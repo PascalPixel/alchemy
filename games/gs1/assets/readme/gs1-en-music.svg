@@ -6,1503 +6,905 @@
 <text class="weyard" x="534" y="15" text-anchor="end">7,300,700</text>
 <rect x="3" y="22" width="534" height="258" fill="#fff"/>
 <g aria-label="song_table.json · golden-sun-sound-table · 0x080fc684: 2,496 bytes">
-<rect x="3.5" y="22.5" width="1.3827864104746035" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="3" y="22" width="2.3827864104746035" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="6" y="30">song_table.json · golden-sun-sound-table · 0x080fc684</text>
+<rect x="3.5" y="22.5" width="44.25334578375148" height="12.584827447679706" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="residuals_index.json · golden-sun-music-residual · 0x080fd044: 4 bytes">
-<rect x="5.882786410474603" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="5.382786410474603" y="22" width="0.0038185679655041724" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="8.382786410474603" y="30">residuals_index.json · golden-sun-music-residual · 0x080fd044</text>
+<rect x="48.75334578375148" y="22.5" width="11.47367864552124" height="0.5" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x080fd048: 684 bytes">
-<rect x="5.886604978440107" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="5.386604978440107" y="22" width="0.6529751221012136" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="8.386604978440108" y="30">index.json · golden-sun-pcm-wave · 0x080fd048</text>
+<rect x="48.75334578375148" y="22.578981554928365" width="11.47367864552124" height="12.505845892751335" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x080fd2f4: 13,068 bytes">
-<rect x="6.53958010054132" y="22.5" width="11.475261543302132" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="6.03958010054132" y="22" width="12.475261543302132" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="9.03958010054132" y="30">index.json · golden-sun-pcm-wave · 0x080fd2f4</text>
+<rect x="3.5" y="36.0848274476797" width="56.72702442927272" height="54.75581818036382" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x08100600: 11,096 bytes">
-<rect x="19.014841643843454" y="22.5" width="9.592707536308573" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="18.514841643843454" y="22" width="10.592707536308573" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="21.514841643843454" y="30">index.json · golden-sun-pcm-wave · 0x08100600</text>
+<rect x="3.5" y="91.84064562804352" width="56.72702442927272" height="46.34209967319535" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x08103158: 7,552 bytes">
-<rect x="29.607549180152027" y="22.5" width="6.209456318871878" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="29.107549180152027" y="22" width="7.209456318871878" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="32.10754918015203" y="30">index.json · golden-sun-pcm-wave · 0x08103158</text>
+<rect x="61.22702442927272" y="22.5" width="48.09882521100866" height="36.88358931756878" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x08104ed8: 1,844 bytes">
-<rect x="36.81700549902391" y="22.5" width="0.7603598320974236" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="36.31700549902391" y="22" width="1.7603598320974236" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="39.31700549902391" y="30">index.json · golden-sun-pcm-wave · 0x08104ed8</text>
+<rect x="110.32584964028138" y="22.500000000000007" width="10.988643232137179" height="36.88358931756877" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x0810560c: 19,544 bytes">
-<rect x="38.57736533112133" y="22.5" width="17.657523079453387" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="38.07736533112133" y="22" width="18.657523079453387" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="41.07736533112133" y="30">index.json · golden-sun-pcm-wave · 0x0810560c</text>
+<rect x="61.22702442927272" y="60.38358931756878" width="60.08746844314584" height="77.79915598367009" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x0810a264: 16,848 bytes">
-<rect x="57.23488841057471" y="22.5" width="15.083808270703575" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="56.73488841057471" y="22" width="16.083808270703575" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="59.73488841057471" y="30">index.json · golden-sun-pcm-wave · 0x0810a264</text>
+<rect x="122.31449287241855" y="22.5" width="34.563291925712555" height="115.68274530123887" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x0810e434: 16,044 bytes">
-<rect x="73.31869668127828" y="22.5" width="14.316276109637236" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="72.81869668127828" y="22" width="15.316276109637236" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="75.81869668127828" y="30">index.json · golden-sun-pcm-wave · 0x0810e434</text>
+<rect x="157.8777847981311" y="22.500000000000007" width="75.59393286802039" height="50.591543720511645" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x081122e0: 2,560 bytes">
-<rect x="88.63497279091553" y="22.5" width="1.4438834979226707" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="88.13497279091553" y="22" width="2.4438834979226707" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="91.13497279091553" y="30">index.json · golden-sun-pcm-wave · 0x081122e0</text>
+<rect x="234.4717176661515" y="22.500000000000007" width="11.221420352912745" height="50.591543720511645" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x08112ce0: 13,304 bytes">
-<rect x="91.0788562888382" y="22.5" width="11.700557053266879" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="90.5788562888382" y="22" width="12.700557053266879" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="93.5788562888382" y="30">index.json · golden-sun-pcm-wave · 0x08112ce0</text>
+<rect x="157.8777847981311" y="74.09154372051165" width="49.340808591142405" height="64.09120158072722" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x081160d8: 8,096 bytes">
-<rect x="103.77941334210507" y="22.5" width="6.728781562180445" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="103.27941334210507" y="22" width="7.728781562180445" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="106.27941334210507" y="30">index.json · golden-sun-pcm-wave · 0x081160d8</text>
+<rect x="208.2185933892735" y="74.09154372051165" width="37.47454462979073" height="50.82714083374976" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x08118078: 2,072 bytes">
-<rect x="111.50819490428552" y="22.5" width="0.9780182061311615" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="111.00819490428552" y="22" width="1.9780182061311615" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="114.00819490428552" y="30">index.json · golden-sun-pcm-wave · 0x08118078</text>
+<rect x="208.2185933892735" y="125.9186845542614" width="37.47454462979073" height="12.264060746977457" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x08118890: 12,264 bytes">
-<rect x="113.48621311041668" y="22.5" width="10.707729382235794" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="112.98621311041668" y="22" width="11.707729382235794" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="115.98621311041668" y="30">index.json · golden-sun-pcm-wave · 0x08118890</text>
+<rect x="3.5" y="139.18274530123887" width="44.92158952522239" height="64.7772131114446" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x0811b878: 8,784 bytes">
-<rect x="125.19394249265248" y="22.5" width="7.385575252247163" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="124.69394249265248" y="22" width="8.385575252247163" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="127.69394249265248" y="30">index.json · golden-sun-pcm-wave · 0x0811b878</text>
+<rect x="49.42158952522239" y="139.18274530123887" width="31.891001499474356" height="64.7772131114446" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x0811db38: 4,084 bytes">
-<rect x="133.57951774489965" y="22.5" width="2.89875789277976" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="133.07951774489965" y="22" width="3.89875789277976" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="136.07951774489965" y="30">index.json · golden-sun-pcm-wave · 0x0811db38</text>
+<rect x="3.5" y="204.95995841268348" width="35.191451281405506" height="26.79329097681088" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x0811eb2c: 7,016 bytes">
-<rect x="137.47827563767942" y="22.5" width="5.697768211494318" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="136.97827563767942" y="22" width="6.697768211494318" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="139.97827563767942" y="30">index.json · golden-sun-pcm-wave · 0x0811eb2c</text>
+<rect x="3.5" y="232.75324938949433" width="35.191451281405506" height="46.74675061050566" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x08120694: 10,884 bytes">
-<rect x="144.17604384917374" y="22.5" width="9.390323434136853" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="143.67604384917374" y="22" width="10.390323434136853" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="146.67604384917374" y="30">index.json · golden-sun-pcm-wave · 0x08120694</text>
+<rect x="39.691451281405506" y="204.95995841268348" width="41.62113974329124" height="61.896099497885025" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x08123118: 2,188 bytes">
-<rect x="154.5663672833106" y="22.5" width="1.0887566771307822" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="154.0663672833106" y="22" width="2.088756677130782" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="157.0663672833106" y="30">index.json · golden-sun-pcm-wave · 0x08123118</text>
+<rect x="39.691451281405506" y="267.8560579105685" width="41.62113974329124" height="11.643942089431505" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x081239a4: 49,200 bytes">
-<rect x="156.6551239604414" y="22.5" width="45.968385975701324" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="156.1551239604414" y="22" width="46.968385975701324" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="159.1551239604414" y="30">index.json · golden-sun-pcm-wave · 0x081239a4</text>
+<rect x="82.31259102469674" y="139.18274530123887" width="84.74921447180625" height="140.31725469876113" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x0812f9d4: 7,164 bytes">
-<rect x="203.6235099361427" y="22.5" width="5.839055226217973" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="203.1235099361427" y="22" width="6.839055226217973" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="206.1235099361427" y="30">index.json · golden-sun-pcm-wave · 0x0812f9d4</text>
+<rect x="168.06180549650298" y="139.18274530123887" width="27.758161435145425" height="60.35566949728107" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x081315d0: 12,424 bytes">
-<rect x="210.46256516236068" y="22.5" width="10.86047210085596" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="209.96256516236068" y="22" width="11.86047210085596" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="212.96256516236068" y="30">index.json · golden-sun-pcm-wave · 0x081315d0</text>
+<rect x="196.81996693164842" y="139.18274530123887" width="48.8731710874158" height="60.35566949728107" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x08134658: 25,528 bytes">
-<rect x="222.32303726321663" y="22.5" width="23.37010075584763" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="221.82303726321663" y="22" width="24.37010075584763" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="224.82303726321663" y="30">index.json · golden-sun-pcm-wave · 0x08134658</text>
+<rect x="168.06180549650298" y="200.53841479851994" width="77.63133252256122" height="78.96158520148006" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x0813aa10: 32,880 bytes">
-<rect x="246.69313801906426" y="22.5" width="30.3886286764443" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="246.19313801906426" y="22" width="31.3886286764443" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="249.19313801906426" y="30">index.json · golden-sun-pcm-wave · 0x0813aa10</text>
+<rect x="246.69313801906424" y="22.5" width="73.60741894317196" height="107.54505239875718" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x08142a80: 9,848 bytes">
-<rect x="278.0817666955086" y="22.5" width="8.401314331071273" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="277.5817666955086" y="22" width="9.401314331071273" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="280.5817666955086" y="30">index.json · golden-sun-pcm-wave · 0x08142a80</text>
+<rect x="321.3005569622362" y="22.5" width="69.41415525074551" height="33.44675418996393" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x081450f8: 21,184 bytes">
-<rect x="287.48308102657984" y="22.5" width="19.223135945310098" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="286.98308102657984" y="22" width="20.223135945310098" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="289.98308102657984" y="30">index.json · golden-sun-pcm-wave · 0x081450f8</text>
+<rect x="321.3005569622362" y="56.94675418996394" width="69.41415525074551" height="73.09829820879324" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x0814a3b8: 33,204 bytes">
-<rect x="307.70621697188994" y="22.5" width="30.697932681650137" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="307.20621697188994" y="22" width="31.697932681650137" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="310.20621697188994" y="30">index.json · golden-sun-pcm-wave · 0x0814a3b8</text>
+<rect x="246.69313801906424" y="131.0450523987572" width="135.009952252142" height="59.12844278266364" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
+<rect x="246.19313801906424" y="130.54505239875718" width="136.009952252142" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
+<text class="weyard rectangle-label" x="249.19313801906424" y="138.54505239875718">index.json · golden-sun-pcm-wave · 0x0814a3b8</text>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x0815256c: 2,200 bytes">
-<rect x="339.40414965354006" y="22.5" width="1.1002123810272946" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="338.90414965354006" y="22" width="2.1002123810272946" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="341.90414965354006" y="30">index.json · golden-sun-pcm-wave · 0x0815256c</text>
+<rect x="382.70309027120624" y="131.0450523987572" width="8.011621941775473" height="59.12844278266364" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x08152e04: 10,844 bytes">
-<rect x="341.50436203456735" y="22.5" width="9.352137754481813" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="341.00436203456735" y="22" width="10.352137754481813" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="344.00436203456735" y="30">index.json · golden-sun-pcm-wave · 0x08152e04</text>
+<rect x="246.69313801906424" y="191.17349518142083" width="48.079474116885905" height="53.41891113779059" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x08155860: 4,004 bytes">
-<rect x="351.85649978904917" y="22.5" width="2.8223865334696767" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="351.35649978904917" y="22" width="3.8223865334696767" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="354.35649978904917" y="30">index.json · golden-sun-pcm-wave · 0x08155860</text>
+<rect x="246.69313801906424" y="245.59240631921142" width="27.2510371426123" height="33.90759368078859" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x08156804: 2,952 bytes">
-<rect x="355.67888632251885" y="22.5" width="1.8181031585420793" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="355.17888632251885" y="22" width="2.8181031585420793" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="358.17888632251885" y="30">index.json · golden-sun-pcm-wave · 0x08156804</text>
+<rect x="274.9441751616765" y="245.59240631921142" width="19.828436974273604" height="33.90759368078859" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x0815738c: 16,416 bytes">
-<rect x="358.49698948106095" y="22.5" width="14.671402930429124" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="357.99698948106095" y="22" width="15.671402930429124" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="360.99698948106095" y="30">index.json · golden-sun-pcm-wave · 0x0815738c</text>
+<rect x="295.7726121359501" y="191.17349518142083" width="44.26340714060669" height="88.32650481857918" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="index.json · golden-sun-pcm-wave · 0x0815b3ac: 18,380 bytes">
-<rect x="374.16839241149006" y="22.5" width="16.546319801491673" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="373.66839241149006" y="22" width="17.546319801491673" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="376.66839241149006" y="30">index.json · golden-sun-pcm-wave · 0x0815b3ac</text>
+<rect x="341.0360192765568" y="191.17349518142083" width="49.67869293642488" height="88.32650481857918" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_slow_passage_sextet_full.mid · golden-sun-sound-sequence · 0x0815fb78: 2,396 bytes">
-<rect x="391.71471221298174" y="22.5" width="1.287322211336999" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="391.21471221298174" y="22" width="2.287322211336999" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="394.21471221298174" y="30">music_slow_passage_sextet_full.mid · golden-sun-sound-sequence · 0x0815fb78</text>
+<rect x="391.7147122129817" y="22.499999999999996" width="26.81162597198943" height="20.21879285732148" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_walking_passage_quintet_full_alpha.mid · golden-sun-sound-sequence · 0x081604d4: 2,796 bytes">
-<rect x="394.0020344243187" y="22.5" width="1.6691790078874167" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="393.5020344243187" y="22" width="2.6691790078874167" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="396.5020344243187" y="30">music_walking_passage_quintet_full_alpha.mid · golden-sun-sound-sequence · 0x081604d4</text>
+<rect x="391.7147122129817" y="43.718792857321475" width="26.81162597198943" height="23.76116228258383" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_slow_passage_quintet_full.mid · golden-sun-sound-sequence · 0x08160fc0: 1,468 bytes">
-<rect x="396.6712134322061" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="396.1712134322061" y="22" width="1.4014144433400313" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="399.1712134322061" y="30">music_slow_passage_quintet_full.mid · golden-sun-sound-sequence · 0x08160fc0</text>
+<rect x="391.7147122129817" y="68.4799551399053" width="26.81162597198943" height="12.000495790712831" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_walking_passage_trio_full.mid · golden-sun-sound-sequence · 0x0816157c: 1,868 bytes">
-<rect x="398.0726278755462" y="22.5" width="0.7832712398904484" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="397.5726278755462" y="22" width="1.7832712398904484" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="400.5726278755462" y="30">music_walking_passage_trio_full.mid · golden-sun-sound-sequence · 0x0816157c</text>
+<rect x="419.5263381849711" y="22.499999999999996" width="14.780064832913807" height="28.15602595827743" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_slow_passage_duo_wide.mid · golden-sun-sound-sequence · 0x08161cc8: 932 bytes">
-<rect x="399.8558991154366" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="399.3558991154366" y="22" width="0.8897263359624723" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="402.3558991154366" y="30">music_slow_passage_duo_wide.mid · golden-sun-sound-sequence · 0x08161cc8</text>
+<rect x="435.3064030178849" y="22.5" width="25.964650399711388" height="7.5129749978429095" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_slow_passage_septet_full.mid · golden-sun-sound-sequence · 0x0816206c: 2,260 bytes">
-<rect x="400.74562545139906" y="22.5" width="1.1574909005098575" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="400.24562545139906" y="22" width="2.1574909005098575" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="403.24562545139906" y="30">music_slow_passage_septet_full.mid · golden-sun-sound-sequence · 0x0816206c</text>
+<rect x="435.3064030178849" y="31.01297499784291" width="25.964650399711388" height="19.643050960434522" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_walking_passage_septet_full_alpha.mid · golden-sun-sound-sequence · 0x08162940: 2,532 bytes">
-<rect x="402.9031163519089" y="22.5" width="1.4171535221641411" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="402.4031163519089" y="22" width="2.417153522164141" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="405.4031163519089" y="30">music_walking_passage_septet_full_alpha.mid · golden-sun-sound-sequence · 0x08162940</text>
+<rect x="419.5263381849711" y="51.656025958277425" width="19.909895473146637" height="28.824424972340704" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_walking_passage_quintet_full_beta.mid · golden-sun-sound-sequence · 0x08163324: 2,644 bytes">
-<rect x="405.32026987407306" y="22.5" width="1.524073425198258" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="404.82026987407306" y="22" width="2.524073425198258" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="407.82026987407306" y="30">music_walking_passage_quintet_full_beta.mid · golden-sun-sound-sequence · 0x08163324</text>
+<rect x="440.43623365811777" y="51.656025958277425" width="20.83481975947856" height="28.824424972340704" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_brisk_passage_quintet_full_alpha.mid · golden-sun-sound-sequence · 0x08163d78: 1,640 bytes">
-<rect x="407.8443432992713" y="22.5" width="0.5656128658567106" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="407.3443432992713" y="22" width="1.5656128658567106" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="410.3443432992713" y="30">music_brisk_passage_quintet_full_alpha.mid · golden-sun-sound-sequence · 0x08163d78</text>
+<rect x="391.7147122129817" y="81.48045093061813" width="12.612081841180785" height="28.67423529360682" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_walking_phrase_sextet_full.mid · golden-sun-sound-sequence · 0x081643e0: 2,076 bytes">
-<rect x="409.40995616512805" y="22.5" width="0.9818367740966656" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="408.90995616512805" y="22" width="1.9818367740966656" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="411.90995616512805" y="30">music_walking_phrase_sextet_full.mid · golden-sun-sound-sequence · 0x081643e0</text>
+<rect x="405.32679405416246" y="81.48045093061813" width="16.230903598958115" height="28.67423529360682" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_walking_phrase_quintet_full.mid · golden-sun-sound-sequence · 0x08164bfc: 1,756 bytes">
-<rect x="411.39179293922473" y="22.5" width="0.6763513368563316" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="410.89179293922473" y="22" width="1.6763513368563316" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="413.89179293922473" y="30">music_walking_phrase_quintet_full.mid · golden-sun-sound-sequence · 0x08164bfc</text>
+<rect x="391.7147122129817" y="111.15468622422495" width="29.70310795514961" height="13.086477679742313" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="residuals_index.json · golden-sun-music-residual · 0x081652d8: 8 bytes">
-<rect x="413.06814427608106" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="412.56814427608106" y="22" width="0.007637135931008345" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="415.56814427608106" y="30">residuals_index.json · golden-sun-music-residual · 0x081652d8</text>
+<rect x="422.4178201681313" y="111.15468622422495" width="0.5" height="13.086477679742313" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_walking_passage_sextet_full_alpha.mid · golden-sun-sound-sequence · 0x081652e0: 2,712 bytes">
-<rect x="413.0757814120121" y="22.5" width="1.588989080611829" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="412.5757814120121" y="22" width="2.588989080611829" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="415.5757814120121" y="30">music_walking_passage_sextet_full_alpha.mid · golden-sun-sound-sequence · 0x081652e0</text>
+<rect x="391.7147122129817" y="125.24116390396726" width="29.8429854401389" height="20.656761602869135" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_slow_passage_trio_full.mid · golden-sun-sound-sequence · 0x08165d78: 1,852 bytes">
-<rect x="415.6647704926239" y="22.5" width="0.767996968028432" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="415.1647704926239" y="22" width="1.767996968028432" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="418.1647704926239" y="30">music_slow_passage_trio_full.mid · golden-sun-sound-sequence · 0x08165d78</text>
+<rect x="422.55769765312056" y="81.48045093061813" width="38.71335576447572" height="10.485889544478217" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_languid_phrase_septet_full_alpha.mid · golden-sun-sound-sequence · 0x081664b4: 4,840 bytes">
-<rect x="417.43276746065237" y="22.5" width="3.6204672382600487" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="416.93276746065237" y="22" width="4.620467238260049" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="419.93276746065237" y="30">music_languid_phrase_septet_full_alpha.mid · golden-sun-sound-sequence · 0x081664b4</text>
+<rect x="422.55769765312056" y="92.96634047509635" width="38.71335576447572" height="29.017119543884757" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_languid_passage_quartet_full.mid · golden-sun-sound-sequence · 0x0816779c: 3,856 bytes">
-<rect x="422.05323469891243" y="22.5" width="2.6810995187460223" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="421.55323469891243" y="22" width="3.6810995187460223" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="424.55323469891243" y="30">music_languid_passage_quartet_full.mid · golden-sun-sound-sequence · 0x0816779c</text>
+<rect x="422.55769765312056" y="122.9834600189811" width="38.71335576447572" height="22.914465487855292" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_languid_phrase_septet_full_beta.mid · golden-sun-sound-sequence · 0x081686ac: 4,828 bytes">
-<rect x="425.73433421765844" y="22.5" width="3.6090115343635363" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="425.23433421765844" y="22" width="4.609011534363536" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="428.23433421765844" y="30">music_languid_phrase_septet_full_beta.mid · golden-sun-sound-sequence · 0x081686ac</text>
+<rect x="462.2710534175963" y="22.5" width="35.40285323807177" height="31.665708044614234" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_languid_phrase_quintet_full.mid · golden-sun-sound-sequence · 0x08169988: 3,224 bytes">
-<rect x="430.343345752022" y="22.5" width="2.0777657801963634" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="429.843345752022" y="22" width="3.0777657801963634" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="432.843345752022" y="30">music_languid_phrase_quintet_full.mid · golden-sun-sound-sequence · 0x08169988</text>
+<rect x="462.2710534175963" y="55.165708044614234" width="35.40285323807177" height="20.813223433271805" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_slow_phrase_sextet_wide.mid · golden-sun-sound-sequence · 0x0816a620: 1,756 bytes">
-<rect x="433.4211115322184" y="22.5" width="0.6763513368563316" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="432.9211115322184" y="22" width="1.6763513368563316" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="435.9211115322184" y="30">music_slow_phrase_sextet_wide.mid · golden-sun-sound-sequence · 0x0816a620</text>
+<rect x="498.6739066556681" y="22.5" width="37.826093344331895" height="10.139380958915682" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_walking_passage_quintet_full_gamma.mid · golden-sun-sound-sequence · 0x0816acfc: 3,740 bytes">
-<rect x="435.0974628690747" y="22.5" width="2.570361047746401" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="434.5974628690747" y="22" width="3.570361047746401" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="437.5974628690747" y="30">music_walking_passage_quintet_full_gamma.mid · golden-sun-sound-sequence · 0x0816acfc</text>
+<rect x="498.6739066556681" y="33.63938095891568" width="37.826093344331895" height="22.72510523140356" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_walking_passage_septet_full_beta.mid · golden-sun-sound-sequence · 0x0816bb98: 3,092 bytes">
-<rect x="438.66782391682113" y="22.5" width="1.9517530373347252" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="438.16782391682113" y="22" width="2.951753037334725" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="441.16782391682113" y="30">music_walking_passage_septet_full_beta.mid · golden-sun-sound-sequence · 0x0816bb98</text>
+<rect x="498.6739066556681" y="57.36448619031924" width="37.826093344331895" height="18.614445287566795" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_walking_passage_septet_full_gamma.mid · golden-sun-sound-sequence · 0x0816c7ac: 4,892 bytes">
-<rect x="441.61957695415583" y="22.5" width="3.670108621811603" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="441.11957695415583" y="22" width="4.670108621811603" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="444.11957695415583" y="30">music_walking_passage_septet_full_gamma.mid · golden-sun-sound-sequence · 0x0816c7ac</text>
+<rect x="462.2710534175963" y="76.97893147788604" width="31.154421446159425" height="36.47192361849531" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_slow_phrase_quintet_full.mid · golden-sun-sound-sequence · 0x0816dac8: 1,520 bytes">
-<rect x="446.28968557596744" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="445.78968557596744" y="22" width="1.4510558268915856" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="448.78968557596744" y="30">music_slow_phrase_quintet_full.mid · golden-sun-sound-sequence · 0x0816dac8</text>
+<rect x="462.2710534175963" y="114.45085509638135" width="31.154421446159425" height="10.642952555215222" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_walking_passage_octet_full.mid · golden-sun-sound-sequence · 0x0816e0b8: 2,716 bytes">
-<rect x="447.74074140285904" y="22.5" width="1.5928076485773333" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="447.24074140285904" y="22" width="2.5928076485773333" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="450.24074140285904" y="30">music_walking_passage_octet_full.mid · golden-sun-sound-sequence · 0x0816e0b8</text>
+<rect x="462.2710534175963" y="126.09380765159656" width="31.154421446159425" height="19.80411785523983" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_walking_passage_septet_full_delta.mid · golden-sun-sound-sequence · 0x0816eb54: 2,760 bytes">
-<rect x="450.33354905143636" y="22.5" width="1.634811896197879" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="449.83354905143636" y="22" width="2.634811896197879" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="452.83354905143636" y="30">music_walking_passage_septet_full_delta.mid · golden-sun-sound-sequence · 0x0816eb54</text>
+<rect x="494.4254748637557" y="76.97893147788604" width="19.343204889807343" height="32.41565269097039" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_walking_passage_septet_full_epsilon.mid · golden-sun-sound-sequence · 0x0816f61c: 3,084 bytes">
-<rect x="452.96836094763427" y="22.5" width="1.944115901403717" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="452.46836094763427" y="22" width="2.944115901403717" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="455.46836094763427" y="30">music_walking_passage_septet_full_epsilon.mid · golden-sun-sound-sequence · 0x0816f61c</text>
+<rect x="514.7686797535631" y="76.97893147788604" width="21.731320246436898" height="32.41565269097039" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_walking_passage_septet_full_zeta.mid · golden-sun-sound-sequence · 0x08170228: 3,516 bytes">
-<rect x="455.912476849038" y="22.5" width="2.3565212416781676" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="455.412476849038" y="22" width="3.3565212416781676" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="458.412476849038" y="30">music_walking_passage_septet_full_zeta.mid · golden-sun-sound-sequence · 0x08170228</text>
+<rect x="494.4254748637557" y="110.39458416885643" width="22.723375685939025" height="35.503341337979975" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_walking_passage_septet_full_eta.mid · golden-sun-sound-sequence · 0x08170fe4: 2,868 bytes">
-<rect x="459.2689980907162" y="22.5" width="1.7379132312664916" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="458.7689980907162" y="22" width="2.7379132312664916" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="461.7689980907162" y="30">music_walking_passage_septet_full_eta.mid · golden-sun-sound-sequence · 0x08170fe4</text>
+<rect x="518.1488505496948" y="110.39458416885643" width="18.351149450305215" height="35.503341337979975" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_walking_passage_sextet_full_beta.mid · golden-sun-sound-sequence · 0x08171b18: 7,972 bytes">
-<rect x="462.00691132198267" y="22.5" width="6.610405955249816" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="461.50691132198267" y="22" width="7.610405955249816" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="464.50691132198267" y="30">music_walking_passage_sextet_full_beta.mid · golden-sun-sound-sequence · 0x08171b18</text>
+<rect x="391.7147122129817" y="146.8979255068364" width="37.8454289176939" height="49.54609489869977" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_walking_phrase_quartet_full.mid · golden-sun-sound-sequence · 0x08173a3c: 6,500 bytes">
-<rect x="469.6173172772325" y="22.5" width="5.20517294394428" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="469.1173172772325" y="22" width="6.20517294394428" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="472.1173172772325" y="30">music_walking_phrase_quartet_full.mid · golden-sun-sound-sequence · 0x08173a3c</text>
+<rect x="430.56014113067556" y="146.8979255068364" width="30.672765675490517" height="49.54609489869977" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_brisk_passage_quintet_full_beta.mid · golden-sun-sound-sequence · 0x081753a0: 7,180 bytes">
-<rect x="475.82249022117674" y="22.5" width="5.8543294980799905" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="475.32249022117674" y="22" width="6.8543294980799905" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="478.32249022117674" y="30">music_brisk_passage_quintet_full_beta.mid · golden-sun-sound-sequence · 0x081753a0</text>
+<rect x="391.7147122129817" y="197.44402040553618" width="69.51819459318442" height="24.07745725350085" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_brisk_passage_septet_full.mid · golden-sun-sound-sequence · 0x08176fac: 7,964 bytes">
-<rect x="482.67681971925674" y="22.5" width="6.602768819318808" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="482.17681971925674" y="22" width="7.602768819318808" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="485.17681971925674" y="30">music_brisk_passage_septet_full.mid · golden-sun-sound-sequence · 0x08176fac</text>
+<rect x="391.7147122129817" y="222.52147765903703" width="32.83174106868197" height="56.97852234096297" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_brisk_passage_quintet_full_gamma.mid · golden-sun-sound-sequence · 0x08178ec8: 2,840 bytes">
-<rect x="490.2795885385755" y="22.5" width="1.7111832555079625" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="489.7795885385755" y="22" width="2.7111832555079625" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="492.7795885385755" y="30">music_brisk_passage_quintet_full_gamma.mid · golden-sun-sound-sequence · 0x08178ec8</text>
+<rect x="425.5464532816637" y="222.52147765903703" width="23.64274550841697" height="27.38503849671045" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_brisk_short_quintet_full.mid · golden-sun-sound-sequence · 0x081799e0: 924 bytes">
-<rect x="492.9907717940835" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="492.4907717940835" y="22" width="0.8820892000314638" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="495.4907717940835" y="30">music_brisk_short_quintet_full.mid · golden-sun-sound-sequence · 0x081799e0</text>
+<rect x="450.18919879008064" y="222.52147765903703" width="11.043708016085478" height="17.89609190991387" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_languid_short_duo_wide.mid · golden-sun-sound-sequence · 0x08179d7c: 464 bytes">
-<rect x="493.872860994115" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="493.372860994115" y="22" width="0.442953883998484" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="496.372860994115" y="30">music_languid_short_duo_wide.mid · golden-sun-sound-sequence · 0x08179d7c</text>
+<rect x="450.18919879008064" y="241.4175695689509" width="11.043708016085478" height="8.488946586796576" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_languid_phrase_trio_full_alpha.mid · golden-sun-sound-sequence · 0x08179f4c: 1,604 bytes">
-<rect x="494.3158148781135" y="22.5" width="0.5312457541671731" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="493.8158148781135" y="22" width="1.5312457541671731" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="496.8158148781135" y="30">music_languid_phrase_trio_full_alpha.mid · golden-sun-sound-sequence · 0x08179f4c</text>
+<rect x="425.5464532816637" y="250.90651615574748" width="12.34960786145688" height="28.59348384425252" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_slow_phrase_quintet_wide.mid · golden-sun-sound-sequence · 0x0817a590: 1,944 bytes">
-<rect x="495.84706063228066" y="22.5" width="0.8558240312350278" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="495.34706063228066" y="22" width="1.8558240312350278" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="498.34706063228066" y="30">music_slow_phrase_quintet_wide.mid · golden-sun-sound-sequence · 0x0817a590</text>
+<rect x="438.89606114312056" y="250.90651615574745" width="22.336845663045565" height="19.517023036100895" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_languid_phrase_duo_full.mid · golden-sun-sound-sequence · 0x0817ad28: 860 bytes">
-<rect x="497.7028846635157" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="497.2028846635157" y="22" width="0.8209921125833971" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="500.2028846635157" y="30">music_languid_phrase_duo_full.mid · golden-sun-sound-sequence · 0x0817ad28</text>
+<rect x="438.89606114312056" y="271.42353919184836" width="22.336845663045565" height="8.076460808151626" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_brisk_passage_sextet_full.mid · golden-sun-sound-sequence · 0x0817b084: 3,536 bytes">
-<rect x="498.5238767760991" y="22.5" width="2.3756140815056885" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="498.0238767760991" y="22" width="3.3756140815056885" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="501.0238767760991" y="30">music_brisk_passage_sextet_full.mid · golden-sun-sound-sequence · 0x0817b084</text>
+<rect x="462.2329068061661" y="146.8979255068364" width="14.85047088919486" height="53.945271917578104" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_languid_brief_trio_wide.mid · golden-sun-sound-sequence · 0x0817be54: 664 bytes">
-<rect x="501.8994908576048" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="501.3994908576048" y="22" width="0.6338822822736926" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="504.3994908576048" y="30">music_languid_brief_trio_wide.mid · golden-sun-sound-sequence · 0x0817be54</text>
+<rect x="462.2329068061661" y="201.8431974244145" width="14.85047088919486" height="9.317777305789555" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_walking_extended_quintet_full.mid · golden-sun-sound-sequence · 0x0817c0ec: 7,528 bytes">
-<rect x="502.5333731398785" y="22.5" width="6.186544911078853" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="502.0333731398785" y="22" width="7.186544911078853" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="505.0333731398785" y="30">music_walking_extended_quintet_full.mid · golden-sun-sound-sequence · 0x0817c0ec</text>
+<rect x="478.083377695361" y="146.89792550683637" width="58.41662230463901" height="30.205553515848052" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_walking_passage_quartet_full.mid · golden-sun-sound-sequence · 0x0817de54: 2,744 bytes">
-<rect x="509.71991805095735" y="22.5" width="1.6195376243358623" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="509.21991805095735" y="22" width="2.6195376243358623" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="512.2199180509574" y="30">music_walking_passage_quartet_full.mid · golden-sun-sound-sequence · 0x0817de54</text>
+<rect x="478.083377695361" y="178.10347902268444" width="18.844110467858986" height="33.05749570751961" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_languid_phrase_trio_full_beta.mid · golden-sun-sound-sequence · 0x0817e90c: 2,016 bytes">
-<rect x="512.3394556752933" y="22.5" width="0.9245582546141029" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="511.8394556752932" y="22" width="1.924558254614103" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="514.8394556752933" y="30">music_languid_phrase_trio_full_beta.mid · golden-sun-sound-sequence · 0x0817e90c</text>
+<rect x="497.92748816321995" y="178.10347902268444" width="13.579346466182113" height="33.05749570751961" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_walking_passage_septet_full_theta.mid · golden-sun-sound-sequence · 0x0817f0ec: 2,844 bytes">
-<rect x="514.2640139299073" y="22.5" width="1.7150018234734663" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="513.7640139299073" y="22" width="2.7150018234734663" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="516.7640139299073" y="30">music_walking_passage_septet_full_theta.mid · golden-sun-sound-sequence · 0x0817f0ec</text>
+<rect x="512.5068346294021" y="178.10347902268444" width="23.99316537059791" height="27.026480842646343" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_walking_short_quartet_full.mid · golden-sun-sound-sequence · 0x0817fc08: 612 bytes">
-<rect x="516.9790157533807" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="516.4790157533807" y="22" width="0.5842408987221384" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="519.4790157533807" y="30">music_walking_short_quartet_full.mid · golden-sun-sound-sequence · 0x0817fc08</text>
+<rect x="512.5068346294021" y="206.1299598653308" width="23.99316537059791" height="5.0310148648732635" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_brisk_phrase_sextet_full.mid · golden-sun-sound-sequence · 0x0817fe6c: 1,908 bytes">
-<rect x="517.5632566521028" y="22.5" width="0.8214569195454904" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="517.0632566521028" y="22" width="1.8214569195454904" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="520.0632566521028" y="30">music_brisk_phrase_sextet_full.mid · golden-sun-sound-sequence · 0x0817fe6c</text>
+<rect x="462.2329068061661" y="212.16097473020406" width="17.47908116580121" height="24.430695445639117" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_slow_hit_quartet_full.mid · golden-sun-sound-sequence · 0x081805e0: 192 bytes">
-<rect x="519.3847135716484" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="518.8847135716484" y="22" width="0.18329126234420026" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="521.8847135716484" y="30">music_slow_hit_quartet_full.mid · golden-sun-sound-sequence · 0x081805e0</text>
+<rect x="462.2329068061661" y="237.59167017584318" width="4.649655388270434" height="7.370270828019585" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_languid_hit_quintet_wide.mid · golden-sun-sound-sequence · 0x081806a0: 248 bytes">
-<rect x="519.5680048339926" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="519.0680048339926" y="22" width="0.2367512138612587" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="522.0680048339926" y="30">music_languid_hit_quintet_wide.mid · golden-sun-sound-sequence · 0x081806a0</text>
+<rect x="467.88256219443656" y="237.59167017584318" width="6.2974715431826445" height="7.370270828019585" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_walking_brief_quartet_mid.mid · golden-sun-sound-sequence · 0x08180798: 188 bytes">
-<rect x="519.8047560478539" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="519.3047560478539" y="22" width="0.17947269437869612" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="522.3047560478539" y="30">music_walking_brief_quartet_mid.mid · golden-sun-sound-sequence · 0x08180798</text>
+<rect x="475.1800337376192" y="237.59167017584318" width="4.531954234348134" height="7.370270828019586" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_walking_brief_quartet_full_alpha.mid · golden-sun-sound-sequence · 0x08180854: 248 bytes">
-<rect x="519.9842287422325" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="519.4842287422325" y="22" width="0.2367512138612587" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="522.4842287422325" y="30">music_walking_brief_quartet_full_alpha.mid · golden-sun-sound-sequence · 0x08180854</text>
+<rect x="480.71198797196735" y="212.16097473020406" width="7.102448143249543" height="6.538686097867139" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_slow_brief_duo_wide.mid · golden-sun-sound-sequence · 0x0818094c: 200 bytes">
-<rect x="520.2209799560937" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="519.7209799560937" y="22" width="0.19092839827520863" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="522.7209799560937" y="30">music_slow_brief_duo_wide.mid · golden-sun-sound-sequence · 0x0818094c</text>
+<rect x="480.71198797196735" y="219.6996608280712" width="7.102448143249543" height="5.079585562796079" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_slow_hit_duo_mid.mid · golden-sun-sound-sequence · 0x08180a14: 96 bytes">
-<rect x="520.411908354369" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="519.911908354369" y="22" width="0.09164563117210013" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="522.911908354369" y="30">music_slow_hit_duo_mid.mid · golden-sun-sound-sequence · 0x08180a14</text>
+<rect x="480.71198797196735" y="225.77924639086726" width="7.102448143249543" height="1.9182010701421186" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_languid_brief_duo_full.mid · golden-sun-sound-sequence · 0x08180a74: 388 bytes">
-<rect x="520.5035539855411" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="520.0035539855411" y="22" width="0.3704010926539047" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="523.0035539855411" y="30">music_languid_brief_duo_full.mid · golden-sun-sound-sequence · 0x08180a74</text>
+<rect x="488.8144361152169" y="212.16097473020406" width="9.842982074054536" height="7.81339480707757" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_brisk_brief_trio_full.mid · golden-sun-sound-sequence · 0x08180bf8: 144 bytes">
-<rect x="520.873955078195" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="520.373955078195" y="22" width="0.1374684467581502" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="523.373955078195" y="30">music_brisk_brief_trio_full.mid · golden-sun-sound-sequence · 0x08180bf8</text>
+<rect x="488.8144361152169" y="220.97436953728163" width="3.592321819599568" height="6.723077923727766" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_brisk_brief_duo_full.mid · golden-sun-sound-sequence · 0x08180c88: 196 bytes">
-<rect x="521.0114235249531" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="520.5114235249531" y="22" width="0.18710983030970446" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="523.5114235249531" y="30">music_brisk_brief_duo_full.mid · golden-sun-sound-sequence · 0x08180c88</text>
+<rect x="493.4067579348165" y="220.97436953728163" width="5.250660254454968" height="6.723077923727765" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_walking_hit_quartet_full.mid · golden-sun-sound-sequence · 0x08180d4c: 220 bytes">
-<rect x="521.1985333552628" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="520.6985333552628" y="22" width="0.2100212381027295" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="523.6985333552628" y="30">music_walking_hit_quartet_full.mid · golden-sun-sound-sequence · 0x08180d4c</text>
+<rect x="480.71198797196735" y="228.6974474610094" width="6.2471977036072825" height="6.476749172101852" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_walking_hit_trio_full.mid · golden-sun-sound-sequence · 0x08180e28: 100 bytes">
-<rect x="521.4085545933656" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="520.9085545933656" y="22" width="0.09546419913760432" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="523.9085545933656" y="30">music_walking_hit_trio_full.mid · golden-sun-sound-sequence · 0x08180e28</text>
+<rect x="480.71198797196735" y="236.17419663311125" width="6.2471977036072825" height="2.398522350955387" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_walking_brief_quartet_full_beta.mid · golden-sun-sound-sequence · 0x08180e8c: 188 bytes">
-<rect x="521.5040187925032" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="521.0040187925032" y="22" width="0.17947269437869612" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="524.0040187925032" y="30">music_walking_brief_quartet_full_beta.mid · golden-sun-sound-sequence · 0x08180e8c</text>
+<rect x="480.71198797196735" y="239.57271898406663" width="6.2471977036072825" height="5.389222019796128" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="music_brisk_brief_quintet_full.mid · golden-sun-sound-sequence · 0x08180f48: 368 bytes">
-<rect x="521.6834914868818" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="521.1834914868818" y="22" width="0.3513082528263839" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="524.1834914868818" y="30">music_brisk_brief_quintet_full.mid · golden-sun-sound-sequence · 0x08180f48</text>
+<rect x="487.95918567557464" y="228.6974474610094" width="10.449333949575587" height="6.916401917210812" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="residuals_index.json · golden-sun-music-residual · 0x081810b8: 8 bytes">
-<rect x="522.0347997397082" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="521.5347997397082" y="22" width="0.007637135931008345" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="524.5347997397082" y="30">residuals_index.json · golden-sun-music-residual · 0x081810b8</text>
+<rect x="499.40851962515023" y="228.6974474610094" width="0.5" height="6.916401917210812" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_hit_mono_narrow_alpha.mid · golden-sun-sound-sequence · 0x081810c0: 44 bytes">
-<rect x="522.0424368756392" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="521.5424368756392" y="22" width="0.0420042476205459" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="524.5424368756392" y="30">effect_languid_hit_mono_narrow_alpha.mid · golden-sun-sound-sequence · 0x081810c0</text>
+<rect x="487.95918567557464" y="236.6138493782202" width="3.2155792842150612" height="1.5707251970517027" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_hit_mono_narrow_alpha.mid · golden-sun-sound-sequence · 0x081810ec: 56 bytes">
-<rect x="522.0844411232597" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="521.5844411232597" y="22" width="0.053459951517058416" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="524.5844411232597" y="30">effect_walking_hit_mono_narrow_alpha.mid · golden-sun-sound-sequence · 0x081810ec</text>
+<rect x="487.95918567557464" y="239.1845745752719" width="3.2155792842150612" height="2.2718320689748936" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_hit_mono_narrow_beta.mid · golden-sun-sound-sequence · 0x08181124: 60 bytes">
-<rect x="522.1379010747768" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="521.6379010747768" y="22" width="0.05727851948256259" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="524.6379010747768" y="30">effect_walking_hit_mono_narrow_beta.mid · golden-sun-sound-sequence · 0x08181124</text>
+<rect x="487.95918567557464" y="242.4564066442468" width="3.2155792842150612" height="2.505534359615957" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_hit_mono_mid_alpha.mid · golden-sun-sound-sequence · 0x08181160: 80 bytes">
-<rect x="522.1951795942593" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="521.6951795942593" y="22" width="0.07637135931008346" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="524.6951795942593" y="30">effect_walking_hit_mono_mid_alpha.mid · golden-sun-sound-sequence · 0x08181160</text>
+<rect x="492.1747649597897" y="236.6138493782202" width="6.482653229481735" height="1.633265246659874" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_brief_trio_narrow.mid · golden-sun-sound-sequence · 0x081811b0: 72 bytes">
-<rect x="522.2715509535694" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="521.7715509535694" y="22" width="0.0687342233790751" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="524.7715509535694" y="30">effect_driving_brief_trio_narrow.mid · golden-sun-sound-sequence · 0x081811b0</text>
+<rect x="492.1747649597897" y="239.24711462488008" width="1.6409364339347303" height="5.7148263789826785" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_duo_mid_alpha.mid · golden-sun-sound-sequence · 0x081811f8: 104 bytes">
-<rect x="522.3402851769486" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="521.8402851769486" y="22" width="0.09928276710310849" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="524.8402851769486" y="30">effect_driving_hit_duo_mid_alpha.mid · golden-sun-sound-sequence · 0x081811f8</text>
+<rect x="494.8157013937244" y="239.24711462488008" width="3.841716795547004" height="4.290469268289383" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_alpha.mid · golden-sun-sound-sequence · 0x08181260: 28 bytes">
-<rect x="522.4395679440516" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="521.9395679440516" y="22" width="0.026729975758529208" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="524.9395679440516" y="30">effect_driving_hit_mono_single_alpha.mid · golden-sun-sound-sequence · 0x08181260</text>
+<rect x="494.8157013937244" y="244.53758389316945" width="3.841716795547004" height="0.5" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_short_mono_mid.mid · golden-sun-sound-sequence · 0x0818127c: 116 bytes">
-<rect x="522.4662979198101" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="521.9662979198101" y="22" width="0.110738470999621" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="524.9662979198101" y="30">effect_walking_short_mono_mid.mid · golden-sun-sound-sequence · 0x0818127c</text>
+<rect x="462.2329068061661" y="245.96194100386276" width="2.7927433589003474" height="6.532944577137387" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_hit_mono_single_alpha.mid · golden-sun-sound-sequence · 0x081812f0: 36 bytes">
-<rect x="522.5770363908098" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="522.0770363908098" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="525.0770363908098" y="30">effect_walking_hit_mono_single_alpha.mid · golden-sun-sound-sequence · 0x081812f0</text>
+<rect x="466.02565016506645" y="245.96194100386276" width="1.4849008213485035" height="2.568236904959815" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_mono_single_alpha.mid · golden-sun-sound-sequence · 0x08181314: 36 bytes">
-<rect x="522.6114035024993" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="522.1114035024993" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="525.1114035024993" y="30">effect_slow_hit_mono_single_alpha.mid · golden-sun-sound-sequence · 0x08181314</text>
+<rect x="468.51055098641496" y="245.96194100386276" width="1.4849008213485035" height="2.568236904959815" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_mono_narrow_alpha.mid · golden-sun-sound-sequence · 0x08181338: 32 bytes">
-<rect x="522.6457706141889" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="522.1457706141889" y="22" width="0.03054854372403338" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="525.1457706141889" y="30">effect_slow_hit_mono_narrow_alpha.mid · golden-sun-sound-sequence · 0x08181338</text>
+<rect x="466.02565016506645" y="249.53017790882257" width="0.9879206570788028" height="2.9647076721775725" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_narrow_alpha.mid · golden-sun-sound-sequence · 0x08181358: 48 bytes">
-<rect x="522.676319157913" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="522.176319157913" y="22" width="0.045822815586050065" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="525.176319157913" y="30">effect_brisk_hit_mono_narrow_alpha.mid · golden-sun-sound-sequence · 0x08181358</text>
+<rect x="468.01357082214525" y="249.53017790882257" width="1.9818809856182042" height="2.9647076721775725" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_mid_alpha.mid · golden-sun-sound-sequence · 0x08181388: 84 bytes">
-<rect x="522.722141973499" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="522.222141973499" y="22" width="0.08018992727558762" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="525.222141973499" y="30">effect_brisk_hit_mono_mid_alpha.mid · golden-sun-sound-sequence · 0x08181388</text>
+<rect x="462.2329068061661" y="253.49488558100015" width="7.7625450015973545" height="1.361072180893808" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_mid_alpha.mid · golden-sun-sound-sequence · 0x081813dc: 88 bytes">
-<rect x="522.8023319007746" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="522.3023319007746" y="22" width="0.0840084952410918" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="525.3023319007746" y="30">effect_driving_hit_mono_mid_alpha.mid · golden-sun-sound-sequence · 0x081813dc</text>
+<rect x="462.2329068061661" y="255.85595776189396" width="2.0599363497641554" height="6.0832165426814235" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_hit_mono_mid_beta.mid · golden-sun-sound-sequence · 0x08181434: 96 bytes">
-<rect x="522.8863403960156" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="522.3863403960156" y="22" width="0.09164563117210013" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="525.3863403960156" y="30">effect_walking_hit_mono_mid_beta.mid · golden-sun-sound-sequence · 0x08181434</text>
+<rect x="465.29284315593026" y="255.85595776189396" width="4.702608651833199" height="3.1462730981549796" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_narrow_beta.mid · golden-sun-sound-sequence · 0x08181494: 68 bytes">
-<rect x="522.9779860271877" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="522.4779860271877" y="22" width="0.06491565541357093" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="525.4779860271877" y="30">effect_brisk_hit_mono_narrow_beta.mid · golden-sun-sound-sequence · 0x08181494</text>
+<rect x="465.29284315593026" y="260.00223086004894" width="4.702608651833199" height="1.9369434445264442" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_duo_wide.mid · golden-sun-sound-sequence · 0x081814d8: 40 bytes">
-<rect x="523.0429016826013" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="522.5429016826013" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="525.5429016826013" y="30">effect_brisk_hit_duo_wide.mid · golden-sun-sound-sequence · 0x081814d8</text>
+<rect x="470.99545180776346" y="245.96194100386276" width="3.2583403166528795" height="1.3135551924944577" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_wide_alpha.mid · golden-sun-sound-sequence · 0x08181500: 36 bytes">
-<rect x="523.0810873622563" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="522.5810873622563" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="525.5810873622563" y="30">effect_brisk_hit_mono_wide_alpha.mid · golden-sun-sound-sequence · 0x08181500</text>
+<rect x="470.99545180776346" y="248.2754961963572" width="3.2583403166528795" height="1.0821996732450123" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_single_alpha.mid · golden-sun-sound-sequence · 0x08181524: 28 bytes">
-<rect x="523.1154544739459" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="522.6154544739459" y="22" width="0.026729975758529208" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="525.6154544739459" y="30">effect_brisk_hit_mono_single_alpha.mid · golden-sun-sound-sequence · 0x08181524</text>
+<rect x="470.99545180776346" y="250.35769586960222" width="1.1291701583264397" height="2.2389772694922407" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_single_beta.mid · golden-sun-sound-sequence · 0x08181540: 28 bytes">
-<rect x="523.1421844497044" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="522.6421844497044" y="22" width="0.026729975758529208" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="525.6421844497044" y="30">effect_brisk_hit_mono_single_beta.mid · golden-sun-sound-sequence · 0x08181540</text>
+<rect x="473.1246219660899" y="250.35769586960222" width="1.1291701583264397" height="2.2389772694922407" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_mid_beta.mid · golden-sun-sound-sequence · 0x0818155c: 40 bytes">
-<rect x="523.1689144254628" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="522.6689144254628" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="525.6689144254628" y="30">effect_brisk_hit_mono_mid_beta.mid · golden-sun-sound-sequence · 0x0818155c</text>
+<rect x="475.25379212441635" y="245.96194100386276" width="4.548746473214357" height="0.7755191012166769" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_full.mid · golden-sun-sound-sequence · 0x08181584: 72 bytes">
-<rect x="523.2071001051179" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="522.7071001051179" y="22" width="0.0687342233790751" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="525.7071001051179" y="30">effect_brisk_hit_mono_full.mid · golden-sun-sound-sequence · 0x08181584</text>
+<rect x="475.25379212441635" y="247.73746010507944" width="4.548746473214357" height="2.195934382190018" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_wide_beta.mid · golden-sun-sound-sequence · 0x081815cc: 60 bytes">
-<rect x="523.275834328497" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="522.775834328497" y="22" width="0.05727851948256259" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="525.775834328497" y="30">effect_brisk_hit_mono_wide_beta.mid · golden-sun-sound-sequence · 0x081815cc</text>
+<rect x="475.25379212441635" y="250.93339448726945" width="4.548746473214357" height="1.6632786518250158" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_narrow_gamma.mid · golden-sun-sound-sequence · 0x08181608: 100 bytes">
-<rect x="523.3331128479796" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="522.8331128479796" y="22" width="0.09546419913760432" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="525.8331128479796" y="30">effect_brisk_hit_mono_narrow_gamma.mid · golden-sun-sound-sequence · 0x08181608</text>
+<rect x="470.99545180776346" y="253.5966731390945" width="3.3235543912317924" height="4.696647052122504" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_narrow_delta.mid · golden-sun-sound-sequence · 0x0818166c: 32 bytes">
-<rect x="523.4285770471172" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="522.9285770471172" y="22" width="0.03054854372403338" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="525.9285770471172" y="30">effect_brisk_hit_mono_narrow_delta.mid · golden-sun-sound-sequence · 0x0818166c</text>
+<rect x="470.99545180776346" y="259.293320191217" width="1.1617771956158962" height="2.6458541133584035" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_narrow_epsilon.mid · golden-sun-sound-sequence · 0x0818168c: 32 bytes">
-<rect x="523.4591255908413" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="522.9591255908413" y="22" width="0.03054854372403338" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="525.9591255908413" y="30">effect_brisk_hit_mono_narrow_epsilon.mid · golden-sun-sound-sequence · 0x0818168c</text>
+<rect x="473.15722900337937" y="259.293320191217" width="1.1617771956158962" height="2.6458541133584035" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_hit_mono_full.mid · golden-sun-sound-sequence · 0x081816ac: 112 bytes">
-<rect x="523.4896741345653" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="522.9896741345653" y="22" width="0.10691990303411683" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="525.9896741345653" y="30">effect_walking_hit_mono_full.mid · golden-sun-sound-sequence · 0x081816ac</text>
+<rect x="475.3190061989952" y="253.5966731390945" width="4.483532398635444" height="4.0305775506435655" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_hit_mono_wide_alpha.mid · golden-sun-sound-sequence · 0x0818171c: 40 bytes">
-<rect x="523.5965940375995" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="523.0965940375995" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="526.0965940375995" y="30">effect_walking_hit_mono_wide_alpha.mid · golden-sun-sound-sequence · 0x0818171c</text>
+<rect x="475.3190061989952" y="258.62725068973805" width="1.284805166098102" height="3.3119236148373417" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_narrow_alpha.mid · golden-sun-sound-sequence · 0x08181744: 56 bytes">
-<rect x="523.6347797172546" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="523.1347797172546" y="22" width="0.053459951517058416" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="526.1347797172546" y="30">effect_driving_hit_mono_narrow_alpha.mid · golden-sun-sound-sequence · 0x08181744</text>
+<rect x="477.60381136509335" y="258.62725068973805" width="2.198727232537342" height="3.3119236148373425" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_mono_mid_alpha.mid · golden-sun-sound-sequence · 0x0818177c: 56 bytes">
-<rect x="523.6882396687716" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="523.1882396687716" y="22" width="0.053459951517058416" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="526.1882396687716" y="30">effect_slow_hit_mono_mid_alpha.mid · golden-sun-sound-sequence · 0x0818177c</text>
+<rect x="462.2329068061661" y="262.9391743045754" width="2.218829679864897" height="3.28499450520165" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_hit_mono_wide_beta.mid · golden-sun-sound-sequence · 0x081817b4: 40 bytes">
-<rect x="523.7416996202887" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="523.2416996202887" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="526.2416996202887" y="30">effect_walking_hit_mono_wide_beta.mid · golden-sun-sound-sequence · 0x081817b4</text>
+<rect x="462.2329068061661" y="267.22416880977704" width="2.218829679864897" height="2.0607103608583213" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_duo_mid_alpha.mid · golden-sun-sound-sequence · 0x081817dc: 68 bytes">
-<rect x="523.7798852999438" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="523.2798852999438" y="22" width="0.06491565541357093" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="526.2798852999438" y="30">effect_slow_hit_duo_mid_alpha.mid · golden-sun-sound-sequence · 0x081817dc</text>
+<rect x="465.451736486031" y="262.9391743045754" width="4.364716133108161" height="2.121924568075488" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_wide_gamma.mid · golden-sun-sound-sequence · 0x08181820: 40 bytes">
-<rect x="523.8448009553573" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="523.3448009553573" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="526.3448009553573" y="30">effect_brisk_hit_mono_wide_gamma.mid · golden-sun-sound-sequence · 0x08181820</text>
+<rect x="465.451736486031" y="266.06109887265086" width="1.332485275264418" height="3.223780297984484" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_mid_beta.mid · golden-sun-sound-sequence · 0x08181848: 52 bytes">
-<rect x="523.8829866350123" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="523.3829866350123" y="22" width="0.049641383551554244" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="526.3829866350123" y="30">effect_driving_hit_mono_mid_beta.mid · golden-sun-sound-sequence · 0x08181848</text>
+<rect x="467.78422176129544" y="266.06109887265086" width="2.0322308578437434" height="3.223780297984484" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_duo_full_alpha.mid · golden-sun-sound-sequence · 0x0818187c: 88 bytes">
-<rect x="523.932628018564" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="523.432628018564" y="22" width="0.0840084952410918" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="526.432628018564" y="30">effect_brisk_hit_duo_full_alpha.mid · golden-sun-sound-sequence · 0x0818187c</text>
+<rect x="462.2329068061661" y="270.28487917063535" width="3.4961430448906503" height="3.820618818351856" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_duo_full_beta.mid · golden-sun-sound-sequence · 0x081818d4: 80 bytes">
-<rect x="524.016636513805" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="523.516636513805" y="22" width="0.07637135931008346" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="526.516636513805" y="30">effect_brisk_hit_duo_full_beta.mid · golden-sun-sound-sequence · 0x081818d4</text>
+<rect x="466.72904985105674" y="270.28487917063535" width="3.0874027680824083" height="3.820618818351856" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_mono_narrow_beta.mid · golden-sun-sound-sequence · 0x08181924: 40 bytes">
-<rect x="524.0930078731151" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="523.5930078731151" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="526.5930078731151" y="30">effect_slow_hit_mono_narrow_beta.mid · golden-sun-sound-sequence · 0x08181924</text>
+<rect x="462.2329068061661" y="275.1054979889872" width="0.8262863431857572" height="4.394502011012791" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_brief_mono_single_alpha.mid · golden-sun-sound-sequence · 0x0818194c: 60 bytes">
-<rect x="524.1311935527701" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="523.6311935527701" y="22" width="0.05727851948256259" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="526.6311935527701" y="30">effect_walking_brief_mono_single_alpha.mid · golden-sun-sound-sequence · 0x0818194c</text>
+<rect x="464.05919314935187" y="275.1054979889872" width="1.739429514778636" height="4.394502011012791" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_hit_mono_narrow_beta.mid · golden-sun-sound-sequence · 0x08181988: 40 bytes">
-<rect x="524.1884720722527" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="523.6884720722527" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="526.6884720722527" y="30">effect_languid_hit_mono_narrow_beta.mid · golden-sun-sound-sequence · 0x08181988</text>
+<rect x="466.7986226641305" y="275.1054979889872" width="3.017829955008666" height="1.4520463686421774" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="residuals_index.json · golden-sun-music-residual · 0x081819b0: 18 bytes">
-<rect x="524.2266577519077" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="523.7266577519077" y="22" width="0.017183555844768775" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="526.7266577519077" y="30">residuals_index.json · golden-sun-music-residual · 0x081819b0</text>
+<rect x="466.7986226641305" y="277.5575443576294" width="0.5066862331282498" height="1.9424556423706134" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_hit_mono_narrow_gamma.mid · golden-sun-sound-sequence · 0x081819c2: 30 bytes">
-<rect x="524.2438413077525" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="523.7438413077525" y="22" width="0.028639259741281294" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="526.7438413077525" y="30">effect_walking_hit_mono_narrow_gamma.mid · golden-sun-sound-sequence · 0x081819c2</text>
+<rect x="468.3053088972588" y="277.5575443576294" width="1.511143721880416" height="1.9424556423706134" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_trio_mid_alpha.mid · golden-sun-sound-sequence · 0x081819e0: 152 bytes">
-<rect x="524.2724805674937" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="523.7724805674937" y="22" width="0.14510558268915855" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="526.7724805674937" y="30">effect_slow_hit_trio_mid_alpha.mid · golden-sun-sound-sequence · 0x081819e0</text>
+<rect x="470.81645261913917" y="262.9391743045754" width="5.324521119711304" height="4.919379447895938" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_short_mono_narrow.mid · golden-sun-sound-sequence · 0x08181a78: 88 bytes">
-<rect x="524.417586150183" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="523.917586150183" y="22" width="0.0840084952410918" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="526.917586150183" y="30">effect_walking_short_mono_narrow.mid · golden-sun-sound-sequence · 0x08181a78</text>
+<rect x="477.14097373885045" y="262.9391743045754" width="2.6615648587802285" height="4.919379447895938" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_hit_duo_full_alpha.mid · golden-sun-sound-sequence · 0x08181ad0: 128 bytes">
-<rect x="524.501594645424" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="524.001594645424" y="22" width="0.12219417489613352" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="527.001594645424" y="30">effect_walking_hit_duo_full_alpha.mid · golden-sun-sound-sequence · 0x08181ad0</text>
+<rect x="470.81645261913917" y="268.8585537524713" width="6.794018324676318" height="3.0449092893955587" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_duo_mid_beta.mid · golden-sun-sound-sequence · 0x08181b50: 36 bytes">
-<rect x="524.6237888203201" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="524.1237888203201" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="527.1237888203201" y="30">effect_driving_hit_duo_mid_beta.mid · golden-sun-sound-sequence · 0x08181b50</text>
+<rect x="478.61047094381547" y="268.8585537524713" width="1.1920676538152142" height="3.0449092893955587" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_duo_mid.mid · golden-sun-sound-sequence · 0x08181b74: 108 bytes">
-<rect x="524.6581559320097" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="524.1581559320097" y="22" width="0.10310133506861266" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="527.1581559320097" y="30">effect_brisk_hit_duo_mid.mid · golden-sun-sound-sequence · 0x08181b74</text>
+<rect x="470.81645261913917" y="272.90346304186687" width="2.5016145638866414" height="6.596536958133122" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_duo_mid_beta.mid · golden-sun-sound-sequence · 0x08181be0: 108 bytes">
-<rect x="524.7612572670782" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="524.2612572670782" y="22" width="0.10310133506861266" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="527.2612572670782" y="30">effect_slow_hit_duo_mid_beta.mid · golden-sun-sound-sequence · 0x08181be0</text>
+<rect x="474.3180671830258" y="272.90346304186687" width="5.484471414604891" height="3.1021299573918864" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_hit_mono_single_alpha.mid · golden-sun-sound-sequence · 0x08181c4c: 28 bytes">
-<rect x="524.8643586021468" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="524.3643586021468" y="22" width="0.026729975758529208" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="527.3643586021468" y="30">effect_languid_hit_mono_single_alpha.mid · golden-sun-sound-sequence · 0x08181c4c</text>
+<rect x="474.3180671830258" y="277.00559299925874" width="0.9735347783580104" height="2.494407000741236" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_hit_mono_narrow_gamma.mid · golden-sun-sound-sequence · 0x08181c68: 32 bytes">
-<rect x="524.8910885779053" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="524.3910885779053" y="22" width="0.03054854372403338" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="527.3910885779053" y="30">effect_languid_hit_mono_narrow_gamma.mid · golden-sun-sound-sequence · 0x08181c68</text>
+<rect x="476.2916019613838" y="277.00559299925874" width="1.25546831812344" height="2.4944070007412353" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_hit_mono_narrow_delta.mid · golden-sun-sound-sequence · 0x08181c88: 32 bytes">
-<rect x="524.9216371216294" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="524.4216371216294" y="22" width="0.03054854372403338" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="527.4216371216294" y="30">effect_languid_hit_mono_narrow_delta.mid · golden-sun-sound-sequence · 0x08181c88</text>
+<rect x="478.54707027950724" y="277.00559299925874" width="1.25546831812344" height="2.4944070007412353" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_brief_duo_narrow.mid · golden-sun-sound-sequence · 0x08181ca8: 52 bytes">
-<rect x="524.9521856653535" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="524.4521856653535" y="22" width="0.049641383551554244" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="527.4521856653535" y="30">effect_languid_brief_duo_narrow.mid · golden-sun-sound-sequence · 0x08181ca8</text>
+<rect x="480.8025385976307" y="245.96194100386276" width="1.7422504317038148" height="3.670425723424338" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_brief_mono_single_alpha.mid · golden-sun-sound-sequence · 0x08181cdc: 32 bytes">
-<rect x="525.001827048905" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="524.501827048905" y="22" width="0.03054854372403338" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="527.501827048905" y="30">effect_languid_brief_mono_single_alpha.mid · golden-sun-sound-sequence · 0x08181cdc</text>
+<rect x="480.8025385976307" y="250.6323667272871" width="1.7422504317038148" height="1.8741081374919002" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_hit_trio_wide.mid · golden-sun-sound-sequence · 0x08181cfc: 68 bytes">
-<rect x="525.0323755926291" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="524.5323755926291" y="22" width="0.06491565541357093" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="527.5323755926291" y="30">effect_walking_hit_trio_wide.mid · golden-sun-sound-sequence · 0x08181cfc</text>
+<rect x="483.54478902933454" y="245.96194100386276" width="5.1374176328609185" height="1.7288739496931078" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_beta.mid · golden-sun-sound-sequence · 0x08181d40: 56 bytes">
-<rect x="525.0972912480427" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="524.5972912480427" y="22" width="0.053459951517058416" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="527.5972912480427" y="30">effect_driving_hit_mono_single_beta.mid · golden-sun-sound-sequence · 0x08181d40</text>
+<rect x="483.54478902933454" y="248.69081495355587" width="1.8641282286684286" height="3.8156599112231313" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_gamma.mid · golden-sun-sound-sequence · 0x08181d78: 64 bytes">
-<rect x="525.1507511995597" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="524.6507511995597" y="22" width="0.06109708744806676" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="527.6507511995597" y="30">effect_driving_hit_mono_single_gamma.mid · golden-sun-sound-sequence · 0x08181d78</text>
+<rect x="486.408917258003" y="248.69081495355587" width="2.27328940419249" height="3.815659911223131" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_wide_delta.mid · golden-sun-sound-sequence · 0x08181db8: 76 bytes">
-<rect x="525.2118482870078" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="524.7118482870078" y="22" width="0.07255279134457927" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="527.7118482870078" y="30">effect_brisk_hit_mono_wide_delta.mid · golden-sun-sound-sequence · 0x08181db8</text>
+<rect x="480.8025385976307" y="253.506474864779" width="3.686491478520276" height="2.99416498519095" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_wide_epsilon.mid · golden-sun-sound-sequence · 0x08181e04: 40 bytes">
-<rect x="525.2844010783524" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="524.7844010783524" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="527.7844010783524" y="30">effect_brisk_hit_mono_wide_epsilon.mid · golden-sun-sound-sequence · 0x08181e04</text>
+<rect x="485.489030076151" y="253.506474864779" width="1.4665744623790924" height="2.99416498519095" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_hit_mono_single_beta.mid · golden-sun-sound-sequence · 0x08181e2c: 28 bytes">
-<rect x="525.3225867580074" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="524.8225867580074" y="22" width="0.026729975758529208" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="527.8225867580074" y="30">effect_languid_hit_mono_single_beta.mid · golden-sun-sound-sequence · 0x08181e2c</text>
+<rect x="487.95560453853005" y="253.506474864779" width="0.7266021236653644" height="2.99416498519095" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_hit_mono_narrow_epsilon.mid · golden-sun-sound-sequence · 0x08181e48: 32 bytes">
-<rect x="525.3493167337659" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="524.8493167337659" y="22" width="0.03054854372403338" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="527.8493167337659" y="30">effect_languid_hit_mono_narrow_epsilon.mid · golden-sun-sound-sequence · 0x08181e48</text>
+<rect x="480.8025385976307" y="257.50063984996996" width="2.9070539484084823" height="1.0172550430257319" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_hit_mono_mid_gamma.mid · golden-sun-sound-sequence · 0x08181e68: 56 bytes">
-<rect x="525.37986527749" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="524.87986527749" y="22" width="0.053459951517058416" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="527.87986527749" y="30">effect_walking_hit_mono_mid_gamma.mid · golden-sun-sound-sequence · 0x08181e68</text>
+<rect x="480.8025385976307" y="259.5178948929957" width="2.9070539484084823" height="2.530196325295031" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_hit_mono_wide_gamma.mid · golden-sun-sound-sequence · 0x08181ea0: 36 bytes">
-<rect x="525.4333252290071" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="524.9333252290071" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="527.9333252290071" y="30">effect_walking_hit_mono_wide_gamma.mid · golden-sun-sound-sequence · 0x08181ea0</text>
+<rect x="484.7095925460392" y="257.50063984996996" width="3.972614116156251" height="0.7831093683888168" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_hit_mono_mid_delta.mid · golden-sun-sound-sequence · 0x08181ec4: 40 bytes">
-<rect x="525.4676923406967" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="524.9676923406967" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="527.9676923406967" y="30">effect_walking_hit_mono_mid_delta.mid · golden-sun-sound-sequence · 0x08181ec4</text>
+<rect x="484.7095925460392" y="259.28374921835876" width="1.6171653242927637" height="2.764341999931946" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_wide_zeta.mid · golden-sun-sound-sequence · 0x08181eec: 36 bytes">
-<rect x="525.5058780203517" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="525.0058780203517" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="528.0058780203517" y="30">effect_brisk_hit_mono_wide_zeta.mid · golden-sun-sound-sequence · 0x08181eec</text>
+<rect x="487.32675787033196" y="259.28374921835876" width="1.3554487918634872" height="2.764341999931946" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_brief_mono_narrow_alpha.mid · golden-sun-sound-sequence · 0x08181f10: 44 bytes">
-<rect x="525.5402451320413" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="525.0402451320413" y="22" width="0.0420042476205459" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="528.0402451320413" y="30">effect_languid_brief_mono_narrow_alpha.mid · golden-sun-sound-sequence · 0x08181f10</text>
+<rect x="489.6822066621954" y="245.96194100386276" width="2.7407043226534875" height="1.8970736394405776" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_brief_mono_narrow_beta.mid · golden-sun-sound-sequence · 0x08181f3c: 44 bytes">
-<rect x="525.5822493796618" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="525.0822493796618" y="22" width="0.0420042476205459" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="528.0822493796618" y="30">effect_languid_brief_mono_narrow_beta.mid · golden-sun-sound-sequence · 0x08181f3c</text>
+<rect x="489.6822066621954" y="248.85901464330334" width="2.7407043226534875" height="1.8970736394405778" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_hit_mono_narrow_zeta.mid · golden-sun-sound-sequence · 0x08181f68: 32 bytes">
-<rect x="525.6242536272823" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="525.1242536272823" y="22" width="0.03054854372403338" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="528.1242536272823" y="30">effect_languid_hit_mono_narrow_zeta.mid · golden-sun-sound-sequence · 0x08181f68</text>
+<rect x="489.6822066621954" y="251.75608828274392" width="2.7407043226534875" height="1.1069626468658744" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_brief_mono_wide.mid · golden-sun-sound-sequence · 0x08181f88: 120 bytes">
-<rect x="525.6548021710064" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="525.1548021710064" y="22" width="0.11455703896512517" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="528.1548021710064" y="30">effect_driving_brief_mono_wide.mid · golden-sun-sound-sequence · 0x08181f88</text>
+<rect x="493.4229109848489" y="245.96194100386276" width="5.23450720442248" height="3.740665955448218" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_brief_mono_single_beta.mid · golden-sun-sound-sequence · 0x08182000: 40 bytes">
-<rect x="525.7693592099715" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="525.2693592099715" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="528.2693592099715" y="30">effect_walking_brief_mono_single_beta.mid · golden-sun-sound-sequence · 0x08182000</text>
+<rect x="493.4229109848489" y="250.70260695931097" width="2.11725360221124" height="2.160443970298812" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_mono_single_beta.mid · golden-sun-sound-sequence · 0x08182028: 40 bytes">
-<rect x="525.8075448896266" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="525.3075448896266" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="528.3075448896266" y="30">effect_slow_hit_mono_single_beta.mid · golden-sun-sound-sequence · 0x08182028</text>
+<rect x="496.54016458706013" y="250.70260695931097" width="2.11725360221124" height="2.160443970298812" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_duo_narrow_alpha.mid · golden-sun-sound-sequence · 0x08182050: 52 bytes">
-<rect x="525.8457305692816" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="525.3457305692816" y="22" width="0.049641383551554244" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="528.3457305692816" y="30">effect_brisk_hit_duo_narrow_alpha.mid · golden-sun-sound-sequence · 0x08182050</text>
+<rect x="489.6822066621954" y="253.86305092960978" width="3.5049342380343074" height="1.8429886607821908" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_brief_mono_single_gamma.mid · golden-sun-sound-sequence · 0x08182084: 40 bytes">
-<rect x="525.8953719528332" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="525.3953719528332" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="528.3953719528332" y="30">effect_walking_brief_mono_single_gamma.mid · golden-sun-sound-sequence · 0x08182084</text>
+<rect x="489.6822066621954" y="256.706039590392" width="3.5049342380343074" height="1.1869143544478389" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_brief_mono_single_delta.mid · golden-sun-sound-sequence · 0x081820ac: 40 bytes">
-<rect x="525.9335576324883" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="525.4335576324883" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="528.4335576324883" y="30">effect_walking_brief_mono_single_delta.mid · golden-sun-sound-sequence · 0x081820ac</text>
+<rect x="489.6822066621954" y="258.8929539448398" width="1.3710180200180564" height="3.155137273450894" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_brief_mono_narrow_alpha.mid · golden-sun-sound-sequence · 0x081820d4: 36 bytes">
-<rect x="525.9717433121433" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="525.4717433121433" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="528.4717433121433" y="30">effect_brisk_brief_mono_narrow_alpha.mid · golden-sun-sound-sequence · 0x081820d4</text>
+<rect x="492.0532246822135" y="258.8929539448398" width="1.133916218016251" height="3.155137273450894" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_brief_mono_narrow_beta.mid · golden-sun-sound-sequence · 0x081820f8: 36 bytes">
-<rect x="526.0061104238329" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="525.5061104238329" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="528.5061104238329" y="30">effect_brisk_brief_mono_narrow_beta.mid · golden-sun-sound-sequence · 0x081820f8</text>
+<rect x="494.18714090022974" y="253.86305092960978" width="4.470277289041659" height="0.6208894627083983" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_mid_gamma.mid · golden-sun-sound-sequence · 0x0818211c: 84 bytes">
-<rect x="526.0404775355224" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="525.5404775355224" y="22" width="0.08018992727558762" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="528.5404775355224" y="30">effect_brisk_hit_mono_mid_gamma.mid · golden-sun-sound-sequence · 0x0818211c</text>
+<rect x="494.18714090022974" y="255.48394039231817" width="4.470277289041659" height="2.782075412986263" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_mid_delta.mid · golden-sun-sound-sequence · 0x08182170: 84 bytes">
-<rect x="526.120667462798" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="525.620667462798" y="22" width="0.08018992727558762" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="528.620667462798" y="30">effect_brisk_hit_mono_mid_delta.mid · golden-sun-sound-sequence · 0x08182170</text>
+<rect x="494.18714090022974" y="259.26601580530445" width="4.470277289041659" height="2.782075412986263" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_mid_epsilon.mid · golden-sun-sound-sequence · 0x081821c4: 84 bytes">
-<rect x="526.2008573900736" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="525.7008573900736" y="22" width="0.08018992727558762" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="528.7008573900736" y="30">effect_brisk_hit_mono_mid_epsilon.mid · golden-sun-sound-sequence · 0x081821c4</text>
+<rect x="480.8025385976307" y="263.0480912182907" width="3.319784962417031" height="3.7893590577077187" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_mid_zeta.mid · golden-sun-sound-sequence · 0x08182218: 44 bytes">
-<rect x="526.2810473173491" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="525.7810473173491" y="22" width="0.0420042476205459" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="528.7810473173491" y="30">effect_brisk_hit_mono_mid_zeta.mid · golden-sun-sound-sequence · 0x08182218</text>
+<rect x="480.8025385976307" y="267.83745027599844" width="3.319784962417031" height="1.5087118873707093" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_mid_eta.mid · golden-sun-sound-sequence · 0x08182244: 44 bytes">
-<rect x="526.3230515649697" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="525.8230515649697" y="22" width="0.0420042476205459" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="528.8230515649697" y="30">effect_brisk_hit_mono_mid_eta.mid · golden-sun-sound-sequence · 0x08182244</text>
+<rect x="485.12232356004773" y="263.0480912182907" width="3.994751362794692" height="1.1696967674557488" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_brief_duo_mid.mid · golden-sun-sound-sequence · 0x08182270: 104 bytes">
-<rect x="526.3650558125902" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="525.8650558125902" y="22" width="0.09928276710310849" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="528.8650558125902" y="30">effect_languid_brief_duo_mid.mid · golden-sun-sound-sequence · 0x08182270</text>
+<rect x="485.12232356004773" y="265.2177879857465" width="3.994751362794692" height="4.128374177622679" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_phrase_mono_single.mid · golden-sun-sound-sequence · 0x081822d8: 68 bytes">
-<rect x="526.4643385796933" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="525.9643385796933" y="22" width="0.06491565541357093" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="528.9643385796933" y="30">effect_brisk_phrase_mono_single.mid · golden-sun-sound-sequence · 0x081822d8</text>
+<rect x="480.8025385976307" y="270.3461621633692" width="2.682491105316262" height="3.5480731976575717" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_duo_wide.mid · golden-sun-sound-sequence · 0x0818231c: 104 bytes">
-<rect x="526.5292542351068" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="526.0292542351068" y="22" width="0.09928276710310849" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="529.0292542351068" y="30">effect_slow_hit_duo_wide.mid · golden-sun-sound-sequence · 0x0818231c</text>
+<rect x="484.485029702947" y="270.3461621633692" width="4.632045219895461" height="3.5480731976575717" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_hit_trio_mid.mid · golden-sun-sound-sequence · 0x08182384: 60 bytes">
-<rect x="526.6285370022099" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="526.1285370022099" y="22" width="0.05727851948256259" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="529.1285370022099" y="30">effect_languid_hit_trio_mid.mid · golden-sun-sound-sequence · 0x08182384</text>
+<rect x="480.8025385976307" y="274.89423536102674" width="1.6361895260033177" height="4.605764638973285" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_hit_trio_narrow_alpha.mid · golden-sun-sound-sequence · 0x081823c0: 96 bytes">
-<rect x="526.6858155216925" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="526.1858155216925" y="22" width="0.09164563117210013" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="529.1858155216925" y="30">effect_languid_hit_trio_narrow_alpha.mid · golden-sun-sound-sequence · 0x081823c0</text>
+<rect x="483.438728123634" y="274.89423536102674" width="3.217903241605309" height="4.605764638973285" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_hit_trio_narrow_beta.mid · golden-sun-sound-sequence · 0x08182420: 56 bytes">
-<rect x="526.7774611528646" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="526.2774611528646" y="22" width="0.053459951517058416" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="529.2774611528646" y="30">effect_languid_hit_trio_narrow_beta.mid · golden-sun-sound-sequence · 0x08182420</text>
+<rect x="487.6566313652393" y="274.89423536102674" width="1.4604435576030967" height="4.605764638973285" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_duo_narrow_alpha.mid · golden-sun-sound-sequence · 0x08182458: 212 bytes">
-<rect x="526.8309211043817" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="526.3309211043817" y="22" width="0.20238410217172115" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="529.3309211043817" y="30">effect_driving_hit_duo_narrow_alpha.mid · golden-sun-sound-sequence · 0x08182458</text>
+<rect x="490.11707492284245" y="263.0480912182907" width="5.0920264231413945" height="7.5710557922004185" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_narrow_beta.mid · golden-sun-sound-sequence · 0x0818252c: 40 bytes">
-<rect x="527.0333052065535" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="526.5333052065535" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="529.5333052065535" y="30">effect_driving_hit_mono_narrow_beta.mid · golden-sun-sound-sequence · 0x0818252c</text>
+<rect x="496.20910134598387" y="263.0480912182907" width="2.448316843287582" height="1.857018597400139" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_narrow_gamma.mid · golden-sun-sound-sequence · 0x08182554: 40 bytes">
-<rect x="527.0714908862085" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="526.5714908862085" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="529.5714908862085" y="30">effect_driving_hit_mono_narrow_gamma.mid · golden-sun-sound-sequence · 0x08182554</text>
+<rect x="496.20910134598387" y="265.9051098156909" width="2.448316843287582" height="1.8570185974001396" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_mono_mid_beta.mid · golden-sun-sound-sequence · 0x0818257c: 40 bytes">
-<rect x="527.1096765658635" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="526.6096765658635" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="529.6096765658635" y="30">effect_slow_hit_mono_mid_beta.mid · golden-sun-sound-sequence · 0x0818257c</text>
+<rect x="496.20910134598387" y="268.76212841309103" width="2.448316843287582" height="1.8570185974001396" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_mono_narrow_gamma.mid · golden-sun-sound-sequence · 0x081825a4: 40 bytes">
-<rect x="527.1478622455186" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="526.6478622455186" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="529.6478622455186" y="30">effect_slow_hit_mono_narrow_gamma.mid · golden-sun-sound-sequence · 0x081825a4</text>
+<rect x="490.11707492284245" y="271.61914701049113" width="2.771763616960293" height="1.612015585149667" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_duo_mid_gamma.mid · golden-sun-sound-sequence · 0x081825cc: 96 bytes">
-<rect x="527.1860479251736" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="526.6860479251736" y="22" width="0.09164563117210013" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="529.6860479251736" y="30">effect_slow_hit_duo_mid_gamma.mid · golden-sun-sound-sequence · 0x081825cc</text>
+<rect x="490.11707492284245" y="274.2311625956408" width="2.771763616960293" height="5.2688374043592" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_mono_mid_gamma.mid · golden-sun-sound-sequence · 0x0818262c: 132 bytes">
-<rect x="527.2776935563458" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="526.7776935563458" y="22" width="0.1260127428616377" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="529.7776935563458" y="30">effect_slow_hit_mono_mid_gamma.mid · golden-sun-sound-sequence · 0x0818262c</text>
+<rect x="493.88883853980275" y="271.61914701049113" width="4.768579649468684" height="4.635925935649857" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_hit_mono_single_gamma.mid · golden-sun-sound-sequence · 0x081826b0: 28 bytes">
-<rect x="527.4037062992074" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="526.9037062992074" y="22" width="0.026729975758529208" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="529.9037062992074" y="30">effect_languid_hit_mono_single_gamma.mid · golden-sun-sound-sequence · 0x081826b0</text>
+<rect x="493.88883853980275" y="277.255072946141" width="1.1252661866463574" height="2.2449270538590094" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_hit_mono_narrow_eta.mid · golden-sun-sound-sequence · 0x081826cc: 48 bytes">
-<rect x="527.4304362749659" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="526.9304362749659" y="22" width="0.045822815586050065" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="529.9304362749659" y="30">effect_languid_hit_mono_narrow_eta.mid · golden-sun-sound-sequence · 0x081826cc</text>
+<rect x="496.0141047264491" y="277.255072946141" width="2.6433134628223267" height="2.2449270538590094" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_hit_duo_full.mid · golden-sun-sound-sequence · 0x081826fc: 116 bytes">
-<rect x="527.4762590905519" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="526.9762590905519" y="22" width="0.110738470999621" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="529.9762590905519" y="30">effect_languid_hit_duo_full.mid · golden-sun-sound-sequence · 0x081826fc</text>
+<rect x="499.6574181892714" y="212.16097473020406" width="5.5303909936231905" height="3.3750099413344197" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_hit_mono_single_delta.mid · golden-sun-sound-sequence · 0x08182770: 56 bytes">
-<rect x="527.5869975615516" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="527.0869975615516" y="22" width="0.053459951517058416" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="530.0869975615516" y="30">effect_languid_hit_mono_single_delta.mid · golden-sun-sound-sequence · 0x08182770</text>
+<rect x="499.6574181892714" y="216.53598467153847" width="5.5303909936231905" height="1.1120737647821333" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_hit_mono_narrow_theta.mid · golden-sun-sound-sequence · 0x081827a8: 48 bytes">
-<rect x="527.6404575130687" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="527.1404575130687" y="22" width="0.045822815586050065" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="530.1404575130687" y="30">effect_languid_hit_mono_narrow_theta.mid · golden-sun-sound-sequence · 0x081827a8</text>
+<rect x="499.6574181892714" y="218.6480584363206" width="1.3048438801023026" height="4.129322000185181" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_brief_mono_narrow.mid · golden-sun-sound-sequence · 0x081827d8: 88 bytes">
-<rect x="527.6862803286547" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="527.1862803286547" y="22" width="0.0840084952410918" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="530.1862803286547" y="30">effect_driving_brief_mono_narrow.mid · golden-sun-sound-sequence · 0x081827d8</text>
+<rect x="501.9622620693737" y="218.6480584363206" width="3.2255471135208875" height="4.129322000185181" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_brief_mono_single_alpha.mid · golden-sun-sound-sequence · 0x08182830: 564 bytes">
-<rect x="527.7702888238957" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="527.2702888238957" y="22" width="0.5384180831360883" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="530.2702888238957" y="30">effect_brisk_brief_mono_single_alpha.mid · golden-sun-sound-sequence · 0x08182830</text>
+<rect x="506.1878091828946" y="212.16097473020403" width="10.958248442868442" height="10.616405706301734" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_brief_mono_single_beta.mid · golden-sun-sound-sequence · 0x08182a64: 412 bytes">
-<rect x="528.3087069070318" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="527.8087069070318" y="22" width="0.3933125004469297" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="530.8087069070318" y="30">effect_brisk_brief_mono_single_beta.mid · golden-sun-sound-sequence · 0x08182a64</text>
+<rect x="499.6574181892714" y="223.77738043650578" width="17.48863943649163" height="4.48848526490403" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_brief_mono_single_beta.mid · golden-sun-sound-sequence · 0x08182c00: 472 bytes">
-<rect x="528.7020194074787" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="528.2020194074787" y="22" width="0.45059101992949235" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="531.2020194074787" y="30">effect_languid_brief_mono_single_beta.mid · golden-sun-sound-sequence · 0x08182c00</text>
+<rect x="499.6574181892714" y="229.2658657014098" width="5.81768579220629" height="16.05160470649796" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_mono_narrow_delta.mid · golden-sun-sound-sequence · 0x08182dd8: 320 bytes">
-<rect x="529.1526104274081" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="528.6526104274081" y="22" width="0.30548543724033383" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="531.6526104274081" y="30">effect_slow_hit_mono_narrow_delta.mid · golden-sun-sound-sequence · 0x08182dd8</text>
+<rect x="506.47510398147773" y="229.2658657014098" width="8.336762915428272" height="7.441388468563348" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_mono_wide.mid · golden-sun-sound-sequence · 0x08182f18: 80 bytes">
-<rect x="529.4580958646485" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="528.9580958646485" y="22" width="0.07637135931008346" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="531.9580958646485" y="30">effect_slow_hit_mono_wide.mid · golden-sun-sound-sequence · 0x08182f18</text>
+<rect x="515.811866896906" y="229.2658657014098" width="1.3341907288570685" height="7.441388468563348" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_duo_narrow.mid · golden-sun-sound-sequence · 0x08182f68: 52 bytes">
-<rect x="529.5344672239586" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="529.0344672239586" y="22" width="0.049641383551554244" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="532.0344672239586" y="30">effect_slow_hit_duo_narrow.mid · golden-sun-sound-sequence · 0x08182f68</text>
+<rect x="506.47510398147773" y="237.70725416997317" width="1.5172645115125247" height="4.087855049688636" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_mono_narrow_epsilon.mid · golden-sun-sound-sequence · 0x08182f9c: 36 bytes">
-<rect x="529.5841086075102" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="529.0841086075102" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="532.0841086075102" y="30">effect_slow_hit_mono_narrow_epsilon.mid · golden-sun-sound-sequence · 0x08182f9c</text>
+<rect x="506.47510398147773" y="242.7951092196618" width="1.5172645115125247" height="2.522361188245978" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_duo_narrow_beta.mid · golden-sun-sound-sequence · 0x08182fc0: 140 bytes">
-<rect x="529.6184757191998" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="529.1184757191998" y="22" width="0.13364987879264603" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="532.1184757191998" y="30">effect_brisk_hit_duo_narrow_beta.mid · golden-sun-sound-sequence · 0x08182fc0</text>
+<rect x="508.99236849299024" y="237.70725416997317" width="3.0047389955881068" height="7.610216237934614" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_brief_mono_narrow_gamma.mid · golden-sun-sound-sequence · 0x0818304c: 48 bytes">
-<rect x="529.7521255979924" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="529.2521255979924" y="22" width="0.045822815586050065" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="532.2521255979924" y="30">effect_brisk_brief_mono_narrow_gamma.mid · golden-sun-sound-sequence · 0x0818304c</text>
+<rect x="512.9971074885783" y="237.70725416997317" width="4.148950137184708" height="1.2960576634492305" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_mono_full.mid · golden-sun-sound-sequence · 0x0818307c: 52 bytes">
-<rect x="529.7979484135784" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="529.2979484135784" y="22" width="0.049641383551554244" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="532.2979484135784" y="30">effect_slow_hit_mono_full.mid · golden-sun-sound-sequence · 0x0818307c</text>
+<rect x="512.9971074885783" y="240.0033118334224" width="4.148950137184708" height="1.4873958020699989" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_trio_mid_beta.mid · golden-sun-sound-sequence · 0x081830b0: 80 bytes">
-<rect x="529.84758979713" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="529.34758979713" y="22" width="0.07637135931008346" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="532.34758979713" y="30">effect_slow_hit_trio_mid_beta.mid · golden-sun-sound-sequence · 0x081830b0</text>
+<rect x="512.9971074885783" y="242.4907076354924" width="4.148950137184708" height="2.8267627724153837" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_hit_mono_mid.mid · golden-sun-sound-sequence · 0x08183100: 156 bytes">
-<rect x="529.9239611564401" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="529.4239611564401" y="22" width="0.14892415065466272" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="532.4239611564401" y="30">effect_languid_hit_mono_mid.mid · golden-sun-sound-sequence · 0x08183100</text>
+<rect x="518.1460576257631" y="212.16097473020406" width="4.352506334053032" height="6.178399888003253" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_mono_narrow_zeta.mid · golden-sun-sound-sequence · 0x0818319c: 64 bytes">
-<rect x="530.0728853070948" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="529.5728853070948" y="22" width="0.06109708744806676" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="532.5728853070948" y="30">effect_slow_hit_mono_narrow_zeta.mid · golden-sun-sound-sequence · 0x0818319c</text>
+<rect x="523.4985639598161" y="212.16097473020406" width="3.1173125646561797" height="2.8284799402684015" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_mono_narrow_eta.mid · golden-sun-sound-sequence · 0x081831dc: 56 bytes">
-<rect x="530.1339823945428" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="529.6339823945428" y="22" width="0.053459951517058416" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="532.6339823945428" y="30">effect_slow_hit_mono_narrow_eta.mid · golden-sun-sound-sequence · 0x081831dc</text>
+<rect x="523.4985639598161" y="215.98945467047247" width="3.1173125646561797" height="2.3499199477348514" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_hit_duo_narrow_alpha.mid · golden-sun-sound-sequence · 0x08183214: 52 bytes">
-<rect x="530.1874423460599" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="529.6874423460599" y="22" width="0.049641383551554244" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="532.6874423460599" y="30">effect_languid_hit_duo_narrow_alpha.mid · golden-sun-sound-sequence · 0x08183214</text>
+<rect x="518.1460576257631" y="219.3393746182073" width="2.3300462061395035" height="2.846035809559714" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_delta.mid · golden-sun-sound-sequence · 0x08183248: 76 bytes">
-<rect x="530.2370837296115" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="529.7370837296115" y="22" width="0.07255279134457927" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="532.7370837296115" y="30">effect_driving_hit_mono_single_delta.mid · golden-sun-sound-sequence · 0x08183248</text>
+<rect x="518.1460576257631" y="223.185410427767" width="2.3300462061395035" height="4.621129260125736" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_duo_full_gamma.mid · golden-sun-sound-sequence · 0x08183294: 76 bytes">
-<rect x="530.3096365209561" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="529.8096365209561" y="22" width="0.07255279134457927" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="532.8096365209561" y="30">effect_brisk_hit_duo_full_gamma.mid · golden-sun-sound-sequence · 0x08183294</text>
+<rect x="521.4761038319026" y="219.3393746182073" width="5.139772692569709" height="2.0487480732885346" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_hit_mono_single_beta.mid · golden-sun-sound-sequence · 0x081832e0: 56 bytes">
-<rect x="530.3821893123007" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="529.8821893123007" y="22" width="0.053459951517058416" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="532.8821893123007" y="30">effect_walking_hit_mono_single_beta.mid · golden-sun-sound-sequence · 0x081832e0</text>
+<rect x="521.4761038319026" y="222.38812269149582" width="5.139772692569709" height="1.2464459487389203" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_narrow_zeta.mid · golden-sun-sound-sequence · 0x08183318: 56 bytes">
-<rect x="530.4356492638178" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="529.9356492638178" y="22" width="0.053459951517058416" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="532.9356492638178" y="30">effect_brisk_hit_mono_narrow_zeta.mid · golden-sun-sound-sequence · 0x08183318</text>
+<rect x="521.4761038319026" y="224.63456864023473" width="2.3060314498452277" height="3.1719710476579954" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_mono_mid_delta.mid · golden-sun-sound-sequence · 0x08183350: 48 bytes">
-<rect x="530.4891092153349" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="529.9891092153349" y="22" width="0.045822815586050065" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="532.9891092153349" y="30">effect_slow_hit_mono_mid_delta.mid · golden-sun-sound-sequence · 0x08183350</text>
+<rect x="524.7821352817479" y="224.63456864023473" width="1.8337412427244812" height="3.171971047657996" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_mono_single_gamma.mid · golden-sun-sound-sequence · 0x08183380: 28 bytes">
-<rect x="530.5349320309209" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="530.0349320309209" y="22" width="0.026729975758529208" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="533.0349320309209" y="30">effect_slow_hit_mono_single_gamma.mid · golden-sun-sound-sequence · 0x08183380</text>
+<rect x="527.6158765244724" y="212.16097473020406" width="1.1964718834506085" height="2.139732312378408" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_hit_duo_narrow_beta.mid · golden-sun-sound-sequence · 0x0818339c: 44 bytes">
-<rect x="530.5616620066794" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="530.0616620066794" y="22" width="0.0420042476205459" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="533.0616620066794" y="30">effect_languid_hit_duo_narrow_beta.mid · golden-sun-sound-sequence · 0x0818339c</text>
+<rect x="527.6158765244724" y="215.30070704258247" width="1.1964718834506085" height="3.933865062308927" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_hit_duo_wide_alpha.mid · golden-sun-sound-sequence · 0x081833c8: 148 bytes">
-<rect x="530.6036662542999" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="530.1036662542999" y="22" width="0.1412870147236544" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="533.1036662542999" y="30">effect_walking_hit_duo_wide_alpha.mid · golden-sun-sound-sequence · 0x081833c8</text>
+<rect x="529.812348407923" y="212.16097473020406" width="6.68765159207713" height="3.7416365533877998" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_mid_theta.mid · golden-sun-sound-sequence · 0x0818345c: 44 bytes">
-<rect x="530.7449532690235" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="530.2449532690235" y="22" width="0.0420042476205459" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="533.2449532690235" y="30">effect_brisk_hit_mono_mid_theta.mid · golden-sun-sound-sequence · 0x0818345c</text>
+<rect x="529.812348407923" y="216.90261128359185" width="2.2524679812634014" height="2.3319608212995346" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_wide.mid · golden-sun-sound-sequence · 0x08183488: 60 bytes">
-<rect x="530.7869575166441" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="530.2869575166441" y="22" width="0.05727851948256259" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="533.2869575166441" y="30">effect_driving_hit_mono_wide.mid · golden-sun-sound-sequence · 0x08183488</text>
+<rect x="533.0648163891864" y="216.90261128359185" width="3.435183610813729" height="2.3319608212995346" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_hit_mono_narrow_delta.mid · golden-sun-sound-sequence · 0x081834c4: 40 bytes">
-<rect x="530.8442360361266" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="530.3442360361266" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="533.3442360361266" y="30">effect_walking_hit_mono_narrow_delta.mid · golden-sun-sound-sequence · 0x081834c4</text>
+<rect x="527.6158765244724" y="220.23457210489138" width="2.562881717922789" height="1.7651508332262473" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_hit_mono_single_epsilon.mid · golden-sun-sound-sequence · 0x081834ec: 48 bytes">
-<rect x="530.8824217157817" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="530.3824217157817" y="22" width="0.045822815586050065" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="533.3824217157817" y="30">effect_languid_hit_mono_single_epsilon.mid · golden-sun-sound-sequence · 0x081834ec</text>
+<rect x="527.6158765244724" y="222.99972293811763" width="2.562881717922789" height="2.3181809998714966" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_duo_narrow_gamma.mid · golden-sun-sound-sequence · 0x0818351c: 36 bytes">
-<rect x="530.9282445313677" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="530.4282445313677" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="533.4282445313677" y="30">effect_brisk_hit_duo_narrow_gamma.mid · golden-sun-sound-sequence · 0x0818351c</text>
+<rect x="527.6158765244724" y="226.31790393798912" width="2.562881717922789" height="1.4886357499036231" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_duo_single.mid · golden-sun-sound-sequence · 0x08183540: 56 bytes">
-<rect x="530.9626116430572" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="530.4626116430572" y="22" width="0.053459951517058416" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="533.4626116430572" y="30">effect_slow_hit_duo_single.mid · golden-sun-sound-sequence · 0x08183540</text>
+<rect x="531.1787582423951" y="220.23457210489138" width="2.2776809113507146" height="3.208056813473398" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_duo_mid_delta.mid · golden-sun-sound-sequence · 0x08183578: 52 bytes">
-<rect x="531.0160715945743" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="530.5160715945743" y="22" width="0.049641383551554244" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="533.5160715945743" y="30">effect_slow_hit_duo_mid_delta.mid · golden-sun-sound-sequence · 0x08183578</text>
+<rect x="534.4564391537458" y="220.23457210489138" width="2.0435608462542354" height="3.208056813473398" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_duo_mid_epsilon.mid · golden-sun-sound-sequence · 0x081835ac: 36 bytes">
-<rect x="531.0657129781259" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="530.5657129781259" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="533.5657129781259" y="30">effect_slow_hit_duo_mid_epsilon.mid · golden-sun-sound-sequence · 0x081835ac</text>
+<rect x="531.1787582423951" y="224.4426289183648" width="1.0318277078015914" height="3.363910769527969" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_duo_mid_zeta.mid · golden-sun-sound-sequence · 0x081835d0: 36 bytes">
-<rect x="531.1000800898155" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="530.6000800898155" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="533.6000800898155" y="30">effect_slow_hit_duo_mid_zeta.mid · golden-sun-sound-sequence · 0x081835d0</text>
+<rect x="533.2105859501967" y="224.4426289183648" width="3.2894140498033586" height="1.0671156276711433" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_mono_narrow_theta.mid · golden-sun-sound-sequence · 0x081835f4: 40 bytes">
-<rect x="531.134447201505" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="530.634447201505" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="533.634447201505" y="30">effect_slow_hit_mono_narrow_theta.mid · golden-sun-sound-sequence · 0x081835f4</text>
+<rect x="533.2105859501967" y="226.50974454603593" width="3.2894140498033586" height="1.2967951418568258" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_duo_mid_eta.mid · golden-sun-sound-sequence · 0x0818361c: 64 bytes">
-<rect x="531.1726328811601" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="530.6726328811601" y="22" width="0.06109708744806676" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="533.6726328811601" y="30">effect_slow_hit_duo_mid_eta.mid · golden-sun-sound-sequence · 0x0818361c</text>
+<rect x="518.1460576257631" y="228.80653968789275" width="2.660648266948321" height="3.306081167077547" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_duo_mid_theta.mid · golden-sun-sound-sequence · 0x0818365c: 56 bytes">
-<rect x="531.2337299686081" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="530.7337299686081" y="22" width="0.053459951517058416" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="533.7337299686081" y="30">effect_slow_hit_duo_mid_theta.mid · golden-sun-sound-sequence · 0x0818365c</text>
+<rect x="518.1460576257631" y="233.1126208549703" width="2.660648266948321" height="2.767821021192854" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_narrow_delta.mid · golden-sun-sound-sequence · 0x08183694: 160 bytes">
-<rect x="531.2871899201252" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="530.7871899201252" y="22" width="0.15274271862016692" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="533.7871899201252" y="30">effect_driving_hit_mono_narrow_delta.mid · golden-sun-sound-sequence · 0x08183694</text>
+<rect x="521.8067058927114" y="228.80653968789275" width="4.735015618219036" height="5.871406117676937" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_hit_mono_single_zeta.mid · golden-sun-sound-sequence · 0x08183734: 28 bytes">
-<rect x="531.4399326387454" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="530.9399326387454" y="22" width="0.026729975758529208" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="533.9399326387454" y="30">effect_languid_hit_mono_single_zeta.mid · golden-sun-sound-sequence · 0x08183734</text>
+<rect x="521.8067058927114" y="235.6779458055697" width="4.735015618219036" height="0.5" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_duo_narrow_beta.mid · golden-sun-sound-sequence · 0x08183750: 160 bytes">
-<rect x="531.4666626145039" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="530.9666626145039" y="22" width="0.15274271862016692" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="533.9666626145039" y="30">effect_driving_hit_duo_narrow_beta.mid · golden-sun-sound-sequence · 0x08183750</text>
+<rect x="518.1460576257631" y="236.88044187616316" width="8.395663885167357" height="3.194234902997609" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_single_gamma.mid · golden-sun-sound-sequence · 0x081837f0: 36 bytes">
-<rect x="531.6194053331241" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="531.1194053331241" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="534.1194053331241" y="30">effect_brisk_hit_mono_single_gamma.mid · golden-sun-sound-sequence · 0x081837f0</text>
+<rect x="518.1460576257631" y="241.07467677916077" width="2.758265554066943" height="1.3592571329361558" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_hit_mono_single_eta.mid · golden-sun-sound-sequence · 0x08183814: 44 bytes">
-<rect x="531.6537724448136" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="531.1537724448136" y="22" width="0.0420042476205459" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="534.1537724448136" y="30">effect_languid_hit_mono_single_eta.mid · golden-sun-sound-sequence · 0x08183814</text>
+<rect x="518.1460576257631" y="243.43393391209693" width="2.758265554066943" height="1.8835364958108565" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_hit_duo_mid.mid · golden-sun-sound-sequence · 0x08183840: 120 bytes">
-<rect x="531.6957766924342" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="531.1957766924342" y="22" width="0.11455703896512517" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="534.1957766924342" y="30">effect_languid_hit_duo_mid.mid · golden-sun-sound-sequence · 0x08183840</text>
+<rect x="521.90432317983" y="241.07467677916077" width="4.637398331100414" height="4.2427936287470125" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_duo_narrow_gamma.mid · golden-sun-sound-sequence · 0x081838b8: 140 bytes">
-<rect x="531.8103337313993" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="531.3103337313993" y="22" width="0.13364987879264603" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="534.3103337313993" y="30">effect_driving_hit_duo_narrow_gamma.mid · golden-sun-sound-sequence · 0x081838b8</text>
+<rect x="527.5417215109304" y="228.80653968789275" width="6.576951024292082" height="3.550863350964356" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_narrow_eta.mid · golden-sun-sound-sequence · 0x08183944: 44 bytes">
-<rect x="531.9439836101919" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="531.4439836101919" y="22" width="0.0420042476205459" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="534.4439836101919" y="30">effect_brisk_hit_mono_narrow_eta.mid · golden-sun-sound-sequence · 0x08183944</text>
+<rect x="535.1186725352225" y="228.80653968789275" width="1.3813274647775113" height="3.550863350964356" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_brief_mono_mid.mid · golden-sun-sound-sequence · 0x08183970: 200 bytes">
-<rect x="531.9859878578125" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="531.4859878578125" y="22" width="0.19092839827520863" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="534.4859878578125" y="30">effect_walking_brief_mono_mid.mid · golden-sun-sound-sequence · 0x08183970</text>
+<rect x="527.5417215109304" y="233.35740303885711" width="8.958278489069594" height="3.9465905988743" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_trio_mid.mid · golden-sun-sound-sequence · 0x08183a38: 96 bytes">
-<rect x="532.1769162560877" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="531.6769162560877" y="22" width="0.09164563117210013" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="534.6769162560877" y="30">effect_brisk_hit_trio_mid.mid · golden-sun-sound-sequence · 0x08183a38</text>
+<rect x="527.5417215109304" y="238.30399363773142" width="3.548843260439197" height="4.1979308779522375" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_duo_narrow_delta.mid · golden-sun-sound-sequence · 0x08183a98: 52 bytes">
-<rect x="532.2685618872598" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="531.7685618872598" y="22" width="0.049641383551554244" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="534.7685618872598" y="30">effect_brisk_hit_duo_narrow_delta.mid · golden-sun-sound-sequence · 0x08183a98</text>
+<rect x="527.5417215109304" y="243.50192451568367" width="3.548843260439197" height="1.8155458922241285" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_brief_duo_full.mid · golden-sun-sound-sequence · 0x08183acc: 120 bytes">
-<rect x="532.3182032708114" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="531.8182032708114" y="22" width="0.11455703896512517" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="534.8182032708114" y="30">effect_brisk_brief_duo_full.mid · golden-sun-sound-sequence · 0x08183acc</text>
+<rect x="532.0905647713696" y="238.30399363773142" width="4.409435228630397" height="4.4637341614838855" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_brief_mono_narrow_delta.mid · golden-sun-sound-sequence · 0x08183b44: 56 bytes">
-<rect x="532.4327603097765" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="531.9327603097765" y="22" width="0.053459951517058416" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="534.9327603097765" y="30">effect_brisk_brief_mono_narrow_delta.mid · golden-sun-sound-sequence · 0x08183b44</text>
+<rect x="532.0905647713696" y="243.76772779921532" width="4.409435228630397" height="1.5497426086924808" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_hit_mono_single_gamma.mid · golden-sun-sound-sequence · 0x08183b7c: 120 bytes">
-<rect x="532.4862202612936" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="531.9862202612936" y="22" width="0.11455703896512517" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="534.9862202612936" y="30">effect_walking_hit_mono_single_gamma.mid · golden-sun-sound-sequence · 0x08183b7c</text>
+<rect x="499.6574181892714" y="246.31747040790776" width="2.766796220386997" height="6.84638040492824" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_brief_mono_narrow_gamma.mid · golden-sun-sound-sequence · 0x08183bf4: 40 bytes">
-<rect x="532.6007773002588" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="532.1007773002588" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="535.1007773002588" y="30">effect_languid_brief_mono_narrow_gamma.mid · golden-sun-sound-sequence · 0x08183bf4</text>
+<rect x="503.4242144096584" y="246.3174704079078" width="4.022394960515996" height="0.96159510123206" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_hit_duo_full_beta.mid · golden-sun-sound-sequence · 0x08183c1c: 68 bytes">
-<rect x="532.6389629799138" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="532.1389629799138" y="22" width="0.06491565541357093" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="535.1389629799138" y="30">effect_walking_hit_duo_full_beta.mid · golden-sun-sound-sequence · 0x08183c1c</text>
+<rect x="503.4242144096584" y="248.27906550913985" width="4.022394960515996" height="2.334711672094502" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_hit_mono_narrow_iota.mid · golden-sun-sound-sequence · 0x08183c60: 52 bytes">
-<rect x="532.7038786353273" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="532.2038786353273" y="22" width="0.049641383551554244" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="535.2038786353273" y="30">effect_languid_hit_mono_narrow_iota.mid · golden-sun-sound-sequence · 0x08183c60</text>
+<rect x="503.4242144096584" y="251.61377718123435" width="4.022394960515996" height="1.5500736316016783" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_epsilon.mid · golden-sun-sound-sequence · 0x08183c94: 48 bytes">
-<rect x="532.7535200188789" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="532.2535200188789" y="22" width="0.045822815586050065" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="535.2535200188789" y="30">effect_driving_hit_mono_single_epsilon.mid · golden-sun-sound-sequence · 0x08183c94</text>
+<rect x="499.6574181892714" y="254.163850812836" width="1.9297303936343306" height="3.035281351105952" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_zeta.mid · golden-sun-sound-sequence · 0x08183cc4: 48 bytes">
-<rect x="532.7993428344649" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="532.2993428344649" y="22" width="0.045822815586050065" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="535.2993428344649" y="30">effect_driving_hit_mono_single_zeta.mid · golden-sun-sound-sequence · 0x08183cc4</text>
+<rect x="502.58714858290574" y="254.163850812836" width="1.929730393634331" height="3.035281351105952" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_eta.mid · golden-sun-sound-sequence · 0x08183cf4: 48 bytes">
-<rect x="532.845165650051" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="532.345165650051" y="22" width="0.045822815586050065" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="535.345165650051" y="30">effect_driving_hit_mono_single_eta.mid · golden-sun-sound-sequence · 0x08183cf4</text>
+<rect x="505.51687897654006" y="254.163850812836" width="1.929730393634331" height="3.035281351105952" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_duo_narrow_delta.mid · golden-sun-sound-sequence · 0x08183d24: 88 bytes">
-<rect x="532.890988465637" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="532.390988465637" y="22" width="0.0840084952410918" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="535.390988465637" y="30">effect_driving_hit_duo_narrow_delta.mid · golden-sun-sound-sequence · 0x08183d24</text>
+<rect x="499.6574181892714" y="258.19913216394195" width="3.2035262169536054" height="4.156192837524272" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_theta.mid · golden-sun-sound-sequence · 0x08183d7c: 32 bytes">
-<rect x="532.974996960878" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="532.474996960878" y="22" width="0.03054854372403338" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="535.474996960878" y="30">effect_driving_hit_mono_single_theta.mid · golden-sun-sound-sequence · 0x08183d7c</text>
+<rect x="503.86094440622503" y="258.19913216394195" width="3.5856649639493874" height="0.7187309458414239" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_iota.mid · golden-sun-sound-sequence · 0x08183d9c: 32 bytes">
-<rect x="533.0055455046021" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="532.5055455046021" y="22" width="0.03054854372403338" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="535.5055455046021" y="30">effect_driving_hit_mono_single_iota.mid · golden-sun-sound-sequence · 0x08183d9c</text>
+<rect x="503.86094440622503" y="259.91786310978335" width="1.2928324819746937" height="2.4374618916828483" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_kappa.mid · golden-sun-sound-sequence · 0x08183dbc: 32 bytes">
-<rect x="533.0360940483262" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="532.5360940483262" y="22" width="0.03054854372403338" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="535.5360940483262" y="30">effect_driving_hit_mono_single_kappa.mid · golden-sun-sound-sequence · 0x08183dbc</text>
+<rect x="506.15377688819973" y="259.91786310978335" width="1.2928324819746937" height="2.4374618916828483" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_lambda.mid · golden-sun-sound-sequence · 0x08183ddc: 32 bytes">
-<rect x="533.0666425920502" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="532.5666425920502" y="22" width="0.03054854372403338" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="535.5666425920502" y="30">effect_driving_hit_mono_single_lambda.mid · golden-sun-sound-sequence · 0x08183ddc</text>
+<rect x="508.44660937017443" y="246.3174704079078" width="1.0065549244166783" height="2.927888633844317" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_mu.mid · golden-sun-sound-sequence · 0x08183dfc: 32 bytes">
-<rect x="533.0971911357743" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="532.5971911357743" y="22" width="0.03054854372403338" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="535.5971911357743" y="30">effect_driving_hit_mono_single_mu.mid · golden-sun-sound-sequence · 0x08183dfc</text>
+<rect x="510.4531642945911" y="246.3174704079078" width="1.0065549244166783" height="2.927888633844317" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_nu.mid · golden-sun-sound-sequence · 0x08183e1c: 32 bytes">
-<rect x="533.1277396794984" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="532.6277396794984" y="22" width="0.03054854372403338" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="535.6277396794984" y="30">effect_driving_hit_mono_single_nu.mid · golden-sun-sound-sequence · 0x08183e1c</text>
+<rect x="508.44660937017443" y="250.2453590417521" width="1.0065549244166783" height="2.927888633844317" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_xi.mid · golden-sun-sound-sequence · 0x08183e3c: 32 bytes">
-<rect x="533.1582882232225" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="532.6582882232225" y="22" width="0.03054854372403338" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="535.6582882232225" y="30">effect_driving_hit_mono_single_xi.mid · golden-sun-sound-sequence · 0x08183e3c</text>
+<rect x="510.4531642945911" y="250.2453590417521" width="1.0065549244166783" height="2.927888633844317" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_omicron.mid · golden-sun-sound-sequence · 0x08183e5c: 36 bytes">
-<rect x="533.1888367669466" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="532.6888367669466" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="535.6888367669466" y="30">effect_driving_hit_mono_single_omicron.mid · golden-sun-sound-sequence · 0x08183e5c</text>
+<rect x="512.4597192190079" y="246.3174704079078" width="1.8217178624609534" height="2.1423109070754536" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_pi.mid · golden-sun-sound-sequence · 0x08183e80: 36 bytes">
-<rect x="533.2232038786361" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="532.7232038786361" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="535.7232038786361" y="30">effect_driving_hit_mono_single_pi.mid · golden-sun-sound-sequence · 0x08183e80</text>
+<rect x="515.2814370814688" y="246.3174704079078" width="1.8217178624609534" height="2.1423109070754536" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_rho.mid · golden-sun-sound-sequence · 0x08183ea4: 36 bytes">
-<rect x="533.2575709903257" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="532.7575709903257" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="535.7575709903257" y="30">effect_driving_hit_mono_single_rho.mid · golden-sun-sound-sequence · 0x08183ea4</text>
+<rect x="512.4597192190079" y="249.45978131498325" width="0.8811452416406356" height="3.7134663606131806" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_sigma.mid · golden-sun-sound-sequence · 0x08183ec8: 36 bytes">
-<rect x="533.2919381020153" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="532.7919381020153" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="535.7919381020153" y="30">effect_driving_hit_mono_single_sigma.mid · golden-sun-sound-sequence · 0x08183ec8</text>
+<rect x="514.3408644606484" y="249.45978131498325" width="2.762290483281271" height="1.3567331803065903" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_tau.mid · golden-sun-sound-sequence · 0x08183eec: 36 bytes">
-<rect x="533.3263052137048" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="532.8263052137048" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="535.8263052137048" y="30">effect_driving_hit_mono_single_tau.mid · golden-sun-sound-sequence · 0x08183eec</text>
+<rect x="514.3408644606484" y="251.81651449528982" width="2.762290483281271" height="1.3567331803065903" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_upsilon.mid · golden-sun-sound-sequence · 0x08183f10: 36 bytes">
-<rect x="533.3606723253944" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="532.8606723253944" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="535.8606723253944" y="30">effect_driving_hit_mono_single_upsilon.mid · golden-sun-sound-sequence · 0x08183f10</text>
+<rect x="508.44660937017443" y="254.1732476755964" width="1.4141363934388158" height="2.6728309303479323" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_phi.mid · golden-sun-sound-sequence · 0x08183f34: 36 bytes">
-<rect x="533.3950394370839" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="532.8950394370839" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="535.8950394370839" y="30">effect_driving_hit_mono_single_phi.mid · golden-sun-sound-sequence · 0x08183f34</text>
+<rect x="510.86074576361324" y="254.1732476755964" width="1.4141363934388158" height="2.6728309303479323" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_chi.mid · golden-sun-sound-sequence · 0x08183f58: 36 bytes">
-<rect x="533.4294065487735" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="532.9294065487735" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="535.9294065487735" y="30">effect_driving_hit_mono_single_chi.mid · golden-sun-sound-sequence · 0x08183f58</text>
+<rect x="508.44660937017443" y="257.84607860594434" width="3.8282727868776316" height="0.8364154651739659" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_psi.mid · golden-sun-sound-sequence · 0x08183f7c: 36 bytes">
-<rect x="533.4637736604631" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="532.9637736604631" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="535.9637736604631" y="30">effect_driving_hit_mono_single_psi.mid · golden-sun-sound-sequence · 0x08183f7c</text>
+<rect x="508.44660937017443" y="259.6824940711183" width="1.4141363934388158" height="2.6728309303479323" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_omega.mid · golden-sun-sound-sequence · 0x08183fa0: 36 bytes">
-<rect x="533.4981407721526" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="532.9981407721526" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="535.9981407721526" y="30">effect_driving_hit_mono_single_omega.mid · golden-sun-sound-sequence · 0x08183fa0</text>
+<rect x="510.86074576361324" y="259.6824940711183" width="1.4141363934388158" height="2.6728309303479323" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_alphabeta.mid · golden-sun-sound-sequence · 0x08183fc4: 36 bytes">
-<rect x="533.5325078838422" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="533.0325078838422" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="536.0325078838422" y="30">effect_driving_hit_mono_single_alphabeta.mid · golden-sun-sound-sequence · 0x08183fc4</text>
+<rect x="513.274882157052" y="254.1732476755964" width="1.4141363934388158" height="2.6728309303479323" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_betabeta.mid · golden-sun-sound-sequence · 0x08183fe8: 36 bytes">
-<rect x="533.5668749955317" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="533.0668749955317" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="536.0668749955317" y="30">effect_driving_hit_mono_single_betabeta.mid · golden-sun-sound-sequence · 0x08183fe8</text>
+<rect x="515.6890185504909" y="254.1732476755964" width="1.4141363934388158" height="2.6728309303479323" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_gammabeta.mid · golden-sun-sound-sequence · 0x0818400c: 36 bytes">
-<rect x="533.6012421072213" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="533.1012421072213" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="536.1012421072213" y="30">effect_driving_hit_mono_single_gammabeta.mid · golden-sun-sound-sequence · 0x0818400c</text>
+<rect x="513.274882157052" y="257.84607860594434" width="3.8282727868776316" height="0.8364154651739659" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_deltabeta.mid · golden-sun-sound-sequence · 0x08184030: 36 bytes">
-<rect x="533.6356092189109" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="533.1356092189109" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="536.1356092189109" y="30">effect_driving_hit_mono_single_deltabeta.mid · golden-sun-sound-sequence · 0x08184030</text>
+<rect x="513.274882157052" y="259.6824940711183" width="1.4141363934388158" height="2.6728309303479323" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_epsilonbeta.mid · golden-sun-sound-sequence · 0x08184054: 36 bytes">
-<rect x="533.6699763306004" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="533.1699763306004" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="536.1699763306004" y="30">effect_driving_hit_mono_single_epsilonbeta.mid · golden-sun-sound-sequence · 0x08184054</text>
+<rect x="515.6890185504909" y="259.6824940711183" width="1.4141363934388158" height="2.6728309303479323" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_zetabeta.mid · golden-sun-sound-sequence · 0x08184078: 36 bytes">
-<rect x="533.70434344229" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="533.20434344229" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="536.20434344229" y="30">effect_driving_hit_mono_single_zetabeta.mid · golden-sun-sound-sequence · 0x08184078</text>
+<rect x="499.6574181892714" y="263.35532500146627" width="1.2410708206594143" height="2.9564634612000966" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_etabeta.mid · golden-sun-sound-sequence · 0x0818409c: 36 bytes">
-<rect x="533.7387105539796" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="533.2387105539796" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="536.2387105539796" y="30">effect_driving_hit_mono_single_etabeta.mid · golden-sun-sound-sequence · 0x0818409c</text>
+<rect x="501.8984890099308" y="263.35532500146627" width="1.2410708206594143" height="2.9564634612000966" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_single_delta.mid · golden-sun-sound-sequence · 0x081840c0: 40 bytes">
-<rect x="533.7730776656691" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="533.2730776656691" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="536.2730776656691" y="30">effect_brisk_hit_mono_single_delta.mid · golden-sun-sound-sequence · 0x081840c0</text>
+<rect x="499.6574181892714" y="267.31178846266636" width="1.2410708206594143" height="3.3960705124445525" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_single_epsilon.mid · golden-sun-sound-sequence · 0x081840e8: 40 bytes">
-<rect x="533.8112633453242" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="533.3112633453242" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="536.3112633453242" y="30">effect_brisk_hit_mono_single_epsilon.mid · golden-sun-sound-sequence · 0x081840e8</text>
+<rect x="501.8984890099308" y="267.31178846266636" width="1.2410708206594143" height="3.3960705124445525" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_single_zeta.mid · golden-sun-sound-sequence · 0x08184110: 40 bytes">
-<rect x="533.8494490249792" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="533.3494490249792" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="536.3494490249792" y="30">effect_brisk_hit_mono_single_zeta.mid · golden-sun-sound-sequence · 0x08184110</text>
+<rect x="504.13955983059026" y="263.35532500146627" width="3.4821416413188286" height="1.1980352562222758" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_single_eta.mid · golden-sun-sound-sequence · 0x08184138: 40 bytes">
-<rect x="533.8876347046343" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="533.3876347046343" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="536.3876347046343" y="30">effect_brisk_hit_mono_single_eta.mid · golden-sun-sound-sequence · 0x08184138</text>
+<rect x="504.13955983059026" y="265.55336025768855" width="3.4821416413188286" height="1.1980352562222758" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_thetabeta.mid · golden-sun-sound-sequence · 0x08184160: 36 bytes">
-<rect x="533.9258203842893" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="533.4258203842893" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="536.4258203842893" y="30">effect_driving_hit_mono_single_thetabeta.mid · golden-sun-sound-sequence · 0x08184160</text>
+<rect x="504.13955983059026" y="267.75139551391084" width="1.2410708206594143" height="2.9564634612000966" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_iotabeta.mid · golden-sun-sound-sequence · 0x08184184: 36 bytes">
-<rect x="533.9601874959789" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="533.4601874959789" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="536.4601874959789" y="30">effect_driving_hit_mono_single_iotabeta.mid · golden-sun-sound-sequence · 0x08184184</text>
+<rect x="506.38063065124965" y="267.75139551391084" width="1.2410708206594143" height="2.9564634612000966" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_kappabeta.mid · golden-sun-sound-sequence · 0x081841a8: 40 bytes">
-<rect x="533.9945546076684" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="533.4945546076684" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="536.4945546076684" y="30">effect_driving_hit_mono_single_kappabeta.mid · golden-sun-sound-sequence · 0x081841a8</text>
+<rect x="499.6574181892714" y="271.7078589751109" width="2.921873936153975" height="1.512040292825458" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_lambdabeta.mid · golden-sun-sound-sequence · 0x081841d0: 40 bytes">
-<rect x="534.0327402873235" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="533.5327402873235" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="536.5327402873235" y="30">effect_driving_hit_mono_single_lambdabeta.mid · golden-sun-sound-sequence · 0x081841d0</text>
+<rect x="499.6574181892714" y="274.2198992679364" width="2.2682282801283127" height="2.01444835139055" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="residuals_index.json · golden-sun-music-residual · 0x081841f8: 8 bytes">
-<rect x="534.0709259669785" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="533.5709259669785" y="22" width="0.007637135931008345" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="536.5709259669785" y="30">residuals_index.json · golden-sun-music-residual · 0x081841f8</text>
+<rect x="502.92564646939974" y="274.2198992679364" width="0.5" height="2.01444835139055" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_duo_single.mid · golden-sun-sound-sequence · 0x08184200: 52 bytes">
-<rect x="534.0785631029095" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="533.5785631029095" y="22" width="0.049641383551554244" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="536.5785631029095" y="30">effect_brisk_hit_duo_single.mid · golden-sun-sound-sequence · 0x08184200</text>
+<rect x="499.6574181892714" y="277.23434761932697" width="2.921873936153975" height="2.2656523806730955" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_brief_duo_wide_alpha.mid · golden-sun-sound-sequence · 0x08184234: 88 bytes">
-<rect x="534.1282044864611" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="533.6282044864611" y="22" width="0.0840084952410918" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="536.6282044864611" y="30">effect_languid_brief_duo_wide_alpha.mid · golden-sun-sound-sequence · 0x08184234</text>
+<rect x="503.5792921254254" y="271.7078589751109" width="4.042409346483682" height="3.298380056612451" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_languid_brief_duo_wide_beta.mid · golden-sun-sound-sequence · 0x0818428c: 92 bytes">
-<rect x="534.2122129817021" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="533.7122129817021" y="22" width="0.08782706320659597" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="536.7122129817021" y="30">effect_languid_brief_duo_wide_beta.mid · golden-sun-sound-sequence · 0x0818428c</text>
+<rect x="503.5792921254254" y="276.0062390317234" width="4.042409346483682" height="3.4937609682766526" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_mubeta.mid · golden-sun-sound-sequence · 0x081842e8: 56 bytes">
-<rect x="534.3000400449088" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="533.8000400449088" y="22" width="0.053459951517058416" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="536.8000400449088" y="30">effect_driving_hit_mono_single_mubeta.mid · golden-sun-sound-sequence · 0x081842e8</text>
+<rect x="508.6217014719091" y="263.35532500146627" width="2.6005519514002278" height="2.8307092016925917" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_single_nubeta.mid · golden-sun-sound-sequence · 0x08184320: 56 bytes">
-<rect x="534.3534999964259" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="533.8534999964259" y="22" width="0.053459951517058416" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="536.8534999964259" y="30">effect_driving_hit_mono_single_nubeta.mid · golden-sun-sound-sequence · 0x08184320</text>
+<rect x="508.6217014719091" y="267.18603420315884" width="2.6005519514002278" height="2.830709201692591" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="residuals_index.json · golden-sun-music-residual · 0x08184358: 8 bytes">
-<rect x="534.4069599479429" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="533.9069599479429" y="22" width="0.007637135931008345" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="536.9069599479429" y="30">residuals_index.json · golden-sun-music-residual · 0x08184358</text>
+<rect x="508.6217014719091" y="271.0167434048514" width="2.6005519514002278" height="0.5" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_mid_gamma.mid · golden-sun-sound-sequence · 0x08184360: 40 bytes">
-<rect x="534.4145970838739" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="533.9145970838739" y="22" width="0.03818567965504173" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="536.9145970838739" y="30">effect_driving_hit_mono_mid_gamma.mid · golden-sun-sound-sequence · 0x08184360</text>
+<rect x="512.2222534233093" y="263.35532500146627" width="2.0952113266423007" height="2.182950794409296" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_narrow_epsilon.mid · golden-sun-sound-sequence · 0x08184388: 36 bytes">
-<rect x="534.452782763529" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="533.952782763529" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="536.952782763529" y="30">effect_driving_hit_mono_narrow_epsilon.mid · golden-sun-sound-sequence · 0x08184388</text>
+<rect x="515.3174647499517" y="263.35532500146627" width="1.7856901939780707" height="2.182950794409296" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_narrow_zeta.mid · golden-sun-sound-sequence · 0x081843ac: 28 bytes">
-<rect x="534.4871498752185" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="533.9871498752185" y="22" width="0.026729975758529208" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="536.9871498752185" y="30">effect_driving_hit_mono_narrow_zeta.mid · golden-sun-sound-sequence · 0x081843ac</text>
+<rect x="512.2222534233093" y="266.53827579587556" width="0.5" height="4.025711780646258" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_driving_hit_mono_narrow_eta.mid · golden-sun-sound-sequence · 0x081843c8: 36 bytes">
-<rect x="534.513879850977" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="534.013879850977" y="22" width="0.03436711168953755" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="537.013879850977" y="30">effect_driving_hit_mono_narrow_eta.mid · golden-sun-sound-sequence · 0x081843c8</text>
+<rect x="513.5944637781207" y="266.53827579587556" width="3.5086911658089512" height="0.9665828706876662" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_duo_mid_iota.mid · golden-sun-sound-sequence · 0x081843ec: 56 bytes">
-<rect x="534.5482469626666" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="534.0482469626666" y="22" width="0.053459951517058416" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="537.0482469626666" y="30">effect_slow_hit_duo_mid_iota.mid · golden-sun-sound-sequence · 0x081843ec</text>
+<rect x="513.5944637781207" y="268.5048586665632" width="3.5086911658089512" height="2.059128909958592" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_slow_hit_mono_mid_epsilon.mid · golden-sun-sound-sequence · 0x08184424: 44 bytes">
-<rect x="534.6017069141836" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="534.1017069141836" y="22" width="0.0420042476205459" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="537.1017069141836" y="30">effect_slow_hit_mono_mid_epsilon.mid · golden-sun-sound-sequence · 0x08184424</text>
+<rect x="508.6217014719091" y="271.5639875765218" width="2.85873106419443" height="1.808461047378862" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_narrow_theta.mid · golden-sun-sound-sequence · 0x08184450: 44 bytes">
-<rect x="534.6437111618042" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="534.1437111618042" y="22" width="0.0420042476205459" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="537.1437111618042" y="30">effect_brisk_hit_mono_narrow_theta.mid · golden-sun-sound-sequence · 0x08184450</text>
+<rect x="508.6217014719091" y="274.37244862390065" width="2.85873106419443" height="1.808461047378862" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_duo_narrow_epsilon.mid · golden-sun-sound-sequence · 0x0818447c: 52 bytes">
-<rect x="534.6857154094247" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="534.1857154094247" y="22" width="0.049641383551554244" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="537.1857154094247" y="30">effect_brisk_hit_duo_narrow_epsilon.mid · golden-sun-sound-sequence · 0x0818447c</text>
+<rect x="508.6217014719091" y="277.1809096712795" width="2.85873106419443" height="2.319090328720474" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_brief_quartet_wide_alpha.mid · golden-sun-sound-sequence · 0x081844b0: 144 bytes">
-<rect x="534.7353567929763" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="534.2353567929763" y="22" width="0.1374684467581502" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="537.2353567929763" y="30">effect_walking_brief_quartet_wide_alpha.mid · golden-sun-sound-sequence · 0x081844b0</text>
+<rect x="512.4804325361035" y="271.5639875765218" width="4.622722407826169" height="5.307773475396376" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_hit_duo_wide_beta.mid · golden-sun-sound-sequence · 0x08184540: 60 bytes">
-<rect x="534.8728252397344" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="534.3728252397344" y="22" width="0.05727851948256259" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="537.3728252397344" y="30">effect_walking_hit_duo_wide_beta.mid · golden-sun-sound-sequence · 0x08184540</text>
+<rect x="512.4804325361035" y="277.8717610519182" width="4.622722407826169" height="1.6282389480818225" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_hit_duo_single.mid · golden-sun-sound-sequence · 0x0818457c: 84 bytes">
-<rect x="534.930103759217" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="534.430103759217" y="22" width="0.08018992727558762" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="537.430103759217" y="30">effect_walking_hit_duo_single.mid · golden-sun-sound-sequence · 0x0818457c</text>
+<rect x="518.1031549439297" y="246.3174704079078" width="4.737095016584181" height="2.6061806850498472" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_brief_quartet_wide_beta.mid · golden-sun-sound-sequence · 0x081845d0: 200 bytes">
-<rect x="535.0102936864926" y="22.5" width="0.5" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="534.5102936864926" y="22" width="0.19092839827520863" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="537.5102936864926" y="30">effect_walking_brief_quartet_wide_beta.mid · golden-sun-sound-sequence · 0x081845d0</text>
+<rect x="523.8402499605138" y="246.3174704079078" width="12.659750039486145" height="2.6061806850498472" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="residuals_index.json · golden-sun-music-residual · 0x08184698: 2,408 bytes">
-<rect x="535.2012220847678" y="22.5" width="1.2987779152322219" height="257" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
-<rect x="534.7012220847678" y="22" width="2.298777915232222" height="10" fill="hsl(28 70% 24%)" fill-opacity=".9"/>
-<text class="weyard rectangle-label" x="537.7012220847678" y="30">residuals_index.json · golden-sun-music-residual · 0x08184698</text>
+<rect x="518.1031549439297" y="249.92365109295764" width="18.396845056070326" height="29.576348907042373" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 </svg>

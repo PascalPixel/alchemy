@@ -45,8 +45,12 @@ fn esc(value: &str) -> String {
         .replace('>', "&gt;")
         .replace('"', "&quot;")
 }
-fn label(text: &str, _width: f64) -> String {
-    text.to_string()
+fn label(text: &str, width: f64, height: f64) -> String {
+    if width >= 90.0 && height >= 12.0 {
+        text.to_string()
+    } else {
+        String::new()
+    }
 }
 fn fill(tree: &str, category: &str, fraction: f64) -> String {
     if category == "retained_asm" {
@@ -181,7 +185,7 @@ fn svg(tree: &str, map: &CoverageMap) -> String {
                 fill(tree, category, tile_fraction(tile, category))
             ));
         }
-        let name = label(&tile.label, body.width - 6.0);
+        let name = label(&tile.label, body.width - 6.0, body.height);
         if !name.is_empty() {
             out.push(format!("<rect x=\"{}\" y=\"{}\" width=\"{}\" height=\"10\" fill=\"hsl({} 70% 24%)\" fill-opacity=\".9\"/>", rect.x, rect.y, rect.width, js_number_string(h)));
             out.push(format!(

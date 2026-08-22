@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 s32 Func_0800231c(s32);
 s32 Func_08002322(s32);
@@ -22,7 +23,7 @@ void Func_08005208(u32 value, s32 param1, s32 param2)
         first,
         Func_0800231c(half) * 0x50
     );
-    ((struct Work_08005208 *)0x03001CE0)->param1 = param1;
-    ((struct Work_08005208 *)0x03001CE0)->result = result;
-    ((struct Work_08005208 *)0x03001CE0)->param2 = param2;
+    ((struct Work_08005208 *)ADDR_03001CE0)->param1 = param1;
+    ((struct Work_08005208 *)ADDR_03001CE0)->result = result;
+    ((struct Work_08005208 *)ADDR_03001CE0)->param2 = param2;
 }

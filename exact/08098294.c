@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 void Func_08098294(int arg0)
 {
@@ -8,7 +9,7 @@ void Func_08098294(int arg0)
   void *temp_r1;
   void *temp_r2;
   void *var_ip;
-  var_ip = *((void **) 0x03001E64);
+  var_ip = *((void **) ADDR_03001E64);
   var_r0 = 0x3F;
   do
   {
@@ -34,4 +35,3 @@ void Func_08098294(int arg0)
   }
   while (var_r0 >= 0);
 }
-

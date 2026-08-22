@@ -1,4 +1,5 @@
 #include "types.h"
+#include "object_efx.h"
 
 struct Position_08097b70 {
     s32 x;
@@ -73,6 +74,6 @@ void Func_08097b70(struct Source_08097b70 *source)
         object->field_48 = 0x1999;
         Func_08009080(object, 0);
         object->field_5e = 12;
-        Func_08009098(object, (const void *)0x0809F0B0);
+        Func_08009098(object, Data_0809f0b0);
     }
 }

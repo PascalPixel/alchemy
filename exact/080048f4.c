@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 void *Func_080048f4(s32 kind, s32 size)
 {
@@ -10,7 +11,7 @@ void *Func_080048f4(s32 kind, s32 size)
     u32 next_address;
     u32 result;
 
-    base = (u32 *)0x03001E50;
+    base = (u32 *)ADDR_03001E50;
     offset = kind * 4;
     result = *(u32 *)((u8 *)base + offset);
     if (result == 0) {

@@ -26,12 +26,13 @@
  *     pattern-matched against other files.
  */
 #include "types.h"
+#include "flash_data.h"
 
 extern s32 Func_080072f0(s32 mode, u8 *destination, u8 value, s32 status);
 
 u16 Func_08007098(u16 sector)
 {
-    u8 *info = (u8 *)0x08007C10;
+    u8 *info = Data_08007c10;
     u8 *cursor;
     u16 saved;
     s32 count;

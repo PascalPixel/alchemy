@@ -1,4 +1,5 @@
 #include "script_object_entry.h"
+#include "global_cells.h"
 
 s32 Func_0800eba0(s32 *a, s32 arg1, s32 *b, s32 arg3);
 
@@ -9,7 +10,7 @@ s32 Func_0800d924(struct ScriptObjectEntry *object, s32 *values)
     u8 *flags;
     struct ScriptObjectEntry *entry;
 
-    entry = *(struct ScriptObjectEntry **)0x03001E64;
+    entry = *(struct ScriptObjectEntry **)ADDR_03001E64;
     index = 0;
     flags = &entry->flags_59;
 loop_1:

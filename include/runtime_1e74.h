@@ -2,6 +2,7 @@
 #define ALCHEMY_RUNTIME_1E74_H
 
 #include "types.h"
+#include "global_cells.h"
 
 struct Runtime1e74 {
     u8 unknown_000[0x655];
@@ -22,7 +23,7 @@ typedef char Runtime1e74_SizeGuard[
 
 static inline struct Runtime1e74 *Runtime1e74_Get(void)
 {
-    return *(struct Runtime1e74 **)0x03001E74;
+    return *(struct Runtime1e74 **)ADDR_03001E74;
 }
 
 #endif

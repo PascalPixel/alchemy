@@ -7,7 +7,7 @@ extern u16 Value_fffffe00;
 
 void Func_080b9acc(void)
 {
-    void **slot = (void **)0x03001e80;
+    void **slot = (void **)ADDR_03001E80;
     u8 *entity = slot[0];
     u8 *state = slot[32];
     volatile u32 *keys = (volatile u32 *)ADDR_03001AE8;

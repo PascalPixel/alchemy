@@ -18,7 +18,7 @@ s32 Func_080199ec(void *arg0)
   {
     var_r6 = 1;
   }
-  var_r2 = (new_var4 = *((s32 *) 0x03001C94));
+  var_r2 = (new_var4 = *((s32 *) ADDR_03001C94));
   new_var = 0;
   if ((*((u8 *) (temp_r5 + 0xEA4))) != new_var)
   {
@@ -36,4 +36,3 @@ s32 Func_080199ec(void *arg0)
   }
   return 0;
 }
-

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "object_efx.h"
 
 struct Effect_080981b0 {
     u8 padding0[6];
@@ -33,8 +34,6 @@ u32 Func_08004458(void);
 #define Rand Func_08004458
 void Func_08096bec(struct Particle_080981b0 *particle, s32 speed, s32 angle);
 void Func_080090d0(struct Effect_080981b0 *effect);
-extern u8 Data_0809f0d4;
-
 void Func_080981b0(struct Effect_080981b0 *effect)
 {
     s32 count;

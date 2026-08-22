@@ -1,4 +1,5 @@
 #include "types.h"
+#include "object_efx.h"
 
 struct Triple08099340 {
     s32 x;
@@ -7,8 +8,6 @@ struct Triple08099340 {
 };
 
 extern s32 *Data_03001f30;
-extern u8 Data_0809f0b0[];
-
 void Func_0800447c(s32, s32, struct Triple08099340 *);
 void Func_08009098(void *, void *);
 

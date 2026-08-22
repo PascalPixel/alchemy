@@ -498,6 +498,12 @@ The main repository records the staged compiler revision and approved bundle
 digests. Never invent a target option or patch the compiler merely to conceal
 an incorrect source reconstruction.
 
+GCC pass-dump options such as `-da` write files like `08120454.c.12.life` into
+the compiler process's working directory. Run diagnostic compiles from an
+ignored owner-specific directory under `out/`, never from the repository root.
+The repository-wide ignore rule is a backstop, not a substitute for containing
+dump output.
+
 ## Keep tooling portable and small
 
 There are six public executable hosts: `build-assets`, `build-stage`, `assets`,

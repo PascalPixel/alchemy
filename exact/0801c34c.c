@@ -1,4 +1,5 @@
 #include "types.h"
+#include "gs1_edition.h"
 
 extern u8 *Data_03001ebc;
 extern s16 Data_02000240[];
@@ -7,6 +8,7 @@ s32 Func_0808a5d0(s16, s16);
 s32 Func_080187ac(s32, s32, s32, s32, s32);
 s32 Func_080162d4(s32, s32, s32, s32, s32);
 void Func_0801e74c(s32, s32, s32, s32);
+void Func_0801c3e8(void);
 s32 Func_080041d8(const void *, s32);
 
 void Func_0801c34c(void)
@@ -23,7 +25,8 @@ void Func_0801c34c(void)
     base = Data_03001ebc;
     x = 8;
     y = 8;
-    resource = Func_0808a5d0(Data_02000240[224], Data_02000240[225]) + 0x99b;
+    resource = Func_0808a5d0(Data_02000240[224], Data_02000240[225])
+             + RENDER_RESOURCE_BASE;
     Func_080187ac(resource, (s32)&x, (s32)&y, (s32)&third, (s32)&fourth);
     x = (30 - third) >> 1;
     y = (10 - fourth) >> 1;
@@ -36,5 +39,5 @@ void Func_0801c34c(void)
         register s32 ninety = 90;
         *field = ninety;
     }
-    Func_080041d8((void *)0x0801c3e9, 0xc80);
+    Func_080041d8((void *)Func_0801c3e8, 0xc80);
 }

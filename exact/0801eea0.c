@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 struct State_0801eea0 {
     u8 padding[4];
@@ -14,7 +15,7 @@ extern s32 Func_08077148(void);
 
 void Func_0801eea0(s32 flags)
 {
-    void **slot = (void **)0x03001E90;
+    void **slot = (void **)ADDR_03001E90;
     struct State_0801eea0 *state = *slot;
     u8 *base = *(u8 **)(slot - 1);
     s32 height = 4;

@@ -2,6 +2,7 @@
 
 extern u8 *Data_03001f2c;
 void Func_08004278(s32);
+void Func_0801ff58(void);
 void Func_08009038(void *);
 
 void Func_0801ff14(void)
@@ -11,7 +12,7 @@ void Func_0801ff14(void)
     s32 zero;
     s32 count;
 
-    Func_08004278(0x0801ff59);
+    Func_08004278((s32)Func_0801ff58);
     zero = 0;
     offset *= 2;
     count = 3;

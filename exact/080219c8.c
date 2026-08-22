@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 extern u8 Data_08037280[];
 
@@ -6,7 +7,7 @@ void Func_08021950(void *, u8 *, s32, s32);
 
 void Func_080219c8(s32 offset)
 {
-    s32 phase = (*(u32 *)0x03001E40 >> 2) & 3;
+    s32 phase = (*(u32 *)ADDR_03001E40 >> 2) & 3;
 
     if (phase > 2) {
         phase = 2;

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 extern s32 Func_08004080(void);
 extern void Func_0802875c(s32 arg0, s32 index);
@@ -12,7 +13,7 @@ void Func_080287a8(s32 arg0)
     s32 off;
     s32 flags;
 
-    base = *(u8 **)0x03001F38;
+    base = *(u8 **)ADDR_03001F38;
     index = *(s16 *)(base + 142);
     if (index <= 5)
     {

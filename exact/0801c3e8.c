@@ -17,7 +17,6 @@ void Func_0801c3e8(void)
   if ((temp_r3 << 0x10) == new_var3)
   {
     Func_08016418(*(new_var = (s32 *) (((u8 *) new_var2) + 0x230)), 2);
-    Func_08004278(0x0801C3E9);
+    Func_08004278((s32)Func_0801c3e8);
   }
 }
-

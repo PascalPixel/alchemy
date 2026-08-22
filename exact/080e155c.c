@@ -25,7 +25,7 @@ void Func_080e155c(s32 arg0, u32 arg1) {
         temp_r6 = (arg0 - 1) & Func_08004458();
         temp_r5 = (s32)(arg1 + (arg1 >> 0x1F)) >> 1;
         temp_r2 = ((arg1 - 1) & Func_08004458()) - temp_r5;
-        temp_r1_2 = (void *)0x03001AD0;
+        temp_r1_2 = (void *)ADDR_03001AD0;
         temp_r6_2 = temp_r6 - temp_r5;
         temp_r3 = temp_r2 + 0x20;
         M2C_FIELD(temp_r1_2, s16 *, 4) = temp_r6_2;
@@ -37,7 +37,7 @@ void Func_080e155c(s32 arg0, u32 arg1) {
         return;
     }
     temp_r0_2 = M2C_FIELD(temp_r1, s32 *, 0x77A0);
-    temp_r2_2 = (void *)0x03001AD0;
+    temp_r2_2 = (void *)ADDR_03001AD0;
     M2C_FIELD(temp_r2_2, s16 *, 4) = temp_r0_2;
     temp_r0_2 = M2C_FIELD(temp_r1, s32 *, 0x77A4);
     M2C_FIELD(temp_r2_2, s16 *, 6) = temp_r0_2;

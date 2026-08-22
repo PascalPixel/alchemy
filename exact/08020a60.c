@@ -1,5 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
+#include "gs1_edition.h"
 
 struct Window_08020a60 {
     u8 padding[12];
@@ -52,6 +53,6 @@ void Func_08020a60(const struct Window_08020a60 *object,
             height--;
             x += 64;
         } while (height != 0);
-        base[0xEA3] = 1;
+        base[RENDER_DIRTY_OFS] = 1;
     }
 }

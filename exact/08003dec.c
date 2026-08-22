@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
@@ -16,7 +17,7 @@ void Func_08003dec(s32 *entry, s32 slot)
         index = 0;
     }
     offset = index * 4;
-    previous = M2C_FIELD(offset, s32 **, 0x03001400);
-    M2C_FIELD(offset, s32 **, 0x03001400) = entry;
+    previous = M2C_FIELD(offset, s32 **, ADDR_03001400);
+    M2C_FIELD(offset, s32 **, ADDR_03001400) = entry;
     *entry = previous;
 }

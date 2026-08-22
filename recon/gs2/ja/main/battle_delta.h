@@ -181,11 +181,13 @@ struct BattleWorkPage {
 /* GS2 reserves element zero of each target array for its second actor. */
 #define BATTLE_PLAN_LOADS()                                                  \
     {                                                                        \
+        /* This order lets GCC hoist range while preserving the target and   \
+         * action temporaries used by the reference schedule. */             \
         actor_id = BATTLE_PLAN_ACTOR_ID(plan, action_id);                    \
-        range = plan->range_index;                                           \
-        target_id = BATTLE_PLAN_TARGET_ID(plan, slot);                       \
-        adjust = BATTLE_PLAN_ADJUST(plan, slot);                             \
         action_id = plan->action_id;                                         \
+        target_id = BATTLE_PLAN_TARGET_ID(plan, slot);                       \
+        range = plan->range_index;                                           \
+        adjust = BATTLE_PLAN_ADJUST(plan, slot);                             \
         modifier = BATTLE_PLAN_MODIFIER(plan, slot);                         \
     }
 
@@ -341,8 +343,10 @@ struct BattleWorkPage {
                                                                              \
             state_save = (s32)((u8 *)actor + 0x14a);                         \
             st = *(u16 *)state_save;                                         \
-            rec = Summon_FindSlot();                                         \
+            /* GCC sinks this constant past the call; its earlier lifetime   \
+             * keeps affi, st, and state_save in their shared carriers. */    \
             affi = -1;                                                       \
+            rec = Summon_FindSlot();                                         \
             efx = action->effect;                                            \
             if (efx == EFX_STANDBY_WORK) {                                   \
                 st = Summon_ClassId(*(s32 *)work);                            \
@@ -361,8 +365,6 @@ struct BattleWorkPage {
                 } else                                                       \
                     hit = 0;                                                 \
             }                                                                \
-            if ((u32)st > 0xffff)                                            \
-                hit = 0;                                                     \
             if (hit != 0 && Summon_ClassValid(st) != 0 && rec >= 0) {        \
                 if (affi == -1) {                                            \
                     affi = Summon_TakeCharge(st, 1);                          \

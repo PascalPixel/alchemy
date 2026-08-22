@@ -39,7 +39,7 @@ struct BattleWorkPage {
         (cur) = 0
 #define BATTLE_SCALE_DEFENSE()                                            \
     if (half != 0) {                                                      \
-        scale = (u32)scale >> 1;                                          \
+        scale /= 2;                                                       \
         if (half == 2)                                                    \
             scale = 0;                                                    \
     }
@@ -659,6 +659,34 @@ struct BattleWorkPage {
             BattleEvent_Push(BATTLE_EVENT_TEXT, 0xcba);                    \
         BattleUnit_Drain(target_id, -dmg);                                 \
         break;
+
+#define BATTLE_HP_DRAIN_BODY()                                             \
+    {                                                                      \
+        s32 heal;                                                          \
+        s32 drain;                                                         \
+        s32 amt;                                                           \
+                                                                           \
+        heal = actor->hp;                                                  \
+        drain = dealt;                                                     \
+        if (action->effect == EFX_DRAIN_HP_HALF)                           \
+            drain /= 2;                                                    \
+        amt = drain;                                                       \
+        heal += amt;                                                       \
+        if (heal > actor->max_hp) {                                        \
+            heal = actor->max_hp;                                          \
+            amt = heal - actor->hp;                                        \
+        }                                                                  \
+        BattleEvent_Push(BATTLE_EVENT_RESET, 0);                           \
+        BattleEvent_Push(BATTLE_EVENT_UNIT, actor_id);                     \
+        if (heal == actor->max_hp)                                         \
+            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_HP_FULL);              \
+        else {                                                             \
+            BattleEvent_Push(BATTLE_EVENT_VALUE, amt);                     \
+            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_HP_RECOVER);           \
+        }                                                                  \
+        actor->hp = (s16)heal;                                             \
+        BattleUnit_UpdateRatios(actor_id);                                 \
+    }
 
 #define BATTLE_IMMOBILIZE_CASES                                           \
     case 0x53:

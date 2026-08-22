@@ -7,7 +7,10 @@ use crate::{
 };
 use candidate_compiler::{
     jsnum::to_js_number_string,
-    verify::{compile_to_assembly, js_subarray, verify_candidate, ROM_BASE},
+    verify::{
+        compile_to_assembly, js_subarray, verify_candidate, CandidateCompilerConfiguration,
+        CandidateCompilerFamily, ROM_BASE,
+    },
 };
 use compiler_core::routing::CompilerTarget;
 use regex::Regex;
@@ -73,7 +76,12 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         .ok_or("The \"path\" argument must be of type string. Received undefined")?;
     let patch_text = read_patch(options.patch.as_deref())?;
     let stem = basename_without(&options.source, ".c").to_string();
-    let key = source_cache_key(&options.source, &options.flags, patch_text.as_deref())?;
+    let key = source_cache_key(
+        &options.source,
+        &options.flags,
+        &options.configuration,
+        patch_text.as_deref(),
+    )?;
     let work = Path::new(work);
     let key_path = work.join(format!("{stem}.key"));
     let candidate_path = work.join("candidate.bin");
@@ -532,15 +540,37 @@ pub fn align_streams(left: &[String], right: &[String]) -> Vec<(Option<String>, 
     }
     out
 }
-fn source_cache_key(source: &str, flags: &[String], patch: Option<&str>) -> Result<String, String> {
+fn source_cache_key(
+    source: &str,
+    flags: &[String],
+    configuration: &CandidateCompilerConfiguration,
+    patch: Option<&str>,
+) -> Result<String, String> {
     let mut hasher = Sha256::new();
+    hasher.update(b"candidate-show-cache-v2");
     hasher.update(std::fs::read(source).map_err(|error| format!("{source}: {error}"))?);
     for flag in flags {
         hasher.update([0]);
         hasher.update(flag.as_bytes());
     }
+    hasher.update([1]);
+    hasher.update(
+        configuration
+            .family
+            .unwrap_or(CandidateCompilerFamily::Routed)
+            .as_str()
+            .as_bytes(),
+    );
+    for flag in &configuration.add_flags {
+        hasher.update([2]);
+        hasher.update(flag.as_bytes());
+    }
+    for flag in &configuration.remove_flags {
+        hasher.update([3]);
+        hasher.update(flag.as_bytes());
+    }
     if let Some(patch) = patch {
-        hasher.update([1]);
+        hasher.update([4]);
         hasher.update(patch.as_bytes());
     }
     Ok(hasher
@@ -548,6 +578,35 @@ fn source_cache_key(source: &str, flags: &[String], patch: Option<&str>) -> Resu
         .iter()
         .map(|byte| format!("{byte:02x}"))
         .collect())
+}
+
+#[cfg(test)]
+mod cache_key_tests {
+    use super::*;
+
+    #[test]
+    fn compiler_family_and_flag_mutations_are_part_of_the_cache_identity() {
+        let source = std::env::temp_dir().join("candidate-show-cache-key.c");
+        std::fs::write(&source, "void Func_08000000(void) {}\n").unwrap();
+        let source = source.to_str().unwrap();
+        let routed = CandidateCompilerConfiguration {
+            family: Some(CandidateCompilerFamily::Routed),
+            ..Default::default()
+        };
+        let gcc296 = CandidateCompilerConfiguration {
+            family: Some(CandidateCompilerFamily::Gcc296),
+            ..Default::default()
+        };
+        let removed = CandidateCompilerConfiguration {
+            family: Some(CandidateCompilerFamily::Routed),
+            remove_flags: vec!["-fgcse".into()],
+            ..Default::default()
+        };
+        let base = source_cache_key(source, &[], &routed, None).unwrap();
+        assert_ne!(base, source_cache_key(source, &[], &gcc296, None).unwrap());
+        assert_ne!(base, source_cache_key(source, &[], &removed, None).unwrap());
+        let _ = std::fs::remove_file(source);
+    }
 }
 fn cached_first(key_path: &Path, key: &str, report: &Path) -> Option<String> {
     (std::fs::read_to_string(key_path).ok()?.trim() == key)

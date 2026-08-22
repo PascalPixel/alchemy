@@ -1,4 +1,13 @@
 #include "types.h"
+#include "gs1_edition.h"
+
+#if defined(GS1_EDITION_DE)
+#define TIMER_CELL_ADDR 0x03001F08
+#define POSITION_ADDR   0x03001AE0
+#else
+#define TIMER_CELL_ADDR 0x03001EF8
+#define POSITION_ADDR   0x03001AD0
+#endif
 
 s32 Func_080c0cec(s32, s32, s32, s32);
 
@@ -20,9 +29,9 @@ void Func_080c01bc(void)
   struct Position080c01bc *new_var;
   u32 temp_r1;
   u32 temp_r2;
-  temp_r0 = *((u32 **) 0x03001EF8);
+  temp_r0 = *((u32 **)TIMER_CELL_ADDR);
   temp_r1 = *temp_r0;
-  new_var2 = *((struct Display080c01bc **) 0x03001E80);
+  new_var2 = *((struct Display080c01bc **)(TIMER_CELL_ADDR - 0x78));
   var_r2 = 0x34 - temp_r1;
   if (var_r2 > 0x20)
   {
@@ -31,7 +40,7 @@ void Func_080c01bc(void)
       var_r2 = 0x20;
     }
   }
-  new_var = (struct Position080c01bc *) 0x03001AD0;
+  new_var = (struct Position080c01bc *)POSITION_ADDR;
   if (var_r2 < 0)
   {
     if (var_r2 || temp_r1)

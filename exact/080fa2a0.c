@@ -43,6 +43,7 @@ void Func_080fa9e0(
 extern u8 Data_080f9675;
 extern u32 Value_00000008;
 extern u8 Data_02004350;
+extern struct PlayerBootstrapRecord Data_080fc624[];
 
 void Func_080fa2a0(void)
 {
@@ -55,8 +56,7 @@ void Func_080fa2a0(void)
 
     count = (u32)&Value_00000008;
     if (count != 0) {
-        struct PlayerBootstrapRecord *entry =
-            (struct PlayerBootstrapRecord *)0x080FC624;
+        struct PlayerBootstrapRecord *entry = Data_080fc624;
         u32 remaining = count;
         do {
             struct MusicPlayerState *player = entry->player;

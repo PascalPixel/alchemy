@@ -1,5 +1,14 @@
 #include "types.h"
 #include "global_cells.h"
+#include "gs1_edition.h"
+
+#if defined(GS1_EDITION_JA)
+#define PAGE_X  120
+#define ENTRY_X 32
+#else
+#define PAGE_X  116
+#define ENTRY_X 24
+#endif
 
 typedef struct MenuRuntime_080a56c8 {
     u8 padding_00[0x20];
@@ -44,7 +53,7 @@ s32 Func_080a56c8(s32 window, s32 unused, const MenuPageState_080a56c8 *state)
         visible_count = 5;
     }
 
-    Func_080a2324(5, first_entry, window, 116, 34);
+    Func_080a2324(5, first_entry, window, PAGE_X, 34);
     Func_080a21b0(window, state->entry_count, 5, state->page, 15);
 
     row = 0;
@@ -54,7 +63,7 @@ s32 Func_080a56c8(s32 window, s32 unused, const MenuPageState_080a56c8 *state)
             Func_08015080(
                 (entry_id[0] & 0x1ff) + (s32)&Value_00000182,
                 runtime->message_window,
-                24,
+                ENTRY_X,
                 row * 16 + 8
             );
             row++;

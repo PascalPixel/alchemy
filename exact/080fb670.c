@@ -34,6 +34,8 @@ struct MusicTrackState {
     u8 *command;
 };
 
+extern s32 Data_080fba48[];
+
 void Func_080072ec(
     struct MusicPlayerState *player,
     struct MusicTrackState *track,
@@ -50,6 +52,6 @@ void Func_080fb670(
     cursor = track->command;
     value = *cursor;
     track->command = cursor + 1;
-    address = 0x080fba48 + (value << 2);
+    address = (s32)&Data_080fba48[value];
     Func_080072ec(player, track, *(s32 *)address);
 }

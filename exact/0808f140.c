@@ -15,6 +15,8 @@ struct GlobalState {
 };
 
 extern struct GlobalState Data_02000240;
+extern const u8 Data_0809e6c0[];
+extern u8 Data_0808eee5;
 
 void Func_0808f140(void *object, s32 flags) {
     void *other;
@@ -23,10 +25,10 @@ void Func_0808f140(void *object, s32 flags) {
         other = Func_0808ba1c(Data_02000240.selected_object);
         if (flags & 1) {
             Func_080091e0(object, 0);
-            Func_08009098(object, 0x0809E6C0);
+            Func_08009098(object, (s32)Data_0809e6c0);
             FIELD(object, u32, 0x28) = 0x20000;
             FIELD(object, u32, 0x48) = 0x4000;
-            FIELD(object, s32, 0x6C) = 0x0808EEE5;
+            FIELD(object, s32, 0x6C) = (s32)&Data_0808eee5;
         }
         if (flags == 3) {
             Func_080030f8(60);

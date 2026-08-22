@@ -1,10 +1,12 @@
 #include "types.h"
 
+extern const u8 Data_080c7420[];
+
 u32 Func_080c2368(s32 arg0)
 {
   u32 var_r0;
   u8 *new_var;
-  new_var = (u8 *) ((arg0 * 8) + 0x080C7420);
+  new_var = (u8 *) ((arg0 * 8) + (s32)Data_080c7420);
   var_r0 = ((u8) (*((u8 *) (new_var + 3)))) >> 5;
   if (((s32) var_r0) > 4)
   {
@@ -12,4 +14,3 @@ u32 Func_080c2368(s32 arg0)
   }
   return var_r0;
 }
-

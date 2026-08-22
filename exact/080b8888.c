@@ -1,4 +1,5 @@
 #include "types.h"
+#include "battle_msg.h"
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
@@ -24,6 +25,6 @@ s32 Func_080b8888(s16 *script) {
     }
     Func_08015118();
     Func_08015120(object_id, 1);
-    Func_080151c8(0x816);
+    Func_080151c8((s32)&Value_00000816);
     return 0;
 }

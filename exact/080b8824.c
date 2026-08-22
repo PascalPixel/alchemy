@@ -1,4 +1,5 @@
 #include "types.h"
+#include "battle_msg.h"
 
 u32 Func_08004458(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
@@ -31,6 +32,6 @@ s32 Func_080b8824(s16 *unused)
         Func_080030f8(22);
         return 1;
     }
-    Func_080151c8(0x844);
+    Func_080151c8((s32)&Value_00000844);
     return 0;
 }

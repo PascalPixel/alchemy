@@ -1,5 +1,12 @@
 #include "types.h"
 #include "global_cells.h"
+#include "gs1_edition.h"
+
+#if defined(GS1_EDITION_DE) || defined(GS1_EDITION_FR)
+#define EFFECT_X 0x78
+#else
+#define EFFECT_X 0x80
+#endif
 
 struct EffectFlags {
     u8 padding[3];
@@ -44,6 +51,7 @@ s32 Func_080b19cc(u16);
 void Func_080b0a6c(void *, s32, s32);
 void Func_080030f8(u32);
 void Func_080a1038(void *);
+extern char Value_00000cad;
 
 s32 Func_080b1e80(s32 arg0, s32 arg1)
 {
@@ -67,12 +75,12 @@ s32 Func_080b1e80(s32 arg0, s32 arg1)
     state = Func_08077020(arg0, arg1);
     selection = state;
     if ((flags->flags & 0x10) && state > 1) {
-        Func_080b04dc(0xcad);
+        Func_080b04dc((s32)&Value_00000cad);
         saved_x = runtime->saved_x;
         saved_y = runtime->saved_y;
         runtime->object[5] = 4;
         runtime->mode = 0xc;
-        Func_080b0a6c(NULL, 0x80, 0x30);
+        Func_080b0a6c(NULL, EFFECT_X, 0x30);
         result = Func_080b1614(0, selection, effect);
         Func_080030f8(1);
         Func_080a1038(runtime->object);

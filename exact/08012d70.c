@@ -1,5 +1,6 @@
 #include "metadata_lookup.h"
 #include "types.h"
+#include "global_cells.h"
 
 struct Entry_08012d70 {
     s16 no;
@@ -23,7 +24,7 @@ void Func_08012d70(s32 slot, s32 value)
     struct Entry_08012d70 *entry;
     u8 *work;
 
-    work = *(u8 **)0x03001E60;
+    work = *(u8 **)ADDR_03001E60;
     count = 0;
     offset = ((3 & slot) * 4) + 0x28;
     index = 0;

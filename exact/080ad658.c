@@ -3,6 +3,7 @@
 
 void Func_08009038(void *);
 void Func_08004278(s32);
+extern u8 Data_080ad40d;
 
 void Func_080ad658(void)
 {
@@ -18,5 +19,5 @@ void Func_080ad658(void)
         }
         index++;
     } while (index < 4);
-    Func_08004278(0x080ad40d);
+    Func_08004278((s32)&Data_080ad40d);
 }

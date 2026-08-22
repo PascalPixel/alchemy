@@ -1,4 +1,5 @@
 #include "types.h"
+#include "battle_msg.h"
 
 struct Input_080b8b48 {
     s16 primary_id;
@@ -63,7 +64,7 @@ s32 Func_080b8b48(struct Input_080b8b48 *input)
     Func_08077008(work.secondary_id);
     Rand();
     Func_08015120(work.primary_id, 1);
-    Func_080151c8(0x814);
+    Func_080151c8((s32)&Value_00000814);
     Func_080b82c4(work.primary_id, work.secondary_id, 13, 0);
     Func_08009088(Func_080b7dd0(work.primary_id)->object, 16);
     Func_080b7dd0(work.secondary_id);

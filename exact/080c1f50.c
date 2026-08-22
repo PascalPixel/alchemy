@@ -1,4 +1,5 @@
 #include "types.h"
+#include "gs1_edition.h"
 
 u8 *Func_08077008(s32);
 
@@ -11,7 +12,7 @@ s32 Func_080c1f50(s32 arg0) {
     u8 marker;
 
     i = 0;
-    marker = 49;
+    marker = LIST_MARKER_CHAR;
 loop_i:
     ptr = Func_08077008(i + 0x80);
     val = ptr[298];

@@ -3,6 +3,7 @@
 extern u8 *Data_03001f2c;
 void Func_08009020(void *, s32);
 s32 Func_08004278(s32);
+extern u8 Data_080a3c09;
 
 void Func_080a3c98(void) {
     u8 *state;
@@ -18,5 +19,5 @@ void Func_080a3c98(void) {
             i++;
         } while (i < state[0x219]);
     }
-    Func_08004278(0x080a3c09);
+    Func_08004278((s32)&Data_080a3c09);
 }

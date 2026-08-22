@@ -1,4 +1,5 @@
 #include "types.h"
+#include "gs1_edition.h"
 
 struct MenuDefaults {
     u8 padding_000[0x1C8];
@@ -65,7 +66,7 @@ s16 Func_08028f98(void)
             return result;
         }
 
-        Func_0801c154(&object, 74, mode * 14 + 60);
+        Func_0801c154(&object, MENU_TEXT_X, mode * 14 + MENU_TEXT_Y);
         primary = result;
         Func_080030f8(1);
     }

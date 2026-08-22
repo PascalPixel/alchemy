@@ -1,10 +1,25 @@
 #include "types.h"
+#include "gs1_edition.h"
 
 struct State_0801ec6c {
+#if defined(GS1_EDITION_JA)
+    u8 pad_0000[0x117c];
+    u16 ids_117c[2];
+    u16 values_1180[2];
+#else
     u8 pad_0000[0x12ec];
     u16 ids_12ec[2];
     u16 values_12f0[2];
+#endif
 };
+
+#if defined(GS1_EDITION_JA)
+#define STATE_IDS ids_117c
+#define STATE_VALUES values_1180
+#else
+#define STATE_IDS ids_12ec
+#define STATE_VALUES values_12f0
+#endif
 
 struct Object_0801ec6c {
     u8 pad_00[4];
@@ -44,9 +59,9 @@ struct Object_0801ec6c *Func_0801ec6c(
 
     if ((u32)side > 1) {
         side = 1;
-        if (state->ids_12ec[1] != 999) {
+        if (state->STATE_IDS[1] != 999) {
             side = 0;
-            if (state->ids_12ec[0] != 999)
+            if (state->STATE_IDS[0] != 999)
                 return object;
         }
     }
@@ -61,7 +76,7 @@ struct Object_0801ec6c *Func_0801ec6c(
         object->mode_04 = 2;
     }
 
-    state->ids_12ec[side] = id;
-    state->values_12f0[side] = first;
+    state->STATE_IDS[side] = id;
+    state->STATE_VALUES[side] = first;
     return object;
 }

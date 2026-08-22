@@ -1,4 +1,5 @@
 #include "types.h"
+#include "gs1_edition.h"
 
 struct Work {
     u8 padding00[0x14];
@@ -36,7 +37,7 @@ struct Slot *Func_08016670(struct Work *work, s32 value, s32 preserve)
     u16 zero;
     u32 index;
 
-    slot = (struct Slot *)(Data_03001e8c + 0x620);
+    slot = (struct Slot *)(Data_03001e8c + RENDER_CHANNEL_OFS);
     selected = 0;
     for (index = 0; index != 3; slot++, index++) {
         if (slot->work == 0 || slot->work->state != 0) {

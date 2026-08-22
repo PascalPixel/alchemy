@@ -136,10 +136,10 @@ struct BattleWorkPage {
          ? (plan)->actor_id2                                                  \
          : (plan)->actor_id)
 #define BATTLE_PLAN_TARGET_ID(plan, slot) ((plan)->target_ids[(slot)])
-#define BATTLE_PLAN_OFFSET(plan, slot) ((plan)->target_offsets[(slot) + 1])
-#define BATTLE_PLAN_ADJUST(plan, slot) ((plan)->target_adjustments[(slot) + 1])
-#define BATTLE_PLAN_MODIFIER(plan, slot) ((plan)->target_modifiers[(slot) + 1])
-#define BATTLE_PLAN_RESULT(plan, slot) ((plan)->target_results[(slot) + 1])
+#define BATTLE_PLAN_OFFSET(plan, slot) ((plan)->target_offsets[(slot)])
+#define BATTLE_PLAN_ADJUST(plan, slot) ((plan)->target_adjustments[(slot)])
+#define BATTLE_PLAN_MODIFIER(plan, slot) ((plan)->target_modifiers[(slot)])
+#define BATTLE_PLAN_RESULT(plan, slot) ((plan)->target_results[(slot)])
 #define BATTLE_PLAN_COMMAND(plan) ((plan)->command)
 #define BATTLE_PLAN_PENDING(plan) ((plan)->pending_amount_60)
 
@@ -232,11 +232,11 @@ struct BattleWorkPage {
 #undef BATTLE_AFTER_COPY
 #define BATTLE_AFTER_COPY()                                                   \
     {                                                                         \
-        s32 state;                                                            \
         s16 *state_cmd;                                                       \
+        s32 state;                                                            \
                                                                               \
-        state_cmd = &BATTLE_PLAN_COMMAND(plan);                               \
         state = *(u16 *)((u8 *)target + 0x14a);                               \
+        state_cmd = &BATTLE_PLAN_COMMAND(plan);                               \
         switch (state) {                                                      \
         case 0xdd:                                                            \
             if (*state_cmd == 1                                               \

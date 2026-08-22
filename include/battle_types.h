@@ -23,13 +23,21 @@ struct BattlePlan {
 #ifdef BATTLE_SECOND_ACTOR
     u8 actor_id2;                                 /* 0x02 */
     u8 target_ids[BATTLE_TARGET_CAPACITY - 1];    /* 0x03 */
+    s8 target_offset0;                            /* 0x10 */
+    s8 target_offsets[BATTLE_TARGET_CAPACITY - 1]; /* 0x11 */
+    s8 target_adjustment0;                        /* 0x1e */
+    s8 target_adjustments[BATTLE_TARGET_CAPACITY - 1]; /* 0x1f */
+    s8 target_modifier0;                          /* 0x2c */
+    s8 target_modifiers[BATTLE_TARGET_CAPACITY - 1]; /* 0x2d */
+    s8 target_result0;                            /* 0x3a */
+    s8 target_results[BATTLE_TARGET_CAPACITY - 1]; /* 0x3b */
 #else
     u8 target_ids[BATTLE_TARGET_CAPACITY];        /* 0x02 */
-#endif
     s8 target_offsets[BATTLE_TARGET_CAPACITY];    /* 0x10 */
     s8 target_adjustments[BATTLE_TARGET_CAPACITY]; /* 0x1e */
     s8 target_modifiers[BATTLE_TARGET_CAPACITY];  /* 0x2c */
     s8 target_results[BATTLE_TARGET_CAPACITY];    /* 0x3a */
+#endif
 #ifdef BATTLE_SECOND_ACTOR
     u8 unknown_48[2];                             /* 0x48 */
     s16 command;                                  /* 0x4a */
@@ -121,18 +129,23 @@ LAYOUT_OFFSET_GUARD(
     struct BattlePlan,
     target_ids,
     0x03);
+LAYOUT_OFFSET_GUARD(
+    BattlePlan_TargetAdjustments,
+    struct BattlePlan,
+    target_adjustments,
+    0x1f);
 #else
 LAYOUT_OFFSET_GUARD(
     BattlePlan_TargetIds,
     struct BattlePlan,
     target_ids,
     0x02);
-#endif
 LAYOUT_OFFSET_GUARD(
     BattlePlan_TargetAdjustments,
     struct BattlePlan,
     target_adjustments,
     0x1e);
+#endif
 LAYOUT_OFFSET_GUARD(
     BattlePlan_ActionId,
     struct BattlePlan,

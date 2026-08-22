@@ -37,6 +37,8 @@ struct Evaluated {
 const RUN_MARKER: &str = ".permuter-run";
 const ACTIVE_MARKER: &str = ".permuter-active";
 const OWNERSHIP_MANIFEST: &str = ".permuter-owned";
+const LIVE_SOURCE_TMP: &str = "best-live.tmp";
+const LIVE_REPORT_TMP: &str = "report-live.tmp";
 
 // Run directories are ordinary files under one of two trusted roots. The
 // path is validated before creation, and every file written by the runner is
@@ -152,7 +154,11 @@ impl RunDirectory {
             if (name.starts_with("candidate-") && name.ends_with(".c"))
                 || matches!(
                     name.as_str(),
-                    "best.c" | "best-UNVERIFIED.c" | "report.json"
+                    "best.c"
+                        | "best-UNVERIFIED.c"
+                        | "report.json"
+                        | LIVE_SOURCE_TMP
+                        | LIVE_REPORT_TMP
                 )
             {
                 let path = self.path.join(&name);
@@ -705,7 +711,12 @@ fn validate_owned_name(name: &str) -> Result<(), String> {
     let valid = (name.starts_with("candidate-") && name.ends_with(".c"))
         || matches!(
             name,
-            "best.c" | "best-UNVERIFIED.c" | "journal.tsv" | "report.json"
+            "best.c"
+                | "best-UNVERIFIED.c"
+                | "journal.tsv"
+                | "report.json"
+                | LIVE_SOURCE_TMP
+                | LIVE_REPORT_TMP
         );
     if !valid || name.contains('/') || name.contains('\\') {
         Err(format!("invalid owned output name {name:?}"))
@@ -777,6 +788,7 @@ fn save_results(
     let report = serde_json::to_string_pretty(&json!({
         "backend": backend_name,
         "search_mode": search_mode,
+        "status": "complete",
         "baseline_score": baseline.score,
         "attempted": attempted,
         "compile_failures": failures,
@@ -861,7 +873,7 @@ fn run_workers(
     stop_exact: bool,
     baseline: Measurement,
     journal: Arc<Journal>,
-    live_best: Arc<Mutex<LiveBest>>,
+    live_best: Arc<LiveBest>,
 ) -> Result<Vec<Evaluated>, String> {
     let next = Arc::new(AtomicUsize::new(0));
     let stop = Arc::new(AtomicBool::new(false));
@@ -906,20 +918,26 @@ fn run_workers(
                 if stop_exact && value.exact {
                     stop.store(true, AtomicOrdering::Release);
                 }
-                if guard_accepts(&baseline, value)
-                    && update_live_best(
-                        &live_best,
-                        baseline.score,
-                        value,
-                        &candidate.source,
-                        &candidate.mutation,
-                    )
-                {
-                    println!(
-                        "new-best={} candidate={} mutation={} {}",
-                        value.score, candidate.index, candidate.mutation, value.summary
-                    );
-                    let _ = io::stdout().flush();
+                if guard_accepts(&baseline, value) {
+                    match live_best.publish(&candidate, value) {
+                        Ok(Some(saved)) => {
+                            println!(
+                                "new-best={} candidate={} mutation={} saved={} {}",
+                                value.score,
+                                candidate.index,
+                                candidate.mutation,
+                                saved,
+                                value.summary
+                            );
+                            let _ = io::stdout().flush();
+                        }
+                        Ok(None) => {}
+                        Err(error) => {
+                            stop.store(true, AtomicOrdering::Release);
+                            let _ = sender.send(Err(error));
+                            break;
+                        }
+                    }
                 }
             }
             if sender
@@ -953,29 +971,160 @@ fn run_workers(
     error.map_or(Ok(evaluated), Err)
 }
 
-type LiveBest = Option<(u64, String, String)>;
+#[derive(Clone, Debug, Eq, PartialEq)]
+struct LiveBestState {
+    score: u64,
+    source: String,
+    mutation: String,
+}
 
-fn update_live_best(
-    best: &Mutex<LiveBest>,
+/// Publishes each strict improvement before it is announced. A killed run may
+/// lose its final ranking pass, but it must not lose the source that produced
+/// the last `new-best` line.
+struct LiveBest {
+    state: Mutex<Option<LiveBestState>>,
+    output: PathBuf,
+    backend: String,
+    search_mode: String,
     baseline_score: u64,
-    measurement: &Measurement,
-    source: &str,
-    mutation: &str,
-) -> bool {
-    if measurement.score >= baseline_score {
-        return false;
+}
+
+impl LiveBest {
+    fn new(
+        run: &mut RunDirectory,
+        backend: &str,
+        search_mode: &str,
+        baseline_score: u64,
+    ) -> Result<Self, String> {
+        for name in [
+            "best.c",
+            "best-UNVERIFIED.c",
+            "report.json",
+            LIVE_SOURCE_TMP,
+            LIVE_REPORT_TMP,
+        ] {
+            run.register(name)?;
+        }
+        Ok(Self {
+            state: Mutex::new(None),
+            output: run.path.clone(),
+            backend: backend.to_string(),
+            search_mode: search_mode.to_string(),
+            baseline_score,
+        })
     }
-    let Ok(mut best) = best.lock() else {
-        return false;
-    };
-    if best
-        .as_ref()
-        .is_some_and(|(score, _, _)| measurement.score >= *score)
-    {
-        return false;
+
+    fn seed(&self) -> Option<(String, String)> {
+        self.state.lock().ok().and_then(|best| {
+            best.as_ref()
+                .map(|best| (best.source.clone(), best.mutation.clone()))
+        })
     }
-    *best = Some((measurement.score, source.to_string(), mutation.to_string()));
-    true
+
+    fn score(&self) -> u64 {
+        self.state
+            .lock()
+            .ok()
+            .and_then(|best| best.as_ref().map(|best| best.score))
+            .unwrap_or(self.baseline_score)
+    }
+
+    fn publish(
+        &self,
+        candidate: &Candidate,
+        measurement: &Measurement,
+    ) -> Result<Option<&'static str>, String> {
+        if measurement.score >= self.baseline_score {
+            return Ok(None);
+        }
+        let mut best = self
+            .state
+            .lock()
+            .map_err(|_| "live-best lock is poisoned".to_string())?;
+        if best
+            .as_ref()
+            .is_some_and(|best| measurement.score >= best.score)
+        {
+            return Ok(None);
+        }
+
+        let unverified = self.search_mode == "classic-exact-only" && !measurement.exact;
+        let name = if unverified {
+            "best-UNVERIFIED.c"
+        } else {
+            "best.c"
+        };
+        atomic_replace(
+            &self.output.join(name),
+            &self.output.join(LIVE_SOURCE_TMP),
+            candidate.source.as_bytes(),
+        )?;
+
+        let report = serde_json::to_string_pretty(&json!({
+            "backend": self.backend,
+            "search_mode": self.search_mode,
+            "status": "running",
+            "baseline_score": self.baseline_score,
+            "results": [{
+                "rank": 0,
+                "candidate": candidate.index,
+                "manual_seed": candidate.manual_seed,
+                "mutation": candidate.mutation,
+                "source_fingerprint": candidate.fingerprint,
+                "score": measurement.score,
+                "exact": measurement.exact,
+                "differences": measurement.differences,
+                "actual_size": measurement.actual_size,
+                "expected_size": measurement.expected_size,
+                "summary": persisted_summary(&measurement.summary),
+            }],
+        }))
+        .map_err(|e| format!("could not serialize live report: {e}"))?
+            + "\n";
+        atomic_replace(
+            &self.output.join("report.json"),
+            &self.output.join(LIVE_REPORT_TMP),
+            report.as_bytes(),
+        )?;
+        *best = Some(LiveBestState {
+            score: measurement.score,
+            source: candidate.source.clone(),
+            mutation: candidate.mutation.clone(),
+        });
+        Ok(Some(name))
+    }
+}
+
+fn atomic_replace(path: &Path, temporary: &Path, contents: &[u8]) -> Result<(), String> {
+    for candidate in [path, temporary] {
+        if fs::symlink_metadata(candidate)
+            .map(|metadata| metadata.file_type().is_symlink())
+            .unwrap_or(false)
+        {
+            return Err(format!(
+                "refusing to overwrite symlink {}",
+                candidate.display()
+            ));
+        }
+    }
+    let mut file = File::options()
+        .write(true)
+        .create(true)
+        .truncate(true)
+        .open(temporary)
+        .map_err(|e| format!("{}: {e}", temporary.display()))?;
+    file.write_all(contents)
+        .and_then(|_| file.sync_all())
+        .map_err(|e| format!("{}: {e}", temporary.display()))?;
+    match fs::rename(temporary, path) {
+        Ok(()) => Ok(()),
+        Err(first) if path.is_file() => {
+            fs::remove_file(path).map_err(|e| format!("{}: {e}", path.display()))?;
+            fs::rename(temporary, path)
+                .map_err(|e| format!("{}: {e} (initial rename: {first})", path.display()))
+        }
+        Err(e) => Err(format!("{}: {e}", path.display())),
+    }
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -991,7 +1140,7 @@ fn walk_workers(
     classic: bool,
     guard: Measurement,
     journal: Arc<Journal>,
-    best: Arc<Mutex<LiveBest>>,
+    best: Arc<LiveBest>,
 ) -> Result<Vec<Evaluated>, String> {
     let counter = Arc::new(AtomicUsize::new(0));
     let stop = Arc::new(AtomicBool::new(false));
@@ -1024,10 +1173,8 @@ fn walk_workers(
                 }
                 if current.is_none() || rng.index(1000) >= keep_prob_permille as usize {
                     current = best
-                        .lock()
-                        .ok()
-                        .and_then(|g| g.clone())
-                        .map(|(_, source, lineage)| (source, format!("{lineage}~")))
+                        .seed()
+                        .map(|(source, lineage)| (source, format!("{lineage}~")))
                         .or_else(|| Some((base_source.as_ref().clone(), "base".into())));
                 }
                 let (source, lineage) = current.clone().expect("walk candidate");
@@ -1077,13 +1224,24 @@ fn walk_workers(
                     if guard_accepts(&guard, value) {
                         current = Some((source.clone(), candidate.mutation.clone()));
                         heat = value.heat.clone();
-                        if update_live_best(&best, guard.score, value, &source, &candidate.mutation)
-                        {
-                            println!(
-                                "new-best={} candidate={} mutation={} {}",
-                                value.score, candidate.index, candidate.mutation, value.summary
-                            );
-                            let _ = io::stdout().flush();
+                        match best.publish(&candidate, value) {
+                            Ok(Some(saved)) => {
+                                println!(
+                                    "new-best={} candidate={} mutation={} saved={} {}",
+                                    value.score,
+                                    candidate.index,
+                                    candidate.mutation,
+                                    saved,
+                                    value.summary
+                                );
+                                let _ = io::stdout().flush();
+                            }
+                            Ok(None) => {}
+                            Err(error) => {
+                                stop.store(true, AtomicOrdering::Release);
+                                let _ = sender.send(Err(error));
+                                break;
+                            }
                         }
                     } else {
                         current = None;
@@ -1106,17 +1264,21 @@ fn walk_workers(
     }
     drop(sender);
     let mut evaluated = Vec::new();
+    let mut error = None;
     for item in receiver {
-        if let Ok(item) = item {
-            evaluated.push(item);
+        match item {
+            Ok(item) => evaluated.push(item),
+            Err(e) => {
+                error.get_or_insert(e);
+            }
         }
     }
     for worker in workers {
-        if worker.join().is_err() {
-            return Err("permuter walk worker panicked".into());
+        if worker.join().is_err() && error.is_none() {
+            error = Some("permuter walk worker panicked".into());
         }
     }
-    Ok(evaluated)
+    error.map_or(Ok(evaluated), Err)
 }
 
 fn collect_results(
@@ -1268,17 +1430,22 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
         return Ok(());
     }
     let backend_name = target.name().to_string();
+    let live_best = Arc::new(LiveBest::new(
+        &mut run,
+        &backend_name,
+        search_mode,
+        baseline.score,
+    )?);
     let target: Arc<dyn Backend> = Arc::from(target);
     let started = Instant::now();
     let mut chain_source = input.source.clone();
     let mut chain_score = baseline.score;
-    let mut best_score = baseline.score;
+    let mut best_score = live_best.score();
     let mut owned = Vec::new();
     let mut attempted = 0;
     let mut failures = 0;
     let mut compile_time = Duration::ZERO;
     let mut exact_found = false;
-    let live_best = Arc::new(Mutex::new(None));
     if options.walk {
         let base = crate::astpass::preprocess_for_ast(&input.source)?;
         let evaluated = walk_workers(
@@ -1519,35 +1686,69 @@ mod tests {
     }
 
     #[test]
-    fn live_best_reports_strict_improvements_as_they_arrive() {
-        let best = Mutex::new(None);
+    fn live_best_publishes_strict_improvements_as_they_arrive() {
+        let stamp = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let output = std::env::temp_dir().join(format!(
+            "alchemy-permuter-live-best-{}-{stamp}",
+            std::process::id()
+        ));
+        fs::create_dir(&output).unwrap();
+        let best = LiveBest {
+            state: Mutex::new(None),
+            output: output.clone(),
+            backend: "test".into(),
+            search_mode: "safe".into(),
+            baseline_score: 100,
+        };
+        let mut candidate = Candidate {
+            index: 7,
+            manual_seed: 3,
+            mutation: "first".into(),
+            source: "first".into(),
+            fingerprint: source_fingerprint("first"),
+        };
         let mut measurement = Measurement::failed("candidate");
         measurement.score = 110;
-        assert!(!update_live_best(
-            &best,
-            100,
-            &measurement,
-            "worse",
-            "worse"
-        ));
-        assert!(best.lock().unwrap().is_none());
+        assert_eq!(best.publish(&candidate, &measurement).unwrap(), None);
+        assert!(!output.join("best.c").exists());
 
         measurement.score = 90;
-        assert!(update_live_best(&best, 100, &measurement, "first", "first"));
+        assert_eq!(
+            best.publish(&candidate, &measurement).unwrap(),
+            Some("best.c")
+        );
+        assert_eq!(fs::read_to_string(output.join("best.c")).unwrap(), "first");
+        let report = fs::read_to_string(output.join("report.json")).unwrap();
+        assert!(report.contains("\"status\": \"running\""));
+        assert!(report.contains("\"score\": 90"));
+
+        candidate.source = "tie".into();
+        candidate.mutation = "tie".into();
         measurement.score = 90;
-        assert!(!update_live_best(&best, 100, &measurement, "tie", "tie"));
+        assert_eq!(best.publish(&candidate, &measurement).unwrap(), None);
+        assert_eq!(fs::read_to_string(output.join("best.c")).unwrap(), "first");
+
+        candidate.source = "later".into();
+        candidate.mutation = "later".into();
         measurement.score = 95;
-        assert!(!update_live_best(
-            &best,
-            100,
-            &measurement,
-            "later",
-            "later"
-        ));
-        measurement.score = 80;
-        assert!(update_live_best(&best, 100, &measurement, "best", "best"));
+        assert_eq!(best.publish(&candidate, &measurement).unwrap(), None);
 
-        let state = best.into_inner().unwrap().unwrap();
-        assert_eq!(state, (80, "best".into(), "best".into()));
+        candidate.source = "best".into();
+        candidate.mutation = "best".into();
+        measurement.score = 80;
+        assert_eq!(
+            best.publish(&candidate, &measurement).unwrap(),
+            Some("best.c")
+        );
+        assert_eq!(fs::read_to_string(output.join("best.c")).unwrap(), "best");
+        assert_eq!(best.seed(), Some(("best".into(), "best".into())));
+        assert_eq!(best.score(), 80);
+        assert!(!output.join(LIVE_SOURCE_TMP).exists());
+        assert!(!output.join(LIVE_REPORT_TMP).exists());
+
+        fs::remove_dir_all(output).unwrap();
     }
 }

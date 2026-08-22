@@ -61,62 +61,65 @@ struct BattleWorkPage {
 #define BATTLE_POWER_BONUS(dmg)                                             \
     if (action_id == 0x2ab || action_id == 0x2a1 || action_id == 0x2d4      \
         || *cmd == 6 || *cmd == 10) {                                      \
-        kind = 0;                                                          \
+        s32 rate;                                                          \
+                                                                             \
+        rate = 0;                                                          \
         switch (action_id) {                                               \
         default:                                                           \
-        case 0x199:                                                        \
-        case 0x187:                                                        \
-        case 0x17f:                                                        \
-            kind = 12;                                                     \
             break;                                                         \
         case 0x196:                                                        \
         case 0x184:                                                        \
         case 0x18c:                                                        \
         case 0x17c:                                                        \
-            kind = 3;                                                      \
+            rate = 3;                                                      \
+            break;                                                         \
+        case 0x199:                                                        \
+        case 0x187:                                                        \
+        case 0x17f:                                                        \
+            rate = 12;                                                     \
             break;                                                         \
         case 0x2ab:                                                        \
-            kind = 35;                                                     \
+            rate = 35;                                                     \
             break;                                                         \
         case 0x197:                                                        \
         case 0x190:                                                        \
         case 0x18d:                                                        \
         case 0x185:                                                        \
         case 0x17d:                                                        \
-            kind = 6;                                                      \
-            break;                                                         \
-        case 0x192:                                                        \
-            kind = 7;                                                      \
-            break;                                                         \
-        case 0x19b:                                                        \
-        case 0x193:                                                        \
-        case 0x181:                                                        \
-            kind = 15;                                                     \
-            break;                                                         \
-        case 0x18a:                                                        \
-            kind = 21;                                                     \
-            break;                                                         \
-        case 0x19c:                                                        \
-            kind = 24;                                                     \
-            break;                                                         \
-        case 0x2a1:                                                        \
-        case 0x182:                                                        \
-            kind = 30;                                                     \
-            break;                                                         \
-        case 0x2d4:                                                        \
-        case 0x194:                                                        \
-            kind = 40;                                                     \
+            rate = 6;                                                      \
             break;                                                         \
         case 0x18e:                                                        \
         case 0x188:                                                        \
         case 0x186:                                                        \
-            kind = 9;                                                      \
+            rate = 9;                                                      \
+            break;                                                         \
+        case 0x192:                                                        \
+            rate = 7;                                                      \
+            break;                                                         \
+        case 0x19b:                                                        \
+        case 0x193:                                                        \
+        case 0x181:                                                        \
+            rate = 15;                                                     \
+            break;                                                         \
+        case 0x18a:                                                        \
+            rate = 21;                                                     \
+            break;                                                         \
+        case 0x19c:                                                        \
+            rate = 24;                                                     \
+            break;                                                         \
+        case 0x2a1:                                                        \
+        case 0x182:                                                        \
+            rate = 30;                                                     \
+            break;                                                         \
+        case 0x2d4:                                                        \
+        case 0x194:                                                        \
+            rate = 40;                                                     \
             break;                                                         \
         }                                                                  \
         value = target->max_hp;                                            \
         if (value > 10000)                                                 \
             value = 10000;                                                 \
-        (dmg) += Math_Div(value * kind, 100);                              \
+        (dmg) += Math_Div(value * rate, 100);                              \
     }
 
 #define BATTLE_GUARD_DAMAGE()                                                \
@@ -149,8 +152,8 @@ struct BattleWorkPage {
         actor_id = BATTLE_PLAN_ACTOR_ID(plan, action_id);                    \
         range = plan->range_index;                                           \
         target_id = BATTLE_PLAN_TARGET_ID(plan, slot);                       \
-        action_id = plan->action_id;                                         \
         adjust = BATTLE_PLAN_ADJUST(plan, slot);                             \
+        action_id = plan->action_id;                                         \
         modifier = BATTLE_PLAN_MODIFIER(plan, slot);                         \
     }
 

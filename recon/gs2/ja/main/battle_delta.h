@@ -1,7 +1,19 @@
 #ifndef GS2_BATTLE_DELTA_H
 #define GS2_BATTLE_DELTA_H
 
-#define BATTLE_WORK (*(void **)0x03000024)
+#define BATTLE_SECOND_ACTOR
+
+struct BattleWorkPage {
+    unsigned char unused_00[0x24];
+    void *work;
+};
+
+#define BATTLE_WORK (((struct BattleWorkPage *)0x03000000)->work)
+#define BATTLE_RANGE_EARLY
+#define BATTLE_OFFSET_LATE
+#define BATTLE_ACTION_ID_EARLY
+#define BATTLE_NARROW_TARGET_ID
+#define BATTLE_AFFINITY_CARRIER
 #define BATTLE_SURVIVES_KO() (Func_081203a8(target_id) != 0)
 #define BATTLE_KO_TAIL()                                                   \
     {                                                                      \
@@ -42,6 +54,10 @@
         }                                                                 \
     }
 #define BATTLE_DAMAGE_BLOCKED() (target->guard_level == 4)
+#define BATTLE_GUARD_VALUE(target) ((target)->guard_level)
+#define BATTLE_EVIL_SPIRIT_ACTIVE()                                        \
+    (action_id != 0x193 && actor->evil_spirit != 0)
+#define BATTLE_DAMAGE_GATE() (action->effect != 0x4b || slot == 0)
 #define BATTLE_POWER_BONUS(dmg)                                             \
     if (action_id == 0x2ab || action_id == 0x2a1 || action_id == 0x2d4      \
         || *cmd == 6 || *cmd == 10) {                                      \
@@ -104,33 +120,57 @@
     }
 
 #define BATTLE_GUARD_DAMAGE()                                                \
-    switch (guard) {                                                        \
-    case 0:                                                                \
-        break;                                                             \
-    case 1:                                                                \
-        dmg /= 2;                                                          \
-        break;                                                             \
-    case 2:                                                                \
-        dmg = Math_Div(dmg * 2, 5);                                        \
-        break;                                                             \
-    default:                                                               \
-        dmg = Math_Div(dmg, 10);                                           \
-        break;                                                             \
+    if (guard != 0) {                                                       \
+        if (guard == 1)                                                     \
+            dmg /= 2;                                                       \
+        else if (guard == 2)                                                \
+            dmg = Math_Div(dmg * 2, 5);                                    \
+        else                                                                \
+            dmg = Math_Div(dmg, 10);                                       \
     }
 
 /* GS2 keeps the plan size but inserts a second actor byte before the target
  * arrays and moves the command halfword from 0x48 to 0x4a. */
 #define BATTLE_PLAN_ACTOR_ID(plan, action_id)                                \
     (((action_id) == 0x138 || (action_id) == 0x13c)                         \
-         ? ((u8 *)(plan))[2]                                                 \
-         : ((u8 *)(plan))[0])
-#define BATTLE_PLAN_TARGET_ID(plan, slot) (((u8 *)(plan))[3 + (slot)])
-#define BATTLE_PLAN_OFFSET(plan, slot) (((s8 *)(plan))[0x11 + (slot)])
-#define BATTLE_PLAN_ADJUST(plan, slot) (((s8 *)(plan))[0x1f + (slot)])
-#define BATTLE_PLAN_MODIFIER(plan, slot) (((s8 *)(plan))[0x2d + (slot)])
-#define BATTLE_PLAN_RESULT(plan, slot) (((s8 *)(plan))[0x3b + (slot)])
-#define BATTLE_PLAN_COMMAND(plan) (*(s16 *)((u8 *)(plan) + 0x4a))
-#define BATTLE_PLAN_PENDING(plan) (*(u32 *)((u8 *)(plan) + 0x60))
+         ? (plan)->actor_id2                                                  \
+         : (plan)->actor_id)
+#define BATTLE_PLAN_TARGET_ID(plan, slot) ((plan)->target_ids[(slot)])
+#define BATTLE_PLAN_OFFSET(plan, slot) ((plan)->target_offsets[(slot) + 1])
+#define BATTLE_PLAN_ADJUST(plan, slot) ((plan)->target_adjustments[(slot) + 1])
+#define BATTLE_PLAN_MODIFIER(plan, slot) ((plan)->target_modifiers[(slot) + 1])
+#define BATTLE_PLAN_RESULT(plan, slot) ((plan)->target_results[(slot) + 1])
+#define BATTLE_PLAN_COMMAND(plan) ((plan)->command)
+#define BATTLE_PLAN_PENDING(plan) ((plan)->pending_amount_60)
+
+/* GS2 reserves element zero of each target array for its second actor. */
+#define BATTLE_PLAN_LOADS()                                                  \
+    {                                                                        \
+        actor_id = BATTLE_PLAN_ACTOR_ID(plan, action_id);                    \
+        range = plan->range_index;                                           \
+        target_id = BATTLE_PLAN_TARGET_ID(plan, slot);                       \
+        action_id = plan->action_id;                                         \
+        adjust = BATTLE_PLAN_ADJUST(plan, slot);                             \
+        modifier = BATTLE_PLAN_MODIFIER(plan, slot);                         \
+    }
+
+#define BATTLE_CURE_SLEEP_ALL()                                             \
+    {                                                                        \
+        if (target->sleep != 0) {                                            \
+            target->sleep = 0;                                               \
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0xce3);                     \
+            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);                  \
+        }                                                                    \
+    }
+#define BATTLE_CURE_SLEEP_PART()                                            \
+    {                                                                        \
+        if (target->sleep != 0) {                                            \
+            target->sleep = 0;                                               \
+            BattleEvent_Push(BATTLE_EVENT_RESET, 0);                         \
+            BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);                  \
+            BattleEvent_Push(BATTLE_EVENT_TEXT, 0xce3);                     \
+        }                                                                    \
+    }
 
 /* The GS2 runtime copy entry is an ARMv4T function pointer. */
 #define BATTLE_COPY_UNIT(copy, target, size)                                 \
@@ -139,31 +179,107 @@
 
 #define BATTLE_AFTER_COPY()                                                   \
     {                                                                         \
-        u16 state;                                                            \
+        s32 state;                                                            \
                                                                               \
         cmd = &BATTLE_PLAN_COMMAND(plan);                                     \
         state = *(u16 *)((u8 *)target + 0x14a);                               \
-        if (state >= 0x65 && state <= 0x67) {                                 \
-            if (action_id != 0x23d && ((u8 *)work)[0x868] != 0                \
+        if (state < 0x65)                                                     \
+            goto gs2_state_guard;                                             \
+        {                                                                     \
+            if (state > 0x67) {                                               \
+                if (state == 0xdd) {                                          \
+                    if (*cmd == 1                                             \
+                        && ((u32)(actor_id ^ target_id) >> 7) != 0) {          \
+                        BattleEvent_Push(11, target_id);                       \
+                        BattleEvent_Push(0, target_id);                        \
+                        BattleEvent_Push(4, 0xcb5);                            \
+                        goto done;                                             \
+                    }                                                          \
+                    goto gs2_state_guard;                                     \
+                }                                                              \
+                cmd = &BATTLE_PLAN_COMMAND(plan);                             \
+                goto gs2_state_guard;                                         \
+            }                                                                  \
+            if (action_id != 0x23d) {                                         \
+                if (((u8 *)work)[0x868] != 0) {                               \
+                    if (((u32)(actor_id ^ target_id) >> 7) != 0) {            \
+                        BattleEvent_Push(11, target_id);                       \
+                        BattleEvent_Push(0, target_id);                        \
+                        BattleEvent_Push(4, 0xcb4);                            \
+                        cmd = &BATTLE_PLAN_COMMAND(plan);                      \
+                        goto done;                                            \
+                    }                                                          \
+                    cmd = &BATTLE_PLAN_COMMAND(plan);                          \
+                    goto gs2_state_guard;                                     \
+                }                                                              \
+                cmd = &BATTLE_PLAN_COMMAND(plan);                              \
+                goto gs2_state_guard;                                         \
+            }                                                                  \
+            cmd = &BATTLE_PLAN_COMMAND(plan);                                  \
+            goto gs2_state_guard;                                             \
+        }                                                                      \
+    gs2_state_guard:                                                          \
+        if (target->guard_level == 4) {                                       \
+            if (((u32)(actor_id ^ target_id) >> 7) != 0) {                    \
+                BattleEvent_Push(11, target_id);                              \
+                BattleEvent_Push(0, target_id);                               \
+                BattleEvent_Push(4, 0xcab);                                   \
+                goto done;                                                    \
+            }                                                                 \
+        }                                                                     \
+    }
+
+#undef BATTLE_AFTER_COPY
+#define BATTLE_AFTER_COPY()                                                   \
+    {                                                                         \
+        s32 state;                                                            \
+        s16 *state_cmd;                                                       \
+                                                                              \
+        state_cmd = &BATTLE_PLAN_COMMAND(plan);                               \
+        state = *(u16 *)((u8 *)target + 0x14a);                               \
+        switch (state) {                                                      \
+        case 0xdd:                                                            \
+            if (*state_cmd == 1                                               \
                 && ((u32)(actor_id ^ target_id) >> 7) != 0) {                 \
                 BattleEvent_Push(11, target_id);                              \
                 BattleEvent_Push(0, target_id);                               \
-                BattleEvent_Push(4, 0xcb4);                                   \
+                BattleEvent_Push(4, 0xcb5);                                   \
+                goto done;                                                    \
+            }                                                                \
+            cmd = &BATTLE_PLAN_COMMAND(plan);                                 \
+            break;                                                           \
+        case 0x65:                                                            \
+        case 0x66:                                                            \
+        case 0x67:                                                            \
+            if (action_id != 0x23d) {                                         \
+                if (((u8 *)work)[0x868] != 0) {                               \
+                    if (((u32)(actor_id ^ target_id) >> 7) != 0) {            \
+                        BattleEvent_Push(11, target_id);                       \
+                        BattleEvent_Push(0, target_id);                        \
+                        BattleEvent_Push(4, 0xcb4);                            \
+                        cmd = &BATTLE_PLAN_COMMAND(plan);                      \
+                        goto done;                                             \
+                    }                                                          \
+                    cmd = &BATTLE_PLAN_COMMAND(plan);                          \
+                    goto gs2_state_guard;                                     \
+                }                                                              \
+                cmd = &BATTLE_PLAN_COMMAND(plan);                              \
+                goto gs2_state_guard;                                         \
+            }                                                                \
+            cmd = &BATTLE_PLAN_COMMAND(plan);                                  \
+            goto gs2_state_guard;                                             \
+        default:                                                             \
+            cmd = &BATTLE_PLAN_COMMAND(plan);                                 \
+            break;                                                           \
+        }                                                                     \
+    gs2_state_guard:                                                          \
+        if (target->guard_level == 4) {                                       \
+            if (((u32)(actor_id ^ target_id) >> 7) != 0) {                    \
+                BattleEvent_Push(11, target_id);                              \
+                BattleEvent_Push(0, target_id);                               \
+                BattleEvent_Push(4, 0xcab);                                   \
                 goto done;                                                    \
             }                                                                 \
-        } else if (state == 0xdd && *cmd == 1                                 \
-                   && ((u32)(actor_id ^ target_id) >> 7) != 0) {              \
-            BattleEvent_Push(11, target_id);                                  \
-            BattleEvent_Push(0, target_id);                                   \
-            BattleEvent_Push(4, 0xcb5);                                       \
-            goto done;                                                        \
-        }                                                                     \
-        if (target->guard_level == 4                                          \
-            && ((u32)(actor_id ^ target_id) >> 7) != 0) {                     \
-            BattleEvent_Push(11, target_id);                                  \
-            BattleEvent_Push(0, target_id);                                   \
-            BattleEvent_Push(4, 0xcab);                                       \
-            goto done;                                                        \
         }                                                                     \
     }
 
@@ -185,40 +301,44 @@
             || action->effect == 0x57) {                                     \
             s32 st;                                                          \
             s32 rec;                                                         \
-            s32 ch;                                                          \
+            s32 state_save;                                                  \
             s32 cursor;                                                      \
+            s32 msg;                                                         \
+            u8 efx;                                                          \
                                                                              \
-            st = *(u16 *)((u8 *)actor + 0x14a);                              \
+            state_save = (s32)((u8 *)actor + 0x14a);                         \
+            st = *(u16 *)state_save;                                         \
             rec = Summon_FindSlot();                                         \
-            ch = -1;                                                         \
-            switch (action->effect) {                                        \
-            case EFX_STANDBY_WORK:                                           \
+            affi = -1;                                                       \
+            efx = action->effect;                                            \
+            if (efx == EFX_STANDBY_WORK) {                                   \
                 st = Summon_ClassId(*(s32 *)work);                            \
-                break;                                                       \
-            case 0x56:                                                       \
-                if (*(u16 *)((u8 *)actor + 0x14a) == 0xa4)                   \
+            } else if (efx == 0x56) {                                        \
+                if (*(u16 *)state_save == 0xa4)                              \
                     st = (BattleRandom_Next() & 3) + 0x17a;                  \
                 else                                                         \
                     st = 0x51;                                               \
-                break;                                                       \
-            case 0x57:                                                       \
+            } else if (efx == 0x57) {                                        \
                 if (((s8 *)work)[0x56b] != 0) {                              \
                     s32 qi;                                                  \
                                                                              \
                     qi = ((s8 *)work)[0x56a];                                \
                     st = *(u16 *)((u8 *)work + 0x564 + qi * 2);              \
-                    ch = ((u8 *)work)[0x568 + qi];                            \
+                    affi = ((u8 *)work)[0x568 + qi];                          \
                 } else                                                       \
                     hit = 0;                                                 \
-                break;                                                       \
             }                                                                \
+            if ((u32)st > 0xffff)                                            \
+                hit = 0;                                                     \
+            if ((u32)(rec + 1) > 0x100)                                     \
+                hit = 0;                                                     \
             if (hit != 0 && Summon_ClassValid(st) != 0 && rec >= 0) {        \
-                if (ch == -1) {                                              \
-                    ch = Summon_TakeCharge(st, 1);                            \
-                    if (ch & 0x8000)                                         \
+                if (affi == -1) {                                            \
+                    affi = Summon_TakeCharge(st, 1);                          \
+                    if (affi & 0x8000)                                       \
                         Summon_ResetCharge(st);                               \
                 }                                                            \
-                BattleUnit_Assign(rec, st, ch & 0x7fff);                     \
+                BattleUnit_Assign(rec, st, affi & 0x7fff);                   \
                 if (action->effect == 0x57) {                                \
                     s32 qi;                                                  \
                                                                              \
@@ -230,35 +350,30 @@
                 if (*(u16 *)((u8 *)actor + 0x14a) == 0xa4) {                 \
                     Func_081203c8((u8 *)work + 0x66, rec);                    \
                 } else {                                                     \
-                    s16 *slots;                                              \
-                                                                             \
-                    slots = (s16 *)((u8 *)work + 2);                          \
+                    affi = (s32)((u8 *)work + 2);                            \
                     {                                                        \
                         s32 off;                                             \
                         s32 i;                                               \
                         s32 j;                                               \
-                        s32 jsave;                                           \
                                                                              \
                         off = 100;                                           \
                         i = 0;                                               \
-                        jsave = 0;                                           \
-                        if (*(s16 *)(BytePtr(slots) + off) == 254) {         \
-                            *(s16 *)(BytePtr(slots) + off) = rec;            \
+                        state_save = 0;                                      \
+                        if (*(s16 *)((u8 *)affi + off) == 254) {             \
+                            *(s16 *)((u8 *)affi + off) = rec;                \
                         } else {                                             \
                             s32 woff;                                        \
                             s32 next;                                        \
-                            u8 *base;                                        \
                                                                              \
                             j = 0;                                           \
                             woff = 100;                                      \
                             for (;;) {                                       \
-                                base = (u8 *)slots;                          \
                                 cursor = j + 100;                            \
-                                n = *(s16 *)(cursor + (s32)base);            \
+                                n = *(s16 *)(cursor + affi);                 \
                                 if (n == 255) {                              \
-                                    *(s16 *)((s32)base + cursor) = rec;      \
-                                    next = jsave + 102;                      \
-                                    *(s16 *)(base + next) = n;              \
+                                    *(s16 *)(affi + cursor) = rec;           \
+                                    next = state_save + 102;                 \
+                                    *(s16 *)(affi + next) = n;               \
                                     break;                                   \
                                 }                                            \
                                 i++;                                         \
@@ -266,10 +381,10 @@
                                 j = next;                                    \
                                 if (i > 5)                                   \
                                     break;                                   \
-                                jsave = next;                                \
+                                state_save = next;                           \
                                 woff = next + 100;                           \
-                                if (*(s16 *)(woff + (s32)base) == 254) {    \
-                                    *(s16 *)(woff + (s32)base) = rec;        \
+                                if (*(s16 *)(woff + affi) == 254) {         \
+                                    *(s16 *)(woff + affi) = rec;             \
                                     break;                                   \
                                 }                                            \
                             }                                                \
@@ -309,26 +424,27 @@
                     }                                                        \
                 }                                                            \
                 BattleEvent_Push(BATTLE_EVENT_UNIT, rec);                    \
-                if (action->effect == 0x57)                                  \
-                    BattleEvent_Push(BATTLE_EVENT_TEXT, 0xd64);              \
-                else if (action_id != 0x1f7)                                 \
+                if (action->effect == 0x57) {                                \
+                    msg = 0xd64;                                              \
+                    goto gs2_summon_msg;                                      \
+                } else if (action_id != 0x1f7) {                             \
                     BattleEvent_Push(BATTLE_EVENT_TEXT, 0xd56);              \
-                else                                                         \
+                } else {                                                     \
                     BattleEvent_Push(BATTLE_EVENT_TEXT, 0xd54);              \
+                }                                                            \
             } else if (action_id == 0x1f7) {                                 \
-                BattleEvent_Push(BATTLE_EVENT_TEXT, 0xd55);                  \
+                msg = 0xd55;                                                  \
+            gs2_summon_msg:                                                   \
+                BattleEvent_Push(BATTLE_EVENT_TEXT, msg);                    \
             } else {                                                         \
                 BattleEvent_Push(BATTLE_EVENT_TEXT, 0xd57);                  \
             }                                                                \
-        }                                                                    \
+        }                                                                     \
     }
 
 #define BATTLE_HIT_PREP()
 #define BATTLE_HIT_EFFECTS()                                                \
-    switch (efx) {                                                         \
-    case EFX_IMMOBILIZE:                                                   \
-    case 0x53:                                                             \
-    {                                                                      \
+    if (action->effect == EFX_IMMOBILIZE || action->effect == 0x53) {      \
         s32 hidx;                                                          \
                                                                            \
         hit = 0;                                                           \
@@ -349,31 +465,24 @@
                     goto gs2_scan_next;                                   \
             }                                                             \
         }                                                                 \
-        break;                                                            \
-    }                                                                     \
-    case EFX_HALF_DEF:                                                    \
+    } else if (action->effect == EFX_HALF_DEF) {                           \
         half = 1;                                                         \
-        break;                                                            \
-    case EFX_LETHAL:                                                      \
+    } else if (action->effect == EFX_LETHAL) {                             \
         crush = 1;                                                        \
-        break;                                                            \
-    case EFX_INSTANT_DOWN:                                                \
+    } else if (action->effect == EFX_INSTANT_DOWN) {                       \
         skip = 1;                                                         \
-        break;                                                            \
-    case EFX_ACTOR_FLASH:                                                 \
+    } else if (action->effect == EFX_ACTOR_FLASH) {                        \
         if (actor->hp != 0)                                               \
             BattleEvent_Push(BATTLE_EVENT_ACTOR_EFFECT, actor_id);        \
-        break;                                                            \
-    case EFX_DRAIN_PP:                                                    \
+    } else if (action->effect == EFX_DRAIN_PP) {                           \
         if (target->pp != 0)                                              \
             nibble = 10;                                                  \
         else                                                              \
             hit = 0;                                                     \
-        break;                                                            \
-    case 0x5a:                                                            \
-    case 0x5b:                                                            \
+    } else if (action->effect == 0x5a) {                                   \
         half = 2;                                                         \
-        break;                                                            \
+    } else if (action->effect == 0x5b) {                                   \
+        half = 2;                                                         \
     }
 
 #define BATTLE_BEFORE_EFFECTS()                                            \

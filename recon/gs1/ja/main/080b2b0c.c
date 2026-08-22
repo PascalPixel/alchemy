@@ -54,6 +54,10 @@ struct AffinityPair {
 #define BATTLE_DAMAGE_BLOCKED() 0
 #endif
 
+#ifndef BATTLE_DAMAGE_GATE
+#define BATTLE_DAMAGE_GATE() 1
+#endif
+
 #ifndef BATTLE_POWER_BONUS
 #define BATTLE_POWER_BONUS(dmg)                                              \
     if (*cmd == 6) {                                                        \
@@ -101,6 +105,23 @@ struct AffinityPair {
 #define BATTLE_PLAN_RESULT(plan, slot) ((plan)->target_results[(slot)])
 #define BATTLE_PLAN_COMMAND(plan) ((plan)->command)
 #define BATTLE_PLAN_PENDING(plan) ((plan)->pending_amount_60)
+#endif
+
+#ifndef BATTLE_PLAN_LOADS
+#define BATTLE_PLAN_LOADS()                                                  \
+    {                                                                        \
+        actor_id = BATTLE_PLAN_ACTOR_ID(plan, action_id);                    \
+        target_id = BATTLE_PLAN_TARGET_ID(plan, slot);                       \
+        action_id = plan->action_id;                                         \
+        range = plan->range_index;                                           \
+        adjust = BATTLE_PLAN_ADJUST(plan, slot);                             \
+        modifier = BATTLE_PLAN_MODIFIER(plan, slot);                         \
+    }
+#endif
+
+#ifndef BATTLE_CURE_SLEEP_ALL
+#define BATTLE_CURE_SLEEP_ALL() (target->sleep = 0)
+#define BATTLE_CURE_SLEEP_PART() (target->sleep = 0)
 #endif
 
 #ifndef BATTLE_AFTER_COPY
@@ -170,9 +191,17 @@ struct AffinityPair {
     }
 #endif
 
+#ifndef BATTLE_GUARD_VALUE
+#define BATTLE_GUARD_VALUE(target) S8OF((target)->guard_level)
+#endif
+
+#ifndef BATTLE_EVIL_SPIRIT_ACTIVE
+#define BATTLE_EVIL_SPIRIT_ACTIVE() (actor->evil_spirit != 0)
+#endif
+
 #define APPLY_GUARD()                                                         \
     {                                                                         \
-        guard = S8OF(target->guard_level);                                    \
+        guard = BATTLE_GUARD_VALUE(target);                                   \
         BATTLE_GUARD_DAMAGE();                                                \
     }
 
@@ -334,13 +363,26 @@ s32 BATTLE_RESOLVE_OWNER(struct BattlePlan *plan, s32 slot)
      * skip=28 nibble=24 affinity=20 copy=16 power=12 (temp)=8 cmd=4
      * target=r7 target_id=sl range=r9 saved=84..
      */
+#ifndef BATTLE_OFFSET_LATE
     s32 offset;
+#endif
     struct BattleAction *action;
+#ifdef BATTLE_ACTION_ID_EARLY
+    s32 action_id;
+#endif
     struct BattleUnit *actor;
     s32 actor_id;
+#ifdef BATTLE_RANGE_EARLY
+    s32 range;
+#endif
+#ifndef BATTLE_ACTION_ID_EARLY
     s32 action_id;
+#endif
     s32 bonus;
     void *work;
+#ifdef BATTLE_OFFSET_LATE
+    s32 offset;
+#endif
     s32 half;
     s32 adjust;
     s32 dealt;
@@ -356,12 +398,21 @@ s32 BATTLE_RESOLVE_OWNER(struct BattlePlan *plan, s32 slot)
     s16 hp0;
     s32 kind;
     s16 *cmd;
+#ifdef BATTLE_NARROW_TARGET_ID
+    u8 target_id;
+#else
     s32 target_id;
+#endif
     s8 *rm;
+#ifndef BATTLE_RANGE_EARLY
     s32 range;
+#endif
     struct BattleUnit *target;
     s32 n;
     s32 value;
+#ifdef BATTLE_AFFINITY_CARRIER
+    s32 affi;
+#endif
     s32 dmg;
     s32 pass;
     s32 scale;
@@ -371,7 +422,6 @@ s32 BATTLE_RESOLVE_OWNER(struct BattlePlan *plan, s32 slot)
     s32 count;
     s32 tmp;
     s32 size;
-
     bonus = 0;
     work = BATTLE_WORK;
     half = 0;
@@ -382,12 +432,7 @@ s32 BATTLE_RESOLVE_OWNER(struct BattlePlan *plan, s32 slot)
     size = sizeof(struct BattleUnit);
     copy = (struct BattleUnit *)Sys_Alloc(size);
 
-    actor_id = BATTLE_PLAN_ACTOR_ID(plan, action_id);
-    target_id = BATTLE_PLAN_TARGET_ID(plan, slot);
-    action_id = plan->action_id;
-    range = plan->range_index;
-    adjust = BATTLE_PLAN_ADJUST(plan, slot);
-    modifier = BATTLE_PLAN_MODIFIER(plan, slot);
+    BATTLE_PLAN_LOADS();
 
     action = BattleAction_Get(action_id);
     actor = BattleUnit_Get(actor_id);
@@ -406,7 +451,11 @@ s32 BATTLE_RESOLVE_OWNER(struct BattlePlan *plan, s32 slot)
     /* 属性相性。テーブルを二方向に走査して符号を決める。 */
     if (range != 4) {
         s16 *tbl;
+#ifndef BATTLE_AFFINITY_CARRIER
         s32 i;
+#else
+#define i affi
+#endif
 
         value = ELEM_AT(target, range);
         tbl = (s16 *)((u8 *)target + 36);
@@ -440,6 +489,9 @@ s32 BATTLE_RESOLVE_OWNER(struct BattlePlan *plan, s32 slot)
         }
         if (i == 4)
             affinity = 1;
+#ifdef BATTLE_AFFINITY_CARRIER
+#undef i
+#endif
     }
 
     /* 攻撃力。元素武器でなければ 100。 */
@@ -603,7 +655,7 @@ after_power:
     }
 
     /* ダメージ種別。HP が残っているか、分類が非ゼロなら種別スイッチへ。 */
-    if (skip == 0
+    if (BATTLE_DAMAGE_GATE() && skip == 0
         && (target->hp != 0 || BattleEffect_Classify(action->effect) != 0)) {
         s32 pp;
         s32 cur;
@@ -991,7 +1043,7 @@ dealt = target->hp - cur;
             BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
             BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_CURE_STUN);
         }
-        target->sleep = 0;
+        BATTLE_CURE_SLEEP_ALL();
         if (target->psy_seal != 0) {
             target->psy_seal = 0;
             BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_CURE_SEAL);
@@ -1027,7 +1079,7 @@ dealt = target->hp - cur;
             BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
             BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_CURE_STUN);
         }
-        target->sleep = 0;
+        BATTLE_CURE_SLEEP_PART();
         if (target->psy_seal != 0) {
             target->psy_seal = 0;
             BattleEvent_Push(BATTLE_EVENT_RESET, 0);
@@ -1510,7 +1562,8 @@ done:
     Sys_SetMode(((u8 *)BATTLE_WORK)[65]);
     if (target->hp != 0)
         BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
-    if (actor->evil_spirit != 0 && (BattleRandom_Next() & 3) == 0 && dealt > 0) {
+    if (BATTLE_EVIL_SPIRIT_ACTIVE()
+        && (BattleRandom_Next() & 3) == 0 && dealt > 0) {
         s32 share;
 
         share = dealt >> 2;

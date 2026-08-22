@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "product": "alchemy",
+  "kind": "integration",
+  "inputs": [
+    "gs1",
+    "gs2"
+  ],
+  "reference_rom": null,
+  "policy": {
+    "byte_exact": false,
+    "preserve_reference_builds": true,
+    "source_reuse_requires_proved_correspondence": true,
+    "integration_changes_live_in_this_product": true
+  }
+}

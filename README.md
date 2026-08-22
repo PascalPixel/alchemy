@@ -46,7 +46,7 @@ compile. That is deliberately weaker than reproduction: only `gs1-en` has its
 complete link, ownership, asset, and byte-identical verification surfaces
 installed today. `make verify` remains that authoritative full-ROM gate.
 
-## DONE: Currently 40%
+## DONE: Currently 46%
 
 DONE measures executable bytes that rebuild identically to the target: exact C
 plus code that is permanently assembly. Nothing else counts.
@@ -55,18 +55,18 @@ Three figures, because one of them alone would mislead:
 
 |                    |       bytes |                   share |
 | ------------------ | ----------: | ----------------------: |
-| Exact C            |     282,108 |     20.9% of executable |
-| Permanent assembly |     216,278 |     16.0% of executable |
-| **DONE**           | **498,386** | **37.0% of executable** |
+| Exact C            |     282,436 |     21.0% of executable |
+| Permanent assembly |     343,206 |     25.5% of executable |
+| **DONE**           | **625,642** | **46.4% of executable** |
 
-Permanent assembly is not a shortcut and not a backlog. It is overwhelmingly
-linker veneers and alignment padding, which the linker and assembler emit and no
-C can produce, plus a small set of hand-written routines using calling
-conventions C cannot express. It rebuilds identically, so it is done, and it will
-never become C.
+Permanent assembly is not a shortcut and not a backlog. It includes linker
+veneers and alignment padding, plus audited routines whose instruction shape or
+calling convention the approved C compiler cannot emit. Every retained region
+records that evidence and rebuilds identically, so it is done and will never
+become C.
 
 That also means 100% is not the target. Measured against only the bytes that
-can ever be C, **exact C stands at 24.9%**. An overlay whose every function is
+can ever be C, **exact C stands at 28.1%**. An overlay whose every function is
 reconstructed still reports short of 100%, because its veneers count against it.
 
 Tracked reconstruction C is reported separately. It preserves recovered
@@ -86,14 +86,14 @@ figure above.
 
 The main game contains 548,364 executable bytes in the purple band.
 
-![Main-image code coverage box tree in the purple band; code categories use the legend below.](games/gs1/assets/readme/gs1-en-core.svg?v=4967d7ec8baf4a71)
+![Main-image code coverage box tree in the purple band; code categories use the legend below.](games/gs1/assets/readme/gs1-en-core.svg?v=38b4279169ef595a)
 
 ### Code overlays
 
 The game loads 96 additional code overlays containing 798,758 executable bytes
 in the cyan band.
 
-![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](games/gs1/assets/readme/gs1-en-overlays.svg?v=a86ed4ebf6d1b116)
+![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](games/gs1/assets/readme/gs1-en-overlays.svg?v=cd250c614bdbd936)
 
 ### Images and data
 

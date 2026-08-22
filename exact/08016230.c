@@ -29,6 +29,7 @@
  */
 #include "types.h"
 #include "global_cells.h"
+#include "gs1_edition.h"
 
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
@@ -72,5 +73,5 @@ void Func_08016230(void *arg0) {
     } else {
         Func_080170f8(temp_r5, temp_r6, temp_r7, temp_r8);
     }
-    M2C_FIELD(temp_sl, s8 *, 0xEA3) = 1;
+    M2C_FIELD(temp_sl, s8 *, RENDER_DIRTY_OFS) = 1;
 }

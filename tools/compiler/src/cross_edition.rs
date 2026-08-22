@@ -1,3 +1,7 @@
+use candidate_compiler::verify::{
+    compile_to_assembly, CandidateCompilerConfiguration, CandidateCompilerFamily,
+};
+use compiler_core::routing::CompilerTarget;
 use objdiff_core::{
     diff::{ArmArchVersion, DiffObjConfig, DiffSide},
     obj,
@@ -163,6 +167,7 @@ struct TargetAddress {
     address: String,
 }
 
+#[derive(Clone)]
 struct RelocationSite {
     offset: usize,
     size: usize,
@@ -199,6 +204,8 @@ struct EditionBuildReport {
     object: String,
     owner_symbol: String,
     size: usize,
+    #[serde(skip_serializing_if = "is_false")]
+    edition_variant: bool,
     all_exact: bool,
     editions: Vec<EditionBuildEntry>,
 }
@@ -237,6 +244,8 @@ struct CorpusEditionBuildOwner {
     en_owner: String,
     source: String,
     size: usize,
+    #[serde(skip_serializing_if = "is_false")]
+    edition_variant: bool,
     all_exact: bool,
     editions: Vec<CorpusEditionBuildEntry>,
 }
@@ -268,6 +277,10 @@ struct EditionBuildFailure {
     en_owner: String,
     source: String,
     error: String,
+}
+
+fn is_false(value: &bool) -> bool {
+    !*value
 }
 
 struct EditionRoms {
@@ -485,6 +498,66 @@ fn write_edition_build(
     Ok(build)
 }
 
+fn source_uses_edition_variant(source: &Path) -> Result<bool, String> {
+    let text =
+        fs::read_to_string(source).map_err(|error| format!("{}: {error}", source.display()))?;
+    Ok(source_text_uses_edition_variant(&text))
+}
+
+fn source_text_uses_edition_variant(text: &str) -> bool {
+    text.contains("#include \"gs1_edition.h\"")
+}
+
+fn compile_edition_object(owner: &str, edition: &str, source: &Path) -> Result<PathBuf, String> {
+    let output = PathBuf::from("out")
+        .join("cross-edition")
+        .join(owner)
+        .join("compiled")
+        .join(edition);
+    fs::create_dir_all(&output).map_err(|error| format!("{}: {error}", output.display()))?;
+    let wrapper = output.join("source.c");
+    let source =
+        fs::canonicalize(source).map_err(|error| format!("{}: {error}", source.display()))?;
+    let include = source
+        .to_string_lossy()
+        .replace('\\', "\\\\")
+        .replace('"', "\\\"");
+    fs::write(
+        &wrapper,
+        format!(
+            "#define GS1_EDITION_{} 1\n#include \"{}\"\n",
+            edition.to_ascii_uppercase(),
+            include
+        ),
+    )
+    .map_err(|error| format!("{}: {error}", wrapper.display()))?;
+
+    let wrapper_text = wrapper.to_string_lossy().into_owned();
+    let routing_text = source.to_string_lossy().into_owned();
+    let output_text = output.to_string_lossy().into_owned();
+    let configuration = CandidateCompilerConfiguration {
+        family: Some(CandidateCompilerFamily::Routed),
+        ..Default::default()
+    };
+    let assembly = compile_to_assembly(
+        &wrapper_text,
+        &routing_text,
+        &output_text,
+        &[],
+        CompilerTarget::Gs1,
+        &configuration,
+    )?;
+    let object = output.join("owner.o");
+    run_tool(
+        Command::new("arm-none-eabi-as")
+            .args(["-mcpu=arm7tdmi", "-mthumb-interwork", "-o"])
+            .arg(&object)
+            .arg(&assembly),
+        "assemble edition source",
+    )?;
+    Ok(object)
+}
+
 fn edition_build_report(
     owner: &str,
     object_path: &Path,
@@ -505,6 +578,8 @@ fn edition_build_report(
         .join("linked");
     fs::create_dir_all(&output_root)
         .map_err(|error| format!("{}: {error}", output_root.display()))?;
+    let source_path = PathBuf::from("exact").join(format!("{owner}.c"));
+    let edition_variant = source_uses_edition_variant(&source_path)?;
 
     let mut editions = Vec::with_capacity(EDITIONS.len());
     for edition in EDITIONS {
@@ -512,19 +587,35 @@ fn edition_build_report(
         let reference = roms.images[edition]
             .get(start..start + size)
             .ok_or_else(|| format!("{edition}: owner extends past ROM"))?;
-        let built = derive_external_symbols(&relocations, reference, start).and_then(|values| {
-            link_owner_for_edition(
-                &output_root,
-                edition,
-                object_path,
-                &owner_symbol,
-                ROM_BASE + start as u64,
-                symbol_offset,
-                size,
-                &values,
-            )
-            .map(|linked| (values, linked))
-        });
+        let variant_object = if edition_variant {
+            compile_edition_object(owner, edition, &source_path)?
+        } else {
+            object_path.to_path_buf()
+        };
+        let (variant_size, variant_symbol_offset, _, variant_relocations) = if edition_variant {
+            relocation_mask(&variant_object, owner)?
+        } else {
+            (size, symbol_offset, Vec::new(), relocations.clone())
+        };
+        if variant_size != size {
+            return Err(format!(
+                "{edition}: edition variant size {variant_size} differs from located owner size {size}"
+            ));
+        }
+        let built =
+            derive_external_symbols(&variant_relocations, reference, start).and_then(|values| {
+                link_owner_for_edition(
+                    &output_root,
+                    edition,
+                    &variant_object,
+                    &owner_symbol,
+                    ROM_BASE + start as u64,
+                    variant_symbol_offset,
+                    size,
+                    &values,
+                )
+                .map(|linked| (values, linked))
+            });
         match built {
             Ok((values, linked)) => {
                 let differing_bytes = reference
@@ -564,6 +655,7 @@ fn edition_build_report(
         object: object_path.display().to_string(),
         owner_symbol,
         size,
+        edition_variant,
         all_exact: editions.iter().all(|edition| edition.byte_exact),
         editions,
     };
@@ -665,6 +757,7 @@ fn write_corpus_edition_build(
             en_owner: owner.owner_symbol.trim_start_matches("Func_").into(),
             source: owner.source,
             size: owner.size,
+            edition_variant: owner.edition_variant,
             all_exact: owner.all_exact,
             editions: owner
                 .editions
@@ -683,7 +776,7 @@ fn write_corpus_edition_build(
         schema_version: 1,
         game: "gs1",
         source_edition: "en",
-        source_state: "byte-exact C objects relinked per edition",
+        source_state: "byte-exact C compiled or relinked per edition",
         owners_total,
         owner_symbol_bytes,
         located_owners: reports.len(),
@@ -2393,6 +2486,14 @@ mod tests {
         .expect("corpus edition build options");
         assert!(options.all);
         assert_eq!(options.edition_build, Some("out/builds.json".into()));
+    }
+
+    #[test]
+    fn detects_explicit_edition_variant_sources() {
+        assert!(source_text_uses_edition_variant(
+            "#include \"types.h\"\n#include \"gs1_edition.h\"\n"
+        ));
+        assert!(!source_text_uses_edition_variant("#include \"types.h\"\n"));
     }
 
     #[test]

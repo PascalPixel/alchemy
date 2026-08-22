@@ -9,6 +9,7 @@ struct Triple08099070 {
 struct Particle_08099160;
 
 void Func_0800447c(s32, s32, struct Triple08099070 *);
+void Func_08099040(void *object);
 
 void Func_08099070(struct Particle_08099160 *particle)
 {
@@ -32,7 +33,7 @@ void Func_08099070(struct Particle_08099160 *particle)
             *(s32 *)(arg + 12) = local.y;
             *(s32 *)(arg + 16) = local.z;
         } else {
-            *(s32 *)(arg + 108) = 0x08099041;
+            *(s32 *)(arg + 108) = (s32)Func_08099040;
         }
     }
 }

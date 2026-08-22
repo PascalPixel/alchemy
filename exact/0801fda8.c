@@ -1,4 +1,5 @@
 #include "types.h"
+#include "gs1_edition.h"
 #include "global_cells.h"
 
 void Func_0801fda8(u8 *object, s32 x, s32 y, s32 width, s32 height) {
@@ -40,6 +41,6 @@ void Func_0801fda8(u8 *object, s32 x, s32 y, s32 width, s32 height) {
             height--;
             offset += 64;
         } while (height != 0);
-        ((u8 *)map)[0xEA3] = 1;
+        ((u8 *)map)[RENDER_DIRTY_OFS] = 1;
     }
 }

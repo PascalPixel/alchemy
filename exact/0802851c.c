@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 void Func_08004278(void *);
@@ -13,7 +14,7 @@ void Func_0802851c(void) {
     u16 *entry;
     void *work;
 
-    work = *(void **)0x03001F38;
+    work = *(void **)ADDR_03001F38;
     Func_08004278((void *)0x08028195);
     childWork = M2C_FIELD(work, struct Work *, 0x78);
     if (childWork != 0) {

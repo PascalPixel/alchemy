@@ -1,7 +1,8 @@
 #include "types.h"
+#include "gs1_edition.h"
 
 struct State_08019908 {
-    u8 filler0[0x12bc];
+    u8 filler0[RENDER_VALUE_TBL_OFS];
     u32 values[8];
     u16 flags[8];
 };

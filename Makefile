@@ -98,6 +98,7 @@ check-owners:
 
 corpus-check:
 	@test -f recon/gs1/project.json
+	@test -f recon/gs2/project.json
 	@if test -d draft; then \
 		printf 'legacy draft/ directory found; use recon/gs1/<edition>/\n'; \
 		exit 1; \
@@ -106,7 +107,7 @@ corpus-check:
 		printf 'source hypotheses belong in recon/, not semantic/ metadata\n'; \
 		exit 1; \
 	fi
-	@printf 'corpus ok: JA base, edition-qualified candidates, exact ownership separate\n'
+	@printf 'corpus ok: GS1/GS2 JA bases, edition-qualified candidates, exact ownership separate\n'
 
 build-tools:
 	@set -e; for host in $(HOSTS); do \

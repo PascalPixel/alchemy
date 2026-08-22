@@ -159,48 +159,101 @@ pub struct Placed {
     pub rect: Rect,
 }
 
-/// Deterministic slice-and-dice treemap. Both tools use this same geometry so
-/// byte accounting and rendered ownership have one model.
+/// Deterministic, order-preserving binary treemap. Each partition is split
+/// across its longest edge near half of its total weight, producing readable
+/// two-dimensional blocks without changing proportional byte accounting.
 pub fn treemap<T, F: Fn(&T) -> i64>(items: &[T], weight: F, frame: Rect) -> Vec<Placed> {
-    let total: i64 = items.iter().map(&weight).sum();
-    if total <= 0 {
-        return Vec::new();
-    }
-    let horizontal = frame.width >= frame.height;
-    let mut cursor = if horizontal { frame.x } else { frame.y };
-    let mut out = Vec::with_capacity(items.len());
-    for (index, item) in items.iter().enumerate() {
-        let share = weight(item).max(0) as f64 / total as f64;
-        let rect = if horizontal {
-            let width = if index + 1 == items.len() {
-                frame.x + frame.width - cursor
-            } else {
-                frame.width * share
-            };
-            let rect = Rect {
-                x: cursor,
-                y: frame.y,
-                width,
-                height: frame.height,
-            };
-            cursor += width;
-            rect
+    fn place(weighted: &[(usize, i64)], frame: Rect, out: &mut Vec<Placed>) {
+        if weighted.is_empty() {
+            return;
+        }
+        if weighted.len() == 1 {
+            out.push(Placed {
+                index: weighted[0].0,
+                rect: frame,
+            });
+            return;
+        }
+
+        let total: i64 = weighted.iter().map(|(_, n)| *n).sum();
+        let mut first = weighted[0].1;
+        let mut split = 1;
+        while split + 1 < weighted.len() && (first + weighted[split].1) * 2 <= total {
+            first += weighted[split].1;
+            split += 1;
+        }
+        let share = first as f64 / total as f64;
+        let (a, b) = if frame.width >= frame.height {
+            let width = frame.width * share;
+            (
+                Rect { width, ..frame },
+                Rect {
+                    x: frame.x + width,
+                    width: frame.width - width,
+                    ..frame
+                },
+            )
         } else {
-            let height = if index + 1 == items.len() {
-                frame.y + frame.height - cursor
-            } else {
-                frame.height * share
-            };
-            let rect = Rect {
-                x: frame.x,
-                y: cursor,
-                width: frame.width,
-                height,
-            };
-            cursor += height;
-            rect
+            let height = frame.height * share;
+            (
+                Rect { height, ..frame },
+                Rect {
+                    y: frame.y + height,
+                    height: frame.height - height,
+                    ..frame
+                },
+            )
         };
-        out.push(Placed { index, rect });
+        place(&weighted[..split], a, out);
+        place(&weighted[split..], b, out);
     }
+
+    let weighted: Vec<_> = items
+        .iter()
+        .enumerate()
+        .filter_map(|(index, item)| {
+            let n = weight(item);
+            (n > 0).then_some((index, n))
+        })
+        .collect();
+    let mut out = Vec::with_capacity(weighted.len());
+    place(&weighted, frame, &mut out);
+    out.sort_by_key(|placed| placed.index);
     out
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{treemap, Rect};
+
+    #[test]
+    fn treemap_uses_both_dimensions_and_preserves_area() {
+        let frame = Rect {
+            x: 3.0,
+            y: 7.0,
+            width: 120.0,
+            height: 80.0,
+        };
+        let placed = treemap(&[1, 1, 1, 1], |n| *n, frame);
+        assert_eq!(placed.len(), 4);
+        assert!(placed.iter().any(|p| p.rect.width < frame.width));
+        assert!(placed.iter().any(|p| p.rect.height < frame.height));
+        let area: f64 = placed.iter().map(|p| p.rect.width * p.rect.height).sum();
+        assert!((area - frame.width * frame.height).abs() < 0.001);
+    }
+
+    #[test]
+    fn treemap_ignores_non_positive_weights_and_keeps_indexes() {
+        let placed = treemap(
+            &[4, 0, -2, 6],
+            |n| *n,
+            Rect {
+                x: 0.0,
+                y: 0.0,
+                width: 100.0,
+                height: 50.0,
+            },
+        );
+        assert_eq!(placed.iter().map(|p| p.index).collect::<Vec<_>>(), [0, 3]);
+    }
 }

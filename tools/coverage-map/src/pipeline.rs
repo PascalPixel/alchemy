@@ -411,6 +411,72 @@ fn permanent_overlay(inventory: &[Region]) -> Vec<Span> {
     )
 }
 
+fn permanent_overlay_evidence(
+    tree: &SourceTree,
+    executable: &std::collections::BTreeMap<String, Vec<Span>>,
+) -> Result<std::collections::BTreeMap<String, Vec<Span>>, String> {
+    let Some(source) = tree.read("games/gs1/semantic/overlay-assembly.json") else {
+        return Ok(std::collections::BTreeMap::new());
+    };
+    let document: Value = serde_json::from_str(&source)
+        .map_err(|error| format!("games/gs1/semantic/overlay-assembly.json: {error}"))?;
+    permanent_overlay_evidence_document(&document, executable)
+}
+
+fn permanent_overlay_evidence_document(
+    document: &Value,
+    executable: &std::collections::BTreeMap<String, Vec<Span>>,
+) -> Result<std::collections::BTreeMap<String, Vec<Span>>, String> {
+    if integer(document, "format") != Some(1) {
+        return Err("overlay assembly evidence has unsupported format".into());
+    }
+    let mut out: std::collections::BTreeMap<String, Vec<Span>> = std::collections::BTreeMap::new();
+    for (index, row) in array(&document, "regions").iter().enumerate() {
+        let overlay = text(row, "overlay");
+        let start = integer(row, "start")
+            .or_else(|| hex(&text(row, "start")))
+            .ok_or_else(|| format!("overlay assembly region {index} has no start"))?;
+        let end = integer(row, "end")
+            .or_else(|| hex(&text(row, "end")))
+            .ok_or_else(|| format!("overlay assembly region {index} has no end"))?;
+        let span = Span::new(start, end);
+        let evidence = array(row, "evidence");
+        if overlay.is_empty()
+            || text(row, "kind").is_empty()
+            || text(row, "retention") != "keep_structured_asm"
+            || text(row, "confidence") != "proven"
+            || evidence.is_empty()
+            || evidence
+                .iter()
+                .any(|item| !matches!(item.as_str(), Some(text) if !text.trim().is_empty()))
+            || span.end <= span.start
+        {
+            return Err(format!(
+                "overlay assembly region {index} lacks proven retention evidence"
+            ));
+        }
+        let Some(exec) = executable.get(&overlay) else {
+            return Err(format!(
+                "overlay assembly region {index} names unknown overlay {overlay}"
+            ));
+        };
+        if bytes(&intersect(&[span], exec)) != span.bytes() {
+            return Err(format!(
+                "overlay assembly region {index} lies outside audited executable bytes"
+            ));
+        }
+        out.entry(overlay).or_default().push(span);
+    }
+    for spans in out.values_mut() {
+        let raw = bytes(spans);
+        *spans = normalize(spans);
+        if bytes(spans) != raw {
+            return Err("overlay assembly evidence contains overlapping regions".into());
+        }
+    }
+    Ok(out)
+}
+
 fn partition(executable: &[Span], cuts: &[i64]) -> Vec<Span> {
     let mut out = Vec::new();
     for run in normalize(executable) {
@@ -815,9 +881,19 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
     let pairs = overlay_ids(options.exact);
     let (owners, exact_overlay) = exact_overlay(options.exact, &pairs, &overlay_exec);
     let retained_main = permanent_main(options.exact);
+    let explicit_retained_overlay = permanent_overlay_evidence(options.exact, &overlay_exec)?;
     let retained_overlay: std::collections::BTreeMap<_, _> = overlay_regions
         .iter()
-        .map(|(id, regions)| (id.clone(), permanent_overlay(regions)))
+        .map(|(id, regions)| {
+            let mut spans = permanent_overlay(regions);
+            spans.extend(
+                explicit_retained_overlay
+                    .get(id)
+                    .cloned()
+                    .unwrap_or_default(),
+            );
+            (id.clone(), normalize(&spans))
+        })
         .collect();
     let (candidate_main, candidate_main_sources) = options
         .recon
@@ -1089,4 +1165,70 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
         rom_areas,
         executable_areas,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+    use std::collections::BTreeMap;
+
+    fn evidence(regions: Value) -> Value {
+        json!({"format": 1, "regions": regions})
+    }
+
+    fn region(start: &str, end: &str) -> Value {
+        json!({
+            "overlay": "resource_test",
+            "start": start,
+            "end": end,
+            "kind": "compiler_ordering_module",
+            "retention": "keep_structured_asm",
+            "confidence": "proven",
+            "evidence": ["approved compiler probe"]
+        })
+    }
+
+    fn executable() -> BTreeMap<String, Vec<Span>> {
+        BTreeMap::from([(
+            "resource_test".into(),
+            vec![Span::new(0x0200_0100, 0x0200_0200)],
+        )])
+    }
+
+    #[test]
+    fn accepts_proven_overlay_assembly_inside_inventory() {
+        let found = permanent_overlay_evidence_document(
+            &evidence(json!([region("0x02000120", "0x02000140")])),
+            &executable(),
+        )
+        .unwrap();
+        assert_eq!(
+            found["resource_test"],
+            vec![Span::new(0x0200_0120, 0x0200_0140)]
+        );
+    }
+
+    #[test]
+    fn rejects_overlay_assembly_outside_inventory() {
+        let error = permanent_overlay_evidence_document(
+            &evidence(json!([region("0x020000f0", "0x02000120")])),
+            &executable(),
+        )
+        .unwrap_err();
+        assert!(error.contains("outside audited executable bytes"));
+    }
+
+    #[test]
+    fn rejects_overlapping_overlay_assembly_evidence() {
+        let error = permanent_overlay_evidence_document(
+            &evidence(json!([
+                region("0x02000120", "0x02000160"),
+                region("0x02000140", "0x02000180")
+            ])),
+            &executable(),
+        )
+        .unwrap_err();
+        assert!(error.contains("overlapping regions"));
+    }
 }

@@ -1,7 +1,8 @@
 #include "types.h"
+#include "global_cells.h"
 
 void Func_0801fda8(u8 *object, s32 x, s32 y, s32 width, s32 height) {
-    u16 *map = *(u16 **)0x03001E8C;
+    u16 *map = *(u16 **)ADDR_03001E8C;
     s32 sum;
 
     sum = x + *(u16 *)(object + 12);

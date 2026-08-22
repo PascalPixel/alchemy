@@ -1,5 +1,6 @@
 #include "types.h"
 #include "runtime_interfaces.h"
+#include "global_cells.h"
 
 
 s32 Func_08020b14(const u8 *str) {
@@ -10,7 +11,7 @@ s32 Func_08020b14(const u8 *str) {
     s32 count_out;
     s32 width_out;
 
-    base = *(u8 **)0x03001E8C;
+    base = *(u8 **)ADDR_03001E8C;
     count = 0;
     if (*str != 0) {
         dst = (u16 *)(base + 0xEB0);

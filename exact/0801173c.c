@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 extern u8 Data_000000d5[];
 void Func_080030f8(u32);
@@ -15,7 +16,7 @@ struct MapInitWork {
 
 void Func_0801173c(void)
 {
-    struct MapInitWork *work = *(struct MapInitWork **)0x03001E70;
+    struct MapInitWork *work = *(struct MapInitWork **)ADDR_03001E70;
     *(s32 *)0x03001CFC = 0x0801161D;
     work->first = 0;
     work->second = 0x9f;

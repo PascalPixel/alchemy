@@ -1,5 +1,6 @@
 #include "a8_state.h"
 #include "types.h"
+#include "global_cells.h"
 
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
@@ -18,7 +19,7 @@ void Func_080a8088(s32 arg0) {
     void *object;
     struct State080a8088 *state;
 
-    state = *(struct State080a8088 **)0x03001F2C;
+    state = *(struct State080a8088 **)ADDR_03001F2C;
     created = 0;
     handle = state->handle;
     if (handle == 0) {

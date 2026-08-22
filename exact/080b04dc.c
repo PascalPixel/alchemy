@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 s32 Func_0808a540(s32);
 void Func_08015140(void);
@@ -12,7 +13,7 @@ extern u8 Data_00000d4c[];
 
 void Func_080b04dc(s32 arg0)
 {
-    s32 *state = *(s32 **)0x03001f2c;
+    s32 *state = *(s32 **)ADDR_03001F2C;
     s32 value = Func_0808a540(*(u16 *)&state[233]);
     s32 result = arg0;
     s8 mode;

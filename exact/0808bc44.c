@@ -1,11 +1,12 @@
 #include "types.h"
+#include "global_cells.h"
 
 void Func_0808bc44(void)
 {
   short new_var;
   void *temp_r1;
   new_var = 0;
-  temp_r1 = *((void **) 0x03001EBC);
+  temp_r1 = *((void **) ADDR_03001EBC);
   *((s16 *) (((u8 *) temp_r1) + 0x16C)) = new_var;
   *((s16 *) (((u8 *) temp_r1) + 0x16E)) = 0;
   *((s16 *) (((u8 *) temp_r1) + 0x170)) = 0;

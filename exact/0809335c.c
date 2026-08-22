@@ -1,6 +1,7 @@
 #include "object_lookup.h"
 #include "types.h"
 #include "object_effect.h"
+#include "global_cells.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
@@ -17,7 +18,7 @@ void Func_0809335c(s32 arg0, s32 arg1) {
     temp_r6 = GetObject(arg0);
     temp_r8 = Func_080048f4(0x1B, 0xCCC);
     temp_r5 = M2C_FIELD(temp_r8, void **, 0x1E0);
-    ptr = *(s32 **)0x03001E70;
+    ptr = *(s32 **)ADDR_03001E70;
     if (temp_r6 != 0) {
         *ptr = (s32)((u8 *)temp_r5 + 8);
         Func_080090e0(temp_r5, (void *)temp_r6);

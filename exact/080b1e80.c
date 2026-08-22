@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 struct EffectFlags {
     u8 padding[3];
@@ -57,7 +58,7 @@ s32 Func_080b1e80(s32 arg0, s32 arg1)
     struct Work_080b1e80 *runtime;
     u8 *object_state;
 
-    runtime = *(struct Work_080b1e80 **)0x03001f2c;
+    runtime = *(struct Work_080b1e80 **)ADDR_03001F2C;
     object_state = Func_08077008(arg0);
     entry_offset = (arg1 * 2) + 0xd8;
     flags = Func_08077018(*(u16 *)(object_state + entry_offset));

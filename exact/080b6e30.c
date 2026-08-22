@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 extern s32 Func_08009270(s32, s32, s32, s32);
 
@@ -9,7 +10,7 @@ s32 Func_080b6e30(s32 value)
     s32 index;
     s16 item;
 
-    base = *(u8 **)0x03001e74;
+    base = *(u8 **)ADDR_03001E74;
     index = 0;
     do {
         offset = index * 2 + 4;

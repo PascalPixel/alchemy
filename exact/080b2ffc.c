@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 void Func_0808a500(s32);
 u32 Func_08004458(void);
@@ -14,7 +15,7 @@ void Func_080b2ffc(void)
     s8 temp_r5;
     s32 offset;
 
-    temp_r7 = *(s32 *)0x03001F2C;
+    temp_r7 = *(s32 *)ADDR_03001F2C;
     var_r5 = temp_r7 + 0x3B0;
     var_r6 = 0x17;
     do {

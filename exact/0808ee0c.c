@@ -1,5 +1,6 @@
 #include "effect_runtime.h"
 #include "object_lookup.h"
+#include "global_cells.h"
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
@@ -33,7 +34,7 @@ void Func_0808ee0c(void)
     register u8 *entry;
 
     object = Func_0808ba1c(Data_02000240.value_1F4);
-    entry = *(u8 **)0x03001EBC + 0x11C;
+    entry = *(u8 **)ADDR_03001EBC + 0x11C;
     index = 0;
     if (entry[4] != 0) {
         object_x = FIELD(object, s32, 8);

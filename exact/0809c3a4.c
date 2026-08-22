@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 s32 Func_080030f8(s32);
 s32 Func_0800430c(void);
@@ -16,13 +17,13 @@ void Func_0809c3a4(void)
     Func_0809c314();
     Func_08091660();
     Func_080936a0(0x9D89, 6);
-    if ((*((volatile u32 *) 0x03001AE8)) & 0x200)
+    if ((*((volatile u32 *) ADDR_03001AE8)) & 0x200)
     {
       do
       {
         Func_080030f8(1);
       }
-      while ((*((volatile u32 *) 0x03001AE8)) & 0x200);
+      while ((*((volatile u32 *) ADDR_03001AE8)) & 0x200);
     }
     Func_080936a0(0x10000, 6);
     Func_080043e0();

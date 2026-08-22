@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 typedef struct MenuRuntime_080a56c8 {
     u8 padding_00[0x20];
@@ -24,7 +25,7 @@ void Func_080a2324(s32 page_size, s32 first_entry, s32 window, s32 x, s32 y);
 
 s32 Func_080a56c8(s32 window, s32 unused, const MenuPageState_080a56c8 *state)
 {
-    MenuRuntime_080a56c8 *runtime = *(MenuRuntime_080a56c8 **)0x03001f2c;
+    MenuRuntime_080a56c8 *runtime = *(MenuRuntime_080a56c8 **)ADDR_03001F2C;
     u32 page;
     u32 first_entry;
     u32 visible_count;

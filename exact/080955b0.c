@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 struct MenuState {
     u8 padding_000[20];
@@ -27,7 +28,7 @@ void Func_080955b0(s32 slot, s32 page, void *entries)
     struct MenuState *state;
     s32 selection;
 
-    state = *(struct MenuState **)0x03001ebc;
+    state = *(struct MenuState **)ADDR_03001EBC;
     if (Func_080770c0(366) != 0) {
         selection = 0;
         Func_080770c8((u8 *)entries + page * 20 + 48);

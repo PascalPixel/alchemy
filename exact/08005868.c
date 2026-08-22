@@ -26,6 +26,7 @@
  *     pattern-matched against other files.
  */
 #include "types.h"
+#include "global_cells.h"
 
 s32 Func_080072f0(s32, s32, s32, s32);
 s32 Func_08006c68(u16, s32);
@@ -42,7 +43,7 @@ u32 Func_08005868(u16 code)
     struct Work_08005868 *work;
     s32 value;
 
-    work = *(struct Work_08005868 **)0x03001F1C;
+    work = *(struct Work_08005868 **)ADDR_03001F1C;
     value = code & 0xFFFF;
     if ((Func_080072f0(value, (s32)&work->data,
                        (s32)param, *param) << 0x10) != 0) {

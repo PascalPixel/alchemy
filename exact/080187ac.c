@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 extern s32 Func_08018038(s32, s32);
 extern void Func_0801868c(s32, s32, s32, s32, s32, s32, s32);
@@ -9,7 +10,7 @@ s32 Func_080187ac(s32 no, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
     s32 temp;
     s32 offset;
 
-    base = *(u16 **)0x03001E8C;
+    base = *(u16 **)ADDR_03001E8C;
     temp = Func_08018038(no, 0);
     offset = temp * 2 + 3760;
     if (*(u16 *)((u8 *)base + offset) == 0)

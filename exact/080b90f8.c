@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
@@ -32,7 +33,7 @@ s32 Func_080b90f8(void) {
     struct Runtime_080b90f8 *runtime;
 
     sp4 = 0;
-    runtime = *(struct Runtime_080b90f8 **)0x03001E74;
+    runtime = *(struct Runtime_080b90f8 **)ADDR_03001E74;
     if (runtime->field_45 == 1) {
         sp4 = 1;
     } else {

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
@@ -13,7 +14,7 @@ s32 Func_08019da8(s32 arg0, s32 arg1, s32 x, s32 y)
     s32 offset;
     void *work;
 
-    work = *(void **)0x03001e8c;
+    work = *(void **)ADDR_03001E8C;
     if (Func_08019d2c(arg0) == -1) {
         return 0;
     }

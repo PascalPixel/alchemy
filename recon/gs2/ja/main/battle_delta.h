@@ -39,11 +39,17 @@ struct BattleWorkPage {
         (cur) = 0
 #define BATTLE_SCALE_DEFENSE()                                            \
     if (half != 0) {                                                      \
-        scale = (u32)def >> 1;                                            \
+        scale = (u32)scale >> 1;                                          \
         if (half == 2)                                                    \
             scale = 0;                                                    \
     }
 #define BATTLE_ATTACK_STAT kind
+#define BATTLE_ATTACK_DIRECT_STAT (actor->attack)
+#define BATTLE_ATTACK_STACK_ORDER
+#define BATTLE_ATTACK_LOADS()                                                \
+    hp0 = target->hp;                                                        \
+    scale = target->defense
+#define BATTLE_ATTACK_HP hp0
 #define BATTLE_ATTACK_PREP()                                              \
     {                                                                     \
         kind = actor->attack;                                             \
@@ -145,6 +151,7 @@ struct BattleWorkPage {
 #define BATTLE_PLAN_RESULT(plan, slot) ((plan)->target_results[(slot)])
 #define BATTLE_PLAN_COMMAND(plan) ((plan)->command)
 #define BATTLE_PLAN_PENDING(plan) ((plan)->pending_amount_60)
+#define BATTLE_SET_COMMAND()
 
 /* GS2 reserves element zero of each target array for its second actor. */
 #define BATTLE_PLAN_LOADS()                                                  \
@@ -235,21 +242,19 @@ struct BattleWorkPage {
 #undef BATTLE_AFTER_COPY
 #define BATTLE_AFTER_COPY()                                                   \
     {                                                                         \
-        s16 *state_cmd;                                                       \
         s32 state;                                                            \
                                                                               \
         state = *(u16 *)((u8 *)target + 0x14a);                               \
-        state_cmd = &BATTLE_PLAN_COMMAND(plan);                               \
         switch (state) {                                                      \
         case 0xdd:                                                            \
-            if (*state_cmd == 1                                               \
+            cmd = &BATTLE_PLAN_COMMAND(plan);                                 \
+            if (*cmd == 1                                                     \
                 && ((u32)(actor_id ^ target_id) >> 7) != 0) {                 \
                 BattleEvent_Push(11, target_id);                              \
                 BattleEvent_Push(0, target_id);                               \
                 BattleEvent_Push(4, 0xcb5);                                   \
                 goto done;                                                    \
             }                                                                \
-            cmd = &BATTLE_PLAN_COMMAND(plan);                                 \
             break;                                                           \
         case 0x65:                                                            \
         case 0x66:                                                            \
@@ -332,8 +337,6 @@ struct BattleWorkPage {
                     hit = 0;                                                 \
             }                                                                \
             if ((u32)st > 0xffff)                                            \
-                hit = 0;                                                     \
-            if ((u32)(rec + 1) > 0x100)                                     \
                 hit = 0;                                                     \
             if (hit != 0 && Summon_ClassValid(st) != 0 && rec >= 0) {        \
                 if (affi == -1) {                                            \

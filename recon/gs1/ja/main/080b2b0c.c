@@ -50,6 +50,22 @@ struct AffinityPair {
 #define BATTLE_ATTACK_PREP()
 #endif
 
+#ifndef BATTLE_ATTACK_DIRECT_STAT
+#define BATTLE_ATTACK_DIRECT_STAT BATTLE_ATTACK_STAT
+#endif
+
+#ifndef BATTLE_ATTACK_LOADS
+#define BATTLE_ATTACK_LOADS()                                                \
+    hp0 = target->hp;                                                        \
+    def = target->defense;                                                   \
+    scale = def;                                                             \
+    cur = hp0
+#endif
+
+#ifndef BATTLE_ATTACK_HP
+#define BATTLE_ATTACK_HP cur
+#endif
+
 #ifndef BATTLE_DAMAGE_BLOCKED
 #define BATTLE_DAMAGE_BLOCKED() 0
 #endif
@@ -117,6 +133,10 @@ struct AffinityPair {
         adjust = BATTLE_PLAN_ADJUST(plan, slot);                             \
         modifier = BATTLE_PLAN_MODIFIER(plan, slot);                         \
     }
+#endif
+
+#ifndef BATTLE_SET_COMMAND
+#define BATTLE_SET_COMMAND() (cmd = &BATTLE_PLAN_COMMAND(plan))
 #endif
 
 #ifndef BATTLE_CURE_SLEEP_ALL
@@ -397,6 +417,10 @@ s32 BATTLE_RESOLVE_OWNER(struct BattlePlan *plan, s32 slot)
     s32 power;
     s16 hp0;
     s32 kind;
+#ifdef BATTLE_ATTACK_STACK_ORDER
+    s32 scale;
+    s32 pass;
+#endif
     s16 *cmd;
 #ifdef BATTLE_NARROW_TARGET_ID
     u8 target_id;
@@ -414,8 +438,10 @@ s32 BATTLE_RESOLVE_OWNER(struct BattlePlan *plan, s32 slot)
     s32 affi;
 #endif
     s32 dmg;
-    s32 pass;
+#ifndef BATTLE_ATTACK_STACK_ORDER
     s32 scale;
+    s32 pass;
+#endif
     s8 *am;
     s32 guard;
     s16 saved[8];
@@ -496,7 +522,7 @@ s32 BATTLE_RESOLVE_OWNER(struct BattlePlan *plan, s32 slot)
 
     /* 攻撃力。元素武器でなければ 100。 */
     if ((u32)plan->range_index <= 3) {
-        cmd = &BATTLE_PLAN_COMMAND(plan);
+        BATTLE_SET_COMMAND();
         if (*cmd != 2) {
             s32 off;
 
@@ -505,7 +531,7 @@ s32 BATTLE_RESOLVE_OWNER(struct BattlePlan *plan, s32 slot)
             goto after_power;
         }
     } else
-        cmd = &BATTLE_PLAN_COMMAND(plan);
+        BATTLE_SET_COMMAND();
     power = 100;
 after_power:
 
@@ -674,12 +700,8 @@ after_power:
 
             if (BATTLE_DAMAGE_BLOCKED())
                 break;
-            hp0 = target->hp;
-            def = target->defense;
-            scale = def;
-            cur = hp0;
+            BATTLE_ATTACK_LOADS();
             BATTLE_SCALE_DEFENSE();
-            BATTLE_ATTACK_PREP();
             pass = 1;
             do {
                 TAKE_BONUS();
@@ -688,12 +710,15 @@ after_power:
                 apwr = action->power;
                 if (nibble == 4)
                     dmg = Math_Div(
-                        Battle_CalcAttack(BATTLE_ATTACK_STAT, scale, 0, bonus)
+                        Battle_CalcAttack(BATTLE_ATTACK_DIRECT_STAT, scale, 0,
+                                          bonus)
                             * apwr,
                         10);
-                else
+                else {
+                    BATTLE_ATTACK_PREP();
                     dmg = Battle_CalcAttack(BATTLE_ATTACK_STAT, scale, apwr,
                                             bonus);
+                }
                 dmg *= adjust;
                 if (modifier != 0) {
                     if (modifier == 1)
@@ -718,20 +743,21 @@ after_power:
                 if (dmg <= 0)
                     dmg = 1;
                 if (crush != 0) {
-                    if (dmg < cur - 1) {
-                        dmg = cur - 1;
+                    if (dmg < BATTLE_ATTACK_HP - 1) {
+                        dmg = BATTLE_ATTACK_HP - 1;
                         if (dmg <= 0)
                             dmg = 1;
                     }
                 }
-                if (BattleFlag_Test(366) != 0 && *cmd == 5 && cur <= dmg) {
-                    dmg = cur - 1;
+                if (BattleFlag_Test(366) != 0 && *cmd == 5
+                    && BATTLE_ATTACK_HP <= dmg) {
+                    dmg = BATTLE_ATTACK_HP - 1;
                 }
                 pass++;
             } while (pass <= 1);
             BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
-            cur -= dmg;
+            BATTLE_ATTACK_HP -= dmg;
             BattleEvent_Push(BATTLE_EVENT_VALUE, dmg);
             {
                 s32 text;
@@ -742,21 +768,21 @@ after_power:
                     text = MSG_DMG_EMPH_E + affinity;
                 BattleEvent_Push(BATTLE_EVENT_TEXT, text);
             }
-            if (cur <= 0 && BATTLE_SURVIVES_KO())
-                cur = 1;
-            if (cur <= 0) {
+            if (BATTLE_ATTACK_HP <= 0 && BATTLE_SURVIVES_KO())
+                BATTLE_ATTACK_HP = 1;
+            if (BATTLE_ATTACK_HP <= 0) {
 #ifdef BATTLE_KO_TAIL
                 BATTLE_KO_TAIL();
 #else
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
                 BattleEvent_Push(BATTLE_EVENT_UNIT, target_id);
-                cur = 0;
+                BATTLE_ATTACK_HP = 0;
                 TEXT_SIDE(MSG_GOES_DOWN, MSG_FELLED);
 #endif
             } else
                 BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
-            dealt = target->hp - cur;
-            target->hp = (s16)cur;
+            dealt = target->hp - BATTLE_ATTACK_HP;
+            target->hp = (s16)BATTLE_ATTACK_HP;
             BattleUnit_UpdateRatios(target_id);
             break;
         }

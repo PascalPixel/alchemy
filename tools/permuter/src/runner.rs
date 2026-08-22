@@ -861,13 +861,14 @@ fn run_workers(
     stop_exact: bool,
     baseline: Measurement,
     journal: Arc<Journal>,
+    live_best: Arc<Mutex<LiveBest>>,
 ) -> Result<Vec<Evaluated>, String> {
     let next = Arc::new(AtomicUsize::new(0));
     let stop = Arc::new(AtomicBool::new(false));
     let (sender, receiver) = mpsc::channel::<Result<Evaluated, String>>();
     let mut workers = Vec::new();
     for _ in 0..jobs.min(candidates.len()).max(1) {
-        let (backend, candidates, next, stop, sender, journal, baseline) = (
+        let (backend, candidates, next, stop, sender, journal, baseline, live_best) = (
             Arc::clone(&backend),
             Arc::clone(&candidates),
             Arc::clone(&next),
@@ -875,6 +876,7 @@ fn run_workers(
             sender.clone(),
             Arc::clone(&journal),
             baseline.clone(),
+            Arc::clone(&live_best),
         );
         workers.push(std::thread::spawn(move || loop {
             if stop_exact && stop.load(AtomicOrdering::Acquire) {
@@ -903,6 +905,21 @@ fn run_workers(
                 }
                 if stop_exact && value.exact {
                     stop.store(true, AtomicOrdering::Release);
+                }
+                if guard_accepts(&baseline, value)
+                    && update_live_best(
+                        &live_best,
+                        baseline.score,
+                        value,
+                        &candidate.source,
+                        &candidate.mutation,
+                    )
+                {
+                    println!(
+                        "new-best={} candidate={} mutation={} {}",
+                        value.score, candidate.index, candidate.mutation, value.summary
+                    );
+                    let _ = io::stdout().flush();
                 }
             }
             if sender
@@ -936,10 +953,10 @@ fn run_workers(
     error.map_or(Ok(evaluated), Err)
 }
 
-type WalkBest = Option<(u64, String, String)>;
+type LiveBest = Option<(u64, String, String)>;
 
-fn update_walk_best(
-    best: &Mutex<WalkBest>,
+fn update_live_best(
+    best: &Mutex<LiveBest>,
     baseline_score: u64,
     measurement: &Measurement,
     source: &str,
@@ -974,10 +991,10 @@ fn walk_workers(
     classic: bool,
     guard: Measurement,
     journal: Arc<Journal>,
+    best: Arc<Mutex<LiveBest>>,
 ) -> Result<Vec<Evaluated>, String> {
     let counter = Arc::new(AtomicUsize::new(0));
     let stop = Arc::new(AtomicBool::new(false));
-    let best: Arc<Mutex<WalkBest>> = Arc::new(Mutex::new(None));
     let (sender, receiver) = mpsc::channel::<Result<Evaluated, String>>();
     let mut workers = Vec::new();
     for worker in 0..jobs.max(1) {
@@ -1060,7 +1077,7 @@ fn walk_workers(
                     if guard_accepts(&guard, value) {
                         current = Some((source.clone(), candidate.mutation.clone()));
                         heat = value.heat.clone();
-                        if update_walk_best(&best, guard.score, value, &source, &candidate.mutation)
+                        if update_live_best(&best, guard.score, value, &source, &candidate.mutation)
                         {
                             println!(
                                 "new-best={} candidate={} mutation={} {}",
@@ -1125,24 +1142,6 @@ fn collect_results(
                 let guarded = guard_accepts(baseline, measurement);
                 if guarded && measurement.score < *best_score {
                     *best_score = measurement.score;
-                    if let Some(round) = round {
-                        println!(
-                            "new-best={} round={} candidate={} mutation={} {}",
-                            *best_score,
-                            round,
-                            item.candidate.index,
-                            item.candidate.mutation,
-                            measurement.summary
-                        );
-                    } else if !options.walk {
-                        println!(
-                            "new-best={} candidate={} mutation={} {}",
-                            *best_score,
-                            item.candidate.index,
-                            item.candidate.mutation,
-                            measurement.summary
-                        );
-                    }
                 }
                 *exact_found |= measurement.exact;
                 if let Some(round) = round {
@@ -1279,6 +1278,7 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
     let mut failures = 0;
     let mut compile_time = Duration::ZERO;
     let mut exact_found = false;
+    let live_best = Arc::new(Mutex::new(None));
     if options.walk {
         let base = crate::astpass::preprocess_for_ast(&input.source)?;
         let evaluated = walk_workers(
@@ -1293,6 +1293,7 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
             options.classic,
             baseline.clone(),
             Arc::clone(&journal),
+            Arc::clone(&live_best),
         )?;
         collect_results(
             &evaluated,
@@ -1329,6 +1330,7 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
                 options.stop_exact,
                 baseline.clone(),
                 Arc::clone(&journal),
+                Arc::clone(&live_best),
             )?;
             evaluated.sort_by_key(|item| item.candidate.index);
             let round_best = collect_results(
@@ -1517,11 +1519,11 @@ mod tests {
     }
 
     #[test]
-    fn walk_best_reports_strict_improvements_as_they_arrive() {
+    fn live_best_reports_strict_improvements_as_they_arrive() {
         let best = Mutex::new(None);
         let mut measurement = Measurement::failed("candidate");
         measurement.score = 110;
-        assert!(!update_walk_best(
+        assert!(!update_live_best(
             &best,
             100,
             &measurement,
@@ -1531,11 +1533,11 @@ mod tests {
         assert!(best.lock().unwrap().is_none());
 
         measurement.score = 90;
-        assert!(update_walk_best(&best, 100, &measurement, "first", "first"));
+        assert!(update_live_best(&best, 100, &measurement, "first", "first"));
         measurement.score = 90;
-        assert!(!update_walk_best(&best, 100, &measurement, "tie", "tie"));
+        assert!(!update_live_best(&best, 100, &measurement, "tie", "tie"));
         measurement.score = 95;
-        assert!(!update_walk_best(
+        assert!(!update_live_best(
             &best,
             100,
             &measurement,
@@ -1543,7 +1545,7 @@ mod tests {
             "later"
         ));
         measurement.score = 80;
-        assert!(update_walk_best(&best, 100, &measurement, "best", "best"));
+        assert!(update_live_best(&best, 100, &measurement, "best", "best"));
 
         let state = best.into_inner().unwrap().unwrap();
         assert_eq!(state, (80, "best".into(), "best".into()));

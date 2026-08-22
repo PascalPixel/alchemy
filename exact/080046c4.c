@@ -1,9 +1,10 @@
 #include "low_runtime.h"
+#include "global_cells.h"
 
 void Func_080046c4(const u8 *source)
 {
-    if (*(u8 *)0x03001ac4 != 0) {
-        u32 cursor_address = 0x03001cbc;
+    if (*(u8 *)ADDR_03001AC4 != 0) {
+        u32 cursor_address = ADDR_03001CBC;
         u32 value = *source;
         u16 *destination = *(u16 **)cursor_address;
         u32 count = 0;
@@ -21,7 +22,7 @@ void Func_080046c4(const u8 *source)
                     break;
                 value = *source++;
             } while (value != 0);
-            cursor_address = 0x03001cbc;
+            cursor_address = ADDR_03001CBC;
         }
         *(u16 **)cursor_address = destination;
     }

@@ -1,10 +1,11 @@
 #include "types.h"
 
 extern u16 Data_080b413c[];
+extern u8 Data_080b3d40[];
 
 /* 4行分の非0バイトを指定配置へ順にコピーする。 */
 void Func_080b06ec(s32 arg0, s32 arg1, u32 arg2) {
-    u8 *source = (u8 *)(0x080b3d40 + ((u32)arg0 << 5));
+    u8 *source = Data_080b3d40 + ((u32)arg0 << 5);
     u8 *destination =
         (u8 *)((u32)arg1 + Data_080b413c[arg2] + 2);
     s32 count = 3;

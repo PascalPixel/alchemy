@@ -1,4 +1,11 @@
 #include "types.h"
+#include "gs1_edition.h"
+
+#if defined(GS1_EDITION_JA)
+#define MESSAGE_WINDOW_ROWS 11
+#else
+#define MESSAGE_WINDOW_ROWS 12
+#endif
 
 enum MessageId_080b3284 {
     MESSAGE_INTRO_080b3284 = 0xd1c,
@@ -36,6 +43,7 @@ struct Object_080b3284 {
 
 extern struct RuntimeState_080b3284 *Data_03001f2c;
 extern struct GlobalState_080b3284 Data_02000240;
+extern char Value_00000d1c;
 
 void Func_080b010c(void);
 void Func_080b0204(void);
@@ -70,9 +78,9 @@ s32 Func_080b3284(s32 mode, s32 object_id)
 
     amount = Func_080b3210(mode);
     Func_08015120(amount, 5);
-    message_base = MESSAGE_INTRO_080b3284;
+    message_base = (s32)&Value_00000d1c;
     Func_080b04dc(message_base);
-    state->window = Func_08015010(0, 16, 12, 4, 2);
+    state->window = Func_08015010(0, 16, MESSAGE_WINDOW_ROWS, 4, 2);
     Func_080b10cc();
 
     if (Func_080b0634(0) != 0) {

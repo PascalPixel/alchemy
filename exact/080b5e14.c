@@ -1,4 +1,14 @@
 #include "types.h"
+#include "gs1_edition.h"
+
+#if defined(GS1_EDITION_DE) || defined(GS1_EDITION_ES) || \
+    defined(GS1_EDITION_FR) || defined(GS1_EDITION_IT)
+#define NAME_LIMIT 7
+#define APPEND_NAME_SPACE 1
+#else
+#define NAME_LIMIT 4
+#define APPEND_NAME_SPACE 0
+#endif
 
 void *Func_08004970(s32);
 void Func_08002df0(void *);
@@ -8,6 +18,7 @@ void Func_080030f8(s32);
 u8 *Func_08077008(s32);
 void *Func_08077000(s32);
 void Func_08015020(s32, u16 *);
+extern char Value_0000080c;
 
 s32 Func_080b5e14(void)
 {
@@ -32,16 +43,20 @@ s32 Func_080b5e14(void)
             count += 1;
         }
         Func_080030f8(2);
-        Func_08015020(0x80C, text);
+        Func_08015020((s32)&Value_0000080c, text);
         i = 0;
         if (text[i] != 0) {
             do {
                 i += 1;
-                if (i > 4) {
+                if (i > NAME_LIMIT) {
                     break;
                 }
             } while (text[i] != 0);
         }
+#if APPEND_NAME_SPACE
+        text[i] = ' ';
+        i += 1;
+#endif
         len = i;
         for (i = 14; i >= len; i--) {
             entry[i] = entry[i - len];

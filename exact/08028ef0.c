@@ -1,4 +1,5 @@
 #include "types.h"
+#include "gs1_edition.h"
 
 struct Work;
 
@@ -15,9 +16,9 @@ void Func_08028ef0(struct Work *work, s16 first, const s16 *second) {
     s32 label = Func_0808a5d0(selected, *second) + (s32)Value_0000099b;
     Func_08016478(work);
     Func_0801e9a0(selected, 3, (s32) work, 0, 14);
-    Func_0801e9a0(*second, 3, (s32) work, 0x52, 14);
-    Func_0801e858(Data_08037428, (s32) work, 0x4A, 0);
+    Func_0801e9a0(*second, 3, (s32) work, MENU_LABEL_X, 14);
+    Func_0801e858(Data_08037428, (s32) work, MENU_TEXT_X, 0);
     Func_0801e74c(selected + (s32)Value_00000a07, (s32)work, 0, 0);
-    Func_0801e858(Data_08037428, (s32) work, 0x4A, 14);
-    Func_0801e74c(label, (s32)work, 0x52, 0);
+    Func_0801e858(Data_08037428, (s32) work, MENU_TEXT_X, 14);
+    Func_0801e74c(label, (s32)work, MENU_LABEL_X, 0);
 }

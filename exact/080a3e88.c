@@ -10,6 +10,7 @@ struct Runtime_080a3e88 {
 };
 
 extern struct Runtime_080a3e88 *Data_03001f2c;
+extern char Value_00000ad7;
 
 void *Func_08077008(s32 kind);
 u32 Func_080a3ddc(void *source, u16 *destination, s32 mode);
@@ -33,7 +34,7 @@ void Func_080a3e88(s32 kind, s32 mode)
     Func_080a1cb0(mode);
     Func_080a3e28(entries, 0);
     if (Func_080a3d6c(kind) == 0)
-        Func_08015080(0xad7, runtime->window, 8, 24);
+        Func_08015080((s32)&Value_00000ad7, runtime->window, 8, 24);
 }
 
 void Func_080a3eec(void)

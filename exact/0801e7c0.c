@@ -1,4 +1,5 @@
 #include "types.h"
+#include "gs1_edition.h"
 
 struct TextPosition_0801e7c0 {
     u8 padding[12];
@@ -26,21 +27,21 @@ void Func_0801e7c0(
     u16 *counter;
 
     base = Data_03001e8c;
-    counter = (u16 *)(base + 0x12B2);
+    counter = (u16 *)(base + RENDER_ENTRY_COUNT_OFS);
     zero = 0;
     *counter = zero;
     Func_08018038(character, 1);
 
-    byte_offset = *counter * 2 + 0xEB0;
+    byte_offset = *counter * 2 + RENDER_ENTRY_TBL_OFS;
     *(u16 *)(base + byte_offset) = zero;
-    *counter = (u16)((*counter + 1) & 0x1FF);
+    *counter = (u16)((*counter + 1) & RENDER_ENTRY_MASK);
 
     cell = ((position->y + (offset_y >> 3) + 1) << 5)
         + (position->x + (offset_x >> 3)) + 1;
     if (cell < 0x280U) {
         byte_offset = cell * 2;
         vram_address = byte_offset + 0x06002000;
-        text = (u16 *)(base + 0xEB0);
+        text = (u16 *)(base + RENDER_ENTRY_TBL_OFS);
         Func_0801de5c(
             text,
             (s32)(base + byte_offset),

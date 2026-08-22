@@ -9,6 +9,7 @@ s32 Func_08077008(s32);
 void Func_080a1bdc(s32 arg0, s32 arg1, s32 arg2);
 void Func_080a68a8(u16 *arg0);
 void Func_08015080(s32, s32 *, s32, s32);
+extern char Value_00000af2;
 
 void Func_080a6384(s32 arg0) {
     void *temp_r6;
@@ -23,6 +24,7 @@ void Func_080a6384(s32 arg0) {
     Func_080a1bdc(0x6C, 0x20, 8);
     Func_080a68a8(temp_r6);
     if (M2C_FIELD(temp_r7, u8 *, 0x218) == 0) {
-        Func_08015080(0xAF2, M2C_FIELD(temp_r7, s32 *, 0x20), 0, 0x18);
+        Func_08015080((s32)&Value_00000af2,
+            M2C_FIELD(temp_r7, s32 *, 0x20), 0, 0x18);
     }
 }

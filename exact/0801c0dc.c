@@ -18,10 +18,11 @@ struct Object_0801c0dc {
 
 s32 Func_08004080(void);
 s32 Func_08003fa4(s32, s32, const void *);
+extern const u8 Data_080342f8[];
 
 void Func_0801c0dc(struct Object_0801c0dc *object, s32 *slot)
 {
-    const void *data = (const void *)0x080342f8;
+    const void *data = Data_080342f8;
     s32 value = Func_08004080();
 
     /* ビットフィールドは生成時の設定順を保持する。 */

@@ -1,4 +1,5 @@
 #include "low_runtime.h"
+#include "global_cells.h"
 
 void Func_08004620(s32);
 
@@ -11,5 +12,5 @@ void Func_0800473c(s32 value, s32 width)
         count = 0xA;
     }
     Func_08004620(value);
-    Func_080046c4((const u8 *)(0x03001F7A - count));
+    Func_080046c4((const u8 *)(ADDR_03001F7A - count));
 }

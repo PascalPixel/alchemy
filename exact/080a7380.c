@@ -1,5 +1,12 @@
 #include "layout_guard.h"
 #include "types.h"
+#include "gs1_edition.h"
+
+#if defined(GS1_EDITION_JA)
+#define ROW_CNT 4
+#else
+#define ROW_CNT 8
+#endif
 
 struct ObjectControl_080a7380 {
     u8 padding00[4];
@@ -82,7 +89,7 @@ s32 Func_080a7380(void)
         (u8)Func_08077158(state->character_ids);
     Func_080a8034(0, 3, 0, 7);
     state->selector_window = Func_08015010(13, 0, 17, 5, 2);
-    for (index = 0; index < 8; index++)
+    for (index = 0; index < ROW_CNT; index++)
         state->row_positions[index] = 30;
     state->selector_flags = 3;
 

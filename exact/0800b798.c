@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
@@ -12,7 +13,7 @@ s32 Func_0800b798(s32 key)
     u32 no;
     struct LookupEntry *entry;
 
-    entry = (struct LookupEntry *)(*(u32 *)0x03001e68 + 0x1c);
+    entry = (struct LookupEntry *)(*(u32 *)ADDR_03001E68 + 0x1c);
     no = 0;
 loop_1:
     if (entry->key == key) {

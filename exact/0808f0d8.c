@@ -27,6 +27,7 @@ void Func_08009150(struct Object_0808f0d8 *, s32, s32, s32);
 void Func_080030f8(s32);
 void Func_08009080(struct Entity_0808f0d8 *, s32);
 void Func_08009098(struct Object_0808f0d8 *, const void *);
+extern const u8 Data_0809e75c[];
 
 void Func_0808f0d8(struct Object_0808f0d8 *object)
 {
@@ -42,6 +43,6 @@ void Func_0808f0d8(struct Object_0808f0d8 *object)
     Func_08009150(object, entity->x, entity->y + 0x240000, entity->z);
     Func_080030f8(3);
     Func_08009080(entity, 28);
-    Func_08009098(object, (const void *)0x0809e75c);
+    Func_08009098(object, Data_0809e75c);
     entity->angle = 0x4000;
 }

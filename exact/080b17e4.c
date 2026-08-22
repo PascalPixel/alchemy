@@ -15,6 +15,7 @@ void Func_080b10cc(void);
 s32 Func_080b1868(s32, s32);
 s32 Func_080b196c(s32 arg0, s32 arg1);
 s32 Func_080f9010(s32);
+extern char Value_00000ca1;
 
 void Func_080b17e4(s32 owner, s32 entry_id, s32 count) {
     s32 temp_r9;
@@ -37,7 +38,7 @@ void Func_080b17e4(s32 owner, s32 entry_id, s32 count) {
             Func_080b10cc();
         } while (var_r5 != 0);
     }
-    Func_080b0574(0xCA1);
+    Func_080b0574((s32)&Value_00000ca1);
     if (Func_080b1868(owner, var_sl) != 0) {
         Func_080b196c(owner, temp_r9);
     }

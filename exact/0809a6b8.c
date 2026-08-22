@@ -5,6 +5,7 @@
 s32 Func_0800231c(s32);
 s32 Func_08002322(s32);
 void Func_0809a484(s32, s32, s32, s32, s32, s32, s32, s32 *);
+extern u8 Data_0809a65d;
 
 void Func_0809a6b8(void *arg0) {
     s32 sp1C[10];
@@ -20,7 +21,7 @@ void Func_0809a6b8(void *arg0) {
     (void)_pad;
     p1c = sp1C;
     M2C_FIELD(p1c, s32 *, 4) = 0;
-    M2C_FIELD(p1c, s32 *, 0x24) = 0x0809A65D;
+    M2C_FIELD(p1c, s32 *, 0x24) = (s32)&Data_0809a65d;
     M2C_FIELD(p1c, s32 *, 8) = 0xCCCC;
     M2C_FIELD(p1c, s32 *, 0xC) = 0xCCCC;
     var_r7 = 0;

@@ -24,6 +24,15 @@
  *     a relocated IWRAM routine. NOT established
  */
 #include "types.h"
+#include "gs1_edition.h"
+
+#if defined(GS1_EDITION_DE)
+#define STATE_CELL_ADDR 0x03001EDC
+#define DISPLAY_CELL_ADDR 0x03001E80
+#else
+#define STATE_CELL_ADDR 0x03001ECC
+#define DISPLAY_CELL_ADDR 0x03001E70
+#endif
 
 struct State_080903bc {
     u8 pad_000[0x52a];
@@ -48,9 +57,9 @@ extern s32 Func_080072f0(s32, s32, s32, s32);
 void Func_080903bc(void)
 {
     struct State_080903bc *state =
-        *(struct State_080903bc **)0x03001ecc;
+        *(struct State_080903bc **)STATE_CELL_ADDR;
     struct Display_080903bc *display =
-        *(struct Display_080903bc **)0x03001e70;
+        *(struct Display_080903bc **)DISPLAY_CELL_ADDR;
     s8 *duration = &state->duration_53c;
     u32 displayValue;
 

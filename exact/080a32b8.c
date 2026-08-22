@@ -1,4 +1,5 @@
 #include "types.h"
+#include "gs1_edition.h"
 
 struct State_080a32b8 {
     u8 pad_000[0x2c];
@@ -17,9 +18,11 @@ struct State_080a32b8 {
 };
 
 extern struct State_080a32b8 *Data_03001f2c;
+extern char Value_00000bef;
 extern s32 Func_080a9e48(s32, s32, s32);
 extern s32 Func_080f9010(s32);
 extern s32 Func_08015278(s32);
+extern s32 Func_08015270(s32);
 extern s32 Func_080a1d08(s32, s32, s32);
 extern s32 Func_080aa448(u32);
 extern s32 Func_08077010(u8);
@@ -36,7 +39,10 @@ s32 Func_080a32b8(void)
     if (result == -1) {
         Func_080f9010(0x72);
         Func_08015278(state->object);
-        Func_080a1d08(state->value + 0xbef, result, result);
+        Func_080a1d08(state->value + (s32)&Value_00000bef, result, result);
+#if defined(GS1_EDITION_JA)
+        Func_08015270(state->object);
+#endif
         state->flag = 1;
         return result;
     }

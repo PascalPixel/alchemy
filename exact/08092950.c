@@ -4,6 +4,7 @@
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 s32 Func_080929d8(void *, s32);
+extern u8 Data_08092981;
 
 void Func_08092950(s32 arg0, s32 arg1) {
     s32 temp_r3;
@@ -13,7 +14,7 @@ void Func_08092950(s32 arg0, s32 arg1) {
     if (temp_r0 != NULL) {
         temp_r3 = 0x100 & arg1;
         if (temp_r3 != 0) {
-            M2C_FIELD(temp_r0, s32 *, 0x6C) = 0x08092981;
+            M2C_FIELD(temp_r0, s32 *, 0x6C) = (s32)&Data_08092981;
             return;
         }
         M2C_FIELD(temp_r0, s32 *, 0x6C) = temp_r3;

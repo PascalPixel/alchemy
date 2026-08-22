@@ -1,4 +1,5 @@
 #include "types.h"
+#include "gs1_edition.h"
 
 struct EntryState {
     u8 padding00[0x14];
@@ -23,7 +24,8 @@ char Func_0801671c(void);
 
 void Func_08016758(void)
 {
-    struct EntrySlot *slot = (struct EntrySlot *)(Data_03001e8c + 0x620);
+    struct EntrySlot *slot =
+        (struct EntrySlot *)(Data_03001e8c + RENDER_CHANNEL_OFS);
     struct EntrySlot *selected = 0;
     s32 index;
 

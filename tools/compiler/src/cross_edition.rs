@@ -214,6 +214,7 @@ struct EditionBuildReport {
 struct EditionBuildEntry {
     edition: String,
     start: String,
+    size: usize,
     external_symbols: BTreeMap<String, String>,
     differing_bytes: Option<usize>,
     byte_exact: bool,
@@ -254,6 +255,7 @@ struct CorpusEditionBuildOwner {
 struct CorpusEditionBuildEntry {
     edition: String,
     start: String,
+    size: usize,
     differing_bytes: Option<usize>,
     byte_exact: bool,
     error: Option<String>,
@@ -356,7 +358,10 @@ pub fn run(args: &[String]) -> Result<(), String> {
     } else {
         print_report(&report, options.calls);
     }
-    if report.core_identical && edition_build.as_ref().map_or(true, |build| build.all_exact) {
+    let all_exact = edition_build
+        .as_ref()
+        .map_or(report.core_identical, |build| build.all_exact);
+    if all_exact {
         Ok(())
     } else {
         Err("one or more editions are not byte-exact".into())
@@ -371,7 +376,8 @@ fn analyze_owner(
     calls: bool,
     hints: Option<&BTreeMap<&str, usize>>,
 ) -> Result<Report, String> {
-    let (size, symbol_address, relocation_mask, relocations) = relocation_mask(object_path, owner)?;
+    let (size, symbol_address, _, relocation_mask, relocations) =
+        relocation_mask(object_path, owner)?;
     let literals = literal_sites(object_path, symbol_address, size)?;
     let mut mask = relocation_mask.clone();
     for literal in &literals {
@@ -564,7 +570,8 @@ fn edition_build_report(
     report: &Report,
     roms: &EditionRoms,
 ) -> Result<EditionBuildReport, String> {
-    let (size, symbol_offset, _, relocations) = relocation_mask(object_path, owner)?;
+    let (size, symbol_offset, owner_bytes, owner_mask, relocations) =
+        relocation_mask(object_path, owner)?;
     if size != report.size {
         return Err(format!(
             "edition build object size {size} differs from located owner size {}",
@@ -583,25 +590,41 @@ fn edition_build_report(
 
     let mut editions = Vec::with_capacity(EDITIONS.len());
     for edition in EDITIONS {
-        let start = report_start(report, edition)?;
-        let reference = roms.images[edition]
-            .get(start..start + size)
-            .ok_or_else(|| format!("{edition}: owner extends past ROM"))?;
+        let reported_start = report_start(report, edition)?;
         let variant_object = if edition_variant {
             compile_edition_object(owner, edition, &source_path)?
         } else {
             object_path.to_path_buf()
         };
-        let (variant_size, variant_symbol_offset, _, variant_relocations) = if edition_variant {
-            relocation_mask(&variant_object, owner)?
+        let (variant_size, variant_symbol_offset, variant_bytes, variant_mask, variant_relocations) =
+            if edition_variant {
+                relocation_mask(&variant_object, owner)?
+            } else {
+                (
+                    size,
+                    symbol_offset,
+                    owner_bytes.clone(),
+                    owner_mask.clone(),
+                    relocations.clone(),
+                )
+            };
+        let start = if edition_variant && edition != "en" {
+            locate_near_exact(
+                &variant_bytes,
+                &variant_mask,
+                &roms.images[edition],
+                reported_start,
+                0x1000,
+                ROM_BASE,
+            )
+            .map(|(start, _)| start)
+            .unwrap_or(reported_start)
         } else {
-            (size, symbol_offset, Vec::new(), relocations.clone())
+            reported_start
         };
-        if variant_size != size {
-            return Err(format!(
-                "{edition}: edition variant size {variant_size} differs from located owner size {size}"
-            ));
-        }
+        let reference = roms.images[edition]
+            .get(start..start + variant_size)
+            .ok_or_else(|| format!("{edition}: owner extends past ROM"))?;
         let built =
             derive_external_symbols(&variant_relocations, reference, start).and_then(|values| {
                 link_owner_for_edition(
@@ -611,7 +634,7 @@ fn edition_build_report(
                     &owner_symbol,
                     ROM_BASE + start as u64,
                     variant_symbol_offset,
-                    size,
+                    variant_size,
                     &values,
                 )
                 .map(|linked| (values, linked))
@@ -627,6 +650,7 @@ fn edition_build_report(
                 editions.push(EditionBuildEntry {
                     edition: edition.into(),
                     start: format!("0x{:08x}", ROM_BASE + start as u64),
+                    size: variant_size,
                     external_symbols: values
                         .into_iter()
                         .map(|(name, value)| (name, format!("0x{value:08x}")))
@@ -639,6 +663,7 @@ fn edition_build_report(
             Err(error) => editions.push(EditionBuildEntry {
                 edition: edition.into(),
                 start: format!("0x{:08x}", ROM_BASE + start as u64),
+                size: variant_size,
                 external_symbols: BTreeMap::new(),
                 differing_bytes: None,
                 byte_exact: false,
@@ -728,7 +753,7 @@ fn write_corpus_edition_build(
                     .find(|entry| entry.edition == edition)
                     .expect("every edition build contains every edition");
                 summary.checked_owners += 1;
-                summary.checked_bytes += owner.size;
+                summary.checked_bytes += entry.size;
                 if let Some(differing_bytes) = entry.differing_bytes {
                     summary.differing_bytes += differing_bytes;
                 } else {
@@ -736,10 +761,10 @@ fn write_corpus_edition_build(
                 }
                 if entry.byte_exact {
                     summary.byte_exact_owners += 1;
-                    summary.byte_exact_bytes += owner.size;
+                    summary.byte_exact_bytes += entry.size;
                 } else {
                     summary.nonexact_owners += 1;
-                    summary.nonexact_bytes += owner.size;
+                    summary.nonexact_bytes += entry.size;
                 }
             }
             summary
@@ -765,6 +790,7 @@ fn write_corpus_edition_build(
                 .map(|entry| CorpusEditionBuildEntry {
                     edition: entry.edition,
                     start: entry.start,
+                    size: entry.size,
                     differing_bytes: entry.differing_bytes,
                     byte_exact: entry.byte_exact,
                     error: entry.error,
@@ -1100,7 +1126,7 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
 
     for (index, owner) in owner_names.iter().enumerate() {
         let object = options.object_dir.join(format!("{owner}.o"));
-        if let Ok((size, _, _, _)) = relocation_mask(&object, owner) {
+        if let Ok((size, _, _, _, _)) = relocation_mask(&object, owner) {
             owner_symbol_bytes += size;
         }
         match analyze_owner(owner, owner_address(owner)?, &object, roms, false, None) {
@@ -2016,7 +2042,7 @@ fn parse_rom_address(value: &str) -> Result<usize, String> {
 fn relocation_mask(
     path: &Path,
     owner: &str,
-) -> Result<(usize, u64, Vec<bool>, Vec<RelocationSite>), String> {
+) -> Result<(usize, u64, Vec<u8>, Vec<bool>, Vec<RelocationSite>), String> {
     let config = DiffObjConfig {
         arm_arch_version: ArmArchVersion::V4t,
         ..Default::default()
@@ -2033,6 +2059,17 @@ fn relocation_mask(
     if size == 0 {
         return Err(format!("{symbol_name} has zero size"));
     }
+    let section_offset = symbol
+        .address
+        .checked_sub(section.address)
+        .ok_or("owner symbol precedes its section")?;
+    let section_offset =
+        usize::try_from(section_offset).map_err(|_| "owner section offset is too large")?;
+    let bytes = section
+        .data
+        .get(section_offset..section_offset + size)
+        .ok_or("owner symbol extends past its section")?
+        .to_vec();
     let mut mask = vec![false; size];
     let mut sites = Vec::new();
     for relocation in &section.relocations {
@@ -2067,7 +2104,7 @@ fn relocation_mask(
             external: target.is_some_and(|symbol| symbol.section.is_none()),
         });
     }
-    Ok((size, symbol.address, mask, sites))
+    Ok((size, symbol.address, bytes, mask, sites))
 }
 
 fn literal_sites(

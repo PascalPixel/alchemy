@@ -1,6 +1,13 @@
 #include "layout_guard.h"
 #include "types.h"
 #include "global_cells.h"
+#include "gs1_edition.h"
+
+#if defined(GS1_EDITION_JA)
+#define BASE_W 11
+#else
+#define BASE_W 12
+#endif
 
 typedef struct Cursor_080b1a14 {
     u8 padding00[5];
@@ -80,13 +87,13 @@ void Func_080f9010(s32);
 s32 Func_080b1a14(void)
 {
     BattleMenuState_080b1a14 *state =
-        *(BattleMenuState_080b1a14 **)0x03001f2c;
+        *(BattleMenuState_080b1a14 **)ADDR_03001F2C;
     s32 list_window;
     s32 selection = 0;
     s32 redraw = 1;
     s32 actor = 0;
 
-    state->base_window = Func_08015010(0, 9, 12, 4, 2);
+    state->base_window = Func_08015010(0, 9, BASE_W, 4, 2);
     Func_080b10cc();
     state->detail_window = Func_08015010(16, 12, 14, 8, 2);
     list_window = Func_08015010(0, 14, 13, 3, 2);

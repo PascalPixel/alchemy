@@ -1,4 +1,11 @@
 #include "types.h"
+#include "gs1_edition.h"
+
+#if defined(GS1_EDITION_DE)
+#define TRANSITION_CELL_ADDR 0x03001F10
+#else
+#define TRANSITION_CELL_ADDR 0x03001F00
+#endif
 
 s32 Func_080030f8(s32);
 void Func_0800387c(u32 first, u32 second);
@@ -10,8 +17,8 @@ void Func_080cdd14(void)
   s32 transfer;
   s32 *flag;
 
-  flag = (s32 *)((u8 *)*((void **)0x03001F00) + 0xC);
-  state = *((u8 **)0x03001E74);
+  flag = (s32 *)((u8 *)*((void **)TRANSITION_CELL_ADDR) + 0xC);
+  state = *((u8 **)(TRANSITION_CELL_ADDR - 0x8C));
   *flag = 1;
   transfer = 0x1541;
   Func_0800387c(0x04000000, transfer);

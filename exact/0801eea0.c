@@ -1,5 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
+#include "gs1_edition.h"
 
 struct State_0801eea0 {
     u8 padding[4];
@@ -23,7 +24,7 @@ void Func_0801eea0(s32 flags)
     s32 right;
     s32 left;
 
-    if (base[0xEA5] != 0) {
+    if (base[RENDER_MENU_STATE_OFS] != 0) {
         value = Func_080b50c8(0);
         height = 3;
     } else {

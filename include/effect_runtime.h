@@ -2,6 +2,7 @@
 #define GUARD_EFFECT_RUNTIME_H
 
 #include "types.h"
+#include "global_cells.h"
 
 struct EffectRuntimeSlot {
     void *object;
@@ -16,6 +17,6 @@ struct EffectRuntime {
     struct EffectRuntimeSlot slots[10];
 };
 
-#define EFFECT_RUNTIME (*(struct EffectRuntime **)0x03001EBC)
+#define EFFECT_RUNTIME (*(struct EffectRuntime **)ADDR_03001EBC)
 
 #endif

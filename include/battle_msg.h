@@ -5,6 +5,12 @@
 
 /* assets/text/message_archive.json の英文から付けた識別名。 */
 /* 番号はリンク時定数。プールされる絶対シンボルとして参照する。 */
+extern char Value_00000810;
+extern char Value_00000811;
+extern char Value_00000812;
+extern char Value_00000813;
+extern char Value_00000814;
+extern char Value_00000816;
 extern char Value_0000081d;
 extern char Value_0000081e;
 extern char Value_00000820;
@@ -19,6 +25,8 @@ extern char Value_00000829;
 extern char Value_0000082a;
 extern char Value_00000831;
 extern char Value_00000834;
+extern char Value_00000843;
+extern char Value_00000844;
 extern char Value_0000084c;
 extern char Value_0000084f;
 extern char Value_00000850;

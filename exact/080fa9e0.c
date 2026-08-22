@@ -34,6 +34,7 @@ struct AudioEngineState {
 };
 
 void Func_080fa68c(struct MusicPlayerState *player);
+extern u8 Data_080f9c91;
 
 void Func_080fa9e0(
     struct MusicPlayerState *player,
@@ -76,7 +77,7 @@ void Func_080fa9e0(
     }
 
     audio_state->player_head = player;
-    audio_state->player_main = (PlayerMainCallback)0x080f9c91;
+    audio_state->player_main = (PlayerMainCallback)&Data_080f9c91;
     audio_state->ident = 0x68736d53;
     player->ident = 0x68736d53;
 }

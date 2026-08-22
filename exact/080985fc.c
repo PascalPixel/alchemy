@@ -15,6 +15,7 @@ void *Func_08096c80(s32, s32, s32, s32);
 void Func_08009098(void *, const void *);
 void Func_080030f8(u32);
 void Func_0809748c(void);
+extern const u8 Data_0809f11c[];
 
 void Func_080985fc(void)
 {
@@ -43,7 +44,7 @@ void Func_080985fc(void)
             argumentPointer->values[2]
         );
         if (object != 0) {
-            Func_08009098(object, (const void *)0x0809F11C);
+            Func_08009098(object, Data_0809f11c);
             *((u8 *)object + 0x55) = 2;
         }
         Func_080030f8((((u32)Rand() * 2) >> 16) + 2);

@@ -936,6 +936,31 @@ fn run_workers(
     error.map_or(Ok(evaluated), Err)
 }
 
+type WalkBest = Option<(u64, String, String)>;
+
+fn update_walk_best(
+    best: &Mutex<WalkBest>,
+    baseline_score: u64,
+    measurement: &Measurement,
+    source: &str,
+    mutation: &str,
+) -> bool {
+    if measurement.score >= baseline_score {
+        return false;
+    }
+    let Ok(mut best) = best.lock() else {
+        return false;
+    };
+    if best
+        .as_ref()
+        .is_some_and(|(score, _, _)| measurement.score >= *score)
+    {
+        return false;
+    }
+    *best = Some((measurement.score, source.to_string(), mutation.to_string()));
+    true
+}
+
 #[allow(clippy::too_many_arguments)]
 fn walk_workers(
     backend: Arc<dyn Backend>,
@@ -952,7 +977,7 @@ fn walk_workers(
 ) -> Result<Vec<Evaluated>, String> {
     let counter = Arc::new(AtomicUsize::new(0));
     let stop = Arc::new(AtomicBool::new(false));
-    let best: Arc<Mutex<Option<(u64, String, String)>>> = Arc::new(Mutex::new(None));
+    let best: Arc<Mutex<WalkBest>> = Arc::new(Mutex::new(None));
     let (sender, receiver) = mpsc::channel::<Result<Evaluated, String>>();
     let mut workers = Vec::new();
     for worker in 0..jobs.max(1) {
@@ -1035,14 +1060,13 @@ fn walk_workers(
                     if guard_accepts(&guard, value) {
                         current = Some((source.clone(), candidate.mutation.clone()));
                         heat = value.heat.clone();
-                        if let Ok(mut guard) = best.lock() {
-                            if guard
-                                .as_ref()
-                                .is_none_or(|(score, _, _)| value.score < *score)
-                            {
-                                *guard =
-                                    Some((value.score, source.clone(), candidate.mutation.clone()));
-                            }
+                        if update_walk_best(&best, guard.score, value, &source, &candidate.mutation)
+                        {
+                            println!(
+                                "new-best={} candidate={} mutation={} {}",
+                                value.score, candidate.index, candidate.mutation, value.summary
+                            );
+                            let _ = io::stdout().flush();
                         }
                     } else {
                         current = None;
@@ -1110,7 +1134,7 @@ fn collect_results(
                             item.candidate.mutation,
                             measurement.summary
                         );
-                    } else {
+                    } else if !options.walk {
                         println!(
                             "new-best={} candidate={} mutation={} {}",
                             *best_score,
@@ -1490,5 +1514,38 @@ mod tests {
         // Exact bytes are definitionally true.
         candidate.exact = true;
         assert!(guard_accepts(&baseline, &candidate));
+    }
+
+    #[test]
+    fn walk_best_reports_strict_improvements_as_they_arrive() {
+        let best = Mutex::new(None);
+        let mut measurement = Measurement::failed("candidate");
+        measurement.score = 110;
+        assert!(!update_walk_best(
+            &best,
+            100,
+            &measurement,
+            "worse",
+            "worse"
+        ));
+        assert!(best.lock().unwrap().is_none());
+
+        measurement.score = 90;
+        assert!(update_walk_best(&best, 100, &measurement, "first", "first"));
+        measurement.score = 90;
+        assert!(!update_walk_best(&best, 100, &measurement, "tie", "tie"));
+        measurement.score = 95;
+        assert!(!update_walk_best(
+            &best,
+            100,
+            &measurement,
+            "later",
+            "later"
+        ));
+        measurement.score = 80;
+        assert!(update_walk_best(&best, 100, &measurement, "best", "best"));
+
+        let state = best.into_inner().unwrap().unwrap();
+        assert_eq!(state, (80, "best".into(), "best".into()));
     }
 }

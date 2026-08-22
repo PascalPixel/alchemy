@@ -1,5 +1,6 @@
 #include "types.h"
 #include "object_effect.h"
+#include "object_efx.h"
 
 struct Vector_08099d18 {
     s32 x;
@@ -33,7 +34,6 @@ typedef char State_08099d18_source_offset[
 #undef STATE_08099D18_OFFSET
 
 extern struct State_08099d18 *Data_03001f30;
-extern u8 Data_0809f0b0[];
 
 u32 Func_08004458(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */

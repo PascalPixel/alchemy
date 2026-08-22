@@ -1,4 +1,5 @@
 #include "types.h"
+#include "object_efx.h"
 
 struct Vector_08098c08 {
     s32 x;
@@ -42,7 +43,7 @@ s32 Func_08098c08(void *source)
         field += 9;
         timer = 20;
         *(u16 *)field = timer;
-        Func_08009098(first_object, (const void *)0x0809F0B0);
+        Func_08009098(first_object, Data_0809f0b0);
     }
 
     position_pointer = &position;
@@ -58,7 +59,7 @@ s32 Func_08098c08(void *source)
             s32 x;
             s32 y;
 
-            Func_08009098(child, (const void *)0x0809F0D4);
+            Func_08009098(child, &Data_0809f0d4);
             x = Rand();
             x += speed;
             *(s32 *)((u8 *)child + 0x34) = speed;

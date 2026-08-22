@@ -1,8 +1,9 @@
 #include "types.h"
+#include "global_cells.h"
 
 u32 Func_08004938(s32 size)
 {
-    u32 *state = (u32 *)0x03001E50;
+    u32 *state = (u32 *)ADDR_03001E50;
     u32 next_address;
     u32 next;
     u32 result;

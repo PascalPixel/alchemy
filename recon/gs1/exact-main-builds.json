@@ -8,19 +8,19 @@
   "located_owners": 1348,
   "unresolved_owners": 41,
   "built_owners": 1348,
-  "all_exact_owners": 1121,
-  "all_exact_bytes": 82786,
+  "all_exact_owners": 1161,
+  "all_exact_bytes": 86318,
   "all_exact": false,
   "editions": [
     {
       "edition": "ja",
       "checked_owners": 1348,
       "checked_bytes": 103186,
-      "byte_exact_owners": 1191,
-      "byte_exact_bytes": 88550,
-      "nonexact_owners": 157,
-      "nonexact_bytes": 14636,
-      "differing_bytes": 386,
+      "byte_exact_owners": 1200,
+      "byte_exact_bytes": 89798,
+      "nonexact_owners": 148,
+      "nonexact_bytes": 13388,
+      "differing_bytes": 363,
       "unbuildable_owners": 3
     },
     {
@@ -38,44 +38,44 @@
       "edition": "de",
       "checked_owners": 1348,
       "checked_bytes": 103186,
-      "byte_exact_owners": 1160,
-      "byte_exact_bytes": 87620,
-      "nonexact_owners": 188,
-      "nonexact_bytes": 15566,
-      "differing_bytes": 380,
+      "byte_exact_owners": 1200,
+      "byte_exact_bytes": 91152,
+      "nonexact_owners": 148,
+      "nonexact_bytes": 12034,
+      "differing_bytes": 302,
       "unbuildable_owners": 2
     },
     {
       "edition": "es",
       "checked_owners": 1348,
       "checked_bytes": 103186,
-      "byte_exact_owners": 1220,
-      "byte_exact_bytes": 92304,
-      "nonexact_owners": 128,
-      "nonexact_bytes": 10882,
-      "differing_bytes": 298,
+      "byte_exact_owners": 1231,
+      "byte_exact_bytes": 93784,
+      "nonexact_owners": 117,
+      "nonexact_bytes": 9402,
+      "differing_bytes": 266,
       "unbuildable_owners": 2
     },
     {
       "edition": "fr",
       "checked_owners": 1348,
       "checked_bytes": 103186,
-      "byte_exact_owners": 1219,
-      "byte_exact_bytes": 92088,
-      "nonexact_owners": 129,
-      "nonexact_bytes": 11098,
-      "differing_bytes": 296,
+      "byte_exact_owners": 1230,
+      "byte_exact_bytes": 93568,
+      "nonexact_owners": 118,
+      "nonexact_bytes": 9618,
+      "differing_bytes": 264,
       "unbuildable_owners": 2
     },
     {
       "edition": "it",
       "checked_owners": 1348,
       "checked_bytes": 103186,
-      "byte_exact_owners": 1254,
-      "byte_exact_bytes": 93856,
-      "nonexact_owners": 94,
-      "nonexact_bytes": 9330,
-      "differing_bytes": 185,
+      "byte_exact_owners": 1265,
+      "byte_exact_bytes": 95336,
+      "nonexact_owners": 83,
+      "nonexact_bytes": 7850,
+      "differing_bytes": 163,
       "unbuildable_owners": 2
     }
   ],
@@ -634,7 +634,7 @@
       "en_owner": "0800352c",
       "source": "exact/0800352c.c",
       "size": 12,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -653,8 +653,8 @@
         {
           "edition": "de",
           "start": "0x0800355c",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -684,7 +684,7 @@
       "en_owner": "08003538",
       "source": "exact/08003538.c",
       "size": 280,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -703,8 +703,8 @@
         {
           "edition": "de",
           "start": "0x08003568",
-          "differing_bytes": 8,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -1484,7 +1484,7 @@
       "en_owner": "08004080",
       "source": "exact/08004080.c",
       "size": 52,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -1503,8 +1503,8 @@
         {
           "edition": "de",
           "start": "0x080040b0",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -2334,7 +2334,7 @@
       "en_owner": "0800488c",
       "source": "exact/0800488c.c",
       "size": 20,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -2353,8 +2353,8 @@
         {
           "edition": "de",
           "start": "0x080048bc",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -2384,7 +2384,7 @@
       "en_owner": "080048a0",
       "source": "exact/080048a0.c",
       "size": 16,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -2403,8 +2403,8 @@
         {
           "edition": "de",
           "start": "0x080048d0",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -2434,7 +2434,7 @@
       "en_owner": "080048b0",
       "source": "exact/080048b0.c",
       "size": 68,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -2453,8 +2453,8 @@
         {
           "edition": "de",
           "start": "0x080048e0",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -2484,7 +2484,7 @@
       "en_owner": "080048f4",
       "source": "exact/080048f4.c",
       "size": 68,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -2503,8 +2503,8 @@
         {
           "edition": "de",
           "start": "0x08004924",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -2534,7 +2534,7 @@
       "en_owner": "08004938",
       "source": "exact/08004938.c",
       "size": 56,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -2553,8 +2553,8 @@
         {
           "edition": "de",
           "start": "0x08004968",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -2584,7 +2584,7 @@
       "en_owner": "08004970",
       "source": "exact/08004970.c",
       "size": 56,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -2603,8 +2603,8 @@
         {
           "edition": "de",
           "start": "0x080049a0",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -2734,7 +2734,7 @@
       "en_owner": "08005208",
       "source": "exact/08005208.c",
       "size": 80,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -2753,8 +2753,8 @@
         {
           "edition": "de",
           "start": "0x08005238",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -2784,7 +2784,7 @@
       "en_owner": "08005258",
       "source": "exact/08005258.c",
       "size": 16,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -2803,8 +2803,8 @@
         {
           "edition": "de",
           "start": "0x08005288",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -4634,7 +4634,7 @@
       "en_owner": "08007028",
       "source": "exact/08007028.c",
       "size": 112,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -4653,29 +4653,29 @@
         {
           "edition": "de",
           "start": "0x08007058",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "es",
           "start": "0x08007088",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "fr",
           "start": "0x08007038",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "it",
           "start": "0x08007068",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         }
       ]
@@ -4684,7 +4684,7 @@
       "en_owner": "08007098",
       "source": "exact/08007098.c",
       "size": 132,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -4703,29 +4703,29 @@
         {
           "edition": "de",
           "start": "0x080070c8",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "es",
           "start": "0x080070f8",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "fr",
           "start": "0x080070a8",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "it",
           "start": "0x080070d8",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         }
       ]
@@ -4734,7 +4734,7 @@
       "en_owner": "0800711c",
       "source": "exact/0800711c.c",
       "size": 140,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -4753,29 +4753,29 @@
         {
           "edition": "de",
           "start": "0x0800714c",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "es",
           "start": "0x0800717c",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "fr",
           "start": "0x0800712c",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "it",
           "start": "0x0800715c",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         }
       ]
@@ -5503,7 +5503,7 @@
         {
           "edition": "de",
           "start": "0x0800b670",
-          "differing_bytes": 2,
+          "differing_bytes": 1,
           "byte_exact": false,
           "error": null
         },
@@ -7984,7 +7984,7 @@
       "en_owner": "0800d924",
       "source": "exact/0800d924.c",
       "size": 104,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -8003,8 +8003,8 @@
         {
           "edition": "de",
           "start": "0x0800d124",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -8034,7 +8034,7 @@
       "en_owner": "0800d98c",
       "source": "exact/0800d98c.c",
       "size": 100,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -8053,8 +8053,8 @@
         {
           "edition": "de",
           "start": "0x0800d18c",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -10534,13 +10534,13 @@
       "en_owner": "0800ea60",
       "source": "exact/0800ea60.c",
       "size": 152,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
           "start": "0x0800ea60",
-          "differing_bytes": 2,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -10553,8 +10553,8 @@
         {
           "edition": "de",
           "start": "0x0800e260",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -14803,7 +14803,7 @@
         {
           "edition": "de",
           "start": "0x08018660",
-          "differing_bytes": 3,
+          "differing_bytes": 2,
           "byte_exact": false,
           "error": null
         },
@@ -15634,7 +15634,7 @@
       "en_owner": "0801a778",
       "source": "exact/0801a778.c",
       "size": 72,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -15653,8 +15653,8 @@
         {
           "edition": "de",
           "start": "0x080193ec",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -15784,7 +15784,7 @@
       "en_owner": "0801a910",
       "source": "exact/0801a910.c",
       "size": 88,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -15803,8 +15803,8 @@
         {
           "edition": "de",
           "start": "0x08019584",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -16034,7 +16034,7 @@
       "en_owner": "0801b228",
       "source": "exact/0801b228.c",
       "size": 32,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -16053,8 +16053,8 @@
         {
           "edition": "de",
           "start": "0x08019e9c",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -16184,7 +16184,7 @@
       "en_owner": "0801b424",
       "source": "exact/0801b424.c",
       "size": 200,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -16203,8 +16203,8 @@
         {
           "edition": "de",
           "start": "0x0801a098",
-          "differing_bytes": 3,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -16884,7 +16884,7 @@
       "en_owner": "0801c21c",
       "source": "exact/0801c21c.c",
       "size": 40,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -16903,8 +16903,8 @@
         {
           "edition": "de",
           "start": "0x0801ae90",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -31284,7 +31284,7 @@
       "en_owner": "08091240",
       "source": "exact/08091240.c",
       "size": 20,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -31303,8 +31303,8 @@
         {
           "edition": "de",
           "start": "0x080948ac",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -38184,13 +38184,13 @@
       "en_owner": "08096d2c",
       "source": "exact/08096d2c.c",
       "size": 88,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
           "start": "0x0808dd14",
-          "differing_bytes": 2,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -38203,29 +38203,29 @@
         {
           "edition": "de",
           "start": "0x0809a3c8",
-          "differing_bytes": 3,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "es",
           "start": "0x0809bdb8",
-          "differing_bytes": 3,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "fr",
           "start": "0x0809bdb8",
-          "differing_bytes": 3,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "it",
           "start": "0x08096db8",
-          "differing_bytes": 2,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         }
       ]
@@ -38234,13 +38234,13 @@
       "en_owner": "08096d84",
       "source": "exact/08096d84.c",
       "size": 88,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
           "start": "0x0808dd6c",
-          "differing_bytes": 2,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -38253,29 +38253,29 @@
         {
           "edition": "de",
           "start": "0x0809a420",
-          "differing_bytes": 3,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "es",
           "start": "0x0809be10",
-          "differing_bytes": 3,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "fr",
           "start": "0x0809be10",
-          "differing_bytes": 3,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "it",
           "start": "0x08096e10",
-          "differing_bytes": 2,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         }
       ]
@@ -38984,13 +38984,13 @@
       "en_owner": "08097b70",
       "source": "exact/08097b70.c",
       "size": 204,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
           "start": "0x0808eb58",
-          "differing_bytes": 2,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -39003,29 +39003,29 @@
         {
           "edition": "de",
           "start": "0x0809b20c",
-          "differing_bytes": 3,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "es",
           "start": "0x0809cbfc",
-          "differing_bytes": 3,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "fr",
           "start": "0x0809cbfc",
-          "differing_bytes": 3,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "it",
           "start": "0x08097bfc",
-          "differing_bytes": 2,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         }
       ]
@@ -39084,13 +39084,13 @@
       "en_owner": "08098070",
       "source": "exact/08098070.c",
       "size": 276,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
           "start": "0x0808f058",
-          "differing_bytes": 5,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -39103,29 +39103,29 @@
         {
           "edition": "de",
           "start": "0x0809b70c",
-          "differing_bytes": 5,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "es",
           "start": "0x0809d0fc",
-          "differing_bytes": 5,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "fr",
           "start": "0x0809d0fc",
-          "differing_bytes": 5,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "it",
           "start": "0x080980fc",
-          "differing_bytes": 3,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         }
       ]
@@ -39234,7 +39234,7 @@
       "en_owner": "08098294",
       "source": "exact/08098294.c",
       "size": 72,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -39253,8 +39253,8 @@
         {
           "edition": "de",
           "start": "0x0809b930",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -39534,13 +39534,13 @@
       "en_owner": "08098c08",
       "source": "exact/08098c08.c",
       "size": 196,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
           "start": "0x0808fbfc",
-          "differing_bytes": 4,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -39553,29 +39553,29 @@
         {
           "edition": "de",
           "start": "0x0809c2b0",
-          "differing_bytes": 6,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "es",
           "start": "0x0809dca0",
-          "differing_bytes": 6,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "fr",
           "start": "0x0809dca0",
-          "differing_bytes": 6,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "it",
           "start": "0x08098ca0",
-          "differing_bytes": 4,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         }
       ]
@@ -39684,13 +39684,13 @@
       "en_owner": "08099040",
       "source": "exact/08099040.c",
       "size": 48,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
           "start": "0x08090034",
-          "differing_bytes": 2,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -39703,29 +39703,29 @@
         {
           "edition": "de",
           "start": "0x0809c6e8",
-          "differing_bytes": 3,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "es",
           "start": "0x0809e0d8",
-          "differing_bytes": 3,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "fr",
           "start": "0x0809e0d8",
-          "differing_bytes": 3,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "it",
           "start": "0x080990d8",
-          "differing_bytes": 2,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         }
       ]
@@ -40184,13 +40184,13 @@
       "en_owner": "08099920",
       "source": "exact/08099920.c",
       "size": 136,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
           "start": "0x08090914",
-          "differing_bytes": 2,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -40203,29 +40203,29 @@
         {
           "edition": "de",
           "start": "0x0809cfc8",
-          "differing_bytes": 3,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "es",
           "start": "0x0809e9b8",
-          "differing_bytes": 3,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "fr",
           "start": "0x0809e9b8",
-          "differing_bytes": 3,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "it",
           "start": "0x080999b8",
-          "differing_bytes": 2,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         }
       ]
@@ -40234,13 +40234,13 @@
       "en_owner": "080999a8",
       "source": "exact/080999a8.c",
       "size": 60,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
           "start": "0x0809099c",
-          "differing_bytes": 2,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -40253,29 +40253,29 @@
         {
           "edition": "de",
           "start": "0x0809d050",
-          "differing_bytes": 3,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "es",
           "start": "0x0809ea40",
-          "differing_bytes": 3,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "fr",
           "start": "0x0809ea40",
-          "differing_bytes": 3,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
           "edition": "it",
           "start": "0x08099a40",
-          "differing_bytes": 2,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         }
       ]
@@ -43003,7 +43003,7 @@
         {
           "edition": "de",
           "start": "0x080a5244",
-          "differing_bytes": 2,
+          "differing_bytes": 1,
           "byte_exact": false,
           "error": null
         },
@@ -48453,7 +48453,7 @@
         {
           "edition": "de",
           "start": "0x080b4014",
-          "differing_bytes": 3,
+          "differing_bytes": 1,
           "byte_exact": false,
           "error": null
         },
@@ -50953,7 +50953,7 @@
         {
           "edition": "de",
           "start": "0x080ba4f0",
-          "differing_bytes": 3,
+          "differing_bytes": 2,
           "byte_exact": false,
           "error": null
         },
@@ -51684,7 +51684,7 @@
       "en_owner": "080b86ec",
       "source": "exact/080b86ec.c",
       "size": 96,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -51703,8 +51703,8 @@
         {
           "edition": "de",
           "start": "0x080bad04",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -52434,7 +52434,7 @@
       "en_owner": "080b9acc",
       "source": "exact/080b9acc.c",
       "size": 96,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -52453,8 +52453,8 @@
         {
           "edition": "de",
           "start": "0x080bc0e4",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -53284,7 +53284,7 @@
       "en_owner": "080bd7dc",
       "source": "exact/080bd7dc.c",
       "size": 44,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -53303,8 +53303,8 @@
         {
           "edition": "de",
           "start": "0x080bfdf4",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -53353,7 +53353,7 @@
         {
           "edition": "de",
           "start": "0x080bfe20",
-          "differing_bytes": 3,
+          "differing_bytes": 2,
           "byte_exact": false,
           "error": null
         },
@@ -53384,7 +53384,7 @@
       "en_owner": "080bdfec",
       "source": "exact/080bdfec.c",
       "size": 64,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -53403,8 +53403,8 @@
         {
           "edition": "de",
           "start": "0x080c0604",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -61803,7 +61803,7 @@
         {
           "edition": "de",
           "start": "0x080e335c",
-          "differing_bytes": 2,
+          "differing_bytes": 1,
           "byte_exact": false,
           "error": null
         },
@@ -63184,7 +63184,7 @@
       "en_owner": "080f3804",
       "source": "exact/080f3804.c",
       "size": 32,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -63203,8 +63203,8 @@
         {
           "edition": "de",
           "start": "0x080f4e18",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -63234,7 +63234,7 @@
       "en_owner": "080f3824",
       "source": "exact/080f3824.c",
       "size": 32,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -63253,8 +63253,8 @@
         {
           "edition": "de",
           "start": "0x080f4e38",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -63284,7 +63284,7 @@
       "en_owner": "080f3844",
       "source": "exact/080f3844.c",
       "size": 20,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -63303,8 +63303,8 @@
         {
           "edition": "de",
           "start": "0x080f4e58",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {
@@ -63334,7 +63334,7 @@
       "en_owner": "080f3858",
       "source": "exact/080f3858.c",
       "size": 64,
-      "all_exact": false,
+      "all_exact": true,
       "editions": [
         {
           "edition": "ja",
@@ -63353,8 +63353,8 @@
         {
           "edition": "de",
           "start": "0x080f4e6c",
-          "differing_bytes": 1,
-          "byte_exact": false,
+          "differing_bytes": 0,
+          "byte_exact": true,
           "error": null
         },
         {

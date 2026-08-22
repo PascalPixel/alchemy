@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 s32 Func_08004080(void)
 {
@@ -7,11 +8,11 @@ s32 Func_08004080(void)
   void *base;
   int zero;
   void *entry;
-  entry = (void *) 0x03001B10;
+  entry = (void *) ADDR_03001B10;
   result = 0x60;
   zero = 0;
   index = zero;
-  base = (void *) 0x03001B10;
+  base = (void *) ADDR_03001B10;
   if ((*((u16 *) (((u8 *) base) + 2))) == 0xFFFF)
   {
     return zero;

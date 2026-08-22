@@ -24,6 +24,7 @@
  *     a relocated IWRAM routine. NOT established
  */
 #include "types.h"
+#include "global_cells.h"
 
 void Func_080049ac(void);
 s32 Func_080770c0(s32);
@@ -32,7 +33,7 @@ s32 Func_080051d8(void *, void *);
 void Func_080072f0(void *);
 
 s32 Func_080b7ed8(void) {
-    u8 *state = *(u8 **)0x03001E80;
+    u8 *state = *(u8 **)ADDR_03001E80;
     Func_080049ac();
     if (Func_080770c0(0x16B) != 0) {
         ((void (*)(void *))0x030002C0)((void *)0x080C2A7C);

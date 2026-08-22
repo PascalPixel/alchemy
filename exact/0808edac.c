@@ -1,4 +1,5 @@
 #include "effect_runtime.h"
+#include "global_cells.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
@@ -18,7 +19,7 @@ void Func_0808edac(s32 unused, s32 x, s32 y) {
     objectX = x;
     slot = Func_0808ec14();
     if (slot != -1) {
-        slotBase = *(s32 *)0x03001EBC + (slot * 8);
+        slotBase = *(s32 *)ADDR_03001EBC + (slot * 8);
         slotData = slotBase + 0x11C;
         object = M2C_FIELD(slotBase, void **, 0x11C);
         if (object != NULL) {

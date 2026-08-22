@@ -1,8 +1,9 @@
 #include "types.h"
+#include "global_cells.h"
 
 s32 Func_08011fd8(s32 index, s32 x, s32 y)
 {
-    u8 *table = *(u8 **)0x03001e70;
+    u8 *table = *(u8 **)ADDR_03001E70;
     u8 *map;
     s32 offset;
     s32 column;

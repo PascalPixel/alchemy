@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 struct Runtime08005ae0 {
     u8 bytes[0x103F];
@@ -11,7 +12,7 @@ s32 Func_08005ae0(void)
     u32 offset;
     s32 sum;
 
-    runtime = *(struct Runtime08005ae0 **)0x03001F1C;
+    runtime = *(struct Runtime08005ae0 **)ADDR_03001F1C;
     limit = 0xFE7;
     sum = 0;
     offset = 0;

@@ -1,5 +1,6 @@
 #include "object_factory.h"
 #include "types.h"
+#include "global_cells.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
@@ -10,7 +11,7 @@ s32 Func_080a9cf8(s32 resource) {
     u8 *base;
     s32 arg5;
 
-    base = *(u8 **)0x03001F2C;
+    base = *(u8 **)ADDR_03001F2C;
     index = 0;
     arg5 = 0xA8;
     output = (void **)(base + 0xC8);

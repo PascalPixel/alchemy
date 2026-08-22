@@ -1,4 +1,4 @@
-#include "types.h"
+#include "global_cells.h"
 
 void Func_080030f8(s32);
 void Func_080a1114(void *, s32);
@@ -9,7 +9,7 @@ void Func_080a34c0(void) {
     u8 *state;
     s8 *controller;
 
-    state = *(u8 **)0x03001F2C;
+    state = *(u8 **)ADDR_03001F2C;
     Func_080a195c();
     Func_080a345c();
     Func_080030f8(1);

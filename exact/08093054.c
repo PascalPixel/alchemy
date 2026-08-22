@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 extern u8 Data_02000240;
 
@@ -17,10 +18,10 @@ s32 Func_08093054(s32 first, s32 second)
     result = Func_08091c7c(*(void **)(table + 500), 0);
     if (result == 0) {
         Func_08092f84(first, second);
-        state = *(u8 **)0x03001ebc;
+        state = *(u8 **)ADDR_03001EBC;
         *(u16 *)(state + 472) += 1;
     } else {
-        state = *(u8 **)0x03001ebc;
+        state = *(u8 **)ADDR_03001EBC;
         *(u16 *)(state + 472) += 1;
         Func_08092f84(first, second);
     }

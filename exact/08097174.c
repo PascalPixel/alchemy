@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
@@ -11,7 +12,7 @@ struct State_08097174 {
 };
 
 void Func_08097174(void) {
-    struct State_08097174 *state = *(void **)0x03001F30;
+    struct State_08097174 *state = *(void **)ADDR_03001F30;
     u8 *object = state->object;
 
     M2C_FIELD(object, s32 *, 0x6C) = 0;

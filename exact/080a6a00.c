@@ -1,5 +1,6 @@
 #include "menu_result.h"
 #include "types.h"
+#include "global_cells.h"
 
 s32 Func_08077008(s32);
 s32 Func_080022ec(s32, s32);
@@ -8,7 +9,7 @@ s32 Func_080022fc(s32, s32);
 s32 Func_080a6a00(struct MenuResult *result, s32 index)
 {
     s32 encoded;
-    u8 *base = *(u8 **)0x03001F2C;
+    u8 *base = *(u8 **)ADDR_03001F2C;
     s32 offset = index + 0x218;
     u8 *entries = base + 2;
     s32 limit;

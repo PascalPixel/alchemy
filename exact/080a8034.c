@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 struct State080a8034 {
     u8 padding_00[0x20];
@@ -19,7 +20,7 @@ s32 Func_080a1870(s32, s32, s32, s32, s32);
 void Func_080a8034(void) {
     struct State080a8034 *state;
 
-    state = *(struct State080a8034 **)0x03001F2C;
+    state = *(struct State080a8034 **)ADDR_03001F2C;
     Func_080a1870(Func_080a1814(state), 2, 2, 8, 0);
     state->field_28 = 0;
     state->field_24 = 0;

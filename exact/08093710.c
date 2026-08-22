@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 s32 Func_080030f8(s32);
 void *Func_080048f4(s32 arg0, s32 arg1);
@@ -7,7 +8,7 @@ void Func_08093710(void)
   s32 var_r5;
   void *temp_r6;
   u8 *new_var;
-  temp_r6 = *((void **) 0x03001E70);
+  temp_r6 = *((void **) ADDR_03001E70);
   if ((*((s16 *) (((u8 *) Func_080048f4(0x1B, 0xCCC)) + 0x19E))) == 3)
   {
     var_r5 = 0;

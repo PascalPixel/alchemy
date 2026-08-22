@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
@@ -13,7 +14,7 @@ s32 Func_080aaf58(void *arg0) {
     s16 temp_r0;
     s32 count;
 
-    temp_r3 = *(void **)0x03001F2C;
+    temp_r3 = *(void **)ADDR_03001F2C;
     var_r4 = 0;
     if (var_r4 < M2C_FIELD(temp_r3, u8, 0x219)) {
         var_r7 = (s8 *)arg0 + 0xA0;

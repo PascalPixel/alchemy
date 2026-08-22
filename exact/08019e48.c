@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 extern s32 Func_08019d2c();
 extern void Func_08016418(struct Work *work, s32 release);
@@ -13,7 +14,7 @@ void Func_08019e48(void)
     u8 *entity;
     s32 offset;
 
-    base = *(u8 **)0x03001E8C;
+    base = *(u8 **)ADDR_03001E8C;
     work = base + 0x500;
     id = Func_08019d2c();
     if (id == -1)

@@ -1,4 +1,5 @@
 #include "m7_interfaces.h"
+#include "global_cells.h"
 
 void Func_080a1bdc(s32 origin_x, s32 origin_y, s32 phase) {
     s32 _v1d16;
@@ -10,7 +11,7 @@ void Func_080a1bdc(s32 origin_x, s32 origin_y, s32 phase) {
     s32 index;
 
     index = 0;
-    _v1t36 = (*(s32 *)0x03001F2C);
+    _v1t36 = (*(s32 *)ADDR_03001F2C);
     slot = (struct Object080a1c **)(_v1t36 + 0x48);
     scan = slot;
     do {

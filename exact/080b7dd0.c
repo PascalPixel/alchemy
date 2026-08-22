@@ -1,8 +1,9 @@
 #include "types.h"
 #include "motion_object.h"
+#include "global_cells.h"
 
 struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id) {
-    u8 *base = *(u8 **)0x03001E74;
+    u8 *base = *(u8 **)ADDR_03001E74;
     u8 *result_base = base + 0x74;
     s32 offset;
     if (object_id > 7) {

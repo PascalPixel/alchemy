@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 extern s32 Func_080c23c0(s32 index);
 
@@ -14,7 +15,7 @@ s32 Func_080b6cdc(s32 arg0)
     s32 i;
 
     retval = Func_080c23c0(arg0);
-    ptr = *(struct Layout **)0x03001e74;
+    ptr = *(struct Layout **)ADDR_03001E74;
 
     for (i = 0; i <= 5; i++) {
         if (ptr->field[i] != 0)

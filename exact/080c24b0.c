@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 extern s16 Data_02000240[];
 
@@ -13,7 +14,7 @@ void Func_080c24b0(void)
     s16 *slots;
     s32 index;
 
-    base = *(u8 **)0x03001E74;
+    base = *(u8 **)ADDR_03001E74;
     words = (union Word *)(base + 0x530);
     Data_02000240[286] = 0;
     words[0].value = 0;

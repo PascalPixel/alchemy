@@ -15,7 +15,7 @@ const EDITIONS: [&str; 6] = ["ja", "en", "de", "es", "fr", "it"];
 const OVERLAY_BASE: u64 = 0x0200_0000;
 const OVERLAY_FIRST: usize = 0x36f;
 const OVERLAY_LAST: usize = 0x3ce;
-const USAGE: &str = "usage: compiler cross-edition ([--calls] [--json] [--rom-dir DIR] [--object FILE] [--edition-build FILE] <8-digit-owner> | --all [--rom-dir DIR] [--object-dir DIR] [--write FILE] | --all-overlays [--rom-dir DIR] [--write FILE])";
+const USAGE: &str = "usage: compiler cross-edition ([--calls] [--json] [--rom-dir DIR] [--object FILE] [--edition-build FILE] <8-digit-owner> | --all [--rom-dir DIR] [--object-dir DIR] [--write FILE] [--edition-build FILE] | --all-overlays [--rom-dir DIR] [--write FILE])";
 
 #[derive(Debug, Serialize)]
 struct Report {
@@ -208,8 +208,66 @@ struct EditionBuildEntry {
     edition: String,
     start: String,
     external_symbols: BTreeMap<String, String>,
-    differing_bytes: usize,
+    differing_bytes: Option<usize>,
     byte_exact: bool,
+    error: Option<String>,
+}
+
+#[derive(Debug, Serialize)]
+struct CorpusEditionBuildReport {
+    schema_version: u32,
+    game: &'static str,
+    source_edition: &'static str,
+    source_state: &'static str,
+    owners_total: usize,
+    owner_symbol_bytes: usize,
+    located_owners: usize,
+    unresolved_owners: usize,
+    built_owners: usize,
+    all_exact_owners: usize,
+    all_exact_bytes: usize,
+    all_exact: bool,
+    editions: Vec<EditionBuildSummary>,
+    owners: Vec<CorpusEditionBuildOwner>,
+    failures: Vec<EditionBuildFailure>,
+}
+
+#[derive(Debug, Serialize)]
+struct CorpusEditionBuildOwner {
+    en_owner: String,
+    source: String,
+    size: usize,
+    all_exact: bool,
+    editions: Vec<CorpusEditionBuildEntry>,
+}
+
+#[derive(Debug, Serialize)]
+struct CorpusEditionBuildEntry {
+    edition: String,
+    start: String,
+    differing_bytes: Option<usize>,
+    byte_exact: bool,
+    error: Option<String>,
+}
+
+#[derive(Debug, Serialize)]
+struct EditionBuildSummary {
+    edition: String,
+    checked_owners: usize,
+    checked_bytes: usize,
+    byte_exact_owners: usize,
+    byte_exact_bytes: usize,
+    nonexact_owners: usize,
+    nonexact_bytes: usize,
+    differing_bytes: usize,
+    unbuildable_owners: usize,
+}
+
+#[derive(Debug, Serialize)]
+struct EditionBuildFailure {
+    en_owner: String,
+    source: String,
+    error: String,
 }
 
 struct EditionRoms {
@@ -415,7 +473,25 @@ fn write_edition_build(
     report: &Report,
     roms: &EditionRoms,
 ) -> Result<EditionBuildReport, String> {
-    let (size, _, _, relocations) = relocation_mask(object_path, owner)?;
+    let build = edition_build_report(owner, object_path, report, roms)?;
+    write_json(path, &build, "edition build")?;
+    println!(
+        "edition_build={} owner={} editions={} all_exact={}",
+        path.display(),
+        owner,
+        build.editions.len(),
+        build.all_exact
+    );
+    Ok(build)
+}
+
+fn edition_build_report(
+    owner: &str,
+    object_path: &Path,
+    report: &Report,
+    roms: &EditionRoms,
+) -> Result<EditionBuildReport, String> {
+    let (size, symbol_offset, _, relocations) = relocation_mask(object_path, owner)?;
     if size != report.size {
         return Err(format!(
             "edition build object size {size} differs from located owner size {}",
@@ -436,60 +512,202 @@ fn write_edition_build(
         let reference = roms.images[edition]
             .get(start..start + size)
             .ok_or_else(|| format!("{edition}: owner extends past ROM"))?;
-        let values = derive_external_symbols(&relocations, reference, start)?;
-        let linked = link_owner_for_edition(
-            &output_root,
-            edition,
-            object_path,
-            &owner_symbol,
-            ROM_BASE + start as u64,
-            &values,
-        )?;
-        let differing_bytes = reference
-            .iter()
-            .zip(&linked)
-            .filter(|(left, right)| left != right)
-            .count()
-            + reference.len().abs_diff(linked.len());
-        editions.push(EditionBuildEntry {
-            edition: edition.into(),
-            start: format!("0x{:08x}", ROM_BASE + start as u64),
-            external_symbols: values
-                .into_iter()
-                .map(|(name, value)| (name, format!("0x{value:08x}")))
-                .collect(),
-            differing_bytes,
-            byte_exact: differing_bytes == 0,
+        let built = derive_external_symbols(&relocations, reference, start).and_then(|values| {
+            link_owner_for_edition(
+                &output_root,
+                edition,
+                object_path,
+                &owner_symbol,
+                ROM_BASE + start as u64,
+                symbol_offset,
+                size,
+                &values,
+            )
+            .map(|linked| (values, linked))
         });
+        match built {
+            Ok((values, linked)) => {
+                let differing_bytes = reference
+                    .iter()
+                    .zip(&linked)
+                    .filter(|(left, right)| left != right)
+                    .count()
+                    + reference.len().abs_diff(linked.len());
+                editions.push(EditionBuildEntry {
+                    edition: edition.into(),
+                    start: format!("0x{:08x}", ROM_BASE + start as u64),
+                    external_symbols: values
+                        .into_iter()
+                        .map(|(name, value)| (name, format!("0x{value:08x}")))
+                        .collect(),
+                    differing_bytes: Some(differing_bytes),
+                    byte_exact: differing_bytes == 0,
+                    error: None,
+                });
+            }
+            Err(error) => editions.push(EditionBuildEntry {
+                edition: edition.into(),
+                start: format!("0x{:08x}", ROM_BASE + start as u64),
+                external_symbols: BTreeMap::new(),
+                differing_bytes: None,
+                byte_exact: false,
+                error: Some(error),
+            }),
+        }
     }
 
     let build = EditionBuildReport {
         schema_version: 1,
         game: "gs1",
-        source_edition: "ja",
-        source: "recon/gs1/ja/main/080b2b0c.c".into(),
+        source_edition: "en",
+        source: format!("exact/{owner}.c"),
         object: object_path.display().to_string(),
         owner_symbol,
         size,
         all_exact: editions.iter().all(|edition| edition.byte_exact),
         editions,
     };
+    Ok(build)
+}
+
+fn write_json<T: Serialize>(path: &Path, value: &T, label: &str) -> Result<(), String> {
     if let Some(parent) = path
         .parent()
         .filter(|parent| !parent.as_os_str().is_empty())
     {
         fs::create_dir_all(parent).map_err(|error| format!("{}: {error}", parent.display()))?;
     }
-    let json = serde_json::to_string_pretty(&build)
-        .map_err(|error| format!("serialize edition build: {error}"))?
+    let json = serde_json::to_string_pretty(value)
+        .map_err(|error| format!("serialize {label}: {error}"))?
         + "\n";
     fs::write(path, json).map_err(|error| format!("{}: {error}", path.display()))?;
+    Ok(())
+}
+
+fn write_corpus_edition_build(
+    path: &Path,
+    object_dir: &Path,
+    reports: &BTreeMap<String, Report>,
+    owners_total: usize,
+    owner_symbol_bytes: usize,
+    unresolved_owners: usize,
+    roms: &EditionRoms,
+) -> Result<CorpusEditionBuildReport, String> {
+    let mut owners = Vec::new();
+    let mut failures = Vec::new();
+    for (index, (owner, report)) in reports.iter().enumerate() {
+        let object = object_dir.join(format!("{owner}.o"));
+        match edition_build_report(owner, &object, report, roms) {
+            Ok(build) => owners.push(build),
+            Err(error) => failures.push(EditionBuildFailure {
+                en_owner: owner.clone(),
+                source: format!("exact/{owner}.c"),
+                error,
+            }),
+        }
+        if (index + 1) % 100 == 0 || index + 1 == reports.len() {
+            eprintln!(
+                "edition builds={}/{} failures={}",
+                owners.len(),
+                index + 1,
+                failures.len()
+            );
+        }
+    }
+
+    let editions = EDITIONS
+        .into_iter()
+        .map(|edition| {
+            let mut summary = EditionBuildSummary {
+                edition: edition.into(),
+                checked_owners: 0,
+                checked_bytes: 0,
+                byte_exact_owners: 0,
+                byte_exact_bytes: 0,
+                nonexact_owners: 0,
+                nonexact_bytes: 0,
+                differing_bytes: 0,
+                unbuildable_owners: 0,
+            };
+            for owner in &owners {
+                let entry = owner
+                    .editions
+                    .iter()
+                    .find(|entry| entry.edition == edition)
+                    .expect("every edition build contains every edition");
+                summary.checked_owners += 1;
+                summary.checked_bytes += owner.size;
+                if let Some(differing_bytes) = entry.differing_bytes {
+                    summary.differing_bytes += differing_bytes;
+                } else {
+                    summary.unbuildable_owners += 1;
+                }
+                if entry.byte_exact {
+                    summary.byte_exact_owners += 1;
+                    summary.byte_exact_bytes += owner.size;
+                } else {
+                    summary.nonexact_owners += 1;
+                    summary.nonexact_bytes += owner.size;
+                }
+            }
+            summary
+        })
+        .collect::<Vec<_>>();
+    let all_exact_owners = owners.iter().filter(|owner| owner.all_exact).count();
+    let all_exact_bytes = owners
+        .iter()
+        .filter(|owner| owner.all_exact)
+        .map(|owner| owner.size)
+        .sum();
+    let owners = owners
+        .into_iter()
+        .map(|owner| CorpusEditionBuildOwner {
+            en_owner: owner.owner_symbol.trim_start_matches("Func_").into(),
+            source: owner.source,
+            size: owner.size,
+            all_exact: owner.all_exact,
+            editions: owner
+                .editions
+                .into_iter()
+                .map(|entry| CorpusEditionBuildEntry {
+                    edition: entry.edition,
+                    start: entry.start,
+                    differing_bytes: entry.differing_bytes,
+                    byte_exact: entry.byte_exact,
+                    error: entry.error,
+                })
+                .collect(),
+        })
+        .collect::<Vec<_>>();
+    let build = CorpusEditionBuildReport {
+        schema_version: 1,
+        game: "gs1",
+        source_edition: "en",
+        source_state: "byte-exact C objects relinked per edition",
+        owners_total,
+        owner_symbol_bytes,
+        located_owners: reports.len(),
+        unresolved_owners,
+        built_owners: owners.len(),
+        all_exact_owners,
+        all_exact_bytes,
+        all_exact: unresolved_owners == 0
+            && failures.is_empty()
+            && owners.len() == owners_total
+            && all_exact_owners == owners_total,
+        editions,
+        owners,
+        failures,
+    };
+    write_json(path, &build, "corpus edition build")?;
     println!(
-        "edition_build={} owner={} editions={} all_exact={}",
+        "edition_builds={} owners={} built={} all_exact={} unresolved={} failures={}",
         path.display(),
-        owner,
-        build.editions.len(),
-        build.all_exact
+        build.owners_total,
+        build.built_owners,
+        build.all_exact_owners,
+        build.unresolved_owners,
+        build.failures.len()
     );
     Ok(build)
 }
@@ -542,6 +760,8 @@ fn link_owner_for_edition(
     object_path: &Path,
     owner_symbol: &str,
     start: u64,
+    symbol_offset: u64,
+    size: usize,
     values: &BTreeMap<String, u64>,
 ) -> Result<Vec<u8>, String> {
     let output = output_root.join(edition);
@@ -573,7 +793,13 @@ fn link_owner_for_edition(
     )?;
     run_tool(
         Command::new("arm-none-eabi-ld")
-            .arg(format!("-Ttext=0x{start:08x}"))
+            .arg(format!(
+                "-Ttext=0x{:08x}",
+                start
+                    .checked_sub(symbol_offset)
+                    .ok_or("owner symbol offset exceeds destination address")?
+            ))
+            .arg("--unresolved-symbols=ignore-all")
             .args(["-e", owner_symbol, "-o"])
             .arg(&elf)
             .arg(object_path)
@@ -587,7 +813,15 @@ fn link_owner_for_edition(
             .arg(&binary),
         "extract edition owner",
     )?;
-    fs::read(&binary).map_err(|error| format!("{}: {error}", binary.display()))
+    let bytes = fs::read(&binary).map_err(|error| format!("{}: {error}", binary.display()))?;
+    let offset = usize::try_from(symbol_offset).map_err(|_| "owner symbol offset is too large")?;
+    let owner = bytes
+        .get(offset..offset + size)
+        .map(Vec::from)
+        .ok_or_else(|| format!("{}: linked owner extends past .text", binary.display()))?;
+    fs::write(output.join("owner.slice.bin"), &owner)
+        .map_err(|error| format!("{}: {error}", output.display()))?;
+    Ok(owner)
 }
 
 fn run_tool(command: &mut Command, label: &str) -> Result<(), String> {
@@ -662,8 +896,10 @@ fn parse(args: &[String]) -> Result<Options, String> {
     if !all && !all_overlays && write.is_some() {
         return Err(format!("--write requires a corpus scan\n{USAGE}"));
     }
-    if (all || all_overlays) && edition_build.is_some() {
-        return Err(format!("--edition-build requires one owner\n{USAGE}"));
+    if all_overlays && edition_build.is_some() {
+        return Err(format!(
+            "--edition-build does not yet support overlay corpus scans\n{USAGE}"
+        ));
     }
     if (all || all_overlays) && (object.is_some() || calls || json) {
         return Err(format!(
@@ -824,6 +1060,18 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
         }
     }
     remove_order_conflicts(&mut reports, &mut failures, "locality")?;
+
+    if let Some(path) = &options.edition_build {
+        write_corpus_edition_build(
+            path,
+            &options.object_dir,
+            &reports,
+            owner_names.len(),
+            owner_symbol_bytes,
+            failures.len(),
+            roms,
+        )?;
+    }
 
     let mut owners = Vec::new();
     let mut matched_bytes = 0;
@@ -2134,6 +2382,18 @@ fn print_report(report: &Report, calls: bool) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn accepts_corpus_edition_build_output() {
+        let options = parse(&[
+            "--all".into(),
+            "--edition-build".into(),
+            "out/builds.json".into(),
+        ])
+        .expect("corpus edition build options");
+        assert!(options.all);
+        assert_eq!(options.edition_build, Some("out/builds.json".into()));
+    }
 
     #[test]
     fn builds_anchors_only_from_core_bytes() {

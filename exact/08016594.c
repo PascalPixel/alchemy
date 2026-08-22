@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
@@ -20,7 +21,7 @@ void Func_08016594(struct Entry_08016594 *entry) {
     if (entry->kind != 0) {
         Func_08003f3c(entry->index);
         if (entry->kind == 2) {
-            u8 *dst = (u8 *) (*(s32 *)0x03001E8C);
+            u8 *dst = (u8 *) (*(s32 *)ADDR_03001E8C);
             s32 idx = ((u32)entry->palette >> 4) * 2 + 0x12D0;
             *(u16 *)(dst + idx) = 0x3E7;
         }

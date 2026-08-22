@@ -1,4 +1,5 @@
 #include "m7_interfaces.h"
+#include "global_cells.h"
 
 void Func_080a1cb0(s32 layout) {
     struct Object080a1c **slot;
@@ -8,7 +9,7 @@ void Func_080a1cb0(s32 layout) {
     s32 origin_y;
     s32 base;
 
-    base = *(s32 *)0x03001F2C;
+    base = *(s32 *)ADDR_03001F2C;
     origin_y = 0x38;
     if (layout != 1) {
         origin_y = 0x28;

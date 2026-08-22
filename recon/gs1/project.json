@@ -12,6 +12,7 @@
   "correspondence": {
     "calibration": "recon/gs1/cross-edition.json",
     "exact_main": "recon/gs1/exact-correspondence.json",
+    "exact_main_builds": "recon/gs1/exact-main-builds.json",
     "exact_overlays": "recon/gs1/exact-overlay-correspondence.json"
   },
   "editions": {

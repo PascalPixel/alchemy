@@ -1,5 +1,6 @@
 #include "a9_motion.h"
 #include "types.h"
+#include "global_cells.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
@@ -10,7 +11,7 @@ void Func_080a9b94(s32 origin_x, s32 origin_y, s32 phase) {
 
     index = 0;
     objects =
-        (struct Object080a9bd8 **)(*(s32 *)0x03001F2C + 0x48);
+        (struct Object080a9bd8 **)(*(s32 *)ADDR_03001F2C + 0x48);
     do {
         object = *objects++;
         if (object != NULL) {

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
@@ -8,7 +9,7 @@ void Func_08090584(void) {
     u16 value;
 
     line = *(volatile u16 *)0x04000006;
-    state = *(u8 **)0x03001E70;
+    state = *(u8 **)ADDR_03001E70;
 
 again:
     switch (FIELD(state, u16, 0x108)) {

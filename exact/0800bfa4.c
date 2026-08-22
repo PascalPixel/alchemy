@@ -1,4 +1,5 @@
 #include "types.h"
+#include "global_cells.h"
 
 struct Thing {
     u8 filler0[8];
@@ -9,7 +10,7 @@ struct Thing {
 
 s32 Func_0800bfa4(struct Thing *thing, s32 *out)
 {
-    u8 *state = *(u8 **)0x03001e70;
+    u8 *state = *(u8 **)ADDR_03001E70;
     s32 *origin = (s32 *)(state + 228);
     s32 a;
     s32 b;

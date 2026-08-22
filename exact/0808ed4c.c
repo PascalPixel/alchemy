@@ -1,4 +1,5 @@
 #include "effect_runtime.h"
+#include "global_cells.h"
 
 #define M2C_FIELD(base, type, offset) \
     (*(type)((u8 *)(base) + (offset)))
@@ -12,5 +13,5 @@ s32 Func_0808ed4c(void) {
     if (slot == -1) {
         return 0;
     }
-    { s32 base = *(s32 *)0x03001EBC; s32 offset = slot * 8; return *(s32 *)((s32)base + (s32)offset + (s32)0x11C); }
+    { s32 base = *(s32 *)ADDR_03001EBC; s32 offset = slot * 8; return *(s32 *)((s32)base + (s32)offset + (s32)0x11C); }
 }

@@ -1,5 +1,6 @@
 #include "layout_guard.h"
 #include "types.h"
+#include "global_cells.h"
 
 typedef struct Cursor_080b1a14 {
     u8 padding00[5];

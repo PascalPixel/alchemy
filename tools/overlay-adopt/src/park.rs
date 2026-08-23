@@ -5,6 +5,120 @@ use std::fs;
 use std::path::Path;
 use std::process::Command;
 use tempfile::tempdir;
+
+fn number(row: &serde_json::Value, key: &str) -> Option<i64> {
+    row.get(key).and_then(|value| {
+        value.as_i64().or_else(|| {
+            value
+                .as_str()
+                .and_then(|text| i64::from_str_radix(text.trim_start_matches("0x"), 16).ok())
+        })
+    })
+}
+
+fn thumb_multi_register(line: &str) -> bool {
+    let code = line.split('@').next().unwrap_or("").trim_start();
+    let instruction = code
+        .strip_prefix("ldmia")
+        .or_else(|| code.strip_prefix("stmia"));
+    instruction.is_some_and(|body| {
+        body.chars().next().is_some_and(char::is_whitespace)
+            && body
+                .split_once('{')
+                .and_then(|(_, registers)| registers.split_once('}'))
+                .is_some_and(|(registers, _)| registers.contains(',') || registers.contains('-'))
+    })
+}
+
+fn audit_multi_register_evidence(root: &Path, overlays: &[String]) -> Result<Vec<String>, String> {
+    let regions: serde_json::Value = serde_json::from_slice(
+        &fs::read(root.join("games/gs1/semantic/regions.json")).map_err(|e| e.to_string())?,
+    )
+    .map_err(|e| e.to_string())?;
+    let evidence: serde_json::Value = serde_json::from_slice(
+        &fs::read(root.join("games/gs1/semantic/overlay-assembly.json"))
+            .map_err(|e| e.to_string())?,
+    )
+    .map_err(|e| e.to_string())?;
+    let wanted: std::collections::BTreeSet<_> = overlays.iter().cloned().collect();
+    let owners: Vec<_> = regions["manual_regions"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .filter_map(|row| {
+            Some((
+                row["overlay"].as_str()?.to_string(),
+                number(row, "entry")?,
+                number(row, "span_bytes")?,
+            ))
+        })
+        .filter(|(overlay, _, _)| wanted.contains(overlay))
+        .collect();
+    let claimed: std::collections::BTreeSet<_> = evidence["regions"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .filter(|row| row["kind"].as_str() == Some("thumb_multi_register_module"))
+        .filter_map(|row| {
+            let overlay = row["overlay"].as_str()?.to_string();
+            let start = number(row, "start")?;
+            let end = number(row, "end")?;
+            wanted.contains(&overlay).then_some((overlay, start, end))
+        })
+        .collect();
+    let mut found = std::collections::BTreeSet::new();
+    for overlay in &wanted {
+        let path = root
+            .join("games/gs1/assets/code")
+            .join(format!("{overlay}_overlay.s"));
+        let offsets: std::collections::BTreeMap<_, _> =
+            listing_offsets(&path)?.into_iter().collect();
+        let source = fs::read_to_string(&path).map_err(|e| e.to_string())?;
+        for (index, _) in source
+            .lines()
+            .enumerate()
+            .filter(|(_, line)| thumb_multi_register(line))
+        {
+            let Some(offset) = offsets.get(&((index + 1) as i64)) else {
+                continue;
+            };
+            let address = OVERLAY_BASE + offset;
+            if let Some((_, entry, span)) = owners.iter().find(|(id, entry, span)| {
+                id == overlay && address >= *entry && address < *entry + *span
+            }) {
+                found.insert((overlay.clone(), *entry, *entry + *span));
+            }
+        }
+    }
+    let mut findings = Vec::new();
+    for row in &found {
+        let mut parts: Vec<_> = claimed
+            .iter()
+            .filter(|part| part.0 == row.0 && part.1 >= row.1 && part.2 <= row.2)
+            .collect();
+        parts.sort_by_key(|part| part.1);
+        if parts.first().is_none_or(|part| part.1 != row.1)
+            || parts.last().is_none_or(|part| part.2 != row.2)
+        {
+            findings.push(format!(
+                "{}:{:08x}\tUNCLAIMED_MULTI_REGISTER_OWNER\tend={:08x}",
+                row.0, row.1, row.2
+            ));
+        }
+    }
+    for row in &claimed {
+        if !found
+            .iter()
+            .any(|owner| owner.0 == row.0 && row.1 >= owner.1 && row.2 <= owner.2)
+        {
+            findings.push(format!(
+                "{}:{:08x}\tSTALE_MULTI_REGISTER_EVIDENCE\tend={:08x}",
+                row.0, row.1, row.2
+            ));
+        }
+    }
+    Ok(findings)
+}
 fn placeholder_block(lines: &[&str], address: i64) -> Option<(usize, usize, i64)> {
     let tag = format!("AlchemyC_{address:08x}:");
     let start = lines.iter().position(|line| line.trim() == tag)?;
@@ -326,6 +440,10 @@ pub fn run_audit(root: &Path, argv: &[String]) -> Result<i32, String> {
         argv.to_vec()
     };
     let mut findings = 0;
+    for line in audit_multi_register_evidence(root, &overlays)? {
+        println!("{line}");
+        findings += 1;
+    }
     for overlay in overlays {
         for line in audit(root, &overlay)? {
             println!("{line}");
@@ -547,4 +665,18 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
         }
     }
     Ok(if failures == 0 { 0 } else { 1 })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::thumb_multi_register;
+
+    #[test]
+    fn recognizes_only_multiple_register_transfers() {
+        assert!(thumb_multi_register("\tldmia r3!, {r0, r1}"));
+        assert!(thumb_multi_register("stmia r2!, {r0-r3} @ copy"));
+        assert!(!thumb_multi_register("\tldmia r3!, {r0}"));
+        assert!(!thumb_multi_register("@ stmia r3!, {r0, r1}"));
+        assert!(!thumb_multi_register("\tpush {r4, r5, lr}"));
+    }
 }

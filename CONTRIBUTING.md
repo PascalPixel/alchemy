@@ -14,6 +14,11 @@ This is the sole contributor guide. `AGENTS.md` and `CLAUDE.md` point here;
 `README.md` is for users. Keep project procedure in this file instead of
 creating another guide.
 
+Pascal's reusable clean-room method lives in the
+[Nintendo Decompilation skill](/Users/pixel/.agents/skills/nintendo-decompilation/SKILL.md).
+This guide remains authoritative for Alchemy's approved evidence, paths,
+commands, compiler rules, and acceptance gates.
+
 ## The contract
 
 ### Use only approved evidence
@@ -170,24 +175,12 @@ or claiming verification.
 
 ## Recover one owner
 
-The standard loop is:
-
-1. Select one audited owner and establish its complete extent.
-2. Read the reference assembly, pools, tables, and observable behavior.
-3. Recover the algorithm, control flow, types, and aggregate layout in plain C.
-4. Compare instruction structure, then linked bytes.
-5. Correct the largest source-shape error and repeat.
-6. Use permutation only after the remaining differences are local.
-7. Adopt the owner only at zero differing reference bytes.
-
-The order matters. Random source variation and compiler-option sweeps cannot
-repair a wrong function boundary, switch binding, loop, type, or algorithm. A
-candidate that is vastly non-matching is not a weak near-match to be nursed
-forward: it is evidence that the overall C shape is wrong. Replace the bad
-shape instead of preserving a lucky prefix, register assignment, or local
-instruction coincidence. In some cases the missing shape is one the approved
-compiler cannot emit at all; classify permanent assembly only after recording
-that compiler evidence.
+Apply the reusable
+[owner-recovery method](/Users/pixel/.agents/skills/nintendo-decompilation/references/reconstruction-method.md)
+to one edition-qualified owner at a time. Alchemy adopts an owner only at zero
+differing reference bytes. A shape that the approved compiler cannot emit may
+be classified as permanent assembly only after its compiler evidence is
+recorded.
 
 ### 1. Select an owner
 
@@ -207,15 +200,6 @@ the same compiler often reveal which single source feature controls their
 different output.
 
 ### 2. Establish the reference shape
-
-Before writing C, account for:
-
-- the entry point, complete owner boundary, arguments, return, frame, and saved registers;
-- branch direction, fallthrough, loops, shared tails, and early returns;
-- switch values, jump-table targets, and source-order case layout;
-- load and store widths, signedness, bitfields, and aggregate offsets;
-- literal pools, addresses, constants, calls, and values live across calls;
-- side effects and repeated reads that optimization is allowed to combine.
 
 Assemble and disassemble reference `.s` when resolving pools and table targets;
 do not hand-count PC-relative offsets across alignment. Resolve message IDs
@@ -281,23 +265,12 @@ The full exact-corpus locator output is
 
 ### 3. Recover source structure
 
-Write the likely compiler input, not optimized assembly expressed in C syntax.
-Begin with ordinary structs, arrays, loops, switches, and expressions. Let GCC
-perform strength reduction, common-tail merging, and register allocation.
-Manually imitating those passes usually changes earlier RTL and moves the
-result farther away.
-
 Use C89 declarations and short evidence-backed names. Preserve observable
 original mistakes. Replace names such as `Func_02000f80`, `status_12c`, and
 anonymous numeric cases only when local evidence supports something better;
 honest names make incorrect bindings visible.
 
 #### Recover source voice, not a modern API
-
-Reconstructed identifiers are reading aids, not claims about the lost source's
-original spelling. The ROM can establish roles and relationships, but it does
-not contain local variable names, typedef names, comments, header boundaries,
-or macro spellings. Do not turn behavioral confidence into authorship claims.
 
 This was a Japanese commercial C codebase built in 2000--2001. Its exact house
 style is not recoverable, but a contemporary source voice is a better neutral
@@ -342,18 +315,8 @@ and declaration-order notes beside the owner whose output they constrain.
 Splitting declarations from implementation is useful; hiding the source shape
 that made the owner exact is not.
 
-Use these promotion tests:
-
-1. The declarations form one stable vocabulary, table family, or interface.
-2. The proposed name is no more specific than the local evidence.
-3. Moving the declaration does not conceal an owner-specific compiler shape.
-4. The header is useful as a unit, rather than a bag of unrelated leftovers.
-
-If any test fails, keep the declaration local. Humanization should expose the
-recovered algorithm, roles, and constraints while leaving uncertainty visible.
-
 A trailing address, register hint, or SSA counter in an identifier
-(`temp_r3_1908`, `var_sl_1853`, `sp4C`, `Func_080ab5e4` used as a *local*
+(`temp_r3_1908`, `var_sl_1853`, `sp4C`, `Func_080ab5e4` used as a _local_
 variable-style name) is a placeholder, not a name, regardless of how
 plausible it reads. Humanizing a function means every symbol it declares or
 touches loses its number once its role has local evidence: parameters,
@@ -401,8 +364,7 @@ tools/compiler/target/release/compiler candidate-show games/gs1/recon/en/main/08
 ```
 
 `--first` crops the first residual window. `--patch FILE` scores a unified diff
-without changing the corpus source. Put independent theories in separate working
-directories rather than racing edits against one tracked source file.
+without changing the corpus source.
 
 Read the complete normalized instruction diff and repair its largest coherent
 hunk. A large mismatch means the source shape is still wrong. Fix algorithms,
@@ -411,36 +373,11 @@ spellings or flags.
 
 ### 5. Invert a stalled last mile
 
-Large mismatches and tiny stubborn mismatches require opposite responses. For
-a large mismatch, discard the overall source shape. For an otherwise close
-candidate whose same small scheduling, ordering, or allocation hunk survives
-several genuinely different source families, stop trying to save the aggregate
-score. Make the stubborn hunk the starting constraint instead.
-
-These are early- and late-stage forms of the same rule: let the scale and
-persistence of the emitted disagreement challenge the source shape. Do not
-mistake the effort already invested in a candidate for evidence that its shape
-must be preserved.
-
-1. State the exact emitted invariant: the contiguous instructions, register
-   roles, frame, branch direction, or other local shape that must not move.
-2. Find ordinary C that emits that invariant naturally, even if hundreds of
-   surrounding instructions become worse.
-3. Freeze the invariant as a hard admission check. Keep a near-exact candidate
-   that violates it only as diagnostic evidence; do not continue tuning it.
-4. Repair outward from the admitted candidate, one coherent diff region at a
-   time, rejecting every edit that loses the invariant.
-5. Move the best admitted candidate into permutation once the remaining source
-   boundaries and behavior are credible.
-
-This inversion is warranted when independent source families keep reproducing
-the same local defect, compiler dumps explain why its ancestry or scheduling is
-locked, and new edits merely recolor the same values or move the defect. Do not
-spend an open-ended search on two halfwords because the rest of the function
-happens to match. Once that evidence exists, inversion is the next structural
-experiment, not an emergency tactic reserved for exhaustive spelling search.
-Conversely, do not invert on the first bad score: establish the repeated local
-constraint with complete diffs and distinct structural experiments first.
+Apply the reusable
+[stalled-last-mile inversion](/Users/pixel/.agents/skills/nintendo-decompilation/references/reconstruction-method.md#invert-a-stalled-last-mile)
+when distinct source families preserve the same local emitted defect. State
+and recheck Alchemy's invariant with the `candidate-show` assembly and linked-
+byte views above; the adoption gate remains zero differing reference bytes.
 
 ### 6. Permute only the last mile
 
@@ -505,20 +442,6 @@ Use comparisons in this order:
 2. Normalized instruction diffs locate structural disagreement.
 3. Objdiff percentages and permuter scores rank experiments only.
 
-When candidate and reference lengths differ, one insertion can shift every
-later halfword, so the raw differing count is a poor compass. When lengths are
-equal, zero is still the only completion state.
-
-Work the largest coherent hunk in the complete instruction diff, not whichever
-colored line appears first. Register names, spills, and frame size are compiler
-consequences. A frame mismatch means some live range differs; adding dummy
-locals to imitate the number does not fix the cause.
-
-A matching prefix is real but fragile because one changed live range can
-recolor the rest of an owner. Conversely, a plausible but incorrectly bound
-body can align by luck. Prefer reference-backed structural conclusions over an
-aggregate score that happens to improve.
-
 ## Treat the compiler as evidence
 
 The compiler source is part of the reconstruction environment. Before sweeping
@@ -541,20 +464,16 @@ dump output.
 
 ## Keep tooling portable and small
 
+Apply the reusable
+[portable-tooling criteria](/Users/pixel/.agents/skills/nintendo-decompilation/references/reconstruction-method.md#keep-reconstruction-tooling-portable-and-small).
 There are six public executable hosts: `build-assets`, `build-stage`, `assets`,
 `compiler`, `overlay`, and `check`. Contributor operations are subcommands of
-those hosts. A game-specific encoder may remain a library behind an asset host;
-it should not become another public command.
+those hosts.
 
-Tooling is Rust. Use maintained crates or established external tools for
-generic plumbing such as JSON, PNG, DEFLATE, hashing, regex, temporary files,
-file locking, directory walking, object comparison, and build scheduling.
-Repository code should describe GBA and reconstruction-specific behavior.
-Names are neutral and descriptive, not prefixed with the project name.
+Tooling is Rust. Repository code describes GBA and reconstruction-specific
+behavior.
 
-`make tooling-size` enforces the portable-toolkit budget. Keep a tool only when
-it is required to build, inspect, prove, adopt, or permute a reconstruction and
-would still be worth carrying into a new GBA decompilation project.
+`make tooling-size` enforces Alchemy's portable-toolkit budget.
 
 ## Prove the repository
 
@@ -586,18 +505,16 @@ baseline or environment error; report that blocker separately.
 
 ## Merge and commit cleanly
 
-Generated coverage files are products, not merge authorities. When branches
-adopt different owners, merge the source changes, regenerate with
+When branches adopt different owners, merge the source changes, regenerate with
 `make coverage`, audit overlays, and run `make verify`. Do not resolve generated
 metrics by choosing one branch's copy.
 
 Before committing:
 
-1. Inspect the complete diff and preserve unrelated work already in the tree.
-2. Remove or relocate scratch output, generated binaries, and temporary links.
-3. Run focused tests for the changed source or tooling.
-4. Run `make verify` and state its exact outcome.
-5. Generate, rather than guess, the required subject prefix.
+1. Remove or relocate scratch output, generated binaries, and temporary links.
+2. Run focused tests for the changed source or tooling.
+3. Run `make verify` and state its exact outcome.
+4. Generate, rather than guess, the required subject prefix.
 
 ```sh
 make progress-subject
@@ -618,257 +535,261 @@ This section is generated. It is the primary contributor target list:
 non-overlapping audited source-owner scopes (or contiguous unresolved
 executable runs), sorted largest to smallest. Regenerate with `make coverage` -- do not edit by hand.
 
-- **Unfinished scopes:** 1,854
+- **Unfinished scopes:** 1,822
 - **Address spaces scanned:** 97 (87 still contain targets)
-- **Target bytes:** 721,480 tracked-C or unresolved-assembly bytes
-- **Resolved-only bytes:** 419,704 Exact C or audited permanent assembly bytes
+- **Target bytes:** 781,376 tracked-C or unresolved-assembly bytes
+- **Resolved-only bytes:** 406,406 Exact C or audited permanent assembly bytes
 - **Executable bytes accounted for:** 1,347,122
 
 ### Main target list
 
-This table contains every scope of at least 1,000 bytes (240 rows). The complete
-1,854-row index, including the smallest audited owners, is
+This table contains every scope of at least 1,000 bytes (244 rows). The complete
+1,822-row index, including the smallest audited owners, is
 [`games/gs1/metrics/gs1-en-core-targets.json`](games/gs1/metrics/gs1-en-core-targets.json).
 
 | Rank | Scope | Target | Namespace / owner |
 |---:|---:|---:|---|
-| 1 | 19,708 | 7,952 | `main:0x080e7404` |
-| 2 | 18,914 | 9,506 | `main:0x080c91dc` |
-| 3 | 14,744 | 5,028 | `main:0x080d1350` |
+| 1 | 19,708 | 9,240 | `main:0x080e7404` |
+| 2 | 18,914 | 18,306 | `main:0x080c91dc` |
+| 3 | 14,744 | 14,512 | `main:0x080d1350` |
 | 4 | 14,476 | 7,472 | `main:0x080a9e48` |
-| 5 | 12,818 | 4,708 | `main:0x080d8988` |
+| 5 | 12,818 | 11,368 | `main:0x080d8988` |
 | 6 | 9,968 | 2,796 | `main:0x080f6008` |
 | 7 | 9,870 | 3,712 | `main:0x08022b44` |
-| 8 | 8,560 | 5,372 | `main:0x080cde90` |
+| 8 | 8,560 | 8,268 | `main:0x080cde90` |
 | 9 | 7,808 | 6,330 | `main:0x080e47b8` |
-| 10 | 7,652 | 1,468 | `main:0x080dbbdc` |
+| 10 | 7,652 | 7,544 | `main:0x080dbbdc` |
 | 11 | 6,458 | 1,300 | `main:0x080270ac` |
 | 12 | 6,192 | 4,200 | `main:0x080b2110` |
 | 13 | 6,070 | 4,380 | `main:0x0801a910` |
 | 14 | 5,794 | 3,456 | `main:0x080b0a6c` |
 | 15 | 5,688 | 3,696 | `main:0x080a414c` |
-| 16 | 5,608 | 956 | `main:0x080e0000` |
+| 16 | 5,608 | 5,404 | `main:0x080e0000` |
 | 17 | 5,450 | 2,228 | `main:0x0808c2dc` |
 | 18 | 5,330 | 3,208 | `main:0x0801cf48` |
-| 19 | 4,866 | 2,240 | `main:0x080d5274` |
-| 20 | 4,718 | 1,704 | `main:0x08017c8c` |
-| 21 | 4,710 | 2,818 | `main:0x080f4168` |
-| 22 | 4,406 | 716 | `main:0x080a2324` |
-| 23 | 4,302 | 2,640 | `main:0x08018efc` |
-| 24 | 4,220 | 2,528 | `main:0x080be18c` |
-| 25 | 4,170 | 2,900 | `main:0x08095bd8` |
-| 26 | 4,158 | 1,920 | `main:0x0801edec` |
-| 27 | 4,138 | 4,138 | `resource_380:0x02002c10` |
-| 28 | 4,122 | 4,122 | `resource_373:0x02002284` |
-| 29 | 4,046 | 1,720 | `main:0x080e2974` |
-| 30 | 3,920 | 2,470 | `main:0x080e15e8` |
-| 31 | 3,850 | 2,604 | `main:0x08077320` |
-| 32 | 3,808 | 1,532 | `main:0x080d0000` |
-| 33 | 3,756 | 1,876 | `main:0x080251d4` |
-| 34 | 3,738 | 2,660 | `main:0x080b6cd0` |
-| 35 | 3,702 | 3,702 | `resource_3c6:0x02000218` |
-| 36 | 3,584 | 2,138 | `main:0x08026080` |
-| 37 | 3,492 | 1,740 | `main:0x080e3a14` |
-| 38 | 3,472 | 1,184 | `main:0x08010424` |
-| 39 | 3,452 | 2,396 | `main:0x080ec100` |
-| 40 | 3,442 | 3,442 | `resource_378:0x0200088c` |
-| 41 | 3,408 | 3,408 | `resource_378:0x02001874` |
-| 42 | 3,364 | 1,212 | `main:0x08096c80` |
-| 43 | 3,274 | 1,024 | `main:0x080bae40` |
-| 44 | 3,238 | 466 | `main:0x080e6638` |
-| 45 | 3,156 | 2,514 | `main:0x080d765c` |
-| 46 | 3,114 | 1,098 | `main:0x080fa678` |
-| 47 | 3,086 | 2,980 | `main:0x08021e6c` |
-| 48 | 3,074 | 3,074 | `resource_383:0x02000b48` |
-| 49 | 3,058 | 3,058 | `resource_3c5:0x0200186c` |
-| 50 | 3,056 | 906 | `main:0x0800ebec` |
-| 51 | 3,046 | 3,046 | `resource_395:0x02000470` |
-| 52 | 3,046 | 3,046 | `resource_39d:0x02001adc` |
-| 53 | 2,946 | 2,426 | `main:0x080167e0` |
-| 54 | 2,918 | 824 | `main:0x080b6148` |
-| 55 | 2,908 | 2,908 | `resource_381:0x020003cc` |
-| 56 | 2,854 | 2,854 | `resource_374:0x0200155c` |
-| 57 | 2,778 | 904 | `main:0x08020bd8` |
-| 58 | 2,772 | 260 | `main:0x0808f52c` |
-| 59 | 2,734 | 2,734 | `resource_3a8:0x020026a8` |
-| 60 | 2,706 | 1,588 | `main:0x080a345c` |
-| 61 | 2,698 | 2,256 | `main:0x080a8914` |
-| 62 | 2,678 | 1,324 | `main:0x08095160` |
-| 63 | 2,672 | 2,672 | `resource_3a8:0x02000aac` |
-| 64 | 2,658 | 1,388 | `main:0x080c1fa8` |
-| 65 | 2,650 | 2,376 | `main:0x080999f0` |
-| 66 | 2,630 | 1,346 | `main:0x080a7a34` |
-| 67 | 2,596 | 200 | `main:0x080c0000` |
-| 68 | 2,574 | 2,574 | `resource_39e:0x02002ec8` |
-| 69 | 2,568 | 748 | `main:0x08012518` |
-| 70 | 2,530 | 1,312 | `main:0x080b8574` |
-| 71 | 2,508 | 460 | `main:0x08020000` |
-| 72 | 2,476 | 2,476 | `resource_3af:0x0200252c` |
-| 73 | 2,440 | 2,368 | `main:0x080bf678` |
-| 74 | 2,430 | 2,244 | `main:0x080a6a00` |
-| 75 | 2,426 | 2,426 | `resource_3b8:0x0200338c` |
-| 76 | 2,418 | 2,418 | `resource_38d:0x02000894` |
-| 77 | 2,382 | 2,382 | `resource_383:0x02003c6c` |
-| 78 | 2,360 | 1,328 | `main:0x080dd9c0` |
-| 79 | 2,310 | 2,310 | `resource_3b8:0x02002a84` |
-| 80 | 2,298 | 2,298 | `resource_380:0x02000a98` |
-| 81 | 2,294 | 1,912 | `main:0x0808e0b0` |
-| 82 | 2,236 | 2,236 | `resource_39e:0x02001494` |
-| 83 | 2,230 | 2,230 | `resource_3bd:0x02001d4c` |
-| 84 | 2,222 | 2,222 | `resource_3bc:0x02001a08` |
-| 85 | 2,218 | 2,218 | `resource_3c9:0x02003e8c` |
-| 86 | 2,218 | 1,028 | `main:0x08079008` |
-| 87 | 2,206 | 2,206 | `resource_377:0x0200063c` |
-| 88 | 2,194 | 2,194 | `resource_376:0x02000640` |
-| 89 | 2,190 | 2,190 | `resource_396:0x0200069c` |
-| 90 | 2,182 | 1,696 | `main:0x0808d828` |
-| 91 | 2,180 | 2,180 | `resource_3bd:0x02002c38` |
-| 92 | 2,172 | 1,336 | `main:0x0808a5f8` |
-| 93 | 2,170 | 2,170 | `resource_3ca:0x02000430` |
-| 94 | 2,158 | 2,158 | `resource_373:0x02001a14` |
-| 95 | 2,118 | 2,118 | `resource_371:0x020028e8` |
-| 96 | 2,070 | 2,070 | `resource_3b1:0x02001b34` |
-| 97 | 2,070 | 2,070 | `resource_3bd:0x020013f8` |
-| 98 | 2,068 | 2,068 | `resource_3c2:0x02000240` |
-| 99 | 2,056 | 1,048 | `main:0x080f0254` |
-| 100 | 2,046 | 124 | `main:0x0800300c` |
-| 101 | 2,026 | 242 | `main:0x0800a97c` |
-| 102 | 2,018 | 2,018 | `resource_3a5:0x020004e4` |
-| 103 | 2,014 | 2,014 | `resource_3c9:0x02000a6c` |
-| 104 | 2,006 | 2,006 | `resource_3a4:0x02001830` |
-| 105 | 2,002 | 2,002 | `resource_38d:0x020019b0` |
-| 106 | 2,002 | 2,002 | `resource_3af:0x02003a0c` |
-| 107 | 1,978 | 1,978 | `resource_3ad:0x02000808` |
-| 108 | 1,928 | 904 | `main:0x08097b54` |
-| 109 | 1,906 | 1,906 | `resource_378:0x0200290c` |
-| 110 | 1,902 | 1,292 | `main:0x080983a0` |
-| 111 | 1,866 | 1,722 | `main:0x080b9b30` |
-| 112 | 1,810 | 1,810 | `resource_383:0x02002fd4` |
-| 113 | 1,810 | 500 | `main:0x08006088` |
-| 114 | 1,808 | 1,808 | `resource_3b1:0x02005c9c` |
-| 115 | 1,800 | 992 | `main:0x0809b0dc` |
-| 116 | 1,782 | 1,660 | `main:0x080de2f8` |
-| 117 | 1,778 | 1,778 | `resource_3b9:0x02001cd4` |
-| 118 | 1,770 | 1,770 | `resource_3b1:0x020028c8` |
-| 119 | 1,736 | 1,736 | `resource_3bf:0x0200298c` |
-| 120 | 1,734 | 1,734 | `resource_383:0x02001e80` |
-| 121 | 1,722 | 1,722 | `resource_3b8:0x02002014` |
-| 122 | 1,718 | 708 | `main:0x080ba2c0` |
-| 123 | 1,704 | 1,704 | `resource_3a2:0x02000924` |
-| 124 | 1,702 | 1,702 | `resource_381:0x02002150` |
-| 125 | 1,702 | 1,702 | `resource_3b7:0x020001d8` |
-| 126 | 1,698 | 1,698 | `resource_3ae:0x02000ba0` |
-| 127 | 1,692 | 400 | `main:0x0808b824` |
-| 128 | 1,638 | 1,638 | `resource_373:0x02004084` |
-| 129 | 1,634 | 1,056 | `main:0x080ae2f4` |
-| 130 | 1,632 | 1,632 | `resource_3a2:0x020001ec` |
-| 131 | 1,626 | 1,626 | `resource_375:0x020000dc` |
-| 132 | 1,586 | 1,586 | `resource_3c5:0x02001238` |
-| 133 | 1,562 | 1,170 | `main:0x080a63e4` |
-| 134 | 1,560 | 832 | `main:0x08098cd8` |
-| 135 | 1,550 | 1,550 | `resource_379:0x02000484` |
-| 136 | 1,514 | 1,514 | `resource_3a4:0x02000d24` |
-| 137 | 1,506 | 1,264 | `main:0x080b5534` |
-| 138 | 1,480 | 1,480 | `resource_399:0x02000f84` |
-| 139 | 1,478 | 1,478 | `resource_3aa:0x02001450` |
-| 140 | 1,462 | 1,462 | `resource_373:0x020039e8` |
-| 141 | 1,458 | 1,458 | `resource_3c8:0x020047ac` |
-| 142 | 1,448 | 1,448 | `resource_3b0:0x02000af8` |
-| 143 | 1,448 | 1,448 | `resource_3b1:0x020050dc` |
-| 144 | 1,426 | 912 | `main:0x0809a8c4` |
-| 145 | 1,410 | 1,410 | `resource_383:0x020036e8` |
-| 146 | 1,410 | 1,138 | `main:0x08090000` |
-| 147 | 1,410 | 908 | `main:0x080c1a24` |
-| 148 | 1,408 | 1,408 | `resource_39e:0x020038d8` |
-| 149 | 1,402 | 1,402 | `resource_3b1:0x0200234c` |
-| 150 | 1,398 | 1,398 | `resource_372:0x02001b18` |
-| 151 | 1,392 | 842 | `main:0x080d4ce8` |
-| 152 | 1,382 | 1,382 | `resource_3c9:0x02003924` |
-| 153 | 1,378 | 1,378 | `resource_380:0x02001780` |
-| 154 | 1,366 | 1,366 | `resource_37a:0x02000488` |
-| 155 | 1,366 | 1,366 | `resource_3aa:0x0200077c` |
-| 156 | 1,354 | 676 | `main:0x08017364` |
-| 157 | 1,346 | 324 | `main:0x080b04dc` |
-| 158 | 1,326 | 1,326 | `resource_391:0x02002004` |
-| 159 | 1,318 | 1,024 | `main:0x08092b94` |
-| 160 | 1,310 | 1,310 | `resource_373:0x020034c8` |
-| 161 | 1,310 | 656 | `main:0x080994d0` |
-| 162 | 1,308 | 1,308 | `resource_37a:0x02002094` |
-| 163 | 1,306 | 1,306 | `resource_3a8:0x02000590` |
-| 164 | 1,298 | 1,298 | `resource_39c:0x02004a08` |
-| 165 | 1,290 | 1,290 | `resource_3af:0x02000c94` |
-| 166 | 1,270 | 1,270 | `resource_371:0x02001064` |
-| 167 | 1,270 | 1,270 | `resource_3b1:0x020037d8` |
-| 168 | 1,262 | 1,262 | `resource_38d:0x020012a0` |
-| 169 | 1,238 | 1,238 | `resource_373:0x02004b24` |
-| 170 | 1,234 | 1,234 | `resource_39d:0x02001608` |
-| 171 | 1,234 | 1,234 | `resource_3af:0x02001db0` |
-| 172 | 1,230 | 1,230 | `resource_371:0x02001f6c` |
-| 173 | 1,230 | 1,230 | `resource_374:0x02000b8c` |
-| 174 | 1,230 | 226 | `main:0x080a7380` |
-| 175 | 1,222 | 1,222 | `resource_37a:0x0200155c` |
-| 176 | 1,222 | 930 | `main:0x080ba978` |
-| 177 | 1,218 | 1,218 | `resource_37b:0x02000554` |
-| 178 | 1,218 | 996 | `main:0x0801c46c` |
-| 179 | 1,210 | 1,210 | `resource_391:0x02001740` |
-| 180 | 1,208 | 1,208 | `resource_3b8:0x02000b40` |
-| 181 | 1,198 | 1,198 | `resource_3b1:0x020057ec` |
-| 182 | 1,194 | 964 | `main:0x080a1090` |
-| 183 | 1,190 | 1,190 | `resource_3bd:0x02002604` |
-| 184 | 1,182 | 1,182 | `resource_3c9:0x02004738` |
-| 185 | 1,180 | 1,180 | `resource_37b:0x0200101c` |
-| 186 | 1,176 | 1,176 | `resource_37b:0x02000a18` |
-| 187 | 1,176 | 1,176 | `resource_380:0x020043bc` |
-| 188 | 1,174 | 1,174 | `resource_3bc:0x020040bc` |
-| 189 | 1,170 | 1,170 | `resource_3b3:0x0200174c` |
-| 190 | 1,162 | 392 | `main:0x08094730` |
-| 191 | 1,160 | 908 | `main:0x080a847c` |
-| 192 | 1,158 | 344 | `main:0x0808ec50` |
-| 193 | 1,154 | 1,154 | `resource_37f:0x02001604` |
-| 194 | 1,150 | 1,150 | `resource_375:0x020014f4` |
-| 195 | 1,142 | 1,142 | `resource_373:0x02004ffc` |
-| 196 | 1,136 | 908 | `main:0x080d0ee0` |
-| 197 | 1,130 | 460 | `main:0x080b0070` |
-| 198 | 1,126 | 1,126 | `resource_37f:0x02000f6c` |
-| 199 | 1,126 | 456 | `main:0x080798b4` |
-| 200 | 1,114 | 1,114 | `resource_3c7:0x02000880` |
-| 201 | 1,106 | 1,106 | `resource_39e:0x02001dbc` |
-| 202 | 1,102 | 1,102 | `resource_3bb:0x020010dc` |
-| 203 | 1,102 | 124 | `main:0x08003c80` |
-| 204 | 1,098 | 1,098 | `main:0x080a5b94` |
-| 205 | 1,096 | 1,096 | `resource_3b9:0x020011c4` |
-| 206 | 1,094 | 1,094 | `resource_371:0x02000c1c` |
-| 207 | 1,094 | 1,094 | `resource_3bc:0x02001474` |
-| 208 | 1,094 | 378 | `main:0x0800b684` |
-| 209 | 1,090 | 1,090 | `resource_39e:0x0200064c` |
-| 210 | 1,082 | 148 | `main:0x080216b4` |
-| 211 | 1,078 | 1,078 | `resource_373:0x020015dc` |
-| 212 | 1,078 | 1,078 | `resource_373:0x020046ec` |
-| 213 | 1,078 | 1,078 | `resource_399:0x020019bc` |
-| 214 | 1,078 | 568 | `main:0x08078aa0` |
-| 215 | 1,074 | 1,074 | `resource_3ba:0x02000db8` |
-| 216 | 1,068 | 896 | `main:0x080bd424` |
-| 217 | 1,066 | 780 | `main:0x08091814` |
-| 218 | 1,054 | 1,054 | `resource_39d:0x020011e8` |
-| 219 | 1,052 | 1,052 | `resource_3b1:0x02004254` |
-| 220 | 1,052 | 1,052 | `resource_3c8:0x020026f8` |
-| 221 | 1,050 | 1,050 | `resource_372:0x020028a4` |
-| 222 | 1,050 | 1,050 | `resource_3aa:0x02000360` |
-| 223 | 1,050 | 1,050 | `resource_3aa:0x02000cd4` |
-| 224 | 1,046 | 1,046 | `resource_380:0x020027f8` |
-| 225 | 1,046 | 1,046 | `resource_381:0x02001b34` |
-| 226 | 1,042 | 1,042 | `resource_377:0x02000f90` |
-| 227 | 1,042 | 1,042 | `resource_3a5:0x02001490` |
-| 228 | 1,038 | 1,038 | `resource_379:0x02000074` |
-| 229 | 1,036 | 956 | `main:0x08029504` |
-| 230 | 1,034 | 1,034 | `resource_39d:0x02000ddc` |
-| 231 | 1,034 | 652 | `main:0x080b9724` |
-| 232 | 1,030 | 1,030 | `resource_391:0x02001bfc` |
-| 233 | 1,026 | 1,026 | `resource_37b:0x02000150` |
-| 234 | 1,024 | 856 | `main:0x080a5fe0` |
-| 235 | 1,022 | 1,022 | `resource_3b8:0x020006dc` |
-| 236 | 1,022 | 1,022 | `resource_3b8:0x02000ff8` |
-| 237 | 1,022 | 464 | `main:0x08016018` |
-| 238 | 1,020 | 1,020 | `resource_3b9:0x02000db0` |
-| 239 | 1,014 | 1,014 | `resource_39e:0x02002ad0` |
-| 240 | 1,010 | 1,010 | `resource_37a:0x02001ca0` |
+| 19 | 5,050 | 916 | `main:0x080dea70` |
+| 20 | 4,866 | 4,616 | `main:0x080d5274` |
+| 21 | 4,718 | 1,704 | `main:0x08017c8c` |
+| 22 | 4,710 | 2,818 | `main:0x080f4168` |
+| 23 | 4,406 | 716 | `main:0x080a2324` |
+| 24 | 4,302 | 2,640 | `main:0x08018efc` |
+| 25 | 4,220 | 2,528 | `main:0x080be18c` |
+| 26 | 4,170 | 2,900 | `main:0x08095bd8` |
+| 27 | 4,158 | 1,920 | `main:0x0801edec` |
+| 28 | 4,138 | 4,138 | `resource_380:0x02002c10` |
+| 29 | 4,122 | 4,122 | `resource_373:0x02002284` |
+| 30 | 4,046 | 3,908 | `main:0x080e2974` |
+| 31 | 3,920 | 2,470 | `main:0x080e15e8` |
+| 32 | 3,850 | 2,604 | `main:0x08077320` |
+| 33 | 3,808 | 3,808 | `main:0x080d0000` |
+| 34 | 3,756 | 3,712 | `main:0x080251d4` |
+| 35 | 3,738 | 2,660 | `main:0x080b6cd0` |
+| 36 | 3,702 | 3,702 | `resource_3c6:0x02000218` |
+| 37 | 3,584 | 2,138 | `main:0x08026080` |
+| 38 | 3,540 | 3,308 | `main:0x080d6888` |
+| 39 | 3,492 | 3,352 | `main:0x080e3a14` |
+| 40 | 3,472 | 1,388 | `main:0x08010424` |
+| 41 | 3,452 | 2,396 | `main:0x080ec100` |
+| 42 | 3,442 | 3,442 | `resource_378:0x0200088c` |
+| 43 | 3,408 | 3,408 | `resource_378:0x02001874` |
+| 44 | 3,364 | 1,212 | `main:0x08096c80` |
+| 45 | 3,274 | 2,888 | `main:0x080bae40` |
+| 46 | 3,238 | 2,386 | `main:0x080e6638` |
+| 47 | 3,156 | 2,514 | `main:0x080d765c` |
+| 48 | 3,114 | 1,098 | `main:0x080fa678` |
+| 49 | 3,086 | 2,980 | `main:0x08021e6c` |
+| 50 | 3,074 | 3,074 | `resource_383:0x02000b48` |
+| 51 | 3,068 | 1,300 | `main:0x080ece7c` |
+| 52 | 3,058 | 3,058 | `resource_3c5:0x0200186c` |
+| 53 | 3,056 | 906 | `main:0x0800ebec` |
+| 54 | 3,046 | 3,046 | `resource_395:0x02000470` |
+| 55 | 3,046 | 3,046 | `resource_39d:0x02001adc` |
+| 56 | 2,946 | 2,426 | `main:0x080167e0` |
+| 57 | 2,918 | 824 | `main:0x080b6148` |
+| 58 | 2,908 | 2,908 | `resource_381:0x020003cc` |
+| 59 | 2,854 | 2,854 | `resource_374:0x0200155c` |
+| 60 | 2,778 | 904 | `main:0x08020bd8` |
+| 61 | 2,772 | 260 | `main:0x0808f52c` |
+| 62 | 2,734 | 2,734 | `resource_3a8:0x020026a8` |
+| 63 | 2,706 | 1,588 | `main:0x080a345c` |
+| 64 | 2,698 | 2,256 | `main:0x080a8914` |
+| 65 | 2,678 | 1,324 | `main:0x08095160` |
+| 66 | 2,672 | 2,672 | `resource_3a8:0x02000aac` |
+| 67 | 2,658 | 2,264 | `main:0x080c1fa8` |
+| 68 | 2,650 | 2,376 | `main:0x080999f0` |
+| 69 | 2,630 | 1,586 | `main:0x080a7a34` |
+| 70 | 2,596 | 200 | `main:0x080c0000` |
+| 71 | 2,574 | 2,574 | `resource_39e:0x02002ec8` |
+| 72 | 2,568 | 748 | `main:0x08012518` |
+| 73 | 2,530 | 1,312 | `main:0x080b8574` |
+| 74 | 2,508 | 460 | `main:0x08020000` |
+| 75 | 2,476 | 2,476 | `resource_3af:0x0200252c` |
+| 76 | 2,440 | 2,368 | `main:0x080bf678` |
+| 77 | 2,430 | 2,244 | `main:0x080a6a00` |
+| 78 | 2,426 | 2,426 | `resource_3b8:0x0200338c` |
+| 79 | 2,418 | 2,418 | `resource_38d:0x02000894` |
+| 80 | 2,382 | 2,382 | `resource_383:0x02003c6c` |
+| 81 | 2,360 | 1,328 | `main:0x080dd9c0` |
+| 82 | 2,310 | 2,310 | `resource_3b8:0x02002a84` |
+| 83 | 2,310 | 388 | `main:0x080113e4` |
+| 84 | 2,298 | 2,298 | `resource_380:0x02000a98` |
+| 85 | 2,294 | 1,912 | `main:0x0808e0b0` |
+| 86 | 2,290 | 1,876 | `main:0x080bd898` |
+| 87 | 2,236 | 2,236 | `resource_39e:0x02001494` |
+| 88 | 2,230 | 2,230 | `resource_3bd:0x02001d4c` |
+| 89 | 2,222 | 2,222 | `resource_3bc:0x02001a08` |
+| 90 | 2,218 | 2,218 | `resource_3c9:0x02003e8c` |
+| 91 | 2,218 | 1,028 | `main:0x08079008` |
+| 92 | 2,206 | 2,206 | `resource_377:0x0200063c` |
+| 93 | 2,194 | 2,194 | `resource_376:0x02000640` |
+| 94 | 2,190 | 2,190 | `resource_396:0x0200069c` |
+| 95 | 2,182 | 1,696 | `main:0x0808d828` |
+| 96 | 2,180 | 2,180 | `resource_3bd:0x02002c38` |
+| 97 | 2,172 | 1,336 | `main:0x0808a5f8` |
+| 98 | 2,170 | 2,170 | `resource_3ca:0x02000430` |
+| 99 | 2,158 | 2,158 | `resource_373:0x02001a14` |
+| 100 | 2,118 | 2,118 | `resource_371:0x020028e8` |
+| 101 | 2,070 | 2,070 | `resource_3b1:0x02001b34` |
+| 102 | 2,070 | 2,070 | `resource_3bd:0x020013f8` |
+| 103 | 2,068 | 2,068 | `resource_3c2:0x02000240` |
+| 104 | 2,056 | 1,048 | `main:0x080f0254` |
+| 105 | 2,046 | 124 | `main:0x0800300c` |
+| 106 | 2,026 | 242 | `main:0x0800a97c` |
+| 107 | 2,018 | 2,018 | `resource_3a5:0x020004e4` |
+| 108 | 2,014 | 2,014 | `resource_3c9:0x02000a6c` |
+| 109 | 2,006 | 2,006 | `resource_3a4:0x02001830` |
+| 110 | 2,002 | 2,002 | `resource_38d:0x020019b0` |
+| 111 | 2,002 | 2,002 | `resource_3af:0x02003a0c` |
+| 112 | 1,978 | 1,978 | `resource_3ad:0x02000808` |
+| 113 | 1,928 | 904 | `main:0x08097b54` |
+| 114 | 1,906 | 1,906 | `resource_378:0x0200290c` |
+| 115 | 1,902 | 1,292 | `main:0x080983a0` |
+| 116 | 1,866 | 1,722 | `main:0x080b9b30` |
+| 117 | 1,810 | 1,810 | `resource_383:0x02002fd4` |
+| 118 | 1,810 | 500 | `main:0x08006088` |
+| 119 | 1,808 | 1,808 | `resource_3b1:0x02005c9c` |
+| 120 | 1,800 | 992 | `main:0x0809b0dc` |
+| 121 | 1,782 | 1,660 | `main:0x080de2f8` |
+| 122 | 1,778 | 1,778 | `resource_3b9:0x02001cd4` |
+| 123 | 1,770 | 1,770 | `resource_3b1:0x020028c8` |
+| 124 | 1,750 | 1,688 | `main:0x080d82b0` |
+| 125 | 1,736 | 1,736 | `resource_3bf:0x0200298c` |
+| 126 | 1,734 | 1,734 | `resource_383:0x02001e80` |
+| 127 | 1,722 | 1,722 | `resource_3b8:0x02002014` |
+| 128 | 1,718 | 1,328 | `main:0x080ba2c0` |
+| 129 | 1,704 | 1,704 | `resource_3a2:0x02000924` |
+| 130 | 1,702 | 1,702 | `resource_381:0x02002150` |
+| 131 | 1,702 | 1,702 | `resource_3b7:0x020001d8` |
+| 132 | 1,698 | 1,698 | `resource_3ae:0x02000ba0` |
+| 133 | 1,692 | 400 | `main:0x0808b824` |
+| 134 | 1,638 | 1,638 | `resource_373:0x02004084` |
+| 135 | 1,634 | 1,056 | `main:0x080ae2f4` |
+| 136 | 1,632 | 1,632 | `resource_3a2:0x020001ec` |
+| 137 | 1,626 | 1,626 | `resource_375:0x020000dc` |
+| 138 | 1,586 | 1,586 | `resource_3c5:0x02001238` |
+| 139 | 1,562 | 1,170 | `main:0x080a63e4` |
+| 140 | 1,560 | 832 | `main:0x08098cd8` |
+| 141 | 1,550 | 1,550 | `resource_379:0x02000484` |
+| 142 | 1,514 | 1,514 | `resource_3a4:0x02000d24` |
+| 143 | 1,506 | 1,264 | `main:0x080b5534` |
+| 144 | 1,480 | 1,480 | `resource_399:0x02000f84` |
+| 145 | 1,478 | 1,478 | `resource_3aa:0x02001450` |
+| 146 | 1,462 | 1,462 | `resource_373:0x020039e8` |
+| 147 | 1,458 | 1,458 | `resource_3c8:0x020047ac` |
+| 148 | 1,448 | 1,448 | `resource_3b0:0x02000af8` |
+| 149 | 1,448 | 1,448 | `resource_3b1:0x020050dc` |
+| 150 | 1,426 | 912 | `main:0x0809a8c4` |
+| 151 | 1,410 | 1,410 | `resource_383:0x020036e8` |
+| 152 | 1,410 | 1,138 | `main:0x08090000` |
+| 153 | 1,410 | 908 | `main:0x080c1a24` |
+| 154 | 1,408 | 1,408 | `resource_39e:0x020038d8` |
+| 155 | 1,402 | 1,402 | `resource_3b1:0x0200234c` |
+| 156 | 1,398 | 1,398 | `resource_372:0x02001b18` |
+| 157 | 1,392 | 842 | `main:0x080d4ce8` |
+| 158 | 1,382 | 1,382 | `resource_3c9:0x02003924` |
+| 159 | 1,378 | 1,378 | `resource_380:0x02001780` |
+| 160 | 1,366 | 1,366 | `resource_3aa:0x0200077c` |
+| 161 | 1,354 | 676 | `main:0x08017364` |
+| 162 | 1,346 | 324 | `main:0x080b04dc` |
+| 163 | 1,326 | 1,326 | `resource_391:0x02002004` |
+| 164 | 1,318 | 1,024 | `main:0x08092b94` |
+| 165 | 1,310 | 1,310 | `resource_373:0x020034c8` |
+| 166 | 1,310 | 656 | `main:0x080994d0` |
+| 167 | 1,308 | 1,308 | `resource_37a:0x02002094` |
+| 168 | 1,306 | 1,306 | `resource_3a8:0x02000590` |
+| 169 | 1,298 | 1,298 | `resource_39c:0x02004a08` |
+| 170 | 1,290 | 1,290 | `resource_3af:0x02000c94` |
+| 171 | 1,270 | 1,270 | `resource_371:0x02001064` |
+| 172 | 1,270 | 1,270 | `resource_3b1:0x020037d8` |
+| 173 | 1,262 | 1,262 | `resource_38d:0x020012a0` |
+| 174 | 1,238 | 1,238 | `resource_373:0x02004b24` |
+| 175 | 1,234 | 1,234 | `resource_39d:0x02001608` |
+| 176 | 1,234 | 1,234 | `resource_3af:0x02001db0` |
+| 177 | 1,230 | 1,230 | `resource_371:0x02001f6c` |
+| 178 | 1,230 | 1,230 | `resource_374:0x02000b8c` |
+| 179 | 1,230 | 226 | `main:0x080a7380` |
+| 180 | 1,222 | 1,222 | `resource_37a:0x0200155c` |
+| 181 | 1,222 | 930 | `main:0x080ba978` |
+| 182 | 1,218 | 1,218 | `resource_37b:0x02000554` |
+| 183 | 1,218 | 996 | `main:0x0801c46c` |
+| 184 | 1,210 | 1,210 | `resource_391:0x02001740` |
+| 185 | 1,208 | 1,208 | `resource_3b8:0x02000b40` |
+| 186 | 1,198 | 1,198 | `resource_3b1:0x020057ec` |
+| 187 | 1,194 | 964 | `main:0x080a1090` |
+| 188 | 1,190 | 1,190 | `resource_3bd:0x02002604` |
+| 189 | 1,182 | 1,182 | `resource_3c9:0x02004738` |
+| 190 | 1,180 | 1,180 | `resource_37b:0x0200101c` |
+| 191 | 1,176 | 1,176 | `resource_37b:0x02000a18` |
+| 192 | 1,170 | 1,170 | `resource_3b3:0x0200174c` |
+| 193 | 1,162 | 392 | `main:0x08094730` |
+| 194 | 1,160 | 908 | `main:0x080a847c` |
+| 195 | 1,158 | 344 | `main:0x0808ec50` |
+| 196 | 1,154 | 1,154 | `resource_37f:0x02001604` |
+| 197 | 1,150 | 1,150 | `resource_375:0x020014f4` |
+| 198 | 1,142 | 1,142 | `resource_373:0x02004ffc` |
+| 199 | 1,136 | 908 | `main:0x080d0ee0` |
+| 200 | 1,130 | 460 | `main:0x080b0070` |
+| 201 | 1,126 | 1,126 | `resource_37f:0x02000f6c` |
+| 202 | 1,126 | 456 | `main:0x080798b4` |
+| 203 | 1,114 | 1,114 | `resource_3c7:0x02000880` |
+| 204 | 1,106 | 1,106 | `resource_39e:0x02001dbc` |
+| 205 | 1,102 | 1,102 | `resource_3bb:0x020010dc` |
+| 206 | 1,102 | 124 | `main:0x08003c80` |
+| 207 | 1,098 | 1,098 | `main:0x080a5b94` |
+| 208 | 1,096 | 1,096 | `resource_3b9:0x020011c4` |
+| 209 | 1,094 | 1,094 | `resource_371:0x02000c1c` |
+| 210 | 1,094 | 1,094 | `resource_3bc:0x02001474` |
+| 211 | 1,094 | 378 | `main:0x0800b684` |
+| 212 | 1,090 | 1,090 | `resource_39e:0x0200064c` |
+| 213 | 1,082 | 148 | `main:0x080216b4` |
+| 214 | 1,078 | 1,078 | `resource_373:0x020015dc` |
+| 215 | 1,078 | 1,078 | `resource_373:0x020046ec` |
+| 216 | 1,078 | 1,078 | `resource_399:0x020019bc` |
+| 217 | 1,078 | 568 | `main:0x08078aa0` |
+| 218 | 1,074 | 1,074 | `resource_3ba:0x02000db8` |
+| 219 | 1,068 | 896 | `main:0x080bd424` |
+| 220 | 1,066 | 780 | `main:0x08091814` |
+| 221 | 1,054 | 1,054 | `resource_39d:0x020011e8` |
+| 222 | 1,052 | 1,052 | `resource_3b1:0x02004254` |
+| 223 | 1,052 | 1,052 | `resource_3c8:0x020026f8` |
+| 224 | 1,050 | 1,050 | `resource_372:0x020028a4` |
+| 225 | 1,050 | 1,050 | `resource_3aa:0x02000360` |
+| 226 | 1,050 | 1,050 | `resource_3aa:0x02000cd4` |
+| 227 | 1,046 | 1,046 | `resource_380:0x020027f8` |
+| 228 | 1,046 | 1,046 | `resource_381:0x02001b34` |
+| 229 | 1,042 | 1,042 | `resource_377:0x02000f90` |
+| 230 | 1,042 | 1,042 | `resource_3a5:0x02001490` |
+| 231 | 1,038 | 1,038 | `resource_379:0x02000074` |
+| 232 | 1,036 | 956 | `main:0x08029504` |
+| 233 | 1,034 | 1,034 | `resource_39d:0x02000ddc` |
+| 234 | 1,034 | 652 | `main:0x080b9724` |
+| 235 | 1,030 | 1,030 | `resource_391:0x02001bfc` |
+| 236 | 1,028 | 724 | `main:0x08090658` |
+| 237 | 1,026 | 1,026 | `resource_37b:0x02000150` |
+| 238 | 1,024 | 856 | `main:0x080a5fe0` |
+| 239 | 1,022 | 1,022 | `resource_3b8:0x020006dc` |
+| 240 | 1,022 | 1,022 | `resource_3b8:0x02000ff8` |
+| 241 | 1,022 | 464 | `main:0x08016018` |
+| 242 | 1,020 | 1,020 | `resource_3b9:0x02000db0` |
+| 243 | 1,014 | 1,014 | `resource_39e:0x02002ad0` |
+| 244 | 1,010 | 1,010 | `resource_37a:0x02001ca0` |

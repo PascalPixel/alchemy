@@ -5,9 +5,9 @@
 void *Func_08077080();
 void Func_080a2438(s32);
 
-#define PlayAbilityUseAnimation Func_080aa460
+#define Ability_PlayUseAnimation Func_080aa460
 
-void PlayAbilityUseAnimation(void)
+void Ability_PlayUseAnimation(void)
 {
     s32 animation_type;
     u32 target_type;

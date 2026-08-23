@@ -2,10 +2,10 @@
 #include "motion_object.h"
 
 struct BattleObjectSlot *Func_080b7dd0(s32 arg0);
-u8 *Func_08077008(s32);
+u8 *Runtime_GetObject(s32);
 void Func_08009140(struct MotionObject *);
 void Func_08009150(struct MotionObject *, s32, s32, s32);
-void Func_08009080(struct MotionObject *, s32);
+void Object_SetMode(struct MotionObject *, s32);
 s32 Func_080022ec(s32, s32);
 
 extern s32 Data_080c59a4[];
@@ -24,7 +24,7 @@ void Func_080b8228(s32 id, s32 variant)
 
     slot = Func_080b7dd0(id);
     object = slot->object;
-    if (Func_08077008(id)[0x128] != 0x94) {
+    if (Runtime_GetObject(id)[0x128] != 0x94) {
         table = Data_080c59a4;
         index = variant * 4;
         object->acceleration = *(s32 *)((u8 *)table + index);
@@ -43,5 +43,5 @@ void Func_080b8228(s32 id, s32 variant)
         x = Func_080022ec(scale * *(s32 *)((u8 *)table + index), 100);
         Func_08009150(object, x, 0, slot->anchor_z);
     }
-    Func_08009080(object, 5);
+    Object_SetMode(object, 5);
 }

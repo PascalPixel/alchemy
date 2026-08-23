@@ -2,7 +2,7 @@
 
 extern s16 Data_02000240[];
 extern s32 Func_08092054(u32);
-extern void Func_08009098(void *, void *);
+extern void Object_SetCallback(void *, void *);
 extern const u8 Data_0809fe00[];
 extern const u8 Data_0809fd44[];
 extern const u8 Data_0809fe10[];
@@ -41,5 +41,5 @@ void Func_08093a6c(s8 *object, s32 kind)
     default:
         break;
     }
-    Func_08009098(object, (void *)kind);
+    Object_SetCallback(object, (void *)kind);
 }

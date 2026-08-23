@@ -23,7 +23,7 @@ extern const struct PresetValues Data_08088e38[44];
 struct OwnerState *Func_08077394(s32 owner);
 u8 *Func_080773d8(s32 record);
 s32 Func_080797fc(s32 record, const u8 *source, s32 output[4]);
-s32 Func_080022fc(s32 value, s32 divisor);
+s32 Modulo(s32 value, s32 divisor);
 s32 Func_080022ec(s32 value, s32 divisor);
 
 u32 Func_080798e0(s32 owner, s16 destination[4][2])
@@ -60,7 +60,7 @@ copied:
 
         result = (u32)Data_08088df8;
         value = values[i];
-        ones = Func_080022fc(value, 10);
+        ones = Modulo(value, 10);
         tens = Func_080022ec(value, 10);
 
         if (tens > 15)

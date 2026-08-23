@@ -1,10 +1,10 @@
 #include "types.h"
 
-u8 *Func_08077008(s32);
+u8 *Runtime_GetObject(s32);
 
 s32 Func_080b27b0(s32 entry_no, s32 kind)
 {
-    u8 *entry = Func_08077008(entry_no);
+    u8 *entry = Runtime_GetObject(entry_no);
     s32 result = 0;
 
     if ((kind == 0 && *(s16 *)(entry + 56) <= 0)

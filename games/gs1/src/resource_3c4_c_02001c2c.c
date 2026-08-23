@@ -25,7 +25,7 @@
  * 0x02004d5e, 0x02004d6e, ... 0x02004dda).  The real callees are the veneers
  * at 0x0200310c (-> Func_0808a080, x10), 0x02003114 (-> Func_0808a090),
  * 0x02003074 (-> Func_08009150), 0x02003134 (-> Func_0808a0e8), 0x020031ac
- * (-> Func_080f9010) and 0x020030ec (-> Func_0808a010), plus this overlay's
+ * (-> Audio_PlayCue) and 0x020030ec (-> Func_0808a010), plus this overlay's
  * prologue at 0x020011e0.
  *
  * Previously skipped because 0x02002ecc looked like an in-image address that

@@ -19,12 +19,12 @@ extern struct FieldEffectState *Data_03001ebc;
 
 s32 Func_08077158(s16 *);
 void Func_08077230(s32);
-struct FieldObject *Func_08077008(s32);
+struct FieldObject *Runtime_GetObject(s32);
 void Func_08077128(s32);
-void Func_080030f8(s32);
+void WaitFrames(s32);
 void Func_0808a368(void);
 void Func_0808a370(void);
-void Func_080f9010(s32);
+void Audio_PlayCue(s32);
 void Func_080b04c4(void);
 void Func_0808a360(void);
 
@@ -42,7 +42,7 @@ void Func_080b3398(s32 room_price)
     Func_08077230(-room_price);
 
     for (index = 0; index < count; index++) {
-        object = Func_08077008(objects[index]);
+        object = Runtime_GetObject(objects[index]);
         if (object->x != 0) {
             object->x = object->saved_x;
             object->y = object->saved_y;
@@ -53,14 +53,14 @@ void Func_080b3398(s32 room_price)
     state = Data_03001ebc;
     state->effect = 0x209;
     state->delay = 60;
-    Func_080030f8(20);
+    WaitFrames(20);
     Func_0808a368();
     Func_0808a370();
-    Func_080f9010(86);
+    Audio_PlayCue(86);
     Func_080b04c4();
-    Func_080030f8(10);
+    WaitFrames(10);
     Func_0808a360();
     Func_0808a370();
-    Func_080030f8(30);
+    WaitFrames(30);
     Data_03001ebc->delay = 16;
 }

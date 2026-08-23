@@ -60,7 +60,7 @@ extern struct MenuObjectControl *Data_03001e68;
 
 struct CharacterSelectorState *Func_080048b0(s32, s32);
 void Func_08002dd8(s32);
-void Func_080030f8(s32);
+void WaitFrames(s32);
 void Func_08015278(s32);
 void Func_08015408(s32, s32, s32, s32);
 s32 Func_08015010(s32, s32, s32, s32, s32);
@@ -83,7 +83,7 @@ s32 OpenCharacterSelector(void)
 
     Data_03001e68->suspended = 1;
     Func_08015408(0, 0, 30, 20);
-    Func_080030f8(1);
+    WaitFrames(1);
     Func_080a1090(0);
 
     state->character_count =
@@ -99,7 +99,7 @@ s32 OpenCharacterSelector(void)
     Func_08015278(state->screen_handle);
     InventoryMenu_CloseWindows();
     Data_03001e68->suspended = 0;
-    Func_080030f8(1);
+    WaitFrames(1);
     Func_08002dd8(55);
     return result;
 }

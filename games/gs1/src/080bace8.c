@@ -1,10 +1,10 @@
 #include "types.h"
 
-u8 *Func_08077008(s32);
+u8 *Runtime_GetObject(s32);
 s32 *Func_080b7dd0(s32);
 u8 *Func_080b7f70(s32, s32);
 void Func_08009020(void *, s32);
-void Func_080030f8(s32);
+void WaitFrames(s32);
 void Func_080bac6c(s32);
 void Func_08009108(void **, s32);
 void Func_080b7e60(s32);
@@ -17,7 +17,7 @@ void Func_080bace8(s32 id)
     u8 *child;
     s32 index;
 
-    state = Func_08077008(id);
+    state = Runtime_GetObject(id);
     index = 0;
     while ((item = Func_080b7f70(*Func_080b7dd0(id), index)) != 0) {
         if (state[0x12a] != 1)
@@ -36,7 +36,7 @@ void Func_080bace8(s32 id)
             child[22] = 0xff;
             index++;
         }
-        Func_080030f8(4);
+        WaitFrames(4);
         Func_080bac6c(id);
         Func_08009108(items, index);
         Func_080b7e60(id);

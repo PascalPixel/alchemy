@@ -30,7 +30,7 @@
 s32 Func_080072f0(s32, s32, s32, s32);
 s32 Func_080022ec(s32, s32);
 s32 Func_08009150(s32, s32, s32, s32);
-s32 Func_08009080(s32, s32);
+s32 Object_SetMode(s32, s32);
 
 s32 Func_0809397c(s32 arg0)
 {
@@ -64,9 +64,9 @@ s32 Func_0809397c(s32 arg0)
             Func_08009150(object, newX, *(s32 *)(object + 0x0c),
                           *(s32 *)(object + 0x10) +
                               Func_080022ec(cellY << 20, arg0));
-            Func_08009080(object, 2);
+            Object_SetMode(object, 2);
         } else {
-            Func_08009080(object, 1);
+            Object_SetMode(object, 1);
         }
     }
     return 1;

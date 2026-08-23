@@ -1,9 +1,9 @@
 #include "types.h"
 
-u8 *Func_08077008(void);
+u8 *Runtime_GetObject(void);
 
 s32 Func_080bf574(void) {
-    u8 *base = Func_08077008();
+    u8 *base = Runtime_GetObject();
     u8 *value = base + 0x146;
     if (*value != 0) {
         (*value)--;

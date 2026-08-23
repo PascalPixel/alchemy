@@ -57,7 +57,7 @@ void Inn_PlaySleepSequence(s32);
 s32 Func_08015010(s32, s32, s32, s32, s32);
 void Func_08015018(s32, s32);
 s32 Func_080150f8(u16, s32, s32, s32);
-void Func_08015120(s32, s32);
+void UiText_DrawQuantity(s32, s32);
 struct Object_080b3284 *Func_0808a080(s32);
 
 #define Inn_CheckIn Func_080b3284
@@ -81,7 +81,7 @@ s32 Func_080b3284(s32 mode, s32 object_id)
     resource_window = Func_080150f8(state->resource_id, 0, 0, 0);
 
     amount = Inn_CalculateRoomPrice(mode);
-    Func_08015120(amount, 5);
+    UiText_DrawQuantity(amount, 5);
     message_base = (s32)&Value_00000d1c;
     Func_080b04dc(message_base);
     state->window = Func_08015010(0, 16, MESSAGE_WINDOW_ROWS, 4, 2);

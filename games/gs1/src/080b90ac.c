@@ -6,7 +6,7 @@ struct ActorState_080b90ac {
 };
 
 s32 Func_080b6c08(s32 groups, u16 *ids);
-struct ActorState_080b90ac *Func_08077008(u16 id);
+struct ActorState_080b90ac *Runtime_GetObject(u16 id);
 void Func_08077010(u16 id);
 
 void Func_080b90ac(void)
@@ -19,7 +19,7 @@ void Func_080b90ac(void)
     for (index = 0; index < count; index++) {
         struct ActorState_080b90ac *actor;
 
-        actor = Func_08077008(ids[index]);
+        actor = Runtime_GetObject(ids[index]);
         actor->field_12b = 0;
         Func_08077010(ids[index]);
     }

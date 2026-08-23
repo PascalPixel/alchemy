@@ -36,8 +36,8 @@ extern struct EffectCamera *Data_03001f30;
 extern u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-extern void Func_0800447c(s32, s32, struct EffectPosition *);
-extern void Func_080974d8(struct EffectPosition *);
+extern void RotateVectorByMagnitude(s32, s32, struct EffectPosition *);
+extern void NormalizeVector(struct EffectPosition *);
 extern s32 Func_0809ba34(struct RadialCameraEffect *);
 extern void Func_0809bb34(struct RadialCameraEffect *);
 
@@ -58,7 +58,7 @@ top:
         position.x = effect->source_x;
         position.z = effect->source_z;
         angle = Rand();
-        Func_0800447c(Rand() * 30 + 0x280000, (u16)angle, &position);
+        RotateVectorByMagnitude(Rand() * 30 + 0x280000, (u16)angle, &position);
         effect->x = position.x;
         effect->z = position.z;
         effect->acceleration = 0x40000;
@@ -74,8 +74,8 @@ top:
         position.x = camera->x;
         position.y = camera->y + 0x80000;
         position.z = camera->z;
-        Func_080974d8(&position);
-        Func_0800447c(0x40000, Rand(), &position);
+        NormalizeVector(&position);
+        RotateVectorByMagnitude(0x40000, Rand(), &position);
         effect->x = position.x;
         effect->z = position.z;
         effect->field_32 = 0x1000;

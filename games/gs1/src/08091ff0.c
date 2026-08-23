@@ -6,7 +6,7 @@ struct BattleEventState {
 };
 
 extern struct BattleEventState *Data_03001ebc;
-void Func_080f9010(s32);
+void Audio_PlayCue(s32);
 
 void Func_08091ff0(s32 sound_id)
 {
@@ -14,6 +14,6 @@ void Func_08091ff0(s32 sound_id)
     if ((s16)sound_id == -1) {
         sound_id = 0x121;
     }
-    Func_080f9010(0x12a);
-    Func_080f9010(sound_id);
+    Audio_PlayCue(0x12a);
+    Audio_PlayCue(sound_id);
 }

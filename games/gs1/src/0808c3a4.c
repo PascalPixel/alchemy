@@ -3,12 +3,12 @@
 extern u8 Data_02000240[];
 
 s32 Func_08077148(void);
-u8 *Func_08077008(s32);
+u8 *Runtime_GetObject(s32);
 s32 Func_080022ec(s32, s32);
 void Func_08077118(s32, s32);
 void Func_08091220(void *, s32);
 void Func_08091254(s32);
-void Func_080f9010(s32);
+void Audio_PlayCue(s32);
 
 s32 Func_0808c3a4(void)
 {
@@ -25,7 +25,7 @@ s32 Func_0808c3a4(void)
         remaining = count;
 
         do {
-            u8 *object = Func_08077008(*entry);
+            u8 *object = Runtime_GetObject(*entry);
             s32 amount;
 
             switch ((s8)object[0x131]) {
@@ -57,7 +57,7 @@ s32 Func_0808c3a4(void)
     if (result != 0) {
         Func_08091220((void *)0x1ff, 0);
         Func_08091254(4);
-        Func_080f9010(133);
+        Audio_PlayCue(133);
     }
 
     return result;

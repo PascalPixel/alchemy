@@ -9,7 +9,7 @@ void Func_0200694a();          /* site veneer -> Func_0808a158 (2nd) */
 void Func_02006a1e();          /* site veneer -> Func_0808a438 */
 void Func_02006956();          /* site veneer -> Func_0808a158 (3rd) */
 void Func_02006a32();          /* site veneer -> Func_0808a440 */
-void Func_02006a6a();          /* site veneer -> Func_080f9010 */
+void Func_02006a6a();          /* site veneer -> Audio_PlayCue */
 void Func_0200696a();          /* site veneer -> Func_0808a158 (4th) */
 
 void Func_02002d08(void)

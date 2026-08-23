@@ -5,7 +5,7 @@
 #define PAGE_CAP_RIGHT 0xf129
 
 s32 Func_080022ec(s32 numerator, s32 denominator);
-s32 Func_080022fc(s32 numerator, s32 denominator);
+s32 Modulo(s32 numerator, s32 denominator);
 void Func_08015280(
     s32 window,
     s32 tile,
@@ -30,7 +30,7 @@ void Func_080a21b0(
     x = right_edge;
     tile = PAGE_LABEL_FIRST;
     page_count = Func_080022ec(item_count, page_size);
-    if (Func_080022fc(item_count, page_size) != 0)
+    if (Modulo(item_count, page_size) != 0)
         page_count++;
 
     x -= page_count;

@@ -1,16 +1,16 @@
 #include "types.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-s32 Func_080022fc(s32, s32);
+s32 Modulo(s32, s32);
 extern u8 Data_02000240[];
 extern u8 Data_08036750[];
 void Func_0801ca1c(void *arg0) {
     s16 temp_r5; s32 temp_sl; s32 var_r2, var_r6, var_r7;
-    temp_r5 = Func_080022fc(Data_02000240[0x205] + 0xC, 0x18) * 4;
+    temp_r5 = Modulo(Data_02000240[0x205] + 0xC, 0x18) * 4;
     temp_sl = Data_02000240[0x206] - 7;
-    var_r6 = Data_08036750[(s16) Func_080022fc(temp_r5, 0x60)];
-    var_r7 = Data_08036750[Func_080022fc(temp_r5 + 0x20, 0x60)];
-    var_r2 = Data_08036750[Func_080022fc(temp_r5 + 0x40, 0x60)];
+    var_r6 = Data_08036750[(s16) Modulo(temp_r5, 0x60)];
+    var_r7 = Data_08036750[Modulo(temp_r5 + 0x20, 0x60)];
+    var_r2 = Data_08036750[Modulo(temp_r5 + 0x40, 0x60)];
     var_r6 += temp_sl; var_r7 += temp_sl; var_r2 += temp_sl;
     if (var_r6 < 0) var_r6 = 0; if (var_r7 < 0) var_r7 = 0; if (var_r2 < 0) var_r2 = 0;
     if (var_r6 > 0x1F) var_r6 = 0x1F; if (var_r7 > 0x1F) var_r7 = 0x1F; if (var_r2 > 0x1F) var_r2 = 0x1F;

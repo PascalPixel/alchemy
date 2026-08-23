@@ -2,33 +2,33 @@
 #include "sound_ids.h"
 
 typedef struct {
-    u8 unknown00[0x34];
+    u8  reserved00[0x34];
     s8 field34;
 } SceneTransitionContext;
 
 typedef struct {
-    u8 unknown000[0xcb8];
+    u8  reserved000[0xcb8];
     s16 active;
-    s16 fieldcba;
+    s16 transition_timer;
 } SceneTransitionState;
 
 typedef struct {
-    u8 unknown000[0x53c];
-    u8 field53c;
-    u8 field53d;
-    u8 field53e;
+    u8  reserved000[0x53c];
+    u8 transition_status;
+    u8 transition_mode;
+    u8 transition_phase;
 } SceneTransitionScene;
 
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 void Func_08004278(void (*callback)(void));
-void *Func_0808e4b4(u32 kind, u32 index, s32 *size);
-void Func_08091200(u32 value, s32 enabled);
-void Func_08091220(u32 value, s32 enabled);
-void Func_08091254(s32 value);
-s32 Func_08096b28(void *resource, s32 mode, s32 size);
-void Func_08098294(s32 value);
+void *Func_0808e4b4(u32 kind, u32 entry_index, s32 *size);
+void Func_08091200(u32 battle_value, s32 enabled);
+void Func_08091220(u32 battle_value, s32 enabled);
+void Func_08091254(s32 battle_value);
+s32 Func_08096b28(void *resource, s32 battle_mode, s32 size);
+void Func_08098294(s32 battle_value);
 void Func_080982dc(void);
-void Func_080f9010(s32 soundId);
+void Audio_PlayCue(s32 soundId);
 
 extern SceneTransitionContext *Data_03001f30;
 extern s32 Data_02000240[];
@@ -45,12 +45,12 @@ void ResetSceneTransitionEffect(void)
     void *resource;
 
     if (state->active != 0) {
-        Func_080f9010(SOUND_SCENE_TRANSITION);
+        Audio_PlayCue(SOUND_SCENE_TRANSITION);
         Func_08004278(Func_080982dc);
 
         clearedValue = 0;
         state->active = clearedValue;
-        state->fieldcba = clearedValue;
+        state->transition_timer = clearedValue;
         Func_08098294(0);
 
         Func_08091200(0x10000, 1);
@@ -58,17 +58,17 @@ void ResetSceneTransitionEffect(void)
         Func_08091220(0, 0);
         Func_08091200(0x10000, 0);
         Func_08091254(30);
-        Func_080030f8(1);
+        WaitFrames(1);
 
         resource = Func_0808e4b4(0x40000005, 8, &resourceSize);
         if (resource != NULL)
             Func_08096b28(resource, Data_02000240[125], resourceSize);
 
         if (context->field34 == 0) {
-            scene->field53e = 0;
-            scene->field53c = 1;
-            scene->field53d = 1;
-            Func_080030f8(10);
+            scene->transition_phase = 0;
+            scene->transition_status = 1;
+            scene->transition_mode = 1;
+            WaitFrames(10);
         }
     }
 }

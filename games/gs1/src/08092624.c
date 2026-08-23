@@ -32,8 +32,8 @@ extern struct Object_08092624 *Func_080090c8(s32, s32, s32, s32);
 extern s32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-extern void Func_08009080(struct Object_08092624 *, s32);
-extern void Func_08009098(struct Object_08092624 *, const void *);
+extern void Object_SetMode(struct Object_08092624 *, s32);
+extern void Object_SetCallback(struct Object_08092624 *, const void *);
 extern void Func_080929d8(struct Object_08092624 *);
 extern s32 Func_08002304(s32, s32);
 extern const u8 Data_0809fbec[];
@@ -51,12 +51,12 @@ void Func_08092624(struct Object_08092624 *source, s32 optional)
         child = object->child;
         switch (Rand() & 1) {
         case 1:
-            Func_08009080(object, 2);
-            Func_08009098(object, Data_0809fbec);
+            Object_SetMode(object, 2);
+            Object_SetCallback(object, Data_0809fbec);
             break;
         default:
-            Func_08009080(object, 1);
-            Func_08009098(object, Data_0809fc04);
+            Object_SetMode(object, 1);
+            Object_SetCallback(object, Data_0809fc04);
             break;
         }
 

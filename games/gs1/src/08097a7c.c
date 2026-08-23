@@ -4,7 +4,7 @@
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-void Func_080041d8(s32, s32);
+void ScheduleCallbackAfterFrames(s32, s32);
 void Func_08097868(void);
 
 void Func_08097a7c(void) {
@@ -35,6 +35,6 @@ void Func_08097a7c(void) {
     *palette = 0x739C;
     {
         s32 n = 0x480;
-        Func_080041d8((s32)Func_08097868, n);
+        ScheduleCallbackAfterFrames((s32)Func_08097868, n);
     }
 }

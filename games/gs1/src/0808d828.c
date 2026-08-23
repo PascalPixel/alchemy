@@ -41,7 +41,7 @@ void Func_08092b94(s32);
 void Func_08092f84(s32, s32);
 void Func_08091750(void);
 void Func_080072e8(s32);
-void Func_080f9010(s32);
+void Audio_PlayCue(s32);
 void Func_08094354(void);
 void Func_08094368(void);
 extern Obj *Data_03001ebc;
@@ -75,9 +75,9 @@ s32 Func_0808d828(s32 arg0) {
         if (temp_r0_2 != 0) {
             temp_r2 = temp_r0_2->flags & 0x30;
             switch (temp_r2) {
-            case 0: Func_080f9010(0x7B); break;
-            case 32: Func_080f9010(0x80); Func_08094354(); break;
-            case 48: Func_080f9010(0x81); Func_08094368(); break;
+            case 0: Audio_PlayCue(0x7B); break;
+            case 32: Audio_PlayCue(0x80); Func_08094354(); break;
+            case 48: Audio_PlayCue(0x81); Func_08094368(); break;
             }
             temp_r3->h170 = (s16) temp_r0_2->val8;
 block_17:

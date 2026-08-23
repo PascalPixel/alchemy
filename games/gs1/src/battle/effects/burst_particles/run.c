@@ -8,14 +8,14 @@ struct BurstParticleVector {
 
 extern u8 *Data_03001f30;
 void Func_08098698(void);
-void Func_080f9010(s32);
+void Audio_PlayCue(s32);
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-void Func_0800447c(s32, s32, struct BurstParticleVector *);
-void *Func_08096c80(s32, s32, s32, s32);
-void Func_08009098(void *, const void *);
-void Func_080030f8(u32);
+void RotateVectorByMagnitude(s32, s32, struct BurstParticleVector *);
+void *Object_Spawn(s32, s32, s32, s32);
+void Object_SetCallback(void *, const void *);
+void WaitFrames(u32);
 void Func_0809748c(void);
 extern const u8 Data_0809f11c[];
 
@@ -25,34 +25,34 @@ void RunBurstParticleEffect(void)
     u8 *state = Data_03001f30;
     struct BurstParticleVector position;
     struct BurstParticleVector *positionPointer;
-    s32 count;
+    s32 entry_count;
 
     Func_08098698();
-    Func_080f9010(SOUND_HEAVY_IMPACT);
+    Audio_PlayCue(SOUND_HEAVY_IMPACT);
     positionPointer = &position;
-    count = 4;
+    entry_count = 4;
     do {
         void *object;
-        s32 random;
+        s32 random_value;
 
         positionPointer->values[0] = *(s32 *)(state + 4);
         positionPointer->values[2] = *(s32 *)(state + 12);
-        random = (Rand() * 6) + 0x40000;
-        Func_0800447c(random, Rand(), positionPointer);
+        random_value = (Rand() * 6) + 0x40000;
+        RotateVectorByMagnitude(random_value, Rand(), positionPointer);
         positionPointer->values[1] = *(s32 *)(state + 8);
-        object = Func_08096c80(
+        object = Object_Spawn(
             0xD9,
             positionPointer->values[0],
             positionPointer->values[1],
             positionPointer->values[2]
         );
         if (object != 0) {
-            Func_08009098(object, Data_0809f11c);
+            Object_SetCallback(object, Data_0809f11c);
             *((u8 *)object + 0x55) = 2;
         }
-        Func_080030f8((((u32)Rand() * 2) >> 16) + 2);
-        count--;
-    } while (count >= 0);
-    Func_080030f8(0x1E);
+        WaitFrames((((u32)Rand() * 2) >> 16) + 2);
+        entry_count--;
+    } while (entry_count >= 0);
+    WaitFrames(0x1E);
     Func_0809748c();
 }

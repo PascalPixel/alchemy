@@ -1,23 +1,23 @@
 #include "types.h"
 
 struct BattleEffectRequest {
-    u8 padding_000[0x18];
-    s16 sourceId;
-    s16 targetId;
-    u8 padding_01c[2];
-    s16 mode;
+    u8 reserved_000[0x18];
+    s16 source_id;
+    s16 target_id;
+    u8 reserved_01c[2];
+    s16 battle_mode;
 };
 
 struct BattleEffectState {
-    u8 padding_000[0xCB8];
+    u8 reserved_000[0xCB8];
     s16 active;
 };
 
 struct BattleEffectGlobals {
-    u8 padding_000[0x1F4];
-    s32 selectedObject;
-    u8 padding_1f8[0x52];
-    s16 selectedId;
+    u8 reserved_000[0x1F4];
+    s32 selected_object;
+    u8 reserved_1f8[0x52];
+    s16 selected_id;
 };
 
 extern struct BattleEffectRequest *Data_03001f30;
@@ -39,7 +39,7 @@ extern struct BattleEffectGlobals Data_02000240;
 #define RunBattleEffect15 Func_0809b208
 #define RunBattleEffect16 Func_0809b698
 void RunBattleEffect01(void);
-void RunSceneTransitionEffect(s32 sourceId, s32 targetId);
+void RunSceneTransitionEffect(s32 source_id, s32 target_id);
 void RunBattleEffect03(void);
 void RunBattleEffect04(void);
 void RunBattleEffect05(void);
@@ -54,10 +54,10 @@ void RunBattleEffect14(void);
 void RunBattleEffect15(void);
 void RunBattleEffect16(void);
 void Func_0809ade8(s32 objectId);
-s32 Func_0808df1c(s32 objectId, s32 mode);
+s32 Func_0808df1c(s32 objectId, s32 battle_mode);
 s32 Func_0809ae3c(s32 objectId);
 s32 Func_0808d5a4(s32 objectId);
-void Func_080970f8(s32 selectedObject, s32 objectId);
+void Func_080970f8(s32 selected_object, s32 objectId);
 void Func_0809ab98(s32 objectId);
 void Func_0809ad90(s32 objectId);
 void Func_0809abb4(void);
@@ -69,16 +69,16 @@ void RunBattleEffect(void)
 {
     struct BattleEffectRequest *request;
     struct BattleEffectState *battle;
-    s32 mode;
-    s32 targetId;
+    s32 battle_mode;
+    s32 target_id;
     s32 objectId;
 
     request = Data_03001f30;
     battle = *(struct BattleEffectState **)((u8 *)&Data_03001f30 - 0x74);
-    mode = request->mode;
-    targetId = request->targetId;
+    battle_mode = request->battle_mode;
+    target_id = request->target_id;
 
-    switch (mode) {
+    switch (battle_mode) {
     case 1:
         RunBattleEffect01();
         return;
@@ -110,18 +110,18 @@ void RunBattleEffect(void)
         RunBattleEffect13();
         return;
     case 9:
-        if (Data_02000240.selectedId != -1) {
-            Func_0809ade8(Data_02000240.selectedId);
-            Data_02000240.selectedId = -1;
+        if (Data_02000240.selected_id != -1) {
+            Func_0809ade8(Data_02000240.selected_id);
+            Data_02000240.selected_id = -1;
         }
 
-        objectId = Func_0808df1c(Data_02000240.selectedObject, mode);
+        objectId = Func_0808df1c(Data_02000240.selected_object, battle_mode);
         objectId = Func_0809ae3c(objectId);
         if (Func_0808d5a4(objectId) != 0) {
-            Func_080970f8(Data_02000240.selectedObject, objectId);
+            Func_080970f8(Data_02000240.selected_object, objectId);
             Func_0809ab98(objectId);
             Func_0809ad90(objectId);
-            Data_02000240.selectedId = objectId;
+            Data_02000240.selected_id = objectId;
         } else {
             Func_0809abb4();
         }
@@ -129,7 +129,7 @@ void RunBattleEffect(void)
     case 2:
         if (battle->active != 0)
             ResetSceneTransitionEffect();
-        RunSceneTransitionEffect(request->sourceId, targetId);
+        RunSceneTransitionEffect(request->source_id, target_id);
         return;
     case 8:
         RunBattleEffect08();

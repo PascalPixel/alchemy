@@ -27,8 +27,8 @@ typedef struct {
 } Object08094380;
 
 Effect08094380 *Func_08009048(Context08094380 *, s32);
-void Func_08009080(Object08094380 *, s32);
-void Func_080030f8(s32);
+void Object_SetMode(Object08094380 *, s32);
+void WaitFrames(s32);
 void Func_08009060(void *);
 void Func_08009150(Object08094380 *, s32, s32, s32);
 void Func_08009158(Object08094380 *);
@@ -49,8 +49,8 @@ void Func_08094380(s32 arg0)
     effect->kind = 15;
     object->x = (object->x & mask) + 0x80000;
     object->z &= mask;
-    Func_08009080(object, arg0);
-    Func_080030f8(30);
+    Object_SetMode(object, arg0);
+    WaitFrames(30);
     context->second_flag = 1;
     Func_08009060(context->effect);
     context->effect = (void *)zero;

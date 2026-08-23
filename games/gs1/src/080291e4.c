@@ -3,7 +3,7 @@
 s32 Func_080162d4(s32, s32, s32, s32, s32);
 void Func_080292c4(s32, s32);
 void Func_0801c0dc(struct Object_0801c0dc *object, s32 *slot);
-void Func_080030f8(s32);
+void WaitFrames(s32);
 s32 Func_0802938c(s32, s32 *, s32 *);
 void Func_0801c154(struct Obj *obj, s32 arg1, s32 arg2);
 void Func_0801c17c(s32);
@@ -33,7 +33,7 @@ loop_body:
                   coordinate[0] * 8 + 58,
                   coordinate[1] * 8 + 20);
 loop_test:
-    Func_080030f8(1);
+    WaitFrames(1);
     event = Func_0802938c(handle, &selection, coordinate);
     if (event != -1)
         goto loop_body;

@@ -12,12 +12,12 @@
  *   0x02000466 -> veneer 0x02001b04 -> Func_080770c0
  *   0x02000470 -> veneer 0x02001b04 -> Func_080770c0
  *   0x0200047c -> veneer 0x02001afc -> Func_08015040
- *   0x02000482 -> veneer 0x02001c2c -> Func_080f9010
+ *   0x02000482 -> veneer 0x02001c2c -> Audio_PlayCue
  *   0x02000486 -> 0x02000384 (this overlay's own prologue)
  *   0x0200048c -> veneer 0x02001b0c -> Func_080770c8
  *   0x02000492 -> veneer 0x02001b14 -> Func_080770d0
  * Per-target multiset: Func_080770c0 x2 and one each of Func_08015040,
- * Func_080f9010, Func_02000384, Func_080770c8, Func_080770d0 - 7 sites, 7 C
+ * Audio_PlayCue, Func_02000384, Func_080770c8, Func_080770d0 - 7 sites, 7 C
  * call expressions.
  *
  * Mirror of 0x0200033c: byte-identical apart from the exchanged story-flag

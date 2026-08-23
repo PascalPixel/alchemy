@@ -5,18 +5,18 @@
 #include "battle_target.h"
 
 struct BattlePresentationTransition {
-    s32 value;
+    s32 battle_value;
     s32 timer;
-    u8 pad08[12];
+    u8 reserved08[12];
     s32 flag;
 };
 
 extern struct BattlePresentationTransition *Data_03001f00;
 
-u8 *Func_08077008(s32);
+u8 *Runtime_GetObject(s32);
 void Func_08015118(void);
 void Func_080151c8(s32);
-void Func_080030f8(s32);
+void WaitFrames(s32);
 s32 Func_080b8888(s16 *);
 s32 Func_080b8c1c(s16 *);
 s32 Func_080b88d0(s16 *);
@@ -26,21 +26,21 @@ s32 BattlePresentation_RunAction(s16 *action)
 {
     struct BattlePresentationTransition *transition;
     s32 actor_id;
-    s32 mode;
+    s32 battle_mode;
     u8 *actor;
 
     actor_id = action[0];
-    actor = Func_08077008(actor_id);
+    actor = Runtime_GetObject(actor_id);
     if (*(s16 *)(actor + 0x38) == 0)
         return -1;
 
     action[5] = BattleTarget_ReplaceDefeated((u8 *)action);
     transition = Data_03001f00;
     if (action[0] > 4)
-        mode = -0x2000;
+        battle_mode = -0x2000;
     else
-        mode = 0x2000;
-    transition->value = mode;
+        battle_mode = 0x2000;
+    transition->battle_value = battle_mode;
     transition->timer = 60;
     Func_08015118();
 
@@ -51,11 +51,11 @@ s32 BattlePresentation_RunAction(s16 *action)
             return 1;
         break;
     case 3:
-        Func_080030f8(45);
+        WaitFrames(45);
         Func_080b8888(action);
         break;
     case 2:
-        Func_080030f8(45);
+        WaitFrames(45);
         Func_080b8c1c(action);
         break;
     case 0:

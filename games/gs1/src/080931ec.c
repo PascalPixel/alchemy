@@ -16,7 +16,7 @@ s32 Func_08015048(void);
 s32 Func_08015050(s32);
 void Func_08015100(s32);
 void Func_08015140(void);
-void Func_080030f8(s32);
+void WaitFrames(s32);
 
 void Func_080931ec(
     s32 first, s32 first_x, s32 first_y, s32 first_arg,
@@ -40,22 +40,22 @@ void Func_080931ec(
     Func_080150f8(second_id, 0, second_arg, second_extra);
 
     while (Func_08015048() == 0)
-        Func_080030f8(1);
+        WaitFrames(1);
 
-    Func_080030f8(1);
+    WaitFrames(1);
     while ((Data_03001c94 & 0x303) == 0)
-        Func_080030f8(1);
+        WaitFrames(1);
 
-    Func_080030f8(1);
+    WaitFrames(1);
     Func_08015100(first_id);
     Func_08015100(second_id);
     Func_08015140();
-    Func_080030f8(1);
+    WaitFrames(1);
 
     while (Func_08015050(first_handle) == 0)
-        Func_080030f8(1);
+        WaitFrames(1);
     while (Func_08015050(second_handle) == 0)
-        Func_080030f8(1);
+        WaitFrames(1);
 
-    Func_080030f8(1);
+    WaitFrames(1);
 }

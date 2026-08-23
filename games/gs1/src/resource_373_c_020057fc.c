@@ -15,7 +15,7 @@
  *
  * UNCERTAINTY 1: the called service addresses are the ones encoded in the
  * overlay image (shared 0x02000000 namespace, load-time fixups).
- * UNCERTAINTY 2: 0x0200e6e4 is passed to Func_08009098 as a plain pointer;
+ * UNCERTAINTY 2: 0x0200e6e4 is passed to Object_SetCallback as a plain pointer;
  * whether it is animation data or a callback is not established here.
  */
 

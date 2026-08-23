@@ -1,6 +1,6 @@
 #include "types.h"
 
-u8 *Func_08077008(s32);
+u8 *Runtime_GetObject(s32);
 
 s32 Func_080a8b10(u8 *output, s32 requested, s32 id) {
     u8 *state;
@@ -9,7 +9,7 @@ s32 Func_080a8b10(u8 *output, s32 requested, s32 id) {
     s32 count;
     s32 mode;
 
-    state = Func_08077008(id);
+    state = Runtime_GetObject(id);
     zero = 0;
     for (i = 4; i >= 0; i--)
         output[i] = zero;

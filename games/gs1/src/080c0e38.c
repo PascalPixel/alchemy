@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 Func_080030f8(s32);
+s32 WaitFrames(s32);
 void Func_080c0e38(void)
 {
   s32 var_r5;
@@ -12,7 +12,7 @@ void Func_080c0e38(void)
   var_r5 = 1;
   do
   {
- do { *((s16 *) new_var2) = 0x1010 - var_r5; var_r5 += 2; Func_080030f8(1); } while (0);
+ do { *((s16 *) new_var2) = 0x1010 - var_r5; var_r5 += 2; WaitFrames(1); } while (0);
   }
   while (var_r5 <= 0x10);
 }

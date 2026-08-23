@@ -2,7 +2,7 @@
 #include "global_cells.h"
 
 s32 Func_080f7460(void);
-s32 Func_080f9010(s32);
+s32 Audio_PlayCue(s32);
 s32 Func_080f6008(void)
 {
   s32 *new_var;
@@ -14,7 +14,7 @@ s32 Func_080f6008(void)
     new_var = (s32 *) ADDR_03001CB4;
     *new_var = *((s32 *) (new_var2 + 4));
   }
-  Func_080f9010(9);
+  Audio_PlayCue(9);
   Func_080f7460();
   return 0;
 }

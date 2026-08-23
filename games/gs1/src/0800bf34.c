@@ -3,7 +3,7 @@
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 void Func_0800be70(u8 *object, u32 position);
-void Func_080030f8(u32);
+void WaitFrames(u32);
 
 void Func_0800bf34(u8 **objects, s32 count) {
     u8 **first;
@@ -31,7 +31,7 @@ void Func_0800bf34(u8 **objects, s32 count) {
                 Func_0800be70(*cursor++, fourth);
             } while (remaining != 0);
         }
-        Func_080030f8(1U);
+        WaitFrames(1U);
         position += 4;
     } while (position <= 0x7FU);
 }

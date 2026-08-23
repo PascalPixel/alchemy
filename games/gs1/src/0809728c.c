@@ -53,7 +53,7 @@ void Func_0809728c(void)
     event_object = *(void **)((u8 *)event_state + 0x10);
     event_value = (s32)(*(s16 *)((u8 *)(event_state) + 0x1C));
     event_index = event_value;
-    Func_08009080(event_object, 0x14);
+    Object_SetMode(event_object, 0x14);
     M2C_FIELD(event_object, u32 *, 0x38) = (s32)*(s32 *)((u8 *)(event_object) + 8);
     M2C_FIELD(event_object, s32 *, 0x3C) = (s32)M2C_FIELD(event_object, s32 *, 0xC);
     M2C_FIELD(event_object, s32 *, 0x40) = (s32)M2C_FIELD(event_object, s32 *, 0x10);
@@ -61,12 +61,12 @@ void Func_0809728c(void)
     M2C_FIELD(event_object, u32 *, 0x28) = 0;
     *(s32 *)((u8 *)(event_object) + 0x2C) = 0;
     if ((s8)M2C_FIELD(event_state, s8 *, 0x22) != 0) {
-        Func_080f9010(212);
+        Audio_PlayCue(212);
         M2C_FIELD(event_object, s32 *, 0x6C) = CALLBACK_1;
     }
     if ((s8)M2C_FIELD(event_state, s8 *, 0x23) != 0) {
         Func_08096cdc(event_object, 1, 0);
-        Func_08015120((s32)event_index, 4);
+        UiText_DrawQuantity((s32)event_index, 4);
         if ((s8)M2C_FIELD(event_state, s8 *, 0x21) != 0) {
             Func_08015040((void *)MESSAGE_NO, (s32)*(s8 *)((u8 *)(event_state) + 0x71C));
         } else {
@@ -78,7 +78,7 @@ void Func_0809728c(void)
         if ((s8)M2C_FIELD(event_state, s8 *, 0x22) != 0) {
             M2C_FIELD(event_object, s32 *, 0x6C) = CALLBACK_2;
         }
-        Func_08009080(event_object, 0x15);
+        Object_SetMode(event_object, 0x15);
     } else {
         Func_08097174();
     }

@@ -21,8 +21,8 @@ struct ItemUseWork {
 
 extern struct ItemUseWork *Data_03001f2c;
 
-struct ItemOwner *Func_08077008(s32);
-struct ItemData *Func_08077018(s32);
+struct ItemOwner *Runtime_GetObject(s32);
+struct ItemData *Item_GetData(s32);
 u8 Func_08077058(s32, s32);
 u32 Func_080a3ddc(struct ItemOwner *, u16 *, s32);
 s32 Func_080a9f10(s32, s32, s32, s32);
@@ -37,17 +37,17 @@ s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
     struct ItemOwner *owner;
     struct ItemData *item;
 
-    owner = Func_08077008(owner_id);
+    owner = Runtime_GetObject(owner_id);
     work = Data_03001f2c;
     item_id = 0x1ff & owner->items[slot];
-    item = Func_08077018(item_id);
+    item = Item_GetData(item_id);
     result = Func_080a9f10(
         0x3fff & item->use_ability,
         owner_id,
         target_id,
         1);
     if (result != -1) {
-        item = Func_08077018(owner->items[slot]);
+        item = Item_GetData(owner->items[slot]);
         if (item->kind == 1) {
             Func_08077058(owner_id, slot);
             work->entry_count =

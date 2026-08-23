@@ -16,7 +16,7 @@ s32 Func_080a1000(void);
 s32 Func_080a1008(void);
 s32 Func_080a1010(void);
 s32 Func_080a1040(void);
-void Func_080030f8(s32);
+void WaitFrames(s32);
 void Func_0808a5f8(void);
 
 s32 Func_0801c244(void)
@@ -35,7 +35,7 @@ loop:
     state[0xcca] = 1;
     if (*(s16 *)(state + 0xcb8) != 0) {
         Func_0808a5f8();
-        Func_080030f8(1);
+        WaitFrames(1);
     }
 #endif
     result = Func_0801c2e4();

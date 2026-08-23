@@ -14,8 +14,8 @@ void *Func_08004970(s32);
 void Func_08002df0(void *);
 void Func_08006488(void);
 s32 Func_08006408(void);
-void Func_080030f8(s32);
-u8 *Func_08077008(s32);
+void WaitFrames(s32);
+u8 *Runtime_GetObject(s32);
 void *Func_08077000(s32);
 void Func_08015020(s32, u16 *);
 extern char Value_0000080c;
@@ -35,7 +35,7 @@ s32 Func_080b5e14(void)
     named_count = 0;
     index = 0;
     while (index <= 2) {
-        name_entry = Func_08077008(index + 128);
+        name_entry = Runtime_GetObject(index + 128);
         if (Func_08006408() == -1) {
             break;
         }
@@ -43,7 +43,7 @@ s32 Func_080b5e14(void)
         if (name_entry[298] != 0) {
             named_count += 1;
         }
-        Func_080030f8(2);
+        WaitFrames(2);
         Func_08015020((s32)&Value_0000080c, name_text);
         i = 0;
         if (name_text[i] != 0) {
@@ -73,7 +73,7 @@ s32 Func_080b5e14(void)
     Func_08077000(1);
     if (Func_08006408() != -1) {
         Func_08006488();
-        Func_080030f8(2);
+        WaitFrames(2);
     }
     Func_08002df0(buffer);
     return named_count;

@@ -10,9 +10,9 @@
 #endif
 
 extern u8 *Data_03001f2c;
-s32 Func_08077008(s32);
+s32 Runtime_GetObject(s32);
 s32 Func_080022ec(s32, s32);
-s32 Func_080022fc(s32, s32);
+s32 Modulo(s32, s32);
 
 static __inline__ u8 LoadByte(s32 base, s32 offset)
 {
@@ -36,7 +36,7 @@ s32 Func_080a8b8c(struct MenuResult *result, s32 index)
     s32 groups;
     s32 value;
 
-    encoded = Func_08077008(LoadByte(entries, offset));
+    encoded = Runtime_GetObject(LoadByte(entries, offset));
     limit = LoadByte(base, 0x218);
     value = LoadSignedByte(base, LoadByte(entries, offset) + 0x260);
     if ((s32)(value + 1) > limit) {
@@ -46,9 +46,9 @@ s32 Func_080a8b8c(struct MenuResult *result, s32 index)
         value = 0;
     }
     quotient = Func_080022ec(value, GROUP_LEN);
-    remainder = Func_080022fc(value, GROUP_LEN);
+    remainder = Modulo(value, GROUP_LEN);
     groups = Func_080022ec(limit, GROUP_LEN);
-    if (Func_080022fc(limit, GROUP_LEN) != 0) {
+    if (Modulo(limit, GROUP_LEN) != 0) {
         groups++;
     }
     result->owner_state = encoded;

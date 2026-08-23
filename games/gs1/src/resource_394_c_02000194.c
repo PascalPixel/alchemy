@@ -38,7 +38,7 @@
  * orientation at +6 and the spawned object pointer at +8.
  *
  * Nineteen call sites, matching the row's advertised count.  Per-target,
- * assembly = C: Func_080091b8 10, Func_080091c0 4, Func_08009080 2,
+ * assembly = C: Func_080091b8 10, Func_080091c0 4, Object_SetMode 2,
  * Func_02000b3c 2, Func_02000150 1.
  */
 

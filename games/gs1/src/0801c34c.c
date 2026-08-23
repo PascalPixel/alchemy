@@ -9,7 +9,7 @@ s32 Func_080187ac(s32, s32, s32, s32, s32);
 s32 Func_080162d4(s32, s32, s32, s32, s32);
 void Func_0801e74c(s32, s32, s32, s32);
 void Func_0801c3e8(void);
-s32 Func_080041d8(const void *, s32);
+s32 ScheduleCallbackAfterFrames(const void *, s32);
 
 void Func_0801c34c(void)
 {
@@ -39,5 +39,5 @@ void Func_0801c34c(void)
         register s32 ninety = 90;
         *field = ninety;
     }
-    Func_080041d8((void *)Func_0801c3e8, 0xc80);
+    ScheduleCallbackAfterFrames((void *)Func_0801c3e8, 0xc80);
 }

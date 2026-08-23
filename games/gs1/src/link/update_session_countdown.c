@@ -48,7 +48,7 @@ void Func_080219c8(s32 destination);
 s32 Func_08021c34(void);
 void Func_0801ea08(s32 value, s32 width, s32 handle, s32 arg3, s32 arg4);
 void Func_080b50d0(s32 offset);
-void Func_080f9010(s32 soundId);
+void Audio_PlayCue(s32 soundId);
 
 void UpdateLinkSessionCountdown(void)
 {
@@ -142,7 +142,7 @@ timer_ready:
 
         seconds = Func_080022ec(timer + FRAMES_PER_SECOND - 1, FRAMES_PER_SECOND);
         if (seconds != 0 && seconds * FRAMES_PER_SECOND == timer)
-            Func_080f9010(SOUND_TRIPLE_TONE_LOW);
+            Audio_PlayCue(SOUND_TRIPLE_TONE_LOW);
 
         if (state->displayHandle != 0)
             Func_0801ea08(seconds, 2, state->displayHandle, 16, 8);

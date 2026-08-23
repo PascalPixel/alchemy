@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 Func_080030f8(s32);
+s32 WaitFrames(s32);
 void Func_080c0e70(void)
 {
   unsigned long new_var;
@@ -14,7 +14,7 @@ void Func_080c0e70(void)
     {
       *((s16 *) 0x04000052) = var_r5 + 0x1000;
       var_r5 += 2;
-      Func_080030f8(1);
+      WaitFrames(1);
     }
   }
   while (var_r5 <= 0x10);

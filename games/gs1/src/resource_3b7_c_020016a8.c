@@ -35,9 +35,9 @@
  * Call targets were resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (an overlay
  * `bl` stores `target_offset - 2`).  In program order:
  *   0x020016f8 -> veneer 0x0200193c -> Func_0808a080
- *   0x020016fe -> veneer 0x0200188c -> Func_08009080
+ *   0x020016fe -> veneer 0x0200188c -> Object_SetMode
  *   0x02001704 -> veneer 0x0200193c -> Func_0808a080
- *   0x0200170a -> veneer 0x0200188c -> Func_08009080
+ *   0x0200170a -> veneer 0x0200188c -> Object_SetMode
  *   0x02001712 -> veneer 0x0200186c -> Func_080000d0
  * Completeness: 5 sites over 3 distinct targets, matching the tool's
  * `sites=5 distinct_targets=3` and the inventory row's calls=5.
@@ -52,7 +52,7 @@
  *    and no call happens inside the loop, so nothing observable depends on it.
  *    This is the same unsaved-r4 idiom already recorded for resource_371 and
  *    resource_372; it is noted rather than "fixed".
- *  - r0 is not reloaded between each Func_0808a080 and the Func_08009080 that
+ *  - r0 is not reloaded between each Func_0808a080 and the Object_SetMode that
  *    follows it, so the looked-up record is that call's first argument.  The
  *    record is not null-tested here, unlike at Func_02000dd0.
  *  - The field names below are descriptive only.  The `<< 16` promotion of a

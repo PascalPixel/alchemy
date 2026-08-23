@@ -44,9 +44,9 @@ typedef char ParticleEffectObject_child_offset[
 #undef OBJECT_0808EEE4_OFFSET
 
 extern u32 Random16(void);
-extern void Func_0800447c(s32, s32, struct ParticlePosition *);
-extern void Func_08009098(struct ParticleEffectObject *, void *);
-extern void Func_08009080(struct ParticleEffectObject *, s32);
+extern void RotateVectorByMagnitude(s32, s32, struct ParticlePosition *);
+extern void Object_SetCallback(struct ParticleEffectObject *, void *);
+extern void Object_SetMode(struct ParticleEffectObject *, s32);
 extern const u8 Data_0809e87c[];
 
 #define EmitRandomParticleEffect Func_0808eee4
@@ -66,15 +66,15 @@ void Func_0808eee4(struct ParticleEmitter *emitter)
     position.y = emitter->position.y;
     position.z = emitter->position.z;
     random_angle = Random16();
-    Func_0800447c(random_angle << 4, Random16(), &position);
-    object = (struct ParticleEffectObject *)Func_08096c80(
+    RotateVectorByMagnitude(random_angle << 4, Random16(), &position);
+    object = (struct ParticleEffectObject *)Object_Spawn(
         0x11D, position.x, position.y, position.z);
     if (object != 0) {
         s32 mask;
         u8 flags;
 
-        Func_08009098(object, (void *)Data_0809e87c);
-        Func_08009080(object, 0);
+        Object_SetCallback(object, (void *)Data_0809e87c);
+        Object_SetMode(object, 0);
         mask = 13;
         flags = object->child->flags;
         mask = -mask;

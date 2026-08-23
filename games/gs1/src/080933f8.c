@@ -5,7 +5,7 @@
 
 void *Func_080048f4(s32 arg0, s32 arg1);
 void Func_08009140(void *);
-void Func_080030f8(u32);
+void WaitFrames(u32);
 void Func_08009128(void);
 void Func_08009150(void *, s32, s32, s32);
 
@@ -63,7 +63,7 @@ void Func_080933f8(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
         M2C_FIELD(temp_r5, s32, 8) = var_r6;
         M2C_FIELD(temp_r5, s32, 0xC) = var_sl;
         M2C_FIELD(temp_r5, s32, 0x10) = var_r7;
-        Func_080030f8(1U);
+        WaitFrames(1U);
         if (M2C_FIELD(sp8, s16, 0x19E) != 3) {
             Func_08009128();
         }

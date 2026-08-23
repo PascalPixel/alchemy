@@ -2,11 +2,11 @@
 
 s32 BattleEffect_GetBaseSuccessRate(s32 effect_id)
 {
-    s32 result;
-    u32 index;
+    s32 battle_result;
+    u32 entry_index;
 
-    index = effect_id - 8;
-    switch (index) {
+    entry_index = effect_id - 8;
+    switch (entry_index) {
     case 4:
     case 5:
         return 0x46;
@@ -36,10 +36,10 @@ s32 BattleEffect_GetBaseSuccessRate(s32 effect_id)
     case 27:
         return 0x32;
     case 48:
-        result = 0x3C;
+        battle_result = 0x3C;
         goto block_18;
     case 49:
-        result = 0x5A;
+        battle_result = 0x5A;
         goto block_18;
     case 0:
     case 1:
@@ -47,9 +47,9 @@ s32 BattleEffect_GetBaseSuccessRate(s32 effect_id)
     case 24:
         return 0x3C;
     default:
-        result = 0x64;
+        battle_result = 0x64;
         break;
     }
 block_18:
-    return 0 - result;
+    return 0 - battle_result;
 }

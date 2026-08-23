@@ -1,9 +1,9 @@
 #include "psynergy_menu.h"
 #include "global_cells.h"
 
-s32 Func_08077008(s32);
+s32 Runtime_GetObject(s32);
 s32 Func_080022ec(s32, s32);
-s32 Func_080022fc(s32, s32);
+s32 Modulo(s32, s32);
 
 s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index)
 {
@@ -18,7 +18,7 @@ s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index)
     s32 selected_index;
     s32 owner_slot;
 
-    owner_state = Func_08077008(owners[offset]);
+    owner_state = Runtime_GetObject(owners[offset]);
     entry_count = base[0x218];
     owner_slot = owners[offset] + 0x260;
     selected_index = ((s8 *)base)[owner_slot];
@@ -26,9 +26,9 @@ s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index)
         selected_index = entry_count - 1;
     }
     page = Func_080022ec(selected_index, 5);
-    row = Func_080022fc(selected_index, 5);
+    row = Modulo(selected_index, 5);
     page_count = Func_080022ec(entry_count, 5);
-    if (Func_080022fc(entry_count, 5) != 0) {
+    if (Modulo(entry_count, 5) != 0) {
         page_count++;
     }
     result->owner_state = owner_state;

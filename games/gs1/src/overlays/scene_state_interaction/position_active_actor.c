@@ -5,12 +5,12 @@ extern u8 Data_02000240[];
 s32 Func_02007240();           /* veneer to Func_080770c0 */
 u8 *Func_020072b8();           /* veneer to Func_0808a080 */
 void Func_0200723a();          /* veneer to Func_08009150 */
-void Func_02007220();          /* veneer to Func_08009098 */
+void Func_02007220();          /* veneer to Object_SetCallback */
 void Func_0200717e();          /* veneer to Func_080000c0 */
 s32 Func_02005772();           /* local thunk to Func_020020e8, site A */
 s32 Func_02005784();           /* local thunk to Func_020020e8, site B */
-void Func_020072aa();          /* veneer to Func_08015120, site A */
-void Func_020072bc();          /* veneer to Func_08015120, site B */
+void Func_020072aa();          /* veneer to UiText_DrawQuantity, site A */
+void Func_020072bc();          /* veneer to UiText_DrawQuantity, site B */
 void Func_020072cc();          /* shared veneer, selector refresh + 0x96a */
 void Func_0200729a();          /* veneer to Func_08009148 */
 

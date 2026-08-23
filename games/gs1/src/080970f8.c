@@ -3,7 +3,7 @@
 #include "global_cells.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-void Func_0800447c(s32, s32, void *);
+void RotateVectorByMagnitude(s32, s32, void *);
 void Func_080970f8(s32 arg0, s32 arg1) {
     void *temp_r0; void *temp_r0_2; s32 temp_r1; void *temp_r6;
     temp_r6 = *(void **)ADDR_03001F30;
@@ -30,5 +30,5 @@ void Func_080970f8(s32 arg0, s32 arg1) {
     M2C_FIELD(temp_r6, s32 *, 4) = (s32) M2C_FIELD(temp_r0, s32 *, 8);
     M2C_FIELD(temp_r6, s32 *, 0xC) = (s32) M2C_FIELD(temp_r0, s32 *, 0x10);
     M2C_FIELD(temp_r6, s32 *, 8) = (s32) M2C_FIELD(temp_r0, s32 *, 0xC);
-    Func_0800447c(0x100000, temp_r1, (u8 *)temp_r6 + 4);
+    RotateVectorByMagnitude(0x100000, temp_r1, (u8 *)temp_r6 + 4);
 }

@@ -2,8 +2,8 @@
 #include "global_cells.h"
 #include "sound_ids.h"
 
-extern void Func_080030f8(u32);
-extern void Func_080f9010(u32);
+extern void WaitFrames(u32);
+extern void Audio_PlayCue(u32);
 extern void Func_0801b664(void *);
 extern void Func_0801b810(void *);
 
@@ -14,17 +14,17 @@ u32 Func_0801b424(u32 value)
     u32 result;
 
 again:
-    Func_080030f8(1);
+    WaitFrames(1);
     if (*(u16 *)(state + 0x3a0) != 0)
         goto again;
 
     if (value != 999) {
         input = (u32 *)ADDR_03001B04;
         if (*input & 0x10) {
-            Func_080f9010(SOUND_MENU_CURSOR_MOVE);
+            Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
             Func_0801b664(state);
         } else if (*input & 0x20) {
-            Func_080f9010(SOUND_MENU_CURSOR_MOVE);
+            Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
             Func_0801b810(state);
         }
 
@@ -33,18 +33,18 @@ again:
                    + *(u16 *)(state + 0x39e);
             if (*(u16 *)(*(u8 **)(state + 0x348) + 10) == 6) {
                 if (result == 0)
-                    Func_080f9010(SOUND_MENU_CONFIRM);
+                    Audio_PlayCue(SOUND_MENU_CONFIRM);
                 else
-                    Func_080f9010(SOUND_MENU_CANCEL);
+                    Audio_PlayCue(SOUND_MENU_CANCEL);
             } else {
-                Func_080f9010(SOUND_MENU_CONFIRM);
+                Audio_PlayCue(SOUND_MENU_CONFIRM);
             }
             return result;
         }
     }
 
     if (value != 0 && (*(u32 *)ADDR_03001C94 & 2)) {
-        Func_080f9010(SOUND_MENU_CANCEL);
+        Audio_PlayCue(SOUND_MENU_CANCEL);
         return -1;
     }
     goto again;

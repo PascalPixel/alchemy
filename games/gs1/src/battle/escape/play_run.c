@@ -7,7 +7,7 @@
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-void Func_080030f8(u32);
+void WaitFrames(u32);
 void Func_080b8064(s32);
 void Func_080151c8(s32);
 
@@ -29,11 +29,11 @@ s32 BattleEscape_PlayRun(s16 *action)
             do {
                 Func_080b8064(party_members[member_slot]);
                 animated++;
-                Func_080030f8(8);
+                WaitFrames(8);
                 member_slot++;
             } while (animated != party_size);
         }
-        Func_080030f8(22);
+        WaitFrames(22);
         return 1;
     }
     Func_080151c8((s32)&Value_00000844);

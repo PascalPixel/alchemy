@@ -1,6 +1,6 @@
 #include "battle_effect_runtime.h"
 
-s32 Func_08009080(s32, s32);
+s32 Object_SetMode(s32, s32);
 
 void Func_08091660(void)
 {
@@ -14,8 +14,8 @@ void Func_08091660(void)
     object->unknown_24 = 0;
     object->unknown_2c = 0;
     if (Data_02000240.mode_1f2 == 1) {
-        Func_08009080((s32)object, 0xC);
+        Object_SetMode((s32)object, 0xC);
         return;
     }
-    Func_08009080((s32)object, 1);
+    Object_SetMode((s32)object, 1);
 }

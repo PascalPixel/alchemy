@@ -25,7 +25,7 @@ extern const s32 Data_08073854[4];
 
 struct RuntimeObject *Func_08009030(s32);
 void Func_08009020(struct RuntimeObject *, s32);
-void Func_080041d8(s32, s32);
+void ScheduleCallbackAfterFrames(s32, s32);
 void Func_080200cc(void);
 
 void Func_0801ffd8(struct PlacementOrigin *origin, s32 x, s32 y)
@@ -48,6 +48,6 @@ void Func_0801ffd8(struct PlacementOrigin *origin, s32 x, s32 y)
             state->y[i] = (origin->y + y) * 8 + 0x10;
         }
 
-        Func_080041d8((s32)Func_080200cc, 200 << 4);
+        ScheduleCallbackAfterFrames((s32)Func_080200cc, 200 << 4);
     }
 }

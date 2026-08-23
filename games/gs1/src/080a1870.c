@@ -37,7 +37,7 @@ s32 Func_08077158(u16 *out);
 s32 Func_0808a288(u16 value);
 void *Func_08009030(s32 value);
 void Func_08009020(void *object, s32 value);
-void Func_080041d8(void (*callback)(void), s32 value);
+void ScheduleCallbackAfterFrames(void (*callback)(void), s32 value);
 void Func_080a19a0(void);
 
 #define InitializeEntryObjects Func_080a1870
@@ -76,6 +76,6 @@ void Func_080a1870(void *source, s32 origin_x, s32 origin_y, s32 spacing)
     {
         s32 delay_frames = 200;
         delay_frames <<= 4;
-        Func_080041d8(Func_080a19a0, delay_frames);
+        ScheduleCallbackAfterFrames(Func_080a19a0, delay_frames);
     }
 }

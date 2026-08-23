@@ -13,7 +13,7 @@ s32 Func_080a10d0(s32 *handle, s32 first, s32 second, s32 third, s32 fourth, s32
         if (0x100 & flags) {
             return 0;
         }
-        Func_08015270(current);
+        UiWindow_Commit(current);
         return 0;
     }
     masked = flags & 0xff;

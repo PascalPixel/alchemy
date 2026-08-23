@@ -2,28 +2,28 @@
 #include "battle_status_icon.h"
 
 struct BattleStatusIconOwner {
-    u8 filler[0x50];
-    void *field50;
-    u8 field54;
+    u8 reserved[0x50];
+    void *state_pointer;
+    u8 state_flags;
 };
 
 struct EffectContext {
-    u8 padding_000[32];
+    u8 reserved_000[32];
     u8 type;
-    u8 padding_021[4];
+    u8 reserved_021[4];
     u8 dirty;
 };
 
 struct StatusIconEffect {
-    u8 padding_000[6];
+    u8 reserved_000[6];
     u8 state;
 };
 
 struct BattleStatusIconRecord {
     struct BattleStatusIconOwner *owner;
-    u8 padding_004[4];
+    u8 reserved_004[4];
     u16 displayed_effect_id;
-    u8 padding_00a[18];
+    u8 reserved_00a[18];
     u16 active_conditions;
     u8 selected_condition;
     s8 cycle_timer;
@@ -31,16 +31,16 @@ struct BattleStatusIconRecord {
     void *secondary_effect;
 };
 
-void *Func_080b7f70(struct BattleStatusIconOwner *owner, s32 index);
+void *Func_080b7f70(struct BattleStatusIconOwner *owner, s32 entry_index);
 struct StatusIconEffect *Func_08009048(struct EffectContext *context, s32 effect_id);
 void Func_08009050(struct EffectContext *context, struct StatusIconEffect *effect);
-void Func_08009070(struct StatusIconEffect *effect, s32 index);
+void Func_08009070(struct StatusIconEffect *effect, s32 entry_index);
 
 /*
  * The reference preserves r0 in its epilogue (pop {r1}; bx r1), matching GCC's
- * scalar-return convention. No path establishes a meaningful result, and the
+ * scalar-return convention. No path establishes a meaningful battle_result, and the
  * sole caller discards it; C99 6.9.1p12 only makes this fallthrough undefined
- * when the caller uses the value.
+ * when the caller uses the battle_value.
  */
 s32 BattleStatusIcon_Cycle(struct BattleStatusIconRecord *record)
 {

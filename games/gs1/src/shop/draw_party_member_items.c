@@ -8,11 +8,11 @@
 extern u8 Value_00000c90;
 extern u8 Value_00000c8f;
 
-void Func_08015060(s32 window);
-s32 Func_08077038(s32 unit_id, s32 item_id);
-void Func_08015120(s32 kosuu, s32 style);
-void Func_08015080(s32 message, s32 window, s32 x, s32 y);
-u8 *Func_080152d0(u16 no, s32 kind, s32 window, s32 x, s32 y);
+void UiWindow_Clear(s32 window);
+s32 Item_FindSlot(s32 unit_id, s32 item_id);
+void UiText_DrawQuantity(s32 kosuu, s32 style);
+void UiText_DrawAt(s32 message, s32 window, s32 x, s32 y);
+u8 *UiIcon_Draw(u16 no, s32 kind, s32 window, s32 x, s32 y);
 
 void Shop_DrawPartyMemberItems(s32 window, s32 unit_id, s32 item_id)
 {
@@ -31,23 +31,23 @@ void Shop_DrawPartyMemberItems(s32 window, s32 unit_id, s32 item_id)
     x = 8;
     y = 8;
     if (window != 0) {
-        Func_08015060(window);
-        slot = Func_08077038(unit_id, item_id);
+        UiWindow_Clear(window);
+        slot = Item_FindSlot(unit_id, item_id);
         /* 参照は枠位置を「バイト差」として先に組み、状態先頭を基底に残す。
            足し込む順を変えると二レジスタ番地形が崩れる。 */
         if (slot != -1) {
             selected_offset = slot * 2 + 216;
-            Func_08015120((*(u16 *)(unit + selected_offset) >> 11) + 1, 5);
-            Func_08015080((s32)&Value_00000c90, window, 0, 0);
+            UiText_DrawQuantity((*(u16 *)(unit + selected_offset) >> 11) + 1, 5);
+            UiText_DrawAt((s32)&Value_00000c90, window, 0, 0);
         } else {
-            Func_08015080((s32)&Value_00000c8f, window, 0, 0);
+            UiText_DrawAt((s32)&Value_00000c8f, window, 0, 0);
         }
         item_index = 0;
         first_offset = 216;
         if (*(u16 *)(unit + first_offset) != 0) {
             for (;;) {
                 item_offset = item_index * 2 + 216;
-                icon = Func_080152d0(*(u16 *)(unit + item_offset), 27,
+                icon = UiIcon_Draw(*(u16 *)(unit + item_offset), 27,
                                      window, x, y);
                 icon[15] = 252;
                 x += 16;

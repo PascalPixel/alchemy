@@ -5,7 +5,7 @@ extern u8 Data_080af228;
 #define InventoryMenu_IncreaseGlyph Data_080af224
 #define InventoryMenu_DecreaseGlyph Data_080af228
 
-void Func_080150b0(s32, s32, s32, s32, s32);
+void UiNumber_DrawAt(s32, s32, s32, s32, s32);
 void Func_08015098(u8 *, s32, s32, s32);
 
 void InventoryMenu_DrawStatDelta(
@@ -14,7 +14,7 @@ void InventoryMenu_DrawStatDelta(
     s32 digits;
     s32 magnitude;
 
-    Func_080150b0(delta, 3, window, x, y);
+    UiNumber_DrawAt(delta, 3, window, x, y);
     digits = 1;
     magnitude = delta;
     if (delta < 0) {

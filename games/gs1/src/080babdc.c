@@ -11,12 +11,12 @@ struct Runtime_080babdc {
 
 extern struct Runtime_080babdc *Data_03001e74;
 
-void *Func_08077008(s32 id);
+void *Runtime_GetObject(s32 id);
 struct ObjectSlot_080babdc *Func_080b7dd0(s32 id);
-void Func_08009080(void *object, s32 mode);
+void Object_SetMode(void *object, s32 mode);
 void Func_080152b8(u16 *selection);
 void Func_080ba918(void *object, s32 value);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 s32 Func_080b6cd0(s32 id);
 void Func_08015130(s32 mode);
 
@@ -27,8 +27,8 @@ void Func_080babdc(s32 id)
     s32 target;
     s32 remaining;
 
-    Func_08077008(id);
-    Func_08009080(Func_080b7dd0(id)->object, 5);
+    Runtime_GetObject(id);
+    Object_SetMode(Func_080b7dd0(id)->object, 5);
 
     sel = selection;
     remaining = 1;
@@ -38,12 +38,12 @@ void Func_080babdc(s32 id)
         sel[0] = id;
         Func_080152b8(sel);
         Func_080ba918(Func_080b7dd0(id)->object, 7);
-        Func_080030f8(2);
+        WaitFrames(2);
 
         sel[0] = id;
         Func_080152b8(sel);
         Func_080ba918(Func_080b7dd0(id)->object, Func_080b6cd0(id));
-        Func_080030f8(2);
+        WaitFrames(2);
         remaining--;
     } while (remaining >= 0);
 

@@ -7,7 +7,7 @@
 
 void Func_08009128(void);
 void *Func_080048f4(s32 arg0, s32 arg1);
-void Func_080030f8(s32);
+void WaitFrames(s32);
 
 void Func_0809335c(s32 arg0, s32 arg1) {
     s32 temp_r6;
@@ -26,7 +26,7 @@ void Func_0809335c(s32 arg0, s32 arg1) {
             M2C_FIELD(temp_r5, s32 *, 8) = (s32) M2C_FIELD(temp_r6, s32 *, 8);
             M2C_FIELD(temp_r5, s32 *, 0xC) = (s32) M2C_FIELD(temp_r6, s32 *, 0xC);
             M2C_FIELD(temp_r5, s32 *, 0x10) = (s32) M2C_FIELD(temp_r6, s32 *, 0x10);
-            Func_080030f8(1);
+            WaitFrames(1);
             if (M2C_FIELD(temp_r8, s16 *, 0x19E) != 3) {
                 Func_08009128();
             }

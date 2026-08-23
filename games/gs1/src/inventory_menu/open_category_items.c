@@ -8,6 +8,6 @@ void InventoryMenu_OpenCategoryItems(s32 owner_id) {
 
     menu = Data_03001f2c;
     Func_080a9cbc();
-    Func_08015270(menu->item_window);
+    UiWindow_Commit(menu->item_window);
     InventoryMenu_DrawCategoryItems(menu->item_window, owner_id, 0);
 }

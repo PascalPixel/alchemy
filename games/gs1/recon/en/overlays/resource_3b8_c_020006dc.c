@@ -1,0 +1,248 @@
+#include "types.h"
+
+#define RunEventScript01 Func_020006dc
+
+/* AUDITED GENERATED CALL SCRIPT for RunEventScript01: 113 calls, 0 loops, 4 memory operations.
+ * Recovered from the complete decoded owner. Calls, arguments, control flow,
+ * loops, and memory operations are accounted for against the ROM. */
+
+void *Func_02004a62();
+void Func_02004b26();
+void *Func_02004b50();
+void Func_02004b56();
+void Func_02004b5e();
+void Func_02004b64();
+void Func_02004b6a();
+void Func_02004b6c();
+void Func_02004b72();
+void Func_02004b9a();
+void *Func_02004ba0();
+void Func_02004ba8();
+void *Func_02004bae();
+void Func_02004bb6();
+void Func_02004bc4();
+void Func_02004bce();
+void Func_02004bd2();
+void Func_02004bd8();
+void Func_02004be2();
+void Func_02004be4();
+void Func_02004bfc();
+void Func_02004c06();
+void Func_02004c0a();
+void Func_02004c18();
+void Func_02004c1c();
+void Func_02004c28();
+void Func_02004c32();
+void Func_02004c34();
+void Func_02004c38();
+void Func_02004c3c();
+void Func_02004c40();
+void Func_02004c42();
+void Func_02004c50();
+void Func_02004c5e();
+void Func_02004c66();
+void Func_02004c70();
+void Func_02004c7e();
+void Func_02004c94();
+void Func_02004c9a();
+void Func_02004c9c();
+void Func_02004cb6();
+void Func_02004cbc();
+void Func_02004cc4();
+void Func_02004cc6();
+s32 Func_02004ccc();
+void Func_02004cce();
+void Func_02004cd2();
+void Func_02004cda();
+void Func_02004ce0();
+void Func_02004ce2();
+void Func_02004cee();
+void Func_02004cfc();
+void Func_02004d04();
+void Func_02004d10();
+void Func_02004d14();
+void Func_02004d1a();
+void Func_02004d20();
+void Func_02004d28();
+void Func_02004d36();
+void Func_02004d42();
+void Func_02004d44();
+void Func_02004d48();
+void Func_02004d4e();
+void Func_02004d52();
+void Func_02004d5c();
+void Func_02004d60();
+void Func_02004d6a();
+void Func_02004d6c();
+void Func_02004d78();
+void Func_02004d7c();
+void Func_02004d86();
+void Func_02004d90();
+void Func_02004daa();
+void Func_02004db2();
+void Func_02004dc0();
+void Func_02004dc6();
+void Func_02004dca();
+void Func_02004dce();
+void Func_02004dd4();
+void Func_02004df2();
+void Func_02004e1c();
+void Func_02004e1e();
+void Func_02004e2c();
+void Func_02004e36();
+void Func_02004e40();
+s32 Func_02004e46();
+void Func_02004e4e();
+void Func_02004e56();
+void Func_02004e64();
+void Func_02004e6c();
+s32 Func_02004e76();
+void Func_02004e7c();
+void Func_02004e80();
+void Func_02004e8c();
+void Func_02004e98();
+void Func_02004ea0();
+s32 Func_02004ea6();
+void Func_02004eae();
+void Func_02004eb0();
+void Func_02004eba();
+void Func_02004ec0();
+void Func_02004ec4();
+void Func_02004ed0();
+void Func_02004ede();
+void Func_02004ee0();
+void Func_02004ef0();
+void Func_02004ef4();
+void Func_02004f00();
+void Func_02004f0e();
+void Func_02004f20();
+
+void RunEventScript01(void)
+{
+    void *p1;
+    void *p19;
+    void *p2;
+    void *p20;
+
+    p1 = Func_02004a62();
+    p2 = Func_02004b50(1, 7864320, 6815744);
+    Func_02004b5e(3, 6815744, 5242880);
+    Func_02004b6c(2, 7864320, 7864320);
+    Func_02004bce(1, 0, 0);
+    Func_02004bd8(3, 0, 0);
+    Func_02004be4(2, 57344, 0);
+    Func_02004c34();
+    Func_02004c40();
+    Func_02004b26(20);
+    Func_02004b6a(3, 65536, 32768, 24);
+    Func_02004c9c(3, 16, 0);
+    Func_02004c28(3, 8192, 0);
+    Func_02004b56(20);
+    Func_02004c06(3, 2);
+    Func_02004b64(30);
+    Func_02004c3c(3, 0);
+    Func_02004b72(10);
+    p19 = Func_02004ba0(0);
+    *(s32 *)(p19 + 16) = *(s32 *)(p19 + 16);
+    p20 = Func_02004bae(0);
+    *(s32 *)(p20 + 64) = *(s32 *)(p20 + 64);
+    Func_02004c1c(0, 32);
+    Func_02004b9a(40);
+    Func_02004c32(0, 34);
+    Func_02004ba8(30);
+    Func_02004c38(0, 33);
+    Func_02004bb6(50);
+    Func_02004c66(1, 2);
+    Func_02004bc4(30);
+    Func_02004c9c(1, 0);
+    Func_02004bd2(10);
+    Func_02004cbc(0);
+    Func_02004be2(20);
+    Func_02004cce(1, 258, 60);
+    Func_02004cc6(1, 0);
+    Func_02004bfc(10);
+    Func_02004c94(1, 4);
+    Func_02004c0a(20);
+    Func_02004ce2(1, 0);
+    Func_02004c18(10);
+    Func_02004d04(0, 258, 80);
+    Func_02004d10(2, 262, 60);
+    Func_02004d14(2, 49152, 0);
+    Func_02004c42(30);
+    Func_02004cda(2, 4);
+    Func_02004c50(20);
+    Func_02004d28(2, 0);
+    Func_02004c5e(10);
+    Func_02004d42(1, 16384, 0);
+    Func_02004c70(30);
+    Func_02004d20(1, 2);
+    Func_02004c7e(45);
+    Func_02004d60(1, 0, 0);
+    Func_02004d6c(2, 57344, 0);
+    Func_02004c9a(30);
+    Func_02004d6a(1, 0);
+    if (Func_02004ccc(-1, 0) != 0) {
+        Func_02004cb6(10);
+        Func_02004d4e(0, 34);
+        Func_02004cc4(20);
+        Func_02004d5c(1, 3);
+        Func_02004cd2(20);
+        Func_02004daa(1, 0);
+        Func_02004ce0(10);
+        Func_02004d78(0, 33);
+        Func_02004cee(30);
+        Func_02004d86(1, 3);
+        Func_02004cfc(20);
+        Func_02004dd4(1, 0);
+    } else {
+        Func_02004d1a(10);
+        Func_02004db2(0, 33);
+        Func_02004d36(30);
+        Func_02004dce(1, 3);
+        Func_02004d44(20);
+        Func_02004e1c(1, 0);
+    }
+    Func_02004d52(10);
+    Func_02004d90(1, 65536, 32768);
+    Func_02004ec4(1, -16, 0);
+    Func_02004e4e(1, 0, 0);
+    Func_02004d7c(35);
+    Func_02004e1e(0, 6, 0);
+    Func_02004dc0(0);
+    Func_02004ef4(0, -32, 0);
+    Func_02004dca(0);
+    Func_02004d48();
+    Func_02004e8c(3, 16384, 0);
+    Func_02004e98(2, 49152, 0);
+    Func_02004dc6(40);
+    Func_02004e56(0, 3);
+    Func_02004dd4(30);
+    Func_02004e64(2, 3);
+    Func_02004e6c(1, 3);
+    Func_02004e7c(3, 3);
+    Func_02004df2(30);
+    Func_02004e2c(1);
+    Func_02004e36(3);
+    Func_02004e40(2);
+    Func_02004ea0(1, 2);
+    if (Func_02004e46(0) != 0) {
+        Func_02004e80(1);
+    }
+    Func_02004eae(1);
+    Func_02004ec0(1, 0, 0);
+    Func_02004ed0(3, 2);
+    if (Func_02004e76(0) != 0) {
+        Func_02004eb0(3);
+    }
+    Func_02004ede(3);
+    Func_02004ef0(3, 0, 0);
+    Func_02004f00(2, 2);
+    if (Func_02004ea6(0) != 0) {
+        Func_02004ee0(2);
+    }
+    Func_02004f0e(2);
+    Func_02004f20(2, 0, 0);
+    Func_02004ea6(10);
+    Func_02004eba();
+}
+

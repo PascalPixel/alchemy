@@ -57,9 +57,9 @@ extern u32 Data_03001ebc;
 void Func_02003fbe();
 void Func_02003fca();
 
-#define StartSolTempleTrapEvent Func_02001380
+#define StartSolShindenTrapEvent Func_02001380
 
-void StartSolTempleTrapEvent(void)
+void StartSolShindenTrapEvent(void)
 {
     u32 scene_state;
     s32 outer_pair;

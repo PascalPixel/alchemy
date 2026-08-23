@@ -275,8 +275,8 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     // lines, each either a compiler selection or a stock flag. agbcc is a fixed
     // compiler and nobody adds an option to it per function. The 120 options
     // this fork invented are gone from routing; see
-    // tools/route-dump/data/invented-flags.txt for the list and AGENTS.md for
-    // the rule that forbids adding another.
+    // tools/route-dump/data/invented-flags.txt for the list and CONTRIBUTING.md
+    // for the rule that forbids adding another.
     //
     // Owners that were reproducing only because an invented option was routed
     // to them no longer reproduce. That is the point: the difference is back in

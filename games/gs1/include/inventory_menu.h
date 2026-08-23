@@ -203,7 +203,7 @@ void Func_08015298(s32 style, u16 item, u8 target, s32 flags);
 #define InventoryMenu_SetMessageWindowRow7Bounds Func_080a4eb8
 #define InventoryMenu_SetMessageWindowRow3Bounds Func_080a4ee0
 #define InventoryMenu_DrawSelectedItemHeader Func_080a51d0
-#define InventoryMenu_ApplyItemAtSlot       Func_080a9e48
+#define Item_Use                            Func_080a9e48
 #define InventoryMenu_BuildPageResult      Func_080a5578
 #define InventoryMenu_DrawItemNamePage     Func_080a56c8
 #define InventoryMenu_ItemNamePageReturnTrue Func_080a5780

@@ -8,6 +8,7 @@ extern s32 Func_08015278(s32);
 extern s32 Func_08015270(s32);
 extern s32 Func_080a1d08(s32, s32, s32);
 extern s32 Func_080aa448(u32);
+#define Item_PlayUseAnimation Func_080aa448
 
 s32 InventoryMenu_UseSelectedItem(void)
 {
@@ -15,7 +16,7 @@ s32 InventoryMenu_UseSelectedItem(void)
     s32 result;
 
     menu = Data_03001f2c;
-    result = InventoryMenu_ApplyItemAtSlot(
+    result = Item_Use(
         menu->selected_slot, menu->item_owner, menu->target_owner);
 
     if (result == -1) {
@@ -30,7 +31,7 @@ s32 InventoryMenu_UseSelectedItem(void)
         return result;
     }
 
-    Func_080aa448(menu->selected_item & 0x1ff);
+    Item_PlayUseAnimation(menu->selected_item & 0x1ff);
     BattleUnit_Recalculate(menu->item_owner);
     BattleUnit_Recalculate(menu->target_owner);
     return 1;

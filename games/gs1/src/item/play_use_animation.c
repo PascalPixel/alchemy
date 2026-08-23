@@ -4,11 +4,11 @@
 
 void *Func_08077018();
 s32 Func_080aa460(s32);
-#define PlayAbilityUseAnimation Func_080aa460
+#define Ability_PlayUseAnimation Func_080aa460
 
-#define PlayItemUseAnimation Func_080aa448
+#define Item_PlayUseAnimation Func_080aa448
 
-void PlayItemUseAnimation(void)
+void Item_PlayUseAnimation(void)
 {
-    PlayAbilityUseAnimation(0x3fff & FIELD(Func_08077018(), u16 *, 0x28));
+    Ability_PlayUseAnimation(0x3fff & FIELD(Func_08077018(), u16 *, 0x28));
 }

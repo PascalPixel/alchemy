@@ -27,9 +27,9 @@ u8 Func_08077058(s32, s32);
 u32 Func_080a3ddc(struct ItemOwner *, u16 *, s32);
 s32 Func_080a9f10(s32, s32, s32, s32);
 
-#define UseItem Func_080a9e48
+#define Item_Use Func_080a9e48
 
-s32 UseItem(s32 slot, s32 owner_id, s32 target_id)
+s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
 {
     struct ItemUseWork *work;
     s32 result;

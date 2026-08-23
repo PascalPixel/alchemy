@@ -24,7 +24,7 @@ struct Work_08092be0 {
 
 extern struct Work_08092be0 *Data_03001ebc;
 
-s32 Func_08092be0(s32 value)
+s32 ObjectTable_FindActiveByValue(s32 value)
 {
     struct Work_08092be0 *state = Data_03001ebc;
     s32 result = -1;

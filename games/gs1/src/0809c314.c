@@ -29,7 +29,7 @@ void Func_0809c314(void)
 
     id = 8;
     do {
-        temp_r0 = GetObject(id);
+        temp_r0 = ObjectTable_Get(id);
 
         if (temp_r0 != 0) {
             s32 objectX = *(s32 *)(temp_r0 + 8);

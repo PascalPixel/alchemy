@@ -8,7 +8,7 @@ extern u8 Data_02000240[];
 
 void Func_0809ade8(void)
 {
-    u8 *object = GetObject();
+    u8 *object = ObjectTable_Get();
     if (object != 0) {
         if (*(void (**)(void))(object + 0x6C) == Func_0809ad71) {
             u8 *state = Data_02000240;

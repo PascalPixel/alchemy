@@ -35,9 +35,9 @@ struct Effect_080942e0 {
 
 extern u32 Data_02000240[];
 
-struct Entity_080942e0 *GetObject(u32);
-/* Object table: 192 pointers at Data_03001ebc + 0x14 (games/gs1/src/0808ba1c.c). */
-#define GetObject Func_0808ba1c
+struct Entity_080942e0 *ObjectTable_Get(u32);
+/* Object table: 192 pointers at Data_03001ebc + 0x14 (object/table/get.c). */
+#define ObjectTable_Get Func_0808ba1c
 struct Effect_080942e0 *Func_08009048(struct Entity_080942e0 *, s32);
 void Object_SetMode(struct Entity_080942e0 *, s32);
 void WaitFrames(s32);
@@ -50,7 +50,7 @@ void ObjectEffect_PrepareContextEffect(s32 value)
     struct Entity_080942e0 *context;
     struct Effect_080942e0 *effect;
 
-    object = GetObject(Data_02000240[125]);
+    object = ObjectTable_Get(Data_02000240[125]);
     context = object->context;
     effect = Func_08009048(context, 27);
     zero = 0;

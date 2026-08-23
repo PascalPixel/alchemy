@@ -5,7 +5,7 @@ void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
 
 void Func_08092128(u32 object_id, s32 x, s32 z)
 {
-    struct ObjectRuntime *object = GetObject(object_id);
+    struct ObjectRuntime *object = ObjectTable_Get(object_id);
 
     if (object != NULL) {
         object->movement_state = 0;

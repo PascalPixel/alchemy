@@ -12,5 +12,5 @@ void Func_08091780(s32 object_id)
     Func_0809177c();
     Func_0808b674(object_id);
     WaitFrames(1);
-    GetObject(Data_02000240.value);
+    ObjectTable_Get(Data_02000240.value);
 }

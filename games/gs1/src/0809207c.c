@@ -4,7 +4,7 @@ void Func_08093a6c(struct ObjectRuntime *object, s32 kind);
 
 void Func_0809207c(u32 object_id, s32 action)
 {
-    struct ObjectRuntime *object = GetObject(object_id);
+    struct ObjectRuntime *object = ObjectTable_Get(object_id);
 
     if (object != NULL) {
         s32 value = 1;

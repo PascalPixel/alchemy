@@ -13,7 +13,7 @@ void Audio_PlayCue(s32);
 void Object_SetMode(void *, s32);
 void WaitFrames(u32);
 void Object_SetPosition(void *, s32, s32, s32);
-void Func_08092adc(s32 arg0, s32 arg1, s32 arg2);
+void ObjectMotion_ArmCallback(s32 arg0, s32 arg1, s32 arg2);
 void BattleEffect_SpawnBurstParticle(void *, s32);
 void Object_CommitPosition(void *);
 void Func_0809202c(void);
@@ -43,7 +43,7 @@ void BattleEffect_RunRisingObjectSequence(s32 sequence_arg, s32 mode_or_frame, s
         WaitFrames(6);
         Audio_PlayCue(0xD9);
         mode_or_frame = 0;
-        Func_08092adc(sequence_arg, 0x5000, 0);
+        ObjectMotion_ArmCallback(sequence_arg, 0x5000, 0);
         *object_flags = 0;
         do {
             next_y = OBJECT_Y(object) + 0xFFFE0000;

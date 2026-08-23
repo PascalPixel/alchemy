@@ -81,7 +81,8 @@ void Func_080b6cb0(void);
 void Func_080c0cec(s32 first, s32 second, s32 third, s32 fourth);
 
 #ifndef BATTLE_SEQUENCE_OWNER
-#define BATTLE_SEQUENCE_OWNER Func_080b12c0
+#define RunBattlePresentation Func_080b12c0
+#define BATTLE_SEQUENCE_OWNER RunBattlePresentation
 #endif
 #ifndef BATTLE_SEQUENCE_CALLBACK
 #define BATTLE_SEQUENCE_CALLBACK ((void *)0x080b4899)

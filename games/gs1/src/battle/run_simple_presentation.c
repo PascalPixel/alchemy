@@ -1,12 +1,12 @@
 #include "types.h"
 
-struct Input_080ba584 {
+struct SimplePresentationInput {
     u8 primary_id;
     u8 padding_01;
     u8 secondary_id;
 };
 
-struct Work_080ba584 {
+struct BattlePresentationWork {
     s32 flags;
     s32 secondary_is_low_id;
     s32 primary_id;
@@ -19,50 +19,52 @@ struct Work_080ba584 {
     s16 members[24];
 };
 
-struct Motion_080ba584 {
+struct PresentationObject {
     u8 padding_00[8];
     s32 x;
     u8 padding_0c[4];
     s32 z;
 };
 
-struct Slot_080ba584 {
-    struct Motion_080ba584 *object;
+struct PresentationObjectSlot {
+    struct PresentationObject *object;
 };
 
-struct Child_080ba584 {
+struct MotionRecordValue {
     s16 value;
 };
 
-struct Record_080ba584 {
+struct MotionRecord {
     u8 padding_00[40];
-    struct Child_080ba584 *child;
+    struct MotionRecordValue *child;
 };
 
 extern s32 *Data_03001f00;
 
-struct Slot_080ba584 *Func_080b7dd0(s32 id);
+struct PresentationObjectSlot *Func_080b7dd0(s32 id);
 s32 Func_080044d0(s32 first, s32 second);
 void Func_080030f8(s32 frames);
 void Func_080c10e8(s32 first, s32 second);
-void Func_080b9d34(void *input, struct Work_080ba584 *work);
+void Func_080b9d34(void *input, struct BattlePresentationWork *work);
 void Func_08077008(s32 id);
-struct Record_080ba584 *Func_080b7f70(
-    struct Motion_080ba584 *object, s32 index);
+struct MotionRecord *Func_080b7f70(
+    struct PresentationObject *object, s32 index);
 s32 Func_08009260(s32 value, s32 second, s32 third);
 void Func_080b82c4(s32 first, s32 second, s32 divisor, s32 initial_y);
-void Func_08009088(struct Motion_080ba584 *object, s32 action);
+void Func_08009088(struct PresentationObject *object, s32 action);
 void Func_080b8178(s32 id);
 void Func_080b8000(s32 id);
-void Func_080c9008(struct Work_080ba584 *work);
+void Func_080c9008(struct BattlePresentationWork *work);
 void Func_080bb938(void);
 
-s32 Func_080ba584(struct Input_080ba584 *input, s32 flags)
+#define RunSimpleBattlePresentation Func_080ba584
+
+s32 RunSimpleBattlePresentation(struct SimplePresentationInput *input, s32 flags)
 {
-    struct Work_080ba584 work;
-    struct Input_080ba584 *saved_input;
-    struct Motion_080ba584 *object;
-    struct Record_080ba584 *record;
+    struct BattlePresentationWork work;
+    struct SimplePresentationInput *saved_input;
+    struct PresentationObject *object;
+    struct MotionRecord *record;
     s32 *facing;
     s32 angle;
     s32 adjusted;

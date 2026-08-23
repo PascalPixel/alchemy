@@ -17,7 +17,7 @@ void Func_0808b8e8(void);
 void Func_08096140(s32);
 void Func_080965a8(s32);
 void Func_08095dd0(s32);
-void Func_08095a44(s32);
+void BattleEffect_FinishHeavyImpact(s32);
 void Func_0808b98c(void);
 void Func_08015358(s32, s32, void *);
 void Func_0808c4c0(void);
@@ -50,7 +50,7 @@ void Func_080955b0(s32 slot, s32 page, void *entries)
             else if (page == 2)
                 Func_08095dd0(slot);
             else if (page == 3)
-                Func_08095a44(slot);
+                BattleEffect_FinishHeavyImpact(slot);
 
             state->slots[slot] = 0;
             if (state->mode == 3)

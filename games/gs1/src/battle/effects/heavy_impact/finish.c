@@ -3,7 +3,7 @@
 
 extern s32 Data_02000240[];
 
-void Func_08095a44(s32 arg)
+void BattleEffect_FinishHeavyImpact(s32 arg)
 {
     s8 *head;
     struct {

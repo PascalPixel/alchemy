@@ -40,7 +40,7 @@ extern const u8 Data_0809fbec[];
 extern const u8 Data_0809fc04[];
 extern u8 Data_080925e1;
 
-void Func_08092624(struct Object_08092624 *source, s32 optional)
+void BattleEffect_SpawnBurstParticle(struct Object_08092624 *source, s32 optional)
 {
     struct Object_08092624 *object;
     struct Child_08092624 *child;

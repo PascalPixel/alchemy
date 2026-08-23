@@ -15204,7 +15204,7 @@
     },
     {
       "en_owner": "08016670",
-      "source": "games/gs1/src/08016670.c",
+      "source": "games/gs1/src/ui/render/activate_channel.c",
       "size": 172,
       "edition_variant": true,
       "all_exact": true,
@@ -19534,7 +19534,7 @@
     },
     {
       "en_owner": "0801c7fc",
-      "source": "games/gs1/src/0801c7fc.c",
+      "source": "games/gs1/src/object/collect_resources.c",
       "size": 164,
       "all_exact": true,
       "editions": [
@@ -24867,7 +24867,7 @@
     },
     {
       "en_owner": "080286a0",
-      "source": "games/gs1/src/080286a0.c",
+      "source": "games/gs1/src/menu/select_resource.c",
       "size": 188,
       "all_exact": true,
       "editions": [
@@ -29856,7 +29856,7 @@
     },
     {
       "en_owner": "080798e0",
-      "source": "games/gs1/src/080798e0.c",
+      "source": "games/gs1/src/owner/build_digit_tiles.c",
       "size": 208,
       "all_exact": true,
       "editions": [
@@ -34280,7 +34280,7 @@
     },
     {
       "en_owner": "0808ee0c",
-      "source": "games/gs1/src/0808ee0c.c",
+      "source": "games/gs1/src/battle/effects/particles/emit_random.c",
       "size": 216,
       "all_exact": true,
       "editions": [
@@ -38761,7 +38761,7 @@
     },
     {
       "en_owner": "08092624",
-      "source": "games/gs1/src/08092624.c",
+      "source": "games/gs1/src/battle/effects/particles/spawn_burst.c",
       "size": 226,
       "all_exact": true,
       "editions": [
@@ -38817,7 +38817,7 @@
     },
     {
       "en_owner": "08092708",
-      "source": "games/gs1/src/08092708.c",
+      "source": "games/gs1/src/battle/effects/objects/run_rising_sequence.c",
       "size": 260,
       "all_exact": true,
       "editions": [
@@ -41786,7 +41786,7 @@
     },
     {
       "en_owner": "08095a44",
-      "source": "games/gs1/src/08095a44.c",
+      "source": "games/gs1/src/battle/effects/heavy_impact/finish.c",
       "size": 328,
       "all_exact": false,
       "editions": [
@@ -42122,7 +42122,7 @@
     },
     {
       "en_owner": "08096048",
-      "source": "games/gs1/src/08096048.c",
+      "source": "games/gs1/src/battle/effects/particles/update_radial_spread.c",
       "size": 248,
       "all_exact": true,
       "editions": [
@@ -43805,7 +43805,7 @@
     },
     {
       "en_owner": "08097f80",
-      "source": "games/gs1/src/08097f80.c",
+      "source": "games/gs1/src/battle/effects/orbiting_particles/update_return.c",
       "size": 172,
       "all_exact": true,
       "editions": [
@@ -45261,7 +45261,7 @@
     },
     {
       "en_owner": "08099d18",
-      "source": "games/gs1/src/08099d18.c",
+      "source": "games/gs1/src/battle/effects/particles/spawn_falling.c",
       "size": 140,
       "all_exact": true,
       "editions": [
@@ -46157,7 +46157,7 @@
     },
     {
       "en_owner": "0809b11c",
-      "source": "games/gs1/src/0809b11c.c",
+      "source": "games/gs1/src/battle/effects/particles/update_radial_launch.c",
       "size": 236,
       "all_exact": true,
       "editions": [

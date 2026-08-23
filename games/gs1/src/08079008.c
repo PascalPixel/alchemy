@@ -6,12 +6,12 @@ struct State_08079008 {
     u8 enabled;
 };
 
-struct State_08079008 *Func_08077394(s32);
+struct State_08079008 *Owner_GetState(s32);
 extern u32 Data_0807a830[];
 
 u32 Func_08079008(s32 owner, s32 level)
 {
-    struct State_08079008 *state = Func_08077394(owner);
+    struct State_08079008 *state = Owner_GetState(owner);
 
     if (state->enabled != 0) {
         if (level <= 0) {

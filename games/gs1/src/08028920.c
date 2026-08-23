@@ -6,7 +6,7 @@ extern s8 Data_080373f7[];
 
 s32 Func_08077290(s32);
 void *Func_080284dc(void);
-void Func_080287a8(s32 arg0);
+void Menu_AppendResourceEntry(s32 arg0);
 void Func_08028808(s32, s32, s32);
 s32 Func_08028574(s32);
 void Func_0802851c(void);
@@ -37,12 +37,12 @@ s32 Func_08028920(s32 input)
     }
 
     Func_080284dc();
-    Func_080287a8(1);
+    Menu_AppendResourceEntry(1);
     if (group == 0) {
-        Func_080287a8(15);
+        Menu_AppendResourceEntry(15);
     }
-    Func_080287a8(2);
-    Func_080287a8(7);
+    Menu_AppendResourceEntry(2);
+    Menu_AppendResourceEntry(7);
     Func_08028808(17, SELECT_MENU_WIDTH, 0);
     value = Func_08028574(input);
     Func_0802851c();

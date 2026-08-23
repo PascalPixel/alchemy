@@ -20,7 +20,7 @@
  *
  * THE ANGLE TEST IS A BAND, NOT A THRESHOLD, and the operands are
  * UNSIGNED. Slot 0's u16 at record[6] is read twice, from two separate
- * Func_0808a080(0) fetches, and compared against 0x4000 with `bls` and
+ * Scene_GetRecord(0) fetches, and compared against 0x4000 with `bls` and
  * against 0xc000 with `bcs`. Func_02000bf4 runs only when the value is
  * strictly inside (0x4000, 0xc000) -- the half-turn band. Everything else
  * goes to Func_02000cd4. Written here as the two guards in source order
@@ -28,7 +28,7 @@
  *
  * Note the record is fetched TWICE for what is logically one field read.
  * Do not collapse it: the two fetches are two calls in the assembly, and
- * Func_0808a080 is not known to be pure.
+ * Scene_GetRecord is not known to be pure.
  *
  * The flag tail is the ordinary sense -- flag 0x898 SET selects
  * Func_02001160, clear selects Func_0200102c(0). 0x898 is set by this

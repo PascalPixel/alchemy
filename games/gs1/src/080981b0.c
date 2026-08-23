@@ -34,7 +34,7 @@ u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
 void Object_SetVelocity(struct ParticleInstance *particle, s32 speed, s32 angle);
-void Func_080090d0(struct ParticleBurstEffect *effect);
+void Object_Destroy(struct ParticleBurstEffect *effect);
 #define UpdateRisingParticleBurst Func_080981b0
 void Func_080981b0(struct ParticleBurstEffect *effect)
 {
@@ -82,5 +82,5 @@ void Func_080981b0(struct ParticleBurstEffect *effect)
     } while (count >= 0);
 
     Audio_PlayCue(0x83);
-    Func_080090d0(effect);
+    Object_Destroy(effect);
 }

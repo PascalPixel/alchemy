@@ -3,7 +3,7 @@
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-s32 Func_080022ec(s32, s32);
+s32 FixedPoint_Ratio(s32, s32);
 
 u16 RollWeaponUnleash(void *owner) {
     struct ItemDefinition *item;
@@ -19,7 +19,7 @@ u16 RollWeaponUnleash(void *owner) {
     if (M2C_FIELD(item, u16, 0xE) == 0) {
         return 1;
     }
-    success_threshold = Func_080022ec(
+    success_threshold = FixedPoint_Ratio(
         (Equipment_GetUnleashRateBonus((s32)owner) +
          (M2C_FIELD(item, u8, 0xB) * 5)) << 0x10,
         100);

@@ -8,13 +8,13 @@ struct Fields_0808b64c {
 
 extern struct Fields_0808b64c *Data_03001ebc;
 
-void Func_080090d0(void *);
+void Object_Destroy(void *);
 
 void Func_0808b64c(s32 arg0) {
     struct Fields_0808b64c *state = Data_03001ebc;
     void *object = Func_0808ba1c(arg0);
     if (object != 0) {
-        Func_080090d0(object);
+        Object_Destroy(object);
         state->objects[arg0] = 0;
     }
 }

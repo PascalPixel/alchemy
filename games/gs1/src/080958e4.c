@@ -1,7 +1,7 @@
 #include "types.h"
 #include "global_cells.h"
 
-void Func_08004278(void *);
+void ScheduleCallback(void *);
 void Func_0809bb34(void *);
 void Func_08002dd8(s32);
 void WaitFrames(s32);
@@ -12,7 +12,7 @@ void Func_080958e4(void) {
     u8 *var_r6;
     s32 var_r7;
 
-    Func_08004278(&Data_08095885);
+    ScheduleCallback(&Data_08095885);
     var_r6 = var_r5 + 157;
     var_r5 += 88;
     for (var_r7 = 23; var_r7 >= 0; var_r7--) {

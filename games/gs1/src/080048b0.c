@@ -1,7 +1,7 @@
 #include "types.h"
 #include "global_cells.h"
 
-s32 Func_080048b0(s32 kind, s32 size)
+s32 Runtime_AllocateHeapBlock(s32 kind, s32 size)
 {
     u32 *base;
     s32 offset;

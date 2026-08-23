@@ -53,7 +53,7 @@ extern void Func_020053f2(s32 style, s32 variant); /* Func_020033d8 veneer #6 */
 extern void Func_02006b68(s32 cue);           /* Audio_PlayCue veneer #8 */
 extern void Func_02006b44(void);              /* Func_0808a4f0 veneer */
 extern void Func_02006a00(void);              /* Func_0808a020 veneer #2 */
-extern void Func_020069b6(s32 flag);          /* Func_080770c8 veneer */
+extern void Func_020069b6(s32 flag);          /* GameFlag_Set veneer */
 
 void Func_020029d0(s32 mode)
 {

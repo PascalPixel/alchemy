@@ -2,7 +2,7 @@
 #include "global_cells.h"
 
 s32 Runtime_GetObject(s32);
-s32 Func_080022ec(s32, s32);
+s32 FixedPoint_Ratio(s32, s32);
 s32 Modulo(s32, s32);
 
 static __inline__ u8 LoadByte(s32 base, s32 offset)
@@ -33,9 +33,9 @@ s32 InventoryMenu_BuildPageResult(struct MenuResult *result, s32 index)
     if ((s32)(value + 1) > limit) {
         value = limit - 1;
     }
-    quotient = Func_080022ec(value, 5);
+    quotient = FixedPoint_Ratio(value, 5);
     remainder = Modulo(value, 5);
-    groups = Func_080022ec(limit, 5);
+    groups = FixedPoint_Ratio(limit, 5);
     if (Modulo(limit, 5) != 0) {
         groups++;
     }

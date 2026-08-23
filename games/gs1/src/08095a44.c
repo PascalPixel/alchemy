@@ -52,7 +52,7 @@ void Func_08095a44(s32 arg)
         pos.y = ((s32)(*((s32 *)(((s8 *)ctx) + 0xC))));
         pos.z = ((s32)(*((s32 *)(zptr = (((s8 *)ctx) + 0x10)))));
         NormalizeVector(&pos);
-        Func_080090d0(ctx);
+        Object_Destroy(ctx);
         Audio_PlayCue(0xA4);
         work = (base + 0x58);
         count = 0x17;

@@ -11,7 +11,7 @@
  * Complete owner: `push {lr}` at 0x02002464 through `pop {r0} / bx r0`
  * at 0x0200247c-0x0200247e, one pool word (0x00001a58) ending
  * 0x02002483; the next owner (`push {lr}`) begins at 0x02002484 --
- * yet another boundary-gap function (flag-gated, calls Func_08015040 /
+ * yet another boundary-gap function (flag-gated, calls UiText_DrawMessage /
  * Func_08009178, new vocabulary for this overlay), left for its own
  * read and noted in the queue file.
  */

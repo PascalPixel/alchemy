@@ -1,7 +1,7 @@
 #include "object_runtime.h"
 
 void Object_SetMode(struct ObjectRuntime *, s32);
-void Func_08009158(struct ObjectRuntime *);
+void Object_CommitPosition(struct ObjectRuntime *);
 void Func_080922c4(u32, s32, s32);
 
 void Func_08092304(u32 object_id, s32 x_offset, s32 z_offset)
@@ -10,7 +10,7 @@ void Func_08092304(u32 object_id, s32 x_offset, s32 z_offset)
 
     Func_080922c4(object_id, x_offset, z_offset);
     if (object != NULL) {
-        Func_08009158(object);
+        Object_CommitPosition(object);
         Object_SetMode(object, 1);
     }
 }

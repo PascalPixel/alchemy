@@ -1,7 +1,7 @@
 #include "psynergy_menu.h"
 #include "global_cells.h"
 
-u8 *Func_08077080(s32 action);
+u8 *Ability_GetData(s32 action);
 s32 Func_0808a488(u8 effect);
 
 s32 PsynergyMenu_ClassifySelectedPsynergy(void)
@@ -10,7 +10,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void)
     s32 kind_difference;
     s32 classification;
 
-    psynergy = Func_08077080(
+    psynergy = Ability_GetData(
         (s32)(0x3fff &
               (*(struct PsynergyMenuState **)ADDR_03001F2C)
                   ->selected_psynergy));

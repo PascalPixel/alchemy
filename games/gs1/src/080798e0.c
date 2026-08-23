@@ -20,15 +20,15 @@ struct DigitOffsets {
 extern const struct DigitOffsets Data_08088df8[16];
 extern const struct PresetValues Data_08088e38[44];
 
-struct OwnerState *Func_08077394(s32 owner);
+struct OwnerState *Owner_GetState(s32 owner);
 u8 *Func_080773d8(s32 record);
 s32 Func_080797fc(s32 record, const u8 *source, s32 output[4]);
 s32 Modulo(s32 value, s32 divisor);
-s32 Func_080022ec(s32 value, s32 divisor);
+s32 FixedPoint_Ratio(s32 value, s32 divisor);
 
 u32 Func_080798e0(s32 owner, s16 destination[4][2])
 {
-    struct OwnerState *state = Func_08077394(owner);
+    struct OwnerState *state = Owner_GetState(owner);
     u32 index;
     u32 result;
     s32 values[4];
@@ -61,7 +61,7 @@ copied:
         result = (u32)Data_08088df8;
         value = values[i];
         ones = Modulo(value, 10);
-        tens = Func_080022ec(value, 10);
+        tens = FixedPoint_Ratio(value, 10);
 
         if (tens > 15)
             tens = 15;

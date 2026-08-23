@@ -32,7 +32,7 @@
  *   0x0850 Runtime_GetObject x1   0x07f0 Func_08015010 x1   0x0800 UiText_DrawMessageAt x3
  *   0x0830 UiWindow_Commit x2   0x0810 Func_08015090 x1   0x0818 Func_08015098 x1
  *   0x0828 UiNumber_DrawAt x1   0x00c0 (prologue) x2      0x08c8 Audio_PlayCue x3
- *   0x07e8 Func_080000c0 x2   0x07f8 Func_08015018 x1   0x0858 Func_08077010 x4
+ *   0x07e8 Func_080000c0 x2   0x07f8 UiWindow_Close x1   0x0858 Func_08077010 x4
  * The 0x00c0 prologue is the in-overlay helper whose byte-exact source is
  * tracked as `games/gs1/assets/code/resource_3cd_c_020000c0.c` — it walks a 16-entry list
  * and applies `arg` to each member.

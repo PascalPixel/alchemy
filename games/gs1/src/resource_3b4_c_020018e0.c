@@ -33,7 +33,7 @@
  *
  * Two of the four arms first repaint one collision cell -- but only while
  * scene flag 0x206 is already set -- and then move flag 0x207: the 0xc000 arm
- * clears it through Func_080770d0 and the 0 arm sets it through Func_080770c8,
+ * clears it through GameFlag_Clear and the 0 arm sets it through GameFlag_Set,
  * which is the pair those two imports form elsewhere in this overlay.  The
  * 0x8000 arm has no flag work and instead branches on slot 0's height word at
  * +12; r0 still holds the record there because nothing has clobbered it on

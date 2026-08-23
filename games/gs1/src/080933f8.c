@@ -3,11 +3,11 @@
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-void *Func_080048f4(s32 arg0, s32 arg1);
-void Func_08009140(void *);
+void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
+void Object_ResetMotion(void *);
 void WaitFrames(u32);
 void Func_08009128(void);
-void Func_08009150(void *, s32, s32, s32);
+void Object_SetPosition(void *, s32, s32, s32);
 
 void Func_080933f8(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
@@ -28,7 +28,7 @@ void Func_080933f8(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     var_sl = arg1;
     spC = arg3;
     var_r7 = arg2;
-    sp8 = Func_080048f4(0x1B, 0xCCC);
+    sp8 = Runtime_AllocateBlock(0x1B, 0xCCC);
     temp_r5 = M2C_FIELD(sp8, void **, 0x1E0);
     temp_r1 = *(void **)ADDR_03001E70;
     sp4 = M2C_FIELD(temp_r1, s32, 0xEC) + 0x780000;
@@ -37,7 +37,7 @@ void Func_080933f8(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     temp_fp = M2C_FIELD(temp_r1, s32, 0xF4) + 0xFF880000;
     temp_r9 = M2C_FIELD(temp_r1, s32, 0xF8) + temp_r2 + 0xFFC00000;
     M2C_FIELD(temp_r1, void **, 0) = (void *) (temp_r5 + 8);
-    Func_08009140(temp_r5);
+    Object_ResetMotion(temp_r5);
     if (var_r6 == -1) {
         var_r6 = M2C_FIELD(temp_r5, s32, 8);
     }
@@ -68,6 +68,6 @@ void Func_080933f8(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
             Func_08009128();
         }
     } else {
-        Func_08009150(temp_r5, var_r6, var_sl, var_r7);
+        Object_SetPosition(temp_r5, var_r6, var_sl, var_r7);
     }
 }

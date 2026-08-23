@@ -14,7 +14,7 @@ struct Work_080ad69c {
 
 extern struct Work_080ad69c *Data_03001f2c;
 
-void Func_08009020(void *item, s32 enabled);
+void Object_InitializeMode(void *item, s32 enabled);
 
 void Func_080ad69c(void)
 {
@@ -22,6 +22,6 @@ void Func_080ad69c(void)
     s32 index;
 
     for (index = 0; index < state->count; ++index) {
-        Func_08009020(state->items[index], 1);
+        Object_InitializeMode(state->items[index], 1);
     }
 }

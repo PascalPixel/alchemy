@@ -4,7 +4,7 @@
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 void WaitFrames(u32);
-void Func_08004278(void *);
+void ScheduleCallback(void *);
 s32 Func_080bdfec(void);
 void Func_080bd898(void);
 
@@ -23,6 +23,6 @@ s32 Func_080be02c(void) {
             WaitFrames(1U);
         } while (M2C_FIELD(runtime, s32 *, 0x800) != 4);
     }
-    Func_08004278((void *)Func_080bd898);
+    ScheduleCallback((void *)Func_080bd898);
     return Func_080bdfec();
 }

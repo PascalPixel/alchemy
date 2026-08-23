@@ -16,7 +16,7 @@
  *   bun tools/overlay-show resource_3a7 0944 -n 124 |
  *   cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a7 --annotate
  * Per-target multiset over the 2 sites, matching the inventory's calls=2:
- *   Func_0808a080 x2 <- veneer 0x02001130  (once for the subject, once per
+ *   Scene_GetRecord x2 <- veneer 0x02001130  (once for the subject, once per
  *                       candidate inside the loop)
  *
  * `>> 20` on the 16.16 coordinates at +8 and +16 is the tile-grid idiom, and

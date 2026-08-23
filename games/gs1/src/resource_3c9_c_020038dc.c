@@ -19,7 +19,7 @@
  * resource_3c9_c_02004b28.c, void/no-argument).
  *
  * SHARED IDIOMS cited from the resource_3b9 mandate: scripted-scene
- * bracket open/close and the story-flag set (Func_080770c8), plus the
+ * bracket open/close and the story-flag set (GameFlag_Set), plus the
  * additive/subtractive workspace-write idiom on 0x03001ebc (first
  * named in resource_377_c_02000a0c.c) -- here workspace+448 = 512
  * (additive: 224<<1 + 64) and workspace+456 = 24 (subtractive:
@@ -39,7 +39,7 @@ extern u8 *Data_03001ebc;
 void Func_02009614();  /* Func_0808a018 */
 void Func_020081bc();  /* Func_020048d8, this overlay's own */
 void Func_02008410();  /* Func_02004b28, this overlay's own */
-void Func_02009604();  /* Func_080770c8 */
+void Func_02009604();  /* GameFlag_Set */
 void Func_020097a6();  /* Func_0808a368 */
 void Func_020097b2();  /* Func_0808a370 */
 void Func_02009770();  /* Func_0808a248 */

@@ -12,7 +12,7 @@
 #define SLOT_VALUE_OFS 0x12F0
 #endif
 
-s32 Func_080770c0(s32);
+s32 GameFlag_IsSet(s32);
 s32 Func_08019d2c(s32);
 void Func_0801a4fc(s32, s32, s32 *, s32 *, s32, s32);
 
@@ -26,7 +26,7 @@ void Func_0801ed40(u32 slot, s32 character, s32 value)
 
     state = *(u8 **)ADDR_03001E8C;
 
-    if (Func_080770c0(0x20) != 0) {
+    if (GameFlag_IsSet(0x20) != 0) {
         if (character == 0)
             character = 0x12;
         if (character == 1)

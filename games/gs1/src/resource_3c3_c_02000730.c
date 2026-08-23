@@ -29,7 +29,7 @@
  *
  * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`; all 11 sites are
  * import veneers.  Per-target multiset, reproduced exactly by the C below:
- *   Func_0808a180 x3, Func_0808a170 x2, and one each of Func_080770c0,
+ *   Func_0808a180 x3, Func_0808a170 x2, and one each of GameFlag_IsSet,
  *   Func_0808a018, Func_0808a020, Func_0808a070, Func_0808a110,
  *   Func_0808a178.
  */

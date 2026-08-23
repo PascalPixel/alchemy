@@ -15,7 +15,7 @@
  * this overlay that agreement is the surprise rather than the default.
  * No arguments, void.
  *
- * Four calls, all resolved by targetOffset: two to the Func_0808a080
+ * Four calls, all resolved by targetOffset: two to the Scene_GetRecord
  * record lookup and two to the Func_0808a1e0 veneer, which the listing
  * prints as four distinct addresses.
  *

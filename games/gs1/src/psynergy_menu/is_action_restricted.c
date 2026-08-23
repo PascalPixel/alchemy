@@ -1,10 +1,10 @@
 #include "psynergy_menu.h"
 
-u8 *Func_08077080(u32 action);
+u8 *Ability_GetData(u32 action);
 
 s32 PsynergyMenu_IsActionRestricted(s32 encoded_action)
 {
-    u8 *action = Func_08077080((u32)(encoded_action << 18) >> 18);
+    u8 *action = Ability_GetData((u32)(encoded_action << 18) >> 18);
     u32 masked_flags;
 
     if (action[12] != 0)

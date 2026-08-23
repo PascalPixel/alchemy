@@ -11,7 +11,7 @@
  * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3b2
  * 25f0 --json` (17 sites, 4 distinct targets):
  *   0x020025f6, 0x02002600, 0x0200260a, 0x02002614, 0x020026ce
- *                              -> veneer 0x02003088 -> Func_0808a080
+ *                              -> veneer 0x02003088 -> Scene_GetRecord
  *   0x02002632, 0x0200263c, 0x02002658, 0x02002664, 0x0200267a, 0x02002686,
  *   0x0200269c, 0x020026ac, 0x020026bc
  *                              -> prologue 0x02001774 -> Func_02001774

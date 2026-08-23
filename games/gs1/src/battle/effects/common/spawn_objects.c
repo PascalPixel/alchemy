@@ -13,7 +13,7 @@ extern u32 Data_03001eec;
 extern u8 Value_000077d8;
 
 #define GetBattleEffectObject Func_08009030
-#define InitBattleEffectObject Func_08009020
+#define InitBattleEffectObject Object_InitializeMode
 #define SpawnBattleEffectObjects Func_080dbb24
 
 BattleEffectObject *GetBattleEffectObject(s32);

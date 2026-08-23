@@ -4,7 +4,7 @@
 
 void *Item_GetData(s32);
 s32 Func_08077218(s32, s32);
-void *Func_08077080(s32);
+void *Ability_GetData(s32);
 
 s32 Func_08025180(s32 arg0, s32 arg1) {
     s32 var_r0;
@@ -24,7 +24,7 @@ s32 Func_08025180(s32 arg0, s32 arg1) {
     if ((M2C_FIELD(temp_r0, u8, 2) != 0) && (Func_08077218(arg0, arg1) == 0)) {
         return var_r0;
     }
-    if ((0x80 & M2C_FIELD(Func_08077080((s32) M2C_FIELD(temp_r0, u16, 0x28)), u8, 1)) == 0) {
+    if ((0x80 & M2C_FIELD(Ability_GetData((s32) M2C_FIELD(temp_r0, u16, 0x28)), u8, 1)) == 0) {
         return 2;
     }
     return 0;

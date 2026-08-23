@@ -36,7 +36,7 @@ extern u8 *Data_03001f2c;
 s32 Func_08077158(u16 *out);
 s32 Func_0808a288(u16 value);
 void *Func_08009030(s32 value);
-void Func_08009020(void *object, s32 value);
+void Object_InitializeMode(void *object, s32 value);
 void ScheduleCallbackAfterFrames(void (*callback)(void), s32 value);
 void Func_080a19a0(void);
 
@@ -67,7 +67,7 @@ void Func_080a1870(void *source, s32 origin_x, s32 origin_y, s32 spacing)
             ENTRY_SLOT(entry_state, 0x154 + i * 4)->w = 0x10000;
             ((struct EntryObject *)entry_object)->f09_b = 0;
             FIELD(entry_object, u8 *, 38) = 0;
-            Func_08009020(entry_object, 1);
+            Object_InitializeMode(entry_object, 1);
         }
     }
     for (; i < 8; i++) {

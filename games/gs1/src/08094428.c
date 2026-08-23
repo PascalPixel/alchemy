@@ -1,8 +1,8 @@
 #include "object_lookup.h"
 #include "types.h"
 
-s32 Func_080770c0(s32);
-void Func_080770d0(s32);
+s32 GameFlag_IsSet(s32);
+void GameFlag_Clear(s32);
 void Func_08094380(s32 arg0);
 void Func_080933f8(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void WaitFrames(s32);
@@ -17,23 +17,23 @@ s32 Func_08094428(void)
     s32 result = 0;
     s32 event = 0x120;
 
-    if (Func_080770c0(event) != 0) {
+    if (GameFlag_IsSet(event) != 0) {
         Func_08094380(24);
-        Func_080770d0(event);
+        GameFlag_Clear(event);
         result = 1;
     } else {
         event = 0x121;
-        if (Func_080770c0(event) != 0) {
+        if (GameFlag_IsSet(event) != 0) {
             Func_08094380(23);
-            Func_080770d0(event);
+            GameFlag_Clear(event);
             result = 2;
         } else {
             event = 0x122;
-            if (Func_080770c0(event) != 0) {
+            if (GameFlag_IsSet(event) != 0) {
                 s32 object_id;
                 void *object;
 
-                Func_080770d0(event);
+                GameFlag_Clear(event);
                 object_id = Data_02000240[125];
                 object = GetObject(object_id);
                 *(s32 *)((u8 *)object + 12) += 0x00a00000;

@@ -8,7 +8,7 @@ struct GlobalData {
 
 extern struct GlobalData Data_02000240;
 
-u8 *Func_08077080(s32);
+u8 *Ability_GetData(s32);
 s32 Func_0808e4b4(s32, u16, void *);
 void Func_08096fb0(s32, s32);
 void Func_080970f8(s32, s32);
@@ -28,7 +28,7 @@ s32 Func_0808e5d8(s32 packedEffect)
 
     index = packedEffect & 0x3FF;
     mode = ((u32)packedEffect >> 10) & 0xF;
-    object = Func_08077080(index)[0xC];
+    object = Ability_GetData(index)[0xC];
     Func_0808ba1c(Data_02000240.selected_object);
     first = (void *)Func_0808e4b4(0x30000005, object, &output);
     second = (void *)Func_0808e4b4(0x20000005, object, &output);

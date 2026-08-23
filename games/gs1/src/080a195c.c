@@ -3,7 +3,7 @@
 extern u8 *Data_03001f2c;
 s32 Func_08077158(void *);
 void Func_08009038(void *);
-void Func_08004278(void (*callback)(void));
+void ScheduleCallback(void (*callback)(void));
 extern u8 Data_080a19a1;
 
 void Func_080a195c(void)
@@ -26,5 +26,5 @@ void Func_080a195c(void)
             }
         } while (--i != 0);
     }
-    Func_08004278((void (*)(void))&Data_080a19a1);
+    ScheduleCallback((void (*)(void))&Data_080a19a1);
 }

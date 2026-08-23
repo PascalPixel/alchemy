@@ -2,9 +2,9 @@
 #include "global_cells.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-void Func_08004278(void *);
+void ScheduleCallback(void *);
 void Func_08016418(struct Work *work, s32 release);
-s32 Func_08003f3c(u32 index);
+s32 Resource_ResetEntry(u32 index);
 void Func_08002dd8(s32);
 void WaitFrames(u32);
 extern u8 Data_08028195;
@@ -16,7 +16,7 @@ void Func_0802851c(void) {
     void *work;
 
     work = *(void **)ADDR_03001F38;
-    Func_08004278(&Data_08028195);
+    ScheduleCallback(&Data_08028195);
     childWork = M2C_FIELD(work, struct Work *, 0x78);
     if (childWork != 0) {
         Func_08016418(childWork, 2);
@@ -24,7 +24,7 @@ void Func_0802851c(void) {
     i = 0;
     while (i < (s32)M2C_FIELD(work, s16, 0x8E)) {
         entry = (u16 *)((u8 *)work + 0x12) + i * 10;
-        Func_08003f3c(*entry);
+        Resource_ResetEntry(*entry);
         i += 1;
     }
     Func_08002dd8(0x3A);

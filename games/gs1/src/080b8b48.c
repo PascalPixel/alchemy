@@ -37,7 +37,7 @@ u32 Random16(void);
 void UiText_DrawQuantity(s32, s32);
 void Func_080151c8(s32);
 struct ObjectSlot_080b8b48 *Func_080b7dd0(s32);
-void Func_08009088(void *, s32);
+void Object_SetAction(void *, s32);
 void Func_080c9008(struct Work_080b8b48 *);
 void Func_080b8000(s32);
 
@@ -67,7 +67,7 @@ s32 Func_080b8b48(struct Input_080b8b48 *input)
     UiText_DrawQuantity(work.primary_id, 1);
     Func_080151c8((s32)&Value_00000814);
     BattleMotion_ApproachTarget(work.primary_id, work.secondary_id, 13, 0);
-    Func_08009088(Func_080b7dd0(work.primary_id)->object, 16);
+    Object_SetAction(Func_080b7dd0(work.primary_id)->object, 16);
     Func_080b7dd0(work.secondary_id);
 
     work.count = 1;

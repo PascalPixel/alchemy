@@ -2,7 +2,7 @@
 
 /*
  * resource_39e owner at 0x020040dc, 76 bytes: flag-set + two-argument
- * pass-through closer. Sets story flag 0x140 (Func_080770c8, the
+ * pass-through closer. Sets story flag 0x140 (GameFlag_Set, the
  * test/set pair named in resource_38d-family drafts), calls
  * Func_0808a428(141, 1), forwards its own two arguments unchanged to
  * Func_0808a430, clears byte 0x23 of the record behind the pointer

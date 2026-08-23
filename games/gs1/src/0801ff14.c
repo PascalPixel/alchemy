@@ -1,7 +1,7 @@
 #include "types.h"
 
 extern u8 *Data_03001f2c;
-void Func_08004278(s32);
+void ScheduleCallback(s32);
 void Func_0801ff58(void);
 void Func_08009038(void *);
 
@@ -12,7 +12,7 @@ void Func_0801ff14(void)
     s32 zero;
     s32 count;
 
-    Func_08004278((s32)Func_0801ff58);
+    ScheduleCallback((s32)Func_0801ff58);
     zero = 0;
     offset *= 2;
     count = 3;

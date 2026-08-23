@@ -15,7 +15,7 @@ s32 Func_080792c4(s32 owner_no, s32 value)
 {
     struct Owner_080792c4 *owner;
 
-    owner = Func_08077394(owner_no);
+    owner = Owner_GetState(owner_no);
     if ((owner->value_124 >= Func_08079008(owner_no, owner->level + 1)) &&
         (Func_0807905c(owner_no, value) != 0)) {
         return value;

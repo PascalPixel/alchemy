@@ -1,9 +1,9 @@
 #include "object_runtime.h"
 
-void Func_08009140(struct ObjectRuntime *);
+void Object_ResetMotion(struct ObjectRuntime *);
 void Object_SetMode(struct ObjectRuntime *, s32);
-void Func_08009150(struct ObjectRuntime *, s32, s32, s32);
-void Func_08009158(struct ObjectRuntime *);
+void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
+void Object_CommitPosition(struct ObjectRuntime *);
 void Func_08092b08(u32 object_id, s32 action);
 
 void Func_08092208(u32 object_id, s32 action, s32 z_offset)
@@ -24,14 +24,14 @@ void Func_08092208(u32 object_id, s32 action, s32 z_offset)
         adjusted *= 16;
         remainder = angle - adjusted;
         object->movement_state = 0;
-        Func_08009140(object);
+        Object_ResetMotion(object);
         Object_SetMode(object, 2);
-        Func_08009150(object,
+        Object_SetPosition(object,
             object->x + ((8 - remainder) << 16),
             object->y, object->z);
-        Func_08009158(object);
+        Object_CommitPosition(object);
         Func_08092b08(object_id, action);
-        Func_08009150(object, object->x, object->y,
+        Object_SetPosition(object, object->x, object->y,
             object->z + (z_offset << 16));
     }
 }

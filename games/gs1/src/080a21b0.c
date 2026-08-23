@@ -4,7 +4,7 @@
 #define PAGE_CAP_LEFT 0xf128
 #define PAGE_CAP_RIGHT 0xf129
 
-s32 Func_080022ec(s32 numerator, s32 denominator);
+s32 FixedPoint_Ratio(s32 numerator, s32 denominator);
 s32 Modulo(s32 numerator, s32 denominator);
 void Func_08015280(
     s32 window,
@@ -29,7 +29,7 @@ void Func_080a21b0(
 
     x = right_edge;
     tile = PAGE_LABEL_FIRST;
-    page_count = Func_080022ec(item_count, page_size);
+    page_count = FixedPoint_Ratio(item_count, page_size);
     if (Modulo(item_count, page_size) != 0)
         page_count++;
 

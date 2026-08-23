@@ -3,7 +3,7 @@
 u8 *Runtime_GetObject(s32);
 s32 *Func_080b7dd0(s32);
 u8 *Func_080b7f70(s32, s32);
-void Func_08009020(void *, s32);
+void Object_InitializeMode(void *, s32);
 void WaitFrames(s32);
 void Func_080bac6c(s32);
 void Func_08009108(void **, s32);
@@ -21,9 +21,9 @@ void Func_080bace8(s32 id)
     index = 0;
     while ((item = Func_080b7f70(*Func_080b7dd0(id), index)) != 0) {
         if (state[0x12a] != 1)
-            Func_08009020(item, 4);
+            Object_InitializeMode(item, 4);
         else
-            Func_08009020(item, 5);
+            Object_InitializeMode(item, 5);
         index++;
     }
 

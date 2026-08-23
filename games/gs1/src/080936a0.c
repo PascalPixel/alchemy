@@ -25,7 +25,7 @@ struct Work_080936a0 {
     u16 flags;
 };
 
-s32 Func_080048f4(s32 arg0, s32 arg1);
+s32 Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void ScheduleCallbackAfterFrames(const void *arg0, s32 arg1);
 extern u8 Data_080935d5;
 
@@ -35,7 +35,7 @@ void Func_080936a0(s32 arg0, s32 arg1)
     s32 handle;
     s32 result;
 
-    handle = Func_080048f4(27, 0xccc);
+    handle = Runtime_AllocateBlock(27, 0xccc);
     if (*(s16 *)(handle + 414) != 3)
         return;
     {

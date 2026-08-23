@@ -3,7 +3,7 @@
 
 extern s32 Func_0801f77c(void);
 extern void *Func_080284dc(void);
-extern void Func_080287a8(s32 arg0);
+extern void Menu_AppendResourceEntry(s32 arg0);
 extern void Func_08028808(s32, s32, s32);
 extern s32 Func_08028574(s32);
 extern void Func_0802851c(void);
@@ -35,20 +35,20 @@ s32 Func_080289e8(void) {
     }
     Func_080284dc();
     if ((group == 0) || (group == 3)) {
-        Func_080287a8(0x15);
+        Menu_AppendResourceEntry(0x15);
     }
     if (group <= 1U) {
-        Func_080287a8(0x16);
+        Menu_AppendResourceEntry(0x16);
     }
     if ((group == 0) || (group == 3)) {
-        Func_080287a8(0x17);
+        Menu_AppendResourceEntry(0x17);
     }
-    Func_080287a8(0x18);
+    Menu_AppendResourceEntry(0x18);
     if ((*(s16 *)0x0200200C) != 0) {
-        Func_080287a8(0x1D);
+        Menu_AppendResourceEntry(0x1D);
     }
     if ((*(s16 *)0x02002010) != 0) {
-        Func_080287a8(0x1E);
+        Menu_AppendResourceEntry(0x1E);
     }
     Func_08028808(0x11, TYPE_MENU_WIDTH, 0);
     result = Func_08028574(initial);

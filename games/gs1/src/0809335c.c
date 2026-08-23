@@ -6,7 +6,7 @@
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void Func_08009128(void);
-void *Func_080048f4(s32 arg0, s32 arg1);
+void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void WaitFrames(s32);
 
 void Func_0809335c(s32 arg0, s32 arg1) {
@@ -16,7 +16,7 @@ void Func_0809335c(s32 arg0, s32 arg1) {
     s32 *ptr;
 
     temp_r6 = GetObject(arg0);
-    temp_r8 = Func_080048f4(0x1B, 0xCCC);
+    temp_r8 = Runtime_AllocateBlock(0x1B, 0xCCC);
     temp_r5 = M2C_FIELD(temp_r8, void **, 0x1E0);
     ptr = *(s32 **)ADDR_03001E70;
     if (temp_r6 != 0) {

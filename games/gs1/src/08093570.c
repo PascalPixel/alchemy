@@ -3,11 +3,11 @@
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-void *Func_080048f4(s32 arg0, s32 arg1);
+void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void Func_08093570(void *target, s32 keep_current_position) {
     void *object;
 
-    object = M2C_FIELD(Func_080048f4(0x1B, 0xCCC), void **, 0x1E0);
+    object = M2C_FIELD(Runtime_AllocateBlock(0x1B, 0xCCC), void **, 0x1E0);
     if (target != NULL) {
         Func_080090e0(object, NULL);
         M2C_FIELD(object, void **, 0x68) = target;

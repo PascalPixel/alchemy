@@ -1,7 +1,7 @@
 #include "render_input.h"
 #include "types.h"
 
-s32 Func_08004080();
+s32 Resource_FindFreeSlot();
 s32 Func_0801a2a4(s32 arg0, s32 arg1, s32 arg2);
 void *Func_0801eb90(
     s32 arg0,
@@ -13,7 +13,7 @@ void *Func_0801eb90(
     s32 no;
     void *result;
 
-    no = Func_08004080();
+    no = Resource_FindFreeSlot();
     result = NULL;
     if (no != 0x60) {
         Func_0801a2a4(arg0, arg1, no);

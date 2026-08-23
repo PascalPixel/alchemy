@@ -41,7 +41,7 @@
  *
  * SHARED IDIOMS, cited: scripted-scene bracket
  * Func_0808a018/Func_0808a020; dialogue-by-id Func_0808a170(0x186e);
- * wait-n-frames Func_0808a010(20); story-flag set Func_080770c8, which
+ * wait-n-frames Func_0808a010(20); story-flag set GameFlag_Set, which
  * is the SET and not the clear.
  *
  * Uncertainty: Func_0808a178(18, 0) and Func_0808a188(18, 0, 20) are

@@ -58,7 +58,7 @@
 
 /*
  * Per-site call symbols: `overlay_call_targets.ts`'s `+2` rule resolves
- * these three sites to the semantic imports (0x366c -> Func_0808a080,
+ * these three sites to the semantic imports (0x366c -> Scene_GetRecord,
  * 0x367a -> Func_08000120 cosine, 0x369a -> Func_08000118 sine) but
  * declaring externs at THOSE addresses does not reproduce the reference
  * bytes -- byte-matching this overlay's `bl` needs the RAW pc-relative
@@ -66,7 +66,7 @@
  * on these bogus-looking mid-veneer-chain addresses instead. Confirmed by
  * direct calculation on the reference halfwords at 0x366c/0x367a/0x369a.
  */
-u8 *Func_020093ba(s32 index);   /* scene-record accessor (Func_0808a080) */
+u8 *Func_020093ba(s32 index);   /* scene-record accessor (Scene_GetRecord) */
 s32 Func_020092b8(s32 angle);   /* sine of a binary angle (Func_08000118) */
 s32 Func_020092a0(s32 angle);   /* cosine of a binary angle (Func_08000120) */
 

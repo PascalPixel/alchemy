@@ -23,7 +23,7 @@ struct Object_0808f0d8 {
 };
 
 extern struct State_0808f0d8 Data_02000240;
-void Func_08009150(struct Object_0808f0d8 *, s32, s32, s32);
+void Object_SetPosition(struct Object_0808f0d8 *, s32, s32, s32);
 void WaitFrames(s32);
 void Object_SetMode(struct Entity_0808f0d8 *, s32);
 void Object_SetCallback(struct Object_0808f0d8 *, const void *);
@@ -40,7 +40,7 @@ void Func_0808f0d8(struct Object_0808f0d8 *object)
     object->field34 = 0x10000;
     object->field30 = 0x20000;
     object->field55 = 0;
-    Func_08009150(object, entity->x, entity->y + 0x240000, entity->z);
+    Object_SetPosition(object, entity->x, entity->y + 0x240000, entity->z);
     WaitFrames(3);
     Object_SetMode(entity, 28);
     Object_SetCallback(object, Data_0809e75c);

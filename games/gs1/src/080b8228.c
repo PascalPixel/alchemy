@@ -3,10 +3,10 @@
 
 struct BattleObjectSlot *Func_080b7dd0(s32 arg0);
 u8 *Runtime_GetObject(s32);
-void Func_08009140(struct MotionObject *);
-void Func_08009150(struct MotionObject *, s32, s32, s32);
+void Object_ResetMotion(struct MotionObject *);
+void Object_SetPosition(struct MotionObject *, s32, s32, s32);
 void Object_SetMode(struct MotionObject *, s32);
-s32 Func_080022ec(s32, s32);
+s32 FixedPoint_Ratio(s32, s32);
 
 extern s32 Data_080c59a4[];
 extern s32 Data_080c59c4[];
@@ -37,11 +37,11 @@ void Func_080b8228(s32 id, s32 variant)
         object->vertical_motion_strength = 0x9999;
         object->vertical_motion_phase = 0;
         object->auto_face_motion = 0;
-        Func_08009140(object);
+        Object_ResetMotion(object);
         scale = slot->anchor_x;
         table = Data_080c5a04;
-        x = Func_080022ec(scale * *(s32 *)((u8 *)table + index), 100);
-        Func_08009150(object, x, 0, slot->anchor_z);
+        x = FixedPoint_Ratio(scale * *(s32 *)((u8 *)table + index), 100);
+        Object_SetPosition(object, x, 0, slot->anchor_z);
     }
     Object_SetMode(object, 5);
 }

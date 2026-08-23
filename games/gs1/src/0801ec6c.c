@@ -30,7 +30,7 @@ struct SideObject {
 
 extern struct SideObjectRegistry *Data_03001e8c;
 
-extern s32 Func_080770c0(s32);
+extern s32 GameFlag_IsSet(s32);
 extern s32 Func_08019d2c(s32);
 extern void Func_0801a4fc(s32, s32, s32 *, s32 *, s32, s32);
 extern struct SideObject *Func_0801eadc(
@@ -47,7 +47,7 @@ struct SideObject *Func_0801ec6c(
     s32 id;
     s32 slot;
 
-    if (Func_080770c0(32) != 0) {
+    if (GameFlag_IsSet(32) != 0) {
         if (object_kind == 0)
             object_kind = 18;
         if (object_kind == 1)

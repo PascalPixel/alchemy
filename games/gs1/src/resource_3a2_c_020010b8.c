@@ -23,21 +23,21 @@
  * The byte-exact games/gs1/assets/code/resource_3a2_c_02001060.c gives that callback's
  * own record layout: a `rank` s32 at +12 and a flags byte at +31 whose bit 1 it
  * sets or clears against the rank of Func_02002570(0) -- the printed name for
- * the same slot-record accessor this owner reaches as Func_0808a080.  So the
+ * the same slot-record accessor this owner reaches as Scene_GetRecord.  So the
  * bit-1 clears below (`& 0xfd`) are the same flag that callback later drives.
  *
  * Calls resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a2 10b8
  * --json` (eleven sites, seven distinct veneer targets; the inventory's
  * `calls=11` counts sites here):
  *   0x10bc -> veneer 0x14f0 -> Func_0808a018
- *   0x10c2 -> veneer 0x1508 -> Func_0808a080
- *   0x10d4 -> veneer 0x1508 -> Func_0808a080
- *   0x10e2 -> veneer 0x1508 -> Func_0808a080
- *   0x10ee -> veneer 0x1508 -> Func_0808a080
+ *   0x10c2 -> veneer 0x1508 -> Scene_GetRecord
+ *   0x10d4 -> veneer 0x1508 -> Scene_GetRecord
+ *   0x10e2 -> veneer 0x1508 -> Scene_GetRecord
+ *   0x10ee -> veneer 0x1508 -> Scene_GetRecord
  *   0x1106 -> veneer 0x14b8 -> Func_080091c0
  *   0x1118 -> veneer 0x14b8 -> Func_080091c0
  *   0x111e -> veneer 0x1498 -> Func_080000c0
- *   0x1126 -> veneer 0x14d8 -> Func_080770c8
+ *   0x1126 -> veneer 0x14d8 -> GameFlag_Set
  *   0x112e -> veneer 0x15b0 -> Func_0808a1e0
  *   0x1132 -> veneer 0x14f8 -> Func_0808a020
  *

@@ -31,7 +31,7 @@ struct Global_08099738 {
 extern struct Global_08099738 Data_02000240;
 
 void Audio_PlayCue(s32);
-s32 Func_08004278(void (*callback)(void));
+s32 ScheduleCallback(void (*callback)(void));
 void Object_SetMode(struct Object_08099738 *, s32);
 void WaitFrames(s32);
 void Func_08099678(void);
@@ -48,7 +48,7 @@ void Func_08099738(void)
     controller = state->controller;
 
     Audio_PlayCue(154);
-    Func_08004278(Func_08099678);
+    ScheduleCallback(Func_08099678);
     Object_SetMode(object, 0);
     object->field_6c = 0;
 

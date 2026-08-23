@@ -7,14 +7,14 @@
  * address, so the owner is `void`.
  *
  * All seven call sites were resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`; all
- * seven are import veneers.  Func_080770c0(flag) is used only as a predicate.
+ * seven are import veneers.  GameFlag_IsSet(flag) is used only as a predicate.
  *
  * Near-identical sibling of 0x02000200: the same Func_0808a018 /
- * Func_080770c0 / Func_08015040 / Func_0808a020 skeleton with flag ids
+ * GameFlag_IsSet / UiText_DrawMessage / Func_0808a020 skeleton with flag ids
  * 0x821 / 0xf02 instead of 0x81a / 0xf01, and with the fall-through arm
  * spelled out separately rather than shared.
  *
- * r5 is loaded with the workspace pointer *before* the Func_08015040 call and
+ * r5 is loaded with the workspace pointer *before* the UiText_DrawMessage call and
  * used after it; that is why the owner saves r5 at all.
  */
 

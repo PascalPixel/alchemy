@@ -19,7 +19,7 @@ struct ResourcePair_0801c7fc {
 
 s32 Func_08077158(u16 *objects);
 struct Object_0801c7fc *Runtime_GetObject(s32 object_id);
-void *Func_08077080(s32 resource_id);
+void *Ability_GetData(s32 resource_id);
 
 s32 Func_0801c7fc(struct ResourcePair_0801c7fc *output)
 {
@@ -55,7 +55,7 @@ s32 Func_0801c7fc(struct ResourcePair_0801c7fc *output)
                 pair = (struct ResourcePair_0801c7fc *)
                     (output_count * sizeof(*pair) + (s32)output);
                 do {
-                    Func_08077080(resource_id);
+                    Ability_GetData(resource_id);
                     pair->object_id = id;
                     pair->resource_id = resource_id;
                     output_count++;

@@ -4,7 +4,7 @@
 extern u8 Value_00000c91;
 
 void UiWindow_Clear(s32 window);
-s32 Func_08077248(s32 unit_id);
+s32 Ability_GetAvailability(s32 unit_id);
 void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
 u8 *UiIcon_Draw(u16 no, s32 kind, s32 window, s32 x, s32 y);
 
@@ -22,7 +22,7 @@ void Shop_DrawPartyMemberItemGrid(s32 window, s32 unit_id)
     y = 0;
     if (window != 0) {
         UiWindow_Clear(window);
-        if (Func_08077248(unit_id) == 0) {
+        if (Ability_GetAvailability(unit_id) == 0) {
             UiText_DrawMessageAt((s32)&Value_00000c91, window, 8, 20);
         } else {
             slot = 0;

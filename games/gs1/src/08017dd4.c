@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 Func_080022ec(s32 dividend, s32 divisor);
+s32 FixedPoint_Ratio(s32 dividend, s32 divisor);
 s32 Modulo(s32 dividend, s32 divisor);
 
 u8 *Func_08017dd4(u8 *buffer, s32 input, s32 width)
@@ -24,7 +24,7 @@ u8 *Func_08017dd4(u8 *buffer, s32 input, s32 width)
     buffer[0] = ' ';
     for (offset = 12; offset != 0; offset--) {
         buffer[offset] = Modulo(value, 10) + '0';
-        value = Func_080022ec(value, 10);
+        value = FixedPoint_Ratio(value, 10);
     }
 
     offset = 0;

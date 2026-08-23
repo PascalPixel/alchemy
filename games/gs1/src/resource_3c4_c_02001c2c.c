@@ -20,11 +20,11 @@
  * Targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (overlay `bl` rule
  * `true_target_offset = stored_displacement + 2`): 16 sites, 7 distinct
  * callees.  This owner is a good demonstration of the rule - ten of the
- * sixteen sites are Func_0808a080 and all ten carry bit-identical `bl`
+ * sixteen sites are Scene_GetRecord and all ten carry bit-identical `bl`
  * halfwords, yet the disassembler prints ten different targets (0x02004d56,
  * 0x02004d5e, 0x02004d6e, ... 0x02004dda).  The real callees are the veneers
- * at 0x0200310c (-> Func_0808a080, x10), 0x02003114 (-> Func_0808a090),
- * 0x02003074 (-> Func_08009150), 0x02003134 (-> Func_0808a0e8), 0x020031ac
+ * at 0x0200310c (-> Scene_GetRecord, x10), 0x02003114 (-> Func_0808a090),
+ * 0x02003074 (-> Object_SetPosition), 0x02003134 (-> Func_0808a0e8), 0x020031ac
  * (-> Audio_PlayCue) and 0x020030ec (-> Func_0808a010), plus this overlay's
  * prologue at 0x020011e0.
  *

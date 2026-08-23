@@ -12,7 +12,7 @@
 
 void *Func_080b50d8(void *, s32);
 s32 Func_080b5100(s32);
-void Func_08009020(void *, s32);
+void Object_InitializeMode(void *, s32);
 extern u32 Data_03001eec;
 
 void Func_080d6888(
@@ -66,7 +66,7 @@ void Func_080d6888(
             }
 
             if (group_value != -1)
-                Func_08009020(group, group_value);
+                Object_InitializeMode(group, group_value);
         }
         group_index++;
     }

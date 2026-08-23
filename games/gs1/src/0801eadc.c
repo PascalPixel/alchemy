@@ -9,7 +9,7 @@
 #endif
 
 void *Func_08015e8c(void);
-void Func_08003f3c(u32);
+void Resource_ResetEntry(u32);
 s32 Func_08016584(void *, void *);
 
 struct TableEntry {
@@ -30,7 +30,7 @@ struct RenderOutput *Func_0801eadc(
 
     output = Func_08015e8c();
     if (output == NULL) {
-        Func_08003f3c((u32)arg0);
+        Resource_ResetEntry((u32)arg0);
         return 0;
     }
     x = arg3 + (arg2->x * 8) + 8;

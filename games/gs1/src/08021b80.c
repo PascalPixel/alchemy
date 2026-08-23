@@ -1,7 +1,7 @@
 #include "types.h"
 
 s32 Func_0801a4fc(u32, s32, s32 *, s32 *, s32, s32);
-s32 Func_080770c0(s32);
+s32 GameFlag_IsSet(s32);
 
 s32 Func_08021b80(u32 kind, s32 value)
 {
@@ -14,7 +14,7 @@ s32 Func_08021b80(u32 kind, s32 value)
     if (var_r5 > 7U) {
         var_r5 = 0;
     }
-    if (Func_080770c0(0x20) != 0) {
+    if (GameFlag_IsSet(0x20) != 0) {
         switch (var_r5) {
         case 0:
             var_r5 = 0x38;

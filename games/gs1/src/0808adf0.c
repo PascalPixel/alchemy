@@ -10,7 +10,7 @@ typedef struct Entry {
 extern Entry Data_0809d7a8[];
 
 s32 Func_08009268(void *, s32 *);
-s32 Func_080770c0(s32);
+s32 GameFlag_IsSet(s32);
 void Func_0808b2b0(s32 arg0);
 
 s32 Func_0808adf0(void *arg0)
@@ -23,7 +23,7 @@ s32 Func_0808adf0(void *arg0)
     while (entry->first != -1) {
         if (entry->first == value &&
             (entry->second == -1 || entry->second == key) &&
-            (entry->third == -1 || Func_080770c0(entry->third) == 0)) {
+            (entry->third == -1 || GameFlag_IsSet(entry->third) == 0)) {
             result = entry->result;
             break;
         }

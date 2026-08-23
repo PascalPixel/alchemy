@@ -38,8 +38,8 @@ typedef struct Position3 {
  *
  * CALL ACCOUNTING.  Thirteen `bl` sites, all resolved with
  * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3bc --annotate`: Func_020038b0
- * x3, Object_SetMode x2, Func_08009150 x2, Audio_PlayCue x2, and one each of
- * Func_0808a080, Func_080091d8, Func_080000c0 and Func_08009158.  The C below
+ * x3, Object_SetMode x2, Object_SetPosition x2, Audio_PlayCue x2, and one each of
+ * Scene_GetRecord, Object_CheckMovementCollision, Func_080000c0 and Object_CommitPosition.  The C below
  * reproduces that multiset exactly; the inventory's `calls=13` agrees.
  *
  * LINK BASE 0x02008000 is proven by a byte-exact sibling (pool word 0x0200804d =
@@ -60,7 +60,7 @@ typedef struct Position3 {
  * three refusals, in order: the cell one step beyond the target is occupied by
  * something whose flag bit 0 at +0x59 is set; the cell directly above the
  * target (y + 0x100000) is likewise occupied; or the terrain probe
- * Func_080091d8 reports a positive code for the destination.  Otherwise mark
+ * Object_CheckMovementCollision reports a positive code for the destination.  Otherwise mark
  * the target state 2, take control of the subject, wait 15 frames, move both
  * the target and the subject onto the destination with the same 0x3333 motion
  * rate, play two cues around re-attaching the camera to the target, commit the
@@ -71,14 +71,14 @@ typedef struct Position3 {
  *    +8/+12/+16, the state byte at +0x22, the occupancy flag bit 0 of the byte
  *    at +0x59, the motion-rate pair at +0x30/+0x34, and the two words cleared
  *    at +0x24/+0x2c.
- *  - Func_080091d8's result is tested with `bgt`, i.e. signed and strictly
+ *  - Object_CheckMovementCollision's result is tested with `bgt`, i.e. signed and strictly
  *    greater than zero, so a negative code does not abort.  Elsewhere in the
  *    tree the value 2 means blocked.
  *  - Func_020038b0 is this overlay's own byte-exact lookup
  *    is byte-exact and takes a single argument;
  *    all three sites also load r1 with a record pointer, which is not
  *    asserted as an argument.
- *  - The two Func_08009150 calls reuse the same position block; the second is
+ *  - The two Object_SetPosition calls reuse the same position block; the second is
  *    reached with r0 reloaded from r8, so it moves the subject, not the target.
  */
 

@@ -30,8 +30,8 @@ Effect08094380 *Func_08009048(Context08094380 *, s32);
 void Object_SetMode(Object08094380 *, s32);
 void WaitFrames(s32);
 void Func_08009060(void *);
-void Func_08009150(Object08094380 *, s32, s32, s32);
-void Func_08009158(Object08094380 *);
+void Object_SetPosition(Object08094380 *, s32, s32, s32);
+void Object_CommitPosition(Object08094380 *);
 
 extern s32 Data_02000240[];
 
@@ -57,7 +57,7 @@ void Func_08094380(s32 arg0)
     *(u8 *)((u8 *)context + 38) = 1;
     object->speed34 = 0x10000;
     object->speed30 = 0x10000;
-    Func_08009150(object,
+    Object_SetPosition(object,
         object->x, object->y, object->z + 0x80000);
-    Func_08009158(object);
+    Object_CommitPosition(object);
 }

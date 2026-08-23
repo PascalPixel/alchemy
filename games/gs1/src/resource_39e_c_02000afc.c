@@ -26,10 +26,10 @@ struct SceneRecordHeading {
  *
  * THE DRAIN LOOP is the one real loop: entry jumps straight to its bottom
  * test. Each iteration re-fetches the slot-12
- * record with Func_0808a080(12) and re-reads the signed 32-bit counter at
+ * record with Scene_GetRecord(12) and re-reads the signed 32-bit counter at
  * record[12]; the body calls Func_080000c0(1), which is the only call in
  * this overlay to that import. The record is re-fetched EVERY time --
- * eight separate Func_0808a080(12) calls in this function, none of them
+ * eight separate Scene_GetRecord(12) calls in this function, none of them
  * cached -- so the pointer is treated as invalidated by each call. Explicit
  * labels retain the machine's wait-then-test lexical order.
  *

@@ -20,12 +20,12 @@ struct TradeOfferTable {
     s32 count;
 };
 
-struct OwnerTradeState *Func_08077394(s32 owner);
+struct OwnerTradeState *Owner_GetState(s32 owner);
 u8 *Func_08077330(s32 which);
 
 s32 Func_0807a1f8(s32 owner, s32 index, s32 bit)
 {
-    struct OwnerTradeState *state = Func_08077394(owner);
+    struct OwnerTradeState *state = Owner_GetState(owner);
     struct TradeOfferTable *table;
     s32 i;
     s32 status;

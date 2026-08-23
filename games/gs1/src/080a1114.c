@@ -1,11 +1,11 @@
 #include "types.h"
 
-s32 Func_08015018(void *handle);
+s32 UiWindow_Close(void *handle);
 
 void Func_080a1114(void **handle)
 {
     if (*handle != NULL) {
-        Func_08015018(*handle);
+        UiWindow_Close(*handle);
         *handle = NULL;
     }
 }

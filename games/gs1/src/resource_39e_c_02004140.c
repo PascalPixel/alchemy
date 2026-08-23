@@ -4,7 +4,7 @@
  * resource_39e owner at 0x02004140, 132 bytes: an eight-shot spawn loop
  * feeding this overlay's own eight-argument spawner
  * (resource_39e_c_0200013c.c). Fetches the slot-8 record
- * (Func_0808a080(8), the record-pointer idiom), builds a 32-byte
+ * (Scene_GetRecord(8), the record-pointer idiom), builds a 32-byte
  * descriptor on the stack (sp+16: word 1, u16 0x0119 at +24, pointer
  * 0x0200d1d8 at +28, 224<<10 at +16, 192<<9 at +20), then loops eight
  * times: wait 10 frames (Func_0808a010), on odd iterations play sound

@@ -53,7 +53,7 @@ extern void Func_02006922(s32 style, s32 variant); /* Func_020033d8 veneer #6 */
 extern void Func_020080f0(s32 cue);           /* Audio_PlayCue veneer #8 */
 extern void Func_020080cc(void);              /* Func_0808a4f0 veneer */
 extern void Func_02007f60(void);              /* Func_0808a020 veneer #2 */
-extern void Func_02007f16(s32 flag);          /* Func_080770c8 veneer */
+extern void Func_02007f16(s32 flag);          /* GameFlag_Set veneer */
 
 void ColossoLogRollingStage_RunScriptedTransition(s32 mode)
 {

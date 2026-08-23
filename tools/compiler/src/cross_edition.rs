@@ -2,6 +2,7 @@ use candidate_compiler::verify::{
     compile_to_assembly, CandidateCompilerConfiguration, CandidateCompilerFamily,
 };
 use compiler_core::routing::CompilerTarget;
+use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use objdiff_core::{
     diff::{ArmArchVersion, DiffObjConfig, DiffSide},
     obj,
@@ -539,7 +540,12 @@ fn compile_edition_object(owner: &str, edition: &str, source: &Path) -> Result<P
     .map_err(|error| format!("{}: {error}", wrapper.display()))?;
 
     let wrapper_text = wrapper.to_string_lossy().into_owned();
-    let routing_text = source.to_string_lossy().into_owned();
+    let owner_address = u32::from_str_radix(owner, 16)
+        .map_err(|error| format!("invalid main owner {owner}: {error}"))?;
+    let routing_text = SourceOwner::Main(owner_address)
+        .routing_path()
+        .to_string_lossy()
+        .into_owned();
     let output_text = output.to_string_lossy().into_owned();
     let configuration = CandidateCompilerConfiguration {
         family: Some(CandidateCompilerFamily::Routed),
@@ -585,7 +591,13 @@ fn edition_build_report(
         .join("linked");
     fs::create_dir_all(&output_root)
         .map_err(|error| format!("{}: {error}", output_root.display()))?;
-    let source_path = PathBuf::from("games/gs1/src").join(format!("{owner}.c"));
+    let source_paths = SourcePaths::load(compiler_core::routing::root())?;
+    let source_owner = SourceOwner::parse(&format!("main:{owner}"))?;
+    let source_path = source_paths.source_path(source_owner);
+    let source_report_path = source_paths
+        .repository_relative_path(source_owner)
+        .to_string_lossy()
+        .replace('\\', "/");
     let edition_variant = source_uses_edition_variant(&source_path)?;
 
     let mut editions = Vec::with_capacity(EDITIONS.len());
@@ -676,7 +688,7 @@ fn edition_build_report(
         schema_version: 1,
         game: "gs1",
         source_edition: "en",
-        source: format!("games/gs1/src/{owner}.c"),
+        source: source_report_path,
         object: object_path.display().to_string(),
         owner_symbol,
         size,
@@ -710,6 +722,7 @@ fn write_corpus_edition_build(
     unresolved_owners: usize,
     roms: &EditionRoms,
 ) -> Result<CorpusEditionBuildReport, String> {
+    let source_paths = SourcePaths::load(compiler_core::routing::root())?;
     let mut owners = Vec::new();
     let mut failures = Vec::new();
     for (index, (owner, report)) in reports.iter().enumerate() {
@@ -718,7 +731,10 @@ fn write_corpus_edition_build(
             Ok(build) => owners.push(build),
             Err(error) => failures.push(EditionBuildFailure {
                 en_owner: owner.clone(),
-                source: format!("games/gs1/src/{owner}.c"),
+                source: source_paths
+                    .repository_relative_path(SourceOwner::parse(&format!("main:{owner}"))?)
+                    .to_string_lossy()
+                    .replace('\\', "/"),
                 error,
             }),
         }
@@ -1093,6 +1109,7 @@ fn read_roms(directory: &Path) -> Result<EditionRoms, String> {
 }
 
 fn exact_owners(object_dir: &Path) -> Result<Vec<String>, String> {
+    let source_paths = SourcePaths::load(compiler_core::routing::root())?;
     let entries =
         fs::read_dir(object_dir).map_err(|error| format!("{}: {error}", object_dir.display()))?;
     let mut owners = entries
@@ -1100,11 +1117,12 @@ fn exact_owners(object_dir: &Path) -> Result<Vec<String>, String> {
         .filter_map(|entry| {
             let path = entry.path();
             let owner = path.file_stem()?.to_str()?;
+            let address = u32::from_str_radix(owner, 16).ok()?;
             (path.extension().is_some_and(|extension| extension == "o")
                 && owner.len() == 8
                 && owner.bytes().all(|byte| byte.is_ascii_hexdigit())
-                && Path::new("games/gs1/src")
-                    .join(format!("{owner}.c"))
+                && source_paths
+                    .source_path(SourceOwner::Main(address))
                     .is_file())
             .then(|| owner.to_ascii_lowercase())
         })
@@ -1122,6 +1140,7 @@ fn exact_owners(object_dir: &Path) -> Result<Vec<String>, String> {
 
 fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
     let owner_names = exact_owners(&options.object_dir)?;
+    let source_paths = SourcePaths::load(compiler_core::routing::root())?;
     let mut reports = BTreeMap::new();
     let mut failures = BTreeMap::new();
     let mut owner_symbol_bytes = 0;
@@ -1241,7 +1260,10 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
         }
         owners.push(CorpusOwner {
             en_owner: owner.clone(),
-            source: format!("games/gs1/src/{owner}.c"),
+            source: source_paths
+                .repository_relative_path(SourceOwner::parse(&format!("main:{owner}"))?)
+                .to_string_lossy()
+                .replace('\\', "/"),
             size: report.size,
             status: if report.core_identical {
                 "shared_core"
@@ -1258,7 +1280,13 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
         .into_iter()
         .map(|(owner, error)| UnresolvedOwner {
             en_owner: owner.clone(),
-            source: format!("games/gs1/src/{owner}.c"),
+            source: source_paths
+                .repository_relative_path(
+                    SourceOwner::parse(&format!("main:{owner}"))
+                        .expect("exact owner names were validated"),
+                )
+                .to_string_lossy()
+                .replace('\\', "/"),
             error,
         })
         .collect::<Vec<_>>();
@@ -1546,33 +1574,19 @@ fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String>
 fn exact_overlay_owners() -> Result<Vec<OverlayOwner>, String> {
     let mut assembly = BTreeMap::<usize, Vec<String>>::new();
     let mut owners = Vec::new();
-    for entry in fs::read_dir("games/gs1/src").map_err(|error| format!("games/gs1/src: {error}"))? {
-        let path = entry.map_err(|error| error.to_string())?.path();
-        let Some(name) = path.file_name().and_then(|name| name.to_str()) else {
+    let source_paths = SourcePaths::load(compiler_core::routing::root())?;
+    for source in source_paths.all_sources()? {
+        let SourceOwner::Overlay { resource, address } = source.owner else {
             continue;
         };
-        let Some(stem) = name.strip_suffix(".c") else {
-            continue;
-        };
-        let Some((resource, address)) = stem.split_once("_c_") else {
-            continue;
-        };
-        let Some(resource) = resource.strip_prefix("resource_") else {
-            continue;
-        };
-        let Ok(resource) = usize::from_str_radix(resource, 16) else {
-            continue;
-        };
-        if !(OVERLAY_FIRST..=OVERLAY_LAST).contains(&resource)
-            || address.len() != 8
-            || !address.bytes().all(|byte| byte.is_ascii_hexdigit())
-        {
+        let resource = resource as usize;
+        if !(OVERLAY_FIRST..=OVERLAY_LAST).contains(&resource) {
             continue;
         }
-        let absolute = u64::from_str_radix(address, 16).map_err(|error| error.to_string())?;
+        let absolute = address as u64;
         let en_offset = absolute
             .checked_sub(OVERLAY_BASE)
-            .ok_or_else(|| format!("{name}: address is below overlay base"))?
+            .ok_or_else(|| format!("{}: address is below overlay base", source.owner.id()))?
             as usize;
         if !assembly.contains_key(&resource) {
             let source = format!("games/gs1/assets/code/resource_{resource:03x}_overlay.s");
@@ -1584,7 +1598,7 @@ fn exact_overlay_owners() -> Result<Vec<OverlayOwner>, String> {
         let start = lines
             .iter()
             .position(|line| line.trim() == tag)
-            .ok_or_else(|| format!("{name}: missing {tag} placeholder"))?;
+            .ok_or_else(|| format!("{}: missing {tag} placeholder", source.owner.id()))?;
         let mut size = 0usize;
         for line in &lines[start + 1..] {
             let trimmed = line.trim();
@@ -1597,11 +1611,17 @@ fn exact_overlay_owners() -> Result<Vec<OverlayOwner>, String> {
             }
         }
         if size == 0 {
-            return Err(format!("{name}: exact placeholder has no span"));
+            return Err(format!(
+                "{}: exact placeholder has no span",
+                source.owner.id()
+            ));
         }
         owners.push(OverlayOwner {
             name: format!("resource_{resource:03x}:0x{absolute:08x}"),
-            source: format!("games/gs1/src/{name}"),
+            source: source_paths
+                .repository_relative_path(source.owner)
+                .to_string_lossy()
+                .replace('\\', "/"),
             resource,
             en_offset,
             size,

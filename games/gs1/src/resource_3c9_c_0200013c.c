@@ -3,7 +3,7 @@
 /*
  * resource_3c9 owner at 0x0200013c, 472 bytes: the overlay's general
  * "spawn and fully configure" routine. Byte-identical to
- * resource_39c_c_0200013c.c (this overlay's own copy of the same
+ * battle/effects/spawn_configured_effect.c (resource_39c's copy of the same
  * routine) apart from the ten bl halfword pairs and the variant-table
  * pool word -- verified by diffing the two full 472-byte disassemblies;
  * that file's spawn-then-owner-record commentary applies here wholesale.

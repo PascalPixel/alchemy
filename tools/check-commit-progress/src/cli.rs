@@ -200,6 +200,7 @@ fn report_required(paths: &[String], target: &str) -> bool {
     paths.iter().any(|path| {
         if target == "gs1-en" {
             path.starts_with("games/gs1/src/")
+                || path == "games/gs1/source-paths.json"
                 || path.starts_with("games/gs1/asm/")
                 || path.starts_with("games/gs1/include/")
                 || path == "games/gs1/metrics/gs1-en-executable.json"

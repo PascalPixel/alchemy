@@ -7,7 +7,6 @@
     {"overlay":"resource_370","start":"0x02000054","end":"0x02000154","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_380","start":"0x0200478c","end":"0x02004854","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_381","start":"0x0200330c","end":"0x020033d4","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
-    {"overlay":"resource_389","start":"0x02000a68","end":"0x02000b50","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_392","start":"0x02000bcc","end":"0x02000c0c","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_392","start":"0x02000c0c","end":"0x02000c4c","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_393","start":"0x02000d9c","end":"0x02000ddc","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
@@ -17,22 +16,13 @@
     {"overlay":"resource_394","start":"0x02000fb4","end":"0x02000ff4","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_395","start":"0x02001878","end":"0x020018b8","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_395","start":"0x020018b8","end":"0x020018f8","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
-    {"overlay":"resource_39a","start":"0x02001c18","end":"0x02001d78","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_39b","start":"0x02001a3c","end":"0x02001bc8","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
-    {"overlay":"resource_39c","start":"0x02001164","end":"0x02001340","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
-    {"overlay":"resource_39c","start":"0x020019b8","end":"0x02001bd8","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_39c","start":"0x02004fcc","end":"0x02005158","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
-    {"overlay":"resource_39f","start":"0x02000f94","end":"0x0200103c","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
-    {"overlay":"resource_39f","start":"0x020019b8","end":"0x02001ac8","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_3a4","start":"0x020039c8","end":"0x02003a44","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_3a5","start":"0x020018a4","end":"0x02001c1c","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
-    {"overlay":"resource_3a6","start":"0x02001390","end":"0x020014ac","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
-    {"overlay":"resource_3a6","start":"0x020015cc","end":"0x0200169c","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
-    {"overlay":"resource_3a7","start":"0x02001158","end":"0x020013ac","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_3b3","start":"0x02000fcc","end":"0x0200101c","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_3b3","start":"0x02001be8","end":"0x02001d84","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_3b3","start":"0x02001d84","end":"0x02001fd4","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
-    {"overlay":"resource_3b3","start":"0x0200253c","end":"0x0200257e","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_3b4","start":"0x020020c4","end":"0x02002188","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_3ba","start":"0x02002124","end":"0x020021b8","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_3ba","start":"0x02002ea0","end":"0x02002f64","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
@@ -47,7 +37,6 @@
     {"overlay":"resource_3bd","start":"0x02000cc8","end":"0x02000cf8","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["second executable island of a complete audited owner; it contains a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_3bd","start":"0x02003644","end":"0x020038c8","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["first executable island of a complete audited owner; it contains a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_3bd","start":"0x020038cc","end":"0x02003a30","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["second executable island of a complete audited owner whose reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
-    {"overlay":"resource_3bf","start":"0x020057ec","end":"0x02005a40","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_3ca","start":"0x020000b0","end":"0x02000100","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_3ca","start":"0x020010d4","end":"0x02001188","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_3ca","start":"0x020012ac","end":"0x02001314","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
@@ -678,12 +667,11 @@
       "overlay": "resource_39c",
       "start": "0x02002318",
       "end": "0x02002504",
-      "kind": "thumb_multi_register_module",
+      "kind": "intra_function_call_module",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
         "audited 492-byte whole owner in games/gs1/semantic/regions.json",
-        "reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit",
         "direct bl at 0x02002404 targets intra-owner 0x0200244e immediately after fallthrough instruction 0x0200244c",
         "the approved Thumb backend accepts SYMBOL_REF but not an intra-function LABEL_REF and has no outlining pass",
         "byte-exact decoded-overlay assembly round trip"
@@ -1065,6 +1053,482 @@
       "evidence": [
         "fourth audited executable island of the 0x02000194 owner",
         "the owner uses IP-linked inline calls that the approved Thumb call patterns cannot emit",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_3b5",
+      "start": "0x0200007c",
+      "end": "0x02000170",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "complete audited 244-byte semantic owner",
+        "direct bl at 0x020000a4 targets 0x020000e6, which the same owner also reaches by ordinary fallthrough from 0x020000e4",
+        "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_3c8",
+      "start": "0x02004048",
+      "end": "0x0200429e",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "audited executable body of the complete 0x02004048--0x020042bc semantic owner",
+        "direct bl at 0x0200413e targets 0x02004258, which the same owner also reaches by ordinary fallthrough from 0x02004256",
+        "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_3c8",
+      "start": "0x020042a0",
+      "end": "0x020042bc",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "directly referenced literal pool of the complete 0x02004048--0x020042bc intra-function-call owner",
+        "the already-retained alignment halfword at 0x0200429e--0x020042a0 is intentionally excluded",
+        "the owner contains a direct bl to a label also reached by ordinary fallthrough, a shape the approved GCC 2.96 Thumb backend cannot emit",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_3c8",
+      "start": "0x02003068",
+      "end": "0x02003136",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
+        "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
+        "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_3c8",
+      "start": "0x020033a8",
+      "end": "0x020033cc",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
+        "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
+        "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_3c8",
+      "start": "0x020033f4",
+      "end": "0x0200340c",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
+        "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
+        "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_3c8",
+      "start": "0x02003418",
+      "end": "0x02003468",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
+        "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
+        "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_3c8",
+      "start": "0x0200346a",
+      "end": "0x02003482",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
+        "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
+        "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_3c8",
+      "start": "0x02003486",
+      "end": "0x02003488",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
+        "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
+        "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_3c8",
+      "start": "0x020037bc",
+      "end": "0x020037c2",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
+        "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
+        "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_3c8",
+      "start": "0x020037c4",
+      "end": "0x020037d4",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
+        "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
+        "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_3c8",
+      "start": "0x020037d6",
+      "end": "0x020037de",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
+        "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
+        "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_3c8",
+      "start": "0x0200382c",
+      "end": "0x02003842",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
+        "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
+        "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_3c8",
+      "start": "0x02003846",
+      "end": "0x02003852",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
+        "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
+        "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_3c8",
+      "start": "0x02003856",
+      "end": "0x02003860",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
+        "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
+        "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_3c8",
+      "start": "0x02003862",
+      "end": "0x02003910",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
+        "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
+        "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_3c8",
+      "start": "0x02003a78",
+      "end": "0x02003a9a",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
+        "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
+        "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_3c8",
+      "start": "0x02003b40",
+      "end": "0x02003b54",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
+        "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
+        "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_3c8",
+      "start": "0x02003b64",
+      "end": "0x02003b6c",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
+        "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
+        "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_3c8",
+      "start": "0x02003fa6",
+      "end": "0x02003fba",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "unresolved executable span of the audited 0x02003068--0x02003fba semantic owner after excluding already resolved C and alignment",
+        "direct bl at 0x020034c6 targets intra-owner 0x02003520, which is also reached by ordinary fallthrough from 0x0200351c",
+        "approved GCC 2.96 Thumb direct-call patterns accept SYMBOL_REF operands, not intra-owner LABEL_REF operands, and the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_391",
+      "start": "0x02000d3c",
+      "end": "0x020010d2",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "executable span of the complete audited 0x02000d3c--0x02002768 semantic owner after excluding alignment halfwords",
+        "external direct bl entries at 0x02000c6e 0x02000cae 0x02000cc0 and 0x02000cc6 target intra-owner 0x02001530 0x02000ef4 0x02001582 and 0x02001588, all also reached by ordinary fallthrough with live owner state",
+        "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_391",
+      "start": "0x020010d4",
+      "end": "0x02001366",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "executable span of the complete audited 0x02000d3c--0x02002768 semantic owner after excluding alignment halfwords",
+        "external direct bl entries target four intra-owner blocks that are also reached by ordinary fallthrough with live owner state",
+        "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_391",
+      "start": "0x02001368",
+      "end": "0x0200173e",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "executable span of the complete audited 0x02000d3c--0x02002768 semantic owner after excluding alignment halfwords",
+        "external direct bl entries target four intra-owner blocks that are also reached by ordinary fallthrough with live owner state",
+        "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_391",
+      "start": "0x02001740",
+      "end": "0x02001bfa",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "executable span of the complete audited 0x02000d3c--0x02002768 semantic owner after excluding alignment halfwords",
+        "external direct bl entries target four intra-owner blocks that are also reached by ordinary fallthrough with live owner state",
+        "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_391",
+      "start": "0x02001bfc",
+      "end": "0x02002002",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "executable span of the complete audited 0x02000d3c--0x02002768 semantic owner after excluding alignment halfwords",
+        "external direct bl entries target four intra-owner blocks that are also reached by ordinary fallthrough with live owner state",
+        "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_391",
+      "start": "0x02002004",
+      "end": "0x02002532",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "executable span of the complete audited 0x02000d3c--0x02002768 semantic owner after excluding alignment halfwords",
+        "external direct bl entries target four intra-owner blocks that are also reached by ordinary fallthrough with live owner state",
+        "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_391",
+      "start": "0x02002534",
+      "end": "0x0200274a",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "executable span of the complete audited 0x02000d3c--0x02002768 semantic owner after excluding alignment halfwords",
+        "external direct bl entries target four intra-owner blocks that are also reached by ordinary fallthrough with live owner state",
+        "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_391",
+      "start": "0x0200274c",
+      "end": "0x02002768",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "executable span of the complete audited 0x02000d3c--0x02002768 semantic owner after excluding alignment halfwords",
+        "external direct bl entries target four intra-owner blocks that are also reached by ordinary fallthrough with live owner state",
+        "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_3bd",
+      "start": "0x020013f8",
+      "end": "0x02001c0e",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "executable span of the complete audited 0x020013f8--0x02002c44 semantic owner after excluding alignment halfwords",
+        "external direct bl entries at 0x0200117e and 0x0200136c target intra-owner 0x02002090 and 0x0200227e, both also reached by ordinary fallthrough with live owner state",
+        "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_3bd",
+      "start": "0x02001c10",
+      "end": "0x02001d4a",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "executable span of the complete audited 0x020013f8--0x02002c44 semantic owner after excluding alignment halfwords",
+        "external direct bl entries target two intra-owner blocks that are also reached by ordinary fallthrough with live owner state",
+        "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_3bd",
+      "start": "0x02001d4c",
+      "end": "0x02002602",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "executable span of the complete audited 0x020013f8--0x02002c44 semantic owner after excluding alignment halfwords",
+        "external direct bl entries target two intra-owner blocks that are also reached by ordinary fallthrough with live owner state",
+        "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_3bd",
+      "start": "0x02002604",
+      "end": "0x02002aaa",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "executable span of the complete audited 0x020013f8--0x02002c44 semantic owner after excluding alignment halfwords",
+        "external direct bl entries target two intra-owner blocks that are also reached by ordinary fallthrough with live owner state",
+        "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_3bd",
+      "start": "0x02002aac",
+      "end": "0x02002c36",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "executable span of the complete audited 0x020013f8--0x02002c44 semantic owner after excluding alignment halfwords",
+        "external direct bl entries target two intra-owner blocks that are also reached by ordinary fallthrough with live owner state",
+        "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_3bd",
+      "start": "0x02002c38",
+      "end": "0x02002c44",
+      "kind": "intra_function_call_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "executable span of the complete audited 0x020013f8--0x02002c44 semantic owner after excluding alignment halfwords",
+        "external direct bl entries target two intra-owner blocks that are also reached by ordinary fallthrough with live owner state",
+        "approved GCC 2.96 Thumb direct-call patterns require SYMBOL_REF operands and cannot call intra-function LABEL_REF blocks; the backend has no outlining pass",
         "byte-exact decoded-overlay assembly round trip"
       ]
     }

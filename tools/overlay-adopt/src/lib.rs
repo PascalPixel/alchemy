@@ -1,5 +1,6 @@
 pub mod park;
 pub mod score;
+use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use overlay_disasm::{assemble_overlay, OverlaySource, OVERLAY_BASE};
 use serde_json::Value;
 use std::fs;
@@ -560,16 +561,38 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
     replaced_lines.extend(placeholder_lines(&stem, fn_row.span_bytes, &aliases));
     replaced_lines.extend(lines[last as usize..].iter().cloned());
     let replaced = replaced_lines.join("\n");
-    let installed = root
-        .join("games/gs1/src")
-        .join(format!("{}_c_{}.c", fn_row.overlay, stem));
+    let owner = SourceOwner::parse(&format!("{}:{}", fn_row.overlay, stem))?;
+    let source_paths = SourcePaths::load(root)?;
+    let installed = source_paths.registered_source_path(owner)?;
     let preexisting = if installed.exists() {
         Some(fs::read(&installed).map_err(|error| error.to_string())?)
     } else {
         None
     };
+    let shared_with_other_owners = source_paths
+        .owners_for_path(&installed)
+        .into_iter()
+        .any(|registered| registered != owner);
+    if shared_with_other_owners {
+        let candidate = fs::read(&options.source).map_err(|error| error.to_string())?;
+        if preexisting.as_deref() != Some(candidate.as_slice()) {
+            return Err(format!(
+                "{} is shared by other exact owners; refusing to overwrite it with differing source",
+                installed.display()
+            ));
+        }
+    }
+    let source_is_installed = fs::canonicalize(&options.source)
+        .ok()
+        .zip(fs::canonicalize(&installed).ok())
+        .is_some_and(|(source, destination)| source == destination);
     let rebuild: Result<Vec<u8>, String> = (|| {
-        fs::copy(&options.source, &installed).map_err(|error| error.to_string())?;
+        if let Some(parent) = installed.parent() {
+            fs::create_dir_all(parent).map_err(|error| error.to_string())?;
+        }
+        if !source_is_installed {
+            fs::copy(&options.source, &installed).map_err(|error| error.to_string())?;
+        }
         fs::write(&assembly, &replaced).map_err(|error| error.to_string())?;
         assemble_overlay(&OverlaySource::path(&assembly), OVERLAY_BASE)
     })();
@@ -644,12 +667,11 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
         return Ok(0);
     }
     println!(
-        "adopt=applied {} span={} aliases={} c=games/gs1/src/{}_c_{}.c",
+        "adopt=applied {} span={} aliases={} c={}",
         options.id,
         fn_row.span_bytes,
         aliases.len(),
-        fn_row.overlay,
-        stem
+        source_paths.repository_relative_path(owner).display()
     );
     Ok(0)
 }

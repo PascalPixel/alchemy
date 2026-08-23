@@ -1,4 +1,5 @@
 use crate::{listing_offsets, region_lines};
+use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use overlay_disasm::compile::assemble_overlay;
 use overlay_disasm::{OverlaySource, OVERLAY_BASE};
 use std::fs;
@@ -16,18 +17,104 @@ fn number(row: &serde_json::Value, key: &str) -> Option<i64> {
     })
 }
 
-fn thumb_multi_register(line: &str) -> bool {
-    let code = line.split('@').next().unwrap_or("").trim_start();
-    let instruction = code
-        .strip_prefix("ldmia")
-        .or_else(|| code.strip_prefix("stmia"));
-    instruction.is_some_and(|body| {
-        body.chars().next().is_some_and(char::is_whitespace)
-            && body
-                .split_once('{')
-                .and_then(|(_, registers)| registers.split_once('}'))
-                .is_some_and(|(registers, _)| registers.contains(',') || registers.contains('-'))
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct ThumbTransfer {
+    load: bool,
+    base: u8,
+    registers: Vec<u8>,
+    targeted: bool,
+}
+
+fn low_register(text: &str) -> Option<u8> {
+    let register = text.trim().strip_prefix('r')?.parse::<u8>().ok()?;
+    (register <= 7).then_some(register)
+}
+
+fn thumb_transfer(line: &str) -> Option<ThumbTransfer> {
+    let code = line.split('@').next().unwrap_or("").trim();
+    if code.is_empty() {
+        return None;
+    }
+    let (targeted, instruction) = match code.split_once(':') {
+        Some((_, instruction)) => (true, instruction.trim()),
+        None => (false, code),
+    };
+    let mut words = instruction.split_whitespace();
+    let mnemonic = words.next()?;
+    let load = match mnemonic {
+        "ldmia" => true,
+        "stmia" => false,
+        _ => return None,
+    };
+    let body = instruction.strip_prefix(mnemonic)?.trim_start();
+    let (operands, rest) = body.split_once('{')?;
+    let (registers, _) = rest.split_once('}')?;
+    let base = low_register(operands.split(',').next()?.trim().trim_end_matches('!'))?;
+    let mut parsed = Vec::new();
+    for item in registers.split(',') {
+        let item = item.trim();
+        if let Some((first, last)) = item.split_once('-') {
+            let first = low_register(first)?;
+            let last = low_register(last)?;
+            if first > last {
+                return None;
+            }
+            parsed.extend(first..=last);
+        } else {
+            parsed.push(low_register(item)?);
+        }
+    }
+    parsed.sort_unstable();
+    parsed.dedup();
+    Some(ThumbTransfer {
+        load,
+        base,
+        registers: parsed,
+        targeted,
     })
+}
+
+fn approved_thumb_block_copy_pair(load: &ThumbTransfer, store: &ThumbTransfer) -> bool {
+    load.load
+        && !store.load
+        && !load.targeted
+        && !store.targeted
+        && matches!(load.registers.len(), 2 | 3)
+        && load.registers == store.registers
+        && load.base != store.base
+        && !load.registers.contains(&load.base)
+        && !store.registers.contains(&store.base)
+}
+
+fn thumb_standalone_wide_transfer_lines(source: &str) -> Vec<usize> {
+    let significant: Vec<_> = source
+        .lines()
+        .enumerate()
+        .filter_map(|(index, line)| {
+            let code = line.split('@').next().unwrap_or("").trim();
+            (!code.is_empty()).then(|| (index + 1, thumb_transfer(line)))
+        })
+        .collect();
+    significant
+        .iter()
+        .enumerate()
+        .filter_map(|(index, (line, transfer))| {
+            let transfer = transfer.as_ref()?;
+            if transfer.registers.len() < 3 {
+                return None;
+            }
+            let paired_as_load = significant
+                .get(index + 1)
+                .and_then(|(_, next)| next.as_ref())
+                .is_some_and(|next| approved_thumb_block_copy_pair(transfer, next));
+            let paired_as_store = index
+                .checked_sub(1)
+                .and_then(|previous| significant.get(previous))
+                .and_then(|(_, previous)| previous.as_ref())
+                .is_some_and(|previous| approved_thumb_block_copy_pair(previous, transfer));
+            (!paired_as_load && !paired_as_store).then_some(*line)
+        })
+        .collect()
 }
 
 fn audit_multi_register_evidence(root: &Path, overlays: &[String]) -> Result<Vec<String>, String> {
@@ -74,12 +161,8 @@ fn audit_multi_register_evidence(root: &Path, overlays: &[String]) -> Result<Vec
         let offsets: std::collections::BTreeMap<_, _> =
             listing_offsets(&path)?.into_iter().collect();
         let source = fs::read_to_string(&path).map_err(|e| e.to_string())?;
-        for (index, _) in source
-            .lines()
-            .enumerate()
-            .filter(|(_, line)| thumb_multi_register(line))
-        {
-            let Some(offset) = offsets.get(&((index + 1) as i64)) else {
+        for line in thumb_standalone_wide_transfer_lines(&source) {
+            let Some(offset) = offsets.get(&(line as i64)) else {
                 continue;
             };
             let address = OVERLAY_BASE + offset;
@@ -369,13 +452,19 @@ pub fn audit(root: &Path, overlay: &str) -> Result<Vec<String>, String> {
         }
     }
     let work = tempdir().map_err(|error| error.to_string())?;
+    let source_paths = SourcePaths::load(root)?;
     let mut findings = Vec::new();
     for address in addresses {
         let Some((_, _, span)) = placeholder_block(&lines, address) else {
             continue;
         };
-        let source = root.join(format!("games/gs1/src/{overlay}_c_{address:08x}.c"));
+        let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;
+        let source = source_paths.source_path(owner);
         if !source.exists() {
+            findings.push(format!(
+                "{overlay}:{address:08x}\tMISSING_SOURCE\t{}",
+                source.display()
+            ));
             continue;
         }
         let reference = match truth_window(root, overlay, address, span) {
@@ -600,18 +689,68 @@ pub fn park_one(root: &Path, overlay: &str, address: i64, apply: bool) -> Result
         ));
     }
     if apply {
+        let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;
+        let source_paths = SourcePaths::load(root)?;
+        let installed = source_paths.source_path(owner);
+        let shared = source_paths
+            .owners_for_path(&installed)
+            .into_iter()
+            .any(|registered| registered != owner);
+        let parked = root.join(format!(
+            "games/gs1/recon/en/overlays/{overlay}_c_{address:08x}.c"
+        ));
         fs::write(&assembly, &text).map_err(|error| error.to_string())?;
-        let installed = root.join(format!("games/gs1/src/{overlay}_c_{address:08x}.c"));
-        if installed.exists() {
-            let parked = root.join(format!(
-                "games/gs1/recon/en/overlays/{overlay}_c_{address:08x}.c"
-            ));
+        let parked_before = if shared && parked.exists() {
+            Some(fs::read(&parked).map_err(|error| {
+                let _ = fs::write(&assembly, &original);
+                format!(
+                    "cannot preserve {} before parking: {error}",
+                    parked.display()
+                )
+            })?)
+        } else {
+            None
+        };
+        let copied = if installed.exists() && shared {
+            fs::copy(&installed, &parked).map_err(|error| {
+                let _ = fs::write(&assembly, &original);
+                format!(
+                    "cannot copy {} to the EN reconstruction corpus: {error}",
+                    installed.display()
+                )
+            })?;
+            true
+        } else {
+            false
+        };
+        let moved = if installed.exists() && !shared {
             fs::rename(&installed, &parked).map_err(|error| {
+                let _ = fs::write(&assembly, &original);
                 format!(
                     "cannot move {} to the EN reconstruction corpus: {error}",
                     installed.display()
                 )
             })?;
+            true
+        } else {
+            false
+        };
+        if let Err(error) = source_paths.unregister_owner(owner) {
+            if moved {
+                let _ = fs::rename(&parked, &installed);
+            }
+            if copied {
+                match parked_before {
+                    Some(bytes) => {
+                        let _ = fs::write(&parked, bytes);
+                    }
+                    None => {
+                        let _ = fs::remove_file(&parked);
+                    }
+                }
+            }
+            let _ = fs::write(&assembly, &original);
+            return Err(error);
         }
     }
     Ok(Parked {
@@ -669,14 +808,43 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
 
 #[cfg(test)]
 mod tests {
-    use super::thumb_multi_register;
+    use super::{audit, thumb_standalone_wide_transfer_lines};
+    use std::fs;
+    use tempfile::tempdir;
 
     #[test]
-    fn recognizes_only_multiple_register_transfers() {
-        assert!(thumb_multi_register("\tldmia r3!, {r0, r1}"));
-        assert!(thumb_multi_register("stmia r2!, {r0-r3} @ copy"));
-        assert!(!thumb_multi_register("\tldmia r3!, {r0}"));
-        assert!(!thumb_multi_register("@ stmia r3!, {r0, r1}"));
-        assert!(!thumb_multi_register("\tpush {r4, r5, lr}"));
+    fn recognizes_only_standalone_wide_thumb_transfers() {
+        assert_eq!(
+            thumb_standalone_wide_transfer_lines("stmia r2!, {r0-r3} @ wide store"),
+            vec![1]
+        );
+        assert!(thumb_standalone_wide_transfer_lines(
+            "\tldmia r3!, {r0-r2}\n\tstmia r4!, {r0, r1, r2}"
+        )
+        .is_empty());
+        assert_eq!(
+            thumb_standalone_wide_transfer_lines(
+                "\tldmia r3!, {r0-r2}\n.L_target:\n\tstmia r4!, {r0-r2}"
+            ),
+            vec![1, 3]
+        );
+        assert!(thumb_standalone_wide_transfer_lines("\tldmia r3!, {r0}").is_empty());
+        assert!(thumb_standalone_wide_transfer_lines("@ stmia r3!, {r0-r2}").is_empty());
+        assert!(thumb_standalone_wide_transfer_lines("\tpush {r4, r5, lr}").is_empty());
+    }
+
+    #[test]
+    fn audit_reports_a_placeholder_without_exact_source() {
+        let root = tempdir().unwrap();
+        let code = root.path().join("games/gs1/assets/code");
+        fs::create_dir_all(&code).unwrap();
+        fs::write(
+            code.join("resource_382_overlay.s"),
+            "AlchemyC_0200dead:\n  .space 4\n",
+        )
+        .unwrap();
+        let findings = audit(root.path(), "resource_382").unwrap();
+        assert_eq!(findings.len(), 1);
+        assert!(findings[0].contains("resource_382:0200dead\tMISSING_SOURCE\t"));
     }
 }

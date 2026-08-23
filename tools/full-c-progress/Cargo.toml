@@ -10,4 +10,5 @@ name = "full_c_progress"
 path = "src/lib.rs"
 
 [dependencies]
+compiler-core = { path = "../compiler-core" }
 serde_json = { version = "1", features = ["preserve_order"] }

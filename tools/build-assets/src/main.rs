@@ -18,6 +18,7 @@ use cache_entry::write_cache_entry_atomically;
 use canonical_json::canonical_json;
 use compiler_core::bundle::{compiler_bundle_signature, host_executable_signature};
 use compiler_core::sha256;
+use compiler_core::source_paths::{SourcePaths, SOURCE_PATHS_MANIFEST};
 use extract_resource::{PaletteGroup, PaletteOperation};
 use gba_header::{build_gba_header_component, read_gba_header_source};
 use generated_files::{prune_files, unused_tracked_images};
@@ -4375,7 +4376,7 @@ fn stamp_files(
     root: &Path,
     directory: &Path,
     files: &mut BTreeMap<String, PathBuf>,
-    include: fn(&str) -> bool,
+    include: &impl Fn(&str) -> bool,
 ) -> Result<(), String> {
     if !directory.exists() {
         return Ok(());
@@ -4410,31 +4411,6 @@ fn stamp_files(
 
 fn include_all_stamp_files(_: &str) -> bool {
     true
-}
-
-fn is_overlay_exact_source(relative: &str) -> bool {
-    let path = Path::new(relative);
-    let components = path.components().collect::<Vec<_>>();
-    let Some(exact_index) = components
-        .iter()
-        .position(|component| component.as_os_str() == std::ffi::OsStr::new("src"))
-    else {
-        return false;
-    };
-    let suffix = &components[exact_index + 1..];
-    if suffix.len() == 1 {
-        let name = suffix[0].as_os_str().to_string_lossy();
-        return name.starts_with("resource_") && name.contains("_c_") && name.ends_with(".c");
-    }
-    suffix.len() >= 3
-        && suffix[0]
-            .as_os_str()
-            .to_string_lossy()
-            .starts_with("resource_")
-        && suffix[1].as_os_str() == std::ffi::OsStr::new("c")
-        && suffix
-            .last()
-            .is_some_and(|component| component.as_os_str().to_string_lossy().ends_with(".c"))
 }
 
 fn stamp_record(stream: &mut Vec<u8>, label: &str, bytes: &[u8]) {
@@ -4473,14 +4449,29 @@ fn stage_stamp_with_signature(
         root,
         &root.join("games/gs1/assets"),
         &mut files,
-        include_all_stamp_files,
+        &include_all_stamp_files,
     )?;
-    stamp_files(
-        root,
-        &root.join("games/gs1/src"),
-        &mut files,
-        is_overlay_exact_source,
-    )?;
+    let source_paths = SourcePaths::load(root)?;
+    let overlay_sources = source_paths
+        .all_sources()?
+        .into_iter()
+        .filter(|source| source.owner.overlay_id().is_some())
+        .map(|source| {
+            source
+                .path
+                .strip_prefix(root)
+                .unwrap_or(&source.path)
+                .to_string_lossy()
+                .replace('\\', "/")
+        })
+        .collect::<BTreeSet<_>>();
+    stamp_files(root, &root.join("games/gs1/src"), &mut files, &|relative| {
+        overlay_sources.contains(relative)
+    })?;
+    let source_paths_manifest = root.join(SOURCE_PATHS_MANIFEST);
+    if source_paths_manifest.is_file() {
+        files.insert(SOURCE_PATHS_MANIFEST.into(), source_paths_manifest);
+    }
     let manifest_relative = manifest
         .strip_prefix(root)
         .unwrap_or(manifest)

@@ -5,6 +5,7 @@ use compiler_core::plan::{
 };
 use compiler_core::routing::CompilerTarget;
 use compiler_core::sha256;
+use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use compiler_core::{external_symbol, external_symbol_assembly, overlay_call_via_base};
 use std::collections::BTreeMap;
 use std::fs;
@@ -151,28 +152,53 @@ fn command_identity(commands: &[Vec<String>], work: &str) -> Vec<u8> {
     }
     identity
 }
-pub fn overlay_c_sources(source: &OverlaySource) -> Vec<PathBuf> {
+fn overlay_c_sources_checked(source: &OverlaySource) -> Result<Vec<PathBuf>, String> {
     let Some(anchor) = source.c_source_anchor() else {
-        return Vec::new();
+        return Ok(Vec::new());
     };
-    let directory = root().join("games/gs1/src");
-    let stripped = Regex::new(r"overlay\.s$", "").replace_first(basename(anchor), "");
-    let prefix = format!("{stripped}c_");
-    if !directory.exists() {
-        return Vec::new();
+    let overlay = Regex::new(r"_overlay\.s$", "").replace_first(basename(anchor), "");
+    let text = source.read_text().map_err(|error| error.to_string())?;
+    let paths = SourcePaths::load(&root())?;
+    let mut found = Vec::new();
+    for address in placeholder_addresses(&text) {
+        let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;
+        let path = paths.source_path(owner);
+        if !path.exists() {
+            return Err(format!(
+                "{overlay}:{address:08x} has an AlchemyC placeholder but no exact C source at {}",
+                path.display()
+            ));
+        }
+        found.push(path);
     }
-    let Ok(entries) = fs::read_dir(&directory) else {
-        return Vec::new();
-    };
-    let mut names: Vec<String> = entries
-        .filter_map(Result::ok)
-        .filter_map(|entry| entry.file_name().into_string().ok())
-        .filter(|name| name.starts_with(&prefix) && name.ends_with(".c"))
-        .collect();
-    names.sort();
-    names.into_iter().map(|name| directory.join(name)).collect()
+    Ok(found)
 }
-fn address_stem(path: &Path) -> Result<(String, i64), String> {
+
+fn placeholder_addresses(assembly: &str) -> Vec<u32> {
+    let mut found = assembly
+        .lines()
+        .filter_map(|line| {
+            line.trim()
+                .strip_prefix("AlchemyC_")?
+                .strip_suffix(':')
+                .and_then(|address| u32::from_str_radix(address, 16).ok())
+        })
+        .collect::<Vec<_>>();
+    found.sort_unstable();
+    found.dedup();
+    found
+}
+
+pub fn overlay_c_sources(source: &OverlaySource) -> Result<Vec<PathBuf>, String> {
+    overlay_c_sources_checked(source)
+}
+
+fn address_stem(path: &Path, overlay: &str) -> Result<(SourceOwner, String, i64), String> {
+    let paths = SourcePaths::load(&root())?;
+    if let Some(owner) = paths.overlay_owner_for_path(overlay, path)? {
+        let stem = owner.address_stem();
+        return Ok((owner, stem, owner.address() as i64));
+    }
     let display = path.to_string_lossy().to_string();
     let name = basename(&display);
     let stem = name.strip_suffix(".c").unwrap_or(name);
@@ -184,7 +210,17 @@ fn address_stem(path: &Path) -> Result<(String, i64), String> {
         return Err(format!("overlay C filename is not an address: {display}"));
     }
     let address = i64::from_str_radix(tail, 16).map_err(|error| error.to_string())?;
-    Ok((tail.to_ascii_lowercase(), address))
+    let resource = overlay
+        .strip_prefix("resource_")
+        .and_then(|value| u16::from_str_radix(value, 16).ok())
+        .ok_or_else(|| format!("invalid overlay owner {overlay:?}"))?;
+    let owner = SourceOwner::from_legacy_stem(stem)
+        .filter(|owner| owner.overlay_id().as_deref() == Some(overlay))
+        .unwrap_or(SourceOwner::Overlay {
+            resource,
+            address: address as u32,
+        });
+    Ok((owner, tail.to_ascii_lowercase(), address))
 }
 fn checked(command: &[String], cwd: &Path) -> Result<String, String> {
     let Some((binary, rest)) = command.split_first() else {
@@ -349,12 +385,25 @@ fn compile_overlay_with_mutations(
         })
         .unwrap_or_default();
     let source_display = source.to_string_lossy().to_string();
-    let routing_source = routing_source
-        .unwrap_or(source)
-        .to_string_lossy()
-        .to_string();
+    let source_paths = SourcePaths::load(&root())?;
+    let routed_owner = routing_source
+        .map(|path| source_paths.overlay_owner_for_path(overlay, path))
+        .transpose()?
+        .flatten();
+    let (owner, stem, address) = match routed_owner {
+        Some(owner) => (owner, owner.address_stem(), owner.address() as i64),
+        None => address_stem(source, overlay)?,
+    };
+    let routing_source = match routing_source {
+        Some(path) => source_paths
+            .overlay_owner_for_path(overlay, path)?
+            .map(SourceOwner::routing_path)
+            .unwrap_or_else(|| path.to_path_buf()),
+        None => owner.routing_path(),
+    }
+    .to_string_lossy()
+    .into_owned();
     let call_via_base = routed_call_via_base(overlay, &routing_source);
-    let (stem, address) = address_stem(source)?;
     let symbol = format!("Func_{}", stem.to_lowercase());
     let text = fs::read_to_string(source).map_err(|error| format!("{source_display}: {error}"))?;
     if !source_defines_symbol(&text, &symbol) {
@@ -523,22 +572,21 @@ pub struct Span {
     pub start: i64,
     pub end: i64,
 }
-pub fn overlay_c_spans(source: &OverlaySource, base: i64) -> Vec<Span> {
+pub fn overlay_c_spans(source: &OverlaySource, base: i64) -> Result<Vec<Span>, String> {
     let display = source.to_display_string();
     let overlay = Regex::new(r"_overlay\.s$", "").replace_first(basename(&display), "");
     let mut spans = Vec::new();
-    for c_source in overlay_c_sources(source) {
-        let Ok(work) = tempdir() else { continue };
-        if let Ok(compiled) = compile_overlay_c(&c_source, work.path(), &overlay, None, &[]) {
-            let start = compiled.address - base;
-            spans.push(Span {
-                start,
-                end: start + compiled.data.len() as i64,
-            });
-        }
+    for c_source in overlay_c_sources(source)? {
+        let work = tempdir().map_err(|error| error.to_string())?;
+        let compiled = compile_overlay_c(&c_source, work.path(), &overlay, None, &[])?;
+        let start = compiled.address - base;
+        spans.push(Span {
+            start,
+            end: start + compiled.data.len() as i64,
+        });
     }
     spans.sort_by_key(|span| span.start);
-    spans
+    Ok(spans)
 }
 pub fn assemble_overlay(source: &OverlaySource, base: i64) -> Result<Vec<u8>, String> {
     let work = tempdir().map_err(|error| error.to_string())?;
@@ -586,7 +634,7 @@ pub fn assemble_overlay(source: &OverlaySource, base: i64) -> Result<Vec<u8>, St
     let display = source.to_display_string();
     let overlay = Regex::new(r"_overlay\.s$", "").replace_first(basename(&display), "");
     let mut occupied: std::collections::BTreeSet<usize> = std::collections::BTreeSet::new();
-    for c_source in overlay_c_sources(source) {
+    for c_source in overlay_c_sources_checked(source)? {
         let compiled =
             compile_overlay_c(&c_source, work.path(), &overlay, None, &[]).map_err(|cause| {
                 format!(
@@ -644,6 +692,32 @@ pub(crate) fn split_lines(text: &str) -> Vec<String> {
     }
     out.push(current);
     out
+}
+
+#[cfg(test)]
+mod source_activation_tests {
+    use super::*;
+    use tempfile::tempdir;
+
+    #[test]
+    fn only_explicit_overlay_placeholders_activate_exact_c() {
+        assert_eq!(
+            placeholder_addresses(
+                "Func_02000104:\n  bx lr\nAlchemyC_02000104:\n  .space 8\nAlchemyC_02000314:\n"
+            ),
+            vec![0x0200_0104, 0x0200_0314]
+        );
+        assert!(placeholder_addresses("Func_02000104:\n  bx lr\n").is_empty());
+    }
+
+    #[test]
+    fn public_source_diagnostic_preserves_missing_source_errors() {
+        let work = tempdir().unwrap();
+        let assembly = work.path().join("resource_382_overlay.s");
+        fs::write(&assembly, "AlchemyC_0200dead:\n  .space 4\n").unwrap();
+        let error = overlay_c_sources(&OverlaySource::path(assembly)).unwrap_err();
+        assert!(error.contains("resource_382:0200dead has an AlchemyC placeholder"));
+    }
 }
 pub(crate) fn js_parse_int_hex(text: &str) -> Option<i64> {
     let body = crate::regex::js_trim(text);

@@ -56,6 +56,7 @@ version = "0.1.0"
 name = "check-unmatchable"
 version = "0.1.0"
 dependencies = [
+ "compiler-core",
  "serde_json",
 ]
 
@@ -64,6 +65,7 @@ name = "compiler-core"
 version = "0.1.0"
 dependencies = [
  "fs2",
+ "serde_json",
  "sha2",
 ]
 
@@ -78,6 +80,7 @@ dependencies = [
 name = "coverage-map"
 version = "0.1.0"
 dependencies = [
+ "compiler-core",
  "serde_json",
 ]
 
@@ -130,6 +133,7 @@ dependencies = [
 name = "full-c-progress"
 version = "0.1.0"
 dependencies = [
+ "compiler-core",
  "serde_json",
 ]
 

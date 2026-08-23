@@ -53,7 +53,7 @@
   ],
   "compiler_family_probe": {
     "target": "gs2-en:08120454-081224c0",
-    "source_probe": "games/gs1/src/080bbb0c.c",
+    "source_probe": "games/gs1/src/battle/resolve_action.c",
     "method": "Compile the proved GS1 source with each locally approved compiler family, disassemble it and the GS2 owner, then measure exact mnemonic n-grams. This is a compiler-family diagnostic, not a claim that the GS1 source is exact GS2 source.",
     "mnemonic_ngram_coverage": {
       "16": {

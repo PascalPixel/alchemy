@@ -4,23 +4,23 @@
   "target": "gs1-en",
   "derivation": "tracked-evidence-v1",
   "rom_bytes": 8388608,
-  "executable_bytes": 1347122,
+  "executable_bytes": 1348188,
   "categories": {
     "exact_c": {
-      "bytes": 282436,
-      "percent_of_executable": 20.97
+      "bytes": 299774,
+      "percent_of_executable": 22.24
     },
     "tracked_c": {
-      "bytes": 47784,
-      "percent_of_executable": 3.55
+      "bytes": 44902,
+      "percent_of_executable": 3.33
     },
     "assembly": {
-      "bytes": 733592,
-      "percent_of_executable": 54.46
+      "bytes": 693762,
+      "percent_of_executable": 51.46
     },
     "retained_asm": {
-      "bytes": 283310,
-      "percent_of_executable": 21.03
+      "bytes": 309750,
+      "percent_of_executable": 22.98
     },
     "asset_data": {
       "bytes": 7300700,
@@ -29,18 +29,18 @@
   },
   "main": {
     "executable_bytes": 548364,
-    "exact_c_bytes": 107198,
-    "tracked_c_bytes": 3660
+    "exact_c_bytes": 107642,
+    "tracked_c_bytes": 7168
   },
   "overlays": {
-    "executable_bytes": 798758,
-    "exact_c_bytes": 175238,
-    "tracked_c_bytes": 44124
+    "executable_bytes": 799824,
+    "exact_c_bytes": 192132,
+    "tracked_c_bytes": 37734
   },
   "provenance": {
     "exact_source": "worktree",
     "tracked_source": "worktree",
-    "tracked_sources": 55,
+    "tracked_sources": 71,
     "main_tracked_census": "games/gs1/recon/en/main/*.json",
     "tracked_superseded_bytes": 0,
     "tracked_outside_extent_bytes": 0,
@@ -52,10 +52,10 @@
       "label": "Main image code",
       "bytes": 548364,
       "categories": {
-        "exact_c": 107198,
-        "tracked_c": 3660,
-        "assembly": 276984,
-        "retained_asm": 160522
+        "exact_c": 107642,
+        "tracked_c": 7168,
+        "assembly": 259880,
+        "retained_asm": 173674
       },
       "tiles": 9
     },
@@ -64,9 +64,9 @@
       "label": "Compressed code overlays",
       "bytes": 539544,
       "categories": {
-        "exact_c": 123840,
-        "tracked_c": 23704,
-        "assembly": 392000
+        "exact_c": 136914,
+        "tracked_c": 19937,
+        "assembly": 382693
       },
       "tiles": 11
     },
@@ -86,24 +86,24 @@
       "label": "Main image",
       "bytes": 548364,
       "categories": {
-        "exact_c": 107198,
-        "tracked_c": 3660,
-        "assembly": 276984,
-        "retained_asm": 160522
+        "exact_c": 107642,
+        "tracked_c": 7168,
+        "assembly": 259880,
+        "retained_asm": 173674
       },
       "tiles": 867
     },
     {
       "id": "overlays",
       "label": "Decoded code overlays",
-      "bytes": 798758,
+      "bytes": 799824,
       "categories": {
-        "exact_c": 175238,
-        "tracked_c": 44124,
-        "assembly": 456608,
-        "retained_asm": 122788
+        "exact_c": 192132,
+        "tracked_c": 37734,
+        "assembly": 433882,
+        "retained_asm": 136076
       },
-      "tiles": 5431
+      "tiles": 5449
     }
   ]
 }

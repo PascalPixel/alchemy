@@ -1094,10 +1094,10 @@
   },
   {
    "song_id": 101,
-   "symbol": "sound_101",
+   "symbol": "sound_shop_purchase",
    "class": "sfx",
-   "stem": "sound_101",
-   "file": "sequences/effect_walking_hit_mono_narrow_alpha.mid",
+   "stem": "sound_shop_purchase",
+   "file": "sequences/effect_shop_purchase.mid",
    "sidecar": null,
    "played_by": [
     "080b17e4"
@@ -1111,7 +1111,7 @@
     "tone_bank": "0x080fc138",
     "tone_bank_role": "effects-bank"
    },
-   "name_is_provisional": true
+   "name_is_provisional": false
   },
   {
    "song_id": 102,
@@ -1208,10 +1208,10 @@
   },
   {
    "song_id": 112,
-   "symbol": "sound_112",
+   "symbol": "sound_menu_confirm",
    "class": "sfx",
-   "stem": "sound_112",
-   "file": "sequences/effect_brisk_hit_mono_mid_alpha.mid",
+   "stem": "sound_menu_confirm",
+   "file": "sequences/effect_menu_confirm.mid",
    "sidecar": null,
    "played_by": [
     "0801b424",
@@ -1227,14 +1227,14 @@
     "tone_bank": "0x080fc138",
     "tone_bank_role": "effects-bank"
    },
-   "name_is_provisional": true
+   "name_is_provisional": false
   },
   {
    "song_id": 113,
-   "symbol": "sound_113",
+   "symbol": "sound_menu_cancel",
    "class": "sfx",
-   "stem": "sound_113",
-   "file": "sequences/effect_driving_hit_mono_mid_alpha.mid",
+   "stem": "sound_menu_cancel",
+   "file": "sequences/effect_menu_cancel.mid",
    "sidecar": null,
    "played_by": [
     "0801b424",
@@ -1250,14 +1250,14 @@
     "tone_bank": "0x080fc138",
     "tone_bank_role": "effects-bank"
    },
-   "name_is_provisional": true
+   "name_is_provisional": false
   },
   {
    "song_id": 114,
-   "symbol": "sound_114",
+   "symbol": "sound_menu_error",
    "class": "sfx",
-   "stem": "sound_114",
-   "file": "sequences/effect_walking_hit_mono_mid_beta.mid",
+   "stem": "sound_menu_error",
+   "file": "sequences/effect_menu_error.mid",
    "sidecar": null,
    "played_by": [
     "080a32b8"
@@ -1271,7 +1271,7 @@
     "tone_bank": "0x080fc138",
     "tone_bank_role": "effects-bank"
    },
-   "name_is_provisional": true
+   "name_is_provisional": false
   },
   {
    "song_id": 116,
@@ -1946,10 +1946,10 @@
   },
   {
    "song_id": 138,
-   "symbol": "sound_138",
+   "symbol": "sound_item_break",
    "class": "sfx",
-   "stem": "sound_138",
-   "file": "sequences/effect_languid_hit_mono_narrow_beta.mid",
+   "stem": "sound_item_break",
+   "file": "sequences/effect_item_break.mid",
    "sidecar": null,
    "played_by": [
     "08098070",
@@ -1966,7 +1966,7 @@
     "tone_bank": "0x080fc138",
     "tone_bank_role": "effects-bank"
    },
-   "name_is_provisional": true
+   "name_is_provisional": false
   },
   {
    "song_id": 140,
@@ -3609,10 +3609,10 @@
   },
   {
    "song_id": 111,
-   "symbol": "sound_111",
+   "symbol": "sound_menu_cursor_move",
    "class": "sfx",
-   "stem": "sound_111",
-   "file": "sequences/effect_brisk_hit_mono_narrow_alpha.mid",
+   "stem": "sound_menu_cursor_move",
+   "file": "sequences/effect_menu_cursor_move.mid",
    "sidecar": null,
    "played_by": [
     "0801b424",
@@ -3628,7 +3628,7 @@
     "tone_bank": "0x080fc138",
     "tone_bank_role": "effects-bank"
    },
-   "name_is_provisional": true
+   "name_is_provisional": false
   },
   {
    "song_id": 256,

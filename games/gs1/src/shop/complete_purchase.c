@@ -1,4 +1,5 @@
 #include "shop.h"
+#include "sound_ids.h"
 
 s32 Func_08077028(s32, s32);
 s32 Func_08077228(s32, u8);
@@ -19,7 +20,7 @@ void Shop_CompletePurchase(s32 unit_id, s32 item_id, s32 quantity) {
     item = Item_Get(item_id);
     added_slot = 0;
     replaced_slot = Func_08077228(unit_id, item->type);
-    Func_080f9010(0x65);
+    Func_080f9010(SOUND_SHOP_PURCHASE);
     if (added_slot < remaining) {
         do {
             added_slot = Func_08077028(unit_id, item_id);

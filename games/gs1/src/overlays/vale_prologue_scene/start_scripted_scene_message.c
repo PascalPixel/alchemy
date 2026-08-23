@@ -1,0 +1,18 @@
+#include "types.h"
+
+extern void Func_02003fb0(s32 arg0);
+extern s32 Func_02004002(s32 arg0, s32 arg1, s32 arg2);
+extern void Func_02004058(s32 arg0, s32 arg1);
+extern s32 Func_02003fe0(s32 arg0, s32 arg1);
+extern void Func_02003fdc(void);
+
+#define StartScriptedSceneMessage Func_02000f3c
+
+void StartScriptedSceneMessage(s32 message_id) {
+    Func_02003fb0(message_id);
+    Func_02004002(8, 0, 0);
+    Func_02003fb0(4055);
+    Func_02004058(181, 3);
+    Func_02003fe0(181, 0);
+    Func_02003fdc();
+}

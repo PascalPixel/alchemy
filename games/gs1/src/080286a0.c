@@ -1,4 +1,5 @@
 #include "types.h"
+#include "sound_ids.h"
 
 struct MenuState_080286a0 {
     u8 padding000[0x78];
@@ -68,12 +69,12 @@ s32 Func_080286a0(s32 arg0, s32 arg1)
             break;
 
         state->selection = (s16)((u16)state->selection + step);
-        Func_080f9010(111);
+        Func_080f9010(SOUND_MENU_CURSOR_MOVE);
         initial_delay = 0;
         current += step;
     }
 
     Func_080030f8(48);
-    Func_080f9010(112);
+    Func_080f9010(SOUND_MENU_CONFIRM);
     return arg1;
 }

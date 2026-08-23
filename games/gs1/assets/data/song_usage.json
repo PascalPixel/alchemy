@@ -357,9 +357,9 @@
     },
     {
       "song_id": 101,
-      "symbol": "sound_101",
-      "name": null,
-      "evidence": "1 call site(s) pass id=101 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080b24e4; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+      "symbol": "sound_shop_purchase",
+      "name": "shop purchase",
+      "evidence": "The successful shop purchase path plays id=101 immediately before adding the item and charging the buyer; the retained Func_080b24e4 implementation confirms the same placement after the shop add check."
     },
     {
       "song_id": 102,
@@ -417,27 +417,27 @@
     },
     {
       "song_id": 111,
-      "symbol": "sound_111",
-      "name": null,
-      "evidence": "132 call site(s) pass id=111 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0801b424, Func_0801c49c, Func_0801d4cc +45 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+      "symbol": "sound_menu_cursor_move",
+      "name": "menu cursor move",
+      "evidence": "Semantic shop and menu callers consistently play id=111 on directional selection changes; 132 call sites show it is the shared cursor-movement effect."
     },
     {
       "song_id": 112,
-      "symbol": "sound_112",
-      "name": null,
-      "evidence": "53 call site(s) pass id=112 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0801b424, Func_0801c49c, Func_0801d4cc +32 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+      "symbol": "sound_menu_confirm",
+      "name": "menu confirm",
+      "evidence": "Semantic shop and menu callers consistently play id=112 when a valid selection is accepted or completed; 53 call sites support the shared confirm role."
     },
     {
       "song_id": 113,
-      "symbol": "sound_113",
-      "name": null,
-      "evidence": "57 call site(s) pass id=113 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0801b424, Func_0801c49c, Func_0801d4cc +40 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+      "symbol": "sound_menu_cancel",
+      "name": "menu cancel",
+      "evidence": "Semantic shop and menu callers consistently play id=113 when a selection is cancelled or rejected; 57 call sites support the shared cancel role."
     },
     {
       "song_id": 114,
-      "symbol": "sound_114",
-      "name": null,
-      "evidence": "22 call site(s) pass id=114 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_08023e70, Func_08025200, Func_08027114 +13 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+      "symbol": "sound_menu_error",
+      "name": "menu error",
+      "evidence": "InventoryMenu_UseSelectedItem plays id=114 only when applying the selected item returns -1, immediately before displaying the failure message; 22 menu call sites support the shared error role."
     },
     {
       "song_id": 115,
@@ -579,9 +579,9 @@
     },
     {
       "song_id": 138,
-      "symbol": "sound_138",
-      "name": null,
-      "evidence": "6 call site(s) pass id=138 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_08098070, Func_08098a84, Func_080999f0 +3 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+      "symbol": "sound_item_break",
+      "name": "item break",
+      "evidence": "InventoryMenu_MaybeBreakSelectedItem plays id=138 immediately after marking a breakable item as broken; five related effect callers corroborate the break effect."
     },
     {
       "song_id": 139,

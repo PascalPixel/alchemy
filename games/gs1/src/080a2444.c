@@ -1,5 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
+#include "sound_ids.h"
 
 s32 Func_08004278(s32);
 s32 Func_080770c8(s32);
@@ -7,7 +8,7 @@ s32 Func_080f9010(s32);
 
 void Func_080a2444(void) {
     if (*(s32 *)ADDR_03001C94 & 8) {
-        Func_080f9010(0x71);
+        Func_080f9010(SOUND_MENU_CANCEL);
         Func_080770c8(0x150);
         Func_08004278((s32)Func_080a2444);
     }

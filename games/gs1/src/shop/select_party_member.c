@@ -1,5 +1,6 @@
 #include "shop.h"
 #include "gs1_edition.h"
+#include "sound_ids.h"
 
 #if defined(GS1_EDITION_JA)
 #define BASE_W 11
@@ -57,9 +58,9 @@ s32 Shop_SelectPartyMember(void)
         if ((*(volatile u32 *)ADDR_03001C94 & 1) != 0) {
             Func_080030f8(1);
             if (Func_08077248(unit_id) == 0) {
-                Func_080f9010(0x71);
+                Func_080f9010(SOUND_MENU_CANCEL);
             } else {
-                Func_080f9010(0x70);
+                Func_080f9010(SOUND_MENU_CONFIRM);
                 if (shop->party_action == 1)
                     Func_080b1bd0(unit_id);
                 else
@@ -72,7 +73,7 @@ s32 Shop_SelectPartyMember(void)
         }
 
         if ((*(volatile u32 *)ADDR_03001C94 & 2) != 0) {
-            Func_080f9010(0x71);
+            Func_080f9010(SOUND_MENU_CANCEL);
             Func_080a1030();
             Func_08015018(list_window, 2);
             Func_08015018(shop->item_window, 2);
@@ -82,12 +83,12 @@ s32 Shop_SelectPartyMember(void)
         }
 
         if ((*(volatile u32 *)ADDR_03001B04 & 0x20) != 0) {
-            Func_080f9010(0x6f);
+            Func_080f9010(SOUND_MENU_CURSOR_MOVE);
             selection--;
             redraw = 1;
         }
         if ((*(volatile u32 *)ADDR_03001B04 & 0x10) != 0) {
-            Func_080f9010(0x6f);
+            Func_080f9010(SOUND_MENU_CURSOR_MOVE);
             selection++;
             redraw = 1;
         }

@@ -104,7 +104,7 @@ or `djinn_venus.gif`. **Extracted** is the same picture sitting under the
 ROM's own numbering — `resource_226_grid_value_high.png` — which is not the
 same as knowing what it is. Almost everything is still Extracted.
 
-![Image and data maturity box tree in the magenta band; brightness is maturity.](games/gs1/assets/readme/gs1-en-images.svg?v=f07dab813e73a866)
+![Image and data maturity box tree in the magenta band; brightness is maturity.](games/gs1/assets/readme/gs1-en-images.svg?v=d35012fe1836736b)
 
 ### Music and sound
 
@@ -115,7 +115,7 @@ Every file now carries a name instead of a ROM index, but read the tier as
 `music_walking_passage_quintet_full`, `effect_sample_large_oneshot` — and none of
 them claims a title or a scene. Nothing was taken from outside the ROM.
 
-![Music and sound maturity box tree in the orange band; brightness is maturity.](games/gs1/assets/readme/gs1-en-music.svg?v=38816d3acb06617c)
+![Music and sound maturity box tree in the orange band; brightness is maturity.](games/gs1/assets/readme/gs1-en-music.svg?v=f78c16bba2533ad5)
 
 ## Contributing and project status
 

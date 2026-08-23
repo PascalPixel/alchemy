@@ -292,7 +292,7 @@
 <g aria-label="effect_languid_hit_mono_narrow_alpha.mid · golden-sun-sound-sequence · 0x081810c0: 44 bytes">
 <rect x="487.95918567557464" y="236.6138493782202" width="3.2155792842150612" height="1.5707251970517027" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
-<g aria-label="effect_walking_hit_mono_narrow_alpha.mid · golden-sun-sound-sequence · 0x081810ec: 56 bytes">
+<g aria-label="effect_shop_purchase.mid · golden-sun-sound-sequence · 0x081810ec: 56 bytes">
 <rect x="487.95918567557464" y="239.1845745752719" width="3.2155792842150612" height="2.2718320689748936" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_walking_hit_mono_narrow_beta.mid · golden-sun-sound-sequence · 0x08181124: 60 bytes">
@@ -322,16 +322,16 @@
 <g aria-label="effect_slow_hit_mono_narrow_alpha.mid · golden-sun-sound-sequence · 0x08181338: 32 bytes">
 <rect x="466.02565016506645" y="249.53017790882257" width="0.9879206570788028" height="2.9647076721775725" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
-<g aria-label="effect_brisk_hit_mono_narrow_alpha.mid · golden-sun-sound-sequence · 0x08181358: 48 bytes">
+<g aria-label="effect_menu_cursor_move.mid · golden-sun-sound-sequence · 0x08181358: 48 bytes">
 <rect x="468.01357082214525" y="249.53017790882257" width="1.9818809856182042" height="2.9647076721775725" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
-<g aria-label="effect_brisk_hit_mono_mid_alpha.mid · golden-sun-sound-sequence · 0x08181388: 84 bytes">
+<g aria-label="effect_menu_confirm.mid · golden-sun-sound-sequence · 0x08181388: 84 bytes">
 <rect x="462.2329068061661" y="253.49488558100015" width="7.7625450015973545" height="1.361072180893808" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
-<g aria-label="effect_driving_hit_mono_mid_alpha.mid · golden-sun-sound-sequence · 0x081813dc: 88 bytes">
+<g aria-label="effect_menu_cancel.mid · golden-sun-sound-sequence · 0x081813dc: 88 bytes">
 <rect x="462.2329068061661" y="255.85595776189396" width="2.0599363497641554" height="6.0832165426814235" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
-<g aria-label="effect_walking_hit_mono_mid_beta.mid · golden-sun-sound-sequence · 0x08181434: 96 bytes">
+<g aria-label="effect_menu_error.mid · golden-sun-sound-sequence · 0x08181434: 96 bytes">
 <rect x="465.29284315593026" y="255.85595776189396" width="4.702608651833199" height="3.1462730981549796" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="effect_brisk_hit_mono_narrow_beta.mid · golden-sun-sound-sequence · 0x08181494: 68 bytes">
@@ -403,7 +403,7 @@
 <g aria-label="effect_walking_brief_mono_single_alpha.mid · golden-sun-sound-sequence · 0x0818194c: 60 bytes">
 <rect x="464.05919314935187" y="275.1054979889872" width="1.739429514778636" height="4.394502011012791" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
-<g aria-label="effect_languid_hit_mono_narrow_beta.mid · golden-sun-sound-sequence · 0x08181988: 40 bytes">
+<g aria-label="effect_item_break.mid · golden-sun-sound-sequence · 0x08181988: 40 bytes">
 <rect x="466.7986226641305" y="275.1054979889872" width="3.017829955008666" height="1.4520463686421774" style="fill:hsl(28 95% 55%);fill:oklch(0.550 0.170 55)"/>
 </g>
 <g aria-label="residuals_index.json · golden-sun-music-residual · 0x081819b0: 18 bytes">

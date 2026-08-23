@@ -10,12 +10,11 @@ Readable code, useful names, fast tools, and good explanations make that work
 possible. They are not progress by themselves: only exact C and accepted
 permanent assembly contribute to DONE.
 
-This is the sole contributor guide. `AGENTS.md` and `CLAUDE.md` point here;
-`README.md` is for users. Keep project procedure in this file instead of
-creating another guide.
+This is the sole contributor guide; `README.md` is for users. Keep project
+procedure in this file instead of creating another guide.
 
 Pascal's reusable clean-room method lives in the
-[Nintendo Decompilation skill](/Users/pixel/.agents/skills/nintendo-decompilation/SKILL.md).
+[Cleanroom skill](/Users/pixel/.agents/skills/cleanroom/SKILL.md).
 This guide remains authoritative for Alchemy's approved evidence, paths,
 commands, compiler rules, and acceptance gates.
 
@@ -176,7 +175,7 @@ or claiming verification.
 ## Recover one owner
 
 Apply the reusable
-[owner-recovery method](/Users/pixel/.agents/skills/nintendo-decompilation/references/reconstruction-method.md)
+[owner-recovery method](/Users/pixel/.agents/skills/cleanroom/references/reconstruction-method.md)
 to one edition-qualified owner at a time. Alchemy adopts an owner only at zero
 differing reference bytes. A shape that the approved compiler cannot emit may
 be classified as permanent assembly only after its compiler evidence is
@@ -374,7 +373,7 @@ spellings or flags.
 ### 5. Invert a stalled last mile
 
 Apply the reusable
-[stalled-last-mile inversion](/Users/pixel/.agents/skills/nintendo-decompilation/references/reconstruction-method.md#invert-a-stalled-last-mile)
+[stalled-last-mile inversion](/Users/pixel/.agents/skills/cleanroom/references/reconstruction-method.md#invert-a-stalled-last-mile)
 when distinct source families preserve the same local emitted defect. State
 and recheck Alchemy's invariant with the `candidate-show` assembly and linked-
 byte views above; the adoption gate remains zero differing reference bytes.
@@ -465,7 +464,7 @@ dump output.
 ## Keep tooling portable and small
 
 Apply the reusable
-[portable-tooling criteria](/Users/pixel/.agents/skills/nintendo-decompilation/references/reconstruction-method.md#keep-reconstruction-tooling-portable-and-small).
+[portable-tooling criteria](/Users/pixel/.agents/skills/cleanroom/references/reconstruction-method.md#keep-reconstruction-tooling-portable-and-small).
 There are six public executable hosts: `build-assets`, `build-stage`, `assets`,
 `compiler`, `overlay`, and `check`. Contributor operations are subcommands of
 those hosts.

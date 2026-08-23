@@ -1,3 +1,4 @@
+#include "fixed_math.h"
 #include "types.h"
 
 struct Position {
@@ -21,9 +22,9 @@ struct Effect_080b2f4c {
     s8 flag;
 };
 
-u32 Func_08004458(void);
+u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Func_08004458
+#define Rand Random16
 void Func_0800447c(s32, s32, struct Position *);
 void Func_0808a510(struct Effect_080b2f4c *, s32, s32);
 s32 Func_0808a508(struct Effect_080b2f4c *);

@@ -1,9 +1,10 @@
 #include "types.h"
+#include "fixed_math.h"
 #include "global_cells.h"
 
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-u32 Func_08004458(void);
+u32 Random16(void);
 
 void Func_080e155c(s32 arg0, u32 arg1) {
     s32 temp_r3;
@@ -22,9 +23,9 @@ void Func_080e155c(s32 arg0, u32 arg1) {
     temp_r1 = *(s32 *)ADDR_03001EEC;
     temp_r0 = (s32 *)(temp_r1 + 0x77A8);
     if (*temp_r0 > 0) {
-        temp_r6 = (arg0 - 1) & Func_08004458();
+        temp_r6 = (arg0 - 1) & Random16();
         temp_r5 = (s32)(arg1 + (arg1 >> 0x1F)) >> 1;
-        temp_r2 = ((arg1 - 1) & Func_08004458()) - temp_r5;
+        temp_r2 = ((arg1 - 1) & Random16()) - temp_r5;
         temp_r1_2 = (void *)ADDR_03001AD0;
         temp_r6_2 = temp_r6 - temp_r5;
         temp_r3 = temp_r2 + 0x20;

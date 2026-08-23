@@ -93,7 +93,9 @@ struct AudioEngineState {
 };
 
 void Func_08006864(const void *source, void *destination, u32 control);
-void Func_080fb518(struct MusicPlayerState *, struct MusicTrackState *);
+void MusicPlayer_ExecuteMemoryAccessCommand(
+    struct MusicPlayerState *,
+    struct MusicTrackState *);
 void Func_080fa1d4(struct MusicPlayerState *, struct MusicTrackState *);
 void Func_080fa1e8(struct MusicPlayerState *, struct MusicTrackState *);
 void Func_080fb670(struct MusicPlayerState *, struct MusicTrackState *);
@@ -135,7 +137,7 @@ void CgbAudio_Initialize(struct CgbChannel *channels)
     state->ident = ident + 1;
 
     command_table = (union AudioCommandSlot *)0x02004000;
-    command_table[8].player_track = Func_080fb518;
+    command_table[8].player_track = MusicPlayer_ExecuteMemoryAccessCommand;
     command_table[17].player_track = Func_080fa1d4;
     command_table[19].player_track = Func_080fa1e8;
     command_table[28].player_track = Func_080fb670;

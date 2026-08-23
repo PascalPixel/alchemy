@@ -1,4 +1,5 @@
 #include "types.h"
+#include "sound_ids.h"
 
 extern u8 Data_02000240[];
 
@@ -24,11 +25,11 @@ void Func_0808c30c(s32 amount, s32 scaled)
         Func_08091220(0x1ff, 0);
         Func_08091254(4);
         if (amount < -10)
-            Func_080f9010(134);
+            Func_080f9010(SOUND_HEAVY_IMPACT);
         else
             Func_080f9010(133);
     } else {
-        Func_080f9010(126);
+        Func_080f9010(SOUND_RECOVERY);
     }
 
     found = Func_08077148();

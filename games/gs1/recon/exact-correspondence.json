@@ -312,7 +312,7 @@
     },
     {
       "en_owner": "08002f40",
-      "source": "games/gs1/src/08002f40.c",
+      "source": "games/gs1/src/resource/get.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -1092,7 +1092,7 @@
     },
     {
       "en_owner": "08004458",
-      "source": "games/gs1/src/08004458.c",
+      "source": "games/gs1/src/math/random_16.c",
       "size": 36,
       "status": "shared_core",
       "starts": {
@@ -1122,7 +1122,7 @@
     },
     {
       "en_owner": "080044d0",
-      "source": "games/gs1/src/080044d0.c",
+      "source": "games/gs1/src/math/arctan2.c",
       "size": 212,
       "status": "shared_core",
       "starts": {
@@ -1182,7 +1182,7 @@
     },
     {
       "en_owner": "080045d4",
-      "source": "games/gs1/src/080045d4.c",
+      "source": "games/gs1/src/math/fixed_sqrt.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -2292,7 +2292,7 @@
     },
     {
       "en_owner": "08006878",
-      "source": "games/gs1/src/08006878.c",
+      "source": "games/gs1/src/save/read_flash_id.c",
       "size": 150,
       "status": "shared_core",
       "starts": {
@@ -2322,7 +2322,7 @@
     },
     {
       "en_owner": "08006910",
-      "source": "games/gs1/src/08006910.c",
+      "source": "games/gs1/src/save/identify_flash.c",
       "size": 148,
       "status": "shared_core",
       "starts": {
@@ -2352,7 +2352,7 @@
     },
     {
       "en_owner": "080069a4",
-      "source": "games/gs1/src/080069a4.c",
+      "source": "games/gs1/src/save/flash_timer_interrupt.c",
       "size": 36,
       "status": "shared_core",
       "starts": {
@@ -2382,7 +2382,7 @@
     },
     {
       "en_owner": "08006a00",
-      "source": "games/gs1/src/08006a00.c",
+      "source": "games/gs1/src/save/start_flash_timer.c",
       "size": 120,
       "status": "shared_core",
       "starts": {
@@ -2412,7 +2412,7 @@
     },
     {
       "en_owner": "08006a78",
-      "source": "games/gs1/src/08006a78.c",
+      "source": "games/gs1/src/save/flash_read_routines.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -2442,7 +2442,7 @@
     },
     {
       "en_owner": "08006af8",
-      "source": "games/gs1/src/08006af8.c",
+      "source": "games/gs1/src/save/wait_for_flash_write.c",
       "size": 140,
       "status": "shared_core",
       "starts": {
@@ -2472,7 +2472,7 @@
     },
     {
       "en_owner": "08006b84",
-      "source": "games/gs1/src/08006b84.c",
+      "source": "games/gs1/src/save/read_flash.c",
       "size": 34,
       "status": "shared_core",
       "starts": {
@@ -2502,7 +2502,7 @@
     },
     {
       "en_owner": "08006ba8",
-      "source": "games/gs1/src/08006ba8.c",
+      "source": "games/gs1/src/save/read_flash_from_sector.c",
       "size": 124,
       "status": "shared_core",
       "starts": {
@@ -2532,7 +2532,7 @@
     },
     {
       "en_owner": "08006c24",
-      "source": "games/gs1/src/08006c24.c",
+      "source": "games/gs1/src/save/verify_flash.c",
       "size": 66,
       "status": "shared_core",
       "starts": {
@@ -2562,7 +2562,7 @@
     },
     {
       "en_owner": "08006c68",
-      "source": "games/gs1/src/08006c68.c",
+      "source": "games/gs1/src/save/verify_flash_sector.c",
       "size": 116,
       "status": "shared_core",
       "starts": {
@@ -2592,7 +2592,7 @@
     },
     {
       "en_owner": "08006cdc",
-      "source": "games/gs1/src/08006cdc.c",
+      "source": "games/gs1/src/save/erase_flash_chip.c",
       "size": 116,
       "status": "shared_core",
       "starts": {
@@ -2622,7 +2622,7 @@
     },
     {
       "en_owner": "08006d50",
-      "source": "games/gs1/src/08006d50.c",
+      "source": "games/gs1/src/save/erase_flash_sector.c",
       "size": 156,
       "status": "shared_core",
       "starts": {
@@ -2652,7 +2652,7 @@
     },
     {
       "en_owner": "08006dec",
-      "source": "games/gs1/src/08006dec.c",
+      "source": "games/gs1/src/save/program_flash_byte.c",
       "size": 56,
       "status": "shared_core",
       "starts": {
@@ -2682,7 +2682,7 @@
     },
     {
       "en_owner": "08006e24",
-      "source": "games/gs1/src/08006e24.c",
+      "source": "games/gs1/src/save/program_flash_sector_with_erase_retry.c",
       "size": 292,
       "status": "shared_core",
       "starts": {
@@ -2712,7 +2712,7 @@
     },
     {
       "en_owner": "08006f48",
-      "source": "games/gs1/src/08006f48.c",
+      "source": "games/gs1/src/save/count_remaining_erased_bytes.c",
       "size": 34,
       "status": "shared_core",
       "starts": {
@@ -2742,7 +2742,7 @@
     },
     {
       "en_owner": "08006f6c",
-      "source": "games/gs1/src/08006f6c.c",
+      "source": "games/gs1/src/save/run_erase_verifier.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -2772,7 +2772,7 @@
     },
     {
       "en_owner": "08006f84",
-      "source": "games/gs1/src/08006f84.c",
+      "source": "games/gs1/src/save/program_flash_sector.c",
       "size": 164,
       "status": "shared_core",
       "starts": {
@@ -2802,7 +2802,7 @@
     },
     {
       "en_owner": "08007028",
-      "source": "games/gs1/src/08007028.c",
+      "source": "games/gs1/src/save/atmel/erase_chip.c",
       "size": 112,
       "status": "shared_core",
       "starts": {
@@ -2832,7 +2832,7 @@
     },
     {
       "en_owner": "08007098",
-      "source": "games/gs1/src/08007098.c",
+      "source": "games/gs1/src/save/atmel/erase_sector.c",
       "size": 132,
       "status": "shared_core",
       "starts": {
@@ -2862,7 +2862,7 @@
     },
     {
       "en_owner": "0800711c",
-      "source": "games/gs1/src/0800711c.c",
+      "source": "games/gs1/src/save/atmel/erase_block.c",
       "size": 140,
       "status": "shared_core",
       "starts": {
@@ -2892,7 +2892,7 @@
     },
     {
       "en_owner": "080071a8",
-      "source": "games/gs1/src/080071a8.c",
+      "source": "games/gs1/src/save/atmel/program_sector.c",
       "size": 120,
       "status": "shared_core",
       "starts": {
@@ -2922,7 +2922,7 @@
     },
     {
       "en_owner": "08007220",
-      "source": "games/gs1/src/08007220.c",
+      "source": "games/gs1/src/save/atmel/program_block.c",
       "size": 196,
       "status": "shared_core",
       "starts": {
@@ -7482,7 +7482,7 @@
     },
     {
       "en_owner": "08012038",
-      "source": "games/gs1/src/08012038.c",
+      "source": "games/gs1/src/map/get_cell_collision.c",
       "size": 64,
       "status": "shared_core",
       "starts": {
@@ -7512,7 +7512,7 @@
     },
     {
       "en_owner": "08012078",
-      "source": "games/gs1/src/08012078.c",
+      "source": "games/gs1/src/map/set_cell_collision.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -7572,7 +7572,7 @@
     },
     {
       "en_owner": "0801219c",
-      "source": "games/gs1/src/0801219c.c",
+      "source": "games/gs1/src/map/check_position_cell_occupied.c",
       "size": 104,
       "status": "shared_core",
       "starts": {
@@ -7602,7 +7602,7 @@
     },
     {
       "en_owner": "08012204",
-      "source": "games/gs1/src/08012204.c",
+      "source": "games/gs1/src/map/get_world_map_collision.c",
       "size": 168,
       "status": "shared_core",
       "starts": {
@@ -7632,7 +7632,7 @@
     },
     {
       "en_owner": "080122ac",
-      "source": "games/gs1/src/080122ac.c",
+      "source": "games/gs1/src/map/check_world_map_collision_range.c",
       "size": 26,
       "status": "shared_core",
       "starts": {
@@ -7662,7 +7662,7 @@
     },
     {
       "en_owner": "080122c8",
-      "source": "games/gs1/src/080122c8.c",
+      "source": "games/gs1/src/map/get_world_map_terrain_behavior.c",
       "size": 104,
       "status": "shared_core",
       "starts": {
@@ -13182,7 +13182,7 @@
     },
     {
       "en_owner": "08026e80",
-      "source": "games/gs1/src/08026e80.c",
+      "source": "games/gs1/src/link/update_session_countdown.c",
       "size": 296,
       "status": "shared_core",
       "starts": {
@@ -16092,7 +16092,7 @@
     },
     {
       "en_owner": "08079bc4",
-      "source": "games/gs1/src/08079bc4.c",
+      "source": "games/gs1/src/battle/random_16.c",
       "size": 36,
       "status": "shared_core",
       "starts": {
@@ -16122,7 +16122,7 @@
     },
     {
       "en_owner": "08079be8",
-      "source": "games/gs1/src/08079be8.c",
+      "source": "games/gs1/src/battle/random_percent.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -16272,7 +16272,7 @@
     },
     {
       "en_owner": "08079cbc",
-      "source": "games/gs1/src/08079cbc.c",
+      "source": "games/gs1/src/item/get_unleash_rate_bonus.c",
       "size": 94,
       "status": "shared_core",
       "starts": {
@@ -16302,7 +16302,7 @@
     },
     {
       "en_owner": "08079d1c",
-      "source": "games/gs1/src/08079d1c.c",
+      "source": "games/gs1/src/item/roll_weapon_unleash.c",
       "size": 96,
       "status": "shared_core",
       "starts": {
@@ -16332,7 +16332,7 @@
     },
     {
       "en_owner": "08079d7c",
-      "source": "games/gs1/src/08079d7c.c",
+      "source": "games/gs1/src/battle/effects/get_base_success_rate.c",
       "size": 288,
       "status": "shared_core",
       "starts": {
@@ -16362,7 +16362,7 @@
     },
     {
       "en_owner": "08079e9c",
-      "source": "games/gs1/src/08079e9c.c",
+      "source": "games/gs1/src/battle/effects/target_is_weak.c",
       "size": 92,
       "status": "shared_core",
       "starts": {
@@ -16392,7 +16392,7 @@
     },
     {
       "en_owner": "08079ef8",
-      "source": "games/gs1/src/08079ef8.c",
+      "source": "games/gs1/src/battle/effects/is_revive.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -16422,7 +16422,7 @@
     },
     {
       "en_owner": "08079f10",
-      "source": "games/gs1/src/08079f10.c",
+      "source": "games/gs1/src/battle/effects/roll_success.c",
       "size": 444,
       "status": "shared_core",
       "starts": {
@@ -17472,7 +17472,7 @@
     },
     {
       "en_owner": "0808bd24",
-      "source": "games/gs1/src/0808bd24.c",
+      "source": "games/gs1/src/map/get_focused_object_collision.c",
       "size": 188,
       "status": "shared_core",
       "starts": {
@@ -17502,7 +17502,7 @@
     },
     {
       "en_owner": "0808bde0",
-      "source": "games/gs1/src/0808bde0.c",
+      "source": "games/gs1/src/map/update_region_at_position.c",
       "size": 224,
       "status": "shared_core",
       "starts": {
@@ -23622,7 +23622,7 @@
     },
     {
       "en_owner": "080984c0",
-      "source": "games/gs1/src/battle/effects/series_02/reset.c",
+      "source": "games/gs1/src/battle/effects/scene_transition/reset.c",
       "size": 232,
       "status": "shared_core",
       "starts": {
@@ -23652,7 +23652,7 @@
     },
     {
       "en_owner": "080985a8",
-      "source": "games/gs1/src/battle/effects/series_12/run_main_object.c",
+      "source": "games/gs1/src/battle/effects/burst_particles/run_main_object.c",
       "size": 84,
       "status": "shared_core",
       "starts": {
@@ -23682,7 +23682,7 @@
     },
     {
       "en_owner": "080985fc",
-      "source": "games/gs1/src/battle/effects/series_12/run.c",
+      "source": "games/gs1/src/battle/effects/burst_particles/run.c",
       "size": 156,
       "status": "shared_core",
       "starts": {
@@ -23832,7 +23832,7 @@
     },
     {
       "en_owner": "08099018",
-      "source": "games/gs1/src/battle/effects/series_06/update_main.c",
+      "source": "games/gs1/src/battle/effects/orbiting_particles/update_main.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -23862,7 +23862,7 @@
     },
     {
       "en_owner": "08099040",
-      "source": "games/gs1/src/battle/effects/series_06/update_fade.c",
+      "source": "games/gs1/src/battle/effects/orbiting_particles/update_fade.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -23892,7 +23892,7 @@
     },
     {
       "en_owner": "08099070",
-      "source": "games/gs1/src/battle/effects/series_06/update_orbit_left.c",
+      "source": "games/gs1/src/battle/effects/orbiting_particles/update_orbit_left.c",
       "size": 92,
       "status": "shared_core",
       "starts": {
@@ -23922,7 +23922,7 @@
     },
     {
       "en_owner": "080990cc",
-      "source": "games/gs1/src/battle/effects/series_06/update_orbit_right.c",
+      "source": "games/gs1/src/battle/effects/orbiting_particles/update_orbit_right.c",
       "size": 92,
       "status": "shared_core",
       "starts": {
@@ -23952,7 +23952,7 @@
     },
     {
       "en_owner": "08099128",
-      "source": "games/gs1/src/battle/effects/series_06/start.c",
+      "source": "games/gs1/src/battle/effects/orbiting_particles/start.c",
       "size": 56,
       "status": "shared_core",
       "starts": {
@@ -23982,7 +23982,7 @@
     },
     {
       "en_owner": "08099160",
-      "source": "games/gs1/src/battle/effects/series_06/run.c",
+      "source": "games/gs1/src/battle/effects/orbiting_particles/run.c",
       "size": 400,
       "status": "shared_core",
       "starts": {
@@ -36042,7 +36042,7 @@
     },
     {
       "en_owner": "080d9ab8",
-      "source": "games/gs1/src/battle/effects/series_c/mode_0.c",
+      "source": "games/gs1/src/battle/effects/palette_ramp/mode_0.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36072,7 +36072,7 @@
     },
     {
       "en_owner": "080d9ac4",
-      "source": "games/gs1/src/battle/effects/series_c/mode_1.c",
+      "source": "games/gs1/src/battle/effects/palette_ramp/mode_1.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36102,7 +36102,7 @@
     },
     {
       "en_owner": "080d9ad0",
-      "source": "games/gs1/src/battle/effects/series_c/mode_2.c",
+      "source": "games/gs1/src/battle/effects/palette_ramp/mode_2.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36132,7 +36132,7 @@
     },
     {
       "en_owner": "080d9adc",
-      "source": "games/gs1/src/battle/effects/series_c/mode_3.c",
+      "source": "games/gs1/src/battle/effects/palette_ramp/mode_3.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36192,7 +36192,7 @@
     },
     {
       "en_owner": "080db6c8",
-      "source": "games/gs1/src/battle/effects/series_h/mode_1.c",
+      "source": "games/gs1/src/battle/effects/particle_field/mode_1.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36222,7 +36222,7 @@
     },
     {
       "en_owner": "080db6d4",
-      "source": "games/gs1/src/battle/effects/series_h/mode_0.c",
+      "source": "games/gs1/src/battle/effects/particle_field/mode_0.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -40152,7 +40152,7 @@
     },
     {
       "en_owner": "080fb518",
-      "source": "games/gs1/src/080fb518.c",
+      "source": "games/gs1/src/audio/execute_memory_access_command.c",
       "size": 344,
       "status": "shared_core",
       "starts": {

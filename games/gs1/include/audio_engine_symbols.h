@@ -42,5 +42,6 @@
 #define Cgb_KeyToFrequency                 Func_080facf8
 #define Cgb_StopOscillator                 Func_080fada0
 #define CgbChannel_UpdatePanEnvelope       Func_080fadf0
+#define MusicPlayer_ExecuteMemoryAccessCommand Func_080fb518
 
 #endif

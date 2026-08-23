@@ -1,4 +1,5 @@
 #include "types.h"
+#include "resource.h"
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
@@ -7,7 +8,6 @@ extern u8 Data_000000e8[];
 
 void Func_080b0020(void *);
 void Func_080b0028(void *);
-s32 Func_08002f40(s32);
 s32 Func_08003fa4(s32, s32, s32);
 void Func_080217a4(void *);
 
@@ -33,7 +33,7 @@ void Func_0801cf48(void)
     Func_08003fa4(
         FIELD(FIELD(base, void *, 0x5B4), u8, 14),
         0x100,
-        Func_08002f40(first_source));
+        (s32)GetResource(first_source));
 
     if (selection == 1) {
         second_source = (FIELD(base, u16, 0x57C) & 7) +
@@ -44,7 +44,7 @@ void Func_0801cf48(void)
     Func_08003fa4(
         FIELD(FIELD(base, void *, 0x5C4), u8, 14),
         0x100,
-        Func_08002f40(second_source));
+        (s32)GetResource(second_source));
 
     if (selection > 1) {
         s32 index = selection * 3;

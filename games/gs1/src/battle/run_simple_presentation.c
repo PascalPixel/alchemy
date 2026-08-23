@@ -1,4 +1,5 @@
 #include "types.h"
+#include "fixed_math.h"
 
 struct SimplePresentationInput {
     u8 primary_id;
@@ -42,7 +43,7 @@ struct MotionRecord {
 extern s32 *Data_03001f00;
 
 struct PresentationObjectSlot *Func_080b7dd0(s32 id);
-s32 Func_080044d0(s32 first, s32 second);
+s32 ArcTan2(s32 first, s32 second);
 void Func_080030f8(s32 frames);
 void Func_080c10e8(s32 first, s32 second);
 void Func_080b9d34(void *input, struct BattlePresentationWork *work);
@@ -79,7 +80,7 @@ s32 RunSimpleBattlePresentation(struct SimplePresentationInput *input, s32 flags
     object = Func_080b7dd0(saved_input->primary_id)->object;
     second_coordinate = object->z;
     first_coordinate = object->x;
-    angle = (u16)Func_080044d0(first_coordinate, second_coordinate);
+    angle = (u16)ArcTan2(first_coordinate, second_coordinate);
     adjusted = angle - 0x2000;
     if (saved_input->primary_id > 7)
         adjusted = angle + 0x6000;

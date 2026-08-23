@@ -1,3 +1,4 @@
+#include "fixed_math.h"
 #include "types.h"
 #include "battle_msg.h"
 
@@ -29,9 +30,9 @@ extern s32 *Data_03001f00;
 void Func_080030f8(u32);
 s32 Func_080b8808(u32);
 void Func_08077008(s32);
-u32 Func_08004458(void);
+u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Func_08004458
+#define Rand Random16
 void Func_08015120(s32, s32);
 void Func_080151c8(s32);
 void Func_080b82c4(s32, s32, s32, s32);

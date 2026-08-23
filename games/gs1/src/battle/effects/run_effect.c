@@ -24,31 +24,31 @@ extern struct BattleEffectRequest *Data_03001f30;
 extern struct BattleEffectGlobals Data_02000240;
 
 #define RunBattleEffect01 Func_0809802c
-#define RunBattleEffect02 Func_08097540
+#define RunSceneTransitionEffect Func_08097540
 #define RunBattleEffect03 Func_080994d0
 #define RunBattleEffect04 Func_08098cd8
 #define RunBattleEffect05 Func_080999f0
-#define RunBattleEffect06 Func_08099160
+#define RunOrbitingParticleEffect Func_08099160
 #define RunBattleEffect07 Func_08098954
 #define RunBattleEffect08 Func_080983a0
 #define RunBattleEffect10 Func_08099838
 #define RunBattleEffect11 Func_0809a294
-#define RunBattleEffect12 Func_080985fc
+#define RunBurstParticleEffect Func_080985fc
 #define RunBattleEffect13 Func_0809ae64
 #define RunBattleEffect14 Func_0809a8c4
 #define RunBattleEffect15 Func_0809b208
 #define RunBattleEffect16 Func_0809b698
 void RunBattleEffect01(void);
-void RunBattleEffect02(s32 sourceId, s32 targetId);
+void RunSceneTransitionEffect(s32 sourceId, s32 targetId);
 void RunBattleEffect03(void);
 void RunBattleEffect04(void);
 void RunBattleEffect05(void);
-void RunBattleEffect06(void);
+void RunOrbitingParticleEffect(void);
 void RunBattleEffect07(void);
 void RunBattleEffect08(void);
 void RunBattleEffect10(void);
 void RunBattleEffect11(void);
-void RunBattleEffect12(void);
+void RunBurstParticleEffect(void);
 void RunBattleEffect13(void);
 void RunBattleEffect14(void);
 void RunBattleEffect15(void);
@@ -61,8 +61,8 @@ void Func_080970f8(s32 selectedObject, s32 objectId);
 void Func_0809ab98(s32 objectId);
 void Func_0809ad90(s32 objectId);
 void Func_0809abb4(void);
-#define ResetBattleEffect02 Func_080984c0
-void ResetBattleEffect02(void);
+#define ResetSceneTransitionEffect Func_080984c0
+void ResetSceneTransitionEffect(void);
 
 #define RunBattleEffect Func_08096810
 void RunBattleEffect(void)
@@ -98,13 +98,13 @@ void RunBattleEffect(void)
         RunBattleEffect14();
         return;
     case 6:
-        RunBattleEffect06();
+        RunOrbitingParticleEffect();
         return;
     case 3:
         RunBattleEffect03();
         return;
     case 12:
-        RunBattleEffect12();
+        RunBurstParticleEffect();
         return;
     case 13:
         RunBattleEffect13();
@@ -128,8 +128,8 @@ void RunBattleEffect(void)
         return;
     case 2:
         if (battle->active != 0)
-            ResetBattleEffect02();
-        RunBattleEffect02(request->sourceId, targetId);
+            ResetSceneTransitionEffect();
+        RunSceneTransitionEffect(request->sourceId, targetId);
         return;
     case 8:
         RunBattleEffect08();

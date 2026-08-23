@@ -1,4 +1,5 @@
 #include "object_lookup.h"
+#include "fixed_math.h"
 #include "types.h"
 
 struct Object_0809280c {
@@ -9,7 +10,7 @@ struct Object_0809280c {
     s32 x;
 };
 
-s32 Func_080044d0(s32, s32);
+s32 ArcTan2(s32, s32);
 void Func_0809163c(s32 arg0);
 
 void Func_0809280c(s32 arg0, s32 arg1, s32 arg2)
@@ -20,7 +21,7 @@ void Func_0809280c(s32 arg0, s32 arg1, s32 arg2)
     object1 = GetObject(arg0);
     object2 = GetObject(arg1);
     if (object1 != 0 && object2 != 0) {
-        object1->angle = Func_080044d0(object2->x - object1->x,
+        object1->angle = ArcTan2(object2->x - object1->x,
                                       object2->y - object1->y);
         Func_0809163c(arg2);
     }

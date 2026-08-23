@@ -1,10 +1,11 @@
 #include "effect_runtime.h"
 #include "object_lookup.h"
 #include "global_cells.h"
+#include "fixed_math.h"
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-s32 Func_080044d0(s32, s32);
+s32 ArcTan2(s32, s32);
 void Func_0800447c(s32, u16, void *);
 
 struct GlobalData {
@@ -55,7 +56,7 @@ loop:
             FIELD(object, s32, 8) = x_offset + center;
             FIELD(object, s32, 0x10) = y_offset + center;
             Func_0800447c(0x140000,
-                          (u16)Func_080044d0(relativeY, relativeX),
+                          (u16)ArcTan2(relativeY, relativeX),
                           object + 8);
             FIELD(object, s32, 0x38) = 0x80000000;
             FIELD(object, s32, 0x3C) = 0x80000000;

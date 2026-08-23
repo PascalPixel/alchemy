@@ -1,3 +1,4 @@
+#include "fixed_math.h"
 #include "types.h"
 
 struct Position_0809aa98 {
@@ -32,9 +33,9 @@ struct Effect_0809aa98 {
 
 extern struct Camera_0809aa98 *Data_03001f30;
 
-extern u32 Func_08004458(void);
+extern u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Func_08004458
+#define Rand Random16
 extern void Func_0800447c(s32, s32, struct Position_0809aa98 *);
 extern void Func_080974d8(struct Position_0809aa98 *);
 extern s32 Func_0809ba34(struct Effect_0809aa98 *);

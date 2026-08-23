@@ -119,5 +119,10 @@ s32 Func_08078ad0(s32 item, s32 delta);
 #define Item_GetTargetMode         Func_08078a8c
 #define ItemCounter_Adjust         Func_08078aa0
 #define Item_AdjustCounter         Func_08078ad0
+#define Equipment_GetUnleashRateBonus Func_08079cbc
+#define RollWeaponUnleash             Func_08079d1c
+
+s32 Equipment_GetUnleashRateBonus(s32 owner);
+u16 RollWeaponUnleash(void *owner);
 
 #endif

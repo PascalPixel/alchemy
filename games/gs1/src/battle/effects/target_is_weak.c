@@ -1,0 +1,49 @@
+#include "types.h"
+#include "battle_effect_chance.h"
+#include "runtime_interfaces.h"
+
+s32 Func_08079ad8(s32 arg0);
+
+s32 BattleTarget_IsWeakToEffect(const u8 *state, s32 effect_id)
+{
+    u8 *entries;
+    const u8 *field;
+    s32 index;
+    s32 offset = 0x129;
+    s32 value;
+
+    field = state + offset;
+    if (*field == 0) {
+        offset--;
+        field = state + offset;
+        entries = (u8 *)Func_080773d8(*field) + 0x48;
+        index = 0;
+first_loop:
+        if (*entries != effect_id) {
+            index++;
+            entries++;
+            if (index > 2) {
+                goto not_found;
+            }
+            goto first_loop;
+        }
+        goto found;
+    }
+
+    offset = 0x129;
+    field = state + offset;
+    entries = Func_08079ad8(*field) + 0x50;
+    index = 0;
+second_loop:
+    value = *entries++;
+    if (value == effect_id) {
+found:
+        return 1;
+    }
+    index++;
+    if (index > 2) {
+not_found:
+        return 0;
+    }
+    goto second_loop;
+}

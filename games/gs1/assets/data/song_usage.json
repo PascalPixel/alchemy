@@ -507,7 +507,7 @@
     },
     {
       "song_id": 126,
-      "symbol": "sound_126",
+      "symbol": "sound_recovery",
       "name": null,
       "evidence": "9 call site(s) pass id=126 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0808c30c, Func_0808d9a4, Func_080aa768 +5 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
     },
@@ -555,7 +555,7 @@
     },
     {
       "song_id": 134,
-      "symbol": "sound_134",
+      "symbol": "sound_heavy_impact",
       "name": null,
       "evidence": "17 call site(s) pass id=134 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0808c30c, Func_08095c08, Func_080985fc +14 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
     },
@@ -753,7 +753,7 @@
     },
     {
       "song_id": 167,
-      "symbol": "sound_167",
+      "symbol": "sound_scene_transition",
       "name": null,
       "evidence": "1 call site(s) pass id=167 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080984c0; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
     },

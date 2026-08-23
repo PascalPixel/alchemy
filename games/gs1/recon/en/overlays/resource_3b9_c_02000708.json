@@ -1,0 +1,26 @@
+{
+  "owner": "resource_3b9:0708",
+  "span_bytes": 942,
+  "semantic_name": "RunEventScript01",
+  "score": {
+    "measured": "2026-08-23",
+    "candidate_bytes": 876,
+    "reference_bytes": 942,
+    "wrong_instructions": 119,
+    "differing_halfwords": 426,
+    "class": "generated-call-script-retention"
+  },
+  "shape": {
+    "calls": 101,
+    "loops": 0,
+    "memory_operations": 1,
+    "reference_high_register_moves": 0
+  },
+  "verified_against_reference": [
+    "complete deterministic reconstruction accounts for all 101 calls and their argument values, 0 loops, and 1 explicit memory operations",
+    "the ROM owner contains no high-register moves; approved GCC CSE and allocation introduce high-register carriers or otherwise change the owner extent",
+    "the default route plus -O0, -O1, -O3, -Os, -fno-gcse, and -fno-cse-follow-jumps produced zero exact emissions"
+  ],
+  "retention": "keep_structured_asm",
+  "note": "A generated event-call script, retained as structured assembly because the approved compiler cannot preserve its repeated immediate construction and call-argument schedule."
+}

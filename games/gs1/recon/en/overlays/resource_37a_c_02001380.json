@@ -1,7 +1,7 @@
 {
   "owner": "resource_37a:1380",
   "span_bytes": 400,
-  "semantic_name": "StartSolTempleTrapEvent",
+  "semantic_name": "StartSolShindenTrapEvent",
   "score": {
     "measured": "2026-08-23",
     "candidate_bytes": 400,
@@ -11,7 +11,7 @@
     "class": "ordering"
   },
   "expressed": [
-    "Sol Temple trap-event setup",
+    "Sol Shinden trap-event setup",
     "all five paired effect loops",
     "scene-state writes at offsets 448 and 456"
   ],

@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global RunBattleEffect01
 	.global Func_0809802c
 	.thumb_func
+RunBattleEffect01:
 Func_0809802c:
 	push	{r5, lr}
 	ldr	r3, [pc, #60]

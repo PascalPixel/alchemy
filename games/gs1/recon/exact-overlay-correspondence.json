@@ -8497,7 +8497,7 @@
     },
     {
       "en_owner": "resource_37a:0x02000030",
-      "source": "games/gs1/src/overlays/sol_temple/get_script_data.c",
+      "source": "games/gs1/src/overlays/sol_shinden/get_script_data.c",
       "resource": "resource_37a",
       "size": 8,
       "core_bytes": 4,
@@ -8529,7 +8529,7 @@
     },
     {
       "en_owner": "resource_37a:0x02000038",
-      "source": "games/gs1/src/overlays/sol_temple/get_initial_state.c",
+      "source": "games/gs1/src/overlays/sol_shinden/get_initial_state.c",
       "resource": "resource_37a",
       "size": 4,
       "core_bytes": 4,
@@ -8561,7 +8561,7 @@
     },
     {
       "en_owner": "resource_37a:0x0200003c",
-      "source": "games/gs1/src/overlays/sol_temple/get_message_data.c",
+      "source": "games/gs1/src/overlays/sol_shinden/get_message_data.c",
       "resource": "resource_37a",
       "size": 8,
       "core_bytes": 4,
@@ -8593,7 +8593,7 @@
     },
     {
       "en_owner": "resource_37a:0x02000044",
-      "source": "games/gs1/src/overlays/sol_temple/get_actor_data.c",
+      "source": "games/gs1/src/overlays/sol_shinden/get_actor_data.c",
       "resource": "resource_37a",
       "size": 8,
       "core_bytes": 4,
@@ -8625,7 +8625,7 @@
     },
     {
       "en_owner": "resource_37a:0x0200004c",
-      "source": "games/gs1/src/overlays/sol_temple/get_effect_data.c",
+      "source": "games/gs1/src/overlays/sol_shinden/get_effect_data.c",
       "resource": "resource_37a",
       "size": 8,
       "core_bytes": 4,
@@ -8657,7 +8657,7 @@
     },
     {
       "en_owner": "resource_37a:0x02000054",
-      "source": "games/gs1/src/overlays/sol_temple/init.c",
+      "source": "games/gs1/src/overlays/sol_shinden/init.c",
       "resource": "resource_37a",
       "size": 180,
       "core_bytes": 72,
@@ -8689,7 +8689,7 @@
     },
     {
       "en_owner": "resource_37a:0x02000108",
-      "source": "games/gs1/src/overlays/sol_temple/init_luna_room.c",
+      "source": "games/gs1/src/overlays/sol_shinden/init_luna_room.c",
       "resource": "resource_37a",
       "size": 72,
       "core_bytes": 32,
@@ -8721,7 +8721,7 @@
     },
     {
       "en_owner": "resource_37a:0x02000150",
-      "source": "games/gs1/src/overlays/sol_temple/init_sol_room.c",
+      "source": "games/gs1/src/overlays/sol_shinden/init_sol_room.c",
       "resource": "resource_37a",
       "size": 156,
       "core_bytes": 64,
@@ -8753,7 +8753,7 @@
     },
     {
       "en_owner": "resource_37a:0x020001ec",
-      "source": "games/gs1/src/overlays/sol_temple/init_center_statue.c",
+      "source": "games/gs1/src/overlays/sol_shinden/init_center_statue.c",
       "resource": "resource_37a",
       "size": 64,
       "core_bytes": 28,
@@ -8785,7 +8785,7 @@
     },
     {
       "en_owner": "resource_37a:0x0200022c",
-      "source": "games/gs1/src/overlays/sol_temple/clear_backdrop.c",
+      "source": "games/gs1/src/overlays/sol_shinden/clear_backdrop.c",
       "resource": "resource_37a",
       "size": 10,
       "core_bytes": 10,
@@ -8817,7 +8817,7 @@
     },
     {
       "en_owner": "resource_37a:0x02000238",
-      "source": "games/gs1/src/overlays/sol_temple/set_light_group_1.c",
+      "source": "games/gs1/src/overlays/sol_shinden/set_light_group_1.c",
       "resource": "resource_37a",
       "size": 148,
       "core_bytes": 100,
@@ -8849,7 +8849,7 @@
     },
     {
       "en_owner": "resource_37a:0x020002cc",
-      "source": "games/gs1/src/overlays/sol_temple/set_light_group_2.c",
+      "source": "games/gs1/src/overlays/sol_shinden/set_light_group_2.c",
       "resource": "resource_37a",
       "size": 148,
       "core_bytes": 100,
@@ -8881,7 +8881,7 @@
     },
     {
       "en_owner": "resource_37a:0x02000360",
-      "source": "games/gs1/src/overlays/sol_temple/set_light_group_3.c",
+      "source": "games/gs1/src/overlays/sol_shinden/set_light_group_3.c",
       "resource": "resource_37a",
       "size": 148,
       "core_bytes": 100,
@@ -8913,7 +8913,7 @@
     },
     {
       "en_owner": "resource_37a:0x020003f4",
-      "source": "games/gs1/src/overlays/sol_temple/set_light_group_4.c",
+      "source": "games/gs1/src/overlays/sol_shinden/set_light_group_4.c",
       "resource": "resource_37a",
       "size": 148,
       "core_bytes": 100,
@@ -8945,7 +8945,7 @@
     },
     {
       "en_owner": "resource_37a:0x02000c00",
-      "source": "games/gs1/src/overlays/sol_temple/update_trap_actor.c",
+      "source": "games/gs1/src/overlays/sol_shinden/update_trap_actor.c",
       "resource": "resource_37a",
       "size": 412,
       "core_bytes": 248,
@@ -8977,7 +8977,7 @@
     },
     {
       "en_owner": "resource_37a:0x02000d9c",
-      "source": "games/gs1/src/overlays/sol_temple/update_light_1.c",
+      "source": "games/gs1/src/overlays/sol_shinden/update_light_1.c",
       "resource": "resource_37a",
       "size": 348,
       "core_bytes": 284,
@@ -9009,7 +9009,7 @@
     },
     {
       "en_owner": "resource_37a:0x02000ef8",
-      "source": "games/gs1/src/overlays/sol_temple/update_light_2.c",
+      "source": "games/gs1/src/overlays/sol_shinden/update_light_2.c",
       "resource": "resource_37a",
       "size": 292,
       "core_bytes": 240,
@@ -9041,7 +9041,7 @@
     },
     {
       "en_owner": "resource_37a:0x0200101c",
-      "source": "games/gs1/src/overlays/sol_temple/update_light_3.c",
+      "source": "games/gs1/src/overlays/sol_shinden/update_light_3.c",
       "resource": "resource_37a",
       "size": 292,
       "core_bytes": 240,
@@ -9073,7 +9073,7 @@
     },
     {
       "en_owner": "resource_37a:0x02001140",
-      "source": "games/gs1/src/overlays/sol_temple/update_light_4.c",
+      "source": "games/gs1/src/overlays/sol_shinden/update_light_4.c",
       "resource": "resource_37a",
       "size": 292,
       "core_bytes": 240,
@@ -9105,7 +9105,7 @@
     },
     {
       "en_owner": "resource_37a:0x02001a58",
-      "source": "games/gs1/src/overlays/sol_temple/run_trap_event.c",
+      "source": "games/gs1/src/overlays/sol_shinden/run_trap_event.c",
       "resource": "resource_37a",
       "size": 400,
       "core_bytes": 212,
@@ -9137,7 +9137,7 @@
     },
     {
       "en_owner": "resource_37a:0x020025b0",
-      "source": "games/gs1/src/overlays/sol_temple/check_all_lights.c",
+      "source": "games/gs1/src/overlays/sol_shinden/check_all_lights.c",
       "resource": "resource_37a",
       "size": 76,
       "core_bytes": 44,
@@ -9169,7 +9169,7 @@
     },
     {
       "en_owner": "resource_37a:0x020025fc",
-      "source": "games/gs1/src/overlays/sol_temple/set_actor_step.c",
+      "source": "games/gs1/src/overlays/sol_shinden/set_actor_step.c",
       "resource": "resource_37a",
       "size": 22,
       "core_bytes": 14,

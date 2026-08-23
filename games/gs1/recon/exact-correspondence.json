@@ -22662,7 +22662,7 @@
     },
     {
       "en_owner": "08096810",
-      "source": "games/gs1/src/08096810.c",
+      "source": "games/gs1/src/battle/effects/run_effect.c",
       "size": 336,
       "status": "shared_core",
       "starts": {
@@ -23622,7 +23622,7 @@
     },
     {
       "en_owner": "080984c0",
-      "source": "games/gs1/src/080984c0.c",
+      "source": "games/gs1/src/battle/effects/series_02/reset.c",
       "size": 232,
       "status": "shared_core",
       "starts": {
@@ -23652,7 +23652,7 @@
     },
     {
       "en_owner": "080985a8",
-      "source": "games/gs1/src/080985a8.c",
+      "source": "games/gs1/src/battle/effects/series_12/run_main_object.c",
       "size": 84,
       "status": "shared_core",
       "starts": {
@@ -23682,7 +23682,7 @@
     },
     {
       "en_owner": "080985fc",
-      "source": "games/gs1/src/080985fc.c",
+      "source": "games/gs1/src/battle/effects/series_12/run.c",
       "size": 156,
       "status": "shared_core",
       "starts": {
@@ -23832,7 +23832,7 @@
     },
     {
       "en_owner": "08099018",
-      "source": "games/gs1/src/08099018.c",
+      "source": "games/gs1/src/battle/effects/series_06/update_main.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -23862,7 +23862,7 @@
     },
     {
       "en_owner": "08099040",
-      "source": "games/gs1/src/08099040.c",
+      "source": "games/gs1/src/battle/effects/series_06/update_fade.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -23892,7 +23892,7 @@
     },
     {
       "en_owner": "08099070",
-      "source": "games/gs1/src/08099070.c",
+      "source": "games/gs1/src/battle/effects/series_06/update_orbit_left.c",
       "size": 92,
       "status": "shared_core",
       "starts": {
@@ -23922,7 +23922,7 @@
     },
     {
       "en_owner": "080990cc",
-      "source": "games/gs1/src/080990cc.c",
+      "source": "games/gs1/src/battle/effects/series_06/update_orbit_right.c",
       "size": 92,
       "status": "shared_core",
       "starts": {
@@ -23952,7 +23952,7 @@
     },
     {
       "en_owner": "08099128",
-      "source": "games/gs1/src/08099128.c",
+      "source": "games/gs1/src/battle/effects/series_06/start.c",
       "size": 56,
       "status": "shared_core",
       "starts": {
@@ -23982,7 +23982,7 @@
     },
     {
       "en_owner": "08099160",
-      "source": "games/gs1/src/08099160.c",
+      "source": "games/gs1/src/battle/effects/series_06/run.c",
       "size": 400,
       "status": "shared_core",
       "starts": {

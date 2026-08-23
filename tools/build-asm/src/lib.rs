@@ -75,6 +75,7 @@ struct ClassificationRule {
     expected_files: usize,
     expected_bytes: usize,
     files: Option<Vec<String>>,
+    matcher: Option<String>,
 }
 
 impl ClassificationRule {
@@ -304,6 +305,26 @@ fn load_classification(path: &Path) -> Result<ClassificationConfig, String> {
             config.format
         ));
     }
+    for rule in &config.structural {
+        if rule.files.is_some() || rule.matcher.is_some() {
+            return Err(format!(
+                "{}: structural rules cannot name sources",
+                rule.kind
+            ));
+        }
+    }
+    for rule in &config.groups {
+        match (rule.files.as_deref(), rule.matcher.as_deref()) {
+            (Some(files), None) if !files.is_empty() => {}
+            (None, Some("thumb_multi_register")) => {}
+            _ => {
+                return Err(format!(
+                    "{}: invalid assembly classification rule",
+                    rule.kind
+                ))
+            }
+        }
+    }
     Ok(config)
 }
 
@@ -370,9 +391,30 @@ fn alignment_padding(data: &[u8]) -> bool {
     data == [0, 0]
 }
 
+fn thumb_multi_register(source: &str) -> bool {
+    source.lines().any(|line| {
+        let code = line.split('@').next().unwrap_or("");
+        let mut words = code.split_whitespace();
+        let mut mnemonic = words.next().unwrap_or("");
+        if mnemonic.ends_with(':') {
+            mnemonic = words.next().unwrap_or("");
+        }
+        if !matches!(mnemonic, "ldmia" | "stmia") {
+            return false;
+        }
+        let Some((_, registers)) = code.split_once('{') else {
+            return false;
+        };
+        registers
+            .split_once('}')
+            .is_some_and(|(registers, _)| registers.contains(',') || registers.contains('-'))
+    })
+}
+
 fn classify(
     name: &str,
     data: &[u8],
+    source: &str,
     config: &ClassificationConfig,
     explicit: &BTreeMap<String, ClassificationRule>,
 ) -> Result<Classification, String> {
@@ -394,6 +436,14 @@ fn classify(
             .find(|rule| rule.kind == "alignment_padding")
             .map(ClassificationRule::classification)
             .ok_or_else(|| "missing alignment padding classification".into());
+    }
+    if thumb_multi_register(source) {
+        return config
+            .groups
+            .iter()
+            .find(|rule| rule.matcher.as_deref() == Some("thumb_multi_register"))
+            .map(ClassificationRule::classification)
+            .ok_or_else(|| "missing Thumb multi-register classification".into());
     }
     Ok(config.default.clone())
 }
@@ -514,6 +564,7 @@ fn valid_external(name: &str) -> bool {
 fn build_region(
     root: &Path,
     source: &Path,
+    source_bytes: &[u8],
     output_dir: &Path,
     cache_dir: &Path,
     run_address: Option<u64>,
@@ -526,11 +577,9 @@ fn build_region(
     let object = output_dir.join(format!("{name}.o"));
     let elf = output_dir.join(format!("{name}.elf"));
     let binary = output_dir.join(format!("{name}.bin"));
-    let source_bytes =
-        std::fs::read(source).map_err(|error| format!("{}: {error}", source.display()))?;
     let cached = cache_dir.join(format!(
         "{}.bin",
-        region_cache_key_with_signatures(&source_bytes, linked_address, binutils)?
+        region_cache_key_with_signatures(source_bytes, linked_address, binutils)?
     ));
     let record = cached.with_extension("record");
     if let Some(data) = read_region_cache(&cached, &record) {
@@ -739,9 +788,12 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
     for source in &sources {
         let source_name = relative(root, source);
         let placement = layout.get(&source_name);
+        let source_text = std::fs::read_to_string(source)
+            .map_err(|error| format!("{}: {error}", source.display()))?;
         let built = build_region(
             root,
             source,
+            source_text.as_bytes(),
             &output,
             &cache,
             placement.map(|item| item.run_address),
@@ -776,7 +828,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
             }
         }
         let name = stem(source);
-        let category = classify(&name, &built.data, &classification, &explicit)?;
+        let category = classify(&name, &built.data, &source_text, &classification, &explicit)?;
         let count = counts.entry(category.kind.clone()).or_default();
         count.files += 1;
         count.bytes += built.data.len();
@@ -877,4 +929,27 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
         bytes,
         counts: counts_text,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::thumb_multi_register;
+
+    #[test]
+    fn distinguishes_thumb_register_list_width() {
+        assert!(!thumb_multi_register("\tldmia\tr3!, {r2}\n"));
+        assert!(!thumb_multi_register("\tstmia\tr5!, {r0}\n"));
+        assert!(thumb_multi_register("\tldmia\tr3!, {r0, r1}\n"));
+        assert!(thumb_multi_register("\tstmia\tr5!, {r0, r1, r2}\n"));
+        assert!(thumb_multi_register("\tldmia\tr3!, {r0-r3}\n"));
+    }
+
+    #[test]
+    fn ignores_comments_and_data() {
+        assert!(!thumb_multi_register("@ stmia r5!, {r0, r1}\n"));
+        assert!(!thumb_multi_register("\t.ascii \"ldmia {r0, r1}\"\n"));
+        assert!(thumb_multi_register(
+            ".L_copy: stmia r5!, {r0, r1} @ copy two words\n"
+        ));
+    }
 }

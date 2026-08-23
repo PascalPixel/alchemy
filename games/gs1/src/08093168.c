@@ -6,7 +6,7 @@ struct State_08093168 {
 };
 
 extern struct State_08093168 *Data_03001ebc;
-extern s32 Func_08015038(s32, s32, s32, s32);
+extern s32 UiWork_Create(s32, s32, s32, s32);
 extern s32 Func_08015050(s32);
 extern void WaitFrames(s32);
 
@@ -34,7 +34,7 @@ void Func_08093168(s32 unused0, s32 unused1, s32 x, s32 y)
     if (adjustedY > 220)
         adjustedY = 220;
 
-    handle = Func_08015038(state->counter, adjustedX, adjustedY, 1);
+    handle = UiWork_Create(state->counter, adjustedX, adjustedY, 1);
     while (Func_08015050(handle) == 0)
         WaitFrames(1);
     state->counter++;

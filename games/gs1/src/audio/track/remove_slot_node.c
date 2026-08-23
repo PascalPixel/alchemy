@@ -1,6 +1,6 @@
 #include "types.h"
 
-void Func_080f7e34(s32 arg0) {
+void AudioTrack_RemoveSlotNode(s32 arg0) {
     s32 temp_r0;
     s32 temp_r1;
     s32 temp_r3;

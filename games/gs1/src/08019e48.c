@@ -2,7 +2,7 @@
 #include "global_cells.h"
 
 extern s32 Func_08019d2c();
-extern void Func_08016418(struct Work *work, s32 release);
+extern void UiWork_Finalize(struct Work *work, s32 release);
 
 void Func_08019e48(void)
 {
@@ -34,7 +34,7 @@ void Func_08019e48(void)
     for (i = 0; i != 8; i++, work += 36) {
         entity = *(u8 **)work;
         if (*(u8 *)(entity + 4) == 2 && *(u8 *)(entity + 14) == id) {
-            Func_08016418(work, 2);
+            UiWork_Finalize(work, 2);
             return;
         }
     }

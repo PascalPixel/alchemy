@@ -2,7 +2,7 @@
 #include "global_cells.h"
 
 s32 ScheduleCallback(s32);
-void Func_08016418(struct Work *work, s32 release);
+void UiWork_Finalize(struct Work *work, s32 release);
 void Func_0801c3e8(void)
 {
   void *new_var2;
@@ -16,7 +16,7 @@ void Func_0801c3e8(void)
   new_var3 = 0;
   if ((temp_r3 << 0x10) == new_var3)
   {
-    Func_08016418(*(new_var = (s32 *) (((u8 *) new_var2) + 0x230)), 2);
+    UiWork_Finalize(*(new_var = (s32 *) (((u8 *) new_var2) + 0x230)), 2);
     ScheduleCallback((s32)Func_0801c3e8);
   }
 }

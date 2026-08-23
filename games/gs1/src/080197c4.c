@@ -1,6 +1,6 @@
 #include "types.h"
 
-void Func_08016418(struct Work *work, s32 release);
+void UiWork_Finalize(struct Work *work, s32 release);
 void WaitFrames(u32);
 
 extern u8 *Data_03001e8c;
@@ -42,7 +42,7 @@ void Func_080197c4(void)
     do {
         work = slot->work;
         if (work != 0 && work->flag != 0)
-            Func_08016418(work, 0);
+            UiWork_Finalize(work, 0);
         index++;
         slot++;
     } while (index != 3);
@@ -75,7 +75,7 @@ poll:
     goto directTest;
 directLoop:
     if (direct->flag != 0)
-        Func_08016418(direct, 0);
+        UiWork_Finalize(direct, 0);
     direct++;
     index++;
 directTest:

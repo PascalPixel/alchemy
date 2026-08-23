@@ -29,7 +29,7 @@ s32 Func_0808e5d8(s32 packedEffect)
     index = packedEffect & 0x3FF;
     mode = ((u32)packedEffect >> 10) & 0xF;
     object = Ability_GetData(index)[0xC];
-    Func_0808ba1c(Data_02000240.selected_object);
+    GetObject(Data_02000240.selected_object);
     first = (void *)Func_0808e4b4(0x30000005, object, &output);
     second = (void *)Func_0808e4b4(0x20000005, object, &output);
     Func_08096fb0(index, 0);

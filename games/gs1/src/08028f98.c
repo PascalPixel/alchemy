@@ -16,7 +16,7 @@ struct Work;
 extern struct MenuDefaults Data_02000240;
 extern volatile u32 Data_03001ae8;
 
-struct Work *Func_080162d4(s32 kind, s32 x, s32 y, s32 width, s32 layer);
+struct Work *UiWindow_Create(s32 kind, s32 x, s32 y, s32 width, s32 layer);
 void Func_08028ef0(
     struct Work *work, s16 primary, const s16 *secondary);
 void Func_0801c0dc(struct TextObject *object, s32 *resource);
@@ -27,7 +27,7 @@ s16 Func_08029094(
     s16 *secondary,
     s16 *mode);
 void Func_0801c17c(s32 resource);
-void Func_08016418(struct Work *work, s32 release);
+void UiWork_Finalize(struct Work *work, s32 release);
 void Func_0808a238(s16 primary, s16 secondary);
 void Func_0801c154(struct TextObject *object, s32 x, s32 y);
 
@@ -45,7 +45,7 @@ s16 Func_08028f98(void)
     mode = 0;
     primary = Data_02000240.primary;
     secondary = Data_02000240.secondary;
-    work = Func_080162d4(0, 7, 30, 5, 2);
+    work = UiWindow_Create(0, 7, 30, 5, 2);
     Func_08028ef0(work, primary, &secondary);
     Func_0801c0dc(&object, &resource);
 
@@ -56,13 +56,13 @@ s16 Func_08028f98(void)
         result = Func_08029094(work, primary, &secondary, &mode);
         if (result == -1) {
             Func_0801c17c(resource);
-            Func_08016418(work, 2);
+            UiWork_Finalize(work, 2);
             Func_0808a238(primary, secondary);
             return result;
         }
         if (result == -2) {
             Func_0801c17c(resource);
-            Func_08016418(work, 2);
+            UiWork_Finalize(work, 2);
             return result;
         }
 

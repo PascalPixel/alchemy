@@ -72,5 +72,30 @@ typedef int bool;
 #define Ability_GetAvailability Func_08077248
 #define Shop_GetSelectionState Func_08077020
 #define UiText_DrawMessage Func_08015040
+#define UiText_DrawCharacter Func_0801e7c0
+#define Menu_LoadResourceSlot Func_0802875c
+#define GetBattleObjectSlot Func_080b7dd0
+#define GetMotionRecord Func_080b7f70
+#define ActivateBattleObjectSlot Func_080b7e60
+#define Object_GetById Func_08092054
+#define GetObject Func_0808ba1c
+#define BattleUnit_Recalculate Func_08077010
+#define UiWork_Finalize Func_08016418
+#define Actor_ResetMotionAtAnchor Func_080b8000
+#define UiText_ShowMessageAndWait Func_080151c8
+#define UiText_ShowMessageAndWaitCore Func_080175a0
+#define UiWork_FinalizePending Func_08015140
+#define UiWork_FinalizePendingCore Func_08019a54
+#define UiWork_Create Func_08015038
+#define UiWindow_Create Func_080162d4
+#define UiWindow_CreateFar Func_08015010
+#define UiWork_IsComplete Func_08017364
+#define UiWork_IsCompleteFar Func_08015048
+#define UiText_BuildRenderEntries Func_08018038
+#define UiText_PrepareMessageWork Func_080174f8
+#define AudioTrack_ResetSlotBuckets Func_080f7db4
+#define AudioTrack_InsertSlotNode Func_080f7df0
+#define AudioTrack_RemoveSlotNode Func_080f7e34
+#define AudioTrack_ConsumeSlotBytes Func_080f7e60
 
 #endif

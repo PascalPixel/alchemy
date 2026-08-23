@@ -1,7 +1,7 @@
 #include "types.h"
 
 extern s16 Data_02000240[];
-extern s32 Func_08092054(u32);
+extern s32 Object_GetById(u32);
 extern void Object_SetCallback(void *, void *);
 extern const u8 Data_0809fe00[];
 extern const u8 Data_0809fd44[];
@@ -32,7 +32,7 @@ void Func_08093a6c(s8 *object, s32 kind)
         break;
     case 5:
         index = 250;
-        *(s32 *)(object + 0x68) = Func_08092054(*(u32 *)&Data_02000240[index]);
+        *(s32 *)(object + 0x68) = Object_GetById(*(u32 *)&Data_02000240[index]);
         kind = (s32)Data_0809ff2c;
         break;
     case 6:

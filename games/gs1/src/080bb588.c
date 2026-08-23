@@ -1,8 +1,8 @@
 #include "types.h"
 
 u8 *Runtime_GetObject(s32);
-void Func_08077010(s32);
-s32 Func_080b7dd0(s32);
+void BattleUnit_Recalculate(s32);
+s32 GetBattleObjectSlot(s32);
 s32 Func_080b78e4(s32, s32);
 
 s32 Func_080bb588(s32 actor)
@@ -46,6 +46,6 @@ s32 Func_080bb588(s32 actor)
     state[0x147] = 0;
     state[0x148] = 0;
 
-    Func_08077010(actor);
-    return Func_080b78e4(actor, Func_080b7dd0(actor));
+    BattleUnit_Recalculate(actor);
+    return Func_080b78e4(actor, GetBattleObjectSlot(actor));
 }

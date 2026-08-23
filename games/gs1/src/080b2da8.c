@@ -3,7 +3,7 @@
 u8 *Runtime_GetObject(s32);
 void Func_08077128(s32);
 u8 *Item_GetData(u16);
-void Func_08077010(s32);
+void BattleUnit_Recalculate(s32);
 
 void Func_080b2da8(s32 id, s32 mode) {
     u8 *state;
@@ -29,7 +29,7 @@ void Func_080b2da8(s32 id, s32 mode) {
             if ((*entry & mask) != 0 &&
                 (Item_GetData(*entry)[3] & 1) != 0) {
                 *entry ^= mask;
-                Func_08077010(id);
+                BattleUnit_Recalculate(id);
             }
             i--;
             entry++;

@@ -3,7 +3,7 @@
 
 s32 Func_080a1814(void *menu);
 s32 Func_080a1870(s32, s32, s32, s32, s32);
-s32 Func_08015010(s32, s32, s32, s32, s32);
+s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 struct PsynergyMenuIcon *Func_080a1778(s32, s32, s32);
 void *Func_080150d8(s32, s32, s32, s32, s32, s32);
 struct PsynergyMenuIcon *Func_080150d0(s32, s32, s32, s32, s32);
@@ -22,7 +22,7 @@ void PsynergyMenu_CreateEntryGrid(void)
     window = Func_080a1814(menu);
     Func_080a1870(window, 2, 2, 8, 0);
 
-    window = Func_08015010(0, 5, 30, 15, 2);
+    window = UiWindow_CreateFar(0, 5, 30, 15, 2);
     menu->psynergy_window = window;
     menu->selected_column = 0;
     menu->selected_row = 0;

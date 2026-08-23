@@ -35,11 +35,11 @@ u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
 void UiText_DrawQuantity(s32, s32);
-void Func_080151c8(s32);
-struct ObjectSlot_080b8b48 *Func_080b7dd0(s32);
+void UiText_ShowMessageAndWait(s32);
+struct ObjectSlot_080b8b48 *GetBattleObjectSlot(s32);
 void Object_SetAction(void *, s32);
 void Func_080c9008(struct Work_080b8b48 *);
-void Func_080b8000(s32);
+void Actor_ResetMotionAtAnchor(s32);
 
 s32 Func_080b8b48(struct Input_080b8b48 *input)
 {
@@ -65,10 +65,10 @@ s32 Func_080b8b48(struct Input_080b8b48 *input)
     Runtime_GetObject(work.secondary_id);
     Rand();
     UiText_DrawQuantity(work.primary_id, 1);
-    Func_080151c8((s32)&Value_00000814);
+    UiText_ShowMessageAndWait((s32)&Value_00000814);
     BattleMotion_ApproachTarget(work.primary_id, work.secondary_id, 13, 0);
-    Object_SetAction(Func_080b7dd0(work.primary_id)->object, 16);
-    Func_080b7dd0(work.secondary_id);
+    Object_SetAction(GetBattleObjectSlot(work.primary_id)->object, 16);
+    GetBattleObjectSlot(work.secondary_id);
 
     work.count = 1;
     if ((u16)work.secondary_id <= 7)
@@ -79,7 +79,7 @@ s32 Func_080b8b48(struct Input_080b8b48 *input)
 
     WaitFrames(4);
     Func_080c9008(&work);
-    Func_080b8000(work.secondary_id);
-    Func_080b8000(work.primary_id);
+    Actor_ResetMotionAtAnchor(work.secondary_id);
+    Actor_ResetMotionAtAnchor(work.primary_id);
     return 0;
 }

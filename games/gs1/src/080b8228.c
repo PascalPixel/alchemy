@@ -1,7 +1,7 @@
 #include "types.h"
 #include "motion_object.h"
 
-struct BattleObjectSlot *Func_080b7dd0(s32 arg0);
+struct BattleObjectSlot *GetBattleObjectSlot(s32 arg0);
 u8 *Runtime_GetObject(s32);
 void Object_ResetMotion(struct MotionObject *);
 void Object_SetPosition(struct MotionObject *, s32, s32, s32);
@@ -22,7 +22,7 @@ void Func_080b8228(s32 id, s32 variant)
     s32 *table;
     s32 scale;
 
-    slot = Func_080b7dd0(id);
+    slot = GetBattleObjectSlot(id);
     object = slot->object;
     if (Runtime_GetObject(id)[0x128] != 0x94) {
         table = Data_080c59a4;

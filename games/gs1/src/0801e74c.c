@@ -2,7 +2,7 @@
 #include "global_cells.h"
 #include "gs1_edition.h"
 
-void Func_08018038(s32, s32);
+void UiText_BuildRenderEntries(s32, s32);
 void Func_08017aa4(u8 *, s32, s32, s32);
 
 void Func_0801e74c(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
@@ -13,7 +13,7 @@ void Func_0801e74c(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     s32 zero = 0;
 
     *counter = zero;
-    Func_08018038(arg0, 1);
+    UiText_BuildRenderEntries(arg0, 1);
     offset = *counter * 2 + RENDER_ENTRY_TBL_OFS;
     *(u16 *)(base + offset) = zero;
     *counter = (*counter + 1) & RENDER_ENTRY_MASK;

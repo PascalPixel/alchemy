@@ -15,7 +15,7 @@ extern struct BattlePresentationTransition *Data_03001f00;
 
 u8 *Runtime_GetObject(s32);
 void Func_08015118(void);
-void Func_080151c8(s32);
+void UiText_ShowMessageAndWait(s32);
 void WaitFrames(s32);
 s32 Func_080b8888(s16 *);
 s32 Func_080b8c1c(s16 *);
@@ -46,7 +46,7 @@ s32 BattlePresentation_RunAction(s16 *action)
 
     switch (action[3]) {
     case 99:
-        Func_080151c8((s32)&Value_00000843);
+        UiText_ShowMessageAndWait((s32)&Value_00000843);
         if (BattleEscape_PlayRun(action) != 0)
             return 1;
         break;

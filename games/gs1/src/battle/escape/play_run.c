@@ -9,7 +9,7 @@ u32 Random16(void);
 #define Rand Random16
 void WaitFrames(u32);
 void Func_080b8064(s32);
-void Func_080151c8(s32);
+void UiText_ShowMessageAndWait(s32);
 
 s32 BattleEscape_PlayRun(s16 *action)
 {
@@ -36,6 +36,6 @@ s32 BattleEscape_PlayRun(s16 *action)
         WaitFrames(22);
         return 1;
     }
-    Func_080151c8((s32)&Value_00000844);
+    UiText_ShowMessageAndWait((s32)&Value_00000844);
     return 0;
 }

@@ -1,13 +1,13 @@
 #include "types.h"
 
-s32 Func_080162d4(s32, s32, s32, s32, s32);
+s32 UiWindow_Create(s32, s32, s32, s32, s32);
 void Func_080292c4(s32, s32);
 void Func_0801c0dc(struct Object_0801c0dc *object, s32 *slot);
 void WaitFrames(s32);
 s32 Func_0802938c(s32, s32 *, s32 *);
 void Func_0801c154(struct Obj *obj, s32 arg1, s32 arg2);
 void Func_0801c17c(s32);
-void Func_08016418(struct Work *work, s32 release);
+void UiWork_Finalize(struct Work *work, s32 release);
 
 s32 Func_080291e4(void)
 {
@@ -22,7 +22,7 @@ s32 Func_080291e4(void)
     handle = 0;
     coordinate[0] = handle;
     coordinate[1] = handle;
-    handle = Func_080162d4(1, 0, 28, 20, 2);
+    handle = UiWindow_Create(1, 0, 28, 20, 2);
     Func_080292c4(handle, selection);
     Func_0801c0dc(object, &output);
     goto loop_test;
@@ -38,6 +38,6 @@ loop_test:
     if (event != -1)
         goto loop_body;
     Func_0801c17c(output);
-    Func_08016418(handle, 2);
+    UiWork_Finalize(handle, 2);
     return 0;
 }

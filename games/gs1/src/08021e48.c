@@ -1,7 +1,7 @@
 #include "types.h"
 
 void WaitFrames(s32);
-s32 Func_08017364(void);
+s32 UiWork_IsComplete(void);
 s32 Func_08017658(s32, s32, s32, s32);
 
 s32 Func_08021e48(s32 arg0, s32 arg1, s32 arg2) {
@@ -12,7 +12,7 @@ s32 Func_08021e48(s32 arg0, s32 arg1, s32 arg2) {
 again:
     WaitFrames(1);
 check:
-    if (Func_08017364() == 0) {
+    if (UiWork_IsComplete() == 0) {
         goto again;
     }
     return result;

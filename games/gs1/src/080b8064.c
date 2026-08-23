@@ -6,13 +6,13 @@
 s32 Object_SetMode(void *, s32);
 s32 Object_ResetMotion(void *);
 s32 Object_SetPosition(void *, s32, s32, s32);
-struct BattleObjectSlot *Func_080b7dd0(s32 object_id);
+struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id);
 
 void Func_080b8064(s32 object_id) {
     void *slot;
     void *object;
 
-    slot = Func_080b7dd0(object_id);
+    slot = GetBattleObjectSlot(object_id);
     object = M2C_FIELD(slot, void **, 0);
     M2C_FIELD(object, s32 *, 0x34) = 0x20000;
     M2C_FIELD(object, s32 *, 0x30) = 0x80000;

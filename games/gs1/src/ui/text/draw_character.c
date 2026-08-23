@@ -9,10 +9,10 @@ struct TextPosition_0801e7c0 {
 
 extern u8 *Data_03001e8c;
 
-s32 Func_08018038(s32 character, s32 count);
+s32 UiText_BuildRenderEntries(s32 character, s32 count);
 s32 Func_0801de5c(u16 *text, s32 map_address, s32 vram_address, s32 phase);
 
-void Func_0801e7c0(
+void UiText_DrawCharacter(
     s32 character,
     struct TextPosition_0801e7c0 *position,
     u32 offset_x,
@@ -30,7 +30,7 @@ void Func_0801e7c0(
     counter = (u16 *)(base + RENDER_ENTRY_COUNT_OFS);
     zero = 0;
     *counter = zero;
-    Func_08018038(character, 1);
+    UiText_BuildRenderEntries(character, 1);
 
     byte_offset = *counter * 2 + RENDER_ENTRY_TBL_OFS;
     *(u16 *)(base + byte_offset) = zero;

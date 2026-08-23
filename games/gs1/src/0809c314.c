@@ -1,7 +1,7 @@
 #include "object_lookup.h"
 #include "types.h"
 
-s32 Func_08092054(u32);
+s32 Object_GetById(u32);
 
 extern s32 Data_02000240[];
 extern u8 Data_03001ebc[];
@@ -18,7 +18,7 @@ void Func_0809c314(void)
     u32 id;
 
     temp_r0 = Data_02000240[125];
-    Func_08092054(temp_r0);
+    Object_GetById(temp_r0);
     temp_r0 = *(s32 *)(*(u8 **)Data_03001ebc + 480);
     x = *(s32 *)(temp_r0 + 8);
     left = x + 0xFEC00000;

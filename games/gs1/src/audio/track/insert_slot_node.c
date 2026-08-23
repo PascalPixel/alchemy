@@ -4,7 +4,7 @@
 
 extern void *Data_02004c00;
 
-void Func_080f7df0(s32 index)
+void AudioTrack_InsertSlotNode(s32 index)
 {
     s32 base;
     s32 nodeOffset;

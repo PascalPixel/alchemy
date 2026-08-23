@@ -31,7 +31,7 @@ struct BattleStatusIconRecord {
     void *secondary_effect;
 };
 
-void *Func_080b7f70(struct BattleStatusIconOwner *owner, s32 entry_index);
+void *GetMotionRecord(struct BattleStatusIconOwner *owner, s32 entry_index);
 struct StatusIconEffect *Func_08009048(struct EffectContext *context, s32 effect_id);
 void Func_08009050(struct EffectContext *context, struct StatusIconEffect *effect);
 void Func_08009070(struct StatusIconEffect *effect, s32 entry_index);
@@ -89,7 +89,7 @@ update:
         changed = 1;
     }
 
-    context = Func_080b7f70(owner, 0);
+    context = GetMotionRecord(owner, 0);
     if (context == 0)
         goto done;
 

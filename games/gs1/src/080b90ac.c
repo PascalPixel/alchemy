@@ -7,7 +7,7 @@ struct ActorState_080b90ac {
 
 s32 Func_080b6c08(s32 groups, u16 *ids);
 struct ActorState_080b90ac *Runtime_GetObject(u16 id);
-void Func_08077010(u16 id);
+void BattleUnit_Recalculate(u16 id);
 
 void Func_080b90ac(void)
 {
@@ -21,6 +21,6 @@ void Func_080b90ac(void)
 
         actor = Runtime_GetObject(ids[index]);
         actor->field_12b = 0;
-        Func_08077010(ids[index]);
+        BattleUnit_Recalculate(ids[index]);
     }
 }

@@ -34,7 +34,7 @@ void Func_0808ee0c(void)
     register u8 *object;
     register u8 *entry;
 
-    object = Func_0808ba1c(Data_02000240.value_1F4);
+    object = GetObject(Data_02000240.value_1F4);
     entry = *(u8 **)ADDR_03001EBC + 0x11C;
     index = 0;
     if (entry[4] != 0) {

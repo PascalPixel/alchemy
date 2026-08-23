@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 Func_080162d4(s32, s32, s32, s32, s32);
+s32 UiWindow_Create(s32, s32, s32, s32, s32);
 extern u8 Data_03001f38;
 
 void Func_080288a8(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
@@ -21,5 +21,5 @@ void Func_080288a8(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     }
 
     *(s32 *)(state + 120) =
-        Func_080162d4(arg0, arg1, *(s16 *)(state + 144), 3, 2);
+        UiWindow_Create(arg0, arg1, *(s16 *)(state + 144), 3, 2);
 }

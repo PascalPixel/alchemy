@@ -7,13 +7,13 @@ struct Point {
     s32 y;
 };
 
-struct Point **Func_080b7dd0(s32);
+struct Point **GetBattleObjectSlot(s32);
 void Func_080c0cec(s32, s32, s32, s32);
 
 void Func_080c0df4(s32 first, s32 second, s32 mode)
 {
-    struct Point *left = *Func_080b7dd0(first);
-    struct Point *right = *Func_080b7dd0(second);
+    struct Point *left = *GetBattleObjectSlot(first);
+    struct Point *right = *GetBattleObjectSlot(second);
     s32 left_x = left->x;
     s32 right_x = right->x;
     s32 left_y = left->y;

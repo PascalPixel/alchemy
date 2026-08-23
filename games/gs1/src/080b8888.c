@@ -7,7 +7,7 @@ void *Runtime_GetObject(s32);
 s32 Func_080b8808(u32 arg0);
 void Func_08015118(void);
 void UiText_DrawQuantity(s32, s32);
-void Func_080151c8(s32);
+void UiText_ShowMessageAndWait(s32);
 
 s32 Func_080b8888(s16 *script) {
     s32 object_id;
@@ -25,6 +25,6 @@ s32 Func_080b8888(s16 *script) {
     }
     Func_08015118();
     UiText_DrawQuantity(object_id, 1);
-    Func_080151c8((s32)&Value_00000816);
+    UiText_ShowMessageAndWait((s32)&Value_00000816);
     return 0;
 }

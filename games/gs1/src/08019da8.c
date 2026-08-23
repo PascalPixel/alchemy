@@ -5,7 +5,7 @@
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 extern s32 Func_08019d2c();
-extern s32 Func_080162d4();
+extern s32 UiWindow_Create();
 extern s32 Func_0801ec6c();
 
 s32 Func_08019da8(s32 arg0, s32 arg1, s32 x, s32 y)
@@ -22,10 +22,10 @@ s32 Func_08019da8(s32 arg0, s32 arg1, s32 x, s32 y)
     minus_four = -4;
     offset = minus_four;
     if (M2C_FIELD(work, u8, RENDER_MODE_OFS) != 0) {
-        object = Func_080162d4(x, y, 6, 5, 2);
+        object = UiWindow_Create(x, y, 6, 5, 2);
         offset = 0;
     } else {
-        object = Func_080162d4(x, y, 5, 5, 2);
+        object = UiWindow_Create(x, y, 5, 5, 2);
     }
     if (object != 0) {
         Func_0801ec6c(arg0, arg1, -1, object, offset, minus_four);

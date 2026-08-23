@@ -3,7 +3,7 @@
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 void ScheduleCallback(void *);
-void Func_08016418(struct Work *work, s32 release);
+void UiWork_Finalize(struct Work *work, s32 release);
 s32 Resource_ResetEntry(u32 index);
 void Func_08002dd8(s32);
 void WaitFrames(u32);
@@ -19,7 +19,7 @@ void Func_0802851c(void) {
     ScheduleCallback(&Data_08028195);
     childWork = M2C_FIELD(work, struct Work *, 0x78);
     if (childWork != 0) {
-        Func_08016418(childWork, 2);
+        UiWork_Finalize(childWork, 2);
     }
     i = 0;
     while (i < (s32)M2C_FIELD(work, s16, 0x8E)) {

@@ -20,51 +20,52 @@ void *Func_08077000(s32);
 void Func_08015020(s32, u16 *);
 extern char Value_0000080c;
 
+#define UpdateNameEntries Func_080b5e14
 s32 Func_080b5e14(void)
 {
-    u16 text[24];
+    u16 name_text[24];
     void *buffer;
-    u8 *entry;
-    s32 count;
+    u8 *name_entry;
+    s32 named_count;
     s32 index;
     s32 len;
     s32 i;
 
     buffer = Func_08004970(340);
-    count = 0;
+    named_count = 0;
     index = 0;
     while (index <= 2) {
-        entry = Func_08077008(index + 128);
+        name_entry = Func_08077008(index + 128);
         if (Func_08006408() == -1) {
             break;
         }
         Func_08006488();
-        if (entry[298] != 0) {
-            count += 1;
+        if (name_entry[298] != 0) {
+            named_count += 1;
         }
         Func_080030f8(2);
-        Func_08015020((s32)&Value_0000080c, text);
+        Func_08015020((s32)&Value_0000080c, name_text);
         i = 0;
-        if (text[i] != 0) {
+        if (name_text[i] != 0) {
             do {
                 i += 1;
                 if (i > NAME_LIMIT) {
                     break;
                 }
-            } while (text[i] != 0);
+            } while (name_text[i] != 0);
         }
 #if APPEND_NAME_SPACE
-        text[i] = ' ';
+        name_text[i] = ' ';
         i += 1;
 #endif
         len = i;
         for (i = 14; i >= len; i--) {
-            entry[i] = entry[i - len];
+            name_entry[i] = name_entry[i - len];
         }
         for (i = 0; i < len; i++) {
-            entry[i] = (u8)text[i];
+            name_entry[i] = (u8)name_text[i];
         }
-        entry[14] = 0;
+        name_entry[14] = 0;
         index += 1;
     }
     Func_08002df0(buffer);
@@ -75,5 +76,5 @@ s32 Func_080b5e14(void)
         Func_080030f8(2);
     }
     Func_08002df0(buffer);
-    return count;
+    return named_count;
 }

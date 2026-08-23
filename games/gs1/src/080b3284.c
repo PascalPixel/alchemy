@@ -8,12 +8,12 @@
 #define MESSAGE_WINDOW_ROWS 12
 #endif
 
-enum MessageId_080b3284 {
-    MESSAGE_INTRO_080b3284 = 0xd1c,
-    MESSAGE_READY_080b3284,
-    MESSAGE_LIMIT_080b3284,
-    MESSAGE_FORCED_080b3284,
-    MESSAGE_COMPLETE_080b3284,
+enum InnMessageId {
+    INN_MESSAGE_WELCOME = 0xd1c,
+    INN_MESSAGE_STAY_COMPLETE,
+    INN_MESSAGE_NOT_ENOUGH_COINS,
+    INN_MESSAGE_GOODBYE,
+    INN_MESSAGE_REST_COMPLETE,
 };
 
 struct RuntimeState_080b3284 {
@@ -50,13 +50,17 @@ void Func_080b010c(void);
 void Func_080b0204(void);
 void Func_080b04dc(s32 message_id);
 s32 Func_080b0634(s32);
-s32 Func_080b3210(s32);
-void Func_080b3398(s32);
+#define Inn_CalculateRoomPrice Func_080b3210
+#define Inn_PlaySleepSequence Func_080b3398
+s32 Inn_CalculateRoomPrice(s32);
+void Inn_PlaySleepSequence(s32);
 s32 Func_08015010(s32, s32, s32, s32, s32);
 void Func_08015018(s32, s32);
 s32 Func_080150f8(u16, s32, s32, s32);
 void Func_08015120(s32, s32);
 struct Object_080b3284 *Func_0808a080(s32);
+
+#define Inn_CheckIn Func_080b3284
 
 s32 Func_080b3284(s32 mode, s32 object_id)
 {
@@ -76,7 +80,7 @@ s32 Func_080b3284(s32 mode, s32 object_id)
     state->resource_id = *object->component->resource_id;
     resource_window = Func_080150f8(state->resource_id, 0, 0, 0);
 
-    amount = Func_080b3210(mode);
+    amount = Inn_CalculateRoomPrice(mode);
     Func_08015120(amount, 5);
     message_base = (s32)&Value_00000d1c;
     Func_080b04dc(message_base);
@@ -85,24 +89,24 @@ s32 Func_080b3284(s32 mode, s32 object_id)
 
     if (Func_080b0634(0) != 0) {
         Func_080b04dc(message_base
-            + (MESSAGE_FORCED_080b3284 - MESSAGE_INTRO_080b3284));
+            + (INN_MESSAGE_GOODBYE - INN_MESSAGE_WELCOME));
         Func_08015018(state->window, 2);
     } else if ((u32)amount > Data_02000240.limit) {
         Func_080b04dc(message_base
-            + (MESSAGE_LIMIT_080b3284 - MESSAGE_INTRO_080b3284));
+            + (INN_MESSAGE_NOT_ENOUGH_COINS - INN_MESSAGE_WELCOME));
         Func_08015018(state->window, 2);
     } else {
         Func_08015018(state->window, 2);
         Func_080b04dc(message_base
-            + (MESSAGE_READY_080b3284 - MESSAGE_INTRO_080b3284));
+            + (INN_MESSAGE_STAY_COMPLETE - INN_MESSAGE_WELCOME));
         Func_08015018(resource_window, 2);
-        Func_080b3398(amount);
+        Inn_PlaySleepSequence(amount);
 
         object = Func_0808a080(object_id);
         state->resource_id = *object->component->resource_id;
         resource_window = Func_080150f8(state->resource_id, 0, 0, 0);
         Func_080b04dc(message_base
-            + (MESSAGE_COMPLETE_080b3284 - MESSAGE_INTRO_080b3284));
+            + (INN_MESSAGE_REST_COMPLETE - INN_MESSAGE_WELCOME));
     }
 
     Func_08015018(resource_window, 2);

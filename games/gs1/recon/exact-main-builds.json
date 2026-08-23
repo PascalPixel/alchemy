@@ -5626,7 +5626,7 @@
     },
     {
       "en_owner": "0800b7c0",
-      "source": "games/gs1/src/0800b7c0.c",
+      "source": "games/gs1/src/animation/initialize_objects.c",
       "size": 168,
       "all_exact": true,
       "editions": [
@@ -21444,7 +21444,7 @@
     },
     {
       "en_owner": "0801ec6c",
-      "source": "games/gs1/src/0801ec6c.c",
+      "source": "games/gs1/src/object/side/create.c",
       "size": 212,
       "edition_variant": true,
       "all_exact": true,
@@ -34336,7 +34336,7 @@
     },
     {
       "en_owner": "0808eee4",
-      "source": "games/gs1/src/0808eee4.c",
+      "source": "games/gs1/src/battle/effects/random_particle/emit.c",
       "size": 140,
       "all_exact": true,
       "editions": [
@@ -34728,7 +34728,7 @@
     },
     {
       "en_owner": "080903bc",
-      "source": "games/gs1/src/080903bc.c",
+      "source": "games/gs1/src/display/transition/update.c",
       "size": 204,
       "edition_variant": true,
       "all_exact": true,
@@ -43242,7 +43242,7 @@
     },
     {
       "en_owner": "0809728c",
-      "source": "games/gs1/src/0809728c.c",
+      "source": "games/gs1/src/field/event_object/initialize.c",
       "size": 248,
       "edition_variant": true,
       "all_exact": true,
@@ -43973,7 +43973,7 @@
     },
     {
       "en_owner": "080981b0",
-      "source": "games/gs1/src/080981b0.c",
+      "source": "games/gs1/src/battle/effects/rising_particle_burst/update.c",
       "size": 228,
       "all_exact": true,
       "editions": [
@@ -44309,7 +44309,7 @@
     },
     {
       "en_owner": "08098b10",
-      "source": "games/gs1/src/08098b10.c",
+      "source": "games/gs1/src/battle/effects/radial_burst/update.c",
       "size": 248,
       "all_exact": true,
       "editions": [
@@ -44365,7 +44365,7 @@
     },
     {
       "en_owner": "08098c08",
-      "source": "games/gs1/src/08098c08.c",
+      "source": "games/gs1/src/battle/effects/heavy_impact/spawn.c",
       "size": 196,
       "all_exact": true,
       "editions": [
@@ -44925,7 +44925,7 @@
     },
     {
       "en_owner": "08099678",
-      "source": "games/gs1/src/08099678.c",
+      "source": "games/gs1/src/map/events/check_object_tile.c",
       "size": 192,
       "all_exact": true,
       "editions": [
@@ -44981,7 +44981,7 @@
     },
     {
       "en_owner": "08099738",
-      "source": "games/gs1/src/08099738.c",
+      "source": "games/gs1/src/map/events/run_tile_trigger_sequence.c",
       "size": 216,
       "all_exact": true,
       "editions": [
@@ -45653,7 +45653,7 @@
     },
     {
       "en_owner": "0809aa98",
-      "source": "games/gs1/src/0809aa98.c",
+      "source": "games/gs1/src/battle/effects/radial_camera/update.c",
       "size": 256,
       "all_exact": true,
       "editions": [
@@ -47445,7 +47445,7 @@
     },
     {
       "en_owner": "080a1870",
-      "source": "games/gs1/src/080a1870.c",
+      "source": "games/gs1/src/psynergy_menu/initialize_entry_objects.c",
       "size": 236,
       "all_exact": true,
       "editions": [
@@ -55521,7 +55521,7 @@
     },
     {
       "en_owner": "080b3210",
-      "source": "games/gs1/src/080b3210.c",
+      "source": "games/gs1/src/inn/calculate_room_price.c",
       "size": 116,
       "all_exact": true,
       "editions": [
@@ -55577,7 +55577,7 @@
     },
     {
       "en_owner": "080b3284",
-      "source": "games/gs1/src/080b3284.c",
+      "source": "games/gs1/src/inn/check_in.c",
       "size": 276,
       "edition_variant": true,
       "all_exact": true,
@@ -55634,7 +55634,7 @@
     },
     {
       "en_owner": "080b3398",
-      "source": "games/gs1/src/080b3398.c",
+      "source": "games/gs1/src/inn/play_sleep_sequence.c",
       "size": 172,
       "all_exact": true,
       "editions": [
@@ -55858,7 +55858,7 @@
     },
     {
       "en_owner": "080b5e14",
-      "source": "games/gs1/src/080b5e14.c",
+      "source": "games/gs1/src/party/update_name_entries.c",
       "size": 248,
       "edition_variant": true,
       "all_exact": true,
@@ -58603,7 +58603,7 @@
     },
     {
       "en_owner": "080b8fd4",
-      "source": "games/gs1/src/080b8fd4.c",
+      "source": "games/gs1/src/camera/scene/configure.c",
       "size": 216,
       "all_exact": true,
       "editions": [
@@ -74623,7 +74623,7 @@
     },
     {
       "en_owner": "080fb2cc",
-      "source": "games/gs1/src/080fb2cc.c",
+      "source": "games/gs1/src/audio/music/player/set_volume.c",
       "size": 104,
       "all_exact": true,
       "editions": [
@@ -74679,7 +74679,7 @@
     },
     {
       "en_owner": "080fb334",
-      "source": "games/gs1/src/080fb334.c",
+      "source": "games/gs1/src/audio/music/player/set_pitch.c",
       "size": 116,
       "all_exact": true,
       "editions": [
@@ -74735,7 +74735,7 @@
     },
     {
       "en_owner": "080fb3a8",
-      "source": "games/gs1/src/080fb3a8.c",
+      "source": "games/gs1/src/audio/music/player/set_pan.c",
       "size": 104,
       "all_exact": true,
       "editions": [
@@ -74791,7 +74791,7 @@
     },
     {
       "en_owner": "080fb410",
-      "source": "games/gs1/src/080fb410.c",
+      "source": "games/gs1/src/audio/music/track/clear_modulation.c",
       "size": 30,
       "all_exact": true,
       "editions": [
@@ -74847,7 +74847,7 @@
     },
     {
       "en_owner": "080fb430",
-      "source": "games/gs1/src/080fb430.c",
+      "source": "games/gs1/src/audio/music/player/set_modulation_depth.c",
       "size": 116,
       "all_exact": true,
       "editions": [
@@ -74903,7 +74903,7 @@
     },
     {
       "en_owner": "080fb4a4",
-      "source": "games/gs1/src/080fb4a4.c",
+      "source": "games/gs1/src/audio/music/player/set_lfo_speed.c",
       "size": 116,
       "all_exact": true,
       "editions": [
@@ -75015,7 +75015,7 @@
     },
     {
       "en_owner": "080fb670",
-      "source": "games/gs1/src/080fb670.c",
+      "source": "games/gs1/src/audio/music/track/dispatch_extended_command.c",
       "size": 32,
       "all_exact": true,
       "editions": [
@@ -75127,7 +75127,7 @@
     },
     {
       "en_owner": "080fb6a4",
-      "source": "games/gs1/src/080fb6a4.c",
+      "source": "games/gs1/src/audio/music/track/read_wave_pointer.c",
       "size": 72,
       "all_exact": true,
       "editions": [
@@ -75183,7 +75183,7 @@
     },
     {
       "en_owner": "080fb6ec",
-      "source": "games/gs1/src/080fb6ec.c",
+      "source": "games/gs1/src/audio/music/track/set_tone_type.c",
       "size": 18,
       "all_exact": true,
       "editions": [
@@ -75239,7 +75239,7 @@
     },
     {
       "en_owner": "080fb700",
-      "source": "games/gs1/src/080fb700.c",
+      "source": "games/gs1/src/audio/music/track/set_tone_attack.c",
       "size": 18,
       "all_exact": true,
       "editions": [
@@ -75295,7 +75295,7 @@
     },
     {
       "en_owner": "080fb714",
-      "source": "games/gs1/src/080fb714.c",
+      "source": "games/gs1/src/audio/music/track/set_tone_decay.c",
       "size": 18,
       "all_exact": true,
       "editions": [
@@ -75351,7 +75351,7 @@
     },
     {
       "en_owner": "080fb728",
-      "source": "games/gs1/src/080fb728.c",
+      "source": "games/gs1/src/audio/music/track/set_tone_sustain.c",
       "size": 18,
       "all_exact": true,
       "editions": [
@@ -75407,7 +75407,7 @@
     },
     {
       "en_owner": "080fb73c",
-      "source": "games/gs1/src/080fb73c.c",
+      "source": "games/gs1/src/audio/music/track/set_tone_release.c",
       "size": 18,
       "all_exact": true,
       "editions": [
@@ -75463,7 +75463,7 @@
     },
     {
       "en_owner": "080fb750",
-      "source": "games/gs1/src/080fb750.c",
+      "source": "games/gs1/src/audio/music/track/set_pseudo_echo_volume.c",
       "size": 12,
       "all_exact": true,
       "editions": [
@@ -75519,7 +75519,7 @@
     },
     {
       "en_owner": "080fb75c",
-      "source": "games/gs1/src/080fb75c.c",
+      "source": "games/gs1/src/audio/music/track/set_pseudo_echo_length.c",
       "size": 12,
       "all_exact": true,
       "editions": [
@@ -75575,7 +75575,7 @@
     },
     {
       "en_owner": "080fb768",
-      "source": "games/gs1/src/080fb768.c",
+      "source": "games/gs1/src/audio/music/track/set_tone_length.c",
       "size": 18,
       "all_exact": true,
       "editions": [
@@ -75631,7 +75631,7 @@
     },
     {
       "en_owner": "080fb77c",
-      "source": "games/gs1/src/080fb77c.c",
+      "source": "games/gs1/src/audio/music/track/set_tone_pan_sweep.c",
       "size": 18,
       "all_exact": true,
       "editions": [

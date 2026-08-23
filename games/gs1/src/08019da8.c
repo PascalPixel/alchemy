@@ -6,7 +6,7 @@
 
 extern s32 Func_08019d2c();
 extern s32 UiWindow_Create();
-extern s32 Func_0801ec6c();
+extern s32 CreateSideObject();
 
 s32 Func_08019da8(s32 arg0, s32 arg1, s32 x, s32 y)
 {
@@ -28,7 +28,7 @@ s32 Func_08019da8(s32 arg0, s32 arg1, s32 x, s32 y)
         object = UiWindow_Create(x, y, 5, 5, 2);
     }
     if (object != 0) {
-        Func_0801ec6c(arg0, arg1, -1, object, offset, minus_four);
+        CreateSideObject(arg0, arg1, -1, object, offset, minus_four);
     }
     return object;
 }

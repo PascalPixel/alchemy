@@ -15,13 +15,13 @@ struct State080a8034 {
 };
 
 s32 Func_080a1814(void *);
-s32 Func_080a1870(s32, s32, s32, s32, s32);
+s32 InitializeEntryObjects(s32, s32, s32, s32, s32);
 
 void Func_080a8034(void) {
     struct State080a8034 *state;
 
     state = *(struct State080a8034 **)ADDR_03001F2C;
-    Func_080a1870(Func_080a1814(state), 2, 2, 8, 0);
+    InitializeEntryObjects(Func_080a1814(state), 2, 2, 8, 0);
     state->field_28 = 0;
     state->field_24 = 0;
     state->field_2c = 0;

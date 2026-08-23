@@ -98,7 +98,7 @@ void MusicPlayer_ExecuteMemoryAccessCommand(
     struct MusicTrackState *);
 void Func_080fa1d4(struct MusicPlayerState *, struct MusicTrackState *);
 void Func_080fa1e8(struct MusicPlayerState *, struct MusicTrackState *);
-void Func_080fb670(struct MusicPlayerState *, struct MusicTrackState *);
+void MusicTrack_DispatchExtendedCommand(struct MusicPlayerState *, struct MusicTrackState *);
 void Func_080fa16c(struct MusicPlayerState *, struct MusicTrackState *);
 void AudioEngine_SetPcmRate(u32);
 void Func_080f9ef8(struct MusicPlayerState *, struct MusicTrackState *);
@@ -140,7 +140,7 @@ void CgbAudio_Initialize(struct CgbChannel *channels)
     command_table[8].player_track = MusicPlayer_ExecuteMemoryAccessCommand;
     command_table[17].player_track = Func_080fa1d4;
     command_table[19].player_track = Func_080fa1e8;
-    command_table[28].player_track = Func_080fb670;
+    command_table[28].player_track = MusicTrack_DispatchExtendedCommand;
     command_table[29].player_track = Func_080fa16c;
     command_table[30].word = AudioEngine_SetPcmRate;
     command_table[31].player_track = Func_080f9ef8;

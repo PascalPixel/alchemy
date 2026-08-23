@@ -53,16 +53,18 @@ union AudioCommandSlot {
 struct MusicTrackState {
     u8 status;                    /* 0x00 */
     u8 unknown01[0x1d];          /* 0x01 */
-    u8 byte_1e;
-    u8 unknown1f;
+    u8 pseudo_echo_volume;       /* 0x1e */
+    u8 pseudo_echo_length;       /* 0x1f */
     void *channel_head;           /* 0x20 */
-    u8 byte_24;
-    u8 unknown25[3];
-    u32 word_28;
-    u8 byte_2c;
-    u8 byte_2d;
-    u8 byte_2e;
-    u8 byte_2f;
+    u8 tone_type;                 /* 0x24 */
+    u8 tone_key;                  /* 0x25 */
+    u8 tone_length;               /* 0x26 */
+    u8 tone_pan_sweep;            /* 0x27 */
+    u32 wave_pointer;              /* 0x28 */
+    u8 tone_attack;               /* 0x2c */
+    u8 tone_decay;                /* 0x2d */
+    u8 tone_sustain;              /* 0x2e */
+    u8 tone_release;              /* 0x2f */
     u8 unknown30[0x10];
     const u8 *command;            /* 0x40 */
     u8 unknown44[0x0c];          /* 0x44 */

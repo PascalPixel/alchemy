@@ -68,7 +68,7 @@ in the cyan band.
 
 ### Images and data
 
-![Image and data maturity box tree in the magenta band; brightness is maturity.](games/gs1/assets/readme/gs1-en-images.svg?v=a9a925b39ac5e048)
+![Image and data maturity box tree in the magenta band; brightness is maturity.](games/gs1/assets/readme/gs1-en-images.svg?v=f07dab813e73a866)
 
 ### Music and sound
 

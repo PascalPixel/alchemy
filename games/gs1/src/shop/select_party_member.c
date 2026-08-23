@@ -1,0 +1,96 @@
+#include "shop.h"
+#include "gs1_edition.h"
+
+#if defined(GS1_EDITION_JA)
+#define BASE_W 11
+#else
+#define BASE_W 12
+#endif
+
+s32 Func_080022fc(s32, s32);
+void Func_080030f8(s32);
+s32 Func_08015010(s32, s32, s32, s32, s32);
+void Func_08015018(s32, s32);
+s32 Func_08077248(s32);
+void Func_080a1028(s32, s32, s32, s32, s32);
+void Func_080a1030(void);
+void Func_080b1bd0(s32);
+void Func_080b211c(s32);
+void Func_080f9010(s32);
+
+/*
+ * Keep an actor-selection menu active while dispatching the chosen actor into
+ * one of two action screens.  The menu itself closes only when cancelled.
+ */
+s32 Shop_SelectPartyMember(void)
+{
+    struct ShopRuntime *shop = SHOP_RUNTIME;
+    s32 list_window;
+    s32 selection = 0;
+    s32 redraw = 1;
+    s32 unit_id = 0;
+
+    shop->money_window = Func_08015010(0, 9, BASE_W, 4, 2);
+    Shop_DrawMoney();
+    shop->item_window = Func_08015010(16, 12, 14, 8, 2);
+    list_window = Func_08015010(0, 14, 13, 3, 2);
+    shop->cursor.anchor->kind = 4;
+    shop->mode = 12;
+    Func_080a1028(list_window, 2, 0, 8, 0);
+
+    for (;;) {
+        if (redraw != 0) {
+            redraw = 0;
+            selection = Func_080022fc(
+                selection + shop->party_member_count,
+                shop->party_member_count);
+            unit_id = shop->party_member_ids[selection];
+            Shop_PlaceCursor(
+                (void *)list_window,
+                selection * 24 - 12,
+                0);
+            shop->mode = 3;
+            Shop_UpdatePartyMemberList(list_window, selection, 0);
+            Shop_DrawPartyMemberItemGrid(shop->item_window, unit_id);
+        }
+
+        if ((*(volatile u32 *)ADDR_03001C94 & 1) != 0) {
+            Func_080030f8(1);
+            if (Func_08077248(unit_id) == 0) {
+                Func_080f9010(0x71);
+            } else {
+                Func_080f9010(0x70);
+                if (shop->party_action == 1)
+                    Func_080b1bd0(unit_id);
+                else
+                    Func_080b211c(unit_id);
+                shop->cursor.anchor->kind = 4;
+                shop->mode = 12;
+                redraw = 1;
+            }
+            continue;
+        }
+
+        if ((*(volatile u32 *)ADDR_03001C94 & 2) != 0) {
+            Func_080f9010(0x71);
+            Func_080a1030();
+            Func_08015018(list_window, 2);
+            Func_08015018(shop->item_window, 2);
+            Func_08015018(shop->money_window, 2);
+            Func_080030f8(1);
+            return 0;
+        }
+
+        if ((*(volatile u32 *)ADDR_03001B04 & 0x20) != 0) {
+            Func_080f9010(0x6f);
+            selection--;
+            redraw = 1;
+        }
+        if ((*(volatile u32 *)ADDR_03001B04 & 0x10) != 0) {
+            Func_080f9010(0x6f);
+            selection++;
+            redraw = 1;
+        }
+        Func_080030f8(1);
+    }
+}

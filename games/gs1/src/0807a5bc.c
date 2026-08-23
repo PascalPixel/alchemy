@@ -6,14 +6,14 @@ s32 Func_0807a5bc(s32 index)
 {
     u16 owners[16];
     s32 result = 0;
-    s32 count = Func_080796c4(owners);
+    s32 count = Party_ListActiveOwners(owners);
 
     if (result < count) {
         u16 *owner = owners;
         s32 remaining = count;
 
         do {
-            struct OwnerValueState *state = Func_08077394(*owner++);
+            struct OwnerValueState *state = OwnerState_Get(*owner++);
 
             if (index == -1) {
                 result += state->values[0];

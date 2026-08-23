@@ -1,8 +1,6 @@
-#include "types.h"
+#include "owner_state.h"
+#include "party_state.h"
 
-extern u8 Data_02000240[];
-s32 Func_080795fc(void);
-u8 *Func_08077394(s32);
 u32 Func_080022ec(s32, s32);
 u32 Func_08077348(void)
 {
@@ -11,12 +9,13 @@ u32 Func_08077348(void)
     s32 i;
 
     total = 0;
-    count = Func_080795fc();
+    count = Party_CountActiveOwners();
     if (count == 0) {
         return 0;
     }
     for (i = 0; i < count; i++) {
-        total += Func_08077394(Data_02000240[0x1F8 + i])[15];
+        total += ((u8 *)OwnerState_Get(
+            Data_02000240.active_owners[i]))[15];
     }
     total = Func_080022ec(total, count);
     return total;

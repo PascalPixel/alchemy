@@ -1,0 +1,22 @@
+#include "audio_engine_symbols.h"
+#include "types.h"
+
+extern u8 Data_00000008[];
+extern s32 Data_080fc624[];
+void Func_080fa264(s32);
+
+void Audio_ResumeAllPlayers(void)
+{
+    u16 player_count = (u32)Data_00000008;
+
+    if (player_count != 0) {
+        s32 *record = Data_080fc624;
+        u32 remaining = player_count;
+
+        do {
+            Func_080fa264(*record);
+            record += 3;
+            remaining--;
+        } while (remaining != 0);
+    }
+}

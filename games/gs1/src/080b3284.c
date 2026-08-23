@@ -1,5 +1,6 @@
 #include "types.h"
 #include "gs1_edition.h"
+#include "shop.h"
 
 #if defined(GS1_EDITION_JA)
 #define MESSAGE_WINDOW_ROWS 11
@@ -49,7 +50,6 @@ void Func_080b010c(void);
 void Func_080b0204(void);
 void Func_080b04dc(s32 message_id);
 s32 Func_080b0634(s32);
-void Func_080b10cc(void);
 s32 Func_080b3210(s32);
 void Func_080b3398(s32);
 s32 Func_08015010(s32, s32, s32, s32, s32);
@@ -81,7 +81,7 @@ s32 Func_080b3284(s32 mode, s32 object_id)
     message_base = (s32)&Value_00000d1c;
     Func_080b04dc(message_base);
     state->window = Func_08015010(0, 16, MESSAGE_WINDOW_ROWS, 4, 2);
-    Func_080b10cc();
+    Shop_DrawMoney();
 
     if (Func_080b0634(0) != 0) {
         Func_080b04dc(message_base

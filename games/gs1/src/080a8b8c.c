@@ -51,11 +51,11 @@ s32 Func_080a8b8c(struct MenuResult *result, s32 index)
     if (Func_080022fc(limit, GROUP_LEN) != 0) {
         groups++;
     }
-    result->value0 = encoded;
-    result->value8 = quotient;
-    result->valueC = groups;
-    result->value10 = remainder;
-    result->value14 = limit;
-    result->value18 = value;
+    result->owner_state = encoded;
+    result->page = quotient;
+    result->page_count = groups;
+    result->row = remainder;
+    result->entry_count = limit;
+    result->selected_index = value;
     return 1;
 }

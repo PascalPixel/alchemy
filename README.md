@@ -46,7 +46,7 @@ compile. That is deliberately weaker than reproduction: only `gs1-en` has its
 complete link, ownership, asset, and byte-identical verification surfaces
 installed today. `make verify` remains that authoritative full-ROM gate.
 
-## DONE: Currently 45%
+## DONE: Currently 50%
 
 DONE measures executable bytes that rebuild identically to the target: exact C
 plus code that is permanently assembly. Nothing else counts.
@@ -56,8 +56,8 @@ Three figures, because one of them alone would mislead:
 |                    |       bytes |                   share |
 | ------------------ | ----------: | ----------------------: |
 | Exact C            |     299,774 |     22.2% of executable |
-| Permanent assembly |     310,566 |     23.0% of executable |
-| **DONE**           | **610,340** | **45.3% of executable** |
+| Permanent assembly |     374,790 |     27.8% of executable |
+| **DONE**           | **674,564** | **50.0% of executable** |
 
 Permanent assembly is not a shortcut and not a backlog. It includes linker
 veneers and alignment padding, plus audited routines whose instruction shape or
@@ -66,7 +66,7 @@ records that evidence and rebuilds identically, so it is done and will never
 become C.
 
 That also means 100% is not the target. Measured against only the bytes that
-can ever be C, **exact C stands at 28.9%**. An overlay whose every function is
+can ever be C, **exact C stands at 30.8%**. An overlay whose every function is
 reconstructed still reports short of 100%, because its veneers count against it.
 
 Tracked reconstruction C is reported separately. It preserves recovered
@@ -86,14 +86,14 @@ figure above.
 
 The main game contains 548,364 executable bytes in the purple band.
 
-![Main-image code coverage box tree in the purple band; code categories use the legend below.](games/gs1/assets/readme/gs1-en-core.svg?v=99b5c0653c65f7a9)
+![Main-image code coverage box tree in the purple band; code categories use the legend below.](games/gs1/assets/readme/gs1-en-core.svg?v=20db6bb8e0c22766)
 
 ### Code overlays
 
 The game loads 96 additional code overlays containing 798,758 executable bytes
 in the cyan band.
 
-![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](games/gs1/assets/readme/gs1-en-overlays.svg?v=5854531410f83bd3)
+![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](games/gs1/assets/readme/gs1-en-overlays.svg?v=3a86df0b7fc8f34c)
 
 ### Images and data
 
@@ -104,7 +104,7 @@ or `djinn_venus.gif`. **Extracted** is the same picture sitting under the
 ROM's own numbering — `resource_226_grid_value_high.png` — which is not the
 same as knowing what it is. Almost everything is still Extracted.
 
-![Image and data maturity box tree in the magenta band; brightness is maturity.](games/gs1/assets/readme/gs1-en-images.svg?v=dac5fe2ce044fef6)
+![Image and data maturity box tree in the magenta band; brightness is maturity.](games/gs1/assets/readme/gs1-en-images.svg?v=41116748a082aaec)
 
 ### Music and sound
 
@@ -115,7 +115,7 @@ Every file now carries a name instead of a ROM index, but read the tier as
 `music_walking_passage_quintet_full`, `effect_sample_large_oneshot` — and none of
 them claims a title or a scene. Nothing was taken from outside the ROM.
 
-![Music and sound maturity box tree in the orange band; brightness is maturity.](games/gs1/assets/readme/gs1-en-music.svg?v=0fe5700a51fd7ccf)
+![Music and sound maturity box tree in the orange band; brightness is maturity.](games/gs1/assets/readme/gs1-en-music.svg?v=f7f0be708f1d7ba4)
 
 ## Contributing and project status
 

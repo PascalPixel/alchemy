@@ -13,7 +13,9 @@
 	.set sub_08015040, 0x08015040
 	.set sub_080770c0, 0x080770c0
 	.set sub_080f9010, 0x080f9010
+	.global RunBattleEffect16
 	.global Region_0809b698
+RunBattleEffect16:
 Region_0809b698:
 	push {r5, r6, r7, lr}
 	mov r7, r11

@@ -16,9 +16,9 @@ void Func_020068ba();
 void Func_020069f0();
 void Func_020068d4();
 
-#define StartXianSchoolDoorEvent Func_02002484
+#define StartSchoolDoorEvent Func_02002484
 
-void StartXianSchoolDoorEvent(void)
+void StartSchoolDoorEvent(void)
 {
     Func_02006864();
     if (Func_0200684a(2202) == 0 && Func_02006854(2197) == 0) {

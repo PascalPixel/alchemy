@@ -1,7 +1,7 @@
 {
   "owner": "resource_39e:2484",
   "span_bytes": 132,
-  "semantic_name": "StartXianSchoolDoorEvent",
+  "semantic_name": "StartSchoolDoorEvent",
   "score": {
     "measured": "2026-08-23",
     "candidate_bytes": 132,
@@ -13,7 +13,7 @@
   "expressed": [
     "two story-flag guard",
     "school-door message path",
-    "Xian school-door event setup"
+    "school-door event setup"
   ],
   "blocked_by": "two argument setup order positions that ordinary GCC 2.96 C does not currently reproduce",
   "rejected": [

@@ -15852,7 +15852,7 @@
     },
     {
       "en_owner": "080797d4",
-      "source": "games/gs1/src/080797d4.c",
+      "source": "games/gs1/src/summon/get_definition.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -29832,7 +29832,7 @@
     },
     {
       "en_owner": "080b595c",
-      "source": "games/gs1/src/080b595c.c",
+      "source": "games/gs1/src/battle/intro/announce_encounter.c",
       "size": 176,
       "status": "shared_core",
       "starts": {
@@ -29892,7 +29892,7 @@
     },
     {
       "en_owner": "080b5d3c",
-      "source": "games/gs1/src/080b5d3c.c",
+      "source": "games/gs1/src/battle/summon/update_availability.c",
       "size": 210,
       "status": "shared_core",
       "starts": {
@@ -29982,7 +29982,7 @@
     },
     {
       "en_owner": "080b6378",
-      "source": "games/gs1/src/080b6378.c",
+      "source": "games/gs1/src/battle/party/assign_member_slots.c",
       "size": 56,
       "status": "shared_core",
       "starts": {
@@ -30042,7 +30042,7 @@
     },
     {
       "en_owner": "080b6ae0",
-      "source": "games/gs1/src/080b6ae0.c",
+      "source": "games/gs1/src/battle/party/list_present_enemies.c",
       "size": 96,
       "status": "shared_core",
       "starts": {
@@ -30072,7 +30072,7 @@
     },
     {
       "en_owner": "080b6b40",
-      "source": "games/gs1/src/080b6b40.c",
+      "source": "games/gs1/src/battle/party/list_living_units.c",
       "size": 200,
       "status": "shared_core",
       "starts": {
@@ -30942,7 +30942,7 @@
     },
     {
       "en_owner": "080b82c4",
-      "source": "games/gs1/src/080b82c4.c",
+      "source": "games/gs1/src/battle/motion/approach_target.c",
       "size": 208,
       "status": "shared_core",
       "starts": {
@@ -31152,7 +31152,7 @@
     },
     {
       "en_owner": "080b874c",
-      "source": "games/gs1/src/080b874c.c",
+      "source": "games/gs1/src/battle/presentation/run_action.c",
       "size": 188,
       "status": "shared_core",
       "starts": {
@@ -31212,7 +31212,7 @@
     },
     {
       "en_owner": "080b8824",
-      "source": "games/gs1/src/080b8824.c",
+      "source": "games/gs1/src/battle/escape/play_run.c",
       "size": 100,
       "status": "shared_core",
       "starts": {
@@ -31332,7 +31332,7 @@
     },
     {
       "en_owner": "080b8f08",
-      "source": "games/gs1/src/080b8f08.c",
+      "source": "games/gs1/src/battle/target/replace_defeated.c",
       "size": 78,
       "status": "shared_core",
       "starts": {
@@ -31452,7 +31452,7 @@
     },
     {
       "en_owner": "080b90f8",
-      "source": "games/gs1/src/080b90f8.c",
+      "source": "games/gs1/src/battle/escape/check_success.c",
       "size": 276,
       "status": "shared_core",
       "starts": {

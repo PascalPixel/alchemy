@@ -399,15 +399,15 @@
     },
     {
       "song_id": 108,
-      "symbol": "sound_108",
-      "name": null,
-      "evidence": "4 call site(s) pass id=108 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_08026e80, Func_0809abb4; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+      "symbol": "sound_triple_tone_low",
+      "name": "triple_tone_low",
+      "evidence": "the extracted sequence is three repeated MIDI note-69 pulses with identical duration and descending velocity; UpdateLinkSessionCountdown plays it at exact one-second boundaries, while Func_0809abb4 reuses it three times before the octave-higher companion"
     },
     {
       "song_id": 109,
-      "symbol": "sound_109",
-      "name": null,
-      "evidence": "1 call site(s) pass id=109 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0809abb4; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+      "symbol": "sound_triple_tone_high",
+      "name": "triple_tone_high",
+      "evidence": "the extracted sequence matches id 108's three-note duration and velocity pattern at MIDI note 81, exactly one octave higher; Func_0809abb4 plays it after three low pulses"
     },
     {
       "song_id": 110,

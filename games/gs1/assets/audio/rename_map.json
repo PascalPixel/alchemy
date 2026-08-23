@@ -1153,11 +1153,11 @@
   },
   {
    "song_id": 108,
-   "symbol": "se_108",
+   "symbol": "se_triple_tone_low",
    "class": "sfx",
-   "stem": "se_108",
-   "file": "sequences/se_108.mid",
-   "sidecar": "sequences/se_108.json",
+   "stem": "se_triple_tone_low",
+   "file": "sequences/se_triple_tone_low.mid",
+   "sidecar": "sequences/se_triple_tone_low.json",
    "played_by": [
     "08026e80"
    ],
@@ -1174,11 +1174,11 @@
   },
   {
    "song_id": 109,
-   "symbol": "se_109",
+   "symbol": "se_triple_tone_high",
    "class": "sfx",
-   "stem": "se_109",
-   "file": "sequences/se_109.mid",
-   "sidecar": "sequences/se_109.json",
+   "stem": "se_triple_tone_high",
+   "file": "sequences/se_triple_tone_high.mid",
+   "sidecar": "sequences/se_triple_tone_high.json",
    "player": 2,
    "header": {
     "address": "0x0818132c",

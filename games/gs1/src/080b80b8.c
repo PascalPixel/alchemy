@@ -6,7 +6,7 @@ extern s8 Data_03001cd4;
 
 s32 Func_080022ec(s32, s32);
 void Func_08009150(void *, s32, s32, s32);
-void Func_08009080(s32, s32);
+void Object_SetMode(s32, s32);
 
 void Func_080b80b8(void **start_slot, void **end_slot, s32 progress) {
     s32 z_step;
@@ -32,5 +32,5 @@ void Func_080b80b8(void **start_slot, void **end_slot, s32 progress) {
     M2C_FIELD(start, s32, 0x44) = 0;
     M2C_FIELD(start, s8, 0x5A) = 1;
     Func_08009150(start, x, 0, start_z + z_step);
-    Func_08009080((s32) start, 2);
+    Object_SetMode((s32) start, 2);
 }

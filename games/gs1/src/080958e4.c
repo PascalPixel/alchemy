@@ -4,7 +4,7 @@
 void Func_08004278(void *);
 void Func_0809bb34(void *);
 void Func_08002dd8(s32);
-void Func_080030f8(s32);
+void WaitFrames(s32);
 extern u8 Data_08095885;
 
 void Func_080958e4(void) {
@@ -24,7 +24,7 @@ void Func_080958e4(void) {
         var_r5 += 72;
     }
     Func_08002dd8(56);
-    Func_080030f8(1);
+    WaitFrames(1);
 }
 
 void Func_0809592c(void *arg0) {

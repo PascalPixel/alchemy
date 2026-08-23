@@ -1,9 +1,9 @@
 #include "inventory_menu.h"
 #include "global_cells.h"
 
-s32 Func_08077008(s32);
+s32 Runtime_GetObject(s32);
 s32 Func_080022ec(s32, s32);
-s32 Func_080022fc(s32, s32);
+s32 Modulo(s32, s32);
 
 static __inline__ u8 LoadByte(s32 base, s32 offset)
 {
@@ -28,15 +28,15 @@ s32 InventoryMenu_BuildPageResult(struct MenuResult *result, s32 index)
     s32 value;
 
     limit = InventoryMenu_CountItems(LoadByte(entries, offset));
-    encoded = Func_08077008(LoadByte(entries, offset));
+    encoded = Runtime_GetObject(LoadByte(entries, offset));
     value = LoadSignedByte(base, LoadByte(entries, offset) + 0x260);
     if ((s32)(value + 1) > limit) {
         value = limit - 1;
     }
     quotient = Func_080022ec(value, 5);
-    remainder = Func_080022fc(value, 5);
+    remainder = Modulo(value, 5);
     groups = Func_080022ec(limit, 5);
-    if (Func_080022fc(limit, 5) != 0) {
+    if (Modulo(limit, 5) != 0) {
         groups++;
     }
     result->owner_state = encoded;

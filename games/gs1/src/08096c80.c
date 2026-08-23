@@ -4,9 +4,9 @@
 u8 *Func_080090c8(s32, s32, s32, s32);
 void Func_080090d0(void);
 void Func_080091e0(u8 *, s32);
-void Func_08009080(u8 *, s32);
+void Object_SetMode(u8 *, s32);
 
-u8 *Func_08096c80(s32 kind, s32 x, s32 y, s32 z)
+u8 *Object_Spawn(s32 kind, s32 x, s32 y, s32 z)
 {
     u8 *base = *(u8 **)ADDR_03001F30;
     u8 *object;
@@ -26,7 +26,7 @@ u8 *Func_08096c80(s32 kind, s32 x, s32 y, s32 z)
         child = *(u8 **)(object + 80);
         child[9] &= ~(flag + 8);
         Func_080091e0(object, 0);
-        Func_08009080(object, 1);
+        Object_SetMode(object, 1);
     }
     return object;
 }

@@ -1,8 +1,8 @@
 #include "types.h"
 
-s32 Func_080f9010();
+s32 Audio_PlayCue();
 
 s32 Func_080a2438(void) {
-    Func_080f9010();
+    Audio_PlayCue();
     return 1;
 }

@@ -6,7 +6,7 @@ void Func_08009038(void *);
 void *Func_08009030(s32);
 void Func_08009020(void *, s32);
 void Func_080ad35c(void);
-s32 Func_080041d8(void (*)(void), s32);
+s32 ScheduleCallbackAfterFrames(void (*)(void), s32);
 
 void Func_080ad274(void)
 {
@@ -32,5 +32,5 @@ void Func_080ad274(void)
         state->positions_x[index] = 0x10;
         state->positions_y[index] = 0x20;
     }
-    Func_080041d8(Func_080ad35c, 0xc80);
+    ScheduleCallbackAfterFrames(Func_080ad35c, 0xc80);
 }

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "gs1_edition.h"
 
-u8 *Func_08077008(s32);
+u8 *Runtime_GetObject(s32);
 
 s32 Func_080c1f50(s32 arg0) {
     u8 *ptr;
@@ -14,7 +14,7 @@ s32 Func_080c1f50(s32 arg0) {
     i = 0;
     marker = LIST_MARKER_CHAR;
 loop_i:
-    ptr = Func_08077008(i + 0x80);
+    ptr = Runtime_GetObject(i + 0x80);
     val = ptr[298];
     if (val != 1) goto next_i;
     if (ptr[296] != arg0) goto next_i;

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "global_cells.h"
 
-s32 Func_080030f8(s32);
+s32 WaitFrames(s32);
 void *Func_080048f4(s32 arg0, s32 arg1);
 void Func_08093710(void)
 {
@@ -14,7 +14,7 @@ void Func_08093710(void)
     var_r5 = 0;
     if ((*((s16 *) (((u8 *) temp_r6) + 0x358))) != 0)
     {
- do { loop_3: Func_080030f8(1); var_r5 += 1; if (var_r5 <= 0x12B) { if ((*((s16 *) ((new_var = (u8 *) temp_r6) + 0x358))) != 0) { goto loop_3; } } } while (0);
+ do { loop_3: WaitFrames(1); var_r5 += 1; if (var_r5 <= 0x12B) { if ((*((s16 *) ((new_var = (u8 *) temp_r6) + 0x358))) != 0) { goto loop_3; } } } while (0);
     }
   }
 }

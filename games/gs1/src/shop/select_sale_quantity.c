@@ -11,7 +11,7 @@
 s32 Func_08077020(s32, s32);
 void Func_080b04dc(s32);
 s32 Func_080b1614(s32, s32, s32);
-void Func_080030f8(u32);
+void WaitFrames(u32);
 void Func_080a1038(void *);
 extern char Value_00000cad;
 
@@ -44,7 +44,7 @@ s32 Shop_SelectSaleQuantity(s32 unit_id, s32 slot)
         shop->mode = 0xc;
         Shop_PlaceCursor(NULL, EFFECT_X, 0x30);
         result = Func_080b1614(0, selection, effect);
-        Func_080030f8(1);
+        WaitFrames(1);
         Func_080a1038(shop->cursor.anchor);
         Shop_PlaceCursor(NULL, saved_x, saved_y);
     }

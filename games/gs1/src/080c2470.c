@@ -1,6 +1,6 @@
 #include "types.h"
 
-u8 *Func_08077018(u32);
+u8 *Item_GetData(u32);
 
 u32 Func_080c2470(u32 value)
 {
@@ -9,7 +9,7 @@ u32 Func_080c2470(u32 value)
     if (base == 0)
         return 0;
     {
-        u8 flags = Func_08077018(base)[3];
+        u8 flags = Item_GetData(base)[3];
 
         if (flags & 8)
             bank = 1;

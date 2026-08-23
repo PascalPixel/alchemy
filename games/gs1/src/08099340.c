@@ -8,8 +8,8 @@ struct Triple08099340 {
 };
 
 extern s32 *Data_03001f30;
-void Func_0800447c(s32, s32, struct Triple08099340 *);
-void Func_08009098(void *, void *);
+void RotateVectorByMagnitude(s32, s32, struct Triple08099340 *);
+void Object_SetCallback(void *, void *);
 
 void Func_08099340(u8 *arg)
 {
@@ -26,14 +26,14 @@ void Func_08099340(u8 *arg)
             local.x = global[1];
             local.y = global[2] + 0xA0000;
             local.z = global[3];
-            Func_0800447c(value << 16,
+            RotateVectorByMagnitude(value << 16,
                           *(s16 *)(arg + 102) + (value << 11),
                           &local);
             *(s32 *)(arg + 8) = local.x;
             *(s32 *)(arg + 12) = local.y;
             *(s32 *)(arg + 16) = local.z;
         } else {
-            Func_08009098(arg, Data_0809f0b0);
+            Object_SetCallback(arg, Data_0809f0b0);
         }
     }
 }

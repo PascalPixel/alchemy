@@ -5,7 +5,7 @@ extern u8 Value_0000097d;
 
 extern s32 Func_08077148(s32);
 extern s32 Func_080772d8(u8, s32);
-extern void Func_08015120(s32, s32);
+extern void UiText_DrawQuantity(s32, s32);
 extern void Func_08015040(void *, s32);
 
 s32 Func_080919d8(s32 event_id)
@@ -32,9 +32,9 @@ s32 Func_080919d8(s32 event_id)
     }
 
     if (total >= count * 30) {
-        Func_08015120(event_id, 2);
+        UiText_DrawQuantity(event_id, 2);
         Func_08015040(&Value_0000097d, 1);
-        Func_08015120(event_id, 2);
+        UiText_DrawQuantity(event_id, 2);
         Func_08015040(&Value_0000097d + 1, 1);
         return -1;
     }

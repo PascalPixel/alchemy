@@ -26,7 +26,7 @@ extern struct State_08017464 *Data_03001e8c;
 extern u8 Data_0801789d;
 
 s32 Func_08003fa4(s32, s32, s32);
-void Func_080041d8(void *, s32);
+void ScheduleCallbackAfterFrames(void *, s32);
 
 void Func_08017464(s32 initialize) {
     struct State_08017464 *state = Data_03001e8c;
@@ -42,5 +42,5 @@ void Func_08017464(s32 initialize) {
     state->secondZero = 0;
     transferSize = 200;
     transferSize <<= 4;
-    Func_080041d8(&Data_0801789d, transferSize);
+    ScheduleCallbackAfterFrames(&Data_0801789d, transferSize);
 }

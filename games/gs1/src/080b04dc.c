@@ -5,7 +5,7 @@ s32 Func_0808a540(s32);
 void Func_08015140(void);
 void Func_08015038(s32, s32, s32, s32);
 s32 Func_08015048(void);
-void Func_080030f8(s32);
+void WaitFrames(s32);
 extern u8 Data_00000c9b[];
 extern u8 Data_00000cc6[];
 extern u8 Data_00000cf1[];
@@ -28,6 +28,6 @@ void Func_080b04dc(s32 arg0)
         result += Data_00000d4c - Data_00000c9b;
     Func_08015038(result, 5, 0, (value << 16) | 0x22);
     while (Func_08015048() == 0)
-        Func_080030f8(1);
-    Func_080030f8(1);
+        WaitFrames(1);
+    WaitFrames(1);
 }

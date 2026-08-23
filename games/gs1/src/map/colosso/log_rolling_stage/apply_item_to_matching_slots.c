@@ -17,7 +17,7 @@
  * outside a recorded row, so overlay_call_targets.ts's own table does not
  * cover it -- resolved with `bun tools/overlay-show resource_3bc 2e18 |
  * cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3bc 2e18 2e52 --annotate`):
- *   0x2002e22 -> veneer -> Func_08077008(handle)         item/party record by id, established (resource_3cd_c_020000ec.c, games/gs1/semantic/main/080b5368.c)
+ *   0x2002e22 -> veneer -> Runtime_GetObject(handle)         item/party record by id, established (resource_3cd_c_020000ec.c, games/gs1/semantic/main/080b5368.c)
  *   0x2002e2c -> veneer -> Func_08077028(handle, item)   established, `s32 Func_08077028(s32 handle, s32 item);` (games/gs1/semantic/main/080b5368.c); its return is loaded then never used, so it is called for its side effect only
  *   0x2002e40 -> veneer -> Func_08077050(handle, slot)   established, `void Func_08077050(s32 handle, s32 resolved);` (same file); here the second argument is this owner's own loop index, not Func_08077028's discarded return -- the two established callees are not chained the way that main-image sibling chains them
  */

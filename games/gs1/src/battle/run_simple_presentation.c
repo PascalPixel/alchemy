@@ -4,7 +4,7 @@
 
 struct SimplePresentationInput {
     u8 primary_id;
-    u8 padding_01;
+    u8 reserved_01;
     u8 secondary_id;
 };
 
@@ -13,18 +13,18 @@ struct BattlePresentationWork {
     s32 secondary_is_low_id;
     s32 primary_id;
     s32 secondary_id;
-    s32 one;
-    s32 count;
-    s32 mode;
-    s32 unknown_1c;
-    u8 padding_20[4];
+    s32 initial_value;
+    s32 entry_count;
+    s32 battle_mode;
+    s32  reserved_1c;
+    u8 reserved_20[4];
     s16 members[24];
 };
 
 struct PresentationObject {
-    u8 padding_00[8];
+    u8 reserved_00[8];
     s32 x;
-    u8 padding_0c[4];
+    u8 reserved_0c[4];
     s32 z;
 };
 
@@ -33,11 +33,11 @@ struct PresentationObjectSlot {
 };
 
 struct MotionRecordValue {
-    s16 value;
+    s16 battle_value;
 };
 
 struct MotionRecord {
-    u8 padding_00[40];
+    u8 reserved_00[40];
     struct MotionRecordValue *child;
 };
 
@@ -45,13 +45,13 @@ extern s32 *Data_03001f00;
 
 struct PresentationObjectSlot *Func_080b7dd0(s32 id);
 s32 ArcTan2(s32 first, s32 second);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 void Func_080c10e8(s32 first, s32 second);
 void Func_080b9d34(void *input, struct BattlePresentationWork *work);
-void Func_08077008(s32 id);
+void Runtime_GetObject(s32 id);
 struct MotionRecord *Func_080b7f70(
-    struct PresentationObject *object, s32 index);
-s32 Func_08009260(s32 value, s32 second, s32 third);
+    struct PresentationObject *object, s32 entry_index);
+s32 Func_08009260(s32 battle_value, s32 second, s32 third);
 void Func_08009088(struct PresentationObject *object, s32 action);
 void Func_080b8178(s32 id);
 void Func_080b8000(s32 id);
@@ -89,21 +89,21 @@ s32 RunSimpleBattlePresentation(struct SimplePresentationInput *input, s32 flags
 
     if (*facing == facing_angle) {
         *facing = facing_angle;
-        Func_080030f8(5);
+        WaitFrames(5);
     } else {
         *facing = facing_angle;
-        Func_080030f8(20);
+        WaitFrames(20);
     }
 
     Func_080c10e8(0, 0);
     Func_080b9d34(saved_input, &work);
-    Func_08077008(work.primary_id);
-    Func_08077008(saved_input->secondary_id);
+    Runtime_GetObject(work.primary_id);
+    Runtime_GetObject(saved_input->secondary_id);
 
     scripted = flags & 2;
     record = Func_080b7f70(
         Func_080b7dd0(saved_input->primary_id)->object, 0);
-    divisor = Func_08009260(record->child->value, 2, 1);
+    divisor = Func_08009260(record->child->battle_value, 2, 1);
     BattleMotion_ApproachTarget(
         work.primary_id,
         saved_input->secondary_id,
@@ -117,11 +117,11 @@ s32 RunSimpleBattlePresentation(struct SimplePresentationInput *input, s32 flags
     else
         work.secondary_is_low_id = 0;
     if (scripted != 0) {
-        Func_080030f8(10);
+        WaitFrames(10);
         Func_080b8178(saved_input->secondary_id);
-        Func_080030f8(2);
-        Func_080030f8(4);
-        Func_080030f8(10);
+        WaitFrames(2);
+        WaitFrames(4);
+        WaitFrames(10);
         Func_080b8000(saved_input->secondary_id);
     } else {
         Func_080c9008(&work);

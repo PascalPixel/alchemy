@@ -1,6 +1,6 @@
 #include "types.h"
 
-void Func_080030f8(u32);
+void WaitFrames(u32);
 
 void Func_080064b8(void)
 {
@@ -17,7 +17,7 @@ void Func_080064b8(void)
     }
     return;
 loop:
-    Func_080030f8(1);
+    WaitFrames(1);
     count++;
     if (count > 0x000927BF)
     {

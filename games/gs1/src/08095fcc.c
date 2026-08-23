@@ -19,7 +19,7 @@ struct Object08095fcc {
 extern s32 Data_02000240[];
 
 s32 Func_08092054(u32);
-void Func_0800447c(s32, s32, struct Triple08095fcc *);
+void RotateVectorByMagnitude(s32, s32, struct Triple08095fcc *);
 void Func_080090d0(void *);
 
 void Func_08095fcc(struct Object08095fcc *arg)
@@ -36,7 +36,7 @@ void Func_08095fcc(struct Object08095fcc *arg)
     value = arg->timer;
     local.x = other->x;
     local.z = other->z;
-    Func_0800447c(value * 0x6666,
+    RotateVectorByMagnitude(value * 0x6666,
                   (value << 11) + arg->angle,
                   &local);
     arg->x = local.x;

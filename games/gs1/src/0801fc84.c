@@ -13,7 +13,7 @@ void Func_0801776c(s32, s32);
 s32 Func_08020244(s16, s32);
 s32 Func_08017658(s32, s32, s32, s32);
 s32 Func_08017364(void);
-s32 Func_080030f8(s32);
+s32 WaitFrames(s32);
 s32 Func_08028df4(s32, s32, s32, s32);
 void Func_08019a54(void);
 
@@ -35,7 +35,7 @@ s32 Func_0801fc84(void)
         } else {
             Func_08017658((s32)&Value_00000016, 8, 1, 2);
             while (Func_08017364() == 0) {
-                Func_080030f8(1);
+                WaitFrames(1);
             }
             if (Func_08028df4(1, 0, 3, 1) != 0) {
                 Func_08019a54();

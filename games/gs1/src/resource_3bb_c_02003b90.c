@@ -41,9 +41,9 @@ typedef struct Position3 {
  * (target offset = stored displacement + 2), never from the disassembler's
  * annotations - it prints the three identical Func_02003b48 halfwords, and the
  * two identical Func_08009150 halfwords, as different callees.  0x3f50 ->
- * Func_0808a080, 0x3e98 -> Func_080091d8, 0x3e48 -> Func_08009080 (twice),
+ * Func_0808a080, 0x3e98 -> Func_080091d8, 0x3e48 -> Object_SetMode (twice),
  * 0x3da0 -> Func_080000c0, 0x3e78 -> Func_08009150 (twice), 0x40b0 ->
- * Func_080f9010 (twice), plus three calls to this overlay's own
+ * Audio_PlayCue (twice), plus three calls to this overlay's own
  * Func_02003b48, whose byte-exact source is
  * games/gs1/assets/code/resource_3bb_c_02003b48.c.
  *

@@ -1,10 +1,10 @@
 #include "types.h"
 
-u8 *Func_08077008(void);
+u8 *Runtime_GetObject(void);
 
 s32 Func_080b2778(s32 unused, s32 kind)
 {
-    u8 value = Func_08077008()[0xF];
+    u8 value = Runtime_GetObject()[0xF];
     s32 result = 0;
 
     if (kind == 0) {

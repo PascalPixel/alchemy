@@ -1,9 +1,9 @@
 #include "shop.h"
 
-s32 Func_080022fc(s32 value, s32 divisor);
-void Func_08015060(s32 window);
-u8 *Func_080150c8(u16 no, u32 flags, s32 window, s32 x, s32 y);
-u8 *Func_080152d0(s32 no, s32 kind, s32 window, s32 x, s32 y);
+s32 Modulo(s32 value, s32 divisor);
+void UiWindow_Clear(s32 window);
+u8 *UiIcon_DrawWithFlags(u16 no, u32 flags, s32 window, s32 x, s32 y);
+u8 *UiIcon_Draw(s32 no, s32 kind, s32 window, s32 x, s32 y);
 u8 *Func_080b0744(s16 value, s32 window, s32 x, s32 y);
 
 void Shop_DrawStockPage(s32 window, s32 selected)
@@ -24,11 +24,11 @@ void Shop_DrawStockPage(s32 window, s32 selected)
     shop = SHOP_RUNTIME;
     item_ids = shop->stock_item_ids;
     item_count = shop->stock_count;
-    first = selected - Func_080022fc(selected, 7);
+    first = selected - Modulo(selected, 7);
     if (window != 0) {
-        Func_08015060(window);
+        UiWindow_Clear(window);
         if (first != 0) {
-            icon = Func_080150c8(shop->previous_page_icon, 0x40000000,
+            icon = UiIcon_DrawWithFlags(shop->previous_page_icon, 0x40000000,
                                  window, 216, -16);
             clear = 0;
             icon[4] = clear;
@@ -36,7 +36,7 @@ void Shop_DrawStockPage(s32 window, s32 selected)
             *(u16 *)(icon + 12) = clear;
         }
         if (first + 7 < item_count) {
-            icon = Func_080150c8(shop->next_page_icon, 0x40000000,
+            icon = UiIcon_DrawWithFlags(shop->next_page_icon, 0x40000000,
                                  window, 216, 24);
             clear = 0;
             icon[4] = clear;
@@ -51,7 +51,7 @@ void Shop_DrawStockPage(s32 window, s32 selected)
                  x += 32, slot++, item_id++, first++) {
                 stock_item = *item_id;
                 definition = Item_Get(stock_item);
-                icon = Func_080152d0(
+                icon = UiIcon_Draw(
                     stock_item, 1, window, slot * 32, 0);
                 icon[15] = 252;
                 if (first == selected) {

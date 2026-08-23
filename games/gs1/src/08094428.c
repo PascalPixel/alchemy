@@ -5,9 +5,9 @@ s32 Func_080770c0(s32);
 void Func_080770d0(s32);
 void Func_08094380(s32 arg0);
 void Func_080933f8(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-void Func_080030f8(s32);
-void Func_080f9010(s32);
-void Func_08009080(void *, s32);
+void WaitFrames(s32);
+void Audio_PlayCue(s32);
+void Object_SetMode(void *, s32);
 void Func_0809163c(s32 arg0);
 void Func_0809335c(s32 arg0, s32 arg1);
 extern s32 Data_02000240[];
@@ -40,11 +40,11 @@ s32 Func_08094428(void)
                 Func_080933f8(-1, -1, -1, 0);
                 while (*(s32 *)((u8 *)object + 12) + *(s32 *)((u8 *)object + 40) >
                        *(s32 *)((u8 *)object + 20)) {
-                    Func_080030f8(1);
+                    WaitFrames(1);
                 }
-                Func_080f9010(159);
+                Audio_PlayCue(159);
                 *(s32 *)((u8 *)object + 12) = *(s32 *)((u8 *)object + 20);
-                Func_08009080(object, 22);
+                Object_SetMode(object, 22);
                 Func_0809163c(15);
                 Func_0809335c(object_id, 1);
                 result = 3;

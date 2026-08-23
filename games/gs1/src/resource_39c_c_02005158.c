@@ -24,7 +24,7 @@
  * owner record's field 9 (flag byte) and 0x26 (byte, cleared) are inferred
  * only from this call shape and the resource_39c_c_02000048.c sibling; none
  * are independently confirmed. The 0x0200de08 pointer passed to
- * Func_08009098 is not dereferenced here, so it is recorded as a raw
+ * Object_SetCallback is not dereferenced here, so it is recorded as a raw
  * literal rather than a typed global, per HANDOVER's address-taken-literal
  * rule.
  */

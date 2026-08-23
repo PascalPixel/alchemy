@@ -2,10 +2,10 @@
 
 void Func_08015278(s32);
 void Func_080a1ac0(s32, s32);
-s32 Func_08077008(s32);
+s32 Runtime_GetObject(s32);
 s32 Func_080a35f8(void *, void *);
 void Func_080a17c4(void *icon);
-void Func_080030f8(s32);
+void WaitFrames(s32);
 
 s32 InventoryMenu_PrepareOwnerItems(s32 party_slot)
 {
@@ -29,7 +29,7 @@ s32 InventoryMenu_PrepareOwnerItems(s32 party_slot)
 
     {
         s32 owner_id_offset = offset + 0x208;
-        result = Func_08077008(*(u16 *)(menu + owner_id_offset));
+        result = Runtime_GetObject(*(u16 *)(menu + owner_id_offset));
     }
     offset = (s32)(menu + 0x1C8);
     *(s8 *)(menu + 0x218) =
@@ -39,6 +39,6 @@ s32 InventoryMenu_PrepareOwnerItems(s32 party_slot)
         s32 cursor_offset = party_slot * 4 + 20;
         Func_080a17c4(*(s32 *)(menu + cursor_offset));
     }
-    Func_080030f8(1);
+    WaitFrames(1);
     return result;
 }

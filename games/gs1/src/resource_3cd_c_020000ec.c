@@ -29,9 +29,9 @@
  *
  * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3cd
  * 00ec` (an overlay `bl` stores target offset - 2).  22 sites, 12 distinct:
- *   0x0850 Func_08077008 x1   0x07f0 Func_08015010 x1   0x0800 Func_08015078 x3
- *   0x0830 Func_08015270 x2   0x0810 Func_08015090 x1   0x0818 Func_08015098 x1
- *   0x0828 Func_080150b0 x1   0x00c0 (prologue) x2      0x08c8 Func_080f9010 x3
+ *   0x0850 Runtime_GetObject x1   0x07f0 Func_08015010 x1   0x0800 UiText_DrawMessageAt x3
+ *   0x0830 UiWindow_Commit x2   0x0810 Func_08015090 x1   0x0818 Func_08015098 x1
+ *   0x0828 UiNumber_DrawAt x1   0x00c0 (prologue) x2      0x08c8 Audio_PlayCue x3
  *   0x07e8 Func_080000c0 x2   0x07f8 Func_08015018 x1   0x0858 Func_08077010 x4
  * The 0x00c0 prologue is the in-overlay helper whose byte-exact source is
  * tracked as `games/gs1/assets/code/resource_3cd_c_020000c0.c` — it walks a 16-entry list
@@ -40,7 +40,7 @@
  * The Func_08015xxx family is the window/text layer established by the tracked
  * main-image sources: `src/080a153c.c` fixes Func_08015090 and Func_08015098 as
  * `(image, layer, x, y)` and `src/080a14f0.c` fixes Func_080150a8 as
- * `(value, digits, layer, x, y)`, which is the same shape Func_080150b0 is
+ * `(value, digits, layer, x, y)`, which is the same shape UiNumber_DrawAt is
  * called with here.  The item record's byte at +15 being a count is confirmed
  * independently by the tracked `games/gs1/assets/code/resource_3cd_c_020000a0.c`, which
  * reads `entry[15]` off the same accessor.
@@ -59,7 +59,7 @@
  * 0/1/2/3 are read here as A / B / Select / Start on the standard GBA key
  * assignment, which fits "A adjusts by 1, Select-or-Start adjusts by 5, B
  * closes" but is not otherwise witnessed.  The pointer handed to Func_08015090
- * is the record Func_08077008 returned, so that accessor's result serves as
+ * is the record Runtime_GetObject returned, so that accessor's result serves as
  * both a record and an icon source; that is what the code does.
  */
 

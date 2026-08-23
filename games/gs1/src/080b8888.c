@@ -3,10 +3,10 @@
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-void *Func_08077008(s32);
+void *Runtime_GetObject(s32);
 s32 Func_080b8808(u32 arg0);
 void Func_08015118(void);
-void Func_08015120(s32, s32);
+void UiText_DrawQuantity(s32, s32);
 void Func_080151c8(s32);
 
 s32 Func_080b8888(s16 *script) {
@@ -15,7 +15,7 @@ s32 Func_080b8888(s16 *script) {
     void *object;
 
     object_id = *script;
-    object = Func_08077008(object_id);
+    object = Runtime_GetObject(object_id);
     if (Func_080b8808(object_id) < 0) {
         return -1;
     }
@@ -24,7 +24,7 @@ s32 Func_080b8888(s16 *script) {
         return result;
     }
     Func_08015118();
-    Func_08015120(object_id, 1);
+    UiText_DrawQuantity(object_id, 1);
     Func_080151c8((s32)&Value_00000816);
     return 0;
 }

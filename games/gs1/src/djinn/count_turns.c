@@ -1,6 +1,6 @@
 #include "types.h"
 
-u8 *Func_08077008(s32);
+u8 *Runtime_GetObject(s32);
 
 extern u8 *Data_03001f2c;
 
@@ -26,7 +26,7 @@ void CountDjinnTurns(u8 *counts)
         one = 1;
         owner_ids = (u16 *)(work + 0x208);
         do {
-            owner = Func_08077008(*owner_ids);
+            owner = Runtime_GetObject(*owner_ids);
             row_index = 0;
             count = 0;
             row = (u32 *)(owner + 0xf8);

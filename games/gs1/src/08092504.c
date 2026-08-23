@@ -1,6 +1,6 @@
 #include "object_runtime.h"
 
-void Func_080030f8(s32);
+void WaitFrames(s32);
 
 void Func_08092504(u32 object_id)
 {
@@ -14,7 +14,7 @@ void Func_08092504(u32 object_id)
         ptr = object->animation;
         saved = ptr[36];
         for (i = 0; i <= 89; i++) {
-            Func_080030f8(1);
+            WaitFrames(1);
             if (saved != ptr[36]) {
                 break;
             }

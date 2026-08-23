@@ -7,7 +7,7 @@ s32 Func_08077230(s32);
 s32 Func_08077298(s16);
 void Func_080b0574(s32 message);
 s32 Func_080b1868(s32, s32);
-s32 Func_080f9010(s32);
+s32 Audio_PlayCue(s32);
 extern char Value_00000ca1;
 
 void Shop_CompletePurchase(s32 unit_id, s32 item_id, s32 quantity) {
@@ -20,7 +20,7 @@ void Shop_CompletePurchase(s32 unit_id, s32 item_id, s32 quantity) {
     item = Item_Get(item_id);
     added_slot = 0;
     replaced_slot = Func_08077228(unit_id, item->type);
-    Func_080f9010(SOUND_SHOP_PURCHASE);
+    Audio_PlayCue(SOUND_SHOP_PURCHASE);
     if (added_slot < remaining) {
         do {
             added_slot = Func_08077028(unit_id, item_id);

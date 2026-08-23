@@ -8,8 +8,8 @@
 #define BASE_W 12
 #endif
 
-s32 Func_080022fc(s32, s32);
-void Func_080030f8(s32);
+s32 Modulo(s32, s32);
+void WaitFrames(s32);
 s32 Func_08015010(s32, s32, s32, s32, s32);
 void Func_08015018(s32, s32);
 s32 Func_08077248(s32);
@@ -17,7 +17,7 @@ void Func_080a1028(s32, s32, s32, s32, s32);
 void Func_080a1030(void);
 void Func_080b1bd0(s32);
 void Func_080b211c(s32);
-void Func_080f9010(s32);
+void Audio_PlayCue(s32);
 
 /*
  * Keep an actor-selection menu active while dispatching the chosen actor into
@@ -42,7 +42,7 @@ s32 Shop_SelectPartyMember(void)
     for (;;) {
         if (redraw != 0) {
             redraw = 0;
-            selection = Func_080022fc(
+            selection = Modulo(
                 selection + shop->party_member_count,
                 shop->party_member_count);
             unit_id = shop->party_member_ids[selection];
@@ -56,11 +56,11 @@ s32 Shop_SelectPartyMember(void)
         }
 
         if ((*(volatile u32 *)ADDR_03001C94 & 1) != 0) {
-            Func_080030f8(1);
+            WaitFrames(1);
             if (Func_08077248(unit_id) == 0) {
-                Func_080f9010(SOUND_MENU_CANCEL);
+                Audio_PlayCue(SOUND_MENU_CANCEL);
             } else {
-                Func_080f9010(SOUND_MENU_CONFIRM);
+                Audio_PlayCue(SOUND_MENU_CONFIRM);
                 if (shop->party_action == 1)
                     Func_080b1bd0(unit_id);
                 else
@@ -73,25 +73,25 @@ s32 Shop_SelectPartyMember(void)
         }
 
         if ((*(volatile u32 *)ADDR_03001C94 & 2) != 0) {
-            Func_080f9010(SOUND_MENU_CANCEL);
+            Audio_PlayCue(SOUND_MENU_CANCEL);
             Func_080a1030();
             Func_08015018(list_window, 2);
             Func_08015018(shop->item_window, 2);
             Func_08015018(shop->money_window, 2);
-            Func_080030f8(1);
+            WaitFrames(1);
             return 0;
         }
 
         if ((*(volatile u32 *)ADDR_03001B04 & 0x20) != 0) {
-            Func_080f9010(SOUND_MENU_CURSOR_MOVE);
+            Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
             selection--;
             redraw = 1;
         }
         if ((*(volatile u32 *)ADDR_03001B04 & 0x10) != 0) {
-            Func_080f9010(SOUND_MENU_CURSOR_MOVE);
+            Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
             selection++;
             redraw = 1;
         }
-        Func_080030f8(1);
+        WaitFrames(1);
     }
 }

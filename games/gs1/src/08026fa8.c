@@ -7,7 +7,7 @@
 #define TEXT_COUNT 52
 #endif
 
-void Func_080030f8(s32);
+void WaitFrames(s32);
 s32 Func_080162d4(s32, s32, s32, s32, s32);
 void Func_08016418(struct Work *work, s32 release);
 volatile unsigned char Func_08016738(void);
@@ -50,7 +50,7 @@ active:
         Func_0801965c((s32)&Value_00000845, buffer, TEXT_COUNT);
         Func_08017aa4(buffer, work, 0, 4);
         do {
-            Func_080030f8(1);
+            WaitFrames(1);
         } while ((Data_03001c94 & 3) == 0 &&
                  *(s32 *)((u8 *)Data_03001f34 + 0x4C) != 0);
         Func_08016418(work, 1);

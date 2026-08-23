@@ -2,7 +2,7 @@
 
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-void *Func_08077008(s32);
+void *Runtime_GetObject(s32);
 s32 Func_080bf208(s32 arg0, s32 arg1, s32 arg2);
 
 s32 Func_080bf4c4(s32 arg0)
@@ -14,7 +14,7 @@ s32 Func_080bf4c4(s32 arg0)
     s32 var_r2;
     void *temp_r0;
 
-    temp_r0 = Func_08077008(arg0);
+    temp_r0 = Runtime_GetObject(arg0);
     var_r2 = M2C_FIELD(temp_r0, u8 *, 0x13D);
     temp_r3 = var_r2 & 0xFF;
     if (temp_r3 != 0) {

@@ -3,7 +3,7 @@
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-s32 Func_080030f8(s32);
+s32 WaitFrames(s32);
 s32 Func_08009240(void *, s32);
 
 struct State_08097174 {
@@ -17,5 +17,5 @@ void Func_08097174(void) {
 
     M2C_FIELD(object, s32 *, 0x6C) = 0;
     Func_08009240(object, 0);
-    Func_080030f8(1);
+    WaitFrames(1);
 }

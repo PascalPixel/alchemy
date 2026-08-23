@@ -26,7 +26,7 @@ struct Work_080936a0 {
 };
 
 s32 Func_080048f4(s32 arg0, s32 arg1);
-void Func_080041d8(const void *arg0, s32 arg1);
+void ScheduleCallbackAfterFrames(const void *arg0, s32 arg1);
 extern u8 Data_080935d5;
 
 void Func_080936a0(s32 arg0, s32 arg1)
@@ -46,5 +46,5 @@ void Func_080936a0(s32 arg0, s32 arg1)
     state->current = result;
     state->kind = arg1;
     state->flags = 0;
-    Func_080041d8(&Data_080935d5, 0xc94);
+    ScheduleCallbackAfterFrames(&Data_080935d5, 0xc94);
 }

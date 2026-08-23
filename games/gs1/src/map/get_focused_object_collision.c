@@ -29,7 +29,7 @@ struct Position_0808bd24 {
     s32 y;
 };
 
-void Func_0800447c(s32, u32, struct Position_0808bd24 *);
+void RotateVectorByMagnitude(s32, u32, struct Position_0808bd24 *);
 
 extern struct Global_0808bd24 Data_02000240;
 extern struct Runtime_0808bd24 *Data_03001ebc;
@@ -60,7 +60,7 @@ u8 GetFocusedObjectCollision(void)
     position.x = object->x;
     position.unknown_04 = object->unknown_0c;
     position.y = object->y;
-    Func_0800447c(0x100000, object->kind, &position);
+    RotateVectorByMagnitude(0x100000, object->kind, &position);
 
     if (runtime->mode == 3) {
         u32 tile_x;

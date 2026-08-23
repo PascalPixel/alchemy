@@ -26,7 +26,7 @@ extern struct Work_080b0444 Data_02000240;
 void Func_08077050(s32, s32);
 void Func_080b0278(s32, s32);
 s32 Func_08077028(s32, s32);
-void *Func_08077008(s32);
+void *Runtime_GetObject(s32);
 
 /* 固定値を設定し、3つの項目フラグを1にする。 */
 s32 Func_080b0444(void)
@@ -36,9 +36,9 @@ s32 Func_080b0444(void)
     Func_08077050(1, Func_08077028(1, 0x48d));
     Func_08077050(0, Func_08077028(0, 0x40b));
     Func_08077028(2, 0xe7);
-    FIELD((void *)Func_08077008(3), s8 *, 0x131) = 1;
-    FIELD((void *)Func_08077008(5), s8 *, 0x131) = 1;
-    FIELD((void *)Func_08077008(2), s8 *, 0x140) = 1;
+    FIELD((void *)Runtime_GetObject(3), s8 *, 0x131) = 1;
+    FIELD((void *)Runtime_GetObject(5), s8 *, 0x131) = 1;
+    FIELD((void *)Runtime_GetObject(2), s8 *, 0x140) = 1;
     Func_080b0278(FINAL_ARG, 0x1e);
     return 0;
 }

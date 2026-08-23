@@ -1,7 +1,7 @@
 #include "types.h"
 
 void Func_08016418(struct Work *work, s32 release);
-void Func_080030f8(u32);
+void WaitFrames(u32);
 
 extern u8 *Data_03001e8c;
 
@@ -69,7 +69,7 @@ poll:
     } while (index != 3);
     index = 0;
     if (!done) {
-        Func_080030f8(1);
+        WaitFrames(1);
         goto poll;
     }
     goto directTest;

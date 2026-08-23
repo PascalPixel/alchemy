@@ -7,17 +7,17 @@
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 struct BattleEscapeState {
-    u8 padding_00[0x45];
+    u8 reserved_00[0x45];
     u8 guaranteed;
     u8 failed_attempts;
 };
 
 struct BattleUnitLevel {
-    u8 padding_00[0x0f];
+    u8 reserved_00[0x0f];
     u8 level;
 };
 
-struct BattleUnitLevel *Func_08077008(s32);
+struct BattleUnitLevel *Runtime_GetObject(s32);
 s32 Func_080022ec(s32, s32);
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
@@ -46,7 +46,7 @@ s32 BattleEscape_CheckSuccess(void) {
             living_units);
         level_total = 0;
         for (unit_index = escaped; unit_index < living_count; unit_index++) {
-            level_total += Func_08077008(
+            level_total += Runtime_GetObject(
                 (s32)living_units[unit_index])->level;
         }
         chance += Func_080022ec(level_total * 0x1F4, living_count);
@@ -55,7 +55,7 @@ s32 BattleEscape_CheckSuccess(void) {
             living_units);
         level_total = 0;
         for (unit_index = 0; unit_index < living_count; unit_index++) {
-            level_total += Func_08077008(
+            level_total += Runtime_GetObject(
                 (s32)living_units[unit_index])->level;
         }
         chance -= Func_080022ec(level_total * 0x1F4, living_count);

@@ -1,5 +1,5 @@
 #include "inventory_menu.h"
-s32 Func_080022fc(s32, s32);
+s32 Modulo(s32, s32);
 
 void InventoryMenu_HidePageStartIcons(void)
 {
@@ -11,7 +11,7 @@ void InventoryMenu_HidePageStartIcons(void)
     do {
         struct InventoryMenuIcon *icon = *icon_slot++;
 
-        if (icon != 0 && Func_080022fc(slot, 5) == 0) {
+        if (icon != 0 && Modulo(slot, 5) == 0) {
             icon->state = hidden_state;
         }
         slot++;

@@ -2,7 +2,7 @@
 
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-void *Func_08077008(u8);
+void *Runtime_GetObject(u8);
 
 s32 Func_080b9d34(void *arg0, void *arg1) {
     s32 sp0;
@@ -28,7 +28,7 @@ s32 Func_080b9d34(void *arg0, void *arg1) {
         do {
             sp4 = var_r1;
             sp0 = var_r4;
-            if ((M2C_FIELD(Func_08077008(*var_r5), s16 *, 0x38) != 0) || (M2C_FIELD(arg0, s32 *, 0x58) & 0x10000)) {
+            if ((M2C_FIELD(Runtime_GetObject(*var_r5), s16 *, 0x38) != 0) || (M2C_FIELD(arg0, s32 *, 0x58) & 0x10000)) {
                 var_r4 += 1;
                 *var_r7 = (s16) *var_r5;
                 var_r7 += 1;

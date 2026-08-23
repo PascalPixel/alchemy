@@ -21,7 +21,7 @@ struct Snd_080c1df4 {
 
 extern struct Snd_080c1df4 *Data_03001e74;
 
-s32 Func_080022fc(s32, s32);
+s32 Modulo(s32, s32);
 
 s32 Func_080c1df4(s32 no)
 {
@@ -45,7 +45,7 @@ s32 Func_080c1df4(s32 no)
             return 0x8001;
         }
         for (; retry <= 31; retry++) {
-            ch = Func_080022fc(w->ch[i] + 1, CH_CNT);
+            ch = Modulo(w->ch[i] + 1, CH_CNT);
             w->ch[i] = ch;
             if ((w->use[i] & (1 << (s8)ch)) == 0)
                 break;

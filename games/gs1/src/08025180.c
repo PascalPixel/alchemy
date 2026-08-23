@@ -2,7 +2,7 @@
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-void *Func_08077018(s32);
+void *Item_GetData(s32);
 s32 Func_08077218(s32, s32);
 void *Func_08077080(s32);
 
@@ -13,7 +13,7 @@ s32 Func_08025180(s32 arg0, s32 arg1) {
     if (arg1 == 0) {
         return 1;
     }
-    temp_r0 = Func_08077018(arg1);
+    temp_r0 = Item_GetData(arg1);
     var_r0 = 1;
     if (M2C_FIELD(temp_r0, u8, 0xC) == 3) {
         return var_r0;

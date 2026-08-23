@@ -39,8 +39,8 @@ struct Entity_080942e0 *Func_0808ba1c(u32);
 /* Object table: 192 pointers at Data_03001ebc + 0x14 (games/gs1/src/0808ba1c.c). */
 #define GetObject Func_0808ba1c
 struct Effect_080942e0 *Func_08009048(struct Entity_080942e0 *, s32);
-void Func_08009080(struct Entity_080942e0 *, s32);
-void Func_080030f8(s32);
+void Object_SetMode(struct Entity_080942e0 *, s32);
+void WaitFrames(s32);
 
 void Func_080942e0(s32 value)
 {
@@ -64,6 +64,6 @@ void Func_080942e0(s32 value)
     object->field2C = zero;
     object->field38 = 0x80000000;
     object->field40 = 0x80000000;
-    Func_08009080(object, value);
-    Func_080030f8(18);
+    Object_SetMode(object, value);
+    WaitFrames(18);
 }

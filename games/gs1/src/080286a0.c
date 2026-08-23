@@ -18,8 +18,8 @@ extern u8 Data_0000001f;
 
 void Func_08016478(void *work);
 void Func_0801e7c0(s32 resource_id, void *work, s32 arg2, s32 arg3);
-void Func_080030f8(s32 frames);
-void Func_080f9010(s32 sound_id);
+void WaitFrames(s32 frames);
+void Audio_PlayCue(s32 sound_id);
 
 static inline s32 AbsoluteDifference(s32 difference, s32 lhs, s32 rhs)
 {
@@ -64,18 +64,18 @@ s32 Func_080286a0(s32 initial_selection, s32 target_selection)
         selection_delay_table = Data_080373ef;
         difference = current_selection - target_selection;
         distance = AbsoluteDifference(difference, current_selection, target_selection);
-        Func_080030f8(selection_delay_table[distance] + frame_delay);
+        WaitFrames(selection_delay_table[distance] + frame_delay);
 
         if (current_selection_index == target_selection)
             break;
 
         state->selection = (s16)((u16)state->selection + selection_step);
-        Func_080f9010(SOUND_MENU_CURSOR_MOVE);
+        Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
         frame_delay = 0;
         current_selection_index += selection_step;
     }
 
-    Func_080030f8(48);
-    Func_080f9010(SOUND_MENU_CONFIRM);
+    WaitFrames(48);
+    Audio_PlayCue(SOUND_MENU_CONFIRM);
     return target_selection;
 }

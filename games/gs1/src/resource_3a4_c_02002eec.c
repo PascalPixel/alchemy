@@ -16,7 +16,7 @@
  * the pool-is-not-a-terminator trap costs 6 bytes even on a row this
  * small.  No arguments, void.
  *
- * The single call resolves to Func_080f9010 via targetOffset.  The
+ * The single call resolves to Audio_PlayCue via targetOffset.  The
  * listing's own arrow reads 0x02003d20, which is a real address inside
  * this image and therefore a plausible-looking lie -- the stored
  * displacement is an absolute image offset minus 2, not pc-relative.

@@ -3,7 +3,7 @@
 
 void Func_08009140(void *);
 void Func_08009150(void *, s32, s32, s32);
-void Func_08009080(void *, s32);
+void Object_SetMode(void *, s32);
 
 struct Object080df8b8 {
     u8 padding_00[0x28];
@@ -33,5 +33,5 @@ void Func_080df8b8(s32 arg0) {
     object->field_58 = 1;
     Func_08009140(object);
     Func_08009150(object, context->word_0c, 0, context->word_10);
-    Func_08009080(object, 1);
+    Object_SetMode(object, 1);
 }

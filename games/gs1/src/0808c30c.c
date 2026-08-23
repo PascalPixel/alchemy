@@ -4,12 +4,12 @@
 extern u8 Data_02000240[];
 
 s32 Func_08077148(void);
-u8 *Func_08077008(s32);
+u8 *Runtime_GetObject(s32);
 s32 Func_080022ec(s32, s32);
 void Func_08077118(s32, s32);
 void Func_08091220(s32, s32);
 void Func_08091254(s32);
-void Func_080f9010(s32);
+void Audio_PlayCue(s32);
 
 void Func_0808c30c(s32 amount, s32 scaled)
 {
@@ -25,11 +25,11 @@ void Func_0808c30c(s32 amount, s32 scaled)
         Func_08091220(0x1ff, 0);
         Func_08091254(4);
         if (amount < -10)
-            Func_080f9010(SOUND_HEAVY_IMPACT);
+            Audio_PlayCue(SOUND_HEAVY_IMPACT);
         else
-            Func_080f9010(133);
+            Audio_PlayCue(133);
     } else {
-        Func_080f9010(SOUND_RECOVERY);
+        Audio_PlayCue(SOUND_RECOVERY);
     }
 
     found = Func_08077148();
@@ -39,7 +39,7 @@ void Func_0808c30c(s32 amount, s32 scaled)
         id = base + offset;
         count = found;
         do {
-            object = Func_08077008(*id);
+            object = Runtime_GetObject(*id);
             value = amount;
             if (scaled) {
                 value = Func_080022ec(*(s16 *)(object + 0x34) * amount, 100);

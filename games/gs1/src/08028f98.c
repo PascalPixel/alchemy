@@ -20,7 +20,7 @@ struct Work *Func_080162d4(s32 kind, s32 x, s32 y, s32 width, s32 layer);
 void Func_08028ef0(
     struct Work *work, s16 primary, const s16 *secondary);
 void Func_0801c0dc(struct TextObject *object, s32 *resource);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 s16 Func_08029094(
     struct Work *work,
     s16 primary,
@@ -50,7 +50,7 @@ s16 Func_08028f98(void)
     Func_0801c0dc(&object, &resource);
 
     while (Data_03001ae8 != 0)
-        Func_080030f8(1);
+        WaitFrames(1);
 
     for (;;) {
         result = Func_08029094(work, primary, &secondary, &mode);
@@ -68,6 +68,6 @@ s16 Func_08028f98(void)
 
         Func_0801c154(&object, MENU_TEXT_X, mode * 14 + MENU_TEXT_Y);
         primary = result;
-        Func_080030f8(1);
+        WaitFrames(1);
     }
 }

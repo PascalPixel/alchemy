@@ -29,7 +29,7 @@ typedef struct Placement {
  *
  * All 13 call sites resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * resource_3a9 0240` (an overlay `bl` stores target offset - 2).  Per-target:
- *   Func_0808a018 1   Func_0808a080 2   Func_080f9010 1   Func_08009178 1
+ *   Func_0808a018 1   Func_0808a080 2   Audio_PlayCue 1   Func_08009178 1
  *   Func_0808a090 1   Func_0808a100 1   Func_0808a0d8 1   Func_0808a010 1
  *   Func_0808a248 1   Func_0808a368 1   Func_0808a370 1   Func_0808a020 1
  * The two Func_0808a080 sites are the loop's per-slot fetch and the later
@@ -62,7 +62,7 @@ typedef struct Placement {
  * tracked `games/gs1/assets/code/resource_3a9_c_02000308.c` spells it.  It is read twice,
  * once for the switch and once for Func_0808a248, and both reads are kept.
  *
- * Uncertainty: 158 is a Func_080f9010 cue id from its argument position.
+ * Uncertainty: 158 is a Audio_PlayCue cue id from its argument position.
  */
 
 /* Old-style declarations: overlay imports vary in arity between call sites. */

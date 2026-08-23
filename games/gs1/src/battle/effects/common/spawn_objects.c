@@ -1,11 +1,11 @@
 #include "types.h"
 
 typedef struct {
-    u8 padding00[9];
+    u8 reserved_00[9];
     u8 flags09_0 : 2;
     u8 variant : 2;
     u8 flags09_4 : 4;
-    u8 padding0a[28];
+    u8 reserved_0a[28];
     u8 enabled;
 } BattleEffectObject;
 
@@ -19,12 +19,12 @@ extern u8 Value_000077d8;
 BattleEffectObject *GetBattleEffectObject(s32);
 void InitBattleEffectObject(BattleEffectObject *, s32);
 
-void SpawnBattleEffectObjects(s32 count, s32 kind, u32 variant) {
+void SpawnBattleEffectObjects(s32 entry_count, s32 kind, u32 variant) {
     u32 base = Data_03001eec;
-    s32 index = 0;
+    s32 entry_index = 0;
     u32 offset;
 
-    if (count == 0) {
+    if (entry_count == 0) {
         return;
     }
     offset = (u32)&Value_000077d8;
@@ -34,10 +34,10 @@ void SpawnBattleEffectObjects(s32 count, s32 kind, u32 variant) {
         *(BattleEffectObject **)(offset + base) = object;
         if (object != 0) {
             object->enabled = 0;
-            InitBattleEffectObject(object, index);
+            InitBattleEffectObject(object, entry_index);
             (*(BattleEffectObject **)(offset + base))->variant = variant;
         }
-        index++;
+        entry_index++;
         offset += 4;
-    } while (index != count);
+    } while (entry_index != entry_count);
 }

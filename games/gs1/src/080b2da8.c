@@ -1,14 +1,14 @@
 #include "types.h"
 
-u8 *Func_08077008(s32);
+u8 *Runtime_GetObject(s32);
 void Func_08077128(s32);
-u8 *Func_08077018(u16);
+u8 *Item_GetData(u16);
 void Func_08077010(s32);
 
 void Func_080b2da8(s32 id, s32 mode) {
     u8 *state;
 
-    state = Func_08077008(id);
+    state = Runtime_GetObject(id);
     if (mode == 0) {
         *(u16 *)(state + 56) = *(u16 *)(state + 52);
         Func_08077128(id);
@@ -27,7 +27,7 @@ void Func_080b2da8(s32 id, s32 mode) {
         entry = (volatile u16 *)((u8 *)entry + 216);
         do {
             if ((*entry & mask) != 0 &&
-                (Func_08077018(*entry)[3] & 1) != 0) {
+                (Item_GetData(*entry)[3] & 1) != 0) {
                 *entry ^= mask;
                 Func_08077010(id);
             }

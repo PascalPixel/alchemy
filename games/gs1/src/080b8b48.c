@@ -28,13 +28,13 @@ struct ObjectSlot_080b8b48 {
 
 extern s32 *Data_03001f00;
 
-void Func_080030f8(u32);
+void WaitFrames(u32);
 s32 Func_080b8808(u32);
-void Func_08077008(s32);
+void Runtime_GetObject(s32);
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-void Func_08015120(s32, s32);
+void UiText_DrawQuantity(s32, s32);
 void Func_080151c8(s32);
 struct ObjectSlot_080b8b48 *Func_080b7dd0(s32);
 void Func_08009088(void *, s32);
@@ -47,10 +47,10 @@ s32 Func_080b8b48(struct Input_080b8b48 *input)
 
     if (*Data_03001f00 == 0x2000) {
         *Data_03001f00 = 0x2000;
-        Func_080030f8(10);
+        WaitFrames(10);
     } else {
         *Data_03001f00 = 0x2000;
-        Func_080030f8(30);
+        WaitFrames(30);
     }
 
     work.primary_id = input->primary_id;
@@ -61,10 +61,10 @@ s32 Func_080b8b48(struct Input_080b8b48 *input)
     if (Func_080b8808(work.secondary_id) < 0)
         return -1;
 
-    Func_08077008(work.primary_id);
-    Func_08077008(work.secondary_id);
+    Runtime_GetObject(work.primary_id);
+    Runtime_GetObject(work.secondary_id);
     Rand();
-    Func_08015120(work.primary_id, 1);
+    UiText_DrawQuantity(work.primary_id, 1);
     Func_080151c8((s32)&Value_00000814);
     BattleMotion_ApproachTarget(work.primary_id, work.secondary_id, 13, 0);
     Func_08009088(Func_080b7dd0(work.primary_id)->object, 16);
@@ -77,7 +77,7 @@ s32 Func_080b8b48(struct Input_080b8b48 *input)
         work.secondary_is_low_id = 0;
     work.unknown1c = 0;
 
-    Func_080030f8(4);
+    WaitFrames(4);
     Func_080c9008(&work);
     Func_080b8000(work.secondary_id);
     Func_080b8000(work.primary_id);

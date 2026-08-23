@@ -6,7 +6,7 @@ struct BattleObjectSlot *Func_080b7dd0(s32);
 s32 Func_080022ec(s32, s32);
 void Func_08009140(struct MotionObject *);
 void Func_08009150(struct MotionObject *, s32, s32, s32);
-void Func_08009080(struct MotionObject *, s32);
+void Object_SetMode(struct MotionObject *, s32);
 
 void BattleMotion_ApproachTarget(
     s32 actor_id,
@@ -45,5 +45,5 @@ void BattleMotion_ApproachTarget(
     object->auto_face_motion = 1;
     Func_08009140(object);
     Func_08009150(object, x, 0, z);
-    Func_08009080(object, 2);
+    Object_SetMode(object, 2);
 }

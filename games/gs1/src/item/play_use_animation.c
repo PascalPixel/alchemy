@@ -2,7 +2,7 @@
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-void *Func_08077018();
+void *Item_GetData();
 s32 Func_080aa460(s32);
 #define Ability_PlayUseAnimation Func_080aa460
 
@@ -10,5 +10,5 @@ s32 Func_080aa460(s32);
 
 void Item_PlayUseAnimation(void)
 {
-    Ability_PlayUseAnimation(0x3fff & FIELD(Func_08077018(), u16 *, 0x28));
+    Ability_PlayUseAnimation(0x3fff & FIELD(Item_GetData(), u16 *, 0x28));
 }

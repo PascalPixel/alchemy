@@ -56,7 +56,7 @@ extern struct Runtime_0808bde0 *Data_03001ebc;
 
 struct Region_0808bde0 *Func_080072e4(RegionProvider_0808bde0 callback);
 s32 Func_0808d428(s32 condition);
-void Func_080f9010(s32 sound_id);
+void Audio_PlayCue(s32 sound_id);
 void Func_08091660(void);
 
 #define FIXED_0808BDE0(value) ((s32)((u32)(s32)(value) << 16))
@@ -99,7 +99,7 @@ loop:
             z >= FIXED_0808BDE0(min_z) &&
             z < FIXED_0808BDE0(max_z)) {
             runtime->selected_region = (u16)selected_value;
-            Func_080f9010(123);
+            Audio_PlayCue(123);
             Func_08091660();
             return;
         }

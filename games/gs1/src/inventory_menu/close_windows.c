@@ -1,7 +1,7 @@
 #include "global_cells.h"
 #include "inventory_menu.h"
 
-void Func_080030f8(s32);
+void WaitFrames(s32);
 void Func_080a1114(void *, s32);
 void Func_080a195c(void);
 
@@ -12,7 +12,7 @@ void InventoryMenu_CloseWindows(void) {
     menu = *(u8 **)ADDR_03001F2C;
     Func_080a195c();
     InventoryMenu_HideAllItemIcons();
-    Func_080030f8(1);
+    WaitFrames(1);
     cursor = *(s8 **)(menu + 0x17C);
     cursor[5] = 0xD;
     Func_080a1114(menu + 0x10, 1);

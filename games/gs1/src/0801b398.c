@@ -5,7 +5,7 @@ extern u32 Data_03001c94;
 extern volatile u32 Data_03001b04;
 
 void Func_0801b9ec(struct State_0801b9ec *state, u32 index);
-void Func_080030f8(u32 value);
+void WaitFrames(u32 value);
 void Func_0801b664(void *state);
 void Func_0801b810(void *state);
 u32 Func_0801be80(void *state);
@@ -16,7 +16,7 @@ s32 Func_0801b398(s32 mode)
 
     Func_0801b9ec(state, 0);
     for (;;) {
-        Func_080030f8(1);
+        WaitFrames(1);
         if (*(u16 *)(state + 0x3a0) != 0) {
             continue;
         }

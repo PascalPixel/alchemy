@@ -7,10 +7,10 @@ struct Object_08096bec {
     s32 z;
 };
 
-void Func_0800447c(s32, s32, s32 *);
+void RotateVectorByMagnitude(s32, s32, s32 *);
 void Func_08009150(struct Object_08096bec *, s32, s32, s32);
 
-void Func_08096bec(struct Object_08096bec *object, s32 arg1, s32 arg2)
+void Object_SetVelocity(struct Object_08096bec *object, s32 arg1, s32 arg2)
 {
     s32 values[3];
 
@@ -19,7 +19,7 @@ void Func_08096bec(struct Object_08096bec *object, s32 arg1, s32 arg2)
         values[0] = object->x;
         values[1] = object->y;
         values[2] = object->z;
-        Func_0800447c(arg1, arg2, values);
+        RotateVectorByMagnitude(arg1, arg2, values);
         Func_08009150(object, values[0], values[1], values[2]);
     }
 }

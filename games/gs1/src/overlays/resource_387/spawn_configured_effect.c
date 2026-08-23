@@ -28,7 +28,7 @@
  * the caller's `extra` pointer) picks the spawn call's own first argument
  * and is never tested again afterward.
  *
- * `Func_08009098(0)`'s result is read once, through its own field 0x50,
+ * `Object_SetCallback(0)`'s result is read once, through its own field 0x50,
  * for two bits (0x0c) of the owner record's field 9 -- the same
  * clear-two-bits-then-copy idiom resource_387_c_02000048.c's adopted
  * Func_02005a2e pair and resource_387_c_02005158.c already use on this
@@ -43,7 +43,7 @@
  * bit 19 populated fields 0x18/0x1c; the second call is shared after that
  * branch, matching the converged machine control flow.
  *
- * Uncertainty: the six imported callees, `Func_08009098`'s result, `entry`,
+ * Uncertainty: the six imported callees, `Object_SetCallback`'s result, `entry`,
  * or `extra`'s field roles are identified beyond this call shape; the
  * default spawn-argument constant 0xde is recorded as read, not decoded
  * further.

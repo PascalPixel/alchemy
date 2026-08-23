@@ -8,7 +8,7 @@
  * descriptor on the stack (sp+16: word 1, u16 0x0119 at +24, pointer
  * 0x0200d1d8 at +28, 224<<10 at +16, 192<<9 at +20), then loops eight
  * times: wait 10 frames (Func_0808a010), on odd iterations play sound
- * 0x82 (Func_080f9010), and spawn with
+ * 0x82 (Audio_PlayCue), and spawn with
  * Func_0200013c(record[8], record[12], record[16] + 0xffe80000, 0,
  * 0x9999, 0, 0x00360001, descriptor). Closes with a 60-frame wait.
  *

@@ -5,7 +5,7 @@ extern s32 Data_0200d240[3];   /* image offset 0x5240 */
 
 extern u8 *Func_02006652(s32 arg0, s32 arg1, s32 arg2, s32 arg3);  /* site veneer -> Func_080090c8 */
 extern void Func_0200559e(u8 *record);                             /* site veneer -> Func_02002a10 */
-extern void Func_0200666a(u8 *record, s32 arg1);                   /* site veneer -> Func_08009080 */
+extern void Func_0200666a(u8 *record, s32 arg1);                   /* site veneer -> Object_SetMode */
 
 void Func_02002b58(void)
 {

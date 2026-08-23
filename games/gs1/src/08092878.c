@@ -47,7 +47,7 @@ loop:
         }
 
         if (remaining != 0) {
-            Func_080030f8(1U);
+            WaitFrames(1U);
             counter++;
             if (counter <= 0x3b)
                 goto loop;

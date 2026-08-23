@@ -14,10 +14,10 @@
  * outside a recorded row, so overlay_call_targets.ts's own table does not
  * cover it -- resolved with `bun tools/overlay-show resource_3a4 3724 |
  * cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a4 3724 3736 --annotate`):
- *   0x2003730 -> veneer -> Func_080f9010(288)   established, play a sound cue (288 = 144 << 1)
+ *   0x2003730 -> veneer -> Audio_PlayCue(288)   established, play a sound cue (288 = 144 << 1)
  */
 
-void Func_02007452();          /* play a sound cue, established (veneer to Func_080f9010) */
+void Func_02007452();          /* play a sound cue, established (veneer to Audio_PlayCue) */
 
 void Func_02003724(u16 *record)
 {

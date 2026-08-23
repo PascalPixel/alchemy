@@ -18,7 +18,7 @@ struct ResourcePair_0801c7fc {
 };
 
 s32 Func_08077158(u16 *objects);
-struct Object_0801c7fc *Func_08077008(s32 object_id);
+struct Object_0801c7fc *Runtime_GetObject(s32 object_id);
 void *Func_08077080(s32 resource_id);
 
 s32 Func_0801c7fc(struct ResourcePair_0801c7fc *output)
@@ -41,7 +41,7 @@ s32 Func_0801c7fc(struct ResourcePair_0801c7fc *output)
 
             id = *object_id;
             object_id++;
-            object = Func_08077008(id);
+            object = Runtime_GetObject(id);
             index = 0;
             resource_offset = sizeof(object->padding_00);
             resource_id =

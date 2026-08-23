@@ -1,6 +1,6 @@
 #include "types.h"
 
-u8 *Func_08077008(s32);
+u8 *Runtime_GetObject(s32);
 
 s32 Func_080b7514(void) {
     s32 i;
@@ -8,7 +8,7 @@ s32 Func_080b7514(void) {
 
     for (i = 0; i <= 5; i++) {
         id = i + 0x80;
-        if (Func_08077008(id)[0x12A] == 0)
+        if (Runtime_GetObject(id)[0x12A] == 0)
             break;
     }
     if (i == 6) {

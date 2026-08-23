@@ -1,6 +1,6 @@
 #include "types.h"
 
-u8 *Func_08077008(s32);
+u8 *Runtime_GetObject(s32);
 s32 Func_08077228(s32, s32);
 u32 Func_080b6e7c(s32 arg0);
 extern u16 Data_080c2a1c[];
@@ -14,7 +14,7 @@ s32 Func_080b6eb4(s32 id) {
     s32 entry;
     s32 result;
 
-    state = Func_08077008(id);
+    state = Runtime_GetObject(id);
     entry = Func_08077228(id, 1);
     result = 0;
     if (entry >= 0) {

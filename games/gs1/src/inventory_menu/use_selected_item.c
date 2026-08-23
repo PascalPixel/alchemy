@@ -3,9 +3,9 @@
 #include "gs1_edition.h"
 #include "sound_ids.h"
 extern char Value_00000bef;
-extern s32 Func_080f9010(s32);
+extern s32 Audio_PlayCue(s32);
 extern s32 Func_08015278(s32);
-extern s32 Func_08015270(s32);
+extern s32 UiWindow_Commit(s32);
 extern s32 Func_080a1d08(s32, s32, s32);
 extern s32 Func_080aa448(u32);
 #define Item_PlayUseAnimation Func_080aa448
@@ -20,12 +20,12 @@ s32 InventoryMenu_UseSelectedItem(void)
         menu->selected_slot, menu->item_owner, menu->target_owner);
 
     if (result == -1) {
-        Func_080f9010(SOUND_MENU_ERROR);
+        Audio_PlayCue(SOUND_MENU_ERROR);
         Func_08015278(menu->info_window);
         Func_080a1d08(
             menu->message_offset + (s32)&Value_00000bef, result, result);
 #if defined(GS1_EDITION_JA)
-        Func_08015270(menu->info_window);
+        UiWindow_Commit(menu->info_window);
 #endif
         menu->completion_flag = 1;
         return result;

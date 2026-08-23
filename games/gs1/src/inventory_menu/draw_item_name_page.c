@@ -13,8 +13,8 @@
 extern u8 Value_00000182;
 
 void Func_08015070(s32 window, s32 x, s32 width, s32 height, s32 style);
-void Func_08015080(s32 message, s32 window, s32 x, s32 y);
-void Func_08015270(s32 window);
+void UiText_DrawAt(s32 message, s32 window, s32 x, s32 y);
+void UiWindow_Commit(s32 window);
 void Func_080a21b0(s32 window, s32 count, s32 page_size, s32 page, s32 style);
 void Func_080a2324(s32 page_size, s32 first_entry, s32 window, s32 x, s32 y);
 
@@ -33,7 +33,7 @@ s32 InventoryMenu_DrawItemNamePage(
 
     (void)unused;
 
-    Func_08015270(window);
+    UiWindow_Commit(window);
     Func_08015070(window, 0, 11, 16, 11);
 
     page = state->page;
@@ -50,7 +50,7 @@ s32 InventoryMenu_DrawItemNamePage(
     if (visible_count > row) {
         item_id = &menu->items[first_entry];
         do {
-            Func_08015080(
+            UiText_DrawAt(
                 (item_id[0] & 0x1ff) + (s32)&Value_00000182,
                 menu->item_window,
                 ENTRY_X,

@@ -12,12 +12,12 @@
  *   0x02000340 -> veneer 0x02001b04 -> Func_080770c0
  *   0x0200034c -> veneer 0x02001b04 -> Func_080770c0
  *   0x02000358 -> veneer 0x02001afc -> Func_08015040
- *   0x0200035e -> veneer 0x02001c2c -> Func_080f9010
+ *   0x0200035e -> veneer 0x02001c2c -> Audio_PlayCue
  *   0x02000362 -> 0x02000210 (this overlay's own prologue)
  *   0x02000368 -> veneer 0x02001b0c -> Func_080770c8
  *   0x0200036e -> veneer 0x02001b14 -> Func_080770d0
  * Per-target multiset: Func_080770c0 x2 and one each of Func_08015040,
- * Func_080f9010, Func_02000210, Func_080770c8, Func_080770d0 - 7 sites, 7 C
+ * Audio_PlayCue, Func_02000210, Func_080770c8, Func_080770d0 - 7 sites, 7 C
  * call expressions.
  *
  * This owner is one of a mirrored pair with 0x02000460, which is byte-identical

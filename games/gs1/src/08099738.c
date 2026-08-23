@@ -30,10 +30,10 @@ struct Global_08099738 {
 
 extern struct Global_08099738 Data_02000240;
 
-void Func_080f9010(s32);
+void Audio_PlayCue(s32);
 s32 Func_08004278(void (*callback)(void));
-void Func_08009080(struct Object_08099738 *, s32);
-void Func_080030f8(s32);
+void Object_SetMode(struct Object_08099738 *, s32);
+void WaitFrames(s32);
 void Func_08099678(void);
 
 void Func_08099738(void)
@@ -47,29 +47,29 @@ void Func_08099738(void)
     state = object->state;
     controller = state->controller;
 
-    Func_080f9010(154);
+    Audio_PlayCue(154);
     Func_08004278(Func_08099678);
-    Func_08009080(object, 0);
+    Object_SetMode(object, 0);
     object->field_6c = 0;
 
     for (i = 0; i < 5; ++i) {
         controller->field_05 = 7;
         state->field_25 = 1;
         state->field_26 = 2;
-        Func_080030f8(2);
+        WaitFrames(2);
         state->field_25 = 1;
         state->field_26 = 0;
-        Func_080030f8(2);
+        WaitFrames(2);
     }
 
     for (i = 0; i < 5; ++i) {
         controller->field_05 = 7;
         state->field_25 = 1;
         state->field_26 = 0;
-        Func_080030f8(2);
+        WaitFrames(2);
         controller->field_05 = 0;
         state->field_25 = 1;
-        Func_080030f8(2);
+        WaitFrames(2);
     }
 
     state->field_26 = 1;

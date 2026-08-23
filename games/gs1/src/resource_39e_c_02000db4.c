@@ -9,7 +9,7 @@
  * word +16 -= 0x10000 each pass, and record word +64 rewritten with
  * 0x80000000 each pass. After the loop the u16 at +30 of the pointer
  * held in record word +80 is cleared (the same record[80] field the
- * 0x02000bf4 row touches), sound 227 plays (Func_080f9010), and four
+ * 0x02000bf4 row touches), sound 227 plays (Audio_PlayCue), and four
  * spawns fire, all descriptor-less (extra = 0):
  *   1: (rec[8],           rec[12], rec[16] - 0x80000, -0xcccc, 0, -0x3333, 0, 0)
  *   2: (rec[8],           rec[12], rec[16] - 0x80000,  0xcccc, 0, -0x3333, 0, 0)

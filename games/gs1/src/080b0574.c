@@ -5,7 +5,7 @@
 void Func_08015038(s32, s32, s32, s32);
 s32 Func_08015048(void);
 void Func_08015140(void);
-void Func_080030f8(u32);
+void WaitFrames(u32);
 s32 Func_0808a540(u16);
 extern u8 Data_00000c9b[];
 extern u8 Data_00000cc6[];
@@ -41,8 +41,8 @@ void Func_080b0574(s32 arg0) {
     Func_08015140();
     Func_08015038(var_r5, 5, 0, (temp_r8 << 0x10) | 0x22);
     while (Func_08015048() == 0) {
-        Func_080030f8(1U);
+        WaitFrames(1U);
     }
-    Func_080030f8(1U);
+    WaitFrames(1U);
     M2C_FIELD(M2C_FIELD(temp_r6, void **, 0x380), u8 *, 5) = temp_sl;
 }

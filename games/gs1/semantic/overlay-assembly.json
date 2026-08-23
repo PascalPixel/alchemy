@@ -136,9 +136,9 @@
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "complete reconstruction is exactly 1574 bytes with zero normalized wrong instructions and all 196 calls and arguments",
-        "all 380 differing halfwords are the same reversed two-register argument-setup order repeated before calls",
-        "source-shape and compiler-mode cohorts found no approved compiler route that emits the reference ordering",
+        "complete semantic reconstruction accounts for all 196 calls, every argument, the pool skip, and the exact 1574-byte owner extent with zero normalized wrong instructions",
+        "all 190 residual two-argument sites differ only because the reference loads r1 before r0 while approved GCC 2.96 load_register_parameters consistently walks arguments forward",
+        "twenty-thousand-candidate safe and ten-thousand-candidate classic exact-only walks found no emitting source",
         "games/gs1/recon/en/overlays/resource_3ce_c_0200029c.json"
       ]
     },

@@ -544,7 +544,7 @@ executable runs), sorted largest to smallest. Regenerate with `make coverage` --
 
 - **Unfinished scopes:** 1,737
 - **Address spaces scanned:** 97 (87 still contain targets)
-- **Target bytes:** 738,556 tracked-C or unresolved-assembly bytes
+- **Target bytes:** 737,848 tracked-C or unresolved-assembly bytes
 - **Resolved-only bytes:** 451,922 Exact C or audited permanent assembly bytes
 - **Executable bytes accounted for:** 1,348,188
 
@@ -676,7 +676,7 @@ This table contains every scope of at least 1,000 bytes (234 rows). The complete
 | 118 | 1,736 | 1,736 | `resource_3bf:0x0200298c` |
 | 119 | 1,734 | 1,734 | `resource_383:0x02001e80` |
 | 120 | 1,722 | 1,722 | `resource_3b8:0x02002014` |
-| 121 | 1,718 | 1,328 | `main:0x080ba2c0` |
+| 121 | 1,718 | 620 | `main:0x080ba2c0` |
 | 122 | 1,704 | 1,704 | `resource_3a2:0x02000924` |
 | 123 | 1,702 | 1,702 | `resource_381:0x02002150` |
 | 124 | 1,702 | 1,702 | `resource_3b7:0x020001d8` |

@@ -31692,7 +31692,7 @@
     },
     {
       "en_owner": "080ba584",
-      "source": "games/gs1/src/080ba584.c",
+      "source": "games/gs1/src/battle/run_simple_presentation.c",
       "size": 296,
       "status": "shared_core",
       "starts": {

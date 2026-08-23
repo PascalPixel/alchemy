@@ -5,38 +5,39 @@ void Func_080030f8(u32);
 
 extern u8 *Data_03001e8c;
 
-struct Work080197c4 {
+struct PendingWork {
     u8 padding00[0x16];
     u16 flag;
     s32 value;
 };
 
-struct Slot080197c4 {
-    struct Work080197c4 *work;
+struct WorkSlot {
+    struct PendingWork *work;
     u8 padding04[0x24];
 };
 
-struct DirectWork080197c4 {
+struct DirectWork {
     u8 padding00[0x16];
     u16 flag;
     s32 value;
     u8 padding1c[8];
 };
 
+#define DrainWorkQueues Func_080197c4
 void Func_080197c4(void)
 {
     u8 *state;
-    struct Slot080197c4 *slot;
-    struct DirectWork080197c4 *direct;
+    struct WorkSlot *slot;
+    struct DirectWork *direct;
     u32 done;
-    struct Work080197c4 *work;
-    struct Work080197c4 *pollWork;
+    struct PendingWork *work;
+    struct PendingWork *poll_work;
     s32 index;
     u16 flag;
 
     state = Data_03001e8c;
-    slot = (struct Slot080197c4 *)(state + 0x620);
-    direct = (struct DirectWork080197c4 *)(state + 0x500);
+    slot = (struct WorkSlot *)(state + 0x620);
+    direct = (struct DirectWork *)(state + 0x500);
     index = 0;
     do {
         work = slot->work;
@@ -48,15 +49,15 @@ void Func_080197c4(void)
 
 poll:
     done = 1;
-    slot = (struct Slot080197c4 *)(state + 0x620);
+    slot = (struct WorkSlot *)(state + 0x620);
     index = 0;
     do {
-        pollWork = slot->work;
-        if (pollWork != 0) {
-            if (pollWork->value == 0) {
-                flag = pollWork->flag;
+        poll_work = slot->work;
+        if (poll_work != 0) {
+            if (poll_work->value == 0) {
+                flag = poll_work->flag;
                 if (flag == 0)
-                    slot->work = (struct Work080197c4 *)(u32)flag;
+                    slot->work = (struct PendingWork *)(u32)flag;
                 else
                     done = 0;
             } else {

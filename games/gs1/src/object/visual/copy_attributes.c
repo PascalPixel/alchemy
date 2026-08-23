@@ -2,7 +2,7 @@
 
 extern s32 Object_GetById(u32);
 
-void Func_08092b54(u32 arg0, u32 arg1)
+void ObjectVisual_CopyAttributes(u32 arg0, u32 arg1)
 {
     void *p;
     u8 flags;

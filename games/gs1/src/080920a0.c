@@ -6,7 +6,7 @@ void Func_080920a0(void)
 {
   void *temp_r0;
   unsigned char new_var;
-  temp_r0 = GetObject();
+  temp_r0 = ObjectTable_Get();
   if (temp_r0 != ((void *) 0))
   {
     new_var = 1;

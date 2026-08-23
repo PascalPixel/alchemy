@@ -17382,7 +17382,7 @@
     },
     {
       "en_owner": "0808ba1c",
-      "source": "games/gs1/src/0808ba1c.c",
+      "source": "games/gs1/src/object/table/get.c",
       "size": 28,
       "status": "shared_core",
       "starts": {
@@ -20832,7 +20832,7 @@
     },
     {
       "en_owner": "0809280c",
-      "source": "games/gs1/src/0809280c.c",
+      "source": "games/gs1/src/object/motion/set_angle_toward.c",
       "size": 58,
       "status": "shared_core",
       "starts": {
@@ -20862,7 +20862,7 @@
     },
     {
       "en_owner": "08092848",
-      "source": "games/gs1/src/08092848.c",
+      "source": "games/gs1/src/object/link/link_pair.c",
       "size": 46,
       "status": "shared_core",
       "starts": {
@@ -20922,7 +20922,7 @@
     },
     {
       "en_owner": "08092924",
-      "source": "games/gs1/src/08092924.c",
+      "source": "games/gs1/src/object/table/destroy_by_id.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -21042,7 +21042,7 @@
     },
     {
       "en_owner": "08092a1c",
-      "source": "games/gs1/src/08092a1c.c",
+      "source": "games/gs1/src/object/link/set_target_callback.c",
       "size": 86,
       "status": "shared_core",
       "starts": {
@@ -21132,7 +21132,7 @@
     },
     {
       "en_owner": "08092adc",
-      "source": "games/gs1/src/08092adc.c",
+      "source": "games/gs1/src/object/motion/arm_callback.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -21192,7 +21192,7 @@
     },
     {
       "en_owner": "08092b54",
-      "source": "games/gs1/src/08092b54.c",
+      "source": "games/gs1/src/object/visual/copy_attributes.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -21282,7 +21282,7 @@
     },
     {
       "en_owner": "08092be0",
-      "source": "games/gs1/src/08092be0.c",
+      "source": "games/gs1/src/object/table/find_active_by_value.c",
       "size": 96,
       "status": "shared_core",
       "starts": {

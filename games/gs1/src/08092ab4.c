@@ -9,7 +9,7 @@ s32 Object_ResetMotion();
 void Func_08092ab4(void) {
     void *temp_r0;
 
-    temp_r0 = GetObject();
+    temp_r0 = ObjectTable_Get();
     if (temp_r0 != NULL) {
         M2C_FIELD(temp_r0, s32 *, 0x38) = 0x80000000;
         M2C_FIELD(temp_r0, s32 *, 0x3C) = 0x80000000;

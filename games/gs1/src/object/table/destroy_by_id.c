@@ -2,14 +2,13 @@
 
 extern u8 *Data_03001ebc;
 /* 生成順維持のため戻り値を整数で受け、直後にオブジェクト番地として扱う。 */
-s32 GetObject(u32 object_id);
-/* Object table: 192 pointers at Data_03001ebc + 0x14 (games/gs1/src/0808ba1c.c). */
-#define GetObject Func_0808ba1c
+s32 ObjectTable_Get(u32 object_id);
+/* Object table: 192 pointers at Data_03001ebc + 0x14 (object/table/get.c). */
 void Object_Destroy(void *);
 
-void Func_08092924(s32 index)
+void ObjectTable_DestroyById(s32 index)
 {
-    void *object = (void *)GetObject(index);
+    void *object = (void *)ObjectTable_Get(index);
     u8 *base = Data_03001ebc;
     s32 offset;
 

@@ -14,7 +14,7 @@ void Func_08096cdc(s32 arg0, s32 arg1, s32 arg2) {
     var_r5 = 0;
     var_sl = (s16 *)Data_0200048a;
     do {
-        temp_r0 = GetObject(var_r5);
+        temp_r0 = ObjectTable_Get(var_r5);
         if ((var_r5 != *var_sl) && (temp_r0 != 0) && (temp_r0 != arg0)) {
             M2C_FIELD(temp_r0, s8, 0x5B) = arg1;
             Object_SetAction(temp_r0, arg2);

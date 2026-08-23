@@ -35,7 +35,7 @@ s32 Func_08094428(void)
 
                 GameFlag_Clear(event);
                 object_id = Data_02000240[125];
-                object = GetObject(object_id);
+                object = ObjectTable_Get(object_id);
                 *(s32 *)((u8 *)object + 12) += 0x00a00000;
                 ObjectMotion_PlaceWithinCameraBounds(-1, -1, -1, 0);
                 while (*(s32 *)((u8 *)object + 12) + *(s32 *)((u8 *)object + 40) >

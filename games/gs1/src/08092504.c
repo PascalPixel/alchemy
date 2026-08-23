@@ -9,7 +9,7 @@ void Func_08092504(u32 object_id)
     volatile s32 saved;
     s32 i;
 
-    object = GetObject(object_id);
+    object = ObjectTable_Get(object_id);
     if (object != NULL && object->animation_kind == 1) {
         ptr = object->animation;
         saved = ptr[36];

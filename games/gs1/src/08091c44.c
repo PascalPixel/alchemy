@@ -16,7 +16,7 @@ void WaitFrames(s32);
 
 void Func_08091c44(s32 object_id, s32 value)
 {
-    struct Object_08091c44 *object = GetObject(object_id);
+    struct Object_08091c44 *object = ObjectTable_Get(object_id);
 
     if (object != 0 && object->active == 1) {
         s32 index = 0;

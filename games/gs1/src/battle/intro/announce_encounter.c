@@ -1,5 +1,7 @@
 #include "types.h"
 #include "battle_msg.h"
+#include "battle_party.h"
+#include "battle_intro.h"
 
 extern u8 *Data_03001e74;
 
@@ -8,40 +10,39 @@ void Func_08015120(s32, s32);
 void Func_080151c8(s32);
 void Func_08015218(void);
 s32 Func_080bb65c(void);
-s32 Func_080b6ae0(s16 *);
 
-void Func_080b595c(s32 count)
+void BattleIntro_AnnounceEncounter(s32 enemy_count)
 {
-    s16 entries[8];
-    u8 *state;
-    s16 *entry;
-    s32 index;
+    s16 enemies[8];
+    u8 *battle_state;
+    s16 *enemy;
+    s32 announced;
 
-    state = Data_03001e74;
+    battle_state = Data_03001e74;
     Func_08015118();
-    Func_080b6ae0(entries);
+    BattleParty_ListPresentEnemies(enemies);
 
-    index = 0;
-    if (count != 0) {
-        entry = entries;
+    announced = 0;
+    if (enemy_count != 0) {
+        enemy = enemies;
         do {
-            Func_08015120((u16)*entry++, 1);
-            if (index == count - 1)
+            Func_08015120((u16)*enemy++, 1);
+            if (announced == enemy_count - 1)
                 Func_080151c8((s32)&Value_00000811);
             else
                 Func_080151c8((s32)&Value_00000810);
-            index++;
+            announced++;
             Func_080bb65c();
-        } while (index != count);
+        } while (announced != enemy_count);
     }
 
     Func_08015218();
-    if (state[69] == 1) {
+    if (battle_state[69] == BATTLE_ENCOUNTER_PARTY_FIRST) {
         Func_08015118();
         Func_08015120(0, 1);
         Func_080151c8((s32)&Value_00000812);
         Func_080bb65c();
-    } else if (state[69] == 2) {
+    } else if (battle_state[69] == BATTLE_ENCOUNTER_ENEMIES_FIRST) {
         Func_08015118();
         Func_08015120(0, 1);
         Func_080151c8((s32)&Value_00000813);

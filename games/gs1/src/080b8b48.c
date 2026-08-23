@@ -1,6 +1,7 @@
 #include "fixed_math.h"
 #include "types.h"
 #include "battle_msg.h"
+#include "battle_motion.h"
 
 struct Input_080b8b48 {
     s16 primary_id;
@@ -35,7 +36,6 @@ u32 Random16(void);
 #define Rand Random16
 void Func_08015120(s32, s32);
 void Func_080151c8(s32);
-void Func_080b82c4(s32, s32, s32, s32);
 struct ObjectSlot_080b8b48 *Func_080b7dd0(s32);
 void Func_08009088(void *, s32);
 void Func_080c9008(struct Work_080b8b48 *);
@@ -66,7 +66,7 @@ s32 Func_080b8b48(struct Input_080b8b48 *input)
     Rand();
     Func_08015120(work.primary_id, 1);
     Func_080151c8((s32)&Value_00000814);
-    Func_080b82c4(work.primary_id, work.secondary_id, 13, 0);
+    BattleMotion_ApproachTarget(work.primary_id, work.secondary_id, 13, 0);
     Func_08009088(Func_080b7dd0(work.primary_id)->object, 16);
     Func_080b7dd0(work.secondary_id);
 

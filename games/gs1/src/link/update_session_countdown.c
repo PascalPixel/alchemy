@@ -1,4 +1,5 @@
 #include "types.h"
+#include "sound_ids.h"
 
 #define COUNTDOWN_START_FRAMES 900
 #define FRAMES_PER_SECOND 60
@@ -141,7 +142,7 @@ timer_ready:
 
         seconds = Func_080022ec(timer + FRAMES_PER_SECOND - 1, FRAMES_PER_SECOND);
         if (seconds != 0 && seconds * FRAMES_PER_SECOND == timer)
-            Func_080f9010(108);
+            Func_080f9010(SOUND_TRIPLE_TONE_LOW);
 
         if (state->displayHandle != 0)
             Func_0801ea08(seconds, 2, state->displayHandle, 16, 8);

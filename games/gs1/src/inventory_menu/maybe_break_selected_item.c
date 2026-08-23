@@ -2,6 +2,7 @@
 #include "global_cells.h"
 #include "inventory.h"
 #include "item.h"
+#include "sound_ids.h"
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
@@ -19,7 +20,7 @@ void InventoryMenu_MaybeBreakSelectedItem(void) {
         Inventory_BreakFar(
             FIELD(menu, u8 *, 0x21A),
             FIELD(menu, u16 *, 0x174));
-        Func_080f9010(0x8A);
+        Func_080f9010(SOUND_ITEM_BREAK);
         Func_080a1d08(0xB86, 0, -1);
     }
 }

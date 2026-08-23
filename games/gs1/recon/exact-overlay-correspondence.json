@@ -50833,7 +50833,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020000c4",
-      "source": "games/gs1/src/resource_3b2_c_020000c4.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/advance_staged_actor_pair.c",
       "resource": "resource_3b2",
       "size": 384,
       "core_bytes": 320,
@@ -50897,7 +50897,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020002a8",
-      "source": "games/gs1/src/resource_3b2_c_020002a8.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/stop_blocked_actor_motion.c",
       "resource": "resource_3b2",
       "size": 164,
       "core_bytes": 144,
@@ -50929,7 +50929,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000474",
-      "source": "games/gs1/src/resource_3b2_c_02000474.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/find_clear_actor_position.c",
       "resource": "resource_3b2",
       "size": 404,
       "core_bytes": 384,
@@ -50961,7 +50961,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020009dc",
-      "source": "games/gs1/src/resource_3b2_c_020009dc.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/set_effect_owner_mode.c",
       "resource": "resource_3b2",
       "size": 22,
       "core_bytes": 22,
@@ -50993,7 +50993,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020009f4",
-      "source": "games/gs1/src/resource_3b2_c_020009f4.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/spawn_mode_14_effect.c",
       "resource": "resource_3b2",
       "size": 86,
       "core_bytes": 70,
@@ -51025,7 +51025,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000a4c",
-      "source": "games/gs1/src/resource_3b2_c_02000a4c.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/spawn_mode_15_effect.c",
       "resource": "resource_3b2",
       "size": 98,
       "core_bytes": 86,
@@ -51057,7 +51057,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000ab0",
-      "source": "games/gs1/src/resource_3b2_c_02000ab0.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/integrate_effect_motion.c",
       "resource": "resource_3b2",
       "size": 54,
       "core_bytes": 54,
@@ -51089,7 +51089,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000ae8",
-      "source": "games/gs1/src/resource_3b2_c_02000ae8.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/spawn_configured_scene_effect.c",
       "resource": "resource_3b2",
       "size": 472,
       "core_bytes": 420,
@@ -51121,7 +51121,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000cc0",
-      "source": "games/gs1/src/resource_3b2_c_02000cc0.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/no_op_effect_callback.c",
       "resource": "resource_3b2",
       "size": 2,
       "core_bytes": 2,
@@ -51153,7 +51153,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000cc4",
-      "source": "games/gs1/src/resource_3b2_c_02000cc4.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/select_primary_scene_data.c",
       "resource": "resource_3b2",
       "size": 120,
       "core_bytes": 72,
@@ -51185,7 +51185,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000d3c",
-      "source": "games/gs1/src/resource_3b2_c_02000d3c.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/get_empty_scene_data.c",
       "resource": "resource_3b2",
       "size": 4,
       "core_bytes": 4,
@@ -51217,7 +51217,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000d40",
-      "source": "games/gs1/src/resource_3b2_c_02000d40.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/get_default_scene_data.c",
       "resource": "resource_3b2",
       "size": 8,
       "core_bytes": 4,
@@ -51249,7 +51249,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000d48",
-      "source": "games/gs1/src/resource_3b2_c_02000d48.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/select_secondary_scene_data.c",
       "resource": "resource_3b2",
       "size": 92,
       "core_bytes": 56,
@@ -51281,7 +51281,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000da4",
-      "source": "games/gs1/src/overlays/resource_3b2/advance_effect_motion.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/advance_effect_motion.c",
       "resource": "resource_3b2",
       "size": 90,
       "core_bytes": 86,
@@ -51313,7 +51313,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000e00",
-      "source": "games/gs1/src/resource_3b2_c_02000e00.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/spawn_radial_effect_burst.c",
       "resource": "resource_3b2",
       "size": 136,
       "core_bytes": 108,
@@ -51345,7 +51345,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000e88",
-      "source": "games/gs1/src/resource_3b2_c_02000e88.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/initialize_prologue_scene_state.c",
       "resource": "resource_3b2",
       "size": 60,
       "core_bytes": 36,
@@ -51377,7 +51377,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000ec4",
-      "source": "games/gs1/src/resource_3b2_c_02000ec4.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/select_tertiary_scene_data.c",
       "resource": "resource_3b2",
       "size": 120,
       "core_bytes": 72,
@@ -51409,7 +51409,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000f3c",
-      "source": "games/gs1/src/resource_3b2_c_02000f3c.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/start_scripted_scene_message.c",
       "resource": "resource_3b2",
       "size": 52,
       "core_bytes": 24,
@@ -51441,7 +51441,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001374",
-      "source": "games/gs1/src/resource_3b2_c_02001374.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/run_prologue_scene_setup.c",
       "resource": "resource_3b2",
       "size": 22,
       "core_bytes": 6,
@@ -51473,7 +51473,7 @@
     },
     {
       "en_owner": "resource_3b2:0x0200138c",
-      "source": "games/gs1/src/resource_3b2_c_0200138c.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/start_scene_script_37.c",
       "resource": "resource_3b2",
       "size": 32,
       "core_bytes": 16,
@@ -51505,7 +51505,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001508",
-      "source": "games/gs1/src/resource_3b2_c_02001508.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/configure_scene_actor_11.c",
       "resource": "resource_3b2",
       "size": 64,
       "core_bytes": 44,
@@ -51537,7 +51537,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001548",
-      "source": "games/gs1/src/resource_3b2_c_02001548.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/configure_scene_actor_12.c",
       "resource": "resource_3b2",
       "size": 68,
       "core_bytes": 44,
@@ -51569,7 +51569,7 @@
     },
     {
       "en_owner": "resource_3b2:0x0200158c",
-      "source": "games/gs1/src/resource_3b2_c_0200158c.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/configure_scene_actor_13.c",
       "resource": "resource_3b2",
       "size": 68,
       "core_bytes": 44,
@@ -51601,7 +51601,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020015d0",
-      "source": "games/gs1/src/resource_3b2_c_020015d0.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/configure_scene_actor_14.c",
       "resource": "resource_3b2",
       "size": 84,
       "core_bytes": 56,
@@ -51633,7 +51633,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001624",
-      "source": "games/gs1/src/resource_3b2_c_02001624.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/show_forget_everything_message.c",
       "resource": "resource_3b2",
       "size": 40,
       "core_bytes": 28,
@@ -51665,7 +51665,7 @@
     },
     {
       "en_owner": "resource_3b2:0x0200164c",
-      "source": "games/gs1/src/resource_3b2_c_0200164c.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/show_help_you_forget_message.c",
       "resource": "resource_3b2",
       "size": 16,
       "core_bytes": 8,
@@ -51697,7 +51697,7 @@
     },
     {
       "en_owner": "resource_3b2:0x0200165c",
-      "source": "games/gs1/src/resource_3b2_c_0200165c.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/show_damaged_door_message.c",
       "resource": "resource_3b2",
       "size": 16,
       "core_bytes": 8,
@@ -51729,7 +51729,7 @@
     },
     {
       "en_owner": "resource_3b2:0x0200166c",
-      "source": "games/gs1/src/resource_3b2_c_0200166c.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/show_save_my_life_message.c",
       "resource": "resource_3b2",
       "size": 16,
       "core_bytes": 8,
@@ -51761,7 +51761,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001740",
-      "source": "games/gs1/src/resource_3b2_c_02001740.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/run_scene_vector_transition.c",
       "resource": "resource_3b2",
       "size": 52,
       "core_bytes": 36,
@@ -51793,7 +51793,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001774",
-      "source": "games/gs1/src/resource_3b2_c_02001774.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/position_scene_actor_pair.c",
       "resource": "resource_3b2",
       "size": 232,
       "core_bytes": 176,
@@ -51825,7 +51825,7 @@
     },
     {
       "en_owner": "resource_3b2:0x0200185c",
-      "source": "games/gs1/src/resource_3b2_c_0200185c.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/mark_grid_left_of_scene_actor.c",
       "resource": "resource_3b2",
       "size": 82,
       "core_bytes": 70,
@@ -51857,7 +51857,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020018b0",
-      "source": "games/gs1/src/resource_3b2_c_020018b0.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/mark_grid_above_scene_actor.c",
       "resource": "resource_3b2",
       "size": 82,
       "core_bytes": 70,
@@ -51889,7 +51889,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001904",
-      "source": "games/gs1/src/resource_3b2_c_02001904.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/set_scene_actor_modes.c",
       "resource": "resource_3b2",
       "size": 24,
       "core_bytes": 16,
@@ -51921,7 +51921,7 @@
     },
     {
       "en_owner": "resource_3b2:0x0200191c",
-      "source": "games/gs1/src/resource_3b2_c_0200191c.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/initialize_escape_scene_actors.c",
       "resource": "resource_3b2",
       "size": 150,
       "core_bytes": 102,
@@ -51953,7 +51953,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020019b4",
-      "source": "games/gs1/src/resource_3b2_c_020019b4.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/activate_scene_actor_8.c",
       "resource": "resource_3b2",
       "size": 12,
       "core_bytes": 8,
@@ -51985,7 +51985,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020019c0",
-      "source": "games/gs1/src/resource_3b2_c_020019c0.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/activate_scene_actor_10.c",
       "resource": "resource_3b2",
       "size": 12,
       "core_bytes": 8,
@@ -52017,7 +52017,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020019cc",
-      "source": "games/gs1/src/resource_3b2_c_020019cc.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/activate_scene_actor_11.c",
       "resource": "resource_3b2",
       "size": 12,
       "core_bytes": 8,
@@ -52049,7 +52049,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020019d8",
-      "source": "games/gs1/src/resource_3b2_c_020019d8.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/activate_scene_actor_12.c",
       "resource": "resource_3b2",
       "size": 12,
       "core_bytes": 8,
@@ -52081,7 +52081,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020019e4",
-      "source": "games/gs1/src/resource_3b2_c_020019e4.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/activate_scene_actor_13.c",
       "resource": "resource_3b2",
       "size": 12,
       "core_bytes": 8,
@@ -52113,7 +52113,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020019f0",
-      "source": "games/gs1/src/resource_3b2_c_020019f0.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/activate_scene_actor_15.c",
       "resource": "resource_3b2",
       "size": 12,
       "core_bytes": 8,
@@ -52145,7 +52145,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020019fc",
-      "source": "games/gs1/src/resource_3b2_c_020019fc.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/activate_scene_actor_17.c",
       "resource": "resource_3b2",
       "size": 12,
       "core_bytes": 8,
@@ -52177,7 +52177,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001a08",
-      "source": "games/gs1/src/resource_3b2_c_02001a08.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/activate_scene_actor_18.c",
       "resource": "resource_3b2",
       "size": 12,
       "core_bytes": 8,
@@ -52209,7 +52209,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001a14",
-      "source": "games/gs1/src/resource_3b2_c_02001a14.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/activate_scene_actor_9.c",
       "resource": "resource_3b2",
       "size": 12,
       "core_bytes": 8,
@@ -52241,7 +52241,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001a20",
-      "source": "games/gs1/src/resource_3b2_c_02001a20.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/activate_scene_actor_19.c",
       "resource": "resource_3b2",
       "size": 12,
       "core_bytes": 8,
@@ -52273,7 +52273,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001a2c",
-      "source": "games/gs1/src/resource_3b2_c_02001a2c.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/activate_scene_actor_14.c",
       "resource": "resource_3b2",
       "size": 12,
       "core_bytes": 8,
@@ -52305,7 +52305,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001a38",
-      "source": "games/gs1/src/resource_3b2_c_02001a38.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/activate_scene_actor_16.c",
       "resource": "resource_3b2",
       "size": 12,
       "core_bytes": 8,
@@ -52337,7 +52337,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001b14",
-      "source": "games/gs1/src/resource_3b2_c_02001b14.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/check_actor_path_south.c",
       "resource": "resource_3b2",
       "size": 44,
       "core_bytes": 32,
@@ -52369,7 +52369,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001b40",
-      "source": "games/gs1/src/resource_3b2_c_02001b40.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/check_actor_path_north.c",
       "resource": "resource_3b2",
       "size": 40,
       "core_bytes": 32,
@@ -52401,7 +52401,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001b68",
-      "source": "games/gs1/src/resource_3b2_c_02001b68.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/check_actor_path_west.c",
       "resource": "resource_3b2",
       "size": 44,
       "core_bytes": 32,
@@ -52433,7 +52433,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001b94",
-      "source": "games/gs1/src/resource_3b2_c_02001b94.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/check_actor_path_east.c",
       "resource": "resource_3b2",
       "size": 40,
       "core_bytes": 32,
@@ -52465,7 +52465,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001bbc",
-      "source": "games/gs1/src/resource_3b2_c_02001bbc.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/update_escape_route_for_actor_positions.c",
       "resource": "resource_3b2",
       "size": 198,
       "core_bytes": 150,
@@ -52497,7 +52497,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001c84",
-      "source": "games/gs1/src/resource_3b2_c_02001c84.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/update_actor_8_return_route.c",
       "resource": "resource_3b2",
       "size": 168,
       "core_bytes": 120,
@@ -52529,7 +52529,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001d2c",
-      "source": "games/gs1/src/resource_3b2_c_02001d2c.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/update_actor_10_retreat_route.c",
       "resource": "resource_3b2",
       "size": 180,
       "core_bytes": 140,
@@ -52561,7 +52561,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001de0",
-      "source": "games/gs1/src/resource_3b2_c_02001de0.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/update_actor_10_advance_route.c",
       "resource": "resource_3b2",
       "size": 122,
       "core_bytes": 86,
@@ -52593,7 +52593,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001e5c",
-      "source": "games/gs1/src/resource_3b2_c_02001e5c.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/update_actor_11_west_route.c",
       "resource": "resource_3b2",
       "size": 152,
       "core_bytes": 112,
@@ -52625,7 +52625,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001ef4",
-      "source": "games/gs1/src/resource_3b2_c_02001ef4.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/update_actor_11_east_route.c",
       "resource": "resource_3b2",
       "size": 130,
       "core_bytes": 94,
@@ -52657,7 +52657,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001f78",
-      "source": "games/gs1/src/resource_3b2_c_02001f78.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/update_actor_12_west_route.c",
       "resource": "resource_3b2",
       "size": 140,
       "core_bytes": 104,
@@ -52689,7 +52689,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02002004",
-      "source": "games/gs1/src/resource_3b2_c_02002004.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/update_actor_12_east_route.c",
       "resource": "resource_3b2",
       "size": 122,
       "core_bytes": 90,
@@ -52721,7 +52721,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02002080",
-      "source": "games/gs1/src/resource_3b2_c_02002080.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/update_actor_13_west_route.c",
       "resource": "resource_3b2",
       "size": 236,
       "core_bytes": 192,
@@ -52753,7 +52753,7 @@
     },
     {
       "en_owner": "resource_3b2:0x0200216c",
-      "source": "games/gs1/src/resource_3b2_c_0200216c.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/update_actor_13_east_route.c",
       "resource": "resource_3b2",
       "size": 148,
       "core_bytes": 112,
@@ -52785,7 +52785,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02002200",
-      "source": "games/gs1/src/resource_3b2_c_02002200.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/update_actor_15_west_route.c",
       "resource": "resource_3b2",
       "size": 200,
       "core_bytes": 156,
@@ -52817,7 +52817,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020022c8",
-      "source": "games/gs1/src/resource_3b2_c_020022c8.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/update_actor_15_east_route.c",
       "resource": "resource_3b2",
       "size": 252,
       "core_bytes": 204,
@@ -52849,7 +52849,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020023c4",
-      "source": "games/gs1/src/resource_3b2_c_020023c4.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/update_actor_17_south_route.c",
       "resource": "resource_3b2",
       "size": 138,
       "core_bytes": 106,
@@ -52881,7 +52881,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02002450",
-      "source": "games/gs1/src/resource_3b2_c_02002450.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/update_actor_17_north_route.c",
       "resource": "resource_3b2",
       "size": 118,
       "core_bytes": 86,
@@ -52913,7 +52913,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020025f0",
-      "source": "games/gs1/src/resource_3b2_c_020025f0.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/advance_actor_18_along_escape_route.c",
       "resource": "resource_3b2",
       "size": 272,
       "core_bytes": 204,
@@ -52945,7 +52945,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02002848",
-      "source": "games/gs1/src/resource_3b2_c_02002848.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/advance_actor_9_along_escape_route.c",
       "resource": "resource_3b2",
       "size": 314,
       "core_bytes": 242,
@@ -52977,7 +52977,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02002b80",
-      "source": "games/gs1/src/resource_3b2_c_02002b80.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/retreat_actor_14_along_escape_route.c",
       "resource": "resource_3b2",
       "size": 204,
       "core_bytes": 168,
@@ -53009,7 +53009,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02002c4c",
-      "source": "games/gs1/src/resource_3b2_c_02002c4c.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/advance_actor_14_along_escape_route.c",
       "resource": "resource_3b2",
       "size": 190,
       "core_bytes": 154,
@@ -53041,7 +53041,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02002d0c",
-      "source": "games/gs1/src/resource_3b2_c_02002d0c.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/retreat_actor_16_along_escape_route.c",
       "resource": "resource_3b2",
       "size": 196,
       "core_bytes": 160,
@@ -53073,7 +53073,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02002dd0",
-      "source": "games/gs1/src/resource_3b2_c_02002dd0.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/advance_actor_16_along_escape_route.c",
       "resource": "resource_3b2",
       "size": 160,
       "core_bytes": 128,
@@ -53105,7 +53105,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02002e70",
-      "source": "games/gs1/src/resource_3b2_c_02002e70.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/update_swaying_scene_object.c",
       "resource": "resource_3b2",
       "size": 102,
       "core_bytes": 82,
@@ -78830,14 +78830,14 @@
     },
     {
       "en_owner": "resource_3b2:0x020012b4",
-      "source": "games/gs1/src/resource_3b2_c_020012b4.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/handle_actor_reaching_escape_column.c",
       "resource": "resource_3b2",
       "size": 192,
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x02001298"
     },
     {
       "en_owner": "resource_3b2:0x02001a44",
-      "source": "games/gs1/src/resource_3b2_c_02001a44.c",
+      "source": "games/gs1/src/overlays/vale_prologue_scene/try_push_blocking_scene_actor.c",
       "resource": "resource_3b2",
       "size": 208,
       "error": "ja: locality counterpart conflicts with neighboring proved owner order"

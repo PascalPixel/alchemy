@@ -1,4 +1,5 @@
 #include "types.h"
+#include "sound_ids.h"
 
 void Func_080f9010(s32);
 void *Func_08096c80(s32, s32, s32, s32);
@@ -10,7 +11,7 @@ void *Func_0809a3c4(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
     s32 v;
     s32 zero;
 
-    Func_080f9010(138);
+    Func_080f9010(SOUND_ITEM_BREAK);
     obj = Func_08096c80(215, arg0, arg1, arg2);
     if (obj != NULL) {
         *(s32 *)(obj + 0x1C) = 0x4000;

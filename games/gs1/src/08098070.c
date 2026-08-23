@@ -1,5 +1,6 @@
 #include "types.h"
 #include "object_efx.h"
+#include "sound_ids.h"
 
 extern void *Func_08096c80(s32, s32, s32, s32);
 extern void Func_08096bec(struct Object_08096bec *object, s32 arg1, s32 arg2);
@@ -61,6 +62,6 @@ void *Func_08098070(void *source)
         }
         index--;
     } while (index >= 0);
-    Func_080f9010(0x8a);
+    Func_080f9010(SOUND_ITEM_BREAK);
     return parent;
 }

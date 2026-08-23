@@ -1,7 +1,7 @@
 #include "types.h"
 #include "gs1_edition.h"
 
-struct State_0801ec6c {
+struct SideObjectRegistry {
 #if defined(GS1_EDITION_JA)
     u8 pad_0000[0x117c];
     u16 ids_117c[2];
@@ -21,39 +21,40 @@ struct State_0801ec6c {
 #define STATE_VALUES values_12f0
 #endif
 
-struct Object_0801ec6c {
+struct SideObject {
     u8 pad_00[4];
     u8 mode_04;
     u8 pad_05[20];
     u8 slot_19;
 };
 
-extern struct State_0801ec6c *Data_03001e8c;
+extern struct SideObjectRegistry *Data_03001e8c;
 
 extern s32 Func_080770c0(s32);
 extern s32 Func_08019d2c(s32);
 extern void Func_0801a4fc(s32, s32, s32 *, s32 *, s32, s32);
-extern struct Object_0801ec6c *Func_0801eadc(
+extern struct SideObject *Func_0801eadc(
     s32, s32, s32, s32, s32);
 
-struct Object_0801ec6c *Func_0801ec6c(
-    s32 kind, s32 arg1, s32 side, s32 arg3, s32 arg4, s32 arg5)
+#define CreateSideObject Func_0801ec6c
+struct SideObject *Func_0801ec6c(
+    s32 object_kind, s32 position, s32 side, s32 arg3, s32 arg4, s32 arg5)
 {
-    struct State_0801ec6c *state = Data_03001e8c;
-    struct Object_0801ec6c *object = 0;
+    struct SideObjectRegistry *state = Data_03001e8c;
+    struct SideObject *object = 0;
     s32 first;
     s32 second;
     s32 id;
     s32 slot;
 
     if (Func_080770c0(32) != 0) {
-        if (kind == 0)
-            kind = 18;
-        if (kind == 1)
-            kind = 19;
+        if (object_kind == 0)
+            object_kind = 18;
+        if (object_kind == 1)
+            object_kind = 19;
     }
 
-    id = Func_08019d2c(kind);
+    id = Func_08019d2c(object_kind);
     if (id == -1)
         return object;
 
@@ -67,7 +68,7 @@ struct Object_0801ec6c *Func_0801ec6c(
     }
 
     slot = 14 + side;
-    Func_0801a4fc(id, arg1, &first, &second, slot, 0);
+    Func_0801a4fc(id, position, &first, &second, slot, 0);
     object = Func_0801eadc(first, 0x80000000, arg3, arg4, arg5);
     if (object != 0) {
         s32 slotBits = slot << 4;

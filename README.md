@@ -46,7 +46,7 @@ compile. That is deliberately weaker than reproduction: only `gs1-en` has its
 complete link, ownership, asset, and byte-identical verification surfaces
 installed today. `make verify` remains that authoritative full-ROM gate.
 
-## DONE: Currently 42%
+## DONE: Currently 45%
 
 DONE measures executable bytes that rebuild identically to the target: exact C
 plus code that is permanently assembly. Nothing else counts.
@@ -55,9 +55,9 @@ Three figures, because one of them alone would mislead:
 
 |                    |       bytes |                   share |
 | ------------------ | ----------: | ----------------------: |
-| Exact C            |     282,436 |     21.0% of executable |
-| Permanent assembly |     283,310 |     21.0% of executable |
-| **DONE**           | **565,746** | **42.0% of executable** |
+| Exact C            |     299,774 |     22.2% of executable |
+| Permanent assembly |     309,750 |     23.0% of executable |
+| **DONE**           | **609,524** | **45.2% of executable** |
 
 Permanent assembly is not a shortcut and not a backlog. It includes linker
 veneers and alignment padding, plus audited routines whose instruction shape or
@@ -66,7 +66,7 @@ records that evidence and rebuilds identically, so it is done and will never
 become C.
 
 That also means 100% is not the target. Measured against only the bytes that
-can ever be C, **exact C stands at 26.5%**. An overlay whose every function is
+can ever be C, **exact C stands at 28.9%**. An overlay whose every function is
 reconstructed still reports short of 100%, because its veneers count against it.
 
 Tracked reconstruction C is reported separately. It preserves recovered
@@ -86,14 +86,14 @@ figure above.
 
 The main game contains 548,364 executable bytes in the purple band.
 
-![Main-image code coverage box tree in the purple band; code categories use the legend below.](games/gs1/assets/readme/gs1-en-core.svg?v=bc0943c9c137186e)
+![Main-image code coverage box tree in the purple band; code categories use the legend below.](games/gs1/assets/readme/gs1-en-core.svg?v=ba6a85a34c131122)
 
 ### Code overlays
 
 The game loads 96 additional code overlays containing 798,758 executable bytes
 in the cyan band.
 
-![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](games/gs1/assets/readme/gs1-en-overlays.svg?v=dc6ecba75f6d1b74)
+![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](games/gs1/assets/readme/gs1-en-overlays.svg?v=5576f9873f4e23a3)
 
 ### Images and data
 

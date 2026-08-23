@@ -4,69 +4,69 @@
   "source_edition": "en",
   "base_edition": "ja",
   "source_state": "byte-exact C",
-  "owners_total": 1390,
-  "owner_symbol_bytes": 106864,
-  "matched_owners": 1349,
-  "matched_bytes": 103514,
-  "shared_core_owners": 1317,
-  "shared_core_bytes": 97892,
-  "regional_core_owners": 32,
-  "regional_core_bytes": 5622,
+  "owners_total": 1392,
+  "owner_symbol_bytes": 107308,
+  "matched_owners": 1351,
+  "matched_bytes": 103958,
+  "shared_core_owners": 1318,
+  "shared_core_bytes": 98188,
+  "regional_core_owners": 33,
+  "regional_core_bytes": 5770,
   "unresolved_owners": 41,
   "editions": [
     {
       "edition": "ja",
-      "matched_owners": 1349,
-      "matched_bytes": 103514,
-      "core_identical_owners": 1349,
-      "core_identical_bytes": 103514,
+      "matched_owners": 1351,
+      "matched_bytes": 103958,
+      "core_identical_owners": 1351,
+      "core_identical_bytes": 103958,
       "core_different_owners": 0,
       "core_different_bytes": 0
     },
     {
       "edition": "en",
-      "matched_owners": 1349,
-      "matched_bytes": 103514,
-      "core_identical_owners": 1321,
-      "core_identical_bytes": 98700,
+      "matched_owners": 1351,
+      "matched_bytes": 103958,
+      "core_identical_owners": 1323,
+      "core_identical_bytes": 99144,
       "core_different_owners": 28,
       "core_different_bytes": 4814
     },
     {
       "edition": "de",
-      "matched_owners": 1349,
-      "matched_bytes": 103514,
-      "core_identical_owners": 1317,
-      "core_identical_bytes": 97892,
+      "matched_owners": 1351,
+      "matched_bytes": 103958,
+      "core_identical_owners": 1319,
+      "core_identical_bytes": 98336,
       "core_different_owners": 32,
       "core_different_bytes": 5622
     },
     {
       "edition": "es",
-      "matched_owners": 1349,
-      "matched_bytes": 103514,
-      "core_identical_owners": 1319,
-      "core_identical_bytes": 98312,
+      "matched_owners": 1351,
+      "matched_bytes": 103958,
+      "core_identical_owners": 1321,
+      "core_identical_bytes": 98756,
       "core_different_owners": 30,
       "core_different_bytes": 5202
     },
     {
       "edition": "fr",
-      "matched_owners": 1349,
-      "matched_bytes": 103514,
-      "core_identical_owners": 1317,
-      "core_identical_bytes": 97892,
+      "matched_owners": 1351,
+      "matched_bytes": 103958,
+      "core_identical_owners": 1319,
+      "core_identical_bytes": 98336,
       "core_different_owners": 32,
       "core_different_bytes": 5622
     },
     {
       "edition": "it",
-      "matched_owners": 1349,
-      "matched_bytes": 103514,
-      "core_identical_owners": 1319,
-      "core_identical_bytes": 98312,
-      "core_different_owners": 30,
-      "core_different_bytes": 5202
+      "matched_owners": 1351,
+      "matched_bytes": 103958,
+      "core_identical_owners": 1320,
+      "core_identical_bytes": 98608,
+      "core_different_owners": 31,
+      "core_different_bytes": 5350
     }
   ],
   "owners": [
@@ -28931,6 +28931,36 @@
       }
     },
     {
+      "en_owner": "080b0fa4",
+      "source": "games/gs1/src/battle/inventory/draw_paged_item_list.c",
+      "size": 296,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x080b35a4",
+        "en": "0x080b0fa4",
+        "es": "0x080b4fa4",
+        "fr": "0x080b4fa4",
+        "it": "0x080b0fa4",
+        "ja": "0x080a7fa4"
+      },
+      "location_methods": {
+        "de": "global_anchor",
+        "en": "source",
+        "es": "global_anchor",
+        "fr": "global_anchor",
+        "it": "global_anchor",
+        "ja": "global_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
       "en_owner": "080b11c4",
       "source": "games/gs1/src/080b11c4.c",
       "size": 156,
@@ -29137,6 +29167,36 @@
         "es": 1,
         "fr": 1,
         "it": 1,
+        "ja": 0
+      }
+    },
+    {
+      "en_owner": "080b1dec",
+      "source": "games/gs1/src/battle/inventory/draw_item_grid.c",
+      "size": 148,
+      "status": "regional_core",
+      "starts": {
+        "de": "0x080b43ec",
+        "en": "0x080b1dec",
+        "es": "0x080b5dec",
+        "fr": "0x080b5dec",
+        "it": "0x080b1dec",
+        "ja": "0x080a8e10"
+      },
+      "location_methods": {
+        "de": "global_anchor",
+        "en": "source",
+        "es": "global_anchor",
+        "fr": "global_anchor",
+        "it": "global_anchor",
+        "ja": "global_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 2,
         "ja": 0
       }
     },
@@ -31932,7 +31992,7 @@
     },
     {
       "en_owner": "080bbb0c",
-      "source": "games/gs1/src/080bbb0c.c",
+      "source": "games/gs1/src/battle/resolve_action.c",
       "size": 6332,
       "status": "shared_core",
       "starts": {

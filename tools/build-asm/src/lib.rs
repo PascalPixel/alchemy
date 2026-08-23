@@ -316,7 +316,7 @@ fn load_classification(path: &Path) -> Result<ClassificationConfig, String> {
     for rule in &config.groups {
         match (rule.files.as_deref(), rule.matcher.as_deref()) {
             (Some(files), None) if !files.is_empty() => {}
-            (None, Some("thumb_multi_register")) => {}
+            (None, Some("thumb_standalone_wide_transfer")) => {}
             _ => {
                 return Err(format!(
                     "{}: invalid assembly classification rule",
@@ -391,23 +391,100 @@ fn alignment_padding(data: &[u8]) -> bool {
     data == [0, 0]
 }
 
-fn thumb_multi_register(source: &str) -> bool {
-    source.lines().any(|line| {
-        let code = line.split('@').next().unwrap_or("");
-        let mut words = code.split_whitespace();
-        let mut mnemonic = words.next().unwrap_or("");
-        if mnemonic.ends_with(':') {
-            mnemonic = words.next().unwrap_or("");
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct ThumbTransfer {
+    load: bool,
+    base: u8,
+    registers: Vec<u8>,
+    targeted: bool,
+}
+
+fn low_register(text: &str) -> Option<u8> {
+    let register = text.trim().strip_prefix('r')?.parse::<u8>().ok()?;
+    (register <= 7).then_some(register)
+}
+
+fn thumb_transfer(line: &str) -> Option<ThumbTransfer> {
+    let code = line.split('@').next().unwrap_or("").trim();
+    if code.is_empty() {
+        return None;
+    }
+    let (targeted, instruction) = match code.split_once(':') {
+        Some((_, instruction)) => (true, instruction.trim()),
+        None => (false, code),
+    };
+    let mut words = instruction.split_whitespace();
+    let mnemonic = words.next()?;
+    let load = match mnemonic {
+        "ldmia" => true,
+        "stmia" => false,
+        _ => return None,
+    };
+    let body = instruction.strip_prefix(mnemonic)?.trim_start();
+    let (operands, rest) = body.split_once('{')?;
+    let (registers, _) = rest.split_once('}')?;
+    let base = low_register(operands.split(',').next()?.trim().trim_end_matches('!'))?;
+    let mut parsed = Vec::new();
+    for item in registers.split(',') {
+        let item = item.trim();
+        if let Some((first, last)) = item.split_once('-') {
+            let first = low_register(first)?;
+            let last = low_register(last)?;
+            if first > last {
+                return None;
+            }
+            parsed.extend(first..=last);
+        } else {
+            parsed.push(low_register(item)?);
         }
-        if !matches!(mnemonic, "ldmia" | "stmia") {
-            return false;
-        }
-        let Some((_, registers)) = code.split_once('{') else {
+    }
+    parsed.sort_unstable();
+    parsed.dedup();
+    Some(ThumbTransfer {
+        load,
+        base,
+        registers: parsed,
+        targeted,
+    })
+}
+
+fn approved_thumb_block_copy_pair(load: &ThumbTransfer, store: &ThumbTransfer) -> bool {
+    load.load
+        && !store.load
+        && !load.targeted
+        && !store.targeted
+        && matches!(load.registers.len(), 2 | 3)
+        && load.registers == store.registers
+        && load.base != store.base
+        && !load.registers.contains(&load.base)
+        && !store.registers.contains(&store.base)
+}
+
+fn thumb_standalone_wide_transfer(source: &str) -> bool {
+    let significant: Vec<_> = source
+        .lines()
+        .filter_map(|line| {
+            let code = line.split('@').next().unwrap_or("").trim();
+            (!code.is_empty()).then(|| thumb_transfer(line))
+        })
+        .collect();
+    significant.iter().enumerate().any(|(index, transfer)| {
+        let Some(transfer) = transfer else {
             return false;
         };
-        registers
-            .split_once('}')
-            .is_some_and(|(registers, _)| registers.contains(',') || registers.contains('-'))
+        if transfer.registers.len() < 3 {
+            return false;
+        }
+        let paired_as_load = significant
+            .get(index + 1)
+            .and_then(Option::as_ref)
+            .is_some_and(|next| approved_thumb_block_copy_pair(transfer, next));
+        let paired_as_store = index
+            .checked_sub(1)
+            .and_then(|previous| significant.get(previous))
+            .and_then(Option::as_ref)
+            .is_some_and(|previous| approved_thumb_block_copy_pair(previous, transfer));
+        !paired_as_load && !paired_as_store
     })
 }
 
@@ -437,11 +514,11 @@ fn classify(
             .map(ClassificationRule::classification)
             .ok_or_else(|| "missing alignment padding classification".into());
     }
-    if thumb_multi_register(source) {
+    if thumb_standalone_wide_transfer(source) {
         return config
             .groups
             .iter()
-            .find(|rule| rule.matcher.as_deref() == Some("thumb_multi_register"))
+            .find(|rule| rule.matcher.as_deref() == Some("thumb_standalone_wide_transfer"))
             .map(ClassificationRule::classification)
             .ok_or_else(|| "missing Thumb multi-register classification".into());
     }
@@ -933,23 +1010,34 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
 
 #[cfg(test)]
 mod tests {
-    use super::thumb_multi_register;
+    use super::thumb_standalone_wide_transfer;
 
     #[test]
-    fn distinguishes_thumb_register_list_width() {
-        assert!(!thumb_multi_register("\tldmia\tr3!, {r2}\n"));
-        assert!(!thumb_multi_register("\tstmia\tr5!, {r0}\n"));
-        assert!(thumb_multi_register("\tldmia\tr3!, {r0, r1}\n"));
-        assert!(thumb_multi_register("\tstmia\tr5!, {r0, r1, r2}\n"));
-        assert!(thumb_multi_register("\tldmia\tr3!, {r0-r3}\n"));
+    fn recognizes_only_standalone_wide_thumb_transfers() {
+        assert!(!thumb_standalone_wide_transfer("\tldmia\tr3!, {r2}\n"));
+        assert!(!thumb_standalone_wide_transfer("\tstmia\tr5!, {r0, r1}\n"));
+        assert!(thumb_standalone_wide_transfer(
+            "\tstmia\tr5!, {r0, r1, r2}\n"
+        ));
+        assert!(thumb_standalone_wide_transfer("\tldmia\tr3!, {r0-r3}\n"));
+        assert!(!thumb_standalone_wide_transfer(
+            "\tldmia\tr3!, {r0, r1, r2}\n\tstmia\tr4!, {r0-r2}\n"
+        ));
     }
 
     #[test]
     fn ignores_comments_and_data() {
-        assert!(!thumb_multi_register("@ stmia r5!, {r0, r1}\n"));
-        assert!(!thumb_multi_register("\t.ascii \"ldmia {r0, r1}\"\n"));
-        assert!(thumb_multi_register(
-            ".L_copy: stmia r5!, {r0, r1} @ copy two words\n"
+        assert!(!thumb_standalone_wide_transfer(
+            "@ stmia r5!, {r0, r1, r2}\n"
+        ));
+        assert!(!thumb_standalone_wide_transfer(
+            "\t.ascii \"ldmia {r0, r1, r2}\"\n"
+        ));
+        assert!(thumb_standalone_wide_transfer(
+            ".L_copy: stmia r5!, {r0, r1, r2} @ targeted wide store\n"
+        ));
+        assert!(thumb_standalone_wide_transfer(
+            "\tldmia r3!, {r0-r2}\n.L_target:\n\tstmia r4!, {r0-r2}\n"
         ));
     }
 }

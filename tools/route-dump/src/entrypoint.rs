@@ -37,6 +37,14 @@ use std::process::ExitCode;
 use compiler_core::routing::{
     cflags_for_source, cflags_for_target, uses_agbcc_compiler, CompilerTarget,
 };
+use compiler_core::source_paths::SourcePaths;
+
+#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
+struct LiveSource {
+    display: String,
+    owner: Option<String>,
+    routing: String,
+}
 
 /// Flags every Gs1 translation unit receives before per-source routing.
 fn baseline() -> Vec<String> {
@@ -44,17 +52,38 @@ fn baseline() -> Vec<String> {
 }
 
 /// The per-source flags that are not part of the baseline, in routed order.
-fn routed_extras(source: &str) -> Vec<String> {
+fn routed_extras(routing: &str) -> Vec<String> {
     let base: BTreeSet<String> = baseline().into_iter().collect();
-    cflags_for_source(source)
+    cflags_for_source(routing)
         .into_iter()
         .filter(|flag| !base.contains(flag))
         .collect()
 }
 
-fn live_sources() -> Vec<String> {
+fn source_records(paths: Option<&SourcePaths>, source: &str) -> Vec<LiveSource> {
+    let owners = paths
+        .map(|paths| paths.owners_for_path(Path::new(source)))
+        .unwrap_or_default();
+    if owners.is_empty() {
+        return vec![LiveSource {
+            display: source.to_string(),
+            owner: None,
+            routing: source.to_string(),
+        }];
+    }
+    owners
+        .into_iter()
+        .map(|owner| LiveSource {
+            display: source.to_string(),
+            owner: Some(owner.id()),
+            routing: owner.routing_path().to_string_lossy().into_owned(),
+        })
+        .collect()
+}
+
+fn live_sources() -> Vec<LiveSource> {
     let mut found = Vec::new();
-    for directory in ["games/gs1/semantic", "games/gs1/src"] {
+    for directory in ["games/gs1/semantic"] {
         let Ok(entries) = std::fs::read_dir(directory) else {
             continue;
         };
@@ -64,19 +93,39 @@ fn live_sources() -> Vec<String> {
                 continue;
             }
             if let Some(text) = path.to_str() {
-                found.push(text.to_string());
+                found.push(LiveSource {
+                    display: text.to_string(),
+                    owner: None,
+                    routing: text.to_string(),
+                });
             }
+        }
+    }
+    if let Ok(paths) = SourcePaths::load(compiler_core::routing::root()) {
+        if let Ok(sources) = paths.all_sources() {
+            found.extend(sources.into_iter().map(|source| {
+                LiveSource {
+                    display: paths
+                        .repository_relative_path(source.owner)
+                        .to_string_lossy()
+                        .into_owned(),
+                    owner: Some(source.owner.id()),
+                    routing: source.owner.routing_path().to_string_lossy().into_owned(),
+                }
+            }));
         }
     }
     found.sort();
     found
 }
 
-fn emit(source: &str) {
-    let extras = routed_extras(source);
-    let agbcc = uses_agbcc_compiler(CompilerTarget::Gs1, source);
+fn emit(source: &LiveSource) {
+    let extras = routed_extras(&source.routing);
+    let agbcc = uses_agbcc_compiler(CompilerTarget::Gs1, &source.routing);
     println!(
-        "{source}\t{}\t{}",
+        "{}\t{}\t{}\t{}",
+        source.display,
+        source.owner.as_deref().unwrap_or("-"),
         if agbcc { "agbcc" } else { "gcc296" },
         extras.join(" ")
     );
@@ -94,9 +143,12 @@ fn self_test() -> Result<(), String> {
     // Routed extras must never duplicate a baseline flag.
     let baseline_set: BTreeSet<String> = base.into_iter().collect();
     for source in live_sources().into_iter().take(400) {
-        for flag in routed_extras(&source) {
+        for flag in routed_extras(&source.routing) {
             if baseline_set.contains(&flag) {
-                return Err(format!("{source}: {flag} is both baseline and routed"));
+                return Err(format!(
+                    "{}: {flag} is both baseline and routed",
+                    source.display
+                ));
             }
         }
     }
@@ -128,8 +180,8 @@ pub fn entry(arguments: &[String]) -> ExitCode {
         let deviating = sources
             .iter()
             .filter(|source| {
-                !routed_extras(source).is_empty()
-                    || uses_agbcc_compiler(CompilerTarget::Gs1, source)
+                !routed_extras(&source.routing).is_empty()
+                    || uses_agbcc_compiler(CompilerTarget::Gs1, &source.routing)
             })
             .count();
         println!(
@@ -148,22 +200,60 @@ pub fn entry(arguments: &[String]) -> ExitCode {
     let sources = if arguments.iter().any(|a| a == "--all" || a == "--routed") {
         live_sources()
     } else {
+        let paths = SourcePaths::load(compiler_core::routing::root()).ok();
         arguments
             .iter()
             .filter(|a| !a.starts_with("--"))
-            .cloned()
+            .flat_map(|source| source_records(paths.as_ref(), source))
             .collect()
     };
     for source in sources {
-        if !Path::new(&source).exists()
-            && !source.starts_with("games/gs1/recon/en/main/does_not_exist")
+        if !Path::new(&source.display).exists()
+            && !source
+                .display
+                .starts_with("games/gs1/recon/en/main/does_not_exist")
         {
-            eprintln!("warning: {source} does not exist on disk");
+            eprintln!("warning: {} does not exist on disk", source.display);
         }
-        if only_routed && routed_extras(&source).is_empty() {
+        if only_routed && routed_extras(&source.routing).is_empty() {
             continue;
         }
         emit(&source);
     }
     ExitCode::SUCCESS
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn shared_source_emits_one_owner_specific_route_per_overlay() {
+        let paths = SourcePaths::parse(
+            Path::new("/repo"),
+            r#"{
+  "format": 1,
+  "owners": {
+    "resource_39b:02000104": "overlays/shared/integrate_effect_motion.c",
+    "resource_39c:02000104": "overlays/shared/integrate_effect_motion.c"
+  }
+}"#,
+        )
+        .unwrap();
+        let records = source_records(
+            Some(&paths),
+            "games/gs1/src/overlays/shared/integrate_effect_motion.c",
+        );
+        assert_eq!(records.len(), 2);
+        assert_eq!(records[0].owner.as_deref(), Some("resource_39b:02000104"));
+        assert_eq!(
+            records[0].routing,
+            "games/gs1/src/resource_39b_c_02000104.c"
+        );
+        assert_eq!(records[1].owner.as_deref(), Some("resource_39c:02000104"));
+        assert_eq!(
+            records[1].routing,
+            "games/gs1/src/resource_39c_c_02000104.c"
+        );
+    }
 }

@@ -16,8 +16,9 @@ CHECK := $(CARGO_RUN) $(TOOLS)/check/Cargo.toml --
 COMPILER := $(CARGO_RUN) $(TOOLS)/compiler/Cargo.toml --
 
 HOSTS := build-assets build-stage assets compiler overlay check
-CORE_TESTS := candidate-compiler candidate-show permuter overlay-adopt \
-              build-full extract-resource coverage-map check-publication
+CORE_TESTS := compiler-core candidate-compiler candidate-show permuter \
+              overlay-disasm overlay-adopt route-dump build-full \
+              extract-resource coverage-map check-publication
 PORTABLE_TOOLS := alignment-tail asset-paths cache-entry canonical-json \
 	generated-files no-asm-c build-stage build-claimed build-asm build-full \
 	compiler compiler-core candidate-compiler candidate-show permuter \

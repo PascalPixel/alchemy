@@ -9,6 +9,7 @@
 #[path = "../../coverage-map/src/model.rs"]
 mod model;
 
+use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use model::{bytes, contains, normalize, Span};
 use serde_json::Value;
 use std::collections::BTreeMap;
@@ -407,6 +408,7 @@ fn overlay_source_spans(
         return Ok(Vec::new());
     };
     let source = read(&root.join("games/gs1/assets/code").join(file))?;
+    let source_paths = SourcePaths::load(root)?;
     let mut owners: Vec<Vec<Span>> = Vec::new();
     let mut current: Option<Vec<Span>> = None;
     let mut cursor = 0;
@@ -449,7 +451,8 @@ fn overlay_source_spans(
         let Some(entry) = spans.first().map(|span| span.start) else {
             continue;
         };
-        let path = root.join(format!("games/gs1/src/{id}_c_{entry:08x}.c"));
+        let owner = SourceOwner::parse(&format!("{id}:{entry:08x}"))?;
+        let path = source_paths.source_path(owner);
         if path.exists() && canonical(&read(&path)?) {
             exact.extend(spans);
         }

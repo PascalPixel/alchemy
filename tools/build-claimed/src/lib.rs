@@ -1,4 +1,4 @@
-//! Compile and verify every `games/gs1/src/<address>.c` claimed by the main image.
+//! Compile and verify every exact C owner claimed by the main image.
 //! Paths and numbers are native Rust types; `serde_json` and `sha2` provide the
 //! only serialization and hashing needed by the cache and manifest.
 
@@ -9,6 +9,7 @@ use canonical_json::canonical_json;
 use compiler_core::bundle::{compiler_bundle_signature, host_executable_signature};
 use compiler_core::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
 use compiler_core::routing::CompilerTarget;
+use compiler_core::source_paths::{SourceFile, SourceOwner, SourcePaths, SOURCE_DIRECTORY};
 use compiler_core::symbols::{external_symbol, external_symbol_assembly, CALL_VIA_BASE};
 use decomp_targets::{
     decomp_target, parse_decomp_target, target_for, BuildSupport, DecompCompilerTarget,
@@ -78,13 +79,6 @@ fn parse_jobs(value: &str) -> f64 {
     } else {
         sign * d.parse::<f64>().unwrap_or(f64::NAN)
     }
-}
-fn source_name(name: &str) -> bool {
-    let b = name.as_bytes();
-    b.len() == 10
-        && b[..8].iter().all(u8::is_ascii_hexdigit)
-        && b[8] == b'.'
-        && matches!(b[9], b'c' | b'C')
 }
 fn function_name(name: &str) -> bool {
     let Some(rest) = name.strip_prefix("Func_") else {
@@ -495,12 +489,47 @@ pub fn compile_source(
     edition_define: &str,
     stamps: &ToolchainStampCache,
 ) -> Result<(Compiled, CacheOutcome)> {
-    let name = stem(source).to_string();
+    let owner = address(stem(source)).ok_or_else(|| {
+        format!(
+            "{}: legacy source filename is not an address",
+            basename(source)
+        )
+    })?;
+    compile_source_for_owner(
+        owner,
+        root,
+        object_cache,
+        source,
+        object_dir,
+        compiler,
+        edition_define,
+        stamps,
+    )
+}
+
+pub fn compile_source_for_owner(
+    owner: u32,
+    root: &str,
+    object_cache: &str,
+    source: &str,
+    object_dir: &str,
+    compiler: DecompCompilerTarget,
+    edition_define: &str,
+    stamps: &ToolchainStampCache,
+) -> Result<(Compiled, CacheOutcome)> {
+    let name = format!("{owner:08x}");
     let object = text(Path::new(object_dir).join(format!("{name}.o")));
     let assembly = text(Path::new(object_dir).join(format!("{name}.s")));
+    let routing_source = match compiler {
+        DecompCompilerTarget::Gs1 => SourceOwner::Main(owner)
+            .routing_path()
+            .to_string_lossy()
+            .into_owned(),
+        DecompCompilerTarget::Gs2 => source.to_string(),
+    };
     let mut options = SourceToAssemblyPlanOptions::new(
         compiler_target(compiler),
-        source,
+        routing_source,
         source,
         assembly.clone(),
     );
@@ -667,6 +696,38 @@ fn write_file(path: &Path, bytes: &[u8], written: &mut Vec<String>) -> Result<()
     Ok(())
 }
 
+fn main_sources(root: &str, source_directory: &str) -> Result<Vec<SourceFile>> {
+    if source_directory == SOURCE_DIRECTORY {
+        return SourcePaths::load(Path::new(root))?.main_sources();
+    }
+    let directory = rooted(root, source_directory);
+    let mut sources = Vec::new();
+    for entry in std::fs::read_dir(&directory)
+        .map_err(|error| format!("{}: {error}", directory.display()))?
+    {
+        let entry = entry.map_err(|error| error.to_string())?;
+        if !entry
+            .file_type()
+            .map_err(|error| error.to_string())?
+            .is_file()
+        {
+            continue;
+        }
+        let path = entry.path();
+        let Some(owner) = path
+            .file_stem()
+            .and_then(|stem| stem.to_str())
+            .and_then(SourceOwner::from_legacy_stem)
+            .filter(|owner| owner.is_main())
+        else {
+            continue;
+        };
+        sources.push(SourceFile { owner, path });
+    }
+    sources.sort_by_key(|source| source.owner);
+    Ok(sources)
+}
+
 pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     let target: DecompTarget = decomp_target(Some(options.target.as_str()))?;
     if !options.compile_only && target.build_support != BuildSupport::Full {
@@ -688,25 +749,15 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
             ));
         }
     }
-    let source_dir = rooted(root, target.source_dir);
-    let mut sources = Vec::new();
-    for entry in
-        std::fs::read_dir(&source_dir).map_err(|e| format!("{}: {e}", source_dir.display()))?
-    {
-        let entry = entry.map_err(|e| e.to_string())?;
-        if entry.file_type().map_err(|e| e.to_string())?.is_file() {
-            let name = entry.file_name().to_string_lossy().into_owned();
-            if source_name(&name) {
-                sources.push(text(source_dir.join(name)));
-            }
-        }
-    }
-    sources.sort();
+    let sources = main_sources(root, target.source_dir)?;
     if sources.is_empty() {
         return Err("no reconstructed sources".into());
     }
-    let addresses: Vec<_> = sources.iter().filter_map(|s| address(stem(s))).collect();
-    if addresses.len() != sources.len() || addresses.windows(2).any(|w| w[0] == w[1]) {
+    let addresses: Vec<_> = sources
+        .iter()
+        .map(|source| source.owner.address())
+        .collect();
+    if addresses.windows(2).any(|w| w[0] == w[1]) {
         return Err("duplicate source address".into());
     }
     let limit = ROM_BASE.saturating_add(target.rom_size as u32);
@@ -719,10 +770,11 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     let cache_dir = object_cache_dir(root);
     let stamps = ToolchainStampCache::new()?;
     let pairs = map_limit(&sources, options.jobs as usize, |source| {
-        compile_source(
+        compile_source_for_owner(
+            source.owner.address(),
             root,
             &cache_dir,
-            source,
+            &text(source.path.clone()),
             &text(object_dir.clone()),
             target.compiler,
             target.edition_define,
@@ -761,7 +813,10 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
             .zip(&compiled)
             .map(|(source, module)| {
                 let mut row = Map::new();
-                row.insert("source".into(), Value::String(relative(root, source)));
+                row.insert(
+                    "source".into(),
+                    Value::String(relative(root, &text(source.path.clone()))),
+                );
                 row.insert(
                     "object".into(),
                     Value::String(relative(root, &module.object)),
@@ -825,13 +880,14 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     let linker = output.join("claimed.ld");
     let mut script = format!(
         "OUTPUT_ARCH(arm)\nENTRY(Func_{})\nSECTIONS\n{{\n",
-        stem(&sources[0])
+        sources[0].owner.address_stem()
     );
     for (source, object) in sources.iter().zip(&objects) {
+        let owner = source.owner.address_stem();
         script.push_str(&format!(
             "  .func_{} 0x{} : {{ {}(.text) }}\n",
-            stem(source),
-            stem(source),
+            owner,
+            owner,
             relative(root, object)
         ));
     }
@@ -894,32 +950,44 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     let mut total = 0usize;
     let mut previous_end = 0u32;
     for (i, source) in sources.iter().enumerate() {
-        let symbol_name = format!("Func_{}", stem(source));
+        let owner = source.owner.address_stem();
+        let source_text = text(source.path.clone());
+        let symbol_name = format!("Func_{owner}");
         let (start, _) = symbols
             .get(&symbol_name)
             .ok_or_else(|| format!("missing linked function {symbol_name}"))?;
-        let claimed = address(stem(source)).unwrap_or(0);
+        let claimed = source.owner.address();
         if start != claimed {
-            failures.push(format!("{}: linked at 0x{start:08x}", basename(source)));
+            failures.push(format!(
+                "{}: linked at 0x{start:08x}",
+                basename(&source_text)
+            ));
             continue;
         }
         compiled[i]
             .defined_names
             .sort_by_key(|n| symbols.get(n).map(|(a, _)| a).unwrap_or(u32::MAX));
         let names = compiled[i].defined_names.clone();
-        let end = module_end(&names, &symbols).map_err(|e| format!("{}: {e}", basename(source)))?;
+        let end =
+            module_end(&names, &symbols).map_err(|e| format!("{}: {e}", basename(&source_text)))?;
         let size = end.saturating_sub(start) as usize;
         if start < previous_end {
-            failures.push(format!("{}: overlaps previous function", basename(source)));
+            failures.push(format!(
+                "{}: overlaps previous function",
+                basename(&source_text)
+            ));
         }
         previous_end = previous_end.max(end);
         if end > limit {
-            failures.push(format!("{}: linked extent outside ROM", basename(source)));
+            failures.push(format!(
+                "{}: linked extent outside ROM",
+                basename(&source_text)
+            ));
         }
         let actual = subarray(&image, start - image_base, end - image_base);
         if let Some(rom) = &rom {
             if actual != subarray(rom, start - ROM_BASE, end - ROM_BASE) {
-                failures.push(format!("{}: linked bytes differ", basename(source)));
+                failures.push(format!("{}: linked bytes differ", basename(&source_text)));
             }
         }
         for name in &names {
@@ -932,12 +1000,12 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
             {
                 failures.push(format!(
                     "{}: invalid module symbol {name}",
-                    basename(source)
+                    basename(&source_text)
                 ));
             }
         }
         let mut region = Map::new();
-        region.insert("source".into(), Value::String(relative(root, source)));
+        region.insert("source".into(), Value::String(relative(root, &source_text)));
         region.insert("symbol".into(), Value::String(symbol_name));
         region.insert("symbols".into(), json_strings(&names));
         region.insert("address".into(), number(start));
@@ -1042,9 +1110,7 @@ mod tests {
         );
     }
     #[test]
-    fn names_are_strict() {
-        assert!(source_name("0801C0C8.C"));
-        assert!(!source_name("0801c0c8.s"));
+    fn function_names_are_strict() {
         assert!(function_name("Func_0801c0c8"));
         assert!(!function_name("Func_0801C0C8"));
     }

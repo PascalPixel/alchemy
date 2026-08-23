@@ -4,7 +4,7 @@
  "target": "gs1-en",
  "derivation": "full-c-progress-v1",
  "audit": "complete",
- "total_union_bytes": 1347122,
+ "total_union_bytes": 1348188,
  "main": {
   "id": "main",
   "executable_bytes": 548364,
@@ -11544,8 +11544,8 @@
   {
    "id": "resource_382",
    "decoded_bytes": 10484,
-   "executable_bytes": 6812,
-   "excluded_bytes": 3672,
+   "executable_bytes": 6894,
+   "excluded_bytes": 3590,
    "audit": "complete",
    "intervals": [
     {
@@ -11553,6 +11553,18 @@
      "end": 33554480,
      "kind": "veneer",
      "evidence": "resource_382_overlay.s:fixed-ldr-bx-veneer"
+    },
+    {
+     "start": 33554480,
+     "end": 33554502,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:bounded-head-leaf"
+    },
+    {
+     "start": 33554502,
+     "end": 33554504,
+     "kind": "executable_alignment",
+     "evidence": "resource_382_overlay.s:two-byte-zero-between-executable-spans"
     },
     {
      "start": 33554504,
@@ -11571,6 +11583,18 @@
      "end": 33554690,
      "kind": "thumb",
      "evidence": "resource_382_overlay.s:428:verified-C-placeholder"
+    },
+    {
+     "start": 33554690,
+     "end": 33554692,
+     "kind": "executable_alignment",
+     "evidence": "resource_382_overlay.s:two-byte-zero-between-executable-spans"
+    },
+    {
+     "start": 33554692,
+     "end": 33554748,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:bounded-object-integrator"
     },
     {
      "start": 33554748,
@@ -12597,8 +12621,8 @@
   {
    "id": "resource_385",
    "decoded_bytes": 6720,
-   "executable_bytes": 4492,
-   "excluded_bytes": 2228,
+   "executable_bytes": 4574,
+   "excluded_bytes": 2146,
    "audit": "complete",
    "intervals": [
     {
@@ -12606,6 +12630,18 @@
      "end": 33554480,
      "kind": "veneer",
      "evidence": "resource_385_overlay.s:fixed-ldr-bx-veneer"
+    },
+    {
+     "start": 33554480,
+     "end": 33554502,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:bounded-head-leaf"
+    },
+    {
+     "start": 33554502,
+     "end": 33554504,
+     "kind": "executable_alignment",
+     "evidence": "resource_385_overlay.s:two-byte-zero-between-executable-spans"
     },
     {
      "start": 33554504,
@@ -12624,6 +12660,18 @@
      "end": 33554690,
      "kind": "thumb",
      "evidence": "resource_385_overlay.s:266:verified-C-placeholder"
+    },
+    {
+     "start": 33554690,
+     "end": 33554692,
+     "kind": "executable_alignment",
+     "evidence": "resource_385_overlay.s:two-byte-zero-between-executable-spans"
+    },
+    {
+     "start": 33554692,
+     "end": 33554748,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:bounded-object-integrator"
     },
     {
      "start": 33554748,
@@ -13035,8 +13083,8 @@
   {
    "id": "resource_387",
    "decoded_bytes": 5376,
-   "executable_bytes": 4570,
-   "excluded_bytes": 806,
+   "executable_bytes": 4652,
+   "excluded_bytes": 724,
    "audit": "complete",
    "intervals": [
     {
@@ -13044,6 +13092,18 @@
      "end": 33554480,
      "kind": "veneer",
      "evidence": "resource_387_overlay.s:fixed-ldr-bx-veneer"
+    },
+    {
+     "start": 33554480,
+     "end": 33554502,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:bounded-head-leaf"
+    },
+    {
+     "start": 33554502,
+     "end": 33554504,
+     "kind": "executable_alignment",
+     "evidence": "resource_387_overlay.s:two-byte-zero-between-executable-spans"
     },
     {
      "start": 33554504,
@@ -13062,6 +13122,18 @@
      "end": 33554690,
      "kind": "thumb",
      "evidence": "resource_387_overlay.s:314:verified-C-placeholder"
+    },
+    {
+     "start": 33554690,
+     "end": 33554692,
+     "kind": "executable_alignment",
+     "evidence": "resource_387_overlay.s:two-byte-zero-between-executable-spans"
+    },
+    {
+     "start": 33554692,
+     "end": 33554748,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:bounded-object-integrator"
     },
     {
      "start": 33554748,
@@ -13560,8 +13632,8 @@
   {
    "id": "resource_38a",
    "decoded_bytes": 2580,
-   "executable_bytes": 1786,
-   "excluded_bytes": 794,
+   "executable_bytes": 1868,
+   "excluded_bytes": 712,
    "audit": "complete",
    "intervals": [
     {
@@ -13569,6 +13641,18 @@
      "end": 33554480,
      "kind": "veneer",
      "evidence": "resource_38a_overlay.s:fixed-ldr-bx-veneer"
+    },
+    {
+     "start": 33554480,
+     "end": 33554502,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:bounded-head-leaf"
+    },
+    {
+     "start": 33554502,
+     "end": 33554504,
+     "kind": "executable_alignment",
+     "evidence": "resource_38a_overlay.s:two-byte-zero-between-executable-spans"
     },
     {
      "start": 33554504,
@@ -13587,6 +13671,18 @@
      "end": 33554690,
      "kind": "thumb",
      "evidence": "resource_38a_overlay.s:82:verified-C-placeholder"
+    },
+    {
+     "start": 33554690,
+     "end": 33554692,
+     "kind": "executable_alignment",
+     "evidence": "resource_38a_overlay.s:two-byte-zero-between-executable-spans"
+    },
+    {
+     "start": 33554692,
+     "end": 33554748,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:bounded-object-integrator"
     },
     {
      "start": 33554748,
@@ -15876,8 +15972,8 @@
   {
    "id": "resource_396",
    "decoded_bytes": 11708,
-   "executable_bytes": 6014,
-   "excluded_bytes": 5694,
+   "executable_bytes": 6096,
+   "excluded_bytes": 5612,
    "audit": "complete",
    "intervals": [
     {
@@ -15885,6 +15981,18 @@
      "end": 33554480,
      "kind": "veneer",
      "evidence": "resource_396_overlay.s:fixed-ldr-bx-veneer"
+    },
+    {
+     "start": 33554480,
+     "end": 33554502,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:bounded-head-leaf"
+    },
+    {
+     "start": 33554502,
+     "end": 33554504,
+     "kind": "executable_alignment",
+     "evidence": "resource_396_overlay.s:two-byte-zero-between-executable-spans"
     },
     {
      "start": 33554504,
@@ -15903,6 +16011,18 @@
      "end": 33554690,
      "kind": "thumb",
      "evidence": "resource_396_overlay.s:335:verified-C-placeholder"
+    },
+    {
+     "start": 33554690,
+     "end": 33554692,
+     "kind": "executable_alignment",
+     "evidence": "resource_396_overlay.s:two-byte-zero-between-executable-spans"
+    },
+    {
+     "start": 33554692,
+     "end": 33554748,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:bounded-object-integrator"
     },
     {
      "start": 33554748,
@@ -17115,8 +17235,8 @@
   {
    "id": "resource_39b",
    "decoded_bytes": 12284,
-   "executable_bytes": 8736,
-   "excluded_bytes": 3548,
+   "executable_bytes": 8818,
+   "excluded_bytes": 3466,
    "audit": "complete",
    "intervals": [
     {
@@ -17124,6 +17244,18 @@
      "end": 33554480,
      "kind": "veneer",
      "evidence": "resource_39b_overlay.s:fixed-ldr-bx-veneer"
+    },
+    {
+     "start": 33554480,
+     "end": 33554502,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:bounded-head-leaf"
+    },
+    {
+     "start": 33554502,
+     "end": 33554504,
+     "kind": "executable_alignment",
+     "evidence": "resource_39b_overlay.s:two-byte-zero-between-executable-spans"
     },
     {
      "start": 33554504,
@@ -17142,6 +17274,18 @@
      "end": 33554690,
      "kind": "thumb",
      "evidence": "resource_39b_overlay.s:323:verified-C-placeholder"
+    },
+    {
+     "start": 33554690,
+     "end": 33554692,
+     "kind": "executable_alignment",
+     "evidence": "resource_39b_overlay.s:two-byte-zero-between-executable-spans"
+    },
+    {
+     "start": 33554692,
+     "end": 33554748,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:bounded-object-integrator"
     },
     {
      "start": 33554748,
@@ -20286,8 +20430,8 @@
   {
    "id": "resource_3a0",
    "decoded_bytes": 7576,
-   "executable_bytes": 5266,
-   "excluded_bytes": 2310,
+   "executable_bytes": 5348,
+   "excluded_bytes": 2228,
    "audit": "complete",
    "intervals": [
     {
@@ -20295,6 +20439,18 @@
      "end": 33554480,
      "kind": "veneer",
      "evidence": "resource_3a0_overlay.s:fixed-ldr-bx-veneer"
+    },
+    {
+     "start": 33554480,
+     "end": 33554502,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:bounded-head-leaf"
+    },
+    {
+     "start": 33554502,
+     "end": 33554504,
+     "kind": "executable_alignment",
+     "evidence": "resource_3a0_overlay.s:two-byte-zero-between-executable-spans"
     },
     {
      "start": 33554504,
@@ -20313,6 +20469,18 @@
      "end": 33554690,
      "kind": "thumb",
      "evidence": "resource_3a0_overlay.s:281:verified-C-placeholder"
+    },
+    {
+     "start": 33554690,
+     "end": 33554692,
+     "kind": "executable_alignment",
+     "evidence": "resource_3a0_overlay.s:two-byte-zero-between-executable-spans"
+    },
+    {
+     "start": 33554692,
+     "end": 33554748,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:bounded-object-integrator"
     },
     {
      "start": 33554748,
@@ -21819,8 +21987,8 @@
   {
    "id": "resource_3a5",
    "decoded_bytes": 9922,
-   "executable_bytes": 9030,
-   "excluded_bytes": 892,
+   "executable_bytes": 9112,
+   "excluded_bytes": 810,
    "audit": "complete",
    "intervals": [
     {
@@ -21828,6 +21996,18 @@
      "end": 33554480,
      "kind": "veneer",
      "evidence": "resource_3a5_overlay.s:fixed-ldr-bx-veneer"
+    },
+    {
+     "start": 33554480,
+     "end": 33554502,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:bounded-head-leaf"
+    },
+    {
+     "start": 33554502,
+     "end": 33554504,
+     "kind": "executable_alignment",
+     "evidence": "resource_3a5_overlay.s:two-byte-zero-between-executable-spans"
     },
     {
      "start": 33554504,
@@ -21846,6 +22026,18 @@
      "end": 33554690,
      "kind": "thumb",
      "evidence": "resource_3a5_overlay.s:263:verified-C-placeholder"
+    },
+    {
+     "start": 33554690,
+     "end": 33554692,
+     "kind": "executable_alignment",
+     "evidence": "resource_3a5_overlay.s:two-byte-zero-between-executable-spans"
+    },
+    {
+     "start": 33554692,
+     "end": 33554748,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:bounded-object-integrator"
     },
     {
      "start": 33554748,
@@ -22614,8 +22806,8 @@
   {
    "id": "resource_3a6",
    "decoded_bytes": 9872,
-   "executable_bytes": 7178,
-   "excluded_bytes": 2694,
+   "executable_bytes": 7260,
+   "excluded_bytes": 2612,
    "audit": "complete",
    "intervals": [
     {
@@ -22623,6 +22815,18 @@
      "end": 33554480,
      "kind": "veneer",
      "evidence": "resource_3a6_overlay.s:fixed-ldr-bx-veneer"
+    },
+    {
+     "start": 33554480,
+     "end": 33554502,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:bounded-head-leaf"
+    },
+    {
+     "start": 33554502,
+     "end": 33554504,
+     "kind": "executable_alignment",
+     "evidence": "resource_3a6_overlay.s:two-byte-zero-between-executable-spans"
     },
     {
      "start": 33554504,
@@ -22641,6 +22845,18 @@
      "end": 33554690,
      "kind": "thumb",
      "evidence": "resource_3a6_overlay.s:310:verified-C-placeholder"
+    },
+    {
+     "start": 33554690,
+     "end": 33554692,
+     "kind": "executable_alignment",
+     "evidence": "resource_3a6_overlay.s:two-byte-zero-between-executable-spans"
+    },
+    {
+     "start": 33554692,
+     "end": 33554748,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:bounded-object-integrator"
     },
     {
      "start": 33554748,
@@ -24033,8 +24249,8 @@
   {
    "id": "resource_3ab",
    "decoded_bytes": 9552,
-   "executable_bytes": 6878,
-   "excluded_bytes": 2674,
+   "executable_bytes": 6960,
+   "excluded_bytes": 2592,
    "audit": "complete",
    "intervals": [
     {
@@ -24042,6 +24258,18 @@
      "end": 33554480,
      "kind": "veneer",
      "evidence": "resource_3ab_overlay.s:fixed-ldr-bx-veneer"
+    },
+    {
+     "start": 33554480,
+     "end": 33554502,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:bounded-head-leaf"
+    },
+    {
+     "start": 33554502,
+     "end": 33554504,
+     "kind": "executable_alignment",
+     "evidence": "resource_3ab_overlay.s:two-byte-zero-between-executable-spans"
     },
     {
      "start": 33554504,
@@ -24060,6 +24288,18 @@
      "end": 33554690,
      "kind": "thumb",
      "evidence": "resource_3ab_overlay.s:441:verified-C-placeholder"
+    },
+    {
+     "start": 33554690,
+     "end": 33554692,
+     "kind": "executable_alignment",
+     "evidence": "resource_3ab_overlay.s:two-byte-zero-between-executable-spans"
+    },
+    {
+     "start": 33554692,
+     "end": 33554748,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:bounded-object-integrator"
     },
     {
      "start": 33554748,
@@ -27129,8 +27369,8 @@
   {
    "id": "resource_3b3",
    "decoded_bytes": 14028,
-   "executable_bytes": 11102,
-   "excluded_bytes": 2926,
+   "executable_bytes": 11184,
+   "excluded_bytes": 2844,
    "audit": "complete",
    "intervals": [
     {
@@ -27138,6 +27378,18 @@
      "end": 33554480,
      "kind": "veneer",
      "evidence": "resource_3b3_overlay.s:fixed-ldr-bx-veneer"
+    },
+    {
+     "start": 33554480,
+     "end": 33554502,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:bounded-head-leaf"
+    },
+    {
+     "start": 33554502,
+     "end": 33554504,
+     "kind": "executable_alignment",
+     "evidence": "resource_3b3_overlay.s:two-byte-zero-between-executable-spans"
     },
     {
      "start": 33554504,
@@ -27156,6 +27408,18 @@
      "end": 33554690,
      "kind": "thumb",
      "evidence": "resource_3b3_overlay.s:377:verified-C-placeholder"
+    },
+    {
+     "start": 33554690,
+     "end": 33554692,
+     "kind": "executable_alignment",
+     "evidence": "resource_3b3_overlay.s:two-byte-zero-between-executable-spans"
+    },
+    {
+     "start": 33554692,
+     "end": 33554748,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:bounded-object-integrator"
     },
     {
      "start": 33554748,
@@ -32910,8 +33174,8 @@
   {
    "id": "resource_3be",
    "decoded_bytes": 7572,
-   "executable_bytes": 5542,
-   "excluded_bytes": 2030,
+   "executable_bytes": 5624,
+   "excluded_bytes": 1948,
    "audit": "complete",
    "intervals": [
     {
@@ -32919,6 +33183,18 @@
      "end": 33554480,
      "kind": "veneer",
      "evidence": "resource_3be_overlay.s:fixed-ldr-bx-veneer"
+    },
+    {
+     "start": 33554480,
+     "end": 33554502,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:bounded-head-leaf"
+    },
+    {
+     "start": 33554502,
+     "end": 33554504,
+     "kind": "executable_alignment",
+     "evidence": "resource_3be_overlay.s:two-byte-zero-between-executable-spans"
     },
     {
      "start": 33554504,
@@ -32937,6 +33213,18 @@
      "end": 33554690,
      "kind": "thumb",
      "evidence": "resource_3be_overlay.s:211:verified-C-placeholder"
+    },
+    {
+     "start": 33554690,
+     "end": 33554692,
+     "kind": "executable_alignment",
+     "evidence": "resource_3be_overlay.s:two-byte-zero-between-executable-spans"
+    },
+    {
+     "start": 33554692,
+     "end": 33554748,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:bounded-object-integrator"
     },
     {
      "start": 33554748,
@@ -34200,8 +34488,8 @@
   {
    "id": "resource_3c0",
    "decoded_bytes": 6656,
-   "executable_bytes": 4898,
-   "excluded_bytes": 1758,
+   "executable_bytes": 4980,
+   "excluded_bytes": 1676,
    "audit": "complete",
    "intervals": [
     {
@@ -34209,6 +34497,18 @@
      "end": 33554480,
      "kind": "veneer",
      "evidence": "resource_3c0_overlay.s:fixed-ldr-bx-veneer"
+    },
+    {
+     "start": 33554480,
+     "end": 33554502,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:bounded-head-leaf"
+    },
+    {
+     "start": 33554502,
+     "end": 33554504,
+     "kind": "executable_alignment",
+     "evidence": "resource_3c0_overlay.s:two-byte-zero-between-executable-spans"
     },
     {
      "start": 33554504,
@@ -34227,6 +34527,18 @@
      "end": 33554690,
      "kind": "thumb",
      "evidence": "resource_3c0_overlay.s:221:verified-C-placeholder"
+    },
+    {
+     "start": 33554690,
+     "end": 33554692,
+     "kind": "executable_alignment",
+     "evidence": "resource_3c0_overlay.s:two-byte-zero-between-executable-spans"
+    },
+    {
+     "start": 33554692,
+     "end": 33554748,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:bounded-object-integrator"
     },
     {
      "start": 33554748,

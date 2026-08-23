@@ -6,6 +6,7 @@
   "build_model": "shared-source-edition-defines",
   "layout": {
     "source": "games/gs1/src",
+    "source_paths": "games/gs1/source-paths.json",
     "assembly": "games/gs1/asm",
     "assets": "games/gs1/assets",
     "include": "games/gs1/include",

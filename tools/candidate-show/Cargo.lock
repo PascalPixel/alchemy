@@ -50,6 +50,7 @@ name = "compiler-core"
 version = "0.1.0"
 dependencies = [
  "fs2",
+ "serde_json",
  "sha2",
 ]
 

@@ -11212,14 +11212,14 @@
     {
       "overlay": "resource_3bb",
       "entry": "0x02002940",
-      "span_bytes": 144,
-      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, lr}) and returning (pop {r5, r6}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing alignment halfword to the next owner's prologue at 0x020029d0, inside the assembled overlay image and not overlapping another recorded owner"
+      "span_bytes": 142,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, lr}) and returning (pop {r5, r6}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image); the C owner ends at 0x020029ce and the independently inventoried executable-alignment halfword 0x020029ce-0x020029d0 is not source-owned; inside the assembled overlay image and not overlapping another recorded owner"
     },
     {
       "overlay": "resource_3bb",
       "entry": "0x020029d0",
-      "span_bytes": 254,
-      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, lr}) and returning (pop {r5}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the trailing three-word literal pool to the next owner's prologue at 0x02002adc, inside the assembled overlay image and not overlapping another recorded owner"
+      "span_bytes": 268,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, lr}) and returning (pop {r5}/pop {r0}/bx r0) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image), span read from the disassembly through the alignment halfword and all three directly referenced pool words to the next owner's prologue at 0x02002adc, inside the assembled overlay image and not overlapping another recorded owner"
     },
     {
       "overlay": "resource_3bb",
@@ -11494,8 +11494,8 @@
     {
       "overlay": "resource_3bc",
       "entry": "0x02002a94",
-      "span_bytes": 184,
-      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, lr}) and returning (pop {r5, r6}/pop {r1}/bx r1) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image, eleven sites, first at 0x02002a9a), span read from the disassembly through the trailing seven-word literal pool to the next owner's prologue at 0x02002b50, inside the assembled overlay image and not overlapping another recorded owner"
+      "span_bytes": 188,
+      "evidence": "admitted whole-owner semantic reconstruction; item-28 unindexed-called-function population -- owner is prologue-started (push {r5, r6, lr}) and returning (pop {r5, r6}/pop {r1}/bx r1) but starts outside any recorded structural inventory row, so the strict sync test cannot see it; reached only by bl (bun tools/overlay_call_targets.ts's +2 rule against the raw image, eleven sites, first at 0x02002a9a), span read from the disassembly through the alignment halfword and all seven directly referenced pool words to the next owner's prologue at 0x02002b50, inside the assembled overlay image and not overlapping another recorded owner"
     },
     {
       "overlay": "resource_3bc",
@@ -11578,8 +11578,8 @@
     {
       "overlay": "resource_3bc",
       "entry": "0x02003b80",
-      "span_bytes": 80,
-      "evidence": "complete field-reset/teleport sibling from push {r5,r6,r7,lr} at 0x02003b80 through pop {r5,r6,r7} / pop {r0} / bx r0 at 0x02003bc8-0x02003bcc plus alignment at 0x02003bce before the next owner at 0x02003bd0; no literal pool and all six calls resolve"
+      "span_bytes": 78,
+      "evidence": "complete field-reset/teleport sibling from push {r5,r6,r7,lr} at 0x02003b80 through pop {r5,r6,r7} / pop {r0} / bx r0 at 0x02003bc8-0x02003bce; the independently inventoried executable-alignment halfword 0x02003bce-0x02003bd0 is not source-owned; no literal pool and all six calls resolve"
     },
     {
       "overlay": "resource_3bc",

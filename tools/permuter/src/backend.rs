@@ -214,14 +214,14 @@ impl AlchemyBackend {
             .unwrap_or("alchemy")
             .to_string();
         let target = PreparedTarget::prepare(path, base_source)?;
-        let stem = name.strip_suffix(".c").unwrap_or(&name);
+        let stem = target.owner_stem();
         let symbol = format!("Func_{stem}");
         let target_instructions = disassemble_bytes(target.expected())?;
         let target_source_instructions = if target.baseline_assembly().is_some() {
             let reference = root().join("games/gs1/asm").join(format!("{stem}.s"));
-            let source = fs::read_to_string(&reference)
-                .map_err(|error| format!("{}: {error}", reference.display()))?;
-            Some(candidate_show::insns::gas_function_insns(&source, &symbol))
+            fs::read_to_string(&reference)
+                .ok()
+                .map(|source| candidate_show::insns::gas_function_insns(&source, &symbol))
         } else {
             None
         };

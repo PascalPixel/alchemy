@@ -4,8 +4,9 @@ use std::process::Command;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use candidate_compiler::{verify_candidate_routed, CandidateCompilerConfiguration, ROM_BASE};
+use candidate_compiler::{verify_candidate_owned_routed, CandidateCompilerConfiguration, ROM_BASE};
 use compiler_core::routing::{root, CompilerTarget};
+use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use overlay_disasm::{assemble_overlay, compile_overlay_candidate, OverlaySource, OVERLAY_BASE};
 
 static TEMP_COUNTER: AtomicU64 = AtomicU64::new(0);
@@ -20,6 +21,7 @@ enum Kind {
 pub struct PreparedTarget {
     original: PathBuf,
     basename: String,
+    owner: SourceOwner,
     expected: Vec<u8>,
     baseline: Score,
     baseline_assembly: Option<String>,
@@ -74,6 +76,16 @@ fn basename(path: &Path) -> Result<String, String> {
 fn stem(path: &Path) -> Result<String, String> {
     let name = basename(path)?;
     Ok(name.strip_suffix(".c").unwrap_or(&name).to_string())
+}
+
+fn source_owner(path: &Path) -> Result<SourceOwner, String> {
+    let paths = SourcePaths::load(&root())?;
+    if let Some(owner) = paths.owner_for_path(path)? {
+        return Ok(owner);
+    }
+    let legacy = stem(path)?;
+    SourceOwner::from_legacy_stem(&legacy)
+        .ok_or_else(|| format!("{} is not registered to a source owner", path.display()))
 }
 
 fn overlay_name(stem: &str) -> Option<String> {
@@ -175,8 +187,33 @@ fn checked(program: &str, arguments: &[String], work: &Path) -> Result<(), Strin
 fn core_reference_span(stem: &str, work: &Path) -> Result<usize, String> {
     let source = root().join("games/gs1/asm").join(format!("{stem}.s"));
     if !source.is_file() {
+        let symbol = format!("Func_{stem}");
+        for relative in [
+            "out/gs1-en/full/claimed/manifest.json",
+            "out/gs1-en/claimed/manifest.json",
+        ] {
+            let manifest = root().join(relative);
+            let Ok(text) = fs::read_to_string(&manifest) else {
+                continue;
+            };
+            let Ok(document) = serde_json::from_str::<serde_json::Value>(&text) else {
+                continue;
+            };
+            let size = document["regions"].as_array().and_then(|regions| {
+                regions.iter().find_map(|region| {
+                    let owns_symbol = region["symbol"].as_str() == Some(symbol.as_str())
+                        || region["symbols"].as_array().is_some_and(|symbols| {
+                            symbols.iter().any(|value| value.as_str() == Some(&symbol))
+                        });
+                    owns_symbol.then(|| region["size"].as_u64()).flatten()
+                })
+            });
+            if let Some(size) = size {
+                return usize::try_from(size).map_err(|error| error.to_string());
+            }
+        }
         return Err(format!(
-            "{} is missing; core owner span is unknown",
+            "{} is missing and no claimed manifest records {symbol}",
             source.display()
         ));
     }
@@ -254,11 +291,12 @@ impl PreparedTarget {
             root().join(original)
         };
         let basename = basename(&original)?;
-        let candidate_stem = stem(&original)?;
+        let owner = source_owner(&original)?;
+        let owner_stem = owner.address_stem();
         let work = TempDir::new("prepare")?;
         let base = work.path().join(&basename);
         fs::write(&base, base_source).map_err(|error| format!("{}: {error}", base.display()))?;
-        if let Some(name) = overlay_name(&candidate_stem) {
+        if let Some(name) = owner.overlay_id() {
             let compiled =
                 compile_overlay_candidate(&base, work.path(), &name, Some(&original), &[])?;
             let reference_path = root()
@@ -279,6 +317,7 @@ impl PreparedTarget {
             Ok(Self {
                 original,
                 basename,
+                owner,
                 expected,
                 baseline,
                 baseline_assembly: None,
@@ -291,9 +330,10 @@ impl PreparedTarget {
             let rom_path = root().join("roms").join("gs1-en.gba");
             let rom =
                 fs::read(&rom_path).map_err(|error| format!("{}: {error}", rom_path.display()))?;
-            let verification = verify_candidate_routed(
+            let verification = verify_candidate_owned_routed(
                 &base.to_string_lossy(),
                 &original.to_string_lossy(),
+                &owner_stem,
                 &rom,
                 &work.path().to_string_lossy(),
                 &[],
@@ -301,22 +341,22 @@ impl PreparedTarget {
                 CompilerTarget::Gs1,
                 &CandidateCompilerConfiguration::default(),
             )?;
-            let span = core_reference_span(&candidate_stem, work.path())?;
-            let address = i64::from_str_radix(candidate_stem.trim_start_matches("0x"), 16)
-                .map_err(|_| format!("{candidate_stem} is not a core address"))?;
+            let span = core_reference_span(&owner_stem, work.path())?;
+            let address = owner.address() as i64;
             let expected = slice_clamped(&rom, address - ROM_BASE as i64, span);
             if expected.len() != span {
                 return Err(format!(
-                    "{candidate_stem} reference span extends beyond the ROM"
+                    "{owner_stem} reference span extends beyond the ROM"
                 ));
             }
             let baseline = score(verification.actual, &expected);
-            let assembly_path = work.path().join(format!("{candidate_stem}.s"));
+            let assembly_path = work.path().join(format!("{owner_stem}.s"));
             let baseline_assembly = fs::read_to_string(&assembly_path)
                 .map_err(|error| format!("{}: {error}", assembly_path.display()))?;
             Ok(Self {
                 original,
                 basename,
+                owner,
                 expected,
                 baseline,
                 baseline_assembly: Some(baseline_assembly),
@@ -335,6 +375,10 @@ impl PreparedTarget {
 
     pub fn baseline_assembly(&self) -> Option<&str> {
         self.baseline_assembly.as_deref()
+    }
+
+    pub fn owner_stem(&self) -> String {
+        self.owner.address_stem()
     }
 
     pub fn identity(&self) -> String {
@@ -362,9 +406,11 @@ impl PreparedTarget {
                 (compiled.data, None)
             }
             Kind::Core { rom } => {
-                let verification = verify_candidate_routed(
+                let owner_stem = self.owner.address_stem();
+                let verification = verify_candidate_owned_routed(
                     &path.to_string_lossy(),
                     &self.original.to_string_lossy(),
+                    &owner_stem,
                     rom,
                     &work.path().to_string_lossy(),
                     &[],
@@ -372,8 +418,7 @@ impl PreparedTarget {
                     CompilerTarget::Gs1,
                     &CandidateCompilerConfiguration::default(),
                 )?;
-                let candidate_stem = stem(&path)?;
-                let assembly_path = work.path().join(format!("{candidate_stem}.s"));
+                let assembly_path = work.path().join(format!("{owner_stem}.s"));
                 let assembly = fs::read_to_string(&assembly_path)
                     .map_err(|error| format!("{}: {error}", assembly_path.display()))?;
                 (verification.actual, Some(assembly))

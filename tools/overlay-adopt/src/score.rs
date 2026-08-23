@@ -1,6 +1,7 @@
 use crate::park::{placeholder_span, truth_window};
 use candidate_show::disasm::disassemble;
 use candidate_show::render::align_streams;
+use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use overlay_disasm::compile::compile_overlay_c;
 use overlay_disasm::OVERLAY_BASE;
 use std::path::{Path, PathBuf};
@@ -16,6 +17,12 @@ fn resolve(root: &Path, target: &str) -> Result<(String, i64), String> {
         };
         return Ok((overlay.to_string(), address));
     }
+    if let Some(owner) = SourcePaths::load(root)?.owner_for_path(Path::new(target))? {
+        let overlay = owner
+            .overlay_id()
+            .ok_or_else(|| format!("{target}: not an overlay source"))?;
+        return Ok((overlay, owner.address() as i64));
+    }
     let name = Path::new(target)
         .file_stem()
         .map(|stem| stem.to_string_lossy().to_string())
@@ -29,11 +36,16 @@ fn resolve(root: &Path, target: &str) -> Result<(String, i64), String> {
     Ok((overlay.to_string(), address))
 }
 fn source_for(root: &Path, overlay: &str, address: i64) -> Result<PathBuf, String> {
-    for directory in ["games/gs1/recon/en/overlays", "games/gs1/src"] {
-        let path = root.join(format!("{directory}/{overlay}_c_{address:08x}.c"));
-        if path.exists() {
-            return Ok(path);
-        }
+    let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;
+    let exact = SourcePaths::load(root)?.source_path(owner);
+    if exact.exists() {
+        return Ok(exact);
+    }
+    let recon = root.join(format!(
+        "games/gs1/recon/en/overlays/{overlay}_c_{address:08x}.c"
+    ));
+    if recon.exists() {
+        return Ok(recon);
     }
     Err(format!(
         "no tracked or exact source for {overlay}:{address:08x}"

@@ -82,8 +82,16 @@ pub fn entry(arguments: &[String]) -> ExitCode {
                 }
             };
         }
-        for span in crate::overlay_c_spans(&source, base) {
-            println!("{},{}", span.start, span.end);
+        match crate::overlay_c_spans(&source, base) {
+            Ok(spans) => {
+                for span in spans {
+                    println!("{},{}", span.start, span.end);
+                }
+            }
+            Err(error) => {
+                eprintln!("{error}");
+                return ExitCode::FAILURE;
+            }
         }
         return ExitCode::SUCCESS;
     }

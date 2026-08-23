@@ -9,6 +9,7 @@ u32 Func_080bd3c8(s32 action_id);
 s32 Func_080b9a70(u32 actor_id);
 s32 Func_080bae40(s32 actor_id, struct BattleAction *action);
 s32 Func_080bad7c(s32 side);
+s32 Func_080bd3e4(s32 table);
 
 #define OWNER_FIELD(base, type, offset) \
     (*(type *)((u8 *)(base) + (offset)))
@@ -53,8 +54,6 @@ void BATTLE_COMMAND_SELECT_OWNER(
     u8 effect;
     u8 target_mode;
     void *item;
-    auto s32 SelectWeighted(s32 table) __asm__("Func_080bd3e4");
-
     selected = -1U;
     retry_mode = retry;
     actor = Func_08077008(request->actor_id);
@@ -77,7 +76,7 @@ select_again:
     case 0:
         weights = 0x080c2b80;
 select_weighted:
-        selected = SelectWeighted(weights);
+        selected = Func_080bd3e4(weights);
         break;
     case 1:
         weights = 0x080c2b88;

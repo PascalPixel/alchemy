@@ -447,11 +447,11 @@
    "evidence": [
     "mixed_or_invalid_function_boundary"
    ],
-   "expected_files": 28,
-   "expected_bytes": 25298,
+   "expected_files": 22,
+   "expected_bytes": 19902,
    "files": [
-    "0800ee14",
     "08026080",
+    "08026b44",
     "080be76c",
     "080beb08",
     "080bef88",
@@ -462,9 +462,6 @@
     "080d7ea0",
     "080ddb34",
     "080ddde0",
-    "080e1acc",
-    "080e1df8",
-    "080e21e8",
     "080e4b4c",
     "080e4e0c",
     "080e5504",
@@ -474,10 +471,7 @@
     "080e6288",
     "080ec474",
     "080ec728",
-    "080ecae8",
-    "080f4318",
-    "080f47bc",
-    "080f4af0"
+    "080ecae8"
    ]
   },
   {
@@ -486,15 +480,16 @@
    "retention": "keep_structured_asm",
    "confidence": "proven",
    "evidence": [
-    "mixed_or_invalid_function_boundary",
-    "reference_uses_multi_register_thumb_transfer",
-    "approved_exact_c_corpus_emits_zero_multi_register_ldmia_stmia_objects",
+    "complete_owner_contains_reachable_standalone_three_register_thumb_transfer",
+    "approved_gcc_2_96_thumb_si_sf_moves_emit_single_register_transfers_and_di_df_moves_emit_two_register_transfers_only_arm_md_3728_3751_3838_3853_4721_4734_4853_4870",
+    "approved_gcc_2_96_thumb_movmem8b_movmem12b_emit_multi_register_transfers_only_as_immediately_adjacent_matching_ldmia_then_stmia_pairs_arm_md_5080_5141_arm_c_9425_9465",
+    "approved_generic_multiple_transfer_patterns_are_target_arm_only_arm_md_4975_5078",
+    "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
     "byte_exact_reconstruction"
    ],
-   "expected_files": 2,
-   "expected_bytes": 2054,
+   "expected_files": 1,
+   "expected_bytes": 1226,
    "files": [
-    "08026b44",
     "080f4f04"
    ]
   },
@@ -1452,10 +1447,11 @@
     "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
     "approved_compiler_has_no_ip_linked_calling_convention",
     "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+    "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
     "byte_exact_reconstruction"
    ],
-      "expected_files": 49,
-      "expected_bytes": 25930,
+      "expected_files": 50,
+      "expected_bytes": 26866,
       "files": [
         "0800447c",
         "08004ab0",
@@ -1471,6 +1467,7 @@
         "0800daf0",
         "0800dd70",
         "0800df04",
+        "0800ee14",
         "0800f2f8",
         "0800fb38",
         "08010000",
@@ -1509,6 +1506,91 @@
    ]
   },
   {
+   "kind": "multi_region_iwram_ip_link_call_owner",
+   "origin": "program_or_library_runtime",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "single_branch_connected_owner_080e15e8_through_080e2538_with_live_parent_stack_and_high_register_state",
+    "owner_continuation_080e17c4_uses_mov_ip_pc_then_bx_r7_at_080e19f8_080e19fa_and_again_at_080e1a10_080e1a12",
+    "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+    "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+    "approved_compiler_has_no_ip_linked_calling_convention",
+    "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+    "only_the_three_still_unresolved_mixed_fragments_are_retained_here",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 3,
+   "expected_bytes": 2470,
+   "files": [
+    "080e1acc",
+    "080e1df8",
+    "080e21e8"
+   ],
+   "subregions": [
+    {
+     "load_address": "0x080e1acc",
+     "size": 734,
+     "kind": "ip_link_call_owner_unresolved_fragment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e1df8",
+     "size": 950,
+     "kind": "ip_link_call_owner_unresolved_fragment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080e21e8",
+     "size": 786,
+     "kind": "ip_link_call_owner_unresolved_fragment",
+     "authorship": "unknown"
+    }
+   ]
+  },
+  {
+   "kind": "multi_region_thumb_multiple_transfer_owner",
+   "origin": "program_or_library_assembly",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "single_branch_connected_owner_080f4168_through_080f53ce_with_live_parent_stack_and_high_register_state",
+    "owner_head_080f4168_uses_standalone_three_register_stmia_at_080f41fa_080f4206_080f4220_080f4232_080f423c_080f4256_each_fed_by_independent_values_and_followed_by_subs_r3_12",
+    "approved_gcc_2_96_thumb_movmem12b_emits_three_register_stmia_only_as_the_immediate_second_half_of_a_matching_ldmia_stmia_block_copy",
+    "approved_gcc_2_96_thumb_di_df_moves_emit_at_most_two_register_ldmia_stmia",
+    "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+    "only_the_three_still_unresolved_mixed_fragments_are_retained_here",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 3,
+   "expected_bytes": 2818,
+   "files": [
+    "080f4318",
+    "080f47bc",
+    "080f4af0"
+   ],
+   "subregions": [
+    {
+     "load_address": "0x080f4318",
+     "size": 1074,
+     "kind": "multi_transfer_owner_unresolved_fragment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080f47bc",
+     "size": 758,
+     "kind": "multi_transfer_owner_unresolved_fragment",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080f4af0",
+     "size": 986,
+     "kind": "multi_transfer_owner_unresolved_fragment",
+     "authorship": "unknown"
+    }
+   ]
+  },
+  {
    "kind": "intra_function_call_module",
    "origin": "program_or_generated_assembly",
    "retention": "keep_structured_asm",
@@ -1519,10 +1601,13 @@
     "approved_thumb_direct_call_pattern_requires_symbol_ref_not_label_ref",
     "approved_arm_backend_has_no_intra_function_outlining_pass",
     "ordinary_c_cannot_call_a_local_label",
+    "080ca60c_bl_080ca956_to_080cb17a_also_reached_by_branch_080cb174_and_bl_080cb176_to_fallthrough_080ca978",
+    "080d1714_bl_080d2352_to_fallthrough_080d18a8",
+    "080d6970_bl_080d75de_to_fallthrough_080d6b76",
     "byte_exact_reconstruction"
    ],
-   "expected_files": 7,
-   "expected_bytes": 24288,
+   "expected_files": 10,
+   "expected_bytes": 33948,
    "files": [
     "08023178",
     "08023e70",
@@ -1530,7 +1615,72 @@
     "0808f52c",
     "080a2680",
     "080ab5e4",
+    "080ca60c",
+    "080d1714",
+    "080d6970",
     "080dea70"
+   ],
+   "subregions": [
+    {
+     "load_address": "0x08023178",
+     "size": 3320,
+     "kind": "intra_function_call_owner",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x08023e70",
+     "size": 2756,
+     "kind": "intra_function_call_owner",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x08027114",
+     "size": 4224,
+     "kind": "intra_function_call_owner",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x0808f52c",
+     "size": 2316,
+     "kind": "intra_function_call_owner",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080a2680",
+     "size": 3128,
+     "kind": "intra_function_call_owner",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080ab5e4",
+     "size": 4888,
+     "kind": "intra_function_call_owner",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080ca60c",
+     "size": 2968,
+     "kind": "intra_function_call_owner",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080d1714",
+     "size": 3384,
+     "kind": "intra_function_call_owner",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080d6970",
+     "size": 3308,
+     "kind": "intra_function_call_owner",
+     "authorship": "unknown"
+    },
+    {
+     "load_address": "0x080dea70",
+     "size": 3656,
+     "kind": "intra_function_call_owner",
+     "authorship": "unknown"
+    }
    ]
   },
   {
@@ -1539,14 +1689,16 @@
    "retention": "keep_structured_asm",
    "confidence": "proven",
    "evidence": [
-    "reference_uses_thumb_ldmia_stmia_with_multiple_registers",
-    "gcc296_thumb_patterns_emit_only_single_register_ldmia_stmia",
-    "approved_exact_c_corpus_emits_zero_multi_register_ldmia_stmia_objects",
+    "complete_owner_contains_reachable_standalone_three_or_four_register_thumb_ldmia_stmia",
+    "approved_gcc_2_96_thumb_si_sf_moves_emit_single_register_transfers_and_di_df_moves_emit_two_register_transfers_only_arm_md_3728_3751_3838_3853_4721_4734_4853_4870",
+    "approved_gcc_2_96_thumb_movmem8b_movmem12b_emit_multi_register_transfers_only_as_immediately_adjacent_matching_ldmia_then_stmia_pairs_arm_md_5080_5141_arm_c_9425_9465",
+    "approved_generic_multiple_transfer_patterns_are_target_arm_only_arm_md_4975_5078",
+    "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
     "byte_exact_reconstruction"
    ],
-      "expected_files": 173,
-      "expected_bytes": 67364,
-   "matcher": "thumb_multi_register"
+   "expected_files": 169,
+   "expected_bytes": 65476,
+   "matcher": "thumb_standalone_wide_transfer"
   }
  ]
 }

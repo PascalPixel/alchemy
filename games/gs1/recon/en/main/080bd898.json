@@ -1,0 +1,104 @@
+{
+  "owner": "main:0x080bd898",
+  "span_bytes": 1876,
+  "edition": {
+    "role": "shared-candidate-wrapper",
+    "edition": "en",
+    "base_owner": "080b4898",
+    "base_edition": "ja",
+    "rebase_status": "proved-shared-core"
+  },
+  "cross_edition": {
+    "measured": "2026-08-23",
+    "object_bytes": 1876,
+    "relocations": 59,
+    "relocation_bytes": 236,
+    "literal_fields": 41,
+    "literal_bytes": 164,
+    "core_bytes": 1476,
+    "core_diff_bytes": {
+      "ja": 0,
+      "en": 0,
+      "de": 0,
+      "es": 0,
+      "fr": 0,
+      "it": 0
+    },
+    "starts": {
+      "ja": "080b4898",
+      "en": "080bd898",
+      "de": "080bfeb0",
+      "es": "080c18b0",
+      "fr": "080c18b0",
+      "it": "080bd8b0"
+    },
+    "callee_correspondences": 32,
+    "core_identical": true
+  },
+  "score": {
+    "measured": "2026-08-23",
+    "candidate_bytes": 1852,
+    "reference_bytes": 1876,
+    "differing_halfwords": 687,
+    "wrong_instructions": 410,
+    "initial_wrong_instructions": 876,
+    "wrong_instruction_residual_reduction": 466,
+    "wrong_instruction_residual_reduction_percent": 53.19635,
+    "matched_prefix_instructions": 9,
+    "class": "wrong",
+    "note": "The first 080bbb0c transfer pass recovered the complete state machine and cut the candidate-show wrong-instruction residual by 53.2%, from 876 to 410. Repeated operand loads, reference-shaped record cursors, exact access width, and declaration lifetime were all material; the retained assembly remains authoritative."
+  },
+  "shape": {
+    "workbench_reference_instructions": 838,
+    "jump_tables": 1,
+    "jump_table_entries": 15,
+    "symbolized_references": 43
+  },
+  "domain": "Battle execution state machine that directly invokes 080bbb0c for each planned target, dispatches a 15-entry event kind, and advances later presentation and cleanup phases.",
+  "expressed": [
+    "JA-base/EN-wrapper ownership, matching the proved architecture used by 080bbb0c",
+    "complete target iteration and direct invocation of 080bbb0c for each planned target",
+    "complete 15-entry battle-event dispatch, including text waits, actor setup, resolution, animation, refresh, and cleanup",
+    "all presentation phases 1, 2, 3, 5, 10, 11, and 13, including timer, input, display, motion-record, and sound behavior",
+    "typed playback/runtime, display, motion-record, BattlePlan, BattleUnit, and BattleObjectSlot layouts backed by exact local offsets",
+    "reference-shaped record cursors and the halfword write at BattleObjectSlot offset 0x2a"
+  ],
+  "unexpressed": [
+    {
+      "op": "source-shape and allocation repair",
+      "count": 410,
+      "where": "the residual is concentrated in register coloring, stack-slot placement, shared-tail formation, literal-pool placement, and a few load/store orderings"
+    }
+  ],
+  "next": "Keep the EN file as a macro-only wrapper. Refine the phase-5 carrier order and phase-11 stack workspace first; both affect long exact runs without changing recovered behavior.",
+  "verified_against_reference": [
+    "fresh candidate-show build: 1852 candidate bytes versus 1876 reference bytes, 687 differing halfwords, and 410 wrong aligned instructions",
+    "the initial compilable stub was 2 bytes with a wrong-instruction residual of 876; the full typed recovery reduces that residual by 466, or 53.2%",
+    "relocation-aware comparison locates the JA owner at 0x080b4898; all 1476 non-relocation, non-literal core bytes agree in every edition",
+    "the reference has one 15-entry jump table, 838 instructions, 43 symbolized references, and 32 established callee correspondences"
+  ],
+  "rejected": [
+    {
+      "shape": "one factored event operand temporary",
+      "result": "kept a value live across the dispatcher and scored 665 wrong instructions; repeating the reference loads cut the residual to 540 and restored 48 candidate bytes"
+    },
+    {
+      "shape": "a second explicit next-event-index source variable",
+      "result": "a controlled build showed the compiler coalescing it into the current-index carrier and regressing the candidate from 410 to 446 wrong instructions"
+    },
+    {
+      "shape": "promote the phase-11 animation frame carrier to s32",
+      "result": "semantically plausible but changed global allocation and stack size; retaining the narrow carrier currently gives the better measured whole-owner result"
+    },
+    {
+      "shape": "inherit 080bbb0c's -fno-cse-follow-jumps route",
+      "result": "the flag is owner-specific; adjacent controlled probing was byte-neutral and it was not added here"
+    }
+  ],
+  "notes": [
+    "The relocation-aware comparison used the retained EN assembly object as an exact locator; it proves shared machine-code core, not recovered C source.",
+    "The JA-to-EN owner shift is +0x9000, exactly matching 080b2b0c to 080bbb0c.",
+    "The phase-local record and selection workspace is deliberately explicit because its stack addresses are observable across calls.",
+    "No external source, git history, compiler modification, copied instruction bytes, fixed-register variables, barriers, or inline assembly was used."
+  ]
+}

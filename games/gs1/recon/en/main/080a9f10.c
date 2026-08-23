@@ -1,4 +1,6 @@
 #include "types.h"
+#include "battle_efx.h"
+#include "battle_types.h"
 
 struct Object_080a9f10 {
     u8 padding_000[0x10];
@@ -10,23 +12,12 @@ struct Object_080a9f10 {
     u16 stat_1c;
     u8 stat_1e;
     u8 padding_01f[0x15];
-    s16 limit_34;
-    s16 limit_36;
-    s16 value_38;
-    s16 value_3a;
+    s16 max_hp;
+    s16 max_pp;
+    s16 hp;
+    s16 pp;
     u8 padding_03c[0xf5];
-    s8 flag_131;
-};
-
-struct Effect_080a9f10 {
-    u8 field_00;
-    u8 kind_flags;
-    u8 scale_index;
-    u8 followup_kind;
-    u8 padding_04[4];
-    u8 target_id;
-    u8 padding_09;
-    u16 amount;
+    s8 poison;
 };
 
 struct Runtime_080a9f10 {
@@ -42,7 +33,7 @@ extern struct Runtime_080a9f10 *Data_03001f2c;
 
 struct Object_080a9f10 *Func_08077008(s32);
 void Func_08077010(s32);
-struct Effect_080a9f10 *Func_08077080(void);
+struct BattleAction *Func_08077080(s32);
 void Func_08077128(s32);
 s32 Func_08077190(s32, s32, s32);
 s32 Func_08004458(void);
@@ -52,19 +43,18 @@ s32 Func_080022ec(s32, s32);
 s32 Func_080a9f10(
     s32 effect_id,
     s32 source_id,
-    s32 target_id_arg,
+    s32 target_id,
     s32 fixed_scale)
 {
-    struct Effect_080a9f10 *effect;
+    struct BattleAction *effect;
     struct Runtime_080a9f10 *runtime;
     struct Object_080a9f10 *target;
     struct Object_080a9f10 *source;
-    s32 target_id;
     s32 lookup_id;
-    s32 changed;
     s32 later_target;
+    s32 changed;
     u32 index;
-    s32 scale;
+    s16 scale;
     s32 random_adjust;
     s32 random_nonone;
     u32 random_bucket;
@@ -78,20 +68,19 @@ s32 Func_080a9f10(
     s16 result_code;
     u8 effect_target;
 
-    effect = Func_08077080();
+    effect = Func_08077080(effect_id);
     runtime = Data_03001f2c;
+    later_target = 0;
     changed = 0;
     result_code = 0;
-    later_target = 0;
 
-    target_id = target_id_arg;
-    if (target_id != 9)
-        lookup_id = target_id;
-    else
+    if (target_id == 9)
         lookup_id = 0;
+    else
+        lookup_id = target_id;
     target = Func_08077008(lookup_id);
 
-    effect_target = effect->target_id;
+    effect_target = effect->range;
     index = 0;
     if (index < runtime->target_count) {
         do {
@@ -100,38 +89,37 @@ s32 Func_080a9f10(
                 target = Func_08077008(target_id);
             }
 
-            amount = effect->amount;
-            switch (effect->kind_flags & 0xf) {
-            case 1:
+            amount = effect->power;
+            switch (effect->target_flags & 0xf) {
+            case DK_HP_HEAL:
                 if (fixed_scale == 0) {
-                    if (effect->scale_index == 4) {
-                        scale = 100;
-                    } else {
+                    if (effect->damage_class != 4) {
+                        s32 stat_offset;
+
                         source = Func_08077008(source_id);
-                        scale = *(s16 *)((u8 *)source +
-                            effect->scale_index * 4 + 0x48);
-                    }
+                        stat_offset = effect->damage_class * 4 + 0x48;
+                        scale = *(s16 *)((u8 *)source + stat_offset);
+                    } else
+                        scale = 100;
                     amount = Func_08077190(amount, scale, 0x100);
                 }
 
-                current = target->value_38;
-                raw_current = *(u16 *)&target->value_38;
+                current = target->hp;
                 if (current <= 0) {
                     if (later_target == 0)
                         result_code = 2;
                 } else {
-                    limit = target->limit_34;
-                    raw_limit = *(u16 *)&target->limit_34;
+                    limit = target->max_hp;
                     if (current == limit) {
                         if (later_target == 0)
                             result_code = 4;
                     } else {
-                        raw_new = raw_current + amount;
-                        target->value_38 = raw_new;
+                        raw_new = (u16)target->hp + amount;
+                        target->hp = raw_new;
                         new_value = (s16)raw_new;
                         if (new_value > limit) {
                             amount -= new_value - limit;
-                            target->value_38 = raw_limit;
+                            target->hp = (s16)(u16)target->max_hp;
                             if (later_target == 0)
                                 result_code = 0;
                         } else if (later_target == 0) {
@@ -139,7 +127,7 @@ s32 Func_080a9f10(
                         }
                         Func_08077128(target_id);
                         changed = 1;
-                        if (effect->target_id == 0xff) {
+                        if (effect->range == 0xff) {
                             later_target = 1;
                             result_code = 3;
                         }
@@ -193,21 +181,21 @@ s32 Func_080a9f10(
                 }
                 break;
 
-            case 11:
-                current = target->value_3a;
-                raw_current = *(u16 *)&target->value_3a;
-                limit = target->limit_36;
-                raw_limit = *(u16 *)&target->limit_36;
+            case DK_PP_HEAL:
+                current = target->pp;
+                raw_current = *(u16 *)&target->pp;
+                limit = target->max_pp;
+                raw_limit = *(u16 *)&target->max_pp;
                 if (current == limit) {
                     if (later_target == 0)
                         result_code = 7;
                 } else {
                     raw_new = raw_current + amount;
-                    target->value_3a = raw_new;
+                    target->pp = raw_new;
                     new_value = (s16)raw_new;
                     if (new_value > limit) {
                         amount -= new_value - limit;
-                        target->value_3a = raw_limit;
+                        target->pp = raw_limit;
                         if (later_target == 0)
                             result_code = 5;
                     } else if (later_target == 0) {
@@ -215,7 +203,7 @@ s32 Func_080a9f10(
                     }
                     Func_08077128(target_id);
                     changed = 1;
-                    if (effect->target_id == 0xff) {
+                    if (effect->range == 0xff) {
                         later_target = 1;
                         result_code = 8;
                     }
@@ -233,25 +221,23 @@ s32 Func_080a9f10(
                 break;
             }
 
-            switch (effect->followup_kind) {
+            switch (effect->effect) {
             case 1:
-                current = target->value_38;
-                raw_current = *(u16 *)&target->value_38;
+                current = target->hp;
                 if (current <= 0) {
                     if (later_target == 0)
                         result_code = 2;
                 } else {
-                    limit = target->limit_34;
-                    raw_limit = *(u16 *)&target->limit_34;
+                    limit = target->max_hp;
                     if (current == limit) {
                         if (later_target == 0)
                             result_code = 2;
                     } else {
-                        raw_new = raw_current + amount;
-                        target->value_38 = raw_new;
+                        raw_new = (u16)target->hp + amount;
+                        target->hp = raw_new;
                         new_value = (s16)raw_new;
                         if (new_value > limit) {
-                            target->value_38 = raw_limit;
+                            target->hp = (s16)(u16)target->max_hp;
                             if (later_target == 0)
                                 result_code = 0;
                         } else if (later_target == 0) {
@@ -264,19 +250,17 @@ s32 Func_080a9f10(
                 break;
 
             case 2:
-                current = target->value_3a;
-                raw_current = *(u16 *)&target->value_3a;
-                limit = target->limit_36;
-                raw_limit = *(u16 *)&target->limit_36;
+                current = target->pp;
+                limit = target->max_pp;
                 if (current == limit) {
                     if (later_target == 0)
                         result_code = 7;
                 } else {
-                    raw_new = raw_current + amount;
-                    target->value_3a = raw_new;
+                    raw_new = (u16)target->pp + amount;
+                    target->pp = raw_new;
                     new_value = (s16)raw_new;
                     if (new_value > limit) {
-                        target->value_3a = raw_limit;
+                        target->pp = (s16)(u16)target->max_pp;
                         if (later_target == 0)
                             result_code = 5;
                     } else if (later_target == 0) {
@@ -287,9 +271,9 @@ s32 Func_080a9f10(
                 }
                 break;
 
-            case 5:
-                if (target->value_38 == 0) {
-                    target->value_38 = target->limit_34;
+            case EFX_REVIVE_FULL:
+                if (target->hp == 0) {
+                    target->hp = target->max_hp;
                     Func_08077128(target_id);
                     changed = 1;
                     if (later_target == 0)
@@ -299,9 +283,9 @@ s32 Func_080a9f10(
                 }
                 break;
 
-            case 56:
-                if (target->value_38 == 0) {
-                    target->value_38 = target->limit_34 / 2;
+            case EFX_REVIVE_HALF:
+                if (target->hp == 0) {
+                    target->hp = target->max_hp / 2;
                     Func_08077128(target_id);
                     if (later_target == 0)
                         result_code = 0xc;
@@ -310,10 +294,10 @@ s32 Func_080a9f10(
                 }
                 break;
 
-            case 57:
-                if (target->value_38 == 0) {
-                    target->value_38 = Func_080022ec(
-                        target->limit_34 * 7, 10);
+            case EFX_REVIVE_80:
+                if (target->hp == 0) {
+                    target->hp = Func_080022ec(
+                        target->max_hp * 7, 10);
                     Func_08077128(target_id);
                     if (later_target == 0)
                         result_code = 0xc;
@@ -322,9 +306,9 @@ s32 Func_080a9f10(
                 }
                 break;
 
-            case 3:
-                if (target->flag_131 != 0) {
-                    target->flag_131 = 0;
+            case EFX_CURE_POISON:
+                if (target->poison != 0) {
+                    target->poison = 0;
                     changed = 1;
                     if (later_target == 0)
                         result_code = 0xa;
@@ -334,7 +318,7 @@ s32 Func_080a9f10(
                 break;
             }
 
-            effect_target = effect->target_id;
+            effect_target = effect->range;
             if (effect_target != 0xff)
                 break;
             index = (u8)(index + 1);

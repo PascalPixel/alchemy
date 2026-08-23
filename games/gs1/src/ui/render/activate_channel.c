@@ -28,7 +28,7 @@ struct Slot {
 extern u8 *Data_03001e8c;
 void Func_080167d8(void *);
 
-struct Slot *Func_08016670(struct Work *work, s32 value, s32 preserve)
+struct Slot *UiWork_ActivateChannel(struct Work *work, s32 value, s32 preserve)
 {
     struct Slot *slot;
     struct Slot *selected;

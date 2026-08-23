@@ -14,11 +14,11 @@ void Object_SetMode(void *, s32);
 void WaitFrames(u32);
 void Object_SetPosition(void *, s32, s32, s32);
 void Func_08092adc(s32 arg0, s32 arg1, s32 arg2);
-void Func_08092624(void *, s32);
+void BattleEffect_SpawnBurstParticle(void *, s32);
 void Object_CommitPosition(void *);
 void Func_0809202c(void);
 
-void Func_08092708(s32 sequence_arg, s32 mode_or_frame, s32 optional_action) {
+void BattleEffect_RunRisingObjectSequence(s32 sequence_arg, s32 mode_or_frame, s32 optional_action) {
     s32 next_y;
     s32 base_z;
     void *object;
@@ -51,7 +51,7 @@ void Func_08092708(s32 sequence_arg, s32 mode_or_frame, s32 optional_action) {
             OBJECT_MIRRORED_Y(object) = next_y;
             WaitFrames(1);
             if ((optional_action != -1) && (mode_or_frame & 1)) {
-                Func_08092624(object, optional_action);
+                BattleEffect_SpawnBurstParticle(object, optional_action);
             }
             mode_or_frame++;
         } while ((u32)mode_or_frame <= 0xD);

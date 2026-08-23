@@ -28,8 +28,7 @@ static inline s32 AbsoluteDifference(s32 difference, s32 lhs, s32 rhs)
     return rhs - lhs;
 }
 
-#define SelectMenuResource Func_080286a0
-s32 Func_080286a0(s32 initial_selection, s32 target_selection)
+s32 Menu_SelectResource(s32 initial_selection, s32 target_selection)
 {
     s16 resource_base;
     s16 current_selection;

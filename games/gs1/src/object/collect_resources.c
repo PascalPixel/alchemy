@@ -21,7 +21,7 @@ s32 Func_08077158(u16 *objects);
 struct Object_0801c7fc *Runtime_GetObject(s32 object_id);
 void *Ability_GetData(s32 resource_id);
 
-s32 Func_0801c7fc(struct ResourcePair_0801c7fc *output)
+s32 Object_CollectResources(struct ResourcePair_0801c7fc *output)
 {
     u16 object_ids[14];
     s32 output_count = 0;

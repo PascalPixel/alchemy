@@ -292,7 +292,7 @@ pub fn conflict_marker_reason(path: &str, data: &[u8]) -> Option<String> {
 /// them, for the same reason they did not find 121 separate tool binaries: a
 /// surface nobody can enumerate is a surface nobody opens. Letting new ones
 /// accumulate rebuilds the problem one file at a time.
-pub const ALLOWED_MARKDOWN: &[&str] = &["README.md", "CONTRIBUTING.md", "AGENTS.md", "CLAUDE.md"];
+pub const ALLOWED_MARKDOWN: &[&str] = &["README.md", "CONTRIBUTING.md"];
 
 /// Reject NEW `.txt` and `.md` files. Existing ones keep working: the rule is
 /// about growth, not about the ten data files already tracked.
@@ -314,9 +314,9 @@ pub fn new_text_file_reason(
             return None;
         }
         return Some(format!(
-            "new markdown file {path}: this repository keeps exactly four \
-             (README.md, CONTRIBUTING.md, AGENTS.md, CLAUDE.md). Put the content \
-             in CONTRIBUTING.md, which is the single shared document"
+            "new markdown file {path}: this repository keeps exactly two \
+             (README.md and CONTRIBUTING.md). Put project procedure in \
+             CONTRIBUTING.md, which is the single contributor guide"
         ));
     }
     Some(format!(
@@ -822,6 +822,19 @@ pub const ACCEPTED_PATHS: &[&str] = &[
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn only_the_user_and_contributor_guides_are_markdown_roots() {
+        let tracked = std::collections::BTreeSet::new();
+
+        assert_eq!(ALLOWED_MARKDOWN, &["README.md", "CONTRIBUTING.md"]);
+        assert!(new_text_file_reason("README.md", &tracked).is_none());
+        assert!(new_text_file_reason("CONTRIBUTING.md", &tracked).is_none());
+        assert!(new_text_file_reason("AGENTS.md", &tracked)
+            .expect("AGENTS.md must not return as a third guide")
+            .contains("exactly two"));
+        assert!(new_text_file_reason("CLAUDE.md", &tracked).is_some());
+    }
 
     #[test]
     fn staged_rename_destinations_are_not_new_files() {

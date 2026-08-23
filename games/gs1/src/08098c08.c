@@ -3,13 +3,13 @@
 #include "object_efx.h"
 #include "sound_ids.h"
 
-struct Vector_08098c08 {
+struct ImpactPosition {
     s32 x;
     s32 y;
     s32 z;
 };
 
-struct Object_08096bec;
+struct ImpactParticle;
 
 void Func_080f9010(s32);
 u8 *Func_08096c80(s32, s32, s32, s32);
@@ -17,16 +17,17 @@ void Func_08009098(void *, const void *);
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-void Func_08096bec(struct Object_08096bec *, s32, s32);
+void Func_08096bec(struct ImpactParticle *, s32, s32);
 
+#define SpawnHeavyImpactEffect Func_08098c08
 s32 Func_08098c08(void *source)
 {
-    struct Vector_08098c08 position;
+    struct ImpactPosition position;
     void *first_object;
     void *child;
     register s32 count;
     register s32 speed;
-    register struct Vector_08098c08 *position_pointer;
+    register struct ImpactPosition *position_pointer;
 
     Func_080f9010(SOUND_HEAVY_IMPACT);
     position.x = *(s32 *)((u8 *)source + 8);
@@ -69,7 +70,7 @@ s32 Func_08098c08(void *source)
             *(u8 *)((u8 *)child + 0x55) = 0;
             y = Rand() * 24 + 0x80000;
             Func_08096bec(
-                (struct Object_08096bec *)child,
+                (struct ImpactParticle *)child,
                 y,
                 Rand());
         }

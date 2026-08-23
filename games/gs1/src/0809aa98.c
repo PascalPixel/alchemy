@@ -1,20 +1,20 @@
 #include "fixed_math.h"
 #include "types.h"
 
-struct Position_0809aa98 {
+struct EffectPosition {
     s32 x;
     s32 y;
     s32 z;
 };
 
-struct Camera_0809aa98 {
+struct EffectCamera {
     s32 filler_00;
     s32 x;
     s32 y;
     s32 z;
 };
 
-struct Effect_0809aa98 {
+struct RadialCameraEffect {
     u8 filler_00[0xC];
     s32 x;
     s32 z;
@@ -31,20 +31,21 @@ struct Effect_0809aa98 {
     u8 flag;
 };
 
-extern struct Camera_0809aa98 *Data_03001f30;
+extern struct EffectCamera *Data_03001f30;
 
 extern u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-extern void Func_0800447c(s32, s32, struct Position_0809aa98 *);
-extern void Func_080974d8(struct Position_0809aa98 *);
-extern s32 Func_0809ba34(struct Effect_0809aa98 *);
-extern void Func_0809bb34(struct Effect_0809aa98 *);
+extern void Func_0800447c(s32, s32, struct EffectPosition *);
+extern void Func_080974d8(struct EffectPosition *);
+extern s32 Func_0809ba34(struct RadialCameraEffect *);
+extern void Func_0809bb34(struct RadialCameraEffect *);
 
-void Func_0809aa98(struct Effect_0809aa98 *effect)
+#define UpdateRadialCameraEffect Func_0809aa98
+void Func_0809aa98(struct RadialCameraEffect *effect)
 {
-    struct Camera_0809aa98 *camera;
-    struct Position_0809aa98 position;
+    struct EffectCamera *camera;
+    struct EffectPosition position;
     s8 *state_pointer;
     s16 angle;
     s32 state;

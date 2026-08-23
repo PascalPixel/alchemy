@@ -20,7 +20,7 @@ s32 Func_080a8114(void);
 s32 Func_080a90bc(void);
 s32 Func_080a96d8(void);
 
-s32 Func_080a76d0(void)
+s32 Menu_RunActionFlow(void)
 {
     struct MenuState_080a76d0 *state = Data_03001f2c;
     s32 step = 0;

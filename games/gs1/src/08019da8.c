@@ -4,7 +4,7 @@
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-extern s32 Func_08019d2c();
+extern s32 Localization_LookupEntryId();
 extern s32 UiWindow_Create();
 extern s32 CreateSideObject();
 
@@ -16,7 +16,7 @@ s32 Func_08019da8(s32 arg0, s32 arg1, s32 x, s32 y)
     void *work;
 
     work = *(void **)ADDR_03001E8C;
-    if (Func_08019d2c(arg0) == -1) {
+    if (Localization_LookupEntryId(arg0) == -1) {
         return 0;
     }
     minus_four = -4;

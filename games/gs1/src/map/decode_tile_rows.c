@@ -1,6 +1,6 @@
 #include "types.h"
 
-void Func_0800f9f4(s32 arg0) {
+void Map_DecodeTileRows(s32 arg0) {
     u16 *destination;
     u16 *source;
     s32 count;

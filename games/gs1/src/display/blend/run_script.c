@@ -9,7 +9,7 @@ struct BlendScriptState {
 
 extern u8 *Data_03001e70;
 
-void Func_080119cc(void)
+void DisplayBlend_RunScript(void)
 {
     u8 *base = Data_03001e70;
     struct BlendScriptState *state;

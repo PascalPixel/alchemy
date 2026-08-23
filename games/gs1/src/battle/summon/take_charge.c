@@ -23,7 +23,7 @@ extern struct Snd_080c1df4 *Data_03001e74;
 
 s32 Modulo(s32, s32);
 
-s32 Func_080c1df4(s32 no)
+s32 Summon_TakeCharge(s32 no)
 {
     struct Snd_080c1df4 *w;
     s32 num;

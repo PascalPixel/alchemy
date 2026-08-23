@@ -34,7 +34,7 @@ u16 Resource_FindFreeSlot(void);
 u16 Resource_CopyData(s32 handle, s32 size, void *buffer);
 void Func_08002dd8(s32 owner);
 
-void Func_0801c188(void)
+void Menu_LoadSelectedResource(void)
 {
     u8 *state = Data_03001e98;
     struct SelectionNode_0801c188 *selection = Func_0801b36c(state);

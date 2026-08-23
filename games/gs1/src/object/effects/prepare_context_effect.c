@@ -42,7 +42,7 @@ struct Effect_080942e0 *Func_08009048(struct Entity_080942e0 *, s32);
 void Object_SetMode(struct Entity_080942e0 *, s32);
 void WaitFrames(s32);
 
-void Func_080942e0(s32 value)
+void ObjectEffect_PrepareContextEffect(s32 value)
 {
     u32 zero;
     u8 kind;

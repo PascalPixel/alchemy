@@ -31,7 +31,7 @@ struct SideObject {
 extern struct SideObjectRegistry *Data_03001e8c;
 
 extern s32 GameFlag_IsSet(s32);
-extern s32 Func_08019d2c(s32);
+extern s32 Localization_LookupEntryId(s32);
 extern void Func_0801a4fc(s32, s32, s32 *, s32 *, s32, s32);
 extern struct SideObject *Func_0801eadc(
     s32, s32, s32, s32, s32);
@@ -53,7 +53,7 @@ struct SideObject *CreateSideObject(
             object_kind = 19;
     }
 
-    id = Func_08019d2c(object_kind);
+    id = Localization_LookupEntryId(object_kind);
     if (id == -1)
         return object;
 

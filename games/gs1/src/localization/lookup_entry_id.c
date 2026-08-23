@@ -3,7 +3,7 @@
 extern const s16 Data_080367e4[];
 extern const s16 Data_0803680c[];
 
-s32 Func_08019d2c(u32 value)
+s32 Localization_LookupEntryId(u32 value)
 {
     s32 result = -1;
     s32 index = 0;

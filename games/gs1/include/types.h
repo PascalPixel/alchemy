@@ -145,5 +145,18 @@ typedef int bool;
 #define UiWork_ActivateChannel Func_08016670
 #define UiWork_DrainPending Func_080197c4
 #define Menu_SelectResource Func_080286a0
+#define Menu_LoadSelectedResource Func_0801c188
+#define AffineMatrix_BuildForEffect Func_08003d28
+#define Localization_LookupEntryId Func_08019d2c
+#define ObjectPlacement_CreateGroup Func_0801fe2c
+#define ObjectMotion_MoveTowardTarget Func_0809397c
+#define ObjectMotion_PlaceWithinCameraBounds Func_080933f8
+#define ObjectEffect_PrepareContextEffect Func_080942e0
+#define ObjectGroup_UpdateMembers Func_080d6888
+#define Menu_RunActionFlow Func_080a76d0
+#define Map_DecodeTileRows Func_0800f9f4
+#define DisplayBlend_RunScript Func_080119cc
+#define Summon_TakeCharge Func_080c1df4
+#define BattleEffect_UpdateRadialMotion Func_080b2f4c
 
 #endif

@@ -29,9 +29,7 @@ struct Sprite {
 
 struct Effect {
     u8 pad00[8];
-    s32 position_x;
-    s32 position_y;
-    s32 position_z;
+    s32 position[3];
     u8 pad14[4];
     s32 accum18;
     s32 accum1c;
@@ -41,9 +39,7 @@ struct Effect {
     s32 rate30;
     s32 rate34;
     u8 pad38[12];
-    s32 velocity_x;
-    s32 velocity_y;
-    s32 velocity_z;
+    s32 velocity[3];
     struct Sprite *sprite;
     u8 pad54;
     u8 mode55;
@@ -58,18 +54,21 @@ s32 Func_02003d76();
 
 void Func_02000da4(struct Effect *effect)
 {
+    s32 velocity_z;
     struct Sprite *sprite;
     s32 velocity_x;
-    s32 velocity_z;
 
-    velocity_x = effect->velocity_x;
-    effect->position_x += velocity_x;
-    effect->position_y += effect->velocity_y;
-    velocity_z = effect->velocity_z;
-    effect->position_z += velocity_z;
+    /* Macro-shaped block keeps the following Z load after the Y store. */
+    do {
+        velocity_x = effect->velocity[0];
+        effect->position[0] += velocity_x;
+        effect->position[1] += effect->velocity[1];
+    } while (0);
+    velocity_z = effect->velocity[2];
+    effect->position[2] += velocity_z;
 
-    effect->velocity_x = velocity_x - Func_02003d76(velocity_x, 18);
-    effect->velocity_z = velocity_z - velocity_z / 16;
+    effect->velocity[0] = velocity_x - Func_02003d76(velocity_x, 18);
+    effect->velocity[2] = velocity_z - velocity_z / 16;
 
     effect->accum18 += effect->rate30;
     effect->accum1c += effect->rate34;

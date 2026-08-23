@@ -1,6 +1,8 @@
 use crate::model::{area, bytes, intersect, normalize, subtract, Area, Span, Tile, CATEGORIES};
 use crate::tree::{read_json, SourceTree, ROM_BASE};
+use compiler_core::source_paths::{SourceOwner, SourcePaths, SOURCE_PATHS_MANIFEST};
 use serde_json::{Map, Value};
+use std::path::Path;
 
 pub struct BuildOptions<'a> {
     pub target: String,
@@ -308,17 +310,30 @@ fn exact_overlay(
     tree: &SourceTree,
     pairs: &[(String, String)],
     executable: &std::collections::BTreeMap<String, Vec<Span>>,
-) -> (
-    std::collections::BTreeMap<String, Vec<Owner>>,
-    std::collections::BTreeMap<String, Vec<Span>>,
-) {
+) -> Result<
+    (
+        std::collections::BTreeMap<String, Vec<Owner>>,
+        std::collections::BTreeMap<String, Vec<Span>>,
+    ),
+    String,
+> {
+    let manifest = tree
+        .read(SOURCE_PATHS_MANIFEST)
+        .unwrap_or_else(|| "{\"format\":1,\"owners\":{}}".into());
+    let source_paths = SourcePaths::parse(Path::new(""), &manifest)?;
     let mut owners = std::collections::BTreeMap::new();
     let mut spans = std::collections::BTreeMap::new();
     for (id, name) in pairs {
         let list: Vec<_> = overlay_owners(tree, name)
             .into_iter()
             .map(|mut owner| {
-                let path = format!("games/gs1/src/{id}_c_{:08x}.c", owner.entry);
+                let path = SourceOwner::parse(&format!("{id}:{:08x}", owner.entry))
+                    .map(|source_owner| source_paths.repository_relative_path(source_owner))
+                    .map(|path| path.to_string_lossy().replace('\\', "/"));
+                let Some(path) = path.ok() else {
+                    owner.spans.clear();
+                    return owner;
+                };
                 if !tree.read(&path).is_some_and(|source| canonical(&source)) {
                     owner.spans.clear();
                 }
@@ -334,7 +349,7 @@ fn exact_overlay(
         owners.insert(id.clone(), list);
         spans.insert(id.clone(), normalize(&flat));
     }
-    (owners, spans)
+    Ok((owners, spans))
 }
 
 fn permanent_main(tree: &SourceTree) -> Vec<Span> {
@@ -879,7 +894,7 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
     }
     let exact_main = exact_main(options.exact, &main_exec);
     let pairs = overlay_ids(options.exact);
-    let (owners, exact_overlay) = exact_overlay(options.exact, &pairs, &overlay_exec);
+    let (owners, exact_overlay) = exact_overlay(options.exact, &pairs, &overlay_exec)?;
     let retained_main = permanent_main(options.exact);
     let explicit_retained_overlay = permanent_overlay_evidence(options.exact, &overlay_exec)?;
     let retained_overlay: std::collections::BTreeMap<_, _> = overlay_regions

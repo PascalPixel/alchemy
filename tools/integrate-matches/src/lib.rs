@@ -11,6 +11,7 @@ use std::sync::OnceLock;
 
 use compiler_core::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
 use compiler_core::routing::{root, CompilerTarget};
+use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use compiler_core::{external_symbol, external_symbol_assembly, CALL_VIA_BASE};
 use regex::Regex;
 
@@ -374,6 +375,7 @@ fn today_utc() -> String {
 
 fn run_pipeline(directory: &str, apply: bool) -> Result<Vec<String>, String> {
     let repository = root_directory();
+    let source_paths = SourcePaths::load(&repository)?;
     let directory = Path::new(directory);
     let gate = directory.join("gate");
     fs::create_dir_all(&gate).map_err(|error| format!("{}: {error}", gate.display()))?;
@@ -395,12 +397,12 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<Vec<String>, String> {
             .strip_prefix("src_")
             .and_then(|name| name.strip_suffix(".c"))
             .unwrap();
-        if repository
-            .join("games/gs1/src")
-            .join(format!("{stem}.c"))
-            .exists()
-        {
+        let owner = SourceOwner::parse(&format!("main:{stem}"))?;
+        if source_paths.source_path(owner).exists() {
             continue;
+        }
+        if apply {
+            source_paths.registered_source_path(owner)?;
         }
         let candidate = directory.join(&name);
         let source_bytes = fs::read(&candidate).map_err(|error| error.to_string())?;
@@ -441,7 +443,12 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<Vec<String>, String> {
     if apply {
         for (stem, _) in &accepted {
             let candidate = directory.join(format!("src_{stem}.c"));
-            let exact = repository.join("games/gs1/src").join(format!("{stem}.c"));
+            let owner = SourceOwner::parse(&format!("main:{stem}"))?;
+            let exact = source_paths.registered_source_path(owner)?;
+            if let Some(parent) = exact.parent() {
+                fs::create_dir_all(parent)
+                    .map_err(|error| format!("{}: {error}", parent.display()))?;
+            }
             fs::copy(&candidate, &exact)
                 .map_err(|error| format!("{}: {error}", exact.display()))?;
             let asm = repository.join("games/gs1/asm").join(format!("{stem}.s"));

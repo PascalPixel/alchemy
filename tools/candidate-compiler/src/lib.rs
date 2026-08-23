@@ -13,6 +13,6 @@ pub mod verify;
 
 pub use compiler_core::routing::CompilerTarget;
 pub use verify::{
-    compile_to_assembly, verify_candidate, verify_candidate_routed, CandidateCompilerConfiguration,
-    CandidateCompilerFamily, Verification, ROM_BASE,
+    compile_to_assembly, verify_candidate, verify_candidate_owned_routed, verify_candidate_routed,
+    CandidateCompilerConfiguration, CandidateCompilerFamily, Verification, ROM_BASE,
 };

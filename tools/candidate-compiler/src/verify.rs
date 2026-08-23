@@ -216,6 +216,37 @@ pub fn verify_candidate_routed(
     configuration: &CandidateCompilerConfiguration,
 ) -> Result<Verification, String> {
     let stem = source_stem(source);
+    verify_candidate_owned_routed(
+        source,
+        routing_source,
+        &stem,
+        rom,
+        output_directory,
+        extra_compiler_flags,
+        image_base,
+        compiler,
+        configuration,
+    )
+}
+
+/// Compile a source whose descriptive filename no longer encodes its owner.
+///
+/// `owner_stem` is the canonical eight-digit main-image address. The physical
+/// source path remains untouched so source-relative includes keep working;
+/// `routing_source` remains the stable owner identity used by compiler tables.
+#[allow(clippy::too_many_arguments)]
+pub fn verify_candidate_owned_routed(
+    source: &str,
+    routing_source: &str,
+    owner_stem: &str,
+    rom: &[u8],
+    output_directory: &str,
+    extra_compiler_flags: &[String],
+    image_base: f64,
+    compiler: CompilerTarget,
+    configuration: &CandidateCompilerConfiguration,
+) -> Result<Verification, String> {
+    let stem = owner_stem.to_string();
     let address = parse_hex(&stem)?;
     let symbol = format!("Func_{}", hex8(address));
 

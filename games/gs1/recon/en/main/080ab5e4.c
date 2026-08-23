@@ -4,7 +4,7 @@
 s32 Func_08002304(s32 numerator, s32 denominator);
 #define Math_Div Func_08002304
 s32 Func_080022f4(s32 numerator, s32 denominator);
-#define Math_Mod Func_080022f4                     /* same address as games/gs1/src/080bbb0c.c's Math_Mod */
+#define Math_Mod Func_080022f4                     /* same address as games/gs1/src/battle/resolve_action.c's Math_Mod */
 
 /*
  * Colosso tournament selection and progression handler.
@@ -36,7 +36,7 @@ s32 Func_080022f4(s32 numerator, s32 denominator);
  *     via Math_Div/Math_Mod(packedPos, 10) into sp38 (quotient) and
  *     sp30-then-temp_r0_47 (remainder). Corrected from an earlier,
  *     backwards labeling of this pair (main:b33ebf347 merge) once
- *     games/gs1/src/080bbb0c.c's own Math_Div/Math_Mod naming confirmed Func_08002304
+ *     games/gs1/src/battle/resolve_action.c's own Math_Div/Math_Mod naming confirmed Func_08002304
  *     is the divide and Func_080022f4 (the address 080bbb0c calls Math_Mod)
  *     is the modulo. sp38 and sp30 both get mutated later, so the tail's
  *     sp38 + sp30*0xA recombination is a new value, not a round-trip of the
@@ -60,7 +60,7 @@ s32 Func_080022f4(s32 numerator, s32 denominator);
  *     consolidated here since each is a separately compiled instance).
  *     NAMING CAVEAT: called into Func_08077210/Func_08077208/
  *     Func_080771b0 etc, on the same 0x08077xxx page as
- *     games/gs1/src/080bbb0c.c's Battle_HitCheck/Battle_CalcAttack/
+ *     games/gs1/src/battle/resolve_action.c's Battle_HitCheck/Battle_CalcAttack/
  *     Battle_CalcPower/Battle_CalcRestore. That's page-adjacency, not
  *     proof, but it's reason enough to doubt the "color/tile" reading
  *     this whole file assumed -- these could be decomposing a packed

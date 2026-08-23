@@ -1,5 +1,6 @@
 pub mod cli;
 
+use compiler_core::source_paths::SourcePaths;
 use serde_json::Value;
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
@@ -18,15 +19,13 @@ fn json(path: &Path) -> Result<Value, String> {
 }
 
 fn exact(root: &Path) -> Result<HashSet<String>, String> {
-    let mut stems = HashSet::new();
-    for entry in std::fs::read_dir(root.join("games/gs1/src")).map_err(|error| error.to_string())? {
-        let path = entry.map_err(|error| error.to_string())?.path();
-        if path.extension().and_then(|value| value.to_str()) == Some("c") {
-            if let Some(stem) = path.file_stem().and_then(|value| value.to_str()) {
-                stems.insert(stem.to_string());
-            }
-        }
-    }
+    let paths = SourcePaths::load(root)?;
+    paths.validate_tree()?;
+    let stems = paths
+        .all_sources()?
+        .into_iter()
+        .map(|source| source.owner.legacy_stem())
+        .collect::<HashSet<_>>();
     if stems.is_empty() {
         return Err("games/gs1/src/ contains no C owners".into());
     }

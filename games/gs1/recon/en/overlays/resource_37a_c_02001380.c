@@ -1,9 +1,9 @@
 #include "types.h"
 
-/* DRAFT for Func_02001380: 49 calls, 5 loops, 0 memory operations.
- * Written by `overlay reconstruct` from the owner's own disassembly.
- * It is a starting point, not a reconstruction: read the assembly and
- * fix it. Score it before believing any of it. */
+/*
+ * Starts the Sol Temple trap event: prepare actor 16, build the five paired
+ * effect rows, then hand control to the room callbacks.
+ */
 
 void Func_02001616();
 void Func_0200163e();
@@ -57,26 +57,38 @@ extern u32 Data_03001ebc;
 void Func_02003fbe();
 void Func_02003fca();
 
-void Func_02001380(void)
+#define StartSolTempleTrapEvent Func_02001380
+
+void StartSolTempleTrapEvent(void)
 {
-    u32 block;
-    s32 i1;
-    s32 i2;
-    s32 i3;
-    s32 i4;
-    s32 i5;
+    u32 scene_state;
+    s32 outer_pair;
+    s32 second_pair;
+    s32 middle_pair;
+    s32 fourth_pair;
+    s32 inner_pair;
 
     Func_02003d58();
     Func_020025ec();
     Func_02003de2(4120);
-    Func_02003e0e(16, 16384, 20);
-    Func_02003e22(16, 256, 0);
+    {
+        register s32 scale = 128;
+        register s32 actor = 16;
+        scale <<= 7;
+        Func_02003e0e(actor, scale, 20);
+    }
+    {
+        register s32 scale = 128;
+        register s32 actor = 16;
+        scale <<= 1;
+        Func_02003e22(actor, scale, 0);
+    }
     Func_02003de4(16, 6, 30);
     Func_02003e5c(37617664, -1, 11403264, 1);
     Func_02003e68();
     Func_02003d96(30);
     Func_020039ce(32784, 20);
-    for (i1 = 0; i1 != 4; i1++) {
+    for (outer_pair = 0; outer_pair != 4; outer_pair++) {
         Func_02003ece(246);
         Func_02001616();
         Func_02003db0(12);
@@ -84,7 +96,7 @@ void Func_02001380(void)
         Func_02001750();
         Func_02003dc2(12);
     }
-    for (i2 = 0; i2 != 6; i2++) {
+    for (second_pair = 0; second_pair != 6; second_pair++) {
         Func_02003ef6(246);
         Func_0200163e();
         Func_02003dd8(8);
@@ -92,7 +104,7 @@ void Func_02001380(void)
         Func_02001778();
         Func_02003dea(8);
     }
-    for (i3 = 0; i3 != 8; i3++) {
+    for (middle_pair = 0; middle_pair != 8; middle_pair++) {
         Func_02003f1e(246);
         Func_02001666();
         Func_02003e00(6);
@@ -100,7 +112,7 @@ void Func_02001380(void)
         Func_020017a0();
         Func_02003e12(6);
     }
-    for (i4 = 0; i4 != 10; i4++) {
+    for (fourth_pair = 0; fourth_pair != 10; fourth_pair++) {
         Func_02003f46(246);
         Func_0200168e();
         Func_02003e28(4);
@@ -108,7 +120,7 @@ void Func_02001380(void)
         Func_020017c8();
         Func_02003e3a(4);
     }
-    for (i5 = 0; i5 != 12; i5++) {
+    for (inner_pair = 0; inner_pair != 12; inner_pair++) {
         Func_02003f6e(246);
         Func_020016b6();
         Func_02003e50(2);
@@ -119,11 +131,18 @@ void Func_02001380(void)
     Func_020016d6();
     Func_02003e70(6);
     Func_02003aa8(32784, 6);
-    Func_02003eae(16, 131072, 65536);
+    {
+        register s32 horizontal_scale = 128;
+        register s32 vertical_scale = 128;
+        register s32 actor = 16;
+        horizontal_scale <<= 10;
+        vertical_scale <<= 9;
+        Func_02003eae(actor, horizontal_scale, vertical_scale);
+    }
     Func_02003ed4(16, 576, 280);
-    block = Data_03001ebc;
-    *(s32 *)(block + 448) = 256;
-    *(s32 *)(block + 456) = 32;
+    scene_state = Data_03001ebc;
+    *(s32 *)(scene_state + 448) = 256;
+    *(s32 *)(scene_state + 456) = 32;
     Func_02003fbe();
     Func_02003fca();
     Func_02003ea8(2067);

@@ -1,12 +1,25 @@
 #ifndef ALCHEMY_PARTY_STATE_H
 #define ALCHEMY_PARTY_STATE_H
 
-#include "types.h"
+#include "layout_guard.h"
 
 struct PartyState {
-    u8 unknown_000[0x1f8];
-    u8 active_owners[8];
+    u8 unknown_000[0x1f4];
+    s32 current_owner;              /* 0x1f4 */
+    u8 active_owners[8];            /* 0x1f8 */
 };
+
+LAYOUT_OFFSET_GUARD(
+    PartyState_CurrentOwner,
+    struct PartyState,
+    current_owner,
+    0x1f4);
+LAYOUT_OFFSET_GUARD(
+    PartyState_ActiveOwners,
+    struct PartyState,
+    active_owners,
+    0x1f8);
+LAYOUT_SIZE_GUARD(PartyState_Size, struct PartyState, 0x200);
 
 extern struct PartyState Data_02000240;
 
@@ -18,5 +31,8 @@ extern struct PartyState Data_02000240;
  */
 s32 Func_080795fc();
 s32 Func_080796c4(s16 *owners);
+
+#define Party_CountActiveOwners Func_080795fc
+#define Party_ListActiveOwners  Func_080796c4
 
 #endif

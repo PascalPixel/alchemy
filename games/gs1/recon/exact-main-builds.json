@@ -3,32 +3,32 @@
   "game": "gs1",
   "source_edition": "en",
   "source_state": "byte-exact C compiled or relinked per edition",
-  "owners_total": 1389,
-  "owner_symbol_bytes": 106536,
-  "located_owners": 1348,
+  "owners_total": 1392,
+  "owner_symbol_bytes": 107308,
+  "located_owners": 1351,
   "unresolved_owners": 41,
-  "built_owners": 1348,
-  "all_exact_owners": 1348,
-  "all_exact_bytes": 103186,
+  "built_owners": 1351,
+  "all_exact_owners": 1349,
+  "all_exact_bytes": 103482,
   "all_exact": false,
   "editions": [
     {
       "edition": "ja",
-      "checked_owners": 1348,
-      "checked_bytes": 103190,
-      "byte_exact_owners": 1348,
-      "byte_exact_bytes": 103190,
-      "nonexact_owners": 0,
-      "nonexact_bytes": 0,
-      "differing_bytes": 0,
+      "checked_owners": 1351,
+      "checked_bytes": 103962,
+      "byte_exact_owners": 1350,
+      "byte_exact_bytes": 103634,
+      "nonexact_owners": 1,
+      "nonexact_bytes": 328,
+      "differing_bytes": 6,
       "unbuildable_owners": 0
     },
     {
       "edition": "en",
-      "checked_owners": 1348,
-      "checked_bytes": 103186,
-      "byte_exact_owners": 1348,
-      "byte_exact_bytes": 103186,
+      "checked_owners": 1351,
+      "checked_bytes": 103958,
+      "byte_exact_owners": 1351,
+      "byte_exact_bytes": 103958,
       "nonexact_owners": 0,
       "nonexact_bytes": 0,
       "differing_bytes": 0,
@@ -36,46 +36,46 @@
     },
     {
       "edition": "de",
-      "checked_owners": 1348,
-      "checked_bytes": 103256,
-      "byte_exact_owners": 1348,
-      "byte_exact_bytes": 103256,
-      "nonexact_owners": 0,
-      "nonexact_bytes": 0,
-      "differing_bytes": 0,
+      "checked_owners": 1351,
+      "checked_bytes": 104028,
+      "byte_exact_owners": 1350,
+      "byte_exact_bytes": 103700,
+      "nonexact_owners": 1,
+      "nonexact_bytes": 328,
+      "differing_bytes": 5,
       "unbuildable_owners": 0
     },
     {
       "edition": "es",
-      "checked_owners": 1348,
-      "checked_bytes": 103256,
-      "byte_exact_owners": 1348,
-      "byte_exact_bytes": 103256,
-      "nonexact_owners": 0,
-      "nonexact_bytes": 0,
-      "differing_bytes": 0,
+      "checked_owners": 1351,
+      "checked_bytes": 104028,
+      "byte_exact_owners": 1350,
+      "byte_exact_bytes": 103700,
+      "nonexact_owners": 1,
+      "nonexact_bytes": 328,
+      "differing_bytes": 4,
       "unbuildable_owners": 0
     },
     {
       "edition": "fr",
-      "checked_owners": 1348,
-      "checked_bytes": 103256,
-      "byte_exact_owners": 1348,
-      "byte_exact_bytes": 103256,
-      "nonexact_owners": 0,
-      "nonexact_bytes": 0,
-      "differing_bytes": 0,
+      "checked_owners": 1351,
+      "checked_bytes": 104028,
+      "byte_exact_owners": 1350,
+      "byte_exact_bytes": 103700,
+      "nonexact_owners": 1,
+      "nonexact_bytes": 328,
+      "differing_bytes": 4,
       "unbuildable_owners": 0
     },
     {
       "edition": "it",
-      "checked_owners": 1348,
-      "checked_bytes": 103256,
-      "byte_exact_owners": 1348,
-      "byte_exact_bytes": 103256,
-      "nonexact_owners": 0,
-      "nonexact_bytes": 0,
-      "differing_bytes": 0,
+      "checked_owners": 1351,
+      "checked_bytes": 104028,
+      "byte_exact_owners": 1349,
+      "byte_exact_bytes": 103552,
+      "nonexact_owners": 2,
+      "nonexact_bytes": 476,
+      "differing_bytes": 4,
       "unbuildable_owners": 0
     }
   ],
@@ -26552,7 +26552,7 @@
     },
     {
       "en_owner": "08078414",
-      "source": "games/gs1/src/08078414.c",
+      "source": "games/gs1/src/item/get_definition.c",
       "size": 24,
       "all_exact": true,
       "editions": [
@@ -26608,7 +26608,7 @@
     },
     {
       "en_owner": "0807842c",
-      "source": "games/gs1/src/0807842c.c",
+      "source": "games/gs1/src/item/can_owner_equip.c",
       "size": 48,
       "all_exact": true,
       "editions": [
@@ -26664,7 +26664,7 @@
     },
     {
       "en_owner": "0807845c",
-      "source": "games/gs1/src/0807845c.c",
+      "source": "games/gs1/src/item/is_compatible_with_owner.c",
       "size": 34,
       "all_exact": true,
       "editions": [
@@ -26720,7 +26720,7 @@
     },
     {
       "en_owner": "08078480",
-      "source": "games/gs1/src/08078480.c",
+      "source": "games/gs1/src/item/get_equipment_group.c",
       "size": 46,
       "all_exact": true,
       "editions": [
@@ -26776,7 +26776,7 @@
     },
     {
       "en_owner": "080784b0",
-      "source": "games/gs1/src/080784b0.c",
+      "source": "games/gs1/src/inventory/get_quantity.c",
       "size": 40,
       "all_exact": true,
       "editions": [
@@ -26832,7 +26832,7 @@
     },
     {
       "en_owner": "080784d8",
-      "source": "games/gs1/src/080784d8.c",
+      "source": "games/gs1/src/inventory/count.c",
       "size": 38,
       "all_exact": true,
       "editions": [
@@ -26888,7 +26888,7 @@
     },
     {
       "en_owner": "08078500",
-      "source": "games/gs1/src/08078500.c",
+      "source": "games/gs1/src/inventory/party_has_space.c",
       "size": 80,
       "all_exact": true,
       "editions": [
@@ -26944,7 +26944,7 @@
     },
     {
       "en_owner": "08078550",
-      "source": "games/gs1/src/08078550.c",
+      "source": "games/gs1/src/inventory/count_party_free_slots.c",
       "size": 54,
       "all_exact": true,
       "editions": [
@@ -27000,7 +27000,7 @@
     },
     {
       "en_owner": "08078588",
-      "source": "games/gs1/src/08078588.c",
+      "source": "games/gs1/src/inventory/add.c",
       "size": 144,
       "all_exact": true,
       "editions": [
@@ -27056,7 +27056,7 @@
     },
     {
       "en_owner": "08078618",
-      "source": "games/gs1/src/08078618.c",
+      "source": "games/gs1/src/inventory/add_to_party.c",
       "size": 76,
       "all_exact": true,
       "editions": [
@@ -27112,7 +27112,7 @@
     },
     {
       "en_owner": "08078664",
-      "source": "games/gs1/src/08078664.c",
+      "source": "games/gs1/src/inventory/find.c",
       "size": 52,
       "all_exact": true,
       "editions": [
@@ -27168,7 +27168,7 @@
     },
     {
       "en_owner": "08078698",
-      "source": "games/gs1/src/08078698.c",
+      "source": "games/gs1/src/inventory/find_party_owner.c",
       "size": 112,
       "all_exact": true,
       "editions": [
@@ -27224,7 +27224,7 @@
     },
     {
       "en_owner": "08078708",
-      "source": "games/gs1/src/08078708.c",
+      "source": "games/gs1/src/inventory/equip.c",
       "size": 212,
       "all_exact": true,
       "editions": [
@@ -27280,7 +27280,7 @@
     },
     {
       "en_owner": "080787dc",
-      "source": "games/gs1/src/080787dc.c",
+      "source": "games/gs1/src/inventory/find_equipped.c",
       "size": 80,
       "all_exact": true,
       "editions": [
@@ -27336,7 +27336,7 @@
     },
     {
       "en_owner": "0807882c",
-      "source": "games/gs1/src/0807882c.c",
+      "source": "games/gs1/src/inventory/get_equipped_definition.c",
       "size": 66,
       "all_exact": true,
       "editions": [
@@ -27392,7 +27392,7 @@
     },
     {
       "en_owner": "08078870",
-      "source": "games/gs1/src/08078870.c",
+      "source": "games/gs1/src/inventory/get_equipped_item.c",
       "size": 84,
       "all_exact": true,
       "editions": [
@@ -27448,7 +27448,7 @@
     },
     {
       "en_owner": "08078948",
-      "source": "games/gs1/src/08078948.c",
+      "source": "games/gs1/src/inventory/discard.c",
       "size": 54,
       "all_exact": true,
       "editions": [
@@ -27504,7 +27504,7 @@
     },
     {
       "en_owner": "08078980",
-      "source": "games/gs1/src/08078980.c",
+      "source": "games/gs1/src/inventory/check_discard.c",
       "size": 92,
       "all_exact": true,
       "editions": [
@@ -27560,7 +27560,7 @@
     },
     {
       "en_owner": "080789dc",
-      "source": "games/gs1/src/080789dc.c",
+      "source": "games/gs1/src/inventory/remove_from_party.c",
       "size": 44,
       "all_exact": true,
       "editions": [
@@ -27616,7 +27616,7 @@
     },
     {
       "en_owner": "08078a08",
-      "source": "games/gs1/src/08078a08.c",
+      "source": "games/gs1/src/inventory/discard_from_party.c",
       "size": 44,
       "all_exact": true,
       "editions": [
@@ -27672,7 +27672,7 @@
     },
     {
       "en_owner": "08078a34",
-      "source": "games/gs1/src/08078a34.c",
+      "source": "games/gs1/src/inventory/break.c",
       "size": 44,
       "all_exact": true,
       "editions": [
@@ -27728,7 +27728,7 @@
     },
     {
       "en_owner": "08078a60",
-      "source": "games/gs1/src/08078a60.c",
+      "source": "games/gs1/src/inventory/repair.c",
       "size": 44,
       "all_exact": true,
       "editions": [
@@ -27784,7 +27784,7 @@
     },
     {
       "en_owner": "08078a8c",
-      "source": "games/gs1/src/08078a8c.c",
+      "source": "games/gs1/src/item/get_target_mode.c",
       "size": 18,
       "all_exact": true,
       "editions": [
@@ -27840,7 +27840,7 @@
     },
     {
       "en_owner": "08078aa0",
-      "source": "games/gs1/src/08078aa0.c",
+      "source": "games/gs1/src/item/adjust_counter_slot.c",
       "size": 48,
       "all_exact": true,
       "editions": [
@@ -27896,7 +27896,7 @@
     },
     {
       "en_owner": "08078ad0",
-      "source": "games/gs1/src/08078ad0.c",
+      "source": "games/gs1/src/item/adjust_counter.c",
       "size": 40,
       "all_exact": true,
       "editions": [
@@ -27952,7 +27952,7 @@
     },
     {
       "en_owner": "08078af8",
-      "source": "games/gs1/src/08078af8.c",
+      "source": "games/gs1/src/inventory/count_item.c",
       "size": 104,
       "all_exact": true,
       "editions": [
@@ -28008,7 +28008,7 @@
     },
     {
       "en_owner": "08078b60",
-      "source": "games/gs1/src/08078b60.c",
+      "source": "games/gs1/src/inventory/count_party_item.c",
       "size": 60,
       "all_exact": true,
       "editions": [
@@ -28064,7 +28064,7 @@
     },
     {
       "en_owner": "08078b9c",
-      "source": "games/gs1/src/08078b9c.c",
+      "source": "games/gs1/src/battle/get_action_definition.c",
       "size": 36,
       "all_exact": true,
       "editions": [
@@ -28120,7 +28120,7 @@
     },
     {
       "en_owner": "08078bc0",
-      "source": "games/gs1/src/08078bc0.c",
+      "source": "games/gs1/src/inventory/has_equipment_value.c",
       "size": 48,
       "all_exact": true,
       "editions": [
@@ -28568,7 +28568,7 @@
     },
     {
       "en_owner": "08079338",
-      "source": "games/gs1/src/08079338.c",
+      "source": "games/gs1/src/game_flags/test.c",
       "size": 32,
       "all_exact": true,
       "editions": [
@@ -28624,7 +28624,7 @@
     },
     {
       "en_owner": "08079358",
-      "source": "games/gs1/src/08079358.c",
+      "source": "games/gs1/src/game_flags/set.c",
       "size": 28,
       "all_exact": true,
       "editions": [
@@ -28680,7 +28680,7 @@
     },
     {
       "en_owner": "08079374",
-      "source": "games/gs1/src/08079374.c",
+      "source": "games/gs1/src/game_flags/clear.c",
       "size": 28,
       "all_exact": true,
       "editions": [
@@ -28736,7 +28736,7 @@
     },
     {
       "en_owner": "08079390",
-      "source": "games/gs1/src/08079390.c",
+      "source": "games/gs1/src/game_flags/toggle.c",
       "size": 40,
       "all_exact": true,
       "editions": [
@@ -28792,7 +28792,7 @@
     },
     {
       "en_owner": "080793b8",
-      "source": "games/gs1/src/080793b8.c",
+      "source": "games/gs1/src/game_flags/get_byte.c",
       "size": 16,
       "all_exact": true,
       "editions": [
@@ -28848,7 +28848,7 @@
     },
     {
       "en_owner": "080793c8",
-      "source": "games/gs1/src/080793c8.c",
+      "source": "games/gs1/src/game_flags/set_byte.c",
       "size": 16,
       "all_exact": true,
       "editions": [
@@ -28904,7 +28904,7 @@
     },
     {
       "en_owner": "080793d8",
-      "source": "games/gs1/src/080793d8.c",
+      "source": "games/gs1/src/game_flags/increment_byte.c",
       "size": 32,
       "all_exact": true,
       "editions": [
@@ -28960,7 +28960,7 @@
     },
     {
       "en_owner": "080793f8",
-      "source": "games/gs1/src/080793f8.c",
+      "source": "games/gs1/src/game_flags/decrement_byte.c",
       "size": 32,
       "all_exact": true,
       "editions": [
@@ -29016,7 +29016,7 @@
     },
     {
       "en_owner": "08079418",
-      "source": "games/gs1/src/08079418.c",
+      "source": "games/gs1/src/game_flags/get_nibble.c",
       "size": 28,
       "all_exact": true,
       "editions": [
@@ -29072,7 +29072,7 @@
     },
     {
       "en_owner": "08079434",
-      "source": "games/gs1/src/08079434.c",
+      "source": "games/gs1/src/game_flags/set_nibble.c",
       "size": 44,
       "all_exact": true,
       "editions": [
@@ -29128,7 +29128,7 @@
     },
     {
       "en_owner": "080795fc",
-      "source": "games/gs1/src/080795fc.c",
+      "source": "games/gs1/src/party/count_active_owners.c",
       "size": 32,
       "all_exact": true,
       "editions": [
@@ -29296,7 +29296,7 @@
     },
     {
       "en_owner": "080796c4",
-      "source": "games/gs1/src/080796c4.c",
+      "source": "games/gs1/src/party/list_active_owners.c",
       "size": 60,
       "all_exact": true,
       "editions": [
@@ -41785,6 +41785,62 @@
       ]
     },
     {
+      "en_owner": "08095a44",
+      "source": "games/gs1/src/08095a44.c",
+      "size": 328,
+      "all_exact": false,
+      "editions": [
+        {
+          "edition": "ja",
+          "start": "0x0808ca2c",
+          "size": 328,
+          "differing_bytes": 6,
+          "byte_exact": false,
+          "error": null
+        },
+        {
+          "edition": "en",
+          "start": "0x08095a44",
+          "size": 328,
+          "differing_bytes": 0,
+          "byte_exact": true,
+          "error": null
+        },
+        {
+          "edition": "de",
+          "start": "0x080990e0",
+          "size": 328,
+          "differing_bytes": 5,
+          "byte_exact": false,
+          "error": null
+        },
+        {
+          "edition": "es",
+          "start": "0x0809aad0",
+          "size": 328,
+          "differing_bytes": 4,
+          "byte_exact": false,
+          "error": null
+        },
+        {
+          "edition": "fr",
+          "start": "0x0809aad0",
+          "size": 328,
+          "differing_bytes": 4,
+          "byte_exact": false,
+          "error": null
+        },
+        {
+          "edition": "it",
+          "start": "0x08095ad0",
+          "size": 328,
+          "differing_bytes": 2,
+          "byte_exact": false,
+          "error": null
+        }
+      ]
+    },
+    {
       "en_owner": "08095b8c",
       "source": "games/gs1/src/08095b8c.c",
       "size": 32,
@@ -48511,7 +48567,7 @@
     },
     {
       "en_owner": "080a32b8",
-      "source": "games/gs1/src/080a32b8.c",
+      "source": "games/gs1/src/inventory_menu/use_selected_item.c",
       "size": 156,
       "edition_variant": true,
       "all_exact": true,
@@ -48624,7 +48680,7 @@
     },
     {
       "en_owner": "080a345c",
-      "source": "games/gs1/src/080a345c.c",
+      "source": "games/gs1/src/inventory_menu/hide_all_item_icons.c",
       "size": 36,
       "all_exact": true,
       "editions": [
@@ -48680,7 +48736,7 @@
     },
     {
       "en_owner": "080a34c0",
-      "source": "games/gs1/src/080a34c0.c",
+      "source": "games/gs1/src/inventory_menu/close_windows.c",
       "size": 156,
       "all_exact": true,
       "editions": [
@@ -48736,7 +48792,7 @@
     },
     {
       "en_owner": "080a355c",
-      "source": "games/gs1/src/080a355c.c",
+      "source": "games/gs1/src/inventory_menu/prepare_owner_items.c",
       "size": 156,
       "all_exact": true,
       "editions": [
@@ -48792,7 +48848,7 @@
     },
     {
       "en_owner": "080a38a8",
-      "source": "games/gs1/src/080a38a8.c",
+      "source": "games/gs1/src/inventory_menu/open_category_items.c",
       "size": 40,
       "all_exact": true,
       "editions": [
@@ -48848,7 +48904,7 @@
     },
     {
       "en_owner": "080a3c08",
-      "source": "games/gs1/src/080a3c08.c",
+      "source": "games/gs1/src/equipment_menu/update_compatibility_indicators.c",
       "size": 144,
       "all_exact": true,
       "editions": [
@@ -48904,7 +48960,7 @@
     },
     {
       "en_owner": "080a3c98",
-      "source": "games/gs1/src/080a3c98.c",
+      "source": "games/gs1/src/equipment_menu/start_compatibility_indicators.c",
       "size": 76,
       "all_exact": true,
       "editions": [
@@ -48960,7 +49016,7 @@
     },
     {
       "en_owner": "080a3ce4",
-      "source": "games/gs1/src/080a3ce4.c",
+      "source": "games/gs1/src/inventory_menu/is_special_item_range.c",
       "size": 20,
       "all_exact": true,
       "editions": [
@@ -49016,7 +49072,7 @@
     },
     {
       "en_owner": "080a3cf8",
-      "source": "games/gs1/src/080a3cf8.c",
+      "source": "games/gs1/src/inventory_menu/draw_message.c",
       "size": 44,
       "all_exact": true,
       "editions": [
@@ -49072,7 +49128,7 @@
     },
     {
       "en_owner": "080a3d24",
-      "source": "games/gs1/src/080a3d24.c",
+      "source": "games/gs1/src/inventory_menu/hide_empty_entry_icons.c",
       "size": 72,
       "all_exact": true,
       "editions": [
@@ -49128,7 +49184,7 @@
     },
     {
       "en_owner": "080a3d6c",
-      "source": "games/gs1/src/080a3d6c.c",
+      "source": "games/gs1/src/inventory_menu/count_items.c",
       "size": 48,
       "all_exact": true,
       "editions": [
@@ -49184,7 +49240,7 @@
     },
     {
       "en_owner": "080a3e28",
-      "source": "games/gs1/src/080a3e28.c",
+      "source": "games/gs1/src/inventory_menu/draw_item_icons.c",
       "size": 96,
       "all_exact": true,
       "editions": [
@@ -49240,7 +49296,7 @@
     },
     {
       "en_owner": "080a3e88",
-      "source": "games/gs1/src/080a3e88.c",
+      "source": "games/gs1/src/inventory_menu/refresh_owner_items.c",
       "size": 100,
       "all_exact": true,
       "editions": [
@@ -49296,7 +49352,7 @@
     },
     {
       "en_owner": "080a45cc",
-      "source": "games/gs1/src/080a45cc.c",
+      "source": "games/gs1/src/inventory_menu/draw_command_labels.c",
       "size": 232,
       "edition_variant": true,
       "all_exact": true,
@@ -49353,7 +49409,7 @@
     },
     {
       "en_owner": "080a47b4",
-      "source": "games/gs1/src/080a47b4.c",
+      "source": "games/gs1/src/inventory_menu/open_item_details.c",
       "size": 76,
       "all_exact": true,
       "editions": [
@@ -49409,7 +49465,7 @@
     },
     {
       "en_owner": "080a4db4",
-      "source": "games/gs1/src/080a4db4.c",
+      "source": "games/gs1/src/inventory_menu/draw_stat_delta.c",
       "size": 108,
       "all_exact": true,
       "editions": [
@@ -49465,7 +49521,7 @@
     },
     {
       "en_owner": "080a4e20",
-      "source": "games/gs1/src/080a4e20.c",
+      "source": "games/gs1/src/inventory_menu/set_item_window_five_row_bounds.c",
       "size": 36,
       "all_exact": true,
       "editions": [
@@ -49521,7 +49577,7 @@
     },
     {
       "en_owner": "080a4e44",
-      "source": "games/gs1/src/080a4e44.c",
+      "source": "games/gs1/src/inventory_menu/set_item_window_three_row_bounds.c",
       "size": 36,
       "all_exact": true,
       "editions": [
@@ -49577,7 +49633,7 @@
     },
     {
       "en_owner": "080a4e68",
-      "source": "games/gs1/src/080a4e68.c",
+      "source": "games/gs1/src/inventory_menu/set_message_window_row_5_bounds.c",
       "size": 40,
       "all_exact": true,
       "editions": [
@@ -49633,7 +49689,7 @@
     },
     {
       "en_owner": "080a4e90",
-      "source": "games/gs1/src/080a4e90.c",
+      "source": "games/gs1/src/inventory_menu/set_message_window_row_6_bounds.c",
       "size": 40,
       "all_exact": true,
       "editions": [
@@ -49689,7 +49745,7 @@
     },
     {
       "en_owner": "080a4eb8",
-      "source": "games/gs1/src/080a4eb8.c",
+      "source": "games/gs1/src/inventory_menu/set_message_window_row_7_bounds.c",
       "size": 40,
       "all_exact": true,
       "editions": [
@@ -49745,7 +49801,7 @@
     },
     {
       "en_owner": "080a4ee0",
-      "source": "games/gs1/src/080a4ee0.c",
+      "source": "games/gs1/src/inventory_menu/set_message_window_row_3_bounds.c",
       "size": 40,
       "all_exact": true,
       "editions": [
@@ -49801,7 +49857,7 @@
     },
     {
       "en_owner": "080a51d0",
-      "source": "games/gs1/src/080a51d0.c",
+      "source": "games/gs1/src/inventory_menu/draw_selected_item_header.c",
       "size": 124,
       "all_exact": true,
       "editions": [
@@ -49913,7 +49969,7 @@
     },
     {
       "en_owner": "080a5578",
-      "source": "games/gs1/src/080a5578.c",
+      "source": "games/gs1/src/inventory_menu/build_page_result.c",
       "size": 156,
       "all_exact": true,
       "editions": [
@@ -49969,7 +50025,7 @@
     },
     {
       "en_owner": "080a56c8",
-      "source": "games/gs1/src/080a56c8.c",
+      "source": "games/gs1/src/inventory_menu/draw_item_name_page.c",
       "size": 184,
       "edition_variant": true,
       "all_exact": true,
@@ -50026,7 +50082,7 @@
     },
     {
       "en_owner": "080a5fe0",
-      "source": "games/gs1/src/080a5fe0.c",
+      "source": "games/gs1/src/psynergy_menu/classify_selected_psynergy.c",
       "size": 76,
       "all_exact": true,
       "editions": [
@@ -50082,7 +50138,7 @@
     },
     {
       "en_owner": "080a6384",
-      "source": "games/gs1/src/080a6384.c",
+      "source": "games/gs1/src/psynergy_menu/refresh_owner_psynergy.c",
       "size": 88,
       "all_exact": true,
       "editions": [
@@ -50138,7 +50194,7 @@
     },
     {
       "en_owner": "080a63dc",
-      "source": "games/gs1/src/080a63dc.c",
+      "source": "games/gs1/src/psynergy_menu/return_true.c",
       "size": 4,
       "all_exact": true,
       "editions": [
@@ -50194,7 +50250,7 @@
     },
     {
       "en_owner": "080a65e4",
-      "source": "games/gs1/src/080a65e4.c",
+      "source": "games/gs1/src/psynergy_menu/set_shortcut.c",
       "size": 48,
       "all_exact": true,
       "editions": [
@@ -50250,7 +50306,7 @@
     },
     {
       "en_owner": "080a6794",
-      "source": "games/gs1/src/080a6794.c",
+      "source": "games/gs1/src/psynergy_menu/create_entry_grid.c",
       "size": 224,
       "all_exact": true,
       "editions": [
@@ -50306,7 +50362,7 @@
     },
     {
       "en_owner": "080a6874",
-      "source": "games/gs1/src/080a6874.c",
+      "source": "games/gs1/src/psynergy_menu/close_windows.c",
       "size": 52,
       "all_exact": true,
       "editions": [
@@ -50362,7 +50418,7 @@
     },
     {
       "en_owner": "080a68a8",
-      "source": "games/gs1/src/080a68a8.c",
+      "source": "games/gs1/src/psynergy_menu/draw_psynergy_icons.c",
       "size": 68,
       "all_exact": true,
       "editions": [
@@ -50418,7 +50474,7 @@
     },
     {
       "en_owner": "080a6a00",
-      "source": "games/gs1/src/080a6a00.c",
+      "source": "games/gs1/src/psynergy_menu/build_page_result.c",
       "size": 152,
       "all_exact": true,
       "editions": [
@@ -50474,7 +50530,7 @@
     },
     {
       "en_owner": "080a735c",
-      "source": "games/gs1/src/080a735c.c",
+      "source": "games/gs1/src/psynergy_menu/is_action_restricted.c",
       "size": 34,
       "all_exact": true,
       "editions": [
@@ -50980,7 +51036,7 @@
     },
     {
       "en_owner": "080a9374",
-      "source": "games/gs1/src/080a9374.c",
+      "source": "games/gs1/src/psynergy_menu/draw_prepared_psynergy_icons.c",
       "size": 40,
       "all_exact": true,
       "editions": [
@@ -51148,7 +51204,7 @@
     },
     {
       "en_owner": "080a9a5c",
-      "source": "games/gs1/src/080a9a5c.c",
+      "source": "games/gs1/src/inventory_menu/draw_category_items.c",
       "size": 144,
       "all_exact": true,
       "editions": [
@@ -53838,7 +53894,7 @@
     },
     {
       "en_owner": "080b09fc",
-      "source": "games/gs1/src/080b09fc.c",
+      "source": "games/gs1/src/shop/set_cursor_position.c",
       "size": 34,
       "all_exact": true,
       "editions": [
@@ -53894,7 +53950,7 @@
     },
     {
       "en_owner": "080b0a6c",
-      "source": "games/gs1/src/080b0a6c.c",
+      "source": "games/gs1/src/shop/place_cursor.c",
       "size": 64,
       "all_exact": true,
       "editions": [
@@ -53949,8 +54005,64 @@
       ]
     },
     {
+      "en_owner": "080b0fa4",
+      "source": "games/gs1/src/shop/draw_stock_page.c",
+      "size": 296,
+      "all_exact": true,
+      "editions": [
+        {
+          "edition": "ja",
+          "start": "0x080a7fa4",
+          "size": 296,
+          "differing_bytes": 0,
+          "byte_exact": true,
+          "error": null
+        },
+        {
+          "edition": "en",
+          "start": "0x080b0fa4",
+          "size": 296,
+          "differing_bytes": 0,
+          "byte_exact": true,
+          "error": null
+        },
+        {
+          "edition": "de",
+          "start": "0x080b35a4",
+          "size": 296,
+          "differing_bytes": 0,
+          "byte_exact": true,
+          "error": null
+        },
+        {
+          "edition": "es",
+          "start": "0x080b4fa4",
+          "size": 296,
+          "differing_bytes": 0,
+          "byte_exact": true,
+          "error": null
+        },
+        {
+          "edition": "fr",
+          "start": "0x080b4fa4",
+          "size": 296,
+          "differing_bytes": 0,
+          "byte_exact": true,
+          "error": null
+        },
+        {
+          "edition": "it",
+          "start": "0x080b0fa4",
+          "size": 296,
+          "differing_bytes": 0,
+          "byte_exact": true,
+          "error": null
+        }
+      ]
+    },
+    {
       "en_owner": "080b11c4",
-      "source": "games/gs1/src/080b11c4.c",
+      "source": "games/gs1/src/shop/update_party_member_list.c",
       "size": 156,
       "all_exact": true,
       "editions": [
@@ -54006,7 +54118,7 @@
     },
     {
       "en_owner": "080b1470",
-      "source": "games/gs1/src/080b1470.c",
+      "source": "games/gs1/src/shop/draw_party_member_items.c",
       "size": 204,
       "all_exact": true,
       "editions": [
@@ -54062,7 +54174,7 @@
     },
     {
       "en_owner": "080b153c",
-      "source": "games/gs1/src/080b153c.c",
+      "source": "games/gs1/src/shop/select_purchase_quantity.c",
       "size": 216,
       "edition_variant": true,
       "all_exact": true,
@@ -54119,7 +54231,7 @@
     },
     {
       "en_owner": "080b17e4",
-      "source": "games/gs1/src/080b17e4.c",
+      "source": "games/gs1/src/shop/complete_purchase.c",
       "size": 132,
       "all_exact": true,
       "editions": [
@@ -54175,7 +54287,7 @@
     },
     {
       "en_owner": "080b196c",
-      "source": "games/gs1/src/080b196c.c",
+      "source": "games/gs1/src/shop/sell_replaced_item.c",
       "size": 96,
       "all_exact": true,
       "editions": [
@@ -54231,7 +54343,7 @@
     },
     {
       "en_owner": "080b19cc",
-      "source": "games/gs1/src/080b19cc.c",
+      "source": "games/gs1/src/shop/compute_sale_price.c",
       "size": 72,
       "all_exact": true,
       "editions": [
@@ -54287,7 +54399,7 @@
     },
     {
       "en_owner": "080b1a14",
-      "source": "games/gs1/src/080b1a14.c",
+      "source": "games/gs1/src/shop/select_party_member.c",
       "size": 444,
       "edition_variant": true,
       "all_exact": true,
@@ -54343,8 +54455,64 @@
       ]
     },
     {
+      "en_owner": "080b1dec",
+      "source": "games/gs1/src/shop/draw_party_member_item_grid.c",
+      "size": 148,
+      "all_exact": false,
+      "editions": [
+        {
+          "edition": "ja",
+          "start": "0x080a8e10",
+          "size": 148,
+          "differing_bytes": 0,
+          "byte_exact": true,
+          "error": null
+        },
+        {
+          "edition": "en",
+          "start": "0x080b1dec",
+          "size": 148,
+          "differing_bytes": 0,
+          "byte_exact": true,
+          "error": null
+        },
+        {
+          "edition": "de",
+          "start": "0x080b43ec",
+          "size": 148,
+          "differing_bytes": 0,
+          "byte_exact": true,
+          "error": null
+        },
+        {
+          "edition": "es",
+          "start": "0x080b5dec",
+          "size": 148,
+          "differing_bytes": 0,
+          "byte_exact": true,
+          "error": null
+        },
+        {
+          "edition": "fr",
+          "start": "0x080b5dec",
+          "size": 148,
+          "differing_bytes": 0,
+          "byte_exact": true,
+          "error": null
+        },
+        {
+          "edition": "it",
+          "start": "0x080b1dec",
+          "size": 148,
+          "differing_bytes": 2,
+          "byte_exact": false,
+          "error": null
+        }
+      ]
+    },
+    {
       "en_owner": "080b1e80",
-      "source": "games/gs1/src/080b1e80.c",
+      "source": "games/gs1/src/shop/select_sale_quantity.c",
       "size": 204,
       "edition_variant": true,
       "all_exact": true,
@@ -54401,7 +54569,7 @@
     },
     {
       "en_owner": "080b20e8",
-      "source": "games/gs1/src/080b20e8.c",
+      "source": "games/gs1/src/shop/compute_repair_price.c",
       "size": 38,
       "all_exact": true,
       "editions": [
@@ -54457,7 +54625,7 @@
     },
     {
       "en_owner": "080b2110",
-      "source": "games/gs1/src/080b2110.c",
+      "source": "games/gs1/src/shop/run_party_member_selection.c",
       "size": 12,
       "all_exact": true,
       "editions": [
@@ -59555,7 +59723,7 @@
     },
     {
       "en_owner": "080bbb0c",
-      "source": "games/gs1/src/080bbb0c.c",
+      "source": "games/gs1/src/battle/resolve_action.c",
       "size": 6332,
       "all_exact": true,
       "editions": [
@@ -72607,7 +72775,7 @@
     },
     {
       "en_owner": "080fa1c8",
-      "source": "games/gs1/src/080fa1c8.c",
+      "source": "games/gs1/src/audio/read_track_command_byte.c",
       "size": 10,
       "all_exact": true,
       "editions": [
@@ -72663,7 +72831,7 @@
     },
     {
       "en_owner": "080fa1fc",
-      "source": "games/gs1/src/080fa1fc.c",
+      "source": "games/gs1/src/audio/pcm_key_to_frequency.c",
       "size": 100,
       "all_exact": true,
       "editions": [
@@ -72719,7 +72887,7 @@
     },
     {
       "en_owner": "080fa280",
-      "source": "games/gs1/src/080fa280.c",
+      "source": "games/gs1/src/audio/begin_music_player_fade_out.c",
       "size": 32,
       "all_exact": true,
       "editions": [
@@ -72775,7 +72943,7 @@
     },
     {
       "en_owner": "080fa2a0",
-      "source": "games/gs1/src/080fa2a0.c",
+      "source": "games/gs1/src/audio/initialize.c",
       "size": 120,
       "all_exact": true,
       "editions": [
@@ -72831,7 +72999,7 @@
     },
     {
       "en_owner": "080fa318",
-      "source": "games/gs1/src/080fa318.c",
+      "source": "games/gs1/src/audio/run_mixer.c",
       "size": 10,
       "all_exact": true,
       "editions": [
@@ -72887,7 +73055,7 @@
     },
     {
       "en_owner": "080fa324",
-      "source": "games/gs1/src/080fa324.c",
+      "source": "games/gs1/src/audio/play_sound.c",
       "size": 44,
       "all_exact": true,
       "editions": [
@@ -72943,7 +73111,7 @@
     },
     {
       "en_owner": "080fa350",
-      "source": "games/gs1/src/080fa350.c",
+      "source": "games/gs1/src/audio/play_sound_if_inactive.c",
       "size": 76,
       "all_exact": true,
       "editions": [
@@ -72999,7 +73167,7 @@
     },
     {
       "en_owner": "080fa39c",
-      "source": "games/gs1/src/080fa39c.c",
+      "source": "games/gs1/src/audio/play_or_resume_sound.c",
       "size": 84,
       "all_exact": true,
       "editions": [
@@ -73055,7 +73223,7 @@
     },
     {
       "en_owner": "080fa3f0",
-      "source": "games/gs1/src/080fa3f0.c",
+      "source": "games/gs1/src/audio/stop_sound.c",
       "size": 52,
       "all_exact": true,
       "editions": [
@@ -73111,7 +73279,7 @@
     },
     {
       "en_owner": "080fa424",
-      "source": "games/gs1/src/080fa424.c",
+      "source": "games/gs1/src/audio/resume_sound.c",
       "size": 52,
       "all_exact": true,
       "editions": [
@@ -73167,7 +73335,7 @@
     },
     {
       "en_owner": "080fa458",
-      "source": "games/gs1/src/080fa458.c",
+      "source": "games/gs1/src/audio/stop_all_players.c",
       "size": 44,
       "all_exact": true,
       "editions": [
@@ -73223,7 +73391,7 @@
     },
     {
       "en_owner": "080fa484",
-      "source": "games/gs1/src/080fa484.c",
+      "source": "games/gs1/src/audio/resume_music_player.c",
       "size": 10,
       "all_exact": true,
       "editions": [
@@ -73279,7 +73447,7 @@
     },
     {
       "en_owner": "080fa490",
-      "source": "games/gs1/src/080fa490.c",
+      "source": "games/gs1/src/audio/resume_all_players.c",
       "size": 44,
       "all_exact": true,
       "editions": [
@@ -73335,7 +73503,7 @@
     },
     {
       "en_owner": "080fa4bc",
-      "source": "games/gs1/src/080fa4bc.c",
+      "source": "games/gs1/src/audio/fade_out_music_player.c",
       "size": 14,
       "all_exact": true,
       "editions": [
@@ -73391,7 +73559,7 @@
     },
     {
       "en_owner": "080fa4cc",
-      "source": "games/gs1/src/080fa4cc.c",
+      "source": "games/gs1/src/audio/fade_music_player.c",
       "size": 32,
       "all_exact": true,
       "editions": [
@@ -73447,7 +73615,7 @@
     },
     {
       "en_owner": "080fa514",
-      "source": "games/gs1/src/080fa514.c",
+      "source": "games/gs1/src/audio/reset_active_tracks.c",
       "size": 72,
       "all_exact": true,
       "editions": [
@@ -73503,7 +73671,7 @@
     },
     {
       "en_owner": "080fa55c",
-      "source": "games/gs1/src/080fa55c.c",
+      "source": "games/gs1/src/audio/initialize_cgb.c",
       "size": 280,
       "all_exact": true,
       "editions": [
@@ -73559,7 +73727,7 @@
     },
     {
       "en_owner": "080fa678",
-      "source": "games/gs1/src/080fa678.c",
+      "source": "games/gs1/src/audio/invoke_command_slot_34.c",
       "size": 20,
       "all_exact": true,
       "editions": [
@@ -73615,7 +73783,7 @@
     },
     {
       "en_owner": "080fa68c",
-      "source": "games/gs1/src/080fa68c.c",
+      "source": "games/gs1/src/audio/invoke_command_slot_35.c",
       "size": 20,
       "all_exact": true,
       "editions": [
@@ -73671,7 +73839,7 @@
     },
     {
       "en_owner": "080fa6a0",
-      "source": "games/gs1/src/080fa6a0.c",
+      "source": "games/gs1/src/audio/initialize_engine.c",
       "size": 248,
       "all_exact": true,
       "editions": [
@@ -73727,7 +73895,7 @@
     },
     {
       "en_owner": "080fa798",
-      "source": "games/gs1/src/080fa798.c",
+      "source": "games/gs1/src/audio/set_pcm_rate.c",
       "size": 164,
       "all_exact": true,
       "editions": [
@@ -73783,7 +73951,7 @@
     },
     {
       "en_owner": "080fa83c",
-      "source": "games/gs1/src/080fa83c.c",
+      "source": "games/gs1/src/audio/set_mode.c",
       "size": 152,
       "all_exact": true,
       "editions": [
@@ -73839,7 +74007,7 @@
     },
     {
       "en_owner": "080fa8d4",
-      "source": "games/gs1/src/080fa8d4.c",
+      "source": "games/gs1/src/audio/stop_all_channels.c",
       "size": 84,
       "all_exact": true,
       "editions": [
@@ -73895,7 +74063,7 @@
     },
     {
       "en_owner": "080fa928",
-      "source": "games/gs1/src/080fa928.c",
+      "source": "games/gs1/src/audio/disable_pcm_dma.c",
       "size": 124,
       "all_exact": true,
       "editions": [
@@ -73951,7 +74119,7 @@
     },
     {
       "en_owner": "080fa9a4",
-      "source": "games/gs1/src/080fa9a4.c",
+      "source": "games/gs1/src/audio/enable_pcm_dma.c",
       "size": 60,
       "all_exact": true,
       "editions": [
@@ -74007,7 +74175,7 @@
     },
     {
       "en_owner": "080fa9e0",
-      "source": "games/gs1/src/080fa9e0.c",
+      "source": "games/gs1/src/audio/initialize_music_player.c",
       "size": 120,
       "all_exact": true,
       "editions": [
@@ -74063,7 +74231,7 @@
     },
     {
       "en_owner": "080faa58",
-      "source": "games/gs1/src/080faa58.c",
+      "source": "games/gs1/src/audio/start_song.c",
       "size": 228,
       "all_exact": true,
       "editions": [
@@ -74119,7 +74287,7 @@
     },
     {
       "en_owner": "080fab3c",
-      "source": "games/gs1/src/080fab3c.c",
+      "source": "games/gs1/src/audio/stop_music_player.c",
       "size": 64,
       "all_exact": true,
       "editions": [
@@ -74175,7 +74343,7 @@
     },
     {
       "en_owner": "080fab7c",
-      "source": "games/gs1/src/080fab7c.c",
+      "source": "games/gs1/src/audio/update_music_player_fade.c",
       "size": 200,
       "all_exact": true,
       "editions": [
@@ -74231,7 +74399,7 @@
     },
     {
       "en_owner": "080fac44",
-      "source": "games/gs1/src/080fac44.c",
+      "source": "games/gs1/src/audio/update_track_volume_pitch.c",
       "size": 180,
       "all_exact": true,
       "editions": [
@@ -74287,7 +74455,7 @@
     },
     {
       "en_owner": "080facf8",
-      "source": "games/gs1/src/080facf8.c",
+      "source": "games/gs1/src/audio/cgb_key_to_frequency.c",
       "size": 168,
       "all_exact": true,
       "editions": [
@@ -74343,7 +74511,7 @@
     },
     {
       "en_owner": "080fada0",
-      "source": "games/gs1/src/080fada0.c",
+      "source": "games/gs1/src/audio/stop_cgb_oscillator.c",
       "size": 80,
       "all_exact": true,
       "editions": [
@@ -74399,7 +74567,7 @@
     },
     {
       "en_owner": "080fadf0",
-      "source": "games/gs1/src/080fadf0.c",
+      "source": "games/gs1/src/audio/update_cgb_pan_envelope.c",
       "size": 104,
       "all_exact": true,
       "editions": [

@@ -329,7 +329,7 @@
       "address": "0x0807a828",
       "size": "0xf7d8",
       "kind": "golden-sun-gameplay-databases",
-      "source": "games/gs1/assets/data/resource_5_database.json"
+      "source": "games/gs1/assets/data/gameplay_databases.json"
     },
     {
       "address": "0x0809c410",

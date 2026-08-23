@@ -18,7 +18,7 @@ s32 Func_08079cbc(s32 arg0)
     while (--index >= 0) {
         v = *(u16 *)((u8 *)offset + arg0);
         if (v & mask) {
-            data = (u8 *)Func_08078414(
+            data = (u8 *)Item_GetDirect(
                 *(u16 *)((u8 *)offset + arg0)) + 24;
             j = 4;
             while (--j >= 0) {

@@ -1,6 +1,5 @@
-#include "types.h"
+#include "game_flags.h"
 #include "party_state.h"
-void Func_08079374(s32 value);
 
 s32 Func_08079664(s32 arg0)
 {
@@ -8,8 +7,8 @@ s32 Func_08079664(s32 arg0)
     s32 index;
     s32 limit;
 
-    count = Func_080795fc(arg0);
-    Func_08079374(arg0);
+    count = Party_CountActiveOwners(arg0);
+    GameFlag_Clear(arg0);
 
     index = 0;
     while (index < count
@@ -34,5 +33,5 @@ s32 Func_08079664(s32 arg0)
         } while (remaining != 0);
     }
 
-    return Func_080795fc(limit);
+    return Party_CountActiveOwners(limit);
 }

@@ -337,18 +337,49 @@ fn c_identifier(text: &str) -> bool {
     }
     bytes.all(|byte| byte == b'_' || byte.is_ascii_alphanumeric())
 }
-fn source_defines_symbol(text: &str, symbol: &str) -> bool {
-    if definition_guard(symbol).is_match(text) {
-        return true;
-    }
+fn aliases_for_symbol(text: &str, symbol: &str) -> Vec<String> {
+    let mut aliases = Vec::new();
     for line in text.lines() {
         let fields: Vec<_> = line.split_ascii_whitespace().collect();
         if fields.len() != 3 || fields[0] != "#define" || fields[2] != symbol {
             continue;
         }
         let alias = fields[1];
-        if c_identifier(alias) && definition_guard(alias).is_match(text) {
-            return true;
+        if c_identifier(alias) {
+            aliases.push(alias.to_string());
+        }
+    }
+    aliases
+}
+fn source_defines_symbol(text: &str, symbol: &str) -> bool {
+    definition_guard(symbol).is_match(text)
+        || aliases_for_symbol(text, symbol)
+            .iter()
+            .any(|alias| definition_guard(alias).is_match(text))
+}
+fn quoted_include(line: &str) -> Option<&str> {
+    let rest = line.trim().strip_prefix("#include")?.trim();
+    let rest = rest.strip_prefix('"')?;
+    let end = rest.find('"')?;
+    Some(&rest[..end])
+}
+fn source_defines_symbol_through_header(source: &Path, text: &str, symbol: &str) -> bool {
+    if source_defines_symbol(text, symbol) {
+        return true;
+    }
+    for include in text.lines().filter_map(quoted_include) {
+        let local = source.parent().map(|parent| parent.join(include));
+        let project = root().join("games/gs1/include").join(include);
+        for header in local.into_iter().chain(std::iter::once(project)) {
+            let Ok(header_text) = fs::read_to_string(header) else {
+                continue;
+            };
+            if aliases_for_symbol(&header_text, symbol)
+                .iter()
+                .any(|alias| definition_guard(alias).is_match(text))
+            {
+                return true;
+            }
         }
     }
     false
@@ -406,7 +437,7 @@ fn compile_overlay_with_mutations(
     let call_via_base = routed_call_via_base(overlay, &routing_source);
     let symbol = format!("Func_{}", stem.to_lowercase());
     let text = fs::read_to_string(source).map_err(|error| format!("{source_display}: {error}"))?;
-    if !source_defines_symbol(&text, &symbol) {
+    if !source_defines_symbol_through_header(source, &text, &symbol) {
         return Err(format!(
             "overlay C source does not define {symbol}: {source_display}"
         ));
@@ -717,6 +748,25 @@ mod source_activation_tests {
         fs::write(&assembly, "AlchemyC_0200dead:\n  .space 4\n").unwrap();
         let error = overlay_c_sources(&OverlaySource::path(assembly)).unwrap_err();
         assert!(error.contains("resource_382:0200dead has an AlchemyC placeholder"));
+    }
+
+    #[test]
+    fn included_header_can_name_an_overlay_owner() {
+        let work = tempdir().unwrap();
+        let source = work.path().join("spawn_effect.c");
+        let header = work.path().join("effect.h");
+        fs::write(
+            &source,
+            "#include \"effect.h\"\nvoid SceneEffect_Spawn(void) {}\n",
+        )
+        .unwrap();
+        fs::write(header, "#define SceneEffect_Spawn Func_0200013c\n").unwrap();
+        let text = fs::read_to_string(&source).unwrap();
+        assert!(source_defines_symbol_through_header(
+            &source,
+            &text,
+            "Func_0200013c"
+        ));
     }
 }
 pub(crate) fn js_parse_int_hex(text: &str) -> Option<i64> {

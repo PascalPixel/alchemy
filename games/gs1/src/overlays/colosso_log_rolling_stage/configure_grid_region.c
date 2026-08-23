@@ -1,0 +1,15 @@
+#include "colosso_log_rolling_stage.h"
+
+extern void Func_02004c0e(s32);
+extern void Func_02004baa(s32, s32, s32, s32, s32, s32);
+
+void ColossoLogRollingStage_ConfigureGridRegion(void)
+{
+    Func_02004c0e(0x360);
+    {
+        s32 width = 49;
+        s32 height = 61;
+
+        Func_02004baa(47, 61, 1, 4, width, height);
+    }
+}

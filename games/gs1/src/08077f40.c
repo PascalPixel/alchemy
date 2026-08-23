@@ -1,11 +1,10 @@
-#include "types.h"
+#include "game_flags.h"
 
 s32 Func_08077428(s32);
-s32 Func_08079358(s32 arg0);
 void Func_08079ae8(s32 arg0);
 
 void Func_08077f40(void) {
-    Func_08079358(0x20);
+    GameFlag_Set(0x20);
     Func_08079ae8(0);
     Func_08079ae8(1);
     Func_08079ae8(5);

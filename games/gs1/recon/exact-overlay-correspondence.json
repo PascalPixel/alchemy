@@ -24977,7 +24977,7 @@
     },
     {
       "en_owner": "resource_395:0x02000030",
-      "source": "games/gs1/src/resource_395_c_02000030.c",
+      "source": "games/gs1/src/overlays/palette_scene/get_script_data.c",
       "resource": "resource_395",
       "size": 8,
       "core_bytes": 4,
@@ -25009,7 +25009,7 @@
     },
     {
       "en_owner": "resource_395:0x02000038",
-      "source": "games/gs1/src/resource_395_c_02000038.c",
+      "source": "games/gs1/src/overlays/palette_scene/get_message_data.c",
       "resource": "resource_395",
       "size": 8,
       "core_bytes": 4,
@@ -25041,7 +25041,7 @@
     },
     {
       "en_owner": "resource_395:0x02000040",
-      "source": "games/gs1/src/resource_395_c_02000040.c",
+      "source": "games/gs1/src/overlays/palette_scene/get_actor_data.c",
       "resource": "resource_395",
       "size": 8,
       "core_bytes": 4,
@@ -25073,7 +25073,7 @@
     },
     {
       "en_owner": "resource_395:0x02000048",
-      "source": "games/gs1/src/resource_395_c_02000048.c",
+      "source": "games/gs1/src/overlays/palette_scene/get_effect_data.c",
       "resource": "resource_395",
       "size": 8,
       "core_bytes": 4,
@@ -25105,7 +25105,7 @@
     },
     {
       "en_owner": "resource_395:0x02000050",
-      "source": "games/gs1/src/resource_395_c_02000050.c",
+      "source": "games/gs1/src/overlays/palette_scene/initialize.c",
       "resource": "resource_395",
       "size": 48,
       "core_bytes": 28,
@@ -25137,7 +25137,7 @@
     },
     {
       "en_owner": "resource_395:0x02000080",
-      "source": "games/gs1/src/resource_395_c_02000080.c",
+      "source": "games/gs1/src/overlays/palette_scene/get_state.c",
       "resource": "resource_395",
       "size": 8,
       "core_bytes": 4,
@@ -25169,7 +25169,7 @@
     },
     {
       "en_owner": "resource_395:0x02000248",
-      "source": "games/gs1/src/resource_395_c_02000248.c",
+      "source": "games/gs1/src/overlays/palette_scene/run_actor_nine_branch.c",
       "resource": "resource_395",
       "size": 60,
       "core_bytes": 24,
@@ -25201,7 +25201,7 @@
     },
     {
       "en_owner": "resource_395:0x02000284",
-      "source": "games/gs1/src/resource_395_c_02000284.c",
+      "source": "games/gs1/src/overlays/palette_scene/run_actor_eight_branch.c",
       "resource": "resource_395",
       "size": 60,
       "core_bytes": 24,
@@ -25233,7 +25233,7 @@
     },
     {
       "en_owner": "resource_395:0x020002c0",
-      "source": "games/gs1/src/resource_395_c_020002c0.c",
+      "source": "games/gs1/src/overlays/palette_scene/run_flagged_branch.c",
       "resource": "resource_395",
       "size": 44,
       "core_bytes": 16,
@@ -25265,7 +25265,7 @@
     },
     {
       "en_owner": "resource_395:0x020011e8",
-      "source": "games/gs1/src/resource_395_c_020011e8.c",
+      "source": "games/gs1/src/overlays/palette_scene/advance_effect_frame.c",
       "resource": "resource_395",
       "size": 48,
       "core_bytes": 40,
@@ -25297,7 +25297,7 @@
     },
     {
       "en_owner": "resource_395:0x02001218",
-      "source": "games/gs1/src/resource_395_c_02001218.c",
+      "source": "games/gs1/src/overlays/palette_scene/spawn_effect.c",
       "resource": "resource_395",
       "size": 156,
       "core_bytes": 120,
@@ -25329,7 +25329,7 @@
     },
     {
       "en_owner": "resource_395:0x020012b4",
-      "source": "games/gs1/src/resource_395_c_020012b4.c",
+      "source": "games/gs1/src/overlays/palette_scene/advance_transition.c",
       "resource": "resource_395",
       "size": 64,
       "core_bytes": 44,
@@ -25361,7 +25361,7 @@
     },
     {
       "en_owner": "resource_395:0x0200152c",
-      "source": "games/gs1/src/resource_395_c_0200152c.c",
+      "source": "games/gs1/src/overlays/palette_scene/advance_orbit.c",
       "resource": "resource_395",
       "size": 116,
       "core_bytes": 100,
@@ -25393,7 +25393,7 @@
     },
     {
       "en_owner": "resource_395:0x0200172c",
-      "source": "games/gs1/src/resource_395_c_0200172c.c",
+      "source": "games/gs1/src/overlays/palette_scene/set_record_value.c",
       "resource": "resource_395",
       "size": 60,
       "core_bytes": 48,
@@ -25425,7 +25425,7 @@
     },
     {
       "en_owner": "resource_395:0x02001768",
-      "source": "games/gs1/src/overlays/resource_395/adjust_palette_window.c",
+      "source": "games/gs1/src/overlays/palette_scene/adjust_palette_window.c",
       "resource": "resource_395",
       "size": 104,
       "core_bytes": 76,
@@ -25457,7 +25457,7 @@
     },
     {
       "en_owner": "resource_395:0x020017d0",
-      "source": "games/gs1/src/overlays/resource_395/adjust_rgb555_color.c",
+      "source": "games/gs1/src/overlays/palette_scene/adjust_rgb555_color.c",
       "resource": "resource_395",
       "size": 104,
       "core_bytes": 88,
@@ -37137,7 +37137,7 @@
     },
     {
       "en_owner": "resource_3a0:0x02000048",
-      "source": "games/gs1/src/resource_3a0_c_02000048.c",
+      "source": "games/gs1/src/overlays/scene_effect_sequence/spawn_primary_effect.c",
       "resource": "resource_3a0",
       "size": 86,
       "core_bytes": 70,
@@ -37169,7 +37169,7 @@
     },
     {
       "en_owner": "resource_3a0:0x020000a0",
-      "source": "games/gs1/src/resource_3a0_c_020000a0.c",
+      "source": "games/gs1/src/overlays/scene_effect_sequence/spawn_secondary_effect.c",
       "resource": "resource_3a0",
       "size": 98,
       "core_bytes": 86,
@@ -37233,7 +37233,7 @@
     },
     {
       "en_owner": "resource_3a0:0x0200013c",
-      "source": "games/gs1/src/overlays/resource_3a0/spawn_configured_effect.c",
+      "source": "games/gs1/src/overlays/scene_effect_sequence/spawn_configured_effect.c",
       "resource": "resource_3a0",
       "size": 472,
       "core_bytes": 420,
@@ -37265,7 +37265,7 @@
     },
     {
       "en_owner": "resource_3a0:0x02000314",
-      "source": "games/gs1/src/resource_3a0_c_02000314.c",
+      "source": "games/gs1/src/overlays/scene_effect_sequence/request_fixed_effect.c",
       "resource": "resource_3a0",
       "size": 16,
       "core_bytes": 12,
@@ -37297,7 +37297,7 @@
     },
     {
       "en_owner": "resource_3a0:0x02000358",
-      "source": "games/gs1/src/resource_3a0_c_02000358.c",
+      "source": "games/gs1/src/overlays/scene_effect_sequence/advance_rotating_sprite.c",
       "resource": "resource_3a0",
       "size": 24,
       "core_bytes": 20,
@@ -37329,7 +37329,7 @@
     },
     {
       "en_owner": "resource_3a0:0x02000370",
-      "source": "games/gs1/src/resource_3a0_c_02000370.c",
+      "source": "games/gs1/src/overlays/scene_effect_sequence/spawn_periodic_effect.c",
       "resource": "resource_3a0",
       "size": 92,
       "core_bytes": 72,
@@ -37361,7 +37361,7 @@
     },
     {
       "en_owner": "resource_3a0:0x020003cc",
-      "source": "games/gs1/src/overlays/resource_3a0/calculate_position_distance.c",
+      "source": "games/gs1/src/overlays/scene_effect_sequence/calculate_fixed_point_position_distance.c",
       "resource": "resource_3a0",
       "size": 60,
       "core_bytes": 52,
@@ -37393,7 +37393,7 @@
     },
     {
       "en_owner": "resource_3a0:0x0200059c",
-      "source": "games/gs1/src/resource_3a0_c_0200059c.c",
+      "source": "games/gs1/src/overlays/scene_effect_sequence/get_primary_scene_data.c",
       "resource": "resource_3a0",
       "size": 8,
       "core_bytes": 4,
@@ -37425,7 +37425,7 @@
     },
     {
       "en_owner": "resource_3a0:0x020005a4",
-      "source": "games/gs1/src/resource_3a0_c_020005a4.c",
+      "source": "games/gs1/src/overlays/scene_effect_sequence/get_initial_scene_value.c",
       "resource": "resource_3a0",
       "size": 4,
       "core_bytes": 4,
@@ -37457,7 +37457,7 @@
     },
     {
       "en_owner": "resource_3a0:0x020005a8",
-      "source": "games/gs1/src/resource_3a0_c_020005a8.c",
+      "source": "games/gs1/src/overlays/scene_effect_sequence/get_secondary_scene_data.c",
       "resource": "resource_3a0",
       "size": 8,
       "core_bytes": 4,
@@ -37489,7 +37489,7 @@
     },
     {
       "en_owner": "resource_3a0:0x020005b0",
-      "source": "games/gs1/src/resource_3a0_c_020005b0.c",
+      "source": "games/gs1/src/overlays/scene_effect_sequence/prepare_scene_state.c",
       "resource": "resource_3a0",
       "size": 36,
       "core_bytes": 24,
@@ -37521,7 +37521,7 @@
     },
     {
       "en_owner": "resource_3a0:0x020005d4",
-      "source": "games/gs1/src/resource_3a0_c_020005d4.c",
+      "source": "games/gs1/src/overlays/scene_effect_sequence/show_actor_setup_message.c",
       "resource": "resource_3a0",
       "size": 32,
       "core_bytes": 12,
@@ -37553,7 +37553,7 @@
     },
     {
       "en_owner": "resource_3a0:0x0200094c",
-      "source": "games/gs1/src/resource_3a0_c_0200094c.c",
+      "source": "games/gs1/src/overlays/scene_effect_sequence/activate_nearby_actor.c",
       "resource": "resource_3a0",
       "size": 28,
       "core_bytes": 20,
@@ -37585,7 +37585,7 @@
     },
     {
       "en_owner": "resource_3a0:0x02000cec",
-      "source": "games/gs1/src/resource_3a0_c_02000cec.c",
+      "source": "games/gs1/src/overlays/scene_effect_sequence/run_actor_scene_message.c",
       "resource": "resource_3a0",
       "size": 32,
       "core_bytes": 12,
@@ -37617,7 +37617,7 @@
     },
     {
       "en_owner": "resource_3a0:0x02000e4c",
-      "source": "games/gs1/src/resource_3a0_c_02000e4c.c",
+      "source": "games/gs1/src/overlays/scene_effect_sequence/dispatch_scene_step.c",
       "resource": "resource_3a0",
       "size": 228,
       "core_bytes": 140,
@@ -37649,7 +37649,7 @@
     },
     {
       "en_owner": "resource_3a0:0x02001140",
-      "source": "games/gs1/src/resource_3a0_c_02001140.c",
+      "source": "games/gs1/src/overlays/scene_effect_sequence/get_tertiary_scene_data.c",
       "resource": "resource_3a0",
       "size": 8,
       "core_bytes": 4,
@@ -61841,7 +61841,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02000030",
-      "source": "games/gs1/src/resource_3bc_c_02000030.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/get_script_data.c",
       "resource": "resource_3bc",
       "size": 8,
       "core_bytes": 4,
@@ -61873,7 +61873,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02000038",
-      "source": "games/gs1/src/resource_3bc_c_02000038.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/get_message_data.c",
       "resource": "resource_3bc",
       "size": 4,
       "core_bytes": 4,
@@ -61905,7 +61905,7 @@
     },
     {
       "en_owner": "resource_3bc:0x0200003c",
-      "source": "games/gs1/src/resource_3bc_c_0200003c.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/get_actor_data.c",
       "resource": "resource_3bc",
       "size": 8,
       "core_bytes": 4,
@@ -61937,7 +61937,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02000044",
-      "source": "games/gs1/src/resource_3bc_c_02000044.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/get_effect_data.c",
       "resource": "resource_3bc",
       "size": 8,
       "core_bytes": 4,
@@ -61969,7 +61969,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02000188",
-      "source": "games/gs1/src/resource_3bc_c_02000188.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/reset_and_run_scene_task.c",
       "resource": "resource_3bc",
       "size": 44,
       "core_bytes": 24,
@@ -62001,7 +62001,7 @@
     },
     {
       "en_owner": "resource_3bc:0x020001b4",
-      "source": "games/gs1/src/resource_3bc_c_020001b4.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/start_scene_task.c",
       "resource": "resource_3bc",
       "size": 20,
       "core_bytes": 12,
@@ -62033,7 +62033,7 @@
     },
     {
       "en_owner": "resource_3bc:0x020001c8",
-      "source": "games/gs1/src/resource_3bc_c_020001c8.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/wait_for_scene_task.c",
       "resource": "resource_3bc",
       "size": 60,
       "core_bytes": 44,
@@ -62065,7 +62065,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02000204",
-      "source": "games/gs1/src/resource_3bc_c_02000204.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/nudge_stage_actors_left.c",
       "resource": "resource_3bc",
       "size": 72,
       "core_bytes": 56,
@@ -62097,7 +62097,7 @@
     },
     {
       "en_owner": "resource_3bc:0x0200024c",
-      "source": "games/gs1/src/resource_3bc_c_0200024c.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/configure_grid_region.c",
       "resource": "resource_3bc",
       "size": 38,
       "core_bytes": 30,
@@ -62129,7 +62129,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02000274",
-      "source": "games/gs1/src/resource_3bc_c_02000274.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/configure_primary_object_set.c",
       "resource": "resource_3bc",
       "size": 132,
       "core_bytes": 88,
@@ -62161,7 +62161,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02000404",
-      "source": "games/gs1/src/resource_3bc_c_02000404.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/configure_secondary_object_set.c",
       "resource": "resource_3bc",
       "size": 160,
       "core_bytes": 108,
@@ -62193,7 +62193,7 @@
     },
     {
       "en_owner": "resource_3bc:0x0200057c",
-      "source": "games/gs1/src/resource_3bc_c_0200057c.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/run_setup_completion_hooks.c",
       "resource": "resource_3bc",
       "size": 14,
       "core_bytes": 6,
@@ -62225,7 +62225,7 @@
     },
     {
       "en_owner": "resource_3bc:0x0200058c",
-      "source": "games/gs1/src/resource_3bc_c_0200058c.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/configure_actor_thirteen.c",
       "resource": "resource_3bc",
       "size": 68,
       "core_bytes": 52,
@@ -62257,7 +62257,7 @@
     },
     {
       "en_owner": "resource_3bc:0x020005d0",
-      "source": "games/gs1/src/resource_3bc_c_020005d0.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/noop_setup_hook.c",
       "resource": "resource_3bc",
       "size": 2,
       "core_bytes": 2,
@@ -62289,7 +62289,7 @@
     },
     {
       "en_owner": "resource_3bc:0x020005d4",
-      "source": "games/gs1/src/resource_3bc_c_020005d4.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/run_setup_hook.c",
       "resource": "resource_3bc",
       "size": 10,
       "core_bytes": 6,
@@ -62321,7 +62321,7 @@
     },
     {
       "en_owner": "resource_3bc:0x020005e0",
-      "source": "games/gs1/src/resource_3bc_c_020005e0.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/activate_clear_obstacle_actors.c",
       "resource": "resource_3bc",
       "size": 120,
       "core_bytes": 96,
@@ -62353,7 +62353,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02000658",
-      "source": "games/gs1/src/resource_3bc_c_02000658.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/show_actor_position_message.c",
       "resource": "resource_3bc",
       "size": 76,
       "core_bytes": 64,
@@ -62385,7 +62385,7 @@
     },
     {
       "en_owner": "resource_3bc:0x020006a4",
-      "source": "games/gs1/src/resource_3bc_c_020006a4.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/check_obstacle_destination.c",
       "resource": "resource_3bc",
       "size": 110,
       "core_bytes": 94,
@@ -62417,7 +62417,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02000714",
-      "source": "games/gs1/src/resource_3bc_c_02000714.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/check_path_clearance.c",
       "resource": "resource_3bc",
       "size": 88,
       "core_bytes": 64,
@@ -62449,7 +62449,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02000a20",
-      "source": "games/gs1/src/resource_3bc_c_02000a20.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/set_scene_event_values.c",
       "resource": "resource_3bc",
       "size": 34,
       "core_bytes": 18,
@@ -62481,7 +62481,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02000a44",
-      "source": "games/gs1/src/resource_3bc_c_02000a44.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/configure_scene_event_effect.c",
       "resource": "resource_3bc",
       "size": 64,
       "core_bytes": 36,
@@ -62513,7 +62513,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02000a84",
-      "source": "games/gs1/src/resource_3bc_c_02000a84.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/wait_for_scene_event_task.c",
       "resource": "resource_3bc",
       "size": 80,
       "core_bytes": 44,
@@ -62545,7 +62545,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02000ad4",
-      "source": "games/gs1/src/resource_3bc_c_02000ad4.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/offset_active_actor.c",
       "resource": "resource_3bc",
       "size": 92,
       "core_bytes": 64,
@@ -62577,7 +62577,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02000b30",
-      "source": "games/gs1/src/resource_3bc_c_02000b30.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/clamp_and_offset_active_actor.c",
       "resource": "resource_3bc",
       "size": 112,
       "core_bytes": 80,
@@ -62609,7 +62609,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02000ba0",
-      "source": "games/gs1/src/resource_3bc_c_02000ba0.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/noop_scene_event_hook.c",
       "resource": "resource_3bc",
       "size": 2,
       "core_bytes": 2,
@@ -62641,7 +62641,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02000d70",
-      "source": "games/gs1/src/resource_3bc_c_02000d70.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/run_scene_event_if_ready.c",
       "resource": "resource_3bc",
       "size": 18,
       "core_bytes": 10,
@@ -62673,7 +62673,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02000d84",
-      "source": "games/gs1/src/resource_3bc_c_02000d84.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/finish_or_continue_scene_event.c",
       "resource": "resource_3bc",
       "size": 24,
       "core_bytes": 12,
@@ -62705,7 +62705,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02000d9c",
-      "source": "games/gs1/src/resource_3bc_c_02000d9c.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/get_scene_event_state.c",
       "resource": "resource_3bc",
       "size": 8,
       "core_bytes": 4,
@@ -62737,7 +62737,7 @@
     },
     {
       "en_owner": "resource_3bc:0x0200137c",
-      "source": "games/gs1/src/resource_3bc_c_0200137c.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/advance_particle_motion.c",
       "resource": "resource_3bc",
       "size": 68,
       "core_bytes": 64,
@@ -62769,7 +62769,7 @@
     },
     {
       "en_owner": "resource_3bc:0x020013c0",
-      "source": "games/gs1/src/resource_3bc_c_020013c0.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/spawn_periodic_scene_particle.c",
       "resource": "resource_3bc",
       "size": 180,
       "core_bytes": 136,
@@ -62801,7 +62801,7 @@
     },
     {
       "en_owner": "resource_3bc:0x020022c4",
-      "source": "games/gs1/src/resource_3bc_c_020022c4.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/position_stage_actor.c",
       "resource": "resource_3bc",
       "size": 48,
       "core_bytes": 32,
@@ -62833,7 +62833,7 @@
     },
     {
       "en_owner": "resource_3bc:0x020022f4",
-      "source": "games/gs1/src/resource_3bc_c_020022f4.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/position_and_activate_stage_actor.c",
       "resource": "resource_3bc",
       "size": 60,
       "core_bytes": 36,
@@ -62865,7 +62865,7 @@
     },
     {
       "en_owner": "resource_3bc:0x020024d0",
-      "source": "games/gs1/src/resource_3bc_c_020024d0.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/run_log_rolling_interaction.c",
       "resource": "resource_3bc",
       "size": 248,
       "core_bytes": 132,
@@ -62897,7 +62897,7 @@
     },
     {
       "en_owner": "resource_3bc:0x020025c8",
-      "source": "games/gs1/src/resource_3bc_c_020025c8.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/restore_stage_actor_positions.c",
       "resource": "resource_3bc",
       "size": 120,
       "core_bytes": 84,
@@ -62929,7 +62929,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02002710",
-      "source": "games/gs1/src/resource_3bc_c_02002710.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/mark_scene_progress.c",
       "resource": "resource_3bc",
       "size": 72,
       "core_bytes": 56,
@@ -62961,7 +62961,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02002758",
-      "source": "games/gs1/src/resource_3bc_c_02002758.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/select_nearest_stage_obstacle.c",
       "resource": "resource_3bc",
       "size": 308,
       "core_bytes": 228,
@@ -62993,7 +62993,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02002a50",
-      "source": "games/gs1/src/resource_3bc_c_02002a50.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/clear_saved_actor_positions.c",
       "resource": "resource_3bc",
       "size": 66,
       "core_bytes": 42,
@@ -63025,7 +63025,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02002a94",
-      "source": "games/gs1/src/overlays/resource_3bc/run_state_interaction.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/run_state_interaction.c",
       "resource": "resource_3bc",
       "size": 188,
       "core_bytes": 116,
@@ -63057,7 +63057,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02002b50",
-      "source": "games/gs1/src/overlays/resource_3bc/initialize_state_interaction.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/initialize_state_interaction.c",
       "resource": "resource_3bc",
       "size": 92,
       "core_bytes": 56,
@@ -63089,7 +63089,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02002e18",
-      "source": "games/gs1/src/resource_3bc_c_02002e18.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/apply_item_to_matching_slots.c",
       "resource": "resource_3bc",
       "size": 60,
       "core_bytes": 48,
@@ -63121,7 +63121,7 @@
     },
     {
       "en_owner": "resource_3bc:0x020033d8",
-      "source": "games/gs1/src/resource_3bc_c_020033d8.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/initialize_mode_task.c",
       "resource": "resource_3bc",
       "size": 142,
       "core_bytes": 82,
@@ -63153,7 +63153,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02003468",
-      "source": "games/gs1/src/resource_3bc_c_02003468.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/run_scripted_transition.c",
       "resource": "resource_3bc",
       "size": 268,
       "core_bytes": 104,
@@ -63185,7 +63185,7 @@
     },
     {
       "en_owner": "resource_3bc:0x020038dc",
-      "source": "games/gs1/src/resource_3bc_c_020038dc.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/reset_actor_motion.c",
       "resource": "resource_3bc",
       "size": 32,
       "core_bytes": 24,
@@ -63217,7 +63217,7 @@
     },
     {
       "en_owner": "resource_3bc:0x020038fc",
-      "source": "games/gs1/src/resource_3bc_c_020038fc.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/ensure_palette_handle.c",
       "resource": "resource_3bc",
       "size": 32,
       "core_bytes": 24,
@@ -63249,7 +63249,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02003a58",
-      "source": "games/gs1/src/resource_3bc_c_02003a58.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/start_palette_task.c",
       "resource": "resource_3bc",
       "size": 98,
       "core_bytes": 58,
@@ -63281,7 +63281,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02003abc",
-      "source": "games/gs1/src/resource_3bc_c_02003abc.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/start_palette_task_from_state.c",
       "resource": "resource_3bc",
       "size": 92,
       "core_bytes": 48,
@@ -63313,7 +63313,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02003b18",
-      "source": "games/gs1/src/resource_3bc_c_02003b18.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/stop_palette_task.c",
       "resource": "resource_3bc",
       "size": 40,
       "core_bytes": 20,
@@ -63345,7 +63345,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02003b40",
-      "source": "games/gs1/src/resource_3bc_c_02003b40.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/position_scaled_object.c",
       "resource": "resource_3bc",
       "size": 64,
       "core_bytes": 48,
@@ -63377,7 +63377,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02003b80",
-      "source": "games/gs1/src/overlays/resource_3bc/spawn_positioned_object.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/spawn_positioned_object.c",
       "resource": "resource_3bc",
       "size": 78,
       "core_bytes": 54,
@@ -63409,7 +63409,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02003c94",
-      "source": "games/gs1/src/resource_3bc_c_02003c94.c",
+      "source": "games/gs1/src/overlays/shared/write_u32_as_hex.c",
       "resource": "resource_3bc",
       "size": 44,
       "core_bytes": 40,
@@ -63441,7 +63441,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02003cc0",
-      "source": "games/gs1/src/resource_3bc_c_02003cc0.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/noop_scene_hook.c",
       "resource": "resource_3bc",
       "size": 4,
       "core_bytes": 4,
@@ -63473,7 +63473,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02003cc4",
-      "source": "games/gs1/src/resource_3bc_c_02003cc4.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/set_balance_state_ready.c",
       "resource": "resource_3bc",
       "size": 12,
       "core_bytes": 8,
@@ -63505,7 +63505,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02003cd0",
-      "source": "games/gs1/src/resource_3bc_c_02003cd0.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/wait_for_balance_state.c",
       "resource": "resource_3bc",
       "size": 36,
       "core_bytes": 28,
@@ -63537,7 +63537,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02003cf4",
-      "source": "games/gs1/src/overlays/resource_3bc/spawn_random_scene_effect.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/spawn_random_scene_effect.c",
       "resource": "resource_3bc",
       "size": 148,
       "core_bytes": 104,
@@ -63569,7 +63569,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02003d88",
-      "source": "games/gs1/src/overlays/resource_3bc/raise_linked_scene_effect.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/raise_linked_scene_effect.c",
       "resource": "resource_3bc",
       "size": 84,
       "core_bytes": 64,
@@ -63601,7 +63601,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02003ddc",
-      "source": "games/gs1/src/overlays/resource_3bc/position_active_actor.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/position_active_actor.c",
       "resource": "resource_3bc",
       "size": 276,
       "core_bytes": 196,
@@ -63633,7 +63633,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02004494",
-      "source": "games/gs1/src/overlays/resource_3bc/setup_scene_descriptor.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/setup_scene_descriptor.c",
       "resource": "resource_3bc",
       "size": 232,
       "core_bytes": 168,
@@ -63665,7 +63665,7 @@
     },
     {
       "en_owner": "resource_3bc:0x0200457c",
-      "source": "games/gs1/src/overlays/resource_3bc/initialize_scene_control.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/initialize_scene_control.c",
       "resource": "resource_3bc",
       "size": 84,
       "core_bytes": 48,
@@ -63697,7 +63697,7 @@
     },
     {
       "en_owner": "resource_3bc:0x020045d0",
-      "source": "games/gs1/src/resource_3bc_c_020045d0.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/set_scene_control_value.c",
       "resource": "resource_3bc",
       "size": 16,
       "core_bytes": 12,
@@ -63729,7 +63729,7 @@
     },
     {
       "en_owner": "resource_3bc:0x020045e0",
-      "source": "games/gs1/src/resource_3bc_c_020045e0.c",
+      "source": "games/gs1/src/overlays/shared/find_actor_at_whole_tile_position.c",
       "resource": "resource_3bc",
       "size": 72,
       "core_bytes": 68,
@@ -63761,7 +63761,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02004628",
-      "source": "games/gs1/src/overlays/resource_3bc/push_staged_actor.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/push_staged_actor.c",
       "resource": "resource_3bc",
       "size": 360,
       "core_bytes": 292,
@@ -63793,7 +63793,7 @@
     },
     {
       "en_owner": "resource_3bc:0x02004790",
-      "source": "games/gs1/src/overlays/resource_3bc/find_actor_ahead.c",
+      "source": "games/gs1/src/overlays/colosso_log_rolling_stage/find_actor_ahead.c",
       "resource": "resource_3bc",
       "size": 160,
       "core_bytes": 132,
@@ -64849,7 +64849,7 @@
     },
     {
       "en_owner": "resource_3be:0x02000048",
-      "source": "games/gs1/src/resource_3be_c_02000048.c",
+      "source": "games/gs1/src/overlays/staged_actor_pair_scene/spawn_primary_effect.c",
       "resource": "resource_3be",
       "size": 86,
       "core_bytes": 70,
@@ -64881,7 +64881,7 @@
     },
     {
       "en_owner": "resource_3be:0x020000a0",
-      "source": "games/gs1/src/resource_3be_c_020000a0.c",
+      "source": "games/gs1/src/overlays/staged_actor_pair_scene/spawn_secondary_effect.c",
       "resource": "resource_3be",
       "size": 98,
       "core_bytes": 86,
@@ -64945,7 +64945,7 @@
     },
     {
       "en_owner": "resource_3be:0x0200013c",
-      "source": "games/gs1/src/overlays/resource_3be/spawn_configured_effect.c",
+      "source": "games/gs1/src/overlays/staged_actor_pair_scene/spawn_configured_effect.c",
       "resource": "resource_3be",
       "size": 472,
       "core_bytes": 420,
@@ -65041,7 +65041,7 @@
     },
     {
       "en_owner": "resource_3be:0x020003a8",
-      "source": "games/gs1/src/overlays/resource_3be/advance_staged_actor_pair.c",
+      "source": "games/gs1/src/overlays/staged_actor_pair_scene/advance_actor_pair.c",
       "resource": "resource_3be",
       "size": 384,
       "core_bytes": 320,
@@ -65105,7 +65105,7 @@
     },
     {
       "en_owner": "resource_3be:0x0200058c",
-      "source": "games/gs1/src/overlays/resource_3be/stop_blocked_actor_motion.c",
+      "source": "games/gs1/src/overlays/staged_actor_pair_scene/stop_blocked_actor_motion.c",
       "resource": "resource_3be",
       "size": 164,
       "core_bytes": 144,
@@ -65137,7 +65137,7 @@
     },
     {
       "en_owner": "resource_3be:0x02000758",
-      "source": "games/gs1/src/overlays/resource_3be/find_clear_actor_position.c",
+      "source": "games/gs1/src/overlays/staged_actor_pair_scene/find_clear_actor_position.c",
       "resource": "resource_3be",
       "size": 404,
       "core_bytes": 384,
@@ -65169,7 +65169,7 @@
     },
     {
       "en_owner": "resource_3be:0x02000cc0",
-      "source": "games/gs1/src/resource_3be_c_02000cc0.c",
+      "source": "games/gs1/src/overlays/staged_actor_pair_scene/get_scene_variant_data.c",
       "resource": "resource_3be",
       "size": 84,
       "core_bytes": 52,
@@ -65201,7 +65201,7 @@
     },
     {
       "en_owner": "resource_3be:0x02000d14",
-      "source": "games/gs1/src/resource_3be_c_02000d14.c",
+      "source": "games/gs1/src/overlays/staged_actor_pair_scene/get_initial_scene_value.c",
       "resource": "resource_3be",
       "size": 4,
       "core_bytes": 4,
@@ -65233,7 +65233,7 @@
     },
     {
       "en_owner": "resource_3be:0x020010f0",
-      "source": "games/gs1/src/resource_3be_c_020010f0.c",
+      "source": "games/gs1/src/overlays/staged_actor_pair_scene/run_scene_step.c",
       "resource": "resource_3be",
       "size": 10,
       "core_bytes": 6,
@@ -65265,7 +65265,7 @@
     },
     {
       "en_owner": "resource_3be:0x02001148",
-      "source": "games/gs1/src/resource_3be_c_02001148.c",
+      "source": "games/gs1/src/overlays/staged_actor_pair_scene/run_scene_update.c",
       "resource": "resource_3be",
       "size": 14,
       "core_bytes": 6,
@@ -65297,7 +65297,7 @@
     },
     {
       "en_owner": "resource_3be:0x020011c4",
-      "source": "games/gs1/src/resource_3be_c_020011c4.c",
+      "source": "games/gs1/src/overlays/staged_actor_pair_scene/noop_actor_callback.c",
       "resource": "resource_3be",
       "size": 4,
       "core_bytes": 4,
@@ -65329,7 +65329,7 @@
     },
     {
       "en_owner": "resource_3be:0x020011c8",
-      "source": "games/gs1/src/resource_3be_c_020011c8.c",
+      "source": "games/gs1/src/overlays/staged_actor_pair_scene/rotate_actor_part.c",
       "resource": "resource_3be",
       "size": 16,
       "core_bytes": 12,
@@ -65361,7 +65361,7 @@
     },
     {
       "en_owner": "resource_3be:0x020011d8",
-      "source": "games/gs1/src/resource_3be_c_020011d8.c",
+      "source": "games/gs1/src/overlays/staged_actor_pair_scene/wait_for_height.c",
       "resource": "resource_3be",
       "size": 32,
       "core_bytes": 28,
@@ -65393,7 +65393,7 @@
     },
     {
       "en_owner": "resource_3be:0x02001380",
-      "source": "games/gs1/src/resource_3be_c_02001380.c",
+      "source": "games/gs1/src/overlays/staged_actor_pair_scene/noop_scene_callback.c",
       "resource": "resource_3be",
       "size": 4,
       "core_bytes": 4,
@@ -65425,7 +65425,7 @@
     },
     {
       "en_owner": "resource_3be:0x02001384",
-      "source": "games/gs1/src/resource_3be_c_02001384.c",
+      "source": "games/gs1/src/overlays/staged_actor_pair_scene/run_actor_twelve_command.c",
       "resource": "resource_3be",
       "size": 16,
       "core_bytes": 12,

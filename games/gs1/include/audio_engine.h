@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_AUDIO_ENGINE_H
 #define ALCHEMY_AUDIO_ENGINE_H
 
+#include "audio_engine_symbols.h"
 #include "types.h"
 
 /*
@@ -198,8 +199,8 @@ typedef char AudioEngineState_direct_channels_offset[
 
 #undef AUDIO_ENGINE_OFFSET
 
-void Func_080fa2a0(void);
-void Func_080fa55c(struct CgbChannel *channels);
+void Audio_Initialize(void);
+void CgbAudio_Initialize(struct CgbChannel *channels);
 void Func_080fa6a0(struct AudioEngineState *audio_state);
 void Func_080fa83c(u32 value);
 void Func_080fa9e0(

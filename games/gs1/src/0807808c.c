@@ -1,9 +1,7 @@
-#include "types.h"
+#include "owner_state.h"
+#include "party_state.h"
 
-extern s32 Func_080795fc(void);
-extern void *Func_08077394(s32);
 extern s32 Func_080022ec(s32, s32);
-extern u8 Data_02000240[];
 
 void Func_0807808c(s32 arg0)
 {
@@ -16,9 +14,9 @@ void Func_0807808c(s32 arg0)
     s32 one;
     s16 v34;
 
-    count = Func_080795fc();
+    count = Party_CountActiveOwners();
     for (n = 0; n < count; n++) {
-        obj = (u8 *)Func_08077394(Data_02000240[504 + n]);
+        obj = OwnerState_Get(Data_02000240.active_owners[n]);
 
         do {
             *(u16 *)(obj + 0x38) = *(u16 *)(obj + 0x34);

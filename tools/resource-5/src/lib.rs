@@ -1,4 +1,5 @@
 use serde_json::{Map, Value};
+use std::collections::HashSet;
 use std::fs;
 use std::io::{self, Write};
 
@@ -108,8 +109,75 @@ fn build_name_slot(value: &Value) -> Result<Vec<u8>> {
     }
 }
 
-fn parse_document(value: &Value) -> Result<&Map<String, Value>> {
-    let source = object(value, "resource 5 source")?;
+const ITEM_KEYS: &[&str] = &[
+    "name",
+    "price",
+    "type",
+    "flags",
+    "equip_mask",
+    "icon",
+    "primary_bonus",
+    "secondary_bonus",
+    "secondary_flags",
+    "use_type",
+    "description_message",
+    "element",
+    "effects",
+    "action_id",
+];
+
+fn is_snake_case(name: &str) -> bool {
+    let mut bytes = name.bytes();
+    let Some(first) = bytes.next() else {
+        return false;
+    };
+    if !first.is_ascii_lowercase() {
+        return false;
+    }
+
+    let mut previous_was_underscore = false;
+    for byte in bytes {
+        if byte == b'_' {
+            if previous_was_underscore {
+                return false;
+            }
+            previous_was_underscore = true;
+        } else if byte.is_ascii_lowercase() || byte.is_ascii_digit() {
+            previous_was_underscore = false;
+        } else {
+            return false;
+        }
+    }
+    !previous_was_underscore
+}
+
+fn item_definition<'a>(value: &'a Value, index: usize) -> Result<&'a Map<String, Value>> {
+    let label = format!("items[{index}]");
+    let item = object(value, &label)?;
+    exact_keys(item, ITEM_KEYS, &label)?;
+
+    let name = field(item, "name")?
+        .as_str()
+        .ok_or_else(|| format!("{label} name must be a string"))?;
+    if !is_snake_case(name) {
+        return err(format!("{label} name must be unique nonempty snake_case"));
+    }
+
+    for (effect_index, effect) in list(field(item, "effects")?, 4, "item effects")?
+        .iter()
+        .enumerate()
+    {
+        exact_keys(
+            object(effect, &format!("{label}.effects[{effect_index}]"))?,
+            &["kind", "amount"],
+            &format!("{label}.effects[{effect_index}]"),
+        )?;
+    }
+    Ok(item)
+}
+
+fn parse_gameplay_databases(value: &Value) -> Result<&Map<String, Value>> {
+    let source = object(value, "gameplay database source")?;
     exact_keys(
         source,
         &[
@@ -118,6 +186,7 @@ fn parse_document(value: &Value) -> Result<&Map<String, Value>> {
             "address",
             "size",
             "alignment_bytes",
+            "item_name_message_base",
             "progression_groups",
             "level_experience",
             "inventory_counter_slots",
@@ -134,15 +203,16 @@ fn parse_document(value: &Value) -> Result<&Map<String, Value>> {
             "signed_scale_curve",
             "djinn",
         ],
-        "resource 5 source",
+        "gameplay database source",
     )?;
     if field(source, "format")?.as_u64() != Some(1)
         || field(source, "kind")?.as_str() != Some("golden-sun-gameplay-databases")
         || field(source, "address")?.as_str() != Some("0x0807a828")
         || field(source, "size")?.as_str() != Some("0x0000f7d8")
         || field(source, "alignment_bytes")?.as_u64() != Some((END - ALIGNMENT) as u64)
+        || field(source, "item_name_message_base")?.as_str() != Some("0x0182")
     {
-        return err("resource 5 header differs");
+        return err("gameplay database header differs");
     }
     list(
         field(source, "progression_groups")?,
@@ -159,7 +229,15 @@ fn parse_document(value: &Value) -> Result<&Map<String, Value>> {
         "inventory_counter_slots",
     )?;
     list(field(source, "party_order")?, 6, "party_order")?;
-    list(field(source, "items")?, 324, "items")?;
+    let items = list(field(source, "items")?, 324, "items")?;
+    let mut item_names = HashSet::with_capacity(items.len());
+    for (index, raw) in items.iter().enumerate() {
+        let item = item_definition(raw, index)?;
+        let name = field(item, "name")?.as_str().unwrap();
+        if !item_names.insert(name) {
+            return err(format!("items[{index}] name {name:?} is not unique"));
+        }
+    }
     list(field(source, "abilities")?, 519, "abilities")?;
     list(field(source, "combatants")?, 165, "combatants")?;
     list(field(source, "hero_growth")?, 8, "hero_growth")?;
@@ -188,26 +266,49 @@ fn parse_document(value: &Value) -> Result<&Map<String, Value>> {
     Ok(source)
 }
 
-fn build_item(value: &Value, index: usize) -> Result<Vec<u8>> {
-    let item = list(value, 20, &format!("items[{index}]"))?;
+fn build_item_definition(value: &Value, index: usize) -> Result<Vec<u8>> {
+    let item = item_definition(value, index)?;
     let mut result = vec![0; 44];
-    write_u16(&mut result, 0, u16(&item[0], "item name_message")?);
-    result[2] = u8(&item[1], "item category")?;
-    result[3] = u8(&item[2], "item flags")?;
-    write_u16(&mut result, 4, u16(&item[3], "item equip_mask")?);
-    write_u16(&mut result, 6, u16(&item[4], "item icon")?);
-    write_i16(&mut result, 8, s16(&item[5], "item primary_bonus")?);
-    result[10] = s8(&item[6], "item secondary_bonus")? as u8;
-    result[11] = u8(&item[7], "item secondary_flags")?;
-    result[12] = u8(&item[8], "item use_type")?;
-    write_u16(&mut result, 14, u16(&item[9], "item description_message")?);
-    result[20] = u8(&item[10], "item element")?;
-    for effect in 0..4 {
-        let offset = 24 + effect * 4;
-        result[offset] = u8(&item[11 + effect * 2], "item effect kind")?;
-        result[offset + 1] = s8(&item[12 + effect * 2], "item effect amount")? as u8;
+    write_u16(&mut result, 0, u16(field(item, "price")?, "item price")?);
+    result[2] = u8(field(item, "type")?, "item type")?;
+    result[3] = u8(field(item, "flags")?, "item flags")?;
+    write_u16(
+        &mut result,
+        4,
+        u16(field(item, "equip_mask")?, "item equip_mask")?,
+    );
+    write_u16(&mut result, 6, u16(field(item, "icon")?, "item icon")?);
+    write_i16(
+        &mut result,
+        8,
+        s16(field(item, "primary_bonus")?, "item primary_bonus")?,
+    );
+    result[10] = s8(field(item, "secondary_bonus")?, "item secondary_bonus")? as u8;
+    result[11] = u8(field(item, "secondary_flags")?, "item secondary_flags")?;
+    result[12] = u8(field(item, "use_type")?, "item use_type")?;
+    write_u16(
+        &mut result,
+        14,
+        u16(
+            field(item, "description_message")?,
+            "item description_message",
+        )?,
+    );
+    result[20] = u8(field(item, "element")?, "item element")?;
+    for (effect_index, raw) in list(field(item, "effects")?, 4, "item effects")?
+        .iter()
+        .enumerate()
+    {
+        let effect = object(raw, &format!("items[{index}].effects[{effect_index}]"))?;
+        let offset = 24 + effect_index * 4;
+        result[offset] = u8(field(effect, "kind")?, "item effect kind")?;
+        result[offset + 1] = s8(field(effect, "amount")?, "item effect amount")? as u8;
     }
-    write_u16(&mut result, 40, u16(&item[19], "item unleash_ability")?);
+    write_u16(
+        &mut result,
+        40,
+        u16(field(item, "action_id")?, "item action_id")?,
+    );
     Ok(result)
 }
 
@@ -512,8 +613,8 @@ fn build_elemental_profile(value: &Value, index: usize) -> Result<Vec<u8>> {
     Ok(result)
 }
 
-pub fn build_resource_5(value: &Value) -> Result<Vec<u8>> {
-    let source = parse_document(value)?;
+pub fn build_gameplay_databases(value: &Value) -> Result<Vec<u8>> {
+    let source = parse_gameplay_databases(value)?;
     let mut result = Vec::with_capacity(RESOURCE_SIZE);
     result.extend(
         list(
@@ -572,7 +673,7 @@ pub fn build_resource_5(value: &Value) -> Result<Vec<u8>> {
         list(field(source, "items")?, 324, "items")?
             .iter()
             .enumerate()
-            .map(|(index, value)| build_item(value, index))
+            .map(|(index, value)| build_item_definition(value, index))
             .collect::<Result<Vec<_>>>()?
             .into_iter()
             .flatten(),
@@ -727,21 +828,24 @@ pub fn build_resource_5(value: &Value) -> Result<Vec<u8>> {
     )? as usize;
     result.extend(vec![0; alignment]);
     if result.len() != RESOURCE_SIZE {
-        return err(format!("resource 5 rebuilt 0x{:x} bytes", result.len()));
+        return err(format!(
+            "gameplay databases rebuilt 0x{:x} bytes",
+            result.len()
+        ));
     }
     Ok(result)
 }
 
 pub fn run(args: Vec<String>) -> Result<()> {
     if args.first().map(String::as_str) != Some("build-stdout") {
-        return err("usage: resource-5 build-stdout SOURCE");
+        return err("usage: assets 5 build-stdout SOURCE");
     }
     let source = args
         .get(1)
         .ok_or_else(|| "build-stdout requires a source".to_string())?;
     let text = fs::read_to_string(source).map_err(|error| format!("{source}: {error}"))?;
     let value: Value = serde_json::from_str(&text).map_err(|error| format!("{source}: {error}"))?;
-    let bytes = build_resource_5(&value)?;
+    let bytes = build_gameplay_databases(&value)?;
     io::stdout()
         .write_all(&bytes)
         .map_err(|error| error.to_string())

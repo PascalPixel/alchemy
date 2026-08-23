@@ -1,21 +1,23 @@
 #ifndef ALCHEMY_OWNER_STATE_H
 #define ALCHEMY_OWNER_STATE_H
 
-#include "types.h"
+#include "layout_guard.h"
 
 struct OwnerInventoryState {
     u8 unknown_000[0xd8];
     u16 inventory[15];
+    u8 unknown_0f6[0x32];
+    volatile u8 class_id;           /* 0x128 */
 };
 
-struct OwnerEquipmentEntry {
-    u16 value;
+struct OwnerActionSlot {
+    u16 encoded_action;
     u16 unknown_02;
 };
 
-struct OwnerEquipmentState {
+struct OwnerActionState {
     u8 unknown_000[0x58];
-    struct OwnerEquipmentEntry equipment[32];
+    struct OwnerActionSlot action_slots[32];
 };
 
 struct OwnerLearnedState {
@@ -41,7 +43,35 @@ struct OwnerValueState {
     u8 values[4];
 };
 
-void *Func_08077394(s32 owner);
-void *Func_0807882c(struct OwnerInventoryState *owner, s32 type);
+LAYOUT_OFFSET_GUARD(
+    OwnerInventoryState_Inventory,
+    struct OwnerInventoryState,
+    inventory,
+    0x0d8);
+LAYOUT_OFFSET_GUARD(
+    OwnerInventoryState_ClassId,
+    struct OwnerInventoryState,
+    class_id,
+    0x128);
+LAYOUT_SIZE_GUARD(
+    OwnerActionSlot_Size,
+    struct OwnerActionSlot,
+    0x04);
+LAYOUT_OFFSET_GUARD(
+    OwnerActionState_ActionSlots,
+    struct OwnerActionState,
+    action_slots,
+    0x58);
+
+/*
+ * Some exact callers deliberately leave the owner id in r0 instead of
+ * spelling it as a C argument.  Keep the legacy declaration non-prototyped
+ * so those compiler-shaped calls remain representable.
+ */
+void *Func_08077394();
+struct OwnerInventoryState *Func_08077008(s32 owner);
+
+#define OwnerState_Get Func_08077394
+#define OwnerState_GetFar Func_08077008
 
 #endif

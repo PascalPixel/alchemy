@@ -1,6 +1,7 @@
 #include "layout_guard.h"
 #include "types.h"
 #include "gs1_edition.h"
+#include "inventory_menu.h"
 
 #if defined(GS1_EDITION_JA)
 #define ROW_CNT 4
@@ -66,7 +67,6 @@ s32 Func_08077158(const u16 *);
 void Func_080a1090(s32);
 void Func_080a8034(s32, s32, s32, s32);
 s32 Func_080a7440(void);
-void Func_080a34c0(void);
 
 /*
  * Open the compact character selector, run its blocking interaction body,
@@ -96,7 +96,7 @@ s32 Func_080a7380(void)
     result = Func_080a7440();
 
     Func_08015278(state->screen_handle);
-    Func_080a34c0();
+    InventoryMenu_CloseWindows();
     Data_03001e68->suspended = 0;
     Func_080030f8(1);
     Func_08002dd8(55);

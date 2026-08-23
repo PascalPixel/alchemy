@@ -2,13 +2,13 @@
 #include "types.h"
 #include "object_efx.h"
 
-struct Position_08097b70 {
+struct ItemBreakFragmentPosition {
     s32 x;
     s32 y;
     s32 z;
 };
 
-struct Source_08097b70 {
+struct ItemBreakFragmentSource {
     u8 pad_00[6];
     u16 angle;
     s32 x;
@@ -17,10 +17,10 @@ struct Source_08097b70 {
     u8 pad_14[70];
     u8 flag_5a;
     u8 pad_5b[13];
-    struct Source_08097b70 *target;
+    struct ItemBreakFragmentSource *target;
 };
 
-struct Object_08097b70 {
+struct ItemBreakFragmentObject {
     u8 pad_00[72];
     s32 field_48;
     u8 pad_4c[9];
@@ -33,16 +33,18 @@ extern s32 ArcTan2(s32, s32);
 extern u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-extern void Func_0800447c(s32, s32, struct Position_08097b70 *);
-extern struct Object_08097b70 *Func_08096c80(s32, s32, s32, s32);
-extern void Func_08009080(struct Object_08097b70 *, s32);
-extern void Func_08009098(struct Object_08097b70 *, const void *);
+extern void Func_0800447c(s32, s32, struct ItemBreakFragmentPosition *);
+extern struct ItemBreakFragmentObject *Func_08096c80(s32, s32, s32, s32);
+extern void Func_08009080(struct ItemBreakFragmentObject *, s32);
+extern void Func_08009098(struct ItemBreakFragmentObject *, const void *);
 
-void Func_08097b70(struct Source_08097b70 *source)
+#define UpdateItemBreakFragment Func_08097b70
+
+void Func_08097b70(struct ItemBreakFragmentSource *source)
 {
-    struct Source_08097b70 *target;
-    struct Position_08097b70 position;
-    struct Object_08097b70 *object;
+    struct ItemBreakFragmentSource *target;
+    struct ItemBreakFragmentPosition position;
+    struct ItemBreakFragmentObject *object;
     s32 turn;
     s32 magnitude;
 

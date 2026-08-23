@@ -60913,7 +60913,7 @@
     },
     {
       "en_owner": "resource_3bb:0x02001b30",
-      "source": "games/gs1/src/overlays/resource_3bb/initialize_scene_actor_positions.c",
+      "source": "games/gs1/src/overlays/scene_state_interaction/initialize_scene_actor_positions.c",
       "resource": "resource_3bb",
       "size": 120,
       "core_bytes": 84,
@@ -60945,7 +60945,7 @@
     },
     {
       "en_owner": "resource_3bb:0x02001c78",
-      "source": "games/gs1/src/overlays/resource_3bb/mark_scene_progress.c",
+      "source": "games/gs1/src/overlays/scene_state_interaction/mark_scene_progress.c",
       "resource": "resource_3bb",
       "size": 72,
       "core_bytes": 56,
@@ -60977,7 +60977,7 @@
     },
     {
       "en_owner": "resource_3bb:0x02001cc0",
-      "source": "games/gs1/src/overlays/resource_3bb/select_nearest_scene_actor.c",
+      "source": "games/gs1/src/overlays/scene_state_interaction/select_nearest_scene_actor.c",
       "resource": "resource_3bb",
       "size": 308,
       "core_bytes": 228,
@@ -61041,7 +61041,7 @@
     },
     {
       "en_owner": "resource_3bb:0x02001ffc",
-      "source": "games/gs1/src/overlays/resource_3bb/run_state_interaction.c",
+      "source": "games/gs1/src/overlays/scene_state_interaction/run_state_interaction.c",
       "resource": "resource_3bb",
       "size": 188,
       "core_bytes": 116,
@@ -61073,7 +61073,7 @@
     },
     {
       "en_owner": "resource_3bb:0x020020b8",
-      "source": "games/gs1/src/overlays/resource_3bb/initialize_state_interaction.c",
+      "source": "games/gs1/src/overlays/scene_state_interaction/initialize_state_interaction.c",
       "resource": "resource_3bb",
       "size": 92,
       "core_bytes": 56,
@@ -61137,7 +61137,7 @@
     },
     {
       "en_owner": "resource_3bb:0x02002940",
-      "source": "games/gs1/src/overlays/resource_3bb/initialize_mode_task.c",
+      "source": "games/gs1/src/overlays/scene_state_interaction/initialize_mode_task.c",
       "resource": "resource_3bb",
       "size": 142,
       "core_bytes": 82,
@@ -61169,7 +61169,7 @@
     },
     {
       "en_owner": "resource_3bb:0x020029d0",
-      "source": "games/gs1/src/overlays/resource_3bb/run_scripted_transition.c",
+      "source": "games/gs1/src/overlays/scene_state_interaction/run_scripted_transition.c",
       "resource": "resource_3bb",
       "size": 268,
       "core_bytes": 104,
@@ -61553,7 +61553,7 @@
     },
     {
       "en_owner": "resource_3bb:0x0200325c",
-      "source": "games/gs1/src/overlays/resource_3bb/spawn_random_scene_effect.c",
+      "source": "games/gs1/src/overlays/scene_state_interaction/spawn_random_scene_effect.c",
       "resource": "resource_3bb",
       "size": 148,
       "core_bytes": 104,
@@ -61585,7 +61585,7 @@
     },
     {
       "en_owner": "resource_3bb:0x020032f0",
-      "source": "games/gs1/src/overlays/resource_3bb/raise_linked_scene_effect.c",
+      "source": "games/gs1/src/overlays/scene_state_interaction/raise_linked_scene_effect.c",
       "resource": "resource_3bb",
       "size": 84,
       "core_bytes": 64,
@@ -61617,7 +61617,7 @@
     },
     {
       "en_owner": "resource_3bb:0x02003344",
-      "source": "games/gs1/src/overlays/resource_3bb/position_active_actor.c",
+      "source": "games/gs1/src/overlays/scene_state_interaction/position_active_actor.c",
       "resource": "resource_3bb",
       "size": 276,
       "core_bytes": 196,

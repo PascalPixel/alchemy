@@ -4,12 +4,12 @@ extern u8 Data_02000380[128];
 
 s32 ItemCounter_Adjust(s32 index, s32 delta)
 {
-    s32 position = index;
+    s32 counter_slot = index;
     u8 *data = Data_02000380;
 
     index = 0;
-    if (position <= 127) {
-        s32 value = data[position];
+    if (counter_slot <= 127) {
+        s32 value = data[counter_slot];
 
         value += delta;
 
@@ -21,7 +21,7 @@ s32 ItemCounter_Adjust(s32 index, s32 delta)
         } else {
             index = value;
         }
-        data[position] = value;
+        data[counter_slot] = value;
     }
     return index;
 }

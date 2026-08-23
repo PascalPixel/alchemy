@@ -3,16 +3,16 @@
 
 /* target_flags 下位4ビットのダメージ種別。 */
 enum {
-    DK_PP_DMG = -1,     /* PPへの直接ダメージ */
-    DK_HP_HEAL = 1,     /* HP回復 */
-    DK_HP_DMG = 2,      /* 威力ベースのHPダメージ */
-    DK_ATTACK = 3,      /* 武器攻撃 */
-    DK_ATTACK_X = 4,    /* 武器攻撃 威力乗算/10 */
-    DK_HP_DMG_6 = 5,    /* 加算HPダメージ 減衰6系 */
-    DK_HP_DMG_7 = 6,    /* 加算HPダメージ 減衰5系 */
-    DK_HP_DMG_9 = 8,    /* 加算HPダメージ 減衰8系 */
-    DK_PP_DRAIN = 10,   /* PP吸収系 */
-    DK_PP_HEAL = 11     /* PP回復 */
+    BATTLE_DAMAGE_PP_DIRECT = -1, /* PPへの直接ダメージ */
+    BATTLE_DAMAGE_HP_HEAL = 1,    /* HP回復 */
+    BATTLE_DAMAGE_HP_POWER = 2,   /* 威力ベースのHPダメージ */
+    BATTLE_DAMAGE_WEAPON = 3,     /* 武器攻撃 */
+    BATTLE_DAMAGE_WEAPON_SCALED = 4, /* 武器攻撃 威力乗算/10 */
+    BATTLE_DAMAGE_HP_ADDITIVE_6 = 5, /* 加算HPダメージ 減衰6系 */
+    BATTLE_DAMAGE_HP_ADDITIVE_7 = 6, /* 加算HPダメージ 減衰5系 */
+    BATTLE_DAMAGE_HP_ADDITIVE_9 = 8, /* 加算HPダメージ 減衰8系 */
+    BATTLE_DAMAGE_PP_DRAIN = 10,  /* PP吸収系 */
+    BATTLE_DAMAGE_PP_HEAL = 11    /* PP回復 */
 };
 
 /* 挙動から付けた識別名で、原作の識別子の主張ではない。 */

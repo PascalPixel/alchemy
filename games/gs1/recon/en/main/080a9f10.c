@@ -91,7 +91,7 @@ s32 Func_080a9f10(
 
             amount = effect->power;
             switch (effect->target_flags & 0xf) {
-            case DK_HP_HEAL:
+            case BATTLE_DAMAGE_HP_HEAL:
                 if (fixed_scale == 0) {
                     if (effect->damage_class != 4) {
                         s32 stat_offset;
@@ -181,7 +181,7 @@ s32 Func_080a9f10(
                 }
                 break;
 
-            case DK_PP_HEAL:
+            case BATTLE_DAMAGE_PP_HEAL:
                 current = target->pp;
                 raw_current = *(u16 *)&target->pp;
                 limit = target->max_pp;

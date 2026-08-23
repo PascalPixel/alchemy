@@ -5096,7 +5096,7 @@
     "start": 135247616,
     "end": 135247634,
     "kind": "thumb",
-    "evidence": "games/gs1/src/080fb700.c:byte-identical-claimed-C"
+    "evidence": "games/gs1/src/audio/music/track/set_tone_attack.c:byte-identical-claimed-C"
    },
    {
     "start": 135247634,
@@ -5108,7 +5108,7 @@
     "start": 135247636,
     "end": 135247654,
     "kind": "thumb",
-    "evidence": "games/gs1/src/080fb714.c:byte-identical-claimed-C"
+    "evidence": "games/gs1/src/audio/music/track/set_tone_decay.c:byte-identical-claimed-C"
    },
    {
     "start": 135247654,
@@ -5120,7 +5120,7 @@
     "start": 135247656,
     "end": 135247674,
     "kind": "thumb",
-    "evidence": "games/gs1/src/080fb728.c:byte-identical-claimed-C"
+    "evidence": "games/gs1/src/audio/music/track/set_tone_sustain.c:byte-identical-claimed-C"
    },
    {
     "start": 135247674,
@@ -5132,7 +5132,7 @@
     "start": 135247676,
     "end": 135247694,
     "kind": "thumb",
-    "evidence": "games/gs1/src/080fb73c.c:byte-identical-claimed-C"
+    "evidence": "games/gs1/src/audio/music/track/set_tone_release.c:byte-identical-claimed-C"
    },
    {
     "start": 135247694,
@@ -5156,7 +5156,7 @@
     "start": 135247740,
     "end": 135247758,
     "kind": "thumb",
-    "evidence": "games/gs1/src/080fb77c.c:byte-identical-claimed-C"
+    "evidence": "games/gs1/src/audio/music/track/set_tone_pan_sweep.c:byte-identical-claimed-C"
    },
    {
     "start": 135247758,

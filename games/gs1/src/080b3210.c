@@ -3,7 +3,7 @@
 extern u8 *Data_03001f2c;
 extern s8 Data_080b4ab6[];
 
-u8 *Func_08077008(s32);
+u8 *Runtime_GetObject(s32);
 
 #define Inn_CalculateRoomPrice Func_080b3210
 
@@ -20,7 +20,7 @@ s32 Func_080b3210(s32 party_size_mode)
         base = global + 2;
         offset = 0x36C;
         do {
-            if (*(s16 *)(Func_08077008(
+            if (*(s16 *)(Runtime_GetObject(
                     *(s16 *)(base + offset)) + 56) != 0)
                 active++;
             index++;

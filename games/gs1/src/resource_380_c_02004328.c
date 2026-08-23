@@ -25,7 +25,7 @@
  * here are Func_08077248, taking one argument.
  *
  * Uncertainty: callee roles beyond call shape remain open;
- * Func_080f9010 receives only r0=0x53 here.
+ * Audio_PlayCue receives only r0=0x53 here.
  */
 
 /* One symbol PER CALL SITE, named at the site's PC-relative-decoded address

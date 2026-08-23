@@ -4,7 +4,7 @@
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 void Func_08016418(struct Work *work, s32 release);
-void Func_080030f8(u32);
+void WaitFrames(u32);
 
 void Func_08019a54(void)
 {
@@ -25,5 +25,5 @@ void Func_08019a54(void)
         no++;
         slot = (void **)((u8 *)slot + 40);
     } while (no != 3);
-    Func_080030f8(10);
+    WaitFrames(10);
 }

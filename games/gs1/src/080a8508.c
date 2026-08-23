@@ -1,6 +1,6 @@
 #include "types.h"
 
-void Func_08015078(s32, s32, s32, s32);
+void UiText_DrawMessageAt(s32, s32, s32, s32);
 extern u8 Data_00000bdc[][2];
 extern u8 Data_00000bda[];
 
@@ -12,8 +12,8 @@ void Func_080a8508(s32 target, s32 selected, const u8 *entries) {
         if (entries[index] != 0) {
             if (selected == count) {
                 s32 message = (s32)Data_00000bdc[index];
-                Func_08015078(message, target, 0, -1);
-                Func_08015078(message + 1, target, 0, 15);
+                UiText_DrawMessageAt(message, target, 0, -1);
+                UiText_DrawMessageAt(message + 1, target, 0, 15);
             }
             count++;
         }
@@ -21,5 +21,5 @@ void Func_080a8508(s32 target, s32 selected, const u8 *entries) {
     } while (index <= 4);
 
     if (count == 0)
-        Func_08015078((s32)Data_00000bda, target, 0, 0);
+        UiText_DrawMessageAt((s32)Data_00000bda, target, 0, 0);
 }

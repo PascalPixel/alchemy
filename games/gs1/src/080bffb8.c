@@ -5,7 +5,7 @@ void Func_08003b70(s32 arg0);
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-void Func_080030f8(s32);
+void WaitFrames(s32);
 
 s32 Func_080bffb8(void)
 {
@@ -35,11 +35,11 @@ s32 Func_080bffb8(void)
         Rand();
         Rand();
         *(volatile u16 *)0x0400004c = (i << 8) | i;
-        Func_080030f8(1);
+        WaitFrames(1);
     }
 
     *(volatile u16 *)0x04000000 = 1;
-    Func_080030f8(4);
+    WaitFrames(4);
     reg = (volatile u16 *)0x04000008;
     *reg++ = bg0cnt;
     *reg++ = bg1cnt;

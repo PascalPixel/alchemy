@@ -24,9 +24,9 @@ struct Object_0808f0d8 {
 
 extern struct State_0808f0d8 Data_02000240;
 void Func_08009150(struct Object_0808f0d8 *, s32, s32, s32);
-void Func_080030f8(s32);
-void Func_08009080(struct Entity_0808f0d8 *, s32);
-void Func_08009098(struct Object_0808f0d8 *, const void *);
+void WaitFrames(s32);
+void Object_SetMode(struct Entity_0808f0d8 *, s32);
+void Object_SetCallback(struct Object_0808f0d8 *, const void *);
 extern const u8 Data_0809e75c[];
 
 void Func_0808f0d8(struct Object_0808f0d8 *object)
@@ -41,8 +41,8 @@ void Func_0808f0d8(struct Object_0808f0d8 *object)
     object->field30 = 0x20000;
     object->field55 = 0;
     Func_08009150(object, entity->x, entity->y + 0x240000, entity->z);
-    Func_080030f8(3);
-    Func_08009080(entity, 28);
-    Func_08009098(object, Data_0809e75c);
+    WaitFrames(3);
+    Object_SetMode(entity, 28);
+    Object_SetCallback(object, Data_0809e75c);
     entity->angle = 0x4000;
 }

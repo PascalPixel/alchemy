@@ -13,7 +13,7 @@ struct Object_08092a1c {
     struct Object_08092a1c *field_68;
 };
 
-void Func_08009098(struct Object_08092a1c *, s32);
+void Object_SetCallback(struct Object_08092a1c *, s32);
 
 void Func_08092a1c(u32 arg0, s32 arg1, s32 arg2) {
     struct Object_08092a1c *first = GetObject(arg0);
@@ -27,6 +27,6 @@ void Func_08092a1c(u32 arg0, s32 arg1, s32 arg2) {
             first->field_30 = second->field_30;
             first->field_59 = 0;
         }
-        Func_08009098(first, arg2);
+        Object_SetCallback(first, arg2);
     }
 }

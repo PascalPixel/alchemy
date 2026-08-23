@@ -21,7 +21,7 @@ extern struct Runtime_08091c7c *Data_03001ebc;
 extern volatile s32 Data_03001c94;
 
 s16 *Func_0808d394(s32);
-void Func_080030f8(s32);
+void WaitFrames(s32);
 s32 Func_08015048(void);
 s32 Func_08015390(s32, s32, s32, s32);
 void Func_080924d4(s32, s32);
@@ -39,12 +39,12 @@ s32 Func_08091c7c(s32 object_id, s32 force)
     s32 result;
 
     while (Data_03001c94 != 0)
-        Func_080030f8(1);
+        WaitFrames(1);
 
     while (Func_08015048() == 0)
-        Func_080030f8(1);
+        WaitFrames(1);
 
-    Func_080030f8(3);
+    WaitFrames(3);
 
     if (force == 0) {
         s32 total = second->value_0e + second->value_0a;

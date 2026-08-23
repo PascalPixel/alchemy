@@ -1,7 +1,7 @@
 #include "object_runtime.h"
 
 void Func_0809163c(s32 arg0);
-void Func_080f9010(s32 arg0);
+void Audio_PlayCue(s32 arg0);
 
 void Func_08092560(u32 object_id, s32 speed, s32 event_id)
 {
@@ -18,9 +18,9 @@ void Func_08092560(u32 object_id, s32 speed, s32 event_id)
         *flags = val;
         object->velocity_y = shifted;
         if (speed > 5) {
-            Func_080f9010(0x99);
+            Audio_PlayCue(0x99);
         } else {
-            Func_080f9010(0x98);
+            Audio_PlayCue(0x98);
         }
         Func_0809163c(event_id);
     }

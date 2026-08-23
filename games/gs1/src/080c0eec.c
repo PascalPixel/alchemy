@@ -5,7 +5,7 @@ extern volatile u32 Data_03001b04;
 extern u8 * volatile Data_03001e74;
 extern volatile u32 Data_03001c94;
 
-void Func_080030f8(s32);
+void WaitFrames(s32);
 
 s32 Func_080c0eec(s32 result)
 {
@@ -28,7 +28,7 @@ loop:
             result = *(s32 *)(base + 0x828);
             goto done;
         }
-        Func_080030f8(1);
+        WaitFrames(1);
         goto loop;
     }
 done:

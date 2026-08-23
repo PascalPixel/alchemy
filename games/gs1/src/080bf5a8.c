@@ -23,7 +23,7 @@ struct Object_080bf5a8 {
 };
 
 struct PlacementTable *Func_08077000(s32 owner);
-struct Object_080bf5a8 *Func_08077008(u8 id);
+struct Object_080bf5a8 *Runtime_GetObject(u8 id);
 void Func_08077010(u8 id);
 void Func_080771b0(u8 id, u8 x, u8 y);
 void Func_080771c0(u8 id, u8 x, u8 y);
@@ -45,7 +45,7 @@ s32 Func_080bf5a8(void)
         timed_entry = list->entries;
         do {
             if (timed_entry->timer > 0 &&
-                Func_08077008(timed_entry->id)->active != 0) {
+                Runtime_GetObject(timed_entry->id)->active != 0) {
                 timed_entry->timer--;
             }
             index++;

@@ -19,9 +19,9 @@ s32 Func_08092054(u32);
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-void Func_0800447c(s32, s32, struct Output_08096048 *);
-void Func_080974d8(struct Output_08096048 *);
-void Func_080f9010(s32);
+void RotateVectorByMagnitude(s32, s32, struct Output_08096048 *);
+void NormalizeVector(struct Output_08096048 *);
+void Audio_PlayCue(s32);
 
 void Func_08096048(struct EffectSlot *effect)
 {
@@ -40,11 +40,11 @@ void Func_08096048(struct EffectSlot *effect)
         position.z = source->position.z;
 
         random = Rand() * 10 + 0xa0000;
-        Func_0800447c(
+        RotateVectorByMagnitude(
             random,
             Rand(),
             &position);
-        Func_080974d8(&position);
+        NormalizeVector(&position);
 
         effect->origin_x = position.x;
         effect->origin_z = position.z;
@@ -53,7 +53,7 @@ void Func_08096048(struct EffectSlot *effect)
         position.x = effect->x;
         position.z = effect->z;
 
-        Func_0800447c(0x780000, 0xc000, &position);
+        RotateVectorByMagnitude(0x780000, 0xc000, &position);
         effect->target_x = position.x;
         effect->target_z = position.z;
         effect->acceleration = 0x10000;
@@ -62,7 +62,7 @@ void Func_08096048(struct EffectSlot *effect)
         effect->state++;
 
         if ((Data_03001800 & 1) != 0)
-            Func_080f9010(0x90);
+            Audio_PlayCue(0x90);
     } else if (state == 1) {
         if (Func_0809ba34(effect) == 0)
             effect->state--;

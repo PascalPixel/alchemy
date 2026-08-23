@@ -1,6 +1,6 @@
 #include "types.h"
 
-u8 *Func_08077008(s32);
+u8 *Runtime_GetObject(s32);
 void Func_08077010(s32);
 s32 Func_080b7dd0(s32);
 s32 Func_080b78e4(s32, s32);
@@ -12,7 +12,7 @@ s32 Func_080bb588(s32 actor)
     s32 count;
     u8 zero;
 
-    state = Func_08077008(actor);
+    state = Runtime_GetObject(actor);
     count = 3;
     zero = 0;
     cursor = state + 0x12f;

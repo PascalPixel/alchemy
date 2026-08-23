@@ -7,8 +7,8 @@ struct Party {
 
 extern struct Party Data_02000240;
 
-extern void Func_080f9010(s16 arg0);
+extern void Audio_PlayCue(s16 arg0);
 
 void Func_0808acc4(void) {
-    Func_080f9010(Data_02000240.member);
+    Audio_PlayCue(Data_02000240.member);
 }

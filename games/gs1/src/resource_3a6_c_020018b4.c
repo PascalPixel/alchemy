@@ -23,13 +23,13 @@
  * All seven call sites were resolved with
  * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3a6 18b4 18ec`, assigning the
  * i-th occurrence in the source to the i-th site in address order:
- *   0x020018b8 -> veneer 0x02001d5c -> Func_080f9010
+ *   0x020018b8 -> veneer 0x02001d5c -> Audio_PlayCue
  *   0x020018c2 -> prologue 0x020017d8
  *   0x020018cc -> prologue 0x020017d8
  *   0x020018d2 -> veneer 0x02001c94 -> Func_080770c8
  *   0x020018d8 -> veneer 0x02001c1c -> Func_080000c0
  *   0x020018dc -> prologue 0x02001770
- *   0x020018e2 -> veneer 0x02001d5c -> Func_080f9010
+ *   0x020018e2 -> veneer 0x02001d5c -> Audio_PlayCue
  * Two of those (0x020018b8 and 0x020018e2) are the SAME callee under different
  * printed names in `overlay_show`, which is the pc-relative bug's signature;
  * the printed targets are not used.

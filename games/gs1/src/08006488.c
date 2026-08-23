@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 Func_080030f8(s32);
+s32 WaitFrames(s32);
 
 void Func_08006488(void)
 {
@@ -12,7 +12,7 @@ void Func_08006488(void)
     if (*(volatile s32 *)0x020023AC != 0) {
         work = 0x020023AC;
 loop:
-        Func_080030f8(1);
+        WaitFrames(1);
         count += 1;
         idle = 0;
         if (count <= 0x927BFU) {

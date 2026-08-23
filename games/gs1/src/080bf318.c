@@ -2,7 +2,7 @@
 
 s32 Func_080bf318(s32 value)
 {
-    struct CounterRuntime *state = Func_08077008();
+    struct CounterRuntime *state = Runtime_GetObject();
 
     if (state->counter_136 != 0) {
         state->counter_136--;

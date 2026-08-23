@@ -42,8 +42,8 @@ extern struct EffectRuntime *Data_03001f30;
 s32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-void Func_0800447c(s32 magnitude, s32 angle, struct EffectPosition *output);
-void Func_080974d8(struct EffectPosition *value);
+void RotateVectorByMagnitude(s32 magnitude, s32 angle, struct EffectPosition *output);
+void NormalizeVector(struct EffectPosition *value);
 s32 Func_0809ba34(struct RadialBurstEffect *effect);
 void Func_0809bb34(struct RadialBurstEffect *effect);
 
@@ -59,7 +59,7 @@ again:
     if (state == 0) {
         value.x = effect->source_x;
         value.z = effect->source_z;
-        Func_0800447c(0x190000, (u16)Rand(), &value);
+        RotateVectorByMagnitude(0x190000, (u16)Rand(), &value);
         effect->x = value.x;
         effect->z = value.z;
         effect->velocity_z = 0x30000;
@@ -83,9 +83,9 @@ again:
         value.x = target->x;
         value.y = target->y + 0x100000;
         value.z = target->z;
-        Func_0800447c(0x80000, runtime->angle, &value);
-        Func_080974d8(&value);
-        Func_0800447c(0x40000, Rand(), &value);
+        RotateVectorByMagnitude(0x80000, runtime->angle, &value);
+        NormalizeVector(&value);
+        RotateVectorByMagnitude(0x40000, Rand(), &value);
         effect->x = value.x;
         effect->z = value.z;
         effect->scale = 0x800;

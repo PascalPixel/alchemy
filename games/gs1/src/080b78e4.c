@@ -1,10 +1,10 @@
 #include "types.h"
 
-u8 *Func_08077008(s32);
+u8 *Runtime_GetObject(s32);
 
 s32 Func_080b78e4(s32 id, u8 *output)
 {
-    u8 *state = Func_08077008(id);
+    u8 *state = Runtime_GetObject(id);
     s8 mode = *(s8 *)(state + 0x131);
     u32 flags = 0;
 

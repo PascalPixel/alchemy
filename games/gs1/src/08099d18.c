@@ -39,9 +39,9 @@ extern struct State_08099d18 *Data_03001f30;
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-void Func_0800447c(s32, s32, struct Vector_08099d18 *);
-void Func_08009080(u8 *, s32);
-void Func_08009098(u8 *, void *);
+void RotateVectorByMagnitude(s32, s32, struct Vector_08099d18 *);
+void Object_SetMode(u8 *, s32);
+void Object_SetCallback(u8 *, void *);
 
 void Func_08099d18(void)
 {
@@ -59,9 +59,9 @@ void Func_08099d18(void)
     position.z = source->z;
 
     angle = Rand() * 3;
-    Func_0800447c((s32)(angle * 16), Rand(), &position);
+    RotateVectorByMagnitude((s32)(angle * 16), Rand(), &position);
 
-    object = Func_08096c80(
+    object = Object_Spawn(
         0x11d,
         position.x,
         position.y,
@@ -69,10 +69,10 @@ void Func_08099d18(void)
     if (object != 0) {
         object[85] = 2;
         *(s32 *)(object + 72) = 0x1999;
-        Func_08009080(object, 0);
+        Object_SetMode(object, 0);
         timer = (u16 *)(object + 94);
         timer_value = 12;
         *timer = timer_value;
-        Func_08009098(object, Data_0809f0b0);
+        Object_SetCallback(object, Data_0809f0b0);
     }
 }

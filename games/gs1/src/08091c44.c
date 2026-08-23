@@ -12,7 +12,7 @@ struct Object_08091c44 {
     u8 active;
 };
 
-void Func_080030f8(s32);
+void WaitFrames(s32);
 
 void Func_08091c44(s32 object_id, s32 value)
 {
@@ -23,7 +23,7 @@ void Func_08091c44(s32 object_id, s32 value)
         u8 *current = &object->child->value;
 
         while (index <= 89) {
-            Func_080030f8(1);
+            WaitFrames(1);
             if (value != *current) {
                 break;
             }

@@ -3,7 +3,7 @@
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-void Func_080030f8(s32);
+void WaitFrames(s32);
 
 void Func_08012350(void)
 {
@@ -15,7 +15,7 @@ void Func_08012350(void)
     if (work[1] > 255 || work[2] > 255) {
         goto body;
 body:
-        Func_080030f8(1);
+        WaitFrames(1);
         ++count;
         if (count >= 300) {
             goto done;

@@ -14,7 +14,7 @@ struct Runtime_080bb8e8 {
 };
 
 s32 Func_080090d0(s32);
-struct Creature_080bb8e8 *Func_08077008();
+struct Creature_080bb8e8 *Runtime_GetObject();
 s32 Func_08077130(void *, s32);
 struct Runtime_080bb8e8 *Func_080b7dd0(s32 arg0);
 s32 Func_080b7e60(s32 arg0);
@@ -25,7 +25,7 @@ s32 Func_080bb8e8(s32 arg0) {
     struct Creature_080bb8e8 *creature;
     struct Runtime_080bb8e8 *runtime;
 
-    creature = Func_08077008();
+    creature = Runtime_GetObject();
     if (creature->field_12a == 1) {
         Func_08077130(creature, 0);
         Func_080bac6c(arg0);

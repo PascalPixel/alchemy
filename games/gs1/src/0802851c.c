@@ -6,7 +6,7 @@ void Func_08004278(void *);
 void Func_08016418(struct Work *work, s32 release);
 s32 Func_08003f3c(u32 index);
 void Func_08002dd8(s32);
-void Func_080030f8(u32);
+void WaitFrames(u32);
 extern u8 Data_08028195;
 
 void Func_0802851c(void) {
@@ -28,5 +28,5 @@ void Func_0802851c(void) {
         i += 1;
     }
     Func_08002dd8(0x3A);
-    Func_080030f8(1U);
+    WaitFrames(1U);
 }

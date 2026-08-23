@@ -1,7 +1,7 @@
 #include "types.h"
 #include "global_cells.h"
 
-s32 Func_080030f8(s32);
+s32 WaitFrames(s32);
 s32 Func_0800430c(void);
 s32 Func_080043e0(void);
 void *Func_080048f4(s32 arg0, s32 arg1);
@@ -21,7 +21,7 @@ void Func_0809c3a4(void)
     {
       do
       {
-        Func_080030f8(1);
+        WaitFrames(1);
       }
       while ((*((volatile u32 *) ADDR_03001AE8)) & 0x200);
     }

@@ -1,6 +1,6 @@
 #include "object_runtime.h"
 
-void Func_08009098(struct ObjectRuntime *, const void *);
+void Object_SetCallback(struct ObjectRuntime *, const void *);
 extern const u8 Data_0809ebfc[];
 
 void Func_0809259c(u32 object_id, s32 variant)
@@ -12,7 +12,7 @@ void Func_0809259c(u32 object_id, s32 variant)
         if (variant > 3) {
             variant = 3;
         }
-        Func_08009098(object,
+        Object_SetCallback(object,
             Data_0809ebfc + ((3 - variant) << 7));
     }
 }

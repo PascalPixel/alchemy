@@ -8,7 +8,7 @@ struct OrbitingParticleVector {
 
 struct OrbitingParticle;
 
-void Func_0800447c(s32, s32, struct OrbitingParticleVector *);
+void RotateVectorByMagnitude(s32, s32, struct OrbitingParticleVector *);
 #define UpdateOrbitingParticleFade Func_08099040
 void UpdateOrbitingParticleFade(void *object);
 
@@ -17,19 +17,19 @@ void UpdateOrbitingParticleRight(struct OrbitingParticle *particle)
 {
     u8 *arg = (u8 *)particle;
     struct OrbitingParticleVector local;
-    s16 value;
-    s32 raw;
+    s16 battle_value;
+    s32 raw_value;
 
     if (arg != 0) {
-        raw = *(u16 *)(arg + 100) - 1;
-        *(u16 *)(arg + 100) = raw;
-        value = (s16)raw;
-        if (value != 0) {
+        raw_value = *(u16 *)(arg + 100) - 1;
+        *(u16 *)(arg + 100) = raw_value;
+        battle_value = (s16)raw_value;
+        if (battle_value != 0) {
             local.x = *(s32 *)(arg + 56);
             local.y = *(s32 *)(arg + 60);
             local.z = *(s32 *)(arg + 64);
-            Func_0800447c(value << 17,
-                          *(s16 *)(arg + 102) - (value << 11),
+            RotateVectorByMagnitude(battle_value << 17,
+                          *(s16 *)(arg + 102) - (battle_value << 11),
                           &local);
             *(s32 *)(arg + 8) = local.x;
             *(s32 *)(arg + 12) = local.y;

@@ -9,23 +9,23 @@ struct ItemBreakFragmentPosition {
 };
 
 struct ItemBreakFragmentSource {
-    u8 pad_00[6];
+    u8 reserved_00[6];
     u16 angle;
     s32 x;
     s32 y;
     s32 z;
-    u8 pad_14[70];
+    u8 reserved_14[70];
     u8 flag_5a;
-    u8 pad_5b[13];
+    u8 reserved_5b[13];
     struct ItemBreakFragmentSource *target;
 };
 
 struct ItemBreakFragmentObject {
-    u8 pad_00[72];
+    u8 reserved_00[72];
     s32 field_48;
-    u8 pad_4c[9];
+    u8 reserved_4c[9];
     u8 mode_55;
-    u8 pad_56[8];
+    u8 reserved_56[8];
     u16 field_5e;
 };
 
@@ -33,10 +33,10 @@ extern s32 ArcTan2(s32, s32);
 extern u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-extern void Func_0800447c(s32, s32, struct ItemBreakFragmentPosition *);
-extern struct ItemBreakFragmentObject *Func_08096c80(s32, s32, s32, s32);
-extern void Func_08009080(struct ItemBreakFragmentObject *, s32);
-extern void Func_08009098(struct ItemBreakFragmentObject *, const void *);
+extern void RotateVectorByMagnitude(s32, s32, struct ItemBreakFragmentPosition *);
+extern struct ItemBreakFragmentObject *Object_Spawn(s32, s32, s32, s32);
+extern void Object_SetMode(struct ItemBreakFragmentObject *, s32);
+extern void Object_SetCallback(struct ItemBreakFragmentObject *, const void *);
 
 #define UpdateItemBreakFragment Func_08097b70
 
@@ -45,8 +45,8 @@ void Func_08097b70(struct ItemBreakFragmentSource *source)
     struct ItemBreakFragmentSource *target;
     struct ItemBreakFragmentPosition position;
     struct ItemBreakFragmentObject *object;
-    s32 turn;
-    s32 magnitude;
+    s32 steering_delta;
+    s32 drift_magnitude;
 
     target = source->target;
     if (target != 0) {
@@ -54,12 +54,12 @@ void Func_08097b70(struct ItemBreakFragmentSource *source)
         s32 zDelta = target->z - source->z;
 
         if (xDelta != 0 || zDelta != 0) {
-            turn = (s16)(ArcTan2(zDelta, xDelta) - source->angle);
-            if (turn > 0x1000)
-                turn = 0x1000;
-            if (turn < -0x1000)
-                turn = -0x1000;
-            source->angle += turn;
+            steering_delta = (s16)(ArcTan2(zDelta, xDelta) - source->angle);
+            if (steering_delta > 0x1000)
+                steering_delta = 0x1000;
+            if (steering_delta < -0x1000)
+                steering_delta = -0x1000;
+            source->angle += steering_delta;
         }
         source->flag_5a = 0;
     }
@@ -67,16 +67,16 @@ void Func_08097b70(struct ItemBreakFragmentSource *source)
     position.x = source->x;
     position.y = source->y - (Rand() << 4) - 0x80000;
     position.z = source->z;
-    magnitude = Rand() * 3;
-    magnitude <<= 4;
-    Func_0800447c(magnitude, Rand(), &position);
+    drift_magnitude = Rand() * 3;
+    drift_magnitude <<= 4;
+    RotateVectorByMagnitude(drift_magnitude, Rand(), &position);
 
-    object = Func_08096c80(0x11D, position.x, position.y, position.z);
+    object = Object_Spawn(0x11D, position.x, position.y, position.z);
     if (object != 0) {
         object->mode_55 = 2;
         object->field_48 = 0x1999;
-        Func_08009080(object, 0);
+        Object_SetMode(object, 0);
         object->field_5e = 12;
-        Func_08009098(object, Data_0809f0b0);
+        Object_SetCallback(object, Data_0809f0b0);
     }
 }

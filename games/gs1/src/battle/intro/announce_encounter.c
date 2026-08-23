@@ -6,7 +6,7 @@
 extern u8 *Data_03001e74;
 
 void Func_08015118(void);
-void Func_08015120(s32, s32);
+void UiText_DrawQuantity(s32, s32);
 void Func_080151c8(s32);
 void Func_08015218(void);
 s32 Func_080bb65c(void);
@@ -26,7 +26,7 @@ void BattleIntro_AnnounceEncounter(s32 enemy_count)
     if (enemy_count != 0) {
         enemy = enemies;
         do {
-            Func_08015120((u16)*enemy++, 1);
+            UiText_DrawQuantity((u16)*enemy++, 1);
             if (announced == enemy_count - 1)
                 Func_080151c8((s32)&Value_00000811);
             else
@@ -39,12 +39,12 @@ void BattleIntro_AnnounceEncounter(s32 enemy_count)
     Func_08015218();
     if (battle_state[69] == BATTLE_ENCOUNTER_PARTY_FIRST) {
         Func_08015118();
-        Func_08015120(0, 1);
+        UiText_DrawQuantity(0, 1);
         Func_080151c8((s32)&Value_00000812);
         Func_080bb65c();
     } else if (battle_state[69] == BATTLE_ENCOUNTER_ENEMIES_FIRST) {
         Func_08015118();
-        Func_08015120(0, 1);
+        UiText_DrawQuantity(0, 1);
         Func_080151c8((s32)&Value_00000813);
         Func_080bb65c();
     }

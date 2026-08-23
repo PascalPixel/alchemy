@@ -3,7 +3,7 @@
 
 extern struct EventValueWork Data_02000240;
 
-void Func_080030f8(s32);
+void WaitFrames(s32);
 void Func_0808b674(s32);
 void Func_0809177c(void);
 
@@ -11,6 +11,6 @@ void Func_08091780(s32 object_id)
 {
     Func_0809177c();
     Func_0808b674(object_id);
-    Func_080030f8(1);
+    WaitFrames(1);
     GetObject(Data_02000240.value);
 }

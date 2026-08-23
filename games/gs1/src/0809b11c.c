@@ -20,12 +20,12 @@ struct RuntimeState_0809b11c {
 extern struct RuntimeState_0809b11c *Data_03001f30;
 extern u32 Data_03001e40;
 
-void Func_080974d8(struct Output *);
+void NormalizeVector(struct Output *);
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-void Func_0800447c(s32, s32, struct Output *);
-void Func_080f9010(s32);
+void RotateVectorByMagnitude(s32, s32, struct Output *);
+void Audio_PlayCue(s32);
 
 void Func_0809b11c(struct EffectSlot *effect)
 {
@@ -41,7 +41,7 @@ void Func_0809b11c(struct EffectSlot *effect)
         position.x = source->position.x;
         position.y = source->position.y;
         position.z = source->position.z;
-        Func_080974d8(&position);
+        NormalizeVector(&position);
 
         effect->x = position.x;
         effect->z = (s32)((u32)position.z + 0x80000);
@@ -51,7 +51,7 @@ void Func_0809b11c(struct EffectSlot *effect)
         position.x = effect->origin_x;
 
         first_random = Rand();
-        Func_0800447c(
+        RotateVectorByMagnitude(
             0x780000,
             ((first_random << 13) >> 16)
                 - ((Rand() << 13) >> 16)
@@ -66,7 +66,7 @@ void Func_0809b11c(struct EffectSlot *effect)
         effect->state++;
 
         if ((Data_03001e40 & 2) != 0)
-            Func_080f9010(0xf6);
+            Audio_PlayCue(0xf6);
     } else if (state == 1) {
         if (Func_0809ba34(effect) == 0)
             effect->state--;

@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 Func_080030f8(s32);
+s32 WaitFrames(s32);
 
 void Func_080f95a0(void)
 {
@@ -9,7 +9,7 @@ void Func_080f95a0(void)
     do {
         if (*(u8 *)0x02003000 == 0)
             break;
-        Func_080030f8(1);
+        WaitFrames(1);
         wait_count++;
     } while (wait_count <= 299);
 }

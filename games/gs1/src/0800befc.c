@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 Func_080030f8(s32);
+s32 WaitFrames(s32);
 void Func_0800be70(u8 *object, u32 position);
 
 void Func_0800befc(u8 *object)
@@ -14,6 +14,6 @@ void Func_0800befc(u8 *object)
         Func_0800be70(object, pos + 2);
         Func_0800be70(object, pos + 3);
         pos += 4;
-        Func_080030f8(1);
+        WaitFrames(1);
     } while (pos <= 0x7f);
 }

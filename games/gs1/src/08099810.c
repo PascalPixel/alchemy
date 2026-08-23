@@ -7,11 +7,11 @@ struct Fields_08099810 {
 
 extern struct Fields_08099810 Data_02000240;
 
-void Func_080041d8(s32, s32);
+void ScheduleCallbackAfterFrames(s32, s32);
 extern u8 Data_08099679;
 
 void Func_08099810(void) {
     if (Data_02000240.value != 0) {
-        Func_080041d8((s32)&Data_08099679, 0xc80);
+        ScheduleCallbackAfterFrames((s32)&Data_08099679, 0xc80);
     }
 }

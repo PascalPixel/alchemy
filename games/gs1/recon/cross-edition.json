@@ -66,6 +66,156 @@
       "next": "Recover the JA boundary and source into games/gs1/recon/ja/main/080a24e0.c, then express the EN owner as a measured delta."
     }
   ],
+  "transfer_scan": {
+    "measured": "2026-08-23",
+    "method": "Each retained EN assembly object was supplied explicitly to compiler cross-edition. Thumb call relocations and disassembled literal fields were masked before the unique relocation-free owner match was compared across the six local ROMs. Object bytes exclude any trailing retained alignment bytes.",
+    "largest_remaining_c_candidate_owners": [
+      {
+        "en_owner": "080d1714",
+        "ja_owner": "080c8714",
+        "retained_span_bytes": 3384,
+        "object_bytes": 3384,
+        "core_bytes": 2784,
+        "en_core_diff_bytes_from_ja": 0,
+        "all_editions_core_identical": true
+      },
+      {
+        "en_owner": "080d6970",
+        "ja_owner": "080cd970",
+        "retained_span_bytes": 3308,
+        "object_bytes": 3306,
+        "core_bytes": 2694,
+        "en_core_diff_bytes_from_ja": 0,
+        "all_editions_core_identical": true
+      },
+      {
+        "en_owner": "080ca60c",
+        "ja_owner": "080c160c",
+        "retained_span_bytes": 2968,
+        "object_bytes": 2968,
+        "core_bytes": 2344,
+        "en_core_diff_bytes_from_ja": 0,
+        "all_editions_core_identical": true
+      },
+      {
+        "en_owner": "080cbc0c",
+        "ja_owner": "080c2c0c",
+        "retained_span_bytes": 2508,
+        "object_bytes": 2506,
+        "core_bytes": 2022,
+        "en_core_diff_bytes_from_ja": 0,
+        "all_editions_core_identical": true
+      },
+      {
+        "en_owner": "080eb754",
+        "ja_owner": "080e2754",
+        "retained_span_bytes": 2444,
+        "object_bytes": 2444,
+        "core_bytes": 1936,
+        "en_core_diff_bytes_from_ja": 0,
+        "all_editions_core_identical": true
+      },
+      {
+        "en_owner": "080dc968",
+        "ja_owner": "080d3968",
+        "retained_span_bytes": 2372,
+        "object_bytes": 2372,
+        "core_bytes": 1784,
+        "en_core_diff_bytes_from_ja": 474,
+        "all_editions_core_identical": false
+      },
+      {
+        "en_owner": "080d2464",
+        "ja_owner": "080c9464",
+        "retained_span_bytes": 2356,
+        "object_bytes": 2354,
+        "core_bytes": 1830,
+        "en_core_diff_bytes_from_ja": 0,
+        "all_editions_core_identical": true
+      },
+      {
+        "en_owner": "08021e6c",
+        "ja_owner": "08021ed4",
+        "retained_span_bytes": 2300,
+        "object_bytes": 2298,
+        "core_bytes": 2030,
+        "en_core_diff_bytes_from_ja": 904,
+        "all_editions_core_identical": false
+      },
+      {
+        "en_owner": "080d91dc",
+        "ja_owner": "080d01dc",
+        "retained_span_bytes": 2268,
+        "object_bytes": 2268,
+        "core_bytes": 1760,
+        "en_core_diff_bytes_from_ja": 0,
+        "all_editions_core_identical": true
+      },
+      {
+        "en_owner": "080e302c",
+        "ja_owner": "080da02c",
+        "retained_span_bytes": 2188,
+        "object_bytes": 2186,
+        "core_bytes": 1774,
+        "en_core_diff_bytes_from_ja": 0,
+        "all_editions_core_identical": true
+      }
+    ],
+    "battle_priority": [
+      {
+        "rank": 1,
+        "en_owner": "080bd898",
+        "ja_owner": "080b4898",
+        "object_bytes": 1876,
+        "core_bytes": 1476,
+        "en_core_diff_bytes_from_ja": 0,
+        "all_editions_core_identical": true,
+        "evidence": "Directly calls 080bbb0c and shares its exact +0x9000 JA-to-EN owner shift; a JA-base/EN-wrapper workbench candidate has been started."
+      },
+      {
+        "rank": 2,
+        "en_owner": "080bae40",
+        "ja_owner": "080b1e40",
+        "object_bytes": 1864,
+        "core_bytes": 1456,
+        "en_core_diff_bytes_from_ja": 0,
+        "all_editions_core_identical": true,
+        "evidence": "Large battle target-selection owner with four corresponding callees and the same +0x9000 JA-to-EN shift."
+      },
+      {
+        "rank": 3,
+        "en_owner": "080a9f10",
+        "ja_owner": "080a0e0c",
+        "retained_span_bytes": 1336,
+        "object_bytes": 1334,
+        "core_bytes": 942,
+        "en_core_diff_bytes_from_ja": 0,
+        "all_editions_core_identical": true,
+        "evidence": "An EN draft already expresses the full owner and now has an exact JA correspondence; rebase the active corpus before further allocation work."
+      },
+      {
+        "rank": 4,
+        "en_owner": "080bd424",
+        "ja_owner": "080b4424",
+        "object_bytes": 896,
+        "core_bytes": 772,
+        "en_core_diff_bytes_from_ja": 0,
+        "all_editions_core_identical": true,
+        "evidence": "Calls 080bae40 twice and has ten corresponding callees, making it a useful sibling for shared type and call-signature recovery."
+      },
+      {
+        "rank": 5,
+        "en_owner": "080ba2c0",
+        "ja_owner": "080b12c0",
+        "object_bytes": 708,
+        "core_bytes": 504,
+        "en_core_diff_bytes_from_ja": 0,
+        "all_editions_core_identical": true,
+        "evidence": "Smaller all-edition-identical battle coordinator with 25 corresponding callees; useful as a lower-cost exactness trial."
+      }
+    ],
+    "conclusion": "The 080bbb0c cross-edition lesson is broadly transferable: eight of the ten largest remaining individual compiler-output owners have a relocation- and literal-normalized core identical in all six editions. For immediate source work, battle owners remain the better sequence because their types, callees, and state-machine vocabulary overlap the exact battle corpus."
+  },
   "propagation": {
     "seed_en_owner": "080bbb0c",
     "shared_core_en_owners": [

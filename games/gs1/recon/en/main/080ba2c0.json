@@ -1,0 +1,95 @@
+{
+  "owner": "main:0x080ba2c0",
+  "span_bytes": 708,
+  "edition": {
+    "role": "shared-candidate-wrapper",
+    "edition": "en",
+    "base_owner": "080b12c0",
+    "base_edition": "ja",
+    "rebase_status": "proved-shared-core"
+  },
+  "cross_edition": {
+    "measured": "2026-08-23",
+    "object_bytes": 708,
+    "core_bytes": 504,
+    "core_diff_bytes": {
+      "ja": 0,
+      "en": 0,
+      "de": 0,
+      "es": 0,
+      "fr": 0,
+      "it": 0
+    },
+    "starts": {
+      "ja": "080b12c0",
+      "en": "080ba2c0"
+    },
+    "callee_correspondences": 25,
+    "core_identical": true
+  },
+  "score": {
+    "measured": "2026-08-23",
+    "candidate_bytes": 708,
+    "reference_bytes": 708,
+    "differing_halfwords": 133,
+    "wrong_instructions": 18,
+    "matched_prefix_instructions": 11,
+    "class": "wrong",
+    "note": "The coherent shared-source recovery has exact object size. Its normalized instruction residual is confined to the entry/facing block before the first literal pool; the retained assembly remains authoritative."
+  },
+  "domain": "Coordinates one battle presentation sequence: establishes camera facing, builds battle work, configures display state, then runs either the direct presentation or the scripted motion and resolution path.",
+  "expressed": [
+    "JA-base/EN-wrapper ownership backed by the proved all-edition-identical core",
+    "camera-facing calculation and frame delays",
+    "battle-work construction and special flag handling",
+    "unit, motion-record, divisor, display-register, and object-action setup",
+    "direct presentation path and scripted motion loop",
+    "resolution dispatch, cleanup, and final object teardown",
+    "edition-specific playback callback address supplied by the thin wrapper",
+    "typed input, work, motion, record, object-slot, and unit layouts backed by exact local offsets"
+  ],
+  "unexpressed": [
+    {
+      "op": "entry input reload and facing-store scheduling",
+      "count": 18,
+      "where": "the normalized residual before the first literal pool; later code resynchronizes"
+    }
+  ],
+  "next": "Keep the EN file as a macro-only wrapper. Revisit only the entry declaration and use order if new compiler-scheduling evidence appears; bounded source and flag probes did not improve the current result.",
+  "verified_against_reference": [
+    "fresh candidate-show build: 708 candidate bytes versus 708 reference bytes, 133 differing halfwords, and 18 wrong aligned instructions",
+    "the normalized residual is limited to input reload/load ordering around the facing store and the first literal-pool boundary",
+    "relocation-aware cross-edition comparison proves 504 core bytes agree in all six editions with 25 established callee correspondences"
+  ],
+  "rejected": [
+    {
+      "shape": "broad top-level cached-coordinate carriers",
+      "result": "extended unrelated lifetimes and regressed to 744 candidate bytes and 236 wrong instructions"
+    },
+    {
+      "shape": "inner do/while with a separate angle-step carrier",
+      "result": "allocated the work pointer differently and scored 740 candidate bytes with 230 wrong instructions"
+    },
+    {
+      "shape": "unsafe diagnostic heat-search result",
+      "result": "reached 712 candidate bytes and 60 wrong instructions only by narrowing an arithmetic carrier to char; rejected as a semantic change"
+    },
+    {
+      "shape": "volatile saved-input carrier",
+      "result": "expanded the frame and regressed to 724 candidate bytes and 120 wrong instructions"
+    },
+    {
+      "shape": "inherit 080bbb0c's -fno-cse-follow-jumps route",
+      "result": "byte-neutral here; the compiler flag is owner-specific and was not added"
+    },
+    {
+      "shape": "safe bounded heat searches",
+      "result": "10,000 iterations from the initial candidate and 20,000 iterations from the near-exact candidate found no verified improvement"
+    }
+  ],
+  "notes": [
+    "Moving the scripted carrier before the facing pointer repaired the reference stack-slot order; keeping loop coordinate carriers inside the loop repaired the long-lived register allocation.",
+    "The linked halfword count is amplified by the one-halfword displacement before the first literal pool; normalized instruction comparison isolates the remaining 18 instructions.",
+    "No external source, git history, compiler modification, copied instruction bytes, fixed-register variables, barriers, or inline assembly was used."
+  ]
+}

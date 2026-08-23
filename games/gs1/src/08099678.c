@@ -2,7 +2,7 @@
 #include "types.h"
 #include "map.h"
 
-struct Object_08099678 {
+struct MapObject {
     u8 padding00[8];
     s32 x;
     u8 padding0c[4];
@@ -11,33 +11,34 @@ struct Object_08099678 {
     u8 map_layer;
 };
 
-struct Runtime_08099678 {
+struct MapEventRuntime {
     u8 padding000[0x17e];
-    s16 field_17e;
+    s16 event_code;
     u8 padding180[0x1e];
     s16 mode;
 };
 
-struct Global_08099678 {
+struct ObjectGlobals {
     u8 padding000[0x1f4];
-    u32 object_id;
+    u32 active_object_id;
 };
 
-extern struct Global_08099678 Data_02000240;
-extern struct Runtime_08099678 *Data_03001ebc;
+extern struct ObjectGlobals Data_02000240;
+extern struct MapEventRuntime *Data_03001ebc;
 
+#define CheckObjectMapTile Func_08099678
 void Func_08099678(void)
 {
     u32 runtime_slot_address;
-    struct Runtime_08099678 *runtime;
-    struct Object_08099678 *object;
+    struct MapEventRuntime *runtime;
+    struct MapObject *object;
     u8 *tile;
     s32 x;
     s32 y;
 
     runtime_slot_address = (u32)&Data_03001ebc;
     runtime = Data_03001ebc;
-    object = GetObject(Data_02000240.object_id);
+    object = GetObject(Data_02000240.active_object_id);
     /* The map-state pointer slot is 19 words before the runtime pointer slot. */
     tile = (u8 *)*(struct MapState **)(runtime_slot_address - 76);
 
@@ -80,5 +81,5 @@ void Func_08099678(void)
     }
 
     if (tile[2] != 0xfb)
-        runtime->field_17e = 0x2092;
+        runtime->event_code = 0x2092;
 }

@@ -30,7 +30,7 @@ void Func_0808a510(struct Effect_080b2f4c *, s32, s32);
 s32 Func_0808a508(struct Effect_080b2f4c *);
 void Func_0808a530(struct Effect_080b2f4c *);
 
-void Func_080b2f4c(struct Effect_080b2f4c *effect)
+void BattleEffect_UpdateRadialMotion(struct Effect_080b2f4c *effect)
 {
     struct Position position;
     s8 *state_pointer;

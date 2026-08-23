@@ -4,7 +4,7 @@
 s32 GameFlag_IsSet(s32);
 void GameFlag_Clear(s32);
 void Func_08094380(s32 arg0);
-void Func_080933f8(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+void ObjectMotion_PlaceWithinCameraBounds(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void WaitFrames(s32);
 void Audio_PlayCue(s32);
 void Object_SetMode(void *, s32);
@@ -37,7 +37,7 @@ s32 Func_08094428(void)
                 object_id = Data_02000240[125];
                 object = GetObject(object_id);
                 *(s32 *)((u8 *)object + 12) += 0x00a00000;
-                Func_080933f8(-1, -1, -1, 0);
+                ObjectMotion_PlaceWithinCameraBounds(-1, -1, -1, 0);
                 while (*(s32 *)((u8 *)object + 12) + *(s32 *)((u8 *)object + 40) >
                        *(s32 *)((u8 *)object + 20)) {
                     WaitFrames(1);

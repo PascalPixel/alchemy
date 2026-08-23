@@ -21,7 +21,7 @@ s32 FixedPoint_Ratio(s32 numerator, s32 denominator);
 extern u8 Data_03001d00;
 extern union AffineMatrix Data_03001d40[];
 
-s32 Func_08003d28(struct Effect *source)
+s32 AffineMatrix_BuildForEffect(struct Effect *source)
 {
     union AffineMatrix *matrix;
     s16 *coefficient;

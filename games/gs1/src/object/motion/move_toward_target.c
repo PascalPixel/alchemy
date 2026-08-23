@@ -32,7 +32,7 @@ s32 FixedPoint_Ratio(s32, s32);
 s32 Object_SetPosition(s32, s32, s32, s32);
 s32 Object_SetMode(s32, s32);
 
-s32 Func_0809397c(s32 arg0)
+s32 ObjectMotion_MoveTowardTarget(s32 arg0)
 {
     s32 squareRoot = 0x030001d8;
     s32 object;

@@ -15,7 +15,7 @@ s32 Func_080b5100(s32);
 void Object_InitializeMode(void *, s32);
 extern u32 Data_03001eec;
 
-void Func_080d6888(
+void ObjectGroup_UpdateMembers(
     s32 set_id,
     s32 object_value,
     s32 group_value,

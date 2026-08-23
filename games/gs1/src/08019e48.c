@@ -1,7 +1,7 @@
 #include "types.h"
 #include "global_cells.h"
 
-extern s32 Func_08019d2c();
+extern s32 Localization_LookupEntryId();
 extern void UiWork_Finalize(struct Work *work, s32 release);
 
 void Func_08019e48(void)
@@ -16,7 +16,7 @@ void Func_08019e48(void)
 
     base = *(u8 **)ADDR_03001E8C;
     work = base + 0x500;
-    id = Func_08019d2c();
+    id = Localization_LookupEntryId();
     if (id == -1)
         return;
 

@@ -34,37 +34,38 @@
 #define DISPLAY_CELL_ADDR 0x03001E70
 #endif
 
-struct State_080903bc {
+struct DisplayTransitionState {
     u8 pad_000[0x52a];
-    u16 value_52a;
+    u16 transition_value;
     u8 pad_52c[14];
-    s8 start_53a;
-    s8 end_53b;
-    s8 duration_53c;
-    s8 step_53d;
+    s8 transition_start;
+    s8 transition_end;
+    s8 transition_duration;
+    s8 transition_step;
 };
 
-struct Display_080903bc {
+struct DisplayTransitionRegisters {
     u8 pad_000[0x100];
-    u16 first_100;
-    u16 second_102;
+    u16 primary_value;
+    u16 secondary_value;
 };
 
 extern s32 Func_08004278(void (*)(void));
 extern void Func_0800307c(s32, s32, s32);
 extern s32 Func_080072f0(s32, s32, s32, s32);
 
+#define UpdateDisplayTransition Func_080903bc
 void Func_080903bc(void)
 {
-    struct State_080903bc *state =
-        *(struct State_080903bc **)STATE_CELL_ADDR;
-    struct Display_080903bc *display =
-        *(struct Display_080903bc **)DISPLAY_CELL_ADDR;
-    s8 *duration = &state->duration_53c;
-    u32 displayValue;
+    struct DisplayTransitionState *state =
+        *(struct DisplayTransitionState **)STATE_CELL_ADDR;
+    struct DisplayTransitionRegisters *display =
+        *(struct DisplayTransitionRegisters **)DISPLAY_CELL_ADDR;
+    s8 *duration = &state->transition_duration;
+    u32 display_value;
 
     if (*duration != 0) {
-        s8 *step = &state->step_53d;
+        s8 *step = &state->transition_step;
 
         if (*step >= *duration) {
             *duration = 0;
@@ -72,22 +73,22 @@ void Func_080903bc(void)
             Func_0800307c(1, 0, 0);
             return;
         } else {
-            s32 delta = state->end_53b - state->start_53a;
+            s32 delta = state->transition_end - state->transition_start;
             s32 value;
 
             (*step)++;
             value = Func_080072f0(
                 delta * *step, *duration, delta, 0x03000380);
-            state->value_52a = state->start_53a + value;
+            state->transition_value = state->transition_start + value;
         }
     }
 
-    displayValue = state->value_52a;
-    if (displayValue > 79) {
-        display->first_100 = 200;
-        display->second_102 = 250;
+    display_value = state->transition_value;
+    if (display_value > 79) {
+        display->primary_value = 200;
+        display->secondary_value = 250;
     } else {
-        display->first_100 = displayValue;
-        display->second_102 = 159 - displayValue;
+        display->primary_value = display_value;
+        display->secondary_value = 159 - display_value;
     }
 }

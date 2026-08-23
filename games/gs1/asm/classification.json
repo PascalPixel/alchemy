@@ -1684,6 +1684,25 @@
    ]
   },
   {
+   "kind": "compiler_allocation_mismatch",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "strong",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_owner_extent",
+    "only_residual_is_r1_instead_of_r3_for_signature_load_and_compare",
+    "approved_compiler_family_and_optimization_sweep_preserves_defect_or_changes_extent",
+    "9786_compiled_semantics_preserving_permutations_produced_zero_exact_candidates",
+    "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 28,
+   "files": [
+    "080fa264"
+   ]
+  },
+  {
    "kind": "thumb_multiple_transfer_module",
    "origin": "program_or_library_assembly",
    "retention": "keep_structured_asm",

@@ -56,8 +56,8 @@ Three figures, because one of them alone would mislead:
 |                    |       bytes |                   share |
 | ------------------ | ----------: | ----------------------: |
 | Exact C            |     299,774 |     22.2% of executable |
-| Permanent assembly |     309,750 |     23.0% of executable |
-| **DONE**           | **609,524** | **45.2% of executable** |
+| Permanent assembly |     309,858 |     23.0% of executable |
+| **DONE**           | **609,632** | **45.2% of executable** |
 
 Permanent assembly is not a shortcut and not a backlog. It includes linker
 veneers and alignment padding, plus audited routines whose instruction shape or
@@ -93,7 +93,7 @@ The main game contains 548,364 executable bytes in the purple band.
 The game loads 96 additional code overlays containing 798,758 executable bytes
 in the cyan band.
 
-![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](games/gs1/assets/readme/gs1-en-overlays.svg?v=5576f9873f4e23a3)
+![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](games/gs1/assets/readme/gs1-en-overlays.svg?v=5854531410f83bd3)
 
 ### Images and data
 
@@ -104,7 +104,7 @@ or `djinn_venus.gif`. **Extracted** is the same picture sitting under the
 ROM's own numbering — `resource_226_grid_value_high.png` — which is not the
 same as knowing what it is. Almost everything is still Extracted.
 
-![Image and data maturity box tree in the magenta band; brightness is maturity.](games/gs1/assets/readme/gs1-en-images.svg?v=d35012fe1836736b)
+![Image and data maturity box tree in the magenta band; brightness is maturity.](games/gs1/assets/readme/gs1-en-images.svg?v=dac5fe2ce044fef6)
 
 ### Music and sound
 
@@ -115,7 +115,7 @@ Every file now carries a name instead of a ROM index, but read the tier as
 `music_walking_passage_quintet_full`, `effect_sample_large_oneshot` — and none of
 them claims a title or a scene. Nothing was taken from outside the ROM.
 
-![Music and sound maturity box tree in the orange band; brightness is maturity.](games/gs1/assets/readme/gs1-en-music.svg?v=f78c16bba2533ad5)
+![Music and sound maturity box tree in the orange band; brightness is maturity.](games/gs1/assets/readme/gs1-en-music.svg?v=0fe5700a51fd7ccf)
 
 ## Contributing and project status
 

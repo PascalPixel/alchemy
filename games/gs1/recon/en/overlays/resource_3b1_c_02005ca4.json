@@ -1,6 +1,7 @@
 {
   "owner": "resource_3b1:5ca4",
   "span_bytes": 108,
+  "semantic_name": "RunMapEvent",
   "score": {
     "measured": "2026-08-17",
     "candidate_bytes": 108,
@@ -18,6 +19,12 @@
     "wrong_instructions 0"
   ],
   "blocked_by": "instruction order only: one swapped pair",
-  "rejected": [],
-  "note": "Found by a full sweep of 1,201 unfinished owners. Exact size, zero wrong instructions."
+  "rejected": [
+    "2026-08-23 bounded routing sweep: -fno-schedule-insns, -fno-gcse, -fno-expensive-optimizations, -fno-rerun-cse-after-loop, -fno-regmove, -fno-strength-reduce, -fno-cse-follow-jumps, -fno-cse-skip-blocks, and -O3 preserve the two-halfword ordering defect; -fno-schedule-insns2 and -O1 regress to 17",
+    "2026-08-23 ordinary-C source sweep: actor and scale locals in both declaration orders, constant and shifted scale forms, and typed prototypes all preserve the same two-halfword shift ordering defect",
+    "2026-08-23 twenty-thousand-candidate safe heat walk: 20,000 compiled, exact 0, best unchanged at the two-halfword baseline",
+    "2026-08-23 ten-thousand-candidate classic exact-only heat walk: 9,965 compiled, exact 0, best unchanged at the two-halfword baseline"
+  ],
+  "retention": "keep_structured_asm",
+  "note": "Found by a full sweep of 1,201 unfinished owners. Exact size, zero wrong instructions; retained only after ordinary-C, routing, safe-walk, and classic exact-only searches preserved the same swapped pair."
 }

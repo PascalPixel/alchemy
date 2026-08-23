@@ -3,9 +3,9 @@
 @ 未達。build_asm.tsでROMとの一致を確認する。
 .syntax unified
 	.thumb
-	.global Func_080fa264
+	.global Audio_ResumePlayer
 	.thumb_func
-Func_080fa264:
+Audio_ResumePlayer:
 	adds	r2, r0, #0
 	ldr	r3, [r2, #52]
 	ldr	r0, [pc, #12]

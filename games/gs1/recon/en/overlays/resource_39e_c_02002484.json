@@ -1,28 +1,25 @@
 {
   "owner": "resource_39e:2484",
   "span_bytes": 132,
+  "semantic_name": "StartXianSchoolDoorEvent",
   "score": {
-    "measured": "2026-08-17",
+    "measured": "2026-08-23",
     "candidate_bytes": 132,
     "reference_bytes": 132,
     "wrong_instructions": 0,
     "differing_halfwords": 5,
     "class": "ordering"
   },
-  "shape": {
-    "calls": 13,
-    "loops": 0,
-    "memory_ops": 0
-  },
   "expressed": [
-    "hand-written from the drafter: both guards as one short-circuit `&&`, both arms, all thirteen calls"
+    "two story-flag guard",
+    "school-door message path",
+    "Xian school-door event setup"
   ],
-  "unexpressed": [],
-  "verified_against_reference": [
-    "byte count 132 = 132",
-    "wrong_instructions 0"
-  ],
-  "blocked_by": "argument setup order: `movs r0, #0` and `lsls r1, r1, #1` are placed differently around a call, two instructions out of 66",
-  "rejected": [],
-  "note": "The two guards skip to the same address, which is `&&` and not nested ifs -- the else arm belongs to the pair. Reading them as separate ifs gave the first branch the wrong target."
+  "blocked_by": "two argument setup order positions that ordinary GCC 2.96 C does not currently reproduce",
+  "rejected": [
+    {
+      "shape": "fixed-register local variables",
+      "result": "byte-exact, but forbidden by the repository no-asm gate because GCC register bindings are an assembly escape"
+    }
+  ]
 }

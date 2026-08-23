@@ -15,11 +15,11 @@
       "percent_of_executable": 3.33
     },
     "assembly": {
-      "bytes": 693762,
-      "percent_of_executable": 51.46
+      "bytes": 693654,
+      "percent_of_executable": 51.45
     },
     "retained_asm": {
-      "bytes": 309750,
+      "bytes": 309858,
       "percent_of_executable": 22.98
     },
     "asset_data": {
@@ -40,7 +40,7 @@
   "provenance": {
     "exact_source": "worktree",
     "tracked_source": "worktree",
-    "tracked_sources": 71,
+    "tracked_sources": 72,
     "main_tracked_census": "games/gs1/recon/en/main/*.json",
     "tracked_superseded_bytes": 0,
     "tracked_outside_extent_bytes": 0,
@@ -100,10 +100,10 @@
       "categories": {
         "exact_c": 192132,
         "tracked_c": 37734,
-        "assembly": 433882,
-        "retained_asm": 136076
+        "assembly": 433774,
+        "retained_asm": 136184
       },
-      "tiles": 5449
+      "tiles": 5451
     }
   ]
 }

@@ -18,6 +18,8 @@
     "wrong_instructions 0"
   ],
   "blocked_by": "instruction order only: `negs r2, r2` scheduled after `movs r1, #2` rather than before it",
-  "rejected": [],
+  "rejected": [
+    "2026-08-23 bounded routing sweep: -fno-schedule-insns, -fno-gcse, -fno-expensive-optimizations, -fno-rerun-cse-after-loop, -fno-regmove, -fno-strength-reduce, -fno-cse-follow-jumps, -fno-cse-skip-blocks, and -O3 preserve the two-halfword ordering defect; -fno-schedule-insns2 and -O1 regress to 5"
+  ],
   "note": "Found by a full sweep of 1,201 unfinished owners. Exact size, zero wrong instructions."
 }

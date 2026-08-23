@@ -1,10 +1,10 @@
 #include "types.h"
+#include "resource.h"
 
-s32 Func_08002f40(s32 index);
 void Func_08005340(void *, void *);
 
 void Func_080e0524(void *arg0, void *arg1, s32 arg2, s32 arg3) {
-    u8 *target = Func_08002f40(arg0);
+    u8 *target = GetResource((s32)arg0);
 
     if (arg3 != 0) {
         void (*copy)(void *, void *, s32) = (void (*)(void *, void *, s32))0x03001388;

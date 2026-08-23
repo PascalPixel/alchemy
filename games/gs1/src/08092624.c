@@ -1,3 +1,4 @@
+#include "fixed_math.h"
 #include "types.h"
 
 struct Child_08092624 {
@@ -28,9 +29,9 @@ struct Object_08092624 {
 };
 
 extern struct Object_08092624 *Func_080090c8(s32, s32, s32, s32);
-extern s32 Func_08004458(void);
+extern s32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Func_08004458
+#define Rand Random16
 extern void Func_08009080(struct Object_08092624 *, s32);
 extern void Func_08009098(struct Object_08092624 *, const void *);
 extern void Func_080929d8(struct Object_08092624 *);

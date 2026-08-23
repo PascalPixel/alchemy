@@ -1,4 +1,5 @@
 #include "types.h"
+#include "fixed_math.h"
 
 extern s32 Data_02000240[];
 
@@ -65,8 +66,8 @@ void Func_08095a44(s32 arg)
                 Func_0809ba70(work, 7);
             }
             while (0);
-            Func_08009248(*((s32 *)(head = (((s8 *)work) + 0))), ((u32)(Func_08004458() * 7)) >> 0x10);
-            value = (Func_080022f4(Func_08004458(), 3) + 0x10000);
+            Func_08009248(*((s32 *)(head = (((s8 *)work) + 0))), ((u32)(Random16() * 7)) >> 0x10);
+            value = (Func_080022f4(Random16(), 3) + 0x10000);
             (*((s32 *)(((s8 *)work) + 0x2C))) = value;
             (*((s32 *)(((s8 *)work) + 0x28))) = value;
             count = (count - 1);

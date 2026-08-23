@@ -201,6 +201,9 @@ typedef char AudioEngineState_direct_channels_offset[
 
 void Audio_Initialize(void);
 void CgbAudio_Initialize(struct CgbChannel *channels);
+void MusicPlayer_ExecuteMemoryAccessCommand(
+    struct MusicPlayerState *player,
+    struct MusicTrackState *track);
 void Func_080fa6a0(struct AudioEngineState *audio_state);
 void Func_080fa83c(u32 value);
 void Func_080fa9e0(

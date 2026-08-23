@@ -1,6 +1,6 @@
 #include "types.h"
+#include "resource.h"
 
-extern s32 Func_08002f40(s32 index);
 extern volatile u8 Data_03001f54;
 extern u8 Data_00000002[];
 
@@ -20,7 +20,7 @@ u16 Func_08077cb8(void)
     s32 shifted;
     s32 result;
 
-    digits = (u8 *)Func_08002f40((s32)Data_00000002);
+    digits = GetResource((s32)Data_00000002);
     hourTens = *digits;
     hours = (hourTens - '0') * 10;
     digits++;

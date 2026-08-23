@@ -1,3 +1,4 @@
+#include "fixed_math.h"
 #include "types.h"
 #include "global_cells.h"
 
@@ -17,9 +18,9 @@ struct Creature_080b90f8 {
 s32 Func_080b6b40(s32 arg0, u16 *arg1);
 struct Creature_080b90f8 *Func_08077008(s32);
 s32 Func_080022ec(s32, s32);
-u32 Func_08004458(void);
+u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Func_08004458
+#define Rand Random16
 extern u8 Data_02000240[];
 
 s32 Func_080b90f8(void) {

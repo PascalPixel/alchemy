@@ -1,5 +1,7 @@
+#include "fixed_math.h"
 #include "types.h"
 #include "object_efx.h"
+#include "sound_ids.h"
 
 struct Vector_08098c08 {
     s32 x;
@@ -12,9 +14,9 @@ struct Object_08096bec;
 void Func_080f9010(s32);
 u8 *Func_08096c80(s32, s32, s32, s32);
 void Func_08009098(void *, const void *);
-u32 Func_08004458(void);
+u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Func_08004458
+#define Rand Random16
 void Func_08096bec(struct Object_08096bec *, s32, s32);
 
 s32 Func_08098c08(void *source)
@@ -26,7 +28,7 @@ s32 Func_08098c08(void *source)
     register s32 speed;
     register struct Vector_08098c08 *position_pointer;
 
-    Func_080f9010(0x86);
+    Func_080f9010(SOUND_HEAVY_IMPACT);
     position.x = *(s32 *)((u8 *)source + 8);
     position.y = *(s32 *)((u8 *)source + 12);
     position.z = *(s32 *)((u8 *)source + 16);

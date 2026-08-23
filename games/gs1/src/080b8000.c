@@ -1,10 +1,11 @@
 #include "types.h"
+#include "fixed_math.h"
 #include "motion_object.h"
 
 struct BattleObjectSlot *Func_080b7dd0(s32 arg0);
 void Func_08009140(struct MotionObject *);
 void Func_08009150(struct MotionObject *, s32, s32, s32);
-s32 Func_080044d0(s32, s32);
+s32 ArcTan2(s32, s32);
 
 void Func_080b8000(s32 arg0) {
     s32 var_r0; s32 zero;
@@ -25,5 +26,5 @@ void Func_080b8000(s32 arg0) {
     var_r0 = slot->anchor_z;
     if (var_r0 < 0) { var_r0 += 7; }
     *(s16 *)((u8 *)object + 6) =
-        (s16)(Func_080044d0(var_r0 >> 3, slot->anchor_x) - 0x8000);
+        (s16)(ArcTan2(var_r0 >> 3, slot->anchor_x) - 0x8000);
 }

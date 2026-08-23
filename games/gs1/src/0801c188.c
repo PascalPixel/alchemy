@@ -1,4 +1,5 @@
 #include "types.h"
+#include "resource.h"
 
 struct SelectionNode_0801c188 {
     u8 padding_00[8];
@@ -28,7 +29,6 @@ extern u8 Value_000000f1;
 
 struct SelectionNode_0801c188 *Func_0801b36c(void *state);
 struct ResourceBuffer_0801c188 *Func_080048b0(s32 owner, s32 size);
-u8 *Func_08002f40(s32 resource_group);
 void Func_080053e8(void *source, void *destination);
 u16 Func_08004080(void);
 u16 Func_08003fa4(s32 handle, s32 size, void *buffer);
@@ -50,7 +50,7 @@ void Func_0801c188(void)
     buffer = Func_080048b0(17, 0x608);
     transfer = (struct TransferState_0801c188 *)(state + 0x30C);
     resource_index = selection->resource_index;
-    resource_table = Func_08002f40((s32)&Value_000000f1);
+    resource_table = GetResource((s32)&Value_000000f1);
     {
         void **destination = &buffer->resource;
         resource = resource_table

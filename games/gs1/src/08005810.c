@@ -1,7 +1,8 @@
 #include "types.h"
+#include "fixed_math.h"
 #include "global_cells.h"
 
-u32 Func_08004458(void);
+u32 Random16(void);
 s32 Func_08002304(s32, s32);
 u32 Func_08005b24(s32);
 
@@ -31,7 +32,7 @@ u32 Func_08005810(s32 mode)
                 index = 0x10;
             }
         } else {
-            index = Func_08002304(Func_08004458(), count);
+            index = Func_08002304(Random16(), count);
             index = empty[index];
         }
     }

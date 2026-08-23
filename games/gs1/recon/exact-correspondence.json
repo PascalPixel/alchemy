@@ -27102,7 +27102,7 @@
     },
     {
       "en_owner": "080a7380",
-      "source": "games/gs1/src/080a7380.c",
+      "source": "games/gs1/src/menu/open_character_selector.c",
       "size": 192,
       "status": "regional_core",
       "starts": {
@@ -30402,7 +30402,7 @@
     },
     {
       "en_owner": "080b7994",
-      "source": "games/gs1/src/080b7994.c",
+      "source": "games/gs1/src/battle/status_icon/cycle.c",
       "size": 280,
       "status": "shared_core",
       "starts": {

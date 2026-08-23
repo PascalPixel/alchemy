@@ -2,6 +2,7 @@
 #include "types.h"
 #include "gs1_edition.h"
 #include "inventory_menu.h"
+#include "character_menu.h"
 
 #if defined(GS1_EDITION_JA)
 #define ROW_CNT 4
@@ -9,12 +10,12 @@
 #define ROW_CNT 8
 #endif
 
-struct ObjectControl_080a7380 {
+struct MenuObjectControl {
     u8 padding00[4];
     u16 suspended;
 };
 
-struct CharacterMenuState_080a7380 {
+struct CharacterSelectorState {
     u8 padding000[0x24];
     s32 screen_handle;
     u8 padding028[0x0e4];
@@ -31,33 +32,33 @@ struct CharacterMenuState_080a7380 {
 
 LAYOUT_OFFSET_GUARD(
     CharacterMenu080a7380_ScreenHandle,
-    struct CharacterMenuState_080a7380,
+    struct CharacterSelectorState,
     screen_handle,
     0x24);
 LAYOUT_OFFSET_GUARD(
     CharacterMenu080a7380_SelectorWindow,
-    struct CharacterMenuState_080a7380,
+    struct CharacterSelectorState,
     selector_window,
     0x10c);
 LAYOUT_OFFSET_GUARD(
     CharacterMenu080a7380_RowPositions,
-    struct CharacterMenuState_080a7380,
+    struct CharacterSelectorState,
     row_positions,
     0x144);
 LAYOUT_OFFSET_GUARD(
     CharacterMenu080a7380_CharacterIds,
-    struct CharacterMenuState_080a7380,
+    struct CharacterSelectorState,
     character_ids,
     0x208);
 LAYOUT_OFFSET_GUARD(
     CharacterMenu080a7380_SelectorFlags,
-    struct CharacterMenuState_080a7380,
+    struct CharacterSelectorState,
     selector_flags,
     0x220);
 
-extern struct ObjectControl_080a7380 *Data_03001e68;
+extern struct MenuObjectControl *Data_03001e68;
 
-struct CharacterMenuState_080a7380 *Func_080048b0(s32, s32);
+struct CharacterSelectorState *Func_080048b0(s32, s32);
 void Func_08002dd8(s32);
 void Func_080030f8(s32);
 void Func_08015278(s32);
@@ -73,9 +74,9 @@ s32 Func_080a7440(void);
  * and tear the screen down.  The shared object list is suspended while this
  * modal owns the display.  Its eight row anchors all begin at x=30.
  */
-s32 Func_080a7380(void)
+s32 OpenCharacterSelector(void)
 {
-    struct CharacterMenuState_080a7380 *state =
+    struct CharacterSelectorState *state =
         Func_080048b0(55, 0x0a70);
     s32 result;
     s32 index;

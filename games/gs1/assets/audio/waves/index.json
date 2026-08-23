@@ -8,8 +8,7 @@
    "size": "0x000002ac",
    "frequency": 22579200,
    "loop_start": 645,
-   "source": "music_sample_tiny_looping.pcm8.wav",
-   "provisional_name": "music_sample_tiny_looping"
+   "source": "wave_00.pcm8.wav"
   },
   {
    "name": "wave_01",
@@ -17,8 +16,7 @@
    "size": "0x0000330c",
    "frequency": 22579200,
    "loop_start": 12544,
-   "source": "music_sample_medium_looping_alpha.pcm8.wav",
-   "provisional_name": "music_sample_medium_looping_alpha"
+   "source": "wave_01.pcm8.wav"
   },
   {
    "name": "wave_02",
@@ -26,8 +24,7 @@
    "size": "0x00002b58",
    "frequency": 22579200,
    "loop_start": 9392,
-   "source": "music_sample_medium_looping_beta.pcm8.wav",
-   "provisional_name": "music_sample_medium_looping_beta"
+   "source": "wave_02.pcm8.wav"
   },
   {
    "name": "wave_03",
@@ -35,8 +32,7 @@
    "size": "0x00001d80",
    "frequency": 22579200,
    "loop_start": null,
-   "source": "music_sample_medium_oneshot.pcm8.wav",
-   "provisional_name": "music_sample_medium_oneshot"
+   "source": "wave_03.pcm8.wav"
   },
   {
    "name": "wave_04",
@@ -44,8 +40,7 @@
    "size": "0x00000734",
    "frequency": 22579200,
    "loop_start": 1804,
-   "source": "music_sample_small_looping_alpha.pcm8.wav",
-   "provisional_name": "music_sample_small_looping_alpha"
+   "source": "wave_04.pcm8.wav"
   },
   {
    "name": "wave_05",
@@ -53,8 +48,7 @@
    "size": "0x00004c58",
    "frequency": 22579200,
    "loop_start": null,
-   "source": "music_sample_large_oneshot.pcm8.wav",
-   "provisional_name": "music_sample_large_oneshot"
+   "source": "wave_05.pcm8.wav"
   },
   {
    "name": "wave_06",
@@ -62,8 +56,7 @@
    "size": "0x000041d0",
    "frequency": 16146432,
    "loop_start": 7820,
-   "source": "music_sample_large_looping.pcm8.wav",
-   "provisional_name": "music_sample_large_looping"
+   "source": "wave_06.pcm8.wav"
   },
   {
    "name": "wave_07",
@@ -71,8 +64,7 @@
    "size": "0x00003eac",
    "frequency": 22579200,
    "loop_start": 5616,
-   "source": "music_sample_medium_looping_gamma.pcm8.wav",
-   "provisional_name": "music_sample_medium_looping_gamma"
+   "source": "wave_07.pcm8.wav"
   },
   {
    "name": "wave_08",
@@ -80,8 +72,7 @@
    "size": "0x00000a00",
    "frequency": 22579200,
    "loop_start": 2500,
-   "source": "music_sample_small_looping_beta.pcm8.wav",
-   "provisional_name": "music_sample_small_looping_beta"
+   "source": "wave_08.pcm8.wav"
   },
   {
    "name": "wave_09",
@@ -89,8 +80,7 @@
    "size": "0x000033f8",
    "frequency": 22579200,
    "loop_start": 7020,
-   "source": "music_sample_medium_looping_delta.pcm8.wav",
-   "provisional_name": "music_sample_medium_looping_delta"
+   "source": "wave_09.pcm8.wav"
   },
   {
    "name": "wave_10",
@@ -98,8 +88,7 @@
    "size": "0x00001fa0",
    "frequency": 22579200,
    "loop_start": 8037,
-   "source": "music_sample_medium_looping_epsilon.pcm8.wav",
-   "provisional_name": "music_sample_medium_looping_epsilon"
+   "source": "wave_10.pcm8.wav"
   },
   {
    "name": "wave_11",
@@ -107,8 +96,7 @@
    "size": "0x00000818",
    "frequency": 22579200,
    "loop_start": 2010,
-   "source": "music_sample_small_looping_gamma.pcm8.wav",
-   "provisional_name": "music_sample_small_looping_gamma"
+   "source": "wave_11.pcm8.wav"
   },
   {
    "name": "wave_12",
@@ -116,8 +104,7 @@
    "size": "0x00002fe8",
    "frequency": 22579200,
    "loop_start": 8064,
-   "source": "music_sample_medium_looping_zeta.pcm8.wav",
-   "provisional_name": "music_sample_medium_looping_zeta"
+   "source": "wave_12.pcm8.wav"
   },
   {
    "name": "wave_13",
@@ -125,8 +112,7 @@
    "size": "0x00002250",
    "frequency": 22579200,
    "loop_start": 3625,
-   "source": "music_sample_medium_looping_eta.pcm8.wav",
-   "provisional_name": "music_sample_medium_looping_eta"
+   "source": "wave_13.pcm8.wav"
   },
   {
    "name": "wave_14",
@@ -134,8 +120,7 @@
    "size": "0x00000ff4",
    "frequency": 22579200,
    "loop_start": null,
-   "source": "unbanked_sample_small_oneshot_alpha.pcm8.wav",
-   "provisional_name": "unbanked_sample_small_oneshot_alpha"
+   "source": "wave_14.pcm8.wav"
   },
   {
    "name": "wave_15",
@@ -143,8 +128,7 @@
    "size": "0x00001b68",
    "frequency": 22579200,
    "loop_start": null,
-   "source": "unbanked_sample_medium_oneshot_alpha.pcm8.wav",
-   "provisional_name": "unbanked_sample_medium_oneshot_alpha"
+   "source": "wave_15.pcm8.wav"
   },
   {
    "name": "wave_16",
@@ -152,8 +136,7 @@
    "size": "0x00002a84",
    "frequency": 22579200,
    "loop_start": null,
-   "source": "unbanked_sample_medium_oneshot_beta.pcm8.wav",
-   "provisional_name": "unbanked_sample_medium_oneshot_beta"
+   "source": "wave_16.pcm8.wav"
   },
   {
    "name": "wave_17",
@@ -161,8 +144,7 @@
    "size": "0x0000088c",
    "frequency": 22579200,
    "loop_start": null,
-   "source": "unbanked_sample_small_oneshot_beta.pcm8.wav",
-   "provisional_name": "unbanked_sample_small_oneshot_beta"
+   "source": "wave_17.pcm8.wav"
   },
   {
    "name": "wave_18",
@@ -170,8 +152,7 @@
    "size": "0x0000c030",
    "frequency": 45158400,
    "loop_start": null,
-   "source": "unbanked_sample_large_oneshot.pcm8.wav",
-   "provisional_name": "unbanked_sample_large_oneshot"
+   "source": "wave_18.pcm8.wav"
   },
   {
    "name": "wave_19",
@@ -179,8 +160,7 @@
    "size": "0x00001bfc",
    "frequency": 22579200,
    "loop_start": 5454,
-   "source": "unbanked_sample_medium_looping.pcm8.wav",
-   "provisional_name": "unbanked_sample_medium_looping"
+   "source": "wave_19.pcm8.wav"
   },
   {
    "name": "wave_20",
@@ -188,8 +168,7 @@
    "size": "0x00003088",
    "frequency": 21528576,
    "loop_start": 5306,
-   "source": "effect_sample_medium_looping_alpha.pcm8.wav",
-   "provisional_name": "effect_sample_medium_looping_alpha"
+   "source": "wave_20.pcm8.wav"
   },
   {
    "name": "wave_21",
@@ -197,8 +176,7 @@
    "size": "0x000063b8",
    "frequency": 21528576,
    "loop_start": 631,
-   "source": "effect_sample_large_looping_alpha.pcm8.wav",
-   "provisional_name": "effect_sample_large_looping_alpha"
+   "source": "wave_21.pcm8.wav"
   },
   {
    "name": "wave_22",
@@ -206,8 +184,7 @@
    "size": "0x00008070",
    "frequency": 21528576,
    "loop_start": null,
-   "source": "effect_sample_large_oneshot_alpha.pcm8.wav",
-   "provisional_name": "effect_sample_large_oneshot_alpha"
+   "source": "wave_22.pcm8.wav"
   },
   {
    "name": "wave_23",
@@ -215,8 +192,7 @@
    "size": "0x00002678",
    "frequency": 21528576,
    "loop_start": 2446,
-   "source": "effect_sample_medium_looping_beta.pcm8.wav",
-   "provisional_name": "effect_sample_medium_looping_beta"
+   "source": "wave_23.pcm8.wav"
   },
   {
    "name": "wave_24",
@@ -224,8 +200,7 @@
    "size": "0x000052c0",
    "frequency": 22542336,
    "loop_start": null,
-   "source": "effect_sample_large_oneshot_beta.pcm8.wav",
-   "provisional_name": "effect_sample_large_oneshot_beta"
+   "source": "wave_24.pcm8.wav"
   },
   {
    "name": "wave_25",
@@ -233,8 +208,7 @@
    "size": "0x000081b4",
    "frequency": 22542336,
    "loop_start": null,
-   "source": "effect_sample_large_oneshot_gamma.pcm8.wav",
-   "provisional_name": "effect_sample_large_oneshot_gamma"
+   "source": "wave_25.pcm8.wav"
   },
   {
    "name": "wave_26",
@@ -242,8 +216,7 @@
    "size": "0x00000898",
    "frequency": 21528576,
    "loop_start": 0,
-   "source": "effect_sample_small_looping.pcm8.wav",
-   "provisional_name": "effect_sample_small_looping"
+   "source": "wave_26.pcm8.wav"
   },
   {
    "name": "wave_27",
@@ -251,8 +224,7 @@
    "size": "0x00002a5c",
    "frequency": 21528576,
    "loop_start": null,
-   "source": "effect_sample_medium_oneshot.pcm8.wav",
-   "provisional_name": "effect_sample_medium_oneshot"
+   "source": "wave_27.pcm8.wav"
   },
   {
    "name": "wave_28",
@@ -260,8 +232,7 @@
    "size": "0x00000fa4",
    "frequency": 21528576,
    "loop_start": null,
-   "source": "effect_sample_small_oneshot_alpha.pcm8.wav",
-   "provisional_name": "effect_sample_small_oneshot_alpha"
+   "source": "wave_28.pcm8.wav"
   },
   {
    "name": "wave_29",
@@ -269,8 +240,7 @@
    "size": "0x00000b88",
    "frequency": 21528576,
    "loop_start": null,
-   "source": "effect_sample_small_oneshot_beta.pcm8.wav",
-   "provisional_name": "effect_sample_small_oneshot_beta"
+   "source": "wave_29.pcm8.wav"
   },
   {
    "name": "wave_30",
@@ -278,8 +248,7 @@
    "size": "0x00004020",
    "frequency": 21528576,
    "loop_start": 7860,
-   "source": "effect_sample_large_looping_beta.pcm8.wav",
-   "provisional_name": "effect_sample_large_looping_beta"
+   "source": "wave_30.pcm8.wav"
   },
   {
    "name": "wave_31",
@@ -287,9 +256,8 @@
    "size": "0x000047cc",
    "frequency": 10764288,
    "loop_start": 500,
-   "source": "effect_sample_large_looping_gamma.pcm8.wav",
-   "provisional_name": "effect_sample_large_looping_gamma"
+   "source": "wave_31.pcm8.wav"
   }
  ],
- "names_note": "PROVISIONAL names, manufactured and meant to be replaced by ear. Each is <bank>_sample_<size>_<loop>: the bank from which of the two tone banks references this wave -- 0x080fba78 for music, 0x080fc138 for effects -- the size band from the record length, and looping or oneshot from whether the record carries a loop point. `unbanked` means neither bank points at it directly, because a tone entry of type 0x40 or 0x80 reaches a keysplit or percussion sub-table instead, and those were not followed. Ties take a Greek-letter suffix. `name` keeps the ROM-ordered wave_<nn> identity; only `source` and `provisional_name` carry the manufactured one. Nothing here names an instrument: the banks are custom, not General MIDI, so a program number does not imply what it sounds like."
+ "names_note": "Wave_<id> preserves ROM order. Instrument semantics remain unnamed until proven from the custom tone banks or listening evidence."
 }

@@ -1709,7 +1709,7 @@ fn expand_series(
                 for grid in series_values(series, "grids")? {
                     let tuple = grid.as_array().ok_or("grid tuple malformed")?;
                     let name = json_string(&tuple[0], "grid id")?.to_ascii_lowercase();
-                    let directory = format!("games/gs1/assets/maps/resource_{name}");
+                    let directory = format!("games/gs1/assets/maps/map_{name}");
                     entries.push(serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"golden-sun-kind1-grid","source":directory,"plan":format!("{directory}_grid_grid.kind1.json")}));
                 }
             }
@@ -1717,7 +1717,7 @@ fn expand_series(
                 for family in series_values(series, "families")? {
                     let tuple = family.as_array().ok_or("map family malformed")?;
                     let name = json_string(&tuple[0], "map family id")?.to_ascii_lowercase();
-                    let directory = format!("games/gs1/assets/maps/resource_{name}");
+                    let directory = format!("games/gs1/assets/maps/map_{name}");
                     let container = json_number(&tuple[1], "map container")?;
                     let mut offsets = serde_json::Map::new();
                     for raw in &tuple[3..] {

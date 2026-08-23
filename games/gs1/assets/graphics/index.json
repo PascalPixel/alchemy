@@ -1853,910 +1853,910 @@
       "members": ["fonts_localization_font_glyphs_0020_00ff.1bpp.png", "fonts_localization_font_mtf_00.indexed.png", "fonts_localization_font_mtf_01.indexed.png", "fonts_localization_font_mtf_02.indexed.png", "fonts_localization_font_mtf_03.indexed.png", "fonts_localization_font_mtf_04.indexed.png", "fonts_localization_font_mtf_05.indexed.png", "fonts_localization_font_mtf_06.indexed.png", "fonts_localization_font_packed_32x32.indexed.png", "fonts_localization_font_tile_08029910.4bpp.png", "fonts_localization_font_tile_080310a4.4bpp.png", "fonts_localization_font_tile_08033ef8.4bpp.png", "fonts_localization_font_tile_080342f8.4bpp.png", "fonts_localization_font_tile_080346f8.4bpp.png", "fonts_localization_font_tile_080368d4.4bpp.png", "fonts_namae_nyuuryoku_gamen.json"]
     },
     {
-      "path": "maps/map_resource_128",
+      "path": "maps/map_128",
       "term": null,
       "files": 10,
-      "members": ["map_resource_128_animation_source.4bpp.png", "map_resource_128_animation_source.kind2.json", "map_resource_128_charblock1.4bpp.png", "map_resource_128_charblock1.kind2.json", "map_resource_128_charblock2.4bpp.png", "map_resource_128_charblock2.kind2.json", "map_resource_128_charblock3.4bpp.png", "map_resource_128_charblock3.kind2.json", "map_resource_128_palette.224.png", "map_resource_128_palette.lz.json"]
+      "members": ["map_128_animation_source.4bpp.png", "map_128_animation_source.kind2.json", "map_128_charblock1.4bpp.png", "map_128_charblock1.kind2.json", "map_128_charblock2.4bpp.png", "map_128_charblock2.kind2.json", "map_128_charblock3.4bpp.png", "map_128_charblock3.kind2.json", "map_128_palette.224.png", "map_128_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_12e",
+      "path": "maps/map_12e",
       "term": null,
       "files": 10,
-      "members": ["map_resource_12e_animation_source.4bpp.png", "map_resource_12e_animation_source.kind2.json", "map_resource_12e_charblock1.4bpp.png", "map_resource_12e_charblock1.kind2.json", "map_resource_12e_charblock2.4bpp.png", "map_resource_12e_charblock2.kind2.json", "map_resource_12e_charblock3.4bpp.png", "map_resource_12e_charblock3.kind2.json", "map_resource_12e_palette.224.png", "map_resource_12e_palette.lz.json"]
+      "members": ["map_12e_animation_source.4bpp.png", "map_12e_animation_source.kind2.json", "map_12e_charblock1.4bpp.png", "map_12e_charblock1.kind2.json", "map_12e_charblock2.4bpp.png", "map_12e_charblock2.kind2.json", "map_12e_charblock3.4bpp.png", "map_12e_charblock3.kind2.json", "map_12e_palette.224.png", "map_12e_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_134",
+      "path": "maps/map_134",
       "term": null,
       "files": 10,
-      "members": ["map_resource_134_animation_source.4bpp.png", "map_resource_134_animation_source.kind2.json", "map_resource_134_charblock1.4bpp.png", "map_resource_134_charblock1.kind2.json", "map_resource_134_charblock2.4bpp.png", "map_resource_134_charblock2.kind2.json", "map_resource_134_charblock3.4bpp.png", "map_resource_134_charblock3.kind2.json", "map_resource_134_palette.224.png", "map_resource_134_palette.lz.json"]
+      "members": ["map_134_animation_source.4bpp.png", "map_134_animation_source.kind2.json", "map_134_charblock1.4bpp.png", "map_134_charblock1.kind2.json", "map_134_charblock2.4bpp.png", "map_134_charblock2.kind2.json", "map_134_charblock3.4bpp.png", "map_134_charblock3.kind2.json", "map_134_palette.224.png", "map_134_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_13a",
+      "path": "maps/map_13a",
       "term": null,
       "files": 10,
-      "members": ["map_resource_13a_animation_source.4bpp.png", "map_resource_13a_animation_source.kind2.json", "map_resource_13a_charblock1.4bpp.png", "map_resource_13a_charblock1.kind2.json", "map_resource_13a_charblock2.4bpp.png", "map_resource_13a_charblock2.kind2.json", "map_resource_13a_charblock3.4bpp.png", "map_resource_13a_charblock3.kind2.json", "map_resource_13a_palette.224.png", "map_resource_13a_palette.lz.json"]
+      "members": ["map_13a_animation_source.4bpp.png", "map_13a_animation_source.kind2.json", "map_13a_charblock1.4bpp.png", "map_13a_charblock1.kind2.json", "map_13a_charblock2.4bpp.png", "map_13a_charblock2.kind2.json", "map_13a_charblock3.4bpp.png", "map_13a_charblock3.kind2.json", "map_13a_palette.224.png", "map_13a_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_140",
+      "path": "maps/map_140",
       "term": null,
       "files": 10,
-      "members": ["map_resource_140_animation_source.4bpp.png", "map_resource_140_animation_source.kind2.json", "map_resource_140_charblock1.4bpp.png", "map_resource_140_charblock1.kind2.json", "map_resource_140_charblock2.4bpp.png", "map_resource_140_charblock2.kind2.json", "map_resource_140_charblock3.4bpp.png", "map_resource_140_charblock3.kind2.json", "map_resource_140_palette.224.png", "map_resource_140_palette.lz.json"]
+      "members": ["map_140_animation_source.4bpp.png", "map_140_animation_source.kind2.json", "map_140_charblock1.4bpp.png", "map_140_charblock1.kind2.json", "map_140_charblock2.4bpp.png", "map_140_charblock2.kind2.json", "map_140_charblock3.4bpp.png", "map_140_charblock3.kind2.json", "map_140_palette.224.png", "map_140_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_146",
+      "path": "maps/map_146",
       "term": null,
       "files": 10,
-      "members": ["map_resource_146_animation_source.4bpp.png", "map_resource_146_animation_source.kind2.json", "map_resource_146_charblock1.4bpp.png", "map_resource_146_charblock1.kind2.json", "map_resource_146_charblock2.4bpp.png", "map_resource_146_charblock2.kind2.json", "map_resource_146_charblock3.4bpp.png", "map_resource_146_charblock3.kind2.json", "map_resource_146_palette.224.png", "map_resource_146_palette.lz.json"]
+      "members": ["map_146_animation_source.4bpp.png", "map_146_animation_source.kind2.json", "map_146_charblock1.4bpp.png", "map_146_charblock1.kind2.json", "map_146_charblock2.4bpp.png", "map_146_charblock2.kind2.json", "map_146_charblock3.4bpp.png", "map_146_charblock3.kind2.json", "map_146_palette.224.png", "map_146_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_14c",
+      "path": "maps/map_14c",
       "term": null,
       "files": 10,
-      "members": ["map_resource_14c_animation_source.4bpp.png", "map_resource_14c_animation_source.kind2.json", "map_resource_14c_charblock1.4bpp.png", "map_resource_14c_charblock1.kind2.json", "map_resource_14c_charblock2.4bpp.png", "map_resource_14c_charblock2.kind2.json", "map_resource_14c_charblock3.4bpp.png", "map_resource_14c_charblock3.kind2.json", "map_resource_14c_palette.224.png", "map_resource_14c_palette.lz.json"]
+      "members": ["map_14c_animation_source.4bpp.png", "map_14c_animation_source.kind2.json", "map_14c_charblock1.4bpp.png", "map_14c_charblock1.kind2.json", "map_14c_charblock2.4bpp.png", "map_14c_charblock2.kind2.json", "map_14c_charblock3.4bpp.png", "map_14c_charblock3.kind2.json", "map_14c_palette.224.png", "map_14c_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_152",
+      "path": "maps/map_152",
       "term": null,
       "files": 13,
-      "members": ["map_resource_152_animation_source.4bpp.png", "map_resource_152_animation_source.kind2.json", "map_resource_152_charblock1.4bpp.png", "map_resource_152_charblock1.kind2.json", "map_resource_152_charblock2.kind2.json", "map_resource_152_charblock2.objects.json", "map_resource_152_charblock2.remaining.4bpp.png", "map_resource_152_charblock3.4bpp.png", "map_resource_152_charblock3.kind2.json", "map_resource_152_objects_ougonmon.png", "map_resource_152_objects_ougonmon.tilemap", "map_resource_152_palette.224.png", "map_resource_152_palette.lz.json"]
+      "members": ["map_152_animation_source.4bpp.png", "map_152_animation_source.kind2.json", "map_152_charblock1.4bpp.png", "map_152_charblock1.kind2.json", "map_152_charblock2.kind2.json", "map_152_charblock2.objects.json", "map_152_charblock2.remaining.4bpp.png", "map_152_charblock3.4bpp.png", "map_152_charblock3.kind2.json", "map_152_objects_ougonmon.png", "map_152_objects_ougonmon.tilemap", "map_152_palette.224.png", "map_152_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_158",
+      "path": "maps/map_158",
       "term": null,
       "files": 13,
-      "members": ["map_resource_158_animation_source.4bpp.png", "map_resource_158_animation_source.kind2.json", "map_resource_158_charblock1.kind2.json", "map_resource_158_charblock1.objects.json", "map_resource_158_charblock1.remaining.4bpp.png", "map_resource_158_charblock2.4bpp.png", "map_resource_158_charblock2.kind2.json", "map_resource_158_charblock3.4bpp.png", "map_resource_158_charblock3.kind2.json", "map_resource_158_objects_kirikabu.png", "map_resource_158_objects_kirikabu.tilemap", "map_resource_158_palette.224.png", "map_resource_158_palette.lz.json"]
+      "members": ["map_158_animation_source.4bpp.png", "map_158_animation_source.kind2.json", "map_158_charblock1.kind2.json", "map_158_charblock1.objects.json", "map_158_charblock1.remaining.4bpp.png", "map_158_charblock2.4bpp.png", "map_158_charblock2.kind2.json", "map_158_charblock3.4bpp.png", "map_158_charblock3.kind2.json", "map_158_objects_kirikabu.png", "map_158_objects_kirikabu.tilemap", "map_158_palette.224.png", "map_158_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_15e",
+      "path": "maps/map_15e",
       "term": null,
       "files": 10,
-      "members": ["map_resource_15e_animation_source.4bpp.png", "map_resource_15e_animation_source.kind2.json", "map_resource_15e_charblock1.4bpp.png", "map_resource_15e_charblock1.kind2.json", "map_resource_15e_charblock2.4bpp.png", "map_resource_15e_charblock2.kind2.json", "map_resource_15e_charblock3.4bpp.png", "map_resource_15e_charblock3.kind2.json", "map_resource_15e_palette.224.png", "map_resource_15e_palette.lz.json"]
+      "members": ["map_15e_animation_source.4bpp.png", "map_15e_animation_source.kind2.json", "map_15e_charblock1.4bpp.png", "map_15e_charblock1.kind2.json", "map_15e_charblock2.4bpp.png", "map_15e_charblock2.kind2.json", "map_15e_charblock3.4bpp.png", "map_15e_charblock3.kind2.json", "map_15e_palette.224.png", "map_15e_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_164",
+      "path": "maps/map_164",
       "term": null,
       "files": 8,
-      "members": ["map_resource_164_charblock1.4bpp.png", "map_resource_164_charblock1.kind2.json", "map_resource_164_charblock2.4bpp.png", "map_resource_164_charblock2.kind2.json", "map_resource_164_charblock3.4bpp.png", "map_resource_164_charblock3.kind2.json", "map_resource_164_palette.224.png", "map_resource_164_palette.lz.json"]
+      "members": ["map_164_charblock1.4bpp.png", "map_164_charblock1.kind2.json", "map_164_charblock2.4bpp.png", "map_164_charblock2.kind2.json", "map_164_charblock3.4bpp.png", "map_164_charblock3.kind2.json", "map_164_palette.224.png", "map_164_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_169",
+      "path": "maps/map_169",
       "term": null,
       "files": 10,
-      "members": ["map_resource_169_animation_source.4bpp.png", "map_resource_169_animation_source.kind2.json", "map_resource_169_charblock1.4bpp.png", "map_resource_169_charblock1.kind2.json", "map_resource_169_charblock2.4bpp.png", "map_resource_169_charblock2.kind2.json", "map_resource_169_charblock3.4bpp.png", "map_resource_169_charblock3.kind2.json", "map_resource_169_palette.224.png", "map_resource_169_palette.lz.json"]
+      "members": ["map_169_animation_source.4bpp.png", "map_169_animation_source.kind2.json", "map_169_charblock1.4bpp.png", "map_169_charblock1.kind2.json", "map_169_charblock2.4bpp.png", "map_169_charblock2.kind2.json", "map_169_charblock3.4bpp.png", "map_169_charblock3.kind2.json", "map_169_palette.224.png", "map_169_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_170",
+      "path": "maps/map_170",
       "term": null,
       "files": 10,
-      "members": ["map_resource_170_animation_source.4bpp.png", "map_resource_170_animation_source.kind2.json", "map_resource_170_charblock1.4bpp.png", "map_resource_170_charblock1.kind2.json", "map_resource_170_charblock2.4bpp.png", "map_resource_170_charblock2.kind2.json", "map_resource_170_charblock3.4bpp.png", "map_resource_170_charblock3.kind2.json", "map_resource_170_palette.224.png", "map_resource_170_palette.lz.json"]
+      "members": ["map_170_animation_source.4bpp.png", "map_170_animation_source.kind2.json", "map_170_charblock1.4bpp.png", "map_170_charblock1.kind2.json", "map_170_charblock2.4bpp.png", "map_170_charblock2.kind2.json", "map_170_charblock3.4bpp.png", "map_170_charblock3.kind2.json", "map_170_palette.224.png", "map_170_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_176",
+      "path": "maps/map_176",
       "term": null,
       "files": 10,
-      "members": ["map_resource_176_animation_source.4bpp.png", "map_resource_176_animation_source.kind2.json", "map_resource_176_charblock1.4bpp.png", "map_resource_176_charblock1.kind2.json", "map_resource_176_charblock2.4bpp.png", "map_resource_176_charblock2.kind2.json", "map_resource_176_charblock3.4bpp.png", "map_resource_176_charblock3.kind2.json", "map_resource_176_palette.224.png", "map_resource_176_palette.lz.json"]
+      "members": ["map_176_animation_source.4bpp.png", "map_176_animation_source.kind2.json", "map_176_charblock1.4bpp.png", "map_176_charblock1.kind2.json", "map_176_charblock2.4bpp.png", "map_176_charblock2.kind2.json", "map_176_charblock3.4bpp.png", "map_176_charblock3.kind2.json", "map_176_palette.224.png", "map_176_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_17c",
+      "path": "maps/map_17c",
       "term": null,
       "files": 10,
-      "members": ["map_resource_17c_animation_source.4bpp.png", "map_resource_17c_animation_source.kind2.json", "map_resource_17c_charblock1.4bpp.png", "map_resource_17c_charblock1.kind2.json", "map_resource_17c_charblock2.4bpp.png", "map_resource_17c_charblock2.kind2.json", "map_resource_17c_charblock3.4bpp.png", "map_resource_17c_charblock3.kind2.json", "map_resource_17c_palette.224.png", "map_resource_17c_palette.lz.json"]
+      "members": ["map_17c_animation_source.4bpp.png", "map_17c_animation_source.kind2.json", "map_17c_charblock1.4bpp.png", "map_17c_charblock1.kind2.json", "map_17c_charblock2.4bpp.png", "map_17c_charblock2.kind2.json", "map_17c_charblock3.4bpp.png", "map_17c_charblock3.kind2.json", "map_17c_palette.224.png", "map_17c_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_182",
+      "path": "maps/map_182",
       "term": null,
       "files": 2,
-      "members": ["map_resource_182_palette.224.png", "map_resource_182_palette.lz.json"]
+      "members": ["map_182_palette.224.png", "map_182_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_184",
+      "path": "maps/map_184",
       "term": null,
       "files": 13,
-      "members": ["map_resource_184_animation_source.4bpp.png", "map_resource_184_animation_source.kind2.json", "map_resource_184_charblock1.kind2.json", "map_resource_184_charblock1.objects.json", "map_resource_184_charblock1.remaining.4bpp.png", "map_resource_184_charblock2.4bpp.png", "map_resource_184_charblock2.kind2.json", "map_resource_184_charblock3.4bpp.png", "map_resource_184_charblock3.kind2.json", "map_resource_184_objects_iwa.png", "map_resource_184_objects_iwa.tilemap", "map_resource_184_palette.224.png", "map_resource_184_palette.lz.json"]
+      "members": ["map_184_animation_source.4bpp.png", "map_184_animation_source.kind2.json", "map_184_charblock1.kind2.json", "map_184_charblock1.objects.json", "map_184_charblock1.remaining.4bpp.png", "map_184_charblock2.4bpp.png", "map_184_charblock2.kind2.json", "map_184_charblock3.4bpp.png", "map_184_charblock3.kind2.json", "map_184_objects_iwa.png", "map_184_objects_iwa.tilemap", "map_184_palette.224.png", "map_184_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_18a",
+      "path": "maps/map_18a",
       "term": null,
       "files": 10,
-      "members": ["map_resource_18a_animation_source.4bpp.png", "map_resource_18a_animation_source.kind2.json", "map_resource_18a_charblock1.4bpp.png", "map_resource_18a_charblock1.kind2.json", "map_resource_18a_charblock2.4bpp.png", "map_resource_18a_charblock2.kind2.json", "map_resource_18a_charblock3.4bpp.png", "map_resource_18a_charblock3.kind2.json", "map_resource_18a_palette.224.png", "map_resource_18a_palette.lz.json"]
+      "members": ["map_18a_animation_source.4bpp.png", "map_18a_animation_source.kind2.json", "map_18a_charblock1.4bpp.png", "map_18a_charblock1.kind2.json", "map_18a_charblock2.4bpp.png", "map_18a_charblock2.kind2.json", "map_18a_charblock3.4bpp.png", "map_18a_charblock3.kind2.json", "map_18a_palette.224.png", "map_18a_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_190",
+      "path": "maps/map_190",
       "term": null,
       "files": 13,
-      "members": ["map_resource_190_animation_source.4bpp.png", "map_resource_190_animation_source.kind2.json", "map_resource_190_charblock1.kind2.json", "map_resource_190_charblock1.objects.json", "map_resource_190_charblock1.remaining.4bpp.png", "map_resource_190_charblock2.4bpp.png", "map_resource_190_charblock2.kind2.json", "map_resource_190_charblock3.4bpp.png", "map_resource_190_charblock3.kind2.json", "map_resource_190_objects_hoshikusa.png", "map_resource_190_objects_hoshikusa.tilemap", "map_resource_190_palette.224.png", "map_resource_190_palette.lz.json"]
+      "members": ["map_190_animation_source.4bpp.png", "map_190_animation_source.kind2.json", "map_190_charblock1.kind2.json", "map_190_charblock1.objects.json", "map_190_charblock1.remaining.4bpp.png", "map_190_charblock2.4bpp.png", "map_190_charblock2.kind2.json", "map_190_charblock3.4bpp.png", "map_190_charblock3.kind2.json", "map_190_objects_hoshikusa.png", "map_190_objects_hoshikusa.tilemap", "map_190_palette.224.png", "map_190_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_196",
+      "path": "maps/map_196",
       "term": null,
       "files": 10,
-      "members": ["map_resource_196_animation_source.4bpp.png", "map_resource_196_animation_source.kind2.json", "map_resource_196_charblock1.4bpp.png", "map_resource_196_charblock1.kind2.json", "map_resource_196_charblock2.4bpp.png", "map_resource_196_charblock2.kind2.json", "map_resource_196_charblock3.4bpp.png", "map_resource_196_charblock3.kind2.json", "map_resource_196_palette.224.png", "map_resource_196_palette.lz.json"]
+      "members": ["map_196_animation_source.4bpp.png", "map_196_animation_source.kind2.json", "map_196_charblock1.4bpp.png", "map_196_charblock1.kind2.json", "map_196_charblock2.4bpp.png", "map_196_charblock2.kind2.json", "map_196_charblock3.4bpp.png", "map_196_charblock3.kind2.json", "map_196_palette.224.png", "map_196_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_19c",
+      "path": "maps/map_19c",
       "term": null,
       "files": 10,
-      "members": ["map_resource_19c_animation_source.4bpp.png", "map_resource_19c_animation_source.kind2.json", "map_resource_19c_charblock1.4bpp.png", "map_resource_19c_charblock1.kind2.json", "map_resource_19c_charblock2.4bpp.png", "map_resource_19c_charblock2.kind2.json", "map_resource_19c_charblock3.4bpp.png", "map_resource_19c_charblock3.kind2.json", "map_resource_19c_palette.224.png", "map_resource_19c_palette.lz.json"]
+      "members": ["map_19c_animation_source.4bpp.png", "map_19c_animation_source.kind2.json", "map_19c_charblock1.4bpp.png", "map_19c_charblock1.kind2.json", "map_19c_charblock2.4bpp.png", "map_19c_charblock2.kind2.json", "map_19c_charblock3.4bpp.png", "map_19c_charblock3.kind2.json", "map_19c_palette.224.png", "map_19c_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_1a2",
+      "path": "maps/map_1a2",
       "term": null,
       "files": 13,
-      "members": ["map_resource_1a2_animation_source.4bpp.png", "map_resource_1a2_animation_source.kind2.json", "map_resource_1a2_charblock1.kind2.json", "map_resource_1a2_charblock1.objects.json", "map_resource_1a2_charblock1.remaining.4bpp.png", "map_resource_1a2_charblock2.4bpp.png", "map_resource_1a2_charblock2.kind2.json", "map_resource_1a2_charblock3.4bpp.png", "map_resource_1a2_charblock3.kind2.json", "map_resource_1a2_objects_iwaana.png", "map_resource_1a2_objects_iwaana.tilemap", "map_resource_1a2_palette.224.png", "map_resource_1a2_palette.lz.json"]
+      "members": ["map_1a2_animation_source.4bpp.png", "map_1a2_animation_source.kind2.json", "map_1a2_charblock1.kind2.json", "map_1a2_charblock1.objects.json", "map_1a2_charblock1.remaining.4bpp.png", "map_1a2_charblock2.4bpp.png", "map_1a2_charblock2.kind2.json", "map_1a2_charblock3.4bpp.png", "map_1a2_charblock3.kind2.json", "map_1a2_objects_iwaana.png", "map_1a2_objects_iwaana.tilemap", "map_1a2_palette.224.png", "map_1a2_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_1aa",
+      "path": "maps/map_1aa",
       "term": null,
       "files": 10,
-      "members": ["map_resource_1aa_animation_source.4bpp.png", "map_resource_1aa_animation_source.kind2.json", "map_resource_1aa_charblock1.4bpp.png", "map_resource_1aa_charblock1.kind2.json", "map_resource_1aa_charblock2.4bpp.png", "map_resource_1aa_charblock2.kind2.json", "map_resource_1aa_charblock3.4bpp.png", "map_resource_1aa_charblock3.kind2.json", "map_resource_1aa_palette.224.png", "map_resource_1aa_palette.lz.json"]
+      "members": ["map_1aa_animation_source.4bpp.png", "map_1aa_animation_source.kind2.json", "map_1aa_charblock1.4bpp.png", "map_1aa_charblock1.kind2.json", "map_1aa_charblock2.4bpp.png", "map_1aa_charblock2.kind2.json", "map_1aa_charblock3.4bpp.png", "map_1aa_charblock3.kind2.json", "map_1aa_palette.224.png", "map_1aa_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_1b2",
+      "path": "maps/map_1b2",
       "term": null,
       "files": 10,
-      "members": ["map_resource_1b2_animation_source.4bpp.png", "map_resource_1b2_animation_source.kind2.json", "map_resource_1b2_charblock1.4bpp.png", "map_resource_1b2_charblock1.kind2.json", "map_resource_1b2_charblock2.4bpp.png", "map_resource_1b2_charblock2.kind2.json", "map_resource_1b2_charblock3.4bpp.png", "map_resource_1b2_charblock3.kind2.json", "map_resource_1b2_palette.224.png", "map_resource_1b2_palette.lz.json"]
+      "members": ["map_1b2_animation_source.4bpp.png", "map_1b2_animation_source.kind2.json", "map_1b2_charblock1.4bpp.png", "map_1b2_charblock1.kind2.json", "map_1b2_charblock2.4bpp.png", "map_1b2_charblock2.kind2.json", "map_1b2_charblock3.4bpp.png", "map_1b2_charblock3.kind2.json", "map_1b2_palette.224.png", "map_1b2_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_1b8",
+      "path": "maps/map_1b8",
       "term": null,
       "files": 8,
-      "members": ["map_resource_1b8_charblock1.4bpp.png", "map_resource_1b8_charblock1.kind2.json", "map_resource_1b8_charblock2.4bpp.png", "map_resource_1b8_charblock2.kind2.json", "map_resource_1b8_charblock3.4bpp.png", "map_resource_1b8_charblock3.kind2.json", "map_resource_1b8_palette.224.png", "map_resource_1b8_palette.lz.json"]
+      "members": ["map_1b8_charblock1.4bpp.png", "map_1b8_charblock1.kind2.json", "map_1b8_charblock2.4bpp.png", "map_1b8_charblock2.kind2.json", "map_1b8_charblock3.4bpp.png", "map_1b8_charblock3.kind2.json", "map_1b8_palette.224.png", "map_1b8_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_1be",
+      "path": "maps/map_1be",
       "term": null,
       "files": 10,
-      "members": ["map_resource_1be_animation_source.4bpp.png", "map_resource_1be_animation_source.kind2.json", "map_resource_1be_charblock1.4bpp.png", "map_resource_1be_charblock1.kind2.json", "map_resource_1be_charblock2.4bpp.png", "map_resource_1be_charblock2.kind2.json", "map_resource_1be_charblock3.4bpp.png", "map_resource_1be_charblock3.kind2.json", "map_resource_1be_palette.224.png", "map_resource_1be_palette.lz.json"]
+      "members": ["map_1be_animation_source.4bpp.png", "map_1be_animation_source.kind2.json", "map_1be_charblock1.4bpp.png", "map_1be_charblock1.kind2.json", "map_1be_charblock2.4bpp.png", "map_1be_charblock2.kind2.json", "map_1be_charblock3.4bpp.png", "map_1be_charblock3.kind2.json", "map_1be_palette.224.png", "map_1be_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_1c4",
+      "path": "maps/map_1c4",
       "term": null,
       "files": 6,
-      "members": ["map_resource_1c4_charblock1.4bpp.png", "map_resource_1c4_charblock1.kind2.json", "map_resource_1c4_charblock2.4bpp.png", "map_resource_1c4_charblock2.kind2.json", "map_resource_1c4_palette.224.png", "map_resource_1c4_palette.lz.json"]
+      "members": ["map_1c4_charblock1.4bpp.png", "map_1c4_charblock1.kind2.json", "map_1c4_charblock2.4bpp.png", "map_1c4_charblock2.kind2.json", "map_1c4_palette.224.png", "map_1c4_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_1c8",
+      "path": "maps/map_1c8",
       "term": null,
       "files": 4,
-      "members": ["map_resource_1c8_charblock1.4bpp.png", "map_resource_1c8_charblock1.kind2.json", "map_resource_1c8_palette.224.png", "map_resource_1c8_palette.lz.json"]
+      "members": ["map_1c8_charblock1.4bpp.png", "map_1c8_charblock1.kind2.json", "map_1c8_palette.224.png", "map_1c8_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_1cb",
+      "path": "maps/map_1cb",
       "term": null,
       "files": 8,
-      "members": ["map_resource_1cb_charblock1.4bpp.png", "map_resource_1cb_charblock1.kind2.json", "map_resource_1cb_charblock2.4bpp.png", "map_resource_1cb_charblock2.kind2.json", "map_resource_1cb_charblock3.4bpp.png", "map_resource_1cb_charblock3.kind2.json", "map_resource_1cb_palette.224.png", "map_resource_1cb_palette.lz.json"]
+      "members": ["map_1cb_charblock1.4bpp.png", "map_1cb_charblock1.kind2.json", "map_1cb_charblock2.4bpp.png", "map_1cb_charblock2.kind2.json", "map_1cb_charblock3.4bpp.png", "map_1cb_charblock3.kind2.json", "map_1cb_palette.224.png", "map_1cb_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_1d0",
+      "path": "maps/map_1d0",
       "term": null,
       "files": 10,
-      "members": ["map_resource_1d0_animation_source.4bpp.png", "map_resource_1d0_animation_source.kind2.json", "map_resource_1d0_charblock1.4bpp.png", "map_resource_1d0_charblock1.kind2.json", "map_resource_1d0_charblock2.4bpp.png", "map_resource_1d0_charblock2.kind2.json", "map_resource_1d0_charblock3.4bpp.png", "map_resource_1d0_charblock3.kind2.json", "map_resource_1d0_palette.224.png", "map_resource_1d0_palette.lz.json"]
+      "members": ["map_1d0_animation_source.4bpp.png", "map_1d0_animation_source.kind2.json", "map_1d0_charblock1.4bpp.png", "map_1d0_charblock1.kind2.json", "map_1d0_charblock2.4bpp.png", "map_1d0_charblock2.kind2.json", "map_1d0_charblock3.4bpp.png", "map_1d0_charblock3.kind2.json", "map_1d0_palette.224.png", "map_1d0_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_1d6",
+      "path": "maps/map_1d6",
       "term": null,
       "files": 10,
-      "members": ["map_resource_1d6_animation_source.4bpp.png", "map_resource_1d6_animation_source.kind2.json", "map_resource_1d6_charblock1.4bpp.png", "map_resource_1d6_charblock1.kind2.json", "map_resource_1d6_charblock2.4bpp.png", "map_resource_1d6_charblock2.kind2.json", "map_resource_1d6_charblock3.4bpp.png", "map_resource_1d6_charblock3.kind2.json", "map_resource_1d6_palette.224.png", "map_resource_1d6_palette.lz.json"]
+      "members": ["map_1d6_animation_source.4bpp.png", "map_1d6_animation_source.kind2.json", "map_1d6_charblock1.4bpp.png", "map_1d6_charblock1.kind2.json", "map_1d6_charblock2.4bpp.png", "map_1d6_charblock2.kind2.json", "map_1d6_charblock3.4bpp.png", "map_1d6_charblock3.kind2.json", "map_1d6_palette.224.png", "map_1d6_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_1dc",
+      "path": "maps/map_1dc",
       "term": null,
       "files": 10,
-      "members": ["map_resource_1dc_animation_source.4bpp.png", "map_resource_1dc_animation_source.kind2.json", "map_resource_1dc_charblock1.4bpp.png", "map_resource_1dc_charblock1.kind2.json", "map_resource_1dc_charblock2.4bpp.png", "map_resource_1dc_charblock2.kind2.json", "map_resource_1dc_charblock3.4bpp.png", "map_resource_1dc_charblock3.kind2.json", "map_resource_1dc_palette.224.png", "map_resource_1dc_palette.lz.json"]
+      "members": ["map_1dc_animation_source.4bpp.png", "map_1dc_animation_source.kind2.json", "map_1dc_charblock1.4bpp.png", "map_1dc_charblock1.kind2.json", "map_1dc_charblock2.4bpp.png", "map_1dc_charblock2.kind2.json", "map_1dc_charblock3.4bpp.png", "map_1dc_charblock3.kind2.json", "map_1dc_palette.224.png", "map_1dc_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_1e2",
+      "path": "maps/map_1e2",
       "term": null,
       "files": 4,
-      "members": ["map_resource_1e2_charblock1.4bpp.png", "map_resource_1e2_charblock1.kind2.json", "map_resource_1e2_palette.224.png", "map_resource_1e2_palette.lz.json"]
+      "members": ["map_1e2_charblock1.4bpp.png", "map_1e2_charblock1.kind2.json", "map_1e2_palette.224.png", "map_1e2_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_1e6",
+      "path": "maps/map_1e6",
       "term": null,
       "files": 2,
-      "members": ["map_resource_1e6_palette.224.png", "map_resource_1e6_palette.lz.json"]
+      "members": ["map_1e6_palette.224.png", "map_1e6_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_1e7",
+      "path": "maps/map_1e7",
       "term": null,
       "files": 2,
-      "members": ["map_resource_1e7_tiles.4bpp.png", "map_resource_1e7_tiles.kind2.json"]
+      "members": ["map_1e7_tiles.4bpp.png", "map_1e7_tiles.kind2.json"]
     },
     {
-      "path": "maps/map_resource_1e8",
+      "path": "maps/map_1e8",
       "term": null,
       "files": 2,
-      "members": ["map_resource_1e8_tiles.4bpp.png", "map_resource_1e8_tiles.kind2.json"]
+      "members": ["map_1e8_tiles.4bpp.png", "map_1e8_tiles.kind2.json"]
     },
     {
-      "path": "maps/map_resource_1e9",
+      "path": "maps/map_1e9",
       "term": null,
       "files": 2,
-      "members": ["map_resource_1e9_tiles.4bpp.png", "map_resource_1e9_tiles.kind2.json"]
+      "members": ["map_1e9_tiles.4bpp.png", "map_1e9_tiles.kind2.json"]
     },
     {
-      "path": "maps/map_resource_1ea",
+      "path": "maps/map_1ea",
       "term": null,
       "files": 2,
-      "members": ["map_resource_1ea_tiles.4bpp.png", "map_resource_1ea_tiles.kind2.json"]
+      "members": ["map_1ea_tiles.4bpp.png", "map_1ea_tiles.kind2.json"]
     },
     {
-      "path": "maps/map_resource_1eb",
+      "path": "maps/map_1eb",
       "term": null,
       "files": 2,
-      "members": ["map_resource_1eb_palette.224.png", "map_resource_1eb_palette.lz.json"]
+      "members": ["map_1eb_palette.224.png", "map_1eb_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_1ed",
+      "path": "maps/map_1ed",
       "term": null,
       "files": 10,
-      "members": ["map_resource_1ed_animation_source.4bpp.png", "map_resource_1ed_animation_source.kind2.json", "map_resource_1ed_charblock1.4bpp.png", "map_resource_1ed_charblock1.kind2.json", "map_resource_1ed_charblock2.4bpp.png", "map_resource_1ed_charblock2.kind2.json", "map_resource_1ed_charblock3.4bpp.png", "map_resource_1ed_charblock3.kind2.json", "map_resource_1ed_palette.224.png", "map_resource_1ed_palette.lz.json"]
+      "members": ["map_1ed_animation_source.4bpp.png", "map_1ed_animation_source.kind2.json", "map_1ed_charblock1.4bpp.png", "map_1ed_charblock1.kind2.json", "map_1ed_charblock2.4bpp.png", "map_1ed_charblock2.kind2.json", "map_1ed_charblock3.4bpp.png", "map_1ed_charblock3.kind2.json", "map_1ed_palette.224.png", "map_1ed_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_1f4",
+      "path": "maps/map_1f4",
       "term": null,
       "files": 2,
-      "members": ["map_resource_1f4_palette.224.png", "map_resource_1f4_palette.lz.json"]
+      "members": ["map_1f4_palette.224.png", "map_1f4_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_1f5",
+      "path": "maps/map_1f5",
       "term": null,
       "files": 2,
-      "members": ["map_resource_1f5_tiles.4bpp.png", "map_resource_1f5_tiles.kind2.json"]
+      "members": ["map_1f5_tiles.4bpp.png", "map_1f5_tiles.kind2.json"]
     },
     {
-      "path": "maps/map_resource_1f7",
+      "path": "maps/map_1f7",
       "term": null,
       "files": 2,
-      "members": ["map_resource_1f7_palette.224.png", "map_resource_1f7_palette.lz.json"]
+      "members": ["map_1f7_palette.224.png", "map_1f7_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_1f8",
+      "path": "maps/map_1f8",
       "term": null,
       "files": 10,
-      "members": ["map_resource_1f8_animation_source.4bpp.png", "map_resource_1f8_animation_source.kind2.json", "map_resource_1f8_charblock1.4bpp.png", "map_resource_1f8_charblock1.kind2.json", "map_resource_1f8_charblock2.4bpp.png", "map_resource_1f8_charblock2.kind2.json", "map_resource_1f8_charblock3.4bpp.png", "map_resource_1f8_charblock3.kind2.json", "map_resource_1f8_palette.224.png", "map_resource_1f8_palette.lz.json"]
+      "members": ["map_1f8_animation_source.4bpp.png", "map_1f8_animation_source.kind2.json", "map_1f8_charblock1.4bpp.png", "map_1f8_charblock1.kind2.json", "map_1f8_charblock2.4bpp.png", "map_1f8_charblock2.kind2.json", "map_1f8_charblock3.4bpp.png", "map_1f8_charblock3.kind2.json", "map_1f8_palette.224.png", "map_1f8_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_1fe",
+      "path": "maps/map_1fe",
       "term": null,
       "files": 10,
-      "members": ["map_resource_1fe_animation_source.4bpp.png", "map_resource_1fe_animation_source.kind2.json", "map_resource_1fe_charblock1.4bpp.png", "map_resource_1fe_charblock1.kind2.json", "map_resource_1fe_charblock2.4bpp.png", "map_resource_1fe_charblock2.kind2.json", "map_resource_1fe_charblock3.4bpp.png", "map_resource_1fe_charblock3.kind2.json", "map_resource_1fe_palette.224.png", "map_resource_1fe_palette.lz.json"]
+      "members": ["map_1fe_animation_source.4bpp.png", "map_1fe_animation_source.kind2.json", "map_1fe_charblock1.4bpp.png", "map_1fe_charblock1.kind2.json", "map_1fe_charblock2.4bpp.png", "map_1fe_charblock2.kind2.json", "map_1fe_charblock3.4bpp.png", "map_1fe_charblock3.kind2.json", "map_1fe_palette.224.png", "map_1fe_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_204",
+      "path": "maps/map_204",
       "term": null,
       "files": 10,
-      "members": ["map_resource_204_animation_source.4bpp.png", "map_resource_204_animation_source.kind2.json", "map_resource_204_charblock1.4bpp.png", "map_resource_204_charblock1.kind2.json", "map_resource_204_charblock2.4bpp.png", "map_resource_204_charblock2.kind2.json", "map_resource_204_charblock3.4bpp.png", "map_resource_204_charblock3.kind2.json", "map_resource_204_palette.224.png", "map_resource_204_palette.lz.json"]
+      "members": ["map_204_animation_source.4bpp.png", "map_204_animation_source.kind2.json", "map_204_charblock1.4bpp.png", "map_204_charblock1.kind2.json", "map_204_charblock2.4bpp.png", "map_204_charblock2.kind2.json", "map_204_charblock3.4bpp.png", "map_204_charblock3.kind2.json", "map_204_palette.224.png", "map_204_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_20a",
+      "path": "maps/map_20a",
       "term": null,
       "files": 10,
-      "members": ["map_resource_20a_animation_source.4bpp.png", "map_resource_20a_animation_source.kind2.json", "map_resource_20a_charblock1.4bpp.png", "map_resource_20a_charblock1.kind2.json", "map_resource_20a_charblock2.4bpp.png", "map_resource_20a_charblock2.kind2.json", "map_resource_20a_charblock3.4bpp.png", "map_resource_20a_charblock3.kind2.json", "map_resource_20a_palette.224.png", "map_resource_20a_palette.lz.json"]
+      "members": ["map_20a_animation_source.4bpp.png", "map_20a_animation_source.kind2.json", "map_20a_charblock1.4bpp.png", "map_20a_charblock1.kind2.json", "map_20a_charblock2.4bpp.png", "map_20a_charblock2.kind2.json", "map_20a_charblock3.4bpp.png", "map_20a_charblock3.kind2.json", "map_20a_palette.224.png", "map_20a_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_210",
+      "path": "maps/map_210",
       "term": null,
       "files": 4,
-      "members": ["map_resource_210_charblock1.4bpp.png", "map_resource_210_charblock1.kind2.json", "map_resource_210_palette.224.png", "map_resource_210_palette.lz.json"]
+      "members": ["map_210_charblock1.4bpp.png", "map_210_charblock1.kind2.json", "map_210_palette.224.png", "map_210_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_213",
+      "path": "maps/map_213",
       "term": null,
       "files": 4,
-      "members": ["map_resource_213_charblock1.4bpp.png", "map_resource_213_charblock1.kind2.json", "map_resource_213_palette.224.png", "map_resource_213_palette.lz.json"]
+      "members": ["map_213_charblock1.4bpp.png", "map_213_charblock1.kind2.json", "map_213_palette.224.png", "map_213_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_216",
+      "path": "maps/map_216",
       "term": null,
       "files": 4,
-      "members": ["map_resource_216_charblock1.4bpp.png", "map_resource_216_charblock1.kind2.json", "map_resource_216_palette.224.png", "map_resource_216_palette.lz.json"]
+      "members": ["map_216_charblock1.4bpp.png", "map_216_charblock1.kind2.json", "map_216_palette.224.png", "map_216_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_219",
+      "path": "maps/map_219",
       "term": null,
       "files": 10,
-      "members": ["map_resource_219_animation_source.4bpp.png", "map_resource_219_animation_source.kind2.json", "map_resource_219_charblock1.4bpp.png", "map_resource_219_charblock1.kind2.json", "map_resource_219_charblock2.4bpp.png", "map_resource_219_charblock2.kind2.json", "map_resource_219_charblock3.4bpp.png", "map_resource_219_charblock3.kind2.json", "map_resource_219_palette.224.png", "map_resource_219_palette.lz.json"]
+      "members": ["map_219_animation_source.4bpp.png", "map_219_animation_source.kind2.json", "map_219_charblock1.4bpp.png", "map_219_charblock1.kind2.json", "map_219_charblock2.4bpp.png", "map_219_charblock2.kind2.json", "map_219_charblock3.4bpp.png", "map_219_charblock3.kind2.json", "map_219_palette.224.png", "map_219_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_21f",
+      "path": "maps/map_21f",
       "term": null,
       "files": 10,
-      "members": ["map_resource_21f_animation_source.4bpp.png", "map_resource_21f_animation_source.kind2.json", "map_resource_21f_charblock1.4bpp.png", "map_resource_21f_charblock1.kind2.json", "map_resource_21f_charblock2.4bpp.png", "map_resource_21f_charblock2.kind2.json", "map_resource_21f_charblock3.4bpp.png", "map_resource_21f_charblock3.kind2.json", "map_resource_21f_palette.224.png", "map_resource_21f_palette.lz.json"]
+      "members": ["map_21f_animation_source.4bpp.png", "map_21f_animation_source.kind2.json", "map_21f_charblock1.4bpp.png", "map_21f_charblock1.kind2.json", "map_21f_charblock2.4bpp.png", "map_21f_charblock2.kind2.json", "map_21f_charblock3.4bpp.png", "map_21f_charblock3.kind2.json", "map_21f_palette.224.png", "map_21f_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_226",
+      "path": "maps/map_226",
       "term": null,
       "files": 10,
-      "members": ["map_resource_226_animation_source.4bpp.png", "map_resource_226_animation_source.kind2.json", "map_resource_226_charblock1.4bpp.png", "map_resource_226_charblock1.kind2.json", "map_resource_226_charblock2.4bpp.png", "map_resource_226_charblock2.kind2.json", "map_resource_226_charblock3.4bpp.png", "map_resource_226_charblock3.kind2.json", "map_resource_226_palette.224.png", "map_resource_226_palette.lz.json"]
+      "members": ["map_226_animation_source.4bpp.png", "map_226_animation_source.kind2.json", "map_226_charblock1.4bpp.png", "map_226_charblock1.kind2.json", "map_226_charblock2.4bpp.png", "map_226_charblock2.kind2.json", "map_226_charblock3.4bpp.png", "map_226_charblock3.kind2.json", "map_226_palette.224.png", "map_226_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_231",
+      "path": "maps/map_231",
       "term": null,
       "files": 4,
-      "members": ["map_resource_231_charblock1.4bpp.png", "map_resource_231_charblock1.kind2.json", "map_resource_231_palette.224.png", "map_resource_231_palette.lz.json"]
+      "members": ["map_231_charblock1.4bpp.png", "map_231_charblock1.kind2.json", "map_231_palette.224.png", "map_231_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_234",
+      "path": "maps/map_234",
       "term": null,
       "files": 10,
-      "members": ["map_resource_234_animation_source.4bpp.png", "map_resource_234_animation_source.kind2.json", "map_resource_234_charblock1.4bpp.png", "map_resource_234_charblock1.kind2.json", "map_resource_234_charblock2.4bpp.png", "map_resource_234_charblock2.kind2.json", "map_resource_234_charblock3.4bpp.png", "map_resource_234_charblock3.kind2.json", "map_resource_234_palette.224.png", "map_resource_234_palette.lz.json"]
+      "members": ["map_234_animation_source.4bpp.png", "map_234_animation_source.kind2.json", "map_234_charblock1.4bpp.png", "map_234_charblock1.kind2.json", "map_234_charblock2.4bpp.png", "map_234_charblock2.kind2.json", "map_234_charblock3.4bpp.png", "map_234_charblock3.kind2.json", "map_234_palette.224.png", "map_234_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_23a",
+      "path": "maps/map_23a",
       "term": null,
       "files": 2,
-      "members": ["map_resource_23a_palette.224.png", "map_resource_23a_palette.lz.json"]
+      "members": ["map_23a_palette.224.png", "map_23a_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_241",
+      "path": "maps/map_241",
       "term": null,
       "files": 10,
-      "members": ["map_resource_241_animation_source.4bpp.png", "map_resource_241_animation_source.kind2.json", "map_resource_241_charblock1.4bpp.png", "map_resource_241_charblock1.kind2.json", "map_resource_241_charblock2.4bpp.png", "map_resource_241_charblock2.kind2.json", "map_resource_241_charblock3.4bpp.png", "map_resource_241_charblock3.kind2.json", "map_resource_241_palette.224.png", "map_resource_241_palette.lz.json"]
+      "members": ["map_241_animation_source.4bpp.png", "map_241_animation_source.kind2.json", "map_241_charblock1.4bpp.png", "map_241_charblock1.kind2.json", "map_241_charblock2.4bpp.png", "map_241_charblock2.kind2.json", "map_241_charblock3.4bpp.png", "map_241_charblock3.kind2.json", "map_241_palette.224.png", "map_241_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_24b",
+      "path": "maps/map_24b",
       "term": null,
       "files": 10,
-      "members": ["map_resource_24b_animation_source.4bpp.png", "map_resource_24b_animation_source.kind2.json", "map_resource_24b_charblock1.4bpp.png", "map_resource_24b_charblock1.kind2.json", "map_resource_24b_charblock2.4bpp.png", "map_resource_24b_charblock2.kind2.json", "map_resource_24b_charblock3.4bpp.png", "map_resource_24b_charblock3.kind2.json", "map_resource_24b_palette.224.png", "map_resource_24b_palette.lz.json"]
+      "members": ["map_24b_animation_source.4bpp.png", "map_24b_animation_source.kind2.json", "map_24b_charblock1.4bpp.png", "map_24b_charblock1.kind2.json", "map_24b_charblock2.4bpp.png", "map_24b_charblock2.kind2.json", "map_24b_charblock3.4bpp.png", "map_24b_charblock3.kind2.json", "map_24b_palette.224.png", "map_24b_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_251",
+      "path": "maps/map_251",
       "term": null,
       "files": 2,
-      "members": ["map_resource_251_palette.224.png", "map_resource_251_palette.lz.json"]
+      "members": ["map_251_palette.224.png", "map_251_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_253",
+      "path": "maps/map_253",
       "term": null,
       "files": 10,
-      "members": ["map_resource_253_animation_source.4bpp.png", "map_resource_253_animation_source.kind2.json", "map_resource_253_charblock1.4bpp.png", "map_resource_253_charblock1.kind2.json", "map_resource_253_charblock2.4bpp.png", "map_resource_253_charblock2.kind2.json", "map_resource_253_charblock3.4bpp.png", "map_resource_253_charblock3.kind2.json", "map_resource_253_palette.224.png", "map_resource_253_palette.lz.json"]
+      "members": ["map_253_animation_source.4bpp.png", "map_253_animation_source.kind2.json", "map_253_charblock1.4bpp.png", "map_253_charblock1.kind2.json", "map_253_charblock2.4bpp.png", "map_253_charblock2.kind2.json", "map_253_charblock3.4bpp.png", "map_253_charblock3.kind2.json", "map_253_palette.224.png", "map_253_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_259",
+      "path": "maps/map_259",
       "term": null,
       "files": 4,
-      "members": ["map_resource_259_charblock1.4bpp.png", "map_resource_259_charblock1.kind2.json", "map_resource_259_palette.224.png", "map_resource_259_palette.lz.json"]
+      "members": ["map_259_charblock1.4bpp.png", "map_259_charblock1.kind2.json", "map_259_palette.224.png", "map_259_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_25c",
+      "path": "maps/map_25c",
       "term": null,
       "files": 2,
-      "members": ["map_resource_25c_palette.224.png", "map_resource_25c_palette.lz.json"]
+      "members": ["map_25c_palette.224.png", "map_25c_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_266",
+      "path": "maps/map_266",
       "term": null,
       "files": 2,
-      "members": ["map_resource_266_palette.224.png", "map_resource_266_palette.lz.json"]
+      "members": ["map_266_palette.224.png", "map_266_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_269",
+      "path": "maps/map_269",
       "term": null,
       "files": 2,
-      "members": ["map_resource_269_palette.224.png", "map_resource_269_palette.lz.json"]
+      "members": ["map_269_palette.224.png", "map_269_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_26c",
+      "path": "maps/map_26c",
       "term": null,
       "files": 10,
-      "members": ["map_resource_26c_animation_source.4bpp.png", "map_resource_26c_animation_source.kind2.json", "map_resource_26c_charblock1.4bpp.png", "map_resource_26c_charblock1.kind2.json", "map_resource_26c_charblock2.4bpp.png", "map_resource_26c_charblock2.kind2.json", "map_resource_26c_charblock3.4bpp.png", "map_resource_26c_charblock3.kind2.json", "map_resource_26c_palette.224.png", "map_resource_26c_palette.lz.json"]
+      "members": ["map_26c_animation_source.4bpp.png", "map_26c_animation_source.kind2.json", "map_26c_charblock1.4bpp.png", "map_26c_charblock1.kind2.json", "map_26c_charblock2.4bpp.png", "map_26c_charblock2.kind2.json", "map_26c_charblock3.4bpp.png", "map_26c_charblock3.kind2.json", "map_26c_palette.224.png", "map_26c_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_274",
+      "path": "maps/map_274",
       "term": null,
       "files": 10,
-      "members": ["map_resource_274_animation_source.4bpp.png", "map_resource_274_animation_source.kind2.json", "map_resource_274_charblock1.4bpp.png", "map_resource_274_charblock1.kind2.json", "map_resource_274_charblock2.4bpp.png", "map_resource_274_charblock2.kind2.json", "map_resource_274_charblock3.4bpp.png", "map_resource_274_charblock3.kind2.json", "map_resource_274_palette.224.png", "map_resource_274_palette.lz.json"]
+      "members": ["map_274_animation_source.4bpp.png", "map_274_animation_source.kind2.json", "map_274_charblock1.4bpp.png", "map_274_charblock1.kind2.json", "map_274_charblock2.4bpp.png", "map_274_charblock2.kind2.json", "map_274_charblock3.4bpp.png", "map_274_charblock3.kind2.json", "map_274_palette.224.png", "map_274_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_27a",
+      "path": "maps/map_27a",
       "term": null,
       "files": 10,
-      "members": ["map_resource_27a_animation_source.4bpp.png", "map_resource_27a_animation_source.kind2.json", "map_resource_27a_charblock1.4bpp.png", "map_resource_27a_charblock1.kind2.json", "map_resource_27a_charblock2.4bpp.png", "map_resource_27a_charblock2.kind2.json", "map_resource_27a_charblock3.4bpp.png", "map_resource_27a_charblock3.kind2.json", "map_resource_27a_palette.224.png", "map_resource_27a_palette.lz.json"]
+      "members": ["map_27a_animation_source.4bpp.png", "map_27a_animation_source.kind2.json", "map_27a_charblock1.4bpp.png", "map_27a_charblock1.kind2.json", "map_27a_charblock2.4bpp.png", "map_27a_charblock2.kind2.json", "map_27a_charblock3.4bpp.png", "map_27a_charblock3.kind2.json", "map_27a_palette.224.png", "map_27a_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_282",
+      "path": "maps/map_282",
       "term": null,
       "files": 2,
-      "members": ["map_resource_282_palette.224.png", "map_resource_282_palette.lz.json"]
+      "members": ["map_282_palette.224.png", "map_282_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_284",
+      "path": "maps/map_284",
       "term": null,
       "files": 6,
-      "members": ["map_resource_284_charblock1.4bpp.png", "map_resource_284_charblock1.kind2.json", "map_resource_284_charblock2.4bpp.png", "map_resource_284_charblock2.kind2.json", "map_resource_284_palette.224.png", "map_resource_284_palette.lz.json"]
+      "members": ["map_284_charblock1.4bpp.png", "map_284_charblock1.kind2.json", "map_284_charblock2.4bpp.png", "map_284_charblock2.kind2.json", "map_284_palette.224.png", "map_284_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_288",
+      "path": "maps/map_288",
       "term": null,
       "files": 2,
-      "members": ["map_resource_288_palette.224.png", "map_resource_288_palette.lz.json"]
+      "members": ["map_288_palette.224.png", "map_288_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_28a",
+      "path": "maps/map_28a",
       "term": null,
       "files": 2,
-      "members": ["map_resource_28a_palette.224.png", "map_resource_28a_palette.lz.json"]
+      "members": ["map_28a_palette.224.png", "map_28a_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_28d",
+      "path": "maps/map_28d",
       "term": null,
       "files": 2,
-      "members": ["map_resource_28d_palette.224.png", "map_resource_28d_palette.lz.json"]
+      "members": ["map_28d_palette.224.png", "map_28d_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_28e",
+      "path": "maps/map_28e",
       "term": null,
       "files": 2,
-      "members": ["map_resource_28e_tiles.4bpp.png", "map_resource_28e_tiles.kind2.json"]
+      "members": ["map_28e_tiles.4bpp.png", "map_28e_tiles.kind2.json"]
     },
     {
-      "path": "maps/map_resource_28f",
+      "path": "maps/map_28f",
       "term": null,
       "files": 2,
-      "members": ["map_resource_28f_tiles.4bpp.png", "map_resource_28f_tiles.kind2.json"]
+      "members": ["map_28f_tiles.4bpp.png", "map_28f_tiles.kind2.json"]
     },
     {
-      "path": "maps/map_resource_290",
+      "path": "maps/map_290",
       "term": null,
       "files": 2,
-      "members": ["map_resource_290_tiles.4bpp.png", "map_resource_290_tiles.kind2.json"]
+      "members": ["map_290_tiles.4bpp.png", "map_290_tiles.kind2.json"]
     },
     {
-      "path": "maps/map_resource_291",
-      "term": null,
-      "files": 4,
-      "members": ["map_resource_291_charblock1.4bpp.png", "map_resource_291_charblock1.kind2.json", "map_resource_291_palette.224.png", "map_resource_291_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_294",
-      "term": null,
-      "files": 10,
-      "members": ["map_resource_294_animation_source.4bpp.png", "map_resource_294_animation_source.kind2.json", "map_resource_294_charblock1.4bpp.png", "map_resource_294_charblock1.kind2.json", "map_resource_294_charblock2.4bpp.png", "map_resource_294_charblock2.kind2.json", "map_resource_294_charblock3.4bpp.png", "map_resource_294_charblock3.kind2.json", "map_resource_294_palette.224.png", "map_resource_294_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_29a",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_29a_palette.224.png", "map_resource_29a_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_29c",
-      "term": null,
-      "files": 10,
-      "members": ["map_resource_29c_animation_source.4bpp.png", "map_resource_29c_animation_source.kind2.json", "map_resource_29c_charblock1.4bpp.png", "map_resource_29c_charblock1.kind2.json", "map_resource_29c_charblock2.4bpp.png", "map_resource_29c_charblock2.kind2.json", "map_resource_29c_charblock3.4bpp.png", "map_resource_29c_charblock3.kind2.json", "map_resource_29c_palette.224.png", "map_resource_29c_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2a2",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2a2_palette.224.png", "map_resource_2a2_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2a4",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2a4_palette.224.png", "map_resource_2a4_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2a6",
-      "term": null,
-      "files": 10,
-      "members": ["map_resource_2a6_animation_source.4bpp.png", "map_resource_2a6_animation_source.kind2.json", "map_resource_2a6_charblock1.4bpp.png", "map_resource_2a6_charblock1.kind2.json", "map_resource_2a6_charblock2.4bpp.png", "map_resource_2a6_charblock2.kind2.json", "map_resource_2a6_charblock3.4bpp.png", "map_resource_2a6_charblock3.kind2.json", "map_resource_2a6_palette.224.png", "map_resource_2a6_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2ac",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2ac_palette.224.png", "map_resource_2ac_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2ae",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2ae_palette.224.png", "map_resource_2ae_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2b0",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2b0_palette.224.png", "map_resource_2b0_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2b2",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2b2_palette.224.png", "map_resource_2b2_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2b4",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2b4_palette.224.png", "map_resource_2b4_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2b5",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2b5_palette.224.png", "map_resource_2b5_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2b7",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2b7_palette.224.png", "map_resource_2b7_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2b9",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2b9_palette.224.png", "map_resource_2b9_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2bb",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2bb_palette.224.png", "map_resource_2bb_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2bd",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2bd_palette.224.png", "map_resource_2bd_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2bf",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2bf_palette.224.png", "map_resource_2bf_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2c1",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2c1_palette.224.png", "map_resource_2c1_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2c3",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2c3_palette.224.png", "map_resource_2c3_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2c6",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2c6_palette.224.png", "map_resource_2c6_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2c8",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2c8_palette.224.png", "map_resource_2c8_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2ca",
-      "term": null,
-      "files": 10,
-      "members": ["map_resource_2ca_animation_source.4bpp.png", "map_resource_2ca_animation_source.kind2.json", "map_resource_2ca_charblock1.4bpp.png", "map_resource_2ca_charblock1.kind2.json", "map_resource_2ca_charblock2.4bpp.png", "map_resource_2ca_charblock2.kind2.json", "map_resource_2ca_charblock3.4bpp.png", "map_resource_2ca_charblock3.kind2.json", "map_resource_2ca_palette.224.png", "map_resource_2ca_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2d0",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2d0_palette.224.png", "map_resource_2d0_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2d2",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2d2_palette.224.png", "map_resource_2d2_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2d5",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2d5_palette.224.png", "map_resource_2d5_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2d6",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2d6_tiles.4bpp.png", "map_resource_2d6_tiles.kind2.json"]
-    },
-    {
-      "path": "maps/map_resource_2d7",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2d7_tiles.4bpp.png", "map_resource_2d7_tiles.kind2.json"]
-    },
-    {
-      "path": "maps/map_resource_2d8",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2d8_tiles.4bpp.png", "map_resource_2d8_tiles.kind2.json"]
-    },
-    {
-      "path": "maps/map_resource_2d9",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2d9_tiles.4bpp.png", "map_resource_2d9_tiles.kind2.json"]
-    },
-    {
-      "path": "maps/map_resource_2da",
-      "term": null,
-      "files": 10,
-      "members": ["map_resource_2da_animation_source.4bpp.png", "map_resource_2da_animation_source.kind2.json", "map_resource_2da_charblock1.4bpp.png", "map_resource_2da_charblock1.kind2.json", "map_resource_2da_charblock2.4bpp.png", "map_resource_2da_charblock2.kind2.json", "map_resource_2da_charblock3.4bpp.png", "map_resource_2da_charblock3.kind2.json", "map_resource_2da_palette.224.png", "map_resource_2da_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2e0",
-      "term": null,
-      "files": 10,
-      "members": ["map_resource_2e0_animation_source.4bpp.png", "map_resource_2e0_animation_source.kind2.json", "map_resource_2e0_charblock1.4bpp.png", "map_resource_2e0_charblock1.kind2.json", "map_resource_2e0_charblock2.4bpp.png", "map_resource_2e0_charblock2.kind2.json", "map_resource_2e0_charblock3.4bpp.png", "map_resource_2e0_charblock3.kind2.json", "map_resource_2e0_palette.224.png", "map_resource_2e0_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2e6",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2e6_palette.224.png", "map_resource_2e6_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2ea",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2ea_palette.224.png", "map_resource_2ea_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2ee",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2ee_palette.224.png", "map_resource_2ee_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2f0",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2f0_palette.224.png", "map_resource_2f0_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2f3",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2f3_palette.224.png", "map_resource_2f3_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2f5",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2f5_palette.224.png", "map_resource_2f5_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2fa",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2fa_palette.224.png", "map_resource_2fa_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2fc",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_2fc_palette.224.png", "map_resource_2fc_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_2fe",
+      "path": "maps/map_291",
       "term": null,
       "files": 4,
-      "members": ["map_resource_2fe_charblock1.4bpp.png", "map_resource_2fe_charblock1.kind2.json", "map_resource_2fe_palette.224.png", "map_resource_2fe_palette.lz.json"]
+      "members": ["map_291_charblock1.4bpp.png", "map_291_charblock1.kind2.json", "map_291_palette.224.png", "map_291_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_302",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_302_palette.224.png", "map_resource_302_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_305",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_305_palette.224.png", "map_resource_305_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_308",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_308_palette.224.png", "map_resource_308_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_309",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_309_tiles.4bpp.png", "map_resource_309_tiles.kind2.json"]
-    },
-    {
-      "path": "maps/map_resource_30a",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_30a_tiles.4bpp.png", "map_resource_30a_tiles.kind2.json"]
-    },
-    {
-      "path": "maps/map_resource_30b",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_30b_tiles.4bpp.png", "map_resource_30b_tiles.kind2.json"]
-    },
-    {
-      "path": "maps/map_resource_30c",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_30c_tiles.4bpp.png", "map_resource_30c_tiles.kind2.json"]
-    },
-    {
-      "path": "maps/map_resource_30d",
+      "path": "maps/map_294",
       "term": null,
       "files": 10,
-      "members": ["map_resource_30d_animation_source.4bpp.png", "map_resource_30d_animation_source.kind2.json", "map_resource_30d_charblock1.4bpp.png", "map_resource_30d_charblock1.kind2.json", "map_resource_30d_charblock2.4bpp.png", "map_resource_30d_charblock2.kind2.json", "map_resource_30d_charblock3.4bpp.png", "map_resource_30d_charblock3.kind2.json", "map_resource_30d_palette.224.png", "map_resource_30d_palette.lz.json"]
+      "members": ["map_294_animation_source.4bpp.png", "map_294_animation_source.kind2.json", "map_294_charblock1.4bpp.png", "map_294_charblock1.kind2.json", "map_294_charblock2.4bpp.png", "map_294_charblock2.kind2.json", "map_294_charblock3.4bpp.png", "map_294_charblock3.kind2.json", "map_294_palette.224.png", "map_294_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_313",
+      "path": "maps/map_29a",
       "term": null,
       "files": 2,
-      "members": ["map_resource_313_palette.224.png", "map_resource_313_palette.lz.json"]
+      "members": ["map_29a_palette.224.png", "map_29a_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_316",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_316_palette.224.png", "map_resource_316_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_318",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_318_palette.224.png", "map_resource_318_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_31b",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_31b_palette.224.png", "map_resource_31b_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_31d",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_31d_palette.224.png", "map_resource_31d_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_31e",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_31e_palette.224.png", "map_resource_31e_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_321",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_321_palette.224.png", "map_resource_321_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_322",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_322_palette.224.png", "map_resource_322_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_326",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_326_palette.224.png", "map_resource_326_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_328",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_328_palette.224.png", "map_resource_328_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_32a",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_32a_palette.224.png", "map_resource_32a_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_32f",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_32f_palette.224.png", "map_resource_32f_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_332",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_332_palette.224.png", "map_resource_332_palette.lz.json"]
-    },
-    {
-      "path": "maps/map_resource_333",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_333_tiles.4bpp.png", "map_resource_333_tiles.kind2.json"]
-    },
-    {
-      "path": "maps/map_resource_334",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_334_tiles.4bpp.png", "map_resource_334_tiles.kind2.json"]
-    },
-    {
-      "path": "maps/map_resource_335",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_335_tiles.4bpp.png", "map_resource_335_tiles.kind2.json"]
-    },
-    {
-      "path": "maps/map_resource_336",
-      "term": null,
-      "files": 2,
-      "members": ["map_resource_336_tiles.4bpp.png", "map_resource_336_tiles.kind2.json"]
-    },
-    {
-      "path": "maps/map_resource_337",
+      "path": "maps/map_29c",
       "term": null,
       "files": 10,
-      "members": ["map_resource_337_animation_source.4bpp.png", "map_resource_337_animation_source.kind2.json", "map_resource_337_charblock1.4bpp.png", "map_resource_337_charblock1.kind2.json", "map_resource_337_charblock2.4bpp.png", "map_resource_337_charblock2.kind2.json", "map_resource_337_charblock3.4bpp.png", "map_resource_337_charblock3.kind2.json", "map_resource_337_palette.224.png", "map_resource_337_palette.lz.json"]
+      "members": ["map_29c_animation_source.4bpp.png", "map_29c_animation_source.kind2.json", "map_29c_charblock1.4bpp.png", "map_29c_charblock1.kind2.json", "map_29c_charblock2.4bpp.png", "map_29c_charblock2.kind2.json", "map_29c_charblock3.4bpp.png", "map_29c_charblock3.kind2.json", "map_29c_palette.224.png", "map_29c_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_33d",
+      "path": "maps/map_2a2",
       "term": null,
       "files": 2,
-      "members": ["map_resource_33d_palette.224.png", "map_resource_33d_palette.lz.json"]
+      "members": ["map_2a2_palette.224.png", "map_2a2_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_33f",
+      "path": "maps/map_2a4",
       "term": null,
-      "files": 10,
-      "members": ["map_resource_33f_animation_source.4bpp.png", "map_resource_33f_animation_source.kind2.json", "map_resource_33f_charblock1.4bpp.png", "map_resource_33f_charblock1.kind2.json", "map_resource_33f_charblock2.4bpp.png", "map_resource_33f_charblock2.kind2.json", "map_resource_33f_charblock3.4bpp.png", "map_resource_33f_charblock3.kind2.json", "map_resource_33f_palette.224.png", "map_resource_33f_palette.lz.json"]
+      "files": 2,
+      "members": ["map_2a4_palette.224.png", "map_2a4_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_345",
+      "path": "maps/map_2a6",
       "term": null,
       "files": 10,
-      "members": ["map_resource_345_animation_source.4bpp.png", "map_resource_345_animation_source.kind2.json", "map_resource_345_charblock1.4bpp.png", "map_resource_345_charblock1.kind2.json", "map_resource_345_charblock2.4bpp.png", "map_resource_345_charblock2.kind2.json", "map_resource_345_charblock3.4bpp.png", "map_resource_345_charblock3.kind2.json", "map_resource_345_palette.224.png", "map_resource_345_palette.lz.json"]
+      "members": ["map_2a6_animation_source.4bpp.png", "map_2a6_animation_source.kind2.json", "map_2a6_charblock1.4bpp.png", "map_2a6_charblock1.kind2.json", "map_2a6_charblock2.4bpp.png", "map_2a6_charblock2.kind2.json", "map_2a6_charblock3.4bpp.png", "map_2a6_charblock3.kind2.json", "map_2a6_palette.224.png", "map_2a6_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_34b",
+      "path": "maps/map_2ac",
       "term": null,
-      "files": 10,
-      "members": ["map_resource_34b_animation_source.4bpp.png", "map_resource_34b_animation_source.kind2.json", "map_resource_34b_charblock1.4bpp.png", "map_resource_34b_charblock1.kind2.json", "map_resource_34b_charblock2.4bpp.png", "map_resource_34b_charblock2.kind2.json", "map_resource_34b_charblock3.4bpp.png", "map_resource_34b_charblock3.kind2.json", "map_resource_34b_palette.224.png", "map_resource_34b_palette.lz.json"]
+      "files": 2,
+      "members": ["map_2ac_palette.224.png", "map_2ac_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_351",
+      "path": "maps/map_2ae",
       "term": null,
-      "files": 10,
-      "members": ["map_resource_351_animation_source.4bpp.png", "map_resource_351_animation_source.kind2.json", "map_resource_351_charblock1.4bpp.png", "map_resource_351_charblock1.kind2.json", "map_resource_351_charblock2.4bpp.png", "map_resource_351_charblock2.kind2.json", "map_resource_351_charblock3.4bpp.png", "map_resource_351_charblock3.kind2.json", "map_resource_351_palette.224.png", "map_resource_351_palette.lz.json"]
+      "files": 2,
+      "members": ["map_2ae_palette.224.png", "map_2ae_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_357",
+      "path": "maps/map_2b0",
       "term": null,
-      "files": 10,
-      "members": ["map_resource_357_animation_source.4bpp.png", "map_resource_357_animation_source.kind2.json", "map_resource_357_charblock1.4bpp.png", "map_resource_357_charblock1.kind2.json", "map_resource_357_charblock2.4bpp.png", "map_resource_357_charblock2.kind2.json", "map_resource_357_charblock3.4bpp.png", "map_resource_357_charblock3.kind2.json", "map_resource_357_palette.224.png", "map_resource_357_palette.lz.json"]
+      "files": 2,
+      "members": ["map_2b0_palette.224.png", "map_2b0_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_35d",
+      "path": "maps/map_2b2",
       "term": null,
-      "files": 10,
-      "members": ["map_resource_35d_animation_source.4bpp.png", "map_resource_35d_animation_source.kind2.json", "map_resource_35d_charblock1.4bpp.png", "map_resource_35d_charblock1.kind2.json", "map_resource_35d_charblock2.4bpp.png", "map_resource_35d_charblock2.kind2.json", "map_resource_35d_charblock3.4bpp.png", "map_resource_35d_charblock3.kind2.json", "map_resource_35d_palette.224.png", "map_resource_35d_palette.lz.json"]
+      "files": 2,
+      "members": ["map_2b2_palette.224.png", "map_2b2_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_363",
+      "path": "maps/map_2b4",
       "term": null,
-      "files": 10,
-      "members": ["map_resource_363_animation_source.4bpp.png", "map_resource_363_animation_source.kind2.json", "map_resource_363_charblock1.4bpp.png", "map_resource_363_charblock1.kind2.json", "map_resource_363_charblock2.4bpp.png", "map_resource_363_charblock2.kind2.json", "map_resource_363_charblock3.4bpp.png", "map_resource_363_charblock3.kind2.json", "map_resource_363_palette.224.png", "map_resource_363_palette.lz.json"]
+      "files": 2,
+      "members": ["map_2b4_palette.224.png", "map_2b4_palette.lz.json"]
     },
     {
-      "path": "maps/map_resource_369",
+      "path": "maps/map_2b5",
+      "term": null,
+      "files": 2,
+      "members": ["map_2b5_palette.224.png", "map_2b5_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_2b7",
+      "term": null,
+      "files": 2,
+      "members": ["map_2b7_palette.224.png", "map_2b7_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_2b9",
+      "term": null,
+      "files": 2,
+      "members": ["map_2b9_palette.224.png", "map_2b9_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_2bb",
+      "term": null,
+      "files": 2,
+      "members": ["map_2bb_palette.224.png", "map_2bb_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_2bd",
+      "term": null,
+      "files": 2,
+      "members": ["map_2bd_palette.224.png", "map_2bd_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_2bf",
+      "term": null,
+      "files": 2,
+      "members": ["map_2bf_palette.224.png", "map_2bf_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_2c1",
+      "term": null,
+      "files": 2,
+      "members": ["map_2c1_palette.224.png", "map_2c1_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_2c3",
+      "term": null,
+      "files": 2,
+      "members": ["map_2c3_palette.224.png", "map_2c3_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_2c6",
+      "term": null,
+      "files": 2,
+      "members": ["map_2c6_palette.224.png", "map_2c6_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_2c8",
+      "term": null,
+      "files": 2,
+      "members": ["map_2c8_palette.224.png", "map_2c8_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_2ca",
       "term": null,
       "files": 10,
-      "members": ["map_resource_369_animation_source.4bpp.png", "map_resource_369_animation_source.kind2.json", "map_resource_369_charblock1.4bpp.png", "map_resource_369_charblock1.kind2.json", "map_resource_369_charblock2.4bpp.png", "map_resource_369_charblock2.kind2.json", "map_resource_369_charblock3.4bpp.png", "map_resource_369_charblock3.kind2.json", "map_resource_369_palette.224.png", "map_resource_369_palette.lz.json"]
+      "members": ["map_2ca_animation_source.4bpp.png", "map_2ca_animation_source.kind2.json", "map_2ca_charblock1.4bpp.png", "map_2ca_charblock1.kind2.json", "map_2ca_charblock2.4bpp.png", "map_2ca_charblock2.kind2.json", "map_2ca_charblock3.4bpp.png", "map_2ca_charblock3.kind2.json", "map_2ca_palette.224.png", "map_2ca_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_2d0",
+      "term": null,
+      "files": 2,
+      "members": ["map_2d0_palette.224.png", "map_2d0_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_2d2",
+      "term": null,
+      "files": 2,
+      "members": ["map_2d2_palette.224.png", "map_2d2_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_2d5",
+      "term": null,
+      "files": 2,
+      "members": ["map_2d5_palette.224.png", "map_2d5_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_2d6",
+      "term": null,
+      "files": 2,
+      "members": ["map_2d6_tiles.4bpp.png", "map_2d6_tiles.kind2.json"]
+    },
+    {
+      "path": "maps/map_2d7",
+      "term": null,
+      "files": 2,
+      "members": ["map_2d7_tiles.4bpp.png", "map_2d7_tiles.kind2.json"]
+    },
+    {
+      "path": "maps/map_2d8",
+      "term": null,
+      "files": 2,
+      "members": ["map_2d8_tiles.4bpp.png", "map_2d8_tiles.kind2.json"]
+    },
+    {
+      "path": "maps/map_2d9",
+      "term": null,
+      "files": 2,
+      "members": ["map_2d9_tiles.4bpp.png", "map_2d9_tiles.kind2.json"]
+    },
+    {
+      "path": "maps/map_2da",
+      "term": null,
+      "files": 10,
+      "members": ["map_2da_animation_source.4bpp.png", "map_2da_animation_source.kind2.json", "map_2da_charblock1.4bpp.png", "map_2da_charblock1.kind2.json", "map_2da_charblock2.4bpp.png", "map_2da_charblock2.kind2.json", "map_2da_charblock3.4bpp.png", "map_2da_charblock3.kind2.json", "map_2da_palette.224.png", "map_2da_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_2e0",
+      "term": null,
+      "files": 10,
+      "members": ["map_2e0_animation_source.4bpp.png", "map_2e0_animation_source.kind2.json", "map_2e0_charblock1.4bpp.png", "map_2e0_charblock1.kind2.json", "map_2e0_charblock2.4bpp.png", "map_2e0_charblock2.kind2.json", "map_2e0_charblock3.4bpp.png", "map_2e0_charblock3.kind2.json", "map_2e0_palette.224.png", "map_2e0_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_2e6",
+      "term": null,
+      "files": 2,
+      "members": ["map_2e6_palette.224.png", "map_2e6_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_2ea",
+      "term": null,
+      "files": 2,
+      "members": ["map_2ea_palette.224.png", "map_2ea_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_2ee",
+      "term": null,
+      "files": 2,
+      "members": ["map_2ee_palette.224.png", "map_2ee_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_2f0",
+      "term": null,
+      "files": 2,
+      "members": ["map_2f0_palette.224.png", "map_2f0_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_2f3",
+      "term": null,
+      "files": 2,
+      "members": ["map_2f3_palette.224.png", "map_2f3_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_2f5",
+      "term": null,
+      "files": 2,
+      "members": ["map_2f5_palette.224.png", "map_2f5_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_2fa",
+      "term": null,
+      "files": 2,
+      "members": ["map_2fa_palette.224.png", "map_2fa_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_2fc",
+      "term": null,
+      "files": 2,
+      "members": ["map_2fc_palette.224.png", "map_2fc_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_2fe",
+      "term": null,
+      "files": 4,
+      "members": ["map_2fe_charblock1.4bpp.png", "map_2fe_charblock1.kind2.json", "map_2fe_palette.224.png", "map_2fe_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_302",
+      "term": null,
+      "files": 2,
+      "members": ["map_302_palette.224.png", "map_302_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_305",
+      "term": null,
+      "files": 2,
+      "members": ["map_305_palette.224.png", "map_305_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_308",
+      "term": null,
+      "files": 2,
+      "members": ["map_308_palette.224.png", "map_308_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_309",
+      "term": null,
+      "files": 2,
+      "members": ["map_309_tiles.4bpp.png", "map_309_tiles.kind2.json"]
+    },
+    {
+      "path": "maps/map_30a",
+      "term": null,
+      "files": 2,
+      "members": ["map_30a_tiles.4bpp.png", "map_30a_tiles.kind2.json"]
+    },
+    {
+      "path": "maps/map_30b",
+      "term": null,
+      "files": 2,
+      "members": ["map_30b_tiles.4bpp.png", "map_30b_tiles.kind2.json"]
+    },
+    {
+      "path": "maps/map_30c",
+      "term": null,
+      "files": 2,
+      "members": ["map_30c_tiles.4bpp.png", "map_30c_tiles.kind2.json"]
+    },
+    {
+      "path": "maps/map_30d",
+      "term": null,
+      "files": 10,
+      "members": ["map_30d_animation_source.4bpp.png", "map_30d_animation_source.kind2.json", "map_30d_charblock1.4bpp.png", "map_30d_charblock1.kind2.json", "map_30d_charblock2.4bpp.png", "map_30d_charblock2.kind2.json", "map_30d_charblock3.4bpp.png", "map_30d_charblock3.kind2.json", "map_30d_palette.224.png", "map_30d_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_313",
+      "term": null,
+      "files": 2,
+      "members": ["map_313_palette.224.png", "map_313_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_316",
+      "term": null,
+      "files": 2,
+      "members": ["map_316_palette.224.png", "map_316_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_318",
+      "term": null,
+      "files": 2,
+      "members": ["map_318_palette.224.png", "map_318_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_31b",
+      "term": null,
+      "files": 2,
+      "members": ["map_31b_palette.224.png", "map_31b_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_31d",
+      "term": null,
+      "files": 2,
+      "members": ["map_31d_palette.224.png", "map_31d_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_31e",
+      "term": null,
+      "files": 2,
+      "members": ["map_31e_palette.224.png", "map_31e_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_321",
+      "term": null,
+      "files": 2,
+      "members": ["map_321_palette.224.png", "map_321_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_322",
+      "term": null,
+      "files": 2,
+      "members": ["map_322_palette.224.png", "map_322_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_326",
+      "term": null,
+      "files": 2,
+      "members": ["map_326_palette.224.png", "map_326_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_328",
+      "term": null,
+      "files": 2,
+      "members": ["map_328_palette.224.png", "map_328_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_32a",
+      "term": null,
+      "files": 2,
+      "members": ["map_32a_palette.224.png", "map_32a_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_32f",
+      "term": null,
+      "files": 2,
+      "members": ["map_32f_palette.224.png", "map_32f_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_332",
+      "term": null,
+      "files": 2,
+      "members": ["map_332_palette.224.png", "map_332_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_333",
+      "term": null,
+      "files": 2,
+      "members": ["map_333_tiles.4bpp.png", "map_333_tiles.kind2.json"]
+    },
+    {
+      "path": "maps/map_334",
+      "term": null,
+      "files": 2,
+      "members": ["map_334_tiles.4bpp.png", "map_334_tiles.kind2.json"]
+    },
+    {
+      "path": "maps/map_335",
+      "term": null,
+      "files": 2,
+      "members": ["map_335_tiles.4bpp.png", "map_335_tiles.kind2.json"]
+    },
+    {
+      "path": "maps/map_336",
+      "term": null,
+      "files": 2,
+      "members": ["map_336_tiles.4bpp.png", "map_336_tiles.kind2.json"]
+    },
+    {
+      "path": "maps/map_337",
+      "term": null,
+      "files": 10,
+      "members": ["map_337_animation_source.4bpp.png", "map_337_animation_source.kind2.json", "map_337_charblock1.4bpp.png", "map_337_charblock1.kind2.json", "map_337_charblock2.4bpp.png", "map_337_charblock2.kind2.json", "map_337_charblock3.4bpp.png", "map_337_charblock3.kind2.json", "map_337_palette.224.png", "map_337_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_33d",
+      "term": null,
+      "files": 2,
+      "members": ["map_33d_palette.224.png", "map_33d_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_33f",
+      "term": null,
+      "files": 10,
+      "members": ["map_33f_animation_source.4bpp.png", "map_33f_animation_source.kind2.json", "map_33f_charblock1.4bpp.png", "map_33f_charblock1.kind2.json", "map_33f_charblock2.4bpp.png", "map_33f_charblock2.kind2.json", "map_33f_charblock3.4bpp.png", "map_33f_charblock3.kind2.json", "map_33f_palette.224.png", "map_33f_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_345",
+      "term": null,
+      "files": 10,
+      "members": ["map_345_animation_source.4bpp.png", "map_345_animation_source.kind2.json", "map_345_charblock1.4bpp.png", "map_345_charblock1.kind2.json", "map_345_charblock2.4bpp.png", "map_345_charblock2.kind2.json", "map_345_charblock3.4bpp.png", "map_345_charblock3.kind2.json", "map_345_palette.224.png", "map_345_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_34b",
+      "term": null,
+      "files": 10,
+      "members": ["map_34b_animation_source.4bpp.png", "map_34b_animation_source.kind2.json", "map_34b_charblock1.4bpp.png", "map_34b_charblock1.kind2.json", "map_34b_charblock2.4bpp.png", "map_34b_charblock2.kind2.json", "map_34b_charblock3.4bpp.png", "map_34b_charblock3.kind2.json", "map_34b_palette.224.png", "map_34b_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_351",
+      "term": null,
+      "files": 10,
+      "members": ["map_351_animation_source.4bpp.png", "map_351_animation_source.kind2.json", "map_351_charblock1.4bpp.png", "map_351_charblock1.kind2.json", "map_351_charblock2.4bpp.png", "map_351_charblock2.kind2.json", "map_351_charblock3.4bpp.png", "map_351_charblock3.kind2.json", "map_351_palette.224.png", "map_351_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_357",
+      "term": null,
+      "files": 10,
+      "members": ["map_357_animation_source.4bpp.png", "map_357_animation_source.kind2.json", "map_357_charblock1.4bpp.png", "map_357_charblock1.kind2.json", "map_357_charblock2.4bpp.png", "map_357_charblock2.kind2.json", "map_357_charblock3.4bpp.png", "map_357_charblock3.kind2.json", "map_357_palette.224.png", "map_357_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_35d",
+      "term": null,
+      "files": 10,
+      "members": ["map_35d_animation_source.4bpp.png", "map_35d_animation_source.kind2.json", "map_35d_charblock1.4bpp.png", "map_35d_charblock1.kind2.json", "map_35d_charblock2.4bpp.png", "map_35d_charblock2.kind2.json", "map_35d_charblock3.4bpp.png", "map_35d_charblock3.kind2.json", "map_35d_palette.224.png", "map_35d_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_363",
+      "term": null,
+      "files": 10,
+      "members": ["map_363_animation_source.4bpp.png", "map_363_animation_source.kind2.json", "map_363_charblock1.4bpp.png", "map_363_charblock1.kind2.json", "map_363_charblock2.4bpp.png", "map_363_charblock2.kind2.json", "map_363_charblock3.4bpp.png", "map_363_charblock3.kind2.json", "map_363_palette.224.png", "map_363_palette.lz.json"]
+    },
+    {
+      "path": "maps/map_369",
+      "term": null,
+      "files": 10,
+      "members": ["map_369_animation_source.4bpp.png", "map_369_animation_source.kind2.json", "map_369_charblock1.4bpp.png", "map_369_charblock1.kind2.json", "map_369_charblock2.4bpp.png", "map_369_charblock2.kind2.json", "map_369_charblock3.4bpp.png", "map_369_charblock3.kind2.json", "map_369_palette.224.png", "map_369_palette.lz.json"]
     },
     {
       "path": "palettes",

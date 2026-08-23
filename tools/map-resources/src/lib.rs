@@ -221,7 +221,7 @@ fn parse_index(index_path: &Path, kind: SeriesKind) -> Result<Vec<IndexEntry>> {
             if id != spec.id
                 || address != spec.address
                 || size != spec.size
-                || directory != format!("resource_{:03x}", spec.id)
+                || directory != format!("{:03x}", spec.id)
             {
                 return Err(format!(
                     "{} resource entry differs from the audited catalog",

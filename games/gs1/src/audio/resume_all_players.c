@@ -3,7 +3,9 @@
 
 extern u8 Data_00000008[];
 extern s32 Data_080fc624[];
-void Func_080fa264(s32);
+#define Audio_ResumePlayer Func_080fa264
+
+void Audio_ResumePlayer(s32);
 
 void Audio_ResumeAllPlayers(void)
 {
@@ -14,7 +16,7 @@ void Audio_ResumeAllPlayers(void)
         u32 remaining = player_count;
 
         do {
-            Func_080fa264(*record);
+            Audio_ResumePlayer(*record);
             record += 3;
             remaining--;
         } while (remaining != 0);

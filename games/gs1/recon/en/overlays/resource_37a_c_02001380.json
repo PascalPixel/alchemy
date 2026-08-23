@@ -1,34 +1,25 @@
 {
   "owner": "resource_37a:1380",
   "span_bytes": 400,
+  "semantic_name": "StartSolTempleTrapEvent",
   "score": {
-    "measured": "2026-08-18",
+    "measured": "2026-08-23",
     "candidate_bytes": 400,
     "reference_bytes": 400,
     "wrong_instructions": 0,
     "differing_halfwords": 7,
     "class": "ordering"
   },
-  "shape": {
-    "calls": null,
-    "loops": 5,
-    "memory_ops": 3
-  },
   "expressed": [
-    "drafted, then three fixes by hand: `!=` loop form, the global-pointer field writes at +448 and +456, and binding that global to a local so it is loaded once"
+    "Sol Temple trap-event setup",
+    "all five paired effect loops",
+    "scene-state writes at offsets 448 and 456"
   ],
-  "unexpressed": [],
-  "verified_against_reference": [
-    "byte count 400 = 400",
-    "wrong_instructions 0",
-    "all five loops"
-  ],
-  "blocked_by": "argument setup order: `lsls r1, r1, #7`, `lsls r1, r1, #1` and `movs r0, #16` each sit one instruction from where the reference puts them",
+  "blocked_by": "three argument setup order positions that ordinary GCC 2.96 C does not currently reproduce",
   "rejected": [
     {
-      "shape": "hoist the shifted constants into a local",
-      "result": "no change, gcc folds it away"
+      "shape": "fixed-register local variables",
+      "result": "byte-exact, but forbidden by the repository no-asm gate because GCC register bindings are an assembly escape"
     }
-  ],
-  "note": "Went 69 -> 49 -> 32 -> 7 differing halfwords. The `!=` loop form alone took 64 wrong instructions to 24: gcc reverses `i < 4` into a countdown when the counter is dead in the body, and `i != 4` cannot be reversed."
+  ]
 }

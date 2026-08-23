@@ -27702,7 +27702,7 @@
     },
     {
       "en_owner": "080a9e48",
-      "source": "games/gs1/src/080a9e48.c",
+      "source": "games/gs1/src/item/use.c",
       "size": 196,
       "status": "shared_core",
       "starts": {
@@ -27732,7 +27732,7 @@
     },
     {
       "en_owner": "080aa448",
-      "source": "games/gs1/src/080aa448.c",
+      "source": "games/gs1/src/item/play_use_animation.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -27762,7 +27762,7 @@
     },
     {
       "en_owner": "080aa460",
-      "source": "games/gs1/src/080aa460.c",
+      "source": "games/gs1/src/ability/play_use_animation.c",
       "size": 212,
       "status": "shared_core",
       "starts": {
@@ -28332,7 +28332,7 @@
     },
     {
       "en_owner": "080ae778",
-      "source": "games/gs1/src/080ae778.c",
+      "source": "games/gs1/src/djinn/check_turn_balance.c",
       "size": 132,
       "status": "shared_core",
       "starts": {
@@ -28362,7 +28362,7 @@
     },
     {
       "en_owner": "080ae7fc",
-      "source": "games/gs1/src/080ae7fc.c",
+      "source": "games/gs1/src/djinn/count_turns.c",
       "size": 144,
       "status": "shared_core",
       "starts": {
@@ -35652,7 +35652,7 @@
     },
     {
       "en_owner": "080d8948",
-      "source": "games/gs1/src/080d8948.c",
+      "source": "games/gs1/src/battle/effects/series_a/mode_0.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -35682,7 +35682,7 @@
     },
     {
       "en_owner": "080d8954",
-      "source": "games/gs1/src/080d8954.c",
+      "source": "games/gs1/src/battle/effects/series_a/mode_1.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -35712,7 +35712,7 @@
     },
     {
       "en_owner": "080d8960",
-      "source": "games/gs1/src/080d8960.c",
+      "source": "games/gs1/src/battle/effects/series_a/mode_2.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -35742,7 +35742,7 @@
     },
     {
       "en_owner": "080d896c",
-      "source": "games/gs1/src/080d896c.c",
+      "source": "games/gs1/src/battle/effects/series_a/mode_3_or_4.c",
       "size": 26,
       "status": "shared_core",
       "starts": {
@@ -35772,7 +35772,7 @@
     },
     {
       "en_owner": "080d8988",
-      "source": "games/gs1/src/080d8988.c",
+      "source": "games/gs1/src/battle/effects/series_a/mode_4.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -35802,7 +35802,7 @@
     },
     {
       "en_owner": "080d8994",
-      "source": "games/gs1/src/080d8994.c",
+      "source": "games/gs1/src/battle/effects/series_a/mode_5.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -35832,7 +35832,7 @@
     },
     {
       "en_owner": "080d89a0",
-      "source": "games/gs1/src/080d89a0.c",
+      "source": "games/gs1/src/battle/effects/series_a/mode_6.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -35862,7 +35862,7 @@
     },
     {
       "en_owner": "080d9194",
-      "source": "games/gs1/src/080d9194.c",
+      "source": "games/gs1/src/battle/effects/series_b/mode_0.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -35892,7 +35892,7 @@
     },
     {
       "en_owner": "080d91a0",
-      "source": "games/gs1/src/080d91a0.c",
+      "source": "games/gs1/src/battle/effects/series_b/mode_1.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -35922,7 +35922,7 @@
     },
     {
       "en_owner": "080d91ac",
-      "source": "games/gs1/src/080d91ac.c",
+      "source": "games/gs1/src/battle/effects/series_b/mode_2.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -35952,7 +35952,7 @@
     },
     {
       "en_owner": "080d91b8",
-      "source": "games/gs1/src/080d91b8.c",
+      "source": "games/gs1/src/battle/effects/series_b/mode_3.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -35982,7 +35982,7 @@
     },
     {
       "en_owner": "080d91c4",
-      "source": "games/gs1/src/080d91c4.c",
+      "source": "games/gs1/src/battle/effects/series_b/mode_5.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36012,7 +36012,7 @@
     },
     {
       "en_owner": "080d91d0",
-      "source": "games/gs1/src/080d91d0.c",
+      "source": "games/gs1/src/battle/effects/series_b/mode_4.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36042,7 +36042,7 @@
     },
     {
       "en_owner": "080d9ab8",
-      "source": "games/gs1/src/080d9ab8.c",
+      "source": "games/gs1/src/battle/effects/series_c/mode_0.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36072,7 +36072,7 @@
     },
     {
       "en_owner": "080d9ac4",
-      "source": "games/gs1/src/080d9ac4.c",
+      "source": "games/gs1/src/battle/effects/series_c/mode_1.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36102,7 +36102,7 @@
     },
     {
       "en_owner": "080d9ad0",
-      "source": "games/gs1/src/080d9ad0.c",
+      "source": "games/gs1/src/battle/effects/series_c/mode_2.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36132,7 +36132,7 @@
     },
     {
       "en_owner": "080d9adc",
-      "source": "games/gs1/src/080d9adc.c",
+      "source": "games/gs1/src/battle/effects/series_c/mode_3.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36162,7 +36162,7 @@
     },
     {
       "en_owner": "080da24c",
-      "source": "games/gs1/src/080da24c.c",
+      "source": "games/gs1/src/battle/effects/common/build_centered_index_list.c",
       "size": 96,
       "status": "shared_core",
       "starts": {
@@ -36192,7 +36192,7 @@
     },
     {
       "en_owner": "080db6c8",
-      "source": "games/gs1/src/080db6c8.c",
+      "source": "games/gs1/src/battle/effects/series_h/mode_1.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36222,7 +36222,7 @@
     },
     {
       "en_owner": "080db6d4",
-      "source": "games/gs1/src/080db6d4.c",
+      "source": "games/gs1/src/battle/effects/series_h/mode_0.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36252,7 +36252,7 @@
     },
     {
       "en_owner": "080dbb24",
-      "source": "games/gs1/src/080dbb24.c",
+      "source": "games/gs1/src/battle/effects/common/spawn_objects.c",
       "size": 116,
       "status": "shared_core",
       "starts": {
@@ -36282,7 +36282,7 @@
     },
     {
       "en_owner": "080dbb98",
-      "source": "games/gs1/src/080dbb98.c",
+      "source": "games/gs1/src/battle/effects/common/no_effect.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -36312,7 +36312,7 @@
     },
     {
       "en_owner": "080dbbdc",
-      "source": "games/gs1/src/080dbbdc.c",
+      "source": "games/gs1/src/battle/effects/series_i/mode_0.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36342,7 +36342,7 @@
     },
     {
       "en_owner": "080dbbe8",
-      "source": "games/gs1/src/080dbbe8.c",
+      "source": "games/gs1/src/battle/effects/series_i/mode_2.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36372,7 +36372,7 @@
     },
     {
       "en_owner": "080dbbf4",
-      "source": "games/gs1/src/080dbbf4.c",
+      "source": "games/gs1/src/battle/effects/series_i/mode_6.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36402,7 +36402,7 @@
     },
     {
       "en_owner": "080dbc00",
-      "source": "games/gs1/src/080dbc00.c",
+      "source": "games/gs1/src/battle/effects/series_i/mode_3.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36432,7 +36432,7 @@
     },
     {
       "en_owner": "080dbc0c",
-      "source": "games/gs1/src/080dbc0c.c",
+      "source": "games/gs1/src/battle/effects/series_i/mode_5.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36462,7 +36462,7 @@
     },
     {
       "en_owner": "080dbc18",
-      "source": "games/gs1/src/080dbc18.c",
+      "source": "games/gs1/src/battle/effects/series_i/mode_7.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36492,7 +36492,7 @@
     },
     {
       "en_owner": "080dbc24",
-      "source": "games/gs1/src/080dbc24.c",
+      "source": "games/gs1/src/battle/effects/series_i/mode_4.c",
       "size": 12,
       "status": "shared_core",
       "starts": {

@@ -542,16 +542,16 @@ This section is generated. It is the primary contributor target list:
 non-overlapping audited source-owner scopes (or contiguous unresolved
 executable runs), sorted largest to smallest. Regenerate with `make coverage` -- do not edit by hand.
 
-- **Unfinished scopes:** 1,736
+- **Unfinished scopes:** 1,737
 - **Address spaces scanned:** 97 (87 still contain targets)
-- **Target bytes:** 738,664 tracked-C or unresolved-assembly bytes
-- **Resolved-only bytes:** 451,814 Exact C or audited permanent assembly bytes
+- **Target bytes:** 738,556 tracked-C or unresolved-assembly bytes
+- **Resolved-only bytes:** 451,922 Exact C or audited permanent assembly bytes
 - **Executable bytes accounted for:** 1,348,188
 
 ### Main target list
 
 This table contains every scope of at least 1,000 bytes (234 rows). The complete
-1,736-row index, including the smallest audited owners, is
+1,737-row index, including the smallest audited owners, is
 [`games/gs1/metrics/gs1-en-core-targets.json`](games/gs1/metrics/gs1-en-core-targets.json).
 
 | Rank | Scope | Target | Namespace / owner |
@@ -668,20 +668,20 @@ This table contains every scope of at least 1,000 bytes (234 rows). The complete
 | 110 | 1,866 | 1,722 | `main:0x080b9b30` |
 | 111 | 1,810 | 1,810 | `resource_383:0x02002fd4` |
 | 112 | 1,810 | 500 | `main:0x08006088` |
-| 113 | 1,808 | 1,808 | `resource_3b1:0x02005c9c` |
-| 114 | 1,800 | 992 | `main:0x0809b0dc` |
-| 115 | 1,782 | 1,660 | `main:0x080de2f8` |
-| 116 | 1,778 | 1,778 | `resource_3b9:0x02001cd4` |
-| 117 | 1,770 | 1,770 | `resource_3b1:0x020028c8` |
-| 118 | 1,750 | 1,688 | `main:0x080d82b0` |
-| 119 | 1,736 | 1,736 | `resource_3bf:0x0200298c` |
-| 120 | 1,734 | 1,734 | `resource_383:0x02001e80` |
-| 121 | 1,722 | 1,722 | `resource_3b8:0x02002014` |
-| 122 | 1,718 | 1,328 | `main:0x080ba2c0` |
-| 123 | 1,704 | 1,704 | `resource_3a2:0x02000924` |
-| 124 | 1,702 | 1,702 | `resource_381:0x02002150` |
-| 125 | 1,702 | 1,702 | `resource_3b7:0x020001d8` |
-| 126 | 1,698 | 1,698 | `resource_3ae:0x02000ba0` |
+| 113 | 1,800 | 992 | `main:0x0809b0dc` |
+| 114 | 1,782 | 1,660 | `main:0x080de2f8` |
+| 115 | 1,778 | 1,778 | `resource_3b9:0x02001cd4` |
+| 116 | 1,770 | 1,770 | `resource_3b1:0x020028c8` |
+| 117 | 1,750 | 1,688 | `main:0x080d82b0` |
+| 118 | 1,736 | 1,736 | `resource_3bf:0x0200298c` |
+| 119 | 1,734 | 1,734 | `resource_383:0x02001e80` |
+| 120 | 1,722 | 1,722 | `resource_3b8:0x02002014` |
+| 121 | 1,718 | 1,328 | `main:0x080ba2c0` |
+| 122 | 1,704 | 1,704 | `resource_3a2:0x02000924` |
+| 123 | 1,702 | 1,702 | `resource_381:0x02002150` |
+| 124 | 1,702 | 1,702 | `resource_3b7:0x020001d8` |
+| 125 | 1,698 | 1,698 | `resource_3ae:0x02000ba0` |
+| 126 | 1,692 | 1,692 | `resource_3b1:0x02005d10` |
 | 127 | 1,692 | 400 | `main:0x0808b824` |
 | 128 | 1,638 | 1,638 | `resource_373:0x02004084` |
 | 129 | 1,634 | 1,056 | `main:0x080ae2f4` |

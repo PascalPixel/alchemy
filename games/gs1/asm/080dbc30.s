@@ -3,9 +3,9 @@
 @ 未達。build_asm.tsでROMとの一致を確認する。
 .syntax unified
 	.thumb
-	.global Func_080dbc30
+	.global BattleEffectI
 	.thumb_func
-Func_080dbc30:
+BattleEffectI:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

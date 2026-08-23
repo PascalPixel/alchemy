@@ -18,6 +18,9 @@
     "wrong_instructions 0"
   ],
   "blocked_by": "instruction order only: one swapped pair",
-  "rejected": [],
+  "rejected": [
+    "2026-08-23 bounded routing sweep: -fno-schedule-insns, -fno-gcse, -fno-expensive-optimizations, -fno-rerun-cse-after-loop, -fno-regmove, -fno-strength-reduce, -fno-cse-follow-jumps, -fno-cse-skip-blocks, and -O3 preserve the two-halfword ordering defect; -fno-schedule-insns2 and -O1 regress to 28",
+    "2026-08-23 ordinary-C source sweep: typed prototypes, casts, constant-zero expressions, and shared-local zero expressions all preserve the same two-halfword negate ordering defect"
+  ],
   "note": "Found by a full sweep of 1,201 unfinished owners. Exact size, zero wrong instructions."
 }

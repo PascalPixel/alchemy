@@ -23,8 +23,7 @@ struct DirectWork {
     u8 padding1c[8];
 };
 
-#define DrainWorkQueues Func_080197c4
-void Func_080197c4(void)
+void UiWork_DrainPending(void)
 {
     u8 *state;
     struct WorkSlot *slot;

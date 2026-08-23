@@ -43,7 +43,7 @@ void RotateVectorByMagnitude(s32, s32, struct Vector_08099d18 *);
 void Object_SetMode(u8 *, s32);
 void Object_SetCallback(u8 *, void *);
 
-void Func_08099d18(void)
+void BattleEffect_SpawnFallingParticles(void)
 {
     struct Source_08099d18 *source;
     struct Vector_08099d18 position;

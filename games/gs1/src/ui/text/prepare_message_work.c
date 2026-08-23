@@ -17,7 +17,7 @@ extern volatile struct UiTextMessageWorkGlobals Data_03001e8c;
 s32 UiText_BuildRenderEntries(s32, s32);
 struct Work *UiWindow_Create(s32, s32, s32, s32, s32);
 void Func_08017248(s32, s32, s32, s32, s32);
-struct Slot *Func_08016670(struct Work *, s32, s32);
+struct Slot *UiWork_ActivateChannel(struct Work *, s32, s32);
 void UiWork_Finalize(struct Work *, s32);
 
 void UiText_PrepareMessageWork(s32 argument)
@@ -57,7 +57,7 @@ use_existing:
         work = existing;
 have_work:
         if (work != NULL) {
-            result = (s32)Func_08016670(work, index, FIELD(control, s32, 8));
+            result = (s32)UiWork_ActivateChannel(work, index, FIELD(control, s32, 8));
             FIELD(control, s32, 4) = result;
             FIELD(control, s32, 8) = 0;
             if (result == 0) {

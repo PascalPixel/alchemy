@@ -14,7 +14,7 @@ extern struct RuntimeState_0808d8f0 *Data_03001ebc;
 extern struct GlobalData_0808d8f0 Data_02000240;
 extern volatile u32 Data_03001ae8;
 
-void Func_08092708(s32, s32, s32);
+void BattleEffect_RunRisingObjectSequence(s32, s32, s32);
 void Func_08093c00(void);
 void Func_08093e28(void);
 void Func_08093fa0(void);
@@ -27,7 +27,7 @@ s32 Func_0808d8f0(s32 event)
     switch (event) {
     case 0xFC:
         if (state->delay > 12 && (Data_03001ae8 & 0x80)) {
-            Func_08092708(selected_object, 6, 0);
+            BattleEffect_RunRisingObjectSequence(selected_object, 6, 0);
             state->delay = 0;
         }
         break;

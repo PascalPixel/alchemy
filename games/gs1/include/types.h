@@ -132,5 +132,18 @@ typedef int bool;
 #define MusicTrack_SetToneLength Func_080fb768
 #define MusicTrack_SetTonePanSweep Func_080fb77c
 #define MusicTrack_ExtendedCommandTable Data_080fba48
+#define BattleEffect_SpawnFallingParticles Func_08099d18
+#define BattleEffect_SpawnBurstParticle Func_08092624
+#define BattleEffect_RunRisingObjectSequence Func_08092708
+#define BattleEffect_UpdateOrbitAndReturn Func_08097f80
+#define BattleEffect_UpdateRadialLaunch Func_0809b11c
+#define BattleEffect_UpdateRadialSpread Func_08096048
+#define BattleEffect_EmitRandomParticle Func_0808ee0c
+#define BattleEffect_FinishHeavyImpact Func_08095a44
+#define Object_CollectResources Func_0801c7fc
+#define Owner_BuildDigitTiles Func_080798e0
+#define UiWork_ActivateChannel Func_08016670
+#define UiWork_DrainPending Func_080197c4
+#define Menu_SelectResource Func_080286a0
 
 #endif

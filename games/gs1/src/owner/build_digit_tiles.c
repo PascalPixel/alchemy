@@ -26,7 +26,7 @@ s32 Func_080797fc(s32 record, const u8 *source, s32 output[4]);
 s32 Modulo(s32 value, s32 divisor);
 s32 FixedPoint_Ratio(s32 value, s32 divisor);
 
-u32 Func_080798e0(s32 owner, s16 destination[4][2])
+u32 Owner_BuildDigitTiles(s32 owner, s16 destination[4][2])
 {
     struct OwnerState *state = Owner_GetState(owner);
     u32 index;

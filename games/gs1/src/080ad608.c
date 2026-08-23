@@ -4,7 +4,7 @@ extern s32 Data_080af304[];
 
 void Func_08009038(void *);
 void *Func_08009030(s32);
-void Func_08009020(void *, s32);
+void Object_InitializeMode(void *, s32);
 
 s32 Func_080ad608(s32 index, s32 kind, s32 value)
 {
@@ -18,7 +18,7 @@ s32 Func_080ad608(s32 index, s32 kind, s32 value)
         void *object = Func_08009030(Data_080af304[kind]);
 
         if (object != 0) {
-            Func_08009020(object, value);
+            Object_InitializeMode(object, value);
         }
         state->objects[index] = object;
     }

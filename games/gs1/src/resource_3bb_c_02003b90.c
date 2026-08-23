@@ -40,9 +40,9 @@ typedef struct Position3 {
  * inventory row's calls=13.  Targets come from cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * (target offset = stored displacement + 2), never from the disassembler's
  * annotations - it prints the three identical Func_02003b48 halfwords, and the
- * two identical Func_08009150 halfwords, as different callees.  0x3f50 ->
- * Func_0808a080, 0x3e98 -> Func_080091d8, 0x3e48 -> Object_SetMode (twice),
- * 0x3da0 -> Func_080000c0, 0x3e78 -> Func_08009150 (twice), 0x40b0 ->
+ * two identical Object_SetPosition halfwords, as different callees.  0x3f50 ->
+ * Scene_GetRecord, 0x3e98 -> Object_CheckMovementCollision, 0x3e48 -> Object_SetMode (twice),
+ * 0x3da0 -> Func_080000c0, 0x3e78 -> Object_SetPosition (twice), 0x40b0 ->
  * Audio_PlayCue (twice), plus three calls to this overlay's own
  * Func_02003b48, whose byte-exact source is
  * games/gs1/assets/code/resource_3bb_c_02003b48.c.
@@ -65,19 +65,19 @@ typedef struct Position3 {
  * Shape: a push.  Find what occupies the tile one step ahead of the subject;
  * if nothing does, stop.  Refuse the push when the tile beyond that occupant,
  * or the tile above it, is occupied by something whose flag byte at +89 has
- * bit 0 set.  Otherwise mark the occupant with state 2, ask Func_080091d8
+ * bit 0 set.  Otherwise mark the occupant with state 2, ask Object_CheckMovementCollision
  * whether the destination is legal (a result greater than zero refuses), and
  * play the slide: both records get 0x3333 in their +48 and +52 speed fields,
- * both are moved with Func_08009150, the two sound ids 238 and 288 are played
- * around Func_08009158, and only the occupant's x and z are committed while
+ * both are moved with Object_SetPosition, the two sound ids 238 and 288 are played
+ * around Object_CommitPosition, and only the occupant's x and z are committed while
  * its +36 and +44 are cleared and the subject is put back into pose 1.
  *
  * Uncertainties: only the record fields at +6, +8, +12, +16, +34, +36,
- * +44, +48, +52 and +89 are asserted.  Both Func_08009150 calls are issued
+ * +44, +48, +52 and +89 are asserted.  Both Object_SetPosition calls are issued
  * with the *same* destination, which is what the instructions do - the
  * scratch is not recomputed between them - and the subject's own record
  * position is never written back, so only the occupant's move is committed.
- * The sign of Func_080091d8's result is tested with `bgt`, so it is signed.
+ * The sign of Object_CheckMovementCollision's result is tested with `bgt`, so it is signed.
  */
 
 /* Import veneers, named by the main-image function each one reaches.

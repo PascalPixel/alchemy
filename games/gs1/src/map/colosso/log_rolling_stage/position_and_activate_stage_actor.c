@@ -17,10 +17,10 @@
  * cover it -- resolved with `bun tools/overlay-show resource_3bc 22f4 |
  * cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3bc 22f4 232e --annotate`):
  *   0x20022fa -> veneer -> Func_0808a400(selector)   entity by selector, established
- *   0x2002304 -> veneer -> Func_08009140()           unestablished, same call as reset_actor_motion.c and siblings
+ *   0x2002304 -> veneer -> Object_ResetMotion()           unestablished, same call as reset_actor_motion.c and siblings
  *   0x200230c -> veneer -> Object_SetMode(entity, 5)  established (record, mode)
- *   0x2002318 -> veneer -> Func_08009150(entity, x, y, z)   established, "move a record to a position"; z argument is the entity's own +12 field unchanged, same horizontal-only-move idiom as 020022c4.c
- *   0x200231e -> veneer -> Func_08009158(entity)     unestablished single-argument call, immediately followed by Object_SetMode(entity, 1)
+ *   0x2002318 -> veneer -> Object_SetPosition(entity, x, y, z)   established, "move a record to a position"; z argument is the entity's own +12 field unchanged, same horizontal-only-move idiom as 020022c4.c
+ *   0x200231e -> veneer -> Object_CommitPosition(entity)     unestablished single-argument call, immediately followed by Object_SetMode(entity, 1)
  *   0x2002326 -> veneer -> Object_SetMode(entity, 1)  mode changed to 1 after the move settles
  */
 

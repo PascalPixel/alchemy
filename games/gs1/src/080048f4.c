@@ -1,7 +1,7 @@
 #include "types.h"
 #include "global_cells.h"
 
-void *Func_080048f4(s32 kind, s32 size)
+void *Runtime_AllocateBlock(s32 kind, s32 size)
 {
     u32 *base;
     s32 offset;

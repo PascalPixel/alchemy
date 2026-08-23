@@ -4,7 +4,7 @@
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 void Func_08015ec0(u32 arg0);
-s32 Func_08003f3c(u32 index);
+s32 Resource_ResetEntry(u32 index);
 
 struct Entry_08016594 {
     u8 unknown_00[4];
@@ -19,7 +19,7 @@ struct Entry_08016594 {
 void Func_08016594(struct Entry_08016594 *entry) {
     Func_08015ec0((u32)entry);
     if (entry->kind != 0) {
-        Func_08003f3c(entry->index);
+        Resource_ResetEntry(entry->index);
         if (entry->kind == 2) {
             u8 *dst = (u8 *) (*(s32 *)ADDR_03001E8C);
             s32 idx = ((u32)entry->palette >> 4) * 2 + 0x12D0;

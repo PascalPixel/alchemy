@@ -68,13 +68,13 @@ void Func_0809728c(void)
         Func_08096cdc(event_object, 1, 0);
         UiText_DrawQuantity((s32)event_index, 4);
         if ((s8)M2C_FIELD(event_state, s8 *, 0x21) != 0) {
-            Func_08015040((void *)MESSAGE_NO, (s32)*(s8 *)((u8 *)(event_state) + 0x71C));
+            UiText_DrawMessage((void *)MESSAGE_NO, (s32)*(s8 *)((u8 *)(event_state) + 0x71C));
         } else {
-            Func_08015040((void *)MESSAGE_NO, (s32)*(s8 *)((u8 *)(event_state) + 0x71C));
+            UiText_DrawMessage((void *)MESSAGE_NO, (s32)*(s8 *)((u8 *)(event_state) + 0x71C));
         }
         Func_08096cdc(event_object, 0, 0x10);
     }
-    if (Func_080770c0(0x140) != 0) {
+    if (GameFlag_IsSet(0x140) != 0) {
         if ((s8)M2C_FIELD(event_state, s8 *, 0x22) != 0) {
             M2C_FIELD(event_object, s32 *, 0x6C) = CALLBACK_2;
         }

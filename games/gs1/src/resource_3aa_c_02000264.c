@@ -28,10 +28,10 @@
  * annotations are wrong in the usual overlay way and were not used.
  *
  * Import shapes, consistent with the already-converted overlays:
- *   Func_080770c0(id)              -> queried predicate; its result is tested
+ *   GameFlag_IsSet(id)              -> queried predicate; its result is tested
  *                                     against zero at all five sites, so it is
  *                                     used purely as a condition here.
- *   Func_0808a080(selector)        -> record pointer; the halfword at +6 of
+ *   Scene_GetRecord(selector)        -> record pointer; the halfword at +6 of
  *                                     the returned record is written straight
  *                                     after both calls (resource_373 and
  *                                     resource_39f fix the same shape).
@@ -47,14 +47,14 @@
  *
  * Uncertainties, recorded rather than guessed:
  *  - The pooled ids 0x941, 0x914, 0x321, 0x915 and 0x109 passed to
- *    Func_080770c0 are opaque here; only the sense of each test is recovered.
- *  - The halfword written at +6 of the Func_0808a080 record is 0x1000 in one
+ *    GameFlag_IsSet are opaque here; only the sense of each test is recovered.
+ *  - The halfword written at +6 of the Scene_GetRecord record is 0x1000 in one
  *    arm and 0xd000 in the other, both built by shifting 0x80 / 0xd0.  Whether
  *    that field is an angle or a flag word is not established.
  *  - Func_0808a0f0(8, 0x038a0000, 0x01a60000) uses a pooled first coordinate
  *    and a shifted second (211 << 17); as 16.16 these are 906.0 and 211.0.
  *  - Both in-overlay branches (0x02001494 and 0x02000360) are taken with r0
- *    holding the zero result of the preceding Func_080770c0, i.e. no argument
+ *    holding the zero result of the preceding GameFlag_IsSet, i.e. no argument
  *    is deliberately set, so they are called with none here.
  */
 

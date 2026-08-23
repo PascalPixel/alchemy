@@ -2,7 +2,7 @@
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-s32 Func_08009158();
+s32 Object_CommitPosition();
 
 void Func_08098184(void *object) {
     s32 next;
@@ -18,6 +18,6 @@ void Func_08098184(void *object) {
             M2C_FIELD(object, s32 *, 0x18) = next;
             M2C_FIELD(object, s32 *, 0x1C) = next;
         }
-        Func_08009158();
+        Object_CommitPosition();
     }
 }

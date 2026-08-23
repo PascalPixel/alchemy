@@ -31,7 +31,7 @@
  * record+6 below 0xa001 wraps to a very large number and takes the
  * OUT-of-range arm, which a signed reading would send the other way.
  *
- * Note the record is fetched BEFORE the bracket opens -- Func_0808a080(0)
+ * Note the record is fetched BEFORE the bracket opens -- Scene_GetRecord(0)
  * at 0x0200250c precedes Func_0808a018 at 0x02002512 -- and only the
  * halfword survives in r5 across the call. The pointer itself is not
  * reused.

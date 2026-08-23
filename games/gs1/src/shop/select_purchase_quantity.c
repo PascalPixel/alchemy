@@ -12,7 +12,7 @@ extern u8 Value_00000ca0;
 extern void Func_080b04dc(s32);
 extern s32 Item_FindSlot(s32, s32);
 extern s32 Func_080022f4(s32, s32);
-extern s32 Func_08077240(s32, s32);
+extern s32 Ability_GetMaximum(s32, s32);
 extern s32 Func_080b1614(s32, s32, s32);
 
 s32 Shop_SelectPurchaseQuantity(s32 unit_id, s32 item_id)
@@ -44,9 +44,9 @@ s32 Shop_SelectPurchaseQuantity(s32 unit_id, s32 item_id)
             chance = Func_080022f4(SHOP_PARTY_STATE.money, item->price);
 
         if (shop->party_action == 2) {
-            maximum = Func_08077240(item_id, 0);
+            maximum = Ability_GetMaximum(item_id, 0);
             if (chance > maximum)
-                maximum = Func_08077240(item_id, 0);
+                maximum = Ability_GetMaximum(item_id, 0);
             else
                 maximum = chance;
             chance = maximum;

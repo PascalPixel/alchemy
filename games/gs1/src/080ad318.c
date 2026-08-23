@@ -2,7 +2,7 @@
 #include "four_object_motion.h"
 
 void Func_08009038(void *);
-void Func_08004278(s32);
+void ScheduleCallback(s32);
 extern u8 Data_080ad35d;
 
 void Func_080ad318(void)
@@ -19,5 +19,5 @@ void Func_080ad318(void)
         }
         index++;
     } while (index < 4);
-    Func_08004278((s32)&Data_080ad35d);
+    ScheduleCallback((s32)&Data_080ad35d);
 }

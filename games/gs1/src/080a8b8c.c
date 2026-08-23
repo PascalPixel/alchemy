@@ -11,7 +11,7 @@
 
 extern u8 *Data_03001f2c;
 s32 Runtime_GetObject(s32);
-s32 Func_080022ec(s32, s32);
+s32 FixedPoint_Ratio(s32, s32);
 s32 Modulo(s32, s32);
 
 static __inline__ u8 LoadByte(s32 base, s32 offset)
@@ -45,9 +45,9 @@ s32 Func_080a8b8c(struct MenuResult *result, s32 index)
     if (limit == 0) {
         value = 0;
     }
-    quotient = Func_080022ec(value, GROUP_LEN);
+    quotient = FixedPoint_Ratio(value, GROUP_LEN);
     remainder = Modulo(value, GROUP_LEN);
-    groups = Func_080022ec(limit, GROUP_LEN);
+    groups = FixedPoint_Ratio(limit, GROUP_LEN);
     if (Modulo(limit, GROUP_LEN) != 0) {
         groups++;
     }

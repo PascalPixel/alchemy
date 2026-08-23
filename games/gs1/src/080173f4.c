@@ -15,14 +15,14 @@ struct State_080173f4 {
 
 extern struct State_080173f4 *Data_03001e8c;
 
-s32 Func_08003fa4(s32, s32, s32);
+s32 Resource_CopyData(s32, s32, s32);
 void ScheduleCallbackAfterFrames(void *, s32);
 
 void Func_080173f4(void) {
     struct State_080173f4 *state = Data_03001e8c;
     s32 transferSize;
 
-    state->result = Func_08003fa4(95, 128 << 6, 0);
+    state->result = Resource_CopyData(95, 128 << 6, 0);
     state->nine = 9;
     state->ten = 10;
     state->zero = 0;

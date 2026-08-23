@@ -4,7 +4,7 @@
  * resource_39e owner at 0x02000db4, 224 bytes: a four-step descent
  * followed by a four-way spawn burst through this overlay's
  * eight-argument spawner (resource_39e_c_0200013c.c). Fetches the
- * slot-19 record (Func_0808a080), then loops four times (unsigned
+ * slot-19 record (Scene_GetRecord), then loops four times (unsigned
  * counter, bls): Func_080000c0(step) with step = 8, 6, 4, 2, record
  * word +16 -= 0x10000 each pass, and record word +64 rewritten with
  * 0x80000000 each pass. After the loop the u16 at +30 of the pointer

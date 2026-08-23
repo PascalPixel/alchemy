@@ -12,7 +12,7 @@
  * same constants but a different lead-in and a different mix of frame waits.
  *
  * REGISTER TRAP worth recording: r5 is used for two unrelated things.  From
- * 0x020000e0 it holds the entity record returned by Func_0808a080(10); from
+ * 0x020000e0 it holds the entity record returned by Scene_GetRecord(10); from
  * 0x0200013c it is reloaded with the constant 58 and is thereafter only a stack
  * argument.  The reassignment sits far from either set of uses, so r5 must be
  * tracked per-use rather than as one variable.  r6 is a plain constant holder
@@ -20,10 +20,10 @@
  *
  * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`; all are import
  * veneers.  Per-target multiset over the 15 sites: Func_080091b8 x5,
- * Func_080000c0 x4, Func_080091c0 x3, and one each of Func_0808a080,
+ * Func_080000c0 x4, Func_080091c0 x3, and one each of Scene_GetRecord,
  * Func_0808a100, Func_080091e0 - 15 C call expressions below, matching the
  * row's calls=15.
- *   Func_0808a080 <- veneer 0x02001b3c;  Func_0808a100 <- 0x02001b74;
+ *   Scene_GetRecord <- veneer 0x02001b3c;  Func_0808a100 <- 0x02001b74;
  *   Func_080091e0 <- 0x02001af4;         Func_080091b8 <- 0x02001ae4;
  *   Func_080000c0 <- 0x02001ad4;         Func_080091c0 <- 0x02001aec.
  */

@@ -9,7 +9,7 @@ u32 *Func_0807a458(u32 owner, u32 index, u32 bit);
 
 s32 Func_0807a498(s32 source, s32 index, s32 bit, s32 target)
 {
-    struct OwnerTransferState *state = Func_08077394(source);
+    struct OwnerTransferState *state = Owner_GetState(source);
     /* Retained across calls for the two accesses to available[index]. */
     s32 availableOffset = index * 4 + 0xf8;
     u32 mask = 1U << bit;

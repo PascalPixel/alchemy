@@ -11,7 +11,7 @@ struct State_080782a0 {
     s16 inputY;
 };
 
-s32 Func_080022ec(s32, s32);
+s32 FixedPoint_Ratio(s32, s32);
 
 void Func_080782a0(struct State_080782a0 *state, s32 input)
 {
@@ -26,7 +26,7 @@ void Func_080782a0(struct State_080782a0 *state, s32 input)
         }
     }
     state->inputX = value;
-    value = Func_080022ec((value << 16) >> 2, state->limitX);
+    value = FixedPoint_Ratio((value << 16) >> 2, state->limitX);
 
     {
         s32 output = 0x4000;
@@ -43,7 +43,7 @@ void Func_080782a0(struct State_080782a0 *state, s32 input)
         }
     }
 
-    value = Func_080022ec(state->inputY << 14, state->limitY);
+    value = FixedPoint_Ratio(state->inputY << 14, state->limitY);
     {
         s32 output = 0x4000;
 

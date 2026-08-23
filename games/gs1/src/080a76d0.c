@@ -14,7 +14,7 @@ struct MenuState_080a76d0 {
 
 extern struct MenuState_080a76d0 *Data_03001f2c;
 
-s32 Func_080770c0(s32 flag);
+s32 GameFlag_IsSet(s32 flag);
 s32 Func_080a77a4(s32 index);
 s32 Func_080a8114(void);
 s32 Func_080a90bc(void);
@@ -28,7 +28,7 @@ s32 Func_080a76d0(void)
     s32 result = 0;
     u32 changed;
 
-    while (!finished && !Func_080770c0(0x150)) {
+    while (!finished && !GameFlag_IsSet(0x150)) {
         switch (step) {
         case 0:
             state->selection = finished;
@@ -63,7 +63,7 @@ s32 Func_080a76d0(void)
         }
     }
 
-    if (Func_080770c0(0x150))
+    if (GameFlag_IsSet(0x150))
         result = -1;
 
     return result;

@@ -14,7 +14,7 @@ struct Queue_08011b00 {
     u16 count;
 };
 
-void *Func_080048f4(s32 arg0, s32 arg1);
+void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 
 void Func_08011b00(void)
 {
@@ -23,7 +23,7 @@ void Func_08011b00(void)
     u16 i;
     u16 j;
 
-    queue = (struct Queue_08011b00 *)Func_080048f4(28, sizeof(struct Queue_08011b00));
+    queue = (struct Queue_08011b00 *)Runtime_AllocateBlock(28, sizeof(struct Queue_08011b00));
     entry = queue->slots;
     for (i = 0; i != 4; i++) {
         entry->unknown_00 = 0;

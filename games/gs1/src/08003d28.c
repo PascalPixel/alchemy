@@ -16,7 +16,7 @@ union AffineMatrix {
 
 s32 Func_0800231c(s32 angle);
 s32 Func_08002322(s32 angle);
-s32 Func_080022ec(s32 numerator, s32 denominator);
+s32 FixedPoint_Ratio(s32 numerator, s32 denominator);
 
 extern u8 Data_03001d00;
 extern union AffineMatrix Data_03001d40[];
@@ -58,13 +58,13 @@ s32 Func_08003d28(struct Effect *source)
 
         sine = Func_08002322(angle);
         cosine = Func_0800231c(angle);
-        *coefficient = Func_080022ec(cosine, x_scale);
+        *coefficient = FixedPoint_Ratio(cosine, x_scale);
         coefficient++;
-        *coefficient = Func_080022ec(sine, x_scale);
+        *coefficient = FixedPoint_Ratio(sine, x_scale);
         coefficient++;
-        *coefficient = Func_080022ec(-sine, y_scale);
+        *coefficient = FixedPoint_Ratio(-sine, y_scale);
         coefficient++;
-        *coefficient = Func_080022ec(cosine, y_scale);
+        *coefficient = FixedPoint_Ratio(cosine, y_scale);
     }
 
     Data_03001d00 = index + 1;

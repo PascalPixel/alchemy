@@ -2,7 +2,7 @@
 #include "types.h"
 
 void Func_08009240(void *, s32);
-void Func_08009088(void *, s32);
+void Object_SetAction(void *, s32);
 void Func_0809ad71(void);
 extern u8 Data_02000240[];
 
@@ -17,6 +17,6 @@ void Func_0809ade8(void)
             Func_08009240(object, *(s8 *)(state + 0x249));
         }
         object[0x5B] = 0;
-        Func_08009088(object, 16);
+        Object_SetAction(object, 16);
     }
 }

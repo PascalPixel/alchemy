@@ -1,6 +1,6 @@
 #include "curve.h"
 
-s32 Func_080022ec(s32 dividend, s32 divisor);
+s32 FixedPoint_Ratio(s32 dividend, s32 divisor);
 
 s32 Func_08011d94(const s8 *samples, s32 start, s32 end)
 {
@@ -16,12 +16,12 @@ s32 Func_08011d94(const s8 *samples, s32 start, s32 end)
     if ((u32)start == CURVE_FULL_STEPS - 1) {
         result = middle;
     } else if ((u32)start < CURVE_FULL_STEPS - 1) {
-        result = first + Func_080022ec(
+        result = first + FixedPoint_Ratio(
             (middle - first) * start,
             CURVE_FULL_STEPS - 1);
     } else {
         start = start - (CURVE_FULL_STEPS - 1);
-        result = middle + Func_080022ec(
+        result = middle + FixedPoint_Ratio(
             (last - middle) * start,
             CURVE_FULL_STEPS - 1);
     }

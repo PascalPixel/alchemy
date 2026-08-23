@@ -1,15 +1,15 @@
 #include "script_interpreter.h"
 
-s8 Func_080770c0(s32);
-s32 Func_080770d0(s32);
+s8 GameFlag_IsSet(s32);
+s32 GameFlag_Clear(s32);
 
 s32 Func_0800d850(struct ScriptInterpreter *interpreter)
 {
     s32 value;
 
     value = interpreter->script[interpreter->cursor + 1];
-    interpreter->condition_result = Func_080770c0(value);
-    Func_080770d0(value);
+    interpreter->condition_result = GameFlag_IsSet(value);
+    GameFlag_Clear(value);
     interpreter->cursor = (u16)interpreter->cursor + 2;
     return 1;
 }

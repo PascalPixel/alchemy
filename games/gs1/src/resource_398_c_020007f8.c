@@ -31,14 +31,14 @@
  *
  * Behaviour: find the actor one step ahead of the player; require the tile
  * beyond it to be empty; stage the pushed position in the three-word frame
- * slot, ask Func_080091d8 whether the move collides, and if it does not,
+ * slot, ask Object_CheckMovementCollision whether the move collides, and if it does not,
  * commit it and hand off to the paired-actor gate scene at 0x02000304.
  *
  * Imports resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- (an overlay `bl` stores
  * `target_offset - 2`).  Twelve call sites against the row's advertised 11;
- * the manifest's `calls` field is a floor.  Per-target: Func_0808a080 1,
- * Func_020007c4 2, Func_080091d8 1, Object_SetMode 2, Func_080000c0 1,
- * Audio_PlayCue 1, Func_08009150 2, Func_08009158 1, Func_02000304 1.
+ * the manifest's `calls` field is a floor.  Per-target: Scene_GetRecord 1,
+ * Func_020007c4 2, Object_CheckMovementCollision 1, Object_SetMode 2, Func_080000c0 1,
+ * Audio_PlayCue 1, Object_SetPosition 2, Object_CommitPosition 1, Func_02000304 1.
  *
  * `blocker` is provably zero where it is stored at +0x24 and +0x2c — the guard
  * above returns early otherwise — but it is the register the assembly stores,

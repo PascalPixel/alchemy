@@ -7,15 +7,15 @@ struct Actor_02000754 {
 };
 
 /*
- * Every call is named at its decoded bl site: the two Func_0808a080 reads go
+ * Every call is named at its decoded bl site: the two Scene_GetRecord reads go
  * through two DIFFERENT per-site import veneers, and the dialogue and
  * Func_020004b4 calls also resolve to their own sites, so the semantic
  * single-name imports cannot reproduce the reference displacements.
  */
 extern void Func_020018c2(s32 dialogue);                 /* Func_0808a170 */
-extern struct Actor_02000754 *Func_02001860(s32 actor);  /* Func_0808a080 */
+extern struct Actor_02000754 *Func_02001860(s32 actor);  /* Scene_GetRecord */
 extern void Func_02000c20(s32 actor);                    /* Func_020004b4 */
-extern struct Actor_02000754 *Func_02001872(s32 actor);  /* Func_0808a080 */
+extern struct Actor_02000754 *Func_02001872(s32 actor);  /* Scene_GetRecord */
 
 void Func_02000754(void)
 {

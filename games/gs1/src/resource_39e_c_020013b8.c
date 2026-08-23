@@ -30,19 +30,19 @@
  *
  * All 20 call sites were resolved with
  * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_39e 13b8 147c`, and the
- * per-target histogram is Func_080770c0 x4, Func_0808a020 x2, Func_0808a018
- * x1, Func_0808a080 x1, Func_0808a208 x1, Func_0808a218 x1, Func_0808a220 x1,
+ * per-target histogram is GameFlag_IsSet x4, Func_0808a020 x2, Func_0808a018
+ * x1, Scene_GetRecord x1, Func_0808a208 x1, Func_0808a218 x1, Func_0808a220 x1,
  * plus nine intra-overlay calls to eight distinct owners:
- *   0x020013bc -> 0x04404 Func_0808a080   0x0200143c -> 0x0102c Func_0200102c
+ *   0x020013bc -> 0x04404 Scene_GetRecord   0x0200143c -> 0x0102c Func_0200102c
  *   0x020013c2 -> 0x043dc Func_0808a018   0x02001442 -> 0x01160 Func_02001160
  *   0x020013d6 -> 0x00e94 Func_02000e94   0x02001446 -> 0x043e4 Func_0808a020
- *   0x020013e8 -> 0x00bf4 Func_02000bf4   0x0200144e -> 0x043bc Func_080770c0
+ *   0x020013e8 -> 0x00bf4 Func_02000bf4   0x0200144e -> 0x043bc GameFlag_IsSet
  *   0x020013fc -> 0x00db4 Func_02000db4   0x02001458 -> 0x0102c Func_0200102c
- *   0x02001402 -> 0x00cd4 Func_02000cd4   0x02001460 -> 0x043bc Func_080770c0
+ *   0x02001402 -> 0x00cd4 Func_02000cd4   0x02001460 -> 0x043bc GameFlag_IsSet
  *   0x0200140e -> 0x044e4 Func_0808a208   0x02001468 -> 0x01494 Func_02001494
  *   0x02001416 -> 0x044fc Func_0808a220   0x0200146e -> 0x01dbc Func_02001dbc
  *   0x0200141a -> 0x044f4 Func_0808a218   0x02001472 -> 0x043e4 Func_0808a020
- *   0x02001428 0x02001432 -> 0x043bc Func_080770c0
+ *   0x02001428 0x02001432 -> 0x043bc GameFlag_IsSet
  * THIS IS WHY THE SWEEP FOUND SO MANY UNRECORDED OWNERS IN THIS OVERLAY: the
  * dispatcher and six of its eight callees are all absent from
  * out/decomp/overlays.json, so nothing that starts from the inventory can reach

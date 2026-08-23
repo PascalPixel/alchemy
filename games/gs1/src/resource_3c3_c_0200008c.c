@@ -29,8 +29,8 @@ extern u8 Value_000000aa;
  * so they are written here as the integers 0xaa and 0xa9.
  *
  * The single call site resolves through `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` to the
- * import veneer at 0x0200087c -> Func_080770c0.  Per-target multiset:
- *   Func_080770c0 x1.
+ * import veneer at 0x0200087c -> GameFlag_IsSet.  Per-target multiset:
+ *   GameFlag_IsSet x1.
  */
 
 /* Old-style declarations: overlay import arities vary per call site. */

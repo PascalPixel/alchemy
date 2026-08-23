@@ -31,7 +31,7 @@
  * code_bytes and span_bytes.
  *
  * Calls: 2 sites, matching the advertised 2:
- *   Func_0808a080  x1   0x4ce
+ *   Scene_GetRecord  x1   0x4ce
  *   Func_0200050c  x1   0x4f2   (this overlay's own owner, prologue site)
  *
  * 0x02000240 is the shared cross-overlay scene workspace, and the halfword read

@@ -1,6 +1,6 @@
 #include "object_runtime.h"
 
-void Func_08009140(struct ObjectRuntime *);
+void Object_ResetMotion(struct ObjectRuntime *);
 s32 Func_080091a8(u8, s32, s32);
 
 void Func_08092454(u32 object_id, s32 x, s32 y, s32 z)
@@ -12,7 +12,7 @@ void Func_08092454(u32 object_id, s32 x, s32 y, s32 z)
 
     object = GetObject(object_id);
     if (object != NULL) {
-        Func_08009140(object);
+        Object_ResetMotion(object);
         object->velocity_x = 0;
         object->velocity_y = 0;
         object->velocity_z = 0;

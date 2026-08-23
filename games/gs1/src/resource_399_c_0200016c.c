@@ -26,9 +26,9 @@
  * 016c` (an overlay `bl` stores `target - 2`, so the disassembler's own
  * annotations are wrong).  Three sites, two distinct imports:
  *   0x02000184 -> Func_0808a038(script)     announce the chosen script
- *   0x0200018a -> Func_080770c0(0x881)      story-flag query, result tested
- *   0x020001b2 -> Func_080770c0(0x881)      the same query on the other arm
- * The two Func_080770c0 sites are on mutually exclusive arms of the scenario
+ *   0x0200018a -> GameFlag_IsSet(0x881)      story-flag query, result tested
+ *   0x020001b2 -> GameFlag_IsSet(0x881)      the same query on the other arm
+ * The two GameFlag_IsSet sites are on mutually exclusive arms of the scenario
  * test and rejoin only at the shared `pop`, so they are two real call sites,
  * not one shared site written twice.
  *

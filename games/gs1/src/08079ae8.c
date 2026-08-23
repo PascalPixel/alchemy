@@ -17,7 +17,7 @@ void Func_08079ae8(s32 owner_no)
 {
     struct Owner_08079ae8 *owner;
 
-    owner = Func_08077394(owner_no);
+    owner = Owner_GetState(owner_no);
     owner->value_129 = Func_080799b0(owner->value_128, owner->values_f8);
     Func_08078bf0(owner_no);
     Func_080798e0(owner_no, owner->data_024);

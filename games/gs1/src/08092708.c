@@ -12,10 +12,10 @@ s32 Func_08092054(u32);
 void Audio_PlayCue(s32);
 void Object_SetMode(void *, s32);
 void WaitFrames(u32);
-void Func_08009150(void *, s32, s32, s32);
+void Object_SetPosition(void *, s32, s32, s32);
 void Func_08092adc(s32 arg0, s32 arg1, s32 arg2);
 void Func_08092624(void *, s32);
-void Func_08009158(void *);
+void Object_CommitPosition(void *);
 void Func_0809202c(void);
 
 void Func_08092708(s32 sequence_arg, s32 mode_or_frame, s32 optional_action) {
@@ -38,7 +38,7 @@ void Func_08092708(s32 sequence_arg, s32 mode_or_frame, s32 optional_action) {
             *object_flags = flags;
         }
         OBJECT_VERTICAL_STEP(object) = 0x40000;
-        Func_08009150(object, OBJECT_X(object), OBJECT_Y(object),
+        Object_SetPosition(object, OBJECT_X(object), OBJECT_Y(object),
             base_z + 0xC0000);
         WaitFrames(6);
         Audio_PlayCue(0xD9);
@@ -57,9 +57,9 @@ void Func_08092708(s32 sequence_arg, s32 mode_or_frame, s32 optional_action) {
         } while ((u32)mode_or_frame <= 0xD);
         *object_flags = 3;
         OBJECT_VERTICAL_STEP(object) = 0x30000;
-        Func_08009150(object, OBJECT_X(object), OBJECT_Y(object),
+        Object_SetPosition(object, OBJECT_X(object), OBJECT_Y(object),
             base_z + 0x100000);
-        Func_08009158(object);
+        Object_CommitPosition(object);
         mode_or_frame = 0;
         if (OBJECT_Y(object) > OBJECT_TARGET_Y(object)) {
 wait_for_target_y:

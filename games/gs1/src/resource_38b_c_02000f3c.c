@@ -1,7 +1,7 @@
 #include "types.h"
 
 /* Per-site raw names preserve the stock relocated branch operands; they
- * resolve to Func_080090c8, Object_SetCallback and Func_08009020 respectively. */
+ * resolve to Func_080090c8, Object_SetCallback and Object_InitializeMode respectively. */
 extern u8 *Func_02001f90();
 extern void Func_02001f96();
 extern void Func_02001fa8();

@@ -1,6 +1,6 @@
 #include "m7_interfaces.h"
 
-s32 Func_080022ec(s32, s32);
+s32 FixedPoint_Ratio(s32, s32);
 s32 Modulo(s32, s32);
 
 void Func_080a1c6c(struct Object080a1c **slot, s32 index,
@@ -17,7 +17,7 @@ void Func_080a1c6c(struct Object080a1c **slot, s32 index,
     }
     stable_phase = *(volatile s32 *)&phase;
     object = *(struct Object080a1c * volatile *)slot;
-    wave = Func_080022ec(wrapped_index, stable_phase);
+    wave = FixedPoint_Ratio(wrapped_index, stable_phase);
     object->y = (s16)((wave * 0x10) + origin_y);
     object->x =
         (s16)((Modulo(wrapped_index, phase) * 0x18) + origin_x);

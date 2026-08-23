@@ -3,7 +3,7 @@
 extern u8 Data_00000024[];
 
 void *Func_080284dc(void);
-void Func_080287a8(s32 arg0);
+void Menu_AppendResourceEntry(s32 arg0);
 void Func_080288a8(s32 a0, s32 a1, s32 a2, s32 a3);
 s32 Func_08028574(s32);
 void Func_0802851c(void);
@@ -16,8 +16,8 @@ s32 Func_08028e54(s32 arg0, s32 arg1, s32 arg2)
     var_r7 = arg2;
     p = Data_00000024;
     Func_080284dc();
-    Func_080287a8(5);
-    Func_080287a8(6);
+    Menu_AppendResourceEntry(5);
+    Menu_AppendResourceEntry(6);
     Func_080288a8(arg0, arg1, 3, p);
     var_r7 = Func_08028574(var_r7);
     Func_0802851c();

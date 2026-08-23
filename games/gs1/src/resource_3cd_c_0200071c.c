@@ -10,7 +10,7 @@
  * It takes no branch at all: seed the workspace's +448 and +456 s32
  * cells with 516 and 24, give record 11 the same 0x19999 value in both
  * its +24 and +28 fields, then set modes on records 13 and 14 and
- * return 0.  Two separate Func_0808a080(11) calls fetch the same
+ * return 0.  Two separate Scene_GetRecord(11) calls fetch the same
  * record for the two stores, which is transcribed as compiled rather
  * than folded into one local.
  *

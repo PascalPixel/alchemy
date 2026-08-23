@@ -1,7 +1,7 @@
 #include "owner_state.h"
 #include "party_state.h"
 
-extern s32 Func_080022ec(s32, s32);
+extern s32 FixedPoint_Ratio(s32, s32);
 
 void Func_0807808c(s32 arg0)
 {
@@ -24,7 +24,7 @@ void Func_0807808c(s32 arg0)
         } while (0);
 
         v34 = *(s16 *)(obj + 0x34);
-        t = Func_080022ec(v34 << 14, v34);
+        t = FixedPoint_Ratio(v34 << 14, v34);
         v14 = 0x4000;
         if (t <= 0x4000) {
             v14 = 0;
@@ -38,7 +38,7 @@ void Func_0807808c(s32 arg0)
             *(s16 *)(obj + 0x14) = (s16)one;
         }
 
-        t = Func_080022ec(*(s16 *)(obj + 0x3A) << 14, *(s16 *)(obj + 0x36));
+        t = FixedPoint_Ratio(*(s16 *)(obj + 0x3A) << 14, *(s16 *)(obj + 0x36));
         v16 = 0x4000;
         if (t <= 0x4000) {
             v16 = 0;

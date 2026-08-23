@@ -1,7 +1,7 @@
 #include "types.h"
 
 s32 Func_0800231c(s32);
-s32 Func_080022ec(s32, s32);
+s32 FixedPoint_Ratio(s32, s32);
 extern s32 Data_03001e40;
 
 void Func_080b8f58(void) {
@@ -24,7 +24,7 @@ void Func_080b8f58(void) {
         random = Data_03001e40;
         angle = (random * 3) << 10;
         color = palette[16];
-        amount = Func_080022ec(0x10000 - Func_0800231c(angle), 0x2AAA);
+        amount = FixedPoint_Ratio(0x10000 - Func_0800231c(angle), 0x2AAA);
 
         red = (color >> 10) & mask;
         green = (color >> 5) & mask;

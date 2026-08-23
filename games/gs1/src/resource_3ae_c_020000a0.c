@@ -27,12 +27,12 @@
  *
  * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --` (an overlay `bl`
  * stores target offset - 2; the disassembler's annotation is wrong).  All four
- * sites go through the veneer at 0x02001550 to `Func_080770c0`, the event-flag
+ * sites go through the veneer at 0x02001550 to `GameFlag_IsSet`, the event-flag
  * test also used by `games/gs1/semantic/overlays/resource_3ae_c_020002dc.c`.  sites=4
  * equals the inventory's calls=4, so the call set is complete.
  *
  * Uncertainties: 0x93e and 0x950 are read as event-flag ids purely from their
- * use as the sole argument of Func_080770c0.  The comparison is `cmp r2,r3`
+ * use as the sole argument of GameFlag_IsSet.  The comparison is `cmp r2,r3`
  * against a full word loaded from the pool while r2 came from `ldrsh`, so the
  * compare is signed 32-bit; the sibling at 0x02000040 has the same shape.
  */

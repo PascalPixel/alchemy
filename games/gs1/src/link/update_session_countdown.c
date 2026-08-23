@@ -42,7 +42,7 @@ extern struct LinkCountdownState *Data_03001f34;
 extern struct LinkRuntimeState *Data_03001e74;
 extern struct LinkSignature Data_02002024[];
 
-s32 Func_080022ec(s32 dividend, s32 divisor);
+s32 FixedPoint_Ratio(s32 dividend, s32 divisor);
 void Func_08003dec(struct CountdownDisplayEntry *entry, s32 value);
 void Func_080219c8(s32 destination);
 s32 Func_08021c34(void);
@@ -72,7 +72,7 @@ void UpdateLinkSessionCountdown(void)
         current = state->currentOffset;
         if (target != current) {
             difference = target - current;
-            step = Func_080022ec(difference, 3);
+            step = FixedPoint_Ratio(difference, 3);
             if (step == 0) {
                 step--;
                 if (difference >= 0)
@@ -140,7 +140,7 @@ timer_ready:
         if (timer < 0)
             goto done;
 
-        seconds = Func_080022ec(timer + FRAMES_PER_SECOND - 1, FRAMES_PER_SECOND);
+        seconds = FixedPoint_Ratio(timer + FRAMES_PER_SECOND - 1, FRAMES_PER_SECOND);
         if (seconds != 0 && seconds * FRAMES_PER_SECOND == timer)
             Audio_PlayCue(SOUND_TRIPLE_TONE_LOW);
 

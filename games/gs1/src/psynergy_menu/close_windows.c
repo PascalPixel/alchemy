@@ -1,7 +1,7 @@
 #include "psynergy_menu.h"
 #include "global_cells.h"
 
-s32 Func_08015018(s32 window, s32 mode);
+s32 UiWindow_Close(s32 window, s32 mode);
 void Func_080a195c(void);
 
 void PsynergyMenu_CloseWindows(void)
@@ -10,7 +10,7 @@ void PsynergyMenu_CloseWindows(void)
 
     menu = *(struct PsynergyMenuState **)ADDR_03001F2C;
     Func_080a195c();
-    Func_08015018(menu->auxiliary_window, 1);
-    Func_08015018(menu->psynergy_window, 1);
-    Func_08015018(menu->message_window, 1);
+    UiWindow_Close(menu->auxiliary_window, 1);
+    UiWindow_Close(menu->psynergy_window, 1);
+    UiWindow_Close(menu->message_window, 1);
 }

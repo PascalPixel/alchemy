@@ -11,8 +11,8 @@
 s32 Modulo(s32, s32);
 void WaitFrames(s32);
 s32 Func_08015010(s32, s32, s32, s32, s32);
-void Func_08015018(s32, s32);
-s32 Func_08077248(s32);
+void UiWindow_Close(s32, s32);
+s32 Ability_GetAvailability(s32);
 void Func_080a1028(s32, s32, s32, s32, s32);
 void Func_080a1030(void);
 void Func_080b1bd0(s32);
@@ -57,7 +57,7 @@ s32 Shop_SelectPartyMember(void)
 
         if ((*(volatile u32 *)ADDR_03001C94 & 1) != 0) {
             WaitFrames(1);
-            if (Func_08077248(unit_id) == 0) {
+            if (Ability_GetAvailability(unit_id) == 0) {
                 Audio_PlayCue(SOUND_MENU_CANCEL);
             } else {
                 Audio_PlayCue(SOUND_MENU_CONFIRM);
@@ -75,9 +75,9 @@ s32 Shop_SelectPartyMember(void)
         if ((*(volatile u32 *)ADDR_03001C94 & 2) != 0) {
             Audio_PlayCue(SOUND_MENU_CANCEL);
             Func_080a1030();
-            Func_08015018(list_window, 2);
-            Func_08015018(shop->item_window, 2);
-            Func_08015018(shop->money_window, 2);
+            UiWindow_Close(list_window, 2);
+            UiWindow_Close(shop->item_window, 2);
+            UiWindow_Close(shop->money_window, 2);
             WaitFrames(1);
             return 0;
         }

@@ -6,7 +6,7 @@
  * Call symbols are per-site, not per-import: the raw region in
  * games/gs1/assets/code/resource_385_overlay.s (lines 766-783, still unadopted) spells
  * every call as `bl sub_02000xxx`, and the two calls that both ultimately
- * reach Func_080770c8 go through TWO DIFFERENT overlay-local veneers,
+ * reach GameFlag_Set go through TWO DIFFERENT overlay-local veneers,
  * sub_02001608 and sub_0200160e -- not the same symbol twice.
  */
 void Func_02001618(void);

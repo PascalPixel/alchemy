@@ -8,8 +8,8 @@ struct MenuState {
     s16 mode;
 };
 
-s32 Func_080770c0(s32);
-void Func_080770c8(void *);
+s32 GameFlag_IsSet(s32);
+void GameFlag_Set(void *);
 s32 Func_08077288(s32, void *);
 void Func_080916b0(void);
 void Func_0808c44c(void);
@@ -29,9 +29,9 @@ void Func_080955b0(s32 slot, s32 page, void *entries)
     s32 selection;
 
     state = *(struct MenuState **)ADDR_03001EBC;
-    if (Func_080770c0(366) != 0) {
+    if (GameFlag_IsSet(366) != 0) {
         selection = 0;
-        Func_080770c8((u8 *)entries + page * 20 + 48);
+        GameFlag_Set((u8 *)entries + page * 20 + 48);
     } else {
         selection = Func_08077288(page, entries);
     }

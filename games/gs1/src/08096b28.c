@@ -28,8 +28,8 @@
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void Func_080072f0(s32, s32);
-void Func_08015040(s32, s32);
-s32 Func_080770c0(s32);
+void UiText_DrawMessage(s32, s32);
+s32 GameFlag_IsSet(s32);
 void Func_080916b0();
 void Func_08091750();
 void Func_08092b94(s32);
@@ -51,9 +51,9 @@ s32 Func_08096b28(void *arg0, s32 arg1, s32 arg2) {
                 Func_080072f0(arg1, arg2);
             }
         }
-        if (Func_080770c0(0x142) != 0) {
+        if (GameFlag_IsSet(0x142) != 0) {
             Func_080916b0();
-            Func_08015040((s32)&Value_00000927, 1);
+            UiText_DrawMessage((s32)&Value_00000927, 1);
             Func_08091750();
         }
     }

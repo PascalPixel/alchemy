@@ -12,14 +12,14 @@
  * 02b8 --annotate`; an overlay `bl` stores `target - 2`, so the disassembler's
  * own annotations are wrong.  23 sites, 11 distinct imports.  Per-target
  * multiset against the assembly, which is what the C below spells:
- *   Func_0808a018 x1, Func_080770c0 x1, Func_0808a170 x2, Func_0808a180 x3,
+ *   Func_0808a018 x1, GameFlag_IsSet x1, Func_0808a170 x2, Func_0808a180 x3,
  *   Func_0808a1f0 x2, Func_0808a010 x4, Func_0808a100 x4, Func_0808a148 x2,
  *   Func_0808a190 x1, Func_0808a1b8 x2, Func_0808a020 x1.
  * (The inventory's calls=20 counts distinct-ish targets and predates the
  * corrected `bl` decoding; it is a lower bound, not a check.)
  *
  * Shape: one scripted section bracketed by Func_0808a018/Func_0808a020, with
- * the story-flag query Func_080770c0(0x881) choosing between two arms.  The
+ * the story-flag query GameFlag_IsSet(0x881) choosing between two arms.  The
  * two arms are the SAME sequence on channel 10 and differ in exactly two
  * places — the message id (0x163c against 0x152d) and one step call, where the
  * flag-set arm uses Func_0808a190(10, 0) and the flag-clear arm uses

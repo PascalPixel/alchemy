@@ -5,7 +5,7 @@ extern u8 *Data_03001ebc;
 s32 Func_0808ba1c(u32 object_id);
 /* Object table: 192 pointers at Data_03001ebc + 0x14 (games/gs1/src/0808ba1c.c). */
 #define GetObject Func_0808ba1c
-void Func_080090d0(void *);
+void Object_Destroy(void *);
 
 void Func_08092924(s32 index)
 {
@@ -14,7 +14,7 @@ void Func_08092924(s32 index)
     s32 offset;
 
     if (object != 0) {
-        Func_080090d0(object);
+        Object_Destroy(object);
         offset = index * 4;
         offset += 20;
         *(s32 *)(base + offset) = 0;

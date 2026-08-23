@@ -28,10 +28,10 @@ extern u8 *Data_03001e98;
 extern u8 Value_000000f1;
 
 struct SelectionNode_0801c188 *Func_0801b36c(void *state);
-struct ResourceBuffer_0801c188 *Func_080048b0(s32 owner, s32 size);
+struct ResourceBuffer_0801c188 *Runtime_AllocateHeapBlock(s32 owner, s32 size);
 void Func_080053e8(void *source, void *destination);
-u16 Func_08004080(void);
-u16 Func_08003fa4(s32 handle, s32 size, void *buffer);
+u16 Resource_FindFreeSlot(void);
+u16 Resource_CopyData(s32 handle, s32 size, void *buffer);
 void Func_08002dd8(s32 owner);
 
 void Func_0801c188(void)
@@ -47,7 +47,7 @@ void Func_0801c188(void)
     if (selection->type != 1 && selection->type != 6)
         return;
 
-    buffer = Func_080048b0(17, 0x608);
+    buffer = Runtime_AllocateHeapBlock(17, 0x608);
     transfer = (struct TransferState_0801c188 *)(state + 0x30C);
     resource_index = selection->resource_index;
     resource_table = GetResource((s32)&Value_000000f1);
@@ -60,9 +60,9 @@ void Func_0801c188(void)
     Func_080053e8(resource, buffer);
 
     if (transfer->active == 0)
-        transfer->handle = Func_08004080();
+        transfer->handle = Resource_FindFreeSlot();
     transfer->transfer_id =
-        Func_08003fa4(transfer->handle, 0x400, buffer);
+        Resource_CopyData(transfer->handle, 0x400, buffer);
     transfer->active = 1;
     transfer->resource_index = resource_index;
     transfer->x = 40;

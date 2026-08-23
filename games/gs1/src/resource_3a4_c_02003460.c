@@ -21,7 +21,7 @@
  *   0x200347a -> veneer -> Func_02006fbc(0, x, z, 255)      established, "place a marker (kind, x, z, level)" (resource_37b_c_020016dc.c, resource_3b2_c_02000f70.c)
  */
 
-u8 *Func_02006ffc();           /* scene-record accessor, established (veneer to Func_0808a080) */
+u8 *Func_02006ffc();           /* scene-record accessor, established (veneer to Scene_GetRecord) */
 void Func_02006fbc();          /* place a marker (kind, x, z, level), established (veneer to Func_08009278) */
 
 void Func_02003460(s32 selector)

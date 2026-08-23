@@ -4,8 +4,8 @@
 
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-s32 Func_080022ec(s32, s32);
-u8 *Func_08077394(s32);
+s32 FixedPoint_Ratio(s32, s32);
+u8 *Owner_GetState(s32);
 s32 Func_0807987c(s32, s32);
 s32 BattleRandomPercent(void);
 
@@ -15,7 +15,7 @@ s32 BattleEffect_RollSuccess(
     s32 resistance_category,
     s32 effect_id,
     s32 success_scale) {
-    u8 *state = Func_08077394(target);
+    u8 *state = Owner_GetState(target);
     s32 attempts = 1;
     s32 score;
     s32 attempt;
@@ -91,7 +91,7 @@ action4_done:
     }
 
     for (attempt = 0; attempt < attempts; attempt++) {
-        if (Func_080022ec(score * success_scale, 100) >= BattleRandomPercent()) {
+        if (FixedPoint_Ratio(score * success_scale, 100) >= BattleRandomPercent()) {
             return 1;
         }
     }

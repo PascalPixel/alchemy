@@ -28,7 +28,7 @@
  * Old-style declarations: overlay import arities are not fixed per name.
  *
  * Each site names the veneer IT reaches, not the import behind it: the four
- * calls here are Func_0808a080, Func_0200007c, Func_0808a080, Func_0200007c,
+ * calls here are Scene_GetRecord, Func_0200007c, Scene_GetRecord, Func_0200007c,
  * and the reference reaches them through four DIFFERENT veneers.  Naming the
  * import instead made the linker synthesise fresh ones and every `bl` missed.
  * Same convention as 6e7d6a12e and games/gs1/src/resource_371_c_0200037c.c, where one

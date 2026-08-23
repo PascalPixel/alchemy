@@ -1,7 +1,7 @@
 #include "object_lookup.h"
 #include "types.h"
 
-void Func_08009088(u8 *, s32);
+void Object_SetAction(u8 *, s32);
 void Func_0809ad71(void);
 
 struct GlobalState {
@@ -29,6 +29,6 @@ void Func_0809ad90(s32 arg0) {
         }
         *(u32 *)(object + 0x6C) = (u32)Func_0809ad71;
         object[0x5B] = 1;
-        Func_08009088(object, 0);
+        Object_SetAction(object, 0);
     }
 }

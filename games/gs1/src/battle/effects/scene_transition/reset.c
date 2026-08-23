@@ -20,7 +20,7 @@ typedef struct {
 } SceneTransitionScene;
 
 void WaitFrames(s32 frames);
-void Func_08004278(void (*callback)(void));
+void ScheduleCallback(void (*callback)(void));
 void *Func_0808e4b4(u32 kind, u32 entry_index, s32 *size);
 void Func_08091200(u32 battle_value, s32 enabled);
 void Func_08091220(u32 battle_value, s32 enabled);
@@ -46,7 +46,7 @@ void ResetSceneTransitionEffect(void)
 
     if (state->active != 0) {
         Audio_PlayCue(SOUND_SCENE_TRANSITION);
-        Func_08004278(Func_080982dc);
+        ScheduleCallback(Func_080982dc);
 
         clearedValue = 0;
         state->active = clearedValue;

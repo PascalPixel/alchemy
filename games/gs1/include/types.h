@@ -44,5 +44,33 @@ typedef int bool;
 #define UiIcon_Draw Func_080152d0
 #define UiWindow_Commit Func_08015270
 #define UiText_DrawQuantity Func_08015120
+#define GameFlag_IsSet Func_080770c0
+#define GameFlag_Set Func_080770c8
+#define GameFlag_Clear Func_080770d0
+#define FixedPoint_Ratio Func_080022ec
+#define Object_ResetMotion Func_08009140
+#define Object_SetPosition Func_08009150
+#define Object_CommitPosition Func_08009158
+#define Object_Destroy Func_080090d0
+#define Object_SetAction Func_08009088
+#define UiWindow_Close Func_08015018
+#define Ability_GetData Func_08077080
+#define Owner_GetState Func_08077394
+#define Resource_FindFreeSlot Func_08004080
+#define Runtime_AllocateBlock Func_080048f4
+#define Resource_CopyData Func_08003fa4
+#define ScheduleCallback Func_08004278
+#define Object_InitializeMode Func_08009020
+#define Scene_GetRecord Func_0808a080
+#define Resource_ResetEntry Func_08003f3c
+#define Runtime_AllocateHeapBlock Func_080048b0
+#define Resource_GetBuffer Func_080040d0
+#define UiPalette_SetColor Func_080150b8
+#define Menu_AppendResourceEntry Func_080287a8
+#define Object_CheckMovementCollision Func_080091d8
+#define Ability_GetMaximum Func_08077240
+#define Ability_GetAvailability Func_08077248
+#define Shop_GetSelectionState Func_08077020
+#define UiText_DrawMessage Func_08015040
 
 #endif

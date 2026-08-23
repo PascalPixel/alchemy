@@ -2,72 +2,73 @@
 #include "fixed_math.h"
 #include "object_effect.h"
 
-struct Values_0808eee4 {
-    s32 first;
-    s32 second;
-    s32 third;
+struct ParticlePosition {
+    s32 x;
+    s32 y;
+    s32 z;
 };
 
-struct Source_0808eee4 {
+struct ParticleEmitter {
     u8 padding[8];
-    struct Values_0808eee4 values;
+    struct ParticlePosition position;
     u8 padding2[20];
-    s32 offset;
+    s32 travel_offset;
     u8 padding3[41];
-    u8 state;
+    u8 active;
 };
 
-struct Child_0808eee4 {
+struct ParticleChild {
     u8 padding[9];
     u8 flags;
 };
 
-struct Object_0808eee4 {
+struct ParticleEffectObject {
     u8 padding[80];
-    struct Child_0808eee4 *child;
+    struct ParticleChild *child;
 };
 
 #define OBJECT_0808EEE4_OFFSET(type, field) \
     ((u32)&(((type *)0)->field))
-typedef char Values_0808eee4_size[
-    sizeof(struct Values_0808eee4) == 0x0c ? 1 : -1
+typedef char ParticlePosition_size[
+    sizeof(struct ParticlePosition) == 0x0c ? 1 : -1
 ];
-typedef char Source_0808eee4_offset_offset[
-    OBJECT_0808EEE4_OFFSET(struct Source_0808eee4, offset) == 0x28 ? 1 : -1
+typedef char ParticleEmitter_travel_offset_offset[
+    OBJECT_0808EEE4_OFFSET(struct ParticleEmitter, travel_offset) == 0x28 ? 1 : -1
 ];
-typedef char Source_0808eee4_state_offset[
-    OBJECT_0808EEE4_OFFSET(struct Source_0808eee4, state) == 0x55 ? 1 : -1
+typedef char ParticleEmitter_active_offset[
+    OBJECT_0808EEE4_OFFSET(struct ParticleEmitter, active) == 0x55 ? 1 : -1
 ];
-typedef char Object_0808eee4_child_offset[
-    OBJECT_0808EEE4_OFFSET(struct Object_0808eee4, child) == 0x50 ? 1 : -1
+typedef char ParticleEffectObject_child_offset[
+    OBJECT_0808EEE4_OFFSET(struct ParticleEffectObject, child) == 0x50 ? 1 : -1
 ];
 #undef OBJECT_0808EEE4_OFFSET
 
 extern u32 Random16(void);
-extern void Func_0800447c(s32, s32, struct Values_0808eee4 *);
-extern void Func_08009098(struct Object_0808eee4 *, void *);
-extern void Func_08009080(struct Object_0808eee4 *, s32);
+extern void Func_0800447c(s32, s32, struct ParticlePosition *);
+extern void Func_08009098(struct ParticleEffectObject *, void *);
+extern void Func_08009080(struct ParticleEffectObject *, s32);
 extern const u8 Data_0809e87c[];
 
-void Func_0808eee4(struct Source_0808eee4 *source)
+#define EmitRandomParticleEffect Func_0808eee4
+void Func_0808eee4(struct ParticleEmitter *emitter)
 {
-    struct Values_0808eee4 values;
-    struct Object_0808eee4 *object;
+    struct ParticlePosition position;
+    struct ParticleEffectObject *object;
     u32 random_angle;
 
-    if (source->offset >= -255 && source->offset <= 255)
-        source->state = 0;
+    if (emitter->travel_offset >= -255 && emitter->travel_offset <= 255)
+        emitter->active = 0;
 
     if ((100 * Random16() >> 16) > 9)
         return;
 
-    values.first = source->values.first;
-    values.second = source->values.second;
-    values.third = source->values.third;
+    position.x = emitter->position.x;
+    position.y = emitter->position.y;
+    position.z = emitter->position.z;
     random_angle = Random16();
-    Func_0800447c(random_angle << 4, Random16(), &values);
-    object = (struct Object_0808eee4 *)Func_08096c80(
-        0x11D, values.first, values.second, values.third);
+    Func_0800447c(random_angle << 4, Random16(), &position);
+    object = (struct ParticleEffectObject *)Func_08096c80(
+        0x11D, position.x, position.y, position.z);
     if (object != 0) {
         s32 mask;
         u8 flags;

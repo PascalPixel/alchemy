@@ -1,6 +1,6 @@
 #include "types.h"
 
-void Func_08003fa4(void *, s32, void *);
+void Resource_CopyData(void *, s32, void *);
 extern u8 Data_08031864;
 extern u8 Value_08031864;
 extern u8 Data_08031864_b;
@@ -24,6 +24,6 @@ s32 Func_0801a32c(u32 value, s32 unused, void *destination)
         source = &Data_08031864_c;
         break;
     }
-    Func_08003fa4(destination, 32, source);
+    Resource_CopyData(destination, 32, source);
     return 1;
 }

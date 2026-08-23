@@ -1,7 +1,7 @@
 #include "types.h"
 
 s32 Func_08077238(s32);
-s32 Func_08077240(s32, s32);
+s32 Ability_GetMaximum(s32, s32);
 
 extern void *Data_03001f2c;
 
@@ -21,7 +21,7 @@ s32 Func_080b0070(void)
     do {
         mode = *(s8 *)(state + 0x3a9);
         if (mode == Func_08077238(index) &&
-            Func_08077240(index, 0) != 0) {
+            Ability_GetMaximum(index, 0) != 0) {
             *output = index;
             count++;
             output++;

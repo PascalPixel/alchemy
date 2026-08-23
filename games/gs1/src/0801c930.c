@@ -1,12 +1,12 @@
 #include "types.h"
 
-void *Func_080048f4(s32 arg0, s32 arg1);
+void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void Func_0801c930(void)
 {
   void *new_var;
   void *temp_r0;
   unsigned int new_var2;
-  new_var = Func_080048f4(0x13, 0x1004);
+  new_var = Runtime_AllocateBlock(0x13, 0x1004);
   temp_r0 = new_var;
   new_var2 = 0;
   if (1)

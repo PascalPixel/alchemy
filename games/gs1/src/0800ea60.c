@@ -2,7 +2,7 @@
 #include "global_cells.h"
 
 extern u8 *Data_03001ebc;
-s32 Func_080770c0(s32);
+s32 GameFlag_IsSet(s32);
 
 static __inline__ void StoreHalfword(u8 *address, s32 value)
 {
@@ -15,7 +15,7 @@ u32 Func_0800ea60(u32 value)
     u32 result = 0x3FFF & value;
     u8 *state = Data_03001ebc;
 
-    if (Func_080770c0(0x107) != 0) {
+    if (GameFlag_IsSet(0x107) != 0) {
         StoreHalfword(state + 0x182, 0xFA);
     } else if (*(s16 *)(state + 0x19E) == 3) {
         if (*(volatile u32 *)ADDR_03001C94 & 0x100) {

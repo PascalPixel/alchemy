@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 Func_080022ec(s32, s32);
+s32 FixedPoint_Ratio(s32, s32);
 void Func_080925e0(void *arg0)
 {
   s32 temp_r3;
@@ -20,6 +20,6 @@ void Func_080925e0(void *arg0)
   temp_r3_3 = (*((s32 *) (((u8 *) arg0) + 0xC))) + 0x400;
   *((s32 *) (((u8 *) arg0) + 0xC)) = temp_r3_3;
   *((s32 *) (((u8 *) arg0) + 0x3C)) = temp_r3_3;
-  *((s32 *) (((u8 *) arg0) + 0x30)) = (s32) (temp_r5 - Func_080022ec(temp_r5, 0x12));
+  *((s32 *) (((u8 *) arg0) + 0x30)) = (s32) (temp_r5 - FixedPoint_Ratio(temp_r5, 0x12));
  do { var_r3 = temp_r7; if (temp_r7 < 0) { var_r3 += 0xF; } *((s32 *) (((u8 *) arg0) + 0x34)) = (s32) (temp_r7 - (var_r3 >> 4)); } while (0);
 }

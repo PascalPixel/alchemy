@@ -18,7 +18,7 @@
  * All seven `bl` sites are placed and reach two distinct callees, matching the
  * inventory row's calls=7.  Targets come from cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * (target offset = stored displacement + 2), never from the disassembler's
- * annotations: 0x3e88 -> Func_080091c0 (four sites), 0x3f50 -> Func_0808a080
+ * annotations: 0x3e88 -> Func_080091c0 (four sites), 0x3f50 -> Scene_GetRecord
  * (three sites).  The same pair, with the same six-argument spelling of
  * Func_080091c0, appears in the neighbouring owners 0x02000258 and
  * 0x0200028c, and the byte-exact sibling
@@ -26,7 +26,7 @@
  * Func_02004164(32, 37, 1, 4, 32, 77).
  *
  * Shape: one fixed line, then three lines whose fifth or sixth argument is a
- * field of the record Func_0808a080 returns for participants 15, 16 and 17,
+ * field of the record Scene_GetRecord returns for participants 15, 16 and 17,
  * shifted right arithmetically by 20.  Records 15 and 16 contribute their word
  * at +8; record 17 contributes its word at +16, and its value moves from the
  * fifth to the sixth argument slot while a literal 18 takes the fifth.

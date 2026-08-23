@@ -1,8 +1,8 @@
 #include "types.h"
 
 void *Func_08002dd8(s32);
-s32 Func_080048b0(s32 arg0, s32 arg1);
-void *Func_080048f4(s32 arg0, s32 arg1);
+s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
+void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void *Func_080e3aa0(s32 *);
 void *Func_080e40a4(s32 *);
 void *Func_080e47b8(s32 *);
@@ -11,9 +11,9 @@ void Func_080e3a3c(s32 *arg0)
   s32 temp_r3;
   s32 new_var;
   new_var = (new_var = 0x60E);
-  Func_080048f4(0x29, new_var);
-  Func_080048b0(0x27, 0x782C);
-  Func_080048b0(0x28, 0x4000);
+  Runtime_AllocateBlock(0x29, new_var);
+  Runtime_AllocateHeapBlock(0x27, 0x782C);
+  Runtime_AllocateHeapBlock(0x28, 0x4000);
   new_var = *arg0;
   temp_r3 = new_var;
   new_var = temp_r3 - 0x64;

@@ -9,15 +9,15 @@
  * return and never reached as code (0x202, 0x1528, 0x201).
  *
  * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`:
- *   0x02000466 -> veneer 0x02001b04 -> Func_080770c0
- *   0x02000470 -> veneer 0x02001b04 -> Func_080770c0
- *   0x0200047c -> veneer 0x02001afc -> Func_08015040
+ *   0x02000466 -> veneer 0x02001b04 -> GameFlag_IsSet
+ *   0x02000470 -> veneer 0x02001b04 -> GameFlag_IsSet
+ *   0x0200047c -> veneer 0x02001afc -> UiText_DrawMessage
  *   0x02000482 -> veneer 0x02001c2c -> Audio_PlayCue
  *   0x02000486 -> 0x02000384 (this overlay's own prologue)
- *   0x0200048c -> veneer 0x02001b0c -> Func_080770c8
- *   0x02000492 -> veneer 0x02001b14 -> Func_080770d0
- * Per-target multiset: Func_080770c0 x2 and one each of Func_08015040,
- * Audio_PlayCue, Func_02000384, Func_080770c8, Func_080770d0 - 7 sites, 7 C
+ *   0x0200048c -> veneer 0x02001b0c -> GameFlag_Set
+ *   0x02000492 -> veneer 0x02001b14 -> GameFlag_Clear
+ * Per-target multiset: GameFlag_IsSet x2 and one each of UiText_DrawMessage,
+ * Audio_PlayCue, Func_02000384, GameFlag_Set, GameFlag_Clear - 7 sites, 7 C
  * call expressions.
  *
  * Mirror of 0x0200033c: byte-identical apart from the exchanged story-flag

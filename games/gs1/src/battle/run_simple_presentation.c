@@ -52,7 +52,7 @@ void Runtime_GetObject(s32 id);
 struct MotionRecord *Func_080b7f70(
     struct PresentationObject *object, s32 entry_index);
 s32 Func_08009260(s32 battle_value, s32 second, s32 third);
-void Func_08009088(struct PresentationObject *object, s32 action);
+void Object_SetAction(struct PresentationObject *object, s32 action);
 void Func_080b8178(s32 id);
 void Func_080b8000(s32 id);
 void Func_080c9008(struct BattlePresentationWork *work);
@@ -109,7 +109,7 @@ s32 RunSimpleBattlePresentation(struct SimplePresentationInput *input, s32 flags
         saved_input->secondary_id,
         divisor,
         0);
-    Func_08009088(Func_080b7dd0(work.primary_id)->object, 16);
+    Object_SetAction(Func_080b7dd0(work.primary_id)->object, 16);
     Func_080b7dd0(saved_input->secondary_id);
 
     if (saved_input->secondary_id <= 7)

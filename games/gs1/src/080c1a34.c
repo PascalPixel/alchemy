@@ -15,8 +15,8 @@ struct Object_080c1a34 {
 extern struct Record_080c1a34 Data_080c5c38[];
 
 struct Object_080c1a34 *Func_08077198(s32 id);
-s32 Func_080770c0(s32 flag);
-s32 Func_080022ec(s32 numerator, s32 denominator);
+s32 GameFlag_IsSet(s32 flag);
+s32 FixedPoint_Ratio(s32 numerator, s32 denominator);
 
 s32 Func_080c1a34(s32 record_id)
 {
@@ -56,8 +56,8 @@ s32 Func_080c1a34(s32 record_id)
             object = Func_08077198(member + 8);
             if (object != 0) {
                 if (object->value <= 3 ||
-                    Func_080770c0(372) != 0 ||
-                    Func_080770c0(member + 1544) != 0) {
+                    GameFlag_IsSet(372) != 0 ||
+                    GameFlag_IsSet(member + 1544) != 0) {
                     sum += object->value;
                     count++;
                 } else {
@@ -70,5 +70,5 @@ s32 Func_080c1a34(s32 record_id)
 
     if (count == 0)
         return -3;
-    return Func_080022ec(sum, count);
+    return FixedPoint_Ratio(sum, count);
 }

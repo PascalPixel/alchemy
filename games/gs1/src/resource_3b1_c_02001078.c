@@ -30,19 +30,19 @@ s32 Func_02002364(void);      /* site 0x1086, was Func_020012dc */
 void Func_02002224();         /* site 0x1092, was Func_02001190 */
 void Func_0200590c();         /* site 0x109e, was Func_0200486c */
 
-s32 Func_02007520();          /* site 0x107e, was Func_080770c0(0x300) */
+s32 Func_02007520();          /* site 0x107e, was GameFlag_IsSet(0x300) */
 void Func_02007556();         /* site 0x108c, was Func_0808a018 */
 void Func_02007642();         /* site 0x1098, was Func_0808a170 */
 void Func_020075f8();         /* site 0x10a6, was Func_0808a100 */
-u8 *Func_02007596();          /* site 0x10ac, was Func_0808a080 */
+u8 *Func_02007596();          /* site 0x10ac, was Scene_GetRecord */
 void Func_020075d8();         /* site 0x10be, was Func_0808a0b8 */
 void Func_02007606();         /* site 0x10c4, was Func_0808a0e8 */
 void Func_02007618();         /* site 0x10ce, was Func_0808a0f0 */
 void Func_020075a4();         /* site 0x10d2, was Func_0808a020 */
 
-s32 Func_0200757c();          /* site 0x10da, was Func_080770c0(0x92b) */
-s32 Func_0200758c();          /* site 0x10ea, was Func_080770c0(0x92a) */
-s32 Func_0200759c();          /* site 0x10fa, was Func_080770c0(0x929) */
+s32 Func_0200757c();          /* site 0x10da, was GameFlag_IsSet(0x92b) */
+s32 Func_0200758c();          /* site 0x10ea, was GameFlag_IsSet(0x92a) */
+s32 Func_0200759c();          /* site 0x10fa, was GameFlag_IsSet(0x929) */
 void Func_0200290e();         /* site 0x1108, was Func_02001804 (converged) */
 void Func_0200291a();         /* site 0x1114, was Func_02001804 (default 0x934) */
 

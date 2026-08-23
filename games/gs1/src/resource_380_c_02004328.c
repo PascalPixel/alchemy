@@ -22,7 +22,7 @@
  * called with two arguments by the 0x020043bc sibling, forcing an
  * old-style declaration there -- is STRUCK: the two rows were never
  * calling the same function, only the same phantom name.  Both calls
- * here are Func_08077248, taking one argument.
+ * here are Ability_GetAvailability, taking one argument.
  *
  * Uncertainty: callee roles beyond call shape remain open;
  * Audio_PlayCue receives only r0=0x53 here.
@@ -31,7 +31,7 @@
 /* One symbol PER CALL SITE, named at the site's PC-relative-decoded address
    (see resource_382:3ac for the rule). Repeated callees therefore appear
    several times under different names: Func_08077030 is called four times
-   and Func_08015040 and Func_08077248 twice each. */
+   and UiText_DrawMessage and Ability_GetAvailability twice each. */
 extern void Func_02008e52(s32 arg0);                        /* 0x0200433c -> 080f9010 */
 extern void Func_02008e4a(s32 arg0, s32 arg1);              /* 0x02004344 -> 0808a398 */
 extern void Func_02008c6a(s32 arg0, s32 arg1);              /* 0x0200434c -> 08015040 */

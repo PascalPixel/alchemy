@@ -5,7 +5,7 @@ extern u8 Data_000000f1[];
 
 u32 Func_08004938(s32 size);
 u32 Func_080053e8(const void *, void *);
-void Func_08003fa4(s32, s32, void *);
+void Resource_CopyData(s32, s32, void *);
 void Func_08002df0(void *);
 
 void Func_0802875c(s32 arg0, s32 index)
@@ -16,6 +16,6 @@ void Func_0802875c(s32 arg0, s32 index)
 
     /* 表内の相対位置から転送元を求める。 */
     Func_080053e8((void *)((u32)base + base[index]), buffer);
-    Func_08003fa4(arg0, size, buffer);
+    Resource_CopyData(arg0, size, buffer);
     Func_08002df0(buffer);
 }

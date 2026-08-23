@@ -27,7 +27,7 @@
  *
  * All 15 call sites resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * resource_3a9 033c` (an overlay `bl` stores target offset - 2).  Per-target:
- *   Func_0808a088 11   Func_080770c0 2   Func_08009180 1   Func_0808a158 1
+ *   Func_0808a088 11   GameFlag_IsSet 2   Func_08009180 1   Func_0808a158 1
  *
  * THE ELEVEN Func_0808a088 SITES ARE ELEVEN SITES, NOT A LOOP.  Nine of them
  * are a straight run of `movs r0,#k / bl` pairs with no counter, no back edge
@@ -52,7 +52,7 @@
  * and the tracked resource_36f sources spell it.
  *
  * Uncertainties: 0x911 is read as an event-flag id from its argument position
- * on Func_080770c0; the six-argument Func_08009180(30, 14, 30, 16, 4, 2) is the
+ * on GameFlag_IsSet; the six-argument Func_08009180(30, 14, 30, 16, 4, 2) is the
  * established six-argument scripted-actor ABI, with the last two arguments
  * passed on the stack, and its argument meanings are not established here.
  */

@@ -1,6 +1,6 @@
 #include "shop.h"
 
-void Func_08009020(void *, s32);
+void Object_InitializeMode(void *, s32);
 s32 Func_08077220(s16, s32);
 
 extern u8 *Data_03001f2c;
@@ -28,9 +28,9 @@ void Shop_UpdatePartyMemberList(s32 window, s32 selected, s32 requirement)
             icon_entry = (s32 *)(shop + 0x114);
             do {
                 if (index == selected)
-                    Func_08009020((void *)*icon_entry, 30);
+                    Object_InitializeMode((void *)*icon_entry, 30);
                 else
-                    Func_08009020((void *)*icon_entry, 1);
+                    Object_InitializeMode((void *)*icon_entry, 1);
                 icon_entry[16] = 0x10000;
                 unit_id = ((union ShopPartyMemberId *)(
                     party_member_base + offset))->half[0];

@@ -11,10 +11,10 @@ typedef struct {
     s32 f604;
 } T;
 
-extern s32 Func_080048b0(s32 arg0, s32 arg1);
+extern s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 extern s32 Func_0801a5a4(T *, s32);
-extern s32 Func_08004080(void);
-extern s32 Func_08003fa4(s32, s32, u8 *);
+extern s32 Resource_FindFreeSlot(void);
+extern s32 Resource_CopyData(s32, s32, u8 *);
 extern s32 Func_08002dd8(s32);
 extern s32 Data_08029a10[];
 extern s32 Data_08029e00[];
@@ -22,7 +22,7 @@ extern s32 Data_08029e00[];
 void Func_08019ee4(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4) {
     T *t;
 
-    t = Func_080048b0(0x11, 0x608);
+    t = Runtime_AllocateHeapBlock(0x11, 0x608);
     t->f604 = Data_08029a10[arg1];
     t->f600 = 2;
     t->f602 = 2;
@@ -32,8 +32,8 @@ void Func_08019ee4(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4) {
     t->f602 = 2;
     Func_0801a5a4(t, 1);
     if (arg4 == 0) {
-        *arg2 = Func_08004080();
+        *arg2 = Resource_FindFreeSlot();
     }
-    *arg3 = Func_08003fa4(*arg2, 0x80, &t->f400);
+    *arg3 = Resource_CopyData(*arg2, 0x80, &t->f400);
     Func_08002dd8(0x11);
 }

@@ -2,10 +2,10 @@
 
 extern u8 Data_02000240[];
 
-s32 Func_02006d18();           /* veneer to Func_080770c0 */
-u8 *Func_02006d88();           /* veneer to Func_0808a080 */
-void Func_02006d02();          /* veneer to Func_08009150 */
-void Func_02006d90();          /* veneer to Func_080770c8 */
+s32 Func_02006d18();           /* veneer to GameFlag_IsSet */
+u8 *Func_02006d88();           /* veneer to Scene_GetRecord */
+void Func_02006d02();          /* veneer to Object_SetPosition */
+void Func_02006d90();          /* veneer to GameFlag_Set */
 void Func_02006ce8();          /* veneer to Object_SetCallback */
 void Func_02006c4e();          /* veneer to Func_080000c0 */
 s32 Func_02005242();           /* local thunk to Func_020020e8, site A */

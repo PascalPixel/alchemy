@@ -22,7 +22,7 @@
  * scratch there would drop an argument.
  *
  * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --`.  Per-target
- * multiset over the 19 sites: Func_0808a080 x5, Func_080770c0 x5,
+ * multiset over the 19 sites: Scene_GetRecord x5, GameFlag_IsSet x5,
  * Func_080091e0 x4, Func_0808a100 x2, and one each of Func_02000210,
  * Func_02000384, Func_020000d4 - 19 C call expressions below, matching the
  * row's calls=19.

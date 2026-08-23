@@ -1,7 +1,7 @@
 #include "object_lookup.h"
 #include "types.h"
 
-s32 Func_08009140();
+s32 Object_ResetMotion();
 void Func_080920a0(void)
 {
   void *temp_r0;
@@ -11,6 +11,6 @@ void Func_080920a0(void)
   {
     new_var = 1;
     *((u8 *) (((u8 *) temp_r0) + 0x5A)) = (u8) (new_var | (*((u8 *) (((u8 *) temp_r0) + 0x5A))));
-    Func_08009140();
+    Object_ResetMotion();
   }
 }

@@ -50,7 +50,7 @@ struct DisplayTransitionRegisters {
     u16 secondary_value;
 };
 
-extern s32 Func_08004278(void (*)(void));
+extern s32 ScheduleCallback(void (*)(void));
 extern void Func_0800307c(s32, s32, s32);
 extern s32 Func_080072f0(s32, s32, s32, s32);
 
@@ -69,7 +69,7 @@ void Func_080903bc(void)
 
         if (*step >= *duration) {
             *duration = 0;
-            Func_08004278(Func_080903bc);
+            ScheduleCallback(Func_080903bc);
             Func_0800307c(1, 0, 0);
             return;
         } else {

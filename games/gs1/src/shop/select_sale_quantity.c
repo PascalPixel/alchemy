@@ -8,7 +8,7 @@
 #define EFFECT_X 0x80
 #endif
 
-s32 Func_08077020(s32, s32);
+s32 Shop_GetSelectionState(s32, s32);
 void Func_080b04dc(s32);
 s32 Func_080b1614(s32, s32, s32);
 void WaitFrames(u32);
@@ -34,7 +34,7 @@ s32 Shop_SelectSaleQuantity(s32 unit_id, s32 slot)
     item = Item_Get(*(u16 *)((u8 *)unit + entry_offset));
     result = 1;
     effect = Shop_ComputeSalePrice(*(u16 *)((u8 *)unit + entry_offset));
-    state = Func_08077020(unit_id, slot);
+    state = Shop_GetSelectionState(unit_id, slot);
     selection = state;
     if ((item->flags & 0x10) && state > 1) {
         Func_080b04dc((s32)&Value_00000cad);

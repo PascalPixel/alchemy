@@ -4,14 +4,14 @@
 s32 WaitFrames(s32);
 s32 Func_0800430c(void);
 s32 Func_080043e0(void);
-void *Func_080048f4(s32 arg0, s32 arg1);
+void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void Func_08091660(void);
 void Func_080936a0(s32, s32);
 void Func_0809c314(void);
 
 void Func_0809c3a4(void)
 {
-  if ((*(s16 *) (((u8 *) Func_080048f4(0x1B, 0xCCC)) + 0x19E)) == 3)
+  if ((*(s16 *) (((u8 *) Runtime_AllocateBlock(0x1B, 0xCCC)) + 0x19E)) == 3)
   {
     Func_0800430c();
     Func_0809c314();

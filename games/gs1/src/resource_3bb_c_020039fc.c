@@ -27,7 +27,7 @@
  * inventory row's calls=10.  Targets come from cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * (target offset = stored displacement + 2), never from the disassembler's
  * annotations: 0x3dd8 -> Func_08000148, 0x3de8 -> Func_08000170, 0x3f50 ->
- * Func_0808a080 (twice), 0x3ee8 -> Func_080770c0, 0x3df8 -> Func_080001a8,
+ * Scene_GetRecord (twice), 0x3ee8 -> GameFlag_IsSet, 0x3df8 -> Func_080001a8,
  * 0x3e18 -> Func_080001d0, 0x3e10 -> Func_080001c8, 0x3da8 ->
  * Func_080000d0, 0x3df0 -> Func_08000178.
  *
@@ -43,7 +43,7 @@
  * Shape: build a descriptor.  Func_08000148(59, 0x7170) returns the record
  * whose fields from +216 to +236 this owner fills in; Func_08000170(512)
  * opens the handle that the rest of the sequence works through.  When
- * Func_080770c0(0x109) is clear, participant `second` is mirrored about
+ * GameFlag_IsSet(0x109) is clear, participant `second` is mirrored about
  * `first` - x becomes twice the fourth argument minus the first
  * participant's x, and z is copied across.  The handle is then bound to the
  * in-image data at 0x4194, its measured extent is stored at +216 and fed

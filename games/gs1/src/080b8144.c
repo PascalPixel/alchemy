@@ -18,7 +18,7 @@ struct Wrapper_080b8144 {
     u32 fourth;
 };
 
-void Func_08009150(struct Target_080b8144 *, u32, u32, u32);
+void Object_SetPosition(struct Target_080b8144 *, u32, u32, u32);
 
 void Func_080b8144(struct Wrapper_080b8144 *slot)
 {
@@ -29,5 +29,5 @@ void Func_080b8144(struct Wrapper_080b8144 *slot)
     target->value48 = 0xAB85;
     target->value44 = 0;
     target->value5a = 0;
-    Func_08009150(target, slot->first, 0, slot->fourth);
+    Object_SetPosition(target, slot->first, 0, slot->fourth);
 }

@@ -3,7 +3,7 @@
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-void Func_08009088(s32, s32);
+void Object_SetAction(s32, s32);
 extern u8 Data_0200048a[];
 
 void Func_08096cdc(s32 arg0, s32 arg1, s32 arg2) {
@@ -17,7 +17,7 @@ void Func_08096cdc(s32 arg0, s32 arg1, s32 arg2) {
         temp_r0 = GetObject(var_r5);
         if ((var_r5 != *var_sl) && (temp_r0 != 0) && (temp_r0 != arg0)) {
             M2C_FIELD(temp_r0, s8, 0x5B) = arg1;
-            Func_08009088(temp_r0, arg2);
+            Object_SetAction(temp_r0, arg2);
         }
         var_r5 += 1;
     } while (var_r5 <= 0x42);

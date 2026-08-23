@@ -5,7 +5,7 @@ extern u8 Data_02000240[];
 
 s32 Func_08077148(void);
 u8 *Runtime_GetObject(s32);
-s32 Func_080022ec(s32, s32);
+s32 FixedPoint_Ratio(s32, s32);
 void Func_08077118(s32, s32);
 void Func_08091220(s32, s32);
 void Func_08091254(s32);
@@ -42,7 +42,7 @@ void Func_0808c30c(s32 amount, s32 scaled)
             object = Runtime_GetObject(*id);
             value = amount;
             if (scaled) {
-                value = Func_080022ec(*(s16 *)(object + 0x34) * amount, 100);
+                value = FixedPoint_Ratio(*(s16 *)(object + 0x34) * amount, 100);
                 if (value == 0) {
                     value = amount;
                     if (value < 0) {

@@ -35,7 +35,7 @@ extern struct PlacementState *Data_03001f2c;
 
 s32 Func_0808a5f0(s8 kind, s8 variant);
 struct RuntimeObject *Func_08009030(s32);
-void Func_08009020(struct RuntimeObject *, s32);
+void Object_InitializeMode(struct RuntimeObject *, s32);
 void ScheduleCallbackAfterFrames(s32, s32);
 void Func_0801ff58(void);
 
@@ -52,7 +52,7 @@ void Func_0801fe2c(struct PlacementOrigin *origin, s32 x, s32 y,
                                         descriptor->variant));
 
         if (object != 0) {
-            Func_08009020(object, 1);
+            Object_InitializeMode(object, 1);
             object->field_26 = 0;
             object->flags = (u8)(object->flags & ~0x0c);
         }

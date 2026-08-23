@@ -26,7 +26,7 @@
  *   0x020018b8 -> veneer 0x02001d5c -> Audio_PlayCue
  *   0x020018c2 -> prologue 0x020017d8
  *   0x020018cc -> prologue 0x020017d8
- *   0x020018d2 -> veneer 0x02001c94 -> Func_080770c8
+ *   0x020018d2 -> veneer 0x02001c94 -> GameFlag_Set
  *   0x020018d8 -> veneer 0x02001c1c -> Func_080000c0
  *   0x020018dc -> prologue 0x02001770
  *   0x020018e2 -> veneer 0x02001d5c -> Audio_PlayCue
@@ -37,7 +37,7 @@
  * The mirror owner at 0x020018f4 is this routine with 112 and 80 negated and
  * the same 0x0301 identifier, so the two 0x020017d8 calls are a signed
  * displacement pair (an axis and its opposite), not two unrelated magnitudes.
- * Func_080770c8 is the event-flag import, so 0x0301 is this scene's flag id.
+ * GameFlag_Set is the event-flag import, so 0x0301 is this scene's flag id.
  */
 
 

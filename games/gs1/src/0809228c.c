@@ -1,7 +1,7 @@
 #include "object_runtime.h"
 
-void Func_08009140(struct ObjectRuntime *);
-void Func_08009150(struct ObjectRuntime *, s32, s32, s32);
+void Object_ResetMotion(struct ObjectRuntime *);
+void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
 
 void Func_0809228c(u32 object_id, s32 x_offset, s32 z_offset)
 {
@@ -9,8 +9,8 @@ void Func_0809228c(u32 object_id, s32 x_offset, s32 z_offset)
 
     if (object != NULL) {
         object->movement_state = 0;
-        Func_08009140(object);
-        Func_08009150(object, object->x + (x_offset << 16),
+        Object_ResetMotion(object);
+        Object_SetPosition(object, object->x + (x_offset << 16),
             object->y, object->z + (z_offset << 16));
     }
 }

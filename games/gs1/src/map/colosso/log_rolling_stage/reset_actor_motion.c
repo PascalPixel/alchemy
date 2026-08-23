@@ -16,10 +16,10 @@
  * cover it -- resolved with `bun tools/overlay-show resource_3bc 38dc |
  * cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3bc 38dc 38fa --annotate`):
  *   0x20038de -> veneer -> Func_020082f8(selector)   scene-record accessor, established
- *   0x20038e4 -> veneer -> Func_08009140()           unestablished, reached with the leftover record pointer in r0 but no evidence it is read
+ *   0x20038e4 -> veneer -> Object_ResetMotion()           unestablished, reached with the leftover record pointer in r0 but no evidence it is read
  */
 
-u8 *Func_020082f8();           /* scene-record accessor, established (veneer to Func_0808a080) */
+u8 *Func_020082f8();           /* scene-record accessor, established (veneer to Scene_GetRecord) */
 void Func_020081e6();          /* unestablished */
 
 void ColossoLogRollingStage_ResetActorMotion(s32 selector)

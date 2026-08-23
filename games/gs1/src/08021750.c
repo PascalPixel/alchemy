@@ -1,7 +1,7 @@
 #include "render_input.h"
 #include "types.h"
 
-s32 Func_08004080(void);
+s32 Resource_FindFreeSlot(void);
 void Func_080216e8(s32 index, s32 value, s32 flag);
 void *Func_08021750(
     s32 arg0,
@@ -13,7 +13,7 @@ void *Func_08021750(
     s32 index;
     struct RenderOutput *entity;
 
-    index = Func_08004080();
+    index = Resource_FindFreeSlot();
     entity = NULL;
     if (index != 0x60) {
         Func_080216e8(arg0, index, arg1);

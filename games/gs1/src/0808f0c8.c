@@ -1,9 +1,9 @@
 #include "types.h"
 
-s32 Func_080090d0();
+s32 Object_Destroy();
 
 void Func_0808f0c8(s32 arg0) {
     if (arg0 != 0) {
-        Func_080090d0();
+        Object_Destroy();
     }
 }

@@ -4,7 +4,7 @@
  * resource_39e owner at 0x020041ec, 336 bytes: a 64-shot randomized
  * particle rain. Opening: sound 0x83, install the thumb callback
  * pointer 0x0200c1c5 into field +108 of the slot-8 record
- * (Func_0808a080), wait 40, Func_0808a338(0x10000, 0) /
+ * (Scene_GetRecord), wait 40, Func_0808a338(0x10000, 0) /
  * Func_0808a330(0x205c54, 1) / Func_0808a348(60), wait 40, sound 0x83
  * again, same callback into the slot-2 record's +108, wait 120. Then a
  * 64-iteration loop (unsigned counter, bls against 63) spawning

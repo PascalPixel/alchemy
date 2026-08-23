@@ -14,7 +14,7 @@ struct PcmRateState {
 
 extern u16 Data_080fb914[];
 
-s32 Func_080022ec(s32 numerator, s32 denominator);
+s32 FixedPoint_Ratio(s32 numerator, s32 denominator);
 void AudioEngine_EnablePcmDma(void);
 
 void AudioEngine_SetPcmRate(u32 mode_bits)
@@ -31,15 +31,15 @@ void AudioEngine_SetPcmRate(u32 mode_bits)
     audio->rate = mode_bits;
     samples_per_vblank = Data_080fb914[mode_bits - 1];
     audio->samples_per_vblank = samples_per_vblank;
-    audio->dma_period = Func_080022ec(0x630, samples_per_vblank);
-    frequency = Func_080022ec(
+    audio->dma_period = FixedPoint_Ratio(0x630, samples_per_vblank);
+    frequency = FixedPoint_Ratio(
         0x91d1b * samples_per_vblank + 0x1388,
         0x2710);
     audio->frequency = frequency;
-    audio->half_period = (Func_080022ec(0x01000000, frequency) + 1) >> 1;
+    audio->half_period = (FixedPoint_Ratio(0x01000000, frequency) + 1) >> 1;
     *(volatile u16 *)0x04000102 = zero;
     timer = (volatile u16 *)0x04000100;
-    *timer = -Func_080022ec(0x44940, samples_per_vblank);
+    *timer = -FixedPoint_Ratio(0x44940, samples_per_vblank);
     AudioEngine_EnablePcmDma();
     while (*(volatile u8 *)0x04000006 == 0x9f) {
     }

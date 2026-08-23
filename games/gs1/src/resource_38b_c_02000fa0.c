@@ -1,6 +1,6 @@
 #include "types.h"
 
-/* Per-site raw names: the first resolves to Func_0808a080 and the four
+/* Per-site raw names: the first resolves to Scene_GetRecord and the four
  * renderer sites resolve to Func_080091c0. */
 extern u8 *Func_02002078();
 extern void Func_02002040(s32, s32, s32, s32, s32, s32);

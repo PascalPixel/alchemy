@@ -4,7 +4,7 @@ extern s32 Data_080af304[];
 
 void Func_08009038(void *);
 void *Func_08009030(s32);
-void Func_08009020(void *, s32);
+void Object_InitializeMode(void *, s32);
 void Func_080ad35c(void);
 s32 ScheduleCallbackAfterFrames(void (*)(void), s32);
 
@@ -26,7 +26,7 @@ void Func_080ad274(void)
         void *object = Func_08009030(Data_080af304[index]);
 
         if (object != NULL) {
-            Func_08009020(object, 2);
+            Object_InitializeMode(object, 2);
         }
         state->objects[index] = object;
         state->positions_x[index] = 0x10;

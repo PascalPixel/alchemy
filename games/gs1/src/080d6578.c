@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 Func_080048b0(s32 arg0, s32 arg1);
+s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 void Func_08002dd8(s32);
 void Func_080e823c(s32 *);
 void Func_080d2d98(s32 *);
@@ -16,9 +16,9 @@ void Func_080e7320(s32 arg0);
 void Func_080e15e8(s32 *);
 
 void Func_080d6578(s32 *arg0) {
-    Func_080048b0(41, 0x302);
-    Func_080048b0(39, 0x782c);
-    Func_080048b0(40, 0x4000);
+    Runtime_AllocateHeapBlock(41, 0x302);
+    Runtime_AllocateHeapBlock(39, 0x782c);
+    Runtime_AllocateHeapBlock(40, 0x4000);
 
     if (*arg0 == 0) {
         Func_080e7320(arg0);

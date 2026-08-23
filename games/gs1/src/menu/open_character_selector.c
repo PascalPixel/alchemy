@@ -58,7 +58,7 @@ LAYOUT_OFFSET_GUARD(
 
 extern struct MenuObjectControl *Data_03001e68;
 
-struct CharacterSelectorState *Func_080048b0(s32, s32);
+struct CharacterSelectorState *Runtime_AllocateHeapBlock(s32, s32);
 void Func_08002dd8(s32);
 void WaitFrames(s32);
 void Func_08015278(s32);
@@ -77,7 +77,7 @@ s32 Func_080a7440(void);
 s32 OpenCharacterSelector(void)
 {
     struct CharacterSelectorState *state =
-        Func_080048b0(55, 0x0a70);
+        Runtime_AllocateHeapBlock(55, 0x0a70);
     s32 result;
     s32 index;
 

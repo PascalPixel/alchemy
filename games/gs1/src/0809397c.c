@@ -28,8 +28,8 @@
 #include "types.h"
 
 s32 Func_080072f0(s32, s32, s32, s32);
-s32 Func_080022ec(s32, s32);
-s32 Func_08009150(s32, s32, s32, s32);
+s32 FixedPoint_Ratio(s32, s32);
+s32 Object_SetPosition(s32, s32, s32, s32);
 s32 Object_SetMode(s32, s32);
 
 s32 Func_0809397c(s32 arg0)
@@ -60,10 +60,10 @@ s32 Func_0809397c(s32 arg0)
         arg0 = *(s16 *)(object + 0x64);
         if (distance >= arg0) {
             newX = *(s32 *)(object + 8) +
-                Func_080022ec(cellX << 20, arg0);
-            Func_08009150(object, newX, *(s32 *)(object + 0x0c),
+                FixedPoint_Ratio(cellX << 20, arg0);
+            Object_SetPosition(object, newX, *(s32 *)(object + 0x0c),
                           *(s32 *)(object + 0x10) +
-                              Func_080022ec(cellY << 20, arg0));
+                              FixedPoint_Ratio(cellY << 20, arg0));
             Object_SetMode(object, 2);
         } else {
             Object_SetMode(object, 1);

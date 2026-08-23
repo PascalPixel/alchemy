@@ -1,7 +1,7 @@
 #include "types.h"
 #include "global_cells.h"
 
-s32 Func_08004080(void)
+s32 Resource_FindFreeSlot(void)
 {
   s32 result;
   s32 index;

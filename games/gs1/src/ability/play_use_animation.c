@@ -2,7 +2,7 @@
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-void *Func_08077080();
+void *Ability_GetData();
 void Func_080a2438(s32);
 
 #define Ability_PlayUseAnimation Func_080aa460
@@ -13,7 +13,7 @@ void Ability_PlayUseAnimation(void)
     u32 target_type;
     void *ability;
 
-    ability = Func_08077080();
+    ability = Ability_GetData();
     animation_type = 0xf & FIELD(ability, u8 *, 1);
     switch (animation_type) {
     case 1:

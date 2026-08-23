@@ -1,7 +1,7 @@
 #include "types.h"
 
-s32 Func_080150b8(s32);
+s32 UiPalette_SetColor(s32);
 
 void Func_080a24c4(void) {
-    Func_080150b8(4);
+    UiPalette_SetColor(4);
 }

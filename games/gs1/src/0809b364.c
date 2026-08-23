@@ -3,7 +3,7 @@
 extern s16 Data_02000240[];
 extern u8 Value_00000001;
 
-void Func_080090d0(void);
+void Object_Destroy(void);
 
 void Func_0809b364(void *arg0) {
     u8 *object;
@@ -20,7 +20,7 @@ void Func_0809b364(void *arg0) {
 
     position = *(s32 *)(object + 0x0C);
     if (position <= threshold) {
-        Func_080090d0();
+        Object_Destroy();
         return;
     }
 

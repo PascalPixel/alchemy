@@ -1,7 +1,7 @@
 #include "owner_state.h"
 #include "types.h"
 
-s32 Func_080022ec(s32, s32);
+s32 FixedPoint_Ratio(s32, s32);
 
 struct Owner_0807822c {
     u8 unknown_00[0x14];
@@ -22,8 +22,8 @@ void Func_0807822c(s32 owner_no)
     s32 second_value;
     struct Owner_0807822c *owner;
 
-    owner = Func_08077394(owner_no);
-    first = Func_080022ec(
+    owner = Owner_GetState(owner_no);
+    first = FixedPoint_Ratio(
         (s32)((u32)(s32)owner->value_38 << 14), owner->divisor_34);
     first_value = 0x4000;
     if (first <= 0x4000) {
@@ -37,7 +37,7 @@ void Func_0807822c(s32 owner_no)
         first_value = 1;
         owner->value_14 = first_value;
     }
-    second = Func_080022ec(
+    second = FixedPoint_Ratio(
         (s32)((u32)(s32)owner->value_3a << 14), owner->divisor_36);
     second_value = 0x4000;
     if (second <= 0x4000) {

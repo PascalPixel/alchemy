@@ -18,12 +18,12 @@
  * (true_target_offset = stored_displacement + 2), matching the inventory's
  * calls=8:
  *   0x02000348 -> 0x02000128  (this overlay's own leaf, see below)
- *   0x02000350 -> veneer 0x0200181c -> Func_080770d0
- *   0x02000356 -> veneer 0x0200181c -> Func_080770d0
+ *   0x02000350 -> veneer 0x0200181c -> GameFlag_Clear
+ *   0x02000356 -> veneer 0x0200181c -> GameFlag_Clear
  *   0x0200035a -> veneer 0x02001844 -> Func_0808a018
  *   0x0200036a -> veneer 0x02001884 -> Func_0808a170
  *   0x02000372 -> veneer 0x0200188c -> Func_0808a178
- *   0x02000378 -> veneer 0x0200181c -> Func_080770d0
+ *   0x02000378 -> veneer 0x0200181c -> GameFlag_Clear
  *   0x0200037c -> veneer 0x0200184c -> Func_0808a020
  *
  * 0x02000128 is reported `unknown` by the resolver only because it has no
@@ -45,13 +45,13 @@
  * loads directly (0x03001e70 + 76), so r5 is the workspace base.
  *
  * Behaviour: reset one workspace field and issue the fixed teardown sequence —
- * a table install through Func_02000128(4), three Func_080770d0 flag clears
+ * a table install through Func_02000128(4), three GameFlag_Clear flag clears
  * (512, 0x203, 0x205), a Func_0808a018 barrier, cue 0x2927 through
  * Func_0808a170, Func_0808a178(8, 0), and finally Func_0808a020 whose result
  * is returned.
  *
- * Func_080770d0 is the overlay's flag-clear entry (Func_080770c0 tests and
- * Func_080770c8 sets; the polarity is forced by Func_020002d8's one-shot
+ * GameFlag_Clear is the overlay's flag-clear entry (GameFlag_IsSet tests and
+ * GameFlag_Set sets; the polarity is forced by Func_020002d8's one-shot
  * timer).  Uncertainties: the meanings of the three flag words and of the
  * workspace halfword at +386 are not established; 386 is built as 193 << 1 and
  * the store is a halfword, so the field is 16-bit.  Func_0808a018 and

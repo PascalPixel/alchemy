@@ -12,7 +12,7 @@ struct Window {
 
 void Func_0801eea0(s32 flags);
 void Func_0801f200(s32);
-void *Func_080048f4(s32 arg0, s32 arg1);
+void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 s32 Func_080162d4(u16, u16, u16, u16, s32);
 
 void Func_0801ef08(s32 arg0) {
@@ -20,7 +20,7 @@ void Func_0801ef08(s32 arg0) {
     struct Window *window;
     s8 *busy;
 
-    window = Func_080048f4(0x10, 0x10);
+    window = Runtime_AllocateBlock(0x10, 0x10);
     busy = (s8 *)((u8 *)*(void **)ADDR_03001E8C + RENDER_MENU_BUSY_OFS);
     zero = 0;
     *busy = 1;

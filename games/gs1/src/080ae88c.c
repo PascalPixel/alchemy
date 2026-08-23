@@ -3,8 +3,8 @@
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-extern s32 Func_08004080(void);
-extern s32 Func_08003fa4(s32, s32, u8 *);
+extern s32 Resource_FindFreeSlot(void);
+extern s32 Resource_CopyData(s32, s32, u8 *);
 extern u8 Data_080aed4c[];
 extern u8 Data_080aedcc[];
 
@@ -14,14 +14,14 @@ void Func_080ae88c(void) {
     void *temp_r5;
 
     temp_r5 = *(void **)ADDR_03001F2C;
-    temp_r0 = Func_08004080();
+    temp_r0 = Resource_FindFreeSlot();
     M2C_FIELD(temp_r5, s16, 0x392) = (s16) temp_r0;
     if (temp_r0 != -1) {
-        Func_08003fa4(temp_r0, 0x80, Data_080aed4c);
+        Resource_CopyData(temp_r0, 0x80, Data_080aed4c);
     }
-    temp_r0_2 = Func_08004080();
+    temp_r0_2 = Resource_FindFreeSlot();
     M2C_FIELD(temp_r5, s16, 0x394) = (s16) temp_r0_2;
     if (temp_r0_2 != -1) {
-        Func_08003fa4(temp_r0_2, 0x80, Data_080aedcc);
+        Resource_CopyData(temp_r0_2, 0x80, Data_080aedcc);
     }
 }

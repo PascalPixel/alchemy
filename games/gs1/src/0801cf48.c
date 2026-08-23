@@ -8,7 +8,7 @@ extern u8 Data_000000e8[];
 
 void Func_080b0020(void *);
 void Func_080b0028(void *);
-s32 Func_08003fa4(s32, s32, s32);
+s32 Resource_CopyData(s32, s32, s32);
 void Func_080217a4(void *);
 
 void Func_0801cf48(void)
@@ -30,7 +30,7 @@ void Func_0801cf48(void)
     } else {
         first_source = (s32)Data_000000e8;
     }
-    Func_08003fa4(
+    Resource_CopyData(
         FIELD(FIELD(base, void *, 0x5B4), u8, 14),
         0x100,
         (s32)GetResource(first_source));
@@ -41,7 +41,7 @@ void Func_0801cf48(void)
     } else {
         second_source = (s32)Data_000000e8;
     }
-    Func_08003fa4(
+    Resource_CopyData(
         FIELD(FIELD(base, void *, 0x5C4), u8, 14),
         0x100,
         (s32)GetResource(second_source));

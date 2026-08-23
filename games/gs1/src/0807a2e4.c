@@ -7,13 +7,13 @@ struct State_0807a2e4 {
     u8 counts[5];
 };
 
-struct State_0807a2e4 *Func_08077394(s32);
+struct State_0807a2e4 *Owner_GetState(s32);
 s32 Func_0807a1f8(s32, s32, s32);
 void Func_08079ae8(s32 arg0);
 
 s32 Func_0807a2e4(s32 owner, s32 index, s32 bit)
 {
-    struct State_0807a2e4 *state = Func_08077394(owner);
+    struct State_0807a2e4 *state = Owner_GetState(owner);
     s32 result = Func_0807a1f8(owner, index, bit);
 
     if (result != 0) {

@@ -3,7 +3,7 @@
 u8 *Runtime_GetObject(s32);
 s32 *Func_080b7dd0(s32);
 void Object_SetMode(s32, s32);
-void Func_08009088(s32, s32);
+void Object_SetAction(s32, s32);
 
 s32 Func_080b7aac(s32 id)
 {
@@ -22,5 +22,5 @@ s32 Func_080b7aac(s32 id)
     }
 
     Object_SetMode(*Func_080b7dd0(id), value);
-    Func_08009088(*Func_080b7dd0(id), (id & 3) + 14);
+    Object_SetAction(*Func_080b7dd0(id), (id & 3) + 14);
 }

@@ -1,6 +1,6 @@
 #include "types.h"
 
-void Func_08009020(void *, s32);
+void Object_InitializeMode(void *, s32);
 s32 Func_080b27b0(s32, s32);
 
 extern u8 *Data_03001f2c;
@@ -25,9 +25,9 @@ void Func_080b2e30(s32 enabled, s32 selected)
             item = (s32 *)(state + 0x114);
             do {
                 if (index == selected)
-                    Func_08009020((void *)*item, 30);
+                    Object_InitializeMode((void *)*item, 30);
                 else
-                    Func_08009020((void *)*item, 1);
+                    Object_InitializeMode((void *)*item, 1);
                 item[16] = 0x10000;
                 id = *(s16 *)(half_base + offset);
                 if (Func_080b27b0(id, variant) == 0)

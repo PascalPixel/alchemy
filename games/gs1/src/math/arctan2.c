@@ -1,7 +1,7 @@
 #include "types.h"
 #include "fixed_math.h"
 
-s32 Func_080022ec(s32 numerator, s32 denominator);
+s32 FixedPoint_Ratio(s32 numerator, s32 denominator);
 extern const u16 Data_08007676[];
 
 u16 ArcTan2(s32 x, s32 y)
@@ -23,7 +23,7 @@ u16 ArcTan2(s32 x, s32 y)
         if (value < 0)
             value = -value;
 
-        ratio = Func_080022ec(value << 8, ratio);
+        ratio = FixedPoint_Ratio(value << 8, ratio);
         result = 0x4000;
         if (ratio <= 0xFB6A) {
             table = Data_08007676;

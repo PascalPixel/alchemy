@@ -38,7 +38,7 @@
  * r5 carries the marker; the `movs r5,#0` at 0x02001f5e is branched over by the
  * high path, which is why that path keeps the value 2.  Slot 11's record is
  * fetched separately on each path -- both fetches join at the shared store --
- * so the two Func_0808a080(11) calls below are one per path, as in the
+ * so the two Scene_GetRecord(11) calls below are one per path, as in the
  * assembly.
  *
  * The epilogue is `pop {r5} / pop {r0} / bx r0`, so the owner is void.

@@ -2,7 +2,7 @@
 #include "global_cells.h"
 
 u8 *Func_080090c8(s32, s32, s32, s32);
-void Func_080090d0(void);
+void Object_Destroy(void);
 void Func_080091e0(u8 *, s32);
 void Object_SetMode(u8 *, s32);
 
@@ -16,7 +16,7 @@ u8 *Object_Spawn(s32 kind, s32 x, s32 y, s32 z)
     object = Func_080090c8(kind, x, y, z);
     if (object != 0) {
         if (object[84] == 0) {
-            Func_080090d0();
+            Object_Destroy();
             return 0;
         }
         *(u32 *)(object + 20) = *(u32 *)(*(u8 **)(base + 16) + 20);

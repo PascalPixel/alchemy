@@ -20,7 +20,7 @@ extern s32 Data_02000240[];
 
 s32 Func_08092054(u32);
 void RotateVectorByMagnitude(s32, s32, struct Triple08095fcc *);
-void Func_080090d0(void *);
+void Object_Destroy(void *);
 
 void Func_08095fcc(struct Object08095fcc *arg)
 {
@@ -44,5 +44,5 @@ void Func_08095fcc(struct Object08095fcc *arg)
     y = arg->y + 0xFFFF0000;
     arg->y = y;
     if (y < other->y + 0x140000)
-        Func_080090d0(arg);
+        Object_Destroy(arg);
 }

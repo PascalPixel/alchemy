@@ -3,7 +3,7 @@
 
 s32 Func_0807a1b4(s32 owner, s32 index, s32 bit)
 {
-    struct OwnerBitState *state = Func_08077394(owner);
+    struct OwnerBitState *state = Owner_GetState(owner);
 
     if (state->bit_counts[index] > 9)
         return -1;

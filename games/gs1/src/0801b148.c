@@ -15,7 +15,7 @@ extern u8 *Data_03001e98;
 void Func_0801a97c(void);
 void Func_08016418(struct Work *work, s32 release);
 void WaitFrames(u32 value);
-s32 Func_08003f3c(u32 index);
+s32 Resource_ResetEntry(u32 index);
 void Func_0801c21c(void);
 void Func_08002dd8(u32 value);
 
@@ -30,7 +30,7 @@ void Func_0801b148(void)
     node = *(struct Node_0801b148 **)(state + 0x348);
     while (node != 0) {
         if (node->active != 0) {
-            Func_08003f3c(node->handle);
+            Resource_ResetEntry(node->handle);
             node->active = 0;
         }
         node = node->next;
@@ -38,18 +38,18 @@ void Func_0801b148(void)
     node = *(struct Node_0801b148 **)(state + 0x34c);
     while (node != 0) {
         if (node->active != 0) {
-            Func_08003f3c(node->handle);
+            Resource_ResetEntry(node->handle);
             node->active = 0;
         }
         node = node->next;
     }
     Func_0801c21c();
     if (*(s16 *)(state + 18) != 0) {
-        Func_08003f3c(*(u16 *)(state + 12));
+        Resource_ResetEntry(*(u16 *)(state + 12));
         if (*(s16 *)(state + 18) != 0) {
-            Func_08003f3c(*(u16 *)(state + 64));
+            Resource_ResetEntry(*(u16 *)(state + 64));
         }
     }
-    Func_08003f3c(*(u16 *)(state + 0x2e4));
+    Resource_ResetEntry(*(u16 *)(state + 0x2e4));
     Func_08002dd8(18);
 }

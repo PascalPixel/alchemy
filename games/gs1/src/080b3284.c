@@ -55,10 +55,10 @@ s32 Func_080b0634(s32);
 s32 Inn_CalculateRoomPrice(s32);
 void Inn_PlaySleepSequence(s32);
 s32 Func_08015010(s32, s32, s32, s32, s32);
-void Func_08015018(s32, s32);
+void UiWindow_Close(s32, s32);
 s32 Func_080150f8(u16, s32, s32, s32);
 void UiText_DrawQuantity(s32, s32);
-struct Object_080b3284 *Func_0808a080(s32);
+struct Object_080b3284 *Scene_GetRecord(s32);
 
 #define Inn_CheckIn Func_080b3284
 
@@ -76,7 +76,7 @@ s32 Func_080b3284(s32 mode, s32 object_id)
     if (mode == 5)
         state->special_active = 1;
 
-    object = Func_0808a080(object_id);
+    object = Scene_GetRecord(object_id);
     state->resource_id = *object->component->resource_id;
     resource_window = Func_080150f8(state->resource_id, 0, 0, 0);
 
@@ -90,26 +90,26 @@ s32 Func_080b3284(s32 mode, s32 object_id)
     if (Func_080b0634(0) != 0) {
         Func_080b04dc(message_base
             + (INN_MESSAGE_GOODBYE - INN_MESSAGE_WELCOME));
-        Func_08015018(state->window, 2);
+        UiWindow_Close(state->window, 2);
     } else if ((u32)amount > Data_02000240.limit) {
         Func_080b04dc(message_base
             + (INN_MESSAGE_NOT_ENOUGH_COINS - INN_MESSAGE_WELCOME));
-        Func_08015018(state->window, 2);
+        UiWindow_Close(state->window, 2);
     } else {
-        Func_08015018(state->window, 2);
+        UiWindow_Close(state->window, 2);
         Func_080b04dc(message_base
             + (INN_MESSAGE_STAY_COMPLETE - INN_MESSAGE_WELCOME));
-        Func_08015018(resource_window, 2);
+        UiWindow_Close(resource_window, 2);
         Inn_PlaySleepSequence(amount);
 
-        object = Func_0808a080(object_id);
+        object = Scene_GetRecord(object_id);
         state->resource_id = *object->component->resource_id;
         resource_window = Func_080150f8(state->resource_id, 0, 0, 0);
         Func_080b04dc(message_base
             + (INN_MESSAGE_REST_COMPLETE - INN_MESSAGE_WELCOME));
     }
 
-    Func_08015018(resource_window, 2);
+    UiWindow_Close(resource_window, 2);
     Func_080b0204();
     return 0;
 }

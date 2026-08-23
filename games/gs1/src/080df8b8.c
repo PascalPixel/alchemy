@@ -1,8 +1,8 @@
 #include "b5_context.h"
 #include "types.h"
 
-void Func_08009140(void *);
-void Func_08009150(void *, s32, s32, s32);
+void Object_ResetMotion(void *);
+void Object_SetPosition(void *, s32, s32, s32);
 void Object_SetMode(void *, s32);
 
 struct Object080df8b8 {
@@ -31,7 +31,7 @@ void Func_080df8b8(s32 arg0) {
     object->field_44 = 0;
     object->field_5a = 0;
     object->field_58 = 1;
-    Func_08009140(object);
-    Func_08009150(object, context->word_0c, 0, context->word_10);
+    Object_ResetMotion(object);
+    Object_SetPosition(object, context->word_0c, 0, context->word_10);
     Object_SetMode(object, 1);
 }

@@ -18,7 +18,7 @@ struct BattleUnitLevel {
 };
 
 struct BattleUnitLevel *Runtime_GetObject(s32);
-s32 Func_080022ec(s32, s32);
+s32 FixedPoint_Ratio(s32, s32);
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
@@ -49,7 +49,7 @@ s32 BattleEscape_CheckSuccess(void) {
             level_total += Runtime_GetObject(
                 (s32)living_units[unit_index])->level;
         }
-        chance += Func_080022ec(level_total * 0x1F4, living_count);
+        chance += FixedPoint_Ratio(level_total * 0x1F4, living_count);
         living_count = BattleParty_ListLivingUnits(
             BATTLE_SIDE_ENEMIES,
             living_units);
@@ -58,7 +58,7 @@ s32 BattleEscape_CheckSuccess(void) {
             level_total += Runtime_GetObject(
                 (s32)living_units[unit_index])->level;
         }
-        chance -= Func_080022ec(level_total * 0x1F4, living_count);
+        chance -= FixedPoint_Ratio(level_total * 0x1F4, living_count);
         if ((chance > 0) &&
             ((u32)((u32)(0x2710 * Rand()) >> 0x10) < (u32)chance)) {
             escaped = 1;

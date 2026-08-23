@@ -16,14 +16,14 @@
  * All nine call sites were resolved with cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml --
  * (true_target_offset = stored_displacement + 2), matching the inventory's
  * calls=9:
- *   0x020002dc -> veneer 0x0200180c -> Func_080770c0
- *   0x020002fa -> veneer 0x0200181c -> Func_080770d0
- *   0x02000302 -> veneer 0x0200180c -> Func_080770c0
+ *   0x020002dc -> veneer 0x0200180c -> GameFlag_IsSet
+ *   0x020002fa -> veneer 0x0200181c -> GameFlag_Clear
+ *   0x02000302 -> veneer 0x0200180c -> GameFlag_IsSet
  *   0x0200030a -> veneer 0x02001844 -> Func_0808a018
  *   0x02000310 -> veneer 0x02001884 -> Func_0808a170
  *   0x02000318 -> veneer 0x0200188c -> Func_0808a178
  *   0x0200031e -> veneer 0x02001714 -> Func_080000c0
- *   0x02000326 -> veneer 0x02001814 -> Func_080770c8
+ *   0x02000326 -> veneer 0x02001814 -> GameFlag_Set
  *   0x0200032a -> veneer 0x0200184c -> Func_0808a020
  *
  * Link base: resource_3cb is linked at 0x02008000 — the handler table at the
@@ -39,16 +39,16 @@
  * in-image idle counter, wrapping it to zero and clearing flag 512 when it
  * reaches 300 frames.  While flag 512 is clear it then runs the scene body
  * once: a Func_0808a018 barrier, cue 0x292e, Func_0808a178(8, 0), a
- * Func_080000c0(5) wait, re-setting flag 512 via Func_080770c8, and a closing
+ * Func_080000c0(5) wait, re-setting flag 512 via GameFlag_Set, and a closing
  * Func_0808a020.  So the scene fires once every 300 frames.
  *
- * The flag trio is Func_080770c0 = test, Func_080770c8 = set,
- * Func_080770d0 = clear.  That assignment is forced here: if Func_080770d0
+ * The flag trio is GameFlag_IsSet = test, GameFlag_Set = set,
+ * GameFlag_Clear = clear.  That assignment is forced here: if GameFlag_Clear
  * set flag 512 the body below could never run, whereas clear/set gives the
  * one-shot-per-300-frames reading.  Func_020010e8's toggle and
  * Func_02000340's three-flag teardown are consistent with it.  The meanings of
  * the flag words 0x203 and 512 themselves are not established.  The
- * store of r0 at 0x020002f4 reuses the register the first Func_080770c0 left
+ * store of r0 at 0x020002f4 reuses the register the first GameFlag_IsSet left
  * as zero on this path, which is why the reset is written as a literal 0.
  * The result is whatever r0 holds at the shared exit: the nonzero flag reading
  * on either early return, or Func_0808a020's value on the full path; nothing

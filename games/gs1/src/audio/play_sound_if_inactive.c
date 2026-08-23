@@ -17,15 +17,15 @@ void MusicPlayer_StartSong(struct MusicPlayerView *, u32);
 extern struct MusicPlayerView *Data_080fc624[];
 extern struct SoundTableEntry Data_080fc684[];
 
-void Audio_PlaySoundIfInactive(u16 sound_id)
+void Audio_PlaySoundIfInactive(u16 audio_cue_id)
 {
     struct MusicPlayerView **players = Data_080fc624;
-    struct SoundTableEntry *sound_table = Data_080fc684;
-    struct SoundTableEntry *sound = &sound_table[sound_id];
-    struct MusicPlayerView *player = players[sound->player * 3];
+    struct SoundTableEntry *audio_cue_table = Data_080fc684;
+    struct SoundTableEntry *audio_cue = &audio_cue_table[audio_cue_id];
+    struct MusicPlayerView *player = players[audio_cue->player * 3];
 
-    if (player->song_header != sound->header) {
-        MusicPlayer_StartSong(player, sound->header);
+    if (player->song_header != audio_cue->header) {
+        MusicPlayer_StartSong(player, audio_cue->header);
     } else {
         s32 status = player->status;
         u16 low_status = *(volatile u16 *)&player->status;

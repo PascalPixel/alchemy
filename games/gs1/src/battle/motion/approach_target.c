@@ -1,3 +1,4 @@
+#include "battle_motion.h"
 #include "types.h"
 #include "motion_object.h"
 
@@ -7,17 +8,17 @@ void Func_08009140(struct MotionObject *);
 void Func_08009150(struct MotionObject *, s32, s32, s32);
 void Func_08009080(struct MotionObject *, s32);
 
-void Func_080b82c4(
-    s32 first,
-    s32 second,
-    s32 divisor,
+void BattleMotion_ApproachTarget(
+    s32 actor_id,
+    s32 target_id,
+    s32 travel_divisor,
     s32 initial_velocity_y
 )
 {
-    struct BattleObjectSlot *first_slot = Func_080b7dd0(first);
-    struct BattleObjectSlot *second_slot = Func_080b7dd0(second);
-    struct MotionObject *object = first_slot->object;
-    struct MotionObject *target = second_slot->object;
+    struct BattleObjectSlot *actor_slot = Func_080b7dd0(actor_id);
+    struct BattleObjectSlot *target_slot = Func_080b7dd0(target_id);
+    struct MotionObject *object = actor_slot->object;
+    struct MotionObject *target = target_slot->object;
     s32 scale = 75;
     s32 difference_x = target->x - object->x;
     s32 start_x = object->x;
@@ -33,7 +34,7 @@ void Func_080b82c4(
 
     distance = ((s32 (*)(s32))0x030001d8)(
         short_x * short_x + short_z * short_z);
-    distance = Func_080022ec(distance << 8, divisor);
+    distance = Func_080022ec(distance << 8, travel_divisor);
     object->acceleration = distance;
     object->speed_limit = distance;
     object->snap_to_target = 1;

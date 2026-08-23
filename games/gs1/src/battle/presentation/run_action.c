@@ -1,41 +1,42 @@
 #include "types.h"
 #include "battle_msg.h"
+#include "battle_escape.h"
+#include "battle_presentation.h"
+#include "battle_target.h"
 
-struct Transition_080b874c {
+struct BattlePresentationTransition {
     s32 value;
     s32 timer;
     u8 pad08[12];
     s32 flag;
 };
 
-extern struct Transition_080b874c *Data_03001f00;
+extern struct BattlePresentationTransition *Data_03001f00;
 
 u8 *Func_08077008(s32);
-s32 Func_080b8f08(const u8 *);
 void Func_08015118(void);
 void Func_080151c8(s32);
-s32 Func_080b8824(s16 *);
 void Func_080030f8(s32);
 s32 Func_080b8888(s16 *);
 s32 Func_080b8c1c(s16 *);
 s32 Func_080b88d0(s16 *);
 void Func_08015220(void);
 
-s32 Func_080b874c(s16 *argument)
+s32 BattlePresentation_RunAction(s16 *action)
 {
-    struct Transition_080b874c *transition;
-    s32 id;
+    struct BattlePresentationTransition *transition;
+    s32 actor_id;
     s32 mode;
-    u8 *object;
+    u8 *actor;
 
-    id = argument[0];
-    object = Func_08077008(id);
-    if (*(s16 *)(object + 0x38) == 0)
+    actor_id = action[0];
+    actor = Func_08077008(actor_id);
+    if (*(s16 *)(actor + 0x38) == 0)
         return -1;
 
-    argument[5] = Func_080b8f08((u8 *)argument);
+    action[5] = BattleTarget_ReplaceDefeated((u8 *)action);
     transition = Data_03001f00;
-    if (argument[0] > 4)
+    if (action[0] > 4)
         mode = -0x2000;
     else
         mode = 0x2000;
@@ -43,30 +44,30 @@ s32 Func_080b874c(s16 *argument)
     transition->timer = 60;
     Func_08015118();
 
-    switch (argument[3]) {
+    switch (action[3]) {
     case 99:
         Func_080151c8((s32)&Value_00000843);
-        if (Func_080b8824(argument) != 0)
+        if (BattleEscape_PlayRun(action) != 0)
             return 1;
         break;
     case 3:
         Func_080030f8(45);
-        Func_080b8888(argument);
+        Func_080b8888(action);
         break;
     case 2:
         Func_080030f8(45);
-        Func_080b8c1c(argument);
+        Func_080b8c1c(action);
         break;
     case 0:
     default: {
-        struct Transition_080b874c *other_transition = Data_03001f00;
+        struct BattlePresentationTransition *other_transition = Data_03001f00;
         other_transition->flag = 0;
-        Func_080b8c1c(argument);
+        Func_080b8c1c(action);
         other_transition->flag = 0;
         break;
     }
     case 1:
-        Func_080b88d0(argument);
+        Func_080b88d0(action);
         break;
     }
 

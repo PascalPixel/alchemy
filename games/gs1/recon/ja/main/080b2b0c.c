@@ -715,8 +715,8 @@ after_power:
          *  0/7/9 は空。
          */
         switch (nibble) {
-        case DK_ATTACK:
-        case DK_ATTACK_X:
+        case BATTLE_DAMAGE_WEAPON:
+        case BATTLE_DAMAGE_WEAPON_SCALED:
         {
             s32 def;
             s32 apwr;
@@ -807,7 +807,7 @@ after_power:
             break;
         }
 
-        case DK_PP_DRAIN:
+        case BATTLE_DAMAGE_PP_DRAIN:
         {
             if (BATTLE_DAMAGE_BLOCKED())
                 break;
@@ -851,7 +851,7 @@ after_power:
             break;
         }
 
-        case DK_HP_HEAL:
+        case BATTLE_DAMAGE_HP_HEAL:
         {
             if (action->power == 0)
                 break;
@@ -880,7 +880,7 @@ after_power:
             break;
         }
 
-        case DK_PP_DMG:
+        case BATTLE_DAMAGE_PP_DIRECT:
         {
             if (BATTLE_DAMAGE_BLOCKED())
                 break;
@@ -912,9 +912,9 @@ after_power:
             goto pp_store;
         }
 
-        case DK_HP_DMG_6:
-        case DK_HP_DMG_7:
-        case DK_HP_DMG_9:
+        case BATTLE_DAMAGE_HP_ADDITIVE_6:
+        case BATTLE_DAMAGE_HP_ADDITIVE_7:
+        case BATTLE_DAMAGE_HP_ADDITIVE_9:
         {
             BATTLE_DAMAGE_ROUND_DECL;
 
@@ -987,7 +987,7 @@ after_power:
             break;
         }
 
-        case DK_PP_HEAL:
+        case BATTLE_DAMAGE_PP_HEAL:
         {
             if (action->power == 0)
                 break;
@@ -1020,7 +1020,7 @@ pp_store:
             /* 空スロット */
             break;
 
-        case DK_HP_DMG:
+        case BATTLE_DAMAGE_HP_POWER:
             if (hit != 0) {
             if (BATTLE_DAMAGE_BLOCKED())
                 break;

@@ -23442,7 +23442,7 @@
     },
     {
       "en_owner": "08097b70",
-      "source": "games/gs1/src/08097b70.c",
+      "source": "games/gs1/src/battle/effects/item_break/update_fragment.c",
       "size": 204,
       "status": "shared_core",
       "starts": {
@@ -23502,7 +23502,7 @@
     },
     {
       "en_owner": "08098070",
-      "source": "games/gs1/src/08098070.c",
+      "source": "games/gs1/src/battle/effects/item_break/start.c",
       "size": 276,
       "status": "shared_core",
       "starts": {

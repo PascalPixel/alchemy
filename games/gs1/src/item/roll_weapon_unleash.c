@@ -7,7 +7,7 @@ s32 Func_080022ec(s32, s32);
 
 u16 RollWeaponUnleash(void *owner) {
     struct ItemDefinition *item;
-    s32 value;
+    s32 success_threshold;
 
     if (M2C_FIELD(owner, u8, 0x129) == 0) {
         return 1;
@@ -19,11 +19,11 @@ u16 RollWeaponUnleash(void *owner) {
     if (M2C_FIELD(item, u16, 0xE) == 0) {
         return 1;
     }
-    value = Func_080022ec(
+    success_threshold = Func_080022ec(
         (Equipment_GetUnleashRateBonus((s32)owner) +
          (M2C_FIELD(item, u8, 0xB) * 5)) << 0x10,
         100);
-    if (value > (s32) (BattleRandom16() & 0xFFFF)) {
+    if (success_threshold > (s32) (BattleRandom16() & 0xFFFF)) {
         return M2C_FIELD(item, u16, 0xE);
     }
     return 1;

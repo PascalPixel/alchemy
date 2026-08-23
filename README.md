@@ -56,8 +56,8 @@ Three figures, because one of them alone would mislead:
 |                    |       bytes |                   share |
 | ------------------ | ----------: | ----------------------: |
 | Exact C            |     299,774 |     22.2% of executable |
-| Permanent assembly |     309,858 |     23.0% of executable |
-| **DONE**           | **609,632** | **45.2% of executable** |
+| Permanent assembly |     310,566 |     23.0% of executable |
+| **DONE**           | **610,340** | **45.3% of executable** |
 
 Permanent assembly is not a shortcut and not a backlog. It includes linker
 veneers and alignment padding, plus audited routines whose instruction shape or
@@ -86,7 +86,7 @@ figure above.
 
 The main game contains 548,364 executable bytes in the purple band.
 
-![Main-image code coverage box tree in the purple band; code categories use the legend below.](games/gs1/assets/readme/gs1-en-core.svg?v=ba6a85a34c131122)
+![Main-image code coverage box tree in the purple band; code categories use the legend below.](games/gs1/assets/readme/gs1-en-core.svg?v=99b5c0653c65f7a9)
 
 ### Code overlays
 

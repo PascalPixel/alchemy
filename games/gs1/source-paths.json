@@ -6,6 +6,7 @@
     "main:080aa460": "ability/play_use_animation.c",
     "main:080ae778": "djinn/check_turn_balance.c",
     "main:080ae7fc": "djinn/count_turns.c",
+    "main:080ba584": "battle/run_simple_presentation.c",
     "main:080d8948": "battle/effects/series_a/mode_0.c",
     "main:080d8954": "battle/effects/series_a/mode_1.c",
     "main:080d8960": "battle/effects/series_a/mode_2.c",

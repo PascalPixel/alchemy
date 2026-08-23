@@ -1,6 +1,7 @@
 {
   "owner": "resource_3ce:029c",
   "span_bytes": 1574,
+  "semantic_name": "RunCallScript",
   "score": {
     "measured": "2026-08-17",
     "candidate_bytes": 1574,
@@ -36,7 +37,16 @@
     {
       "axis": "overlay_mode_cohort singles",
       "result": "0 exact"
+    },
+    {
+      "axis": "twenty-thousand-candidate safe heat walk",
+      "result": "20,000 compiled, exact 0; the only retained candidate was a structurally reweighted tie with the same 380 differing halfwords"
+    },
+    {
+      "axis": "ten-thousand-candidate classic exact-only heat walk",
+      "result": "9,986 compiled, exact 0; best unchanged at the 380-halfword baseline"
     }
   ],
-  "note": "The closest any owner has come. Exact size, zero wrong instructions, and the whole residual is one swapped pair repeated at every call site. gcc's load_register_parameters walks arguments forward, which is what the candidate emits; the reference is reversed."
+  "retention": "keep_structured_asm",
+  "note": "Exact size, zero wrong instructions, and the whole residual is one swapped pair repeated at every two-argument call site. GCC's load_register_parameters walks arguments forward, which is what every candidate emits; the reference is consistently reversed, identifying a generated call script rather than ordinary compiler output."
 }

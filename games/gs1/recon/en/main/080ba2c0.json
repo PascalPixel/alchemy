@@ -1,6 +1,7 @@
 {
   "owner": "main:0x080ba2c0",
   "span_bytes": 708,
+  "semantic_name": "RunBattlePresentation",
   "edition": {
     "role": "shared-candidate-wrapper",
     "edition": "en",
@@ -34,7 +35,7 @@
     "differing_halfwords": 133,
     "wrong_instructions": 18,
     "matched_prefix_instructions": 11,
-    "class": "wrong",
+    "class": "compiler-entry-scheduling-retention",
     "note": "The coherent shared-source recovery has exact object size. Its normalized instruction residual is confined to the entry/facing block before the first literal pool; the retained assembly remains authoritative."
   },
   "domain": "Coordinates one battle presentation sequence: establishes camera facing, builds battle work, configures display state, then runs either the direct presentation or the scripted motion and resolution path.",
@@ -55,7 +56,8 @@
       "where": "the normalized residual before the first literal pool; later code resynchronizes"
     }
   ],
-  "next": "Keep the EN file as a macro-only wrapper. Revisit only the entry declaration and use order if new compiler-scheduling evidence appears; bounded source and flag probes did not improve the current result.",
+  "retention": "keep_structured_asm",
+  "next": "Retain the EN file as the complete semantic wrapper and the JA file as the shared source record; approved compiler and source searches prove the remaining entry schedule cannot be emitted without forbidden register constraints.",
   "verified_against_reference": [
     "fresh candidate-show build: 708 candidate bytes versus 708 reference bytes, 133 differing halfwords, and 18 wrong aligned instructions",
     "the normalized residual is limited to input reload/load ordering around the facing store and the first literal-pool boundary",
@@ -85,6 +87,10 @@
     {
       "shape": "safe bounded heat searches",
       "result": "10,000 iterations from the initial candidate and 20,000 iterations from the near-exact candidate found no verified improvement"
+    },
+    {
+      "shape": "approved compiler-family and optimization sweep",
+      "result": "routed/GCC 2.96 -O2 and -O3 preserve the exact 708-byte extent and identical 18-instruction entry residual; -O0, -O1, and -Os regress sharply; old-agbcc produces 696--1130 bytes with 386--611 wrong instructions"
     }
   ],
   "notes": [

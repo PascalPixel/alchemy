@@ -7,11 +7,14 @@ extern void *Func_08096c80(s32, s32, s32, s32);
 extern void Func_08096bec(struct Object_08096bec *object, s32 arg1, s32 arg2);
 extern void Func_08009080(void *, s32);
 extern void Func_08009098(void *, void *);
-extern void Func_08097b70(void *);
+#define UpdateItemBreakFragment Func_08097b70
+extern void UpdateItemBreakFragment(void *);
 extern u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
 extern void Func_080f9010(s32);
+
+#define StartItemBreakEffect Func_08098070
 
 void *Func_08098070(void *source)
 {
@@ -33,7 +36,7 @@ void *Func_08098070(void *source)
         return 0;
     *(s32 *)((s8 *)parent + 0x1c) = 0x4000;
     *(s32 *)((s8 *)parent + 0x18) = 0x4000;
-    *(s32 *)((s8 *)parent + 0x6c) = (s32)Func_08097b70;
+    *(s32 *)((s8 *)parent + 0x6c) = (s32)UpdateItemBreakFragment;
     *(s32 *)((s8 *)parent + 0x30) = 0x20000;
     *(s32 *)((s8 *)parent + 0x34) = 0x20000;
     zero = 0;

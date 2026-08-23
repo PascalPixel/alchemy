@@ -1,3 +1,4 @@
+#include "fixed_math.h"
 #include "types.h"
 #include "object_effect.h"
 #include "object_efx.h"
@@ -35,9 +36,9 @@ typedef char State_08099d18_source_offset[
 
 extern struct State_08099d18 *Data_03001f30;
 
-u32 Func_08004458(void);
+u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Func_08004458
+#define Rand Random16
 void Func_0800447c(s32, s32, struct Vector_08099d18 *);
 void Func_08009080(u8 *, s32);
 void Func_08009098(u8 *, void *);

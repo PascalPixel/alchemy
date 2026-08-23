@@ -1,4 +1,5 @@
 #include "types.h"
+#include "fixed_math.h"
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
@@ -14,7 +15,7 @@ void Func_08092878(void *first, void *second)
     u32 firstTarget;
 
     if (first != 0 && second != 0) {
-        firstTarget = (u16)Func_080044d0(
+        firstTarget = (u16)ArcTan2(
             FIELD(second, s32 *, 0x10) - FIELD(first, s32 *, 0x10),
             FIELD(second, s32 *, 8) - FIELD(first, s32 *, 8));
         secondTarget = firstTarget + 0x8000;

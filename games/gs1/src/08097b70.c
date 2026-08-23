@@ -1,3 +1,4 @@
+#include "fixed_math.h"
 #include "types.h"
 #include "object_efx.h"
 
@@ -28,10 +29,10 @@ struct Object_08097b70 {
     u16 field_5e;
 };
 
-extern s32 Func_080044d0(s32, s32);
-extern u32 Func_08004458(void);
+extern s32 ArcTan2(s32, s32);
+extern u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Func_08004458
+#define Rand Random16
 extern void Func_0800447c(s32, s32, struct Position_08097b70 *);
 extern struct Object_08097b70 *Func_08096c80(s32, s32, s32, s32);
 extern void Func_08009080(struct Object_08097b70 *, s32);
@@ -51,7 +52,7 @@ void Func_08097b70(struct Source_08097b70 *source)
         s32 zDelta = target->z - source->z;
 
         if (xDelta != 0 || zDelta != 0) {
-            turn = (s16)(Func_080044d0(zDelta, xDelta) - source->angle);
+            turn = (s16)(ArcTan2(zDelta, xDelta) - source->angle);
             if (turn > 0x1000)
                 turn = 0x1000;
             if (turn < -0x1000)

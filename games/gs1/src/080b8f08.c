@@ -1,10 +1,11 @@
+#include "fixed_math.h"
 #include "types.h"
 
 u8 *Func_08077008(s32);
 s32 Func_080b6b40(s32 arg0, u16 *arg1);
-u32 Func_08004458(void);
+u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Func_08004458
+#define Rand Random16
 
 s32 Func_080b8f08(const u8 *arg0)
 {

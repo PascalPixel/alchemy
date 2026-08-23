@@ -1,9 +1,9 @@
 #include "types.h"
 #include "global_cells.h"
+#include "resource.h"
 
 extern u8 Data_000000d5[];
 void Func_080030f8(u32);
-s32 Func_08002f40(s32 index);
 void Func_08005340(s32, s32);
 void Func_080113e4(void);
 void Func_0801161c(void);
@@ -23,7 +23,7 @@ void Func_0801173c(void)
     work->first = 0;
     work->second = 0x9f;
     Func_080030f8(1U);
-    Func_08005340(Func_08002f40((s32) Data_000000d5), 0x02010000);
+    Func_08005340((s32)GetResource((s32)Data_000000d5), 0x02010000);
     Func_080113e4();
     Func_0800439c((u32)Func_0801179c);
     Func_080030f8(1U);

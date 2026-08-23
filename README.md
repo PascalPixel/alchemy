@@ -9,67 +9,37 @@
 
 <p align="center"><strong>Golden Sun 25th Anniversary Preservation Project</strong></p>
 
-The historical reconstructions are also the preservation base for Alchemy's
-eventual third product: one reintegrated game spanning both games' content.
-That integration lives separately from the twelve historical targets, so it
-cannot blur or weaken their reconstruction evidence.
+Alchemy is an unofficial clean-room reconstruction of _Golden Sun_ and
+_Golden Sun: The Lost Age_ for the Game Boy Advance. It preserves all six
+Japanese and European-language editions of each game from the original
+cartridges, with Japanese as the canonical source base and the English
+_Golden Sun_ release as the first complete derived build target.
 
-Everything here is reconstructed from the approved cartridges themselves. No
-other Golden Sun project supplies code, names, or game knowledge to this one.
+## Status: 50% DONE
 
-## Repository shape
+![Main-game reconstruction coverage](games/gs1/assets/readme/gs1-en-core.svg?v=20db6bb8e0c22766)
 
-The layout follows the useful pret convention: one shared source tree per
-game, selected per edition at build time, rather than six copied source trees.
+![Code-overlay reconstruction coverage](games/gs1/assets/readme/gs1-en-overlays.svg?v=3a86df0b7fc8f34c)
 
-## DONE: Currently 50%
+![Images and data naming coverage](games/gs1/assets/readme/gs1-en-images.svg?v=41116748a082aaec)
 
-DONE measures executable bytes that rebuild identically to the target: exact C
-plus code that is permanently assembly. Nothing else counts.
+![Music and sound naming coverage](games/gs1/assets/readme/gs1-en-music.svg?v=f7f0be708f1d7ba4)
 
-Three figures, because one of them alone would mislead:
+## Details
 
-|                    |       bytes |                   share |
-| ------------------ | ----------: | ----------------------: |
-| Exact C            |     299,774 |     22.2% of executable |
-| Permanent assembly |     374,790 |     27.8% of executable |
-| **DONE**           | **674,564** | **50.0% of executable** |
+Alchemy rebuilds the games from readable source code, retained assembly, and
+named assets while checking the result byte for byte against an approved
+cartridge image. The historical editions remain independent from the future
+`games/alchemy/` reintegration, so new work cannot weaken their preservation
+evidence.
 
-Permanent assembly is not a shortcut and not a backlog. It includes linker
-veneers and alignment padding, plus audited routines whose instruction shape or
-calling convention the approved C compiler cannot emit. Every retained region
-records that evidence and rebuilds identically, so it is done and will never
-become C.
+## Acknowledgements
 
-That also means 100% is not the target. Measured against only the bytes that
-can ever be C, **exact C stands at 30.8%**. An overlay whose every function is
-reconstructed still reports short of 100%, because its veneers count against it.
+_Golden Sun_, its characters, music, art, and original code were created by
+Camelot Software Planning and published by Nintendo. Alchemy is an independent
+fan preservation project and is not affiliated with or endorsed by either
+company.
 
-Tracked reconstruction C is reported separately. It preserves recovered
-algorithms and failed experiments, but contributes nothing to this table until
-the linked bytes for an edition are exact.
-
-The four maps below show the current byte metrics for the English derived
-build. Progress is measured by bytes, not function counts. Tracked but
-non-exact reconstruction is shown separately and never contributes to DONE.
-
-### Main game
-
-The main game contains 548,364 executable bytes in the purple band.
-
-![Main-image code coverage box tree in the purple band; code categories use the legend below.](games/gs1/assets/readme/gs1-en-core.svg?v=20db6bb8e0c22766)
-
-### Code overlays
-
-The game loads 96 additional code overlays containing 798,758 executable bytes
-in the cyan band.
-
-![Decoded code-overlay coverage box tree in the cyan band; code categories use the legend below.](games/gs1/assets/readme/gs1-en-overlays.svg?v=3a86df0b7fc8f34c)
-
-### Images and data
-
-![Image and data maturity box tree in the magenta band; brightness is maturity.](games/gs1/assets/readme/gs1-en-images.svg?v=41116748a082aaec)
-
-### Music and sound
-
-![Music and sound maturity box tree in the orange band; brightness is maturity.](games/gs1/assets/readme/gs1-en-music.svg?v=f7f0be708f1d7ba4)
+Thank you to everyone documenting the Game Boy Advance, improving preservation
+tooling, testing reconstructed editions, and contributing careful clean-room
+work to Alchemy.

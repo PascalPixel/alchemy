@@ -1,10 +1,11 @@
 #include "types.h"
+#include "fixed_math.h"
 #include "global_cells.h"
 
 void Func_0808a500(s32);
-u32 Func_08004458(void);
+u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Func_08004458
+#define Rand Random16
 void Func_08009248(s32, u32);
 
 void Func_080b2ffc(void)

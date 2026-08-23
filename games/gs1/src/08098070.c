@@ -1,3 +1,4 @@
+#include "fixed_math.h"
 #include "types.h"
 #include "object_efx.h"
 #include "sound_ids.h"
@@ -7,9 +8,9 @@ extern void Func_08096bec(struct Object_08096bec *object, s32 arg1, s32 arg2);
 extern void Func_08009080(void *, s32);
 extern void Func_08009098(void *, void *);
 extern void Func_08097b70(void *);
-extern u32 Func_08004458(void);
+extern u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Func_08004458
+#define Rand Random16
 extern void Func_080f9010(s32);
 
 void *Func_08098070(void *source)

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "fixed_math.h"
 #include "object_effect.h"
 
 struct Values_0808eee4 {
@@ -42,7 +43,7 @@ typedef char Object_0808eee4_child_offset[
 ];
 #undef OBJECT_0808EEE4_OFFSET
 
-extern u32 Func_08004458(void);
+extern u32 Random16(void);
 extern void Func_0800447c(s32, s32, struct Values_0808eee4 *);
 extern void Func_08009098(struct Object_0808eee4 *, void *);
 extern void Func_08009080(struct Object_0808eee4 *, s32);
@@ -57,14 +58,14 @@ void Func_0808eee4(struct Source_0808eee4 *source)
     if (source->offset >= -255 && source->offset <= 255)
         source->state = 0;
 
-    if ((100 * Func_08004458() >> 16) > 9)
+    if ((100 * Random16() >> 16) > 9)
         return;
 
     values.first = source->values.first;
     values.second = source->values.second;
     values.third = source->values.third;
-    random_angle = Func_08004458();
-    Func_0800447c(random_angle << 4, Func_08004458(), &values);
+    random_angle = Random16();
+    Func_0800447c(random_angle << 4, Random16(), &values);
     object = (struct Object_0808eee4 *)Func_08096c80(
         0x11D, values.first, values.second, values.third);
     if (object != 0) {

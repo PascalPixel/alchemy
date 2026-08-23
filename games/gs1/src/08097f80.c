@@ -1,3 +1,4 @@
+#include "fixed_math.h"
 #include "effect_0809b11c.h"
 
 struct Output_08097f80 {
@@ -6,9 +7,9 @@ struct Output_08097f80 {
     s32 z;
 };
 
-u32 Func_08004458(void);
+u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Func_08004458
+#define Rand Random16
 void Func_0800447c(s32, s32, struct Output_08097f80 *);
 void Func_08097f80(struct EffectSlot *effect)
 {

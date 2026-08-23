@@ -1,3 +1,4 @@
+#include "fixed_math.h"
 #include "types.h"
 #include "object_efx.h"
 
@@ -29,9 +30,9 @@ void Func_080030f8(s32 frames);
 struct Particle_080981b0 *Func_08096c80(
     s32 kind, s32 x, s32 y, s32 z);
 void Func_08009098(struct Particle_080981b0 *particle, const void *callback);
-u32 Func_08004458(void);
+u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Func_08004458
+#define Rand Random16
 void Func_08096bec(struct Particle_080981b0 *particle, s32 speed, s32 angle);
 void Func_080090d0(struct Effect_080981b0 *effect);
 void Func_080981b0(struct Effect_080981b0 *effect)

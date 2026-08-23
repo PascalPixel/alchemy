@@ -1,6 +1,7 @@
 #include "inventory_menu.h"
 #include "battle_runtime.h"
 #include "gs1_edition.h"
+#include "sound_ids.h"
 extern char Value_00000bef;
 extern s32 Func_080f9010(s32);
 extern s32 Func_08015278(s32);
@@ -18,7 +19,7 @@ s32 InventoryMenu_UseSelectedItem(void)
         menu->selected_slot, menu->item_owner, menu->target_owner);
 
     if (result == -1) {
-        Func_080f9010(0x72);
+        Func_080f9010(SOUND_MENU_ERROR);
         Func_08015278(menu->info_window);
         Func_080a1d08(
             menu->message_offset + (s32)&Value_00000bef, result, result);

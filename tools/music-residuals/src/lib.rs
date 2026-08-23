@@ -18,8 +18,8 @@ pub type Result<T> = std::result::Result<T, Error>;
 pub const ROM_BASE: u32 = 0x0800_0000;
 pub const ROM_SIZE: usize = 0x0080_0000;
 pub const SOUND_TABLE_ADDRESS: u32 = 0x080f_c684;
-pub const YOBI_ADDRESS: u32 = 0x0818_19b0;
-pub const YOBI_END: u32 = 0x0818_19c2;
+pub const ORPHAN_STREAM_ADDRESS: u32 = 0x0818_19b0;
+pub const ORPHAN_STREAM_END: u32 = 0x0818_19c2;
 pub const ALIGNMENT_ADDRESS: u32 = 0x0818_4698;
 pub const ALIGNMENT_END: u32 = 0x0818_5000;
 
@@ -59,7 +59,7 @@ fn fixed_index() -> Value {
         ],
         "orphan_stream": {
             "address":"0x081819b0", "size":18,
-            "source":"sound_138_yobi.json", "between":["sound_138","sound_139"]
+            "source":"orphan_stream_after_item_break.json", "between":["sound_item_break","sound_139"]
         },
         "tail_alignment": {
             "address":"0x08184698", "end":"0x08185000", "boundary":4096, "fill":0
@@ -67,7 +67,7 @@ fn fixed_index() -> Value {
     })
 }
 
-fn fixed_yobi() -> Value {
+fn fixed_orphan_stream() -> Value {
     json!({
         "format": 1,
         "engine": "smsh-sequence",
@@ -75,7 +75,7 @@ fn fixed_yobi() -> Value {
         "externals": {},
         "layout": [{
             "kind": "stream",
-            "label": "yobi_track",
+            "label": "orphan_stream_after_item_break",
             "events": [
                 ["volume",120], ["key_shift",0], ["tempo",30], ["voice",21],
                 ["note",1,61,127], ["wait",1], ["note_running",1,66], ["wait",1],
@@ -98,9 +98,9 @@ fn validate_index(index_path: &Path) -> Result<PathBuf> {
     let source = index_path
         .parent()
         .unwrap_or_else(|| Path::new("."))
-        .join(format!("{prefix}sound_138_yobi.json"));
-    let (_, yobi) = read_json(&source, "reserve sound stream")?;
-    if yobi != fixed_yobi() {
+        .join(format!("{prefix}orphan_stream_after_item_break.json"));
+    let (_, orphan_stream) = read_json(&source, "reserve sound stream")?;
+    if orphan_stream != fixed_orphan_stream() {
         return Err("reserve sound stream differs from the audited events".into());
     }
     Ok(source)
@@ -114,13 +114,13 @@ fn header(address: u32, priority: u8, reverb: u8, tone_bank: u32) -> BuiltMusicR
 
 pub fn build_music_residuals(index_path: &Path) -> Result<Vec<BuiltMusicResidual>> {
     validate_index(index_path)?;
-    let (yobi, report) = build_reserve_sequence(YOBI_ADDRESS);
-    if report.base != YOBI_ADDRESS
+    let (orphan_stream, report) = build_reserve_sequence(ORPHAN_STREAM_ADDRESS);
+    if report.base != ORPHAN_STREAM_ADDRESS
         || report.bytes != 18
         || report.streams != 1
         || report.tracks != 0
         || report.events != 11
-        || yobi.len() != 18
+        || orphan_stream.len() != 18
     {
         return Err("reserve sound stream has an unexpected report".into());
     }
@@ -132,8 +132,8 @@ pub fn build_music_residuals(index_path: &Path) -> Result<Vec<BuiltMusicResidual
         header(0x0816_52d8, 0, 178, 0x080f_ba78),
         header(0x0818_10b8, 0, 178, 0x080f_ba78),
         BuiltMusicResidual {
-            address: YOBI_ADDRESS,
-            data: yobi,
+            address: ORPHAN_STREAM_ADDRESS,
+            data: orphan_stream,
         },
         header(0x0818_41f8, 120, 0, 0x080f_c138),
         header(0x0818_4358, 120, 0, 0x080f_c138),
@@ -164,7 +164,7 @@ fn verify_sound_table_links(rom: &[u8]) -> Result<()> {
     for (sound, header) in [
         (19u32, 0x0816_52d8),
         (95, 0x0818_10b8),
-        (138, YOBI_ADDRESS - 12),
+        (138, ORPHAN_STREAM_ADDRESS - 12),
         (139, 0x0818_19d4),
         (288, 0x0818_41f8),
         (298, 0x0818_4358),
@@ -181,12 +181,12 @@ fn verify_sound_table_links(rom: &[u8]) -> Result<()> {
             ));
         }
     }
-    let sound138 = (YOBI_ADDRESS - 12 - ROM_BASE) as usize;
+    let sound138 = (ORPHAN_STREAM_ADDRESS - 12 - ROM_BASE) as usize;
     let sound139 = (0x0818_19d4 - ROM_BASE) as usize;
     if rom.get(sound138) != Some(&1) || read_u32(rom, sound138 + 8)? != 0x0818_1988 {
         return Err("reserve sound stream does not follow sound 138".into());
     }
-    if rom.get(sound139) != Some(&1) || read_u32(rom, sound139 + 8)? != YOBI_END {
+    if rom.get(sound139) != Some(&1) || read_u32(rom, sound139 + 8)? != ORPHAN_STREAM_END {
         return Err("reserve sound stream does not precede sound 139".into());
     }
     Ok(())
@@ -226,7 +226,7 @@ pub fn verify_music_residuals(rom_path: &Path, index_path: &Path) -> Result<Stri
 }
 
 pub fn self_test() -> Result<()> {
-    let (bytes, report) = build_reserve_sequence(YOBI_ADDRESS);
+    let (bytes, report) = build_reserve_sequence(ORPHAN_STREAM_ADDRESS);
     if bytes.len() != 18
         || report.events != 11
         || bytes

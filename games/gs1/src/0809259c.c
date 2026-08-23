@@ -7,7 +7,7 @@ void Func_0809259c(u32 object_id, s32 variant)
 {
     struct ObjectRuntime *object;
 
-    object = GetObject(object_id);
+    object = ObjectTable_Get(object_id);
     if (object != NULL && variant > 0) {
         if (variant > 3) {
             variant = 3;

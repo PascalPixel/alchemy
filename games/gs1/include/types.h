@@ -78,7 +78,7 @@ typedef int bool;
 #define GetMotionRecord Func_080b7f70
 #define ActivateBattleObjectSlot Func_080b7e60
 #define Object_GetById Func_08092054
-#define GetObject Func_0808ba1c
+#define ObjectTable_Get Func_0808ba1c
 #define BattleUnit_Recalculate Func_08077010
 #define UiWork_Finalize Func_08016418
 #define Actor_ResetMotionAtAnchor Func_080b8000
@@ -158,5 +158,12 @@ typedef int bool;
 #define DisplayBlend_RunScript Func_080119cc
 #define Summon_TakeCharge Func_080c1df4
 #define BattleEffect_UpdateRadialMotion Func_080b2f4c
+#define ObjectMotion_SetAngleToward Func_0809280c
+#define Object_LinkPair Func_08092848
+#define ObjectTable_DestroyById Func_08092924
+#define Object_SetTargetAndCallback Func_08092a1c
+#define ObjectMotion_ArmCallback Func_08092adc
+#define ObjectVisual_CopyAttributes Func_08092b54
+#define ObjectTable_FindActiveByValue Func_08092be0
 
 #endif

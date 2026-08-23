@@ -2,7 +2,7 @@
 
 s32 Func_08091584(void)
 {
-    struct BattleRenderObject *object = GetObject();
+    struct BattleRenderObject *object = ObjectTable_Get();
 
     if (object->kind != 1 ||
         object->animation == NULL ||

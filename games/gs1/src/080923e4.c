@@ -11,7 +11,7 @@ void Func_080923e4(u32 object_id, s32 x, s32 z)
     s32 tile_z;
     s32 terrain_id;
 
-    object = GetObject(object_id);
+    object = ObjectTable_Get(object_id);
     if (object != NULL) {
         Object_ResetMotion(object);
         object->velocity_x = 0;

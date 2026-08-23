@@ -6,7 +6,7 @@ extern const u8 Data_0809ff40[];
 
 void Func_080920c0(u32 object_id, u32 linked_object_id)
 {
-    struct ObjectRuntime *object = GetObject(object_id);
+    struct ObjectRuntime *object = ObjectTable_Get(object_id);
 
     if (object != NULL) {
         object->linked_object = Object_GetById(linked_object_id);

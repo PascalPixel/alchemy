@@ -17,7 +17,7 @@ void Func_0809b588(void) {
     register u8 *value_address;
     register u8 value;
 
-    state = *(u8 **)(GetObject(Data_02000240.object_id) + 0x50);
+    state = *(u8 **)(ObjectTable_Get(Data_02000240.object_id) + 0x50);
     child = *(u8 **)(state + 0x28);
     result = Func_08002304(Data_03001e40, 5);
     if (result == 0) {

@@ -15,7 +15,7 @@ void Func_0809335c(s32 arg0, s32 arg1) {
     void *temp_r8;
     s32 *ptr;
 
-    temp_r6 = GetObject(arg0);
+    temp_r6 = ObjectTable_Get(arg0);
     temp_r8 = Runtime_AllocateBlock(0x1B, 0xCCC);
     temp_r5 = M2C_FIELD(temp_r8, void **, 0x1E0);
     ptr = *(s32 **)ADDR_03001E70;

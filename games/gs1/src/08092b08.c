@@ -10,7 +10,7 @@ void Func_08092b08(s32 arg0, s32 arg1)
     s32 three;
 
     three = 3;
-    object = GetObject(arg0);
+    object = ObjectTable_Get(arg0);
     if (object != 0 && (0xF & *(volatile s8 *)(object + 0x54)) == 1) {
         value = (three & arg1) * 4;
         mask = -0xD;

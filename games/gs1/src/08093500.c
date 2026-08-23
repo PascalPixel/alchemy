@@ -9,7 +9,7 @@ void ObjectMotion_PlaceWithinCameraBounds(s32, s32, s32, s32);
 void Func_08093500(s32 arg0, s32 arg1) {
     void *temp_r5;
 
-    temp_r5 = GetObject();
+    temp_r5 = ObjectTable_Get();
     Runtime_AllocateBlock(0x1B, 0xCCC);
     if (temp_r5 != NULL) {
         ObjectMotion_PlaceWithinCameraBounds(M2C_FIELD(temp_r5, s32 *, 8), -1, M2C_FIELD(temp_r5, s32 *, 0x10), arg1);

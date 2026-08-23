@@ -22,7 +22,7 @@ void Func_0808f140(void *object, s32 flags) {
     void *other;
 
     if (object != NULL) {
-        other = GetObject(Data_02000240.selected_object);
+        other = ObjectTable_Get(Data_02000240.selected_object);
         if (flags & 1) {
             Func_080091e0(object, 0);
             Object_SetCallback(object, (s32)Data_0809e6c0);

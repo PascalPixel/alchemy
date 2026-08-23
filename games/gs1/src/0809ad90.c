@@ -17,7 +17,7 @@ void Func_0809ad90(s32 arg0) {
     u8 *object;
     u8 *entry;
 
-    object = GetObject(arg0);
+    object = ObjectTable_Get(arg0);
     if (object != NULL) {
         Data_02000240.saved_callback = *(u32 *)(object + 0x6C);
         Data_02000240.saved_byte = 0;

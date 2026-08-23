@@ -78,7 +78,7 @@ void BattleEffect_FinishHeavyImpact(s32 arg)
     }
     while (0);
     WaitFrames(0x3C);
-    Func_08092adc(Data_02000240[125], 0x4000, 0);
+    ObjectMotion_ArmCallback(Data_02000240[125], 0x4000, 0);
     WaitFrames(0x14);
     Object_SetMode(Object_GetById(Data_02000240[125]), 0x1C);
     WaitFrames(0x28);

@@ -37,7 +37,7 @@ void CheckObjectMapTile(void)
 
     runtime_slot_address = (u32)&Data_03001ebc;
     runtime = Data_03001ebc;
-    object = GetObject(Data_02000240.active_object_id);
+    object = ObjectTable_Get(Data_02000240.active_object_id);
     /* The map-state pointer slot is 19 words before the runtime pointer slot. */
     tile = (u8 *)*(struct MapState **)(runtime_slot_address - 76);
 

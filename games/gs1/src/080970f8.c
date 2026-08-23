@@ -8,10 +8,10 @@ void Func_080970f8(s32 arg0, s32 arg1) {
     void *temp_r0; void *temp_r0_2; s32 temp_r1; void *temp_r6;
     temp_r6 = *(void **)ADDR_03001F30;
     M2C_FIELD(temp_r6, s16, 0x18) = arg0;
-    temp_r0 = GetObject((s16) arg0);
+    temp_r0 = ObjectTable_Get((s16) arg0);
     M2C_FIELD(temp_r6, s16, 0x1A) = arg1;
     M2C_FIELD(temp_r6, s32 *, 0x10) = (s32) temp_r0;
-    temp_r0_2 = GetObject((s16) arg1);
+    temp_r0_2 = ObjectTable_Get((s16) arg1);
     temp_r1 = (M2C_FIELD(temp_r0, u16, 6) + 0x2000) & 0xC000;
     M2C_FIELD(temp_r6, s32 *, 0x14) = (s32) temp_r0_2;
     M2C_FIELD(temp_r6, s32 *, 0) = temp_r1;

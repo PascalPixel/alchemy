@@ -13,7 +13,7 @@ void Func_08092208(u32 object_id, s32 action, s32 z_offset)
     s32 adjusted;
     s16 remainder;
 
-    object = GetObject(object_id);
+    object = ObjectTable_Get(object_id);
     if (object != NULL) {
         angle = *(s16 *)((u8 *)object + 0x0a);
         adjusted = angle;

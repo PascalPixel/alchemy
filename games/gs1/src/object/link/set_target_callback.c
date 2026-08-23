@@ -15,9 +15,9 @@ struct Object_08092a1c {
 
 void Object_SetCallback(struct Object_08092a1c *, s32);
 
-void Func_08092a1c(u32 arg0, s32 arg1, s32 arg2) {
-    struct Object_08092a1c *first = GetObject(arg0);
-    struct Object_08092a1c *second = GetObject(arg1 & 0xff);
+void Object_SetTargetAndCallback(u32 arg0, s32 arg1, s32 arg2) {
+    struct Object_08092a1c *first = ObjectTable_Get(arg0);
+    struct Object_08092a1c *second = ObjectTable_Get(arg1 & 0xff);
 
     if (first != 0 && second != 0) {
         first->field_68 = second;

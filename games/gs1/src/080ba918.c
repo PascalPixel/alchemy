@@ -16,7 +16,7 @@ struct Record_080ba918 {
 
 struct Fields_080b7f70;
 
-void *Func_080b7f70(struct Fields_080b7f70 *, s32);
+void *GetMotionRecord(struct Fields_080b7f70 *, s32);
 
 struct Record_080ba918 *Func_080ba918(void *object, s32 value)
 {
@@ -26,7 +26,7 @@ struct Record_080ba918 *Func_080ba918(void *object, s32 value)
 
     object_index = 0;
     first_mask = 0xff;
-    while ((record = Func_080b7f70(object, object_index)) != NULL) {
+    while ((record = GetMotionRecord(object, object_index)) != NULL) {
         struct Child_080ba918 *child;
         struct Child_080ba918 **children;
         s32 child_count;

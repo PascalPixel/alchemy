@@ -3,7 +3,7 @@
 
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-void Func_08016418(struct Work *work, s32 release);
+void UiWork_Finalize(struct Work *work, s32 release);
 s32 Func_08017394(void *arg0);
 void WaitFrames(s32);
 s32 Resource_ResetEntry(u32 index);
@@ -15,7 +15,7 @@ void Func_0801c954(void) {
     u16 *p;
 
     r5 = *(u8 **)ADDR_03001E9C;
-    Func_08016418(M2C_FIELD(r5, s32 *, 0xFF4), 0);
+    UiWork_Finalize(M2C_FIELD(r5, s32 *, 0xFF4), 0);
     while (Func_08017394(M2C_FIELD(r5, s32 *, 0xFF4)) == 0) {
         WaitFrames(1);
     }

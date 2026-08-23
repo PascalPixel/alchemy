@@ -11,10 +11,10 @@ struct State_080f7e60 {
 
 extern struct State_080f7e60 *Data_02004c00;
 
-void Func_080f7df0(s32 index);
-void Func_080f7e34(s32 index);
+void AudioTrack_InsertSlotNode(s32 index);
+void AudioTrack_RemoveSlotNode(s32 index);
 
-void Func_080f7e60(s32 start, s32 count, const u8 *input)
+void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
 {
     s32 limit = count;
     s32 current = 0;
@@ -31,7 +31,7 @@ void Func_080f7e60(s32 start, s32 count, const u8 *input)
             u32 next_offset;
             u8 value;
 
-            Func_080f7e34(removal & mask);
+            AudioTrack_RemoveSlotNode(removal & mask);
             state = Data_02004c00;
             read_offset = state->input_cursor;
             value = input[read_offset];
@@ -44,7 +44,7 @@ void Func_080f7e60(s32 start, s32 count, const u8 *input)
 
             state->bucket_by_slot[slot & mask] = value;
             current++;
-            Func_080f7df0(slot & mask);
+            AudioTrack_InsertSlotNode(slot & mask);
             removal++;
         } while (current < limit);
     }
@@ -59,7 +59,7 @@ void Func_080f7e60(s32 start, s32 count, const u8 *input)
             u32 slot = (base + (u32)current) & mask;
             struct State_080f7e60 *state;
 
-            Func_080f7e34(slot);
+            AudioTrack_RemoveSlotNode(slot);
             state = *root;
             current++;
             state->bucket_by_slot[slot] = empty;

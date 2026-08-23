@@ -6,7 +6,7 @@
 s32 Func_08002dd8(s32);
 s32 Resource_ResetEntry(u16);
 s32 ScheduleCallback(s32);
-s32 Func_08015140();
+s32 UiWork_FinalizePending();
 extern u8 Data_080b00f5;
 
 void Func_080b0204(void) {
@@ -14,7 +14,7 @@ void Func_080b0204(void) {
 
     temp_r5 = *(void **)ADDR_03001F2C;
     ScheduleCallback((s32)&Data_080b00f5);
-    Func_08015140();
+    UiWork_FinalizePending();
     Resource_ResetEntry(M2C_FIELD(temp_r5, u16 *, 0x390));
     Resource_ResetEntry(M2C_FIELD(temp_r5, u16 *, 0x392));
     Resource_ResetEntry(M2C_FIELD(temp_r5, u16 *, 0x394));

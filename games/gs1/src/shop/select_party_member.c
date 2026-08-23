@@ -10,7 +10,7 @@
 
 s32 Modulo(s32, s32);
 void WaitFrames(s32);
-s32 Func_08015010(s32, s32, s32, s32, s32);
+s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 void UiWindow_Close(s32, s32);
 s32 Ability_GetAvailability(s32);
 void Func_080a1028(s32, s32, s32, s32, s32);
@@ -31,10 +31,10 @@ s32 Shop_SelectPartyMember(void)
     s32 redraw = 1;
     s32 unit_id = 0;
 
-    shop->money_window = Func_08015010(0, 9, BASE_W, 4, 2);
+    shop->money_window = UiWindow_CreateFar(0, 9, BASE_W, 4, 2);
     Shop_DrawMoney();
-    shop->item_window = Func_08015010(16, 12, 14, 8, 2);
-    list_window = Func_08015010(0, 14, 13, 3, 2);
+    shop->item_window = UiWindow_CreateFar(16, 12, 14, 8, 2);
+    list_window = UiWindow_CreateFar(0, 14, 13, 3, 2);
     shop->cursor.anchor->kind = 4;
     shop->mode = 12;
     Func_080a1028(list_window, 2, 0, 8, 0);

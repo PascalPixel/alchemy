@@ -63,7 +63,7 @@ void Func_08002dd8(s32);
 void WaitFrames(s32);
 void Func_08015278(s32);
 void Func_08015408(s32, s32, s32, s32);
-s32 Func_08015010(s32, s32, s32, s32, s32);
+s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 s32 Func_08077158(const u16 *);
 void Func_080a1090(s32);
 void Func_080a8034(s32, s32, s32, s32);
@@ -89,7 +89,7 @@ s32 OpenCharacterSelector(void)
     state->character_count =
         (u8)Func_08077158(state->character_ids);
     Func_080a8034(0, 3, 0, 7);
-    state->selector_window = Func_08015010(13, 0, 17, 5, 2);
+    state->selector_window = UiWindow_CreateFar(13, 0, 17, 5, 2);
     for (index = 0; index < ROW_CNT; index++)
         state->row_positions[index] = 30;
     state->selector_flags = 3;

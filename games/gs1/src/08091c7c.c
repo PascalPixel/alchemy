@@ -22,11 +22,11 @@ extern volatile s32 Data_03001c94;
 
 s16 *Func_0808d394(s32);
 void WaitFrames(s32);
-s32 Func_08015048(void);
+s32 UiWork_IsCompleteFar(void);
 s32 Func_08015390(s32, s32, s32, s32);
 void Func_080924d4(s32, s32);
 void Func_08015100(s32);
-void Func_08015140(void);
+void UiWork_FinalizePending(void);
 void Func_08091c44(s32, s32);
 
 s32 Func_08091c7c(s32 object_id, s32 force)
@@ -41,7 +41,7 @@ s32 Func_08091c7c(s32 object_id, s32 force)
     while (Data_03001c94 != 0)
         WaitFrames(1);
 
-    while (Func_08015048() == 0)
+    while (UiWork_IsCompleteFar() == 0)
         WaitFrames(1);
 
     WaitFrames(3);
@@ -63,12 +63,12 @@ s32 Func_08091c7c(s32 object_id, s32 force)
     if (result != 0) {
         Func_080924d4(object_id, 4);
         Func_08015100(value);
-        Func_08015140();
+        UiWork_FinalizePending();
         Func_08091c44(object_id, 4);
     } else {
         Func_080924d4(object_id, 3);
         Func_08015100(value);
-        Func_08015140();
+        UiWork_FinalizePending();
         Func_08091c44(object_id, 3);
     }
 

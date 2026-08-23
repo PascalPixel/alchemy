@@ -13,7 +13,7 @@ struct Work;
 extern u8 *Data_03001e98;
 
 void Func_0801a97c(void);
-void Func_08016418(struct Work *work, s32 release);
+void UiWork_Finalize(struct Work *work, s32 release);
 void WaitFrames(u32 value);
 s32 Resource_ResetEntry(u32 index);
 void Func_0801c21c(void);
@@ -25,7 +25,7 @@ void Func_0801b148(void)
     struct Node_0801b148 *node;
 
     Func_0801a97c();
-    Func_08016418(*(struct Work **)(state + 0x350), 2);
+    UiWork_Finalize(*(struct Work **)(state + 0x350), 2);
     WaitFrames(1);
     node = *(struct Node_0801b148 **)(state + 0x348);
     while (node != 0) {

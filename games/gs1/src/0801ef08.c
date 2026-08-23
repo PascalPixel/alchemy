@@ -13,7 +13,7 @@ struct Window {
 void Func_0801eea0(s32 flags);
 void Func_0801f200(s32);
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
-s32 Func_080162d4(u16, u16, u16, u16, s32);
+s32 UiWindow_Create(u16, u16, u16, u16, s32);
 
 void Func_0801ef08(s32 arg0) {
     s32 zero;
@@ -25,7 +25,7 @@ void Func_0801ef08(s32 arg0) {
     zero = 0;
     *busy = 1;
     Func_0801eea0(arg0);
-    window->handle = Func_080162d4(
+    window->handle = UiWindow_Create(
         window->left, window->top, window->right, window->bottom, 6);
     Func_0801f200(arg0);
     *busy = zero;

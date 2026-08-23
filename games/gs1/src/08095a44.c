@@ -20,7 +20,7 @@ void Func_08095a44(s32 arg)
     void *work;
 
     id = arg;
-    ctx = Func_08092054();
+    ctx = Object_GetById();
     /* The single-pass block preserves the first call's argument schedule. */
     do
     {
@@ -80,7 +80,7 @@ void Func_08095a44(s32 arg)
     WaitFrames(0x3C);
     Func_08092adc(Data_02000240[125], 0x4000, 0);
     WaitFrames(0x14);
-    Object_SetMode(Func_08092054(Data_02000240[125]), 0x1C);
+    Object_SetMode(Object_GetById(Data_02000240[125]), 0x1C);
     WaitFrames(0x28);
     Audio_PlayCue(0xA4);
     WaitFrames(0x64);

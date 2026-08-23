@@ -2,16 +2,16 @@
 #include "fixed_math.h"
 #include "motion_object.h"
 
-struct BattleObjectSlot *Func_080b7dd0(s32 arg0);
+struct BattleObjectSlot *GetBattleObjectSlot(s32 arg0);
 void Object_ResetMotion(struct MotionObject *);
 void Object_SetPosition(struct MotionObject *, s32, s32, s32);
 s32 ArcTan2(s32, s32);
 
-void Func_080b8000(s32 arg0) {
+void Actor_ResetMotionAtAnchor(s32 arg0) {
     s32 var_r0; s32 zero;
     struct BattleObjectSlot *slot;
     struct MotionObject *object;
-    slot = Func_080b7dd0(arg0);
+    slot = GetBattleObjectSlot(arg0);
     object = slot->object;
     zero = 0;
     object->acceleration = 0x20000;

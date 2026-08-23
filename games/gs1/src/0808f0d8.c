@@ -36,7 +36,7 @@ void Func_0808f0d8(struct Object_0808f0d8 *object)
     if (object == 0)
         return;
 
-    entity = Func_0808ba1c(Data_02000240.object_index);
+    entity = GetObject(Data_02000240.object_index);
     object->field34 = 0x10000;
     object->field30 = 0x20000;
     object->field55 = 0;

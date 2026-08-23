@@ -1,10 +1,10 @@
 #include "types.h"
 
 s32 Func_0808a540(u16);
-void Func_08015140(void);
+void UiWork_FinalizePending(void);
 s32 Func_080b2884(s32 value);
-void Func_08015038(s32, s32, s32, s32);
-s32 Func_08015048(void);
+void UiWork_Create(s32, s32, s32, s32);
+s32 UiWork_IsCompleteFar(void);
 void WaitFrames(u32);
 
 extern void *Data_03001f2c;
@@ -29,9 +29,9 @@ void Func_080b2928(s32 arg0)
     value = Func_0808a540(state->value);
     arg0 = Func_080b2884(arg0);
     *(u8 *)((u8 *)*modeSlot + 5) = 13;
-    Func_08015140();
-    Func_08015038(arg0, 5, 0, (value << 16) | 0x22);
-    while (Func_08015048() == 0)
+    UiWork_FinalizePending();
+    UiWork_Create(arg0, 5, 0, (value << 16) | 0x22);
+    while (UiWork_IsCompleteFar() == 0)
         WaitFrames(1);
     WaitFrames(1);
     *(u8 *)((u8 *)state->modeState + 5) = mode;

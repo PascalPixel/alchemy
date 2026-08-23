@@ -2,9 +2,9 @@
 #include "global_cells.h"
 
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-void Func_08015038(s32, s32, s32, s32);
-s32 Func_08015048(void);
-void Func_08015140(void);
+void UiWork_Create(s32, s32, s32, s32);
+s32 UiWork_IsCompleteFar(void);
+void UiWork_FinalizePending(void);
 void WaitFrames(u32);
 s32 Func_0808a540(u16);
 extern u8 Data_00000c9b[];
@@ -38,9 +38,9 @@ void Func_080b0574(s32 arg0) {
         var_r5 += (s32)Data_00000d4c - (s32)Data_00000c9b;
     }
     (*var_r7)[5] = 0xDU;
-    Func_08015140();
-    Func_08015038(var_r5, 5, 0, (temp_r8 << 0x10) | 0x22);
-    while (Func_08015048() == 0) {
+    UiWork_FinalizePending();
+    UiWork_Create(var_r5, 5, 0, (temp_r8 << 0x10) | 0x22);
+    while (UiWork_IsCompleteFar() == 0) {
         WaitFrames(1U);
     }
     WaitFrames(1U);

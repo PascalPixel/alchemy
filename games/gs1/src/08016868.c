@@ -4,7 +4,7 @@
 
 struct Work;
 
-void Func_08016418(struct Work *, s32);
+void UiWork_Finalize(struct Work *, s32);
 s32 Func_080168f4(void *);
 void Func_08019854(void *);
 
@@ -38,7 +38,7 @@ void Func_08016868(void)
                     {
                         u8 *entity = *(u8 **)channel;
 
-                        Func_08016418(
+                        UiWork_Finalize(
                             (struct Work *)entity,
                             (u16)(*(u16 *)(entity + 0x16) & 2)
                         );

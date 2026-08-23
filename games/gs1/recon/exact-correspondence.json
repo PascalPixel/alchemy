@@ -7992,7 +7992,7 @@
     },
     {
       "en_owner": "08016418",
-      "source": "games/gs1/src/08016418.c",
+      "source": "games/gs1/src/ui/work/finalize.c",
       "size": 96,
       "status": "shared_core",
       "starts": {
@@ -8472,7 +8472,7 @@
     },
     {
       "en_owner": "080174f8",
-      "source": "games/gs1/src/080174f8.c",
+      "source": "games/gs1/src/ui/text/prepare_message_work.c",
       "size": 168,
       "status": "regional_core",
       "starts": {
@@ -8502,7 +8502,7 @@
     },
     {
       "en_owner": "080175a0",
-      "source": "games/gs1/src/080175a0.c",
+      "source": "games/gs1/src/ui/text/show_message_and_wait.c",
       "size": 32,
       "status": "shared_core",
       "starts": {
@@ -11142,7 +11142,7 @@
     },
     {
       "en_owner": "0801e7c0",
-      "source": "games/gs1/src/0801e7c0.c",
+      "source": "games/gs1/src/ui/text/draw_character.c",
       "size": 150,
       "status": "regional_core",
       "starts": {
@@ -13362,7 +13362,7 @@
     },
     {
       "en_owner": "0802875c",
-      "source": "games/gs1/src/0802875c.c",
+      "source": "games/gs1/src/menu/load_resource_slot.c",
       "size": 76,
       "status": "shared_core",
       "starts": {
@@ -19962,7 +19962,7 @@
     },
     {
       "en_owner": "08092054",
-      "source": "games/gs1/src/08092054.c",
+      "source": "games/gs1/src/object/get_by_id.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -30492,7 +30492,7 @@
     },
     {
       "en_owner": "080b7dd0",
-      "source": "games/gs1/src/080b7dd0.c",
+      "source": "games/gs1/src/battle/motion/get_battle_object_slot.c",
       "size": 52,
       "status": "shared_core",
       "starts": {
@@ -30582,7 +30582,7 @@
     },
     {
       "en_owner": "080b7e60",
-      "source": "games/gs1/src/080b7e60.c",
+      "source": "games/gs1/src/battle/motion/activate_battle_object_slot.c",
       "size": 26,
       "status": "shared_core",
       "starts": {
@@ -30702,7 +30702,7 @@
     },
     {
       "en_owner": "080b7f70",
-      "source": "games/gs1/src/080b7f70.c",
+      "source": "games/gs1/src/battle/motion/get_motion_record.c",
       "size": 42,
       "status": "shared_core",
       "starts": {
@@ -30762,7 +30762,7 @@
     },
     {
       "en_owner": "080b8000",
-      "source": "games/gs1/src/080b8000.c",
+      "source": "games/gs1/src/battle/motion/reset_actor_at_anchor.c",
       "size": 100,
       "status": "shared_core",
       "starts": {
@@ -38412,7 +38412,7 @@
     },
     {
       "en_owner": "080f7db4",
-      "source": "games/gs1/src/080f7db4.c",
+      "source": "games/gs1/src/audio/track/reset_slot_buckets.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -38442,7 +38442,7 @@
     },
     {
       "en_owner": "080f7df0",
-      "source": "games/gs1/src/080f7df0.c",
+      "source": "games/gs1/src/audio/track/insert_slot_node.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -38472,7 +38472,7 @@
     },
     {
       "en_owner": "080f7e34",
-      "source": "games/gs1/src/080f7e34.c",
+      "source": "games/gs1/src/audio/track/remove_slot_node.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -38502,7 +38502,7 @@
     },
     {
       "en_owner": "080f7e60",
-      "source": "games/gs1/src/080f7e60.c",
+      "source": "games/gs1/src/audio/track/consume_slot_bytes.c",
       "size": 208,
       "status": "shared_core",
       "starts": {
@@ -40619,7 +40619,7 @@
     },
     {
       "en_owner": "08017364",
-      "source": "games/gs1/src/08017364.c",
+      "source": "games/gs1/src/ui/work/is_complete.c",
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x080172b4"
     },
     {
@@ -40654,7 +40654,7 @@
     },
     {
       "en_owner": "08019a54",
-      "source": "games/gs1/src/08019a54.c",
+      "source": "games/gs1/src/ui/work/finalize_pending.c",
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x08019a50"
     },
     {

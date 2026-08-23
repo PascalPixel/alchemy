@@ -30,21 +30,21 @@ s32 WaitFrames(s32);
 s32 Object_InitializeMode(void *, s32);
 s32 Func_08009100(void *);
 struct Creature_080b8ec4 *Runtime_GetObject();
-struct Runtime_080b8ec4 *Func_080b7dd0(s32);
-s32 Func_080b7e60(s32);
+struct Runtime_080b8ec4 *GetBattleObjectSlot(s32);
+s32 ActivateBattleObjectSlot(s32);
 void Func_080b8ec4(s32 arg0)
 {
   struct ActorData_080b8ec4 *actor_data;
   struct Actor_080b8ec4 *object;
   if (Runtime_GetObject()->field_38 <= 0)
   {
-    object = Func_080b7dd0(arg0)->field_00->field_50;
+    object = GetBattleObjectSlot(arg0)->field_00->field_50;
     Object_InitializeMode(object, 5);
     actor_data = object->field_28;
     actor_data->field_05 = 6;
     actor_data->field_16 = 0xFF;
     WaitFrames(4);
     Func_08009100(object);
-    Func_080b7e60(arg0);
+    ActivateBattleObjectSlot(arg0);
   }
 }

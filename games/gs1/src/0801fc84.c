@@ -12,10 +12,10 @@ u32 Func_08005ac0(s32);
 void Func_0801776c(s32, s32);
 s32 Func_08020244(s16, s32);
 s32 Func_08017658(s32, s32, s32, s32);
-s32 Func_08017364(void);
+s32 UiWork_IsComplete(void);
 s32 WaitFrames(s32);
 s32 Func_08028df4(s32, s32, s32, s32);
-void Func_08019a54(void);
+void UiWork_FinalizePendingCore(void);
 
 s32 Func_0801fc84(void)
 {
@@ -34,13 +34,13 @@ s32 Func_0801fc84(void)
             result = value;
         } else {
             Func_08017658((s32)&Value_00000016, 8, 1, 2);
-            while (Func_08017364() == 0) {
+            while (UiWork_IsComplete() == 0) {
                 WaitFrames(1);
             }
             if (Func_08028df4(1, 0, 3, 1) != 0) {
-                Func_08019a54();
+                UiWork_FinalizePendingCore();
             } else {
-                Func_08019a54();
+                UiWork_FinalizePendingCore();
                 found = Func_08005ac0(value);
                 found |= Func_08005ac0(value + 3);
                 if (found != 0) {

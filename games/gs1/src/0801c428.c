@@ -4,7 +4,7 @@
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 ScheduleCallback(s32);
-void Func_08016418(struct Work *work, s32 release);
+void UiWork_Finalize(struct Work *work, s32 release);
 void Func_0801c3e8(void);
 
 void Func_0801c428(void) {
@@ -12,7 +12,7 @@ void Func_0801c428(void) {
 
     temp_r0 = M2C_FIELD(*(void **)ADDR_03001EBC, void **, 0x230);
     if ((temp_r0 != NULL) && (M2C_FIELD(temp_r0, u16 *, 0x16) != 0)) {
-        Func_08016418(temp_r0, 2);
+        UiWork_Finalize(temp_r0, 2);
         ScheduleCallback((s32)Func_0801c3e8);
     }
 }

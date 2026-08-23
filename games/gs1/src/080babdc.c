@@ -12,7 +12,7 @@ struct Runtime_080babdc {
 extern struct Runtime_080babdc *Data_03001e74;
 
 void *Runtime_GetObject(s32 id);
-struct ObjectSlot_080babdc *Func_080b7dd0(s32 id);
+struct ObjectSlot_080babdc *GetBattleObjectSlot(s32 id);
 void Object_SetMode(void *object, s32 mode);
 void Func_080152b8(u16 *selection);
 void Func_080ba918(void *object, s32 value);
@@ -28,7 +28,7 @@ void Func_080babdc(s32 id)
     s32 remaining;
 
     Runtime_GetObject(id);
-    Object_SetMode(Func_080b7dd0(id)->object, 5);
+    Object_SetMode(GetBattleObjectSlot(id)->object, 5);
 
     sel = selection;
     remaining = 1;
@@ -37,12 +37,12 @@ void Func_080babdc(s32 id)
         sel[1] = target;
         sel[0] = id;
         Func_080152b8(sel);
-        Func_080ba918(Func_080b7dd0(id)->object, 7);
+        Func_080ba918(GetBattleObjectSlot(id)->object, 7);
         WaitFrames(2);
 
         sel[0] = id;
         Func_080152b8(sel);
-        Func_080ba918(Func_080b7dd0(id)->object, Func_080b6cd0(id));
+        Func_080ba918(GetBattleObjectSlot(id)->object, Func_080b6cd0(id));
         WaitFrames(2);
         remaining--;
     } while (remaining >= 0);

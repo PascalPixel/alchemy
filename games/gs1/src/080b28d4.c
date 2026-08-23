@@ -6,10 +6,10 @@ struct Work_080b28d4 {
 };
 
 s32 Func_0808a540(u16);
-void Func_08015140(void);
+void UiWork_FinalizePending(void);
 s32 Func_080b2884(s32 value);
-void Func_08015038(s32, s32, s32, s32);
-s32 Func_08015048(void);
+void UiWork_Create(s32, s32, s32, s32);
+s32 UiWork_IsCompleteFar(void);
 void WaitFrames(u32);
 
 extern struct Work_080b28d4 *Data_03001f2c;
@@ -19,10 +19,10 @@ void Func_080b28d4(s32 value)
     s32 param;
 
     param = Func_0808a540(Data_03001f2c->value_3a4);
-    Func_08015140();
+    UiWork_FinalizePending();
     value = Func_080b2884(value);
-    Func_08015038(value, 5, 0, (param << 0x10) | 0x22);
-    while (Func_08015048() == 0) {
+    UiWork_Create(value, 5, 0, (param << 0x10) | 0x22);
+    while (UiWork_IsCompleteFar() == 0) {
         WaitFrames(1U);
     }
     WaitFrames(1U);

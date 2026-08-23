@@ -1,7 +1,7 @@
 #include "types.h"
 
 u8 *Runtime_GetObject(s32);
-s32 *Func_080b7dd0(s32);
+s32 *GetBattleObjectSlot(s32);
 void Object_SetMode(s32, s32);
 void Object_SetAction(s32, s32);
 
@@ -21,6 +21,6 @@ s32 Func_080b7aac(s32 id)
         value = 5 - value;
     }
 
-    Object_SetMode(*Func_080b7dd0(id), value);
-    Object_SetAction(*Func_080b7dd0(id), (id & 3) + 14);
+    Object_SetMode(*GetBattleObjectSlot(id), value);
+    Object_SetAction(*GetBattleObjectSlot(id), (id & 3) + 14);
 }

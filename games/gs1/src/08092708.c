@@ -8,7 +8,7 @@
 #define OBJECT_VERTICAL_STEP(object) FIELD_S32(object, 0x28)
 #define OBJECT_MIRRORED_Y(object) FIELD_S32(object, 0x3C)
 
-s32 Func_08092054(u32);
+s32 Object_GetById(u32);
 void Audio_PlayCue(s32);
 void Object_SetMode(void *, s32);
 void WaitFrames(u32);
@@ -24,7 +24,7 @@ void Func_08092708(s32 sequence_arg, s32 mode_or_frame, s32 optional_action) {
     void *object;
     u8 *object_flags;
 
-    object = (void *)Func_08092054(sequence_arg);
+    object = (void *)Object_GetById(sequence_arg);
     base_z = OBJECT_Z(object);
     if (object != 0) {
         Audio_PlayCue(0x121);

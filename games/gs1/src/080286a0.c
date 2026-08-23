@@ -17,7 +17,7 @@ extern u8 Data_080373ef[];
 extern u8 Data_0000001f;
 
 void Func_08016478(void *work);
-void Func_0801e7c0(s32 resource_id, void *work, s32 arg2, s32 arg3);
+void UiText_DrawCharacter(s32 resource_id, void *work, s32 arg2, s32 arg3);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 sound_id);
 
@@ -58,7 +58,7 @@ s32 Func_080286a0(s32 initial_selection, s32 target_selection)
         } else {
             resource_id = state->resource_ids[state->selection] + (s32)&Data_0000001f;
         }
-        Func_0801e7c0(resource_id, state->work, 0, 0);
+        UiText_DrawCharacter(resource_id, state->work, 0, 0);
 
         current_selection = state->selection;
         selection_delay_table = Data_080373ef;

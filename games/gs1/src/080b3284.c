@@ -54,7 +54,7 @@ s32 Func_080b0634(s32);
 #define Inn_PlaySleepSequence Func_080b3398
 s32 Inn_CalculateRoomPrice(s32);
 void Inn_PlaySleepSequence(s32);
-s32 Func_08015010(s32, s32, s32, s32, s32);
+s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 void UiWindow_Close(s32, s32);
 s32 Func_080150f8(u16, s32, s32, s32);
 void UiText_DrawQuantity(s32, s32);
@@ -84,7 +84,7 @@ s32 Func_080b3284(s32 mode, s32 object_id)
     UiText_DrawQuantity(amount, 5);
     message_base = (s32)&Value_00000d1c;
     Func_080b04dc(message_base);
-    state->window = Func_08015010(0, 16, MESSAGE_WINDOW_ROWS, 4, 2);
+    state->window = UiWindow_CreateFar(0, 16, MESSAGE_WINDOW_ROWS, 4, 2);
     Shop_DrawMoney();
 
     if (Func_080b0634(0) != 0) {

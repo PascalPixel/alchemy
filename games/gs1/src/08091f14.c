@@ -22,7 +22,7 @@ extern struct SharedData_08091f14 Data_02000240;
 
 void Func_0809537c(s32 flags);
 s16 Func_0808b074(s32 value);
-void *Func_0808ba1c(u32 object);
+void *GetObject(u32 object);
 /* Object table: 192 pointers at Data_03001ebc + 0x14 (games/gs1/src/0808ba1c.c). */
 #define GetObject Func_0808ba1c
 void Func_0808adf0(void *object);

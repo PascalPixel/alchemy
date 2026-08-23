@@ -3,14 +3,14 @@
 s32 WaitFrames(s32);
 s32 Object_SetMode(s32, s32);
 s32 Func_0808ef70(s32, s32);
-s32 Func_08092054(u32);
+s32 Object_GetById(u32);
 s32 Audio_PlayCue(s32);
 
 s32 Func_0808e078(s32 effect, s32 target, s32 mode) {
     s32 object;
     s32 result;
 
-    object = Func_08092054(target);
+    object = Object_GetById(target);
     result = 0;
     if (object != 0) {
         Audio_PlayCue(0x7C);

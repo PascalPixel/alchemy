@@ -3,7 +3,7 @@
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 Object_Destroy(s32);
-void *Func_080b7dd0(s32 arg0);
+void *GetBattleObjectSlot(s32 arg0);
 
 void *Func_080b7e7c(void) {
     s32 var_r0;
@@ -16,7 +16,7 @@ void *Func_080b7e7c(void) {
         if (var_r6 <= 7) {
             var_r0 = var_r6;
         }
-        temp_r0 = Func_080b7dd0(var_r0);
+        temp_r0 = GetBattleObjectSlot(var_r0);
         if ((temp_r0 != NULL) && (M2C_FIELD(temp_r0, s16 *, 0x28) != 0)) {
             Object_Destroy(M2C_FIELD(temp_r0, s32 *, 0));
             M2C_FIELD(temp_r0, s32 *, 0) = 0;

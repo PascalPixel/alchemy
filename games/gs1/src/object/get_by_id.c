@@ -1,6 +1,6 @@
 #include "object_runtime.h"
 
-struct ObjectRuntime *Func_08092054(u32 object_id)
+struct ObjectRuntime *Object_GetById(u32 object_id)
 {
     struct ObjectRuntime *object = GetObject(object_id);
 

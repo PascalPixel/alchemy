@@ -8,8 +8,8 @@
 #endif
 
 void WaitFrames(s32);
-s32 Func_080162d4(s32, s32, s32, s32, s32);
-void Func_08016418(struct Work *work, s32 release);
+s32 UiWindow_Create(s32, s32, s32, s32, s32);
+void UiWork_Finalize(struct Work *work, s32 release);
 volatile unsigned char Func_08016738(void);
 void Func_08017aa4(s16 *, s32, s32, s32);
 #if defined(GS1_EDITION_JA)
@@ -45,7 +45,7 @@ s32 Func_08026fa8(void) {
         }
     } else {
 active:
-        work = Func_080162d4(0, 7, 30, 4, 42);
+        work = UiWindow_Create(0, 7, 30, 4, 42);
         Func_08016738();
         Func_0801965c((s32)&Value_00000845, buffer, TEXT_COUNT);
         Func_08017aa4(buffer, work, 0, 4);
@@ -53,7 +53,7 @@ active:
             WaitFrames(1);
         } while ((Data_03001c94 & 3) == 0 &&
                  *(s32 *)((u8 *)Data_03001f34 + 0x4C) != 0);
-        Func_08016418(work, 1);
+        UiWork_Finalize(work, 1);
     }
     return result;
 }

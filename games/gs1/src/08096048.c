@@ -15,7 +15,7 @@ struct PositionSource_08096048 {
 extern s32 Data_02000240[];
 extern u32 Data_03001800;
 
-s32 Func_08092054(u32);
+s32 Object_GetById(u32);
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
@@ -31,7 +31,7 @@ void Func_08096048(struct EffectSlot *effect)
     u32 random;
 
     source = (struct PositionSource_08096048 *)
-        Func_08092054(Data_02000240[125]);
+        Object_GetById(Data_02000240[125]);
     state = effect->state;
 
     if (state == 0) {

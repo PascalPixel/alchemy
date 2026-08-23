@@ -12,7 +12,7 @@ struct State_08028aa8 {
 extern struct State_08028aa8 *Data_03001f38;
 
 extern void Func_080164d4(void *, s32, s32, s32, s32);
-extern void Func_0801e7c0(const u8 *, void *, s32, s32);
+extern void UiText_DrawCharacter(const u8 *, void *, s32, s32);
 
 void Func_08028aa8(void)
 {
@@ -31,12 +31,12 @@ void Func_08028aa8(void)
             {
                 const u8 *text = (const u8 *)0xc7b;
 
-                Func_0801e7c0(text, state->window_07c, 18, 40);
-                Func_0801e7c0(text + 1, state->window_07c, 18, 48);
-                Func_0801e7c0(text + 2, state->window_07c, 18, 56);
-                Func_0801e7c0(text + 3, state->window_07c, 18, 64);
+                UiText_DrawCharacter(text, state->window_07c, 18, 40);
+                UiText_DrawCharacter(text + 1, state->window_07c, 18, 48);
+                UiText_DrawCharacter(text + 2, state->window_07c, 18, 56);
+                UiText_DrawCharacter(text + 3, state->window_07c, 18, 64);
                 text += 4;
-                Func_0801e7c0(text, state->window_07c, 18, 72);
+                UiText_DrawCharacter(text, state->window_07c, 18, 72);
                 goto done;
             }
         }
@@ -44,10 +44,10 @@ void Func_08028aa8(void)
         {
             const u8 *text = (const u8 *)0xc7b;
 
-            Func_0801e7c0(text, state->window_07c, 18, 40);
-            Func_0801e7c0(text + 1, state->window_07c, 18, 48);
+            UiText_DrawCharacter(text, state->window_07c, 18, 40);
+            UiText_DrawCharacter(text + 1, state->window_07c, 18, 48);
             text += 2;
-            Func_0801e7c0(text, state->window_07c, 18, 56);
+            UiText_DrawCharacter(text, state->window_07c, 18, 56);
             goto done;
         }
 
@@ -55,8 +55,8 @@ mode_other:
         {
             const u8 *text = (const u8 *)0xc7b;
 
-            Func_0801e7c0(text++, state->window_07c, 18, 40);
-            Func_0801e7c0(text, state->window_07c, 18, 48);
+            UiText_DrawCharacter(text++, state->window_07c, 18, 40);
+            UiText_DrawCharacter(text, state->window_07c, 18, 48);
         }
 done:
         ;

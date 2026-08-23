@@ -8,7 +8,7 @@ u32 Func_080053e8(const void *, void *);
 void Resource_CopyData(s32, s32, void *);
 void Func_08002df0(void *);
 
-void Func_0802875c(s32 arg0, s32 index)
+void Menu_LoadResourceSlot(s32 arg0, s32 index)
 {
     s32 size = 1024;
     void *buffer = (void *)Func_08004938(size);

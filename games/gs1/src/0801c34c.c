@@ -6,7 +6,7 @@ extern s16 Data_02000240[];
 
 s32 Func_0808a5d0(s16, s16);
 s32 Func_080187ac(s32, s32, s32, s32, s32);
-s32 Func_080162d4(s32, s32, s32, s32, s32);
+s32 UiWindow_Create(s32, s32, s32, s32, s32);
 void Func_0801e74c(s32, s32, s32, s32);
 void Func_0801c3e8(void);
 s32 ScheduleCallbackAfterFrames(const void *, s32);
@@ -30,7 +30,7 @@ void Func_0801c34c(void)
     Func_080187ac(resource, (s32)&x, (s32)&y, (s32)&third, (s32)&fourth);
     x = (30 - third) >> 1;
     y = (10 - fourth) >> 1;
-    object = Func_080162d4(x, y, third, fourth, 2);
+    object = UiWindow_Create(x, y, third, fourth, 2);
     /* 生成した番号を+0x230へ保存してから次の処理を呼ぶ。 */
     *(s32 *)(base + 0x230) = object;
     Func_0801e74c(resource, object, 0, 0);

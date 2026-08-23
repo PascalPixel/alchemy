@@ -6,21 +6,21 @@
 struct Work;
 struct Slot;
 
-struct Globals_080174f8 {
+struct UiTextMessageWorkGlobals {
     void *state;
     u8 padding4[0x54];
     void *control;
 };
 
-extern volatile struct Globals_080174f8 Data_03001e8c;
+extern volatile struct UiTextMessageWorkGlobals Data_03001e8c;
 
-s32 Func_08018038(s32, s32);
-struct Work *Func_080162d4(s32, s32, s32, s32, s32);
+s32 UiText_BuildRenderEntries(s32, s32);
+struct Work *UiWindow_Create(s32, s32, s32, s32, s32);
 void Func_08017248(s32, s32, s32, s32, s32);
 struct Slot *Func_08016670(struct Work *, s32, s32);
-void Func_08016418(struct Work *, s32);
+void UiWork_Finalize(struct Work *, s32);
 
-void Func_080174f8(s32 argument)
+void UiText_PrepareMessageWork(s32 argument)
 {
     s32 index;
     s32 result;
@@ -35,7 +35,7 @@ void Func_080174f8(s32 argument)
     control = Data_03001e8c.control;
     result = 0;
     FIELD(state, s8, RENDER_MENU_STATE_OFS) = 2;
-    index = Func_08018038(argument, 1);
+    index = UiText_BuildRenderEntries(argument, 1);
     one = 1;
     FIELD(state, s8, RENDER_MENU_STATE_OFS) = one;
     active_offset = RENDER_ENTRY_TBL_OFS + index * 2;
@@ -46,7 +46,7 @@ void Func_080174f8(s32 argument)
             goto use_existing;
         }
         {
-            work = Func_080162d4(0, 15, 30, 6, 10);
+            work = UiWindow_Create(0, 15, 30, 6, 10);
             existing = work;
             FIELD(control, struct Work *, 0) = existing;
             Func_08017248(0, 15, 30, 6, one);
@@ -61,7 +61,7 @@ have_work:
             FIELD(control, s32, 4) = result;
             FIELD(control, s32, 8) = 0;
             if (result == 0) {
-                Func_08016418(work, one);
+                UiWork_Finalize(work, one);
             }
         }
     }

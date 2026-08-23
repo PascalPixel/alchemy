@@ -3,7 +3,7 @@
 
 extern u8 *Data_03001ebc;
 
-void *Func_0808ba1c(u32 arg0) {
+void *GetObject(u32 arg0) {
     u8 *base = Data_03001ebc;
     u32 offset;
     if (arg0 > 0xbf)

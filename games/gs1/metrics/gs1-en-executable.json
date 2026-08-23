@@ -1814,7 +1814,7 @@
     "start": 134342592,
     "end": 134342742,
     "kind": "thumb",
-    "evidence": "games/gs1/src/0801e7c0.c:byte-identical-claimed-C"
+    "evidence": "games/gs1/src/ui/text/draw_character.c:byte-identical-claimed-C"
    },
    {
     "start": 134342742,
@@ -3908,7 +3908,7 @@
     "start": 134971248,
     "end": 134971290,
     "kind": "thumb",
-    "evidence": "games/gs1/src/080b7f70.c:byte-identical-claimed-C"
+    "evidence": "games/gs1/src/battle/motion/get_motion_record.c:byte-identical-claimed-C"
    },
    {
     "start": 134971290,

@@ -10,12 +10,12 @@ extern volatile u32 Data_03001c94;
 
 s32 Func_08092ba8(s32);
 s32 Func_080915ac(u32);
-s32 Func_08015038(s32, s32, s32, s32);
+s32 UiWork_Create(s32, s32, s32, s32);
 s32 Func_080150f8(s32, s32, s32, s32);
-s32 Func_08015048(void);
+s32 UiWork_IsCompleteFar(void);
 s32 Func_08015050(s32);
 void Func_08015100(s32);
-void Func_08015140(void);
+void UiWork_FinalizePending(void);
 void WaitFrames(s32);
 
 void Func_080931ec(
@@ -29,17 +29,17 @@ void Func_080931ec(
     s32 first_handle;
     s32 second_handle;
 
-    first_handle = Func_08015038(
+    first_handle = UiWork_Create(
         runtime->effect_count++, first_x, first_y,
         Func_080915ac(first_id) << 16);
     Func_080150f8(first_id, 0, first_arg, first_extra);
 
-    second_handle = Func_08015038(
+    second_handle = UiWork_Create(
         runtime->effect_count++, second_x, second_y,
         Func_080915ac(second_id) << 16);
     Func_080150f8(second_id, 0, second_arg, second_extra);
 
-    while (Func_08015048() == 0)
+    while (UiWork_IsCompleteFar() == 0)
         WaitFrames(1);
 
     WaitFrames(1);
@@ -49,7 +49,7 @@ void Func_080931ec(
     WaitFrames(1);
     Func_08015100(first_id);
     Func_08015100(second_id);
-    Func_08015140();
+    UiWork_FinalizePending();
     WaitFrames(1);
 
     while (Func_08015050(first_handle) == 0)

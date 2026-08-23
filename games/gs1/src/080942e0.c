@@ -35,7 +35,7 @@ struct Effect_080942e0 {
 
 extern u32 Data_02000240[];
 
-struct Entity_080942e0 *Func_0808ba1c(u32);
+struct Entity_080942e0 *GetObject(u32);
 /* Object table: 192 pointers at Data_03001ebc + 0x14 (games/gs1/src/0808ba1c.c). */
 #define GetObject Func_0808ba1c
 struct Effect_080942e0 *Func_08009048(struct Entity_080942e0 *, s32);

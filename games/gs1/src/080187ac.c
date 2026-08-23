@@ -2,7 +2,7 @@
 #include "global_cells.h"
 #include "gs1_edition.h"
 
-extern s32 Func_08018038(s32, s32);
+extern s32 UiText_BuildRenderEntries(s32, s32);
 extern void Func_0801868c(s32, s32, s32, s32, s32, s32, s32);
 
 s32 Func_080187ac(s32 no, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
@@ -12,7 +12,7 @@ s32 Func_080187ac(s32 no, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
     s32 offset;
 
     base = *(u16 **)ADDR_03001E8C;
-    temp = Func_08018038(no, 0);
+    temp = UiText_BuildRenderEntries(no, 0);
     offset = temp * 2 + RENDER_ENTRY_TBL_OFS;
     if (*(u16 *)((u8 *)base + offset) == 0)
     {

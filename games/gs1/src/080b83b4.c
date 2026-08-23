@@ -1,7 +1,7 @@
 #include "types.h"
 #include "motion_object.h"
 
-struct BattleObjectSlot *Func_080b7dd0(s32);
+struct BattleObjectSlot *GetBattleObjectSlot(s32);
 void Func_080b83b0(void *, s32);
 
 void Func_080b83b4(s32 arg0, s32 arg1) {
@@ -18,8 +18,8 @@ void Func_080b83b4(s32 arg0, s32 arg1) {
         s32 z;
     } pos;
 
-    obj1 = Func_080b7dd0(arg0)->object;
-    second_slot = Func_080b7dd0(arg1);
+    obj1 = GetBattleObjectSlot(arg0)->object;
+    second_slot = GetBattleObjectSlot(arg1);
     obj2 = second_slot->object;
 
     a1 = obj1->target_x;

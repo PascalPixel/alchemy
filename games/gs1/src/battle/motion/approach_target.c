@@ -2,7 +2,7 @@
 #include "types.h"
 #include "motion_object.h"
 
-struct BattleObjectSlot *Func_080b7dd0(s32);
+struct BattleObjectSlot *GetBattleObjectSlot(s32);
 s32 FixedPoint_Ratio(s32, s32);
 void Object_ResetMotion(struct MotionObject *);
 void Object_SetPosition(struct MotionObject *, s32, s32, s32);
@@ -15,8 +15,8 @@ void BattleMotion_ApproachTarget(
     s32 initial_velocity_y
 )
 {
-    struct BattleObjectSlot *actor_slot = Func_080b7dd0(actor_id);
-    struct BattleObjectSlot *target_slot = Func_080b7dd0(target_id);
+    struct BattleObjectSlot *actor_slot = GetBattleObjectSlot(actor_id);
+    struct BattleObjectSlot *target_slot = GetBattleObjectSlot(target_id);
     struct MotionObject *object = actor_slot->object;
     struct MotionObject *target = target_slot->object;
     s32 scale = 75;

@@ -10,12 +10,12 @@ void Func_080fa264(void *player);
 extern void *Data_080fc624[];
 extern SoundTableEntry Data_080fc684[];
 
-void Audio_ResumeSound(u16 sound_id)
+void Audio_ResumeSound(u16 audio_cue_id)
 {
-    u32 table_offset = sound_id;
+    u32 table_offset = audio_cue_id;
     void * volatile *players;
-    SoundTableEntry *sound_table;
-    SoundTableEntry *sound;
+    SoundTableEntry *audio_cue_table;
+    SoundTableEntry *audio_cue;
     void *player;
     u32 current_header;
     u32 target_header;
@@ -24,15 +24,15 @@ void Audio_ResumeSound(u16 sound_id)
 
     table_offset <<= 16;
     players = Data_080fc624;
-    sound_table = Data_080fc684;
+    audio_cue_table = Data_080fc684;
     table_offset >>= 13;
-    sound = (SoundTableEntry *)((unsigned char *)sound_table + table_offset);
-    player_id = sound->player;
+    audio_cue = (SoundTableEntry *)((unsigned char *)audio_cue_table + table_offset);
+    player_id = audio_cue->player;
     player_slot = player_id << 1;
     player_slot += player_id;
     player = players[player_slot];
     current_header = *(volatile u32 *)player;
-    target_header = sound->header;
+    target_header = audio_cue->header;
 
     if (current_header == target_header)
         Func_080fa264(player);

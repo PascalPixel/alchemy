@@ -12,14 +12,14 @@ extern SoundTableEntry Data_080fc684[];
 void MusicPlayer_StartSong(void *, s32);
 void Func_080fa264(void *);
 
-void Audio_PlayOrResumeSound(u16 sound_id)
+void Audio_PlayOrResumeSound(u16 audio_cue_id)
 {
     s32 **players = Data_080fc624;
-    SoundTableEntry *sound_table = Data_080fc684;
-    SoundTableEntry *sound = &sound_table[sound_id];
-    s32 *player = players[sound->player * 3];
+    SoundTableEntry *audio_cue_table = Data_080fc684;
+    SoundTableEntry *audio_cue = &audio_cue_table[audio_cue_id];
+    s32 *player = players[audio_cue->player * 3];
     s32 current_header = player[0];
-    s32 target_header = sound->header;
+    s32 target_header = audio_cue->header;
 
     if (current_header != target_header) {
         MusicPlayer_StartSong(player, target_header);

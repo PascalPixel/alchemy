@@ -1,0 +1,37 @@
+#include "types.h"
+
+extern s16 Data_02000240[];
+extern u8 Value_0000006a;
+extern u8 Value_000000a2;
+extern u8 Value_000000a1;
+extern u8 Value_000000a0;
+extern u8 Value_000000a3;
+extern u8 Data_0200e9d0[];
+extern u8 Data_0200ee08[];
+extern u8 Data_0200ec28[];
+extern u8 Data_0200eac0[];
+extern u8 Data_0200ee98[];
+extern u8 Data_0200e9b8[];
+
+#define SelectTertiarySceneData Func_02000a80
+
+s32 SelectTertiarySceneData(void) {
+    s16 scene_variant = Data_02000240[224];
+
+    if (scene_variant == (s32)&Value_0000006a) {
+        return (s32)Data_0200e9d0;
+    }
+    if (scene_variant == (s32)&Value_000000a2) {
+        return (s32)Data_0200ee08;
+    }
+    if (scene_variant == (s32)&Value_000000a1) {
+        return (s32)Data_0200ec28;
+    }
+    if (scene_variant == (s32)&Value_000000a0) {
+        return (s32)Data_0200eac0;
+    }
+    if (scene_variant == (s32)&Value_000000a3) {
+        return (s32)Data_0200ee98;
+    }
+    return (s32)Data_0200e9b8;
+}

@@ -13,7 +13,7 @@
 #endif
 
 s32 GameFlag_IsSet(s32);
-s32 Func_08019d2c(s32);
+s32 Localization_LookupEntryId(s32);
 void Func_0801a4fc(s32, s32, s32 *, s32 *, s32, s32);
 
 void Func_0801ed40(u32 slot, s32 character, s32 value)
@@ -33,7 +33,7 @@ void Func_0801ed40(u32 slot, s32 character, s32 value)
             character = 0x13;
     }
 
-    character_id = Func_08019d2c(character);
+    character_id = Localization_LookupEntryId(character);
     if (character_id != -1U) {
         if (slot > 1U) {
             if (*(u16 *)(state + SLOT1_ID_OFS) == character_id) {

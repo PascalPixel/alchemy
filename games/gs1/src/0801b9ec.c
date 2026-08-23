@@ -17,7 +17,7 @@ struct State_0801b9ec {
 
 extern u8 Data_0000001f;
 void Func_08019ee4(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
-void Func_0801c188(void);
+void Menu_LoadSelectedResource(void);
 
 void Func_0801b9ec(struct State_0801b9ec *state, u32 index)
 {
@@ -34,6 +34,6 @@ void Func_0801b9ec(struct State_0801b9ec *state, u32 index)
 
         value = node->value;
         Func_08019ee4(first, 0, &value, &output, 1);
-        Func_0801c188();
+        Menu_LoadSelectedResource();
     }
 }

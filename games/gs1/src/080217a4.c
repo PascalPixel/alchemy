@@ -24,7 +24,7 @@ struct Object {
 
 extern volatile u32 Data_03001800;
 extern s32 Data_08037230[];
-s32 Func_08003d28(struct Effect *effect);
+s32 AffineMatrix_BuildForEffect(struct Effect *effect);
 
 void Func_080217a4(struct Object *object)
 {
@@ -39,7 +39,7 @@ void Func_080217a4(struct Object *object)
         effect.x = value;
         effect.y = value;
         effect.z = 0;
-        object->field22_9 = Func_08003d28(&effect);
+        object->field22_9 = AffineMatrix_BuildForEffect(&effect);
         object->field21_0 = 3;
         object->field22_0 = object->source6 + 0xfff0;
         object->output20 = object->source8 + 0xf0;

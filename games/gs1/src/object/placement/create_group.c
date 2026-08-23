@@ -39,8 +39,8 @@ void Object_InitializeMode(struct RuntimeObject *, s32);
 void ScheduleCallbackAfterFrames(s32, s32);
 void Func_0801ff58(void);
 
-void Func_0801fe2c(struct PlacementOrigin *origin, s32 x, s32 y,
-                   struct PlacementDescriptor *descriptor)
+void ObjectPlacement_CreateGroup(struct PlacementOrigin *origin, s32 x, s32 y,
+                                 struct PlacementDescriptor *descriptor)
 {
     struct PlacementState *state = Data_03001f2c;
     s32 i;

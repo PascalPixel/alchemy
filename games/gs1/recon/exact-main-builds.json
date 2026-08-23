@@ -1258,7 +1258,7 @@
     },
     {
       "en_owner": "08003d28",
-      "source": "games/gs1/src/08003d28.c",
+      "source": "games/gs1/src/graphics/affine/build_matrix.c",
       "size": 196,
       "all_exact": true,
       "editions": [
@@ -12066,7 +12066,7 @@
     },
     {
       "en_owner": "0800f9f4",
-      "source": "games/gs1/src/0800f9f4.c",
+      "source": "games/gs1/src/map/decode_tile_rows.c",
       "size": 152,
       "all_exact": true,
       "editions": [
@@ -12626,7 +12626,7 @@
     },
     {
       "en_owner": "080119cc",
-      "source": "games/gs1/src/080119cc.c",
+      "source": "games/gs1/src/display/blend/run_script.c",
       "size": 184,
       "all_exact": true,
       "editions": [
@@ -16731,7 +16731,7 @@
     },
     {
       "en_owner": "08019d2c",
-      "source": "games/gs1/src/08019d2c.c",
+      "source": "games/gs1/src/localization/lookup_entry_id.c",
       "size": 124,
       "all_exact": true,
       "editions": [
@@ -18860,7 +18860,7 @@
     },
     {
       "en_owner": "0801c188",
-      "source": "games/gs1/src/0801c188.c",
+      "source": "games/gs1/src/menu/resource_transfer/load_selected.c",
       "size": 148,
       "all_exact": true,
       "editions": [
@@ -22457,7 +22457,7 @@
     },
     {
       "en_owner": "0801fe2c",
-      "source": "games/gs1/src/0801fe2c.c",
+      "source": "games/gs1/src/object/placement/create_group.c",
       "size": 232,
       "all_exact": true,
       "editions": [
@@ -40274,7 +40274,7 @@
     },
     {
       "en_owner": "080933f8",
-      "source": "games/gs1/src/080933f8.c",
+      "source": "games/gs1/src/object/motion/place_within_camera_bounds.c",
       "size": 264,
       "all_exact": true,
       "editions": [
@@ -40834,7 +40834,7 @@
     },
     {
       "en_owner": "0809397c",
-      "source": "games/gs1/src/0809397c.c",
+      "source": "games/gs1/src/object/motion/move_toward_target.c",
       "size": 152,
       "all_exact": true,
       "editions": [
@@ -41058,7 +41058,7 @@
     },
     {
       "en_owner": "080942e0",
-      "source": "games/gs1/src/080942e0.c",
+      "source": "games/gs1/src/object/effects/prepare_context_effect.c",
       "size": 116,
       "all_exact": true,
       "editions": [
@@ -50643,7 +50643,7 @@
     },
     {
       "en_owner": "080a76d0",
-      "source": "games/gs1/src/080a76d0.c",
+      "source": "games/gs1/src/menu/run_action_flow.c",
       "size": 212,
       "all_exact": true,
       "editions": [
@@ -55409,7 +55409,7 @@
     },
     {
       "en_owner": "080b2f4c",
-      "source": "games/gs1/src/080b2f4c.c",
+      "source": "games/gs1/src/battle/effects/radial/update_motion.c",
       "size": 176,
       "all_exact": true,
       "editions": [
@@ -62188,7 +62188,7 @@
     },
     {
       "en_owner": "080c1df4",
-      "source": "games/gs1/src/080c1df4.c",
+      "source": "games/gs1/src/battle/summon/take_charge.c",
       "size": 200,
       "edition_variant": true,
       "all_exact": true,
@@ -66447,7 +66447,7 @@
     },
     {
       "en_owner": "080d6888",
-      "source": "games/gs1/src/080d6888.c",
+      "source": "games/gs1/src/object/group/update_members.c",
       "size": 216,
       "all_exact": true,
       "editions": [

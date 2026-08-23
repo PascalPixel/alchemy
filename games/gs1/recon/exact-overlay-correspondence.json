@@ -50833,7 +50833,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020000c4",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/advance_staged_actor_pair.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/advance_staged_actor_pair.c",
       "resource": "resource_3b2",
       "size": 384,
       "core_bytes": 320,
@@ -50897,7 +50897,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020002a8",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/stop_blocked_actor_motion.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/stop_blocked_actor_motion.c",
       "resource": "resource_3b2",
       "size": 164,
       "core_bytes": 144,
@@ -50929,7 +50929,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000474",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/find_clear_actor_position.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/find_clear_actor_position.c",
       "resource": "resource_3b2",
       "size": 404,
       "core_bytes": 384,
@@ -50961,7 +50961,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020009dc",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/set_effect_owner_mode.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/set_effect_owner_mode.c",
       "resource": "resource_3b2",
       "size": 22,
       "core_bytes": 22,
@@ -50993,7 +50993,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020009f4",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/spawn_mode_14_effect.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/spawn_mode_14_effect.c",
       "resource": "resource_3b2",
       "size": 86,
       "core_bytes": 70,
@@ -51025,7 +51025,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000a4c",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/spawn_mode_15_effect.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/spawn_mode_15_effect.c",
       "resource": "resource_3b2",
       "size": 98,
       "core_bytes": 86,
@@ -51057,7 +51057,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000ab0",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/integrate_effect_motion.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/integrate_effect_motion.c",
       "resource": "resource_3b2",
       "size": 54,
       "core_bytes": 54,
@@ -51089,7 +51089,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000ae8",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/spawn_configured_scene_effect.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/spawn_configured_scene_effect.c",
       "resource": "resource_3b2",
       "size": 472,
       "core_bytes": 420,
@@ -51121,7 +51121,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000cc0",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/no_op_effect_callback.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/no_op_effect_callback.c",
       "resource": "resource_3b2",
       "size": 2,
       "core_bytes": 2,
@@ -51153,7 +51153,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000cc4",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/select_primary_scene_data.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/select_primary_scene_data.c",
       "resource": "resource_3b2",
       "size": 120,
       "core_bytes": 72,
@@ -51185,7 +51185,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000d3c",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/get_empty_scene_data.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/get_empty_scene_data.c",
       "resource": "resource_3b2",
       "size": 4,
       "core_bytes": 4,
@@ -51217,7 +51217,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000d40",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/get_default_scene_data.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/get_default_scene_data.c",
       "resource": "resource_3b2",
       "size": 8,
       "core_bytes": 4,
@@ -51249,7 +51249,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000d48",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/select_secondary_scene_data.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/select_secondary_scene_data.c",
       "resource": "resource_3b2",
       "size": 92,
       "core_bytes": 56,
@@ -51281,7 +51281,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000da4",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/advance_effect_motion.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/advance_effect_motion.c",
       "resource": "resource_3b2",
       "size": 90,
       "core_bytes": 86,
@@ -51313,7 +51313,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000e00",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/spawn_radial_effect_burst.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/spawn_radial_effect_burst.c",
       "resource": "resource_3b2",
       "size": 136,
       "core_bytes": 108,
@@ -51345,7 +51345,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000e88",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/initialize_prologue_scene_state.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/initialize_prologue_scene_state.c",
       "resource": "resource_3b2",
       "size": 60,
       "core_bytes": 36,
@@ -51377,7 +51377,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000ec4",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/select_tertiary_scene_data.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/select_tertiary_scene_data.c",
       "resource": "resource_3b2",
       "size": 120,
       "core_bytes": 72,
@@ -51409,7 +51409,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02000f3c",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/start_scripted_scene_message.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/start_scripted_scene_message.c",
       "resource": "resource_3b2",
       "size": 52,
       "core_bytes": 24,
@@ -51441,7 +51441,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001374",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/run_prologue_scene_setup.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/run_prologue_scene_setup.c",
       "resource": "resource_3b2",
       "size": 22,
       "core_bytes": 6,
@@ -51473,7 +51473,7 @@
     },
     {
       "en_owner": "resource_3b2:0x0200138c",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/start_scene_script_37.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/start_scene_script_37.c",
       "resource": "resource_3b2",
       "size": 32,
       "core_bytes": 16,
@@ -51505,7 +51505,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001508",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/configure_scene_actor_11.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/configure_scene_actor_11.c",
       "resource": "resource_3b2",
       "size": 64,
       "core_bytes": 44,
@@ -51537,7 +51537,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001548",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/configure_scene_actor_12.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/configure_scene_actor_12.c",
       "resource": "resource_3b2",
       "size": 68,
       "core_bytes": 44,
@@ -51569,7 +51569,7 @@
     },
     {
       "en_owner": "resource_3b2:0x0200158c",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/configure_scene_actor_13.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/configure_scene_actor_13.c",
       "resource": "resource_3b2",
       "size": 68,
       "core_bytes": 44,
@@ -51601,7 +51601,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020015d0",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/configure_scene_actor_14.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/configure_scene_actor_14.c",
       "resource": "resource_3b2",
       "size": 84,
       "core_bytes": 56,
@@ -51633,7 +51633,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001624",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/show_forget_everything_message.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/show_forget_everything_message.c",
       "resource": "resource_3b2",
       "size": 40,
       "core_bytes": 28,
@@ -51665,7 +51665,7 @@
     },
     {
       "en_owner": "resource_3b2:0x0200164c",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/show_help_you_forget_message.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/show_help_you_forget_message.c",
       "resource": "resource_3b2",
       "size": 16,
       "core_bytes": 8,
@@ -51697,7 +51697,7 @@
     },
     {
       "en_owner": "resource_3b2:0x0200165c",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/show_damaged_door_message.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/show_damaged_door_message.c",
       "resource": "resource_3b2",
       "size": 16,
       "core_bytes": 8,
@@ -51729,7 +51729,7 @@
     },
     {
       "en_owner": "resource_3b2:0x0200166c",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/show_save_my_life_message.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/show_save_my_life_message.c",
       "resource": "resource_3b2",
       "size": 16,
       "core_bytes": 8,
@@ -51761,7 +51761,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001740",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/run_scene_vector_transition.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/run_scene_vector_transition.c",
       "resource": "resource_3b2",
       "size": 52,
       "core_bytes": 36,
@@ -51793,7 +51793,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001774",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/position_scene_actor_pair.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/position_scene_actor_pair.c",
       "resource": "resource_3b2",
       "size": 232,
       "core_bytes": 176,
@@ -51825,7 +51825,7 @@
     },
     {
       "en_owner": "resource_3b2:0x0200185c",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/mark_grid_left_of_scene_actor.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/mark_grid_left_of_scene_actor.c",
       "resource": "resource_3b2",
       "size": 82,
       "core_bytes": 70,
@@ -51857,7 +51857,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020018b0",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/mark_grid_above_scene_actor.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/mark_grid_above_scene_actor.c",
       "resource": "resource_3b2",
       "size": 82,
       "core_bytes": 70,
@@ -51889,7 +51889,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001904",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/set_scene_actor_modes.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/set_scene_actor_modes.c",
       "resource": "resource_3b2",
       "size": 24,
       "core_bytes": 16,
@@ -51921,7 +51921,7 @@
     },
     {
       "en_owner": "resource_3b2:0x0200191c",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/initialize_escape_scene_actors.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/initialize_escape_scene_actors.c",
       "resource": "resource_3b2",
       "size": 150,
       "core_bytes": 102,
@@ -51953,7 +51953,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020019b4",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/activate_scene_actor_8.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/activate_scene_actor_8.c",
       "resource": "resource_3b2",
       "size": 12,
       "core_bytes": 8,
@@ -51985,7 +51985,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020019c0",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/activate_scene_actor_10.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/activate_scene_actor_10.c",
       "resource": "resource_3b2",
       "size": 12,
       "core_bytes": 8,
@@ -52017,7 +52017,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020019cc",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/activate_scene_actor_11.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/activate_scene_actor_11.c",
       "resource": "resource_3b2",
       "size": 12,
       "core_bytes": 8,
@@ -52049,7 +52049,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020019d8",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/activate_scene_actor_12.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/activate_scene_actor_12.c",
       "resource": "resource_3b2",
       "size": 12,
       "core_bytes": 8,
@@ -52081,7 +52081,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020019e4",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/activate_scene_actor_13.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/activate_scene_actor_13.c",
       "resource": "resource_3b2",
       "size": 12,
       "core_bytes": 8,
@@ -52113,7 +52113,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020019f0",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/activate_scene_actor_15.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/activate_scene_actor_15.c",
       "resource": "resource_3b2",
       "size": 12,
       "core_bytes": 8,
@@ -52145,7 +52145,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020019fc",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/activate_scene_actor_17.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/activate_scene_actor_17.c",
       "resource": "resource_3b2",
       "size": 12,
       "core_bytes": 8,
@@ -52177,7 +52177,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001a08",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/activate_scene_actor_18.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/activate_scene_actor_18.c",
       "resource": "resource_3b2",
       "size": 12,
       "core_bytes": 8,
@@ -52209,7 +52209,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001a14",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/activate_scene_actor_9.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/activate_scene_actor_9.c",
       "resource": "resource_3b2",
       "size": 12,
       "core_bytes": 8,
@@ -52241,7 +52241,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001a20",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/activate_scene_actor_19.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/activate_scene_actor_19.c",
       "resource": "resource_3b2",
       "size": 12,
       "core_bytes": 8,
@@ -52273,7 +52273,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001a2c",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/activate_scene_actor_14.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/activate_scene_actor_14.c",
       "resource": "resource_3b2",
       "size": 12,
       "core_bytes": 8,
@@ -52305,7 +52305,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001a38",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/activate_scene_actor_16.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/activate_scene_actor_16.c",
       "resource": "resource_3b2",
       "size": 12,
       "core_bytes": 8,
@@ -52337,7 +52337,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001b14",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/check_actor_path_south.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/check_actor_path_south.c",
       "resource": "resource_3b2",
       "size": 44,
       "core_bytes": 32,
@@ -52369,7 +52369,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001b40",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/check_actor_path_north.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/check_actor_path_north.c",
       "resource": "resource_3b2",
       "size": 40,
       "core_bytes": 32,
@@ -52401,7 +52401,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001b68",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/check_actor_path_west.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/check_actor_path_west.c",
       "resource": "resource_3b2",
       "size": 44,
       "core_bytes": 32,
@@ -52433,7 +52433,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001b94",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/check_actor_path_east.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/check_actor_path_east.c",
       "resource": "resource_3b2",
       "size": 40,
       "core_bytes": 32,
@@ -52465,7 +52465,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001bbc",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/update_escape_route_for_actor_positions.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/update_escape_route_for_actor_positions.c",
       "resource": "resource_3b2",
       "size": 198,
       "core_bytes": 150,
@@ -52497,7 +52497,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001c84",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/update_actor_8_return_route.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/update_actor_8_return_route.c",
       "resource": "resource_3b2",
       "size": 168,
       "core_bytes": 120,
@@ -52529,7 +52529,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001d2c",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/update_actor_10_retreat_route.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/update_actor_10_retreat_route.c",
       "resource": "resource_3b2",
       "size": 180,
       "core_bytes": 140,
@@ -52561,7 +52561,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001de0",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/update_actor_10_advance_route.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/update_actor_10_advance_route.c",
       "resource": "resource_3b2",
       "size": 122,
       "core_bytes": 86,
@@ -52593,7 +52593,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001e5c",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/update_actor_11_west_route.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/update_actor_11_west_route.c",
       "resource": "resource_3b2",
       "size": 152,
       "core_bytes": 112,
@@ -52625,7 +52625,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001ef4",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/update_actor_11_east_route.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/update_actor_11_east_route.c",
       "resource": "resource_3b2",
       "size": 130,
       "core_bytes": 94,
@@ -52657,7 +52657,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02001f78",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/update_actor_12_west_route.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/update_actor_12_west_route.c",
       "resource": "resource_3b2",
       "size": 140,
       "core_bytes": 104,
@@ -52689,7 +52689,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02002004",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/update_actor_12_east_route.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/update_actor_12_east_route.c",
       "resource": "resource_3b2",
       "size": 122,
       "core_bytes": 90,
@@ -52721,7 +52721,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02002080",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/update_actor_13_west_route.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/update_actor_13_west_route.c",
       "resource": "resource_3b2",
       "size": 236,
       "core_bytes": 192,
@@ -52753,7 +52753,7 @@
     },
     {
       "en_owner": "resource_3b2:0x0200216c",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/update_actor_13_east_route.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/update_actor_13_east_route.c",
       "resource": "resource_3b2",
       "size": 148,
       "core_bytes": 112,
@@ -52785,7 +52785,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02002200",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/update_actor_15_west_route.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/update_actor_15_west_route.c",
       "resource": "resource_3b2",
       "size": 200,
       "core_bytes": 156,
@@ -52817,7 +52817,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020022c8",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/update_actor_15_east_route.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/update_actor_15_east_route.c",
       "resource": "resource_3b2",
       "size": 252,
       "core_bytes": 204,
@@ -52849,7 +52849,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020023c4",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/update_actor_17_south_route.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/update_actor_17_south_route.c",
       "resource": "resource_3b2",
       "size": 138,
       "core_bytes": 106,
@@ -52881,7 +52881,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02002450",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/update_actor_17_north_route.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/update_actor_17_north_route.c",
       "resource": "resource_3b2",
       "size": 118,
       "core_bytes": 86,
@@ -52913,7 +52913,7 @@
     },
     {
       "en_owner": "resource_3b2:0x020025f0",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/advance_actor_18_along_escape_route.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/advance_actor_18_along_escape_route.c",
       "resource": "resource_3b2",
       "size": 272,
       "core_bytes": 204,
@@ -52945,7 +52945,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02002848",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/advance_actor_9_along_escape_route.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/advance_actor_9_along_escape_route.c",
       "resource": "resource_3b2",
       "size": 314,
       "core_bytes": 242,
@@ -52977,7 +52977,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02002b80",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/retreat_actor_14_along_escape_route.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/retreat_actor_14_along_escape_route.c",
       "resource": "resource_3b2",
       "size": 204,
       "core_bytes": 168,
@@ -53009,7 +53009,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02002c4c",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/advance_actor_14_along_escape_route.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/advance_actor_14_along_escape_route.c",
       "resource": "resource_3b2",
       "size": 190,
       "core_bytes": 154,
@@ -53041,7 +53041,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02002d0c",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/retreat_actor_16_along_escape_route.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/retreat_actor_16_along_escape_route.c",
       "resource": "resource_3b2",
       "size": 196,
       "core_bytes": 160,
@@ -53073,7 +53073,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02002dd0",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/advance_actor_16_along_escape_route.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/advance_actor_16_along_escape_route.c",
       "resource": "resource_3b2",
       "size": 160,
       "core_bytes": 128,
@@ -53105,7 +53105,7 @@
     },
     {
       "en_owner": "resource_3b2:0x02002e70",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/update_swaying_scene_object.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/update_swaying_scene_object.c",
       "resource": "resource_3b2",
       "size": 102,
       "core_bytes": 82,
@@ -65521,7 +65521,7 @@
     },
     {
       "en_owner": "resource_3bf:0x020000c4",
-      "source": "games/gs1/src/resource_3bf_c_020000c4.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/advance_staged_actor_pair.c",
       "resource": "resource_3bf",
       "size": 384,
       "core_bytes": 320,
@@ -65585,7 +65585,7 @@
     },
     {
       "en_owner": "resource_3bf:0x020002a8",
-      "source": "games/gs1/src/resource_3bf_c_020002a8.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/stop_blocked_actor_motion.c",
       "resource": "resource_3bf",
       "size": 164,
       "core_bytes": 144,
@@ -65617,7 +65617,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02000474",
-      "source": "games/gs1/src/resource_3bf_c_02000474.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/find_clear_actor_position.c",
       "resource": "resource_3bf",
       "size": 404,
       "core_bytes": 384,
@@ -65649,7 +65649,7 @@
     },
     {
       "en_owner": "resource_3bf:0x020009dc",
-      "source": "games/gs1/src/resource_3bf_c_020009dc.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/select_primary_scene_data.c",
       "resource": "resource_3bf",
       "size": 84,
       "core_bytes": 52,
@@ -65681,7 +65681,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02000a30",
-      "source": "games/gs1/src/resource_3bf_c_02000a30.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/get_empty_scene_data.c",
       "resource": "resource_3bf",
       "size": 4,
       "core_bytes": 4,
@@ -65713,7 +65713,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02000a34",
-      "source": "games/gs1/src/resource_3bf_c_02000a34.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/select_secondary_scene_data.c",
       "resource": "resource_3bf",
       "size": 76,
       "core_bytes": 48,
@@ -65745,7 +65745,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02000a80",
-      "source": "games/gs1/src/resource_3bf_c_02000a80.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/select_tertiary_scene_data.c",
       "resource": "resource_3bf",
       "size": 120,
       "core_bytes": 72,
@@ -65777,7 +65777,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02000af8",
-      "source": "games/gs1/src/resource_3bf_c_02000af8.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/select_quaternary_scene_data.c",
       "resource": "resource_3bf",
       "size": 84,
       "core_bytes": 52,
@@ -65809,7 +65809,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02000b4c",
-      "source": "games/gs1/src/resource_3bf_c_02000b4c.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/configure_scene_actor_12.c",
       "resource": "resource_3bf",
       "size": 82,
       "core_bytes": 66,
@@ -65841,7 +65841,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02000ba0",
-      "source": "games/gs1/src/resource_3bf_c_02000ba0.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/run_scene_object_setup.c",
       "resource": "resource_3bf",
       "size": 10,
       "core_bytes": 6,
@@ -65873,7 +65873,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02000c90",
-      "source": "games/gs1/src/resource_3bf_c_02000c90.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/place_scene_object_pair_from_table_a.c",
       "resource": "resource_3bf",
       "size": 80,
       "core_bytes": 64,
@@ -65905,7 +65905,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02000e30",
-      "source": "games/gs1/src/resource_3bf_c_02000e30.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/place_scene_object_pair_from_table_b.c",
       "resource": "resource_3bf",
       "size": 80,
       "core_bytes": 64,
@@ -65937,7 +65937,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02000ee0",
-      "source": "games/gs1/src/resource_3bf_c_02000ee0.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/place_scene_object_pair_from_table_c.c",
       "resource": "resource_3bf",
       "size": 80,
       "core_bytes": 64,
@@ -65969,7 +65969,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02000f94",
-      "source": "games/gs1/src/resource_3bf_c_02000f94.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/show_locked_door_message_once.c",
       "resource": "resource_3bf",
       "size": 32,
       "core_bytes": 20,
@@ -66001,7 +66001,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02000fb4",
-      "source": "games/gs1/src/resource_3bf_c_02000fb4.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/show_locked_door_message.c",
       "resource": "resource_3bf",
       "size": 20,
       "core_bytes": 12,
@@ -66033,7 +66033,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02000fc8",
-      "source": "games/gs1/src/resource_3bf_c_02000fc8.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/show_gerald_dont_message.c",
       "resource": "resource_3bf",
       "size": 28,
       "core_bytes": 16,
@@ -66065,7 +66065,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02000fe4",
-      "source": "games/gs1/src/resource_3bf_c_02000fe4.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/show_that_was_exciting_message.c",
       "resource": "resource_3bf",
       "size": 28,
       "core_bytes": 16,
@@ -66097,7 +66097,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02001000",
-      "source": "games/gs1/src/resource_3bf_c_02001000.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/show_sorry_i_scared_you_message.c",
       "resource": "resource_3bf",
       "size": 28,
       "core_bytes": 16,
@@ -66129,7 +66129,7 @@
     },
     {
       "en_owner": "resource_3bf:0x0200101c",
-      "source": "games/gs1/src/resource_3bf_c_0200101c.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/show_well_message.c",
       "resource": "resource_3bf",
       "size": 28,
       "core_bytes": 16,
@@ -66161,7 +66161,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02001038",
-      "source": "games/gs1/src/resource_3bf_c_02001038.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/try_start_actor_interaction.c",
       "resource": "resource_3bf",
       "size": 96,
       "core_bytes": 64,
@@ -66193,7 +66193,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02001098",
-      "source": "games/gs1/src/resource_3bf_c_02001098.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/no_op_scene_callback_a.c",
       "resource": "resource_3bf",
       "size": 4,
       "core_bytes": 4,
@@ -66225,7 +66225,7 @@
     },
     {
       "en_owner": "resource_3bf:0x0200109c",
-      "source": "games/gs1/src/resource_3bf_c_0200109c.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/no_op_scene_callback_b.c",
       "resource": "resource_3bf",
       "size": 4,
       "core_bytes": 4,
@@ -66257,7 +66257,7 @@
     },
     {
       "en_owner": "resource_3bf:0x020010a0",
-      "source": "games/gs1/src/resource_3bf_c_020010a0.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/no_op_scene_callback_c.c",
       "resource": "resource_3bf",
       "size": 4,
       "core_bytes": 4,
@@ -66289,7 +66289,7 @@
     },
     {
       "en_owner": "resource_3bf:0x020010a4",
-      "source": "games/gs1/src/resource_3bf_c_020010a4.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/no_op_scene_callback_d.c",
       "resource": "resource_3bf",
       "size": 2,
       "core_bytes": 2,
@@ -66321,7 +66321,7 @@
     },
     {
       "en_owner": "resource_3bf:0x020010a8",
-      "source": "games/gs1/src/resource_3bf_c_020010a8.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/start_dora_house_accident_scene.c",
       "resource": "resource_3bf",
       "size": 96,
       "core_bytes": 52,
@@ -66353,7 +66353,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02001108",
-      "source": "games/gs1/src/resource_3bf_c_02001108.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/is_player_in_accident_trigger_area.c",
       "resource": "resource_3bf",
       "size": 72,
       "core_bytes": 64,
@@ -66385,7 +66385,7 @@
     },
     {
       "en_owner": "resource_3bf:0x020012e0",
-      "source": "games/gs1/src/resource_3bf_c_020012e0.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/configure_scene_actor_9.c",
       "resource": "resource_3bf",
       "size": 66,
       "core_bytes": 34,
@@ -66417,7 +66417,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02001324",
-      "source": "games/gs1/src/resource_3bf_c_02001324.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/are_scene_actors_in_passing_lane.c",
       "resource": "resource_3bf",
       "size": 104,
       "core_bytes": 92,
@@ -66449,7 +66449,7 @@
     },
     {
       "en_owner": "resource_3bf:0x020014bc",
-      "source": "games/gs1/src/resource_3bf_c_020014bc.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/activate_scene_actor_17.c",
       "resource": "resource_3bf",
       "size": 16,
       "core_bytes": 8,
@@ -66481,7 +66481,7 @@
     },
     {
       "en_owner": "resource_3bf:0x020014cc",
-      "source": "games/gs1/src/resource_3bf_c_020014cc.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/is_player_in_secondary_trigger_area.c",
       "resource": "resource_3bf",
       "size": 92,
       "core_bytes": 84,
@@ -66513,7 +66513,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02001650",
-      "source": "games/gs1/src/resource_3bf_c_02001650.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/activate_scene_actor_18.c",
       "resource": "resource_3bf",
       "size": 16,
       "core_bytes": 8,
@@ -66545,7 +66545,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02001660",
-      "source": "games/gs1/src/resource_3bf_c_02001660.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/is_player_outside_scene_rectangle.c",
       "resource": "resource_3bf",
       "size": 60,
       "core_bytes": 52,
@@ -66577,7 +66577,7 @@
     },
     {
       "en_owner": "resource_3bf:0x0200169c",
-      "source": "games/gs1/src/resource_3bf_c_0200169c.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/update_actor_17_scene_trigger.c",
       "resource": "resource_3bf",
       "size": 108,
       "core_bytes": 72,
@@ -66609,7 +66609,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02001708",
-      "source": "games/gs1/src/resource_3bf_c_02001708.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/run_actor_17_scene_step.c",
       "resource": "resource_3bf",
       "size": 16,
       "core_bytes": 8,
@@ -66641,7 +66641,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02001718",
-      "source": "games/gs1/src/resource_3bf_c_02001718.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/trigger_scene_stage_95_from_actor_12.c",
       "resource": "resource_3bf",
       "size": 68,
       "core_bytes": 48,
@@ -66673,7 +66673,7 @@
     },
     {
       "en_owner": "resource_3bf:0x0200175c",
-      "source": "games/gs1/src/resource_3bf_c_0200175c.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/trigger_scene_stage_96_from_actor_13.c",
       "resource": "resource_3bf",
       "size": 96,
       "core_bytes": 56,
@@ -66705,7 +66705,7 @@
     },
     {
       "en_owner": "resource_3bf:0x020017bc",
-      "source": "games/gs1/src/resource_3bf_c_020017bc.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/trigger_scene_stage_96_from_actor_21.c",
       "resource": "resource_3bf",
       "size": 96,
       "core_bytes": 56,
@@ -66737,7 +66737,7 @@
     },
     {
       "en_owner": "resource_3bf:0x0200181c",
-      "source": "games/gs1/src/resource_3bf_c_0200181c.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/is_scene_actor_vertically_near_player.c",
       "resource": "resource_3bf",
       "size": 100,
       "core_bytes": 88,
@@ -66769,7 +66769,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02001880",
-      "source": "games/gs1/src/resource_3bf_c_02001880.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/is_scene_actor_horizontally_near_player.c",
       "resource": "resource_3bf",
       "size": 100,
       "core_bytes": 88,
@@ -66801,7 +66801,7 @@
     },
     {
       "en_owner": "resource_3bf:0x020018e4",
-      "source": "games/gs1/src/resource_3bf_c_020018e4.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/is_actor_interaction_available.c",
       "resource": "resource_3bf",
       "size": 50,
       "core_bytes": 38,
@@ -66833,7 +66833,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02001918",
-      "source": "games/gs1/src/resource_3bf_c_02001918.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/is_scene_actor_within_four_steps.c",
       "resource": "resource_3bf",
       "size": 104,
       "core_bytes": 92,
@@ -66865,7 +66865,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02001980",
-      "source": "games/gs1/src/resource_3bf_c_02001980.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/is_scene_actor_within_trigger_box.c",
       "resource": "resource_3bf",
       "size": 104,
       "core_bytes": 92,
@@ -66897,7 +66897,7 @@
     },
     {
       "en_owner": "resource_3bf:0x020019e8",
-      "source": "games/gs1/src/resource_3bf_c_020019e8.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/trigger_scene_41_at_village_path.c",
       "resource": "resource_3bf",
       "size": 92,
       "core_bytes": 68,
@@ -66929,7 +66929,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02001a44",
-      "source": "games/gs1/src/resource_3bf_c_02001a44.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/trigger_scene_40_at_village_path.c",
       "resource": "resource_3bf",
       "size": 108,
       "core_bytes": 88,
@@ -66961,7 +66961,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02001ab0",
-      "source": "games/gs1/src/resource_3bf_c_02001ab0.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/run_actor_9_scripted_sequence.c",
       "resource": "resource_3bf",
       "size": 116,
       "core_bytes": 56,
@@ -66993,7 +66993,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02001b24",
-      "source": "games/gs1/src/resource_3bf_c_02001b24.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/run_actor_scripted_sequence_a.c",
       "resource": "resource_3bf",
       "size": 192,
       "core_bytes": 96,
@@ -67025,7 +67025,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02001be4",
-      "source": "games/gs1/src/resource_3bf_c_02001be4.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/turn_actor_to_scene_direction.c",
       "resource": "resource_3bf",
       "size": 104,
       "core_bytes": 72,
@@ -67057,7 +67057,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02001c4c",
-      "source": "games/gs1/src/resource_3bf_c_02001c4c.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/run_actor_scripted_sequence_b.c",
       "resource": "resource_3bf",
       "size": 88,
       "core_bytes": 48,
@@ -67089,7 +67089,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02001ca4",
-      "source": "games/gs1/src/resource_3bf_c_02001ca4.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/run_actor_scripted_sequence_c.c",
       "resource": "resource_3bf",
       "size": 76,
       "core_bytes": 40,
@@ -67121,7 +67121,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02001d60",
-      "source": "games/gs1/src/resource_3bf_c_02001d60.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/run_actor_scripted_sequence_d.c",
       "resource": "resource_3bf",
       "size": 100,
       "core_bytes": 52,
@@ -67153,7 +67153,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02001dc4",
-      "source": "games/gs1/src/resource_3bf_c_02001dc4.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/inspect_ordinary_object.c",
       "resource": "resource_3bf",
       "size": 104,
       "core_bytes": 60,
@@ -67185,7 +67185,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02001e2c",
-      "source": "games/gs1/src/resource_3bf_c_02001e2c.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/inspect_empty_chest.c",
       "resource": "resource_3bf",
       "size": 104,
       "core_bytes": 60,
@@ -67217,7 +67217,7 @@
     },
     {
       "en_owner": "resource_3bf:0x020020cc",
-      "source": "games/gs1/src/resource_3bf_c_020020cc.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/inspect_empty_scene_object.c",
       "resource": "resource_3bf",
       "size": 104,
       "core_bytes": 60,
@@ -67249,7 +67249,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02002134",
-      "source": "games/gs1/src/resource_3bf_c_02002134.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/run_actor_12_interaction_sequence.c",
       "resource": "resource_3bf",
       "size": 144,
       "core_bytes": 72,
@@ -67281,7 +67281,7 @@
     },
     {
       "en_owner": "resource_3bf:0x0200226c",
-      "source": "games/gs1/src/resource_3bf_c_0200226c.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/configure_interaction_region_a.c",
       "resource": "resource_3bf",
       "size": 50,
       "core_bytes": 42,
@@ -67313,7 +67313,7 @@
     },
     {
       "en_owner": "resource_3bf:0x020022a0",
-      "source": "games/gs1/src/resource_3bf_c_020022a0.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/configure_interaction_region_b.c",
       "resource": "resource_3bf",
       "size": 50,
       "core_bytes": 42,
@@ -67345,7 +67345,7 @@
     },
     {
       "en_owner": "resource_3bf:0x020022d4",
-      "source": "games/gs1/src/resource_3bf_c_020022d4.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/configure_interaction_region_c.c",
       "resource": "resource_3bf",
       "size": 50,
       "core_bytes": 42,
@@ -67377,7 +67377,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02002308",
-      "source": "games/gs1/src/resource_3bf_c_02002308.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/inspect_village_well.c",
       "resource": "resource_3bf",
       "size": 132,
       "core_bytes": 76,
@@ -67409,7 +67409,7 @@
     },
     {
       "en_owner": "resource_3bf:0x0200238c",
-      "source": "games/gs1/src/resource_3bf_c_0200238c.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/run_secondary_map_interaction.c",
       "resource": "resource_3bf",
       "size": 132,
       "core_bytes": 76,
@@ -67441,7 +67441,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02002410",
-      "source": "games/gs1/src/resource_3bf_c_02002410.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/configure_primary_interaction_regions.c",
       "resource": "resource_3bf",
       "size": 88,
       "core_bytes": 72,
@@ -67473,7 +67473,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02002468",
-      "source": "games/gs1/src/resource_3bf_c_02002468.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/configure_secondary_interaction_regions.c",
       "resource": "resource_3bf",
       "size": 88,
       "core_bytes": 72,
@@ -67505,7 +67505,7 @@
     },
     {
       "en_owner": "resource_3bf:0x020024c0",
-      "source": "games/gs1/src/resource_3bf_c_020024c0.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/inspect_wardrobe.c",
       "resource": "resource_3bf",
       "size": 36,
       "core_bytes": 16,
@@ -67537,7 +67537,7 @@
     },
     {
       "en_owner": "resource_3bf:0x020024e4",
-      "source": "games/gs1/src/resource_3bf_c_020024e4.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/inspect_firewood.c",
       "resource": "resource_3bf",
       "size": 32,
       "core_bytes": 16,
@@ -67569,7 +67569,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02002504",
-      "source": "games/gs1/src/resource_3bf_c_02002504.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/inspect_books.c",
       "resource": "resource_3bf",
       "size": 36,
       "core_bytes": 20,
@@ -67601,7 +67601,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02004928",
-      "source": "games/gs1/src/resource_3bf_c_02004928.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/select_actor_25_scene_variant.c",
       "resource": "resource_3bf",
       "size": 60,
       "core_bytes": 28,
@@ -67633,7 +67633,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02004964",
-      "source": "games/gs1/src/resource_3bf_c_02004964.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/select_actor_24_scene_variant.c",
       "resource": "resource_3bf",
       "size": 60,
       "core_bytes": 28,
@@ -67665,7 +67665,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02004b68",
-      "source": "games/gs1/src/resource_3bf_c_02004b68.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/configure_scene_actor_26.c",
       "resource": "resource_3bf",
       "size": 28,
       "core_bytes": 16,
@@ -67697,7 +67697,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02004b84",
-      "source": "games/gs1/src/resource_3bf_c_02004b84.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/configure_scene_actor_14.c",
       "resource": "resource_3bf",
       "size": 32,
       "core_bytes": 16,
@@ -67729,7 +67729,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02004ba4",
-      "source": "games/gs1/src/resource_3bf_c_02004ba4.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/configure_scene_actor_13.c",
       "resource": "resource_3bf",
       "size": 32,
       "core_bytes": 16,
@@ -67761,7 +67761,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02004bc4",
-      "source": "games/gs1/src/resource_3bf_c_02004bc4.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/configure_scene_actor_12_variant.c",
       "resource": "resource_3bf",
       "size": 32,
       "core_bytes": 16,
@@ -67793,7 +67793,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02004be4",
-      "source": "games/gs1/src/resource_3bf_c_02004be4.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/configure_scene_actor_18.c",
       "resource": "resource_3bf",
       "size": 24,
       "core_bytes": 12,
@@ -67825,7 +67825,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02004bfc",
-      "source": "games/gs1/src/resource_3bf_c_02004bfc.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/run_actor_20_scene_sequence.c",
       "resource": "resource_3bf",
       "size": 272,
       "core_bytes": 124,
@@ -67857,7 +67857,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02004d0c",
-      "source": "games/gs1/src/resource_3bf_c_02004d0c.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/finish_actor_20_scene_sequence.c",
       "resource": "resource_3bf",
       "size": 64,
       "core_bytes": 32,
@@ -67889,7 +67889,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02004d50",
-      "source": "games/gs1/src/resource_3bf_c_02004d50.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/configure_actor_13_interaction.c",
       "resource": "resource_3bf",
       "size": 56,
       "core_bytes": 32,
@@ -67921,7 +67921,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02004d88",
-      "source": "games/gs1/src/resource_3bf_c_02004d88.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/configure_actor_13_scene_resource.c",
       "resource": "resource_3bf",
       "size": 24,
       "core_bytes": 12,
@@ -67953,7 +67953,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02005470",
-      "source": "games/gs1/src/resource_3bf_c_02005470.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/activate_three_actor_group_from_flags.c",
       "resource": "resource_3bf",
       "size": 64,
       "core_bytes": 32,
@@ -67985,7 +67985,7 @@
     },
     {
       "en_owner": "resource_3bf:0x020054b0",
-      "source": "games/gs1/src/resource_3bf_c_020054b0.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/activate_two_actor_group_from_flags.c",
       "resource": "resource_3bf",
       "size": 44,
       "core_bytes": 24,
@@ -68017,7 +68017,7 @@
     },
     {
       "en_owner": "resource_3bf:0x020054dc",
-      "source": "games/gs1/src/resource_3bf_c_020054dc.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/activate_second_three_actor_group_from_flags.c",
       "resource": "resource_3bf",
       "size": 68,
       "core_bytes": 32,
@@ -68049,7 +68049,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02005520",
-      "source": "games/gs1/src/resource_3bf_c_02005520.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/activate_five_actor_group_from_flags.c",
       "resource": "resource_3bf",
       "size": 104,
       "core_bytes": 52,
@@ -68081,7 +68081,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02005a40",
-      "source": "games/gs1/src/resource_3bf_c_02005a40.c",
+      "source": "games/gs1/src/runtime/soft_float/add_soft_double.c",
       "resource": "resource_3bf",
       "size": 54,
       "core_bytes": 38,
@@ -68113,7 +68113,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02005a78",
-      "source": "games/gs1/src/resource_3bf_c_02005a78.c",
+      "source": "games/gs1/src/runtime/soft_float/subtract_soft_double.c",
       "resource": "resource_3bf",
       "size": 62,
       "core_bytes": 46,
@@ -68145,7 +68145,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02005ab8",
-      "source": "games/gs1/src/resource_3bf_c_02005ab8.c",
+      "source": "games/gs1/src/runtime/soft_float/get_status_storage.c",
       "resource": "resource_3bf",
       "size": 8,
       "core_bytes": 4,
@@ -68177,7 +68177,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02005ac0",
-      "source": "games/gs1/src/resource_3bf_c_02005ac0.c",
+      "source": "games/gs1/src/runtime/soft_float/record_a_is_nan.c",
       "resource": "resource_3bf",
       "size": 16,
       "core_bytes": 16,
@@ -68209,7 +68209,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02005ad0",
-      "source": "games/gs1/src/resource_3bf_c_02005ad0.c",
+      "source": "games/gs1/src/runtime/soft_float/record_a_is_infinity.c",
       "resource": "resource_3bf",
       "size": 16,
       "core_bytes": 16,
@@ -68241,7 +68241,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02005ae0",
-      "source": "games/gs1/src/resource_3bf_c_02005ae0.c",
+      "source": "games/gs1/src/runtime/soft_float/record_a_is_zero.c",
       "resource": "resource_3bf",
       "size": 16,
       "core_bytes": 16,
@@ -68273,7 +68273,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02005af0",
-      "source": "games/gs1/src/resource_3bf_c_02005af0.c",
+      "source": "games/gs1/src/runtime/soft_float/signed_int_to_soft_double.c",
       "resource": "resource_3bf",
       "size": 124,
       "core_bytes": 108,
@@ -68305,7 +68305,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02005b6c",
-      "source": "games/gs1/src/resource_3bf_c_02005b6c.c",
+      "source": "games/gs1/src/runtime/soft_float/soft_double_to_signed_int.c",
       "resource": "resource_3bf",
       "size": 108,
       "core_bytes": 84,
@@ -68337,7 +68337,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02005bd8",
-      "source": "games/gs1/src/resource_3bf_c_02005bd8.c",
+      "source": "games/gs1/src/runtime/soft_float/record_b_is_nan.c",
       "resource": "resource_3bf",
       "size": 16,
       "core_bytes": 16,
@@ -68369,7 +68369,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02005be8",
-      "source": "games/gs1/src/resource_3bf_c_02005be8.c",
+      "source": "games/gs1/src/runtime/soft_float/record_b_is_infinity.c",
       "resource": "resource_3bf",
       "size": 16,
       "core_bytes": 16,
@@ -68401,7 +68401,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02005bf8",
-      "source": "games/gs1/src/resource_3bf_c_02005bf8.c",
+      "source": "games/gs1/src/runtime/soft_float/record_b_is_zero.c",
       "resource": "resource_3bf",
       "size": 16,
       "core_bytes": 16,
@@ -68433,7 +68433,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02005c08",
-      "source": "games/gs1/src/resource_3bf_c_02005c08.c",
+      "source": "games/gs1/src/runtime/soft_float/logical_shift_right_64.c",
       "resource": "resource_3bf",
       "size": 48,
       "core_bytes": 48,
@@ -68465,7 +68465,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02005c38",
-      "source": "games/gs1/src/resource_3bf_c_02005c38.c",
+      "source": "games/gs1/src/runtime/soft_float/pack_soft_double.c",
       "resource": "resource_3bf",
       "size": 412,
       "core_bytes": 352,
@@ -68497,7 +68497,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02005dd4",
-      "source": "games/gs1/src/resource_3bf_c_02005dd4.c",
+      "source": "games/gs1/src/runtime/soft_float/record_c_is_nan.c",
       "resource": "resource_3bf",
       "size": 16,
       "core_bytes": 16,
@@ -68529,7 +68529,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02005de4",
-      "source": "games/gs1/src/resource_3bf_c_02005de4.c",
+      "source": "games/gs1/src/runtime/soft_float/record_c_is_infinity.c",
       "resource": "resource_3bf",
       "size": 16,
       "core_bytes": 16,
@@ -68561,7 +68561,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02005df4",
-      "source": "games/gs1/src/resource_3bf_c_02005df4.c",
+      "source": "games/gs1/src/runtime/soft_float/record_c_is_zero.c",
       "resource": "resource_3bf",
       "size": 16,
       "core_bytes": 16,
@@ -68593,7 +68593,7 @@
     },
     {
       "en_owner": "resource_3bf:0x02005e04",
-      "source": "games/gs1/src/resource_3bf_c_02005e04.c",
+      "source": "games/gs1/src/runtime/soft_float/unpack_soft_double.c",
       "resource": "resource_3bf",
       "size": 212,
       "core_bytes": 188,
@@ -78830,28 +78830,28 @@
     },
     {
       "en_owner": "resource_3b2:0x020012b4",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/handle_actor_reaching_escape_column.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/handle_actor_reaching_escape_column.c",
       "resource": "resource_3b2",
       "size": 192,
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x02001298"
     },
     {
       "en_owner": "resource_3b2:0x02001a44",
-      "source": "games/gs1/src/overlays/vale_prologue_scene/try_push_blocking_scene_actor.c",
+      "source": "games/gs1/src/overlays/heidia_prologue_scene/try_push_blocking_scene_actor.c",
       "resource": "resource_3b2",
       "size": 208,
       "error": "ja: locality counterpart conflicts with neighboring proved owner order"
     },
     {
       "en_owner": "resource_3bf:0x02002528",
-      "source": "games/gs1/src/resource_3bf_c_02002528.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/no_op_interaction_callback.c",
       "resource": "resource_3bf",
       "size": 2,
       "error": "only 2 bytes remain after masking Thumb calls and literal fields"
     },
     {
       "en_owner": "resource_3bf:0x02004d4c",
-      "source": "games/gs1/src/resource_3bf_c_02004d4c.c",
+      "source": "games/gs1/src/overlays/heidia_village_scene/no_op_actor_callback.c",
       "resource": "resource_3bf",
       "size": 2,
       "error": "only 2 bytes remain after masking Thumb calls and literal fields"

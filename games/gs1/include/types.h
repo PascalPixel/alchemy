@@ -73,6 +73,18 @@ typedef int bool;
 #define Runtime_BumpAllocate Func_08004938
 #define Runtime_BumpAllocateAlternatePool Func_08004970
 #define Trade_GetOfferState Func_08077330
+#define Djinn_GetDefinition Func_0807a0cc
+#define Djinn_AddToOwner Func_0807a1b4
+#define Trade_CanOfferDjinn Func_0807a1f8
+#define Djinn_IsActive Func_0807a2bc
+#define Djinn_Activate Func_0807a2e4
+#define Djinn_Deactivate Func_0807a350
+#define Trade_RemoveOffer Func_0807a3a8
+#define Trade_AddOffer Func_0807a458
+#define Djinn_Transfer Func_0807a498
+#define Trade_CountPendingOffers Func_0807a550
+#define Party_SumDjinnCounts Func_0807a5bc
+#define Inventory_AddAndEquip Func_0807a628
 #define Party_GetAverageLevel Func_08077348
 #define GameFlag_RefreshLureCap Func_08077c10
 #define Runtime_GetBuildStampTime Func_08077cb8
@@ -206,6 +218,7 @@ typedef int bool;
 #define BattleEffect_PauseObject Func_0809ad90
 #define BattleEffect_ResumeObject Func_0809ade8
 #define BattleEffect_UpdateObjectVisibilityBounds Func_0809c314
+#define BattleEffect_RunVisibilityTransition Func_0809c3a4
 #define BattleEffect_CleanupResourcesAndWindow Func_0809bcd4
 #define FieldEvent_ShowStatusMessage Func_0809b648
 #define FixedPoint_Multiply8_8 Func_080f40b4

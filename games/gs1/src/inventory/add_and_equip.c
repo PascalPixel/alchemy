@@ -1,6 +1,6 @@
 #include "inventory.h"
 
-void Func_0807a628(s32 owner, s32 target)
+void Inventory_AddAndEquip(s32 owner, s32 target)
 {
     s32 state = (s32)OwnerState_Get(owner);
     u16 *entry;

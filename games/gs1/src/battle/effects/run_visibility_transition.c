@@ -9,7 +9,7 @@ void Func_08091660(void);
 void Func_080936a0(s32, s32);
 void BattleEffect_UpdateObjectVisibilityBounds(void);
 
-void Func_0809c3a4(void)
+void BattleEffect_RunVisibilityTransition(void)
 {
   if ((*(s16 *) (((u8 *) Runtime_AllocateBlock(0x1B, 0xCCC)) + 0x19E)) == 3)
   {

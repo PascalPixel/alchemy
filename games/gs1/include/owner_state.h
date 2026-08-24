@@ -38,6 +38,13 @@ struct OwnerTransferState {
     u8 owned_counts[4];
 };
 
+struct OwnerDjinnState {
+    u8 unknown_000[0xf8];
+    u32 available[4];
+    u32 active[5];
+    u8 active_counts[5];
+};
+
 struct OwnerValueState {
     u8 unknown_000[0x118];
     u8 values[4];
@@ -62,6 +69,21 @@ LAYOUT_OFFSET_GUARD(
     struct OwnerActionState,
     action_slots,
     0x58);
+LAYOUT_OFFSET_GUARD(
+    OwnerDjinnState_Available,
+    struct OwnerDjinnState,
+    available,
+    0x0f8);
+LAYOUT_OFFSET_GUARD(
+    OwnerDjinnState_Active,
+    struct OwnerDjinnState,
+    active,
+    0x108);
+LAYOUT_OFFSET_GUARD(
+    OwnerDjinnState_ActiveCounts,
+    struct OwnerDjinnState,
+    active_counts,
+    0x11c);
 
 /*
  * Some exact callers deliberately leave the owner id in r0 instead of

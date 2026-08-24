@@ -2,7 +2,7 @@
 
 extern const u16 Data_0808926c[];
 
-const u16 *Func_0807a0cc(u32 group, u32 index)
+const u16 *Djinn_GetDefinition(u32 group, u32 index)
 {
     s32 entry;
 

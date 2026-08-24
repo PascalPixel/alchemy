@@ -3,7 +3,7 @@
 s32 Func_08077090(s32 group, s32 entry);
 s32 GameFlag_IsSet(s32 group);
 
-s32 Func_08091814(u32 packed_id)
+s32 Event_ValidatePackedId(u32 packed_id)
 {
     s32 group = (packed_id >> 10) & 0xf;
     s32 entry = packed_id & 0x3ff;

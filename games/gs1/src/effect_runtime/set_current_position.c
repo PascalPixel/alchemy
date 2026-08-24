@@ -4,9 +4,9 @@
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 Func_080091a8(s32, s32, s32);
-s32 Func_0808ec14();
+s32 EffectRuntime_FindSlotByObject();
 
-void Func_0808edac(s32 unused, s32 x, s32 y) {
+void EffectRuntime_SetCurrentPosition(s32 unused, s32 x, s32 y) {
     s32 slot;
     s32 angle;
     s32 objectX;
@@ -17,7 +17,7 @@ void Func_0808edac(s32 unused, s32 x, s32 y) {
 
     objectY = y;
     objectX = x;
-    slot = Func_0808ec14();
+    slot = EffectRuntime_FindSlotByObject();
     if (slot != -1) {
         slotBase = *(s32 *)ADDR_03001EBC + (slot * 8);
         slotData = slotBase + 0x11C;

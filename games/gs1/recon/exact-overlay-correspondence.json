@@ -5,12 +5,12 @@
   "base_edition": "ja",
   "source_state": "byte-exact overlay C",
   "resources_total": 96,
-  "owners_total": 2548,
-  "owner_symbol_bytes": 208192,
-  "matched_owners": 2510,
-  "matched_bytes": 205116,
-  "shared_core_owners": 2504,
-  "shared_core_bytes": 203856,
+  "owners_total": 2553,
+  "owner_symbol_bytes": 208752,
+  "matched_owners": 2515,
+  "matched_bytes": 205676,
+  "shared_core_owners": 2509,
+  "shared_core_bytes": 204416,
   "regional_core_owners": 6,
   "regional_core_bytes": 1260,
   "unresolved_owners": 38,
@@ -32,55 +32,55 @@
   "editions": [
     {
       "edition": "ja",
-      "matched_owners": 2510,
-      "matched_bytes": 205116,
-      "core_identical_owners": 2510,
-      "core_identical_bytes": 205116,
+      "matched_owners": 2515,
+      "matched_bytes": 205676,
+      "core_identical_owners": 2515,
+      "core_identical_bytes": 205676,
       "core_different_owners": 0,
       "core_different_bytes": 0
     },
     {
       "edition": "en",
-      "matched_owners": 2510,
-      "matched_bytes": 205116,
-      "core_identical_owners": 2505,
-      "core_identical_bytes": 204164,
+      "matched_owners": 2515,
+      "matched_bytes": 205676,
+      "core_identical_owners": 2510,
+      "core_identical_bytes": 204724,
       "core_different_owners": 5,
       "core_different_bytes": 952
     },
     {
       "edition": "de",
-      "matched_owners": 2510,
-      "matched_bytes": 205116,
-      "core_identical_owners": 2505,
-      "core_identical_bytes": 204164,
+      "matched_owners": 2515,
+      "matched_bytes": 205676,
+      "core_identical_owners": 2510,
+      "core_identical_bytes": 204724,
       "core_different_owners": 5,
       "core_different_bytes": 952
     },
     {
       "edition": "es",
-      "matched_owners": 2510,
-      "matched_bytes": 205116,
-      "core_identical_owners": 2504,
-      "core_identical_bytes": 203856,
+      "matched_owners": 2515,
+      "matched_bytes": 205676,
+      "core_identical_owners": 2509,
+      "core_identical_bytes": 204416,
       "core_different_owners": 6,
       "core_different_bytes": 1260
     },
     {
       "edition": "fr",
-      "matched_owners": 2510,
-      "matched_bytes": 205116,
-      "core_identical_owners": 2504,
-      "core_identical_bytes": 203856,
+      "matched_owners": 2515,
+      "matched_bytes": 205676,
+      "core_identical_owners": 2509,
+      "core_identical_bytes": 204416,
       "core_different_owners": 6,
       "core_different_bytes": 1260
     },
     {
       "edition": "it",
-      "matched_owners": 2510,
-      "matched_bytes": 205116,
-      "core_identical_owners": 2504,
-      "core_identical_bytes": 203856,
+      "matched_owners": 2515,
+      "matched_bytes": 205676,
+      "core_identical_owners": 2509,
+      "core_identical_bytes": 204416,
       "core_different_owners": 6,
       "core_different_bytes": 1260
     }
@@ -4219,6 +4219,12 @@
       "size": 8,
       "core_bytes": 4,
       "location_methods": "nsoooo"
+    },
+    {
+      "en_owner": "resource_389:02000b6c",
+      "size": 100,
+      "core_bytes": 64,
+      "location_methods": "tstttt"
     },
     {
       "en_owner": "resource_389:02001088",
@@ -10648,6 +10654,12 @@
       "location_methods": "tstttt"
     },
     {
+      "en_owner": "resource_3b1:02000284",
+      "size": 112,
+      "core_bytes": 96,
+      "location_methods": "tstttt"
+    },
+    {
       "en_owner": "resource_3b1:020002f4",
       "size": 76,
       "core_bytes": 68,
@@ -10742,6 +10754,12 @@
       "size": 204,
       "core_bytes": 100,
       "location_methods": "nsnnnn"
+    },
+    {
+      "en_owner": "resource_3b1:02001144",
+      "size": 76,
+      "core_bytes": 72,
+      "location_methods": "tstttt"
     },
     {
       "en_owner": "resource_3b1:02001280",
@@ -10903,6 +10921,12 @@
       "en_owner": "resource_3b1:02004890",
       "size": 28,
       "core_bytes": 20,
+      "location_methods": "osoooo"
+    },
+    {
+      "en_owner": "resource_3b1:020048ac",
+      "size": 60,
+      "core_bytes": 40,
       "location_methods": "osoooo"
     },
     {
@@ -17004,6 +17028,12 @@
       "en_owner": "resource_3c9:020004bc",
       "size": 92,
       "core_bytes": 80,
+      "location_methods": "tstttt"
+    },
+    {
+      "en_owner": "resource_3c9:02000518",
+      "size": 212,
+      "core_bytes": 156,
       "location_methods": "tstttt"
     },
     {

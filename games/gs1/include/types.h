@@ -216,6 +216,7 @@ typedef int bool;
 #define AudioTrack_ConsumeSlotBytes Func_080f7e60
 #define AudioTrack_CopyBufferedBytes Func_080f7f30
 #define EmitRandomParticleEffect Func_0808eee4
+#define BattleEffect_SpawnRandomParticleAtPosition Func_0808f28c
 #define InitializeEventObject Func_0809728c
 #define UpdateRisingParticleBurst Func_080981b0
 #define SpawnHeavyImpactEffect Func_08098c08

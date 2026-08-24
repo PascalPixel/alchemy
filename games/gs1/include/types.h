@@ -196,6 +196,7 @@ typedef int bool;
 #define UiText_ShowLocalizedMessageAndWait Func_08026fa8
 #define Text_FormatHex Func_08029274
 #define UiText_SetRenderString Func_08020b14
+#define UiText_DrawPaddedLabel Func_08020b64
 #define UiWork_FinalizePending Func_08015140
 #define UiWork_FinalizePendingCore Func_08019a54
 #define UiTimedNotice_Create Func_0801c34c

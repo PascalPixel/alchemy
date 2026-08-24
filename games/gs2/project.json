@@ -4,6 +4,7 @@
   "canonical_edition": "ja",
   "default_target": "gs2-en",
   "build_model": "shared-source-edition-defines",
+  "source_paths": "games/gs2/source-paths.json",
   "layout": {
     "source": "games/gs2/src",
     "assembly": "games/gs2/asm",

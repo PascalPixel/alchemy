@@ -43,8 +43,12 @@ fn basename_without<'a>(path: &'a str, extension: &str) -> &'a str {
         .unwrap_or(base)
 }
 
-fn main_source_identity(root: &Path, source: &str) -> Result<(SourceOwner, PathBuf), String> {
-    let paths = SourcePaths::load(root)?;
+fn main_source_identity(
+    root: &Path,
+    source: &str,
+    target: CompilerTarget,
+) -> Result<(SourceOwner, PathBuf), String> {
+    let paths = SourcePaths::load_for_game(root, target.as_str())?;
     let path = Path::new(source);
     let mut owner = paths.owner_for_path(path)?;
     if owner.is_none() && !path.is_absolute() {
@@ -56,16 +60,23 @@ fn main_source_identity(root: &Path, source: &str) -> Result<(SourceOwner, PathB
             .and_then(|stem| stem.to_str())
             .and_then(SourceOwner::from_legacy_stem)
     });
-    let owner = owner.ok_or_else(|| format!("no GS1 source owner registered for {source}"))?;
+    let owner = owner.ok_or_else(|| {
+        format!(
+            "no {} source owner registered for {source}",
+            target.as_str().to_ascii_uppercase()
+        )
+    })?;
     match owner {
-        SourceOwner::Main(_) => Ok((
-            owner,
-            if routed_by_manifest {
+        SourceOwner::Main(_) => {
+            let routing = if target == CompilerTarget::Gs2 {
+                Path::new("games/gs2/src").join(owner.legacy_relative_path())
+            } else if routed_by_manifest {
                 owner.routing_path()
             } else {
                 path.to_path_buf()
-            },
-        )),
+            };
+            Ok((owner, routing))
+        }
         SourceOwner::Overlay { .. } => Err(format!(
             "candidate-show expects a main-image owner, but {source} is {}",
             owner.id()
@@ -129,7 +140,7 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         .ok_or("The \"path\" argument must be of type string. Received undefined")?;
     let patch_text = read_patch(options.patch.as_deref())?;
     let source_label = basename_without(&options.source, ".c").to_string();
-    let (owner, routing_source) = main_source_identity(root, &options.source)?;
+    let (owner, routing_source) = main_source_identity(root, &options.source, options.target)?;
     let stem = owner.address_stem();
     let key = source_cache_key(
         &options.source,
@@ -137,6 +148,8 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         &stem,
         &options.flags,
         &options.configuration,
+        options.rom.as_deref(),
+        options.size,
         patch_text.as_deref(),
     )?;
     let work = Path::new(work);
@@ -177,7 +190,7 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
             work.to_string_lossy().as_ref(),
             &options.flags,
             ROM_BASE,
-            CompilerTarget::Gs1,
+            options.target,
             &options.configuration,
         )?;
         let address = js_parse_int_radix(&stem, 16);
@@ -191,9 +204,9 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
             linked.len() as f64,
         )?
         .unwrap_or(verification.actual.len() as f64);
-        let size = region_size(root, &stem).ok_or_else(|| {
+        let size = options.size.map(|size| size as f64).or_else(|| region_size(root, &stem)).ok_or_else(|| {
                 format!(
-                    "no owner-size entry for {stem} in the claimed or asm build manifests -- run `make build-claimed` (or `make build-full`) before scoring against the ROM. Falling back to the candidate's own linked length would compare the source against itself."
+                    "no owner-size entry for {stem} in the claimed or asm build manifests -- pass `--size BYTES` for an independently established owner boundary, or run `make build-claimed` (or `make build-full`) before scoring against the ROM. Falling back to the candidate's own linked length would compare the source against itself."
                 )
             })?;
         let actual = js_subarray(&linked, 0.0, extent);
@@ -391,9 +404,13 @@ fn render_bytes(
 fn render_asm(root: &Path, options: &Options, work: &str) -> Result<RenderOutput, String> {
     let started = Instant::now();
     let source_label = basename_without(&options.source, ".c").to_string();
-    let (owner, routing_source) = main_source_identity(root, &options.source)?;
+    let (owner, routing_source) = main_source_identity(root, &options.source, options.target)?;
     let stem = owner.address_stem();
-    let reference = root.join("games/gs1/asm").join(format!("{stem}.s"));
+    let reference = root
+        .join("games")
+        .join(options.target.as_str())
+        .join("asm")
+        .join(format!("{stem}.s"));
     if !reference.is_file() {
         return Err(format!(
             "--asm expects a main-image owner with {}",
@@ -415,7 +432,7 @@ fn render_asm(root: &Path, options: &Options, work: &str) -> Result<RenderOutput
         &routing_source.to_string_lossy(),
         work,
         &options.flags,
-        CompilerTarget::Gs1,
+        options.target,
         &options.configuration,
     )?;
     let symbol = format!("Func_{stem}");
@@ -609,6 +626,8 @@ fn source_cache_key(
     owner_stem: &str,
     flags: &[String],
     configuration: &CandidateCompilerConfiguration,
+    rom: Option<&str>,
+    size: Option<usize>,
     patch: Option<&str>,
 ) -> Result<String, String> {
     let executable = std::env::current_exe()
@@ -622,6 +641,8 @@ fn source_cache_key(
         owner_stem,
         flags,
         configuration,
+        rom,
+        size,
         patch,
         &executable,
         bundle.as_bytes(),
@@ -634,6 +655,8 @@ fn source_cache_key_with_environment(
     owner_stem: &str,
     flags: &[String],
     configuration: &CandidateCompilerConfiguration,
+    rom: Option<&str>,
+    size: Option<usize>,
     patch: Option<&str>,
     executable: &[u8],
     compiler_bundle: &[u8],
@@ -669,6 +692,15 @@ fn source_cache_key_with_environment(
         hasher.update([3]);
         hasher.update(flag.as_bytes());
     }
+    hasher.update([9, u8::from(configuration.reference_symbols)]);
+    if let Some(rom) = rom {
+        hasher.update([10]);
+        hasher.update(rom.as_bytes());
+    }
+    if let Some(size) = size {
+        hasher.update([11]);
+        hasher.update(size.to_le_bytes());
+    }
     if let Some(patch) = patch {
         hasher.update([4]);
         hasher.update(patch.as_bytes());
@@ -703,14 +735,15 @@ mod cache_key_tests {
             ..Default::default()
         };
         let route = "games/gs1/src/08000000.c";
-        let base = source_cache_key(source, route, "08000000", &[], &routed, None).unwrap();
+        let base =
+            source_cache_key(source, route, "08000000", &[], &routed, None, None, None).unwrap();
         assert_ne!(
             base,
-            source_cache_key(source, route, "08000000", &[], &gcc296, None).unwrap()
+            source_cache_key(source, route, "08000000", &[], &gcc296, None, None, None).unwrap()
         );
         assert_ne!(
             base,
-            source_cache_key(source, route, "08000000", &[], &removed, None).unwrap()
+            source_cache_key(source, route, "08000000", &[], &removed, None, None, None).unwrap()
         );
         assert_ne!(
             base,
@@ -720,13 +753,15 @@ mod cache_key_tests {
                 "08000000",
                 &[],
                 &routed,
+                None,
+                None,
                 None
             )
             .unwrap()
         );
         assert_ne!(
             base,
-            source_cache_key(source, route, "08000004", &[], &routed, None).unwrap()
+            source_cache_key(source, route, "08000004", &[], &routed, None, None, None).unwrap()
         );
         let _ = std::fs::remove_file(source);
     }
@@ -744,6 +779,8 @@ mod cache_key_tests {
             &[],
             &configuration,
             None,
+            None,
+            None,
             b"host-a",
             b"bundle-a",
         )
@@ -756,6 +793,8 @@ mod cache_key_tests {
                 "08000000",
                 &[],
                 &configuration,
+                None,
+                None,
                 None,
                 b"host-b",
                 b"bundle-a",
@@ -770,6 +809,8 @@ mod cache_key_tests {
                 "08000000",
                 &[],
                 &configuration,
+                None,
+                None,
                 None,
                 b"host-a",
                 b"bundle-b",
@@ -890,6 +931,7 @@ mod source_identity_tests {
         let (owner, route) = main_source_identity(
             &root,
             "games/gs1/src/battle/inventory/draw_paged_item_list.c",
+            CompilerTarget::Gs1,
         )
         .unwrap();
         assert_eq!(owner, SourceOwner::Main(0x080b0fa4));
@@ -901,7 +943,7 @@ mod source_identity_tests {
     fn address_named_recon_candidate_keeps_its_legacy_route() {
         let root = scratch_root("recon");
         let source = "games/gs1/recon/en/main/080ab5e4.c";
-        let (owner, route) = main_source_identity(&root, source).unwrap();
+        let (owner, route) = main_source_identity(&root, source, CompilerTarget::Gs1).unwrap();
         assert_eq!(owner, SourceOwner::Main(0x080ab5e4));
         assert_eq!(route, PathBuf::from(source));
         let _ = fs::remove_dir_all(&root);

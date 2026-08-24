@@ -370,6 +370,21 @@ Then compare linked bytes:
 tools/compiler/target/release/compiler candidate-show games/gs1/recon/en/main/080bbb0c.c --align
 ```
 
+When measuring a candidate against an independently established GS2 boundary,
+select the target and explicit owner size:
+
+```sh
+tools/compiler/target/release/compiler candidate-show \
+  games/gs2/recon/ja/main/08120450.c --target gs2 \
+  --rom roms/gs2-ja.gba --size 0x206c \
+  --flags -Igames/gs1/include
+```
+
+Once the candidate's relocation sites align with the reference structure,
+`--reference-symbols` derives call and literal targets from the chosen local
+reference image. Inconsistent sites or a non-call where a call is expected are
+errors, never guessed bindings.
+
 `--first` crops the first residual window. `--patch FILE` scores a unified diff
 without changing the corpus source.
 

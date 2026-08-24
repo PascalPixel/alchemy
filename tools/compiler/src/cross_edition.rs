@@ -20,7 +20,7 @@ const EDITIONS: [&str; 6] = ["ja", "en", "de", "es", "fr", "it"];
 const OVERLAY_BASE: u64 = 0x0200_0000;
 const OVERLAY_FIRST: usize = 0x36f;
 const OVERLAY_LAST: usize = 0x3ce;
-const CORRESPONDENCE_SCHEMA_VERSION: u32 = 2;
+const CORRESPONDENCE_SCHEMA_VERSION: u32 = 3;
 const CORPUS_EDITION_BUILD_SCHEMA_VERSION: u32 = 2;
 const USAGE: &str = "usage: compiler cross-edition ([--calls] [--json] [--rom-dir DIR] [--object FILE] [--edition-build FILE] <8-digit-owner> | --all [--rom-dir DIR] [--object-dir DIR] [--write FILE] [--edition-build FILE] | --all-overlays [--rom-dir DIR] [--write FILE])";
 
@@ -60,6 +60,7 @@ struct CorpusReport {
     regional_core_owners: usize,
     regional_core_bytes: usize,
     unresolved_owners: usize,
+    location_method_codes: BTreeMap<&'static str, &'static str>,
     editions: Vec<EditionSummary>,
     owners: Vec<CorpusOwner>,
     unresolved: Vec<UnresolvedOwner>,
@@ -80,9 +81,10 @@ struct EditionSummary {
 struct CorpusOwner {
     en_owner: String,
     size: usize,
-    status: &'static str,
-    starts: BTreeMap<String, String>,
-    location_methods: BTreeMap<String, &'static str>,
+    #[serde(skip_serializing_if = "BTreeMap::is_empty")]
+    start_overrides: BTreeMap<String, String>,
+    location_methods: String,
+    #[serde(skip_serializing_if = "BTreeMap::is_empty")]
     core_diff_bytes_from_ja: BTreeMap<String, usize>,
 }
 
@@ -110,6 +112,7 @@ struct OverlayCorpusReport {
     regional_core_bytes: usize,
     unresolved_owners: usize,
     resource_tables: BTreeMap<String, String>,
+    location_method_codes: BTreeMap<&'static str, &'static str>,
     editions: Vec<EditionSummary>,
     owners: Vec<OverlayCorpusOwner>,
     unresolved: Vec<OverlayUnresolvedOwner>,
@@ -120,9 +123,10 @@ struct OverlayCorpusOwner {
     en_owner: String,
     size: usize,
     core_bytes: usize,
-    status: &'static str,
-    starts: BTreeMap<String, String>,
-    location_methods: BTreeMap<String, &'static str>,
+    #[serde(skip_serializing_if = "BTreeMap::is_empty")]
+    start_overrides: BTreeMap<String, String>,
+    location_methods: String,
+    #[serde(skip_serializing_if = "BTreeMap::is_empty")]
     core_diff_bytes_from_ja: BTreeMap<String, usize>,
 }
 
@@ -1104,6 +1108,29 @@ fn canonical_main_owner_id(owner: &str) -> Result<String, String> {
     SourceOwner::parse(&format!("main:{owner}")).map(SourceOwner::id)
 }
 
+fn location_method_codes() -> BTreeMap<&'static str, &'static str> {
+    [
+        ("a", "global_anchor"),
+        ("n", "neighbor_exact"),
+        ("o", "resource_offset_exact"),
+        ("s", "source"),
+        ("t", "global_thumb_anchor"),
+    ]
+    .into_iter()
+    .collect()
+}
+
+fn location_method_code(method: &str) -> Result<char, String> {
+    match method {
+        "global_anchor" => Ok('a'),
+        "neighbor_exact" => Ok('n'),
+        "resource_offset_exact" => Ok('o'),
+        "source" => Ok('s'),
+        "global_thumb_anchor" => Ok('t'),
+        _ => Err(format!("unknown location method {method:?}")),
+    }
+}
+
 fn resolve_object(
     owner: &str,
     explicit: Option<&Path>,
@@ -1248,22 +1275,24 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
         } else {
             regional_core_bytes += report.size;
         }
-        let mut starts = BTreeMap::new();
-        let mut location_methods = BTreeMap::new();
+        let canonical_start = format!("0x{owner}");
+        let mut start_overrides = BTreeMap::new();
+        let mut location_methods = String::with_capacity(EDITIONS.len());
         let mut core_diff_bytes_from_ja = BTreeMap::new();
         for edition in &report.editions {
-            starts.insert(edition.edition.clone(), edition.start.clone());
-            location_methods.insert(
-                edition.edition.clone(),
-                if edition.edition == "en" {
-                    "source"
-                } else if edition.anchor_matches == 0 {
-                    "neighbor_exact"
-                } else {
-                    "global_anchor"
-                },
-            );
-            core_diff_bytes_from_ja.insert(edition.edition.clone(), edition.core_diff_bytes);
+            if edition.start != canonical_start {
+                start_overrides.insert(edition.edition.clone(), edition.start.clone());
+            }
+            location_methods.push(location_method_code(if edition.edition == "en" {
+                "source"
+            } else if edition.anchor_matches == 0 {
+                "neighbor_exact"
+            } else {
+                "global_anchor"
+            })?);
+            if edition.core_diff_bytes != 0 {
+                core_diff_bytes_from_ja.insert(edition.edition.clone(), edition.core_diff_bytes);
+            }
             let totals = edition_totals
                 .get_mut(edition.edition.as_str())
                 .expect("known edition");
@@ -1280,12 +1309,7 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
         owners.push(CorpusOwner {
             en_owner: canonical_main_owner_id(&owner)?,
             size: report.size,
-            status: if report.core_identical {
-                "shared_core"
-            } else {
-                "regional_core"
-            },
-            starts,
+            start_overrides,
             location_methods,
             core_diff_bytes_from_ja,
         });
@@ -1328,15 +1352,16 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
         matched_bytes,
         shared_core_owners: owners
             .iter()
-            .filter(|owner| owner.status == "shared_core")
+            .filter(|owner| owner.core_diff_bytes_from_ja.is_empty())
             .count(),
         shared_core_bytes,
         regional_core_owners: owners
             .iter()
-            .filter(|owner| owner.status == "regional_core")
+            .filter(|owner| !owner.core_diff_bytes_from_ja.is_empty())
             .count(),
         regional_core_bytes,
         unresolved_owners: unresolved.len(),
+        location_method_codes: location_method_codes(),
         editions,
         owners,
         unresolved,
@@ -1444,8 +1469,9 @@ fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String>
             ja_start,
             found.owner.size,
         )?;
-        let mut starts = BTreeMap::new();
-        let mut methods = BTreeMap::new();
+        let canonical_start = format!("0x{:08x}", OVERLAY_BASE + found.owner.en_offset as u64);
+        let mut start_overrides = BTreeMap::new();
+        let mut methods = String::with_capacity(EDITIONS.len());
         let mut differences = BTreeMap::new();
         let mut shared = true;
         for edition in EDITIONS {
@@ -1459,12 +1485,14 @@ fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String>
             )?;
             let difference = core_diff_bytes(ja, other, &found.mask);
             shared &= difference == 0;
-            starts.insert(
-                edition.to_string(),
-                format!("0x{:08x}", OVERLAY_BASE + start as u64),
-            );
-            methods.insert(edition.to_string(), found.methods[edition]);
-            differences.insert(edition.to_string(), difference);
+            let start = format!("0x{:08x}", OVERLAY_BASE + start as u64);
+            if start != canonical_start {
+                start_overrides.insert(edition.to_string(), start);
+            }
+            methods.push(location_method_code(found.methods[edition])?);
+            if difference != 0 {
+                differences.insert(edition.to_string(), difference);
+            }
             let totals = edition_totals.get_mut(edition).expect("known edition");
             totals[0] += 1;
             totals[1] += found.owner.size;
@@ -1485,12 +1513,7 @@ fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String>
             en_owner: found.owner.name.clone(),
             size: found.owner.size,
             core_bytes: found.mask.iter().filter(|masked| !**masked).count(),
-            status: if shared {
-                "shared_core"
-            } else {
-                "regional_core"
-            },
-            starts,
+            start_overrides,
             location_methods: methods,
             core_diff_bytes_from_ja: differences,
         });
@@ -1537,16 +1560,17 @@ fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String>
         matched_bytes: owners.iter().map(|owner| owner.size).sum(),
         shared_core_owners: owners
             .iter()
-            .filter(|owner| owner.status == "shared_core")
+            .filter(|owner| owner.core_diff_bytes_from_ja.is_empty())
             .count(),
         shared_core_bytes,
         regional_core_owners: owners
             .iter()
-            .filter(|owner| owner.status == "regional_core")
+            .filter(|owner| !owner.core_diff_bytes_from_ja.is_empty())
             .count(),
         regional_core_bytes,
         unresolved_owners: unresolved.len(),
         resource_tables,
+        location_method_codes: location_method_codes(),
         editions,
         owners,
         unresolved,
@@ -2643,17 +2667,24 @@ mod tests {
             assert!(value.get("resource").is_none());
         }
 
-        assert_identity(
-            &CorpusOwner {
-                en_owner: SourceOwner::Main(0x0800_2ee4).id(),
-                size: 4,
-                status: "shared_core",
-                starts: BTreeMap::new(),
-                location_methods: BTreeMap::new(),
-                core_diff_bytes_from_ja: BTreeMap::new(),
-            },
-            "main:08002ee4",
-        );
+        let owner = CorpusOwner {
+            en_owner: SourceOwner::Main(0x0800_2ee4).id(),
+            size: 4,
+            start_overrides: BTreeMap::new(),
+            location_methods: "asaaaa".into(),
+            core_diff_bytes_from_ja: BTreeMap::new(),
+        };
+        assert_identity(&owner, "main:08002ee4");
+        let compact = serde_json::to_value(owner).expect("serialize compact owner");
+        for derived in [
+            "status",
+            "starts",
+            "start_overrides",
+            "core_diff_bytes_from_ja",
+        ] {
+            assert!(compact.get(derived).is_none(), "unexpected {derived}");
+        }
+        assert_eq!(compact["location_methods"], "asaaaa");
         assert_identity(
             &UnresolvedOwner {
                 en_owner: SourceOwner::Main(0x0800_2ee4).id(),
@@ -2671,9 +2702,8 @@ mod tests {
                 en_owner: overlay_owner.clone(),
                 size: 4,
                 core_bytes: 4,
-                status: "shared_core",
-                starts: BTreeMap::new(),
-                location_methods: BTreeMap::new(),
+                start_overrides: BTreeMap::new(),
+                location_methods: "sooooo".into(),
                 core_diff_bytes_from_ja: BTreeMap::new(),
             },
             "resource_36f:02000030",
@@ -2693,8 +2723,20 @@ mod tests {
             },
             "main:08002ee4",
         );
-        assert_eq!(CORRESPONDENCE_SCHEMA_VERSION, 2);
+        assert_eq!(CORRESPONDENCE_SCHEMA_VERSION, 3);
         assert_eq!(CORPUS_EDITION_BUILD_SCHEMA_VERSION, 2);
+        assert_eq!(
+            location_method_codes(),
+            [
+                ("a", "global_anchor"),
+                ("n", "neighbor_exact"),
+                ("o", "resource_offset_exact"),
+                ("s", "source"),
+                ("t", "global_thumb_anchor"),
+            ]
+            .into_iter()
+            .collect()
+        );
     }
 
     #[test]

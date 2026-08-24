@@ -22332,7 +22332,7 @@
     },
     {
       "en_owner": "08095884",
-      "source": "games/gs1/src/08095884.c",
+      "source": "games/gs1/src/battle/effects/runtime/update_all_slots.c",
       "size": 36,
       "status": "shared_core",
       "starts": {

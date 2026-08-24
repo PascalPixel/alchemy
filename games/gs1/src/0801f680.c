@@ -2,7 +2,7 @@
 
 u32 Func_080022f4(s32, s32);
 s32 Func_08002304(s32, s32);
-u8 *Func_08017dd4(u8 *, s32, s32);
+u8 *Text_FormatNumber(u8 *, s32, s32);
 
 void *Func_0801f680(s32 value, u8 *output)
 {
@@ -20,7 +20,7 @@ void *Func_0801f680(s32 value, u8 *output)
     minutes = Func_080022f4(time, 60);
     seconds = Func_08002304(time, 60);
 
-    text = Func_08017dd4(buffer, minutes, 3);
+    text = Text_FormatNumber(buffer, minutes, 3);
     *output = *text;
     text++;
     cursor = output + 1;
@@ -31,7 +31,7 @@ void *Func_0801f680(s32 value, u8 *output)
     cursor++;
     *cursor = ':';
 
-    text = Func_08017dd4(buffer, seconds, 2);
+    text = Text_FormatNumber(buffer, seconds, 2);
     cursor++;
     *cursor = text[0];
     cursor++;

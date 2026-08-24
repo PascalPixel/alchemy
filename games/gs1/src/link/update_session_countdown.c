@@ -46,7 +46,7 @@ s32 FixedPoint_Ratio(s32 dividend, s32 divisor);
 void Runtime_PushSlotEntry(struct CountdownDisplayEntry *entry, s32 value);
 void Func_080219c8(s32 destination);
 s32 Func_08021c34(void);
-void Func_0801ea08(s32 value, s32 width, s32 handle, s32 arg3, s32 arg4);
+void UiText_DrawNumberInWindow(s32 value, s32 width, s32 handle, s32 arg3, s32 arg4);
 void Func_080b50d0(s32 offset);
 void Audio_PlayCue(s32 soundId);
 
@@ -145,7 +145,7 @@ timer_ready:
             Audio_PlayCue(SOUND_TRIPLE_TONE_LOW);
 
         if (state->displayHandle != 0)
-            Func_0801ea08(seconds, 2, state->displayHandle, 16, 8);
+            UiText_DrawNumberInWindow(seconds, 2, state->displayHandle, 16, 8);
     }
 
 done:

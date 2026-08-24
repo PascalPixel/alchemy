@@ -9,12 +9,12 @@ struct TextRenderWork {
     u16 y;
 };
 
-void Func_0801e8b0(
+void UiText_DrawStringAtOffset(
     u8 *text,
     struct TextRenderWork *work,
     s32 offset_x,
     s32 offset_y);
-void Func_0801e9d4(
+void UiText_DrawNumberAtOffset(
     s32 value,
     s32 format,
     struct TextRenderWork *work,

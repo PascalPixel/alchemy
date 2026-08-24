@@ -3,7 +3,7 @@
 s32 FixedPoint_Ratio(s32 dividend, s32 divisor);
 s32 Modulo(s32 dividend, s32 divisor);
 
-u8 *Func_08017dd4(u8 *buffer, s32 input, s32 width)
+u8 *Text_FormatNumber(u8 *buffer, s32 input, s32 width)
 {
     s32 offset;
     s32 value;

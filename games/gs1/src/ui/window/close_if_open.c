@@ -2,7 +2,7 @@
 
 s32 UiWindow_Close(void *handle);
 
-void Func_080a1114(void **handle)
+void UiWindow_CloseIfOpen(void **handle)
 {
     if (*handle != NULL) {
         UiWindow_Close(*handle);

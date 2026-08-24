@@ -13,7 +13,7 @@ struct State08078e28 {
 struct State08078e28 *Owner_GetState(s32);
 void Func_08078bf0(s32);
 
-s32 Func_08078e28(s32 state_index, s32 value)
+s32 OwnerAction_Add(s32 state_index, s32 value)
 {
     struct State08078e28 *state = Owner_GetState(state_index);
     s32 key = value & 0x3fff;

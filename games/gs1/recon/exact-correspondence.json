@@ -15102,7 +15102,7 @@
     },
     {
       "en_owner": "08078e28",
-      "source": "games/gs1/src/08078e28.c",
+      "source": "games/gs1/src/owner/action/add.c",
       "size": 164,
       "status": "shared_core",
       "starts": {
@@ -25212,7 +25212,7 @@
     },
     {
       "en_owner": "080a10d0",
-      "source": "games/gs1/src/080a10d0.c",
+      "source": "games/gs1/src/ui/window/update_or_create.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -25242,7 +25242,7 @@
     },
     {
       "en_owner": "080a1114",
-      "source": "games/gs1/src/080a1114.c",
+      "source": "games/gs1/src/ui/window/close_if_open.c",
       "size": 24,
       "status": "shared_core",
       "starts": {

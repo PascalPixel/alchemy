@@ -4,7 +4,8 @@
 #include "sound_ids.h"
 
 extern void *Object_Spawn(s32, s32, s32, s32);
-extern void Object_SetVelocity(struct Object_08096bec *object, s32 arg1, s32 arg2);
+extern void ObjectMotion_SetTargetPositionFromMagnitudeAngle(
+    struct Object_08096bec *object, s32 magnitude, s32 angle);
 extern void Object_SetMode(void *, s32);
 extern void Object_SetCallback(void *, void *);
 extern void BattleEffect_UpdateItemBreakFragment(void *);
@@ -39,7 +40,7 @@ void *BattleEffect_StartItemBreak(void *source)
     zero = 0;
     *(s8 *)((s8 *)parent + 0x55) = zero;
     Object_SetMode(parent, 3);
-    Object_SetVelocity(parent, 0x100000, angle);
+    ObjectMotion_SetTargetPositionFromMagnitudeAngle(parent, 0x100000, angle);
 
     fragment_count = 7;
     do {
@@ -57,7 +58,8 @@ void *BattleEffect_StartItemBreak(void *source)
             *(s32 *)((s8 *)child + 0x28) = horizontal_velocity - Rand();
             fragment_height = Rand() * 0x18 + 0x80000;
             rotation_jitter = Rand();
-            Object_SetVelocity(child, fragment_height,
+            ObjectMotion_SetTargetPositionFromMagnitudeAngle(
+                child, fragment_height,
                           ((rotation_jitter - Rand()) >> 3) +
                           *(u16 *)((s8 *)source + 6));
         }

@@ -17,7 +17,8 @@ void Object_SetCallback(void *, const void *);
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-void Object_SetVelocity(struct ImpactParticle *, s32, s32);
+void ObjectMotion_SetTargetPositionFromMagnitudeAngle(
+    struct ImpactParticle *, s32, s32);
 
 s32 SpawnHeavyImpactEffect(void *source)
 {
@@ -68,7 +69,7 @@ s32 SpawnHeavyImpactEffect(void *source)
             *(s32 *)((u8 *)child + 0x30) = x;
             *(u8 *)((u8 *)child + 0x55) = 0;
             y = Rand() * 24 + 0x80000;
-            Object_SetVelocity(
+            ObjectMotion_SetTargetPositionFromMagnitudeAngle(
                 (struct ImpactParticle *)child,
                 y,
                 Rand());

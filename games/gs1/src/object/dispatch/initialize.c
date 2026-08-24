@@ -1,6 +1,6 @@
 #include "object_dispatch.h"
 
-void Func_0800c2d8(struct DispatchObject *object, u32 value)
+void ObjectDispatch_Initialize(struct DispatchObject *object, u32 value)
 {
     if (object != 0) {
         object->value_04 = 0;

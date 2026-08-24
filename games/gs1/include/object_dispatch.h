@@ -29,7 +29,7 @@ struct DispatchObject {
     u8 unknown_6c[4];
 };
 
-void Func_0800c2d8(struct DispatchObject *object, u32 value);
+void ObjectDispatch_Initialize(struct DispatchObject *object, u32 value);
 
 extern const u32 Data_08013590[];
 extern const u32 Data_080135a8[];

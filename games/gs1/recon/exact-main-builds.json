@@ -6466,7 +6466,7 @@
     },
     {
       "en_owner": "0800c2d8",
-      "source": "games/gs1/src/0800c2d8.c",
+      "source": "games/gs1/src/object/dispatch/initialize.c",
       "size": 40,
       "all_exact": true,
       "editions": [
@@ -37305,7 +37305,7 @@
     },
     {
       "en_owner": "08092064",
-      "source": "games/gs1/src/08092064.c",
+      "source": "games/gs1/src/object/motion/set_speed_parameters.c",
       "size": 24,
       "all_exact": true,
       "editions": [

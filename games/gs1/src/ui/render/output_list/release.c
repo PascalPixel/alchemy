@@ -3,7 +3,7 @@
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-void Func_08015ec0(u32 arg0);
+void RenderOutput_ReleaseFree(u32 arg0);
 s32 Resource_ResetEntry(u32 index);
 
 struct Entry_08016594 {
@@ -17,7 +17,7 @@ struct Entry_08016594 {
 };
 
 void RenderOutput_Release(struct Entry_08016594 *entry) {
-    Func_08015ec0((u32)entry);
+    RenderOutput_ReleaseFree((u32)entry);
     if (entry->kind != 0) {
         Resource_ResetEntry(entry->index);
         if (entry->kind == 2) {

@@ -8832,7 +8832,7 @@
     },
     {
       "en_owner": "08019944",
-      "source": "games/gs1/src/08019944.c",
+      "source": "games/gs1/src/ui/render/lookup_named_value.c",
       "size": 88,
       "status": "shared_core",
       "starts": {

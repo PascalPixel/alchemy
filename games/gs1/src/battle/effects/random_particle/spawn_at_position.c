@@ -28,7 +28,7 @@ extern struct Object_0808f28c *Object_Spawn(s32, u32, u32, u32);
 extern void Object_SetCallback(struct Object_0808f28c *, void *);
 extern void Object_SetMode(struct Object_0808f28c *, s32);
 
-void Func_0808f28c(const struct Source_0808f28c *source)
+void BattleEffect_SpawnRandomParticleAtPosition(const struct Source_0808f28c *source)
 {
     struct Values_0808f28c values;
     struct Object_0808f28c *object;

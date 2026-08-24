@@ -17,7 +17,7 @@ extern struct MenuDefaults Data_02000240;
 extern volatile u32 Data_03001ae8;
 
 struct Work *UiWindow_Create(s32 kind, s32 x, s32 y, s32 width, s32 layer);
-void Func_08028ef0(
+void Menu_DrawSelectionRow(
     struct Work *work, s16 primary, const s16 *secondary);
 void Func_0801c0dc(struct TextObject *object, s32 *resource);
 void WaitFrames(s32 frames);
@@ -31,7 +31,7 @@ void UiWork_Finalize(struct Work *work, s32 release);
 void Func_0808a238(s16 primary, s16 secondary);
 void Func_0801c154(struct TextObject *object, s32 x, s32 y);
 
-s16 Func_08028f98(void)
+s16 Menu_RunSelection(void)
 {
     s32 resource;
     s16 mode;
@@ -46,7 +46,7 @@ s16 Func_08028f98(void)
     primary = Data_02000240.primary;
     secondary = Data_02000240.secondary;
     work = UiWindow_Create(0, 7, 30, 5, 2);
-    Func_08028ef0(work, primary, &secondary);
+    Menu_DrawSelectionRow(work, primary, &secondary);
     Func_0801c0dc(&object, &resource);
 
     while (Data_03001ae8 != 0)

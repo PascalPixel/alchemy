@@ -11,7 +11,7 @@ void Func_0801e74c(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 extern u8 Value_0000099b[];
 extern u8 Value_00000a07[];
 extern u8 Data_08037428[];
-void Func_08028ef0(struct Work *work, s16 first, const s16 *second) {
+void Menu_DrawSelectionRow(struct Work *work, s16 first, const s16 *second) {
     s16 selected = first;
     s32 label = Func_0808a5d0(selected, *second) + (s32)Value_0000099b;
     Func_08016478(work);

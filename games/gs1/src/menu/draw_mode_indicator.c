@@ -6,7 +6,7 @@ extern u8 Data_03001f38;
 extern u8 Value_00000c71;
 extern u8 Value_00000c73;
 
-void Func_08028b80(void)
+void Menu_DrawModeIndicator(void)
 {
     u8 *state = *(u8 **)&Data_03001f38;
     s16 *shown = (s16 *)(state + 150);

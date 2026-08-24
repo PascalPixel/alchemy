@@ -105,6 +105,7 @@ typedef int bool;
 #define GameFlag_RefreshLureCap Func_08077c10
 #define Runtime_GetBuildStampTime Func_08077cb8
 #define Owner_GetLevelThreshold Func_08079008
+#define OwnerAction_Add Func_08078e28
 #define Party_AddActiveOwner Func_0807961c
 #define Party_RemoveActiveOwner Func_08079664
 #define Item_GetEquippedElement Func_08079c8c
@@ -135,6 +136,8 @@ typedef int bool;
 #define Menu_WaitForSelectionInput Func_0801b424
 #define Menu_MoveSelectionForward Func_0801b4ec
 #define Menu_MoveSelectionBackward Func_0801b5c0
+#define UiWindow_UpdateOrCreate Func_080a10d0
+#define UiWindow_CloseIfOpen Func_080a1114
 #define Object_CheckMovementCollision Func_080091d8
 #define Ability_GetMaximum Func_08077240
 #define Ability_GetAvailability Func_08077248

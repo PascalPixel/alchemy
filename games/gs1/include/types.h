@@ -426,6 +426,7 @@ typedef int bool;
 #define MusicTrack_Finish Func_080f9a50
 #define Audio_DummyCallback Func_080fb790
 #define ObjectLink_RotatePairToward Func_08092878
+#define Object_LinkObjectAndSetCallback Func_080920c0
 #define ObjectTable_ReadActiveValue Func_08092ba8
 #define ObjectMotion_SetPositionWithTerrain Func_08092454
 #define ObjectMotion_SetHorizontalPositionWithTerrain Func_080923e4

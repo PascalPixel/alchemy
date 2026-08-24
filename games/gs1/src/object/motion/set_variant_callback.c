@@ -3,7 +3,7 @@
 void Object_SetCallback(struct ObjectRuntime *, const void *);
 extern const u8 Data_0809ebfc[];
 
-void Func_0809259c(u32 object_id, s32 variant)
+void ObjectMotion_SetVariantCallback(u32 object_id, s32 variant)
 {
     struct ObjectRuntime *object;
 

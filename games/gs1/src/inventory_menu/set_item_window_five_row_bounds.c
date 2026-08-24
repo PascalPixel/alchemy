@@ -6,8 +6,8 @@
 
 void InventoryMenu_SetItemWindowFiveRowBounds(void) {
     void *menu = *(void **)ADDR_03001F2C;
-    struct Bounds080a23f4 *window =
-        FIELD(menu, struct Bounds080a23f4 **, 0x20);
+    struct WindowBounds *window =
+        FIELD(menu, struct WindowBounds **, 0x20);
 
-    Func_080a23f4(window, 0xD, 5, 0x11, 0xA);
+    WindowBounds_Set(window, 0xD, 5, 0x11, 0xA);
 }

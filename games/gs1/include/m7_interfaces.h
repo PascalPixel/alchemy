@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-struct Bounds080a23f4 {
+struct WindowBounds {
     u8 padding_00[8];
     u16 left;
     u16 top;
@@ -21,7 +21,7 @@ void PsynergyMenu_PositionOwnerEntry(
     struct Object080a1c **, s32, s32, s32, s32);
 void InventoryMenu_PositionOwnerEntry(
     struct Object080a1c **, s32, s32, s32, s32);
-void Func_080a23f4(
-    struct Bounds080a23f4 *, s32, s32, s32, s32);
+void WindowBounds_Set(
+    struct WindowBounds *, s32, s32, s32, s32);
 
 #endif

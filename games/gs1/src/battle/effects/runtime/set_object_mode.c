@@ -2,6 +2,6 @@
 
 void Object_InitializeMode(void *, s32);
 
-void Func_0809ba70(struct EffectSlot *effect, s32 mode) {
+void EffectSlot_SetObjectMode(struct EffectSlot *effect, s32 mode) {
     Object_InitializeMode(effect->object, mode);
 }

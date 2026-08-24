@@ -1,6 +1,6 @@
 #include "effect_0809b11c.h"
 
-u32 Func_0809ba34(struct EffectSlot *effect) {
+u32 EffectSlot_HasReachedTarget(struct EffectSlot *effect) {
     u32 value;
 
     if (effect->flag41 == 0) {

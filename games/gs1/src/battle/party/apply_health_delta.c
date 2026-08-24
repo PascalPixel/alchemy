@@ -7,7 +7,7 @@ s32 Func_08077148(void);
 u8 *Runtime_GetObject(s32);
 s32 FixedPoint_Ratio(s32, s32);
 void Func_08077118(s32, s32);
-void Func_08091220(s32, s32);
+void BattleEffect_ApplyColorToSourceBuffer(s32, s32);
 void BattleEffect_StartBufferInterpolation(s32);
 void Audio_PlayCue(s32);
 
@@ -22,7 +22,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
     u8 *object;
 
     if (amount < 0) {
-        Func_08091220(0x1ff, 0);
+        BattleEffect_ApplyColorToSourceBuffer(0x1ff, 0);
         BattleEffect_StartBufferInterpolation(4);
         if (amount < -10)
             Audio_PlayCue(SOUND_HEAVY_IMPACT);

@@ -3,7 +3,7 @@
 
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-void Func_08090378(s32 clear_0800, s32 clear_0400, s32 clear_0200) {
+void DisplayState_ClearFlags(s32 clear_0800, s32 clear_0400, s32 clear_0200) {
     void *state;
 
     state = *(void **)ADDR_03001E70;

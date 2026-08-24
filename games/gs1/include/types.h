@@ -70,6 +70,7 @@ typedef int bool;
 #define Resource_ClearSlotReferences Func_08003f04
 #define Resource_ActivateEntry Func_08003f78
 #define Resource_InitializeTable Func_0800403c
+#define Inn_CleanupResources Func_080b0204
 #define Runtime_AllocateHeapBlock Func_080048b0
 #define Resource_GetBuffer Func_080040d0
 #define Runtime_PushSlotEntry Func_08003dec
@@ -114,6 +115,9 @@ typedef int bool;
 #define RenderOutput_CreateLoaded Func_0801eb90
 #define RenderOutput_CreateWithTransform Func_0801ebd8
 #define RenderOutput_CreateFromTable Func_0801ec24
+#define TextResource_Initialize Func_0801c0dc
+#define TextResource_SetPosition Func_0801c154
+#define TextResource_Release Func_0801c17c
 #define Object_CheckMovementCollision Func_080091d8
 #define Ability_GetMaximum Func_08077240
 #define Ability_GetAvailability Func_08077248
@@ -335,6 +339,7 @@ typedef int bool;
 #define MusicCommand_SetVolume Func_080f950c
 #define MusicCommand_SetPitchAndUpdateFrequency Func_080f94c8
 #define AudioCommand_UpdateToggleMask Func_080f9570
+#define AudioCommand_WaitForStateByteClear Func_080b04c4
 #define Audio_InitializeRuntimeDefaults Func_080f9438
 #define Graphics_ScaleRgb555 Func_080f6038
 #define Audio_ClearChannelChain Func_080f9a30

@@ -25,7 +25,7 @@ void WaitFrames(s32);
 void Func_0808a368(void);
 void Func_0808a370(void);
 void Audio_PlayCue(s32);
-void Func_080b04c4(void);
+void AudioCommand_WaitForStateByteClear(void);
 void Func_0808a360(void);
 
 void Inn_PlaySleepSequence(s32 room_price)
@@ -55,7 +55,7 @@ void Inn_PlaySleepSequence(s32 room_price)
     Func_0808a368();
     Func_0808a370();
     Audio_PlayCue(86);
-    Func_080b04c4();
+    AudioCommand_WaitForStateByteClear();
     WaitFrames(10);
     Func_0808a360();
     Func_0808a370();

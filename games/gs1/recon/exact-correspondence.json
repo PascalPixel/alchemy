@@ -10032,7 +10032,7 @@
     },
     {
       "en_owner": "0801c0dc",
-      "source": "games/gs1/src/0801c0dc.c",
+      "source": "games/gs1/src/ui/text/resource/initialize.c",
       "size": 118,
       "status": "shared_core",
       "starts": {
@@ -10062,7 +10062,7 @@
     },
     {
       "en_owner": "0801c154",
-      "source": "games/gs1/src/0801c154.c",
+      "source": "games/gs1/src/ui/text/resource/set_position.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -10092,7 +10092,7 @@
     },
     {
       "en_owner": "0801c17c",
-      "source": "games/gs1/src/0801c17c.c",
+      "source": "games/gs1/src/ui/text/resource/release.c",
       "size": 10,
       "status": "shared_core",
       "starts": {
@@ -28572,7 +28572,7 @@
     },
     {
       "en_owner": "080b0204",
-      "source": "games/gs1/src/080b0204.c",
+      "source": "games/gs1/src/inn/cleanup_resources.c",
       "size": 116,
       "status": "shared_core",
       "starts": {
@@ -28632,7 +28632,7 @@
     },
     {
       "en_owner": "080b04c4",
-      "source": "games/gs1/src/080b04c4.c",
+      "source": "games/gs1/src/audio/command/wait_for_state_byte_clear.c",
       "size": 22,
       "status": "shared_core",
       "starts": {

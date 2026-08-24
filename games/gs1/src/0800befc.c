@@ -1,7 +1,7 @@
 #include "types.h"
 
 s32 WaitFrames(s32);
-void Func_0800be70(u8 *object, u32 position);
+void Map_RenderAnimatedTileFrame(u8 *object, u32 position);
 
 void Func_0800befc(u8 *object)
 {
@@ -9,10 +9,10 @@ void Func_0800befc(u8 *object)
 
     pos = 0;
     do {
-        Func_0800be70(object, pos);
-        Func_0800be70(object, pos + 1);
-        Func_0800be70(object, pos + 2);
-        Func_0800be70(object, pos + 3);
+        Map_RenderAnimatedTileFrame(object, pos);
+        Map_RenderAnimatedTileFrame(object, pos + 1);
+        Map_RenderAnimatedTileFrame(object, pos + 2);
+        Map_RenderAnimatedTileFrame(object, pos + 3);
         pos += 4;
         WaitFrames(1);
     } while (pos <= 0x7f);

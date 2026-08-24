@@ -6,5 +6,5 @@ s32 Func_080994d0();
 
 void Func_080994c0(void) {
     Func_080994d0();
-    Func_08097174();
+    EffectRuntime_StopCurrentObject();
 }

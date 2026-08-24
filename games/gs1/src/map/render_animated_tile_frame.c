@@ -8,7 +8,7 @@ struct MapBase {
 
 extern u8 Data_0801314c[];
 
-void Func_0800be70(u8 *object, u32 position)
+void Map_RenderAnimatedTileFrame(u8 *object, u32 position)
 {
     u16 *destination;
     s32 count;

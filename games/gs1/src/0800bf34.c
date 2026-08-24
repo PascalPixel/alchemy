@@ -2,7 +2,7 @@
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-void Func_0800be70(u8 *object, u32 position);
+void Map_RenderAnimatedTileFrame(u8 *object, u32 position);
 void WaitFrames(u32);
 
 void Func_0800bf34(u8 **objects, s32 count) {
@@ -24,11 +24,11 @@ void Func_0800bf34(u8 **objects, s32 count) {
             fourth = position + 3;
             remaining = count;
             do {
-                Func_0800be70(*cursor, position);
-                Func_0800be70(*cursor, second);
-                Func_0800be70(*cursor, third);
+                Map_RenderAnimatedTileFrame(*cursor, position);
+                Map_RenderAnimatedTileFrame(*cursor, second);
+                Map_RenderAnimatedTileFrame(*cursor, third);
                 remaining -= 1;
-                Func_0800be70(*cursor++, fourth);
+                Map_RenderAnimatedTileFrame(*cursor++, fourth);
             } while (remaining != 0);
         }
         WaitFrames(1U);

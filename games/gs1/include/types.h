@@ -238,9 +238,11 @@ typedef int bool;
 #define FourObjectMotion_ClearSlotsAndSchedule Func_080ad318
 #define FourObjectMotion_InitializeTopRow Func_080ad274
 #define FourObjectMotion_InitializeBottomRow Func_080ad508
+#define FourObjectMotion_UpdateAllPositions Func_080ad35c
 #define FourObjectMotion_SetSlotPosition Func_080ad5b4
 #define FourObjectMotion_SetSlotPhase Func_080ad5f4
 #define FourObjectMotion_ReplaceSlot Func_080ad608
+#define FourObjectMotion_ClearSlotsAndScheduleAlt Func_080ad658
 #define ObjectGroup_ApplyRandomChildValues Func_08096b88
 #define FieldEvent_RunTypeHandler Func_08096af0
 #define ObjectGroup_SetActionForOthers Func_08096cdc

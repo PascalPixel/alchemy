@@ -224,6 +224,8 @@
     "main:080ad5f4": "object/motion/four_object/set_slot_phase.c",
     "main:080ad274": "object/motion/four_object/initialize_top_row.c",
     "main:080ad508": "object/motion/four_object/initialize_bottom_row.c",
+    "main:080ad35c": "object/motion/four_object/update_all_positions.c",
+    "main:080ad658": "object/motion/four_object/clear_slots_and_schedule_alt.c",
     "main:08099d18": "battle/effects/particles/spawn_falling.c",
     "main:08092624": "battle/effects/particles/spawn_burst.c",
     "main:0809b11c": "battle/effects/particles/update_radial_launch.c",

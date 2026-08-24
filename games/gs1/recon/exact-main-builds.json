@@ -52437,7 +52437,7 @@
     },
     {
       "en_owner": "080ad35c",
-      "source": "games/gs1/src/080ad35c.c",
+      "source": "games/gs1/src/object/motion/four_object/update_all_positions.c",
       "size": 176,
       "all_exact": true,
       "editions": [
@@ -52717,7 +52717,7 @@
     },
     {
       "en_owner": "080ad658",
-      "source": "games/gs1/src/080ad658.c",
+      "source": "games/gs1/src/object/motion/four_object/clear_slots_and_schedule_alt.c",
       "size": 68,
       "all_exact": true,
       "editions": [

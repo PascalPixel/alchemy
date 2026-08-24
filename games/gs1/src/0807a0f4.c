@@ -7,8 +7,8 @@ struct OwnerState_0807a0f4 {
     u8 values[4];
 };
 
-s32 Func_0807a1b4(s32 owner, s32 index, u8 *state);
-u32 *Func_0807a458(s32 owner, s32 index, u8 *state);
+s32 Djinn_AddToOwner(s32 owner, s32 index, u8 *state);
+u32 *Trade_AddOffer(s32 owner, s32 index, u8 *state);
 
 s32 Func_0807a0f4(s32 index, u8 *state)
 {
@@ -56,8 +56,8 @@ s32 Func_0807a0f4(s32 index, u8 *state)
     if (bestValue == 999)
         return -2;
 
-    Func_0807a1b4(bestOwner, index, state);
-    Func_0807a458(bestOwner, index, state);
+    Djinn_AddToOwner(bestOwner, index, state);
+    Trade_AddOffer(bestOwner, index, state);
     GameFlag_Set(entry);
     return bestOwner;
 }

@@ -2,7 +2,7 @@
 
 u8 *Trade_GetOfferState(s32);
 
-s32 Func_0807a550(u8 *counts)
+s32 Trade_CountPendingOffers(u8 *counts)
 {
     s32 found = 0;
     u8 *base = Trade_GetOfferState(0);

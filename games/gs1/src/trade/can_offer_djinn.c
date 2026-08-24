@@ -23,7 +23,7 @@ struct TradeOfferTable {
 struct OwnerTradeState *Owner_GetState(s32 owner);
 u8 *Trade_GetOfferState(s32 which);
 
-s32 Func_0807a1f8(s32 owner, s32 index, s32 bit)
+s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit)
 {
     struct OwnerTradeState *state = Owner_GetState(owner);
     struct TradeOfferTable *table;

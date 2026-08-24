@@ -1,7 +1,7 @@
 #include "types.h"
 #include "owner_state.h"
 
-s32 Func_0807a1b4(s32 owner, s32 index, s32 bit)
+s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit)
 {
     struct OwnerBitState *state = Owner_GetState(owner);
 

@@ -30696,7 +30696,7 @@
     },
     {
       "en_owner": "0807a0cc",
-      "source": "games/gs1/src/0807a0cc.c",
+      "source": "games/gs1/src/djinn/get_definition.c",
       "size": 40,
       "all_exact": true,
       "editions": [
@@ -30808,7 +30808,7 @@
     },
     {
       "en_owner": "0807a1b4",
-      "source": "games/gs1/src/0807a1b4.c",
+      "source": "games/gs1/src/djinn/add_to_owner.c",
       "size": 66,
       "all_exact": true,
       "editions": [
@@ -30864,7 +30864,7 @@
     },
     {
       "en_owner": "0807a1f8",
-      "source": "games/gs1/src/0807a1f8.c",
+      "source": "games/gs1/src/trade/can_offer_djinn.c",
       "size": 194,
       "all_exact": true,
       "editions": [
@@ -30920,7 +30920,7 @@
     },
     {
       "en_owner": "0807a2bc",
-      "source": "games/gs1/src/0807a2bc.c",
+      "source": "games/gs1/src/djinn/is_active.c",
       "size": 38,
       "all_exact": true,
       "editions": [
@@ -30976,7 +30976,7 @@
     },
     {
       "en_owner": "0807a2e4",
-      "source": "games/gs1/src/0807a2e4.c",
+      "source": "games/gs1/src/djinn/activate.c",
       "size": 106,
       "all_exact": true,
       "editions": [
@@ -31032,7 +31032,7 @@
     },
     {
       "en_owner": "0807a350",
-      "source": "games/gs1/src/0807a350.c",
+      "source": "games/gs1/src/djinn/deactivate.c",
       "size": 88,
       "all_exact": true,
       "editions": [
@@ -31088,7 +31088,7 @@
     },
     {
       "en_owner": "0807a458",
-      "source": "games/gs1/src/0807a458.c",
+      "source": "games/gs1/src/trade/add_offer.c",
       "size": 62,
       "all_exact": true,
       "editions": [
@@ -31144,7 +31144,7 @@
     },
     {
       "en_owner": "0807a498",
-      "source": "games/gs1/src/0807a498.c",
+      "source": "games/gs1/src/djinn/transfer.c",
       "size": 182,
       "all_exact": true,
       "editions": [
@@ -31200,7 +31200,7 @@
     },
     {
       "en_owner": "0807a550",
-      "source": "games/gs1/src/0807a550.c",
+      "source": "games/gs1/src/trade/count_pending_offers.c",
       "size": 94,
       "all_exact": true,
       "editions": [
@@ -31312,7 +31312,7 @@
     },
     {
       "en_owner": "0807a5bc",
-      "source": "games/gs1/src/0807a5bc.c",
+      "source": "games/gs1/src/party/sum_djinn_counts.c",
       "size": 106,
       "all_exact": true,
       "editions": [
@@ -31368,7 +31368,7 @@
     },
     {
       "en_owner": "0807a628",
-      "source": "games/gs1/src/0807a628.c",
+      "source": "games/gs1/src/inventory/add_and_equip.c",
       "size": 60,
       "all_exact": true,
       "editions": [
@@ -46885,7 +46885,7 @@
     },
     {
       "en_owner": "0809c3a4",
-      "source": "games/gs1/src/0809c3a4.c",
+      "source": "games/gs1/src/battle/effects/run_visibility_transition.c",
       "size": 108,
       "all_exact": true,
       "editions": [

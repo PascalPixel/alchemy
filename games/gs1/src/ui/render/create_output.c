@@ -10,7 +10,7 @@
 
 void *Func_08015e8c(void);
 void Resource_ResetEntry(u32);
-s32 Func_08016584(void *, void *);
+s32 RenderOutput_AppendToList(void *, void *);
 
 struct TableEntry {
     u16 unused;
@@ -48,6 +48,6 @@ struct RenderOutput *RenderOutput_Create(
     output->index = (s8)arg0;
     output->one4 = 1;
     output->one5 = 1;
-    Func_08016584(arg2, output);
+    RenderOutput_AppendToList(arg2, output);
     return output;
 }

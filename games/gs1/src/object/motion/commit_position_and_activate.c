@@ -2,13 +2,13 @@
 
 void Object_SetMode(struct ObjectRuntime *, s32);
 void Object_CommitPosition(struct ObjectRuntime *);
-void Func_080922c4(u32, s32, s32);
+void ObjectMotion_OffsetPositionAndReset(u32, s32, s32);
 
-void Func_08092304(u32 object_id, s32 x_offset, s32 z_offset)
+void ObjectMotion_CommitPositionAndActivate(u32 object_id, s32 x_offset, s32 z_offset)
 {
     struct ObjectRuntime *object = ObjectTable_Get(object_id);
 
-    Func_080922c4(object_id, x_offset, z_offset);
+    ObjectMotion_OffsetPositionAndReset(object_id, x_offset, z_offset);
     if (object != NULL) {
         Object_CommitPosition(object);
         Object_SetMode(object, 1);

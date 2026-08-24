@@ -1,8 +1,8 @@
 #include "types.h"
 
-void Func_08016594(void *);
+void RenderOutput_Release(void *);
 
-void Func_080164ac(void *arg0) {
+void RenderOutput_ClearList(void *arg0) {
     void *next;
     void *node;
 
@@ -14,7 +14,7 @@ void Func_080164ac(void *arg0) {
         *(void **)arg0 = next;
         while (node != NULL) {
             next = *(void **)node;
-            Func_08016594(node);
+            RenderOutput_Release(node);
             node = next;
         }
     }

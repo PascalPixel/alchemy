@@ -8022,7 +8022,7 @@
     },
     {
       "en_owner": "08016478",
-      "source": "games/gs1/src/08016478.c",
+      "source": "games/gs1/src/ui/render/output_list/prepare_for_redraw.c",
       "size": 30,
       "status": "shared_core",
       "starts": {
@@ -8082,7 +8082,7 @@
     },
     {
       "en_owner": "080164ac",
-      "source": "games/gs1/src/080164ac.c",
+      "source": "games/gs1/src/ui/render/output_list/clear.c",
       "size": 38,
       "status": "shared_core",
       "starts": {
@@ -8142,7 +8142,7 @@
     },
     {
       "en_owner": "08016584",
-      "source": "games/gs1/src/08016584.c",
+      "source": "games/gs1/src/ui/render/output_list/append.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -16062,7 +16062,7 @@
     },
     {
       "en_owner": "08079ae8",
-      "source": "games/gs1/src/08079ae8.c",
+      "source": "games/gs1/src/owner/refresh_derived_data.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -20262,7 +20262,7 @@
     },
     {
       "en_owner": "080921c4",
-      "source": "games/gs1/src/080921c4.c",
+      "source": "games/gs1/src/object/motion/set_position_and_reset.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -20352,7 +20352,7 @@
     },
     {
       "en_owner": "080922c4",
-      "source": "games/gs1/src/080922c4.c",
+      "source": "games/gs1/src/object/motion/offset_position_and_reset.c",
       "size": 62,
       "status": "shared_core",
       "starts": {
@@ -20382,7 +20382,7 @@
     },
     {
       "en_owner": "08092304",
-      "source": "games/gs1/src/08092304.c",
+      "source": "games/gs1/src/object/motion/commit_position_and_activate.c",
       "size": 56,
       "status": "shared_core",
       "starts": {
@@ -40614,7 +40614,7 @@
     },
     {
       "en_owner": "08016594",
-      "source": "games/gs1/src/08016594.c",
+      "source": "games/gs1/src/ui/render/output_list/release.c",
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x08016544"
     },
     {

@@ -2,7 +2,7 @@
 #include "owner_state.h"
 
 s32 Trade_CanOfferDjinn(s32, s32, s32);
-void Func_08079ae8(s32 arg0);
+void Owner_RefreshDerivedData(s32 arg0);
 
 s32 Djinn_Activate(s32 owner, s32 index, s32 bit)
 {
@@ -17,7 +17,7 @@ s32 Djinn_Activate(s32 owner, s32 index, s32 bit)
             return 0;
         }
         state->active_counts[index]++;
-        Func_08079ae8(owner);
+        Owner_RefreshDerivedData(owner);
     }
     return result;
 }

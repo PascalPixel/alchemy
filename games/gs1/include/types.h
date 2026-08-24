@@ -267,6 +267,7 @@ typedef int bool;
 #define MusicTrack_SetTonePanSweep Func_080fb77c
 #define MusicTrack_ExtendedCommandTable Data_080fba48
 #define BattleEffect_SpawnFallingParticles Func_08099d18
+#define BattleEffect_SpawnRadialParticleRing Func_0809a6b8
 #define BattleEffect_SpawnBurstParticle Func_08092624
 #define BattleEffect_RunRisingObjectSequence Func_08092708
 #define BattleEffect_UpdateOrbitAndReturn Func_08097f80

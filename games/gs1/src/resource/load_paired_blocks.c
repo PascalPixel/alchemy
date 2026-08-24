@@ -16,7 +16,7 @@ extern u8 Data_080aeb4c[];
 s32 Resource_FindFreeSlot(void);
 void Resource_CopyData(s32, s32, const u8 *);
 
-void Func_080a5534(void)
+void Resource_LoadPairedBlocks(void)
 {
     struct State_080a5534 *state = Data_03001f2c;
     s32 value = Resource_FindFreeSlot();

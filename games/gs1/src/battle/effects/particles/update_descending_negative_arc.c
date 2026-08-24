@@ -5,7 +5,7 @@ extern u8 Value_00000001;
 
 void Object_Destroy(void);
 
-void Func_0809b3d8(void *arg0) {
+void BattleEffect_UpdateDescendingParticleNegativeArc(void *arg0) {
     u8 *object;
     u8 *source;
     s32 position;

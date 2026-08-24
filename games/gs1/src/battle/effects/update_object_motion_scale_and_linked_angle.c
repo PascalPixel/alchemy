@@ -1,6 +1,6 @@
 #include "types.h"
 
-void Func_0809a44c(void *arg0)
+void BattleEffect_UpdateObjectMotionScaleAndLinkedAngle(void *arg0)
 {
     u8 *a = arg0;
 

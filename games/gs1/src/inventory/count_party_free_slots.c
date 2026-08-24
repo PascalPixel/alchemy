@@ -3,17 +3,17 @@
 s32 PartyInventory_CountFreeSlots(void)
 {
     s16 owners[10];
-    s32 count = Party_ListActiveOwners(owners);
-    s32 result = 0;
-    s16 *owner = owners;
+    s32 owner_count = Party_ListActiveOwners(owners);
+    s32 free_slot_count = 0;
+    s16 *owner_cursor = owners;
 
-    if (result < count) {
-        s32 remaining = count;
+    if (free_slot_count < owner_count) {
+        s32 remaining_owners = owner_count;
 
         do {
-            result = result - Inventory_Count(*owner++) + 15;
-            remaining--;
-        } while (remaining != 0);
+            free_slot_count = free_slot_count - Inventory_Count(*owner_cursor++) + 15;
+            remaining_owners--;
+        } while (remaining_owners != 0);
     }
-    return result;
+    return free_slot_count;
 }

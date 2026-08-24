@@ -22,53 +22,53 @@ s32 Party_ComputeEligibleMemberAverage(s32 record_id)
 {
     volatile u8 scratch[28];
     struct Record_080c1a34 *record;
-    s32 index;
-    s32 sum;
-    s32 count;
+    s32 member_index;
+    s32 level_sum;
+    s32 eligible_count;
 
-    count = 0;
-    sum = 0;
+    eligible_count = 0;
+    level_sum = 0;
     record = &Data_080c5c38[record_id];
     (void)scratch;
 
-    index = 0;
+    member_index = 0;
     if (record->present[0] == 0) {
         u8 *present;
 
         present = record->present;
         do {
-            index++;
-            if ((u32)index > 4)
+            member_index++;
+            if ((u32)member_index > 4)
                 break;
             present++;
         } while (*present == 0);
     }
-    if (index == 5)
+    if (member_index == 5)
         return -1;
 
-    index = 0;
+    member_index = 0;
     do {
-        if (record->enabled[index] != 0) {
+        if (record->enabled[member_index] != 0) {
             struct Object_080c1a34 *object;
             s32 member;
 
-            member = record->members[index];
+            member = record->members[member_index];
             object = Func_08077198(member + 8);
             if (object != 0) {
                 if (object->value <= 3 ||
                     GameFlag_IsSet(372) != 0 ||
                     GameFlag_IsSet(member + 1544) != 0) {
-                    sum += object->value;
-                    count++;
+                    level_sum += object->value;
+                    eligible_count++;
                 } else {
                     return -2;
                 }
             }
         }
-        index++;
-    } while ((u32)index <= 4);
+        member_index++;
+    } while ((u32)member_index <= 4);
 
-    if (count == 0)
+    if (eligible_count == 0)
         return -3;
-    return FixedPoint_Ratio(sum, count);
+    return FixedPoint_Ratio(level_sum, eligible_count);
 }

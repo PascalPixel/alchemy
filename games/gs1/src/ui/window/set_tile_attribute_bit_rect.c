@@ -2,13 +2,13 @@
 #include "global_cells.h"
 #include "gs1_edition.h"
 
-void Func_0801f5f0(
-    const u8 *object, s32 x, s32 y, s32 width, s32 height, u32 field)
+void UiWindow_SetTileAttributeBitRect(
+    const u8 *window, s32 x, s32 y, s32 width, s32 height, u32 field)
 {
     u8 *base = *(u8 **)ADDR_03001E8C;
 
-    x += *(u16 *)(object + 12) + 1;
-    y += *(u16 *)(object + 14) + 1;
+    x += *(u16 *)(window + 12) + 1;
+    y += *(u16 *)(window + 14) + 1;
     field &= 1;
     field <<= 12;
     if (x < 0) {

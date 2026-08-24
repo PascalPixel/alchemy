@@ -2,15 +2,15 @@
 
 s32 GameFlag_IsSet();
 
-s32 GameFlag_IsConditionActive(s32 arg0) {
-    s32 temp_r0;
+s32 GameFlag_IsConditionActive(s32 condition) {
+    s32 flag_state;
 
-    if (arg0 == -1) {
+    if (condition == -1) {
         return 1;
     }
-    if (0x1000 & arg0) {
+    if (0x1000 & condition) {
         return GameFlag_IsSet();
     }
-    temp_r0 = GameFlag_IsSet();
-    return 1 - ((u32) ((0 - temp_r0) | temp_r0) >> 0x1F);
+    flag_state = GameFlag_IsSet();
+    return 1 - ((u32) ((0 - flag_state) | flag_state) >> 0x1F);
 }

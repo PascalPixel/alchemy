@@ -5,7 +5,7 @@ s32 Resource_GetBuffer(s32 index, s32 value);
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 s32 Func_080153d0(s32, s32, s32 *, s32 *, s32);
 
-s32 Func_080ae908(s32 arg0, s32 arg1) {
+s32 UiIcon_LoadResourceIntoSlot(s32 arg0, s32 arg1) {
     s32 sp4;
     s32 sp8;
     s32 temp_r5;

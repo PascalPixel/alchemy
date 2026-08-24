@@ -1,14 +1,6 @@
 #include "types.h"
 #include "fixed_math.h"
-
-struct BattleFormationRecord {
-    u8 battle_type;
-    u8 member_ids[5];
-    u8 minimum_counts[5];
-    u8 maximum_counts[5];
-};
-
-extern struct BattleFormationRecord Data_080c5c38[];
+#include "battle_formation.h"
 u32 Random16(void);
 
 #define BattleFormation_SelectRandomAvailableMember Func_080c1fa8

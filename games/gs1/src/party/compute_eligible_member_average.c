@@ -1,18 +1,10 @@
 #include "types.h"
-
-struct Record_080c1a34 {
-    u8 unknown_00;
-    u8 members[5];
-    u8 present[5];
-    u8 enabled[5];
-};
+#include "battle_formation.h"
 
 struct Object_080c1a34 {
     u8 padding_00[15];
     u8 value;
 };
-
-extern struct Record_080c1a34 Data_080c5c38[];
 
 struct Object_080c1a34 *Func_08077198(s32 id);
 s32 GameFlag_IsSet(s32 flag);
@@ -21,7 +13,7 @@ s32 FixedPoint_Ratio(s32 numerator, s32 denominator);
 s32 Party_ComputeEligibleMemberAverage(s32 record_id)
 {
     volatile u8 scratch[28];
-    struct Record_080c1a34 *record;
+    struct BattleFormationRecord *record;
     s32 member_index;
     s32 level_sum;
     s32 eligible_count;
@@ -32,10 +24,10 @@ s32 Party_ComputeEligibleMemberAverage(s32 record_id)
     (void)scratch;
 
     member_index = 0;
-    if (record->present[0] == 0) {
+    if (record->minimum_counts[0] == 0) {
         u8 *present;
 
-        present = record->present;
+        present = record->minimum_counts;
         do {
             member_index++;
             if ((u32)member_index > 4)
@@ -48,11 +40,11 @@ s32 Party_ComputeEligibleMemberAverage(s32 record_id)
 
     member_index = 0;
     do {
-        if (record->enabled[member_index] != 0) {
+        if (record->maximum_counts[member_index] != 0) {
             struct Object_080c1a34 *object;
             s32 member;
 
-            member = record->members[member_index];
+            member = record->member_ids[member_index];
             object = Func_08077198(member + 8);
             if (object != 0) {
                 if (object->value <= 3 ||

@@ -2,7 +2,7 @@
 
 s32 FixedPoint_Ratio(s32, s32);
 
-void Func_0809a65c(void *arg0) {
+void ParticleEffect_UpdateMotionAndScale(void *arg0) {
     u8 *a = arg0;
     s32 a44 = *(volatile s32 *)(a + 0x44);
     s32 a4c;

@@ -53,13 +53,13 @@ void RunBattleEffect13(void);
 void RunBattleEffect14(void);
 void RunBattleEffect15(void);
 void RunBattleEffect16(void);
-void Func_0809ade8(s32 objectId);
+void BattleEffect_ResumeObject(s32 objectId);
 s32 Func_0808df1c(s32 objectId, s32 battle_mode);
 s32 Func_0809ae3c(s32 objectId);
 s32 Func_0808d5a4(s32 objectId);
 void Func_080970f8(s32 selected_object, s32 objectId);
 void Func_0809ab98(s32 objectId);
-void Func_0809ad90(s32 objectId);
+void BattleEffect_PauseObject(s32 objectId);
 void Func_0809abb4(void);
 #define ResetSceneTransitionEffect Func_080984c0
 void ResetSceneTransitionEffect(void);
@@ -111,7 +111,7 @@ void RunBattleEffect(void)
         return;
     case 9:
         if (Data_02000240.selected_id != -1) {
-            Func_0809ade8(Data_02000240.selected_id);
+            BattleEffect_ResumeObject(Data_02000240.selected_id);
             Data_02000240.selected_id = -1;
         }
 
@@ -120,7 +120,7 @@ void RunBattleEffect(void)
         if (Func_0808d5a4(objectId) != 0) {
             Func_080970f8(Data_02000240.selected_object, objectId);
             Func_0809ab98(objectId);
-            Func_0809ad90(objectId);
+            BattleEffect_PauseObject(objectId);
             Data_02000240.selected_id = objectId;
         } else {
             Func_0809abb4();

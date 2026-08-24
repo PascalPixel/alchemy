@@ -15995,7 +15995,7 @@
     },
     {
       "en_owner": "08017dd4",
-      "source": "games/gs1/src/08017dd4.c",
+      "source": "games/gs1/src/ui/text/format_number.c",
       "size": 180,
       "all_exact": true,
       "editions": [
@@ -20827,7 +20827,7 @@
     },
     {
       "en_owner": "0801e858",
-      "source": "games/gs1/src/0801e858.c",
+      "source": "games/gs1/src/ui/text/draw_string.c",
       "size": 88,
       "all_exact": true,
       "editions": [
@@ -20883,7 +20883,7 @@
     },
     {
       "en_owner": "0801e8b0",
-      "source": "games/gs1/src/0801e8b0.c",
+      "source": "games/gs1/src/ui/text/draw_string_at_offset.c",
       "size": 142,
       "all_exact": true,
       "editions": [
@@ -20939,7 +20939,7 @@
     },
     {
       "en_owner": "0801e940",
-      "source": "games/gs1/src/0801e940.c",
+      "source": "games/gs1/src/ui/text/draw_string_in_window.c",
       "size": 96,
       "all_exact": true,
       "editions": [
@@ -20995,7 +20995,7 @@
     },
     {
       "en_owner": "0801e9a0",
-      "source": "games/gs1/src/0801e9a0.c",
+      "source": "games/gs1/src/ui/text/draw_number.c",
       "size": 50,
       "all_exact": true,
       "editions": [
@@ -21051,7 +21051,7 @@
     },
     {
       "en_owner": "0801e9d4",
-      "source": "games/gs1/src/0801e9d4.c",
+      "source": "games/gs1/src/ui/text/draw_number_at_offset.c",
       "size": 50,
       "all_exact": true,
       "editions": [
@@ -21107,7 +21107,7 @@
     },
     {
       "en_owner": "0801ea08",
-      "source": "games/gs1/src/0801ea08.c",
+      "source": "games/gs1/src/ui/text/draw_number_in_window.c",
       "size": 50,
       "all_exact": true,
       "editions": [

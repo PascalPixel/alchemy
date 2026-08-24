@@ -7,7 +7,7 @@ s32 Func_08002df0(s16 *);
 s16 *Runtime_BumpAllocateAlternatePool(s32 arg0);
 s32 Func_0801de5c(s16 *, s32, s32, s32);
 
-void Func_0801e8b0(
+void UiText_DrawStringAtOffset(
     u8 *text,
     struct TextRenderWork *work,
     s32 offset_x,

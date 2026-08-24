@@ -85,7 +85,7 @@ fn core_difference(left: &Row, right: &Row) -> usize {
         .count()
 }
 
-fn resource_table(rom: &[u8]) -> Result<usize, String> {
+pub(crate) fn resource_table(rom: &[u8]) -> Result<usize, String> {
     (0..rom.len().saturating_sub(8))
         .step_by(4)
         .find(|offset| {
@@ -112,7 +112,7 @@ fn resource_pointer(rom: &[u8], table: usize, resource: usize) -> Result<usize, 
         .ok_or_else(|| format!("resource {resource:03x} points outside ROM"))
 }
 
-fn decode_overlay(rom: &[u8], table: usize, overlay: &str) -> Result<Vec<u8>, String> {
+pub(crate) fn decode_overlay(rom: &[u8], table: usize, overlay: &str) -> Result<Vec<u8>, String> {
     let resource = overlay
         .strip_prefix("resource_")
         .and_then(|value| usize::from_str_radix(value, 16).ok())

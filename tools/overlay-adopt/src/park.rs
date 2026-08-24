@@ -543,41 +543,10 @@ pub fn run_audit(root: &Path, argv: &[String]) -> Result<i32, String> {
     Ok(if findings == 0 { 0 } else { 1 })
 }
 fn rom_overlay(root: &Path, overlay: &str) -> Result<Vec<u8>, String> {
-    let manifest = fs::read_to_string(root.join("games/gs1/assets/manifest.json"))
-        .map_err(|error| format!("games/gs1/assets/manifest.json: {error}"))?;
-    let want = format!("\"{}\"", overlay.trim_start_matches("resource_"));
-    let mut address = 0usize;
-    let mut compressed = 0usize;
-    let mut decoded = 0usize;
-    for row in manifest.split('[') {
-        if !row.starts_with(&want) {
-            continue;
-        }
-        let numbers: Vec<usize> = row
-            .split('"')
-            .filter_map(|piece| {
-                piece
-                    .strip_prefix("0x")
-                    .and_then(|hex| usize::from_str_radix(hex, 16).ok())
-            })
-            .collect();
-        if numbers.len() >= 3 {
-            address = numbers[0];
-            compressed = numbers[1];
-            decoded = numbers[2];
-            break;
-        }
-    }
-    if address == 0 {
-        return Err(format!("{overlay} is not in the overlay series"));
-    }
     let rom = fs::read(root.join("roms/gs1-en.gba"))
         .map_err(|error| format!("roms/gs1-en.gba: {error}"))?;
-    let start = address - 0x0800_0000;
-    let (bytes, _) =
-        extract_resource::decode_general(&rom, start, start + compressed, decoded as u64)
-            .map_err(|error| error.0)?;
-    Ok(bytes)
+    let table = crate::twins::resource_table(&rom)?;
+    crate::twins::decode_overlay(&rom, table, overlay)
 }
 pub fn truth_window(
     root: &Path,
@@ -808,7 +777,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
 
 #[cfg(test)]
 mod tests {
-    use super::{audit, thumb_standalone_wide_transfer_lines};
+    use super::{audit, rom_overlay, thumb_standalone_wide_transfer_lines};
     use std::fs;
     use tempfile::tempdir;
 
@@ -846,5 +815,29 @@ mod tests {
         let findings = audit(root.path(), "resource_382").unwrap();
         assert_eq!(findings.len(), 1);
         assert!(findings[0].contains("resource_382:0200dead\tMISSING_SOURCE\t"));
+    }
+
+    #[test]
+    fn rom_overlay_uses_live_directory_and_dispatches_tag_one() {
+        const ROM_BASE: usize = 0x0800_0000;
+        const RESOURCE: usize = 0x36f;
+        let root = tempdir().unwrap();
+        let table = 0x100usize;
+        let start = 0x1000usize;
+        let stream = [1, 0x30, b'A', b'B', 0x01, 0x02, 0, 0];
+        let mut rom = vec![0u8; start + stream.len() + 16];
+
+        rom[table..table + 4].copy_from_slice(&(ROM_BASE as u32).to_le_bytes());
+        rom[table + 4..table + 8].copy_from_slice(&((ROM_BASE + table) as u32).to_le_bytes());
+        let pointer = table + RESOURCE * 4;
+        rom[pointer..pointer + 4].copy_from_slice(&((ROM_BASE + start) as u32).to_le_bytes());
+        rom[pointer + 4..pointer + 8]
+            .copy_from_slice(&((ROM_BASE + start + stream.len()) as u32).to_le_bytes());
+        rom[start..start + stream.len()].copy_from_slice(&stream);
+
+        fs::create_dir_all(root.path().join("roms")).unwrap();
+        fs::write(root.path().join("roms/gs1-en.gba"), rom).unwrap();
+
+        assert_eq!(rom_overlay(root.path(), "resource_36f").unwrap(), b"ABAB");
     }
 }

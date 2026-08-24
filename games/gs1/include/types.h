@@ -548,6 +548,7 @@ typedef int bool;
 #define BattleRuntime_InitializeRenderObject Func_08091660
 #define BattleRuntime_Reset Func_080916b0
 #define BattleRuntime_WaitIfModeZero Func_0809163c
+#define BattleRuntime_UpdateModeFromShoulderButtons Func_080915ec
 #define Script_SetOrCompareCursor Func_0800e24c
 #define Script_SetOrCompareUnsignedHalfword Func_0800e280
 #define Script_SetOrCompareWord08 Func_0800e2b0

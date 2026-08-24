@@ -9,7 +9,7 @@ use canonical_json::canonical_json;
 use compiler_core::bundle::{compiler_bundle_signature, host_executable_signature};
 use compiler_core::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
 use compiler_core::routing::CompilerTarget;
-use compiler_core::source_paths::{SourceFile, SourceOwner, SourcePaths, SOURCE_DIRECTORY};
+use compiler_core::source_paths::{SourceFile, SourceOwner, SourcePaths};
 use compiler_core::symbols::{external_symbol, external_symbol_assembly, CALL_VIA_BASE};
 use decomp_targets::{
     decomp_target, parse_decomp_target, target_for, BuildSupport, DecompCompilerTarget,
@@ -525,7 +525,10 @@ pub fn compile_source_for_owner(
             .routing_path()
             .to_string_lossy()
             .into_owned(),
-        DecompCompilerTarget::Gs2 => source.to_string(),
+        DecompCompilerTarget::Gs2 => SourceOwner::Main(owner)
+            .routing_path_for_game("gs2")
+            .to_string_lossy()
+            .into_owned(),
     };
     let mut options = SourceToAssemblyPlanOptions::new(
         compiler_target(compiler),
@@ -697,8 +700,12 @@ fn write_file(path: &Path, bytes: &[u8], written: &mut Vec<String>) -> Result<()
 }
 
 fn main_sources(root: &str, source_directory: &str) -> Result<Vec<SourceFile>> {
-    if source_directory == SOURCE_DIRECTORY {
-        return SourcePaths::load(Path::new(root))?.main_sources();
+    if let Some(game) = source_directory
+        .strip_prefix("games/")
+        .and_then(|path| path.strip_suffix("/src"))
+        .filter(|game| !game.contains('/'))
+    {
+        return SourcePaths::load_for_game(Path::new(root), game)?.main_sources();
     }
     let directory = rooted(root, source_directory);
     let mut sources = Vec::new();

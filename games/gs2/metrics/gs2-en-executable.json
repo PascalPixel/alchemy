@@ -14,7 +14,7 @@
         "start": 134296268,
         "end": 134296272,
         "kind": "thumb",
-        "evidence": "games/gs2/src/080132cc.c:byte-identical-claimed-C"
+        "evidence": "games/gs2/src/runtime/constant_zero_result.c:byte-identical-claimed-C"
       }
     ],
     "evidence": ["assembly classification unavailable", "out/gs2-en/full/claimed/manifest.json", "byte-identical full build and tracked assembly classification"]

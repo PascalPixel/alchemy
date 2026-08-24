@@ -1,10 +1,11 @@
-//! Canonical GS1 owner-to-source paths.
+//! Canonical owner-to-source paths for each historical game.
 //!
 //! Exact C historically lived in one flat directory and encoded ownership in
-//! each filename. `games/gs1/source-paths.json` lets source use descriptive,
+//! each filename. `games/<game>/source-paths.json` lets source use descriptive,
 //! nested paths while owner identity remains explicit and machine-readable.
-//! Owners absent from the manifest retain their legacy flat path during the
-//! migration.
+//! GS1 remains the default resolver for existing callers; target-aware build
+//! paths select the corresponding game registry. Owners absent from a manifest
+//! retain their legacy flat path during the migration.
 
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
@@ -99,7 +100,14 @@ impl SourceOwner {
     /// Stable synthetic route used by the compiler tables. Source location is
     /// presentation; compiler routing belongs to the owner.
     pub fn routing_path(self) -> PathBuf {
-        Path::new(SOURCE_DIRECTORY).join(self.legacy_relative_path())
+        self.routing_path_for_game("gs1")
+    }
+
+    pub fn routing_path_for_game(self, game: &str) -> PathBuf {
+        Path::new("games")
+            .join(game)
+            .join("src")
+            .join(self.legacy_relative_path())
     }
 }
 
@@ -128,22 +136,35 @@ pub struct SourceFile {
 #[derive(Clone, Debug)]
 pub struct SourcePaths {
     repository: PathBuf,
+    source_directory: PathBuf,
+    manifest: PathBuf,
     by_owner: BTreeMap<SourceOwner, PathBuf>,
     by_path: BTreeMap<PathBuf, Vec<SourceOwner>>,
 }
 
 impl SourcePaths {
     pub fn load(repository: &Path) -> Result<Self, String> {
-        let path = repository.join(SOURCE_PATHS_MANIFEST);
+        Self::load_for_game(repository, "gs1")
+    }
+
+    pub fn load_for_game(repository: &Path, game: &str) -> Result<Self, String> {
+        let (source_directory, manifest) = game_paths(game)?;
+        let path = repository.join(&manifest);
         if !path.exists() {
-            return Ok(Self::empty(repository));
+            return Ok(Self::empty(repository, source_directory, manifest));
         }
         let text =
             fs::read_to_string(&path).map_err(|error| format!("{}: {error}", path.display()))?;
-        Self::parse(repository, &text).map_err(|error| format!("{}: {error}", path.display()))
+        Self::parse_for_game(repository, game, &text)
+            .map_err(|error| format!("{}: {error}", path.display()))
     }
 
     pub fn parse(repository: &Path, text: &str) -> Result<Self, String> {
+        Self::parse_for_game(repository, "gs1", text)
+    }
+
+    pub fn parse_for_game(repository: &Path, game: &str, text: &str) -> Result<Self, String> {
+        let (source_directory, manifest) = game_paths(game)?;
         let value: Value = serde_json::from_str(text).map_err(|error| error.to_string())?;
         if value.get("format").and_then(Value::as_u64) != Some(1) {
             return Err("format must be 1".into());
@@ -182,25 +203,29 @@ impl SourcePaths {
         }
         Ok(Self {
             repository: repository.to_path_buf(),
+            source_directory,
+            manifest,
             by_owner,
             by_path,
         })
     }
 
-    fn empty(repository: &Path) -> Self {
+    fn empty(repository: &Path, source_directory: PathBuf, manifest: PathBuf) -> Self {
         Self {
             repository: repository.to_path_buf(),
+            source_directory,
+            manifest,
             by_owner: BTreeMap::new(),
             by_path: BTreeMap::new(),
         }
     }
 
     pub fn source_root(&self) -> PathBuf {
-        self.repository.join(SOURCE_DIRECTORY)
+        self.repository.join(&self.source_directory)
     }
 
     pub fn manifest_path(&self) -> PathBuf {
-        self.repository.join(SOURCE_PATHS_MANIFEST)
+        self.repository.join(&self.manifest)
     }
 
     pub fn mapped_relative_path(&self, owner: SourceOwner) -> Option<&Path> {
@@ -266,7 +291,7 @@ impl SourcePaths {
     }
 
     pub fn repository_relative_path(&self, owner: SourceOwner) -> PathBuf {
-        Path::new(SOURCE_DIRECTORY).join(self.relative_path(owner))
+        self.source_directory.join(self.relative_path(owner))
     }
 
     pub fn owners_for_path(&self, path: &Path) -> Vec<SourceOwner> {
@@ -404,7 +429,7 @@ impl SourcePaths {
                 .ok()
                 .map(Path::to_path_buf);
         }
-        path.strip_prefix(SOURCE_DIRECTORY)
+        path.strip_prefix(&self.source_directory)
             .ok()
             .map(Path::to_path_buf)
             .or_else(|| {
@@ -430,12 +455,24 @@ impl SourcePaths {
         if let Some(path) = unowned.first() {
             return Err(format!(
                 "nested exact source is absent from {}: {}",
-                SOURCE_PATHS_MANIFEST,
+                self.manifest.display(),
                 path.display()
             ));
         }
         Ok(())
     }
+}
+
+fn game_paths(game: &str) -> Result<(PathBuf, PathBuf), String> {
+    if game.is_empty()
+        || !game
+            .bytes()
+            .all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit())
+    {
+        return Err(format!("invalid game id {game:?}"));
+    }
+    let root = Path::new("games").join(game);
+    Ok((root.join("src"), root.join("source-paths.json")))
 }
 
 fn matches_filter(owner: SourceOwner, main: Option<bool>, overlay: Option<&str>) -> bool {
@@ -635,6 +672,27 @@ mod tests {
                 resource: 0x39c,
                 address: 0x0200_0104,
             }]
+        );
+    }
+
+    #[test]
+    fn each_game_owns_an_independent_descriptive_registry() {
+        let root = tempdir().unwrap();
+        let manifest_path = root.path().join("games/gs2/source-paths.json");
+        fs::create_dir_all(manifest_path.parent().unwrap()).unwrap();
+        fs::write(
+            &manifest_path,
+            r#"{"format":1,"owners":{"main:080132cc":"runtime/constant_zero_result.c"}}"#,
+        )
+        .unwrap();
+        let paths = SourcePaths::load_for_game(root.path(), "gs2").unwrap();
+        assert_eq!(
+            paths.repository_relative_path(SourceOwner::Main(0x0801_32cc)),
+            PathBuf::from("games/gs2/src/runtime/constant_zero_result.c")
+        );
+        assert_eq!(
+            SourceOwner::Main(0x0801_32cc).routing_path_for_game("gs2"),
+            PathBuf::from("games/gs2/src/080132cc.c")
         );
     }
 }

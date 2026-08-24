@@ -2,7 +2,7 @@
 
 extern u8 *Data_03001e8c;
 
-void Func_08015ec0(u32 arg0)
+void RenderOutput_ReleaseFree(u32 arg0)
 {
     u8 *base = Data_03001e8c;
     /* 管理領域内の要素だけを空きリストへ戻す。 */

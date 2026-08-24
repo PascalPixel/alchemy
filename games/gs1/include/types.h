@@ -281,6 +281,7 @@ typedef int bool;
 #define RenderOutput_PrepareForRedraw Func_08016478
 #define RenderOutput_RedrawSavedRect Func_08016498
 #define RenderOutput_AcquireFree Func_08015e8c
+#define RenderOutput_ReleaseFree Func_08015ec0
 #define RenderOutput_ClearList Func_080164ac
 #define RenderOutput_AppendToList Func_08016584
 #define RenderOutput_Release Func_08016594
@@ -533,6 +534,7 @@ typedef int bool;
 #define Script_ClearFlagAndTest Func_0800d850
 #define Script_ToggleFlagAndTest Func_0800d880
 #define ObjectDispatch_ApplyArgumentToChildren Func_0800c300
+#define ObjectDispatch_Initialize Func_0800c2d8
 #define ObjectDispatch_ApplyValueToChildren Func_0800c344
 #define ObjectDispatch_ApplyPairToChildren Func_0800c388
 #define BattleEffect_FindDefinition Func_08091560
@@ -541,6 +543,7 @@ typedef int bool;
 #define BattleEffect_GetFlags Func_080915dc
 #define BattleEffect_FilterObjectIdByFlags Func_0809ae3c
 #define BattleEffect_PlayQueuedSound Func_0809202c
+#define ObjectMotion_SetSpeedParameters Func_08092064
 #define BattleRuntime_InitializeRenderObject Func_08091660
 #define BattleRuntime_Reset Func_080916b0
 #define BattleRuntime_WaitIfModeZero Func_0809163c

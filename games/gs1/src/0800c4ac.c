@@ -2,5 +2,5 @@
 
 void Func_0800c4ac(struct DispatchObject *object)
 {
-    Func_0800c2d8(object, (u32)Data_08013620);
+    ObjectDispatch_Initialize(object, (u32)Data_08013620);
 }

@@ -348,6 +348,7 @@ typedef int bool;
 #define BattleEffect_InterpolateBuffers Func_0809088c
 #define BattleEffect_PrepareBufferInterpolation Func_0809748c
 #define BattleEffect_StartBufferInterpolation Func_08091254
+#define BattleEffect_ApplyColorToSourceBuffer Func_08091220
 #define BattleEffect_SetPrimaryBufferValue Func_08091240
 #define BattleEffect_GetResourceGroup Func_0808a8d0
 #define BattleEffect_LoadResourceGroup Func_0808ab48

@@ -2,7 +2,7 @@
 
 s32 Func_08090a5c(s32, s32, s32, s32);
 
-void Func_08091220(s32 value, s32 mode)
+void BattleEffect_ApplyColorToSourceBuffer(s32 value, s32 mode)
 {
     struct BattleEffectBuffers *buffers = Data_03001ed0;
 

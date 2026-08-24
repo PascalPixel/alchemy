@@ -4,7 +4,7 @@
 struct Work;
 
 s32 Func_0808a5d0(s16, s16);
-void Func_08016478(void *);
+void RenderOutput_PrepareForRedraw(void *);
 void UiText_DrawNumber(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 void UiText_DrawString(u8 *arg0, s32 arg1, s32 arg2, s32 arg3);
 void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
@@ -14,7 +14,7 @@ extern u8 Data_08037428[];
 void Menu_DrawSelectionRow(struct Work *work, s16 first, const s16 *second) {
     s16 selected = first;
     s32 label = Func_0808a5d0(selected, *second) + (s32)Value_0000099b;
-    Func_08016478(work);
+    RenderOutput_PrepareForRedraw(work);
     UiText_DrawNumber(selected, 3, (s32) work, 0, 14);
     UiText_DrawNumber(*second, 3, (s32) work, MENU_LABEL_X, 14);
     UiText_DrawString(Data_08037428, (s32) work, MENU_TEXT_X, 0);

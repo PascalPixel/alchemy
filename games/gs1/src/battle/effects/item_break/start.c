@@ -13,9 +13,7 @@ extern u32 Random16(void);
 #define Rand Random16
 extern void Audio_PlayCue(s32);
 
-#define StartItemBreakEffect Func_08098070
-
-void *Func_08098070(void *source)
+void *BattleEffect_StartItemBreak(void *source)
 {
     s32 angle;
     s32 fragment_height;

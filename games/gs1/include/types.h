@@ -371,6 +371,7 @@ typedef int bool;
 #define BattleEffect_RunParticleFieldVariant3 Func_080dfa3c
 #define SpawnItemBreakEffectMode1 Func_0809a3c4
 #define SpawnItemBreakEffectMode3 Func_08098a84
+#define BattleEffect_StartItemBreak Func_08098070
 #define BattleEffect_UpdateItemBreakFragment Func_08097b70
 #define BattleParty_ApplyHealthDelta Func_0808c30c
 #define BattleParty_ApplyStatusDamage Func_0808c3a4

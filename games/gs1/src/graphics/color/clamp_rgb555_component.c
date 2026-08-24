@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 Func_080f38ac(s32 arg0)
+s32 Graphics_ClampRgb555Component(s32 arg0)
 {
     if (arg0 > 31744)
         arg0 = 31744;

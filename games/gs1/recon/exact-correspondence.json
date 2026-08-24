@@ -38142,7 +38142,7 @@
     },
     {
       "en_owner": "080f3898",
-      "source": "games/gs1/src/080f3898.c",
+      "source": "games/gs1/src/graphics/color/clamp_rgb555_channel.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -38172,7 +38172,7 @@
     },
     {
       "en_owner": "080f38ac",
-      "source": "games/gs1/src/080f38ac.c",
+      "source": "games/gs1/src/graphics/color/clamp_rgb555_component.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -38232,7 +38232,7 @@
     },
     {
       "en_owner": "080f40b4",
-      "source": "games/gs1/src/080f40b4.c",
+      "source": "games/gs1/src/math/multiply_fixed_8_8.c",
       "size": 28,
       "status": "shared_core",
       "starts": {
@@ -38262,7 +38262,7 @@
     },
     {
       "en_owner": "080f40d0",
-      "source": "games/gs1/src/080f40d0.c",
+      "source": "games/gs1/src/math/scale_by_ratio_fixed.c",
       "size": 22,
       "status": "shared_core",
       "starts": {
@@ -38292,7 +38292,7 @@
     },
     {
       "en_owner": "080f40e8",
-      "source": "games/gs1/src/080f40e8.c",
+      "source": "games/gs1/src/math/reciprocal_fixed.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -38322,7 +38322,7 @@
     },
     {
       "en_owner": "080f4100",
-      "source": "games/gs1/src/080f4100.c",
+      "source": "games/gs1/src/graphics/color/scale_rgb555_buffer.c",
       "size": 104,
       "status": "shared_core",
       "starts": {

@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 Func_080f3898(s32 arg0)
+s32 Graphics_ClampRgb555Channel(s32 arg0)
 {
     if (arg0 > 31)
         return 31;

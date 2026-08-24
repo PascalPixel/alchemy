@@ -5,7 +5,7 @@
 //! directory adapter preserves decomp-permuter's portable `base.c` /
 //! `target.o` / `compile.sh` workflow for other compilers and architectures.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
@@ -167,6 +167,7 @@ pub fn load_input(path: &Path) -> Result<Input, String> {
     } else {
         let source = fs::read_to_string(&requested)
             .map_err(|error| format!("{}: {error}", requested.display()))?;
+        let source = expand_local_c_includes(&requested, &source, &mut BTreeSet::new())?;
         Ok(Input {
             requested: requested.clone(),
             source_path: requested,
@@ -174,6 +175,42 @@ pub fn load_input(path: &Path) -> Result<Input, String> {
             directory_mode: false,
         })
     }
+}
+
+fn expand_local_c_includes(
+    path: &Path,
+    source: &str,
+    active: &mut BTreeSet<PathBuf>,
+) -> Result<String, String> {
+    let canonical =
+        fs::canonicalize(path).map_err(|error| format!("{}: {error}", path.display()))?;
+    if !active.insert(canonical.clone()) {
+        return Err(format!(
+            "recursive C include through {}",
+            canonical.display()
+        ));
+    }
+    let mut expanded = String::new();
+    for line in source.lines() {
+        let include = line
+            .trim()
+            .strip_prefix("#include")
+            .map(str::trim)
+            .and_then(|value| value.strip_prefix('"'))
+            .and_then(|value| value.split_once('"').map(|(name, _)| name))
+            .filter(|name| name.ends_with(".c"));
+        if let Some(include) = include {
+            let included = canonical.parent().unwrap_or(Path::new("")).join(include);
+            let body = fs::read_to_string(&included)
+                .map_err(|error| format!("{}: {error}", included.display()))?;
+            expanded.push_str(&expand_local_c_includes(&included, &body, active)?);
+        } else {
+            expanded.push_str(line);
+            expanded.push('\n');
+        }
+    }
+    active.remove(&canonical);
+    Ok(expanded)
 }
 
 pub fn prepare(

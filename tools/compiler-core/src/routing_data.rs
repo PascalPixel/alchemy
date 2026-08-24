@@ -144,6 +144,8 @@ pub static NO_STRICT_ALIASING_OVERLAY_SOURCES: &[&str] = &[
     "games/gs1/src/resource_3b0_c_02000030.c",
     "games/gs1/src/resource_373_c_02000608.c",
     "games/gs1/src/resource_389_c_02000608.c",
+    "games/gs1/src/resource_39b_c_020008ec.c",
+    "games/gs1/src/resource_39c_c_020008ec.c",
     "games/gs1/src/resource_391_c_02000608.c",
     "games/gs1/src/resource_392_c_02000608.c",
     "games/gs1/src/resource_393_c_02000608.c",

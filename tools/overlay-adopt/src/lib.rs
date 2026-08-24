@@ -350,6 +350,13 @@ fn audited_span(
     if tiles && last.map(|interval| interval.kind.as_str()) != Some("executable_alignment") {
         return Ok(());
     }
+    // Some GCC by-value entry points reserve incoming stack arguments before
+    // the conventional push. The interval audit can miss that first
+    // instruction even though the reviewed owner record explicitly includes
+    // it. Only the exact recorded owner span may bridge such a gap.
+    if reviewed_owner_span(root, overlay, start, span_bytes)? {
+        return Ok(());
+    }
     let detail = if touched.is_empty() {
         "no audited executable interval covers it".to_string()
     } else {
@@ -381,6 +388,31 @@ fn audited_span(
         "{} span 0x{:08x}..0x{:08x} is not inside one audited executable interval: {}{}",
         id, start, end, detail, suggestion
     ))
+}
+
+fn reviewed_owner_span(
+    root: &Path,
+    overlay: &str,
+    start: i64,
+    span_bytes: i64,
+) -> Result<bool, String> {
+    let path = root.join("games/gs1/semantic/regions.json");
+    let document: Value = serde_json::from_str(
+        &fs::read_to_string(&path).map_err(|error| format!("{}: {error}", path.display()))?,
+    )
+    .map_err(|error| format!("{}: {error}", path.display()))?;
+    let Some(regions) = document.get("manual_regions").and_then(Value::as_array) else {
+        return Err(format!("{} has no manual_regions array", path.display()));
+    };
+    Ok(regions.iter().any(|region| {
+        let entry = region
+            .get("entry")
+            .and_then(Value::as_str)
+            .and_then(|value| i64::from_str_radix(value.trim_start_matches("0x"), 16).ok());
+        region.get("overlay").and_then(Value::as_str) == Some(overlay)
+            && entry == Some(start)
+            && region.get("span_bytes").and_then(Value::as_i64) == Some(span_bytes)
+    }))
 }
 const USAGE: &str =
     "usage: overlay-adopt <overlay:offsetHex> --source FILE [--span BYTES] [--apply] [--where]";

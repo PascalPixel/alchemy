@@ -35,6 +35,8 @@
     "main:08017004": "ui/window/update_interpolated_geometry.c",
     "main:08016868": "ui/runtime/process_render_channels.c",
     "main:0801e260": "ui/window/clear_tile_attributes_in_rect.c",
+    "main:080209d0": "ui/window/copy_tilemap_region.c",
+    "main:08026fa8": "ui/text/show_localized_message_and_wait.c",
     "main:08079ae8": "owner/refresh_derived_data.c",
     "main:0807961c": "party/add_active_owner.c",
     "main:08079664": "party/remove_active_owner.c",

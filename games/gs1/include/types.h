@@ -113,6 +113,7 @@ typedef int bool;
 #define UiWindow_UpdateInterpolatedGeometry Func_08017004
 #define UiWork_ProcessRenderChannels Func_08016868
 #define UiWindow_ClearTileAttributesInRect Func_0801e260
+#define UiWindow_CopyTilemapRegion Func_080209d0
 #define Owner_RefreshDerivedData Func_08079ae8
 #define Party_AddActiveOwner Func_0807961c
 #define Party_RemoveActiveOwner Func_08079664
@@ -191,6 +192,7 @@ typedef int bool;
 #define Summon_ClassValid Func_080b6cdc
 #define UiText_ShowMessageAndWait Func_080151c8
 #define UiText_ShowMessageAndWaitCore Func_080175a0
+#define UiText_ShowLocalizedMessageAndWait Func_08026fa8
 #define UiWork_FinalizePending Func_08015140
 #define UiWork_FinalizePendingCore Func_08019a54
 #define UiTimedNotice_Create Func_0801c34c

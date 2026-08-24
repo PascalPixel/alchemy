@@ -20172,7 +20172,7 @@
     },
     {
       "en_owner": "08092128",
-      "source": "games/gs1/src/08092128.c",
+      "source": "games/gs1/src/object/motion/reset_and_set_position.c",
       "size": 46,
       "status": "shared_core",
       "starts": {
@@ -20232,7 +20232,7 @@
     },
     {
       "en_owner": "0809218c",
-      "source": "games/gs1/src/0809218c.c",
+      "source": "games/gs1/src/object/motion/reset_and_set_position_in_mode_2.c",
       "size": 54,
       "status": "shared_core",
       "starts": {

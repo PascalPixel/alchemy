@@ -3,7 +3,7 @@
 extern volatile u8 Data_03001f54;
 extern volatile s32 Data_03001c94;
 
-void Func_080915ec(void)
+void BattleRuntime_UpdateModeFromShoulderButtons(void)
 {
     struct BattleRuntime *runtime = Data_03001ebc;
 

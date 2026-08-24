@@ -532,6 +532,7 @@
     "main:080915ec": "battle/runtime/update_mode_from_shoulder_buttons.c",
     "main:0809ae3c": "battle/effects/filter_object_id.c",
     "main:0809202c": "battle/effects/audio/play_queued_sound.c",
+    "main:08091ff0": "battle/effects/audio/set_queued_sound_and_play.c",
     "main:08092064": "object/motion/set_speed_parameters.c",
     "main:0809207c": "object/motion/enable_action_and_set_callback.c",
     "main:080920a0": "object/motion/enable_action_and_reset_motion.c",

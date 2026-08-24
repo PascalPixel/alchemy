@@ -19902,7 +19902,7 @@
     },
     {
       "en_owner": "08091ff0",
-      "source": "games/gs1/src/08091ff0.c",
+      "source": "games/gs1/src/battle/effects/audio/set_queued_sound_and_play.c",
       "size": 60,
       "status": "shared_core",
       "starts": {

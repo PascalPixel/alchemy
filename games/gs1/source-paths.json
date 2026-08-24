@@ -314,6 +314,7 @@
     "main:08097f80": "battle/effects/orbiting_particles/update_return.c",
     "main:08095a44": "battle/effects/heavy_impact/finish.c",
     "main:080903bc": "display/transition/update.c",
+    "main:08090378": "display/state/clear_flags.c",
     "main:0809728c": "field/event_object/initialize.c",
     "main:08099678": "map/events/check_object_tile.c",
     "main:08099738": "map/events/run_tile_trigger_sequence.c",

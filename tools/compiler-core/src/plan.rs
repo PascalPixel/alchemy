@@ -286,8 +286,9 @@ pub fn source_to_assembly_plan(
 ) -> Result<SourceToAssemblyPlan> {
     let requested_family = options.family.unwrap_or(CompilerFamily::Routed);
     let family = match requested_family {
-        // `usesAgbccCompiler` is gs1-only, so a routed gs2 plan always resolves
-        // to gcc296 and can never trip the gs1-only guard below.
+        // The routed family follows owner evidence. The shared audio-engine
+        // owners use old_agbcc in both games; GS2's remaining routed owners use
+        // GCC 2.96.
         CompilerFamily::Routed => {
             if uses_agbcc_compiler(options.target, &options.routing_source) {
                 ResolvedFamily::OldAgbcc
@@ -299,7 +300,7 @@ pub fn source_to_assembly_plan(
         CompilerFamily::OldAgbcc => ResolvedFamily::OldAgbcc,
         CompilerFamily::Gcc3 => ResolvedFamily::Gcc3,
     };
-    if family != ResolvedFamily::Gcc296 && options.target != CompilerTarget::Gs1 {
+    if family == ResolvedFamily::Gcc3 && options.target != CompilerTarget::Gs1 {
         return Err(format!("{} is only approved for gs1", family.as_str()));
     }
 
@@ -354,7 +355,8 @@ pub fn source_to_assembly_plan(
         };
         steps.push(CompilerCommandStep {
             kind: StepKind::Preprocess,
-            command: direct_preprocessor_command_with_minor_and_flags(
+            command: direct_preprocessor_command_for_target_with_minor_and_flags(
+                options.target,
                 &options.input,
                 &compiler_input,
                 gcc_minor,
@@ -445,7 +447,23 @@ fn direct_preprocessor_command_with_minor_and_flags(
     gcc_minor: i64,
     flags: &[String],
 ) -> Result<Vec<String>> {
-    validate_bundle(CompilerTarget::Gs1)?;
+    direct_preprocessor_command_for_target_with_minor_and_flags(
+        CompilerTarget::Gs1,
+        input,
+        output,
+        gcc_minor,
+        flags,
+    )
+}
+
+fn direct_preprocessor_command_for_target_with_minor_and_flags(
+    target: CompilerTarget,
+    input: &str,
+    output: &str,
+    gcc_minor: i64,
+    flags: &[String],
+) -> Result<Vec<String>> {
+    validate_bundle(target)?;
     let mut command = vec![
         bundle().join("cpp").to_string_lossy().into_owned(),
         "-lang-c".into(),
@@ -465,7 +483,14 @@ fn direct_preprocessor_command_with_minor_and_flags(
         "-D__ELF__".into(),
         "-Dthumb".into(),
         "-D__thumb__".into(),
-        format!("-I{}", root().join("games/gs1/include").display()),
+        format!(
+            "-I{}",
+            root()
+                .join("games")
+                .join(target.as_str())
+                .join("include")
+                .display()
+        ),
     ];
     command.extend(flags.iter().cloned());
     command.push(input.to_string());
@@ -587,5 +612,23 @@ mod tests {
             .command
             .iter()
             .any(|argument| argument == "-DGS2_EDITION_IT=1"));
+    }
+
+    #[test]
+    fn shared_gs2_audio_owner_routes_through_old_agbcc() {
+        let mut options = SourceToAssemblyPlanOptions::new(
+            CompilerTarget::Gs2,
+            "games/gs2/src/081c28e0.c",
+            "candidate.c",
+            "candidate.s",
+        );
+        options.preprocessor_flags = vec!["-DGS2_EDITION_JA=1".into()];
+
+        let plan = source_to_assembly_plan(&options).unwrap();
+        assert!(plan.steps[1].command[0].ends_with("/agbcc/old_agbcc"));
+        assert!(plan.steps[0]
+            .command
+            .iter()
+            .any(|argument| argument == "-DGS2_EDITION_JA=1"));
     }
 }

@@ -27,6 +27,6 @@ void ObjectVisual_CopyAttributes(u32 arg0, u32 arg1)
     *(u16 *)((u8 *)p + 0x8) = merged;
 }
 
-void Func_08092b90(void)
+void ObjectVisual_ReservedNoOp2B90(void)
 {
 }

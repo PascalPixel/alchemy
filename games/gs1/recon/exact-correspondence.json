@@ -72,7 +72,7 @@
   "owners": [
     {
       "en_owner": "08002ee4",
-      "source": "games/gs1/src/08002ee4.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_30.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -102,7 +102,7 @@
     },
     {
       "en_owner": "08002ef8",
-      "source": "games/gs1/src/08002ef8.c",
+      "source": "games/gs1/src/runtime/dispatch/reserved_no_op_a.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -132,7 +132,7 @@
     },
     {
       "en_owner": "08002efc",
-      "source": "games/gs1/src/08002efc.c",
+      "source": "games/gs1/src/runtime/dispatch/reserved_no_op_b.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -162,7 +162,7 @@
     },
     {
       "en_owner": "08002f00",
-      "source": "games/gs1/src/08002f00.c",
+      "source": "games/gs1/src/runtime/dispatch/reserved_no_op_c.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -192,7 +192,7 @@
     },
     {
       "en_owner": "08002f04",
-      "source": "games/gs1/src/08002f04.c",
+      "source": "games/gs1/src/runtime/dispatch/reserved_no_op_d.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -222,7 +222,7 @@
     },
     {
       "en_owner": "08002f08",
-      "source": "games/gs1/src/08002f08.c",
+      "source": "games/gs1/src/runtime/dispatch/reserved_no_op_e.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -252,7 +252,7 @@
     },
     {
       "en_owner": "08002f0c",
-      "source": "games/gs1/src/08002f0c.c",
+      "source": "games/gs1/src/runtime/dispatch/reserved_status_zero.c",
       "size": 4,
       "status": "shared_core",
       "starts": {
@@ -282,7 +282,7 @@
     },
     {
       "en_owner": "08002f3c",
-      "source": "games/gs1/src/08002f3c.c",
+      "source": "games/gs1/src/runtime/dispatch/no_op_hook.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -342,7 +342,7 @@
     },
     {
       "en_owner": "08002f4c",
-      "source": "games/gs1/src/08002f4c.c",
+      "source": "games/gs1/src/data/packed_table/adjust_marked_offsets.c",
       "size": 100,
       "status": "shared_core",
       "starts": {
@@ -372,7 +372,7 @@
     },
     {
       "en_owner": "08003008",
-      "source": "games/gs1/src/08003008.c",
+      "source": "games/gs1/src/runtime/dispatch/reserved_no_op_f.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -402,7 +402,7 @@
     },
     {
       "en_owner": "0800352c",
-      "source": "games/gs1/src/0800352c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_168.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -432,7 +432,7 @@
     },
     {
       "en_owner": "08003538",
-      "source": "games/gs1/src/08003538.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_114.c",
       "size": 280,
       "status": "shared_core",
       "starts": {
@@ -462,7 +462,7 @@
     },
     {
       "en_owner": "08003810",
-      "source": "games/gs1/src/08003810.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_27.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -492,7 +492,7 @@
     },
     {
       "en_owner": "08003b70",
-      "source": "games/gs1/src/08003b70.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_99.c",
       "size": 66,
       "status": "shared_core",
       "starts": {
@@ -522,7 +522,7 @@
     },
     {
       "en_owner": "08003bb4",
-      "source": "games/gs1/src/08003bb4.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_12.c",
       "size": 66,
       "status": "shared_core",
       "starts": {
@@ -552,7 +552,7 @@
     },
     {
       "en_owner": "08003bf8",
-      "source": "games/gs1/src/08003bf8.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_69.c",
       "size": 66,
       "status": "shared_core",
       "starts": {
@@ -582,7 +582,7 @@
     },
     {
       "en_owner": "08003c3c",
-      "source": "games/gs1/src/08003c3c.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_133.c",
       "size": 66,
       "status": "shared_core",
       "starts": {
@@ -612,7 +612,7 @@
     },
     {
       "en_owner": "08003c80",
-      "source": "games/gs1/src/08003c80.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_28.c",
       "size": 96,
       "status": "shared_core",
       "starts": {
@@ -642,7 +642,7 @@
     },
     {
       "en_owner": "08003ce0",
-      "source": "games/gs1/src/08003ce0.c",
+      "source": "games/gs1/src/unidentified/main/system/system_owner_4.c",
       "size": 36,
       "status": "shared_core",
       "starts": {
@@ -672,7 +672,7 @@
     },
     {
       "en_owner": "08003d04",
-      "source": "games/gs1/src/08003d04.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_7.c",
       "size": 36,
       "status": "shared_core",
       "starts": {
@@ -942,7 +942,7 @@
     },
     {
       "en_owner": "080040b4",
-      "source": "games/gs1/src/080040b4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_235.c",
       "size": 26,
       "status": "shared_core",
       "starts": {
@@ -1032,7 +1032,7 @@
     },
     {
       "en_owner": "0800412c",
-      "source": "games/gs1/src/0800412c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_195.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -1062,7 +1062,7 @@
     },
     {
       "en_owner": "08004420",
-      "source": "games/gs1/src/08004420.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_44.c",
       "size": 56,
       "status": "shared_core",
       "starts": {
@@ -1152,7 +1152,7 @@
     },
     {
       "en_owner": "080045a4",
-      "source": "games/gs1/src/080045a4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_166.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -1212,7 +1212,7 @@
     },
     {
       "en_owner": "080045e8",
-      "source": "games/gs1/src/080045e8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_28.c",
       "size": 8,
       "status": "shared_core",
       "starts": {
@@ -1242,7 +1242,7 @@
     },
     {
       "en_owner": "080045f0",
-      "source": "games/gs1/src/080045f0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_200.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -1272,7 +1272,7 @@
     },
     {
       "en_owner": "08004620",
-      "source": "games/gs1/src/08004620.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_140.c",
       "size": 120,
       "status": "shared_core",
       "starts": {
@@ -1302,7 +1302,7 @@
     },
     {
       "en_owner": "08004698",
-      "source": "games/gs1/src/08004698.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_231.c",
       "size": 42,
       "status": "shared_core",
       "starts": {
@@ -1332,7 +1332,7 @@
     },
     {
       "en_owner": "080046c4",
-      "source": "games/gs1/src/080046c4.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_31.c",
       "size": 84,
       "status": "shared_core",
       "starts": {
@@ -1362,7 +1362,7 @@
     },
     {
       "en_owner": "08004718",
-      "source": "games/gs1/src/08004718.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_87.c",
       "size": 36,
       "status": "shared_core",
       "starts": {
@@ -1392,7 +1392,7 @@
     },
     {
       "en_owner": "0800473c",
-      "source": "games/gs1/src/0800473c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_129.c",
       "size": 36,
       "status": "shared_core",
       "starts": {
@@ -1422,7 +1422,7 @@
     },
     {
       "en_owner": "0800488c",
-      "source": "games/gs1/src/0800488c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_275.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -1452,7 +1452,7 @@
     },
     {
       "en_owner": "080048a0",
-      "source": "games/gs1/src/080048a0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_227.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -1602,7 +1602,7 @@
     },
     {
       "en_owner": "080051d8",
-      "source": "games/gs1/src/080051d8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_54.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -1632,7 +1632,7 @@
     },
     {
       "en_owner": "080051e8",
-      "source": "games/gs1/src/080051e8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_30.c",
       "size": 32,
       "status": "shared_core",
       "starts": {
@@ -1662,7 +1662,7 @@
     },
     {
       "en_owner": "08005208",
-      "source": "games/gs1/src/08005208.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_74.c",
       "size": 80,
       "status": "shared_core",
       "starts": {
@@ -1692,7 +1692,7 @@
     },
     {
       "en_owner": "08005258",
-      "source": "games/gs1/src/08005258.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_111.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -1722,7 +1722,7 @@
     },
     {
       "en_owner": "08005810",
-      "source": "games/gs1/src/08005810.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_171.c",
       "size": 88,
       "status": "shared_core",
       "starts": {
@@ -1752,7 +1752,7 @@
     },
     {
       "en_owner": "08005868",
-      "source": "games/gs1/src/08005868.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_16.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -1782,7 +1782,7 @@
     },
     {
       "en_owner": "08005904",
-      "source": "games/gs1/src/08005904.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_138.c",
       "size": 28,
       "status": "shared_core",
       "starts": {
@@ -1812,7 +1812,7 @@
     },
     {
       "en_owner": "08005ac0",
-      "source": "games/gs1/src/08005ac0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_203.c",
       "size": 30,
       "status": "shared_core",
       "starts": {
@@ -1842,7 +1842,7 @@
     },
     {
       "en_owner": "08005ae0",
-      "source": "games/gs1/src/08005ae0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_144.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -1872,7 +1872,7 @@
     },
     {
       "en_owner": "08005b24",
-      "source": "games/gs1/src/08005b24.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_73.c",
       "size": 64,
       "status": "shared_core",
       "starts": {
@@ -1902,7 +1902,7 @@
     },
     {
       "en_owner": "08005c08",
-      "source": "games/gs1/src/08005c08.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_73.c",
       "size": 34,
       "status": "shared_core",
       "starts": {
@@ -1932,7 +1932,7 @@
     },
     {
       "en_owner": "08005c2c",
-      "source": "games/gs1/src/08005c2c.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_130.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -1962,7 +1962,7 @@
     },
     {
       "en_owner": "08005cf8",
-      "source": "games/gs1/src/08005cf8.c",
+      "source": "games/gs1/src/unidentified/main/system/system_owner_11.c",
       "size": 22,
       "status": "shared_core",
       "starts": {
@@ -1992,7 +1992,7 @@
     },
     {
       "en_owner": "08005e70",
-      "source": "games/gs1/src/08005e70.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_53.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -2022,7 +2022,7 @@
     },
     {
       "en_owner": "08005e88",
-      "source": "games/gs1/src/08005e88.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_122.c",
       "size": 86,
       "status": "shared_core",
       "starts": {
@@ -2052,7 +2052,7 @@
     },
     {
       "en_owner": "08006088",
-      "source": "games/gs1/src/08006088.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_57.c",
       "size": 96,
       "status": "shared_core",
       "starts": {
@@ -2082,7 +2082,7 @@
     },
     {
       "en_owner": "08006358",
-      "source": "games/gs1/src/08006358.c",
+      "source": "games/gs1/src/unidentified/main/system/system_owner_1.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -2112,7 +2112,7 @@
     },
     {
       "en_owner": "08006384",
-      "source": "games/gs1/src/08006384.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_21.c",
       "size": 56,
       "status": "shared_core",
       "starts": {
@@ -2142,7 +2142,7 @@
     },
     {
       "en_owner": "08006458",
-      "source": "games/gs1/src/08006458.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_80.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -2172,7 +2172,7 @@
     },
     {
       "en_owner": "08006488",
-      "source": "games/gs1/src/08006488.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_78.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -2202,7 +2202,7 @@
     },
     {
       "en_owner": "080064b8",
-      "source": "games/gs1/src/080064b8.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_22.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -2232,7 +2232,7 @@
     },
     {
       "en_owner": "080064f4",
-      "source": "games/gs1/src/080064f4.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_48.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -2262,7 +2262,7 @@
     },
     {
       "en_owner": "08006798",
-      "source": "games/gs1/src/08006798.c",
+      "source": "games/gs1/src/runtime/wait/busy_loop_tick.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -2982,7 +2982,7 @@
     },
     {
       "en_owner": "0800b684",
-      "source": "games/gs1/src/0800b684.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_124.c",
       "size": 52,
       "status": "shared_core",
       "starts": {
@@ -3012,7 +3012,7 @@
     },
     {
       "en_owner": "0800b798",
-      "source": "games/gs1/src/0800b798.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_135.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -3072,7 +3072,7 @@
     },
     {
       "en_owner": "0800b868",
-      "source": "games/gs1/src/0800b868.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_37.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -3162,7 +3162,7 @@
     },
     {
       "en_owner": "0800b9a4",
-      "source": "games/gs1/src/0800b9a4.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_127.c",
       "size": 80,
       "status": "shared_core",
       "starts": {
@@ -3192,7 +3192,7 @@
     },
     {
       "en_owner": "0800b9f4",
-      "source": "games/gs1/src/0800b9f4.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_72.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -3222,7 +3222,7 @@
     },
     {
       "en_owner": "0800bacc",
-      "source": "games/gs1/src/0800bacc.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_3.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -3252,7 +3252,7 @@
     },
     {
       "en_owner": "0800baf8",
-      "source": "games/gs1/src/0800baf8.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_14.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -3282,7 +3282,7 @@
     },
     {
       "en_owner": "0800be20",
-      "source": "games/gs1/src/0800be20.c",
+      "source": "games/gs1/src/unidentified/main/script/script_owner_13.c",
       "size": 78,
       "status": "shared_core",
       "starts": {
@@ -3342,7 +3342,7 @@
     },
     {
       "en_owner": "0800befc",
-      "source": "games/gs1/src/0800befc.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_1.c",
       "size": 56,
       "status": "shared_core",
       "starts": {
@@ -3372,7 +3372,7 @@
     },
     {
       "en_owner": "0800bf34",
-      "source": "games/gs1/src/0800bf34.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_17.c",
       "size": 112,
       "status": "shared_core",
       "starts": {
@@ -3402,7 +3402,7 @@
     },
     {
       "en_owner": "0800bfa4",
-      "source": "games/gs1/src/0800bfa4.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_84.c",
       "size": 96,
       "status": "shared_core",
       "starts": {
@@ -3432,7 +3432,7 @@
     },
     {
       "en_owner": "0800c0c4",
-      "source": "games/gs1/src/0800c0c4.c",
+      "source": "games/gs1/src/resource/table/reserved_no_op.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -3462,7 +3462,7 @@
     },
     {
       "en_owner": "0800c0cc",
-      "source": "games/gs1/src/0800c0cc.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_12.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -3612,7 +3612,7 @@
     },
     {
       "en_owner": "0800c3ec",
-      "source": "games/gs1/src/0800c3ec.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_18.c",
       "size": 28,
       "status": "shared_core",
       "starts": {
@@ -3642,7 +3642,7 @@
     },
     {
       "en_owner": "0800c408",
-      "source": "games/gs1/src/0800c408.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_97.c",
       "size": 38,
       "status": "shared_core",
       "starts": {
@@ -3672,7 +3672,7 @@
     },
     {
       "en_owner": "0800c430",
-      "source": "games/gs1/src/0800c430.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_31.c",
       "size": 34,
       "status": "shared_core",
       "starts": {
@@ -3702,7 +3702,7 @@
     },
     {
       "en_owner": "0800c454",
-      "source": "games/gs1/src/0800c454.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_269.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -3732,7 +3732,7 @@
     },
     {
       "en_owner": "0800c46c",
-      "source": "games/gs1/src/0800c46c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_68.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -3762,7 +3762,7 @@
     },
     {
       "en_owner": "0800c47c",
-      "source": "games/gs1/src/0800c47c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_93.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -3792,7 +3792,7 @@
     },
     {
       "en_owner": "0800c48c",
-      "source": "games/gs1/src/0800c48c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_143.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -3822,7 +3822,7 @@
     },
     {
       "en_owner": "0800c49c",
-      "source": "games/gs1/src/0800c49c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_158.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -3852,7 +3852,7 @@
     },
     {
       "en_owner": "0800c4ac",
-      "source": "games/gs1/src/0800c4ac.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_89.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -3882,7 +3882,7 @@
     },
     {
       "en_owner": "0800c4bc",
-      "source": "games/gs1/src/0800c4bc.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_1.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -3912,7 +3912,7 @@
     },
     {
       "en_owner": "0800c4ec",
-      "source": "games/gs1/src/0800c4ec.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_24.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -3942,7 +3942,7 @@
     },
     {
       "en_owner": "0800c528",
-      "source": "games/gs1/src/0800c528.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_17.c",
       "size": 30,
       "status": "shared_core",
       "starts": {
@@ -3972,7 +3972,7 @@
     },
     {
       "en_owner": "0800c548",
-      "source": "games/gs1/src/0800c548.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_34.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -4002,7 +4002,7 @@
     },
     {
       "en_owner": "0800c570",
-      "source": "games/gs1/src/0800c570.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_55.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -4032,7 +4032,7 @@
     },
     {
       "en_owner": "0800c598",
-      "source": "games/gs1/src/0800c598.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_116.c",
       "size": 26,
       "status": "shared_core",
       "starts": {
@@ -4062,7 +4062,7 @@
     },
     {
       "en_owner": "0800c5b4",
-      "source": "games/gs1/src/0800c5b4.c",
+      "source": "games/gs1/src/unidentified/main/system/system_owner_22.c",
       "size": 72,
       "status": "shared_core",
       "starts": {
@@ -4092,7 +4092,7 @@
     },
     {
       "en_owner": "0800c5fc",
-      "source": "games/gs1/src/0800c5fc.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_45.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -4122,7 +4122,7 @@
     },
     {
       "en_owner": "0800ca2c",
-      "source": "games/gs1/src/0800ca2c.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_11.c",
       "size": 22,
       "status": "shared_core",
       "starts": {
@@ -4152,7 +4152,7 @@
     },
     {
       "en_owner": "0800ca44",
-      "source": "games/gs1/src/0800ca44.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_29.c",
       "size": 18,
       "status": "shared_core",
       "starts": {
@@ -4182,7 +4182,7 @@
     },
     {
       "en_owner": "0800ca58",
-      "source": "games/gs1/src/0800ca58.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_8.c",
       "size": 18,
       "status": "shared_core",
       "starts": {
@@ -4212,7 +4212,7 @@
     },
     {
       "en_owner": "0800ca6c",
-      "source": "games/gs1/src/0800ca6c.c",
+      "source": "games/gs1/src/unidentified/main/system/system_owner_20.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -4242,7 +4242,7 @@
     },
     {
       "en_owner": "0800ca98",
-      "source": "games/gs1/src/0800ca98.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_58.c",
       "size": 50,
       "status": "shared_core",
       "starts": {
@@ -4272,7 +4272,7 @@
     },
     {
       "en_owner": "0800d130",
-      "source": "games/gs1/src/0800d130.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_11.c",
       "size": 26,
       "status": "shared_core",
       "starts": {
@@ -4722,7 +4722,7 @@
     },
     {
       "en_owner": "0800d8e8",
-      "source": "games/gs1/src/0800d8e8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_136.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -4812,7 +4812,7 @@
     },
     {
       "en_owner": "0800d924",
-      "source": "games/gs1/src/0800d924.c",
+      "source": "games/gs1/src/unidentified/main/script/script_owner_1.c",
       "size": 104,
       "status": "shared_core",
       "starts": {
@@ -4842,7 +4842,7 @@
     },
     {
       "en_owner": "0800d98c",
-      "source": "games/gs1/src/0800d98c.c",
+      "source": "games/gs1/src/unidentified/main/script/script_owner_8.c",
       "size": 100,
       "status": "shared_core",
       "starts": {
@@ -4902,7 +4902,7 @@
     },
     {
       "en_owner": "0800da18",
-      "source": "games/gs1/src/0800da18.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_45.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -4932,7 +4932,7 @@
     },
     {
       "en_owner": "0800da40",
-      "source": "games/gs1/src/0800da40.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_35.c",
       "size": 54,
       "status": "shared_core",
       "starts": {
@@ -4962,7 +4962,7 @@
     },
     {
       "en_owner": "0800da78",
-      "source": "games/gs1/src/0800da78.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_67.c",
       "size": 38,
       "status": "shared_core",
       "starts": {
@@ -4992,7 +4992,7 @@
     },
     {
       "en_owner": "0800daa0",
-      "source": "games/gs1/src/0800daa0.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_14.c",
       "size": 30,
       "status": "shared_core",
       "starts": {
@@ -5022,7 +5022,7 @@
     },
     {
       "en_owner": "0800dac0",
-      "source": "games/gs1/src/0800dac0.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_46.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -5052,7 +5052,7 @@
     },
     {
       "en_owner": "0800dcdc",
-      "source": "games/gs1/src/0800dcdc.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_24.c",
       "size": 148,
       "status": "shared_core",
       "starts": {
@@ -5622,7 +5622,7 @@
     },
     {
       "en_owner": "0800e548",
-      "source": "games/gs1/src/0800e548.c",
+      "source": "games/gs1/src/unidentified/main/script/script_owner_14.c",
       "size": 42,
       "status": "shared_core",
       "starts": {
@@ -6312,7 +6312,7 @@
     },
     {
       "en_owner": "0800ea54",
-      "source": "games/gs1/src/0800ea54.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_52.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -6342,7 +6342,7 @@
     },
     {
       "en_owner": "0800ea60",
-      "source": "games/gs1/src/0800ea60.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_40.c",
       "size": 152,
       "status": "shared_core",
       "starts": {
@@ -6372,7 +6372,7 @@
     },
     {
       "en_owner": "0800eaf8",
-      "source": "games/gs1/src/0800eaf8.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_56.c",
       "size": 168,
       "status": "shared_core",
       "starts": {
@@ -6402,7 +6402,7 @@
     },
     {
       "en_owner": "0800eba0",
-      "source": "games/gs1/src/0800eba0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_97.c",
       "size": 76,
       "status": "shared_core",
       "starts": {
@@ -6432,7 +6432,7 @@
     },
     {
       "en_owner": "0800f7dc",
-      "source": "games/gs1/src/0800f7dc.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_115.c",
       "size": 22,
       "status": "shared_core",
       "starts": {
@@ -6462,7 +6462,7 @@
     },
     {
       "en_owner": "0800f9cc",
-      "source": "games/gs1/src/0800f9cc.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_144.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -6522,7 +6522,7 @@
     },
     {
       "en_owner": "0800fa8c",
-      "source": "games/gs1/src/0800fa8c.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_2.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -6552,7 +6552,7 @@
     },
     {
       "en_owner": "0800fe9c",
-      "source": "games/gs1/src/0800fe9c.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_2.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -6582,7 +6582,7 @@
     },
     {
       "en_owner": "080108c4",
-      "source": "games/gs1/src/080108c4.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_119.c",
       "size": 32,
       "status": "shared_core",
       "starts": {
@@ -6672,7 +6672,7 @@
     },
     {
       "en_owner": "0801173c",
-      "source": "games/gs1/src/0801173c.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_112.c",
       "size": 96,
       "status": "shared_core",
       "starts": {
@@ -6702,7 +6702,7 @@
     },
     {
       "en_owner": "080118a8",
-      "source": "games/gs1/src/080118a8.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_8.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -6732,7 +6732,7 @@
     },
     {
       "en_owner": "08011984",
-      "source": "games/gs1/src/08011984.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_64.c",
       "size": 36,
       "status": "shared_core",
       "starts": {
@@ -6762,7 +6762,7 @@
     },
     {
       "en_owner": "080119a8",
-      "source": "games/gs1/src/080119a8.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_3.c",
       "size": 36,
       "status": "shared_core",
       "starts": {
@@ -6822,7 +6822,7 @@
     },
     {
       "en_owner": "08011ae0",
-      "source": "games/gs1/src/08011ae0.c",
+      "source": "games/gs1/src/unidentified/main/script/script_owner_15.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -6852,7 +6852,7 @@
     },
     {
       "en_owner": "08011af0",
-      "source": "games/gs1/src/08011af0.c",
+      "source": "games/gs1/src/unidentified/main/script/script_owner_6.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -6882,7 +6882,7 @@
     },
     {
       "en_owner": "08011b00",
-      "source": "games/gs1/src/08011b00.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_131.c",
       "size": 84,
       "status": "shared_core",
       "starts": {
@@ -6912,7 +6912,7 @@
     },
     {
       "en_owner": "08011bc8",
-      "source": "games/gs1/src/08011bc8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_153.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -6942,7 +6942,7 @@
     },
     {
       "en_owner": "08011be0",
-      "source": "games/gs1/src/08011be0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_268.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -6972,7 +6972,7 @@
     },
     {
       "en_owner": "08011ce0",
-      "source": "games/gs1/src/08011ce0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_213.c",
       "size": 10,
       "status": "shared_core",
       "starts": {
@@ -7002,7 +7002,7 @@
     },
     {
       "en_owner": "08011cec",
-      "source": "games/gs1/src/08011cec.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_35.c",
       "size": 34,
       "status": "shared_core",
       "starts": {
@@ -7032,7 +7032,7 @@
     },
     {
       "en_owner": "08011d10",
-      "source": "games/gs1/src/08011d10.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_115.c",
       "size": 34,
       "status": "shared_core",
       "starts": {
@@ -7062,7 +7062,7 @@
     },
     {
       "en_owner": "08011d34",
-      "source": "games/gs1/src/08011d34.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_270.c",
       "size": 42,
       "status": "shared_core",
       "starts": {
@@ -7092,7 +7092,7 @@
     },
     {
       "en_owner": "08011d60",
-      "source": "games/gs1/src/08011d60.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_277.c",
       "size": 50,
       "status": "shared_core",
       "starts": {
@@ -7122,7 +7122,7 @@
     },
     {
       "en_owner": "08011d94",
-      "source": "games/gs1/src/08011d94.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_51.c",
       "size": 72,
       "status": "shared_core",
       "starts": {
@@ -7152,7 +7152,7 @@
     },
     {
       "en_owner": "08011ddc",
-      "source": "games/gs1/src/08011ddc.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_9.c",
       "size": 78,
       "status": "shared_core",
       "starts": {
@@ -7182,7 +7182,7 @@
     },
     {
       "en_owner": "08011e2c",
-      "source": "games/gs1/src/08011e2c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_159.c",
       "size": 36,
       "status": "shared_core",
       "starts": {
@@ -7212,7 +7212,7 @@
     },
     {
       "en_owner": "08011e50",
-      "source": "games/gs1/src/08011e50.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_106.c",
       "size": 26,
       "status": "shared_core",
       "starts": {
@@ -7242,7 +7242,7 @@
     },
     {
       "en_owner": "08011e6c",
-      "source": "games/gs1/src/08011e6c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_49.c",
       "size": 26,
       "status": "shared_core",
       "starts": {
@@ -7272,7 +7272,7 @@
     },
     {
       "en_owner": "08011e88",
-      "source": "games/gs1/src/08011e88.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_148.c",
       "size": 70,
       "status": "shared_core",
       "starts": {
@@ -7302,7 +7302,7 @@
     },
     {
       "en_owner": "08011ed0",
-      "source": "games/gs1/src/08011ed0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_199.c",
       "size": 66,
       "status": "shared_core",
       "starts": {
@@ -7332,7 +7332,7 @@
     },
     {
       "en_owner": "08011f14",
-      "source": "games/gs1/src/08011f14.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_116.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -7362,7 +7362,7 @@
     },
     {
       "en_owner": "08011f28",
-      "source": "games/gs1/src/08011f28.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_94.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -7392,7 +7392,7 @@
     },
     {
       "en_owner": "08011f3c",
-      "source": "games/gs1/src/08011f3c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_22.c",
       "size": 10,
       "status": "shared_core",
       "starts": {
@@ -7422,7 +7422,7 @@
     },
     {
       "en_owner": "08011f48",
-      "source": "games/gs1/src/08011f48.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_38.c",
       "size": 10,
       "status": "shared_core",
       "starts": {
@@ -7452,7 +7452,7 @@
     },
     {
       "en_owner": "08011fd8",
-      "source": "games/gs1/src/08011fd8.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_33.c",
       "size": 96,
       "status": "shared_core",
       "starts": {
@@ -7542,7 +7542,7 @@
     },
     {
       "en_owner": "080120b4",
-      "source": "games/gs1/src/080120b4.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_123.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -7692,7 +7692,7 @@
     },
     {
       "en_owner": "08012330",
-      "source": "games/gs1/src/08012330.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_208.c",
       "size": 32,
       "status": "shared_core",
       "starts": {
@@ -7722,7 +7722,7 @@
     },
     {
       "en_owner": "08012350",
-      "source": "games/gs1/src/08012350.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_120.c",
       "size": 56,
       "status": "shared_core",
       "starts": {
@@ -7752,7 +7752,7 @@
     },
     {
       "en_owner": "08012af8",
-      "source": "games/gs1/src/08012af8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_72.c",
       "size": 52,
       "status": "shared_core",
       "starts": {
@@ -7782,7 +7782,7 @@
     },
     {
       "en_owner": "08012d20",
-      "source": "games/gs1/src/08012d20.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_145.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -7812,7 +7812,7 @@
     },
     {
       "en_owner": "08012d48",
-      "source": "games/gs1/src/08012d48.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_261.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -7842,7 +7842,7 @@
     },
     {
       "en_owner": "08012d70",
-      "source": "games/gs1/src/08012d70.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_217.c",
       "size": 120,
       "status": "shared_core",
       "starts": {
@@ -7872,7 +7872,7 @@
     },
     {
       "en_owner": "08012de8",
-      "source": "games/gs1/src/08012de8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_222.c",
       "size": 64,
       "status": "shared_core",
       "starts": {
@@ -7932,7 +7932,7 @@
     },
     {
       "en_owner": "08016230",
-      "source": "games/gs1/src/08016230.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_4.c",
       "size": 164,
       "status": "shared_core",
       "starts": {
@@ -7962,7 +7962,7 @@
     },
     {
       "en_owner": "080163ec",
-      "source": "games/gs1/src/080163ec.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_142.c",
       "size": 42,
       "status": "shared_core",
       "starts": {
@@ -8112,7 +8112,7 @@
     },
     {
       "en_owner": "0801656c",
-      "source": "games/gs1/src/0801656c.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_105.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -8202,7 +8202,7 @@
     },
     {
       "en_owner": "0801671c",
-      "source": "games/gs1/src/0801671c.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_41.c",
       "size": 28,
       "status": "shared_core",
       "starts": {
@@ -8232,7 +8232,7 @@
     },
     {
       "en_owner": "08016738",
-      "source": "games/gs1/src/08016738.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_25.c",
       "size": 32,
       "status": "shared_core",
       "starts": {
@@ -8262,7 +8262,7 @@
     },
     {
       "en_owner": "08016758",
-      "source": "games/gs1/src/08016758.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_131.c",
       "size": 84,
       "status": "regional_core",
       "starts": {
@@ -8292,7 +8292,7 @@
     },
     {
       "en_owner": "080167ac",
-      "source": "games/gs1/src/080167ac.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_117.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -8412,7 +8412,7 @@
     },
     {
       "en_owner": "08017464",
-      "source": "games/gs1/src/08017464.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_160.c",
       "size": 116,
       "status": "regional_core",
       "starts": {
@@ -8442,7 +8442,7 @@
     },
     {
       "en_owner": "080174d8",
-      "source": "games/gs1/src/080174d8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_165.c",
       "size": 32,
       "status": "shared_core",
       "starts": {
@@ -8532,7 +8532,7 @@
     },
     {
       "en_owner": "08017620",
-      "source": "games/gs1/src/08017620.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_20.c",
       "size": 56,
       "status": "shared_core",
       "starts": {
@@ -8562,7 +8562,7 @@
     },
     {
       "en_owner": "0801789c",
-      "source": "games/gs1/src/0801789c.c",
+      "source": "games/gs1/src/unidentified/main/graphics/graphics_owner_6.c",
       "size": 18,
       "status": "shared_core",
       "starts": {
@@ -8622,7 +8622,7 @@
     },
     {
       "en_owner": "08018790",
-      "source": "games/gs1/src/08018790.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_22.c",
       "size": 28,
       "status": "shared_core",
       "starts": {
@@ -8682,7 +8682,7 @@
     },
     {
       "en_owner": "080187fc",
-      "source": "games/gs1/src/080187fc.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_37.c",
       "size": 84,
       "status": "regional_core",
       "starts": {
@@ -8712,7 +8712,7 @@
     },
     {
       "en_owner": "0801964c",
-      "source": "games/gs1/src/0801964c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_244.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -8742,7 +8742,7 @@
     },
     {
       "en_owner": "080197b4",
-      "source": "games/gs1/src/080197b4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_27.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -8772,7 +8772,7 @@
     },
     {
       "en_owner": "080198dc",
-      "source": "games/gs1/src/080198dc.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_134.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -8802,7 +8802,7 @@
     },
     {
       "en_owner": "08019908",
-      "source": "games/gs1/src/08019908.c",
+      "source": "games/gs1/src/unidentified/main/graphics/graphics_owner_9.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -8862,7 +8862,7 @@
     },
     {
       "en_owner": "0801999c",
-      "source": "games/gs1/src/0801999c.c",
+      "source": "games/gs1/src/unidentified/main/graphics/graphics_owner_3.c",
       "size": 80,
       "status": "shared_core",
       "starts": {
@@ -8892,7 +8892,7 @@
     },
     {
       "en_owner": "080199ec",
-      "source": "games/gs1/src/080199ec.c",
+      "source": "games/gs1/src/unidentified/main/graphics/graphics_owner_10.c",
       "size": 104,
       "status": "shared_core",
       "starts": {
@@ -8922,7 +8922,7 @@
     },
     {
       "en_owner": "08019ba0",
-      "source": "games/gs1/src/08019ba0.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_35.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -8952,7 +8952,7 @@
     },
     {
       "en_owner": "08019d0c",
-      "source": "games/gs1/src/08019d0c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_272.c",
       "size": 32,
       "status": "shared_core",
       "starts": {
@@ -9012,7 +9012,7 @@
     },
     {
       "en_owner": "08019da8",
-      "source": "games/gs1/src/08019da8.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_32.c",
       "size": 160,
       "status": "shared_core",
       "starts": {
@@ -9042,7 +9042,7 @@
     },
     {
       "en_owner": "08019ebc",
-      "source": "games/gs1/src/08019ebc.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_238.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -9072,7 +9072,7 @@
     },
     {
       "en_owner": "08019ed0",
-      "source": "games/gs1/src/08019ed0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_125.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -9102,7 +9102,7 @@
     },
     {
       "en_owner": "08019ee4",
-      "source": "games/gs1/src/08019ee4.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_100.c",
       "size": 180,
       "status": "shared_core",
       "starts": {
@@ -9132,7 +9132,7 @@
     },
     {
       "en_owner": "08019f98",
-      "source": "games/gs1/src/08019f98.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_8.c",
       "size": 50,
       "status": "shared_core",
       "starts": {
@@ -9162,7 +9162,7 @@
     },
     {
       "en_owner": "08019fcc",
-      "source": "games/gs1/src/08019fcc.c",
+      "source": "games/gs1/src/unidentified/main/system/system_owner_23.c",
       "size": 188,
       "status": "shared_core",
       "starts": {
@@ -9192,7 +9192,7 @@
     },
     {
       "en_owner": "0801a2a4",
-      "source": "games/gs1/src/0801a2a4.c",
+      "source": "games/gs1/src/unidentified/main/system/system_owner_15.c",
       "size": 70,
       "status": "shared_core",
       "starts": {
@@ -9222,7 +9222,7 @@
     },
     {
       "en_owner": "0801a2ec",
-      "source": "games/gs1/src/0801a2ec.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_125.c",
       "size": 62,
       "status": "shared_core",
       "starts": {
@@ -9282,7 +9282,7 @@
     },
     {
       "en_owner": "0801a370",
-      "source": "games/gs1/src/0801a370.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_44.c",
       "size": 96,
       "status": "shared_core",
       "starts": {
@@ -9312,7 +9312,7 @@
     },
     {
       "en_owner": "0801a3d0",
-      "source": "games/gs1/src/0801a3d0.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_3.c",
       "size": 50,
       "status": "shared_core",
       "starts": {
@@ -9342,7 +9342,7 @@
     },
     {
       "en_owner": "0801a404",
-      "source": "games/gs1/src/0801a404.c",
+      "source": "games/gs1/src/unidentified/main/system/system_owner_7.c",
       "size": 188,
       "status": "shared_core",
       "starts": {
@@ -9372,7 +9372,7 @@
     },
     {
       "en_owner": "0801a4c0",
-      "source": "games/gs1/src/0801a4c0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_196.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -9402,7 +9402,7 @@
     },
     {
       "en_owner": "0801a778",
-      "source": "games/gs1/src/0801a778.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_49.c",
       "size": 72,
       "status": "shared_core",
       "starts": {
@@ -9432,7 +9432,7 @@
     },
     {
       "en_owner": "0801a7c0",
-      "source": "games/gs1/src/0801a7c0.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_61.c",
       "size": 52,
       "status": "shared_core",
       "starts": {
@@ -9462,7 +9462,7 @@
     },
     {
       "en_owner": "0801a90c",
-      "source": "games/gs1/src/0801a90c.c",
+      "source": "games/gs1/src/ui/work/reserved_no_op.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -9492,7 +9492,7 @@
     },
     {
       "en_owner": "0801a910",
-      "source": "games/gs1/src/0801a910.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_7.c",
       "size": 88,
       "status": "shared_core",
       "starts": {
@@ -9612,7 +9612,7 @@
     },
     {
       "en_owner": "0801b1ec",
-      "source": "games/gs1/src/0801b1ec.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_118.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -9642,7 +9642,7 @@
     },
     {
       "en_owner": "0801b228",
-      "source": "games/gs1/src/0801b228.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_242.c",
       "size": 32,
       "status": "shared_core",
       "starts": {
@@ -9672,7 +9672,7 @@
     },
     {
       "en_owner": "0801b36c",
-      "source": "games/gs1/src/0801b36c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_114.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -9822,7 +9822,7 @@
     },
     {
       "en_owner": "0801b9a8",
-      "source": "games/gs1/src/0801b9a8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_164.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -9852,7 +9852,7 @@
     },
     {
       "en_owner": "0801b9ec",
-      "source": "games/gs1/src/0801b9ec.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_33.c",
       "size": 72,
       "status": "shared_core",
       "starts": {
@@ -9882,7 +9882,7 @@
     },
     {
       "en_owner": "0801ba34",
-      "source": "games/gs1/src/0801ba34.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_81.c",
       "size": 52,
       "status": "shared_core",
       "starts": {
@@ -9912,7 +9912,7 @@
     },
     {
       "en_owner": "0801bc34",
-      "source": "games/gs1/src/0801bc34.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_96.c",
       "size": 160,
       "status": "shared_core",
       "starts": {
@@ -9942,7 +9942,7 @@
     },
     {
       "en_owner": "0801bcd4",
-      "source": "games/gs1/src/0801bcd4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_130.c",
       "size": 196,
       "status": "shared_core",
       "starts": {
@@ -9972,7 +9972,7 @@
     },
     {
       "en_owner": "0801c0c4",
-      "source": "games/gs1/src/0801c0c4.c",
+      "source": "games/gs1/src/ui/text/resource/no_op_callback.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -10002,7 +10002,7 @@
     },
     {
       "en_owner": "0801c0c8",
-      "source": "games/gs1/src/0801c0c8.c",
+      "source": "games/gs1/src/ui/text/resource/no_op_callback_bank.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -10182,7 +10182,7 @@
     },
     {
       "en_owner": "0801c244",
-      "source": "games/gs1/src/0801c244.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_5.c",
       "size": 140,
       "status": "regional_core",
       "starts": {
@@ -10212,7 +10212,7 @@
     },
     {
       "en_owner": "0801c2d0",
-      "source": "games/gs1/src/0801c2d0.c",
+      "source": "games/gs1/src/unidentified/main/system/system_owner_9.c",
       "size": 18,
       "status": "shared_core",
       "starts": {
@@ -10242,7 +10242,7 @@
     },
     {
       "en_owner": "0801c2e4",
-      "source": "games/gs1/src/0801c2e4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_65.c",
       "size": 10,
       "status": "shared_core",
       "starts": {
@@ -10272,7 +10272,7 @@
     },
     {
       "en_owner": "0801c2f0",
-      "source": "games/gs1/src/0801c2f0.c",
+      "source": "games/gs1/src/unidentified/main/system/system_owner_3.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -10302,7 +10302,7 @@
     },
     {
       "en_owner": "0801c304",
-      "source": "games/gs1/src/0801c304.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_219.c",
       "size": 72,
       "status": "shared_core",
       "starts": {
@@ -10422,7 +10422,7 @@
     },
     {
       "en_owner": "0801c458",
-      "source": "games/gs1/src/0801c458.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_58.c",
       "size": 14,
       "status": "shared_core",
       "starts": {
@@ -10452,7 +10452,7 @@
     },
     {
       "en_owner": "0801c46c",
-      "source": "games/gs1/src/0801c46c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_142.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -10512,7 +10512,7 @@
     },
     {
       "en_owner": "0801c924",
-      "source": "games/gs1/src/0801c924.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_221.c",
       "size": 10,
       "status": "shared_core",
       "starts": {
@@ -10542,7 +10542,7 @@
     },
     {
       "en_owner": "0801c930",
-      "source": "games/gs1/src/0801c930.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_23.c",
       "size": 36,
       "status": "shared_core",
       "starts": {
@@ -10572,7 +10572,7 @@
     },
     {
       "en_owner": "0801c954",
-      "source": "games/gs1/src/0801c954.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_35.c",
       "size": 104,
       "status": "shared_core",
       "starts": {
@@ -10602,7 +10602,7 @@
     },
     {
       "en_owner": "0801c9bc",
-      "source": "games/gs1/src/0801c9bc.c",
+      "source": "games/gs1/src/graphics/palette/reserved_no_op_a.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -10632,7 +10632,7 @@
     },
     {
       "en_owner": "0801c9c0",
-      "source": "games/gs1/src/0801c9c0.c",
+      "source": "games/gs1/src/graphics/palette/reserved_no_op_b.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -10662,7 +10662,7 @@
     },
     {
       "en_owner": "0801c9c4",
-      "source": "games/gs1/src/0801c9c4.c",
+      "source": "games/gs1/src/graphics/palette/reserved_no_op_c.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -10692,7 +10692,7 @@
     },
     {
       "en_owner": "0801ca1c",
-      "source": "games/gs1/src/0801ca1c.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_140.c",
       "size": 196,
       "status": "shared_core",
       "starts": {
@@ -10722,7 +10722,7 @@
     },
     {
       "en_owner": "0801cae0",
-      "source": "games/gs1/src/0801cae0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_103.c",
       "size": 244,
       "status": "shared_core",
       "starts": {
@@ -10752,7 +10752,7 @@
     },
     {
       "en_owner": "0801ce48",
-      "source": "games/gs1/src/0801ce48.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_74.c",
       "size": 36,
       "status": "shared_core",
       "starts": {
@@ -10782,7 +10782,7 @@
     },
     {
       "en_owner": "0801ce6c",
-      "source": "games/gs1/src/0801ce6c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_167.c",
       "size": 36,
       "status": "shared_core",
       "starts": {
@@ -10812,7 +10812,7 @@
     },
     {
       "en_owner": "0801ce90",
-      "source": "games/gs1/src/0801ce90.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_89.c",
       "size": 80,
       "status": "shared_core",
       "starts": {
@@ -10842,7 +10842,7 @@
     },
     {
       "en_owner": "0801cee0",
-      "source": "games/gs1/src/0801cee0.c",
+      "source": "games/gs1/src/graphics/palette/adjust_selection_counter.c",
       "size": 100,
       "status": "shared_core",
       "starts": {
@@ -10872,7 +10872,7 @@
     },
     {
       "en_owner": "0801cf48",
-      "source": "games/gs1/src/0801cf48.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_54.c",
       "size": 204,
       "status": "shared_core",
       "starts": {
@@ -10902,7 +10902,7 @@
     },
     {
       "en_owner": "0801d0f0",
-      "source": "games/gs1/src/0801d0f0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_251.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -10932,7 +10932,7 @@
     },
     {
       "en_owner": "0801d94c",
-      "source": "games/gs1/src/0801d94c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_123.c",
       "size": 52,
       "status": "shared_core",
       "starts": {
@@ -10962,7 +10962,7 @@
     },
     {
       "en_owner": "0801d9bc",
-      "source": "games/gs1/src/0801d9bc.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_104.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -11022,7 +11022,7 @@
     },
     {
       "en_owner": "0801e418",
-      "source": "games/gs1/src/0801e418.c",
+      "source": "games/gs1/src/ui/render/reserved_no_op.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -11052,7 +11052,7 @@
     },
     {
       "en_owner": "0801e71c",
-      "source": "games/gs1/src/0801e71c.c",
+      "source": "games/gs1/src/unidentified/main/graphics/graphics_owner_2.c",
       "size": 28,
       "status": "shared_core",
       "starts": {
@@ -11082,7 +11082,7 @@
     },
     {
       "en_owner": "0801e738",
-      "source": "games/gs1/src/0801e738.c",
+      "source": "games/gs1/src/unidentified/main/graphics/graphics_owner_4.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -11532,7 +11532,7 @@
     },
     {
       "en_owner": "0801ed40",
-      "source": "games/gs1/src/0801ed40.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_283.c",
       "size": 140,
       "status": "regional_core",
       "starts": {
@@ -11562,7 +11562,7 @@
     },
     {
       "en_owner": "0801edcc",
-      "source": "games/gs1/src/0801edcc.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_25.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -11592,7 +11592,7 @@
     },
     {
       "en_owner": "0801eddc",
-      "source": "games/gs1/src/0801eddc.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_61.c",
       "size": 14,
       "status": "shared_core",
       "starts": {
@@ -11622,7 +11622,7 @@
     },
     {
       "en_owner": "0801ee68",
-      "source": "games/gs1/src/0801ee68.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_188.c",
       "size": 56,
       "status": "shared_core",
       "starts": {
@@ -11652,7 +11652,7 @@
     },
     {
       "en_owner": "0801eea0",
-      "source": "games/gs1/src/0801eea0.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_21.c",
       "size": 104,
       "status": "shared_core",
       "starts": {
@@ -11682,7 +11682,7 @@
     },
     {
       "en_owner": "0801ef08",
-      "source": "games/gs1/src/0801ef08.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_10.c",
       "size": 96,
       "status": "shared_core",
       "starts": {
@@ -11712,7 +11712,7 @@
     },
     {
       "en_owner": "0801f5d4",
-      "source": "games/gs1/src/0801f5d4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_281.c",
       "size": 28,
       "status": "shared_core",
       "starts": {
@@ -11772,7 +11772,7 @@
     },
     {
       "en_owner": "0801f680",
-      "source": "games/gs1/src/0801f680.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_6.c",
       "size": 132,
       "status": "shared_core",
       "starts": {
@@ -11802,7 +11802,7 @@
     },
     {
       "en_owner": "0801f704",
-      "source": "games/gs1/src/0801f704.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_46.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -11832,7 +11832,7 @@
     },
     {
       "en_owner": "0801f730",
-      "source": "games/gs1/src/0801f730.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_139.c",
       "size": 76,
       "status": "shared_core",
       "starts": {
@@ -11862,7 +11862,7 @@
     },
     {
       "en_owner": "0801f77c",
-      "source": "games/gs1/src/0801f77c.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_94.c",
       "size": 156,
       "status": "shared_core",
       "starts": {
@@ -11892,7 +11892,7 @@
     },
     {
       "en_owner": "0801f9b4",
-      "source": "games/gs1/src/0801f9b4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_249.c",
       "size": 136,
       "status": "shared_core",
       "starts": {
@@ -11922,7 +11922,7 @@
     },
     {
       "en_owner": "0801fa3c",
-      "source": "games/gs1/src/0801fa3c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_154.c",
       "size": 108,
       "status": "shared_core",
       "starts": {
@@ -11952,7 +11952,7 @@
     },
     {
       "en_owner": "0801fb48",
-      "source": "games/gs1/src/0801fb48.c",
+      "source": "games/gs1/src/unidentified/main/audio/audio_owner_5.c",
       "size": 96,
       "status": "shared_core",
       "starts": {
@@ -11982,7 +11982,7 @@
     },
     {
       "en_owner": "0801fba8",
-      "source": "games/gs1/src/0801fba8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_71.c",
       "size": 220,
       "status": "shared_core",
       "starts": {
@@ -12012,7 +12012,7 @@
     },
     {
       "en_owner": "0801fc84",
-      "source": "games/gs1/src/0801fc84.c",
+      "source": "games/gs1/src/unidentified/main/system/system_owner_13.c",
       "size": 176,
       "status": "shared_core",
       "starts": {
@@ -12072,7 +12072,7 @@
     },
     {
       "en_owner": "0801ff14",
-      "source": "games/gs1/src/0801ff14.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_146.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -12102,7 +12102,7 @@
     },
     {
       "en_owner": "0801ff58",
-      "source": "games/gs1/src/0801ff58.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_184.c",
       "size": 128,
       "status": "shared_core",
       "starts": {
@@ -12132,7 +12132,7 @@
     },
     {
       "en_owner": "0801ffd8",
-      "source": "games/gs1/src/0801ffd8.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_31.c",
       "size": 176,
       "status": "shared_core",
       "starts": {
@@ -12162,7 +12162,7 @@
     },
     {
       "en_owner": "08020088",
-      "source": "games/gs1/src/08020088.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_64.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -12192,7 +12192,7 @@
     },
     {
       "en_owner": "080200cc",
-      "source": "games/gs1/src/080200cc.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_218.c",
       "size": 132,
       "status": "shared_core",
       "starts": {
@@ -12222,7 +12222,7 @@
     },
     {
       "en_owner": "08020150",
-      "source": "games/gs1/src/08020150.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_13.c",
       "size": 72,
       "status": "shared_core",
       "starts": {
@@ -12252,7 +12252,7 @@
     },
     {
       "en_owner": "080208e4",
-      "source": "games/gs1/src/080208e4.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_66.c",
       "size": 204,
       "status": "shared_core",
       "starts": {
@@ -12282,7 +12282,7 @@
     },
     {
       "en_owner": "080209b0",
-      "source": "games/gs1/src/080209b0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_41.c",
       "size": 28,
       "status": "shared_core",
       "starts": {
@@ -12372,7 +12372,7 @@
     },
     {
       "en_owner": "08020aec",
-      "source": "games/gs1/src/08020aec.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_233.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -12402,7 +12402,7 @@
     },
     {
       "en_owner": "08020b00",
-      "source": "games/gs1/src/08020b00.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_128.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -12432,7 +12432,7 @@
     },
     {
       "en_owner": "08021360",
-      "source": "games/gs1/src/08021360.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_40.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -12522,7 +12522,7 @@
     },
     {
       "en_owner": "080216b4",
-      "source": "games/gs1/src/080216b4.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_38.c",
       "size": 52,
       "status": "shared_core",
       "starts": {
@@ -12612,7 +12612,7 @@
     },
     {
       "en_owner": "080217a4",
-      "source": "games/gs1/src/080217a4.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_83.c",
       "size": 164,
       "status": "shared_core",
       "starts": {
@@ -12642,7 +12642,7 @@
     },
     {
       "en_owner": "080218dc",
-      "source": "games/gs1/src/080218dc.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_108.c",
       "size": 116,
       "status": "shared_core",
       "starts": {
@@ -12672,7 +12672,7 @@
     },
     {
       "en_owner": "08021950",
-      "source": "games/gs1/src/08021950.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_150.c",
       "size": 120,
       "status": "shared_core",
       "starts": {
@@ -12702,7 +12702,7 @@
     },
     {
       "en_owner": "080219c8",
-      "source": "games/gs1/src/080219c8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_139.c",
       "size": 80,
       "status": "shared_core",
       "starts": {
@@ -12732,7 +12732,7 @@
     },
     {
       "en_owner": "08021a18",
-      "source": "games/gs1/src/08021a18.c",
+      "source": "games/gs1/src/unidentified/main/graphics/graphics_owner_13.c",
       "size": 152,
       "status": "shared_core",
       "starts": {
@@ -12762,7 +12762,7 @@
     },
     {
       "en_owner": "08021ab0",
-      "source": "games/gs1/src/08021ab0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_82.c",
       "size": 62,
       "status": "shared_core",
       "starts": {
@@ -12792,7 +12792,7 @@
     },
     {
       "en_owner": "08021af0",
-      "source": "games/gs1/src/08021af0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_76.c",
       "size": 64,
       "status": "shared_core",
       "starts": {
@@ -12822,7 +12822,7 @@
     },
     {
       "en_owner": "08021b30",
-      "source": "games/gs1/src/08021b30.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_29.c",
       "size": 78,
       "status": "shared_core",
       "starts": {
@@ -12852,7 +12852,7 @@
     },
     {
       "en_owner": "08021b80",
-      "source": "games/gs1/src/08021b80.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_248.c",
       "size": 70,
       "status": "shared_core",
       "starts": {
@@ -12882,7 +12882,7 @@
     },
     {
       "en_owner": "08021bc8",
-      "source": "games/gs1/src/08021bc8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_256.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -12912,7 +12912,7 @@
     },
     {
       "en_owner": "08021c34",
-      "source": "games/gs1/src/08021c34.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_1.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -12942,7 +12942,7 @@
     },
     {
       "en_owner": "08021c64",
-      "source": "games/gs1/src/08021c64.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_9.c",
       "size": 84,
       "status": "shared_core",
       "starts": {
@@ -12972,7 +12972,7 @@
     },
     {
       "en_owner": "08021dfc",
-      "source": "games/gs1/src/08021dfc.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_109.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -13002,7 +13002,7 @@
     },
     {
       "en_owner": "08021e14",
-      "source": "games/gs1/src/08021e14.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_132.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -13032,7 +13032,7 @@
     },
     {
       "en_owner": "08021e28",
-      "source": "games/gs1/src/08021e28.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_104.c",
       "size": 32,
       "status": "shared_core",
       "starts": {
@@ -13062,7 +13062,7 @@
     },
     {
       "en_owner": "08021e48",
-      "source": "games/gs1/src/08021e48.c",
+      "source": "games/gs1/src/unidentified/main/system/system_owner_18.c",
       "size": 34,
       "status": "shared_core",
       "starts": {
@@ -13092,7 +13092,7 @@
     },
     {
       "en_owner": "080228bc",
-      "source": "games/gs1/src/080228bc.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_52.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -13122,7 +13122,7 @@
     },
     {
       "en_owner": "08022a38",
-      "source": "games/gs1/src/08022a38.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_101.c",
       "size": 66,
       "status": "shared_core",
       "starts": {
@@ -13152,7 +13152,7 @@
     },
     {
       "en_owner": "08025180",
-      "source": "games/gs1/src/08025180.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_15.c",
       "size": 82,
       "status": "shared_core",
       "starts": {
@@ -13242,7 +13242,7 @@
     },
     {
       "en_owner": "0802706c",
-      "source": "games/gs1/src/0802706c.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_23.c",
       "size": 62,
       "status": "shared_core",
       "starts": {
@@ -13272,7 +13272,7 @@
     },
     {
       "en_owner": "080270ac",
-      "source": "games/gs1/src/080270ac.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_46.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -13452,7 +13452,7 @@
     },
     {
       "en_owner": "08028920",
-      "source": "games/gs1/src/08028920.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_34.c",
       "size": 124,
       "status": "regional_core",
       "starts": {
@@ -13482,7 +13482,7 @@
     },
     {
       "en_owner": "080289e8",
-      "source": "games/gs1/src/080289e8.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_12.c",
       "size": 192,
       "status": "regional_core",
       "starts": {
@@ -13512,7 +13512,7 @@
     },
     {
       "en_owner": "08028df4",
-      "source": "games/gs1/src/08028df4.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_28.c",
       "size": 96,
       "status": "shared_core",
       "starts": {
@@ -13542,7 +13542,7 @@
     },
     {
       "en_owner": "08028e54",
-      "source": "games/gs1/src/08028e54.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_38.c",
       "size": 84,
       "status": "shared_core",
       "starts": {
@@ -13572,7 +13572,7 @@
     },
     {
       "en_owner": "08028edc",
-      "source": "games/gs1/src/08028edc.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_58.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -13662,7 +13662,7 @@
     },
     {
       "en_owner": "080291e4",
-      "source": "games/gs1/src/080291e4.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_23.c",
       "size": 142,
       "status": "shared_core",
       "starts": {
@@ -13722,7 +13722,7 @@
     },
     {
       "en_owner": "080294d0",
-      "source": "games/gs1/src/080294d0.c",
+      "source": "games/gs1/src/menu/reserved_no_op.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -13752,7 +13752,7 @@
     },
     {
       "en_owner": "080294d4",
-      "source": "games/gs1/src/080294d4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_173.c",
       "size": 46,
       "status": "shared_core",
       "starts": {
@@ -13782,7 +13782,7 @@
     },
     {
       "en_owner": "08029504",
-      "source": "games/gs1/src/08029504.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_264.c",
       "size": 80,
       "status": "shared_core",
       "starts": {
@@ -13812,7 +13812,7 @@
     },
     {
       "en_owner": "08077320",
-      "source": "games/gs1/src/08077320.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_178.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -13932,7 +13932,7 @@
     },
     {
       "en_owner": "080773f4",
-      "source": "games/gs1/src/080773f4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_99.c",
       "size": 52,
       "status": "shared_core",
       "starts": {
@@ -14022,7 +14022,7 @@
     },
     {
       "en_owner": "08077f40",
-      "source": "games/gs1/src/08077f40.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_59.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -14082,7 +14082,7 @@
     },
     {
       "en_owner": "08078228",
-      "source": "games/gs1/src/08078228.c",
+      "source": "games/gs1/src/owner/reserved_no_op_a.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -15132,7 +15132,7 @@
     },
     {
       "en_owner": "08078ecc",
-      "source": "games/gs1/src/08078ecc.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_143.c",
       "size": 10,
       "status": "shared_core",
       "starts": {
@@ -15162,7 +15162,7 @@
     },
     {
       "en_owner": "08078ed8",
-      "source": "games/gs1/src/08078ed8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_257.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -15192,7 +15192,7 @@
     },
     {
       "en_owner": "08079004",
-      "source": "games/gs1/src/08079004.c",
+      "source": "games/gs1/src/owner/reserved_no_op_b.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -15252,7 +15252,7 @@
     },
     {
       "en_owner": "080792c4",
-      "source": "games/gs1/src/080792c4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_163.c",
       "size": 56,
       "status": "shared_core",
       "starts": {
@@ -15282,7 +15282,7 @@
     },
     {
       "en_owner": "080792fc",
-      "source": "games/gs1/src/080792fc.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_39.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -15732,7 +15732,7 @@
     },
     {
       "en_owner": "08079700",
-      "source": "games/gs1/src/08079700.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_4.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -15762,7 +15762,7 @@
     },
     {
       "en_owner": "08079728",
-      "source": "games/gs1/src/08079728.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_276.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -15792,7 +15792,7 @@
     },
     {
       "en_owner": "08079754",
-      "source": "games/gs1/src/08079754.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_189.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -15822,7 +15822,7 @@
     },
     {
       "en_owner": "0807977c",
-      "source": "games/gs1/src/0807977c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_141.c",
       "size": 88,
       "status": "shared_core",
       "starts": {
@@ -15882,7 +15882,7 @@
     },
     {
       "en_owner": "080797ec",
-      "source": "games/gs1/src/080797ec.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_105.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -16032,7 +16032,7 @@
     },
     {
       "en_owner": "08079ad8",
-      "source": "games/gs1/src/08079ad8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_258.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -16152,7 +16152,7 @@
     },
     {
       "en_owner": "08079bf8",
-      "source": "games/gs1/src/08079bf8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_120.c",
       "size": 56,
       "status": "shared_core",
       "starts": {
@@ -16182,7 +16182,7 @@
     },
     {
       "en_owner": "08079c30",
-      "source": "games/gs1/src/08079c30.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_263.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -16212,7 +16212,7 @@
     },
     {
       "en_owner": "08079c5c",
-      "source": "games/gs1/src/08079c5c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_243.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -16752,7 +16752,7 @@
     },
     {
       "en_owner": "0807a5b0",
-      "source": "games/gs1/src/0807a5b0.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_22.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -16902,7 +16902,7 @@
     },
     {
       "en_owner": "0808acc4",
-      "source": "games/gs1/src/0808acc4.c",
+      "source": "games/gs1/src/unidentified/main/audio/audio_owner_8.c",
       "size": 28,
       "status": "shared_core",
       "starts": {
@@ -16962,7 +16962,7 @@
     },
     {
       "en_owner": "0808b02c",
-      "source": "games/gs1/src/0808b02c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_220.c",
       "size": 28,
       "status": "shared_core",
       "starts": {
@@ -16992,7 +16992,7 @@
     },
     {
       "en_owner": "0808b048",
-      "source": "games/gs1/src/0808b048.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_2.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -17082,7 +17082,7 @@
     },
     {
       "en_owner": "0808b1d8",
-      "source": "games/gs1/src/0808b1d8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_57.c",
       "size": 112,
       "status": "shared_core",
       "starts": {
@@ -17112,7 +17112,7 @@
     },
     {
       "en_owner": "0808b248",
-      "source": "games/gs1/src/0808b248.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_17.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -17142,7 +17142,7 @@
     },
     {
       "en_owner": "0808b25c",
-      "source": "games/gs1/src/0808b25c.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_37.c",
       "size": 84,
       "status": "shared_core",
       "starts": {
@@ -17202,7 +17202,7 @@
     },
     {
       "en_owner": "0808b398",
-      "source": "games/gs1/src/0808b398.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_133.c",
       "size": 56,
       "status": "shared_core",
       "starts": {
@@ -17232,7 +17232,7 @@
     },
     {
       "en_owner": "0808b3d0",
-      "source": "games/gs1/src/0808b3d0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_252.c",
       "size": 26,
       "status": "shared_core",
       "starts": {
@@ -17622,7 +17622,7 @@
     },
     {
       "en_owner": "0808c44c",
-      "source": "games/gs1/src/0808c44c.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_47.c",
       "size": 116,
       "status": "shared_core",
       "starts": {
@@ -17652,7 +17652,7 @@
     },
     {
       "en_owner": "0808c4c0",
-      "source": "games/gs1/src/0808c4c0.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_87.c",
       "size": 56,
       "status": "shared_core",
       "starts": {
@@ -17712,7 +17712,7 @@
     },
     {
       "en_owner": "0808d458",
-      "source": "games/gs1/src/0808d458.c",
+      "source": "games/gs1/src/unidentified/main/script/script_owner_17.c",
       "size": 52,
       "status": "shared_core",
       "starts": {
@@ -17742,7 +17742,7 @@
     },
     {
       "en_owner": "0808d590",
-      "source": "games/gs1/src/0808d590.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_68.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -17772,7 +17772,7 @@
     },
     {
       "en_owner": "0808d5a4",
-      "source": "games/gs1/src/0808d5a4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_151.c",
       "size": 56,
       "status": "shared_core",
       "starts": {
@@ -17802,7 +17802,7 @@
     },
     {
       "en_owner": "0808d7d8",
-      "source": "games/gs1/src/0808d7d8.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_43.c",
       "size": 78,
       "status": "shared_core",
       "starts": {
@@ -17832,7 +17832,7 @@
     },
     {
       "en_owner": "0808d828",
-      "source": "games/gs1/src/0808d828.c",
+      "source": "games/gs1/src/unidentified/main/audio/audio_owner_9.c",
       "size": 200,
       "status": "shared_core",
       "starts": {
@@ -17862,7 +17862,7 @@
     },
     {
       "en_owner": "0808d8f0",
-      "source": "games/gs1/src/0808d8f0.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_36.c",
       "size": 180,
       "status": "shared_core",
       "starts": {
@@ -17892,7 +17892,7 @@
     },
     {
       "en_owner": "0808ddb8",
-      "source": "games/gs1/src/0808ddb8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_232.c",
       "size": 52,
       "status": "shared_core",
       "starts": {
@@ -17922,7 +17922,7 @@
     },
     {
       "en_owner": "0808e078",
-      "source": "games/gs1/src/0808e078.c",
+      "source": "games/gs1/src/unidentified/main/audio/audio_owner_4.c",
       "size": 54,
       "status": "shared_core",
       "starts": {
@@ -17952,7 +17952,7 @@
     },
     {
       "en_owner": "0808e0b0",
-      "source": "games/gs1/src/0808e0b0.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_39.c",
       "size": 104,
       "status": "shared_core",
       "starts": {
@@ -17982,7 +17982,7 @@
     },
     {
       "en_owner": "0808e118",
-      "source": "games/gs1/src/0808e118.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_241.c",
       "size": 52,
       "status": "shared_core",
       "starts": {
@@ -18012,7 +18012,7 @@
     },
     {
       "en_owner": "0808e5d8",
-      "source": "games/gs1/src/0808e5d8.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_23.c",
       "size": 168,
       "status": "shared_core",
       "starts": {
@@ -18042,7 +18042,7 @@
     },
     {
       "en_owner": "0808e96c",
-      "source": "games/gs1/src/0808e96c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_207.c",
       "size": 36,
       "status": "shared_core",
       "starts": {
@@ -18072,7 +18072,7 @@
     },
     {
       "en_owner": "0808e990",
-      "source": "games/gs1/src/0808e990.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_135.c",
       "size": 22,
       "status": "shared_core",
       "starts": {
@@ -18552,7 +18552,7 @@
     },
     {
       "en_owner": "0808feb0",
-      "source": "games/gs1/src/0808feb0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_183.c",
       "size": 28,
       "status": "shared_core",
       "starts": {
@@ -18702,7 +18702,7 @@
     },
     {
       "en_owner": "080911e8",
-      "source": "games/gs1/src/080911e8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_33.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -18912,7 +18912,7 @@
     },
     {
       "en_owner": "08091540",
-      "source": "games/gs1/src/08091540.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_253.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -18942,7 +18942,7 @@
     },
     {
       "en_owner": "08091550",
-      "source": "games/gs1/src/08091550.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_280.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -19212,7 +19212,7 @@
     },
     {
       "en_owner": "08091750",
-      "source": "games/gs1/src/08091750.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_53.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -19242,7 +19242,7 @@
     },
     {
       "en_owner": "0809177c",
-      "source": "games/gs1/src/0809177c.c",
+      "source": "games/gs1/src/unidentified/main/script/script_owner_2.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -19272,7 +19272,7 @@
     },
     {
       "en_owner": "08091780",
-      "source": "games/gs1/src/08091780.c",
+      "source": "games/gs1/src/unidentified/main/script/script_owner_5.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -19302,7 +19302,7 @@
     },
     {
       "en_owner": "080917ac",
-      "source": "games/gs1/src/080917ac.c",
+      "source": "games/gs1/src/unidentified/main/script/script_owner_10.c",
       "size": 22,
       "status": "shared_core",
       "starts": {
@@ -19332,7 +19332,7 @@
     },
     {
       "en_owner": "080917d0",
-      "source": "games/gs1/src/080917d0.c",
+      "source": "games/gs1/src/unidentified/main/script/script_owner_12.c",
       "size": 34,
       "status": "shared_core",
       "starts": {
@@ -19362,7 +19362,7 @@
     },
     {
       "en_owner": "080917f4",
-      "source": "games/gs1/src/080917f4.c",
+      "source": "games/gs1/src/unidentified/main/script/script_owner_16.c",
       "size": 30,
       "status": "shared_core",
       "starts": {
@@ -19452,7 +19452,7 @@
     },
     {
       "en_owner": "080919d8",
-      "source": "games/gs1/src/080919d8.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_9.c",
       "size": 128,
       "status": "shared_core",
       "starts": {
@@ -19482,7 +19482,7 @@
     },
     {
       "en_owner": "08091c1c",
-      "source": "games/gs1/src/08091c1c.c",
+      "source": "games/gs1/src/inventory/try_add_and_return_owner.c",
       "size": 30,
       "status": "shared_core",
       "starts": {
@@ -19512,7 +19512,7 @@
     },
     {
       "en_owner": "08091c44",
-      "source": "games/gs1/src/08091c44.c",
+      "source": "games/gs1/src/unidentified/main/system/system_owner_17.c",
       "size": 56,
       "status": "shared_core",
       "starts": {
@@ -19542,7 +19542,7 @@
     },
     {
       "en_owner": "08091c7c",
-      "source": "games/gs1/src/08091c7c.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_59.c",
       "size": 264,
       "status": "shared_core",
       "starts": {
@@ -19572,7 +19572,7 @@
     },
     {
       "en_owner": "08091d84",
-      "source": "games/gs1/src/08091d84.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_190.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -19602,7 +19602,7 @@
     },
     {
       "en_owner": "08091d94",
-      "source": "games/gs1/src/08091d94.c",
+      "source": "games/gs1/src/unidentified/main/audio/audio_owner_1.c",
       "size": 52,
       "status": "shared_core",
       "starts": {
@@ -19632,7 +19632,7 @@
     },
     {
       "en_owner": "08091dc8",
-      "source": "games/gs1/src/08091dc8.c",
+      "source": "games/gs1/src/unidentified/main/script/script_owner_3.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -19662,7 +19662,7 @@
     },
     {
       "en_owner": "08091df4",
-      "source": "games/gs1/src/08091df4.c",
+      "source": "games/gs1/src/unidentified/main/script/script_owner_11.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -19692,7 +19692,7 @@
     },
     {
       "en_owner": "08091e20",
-      "source": "games/gs1/src/08091e20.c",
+      "source": "games/gs1/src/unidentified/main/script/script_owner_7.c",
       "size": 28,
       "status": "shared_core",
       "starts": {
@@ -19722,7 +19722,7 @@
     },
     {
       "en_owner": "08091e3c",
-      "source": "games/gs1/src/08091e3c.c",
+      "source": "games/gs1/src/unidentified/main/script/script_owner_4.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -19752,7 +19752,7 @@
     },
     {
       "en_owner": "08091e6c",
-      "source": "games/gs1/src/08091e6c.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_26.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -19782,7 +19782,7 @@
     },
     {
       "en_owner": "08091eb0",
-      "source": "games/gs1/src/08091eb0.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_40.c",
       "size": 100,
       "status": "shared_core",
       "starts": {
@@ -19812,7 +19812,7 @@
     },
     {
       "en_owner": "08091f14",
-      "source": "games/gs1/src/08091f14.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_59.c",
       "size": 124,
       "status": "shared_core",
       "starts": {
@@ -19842,7 +19842,7 @@
     },
     {
       "en_owner": "08091f90",
-      "source": "games/gs1/src/08091f90.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_85.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -19872,7 +19872,7 @@
     },
     {
       "en_owner": "08091fa8",
-      "source": "games/gs1/src/08091fa8.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_4.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -20112,7 +20112,7 @@
     },
     {
       "en_owner": "080920e8",
-      "source": "games/gs1/src/080920e8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_60.c",
       "size": 18,
       "status": "shared_core",
       "starts": {
@@ -20142,7 +20142,7 @@
     },
     {
       "en_owner": "080920fc",
-      "source": "games/gs1/src/080920fc.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_122.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -20412,7 +20412,7 @@
     },
     {
       "en_owner": "0809233c",
-      "source": "games/gs1/src/0809233c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_181.c",
       "size": 136,
       "status": "shared_core",
       "starts": {
@@ -20622,7 +20622,7 @@
     },
     {
       "en_owner": "08092548",
-      "source": "games/gs1/src/08092548.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_43.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -20712,7 +20712,7 @@
     },
     {
       "en_owner": "080925cc",
-      "source": "games/gs1/src/080925cc.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_69.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -21102,7 +21102,7 @@
     },
     {
       "en_owner": "08092ab4",
-      "source": "games/gs1/src/08092ab4.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_51.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -21222,7 +21222,7 @@
     },
     {
       "en_owner": "08092b94",
-      "source": "games/gs1/src/08092b94.c",
+      "source": "games/gs1/src/unidentified/main/script/script_owner_9.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -21312,7 +21312,7 @@
     },
     {
       "en_owner": "08093040",
-      "source": "games/gs1/src/08093040.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_32.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -21342,7 +21342,7 @@
     },
     {
       "en_owner": "08093054",
-      "source": "games/gs1/src/08093054.c",
+      "source": "games/gs1/src/battle/event_runtime/process_action.c",
       "size": 100,
       "status": "shared_core",
       "starts": {
@@ -21372,7 +21372,7 @@
     },
     {
       "en_owner": "0809315c",
-      "source": "games/gs1/src/0809315c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_192.c",
       "size": 10,
       "status": "shared_core",
       "starts": {
@@ -21402,7 +21402,7 @@
     },
     {
       "en_owner": "08093168",
-      "source": "games/gs1/src/08093168.c",
+      "source": "games/gs1/src/unidentified/main/system/system_owner_6.c",
       "size": 108,
       "status": "shared_core",
       "starts": {
@@ -21432,7 +21432,7 @@
     },
     {
       "en_owner": "080931d4",
-      "source": "games/gs1/src/080931d4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_228.c",
       "size": 22,
       "status": "shared_core",
       "starts": {
@@ -21462,7 +21462,7 @@
     },
     {
       "en_owner": "080931ec",
-      "source": "games/gs1/src/080931ec.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_82.c",
       "size": 280,
       "status": "shared_core",
       "starts": {
@@ -21492,7 +21492,7 @@
     },
     {
       "en_owner": "08093304",
-      "source": "games/gs1/src/08093304.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_91.c",
       "size": 88,
       "status": "shared_core",
       "starts": {
@@ -21522,7 +21522,7 @@
     },
     {
       "en_owner": "0809335c",
-      "source": "games/gs1/src/0809335c.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_63.c",
       "size": 120,
       "status": "shared_core",
       "starts": {
@@ -21552,7 +21552,7 @@
     },
     {
       "en_owner": "080933d4",
-      "source": "games/gs1/src/080933d4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_284.c",
       "size": 36,
       "status": "shared_core",
       "starts": {
@@ -21612,7 +21612,7 @@
     },
     {
       "en_owner": "08093500",
-      "source": "games/gs1/src/08093500.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_75.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -21642,7 +21642,7 @@
     },
     {
       "en_owner": "08093530",
-      "source": "games/gs1/src/08093530.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_64.c",
       "size": 36,
       "status": "shared_core",
       "starts": {
@@ -21672,7 +21672,7 @@
     },
     {
       "en_owner": "08093554",
-      "source": "games/gs1/src/08093554.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_70.c",
       "size": 28,
       "status": "shared_core",
       "starts": {
@@ -21702,7 +21702,7 @@
     },
     {
       "en_owner": "08093570",
-      "source": "games/gs1/src/08093570.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_51.c",
       "size": 64,
       "status": "shared_core",
       "starts": {
@@ -21732,7 +21732,7 @@
     },
     {
       "en_owner": "080935b0",
-      "source": "games/gs1/src/080935b0.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_85.c",
       "size": 36,
       "status": "shared_core",
       "starts": {
@@ -21762,7 +21762,7 @@
     },
     {
       "en_owner": "080936a0",
-      "source": "games/gs1/src/080936a0.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_66.c",
       "size": 112,
       "status": "shared_core",
       "starts": {
@@ -21792,7 +21792,7 @@
     },
     {
       "en_owner": "08093710",
-      "source": "games/gs1/src/08093710.c",
+      "source": "games/gs1/src/unidentified/main/system/system_owner_14.c",
       "size": 92,
       "status": "shared_core",
       "starts": {
@@ -21822,7 +21822,7 @@
     },
     {
       "en_owner": "0809376c",
-      "source": "games/gs1/src/0809376c.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_14.c",
       "size": 76,
       "status": "shared_core",
       "starts": {
@@ -21852,7 +21852,7 @@
     },
     {
       "en_owner": "08093964",
-      "source": "games/gs1/src/08093964.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_86.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -21972,7 +21972,7 @@
     },
     {
       "en_owner": "080941dc",
-      "source": "games/gs1/src/080941dc.c",
+      "source": "games/gs1/src/object/effects/reserved_no_op.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -22032,7 +22032,7 @@
     },
     {
       "en_owner": "08094354",
-      "source": "games/gs1/src/08094354.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_19.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -22062,7 +22062,7 @@
     },
     {
       "en_owner": "08094368",
-      "source": "games/gs1/src/08094368.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_20.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -22092,7 +22092,7 @@
     },
     {
       "en_owner": "08094380",
-      "source": "games/gs1/src/08094380.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_36.c",
       "size": 168,
       "status": "shared_core",
       "starts": {
@@ -22122,7 +22122,7 @@
     },
     {
       "en_owner": "08094428",
-      "source": "games/gs1/src/08094428.c",
+      "source": "games/gs1/src/unidentified/main/audio/audio_owner_6.c",
       "size": 196,
       "status": "shared_core",
       "starts": {
@@ -22152,7 +22152,7 @@
     },
     {
       "en_owner": "080947e4",
-      "source": "games/gs1/src/080947e4.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_9.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -22182,7 +22182,7 @@
     },
     {
       "en_owner": "08095214",
-      "source": "games/gs1/src/08095214.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_28.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -22212,7 +22212,7 @@
     },
     {
       "en_owner": "08095240",
-      "source": "games/gs1/src/08095240.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_98.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -22242,7 +22242,7 @@
     },
     {
       "en_owner": "08095268",
-      "source": "games/gs1/src/08095268.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_76.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -22302,7 +22302,7 @@
     },
     {
       "en_owner": "080955b0",
-      "source": "games/gs1/src/080955b0.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_21.c",
       "size": 208,
       "status": "shared_core",
       "starts": {
@@ -22422,7 +22422,7 @@
     },
     {
       "en_owner": "08095b8c",
-      "source": "games/gs1/src/08095b8c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_3.c",
       "size": 32,
       "status": "shared_core",
       "starts": {
@@ -22452,7 +22452,7 @@
     },
     {
       "en_owner": "08095bac",
-      "source": "games/gs1/src/08095bac.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_141.c",
       "size": 42,
       "status": "shared_core",
       "starts": {
@@ -22482,7 +22482,7 @@
     },
     {
       "en_owner": "08095bd8",
-      "source": "games/gs1/src/08095bd8.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_88.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -22512,7 +22512,7 @@
     },
     {
       "en_owner": "08095f9c",
-      "source": "games/gs1/src/08095f9c.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_6.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -22542,7 +22542,7 @@
     },
     {
       "en_owner": "08095fcc",
-      "source": "games/gs1/src/08095fcc.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_107.c",
       "size": 124,
       "status": "shared_core",
       "starts": {
@@ -22602,7 +22602,7 @@
     },
     {
       "en_owner": "08096574",
-      "source": "games/gs1/src/08096574.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_60.c",
       "size": 52,
       "status": "shared_core",
       "starts": {
@@ -22632,7 +22632,7 @@
     },
     {
       "en_owner": "080967e4",
-      "source": "games/gs1/src/080967e4.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_41.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -22692,7 +22692,7 @@
     },
     {
       "en_owner": "08096ab0",
-      "source": "games/gs1/src/08096ab0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_155.c",
       "size": 64,
       "status": "shared_core",
       "starts": {
@@ -22752,7 +22752,7 @@
     },
     {
       "en_owner": "08096b28",
-      "source": "games/gs1/src/08096b28.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_56.c",
       "size": 96,
       "status": "shared_core",
       "starts": {
@@ -22872,7 +22872,7 @@
     },
     {
       "en_owner": "08096c48",
-      "source": "games/gs1/src/08096c48.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_103.c",
       "size": 54,
       "status": "shared_core",
       "starts": {
@@ -22962,7 +22962,7 @@
     },
     {
       "en_owner": "08096d2c",
-      "source": "games/gs1/src/08096d2c.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_68.c",
       "size": 88,
       "status": "shared_core",
       "starts": {
@@ -22992,7 +22992,7 @@
     },
     {
       "en_owner": "08096d84",
-      "source": "games/gs1/src/08096d84.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_71.c",
       "size": 88,
       "status": "shared_core",
       "starts": {
@@ -23022,7 +23022,7 @@
     },
     {
       "en_owner": "08096f14",
-      "source": "games/gs1/src/08096f14.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_8.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -23052,7 +23052,7 @@
     },
     {
       "en_owner": "08096f50",
-      "source": "games/gs1/src/08096f50.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_5.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -23082,7 +23082,7 @@
     },
     {
       "en_owner": "08096f8c",
-      "source": "games/gs1/src/08096f8c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_84.c",
       "size": 36,
       "status": "shared_core",
       "starts": {
@@ -23232,7 +23232,7 @@
     },
     {
       "en_owner": "08097608",
-      "source": "games/gs1/src/08097608.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_20.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -23262,7 +23262,7 @@
     },
     {
       "en_owner": "080978c4",
-      "source": "games/gs1/src/080978c4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_91.c",
       "size": 132,
       "status": "shared_core",
       "starts": {
@@ -23292,7 +23292,7 @@
     },
     {
       "en_owner": "08097948",
-      "source": "games/gs1/src/08097948.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_245.c",
       "size": 92,
       "status": "shared_core",
       "starts": {
@@ -23322,7 +23322,7 @@
     },
     {
       "en_owner": "08097a54",
-      "source": "games/gs1/src/08097a54.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_1.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -23352,7 +23352,7 @@
     },
     {
       "en_owner": "08097a7c",
-      "source": "games/gs1/src/08097a7c.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_65.c",
       "size": 96,
       "status": "shared_core",
       "starts": {
@@ -23382,7 +23382,7 @@
     },
     {
       "en_owner": "08097adc",
-      "source": "games/gs1/src/08097adc.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_110.c",
       "size": 118,
       "status": "shared_core",
       "starts": {
@@ -23412,7 +23412,7 @@
     },
     {
       "en_owner": "08097b54",
-      "source": "games/gs1/src/08097b54.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_26.c",
       "size": 28,
       "status": "shared_core",
       "starts": {
@@ -23532,7 +23532,7 @@
     },
     {
       "en_owner": "08098184",
-      "source": "games/gs1/src/08098184.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_118.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -23592,7 +23592,7 @@
     },
     {
       "en_owner": "08098294",
-      "source": "games/gs1/src/08098294.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_247.c",
       "size": 72,
       "status": "shared_core",
       "starts": {
@@ -23802,7 +23802,7 @@
     },
     {
       "en_owner": "08098ccc",
-      "source": "games/gs1/src/08098ccc.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_50.c",
       "size": 10,
       "status": "shared_core",
       "starts": {
@@ -24012,7 +24012,7 @@
     },
     {
       "en_owner": "08099340",
-      "source": "games/gs1/src/08099340.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_127.c",
       "size": 112,
       "status": "shared_core",
       "starts": {
@@ -24042,7 +24042,7 @@
     },
     {
       "en_owner": "080994c0",
-      "source": "games/gs1/src/080994c0.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_29.c",
       "size": 14,
       "status": "shared_core",
       "starts": {
@@ -24132,7 +24132,7 @@
     },
     {
       "en_owner": "08099810",
-      "source": "games/gs1/src/08099810.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_92.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -24162,7 +24162,7 @@
     },
     {
       "en_owner": "08099920",
-      "source": "games/gs1/src/08099920.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_17.c",
       "size": 136,
       "status": "shared_core",
       "starts": {
@@ -24192,7 +24192,7 @@
     },
     {
       "en_owner": "080999a8",
-      "source": "games/gs1/src/080999a8.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_126.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -24222,7 +24222,7 @@
     },
     {
       "en_owner": "080999e4",
-      "source": "games/gs1/src/080999e4.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_60.c",
       "size": 10,
       "status": "shared_core",
       "starts": {
@@ -24402,7 +24402,7 @@
     },
     {
       "en_owner": "0809a890",
-      "source": "games/gs1/src/0809a890.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_129.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -24432,7 +24432,7 @@
     },
     {
       "en_owner": "0809a8b8",
-      "source": "games/gs1/src/0809a8b8.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_137.c",
       "size": 10,
       "status": "shared_core",
       "starts": {
@@ -24492,7 +24492,7 @@
     },
     {
       "en_owner": "0809ab98",
-      "source": "games/gs1/src/0809ab98.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_79.c",
       "size": 28,
       "status": "shared_core",
       "starts": {
@@ -24522,7 +24522,7 @@
     },
     {
       "en_owner": "0809ad70",
-      "source": "games/gs1/src/0809ad70.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_193.c",
       "size": 32,
       "status": "shared_core",
       "starts": {
@@ -24642,7 +24642,7 @@
     },
     {
       "en_owner": "0809ae58",
-      "source": "games/gs1/src/0809ae58.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_209.c",
       "size": 10,
       "status": "shared_core",
       "starts": {
@@ -25152,7 +25152,7 @@
     },
     {
       "en_owner": "080a1050",
-      "source": "games/gs1/src/080a1050.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_18.c",
       "size": 30,
       "status": "shared_core",
       "starts": {
@@ -25182,7 +25182,7 @@
     },
     {
       "en_owner": "080a1070",
-      "source": "games/gs1/src/080a1070.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_100.c",
       "size": 30,
       "status": "shared_core",
       "starts": {
@@ -25362,7 +25362,7 @@
     },
     {
       "en_owner": "080a1804",
-      "source": "games/gs1/src/080a1804.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_86.c",
       "size": 14,
       "status": "shared_core",
       "starts": {
@@ -25482,7 +25482,7 @@
     },
     {
       "en_owner": "080a19a0",
-      "source": "games/gs1/src/080a19a0.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_25.c",
       "size": 160,
       "status": "shared_core",
       "starts": {
@@ -25512,7 +25512,7 @@
     },
     {
       "en_owner": "080a1bc8",
-      "source": "games/gs1/src/080a1bc8.c",
+      "source": "games/gs1/src/psynergy_menu/reserved_no_op.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -25542,7 +25542,7 @@
     },
     {
       "en_owner": "080a1bcc",
-      "source": "games/gs1/src/080a1bcc.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_250.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -25782,7 +25782,7 @@
     },
     {
       "en_owner": "080a2408",
-      "source": "games/gs1/src/080a2408.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_27.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -25812,7 +25812,7 @@
     },
     {
       "en_owner": "080a2438",
-      "source": "games/gs1/src/080a2438.c",
+      "source": "games/gs1/src/unidentified/main/audio/audio_owner_3.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -25932,7 +25932,7 @@
     },
     {
       "en_owner": "080a24ac",
-      "source": "games/gs1/src/080a24ac.c",
+      "source": "games/gs1/src/unidentified/main/graphics/graphics_owner_8.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -25962,7 +25962,7 @@
     },
     {
       "en_owner": "080a24b8",
-      "source": "games/gs1/src/080a24b8.c",
+      "source": "games/gs1/src/unidentified/main/graphics/graphics_owner_12.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -25992,7 +25992,7 @@
     },
     {
       "en_owner": "080a24c4",
-      "source": "games/gs1/src/080a24c4.c",
+      "source": "games/gs1/src/unidentified/main/graphics/graphics_owner_5.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -26052,7 +26052,7 @@
     },
     {
       "en_owner": "080a33d4",
-      "source": "games/gs1/src/080a33d4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_37.c",
       "size": 134,
       "status": "shared_core",
       "starts": {
@@ -27162,7 +27162,7 @@
     },
     {
       "en_owner": "080a8034",
-      "source": "games/gs1/src/080a8034.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_102.c",
       "size": 84,
       "status": "shared_core",
       "starts": {
@@ -27192,7 +27192,7 @@
     },
     {
       "en_owner": "080a8088",
-      "source": "games/gs1/src/080a8088.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_107.c",
       "size": 140,
       "status": "shared_core",
       "starts": {
@@ -27372,7 +27372,7 @@
     },
     {
       "en_owner": "080a99b0",
-      "source": "games/gs1/src/080a99b0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_278.c",
       "size": 166,
       "status": "shared_core",
       "starts": {
@@ -27402,7 +27402,7 @@
     },
     {
       "en_owner": "080a9a58",
-      "source": "games/gs1/src/080a9a58.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_186.c",
       "size": 4,
       "status": "shared_core",
       "starts": {
@@ -27462,7 +27462,7 @@
     },
     {
       "en_owner": "080a9b94",
-      "source": "games/gs1/src/080a9b94.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_93.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -27492,7 +27492,7 @@
     },
     {
       "en_owner": "080a9bd8",
-      "source": "games/gs1/src/080a9bd8.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_32.c",
       "size": 64,
       "status": "shared_core",
       "starts": {
@@ -27552,7 +27552,7 @@
     },
     {
       "en_owner": "080a9cf8",
-      "source": "games/gs1/src/080a9cf8.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_111.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -27672,7 +27672,7 @@
     },
     {
       "en_owner": "080a9e34",
-      "source": "games/gs1/src/080a9e34.c",
+      "source": "games/gs1/src/item/prepare_use_palette.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -27792,7 +27792,7 @@
     },
     {
       "en_owner": "080aa534",
-      "source": "games/gs1/src/080aa534.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_210.c",
       "size": 4,
       "status": "shared_core",
       "starts": {
@@ -27822,7 +27822,7 @@
     },
     {
       "en_owner": "080aa538",
-      "source": "games/gs1/src/080aa538.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_15.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -27852,7 +27852,7 @@
     },
     {
       "en_owner": "080aa544",
-      "source": "games/gs1/src/080aa544.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_234.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -27912,7 +27912,7 @@
     },
     {
       "en_owner": "080aaf58",
-      "source": "games/gs1/src/080aaf58.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_25.c",
       "size": 96,
       "status": "shared_core",
       "starts": {
@@ -27942,7 +27942,7 @@
     },
     {
       "en_owner": "080ab1f4",
-      "source": "games/gs1/src/080ab1f4.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_67.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -27972,7 +27972,7 @@
     },
     {
       "en_owner": "080ab2ec",
-      "source": "games/gs1/src/080ab2ec.c",
+      "source": "games/gs1/src/unidentified/main/graphics/graphics_owner_1.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -28002,7 +28002,7 @@
     },
     {
       "en_owner": "080aca04",
-      "source": "games/gs1/src/080aca04.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_44.c",
       "size": 180,
       "status": "regional_core",
       "starts": {
@@ -28272,7 +28272,7 @@
     },
     {
       "en_owner": "080ad69c",
-      "source": "games/gs1/src/080ad69c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_39.c",
       "size": 56,
       "status": "shared_core",
       "starts": {
@@ -28302,7 +28302,7 @@
     },
     {
       "en_owner": "080ae714",
-      "source": "games/gs1/src/080ae714.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_96.c",
       "size": 100,
       "status": "shared_core",
       "starts": {
@@ -28422,7 +28422,7 @@
     },
     {
       "en_owner": "080ae8dc",
-      "source": "games/gs1/src/080ae8dc.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_90.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -28542,7 +28542,7 @@
     },
     {
       "en_owner": "080b00f4",
-      "source": "games/gs1/src/080b00f4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_273.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -28602,7 +28602,7 @@
     },
     {
       "en_owner": "080b0444",
-      "source": "games/gs1/src/080b0444.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_50.c",
       "size": 128,
       "status": "regional_core",
       "starts": {
@@ -28722,7 +28722,7 @@
     },
     {
       "en_owner": "080b0664",
-      "source": "games/gs1/src/080b0664.c",
+      "source": "games/gs1/src/unidentified/main/system/system_owner_21.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -28782,7 +28782,7 @@
     },
     {
       "en_owner": "080b06c0",
-      "source": "games/gs1/src/080b06c0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_201.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -28812,7 +28812,7 @@
     },
     {
       "en_owner": "080b06ec",
-      "source": "games/gs1/src/080b06ec.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_88.c",
       "size": 88,
       "status": "shared_core",
       "starts": {
@@ -28842,7 +28842,7 @@
     },
     {
       "en_owner": "080b0894",
-      "source": "games/gs1/src/080b0894.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_157.c",
       "size": 36,
       "status": "shared_core",
       "starts": {
@@ -29412,7 +29412,7 @@
     },
     {
       "en_owner": "080b2778",
-      "source": "games/gs1/src/080b2778.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_75.c",
       "size": 56,
       "status": "shared_core",
       "starts": {
@@ -29442,7 +29442,7 @@
     },
     {
       "en_owner": "080b27b0",
-      "source": "games/gs1/src/080b27b0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_161.c",
       "size": 92,
       "status": "shared_core",
       "starts": {
@@ -29472,7 +29472,7 @@
     },
     {
       "en_owner": "080b280c",
-      "source": "games/gs1/src/080b280c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_180.c",
       "size": 120,
       "status": "shared_core",
       "starts": {
@@ -29502,7 +29502,7 @@
     },
     {
       "en_owner": "080b2884",
-      "source": "games/gs1/src/080b2884.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_126.c",
       "size": 80,
       "status": "shared_core",
       "starts": {
@@ -29532,7 +29532,7 @@
     },
     {
       "en_owner": "080b28d4",
-      "source": "games/gs1/src/080b28d4.c",
+      "source": "games/gs1/src/unidentified/main/system/system_owner_10.c",
       "size": 84,
       "status": "shared_core",
       "starts": {
@@ -29562,7 +29562,7 @@
     },
     {
       "en_owner": "080b2928",
-      "source": "games/gs1/src/080b2928.c",
+      "source": "games/gs1/src/unidentified/main/system/system_owner_2.c",
       "size": 128,
       "status": "shared_core",
       "starts": {
@@ -29592,7 +29592,7 @@
     },
     {
       "en_owner": "080b2da8",
-      "source": "games/gs1/src/080b2da8.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_38.c",
       "size": 136,
       "status": "shared_core",
       "starts": {
@@ -29622,7 +29622,7 @@
     },
     {
       "en_owner": "080b2e30",
-      "source": "games/gs1/src/080b2e30.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_230.c",
       "size": 168,
       "status": "shared_core",
       "starts": {
@@ -29652,7 +29652,7 @@
     },
     {
       "en_owner": "080b2ed8",
-      "source": "games/gs1/src/080b2ed8.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_62.c",
       "size": 116,
       "status": "shared_core",
       "starts": {
@@ -29712,7 +29712,7 @@
     },
     {
       "en_owner": "080b2ffc",
-      "source": "games/gs1/src/080b2ffc.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_102.c",
       "size": 84,
       "status": "shared_core",
       "starts": {
@@ -29862,7 +29862,7 @@
     },
     {
       "en_owner": "080b5b14",
-      "source": "games/gs1/src/080b5b14.c",
+      "source": "games/gs1/src/party/reserved_no_op.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -29952,7 +29952,7 @@
     },
     {
       "en_owner": "080b606c",
-      "source": "games/gs1/src/080b606c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_121.c",
       "size": 50,
       "status": "shared_core",
       "starts": {
@@ -30012,7 +30012,7 @@
     },
     {
       "en_owner": "080b63b0",
-      "source": "games/gs1/src/080b63b0.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_34.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -30102,7 +30102,7 @@
     },
     {
       "en_owner": "080b6c90",
-      "source": "games/gs1/src/080b6c90.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_212.c",
       "size": 30,
       "status": "shared_core",
       "starts": {
@@ -30132,7 +30132,7 @@
     },
     {
       "en_owner": "080b6cb0",
-      "source": "games/gs1/src/080b6cb0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_14.c",
       "size": 30,
       "status": "shared_core",
       "starts": {
@@ -30162,7 +30162,7 @@
     },
     {
       "en_owner": "080b6cd0",
-      "source": "games/gs1/src/080b6cd0.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_27.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -30222,7 +30222,7 @@
     },
     {
       "en_owner": "080b6e30",
-      "source": "games/gs1/src/080b6e30.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_62.c",
       "size": 76,
       "status": "shared_core",
       "starts": {
@@ -30252,7 +30252,7 @@
     },
     {
       "en_owner": "080b6eb4",
-      "source": "games/gs1/src/080b6eb4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_156.c",
       "size": 144,
       "status": "shared_core",
       "starts": {
@@ -30282,7 +30282,7 @@
     },
     {
       "en_owner": "080b7410",
-      "source": "games/gs1/src/080b7410.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_55.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -30342,7 +30342,7 @@
     },
     {
       "en_owner": "080b770c",
-      "source": "games/gs1/src/080b770c.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_49.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -30372,7 +30372,7 @@
     },
     {
       "en_owner": "080b78e4",
-      "source": "games/gs1/src/080b78e4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_50.c",
       "size": 176,
       "status": "shared_core",
       "starts": {
@@ -30432,7 +30432,7 @@
     },
     {
       "en_owner": "080b7aac",
-      "source": "games/gs1/src/080b7aac.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_29.c",
       "size": 132,
       "status": "shared_core",
       "starts": {
@@ -30612,7 +30612,7 @@
     },
     {
       "en_owner": "080b7e7c",
-      "source": "games/gs1/src/080b7e7c.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_30.c",
       "size": 56,
       "status": "shared_core",
       "starts": {
@@ -30642,7 +30642,7 @@
     },
     {
       "en_owner": "080b7eb4",
-      "source": "games/gs1/src/080b7eb4.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_10.c",
       "size": 36,
       "status": "shared_core",
       "starts": {
@@ -30672,7 +30672,7 @@
     },
     {
       "en_owner": "080b7ed8",
-      "source": "games/gs1/src/080b7ed8.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_63.c",
       "size": 72,
       "status": "shared_core",
       "starts": {
@@ -30732,7 +30732,7 @@
     },
     {
       "en_owner": "080b7f9c",
-      "source": "games/gs1/src/080b7f9c.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_26.c",
       "size": 100,
       "status": "shared_core",
       "starts": {
@@ -30792,7 +30792,7 @@
     },
     {
       "en_owner": "080b8064",
-      "source": "games/gs1/src/080b8064.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_5.c",
       "size": 84,
       "status": "shared_core",
       "starts": {
@@ -30972,7 +30972,7 @@
     },
     {
       "en_owner": "080b8394",
-      "source": "games/gs1/src/080b8394.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_65.c",
       "size": 28,
       "status": "shared_core",
       "starts": {
@@ -31002,7 +31002,7 @@
     },
     {
       "en_owner": "080b83b0",
-      "source": "games/gs1/src/080b83b0.c",
+      "source": "games/gs1/src/battle/motion/reserved_no_op.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -31032,7 +31032,7 @@
     },
     {
       "en_owner": "080b83b4",
-      "source": "games/gs1/src/080b83b4.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_13.c",
       "size": 98,
       "status": "shared_core",
       "starts": {
@@ -31062,7 +31062,7 @@
     },
     {
       "en_owner": "080b8418",
-      "source": "games/gs1/src/080b8418.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_55.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -31092,7 +31092,7 @@
     },
     {
       "en_owner": "080b8530",
-      "source": "games/gs1/src/080b8530.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_16.c",
       "size": 66,
       "status": "shared_core",
       "starts": {
@@ -31122,7 +31122,7 @@
     },
     {
       "en_owner": "080b86ec",
-      "source": "games/gs1/src/080b86ec.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_121.c",
       "size": 96,
       "status": "shared_core",
       "starts": {
@@ -31242,7 +31242,7 @@
     },
     {
       "en_owner": "080b8888",
-      "source": "games/gs1/src/080b8888.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_6.c",
       "size": 72,
       "status": "shared_core",
       "starts": {
@@ -31272,7 +31272,7 @@
     },
     {
       "en_owner": "080b8b48",
-      "source": "games/gs1/src/080b8b48.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_48.c",
       "size": 212,
       "status": "shared_core",
       "starts": {
@@ -31302,7 +31302,7 @@
     },
     {
       "en_owner": "080b8ec4",
-      "source": "games/gs1/src/080b8ec4.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_19.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -31362,7 +31362,7 @@
     },
     {
       "en_owner": "080b8f58",
-      "source": "games/gs1/src/080b8f58.c",
+      "source": "games/gs1/src/unidentified/main/graphics/graphics_owner_11.c",
       "size": 124,
       "status": "shared_core",
       "starts": {
@@ -31422,7 +31422,7 @@
     },
     {
       "en_owner": "080b90ac",
-      "source": "games/gs1/src/080b90ac.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_57.c",
       "size": 76,
       "status": "shared_core",
       "starts": {
@@ -31482,7 +31482,7 @@
     },
     {
       "en_owner": "080b98b4",
-      "source": "games/gs1/src/080b98b4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_16.c",
       "size": 128,
       "status": "shared_core",
       "starts": {
@@ -31512,7 +31512,7 @@
     },
     {
       "en_owner": "080b9a44",
-      "source": "games/gs1/src/080b9a44.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_194.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -31542,7 +31542,7 @@
     },
     {
       "en_owner": "080b9a70",
-      "source": "games/gs1/src/080b9a70.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_152.c",
       "size": 92,
       "status": "shared_core",
       "starts": {
@@ -31572,7 +31572,7 @@
     },
     {
       "en_owner": "080b9acc",
-      "source": "games/gs1/src/080b9acc.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_45.c",
       "size": 96,
       "status": "shared_core",
       "starts": {
@@ -31602,7 +31602,7 @@
     },
     {
       "en_owner": "080b9b2c",
-      "source": "games/gs1/src/080b9b2c.c",
+      "source": "games/gs1/src/battle/runtime/reserved_no_op_b.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -31632,7 +31632,7 @@
     },
     {
       "en_owner": "080b9d34",
-      "source": "games/gs1/src/080b9d34.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_13.c",
       "size": 144,
       "status": "shared_core",
       "starts": {
@@ -31662,7 +31662,7 @@
     },
     {
       "en_owner": "080ba27c",
-      "source": "games/gs1/src/080ba27c.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_77.c",
       "size": 66,
       "status": "shared_core",
       "starts": {
@@ -31842,7 +31842,7 @@
     },
     {
       "en_owner": "080bb8d8",
-      "source": "games/gs1/src/080bb8d8.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_136.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -31902,7 +31902,7 @@
     },
     {
       "en_owner": "080bb928",
-      "source": "games/gs1/src/080bb928.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_214.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -31932,7 +31932,7 @@
     },
     {
       "en_owner": "080bbabc",
-      "source": "games/gs1/src/080bbabc.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_42.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -31962,7 +31962,7 @@
     },
     {
       "en_owner": "080bbae8",
-      "source": "games/gs1/src/080bbae8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_170.c",
       "size": 34,
       "status": "shared_core",
       "starts": {
@@ -32022,7 +32022,7 @@
     },
     {
       "en_owner": "080bd3c8",
-      "source": "games/gs1/src/080bd3c8.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_10.c",
       "size": 26,
       "status": "shared_core",
       "starts": {
@@ -32052,7 +32052,7 @@
     },
     {
       "en_owner": "080bd3e4",
-      "source": "games/gs1/src/080bd3e4.c",
+      "source": "games/gs1/src/unidentified/main/system/system_owner_19.c",
       "size": 62,
       "status": "shared_core",
       "starts": {
@@ -32202,7 +32202,7 @@
     },
     {
       "en_owner": "080be070",
-      "source": "games/gs1/src/080be070.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_260.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -32262,7 +32262,7 @@
     },
     {
       "en_owner": "080bf208",
-      "source": "games/gs1/src/080bf208.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_109.c",
       "size": 72,
       "status": "shared_core",
       "starts": {
@@ -32292,7 +32292,7 @@
     },
     {
       "en_owner": "080bf250",
-      "source": "games/gs1/src/080bf250.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_279.c",
       "size": 100,
       "status": "shared_core",
       "starts": {
@@ -32322,7 +32322,7 @@
     },
     {
       "en_owner": "080bf2b4",
-      "source": "games/gs1/src/080bf2b4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_224.c",
       "size": 100,
       "status": "shared_core",
       "starts": {
@@ -32352,7 +32352,7 @@
     },
     {
       "en_owner": "080bf318",
-      "source": "games/gs1/src/080bf318.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_101.c",
       "size": 100,
       "status": "shared_core",
       "starts": {
@@ -32382,7 +32382,7 @@
     },
     {
       "en_owner": "080bf37c",
-      "source": "games/gs1/src/080bf37c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_262.c",
       "size": 64,
       "status": "shared_core",
       "starts": {
@@ -32412,7 +32412,7 @@
     },
     {
       "en_owner": "080bf3bc",
-      "source": "games/gs1/src/080bf3bc.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_47.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -32442,7 +32442,7 @@
     },
     {
       "en_owner": "080bf400",
-      "source": "games/gs1/src/080bf400.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_282.c",
       "size": 64,
       "status": "shared_core",
       "starts": {
@@ -32472,7 +32472,7 @@
     },
     {
       "en_owner": "080bf440",
-      "source": "games/gs1/src/080bf440.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_236.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -32502,7 +32502,7 @@
     },
     {
       "en_owner": "080bf484",
-      "source": "games/gs1/src/080bf484.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_80.c",
       "size": 64,
       "status": "shared_core",
       "starts": {
@@ -32532,7 +32532,7 @@
     },
     {
       "en_owner": "080bf4c4",
-      "source": "games/gs1/src/080bf4c4.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_128.c",
       "size": 96,
       "status": "shared_core",
       "starts": {
@@ -32562,7 +32562,7 @@
     },
     {
       "en_owner": "080bf524",
-      "source": "games/gs1/src/080bf524.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_134.c",
       "size": 38,
       "status": "shared_core",
       "starts": {
@@ -32592,7 +32592,7 @@
     },
     {
       "en_owner": "080bf54c",
-      "source": "games/gs1/src/080bf54c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_182.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -32622,7 +32622,7 @@
     },
     {
       "en_owner": "080bf574",
-      "source": "games/gs1/src/080bf574.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_172.c",
       "size": 52,
       "status": "shared_core",
       "starts": {
@@ -32682,7 +32682,7 @@
     },
     {
       "en_owner": "080bf65c",
-      "source": "games/gs1/src/080bf65c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_36.c",
       "size": 22,
       "status": "shared_core",
       "starts": {
@@ -32712,7 +32712,7 @@
     },
     {
       "en_owner": "080bf674",
-      "source": "games/gs1/src/080bf674.c",
+      "source": "games/gs1/src/battle/runtime/reserved_no_op_c.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -32742,7 +32742,7 @@
     },
     {
       "en_owner": "080bffb8",
-      "source": "games/gs1/src/080bffb8.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_62.c",
       "size": 224,
       "status": "shared_core",
       "starts": {
@@ -32772,7 +32772,7 @@
     },
     {
       "en_owner": "080c0098",
-      "source": "games/gs1/src/080c0098.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_47.c",
       "size": 64,
       "status": "shared_core",
       "starts": {
@@ -32802,7 +32802,7 @@
     },
     {
       "en_owner": "080c01bc",
-      "source": "games/gs1/src/080c01bc.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_124.c",
       "size": 108,
       "status": "shared_core",
       "starts": {
@@ -32832,7 +32832,7 @@
     },
     {
       "en_owner": "080c0298",
-      "source": "games/gs1/src/080c0298.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_19.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -32862,7 +32862,7 @@
     },
     {
       "en_owner": "080c08e0",
-      "source": "games/gs1/src/080c08e0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_10.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -32892,7 +32892,7 @@
     },
     {
       "en_owner": "080c0df4",
-      "source": "games/gs1/src/080c0df4.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_33.c",
       "size": 66,
       "status": "shared_core",
       "starts": {
@@ -33012,7 +33012,7 @@
     },
     {
       "en_owner": "080c0edc",
-      "source": "games/gs1/src/080c0edc.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_215.c",
       "size": 14,
       "status": "shared_core",
       "starts": {
@@ -33042,7 +33042,7 @@
     },
     {
       "en_owner": "080c1014",
-      "source": "games/gs1/src/080c1014.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_2.c",
       "size": 64,
       "status": "shared_core",
       "starts": {
@@ -33072,7 +33072,7 @@
     },
     {
       "en_owner": "080c1054",
-      "source": "games/gs1/src/080c1054.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_19.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -33162,7 +33162,7 @@
     },
     {
       "en_owner": "080c16d0",
-      "source": "games/gs1/src/080c16d0.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_12.c",
       "size": 84,
       "status": "shared_core",
       "starts": {
@@ -33222,7 +33222,7 @@
     },
     {
       "en_owner": "080c1a14",
-      "source": "games/gs1/src/080c1a14.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_81.c",
       "size": 14,
       "status": "shared_core",
       "starts": {
@@ -33252,7 +33252,7 @@
     },
     {
       "en_owner": "080c1a24",
-      "source": "games/gs1/src/080c1a24.c",
+      "source": "games/gs1/src/unidentified/main/system/system_owner_5.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -33342,7 +33342,7 @@
     },
     {
       "en_owner": "080c1f50",
-      "source": "games/gs1/src/080c1f50.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_13.c",
       "size": 86,
       "status": "regional_core",
       "starts": {
@@ -33372,7 +33372,7 @@
     },
     {
       "en_owner": "080c2368",
-      "source": "games/gs1/src/080c2368.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_174.c",
       "size": 28,
       "status": "shared_core",
       "starts": {
@@ -33402,7 +33402,7 @@
     },
     {
       "en_owner": "080c2384",
-      "source": "games/gs1/src/080c2384.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_240.c",
       "size": 28,
       "status": "shared_core",
       "starts": {
@@ -33432,7 +33432,7 @@
     },
     {
       "en_owner": "080c23a0",
-      "source": "games/gs1/src/080c23a0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_7.c",
       "size": 32,
       "status": "shared_core",
       "starts": {
@@ -33462,7 +33462,7 @@
     },
     {
       "en_owner": "080c23c0",
-      "source": "games/gs1/src/080c23c0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_191.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -33492,7 +33492,7 @@
     },
     {
       "en_owner": "080c23e8",
-      "source": "games/gs1/src/080c23e8.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_106.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -33522,7 +33522,7 @@
     },
     {
       "en_owner": "080c2410",
-      "source": "games/gs1/src/080c2410.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_95.c",
       "size": 36,
       "status": "shared_core",
       "starts": {
@@ -33552,7 +33552,7 @@
     },
     {
       "en_owner": "080c2434",
-      "source": "games/gs1/src/080c2434.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_42.c",
       "size": 32,
       "status": "shared_core",
       "starts": {
@@ -33582,7 +33582,7 @@
     },
     {
       "en_owner": "080c2454",
-      "source": "games/gs1/src/080c2454.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_78.c",
       "size": 28,
       "status": "shared_core",
       "starts": {
@@ -33612,7 +33612,7 @@
     },
     {
       "en_owner": "080c2470",
-      "source": "games/gs1/src/080c2470.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_24.c",
       "size": 64,
       "status": "shared_core",
       "starts": {
@@ -33642,7 +33642,7 @@
     },
     {
       "en_owner": "080c24b0",
-      "source": "games/gs1/src/080c24b0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_79.c",
       "size": 64,
       "status": "shared_core",
       "starts": {
@@ -33672,7 +33672,7 @@
     },
     {
       "en_owner": "080c2a08",
-      "source": "games/gs1/src/080c2a08.c",
+      "source": "games/gs1/src/battle/runtime/reserved_no_op_a.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -33702,7 +33702,7 @@
     },
     {
       "en_owner": "080c90e4",
-      "source": "games/gs1/src/080c90e4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_266.c",
       "size": 84,
       "status": "shared_core",
       "starts": {
@@ -33732,7 +33732,7 @@
     },
     {
       "en_owner": "080c9138",
-      "source": "games/gs1/src/080c9138.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_42.c",
       "size": 108,
       "status": "shared_core",
       "starts": {
@@ -33762,7 +33762,7 @@
     },
     {
       "en_owner": "080c9c60",
-      "source": "games/gs1/src/080c9c60.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_246.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -33792,7 +33792,7 @@
     },
     {
       "en_owner": "080c9c6c",
-      "source": "games/gs1/src/080c9c6c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_48.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -33822,7 +33822,7 @@
     },
     {
       "en_owner": "080c9c78",
-      "source": "games/gs1/src/080c9c78.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_66.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -33852,7 +33852,7 @@
     },
     {
       "en_owner": "080c9c84",
-      "source": "games/gs1/src/080c9c84.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_34.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -33882,7 +33882,7 @@
     },
     {
       "en_owner": "080c9c90",
-      "source": "games/gs1/src/080c9c90.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_179.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -33912,7 +33912,7 @@
     },
     {
       "en_owner": "080c9c9c",
-      "source": "games/gs1/src/080c9c9c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_239.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -33942,7 +33942,7 @@
     },
     {
       "en_owner": "080ca1e4",
-      "source": "games/gs1/src/080ca1e4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_197.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -33972,7 +33972,7 @@
     },
     {
       "en_owner": "080ca1f0",
-      "source": "games/gs1/src/080ca1f0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_254.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34002,7 +34002,7 @@
     },
     {
       "en_owner": "080ca57c",
-      "source": "games/gs1/src/080ca57c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_83.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34032,7 +34032,7 @@
     },
     {
       "en_owner": "080ca588",
-      "source": "games/gs1/src/080ca588.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_205.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34062,7 +34062,7 @@
     },
     {
       "en_owner": "080ca594",
-      "source": "games/gs1/src/080ca594.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_92.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34092,7 +34092,7 @@
     },
     {
       "en_owner": "080ca5a0",
-      "source": "games/gs1/src/080ca5a0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_117.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34122,7 +34122,7 @@
     },
     {
       "en_owner": "080ca5ac",
-      "source": "games/gs1/src/080ca5ac.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_95.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34152,7 +34152,7 @@
     },
     {
       "en_owner": "080ca5b8",
-      "source": "games/gs1/src/080ca5b8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_98.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34182,7 +34182,7 @@
     },
     {
       "en_owner": "080ca5c4",
-      "source": "games/gs1/src/080ca5c4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_255.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34212,7 +34212,7 @@
     },
     {
       "en_owner": "080ca5d0",
-      "source": "games/gs1/src/080ca5d0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_169.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34242,7 +34242,7 @@
     },
     {
       "en_owner": "080ca5dc",
-      "source": "games/gs1/src/080ca5dc.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_112.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34272,7 +34272,7 @@
     },
     {
       "en_owner": "080ca5e8",
-      "source": "games/gs1/src/080ca5e8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_176.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34302,7 +34302,7 @@
     },
     {
       "en_owner": "080ca5f4",
-      "source": "games/gs1/src/080ca5f4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_237.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34332,7 +34332,7 @@
     },
     {
       "en_owner": "080ca600",
-      "source": "games/gs1/src/080ca600.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_226.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34362,7 +34362,7 @@
     },
     {
       "en_owner": "080ccbdc",
-      "source": "games/gs1/src/080ccbdc.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_187.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -34392,7 +34392,7 @@
     },
     {
       "en_owner": "080ccc20",
-      "source": "games/gs1/src/080ccc20.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_204.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34422,7 +34422,7 @@
     },
     {
       "en_owner": "080ccc2c",
-      "source": "games/gs1/src/080ccc2c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_15.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34512,7 +34512,7 @@
     },
     {
       "en_owner": "080cd4b4",
-      "source": "games/gs1/src/080cd4b4.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_61.c",
       "size": 84,
       "status": "shared_core",
       "starts": {
@@ -34542,7 +34542,7 @@
     },
     {
       "en_owner": "080cd508",
-      "source": "games/gs1/src/080cd508.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_54.c",
       "size": 36,
       "status": "shared_core",
       "starts": {
@@ -34572,7 +34572,7 @@
     },
     {
       "en_owner": "080cdd14",
-      "source": "games/gs1/src/080cdd14.c",
+      "source": "games/gs1/src/unidentified/main/system/system_owner_8.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -34602,7 +34602,7 @@
     },
     {
       "en_owner": "080ceb30",
-      "source": "games/gs1/src/080ceb30.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_20.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34632,7 +34632,7 @@
     },
     {
       "en_owner": "080ceb3c",
-      "source": "games/gs1/src/080ceb3c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_274.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34662,7 +34662,7 @@
     },
     {
       "en_owner": "080ceb48",
-      "source": "games/gs1/src/080ceb48.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_259.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34692,7 +34692,7 @@
     },
     {
       "en_owner": "080cef64",
-      "source": "games/gs1/src/080cef64.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_21.c",
       "size": 112,
       "status": "shared_core",
       "starts": {
@@ -34722,7 +34722,7 @@
     },
     {
       "en_owner": "080cefd4",
-      "source": "games/gs1/src/080cefd4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_185.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34752,7 +34752,7 @@
     },
     {
       "en_owner": "080cefe0",
-      "source": "games/gs1/src/080cefe0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_31.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34782,7 +34782,7 @@
     },
     {
       "en_owner": "080cefec",
-      "source": "games/gs1/src/080cefec.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_265.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34812,7 +34812,7 @@
     },
     {
       "en_owner": "080cf2a0",
-      "source": "games/gs1/src/080cf2a0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_67.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34842,7 +34842,7 @@
     },
     {
       "en_owner": "080cf2ac",
-      "source": "games/gs1/src/080cf2ac.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_147.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34872,7 +34872,7 @@
     },
     {
       "en_owner": "080cf88c",
-      "source": "games/gs1/src/080cf88c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_32.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34902,7 +34902,7 @@
     },
     {
       "en_owner": "080cf898",
-      "source": "games/gs1/src/080cf898.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_77.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34932,7 +34932,7 @@
     },
     {
       "en_owner": "080cf8a4",
-      "source": "games/gs1/src/080cf8a4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_56.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34962,7 +34962,7 @@
     },
     {
       "en_owner": "080cf8b0",
-      "source": "games/gs1/src/080cf8b0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_90.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -34992,7 +34992,7 @@
     },
     {
       "en_owner": "080cf8bc",
-      "source": "games/gs1/src/080cf8bc.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_110.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -35022,7 +35022,7 @@
     },
     {
       "en_owner": "080cf8c8",
-      "source": "games/gs1/src/080cf8c8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_271.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -35052,7 +35052,7 @@
     },
     {
       "en_owner": "080cf8d4",
-      "source": "games/gs1/src/080cf8d4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_5.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -35172,7 +35172,7 @@
     },
     {
       "en_owner": "080d45ec",
-      "source": "games/gs1/src/080d45ec.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_267.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -35202,7 +35202,7 @@
     },
     {
       "en_owner": "080d45f8",
-      "source": "games/gs1/src/080d45f8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_202.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -35472,7 +35472,7 @@
     },
     {
       "en_owner": "080d6504",
-      "source": "games/gs1/src/080d6504.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_18.c",
       "size": 88,
       "status": "shared_core",
       "starts": {
@@ -35622,7 +35622,7 @@
     },
     {
       "en_owner": "080d6960",
-      "source": "games/gs1/src/080d6960.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_175.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -36522,7 +36522,7 @@
     },
     {
       "en_owner": "080dd2ac",
-      "source": "games/gs1/src/080dd2ac.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_53.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36552,7 +36552,7 @@
     },
     {
       "en_owner": "080dd2b8",
-      "source": "games/gs1/src/080dd2b8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_223.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -37572,7 +37572,7 @@
     },
     {
       "en_owner": "080e3a14",
-      "source": "games/gs1/src/080e3a14.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_43.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -37602,7 +37602,7 @@
     },
     {
       "en_owner": "080e3a3c",
-      "source": "games/gs1/src/080e3a3c.c",
+      "source": "games/gs1/src/unidentified/main/system/system_owner_16.c",
       "size": 100,
       "status": "shared_core",
       "starts": {
@@ -37632,7 +37632,7 @@
     },
     {
       "en_owner": "080e6948",
-      "source": "games/gs1/src/080e6948.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_113.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -37722,7 +37722,7 @@
     },
     {
       "en_owner": "080ec0e0",
-      "source": "games/gs1/src/080ec0e0.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_138.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -37752,7 +37752,7 @@
     },
     {
       "en_owner": "080ece7c",
-      "source": "games/gs1/src/080ece7c.c",
+      "source": "games/gs1/src/unidentified/main/system/system_owner_12.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -37782,7 +37782,7 @@
     },
     {
       "en_owner": "080eceac",
-      "source": "games/gs1/src/080eceac.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_11.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -37812,7 +37812,7 @@
     },
     {
       "en_owner": "080ecedc",
-      "source": "games/gs1/src/080ecedc.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_162.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -37842,7 +37842,7 @@
     },
     {
       "en_owner": "080ecee8",
-      "source": "games/gs1/src/080ecee8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_113.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -37872,7 +37872,7 @@
     },
     {
       "en_owner": "080f037c",
-      "source": "games/gs1/src/080f037c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_70.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -37902,7 +37902,7 @@
     },
     {
       "en_owner": "080f03c0",
-      "source": "games/gs1/src/080f03c0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_229.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -37932,7 +37932,7 @@
     },
     {
       "en_owner": "080f2eb8",
-      "source": "games/gs1/src/080f2eb8.c",
+      "source": "games/gs1/src/graphics/color/reserved_no_op.c",
       "size": 2,
       "status": "shared_core",
       "starts": {
@@ -37992,7 +37992,7 @@
     },
     {
       "en_owner": "080f37ec",
-      "source": "games/gs1/src/080f37ec.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_11.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -38202,7 +38202,7 @@
     },
     {
       "en_owner": "080f4008",
-      "source": "games/gs1/src/080f4008.c",
+      "source": "games/gs1/src/unidentified/main/audio/audio_owner_7.c",
       "size": 32,
       "status": "shared_core",
       "starts": {
@@ -38352,7 +38352,7 @@
     },
     {
       "en_owner": "080f6008",
-      "source": "games/gs1/src/080f6008.c",
+      "source": "games/gs1/src/unidentified/main/audio/audio_owner_2.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -38652,7 +38652,7 @@
     },
     {
       "en_owner": "080f94f8",
-      "source": "games/gs1/src/080f94f8.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_225.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -38712,7 +38712,7 @@
     },
     {
       "en_owner": "080f9538",
-      "source": "games/gs1/src/080f9538.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_137.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -40212,7 +40212,7 @@
     },
     {
       "en_owner": "080fb690",
-      "source": "games/gs1/src/080fb690.c",
+      "source": "games/gs1/src/unidentified/main/battle/battle_owner_52.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -40572,7 +40572,7 @@
     },
     {
       "en_owner": "08185008",
-      "source": "games/gs1/src/08185008.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_216.c",
       "size": 28,
       "status": "shared_core",
       "starts": {
@@ -40609,7 +40609,7 @@
     },
     {
       "en_owner": "08015ef4",
-      "source": "games/gs1/src/08015ef4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_149.c",
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x08015ec8"
     },
     {
@@ -40629,22 +40629,22 @@
     },
     {
       "en_owner": "080173ac",
-      "source": "games/gs1/src/080173ac.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_198.c",
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x080172fc"
     },
     {
       "en_owner": "080173f4",
-      "source": "games/gs1/src/080173f4.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_63.c",
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x08017344"
     },
     {
       "en_owner": "08017a64",
-      "source": "games/gs1/src/08017a64.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_4.c",
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x08017984"
     },
     {
       "en_owner": "08017c1c",
-      "source": "games/gs1/src/08017c1c.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_108.c",
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x08017b3c"
     },
     {
@@ -40659,22 +40659,22 @@
     },
     {
       "en_owner": "08019e48",
-      "source": "games/gs1/src/08019e48.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_211.c",
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x08019e40"
     },
     {
       "en_owner": "0801e3c8",
-      "source": "games/gs1/src/0801e3c8.c",
+      "source": "games/gs1/src/unidentified/main/field/field_owner_36.c",
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x0801e3c0"
     },
     {
       "en_owner": "0801fd84",
-      "source": "games/gs1/src/0801fd84.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_6.c",
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x0801fc84"
     },
     {
       "en_owner": "0801fd98",
-      "source": "games/gs1/src/0801fd98.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_132.c",
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x0801fc98"
     },
     {
@@ -40694,12 +40694,12 @@
     },
     {
       "en_owner": "080270d8",
-      "source": "games/gs1/src/080270d8.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_15.c",
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x08027134"
     },
     {
       "en_owner": "0802899c",
-      "source": "games/gs1/src/0802899c.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_26.c",
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x08028a04"
     },
     {
@@ -40714,17 +40714,17 @@
     },
     {
       "en_owner": "08028d74",
-      "source": "games/gs1/src/08028d74.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_24.c",
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x08028dcc"
     },
     {
       "en_owner": "08028db4",
-      "source": "games/gs1/src/08028db4.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_30.c",
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x08028e0c"
     },
     {
       "en_owner": "08028ea8",
-      "source": "games/gs1/src/08028ea8.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_7.c",
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x08028f00"
     },
     {
@@ -40734,17 +40734,17 @@
     },
     {
       "en_owner": "080a14f0",
-      "source": "games/gs1/src/080a14f0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_177.c",
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x0809849c"
     },
     {
       "en_owner": "080a153c",
-      "source": "games/gs1/src/080a153c.c",
+      "source": "games/gs1/src/unidentified/main/graphics/graphics_owner_7.c",
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x080984e8"
     },
     {
       "en_owner": "080a23c0",
-      "source": "games/gs1/src/080a23c0.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_18.c",
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x08099344"
     },
     {
@@ -40774,7 +40774,7 @@
     },
     {
       "en_owner": "080a8cc0",
-      "source": "games/gs1/src/080a8cc0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_119.c",
       "error": "ja: locality counterpart conflicts with neighboring proved owner order"
     },
     {
@@ -40799,12 +40799,12 @@
     },
     {
       "en_owner": "080c0eec",
-      "source": "games/gs1/src/080c0eec.c",
+      "source": "games/gs1/src/unidentified/main/ui/ui_owner_16.c",
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x080b7eec"
     },
     {
       "en_owner": "080ec0f0",
-      "source": "games/gs1/src/080ec0f0.c",
+      "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_206.c",
       "error": "de: locality counterpart conflicts with neighboring proved owner order"
     }
   ]

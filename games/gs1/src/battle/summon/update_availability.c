@@ -70,6 +70,6 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void)
     }
 }
 
-void Func_080b5e10(void)
+void BattleSummon_ReservedNoOp5E10(void)
 {
 }

@@ -60,7 +60,7 @@ void Func_080f9f6c(
     u32,
     struct MusicPlayerState *,
     struct MusicTrackState *);
-void Func_080fb790(void);
+void Audio_DummyCallback(void);
 void AudioEngine_SetPcmRate(u32 value);
 
 void AudioEngine_Initialize(struct AudioEngineState *audio)
@@ -97,10 +97,10 @@ void AudioEngine_Initialize(struct AudioEngineState *audio)
     audio->max_pcm_channels = 8;
     audio->master_volume = 15;
     audio->note_handler = Func_080f9f6c;
-    audio->cgb_update = Func_080fb790;
-    audio->cgb_disable.placeholder = Func_080fb790;
-    audio->key_to_freq.placeholder = Func_080fb790;
-    audio->ext_volume_pitch = Func_080fb790;
+    audio->cgb_update = Audio_DummyCallback;
+    audio->cgb_disable.placeholder = Audio_DummyCallback;
+    audio->key_to_freq.placeholder = Audio_DummyCallback;
+    audio->ext_volume_pitch = Audio_DummyCallback;
 
     command_table = (union AudioCommandSlot *)0x02004000;
     Func_080f9a80(command_table);

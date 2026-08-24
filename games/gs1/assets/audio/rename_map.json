@@ -1313,11 +1313,11 @@
   },
   {
    "song_id": 126,
-   "symbol": "se_126",
+   "symbol": "se_recovery",
    "class": "sfx",
-   "stem": "se_126",
-   "file": "sequences/se_126.mid",
-   "sidecar": "sequences/se_126.json",
+   "stem": "se_recovery",
+   "file": "sequences/se_recovery.mid",
+   "sidecar": "sequences/se_recovery.json",
    "played_by": [
     "0808c30c",
     "080985a8"
@@ -1871,11 +1871,11 @@
   },
   {
    "song_id": 134,
-   "symbol": "se_134",
+   "symbol": "se_heavy_impact",
    "class": "sfx",
-   "stem": "se_134",
-   "file": "sequences/se_134.mid",
-   "sidecar": "sequences/se_134.json",
+   "stem": "se_heavy_impact",
+   "file": "sequences/se_heavy_impact.mid",
+   "sidecar": "sequences/se_heavy_impact.json",
    "played_by": [
     "0808c30c",
     "080985fc",
@@ -4725,11 +4725,11 @@
   },
   {
    "song_id": 167,
-   "symbol": "se_167",
+   "symbol": "se_scene_transition",
    "class": "sfx",
-   "stem": "se_167",
-   "file": "sequences/se_167.mid",
-   "sidecar": "sequences/se_167.json",
+   "stem": "se_scene_transition",
+   "file": "sequences/se_scene_transition.mid",
+   "sidecar": "sequences/se_scene_transition.json",
    "played_by": [
     "080984c0"
    ],
@@ -4874,7 +4874,7 @@
    "name_is_provisional": false
   }
  ],
- "comment": "song_id -> extracted file, the ROM's ordering for it, and the evidence for naming one. Entries are sorted by (player, song_id), which is the ROM's own grouping -- see `ordering`. Every stem still carries the ROM's numbering, so the music tier reads Extracted and not Named. That is not an extraction gap: a name has to say what the sound IS, and neither the sound table nor the sequence bytes say that. `played_by` is the only linkage that could name one: the owners whose reconstructed C calls Func_080f9010 -- the linker veneer to the engine dispatcher Func_080f9080, whose first argument is the song id -- with this id as a LITERAL. 52 such sites across 34 ids; 22 of those ids have exactly one caller. A further 41 owners call the dispatcher with a computed id and cannot be attributed, and no overlay calls it with a literal. NAMING IS BLOCKED, and the reason is measured rather than assumed: the corpus has established 341 descriptive identities, and ZERO of them are reachable from any sound caller. They are all overlay-local Func_02xxxxxx aliases while every caller of the dispatcher is a main-image Func_08xxxxxx. So `played_by` says 'this id is played from there' and nothing more -- not what it sounds like, not which scene owns it. Naming waits on main-image caller identities, which is ordinary decompilation and not audio work. Do not invent names to move the tier. Derived from games/gs1/src/ and games/gs1/assets/audio/song_table.json; regenerate rather than editing by hand.",
+ "comment": "song_id -> extracted file, the ROM's ordering for it, and the evidence for naming one. Entries are sorted by (player, song_id), which is the ROM's own grouping -- see `ordering`. Numbered BGM and SE stems preserve ROM identity until exact source or sequence structure establishes a role. Eleven effects now have terse semantic names backed by exact call sites; all other numbered stems remain intentionally unresolved. `played_by` alone says only where an id is used, not what the sound is. Derived from games/gs1/src/, games/gs1/assets/data/song_usage.json, and games/gs1/assets/audio/song_table.json.",
  "accounting": {
   "song_table_entries": 312,
   "extracted_sequences": 260,
@@ -5118,6 +5118,7 @@
  },
  "naming": {
   "status": "rom_identity",
+  "semantic_effects": 11,
   "note": "Audio names follow the ROM channel identities BGM_<id>, SE_<id>, and wave_<id>. Only call-site-proven sound effects receive terse semantic SE names."
  }
 }

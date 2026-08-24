@@ -508,8 +508,8 @@
     {
       "song_id": 126,
       "symbol": "sound_recovery",
-      "name": null,
-      "evidence": "9 call site(s) pass id=126 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0808c30c, Func_0808d9a4, Func_080aa768 +5 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+      "name": "recovery",
+      "evidence": "The exact BattleParty_ApplyHealthDelta owner plays id=126 on the non-damage path before applying a positive health delta; the same exact source names the cue SOUND_RECOVERY."
     },
     {
       "song_id": 127,
@@ -556,8 +556,8 @@
     {
       "song_id": 134,
       "symbol": "sound_heavy_impact",
-      "name": null,
-      "evidence": "17 call site(s) pass id=134 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_0808c30c, Func_08095c08, Func_080985fc +14 more; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+      "name": "heavy impact",
+      "evidence": "The exact SpawnHeavyImpactEffect owner plays id=134 before spawning its impact flash and particles; exact health-delta and burst-particle callers corroborate the impact role."
     },
     {
       "song_id": 135,
@@ -754,8 +754,8 @@
     {
       "song_id": 167,
       "symbol": "sound_scene_transition",
-      "name": null,
-      "evidence": "1 call site(s) pass id=167 to sound dispatch Func_080f9080 (veneer Func_080f9010) in Func_080984c0; caller functions are address-named with no in-repo reference tying them to a bank-9 place name or bank-10 scene, so the named context is unproven"
+      "name": "scene transition",
+      "evidence": "The exact ResetSceneTransitionEffect owner plays id=167 at the start of its active transition reset, before scheduling the transition callback and interpolating the scene buffers."
     },
     {
       "song_id": 168,

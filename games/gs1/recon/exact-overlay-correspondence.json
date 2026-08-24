@@ -5,12 +5,12 @@
   "base_edition": "ja",
   "source_state": "byte-exact overlay C",
   "resources_total": 96,
-  "owners_total": 2497,
-  "owner_symbol_bytes": 192320,
-  "matched_owners": 2460,
-  "matched_bytes": 189246,
-  "shared_core_owners": 2454,
-  "shared_core_bytes": 187986,
+  "owners_total": 2500,
+  "owner_symbol_bytes": 192592,
+  "matched_owners": 2463,
+  "matched_bytes": 189518,
+  "shared_core_owners": 2457,
+  "shared_core_bytes": 188258,
   "regional_core_owners": 6,
   "regional_core_bytes": 1260,
   "unresolved_owners": 37,
@@ -25,55 +25,55 @@
   "editions": [
     {
       "edition": "ja",
-      "matched_owners": 2460,
-      "matched_bytes": 189246,
-      "core_identical_owners": 2460,
-      "core_identical_bytes": 189246,
+      "matched_owners": 2463,
+      "matched_bytes": 189518,
+      "core_identical_owners": 2463,
+      "core_identical_bytes": 189518,
       "core_different_owners": 0,
       "core_different_bytes": 0
     },
     {
       "edition": "en",
-      "matched_owners": 2460,
-      "matched_bytes": 189246,
-      "core_identical_owners": 2455,
-      "core_identical_bytes": 188294,
+      "matched_owners": 2463,
+      "matched_bytes": 189518,
+      "core_identical_owners": 2458,
+      "core_identical_bytes": 188566,
       "core_different_owners": 5,
       "core_different_bytes": 952
     },
     {
       "edition": "de",
-      "matched_owners": 2460,
-      "matched_bytes": 189246,
-      "core_identical_owners": 2455,
-      "core_identical_bytes": 188294,
+      "matched_owners": 2463,
+      "matched_bytes": 189518,
+      "core_identical_owners": 2458,
+      "core_identical_bytes": 188566,
       "core_different_owners": 5,
       "core_different_bytes": 952
     },
     {
       "edition": "es",
-      "matched_owners": 2460,
-      "matched_bytes": 189246,
-      "core_identical_owners": 2454,
-      "core_identical_bytes": 187986,
+      "matched_owners": 2463,
+      "matched_bytes": 189518,
+      "core_identical_owners": 2457,
+      "core_identical_bytes": 188258,
       "core_different_owners": 6,
       "core_different_bytes": 1260
     },
     {
       "edition": "fr",
-      "matched_owners": 2460,
-      "matched_bytes": 189246,
-      "core_identical_owners": 2454,
-      "core_identical_bytes": 187986,
+      "matched_owners": 2463,
+      "matched_bytes": 189518,
+      "core_identical_owners": 2457,
+      "core_identical_bytes": 188258,
       "core_different_owners": 6,
       "core_different_bytes": 1260
     },
     {
       "edition": "it",
-      "matched_owners": 2460,
-      "matched_bytes": 189246,
-      "core_identical_owners": 2454,
-      "core_identical_bytes": 187986,
+      "matched_owners": 2463,
+      "matched_bytes": 189518,
+      "core_identical_owners": 2457,
+      "core_identical_bytes": 188258,
       "core_different_owners": 6,
       "core_different_bytes": 1260
     }
@@ -16381,6 +16381,38 @@
         "fr": "0x02000314",
         "it": "0x02000314",
         "ja": "0x02000314"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
+      "en_owner": "resource_385:0x02000400",
+      "source": "games/gs1/src/overlays/actor_movement_effect/update_actor_proximity.c",
+      "resource": "resource_385",
+      "size": 152,
+      "core_bytes": 128,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02000400",
+        "en": "0x02000400",
+        "es": "0x02000400",
+        "fr": "0x02000400",
+        "it": "0x02000400",
+        "ja": "0x02000400"
       },
       "location_methods": {
         "de": "global_thumb_anchor",
@@ -34821,6 +34853,38 @@
         "fr": "resource_offset_exact",
         "it": "resource_offset_exact",
         "ja": "resource_offset_exact"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
+      "en_owner": "resource_39d:0x02000890",
+      "source": "games/gs1/src/overlays/fixed_point_distance/measure_position_distance_variant_a.c",
+      "resource": "resource_39d",
+      "size": 60,
+      "core_bytes": 52,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02000890",
+        "en": "0x02000890",
+        "es": "0x02000890",
+        "fr": "0x02000890",
+        "it": "0x02000890",
+        "ja": "0x02000890"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
       },
       "core_diff_bytes_from_ja": {
         "de": 0,
@@ -76165,6 +76229,38 @@
         "fr": "resource_offset_exact",
         "it": "resource_offset_exact",
         "ja": "resource_offset_exact"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
+      "en_owner": "resource_3c9:0x02000480",
+      "source": "games/gs1/src/overlays/fixed_point_distance/measure_position_distance_variant_b.c",
+      "resource": "resource_3c9",
+      "size": 60,
+      "core_bytes": 52,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02000480",
+        "en": "0x02000480",
+        "es": "0x02000480",
+        "fr": "0x02000480",
+        "it": "0x02000480",
+        "ja": "0x02000480"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
       },
       "core_diff_bytes_from_ja": {
         "de": 0,

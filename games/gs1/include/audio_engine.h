@@ -51,11 +51,11 @@ union AudioCommandSlot {
 
 /* 楽曲トラックは0x50バイト。+0x40は次のコマンド位置。 */
 struct MusicTrackState {
-    u8 status;                    /* 0x00 */
+    u8 flags;                     /* 0x00 */
     u8 unknown01[0x1d];          /* 0x01 */
     u8 pseudo_echo_volume;       /* 0x1e */
     u8 pseudo_echo_length;       /* 0x1f */
-    void *channel_head;           /* 0x20 */
+    void *channel;                /* 0x20 */
     u8 tone_type;                 /* 0x24 */
     u8 tone_key;                  /* 0x25 */
     u8 tone_length;               /* 0x26 */
@@ -65,24 +65,24 @@ struct MusicTrackState {
     u8 tone_decay;                /* 0x2d */
     u8 tone_sustain;              /* 0x2e */
     u8 tone_release;              /* 0x2f */
-    u8 unknown30[0x10];
+    u8 track_gap[0x10];
     const u8 *command;            /* 0x40 */
-    u8 unknown44[0x0c];          /* 0x44 */
+    u8 pattern_stack_bytes[0x0c]; /* 0x44 */
 };
 
 /* One music-player state is 0x40 bytes. */
 struct MusicPlayerState {
-    u32 unknown00;                        /* 0x00 */
+    u32 song_header_word;                  /* 0x00 */
     u32 status;                           /* 0x04 */
     u8 track_count;                       /* 0x08 */
     u8 priority;                          /* 0x09 */
-    u8 unknown0a;                         /* 0x0a */
+    u8 command;                           /* 0x0a */
     u8 config;                            /* 0x0b */
-    u8 unknown0c[0x0c];                   /* 0x0c */
+    u8 clock_and_gap[0x0c];               /* 0x0c */
     u8 *memory_area;                      /* 0x18 */
-    u8 unknown1c[0x10];                   /* 0x1c */
+    u8 tempo_and_fade_bytes[0x10];        /* 0x1c */
     struct MusicTrackState *tracks;       /* 0x2c */
-    void *unknown30;                      /* 0x30 */
+    void *voice_group;                    /* 0x30 */
     u32 ident;                            /* 0x34 */
     PlayerMainCallback next_callback;             /* 0x38 */
     struct MusicPlayerState *next_player;         /* 0x3c */
@@ -90,7 +90,7 @@ struct MusicPlayerState {
 
 /* One Game Boy sound channel is 0x40 bytes. */
 struct CgbChannel {
-    u8 status;                              /* 0x00 */
+    u8 status_flags;                        /* 0x00 */
     u8 type;                                /* 0x01 */
     u8 right_volume;                        /* 0x02 */
     u8 left_volume;                         /* 0x03 */
@@ -104,28 +104,28 @@ struct CgbChannel {
     u8 envelope_counter;                    /* 0x0b */
     u8 pseudo_echo_volume;                  /* 0x0c */
     u8 pseudo_echo_length;                  /* 0x0d */
-    u8 unknown0e[2];                        /* 0x0e */
+    u8 dummy1[2];                           /* 0x0e */
     u8 gate_time;                           /* 0x10 */
     u8 midi_key;                            /* 0x11 */
     u8 velocity;                            /* 0x12 */
     u8 priority;                            /* 0x13 */
     u8 rhythm_pan;                          /* 0x14 */
-    u8 unknown15[3];                        /* 0x15 */
-    u8 unknown18;                           /* 0x18 */
+    u8 dummy3[3];                           /* 0x15 */
+    u8 dummy5;                              /* 0x18 */
     s8 sustain_goal;                        /* 0x19 */
-    u8 unknown1a;                           /* 0x1a */
+    u8 n4;                                  /* 0x1a */
     u8 pan;                                 /* 0x1b */
     u8 pan_mask;                            /* 0x1c */
     u8 modify;                              /* 0x1d */
     u8 length;                              /* 0x1e */
     u8 sweep;                               /* 0x1f */
     u32 frequency;                          /* 0x20 */
-    const u8 *wave;                         /* 0x24 */
-    const u8 *current_wave;                 /* 0x28 */
+    const u8 *wave_pointer;                 /* 0x24 */
+    const u8 *current_pointer;              /* 0x28 */
     struct MusicTrackState *track;           /* 0x2c */
-    struct CgbChannel *previous;             /* 0x30 */
-    struct CgbChannel *next;                 /* 0x34 */
-    u8 unknown38[8];                        /* 0x38 */
+    struct CgbChannel *previous_channel;    /* 0x30 */
+    struct CgbChannel *next_channel;        /* 0x34 */
+    u8 dummy4[8];                            /* 0x38 */
 };
 
 /*
@@ -140,23 +140,23 @@ struct AudioEngineState {
     u8 master_volume;                                 /* 0x007 */
     u8 pcm_rate;                                      /* 0x008 */
     u8 mode;                                          /* 0x009 */
-    u8 counter_0a;                                    /* 0x00a */
+    u8 c15_counter;                                   /* 0x00a */
     u8 pcm_dma_period;                                /* 0x00b */
     u8 max_lines;                                     /* 0x00c */
-    u8 unknown0d[3];                                  /* 0x00d */
-    u32 samples_per_vblank;                           /* 0x010 */
-    u32 pcm_frequency;                                /* 0x014 */
-    u32 frequency_scale;                              /* 0x018 */
+    u8 gap[3];                                        /* 0x00d */
+    u32 pcm_samples_per_vblank;                       /* 0x010 */
+    u32 pcm_freq;                                     /* 0x014 */
+    u32 div_freq;                                     /* 0x018 */
     struct CgbChannel *cgb_channels;                  /* 0x01c */
-    PlayerMainCallback player_main;                   /* 0x020 */
-    struct MusicPlayerState *player_head;             /* 0x024 */
-    CgbUpdateCallback cgb_update;                     /* 0x028 */
-    union CgbDisableCallbackSlot cgb_disable;         /* 0x02c */
-    union KeyToFrequencyCallbackSlot key_to_freq;     /* 0x030 */
-    union AudioCommandSlot *command_table;            /* 0x034 */
-    NoteHandler note_handler;                         /* 0x038 */
+    PlayerMainCallback mplay_main_head;               /* 0x020 */
+    struct MusicPlayerState *music_player_head;       /* 0x024 */
+    CgbUpdateCallback cgb_sound;                      /* 0x028 */
+    union CgbDisableCallbackSlot cgb_osc_off;         /* 0x02c */
+    union KeyToFrequencyCallbackSlot midi_key_to_cgb_freq; /* 0x030 */
+    union AudioCommandSlot *mplay_jump_table;         /* 0x034 */
+    NoteHandler ply_note;                             /* 0x038 */
     CgbUpdateCallback ext_volume_pitch;               /* 0x03c */
-    u8 unknown40[0x10];                               /* 0x040 */
+    u8 gap2[0x10];                                    /* 0x040 */
     u8 direct_channels[12][0x40];                     /* 0x050 */
     s8 pcm_buffers[2][0x630];                         /* 0x350 */
 };

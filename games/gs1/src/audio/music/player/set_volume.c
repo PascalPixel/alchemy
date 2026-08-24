@@ -1,7 +1,7 @@
 #include "types.h"
 
 struct MusicTrackState {
-    u8 status;
+    u8 flags;
     u8 pad01[18];
     u8 priority;
     u8 pad14[60];

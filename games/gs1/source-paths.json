@@ -56,6 +56,7 @@
     "main:0809228c": "object/motion/offset_position_and_reset_motion.c",
     "main:080922c4": "object/motion/offset_position_and_reset.c",
     "main:08092304": "object/motion/commit_position_and_activate.c",
+    "main:080923c4": "object/motion/commit_current_position_and_activate.c",
     "main:080924d4": "object/set_mode_by_id.c",
     "main:080924ec": "object/set_action_by_id.c",
     "main:080c1a34": "party/compute_eligible_member_average.c",

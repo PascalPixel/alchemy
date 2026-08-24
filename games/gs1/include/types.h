@@ -437,6 +437,7 @@ typedef int bool;
 #define ObjectMotion_OffsetPositionAndReset Func_080922c4
 #define ObjectMotion_OffsetPositionAndResetMotion Func_0809228c
 #define ObjectMotion_CommitPositionAndActivate Func_08092304
+#define ObjectMotion_CommitCurrentPositionAndActivate Func_080923c4
 #define Object_SetModeById Func_080924d4
 #define Object_SetActionById Func_080924ec
 #define ObjectMotion_SnapHeadingAndOffset Func_08092208

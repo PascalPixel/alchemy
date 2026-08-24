@@ -14,7 +14,7 @@ s16 *Runtime_BumpAllocateAlternatePool(s32 size);
 u32 Func_08005340(const void *source, void *destination);
 void Func_08002df0(void *buffer);
 
-void Func_080209d0(const struct Window_080209d0 *window, const void *source)
+void UiWindow_CopyTilemapRegion(const struct Window_080209d0 *window, const void *source)
 {
     s16 *mirror = (s16 *)Data_03001e8c;
     s16 *buffer = Runtime_BumpAllocateAlternatePool(0x300);

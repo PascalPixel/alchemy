@@ -12312,7 +12312,7 @@
     },
     {
       "en_owner": "080209d0",
-      "source": "games/gs1/src/080209d0.c",
+      "source": "games/gs1/src/ui/window/copy_tilemap_region.c",
       "size": 144,
       "status": "shared_core",
       "starts": {
@@ -13212,7 +13212,7 @@
     },
     {
       "en_owner": "08026fa8",
-      "source": "games/gs1/src/08026fa8.c",
+      "source": "games/gs1/src/ui/text/show_localized_message_and_wait.c",
       "size": 196,
       "status": "regional_core",
       "starts": {

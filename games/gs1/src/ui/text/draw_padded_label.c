@@ -2,7 +2,7 @@
 
 void UiText_DrawString(u8 *arg0, s32 arg1, s32 arg2, s32 arg3);
 
-void Func_08020b64(s32 output, u8 *input)
+void UiText_DrawPaddedLabel(s32 output, u8 *input)
 {
     u8 text[20];
     s32 length = 0;
@@ -25,5 +25,5 @@ void Func_08020b64(s32 output, u8 *input)
     text[length++] = 8;
     text[length++] = 15;
     text[length] = 0;
-            UiText_DrawString(text, output, 0, -2);
+    UiText_DrawString(text, output, 0, -2);
 }

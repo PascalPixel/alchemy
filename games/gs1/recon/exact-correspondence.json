@@ -40689,7 +40689,7 @@
     },
     {
       "en_owner": "08020b64",
-      "source": "games/gs1/src/08020b64.c",
+      "source": "games/gs1/src/ui/text/draw_padded_label.c",
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x08020b40"
     },
     {

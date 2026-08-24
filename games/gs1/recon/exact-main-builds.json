@@ -6130,7 +6130,7 @@
     },
     {
       "en_owner": "0800be70",
-      "source": "games/gs1/src/0800be70.c",
+      "source": "games/gs1/src/map/render_animated_tile_frame.c",
       "size": 140,
       "all_exact": true,
       "editions": [
@@ -43186,7 +43186,7 @@
     },
     {
       "en_owner": "08097174",
-      "source": "games/gs1/src/08097174.c",
+      "source": "games/gs1/src/effect_runtime/stop_current_object.c",
       "size": 32,
       "all_exact": true,
       "editions": [

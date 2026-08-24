@@ -203,6 +203,9 @@ typedef int bool;
 #define CharacterMenu_DrawSelectionLabels Func_080a8508
 #define CharacterMenu_BuildAvailability Func_080a8b10
 #define CharacterMenu_UpdateSelectionIcons Func_080a9dc4
+#define BattleEffect_InitializeDefaultMode Func_080e7320
+#define Event_ValidatePackedId Func_08091814
+#define Event_ClearInvalidPackedValues Func_08091858
 #define Map_DecodeTileRows Func_0800f9f4
 #define DisplayBlend_RunScript Func_080119cc
 #define Summon_TakeCharge Func_080c1df4
@@ -312,10 +315,32 @@ typedef int bool;
 #define Graphics_ApplyBg2ReferencePoint Func_080cd488
 #define BattleEffect_InitializeMode Func_080d6578
 #define BattleEffect_DispatchMode Func_080d6660
+#define BattleEffect_CallbackTable Data_080ee2b4
 #define BattleEffect_RunNoEffectFrames Func_080d655c
+#define BattleEffect_RenderAnimation Func_080d2464
+#define BattleEffect_RenderAnimationMode0 Func_080d2458
+#define BattleEffect_RenderAnimationMode1 Func_080d244c
+#define BattleEffect_RenderMode Func_080d52c8
+#define BattleEffect_RenderMode0Or1 Func_080d5258
+#define BattleEffect_RenderMode1 Func_080d5274
+#define BattleEffect_RenderMode2 Func_080d5280
+#define BattleEffect_RenderMode3 Func_080d528c
+#define BattleEffect_RenderMode4 Func_080d5298
+#define BattleEffect_RenderMode5 Func_080d52a4
+#define BattleEffect_RenderMode6 Func_080d52bc
+#define BattleEffect_RenderMode7 Func_080d52b0
 #define UiMessage_ShowAndWait Func_080b04dc
 #define UiMessage_ShowAndRestoreState Func_080b0574
 #define UiMessage_ShowChoice Func_080b0634
 #define AbilityMenu_BuildAvailableList Func_080b0070
+#define EffectRuntime_FindSlotByObject Func_0808ec14
+#define EffectRuntime_SetMode5AndPlayCue Func_0808ec50
+#define EffectRuntime_SetMode7AndLaunch Func_0808ec8c
+#define EffectRuntime_SetMode4AndPlayCue Func_0808ece0
+#define EffectRuntime_SetMode2 Func_0808ed1c
+#define EffectRuntime_GetCurrentObject Func_0808ed4c
+#define EffectRuntime_ClearCurrentFlags Func_0808ed78
+#define EffectRuntime_SetCurrentPosition Func_0808edac
+#define Graphics_AdjustPaletteBank Func_080aac84
 
 #endif

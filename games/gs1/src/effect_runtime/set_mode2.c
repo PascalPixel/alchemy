@@ -4,22 +4,18 @@
 #define M2C_FIELD(base, type, offset) \
     (*(type)((u8 *)(base) + (offset)))
 
-s32 WaitFrames(s32);
 s32 Object_SetMode(s32, s32);
-s32 Func_0808ec14();
-s32 Audio_PlayCue(s32);
+s32 EffectRuntime_FindSlotByObject();
 
-void Func_0808ec50(void) {
+void EffectRuntime_SetMode2(void) {
     s32 slot;
     s32 object;
 
-    slot = Func_0808ec14();
+    slot = EffectRuntime_FindSlotByObject();
     if (slot != -1) {
         { s32 base = *(s32 *)ADDR_03001EBC; s32 offset = slot * 8; object = *(s32 *)((s32)base + (s32)offset + (s32)0x11C); }
         if (object != 0) {
-            Object_SetMode(object, 5);
+            Object_SetMode(object, 2);
         }
-        Audio_PlayCue(0x7D);
-        WaitFrames(0xC);
     }
 }

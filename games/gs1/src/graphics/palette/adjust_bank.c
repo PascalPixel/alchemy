@@ -1,6 +1,6 @@
 #include "types.h"
 
-void Func_080aac84(s32 arg0)
+void Graphics_AdjustPaletteBank(s32 arg0)
 {
     s32 iter;
     s32 bank;

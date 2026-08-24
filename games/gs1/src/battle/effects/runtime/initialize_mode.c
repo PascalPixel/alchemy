@@ -8,7 +8,7 @@ void Func_080eb754(s32 *);
 void Func_080dc968(s32 *);
 void Func_080d6970(s32 *);
 void Func_080ec100(s32 *);
-void Func_080d2458(s32 arg0);
+void BattleEffect_RenderAnimationMode0(s32 arg0);
 void Func_080d1714(s32 *);
 void Func_080ea0d8(s32 *);
 void Func_080d765c(s32 *);
@@ -43,7 +43,7 @@ void BattleEffect_InitializeMode(s32 *arg0) {
             Func_080ec100(arg0);
             break;
         case 7:
-            Func_080d2458(arg0);
+            BattleEffect_RenderAnimationMode0(arg0);
             break;
         case 8:
             Func_080d1714(arg0);

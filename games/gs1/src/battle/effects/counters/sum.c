@@ -7,7 +7,7 @@ struct State_0808bc9c {
 
 extern struct State_0808bc9c *Data_03001ebc;
 
-s32 Func_0808bc9c(void)
+s32 BattleEffect_SumCounters(void)
 {
     struct State_0808bc9c *state = Data_03001ebc;
 

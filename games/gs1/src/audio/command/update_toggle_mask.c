@@ -2,7 +2,7 @@
 
 extern u8 Data_02003040[];
 
-void Func_080f9570(u32 command)
+void AudioCommand_UpdateToggleMask(u32 command)
 {
     u32 toggle = command & 0x80;
 

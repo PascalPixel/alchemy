@@ -7,7 +7,7 @@ void Object_ResetMotion(struct MotionObject *);
 void Object_SetPosition(struct MotionObject *, s32, s32, s32);
 void Object_SetMode(struct MotionObject *, s32);
 
-void Func_080df90c(s32 first, s32 second, s32 divisor) {
+void BattleEffect_SetApproachMotion(s32 first, s32 second, s32 divisor) {
     struct B5Context *first_context = Func_080b5098(first);
     struct B5Context *second_context = Func_080b5098(second);
     struct MotionObject *object = first_context->object;

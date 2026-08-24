@@ -69471,7 +69471,7 @@
     },
     {
       "en_owner": "080e28f4",
-      "source": "games/gs1/src/080e28f4.c",
+      "source": "games/gs1/src/effects/step/run_animation_mode_6_or_7_or_8.c",
       "size": 38,
       "all_exact": true,
       "editions": [
@@ -69527,7 +69527,7 @@
     },
     {
       "en_owner": "080e291c",
-      "source": "games/gs1/src/080e291c.c",
+      "source": "games/gs1/src/effects/step/run_animation_mode_0.c",
       "size": 12,
       "all_exact": true,
       "editions": [
@@ -69583,7 +69583,7 @@
     },
     {
       "en_owner": "080e2928",
-      "source": "games/gs1/src/080e2928.c",
+      "source": "games/gs1/src/effects/step/run_animation_mode_0_duplicate.c",
       "size": 12,
       "all_exact": true,
       "editions": [
@@ -69639,7 +69639,7 @@
     },
     {
       "en_owner": "080e2934",
-      "source": "games/gs1/src/080e2934.c",
+      "source": "games/gs1/src/effects/step/run_animation_mode_1.c",
       "size": 12,
       "all_exact": true,
       "editions": [
@@ -69695,7 +69695,7 @@
     },
     {
       "en_owner": "080e2940",
-      "source": "games/gs1/src/080e2940.c",
+      "source": "games/gs1/src/effects/step/run_animation_mode_2.c",
       "size": 12,
       "all_exact": true,
       "editions": [
@@ -69751,7 +69751,7 @@
     },
     {
       "en_owner": "080e294c",
-      "source": "games/gs1/src/080e294c.c",
+      "source": "games/gs1/src/effects/step/run_animation_mode_3_or_4_or_5.c",
       "size": 38,
       "all_exact": true,
       "editions": [

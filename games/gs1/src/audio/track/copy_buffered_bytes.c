@@ -1,7 +1,8 @@
 #include "types.h"
+
 extern u8 Data_0000443c[];
 
-void Func_080f7f30(u8 *destination)
+void AudioTrack_CopyBufferedBytes(u8 *destination)
 {
     u32 countOffset = 0x4404;
     u8 **basePointer = (u8 **)0x02004c00;

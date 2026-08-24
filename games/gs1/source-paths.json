@@ -39,6 +39,7 @@
     "main:08026fa8": "ui/text/show_localized_message_and_wait.c",
     "main:08029274": "text/format_hex.c",
     "main:08020b14": "ui/text/set_render_string.c",
+    "main:08020b64": "ui/text/draw_padded_label.c",
     "main:08079ae8": "owner/refresh_derived_data.c",
     "main:0807961c": "party/add_active_owner.c",
     "main:08079664": "party/remove_active_owner.c",

@@ -7,14 +7,14 @@
 s32 WaitFrames(s32);
 s32 Object_SetMode(void *, s32);
 s32 Func_080091e0(void *, s32);
-s32 Func_0808ec14();
+s32 EffectRuntime_FindSlotByObject();
 s32 Audio_PlayCue(s32);
 
-void Func_0808ec8c(void) {
+void EffectRuntime_SetMode7AndLaunch(void) {
     s32 slot;
     void *object;
 
-    slot = Func_0808ec14();
+    slot = EffectRuntime_FindSlotByObject();
     if (slot != -1) {
         { s32 base = *(s32 *)ADDR_03001EBC; s32 offset = slot * 8; object = *(void **)((s32)base + (s32)offset + (s32)0x11C); }
         WaitFrames(0x12);

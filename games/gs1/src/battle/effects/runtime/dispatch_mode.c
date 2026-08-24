@@ -5,7 +5,7 @@ typedef void (*Callback)(s32 *);
 
 s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 void Func_08002dd8(s32);
-extern Callback Data_080ee2b4[];
+extern Callback BattleEffect_CallbackTable[];
 
 void BattleEffect_DispatchMode(s32 *state)
 {
@@ -22,7 +22,7 @@ void BattleEffect_DispatchMode(s32 *state)
     if (index == 0)
         state[6] = 0;
     else
-        Data_080ee2b4[index - 1](state);
+        BattleEffect_CallbackTable[index - 1](state);
 
     Func_08002dd8(40);
     Func_08002dd8(39);

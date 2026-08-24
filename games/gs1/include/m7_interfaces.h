@@ -17,9 +17,9 @@ struct Object080a1c {
     s16 y;
 };
 
-void Func_080a1c2c(
+void PsynergyMenu_PositionOwnerEntry(
     struct Object080a1c **, s32, s32, s32, s32);
-void Func_080a1c6c(
+void InventoryMenu_PositionOwnerEntry(
     struct Object080a1c **, s32, s32, s32, s32);
 void Func_080a23f4(
     struct Bounds080a23f4 *, s32, s32, s32, s32);

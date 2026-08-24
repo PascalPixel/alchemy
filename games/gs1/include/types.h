@@ -219,6 +219,10 @@ typedef int bool;
 #define BattleEffect_ResumeObject Func_0809ade8
 #define BattleEffect_UpdateObjectVisibilityBounds Func_0809c314
 #define BattleEffect_RunVisibilityTransition Func_0809c3a4
+#define PsynergyMenu_RefreshOwnerEntries Func_080a1bdc
+#define PsynergyMenu_PositionOwnerEntry Func_080a1c2c
+#define InventoryMenu_PositionOwnerEntry Func_080a1c6c
+#define InventoryMenu_RefreshOwnerEntries Func_080a1cb0
 #define BattleEffect_CleanupResourcesAndWindow Func_0809bcd4
 #define FieldEvent_ShowStatusMessage Func_0809b648
 #define FixedPoint_Multiply8_8 Func_080f40b4

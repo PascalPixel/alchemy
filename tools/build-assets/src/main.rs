@@ -3658,18 +3658,18 @@ fn build_entry_native_tail(
         "golden-sun-battle-effect-data" => {
             let document = json(&source_path(entry_source)?)?;
             let mut nested = Vec::new();
-            for item in document["direct_graphics"]
-                .as_array()
-                .into_iter()
-                .flatten()
-                .chain(std::iter::once(&document["halfword_graphic"]))
-                .chain(
-                    document["palette_graphics"]
-                        .as_array()
-                        .into_iter()
-                        .flatten(),
-                )
-            {
+            for item in document["direct_graphics"].as_array().into_iter().flatten() {
+                nested.push(format!(
+                    "games/gs1/assets/{}",
+                    flat_asset_name(json_string(item, "battle graphic source")?)
+                ));
+            }
+            for item in std::iter::once(&document["halfword_graphic"]).chain(
+                document["palette_graphics"]
+                    .as_array()
+                    .into_iter()
+                    .flatten(),
+            ) {
                 nested.push(format!(
                     "games/gs1/assets/{}",
                     flat_asset_name(json_string(
@@ -3696,7 +3696,7 @@ fn build_entry_native_tail(
                 std::iter::once(entry_source.to_string())
                     .chain(nested)
                     .collect(),
-                serde_json::json!({"graphics":document["direct_graphics"].as_array().map_or(0,Vec::len)+1+document["palette_graphics"].as_array().map_or(0,Vec::len),"weighted_records":document["weighted_records"]["records"].as_array().map_or(0,Vec::len),"typed_tables":document["typed_tables"].as_array().map_or(0,Vec::len)}),
+                serde_json::json!({"graphics":document["direct_graphics"].as_array().map_or(0,Vec::len)+1+document["palette_graphics"].as_array().map_or(0,Vec::len),"weighted_records":document["weighted_records"].as_array().map_or(0,Vec::len),"typed_tables":document["typed_tables"].as_array().map_or(0,Vec::len)}),
             ))
         }
         "golden-sun-sentou-gamen-data" => {

@@ -20,7 +20,7 @@ use serde_json::Value;
 use sha2::{Digest, Sha256};
 use std::{
     cmp::Ordering,
-    collections::BTreeMap,
+    collections::{BTreeMap, BTreeSet},
     path::{Path, PathBuf},
     process::Command,
     time::Instant,
@@ -663,7 +663,12 @@ fn source_cache_key_with_environment(
 ) -> Result<String, String> {
     let mut hasher = Sha256::new();
     hasher.update(b"candidate-show-cache-v4");
-    hasher.update(std::fs::read(source).map_err(|error| format!("{source}: {error}"))?);
+    hasher.update(source_input_signature(
+        compiler_core::routing::root(),
+        source,
+        routing_source,
+        flags,
+    )?);
     hasher.update([7]);
     hasher.update(routing_source.as_bytes());
     hasher.update([8]);
@@ -710,6 +715,89 @@ fn source_cache_key_with_environment(
         .iter()
         .map(|byte| format!("{byte:02x}"))
         .collect())
+}
+
+fn source_input_signature(
+    root: &Path,
+    source: &str,
+    routing_source: &str,
+    flags: &[String],
+) -> Result<Vec<u8>, String> {
+    let source = rooted_path(root, Path::new(source));
+    let mut include_dirs = Vec::new();
+    if let Some(game) = routing_source
+        .strip_prefix("games/")
+        .and_then(|path| path.split('/').next())
+    {
+        include_dirs.push(root.join("games").join(game).join("include"));
+    }
+    include_dirs.extend(flags.iter().filter_map(|flag| {
+        flag.strip_prefix("-I")
+            .filter(|path| !path.is_empty())
+            .map(|path| rooted_path(root, Path::new(path)))
+    }));
+
+    let mut seen = BTreeSet::new();
+    let mut inputs = Vec::new();
+    collect_source_inputs(&source, &include_dirs, &mut seen, &mut inputs)?;
+    let mut hasher = Sha256::new();
+    for (path, bytes) in inputs {
+        hasher.update(path.to_string_lossy().as_bytes());
+        hasher.update([0]);
+        hasher.update(bytes);
+        hasher.update([0xff]);
+    }
+    Ok(hasher.finalize().to_vec())
+}
+
+fn rooted_path(root: &Path, path: &Path) -> PathBuf {
+    if path.is_absolute() {
+        path.to_path_buf()
+    } else {
+        root.join(path)
+    }
+}
+
+fn collect_source_inputs(
+    path: &Path,
+    include_dirs: &[PathBuf],
+    seen: &mut BTreeSet<PathBuf>,
+    inputs: &mut Vec<(PathBuf, Vec<u8>)>,
+) -> Result<(), String> {
+    let canonical =
+        std::fs::canonicalize(path).map_err(|error| format!("{}: {error}", path.display()))?;
+    if !seen.insert(canonical.clone()) {
+        return Ok(());
+    }
+    let bytes =
+        std::fs::read(&canonical).map_err(|error| format!("{}: {error}", canonical.display()))?;
+    let text = String::from_utf8_lossy(&bytes);
+    let mut includes = Vec::new();
+    for line in text.lines() {
+        let Some(rest) = line.trim_start().strip_prefix("#include") else {
+            continue;
+        };
+        let rest = rest.trim_start();
+        let Some(rest) = rest.strip_prefix('"') else {
+            continue;
+        };
+        let Some((include, _)) = rest.split_once('"') else {
+            continue;
+        };
+        let include = Path::new(include);
+        let local = canonical.parent().unwrap_or(Path::new("")).join(include);
+        let resolved = std::iter::once(local)
+            .chain(include_dirs.iter().map(|directory| directory.join(include)))
+            .find(|candidate| candidate.is_file());
+        if let Some(resolved) = resolved {
+            includes.push(resolved);
+        }
+    }
+    inputs.push((canonical, bytes));
+    for include in includes {
+        collect_source_inputs(&include, include_dirs, seen, inputs)?;
+    }
+    Ok(())
 }
 
 #[cfg(test)]
@@ -818,6 +906,35 @@ mod cache_key_tests {
             .unwrap()
         );
         let _ = std::fs::remove_file(source);
+    }
+
+    #[test]
+    fn included_source_changes_are_part_of_the_cache_identity() {
+        let root = std::env::temp_dir().join("candidate-show-include-cache-key");
+        let _ = std::fs::remove_dir_all(&root);
+        std::fs::create_dir_all(root.join("games/gs1/include")).unwrap();
+        std::fs::create_dir_all(root.join("games/gs1/recon/en/main")).unwrap();
+        let source = root.join("games/gs1/recon/en/main/08000000.c");
+        let body = root.join("games/gs1/recon/en/main/body.c");
+        std::fs::write(&source, "#include \"body.c\"\n").unwrap();
+        std::fs::write(&body, "void Func_08000000(void) {}\n").unwrap();
+        let first = source_input_signature(
+            &root,
+            source.to_str().unwrap(),
+            "games/gs1/src/08000000.c",
+            &[],
+        )
+        .unwrap();
+        std::fs::write(&body, "void Func_08000000(void) { for (;;) {} }\n").unwrap();
+        let second = source_input_signature(
+            &root,
+            source.to_str().unwrap(),
+            "games/gs1/src/08000000.c",
+            &[],
+        )
+        .unwrap();
+        assert_ne!(first, second);
+        let _ = std::fs::remove_dir_all(&root);
     }
 }
 fn cached_first(key_path: &Path, key: &str, report: &Path) -> Option<String> {

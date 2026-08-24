@@ -234,6 +234,9 @@ typedef int bool;
 #define Graphics_ClampRgb555Channel Func_080f3898
 #define Graphics_ClampRgb555Component Func_080f38ac
 #define Graphics_ScaleRgb555Buffer Func_080f4100
+#define Graphics_UpdatePhasePalette Func_080d40ec
+#define Graphics_PackTileRows Func_080df9d0
+#define Graphics_TransposeCopy Func_080dfddc
 #define MusicPlayer_SetPitchAndUpdateFrequency Func_080fb2a4
 #define Audio_InitializeRuntimeDefaults Func_080f9438
 #define Graphics_ScaleRgb555 Func_080f6038

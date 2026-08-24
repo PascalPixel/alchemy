@@ -1,6 +1,6 @@
 #include "types.h"
 
-void Func_080dfddc(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+void Graphics_TransposeCopy(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
     s32 var_ip;
     s32 var_r1;
     s32 var_r6;

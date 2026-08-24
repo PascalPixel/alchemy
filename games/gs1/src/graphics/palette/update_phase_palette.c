@@ -4,7 +4,7 @@ typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
 
 s32 Func_08002322(s32 angle);
 
-void Func_080d40ec(s32 frame, s32 red_phase, s32 green_phase, s32 blue_phase)
+void Graphics_UpdatePhasePalette(s32 frame, s32 red_phase, s32 green_phase, s32 blue_phase)
 {
     u16 palette[64];
     u16 *output;

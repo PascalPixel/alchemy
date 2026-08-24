@@ -1,6 +1,6 @@
 #include "types.h"
 
-void Func_080df9d0(u8 *source, u8 *destination, s32 stride) {
+void Graphics_PackTileRows(u8 *source, u8 *destination, s32 stride) {
     s32 row = 0;
     s32 rowCount = 288;
     s32 sourceOffset = 0;

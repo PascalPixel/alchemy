@@ -35142,7 +35142,7 @@
     },
     {
       "en_owner": "080d40ec",
-      "source": "games/gs1/src/080d40ec.c",
+      "source": "games/gs1/src/graphics/palette/update_phase_palette.c",
       "size": 184,
       "status": "shared_core",
       "starts": {
@@ -36972,7 +36972,7 @@
     },
     {
       "en_owner": "080df9d0",
-      "source": "games/gs1/src/080df9d0.c",
+      "source": "games/gs1/src/graphics/tile/pack_rows.c",
       "size": 72,
       "status": "shared_core",
       "starts": {
@@ -37122,7 +37122,7 @@
     },
     {
       "en_owner": "080dfddc",
-      "source": "games/gs1/src/080dfddc.c",
+      "source": "games/gs1/src/graphics/tile/transpose_copy.c",
       "size": 78,
       "status": "shared_core",
       "starts": {

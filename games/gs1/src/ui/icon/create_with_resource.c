@@ -4,7 +4,7 @@ extern s32 Resource_FindFreeSlot(void);
 extern s32 Resource_CopyData();
 extern s32 UiIcon_DrawWithFlags();
 extern u8 Data_080aea4c[];
-s32 Func_080a172c(s32 first, s32 unused, s32 second, s32 third)
+s32 UiIcon_CreateWithResource(s32 first, s32 unused, s32 second, s32 third)
 {
     s32 entry_no;
     s32 result;

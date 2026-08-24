@@ -6,7 +6,7 @@ void Func_08002dd8(s32);
 u32 Func_080053e8(const void *, void *);
 extern s32 Data_08031864[];
 
-void Func_080215e0(s32 arg0, s32 arg1) {
+void RenderResource_LoadPair(s32 arg0, s32 arg1) {
     register s32 value;
     void *temp_r6;
 

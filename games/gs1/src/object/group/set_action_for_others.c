@@ -6,7 +6,7 @@
 void Object_SetAction(s32, s32);
 extern u8 Data_0200048a[];
 
-void Func_08096cdc(s32 arg0, s32 arg1, s32 arg2) {
+void ObjectGroup_SetActionForOthers(s32 arg0, s32 arg1, s32 arg2) {
     s16 *var_sl;
     s32 temp_r0;
     s32 var_r5;

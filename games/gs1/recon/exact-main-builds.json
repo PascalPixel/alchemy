@@ -42402,7 +42402,7 @@
     },
     {
       "en_owner": "08096af0",
-      "source": "games/gs1/src/08096af0.c",
+      "source": "games/gs1/src/field/events/run_type_handler.c",
       "size": 56,
       "all_exact": true,
       "editions": [
@@ -42514,7 +42514,7 @@
     },
     {
       "en_owner": "08096b88",
-      "source": "games/gs1/src/08096b88.c",
+      "source": "games/gs1/src/object/group/apply_random_child_values.c",
       "size": 100,
       "all_exact": true,
       "editions": [
@@ -42794,7 +42794,7 @@
     },
     {
       "en_owner": "08096cdc",
-      "source": "games/gs1/src/08096cdc.c",
+      "source": "games/gs1/src/object/group/set_action_for_others.c",
       "size": 80,
       "all_exact": true,
       "editions": [

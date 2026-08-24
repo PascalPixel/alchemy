@@ -234,6 +234,35 @@ fn validate_drafts(root: &Path, exact: &HashSet<String>) -> Result<usize, String
     Ok(count)
 }
 
+fn validate_reconstruction_records(root: &Path) -> Result<(), String> {
+    for relative in ["games/gs1/recon/en/main", "games/gs1/recon/en/overlays"] {
+        for entry in std::fs::read_dir(root.join(relative))
+            .map_err(|error| format!("{relative}: {error}"))?
+        {
+            let path = entry.map_err(|error| error.to_string())?.path();
+            if path.extension().and_then(|value| value.to_str()) != Some("json") {
+                continue;
+            }
+            let stem = path
+                .file_stem()
+                .and_then(|value| value.to_str())
+                .ok_or_else(|| format!("{} has no UTF-8 owner stem", path.display()))?;
+            SourceOwner::from_legacy_stem(stem)
+                .ok_or_else(|| format!("{} has no owner-qualified filename", path.display()))?;
+            let record = json(&path)?;
+            for duplicate in ["owner", "semantic_name"] {
+                if record.get(duplicate).is_some() {
+                    return Err(format!(
+                        "{} repeats {duplicate}; owner identity comes from the filename and names from games/gs1/source-paths.json",
+                        path.display()
+                    ));
+                }
+            }
+        }
+    }
+    Ok(())
+}
+
 pub fn validate() -> Result<(usize, usize, usize, usize, usize), String> {
     let root = root();
     let exact = exact(&root)?;
@@ -242,5 +271,6 @@ pub fn validate() -> Result<(usize, usize, usize, usize, usize), String> {
     let unmatchable = validate_unmatchable(&root, &exact, &audited)?;
     let provisional = validate_provisional(&root, &exact)?;
     let drafts = validate_drafts(&root, &exact)?;
+    validate_reconstruction_records(&root)?;
     Ok((unmatchable, provisional, drafts, audited.len(), names))
 }

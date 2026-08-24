@@ -230,11 +230,7 @@ fn candidate_main(tree: &SourceTree, executable: &[Span]) -> (Vec<Span>, usize) 
         else {
             continue;
         };
-        let Some(start) = get(&record, "owner")
-            .and_then(Value::as_str)
-            .and_then(|owner| owner.strip_prefix("main:"))
-            .and_then(hex)
-        else {
+        let Some(start) = hex(stem) else {
             continue;
         };
         let Some(size) = integer(&record, "span_bytes") else {

@@ -556,6 +556,7 @@ typedef int bool;
 #define BattleEffect_GetFlags Func_080915dc
 #define BattleEffect_FilterObjectIdByFlags Func_0809ae3c
 #define BattleEffect_PlayQueuedSound Func_0809202c
+#define BattleEffect_SetQueuedSoundAndPlay Func_08091ff0
 #define ObjectMotion_SetSpeedParameters Func_08092064
 #define BattleRuntime_InitializeRenderObject Func_08091660
 #define BattleRuntime_Reset Func_080916b0

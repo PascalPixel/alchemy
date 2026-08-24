@@ -226,6 +226,7 @@ typedef int bool;
 #define AudioTrack_CopyBufferedBytes Func_080f7f30
 #define EmitRandomParticleEffect Func_0808eee4
 #define BattleEffect_SpawnRandomParticleAtPosition Func_0808f28c
+#define BattleEffect_SetupObjectPair Func_080970f8
 #define InitializeEventObject Func_0809728c
 #define UpdateRisingParticleBurst Func_080981b0
 #define SpawnHeavyImpactEffect Func_08098c08
@@ -517,6 +518,7 @@ typedef int bool;
 #define Script_InvokeCallback Func_0800d6a4
 #define Script_SkipCommand Func_0800d8f4
 #define Script_PlayAudioCue Func_0800d900
+#define Script_ApplyObjectArgument Func_0800d8c4
 #define Script_FindLabel Func_0800d6d8
 #define Script_RepeatOrJump Func_0800d710
 #define Script_JumpToLabel Func_0800d760

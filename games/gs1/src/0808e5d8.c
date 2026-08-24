@@ -11,7 +11,7 @@ extern struct GlobalData Data_02000240;
 u8 *Ability_GetData(s32);
 s32 Func_0808e4b4(s32, u16, void *);
 void Func_08096fb0(s32, s32);
-void Func_080970f8(s32, s32);
+void BattleEffect_SetupObjectPair(s32, s32);
 s32 Func_08096b28(void *, s32, s32);
 void FieldEvent_RunTypeHandler(void);
 void EffectRuntime_StopCurrentObject(void);
@@ -33,7 +33,7 @@ s32 Func_0808e5d8(s32 packedEffect)
     first = (void *)Func_0808e4b4(0x30000005, object, &output);
     second = (void *)Func_0808e4b4(0x20000005, object, &output);
     Func_08096fb0(index, 0);
-    Func_080970f8(Data_02000240.selected_object, output);
+    BattleEffect_SetupObjectPair(Data_02000240.selected_object, output);
     Func_08096b28(first, mode, output);
     FieldEvent_RunTypeHandler();
     EffectRuntime_StopCurrentObject();

@@ -4692,7 +4692,7 @@
     },
     {
       "en_owner": "0800d8c4",
-      "source": "games/gs1/src/0800d8c4.c",
+      "source": "games/gs1/src/script/interpreter/apply_object_argument.c",
       "size": 34,
       "status": "shared_core",
       "starts": {
@@ -23112,7 +23112,7 @@
     },
     {
       "en_owner": "080970f8",
-      "source": "games/gs1/src/080970f8.c",
+      "source": "games/gs1/src/battle/effects/setup_object_pair.c",
       "size": 124,
       "status": "shared_core",
       "starts": {

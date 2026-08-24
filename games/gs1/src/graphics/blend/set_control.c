@@ -20,7 +20,7 @@
 
 #define REG_BLDCNT (*(volatile u16 *)0x04000050)
 
-void Func_080c0ea8(void)
+void Graphics_SetBlendControl(void)
 {
     REG_BLDCNT = 0xbf;
 }

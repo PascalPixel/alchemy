@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 Func_080c1724(u16 *source, u16 *destination, s32 scale, s32 count)
+s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale, s32 count)
 {
     s32 remaining;
     u32 maskRed;

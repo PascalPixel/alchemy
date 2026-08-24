@@ -34560,7 +34560,7 @@
     },
     {
       "en_owner": "0808f304",
-      "source": "games/gs1/src/0808f304.c",
+      "source": "games/gs1/src/effect_runtime/is_active.c",
       "size": 40,
       "all_exact": true,
       "editions": [

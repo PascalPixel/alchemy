@@ -8,7 +8,7 @@ extern s32 Resource_CopyData(s32, s32, u8 *);
 extern u8 Data_080aed4c[];
 extern u8 Data_080aedcc[];
 
-void Func_080ae88c(void) {
+void Resource_LoadPairedBlocksIfAvailable(void) {
     s32 temp_r0;
     s32 temp_r0_2;
     void *temp_r5;

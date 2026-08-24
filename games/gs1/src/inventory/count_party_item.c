@@ -3,17 +3,17 @@
 s32 PartyInventory_CountItem(s32 item_id)
 {
     u16 owners[16];
-    s32 result = 0;
-    s32 count = Party_ListActiveOwners(owners);
+    s32 item_count = 0;
+    s32 owner_count = Party_ListActiveOwners(owners);
 
-    if (result < count) {
-        u16 *owner = owners;
-        s32 remaining = count;
+    if (item_count < owner_count) {
+        u16 *owner_cursor = owners;
+        s32 remaining_owners = owner_count;
 
         do {
-            result += Inventory_CountItem(*owner++, item_id);
-            remaining--;
-        } while (remaining != 0);
+            item_count += Inventory_CountItem(*owner_cursor++, item_id);
+            remaining_owners--;
+        } while (remaining_owners != 0);
     }
-    return result;
+    return item_count;
 }

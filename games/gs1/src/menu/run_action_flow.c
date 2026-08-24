@@ -1,13 +1,13 @@
 #include "types.h"
 
-struct MenuObject_080a76d0 {
+struct MenuActionObject {
     u8 padding0[5];
     u8 mode;
 };
 
-struct MenuState_080a76d0 {
+struct MenuActionState {
     u8 padding0[0x14];
-    struct MenuObject_080a76d0 *object;
+    struct MenuActionObject *object;
     u8 padding18[0x15C];
     u16 selection;
 };
@@ -22,7 +22,7 @@ s32 Func_080a96d8(void);
 
 s32 Menu_RunActionFlow(void)
 {
-    struct MenuState_080a76d0 *state = Data_03001f2c;
+    struct MenuActionState *state = Data_03001f2c;
     s32 step = 0;
     s32 finished = step;
     s32 result = 0;

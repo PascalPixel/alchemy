@@ -38382,7 +38382,7 @@
     },
     {
       "en_owner": "080f6038",
-      "source": "games/gs1/src/080f6038.c",
+      "source": "games/gs1/src/graphics/color/scale_rgb555.c",
       "size": 104,
       "status": "shared_core",
       "starts": {
@@ -38562,7 +38562,7 @@
     },
     {
       "en_owner": "080f9438",
-      "source": "games/gs1/src/080f9438.c",
+      "source": "games/gs1/src/audio/initialize_runtime_defaults.c",
       "size": 142,
       "status": "shared_core",
       "starts": {
@@ -38952,7 +38952,7 @@
     },
     {
       "en_owner": "080f9a50",
-      "source": "games/gs1/src/080f9a50.c",
+      "source": "games/gs1/src/audio/music/track/finish.c",
       "size": 46,
       "status": "shared_core",
       "starts": {
@@ -40542,7 +40542,7 @@
     },
     {
       "en_owner": "080fb790",
-      "source": "games/gs1/src/080fb790.c",
+      "source": "games/gs1/src/audio/dummy_callback.c",
       "size": 2,
       "status": "shared_core",
       "starts": {

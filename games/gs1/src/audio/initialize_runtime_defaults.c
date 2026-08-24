@@ -1,6 +1,7 @@
+#include "audio_engine_symbols.h"
 #include "types.h"
 
-void Func_080fa2a0(void);
+void Audio_Initialize(void);
 extern u8 Data_02003000;
 extern u8 Data_02003004;
 extern u16 Data_02003008;
@@ -14,12 +15,12 @@ extern u16 Data_02003038;
 extern u8 Data_0200303c;
 extern u8 Data_02003040;
 
-void Func_080f9438(void)
+void Audio_InitializeRuntimeDefaults(void)
 {
-    s16 *item;
-    s32 count;
+    s16 *player_volume;
+    s32 remaining;
 
-    Func_080fa2a0();
+    Audio_Initialize();
     Data_0200303c = 0xff;
     Data_02003000 = 0;
     Data_02003034 = 0x100;
@@ -30,12 +31,12 @@ void Func_080f9438(void)
     Data_0200300c = 4;
     Data_02003014 = 0;
     Data_02003040 = 0;
-    item = &Data_02003020;
+    player_volume = &Data_02003020;
     Data_02003004 = 0;
-    count = 7;
+    remaining = 7;
     do {
-        count--;
-        *item = 0;
-        item += 1;
-    } while (count >= 0);
+        remaining--;
+        *player_volume = 0;
+        player_volume += 1;
+    } while (remaining >= 0);
 }

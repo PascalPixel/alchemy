@@ -38,7 +38,7 @@ extern u32 Random16(void);
 #define Rand Random16
 extern void RotateVectorByMagnitude(s32, s32, struct EffectPosition *);
 extern void NormalizeVector(struct EffectPosition *);
-extern s32 Func_0809ba34(struct RadialCameraEffect *);
+extern s32 EffectSlot_HasReachedTarget(struct RadialCameraEffect *);
 extern void Func_0809bb34(struct RadialCameraEffect *);
 
 void UpdateRadialCameraEffect(struct RadialCameraEffect *effect)
@@ -65,7 +65,7 @@ top:
         effect->flag = state;
         goto advance;
     } else if (state == 1) {
-        if (Func_0809ba34(effect) != 0)
+        if (EffectSlot_HasReachedTarget(effect) != 0)
             return;
         *state_pointer = (u8)*state_pointer + 1;
         goto top;
@@ -83,7 +83,7 @@ advance:
         *state_pointer = (u8)*state_pointer + 1;
         return;
     } else if (state == 3) {
-        if (Func_0809ba34(effect) == 0)
+        if (EffectSlot_HasReachedTarget(effect) == 0)
             Func_0809bb34(effect);
         return;
     } else {

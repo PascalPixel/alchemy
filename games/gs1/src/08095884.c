@@ -9,7 +9,7 @@ void Func_08095884(void) {
     var_r6 = 0x17;
     do {
         var_r6 -= 1;
-        Func_0809b804((struct EffectSlot *)var_r5);
+        EffectSlot_Update((struct EffectSlot *)var_r5);
         var_r5 += 0x48;
     } while (var_r6 >= 0);
 }

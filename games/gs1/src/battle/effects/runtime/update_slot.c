@@ -1,6 +1,6 @@
 #include "effect_0809b11c.h"
 
-void Func_0809b804(struct EffectSlot *effect)
+void EffectSlot_Update(struct EffectSlot *effect)
 {
     if (effect->active != 0) {
         effect->age++;

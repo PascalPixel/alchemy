@@ -44,7 +44,7 @@ s32 Random16(void);
 #define Rand Random16
 void RotateVectorByMagnitude(s32 magnitude, s32 angle, struct EffectPosition *output);
 void NormalizeVector(struct EffectPosition *value);
-s32 Func_0809ba34(struct RadialBurstEffect *effect);
+s32 EffectSlot_HasReachedTarget(struct RadialBurstEffect *effect);
 void Func_0809bb34(struct RadialBurstEffect *effect);
 
 void UpdateRadialBurstEffect(struct RadialBurstEffect *effect)
@@ -69,7 +69,7 @@ again:
     }
 
     if (state == 1) {
-        if (Func_0809ba34(effect) == 0) {
+        if (EffectSlot_HasReachedTarget(effect) == 0) {
             effect->state++;
             goto again;
         }
@@ -93,6 +93,6 @@ again:
         return;
     }
 
-    if (state == 3 && Func_0809ba34(effect) == 0)
+    if (state == 3 && EffectSlot_HasReachedTarget(effect) == 0)
         Func_0809bb34(effect);
 }

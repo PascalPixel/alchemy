@@ -46493,7 +46493,7 @@
     },
     {
       "en_owner": "0809b804",
-      "source": "games/gs1/src/0809b804.c",
+      "source": "games/gs1/src/battle/effects/runtime/update_slot.c",
       "size": 104,
       "all_exact": true,
       "editions": [
@@ -46549,7 +46549,7 @@
     },
     {
       "en_owner": "0809ba34",
-      "source": "games/gs1/src/0809ba34.c",
+      "source": "games/gs1/src/battle/effects/runtime/has_reached_target.c",
       "size": 38,
       "all_exact": true,
       "editions": [
@@ -46605,7 +46605,7 @@
     },
     {
       "en_owner": "0809ba5c",
-      "source": "games/gs1/src/0809ba5c.c",
+      "source": "games/gs1/src/battle/effects/runtime/set_position.c",
       "size": 18,
       "all_exact": true,
       "editions": [
@@ -46661,7 +46661,7 @@
     },
     {
       "en_owner": "0809ba70",
-      "source": "games/gs1/src/0809ba70.c",
+      "source": "games/gs1/src/battle/effects/runtime/set_object_mode.c",
       "size": 12,
       "all_exact": true,
       "editions": [
@@ -46717,7 +46717,7 @@
     },
     {
       "en_owner": "0809ba7c",
-      "source": "games/gs1/src/0809ba7c.c",
+      "source": "games/gs1/src/battle/effects/runtime/set_callback.c",
       "size": 20,
       "all_exact": true,
       "editions": [

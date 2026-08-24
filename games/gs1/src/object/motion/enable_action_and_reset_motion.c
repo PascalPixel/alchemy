@@ -2,7 +2,7 @@
 #include "types.h"
 
 s32 Object_ResetMotion();
-void Func_080920a0(void)
+void ObjectMotion_EnableActionAndResetMotion(void)
 {
   void *temp_r0;
   unsigned char new_var;

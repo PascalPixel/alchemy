@@ -11,7 +11,7 @@ extern struct State_0801c304 *Data_03001e98;
 void Func_0801a7f4(u32);
 void Func_0801b228(void);
 void Func_0801b010(u32, u32);
-void Func_0801a968(void);
+void Resource_ScheduleOwnerResetDelayed(void);
 u32 Func_0801b424(u32);
 void Resource_ResetOwnerEntries(void);
 
@@ -26,7 +26,7 @@ u32 Func_0801c304(u32 value)
     Func_0801a7f4(value);
     Func_0801b228();
     Func_0801b010(0, 5);
-    Func_0801a968();
+    Resource_ScheduleOwnerResetDelayed();
     result = Func_0801b424(1);
     Resource_ResetOwnerEntries();
     return result;

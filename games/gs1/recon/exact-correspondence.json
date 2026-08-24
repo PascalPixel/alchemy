@@ -15972,7 +15972,7 @@
     },
     {
       "en_owner": "080798b4",
-      "source": "games/gs1/src/080798b4.c",
+      "source": "games/gs1/src/owner/get_default_element.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -18852,7 +18852,7 @@
     },
     {
       "en_owner": "08091294",
-      "source": "games/gs1/src/08091294.c",
+      "source": "games/gs1/src/battle/effects/color/clamp_rgb555_channel.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -18882,7 +18882,7 @@
     },
     {
       "en_owner": "080912a8",
-      "source": "games/gs1/src/080912a8.c",
+      "source": "games/gs1/src/battle/effects/color/clamp_rgb555_component.c",
       "size": 16,
       "status": "shared_core",
       "starts": {

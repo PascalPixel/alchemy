@@ -1,7 +1,7 @@
 #include "effect_0809b11c.h"
 #include "global_cells.h"
 
-void Func_08095884(void) {
+void BattleEffect_UpdateAllSlots(void) {
     s32 var_r5;
     s32 var_r6;
 

@@ -1,7 +1,7 @@
 #include "audio_engine_symbols.h"
 #include "types.h"
 
-void Func_080f9ef8(void *, void *);
+void MusicTrack_Stop(void *, void *);
 
 void MusicPlayer_Stop(u8 *player)
 {
@@ -19,7 +19,7 @@ void MusicPlayer_Stop(u8 *player)
     track = *(u8 **)(player + 44);
     if (track_count > 0) {
         do {
-            Func_080f9ef8(player, track);
+            MusicTrack_Stop(player, track);
             track_count--;
             track += 80;
         } while (track_count > 0);

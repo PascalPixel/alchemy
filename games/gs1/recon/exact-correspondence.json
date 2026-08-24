@@ -22902,7 +22902,7 @@
     },
     {
       "en_owner": "08096c80",
-      "source": "games/gs1/src/08096c80.c",
+      "source": "games/gs1/src/object/spawn.c",
       "size": 92,
       "status": "shared_core",
       "starts": {

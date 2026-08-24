@@ -18732,7 +18732,7 @@
     },
     {
       "en_owner": "08091200",
-      "source": "games/gs1/src/08091200.c",
+      "source": "games/gs1/src/battle/effects/interpolate/apply_color_to_target_buffer.c",
       "size": 32,
       "status": "shared_core",
       "starts": {

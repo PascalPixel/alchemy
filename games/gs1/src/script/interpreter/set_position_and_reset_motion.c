@@ -2,7 +2,7 @@
 
 void Func_0800d130(struct ScriptInterpreter *, s32, s32, s32);
 
-s32 Func_0800d9f0(struct ScriptInterpreter *interpreter)
+s32 Script_SetPositionAndResetMotion(struct ScriptInterpreter *interpreter)
 {
     s32 first;
     s32 second;

@@ -9042,7 +9042,7 @@
     },
     {
       "en_owner": "0800d9f0",
-      "source": "games/gs1/src/0800d9f0.c",
+      "source": "games/gs1/src/script/interpreter/set_position_and_reset_motion.c",
       "size": 40,
       "all_exact": true,
       "editions": [

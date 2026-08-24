@@ -4,7 +4,7 @@
  "target": "gs1-en",
  "derivation": "full-c-progress-v1",
  "audit": "complete",
- "total_union_bytes": 1348398,
+ "total_union_bytes": 1348402,
  "main": {
   "id": "main",
   "executable_bytes": 548364,
@@ -17343,8 +17343,8 @@
   {
    "id": "resource_39b",
    "decoded_bytes": 12284,
-   "executable_bytes": 8818,
-   "excluded_bytes": 3466,
+   "executable_bytes": 8820,
+   "excluded_bytes": 3464,
    "audit": "complete",
    "intervals": [
     {
@@ -17480,7 +17480,7 @@
      "evidence": "adjacent audited literal_pool spans; see namespace evidence"
     },
     {
-     "start": 33556718,
+     "start": 33556716,
      "end": 33557382,
      "kind": "thumb",
      "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -17970,8 +17970,8 @@
   {
    "id": "resource_39c",
    "decoded_bytes": 28696,
-   "executable_bytes": 22198,
-   "excluded_bytes": 6498,
+   "executable_bytes": 22200,
+   "excluded_bytes": 6496,
    "audit": "complete",
    "intervals": [
     {
@@ -18071,7 +18071,7 @@
      "evidence": "adjacent audited literal_pool spans; see namespace evidence"
     },
     {
-     "start": 33556718,
+     "start": 33556716,
      "end": 33557382,
      "kind": "thumb",
      "evidence": "adjacent audited thumb spans; see namespace evidence"

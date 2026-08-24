@@ -2,7 +2,7 @@
 #include "global_cells.h"
 #include "gs1_edition.h"
 
-void *Func_08015e8c(void)
+void *RenderOutput_AcquireFree(void)
 {
   void **temp_r0;
   void **temp_r2;

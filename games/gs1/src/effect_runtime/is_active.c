@@ -1,7 +1,7 @@
 #include "types.h"
 #include "global_cells.h"
 
-u32 Func_0808f304(void)
+u32 EffectRuntime_IsActive(void)
 {
   s16 temp_r3_2;
   u32 var_r0;
@@ -16,4 +16,3 @@ u32 Func_0808f304(void)
   }
   return var_r0;
 }
-

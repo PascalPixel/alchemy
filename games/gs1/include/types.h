@@ -470,6 +470,7 @@ typedef int bool;
 #define EffectRuntime_GetCurrentObject Func_0808ed4c
 #define EffectRuntime_ClearCurrentFlags Func_0808ed78
 #define EffectRuntime_SetCurrentPosition Func_0808edac
+#define EffectRuntime_IsActive Func_0808f304
 #define EffectRuntime_PrepareRisingObject Func_0808f0d8
 #define EffectRuntime_RunRisingObjectSequence Func_0808f140
 #define BattleEffect_RunMode0 Func_080de974

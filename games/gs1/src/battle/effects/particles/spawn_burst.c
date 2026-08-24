@@ -34,7 +34,7 @@ extern s32 Random16(void);
 #define Rand Random16
 extern void Object_SetMode(struct Object_08092624 *, s32);
 extern void Object_SetCallback(struct Object_08092624 *, const void *);
-extern void Func_080929d8(struct Object_08092624 *);
+extern void ObjectGroup_SetChildValue(struct Object_08092624 *);
 extern s32 Func_08002304(s32, s32);
 extern const u8 Data_0809fbec[];
 extern const u8 Data_0809fc04[];
@@ -61,7 +61,7 @@ void BattleEffect_SpawnBurstParticle(struct Object_08092624 *source, s32 optiona
         }
 
         if (optional != 0)
-            Func_080929d8(object);
+            ObjectGroup_SetChildValue(object);
 
         object->mode_55 = 0;
         value = Func_08002304(Rand(), 10) + 5;

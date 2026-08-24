@@ -165,6 +165,10 @@ typedef int bool;
 #define ObjectMotion_ArmCallback Func_08092adc
 #define ObjectVisual_CopyAttributes Func_08092b54
 #define ObjectTable_FindActiveByValue Func_08092be0
+#define ObjectGroup_ConfigureChildValue Func_08092950
+#define ObjectGroup_ApplyIndexedChildValue Func_08092980
+#define ObjectGroup_SetChildValue Func_080929d8
+#define ObjectMotion_SetActionVariant Func_08092b08
 #define Audio_InitializeRuntimeDefaults Func_080f9438
 #define Graphics_ScaleRgb555 Func_080f6038
 #define Audio_ClearChannelChain Func_080f9a30
@@ -187,5 +191,8 @@ typedef int bool;
 #define MusicTrack_SetModulationFromCommand Func_080fa1e8
 #define MusicTrack_Stop Func_080f9ef8
 #define CgbAudio_Update Func_080fae58
+#define Math_UmulHigh32 Func_080f95e0
+#define AudioEngine_RunMixerTick Func_080f95f0
+#define MusicTrack_HandleNote Func_080f9f6c
 
 #endif

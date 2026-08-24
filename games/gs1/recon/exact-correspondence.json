@@ -20442,7 +20442,7 @@
     },
     {
       "en_owner": "080923c4",
-      "source": "games/gs1/src/080923c4.c",
+      "source": "games/gs1/src/object/motion/commit_current_position_and_activate.c",
       "size": 30,
       "status": "shared_core",
       "starts": {

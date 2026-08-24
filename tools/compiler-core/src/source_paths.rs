@@ -3,6 +3,9 @@
 //! Exact C historically lived in one flat directory and encoded ownership in
 //! each filename. `games/<game>/source-paths.json` maps stable address-qualified
 //! owner identities to canonical human symbols and descriptive source paths.
+//! A source path is normally the whole record: its filename stem is the symbol.
+//! Object records exist only when a name differs or owner-specific metadata is
+//! needed.
 //! GS1 remains the default resolver for existing callers; target-aware build
 //! paths select the corresponding game registry. Owners absent from a manifest
 //! retain their legacy flat path during the migration.
@@ -185,8 +188,8 @@ impl SourcePaths {
     pub fn parse_for_game(repository: &Path, game: &str, text: &str) -> Result<Self, String> {
         let (source_directory, manifest) = game_paths(game)?;
         let value: Value = serde_json::from_str(text).map_err(|error| error.to_string())?;
-        if value.get("format").and_then(Value::as_u64) != Some(2) {
-            return Err("format must be 2".into());
+        if value.get("format").and_then(Value::as_u64) != Some(3) {
+            return Err("format must be 3".into());
         }
         let owners = value
             .get("owners")
@@ -196,34 +199,46 @@ impl SourcePaths {
         let mut by_path = BTreeMap::<PathBuf, Vec<SourceOwner>>::new();
         for (id, value) in owners {
             let owner = SourceOwner::parse(id)?;
-            let record = value
-                .as_object()
-                .ok_or_else(|| format!("{id}: owner record must be an object"))?;
-            let name = record
-                .get("name")
-                .and_then(Value::as_str)
-                .ok_or_else(|| format!("{id}: owner name must be a string"))?;
-            if !c_identifier(name) {
+            let (explicit_name, source, call_via) = if let Some(source) = value.as_str() {
+                (None, Some(validate_source_path(source)?), None)
+            } else {
+                let record = value.as_object().ok_or_else(|| {
+                    format!("{id}: owner record must be a source string or object")
+                })?;
+                let explicit_name = record
+                    .get("name")
+                    .map(|name| {
+                        name.as_str()
+                            .ok_or_else(|| format!("{id}: owner name must be a string"))
+                    })
+                    .transpose()?;
+                let source = record
+                    .get("source")
+                    .map(|source| {
+                        source
+                            .as_str()
+                            .ok_or_else(|| format!("{id}: source path must be a string"))
+                            .and_then(validate_source_path)
+                    })
+                    .transpose()?;
+                let call_via = record
+                    .get("call_via")
+                    .map(|value| {
+                        value
+                            .as_str()
+                            .ok_or_else(|| format!("{id}: call_via must be a string"))
+                            .and_then(|value| parse_lower_hex(value, 8, id))
+                    })
+                    .transpose()?;
+                (explicit_name, source, call_via)
+            };
+            let name = explicit_name
+                .map(str::to_owned)
+                .or_else(|| source.as_deref().and_then(source_stem))
+                .ok_or_else(|| format!("{id}: owner record needs a name or source"))?;
+            if !c_identifier(&name) {
                 return Err(format!("{id}: owner name {name:?} is not a C identifier"));
             }
-            let path = record
-                .get("source")
-                .map(|source| {
-                    source
-                        .as_str()
-                        .ok_or_else(|| format!("{id}: source path must be a string"))
-                        .and_then(validate_source_path)
-                })
-                .transpose()?;
-            let call_via = record
-                .get("call_via")
-                .map(|value| {
-                    value
-                        .as_str()
-                        .ok_or_else(|| format!("{id}: call_via must be a string"))
-                        .and_then(|value| parse_lower_hex(value, 8, id))
-                })
-                .transpose()?;
             if call_via.is_some_and(|address| {
                 owner.is_main()
                     || !(0x0200_0000..0x0204_0000).contains(&address)
@@ -237,8 +252,8 @@ impl SourcePaths {
                 .insert(
                     owner,
                     SourceRecord {
-                        name: name.to_string(),
-                        path: path.clone(),
+                        name,
+                        path: source.clone(),
                         call_via,
                     },
                 )
@@ -246,7 +261,7 @@ impl SourcePaths {
             {
                 return Err(format!("duplicate source owner {id}"));
             }
-            if let Some(path) = path {
+            if let Some(path) = source {
                 by_path.entry(path).or_default().push(owner);
             }
         }
@@ -339,11 +354,30 @@ impl SourcePaths {
             .get_mut("owners")
             .and_then(Value::as_object_mut)
             .ok_or_else(|| format!("{}: owners must be an object", manifest.display()))?;
-        let Some(record) = owners.get_mut(&owner.id()).and_then(Value::as_object_mut) else {
+        let Some(owner_value) = owners.get_mut(&owner.id()) else {
             return Ok(false);
         };
-        if record.remove("source").is_none() {
-            return Ok(false);
+        let name = match owner_value {
+            Value::String(source) => source_stem(&validate_source_path(source)?)
+                .ok_or_else(|| format!("{}: source has no filename stem", owner.id()))?,
+            Value::Object(record) => {
+                let Some(source) = record.remove("source") else {
+                    return Ok(false);
+                };
+                if record.contains_key("name") {
+                    String::new()
+                } else {
+                    let source = source
+                        .as_str()
+                        .ok_or_else(|| format!("{}: source path must be a string", owner.id()))?;
+                    source_stem(&validate_source_path(source)?)
+                        .ok_or_else(|| format!("{}: source has no filename stem", owner.id()))?
+                }
+            }
+            _ => return Err(format!("{}: invalid owner record", owner.id())),
+        };
+        if !name.is_empty() {
+            *owner_value = serde_json::json!({"name": name});
         }
         let mut rendered =
             serde_json::to_string_pretty(&value).map_err(|error| error.to_string())?;
@@ -583,6 +617,12 @@ fn validate_source_path(source: &str) -> Result<PathBuf, String> {
     Ok(path.to_path_buf())
 }
 
+fn source_stem(path: &Path) -> Option<String> {
+    path.file_stem()
+        .and_then(|stem| stem.to_str())
+        .map(str::to_owned)
+}
+
 fn visit_c_files(directory: &Path, visit: &mut impl FnMut(&Path)) -> Result<(), String> {
     if !directory.exists() {
         return Ok(());
@@ -608,10 +648,10 @@ mod tests {
 
     fn manifest() -> &'static str {
         r#"{
-  "format": 2,
+  "format": 3,
   "owners": {
-    "main:080bbb0c": {"name":"resolve_action","source":"battle/resolve_action.c"},
-    "resource_39c:0200013c": {"name":"spawn_configured_effect","source":"battle/effects/spawn_configured_effect.c","call_via":"020066d2"}
+    "main:080bbb0c": "battle/resolve_action.c",
+    "resource_39c:0200013c": {"source":"battle/effects/spawn_configured_effect.c","call_via":"020066d2"}
   }
 }"#
     }
@@ -700,7 +740,7 @@ mod tests {
             "/tmp/source.c",
             "battle/readme.md",
         ] {
-            let text = format!("{{\"format\":2,\"owners\":{{\"main:080bbb0c\":{{\"name\":\"resolve_action\",\"source\":{path:?}}}}}}}");
+            let text = format!("{{\"format\":3,\"owners\":{{\"main:080bbb0c\":{{\"name\":\"resolve_action\",\"source\":{path:?}}}}}}}");
             assert!(SourcePaths::parse(root.path(), &text).is_err(), "{path}");
         }
     }
@@ -716,7 +756,7 @@ mod tests {
             ("resource_39c:0200013c", "33580754"),
         ] {
             let text = format!(
-                r#"{{"format":2,"owners":{{"{owner}":{{"name":"owner","call_via":{call_via}}}}}}}"#
+                r#"{{"format":3,"owners":{{"{owner}":{{"name":"owner","call_via":{call_via}}}}}}}"#
             );
             assert!(SourcePaths::parse(root.path(), &text).is_err());
         }
@@ -726,10 +766,10 @@ mod tests {
     fn one_source_can_own_the_same_address_in_related_overlays() {
         let root = tempdir().unwrap();
         let text = r#"{
-  "format": 2,
+  "format": 3,
   "owners": {
-    "resource_39b:0200013c": {"name":"spawn_configured_effect","source":"battle/effects/spawn_configured_effect.c"},
-    "resource_39c:0200013c": {"name":"spawn_configured_effect","source":"battle/effects/spawn_configured_effect.c"}
+    "resource_39b:0200013c": "battle/effects/spawn_configured_effect.c",
+    "resource_39c:0200013c": "battle/effects/spawn_configured_effect.c"
   }
 }"#;
         let paths = SourcePaths::parse(root.path(), text).unwrap();
@@ -755,10 +795,10 @@ mod tests {
         fs::write(
             &manifest_path,
             r#"{
-  "format": 2,
+  "format": 3,
   "owners": {
-    "resource_39b:02000104": {"name":"integrate_effect_motion","source":"overlays/shared/integrate_effect_motion.c"},
-    "resource_39c:02000104": {"name":"integrate_effect_motion","source":"overlays/shared/integrate_effect_motion.c"}
+    "resource_39b:02000104": "overlays/shared/integrate_effect_motion.c",
+    "resource_39c:02000104": "overlays/shared/integrate_effect_motion.c"
   }
 }"#,
         )
@@ -771,6 +811,13 @@ mod tests {
             })
             .unwrap());
         let reloaded = SourcePaths::load(root.path()).unwrap();
+        assert_eq!(
+            reloaded.registered_name(SourceOwner::Overlay {
+                resource: 0x39b,
+                address: 0x0200_0104,
+            }),
+            Some("integrate_effect_motion")
+        );
         assert_eq!(
             reloaded.owners_for_path(Path::new(
                 "games/gs1/src/overlays/shared/integrate_effect_motion.c"
@@ -789,7 +836,7 @@ mod tests {
         fs::create_dir_all(manifest_path.parent().unwrap()).unwrap();
         fs::write(
             &manifest_path,
-            r#"{"format":2,"owners":{"main:080132cc":{"name":"constant_zero_result","source":"runtime/constant_zero_result.c"}}}"#,
+            r#"{"format":3,"owners":{"main:080132cc":"runtime/constant_zero_result.c"}}"#,
         )
         .unwrap();
         let paths = SourcePaths::load_for_game(root.path(), "gs2").unwrap();

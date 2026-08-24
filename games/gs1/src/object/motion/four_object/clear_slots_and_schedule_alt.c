@@ -5,7 +5,7 @@ void Func_08009038(void *);
 void ScheduleCallback(s32);
 extern u8 Data_080ad40d;
 
-void Func_080ad658(void)
+void FourObjectMotion_ClearSlotsAndScheduleAlt(void)
 {
     struct FourObjectMotionState *state = Data_03001f2c;
     s32 index = 0;

@@ -4,7 +4,7 @@
 extern u8 *Data_03001e8c;
 
 s32 Func_08002df0(s16 *);
-s16 *Func_08004970(s32 arg0);
+s16 *Runtime_BumpAllocateAlternatePool(s32 arg0);
 s32 Func_0801de5c(s16 *, s32, s32, s32);
 
 void Func_0801e8b0(
@@ -22,7 +22,7 @@ void Func_0801e8b0(
     s32 destination_address;
     s32 phase;
 
-    buffer = Func_08004970(0x200);
+    buffer = Runtime_BumpAllocateAlternatePool(0x200);
     base = Data_03001e8c;
     output = buffer;
     if (*text != 0) {

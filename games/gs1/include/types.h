@@ -63,8 +63,15 @@ typedef int bool;
 #define Object_InitializeMode Func_08009020
 #define Scene_GetRecord Func_0808a080
 #define Resource_ResetEntry Func_08003f3c
+#define Resource_ClearSlotReferences Func_08003f04
+#define Resource_ActivateEntry Func_08003f78
+#define Resource_InitializeTable Func_0800403c
 #define Runtime_AllocateHeapBlock Func_080048b0
 #define Resource_GetBuffer Func_080040d0
+#define Runtime_PushSlotEntry Func_08003dec
+#define Scheduler_ResetTaskTable Func_080040e8
+#define Runtime_BumpAllocate Func_08004938
+#define Runtime_BumpAllocateAlternatePool Func_08004970
 #define UiPalette_SetColor Func_080150b8
 #define Menu_AppendResourceEntry Func_080287a8
 #define Object_CheckMovementCollision Func_080091d8

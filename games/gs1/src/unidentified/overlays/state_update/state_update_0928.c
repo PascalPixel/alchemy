@@ -1,30 +1,11 @@
-#include "types.h"
-#define NULL ((void *)0)
+#define CreateOverlayObject Func_02001166
+#define SetOverlayObjectMode Func_020011a0
+#define SetOverlayObjectSlot Func_020012a0
+#define CreateConfiguredOverlayObject Func_020000a0
 
-void *Func_02001166(s32, s32, s32, s32);
-void Func_020011a0(void *, s32);
-void Func_020012a0(void *, s32);
+#include "create_configured_overlay_object.h"
 
-void *Func_020000a0(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+void *CreateConfiguredOverlayObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    u8 *result = Func_02001166(arg3, arg0, arg1, arg2);
-
-    if (result != NULL) {
-        u8 *object = *(u8 **)(result + 0x50);
-        s32 flags;
-        s32 mask = 13;
-
-        flags = object[9];
-        mask = -mask;
-        mask &= flags;
-        mask |= 4;
-        object[9] = mask;
-        result[0x55] = 0;
-        result[0x59] = 8;
-        Func_020011a0(result, 0);
-        Func_020012a0(result, 15);
-        result[0x23] = (result[0x23] & 0xfe) | 2;
-        return result;
-    }
-    return NULL;
+#include "create_configured_overlay_object_body.inc"
 }

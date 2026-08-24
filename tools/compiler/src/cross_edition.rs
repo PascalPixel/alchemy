@@ -21,6 +21,7 @@ const OVERLAY_BASE: u64 = 0x0200_0000;
 const OVERLAY_FIRST: usize = 0x36f;
 const OVERLAY_LAST: usize = 0x3ce;
 const CORRESPONDENCE_SCHEMA_VERSION: u32 = 2;
+const CORPUS_EDITION_BUILD_SCHEMA_VERSION: u32 = 2;
 const USAGE: &str = "usage: compiler cross-edition ([--calls] [--json] [--rom-dir DIR] [--object FILE] [--edition-build FILE] <8-digit-owner> | --all [--rom-dir DIR] [--object-dir DIR] [--write FILE] [--edition-build FILE] | --all-overlays [--rom-dir DIR] [--write FILE])";
 
 #[derive(Debug, Serialize)]
@@ -239,22 +240,16 @@ struct CorpusEditionBuildReport {
 #[derive(Debug, Serialize)]
 struct CorpusEditionBuildOwner {
     en_owner: String,
-    source: String,
     size: usize,
     #[serde(skip_serializing_if = "is_false")]
     edition_variant: bool,
-    all_exact: bool,
-    editions: Vec<CorpusEditionBuildEntry>,
-}
-
-#[derive(Debug, Serialize)]
-struct CorpusEditionBuildEntry {
-    edition: String,
-    start: String,
-    size: usize,
-    differing_bytes: Option<usize>,
-    byte_exact: bool,
-    error: Option<String>,
+    starts: BTreeMap<String, String>,
+    #[serde(skip_serializing_if = "BTreeMap::is_empty")]
+    size_overrides: BTreeMap<String, usize>,
+    #[serde(skip_serializing_if = "BTreeMap::is_empty")]
+    differing_bytes: BTreeMap<String, usize>,
+    #[serde(skip_serializing_if = "BTreeMap::is_empty")]
+    errors: BTreeMap<String, String>,
 }
 
 #[derive(Debug, Serialize)]
@@ -273,7 +268,6 @@ struct EditionBuildSummary {
 #[derive(Debug, Serialize)]
 struct EditionBuildFailure {
     en_owner: String,
-    source: String,
     error: String,
 }
 
@@ -707,6 +701,68 @@ fn write_json<T: Serialize>(path: &Path, value: &T, label: &str) -> Result<(), S
     Ok(())
 }
 
+fn compact_corpus_edition_build_owner(
+    owner: EditionBuildReport,
+) -> Result<CorpusEditionBuildOwner, String> {
+    let en_owner = canonical_main_owner_id(owner.owner_symbol.trim_start_matches("Func_"))?;
+    let mut starts = BTreeMap::new();
+    let mut size_overrides = BTreeMap::new();
+    let mut differing_bytes = BTreeMap::new();
+    let mut errors = BTreeMap::new();
+    for entry in owner.editions {
+        if starts.insert(entry.edition.clone(), entry.start).is_some() {
+            return Err(format!("{en_owner}: duplicate {} edition", entry.edition));
+        }
+        if entry.size != owner.size {
+            size_overrides.insert(entry.edition.clone(), entry.size);
+        }
+        match (entry.differing_bytes, entry.error) {
+            (Some(difference), None) => {
+                if entry.byte_exact != (difference == 0) {
+                    return Err(format!(
+                        "{en_owner}: {} byte_exact disagrees with differing_bytes",
+                        entry.edition
+                    ));
+                }
+                if difference != 0 {
+                    differing_bytes.insert(entry.edition, difference);
+                }
+            }
+            (None, Some(error)) if !entry.byte_exact => {
+                errors.insert(entry.edition, error);
+            }
+            _ => {
+                return Err(format!(
+                    "{en_owner}: {} must have either differing_bytes or an error",
+                    entry.edition
+                ));
+            }
+        }
+    }
+    if starts.len() != EDITIONS.len()
+        || EDITIONS
+            .into_iter()
+            .any(|edition| !starts.contains_key(edition))
+    {
+        return Err(format!("{en_owner}: edition build set is incomplete"));
+    }
+    let derived_all_exact = differing_bytes.is_empty() && errors.is_empty();
+    if owner.all_exact != derived_all_exact {
+        return Err(format!(
+            "{en_owner}: all_exact disagrees with sparse edition evidence"
+        ));
+    }
+    Ok(CorpusEditionBuildOwner {
+        en_owner,
+        size: owner.size,
+        edition_variant: owner.edition_variant,
+        starts,
+        size_overrides,
+        differing_bytes,
+        errors,
+    })
+}
+
 fn write_corpus_edition_build(
     path: &Path,
     object_dir: &Path,
@@ -716,7 +772,6 @@ fn write_corpus_edition_build(
     unresolved_owners: usize,
     roms: &EditionRoms,
 ) -> Result<CorpusEditionBuildReport, String> {
-    let source_paths = SourcePaths::load(compiler_core::routing::root())?;
     let mut owners = Vec::new();
     let mut failures = Vec::new();
     for (index, (owner, report)) in reports.iter().enumerate() {
@@ -724,11 +779,7 @@ fn write_corpus_edition_build(
         match edition_build_report(owner, &object, report, roms) {
             Ok(build) => owners.push(build),
             Err(error) => failures.push(EditionBuildFailure {
-                en_owner: owner.clone(),
-                source: source_paths
-                    .repository_relative_path(SourceOwner::parse(&format!("main:{owner}"))?)
-                    .to_string_lossy()
-                    .replace('\\', "/"),
+                en_owner: canonical_main_owner_id(owner)?,
                 error,
             }),
         }
@@ -788,28 +839,10 @@ fn write_corpus_edition_build(
         .sum();
     let owners = owners
         .into_iter()
-        .map(|owner| CorpusEditionBuildOwner {
-            en_owner: owner.owner_symbol.trim_start_matches("Func_").into(),
-            source: owner.source,
-            size: owner.size,
-            edition_variant: owner.edition_variant,
-            all_exact: owner.all_exact,
-            editions: owner
-                .editions
-                .into_iter()
-                .map(|entry| CorpusEditionBuildEntry {
-                    edition: entry.edition,
-                    start: entry.start,
-                    size: entry.size,
-                    differing_bytes: entry.differing_bytes,
-                    byte_exact: entry.byte_exact,
-                    error: entry.error,
-                })
-                .collect(),
-        })
-        .collect::<Vec<_>>();
+        .map(compact_corpus_edition_build_owner)
+        .collect::<Result<Vec<_>, String>>()?;
     let build = CorpusEditionBuildReport {
-        schema_version: 1,
+        schema_version: CORPUS_EDITION_BUILD_SCHEMA_VERSION,
         game: "gs1",
         source_edition: "en",
         source_state: "byte-exact C compiled or relinked per edition",
@@ -1067,6 +1100,10 @@ fn owner_address(owner: &str) -> Result<u64, String> {
     Ok(address)
 }
 
+fn canonical_main_owner_id(owner: &str) -> Result<String, String> {
+    SourceOwner::parse(&format!("main:{owner}")).map(SourceOwner::id)
+}
+
 fn resolve_object(
     owner: &str,
     explicit: Option<&Path>,
@@ -1241,7 +1278,7 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
             }
         }
         owners.push(CorpusOwner {
-            en_owner: SourceOwner::parse(&format!("main:{owner}"))?.id(),
+            en_owner: canonical_main_owner_id(&owner)?,
             size: report.size,
             status: if report.core_identical {
                 "shared_core"
@@ -1258,7 +1295,7 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
         .into_iter()
         .map(|(owner, error)| {
             Ok(UnresolvedOwner {
-                en_owner: SourceOwner::parse(&format!("main:{owner}"))?.id(),
+                en_owner: canonical_main_owner_id(&owner)?,
                 error,
             })
         })
@@ -2649,7 +2686,53 @@ mod tests {
             },
             "resource_36f:02000030",
         );
+        assert_identity(
+            &EditionBuildFailure {
+                en_owner: SourceOwner::Main(0x0800_2ee4).id(),
+                error: "unbuildable".into(),
+            },
+            "main:08002ee4",
+        );
         assert_eq!(CORRESPONDENCE_SCHEMA_VERSION, 2);
+        assert_eq!(CORPUS_EDITION_BUILD_SCHEMA_VERSION, 2);
+    }
+
+    #[test]
+    fn corpus_edition_build_rows_encode_only_nondefault_evidence() {
+        let entries = EDITIONS
+            .into_iter()
+            .map(|edition| EditionBuildEntry {
+                edition: edition.into(),
+                start: format!("0x0800{:04x}", edition.len()),
+                size: if edition == "ja" { 8 } else { 4 },
+                external_symbols: BTreeMap::new(),
+                differing_bytes: (edition != "de").then_some(if edition == "es" { 2 } else { 0 }),
+                byte_exact: !matches!(edition, "de" | "es"),
+                error: (edition == "de").then(|| "link failed".into()),
+            })
+            .collect();
+        let row = compact_corpus_edition_build_owner(EditionBuildReport {
+            schema_version: 1,
+            game: "gs1",
+            source_edition: "en",
+            source: "games/gs1/src/example.c".into(),
+            object: "out/example.o".into(),
+            owner_symbol: "Func_08002ee4".into(),
+            size: 4,
+            edition_variant: false,
+            all_exact: false,
+            editions: entries,
+        })
+        .expect("compact corpus row");
+        let value = serde_json::to_value(row).expect("serialize compact corpus row");
+        assert_eq!(value["en_owner"], "main:08002ee4");
+        assert_eq!(value["starts"].as_object().map(|map| map.len()), Some(6));
+        assert_eq!(value["size_overrides"]["ja"], 8);
+        assert_eq!(value["differing_bytes"]["es"], 2);
+        assert_eq!(value["errors"]["de"], "link failed");
+        for removed in ["source", "editions", "all_exact", "byte_exact"] {
+            assert!(value.get(removed).is_none(), "unexpected {removed}");
+        }
     }
 
     #[test]

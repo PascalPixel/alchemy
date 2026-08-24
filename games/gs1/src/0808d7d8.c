@@ -29,7 +29,7 @@
 
 s32 Func_080072f0(s32);
 void *Func_0808d48c(s32, s32);
-s32 Func_080916b0();
+s32 BattleRuntime_Reset();
 s32 Func_08091750();
 s32 Func_08092b94(s32);
 s32 Func_08092f84(s32, s32);
@@ -45,7 +45,7 @@ s32 Func_0808d7d8(s32 arg0) {
         temp_r3 = M2C_FIELD(temp_r0, s32 *, 8);
         if (temp_r3 != 0) {
             if (temp_r3 < 0x10000) {
-                Func_080916b0();
+                BattleRuntime_Reset();
                 Func_08092b94(M2C_FIELD(temp_r0, s32 *, 8));
                 Func_08092f84(-1, 0);
                 var_r6 = 0;

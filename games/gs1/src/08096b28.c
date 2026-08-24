@@ -30,7 +30,7 @@
 void Func_080072f0(s32, s32);
 void UiText_DrawMessage(s32, s32);
 s32 GameFlag_IsSet(s32);
-void Func_080916b0();
+void BattleRuntime_Reset();
 void Func_08091750();
 void Func_08092b94(s32);
 void Func_08092f84(s32, s32);
@@ -43,7 +43,7 @@ s32 Func_08096b28(void *arg0, s32 arg1, s32 arg2) {
         resource = M2C_FIELD(arg0, s32 *, 8);
         if (resource != 0) {
             if (resource < 0x10000) {
-                Func_080916b0();
+                BattleRuntime_Reset();
                 Func_08092b94(M2C_FIELD(arg0, s32 *, 8));
                 Func_08092f84(arg2, 0);
                 Func_08091750();
@@ -52,7 +52,7 @@ s32 Func_08096b28(void *arg0, s32 arg1, s32 arg2) {
             }
         }
         if (GameFlag_IsSet(0x142) != 0) {
-            Func_080916b0();
+            BattleRuntime_Reset();
             UiText_DrawMessage((s32)&Value_00000927, 1);
             Func_08091750();
         }

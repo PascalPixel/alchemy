@@ -80,6 +80,7 @@
     "main:0800d850": "script/interpreter/clear_flag_and_test.c",
     "main:0800d880": "script/interpreter/toggle_flag_and_test.c",
     "main:0800d8f4": "script/interpreter/skip_command.c",
+    "main:0800d900": "script/interpreter/play_audio_cue.c",
     "main:0800e220": "script/operands/set_or_compare_address.c",
     "main:0800e334": "script/operands/set_or_compare_halfword20.c",
     "main:0800e364": "script/operands/set_or_compare_word18.c",

@@ -38,9 +38,7 @@ extern struct ItemBreakFragmentObject *Object_Spawn(s32, s32, s32, s32);
 extern void Object_SetMode(struct ItemBreakFragmentObject *, s32);
 extern void Object_SetCallback(struct ItemBreakFragmentObject *, const void *);
 
-#define UpdateItemBreakFragment Func_08097b70
-
-void Func_08097b70(struct ItemBreakFragmentSource *source)
+void BattleEffect_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source)
 {
     struct ItemBreakFragmentSource *target;
     struct ItemBreakFragmentPosition position;

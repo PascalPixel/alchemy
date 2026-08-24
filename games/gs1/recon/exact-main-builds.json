@@ -29688,7 +29688,7 @@
     },
     {
       "en_owner": "080797fc",
-      "source": "games/gs1/src/080797fc.c",
+      "source": "games/gs1/src/owner/get_digit_values.c",
       "size": 128,
       "all_exact": true,
       "editions": [
@@ -29744,7 +29744,7 @@
     },
     {
       "en_owner": "0807987c",
-      "source": "games/gs1/src/0807987c.c",
+      "source": "games/gs1/src/owner/get_resistance_value.c",
       "size": 54,
       "all_exact": true,
       "editions": [

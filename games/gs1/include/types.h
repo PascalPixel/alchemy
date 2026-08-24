@@ -106,6 +106,8 @@ typedef int bool;
 #define Runtime_GetBuildStampTime Func_08077cb8
 #define Owner_GetLevelThreshold Func_08079008
 #define OwnerAction_Add Func_08078e28
+#define Owner_GetDigitValues Func_080797fc
+#define Owner_GetResistanceValue Func_0807987c
 #define Party_AddActiveOwner Func_0807961c
 #define Party_RemoveActiveOwner Func_08079664
 #define Item_GetEquippedElement Func_08079c8c

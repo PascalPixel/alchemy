@@ -6,7 +6,7 @@
 
 s32 FixedPoint_Ratio(s32, s32);
 u8 *Owner_GetState(s32);
-s32 Func_0807987c(s32, s32);
+s32 Owner_GetResistanceValue(s32, s32);
 s32 BattleRandomPercent(void);
 
 s32 BattleEffect_RollSuccess(
@@ -75,8 +75,8 @@ action4_done:
 
     score = BattleEffect_GetBaseSuccessRate(effect_id);
     if (score > 0) {
-        s32 difference = Func_0807987c(caster, resistance_category) -
-            Func_0807987c(target, resistance_category) -
+        s32 difference = Owner_GetResistanceValue(caster, resistance_category) -
+            Owner_GetResistanceValue(target, resistance_category) -
             (M2C_FIELD(state, u8 *, 0x42) >> 1);
         score += difference * 3;
         if (BattleTarget_IsWeakToEffect(state, effect_id) != 0) {

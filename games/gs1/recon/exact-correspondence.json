@@ -27522,7 +27522,7 @@
     },
     {
       "en_owner": "080a9cbc",
-      "source": "games/gs1/src/080a9cbc.c",
+      "source": "games/gs1/src/inventory_menu/position_category_items.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -27582,7 +27582,7 @@
     },
     {
       "en_owner": "080a9d3c",
-      "source": "games/gs1/src/080a9d3c.c",
+      "source": "games/gs1/src/inventory_menu/apply_category_item_flags.c",
       "size": 72,
       "status": "shared_core",
       "starts": {
@@ -27612,7 +27612,7 @@
     },
     {
       "en_owner": "080a9d84",
-      "source": "games/gs1/src/080a9d84.c",
+      "source": "games/gs1/src/inventory_menu/reset_category_item_positions.c",
       "size": 64,
       "status": "shared_core",
       "starts": {

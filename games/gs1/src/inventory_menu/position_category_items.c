@@ -21,7 +21,7 @@ LAYOUT_SIZE_GUARD(State_080a9cbc_size, struct State_080a9cbc, 200);
 extern struct State_080a9cbc *Data_03001f2c;
 void Func_080a17c4(void *arg0);
 
-void Func_080a9cbc(void)
+void InventoryMenu_PositionCategoryItems(void)
 {
     struct State_080a9cbc *state = Data_03001f2c;
     s32 value1 = 248;

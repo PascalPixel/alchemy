@@ -43,7 +43,7 @@ extern struct LinkRuntimeState *Data_03001e74;
 extern struct LinkSignature Data_02002024[];
 
 s32 FixedPoint_Ratio(s32 dividend, s32 divisor);
-void Func_08003dec(struct CountdownDisplayEntry *entry, s32 value);
+void Runtime_PushSlotEntry(struct CountdownDisplayEntry *entry, s32 value);
 void Func_080219c8(s32 destination);
 s32 Func_08021c34(void);
 void Func_0801ea08(s32 value, s32 width, s32 handle, s32 arg3, s32 arg4);
@@ -88,7 +88,7 @@ void UpdateLinkSessionCountdown(void)
         i = 2;
         do {
             if (*active++ != 0)
-                Func_08003dec(entry, 240);
+                Runtime_PushSlotEntry(entry, 240);
             i--;
             entry++;
         } while (i >= 0);

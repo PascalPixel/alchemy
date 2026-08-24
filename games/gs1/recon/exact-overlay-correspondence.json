@@ -5,12 +5,12 @@
   "base_edition": "ja",
   "source_state": "byte-exact overlay C",
   "resources_total": 96,
-  "owners_total": 2541,
-  "owner_symbol_bytes": 203320,
-  "matched_owners": 2503,
-  "matched_bytes": 200244,
-  "shared_core_owners": 2497,
-  "shared_core_bytes": 198984,
+  "owners_total": 2548,
+  "owner_symbol_bytes": 208192,
+  "matched_owners": 2510,
+  "matched_bytes": 205116,
+  "shared_core_owners": 2504,
+  "shared_core_bytes": 203856,
   "regional_core_owners": 6,
   "regional_core_bytes": 1260,
   "unresolved_owners": 38,
@@ -25,55 +25,55 @@
   "editions": [
     {
       "edition": "ja",
-      "matched_owners": 2503,
-      "matched_bytes": 200244,
-      "core_identical_owners": 2503,
-      "core_identical_bytes": 200244,
+      "matched_owners": 2510,
+      "matched_bytes": 205116,
+      "core_identical_owners": 2510,
+      "core_identical_bytes": 205116,
       "core_different_owners": 0,
       "core_different_bytes": 0
     },
     {
       "edition": "en",
-      "matched_owners": 2503,
-      "matched_bytes": 200244,
-      "core_identical_owners": 2498,
-      "core_identical_bytes": 199292,
+      "matched_owners": 2510,
+      "matched_bytes": 205116,
+      "core_identical_owners": 2505,
+      "core_identical_bytes": 204164,
       "core_different_owners": 5,
       "core_different_bytes": 952
     },
     {
       "edition": "de",
-      "matched_owners": 2503,
-      "matched_bytes": 200244,
-      "core_identical_owners": 2498,
-      "core_identical_bytes": 199292,
+      "matched_owners": 2510,
+      "matched_bytes": 205116,
+      "core_identical_owners": 2505,
+      "core_identical_bytes": 204164,
       "core_different_owners": 5,
       "core_different_bytes": 952
     },
     {
       "edition": "es",
-      "matched_owners": 2503,
-      "matched_bytes": 200244,
-      "core_identical_owners": 2497,
-      "core_identical_bytes": 198984,
+      "matched_owners": 2510,
+      "matched_bytes": 205116,
+      "core_identical_owners": 2504,
+      "core_identical_bytes": 203856,
       "core_different_owners": 6,
       "core_different_bytes": 1260
     },
     {
       "edition": "fr",
-      "matched_owners": 2503,
-      "matched_bytes": 200244,
-      "core_identical_owners": 2497,
-      "core_identical_bytes": 198984,
+      "matched_owners": 2510,
+      "matched_bytes": 205116,
+      "core_identical_owners": 2504,
+      "core_identical_bytes": 203856,
       "core_different_owners": 6,
       "core_different_bytes": 1260
     },
     {
       "edition": "it",
-      "matched_owners": 2503,
-      "matched_bytes": 200244,
-      "core_identical_owners": 2497,
-      "core_identical_bytes": 198984,
+      "matched_owners": 2510,
+      "matched_bytes": 205116,
+      "core_identical_owners": 2504,
+      "core_identical_bytes": 203856,
       "core_different_owners": 6,
       "core_different_bytes": 1260
     }
@@ -36944,6 +36944,38 @@
       }
     },
     {
+      "en_owner": "resource_39f:0x02000608",
+      "source": "games/gs1/src/overlays/staged_actor_movement/apply_orbiting_effect_actor_movement_and_redraw.c",
+      "resource": "resource_39f",
+      "size": 696,
+      "core_bytes": 544,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02000608",
+        "en": "0x02000608",
+        "es": "0x02000608",
+        "fr": "0x02000608",
+        "it": "0x02000608",
+        "ja": "0x02000608"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
       "en_owner": "resource_39f:0x020009dc",
       "source": "games/gs1/src/unidentified/overlays/state_update/state_update_0834.c",
       "resource": "resource_39f",
@@ -51984,6 +52016,38 @@
       }
     },
     {
+      "en_owner": "resource_3b2:0x02000608",
+      "source": "games/gs1/src/overlays/staged_actor_movement/apply_prologue_actor_movement_and_redraw.c",
+      "resource": "resource_3b2",
+      "size": 696,
+      "core_bytes": 544,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02000608",
+        "en": "0x02000608",
+        "es": "0x02000608",
+        "fr": "0x02000608",
+        "it": "0x02000608",
+        "ja": "0x02000608"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
       "en_owner": "resource_3b2:0x020009dc",
       "source": "games/gs1/src/map/heidia/prologue/set_effect_owner_mode.c",
       "resource": "resource_3b2",
@@ -55581,6 +55645,38 @@
         "fr": "0x02000474",
         "it": "0x02000474",
         "ja": "0x02000474"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
+      "en_owner": "resource_3b4:0x02000608",
+      "source": "games/gs1/src/overlays/staged_actor_movement/apply_scene_actor_movement_and_redraw.c",
+      "resource": "resource_3b4",
+      "size": 696,
+      "core_bytes": 544,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02000608",
+        "en": "0x02000608",
+        "es": "0x02000608",
+        "fr": "0x02000608",
+        "it": "0x02000608",
+        "ja": "0x02000608"
       },
       "location_methods": {
         "de": "global_thumb_anchor",
@@ -65264,6 +65360,38 @@
       }
     },
     {
+      "en_owner": "resource_3bd:0x02000608",
+      "source": "games/gs1/src/overlays/staged_actor_movement/apply_staged_actor_movement_and_redraw.c",
+      "resource": "resource_3bd",
+      "size": 696,
+      "core_bytes": 544,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02000608",
+        "en": "0x02000608",
+        "es": "0x02000608",
+        "fr": "0x02000608",
+        "it": "0x02000608",
+        "ja": "0x02000608"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
       "en_owner": "resource_3bd:0x020009dc",
       "source": "games/gs1/src/unidentified/overlays/leaf/leaf_0014.c",
       "resource": "resource_3bd",
@@ -66941,6 +67069,38 @@
         "fr": "0x02000474",
         "it": "0x02000474",
         "ja": "0x02000474"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
+      "en_owner": "resource_3bf:0x02000608",
+      "source": "games/gs1/src/overlays/staged_actor_movement/apply_heidia_village_actor_movement_and_redraw.c",
+      "resource": "resource_3bf",
+      "size": 696,
+      "core_bytes": 544,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02000608",
+        "en": "0x02000608",
+        "es": "0x02000608",
+        "fr": "0x02000608",
+        "it": "0x02000608",
+        "ja": "0x02000608"
       },
       "location_methods": {
         "de": "global_thumb_anchor",
@@ -71728,6 +71888,38 @@
       }
     },
     {
+      "en_owner": "resource_3c4:0x02000608",
+      "source": "games/gs1/src/overlays/staged_actor_movement/apply_effect_motion_a_actor_movement_and_redraw.c",
+      "resource": "resource_3c4",
+      "size": 696,
+      "core_bytes": 544,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02000608",
+        "en": "0x02000608",
+        "es": "0x02000608",
+        "fr": "0x02000608",
+        "it": "0x02000608",
+        "ja": "0x02000608"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
       "en_owner": "resource_3c4:0x020009dc",
       "source": "games/gs1/src/unidentified/overlays/state_update/state_update_0634.c",
       "resource": "resource_3c4",
@@ -73597,6 +73789,38 @@
         "fr": "0x02000474",
         "it": "0x02000474",
         "ja": "0x02000474"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
+      "en_owner": "resource_3c5:0x02000608",
+      "source": "games/gs1/src/overlays/staged_actor_movement/apply_effect_motion_b_actor_movement_and_redraw.c",
+      "resource": "resource_3c5",
+      "size": 696,
+      "core_bytes": 544,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02000608",
+        "en": "0x02000608",
+        "es": "0x02000608",
+        "fr": "0x02000608",
+        "it": "0x02000608",
+        "ja": "0x02000608"
       },
       "location_methods": {
         "de": "global_thumb_anchor",

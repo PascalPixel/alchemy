@@ -121,22 +121,6 @@ fn write_i32(data: &mut [u8], offset: usize, value: i32) {
     data[offset..offset + 4].copy_from_slice(&value.to_le_bytes());
 }
 
-fn build_name_slot(value: &Value) -> Result<Vec<u8>> {
-    let name = value
-        .as_str()
-        .ok_or_else(|| "combatant name_slot must be space, zero, or sentinel".to_string())?;
-    match name {
-        "space" => Ok(vec![0x20; 14]),
-        "zero" => Ok(vec![0; 14]),
-        "sentinel" => {
-            let mut result = vec![0; 14];
-            result[0] = 0xff;
-            Ok(result)
-        }
-        _ => err("combatant name_slot must be space, zero, or sentinel"),
-    }
-}
-
 const ITEM_KEYS: &[&str] = &[
     "name",
     "price",
@@ -228,7 +212,7 @@ fn parse_gameplay_databases(value: &Value) -> Result<&Map<String, Value>> {
         ],
         "gameplay database source",
     )?;
-    if field(source, "format")?.as_u64() != Some(4)
+    if field(source, "format")?.as_u64() != Some(5)
         || field(source, "kind")?.as_str() != Some("golden-sun-gameplay-databases")
         || field(source, "address")?.as_str() != Some("0x0807a828")
         || field(source, "size")?.as_str() != Some("0x0000f7d8")
@@ -385,102 +369,66 @@ fn build_ability(value: &Value, index: usize) -> Result<Vec<u8>> {
 }
 
 fn build_combatant(value: &Value, index: usize) -> Result<Vec<u8>> {
-    let item = object(value, &format!("combatants[{index}]"))?;
-    sparse_keys(
-        item,
-        &[
-            "name_slot",
-            "level",
-            "hp",
-            "pp",
-            "attack",
-            "defense",
-            "agility",
-            "luck",
-            "turns",
-            "hp_regeneration",
-            "initial_abilities",
-            "initial_ability_counts",
-            "elemental_profile",
-            "behavior",
-            "flags",
-            "secondary_abilities",
-            "secondary_ability_counts",
-            "battle_traits",
-            "experience_reward",
-            "sprite",
-            "reward_tier",
-            "coin_reward",
-        ],
-        &[],
-        &format!("combatants[{index}]"),
-    )?;
+    let item = value
+        .as_array()
+        .filter(|values| values.len() <= 37)
+        .ok_or_else(|| format!("combatants[{index}] must contain at most 37 values"))?;
+    let value = |index: usize, default: i128, maximum: i128, label: &str| {
+        item.get(index)
+            .map_or(Ok(default), |value| integer(value, 0, maximum, label))
+    };
     let mut result = vec![0; 84];
-    if let Some(name_slot) = item.get("name_slot") {
-        result[0..14].copy_from_slice(&build_name_slot(name_slot)?);
-    } else {
-        result[0..14].fill(0x20);
+    match value(0, 0, 2, "combatant name slot")? {
+        0 => result[0..14].fill(0x20),
+        1 => {}
+        2 => result[0] = 0xff,
+        _ => unreachable!(),
     }
-    result[15] = integer_or(item, "level", 0, 0, 0xff, "combatant level")? as u8;
-    for (offset, key) in [
-        (16, "hp"),
-        (18, "pp"),
-        (20, "attack"),
-        (22, "defense"),
-        (24, "agility"),
-        (28, "hp_regeneration"),
-        (54, "flags"),
-        (76, "experience_reward"),
-        (78, "sprite"),
-        (80, "reward_tier"),
-        (82, "coin_reward"),
+    result[15] = value(1, 0, 0xff, "combatant level")? as u8;
+    for (offset, field) in [
+        (16, 2),
+        (18, 3),
+        (20, 4),
+        (22, 5),
+        (24, 6),
+        (28, 9),
+        (54, 20),
+        (76, 33),
+        (78, 34),
+        (80, 35),
+        (82, 36),
     ] {
         write_u16(
             &mut result,
             offset,
-            integer_or(item, key, 0, 0, 0xffff, &format!("combatant {key}"))? as u16,
+            value(field, 0, 0xffff, "combatant halfword")? as u16,
         );
     }
-    result[26] = integer_or(item, "luck", 0, 0, 0xff, "combatant luck")? as u8;
-    result[27] = integer_or(item, "turns", 1, 0, 0xff, "combatant turns")? as u8;
-    for (field_name, offset, label) in [
-        ("initial_abilities", 40, "combatant initial ability"),
-        ("secondary_abilities", 56, "combatant secondary ability"),
-        ("battle_traits", 68, "combatant battle trait"),
+    result[26] = value(7, 0, 0xff, "combatant luck")? as u8;
+    result[27] = value(8, 1, 0xff, "combatant turns")? as u8;
+    for (field, offset, label) in [
+        (10, 40, "combatant initial ability"),
+        (21, 56, "combatant secondary ability"),
+        (29, 68, "combatant battle trait"),
     ] {
-        if let Some(entries) = item.get(field_name) {
-            for (slot, entry) in list(entries, 4, field_name)?.iter().enumerate() {
-                write_u16(&mut result, offset + slot * 2, u16(entry, label)?);
-            }
+        for slot in 0..4 {
+            write_u16(
+                &mut result,
+                offset + slot * 2,
+                value(field + slot, 0, 0xffff, label)? as u16,
+            );
         }
     }
-    for (field_name, offset, label) in [
-        (
-            "initial_ability_counts",
-            48,
-            "combatant initial ability count",
-        ),
-        (
-            "secondary_ability_counts",
-            64,
-            "combatant secondary ability count",
-        ),
+    for (field, offset, label) in [
+        (14, 48, "combatant initial ability count"),
+        (25, 64, "combatant secondary ability count"),
     ] {
-        if let Some(entries) = item.get(field_name) {
-            for (slot, entry) in list(entries, 4, field_name)?.iter().enumerate() {
-                result[offset + slot] = u8(entry, label)?;
-            }
+        for slot in 0..4 {
+            result[offset + slot] = value(field + slot, 0, 0xff, label)? as u8;
         }
     }
-    result[52] = integer_or(
-        item,
-        "elemental_profile",
-        0,
-        0,
-        0xff,
-        "combatant elemental_profile",
-    )? as u8;
-    result[53] = integer_or(item, "behavior", 0, 0, 0xff, "combatant behavior")? as u8;
+    result[52] = value(18, 0, 0xff, "combatant elemental profile")? as u8;
+    result[53] = value(19, 0, 0xff, "combatant behavior")? as u8;
     Ok(result)
 }
 
@@ -871,7 +819,7 @@ mod tests {
         assert_eq!(build_ability(&json!([]), 0).unwrap(), vec![0; 16]);
         assert_eq!(build_class(&json!({}), 0).unwrap(), vec![0; 84]);
 
-        let combatant = build_combatant(&json!({}), 0).unwrap();
+        let combatant = build_combatant(&json!([]), 0).unwrap();
         assert_eq!(&combatant[..14], &[0x20; 14]);
         assert_eq!(combatant[27], 1);
         assert!(combatant[14..27]
@@ -887,5 +835,6 @@ mod tests {
         assert!(build_ability(&json!([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), 0).is_err());
         assert!(build_class(&json!({"unknown":0}), 0).is_err());
         assert!(build_combatant(&json!({"unknown":0}), 0).is_err());
+        assert!(build_combatant(&json!(vec![0; 38]), 0).is_err());
     }
 }

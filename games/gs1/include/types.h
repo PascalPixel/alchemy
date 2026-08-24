@@ -42,6 +42,10 @@ typedef int bool;
 #define UiNumber_DrawAt Func_080150b0
 #define UiIcon_DrawWithFlags Func_080150c8
 #define UiIcon_Draw Func_080152d0
+#define UiIcon_CreateWithResource Func_080a172c
+#define UiIcon_CreateWithResourceVariant Func_080a1778
+#define UiIcon_PrepareObject Func_080a17c4
+#define UiMenu_CreateCursor Func_080a1814
 #define UiWindow_Commit Func_08015270
 #define UiText_DrawQuantity Func_08015120
 #define GameFlag_IsSet Func_080770c0
@@ -101,6 +105,10 @@ typedef int bool;
 #define Menu_DrawModeIndicator Func_08028b80
 #define Menu_DrawSelectionRow Func_08028ef0
 #define Menu_RunSelection Func_08028f98
+#define RenderResource_LoadPair Func_080215e0
+#define RenderResource_CreatePair Func_08021620
+#define RenderResource_LoadFrame Func_080216e8
+#define RenderResource_CreateFrame Func_08021750
 #define Object_CheckMovementCollision Func_080091d8
 #define Ability_GetMaximum Func_08077240
 #define Ability_GetAvailability Func_08077248

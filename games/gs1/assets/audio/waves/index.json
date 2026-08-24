@@ -259,5 +259,17 @@
    "source": "wave_31.pcm8.wav"
   }
  ],
- "names_note": "Wave_<id> preserves ROM order. Instrument semantics remain unnamed until proven from the custom tone banks or listening evidence."
+ "names_note": "Wave_<id> preserves ROM order. Instrument semantics remain unnamed until proven from the custom tone banks or listening evidence.",
+ "tone_attribution": {
+  "note": "Programs read from the ROM's two 12-byte m4a tone banks. Waves 14-19 are reached through keysplit or percussion subtables and remain unattributed.",
+  "banks": [
+   ["music-bank", "0x080fba78"],
+   ["effects-bank", "0x080fc138"]
+  ],
+  "groups": [
+   ["wave_00", "music-bank", [8, 24, 33, 45, 46, 47, 48, 52, 56, 61, 68, 72, 73, 75]],
+   ["wave_20", "effects-bank", [50, 51, 52, 53, 54, 55, 57, 58, 59, 70, 71, 72]]
+  ],
+  "unattributed": ["wave_14", "wave_15", "wave_16", "wave_17", "wave_18", "wave_19"]
+ }
 }

@@ -35009,7 +35009,7 @@
     },
     {
       "en_owner": "08091220",
-      "source": "games/gs1/src/08091220.c",
+      "source": "games/gs1/src/battle/effects/interpolate/apply_color_to_source_buffer.c",
       "size": 32,
       "all_exact": true,
       "editions": [

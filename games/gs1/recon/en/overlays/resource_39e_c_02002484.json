@@ -1,7 +1,5 @@
 {
-  "owner": "resource_39e:2484",
   "span_bytes": 132,
-  "semantic_name": "StartSchoolDoorEvent",
   "score": {
     "measured": "2026-08-23",
     "candidate_bytes": 132,

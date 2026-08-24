@@ -1,7 +1,5 @@
 {
-  "owner": "resource_3a2:0924",
   "span_bytes": 1704,
-  "semantic_name": "RunEventScript01",
   "score": {
     "measured": "2026-08-23",
     "candidate_bytes": 1640,

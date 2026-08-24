@@ -1,7 +1,5 @@
 {
-  "owner": "resource_379:0074",
   "span_bytes": 1038,
-  "semantic_name": "RunEventScript01",
   "score": {
     "measured": "2026-08-23",
     "candidate_bytes": 1008,

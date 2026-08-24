@@ -1,7 +1,5 @@
 {
-  "owner": "resource_3b1:5ca4",
   "span_bytes": 108,
-  "semantic_name": "RunMapEvent",
   "score": {
     "measured": "2026-08-17",
     "candidate_bytes": 108,

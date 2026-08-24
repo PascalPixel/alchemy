@@ -1,7 +1,5 @@
 {
-  "owner": "main:0x080ba2c0",
   "span_bytes": 708,
-  "semantic_name": "RunBattlePresentation",
   "edition": {
     "role": "shared-candidate-wrapper",
     "edition": "en",

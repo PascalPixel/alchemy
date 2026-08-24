@@ -1,7 +1,5 @@
 {
-  "owner": "resource_37a:1380",
   "span_bytes": 400,
-  "semantic_name": "StartSolShindenTrapEvent",
   "score": {
     "measured": "2026-08-23",
     "candidate_bytes": 400,

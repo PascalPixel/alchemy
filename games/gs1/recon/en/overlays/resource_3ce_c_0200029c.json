@@ -1,7 +1,5 @@
 {
-  "owner": "resource_3ce:029c",
   "span_bytes": 1574,
-  "semantic_name": "RunCallScript",
   "score": {
     "measured": "2026-08-17",
     "candidate_bytes": 1574,

@@ -1,5 +1,4 @@
 {
-  "owner": "main:0x080fa264",
   "span_bytes": 28,
   "score": {
     "measured": "2026-08-23",
@@ -22,6 +21,5 @@
     "10,000-candidate classic heat-guided walk: 9,786 compiled, exact 0, every retained result tied the two-halfword baseline",
     "approved-family sweep across routed/old-agbcc and GCC 2.96 at -O0/-O1/-O2/-O3/-Os: optimized routed builds preserve the r1 allocation; other combinations change extent or broader instruction shape; GCC 3 is unavailable in the recorded toolchain"
   ],
-  "retention": "keep_structured_asm",
-  "semantic_name": "Audio_ResumePlayer"
+  "retention": "keep_structured_asm"
 }

@@ -19092,7 +19092,7 @@
     },
     {
       "en_owner": "080915ec",
-      "source": "games/gs1/src/080915ec.c",
+      "source": "games/gs1/src/battle/runtime/update_mode_from_shoulder_buttons.c",
       "size": 80,
       "status": "shared_core",
       "starts": {

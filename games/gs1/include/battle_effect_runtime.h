@@ -29,7 +29,8 @@ struct BattleRuntime {
     s32 unknown_1c8;
     /*
      * Two-state, driven by the shoulder buttons off the 0x03001c94 latch:
-     * Func_080915ec sets it to 0 on L (0x200) and to -1 on R (0x100), and
+     * BattleRuntime_UpdateModeFromShoulderButtons sets it to 0 on L (0x200)
+     * and to -1 on R (0x100), and
      * Func_080916b0 initialises it to 0. Func_0809163c calls Func_080030f8
      * only while it is 0. That is the whole of the evidence -- what the two
      * states mean is not established, so the name says mode and not more.

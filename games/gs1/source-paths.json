@@ -520,6 +520,7 @@
     "main:08091584": "battle/effects/runtime/get_animation_value.c",
     "main:080915ac": "battle/effects/runtime/get_resource_id.c",
     "main:080915dc": "battle/effects/runtime/get_flags.c",
+    "main:080915ec": "battle/runtime/update_mode_from_shoulder_buttons.c",
     "main:0809ae3c": "battle/effects/filter_object_id.c",
     "main:0809202c": "battle/effects/audio/play_queued_sound.c",
     "main:08092064": "object/motion/set_speed_parameters.c",

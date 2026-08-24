@@ -33,7 +33,8 @@ void Object_SetCallback(struct ParticleInstance *particle, const void *callback)
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-void Object_SetVelocity(struct ParticleInstance *particle, s32 speed, s32 angle);
+void ObjectMotion_SetTargetPositionFromMagnitudeAngle(
+    struct ParticleInstance *particle, s32 magnitude, s32 angle);
 void Object_Destroy(struct ParticleBurstEffect *effect);
 void UpdateRisingParticleBurst(struct ParticleBurstEffect *effect)
 {
@@ -75,7 +76,8 @@ void UpdateRisingParticleBurst(struct ParticleBurstEffect *effect)
             random = Rand();
             particle->random_offset = (s32)(random - Rand());
             speed = Rand() * 24 + 0x80000;
-            Object_SetVelocity(particle, speed, Rand());
+            ObjectMotion_SetTargetPositionFromMagnitudeAngle(
+                particle, speed, Rand());
         }
         count--;
     } while (count >= 0);

@@ -28,7 +28,7 @@ typedef int bool;
 #define Object_SetMode Func_08009080
 #define Object_SetCallback Func_08009098
 #define Object_Spawn Func_08096c80
-#define Object_SetVelocity Func_08096bec
+#define ObjectMotion_SetTargetPositionFromMagnitudeAngle Func_08096bec
 #define Runtime_GetObject Func_08077008
 #define Item_GetData Func_08077018
 #define Item_FindSlot Func_08077038

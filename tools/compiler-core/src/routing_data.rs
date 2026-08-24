@@ -58,16 +58,16 @@ pub static NO_INTERWORK_OVERLAY_SOURCES: &[&str] = &[
     "games/gs1/src/resource_3a7_c_020014d8.c",
     "games/gs1/src/resource_3a7_c_0200145c.c",
     "games/gs1/src/resource_3a7_c_02001574.c",
+    "games/gs1/src/resource_3a7_c_02001158.c",
 ];
 // Soft-float library leaves that keep r4 CALLEE-SAVED, i.e. the stock ARM ABI
 // without `-fcall-used-r4`.
 //
 // The base flag set hands r4 to the allocator because Camelot's own code was
-// built that way. These four are not Camelot's code: they are the compiler's
-// soft-float support routines, and each one's reference prologue and epilogue
-// are `push {r4, ...}` / `pop {r4, ...}` against our `push`/`pop` without it.
-// That is the entire residual for all four -- identical size, two halfwords,
-// the r4 bit in each register list.
+// built that way. These entries are compiler soft-float support routines and
+// keep the stock ABI. For the original leaf set, the entire residual was the
+// r4 bit in otherwise identical `push` and `pop` register lists; the larger
+// add-parts owner independently confirms the same library boundary.
 //
 // Same shape of routing as `NO_INTERWORK_OVERLAY_SOURCES` above, which
 // subtracts `-mthumb-interwork` from this same family, and the same reasoning
@@ -81,6 +81,7 @@ pub static NO_INTERWORK_OVERLAY_SOURCES: &[&str] = &[
 pub static CALLEE_SAVED_R4_OVERLAY_SOURCES: &[&str] = &[
     "games/gs1/src/resource_3a7_c_0200145c.c",
     "games/gs1/src/resource_3a7_c_02001574.c",
+    "games/gs1/src/resource_3a7_c_02001158.c",
     "games/gs1/src/resource_3bf_c_02005af0.c",
     "games/gs1/src/resource_3bf_c_02005c08.c",
     "games/gs1/src/resource_3a7_c_020013ac.c",

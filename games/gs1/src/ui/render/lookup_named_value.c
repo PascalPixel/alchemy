@@ -2,7 +2,7 @@
 #include "global_cells.h"
 #include "gs1_edition.h"
 
-u32 Func_08019944(u32 value, u32 clear)
+u32 UiRender_LookupNamedValue(u32 value, u32 clear)
 {
     u32 index;
     u32 name_offset;

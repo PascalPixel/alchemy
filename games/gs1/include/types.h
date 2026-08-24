@@ -170,5 +170,13 @@ typedef int bool;
 #define Audio_ClearChannelChain Func_080f9a30
 #define MusicTrack_Finish Func_080f9a50
 #define Audio_DummyCallback Func_080fb790
+#define ObjectLink_RotatePairToward Func_08092878
+#define ObjectTable_ReadActiveValue Func_08092ba8
+#define ObjectMotion_SetPositionWithTerrain Func_08092454
+#define ObjectMotion_SetHorizontalPositionWithTerrain Func_080923e4
+#define ObjectMotion_SnapHeadingAndOffset Func_08092208
+#define ObjectMotion_Launch Func_08092560
+#define ParticleEffect_UpdateLinearMotion Func_080925e0
+#define ObjectMotion_StepAngle Func_08092a74
 
 #endif

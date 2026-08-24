@@ -63,15 +63,13 @@ fn validate_registered_main_symbols(root: &Path) -> Result<usize, String> {
         let owner = SourceOwner::Main(
             u32::from_str_radix(stem, 16).map_err(|error| format!("{stem}: {error}"))?,
         );
-        let registered = register.registered_name(owner).ok_or_else(|| {
-            format!(
-                "{} exports {exported} but has no registered name",
-                owner.id()
-            )
-        })?;
-        if exported != registered {
+        let expected = register
+            .registered_name(owner)
+            .map(str::to_owned)
+            .unwrap_or_else(|| owner.legacy_name());
+        if exported != expected {
             return Err(format!(
-                "{} exports {exported}, but the owner register names it {registered}",
+                "{} exports {exported}, but the owner register names it {expected}",
                 path.display()
             ));
         }

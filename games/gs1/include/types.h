@@ -519,6 +519,7 @@ typedef int bool;
 #define Script_SkipCommand Func_0800d8f4
 #define Script_PlayAudioCue Func_0800d900
 #define Script_ApplyObjectArgument Func_0800d8c4
+#define Script_SetPositionAndResetMotion Func_0800d9f0
 #define Script_FindLabel Func_0800d6d8
 #define Script_RepeatOrJump Func_0800d710
 #define Script_JumpToLabel Func_0800d760

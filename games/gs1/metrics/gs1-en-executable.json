@@ -4,7 +4,7 @@
  "target": "gs1-en",
  "derivation": "full-c-progress-v1",
  "audit": "complete",
- "total_union_bytes": 1348188,
+ "total_union_bytes": 1348398,
  "main": {
   "id": "main",
   "executable_bytes": 548364,
@@ -7179,8 +7179,8 @@
   {
    "id": "resource_373",
    "decoded_bytes": 30764,
-   "executable_bytes": 24952,
-   "excluded_bytes": 5812,
+   "executable_bytes": 24954,
+   "excluded_bytes": 5810,
    "audit": "complete",
    "intervals": [
     {
@@ -7206,6 +7206,12 @@
      "end": 33555976,
      "kind": "thumb",
      "evidence": "resource_373_overlay.s:1929:verified-C-placeholder"
+    },
+    {
+     "start": 33555976,
+     "end": 33555978,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:resource_373:02000608 complete owner begins with the stack-opening instruction"
     },
     {
      "start": 33555978,
@@ -8610,8 +8616,8 @@
   {
    "id": "resource_376",
    "decoded_bytes": 8800,
-   "executable_bytes": 4784,
-   "excluded_bytes": 4016,
+   "executable_bytes": 4852,
+   "excluded_bytes": 3948,
    "audit": "complete",
    "intervals": [
     {
@@ -8625,6 +8631,24 @@
      "end": 33554568,
      "kind": "thumb",
      "evidence": "resource_376_overlay.s:362:verified-C-placeholder"
+    },
+    {
+     "start": 33554568,
+     "end": 33554630,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:resource_376:02000088 complete straight-line leaf through sole bx-lr return"
+    },
+    {
+     "start": 33554630,
+     "end": 33554632,
+     "kind": "executable_alignment",
+     "evidence": "resource_376_overlay.s:two-byte zero between the return and its word-aligned literal"
+    },
+    {
+     "start": 33554632,
+     "end": 33554636,
+     "kind": "literal_pool",
+     "evidence": "resource_376_overlay.s:pc-relative literal reached only by the 0x02000088 owner (0x00000666)"
     },
     {
      "start": 33554636,
@@ -8793,8 +8817,8 @@
   {
    "id": "resource_377",
    "decoded_bytes": 11548,
-   "executable_bytes": 6820,
-   "excluded_bytes": 4728,
+   "executable_bytes": 6828,
+   "excluded_bytes": 4720,
    "audit": "complete",
    "intervals": [
     {
@@ -8808,6 +8832,18 @@
      "end": 33554568,
      "kind": "thumb",
      "evidence": "resource_377_overlay.s:482:verified-C-placeholder"
+    },
+    {
+     "start": 33554568,
+     "end": 33554572,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:resource_377:02000088 complete exported ldr/bx leaf"
+    },
+    {
+     "start": 33554572,
+     "end": 33554576,
+     "kind": "literal_pool",
+     "evidence": "resource_377_overlay.s:pc-relative literal owned by 0x02000088 (0x02009fd0)"
     },
     {
      "start": 33554576,
@@ -9585,8 +9621,8 @@
   {
    "id": "resource_379",
    "decoded_bytes": 3766,
-   "executable_bytes": 3064,
-   "excluded_bytes": 702,
+   "executable_bytes": 3072,
+   "excluded_bytes": 694,
    "audit": "complete",
    "intervals": [
     {
@@ -9594,6 +9630,18 @@
      "end": 33554480,
      "kind": "veneer",
      "evidence": "resource_379_overlay.s:fixed-ldr-bx-veneer"
+    },
+    {
+     "start": 33554480,
+     "end": 33554484,
+     "kind": "thumb",
+     "evidence": "resource_379_overlay.s:header veneer at 0x02000008 exports the complete ldr/bx leaf at 0x02000030"
+    },
+    {
+     "start": 33554484,
+     "end": 33554488,
+     "kind": "literal_pool",
+     "evidence": "resource_379_overlay.s:pc-relative literal owned by 0x02000030 (0x02008cf0)"
     },
     {
      "start": 33554488,
@@ -9939,8 +9987,8 @@
   {
    "id": "resource_37b",
    "decoded_bytes": 10616,
-   "executable_bytes": 9548,
-   "excluded_bytes": 1068,
+   "executable_bytes": 9580,
+   "excluded_bytes": 1036,
    "audit": "complete",
    "intervals": [
     {
@@ -9950,10 +9998,58 @@
      "evidence": "resource_37b_overlay.s:fixed-ldr-bx-veneer"
     },
     {
+     "start": 33554480,
+     "end": 33554484,
+     "kind": "thumb",
+     "evidence": "resource_37b_overlay.s:header veneer at 0x02000008 exports the complete ldr/bx leaf at 0x02000030"
+    },
+    {
+     "start": 33554484,
+     "end": 33554488,
+     "kind": "literal_pool",
+     "evidence": "resource_37b_overlay.s:pc-relative literal owned by 0x02000030 (0x0200a5c0)"
+    },
+    {
      "start": 33554488,
      "end": 33554492,
      "kind": "thumb",
      "evidence": "resource_37b_overlay.s:603:verified-C-placeholder"
+    },
+    {
+     "start": 33554492,
+     "end": 33554496,
+     "kind": "thumb",
+     "evidence": "resource_37b_overlay.s:header veneer at 0x02000010 exports the complete ldr/bx leaf at 0x0200003c"
+    },
+    {
+     "start": 33554496,
+     "end": 33554500,
+     "kind": "literal_pool",
+     "evidence": "resource_37b_overlay.s:pc-relative literal owned by 0x0200003c (0x0200a698)"
+    },
+    {
+     "start": 33554500,
+     "end": 33554504,
+     "kind": "thumb",
+     "evidence": "resource_37b_overlay.s:header veneer at 0x02000018 exports the complete ldr/bx leaf at 0x02000044"
+    },
+    {
+     "start": 33554504,
+     "end": 33554508,
+     "kind": "literal_pool",
+     "evidence": "resource_37b_overlay.s:pc-relative literal owned by 0x02000044 (0x0200a6bc)"
+    },
+    {
+     "start": 33554508,
+     "end": 33554512,
+     "kind": "thumb",
+     "evidence": "resource_37b_overlay.s:header veneer at 0x02000020 exports the complete ldr/bx leaf at 0x0200004c"
+    },
+    {
+     "start": 33554512,
+     "end": 33554516,
+     "kind": "literal_pool",
+     "evidence": "resource_37b_overlay.s:pc-relative literal owned by 0x0200004c (0x0200a80c)"
     },
     {
      "start": 33554516,
@@ -13632,8 +13728,8 @@
   {
    "id": "resource_38a",
    "decoded_bytes": 2580,
-   "executable_bytes": 1868,
-   "excluded_bytes": 712,
+   "executable_bytes": 1884,
+   "excluded_bytes": 696,
    "audit": "complete",
    "intervals": [
     {
@@ -13725,6 +13821,18 @@
      "end": 33555652,
      "kind": "literal_pool",
      "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+    },
+    {
+     "start": 33555652,
+     "end": 33555664,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:resource_38a:020004c4 complete attached-state angle leaf through bx lr"
+    },
+    {
+     "start": 33555664,
+     "end": 33555668,
+     "kind": "literal_pool",
+     "evidence": "resource_38a_overlay.s:pc-relative signed -0x800 literal reached by the 0x020004c4 owner"
     },
     {
      "start": 33555668,
@@ -27369,8 +27477,8 @@
   {
    "id": "resource_3b3",
    "decoded_bytes": 14028,
-   "executable_bytes": 11184,
-   "excluded_bytes": 2844,
+   "executable_bytes": 11232,
+   "excluded_bytes": 2796,
    "audit": "complete",
    "intervals": [
     {
@@ -27692,6 +27800,24 @@
      "evidence": "adjacent audited literal_pool spans; see namespace evidence"
     },
     {
+     "start": 33560012,
+     "end": 33560050,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:resource_3b3:020015cc complete prologue-less three-word coordinate-preset copier through bx lr"
+    },
+    {
+     "start": 33560050,
+     "end": 33560052,
+     "kind": "executable_alignment",
+     "evidence": "resource_3b3_overlay.s:two-byte zero after the 0x020015cc return"
+    },
+    {
+     "start": 33560052,
+     "end": 33560060,
+     "kind": "literal_pool",
+     "evidence": "resource_3b3_overlay.s:source and destination literals referenced only by the 0x020015cc owner"
+    },
+    {
      "start": 33560060,
      "end": 33560394,
      "kind": "thumb",
@@ -27972,8 +28098,8 @@
   {
    "id": "resource_3b4",
    "decoded_bytes": 12164,
-   "executable_bytes": 9574,
-   "excluded_bytes": 2590,
+   "executable_bytes": 9590,
+   "excluded_bytes": 2574,
    "audit": "complete",
    "intervals": [
     {
@@ -28281,6 +28407,24 @@
      "end": 33560768,
      "kind": "literal_pool",
      "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+    },
+    {
+     "start": 33560768,
+     "end": 33560778,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:resource_3b4:020018c0 complete blend-alpha register setter through bx lr"
+    },
+    {
+     "start": 33560778,
+     "end": 33560780,
+     "kind": "executable_alignment",
+     "evidence": "resource_3b4_overlay.s:two-byte zero after the 0x020018c0 return"
+    },
+    {
+     "start": 33560780,
+     "end": 33560784,
+     "kind": "literal_pool",
+     "evidence": "resource_3b4_overlay.s:0x04000052 register literal referenced only by the 0x020018c0 owner"
     },
     {
      "start": 33560784,
@@ -33174,8 +33318,8 @@
   {
    "id": "resource_3be",
    "decoded_bytes": 7572,
-   "executable_bytes": 5624,
-   "excluded_bytes": 1948,
+   "executable_bytes": 5632,
+   "excluded_bytes": 1940,
    "audit": "complete",
    "intervals": [
     {
@@ -33345,6 +33489,18 @@
      "end": 33557784,
      "kind": "thumb",
      "evidence": "adjacent audited thumb spans; see namespace evidence"
+    },
+    {
+     "start": 33557784,
+     "end": 33557788,
+     "kind": "thumb",
+     "evidence": "resource_3be_overlay.s:header veneer at 0x02000010 exports the complete ldr/bx leaf at 0x02000d18"
+    },
+    {
+     "start": 33557788,
+     "end": 33557792,
+     "kind": "literal_pool",
+     "evidence": "resource_3be_overlay.s:pc-relative descriptor-data literal owned by 0x02000d18 (0x0200991c)"
     },
     {
      "start": 33557792,
@@ -38910,8 +39066,8 @@
   {
    "id": "resource_3ce",
    "decoded_bytes": 5772,
-   "executable_bytes": 4770,
-   "excluded_bytes": 1002,
+   "executable_bytes": 4774,
+   "excluded_bytes": 998,
    "audit": "complete",
    "intervals": [
     {
@@ -38949,6 +39105,18 @@
      "end": 33554984,
      "kind": "thumb",
      "evidence": "resource_3ce_overlay.s:495:verified-C-placeholder"
+    },
+    {
+     "start": 33554984,
+     "end": 33554986,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:resource_3ce:02000228 complete bx-lr callback; three local table entries publish 0x02008229"
+    },
+    {
+     "start": 33554986,
+     "end": 33554988,
+     "kind": "executable_alignment",
+     "evidence": "resource_3ce_overlay.s:two-byte zero between the callback return and the next owner"
     },
     {
      "start": 33554988,

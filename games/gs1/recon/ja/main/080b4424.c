@@ -4,7 +4,6 @@
 #include "battle_types.h"
 
 void *Func_08077198(s32 class_id);
-void *Func_08077018(u16 item_id);
 u32 Func_080bd3c8(s32 action_id);
 s32 Func_080b9a70(u32 actor_id);
 s32 Func_080bae40(s32 actor_id, struct BattleAction *action);

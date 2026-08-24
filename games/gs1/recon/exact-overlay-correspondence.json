@@ -5,15 +5,15 @@
   "base_edition": "ja",
   "source_state": "byte-exact overlay C",
   "resources_total": 96,
-  "owners_total": 2508,
-  "owner_symbol_bytes": 194456,
-  "matched_owners": 2471,
-  "matched_bytes": 191382,
-  "shared_core_owners": 2465,
-  "shared_core_bytes": 190122,
+  "owners_total": 2536,
+  "owner_symbol_bytes": 199840,
+  "matched_owners": 2498,
+  "matched_bytes": 196764,
+  "shared_core_owners": 2492,
+  "shared_core_bytes": 195504,
   "regional_core_owners": 6,
   "regional_core_bytes": 1260,
-  "unresolved_owners": 37,
+  "unresolved_owners": 38,
   "resource_tables": {
     "de": "0x0831fe00",
     "en": "0x08320000",
@@ -25,55 +25,55 @@
   "editions": [
     {
       "edition": "ja",
-      "matched_owners": 2471,
-      "matched_bytes": 191382,
-      "core_identical_owners": 2471,
-      "core_identical_bytes": 191382,
+      "matched_owners": 2498,
+      "matched_bytes": 196764,
+      "core_identical_owners": 2498,
+      "core_identical_bytes": 196764,
       "core_different_owners": 0,
       "core_different_bytes": 0
     },
     {
       "edition": "en",
-      "matched_owners": 2471,
-      "matched_bytes": 191382,
-      "core_identical_owners": 2466,
-      "core_identical_bytes": 190430,
+      "matched_owners": 2498,
+      "matched_bytes": 196764,
+      "core_identical_owners": 2493,
+      "core_identical_bytes": 195812,
       "core_different_owners": 5,
       "core_different_bytes": 952
     },
     {
       "edition": "de",
-      "matched_owners": 2471,
-      "matched_bytes": 191382,
-      "core_identical_owners": 2466,
-      "core_identical_bytes": 190430,
+      "matched_owners": 2498,
+      "matched_bytes": 196764,
+      "core_identical_owners": 2493,
+      "core_identical_bytes": 195812,
       "core_different_owners": 5,
       "core_different_bytes": 952
     },
     {
       "edition": "es",
-      "matched_owners": 2471,
-      "matched_bytes": 191382,
-      "core_identical_owners": 2465,
-      "core_identical_bytes": 190122,
+      "matched_owners": 2498,
+      "matched_bytes": 196764,
+      "core_identical_owners": 2492,
+      "core_identical_bytes": 195504,
       "core_different_owners": 6,
       "core_different_bytes": 1260
     },
     {
       "edition": "fr",
-      "matched_owners": 2471,
-      "matched_bytes": 191382,
-      "core_identical_owners": 2465,
-      "core_identical_bytes": 190122,
+      "matched_owners": 2498,
+      "matched_bytes": 196764,
+      "core_identical_owners": 2492,
+      "core_identical_bytes": 195504,
       "core_different_owners": 6,
       "core_different_bytes": 1260
     },
     {
       "edition": "it",
-      "matched_owners": 2471,
-      "matched_bytes": 191382,
-      "core_identical_owners": 2465,
-      "core_identical_bytes": 190122,
+      "matched_owners": 2498,
+      "matched_bytes": 196764,
+      "core_identical_owners": 2492,
+      "core_identical_bytes": 195504,
       "core_different_owners": 6,
       "core_different_bytes": 1260
     }
@@ -3152,6 +3152,38 @@
       }
     },
     {
+      "en_owner": "resource_373:0x02000608",
+      "source": "games/gs1/src/overlays/staged_actor_movement/run_staged_actor_movement_and_redraw.c",
+      "resource": "resource_373",
+      "size": 696,
+      "core_bytes": 544,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02000608",
+        "en": "0x02000608",
+        "es": "0x02000608",
+        "fr": "0x02000608",
+        "it": "0x02000608",
+        "ja": "0x02000608"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
       "en_owner": "resource_373:0x020009dc",
       "source": "games/gs1/src/map/staged_actor_scene/select_primary_scene_data.c",
       "resource": "resource_373",
@@ -4573,6 +4605,38 @@
         "fr": "0x02005af0",
         "it": "0x02005b38",
         "ja": "0x02005af0"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
+      "en_owner": "resource_373:0x02005b48",
+      "source": "games/gs1/src/overlays/orbiting_effect/initialize_staged_actor_scene_orbiting_effect.c",
+      "resource": "resource_373",
+      "size": 216,
+      "core_bytes": 180,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02005b58",
+        "en": "0x02005b48",
+        "es": "0x02005ba0",
+        "fr": "0x02005b58",
+        "it": "0x02005ba0",
+        "ja": "0x02005b58"
       },
       "location_methods": {
         "de": "global_thumb_anchor",
@@ -6160,6 +6224,38 @@
       }
     },
     {
+      "en_owner": "resource_376:0x02000088",
+      "source": "games/gs1/src/overlays/scaled_motion/advance_position_scale_and_velocity.c",
+      "resource": "resource_376",
+      "size": 68,
+      "core_bytes": 64,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02000088",
+        "en": "0x02000088",
+        "es": "0x02000088",
+        "fr": "0x02000088",
+        "it": "0x02000088",
+        "ja": "0x02000088"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
       "en_owner": "resource_376:0x020000cc",
       "source": "games/gs1/src/unidentified/overlays/leaf/leaf_0877.c",
       "resource": "resource_376",
@@ -6757,6 +6853,38 @@
         "fr": "global_thumb_anchor",
         "it": "global_thumb_anchor",
         "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
+      "en_owner": "resource_377:0x02000088",
+      "source": "games/gs1/src/overlays/facing_target_scene/get_script_data.c",
+      "resource": "resource_377",
+      "size": 8,
+      "core_bytes": 4,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02000088",
+        "en": "0x02000088",
+        "es": "0x02000088",
+        "fr": "0x02000088",
+        "it": "0x02000088",
+        "ja": "0x02000088"
+      },
+      "location_methods": {
+        "de": "resource_offset_exact",
+        "en": "source",
+        "es": "resource_offset_exact",
+        "fr": "resource_offset_exact",
+        "it": "resource_offset_exact",
+        "ja": "resource_offset_exact"
       },
       "core_diff_bytes_from_ja": {
         "de": 0,
@@ -8208,6 +8336,38 @@
       }
     },
     {
+      "en_owner": "resource_378:0x020032a8",
+      "source": "games/gs1/src/overlays/actor_facing/is_actor_facing_inward.c",
+      "resource": "resource_378",
+      "size": 40,
+      "core_bytes": 28,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x020032a8",
+        "en": "0x020032a8",
+        "es": "0x020032a8",
+        "fr": "0x020032a8",
+        "it": "0x020032a8",
+        "ja": "0x02003298"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
       "en_owner": "resource_378:0x020032d0",
       "source": "games/gs1/src/unidentified/overlays/call_sequence/call_sequence_0006.c",
       "resource": "resource_378",
@@ -8325,6 +8485,38 @@
         "fr": "neighbor_exact",
         "it": "neighbor_exact",
         "ja": "neighbor_exact"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
+      "en_owner": "resource_379:0x02000030",
+      "source": "games/gs1/src/overlays/conditional_scene_setup/get_script_data.c",
+      "resource": "resource_379",
+      "size": 8,
+      "core_bytes": 4,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02000030",
+        "en": "0x02000030",
+        "es": "0x02000030",
+        "fr": "0x02000030",
+        "it": "0x02000030",
+        "ja": "0x02000030"
+      },
+      "location_methods": {
+        "de": "resource_offset_exact",
+        "en": "source",
+        "es": "resource_offset_exact",
+        "fr": "resource_offset_exact",
+        "it": "resource_offset_exact",
+        "ja": "resource_offset_exact"
       },
       "core_diff_bytes_from_ja": {
         "de": 0,
@@ -9200,6 +9392,38 @@
       }
     },
     {
+      "en_owner": "resource_37b:0x02000030",
+      "source": "games/gs1/src/overlays/scene_event_runtime/get_script_data.c",
+      "resource": "resource_37b",
+      "size": 8,
+      "core_bytes": 4,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02000030",
+        "en": "0x02000030",
+        "es": "0x02000030",
+        "fr": "0x02000030",
+        "it": "0x02000030",
+        "ja": "0x02000030"
+      },
+      "location_methods": {
+        "de": "resource_offset_exact",
+        "en": "source",
+        "es": "resource_offset_exact",
+        "fr": "resource_offset_exact",
+        "it": "resource_offset_exact",
+        "ja": "resource_offset_exact"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
       "en_owner": "resource_37b:0x02000038",
       "source": "games/gs1/src/unidentified/overlays/state_update/state_update_0287.c",
       "resource": "resource_37b",
@@ -9213,6 +9437,102 @@
         "fr": "0x02000038",
         "it": "0x02000038",
         "ja": "0x02000038"
+      },
+      "location_methods": {
+        "de": "resource_offset_exact",
+        "en": "source",
+        "es": "resource_offset_exact",
+        "fr": "resource_offset_exact",
+        "it": "resource_offset_exact",
+        "ja": "resource_offset_exact"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
+      "en_owner": "resource_37b:0x0200003c",
+      "source": "games/gs1/src/overlays/scene_event_runtime/get_message_data.c",
+      "resource": "resource_37b",
+      "size": 8,
+      "core_bytes": 4,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x0200003c",
+        "en": "0x0200003c",
+        "es": "0x0200003c",
+        "fr": "0x0200003c",
+        "it": "0x0200003c",
+        "ja": "0x0200003c"
+      },
+      "location_methods": {
+        "de": "resource_offset_exact",
+        "en": "source",
+        "es": "resource_offset_exact",
+        "fr": "resource_offset_exact",
+        "it": "resource_offset_exact",
+        "ja": "resource_offset_exact"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
+      "en_owner": "resource_37b:0x02000044",
+      "source": "games/gs1/src/overlays/scene_event_runtime/get_actor_data.c",
+      "resource": "resource_37b",
+      "size": 8,
+      "core_bytes": 4,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02000044",
+        "en": "0x02000044",
+        "es": "0x02000044",
+        "fr": "0x02000044",
+        "it": "0x02000044",
+        "ja": "0x02000044"
+      },
+      "location_methods": {
+        "de": "resource_offset_exact",
+        "en": "source",
+        "es": "resource_offset_exact",
+        "fr": "resource_offset_exact",
+        "it": "resource_offset_exact",
+        "ja": "resource_offset_exact"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
+      "en_owner": "resource_37b:0x0200004c",
+      "source": "games/gs1/src/overlays/scene_event_runtime/get_effect_data.c",
+      "resource": "resource_37b",
+      "size": 8,
+      "core_bytes": 4,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x0200004c",
+        "en": "0x0200004c",
+        "es": "0x0200004c",
+        "fr": "0x0200004c",
+        "it": "0x0200004c",
+        "ja": "0x0200004c"
       },
       "location_methods": {
         "de": "resource_offset_exact",
@@ -11249,7 +11569,7 @@
     },
     {
       "en_owner": "resource_380:0x0200013c",
-      "source": "games/gs1/src/unidentified/overlays/state_update/state_update_0760.c",
+      "source": "games/gs1/src/overlays/configurable_effect_spawn/spawn_configured_effect.c",
       "resource": "resource_380",
       "size": 472,
       "core_bytes": 420,
@@ -18960,6 +19280,38 @@
       }
     },
     {
+      "en_owner": "resource_389:0x02000608",
+      "source": "games/gs1/src/overlays/staged_actor_movement/apply_actor_slot_movement_and_redraw.c",
+      "resource": "resource_389",
+      "size": 696,
+      "core_bytes": 544,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02000608",
+        "en": "0x02000608",
+        "es": "0x02000608",
+        "fr": "0x02000608",
+        "it": "0x02000608",
+        "ja": "0x02000608"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
       "en_owner": "resource_389:0x02000a00",
       "source": "games/gs1/src/unidentified/overlays/state_update/state_update_0749.c",
       "resource": "resource_389",
@@ -19549,6 +19901,38 @@
         "fr": "0x020003e4",
         "it": "0x020003e4",
         "ja": "0x020003e4"
+      },
+      "location_methods": {
+        "de": "resource_offset_exact",
+        "en": "source",
+        "es": "resource_offset_exact",
+        "fr": "resource_offset_exact",
+        "it": "resource_offset_exact",
+        "ja": "resource_offset_exact"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
+      "en_owner": "resource_38a:0x020004c4",
+      "source": "games/gs1/src/overlays/effect_record_configuration/rotate_effect_record.c",
+      "resource": "resource_38a",
+      "size": 16,
+      "core_bytes": 12,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x020004c4",
+        "en": "0x020004c4",
+        "es": "0x020004c4",
+        "fr": "0x020004c4",
+        "it": "0x020004c4",
+        "ja": "0x020004c4"
       },
       "location_methods": {
         "de": "resource_offset_exact",
@@ -21776,6 +22160,38 @@
       }
     },
     {
+      "en_owner": "resource_38e:0x02000974",
+      "source": "games/gs1/src/overlays/orbiting_effect/initialize_orbiting_scene_entity.c",
+      "resource": "resource_38e",
+      "size": 216,
+      "core_bytes": 180,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02000974",
+        "en": "0x02000974",
+        "es": "0x02000974",
+        "fr": "0x02000974",
+        "it": "0x02000974",
+        "ja": "0x02000974"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
       "en_owner": "resource_38f:0x02000030",
       "source": "games/gs1/src/unidentified/overlays/state_update/state_update_0644.c",
       "resource": "resource_38f",
@@ -23024,6 +23440,38 @@
       }
     },
     {
+      "en_owner": "resource_391:0x02000608",
+      "source": "games/gs1/src/overlays/staged_actor_movement/apply_staged_actor_probe_movement_and_redraw.c",
+      "resource": "resource_391",
+      "size": 696,
+      "core_bytes": 544,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02000608",
+        "en": "0x02000608",
+        "es": "0x02000608",
+        "fr": "0x02000608",
+        "it": "0x02000608",
+        "ja": "0x02000608"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
       "en_owner": "resource_391:0x020009dc",
       "source": "games/gs1/src/unidentified/overlays/state_update/state_update_0754.c",
       "resource": "resource_391",
@@ -23728,6 +24176,38 @@
       }
     },
     {
+      "en_owner": "resource_392:0x02000608",
+      "source": "games/gs1/src/overlays/staged_actor_movement/apply_staged_actor_placement_and_redraw.c",
+      "resource": "resource_392",
+      "size": 696,
+      "core_bytes": 544,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02000608",
+        "en": "0x02000608",
+        "es": "0x02000608",
+        "fr": "0x02000608",
+        "it": "0x02000608",
+        "ja": "0x02000608"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
       "en_owner": "resource_392:0x020009dc",
       "source": "games/gs1/src/unidentified/overlays/leaf/leaf_0450.c",
       "resource": "resource_392",
@@ -24080,6 +24560,38 @@
       }
     },
     {
+      "en_owner": "resource_392:0x02000cb4",
+      "source": "games/gs1/src/overlays/orbiting_effect/initialize_orbiting_particle.c",
+      "resource": "resource_392",
+      "size": 216,
+      "core_bytes": 180,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02000cb4",
+        "en": "0x02000cb4",
+        "es": "0x02000cb4",
+        "fr": "0x02000cb4",
+        "it": "0x02000cb4",
+        "ja": "0x02000cb4"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
       "en_owner": "resource_393:0x02000030",
       "source": "games/gs1/src/overlays/shared/measure_fixed_point_position_distance.c",
       "resource": "resource_393",
@@ -24253,6 +24765,38 @@
         "fr": "0x02000474",
         "it": "0x02000474",
         "ja": "0x02000474"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
+      "en_owner": "resource_393:0x02000608",
+      "source": "games/gs1/src/overlays/staged_actor_movement/apply_scene_transition_actor_movement_and_redraw.c",
+      "resource": "resource_393",
+      "size": 696,
+      "core_bytes": 544,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02000608",
+        "en": "0x02000608",
+        "es": "0x02000608",
+        "fr": "0x02000608",
+        "it": "0x02000608",
+        "ja": "0x02000608"
       },
       "location_methods": {
         "de": "global_thumb_anchor",
@@ -34928,6 +35472,38 @@
       }
     },
     {
+      "en_owner": "resource_39d:0x020008cc",
+      "source": "games/gs1/src/overlays/actor_search/find_nearest_f2_actor.c",
+      "resource": "resource_39d",
+      "size": 92,
+      "core_bytes": 80,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x020008cc",
+        "en": "0x020008cc",
+        "es": "0x020008cc",
+        "fr": "0x020008cc",
+        "it": "0x020008cc",
+        "ja": "0x020008cc"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
       "en_owner": "resource_39d:0x02000ad0",
       "source": "games/gs1/src/unidentified/overlays/state_update/state_update_0768.c",
       "resource": "resource_39d",
@@ -37245,6 +37821,38 @@
         "fr": "0x02002bb0",
         "it": "0x02002bb0",
         "ja": "0x02002b94"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
+      "en_owner": "resource_39f:0x02002c0c",
+      "source": "games/gs1/src/overlays/orbiting_effect/initialize_orbiting_effect.c",
+      "resource": "resource_39f",
+      "size": 216,
+      "core_bytes": 180,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02002c18",
+        "en": "0x02002c0c",
+        "es": "0x02002c18",
+        "fr": "0x02002c18",
+        "it": "0x02002c18",
+        "ja": "0x02002bfc"
       },
       "location_methods": {
         "de": "global_thumb_anchor",
@@ -44784,6 +45392,38 @@
       }
     },
     {
+      "en_owner": "resource_3a8:0x02003a3c",
+      "source": "games/gs1/src/overlays/orbiting_effect/initialize_orbiting_render_effect.c",
+      "resource": "resource_3a8",
+      "size": 216,
+      "core_bytes": 180,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02003a3c",
+        "en": "0x02003a3c",
+        "es": "0x02003a3c",
+        "fr": "0x02003a3c",
+        "it": "0x02003a3c",
+        "ja": "0x02003a38"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
       "en_owner": "resource_3a9:0x02000030",
       "source": "games/gs1/src/unidentified/overlays/state_update/state_update_0568.c",
       "resource": "resource_3a9",
@@ -46301,6 +46941,38 @@
         "fr": "0x020017d8",
         "it": "0x0200182c",
         "ja": "0x020017c8"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
+      "en_owner": "resource_3ab:0x02001840",
+      "source": "games/gs1/src/overlays/orbiting_effect/initialize_spawned_orbiting_effect.c",
+      "resource": "resource_3ab",
+      "size": 216,
+      "core_bytes": 180,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02001840",
+        "en": "0x02001840",
+        "es": "0x02001894",
+        "fr": "0x02001840",
+        "it": "0x02001894",
+        "ja": "0x02001830"
       },
       "location_methods": {
         "de": "global_thumb_anchor",
@@ -53392,6 +54064,38 @@
       }
     },
     {
+      "en_owner": "resource_3b2:0x02002ed8",
+      "source": "games/gs1/src/overlays/orbiting_effect/initialize_swaying_scene_object.c",
+      "resource": "resource_3b2",
+      "size": 216,
+      "core_bytes": 180,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02002ed8",
+        "en": "0x02002ed8",
+        "es": "0x02002ed8",
+        "fr": "0x02002ed8",
+        "it": "0x02002ed8",
+        "ja": "0x02002e80"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
       "en_owner": "resource_3b3:0x02000030",
       "source": "games/gs1/src/overlays/shared/set_effect_record_mode.c",
       "resource": "resource_3b3",
@@ -54109,6 +54813,38 @@
         "fr": "0x02001544",
         "it": "0x02001544",
         "ja": "0x02001538"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
+      "en_owner": "resource_3b3:0x020015cc",
+      "source": "games/gs1/src/overlays/coordinate_preset/copy_and_offset_coordinates.c",
+      "resource": "resource_3b3",
+      "size": 48,
+      "core_bytes": 40,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x020015cc",
+        "en": "0x020015cc",
+        "es": "0x020015cc",
+        "fr": "0x020015cc",
+        "it": "0x020015cc",
+        "ja": "0x020015c0"
       },
       "location_methods": {
         "de": "global_thumb_anchor",
@@ -55613,6 +56349,38 @@
         "fr": "0x020015e4",
         "it": "0x020015e4",
         "ja": "0x020015e4"
+      },
+      "location_methods": {
+        "de": "resource_offset_exact",
+        "en": "source",
+        "es": "resource_offset_exact",
+        "fr": "resource_offset_exact",
+        "it": "resource_offset_exact",
+        "ja": "resource_offset_exact"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
+      "en_owner": "resource_3b4:0x020018c0",
+      "source": "games/gs1/src/overlays/display/set_blend_alpha_coefficients.c",
+      "resource": "resource_3b4",
+      "size": 16,
+      "core_bytes": 12,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x020018c0",
+        "en": "0x020018c0",
+        "es": "0x020018c0",
+        "fr": "0x020018c0",
+        "it": "0x020018c0",
+        "ja": "0x020018c0"
       },
       "location_methods": {
         "de": "resource_offset_exact",
@@ -65584,6 +66352,38 @@
       }
     },
     {
+      "en_owner": "resource_3be:0x02000d18",
+      "source": "games/gs1/src/overlays/staged_actor_pair_scene/get_message_data.c",
+      "resource": "resource_3be",
+      "size": 8,
+      "core_bytes": 4,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02000d18",
+        "en": "0x02000d18",
+        "es": "0x02000d18",
+        "fr": "0x02000d18",
+        "it": "0x02000d18",
+        "ja": "0x02000d18"
+      },
+      "location_methods": {
+        "de": "resource_offset_exact",
+        "en": "source",
+        "es": "resource_offset_exact",
+        "fr": "resource_offset_exact",
+        "it": "resource_offset_exact",
+        "ja": "resource_offset_exact"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
       "en_owner": "resource_3be:0x020010f0",
       "source": "games/gs1/src/overlays/staged_actor_pair_scene/run_scene_step.c",
       "resource": "resource_3be",
@@ -73840,6 +74640,38 @@
       }
     },
     {
+      "en_owner": "resource_3c7:0x02000030",
+      "source": "games/gs1/src/overlays/actor_pose/set_actor_fourteen_pose.c",
+      "resource": "resource_3c7",
+      "size": 18,
+      "core_bytes": 14,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02000030",
+        "en": "0x02000030",
+        "es": "0x02000030",
+        "fr": "0x02000030",
+        "it": "0x02000030",
+        "ja": "0x02000030"
+      },
+      "location_methods": {
+        "de": "resource_offset_exact",
+        "en": "source",
+        "es": "resource_offset_exact",
+        "fr": "resource_offset_exact",
+        "it": "resource_offset_exact",
+        "ja": "resource_offset_exact"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
       "en_owner": "resource_3c7:0x02000044",
       "source": "games/gs1/src/unidentified/overlays/leaf/leaf_0058.c",
       "resource": "resource_3c7",
@@ -77328,6 +78160,38 @@
       }
     },
     {
+      "en_owner": "resource_3ca:0x0200004c",
+      "source": "games/gs1/src/overlays/scene_audio/play_workspace_cue_and_clear_palette_zero.c",
+      "resource": "resource_3ca",
+      "size": 36,
+      "core_bytes": 28,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x0200004c",
+        "en": "0x0200004c",
+        "es": "0x0200004c",
+        "fr": "0x0200004c",
+        "it": "0x0200004c",
+        "ja": "0x0200004c"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
       "en_owner": "resource_3ca:0x02000070",
       "source": "games/gs1/src/unidentified/overlays/leaf/leaf_0599.c",
       "resource": "resource_3ca",
@@ -79387,6 +80251,13 @@
     {
       "en_owner": "resource_3ce:0x02000204",
       "source": "games/gs1/src/unidentified/overlays/leaf/leaf_0593.c",
+      "resource": "resource_3ce",
+      "size": 2,
+      "error": "only 2 bytes remain after masking Thumb calls and literal fields"
+    },
+    {
+      "en_owner": "resource_3ce:0x02000228",
+      "source": "games/gs1/src/overlays/command_table/no_op_callback.c",
       "resource": "resource_3ce",
       "size": 2,
       "error": "only 2 bytes remain after masking Thumb calls and literal fields"

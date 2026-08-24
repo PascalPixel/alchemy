@@ -3,7 +3,6 @@
 
 extern u8 Data_00000008[];
 extern s32 Data_080fc624[];
-#define Audio_ResumePlayer Func_080fa264
 
 void Audio_ResumePlayer(s32);
 

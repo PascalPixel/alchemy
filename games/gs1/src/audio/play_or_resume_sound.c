@@ -10,7 +10,7 @@ extern s32 *Data_080fc624[];
 extern SoundTableEntry Data_080fc684[];
 
 void MusicPlayer_StartSong(void *, s32);
-void Func_080fa264(void *);
+void Audio_ResumePlayer(void *);
 
 void Audio_PlayOrResumeSound(u16 audio_cue_id)
 {
@@ -29,6 +29,6 @@ void Audio_PlayOrResumeSound(u16 audio_cue_id)
         if ((u16)status == 0)
             MusicPlayer_StartSong(player, current_header);
         else if (status < 0)
-            Func_080fa264(player);
+            Audio_ResumePlayer(player);
     }
 }

@@ -96,17 +96,17 @@ void Func_08006864(const void *source, void *destination, u32 control);
 void MusicPlayer_ExecuteMemoryAccessCommand(
     struct MusicPlayerState *,
     struct MusicTrackState *);
-void Func_080fa1d4(struct MusicPlayerState *, struct MusicTrackState *);
-void Func_080fa1e8(struct MusicPlayerState *, struct MusicTrackState *);
+void MusicTrack_SetLfoSpeedFromCommand(struct MusicPlayerState *, struct MusicTrackState *);
+void MusicTrack_SetModulationFromCommand(struct MusicPlayerState *, struct MusicTrackState *);
 void MusicTrack_DispatchExtendedCommand(struct MusicPlayerState *, struct MusicTrackState *);
-void Func_080fa16c(struct MusicPlayerState *, struct MusicTrackState *);
+void MusicTrack_EndTie(struct MusicPlayerState *, struct MusicTrackState *);
 void AudioEngine_SetPcmRate(u32);
-void Func_080f9ef8(struct MusicPlayerState *, struct MusicTrackState *);
+void MusicTrack_Stop(struct MusicPlayerState *, struct MusicTrackState *);
 void MusicPlayer_UpdateFade(struct MusicPlayerState *);
 void MusicTrack_UpdateVolumePitch(
     struct MusicPlayerState *,
     struct MusicTrackState *);
-void Func_080fae58(void);
+void CgbAudio_Update(void);
 void Cgb_StopOscillator(u8);
 s32 Cgb_KeyToFrequency(s32, s32, s32);
 extern u8 Value_00000000;
@@ -138,17 +138,17 @@ void CgbAudio_Initialize(struct CgbChannel *channels)
 
     mplay_jump_table = (union AudioCommandSlot *)0x02004000;
     mplay_jump_table[8].player_track = MusicPlayer_ExecuteMemoryAccessCommand;
-    mplay_jump_table[17].player_track = Func_080fa1d4;
-    mplay_jump_table[19].player_track = Func_080fa1e8;
+    mplay_jump_table[17].player_track = MusicTrack_SetLfoSpeedFromCommand;
+    mplay_jump_table[19].player_track = MusicTrack_SetModulationFromCommand;
     mplay_jump_table[28].player_track = MusicTrack_DispatchExtendedCommand;
-    mplay_jump_table[29].player_track = Func_080fa16c;
+    mplay_jump_table[29].player_track = MusicTrack_EndTie;
     mplay_jump_table[30].word = AudioEngine_SetPcmRate;
-    mplay_jump_table[31].player_track = Func_080f9ef8;
+    mplay_jump_table[31].player_track = MusicTrack_Stop;
     mplay_jump_table[32].player = MusicPlayer_UpdateFade;
     mplay_jump_table[33].player_track = MusicTrack_UpdateVolumePitch;
 
     state->cgb_channels = channels;
-    state->cgb_sound = Func_080fae58;
+    state->cgb_sound = CgbAudio_Update;
     state->cgb_osc_off.handler = Cgb_StopOscillator;
     state->midi_key_to_cgb_freq.handler = Cgb_KeyToFrequency;
     state->max_lines = (u32)&Value_00000000;

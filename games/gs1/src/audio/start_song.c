@@ -33,7 +33,7 @@ struct SongStartPlayer {
     u32 ident;
 };
 
-void Func_080f9ef8(
+void MusicTrack_Stop(
     struct SongStartPlayer *player,
     struct SongStartTrack *track);
 void AudioEngine_SetMode(u8 flags);
@@ -82,7 +82,7 @@ void MusicPlayer_StartSong(
     track = player->tracks;
     while (track_index < song->track_count
            && track_index < player->track_capacity) {
-        Func_080f9ef8(player, track);
+        MusicTrack_Stop(player, track);
         track->flags = 0xc0;
         track->channel = 0;
         track->command = song->track_data[track_index];
@@ -90,7 +90,7 @@ void MusicPlayer_StartSong(
         track++;
     }
     while (track_index < player->track_capacity) {
-        Func_080f9ef8(player, track);
+        MusicTrack_Stop(player, track);
         track->flags = 0;
         track_index++;
         track++;

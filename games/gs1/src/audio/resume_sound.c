@@ -6,7 +6,7 @@ typedef struct {
     u16 player;
 } SoundTableEntry;
 
-void Func_080fa264(void *player);
+void Audio_ResumePlayer(void *player);
 extern void *Data_080fc624[];
 extern SoundTableEntry Data_080fc684[];
 
@@ -35,5 +35,5 @@ void Audio_ResumeSound(u16 audio_cue_id)
     target_header = audio_cue->header;
 
     if (current_header == target_header)
-        Func_080fa264(player);
+        Audio_ResumePlayer(player);
 }

@@ -146,7 +146,7 @@ fn overlay_owners(tree: &SourceTree, name: &str) -> Vec<Owner> {
             }
             cursor = entry;
             owner = Some(Owner {
-                label: format!("AlchemyC_{entry:08x}"),
+                label: String::new(),
                 entry,
                 spans: Vec::new(),
             });
@@ -319,27 +319,28 @@ fn exact_overlay(
 > {
     let manifest = tree
         .read(SOURCE_PATHS_MANIFEST)
-        .unwrap_or_else(|| "{\"format\":2,\"owners\":{}}".into());
+        .ok_or_else(|| format!("missing canonical owner register {SOURCE_PATHS_MANIFEST}"))?;
     let source_paths = SourcePaths::parse(Path::new(""), &manifest)?;
     let mut owners = std::collections::BTreeMap::new();
     let mut spans = std::collections::BTreeMap::new();
     for (id, name) in pairs {
-        let list: Vec<_> = overlay_owners(tree, name)
+        let list = overlay_owners(tree, name)
             .into_iter()
-            .map(|mut owner| {
-                let source_owner = SourceOwner::parse(&format!("{id}:{:08x}", owner.entry));
-                if let Ok(source_owner) = source_owner {
-                    if let Some(name) = source_paths.registered_name(source_owner) {
-                        owner.label = name.to_string();
-                    }
-                }
-                let path = source_owner
-                    .map(|source_owner| source_paths.repository_relative_path(source_owner))
-                    .map(|path| path.to_string_lossy().replace('\\', "/"));
-                let Some(path) = path.ok() else {
-                    owner.spans.clear();
-                    return owner;
-                };
+            .map(|mut owner| -> Result<Owner, String> {
+                let source_owner = SourceOwner::parse(&format!("{id}:{:08x}", owner.entry))?;
+                owner.label = source_paths
+                    .registered_name(source_owner)
+                    .ok_or_else(|| {
+                        format!(
+                            "exact owner {} has no name in {SOURCE_PATHS_MANIFEST}",
+                            source_owner.id()
+                        )
+                    })?
+                    .to_string();
+                let path = source_paths
+                    .repository_relative_path(source_owner)
+                    .to_string_lossy()
+                    .replace('\\', "/");
                 if !tree.read(&path).is_some_and(|source| canonical(&source)) {
                     owner.spans.clear();
                 }
@@ -347,10 +348,12 @@ fn exact_overlay(
                     &owner.spans,
                     executable.get(id).map(Vec::as_slice).unwrap_or(&[]),
                 );
-                owner
+                Ok(owner)
             })
-            .filter(|o| !o.spans.is_empty())
-            .collect();
+            .collect::<Result<Vec<_>, _>>()?
+            .into_iter()
+            .filter(|owner| !owner.spans.is_empty())
+            .collect::<Vec<_>>();
         let flat: Vec<_> = list.iter().flat_map(|o| o.spans.iter().copied()).collect();
         owners.insert(id.clone(), list);
         spans.insert(id.clone(), normalize(&flat));

@@ -16,7 +16,7 @@ struct Entry_08016594 {
     u8 palette;
 };
 
-void Func_08016594(struct Entry_08016594 *entry) {
+void RenderOutput_Release(struct Entry_08016594 *entry) {
     Func_08015ec0((u32)entry);
     if (entry->kind != 0) {
         Resource_ResetEntry(entry->index);

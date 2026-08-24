@@ -36,7 +36,7 @@ typedef struct {
 } Obj;
 
 s32 Func_0808d48c(s32, s32);
-void Func_080916b0(void);
+void BattleRuntime_Reset(void);
 void Func_08092b94(s32);
 void Func_08092f84(s32, s32);
 void Func_08091750(void);
@@ -61,7 +61,7 @@ s32 Func_0808d828(s32 arg0) {
             temp_r3->h19c = 0;
         }
         if (temp_r0->val8 < 0x10000) {
-            Func_080916b0();
+            BattleRuntime_Reset();
             Func_08092b94(temp_r0->val8);
             Func_08092f84(-1, 0);
             var_r7 = 0;

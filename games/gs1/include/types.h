@@ -146,6 +146,7 @@ typedef int bool;
 #define Menu_EnsureCancelSound Func_080a2490
 #define Menu_SelectionLoop Func_0801b398
 #define Menu_ReleaseEntryObjects Func_080a195c
+#define EffectPosition_ApplyAnimation Func_080e3994
 #define Menu_WaitForSelectionInput Func_0801b424
 #define Menu_MoveSelectionForward Func_0801b4ec
 #define Menu_MoveSelectionBackward Func_0801b5c0
@@ -522,6 +523,8 @@ typedef int bool;
 #define BattleEffect_GetAnimationValue Func_08091584
 #define BattleEffect_GetResourceId Func_080915ac
 #define BattleEffect_GetFlags Func_080915dc
+#define BattleRuntime_InitializeRenderObject Func_08091660
+#define BattleRuntime_Reset Func_080916b0
 #define Script_SetOrCompareCursor Func_0800e24c
 #define Script_SetOrCompareUnsignedHalfword Func_0800e280
 #define Script_SetOrCompareWord08 Func_0800e2b0

@@ -451,7 +451,7 @@ struct BattleWorkPage {
                         q = (u16 *)saved;                                    \
                         count = listed;                                      \
                         do {                                                 \
-                            Actor_RefreshSlot(*q++);                         \
+                            Actor_ResetMotionAtAnchor(*q++);                \
                             count--;                                         \
                         } while (count != 0);                                \
                     }                                                        \

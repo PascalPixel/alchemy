@@ -31,7 +31,7 @@ struct FadePlayerState {
     struct FadeTrackState *tracks;
 };
 
-void Func_080f9ef8(
+void MusicTrack_Stop(
     struct FadePlayerState *player,
     struct FadeTrackState *track);
 
@@ -61,7 +61,7 @@ void MusicPlayer_UpdateFade(struct FadePlayerState *player)
             while (track_count > 0) {
                 u32 active;
 
-                Func_080f9ef8(player, track);
+                MusicTrack_Stop(player, track);
 
                 active = 1;
                 fade_volume = player->fade_volume;

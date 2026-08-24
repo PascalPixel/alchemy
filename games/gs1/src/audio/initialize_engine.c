@@ -55,7 +55,7 @@ struct AudioEngineState {
 };
 
 void Func_08006864(const void *source, void *destination, u32 control);
-void Func_080f9a80(union AudioCommandSlot *destination);
+void MusicPlayer_CopyCommandTable(union AudioCommandSlot *destination);
 void Func_080f9f6c(
     u32,
     struct MusicPlayerState *,
@@ -103,7 +103,7 @@ void AudioEngine_Initialize(struct AudioEngineState *audio)
     audio->ext_volume_pitch = Audio_DummyCallback;
 
     mplay_jump_table = (union AudioCommandSlot *)0x02004000;
-    Func_080f9a80(mplay_jump_table);
+    MusicPlayer_CopyCommandTable(mplay_jump_table);
     audio->mplay_jump_table = mplay_jump_table;
 
     AudioEngine_SetPcmRate(0x40000);

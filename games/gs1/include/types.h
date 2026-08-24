@@ -178,5 +178,14 @@ typedef int bool;
 #define ObjectMotion_Launch Func_08092560
 #define ParticleEffect_UpdateLinearMotion Func_080925e0
 #define ObjectMotion_StepAngle Func_08092a74
+#define MusicPlayer_CopyCommandTable Func_080f9a80
+#define Audio_Clear64Bytes Func_080f9a18
+#define MusicTrack_ReadCommandByteFiltered Func_080f9ab4
+#define Audio_ResumePlayer Func_080fa264
+#define MusicTrack_EndTie Func_080fa16c
+#define MusicTrack_SetLfoSpeedFromCommand Func_080fa1d4
+#define MusicTrack_SetModulationFromCommand Func_080fa1e8
+#define MusicTrack_Stop Func_080f9ef8
+#define CgbAudio_Update Func_080fae58
 
 #endif

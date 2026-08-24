@@ -45429,7 +45429,7 @@
     },
     {
       "en_owner": "0809a65c",
-      "source": "games/gs1/src/0809a65c.c",
+      "source": "games/gs1/src/battle/effects/particles/update_motion_and_scale.c",
       "size": 90,
       "all_exact": true,
       "editions": [
@@ -45821,7 +45821,7 @@
     },
     {
       "en_owner": "0809ad90",
-      "source": "games/gs1/src/0809ad90.c",
+      "source": "games/gs1/src/battle/effects/object_control/pause_object.c",
       "size": 88,
       "all_exact": true,
       "editions": [
@@ -45877,7 +45877,7 @@
     },
     {
       "en_owner": "0809ade8",
-      "source": "games/gs1/src/0809ade8.c",
+      "source": "games/gs1/src/battle/effects/object_control/resume_object.c",
       "size": 84,
       "all_exact": true,
       "editions": [

@@ -13,7 +13,7 @@ struct GlobalState {
 
 extern struct GlobalState Data_02000240;
 
-void Func_0809ad90(s32 arg0) {
+void BattleEffect_PauseObject(s32 arg0) {
     u8 *object;
     u8 *entry;
 

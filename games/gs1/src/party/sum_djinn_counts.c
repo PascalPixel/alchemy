@@ -2,7 +2,7 @@
 #include "owner_state.h"
 #include "party_state.h"
 
-s32 Func_0807a5bc(s32 index)
+s32 Party_SumDjinnCounts(s32 index)
 {
     u16 owners[16];
     s32 result = 0;

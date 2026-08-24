@@ -3,7 +3,7 @@
 
 s32 FixedPoint_Ratio(s32, s32);
 
-struct Owner_0807822c {
+struct OwnerRatioState {
     u8 unknown_00[0x14];
     s16 value_14;
     s16 value_16;
@@ -14,13 +14,13 @@ struct Owner_0807822c {
     s16 value_3a;
 };
 
-void Func_0807822c(s32 owner_no)
+void Owner_RecalculateRatios(s32 owner_no)
 {
     s32 first;
     s32 second;
     s32 first_value;
     s32 second_value;
-    struct Owner_0807822c *owner;
+    struct OwnerRatioState *owner;
 
     owner = Owner_GetState(owner_no);
     first = FixedPoint_Ratio(

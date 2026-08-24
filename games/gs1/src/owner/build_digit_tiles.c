@@ -21,7 +21,7 @@ extern const struct DigitOffsets Data_08088df8[16];
 extern const struct PresetValues Data_08088e38[44];
 
 struct OwnerState *Owner_GetState(s32 owner);
-u8 *Func_080773d8(s32 record);
+u8 *Owner_GetRecord(s32 record);
 s32 Func_080797fc(s32 record, const u8 *source, s32 output[4]);
 s32 Modulo(s32 value, s32 divisor);
 s32 FixedPoint_Ratio(s32 value, s32 divisor);
@@ -35,7 +35,7 @@ u32 Owner_BuildDigitTiles(s32 owner, s16 destination[4][2])
     s32 i;
 
     if (state->use_source_129 == 0) {
-        index = Func_080773d8(state->record_128)[52];
+        index = Owner_GetRecord(state->record_128)[52];
         if (index > 43)
             index = 0;
 

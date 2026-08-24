@@ -3,7 +3,7 @@
 
 extern const u8 Data_08080ec8[];
 
-const u8 *Func_080773d8(s32 arg0) {
+const u8 *Owner_GetRecord(s32 arg0) {
     u32 var_r0;
 
     var_r0 = arg0 - 8;

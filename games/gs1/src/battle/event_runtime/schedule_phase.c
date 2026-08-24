@@ -3,7 +3,7 @@
 s32 ScheduleCallbackAfterFrames(s32, s32);
 void Func_080bd898(void);
 
-s32 Func_080bd808(s32 parameter) {
+s32 BattleEventRuntime_SchedulePhase(s32 parameter) {
     struct Runtime1e74 *runtime;
 
     runtime = Runtime1e74_Get();

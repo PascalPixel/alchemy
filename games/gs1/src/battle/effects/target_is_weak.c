@@ -16,7 +16,7 @@ s32 BattleTarget_IsWeakToEffect(const u8 *state, s32 effect_id)
     if (*field == 0) {
         offset--;
         field = state + offset;
-        entries = (u8 *)Func_080773d8(*field) + 0x48;
+        entries = (u8 *)Owner_GetRecord(*field) + 0x48;
         entry_index = 0;
 first_loop:
         if (*entries != effect_id) {

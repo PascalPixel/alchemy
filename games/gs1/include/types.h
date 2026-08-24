@@ -60,7 +60,9 @@ typedef int bool;
 #define UiWindow_Close Func_08015018
 #define Ability_GetData Func_08077080
 #define Owner_GetState Func_08077394
+#define Owner_GetRecord Func_080773d8
 #define Resource_FindFreeSlot Func_08004080
+#define Resource_DecompressLz Func_0800a97c
 #define Runtime_AllocateBlock Func_080048f4
 #define Resource_CopyData Func_08003fa4
 #define ScheduleCallback Func_08004278
@@ -118,6 +120,9 @@ typedef int bool;
 #define TextResource_Initialize Func_0801c0dc
 #define TextResource_SetPosition Func_0801c154
 #define TextResource_Release Func_0801c17c
+#define Menu_CancelSoundTick Func_080a2444
+#define Menu_CancelSoundReset Func_080a2474
+#define Menu_EnsureCancelSound Func_080a2490
 #define Object_CheckMovementCollision Func_080091d8
 #define Ability_GetMaximum Func_08077240
 #define Ability_GetAvailability Func_08077248
@@ -134,6 +139,9 @@ typedef int bool;
 #define Menu_LoadResourceSlot Func_0802875c
 #define GetBattleObjectSlot Func_080b7dd0
 #define GetMotionRecord Func_080b7f70
+#define BattleMotion_SetRecordChildValues Func_080ba918
+#define BattleMotion_RunValueSequence Func_080babdc
+#define BattleMotion_InitializeActorRecords Func_080bace8
 #define ReleaseBattleObjectRecords Func_080b7b30
 #define ResetMotionRecordGroup Func_080b7e04
 #define ResetBattleObjectRecordGroups Func_080b7e24
@@ -149,6 +157,8 @@ typedef int bool;
 #define ObjectTable_GetSlotAddress Func_0808b854
 #define ObjectTable_ClearBattleSlots Func_0808b9f8
 #define BattleUnit_Recalculate Func_08077010
+#define BattleActor_ResetRuntimeFields Func_080bb588
+#define BattleActor_DestroyTemporaryObject Func_080bb8e8
 #define UiWork_Finalize Func_08016418
 #define Actor_ResetMotionAtAnchor Func_080b8000
 #define BattleObject_IsValidId Func_080b8808
@@ -236,6 +246,7 @@ typedef int bool;
 #define CharacterMenu_BuildAvailability Func_080a8b10
 #define CharacterMenu_UpdateSelectionIcons Func_080a9dc4
 #define BattleEffect_InitializeDefaultMode Func_080e7320
+#define BattleEffect_InitializeMode1 Func_080e732c
 #define Event_ValidatePackedId Func_08091814
 #define Event_ClearInvalidPackedValues Func_08091858
 #define Map_DecodeTileRows Func_0800f9f4
@@ -369,6 +380,10 @@ typedef int bool;
 #define EventTable_ApplyRowAbilities Func_080b26cc
 #define EventTable_CopyRowHeader Func_080b2720
 #define EventTable_GetRowType Func_080b2764
+#define BattleEventRuntime_BeginPhase Func_080bd7dc
+#define BattleEventRuntime_SchedulePhase Func_080bd808
+#define BattleEventRuntime_Reset Func_080bdfec
+#define BattleEventRuntime_WaitForReady Func_080be02c
 #define NodeChain_GetNodeAtIndex Func_080b0694
 #define Menu_BuildPageResult Func_080a8b8c
 #define BattleEffect_ResetCounters Func_0808bc44
@@ -442,6 +457,10 @@ typedef int bool;
 #define ObjectDispatch_ApplyArgumentToChildren Func_0800c300
 #define ObjectDispatch_ApplyValueToChildren Func_0800c344
 #define ObjectDispatch_ApplyPairToChildren Func_0800c388
+#define BattleEffect_FindDefinition Func_08091560
+#define BattleEffect_GetAnimationValue Func_08091584
+#define BattleEffect_GetResourceId Func_080915ac
+#define BattleEffect_GetFlags Func_080915dc
 #define Script_SetOrCompareCursor Func_0800e24c
 #define Script_SetOrCompareUnsignedHalfword Func_0800e280
 #define Script_SetOrCompareWord08 Func_0800e2b0

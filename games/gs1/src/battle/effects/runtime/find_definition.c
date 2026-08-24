@@ -2,7 +2,7 @@
 
 extern struct BattleEffectEntry Data_0809e9f0[];
 
-struct BattleEffectEntry *Func_08091560(u32 id)
+struct BattleEffectEntry *BattleEffect_FindDefinition(u32 id)
 {
     struct BattleEffectEntry *entry = Data_0809e9f0;
     u32 index = 0;

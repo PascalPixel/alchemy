@@ -15,12 +15,12 @@ void *Runtime_GetObject(s32 id);
 struct ObjectSlot_080babdc *GetBattleObjectSlot(s32 id);
 void Object_SetMode(void *object, s32 mode);
 void Func_080152b8(u16 *selection);
-void Func_080ba918(void *object, s32 value);
+void BattleMotion_SetRecordChildValues(void *object, s32 value);
 void WaitFrames(s32 frames);
 s32 Func_080b6cd0(s32 id);
 void Func_08015130(s32 mode);
 
-void Func_080babdc(s32 id)
+void BattleMotion_RunValueSequence(s32 id)
 {
     u16 selection[2];
     u16 *sel;
@@ -37,12 +37,12 @@ void Func_080babdc(s32 id)
         sel[1] = target;
         sel[0] = id;
         Func_080152b8(sel);
-        Func_080ba918(GetBattleObjectSlot(id)->object, 7);
+        BattleMotion_SetRecordChildValues(GetBattleObjectSlot(id)->object, 7);
         WaitFrames(2);
 
         sel[0] = id;
         Func_080152b8(sel);
-        Func_080ba918(GetBattleObjectSlot(id)->object, Func_080b6cd0(id));
+        BattleMotion_SetRecordChildValues(GetBattleObjectSlot(id)->object, Func_080b6cd0(id));
         WaitFrames(2);
         remaining--;
     } while (remaining >= 0);

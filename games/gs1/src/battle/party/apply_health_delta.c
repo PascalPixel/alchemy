@@ -11,7 +11,7 @@ void Func_08091220(s32, s32);
 void Func_08091254(s32);
 void Audio_PlayCue(s32);
 
-void Func_0808c30c(s32 amount, s32 scaled)
+void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
 {
     s32 count;
     s32 found;

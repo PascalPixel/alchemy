@@ -113,6 +113,10 @@ typedef int bool;
 #define ActivateBattleObjectSlot Func_080b7e60
 #define Object_GetById Func_08092054
 #define ObjectTable_Get Func_0808ba1c
+#define ObjectTable_DestroyAtIndex Func_0808b64c
+#define ObjectTable_FindLastActiveId Func_0808b824
+#define ObjectTable_GetSlotAddress Func_0808b854
+#define ObjectTable_ClearBattleSlots Func_0808b9f8
 #define BattleUnit_Recalculate Func_08077010
 #define UiWork_Finalize Func_08016418
 #define Actor_ResetMotionAtAnchor Func_080b8000
@@ -223,6 +227,10 @@ typedef int bool;
 #define BattleEffect_LookupResult Func_0808adf0
 #define BattleEffect_GetWeightedResult Func_0808b05c
 #define BattleEffect_GetPhaseResult Func_0808b074
+#define EffectStep_AdvanceWithGravity3D Func_080e38b8
+#define EffectStep_AdvanceWithGravity2D Func_080e3908
+#define BattleParty_ApplyHealthDelta Func_0808c30c
+#define BattleParty_ApplyStatusDamage Func_0808c3a4
 #define PsynergyMenu_RefreshOwnerEntries Func_080a1bdc
 #define PsynergyMenu_PositionOwnerEntry Func_080a1c2c
 #define InventoryMenu_PositionOwnerEntry Func_080a1c6c

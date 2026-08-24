@@ -5,7 +5,7 @@ void Object_ResetMotion(void *);
 void Object_SetPosition(void *, s32, s32, s32);
 void Object_SetMode(void *, s32);
 
-struct Object080df8b8 {
+struct RisingObjectState {
     u8 padding_00[0x28];
     s32 field_28;
     u8 padding_2c[4];
@@ -20,9 +20,9 @@ struct Object080df8b8 {
     u8 field_5a;
 };
 
-void Func_080df8b8(s32 arg0) {
+void BattleEffect_InitializeRisingObject(s32 arg0) {
     struct B5Context *context = Func_080b5098(arg0);
-    struct Object080df8b8 *object = context->object;
+    struct RisingObjectState *object = context->object;
 
     object->field_34 = 0x20000;
     object->field_30 = 0x80000;

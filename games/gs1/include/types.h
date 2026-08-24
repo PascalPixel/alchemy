@@ -110,6 +110,9 @@ typedef int bool;
 #define Menu_LoadResourceSlot Func_0802875c
 #define GetBattleObjectSlot Func_080b7dd0
 #define GetMotionRecord Func_080b7f70
+#define ReleaseBattleObjectRecords Func_080b7b30
+#define ResetMotionRecordGroup Func_080b7e04
+#define ResetBattleObjectRecordGroups Func_080b7e24
 #define ActivateBattleObjectSlot Func_080b7e60
 #define Object_GetById Func_08092054
 #define ObjectTable_Get Func_0808ba1c
@@ -120,6 +123,7 @@ typedef int bool;
 #define BattleUnit_Recalculate Func_08077010
 #define UiWork_Finalize Func_08016418
 #define Actor_ResetMotionAtAnchor Func_080b8000
+#define BattleObject_IsValidId Func_080b8808
 #define UiText_ShowMessageAndWait Func_080151c8
 #define UiText_ShowMessageAndWaitCore Func_080175a0
 #define UiWork_FinalizePending Func_08015140
@@ -223,6 +227,7 @@ typedef int bool;
 #define BattleEffect_ResumeObject Func_0809ade8
 #define BattleEffect_UpdateObjectVisibilityBounds Func_0809c314
 #define BattleEffect_RunVisibilityTransition Func_0809c3a4
+#define BattleEffect_InterpolateBuffers Func_0809088c
 #define BattleEffect_GetResourceGroup Func_0808a8d0
 #define BattleEffect_LookupResult Func_0808adf0
 #define BattleEffect_GetWeightedResult Func_0808b05c
@@ -231,6 +236,7 @@ typedef int bool;
 #define EffectStep_AdvanceWithGravity2D Func_080e3908
 #define BattleParty_ApplyHealthDelta Func_0808c30c
 #define BattleParty_ApplyStatusDamage Func_0808c3a4
+#define BattleParty_ApplyDrain Func_0808c2dc
 #define PsynergyMenu_RefreshOwnerEntries Func_080a1bdc
 #define PsynergyMenu_PositionOwnerEntry Func_080a1c2c
 #define InventoryMenu_PositionOwnerEntry Func_080a1c6c
@@ -256,6 +262,10 @@ typedef int bool;
 #define Graphics_UploadVramBlock Func_080c1438
 #define Graphics_ScaleRgb555Clamped Func_080c1724
 #define MusicPlayer_SetPitchAndUpdateFrequency Func_080fb2a4
+#define MusicCommand_SetPitch Func_080f94e0
+#define MusicCommand_SetVolume Func_080f950c
+#define MusicCommand_SetPitchAndUpdateFrequency Func_080f94c8
+#define AudioCommand_UpdateToggleMask Func_080f9570
 #define Audio_InitializeRuntimeDefaults Func_080f9438
 #define Graphics_ScaleRgb555 Func_080f6038
 #define Audio_ClearChannelChain Func_080f9a30
@@ -281,5 +291,15 @@ typedef int bool;
 #define Math_UmulHigh32 Func_080f95e0
 #define AudioEngine_RunMixerTick Func_080f95f0
 #define MusicTrack_HandleNote Func_080f9f6c
+#define EventTable_GetRowLimit Func_080b26c8
+#define EventTable_ApplyRowAbilities Func_080b26cc
+#define EventTable_CopyRowHeader Func_080b2720
+#define EventTable_GetRowType Func_080b2764
+#define NodeChain_GetNodeAtIndex Func_080b0694
+#define Menu_BuildPageResult Func_080a8b8c
+#define BattleEffect_ResetCounters Func_0808bc44
+#define BattleEffect_SumCounters Func_0808bc9c
+#define BattleEffect_InitializeRisingObject Func_080df8b8
+#define BattleEffect_SetApproachMotion Func_080df90c
 
 #endif

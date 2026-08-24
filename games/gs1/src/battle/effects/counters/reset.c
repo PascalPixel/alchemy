@@ -1,7 +1,7 @@
 #include "types.h"
 #include "global_cells.h"
 
-void Func_0808bc44(void)
+void BattleEffect_ResetCounters(void)
 {
   short new_var;
   void *temp_r1;
@@ -20,4 +20,3 @@ void Func_0808bc44(void)
   *((s16 *) (((u8 *) temp_r1) + 0x180)) = 0;
   *((s16 *) (((u8 *) temp_r1) + 0x182)) = 0;
 }
-

@@ -1,7 +1,7 @@
 #include "types.h"
 
 void MusicPlayer_SetPitch(u8 *state, u32 maskArg, u32 valueArg);
-void Func_080f94e0(s16 arg0)
+void MusicCommand_SetPitch(s16 arg0)
 {
   int new_var;
   int new_var3;

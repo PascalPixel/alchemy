@@ -48,16 +48,13 @@ struct BattleObjectSlot {
 
 /* Raw linker spellings stay here; reconstructed APIs are used by C bodies. */
 struct BattleObjectSlot *Func_080b7dd0(s32 object_id);
-void Func_080b7b30(s32 object_id);
-void Func_080b7e04(void *record_group);
-void Func_080b7e24(struct MotionObject *object);
+void ReleaseBattleObjectRecords(s32 object_id);
+void ResetMotionRecordGroup(void *record_group);
+void ResetBattleObjectRecordGroups(struct MotionObject *object);
 s32 Func_080b7e60(s32 object_id);
 void *Func_080b7f70(struct MotionObject *object, s32 record_index);
 
 #define GetBattleObjectSlot Func_080b7dd0
-#define ReleaseBattleObjectRecords Func_080b7b30
-#define ResetMotionRecordGroup Func_080b7e04
-#define ResetBattleObjectRecordGroups Func_080b7e24
 #define ActivateBattleObjectSlot Func_080b7e60
 #define GetMotionRecord Func_080b7f70
 

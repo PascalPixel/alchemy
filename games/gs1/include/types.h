@@ -432,6 +432,8 @@ typedef int bool;
 #define ObjectMotion_SnapToTerrain Func_0808e9a8
 #define ObjectMotion_SetPositionAndReset Func_080921c4
 #define ObjectMotion_SetPositionAndCommit Func_08092158
+#define ObjectMotion_ResetAndSetPosition Func_08092128
+#define ObjectMotion_ResetAndSetPositionInMode2 Func_0809218c
 #define ObjectMotion_OffsetPositionAndReset Func_080922c4
 #define ObjectMotion_OffsetPositionAndResetMotion Func_0809228c
 #define ObjectMotion_CommitPositionAndActivate Func_08092304

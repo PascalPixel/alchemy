@@ -157,6 +157,7 @@ void Func_080a34c0(void);
 s32 Func_080a355c(s32 party_slot);
 s32 Func_080a4110(s32 column, s32 row);
 s32 Func_080a413c(s32 column, s32 row);
+void Func_080a448c(s8 *command_states);
 void Func_080a45cc(void *command_states, s32 window);
 void Func_080a4754(void);
 s32 Func_080a47b4(s32 item_index);
@@ -192,6 +193,7 @@ void Func_08015298(s32 style, u16 item, u8 target, s32 flags);
 #define InventoryMenu_PrepareOwnerItems    Func_080a355c
 #define InventoryMenu_GetCommandCursorX    Func_080a4110
 #define InventoryMenu_GetCommandCursorY    Func_080a413c
+#define InventoryMenu_BuildCommandStates   Func_080a448c
 #define InventoryMenu_DrawCommandLabels    Func_080a45cc
 #define InventoryMenu_MaybeBreakSelectedItem Func_080a4754
 #define InventoryMenu_OpenItemDetails      Func_080a47b4

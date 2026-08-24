@@ -4,7 +4,7 @@
 extern volatile u8 Data_03001f54;
 extern u8 Data_00000002[];
 
-u16 Func_08077cb8(void)
+u16 Runtime_GetBuildStampTime(void)
 {
     u8 *digits;
     s32 hourTens;

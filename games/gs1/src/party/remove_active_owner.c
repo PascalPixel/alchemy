@@ -1,7 +1,7 @@
 #include "game_flags.h"
 #include "party_state.h"
 
-s32 Func_08079664(s32 arg0)
+s32 Party_RemoveActiveOwner(s32 arg0)
 {
     s32 count;
     s32 index;

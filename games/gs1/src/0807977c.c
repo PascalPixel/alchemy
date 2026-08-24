@@ -5,7 +5,7 @@ struct State_0807977c {
 };
 
 extern u8 Data_08084a8c[16];
-struct State_0807977c *Func_08077330(s32);
+struct State_0807977c *Trade_GetOfferState(s32);
 
 s32 Func_0807977c(u8 *output) {
     u8 *source = Data_08084a8c;
@@ -14,7 +14,7 @@ s32 Func_0807977c(u8 *output) {
 
     do {
         u8 value = *source++;
-        if ((Func_08077330(0)->flags & (1 << value)) != 0) {
+        if ((Trade_GetOfferState(0)->flags & (1 << value)) != 0) {
             *output++ = value;
             count++;
         }

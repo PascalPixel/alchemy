@@ -4,7 +4,7 @@
 
 s32 Func_080170f8(u16, u16, u16, u16);
 
-void Func_08016498(void *arg0) {
+void RenderOutput_RedrawSavedRect(void *arg0) {
     /* 保存済みの矩形を再描画する。 */
     Func_080170f8(M2C_FIELD(arg0, u16 *, 0xC), M2C_FIELD(arg0, u16 *, 0xE), M2C_FIELD(arg0, u16 *, 8), M2C_FIELD(arg0, u16 *, 0xA));
 }

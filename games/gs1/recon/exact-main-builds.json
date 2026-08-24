@@ -14980,7 +14980,7 @@
     },
     {
       "en_owner": "08016498",
-      "source": "games/gs1/src/08016498.c",
+      "source": "games/gs1/src/ui/render/output_list/redraw_saved_rect.c",
       "size": 20,
       "all_exact": true,
       "editions": [
@@ -45933,7 +45933,7 @@
     },
     {
       "en_owner": "0809ae3c",
-      "source": "games/gs1/src/0809ae3c.c",
+      "source": "games/gs1/src/battle/effects/filter_object_id.c",
       "size": 26,
       "all_exact": true,
       "editions": [

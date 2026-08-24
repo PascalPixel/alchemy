@@ -38593,7 +38593,7 @@
     },
     {
       "en_owner": "0809259c",
-      "source": "games/gs1/src/0809259c.c",
+      "source": "games/gs1/src/object/motion/set_variant_callback.c",
       "size": 48,
       "all_exact": true,
       "editions": [

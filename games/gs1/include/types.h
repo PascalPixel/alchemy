@@ -320,6 +320,7 @@ typedef int bool;
 #define ObjectGroup_ApplyIndexedChildValue Func_08092980
 #define ObjectGroup_SetChildValue Func_080929d8
 #define ObjectMotion_SetActionVariant Func_08092b08
+#define ObjectMotion_SetVariantCallback Func_0809259c
 #define ObjectMotion_SetActionCallback Func_08093a6c
 #define ObjectMotion_WaitForAnimationChange Func_08092504
 #define ObjectMotion_TurnTowardLinkedTarget Func_08093a14

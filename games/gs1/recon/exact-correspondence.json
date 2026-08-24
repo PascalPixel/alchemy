@@ -4782,7 +4782,7 @@
     },
     {
       "en_owner": "0800d900",
-      "source": "games/gs1/src/0800d900.c",
+      "source": "games/gs1/src/script/interpreter/play_audio_cue.c",
       "size": 34,
       "status": "shared_core",
       "starts": {

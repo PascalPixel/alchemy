@@ -7,8 +7,7 @@ extern void *Object_Spawn(s32, s32, s32, s32);
 extern void Object_SetVelocity(struct Object_08096bec *object, s32 arg1, s32 arg2);
 extern void Object_SetMode(void *, s32);
 extern void Object_SetCallback(void *, void *);
-#define UpdateItemBreakFragment Func_08097b70
-extern void UpdateItemBreakFragment(void *);
+extern void BattleEffect_UpdateItemBreakFragment(void *);
 extern u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
@@ -36,7 +35,7 @@ void *Func_08098070(void *source)
         return 0;
     *(s32 *)((s8 *)parent + 0x1c) = 0x4000;
     *(s32 *)((s8 *)parent + 0x18) = 0x4000;
-    *(s32 *)((s8 *)parent + 0x6c) = (s32)UpdateItemBreakFragment;
+    *(s32 *)((s8 *)parent + 0x6c) = (s32)BattleEffect_UpdateItemBreakFragment;
     *(s32 *)((s8 *)parent + 0x30) = 0x20000;
     *(s32 *)((s8 *)parent + 0x34) = 0x20000;
     zero = 0;

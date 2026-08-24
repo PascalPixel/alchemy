@@ -7,14 +7,14 @@ s32 Func_080043e0(void);
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void Func_08091660(void);
 void Func_080936a0(s32, s32);
-void Func_0809c314(void);
+void BattleEffect_UpdateObjectVisibilityBounds(void);
 
 void Func_0809c3a4(void)
 {
   if ((*(s16 *) (((u8 *) Runtime_AllocateBlock(0x1B, 0xCCC)) + 0x19E)) == 3)
   {
     Func_0800430c();
-    Func_0809c314();
+    BattleEffect_UpdateObjectVisibilityBounds();
     Func_08091660();
     Func_080936a0(0x9D89, 6);
     if ((*((volatile u32 *) ADDR_03001AE8)) & 0x200)

@@ -5,7 +5,7 @@
 
 void Func_080984c0(void);
 void MapEvent_RunTileTriggerSequence(void);
-void Func_0809b648(void);
+void FieldEvent_ShowStatusMessage(void);
 
 void FieldEvent_RunTypeHandler(void) {
     u32 type;
@@ -19,7 +19,7 @@ void FieldEvent_RunTypeHandler(void) {
         MapEvent_RunTileTriggerSequence();
         return;
     case 16:
-        Func_0809b648();
+        FieldEvent_ShowStatusMessage();
         return;
     }
 }

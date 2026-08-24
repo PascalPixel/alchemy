@@ -6,7 +6,7 @@ extern char Value_00000925;
 void UiText_DrawQuantity(s32 arg0, s32 arg1);
 void UiText_DrawMessage(void *arg0, s32 arg1);
 
-void Func_0809b648(void) {
+void FieldEvent_ShowStatusMessage(void) {
     Data_02000240[145] = 0;
     if (*(s8 *)&Data_02000240[146] == 0) {
         UiText_DrawQuantity(0x96, 4);

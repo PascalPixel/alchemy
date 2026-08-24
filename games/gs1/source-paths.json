@@ -274,6 +274,7 @@
     "main:08028ef0": "menu/draw_selection_row.c",
     "main:08028f98": "menu/run_selection.c",
     "main:08092054": "object/get_by_id.c",
+    "main:08096c80": "object/spawn.c",
     "main:080fb518": "audio/execute_memory_access_command.c",
     "main:080f7db4": "audio/track/reset_slot_buckets.c",
     "main:080f7df0": "audio/track/insert_slot_node.c",

@@ -564,16 +564,16 @@ This section is generated. It is the primary contributor target list:
 non-overlapping audited source-owner scopes (or contiguous unresolved
 executable runs), sorted largest to smallest. Regenerate with `make coverage` -- do not edit by hand.
 
-- **Unfinished scopes:** 1,649
+- **Unfinished scopes:** 1,650
 - **Address spaces scanned:** 97 (86 still contain targets)
-- **Target bytes:** 658,628 tracked-C or unresolved-assembly bytes
-- **Resolved-only bytes:** 531,376 Exact C or audited permanent assembly bytes
+- **Target bytes:** 655,078 tracked-C or unresolved-assembly bytes
+- **Resolved-only bytes:** 533,646 Exact C or audited permanent assembly bytes
 - **Executable bytes accounted for:** 1,348,422
 
 ### Main target list
 
 This table contains every scope of at least 1,000 bytes (195 rows). The complete
-1,649-row index, including the smallest audited owners, is
+1,650-row index, including the smallest audited owners, is
 [`games/gs1/metrics/gs1-en-core-targets.json`](games/gs1/metrics/gs1-en-core-targets.json).
 
 | Rank | Scope | Target | Namespace / owner |
@@ -592,7 +592,7 @@ This table contains every scope of at least 1,000 bytes (195 rows). The complete
 | 12 | 6,192 | 4,200 | `main:0x080b2110` |
 | 13 | 6,070 | 4,380 | `main:0x0801a910` |
 | 14 | 5,794 | 3,012 | `main:0x080b0a6c` |
-| 15 | 5,688 | 3,696 | `main:0x080a414c` |
+| 15 | 5,688 | 3,376 | `main:0x080a414c` |
 | 16 | 5,608 | 5,404 | `main:0x080e0000` |
 | 17 | 5,450 | 2,228 | `main:0x0808c2dc` |
 | 18 | 5,330 | 3,208 | `main:0x0801cf48` |
@@ -619,7 +619,7 @@ This table contains every scope of at least 1,000 bytes (195 rows). The complete
 | 39 | 3,442 | 3,442 | `resource_378:0x0200088c` |
 | 40 | 3,408 | 3,408 | `resource_378:0x02001874` |
 | 41 | 3,364 | 1,212 | `main:0x08096c80` |
-| 42 | 3,274 | 2,888 | `main:0x080bae40` |
+| 42 | 3,274 | 2,500 | `main:0x080bae40` |
 | 43 | 3,238 | 2,386 | `main:0x080e6638` |
 | 44 | 3,156 | 2,514 | `main:0x080d765c` |
 | 45 | 3,114 | 1,098 | `main:0x080fa678` |
@@ -637,7 +637,7 @@ This table contains every scope of at least 1,000 bytes (195 rows). The complete
 | 57 | 2,698 | 2,256 | `main:0x080a8914` |
 | 58 | 2,678 | 1,324 | `main:0x08095160` |
 | 59 | 2,672 | 2,672 | `resource_3a8:0x02000aac` |
-| 60 | 2,658 | 2,264 | `main:0x080c1fa8` |
+| 60 | 2,658 | 2,180 | `main:0x080c1fa8` |
 | 61 | 2,650 | 2,376 | `main:0x080999f0` |
 | 62 | 2,630 | 1,586 | `main:0x080a7a34` |
 | 63 | 2,596 | 200 | `main:0x080c0000` |
@@ -678,7 +678,7 @@ This table contains every scope of at least 1,000 bytes (195 rows). The complete
 | 98 | 2,014 | 2,014 | `resource_3c9:0x02000a6c` |
 | 99 | 2,006 | 2,006 | `resource_3a4:0x02001830` |
 | 100 | 2,002 | 2,002 | `resource_3af:0x02003a0c` |
-| 101 | 1,928 | 904 | `main:0x08097b54` |
+| 101 | 1,928 | 836 | `main:0x08097b54` |
 | 102 | 1,906 | 1,906 | `resource_378:0x0200290c` |
 | 103 | 1,902 | 1,292 | `main:0x080983a0` |
 | 104 | 1,866 | 1,722 | `main:0x080b9b30` |
@@ -693,80 +693,80 @@ This table contains every scope of at least 1,000 bytes (195 rows). The complete
 | 113 | 1,718 | 620 | `main:0x080ba2c0` |
 | 114 | 1,702 | 1,702 | `resource_381:0x02002150` |
 | 115 | 1,702 | 1,702 | `resource_3b7:0x020001d8` |
-| 116 | 1,698 | 1,698 | `resource_3ae:0x02000ba0` |
-| 117 | 1,692 | 1,692 | `resource_3b1:0x02005d10` |
-| 118 | 1,692 | 400 | `main:0x0808b824` |
-| 119 | 1,638 | 1,638 | `resource_373:0x02004084` |
-| 120 | 1,634 | 1,056 | `main:0x080ae2f4` |
-| 121 | 1,632 | 1,632 | `resource_3a2:0x020001ec` |
-| 122 | 1,562 | 1,170 | `main:0x080a63e4` |
-| 123 | 1,560 | 832 | `main:0x08098cd8` |
-| 124 | 1,514 | 1,514 | `resource_3a4:0x02000d24` |
-| 125 | 1,506 | 1,264 | `main:0x080b5534` |
-| 126 | 1,462 | 1,462 | `resource_373:0x020039e8` |
-| 127 | 1,458 | 1,458 | `resource_3c8:0x020047ac` |
-| 128 | 1,448 | 1,448 | `resource_3b0:0x02000af8` |
-| 129 | 1,448 | 1,448 | `resource_3b1:0x020050dc` |
-| 130 | 1,426 | 912 | `main:0x0809a8c4` |
-| 131 | 1,410 | 1,410 | `resource_383:0x020036e8` |
-| 132 | 1,410 | 1,138 | `main:0x08090000` |
-| 133 | 1,410 | 908 | `main:0x080c1a24` |
-| 134 | 1,408 | 1,408 | `resource_39e:0x020038d8` |
-| 135 | 1,402 | 1,402 | `resource_3b1:0x0200234c` |
-| 136 | 1,398 | 1,398 | `resource_372:0x02001b18` |
-| 137 | 1,392 | 842 | `main:0x080d4ce8` |
-| 138 | 1,382 | 1,382 | `resource_3c9:0x02003924` |
-| 139 | 1,354 | 676 | `main:0x08017364` |
-| 140 | 1,346 | 324 | `main:0x080b04dc` |
-| 141 | 1,318 | 1,024 | `main:0x08092b94` |
-| 142 | 1,310 | 1,310 | `resource_373:0x020034c8` |
-| 143 | 1,310 | 656 | `main:0x080994d0` |
-| 144 | 1,308 | 1,308 | `resource_37a:0x02002094` |
-| 145 | 1,306 | 1,306 | `resource_3a8:0x02000590` |
-| 146 | 1,298 | 1,298 | `resource_39c:0x02004a08` |
-| 147 | 1,290 | 1,290 | `resource_3af:0x02000c94` |
-| 148 | 1,270 | 1,270 | `resource_3b1:0x020037d8` |
-| 149 | 1,230 | 1,230 | `resource_371:0x02001f6c` |
-| 150 | 1,230 | 226 | `main:0x080a7380` |
-| 151 | 1,222 | 1,222 | `resource_37a:0x0200155c` |
-| 152 | 1,222 | 930 | `main:0x080ba978` |
-| 153 | 1,218 | 996 | `main:0x0801c46c` |
-| 154 | 1,208 | 1,208 | `resource_3b8:0x02000b40` |
-| 155 | 1,198 | 1,198 | `resource_3b1:0x020057ec` |
-| 156 | 1,194 | 964 | `main:0x080a1090` |
-| 157 | 1,182 | 1,182 | `resource_3c9:0x02004738` |
-| 158 | 1,180 | 1,180 | `resource_37b:0x0200101c` |
-| 159 | 1,176 | 1,176 | `resource_37b:0x02000a18` |
-| 160 | 1,170 | 1,170 | `resource_3b3:0x0200174c` |
-| 161 | 1,162 | 392 | `main:0x08094730` |
-| 162 | 1,160 | 908 | `main:0x080a847c` |
-| 163 | 1,158 | 344 | `main:0x0808ec50` |
-| 164 | 1,150 | 1,150 | `resource_375:0x020014f4` |
-| 165 | 1,136 | 908 | `main:0x080d0ee0` |
-| 166 | 1,130 | 460 | `main:0x080b0070` |
-| 167 | 1,126 | 456 | `main:0x080798b4` |
-| 168 | 1,114 | 1,114 | `resource_3c7:0x02000880` |
-| 169 | 1,106 | 1,106 | `resource_39e:0x02001dbc` |
-| 170 | 1,102 | 1,102 | `resource_3bb:0x020010dc` |
-| 171 | 1,102 | 124 | `main:0x08003c80` |
-| 172 | 1,098 | 1,098 | `main:0x080a5b94` |
-| 173 | 1,096 | 1,096 | `resource_3b9:0x020011c4` |
-| 174 | 1,094 | 1,094 | `resource_3bc:0x02001474` |
-| 175 | 1,094 | 378 | `main:0x0800b684` |
-| 176 | 1,082 | 148 | `main:0x080216b4` |
-| 177 | 1,078 | 1,078 | `resource_373:0x020015dc` |
-| 178 | 1,078 | 568 | `main:0x08078aa0` |
-| 179 | 1,074 | 1,074 | `resource_3ba:0x02000db8` |
-| 180 | 1,068 | 896 | `main:0x080bd424` |
-| 181 | 1,066 | 780 | `main:0x08091814` |
-| 182 | 1,052 | 1,052 | `resource_3b1:0x02004254` |
-| 183 | 1,052 | 1,052 | `resource_3c8:0x020026f8` |
-| 184 | 1,046 | 1,046 | `resource_380:0x020027f8` |
-| 185 | 1,046 | 1,046 | `resource_381:0x02001b34` |
-| 186 | 1,042 | 1,042 | `resource_3a5:0x02001490` |
-| 187 | 1,036 | 956 | `main:0x08029504` |
-| 188 | 1,034 | 652 | `main:0x080b9724` |
-| 189 | 1,028 | 724 | `main:0x08090658` |
+| 116 | 1,692 | 1,692 | `resource_3b1:0x02005d10` |
+| 117 | 1,692 | 400 | `main:0x0808b824` |
+| 118 | 1,638 | 1,638 | `resource_373:0x02004084` |
+| 119 | 1,634 | 1,056 | `main:0x080ae2f4` |
+| 120 | 1,632 | 1,632 | `resource_3a2:0x020001ec` |
+| 121 | 1,562 | 1,170 | `main:0x080a63e4` |
+| 122 | 1,560 | 832 | `main:0x08098cd8` |
+| 123 | 1,514 | 1,514 | `resource_3a4:0x02000d24` |
+| 124 | 1,506 | 1,264 | `main:0x080b5534` |
+| 125 | 1,462 | 1,462 | `resource_373:0x020039e8` |
+| 126 | 1,458 | 1,458 | `resource_3c8:0x020047ac` |
+| 127 | 1,448 | 1,448 | `resource_3b0:0x02000af8` |
+| 128 | 1,448 | 1,448 | `resource_3b1:0x020050dc` |
+| 129 | 1,426 | 912 | `main:0x0809a8c4` |
+| 130 | 1,410 | 1,410 | `resource_383:0x020036e8` |
+| 131 | 1,410 | 1,138 | `main:0x08090000` |
+| 132 | 1,410 | 908 | `main:0x080c1a24` |
+| 133 | 1,408 | 1,408 | `resource_39e:0x020038d8` |
+| 134 | 1,402 | 1,402 | `resource_3b1:0x0200234c` |
+| 135 | 1,398 | 1,398 | `resource_372:0x02001b18` |
+| 136 | 1,392 | 842 | `main:0x080d4ce8` |
+| 137 | 1,382 | 1,382 | `resource_3c9:0x02003924` |
+| 138 | 1,354 | 676 | `main:0x08017364` |
+| 139 | 1,346 | 324 | `main:0x080b04dc` |
+| 140 | 1,318 | 1,024 | `main:0x08092b94` |
+| 141 | 1,310 | 1,310 | `resource_373:0x020034c8` |
+| 142 | 1,310 | 656 | `main:0x080994d0` |
+| 143 | 1,308 | 1,308 | `resource_37a:0x02002094` |
+| 144 | 1,306 | 1,306 | `resource_3a8:0x02000590` |
+| 145 | 1,298 | 1,298 | `resource_39c:0x02004a08` |
+| 146 | 1,290 | 1,290 | `resource_3af:0x02000c94` |
+| 147 | 1,270 | 1,270 | `resource_3b1:0x020037d8` |
+| 148 | 1,230 | 1,230 | `resource_371:0x02001f6c` |
+| 149 | 1,230 | 226 | `main:0x080a7380` |
+| 150 | 1,222 | 1,222 | `resource_37a:0x0200155c` |
+| 151 | 1,222 | 930 | `main:0x080ba978` |
+| 152 | 1,218 | 996 | `main:0x0801c46c` |
+| 153 | 1,208 | 1,208 | `resource_3b8:0x02000b40` |
+| 154 | 1,198 | 1,198 | `resource_3b1:0x020057ec` |
+| 155 | 1,194 | 964 | `main:0x080a1090` |
+| 156 | 1,182 | 1,182 | `resource_3c9:0x02004738` |
+| 157 | 1,180 | 1,180 | `resource_37b:0x0200101c` |
+| 158 | 1,176 | 1,176 | `resource_37b:0x02000a18` |
+| 159 | 1,170 | 1,170 | `resource_3b3:0x0200174c` |
+| 160 | 1,162 | 392 | `main:0x08094730` |
+| 161 | 1,160 | 908 | `main:0x080a847c` |
+| 162 | 1,158 | 344 | `main:0x0808ec50` |
+| 163 | 1,150 | 1,150 | `resource_375:0x020014f4` |
+| 164 | 1,136 | 908 | `main:0x080d0ee0` |
+| 165 | 1,130 | 460 | `main:0x080b0070` |
+| 166 | 1,126 | 456 | `main:0x080798b4` |
+| 167 | 1,114 | 1,114 | `resource_3c7:0x02000880` |
+| 168 | 1,106 | 1,106 | `resource_39e:0x02001dbc` |
+| 169 | 1,102 | 1,102 | `resource_3bb:0x020010dc` |
+| 170 | 1,102 | 124 | `main:0x08003c80` |
+| 171 | 1,098 | 1,098 | `main:0x080a5b94` |
+| 172 | 1,096 | 1,096 | `resource_3b9:0x020011c4` |
+| 173 | 1,094 | 1,094 | `resource_3bc:0x02001474` |
+| 174 | 1,094 | 378 | `main:0x0800b684` |
+| 175 | 1,082 | 148 | `main:0x080216b4` |
+| 176 | 1,078 | 1,078 | `resource_373:0x020015dc` |
+| 177 | 1,078 | 568 | `main:0x08078aa0` |
+| 178 | 1,074 | 1,074 | `resource_3ba:0x02000db8` |
+| 179 | 1,068 | 896 | `main:0x080bd424` |
+| 180 | 1,066 | 780 | `main:0x08091814` |
+| 181 | 1,052 | 1,052 | `resource_3b1:0x02004254` |
+| 182 | 1,052 | 1,052 | `resource_3c8:0x020026f8` |
+| 183 | 1,046 | 1,046 | `resource_380:0x020027f8` |
+| 184 | 1,046 | 1,046 | `resource_381:0x02001b34` |
+| 185 | 1,042 | 1,042 | `resource_3a5:0x02001490` |
+| 186 | 1,036 | 956 | `main:0x08029504` |
+| 187 | 1,034 | 652 | `main:0x080b9724` |
+| 188 | 1,028 | 724 | `main:0x08090658` |
+| 189 | 1,026 | 1,026 | `resource_3ae:0x02000e40` |
 | 190 | 1,024 | 856 | `main:0x080a5fe0` |
 | 191 | 1,022 | 1,022 | `resource_3b8:0x02000ff8` |
 | 192 | 1,022 | 464 | `main:0x08016018` |

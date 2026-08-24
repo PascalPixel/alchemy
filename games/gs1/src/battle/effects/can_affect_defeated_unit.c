@@ -1,8 +1,8 @@
 #include "types.h"
 
-s32 Func_080bbae8(s32 value)
+s32 Func_080bbae8(s32 effect)
 {
-    switch (value) {
+    switch (effect) {
     case 31:
     case 32:
     case 60:

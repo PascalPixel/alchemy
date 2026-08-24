@@ -7,20 +7,20 @@
   "executable_bytes": 1348422,
   "categories": {
     "exact_c": {
-      "bytes": 315834,
-      "percent_of_executable": 23.42
+      "bytes": 317334,
+      "percent_of_executable": 23.53
     },
     "tracked_c": {
-      "bytes": 43936,
-      "percent_of_executable": 3.26
+      "bytes": 44108,
+      "percent_of_executable": 3.27
     },
     "assembly": {
-      "bytes": 614692,
-      "percent_of_executable": 45.59
+      "bytes": 610970,
+      "percent_of_executable": 45.31
     },
     "retained_asm": {
-      "bytes": 373960,
-      "percent_of_executable": 27.73
+      "bytes": 376010,
+      "percent_of_executable": 27.89
     },
     "asset_data": {
       "bytes": 7300700,
@@ -29,18 +29,18 @@
   },
   "main": {
     "executable_bytes": 548364,
-    "exact_c_bytes": 107642,
-    "tracked_c_bytes": 6460
+    "exact_c_bytes": 108582,
+    "tracked_c_bytes": 6524
   },
   "overlays": {
     "executable_bytes": 800058,
-    "exact_c_bytes": 208192,
-    "tracked_c_bytes": 37476
+    "exact_c_bytes": 208752,
+    "tracked_c_bytes": 37584
   },
   "provenance": {
     "exact_source": "worktree",
     "tracked_source": "worktree",
-    "tracked_sources": 119,
+    "tracked_sources": 136,
     "main_tracked_census": "games/gs1/recon/en/main/*.json",
     "tracked_superseded_bytes": 0,
     "tracked_outside_extent_bytes": 0,
@@ -52,10 +52,10 @@
       "label": "Main image code",
       "bytes": 548364,
       "categories": {
-        "exact_c": 107642,
-        "tracked_c": 6460,
-        "assembly": 259880,
-        "retained_asm": 174382
+        "exact_c": 108582,
+        "tracked_c": 6524,
+        "assembly": 258536,
+        "retained_asm": 174722
       },
       "tiles": 9
     },
@@ -64,9 +64,9 @@
       "label": "Compressed code overlays",
       "bytes": 539544,
       "categories": {
-        "exact_c": 148629,
-        "tracked_c": 19755,
-        "assembly": 371160
+        "exact_c": 148993,
+        "tracked_c": 19833,
+        "assembly": 370718
       },
       "tiles": 11
     },
@@ -86,10 +86,10 @@
       "label": "Main image",
       "bytes": 548364,
       "categories": {
-        "exact_c": 107642,
-        "tracked_c": 6460,
-        "assembly": 259880,
-        "retained_asm": 174382
+        "exact_c": 108582,
+        "tracked_c": 6524,
+        "assembly": 258536,
+        "retained_asm": 174722
       },
       "tiles": 867
     },
@@ -98,12 +98,12 @@
       "label": "Decoded code overlays",
       "bytes": 800058,
       "categories": {
-        "exact_c": 208192,
-        "tracked_c": 37476,
-        "assembly": 354812,
-        "retained_asm": 199578
+        "exact_c": 208752,
+        "tracked_c": 37584,
+        "assembly": 352434,
+        "retained_asm": 201288
       },
-      "tiles": 5364
+      "tiles": 5376
     }
   ]
 }

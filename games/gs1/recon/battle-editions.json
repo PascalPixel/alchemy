@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "game": "gs1",
-  "source_edition": "ja",
-  "source": "games/gs1/recon/ja/main/080b2b0c.c",
+  "source_edition": "en",
+  "source": "games/gs1/src/battle/resolve_action.c",
   "object": "out/gs1-en/full/claimed/obj/080bbb0c.o",
   "owner_symbol": "Func_080bbb0c",
   "size": 6332,
@@ -11,6 +11,7 @@
     {
       "edition": "ja",
       "start": "0x080b2b0c",
+      "size": 6332,
       "external_symbols": {
         "Data_03001388": "0x03001388",
         "Data_03001e74": "0x03001e74",
@@ -116,11 +117,13 @@
         "Value_000008f6": "0x000008f8"
       },
       "differing_bytes": 0,
-      "byte_exact": true
+      "byte_exact": true,
+      "error": null
     },
     {
       "edition": "en",
       "start": "0x080bbb0c",
+      "size": 6332,
       "external_symbols": {
         "Data_03001388": "0x03001388",
         "Data_03001e74": "0x03001e74",
@@ -226,11 +229,13 @@
         "Value_000008f6": "0x000008f6"
       },
       "differing_bytes": 0,
-      "byte_exact": true
+      "byte_exact": true,
+      "error": null
     },
     {
       "edition": "de",
       "start": "0x080be124",
+      "size": 6332,
       "external_symbols": {
         "Data_03001388": "0x03001388",
         "Data_03001e74": "0x03001e84",
@@ -336,11 +341,13 @@
         "Value_000008f6": "0x000009ed"
       },
       "differing_bytes": 0,
-      "byte_exact": true
+      "byte_exact": true,
+      "error": null
     },
     {
       "edition": "es",
       "start": "0x080bfb24",
+      "size": 6332,
       "external_symbols": {
         "Data_03001388": "0x03001388",
         "Data_03001e74": "0x03001e74",
@@ -446,11 +453,13 @@
         "Value_000008f6": "0x000009ed"
       },
       "differing_bytes": 0,
-      "byte_exact": true
+      "byte_exact": true,
+      "error": null
     },
     {
       "edition": "fr",
       "start": "0x080bfb24",
+      "size": 6332,
       "external_symbols": {
         "Data_03001388": "0x03001388",
         "Data_03001e74": "0x03001e74",
@@ -556,11 +565,13 @@
         "Value_000008f6": "0x000009ed"
       },
       "differing_bytes": 0,
-      "byte_exact": true
+      "byte_exact": true,
+      "error": null
     },
     {
       "edition": "it",
       "start": "0x080bbb24",
+      "size": 6332,
       "external_symbols": {
         "Data_03001388": "0x03001388",
         "Data_03001e74": "0x03001e74",
@@ -666,7 +677,8 @@
         "Value_000008f6": "0x000009ed"
       },
       "differing_bytes": 0,
-      "byte_exact": true
+      "byte_exact": true,
+      "error": null
     }
   ]
 }

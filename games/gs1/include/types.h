@@ -63,6 +63,8 @@ typedef int bool;
 #define Owner_GetRecord Func_080773d8
 #define Resource_FindFreeSlot Func_08004080
 #define Resource_DecompressLz Func_0800a97c
+#define ResourceMetadata_Register Func_0800b8ac
+#define ResourceMetadata_Unregister Func_0800b93c
 #define Runtime_AllocateBlock Func_080048f4
 #define Resource_CopyData Func_08003fa4
 #define ScheduleCallback Func_08004278
@@ -123,6 +125,10 @@ typedef int bool;
 #define Menu_CancelSoundTick Func_080a2444
 #define Menu_CancelSoundReset Func_080a2474
 #define Menu_EnsureCancelSound Func_080a2490
+#define Menu_SelectionLoop Func_0801b398
+#define Menu_WaitForSelectionInput Func_0801b424
+#define Menu_MoveSelectionForward Func_0801b4ec
+#define Menu_MoveSelectionBackward Func_0801b5c0
 #define Object_CheckMovementCollision Func_080091d8
 #define Ability_GetMaximum Func_08077240
 #define Ability_GetAvailability Func_08077248
@@ -295,6 +301,10 @@ typedef int bool;
 #define BattleEffect_GetPhaseResult Func_0808b074
 #define EffectStep_AdvanceWithGravity3D Func_080e38b8
 #define EffectStep_AdvanceWithGravity2D Func_080e3908
+#define EffectPosition_ApplyBaseAndYOffset Func_080e3944
+#define EffectPosition_ApplyAnimationAndYOffset Func_080e3958
+#define EffectPosition_ApplyStepAndYOffset Func_080e396c
+#define EffectPosition_ApplyAlternateStepAndYOffset Func_080e3980
 #define Resource_LoadAndDecompress Func_080e0524
 #define EffectStep_RunAnimation Func_080e2974
 #define EffectStep_RunAnimationMode0 Func_080e291c

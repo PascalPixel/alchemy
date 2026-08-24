@@ -124,6 +124,8 @@ typedef int bool;
 #define UiWork_Finalize Func_08016418
 #define Actor_ResetMotionAtAnchor Func_080b8000
 #define BattleObject_IsValidId Func_080b8808
+#define Summon_FindSlot Func_080b7514
+#define Summon_ClassValid Func_080b6cdc
 #define UiText_ShowMessageAndWait Func_080151c8
 #define UiText_ShowMessageAndWaitCore Func_080175a0
 #define UiWork_FinalizePending Func_08015140
@@ -196,6 +198,11 @@ typedef int bool;
 #define ObjectEffect_PrepareContextEffect Func_080942e0
 #define ObjectGroup_UpdateMembers Func_080d6888
 #define Menu_RunActionFlow Func_080a76d0
+#define Menu_DrawPageIndicator Func_080a21b0
+#define CharacterMenu_DrawSelectionCursor Func_080a847c
+#define CharacterMenu_DrawSelectionLabels Func_080a8508
+#define CharacterMenu_BuildAvailability Func_080a8b10
+#define CharacterMenu_UpdateSelectionIcons Func_080a9dc4
 #define Map_DecodeTileRows Func_0800f9f4
 #define DisplayBlend_RunScript Func_080119cc
 #define Summon_TakeCharge Func_080c1df4
@@ -301,5 +308,14 @@ typedef int bool;
 #define BattleEffect_SumCounters Func_0808bc9c
 #define BattleEffect_InitializeRisingObject Func_080df8b8
 #define BattleEffect_SetApproachMotion Func_080df90c
+#define Graphics_ApplyWindowBlendRegisters Func_080cd418
+#define Graphics_ApplyBg2ReferencePoint Func_080cd488
+#define BattleEffect_InitializeMode Func_080d6578
+#define BattleEffect_DispatchMode Func_080d6660
+#define BattleEffect_RunNoEffectFrames Func_080d655c
+#define UiMessage_ShowAndWait Func_080b04dc
+#define UiMessage_ShowAndRestoreState Func_080b0574
+#define UiMessage_ShowChoice Func_080b0634
+#define AbilityMenu_BuildAvailableList Func_080b0070
 
 #endif

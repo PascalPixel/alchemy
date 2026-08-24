@@ -4,7 +4,7 @@
 void Func_080a1038(void *);
 s32 Func_080153b0(s32, s32, s32);
 
-s32 Func_080b0634(s32 arg0) {
+s32 UiMessage_ShowChoice(s32 arg0) {
     u8 **slot = (u8 **)(*(u8 **)ADDR_03001F2C + 0x380);
     u8 saved = (*slot)[5];
     Func_080a1038(*slot);

@@ -11,7 +11,7 @@ extern u8 Data_00000cc6[];
 extern u8 Data_00000cf1[];
 extern u8 Data_00000d4c[];
 
-void Func_080b04dc(s32 arg0)
+void UiMessage_ShowAndWait(s32 arg0)
 {
     s32 *state = *(s32 **)ADDR_03001F2C;
     s32 value = Func_0808a540(*(u16 *)&state[233]);

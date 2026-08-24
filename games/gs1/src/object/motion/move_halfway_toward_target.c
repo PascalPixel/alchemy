@@ -9,7 +9,7 @@ struct Object_08095348 {
     struct Object_08095348 *target;
 };
 
-void Func_08095348(struct Object_08095348 *object)
+void ObjectMotion_MoveHalfwayTowardTarget(struct Object_08095348 *object)
 {
     struct Object_08095348 *target = object->target;
 

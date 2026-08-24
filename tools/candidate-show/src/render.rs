@@ -1042,7 +1042,7 @@ mod source_identity_tests {
         let root = scratch_root("nested");
         fs::write(
             root.join("games/gs1/source-paths.json"),
-            r#"{"format":1,"owners":{"main:080b0fa4":"battle/inventory/draw_paged_item_list.c"}}"#,
+            r#"{"format":2,"owners":{"main:080b0fa4":{"name":"draw_paged_item_list","source":"battle/inventory/draw_paged_item_list.c"}}}"#,
         )
         .unwrap();
         let (owner, route) = main_source_identity(

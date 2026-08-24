@@ -2,7 +2,7 @@
 
 s32 Func_0800ca98(void *);
 
-s32 Func_0800d674(struct ScriptInterpreter *interpreter) {
+s32 Script_WaitForEvent(struct ScriptInterpreter *interpreter) {
     if ((u32)interpreter->delay > 0x3B) {
         interpreter->delay = 0;
         goto block_3;

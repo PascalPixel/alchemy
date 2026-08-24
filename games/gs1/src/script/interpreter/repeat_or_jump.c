@@ -1,6 +1,6 @@
 #include "script_interpreter.h"
 
-s32 Func_0800d710(struct ScriptInterpreter *interpreter) {
+s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter) {
     const s32 *ptr;
     s32 temp_r4;
     s32 temp_r1;

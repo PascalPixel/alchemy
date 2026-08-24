@@ -13,7 +13,7 @@ extern s32 Data_080c59c4[];
 extern s32 Data_080c59e4[];
 extern s32 Data_080c5a04[];
 
-void Func_080b8228(s32 id, s32 variant)
+void BattleMotion_ApplyVariantMotion(s32 id, s32 variant)
 {
     struct BattleObjectSlot *slot;
     struct MotionObject *object;

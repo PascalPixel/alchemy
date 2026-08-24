@@ -20,7 +20,7 @@ struct Wrapper_080b8144 {
 
 void Object_SetPosition(struct Target_080b8144 *, u32, u32, u32);
 
-void Func_080b8144(struct Wrapper_080b8144 *slot)
+void BattleMotion_SetObjectPosition(struct Wrapper_080b8144 *slot)
 {
     struct Target_080b8144 *target = slot->target;
 

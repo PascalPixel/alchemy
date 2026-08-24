@@ -7,7 +7,7 @@ struct State_0808b824 {
 
 extern struct State_0808b824 *Data_03001ebc;
 
-s32 Func_0808b824(void)
+s32 ObjectTable_FindLastActiveId(void)
 {
     struct State_0808b824 *state = Data_03001ebc;
     s32 result = 7;

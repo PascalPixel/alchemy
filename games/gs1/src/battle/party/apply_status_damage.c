@@ -10,7 +10,7 @@ void Func_08091220(void *, s32);
 void Func_08091254(s32);
 void Audio_PlayCue(s32);
 
-s32 Func_0808c3a4(void)
+s32 BattleParty_ApplyStatusDamage(void)
 {
     s32 result = 0;
     s32 count = Func_08077148();

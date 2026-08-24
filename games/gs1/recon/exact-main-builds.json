@@ -32208,7 +32208,7 @@
     },
     {
       "en_owner": "0808b64c",
-      "source": "games/gs1/src/0808b64c.c",
+      "source": "games/gs1/src/object/table/destroy_at_index.c",
       "size": 40,
       "all_exact": true,
       "editions": [
@@ -32264,7 +32264,7 @@
     },
     {
       "en_owner": "0808b824",
-      "source": "games/gs1/src/0808b824.c",
+      "source": "games/gs1/src/object/table/find_last_active_id.c",
       "size": 48,
       "all_exact": true,
       "editions": [
@@ -32320,7 +32320,7 @@
     },
     {
       "en_owner": "0808b854",
-      "source": "games/gs1/src/0808b854.c",
+      "source": "games/gs1/src/object/table/get_slot_address.c",
       "size": 20,
       "all_exact": true,
       "editions": [
@@ -32376,7 +32376,7 @@
     },
     {
       "en_owner": "0808b9f8",
-      "source": "games/gs1/src/0808b9f8.c",
+      "source": "games/gs1/src/object/table/clear_battle_slots.c",
       "size": 36,
       "all_exact": true,
       "editions": [
@@ -32768,7 +32768,7 @@
     },
     {
       "en_owner": "0808c30c",
-      "source": "games/gs1/src/0808c30c.c",
+      "source": "games/gs1/src/battle/party/apply_health_delta.c",
       "size": 152,
       "all_exact": true,
       "editions": [
@@ -32824,7 +32824,7 @@
     },
     {
       "en_owner": "0808c3a4",
-      "source": "games/gs1/src/0808c3a4.c",
+      "source": "games/gs1/src/battle/party/apply_status_damage.c",
       "size": 168,
       "all_exact": true,
       "editions": [
@@ -69807,7 +69807,7 @@
     },
     {
       "en_owner": "080e38b8",
-      "source": "games/gs1/src/080e38b8.c",
+      "source": "games/gs1/src/effects/physics/advance_with_gravity_3d.c",
       "size": 80,
       "all_exact": true,
       "editions": [
@@ -69863,7 +69863,7 @@
     },
     {
       "en_owner": "080e3908",
-      "source": "games/gs1/src/080e3908.c",
+      "source": "games/gs1/src/effects/physics/advance_with_gravity_2d.c",
       "size": 58,
       "all_exact": true,
       "editions": [

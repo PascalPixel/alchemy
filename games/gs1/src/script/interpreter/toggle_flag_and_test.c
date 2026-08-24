@@ -4,7 +4,7 @@ s32 GameFlag_IsSet(s32 arg0);
 void GameFlag_Set(s32 arg0);
 void GameFlag_Clear(s32 arg0);
 
-s32 Func_0800d880(struct ScriptInterpreter *interpreter)
+s32 Script_ToggleFlagAndTest(struct ScriptInterpreter *interpreter)
 {
     s32 value;
     s32 result;

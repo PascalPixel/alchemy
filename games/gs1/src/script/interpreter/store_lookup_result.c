@@ -1,6 +1,6 @@
 #include "script_interpreter.h"
 
-s32 Func_0800d654(struct ScriptInterpreter *interpreter)
+s32 Script_StoreLookupResult(struct ScriptInterpreter *interpreter)
 {
     s16 cursor = interpreter->cursor;
 

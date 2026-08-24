@@ -1,6 +1,6 @@
 #include "script_interpreter.h"
 
-s32 Func_0800d6a4(struct ScriptInterpreter *interpreter)
+s32 Script_InvokeCallback(struct ScriptInterpreter *interpreter)
 {
     s16 initial = interpreter->cursor;
     ScriptCommand callback =

@@ -3,7 +3,7 @@
 s8 GameFlag_IsSet(s32);
 s32 GameFlag_Clear(s32);
 
-s32 Func_0800d850(struct ScriptInterpreter *interpreter)
+s32 Script_ClearFlagAndTest(struct ScriptInterpreter *interpreter)
 {
     s32 value;
 

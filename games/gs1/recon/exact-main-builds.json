@@ -7978,7 +7978,7 @@
     },
     {
       "en_owner": "0800d654",
-      "source": "games/gs1/src/0800d654.c",
+      "source": "games/gs1/src/script/interpreter/store_lookup_result.c",
       "size": 30,
       "all_exact": true,
       "editions": [
@@ -8034,7 +8034,7 @@
     },
     {
       "en_owner": "0800d674",
-      "source": "games/gs1/src/0800d674.c",
+      "source": "games/gs1/src/script/interpreter/wait_for_event.c",
       "size": 48,
       "all_exact": true,
       "editions": [
@@ -8090,7 +8090,7 @@
     },
     {
       "en_owner": "0800d6a4",
-      "source": "games/gs1/src/0800d6a4.c",
+      "source": "games/gs1/src/script/interpreter/invoke_callback.c",
       "size": 50,
       "all_exact": true,
       "editions": [
@@ -8146,7 +8146,7 @@
     },
     {
       "en_owner": "0800d6d8",
-      "source": "games/gs1/src/0800d6d8.c",
+      "source": "games/gs1/src/script/interpreter/find_label.c",
       "size": 56,
       "all_exact": true,
       "editions": [
@@ -8202,7 +8202,7 @@
     },
     {
       "en_owner": "0800d710",
-      "source": "games/gs1/src/0800d710.c",
+      "source": "games/gs1/src/script/interpreter/repeat_or_jump.c",
       "size": 80,
       "all_exact": true,
       "editions": [
@@ -8258,7 +8258,7 @@
     },
     {
       "en_owner": "0800d760",
-      "source": "games/gs1/src/0800d760.c",
+      "source": "games/gs1/src/script/interpreter/jump_to_label.c",
       "size": 30,
       "all_exact": true,
       "editions": [
@@ -8314,7 +8314,7 @@
     },
     {
       "en_owner": "0800d780",
-      "source": "games/gs1/src/0800d780.c",
+      "source": "games/gs1/src/script/interpreter/jump_if_true.c",
       "size": 50,
       "all_exact": true,
       "editions": [
@@ -8370,7 +8370,7 @@
     },
     {
       "en_owner": "0800d7b4",
-      "source": "games/gs1/src/0800d7b4.c",
+      "source": "games/gs1/src/script/interpreter/jump_if_false.c",
       "size": 50,
       "all_exact": true,
       "editions": [
@@ -8426,7 +8426,7 @@
     },
     {
       "en_owner": "0800d7e8",
-      "source": "games/gs1/src/0800d7e8.c",
+      "source": "games/gs1/src/script/interpreter/load_main_script.c",
       "size": 16,
       "all_exact": true,
       "editions": [
@@ -8482,7 +8482,7 @@
     },
     {
       "en_owner": "0800d7f8",
-      "source": "games/gs1/src/0800d7f8.c",
+      "source": "games/gs1/src/script/interpreter/test_flag.c",
       "size": 40,
       "all_exact": true,
       "editions": [
@@ -8538,7 +8538,7 @@
     },
     {
       "en_owner": "0800d820",
-      "source": "games/gs1/src/0800d820.c",
+      "source": "games/gs1/src/script/interpreter/set_flag_and_test.c",
       "size": 48,
       "all_exact": true,
       "editions": [
@@ -8594,7 +8594,7 @@
     },
     {
       "en_owner": "0800d850",
-      "source": "games/gs1/src/0800d850.c",
+      "source": "games/gs1/src/script/interpreter/clear_flag_and_test.c",
       "size": 48,
       "all_exact": true,
       "editions": [
@@ -8650,7 +8650,7 @@
     },
     {
       "en_owner": "0800d880",
-      "source": "games/gs1/src/0800d880.c",
+      "source": "games/gs1/src/script/interpreter/toggle_flag_and_test.c",
       "size": 66,
       "all_exact": true,
       "editions": [
@@ -60171,7 +60171,7 @@
     },
     {
       "en_owner": "080be0b4",
-      "source": "games/gs1/src/080be0b4.c",
+      "source": "games/gs1/src/battle/placement/count_valid_entries.c",
       "size": 214,
       "all_exact": true,
       "editions": [
@@ -60955,7 +60955,7 @@
     },
     {
       "en_owner": "080bf5a8",
-      "source": "games/gs1/src/080bf5a8.c",
+      "source": "games/gs1/src/battle/placement/update_timed_entries.c",
       "size": 178,
       "all_exact": true,
       "editions": [

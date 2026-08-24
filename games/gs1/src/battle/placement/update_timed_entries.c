@@ -17,18 +17,18 @@ struct PlacementTable {
     struct PlacementList list;
 };
 
-struct Object_080bf5a8 {
+struct BattleObject {
     u8 padding[0x38];
     s16 active;
 };
 
 struct PlacementTable *Func_08077000(s32 owner);
-struct Object_080bf5a8 *Runtime_GetObject(u8 id);
+struct BattleObject *Runtime_GetObject(u8 id);
 void BattleUnit_Recalculate(u8 id);
 void Func_080771b0(u8 id, u8 x, u8 y);
 void Func_080771c0(u8 id, u8 x, u8 y);
 
-s32 Func_080bf5a8(void)
+s32 BattlePlacement_UpdateTimedEntries(void)
 {
     struct PlacementList *list;
     struct PlacementEntry *timed_entry;
@@ -52,7 +52,6 @@ s32 Func_080bf5a8(void)
             timed_entry++;
         } while (index < list->count);
     }
-
     index = 0;
     if (index < list->count) {
         expired_entry = list->entries;

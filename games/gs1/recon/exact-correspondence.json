@@ -20202,7 +20202,7 @@
     },
     {
       "en_owner": "08092158",
-      "source": "games/gs1/src/08092158.c",
+      "source": "games/gs1/src/object/motion/set_position_and_commit.c",
       "size": 52,
       "status": "shared_core",
       "starts": {
@@ -20322,7 +20322,7 @@
     },
     {
       "en_owner": "0809228c",
-      "source": "games/gs1/src/0809228c.c",
+      "source": "games/gs1/src/object/motion/offset_position_and_reset_motion.c",
       "size": 54,
       "status": "shared_core",
       "starts": {

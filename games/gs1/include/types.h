@@ -145,6 +145,7 @@ typedef int bool;
 #define Menu_CancelSoundReset Func_080a2474
 #define Menu_EnsureCancelSound Func_080a2490
 #define Menu_SelectionLoop Func_0801b398
+#define Menu_ReleaseEntryObjects Func_080a195c
 #define Menu_WaitForSelectionInput Func_0801b424
 #define Menu_MoveSelectionForward Func_0801b4ec
 #define Menu_MoveSelectionBackward Func_0801b5c0
@@ -334,6 +335,8 @@ typedef int bool;
 #define BattleEffect_UpdateObjectVisibilityBounds Func_0809c314
 #define BattleEffect_RunVisibilityTransition Func_0809c3a4
 #define BattleEffect_InterpolateBuffers Func_0809088c
+#define BattleEffect_StartBufferInterpolation Func_08091254
+#define BattleEffect_SetPrimaryBufferValue Func_08091240
 #define BattleEffect_GetResourceGroup Func_0808a8d0
 #define BattleEffect_LoadResourceGroup Func_0808ab48
 #define BattleEffect_LookupResult Func_0808adf0

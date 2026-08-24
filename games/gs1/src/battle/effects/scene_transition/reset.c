@@ -24,7 +24,7 @@ void ScheduleCallback(void (*callback)(void));
 void *Func_0808e4b4(u32 kind, u32 entry_index, s32 *size);
 void Func_08091200(u32 battle_value, s32 enabled);
 void Func_08091220(u32 battle_value, s32 enabled);
-void Func_08091254(s32 battle_value);
+void BattleEffect_StartBufferInterpolation(s32 battle_value);
 s32 Func_08096b28(void *resource, s32 battle_mode, s32 size);
 void Func_08098294(s32 battle_value);
 void Func_080982dc(void);
@@ -54,10 +54,10 @@ void ResetSceneTransitionEffect(void)
         Func_08098294(0);
 
         Func_08091200(0x10000, 1);
-        Func_08091254(1);
+        BattleEffect_StartBufferInterpolation(1);
         Func_08091220(0, 0);
         Func_08091200(0x10000, 0);
-        Func_08091254(30);
+        BattleEffect_StartBufferInterpolation(30);
         WaitFrames(1);
 
         resource = Func_0808e4b4(0x40000005, 8, &resourceSize);

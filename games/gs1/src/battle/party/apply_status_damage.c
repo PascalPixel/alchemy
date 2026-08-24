@@ -7,7 +7,7 @@ u8 *Runtime_GetObject(s32);
 s32 FixedPoint_Ratio(s32, s32);
 void Func_08077118(s32, s32);
 void Func_08091220(void *, s32);
-void Func_08091254(s32);
+void BattleEffect_StartBufferInterpolation(s32);
 void Audio_PlayCue(s32);
 
 s32 BattleParty_ApplyStatusDamage(void)
@@ -56,7 +56,7 @@ s32 BattleParty_ApplyStatusDamage(void)
 
     if (result != 0) {
         Func_08091220((void *)0x1ff, 0);
-        Func_08091254(4);
+        BattleEffect_StartBufferInterpolation(4);
         Audio_PlayCue(133);
     }
 

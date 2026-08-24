@@ -4,7 +4,7 @@
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void Func_08091200(s32 arg0, s32 arg1);
-void Func_08091254(s32 value);
+void BattleEffect_StartBufferInterpolation(s32 value);
 
 void Func_0809748c(void) {
     s32 value;
@@ -18,5 +18,5 @@ void Func_0809748c(void) {
     } else {
         Func_08091200(value, 1);
     }
-    Func_08091254(8);
+    BattleEffect_StartBufferInterpolation(8);
 }

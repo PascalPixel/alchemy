@@ -22362,7 +22362,7 @@
     },
     {
       "en_owner": "080958e4",
-      "source": "games/gs1/src/080958e4.c",
+      "source": "games/gs1/src/battle/effects/runtime/clear_active_slots_and_schedule_updates.c",
       "size": 72,
       "status": "shared_core",
       "starts": {

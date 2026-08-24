@@ -187,6 +187,7 @@
     "main:0809ba7c": "battle/effects/runtime/set_callback.c",
     "main:0809b804": "battle/effects/runtime/update_slot.c",
     "main:08095884": "battle/effects/runtime/update_all_slots.c",
+    "main:080958e4": "battle/effects/runtime/clear_active_slots_and_schedule_updates.c",
     "main:0809a65c": "battle/effects/particles/update_motion_and_scale.c",
     "main:0809ad90": "battle/effects/object_control/pause_object.c",
     "main:0809ade8": "battle/effects/object_control/resume_object.c",

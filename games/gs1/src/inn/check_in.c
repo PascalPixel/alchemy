@@ -47,7 +47,7 @@ extern struct InnGlobalState Data_02000240;
 extern char Value_00000d1c;
 
 void Func_080b010c(void);
-void Func_080b0204(void);
+void Inn_CleanupResources(void);
 void Func_080b04dc(s32 message_id);
 s32 Func_080b0634(s32);
 s32 Inn_CalculateRoomPrice(s32);
@@ -106,6 +106,6 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
     }
 
     UiWindow_Close(resource_window, 2);
-    Func_080b0204();
+    Inn_CleanupResources();
     return 0;
 }

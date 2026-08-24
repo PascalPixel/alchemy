@@ -8,7 +8,7 @@ struct Obj {
     u16 rest : 7;
 };
 void Runtime_PushSlotEntry(s32 *arg0, s32 arg1);
-void Func_0801c154(struct Obj *obj, s32 arg1, s32 arg2) {
+void TextResource_SetPosition(struct Obj *obj, s32 arg1, s32 arg2) {
     obj->index = arg1;
     obj->kind = arg2;
     Runtime_PushSlotEntry((s32 *) obj, 0xFC);

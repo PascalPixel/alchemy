@@ -9,7 +9,7 @@ s32 ScheduleCallback(s32);
 s32 UiWork_FinalizePending();
 extern u8 Data_080b00f5;
 
-void Func_080b0204(void) {
+void Inn_CleanupResources(void) {
     void *temp_r5;
 
     temp_r5 = *(void **)ADDR_03001F2C;

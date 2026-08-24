@@ -219,6 +219,10 @@ typedef int bool;
 #define BattleEffect_ResumeObject Func_0809ade8
 #define BattleEffect_UpdateObjectVisibilityBounds Func_0809c314
 #define BattleEffect_RunVisibilityTransition Func_0809c3a4
+#define BattleEffect_GetResourceGroup Func_0808a8d0
+#define BattleEffect_LookupResult Func_0808adf0
+#define BattleEffect_GetWeightedResult Func_0808b05c
+#define BattleEffect_GetPhaseResult Func_0808b074
 #define PsynergyMenu_RefreshOwnerEntries Func_080a1bdc
 #define PsynergyMenu_PositionOwnerEntry Func_080a1c2c
 #define InventoryMenu_PositionOwnerEntry Func_080a1c6c
@@ -237,6 +241,12 @@ typedef int bool;
 #define Graphics_UpdatePhasePalette Func_080d40ec
 #define Graphics_PackTileRows Func_080df9d0
 #define Graphics_TransposeCopy Func_080dfddc
+#define Graphics_FadeAlphaOut Func_080c0e38
+#define Graphics_FadeAlphaIn Func_080c0e70
+#define Graphics_SetBlendControl Func_080c0ea8
+#define Graphics_AdvancePaletteCycle Func_080c1084
+#define Graphics_UploadVramBlock Func_080c1438
+#define Graphics_ScaleRgb555Clamped Func_080c1724
 #define MusicPlayer_SetPitchAndUpdateFrequency Func_080fb2a4
 #define Audio_InitializeRuntimeDefaults Func_080f9438
 #define Graphics_ScaleRgb555 Func_080f6038

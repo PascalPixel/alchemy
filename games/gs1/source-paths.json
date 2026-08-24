@@ -288,6 +288,7 @@
     "main:08099128": "battle/effects/orbiting_particles/start.c",
     "main:08099160": "battle/effects/orbiting_particles/run.c",
     "main:0808eee4": "battle/effects/random_particle/emit.c",
+    "main:0808f28c": "battle/effects/random_particle/spawn_at_position.c",
     "main:080981b0": "battle/effects/rising_particle_burst/update.c",
     "main:08098c08": "battle/effects/heavy_impact/spawn.c",
     "main:08098b10": "battle/effects/radial_burst/update.c",

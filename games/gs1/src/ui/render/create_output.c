@@ -17,7 +17,7 @@ struct TableEntry {
     u16 value;
 };
 
-struct RenderOutput *Func_0801eadc(
+struct RenderOutput *RenderOutput_Create(
     s32 arg0,
     s32 arg1,
     struct RenderInput *arg2,

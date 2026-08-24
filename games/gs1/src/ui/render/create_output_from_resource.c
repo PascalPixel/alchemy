@@ -2,7 +2,7 @@
 #include "types.h"
 
 s32 Func_0801bc34(s32 mode, s32 value);
-void *Func_0801eb64(
+void *RenderOutput_CreateFromResource(
     s32 arg0,
     s32 arg1,
     struct RenderInput *arg2,
@@ -15,5 +15,5 @@ void *Func_0801eb64(
     if (no < 0) {
         return NULL;
     }
-    return Func_0801eadc(no, 0x40000000, arg2, arg3, arg4);
+    return RenderOutput_Create(no, 0x40000000, arg2, arg3, arg4);
 }

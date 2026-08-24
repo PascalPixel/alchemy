@@ -38,6 +38,8 @@
     "main:080921c4": "object/motion/set_position_and_reset.c",
     "main:080922c4": "object/motion/offset_position_and_reset.c",
     "main:08092304": "object/motion/commit_position_and_activate.c",
+    "main:080924d4": "object/set_mode_by_id.c",
+    "main:080924ec": "object/set_action_by_id.c",
     "main:080c1a34": "party/compute_eligible_member_average.c",
     "main:08003dec": "runtime/slot/push_entry.c",
     "main:08003f04": "resource/table/clear_entry_references.c",

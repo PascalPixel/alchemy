@@ -2,7 +2,7 @@
 
 void Object_SetMode(struct ObjectRuntime *, s32);
 
-void Func_080924d4(u32 object_id, s32 action)
+void Object_SetModeById(u32 object_id, s32 action)
 {
     struct ObjectRuntime *object = ObjectTable_Get(object_id);
 

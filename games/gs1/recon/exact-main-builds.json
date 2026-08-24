@@ -38313,7 +38313,7 @@
     },
     {
       "en_owner": "080924d4",
-      "source": "games/gs1/src/080924d4.c",
+      "source": "games/gs1/src/object/set_mode_by_id.c",
       "size": 24,
       "all_exact": true,
       "editions": [
@@ -38369,7 +38369,7 @@
     },
     {
       "en_owner": "080924ec",
-      "source": "games/gs1/src/080924ec.c",
+      "source": "games/gs1/src/object/set_action_by_id.c",
       "size": 24,
       "all_exact": true,
       "editions": [

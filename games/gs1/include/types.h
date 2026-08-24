@@ -371,6 +371,7 @@ typedef int bool;
 #define BattleEffect_RunParticleFieldVariant3 Func_080dfa3c
 #define SpawnItemBreakEffectMode1 Func_0809a3c4
 #define SpawnItemBreakEffectMode3 Func_08098a84
+#define BattleEffect_UpdateItemBreakFragment Func_08097b70
 #define BattleParty_ApplyHealthDelta Func_0808c30c
 #define BattleParty_ApplyStatusDamage Func_0808c3a4
 #define BattleParty_ApplyDrain Func_0808c2dc
@@ -514,6 +515,7 @@ typedef int bool;
 #define Script_WaitForEvent Func_0800d674
 #define Script_InvokeCallback Func_0800d6a4
 #define Script_SkipCommand Func_0800d8f4
+#define Script_PlayAudioCue Func_0800d900
 #define Script_FindLabel Func_0800d6d8
 #define Script_RepeatOrJump Func_0800d710
 #define Script_JumpToLabel Func_0800d760

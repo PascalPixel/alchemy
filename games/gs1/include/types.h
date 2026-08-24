@@ -203,6 +203,8 @@ typedef int bool;
 #define UiRender_LookupNamedValue Func_08019944
 #define Resource_ResetPendingTransfer Func_0801c21c
 #define Map_RenderAnimatedTileFrame Func_0800be70
+#define Map_RenderPaletteMappedColumn Func_08011164
+#define Map_RenderPaletteMappedRow Func_080110e0
 #define UiWork_FinalizePending Func_08015140
 #define UiWork_FinalizePendingCore Func_08019a54
 #define UiTimedNotice_Create Func_0801c34c
@@ -339,6 +341,7 @@ typedef int bool;
 #define BattleEffect_UpdateObjectVisibilityBounds Func_0809c314
 #define BattleEffect_RunVisibilityTransition Func_0809c3a4
 #define BattleEffect_InterpolateBuffers Func_0809088c
+#define BattleEffect_PrepareBufferInterpolation Func_0809748c
 #define BattleEffect_StartBufferInterpolation Func_08091254
 #define BattleEffect_SetPrimaryBufferValue Func_08091240
 #define BattleEffect_GetResourceGroup Func_0808a8d0
@@ -510,6 +513,7 @@ typedef int bool;
 #define Script_StoreLookupResult Func_0800d654
 #define Script_WaitForEvent Func_0800d674
 #define Script_InvokeCallback Func_0800d6a4
+#define Script_SkipCommand Func_0800d8f4
 #define Script_FindLabel Func_0800d6d8
 #define Script_RepeatOrJump Func_0800d710
 #define Script_JumpToLabel Func_0800d760

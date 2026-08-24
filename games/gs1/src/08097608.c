@@ -7,7 +7,7 @@ s32 Func_08002dd8(s32);
 s32 ScheduleCallback(s32);
 void Func_0808e0b0(struct Outer0808e0b0 *outer, s32 value);
 struct Outer0808e0b0 *Object_GetById(u32);
-void Func_0809748c(void);
+void BattleEffect_PrepareBufferInterpolation(void);
 void Func_08097adc(void);
 extern u8 Data_08097645;
 
@@ -18,6 +18,6 @@ void Func_08097608(void) {
     Func_08097adc();
     ScheduleCallback((s32)&Data_08097645);
     Func_0808e0b0(Object_GetById(M2C_FIELD(temp_r5, u16, 0x290)), 1);
-    Func_0809748c();
+    BattleEffect_PrepareBufferInterpolation();
     Func_08002dd8(0x16);
 }

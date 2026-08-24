@@ -234,6 +234,8 @@ typedef int bool;
 #define UpdateRadialCameraEffect Func_0809aa98
 #define UpdateDisplayTransition Func_080903bc
 #define DisplayState_ClearFlags Func_08090378
+#define WindowBounds_Set Func_080a23f4
+#define DisplayTransition_UpdateScanline Func_08090584
 #define MapEvent_RunTileTriggerSequence Func_08099738
 #define MusicPlayer_SetVolume Func_080fb2cc
 #define MusicPlayer_SetPitch Func_080fb334

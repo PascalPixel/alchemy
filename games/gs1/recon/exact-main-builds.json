@@ -34785,7 +34785,7 @@
     },
     {
       "en_owner": "08090584",
-      "source": "games/gs1/src/08090584.c",
+      "source": "games/gs1/src/display/transition/update_scanline.c",
       "size": 210,
       "all_exact": true,
       "editions": [
@@ -48062,7 +48062,7 @@
     },
     {
       "en_owner": "080a23f4",
-      "source": "games/gs1/src/080a23f4.c",
+      "source": "games/gs1/src/ui/window/set_bounds.c",
       "size": 20,
       "all_exact": true,
       "editions": [

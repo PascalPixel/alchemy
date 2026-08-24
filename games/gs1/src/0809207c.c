@@ -1,6 +1,6 @@
 #include "object_runtime.h"
 
-void Func_08093a6c(struct ObjectRuntime *object, s32 kind);
+void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 kind);
 
 void Func_0809207c(u32 object_id, s32 action)
 {
@@ -10,6 +10,6 @@ void Func_0809207c(u32 object_id, s32 action)
         s32 value = 1;
         value |= object->action_flags;
         object->action_flags = value;
-        Func_08093a6c(object, action);
+        ObjectMotion_SetActionCallback(object, action);
     }
 }

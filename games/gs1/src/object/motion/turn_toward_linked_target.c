@@ -5,7 +5,7 @@
 
 s32 ArcTan2(s32, s32);
 
-s32 Func_08093a14(void *arg0) {
+s32 ObjectMotion_TurnTowardLinkedTarget(void *arg0) {
     s16 var_r0;
     u16 temp_r3;
     s32 temp;

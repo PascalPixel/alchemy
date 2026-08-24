@@ -279,6 +279,7 @@ typedef int bool;
 #define UiWork_ActivateChannel Func_08016670
 #define UiWork_ResetChannelTransition Func_080167d8
 #define RenderOutput_PrepareForRedraw Func_08016478
+#define RenderOutput_RedrawSavedRect Func_08016498
 #define RenderOutput_ClearList Func_080164ac
 #define RenderOutput_AppendToList Func_08016584
 #define RenderOutput_Release Func_08016594
@@ -537,6 +538,7 @@ typedef int bool;
 #define BattleEffect_GetAnimationValue Func_08091584
 #define BattleEffect_GetResourceId Func_080915ac
 #define BattleEffect_GetFlags Func_080915dc
+#define BattleEffect_FilterObjectIdByFlags Func_0809ae3c
 #define BattleEffect_PlayQueuedSound Func_0809202c
 #define BattleRuntime_InitializeRenderObject Func_08091660
 #define BattleRuntime_Reset Func_080916b0

@@ -2,8 +2,7 @@
 #include "runtime_interfaces.h"
 #include "global_cells.h"
 
-
-s32 Func_08020b14(const u8 *str) {
+s32 UiText_SetRenderString(const u8 *str) {
     u8 *base;
     u16 *dst;
     s32 count;

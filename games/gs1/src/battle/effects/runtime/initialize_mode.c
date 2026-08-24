@@ -15,7 +15,7 @@ void Func_080d765c(s32 *);
 void Func_080e7320(s32 arg0);
 void Func_080e15e8(s32 *);
 
-void Func_080d6578(s32 *arg0) {
+void BattleEffect_InitializeMode(s32 *arg0) {
     Runtime_AllocateHeapBlock(41, 0x302);
     Runtime_AllocateHeapBlock(39, 0x782c);
     Runtime_AllocateHeapBlock(40, 0x4000);

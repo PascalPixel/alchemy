@@ -2,7 +2,7 @@
 
 u8 *Runtime_GetObject(s32);
 
-s32 Func_080a8b10(u8 *output, s32 requested, s32 id) {
+s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id) {
     u8 *state;
     s32 i;
     s32 zero;
@@ -28,16 +28,13 @@ s32 Func_080a8b10(u8 *output, s32 requested, s32 id) {
             output[2] = 1;
         count++;
     }
-
     if (*(s8 *)(state + 304) != 0) {
         output[3] = 1;
         count++;
     }
-
     if (state[320] != 0) {
         output[4] = 1;
         count++;
     }
-
     return count;
 }

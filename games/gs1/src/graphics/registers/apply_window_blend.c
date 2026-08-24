@@ -1,7 +1,7 @@
 #include "types.h"
 #include "global_cells.h"
 
-void Func_080cd418(void)
+void Graphics_ApplyWindowBlendRegisters(void)
 {
     u8 *src = *(u8 **)ADDR_03001EEC;
 

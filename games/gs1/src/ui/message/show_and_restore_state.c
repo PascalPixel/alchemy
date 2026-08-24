@@ -12,7 +12,7 @@ extern u8 Data_00000cc6[];
 extern u8 Data_00000cf1[];
 extern u8 Data_00000d4c[];
 
-void Func_080b0574(s32 arg0) {
+void UiMessage_ShowAndRestoreState(s32 arg0) {
     s32 temp_r8;
     s32 var_r5;
     s8 temp_r1;

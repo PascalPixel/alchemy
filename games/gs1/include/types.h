@@ -252,6 +252,11 @@ typedef int bool;
 #define EffectStep_RunAnimationMode2 Func_080e2940
 #define EffectStep_RunAnimationMode3Or4Or5 Func_080e294c
 #define EffectStep_RunAnimationMode6Or7Or8 Func_080e28f4
+#define BattleEffect_RunParticleFieldVariant Func_080dfa48
+#define BattleEffect_RunParticleFieldVariant0 Func_080dfa18
+#define BattleEffect_RunParticleFieldVariant1 Func_080dfa24
+#define BattleEffect_RunParticleFieldVariant2 Func_080dfa30
+#define BattleEffect_RunParticleFieldVariant3 Func_080dfa3c
 #define SpawnItemBreakEffectMode1 Func_0809a3c4
 #define SpawnItemBreakEffectMode3 Func_08098a84
 #define BattleParty_ApplyHealthDelta Func_0808c30c
@@ -352,5 +357,6 @@ typedef int bool;
 #define EffectRuntime_ClearCurrentFlags Func_0808ed78
 #define EffectRuntime_SetCurrentPosition Func_0808edac
 #define Graphics_AdjustPaletteBank Func_080aac84
+#define Camera_ApplyShake Func_080e155c
 
 #endif

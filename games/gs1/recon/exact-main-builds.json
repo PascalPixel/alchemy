@@ -21163,7 +21163,7 @@
     },
     {
       "en_owner": "0801eadc",
-      "source": "games/gs1/src/0801eadc.c",
+      "source": "games/gs1/src/ui/render/create_output.c",
       "size": 136,
       "edition_variant": true,
       "all_exact": true,
@@ -21220,7 +21220,7 @@
     },
     {
       "en_owner": "0801eb64",
-      "source": "games/gs1/src/0801eb64.c",
+      "source": "games/gs1/src/ui/render/create_output_from_resource.c",
       "size": 44,
       "all_exact": true,
       "editions": [
@@ -21276,7 +21276,7 @@
     },
     {
       "en_owner": "0801eb90",
-      "source": "games/gs1/src/0801eb90.c",
+      "source": "games/gs1/src/ui/render/create_output_loaded.c",
       "size": 72,
       "all_exact": true,
       "editions": [
@@ -21332,7 +21332,7 @@
     },
     {
       "en_owner": "0801ebd8",
-      "source": "games/gs1/src/0801ebd8.c",
+      "source": "games/gs1/src/ui/render/create_output_with_transform.c",
       "size": 76,
       "all_exact": true,
       "editions": [
@@ -21388,7 +21388,7 @@
     },
     {
       "en_owner": "0801ec24",
-      "source": "games/gs1/src/0801ec24.c",
+      "source": "games/gs1/src/ui/render/create_output_from_table.c",
       "size": 70,
       "all_exact": true,
       "editions": [

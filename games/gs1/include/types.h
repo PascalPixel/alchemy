@@ -109,6 +109,11 @@ typedef int bool;
 #define RenderResource_CreatePair Func_08021620
 #define RenderResource_LoadFrame Func_080216e8
 #define RenderResource_CreateFrame Func_08021750
+#define RenderOutput_Create Func_0801eadc
+#define RenderOutput_CreateFromResource Func_0801eb64
+#define RenderOutput_CreateLoaded Func_0801eb90
+#define RenderOutput_CreateWithTransform Func_0801ebd8
+#define RenderOutput_CreateFromTable Func_0801ec24
 #define Object_CheckMovementCollision Func_080091d8
 #define Ability_GetMaximum Func_08077240
 #define Ability_GetAvailability Func_08077248

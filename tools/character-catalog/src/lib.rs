@@ -240,7 +240,7 @@ fn build_animations(index: &Value) -> Result<AnimationBuild> {
 }
 
 pub fn build_character_catalog(index: &Value) -> Result<Vec<u8>> {
-    if integer_value(field(index, "format")?, "format")? != 3
+    if integer_value(field(index, "format")?, "format")? != 4
         || text(field(index, "codec")?, "codec")? != "golden-sun-character-catalog"
     {
         return fail("unsupported character catalog format");
@@ -259,7 +259,7 @@ pub fn build_character_catalog(index: &Value) -> Result<Vec<u8>> {
     let mut frames = BTreeMap::new();
     for item in array(field(index, "frame_directories")?, "frame directories")? {
         let item = array(item, "frame directory")?;
-        if item.len() < 2 {
+        if item.len() != 2 {
             return fail("invalid frame directory");
         }
         let name = text(&item[0], "frame directory name")?.to_string();

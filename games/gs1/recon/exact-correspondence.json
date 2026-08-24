@@ -5112,7 +5112,7 @@
     },
     {
       "en_owner": "0800e24c",
-      "source": "games/gs1/src/0800e24c.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_cursor.c",
       "size": 50,
       "status": "shared_core",
       "starts": {
@@ -5142,7 +5142,7 @@
     },
     {
       "en_owner": "0800e280",
-      "source": "games/gs1/src/0800e280.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_unsigned_halfword.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -5172,7 +5172,7 @@
     },
     {
       "en_owner": "0800e2b0",
-      "source": "games/gs1/src/0800e2b0.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_word08.c",
       "size": 42,
       "status": "shared_core",
       "starts": {
@@ -5202,7 +5202,7 @@
     },
     {
       "en_owner": "0800e2dc",
-      "source": "games/gs1/src/0800e2dc.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_word0c.c",
       "size": 42,
       "status": "shared_core",
       "starts": {
@@ -5232,7 +5232,7 @@
     },
     {
       "en_owner": "0800e308",
-      "source": "games/gs1/src/0800e308.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_word10.c",
       "size": 42,
       "status": "shared_core",
       "starts": {
@@ -5322,7 +5322,7 @@
     },
     {
       "en_owner": "0800e390",
-      "source": "games/gs1/src/0800e390.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_word1c.c",
       "size": 42,
       "status": "shared_core",
       "starts": {
@@ -5352,7 +5352,7 @@
     },
     {
       "en_owner": "0800e3bc",
-      "source": "games/gs1/src/0800e3bc.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_word24.c",
       "size": 42,
       "status": "shared_core",
       "starts": {
@@ -5382,7 +5382,7 @@
     },
     {
       "en_owner": "0800e3e8",
-      "source": "games/gs1/src/0800e3e8.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_word28.c",
       "size": 42,
       "status": "shared_core",
       "starts": {
@@ -5412,7 +5412,7 @@
     },
     {
       "en_owner": "0800e414",
-      "source": "games/gs1/src/0800e414.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_word2c.c",
       "size": 42,
       "status": "shared_core",
       "starts": {
@@ -5442,7 +5442,7 @@
     },
     {
       "en_owner": "0800e440",
-      "source": "games/gs1/src/0800e440.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_word30.c",
       "size": 42,
       "status": "shared_core",
       "starts": {
@@ -5472,7 +5472,7 @@
     },
     {
       "en_owner": "0800e46c",
-      "source": "games/gs1/src/0800e46c.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_word34.c",
       "size": 42,
       "status": "shared_core",
       "starts": {
@@ -5502,7 +5502,7 @@
     },
     {
       "en_owner": "0800e498",
-      "source": "games/gs1/src/0800e498.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_word38.c",
       "size": 42,
       "status": "shared_core",
       "starts": {
@@ -5532,7 +5532,7 @@
     },
     {
       "en_owner": "0800e4c4",
-      "source": "games/gs1/src/0800e4c4.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_word3c.c",
       "size": 42,
       "status": "shared_core",
       "starts": {
@@ -5562,7 +5562,7 @@
     },
     {
       "en_owner": "0800e4f0",
-      "source": "games/gs1/src/0800e4f0.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_word40.c",
       "size": 42,
       "status": "shared_core",
       "starts": {
@@ -5592,7 +5592,7 @@
     },
     {
       "en_owner": "0800e51c",
-      "source": "games/gs1/src/0800e51c.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_word44.c",
       "size": 42,
       "status": "shared_core",
       "starts": {
@@ -5682,7 +5682,7 @@
     },
     {
       "en_owner": "0800e5a0",
-      "source": "games/gs1/src/0800e5a0.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_word4c.c",
       "size": 42,
       "status": "shared_core",
       "starts": {
@@ -5712,7 +5712,7 @@
     },
     {
       "en_owner": "0800e5cc",
-      "source": "games/gs1/src/0800e5cc.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_address50.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -5742,7 +5742,7 @@
     },
     {
       "en_owner": "0800e5f8",
-      "source": "games/gs1/src/0800e5f8.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_byte54.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -5832,7 +5832,7 @@
     },
     {
       "en_owner": "0800e6ac",
-      "source": "games/gs1/src/0800e6ac.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_comparison_result.c",
       "size": 54,
       "status": "shared_core",
       "starts": {
@@ -5862,7 +5862,7 @@
     },
     {
       "en_owner": "0800e6e4",
-      "source": "games/gs1/src/0800e6e4.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_byte58.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -5892,7 +5892,7 @@
     },
     {
       "en_owner": "0800e720",
-      "source": "games/gs1/src/0800e720.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_byte59.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -5922,7 +5922,7 @@
     },
     {
       "en_owner": "0800e75c",
-      "source": "games/gs1/src/0800e75c.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_byte5a.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -5952,7 +5952,7 @@
     },
     {
       "en_owner": "0800e798",
-      "source": "games/gs1/src/0800e798.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_byte5b.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -5982,7 +5982,7 @@
     },
     {
       "en_owner": "0800e7d4",
-      "source": "games/gs1/src/0800e7d4.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_byte5d.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -6012,7 +6012,7 @@
     },
     {
       "en_owner": "0800e810",
-      "source": "games/gs1/src/0800e810.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_halfword5e.c",
       "size": 64,
       "status": "shared_core",
       "starts": {
@@ -6042,7 +6042,7 @@
     },
     {
       "en_owner": "0800e850",
-      "source": "games/gs1/src/0800e850.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_signed_halfword64.c",
       "size": 64,
       "status": "shared_core",
       "starts": {
@@ -6072,7 +6072,7 @@
     },
     {
       "en_owner": "0800e890",
-      "source": "games/gs1/src/0800e890.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_signed_halfword66.c",
       "size": 64,
       "status": "shared_core",
       "starts": {
@@ -6102,7 +6102,7 @@
     },
     {
       "en_owner": "0800e8d0",
-      "source": "games/gs1/src/0800e8d0.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_word68.c",
       "size": 42,
       "status": "shared_core",
       "starts": {
@@ -6132,7 +6132,7 @@
     },
     {
       "en_owner": "0800e8fc",
-      "source": "games/gs1/src/0800e8fc.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_word6c.c",
       "size": 42,
       "status": "shared_core",
       "starts": {
@@ -6162,7 +6162,7 @@
     },
     {
       "en_owner": "0800e928",
-      "source": "games/gs1/src/0800e928.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_byte62.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -6192,7 +6192,7 @@
     },
     {
       "en_owner": "0800e964",
-      "source": "games/gs1/src/0800e964.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_byte63.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -6222,7 +6222,7 @@
     },
     {
       "en_owner": "0800e9a0",
-      "source": "games/gs1/src/0800e9a0.c",
+      "source": "games/gs1/src/script/operands/apply_operand_set.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -6252,7 +6252,7 @@
     },
     {
       "en_owner": "0800e9dc",
-      "source": "games/gs1/src/0800e9dc.c",
+      "source": "games/gs1/src/script/operands/apply_operand_add.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -6282,7 +6282,7 @@
     },
     {
       "en_owner": "0800ea18",
-      "source": "games/gs1/src/0800ea18.c",
+      "source": "games/gs1/src/script/operands/apply_operand_compare.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -10332,7 +10332,7 @@
     },
     {
       "en_owner": "0801c34c",
-      "source": "games/gs1/src/0801c34c.c",
+      "source": "games/gs1/src/ui/timed_notice/create.c",
       "size": 156,
       "status": "shared_core",
       "starts": {
@@ -10362,7 +10362,7 @@
     },
     {
       "en_owner": "0801c3e8",
-      "source": "games/gs1/src/0801c3e8.c",
+      "source": "games/gs1/src/ui/timed_notice/tick.c",
       "size": 64,
       "status": "shared_core",
       "starts": {
@@ -10392,7 +10392,7 @@
     },
     {
       "en_owner": "0801c428",
-      "source": "games/gs1/src/0801c428.c",
+      "source": "games/gs1/src/ui/timed_notice/close_if_active.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -18462,7 +18462,7 @@
     },
     {
       "en_owner": "0808f0d8",
-      "source": "games/gs1/src/0808f0d8.c",
+      "source": "games/gs1/src/effect_runtime/prepare_rising_object.c",
       "size": 104,
       "status": "shared_core",
       "starts": {
@@ -18492,7 +18492,7 @@
     },
     {
       "en_owner": "0808f140",
-      "source": "games/gs1/src/0808f140.c",
+      "source": "games/gs1/src/effect_runtime/run_rising_object_sequence.c",
       "size": 128,
       "status": "shared_core",
       "starts": {
@@ -28062,7 +28062,7 @@
     },
     {
       "en_owner": "080ad318",
-      "source": "games/gs1/src/080ad318.c",
+      "source": "games/gs1/src/object/motion/four_object/clear_slots_and_schedule.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -28152,7 +28152,7 @@
     },
     {
       "en_owner": "080ad5b4",
-      "source": "games/gs1/src/080ad5b4.c",
+      "source": "games/gs1/src/object/motion/four_object/set_slot_position.c",
       "size": 64,
       "status": "shared_core",
       "starts": {
@@ -28182,7 +28182,7 @@
     },
     {
       "en_owner": "080ad5f4",
-      "source": "games/gs1/src/080ad5f4.c",
+      "source": "games/gs1/src/object/motion/four_object/set_slot_phase.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -28212,7 +28212,7 @@
     },
     {
       "en_owner": "080ad608",
-      "source": "games/gs1/src/080ad608.c",
+      "source": "games/gs1/src/object/motion/four_object/replace_slot.c",
       "size": 80,
       "status": "shared_core",
       "starts": {

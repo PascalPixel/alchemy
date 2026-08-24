@@ -160,38 +160,31 @@ fn build_animations(index: &Value) -> Result<AnimationBuild> {
     let mut table_counts = BTreeMap::new();
     let mut cursor = start;
     for group in groups {
+        let group_name = text(field(group, "name")?, "animation symbol")?;
         let commands = array(field(group, "commands")?, "animation commands")?;
         for command_value in commands {
             let (opcode, operand) = encode_command(command_value)?;
             data.extend_from_slice(&[opcode, operand]);
         }
-        let labels = array(field(group, "labels")?, "animation labels")?;
+        let entry_commands = array(field(group, "entry_commands")?, "animation entry commands")?;
         let mut label_indexes = BTreeSet::new();
-        let group_name = text(field(group, "name")?, "animation symbol")?;
-        for label in labels {
-            let label = array(label, "animation label")?;
-            if label.len() < 2 {
-                return fail("invalid animation label");
-            }
-            let label_name = text(&label[0], "animation symbol")?;
+        let mut entry_addresses = Vec::with_capacity(entry_commands.len());
+        for (entry_index, command_value) in entry_commands.iter().enumerate() {
             let command = bounded(
-                &label[1],
+                command_value,
                 0,
                 commands.len() as i64 - 1,
-                "animation label command",
+                "animation entry command",
             )? as usize;
             if !label_indexes.insert(command) {
                 return fail(format!("duplicate command label in {group_name}"));
             }
-            if symbols
-                .insert(
-                    label_name.to_string(),
-                    u32::try_from(cursor + (command * 2) as i64).expect("animation address"),
-                )
-                .is_some()
-            {
+            let label_name = format!("{group_name}_{entry_index:03x}");
+            let address = u32::try_from(cursor + (command * 2) as i64).expect("animation address");
+            if symbols.insert(label_name.clone(), address).is_some() {
                 return fail(format!("duplicate animation symbol {label_name}"));
             }
+            entry_addresses.push(address);
         }
         cursor += i64::try_from(commands.len() * 2).expect("command size");
         if symbols
@@ -203,17 +196,28 @@ fn build_animations(index: &Value) -> Result<AnimationBuild> {
         {
             return fail(format!("duplicate animation symbol {group_name}"));
         }
-        let entries = array(field(group, "entries")?, "animation entries")?;
-        table_counts.insert(group_name.to_string(), entries.len());
-        for entry in entries {
-            let entry = text(entry, "animation entry")?;
-            let address = symbols
-                .get(entry)
-                .copied()
-                .ok_or_else(|| Error(format!("undefined animation entry {entry}")))?;
-            data.extend_from_slice(&address.to_le_bytes());
+        let table_entries = object(group, "animation group")?
+            .get("table_entries")
+            .map(|value| array(value, "animation table entries"))
+            .transpose()?;
+        let table_count = table_entries.map_or(entry_addresses.len(), Vec::len);
+        table_counts.insert(group_name.to_string(), table_count);
+        if let Some(table_entries) = table_entries {
+            for entry in table_entries {
+                let entry = bounded(
+                    entry,
+                    0,
+                    entry_addresses.len() as i64 - 1,
+                    "animation table entry",
+                )? as usize;
+                data.extend_from_slice(&entry_addresses[entry].to_le_bytes());
+            }
+        } else {
+            for address in entry_addresses {
+                data.extend_from_slice(&address.to_le_bytes());
+            }
         }
-        cursor += i64::try_from(entries.len() * 4).expect("table size");
+        cursor += i64::try_from(table_count * 4).expect("table size");
         if let Some(extras) = object(group, "animation group")?.get("extra_tables") {
             for extra in array(extras, "extra animation tables")? {
                 let extra = object(extra, "extra animation table")?;
@@ -232,21 +236,19 @@ fn build_animations(index: &Value) -> Result<AnimationBuild> {
                 {
                     return fail(format!("duplicate animation symbol {name}"));
                 }
-                let entries = array(
+                let count = bounded(
                     extra
-                        .get("entries")
+                        .get("count")
                         .ok_or_else(|| Error("invalid extra animation table".into()))?,
-                    "extra animation entries",
-                )?;
-                for entry in entries {
-                    let entry = text(entry, "extra animation entry")?;
-                    let address = symbols
-                        .get(entry)
-                        .copied()
-                        .ok_or_else(|| Error(format!("undefined extra animation entry {entry}")))?;
+                    1,
+                    0xffff,
+                    "extra animation table count",
+                )? as usize;
+                let address = symbols[name];
+                for _ in 0..count {
                     data.extend_from_slice(&address.to_le_bytes());
                 }
-                cursor += i64::try_from(entries.len() * 4).expect("table size");
+                cursor += i64::try_from(count * 4).expect("table size");
             }
         }
     }
@@ -254,7 +256,7 @@ fn build_animations(index: &Value) -> Result<AnimationBuild> {
 }
 
 pub fn build_character_catalog(index: &Value) -> Result<Vec<u8>> {
-    if integer_value(field(index, "format")?, "format")? != 1
+    if integer_value(field(index, "format")?, "format")? != 2
         || text(field(index, "codec")?, "codec")? != "golden-sun-character-catalog"
     {
         return fail("unsupported character catalog format");

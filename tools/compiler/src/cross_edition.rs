@@ -20,6 +20,7 @@ const EDITIONS: [&str; 6] = ["ja", "en", "de", "es", "fr", "it"];
 const OVERLAY_BASE: u64 = 0x0200_0000;
 const OVERLAY_FIRST: usize = 0x36f;
 const OVERLAY_LAST: usize = 0x3ce;
+const CORRESPONDENCE_SCHEMA_VERSION: u32 = 2;
 const USAGE: &str = "usage: compiler cross-edition ([--calls] [--json] [--rom-dir DIR] [--object FILE] [--edition-build FILE] <8-digit-owner> | --all [--rom-dir DIR] [--object-dir DIR] [--write FILE] [--edition-build FILE] | --all-overlays [--rom-dir DIR] [--write FILE])";
 
 #[derive(Debug, Serialize)]
@@ -77,7 +78,6 @@ struct EditionSummary {
 #[derive(Debug, Serialize)]
 struct CorpusOwner {
     en_owner: String,
-    source: String,
     size: usize,
     status: &'static str,
     starts: BTreeMap<String, String>,
@@ -88,7 +88,6 @@ struct CorpusOwner {
 #[derive(Debug, Serialize)]
 struct UnresolvedOwner {
     en_owner: String,
-    source: String,
     error: String,
 }
 
@@ -118,8 +117,6 @@ struct OverlayCorpusReport {
 #[derive(Debug, Serialize)]
 struct OverlayCorpusOwner {
     en_owner: String,
-    source: String,
-    resource: String,
     size: usize,
     core_bytes: usize,
     status: &'static str,
@@ -131,8 +128,6 @@ struct OverlayCorpusOwner {
 #[derive(Debug, Serialize)]
 struct OverlayUnresolvedOwner {
     en_owner: String,
-    source: String,
-    resource: String,
     size: usize,
     error: String,
 }
@@ -312,7 +307,6 @@ struct LocationAnchor {
 
 struct OverlayOwner {
     name: String,
-    source: String,
     resource: usize,
     en_offset: usize,
     size: usize,
@@ -1110,22 +1104,11 @@ fn read_roms(directory: &Path) -> Result<EditionRoms, String> {
 
 fn exact_owners(object_dir: &Path) -> Result<Vec<String>, String> {
     let source_paths = SourcePaths::load(compiler_core::routing::root())?;
-    let entries =
-        fs::read_dir(object_dir).map_err(|error| format!("{}: {error}", object_dir.display()))?;
-    let mut owners = entries
-        .filter_map(Result::ok)
-        .filter_map(|entry| {
-            let path = entry.path();
-            let owner = path.file_stem()?.to_str()?;
-            let address = u32::from_str_radix(owner, 16).ok()?;
-            (path.extension().is_some_and(|extension| extension == "o")
-                && owner.len() == 8
-                && owner.bytes().all(|byte| byte.is_ascii_hexdigit())
-                && source_paths
-                    .source_path(SourceOwner::Main(address))
-                    .is_file())
-            .then(|| owner.to_ascii_lowercase())
-        })
+    let mut owners = source_paths
+        .main_sources()?
+        .into_iter()
+        .map(|source| source.owner.address_stem())
+        .filter(|owner| object_dir.join(format!("{owner}.o")).is_file())
         .collect::<Vec<_>>();
     owners.sort();
     owners.dedup();
@@ -1140,7 +1123,6 @@ fn exact_owners(object_dir: &Path) -> Result<Vec<String>, String> {
 
 fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
     let owner_names = exact_owners(&options.object_dir)?;
-    let source_paths = SourcePaths::load(compiler_core::routing::root())?;
     let mut reports = BTreeMap::new();
     let mut failures = BTreeMap::new();
     let mut owner_symbol_bytes = 0;
@@ -1259,11 +1241,7 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
             }
         }
         owners.push(CorpusOwner {
-            en_owner: owner.clone(),
-            source: source_paths
-                .repository_relative_path(SourceOwner::parse(&format!("main:{owner}"))?)
-                .to_string_lossy()
-                .replace('\\', "/"),
+            en_owner: SourceOwner::parse(&format!("main:{owner}"))?.id(),
             size: report.size,
             status: if report.core_identical {
                 "shared_core"
@@ -1278,18 +1256,13 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
 
     let unresolved = failures
         .into_iter()
-        .map(|(owner, error)| UnresolvedOwner {
-            en_owner: owner.clone(),
-            source: source_paths
-                .repository_relative_path(
-                    SourceOwner::parse(&format!("main:{owner}"))
-                        .expect("exact owner names were validated"),
-                )
-                .to_string_lossy()
-                .replace('\\', "/"),
-            error,
+        .map(|(owner, error)| {
+            Ok(UnresolvedOwner {
+                en_owner: SourceOwner::parse(&format!("main:{owner}"))?.id(),
+                error,
+            })
         })
-        .collect::<Vec<_>>();
+        .collect::<Result<Vec<_>, String>>()?;
 
     let editions = EDITIONS
         .into_iter()
@@ -1307,7 +1280,7 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
         })
         .collect();
     let report = CorpusReport {
-        schema_version: 1,
+        schema_version: CORRESPONDENCE_SCHEMA_VERSION,
         game: "gs1",
         source_edition: "en",
         base_edition: "ja",
@@ -1473,8 +1446,6 @@ fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String>
         }
         owners.push(OverlayCorpusOwner {
             en_owner: found.owner.name.clone(),
-            source: found.owner.source.clone(),
-            resource: format!("resource_{:03x}", found.owner.resource),
             size: found.owner.size,
             core_bytes: found.mask.iter().filter(|masked| !**masked).count(),
             status: if shared {
@@ -1496,8 +1467,6 @@ fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String>
                 .get(&owner.name)
                 .map(|error| OverlayUnresolvedOwner {
                     en_owner: owner.name.clone(),
-                    source: owner.source.clone(),
-                    resource: format!("resource_{:03x}", owner.resource),
                     size: owner.size,
                     error: error.clone(),
                 })
@@ -1519,7 +1488,7 @@ fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String>
         })
         .collect();
     let report = OverlayCorpusReport {
-        schema_version: 1,
+        schema_version: CORRESPONDENCE_SCHEMA_VERSION,
         game: "gs1",
         source_edition: "en",
         base_edition: "ja",
@@ -1617,11 +1586,7 @@ fn exact_overlay_owners() -> Result<Vec<OverlayOwner>, String> {
             ));
         }
         owners.push(OverlayOwner {
-            name: format!("resource_{resource:03x}:0x{absolute:08x}"),
-            source: source_paths
-                .repository_relative_path(source.owner)
-                .to_string_lossy()
-                .replace('\\', "/"),
+            name: source.owner.id(),
             resource,
             en_offset,
             size,
@@ -1760,7 +1725,6 @@ fn analyze_overlay_owner(
             return Ok(OverlayMatch {
                 owner: OverlayOwner {
                     name: owner.name.clone(),
-                    source: owner.source.clone(),
                     resource: owner.resource,
                     en_offset: owner.en_offset,
                     size: owner.size,
@@ -1823,7 +1787,6 @@ fn analyze_overlay_owner(
     Ok(OverlayMatch {
         owner: OverlayOwner {
             name: owner.name.clone(),
-            source: owner.source.clone(),
             resource: owner.resource,
             en_offset: owner.en_offset,
             size: owner.size,
@@ -2632,6 +2595,61 @@ mod tests {
         assert_eq!(&mask[0..4], &[false; 4]);
         assert_eq!(&mask[4..12], &[true; 8]);
         assert_eq!(&mask[12..16], &[false; 4]);
+    }
+
+    #[test]
+    fn correspondence_rows_serialize_only_canonical_owner_identity() {
+        fn assert_identity<T: Serialize>(row: &T, expected: &str) {
+            let value = serde_json::to_value(row).expect("serialize correspondence row");
+            assert_eq!(value["en_owner"], expected);
+            assert!(value.get("source").is_none());
+            assert!(value.get("resource").is_none());
+        }
+
+        assert_identity(
+            &CorpusOwner {
+                en_owner: SourceOwner::Main(0x0800_2ee4).id(),
+                size: 4,
+                status: "shared_core",
+                starts: BTreeMap::new(),
+                location_methods: BTreeMap::new(),
+                core_diff_bytes_from_ja: BTreeMap::new(),
+            },
+            "main:08002ee4",
+        );
+        assert_identity(
+            &UnresolvedOwner {
+                en_owner: SourceOwner::Main(0x0800_2ee4).id(),
+                error: "unresolved".into(),
+            },
+            "main:08002ee4",
+        );
+        let overlay_owner = SourceOwner::Overlay {
+            resource: 0x36f,
+            address: 0x0200_0030,
+        }
+        .id();
+        assert_identity(
+            &OverlayCorpusOwner {
+                en_owner: overlay_owner.clone(),
+                size: 4,
+                core_bytes: 4,
+                status: "shared_core",
+                starts: BTreeMap::new(),
+                location_methods: BTreeMap::new(),
+                core_diff_bytes_from_ja: BTreeMap::new(),
+            },
+            "resource_36f:02000030",
+        );
+        assert_identity(
+            &OverlayUnresolvedOwner {
+                en_owner: overlay_owner,
+                size: 4,
+                error: "unresolved".into(),
+            },
+            "resource_36f:02000030",
+        );
+        assert_eq!(CORRESPONDENCE_SCHEMA_VERSION, 2);
     }
 
     #[test]

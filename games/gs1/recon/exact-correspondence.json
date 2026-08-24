@@ -7902,7 +7902,7 @@
     },
     {
       "en_owner": "08015e8c",
-      "source": "games/gs1/src/08015e8c.c",
+      "source": "games/gs1/src/ui/render/output_list/acquire_free.c",
       "size": 52,
       "status": "shared_core",
       "starts": {
@@ -19122,7 +19122,7 @@
     },
     {
       "en_owner": "0809163c",
-      "source": "games/gs1/src/0809163c.c",
+      "source": "games/gs1/src/battle/runtime/wait_if_mode_zero.c",
       "size": 36,
       "status": "shared_core",
       "starts": {

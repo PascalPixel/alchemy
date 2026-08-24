@@ -12,7 +12,7 @@ struct Work;
 
 extern u8 *Data_03001e98;
 
-void Func_0801a97c(void);
+void Resource_ScheduleOwnerReset(void);
 void UiWork_Finalize(struct Work *work, s32 release);
 void WaitFrames(u32 value);
 s32 Resource_ResetEntry(u32 index);
@@ -24,7 +24,7 @@ void Resource_ResetOwnerEntries(void)
     u8 *state = Data_03001e98;
     struct Node_0801b148 *node;
 
-    Func_0801a97c();
+    Resource_ScheduleOwnerReset();
     UiWork_Finalize(*(struct Work **)(state + 0x350), 2);
     WaitFrames(1);
     node = *(struct Node_0801b148 **)(state + 0x348);

@@ -2,7 +2,7 @@
 
 void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 kind);
 
-void Func_0809207c(u32 object_id, s32 action)
+void ObjectMotion_EnableActionAndSetCallback(u32 object_id, s32 action)
 {
     struct ObjectRuntime *object = ObjectTable_Get(object_id);
 

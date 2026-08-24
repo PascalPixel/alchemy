@@ -63,6 +63,7 @@ typedef int bool;
 #define Ability_GetData Func_08077080
 #define Owner_GetState Func_08077394
 #define Owner_GetRecord Func_080773d8
+#define Owner_GetDefaultElement Func_080798b4
 #define Owner_RefreshActiveRatios Func_0807808c
 #define Owner_RecalculateRatios Func_0807822c
 #define Owner_UpdateRatioPair Func_080782a0
@@ -236,6 +237,8 @@ typedef int bool;
 #define DisplayState_ClearFlags Func_08090378
 #define WindowBounds_Set Func_080a23f4
 #define DisplayTransition_UpdateScanline Func_08090584
+#define BattleEffect_ClampRgb555Channel Func_08091294
+#define BattleEffect_ClampRgb555Component Func_080912a8
 #define MapEvent_RunTileTriggerSequence Func_08099738
 #define MusicPlayer_SetVolume Func_080fb2cc
 #define MusicPlayer_SetPitch Func_080fb334

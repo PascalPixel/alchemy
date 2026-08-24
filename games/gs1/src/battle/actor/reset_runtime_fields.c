@@ -5,7 +5,7 @@ void BattleUnit_Recalculate(s32);
 s32 GetBattleObjectSlot(s32);
 s32 Func_080b78e4(s32, s32);
 
-s32 Func_080bb588(s32 actor)
+s32 BattleActor_ResetRuntimeFields(s32 actor)
 {
     u8 *state;
     u8 *cursor;

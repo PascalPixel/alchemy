@@ -22,7 +22,7 @@ s32 Func_080797fc(s32 record, const u8 *source, s32 output[4]) {
     if (record > 7) {
         u32 index;
 
-        index = Func_080773d8(record)[52];
+        index = Owner_GetRecord(record)[52];
         if (index > 43)
             index = 0;
 

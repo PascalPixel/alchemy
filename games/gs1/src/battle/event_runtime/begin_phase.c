@@ -1,6 +1,6 @@
 #include "runtime_1e74.h"
 
-void Func_080bd7dc(s32 parameter) {
+void BattleEventRuntime_BeginPhase(s32 parameter) {
     struct Runtime1e74 *runtime;
 
     runtime = Runtime1e74_Get();

@@ -18,7 +18,7 @@ struct Fields_080b7f70;
 
 void *GetMotionRecord(struct Fields_080b7f70 *, s32);
 
-struct Record_080ba918 *Func_080ba918(void *object, s32 value)
+struct Record_080ba918 *BattleMotion_SetRecordChildValues(void *object, s32 value)
 {
     s32 object_index;
     struct Record_080ba918 *record;

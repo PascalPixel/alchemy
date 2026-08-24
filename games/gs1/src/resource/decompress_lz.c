@@ -1,5 +1,7 @@
 #include "types.h"
 
+#define Resource_DecompressLz Func_0800a97c
+
 u8 *Func_0800a97c(const u8 *source, u8 *destination)
 {
     s32 token;
@@ -15,10 +17,8 @@ u8 *Func_0800a97c(const u8 *source, u8 *destination)
 
     token = source[0] | (source[1] << 8);
     literal = source + 2;
-    if (token == 0) {
+    if (token == 0)
         return (u8 *)literal;
-    }
-
     command = source + token;
     control = *command;
     sentinel = 128;
@@ -54,17 +54,15 @@ shift:
 
 dispatch:
     if ((control & 1) != 0) {
-        if (control != 1) {
+        if (control != 1)
             *destination++ = *literal++;
-        }
         goto shift;
     }
 
     byte = *command++;
     token = byte << 8;
     token |= *command++;
-    if (token != 0) {
+    if (token != 0)
         goto back_reference;
-    }
     return start;
 }

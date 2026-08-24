@@ -5,10 +5,10 @@
 
 void WaitFrames(u32);
 void ScheduleCallback(void *);
-s32 Func_080bdfec(void);
+s32 BattleEventRuntime_Reset(void);
 void Func_080bd898(void);
 
-s32 Func_080be02c(void) {
+s32 BattleEventRuntime_WaitForReady(void) {
     s32 state;
     void *runtime;
 
@@ -24,5 +24,5 @@ s32 Func_080be02c(void) {
         } while (M2C_FIELD(runtime, s32 *, 0x800) != 4);
     }
     ScheduleCallback((void *)Func_080bd898);
-    return Func_080bdfec();
+    return BattleEventRuntime_Reset();
 }

@@ -197,7 +197,9 @@ source path. Do not add parallel symbol maps or infer a canonical name from a
 filename, assembly export, chart label, or tool-local table. Those consumers
 must resolve the stable owner identity through this register. Owner-specific
 compiler facts, such as an exceptional `call_via` bank, belong on the same
-record rather than in a source-path lookup table. Existing flat
+record rather than in a source-path lookup table. The legacy `Func_<address>`
+spelling is derived directly from an unregistered main owner identity and is
+not repeated as a database record. Existing flat
 address-named files remain a supported migration fallback, but do not add new
 ones: register a nested descriptive path before adopting a new owner.
 

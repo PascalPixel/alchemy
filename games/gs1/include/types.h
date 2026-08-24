@@ -244,6 +244,7 @@ typedef int bool;
 #define BattleEffect_GetPhaseResult Func_0808b074
 #define EffectStep_AdvanceWithGravity3D Func_080e38b8
 #define EffectStep_AdvanceWithGravity2D Func_080e3908
+#define Resource_LoadAndDecompress Func_080e0524
 #define EffectStep_RunAnimation Func_080e2974
 #define EffectStep_RunAnimationMode0 Func_080e291c
 #define EffectStep_RunAnimationMode0Duplicate Func_080e2928
@@ -251,6 +252,8 @@ typedef int bool;
 #define EffectStep_RunAnimationMode2 Func_080e2940
 #define EffectStep_RunAnimationMode3Or4Or5 Func_080e294c
 #define EffectStep_RunAnimationMode6Or7Or8 Func_080e28f4
+#define SpawnItemBreakEffectMode1 Func_0809a3c4
+#define SpawnItemBreakEffectMode3 Func_08098a84
 #define BattleParty_ApplyHealthDelta Func_0808c30c
 #define BattleParty_ApplyStatusDamage Func_0808c3a4
 #define BattleParty_ApplyDrain Func_0808c2dc

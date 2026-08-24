@@ -55,7 +55,7 @@ void RunBattleEffect15(void);
 void RunBattleEffect16(void);
 void BattleEffect_ResumeObject(s32 objectId);
 s32 Func_0808df1c(s32 objectId, s32 battle_mode);
-s32 Func_0809ae3c(s32 objectId);
+s32 BattleEffect_FilterObjectIdByFlags(s32 objectId);
 s32 Func_0808d5a4(s32 objectId);
 void BattleEffect_SetupObjectPair(s32 selected_object, s32 objectId);
 void Func_0809ab98(s32 objectId);
@@ -116,7 +116,7 @@ void RunBattleEffect(void)
         }
 
         objectId = Func_0808df1c(Data_02000240.selected_object, battle_mode);
-        objectId = Func_0809ae3c(objectId);
+        objectId = BattleEffect_FilterObjectIdByFlags(objectId);
         if (Func_0808d5a4(objectId) != 0) {
             BattleEffect_SetupObjectPair(Data_02000240.selected_object, objectId);
             Func_0809ab98(objectId);

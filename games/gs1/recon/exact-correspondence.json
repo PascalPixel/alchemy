@@ -4752,7 +4752,7 @@
     },
     {
       "en_owner": "0800d8f4",
-      "source": "games/gs1/src/0800d8f4.c",
+      "source": "games/gs1/src/script/interpreter/skip_command.c",
       "size": 10,
       "status": "shared_core",
       "starts": {
@@ -6612,7 +6612,7 @@
     },
     {
       "en_owner": "080110e0",
-      "source": "games/gs1/src/080110e0.c",
+      "source": "games/gs1/src/map/render_palette_mapped_row.c",
       "size": 132,
       "status": "shared_core",
       "starts": {
@@ -6642,7 +6642,7 @@
     },
     {
       "en_owner": "08011164",
-      "source": "games/gs1/src/08011164.c",
+      "source": "games/gs1/src/map/render_palette_mapped_column.c",
       "size": 80,
       "status": "shared_core",
       "starts": {
@@ -23202,7 +23202,7 @@
     },
     {
       "en_owner": "0809748c",
-      "source": "games/gs1/src/0809748c.c",
+      "source": "games/gs1/src/battle/effects/interpolate/prepare.c",
       "size": 76,
       "status": "shared_core",
       "starts": {

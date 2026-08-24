@@ -9,7 +9,7 @@ static __inline__ void CopyEntry(u8 *map, u8 *destination)
     *(u16 *)(destination + 64) = *colors;
 }
 
-void Func_080110e0(u32 value)
+void Map_RenderPaletteMappedRow(u32 value)
 {
     u8 *map;
     u8 *destination;

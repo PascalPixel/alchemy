@@ -6,7 +6,7 @@ void Func_08009038(void *);
 void ScheduleCallback(void (*callback)(void));
 extern u8 Data_080a19a1;
 
-void Func_080a195c(void)
+void Menu_ReleaseEntryObjects(void)
 {
     u32 buf[7];
     u8 *base = Data_03001f2c;

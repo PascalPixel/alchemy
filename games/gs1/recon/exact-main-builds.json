@@ -35065,7 +35065,7 @@
     },
     {
       "en_owner": "08091240",
-      "source": "games/gs1/src/08091240.c",
+      "source": "games/gs1/src/battle/effects/buffers/set_primary_value.c",
       "size": 20,
       "all_exact": true,
       "editions": [
@@ -35121,7 +35121,7 @@
     },
     {
       "en_owner": "08091254",
-      "source": "games/gs1/src/08091254.c",
+      "source": "games/gs1/src/battle/effects/interpolate/start_buffer.c",
       "size": 64,
       "all_exact": true,
       "editions": [
@@ -47501,7 +47501,7 @@
     },
     {
       "en_owner": "080a195c",
-      "source": "games/gs1/src/080a195c.c",
+      "source": "games/gs1/src/menu/release_entry_objects.c",
       "size": 68,
       "all_exact": true,
       "editions": [

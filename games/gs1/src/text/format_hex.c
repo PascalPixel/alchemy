@@ -1,6 +1,6 @@
 #include "types.h"
 
-void Func_08029274(u32 value, u32 count, u8 *output) {
+void Text_FormatHex(u32 value, u32 count, u8 *output) {
     u8 digits[8];
     u8 *cursor;
     u32 index;

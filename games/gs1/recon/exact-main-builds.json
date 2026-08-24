@@ -25543,7 +25543,7 @@
     },
     {
       "en_owner": "08029274",
-      "source": "games/gs1/src/08029274.c",
+      "source": "games/gs1/src/text/format_hex.c",
       "size": 80,
       "all_exact": true,
       "editions": [
@@ -33776,7 +33776,7 @@
     },
     {
       "en_owner": "0808e9a8",
-      "source": "games/gs1/src/0808e9a8.c",
+      "source": "games/gs1/src/object/motion/snap_to_terrain.c",
       "size": 24,
       "all_exact": true,
       "editions": [
@@ -34392,7 +34392,7 @@
     },
     {
       "en_owner": "0808f0c8",
-      "source": "games/gs1/src/0808f0c8.c",
+      "source": "games/gs1/src/object/destroy_if_present.c",
       "size": 14,
       "all_exact": true,
       "editions": [

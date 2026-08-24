@@ -193,11 +193,7 @@ fn item_definition<'a>(value: &'a Value, index: usize) -> Result<&'a Map<String,
 
     if let Some(effects) = item.get("effects") {
         for (effect_index, effect) in list(effects, 4, "item effects")?.iter().enumerate() {
-            exact_keys(
-                object(effect, &format!("{label}.effects[{effect_index}]"))?,
-                &["kind", "amount"],
-                &format!("{label}.effects[{effect_index}]"),
-            )?;
+            list(effect, 2, &format!("{label}.effects[{effect_index}]"))?;
         }
     }
     Ok(item)
@@ -232,7 +228,7 @@ fn parse_gameplay_databases(value: &Value) -> Result<&Map<String, Value>> {
         ],
         "gameplay database source",
     )?;
-    if field(source, "format")?.as_u64() != Some(2)
+    if field(source, "format")?.as_u64() != Some(3)
         || field(source, "kind")?.as_str() != Some("golden-sun-gameplay-databases")
         || field(source, "address")?.as_str() != Some("0x0807a828")
         || field(source, "size")?.as_str() != Some("0x0000f7d8")
@@ -350,10 +346,10 @@ fn build_item_definition(value: &Value, index: usize) -> Result<Vec<u8>> {
     result[20] = integer_or(item, "element", 4, 0, 0xff, "item element")? as u8;
     if let Some(effects) = item.get("effects") {
         for (effect_index, raw) in list(effects, 4, "item effects")?.iter().enumerate() {
-            let effect = object(raw, &format!("items[{index}].effects[{effect_index}]"))?;
+            let effect = list(raw, 2, &format!("items[{index}].effects[{effect_index}]"))?;
             let offset = 24 + effect_index * 4;
-            result[offset] = u8(field(effect, "kind")?, "item effect kind")?;
-            result[offset + 1] = s8(field(effect, "amount")?, "item effect amount")? as u8;
+            result[offset] = u8(&effect[0], "item effect kind")?;
+            result[offset + 1] = s8(&effect[1], "item effect amount")? as u8;
         }
     }
     write_u16(
@@ -615,10 +611,9 @@ fn build_class(value: &Value, index: usize) -> Result<Vec<u8>> {
     }
     if let Some(abilities) = item.get("abilities") {
         for (slot, raw) in list(abilities, 16, "class abilities")?.iter().enumerate() {
-            let ability = object(raw, "class ability")?;
-            exact_keys(ability, &["id", "level"], "class ability")?;
-            result[16 + slot * 4] = u8(field(ability, "id")?, "class ability id")?;
-            result[17 + slot * 4] = u8(field(ability, "level")?, "class ability level")?;
+            let ability = list(raw, 2, "class ability")?;
+            result[16 + slot * 4] = u8(&ability[0], "class ability id")?;
+            result[17 + slot * 4] = u8(&ability[1], "class ability level")?;
         }
     }
     if let Some(traits) = item.get("traits") {
@@ -652,17 +647,16 @@ fn build_elemental_profile(value: &Value, index: usize) -> Result<Vec<u8>> {
         .iter()
         .enumerate()
     {
-        let stat = object(raw, "elemental profile stat")?;
-        exact_keys(stat, &["power", "resistance"], "elemental profile stat")?;
+        let stat = list(raw, 2, "elemental profile stat")?;
         write_u16(
             &mut result,
             8 + slot * 4,
-            u16(field(stat, "power")?, "elemental profile power")?,
+            u16(&stat[0], "elemental profile power")?,
         );
         write_u16(
             &mut result,
             10 + slot * 4,
-            u16(field(stat, "resistance")?, "elemental profile resistance")?,
+            u16(&stat[1], "elemental profile resistance")?,
         );
     }
     Ok(result)
@@ -770,22 +764,10 @@ pub fn build_gameplay_databases(value: &Value) -> Result<Vec<u8>> {
         .iter()
         .enumerate()
     {
-        let summon = object(raw, &format!("summons[{index}]"))?;
-        exact_keys(
-            summon,
-            &["ability_id", "djinn_cost"],
-            &format!("summons[{index}]"),
-        )?;
+        let summon = list(raw, 2, &format!("summons[{index}]"))?;
         let mut bytes = vec![0; 8];
-        write_u32(
-            &mut bytes,
-            0,
-            u32(field(summon, "ability_id")?, "summon ability_id")?,
-        );
-        for (slot, entry) in list(field(summon, "djinn_cost")?, 4, "summon djinn_cost")?
-            .iter()
-            .enumerate()
-        {
+        write_u32(&mut bytes, 0, u32(&summon[0], "summon ability_id")?);
+        for (slot, entry) in list(&summon[1], 4, "summon djinn_cost")?.iter().enumerate() {
             bytes[4 + slot] = u8(entry, "summon Djinn cost")?;
         }
         result.extend(bytes);
@@ -841,34 +823,20 @@ pub fn build_gameplay_databases(value: &Value) -> Result<Vec<u8>> {
     .iter()
     .enumerate()
     {
-        let point = object(raw, &format!("signed_scale_curve[{index}]"))?;
-        exact_keys(
-            point,
-            &["input", "output"],
-            &format!("signed_scale_curve[{index}]"),
-        )?;
+        let point = list(raw, 2, &format!("signed_scale_curve[{index}]"))?;
         let mut bytes = vec![0; 4];
-        write_i16(&mut bytes, 0, s16(field(point, "input")?, "scale input")?);
-        write_i16(&mut bytes, 2, s16(field(point, "output")?, "scale output")?);
+        write_i16(&mut bytes, 0, s16(&point[0], "scale input")?);
+        write_i16(&mut bytes, 2, s16(&point[1], "scale output")?);
         result.extend(bytes);
     }
     for (index, raw) in list(field(source, "djinn")?, 80, "djinn")?
         .iter()
         .enumerate()
     {
-        let djinni = object(raw, &format!("djinn[{index}]"))?;
-        exact_keys(
-            djinni,
-            &["name_message", "stat_bonuses"],
-            &format!("djinn[{index}]"),
-        )?;
+        let djinni = list(raw, 2, &format!("djinn[{index}]"))?;
         let mut bytes = vec![0; 12];
-        write_u16(
-            &mut bytes,
-            0,
-            u16(field(djinni, "name_message")?, "Djinn name_message")?,
-        );
-        for (slot, entry) in list(field(djinni, "stat_bonuses")?, 6, "Djinn stat_bonuses")?
+        write_u16(&mut bytes, 0, u16(&djinni[0], "Djinn name_message")?);
+        for (slot, entry) in list(&djinni[1], 6, "Djinn stat_bonuses")?
             .iter()
             .enumerate()
         {

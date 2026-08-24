@@ -503,6 +503,8 @@
     "main:08091584": "battle/effects/runtime/get_animation_value.c",
     "main:080915ac": "battle/effects/runtime/get_resource_id.c",
     "main:080915dc": "battle/effects/runtime/get_flags.c",
+    "main:08091660": "battle/runtime/initialize_render_object.c",
+    "main:080916b0": "battle/runtime/reset.c",
     "main:0808f0d8": "effect_runtime/prepare_rising_object.c",
     "main:0808f140": "effect_runtime/run_rising_object_sequence.c",
     "main:080aac84": "graphics/palette/adjust_bank.c",

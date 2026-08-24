@@ -5,7 +5,7 @@ s32 WaitFrames(s32);
 s32 Func_0800430c(void);
 s32 Func_080043e0(void);
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
-void Func_08091660(void);
+void BattleRuntime_InitializeRenderObject(void);
 void Func_080936a0(s32, s32);
 void BattleEffect_UpdateObjectVisibilityBounds(void);
 
@@ -15,7 +15,7 @@ void BattleEffect_RunVisibilityTransition(void)
   {
     Func_0800430c();
     BattleEffect_UpdateObjectVisibilityBounds();
-    Func_08091660();
+    BattleRuntime_InitializeRenderObject();
     Func_080936a0(0x9D89, 6);
     if ((*((volatile u32 *) ADDR_03001AE8)) & 0x200)
     {

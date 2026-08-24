@@ -1,17 +1,17 @@
 #include "battle_effect_runtime.h"
 
 void Func_08015208(void);
-void Func_08091660(void);
+void BattleRuntime_InitializeRenderObject(void);
 void Func_0808e118(void);
 void ScheduleCallbackAfterFrames(const void *, s32);
 void Func_080915ec(void);
 u32 GameFlag_Clear(s32);
 
-void Func_080916b0(void) {
+void BattleRuntime_Reset(void) {
     struct BattleRuntime *runtime = Data_03001ebc;
 
     Func_08015208();
-    Func_08091660();
+    BattleRuntime_InitializeRenderObject();
     if (runtime->unknown_cb6 != 0) {
         Func_0808e118();
     }

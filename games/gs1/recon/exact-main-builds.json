@@ -35737,7 +35737,7 @@
     },
     {
       "en_owner": "08091660",
-      "source": "games/gs1/src/08091660.c",
+      "source": "games/gs1/src/battle/runtime/initialize_render_object.c",
       "size": 80,
       "all_exact": true,
       "editions": [
@@ -35793,7 +35793,7 @@
     },
     {
       "en_owner": "080916b0",
-      "source": "games/gs1/src/080916b0.c",
+      "source": "games/gs1/src/battle/runtime/reset.c",
       "size": 160,
       "all_exact": true,
       "editions": [

@@ -142,13 +142,19 @@ pub struct SourceFile {
 }
 
 #[derive(Clone, Debug)]
+struct SourceRecord {
+    name: String,
+    path: Option<PathBuf>,
+    call_via: Option<u32>,
+}
+
+#[derive(Clone, Debug)]
 pub struct SourcePaths {
     repository: PathBuf,
     source_directory: PathBuf,
     manifest: PathBuf,
-    by_owner: BTreeMap<SourceOwner, PathBuf>,
+    records: BTreeMap<SourceOwner, SourceRecord>,
     by_path: BTreeMap<PathBuf, Vec<SourceOwner>>,
-    names: BTreeMap<SourceOwner, String>,
 }
 
 impl SourcePaths {
@@ -182,9 +188,8 @@ impl SourcePaths {
             .get("owners")
             .and_then(Value::as_object)
             .ok_or("owners must be an object")?;
-        let mut by_owner = BTreeMap::new();
+        let mut records = BTreeMap::new();
         let mut by_path = BTreeMap::<PathBuf, Vec<SourceOwner>>::new();
-        let mut names = BTreeMap::new();
         for (id, value) in owners {
             let owner = SourceOwner::parse(id)?;
             let record = value
@@ -197,18 +202,49 @@ impl SourcePaths {
             if !c_identifier(name) {
                 return Err(format!("{id}: owner name {name:?} is not a C identifier"));
             }
-            names.insert(owner, name.to_string());
-            let Some(source) = record.get("source") else {
-                continue;
-            };
-            let source = source
-                .as_str()
-                .ok_or_else(|| format!("{id}: source path must be a string"))?;
-            let path = validate_source_path(source)?;
-            if by_owner.insert(owner, path.clone()).is_some() {
+            let path = record
+                .get("source")
+                .map(|source| {
+                    source
+                        .as_str()
+                        .ok_or_else(|| format!("{id}: source path must be a string"))
+                        .and_then(validate_source_path)
+                })
+                .transpose()?;
+            let call_via = record
+                .get("call_via")
+                .map(|value| {
+                    value
+                        .as_str()
+                        .ok_or_else(|| format!("{id}: call_via must be a string"))
+                        .and_then(|value| parse_lower_hex(value, 8, id))
+                })
+                .transpose()?;
+            if call_via.is_some_and(|address| {
+                owner.is_main()
+                    || !(0x0200_0000..0x0204_0000).contains(&address)
+                    || address & 1 != 0
+            }) {
+                return Err(format!(
+                    "{id}: call_via must be an aligned overlay RAM address"
+                ));
+            }
+            if records
+                .insert(
+                    owner,
+                    SourceRecord {
+                        name: name.to_string(),
+                        path: path.clone(),
+                        call_via,
+                    },
+                )
+                .is_some()
+            {
                 return Err(format!("duplicate source owner {id}"));
             }
-            by_path.entry(path).or_default().push(owner);
+            if let Some(path) = path {
+                by_path.entry(path).or_default().push(owner);
+            }
         }
         for (path, owners) in &by_path {
             if owners.len() <= 1 {
@@ -229,9 +265,8 @@ impl SourcePaths {
             repository: repository.to_path_buf(),
             source_directory,
             manifest,
-            by_owner,
+            records,
             by_path,
-            names,
         })
     }
 
@@ -240,9 +275,8 @@ impl SourcePaths {
             repository: repository.to_path_buf(),
             source_directory,
             manifest,
-            by_owner: BTreeMap::new(),
+            records: BTreeMap::new(),
             by_path: BTreeMap::new(),
-            names: BTreeMap::new(),
         }
     }
 
@@ -255,7 +289,9 @@ impl SourcePaths {
     }
 
     pub fn mapped_relative_path(&self, owner: SourceOwner) -> Option<&Path> {
-        self.by_owner.get(&owner).map(PathBuf::as_path)
+        self.records
+            .get(&owner)
+            .and_then(|record| record.path.as_deref())
     }
 
     pub fn mapped_source_path(&self, owner: SourceOwner) -> Option<PathBuf> {
@@ -264,7 +300,11 @@ impl SourcePaths {
     }
 
     pub fn registered_name(&self, owner: SourceOwner) -> Option<&str> {
-        self.names.get(&owner).map(String::as_str)
+        self.records.get(&owner).map(|record| record.name.as_str())
+    }
+
+    pub fn registered_call_via(&self, owner: SourceOwner) -> Option<u32> {
+        self.records.get(&owner).and_then(|record| record.call_via)
     }
 
     /// Destination for a new exact-source adoption. Legacy fallback is
@@ -313,9 +353,8 @@ impl SourcePaths {
     }
 
     pub fn relative_path(&self, owner: SourceOwner) -> PathBuf {
-        self.by_owner
-            .get(&owner)
-            .cloned()
+        self.mapped_relative_path(owner)
+            .map(Path::to_path_buf)
             .unwrap_or_else(|| owner.legacy_relative_path())
     }
 
@@ -421,7 +460,7 @@ impl SourcePaths {
                 if !matches_filter(owner, main, overlay) {
                     continue;
                 }
-                if self.by_owner.contains_key(&owner) {
+                if self.mapped_relative_path(owner).is_some() {
                     return Err(format!(
                         "{} exists at both its legacy path and its mapped source path",
                         owner.id()
@@ -430,7 +469,10 @@ impl SourcePaths {
                 found.insert(owner, path);
             }
         }
-        for (owner, relative) in &self.by_owner {
+        for (owner, record) in &self.records {
+            let Some(relative) = &record.path else {
+                continue;
+            };
             if !matches_filter(*owner, main, overlay) {
                 continue;
             }
@@ -565,7 +607,7 @@ mod tests {
   "format": 2,
   "owners": {
     "main:080bbb0c": {"name":"resolve_action","source":"battle/resolve_action.c"},
-    "resource_39c:0200013c": {"name":"spawn_configured_effect","source":"battle/effects/spawn_configured_effect.c"}
+    "resource_39c:0200013c": {"name":"spawn_configured_effect","source":"battle/effects/spawn_configured_effect.c","call_via":"020066d2"}
   }
 }"#
     }
@@ -597,6 +639,13 @@ mod tests {
         assert_eq!(
             paths.relative_path(SourceOwner::Main(0x0800_2efc)),
             PathBuf::from("08002efc.c")
+        );
+        assert_eq!(
+            paths.registered_call_via(SourceOwner::Overlay {
+                resource: 0x39c,
+                address: 0x0200_013c,
+            }),
+            Some(0x0200_66d2)
         );
         assert!(paths
             .registered_source_path(SourceOwner::Main(0x0800_2efc))
@@ -645,6 +694,23 @@ mod tests {
         ] {
             let text = format!("{{\"format\":2,\"owners\":{{\"main:080bbb0c\":{{\"name\":\"resolve_action\",\"source\":{path:?}}}}}}}");
             assert!(SourcePaths::parse(root.path(), &text).is_err(), "{path}");
+        }
+    }
+
+    #[test]
+    fn call_via_accepts_only_canonical_overlay_ram_addresses() {
+        let root = tempdir().unwrap();
+        for (owner, call_via) in [
+            ("main:080bbb0c", r#""020066d2""#),
+            ("resource_39c:0200013c", r#""020066d3""#),
+            ("resource_39c:0200013c", r#""080066d2""#),
+            ("resource_39c:0200013c", r#""020066D2""#),
+            ("resource_39c:0200013c", "33580754"),
+        ] {
+            let text = format!(
+                r#"{{"format":2,"owners":{{"{owner}":{{"name":"owner","call_via":{call_via}}}}}}}"#
+            );
+            assert!(SourcePaths::parse(root.path(), &text).is_err());
         }
     }
 

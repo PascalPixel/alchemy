@@ -31,10 +31,8 @@
 //! duplicate is left alone here on purpose (it is another agent's file); see the
 //! retirement note in `lib.rs`.
 
-use crate::routing::source_key;
-
 pub use crate::call_via_data::CALL_VIA_BASE;
-use crate::call_via_data::{CALL_VIA_REGISTERS, OVERLAY_CALL_VIA_BASE, SOURCE_CALL_VIA_BASE};
+use crate::call_via_data::{CALL_VIA_REGISTERS, OVERLAY_CALL_VIA_BASE};
 
 /// `interface ExternalSymbol`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -135,27 +133,12 @@ pub fn external_symbol_assembly(name: &str, call_via_base: u64) -> Result<String
     ))
 }
 
-/// `overlayCallViaBase(overlay, source?)`.
-///
-/// The per-source override wins over the overlay's entry, which wins over the
-/// main image's bank. Pass `None` for `source` where the TypeScript passes
-/// `undefined`: the override table is not consulted at all in that case, which
-/// matters because `sourceKey` resolves against the repository root and would
-/// otherwise be asked to normalise nothing.
-pub fn overlay_call_via_base(overlay: &str, source: Option<&str>) -> u64 {
-    let override_base = source.and_then(|source| {
-        let key = source_key(source);
-        SOURCE_CALL_VIA_BASE
-            .iter()
-            .find(|(candidate, _)| *candidate == key)
-            .map(|(_, base)| *base)
-    });
-    override_base
-        .or_else(|| {
-            OVERLAY_CALL_VIA_BASE
-                .iter()
-                .find(|(candidate, _)| *candidate == overlay)
-                .map(|(_, base)| *base)
-        })
+/// The overlay-wide bank. Owner-specific exceptions live with their owner
+/// records in `source-paths.json`.
+pub fn overlay_call_via_base(overlay: &str) -> u64 {
+    OVERLAY_CALL_VIA_BASE
+        .iter()
+        .find(|(candidate, _)| *candidate == overlay)
+        .map(|(_, base)| *base)
         .unwrap_or(CALL_VIA_BASE)
 }

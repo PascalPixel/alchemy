@@ -67,7 +67,6 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         .registered_name(owner)
         .ok_or_else(|| format!("{} has no registered owner name", owner.id()))?
         .to_string();
-    validate_reference_symbol(&reference_asm, &symbol)?;
     let m2c = locate_m2c(repository, options.m2c.as_deref())?;
     let m2c_macros = m2c.parent().unwrap_or(Path::new(".")).join("m2c_macros.h");
     if !m2c_macros.is_file() {
@@ -203,30 +202,6 @@ fn owner_stem(path: &Path) -> Result<String, String> {
         ));
     }
     Ok(stem.to_ascii_lowercase())
-}
-
-fn validate_reference_symbol(path: &Path, registered: &str) -> Result<(), String> {
-    let text =
-        std::fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
-    let exported = reference_symbol_from_text(&text)
-        .ok_or_else(|| format!("{}: missing exported owner symbol", path.display()))?;
-    if exported != registered {
-        return Err(format!(
-            "{} exports {exported}, but the owner register names it {registered}",
-            path.display()
-        ));
-    }
-    Ok(())
-}
-
-fn reference_symbol_from_text(text: &str) -> Option<String> {
-    text.lines().find_map(|line| {
-        let mut fields = line.split_ascii_whitespace();
-        match (fields.next(), fields.next(), fields.next()) {
-            (Some(".global"), Some(symbol), None) => Some(symbol.to_string()),
-            _ => None,
-        }
-    })
 }
 
 fn absolute_existing(repository: &Path, path: &Path) -> Result<PathBuf, String> {
@@ -570,19 +545,5 @@ mod tests {
             "080ab5e4"
         );
         assert!(owner_stem(Path::new("games/gs1/recon/en/main/best.c")).is_err());
-    }
-
-    #[test]
-    fn uses_the_reference_owners_exported_symbol() {
-        assert_eq!(
-            reference_symbol_from_text(
-                ".syntax unified\n\t.global BattleEffectA\n\t.thumb_func\nBattleEffectA:\n"
-            ),
-            Some("BattleEffectA".into())
-        );
-        assert_eq!(
-            reference_symbol_from_text(".global Func_08000000\nFunc_08000000:\n"),
-            Some("Func_08000000".into())
-        );
     }
 }

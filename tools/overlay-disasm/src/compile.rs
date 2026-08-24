@@ -399,9 +399,6 @@ fn source_input_signature(source: &Path, commands: &[Vec<String>]) -> Result<Vec
     }
     Ok(sha256::hex(&stream).into_bytes())
 }
-fn routed_call_via_base(overlay: &str, routing_source: &str) -> i64 {
-    overlay_call_via_base(overlay, Some(routing_source)) as i64
-}
 fn definition_guard(name: &str) -> Regex {
     Regex::new(&format!(r"\b{name}\s*\([^;{{}}]*\)\s*\{{"), "")
 }
@@ -509,7 +506,10 @@ fn compile_overlay_with_mutations(
     }
     .to_string_lossy()
     .into_owned();
-    let call_via_base = routed_call_via_base(overlay, &routing_source);
+    let call_via_base = source_paths
+        .registered_call_via(owner)
+        .map(u64::from)
+        .unwrap_or_else(|| overlay_call_via_base(overlay)) as i64;
     let symbol = format!("Func_{}", stem.to_lowercase());
     let text = fs::read_to_string(source).map_err(|error| format!("{source_display}: {error}"))?;
     if !source_defines_symbol_through_header(source, &text, &symbol) {

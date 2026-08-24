@@ -3,7 +3,7 @@
 extern volatile s32 Data_03001e40;
 s32 Func_08002304(s32, s32) __attribute__((const));
 
-void Func_08096b88(void *owner)
+void ObjectGroup_ApplyRandomChildValues(void *owner)
 {
     s32 state;
     void *target;

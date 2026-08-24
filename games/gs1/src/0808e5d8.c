@@ -13,7 +13,7 @@ s32 Func_0808e4b4(s32, u16, void *);
 void Func_08096fb0(s32, s32);
 void Func_080970f8(s32, s32);
 s32 Func_08096b28(void *, s32, s32);
-void Func_08096af0(void);
+void FieldEvent_RunTypeHandler(void);
 void Func_08097174(void);
 void Func_08097194(void);
 
@@ -35,7 +35,7 @@ s32 Func_0808e5d8(s32 packedEffect)
     Func_08096fb0(index, 0);
     Func_080970f8(Data_02000240.selected_object, output);
     Func_08096b28(first, mode, output);
-    Func_08096af0();
+    FieldEvent_RunTypeHandler();
     Func_08097174();
     Func_08096b28(second, mode, output);
     Func_08097194();

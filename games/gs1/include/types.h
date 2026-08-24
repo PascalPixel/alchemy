@@ -108,6 +108,7 @@ typedef int bool;
 #define OwnerAction_Add Func_08078e28
 #define Owner_GetDigitValues Func_080797fc
 #define Owner_GetResistanceValue Func_0807987c
+#define Owner_RefreshDerivedData Func_08079ae8
 #define Party_AddActiveOwner Func_0807961c
 #define Party_RemoveActiveOwner Func_08079664
 #define Item_GetEquippedElement Func_08079c8c
@@ -246,6 +247,10 @@ typedef int bool;
 #define Object_CollectResources Func_0801c7fc
 #define Owner_BuildDigitTiles Func_080798e0
 #define UiWork_ActivateChannel Func_08016670
+#define RenderOutput_PrepareForRedraw Func_08016478
+#define RenderOutput_ClearList Func_080164ac
+#define RenderOutput_AppendToList Func_08016584
+#define RenderOutput_Release Func_08016594
 #define UiWork_DrainPending Func_080197c4
 #define Menu_SelectResource Func_080286a0
 #define Menu_LoadSelectedResource Func_0801c188
@@ -381,6 +386,9 @@ typedef int bool;
 #define ObjectTable_ReadActiveValue Func_08092ba8
 #define ObjectMotion_SetPositionWithTerrain Func_08092454
 #define ObjectMotion_SetHorizontalPositionWithTerrain Func_080923e4
+#define ObjectMotion_SetPositionAndReset Func_080921c4
+#define ObjectMotion_OffsetPositionAndReset Func_080922c4
+#define ObjectMotion_CommitPositionAndActivate Func_08092304
 #define ObjectMotion_SnapHeadingAndOffset Func_08092208
 #define ObjectMotion_Launch Func_08092560
 #define ParticleEffect_UpdateLinearMotion Func_080925e0

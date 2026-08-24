@@ -2,7 +2,7 @@
 
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-void Func_08016584(void *arg0, s8 *arg1) {
+void RenderOutput_AppendToList(void *arg0, s8 *arg1) {
     /* 新しい末尾をリストとキャッシュの両方へ接続する。 */
     if (arg0 != NULL) {
         *(volatile s32 *)M2C_FIELD(arg0, s32 **, 4) = (s32) arg1;

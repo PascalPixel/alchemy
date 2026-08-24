@@ -200,6 +200,13 @@ typedef int bool;
 #define BattleEffect_UpdateObjectVisibilityBounds Func_0809c314
 #define BattleEffect_CleanupResourcesAndWindow Func_0809bcd4
 #define FieldEvent_ShowStatusMessage Func_0809b648
+#define FixedPoint_Multiply8_8 Func_080f40b4
+#define FixedPoint_ScaleByRatio Func_080f40d0
+#define FixedPoint_Reciprocal Func_080f40e8
+#define Graphics_ClampRgb555Channel Func_080f3898
+#define Graphics_ClampRgb555Component Func_080f38ac
+#define Graphics_ScaleRgb555Buffer Func_080f4100
+#define MusicPlayer_SetPitchAndUpdateFrequency Func_080fb2a4
 #define Audio_InitializeRuntimeDefaults Func_080f9438
 #define Graphics_ScaleRgb555 Func_080f6038
 #define Audio_ClearChannelChain Func_080f9a30

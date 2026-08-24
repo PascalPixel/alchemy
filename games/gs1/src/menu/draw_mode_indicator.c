@@ -1,6 +1,6 @@
 #include "types.h"
 
-void Func_08016478(void *);
+void RenderOutput_PrepareForRedraw(void *);
 void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 extern u8 Data_03001f38;
 extern u8 Value_00000c71;
@@ -15,7 +15,7 @@ void Menu_DrawModeIndicator(void)
     /* 値が変わった時だけ表示を更新する。 */
     if (*shown != *current) {
         *shown = (u16)*current;
-        Func_08016478(*(void **)(state + 124));
+        RenderOutput_PrepareForRedraw(*(void **)(state + 124));
         if (*current == 0) {
             UiText_DrawResource((s32)&Value_00000c71,
                 *(void **)(state + 124), 16, 4);

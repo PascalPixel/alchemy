@@ -4,7 +4,7 @@
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 void RotateVectorByMagnitude(s32, s32, void *);
-void Func_080970f8(s32 arg0, s32 arg1) {
+void BattleEffect_SetupObjectPair(s32 arg0, s32 arg1) {
     void *temp_r0; void *temp_r0_2; s32 temp_r1; void *temp_r6;
     temp_r6 = *(void **)ADDR_03001F30;
     M2C_FIELD(temp_r6, s16, 0x18) = arg0;

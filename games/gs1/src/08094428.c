@@ -8,7 +8,7 @@ void ObjectMotion_PlaceWithinCameraBounds(s32 arg0, s32 arg1, s32 arg2, s32 arg3
 void WaitFrames(s32);
 void Audio_PlayCue(s32);
 void Object_SetMode(void *, s32);
-void Func_0809163c(s32 arg0);
+void BattleRuntime_WaitIfModeZero(s32 arg0);
 void Func_0809335c(s32 arg0, s32 arg1);
 extern s32 Data_02000240[];
 
@@ -45,7 +45,7 @@ s32 Func_08094428(void)
                 Audio_PlayCue(159);
                 *(s32 *)((u8 *)object + 12) = *(s32 *)((u8 *)object + 20);
                 Object_SetMode(object, 22);
-                Func_0809163c(15);
+                BattleRuntime_WaitIfModeZero(15);
                 Func_0809335c(object_id, 1);
                 result = 3;
             }

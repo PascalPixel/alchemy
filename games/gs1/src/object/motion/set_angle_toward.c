@@ -11,7 +11,7 @@ struct Object_0809280c {
 };
 
 s32 ArcTan2(s32, s32);
-void Func_0809163c(s32 arg0);
+void BattleRuntime_WaitIfModeZero(s32 arg0);
 
 void ObjectMotion_SetAngleToward(s32 arg0, s32 arg1, s32 arg2)
 {
@@ -23,6 +23,6 @@ void ObjectMotion_SetAngleToward(s32 arg0, s32 arg1, s32 arg2)
     if (object1 != 0 && object2 != 0) {
         object1->angle = ArcTan2(object2->x - object1->x,
                                       object2->y - object1->y);
-        Func_0809163c(arg2);
+        BattleRuntime_WaitIfModeZero(arg2);
     }
 }

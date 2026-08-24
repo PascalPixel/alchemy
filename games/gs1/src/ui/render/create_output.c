@@ -8,7 +8,7 @@
 #define TABLE_ADDR 0x03001B10
 #endif
 
-void *Func_08015e8c(void);
+void *RenderOutput_AcquireFree(void);
 void Resource_ResetEntry(u32);
 s32 RenderOutput_AppendToList(void *, void *);
 
@@ -28,7 +28,7 @@ struct RenderOutput *RenderOutput_Create(
     struct RenderOutput *output;
     s32 y;
 
-    output = Func_08015e8c();
+    output = RenderOutput_AcquireFree();
     if (output == NULL) {
         Resource_ResetEntry((u32)arg0);
         return 0;

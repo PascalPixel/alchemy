@@ -2,7 +2,7 @@
 #include "types.h"
 
 void Object_SetCallback(u8 *, void *);
-void Func_0809163c(s32 arg0);
+void BattleRuntime_WaitIfModeZero(s32 arg0);
 extern u8 Data_0809fc1c[];
 
 void ObjectMotion_ArmCallback(s32 arg0, s32 arg1, s32 arg2) {
@@ -10,6 +10,6 @@ void ObjectMotion_ArmCallback(s32 arg0, s32 arg1, s32 arg2) {
     if (object != NULL) {
         *(s16 *)(object + 0x64) = arg1;
         Object_SetCallback(object, Data_0809fc1c);
-        Func_0809163c(arg2);
+        BattleRuntime_WaitIfModeZero(arg2);
     }
 }

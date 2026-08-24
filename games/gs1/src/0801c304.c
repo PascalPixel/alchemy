@@ -13,7 +13,7 @@ void Func_0801b228(void);
 void Func_0801b010(u32, u32);
 void Func_0801a968(void);
 u32 Func_0801b424(u32);
-void Func_0801b148(void);
+void Resource_ResetOwnerEntries(void);
 
 u32 Func_0801c304(u32 value)
 {
@@ -28,6 +28,6 @@ u32 Func_0801c304(u32 value)
     Func_0801b010(0, 5);
     Func_0801a968();
     result = Func_0801b424(1);
-    Func_0801b148();
+    Resource_ResetOwnerEntries();
     return result;
 }

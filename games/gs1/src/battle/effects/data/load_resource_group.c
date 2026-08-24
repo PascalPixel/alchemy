@@ -11,7 +11,7 @@ extern u8 Data_02008000[];
 
 void Func_08002fb0(s32 first, s32 second);
 
-void Func_0808ab48(void)
+void BattleEffect_LoadResourceGroup(void)
 {
     u8 *table = Data_0809f1a8;
     s16 index = Data_02000240.index;

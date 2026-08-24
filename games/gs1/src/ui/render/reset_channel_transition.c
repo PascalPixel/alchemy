@@ -1,6 +1,6 @@
 #include "types.h"
 
-void Func_080167d8(void *arg0)
+void UiWork_ResetChannelTransition(void *arg0)
 {
   int new_var3;
   int new_var;
@@ -10,4 +10,3 @@ void Func_080167d8(void *arg0)
   new_var3 = new_var;
   *((s16 *) new_var2) = new_var3;
 }
-

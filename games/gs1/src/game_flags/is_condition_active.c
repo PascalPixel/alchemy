@@ -2,7 +2,7 @@
 
 s32 GameFlag_IsSet();
 
-s32 Func_0808d428(s32 arg0) {
+s32 GameFlag_IsConditionActive(s32 arg0) {
     s32 temp_r0;
 
     if (arg0 == -1) {

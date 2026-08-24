@@ -3,7 +3,7 @@
 
 extern u8 *Data_03001e8c;
 
-void Func_0801e260(s32 x, s32 y, u32 width, u32 height)
+void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height)
 {
     u8 *base = Data_03001e8c;
     u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)base);

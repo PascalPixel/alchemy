@@ -56,7 +56,7 @@ void *Func_0808e4b4(u32 kind, u32 entry_index, s32 *size);
 struct OrbitingParticle *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 s32 Func_08096b28(void *resource, s32 battle_mode, s32 size);
 void Func_08097384(void);
-void Func_0809748c(void);
+void BattleEffect_PrepareBufferInterpolation(void);
 #define UpdateOrbitingParticleMain Func_08099018
 #define UpdateOrbitingParticleLeft Func_08099070
 #define UpdateOrbitingParticleRight Func_080990cc
@@ -149,5 +149,5 @@ void RunOrbitingParticleEffect(void)
         WaitFrames(20);
     }
 
-    Func_0809748c();
+    BattleEffect_PrepareBufferInterpolation();
 }

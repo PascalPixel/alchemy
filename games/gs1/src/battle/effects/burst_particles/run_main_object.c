@@ -8,7 +8,7 @@ void Object_SetMode(s32, s32);
 void Func_080091e0(void *, s32);
 void WaitFrames(s32);
 void Audio_PlayCue(s32);
-void Func_0809748c(void);
+void BattleEffect_PrepareBufferInterpolation(void);
 
 #define RunBurstParticleMainObject Func_080985a8
 void RunBurstParticleMainObject(void) {
@@ -29,6 +29,6 @@ void RunBurstParticleMainObject(void) {
         WaitFrames(0xAU);
         Audio_PlayCue(0x7E);
         WaitFrames(0x28U);
-        Func_0809748c();
+        BattleEffect_PrepareBufferInterpolation();
     }
 }

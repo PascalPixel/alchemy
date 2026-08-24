@@ -16,7 +16,7 @@ void RotateVectorByMagnitude(s32, s32, struct BurstParticleVector *);
 void *Object_Spawn(s32, s32, s32, s32);
 void Object_SetCallback(void *, const void *);
 void WaitFrames(u32);
-void Func_0809748c(void);
+void BattleEffect_PrepareBufferInterpolation(void);
 extern const u8 Data_0809f11c[];
 
 #define RunBurstParticleEffect Func_080985fc
@@ -54,5 +54,5 @@ void RunBurstParticleEffect(void)
         entry_count--;
     } while (entry_count >= 0);
     WaitFrames(0x1E);
-    Func_0809748c();
+    BattleEffect_PrepareBufferInterpolation();
 }

@@ -24372,7 +24372,7 @@
     },
     {
       "en_owner": "0809a6b8",
-      "source": "games/gs1/src/0809a6b8.c",
+      "source": "games/gs1/src/battle/effects/particles/spawn_radial_particle_ring.c",
       "size": 128,
       "status": "shared_core",
       "starts": {

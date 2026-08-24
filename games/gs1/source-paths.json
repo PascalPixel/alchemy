@@ -336,6 +336,7 @@
     "main:080be0b4": "battle/placement/count_valid_entries.c",
     "main:080bf5a8": "battle/placement/update_timed_entries.c",
     "main:08099d18": "battle/effects/particles/spawn_falling.c",
+    "main:0809a6b8": "battle/effects/particles/spawn_radial_particle_ring.c",
     "main:08092624": "battle/effects/particles/spawn_burst.c",
     "main:0809b11c": "battle/effects/particles/update_radial_launch.c",
     "main:08096048": "battle/effects/particles/update_radial_spread.c",

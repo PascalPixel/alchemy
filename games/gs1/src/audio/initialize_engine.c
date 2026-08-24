@@ -56,7 +56,7 @@ struct AudioEngineState {
 
 void Func_08006864(const void *source, void *destination, u32 control);
 void MusicPlayer_CopyCommandTable(union AudioCommandSlot *destination);
-void Func_080f9f6c(
+void MusicTrack_HandleNote(
     u32,
     struct MusicPlayerState *,
     struct MusicTrackState *);
@@ -96,7 +96,7 @@ void AudioEngine_Initialize(struct AudioEngineState *audio)
 
     audio->max_pcm_channels = 8;
     audio->master_volume = 15;
-    audio->ply_note = Func_080f9f6c;
+    audio->ply_note = MusicTrack_HandleNote;
     audio->cgb_sound = Audio_DummyCallback;
     audio->cgb_osc_off.placeholder = Audio_DummyCallback;
     audio->midi_key_to_cgb_freq.placeholder = Audio_DummyCallback;

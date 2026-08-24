@@ -1,6 +1,6 @@
 #include "object_dispatch.h"
 
-void Func_080929d8(struct DispatchObject *object, s32 value)
+void ObjectGroup_SetChildValue(struct DispatchObject *object, s32 value)
 {
     if ((object->kind & 0xf) == 1) {
         u8 *container = object->target.child;

@@ -20952,7 +20952,7 @@
     },
     {
       "en_owner": "08092950",
-      "source": "games/gs1/src/08092950.c",
+      "source": "games/gs1/src/object/group/configure_child_value.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -20982,7 +20982,7 @@
     },
     {
       "en_owner": "08092980",
-      "source": "games/gs1/src/08092980.c",
+      "source": "games/gs1/src/object/group/apply_indexed_child_value.c",
       "size": 88,
       "status": "shared_core",
       "starts": {
@@ -21012,7 +21012,7 @@
     },
     {
       "en_owner": "080929d8",
-      "source": "games/gs1/src/080929d8.c",
+      "source": "games/gs1/src/object/group/set_child_value.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -21162,7 +21162,7 @@
     },
     {
       "en_owner": "08092b08",
-      "source": "games/gs1/src/08092b08.c",
+      "source": "games/gs1/src/object/motion/set_action_variant.c",
       "size": 76,
       "status": "shared_core",
       "starts": {

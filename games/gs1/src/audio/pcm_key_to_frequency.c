@@ -1,7 +1,7 @@
 #include "audio_engine_symbols.h"
 #include "types.h"
 
-s32 Func_080f95e0(s32, s32);
+s32 Math_UmulHigh32(s32, s32);
 extern u8 Data_080fb830[];
 extern u32 Data_080fb8e4[];
 
@@ -26,9 +26,9 @@ s32 Pcm_KeyToFrequency(void *wave, u8 key, u8 pitch)
     upper_frequency =
         Data_080fb8e4[upper_frequency & 15] >> (upper_frequency >> 4);
 
-    return Func_080f95e0(*(s32 *)((u8 *)wave + 4),
+    return Math_UmulHigh32(*(s32 *)((u8 *)wave + 4),
         lower_frequency
-            + Func_080f95e0(
+            + Math_UmulHigh32(
                 upper_frequency - lower_frequency,
                 pitch_scale));
 }

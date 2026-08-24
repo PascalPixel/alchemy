@@ -1,6 +1,6 @@
 #include "types.h"
 
-void Func_080f2ebc(s16 *arg0, s16 *arg1, s16 *arg2, s32 arg3) {
+void Graphics_InterpolatePaletteBuffers(s16 *arg0, s16 *arg1, s16 *arg2, s32 arg3) {
     s32 index;
     s32 first;
     s32 second;

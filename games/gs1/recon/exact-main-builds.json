@@ -9434,7 +9434,7 @@
     },
     {
       "en_owner": "0800e220",
-      "source": "games/gs1/src/0800e220.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_address.c",
       "size": 44,
       "all_exact": true,
       "editions": [
@@ -9770,7 +9770,7 @@
     },
     {
       "en_owner": "0800e334",
-      "source": "games/gs1/src/0800e334.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_halfword20.c",
       "size": 48,
       "all_exact": true,
       "editions": [
@@ -9826,7 +9826,7 @@
     },
     {
       "en_owner": "0800e364",
-      "source": "games/gs1/src/0800e364.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_word18.c",
       "size": 42,
       "all_exact": true,
       "editions": [
@@ -10498,7 +10498,7 @@
     },
     {
       "en_owner": "0800e574",
-      "source": "games/gs1/src/0800e574.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_word14.c",
       "size": 42,
       "all_exact": true,
       "editions": [
@@ -10722,7 +10722,7 @@
     },
     {
       "en_owner": "0800e634",
-      "source": "games/gs1/src/0800e634.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_byte55.c",
       "size": 60,
       "all_exact": true,
       "editions": [
@@ -10778,7 +10778,7 @@
     },
     {
       "en_owner": "0800e670",
-      "source": "games/gs1/src/0800e670.c",
+      "source": "games/gs1/src/script/operands/set_or_compare_byte56.c",
       "size": 60,
       "all_exact": true,
       "editions": [
@@ -48005,7 +48005,7 @@
     },
     {
       "en_owner": "080a2268",
-      "source": "games/gs1/src/080a2268.c",
+      "source": "games/gs1/src/render/tilemap/set_flag_rect.c",
       "size": 140,
       "edition_variant": true,
       "all_exact": true,
@@ -70871,7 +70871,7 @@
     },
     {
       "en_owner": "080f2ebc",
-      "source": "games/gs1/src/080f2ebc.c",
+      "source": "games/gs1/src/graphics/color/interpolate_palette_buffers.c",
       "size": 84,
       "all_exact": true,
       "editions": [
@@ -70983,7 +70983,7 @@
     },
     {
       "en_owner": "080f3804",
-      "source": "games/gs1/src/080f3804.c",
+      "source": "games/gs1/src/graphics/color/transform_large_palette.c",
       "size": 32,
       "all_exact": true,
       "editions": [
@@ -71039,7 +71039,7 @@
     },
     {
       "en_owner": "080f3824",
-      "source": "games/gs1/src/080f3824.c",
+      "source": "games/gs1/src/graphics/color/transform_small_palette.c",
       "size": 32,
       "all_exact": true,
       "editions": [
@@ -71095,7 +71095,7 @@
     },
     {
       "en_owner": "080f3844",
-      "source": "games/gs1/src/080f3844.c",
+      "source": "games/gs1/src/graphics/color/set_palette_transform_value.c",
       "size": 20,
       "all_exact": true,
       "editions": [
@@ -71151,7 +71151,7 @@
     },
     {
       "en_owner": "080f3858",
-      "source": "games/gs1/src/080f3858.c",
+      "source": "games/gs1/src/graphics/color/update_palette_interpolation.c",
       "size": 64,
       "all_exact": true,
       "editions": [
@@ -71935,7 +71935,7 @@
     },
     {
       "en_owner": "080f7f30",
-      "source": "games/gs1/src/080f7f30.c",
+      "source": "games/gs1/src/audio/track/copy_buffered_bytes.c",
       "size": 72,
       "all_exact": true,
       "editions": [

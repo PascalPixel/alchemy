@@ -1,6 +1,6 @@
 #include "script_operands.h"
 
-void Func_0800e634(struct ScriptOperands *state, s32 operation, s32 value)
+void Script_SetOrCompareByte55(struct ScriptOperands *state, s32 operation, s32 value)
 {
     s32 result;
     if (operation == 0) {

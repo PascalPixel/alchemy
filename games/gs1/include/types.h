@@ -141,6 +141,7 @@ typedef int bool;
 #define AudioTrack_InsertSlotNode Func_080f7df0
 #define AudioTrack_RemoveSlotNode Func_080f7e34
 #define AudioTrack_ConsumeSlotBytes Func_080f7e60
+#define AudioTrack_CopyBufferedBytes Func_080f7f30
 #define EmitRandomParticleEffect Func_0808eee4
 #define InitializeEventObject Func_0809728c
 #define UpdateRisingParticleBurst Func_080981b0
@@ -276,6 +277,12 @@ typedef int bool;
 #define FixedPoint_Reciprocal Func_080f40e8
 #define Graphics_ClampRgb555Channel Func_080f3898
 #define Graphics_ClampRgb555Component Func_080f38ac
+#define Graphics_InterpolatePaletteBuffers Func_080f2ebc
+#define Graphics_TransformPaletteBuffer Func_080f3078
+#define Graphics_TransformLargePalette Func_080f3804
+#define Graphics_TransformSmallPalette Func_080f3824
+#define Graphics_SetPaletteTransformValue Func_080f3844
+#define Graphics_UpdatePaletteInterpolation Func_080f3858
 #define Graphics_ScaleRgb555Buffer Func_080f4100
 #define Graphics_UpdatePhasePalette Func_080d40ec
 #define Graphics_PackTileRows Func_080df9d0
@@ -328,6 +335,7 @@ typedef int bool;
 #define BattleEffect_SetApproachMotion Func_080df90c
 #define Graphics_ApplyWindowBlendRegisters Func_080cd418
 #define Graphics_ApplyBg2ReferencePoint Func_080cd488
+#define Render_SetTilemapFlagRect Func_080a2268
 #define BattleEffect_InitializeMode Func_080d6578
 #define BattleEffect_DispatchMode Func_080d6660
 #define BattleEffect_CallbackTable Data_080ee2b4
@@ -357,6 +365,12 @@ typedef int bool;
 #define EffectRuntime_ClearCurrentFlags Func_0808ed78
 #define EffectRuntime_SetCurrentPosition Func_0808edac
 #define Graphics_AdjustPaletteBank Func_080aac84
+#define Script_SetOrCompareAddress Func_0800e220
+#define Script_SetOrCompareHalfword20 Func_0800e334
+#define Script_SetOrCompareWord18 Func_0800e364
+#define Script_SetOrCompareWord14 Func_0800e574
+#define Script_SetOrCompareByte55 Func_0800e634
+#define Script_SetOrCompareByte56 Func_0800e670
 #define Camera_ApplyShake Func_080e155c
 
 #endif

@@ -5,12 +5,12 @@
   "base_edition": "ja",
   "source_state": "byte-exact overlay C",
   "resources_total": 96,
-  "owners_total": 2538,
-  "owner_symbol_bytes": 201232,
-  "matched_owners": 2500,
-  "matched_bytes": 198156,
-  "shared_core_owners": 2494,
-  "shared_core_bytes": 196896,
+  "owners_total": 2541,
+  "owner_symbol_bytes": 203320,
+  "matched_owners": 2503,
+  "matched_bytes": 200244,
+  "shared_core_owners": 2497,
+  "shared_core_bytes": 198984,
   "regional_core_owners": 6,
   "regional_core_bytes": 1260,
   "unresolved_owners": 38,
@@ -25,55 +25,55 @@
   "editions": [
     {
       "edition": "ja",
-      "matched_owners": 2500,
-      "matched_bytes": 198156,
-      "core_identical_owners": 2500,
-      "core_identical_bytes": 198156,
+      "matched_owners": 2503,
+      "matched_bytes": 200244,
+      "core_identical_owners": 2503,
+      "core_identical_bytes": 200244,
       "core_different_owners": 0,
       "core_different_bytes": 0
     },
     {
       "edition": "en",
-      "matched_owners": 2500,
-      "matched_bytes": 198156,
-      "core_identical_owners": 2495,
-      "core_identical_bytes": 197204,
+      "matched_owners": 2503,
+      "matched_bytes": 200244,
+      "core_identical_owners": 2498,
+      "core_identical_bytes": 199292,
       "core_different_owners": 5,
       "core_different_bytes": 952
     },
     {
       "edition": "de",
-      "matched_owners": 2500,
-      "matched_bytes": 198156,
-      "core_identical_owners": 2495,
-      "core_identical_bytes": 197204,
+      "matched_owners": 2503,
+      "matched_bytes": 200244,
+      "core_identical_owners": 2498,
+      "core_identical_bytes": 199292,
       "core_different_owners": 5,
       "core_different_bytes": 952
     },
     {
       "edition": "es",
-      "matched_owners": 2500,
-      "matched_bytes": 198156,
-      "core_identical_owners": 2494,
-      "core_identical_bytes": 196896,
+      "matched_owners": 2503,
+      "matched_bytes": 200244,
+      "core_identical_owners": 2497,
+      "core_identical_bytes": 198984,
       "core_different_owners": 6,
       "core_different_bytes": 1260
     },
     {
       "edition": "fr",
-      "matched_owners": 2500,
-      "matched_bytes": 198156,
-      "core_identical_owners": 2494,
-      "core_identical_bytes": 196896,
+      "matched_owners": 2503,
+      "matched_bytes": 200244,
+      "core_identical_owners": 2497,
+      "core_identical_bytes": 198984,
       "core_different_owners": 6,
       "core_different_bytes": 1260
     },
     {
       "edition": "it",
-      "matched_owners": 2500,
-      "matched_bytes": 198156,
-      "core_identical_owners": 2494,
-      "core_identical_bytes": 196896,
+      "matched_owners": 2503,
+      "matched_bytes": 200244,
+      "core_identical_owners": 2497,
+      "core_identical_bytes": 198984,
       "core_different_owners": 6,
       "core_different_bytes": 1260
     }
@@ -42288,6 +42288,38 @@
       }
     },
     {
+      "en_owner": "resource_3a6:0x020008ec",
+      "source": "games/gs1/src/overlays/staged_actor_movement/apply_staged_actor_pair_movement_and_redraw.c",
+      "resource": "resource_3a6",
+      "size": 696,
+      "core_bytes": 544,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x020008ec",
+        "en": "0x020008ec",
+        "es": "0x020008ec",
+        "fr": "0x020008ec",
+        "it": "0x020008ec",
+        "ja": "0x020008ec"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
       "en_owner": "resource_3a6:0x02000cc0",
       "source": "games/gs1/src/unidentified/overlays/leaf/leaf_0797.c",
       "resource": "resource_3a6",
@@ -54512,6 +54544,38 @@
       }
     },
     {
+      "en_owner": "resource_3b3:0x020008ec",
+      "source": "games/gs1/src/overlays/staged_actor_movement/apply_staged_actor_navigation_movement_and_redraw.c",
+      "resource": "resource_3b3",
+      "size": 696,
+      "core_bytes": 544,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x020008ec",
+        "en": "0x020008ec",
+        "es": "0x020008ec",
+        "fr": "0x020008ec",
+        "it": "0x020008ec",
+        "ja": "0x020008ec"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
       "en_owner": "resource_3b3:0x02000d78",
       "source": "games/gs1/src/unidentified/overlays/state_update/state_update_0298.c",
       "resource": "resource_3b3",
@@ -66333,6 +66397,38 @@
         "fr": "0x02000758",
         "it": "0x02000758",
         "ja": "0x02000758"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
+      "en_owner": "resource_3be:0x020008ec",
+      "source": "games/gs1/src/overlays/staged_actor_movement/apply_actor_pair_scene_movement_and_redraw.c",
+      "resource": "resource_3be",
+      "size": 696,
+      "core_bytes": 544,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x020008ec",
+        "en": "0x020008ec",
+        "es": "0x020008ec",
+        "fr": "0x020008ec",
+        "it": "0x020008ec",
+        "ja": "0x020008ec"
       },
       "location_methods": {
         "de": "global_thumb_anchor",

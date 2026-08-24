@@ -4,7 +4,7 @@
  "target": "gs1-en",
  "derivation": "full-c-progress-v1",
  "audit": "complete",
- "total_union_bytes": 1348402,
+ "total_union_bytes": 1348408,
  "main": {
   "id": "main",
   "executable_bytes": 548364,
@@ -22914,8 +22914,8 @@
   {
    "id": "resource_3a6",
    "decoded_bytes": 9872,
-   "executable_bytes": 7260,
-   "excluded_bytes": 2612,
+   "executable_bytes": 7262,
+   "excluded_bytes": 2610,
    "audit": "complete",
    "intervals": [
     {
@@ -23051,7 +23051,7 @@
      "evidence": "adjacent audited literal_pool spans; see namespace evidence"
     },
     {
-     "start": 33556718,
+     "start": 33556716,
      "end": 33557382,
      "kind": "thumb",
      "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -27477,8 +27477,8 @@
   {
    "id": "resource_3b3",
    "decoded_bytes": 14028,
-   "executable_bytes": 11232,
-   "excluded_bytes": 2796,
+   "executable_bytes": 11234,
+   "excluded_bytes": 2794,
    "audit": "complete",
    "intervals": [
     {
@@ -27614,7 +27614,7 @@
      "evidence": "adjacent audited literal_pool spans; see namespace evidence"
     },
     {
-     "start": 33556718,
+     "start": 33556716,
      "end": 33557382,
      "kind": "thumb",
      "evidence": "adjacent audited thumb spans; see namespace evidence"
@@ -33318,8 +33318,8 @@
   {
    "id": "resource_3be",
    "decoded_bytes": 7572,
-   "executable_bytes": 5632,
-   "excluded_bytes": 1940,
+   "executable_bytes": 5634,
+   "excluded_bytes": 1938,
    "audit": "complete",
    "intervals": [
     {
@@ -33455,7 +33455,7 @@
      "evidence": "adjacent audited literal_pool spans; see namespace evidence"
     },
     {
-     "start": 33556718,
+     "start": 33556716,
      "end": 33557382,
      "kind": "thumb",
      "evidence": "adjacent audited thumb spans; see namespace evidence"

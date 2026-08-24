@@ -6,7 +6,7 @@
 
 u32 Random16(void);
 
-void Func_080e155c(s32 arg0, u32 arg1) {
+void Camera_ApplyShake(s32 arg0, u32 arg1) {
     s32 temp_r3;
     s32 temp_r6_2;
     s32 *temp_r0;

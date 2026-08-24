@@ -69079,7 +69079,7 @@
     },
     {
       "en_owner": "080dfa18",
-      "source": "games/gs1/src/080dfa18.c",
+      "source": "games/gs1/src/battle/effects/particle_field/variant_0.c",
       "size": 12,
       "all_exact": true,
       "editions": [
@@ -69135,7 +69135,7 @@
     },
     {
       "en_owner": "080dfa24",
-      "source": "games/gs1/src/080dfa24.c",
+      "source": "games/gs1/src/battle/effects/particle_field/variant_1.c",
       "size": 12,
       "all_exact": true,
       "editions": [
@@ -69191,7 +69191,7 @@
     },
     {
       "en_owner": "080dfa30",
-      "source": "games/gs1/src/080dfa30.c",
+      "source": "games/gs1/src/battle/effects/particle_field/variant_2.c",
       "size": 12,
       "all_exact": true,
       "editions": [
@@ -69247,7 +69247,7 @@
     },
     {
       "en_owner": "080dfa3c",
-      "source": "games/gs1/src/080dfa3c.c",
+      "source": "games/gs1/src/battle/effects/particle_field/variant_3.c",
       "size": 12,
       "all_exact": true,
       "editions": [
@@ -69415,7 +69415,7 @@
     },
     {
       "en_owner": "080e155c",
-      "source": "games/gs1/src/080e155c.c",
+      "source": "games/gs1/src/camera/apply_shake.c",
       "size": 140,
       "all_exact": true,
       "editions": [

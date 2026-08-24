@@ -14052,7 +14052,7 @@
     },
     {
       "en_owner": "0807808c",
-      "source": "games/gs1/src/0807808c.c",
+      "source": "games/gs1/src/owner/refresh_active_ratios.c",
       "size": 184,
       "status": "shared_core",
       "starts": {
@@ -14112,7 +14112,7 @@
     },
     {
       "en_owner": "0807822c",
-      "source": "games/gs1/src/0807822c.c",
+      "source": "games/gs1/src/owner/recalculate_ratios.c",
       "size": 114,
       "status": "shared_core",
       "starts": {
@@ -14142,7 +14142,7 @@
     },
     {
       "en_owner": "080782a0",
-      "source": "games/gs1/src/080782a0.c",
+      "source": "games/gs1/src/owner/update_ratio_pair.c",
       "size": 128,
       "status": "shared_core",
       "starts": {
@@ -14172,7 +14172,7 @@
     },
     {
       "en_owner": "080783a4",
-      "source": "games/gs1/src/080783a4.c",
+      "source": "games/gs1/src/owner/adjust_first_value.c",
       "size": 54,
       "status": "shared_core",
       "starts": {
@@ -14202,7 +14202,7 @@
     },
     {
       "en_owner": "080783dc",
-      "source": "games/gs1/src/080783dc.c",
+      "source": "games/gs1/src/owner/adjust_second_value.c",
       "size": 54,
       "status": "shared_core",
       "starts": {
@@ -33282,7 +33282,7 @@
     },
     {
       "en_owner": "080c1a34",
-      "source": "games/gs1/src/080c1a34.c",
+      "source": "games/gs1/src/party/compute_eligible_member_average.c",
       "size": 200,
       "status": "shared_core",
       "starts": {

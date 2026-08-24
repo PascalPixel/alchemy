@@ -18,7 +18,7 @@ struct Object_080c1a34 *Func_08077198(s32 id);
 s32 GameFlag_IsSet(s32 flag);
 s32 FixedPoint_Ratio(s32 numerator, s32 denominator);
 
-s32 Func_080c1a34(s32 record_id)
+s32 Party_ComputeEligibleMemberAverage(s32 record_id)
 {
     volatile u8 scratch[28];
     struct Record_080c1a34 *record;

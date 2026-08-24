@@ -8,7 +8,7 @@ void Resource_CopyData(s32, s32, void *);
 void Func_08002dd8(s32);
 extern unsigned char Data_000000f1[];
 
-void Func_080216e8(s32 index, s32 value, s32 flag) {
+void RenderResource_LoadFrame(s32 index, s32 value, s32 flag) {
     s32 size = 1024;
     void *buffer = Runtime_AllocateBlock(14, size);
     u16 *base = GetResource((s32)Data_000000f1);

@@ -12462,7 +12462,7 @@
     },
     {
       "en_owner": "080215e0",
-      "source": "games/gs1/src/080215e0.c",
+      "source": "games/gs1/src/graphics/resource/load_pair.c",
       "size": 64,
       "status": "shared_core",
       "starts": {
@@ -12492,7 +12492,7 @@
     },
     {
       "en_owner": "08021620",
-      "source": "games/gs1/src/08021620.c",
+      "source": "games/gs1/src/graphics/resource/create_pair.c",
       "size": 146,
       "status": "shared_core",
       "starts": {
@@ -12552,7 +12552,7 @@
     },
     {
       "en_owner": "080216e8",
-      "source": "games/gs1/src/080216e8.c",
+      "source": "games/gs1/src/graphics/resource/load_frame.c",
       "size": 104,
       "status": "shared_core",
       "starts": {
@@ -12582,7 +12582,7 @@
     },
     {
       "en_owner": "08021750",
-      "source": "games/gs1/src/08021750.c",
+      "source": "games/gs1/src/graphics/resource/create_frame.c",
       "size": 84,
       "status": "shared_core",
       "starts": {
@@ -25272,7 +25272,7 @@
     },
     {
       "en_owner": "080a172c",
-      "source": "games/gs1/src/080a172c.c",
+      "source": "games/gs1/src/ui/icon/create_with_resource.c",
       "size": 76,
       "status": "shared_core",
       "starts": {
@@ -25302,7 +25302,7 @@
     },
     {
       "en_owner": "080a1778",
-      "source": "games/gs1/src/080a1778.c",
+      "source": "games/gs1/src/ui/icon/create_with_resource_variant.c",
       "size": 76,
       "status": "shared_core",
       "starts": {
@@ -25332,7 +25332,7 @@
     },
     {
       "en_owner": "080a17c4",
-      "source": "games/gs1/src/080a17c4.c",
+      "source": "games/gs1/src/ui/icon/prepare_object.c",
       "size": 64,
       "status": "shared_core",
       "starts": {
@@ -25392,7 +25392,7 @@
     },
     {
       "en_owner": "080a1814",
-      "source": "games/gs1/src/080a1814.c",
+      "source": "games/gs1/src/ui/menu/create_cursor.c",
       "size": 92,
       "status": "shared_core",
       "starts": {

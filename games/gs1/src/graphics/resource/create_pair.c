@@ -2,8 +2,8 @@
 #include "types.h"
 
 s32 Resource_FindFreeSlot(void);
-void Func_080215e0(s32 arg0, s32 arg1);
-void *Func_08021620(
+void RenderResource_LoadPair(s32 arg0, s32 arg1);
+void *RenderResource_CreatePair(
     s32 arg0,
     struct RenderInput *arg1,
     s32 arg2,
@@ -17,7 +17,7 @@ void *Func_08021620(
     if (index > 95)
         return NULL;
 
-    Func_080215e0(arg0, index);
+    RenderResource_LoadPair(arg0, index);
     first = Func_0801eadc(index, 0x80004000, arg1, arg2, arg3);
     first->sentinel = 0xFD;
     second = Func_0801eadc(index, 0x80004000, arg1, arg2 + 32, arg3);

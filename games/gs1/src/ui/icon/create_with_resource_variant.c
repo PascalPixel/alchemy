@@ -4,7 +4,7 @@ s32 Resource_CopyData(s32 entry_no, s32 mode, s32 data);
 s32 Resource_FindFreeSlot(void);
 s32 UiIcon_DrawWithFlags(s32 entry_no, s32 flags, s32 first, s32 second, s32 third);
 extern u8 Data_080aea4c[];
-s32 Func_080a1778(s32 first, s32 second, s32 third)
+s32 UiIcon_CreateWithResourceVariant(s32 first, s32 second, s32 third)
 {
   s32 temp_r0;
   unsigned char new_var;

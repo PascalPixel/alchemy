@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 Func_080912a8(s32 value)
+s32 BattleEffect_ClampRgb555Component(s32 value)
 {
     if (value > 31744)
         value = 31744;

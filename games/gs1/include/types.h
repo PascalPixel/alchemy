@@ -344,6 +344,7 @@ typedef int bool;
 #define EffectSlot_SetObjectMode Func_0809ba70
 #define EffectSlot_SetCallback Func_0809ba7c
 #define EffectSlot_Update Func_0809b804
+#define BattleEffect_UpdateAllSlots Func_08095884
 #define ParticleEffect_UpdateMotionAndScale Func_0809a65c
 #define BattleEffect_PauseObject Func_0809ad90
 #define BattleEffect_ResumeObject Func_0809ade8

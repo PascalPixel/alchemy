@@ -1,5 +1,7 @@
 #include "types.h"
 
+extern u8 *Data_03001ebc;
+
 /* DRAFT for Func_0200088c: 490 calls, 2 loops, 3 memory operations.
  * Written by `overlay reconstruct` from the owner's own disassembly.
  * It is a starting point, not a reconstruction: read the assembly and
@@ -22,7 +24,7 @@ void Func_0200387a();
 void Func_020038f8();
 void Func_02003916();
 void Func_02003924();
-void Func_02003e66();
+s32 Func_02003e66();
 void Func_02003e80();
 void Func_02003ef8();
 void Func_02003f10();
@@ -465,32 +467,30 @@ void Func_02004f4a();
 
 void Func_0200088c(void)
 {
-    void *p4;
-    void *p48;
-    void *p488;
-    void *p489;
-    s32 i1;
-    s32 i2;
 
     Func_02003e80();
-    Func_02003e66(513);
-    Func_02003f3c(0, 8, 0);
-    p4 = Func_02003f3e(1, 0, 0);;
-    Func_02003f48(11, 0, 0);
-    Func_02003f52(12, 0, 0);
-    Func_02003f5c(9, 0, 0);
-    Func_02003f66(10, 0, 0);
-    Func_02003fd0(12582912, -1, 10485760, 1);
-    Func_02003fdc();
-    Func_0200401e();
-    Func_0200402a();
-    Func_02003ef8(120);
-    Func_020020de();
+    if (Func_02003e66(513)) {
+        Func_02003f3c(0, 8, 0);
+        Func_02003f3e(1, 0, 0);
+        Func_02003f48(11, 0, 0);
+        Func_02003f52(12, 0, 0);
+        Func_02003f5c(9, 0, 0);
+        Func_02003f66(10, 0, 0);
+        Func_02003fd0(12582912, -1, 10485760, 1);
+        Func_02003fdc();
+        ((u32 *)Data_03001ebc)[112] = 256;
+        ((u32 *)Data_03001ebc)[114] = 64;
+        Func_0200401e();
+        Func_0200402a();
+        Func_02003ef8(120);
+        Func_020020de();
+    }
     Func_02004024(65538, 0);
     Func_02004032(1);
     Func_02003f10(1);
     Func_02004022(12582912, -1, 10485760, 1);
     Func_0200402e();
+    ((u32 *)Data_03001ebc)[112] = 521;
     Func_02004068();
     Func_02004074();
     Func_02003264();
@@ -519,7 +519,7 @@ void Func_0200088c(void)
     Func_02003ffe(10);
     Func_0200407e(0, 3);
     Func_0200408e(1, 3);
-    p48 = Func_02004014(30);;
+    Func_02004014(30);
     Func_0200409c(12, 3);
     Func_02004022(20);
     Func_020040ca(11, 2);
@@ -672,10 +672,16 @@ void Func_0200088c(void)
     Func_02004510(32);
     Func_02003680(8, 4608);
     Func_0200451e(16);
-    for (i1 = 0; i1 < 5; i1++) {
-        Func_0200369c(8, 4608);
-        Func_0200453c(8);
-    }
+    Func_0200369c(8, 4608);
+    Func_0200453c(8);
+    Func_0200369c(8, 4608);
+    Func_0200453c(8);
+    Func_0200369c(8, 4608);
+    Func_0200453c(8);
+    Func_0200369c(8, 4608);
+    Func_0200453c(8);
+    Func_0200369c(8, 4608);
+    Func_0200453c(8);
     Func_0200454a(8);
     Func_020036ba(8, 4608);
     Func_02004558(32);
@@ -750,10 +756,16 @@ void Func_0200088c(void)
     Func_0200480c(12, 1);
     Func_02004814(9, 1);
     Func_0200481c(10, 1);
-    for (i2 = 0; i2 < 5; i2++) {
-        Func_020038f8(8, 4608);
-        Func_02004798(8);
-    }
+    Func_020038f8(8, 4608);
+    Func_02004798(8);
+    Func_020038f8(8, 4608);
+    Func_02004798(8);
+    Func_020038f8(8, 4608);
+    Func_02004798(8);
+    Func_020038f8(8, 4608);
+    Func_02004798(8);
+    Func_020038f8(8, 4608);
+    Func_02004798(8);
     Func_020047a6(8);
     Func_02003916(8, 4608);
     Func_020047b4(32);
@@ -963,9 +975,7 @@ void Func_0200088c(void)
     Func_02004e26(20);
     Func_02004efe(12, 0);
     Func_02004e34(20);
-    p488 = Func_02004e62(10);;
-    *(u8 *)((u8 *)(p488) + 35) &= 0xfe;
-    p489 = Func_02004e72(10);;
-    *(s32 *)(p489 + 108) = 33589321;
+    *(u8 *)((u8 *)Func_02004e62(10) + 35) &= 0xfe;
+    *(s32 *)((u8 *)Func_02004e72(10) + 108) = 33589321;
     Func_02004e62();
 }

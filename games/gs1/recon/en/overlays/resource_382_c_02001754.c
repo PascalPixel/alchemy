@@ -23,24 +23,24 @@ s32 Func_02003092();
 s32 Func_020030a0();
 void Func_02001754(struct Effect_382 *effect)
 {
-    s32 step;
-    s32 rate;
+    s32 horizontal_rate;
+    s32 vertical_rate;
 
     effect->f8 += effect->f48;
     effect->f56 = effect->f8;
 
     if (effect->f100 != 0) {
-        step = effect->f52;
+        effect->f12 += effect->f52;
+        effect->f60 = effect->f12;
     } else {
         effect->f16 += effect->f52;
         effect->f64 = effect->f16;
-        step = 1024;
+        effect->f12 += 1024;
+        effect->f60 = effect->f12;
     }
-    effect->f12 += step;
-    effect->f60 = effect->f12;
 
-    rate = effect->f48;
-    effect->f48 = rate - Func_02003092(rate, 28);
-    rate = effect->f52;
-    effect->f52 = rate - Func_020030a0(rate, 28);
+    horizontal_rate = effect->f48;
+    effect->f48 = horizontal_rate - Func_02003092(horizontal_rate, 28);
+    vertical_rate = effect->f52;
+    effect->f52 = vertical_rate - Func_020030a0(vertical_rate, 28);
 }

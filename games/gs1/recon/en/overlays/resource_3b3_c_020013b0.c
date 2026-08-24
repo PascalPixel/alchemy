@@ -38,11 +38,12 @@ void Func_020013b0(struct Effect_3b3 *effect)
     s32 velocity_z;
 
     velocity_x = effect->velocity_x;
-    velocity_y = effect->velocity_y;
-    velocity_z = effect->velocity_z;
-
     effect->position_x += velocity_x;
+
+    velocity_y = effect->velocity_y;
     effect->position_y += velocity_y;
+
+    velocity_z = effect->velocity_z;
     effect->position_z += velocity_z;
 
     effect->velocity_x = velocity_x - Func_02003e08(velocity_x, 10);

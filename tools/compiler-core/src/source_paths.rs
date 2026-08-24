@@ -73,6 +73,10 @@ impl SourceOwner {
         format!("{:08x}", self.address())
     }
 
+    pub fn legacy_name(self) -> String {
+        format!("Func_{}", self.address_stem())
+    }
+
     pub fn overlay_id(self) -> Option<String> {
         match self {
             Self::Main(_) => None,
@@ -626,6 +630,10 @@ mod tests {
             }
         );
         assert!(SourceOwner::parse("main:080BBB0C").is_err());
+        assert_eq!(
+            SourceOwner::Main(0x080b_bb0c).legacy_name(),
+            "Func_080bbb0c"
+        );
     }
 
     #[test]

@@ -3,7 +3,7 @@
 
 extern s32 FixedPoint_Ratio(s32, s32);
 
-void Func_0807808c(s32 arg0)
+void Owner_RefreshActiveRatios(s32 arg0)
 {
     s32 count;
     s32 n;

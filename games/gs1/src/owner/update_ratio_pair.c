@@ -1,6 +1,6 @@
 #include "types.h"
 
-struct State_080782a0 {
+struct OwnerRatioPairState {
     u8 padding0[20];
     s16 outputX;
     s16 outputY;
@@ -13,7 +13,7 @@ struct State_080782a0 {
 
 s32 FixedPoint_Ratio(s32, s32);
 
-void Func_080782a0(struct State_080782a0 *state, s32 input)
+void Owner_UpdateRatioPair(struct OwnerRatioPairState *state, s32 input)
 {
     s32 value;
 

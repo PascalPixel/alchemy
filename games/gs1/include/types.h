@@ -61,6 +61,11 @@ typedef int bool;
 #define Ability_GetData Func_08077080
 #define Owner_GetState Func_08077394
 #define Owner_GetRecord Func_080773d8
+#define Owner_RefreshActiveRatios Func_0807808c
+#define Owner_RecalculateRatios Func_0807822c
+#define Owner_UpdateRatioPair Func_080782a0
+#define Owner_AdjustFirstValue Func_080783a4
+#define Owner_AdjustSecondValue Func_080783dc
 #define Resource_FindFreeSlot Func_08004080
 #define Resource_DecompressLz Func_0800a97c
 #define ResourceMetadata_Register Func_0800b8ac
@@ -96,6 +101,7 @@ typedef int bool;
 #define Party_SumDjinnCounts Func_0807a5bc
 #define Inventory_AddAndEquip Func_0807a628
 #define Party_GetAverageLevel Func_08077348
+#define Party_ComputeEligibleMemberAverage Func_080c1a34
 #define GameFlag_RefreshLureCap Func_08077c10
 #define Runtime_GetBuildStampTime Func_08077cb8
 #define Owner_GetLevelThreshold Func_08079008

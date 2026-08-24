@@ -20,7 +20,7 @@ s32 Resource_FindFreeSlot(void);
 s32 Resource_CopyData(s32, s32, const void *);
 extern const u8 Data_080342f8[];
 
-void Func_0801c0dc(struct Object_0801c0dc *object, s32 *slot)
+void TextResource_Initialize(struct Object_0801c0dc *object, s32 *slot)
 {
     const void *data = Data_080342f8;
     s32 value = Resource_FindFreeSlot();

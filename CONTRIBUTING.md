@@ -195,7 +195,9 @@ address-to-source authority. Each `main:<address>` or
 `resource_<id>:<address>` record has one human name and may have one exact-C
 source path. Do not add parallel symbol maps or infer a canonical name from a
 filename, assembly export, chart label, or tool-local table. Those consumers
-must resolve the stable owner identity through this register. Existing flat
+must resolve the stable owner identity through this register. Owner-specific
+compiler facts, such as an exceptional `call_via` bank, belong on the same
+record rather than in a source-path lookup table. Existing flat
 address-named files remain a supported migration fallback, but do not add new
 ones: register a nested descriptive path before adopting a new owner.
 

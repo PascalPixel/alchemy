@@ -89,14 +89,13 @@ fn main_source_identity(
 /// case -- the caller must error rather than substitute a fallback, since
 /// any fallback derived from the candidate would compare the source
 /// against itself and silently report a plausible-looking wrong score.
-fn region_size(root: &Path, stem: &str) -> Option<f64> {
+fn region_size(root: &Path, address: u32) -> Option<f64> {
     let manifests = [
         "out/gs1-en/full/claimed/manifest.json",
         "out/gs1-en/claimed/manifest.json",
         "out/gs1-en/full/asm/manifest.json",
         "out/gs1-en/asm/manifest.json",
     ];
-    let symbol = format!("Func_{stem}");
     for manifest in manifests {
         let Ok(text) = std::fs::read_to_string(root.join(manifest)) else {
             continue;
@@ -108,14 +107,7 @@ fn region_size(root: &Path, stem: &str) -> Option<f64> {
             continue;
         };
         let size = regions.iter().find_map(|region| {
-            let source_matches = region["source"].as_str().is_some_and(|source| {
-                basename_without(source, ".s") == stem || basename_without(source, ".c") == stem
-            });
-            let symbol_matches = region["symbol"].as_str() == Some(symbol.as_str())
-                || region["symbols"].as_array().is_some_and(|symbols| {
-                    symbols.iter().any(|value| value.as_str() == Some(&symbol))
-                });
-            (source_matches || symbol_matches)
+            (region["address"].as_u64() == Some(u64::from(address)))
                 .then(|| region["size"].as_f64())
                 .flatten()
         });
@@ -204,7 +196,7 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
             linked.len() as f64,
         )?
         .unwrap_or(verification.actual.len() as f64);
-        let size = options.size.map(|size| size as f64).or_else(|| region_size(root, &stem)).ok_or_else(|| {
+        let size = options.size.map(|size| size as f64).or_else(|| region_size(root, owner.address())).ok_or_else(|| {
                 format!(
                     "no owner-size entry for {stem} in the claimed or asm build manifests -- pass `--size BYTES` for an independently established owner boundary, or run `make build-claimed` (or `make build-full`) before scoring against the ROM. Falling back to the candidate's own linked length would compare the source against itself."
                 )
@@ -980,23 +972,23 @@ mod region_size_tests {
         let root = scratch_root("present");
         fs::write(
             root.join("out/gs1-en/asm/manifest.json"),
-            r#"{"regions":[{"source":"games/gs1/asm/080ab5e4.s","size":4888}]}"#,
+            r#"{"regions":[{"address":134919652,"size":4888}]}"#,
         )
         .unwrap();
-        assert_eq!(region_size(&root, "080ab5e4"), Some(4888.0));
+        assert_eq!(region_size(&root, 0x080a_b5e4), Some(4888.0));
         let _ = fs::remove_dir_all(&root);
     }
 
     #[test]
-    fn reads_a_nested_source_size_by_canonical_symbol() {
+    fn reads_a_nested_source_size_by_owner_address() {
         let root = scratch_root("claimed-nested");
         fs::create_dir_all(root.join("out/gs1-en/claimed")).unwrap();
         fs::write(
             root.join("out/gs1-en/claimed/manifest.json"),
-            r#"{"regions":[{"source":"games/gs1/src/battle/inventory/draw_paged_item_list.c","symbol":"Func_080b0fa4","size":296}]}"#,
+            r#"{"regions":[{"address":134942628,"size":296}]}"#,
         )
         .unwrap();
-        assert_eq!(region_size(&root, "080b0fa4"), Some(296.0));
+        assert_eq!(region_size(&root, 0x080b_0fa4), Some(296.0));
         let _ = fs::remove_dir_all(&root);
     }
 
@@ -1008,7 +1000,7 @@ mod region_size_tests {
         // candidate's own linked length here, comparing the source
         // against itself and reporting a plausible-looking wrong score.
         let root = scratch_root("absent");
-        assert_eq!(region_size(&root, "080ab5e4"), None);
+        assert_eq!(region_size(&root, 0x080a_b5e4), None);
         let _ = fs::remove_dir_all(&root);
     }
 
@@ -1017,10 +1009,10 @@ mod region_size_tests {
         let root = scratch_root("other-owner");
         fs::write(
             root.join("out/gs1-en/asm/manifest.json"),
-            r#"{"regions":[{"source":"games/gs1/asm/080bbb0c.s","size":6332}]}"#,
+            r#"{"regions":[{"address":134986508,"size":6332}]}"#,
         )
         .unwrap();
-        assert_eq!(region_size(&root, "080ab5e4"), None);
+        assert_eq!(region_size(&root, 0x080a_b5e4), None);
         let _ = fs::remove_dir_all(&root);
     }
 }

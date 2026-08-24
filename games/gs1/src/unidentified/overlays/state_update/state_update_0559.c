@@ -1,25 +1,16 @@
-#include "types.h"
+#define RuntimeSelectorTable Data_02000240
+#define PrimaryRuntimeSelector Value_00000044
+#define SecondaryRuntimeSelector Value_00000045
+#define TertiaryRuntimeSelector Value_00000046
+#define PrimaryOverlayData Data_0200b6a0
+#define SecondaryOverlayData Data_0200b790
+#define TertiaryOverlayData Data_0200b8b0
+#define DefaultOverlayData Data_0200ba30
+#define SelectOverlayDataByRuntimeSelector Func_02000f40
 
-extern s16 Data_02000240[];
-extern u8 Value_00000044;
-extern u8 Value_00000045;
-extern u8 Value_00000046;
-extern u8 Data_0200b6a0[];
-extern u8 Data_0200b790[];
-extern u8 Data_0200b8b0[];
-extern u8 Data_0200ba30[];
+#include "select_overlay_data_by_runtime_selector.h"
 
-s32 Func_02000f40(void) {
-    s16 v = Data_02000240[224];
-
-    if (v == (s32)&Value_00000044) {
-        return (s32)Data_0200b6a0;
-    }
-    if (v == (s32)&Value_00000045) {
-        return (s32)Data_0200b790;
-    }
-    if (v == (s32)&Value_00000046) {
-        return (s32)Data_0200b8b0;
-    }
-    return (s32)Data_0200ba30;
+s32 SelectOverlayDataByRuntimeSelector(void)
+{
+#include "select_overlay_data_by_runtime_selector_body.inc"
 }

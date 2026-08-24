@@ -187,7 +187,7 @@ fn checked(program: &str, arguments: &[String], work: &Path) -> Result<(), Strin
 fn core_reference_span(stem: &str, work: &Path) -> Result<usize, String> {
     let source = root().join("games/gs1/asm").join(format!("{stem}.s"));
     if !source.is_file() {
-        let symbol = format!("Func_{stem}");
+        let address = u32::from_str_radix(stem, 16).map_err(|error| error.to_string())?;
         for relative in [
             "out/gs1-en/full/claimed/manifest.json",
             "out/gs1-en/claimed/manifest.json",
@@ -201,11 +201,9 @@ fn core_reference_span(stem: &str, work: &Path) -> Result<usize, String> {
             };
             let size = document["regions"].as_array().and_then(|regions| {
                 regions.iter().find_map(|region| {
-                    let owns_symbol = region["symbol"].as_str() == Some(symbol.as_str())
-                        || region["symbols"].as_array().is_some_and(|symbols| {
-                            symbols.iter().any(|value| value.as_str() == Some(&symbol))
-                        });
-                    owns_symbol.then(|| region["size"].as_u64()).flatten()
+                    (region["address"].as_u64() == Some(u64::from(address)))
+                        .then(|| region["size"].as_u64())
+                        .flatten()
                 })
             });
             if let Some(size) = size {
@@ -213,7 +211,7 @@ fn core_reference_span(stem: &str, work: &Path) -> Result<usize, String> {
             }
         }
         return Err(format!(
-            "{} is missing and no claimed manifest records {symbol}",
+            "{} is missing and no claimed manifest records owner {stem}",
             source.display()
         ));
     }

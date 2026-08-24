@@ -85,5 +85,5 @@ void BattleEffect_FinishHeavyImpact(s32 arg)
     Audio_PlayCue(0xA4);
     WaitFrames(0x64);
     Func_080b0050();
-    Func_080958e4();
+    BattleEffect_ClearActiveSlotsAndScheduleUpdates();
 }

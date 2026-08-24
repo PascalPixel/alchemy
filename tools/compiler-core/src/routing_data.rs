@@ -59,6 +59,7 @@ pub static NO_INTERWORK_OVERLAY_SOURCES: &[&str] = &[
     "games/gs1/src/resource_3a7_c_0200145c.c",
     "games/gs1/src/resource_3a7_c_02001574.c",
     "games/gs1/src/resource_3a7_c_02001158.c",
+    "games/gs1/src/resource_3bf_c_020057ec.c",
 ];
 // Soft-float library leaves that keep r4 CALLEE-SAVED, i.e. the stock ARM ABI
 // without `-fcall-used-r4`.
@@ -82,6 +83,7 @@ pub static CALLEE_SAVED_R4_OVERLAY_SOURCES: &[&str] = &[
     "games/gs1/src/resource_3a7_c_0200145c.c",
     "games/gs1/src/resource_3a7_c_02001574.c",
     "games/gs1/src/resource_3a7_c_02001158.c",
+    "games/gs1/src/resource_3bf_c_020057ec.c",
     "games/gs1/src/resource_3bf_c_02005af0.c",
     "games/gs1/src/resource_3bf_c_02005c08.c",
     "games/gs1/src/resource_3a7_c_020013ac.c",

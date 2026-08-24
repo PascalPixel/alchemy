@@ -3899,6 +3899,7 @@
     "resource_398:020004b4": "overlays/scene_setup/run_guarded_scene_setup.c",
     "resource_3ba:02001c7c": "overlays/party/run_party_count_interaction.c",
     "resource_3bb:02001f14": "overlays/party/run_party_count_interaction_copy_a.c",
-    "resource_3bc:020029ac": "overlays/party/run_party_count_interaction_copy_b.c"
+    "resource_3bc:020029ac": "overlays/party/run_party_count_interaction_copy_b.c",
+    "resource_3bf:020057ec": "runtime/soft_float/add_parts_copy.c"
   }
 }

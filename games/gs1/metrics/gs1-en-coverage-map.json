@@ -7,16 +7,16 @@
   "executable_bytes": 1348188,
   "categories": {
     "exact_c": {
-      "bytes": 301502,
-      "percent_of_executable": 22.36
+      "bytes": 302098,
+      "percent_of_executable": 22.41
     },
     "tracked_c": {
       "bytes": 43954,
       "percent_of_executable": 3.26
     },
     "assembly": {
-      "bytes": 628650,
-      "percent_of_executable": 46.63
+      "bytes": 628054,
+      "percent_of_executable": 46.59
     },
     "retained_asm": {
       "bytes": 374082,
@@ -34,7 +34,7 @@
   },
   "overlays": {
     "executable_bytes": 799824,
-    "exact_c_bytes": 193860,
+    "exact_c_bytes": 194456,
     "tracked_c_bytes": 37494
   },
   "provenance": {
@@ -64,9 +64,9 @@
       "label": "Compressed code overlays",
       "bytes": 539544,
       "categories": {
-        "exact_c": 138242,
+        "exact_c": 138617,
         "tracked_c": 19768,
-        "assembly": 381534
+        "assembly": 381159
       },
       "tiles": 11
     },
@@ -98,9 +98,9 @@
       "label": "Decoded code overlays",
       "bytes": 799824,
       "categories": {
-        "exact_c": 193860,
+        "exact_c": 194456,
         "tracked_c": 37494,
-        "assembly": 368770,
+        "assembly": 368174,
         "retained_asm": 199700
       },
       "tiles": 5370

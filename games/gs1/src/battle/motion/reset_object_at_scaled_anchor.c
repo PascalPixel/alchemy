@@ -7,7 +7,7 @@ s32 Object_ResetMotion(void *);
 s32 Object_SetPosition(void *, s32, s32, s32);
 struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id);
 
-void Func_080b8178(s32 object_id) {
+void BattleMotion_ResetObjectAtScaledAnchor(s32 object_id) {
     u32 scaled_x;
     void *slot;
     void *object;

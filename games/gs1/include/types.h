@@ -129,6 +129,10 @@ typedef int bool;
 #define ResetMotionRecordGroup Func_080b7e04
 #define ResetBattleObjectRecordGroups Func_080b7e24
 #define ActivateBattleObjectSlot Func_080b7e60
+#define BattleMotion_InterpolatePosition Func_080b80b8
+#define BattleMotion_SetObjectPosition Func_080b8144
+#define BattleMotion_ResetObjectAtScaledAnchor Func_080b8178
+#define BattleMotion_ApplyVariantMotion Func_080b8228
 #define Object_GetById Func_08092054
 #define ObjectTable_Get Func_0808ba1c
 #define ObjectTable_DestroyAtIndex Func_0808b64c
@@ -425,6 +429,9 @@ typedef int bool;
 #define Script_SetFlagAndTest Func_0800d820
 #define Script_ClearFlagAndTest Func_0800d850
 #define Script_ToggleFlagAndTest Func_0800d880
+#define ObjectDispatch_ApplyArgumentToChildren Func_0800c300
+#define ObjectDispatch_ApplyValueToChildren Func_0800c344
+#define ObjectDispatch_ApplyPairToChildren Func_0800c388
 #define Script_SetOrCompareCursor Func_0800e24c
 #define Script_SetOrCompareUnsignedHalfword Func_0800e280
 #define Script_SetOrCompareWord08 Func_0800e2b0

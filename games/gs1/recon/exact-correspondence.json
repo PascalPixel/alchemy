@@ -3522,7 +3522,7 @@
     },
     {
       "en_owner": "0800c300",
-      "source": "games/gs1/src/0800c300.c",
+      "source": "games/gs1/src/object/dispatch/apply_argument_to_children.c",
       "size": 66,
       "status": "shared_core",
       "starts": {
@@ -3552,7 +3552,7 @@
     },
     {
       "en_owner": "0800c344",
-      "source": "games/gs1/src/0800c344.c",
+      "source": "games/gs1/src/object/dispatch/apply_value_to_children.c",
       "size": 66,
       "status": "shared_core",
       "starts": {
@@ -3582,7 +3582,7 @@
     },
     {
       "en_owner": "0800c388",
-      "source": "games/gs1/src/0800c388.c",
+      "source": "games/gs1/src/object/dispatch/apply_pair_to_children.c",
       "size": 100,
       "status": "shared_core",
       "starts": {
@@ -30822,7 +30822,7 @@
     },
     {
       "en_owner": "080b80b8",
-      "source": "games/gs1/src/080b80b8.c",
+      "source": "games/gs1/src/battle/motion/interpolate_position.c",
       "size": 140,
       "status": "shared_core",
       "starts": {
@@ -30852,7 +30852,7 @@
     },
     {
       "en_owner": "080b8144",
-      "source": "games/gs1/src/080b8144.c",
+      "source": "games/gs1/src/battle/motion/set_object_position.c",
       "size": 52,
       "status": "shared_core",
       "starts": {
@@ -30882,7 +30882,7 @@
     },
     {
       "en_owner": "080b8178",
-      "source": "games/gs1/src/080b8178.c",
+      "source": "games/gs1/src/battle/motion/reset_object_at_scaled_anchor.c",
       "size": 80,
       "status": "shared_core",
       "starts": {
@@ -30912,7 +30912,7 @@
     },
     {
       "en_owner": "080b8228",
-      "source": "games/gs1/src/080b8228.c",
+      "source": "games/gs1/src/battle/motion/apply_variant_motion.c",
       "size": 156,
       "status": "shared_core",
       "starts": {

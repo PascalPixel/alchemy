@@ -487,6 +487,7 @@
     "main:0808ed4c": "effect_runtime/get_current_object.c",
     "main:0808ed78": "effect_runtime/clear_current_flags.c",
     "main:0808edac": "effect_runtime/set_current_position.c",
+    "main:0808f304": "effect_runtime/is_active.c",
     "main:08091560": "battle/effects/runtime/find_definition.c",
     "main:08091584": "battle/effects/runtime/get_animation_value.c",
     "main:080915ac": "battle/effects/runtime/get_resource_id.c",

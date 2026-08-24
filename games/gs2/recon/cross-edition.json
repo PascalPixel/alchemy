@@ -51,6 +51,72 @@
       "core_identical": true
     }
   ],
+  "twelve_rom_transfer_scan": {
+    "measured": "2026-08-24",
+    "method": "Scan each of the twelve local ROMs by recursively bisecting it to 1 MiB leaves, with owner-length overlap at every split. Probes are complete .text bodies from adopted GS1 C objects with no relocation records. Every retained hit is unique in all twelve ROMs; candidate-show then independently linked and scored each transferred source against all six GS2 editions.",
+    "probe_count": 125,
+    "rom_scans": 12,
+    "shared_unique_owners": 9,
+    "exact_bytes_per_gs2_edition": 892,
+    "assembly_delta_bytes": 0,
+    "compiler_route": "old-agbcc, inherited only for these byte-identical audio owners",
+    "owners": [
+      {
+        "source": "audio/update_track_volume_pitch.c",
+        "gs1_en_owner": "080fac44",
+        "gs2_owner": "081c28e0",
+        "size": 180
+      },
+      {
+        "source": "audio/music/player/set_pitch.c",
+        "gs1_en_owner": "080fb334",
+        "gs2_owner": "081c2fd0",
+        "size": 116
+      },
+      {
+        "source": "audio/update_cgb_pan_envelope.c",
+        "gs1_en_owner": "080fadf0",
+        "gs2_owner": "081c2a8c",
+        "size": 104
+      },
+      {
+        "source": "audio/music/player/set_volume.c",
+        "gs1_en_owner": "080fb2cc",
+        "gs2_owner": "081c2f68",
+        "size": 104
+      },
+      {
+        "source": "audio/music/player/set_pan.c",
+        "gs1_en_owner": "080fb3a8",
+        "gs2_owner": "081c3044",
+        "size": 104
+      },
+      {
+        "source": "audio/stop_cgb_oscillator.c",
+        "gs1_en_owner": "080fada0",
+        "gs2_owner": "081c2a3c",
+        "size": 80
+      },
+      {
+        "source": "audio/fade_music_player.c",
+        "gs1_en_owner": "080fa4cc",
+        "gs2_owner": "081c2168",
+        "size": 72
+      },
+      {
+        "source": "audio/music/track/read_wave_pointer.c",
+        "gs1_en_owner": "080fb6a4",
+        "gs2_owner": "081c3340",
+        "size": 72
+      },
+      {
+        "source": "audio/enable_pcm_dma.c",
+        "gs1_en_owner": "080fa9a4",
+        "gs2_owner": "081c2640",
+        "size": 60
+      }
+    ]
+  },
   "compiler_family_probe": {
     "target": "gs2-en:08120454-081224c0",
     "source_probe": "games/gs1/src/battle/resolve_action.c",

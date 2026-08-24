@@ -382,13 +382,17 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
 
 /// `usesAgbccCompiler`.
 pub fn uses_agbcc_compiler(target: CompilerTarget, source: &str) -> bool {
-    target == CompilerTarget::Gs1 && has(AGBCC_SOURCES, &source_stem(source))
+    let stem = source_stem(source);
+    match target {
+        CompilerTarget::Gs1 => has(AGBCC_SOURCES, &stem),
+        CompilerTarget::Gs2 => has(GS2_AGBCC_SOURCES, &stem),
+    }
 }
 
 /// `cflagsForTargetSource`.
 pub fn cflags_for_target_source(target: CompilerTarget, source: &str) -> Vec<String> {
     let stem = source_stem(source);
-    if target == CompilerTarget::Gs1 && has(AGBCC_SOURCES, &stem) {
+    if uses_agbcc_compiler(target, source) {
         let mut out = agbcc_cflags();
         if has(AGBCC_OPTIMIZE_O1_SOURCES, &stem) {
             out.push("-O1".to_string());
@@ -408,10 +412,16 @@ pub fn cflags_for_target_source(target: CompilerTarget, source: &str) -> Vec<Str
         if has(AGBCC_COMMUTATIVE_COPY_CONSTANT_SOURCES, &stem) {
             out.push("-mcommutative-copy-constant".to_string());
         }
-        if has(AGBCC_PROLOGUE_NEXT_HIGH_REG_SOURCES, &stem) {
+        if match target {
+            CompilerTarget::Gs1 => has(AGBCC_PROLOGUE_NEXT_HIGH_REG_SOURCES, &stem),
+            CompilerTarget::Gs2 => has(GS2_AGBCC_PROLOGUE_NEXT_HIGH_REG_SOURCES, &stem),
+        } {
             out.push("-mprologue-next-high-reg".to_string());
         }
-        if has(AGBCC_TRACK_NARROW_VALUE_R1_SOURCES, &stem) {
+        if match target {
+            CompilerTarget::Gs1 => has(AGBCC_TRACK_NARROW_VALUE_R1_SOURCES, &stem),
+            CompilerTarget::Gs2 => has(GS2_AGBCC_TRACK_NARROW_VALUE_R1_SOURCES, &stem),
+        } {
             out.push("-mtrack-narrow-value-r1".to_string());
         }
         if has(AGBCC_COMPARE_ONLY_AND_TST_SOURCES, &stem) {

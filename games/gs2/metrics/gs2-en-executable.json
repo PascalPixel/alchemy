@@ -4,10 +4,10 @@
   "target": "gs2-en",
   "derivation": "full-c-progress-v1",
   "audit": "incomplete",
-  "total_union_bytes": 4,
+  "total_union_bytes": 896,
   "main": {
     "id": "main",
-    "executable_bytes": 4,
+    "executable_bytes": 896,
     "audit": "incomplete",
     "intervals": [
       {
@@ -15,6 +15,60 @@
         "end": 134296272,
         "kind": "thumb",
         "evidence": "games/gs2/src/runtime/constant_zero_result.c:byte-identical-claimed-C"
+      },
+      {
+        "start": 136061288,
+        "end": 136061360,
+        "kind": "thumb",
+        "evidence": "games/gs2/src/audio/fade_music_player.c:12-ROM-zero-delta-C"
+      },
+      {
+        "start": 136062528,
+        "end": 136062588,
+        "kind": "thumb",
+        "evidence": "games/gs2/src/audio/enable_pcm_dma.c:12-ROM-zero-delta-C"
+      },
+      {
+        "start": 136063200,
+        "end": 136063380,
+        "kind": "thumb",
+        "evidence": "games/gs2/src/audio/update_track_volume_pitch.c:12-ROM-zero-delta-C"
+      },
+      {
+        "start": 136063548,
+        "end": 136063628,
+        "kind": "thumb",
+        "evidence": "games/gs2/src/audio/stop_cgb_oscillator.c:12-ROM-zero-delta-C"
+      },
+      {
+        "start": 136063628,
+        "end": 136063732,
+        "kind": "thumb",
+        "evidence": "games/gs2/src/audio/update_cgb_pan_envelope.c:12-ROM-zero-delta-C"
+      },
+      {
+        "start": 136064872,
+        "end": 136064976,
+        "kind": "thumb",
+        "evidence": "games/gs2/src/audio/music/player/set_volume.c:12-ROM-zero-delta-C"
+      },
+      {
+        "start": 136064976,
+        "end": 136065092,
+        "kind": "thumb",
+        "evidence": "games/gs2/src/audio/music/player/set_pitch.c:12-ROM-zero-delta-C"
+      },
+      {
+        "start": 136065092,
+        "end": 136065196,
+        "kind": "thumb",
+        "evidence": "games/gs2/src/audio/music/player/set_pan.c:12-ROM-zero-delta-C"
+      },
+      {
+        "start": 136065856,
+        "end": 136065928,
+        "kind": "thumb",
+        "evidence": "games/gs2/src/audio/music/track/read_wave_pointer.c:12-ROM-zero-delta-C"
       }
     ],
     "evidence": ["assembly classification unavailable", "out/gs2-en/full/claimed/manifest.json", "byte-identical full build and tracked assembly classification"]

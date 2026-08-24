@@ -283,6 +283,10 @@ pub static AGBCC_SOURCES: &[&str] = &[
     "08006910", "080fa280", "080fa4cc", "080fa798", "080faa58", "080fae58", "080fb2a4", "080fb410",
     "080fb518",
 ];
+pub static GS2_AGBCC_SOURCES: &[&str] = &[
+    "081c2168", "081c2640", "081c28e0", "081c2a3c", "081c2a8c", "081c2f68", "081c2fd0", "081c3044",
+    "081c3340",
+];
 pub static AGBCC_LITERAL_BEFORE_SHIFT_SOURCES: &[&str] = &["080fb670"];
 pub static AGBCC_OPTIMIZE_O1_SOURCES: &[&str] = &[
     "08006878", "08006a00", "08006ba8", "08006c68", "08006cdc", "08006d50", "08006e24", "08006f84",
@@ -294,7 +298,10 @@ pub static AGBCC_NO_REGMOVE_SOURCES: &[&str] = &["08006910"];
 pub static AGBCC_COMPARE_ONLY_AND_TST_SOURCES: &[&str] = &["080f9a50"];
 pub static AGBCC_COMMUTATIVE_COPY_CONSTANT_SOURCES: &[&str] = &["080fa514"];
 pub static AGBCC_PROLOGUE_NEXT_HIGH_REG_SOURCES: &[&str] = &["080fb2cc", "080fb334", "080fb3a8"];
+pub static GS2_AGBCC_PROLOGUE_NEXT_HIGH_REG_SOURCES: &[&str] =
+    &["081c2f68", "081c2fd0", "081c3044"];
 pub static AGBCC_TRACK_NARROW_VALUE_R1_SOURCES: &[&str] = &["080fa280", "080fa4cc"];
+pub static GS2_AGBCC_TRACK_NARROW_VALUE_R1_SOURCES: &[&str] = &["081c2168"];
 
 pub static NO_RERUN_CSE_AFTER_LOOP_SOURCES: &[&str] = &["08006088", "0808c30c", "080ba918"];
 

@@ -1,6 +1,15 @@
 {
   "format": 3,
   "owners": {
-    "main:080132cc": "runtime/constant_zero_result.c"
+    "main:080132cc": "runtime/constant_zero_result.c",
+    "main:081c2168": "audio/fade_music_player.c",
+    "main:081c2640": "audio/enable_pcm_dma.c",
+    "main:081c28e0": "audio/update_track_volume_pitch.c",
+    "main:081c2a3c": "audio/stop_cgb_oscillator.c",
+    "main:081c2a8c": "audio/update_cgb_pan_envelope.c",
+    "main:081c2f68": "audio/music/player/set_volume.c",
+    "main:081c2fd0": "audio/music/player/set_pitch.c",
+    "main:081c3044": "audio/music/player/set_pan.c",
+    "main:081c3340": "audio/music/track/read_wave_pointer.c"
   }
 }

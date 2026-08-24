@@ -197,6 +197,9 @@ typedef int bool;
 #define ParticleEffect_UpdateMotionAndScale Func_0809a65c
 #define BattleEffect_PauseObject Func_0809ad90
 #define BattleEffect_ResumeObject Func_0809ade8
+#define BattleEffect_UpdateObjectVisibilityBounds Func_0809c314
+#define BattleEffect_CleanupResourcesAndWindow Func_0809bcd4
+#define FieldEvent_ShowStatusMessage Func_0809b648
 #define Audio_InitializeRuntimeDefaults Func_080f9438
 #define Graphics_ScaleRgb555 Func_080f6038
 #define Audio_ClearChannelChain Func_080f9a30

@@ -46437,7 +46437,7 @@
     },
     {
       "en_owner": "0809b648",
-      "source": "games/gs1/src/0809b648.c",
+      "source": "games/gs1/src/field/events/show_status_message.c",
       "size": 80,
       "all_exact": true,
       "editions": [
@@ -46773,7 +46773,7 @@
     },
     {
       "en_owner": "0809bcd4",
-      "source": "games/gs1/src/0809bcd4.c",
+      "source": "games/gs1/src/battle/effects/cleanup_resources_and_window.c",
       "size": 36,
       "all_exact": true,
       "editions": [
@@ -46829,7 +46829,7 @@
     },
     {
       "en_owner": "0809c314",
-      "source": "games/gs1/src/0809c314.c",
+      "source": "games/gs1/src/battle/effects/update_object_visibility_bounds.c",
       "size": 144,
       "all_exact": true,
       "editions": [

@@ -16,7 +16,7 @@ void Object_SetPosition(void *, s32, s32, s32);
 void ObjectMotion_ArmCallback(s32 arg0, s32 arg1, s32 arg2);
 void BattleEffect_SpawnBurstParticle(void *, s32);
 void Object_CommitPosition(void *);
-void Func_0809202c(void);
+void BattleEffect_PlayQueuedSound(void);
 
 void BattleEffect_RunRisingObjectSequence(s32 sequence_arg, s32 mode_or_frame, s32 optional_action) {
     s32 next_y;
@@ -72,6 +72,6 @@ wait_for_target_y:
             }
         }
         WaitFrames(2);
-        Func_0809202c();
+        BattleEffect_PlayQueuedSound();
     }
 }

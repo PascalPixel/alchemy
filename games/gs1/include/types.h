@@ -201,6 +201,7 @@ typedef int bool;
 #define UiText_SetRenderString Func_08020b14
 #define UiText_DrawPaddedLabel Func_08020b64
 #define UiRender_LookupNamedValue Func_08019944
+#define Resource_ResetPendingTransfer Func_0801c21c
 #define UiWork_FinalizePending Func_08015140
 #define UiWork_FinalizePendingCore Func_08019a54
 #define UiTimedNotice_Create Func_0801c34c
@@ -524,6 +525,7 @@ typedef int bool;
 #define BattleEffect_GetAnimationValue Func_08091584
 #define BattleEffect_GetResourceId Func_080915ac
 #define BattleEffect_GetFlags Func_080915dc
+#define BattleEffect_PlayQueuedSound Func_0809202c
 #define BattleRuntime_InitializeRenderObject Func_08091660
 #define BattleRuntime_Reset Func_080916b0
 #define Script_SetOrCompareCursor Func_0800e24c

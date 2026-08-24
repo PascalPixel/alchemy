@@ -2,7 +2,7 @@
 #include "global_cells.h"
 
 s32 Resource_ResetEntry(u32 index);
-void Func_0801c21c(void)
+void Resource_ResetPendingTransfer(void)
 {
     u32 offset = 0x30c;
     u8 *work = *(u8 **)ADDR_03001E98 + offset;

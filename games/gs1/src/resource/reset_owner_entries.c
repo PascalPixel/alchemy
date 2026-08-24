@@ -16,7 +16,7 @@ void Func_0801a97c(void);
 void UiWork_Finalize(struct Work *work, s32 release);
 void WaitFrames(u32 value);
 s32 Resource_ResetEntry(u32 index);
-void Func_0801c21c(void);
+void Resource_ResetPendingTransfer(void);
 void Func_08002dd8(u32 value);
 
 void Resource_ResetOwnerEntries(void)
@@ -43,7 +43,7 @@ void Resource_ResetOwnerEntries(void)
         }
         node = node->next;
     }
-    Func_0801c21c();
+    Resource_ResetPendingTransfer();
     if (*(s16 *)(state + 18) != 0) {
         Resource_ResetEntry(*(u16 *)(state + 12));
         if (*(s16 *)(state + 18) != 0) {

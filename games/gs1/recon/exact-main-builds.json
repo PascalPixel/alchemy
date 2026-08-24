@@ -37865,7 +37865,7 @@
     },
     {
       "en_owner": "08092208",
-      "source": "games/gs1/src/08092208.c",
+      "source": "games/gs1/src/object/motion/snap_heading_and_offset.c",
       "size": 132,
       "all_exact": true,
       "editions": [
@@ -38201,7 +38201,7 @@
     },
     {
       "en_owner": "080923e4",
-      "source": "games/gs1/src/080923e4.c",
+      "source": "games/gs1/src/object/motion/set_horizontal_position_with_terrain.c",
       "size": 112,
       "all_exact": true,
       "editions": [
@@ -38257,7 +38257,7 @@
     },
     {
       "en_owner": "08092454",
-      "source": "games/gs1/src/08092454.c",
+      "source": "games/gs1/src/object/motion/set_position_with_terrain.c",
       "size": 128,
       "all_exact": true,
       "editions": [
@@ -38537,7 +38537,7 @@
     },
     {
       "en_owner": "08092560",
-      "source": "games/gs1/src/08092560.c",
+      "source": "games/gs1/src/object/motion/launch.c",
       "size": 60,
       "all_exact": true,
       "editions": [
@@ -38705,7 +38705,7 @@
     },
     {
       "en_owner": "080925e0",
-      "source": "games/gs1/src/080925e0.c",
+      "source": "games/gs1/src/battle/effects/particles/update_linear_motion.c",
       "size": 68,
       "all_exact": true,
       "editions": [
@@ -38985,7 +38985,7 @@
     },
     {
       "en_owner": "08092878",
-      "source": "games/gs1/src/08092878.c",
+      "source": "games/gs1/src/object/link/rotate_pair_toward.c",
       "size": 172,
       "all_exact": true,
       "editions": [
@@ -39321,7 +39321,7 @@
     },
     {
       "en_owner": "08092a74",
-      "source": "games/gs1/src/08092a74.c",
+      "source": "games/gs1/src/object/motion/step_angle.c",
       "size": 64,
       "all_exact": true,
       "editions": [
@@ -39657,7 +39657,7 @@
     },
     {
       "en_owner": "08092ba8",
-      "source": "games/gs1/src/08092ba8.c",
+      "source": "games/gs1/src/object/table/read_active_value.c",
       "size": 56,
       "all_exact": true,
       "editions": [

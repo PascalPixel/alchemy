@@ -3,7 +3,7 @@
 void Object_ResetMotion(struct ObjectRuntime *);
 s32 Func_080091a8(u8, s32, s32);
 
-void Func_08092454(u32 object_id, s32 x, s32 y, s32 z)
+void ObjectMotion_SetPositionWithTerrain(u32 object_id, s32 x, s32 y, s32 z)
 {
     struct ObjectRuntime *object;
     s32 terrain_height;

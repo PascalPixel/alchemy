@@ -1,11 +1,11 @@
 #include "types.h"
 
-u8 *Func_08077330(s32);
+u8 *Trade_GetOfferState(s32);
 
 s32 Func_0807a550(u8 *counts)
 {
     s32 found = 0;
-    u8 *base = Func_08077330(0);
+    u8 *base = Trade_GetOfferState(0);
     u8 *entry = base + 8;
     s32 index;
 

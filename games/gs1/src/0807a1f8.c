@@ -21,7 +21,7 @@ struct TradeOfferTable {
 };
 
 struct OwnerTradeState *Owner_GetState(s32 owner);
-u8 *Func_08077330(s32 which);
+u8 *Trade_GetOfferState(s32 which);
 
 s32 Func_0807a1f8(s32 owner, s32 index, s32 bit)
 {
@@ -41,7 +41,7 @@ s32 Func_0807a1f8(s32 owner, s32 index, s32 bit)
     if ((state->pledged[index] & (1 << bit)) != 0)
         return 0;
 
-    table = (struct TradeOfferTable *)(Func_08077330((u32)owner > 7) + 8);
+    table = (struct TradeOfferTable *)(Trade_GetOfferState((u32)owner > 7) + 8);
     for (i = 0; i < table->count; i++) {
         if (index == table->offers[i].index && bit == table->offers[i].bit)
             break;

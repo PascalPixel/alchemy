@@ -4,7 +4,7 @@
 
 s32 Func_080798b4();
 
-s32 Func_08079c8c(void) {
+s32 Item_GetEquippedElement(void) {
     struct ItemDefinition *item;
     void *owner;
 

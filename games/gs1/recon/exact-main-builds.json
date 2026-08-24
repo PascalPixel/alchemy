@@ -25824,7 +25824,7 @@
     },
     {
       "en_owner": "08077330",
-      "source": "games/gs1/src/08077330.c",
+      "source": "games/gs1/src/trade/get_offer_state.c",
       "size": 24,
       "all_exact": true,
       "editions": [
@@ -25880,7 +25880,7 @@
     },
     {
       "en_owner": "08077348",
-      "source": "games/gs1/src/08077348.c",
+      "source": "games/gs1/src/party/get_average_level.c",
       "size": 76,
       "all_exact": true,
       "editions": [
@@ -26048,7 +26048,7 @@
     },
     {
       "en_owner": "08077c10",
-      "source": "games/gs1/src/08077c10.c",
+      "source": "games/gs1/src/game_flags/refresh_lure_cap.c",
       "size": 168,
       "all_exact": true,
       "editions": [
@@ -26104,7 +26104,7 @@
     },
     {
       "en_owner": "08077cb8",
-      "source": "games/gs1/src/08077cb8.c",
+      "source": "games/gs1/src/runtime/get_build_stamp_time.c",
       "size": 128,
       "all_exact": true,
       "editions": [
@@ -28400,7 +28400,7 @@
     },
     {
       "en_owner": "08079008",
-      "source": "games/gs1/src/08079008.c",
+      "source": "games/gs1/src/owner/get_level_threshold.c",
       "size": 84,
       "all_exact": true,
       "editions": [
@@ -29184,7 +29184,7 @@
     },
     {
       "en_owner": "0807961c",
-      "source": "games/gs1/src/0807961c.c",
+      "source": "games/gs1/src/party/add_active_owner.c",
       "size": 72,
       "all_exact": true,
       "editions": [
@@ -29240,7 +29240,7 @@
     },
     {
       "en_owner": "08079664",
-      "source": "games/gs1/src/08079664.c",
+      "source": "games/gs1/src/party/remove_active_owner.c",
       "size": 96,
       "all_exact": true,
       "editions": [
@@ -30304,7 +30304,7 @@
     },
     {
       "en_owner": "08079c8c",
-      "source": "games/gs1/src/08079c8c.c",
+      "source": "games/gs1/src/item/get_equipped_element.c",
       "size": 48,
       "all_exact": true,
       "editions": [

@@ -165,5 +165,10 @@ typedef int bool;
 #define ObjectMotion_ArmCallback Func_08092adc
 #define ObjectVisual_CopyAttributes Func_08092b54
 #define ObjectTable_FindActiveByValue Func_08092be0
+#define Audio_InitializeRuntimeDefaults Func_080f9438
+#define Graphics_ScaleRgb555 Func_080f6038
+#define Audio_ClearChannelChain Func_080f9a30
+#define MusicTrack_Finish Func_080f9a50
+#define Audio_DummyCallback Func_080fb790
 
 #endif

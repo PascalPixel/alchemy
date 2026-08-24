@@ -6,21 +6,17 @@ void *Object_Spawn(s32, s32, s32, s32);
 void Object_SetMode(void *, s32);
 void WaitFrames(s32);
 
-void *Func_0809a3c4(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+void *SpawnItemBreakEffectMode3(s32 x, s32 y, s32 z, s32 angle) {
     u8 *obj;
     s32 v;
-    s32 zero;
 
     Audio_PlayCue(SOUND_ITEM_BREAK);
-    obj = Object_Spawn(215, arg0, arg1, arg2);
+    obj = Object_Spawn(215, x, y, z);
     if (obj != NULL) {
-        *(s32 *)(obj + 0x1C) = 0x4000;
-        *(s32 *)(obj + 0x18) = 0x4000;
-        *(s32 *)(obj + 0x30) = 0x30000;
-        *(s32 *)(obj + 0x34) = 0x30000;
-        zero = 0;
-        *(s8 *)(obj + 0x5A) = zero;
-        Object_SetMode(obj, 1);
+        *(s32 *)(obj + 0x18) = *(s32 *)(obj + 0x1C) = 0x4000;
+        *(s32 *)(obj + 0x34) = *(s32 *)(obj + 0x30) = 0x30000;
+        *(s8 *)(*(u8 **)(obj + 0x50) + 9) &= ~0xC;
+        Object_SetMode(obj, 3);
         v = *(s32 *)(obj + 0x18);
         if (v < 0x10000) {
             do {
@@ -32,7 +28,7 @@ void *Func_0809a3c4(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
                 v = *(s32 *)(obj + 0x18);
             } while (v <= 0xFFFF);
         }
-        *(u16 *)(obj + 6) = (u16) arg3;
+        *(u16 *)(obj + 6) = (u16)angle;
     }
     return obj;
 }

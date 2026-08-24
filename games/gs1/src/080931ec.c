@@ -8,7 +8,7 @@ struct Runtime_080931ec {
 extern struct Runtime_080931ec *Data_03001ebc;
 extern volatile u32 Data_03001c94;
 
-s32 Func_08092ba8(s32);
+s32 ObjectTable_ReadActiveValue(s32);
 s32 Func_080915ac(u32);
 s32 UiWork_Create(s32, s32, s32, s32);
 s32 Func_080150f8(s32, s32, s32, s32);
@@ -24,8 +24,8 @@ void Func_080931ec(
     s32 second_arg, s32 second_extra)
 {
     struct Runtime_080931ec *runtime = Data_03001ebc;
-    s32 first_id = Func_08092ba8(first);
-    s32 second_id = Func_08092ba8(second);
+    s32 first_id = ObjectTable_ReadActiveValue(first);
+    s32 second_id = ObjectTable_ReadActiveValue(second);
     s32 first_handle;
     s32 second_handle;
 

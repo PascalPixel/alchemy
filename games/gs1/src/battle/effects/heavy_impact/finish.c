@@ -47,7 +47,7 @@ void BattleEffect_FinishHeavyImpact(s32 arg)
         (*((s32 *)(((s8 *)ctx) + 0x6C))) = 0x0809592D;
         WaitFrames(0x28);
         Audio_PlayCue(0x99);
-        Func_08092560(id, 0xC, 0x16);
+        ObjectMotion_Launch(id, 0xC, 0x16);
         pos.x = ((s32)(*((s32 *)(((s8 *)ctx) + 8))));
         pos.y = ((s32)(*((s32 *)(((s8 *)ctx) + 0xC))));
         pos.z = ((s32)(*((s32 *)(zptr = (((s8 *)ctx) + 0x10)))));

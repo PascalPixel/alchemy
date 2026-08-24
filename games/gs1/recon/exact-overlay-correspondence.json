@@ -5,12 +5,12 @@
   "base_edition": "ja",
   "source_state": "byte-exact overlay C",
   "resources_total": 96,
-  "owners_total": 2502,
-  "owner_symbol_bytes": 192720,
-  "matched_owners": 2465,
-  "matched_bytes": 189646,
-  "shared_core_owners": 2459,
-  "shared_core_bytes": 188386,
+  "owners_total": 2507,
+  "owner_symbol_bytes": 193860,
+  "matched_owners": 2470,
+  "matched_bytes": 190786,
+  "shared_core_owners": 2464,
+  "shared_core_bytes": 189526,
   "regional_core_owners": 6,
   "regional_core_bytes": 1260,
   "unresolved_owners": 37,
@@ -25,55 +25,55 @@
   "editions": [
     {
       "edition": "ja",
-      "matched_owners": 2465,
-      "matched_bytes": 189646,
-      "core_identical_owners": 2465,
-      "core_identical_bytes": 189646,
+      "matched_owners": 2470,
+      "matched_bytes": 190786,
+      "core_identical_owners": 2470,
+      "core_identical_bytes": 190786,
       "core_different_owners": 0,
       "core_different_bytes": 0
     },
     {
       "edition": "en",
-      "matched_owners": 2465,
-      "matched_bytes": 189646,
-      "core_identical_owners": 2460,
-      "core_identical_bytes": 188694,
+      "matched_owners": 2470,
+      "matched_bytes": 190786,
+      "core_identical_owners": 2465,
+      "core_identical_bytes": 189834,
       "core_different_owners": 5,
       "core_different_bytes": 952
     },
     {
       "edition": "de",
-      "matched_owners": 2465,
-      "matched_bytes": 189646,
-      "core_identical_owners": 2460,
-      "core_identical_bytes": 188694,
+      "matched_owners": 2470,
+      "matched_bytes": 190786,
+      "core_identical_owners": 2465,
+      "core_identical_bytes": 189834,
       "core_different_owners": 5,
       "core_different_bytes": 952
     },
     {
       "edition": "es",
-      "matched_owners": 2465,
-      "matched_bytes": 189646,
-      "core_identical_owners": 2459,
-      "core_identical_bytes": 188386,
+      "matched_owners": 2470,
+      "matched_bytes": 190786,
+      "core_identical_owners": 2464,
+      "core_identical_bytes": 189526,
       "core_different_owners": 6,
       "core_different_bytes": 1260
     },
     {
       "edition": "fr",
-      "matched_owners": 2465,
-      "matched_bytes": 189646,
-      "core_identical_owners": 2459,
-      "core_identical_bytes": 188386,
+      "matched_owners": 2470,
+      "matched_bytes": 190786,
+      "core_identical_owners": 2464,
+      "core_identical_bytes": 189526,
       "core_different_owners": 6,
       "core_different_bytes": 1260
     },
     {
       "edition": "it",
-      "matched_owners": 2465,
-      "matched_bytes": 189646,
-      "core_identical_owners": 2459,
-      "core_identical_bytes": 188386,
+      "matched_owners": 2470,
+      "matched_bytes": 190786,
+      "core_identical_owners": 2464,
+      "core_identical_bytes": 189526,
       "core_different_owners": 6,
       "core_different_bytes": 1260
     }
@@ -28048,6 +28048,38 @@
       }
     },
     {
+      "en_owner": "resource_398:0x020004b4",
+      "source": "games/gs1/src/overlays/scene_setup/run_guarded_scene_setup.c",
+      "resource": "resource_398",
+      "size": 52,
+      "core_bytes": 36,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x020004b4",
+        "en": "0x020004b4",
+        "es": "0x020004b4",
+        "fr": "0x020004b4",
+        "it": "0x020004b4",
+        "ja": "0x020004b4"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
       "en_owner": "resource_398:0x020004e8",
       "source": "games/gs1/src/unidentified/overlays/state_update/state_update_0208.c",
       "resource": "resource_398",
@@ -43133,6 +43165,38 @@
         "fr": "0x02000c50",
         "it": "0x02000c50",
         "ja": "0x02000c50"
+      },
+      "location_methods": {
+        "de": "global_thumb_anchor",
+        "en": "source",
+        "es": "global_thumb_anchor",
+        "fr": "global_thumb_anchor",
+        "it": "global_thumb_anchor",
+        "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
+      "en_owner": "resource_3a7:0x02001158",
+      "source": "games/gs1/src/runtime/soft_float/add_parts.c",
+      "resource": "resource_3a7",
+      "size": 596,
+      "core_bytes": 552,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02001158",
+        "en": "0x02001158",
+        "es": "0x02001158",
+        "fr": "0x02001158",
+        "it": "0x02001158",
+        "ja": "0x02001158"
       },
       "location_methods": {
         "de": "global_thumb_anchor",
@@ -59408,6 +59472,38 @@
       }
     },
     {
+      "en_owner": "resource_3ba:0x02001c7c",
+      "source": "games/gs1/src/overlays/party/run_party_count_interaction.c",
+      "resource": "resource_3ba",
+      "size": 164,
+      "core_bytes": 88,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02001c7c",
+        "en": "0x02001c7c",
+        "es": "0x02001c7c",
+        "fr": "0x02001c7c",
+        "it": "0x02001c7c",
+        "ja": "0x02001c7c"
+      },
+      "location_methods": {
+        "de": "neighbor_exact",
+        "en": "source",
+        "es": "neighbor_exact",
+        "fr": "neighbor_exact",
+        "it": "neighbor_exact",
+        "ja": "neighbor_exact"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
       "en_owner": "resource_3ba:0x02001d20",
       "source": "games/gs1/src/unidentified/overlays/leaf/leaf_0286.c",
       "resource": "resource_3ba",
@@ -61189,6 +61285,38 @@
         "fr": "global_thumb_anchor",
         "it": "global_thumb_anchor",
         "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
+      "en_owner": "resource_3bb:0x02001f14",
+      "source": "games/gs1/src/overlays/party/run_party_count_interaction_copy_a.c",
+      "resource": "resource_3bb",
+      "size": 164,
+      "core_bytes": 88,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x02001f14",
+        "en": "0x02001f14",
+        "es": "0x02001f14",
+        "fr": "0x02001f14",
+        "it": "0x02001f14",
+        "ja": "0x02001f14"
+      },
+      "location_methods": {
+        "de": "neighbor_exact",
+        "en": "source",
+        "es": "neighbor_exact",
+        "fr": "neighbor_exact",
+        "it": "neighbor_exact",
+        "ja": "neighbor_exact"
       },
       "core_diff_bytes_from_ja": {
         "de": 0,
@@ -63173,6 +63301,38 @@
         "fr": "global_thumb_anchor",
         "it": "global_thumb_anchor",
         "ja": "global_thumb_anchor"
+      },
+      "core_diff_bytes_from_ja": {
+        "de": 0,
+        "en": 0,
+        "es": 0,
+        "fr": 0,
+        "it": 0,
+        "ja": 0
+      }
+    },
+    {
+      "en_owner": "resource_3bc:0x020029ac",
+      "source": "games/gs1/src/overlays/party/run_party_count_interaction_copy_b.c",
+      "resource": "resource_3bc",
+      "size": 164,
+      "core_bytes": 88,
+      "status": "shared_core",
+      "starts": {
+        "de": "0x020029ac",
+        "en": "0x020029ac",
+        "es": "0x020029a4",
+        "fr": "0x020029a4",
+        "it": "0x020029a4",
+        "ja": "0x020029ac"
+      },
+      "location_methods": {
+        "de": "neighbor_exact",
+        "en": "source",
+        "es": "neighbor_exact",
+        "fr": "neighbor_exact",
+        "it": "neighbor_exact",
+        "ja": "neighbor_exact"
       },
       "core_diff_bytes_from_ja": {
         "de": 0,

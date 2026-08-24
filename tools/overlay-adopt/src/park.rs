@@ -202,7 +202,7 @@ fn audit_multi_register_evidence(root: &Path, overlays: &[String]) -> Result<Vec
     }
     Ok(findings)
 }
-fn placeholder_block(lines: &[&str], address: i64) -> Option<(usize, usize, i64)> {
+pub(crate) fn placeholder_block(lines: &[&str], address: i64) -> Option<(usize, usize, i64)> {
     let tag = format!("AlchemyC_{address:08x}:");
     let start = lines.iter().position(|line| line.trim() == tag)?;
     let mut end = start + 1;

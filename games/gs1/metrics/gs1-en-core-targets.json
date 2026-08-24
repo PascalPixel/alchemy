@@ -13,14 +13,14 @@
     "executable_bytes": 1348188,
     "audited_address_spaces": 97,
     "address_spaces_with_targets": 87,
-    "target_count": 1688,
-    "target_scope_bytes": 831854,
-    "target_bytes": 673436,
+    "target_count": 1686,
+    "target_scope_bytes": 831694,
+    "target_bytes": 673276,
     "tracked_c_bytes": 44006,
-    "assembly_bytes": 629430,
+    "assembly_bytes": 629270,
     "exact_c_leverage_bytes": 65810,
     "permanent_assembly_leverage_bytes": 92608,
-    "resolved_only_bytes": 516334
+    "resolved_only_bytes": 516494
   },
   "targets": [
     {
@@ -6253,18 +6253,6 @@
     },
     {
       "rank": 520,
-      "namespace": "resource_385",
-      "address": "0x02000350",
-      "label": "385 · byte-exact assembly 0x02000350–0x02000498",
-      "scope_bytes": 328,
-      "target_bytes": 328,
-      "tracked_c_bytes": 0,
-      "assembly_bytes": 328,
-      "exact_c_leverage_bytes": 0,
-      "permanent_assembly_bytes": 0
-    },
-    {
-      "rank": 521,
       "namespace": "resource_3b1",
       "address": "0x0200366c",
       "label": "3b1 · byte-exact assembly 0x0200366c–0x020037b4",
@@ -6276,7 +6264,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 522,
+      "rank": 521,
       "namespace": "resource_3c0",
       "address": "0x02000d14",
       "label": "3c0 · byte-exact assembly 0x02000d14–0x02000e5c",
@@ -6288,7 +6276,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 523,
+      "rank": 522,
       "namespace": "resource_38d",
       "address": "0x02000568",
       "label": "38d · byte-exact assembly 0x02000568–0x020006ae",
@@ -6300,7 +6288,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 524,
+      "rank": 523,
       "namespace": "resource_39a",
       "address": "0x020017e0",
       "label": "39a · byte-exact assembly 0x020017e0–0x02001926",
@@ -6312,7 +6300,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 525,
+      "rank": 524,
       "namespace": "resource_3b2",
       "address": "0x02002700",
       "label": "3b2 · byte-exact assembly 0x02002700–0x02002846",
@@ -6324,7 +6312,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 526,
+      "rank": 525,
       "namespace": "main",
       "address": "0x0807a350",
       "label": "0x0807a350–0x0807a496",
@@ -6336,7 +6324,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 527,
+      "rank": 526,
       "namespace": "resource_371",
       "address": "0x02001e2c",
       "label": "371 · byte-exact assembly 0x02001e2c–0x02001f6a",
@@ -6348,7 +6336,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 528,
+      "rank": 527,
       "namespace": "resource_372",
       "address": "0x02000f38",
       "label": "372 · byte-exact assembly 0x02000f38–0x02001076",
@@ -6360,7 +6348,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 529,
+      "rank": 528,
       "namespace": "resource_378",
       "address": "0x0200074c",
       "label": "378 · byte-exact assembly 0x0200074c–0x0200088a",
@@ -6372,7 +6360,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 530,
+      "rank": 529,
       "namespace": "resource_396",
       "address": "0x02000334",
       "label": "396 · byte-exact assembly 0x02000334–0x02000472",
@@ -6384,7 +6372,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 531,
+      "rank": 530,
       "namespace": "resource_3a7",
       "address": "0x02000170",
       "label": "3a7 · byte-exact assembly 0x02000170–0x020002ae",
@@ -6396,7 +6384,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 532,
+      "rank": 531,
       "namespace": "resource_3ae",
       "address": "0x02000944",
       "label": "3ae · byte-exact assembly 0x02000944–0x02000a82",
@@ -6408,7 +6396,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 533,
+      "rank": 532,
       "namespace": "resource_3bc",
       "address": "0x0200004c",
       "label": "3bc · byte-exact assembly 0x0200004c–0x02000188",
@@ -6420,7 +6408,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 534,
+      "rank": 533,
       "namespace": "main",
       "address": "0x080a1e38",
       "label": "0x080a1e38–0x080a1f72",
@@ -6432,7 +6420,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 535,
+      "rank": 534,
       "namespace": "resource_39d",
       "address": "0x02002f18",
       "label": "39d · byte-exact assembly 0x02002f18–0x02003052",
@@ -6444,7 +6432,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 536,
+      "rank": 535,
       "namespace": "resource_3a0",
       "address": "0x02000d0c",
       "label": "3a0 · byte-exact assembly 0x02000d0c–0x02000e46",
@@ -6456,7 +6444,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 537,
+      "rank": 536,
       "namespace": "resource_3a7",
       "address": "0x02000f08",
       "label": "3a7 · byte-exact assembly 0x02000f08–0x02001042",
@@ -6468,7 +6456,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 538,
+      "rank": 537,
       "namespace": "resource_3ab",
       "address": "0x0200049c",
       "label": "3ab · byte-exact assembly 0x0200049c–0x020005d6",
@@ -6480,7 +6468,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 539,
+      "rank": 538,
       "namespace": "resource_3b8",
       "address": "0x02003e40",
       "label": "3b8 · byte-exact assembly 0x02003e40–0x02003f7a",
@@ -6492,7 +6480,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 540,
+      "rank": 539,
       "namespace": "resource_3cb",
       "address": "0x0200106c",
       "label": "3cb · byte-exact assembly 0x0200106c–0x020011a6",
@@ -6504,7 +6492,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 541,
+      "rank": 540,
       "namespace": "resource_373",
       "address": "0x020008a4",
       "label": "373 · byte-exact assembly 0x020008a4–0x020009dc",
@@ -6516,7 +6504,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 542,
+      "rank": 541,
       "namespace": "resource_378",
       "address": "0x020027d4",
       "label": "378 · byte-exact assembly 0x020027d4–0x0200290c",
@@ -6528,7 +6516,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 543,
+      "rank": 542,
       "namespace": "resource_389",
       "address": "0x020008a4",
       "label": "389 · byte-exact assembly 0x020008a4–0x020009dc",
@@ -6540,7 +6528,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 544,
+      "rank": 543,
       "namespace": "resource_391",
       "address": "0x020008a4",
       "label": "391 · byte-exact assembly 0x020008a4–0x020009dc",
@@ -6552,7 +6540,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 545,
+      "rank": 544,
       "namespace": "resource_392",
       "address": "0x020008a4",
       "label": "392 · byte-exact assembly 0x020008a4–0x020009dc",
@@ -6564,7 +6552,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 546,
+      "rank": 545,
       "namespace": "resource_393",
       "address": "0x020008a4",
       "label": "393 · byte-exact assembly 0x020008a4–0x020009dc",
@@ -6576,7 +6564,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 547,
+      "rank": 546,
       "namespace": "resource_39c",
       "address": "0x02000b88",
       "label": "39c · byte-exact assembly 0x02000b88–0x02000cc0",
@@ -6588,7 +6576,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 548,
+      "rank": 547,
       "namespace": "resource_39f",
       "address": "0x020008a4",
       "label": "39f · byte-exact assembly 0x020008a4–0x020009dc",
@@ -6600,7 +6588,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 549,
+      "rank": 548,
       "namespace": "resource_3a5",
       "address": "0x02000cc8",
       "label": "3a5 · byte-exact assembly 0x02000cc8–0x02000e00",
@@ -6612,7 +6600,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 550,
+      "rank": 549,
       "namespace": "resource_3a6",
       "address": "0x02000b88",
       "label": "3a6 · byte-exact assembly 0x02000b88–0x02000cc0",
@@ -6624,7 +6612,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 551,
+      "rank": 550,
       "namespace": "resource_3b2",
       "address": "0x020008a4",
       "label": "3b2 · byte-exact assembly 0x020008a4–0x020009dc",
@@ -6636,7 +6624,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 552,
+      "rank": 551,
       "namespace": "resource_3b4",
       "address": "0x020008a4",
       "label": "3b4 · byte-exact assembly 0x020008a4–0x020009dc",
@@ -6648,7 +6636,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 553,
+      "rank": 552,
       "namespace": "resource_3bd",
       "address": "0x020008a4",
       "label": "3bd · byte-exact assembly 0x020008a4–0x020009dc",
@@ -6660,7 +6648,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 554,
+      "rank": 553,
       "namespace": "resource_3be",
       "address": "0x02000b88",
       "label": "3be · byte-exact assembly 0x02000b88–0x02000cc0",
@@ -6672,7 +6660,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 555,
+      "rank": 554,
       "namespace": "resource_3bf",
       "address": "0x020008a4",
       "label": "3bf · byte-exact assembly 0x020008a4–0x020009dc",
@@ -6684,7 +6672,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 556,
+      "rank": 555,
       "namespace": "resource_3c4",
       "address": "0x020008a4",
       "label": "3c4 · byte-exact assembly 0x020008a4–0x020009dc",
@@ -6696,7 +6684,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 557,
+      "rank": 556,
       "namespace": "resource_3c5",
       "address": "0x020008a4",
       "label": "3c5 · byte-exact assembly 0x020008a4–0x020009dc",
@@ -6708,7 +6696,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 558,
+      "rank": 557,
       "namespace": "resource_37f",
       "address": "0x02000420",
       "label": "37f · byte-exact assembly 0x02000420–0x02000556",
@@ -6720,7 +6708,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 559,
+      "rank": 558,
       "namespace": "resource_39e",
       "address": "0x02000518",
       "label": "39e · byte-exact assembly 0x02000518–0x0200064a",
@@ -6732,7 +6720,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 560,
+      "rank": 559,
       "namespace": "resource_3af",
       "address": "0x02002284",
       "label": "3af · byte-exact assembly 0x02002284–0x020023b6",
@@ -6744,7 +6732,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 561,
+      "rank": 560,
       "namespace": "resource_3c0",
       "address": "0x02000be0",
       "label": "3c0 · byte-exact assembly 0x02000be0–0x02000d12",
@@ -6756,7 +6744,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 562,
+      "rank": 561,
       "namespace": "resource_3c3",
       "address": "0x02000124",
       "label": "3c3 · byte-exact assembly 0x02000124–0x02000256",
@@ -6768,7 +6756,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 563,
+      "rank": 562,
       "namespace": "resource_399",
       "address": "0x02001df4",
       "label": "399 · byte-exact assembly 0x02001df4–0x02001f24",
@@ -6780,7 +6768,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 564,
+      "rank": 563,
       "namespace": "resource_3bf",
       "address": "0x0200138c",
       "label": "3bf · byte-exact assembly 0x0200138c–0x020014bc",
@@ -6792,7 +6780,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 565,
+      "rank": 564,
       "namespace": "resource_3a7",
       "address": "0x02000754",
       "label": "3a7 · byte-exact assembly 0x02000754–0x02000882",
@@ -6804,7 +6792,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 566,
+      "rank": 565,
       "namespace": "resource_3b4",
       "address": "0x02002318",
       "label": "3b4 · byte-exact assembly 0x02002318–0x02002446",
@@ -6816,7 +6804,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 567,
+      "rank": 566,
       "namespace": "main",
       "address": "0x08078ed8",
       "label": "0x08078ed8–0x08079006",
@@ -6828,7 +6816,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 568,
+      "rank": 567,
       "namespace": "resource_3ad",
       "address": "0x02000210",
       "label": "3ad · byte-exact assembly 0x02000210–0x0200033c",
@@ -6840,7 +6828,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 569,
+      "rank": 568,
       "namespace": "resource_3a4",
       "address": "0x0200247c",
       "label": "3a4 · byte-exact assembly 0x0200247c–0x020025a6",
@@ -6852,7 +6840,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 570,
+      "rank": 569,
       "namespace": "resource_3b1",
       "address": "0x02001144",
       "label": "3b1 · byte-exact assembly 0x02001144–0x0200126e",
@@ -6864,7 +6852,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 571,
+      "rank": 570,
       "namespace": "resource_3bf",
       "address": "0x02005324",
       "label": "3bf · byte-exact assembly 0x02005324–0x0200544e",
@@ -6876,7 +6864,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 572,
+      "rank": 571,
       "namespace": "resource_3c8",
       "address": "0x020009c8",
       "label": "3c8 · byte-exact assembly 0x020009c8–0x02000af2",
@@ -6888,7 +6876,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 573,
+      "rank": 572,
       "namespace": "resource_373",
       "address": "0x0200034c",
       "label": "373 · byte-exact assembly 0x0200034c–0x02000474",
@@ -6900,7 +6888,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 574,
+      "rank": 573,
       "namespace": "resource_382",
       "address": "0x020004a0",
       "label": "382 · byte-exact assembly 0x020004a0–0x020005c8",
@@ -6912,7 +6900,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 575,
+      "rank": 574,
       "namespace": "resource_389",
       "address": "0x0200034c",
       "label": "389 · byte-exact assembly 0x0200034c–0x02000474",
@@ -6924,7 +6912,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 576,
+      "rank": 575,
       "namespace": "resource_391",
       "address": "0x0200034c",
       "label": "391 · byte-exact assembly 0x0200034c–0x02000474",
@@ -6936,7 +6924,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 577,
+      "rank": 576,
       "namespace": "resource_392",
       "address": "0x0200034c",
       "label": "392 · byte-exact assembly 0x0200034c–0x02000474",
@@ -6948,7 +6936,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 578,
+      "rank": 577,
       "namespace": "resource_393",
       "address": "0x0200034c",
       "label": "393 · byte-exact assembly 0x0200034c–0x02000474",
@@ -6960,7 +6948,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 579,
+      "rank": 578,
       "namespace": "resource_39f",
       "address": "0x0200034c",
       "label": "39f · byte-exact assembly 0x0200034c–0x02000474",
@@ -6972,7 +6960,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 580,
+      "rank": 579,
       "namespace": "resource_3b2",
       "address": "0x0200034c",
       "label": "3b2 · byte-exact assembly 0x0200034c–0x02000474",
@@ -6984,7 +6972,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 581,
+      "rank": 580,
       "namespace": "resource_3b4",
       "address": "0x0200034c",
       "label": "3b4 · byte-exact assembly 0x0200034c–0x02000474",
@@ -6996,7 +6984,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 582,
+      "rank": 581,
       "namespace": "resource_3b4",
       "address": "0x02001798",
       "label": "3b4 · byte-exact assembly 0x02001798–0x020018c0",
@@ -7008,7 +6996,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 583,
+      "rank": 582,
       "namespace": "resource_3bd",
       "address": "0x0200034c",
       "label": "3bd · byte-exact assembly 0x0200034c–0x02000474",
@@ -7020,7 +7008,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 584,
+      "rank": 583,
       "namespace": "resource_3bf",
       "address": "0x0200034c",
       "label": "3bf · byte-exact assembly 0x0200034c–0x02000474",
@@ -7032,7 +7020,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 585,
+      "rank": 584,
       "namespace": "resource_3c4",
       "address": "0x0200034c",
       "label": "3c4 · byte-exact assembly 0x0200034c–0x02000474",
@@ -7044,7 +7032,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 586,
+      "rank": 585,
       "namespace": "resource_3c5",
       "address": "0x0200034c",
       "label": "3c5 · byte-exact assembly 0x0200034c–0x02000474",
@@ -7056,7 +7044,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 587,
+      "rank": 586,
       "namespace": "resource_3af",
       "address": "0x020011a0",
       "label": "3af · byte-exact assembly 0x020011a0–0x020012c6",
@@ -7068,7 +7056,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 588,
+      "rank": 587,
       "namespace": "resource_3b2",
       "address": "0x020024c8",
       "label": "3b2 · byte-exact assembly 0x020024c8–0x020025ee",
@@ -7080,7 +7068,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 589,
+      "rank": 588,
       "namespace": "main",
       "address": "0x080c0eec",
       "label": "0x080c0eec–0x080c1012",
@@ -7092,7 +7080,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 590,
+      "rank": 589,
       "namespace": "resource_37f",
       "address": "0x020007d0",
       "label": "37f · byte-exact assembly 0x020007d0–0x020008f4",
@@ -7104,7 +7092,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 591,
+      "rank": 590,
       "namespace": "resource_39b",
       "address": "0x02001ec4",
       "label": "39b · byte-exact assembly 0x02001ec4–0x02001fe8",
@@ -7116,7 +7104,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 592,
+      "rank": 591,
       "namespace": "resource_39c",
       "address": "0x02005454",
       "label": "39c · byte-exact assembly 0x02005454–0x02005578",
@@ -7128,7 +7116,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 593,
+      "rank": 592,
       "namespace": "resource_3a6",
       "address": "0x020014a8",
       "label": "3a6 · byte-exact assembly 0x020014a8–0x020015cc",
@@ -7140,7 +7128,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 594,
+      "rank": 593,
       "namespace": "resource_371",
       "address": "0x0200165c",
       "label": "371 · byte-exact assembly 0x0200165c–0x0200177e",
@@ -7152,7 +7140,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 595,
+      "rank": 594,
       "namespace": "resource_399",
       "address": "0x02001790",
       "label": "399 · byte-exact assembly 0x02001790–0x020018b2",
@@ -7164,7 +7152,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 596,
+      "rank": 595,
       "namespace": "resource_39c",
       "address": "0x02002e34",
       "label": "39c · byte-exact assembly 0x02002e34–0x02002f56",
@@ -7176,7 +7164,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 597,
+      "rank": 596,
       "namespace": "resource_373",
       "address": "0x02005474",
       "label": "373 · byte-exact assembly 0x02005474–0x02005594",
@@ -7188,7 +7176,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 598,
+      "rank": 597,
       "namespace": "resource_3a6",
       "address": "0x02001258",
       "label": "3a6 · byte-exact assembly 0x02001258–0x02001378",
@@ -7200,7 +7188,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 599,
+      "rank": 598,
       "namespace": "resource_3bc",
       "address": "0x02000c50",
       "label": "3bc · byte-exact assembly 0x02000c50–0x02000d70",
@@ -7212,7 +7200,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 600,
+      "rank": 599,
       "namespace": "resource_3b9",
       "address": "0x02000334",
       "label": "3b9 · byte-exact assembly 0x02000334–0x02000452",
@@ -7224,7 +7212,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 601,
+      "rank": 600,
       "namespace": "resource_37a",
       "address": "0x02001264",
       "label": "37a · byte-exact assembly 0x02001264–0x02001380",
@@ -7236,7 +7224,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 602,
+      "rank": 601,
       "namespace": "resource_3c4",
       "address": "0x020010c4",
       "label": "3c4 · byte-exact assembly 0x020010c4–0x020011e0",
@@ -7248,7 +7236,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 603,
+      "rank": 602,
       "namespace": "resource_39f",
       "address": "0x020015d0",
       "label": "39f · byte-exact assembly 0x020015d0–0x020016ea",
@@ -7260,7 +7248,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 604,
+      "rank": 603,
       "namespace": "resource_3a4",
       "address": "0x02003484",
       "label": "3a4 · byte-exact assembly 0x02003484–0x0200359e",
@@ -7272,7 +7260,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 605,
+      "rank": 604,
       "namespace": "resource_39f",
       "address": "0x02000d90",
       "label": "39f · byte-exact assembly 0x02000d90–0x02000ea8",
@@ -7284,7 +7272,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 606,
+      "rank": 605,
       "namespace": "resource_372",
       "address": "0x02001348",
       "label": "372 · byte-exact assembly 0x02001348–0x0200145e",
@@ -7296,7 +7284,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 607,
+      "rank": 606,
       "namespace": "resource_3a4",
       "address": "0x020008cc",
       "label": "3a4 · byte-exact assembly 0x020008cc–0x020009e2",
@@ -7308,7 +7296,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 608,
+      "rank": 607,
       "namespace": "resource_374",
       "address": "0x020004d4",
       "label": "374 · byte-exact assembly 0x020004d4–0x020005e8",
@@ -7320,7 +7308,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 609,
+      "rank": 608,
       "namespace": "resource_3ba",
       "address": "0x02000840",
       "label": "3ba · byte-exact assembly 0x02000840–0x02000954",
@@ -7332,7 +7320,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 610,
+      "rank": 609,
       "namespace": "resource_3bb",
       "address": "0x02000a1c",
       "label": "3bb · byte-exact assembly 0x02000a1c–0x02000b30",
@@ -7344,7 +7332,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 611,
+      "rank": 610,
       "namespace": "resource_378",
       "address": "0x02003098",
       "label": "378 · byte-exact assembly 0x02003098–0x020031aa",
@@ -7356,7 +7344,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 612,
+      "rank": 611,
       "namespace": "resource_3a3",
       "address": "0x0200069c",
       "label": "3a3 · byte-exact assembly 0x0200069c–0x020007ae",
@@ -7368,7 +7356,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 613,
+      "rank": 612,
       "namespace": "resource_3b2",
       "address": "0x02002984",
       "label": "3b2 · byte-exact assembly 0x02002984–0x02002a96",
@@ -7380,7 +7368,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 614,
+      "rank": 613,
       "namespace": "resource_3bf",
       "address": "0x02001528",
       "label": "3bf · byte-exact assembly 0x02001528–0x0200163a",
@@ -7392,7 +7380,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 615,
+      "rank": 614,
       "namespace": "resource_3c0",
       "address": "0x020009b4",
       "label": "3c0 · byte-exact assembly 0x020009b4–0x02000ac6",
@@ -7404,7 +7392,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 616,
+      "rank": 615,
       "namespace": "resource_3a4",
       "address": "0x02002a48",
       "label": "3a4 · byte-exact assembly 0x02002a48–0x02002b58",
@@ -7416,7 +7404,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 617,
+      "rank": 616,
       "namespace": "resource_39c",
       "address": "0x02003948",
       "label": "39c · byte-exact assembly 0x02003948–0x02003a56",
@@ -7428,7 +7416,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 618,
+      "rank": 617,
       "namespace": "resource_3a0",
       "address": "0x02000f30",
       "label": "3a0 · byte-exact assembly 0x02000f30–0x0200103e",
@@ -7440,7 +7428,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 619,
+      "rank": 618,
       "namespace": "resource_3b4",
       "address": "0x02001414",
       "label": "3b4 · byte-exact assembly 0x02001414–0x02001522",
@@ -7452,7 +7440,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 620,
+      "rank": 619,
       "namespace": "main",
       "address": "0x08078870",
       "label": "0x08078870–0x0807897e",
@@ -7464,7 +7452,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 621,
+      "rank": 620,
       "namespace": "resource_3af",
       "address": "0x020012c8",
       "label": "3af · byte-exact assembly 0x020012c8–0x020013d4",
@@ -7476,7 +7464,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 622,
+      "rank": 621,
       "namespace": "resource_3bc",
       "address": "0x020002f8",
       "label": "3bc · byte-exact assembly 0x020002f8–0x02000404",
@@ -7488,7 +7476,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 623,
+      "rank": 622,
       "namespace": "resource_3c8",
       "address": "0x020022c8",
       "label": "3c8 · byte-exact assembly 0x020022c8–0x020023d4",
@@ -7500,7 +7488,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 624,
+      "rank": 623,
       "namespace": "resource_39f",
       "address": "0x020021b0",
       "label": "39f · byte-exact assembly 0x020021b0–0x020022ba",
@@ -7512,7 +7500,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 625,
+      "rank": 624,
       "namespace": "resource_3a8",
       "address": "0x020016bc",
       "label": "3a8 · byte-exact assembly 0x020016bc–0x020017c6",
@@ -7524,7 +7512,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 626,
+      "rank": 625,
       "namespace": "main",
       "address": "0x080a1ac0",
       "label": "0x080a1ac0–0x080a1bca",
@@ -7536,7 +7524,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 627,
+      "rank": 626,
       "namespace": "resource_38b",
       "address": "0x02000db4",
       "label": "38b · byte-exact assembly 0x02000db4–0x02000eba",
@@ -7548,7 +7536,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 628,
+      "rank": 627,
       "namespace": "resource_3b1",
       "address": "0x02003cd0",
       "label": "3b1 · byte-exact assembly 0x02003cd0–0x02003dd6",
@@ -7560,7 +7548,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 629,
+      "rank": 628,
       "namespace": "resource_3b3",
       "address": "0x02001070",
       "label": "3b3 · byte-exact assembly 0x02001070–0x02001174",
@@ -7572,7 +7560,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 630,
+      "rank": 629,
       "namespace": "resource_3a4",
       "address": "0x020006dc",
       "label": "3a4 · byte-exact assembly 0x020006dc–0x020007de",
@@ -7584,7 +7572,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 631,
+      "rank": 630,
       "namespace": "resource_3a6",
       "address": "0x02001acc",
       "label": "3a6 · byte-exact assembly 0x02001acc–0x02001bce",
@@ -7596,7 +7584,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 632,
+      "rank": 631,
       "namespace": "resource_3b5",
       "address": "0x020005dc",
       "label": "3b5 · byte-exact assembly 0x020005dc–0x020006de",
@@ -7608,7 +7596,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 633,
+      "rank": 632,
       "namespace": "resource_3bd",
       "address": "0x02003ad4",
       "label": "3bd · byte-exact assembly 0x02003ad4–0x02003bd6",
@@ -7620,7 +7608,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 634,
+      "rank": 633,
       "namespace": "main",
       "address": "0x0801656c",
       "label": "0x0801656c–0x0801666e",
@@ -7632,7 +7620,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 635,
+      "rank": 634,
       "namespace": "main",
       "address": "0x080782a0",
       "label": "0x080782a0–0x080783a2",
@@ -7644,7 +7632,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 636,
+      "rank": 635,
       "namespace": "resource_3af",
       "address": "0x02001c0c",
       "label": "3af · byte-exact assembly 0x02001c0c–0x02001d0c",
@@ -7656,7 +7644,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 637,
+      "rank": 636,
       "namespace": "resource_371",
       "address": "0x0200155c",
       "label": "371 · byte-exact assembly 0x0200155c–0x0200165a",
@@ -7668,7 +7656,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 638,
+      "rank": 637,
       "namespace": "resource_3a4",
       "address": "0x020025a8",
       "label": "3a4 · byte-exact assembly 0x020025a8–0x020026a6",
@@ -7680,7 +7668,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 639,
+      "rank": 638,
       "namespace": "resource_3ae",
       "address": "0x020006c8",
       "label": "3ae · byte-exact assembly 0x020006c8–0x020007c6",
@@ -7692,7 +7680,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 640,
+      "rank": 639,
       "namespace": "resource_3a3",
       "address": "0x02000b10",
       "label": "3a3 · byte-exact assembly 0x02000b10–0x02000c0c",
@@ -7704,7 +7692,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 641,
+      "rank": 640,
       "namespace": "resource_3c9",
       "address": "0x020037c4",
       "label": "3c9 · byte-exact assembly 0x020037c4–0x020038c0",
@@ -7716,7 +7704,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 642,
+      "rank": 641,
       "namespace": "resource_3a7",
       "address": "0x02000ca0",
       "label": "3a7 · byte-exact assembly 0x02000ca0–0x02000d9a",
@@ -7728,7 +7716,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 643,
+      "rank": 642,
       "namespace": "resource_383",
       "address": "0x0200091c",
       "label": "383 · byte-exact assembly 0x0200091c–0x02000a14",
@@ -7740,7 +7728,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 644,
+      "rank": 643,
       "namespace": "resource_386",
       "address": "0x02000204",
       "label": "386 · byte-exact assembly 0x02000204–0x020002fc",
@@ -7752,7 +7740,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 645,
+      "rank": 644,
       "namespace": "resource_39c",
       "address": "0x020021cc",
       "label": "39c · byte-exact assembly 0x020021cc–0x020022c4",
@@ -7764,7 +7752,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 646,
+      "rank": 645,
       "namespace": "resource_39a",
       "address": "0x02001928",
       "label": "39a · byte-exact assembly 0x02001928–0x02001a1e",
@@ -7776,7 +7764,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 647,
+      "rank": 646,
       "namespace": "resource_3ab",
       "address": "0x02000ea8",
       "label": "3ab · byte-exact assembly 0x02000ea8–0x02000f9c",
@@ -7788,7 +7776,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 648,
+      "rank": 647,
       "namespace": "resource_3c0",
       "address": "0x02000464",
       "label": "3c0 · byte-exact assembly 0x02000464–0x02000558",
@@ -7800,7 +7788,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 649,
+      "rank": 648,
       "namespace": "resource_3c7",
       "address": "0x02000300",
       "label": "3c7 · byte-exact assembly 0x02000300–0x020003f4",
@@ -7812,7 +7800,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 650,
+      "rank": 649,
       "namespace": "resource_371",
       "address": "0x02001780",
       "label": "371 · byte-exact assembly 0x02001780–0x02001872",
@@ -7824,7 +7812,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 651,
+      "rank": 650,
       "namespace": "resource_3a0",
       "address": "0x02001040",
       "label": "3a0 · byte-exact assembly 0x02001040–0x02001132",
@@ -7836,7 +7824,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 652,
+      "rank": 651,
       "namespace": "resource_3ae",
       "address": "0x020007c8",
       "label": "3ae · byte-exact assembly 0x020007c8–0x020008ba",
@@ -7848,7 +7836,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 653,
+      "rank": 652,
       "namespace": "resource_3b7",
       "address": "0x0200173c",
       "label": "3b7 · byte-exact assembly 0x0200173c–0x0200182e",
@@ -7860,7 +7848,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 654,
+      "rank": 653,
       "namespace": "resource_382",
       "address": "0x02000a4c",
       "label": "382 · byte-exact assembly 0x02000a4c–0x02000b3a",
@@ -7872,7 +7860,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 655,
+      "rank": 654,
       "namespace": "resource_3a4",
       "address": "0x02002f10",
       "label": "3a4 · byte-exact assembly 0x02002f10–0x02002ffc",
@@ -7884,7 +7872,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 656,
+      "rank": 655,
       "namespace": "resource_3b3",
       "address": "0x02000ddc",
       "label": "3b3 · byte-exact assembly 0x02000ddc–0x02000ec8",
@@ -7896,7 +7884,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 657,
+      "rank": 656,
       "namespace": "main",
       "address": "0x08005ee0",
       "label": "0x08005ee0–0x08005fca",
@@ -7908,7 +7896,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 658,
+      "rank": 657,
       "namespace": "resource_3a4",
       "address": "0x020007e0",
       "label": "3a4 · byte-exact assembly 0x020007e0–0x020008ca",
@@ -7920,7 +7908,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 659,
+      "rank": 658,
       "namespace": "resource_39c",
       "address": "0x02003778",
       "label": "39c · byte-exact assembly 0x02003778–0x02003860",
@@ -7932,7 +7920,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 660,
+      "rank": 659,
       "namespace": "resource_3ba",
       "address": "0x0200004c",
       "label": "3ba · byte-exact assembly 0x0200004c–0x02000134",
@@ -7944,7 +7932,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 661,
+      "rank": 660,
       "namespace": "resource_370",
       "address": "0x02000cfc",
       "label": "370 · byte-exact assembly 0x02000cfc–0x02000de2",
@@ -7956,7 +7944,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 662,
+      "rank": 661,
       "namespace": "resource_399",
       "address": "0x02000874",
       "label": "399 · byte-exact assembly 0x02000874–0x0200095a",
@@ -7968,7 +7956,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 663,
+      "rank": 662,
       "namespace": "resource_3b2",
       "address": "0x02002a98",
       "label": "3b2 · byte-exact assembly 0x02002a98–0x02002b7e",
@@ -7980,7 +7968,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 664,
+      "rank": 663,
       "namespace": "resource_3b4",
       "address": "0x02002188",
       "label": "3b4 · byte-exact assembly 0x02002188–0x0200226e",
@@ -7992,7 +7980,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 665,
+      "rank": 664,
       "namespace": "resource_3bb",
       "address": "0x02000160",
       "label": "3bb · byte-exact assembly 0x02000160–0x02000246",
@@ -8004,7 +7992,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 666,
+      "rank": 665,
       "namespace": "resource_373",
       "address": "0x02003fa0",
       "label": "373 · byte-exact assembly 0x02003fa0–0x02004082",
@@ -8016,7 +8004,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 667,
+      "rank": 666,
       "namespace": "resource_376",
       "address": "0x0200055c",
       "label": "376 · byte-exact assembly 0x0200055c–0x0200063e",
@@ -8028,7 +8016,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 668,
+      "rank": 667,
       "namespace": "resource_38d",
       "address": "0x02002308",
       "label": "38d · byte-exact assembly 0x02002308–0x020023ea",
@@ -8040,7 +8028,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 669,
+      "rank": 668,
       "namespace": "resource_399",
       "address": "0x02000790",
       "label": "399 · byte-exact assembly 0x02000790–0x02000872",
@@ -8052,7 +8040,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 670,
+      "rank": 669,
       "namespace": "resource_3a4",
       "address": "0x02002be0",
       "label": "3a4 · byte-exact assembly 0x02002be0–0x02002cc2",
@@ -8064,7 +8052,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 671,
+      "rank": 670,
       "namespace": "resource_371",
       "address": "0x020036dc",
       "label": "371 · byte-exact assembly 0x020036dc–0x020037bc",
@@ -8076,7 +8064,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 672,
+      "rank": 671,
       "namespace": "resource_373",
       "address": "0x0200564c",
       "label": "373 · byte-exact assembly 0x0200564c–0x0200572c",
@@ -8088,7 +8076,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 673,
+      "rank": 672,
       "namespace": "resource_372",
       "address": "0x02001974",
       "label": "372 · byte-exact assembly 0x02001974–0x02001a52",
@@ -8100,7 +8088,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 674,
+      "rank": 673,
       "namespace": "resource_373",
       "address": "0x02000fe4",
       "label": "373 · byte-exact assembly 0x02000fe4–0x020010c2",
@@ -8112,7 +8100,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 675,
+      "rank": 674,
       "namespace": "resource_37f",
       "address": "0x0200092c",
       "label": "37f · byte-exact assembly 0x0200092c–0x02000a0a",
@@ -8124,7 +8112,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 676,
+      "rank": 675,
       "namespace": "resource_39b",
       "address": "0x02001de4",
       "label": "39b · byte-exact assembly 0x02001de4–0x02001ec2",
@@ -8136,7 +8124,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 677,
+      "rank": 676,
       "namespace": "resource_39c",
       "address": "0x02005374",
       "label": "39c · byte-exact assembly 0x02005374–0x02005452",
@@ -8148,7 +8136,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 678,
+      "rank": 677,
       "namespace": "main",
       "address": "0x080f4008",
       "label": "0x080f4008–0x080f40e6",
@@ -8160,7 +8148,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 679,
+      "rank": 678,
       "namespace": "resource_371",
       "address": "0x020006ec",
       "label": "371 · byte-exact assembly 0x020006ec–0x020007c8",
@@ -8172,7 +8160,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 680,
+      "rank": 679,
       "namespace": "resource_373",
       "address": "0x0200336c",
       "label": "373 · byte-exact assembly 0x0200336c–0x02003446",
@@ -8184,7 +8172,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 681,
+      "rank": 680,
       "namespace": "resource_39c",
       "address": "0x0200251c",
       "label": "39c · byte-exact assembly 0x0200251c–0x020025f6",
@@ -8196,7 +8184,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 682,
+      "rank": 681,
       "namespace": "resource_3a8",
       "address": "0x02003768",
       "label": "3a8 · byte-exact assembly 0x02003768–0x02003842",
@@ -8208,7 +8196,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 683,
+      "rank": 682,
       "namespace": "resource_3ab",
       "address": "0x020005d8",
       "label": "3ab · byte-exact assembly 0x020005d8–0x020006b2",
@@ -8220,7 +8208,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 684,
+      "rank": 683,
       "namespace": "resource_3ad",
       "address": "0x02000384",
       "label": "3ad · byte-exact assembly 0x02000384–0x0200045e",
@@ -8232,7 +8220,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 685,
+      "rank": 684,
       "namespace": "resource_3af",
       "address": "0x02000bb8",
       "label": "3af · byte-exact assembly 0x02000bb8–0x02000c92",
@@ -8244,7 +8232,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 686,
+      "rank": 685,
       "namespace": "resource_3bc",
       "address": "0x02001144",
       "label": "3bc · byte-exact assembly 0x02001144–0x0200121e",
@@ -8256,7 +8244,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 687,
+      "rank": 686,
       "namespace": "resource_3be",
       "address": "0x02001394",
       "label": "3be · byte-exact assembly 0x02001394–0x0200146e",
@@ -8268,7 +8256,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 688,
+      "rank": 687,
       "namespace": "resource_373",
       "address": "0x02005b48",
       "label": "373 · byte-exact assembly 0x02005b48–0x02005c20",
@@ -8280,7 +8268,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 689,
+      "rank": 688,
       "namespace": "resource_38e",
       "address": "0x02000974",
       "label": "38e · byte-exact assembly 0x02000974–0x02000a4c",
@@ -8292,7 +8280,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 690,
+      "rank": 689,
       "namespace": "resource_392",
       "address": "0x02000cb4",
       "label": "392 · byte-exact assembly 0x02000cb4–0x02000d8c",
@@ -8304,7 +8292,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 691,
+      "rank": 690,
       "namespace": "resource_39e",
       "address": "0x0200268c",
       "label": "39e · byte-exact assembly 0x0200268c–0x02002764",
@@ -8316,7 +8304,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 692,
+      "rank": 691,
       "namespace": "resource_39f",
       "address": "0x02002c0c",
       "label": "39f · byte-exact assembly 0x02002c0c–0x02002ce4",
@@ -8328,7 +8316,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 693,
+      "rank": 692,
       "namespace": "resource_3a8",
       "address": "0x02003a3c",
       "label": "3a8 · byte-exact assembly 0x02003a3c–0x02003b14",
@@ -8340,7 +8328,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 694,
+      "rank": 693,
       "namespace": "resource_3ab",
       "address": "0x02001840",
       "label": "3ab · byte-exact assembly 0x02001840–0x02001918",
@@ -8352,7 +8340,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 695,
+      "rank": 694,
       "namespace": "resource_3b2",
       "address": "0x02002ed8",
       "label": "3b2 · byte-exact assembly 0x02002ed8–0x02002fb0",
@@ -8364,7 +8352,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 696,
+      "rank": 695,
       "namespace": "resource_3bc",
       "address": "0x020004a4",
       "label": "3bc · byte-exact assembly 0x020004a4–0x0200057c",
@@ -8376,7 +8364,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 697,
+      "rank": 696,
       "namespace": "resource_39e",
       "address": "0x02000e94",
       "label": "39e · byte-exact assembly 0x02000e94–0x02000f6a",
@@ -8388,7 +8376,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 698,
+      "rank": 697,
       "namespace": "resource_3a4",
       "address": "0x02003844",
       "label": "3a4 · byte-exact assembly 0x02003844–0x0200391a",
@@ -8400,7 +8388,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 699,
+      "rank": 698,
       "namespace": "resource_3c4",
       "address": "0x0200252c",
       "label": "3c4 · byte-exact assembly 0x0200252c–0x02002602",
@@ -8412,7 +8400,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 700,
+      "rank": 699,
       "namespace": "resource_3c9",
       "address": "0x02000518",
       "label": "3c9 · byte-exact assembly 0x02000518–0x020005ec",
@@ -8424,7 +8412,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 701,
+      "rank": 700,
       "namespace": "resource_3ab",
       "address": "0x020008ec",
       "label": "3ab · byte-exact assembly 0x020008ec–0x020009be",
@@ -8436,7 +8424,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 702,
+      "rank": 701,
       "namespace": "resource_3af",
       "address": "0x02001444",
       "label": "3af · byte-exact assembly 0x02001444–0x02001516",
@@ -8448,7 +8436,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 703,
+      "rank": 702,
       "namespace": "resource_3b5",
       "address": "0x02000874",
       "label": "3b5 · byte-exact assembly 0x02000874–0x02000946",
@@ -8460,7 +8448,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 704,
+      "rank": 703,
       "namespace": "resource_3c6",
       "address": "0x0200010c",
       "label": "3c6 · byte-exact assembly 0x0200010c–0x020001de",
@@ -8472,7 +8460,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 705,
+      "rank": 704,
       "namespace": "resource_3c8",
       "address": "0x02004520",
       "label": "3c8 · byte-exact assembly 0x02004520–0x020045f0",
@@ -8484,7 +8472,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 706,
+      "rank": 705,
       "namespace": "resource_371",
       "address": "0x020027c8",
       "label": "371 · byte-exact assembly 0x020027c8–0x02002896",
@@ -8496,7 +8484,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 707,
+      "rank": 706,
       "namespace": "resource_399",
       "address": "0x020006c0",
       "label": "399 · byte-exact assembly 0x020006c0–0x0200078e",
@@ -8508,7 +8496,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 708,
+      "rank": 707,
       "namespace": "resource_372",
       "address": "0x02003ce0",
       "label": "372 · byte-exact assembly 0x02003ce0–0x02003dac",
@@ -8520,7 +8508,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 709,
+      "rank": 708,
       "namespace": "resource_37f",
       "address": "0x02000134",
       "label": "37f · byte-exact assembly 0x02000134–0x02000200",
@@ -8532,7 +8520,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 710,
+      "rank": 709,
       "namespace": "resource_3bf",
       "address": "0x02000bac",
       "label": "3bf · byte-exact assembly 0x02000bac–0x02000c78",
@@ -8544,7 +8532,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 711,
+      "rank": 710,
       "namespace": "resource_373",
       "address": "0x020032a0",
       "label": "373 · byte-exact assembly 0x020032a0–0x0200336a",
@@ -8556,7 +8544,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 712,
+      "rank": 711,
       "namespace": "resource_381",
       "address": "0x02002eb0",
       "label": "381 · byte-exact assembly 0x02002eb0–0x02002f7a",
@@ -8568,7 +8556,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 713,
+      "rank": 712,
       "namespace": "resource_39c",
       "address": "0x02001334",
       "label": "39c · byte-exact assembly 0x02001334–0x020013fe",
@@ -8580,7 +8568,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 714,
+      "rank": 713,
       "namespace": "resource_39c",
       "address": "0x020036ac",
       "label": "39c · byte-exact assembly 0x020036ac–0x02003776",
@@ -8592,7 +8580,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 715,
+      "rank": 714,
       "namespace": "resource_3b3",
       "address": "0x0200215c",
       "label": "3b3 · byte-exact assembly 0x0200215c–0x02002226",
@@ -8604,7 +8592,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 716,
+      "rank": 715,
       "namespace": "resource_380",
       "address": "0x02004260",
       "label": "380 · byte-exact assembly 0x02004260–0x02004328",
@@ -8616,7 +8604,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 717,
+      "rank": 716,
       "namespace": "resource_385",
       "address": "0x020008a8",
       "label": "385 · byte-exact assembly 0x020008a8–0x02000970",
@@ -8628,7 +8616,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 718,
+      "rank": 717,
       "namespace": "resource_3a3",
       "address": "0x020001d0",
       "label": "3a3 · byte-exact assembly 0x020001d0–0x02000298",
@@ -8640,7 +8628,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 719,
+      "rank": 718,
       "namespace": "resource_3a8",
       "address": "0x02003844",
       "label": "3a8 · byte-exact assembly 0x02003844–0x0200390c",
@@ -8652,7 +8640,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 720,
+      "rank": 719,
       "namespace": "resource_3c8",
       "address": "0x020007d8",
       "label": "3c8 · byte-exact assembly 0x020007d8–0x020008a0",
@@ -8664,7 +8652,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 721,
+      "rank": 720,
       "namespace": "resource_391",
       "address": "0x02000c68",
       "label": "391 · byte-exact assembly 0x02000c68–0x02000d2e",
@@ -8676,7 +8664,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 722,
+      "rank": 721,
       "namespace": "resource_39a",
       "address": "0x02001ad0",
       "label": "39a · byte-exact assembly 0x02001ad0–0x02001b96",
@@ -8688,7 +8676,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 723,
+      "rank": 722,
       "namespace": "resource_39e",
       "address": "0x02000cd4",
       "label": "39e · byte-exact assembly 0x02000cd4–0x02000d9a",
@@ -8700,7 +8688,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 724,
+      "rank": 723,
       "namespace": "resource_3bd",
       "address": "0x02000de8",
       "label": "3bd · byte-exact assembly 0x02000de8–0x02000eac",
@@ -8712,7 +8700,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 725,
+      "rank": 724,
       "namespace": "resource_3c0",
       "address": "0x02000e8c",
       "label": "3c0 · byte-exact assembly 0x02000e8c–0x02000f50",
@@ -8724,7 +8712,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 726,
+      "rank": 725,
       "namespace": "resource_3c5",
       "address": "0x02001030",
       "label": "3c5 · byte-exact assembly 0x02001030–0x020010f4",
@@ -8736,7 +8724,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 727,
+      "rank": 726,
       "namespace": "resource_3cb",
       "address": "0x02000f8c",
       "label": "3cb · byte-exact assembly 0x02000f8c–0x02001050",
@@ -8748,7 +8736,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 728,
+      "rank": 727,
       "namespace": "resource_371",
       "address": "0x02004058",
       "label": "371 · byte-exact assembly 0x02004058–0x0200411a",
@@ -8760,7 +8748,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 729,
+      "rank": 728,
       "namespace": "resource_373",
       "address": "0x02005d68",
       "label": "373 · byte-exact assembly 0x02005d68–0x02005e2a",
@@ -8772,7 +8760,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 730,
+      "rank": 729,
       "namespace": "resource_377",
       "address": "0x0200168c",
       "label": "377 · byte-exact assembly 0x0200168c–0x0200174e",
@@ -8784,7 +8772,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 731,
+      "rank": 730,
       "namespace": "resource_378",
       "address": "0x020031ac",
       "label": "378 · byte-exact assembly 0x020031ac–0x0200326e",
@@ -8796,7 +8784,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 732,
+      "rank": 731,
       "namespace": "resource_3b2",
       "address": "0x020011dc",
       "label": "3b2 · byte-exact assembly 0x020011dc–0x0200129e",
@@ -8808,7 +8796,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 733,
+      "rank": 732,
       "namespace": "resource_3a4",
       "address": "0x02003664",
       "label": "3a4 · byte-exact assembly 0x02003664–0x02003724",
@@ -8820,7 +8808,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 734,
+      "rank": 733,
       "namespace": "resource_3b0",
       "address": "0x020000c0",
       "label": "3b0 · byte-exact assembly 0x020000c0–0x02000180",
@@ -8832,7 +8820,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 735,
+      "rank": 734,
       "namespace": "resource_3c5",
       "address": "0x02000e98",
       "label": "3c5 · byte-exact assembly 0x02000e98–0x02000f58",
@@ -8844,7 +8832,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 736,
+      "rank": 735,
       "namespace": "resource_3b9",
       "address": "0x02000648",
       "label": "3b9 · byte-exact assembly 0x02000648–0x02000706",
@@ -8856,7 +8844,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 737,
+      "rank": 736,
       "namespace": "resource_3ba",
       "address": "0x02000270",
       "label": "3ba · byte-exact assembly 0x02000270–0x0200032e",
@@ -8868,7 +8856,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 738,
+      "rank": 737,
       "namespace": "resource_3ba",
       "address": "0x02002bec",
       "label": "3ba · byte-exact assembly 0x02002bec–0x02002caa",
@@ -8880,7 +8868,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 739,
+      "rank": 738,
       "namespace": "resource_3bb",
       "address": "0x02002e84",
       "label": "3bb · byte-exact assembly 0x02002e84–0x02002f42",
@@ -8892,7 +8880,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 740,
+      "rank": 739,
       "namespace": "main",
       "address": "0x080fa264",
       "label": "0x080fa264–0x080fa322",
@@ -8904,7 +8892,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 741,
+      "rank": 740,
       "namespace": "resource_37b",
       "address": "0x020022e8",
       "label": "37b · byte-exact assembly 0x020022e8–0x020023a4",
@@ -8916,7 +8904,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 742,
+      "rank": 741,
       "namespace": "resource_3c2",
       "address": "0x02000a78",
       "label": "3c2 · byte-exact assembly 0x02000a78–0x02000b34",
@@ -8928,7 +8916,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 743,
+      "rank": 742,
       "namespace": "main",
       "address": "0x08005fcc",
       "label": "0x08005fcc–0x08006086",
@@ -8940,7 +8928,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 744,
+      "rank": 743,
       "namespace": "resource_3ab",
       "address": "0x020015ac",
       "label": "3ab · byte-exact assembly 0x020015ac–0x02001666",
@@ -8952,7 +8940,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 745,
+      "rank": 744,
       "namespace": "resource_3af",
       "address": "0x0200021a",
       "label": "3af · byte-exact assembly 0x0200021a–0x020002d4",
@@ -8964,7 +8952,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 746,
+      "rank": 745,
       "namespace": "resource_3ba",
       "address": "0x02002844",
       "label": "3ba · byte-exact assembly 0x02002844–0x020028fe",
@@ -8976,7 +8964,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 747,
+      "rank": 746,
       "namespace": "resource_3bb",
       "address": "0x02002adc",
       "label": "3bb · byte-exact assembly 0x02002adc–0x02002b96",
@@ -8988,7 +8976,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 748,
+      "rank": 747,
       "namespace": "resource_3bc",
       "address": "0x02003574",
       "label": "3bc · byte-exact assembly 0x02003574–0x0200362e",
@@ -9000,7 +8988,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 749,
+      "rank": 748,
       "namespace": "resource_3c0",
       "address": "0x02000b24",
       "label": "3c0 · byte-exact assembly 0x02000b24–0x02000bde",
@@ -9012,7 +9000,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 750,
+      "rank": 749,
       "namespace": "resource_382",
       "address": "0x02000fb4",
       "label": "382 · byte-exact assembly 0x02000fb4–0x0200106c",
@@ -9024,7 +9012,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 751,
+      "rank": 750,
       "namespace": "resource_385",
       "address": "0x02000b40",
       "label": "385 · byte-exact assembly 0x02000b40–0x02000bf8",
@@ -9036,7 +9024,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 752,
+      "rank": 751,
       "namespace": "resource_394",
       "address": "0x02000098",
       "label": "394 · byte-exact assembly 0x02000098–0x02000150",
@@ -9048,7 +9036,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 753,
+      "rank": 752,
       "namespace": "resource_3b8",
       "address": "0x02003d40",
       "label": "3b8 · byte-exact assembly 0x02003d40–0x02003df8",
@@ -9060,7 +9048,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 754,
+      "rank": 753,
       "namespace": "resource_3b9",
       "address": "0x02000454",
       "label": "3b9 · byte-exact assembly 0x02000454–0x0200050c",
@@ -9072,7 +9060,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 755,
+      "rank": 754,
       "namespace": "resource_37a",
       "address": "0x02001be8",
       "label": "37a · byte-exact assembly 0x02001be8–0x02001c9e",
@@ -9084,7 +9072,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 756,
+      "rank": 755,
       "namespace": "resource_37f",
       "address": "0x0200007c",
       "label": "37f · byte-exact assembly 0x0200007c–0x02000132",
@@ -9096,7 +9084,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 757,
+      "rank": 756,
       "namespace": "resource_3a4",
       "address": "0x020035ac",
       "label": "3a4 · byte-exact assembly 0x020035ac–0x02003662",
@@ -9108,7 +9096,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 758,
+      "rank": 757,
       "namespace": "resource_3a7",
       "address": "0x02000884",
       "label": "3a7 · byte-exact assembly 0x02000884–0x0200093a",
@@ -9120,7 +9108,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 759,
+      "rank": 758,
       "namespace": "resource_3af",
       "address": "0x02000444",
       "label": "3af · byte-exact assembly 0x02000444–0x020004fa",
@@ -9132,7 +9120,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 760,
+      "rank": 759,
       "namespace": "resource_3af",
       "address": "0x02001b54",
       "label": "3af · byte-exact assembly 0x02001b54–0x02001c0a",
@@ -9144,7 +9132,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 761,
+      "rank": 760,
       "namespace": "resource_3bb",
       "address": "0x02000400",
       "label": "3bb · byte-exact assembly 0x02000400–0x020004b6",
@@ -9156,7 +9144,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 762,
+      "rank": 761,
       "namespace": "resource_38d",
       "address": "0x02000338",
       "label": "38d · byte-exact assembly 0x02000338–0x020003ec",
@@ -9168,7 +9156,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 763,
+      "rank": 762,
       "namespace": "resource_373",
       "address": "0x02001490",
       "label": "373 · byte-exact assembly 0x02001490–0x02001542",
@@ -9180,7 +9168,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 764,
+      "rank": 763,
       "namespace": "resource_380",
       "address": "0x02001394",
       "label": "380 · byte-exact assembly 0x02001394–0x02001446",
@@ -9192,7 +9180,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 765,
+      "rank": 764,
       "namespace": "resource_3a4",
       "address": "0x020002cc",
       "label": "3a4 · byte-exact assembly 0x020002cc–0x0200037e",
@@ -9204,7 +9192,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 766,
+      "rank": 765,
       "namespace": "main",
       "address": "0x080ae99c",
       "label": "0x080ae99c–0x080aea4c",
@@ -9216,10 +9204,22 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 767,
+      "rank": 766,
       "namespace": "resource_382",
       "address": "0x02001674",
       "label": "382 · byte-exact assembly 0x02001674–0x02001724",
+      "scope_bytes": 176,
+      "target_bytes": 176,
+      "tracked_c_bytes": 0,
+      "assembly_bytes": 176,
+      "exact_c_leverage_bytes": 0,
+      "permanent_assembly_bytes": 0
+    },
+    {
+      "rank": 767,
+      "namespace": "resource_385",
+      "address": "0x02000350",
+      "label": "385 · byte-exact assembly 0x02000350–0x02000400",
       "scope_bytes": 176,
       "target_bytes": 176,
       "tracked_c_bytes": 0,
@@ -19693,18 +19693,6 @@
     },
     {
       "rank": 1640,
-      "namespace": "resource_39d",
-      "address": "0x020008c8",
-      "label": "39d · byte-exact assembly 0x020008c8–0x020008cc",
-      "scope_bytes": 4,
-      "target_bytes": 4,
-      "tracked_c_bytes": 0,
-      "assembly_bytes": 4,
-      "exact_c_leverage_bytes": 0,
-      "permanent_assembly_bytes": 0
-    },
-    {
-      "rank": 1641,
       "namespace": "resource_39f",
       "address": "0x020016ec",
       "label": "39f · byte-exact assembly 0x020016ec–0x020016f0",
@@ -19716,7 +19704,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1642,
+      "rank": 1641,
       "namespace": "resource_39f",
       "address": "0x02002074",
       "label": "39f · byte-exact assembly 0x02002074–0x02002078",
@@ -19728,7 +19716,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1643,
+      "rank": 1642,
       "namespace": "resource_3a0",
       "address": "0x02000e48",
       "label": "3a0 · byte-exact assembly 0x02000e48–0x02000e4c",
@@ -19740,7 +19728,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1644,
+      "rank": 1643,
       "namespace": "resource_3a4",
       "address": "0x020050f2",
       "label": "3a4 · byte-exact assembly 0x020050f2–0x020050f6",
@@ -19752,7 +19740,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1645,
+      "rank": 1644,
       "namespace": "resource_3a5",
       "address": "0x02002142",
       "label": "3a5 · byte-exact assembly 0x02002142–0x02002146",
@@ -19764,7 +19752,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1646,
+      "rank": 1645,
       "namespace": "resource_3a5",
       "address": "0x0200218a",
       "label": "3a5 · byte-exact assembly 0x0200218a–0x0200218e",
@@ -19776,7 +19764,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1647,
+      "rank": 1646,
       "namespace": "resource_3a5",
       "address": "0x020021ea",
       "label": "3a5 · byte-exact assembly 0x020021ea–0x020021ee",
@@ -19788,7 +19776,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1648,
+      "rank": 1647,
       "namespace": "resource_3a5",
       "address": "0x0200224a",
       "label": "3a5 · byte-exact assembly 0x0200224a–0x0200224e",
@@ -19800,7 +19788,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1649,
+      "rank": 1648,
       "namespace": "resource_3a5",
       "address": "0x020022f2",
       "label": "3a5 · byte-exact assembly 0x020022f2–0x020022f6",
@@ -19812,7 +19800,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1650,
+      "rank": 1649,
       "namespace": "resource_3a5",
       "address": "0x020026ac",
       "label": "3a5 · byte-exact assembly 0x020026ac–0x020026b0",
@@ -19824,7 +19812,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1651,
+      "rank": 1650,
       "namespace": "resource_3a6",
       "address": "0x02001698",
       "label": "3a6 · byte-exact assembly 0x02001698–0x0200169c",
@@ -19836,7 +19824,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1652,
+      "rank": 1651,
       "namespace": "resource_3a8",
       "address": "0x02001ff2",
       "label": "3a8 · byte-exact assembly 0x02001ff2–0x02001ff6",
@@ -19848,7 +19836,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1653,
+      "rank": 1652,
       "namespace": "resource_3aa",
       "address": "0x0200022c",
       "label": "3aa · byte-exact assembly 0x0200022c–0x02000230",
@@ -19860,7 +19848,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1654,
+      "rank": 1653,
       "namespace": "resource_3ad",
       "address": "0x02001a08",
       "label": "3ad · byte-exact assembly 0x02001a08–0x02001a0c",
@@ -19872,7 +19860,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1655,
+      "rank": 1654,
       "namespace": "resource_3af",
       "address": "0x020004fc",
       "label": "3af · byte-exact assembly 0x020004fc–0x02000500",
@@ -19884,7 +19872,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1656,
+      "rank": 1655,
       "namespace": "resource_3b1",
       "address": "0x02000214",
       "label": "3b1 · byte-exact assembly 0x02000214–0x02000218",
@@ -19896,7 +19884,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1657,
+      "rank": 1656,
       "namespace": "resource_3b1",
       "address": "0x02000548",
       "label": "3b1 · byte-exact assembly 0x02000548–0x0200054c",
@@ -19908,7 +19896,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1658,
+      "rank": 1657,
       "namespace": "resource_3b1",
       "address": "0x02003340",
       "label": "3b1 · byte-exact assembly 0x02003340–0x02003344",
@@ -19920,7 +19908,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1659,
+      "rank": 1658,
       "namespace": "resource_3b1",
       "address": "0x02004cb8",
       "label": "3b1 · byte-exact assembly 0x02004cb8–0x02004cbc",
@@ -19932,7 +19920,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1660,
+      "rank": 1659,
       "namespace": "resource_3b3",
       "address": "0x02002538",
       "label": "3b3 · byte-exact assembly 0x02002538–0x0200253c",
@@ -19944,7 +19932,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1661,
+      "rank": 1660,
       "namespace": "resource_3b4",
       "address": "0x0200106c",
       "label": "3b4 · byte-exact assembly 0x0200106c–0x02001070",
@@ -19956,7 +19944,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1662,
+      "rank": 1661,
       "namespace": "resource_3b9",
       "address": "0x0200020c",
       "label": "3b9 · byte-exact assembly 0x0200020c–0x02000210",
@@ -19968,7 +19956,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1663,
+      "rank": 1662,
       "namespace": "resource_3bd",
       "address": "0x02000d44",
       "label": "3bd · byte-exact assembly 0x02000d44–0x02000d48",
@@ -19980,7 +19968,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1664,
+      "rank": 1663,
       "namespace": "resource_3be",
       "address": "0x02001144",
       "label": "3be · byte-exact assembly 0x02001144–0x02001148",
@@ -19992,7 +19980,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1665,
+      "rank": 1664,
       "namespace": "resource_3be",
       "address": "0x020011c0",
       "label": "3be · byte-exact assembly 0x020011c0–0x020011c4",
@@ -20004,7 +19992,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1666,
+      "rank": 1665,
       "namespace": "resource_3c4",
       "address": "0x02001f58",
       "label": "3c4 · byte-exact assembly 0x02001f58–0x02001f5c",
@@ -20016,7 +20004,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1667,
+      "rank": 1666,
       "namespace": "resource_3c4",
       "address": "0x02002b94",
       "label": "3c4 · byte-exact assembly 0x02002b94–0x02002b98",
@@ -20028,7 +20016,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1668,
+      "rank": 1667,
       "namespace": "resource_3c6",
       "address": "0x020014d4",
       "label": "3c6 · byte-exact assembly 0x020014d4–0x020014d8",
@@ -20040,19 +20028,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1669,
-      "namespace": "resource_3c9",
-      "address": "0x020004b8",
-      "label": "3c9 · byte-exact assembly 0x020004b8–0x020004bc",
-      "scope_bytes": 4,
-      "target_bytes": 4,
-      "tracked_c_bytes": 0,
-      "assembly_bytes": 4,
-      "exact_c_leverage_bytes": 0,
-      "permanent_assembly_bytes": 0
-    },
-    {
-      "rank": 1670,
+      "rank": 1668,
       "namespace": "resource_3c9",
       "address": "0x02005be8",
       "label": "3c9 · byte-exact assembly 0x02005be8–0x02005bec",
@@ -20064,7 +20040,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1671,
+      "rank": 1669,
       "namespace": "resource_3ca",
       "address": "0x0200038c",
       "label": "3ca · byte-exact assembly 0x0200038c–0x02000390",
@@ -20076,7 +20052,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1672,
+      "rank": 1670,
       "namespace": "resource_3cb",
       "address": "0x02000f84",
       "label": "3cb · byte-exact assembly 0x02000f84–0x02000f88",
@@ -20088,7 +20064,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1673,
+      "rank": 1671,
       "namespace": "resource_371",
       "address": "0x0200487e",
       "label": "371 · byte-exact assembly 0x0200487e–0x02004880",
@@ -20100,7 +20076,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1674,
+      "rank": 1672,
       "namespace": "resource_371",
       "address": "0x02004882",
       "label": "371 · byte-exact assembly 0x02004882–0x02004884",
@@ -20112,7 +20088,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1675,
+      "rank": 1673,
       "namespace": "resource_371",
       "address": "0x020048b8",
       "label": "371 · byte-exact assembly 0x020048b8–0x020048ba",
@@ -20124,7 +20100,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1676,
+      "rank": 1674,
       "namespace": "resource_39c",
       "address": "0x02006d28",
       "label": "39c · byte-exact assembly 0x02006d28–0x02006d2a",
@@ -20136,7 +20112,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1677,
+      "rank": 1675,
       "namespace": "resource_39c",
       "address": "0x02006e60",
       "label": "39c · byte-exact assembly 0x02006e60–0x02006e62",
@@ -20148,7 +20124,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1678,
+      "rank": 1676,
       "namespace": "resource_39c",
       "address": "0x02006ff8",
       "label": "39c · byte-exact assembly 0x02006ff8–0x02006ffa",
@@ -20160,7 +20136,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1679,
+      "rank": 1677,
       "namespace": "resource_39c",
       "address": "0x0200700a",
       "label": "39c · byte-exact assembly 0x0200700a–0x0200700c",
@@ -20172,7 +20148,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1680,
+      "rank": 1678,
       "namespace": "resource_3b9",
       "address": "0x02000212",
       "label": "3b9 · byte-exact assembly 0x02000212–0x02000214",
@@ -20184,7 +20160,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1681,
+      "rank": 1679,
       "namespace": "resource_3b9",
       "address": "0x02000216",
       "label": "3b9 · byte-exact assembly 0x02000216–0x02000218",
@@ -20196,7 +20172,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1682,
+      "rank": 1680,
       "namespace": "resource_3b9",
       "address": "0x0200021a",
       "label": "3b9 · byte-exact assembly 0x0200021a–0x0200021c",
@@ -20208,7 +20184,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1683,
+      "rank": 1681,
       "namespace": "resource_3b9",
       "address": "0x0200022e",
       "label": "3b9 · byte-exact assembly 0x0200022e–0x02000230",
@@ -20220,7 +20196,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1684,
+      "rank": 1682,
       "namespace": "resource_3b9",
       "address": "0x02000232",
       "label": "3b9 · byte-exact assembly 0x02000232–0x02000234",
@@ -20232,7 +20208,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1685,
+      "rank": 1683,
       "namespace": "resource_3b9",
       "address": "0x02000236",
       "label": "3b9 · byte-exact assembly 0x02000236–0x02000238",
@@ -20244,7 +20220,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1686,
+      "rank": 1684,
       "namespace": "resource_3bd",
       "address": "0x02004782",
       "label": "3bd · byte-exact assembly 0x02004782–0x02004784",
@@ -20256,7 +20232,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1687,
+      "rank": 1685,
       "namespace": "resource_3bd",
       "address": "0x020047fa",
       "label": "3bd · byte-exact assembly 0x020047fa–0x020047fc",
@@ -20268,7 +20244,7 @@
       "permanent_assembly_bytes": 0
     },
     {
-      "rank": 1688,
+      "rank": 1686,
       "namespace": "resource_3bd",
       "address": "0x020048f6",
       "label": "3bd · byte-exact assembly 0x020048f6–0x020048f8",

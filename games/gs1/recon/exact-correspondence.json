@@ -9552,7 +9552,7 @@
     },
     {
       "en_owner": "0801a97c",
-      "source": "games/gs1/src/0801a97c.c",
+      "source": "games/gs1/src/resource/schedule_owner_reset.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -20022,7 +20022,7 @@
     },
     {
       "en_owner": "0809207c",
-      "source": "games/gs1/src/0809207c.c",
+      "source": "games/gs1/src/object/motion/enable_action_and_set_callback.c",
       "size": 36,
       "status": "shared_core",
       "starts": {

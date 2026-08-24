@@ -79,7 +79,7 @@ void InitializeEventObject(void)
         }
         Object_SetMode(event_object, 0x15);
     } else {
-        Func_08097174();
+        EffectRuntime_StopCurrentObject();
     }
     M2C_FIELD(render_state, s8 *, 0xCC7) = 1;
 }

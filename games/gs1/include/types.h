@@ -202,6 +202,7 @@ typedef int bool;
 #define UiText_DrawPaddedLabel Func_08020b64
 #define UiRender_LookupNamedValue Func_08019944
 #define Resource_ResetPendingTransfer Func_0801c21c
+#define Map_RenderAnimatedTileFrame Func_0800be70
 #define UiWork_FinalizePending Func_08015140
 #define UiWork_FinalizePendingCore Func_08019a54
 #define UiTimedNotice_Create Func_0801c34c
@@ -483,6 +484,7 @@ typedef int bool;
 #define EffectRuntime_SetMode2 Func_0808ed1c
 #define EffectRuntime_GetCurrentObject Func_0808ed4c
 #define EffectRuntime_ClearCurrentFlags Func_0808ed78
+#define EffectRuntime_StopCurrentObject Func_08097174
 #define EffectRuntime_SetCurrentPosition Func_0808edac
 #define EffectRuntime_IsActive Func_0808f304
 #define EffectRuntime_PrepareRisingObject Func_0808f0d8

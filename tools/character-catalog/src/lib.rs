@@ -103,22 +103,6 @@ fn write_u32(data: &mut [u8], offset: usize, value: u32) {
     data[offset..offset + 4].copy_from_slice(&value.to_le_bytes());
 }
 
-fn pair(value: &Value, minimum: i64, maximum: i64, name: &str) -> Result<[i64; 2]> {
-    let values = array(value, name)?;
-    if values.len() != 2 {
-        return fail(format!("invalid {name}"));
-    }
-    Ok([
-        bounded(&values[0], minimum, maximum, &format!("{name} first value"))?,
-        bounded(
-            &values[1],
-            minimum,
-            maximum,
-            &format!("{name} second value"),
-        )?,
-    ])
-}
-
 fn encode_command(value: &Value) -> Result<(u8, u8)> {
     let values = array(value, "animation command")?;
     if values.len() < 2 {
@@ -256,7 +240,7 @@ fn build_animations(index: &Value) -> Result<AnimationBuild> {
 }
 
 pub fn build_character_catalog(index: &Value) -> Result<Vec<u8>> {
-    if integer_value(field(index, "format")?, "format")? != 2
+    if integer_value(field(index, "format")?, "format")? != 3
         || text(field(index, "codec")?, "codec")? != "golden-sun-character-catalog"
     {
         return fail("unsupported character catalog format");
@@ -296,7 +280,7 @@ pub fn build_character_catalog(index: &Value) -> Result<Vec<u8>> {
     let mut descriptors = vec![0u8; CHARACTER_DESCRIPTOR_COUNT * CHARACTER_DESCRIPTOR_SIZE];
     let descriptor_object = object(field(index, "descriptors")?, "descriptors")?;
     let mut used = BTreeSet::new();
-    for (key, item) in descriptor_object {
+    for (key, item_value) in descriptor_object {
         if key.len() != 3
             || !key
                 .bytes()
@@ -309,45 +293,48 @@ pub fn build_character_catalog(index: &Value) -> Result<Vec<u8>> {
         if record_id >= CHARACTER_DESCRIPTOR_COUNT || !used.insert(record_id) {
             return fail(format!("duplicate descriptor id {key}"));
         }
+        let item = array(item_value, "descriptor")?;
+        if !(10..=12).contains(&item.len()) {
+            return fail(format!("invalid descriptor {key}"));
+        }
         let offset = record_id * CHARACTER_DESCRIPTOR_SIZE;
-        let size_pair = pair(field(item, "size")?, 0, 0xff, "descriptor size")?;
-        let adjust = pair(field(item, "adjust")?, -0x80, 0x7f, "descriptor adjustment")?;
-        let anchor = pair(field(item, "anchor")?, -0x80, 0xff, "descriptor anchor")?;
-        descriptors[offset] = size_pair[0] as u8;
-        descriptors[offset + 1] = size_pair[1] as u8;
+        descriptors[offset] = bounded(&item[0], 0, 0xff, "descriptor width")? as u8;
+        descriptors[offset + 1] = bounded(&item[1], 0, 0xff, "descriptor height")? as u8;
         write_u16(
             &mut descriptors,
             offset + 2,
-            bounded(field(item, "scale")?, 0, 0xffff, "descriptor scale")? as u16,
+            bounded(&item[2], 0, 0xffff, "descriptor scale")? as u16,
         );
-        descriptors[offset + 4] =
-            bounded(field(item, "draw_kind")?, 0, 0xff, "descriptor draw kind")? as u8;
-        let animation_count = bounded(
-            field(item, "animation_count")?,
-            0,
-            0xff,
-            "descriptor animation count",
-        )? as u8;
+        descriptors[offset + 4] = bounded(&item[3], 0, 0xff, "descriptor draw kind")? as u8;
+        let animation_count = bounded(&item[4], 0, 0xff, "descriptor animation count")? as u8;
         descriptors[offset + 5] = animation_count;
-        descriptors[offset + 6] = adjust[0] as i8 as u8;
-        descriptors[offset + 7] = adjust[1] as i8 as u8;
-        descriptors[offset + 8] = anchor[0] as i8 as u8;
-        descriptors[offset + 9] =
-            bounded(&Value::from(anchor[1]), 0, 0xff, "descriptor anchor y")? as u8;
-        let codec = bounded(field(item, "frame_codec")?, 0, 3, "descriptor frame codec")? as u8;
+        descriptors[offset + 6] =
+            bounded(&item[5], -0x80, 0x7f, "descriptor adjustment x")? as i8 as u8;
+        descriptors[offset + 7] =
+            bounded(&item[6], -0x80, 0x7f, "descriptor adjustment y")? as i8 as u8;
+        descriptors[offset + 8] =
+            bounded(&item[7], -0x80, 0x7f, "descriptor anchor x")? as i8 as u8;
+        descriptors[offset + 9] = bounded(&item[8], 0, 0xff, "descriptor anchor y")? as u8;
+        let codec = bounded(&item[9], 0, 3, "descriptor frame codec")? as u8;
         if !matches!(codec, 0 | 1 | 3) {
             return fail("unsupported descriptor frame codec");
         }
         descriptors[offset + 10] = codec;
-        if !field(item, "frames")?.is_null() {
-            let frame_name = text(field(item, "frames")?, "descriptor frame directory")?;
+        let default_frame = Value::String(format!("chr_{key}"));
+        let frame_value = item.get(10).unwrap_or(&default_frame);
+        if !frame_value.is_null() {
+            let frame_name = text(frame_value, "descriptor frame directory")?;
             let frame_address = frames
                 .get(frame_name)
                 .copied()
                 .ok_or_else(|| Error(format!("undefined frame directory {frame_name}")))?;
             write_u32(&mut descriptors, offset + 12, frame_address);
         }
-        let animation_name = text(field(item, "animation")?, "descriptor animation table")?;
+        let default_animation = Value::String(format!("anm_{key}"));
+        let animation_name = text(
+            item.get(11).unwrap_or(&default_animation),
+            "descriptor animation table",
+        )?;
         let animation_directory = symbols
             .get(animation_name)
             .copied()

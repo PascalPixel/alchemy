@@ -195,6 +195,7 @@
     "main:0809088c": "battle/effects/interpolate_buffers.c",
     "main:0809748c": "battle/effects/interpolate/prepare.c",
     "main:08091220": "battle/effects/interpolate/apply_color_to_source_buffer.c",
+    "main:08091200": "battle/effects/interpolate/apply_color_to_target_buffer.c",
     "main:08091254": "battle/effects/interpolate/start_buffer.c",
     "main:08091240": "battle/effects/buffers/set_primary_value.c",
     "main:0808a8d0": "battle/effects/data/get_resource_group.c",

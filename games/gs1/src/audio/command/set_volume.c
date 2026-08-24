@@ -1,7 +1,7 @@
 #include "types.h"
 
 void MusicPlayer_SetVolume(struct Work *arg0, u32 mask, u32 value);
-void Func_080f950c(s16 arg0)
+void MusicCommand_SetVolume(s16 arg0)
 {
   s16 temp_r5;
   s16 *new_var;

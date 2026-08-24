@@ -24,7 +24,7 @@ static __inline__ s8 LoadSignedByte(s32 base, s32 offset)
     return *(s8 *)(base + offset);
 }
 
-s32 Func_080a8b8c(struct MenuResult *result, s32 index)
+s32 Menu_BuildPageResult(struct MenuResult *result, s32 index)
 {
     s32 encoded;
     s32 base = *(s32 *)ADDR_03001F2C;

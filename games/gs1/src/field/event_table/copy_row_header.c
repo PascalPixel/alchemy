@@ -2,7 +2,7 @@
 
 extern s16 Data_080b41ac[][33];
 
-s32 Func_080b2720(s32 row_no, u16 *output)
+s32 EventTable_CopyRowHeader(s32 row_no, u16 *output)
 {
     s16 *src;
     u16 *dst;

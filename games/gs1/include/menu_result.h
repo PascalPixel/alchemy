@@ -13,6 +13,6 @@ struct MenuResult {
     s32 selected_index;
 };
 
-s32 Func_080a8b8c(struct MenuResult *, s32);
+s32 Menu_BuildPageResult(struct MenuResult *, s32);
 
 #endif

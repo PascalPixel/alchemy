@@ -6,7 +6,7 @@ s32 GameFlag_IsSet(s32 flag_no);
 void GameFlag_Set(s32 flag_no);
 void Ability_GetMaximum(s32 value, s32 enabled);
 
-void Func_080b26cc(s32 row_no)
+void EventTable_ApplyRowAbilities(s32 row_no)
 {
     s16 *row;
     s16 *entry;

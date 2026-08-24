@@ -32488,7 +32488,7 @@
     },
     {
       "en_owner": "0808bc44",
-      "source": "games/gs1/src/0808bc44.c",
+      "source": "games/gs1/src/battle/effects/counters/reset.c",
       "size": 88,
       "all_exact": true,
       "editions": [
@@ -32544,7 +32544,7 @@
     },
     {
       "en_owner": "0808bc9c",
-      "source": "games/gs1/src/0808bc9c.c",
+      "source": "games/gs1/src/battle/effects/counters/sum.c",
       "size": 136,
       "all_exact": true,
       "editions": [
@@ -32712,7 +32712,7 @@
     },
     {
       "en_owner": "0808c2dc",
-      "source": "games/gs1/src/0808c2dc.c",
+      "source": "games/gs1/src/battle/party/apply_drain.c",
       "size": 48,
       "all_exact": true,
       "editions": [
@@ -34841,7 +34841,7 @@
     },
     {
       "en_owner": "0809088c",
-      "source": "games/gs1/src/0809088c.c",
+      "source": "games/gs1/src/battle/effects/interpolate_buffers.c",
       "size": 84,
       "all_exact": true,
       "editions": [
@@ -50979,7 +50979,7 @@
     },
     {
       "en_owner": "080a8b8c",
-      "source": "games/gs1/src/080a8b8c.c",
+      "source": "games/gs1/src/menu/build_page_result.c",
       "size": 160,
       "edition_variant": true,
       "all_exact": true,
@@ -53670,7 +53670,7 @@
     },
     {
       "en_owner": "080b0694",
-      "source": "games/gs1/src/080b0694.c",
+      "source": "games/gs1/src/node_chain/get_node_at_index.c",
       "size": 44,
       "all_exact": true,
       "editions": [
@@ -54681,7 +54681,7 @@
     },
     {
       "en_owner": "080b26c8",
-      "source": "games/gs1/src/080b26c8.c",
+      "source": "games/gs1/src/field/event_table/get_row_limit.c",
       "size": 4,
       "all_exact": true,
       "editions": [
@@ -54737,7 +54737,7 @@
     },
     {
       "en_owner": "080b26cc",
-      "source": "games/gs1/src/080b26cc.c",
+      "source": "games/gs1/src/field/event_table/apply_row_abilities.c",
       "size": 84,
       "all_exact": true,
       "editions": [
@@ -54793,7 +54793,7 @@
     },
     {
       "en_owner": "080b2720",
-      "source": "games/gs1/src/080b2720.c",
+      "source": "games/gs1/src/field/event_table/copy_row_header.c",
       "size": 68,
       "all_exact": true,
       "editions": [
@@ -54849,7 +54849,7 @@
     },
     {
       "en_owner": "080b2764",
-      "source": "games/gs1/src/080b2764.c",
+      "source": "games/gs1/src/field/event_table/get_row_type.c",
       "size": 20,
       "all_exact": true,
       "editions": [
@@ -56867,7 +56867,7 @@
     },
     {
       "en_owner": "080b7b30",
-      "source": "games/gs1/src/080b7b30.c",
+      "source": "games/gs1/src/battle/motion/release_battle_object_records.c",
       "size": 58,
       "all_exact": true,
       "editions": [
@@ -56979,7 +56979,7 @@
     },
     {
       "en_owner": "080b7e04",
-      "source": "games/gs1/src/080b7e04.c",
+      "source": "games/gs1/src/battle/motion/reset_motion_record_group.c",
       "size": 30,
       "all_exact": true,
       "editions": [
@@ -57035,7 +57035,7 @@
     },
     {
       "en_owner": "080b7e24",
-      "source": "games/gs1/src/080b7e24.c",
+      "source": "games/gs1/src/battle/motion/reset_battle_object_record_groups.c",
       "size": 60,
       "all_exact": true,
       "editions": [
@@ -58211,7 +58211,7 @@
     },
     {
       "en_owner": "080b8808",
-      "source": "games/gs1/src/080b8808.c",
+      "source": "games/gs1/src/battle/object/is_valid_id.c",
       "size": 28,
       "all_exact": true,
       "editions": [
@@ -68911,7 +68911,7 @@
     },
     {
       "en_owner": "080df8b8",
-      "source": "games/gs1/src/080df8b8.c",
+      "source": "games/gs1/src/battle/effects/motion/initialize_rising_object.c",
       "size": 84,
       "all_exact": true,
       "editions": [
@@ -68967,7 +68967,7 @@
     },
     {
       "en_owner": "080df90c",
-      "source": "games/gs1/src/080df90c.c",
+      "source": "games/gs1/src/battle/effects/motion/set_approach_motion.c",
       "size": 196,
       "all_exact": true,
       "editions": [
@@ -72047,7 +72047,7 @@
     },
     {
       "en_owner": "080f94c8",
-      "source": "games/gs1/src/080f94c8.c",
+      "source": "games/gs1/src/audio/command/set_pitch_and_update_frequency.c",
       "size": 24,
       "all_exact": true,
       "editions": [
@@ -72103,7 +72103,7 @@
     },
     {
       "en_owner": "080f94e0",
-      "source": "games/gs1/src/080f94e0.c",
+      "source": "games/gs1/src/audio/command/set_pitch.c",
       "size": 24,
       "all_exact": true,
       "editions": [
@@ -72215,7 +72215,7 @@
     },
     {
       "en_owner": "080f950c",
-      "source": "games/gs1/src/080f950c.c",
+      "source": "games/gs1/src/audio/command/set_volume.c",
       "size": 44,
       "all_exact": true,
       "editions": [
@@ -72327,7 +72327,7 @@
     },
     {
       "en_owner": "080f954c",
-      "source": "games/gs1/src/080f954c.c",
+      "source": "games/gs1/src/audio/command/get_state_byte.c",
       "size": 12,
       "all_exact": true,
       "editions": [
@@ -72383,7 +72383,7 @@
     },
     {
       "en_owner": "080f9558",
-      "source": "games/gs1/src/080f9558.c",
+      "source": "games/gs1/src/audio/command/stop_all_players.c",
       "size": 10,
       "all_exact": true,
       "editions": [
@@ -72439,7 +72439,7 @@
     },
     {
       "en_owner": "080f9564",
-      "source": "games/gs1/src/080f9564.c",
+      "source": "games/gs1/src/audio/command/resume_all_players.c",
       "size": 10,
       "all_exact": true,
       "editions": [
@@ -72495,7 +72495,7 @@
     },
     {
       "en_owner": "080f9570",
-      "source": "games/gs1/src/080f9570.c",
+      "source": "games/gs1/src/audio/command/update_toggle_mask.c",
       "size": 36,
       "all_exact": true,
       "editions": [
@@ -72551,7 +72551,7 @@
     },
     {
       "en_owner": "080f9594",
-      "source": "games/gs1/src/080f9594.c",
+      "source": "games/gs1/src/audio/command/get_secondary_state_byte.c",
       "size": 12,
       "all_exact": true,
       "editions": [
@@ -72607,7 +72607,7 @@
     },
     {
       "en_owner": "080f95a0",
-      "source": "games/gs1/src/080f95a0.c",
+      "source": "games/gs1/src/audio/command/wait_for_completion.c",
       "size": 40,
       "all_exact": true,
       "editions": [
@@ -72663,7 +72663,7 @@
     },
     {
       "en_owner": "080f95c8",
-      "source": "games/gs1/src/080f95c8.c",
+      "source": "games/gs1/src/audio/command/get_command_width.c",
       "size": 24,
       "all_exact": true,
       "editions": [

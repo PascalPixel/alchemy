@@ -1,6 +1,6 @@
 #include "types.h"
 
-void Func_0809088c(s16 *arg0, s16 *arg1, s16 *arg2, s32 arg3) {
+void BattleEffect_InterpolateBuffers(s16 *arg0, s16 *arg1, s16 *arg2, s32 arg3) {
     s32 index;
     s32 first;
     s32 second;

@@ -14,7 +14,7 @@ extern struct State_08028aa8 *Data_03001f38;
 extern void Func_080164d4(void *, s32, s32, s32, s32);
 extern void UiText_DrawCharacter(const u8 *, void *, s32, s32);
 
-void Func_08028aa8(void)
+void Menu_DrawModeLabel(void)
 {
     struct State_08028aa8 *state = Data_03001f38;
 

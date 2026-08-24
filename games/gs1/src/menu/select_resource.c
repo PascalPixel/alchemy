@@ -16,7 +16,7 @@ extern struct MenuSelectionState *Data_03001f38;
 extern u8 Data_080373ef[];
 extern u8 Data_0000001f;
 
-void Func_08016478(void *work);
+void RenderOutput_PrepareForRedraw(void *work);
 void UiText_DrawCharacter(s32 resource_id, void *work, s32 arg2, s32 arg3);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 sound_id);
@@ -50,7 +50,7 @@ s32 Menu_SelectResource(s32 initial_selection, s32 target_selection)
     current_selection_index = initial_selection;
 
     for (;;) {
-        Func_08016478(state->work);
+        RenderOutput_PrepareForRedraw(state->work);
         resource_base = state->resource_base;
         if (resource_base != 0) {
             resource_id = resource_base + state->selection;

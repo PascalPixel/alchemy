@@ -20592,7 +20592,7 @@
     },
     {
       "en_owner": "08092504",
-      "source": "games/gs1/src/08092504.c",
+      "source": "games/gs1/src/object/motion/wait_for_animation_change.c",
       "size": 66,
       "status": "shared_core",
       "starts": {
@@ -21912,7 +21912,7 @@
     },
     {
       "en_owner": "08093a14",
-      "source": "games/gs1/src/08093a14.c",
+      "source": "games/gs1/src/object/motion/turn_toward_linked_target.c",
       "size": 88,
       "status": "shared_core",
       "starts": {
@@ -21942,7 +21942,7 @@
     },
     {
       "en_owner": "08093a6c",
-      "source": "games/gs1/src/08093a6c.c",
+      "source": "games/gs1/src/object/motion/set_action_callback.c",
       "size": 140,
       "status": "shared_core",
       "starts": {

@@ -1,6 +1,6 @@
 pub mod cli;
 
-use compiler_core::source_paths::SourcePaths;
+use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use serde_json::Value;
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
@@ -30,6 +30,54 @@ fn exact(root: &Path) -> Result<HashSet<String>, String> {
         return Err("games/gs1/src/ contains no C owners".into());
     }
     Ok(stems)
+}
+
+fn validate_registered_main_symbols(root: &Path) -> Result<usize, String> {
+    let register = SourcePaths::load(root)?;
+    let mut count = 0;
+    for entry in std::fs::read_dir(root.join("games/gs1/asm"))
+        .map_err(|error| format!("games/gs1/asm: {error}"))?
+    {
+        let path = entry.map_err(|error| error.to_string())?.path();
+        let Some(stem) = path.file_stem().and_then(|value| value.to_str()) else {
+            continue;
+        };
+        if path.extension().and_then(|value| value.to_str()) != Some("s")
+            || stem.len() != 8
+            || !stem.bytes().all(|byte| byte.is_ascii_hexdigit())
+        {
+            continue;
+        }
+        let text = std::fs::read_to_string(&path)
+            .map_err(|error| format!("{}: {error}", path.display()))?;
+        let exported = text.lines().find_map(|line| {
+            let mut fields = line.split_ascii_whitespace();
+            match (fields.next(), fields.next(), fields.next()) {
+                (Some(".global"), Some(symbol), None) => Some(symbol),
+                _ => None,
+            }
+        });
+        let Some(exported) = exported else {
+            continue;
+        };
+        let owner = SourceOwner::Main(
+            u32::from_str_radix(stem, 16).map_err(|error| format!("{stem}: {error}"))?,
+        );
+        let registered = register.registered_name(owner).ok_or_else(|| {
+            format!(
+                "{} exports {exported} but has no registered name",
+                owner.id()
+            )
+        })?;
+        if exported != registered {
+            return Err(format!(
+                "{} exports {exported}, but the owner register names it {registered}",
+                path.display()
+            ));
+        }
+        count += 1;
+    }
+    Ok(count)
 }
 
 fn audited(root: &Path) -> Result<HashSet<String>, String> {
@@ -188,12 +236,13 @@ fn validate_drafts(root: &Path, exact: &HashSet<String>) -> Result<usize, String
     Ok(count)
 }
 
-pub fn validate() -> Result<(usize, usize, usize, usize), String> {
+pub fn validate() -> Result<(usize, usize, usize, usize, usize), String> {
     let root = root();
     let exact = exact(&root)?;
+    let names = validate_registered_main_symbols(&root)?;
     let audited = audited(&root)?;
     let unmatchable = validate_unmatchable(&root, &exact, &audited)?;
     let provisional = validate_provisional(&root, &exact)?;
     let drafts = validate_drafts(&root, &exact)?;
-    Ok((unmatchable, provisional, drafts, audited.len()))
+    Ok((unmatchable, provisional, drafts, audited.len(), names))
 }

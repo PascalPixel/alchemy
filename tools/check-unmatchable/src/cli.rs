@@ -13,9 +13,9 @@ pub fn entry(arguments: &[String]) -> ExitCode {
         return ExitCode::from(2);
     }
     match crate::validate() {
-        Ok((unmatchable, provisional, drafts, audited)) => {
+        Ok((unmatchable, provisional, drafts, audited, names)) => {
             println!(
-                "owner registers ok: {unmatchable} unmatchable, {provisional} provisional, {drafts} drafts, {audited} audited"
+                "owner registers ok: {unmatchable} unmatchable, {provisional} provisional, {drafts} drafts, {audited} audited, {names} named main assembly owners"
             );
             ExitCode::SUCCESS
         }

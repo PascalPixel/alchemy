@@ -29,6 +29,8 @@
     "main:08077cb8": "runtime/get_build_stamp_time.c",
     "main:08079008": "owner/get_level_threshold.c",
     "main:08078e28": "owner/action/add.c",
+    "main:080797fc": "owner/get_digit_values.c",
+    "main:0807987c": "owner/get_resistance_value.c",
     "main:0807961c": "party/add_active_owner.c",
     "main:08079664": "party/remove_active_owner.c",
     "main:08079c8c": "item/get_equipped_element.c",

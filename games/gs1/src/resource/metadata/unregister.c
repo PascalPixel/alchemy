@@ -4,8 +4,7 @@
 
 void Func_0800bc48(void *destination);
 
-/* 4つの登録枠から指定項目を外す。 */
-void Func_0800b93c(void *arg0, s32 arg1)
+void ResourceMetadata_Unregister(void *arg0, s32 arg1)
 {
     s32 *var_r1;
     s32 *var_r2;

@@ -7,7 +7,7 @@ extern void Audio_PlayCue(u32);
 extern void Func_0801b664(void *);
 extern void Func_0801b810(void *);
 
-u32 Func_0801b424(u32 value)
+u32 Menu_WaitForSelectionInput(u32 value)
 {
     u8 *state = *(u8 **)ADDR_03001E98;
     volatile u32 *input;

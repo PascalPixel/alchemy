@@ -3102,7 +3102,7 @@
     },
     {
       "en_owner": "0800b8ac",
-      "source": "games/gs1/src/0800b8ac.c",
+      "source": "games/gs1/src/resource/metadata/register.c",
       "size": 144,
       "status": "shared_core",
       "starts": {
@@ -3132,7 +3132,7 @@
     },
     {
       "en_owner": "0800b93c",
-      "source": "games/gs1/src/0800b93c.c",
+      "source": "games/gs1/src/resource/metadata/unregister.c",
       "size": 104,
       "status": "shared_core",
       "starts": {
@@ -9702,7 +9702,7 @@
     },
     {
       "en_owner": "0801b398",
-      "source": "games/gs1/src/0801b398.c",
+      "source": "games/gs1/src/menu/selection/loop.c",
       "size": 140,
       "status": "shared_core",
       "starts": {
@@ -9732,7 +9732,7 @@
     },
     {
       "en_owner": "0801b424",
-      "source": "games/gs1/src/0801b424.c",
+      "source": "games/gs1/src/menu/selection/wait_for_input.c",
       "size": 200,
       "status": "shared_core",
       "starts": {
@@ -9762,7 +9762,7 @@
     },
     {
       "en_owner": "0801b4ec",
-      "source": "games/gs1/src/0801b4ec.c",
+      "source": "games/gs1/src/menu/selection/move_forward.c",
       "size": 212,
       "status": "shared_core",
       "starts": {
@@ -9792,7 +9792,7 @@
     },
     {
       "en_owner": "0801b5c0",
-      "source": "games/gs1/src/0801b5c0.c",
+      "source": "games/gs1/src/menu/selection/move_backward.c",
       "size": 164,
       "status": "shared_core",
       "starts": {
@@ -37452,7 +37452,7 @@
     },
     {
       "en_owner": "080e3944",
-      "source": "games/gs1/src/080e3944.c",
+      "source": "games/gs1/src/effects/position/apply_base_and_y_offset.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -37482,7 +37482,7 @@
     },
     {
       "en_owner": "080e3958",
-      "source": "games/gs1/src/080e3958.c",
+      "source": "games/gs1/src/effects/position/apply_animation_and_y_offset.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -37512,7 +37512,7 @@
     },
     {
       "en_owner": "080e396c",
-      "source": "games/gs1/src/080e396c.c",
+      "source": "games/gs1/src/effects/position/apply_step_and_y_offset.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -37542,7 +37542,7 @@
     },
     {
       "en_owner": "080e3980",
-      "source": "games/gs1/src/080e3980.c",
+      "source": "games/gs1/src/effects/position/apply_alternate_step_and_y_offset.c",
       "size": 20,
       "status": "shared_core",
       "starts": {

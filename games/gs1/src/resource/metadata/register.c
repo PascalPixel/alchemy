@@ -1,7 +1,7 @@
 #include "metadata_lookup.h"
 #include "types.h"
 
-struct State_0800b8ac {
+struct MetadataSlotState {
     u8 padding0[24];
     s32 shifted;
     u8 padding1[4];
@@ -14,7 +14,7 @@ struct State_0800b8ac {
     s32 slots[4];
 };
 
-struct Metadata_0800b8ac {
+struct MetadataRecord {
     u8 first;
     u8 second;
     u16 value;
@@ -25,12 +25,12 @@ struct Metadata_0800b8ac {
 
 extern s32 Func_0800bbc0(s32);
 
-s32 Func_0800b8ac(struct State_0800b8ac *state, s32 arg1)
+s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id)
 {
     s32 value = state->slots[0];
     s32 index = 0;
     s32 *slot;
-    struct Metadata_0800b8ac *metadata;
+    struct MetadataRecord *metadata;
 
     if (value != 0) {
         slot = &state->slots[0];
@@ -44,12 +44,11 @@ s32 Func_0800b8ac(struct State_0800b8ac *state, s32 arg1)
     }
     if (index == 4)
         return -1;
-
-    value = Func_0800bbc0(arg1);
+    value = Func_0800bbc0(id);
     if (value == 0)
         return 0;
     state->slots[index] = value;
-    metadata = Func_08185000(arg1);
+    metadata = Func_08185000(id);
     if (state->count == 0) {
         state->first = metadata->first;
         state->second = metadata->second;

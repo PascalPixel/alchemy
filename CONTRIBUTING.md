@@ -189,13 +189,15 @@ overlay owners live inside
 `games/gs1/assets/code/resource_<id>_overlay.s`.
 
 Exact source uses descriptive, domain-owned paths under `games/gs1/src/`, such
-as `battle/inventory/draw_item_grid.c`. The canonical
-`games/gs1/source-paths.json` maps each `main:<address>` or
-`resource_<id>:<address>` owner to that path. Existing flat address-named files
-remain a supported migration fallback, but do not add new ones: register a
-nested descriptive path before adopting a new owner. Compiler flags, linking,
-auditing, and progress continue to route by owner identity rather than by the
-presentation filename.
+as `battle/inventory/draw_item_grid.c`. The canonical owner register,
+`games/gs1/source-paths.json`, is the single address-to-name and
+address-to-source authority. Each `main:<address>` or
+`resource_<id>:<address>` record has one human name and may have one exact-C
+source path. Do not add parallel symbol maps or infer a canonical name from a
+filename, assembly export, chart label, or tool-local table. Those consumers
+must resolve the stable owner identity through this register. Existing flat
+address-named files remain a supported migration fallback, but do not add new
+ones: register a nested descriptive path before adopting a new owner.
 
 The generated Targets table ranks useful scopes, but a listed run may begin in
 a literal pool or include a continuation. Resolve the owner through

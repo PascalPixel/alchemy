@@ -1,8 +1,8 @@
-//! Canonical owner-to-source paths for each historical game.
+//! Canonical owner register for each historical game.
 //!
 //! Exact C historically lived in one flat directory and encoded ownership in
-//! each filename. `games/<game>/source-paths.json` lets source use descriptive,
-//! nested paths while owner identity remains explicit and machine-readable.
+//! each filename. `games/<game>/source-paths.json` maps stable address-qualified
+//! owner identities to canonical human symbols and descriptive source paths.
 //! GS1 remains the default resolver for existing callers; target-aware build
 //! paths select the corresponding game registry. Owners absent from a manifest
 //! retain their legacy flat path during the migration.
@@ -117,6 +117,14 @@ fn lower_hex(value: &str) -> bool {
         .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
 }
 
+fn c_identifier(value: &str) -> bool {
+    let mut bytes = value.bytes();
+    if !matches!(bytes.next(), Some(first) if first == b'_' || first.is_ascii_alphabetic()) {
+        return false;
+    }
+    bytes.all(|byte| byte == b'_' || byte.is_ascii_alphanumeric())
+}
+
 fn parse_lower_hex(value: &str, width: usize, owner: &str) -> Result<u32, String> {
     if value.len() != width || !lower_hex(value) {
         return Err(format!(
@@ -140,6 +148,7 @@ pub struct SourcePaths {
     manifest: PathBuf,
     by_owner: BTreeMap<SourceOwner, PathBuf>,
     by_path: BTreeMap<PathBuf, Vec<SourceOwner>>,
+    names: BTreeMap<SourceOwner, String>,
 }
 
 impl SourcePaths {
@@ -166,8 +175,8 @@ impl SourcePaths {
     pub fn parse_for_game(repository: &Path, game: &str, text: &str) -> Result<Self, String> {
         let (source_directory, manifest) = game_paths(game)?;
         let value: Value = serde_json::from_str(text).map_err(|error| error.to_string())?;
-        if value.get("format").and_then(Value::as_u64) != Some(1) {
-            return Err("format must be 1".into());
+        if value.get("format").and_then(Value::as_u64) != Some(2) {
+            return Err("format must be 2".into());
         }
         let owners = value
             .get("owners")
@@ -175,9 +184,24 @@ impl SourcePaths {
             .ok_or("owners must be an object")?;
         let mut by_owner = BTreeMap::new();
         let mut by_path = BTreeMap::<PathBuf, Vec<SourceOwner>>::new();
+        let mut names = BTreeMap::new();
         for (id, value) in owners {
             let owner = SourceOwner::parse(id)?;
-            let source = value
+            let record = value
+                .as_object()
+                .ok_or_else(|| format!("{id}: owner record must be an object"))?;
+            let name = record
+                .get("name")
+                .and_then(Value::as_str)
+                .ok_or_else(|| format!("{id}: owner name must be a string"))?;
+            if !c_identifier(name) {
+                return Err(format!("{id}: owner name {name:?} is not a C identifier"));
+            }
+            names.insert(owner, name.to_string());
+            let Some(source) = record.get("source") else {
+                continue;
+            };
+            let source = source
                 .as_str()
                 .ok_or_else(|| format!("{id}: source path must be a string"))?;
             let path = validate_source_path(source)?;
@@ -207,6 +231,7 @@ impl SourcePaths {
             manifest,
             by_owner,
             by_path,
+            names,
         })
     }
 
@@ -217,6 +242,7 @@ impl SourcePaths {
             manifest,
             by_owner: BTreeMap::new(),
             by_path: BTreeMap::new(),
+            names: BTreeMap::new(),
         }
     }
 
@@ -237,6 +263,10 @@ impl SourcePaths {
             .map(|path| self.source_root().join(path))
     }
 
+    pub fn registered_name(&self, owner: SourceOwner) -> Option<&str> {
+        self.names.get(&owner).map(String::as_str)
+    }
+
     /// Destination for a new exact-source adoption. Legacy fallback is
     /// intentionally excluded: new writes must never recreate the flat,
     /// address-named layout.
@@ -250,8 +280,8 @@ impl SourcePaths {
         })
     }
 
-    /// Remove one explicit owner registration after parking exact C back to
-    /// assembly. Other owners of a shared physical source remain registered.
+    /// Remove an owner's exact-C path after parking it back to assembly. Its
+    /// canonical name remains registered.
     pub fn unregister_owner(&self, owner: SourceOwner) -> Result<bool, String> {
         let manifest = self.manifest_path();
         if !manifest.exists() {
@@ -265,7 +295,10 @@ impl SourcePaths {
             .get_mut("owners")
             .and_then(Value::as_object_mut)
             .ok_or_else(|| format!("{}: owners must be an object", manifest.display()))?;
-        if owners.remove(&owner.id()).is_none() {
+        let Some(record) = owners.get_mut(&owner.id()).and_then(Value::as_object_mut) else {
+            return Ok(false);
+        };
+        if record.remove("source").is_none() {
             return Ok(false);
         }
         let mut rendered =
@@ -529,10 +562,10 @@ mod tests {
 
     fn manifest() -> &'static str {
         r#"{
-  "format": 1,
+  "format": 2,
   "owners": {
-    "main:080bbb0c": "battle/resolve_action.c",
-    "resource_39c:0200013c": "battle/effects/spawn_configured_effect.c"
+    "main:080bbb0c": {"name":"resolve_action","source":"battle/resolve_action.c"},
+    "resource_39c:0200013c": {"name":"spawn_configured_effect","source":"battle/effects/spawn_configured_effect.c"}
   }
 }"#
     }
@@ -610,7 +643,7 @@ mod tests {
             "/tmp/source.c",
             "battle/readme.md",
         ] {
-            let text = format!("{{\"format\":1,\"owners\":{{\"main:080bbb0c\":{path:?}}}}}");
+            let text = format!("{{\"format\":2,\"owners\":{{\"main:080bbb0c\":{{\"name\":\"resolve_action\",\"source\":{path:?}}}}}}}");
             assert!(SourcePaths::parse(root.path(), &text).is_err(), "{path}");
         }
     }
@@ -619,10 +652,10 @@ mod tests {
     fn one_source_can_own_the_same_address_in_related_overlays() {
         let root = tempdir().unwrap();
         let text = r#"{
-  "format": 1,
+  "format": 2,
   "owners": {
-    "resource_39b:0200013c": "battle/effects/spawn_configured_effect.c",
-    "resource_39c:0200013c": "battle/effects/spawn_configured_effect.c"
+    "resource_39b:0200013c": {"name":"spawn_configured_effect","source":"battle/effects/spawn_configured_effect.c"},
+    "resource_39c:0200013c": {"name":"spawn_configured_effect","source":"battle/effects/spawn_configured_effect.c"}
   }
 }"#;
         let paths = SourcePaths::parse(root.path(), text).unwrap();
@@ -648,10 +681,10 @@ mod tests {
         fs::write(
             &manifest_path,
             r#"{
-  "format": 1,
+  "format": 2,
   "owners": {
-    "resource_39b:02000104": "overlays/shared/integrate_effect_motion.c",
-    "resource_39c:02000104": "overlays/shared/integrate_effect_motion.c"
+    "resource_39b:02000104": {"name":"integrate_effect_motion","source":"overlays/shared/integrate_effect_motion.c"},
+    "resource_39c:02000104": {"name":"integrate_effect_motion","source":"overlays/shared/integrate_effect_motion.c"}
   }
 }"#,
         )
@@ -682,7 +715,7 @@ mod tests {
         fs::create_dir_all(manifest_path.parent().unwrap()).unwrap();
         fs::write(
             &manifest_path,
-            r#"{"format":1,"owners":{"main:080132cc":"runtime/constant_zero_result.c"}}"#,
+            r#"{"format":2,"owners":{"main:080132cc":{"name":"constant_zero_result","source":"runtime/constant_zero_result.c"}}}"#,
         )
         .unwrap();
         let paths = SourcePaths::load_for_game(root.path(), "gs2").unwrap();

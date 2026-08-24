@@ -319,7 +319,7 @@ fn exact_overlay(
 > {
     let manifest = tree
         .read(SOURCE_PATHS_MANIFEST)
-        .unwrap_or_else(|| "{\"format\":1,\"owners\":{}}".into());
+        .unwrap_or_else(|| "{\"format\":2,\"owners\":{}}".into());
     let source_paths = SourcePaths::parse(Path::new(""), &manifest)?;
     let mut owners = std::collections::BTreeMap::new();
     let mut spans = std::collections::BTreeMap::new();
@@ -327,7 +327,13 @@ fn exact_overlay(
         let list: Vec<_> = overlay_owners(tree, name)
             .into_iter()
             .map(|mut owner| {
-                let path = SourceOwner::parse(&format!("{id}:{:08x}", owner.entry))
+                let source_owner = SourceOwner::parse(&format!("{id}:{:08x}", owner.entry));
+                if let Ok(source_owner) = source_owner {
+                    if let Some(name) = source_paths.registered_name(source_owner) {
+                        owner.label = name.to_string();
+                    }
+                }
+                let path = source_owner
                     .map(|source_owner| source_paths.repository_relative_path(source_owner))
                     .map(|path| path.to_string_lossy().replace('\\', "/"));
                 let Some(path) = path.ok() else {

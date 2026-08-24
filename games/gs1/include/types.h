@@ -223,6 +223,9 @@ typedef int bool;
 #define PsynergyMenu_PositionOwnerEntry Func_080a1c2c
 #define InventoryMenu_PositionOwnerEntry Func_080a1c6c
 #define InventoryMenu_RefreshOwnerEntries Func_080a1cb0
+#define InventoryMenu_PositionCategoryItems Func_080a9cbc
+#define InventoryMenu_ResetCategoryItemPositions Func_080a9d84
+#define InventoryMenu_ApplyCategoryItemFlags Func_080a9d3c
 #define BattleEffect_CleanupResourcesAndWindow Func_0809bcd4
 #define FieldEvent_ShowStatusMessage Func_0809b648
 #define FixedPoint_Multiply8_8 Func_080f40b4

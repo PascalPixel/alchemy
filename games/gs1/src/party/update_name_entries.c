@@ -10,7 +10,7 @@
 #define APPEND_NAME_SPACE 0
 #endif
 
-void *Func_08004970(s32);
+void *Runtime_BumpAllocateAlternatePool(s32);
 void Func_08002df0(void *);
 void Func_08006488(void);
 s32 Func_08006408(void);
@@ -30,7 +30,7 @@ s32 UpdateNameEntries(void)
     s32 len;
     s32 i;
 
-    buffer = Func_08004970(340);
+    buffer = Runtime_BumpAllocateAlternatePool(340);
     named_count = 0;
     index = 0;
     while (index <= 2) {
@@ -68,7 +68,7 @@ s32 UpdateNameEntries(void)
         index += 1;
     }
     Func_08002df0(buffer);
-    buffer = Func_08004970(320);
+    buffer = Runtime_BumpAllocateAlternatePool(320);
     Func_08077000(1);
     if (Func_08006408() != -1) {
         Func_08006488();

@@ -732,7 +732,7 @@
     },
     {
       "en_owner": "08003dec",
-      "source": "games/gs1/src/08003dec.c",
+      "source": "games/gs1/src/runtime/slot/push_entry.c",
       "size": 36,
       "status": "shared_core",
       "starts": {
@@ -792,7 +792,7 @@
     },
     {
       "en_owner": "08003f04",
-      "source": "games/gs1/src/08003f04.c",
+      "source": "games/gs1/src/resource/table/clear_entry_references.c",
       "size": 56,
       "status": "shared_core",
       "starts": {
@@ -822,7 +822,7 @@
     },
     {
       "en_owner": "08003f3c",
-      "source": "games/gs1/src/08003f3c.c",
+      "source": "games/gs1/src/resource/table/reset_entry.c",
       "size": 60,
       "status": "shared_core",
       "starts": {
@@ -852,7 +852,7 @@
     },
     {
       "en_owner": "08003f78",
-      "source": "games/gs1/src/08003f78.c",
+      "source": "games/gs1/src/resource/table/activate_entry.c",
       "size": 44,
       "status": "shared_core",
       "starts": {
@@ -882,7 +882,7 @@
     },
     {
       "en_owner": "0800403c",
-      "source": "games/gs1/src/0800403c.c",
+      "source": "games/gs1/src/resource/table/initialize.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -912,7 +912,7 @@
     },
     {
       "en_owner": "08004080",
-      "source": "games/gs1/src/08004080.c",
+      "source": "games/gs1/src/resource/table/find_free_slot.c",
       "size": 52,
       "status": "shared_core",
       "starts": {
@@ -972,7 +972,7 @@
     },
     {
       "en_owner": "080040d0",
-      "source": "games/gs1/src/080040d0.c",
+      "source": "games/gs1/src/resource/table/get_buffer.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -1002,7 +1002,7 @@
     },
     {
       "en_owner": "080040e8",
-      "source": "games/gs1/src/080040e8.c",
+      "source": "games/gs1/src/runtime/scheduler/reset_task_table.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -1482,7 +1482,7 @@
     },
     {
       "en_owner": "080048b0",
-      "source": "games/gs1/src/080048b0.c",
+      "source": "games/gs1/src/runtime/memory/allocate_heap_block.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -1512,7 +1512,7 @@
     },
     {
       "en_owner": "080048f4",
-      "source": "games/gs1/src/080048f4.c",
+      "source": "games/gs1/src/runtime/memory/allocate_block.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -1542,7 +1542,7 @@
     },
     {
       "en_owner": "08004938",
-      "source": "games/gs1/src/08004938.c",
+      "source": "games/gs1/src/runtime/memory/bump_allocate.c",
       "size": 56,
       "status": "shared_core",
       "starts": {
@@ -1572,7 +1572,7 @@
     },
     {
       "en_owner": "08004970",
-      "source": "games/gs1/src/08004970.c",
+      "source": "games/gs1/src/runtime/memory/bump_allocate_alternate_pool.c",
       "size": 56,
       "status": "shared_core",
       "starts": {

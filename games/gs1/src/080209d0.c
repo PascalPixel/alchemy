@@ -10,14 +10,14 @@ struct Window_080209d0 {
     u16 y;
 };
 
-s16 *Func_08004970(s32 size);
+s16 *Runtime_BumpAllocateAlternatePool(s32 size);
 u32 Func_08005340(const void *source, void *destination);
 void Func_08002df0(void *buffer);
 
 void Func_080209d0(const struct Window_080209d0 *window, const void *source)
 {
     s16 *mirror = (s16 *)Data_03001e8c;
-    s16 *buffer = Func_08004970(0x300);
+    s16 *buffer = Runtime_BumpAllocateAlternatePool(0x300);
     s16 *input = buffer;
     u32 cell;
     s16 *vram;

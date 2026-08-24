@@ -1,3 +1,4 @@
+use canonical_json::canonical_json;
 use serde_json::{Map, Value};
 use std::collections::HashSet;
 use std::fs;
@@ -30,6 +31,20 @@ fn exact_keys(value: &Map<String, Value>, expected: &[&str], label: &str) -> Res
     actual.sort_unstable();
     wanted.sort_unstable();
     if actual != wanted {
+        return err(format!("{label} fields differ"));
+    }
+    Ok(())
+}
+
+fn sparse_keys(
+    value: &Map<String, Value>,
+    allowed: &[&str],
+    required: &[&str],
+    label: &str,
+) -> Result<()> {
+    if value.keys().any(|key| !allowed.contains(&key.as_str()))
+        || required.iter().any(|key| !value.contains_key(*key))
+    {
         return err(format!("{label} fields differ"));
     }
     Ok(())
@@ -78,6 +93,19 @@ fn s32(value: &Value, label: &str) -> Result<i32> {
 }
 fn u32(value: &Value, label: &str) -> Result<u32> {
     Ok(unsigned(value, 0xffff_ffff, label)? as u32)
+}
+
+fn integer_or(
+    value: &Map<String, Value>,
+    key: &str,
+    default: i128,
+    minimum: i128,
+    maximum: i128,
+    label: &str,
+) -> Result<i128> {
+    value
+        .get(key)
+        .map_or(Ok(default), |value| integer(value, minimum, maximum, label))
 }
 
 fn write_u16(data: &mut [u8], offset: usize, value: u16) {
@@ -154,7 +182,7 @@ fn is_snake_case(name: &str) -> bool {
 fn item_definition<'a>(value: &'a Value, index: usize) -> Result<&'a Map<String, Value>> {
     let label = format!("items[{index}]");
     let item = object(value, &label)?;
-    exact_keys(item, ITEM_KEYS, &label)?;
+    sparse_keys(item, ITEM_KEYS, &["name"], &label)?;
 
     let name = field(item, "name")?
         .as_str()
@@ -163,15 +191,14 @@ fn item_definition<'a>(value: &'a Value, index: usize) -> Result<&'a Map<String,
         return err(format!("{label} name must be unique nonempty snake_case"));
     }
 
-    for (effect_index, effect) in list(field(item, "effects")?, 4, "item effects")?
-        .iter()
-        .enumerate()
-    {
-        exact_keys(
-            object(effect, &format!("{label}.effects[{effect_index}]"))?,
-            &["kind", "amount"],
-            &format!("{label}.effects[{effect_index}]"),
-        )?;
+    if let Some(effects) = item.get("effects") {
+        for (effect_index, effect) in list(effects, 4, "item effects")?.iter().enumerate() {
+            exact_keys(
+                object(effect, &format!("{label}.effects[{effect_index}]"))?,
+                &["kind", "amount"],
+                &format!("{label}.effects[{effect_index}]"),
+            )?;
+        }
     }
     Ok(item)
 }
@@ -205,7 +232,7 @@ fn parse_gameplay_databases(value: &Value) -> Result<&Map<String, Value>> {
         ],
         "gameplay database source",
     )?;
-    if field(source, "format")?.as_u64() != Some(1)
+    if field(source, "format")?.as_u64() != Some(2)
         || field(source, "kind")?.as_str() != Some("golden-sun-gameplay-databases")
         || field(source, "address")?.as_str() != Some("0x0807a828")
         || field(source, "size")?.as_str() != Some("0x0000f7d8")
@@ -269,66 +296,88 @@ fn parse_gameplay_databases(value: &Value) -> Result<&Map<String, Value>> {
 fn build_item_definition(value: &Value, index: usize) -> Result<Vec<u8>> {
     let item = item_definition(value, index)?;
     let mut result = vec![0; 44];
-    write_u16(&mut result, 0, u16(field(item, "price")?, "item price")?);
-    result[2] = u8(field(item, "type")?, "item type")?;
-    result[3] = u8(field(item, "flags")?, "item flags")?;
+    write_u16(
+        &mut result,
+        0,
+        integer_or(item, "price", 0, 0, 0xffff, "item price")? as u16,
+    );
+    result[2] = integer_or(item, "type", 0, 0, 0xff, "item type")? as u8;
+    result[3] = integer_or(item, "flags", 0, 0, 0xff, "item flags")? as u8;
     write_u16(
         &mut result,
         4,
-        u16(field(item, "equip_mask")?, "item equip_mask")?,
+        integer_or(item, "equip_mask", 0, 0, 0xffff, "item equip_mask")? as u16,
     );
-    write_u16(&mut result, 6, u16(field(item, "icon")?, "item icon")?);
+    write_u16(
+        &mut result,
+        6,
+        integer_or(item, "icon", 0, 0, 0xffff, "item icon")? as u16,
+    );
     write_i16(
         &mut result,
         8,
-        s16(field(item, "primary_bonus")?, "item primary_bonus")?,
+        integer_or(
+            item,
+            "primary_bonus",
+            0,
+            -0x8000,
+            0x7fff,
+            "item primary_bonus",
+        )? as i16,
     );
-    result[10] = s8(field(item, "secondary_bonus")?, "item secondary_bonus")? as u8;
-    result[11] = u8(field(item, "secondary_flags")?, "item secondary_flags")?;
-    result[12] = u8(field(item, "use_type")?, "item use_type")?;
+    result[10] = integer_or(
+        item,
+        "secondary_bonus",
+        0,
+        -0x80,
+        0x7f,
+        "item secondary_bonus",
+    )? as i8 as u8;
+    result[11] = integer_or(item, "secondary_flags", 0, 0, 0xff, "item secondary_flags")? as u8;
+    result[12] = integer_or(item, "use_type", 0, 0, 0xff, "item use_type")? as u8;
     write_u16(
         &mut result,
         14,
-        u16(
-            field(item, "description_message")?,
+        integer_or(
+            item,
+            "description_message",
+            0,
+            0,
+            0xffff,
             "item description_message",
-        )?,
+        )? as u16,
     );
-    result[20] = u8(field(item, "element")?, "item element")?;
-    for (effect_index, raw) in list(field(item, "effects")?, 4, "item effects")?
-        .iter()
-        .enumerate()
-    {
-        let effect = object(raw, &format!("items[{index}].effects[{effect_index}]"))?;
-        let offset = 24 + effect_index * 4;
-        result[offset] = u8(field(effect, "kind")?, "item effect kind")?;
-        result[offset + 1] = s8(field(effect, "amount")?, "item effect amount")? as u8;
+    result[20] = integer_or(item, "element", 4, 0, 0xff, "item element")? as u8;
+    if let Some(effects) = item.get("effects") {
+        for (effect_index, raw) in list(effects, 4, "item effects")?.iter().enumerate() {
+            let effect = object(raw, &format!("items[{index}].effects[{effect_index}]"))?;
+            let offset = 24 + effect_index * 4;
+            result[offset] = u8(field(effect, "kind")?, "item effect kind")?;
+            result[offset + 1] = s8(field(effect, "amount")?, "item effect amount")? as u8;
+        }
     }
     write_u16(
         &mut result,
         40,
-        u16(field(item, "action_id")?, "item action_id")?,
+        integer_or(item, "action_id", 0, 0, 0xffff, "item action_id")? as u16,
     );
     Ok(result)
 }
 
 fn build_ability(value: &Value, index: usize) -> Result<Vec<u8>> {
     let ability = object(value, &format!("abilities[{index}]"))?;
-    exact_keys(
-        ability,
-        &[
-            "element",
-            "target",
-            "damage_class",
-            "effect",
-            "animation",
-            "range",
-            "category",
-            "power",
-            "chance",
-        ],
-        &format!("abilities[{index}]"),
-    )?;
+    let keys = [
+        "element",
+        "target",
+        "damage_class",
+        "effect",
+        "animation",
+        "range",
+        "category",
+        "power",
+        "chance",
+    ];
+    sparse_keys(ability, &keys, &[], &format!("abilities[{index}]"))?;
     let mut result = vec![0; 16];
     for (offset, key) in [
         (0, "element"),
@@ -338,29 +387,29 @@ fn build_ability(value: &Value, index: usize) -> Result<Vec<u8>> {
         (8, "range"),
         (9, "category"),
     ] {
-        result[offset] = u8(field(ability, key)?, &format!("ability {key}"))?;
+        result[offset] = integer_or(ability, key, 0, 0, 0xff, &format!("ability {key}"))? as u8;
     }
     write_u16(
         &mut result,
         4,
-        u16(field(ability, "animation")?, "ability animation")?,
+        integer_or(ability, "animation", 0, 0, 0xffff, "ability animation")? as u16,
     );
     write_u16(
         &mut result,
         10,
-        u16(field(ability, "power")?, "ability power")?,
+        integer_or(ability, "power", 0, 0, 0xffff, "ability power")? as u16,
     );
     write_u16(
         &mut result,
         12,
-        u16(field(ability, "chance")?, "ability chance")?,
+        integer_or(ability, "chance", 0, 0, 0xffff, "ability chance")? as u16,
     );
     Ok(result)
 }
 
 fn build_combatant(value: &Value, index: usize) -> Result<Vec<u8>> {
     let item = object(value, &format!("combatants[{index}]"))?;
-    exact_keys(
+    sparse_keys(
         item,
         &[
             "name_slot",
@@ -386,11 +435,16 @@ fn build_combatant(value: &Value, index: usize) -> Result<Vec<u8>> {
             "reward_tier",
             "coin_reward",
         ],
+        &[],
         &format!("combatants[{index}]"),
     )?;
     let mut result = vec![0; 84];
-    result[0..14].copy_from_slice(&build_name_slot(field(item, "name_slot")?)?);
-    result[15] = u8(field(item, "level")?, "combatant level")?;
+    if let Some(name_slot) = item.get("name_slot") {
+        result[0..14].copy_from_slice(&build_name_slot(name_slot)?);
+    } else {
+        result[0..14].fill(0x20);
+    }
+    result[15] = integer_or(item, "level", 0, 0, 0xff, "combatant level")? as u8;
     for (offset, key) in [
         (16, "hp"),
         (18, "pp"),
@@ -407,21 +461,20 @@ fn build_combatant(value: &Value, index: usize) -> Result<Vec<u8>> {
         write_u16(
             &mut result,
             offset,
-            u16(field(item, key)?, &format!("combatant {key}"))?,
+            integer_or(item, key, 0, 0, 0xffff, &format!("combatant {key}"))? as u16,
         );
     }
-    result[26] = u8(field(item, "luck")?, "combatant luck")?;
-    result[27] = u8(field(item, "turns")?, "combatant turns")?;
+    result[26] = integer_or(item, "luck", 0, 0, 0xff, "combatant luck")? as u8;
+    result[27] = integer_or(item, "turns", 1, 0, 0xff, "combatant turns")? as u8;
     for (field_name, offset, label) in [
         ("initial_abilities", 40, "combatant initial ability"),
         ("secondary_abilities", 56, "combatant secondary ability"),
         ("battle_traits", 68, "combatant battle trait"),
     ] {
-        for (slot, entry) in list(field(item, field_name)?, 4, field_name)?
-            .iter()
-            .enumerate()
-        {
-            write_u16(&mut result, offset + slot * 2, u16(entry, label)?);
+        if let Some(entries) = item.get(field_name) {
+            for (slot, entry) in list(entries, 4, field_name)?.iter().enumerate() {
+                write_u16(&mut result, offset + slot * 2, u16(entry, label)?);
+            }
         }
     }
     for (field_name, offset, label) in [
@@ -436,18 +489,21 @@ fn build_combatant(value: &Value, index: usize) -> Result<Vec<u8>> {
             "combatant secondary ability count",
         ),
     ] {
-        for (slot, entry) in list(field(item, field_name)?, 4, field_name)?
-            .iter()
-            .enumerate()
-        {
-            result[offset + slot] = u8(entry, label)?;
+        if let Some(entries) = item.get(field_name) {
+            for (slot, entry) in list(entries, 4, field_name)?.iter().enumerate() {
+                result[offset + slot] = u8(entry, label)?;
+            }
         }
     }
-    result[52] = u8(
-        field(item, "elemental_profile")?,
+    result[52] = integer_or(
+        item,
+        "elemental_profile",
+        0,
+        0,
+        0xff,
         "combatant elemental_profile",
-    )?;
-    result[53] = u8(field(item, "behavior")?, "combatant behavior")?;
+    )? as u8;
+    result[53] = integer_or(item, "behavior", 0, 0, 0xff, "combatant behavior")? as u8;
     Ok(result)
 }
 
@@ -523,7 +579,7 @@ fn build_hero_growth(value: &Value, index: usize) -> Result<Vec<u8>> {
 
 fn build_class(value: &Value, index: usize) -> Result<Vec<u8>> {
     let item = object(value, &format!("classes[{index}]"))?;
-    exact_keys(
+    sparse_keys(
         item,
         &[
             "family",
@@ -532,44 +588,43 @@ fn build_class(value: &Value, index: usize) -> Result<Vec<u8>> {
             "abilities",
             "traits",
         ],
+        &[],
         &format!("classes[{index}]"),
     )?;
     let mut result = vec![0; 84];
-    write_i32(&mut result, 0, s32(field(item, "family")?, "class family")?);
-    for (slot, entry) in list(
-        field(item, "djinn_requirements")?,
-        4,
-        "class djinn_requirements",
-    )?
-    .iter()
-    .enumerate()
-    {
-        result[4 + slot] = u8(entry, "class djinn requirement")?;
+    write_i32(
+        &mut result,
+        0,
+        integer_or(item, "family", 0, -0x8000_0000, 0x7fff_ffff, "class family")? as i32,
+    );
+    if let Some(requirements) = item.get("djinn_requirements") {
+        for (slot, entry) in list(requirements, 4, "class djinn_requirements")?
+            .iter()
+            .enumerate()
+        {
+            result[4 + slot] = u8(entry, "class djinn requirement")?;
+        }
     }
-    for (slot, entry) in list(
-        field(item, "stat_multipliers")?,
-        6,
-        "class stat_multipliers",
-    )?
-    .iter()
-    .enumerate()
-    {
-        result[8 + slot] = u8(entry, "class stat multiplier")?;
+    if let Some(multipliers) = item.get("stat_multipliers") {
+        for (slot, entry) in list(multipliers, 6, "class stat_multipliers")?
+            .iter()
+            .enumerate()
+        {
+            result[8 + slot] = u8(entry, "class stat multiplier")?;
+        }
     }
-    for (slot, raw) in list(field(item, "abilities")?, 16, "class abilities")?
-        .iter()
-        .enumerate()
-    {
-        let ability = object(raw, "class ability")?;
-        exact_keys(ability, &["id", "level"], "class ability")?;
-        result[16 + slot * 4] = u8(field(ability, "id")?, "class ability id")?;
-        result[17 + slot * 4] = u8(field(ability, "level")?, "class ability level")?;
+    if let Some(abilities) = item.get("abilities") {
+        for (slot, raw) in list(abilities, 16, "class abilities")?.iter().enumerate() {
+            let ability = object(raw, "class ability")?;
+            exact_keys(ability, &["id", "level"], "class ability")?;
+            result[16 + slot * 4] = u8(field(ability, "id")?, "class ability id")?;
+            result[17 + slot * 4] = u8(field(ability, "level")?, "class ability level")?;
+        }
     }
-    for (slot, entry) in list(field(item, "traits")?, 4, "class traits")?
-        .iter()
-        .enumerate()
-    {
-        result[80 + slot] = u8(entry, "class trait")?;
+    if let Some(traits) = item.get("traits") {
+        for (slot, entry) in list(traits, 4, "class traits")?.iter().enumerate() {
+            result[80 + slot] = u8(entry, "class trait")?;
+        }
     }
     Ok(result)
 }
@@ -837,16 +892,50 @@ pub fn build_gameplay_databases(value: &Value) -> Result<Vec<u8>> {
 }
 
 pub fn run(args: Vec<String>) -> Result<()> {
-    if args.first().map(String::as_str) != Some("build-stdout") {
-        return err("usage: assets 5 build-stdout SOURCE");
-    }
-    let source = args
-        .get(1)
-        .ok_or_else(|| "build-stdout requires a source".to_string())?;
+    let [command, source] = args.as_slice() else {
+        return err("usage: assets 5 (build-stdout|format) SOURCE");
+    };
     let text = fs::read_to_string(source).map_err(|error| format!("{source}: {error}"))?;
     let value: Value = serde_json::from_str(&text).map_err(|error| format!("{source}: {error}"))?;
-    let bytes = build_gameplay_databases(&value)?;
-    io::stdout()
-        .write_all(&bytes)
-        .map_err(|error| error.to_string())
+    match command.as_str() {
+        "build-stdout" => io::stdout()
+            .write_all(&build_gameplay_databases(&value)?)
+            .map_err(|error| error.to_string()),
+        "format" => fs::write(source, format!("{}\n", canonical_json(&value)))
+            .map_err(|error| error.to_string()),
+        _ => err("usage: assets 5 (build-stdout|format) SOURCE"),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+
+    #[test]
+    fn sparse_records_expand_to_binary_defaults() {
+        let item = build_item_definition(&json!({"name":"no_item"}), 0).unwrap();
+        assert_eq!(item.len(), 44);
+        assert_eq!(item[20], 4);
+        assert!(item[..20].iter().chain(&item[21..]).all(|byte| *byte == 0));
+
+        assert_eq!(build_ability(&json!({}), 0).unwrap(), vec![0; 16]);
+        assert_eq!(build_class(&json!({}), 0).unwrap(), vec![0; 84]);
+
+        let combatant = build_combatant(&json!({}), 0).unwrap();
+        assert_eq!(&combatant[..14], &[0x20; 14]);
+        assert_eq!(combatant[27], 1);
+        assert!(combatant[14..27]
+            .iter()
+            .chain(&combatant[28..])
+            .all(|byte| *byte == 0));
+    }
+
+    #[test]
+    fn sparse_records_still_reject_unknown_fields() {
+        assert!(build_item_definition(&json!({"name":"no_item","unknown":0}), 0).is_err());
+        assert!(build_ability(&json!({"unknown":0}), 0).is_err());
+        assert!(build_class(&json!({"unknown":0}), 0).is_err());
+        assert!(build_combatant(&json!({"unknown":0}), 0).is_err());
+    }
 }

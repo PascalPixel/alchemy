@@ -18916,7 +18916,7 @@
     },
     {
       "en_owner": "0801c21c",
-      "source": "games/gs1/src/0801c21c.c",
+      "source": "games/gs1/src/resource/transfer/reset_pending.c",
       "size": 40,
       "all_exact": true,
       "editions": [
@@ -37193,7 +37193,7 @@
     },
     {
       "en_owner": "0809202c",
-      "source": "games/gs1/src/0809202c.c",
+      "source": "games/gs1/src/battle/effects/audio/play_queued_sound.c",
       "size": 40,
       "all_exact": true,
       "editions": [

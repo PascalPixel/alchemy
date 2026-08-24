@@ -23712,7 +23712,7 @@
     },
     {
       "en_owner": "08098a84",
-      "source": "games/gs1/src/08098a84.c",
+      "source": "games/gs1/src/battle/effects/item_break/spawn_mode_3.c",
       "size": 138,
       "status": "shared_core",
       "starts": {
@@ -24282,7 +24282,7 @@
     },
     {
       "en_owner": "0809a3c4",
-      "source": "games/gs1/src/0809a3c4.c",
+      "source": "games/gs1/src/battle/effects/item_break/spawn_mode_1.c",
       "size": 134,
       "status": "shared_core",
       "starts": {
@@ -37152,7 +37152,7 @@
     },
     {
       "en_owner": "080e0524",
-      "source": "games/gs1/src/080e0524.c",
+      "source": "games/gs1/src/resource/load_and_decompress.c",
       "size": 64,
       "status": "shared_core",
       "starts": {

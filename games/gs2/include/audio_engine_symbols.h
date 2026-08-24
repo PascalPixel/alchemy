@@ -1,0 +1,15 @@
+#ifndef GS2_AUDIO_ENGINE_SYMBOLS_H
+#define GS2_AUDIO_ENGINE_SYMBOLS_H
+
+#define MusicPlayer_FadeOutPause Func_081c2168
+#define MusicPlayer_FadeIn Func_081c2188
+#define AudioEngine_EnablePcmDma Func_081c2640
+#define MusicTrack_UpdateVolumePitch Func_081c28e0
+#define Cgb_StopOscillator Func_081c2a3c
+#define CgbChannel_UpdatePanEnvelope Func_081c2a8c
+#define MusicPlayer_SetVolume Func_081c2f68
+#define MusicPlayer_SetPitch Func_081c2fd0
+#define MusicPlayer_SetPan Func_081c3044
+#define MusicTrack_ReadWavePointer Func_081c3340
+
+#endif

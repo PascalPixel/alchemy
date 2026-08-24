@@ -232,10 +232,10 @@ mod tests {
         let paths = SourcePaths::parse(
             Path::new("/repo"),
             r#"{
-  "format": 2,
+  "format": 3,
   "owners": {
-    "resource_39b:02000104": {"name":"integrate_effect_motion","source":"overlays/shared/integrate_effect_motion.c"},
-    "resource_39c:02000104": {"name":"integrate_effect_motion","source":"overlays/shared/integrate_effect_motion.c"}
+    "resource_39b:02000104": "overlays/shared/integrate_effect_motion.c",
+    "resource_39c:02000104": "overlays/shared/integrate_effect_motion.c"
   }
 }"#,
         )

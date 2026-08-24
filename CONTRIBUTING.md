@@ -191,11 +191,12 @@ overlay owners live inside
 Exact source uses descriptive, domain-owned paths under `games/gs1/src/`, such
 as `battle/inventory/draw_item_grid.c`. The canonical owner register,
 `games/gs1/source-paths.json`, is the single address-to-name and
-address-to-source authority. Each `main:<address>` or
-`resource_<id>:<address>` record has one human name and may have one exact-C
-source path. Do not add parallel symbol maps or infer a canonical name from a
-filename, assembly export, chart label, or tool-local table. Those consumers
-must resolve the stable owner identity through this register. Owner-specific
+address-to-source authority. A plain source-path record takes its human name
+from the `.c` filename; use an object only to override that name, retain a name
+without exact C, or add owner-specific metadata. Do not add parallel symbol
+maps or infer names outside this schema from assembly exports, chart labels, or
+tool-local tables. Those consumers must resolve the stable owner identity
+through this register. Owner-specific
 compiler facts, such as an exceptional `call_via` bank, belong on the same
 record rather than in a source-path lookup table. The legacy `Func_<address>`
 spelling is derived directly from an unregistered main owner identity and is

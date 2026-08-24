@@ -10,7 +10,7 @@ struct OwnerState_0807a0f4 {
 s32 Djinn_AddToOwner(s32 owner, s32 index, u8 *state);
 u32 *Trade_AddOffer(s32 owner, s32 index, u8 *state);
 
-s32 Func_0807a0f4(s32 index, u8 *state)
+s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state)
 {
     void *entry = state + index * 20 + 48;
     s32 bestOwner = 0;

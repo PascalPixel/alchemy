@@ -13302,7 +13302,7 @@
     },
     {
       "en_owner": "0802851c",
-      "source": "games/gs1/src/0802851c.c",
+      "source": "games/gs1/src/menu/end_resource_selection.c",
       "size": 88,
       "status": "shared_core",
       "starts": {
@@ -13392,7 +13392,7 @@
     },
     {
       "en_owner": "080287a8",
-      "source": "games/gs1/src/080287a8.c",
+      "source": "games/gs1/src/menu/append_resource_entry.c",
       "size": 96,
       "status": "shared_core",
       "starts": {
@@ -13422,7 +13422,7 @@
     },
     {
       "en_owner": "080288a8",
-      "source": "games/gs1/src/080288a8.c",
+      "source": "games/gs1/src/menu/layout_resource_entries.c",
       "size": 120,
       "status": "shared_core",
       "starts": {
@@ -13602,7 +13602,7 @@
     },
     {
       "en_owner": "08028ef0",
-      "source": "games/gs1/src/08028ef0.c",
+      "source": "games/gs1/src/menu/draw_selection_row.c",
       "size": 168,
       "status": "regional_core",
       "starts": {
@@ -13632,7 +13632,7 @@
     },
     {
       "en_owner": "08028f98",
-      "source": "games/gs1/src/08028f98.c",
+      "source": "games/gs1/src/menu/run_selection.c",
       "size": 252,
       "status": "regional_core",
       "starts": {
@@ -16482,7 +16482,7 @@
     },
     {
       "en_owner": "0807a0f4",
-      "source": "games/gs1/src/0807a0f4.c",
+      "source": "games/gs1/src/djinn/add_to_least_loaded_owner.c",
       "size": 192,
       "status": "shared_core",
       "starts": {
@@ -40704,12 +40704,12 @@
     },
     {
       "en_owner": "08028aa8",
-      "source": "games/gs1/src/08028aa8.c",
+      "source": "games/gs1/src/menu/draw_mode_label.c",
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x08028b10"
     },
     {
       "en_owner": "08028b80",
-      "source": "games/gs1/src/08028b80.c",
+      "source": "games/gs1/src/menu/draw_mode_indicator.c",
       "error": "fr: no exact core within 0x1000 bytes of predicted 0x08027b24"
     },
     {

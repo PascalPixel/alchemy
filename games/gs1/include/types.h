@@ -74,6 +74,7 @@ typedef int bool;
 #define Runtime_BumpAllocateAlternatePool Func_08004970
 #define Trade_GetOfferState Func_08077330
 #define Djinn_GetDefinition Func_0807a0cc
+#define Djinn_AddToLeastLoadedOwner Func_0807a0f4
 #define Djinn_AddToOwner Func_0807a1b4
 #define Trade_CanOfferDjinn Func_0807a1f8
 #define Djinn_IsActive Func_0807a2bc
@@ -93,7 +94,13 @@ typedef int bool;
 #define Party_RemoveActiveOwner Func_08079664
 #define Item_GetEquippedElement Func_08079c8c
 #define UiPalette_SetColor Func_080150b8
+#define Menu_EndResourceSelection Func_0802851c
 #define Menu_AppendResourceEntry Func_080287a8
+#define Menu_LayoutResourceEntries Func_080288a8
+#define Menu_DrawModeLabel Func_08028aa8
+#define Menu_DrawModeIndicator Func_08028b80
+#define Menu_DrawSelectionRow Func_08028ef0
+#define Menu_RunSelection Func_08028f98
 #define Object_CheckMovementCollision Func_080091d8
 #define Ability_GetMaximum Func_08077240
 #define Ability_GetAvailability Func_08077248

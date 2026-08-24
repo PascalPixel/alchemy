@@ -52,6 +52,7 @@ typedef int bool;
 #define GameFlag_IsConditionActive Func_0808d428
 #define GameFlag_Set Func_080770c8
 #define GameFlag_Clear Func_080770d0
+#define Object_DestroyIfPresent Func_0808f0c8
 #define FixedPoint_Ratio Func_080022ec
 #define Object_ResetMotion Func_08009140
 #define Object_SetPosition Func_08009150
@@ -193,6 +194,8 @@ typedef int bool;
 #define UiText_ShowMessageAndWait Func_080151c8
 #define UiText_ShowMessageAndWaitCore Func_080175a0
 #define UiText_ShowLocalizedMessageAndWait Func_08026fa8
+#define Text_FormatHex Func_08029274
+#define UiText_SetRenderString Func_08020b14
 #define UiWork_FinalizePending Func_08015140
 #define UiWork_FinalizePendingCore Func_08019a54
 #define UiTimedNotice_Create Func_0801c34c
@@ -400,6 +403,7 @@ typedef int bool;
 #define ObjectTable_ReadActiveValue Func_08092ba8
 #define ObjectMotion_SetPositionWithTerrain Func_08092454
 #define ObjectMotion_SetHorizontalPositionWithTerrain Func_080923e4
+#define ObjectMotion_SnapToTerrain Func_0808e9a8
 #define ObjectMotion_SetPositionAndReset Func_080921c4
 #define ObjectMotion_OffsetPositionAndReset Func_080922c4
 #define ObjectMotion_CommitPositionAndActivate Func_08092304

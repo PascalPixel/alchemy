@@ -228,7 +228,7 @@ fn parse_gameplay_databases(value: &Value) -> Result<&Map<String, Value>> {
         ],
         "gameplay database source",
     )?;
-    if field(source, "format")?.as_u64() != Some(3)
+    if field(source, "format")?.as_u64() != Some(4)
         || field(source, "kind")?.as_str() != Some("golden-sun-gameplay-databases")
         || field(source, "address")?.as_str() != Some("0x0807a828")
         || field(source, "size")?.as_str() != Some("0x0000f7d8")
@@ -361,45 +361,26 @@ fn build_item_definition(value: &Value, index: usize) -> Result<Vec<u8>> {
 }
 
 fn build_ability(value: &Value, index: usize) -> Result<Vec<u8>> {
-    let ability = object(value, &format!("abilities[{index}]"))?;
-    let keys = [
-        "element",
-        "target",
-        "damage_class",
-        "effect",
-        "animation",
-        "range",
-        "category",
-        "power",
-        "chance",
-    ];
-    sparse_keys(ability, &keys, &[], &format!("abilities[{index}]"))?;
+    let ability = value
+        .as_array()
+        .filter(|values| values.len() <= 9)
+        .ok_or_else(|| format!("abilities[{index}] must contain at most 9 values"))?;
+    let value = |index: usize, maximum: i128, label: &str| {
+        ability
+            .get(index)
+            .map_or(Ok(0), |value| integer(value, 0, maximum, label))
+    };
     let mut result = vec![0; 16];
-    for (offset, key) in [
-        (0, "element"),
-        (1, "target"),
-        (2, "damage_class"),
-        (3, "effect"),
-        (8, "range"),
-        (9, "category"),
-    ] {
-        result[offset] = integer_or(ability, key, 0, 0, 0xff, &format!("ability {key}"))? as u8;
+    for (offset, field) in [(0, 0), (1, 1), (2, 2), (3, 3), (8, 5), (9, 6)] {
+        result[offset] = value(field, 0xff, "ability byte")? as u8;
     }
     write_u16(
         &mut result,
         4,
-        integer_or(ability, "animation", 0, 0, 0xffff, "ability animation")? as u16,
+        value(4, 0xffff, "ability animation")? as u16,
     );
-    write_u16(
-        &mut result,
-        10,
-        integer_or(ability, "power", 0, 0, 0xffff, "ability power")? as u16,
-    );
-    write_u16(
-        &mut result,
-        12,
-        integer_or(ability, "chance", 0, 0, 0xffff, "ability chance")? as u16,
-    );
+    write_u16(&mut result, 10, value(7, 0xffff, "ability power")? as u16);
+    write_u16(&mut result, 12, value(8, 0xffff, "ability chance")? as u16);
     Ok(result)
 }
 
@@ -887,7 +868,7 @@ mod tests {
         assert_eq!(item[20], 4);
         assert!(item[..20].iter().chain(&item[21..]).all(|byte| *byte == 0));
 
-        assert_eq!(build_ability(&json!({}), 0).unwrap(), vec![0; 16]);
+        assert_eq!(build_ability(&json!([]), 0).unwrap(), vec![0; 16]);
         assert_eq!(build_class(&json!({}), 0).unwrap(), vec![0; 84]);
 
         let combatant = build_combatant(&json!({}), 0).unwrap();
@@ -903,6 +884,7 @@ mod tests {
     fn sparse_records_still_reject_unknown_fields() {
         assert!(build_item_definition(&json!({"name":"no_item","unknown":0}), 0).is_err());
         assert!(build_ability(&json!({"unknown":0}), 0).is_err());
+        assert!(build_ability(&json!([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), 0).is_err());
         assert!(build_class(&json!({"unknown":0}), 0).is_err());
         assert!(build_combatant(&json!({"unknown":0}), 0).is_err());
     }

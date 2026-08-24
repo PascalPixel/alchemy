@@ -1,7 +1,7 @@
 #include "m7_interfaces.h"
 #include "global_cells.h"
 
-void Func_080a1cb0(s32 layout) {
+void InventoryMenu_RefreshOwnerEntries(s32 layout) {
     struct Object080a1c **slot;
     struct Object080a1c **scan;
     struct Object080a1c *object;
@@ -20,7 +20,7 @@ void Func_080a1cb0(s32 layout) {
     do {
         object = *scan++;
         if (object != NULL) {
-            Func_080a1c6c(slot, index, 0x74, origin_y, 5);
+            InventoryMenu_PositionOwnerEntry(slot, index, 0x74, origin_y, 5);
         }
         index++;
         slot++;

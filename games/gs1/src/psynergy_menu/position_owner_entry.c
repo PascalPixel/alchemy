@@ -1,9 +1,11 @@
 #include "m7_interfaces.h"
 
+#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+
 s32 FixedPoint_Ratio(s32, s32);
 s32 Modulo(s32, s32);
 
-void Func_080a1c6c(struct Object080a1c **slot, s32 index,
+void PsynergyMenu_PositionOwnerEntry(struct Object080a1c **slot, s32 index,
     s32 origin_x, s32 origin_y,
     s32 phase) {
     struct Object080a1c *object;
@@ -12,7 +14,7 @@ void Func_080a1c6c(struct Object080a1c **slot, s32 index,
     s32 wrapped_index;
 
     wrapped_index = index;
-    if (wrapped_index > 0xF) {
+    if (wrapped_index > 0x1F) {
         wrapped_index = 0;
     }
     stable_phase = *(volatile s32 *)&phase;
@@ -20,6 +22,6 @@ void Func_080a1c6c(struct Object080a1c **slot, s32 index,
     wave = FixedPoint_Ratio(wrapped_index, stable_phase);
     object->y = (s16)((wave * 0x10) + origin_y);
     object->x =
-        (s16)((Modulo(wrapped_index, phase) * 0x18) + origin_x);
+        (s16)((Modulo(wrapped_index, phase) * 0x10) + origin_x);
     Func_080a17c4(object);
 }

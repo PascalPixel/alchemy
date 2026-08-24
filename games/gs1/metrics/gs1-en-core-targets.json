@@ -15,10 +15,10 @@
     "address_spaces_with_targets": 86,
     "target_count": 1650,
     "target_scope_bytes": 814776,
-    "target_bytes": 655078,
+    "target_bytes": 654838,
     "tracked_c_bytes": 44108,
-    "assembly_bytes": 610970,
-    "exact_c_leverage_bytes": 66750,
+    "assembly_bytes": 610730,
+    "exact_c_leverage_bytes": 66990,
     "permanent_assembly_leverage_bytes": 92948,
     "resolved_only_bytes": 533646
   },
@@ -413,10 +413,10 @@
       "address": "0x080b6cd0",
       "label": "0x080b6cd0–0x080b7b6a",
       "scope_bytes": 3738,
-      "target_bytes": 2660,
+      "target_bytes": 2420,
       "tracked_c_bytes": 0,
-      "assembly_bytes": 2660,
-      "exact_c_leverage_bytes": 1078,
+      "assembly_bytes": 2420,
+      "exact_c_leverage_bytes": 1318,
       "permanent_assembly_bytes": 0
     },
     {

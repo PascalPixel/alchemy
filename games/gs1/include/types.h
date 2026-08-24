@@ -283,6 +283,7 @@ typedef int bool;
 #define RenderOutput_AcquireFree Func_08015e8c
 #define RenderOutput_ReleaseFree Func_08015ec0
 #define Resource_ScheduleOwnerReset Func_0801a97c
+#define Resource_ScheduleOwnerResetDelayed Func_0801a968
 #define RenderOutput_ClearList Func_080164ac
 #define RenderOutput_AppendToList Func_08016584
 #define RenderOutput_Release Func_08016594
@@ -324,6 +325,7 @@ typedef int bool;
 #define ObjectMotion_SetVariantCallback Func_0809259c
 #define ObjectMotion_SetActionCallback Func_08093a6c
 #define ObjectMotion_EnableActionAndSetCallback Func_0809207c
+#define ObjectMotion_EnableActionAndResetMotion Func_080920a0
 #define ObjectMotion_WaitForAnimationChange Func_08092504
 #define ObjectMotion_TurnTowardLinkedTarget Func_08093a14
 #define FourObjectMotion_ClearSlotsAndSchedule Func_080ad318

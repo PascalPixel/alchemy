@@ -7,7 +7,7 @@ void Func_08002dd8(s32);
 void WaitFrames(s32);
 extern u8 Data_08095885;
 
-void Func_080958e4(void) {
+void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void) {
     u8 *var_r5 = *(u8 **)ADDR_03001F30;
     u8 *var_r6;
     s32 var_r7;

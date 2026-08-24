@@ -33,23 +33,23 @@ struct AudioEngineState {
     u8 master_volume;
     u8 pcm_rate;
     u8 mode;
-    u8 counter_0a;
+    u8 c15_counter;
     u8 pcm_dma_period;
     u8 max_lines;
-    u8 unknown0d[3];
-    u32 samples_per_vblank;
-    u32 pcm_frequency;
-    u32 frequency_scale;
+    u8 gap[3];
+    u32 pcm_samples_per_vblank;
+    u32 pcm_freq;
+    u32 div_freq;
     struct CgbChannel *cgb_channels;
-    PlayerMainCallback player_main;
-    struct MusicPlayerState *player_head;
-    CgbUpdateCallback cgb_update;
-    union CgbDisableCallbackSlot cgb_disable;
-    union KeyToFrequencyCallbackSlot key_to_freq;
-    union AudioCommandSlot *command_table;
-    NoteHandler note_handler;
+    PlayerMainCallback mplay_main_head;
+    struct MusicPlayerState *music_player_head;
+    CgbUpdateCallback cgb_sound;
+    union CgbDisableCallbackSlot cgb_osc_off;
+    union KeyToFrequencyCallbackSlot midi_key_to_cgb_freq;
+    union AudioCommandSlot *mplay_jump_table;
+    NoteHandler ply_note;
     CgbUpdateCallback ext_volume_pitch;
-    u8 unknown40[0x10];
+    u8 gap2[0x10];
     u8 direct_channels[12][0x40];
     u8 pcm_buffers[2][0x630];
 };
@@ -66,7 +66,7 @@ void AudioEngine_SetPcmRate(u32 value);
 void AudioEngine_Initialize(struct AudioEngineState *audio)
 {
     u32 zero;
-    union AudioCommandSlot *command_table;
+    union AudioCommandSlot *mplay_jump_table;
 
     audio->ident = 0;
 
@@ -96,15 +96,15 @@ void AudioEngine_Initialize(struct AudioEngineState *audio)
 
     audio->max_pcm_channels = 8;
     audio->master_volume = 15;
-    audio->note_handler = Func_080f9f6c;
-    audio->cgb_update = Audio_DummyCallback;
-    audio->cgb_disable.placeholder = Audio_DummyCallback;
-    audio->key_to_freq.placeholder = Audio_DummyCallback;
+    audio->ply_note = Func_080f9f6c;
+    audio->cgb_sound = Audio_DummyCallback;
+    audio->cgb_osc_off.placeholder = Audio_DummyCallback;
+    audio->midi_key_to_cgb_freq.placeholder = Audio_DummyCallback;
     audio->ext_volume_pitch = Audio_DummyCallback;
 
-    command_table = (union AudioCommandSlot *)0x02004000;
-    Func_080f9a80(command_table);
-    audio->command_table = command_table;
+    mplay_jump_table = (union AudioCommandSlot *)0x02004000;
+    Func_080f9a80(mplay_jump_table);
+    audio->mplay_jump_table = mplay_jump_table;
 
     AudioEngine_SetPcmRate(0x40000);
     audio->ident = 0x68736d53;

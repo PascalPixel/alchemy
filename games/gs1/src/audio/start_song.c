@@ -11,9 +11,9 @@ struct SongHeader {
 };
 
 struct SongStartTrack {
-    u8 status;
+    u8 flags;
     u8 padding01[0x1f];
-    s32 channel_head;
+    s32 channel;
     u8 padding24[0x1c];
     s32 command;
     u8 padding44[0x0c];
@@ -56,7 +56,7 @@ void MusicPlayer_StartSong(
     priority = song->priority;
     if (check_song_priority != 0
         && !(((player->song == 0
-               || (player->tracks->status & 0x40) == 0)
+               || (player->tracks->flags & 0x40) == 0)
               && ((status = player->status),
                   (*(volatile u16 *)&player->status == 0 || status < 0)))
              || player->priority
@@ -83,15 +83,15 @@ void MusicPlayer_StartSong(
     while (track_index < song->track_count
            && track_index < player->track_capacity) {
         Func_080f9ef8(player, track);
-        track->status = 0xc0;
-        track->channel_head = 0;
+        track->flags = 0xc0;
+        track->channel = 0;
         track->command = song->track_data[track_index];
         track_index++;
         track++;
     }
     while (track_index < player->track_capacity) {
         Func_080f9ef8(player, track);
-        track->status = 0;
+        track->flags = 0;
         track_index++;
         track++;
     }

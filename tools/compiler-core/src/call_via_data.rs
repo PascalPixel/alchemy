@@ -74,6 +74,13 @@ pub static SOURCE_CALL_VIA_BASE: &[(&str, u64)] = &[
     ("games/gs1/src/resource_3a6_c_020008ec.c", 0x0200_27ca),
     ("games/gs1/src/resource_3b3_c_020008ec.c", 0x0200_3622),
     ("games/gs1/src/resource_3be_c_020008ec.c", 0x0200_2042),
+    ("games/gs1/src/resource_39f_c_02000608.c", 0x0200_363e),
+    ("games/gs1/src/resource_3b2_c_02000608.c", 0x0200_38a2),
+    ("games/gs1/src/resource_3b4_c_02000608.c", 0x0200_2d8a),
+    ("games/gs1/src/resource_3bd_c_02000608.c", 0x0200_45fa),
+    ("games/gs1/src/resource_3bf_c_02000608.c", 0x0200_5f32),
+    ("games/gs1/src/resource_3c4_c_02000608.c", 0x0200_3936),
+    ("games/gs1/src/resource_3c5_c_02000608.c", 0x0200_371a),
     (
         "games/gs1/recon/en/overlays/resource_391_c_02000608.c",
         0x0200_34ae,

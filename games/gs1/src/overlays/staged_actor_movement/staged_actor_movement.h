@@ -53,7 +53,11 @@ extern void Func_02000902(s32, s32, s32, s32, s32, s32);
 extern void Func_020066b4(s32, s32, s32);
 extern void Func_02006714();
 extern void Func_0200668a(s32);
+#ifdef STAGED_ACTOR_MOVEMENT_UNTYPED_LOCATION_CALL
+extern void Func_0200672c();
+#else
 extern void Func_0200672c(s32, s32, s32);
+#endif
 extern StagedActorRecord *Func_020066ea(s32);
 extern void Func_020066c4();
 extern void Func_02006614(StagedActorRecord *, s32);

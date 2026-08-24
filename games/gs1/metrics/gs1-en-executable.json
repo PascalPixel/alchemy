@@ -4,7 +4,7 @@
  "target": "gs1-en",
  "derivation": "full-c-progress-v1",
  "audit": "complete",
- "total_union_bytes": 1348408,
+ "total_union_bytes": 1348422,
  "main": {
   "id": "main",
   "executable_bytes": 548364,
@@ -20169,8 +20169,8 @@
   {
    "id": "resource_39f",
    "decoded_bytes": 15916,
-   "executable_bytes": 11272,
-   "excluded_bytes": 4644,
+   "executable_bytes": 11274,
+   "excluded_bytes": 4642,
    "audit": "complete",
    "intervals": [
     {
@@ -20196,6 +20196,12 @@
      "end": 33555976,
      "kind": "thumb",
      "evidence": "resource_39f_overlay.s:734:verified-C-placeholder"
+    },
+    {
+     "start": 33555976,
+     "end": 33555978,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:resource_39f:02000608 complete owner begins with the stack-opening instruction"
     },
     {
      "start": 33555978,
@@ -27012,8 +27018,8 @@
   {
    "id": "resource_3b2",
    "decoded_bytes": 15796,
-   "executable_bytes": 12510,
-   "excluded_bytes": 3286,
+   "executable_bytes": 12512,
+   "excluded_bytes": 3284,
    "audit": "complete",
    "intervals": [
     {
@@ -27039,6 +27045,12 @@
      "end": 33555976,
      "kind": "thumb",
      "evidence": "resource_3b2_overlay.s:690:verified-C-placeholder"
+    },
+    {
+     "start": 33555976,
+     "end": 33555978,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:resource_3b2:02000608 complete owner begins with the stack-opening instruction"
     },
     {
      "start": 33555978,
@@ -28098,8 +28110,8 @@
   {
    "id": "resource_3b4",
    "decoded_bytes": 12164,
-   "executable_bytes": 9590,
-   "excluded_bytes": 2574,
+   "executable_bytes": 9592,
+   "excluded_bytes": 2572,
    "audit": "complete",
    "intervals": [
     {
@@ -28125,6 +28137,12 @@
      "end": 33555976,
      "kind": "thumb",
      "evidence": "resource_3b4_overlay.s:644:verified-C-placeholder"
+    },
+    {
+     "start": 33555976,
+     "end": 33555978,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:resource_3b4:02000608 complete owner begins with the stack-opening instruction"
     },
     {
      "start": 33555978,
@@ -32661,8 +32679,8 @@
   {
    "id": "resource_3bd",
    "decoded_bytes": 18692,
-   "executable_bytes": 16342,
-   "excluded_bytes": 2350,
+   "executable_bytes": 16344,
+   "excluded_bytes": 2348,
    "audit": "complete",
    "intervals": [
     {
@@ -32700,6 +32718,12 @@
      "end": 33555976,
      "kind": "thumb",
      "evidence": "resource_3bd_overlay.s:1282:verified-C-placeholder"
+    },
+    {
+     "start": 33555976,
+     "end": 33555978,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:resource_3bd:02000608 complete owner begins with the stack-opening instruction"
     },
     {
      "start": 33555978,
@@ -33723,8 +33747,8 @@
   {
    "id": "resource_3bf",
    "decoded_bytes": 30580,
-   "executable_bytes": 23476,
-   "excluded_bytes": 7104,
+   "executable_bytes": 23478,
+   "excluded_bytes": 7102,
    "audit": "complete",
    "intervals": [
     {
@@ -33750,6 +33774,12 @@
      "end": 33555976,
      "kind": "thumb",
      "evidence": "resource_3bf_overlay.s:1711:verified-C-placeholder"
+    },
+    {
+     "start": 33555976,
+     "end": 33555978,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:resource_3bf:02000608 complete owner begins with the stack-opening instruction"
     },
     {
      "start": 33555978,
@@ -35256,8 +35286,8 @@
   {
    "id": "resource_3c4",
    "decoded_bytes": 16764,
-   "executable_bytes": 10184,
-   "excluded_bytes": 6580,
+   "executable_bytes": 10186,
+   "excluded_bytes": 6578,
    "audit": "complete",
    "intervals": [
     {
@@ -35283,6 +35313,12 @@
      "end": 33555976,
      "kind": "thumb",
      "evidence": "resource_3c4_overlay.s:642:verified-C-placeholder"
+    },
+    {
+     "start": 33555976,
+     "end": 33555978,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:resource_3c4:02000608 complete owner begins with the stack-opening instruction"
     },
     {
      "start": 33555978,
@@ -35817,8 +35853,8 @@
   {
    "id": "resource_3c5",
    "decoded_bytes": 15604,
-   "executable_bytes": 11998,
-   "excluded_bytes": 3606,
+   "executable_bytes": 12000,
+   "excluded_bytes": 3604,
    "audit": "complete",
    "intervals": [
     {
@@ -35844,6 +35880,12 @@
      "end": 33555976,
      "kind": "thumb",
      "evidence": "resource_3c5_overlay.s:921:verified-C-placeholder"
+    },
+    {
+     "start": 33555976,
+     "end": 33555978,
+     "kind": "thumb",
+     "evidence": "games/gs1/semantic/regions.json:resource_3c5:02000608 complete owner begins with the stack-opening instruction"
     },
     {
      "start": 33555978,

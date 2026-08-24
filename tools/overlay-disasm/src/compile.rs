@@ -7,7 +7,7 @@ use compiler_core::routing::CompilerTarget;
 use compiler_core::sha256;
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use compiler_core::{external_symbol, external_symbol_assembly, overlay_call_via_base};
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -311,18 +311,93 @@ fn overlay_cache_key(
     plan_signature: &str,
     address: i64,
     call_via_base: i64,
-    source: &[u8],
+    source_inputs: &[u8],
 ) -> String {
     let mut key = Vec::new();
-    append_frame(&mut key, b"overlay-c-cache-v2");
+    append_frame(&mut key, b"overlay-c-cache-v3");
     append_frame(&mut key, self_digest().as_bytes());
     append_frame(&mut key, compiler_signature.as_bytes());
     append_frame(&mut key, host_signature.as_bytes());
     append_frame(&mut key, plan_signature.as_bytes());
     append_frame(&mut key, hex(address, 8).as_bytes());
     append_frame(&mut key, hex(call_via_base, 8).as_bytes());
-    append_frame(&mut key, source);
+    append_frame(&mut key, source_inputs);
     sha256::hex(&key)
+}
+
+fn rooted_path(path: &Path) -> PathBuf {
+    if path.is_absolute() {
+        path.to_path_buf()
+    } else {
+        root().join(path)
+    }
+}
+
+fn compiler_include_dirs(commands: &[Vec<String>]) -> Vec<PathBuf> {
+    let mut directories = BTreeSet::new();
+    for command in commands {
+        let mut arguments = command.iter();
+        while let Some(argument) = arguments.next() {
+            let include = if argument == "-I" {
+                arguments.next().map(String::as_str)
+            } else {
+                argument.strip_prefix("-I").filter(|path| !path.is_empty())
+            };
+            if let Some(include) = include {
+                directories.insert(rooted_path(Path::new(include)));
+            }
+        }
+    }
+    directories.into_iter().collect()
+}
+
+fn collect_source_inputs(
+    path: &Path,
+    include_dirs: &[PathBuf],
+    seen: &mut BTreeSet<PathBuf>,
+    inputs: &mut Vec<(PathBuf, Vec<u8>)>,
+) -> Result<(), String> {
+    let canonical =
+        fs::canonicalize(path).map_err(|error| format!("{}: {error}", path.display()))?;
+    if !seen.insert(canonical.clone()) {
+        return Ok(());
+    }
+    let bytes =
+        fs::read(&canonical).map_err(|error| format!("{}: {error}", canonical.display()))?;
+    let text = String::from_utf8_lossy(&bytes);
+    let mut includes = Vec::new();
+    for include in text.lines().filter_map(quoted_include) {
+        let include = Path::new(include);
+        let local = canonical.parent().unwrap_or(Path::new("")).join(include);
+        if let Some(resolved) = std::iter::once(local)
+            .chain(include_dirs.iter().map(|directory| directory.join(include)))
+            .find(|candidate| candidate.is_file())
+        {
+            includes.push(resolved);
+        }
+    }
+    inputs.push((canonical, bytes));
+    for include in includes {
+        collect_source_inputs(&include, include_dirs, seen, inputs)?;
+    }
+    Ok(())
+}
+
+fn source_input_signature(source: &Path, commands: &[Vec<String>]) -> Result<Vec<u8>, String> {
+    let mut seen = BTreeSet::new();
+    let mut inputs = Vec::new();
+    collect_source_inputs(
+        source,
+        &compiler_include_dirs(commands),
+        &mut seen,
+        &mut inputs,
+    )?;
+    let mut stream = Vec::new();
+    for (path, bytes) in inputs {
+        append_frame(&mut stream, path.to_string_lossy().as_bytes());
+        append_frame(&mut stream, &bytes);
+    }
+    Ok(sha256::hex(&stream).into_bytes())
 }
 fn routed_call_via_base(overlay: &str, routing_source: &str) -> i64 {
     overlay_call_via_base(overlay, Some(routing_source)) as i64
@@ -462,7 +537,7 @@ fn compile_overlay_with_mutations(
     }
     let plan = source_to_assembly_plan(&options).map_err(|error| error.to_string())?;
     let steps: Vec<Vec<String>> = plan.steps.iter().map(|step| step.command.clone()).collect();
-    let source_bytes = fs::read(source).map_err(|error| format!("{source_display}: {error}"))?;
+    let source_inputs = source_input_signature(source, &steps)?;
     let plan_signature = plan_stamp(&steps, &work_display);
     let host_signature = compiler_core::bundle::host_executable_signature(&OVERLAY_HOST_TOOLS)
         .map_err(|error| format!("overlay host tool signature: {error}"))?;
@@ -474,7 +549,7 @@ fn compile_overlay_with_mutations(
             &plan_signature,
             address,
             call_via_base,
-            &source_bytes,
+            &source_inputs,
         )
     ));
     if extra_flags.is_empty() {
@@ -767,6 +842,19 @@ mod source_activation_tests {
             &text,
             "Func_0200013c"
         ));
+    }
+
+    #[test]
+    fn included_source_changes_are_part_of_the_overlay_cache_identity() {
+        let work = tempdir().unwrap();
+        let source = work.path().join("owner.c");
+        let body = work.path().join("body.inc");
+        fs::write(&source, "#include \"body.inc\"\n").unwrap();
+        fs::write(&body, "void owner(void) {}\n").unwrap();
+        let first = source_input_signature(&source, &[]).unwrap();
+        fs::write(&body, "void owner(void) { for (;;) {} }\n").unwrap();
+        let second = source_input_signature(&source, &[]).unwrap();
+        assert_ne!(first, second);
     }
 }
 pub(crate) fn js_parse_int_hex(text: &str) -> Option<i64> {

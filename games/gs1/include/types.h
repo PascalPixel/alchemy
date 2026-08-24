@@ -194,6 +194,9 @@ typedef int bool;
 #define EffectSlot_SetObjectMode Func_0809ba70
 #define EffectSlot_SetCallback Func_0809ba7c
 #define EffectSlot_Update Func_0809b804
+#define ParticleEffect_UpdateMotionAndScale Func_0809a65c
+#define BattleEffect_PauseObject Func_0809ad90
+#define BattleEffect_ResumeObject Func_0809ade8
 #define Audio_InitializeRuntimeDefaults Func_080f9438
 #define Graphics_ScaleRgb555 Func_080f6038
 #define Audio_ClearChannelChain Func_080f9a30

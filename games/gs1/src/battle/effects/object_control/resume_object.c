@@ -6,7 +6,7 @@ void Object_SetAction(void *, s32);
 void Func_0809ad71(void);
 extern u8 Data_02000240[];
 
-void Func_0809ade8(void)
+void BattleEffect_ResumeObject(void)
 {
     u8 *object = ObjectTable_Get();
     if (object != 0) {

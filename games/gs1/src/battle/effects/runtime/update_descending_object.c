@@ -3,7 +3,7 @@ struct Work_0809b0dc {
   u8 f0[6]; u16 f6; u8 f8[4]; u32 fC; u8 f10[8]; u32 f18; u32 f1C; u8 f20[0x34]; s8 f54;
 };
 /* +0x18/+0x1cを0x280減らし、+6/+0x0cを加算する。 */
-void Func_0809b0dc(struct Work_0809b0dc *arg0) {
+void BattleEffect_UpdateDescendingObject(struct Work_0809b0dc *arg0) {
   u32 temp_r2;
   arg0->f1C -= 0x280;
   temp_r2 = arg0->f18 - 0x280;

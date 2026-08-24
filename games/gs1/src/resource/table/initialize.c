@@ -5,13 +5,13 @@ struct ResourceTableEntry {
     u16 flags;
 };
 
-extern u8 Data_03001810[];
-extern struct ResourceTableEntry Data_03001b10[];
+extern u8 ResourceBlockOwners[];
+extern struct ResourceTableEntry ResourceTableEntries[];
 
 void Resource_InitializeTable(void)
 {
     u32 limit = 0x1ff;
-    u8 *occupancy_markers = Data_03001810;
+    u8 *occupancy_markers = ResourceBlockOwners;
     u32 count = 0;
     u32 empty_marker = 0xff;
 
@@ -21,7 +21,7 @@ void Resource_InitializeTable(void)
     } while (count <= limit);
 
     {
-        struct ResourceTableEntry *resource_entry = Data_03001b10;
+        struct ResourceTableEntry *resource_entry = ResourceTableEntries;
 
         count = 0;
         do {

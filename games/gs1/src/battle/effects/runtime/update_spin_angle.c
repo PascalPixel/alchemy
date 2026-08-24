@@ -2,7 +2,7 @@
 
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-void Func_0809b0b0(void *arg0) {
+void BattleEffect_UpdateSpinAngle(void *arg0) {
     u32 temp_r2;
 
     temp_r2 = M2C_FIELD(arg0, s16 *, 0x64) * 0x50;

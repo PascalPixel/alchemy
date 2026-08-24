@@ -5,12 +5,12 @@ struct ResourceTableEntry {
     u16 flags;
 };
 
-extern struct ResourceTableEntry Data_03001b10[];
+extern struct ResourceTableEntry ResourceTableEntries[];
 s32 Resource_ClearSlotReferences(s32 resource_id);
 
 s32 Resource_ResetEntry(u32 resource_index)
 {
-    struct ResourceTableEntry *resource_entry = &Data_03001b10[resource_index];
+    struct ResourceTableEntry *resource_entry = &ResourceTableEntries[resource_index];
 
     if (resource_index > 95) {
         return -1;

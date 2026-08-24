@@ -762,7 +762,7 @@
     },
     {
       "en_owner": "08003ed4",
-      "source": "games/gs1/src/08003ed4.c",
+      "source": "games/gs1/src/resource/table/get_longest_free_block_run.c",
       "size": 48,
       "status": "shared_core",
       "starts": {
@@ -11742,7 +11742,7 @@
     },
     {
       "en_owner": "0801f5f0",
-      "source": "games/gs1/src/0801f5f0.c",
+      "source": "games/gs1/src/ui/window/set_tile_attribute_bit_rect.c",
       "size": 144,
       "status": "shared_core",
       "starts": {
@@ -12342,7 +12342,7 @@
     },
     {
       "en_owner": "08020a60",
-      "source": "games/gs1/src/08020a60.c",
+      "source": "games/gs1/src/ui/window/set_tile_attribute_rect.c",
       "size": 140,
       "status": "shared_core",
       "starts": {
@@ -22842,7 +22842,7 @@
     },
     {
       "en_owner": "08096c24",
-      "source": "games/gs1/src/08096c24.c",
+      "source": "games/gs1/src/resource/table/count_free_blocks.c",
       "size": 36,
       "status": "shared_core",
       "starts": {
@@ -24312,7 +24312,7 @@
     },
     {
       "en_owner": "0809a44c",
-      "source": "games/gs1/src/0809a44c.c",
+      "source": "games/gs1/src/battle/effects/update_object_motion_scale_and_linked_angle.c",
       "size": 54,
       "status": "shared_core",
       "starts": {
@@ -24672,7 +24672,7 @@
     },
     {
       "en_owner": "0809b0b0",
-      "source": "games/gs1/src/0809b0b0.c",
+      "source": "games/gs1/src/battle/effects/runtime/update_spin_angle.c",
       "size": 42,
       "status": "shared_core",
       "starts": {
@@ -24702,7 +24702,7 @@
     },
     {
       "en_owner": "0809b0dc",
-      "source": "games/gs1/src/0809b0dc.c",
+      "source": "games/gs1/src/battle/effects/runtime/update_descending_object.c",
       "size": 64,
       "status": "shared_core",
       "starts": {
@@ -24762,7 +24762,7 @@
     },
     {
       "en_owner": "0809b364",
-      "source": "games/gs1/src/0809b364.c",
+      "source": "games/gs1/src/battle/effects/particles/update_descending_positive_arc.c",
       "size": 116,
       "status": "shared_core",
       "starts": {
@@ -24792,7 +24792,7 @@
     },
     {
       "en_owner": "0809b3d8",
-      "source": "games/gs1/src/0809b3d8.c",
+      "source": "games/gs1/src/battle/effects/particles/update_descending_negative_arc.c",
       "size": 120,
       "status": "shared_core",
       "starts": {
@@ -24822,7 +24822,7 @@
     },
     {
       "en_owner": "0809b588",
-      "source": "games/gs1/src/0809b588.c",
+      "source": "games/gs1/src/battle/effects/update_effect16_state.c",
       "size": 84,
       "status": "shared_core",
       "starts": {
@@ -24852,7 +24852,7 @@
     },
     {
       "en_owner": "0809b5dc",
-      "source": "games/gs1/src/0809b5dc.c",
+      "source": "games/gs1/src/battle/effects/particles/update_paired_arc_spawner.c",
       "size": 108,
       "status": "shared_core",
       "starts": {
@@ -26742,7 +26742,7 @@
     },
     {
       "en_owner": "080a5534",
-      "source": "games/gs1/src/080a5534.c",
+      "source": "games/gs1/src/resource/load_paired_blocks.c",
       "size": 68,
       "status": "shared_core",
       "starts": {
@@ -28392,7 +28392,7 @@
     },
     {
       "en_owner": "080ae88c",
-      "source": "games/gs1/src/080ae88c.c",
+      "source": "games/gs1/src/resource/load_paired_blocks_if_available.c",
       "size": 80,
       "status": "shared_core",
       "starts": {
@@ -28452,7 +28452,7 @@
     },
     {
       "en_owner": "080ae908",
-      "source": "games/gs1/src/080ae908.c",
+      "source": "games/gs1/src/ui/icon/load_resource_into_slot.c",
       "size": 78,
       "status": "shared_core",
       "starts": {
@@ -28482,7 +28482,7 @@
     },
     {
       "en_owner": "080ae958",
-      "source": "games/gs1/src/080ae958.c",
+      "source": "games/gs1/src/ui/icon/create_with_loaded_resource.c",
       "size": 66,
       "status": "shared_core",
       "starts": {
@@ -40679,7 +40679,7 @@
     },
     {
       "en_owner": "0801fda8",
-      "source": "games/gs1/src/0801fda8.c",
+      "source": "games/gs1/src/ui/window/fill_tilemap_rect.c",
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x0801fca8"
     },
     {

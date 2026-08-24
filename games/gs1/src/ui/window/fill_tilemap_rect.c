@@ -2,13 +2,13 @@
 #include "gs1_edition.h"
 #include "global_cells.h"
 
-void Func_0801fda8(u8 *object, s32 x, s32 y, s32 width, s32 height) {
+void UiWindow_FillTilemapRect(u8 *window, s32 x, s32 y, s32 width, s32 height) {
     u16 *map = *(u16 **)ADDR_03001E8C;
     s32 sum;
 
-    sum = x + *(u16 *)(object + 12);
+    sum = x + *(u16 *)(window + 12);
     x = sum + 1;
-    sum = y + *(u16 *)(object + 14);
+    sum = y + *(u16 *)(window + 14);
     y = sum + 1;
 
     if (x < 0) {

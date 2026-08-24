@@ -1,11 +1,11 @@
 #include "types.h"
 
-extern u8 Data_03001b10[];
+extern u8 ResourceTableEntries[];
 s32 Resource_ClearSlotReferences(s32 resource_id);
 
 s32 Resource_ActivateEntry(u32 resource_index)
 {
-    u16 *resource_entry = (u16 *)(Data_03001b10 + resource_index * 4);
+    u16 *resource_entry = (u16 *)(ResourceTableEntries + resource_index * 4);
 
     if (resource_index > 95)
         return -1;

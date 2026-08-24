@@ -2,14 +2,14 @@
 
 u32 GameFlag_Toggle(s32 flag)
 {
-    s32 mask;
-    u8 *bytes;
-    s32 value;
+    s32 flag_mask;
+    u8 *flag_bytes;
+    s32 flag_value;
 
-    mask = 1 << (7 & flag);
-    bytes = (u8 *)0x02000040;
+    flag_mask = 1 << (7 & flag);
+    flag_bytes = (u8 *)0x02000040;
     flag = ((u32)flag << 0x14) >> 0x17;
-    bytes[flag] = (u8)(bytes[flag] ^ mask);
-    value = bytes[flag] & mask;
-    return (u32)((0 - value) | value) >> 31;
+    flag_bytes[flag] = (u8)(flag_bytes[flag] ^ flag_mask);
+    flag_value = flag_bytes[flag] & flag_mask;
+    return (u32)((0 - flag_value) | flag_value) >> 31;
 }

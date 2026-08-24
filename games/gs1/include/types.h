@@ -36,6 +36,7 @@ typedef int bool;
 #define NormalizeVector Func_080974d8
 #define ScheduleCallbackAfterFrames Func_080041d8
 #define Modulo Func_080022fc
+#define UnsignedModulo Func_08002304
 #define UiWindow_Clear Func_08015060
 #define UiText_DrawMessageAt Func_08015078
 #define UiText_DrawAt Func_08015080
@@ -241,6 +242,7 @@ typedef int bool;
 #define ConfigureSceneCamera Func_080b8fd4
 #define UpdateRadialBurstEffect Func_08098b10
 #define UpdateRadialCameraEffect Func_0809aa98
+#define BattleEffect_UpdateObjectMotionScaleAndLinkedAngle Func_0809a44c
 #define UpdateDisplayTransition Func_080903bc
 #define DisplayState_ClearFlags Func_08090378
 #define WindowBounds_Set Func_080a23f4
@@ -285,6 +287,13 @@ typedef int bool;
 #define RenderOutput_ReleaseFree Func_08015ec0
 #define Resource_ScheduleOwnerReset Func_0801a97c
 #define Resource_ScheduleOwnerResetDelayed Func_0801a968
+#define Resource_LoadPairedBlocks Func_080a5534
+#define Resource_LoadPairedBlocksIfAvailable Func_080ae88c
+#define UiIcon_CreateWithLoadedResource Func_080ae958
+#define UiIcon_LoadResourceIntoSlot Func_080ae908
+#define UiWindow_FillTilemapRect Func_0801fda8
+#define UiWindow_SetTileAttributeRect Func_08020a60
+#define UiWindow_SetTileAttributeBitRect Func_0801f5f0
 #define RenderOutput_ClearList Func_080164ac
 #define RenderOutput_AppendToList Func_08016584
 #define RenderOutput_Release Func_08016594
@@ -347,6 +356,13 @@ typedef int bool;
 #define EffectSlot_Update Func_0809b804
 #define BattleEffect_UpdateAllSlots Func_08095884
 #define BattleEffect_ClearActiveSlotsAndScheduleUpdates Func_080958e4
+#define BattleEffect_UpdateSpinAngle Func_0809b0b0
+#define BattleEffect_UpdateDescendingObject Func_0809b0dc
+#define BattleEffect_UpdateDescendingParticlePositiveArc Func_0809b364
+#define BattleEffect_UpdateDescendingParticleNegativeArc Func_0809b3d8
+#define BattleEffect_SpawnPairedArcObjects Func_0809b450
+#define BattleEffect_UpdatePairedArcSpawner Func_0809b5dc
+#define BattleEffect_UpdateEffect16State Func_0809b588
 #define ParticleEffect_UpdateMotionAndScale Func_0809a65c
 #define BattleEffect_PauseObject Func_0809ad90
 #define BattleEffect_ResumeObject Func_0809ade8
@@ -601,5 +617,9 @@ typedef int bool;
 #define Script_ApplyOperandAdd Func_0800e9dc
 #define Script_ApplyOperandCompare Func_0800ea18
 #define Camera_ApplyShake Func_080e155c
+#define ResourceTable_GetLongestFreeBlockRun Func_08003ed4
+#define ResourceTable_CountFreeBlocks Func_08096c24
+#define ResourceBlockOwners Data_03001810
+#define ResourceTableEntries Data_03001b10
 
 #endif

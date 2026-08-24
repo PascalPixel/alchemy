@@ -9,19 +9,21 @@
  * `movs r3,#13 / negs r3,r3` pair the reference builds.
  */
 
-struct Rec_39c {
-    u8 pad00[9];
-    u8 lo : 2;
+struct EffectRecord {
+    u8 pad[9];
+    u8 flags_lo : 2;
     u8 mode : 2;                /* +9, bits 2..3 */
-    u8 hi : 4;
+    u8 flags_hi : 4;
 };
 
-struct Work_39c {
-    u8 pad00[80];
-    struct Rec_39c *rec;        /* +80 */
+struct EffectWork {
+    u8 pad[80];
+    struct EffectRecord *record; /* +80 */
 };
 
-void Func_02000030(struct Work_39c *work, s32 value)
+#define SetEffectRecordMode Func_02000030
+
+void SetEffectRecordMode(struct EffectWork *work, s32 mode)
 {
-    work->rec->mode = value;
+    work->record->mode = mode;
 }

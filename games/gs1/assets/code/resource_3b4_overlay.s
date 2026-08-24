@@ -2228,10 +2228,8 @@ AlchemyC_020015e4:
 	bx	r0
 	.4byte 0x0001b333
 	.4byte 0x0000d999
-	.4byte 0x22d04b02
-	.4byte 0x801a0112
-	.4byte 0x00004770
-	.4byte 0x04000052
+AlchemyC_020018c0:
+	.space 0x10
 AlchemyC_020018d0:
 	.space 0x10
 AlchemyC_020018e0:

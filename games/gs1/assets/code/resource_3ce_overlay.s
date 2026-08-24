@@ -493,7 +493,9 @@ AlchemyC_02000208:
 	.2byte 0x0000
 AlchemyC_0200021c:
 	.space 0xc
-	.4byte 0x00004770
+AlchemyC_02000228:
+	.space 0x2
+	.2byte 0x0000
 AlchemyC_0200022c:
 	.space 0x10
 AlchemyC_0200023c:

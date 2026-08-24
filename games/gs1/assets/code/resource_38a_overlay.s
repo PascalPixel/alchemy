@@ -211,11 +211,8 @@ AlchemyC_020003e4:
 	.4byte 0x0000001c
 	.4byte 0x0000012f
 	.4byte 0x00000864
-	.4byte 0x49026d02
-	.4byte 0x185b8bd3
-	.4byte 0x477083d3
-	.2byte 0xf800
-	.2byte 0xffff
+AlchemyC_020004c4:
+	.space 0x10
 AlchemyC_020004d4:
 	.space 0x20
 	push	{r5, r6, r7, lr}

@@ -1783,19 +1783,8 @@ AlchemyC_02001544:
 	.4byte 0x0200b738
 	.4byte 0x0200b72c
 	.4byte 0x04000018
-	.4byte 0x4a0a4b09
-	.4byte 0xc202cb02
-	.4byte 0xc202cb02
-	.4byte 0x6013681b
-	.4byte 0x88534a06
-	.4byte 0x805333c0
-	.4byte 0x33c088d3
-	.4byte 0x895380d3
-	.4byte 0x815333c0
-	.4byte 0x00004770
-	.4byte 0x03001ad4
-	.2byte 0xb72c
-	.2byte 0x0200
+AlchemyC_020015cc:
+	.space 0x30
 	push	{r5, r6, lr}
 	movs	r0, #128
 	lsls	r0, r0, #2

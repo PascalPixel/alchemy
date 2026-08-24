@@ -843,9 +843,8 @@ AlchemyC_02000cc0:
 	.space 0x54
 AlchemyC_02000d14:
 	.space 0x4
-	.4byte 0x47704800
-	.2byte 0x991c
-	.2byte 0x0200
+AlchemyC_02000d18:
+	.space 0x8
 	push	{lr}
 	ldr	r3, [pc, #60]
 	movs	r1, #224

@@ -29,6 +29,6 @@ done:
     return (s16 *)allocation_address;
 }
 
-void Func_080049a8(void)
+void RuntimeMemory_ReservedNoOp049A8(void)
 {
 }

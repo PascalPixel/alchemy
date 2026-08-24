@@ -20,6 +20,6 @@ void ObjectTable_DestroyById(s32 index)
     }
 }
 
-void Func_0809294c(void)
+void ObjectTable_ReservedNoOp294C(void)
 {
 }

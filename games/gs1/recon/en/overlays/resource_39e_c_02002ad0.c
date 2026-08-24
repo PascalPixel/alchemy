@@ -14,22 +14,22 @@ void Func_02006f2a();
 void Func_02006f3e();
 void Func_02006f4e();
 void Func_02006f80();
-void Func_02006f90();
+void *Func_02006f90();
 void Func_02006f92();
-void Func_02006fa4();
+void *Func_02006fa4();
 void Func_02006fac();
 void Func_02006fb4();
-void Func_02006fb8();
+void *Func_02006fb8();
 void Func_02006fc8();
 void Func_02006fd6();
 void Func_02006fe4();
-void Func_02006fe6();
+void Func_02006fe6(s32, s32, s32);
 void Func_02006fe8();
 void Func_02006ff2();
-void Func_02006ffa();
+void Func_02006ffa(s32, s32, s32);
 void Func_02007000();
 void Func_0200700c();
-void Func_0200700e();
+void Func_0200700e(s32, s32, s32);
 void *Func_02007014();
 void Func_02007028();
 void Func_02007030();
@@ -485,6 +485,8 @@ void Func_0200827c();
 void Func_02008290();
 void Func_020082b4();
 void Func_020082cc();
+
+extern u8 Data_02000240[];
 void Func_020082ce();
 
 void Func_02002ad0(void)
@@ -516,12 +518,24 @@ void Func_02002ad0(void)
     Func_02006fe8(0, 1);
     Func_02006f4e(20);
     Func_0200704a(9, 53248, 0);
-    Func_02006f90(0);
-    Func_02006fe6(1);
-    Func_02006fa4(0);
-    Func_02006ffa(2);
-    Func_02006fb8(0);
-    Func_0200700e(3);
+    {
+        void *object = Func_02006f90(0);
+        if (object != 0) {
+            Func_02006fe6(1, *(s32 *)((u8 *)object + 8), *(s32 *)((u8 *)object + 16));
+        }
+    }
+    {
+        void *object = Func_02006fa4(0);
+        if (object != 0) {
+            Func_02006ffa(2, *(s32 *)((u8 *)object + 8), *(s32 *)((u8 *)object + 16));
+        }
+    }
+    {
+        void *object = Func_02006fb8(0);
+        if (object != 0) {
+            Func_0200700e(3, *(s32 *)((u8 *)object + 8), *(s32 *)((u8 *)object + 16));
+        }
+    }
     Func_02006fe4(0, 32768, 16384);
     Func_02006ff2(1, 32768, 16384);
     Func_02007000(2, 32768, 16384);
@@ -986,15 +1000,19 @@ void Func_02002ad0(void)
     Func_020081a2(0, 258, 0);
     Func_020081ae(1, 258, 60);
     Func_0200818e(3, 0);
-    Func_020080e6(0, 0);
-    Func_020080d0(20);
-    Func_02008160(1, 3);
-    Func_020080de(20);
-    Func_020081c8(1, 0, 20);
-    Func_02008100(20);
-    Func_020081a0(3, 3);
-    Func_0200811e(20);
-    Func_02008208(3, 0, 20);
+    if (Func_020080e6(0, 0) == 0) {
+        Func_020080d0(20);
+        Func_02008160(1, 3);
+        Func_020080de(20);
+        Func_020081c8(1, 0, 20);
+        (*(u16 *)(Data_02000240 + 472))++;
+    } else {
+        Func_02008100(20);
+        (*(u16 *)(Data_02000240 + 472))++;
+        Func_020081a0(3, 3);
+        Func_0200811e(20);
+        Func_02008208(3, 0, 20);
+    }
     Func_020081d0(1, 1);
     Func_0200821a(1, 0, 20);
     Func_020081c2(0, 3);

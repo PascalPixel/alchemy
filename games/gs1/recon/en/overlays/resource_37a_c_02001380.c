@@ -72,14 +72,14 @@ void StartSolShindenTrapEvent(void)
     Func_020025ec();
     Func_02003de2(4120);
     {
-        register s32 scale = 128;
         register s32 actor = 16;
+        register s32 scale = 128;
         scale <<= 7;
         Func_02003e0e(actor, scale, 20);
     }
     {
-        register s32 scale = 128;
         register s32 actor = 16;
+        register s32 scale = 128;
         scale <<= 1;
         Func_02003e22(actor, scale, 0);
     }
@@ -132,9 +132,9 @@ void StartSolShindenTrapEvent(void)
     Func_02003e70(6);
     Func_02003aa8(32784, 6);
     {
+        register s32 actor = 16;
         register s32 horizontal_scale = 128;
         register s32 vertical_scale = 128;
-        register s32 actor = 16;
         horizontal_scale <<= 10;
         vertical_scale <<= 9;
         Func_02003eae(actor, horizontal_scale, vertical_scale);

@@ -3492,7 +3492,7 @@
     },
     {
       "en_owner": "0800c2d8",
-      "source": "games/gs1/src/0800c2d8.c",
+      "source": "games/gs1/src/object/dispatch/initialize.c",
       "size": 40,
       "status": "shared_core",
       "starts": {
@@ -19992,7 +19992,7 @@
     },
     {
       "en_owner": "08092064",
-      "source": "games/gs1/src/08092064.c",
+      "source": "games/gs1/src/object/motion/set_speed_parameters.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -40604,7 +40604,7 @@
   "unresolved": [
     {
       "en_owner": "08015ec0",
-      "source": "games/gs1/src/08015ec0.c",
+      "source": "games/gs1/src/ui/render/output_list/release_free.c",
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x08015e94"
     },
     {

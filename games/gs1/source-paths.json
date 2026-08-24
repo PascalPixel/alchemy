@@ -403,6 +403,7 @@
     "main:08092ba8": "object/table/read_active_value.c",
     "main:08092454": "object/motion/set_position_with_terrain.c",
     "main:080923e4": "object/motion/set_horizontal_position_with_terrain.c",
+    "main:08096bec": "object/motion/set_target_position_from_magnitude_angle.c",
     "main:08092208": "object/motion/snap_heading_and_offset.c",
     "main:08092560": "object/motion/launch.c",
     "main:080925e0": "battle/effects/particles/update_linear_motion.c",

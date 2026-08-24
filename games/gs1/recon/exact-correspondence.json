@@ -22812,7 +22812,7 @@
     },
     {
       "en_owner": "08096bec",
-      "source": "games/gs1/src/08096bec.c",
+      "source": "games/gs1/src/object/motion/set_target_position_from_magnitude_angle.c",
       "size": 54,
       "status": "shared_core",
       "starts": {

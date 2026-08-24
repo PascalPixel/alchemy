@@ -8,7 +8,8 @@ u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
 s32 Object_SetCallback(void *, s32);
-void Object_SetVelocity(struct Object_08096bec *object, s32 arg1, s32 arg2);
+void ObjectMotion_SetTargetPositionFromMagnitudeAngle(
+    struct Object_08096bec *object, s32 magnitude, s32 angle);
 void *Object_Spawn(s32, s32, s32, s32);
 
 void Func_08099920(void *object) {
@@ -33,7 +34,8 @@ void Func_08099920(void *object) {
             M2C_FIELD(temp_r0, s8 *, 0x55) = 2;
             M2C_FIELD(temp_r0, s32 *, 0x28) = 0x10000;
             M2C_FIELD(temp_r0, s32 *, 0x30) = (s32) (Rand() + 0x13333);
-            Object_SetVelocity(temp_r0, 0x200000, Rand());
+            ObjectMotion_SetTargetPositionFromMagnitudeAngle(
+                temp_r0, 0x200000, Rand());
             ptr2 = &M2C_FIELD(temp_r0, s16 *, 0x5E);
             phase2 = 6;
             *ptr2 = phase2;

@@ -1,19 +1,21 @@
 #include "types.h"
 
 /* Shared 22-byte head leaf proved identical for this overlay family. */
-struct Rec_02000030 {
-    u8 pad00[9];
-    u8 lo : 2;
+struct EffectRec {
+    u8 pad[9];
+    u8 flags_lo : 2;
     u8 mode : 2;
-    u8 hi : 4;
+    u8 flags_hi : 4;
 };
 
-struct Work_02000030 {
-    u8 pad00[80];
-    struct Rec_02000030 *rec;
+struct EffectWork {
+    u8 pad[80];
+    struct EffectRec *rec;
 };
 
-void Func_02000030(struct Work_02000030 *work, s32 value)
+#define SetEffectMode Func_02000030
+
+void SetEffectMode(struct EffectWork *work, s32 mode)
 {
-    work->rec->mode = value;
+    work->rec->mode = mode;
 }

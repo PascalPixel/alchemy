@@ -55,7 +55,7 @@ extern struct RuntimeServices_0808bde0 Data_02008000;
 extern struct Runtime_0808bde0 *Data_03001ebc;
 
 struct Region_0808bde0 *Func_080072e4(RegionProvider_0808bde0 callback);
-s32 Func_0808d428(s32 condition);
+s32 GameFlag_IsConditionActive(s32 condition);
 void Audio_PlayCue(s32 sound_id);
 void Func_08091660(void);
 
@@ -91,7 +91,7 @@ loop:
         max_z = region->max_z;
         condition = region->condition;
         selected_value = region->value;
-        if (Func_0808d428(condition) != 0 &&
+        if (GameFlag_IsConditionActive(condition) != 0 &&
             y >= FIXED_0808BDE0(min_y) &&
             y < FIXED_0808BDE0(max_y) &&
             x >= FIXED_0808BDE0(min_x) &&

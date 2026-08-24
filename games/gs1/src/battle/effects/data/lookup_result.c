@@ -11,7 +11,7 @@ extern Entry Data_0809d7a8[];
 
 s32 Func_08009268(void *, s32 *);
 s32 GameFlag_IsSet(s32);
-void Func_0808b2b0(s32 arg0);
+void BattleEffect_SelectResultPointer(s32 arg0);
 
 s32 BattleEffect_LookupResult(void *arg0)
 {
@@ -29,6 +29,6 @@ s32 BattleEffect_LookupResult(void *arg0)
         }
         entry++;
     }
-    Func_0808b2b0(key);
+    BattleEffect_SelectResultPointer(key);
     return result;
 }

@@ -22,7 +22,7 @@ typedef s32 (*RamScaleFunction_08017004)(s32, s32);
 
 void Func_080170f8(s32, s32, s32, s32);
 
-void Func_08017004(void *window, s32 save_position)
+void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position)
 {
     struct InterpolationScratch_08017004 scratch;
     s32 frame;

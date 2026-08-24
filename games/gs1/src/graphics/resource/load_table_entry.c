@@ -6,7 +6,7 @@ extern u8 Value_08031864;
 extern u8 Data_08031864_b;
 extern u8 Data_08031864_c;
 
-s32 Func_0801a32c(u32 value, s32 unused, void *destination)
+s32 RenderResource_LoadTableEntry(u32 value, s32 unused, void *destination)
 {
     void *source;
     switch (value) {

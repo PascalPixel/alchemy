@@ -16842,7 +16842,7 @@
     },
     {
       "en_owner": "0808a8d0",
-      "source": "games/gs1/src/0808a8d0.c",
+      "source": "games/gs1/src/battle/effects/data/get_resource_group.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -16932,7 +16932,7 @@
     },
     {
       "en_owner": "0808adf0",
-      "source": "games/gs1/src/0808adf0.c",
+      "source": "games/gs1/src/battle/effects/data/lookup_result.c",
       "size": 132,
       "status": "shared_core",
       "starts": {
@@ -17022,7 +17022,7 @@
     },
     {
       "en_owner": "0808b05c",
-      "source": "games/gs1/src/0808b05c.c",
+      "source": "games/gs1/src/battle/effects/data/get_weighted_result.c",
       "size": 24,
       "status": "shared_core",
       "starts": {
@@ -17052,7 +17052,7 @@
     },
     {
       "en_owner": "0808b074",
-      "source": "games/gs1/src/0808b074.c",
+      "source": "games/gs1/src/battle/effects/data/get_phase_result.c",
       "size": 28,
       "status": "shared_core",
       "starts": {
@@ -32922,7 +32922,7 @@
     },
     {
       "en_owner": "080c0e38",
-      "source": "games/gs1/src/080c0e38.c",
+      "source": "games/gs1/src/graphics/blend/fade_alpha_out.c",
       "size": 54,
       "status": "shared_core",
       "starts": {
@@ -32952,7 +32952,7 @@
     },
     {
       "en_owner": "080c0e70",
-      "source": "games/gs1/src/080c0e70.c",
+      "source": "games/gs1/src/graphics/blend/fade_alpha_in.c",
       "size": 54,
       "status": "shared_core",
       "starts": {
@@ -32982,7 +32982,7 @@
     },
     {
       "en_owner": "080c0ea8",
-      "source": "games/gs1/src/080c0ea8.c",
+      "source": "games/gs1/src/graphics/blend/set_control.c",
       "size": 16,
       "status": "shared_core",
       "starts": {
@@ -33102,7 +33102,7 @@
     },
     {
       "en_owner": "080c1084",
-      "source": "games/gs1/src/080c1084.c",
+      "source": "games/gs1/src/graphics/palette/advance_cycle.c",
       "size": 100,
       "status": "shared_core",
       "starts": {
@@ -33132,7 +33132,7 @@
     },
     {
       "en_owner": "080c1438",
-      "source": "games/gs1/src/080c1438.c",
+      "source": "games/gs1/src/graphics/vram/upload_block.c",
       "size": 56,
       "status": "shared_core",
       "starts": {
@@ -33192,7 +33192,7 @@
     },
     {
       "en_owner": "080c1724",
-      "source": "games/gs1/src/080c1724.c",
+      "source": "games/gs1/src/graphics/color/scale_rgb555_clamped.c",
       "size": 114,
       "status": "shared_core",
       "starts": {

@@ -1,7 +1,7 @@
 #include "types.h"
 
 s32 WaitFrames(s32);
-void Func_080c0e70(void)
+void Graphics_FadeAlphaIn(void)
 {
   unsigned long new_var;
   s32 var_r5;
@@ -19,4 +19,3 @@ void Func_080c0e70(void)
   }
   while (var_r5 <= 0x10);
 }
-

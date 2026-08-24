@@ -9,7 +9,7 @@ struct State {
 extern struct State Data_03001e50;
 u32 Func_080054e4(void *, void *, u32);
 
-u32 Func_080c1438(void)
+u32 Graphics_UploadVramBlock(void)
 {
     void *source = (void *)Data_03001e50.source;
     u8 *context = (u8 *)Data_03001e50.context;

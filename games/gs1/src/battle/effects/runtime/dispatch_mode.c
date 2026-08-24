@@ -7,7 +7,7 @@ s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 void Func_08002dd8(s32);
 extern Callback Data_080ee2b4[];
 
-void Func_080d6660(s32 *state)
+void BattleEffect_DispatchMode(s32 *state)
 {
     s32 index;
     s32 **destination;

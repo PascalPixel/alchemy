@@ -1,7 +1,7 @@
 #include "types.h"
 #include "global_cells.h"
 
-void Func_080cd488(void)
+void Graphics_ApplyBg2ReferencePoint(void)
 {
     u8 *base = *(u8 **)ADDR_03001EEC;
     *(u32 *)0x04000028 = *(u32 *)(base + 0x77D0);

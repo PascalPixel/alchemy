@@ -2,7 +2,7 @@
 
 u8 *Runtime_GetObject(s32);
 
-s32 Func_080b7514(void) {
+s32 Summon_FindSlot(void) {
     s32 i;
     s32 id;
 
@@ -11,8 +11,7 @@ s32 Func_080b7514(void) {
         if (Runtime_GetObject(id)[0x12A] == 0)
             break;
     }
-    if (i == 6) {
+    if (i == 6)
         return -1;
-    }
     return id;
 }

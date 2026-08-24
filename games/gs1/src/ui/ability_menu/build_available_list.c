@@ -5,7 +5,7 @@ s32 Ability_GetMaximum(s32, s32);
 
 extern void *Data_03001f2c;
 
-s32 Func_080b0070(void)
+s32 AbilityMenu_BuildAvailableList(void)
 {
     u8 *state;
     s16 *output;

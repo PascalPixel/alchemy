@@ -2,7 +2,7 @@
 
 void Func_080dbb98(void);
 
-void Func_080d655c(s32 arg0) {
+void BattleEffect_RunNoEffectFrames(s32 arg0) {
     s32 var_r6;
 
     var_r6 = 0;

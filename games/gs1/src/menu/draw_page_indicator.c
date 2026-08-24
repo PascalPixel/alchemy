@@ -6,15 +6,9 @@
 
 s32 FixedPoint_Ratio(s32 numerator, s32 denominator);
 s32 Modulo(s32 numerator, s32 denominator);
-void Func_08015280(
-    s32 window,
-    s32 tile,
-    s32 x,
-    s32 y,
-    s32 style
-);
+void Func_08015280(s32 window, s32 tile, s32 x, s32 y, s32 style);
 
-void Func_080a21b0(
+void Menu_DrawPageIndicator(
     s32 window,
     s32 item_count,
     s32 page_size,

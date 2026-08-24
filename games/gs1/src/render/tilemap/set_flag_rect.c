@@ -2,7 +2,7 @@
 #include "global_cells.h"
 #include "gs1_edition.h"
 
-void Func_080a2268(
+void Render_SetTilemapFlagRect(
     const u8 *object, s32 x, s32 y, s32 width, s32 height, u32 field)
 {
     u8 *base = *(u8 **)ADDR_03001E8C;

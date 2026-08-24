@@ -1,18 +1,18 @@
 #include "script_operands.h"
 
-void Func_0800e220(struct ScriptOperands *state, s32 operation, s32 value) {
+void Script_SetOrCompareWord14(struct ScriptOperands *state, s32 operation, s32 value) {
     s8 result;
 
     if (operation == 0) {
-        state->script_address = value;
+        state->word_14 = value;
         return;
     }
     if (operation == 1) {
-        state->script_address += (u32)value * 4;
+        state->word_14 += value;
         return;
     }
     result = 0;
-    if (state->script_address == (u32)value) {
+    if (state->word_14 == value) {
         result = 1;
     }
     state->comparison_result = result;

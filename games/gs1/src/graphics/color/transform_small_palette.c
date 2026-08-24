@@ -1,0 +1,13 @@
+#include "types.h"
+#include "global_cells.h"
+
+s32 Graphics_TransformPaletteBuffer(s32, s32, s32, s32);
+
+void Graphics_TransformSmallPalette(s32 arg0, s32 arg1) {
+    s32 temp_r1;
+
+    temp_r1 = *(s32 *)ADDR_03001ED0;
+    if (temp_r1 != 0) {
+        Graphics_TransformPaletteBuffer(arg0, temp_r1, temp_r1 + 0x400, arg1);
+    }
+}

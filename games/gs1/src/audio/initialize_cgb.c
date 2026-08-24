@@ -31,7 +31,7 @@ union AudioCommandSlot {
 };
 
 struct CgbChannel {
-    u8 status;
+    u8 status_flags;
     u8 type;
     u8 right_volume;
     u8 left_volume;
@@ -45,28 +45,28 @@ struct CgbChannel {
     u8 envelope_counter;
     u8 pseudo_echo_volume;
     u8 pseudo_echo_length;
-    u8 unknown0e[2];
+    u8 dummy1[2];
     u8 gate_time;
     u8 midi_key;
     u8 velocity;
     u8 priority;
     u8 rhythm_pan;
-    u8 unknown15[3];
-    u8 unknown18;
+    u8 dummy3[3];
+    u8 dummy5;
     s8 sustain_goal;
-    u8 unknown1a;
+    u8 n4;
     u8 pan;
     u8 pan_mask;
     u8 modify;
     u8 length;
     u8 sweep;
     u32 frequency;
-    const u8 *wave;
-    const u8 *current_wave;
+    const u8 *wave_pointer;
+    const u8 *current_pointer;
     struct MusicTrackState *track;
-    struct CgbChannel *previous;
-    struct CgbChannel *next;
-    u8 unknown38[8];
+    struct CgbChannel *previous_channel;
+    struct CgbChannel *next_channel;
+    u8 dummy4[8];
 };
 
 struct AudioEngineState {
@@ -77,19 +77,19 @@ struct AudioEngineState {
     u8 master_volume;
     u8 pcm_rate;
     u8 mode;
-    u8 counter_0a;
+    u8 c15_counter;
     u8 pcm_dma_period;
     u8 max_lines;
-    u8 unknown0d[3];
-    u32 samples_per_vblank;
-    u32 pcm_frequency;
-    u32 frequency_scale;
+    u8 gap[3];
+    u32 pcm_samples_per_vblank;
+    u32 pcm_freq;
+    u32 div_freq;
     struct CgbChannel *cgb_channels;
-    PlayerMainCallback player_main;
-    struct MusicPlayerState *player_head;
-    CgbUpdateCallback cgb_update;
-    union CgbDisableCallbackSlot cgb_disable;
-    union KeyToFrequencyCallbackSlot key_to_freq;
+    PlayerMainCallback mplay_main_head;
+    struct MusicPlayerState *music_player_head;
+    CgbUpdateCallback cgb_sound;
+    union CgbDisableCallbackSlot cgb_osc_off;
+    union KeyToFrequencyCallbackSlot midi_key_to_cgb_freq;
 };
 
 void Func_08006864(const void *source, void *destination, u32 control);
@@ -115,7 +115,7 @@ void CgbAudio_Initialize(struct CgbChannel *channels)
 {
     u32 zero;
     struct AudioEngineState *state;
-    union AudioCommandSlot *command_table;
+    union AudioCommandSlot *mplay_jump_table;
     u32 ident;
 
     *(volatile u16 *)0x04000084 = 143;
@@ -136,21 +136,21 @@ void CgbAudio_Initialize(struct CgbChannel *channels)
 
     state->ident = ident + 1;
 
-    command_table = (union AudioCommandSlot *)0x02004000;
-    command_table[8].player_track = MusicPlayer_ExecuteMemoryAccessCommand;
-    command_table[17].player_track = Func_080fa1d4;
-    command_table[19].player_track = Func_080fa1e8;
-    command_table[28].player_track = MusicTrack_DispatchExtendedCommand;
-    command_table[29].player_track = Func_080fa16c;
-    command_table[30].word = AudioEngine_SetPcmRate;
-    command_table[31].player_track = Func_080f9ef8;
-    command_table[32].player = MusicPlayer_UpdateFade;
-    command_table[33].player_track = MusicTrack_UpdateVolumePitch;
+    mplay_jump_table = (union AudioCommandSlot *)0x02004000;
+    mplay_jump_table[8].player_track = MusicPlayer_ExecuteMemoryAccessCommand;
+    mplay_jump_table[17].player_track = Func_080fa1d4;
+    mplay_jump_table[19].player_track = Func_080fa1e8;
+    mplay_jump_table[28].player_track = MusicTrack_DispatchExtendedCommand;
+    mplay_jump_table[29].player_track = Func_080fa16c;
+    mplay_jump_table[30].word = AudioEngine_SetPcmRate;
+    mplay_jump_table[31].player_track = Func_080f9ef8;
+    mplay_jump_table[32].player = MusicPlayer_UpdateFade;
+    mplay_jump_table[33].player_track = MusicTrack_UpdateVolumePitch;
 
     state->cgb_channels = channels;
-    state->cgb_update = Func_080fae58;
-    state->cgb_disable.handler = Cgb_StopOscillator;
-    state->key_to_freq.handler = Cgb_KeyToFrequency;
+    state->cgb_sound = Func_080fae58;
+    state->cgb_osc_off.handler = Cgb_StopOscillator;
+    state->midi_key_to_cgb_freq.handler = Cgb_KeyToFrequency;
     state->max_lines = (u32)&Value_00000000;
 
     zero = 0;

@@ -9,17 +9,17 @@ struct AudioEngineState;
 typedef void (*PlayerMainCallback)(struct MusicPlayerState *);
 
 struct MusicPlayerState {
-    u32 unknown00;
+    u32 song_header_word;
     u32 status;
     u8 track_count;
     u8 priority;
-    u8 unknown0a;
+    u8 command;
     u8 config;
-    u8 unknown0c[0x0c];
+    u8 clock_and_gap[0x0c];
     u8 *memory_area;
-    u8 unknown1c[0x10];
+    u8 tempo_and_fade_bytes[0x10];
     struct MusicTrackState *tracks;
-    void *unknown30;
+    void *voice_group;
     u32 ident;
     PlayerMainCallback next_callback;
     struct MusicPlayerState *next_player;

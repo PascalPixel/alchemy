@@ -22,7 +22,7 @@ extern const struct PresetValues Data_08088e38[44];
 
 struct OwnerState *Owner_GetState(s32 owner);
 u8 *Owner_GetRecord(s32 record);
-s32 Func_080797fc(s32 record, const u8 *source, s32 output[4]);
+s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4]);
 s32 Modulo(s32 value, s32 divisor);
 s32 FixedPoint_Ratio(s32 value, s32 divisor);
 
@@ -51,7 +51,7 @@ copied:
         return index;
     }
 
-    Func_080797fc(state->record_128, state->source_f8, values);
+    Owner_GetDigitValues(state->record_128, state->source_f8, values);
     i = 0;
     do {
         s32 value;

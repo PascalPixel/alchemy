@@ -10,7 +10,7 @@ void Func_0801b664(void *state);
 void Func_0801b810(void *state);
 u32 Func_0801be80(void *state);
 
-s32 Func_0801b398(s32 mode)
+s32 Menu_SelectionLoop(s32 mode)
 {
     u8 *state = Data_03001e98;
 

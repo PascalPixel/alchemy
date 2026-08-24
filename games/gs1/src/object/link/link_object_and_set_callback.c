@@ -4,7 +4,7 @@ struct ObjectRuntime *Object_GetById(u32);
 void ObjectMotion_SetActionCallback(struct ObjectRuntime *, s32);
 extern const u8 Data_0809ff40[];
 
-void Func_080920c0(u32 object_id, u32 linked_object_id)
+void Object_LinkObjectAndSetCallback(u32 object_id, u32 linked_object_id)
 {
     struct ObjectRuntime *object = ObjectTable_Get(object_id);
 

@@ -20082,7 +20082,7 @@
     },
     {
       "en_owner": "080920c0",
-      "source": "games/gs1/src/080920c0.c",
+      "source": "games/gs1/src/object/link/link_object_and_set_callback.c",
       "size": 40,
       "status": "shared_core",
       "starts": {

@@ -19,7 +19,7 @@ s32 Resource_ResetEntry(u32 index);
 void Func_0801c21c(void);
 void Func_08002dd8(u32 value);
 
-void Func_0801b148(void)
+void Resource_ResetOwnerEntries(void)
 {
     u8 *state = Data_03001e98;
     struct Node_0801b148 *node;

@@ -8,7 +8,7 @@ void UiWork_Finalize(struct Work *, s32);
 s32 Func_080168f4(void *);
 void Func_08019854(void *);
 
-void Func_08016868(void)
+void UiWork_ProcessRenderChannels(void)
 {
     u8 *channel = *(u8 **)ADDR_03001E8C + RENDER_CHANNEL_OFS;
     s32 channel_no = 0;

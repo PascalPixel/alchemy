@@ -49,6 +49,7 @@ typedef int bool;
 #define UiWindow_Commit Func_08015270
 #define UiText_DrawQuantity Func_08015120
 #define GameFlag_IsSet Func_080770c0
+#define GameFlag_IsConditionActive Func_0808d428
 #define GameFlag_Set Func_080770c8
 #define GameFlag_Clear Func_080770d0
 #define FixedPoint_Ratio Func_080022ec
@@ -108,6 +109,10 @@ typedef int bool;
 #define OwnerAction_Add Func_08078e28
 #define Owner_GetDigitValues Func_080797fc
 #define Owner_GetResistanceValue Func_0807987c
+#define Resource_ResetOwnerEntries Func_0801b148
+#define UiWindow_UpdateInterpolatedGeometry Func_08017004
+#define UiWork_ProcessRenderChannels Func_08016868
+#define UiWindow_ClearTileAttributesInRect Func_0801e260
 #define Owner_RefreshDerivedData Func_08079ae8
 #define Party_AddActiveOwner Func_0807961c
 #define Party_RemoveActiveOwner Func_08079664
@@ -123,6 +128,7 @@ typedef int bool;
 #define RenderResource_LoadPair Func_080215e0
 #define RenderResource_CreatePair Func_08021620
 #define RenderResource_LoadFrame Func_080216e8
+#define RenderResource_LoadTableEntry Func_0801a32c
 #define RenderResource_CreateFrame Func_08021750
 #define RenderOutput_Create Func_0801eadc
 #define RenderOutput_CreateFromResource Func_0801eb64
@@ -146,6 +152,7 @@ typedef int bool;
 #define Ability_GetAvailability Func_08077248
 #define Shop_GetSelectionState Func_08077020
 #define UiText_DrawMessage Func_08015040
+#define UiText_DrawResource Func_0801e74c
 #define UiText_DrawCharacter Func_0801e7c0
 #define Text_FormatNumber Func_08017dd4
 #define UiText_DrawString Func_0801e858
@@ -193,8 +200,10 @@ typedef int bool;
 #define UiWindow_Create Func_080162d4
 #define UiWindow_CreateFar Func_08015010
 #define UiWork_IsComplete Func_08017364
+#define UiWork_IsIdle Func_08017394
 #define UiWork_IsCompleteFar Func_08015048
 #define UiText_BuildRenderEntries Func_08018038
+#define UiText_GetResourceDimensions Func_080187ac
 #define UiText_PrepareMessageWork Func_080174f8
 #define AudioTrack_ResetSlotBuckets Func_080f7db4
 #define AudioTrack_InsertSlotNode Func_080f7df0
@@ -247,6 +256,7 @@ typedef int bool;
 #define Object_CollectResources Func_0801c7fc
 #define Owner_BuildDigitTiles Func_080798e0
 #define UiWork_ActivateChannel Func_08016670
+#define UiWork_ResetChannelTransition Func_080167d8
 #define RenderOutput_PrepareForRedraw Func_08016478
 #define RenderOutput_ClearList Func_080164ac
 #define RenderOutput_AppendToList Func_08016584
@@ -312,9 +322,11 @@ typedef int bool;
 #define BattleEffect_RunVisibilityTransition Func_0809c3a4
 #define BattleEffect_InterpolateBuffers Func_0809088c
 #define BattleEffect_GetResourceGroup Func_0808a8d0
+#define BattleEffect_LoadResourceGroup Func_0808ab48
 #define BattleEffect_LookupResult Func_0808adf0
 #define BattleEffect_GetWeightedResult Func_0808b05c
 #define BattleEffect_GetPhaseResult Func_0808b074
+#define BattleEffect_SelectResultPointer Func_0808b2b0
 #define EffectStep_AdvanceWithGravity3D Func_080e38b8
 #define EffectStep_AdvanceWithGravity2D Func_080e3908
 #define EffectPosition_ApplyBaseAndYOffset Func_080e3944

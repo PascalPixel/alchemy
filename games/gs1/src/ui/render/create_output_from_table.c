@@ -2,7 +2,7 @@
 #include "types.h"
 
 s32 Resource_FindFreeSlot();
-s32 Func_0801a32c(u32 value, s32 unused, void *destination);
+s32 RenderResource_LoadTableEntry(u32 value, s32 unused, void *destination);
 void *RenderOutput_CreateFromTable(
     s32 arg0,
     struct RenderInput *arg1,
@@ -15,7 +15,7 @@ void *RenderOutput_CreateFromTable(
     temp_r0 = Resource_FindFreeSlot();
     var_r0 = NULL;
     if (temp_r0 != 0x60) {
-        Func_0801a32c(arg0, 0, temp_r0);
+        RenderResource_LoadTableEntry(arg0, 0, temp_r0);
         var_r0 = RenderOutput_Create(temp_r0, 0x40000000, arg1, arg2, arg3);
     }
     return var_r0;

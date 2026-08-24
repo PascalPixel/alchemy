@@ -5,7 +5,7 @@
 extern s32 UiText_BuildRenderEntries(s32, s32);
 extern void Func_0801868c(s32, s32, s32, s32, s32, s32, s32);
 
-s32 Func_080187ac(s32 no, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
+s32 UiText_GetResourceDimensions(s32 no, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
 {
     u16 *base;
     s32 temp;

@@ -9522,7 +9522,7 @@
     },
     {
       "en_owner": "0801a968",
-      "source": "games/gs1/src/0801a968.c",
+      "source": "games/gs1/src/resource/schedule_owner_reset_delayed.c",
       "size": 20,
       "status": "shared_core",
       "starts": {
@@ -20052,7 +20052,7 @@
     },
     {
       "en_owner": "080920a0",
-      "source": "games/gs1/src/080920a0.c",
+      "source": "games/gs1/src/object/motion/enable_action_and_reset_motion.c",
       "size": 30,
       "status": "shared_core",
       "starts": {

@@ -1,7 +1,7 @@
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-const USAGE: &str = "usage: overlay <adopt|park|audit|score|show|reconstruct|disasm> [args]";
+const USAGE: &str = "usage: overlay <adopt|park|audit|score|show|reconstruct|twins|disasm> [args]";
 
 fn root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -51,6 +51,7 @@ fn main() -> ExitCode {
         "score" => code(overlay_adopt::score::run(&root(), rest)),
         "disasm" => overlay_disasm::cli::entry(rest),
         "reconstruct" => lines(overlay_show::reconstruct::run(rest)),
+        "twins" => code(overlay_adopt::twins::run(&root(), rest)),
         "show" => match overlay_show::run(rest) {
             Ok(overlay_show::Outcome::Usage) => ExitCode::SUCCESS,
             Ok(overlay_show::Outcome::SelfTest(message)) => {

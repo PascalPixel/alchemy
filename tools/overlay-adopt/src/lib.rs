@@ -1,5 +1,6 @@
 pub mod park;
 pub mod score;
+pub mod twins;
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use overlay_disasm::{assemble_overlay, OverlaySource, OVERLAY_BASE};
 use serde_json::Value;

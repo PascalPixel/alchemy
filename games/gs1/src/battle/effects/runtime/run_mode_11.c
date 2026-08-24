@@ -2,6 +2,6 @@
 
 s32 Func_080dea70(s32, s32);
 
-void Func_080de9a4(s32 arg0) {
+void BattleEffect_RunMode11(s32 arg0) {
     Func_080dea70(arg0, 0xB);
 }

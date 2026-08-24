@@ -236,6 +236,8 @@ typedef int bool;
 #define ObjectMotion_WaitForAnimationChange Func_08092504
 #define ObjectMotion_TurnTowardLinkedTarget Func_08093a14
 #define FourObjectMotion_ClearSlotsAndSchedule Func_080ad318
+#define FourObjectMotion_InitializeTopRow Func_080ad274
+#define FourObjectMotion_InitializeBottomRow Func_080ad508
 #define FourObjectMotion_SetSlotPosition Func_080ad5b4
 #define FourObjectMotion_SetSlotPhase Func_080ad5f4
 #define FourObjectMotion_ReplaceSlot Func_080ad608
@@ -380,6 +382,17 @@ typedef int bool;
 #define EffectRuntime_SetCurrentPosition Func_0808edac
 #define EffectRuntime_PrepareRisingObject Func_0808f0d8
 #define EffectRuntime_RunRisingObjectSequence Func_0808f140
+#define BattleEffect_RunMode0 Func_080de974
+#define BattleEffect_RunMode1 Func_080de980
+#define BattleEffect_RunMode2 Func_080de98c
+#define BattleEffect_RunMode3 Func_080de998
+#define BattleEffect_RunMode11 Func_080de9a4
+#define BattleEffect_RunMode4 Func_080de9b0
+#define BattleEffect_RunMode5WithAction Func_080de9bc
+#define BattleEffect_RunMode6WithAction Func_080de9f0
+#define BattleEffect_RunMode7 Func_080dea24
+#define BattleEffect_RunMode10 Func_080dea30
+#define BattleEffect_RunMode9WithAction Func_080dea3c
 #define Graphics_AdjustPaletteBank Func_080aac84
 #define Script_SetOrCompareAddress Func_0800e220
 #define Script_SetOrCompareHalfword20 Func_0800e334

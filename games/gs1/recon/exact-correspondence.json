@@ -28032,7 +28032,7 @@
     },
     {
       "en_owner": "080ad274",
-      "source": "games/gs1/src/080ad274.c",
+      "source": "games/gs1/src/object/motion/four_object/initialize_top_row.c",
       "size": 164,
       "status": "shared_core",
       "starts": {
@@ -28122,7 +28122,7 @@
     },
     {
       "en_owner": "080ad508",
-      "source": "games/gs1/src/080ad508.c",
+      "source": "games/gs1/src/object/motion/four_object/initialize_bottom_row.c",
       "size": 172,
       "status": "shared_core",
       "starts": {
@@ -36582,7 +36582,7 @@
     },
     {
       "en_owner": "080de974",
-      "source": "games/gs1/src/080de974.c",
+      "source": "games/gs1/src/battle/effects/runtime/run_mode_0.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36612,7 +36612,7 @@
     },
     {
       "en_owner": "080de980",
-      "source": "games/gs1/src/080de980.c",
+      "source": "games/gs1/src/battle/effects/runtime/run_mode_1.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36642,7 +36642,7 @@
     },
     {
       "en_owner": "080de98c",
-      "source": "games/gs1/src/080de98c.c",
+      "source": "games/gs1/src/battle/effects/runtime/run_mode_2.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36672,7 +36672,7 @@
     },
     {
       "en_owner": "080de998",
-      "source": "games/gs1/src/080de998.c",
+      "source": "games/gs1/src/battle/effects/runtime/run_mode_3.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36702,7 +36702,7 @@
     },
     {
       "en_owner": "080de9a4",
-      "source": "games/gs1/src/080de9a4.c",
+      "source": "games/gs1/src/battle/effects/runtime/run_mode_11.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36732,7 +36732,7 @@
     },
     {
       "en_owner": "080de9b0",
-      "source": "games/gs1/src/080de9b0.c",
+      "source": "games/gs1/src/battle/effects/runtime/run_mode_4.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36762,7 +36762,7 @@
     },
     {
       "en_owner": "080de9bc",
-      "source": "games/gs1/src/080de9bc.c",
+      "source": "games/gs1/src/battle/effects/runtime/run_mode_5_with_action.c",
       "size": 50,
       "status": "shared_core",
       "starts": {
@@ -36792,7 +36792,7 @@
     },
     {
       "en_owner": "080de9f0",
-      "source": "games/gs1/src/080de9f0.c",
+      "source": "games/gs1/src/battle/effects/runtime/run_mode_6_with_action.c",
       "size": 50,
       "status": "shared_core",
       "starts": {
@@ -36822,7 +36822,7 @@
     },
     {
       "en_owner": "080dea24",
-      "source": "games/gs1/src/080dea24.c",
+      "source": "games/gs1/src/battle/effects/runtime/run_mode_7.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36852,7 +36852,7 @@
     },
     {
       "en_owner": "080dea30",
-      "source": "games/gs1/src/080dea30.c",
+      "source": "games/gs1/src/battle/effects/runtime/run_mode_10.c",
       "size": 12,
       "status": "shared_core",
       "starts": {
@@ -36882,7 +36882,7 @@
     },
     {
       "en_owner": "080dea3c",
-      "source": "games/gs1/src/080dea3c.c",
+      "source": "games/gs1/src/battle/effects/runtime/run_mode_9_with_action.c",
       "size": 50,
       "status": "shared_core",
       "starts": {

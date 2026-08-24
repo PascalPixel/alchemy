@@ -1,5 +1,6 @@
 #include "types.h"
 #include "four_object_motion.h"
+
 extern s32 Data_080af304[];
 
 void Func_08009038(void *);
@@ -8,7 +9,7 @@ void Object_InitializeMode(void *, s32);
 void Func_080ad40c(void);
 s32 ScheduleCallbackAfterFrames(void (*)(void), s32);
 
-void Func_080ad508(void)
+void FourObjectMotion_InitializeBottomRow(void)
 {
     struct FourObjectMotionState *state = Data_03001f2c;
     s32 index;

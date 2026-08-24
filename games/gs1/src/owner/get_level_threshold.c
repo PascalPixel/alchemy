@@ -9,7 +9,7 @@ struct State_08079008 {
 struct State_08079008 *Owner_GetState(s32);
 extern u32 Data_0807a830[];
 
-u32 Func_08079008(s32 owner, s32 level)
+u32 Owner_GetLevelThreshold(s32 owner, s32 level)
 {
     struct State_08079008 *state = Owner_GetState(owner);
 

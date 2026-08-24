@@ -2,7 +2,7 @@
 #include "party_state.h"
 
 u32 FixedPoint_Ratio(s32, s32);
-u32 Func_08077348(void)
+u32 Party_GetAverageLevel(void)
 {
     s32 count;
     s32 total;

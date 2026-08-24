@@ -1,7 +1,7 @@
 #include "inventory.h"
 #include "game_flags.h"
 
-void Func_08077c10(void)
+void GameFlag_RefreshLureCap(void)
 {
     s32 count;
     s32 n;

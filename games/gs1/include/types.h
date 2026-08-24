@@ -72,6 +72,14 @@ typedef int bool;
 #define Scheduler_ResetTaskTable Func_080040e8
 #define Runtime_BumpAllocate Func_08004938
 #define Runtime_BumpAllocateAlternatePool Func_08004970
+#define Trade_GetOfferState Func_08077330
+#define Party_GetAverageLevel Func_08077348
+#define GameFlag_RefreshLureCap Func_08077c10
+#define Runtime_GetBuildStampTime Func_08077cb8
+#define Owner_GetLevelThreshold Func_08079008
+#define Party_AddActiveOwner Func_0807961c
+#define Party_RemoveActiveOwner Func_08079664
+#define Item_GetEquippedElement Func_08079c8c
 #define UiPalette_SetColor Func_080150b8
 #define Menu_AppendResourceEntry Func_080287a8
 #define Object_CheckMovementCollision Func_080091d8

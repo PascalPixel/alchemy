@@ -2,7 +2,7 @@
 
 s32 Owner_GetState(s32);
 
-s32 Func_08077330(s32 arg0) {
+s32 Trade_GetOfferState(s32 arg0) {
     if (arg0 != 0) {
         return Owner_GetState(0x83);
     }

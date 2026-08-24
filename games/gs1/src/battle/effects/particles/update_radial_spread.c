@@ -64,10 +64,10 @@ void BattleEffect_UpdateRadialSpread(struct EffectSlot *effect)
         if ((Data_03001800 & 1) != 0)
             Audio_PlayCue(0x90);
     } else if (state == 1) {
-        if (Func_0809ba34(effect) == 0)
+        if (EffectSlot_HasReachedTarget(effect) == 0)
             effect->state--;
     } else if (state == 2) {
-        if (Func_0809ba34(effect) == 0)
+        if (EffectSlot_HasReachedTarget(effect) == 0)
             Func_0809bb34(effect);
     }
 }

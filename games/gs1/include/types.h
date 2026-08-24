@@ -189,6 +189,11 @@ typedef int bool;
 #define ObjectGroup_ApplyRandomChildValues Func_08096b88
 #define FieldEvent_RunTypeHandler Func_08096af0
 #define ObjectGroup_SetActionForOthers Func_08096cdc
+#define EffectSlot_HasReachedTarget Func_0809ba34
+#define EffectSlot_SetPosition Func_0809ba5c
+#define EffectSlot_SetObjectMode Func_0809ba70
+#define EffectSlot_SetCallback Func_0809ba7c
+#define EffectSlot_Update Func_0809b804
 #define Audio_InitializeRuntimeDefaults Func_080f9438
 #define Graphics_ScaleRgb555 Func_080f6038
 #define Audio_ClearChannelChain Func_080f9a30

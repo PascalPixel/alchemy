@@ -59,11 +59,11 @@ void BattleEffect_FinishHeavyImpact(s32 arg)
         do
         {
             Func_0809ba90(work, 0x11C, pos.x, pos.z);
-            Func_0809ba7c(work, 0x08095939);
+            EffectSlot_SetCallback(work, 0x08095939);
             /* This boundary keeps the work pointer ahead of the constant. */
             do
             {
-                Func_0809ba70(work, 7);
+            EffectSlot_SetObjectMode(work, 7);
             }
             while (0);
             Func_08009248(*((s32 *)(head = (((s8 *)work) + 0))), ((u32)(Random16() * 7)) >> 0x10);

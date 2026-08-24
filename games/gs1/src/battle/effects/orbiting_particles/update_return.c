@@ -36,7 +36,7 @@ next_state:
     }
 
     if (state == 1) {
-        if (Func_0809ba34(effect) == 0) {
+        if (EffectSlot_HasReachedTarget(effect) == 0) {
             (*state_pointer)++;
             goto next_state;
         }
@@ -56,6 +56,6 @@ next_state:
         return;
     }
 
-    if (state == 3 && Func_0809ba34(effect) == 0)
+    if (state == 3 && EffectSlot_HasReachedTarget(effect) == 0)
         Func_0809bb34(effect);
 }

@@ -37,11 +37,11 @@ struct EffectSlot {
     /* 0x47 */ u8 flags;
 };
 
-u32 Func_0809ba34(struct EffectSlot *);
-void Func_0809ba5c(struct EffectSlot *, s32, s32);
-void Func_0809ba70(struct EffectSlot *, s32);
-void Func_0809ba7c(struct EffectSlot *, EffectCallback);
-void Func_0809b804(struct EffectSlot *);
+u32 EffectSlot_HasReachedTarget(struct EffectSlot *);
+void EffectSlot_SetPosition(struct EffectSlot *, s32, s32);
+void EffectSlot_SetObjectMode(struct EffectSlot *, s32);
+void EffectSlot_SetCallback(struct EffectSlot *, EffectCallback);
+void EffectSlot_Update(struct EffectSlot *);
 void Func_0809b86c(struct EffectSlot *);
 void Func_0809b8f4(struct EffectSlot *);
 void Func_0809bb34(struct EffectSlot *);

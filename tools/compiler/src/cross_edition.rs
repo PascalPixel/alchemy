@@ -9,7 +9,7 @@ use objdiff_core::{
 };
 use serde::Serialize;
 use std::{
-    collections::BTreeMap,
+    collections::{BTreeMap, BTreeSet},
     fs,
     path::{Path, PathBuf},
     process::Command,
@@ -21,7 +21,7 @@ const OVERLAY_BASE: u64 = 0x0200_0000;
 const OVERLAY_FIRST: usize = 0x36f;
 const OVERLAY_LAST: usize = 0x3ce;
 const CORRESPONDENCE_SCHEMA_VERSION: u32 = 3;
-const CORPUS_EDITION_BUILD_SCHEMA_VERSION: u32 = 2;
+const CORPUS_EDITION_BUILD_SCHEMA_VERSION: u32 = 3;
 const USAGE: &str = "usage: compiler cross-edition ([--calls] [--json] [--rom-dir DIR] [--object FILE] [--edition-build FILE] <8-digit-owner> | --all [--rom-dir DIR] [--object-dir DIR] [--write FILE] [--edition-build FILE] | --all-overlays [--rom-dir DIR] [--write FILE])";
 
 #[derive(Debug, Serialize)]
@@ -247,7 +247,8 @@ struct CorpusEditionBuildOwner {
     size: usize,
     #[serde(skip_serializing_if = "is_false")]
     edition_variant: bool,
-    starts: BTreeMap<String, String>,
+    #[serde(skip_serializing_if = "BTreeMap::is_empty")]
+    start_overrides: BTreeMap<String, String>,
     #[serde(skip_serializing_if = "BTreeMap::is_empty")]
     size_overrides: BTreeMap<String, usize>,
     #[serde(skip_serializing_if = "BTreeMap::is_empty")]
@@ -709,13 +710,18 @@ fn compact_corpus_edition_build_owner(
     owner: EditionBuildReport,
 ) -> Result<CorpusEditionBuildOwner, String> {
     let en_owner = canonical_main_owner_id(owner.owner_symbol.trim_start_matches("Func_"))?;
-    let mut starts = BTreeMap::new();
+    let canonical_start = format!("0x{}", en_owner.trim_start_matches("main:"));
+    let mut editions = BTreeSet::new();
+    let mut start_overrides = BTreeMap::new();
     let mut size_overrides = BTreeMap::new();
     let mut differing_bytes = BTreeMap::new();
     let mut errors = BTreeMap::new();
     for entry in owner.editions {
-        if starts.insert(entry.edition.clone(), entry.start).is_some() {
+        if !editions.insert(entry.edition.clone()) {
             return Err(format!("{en_owner}: duplicate {} edition", entry.edition));
+        }
+        if entry.start != canonical_start {
+            start_overrides.insert(entry.edition.clone(), entry.start);
         }
         if entry.size != owner.size {
             size_overrides.insert(entry.edition.clone(), entry.size);
@@ -743,10 +749,10 @@ fn compact_corpus_edition_build_owner(
             }
         }
     }
-    if starts.len() != EDITIONS.len()
+    if editions.len() != EDITIONS.len()
         || EDITIONS
             .into_iter()
-            .any(|edition| !starts.contains_key(edition))
+            .any(|edition| !editions.contains(edition))
     {
         return Err(format!("{en_owner}: edition build set is incomplete"));
     }
@@ -760,7 +766,7 @@ fn compact_corpus_edition_build_owner(
         en_owner,
         size: owner.size,
         edition_variant: owner.edition_variant,
-        starts,
+        start_overrides,
         size_overrides,
         differing_bytes,
         errors,
@@ -2724,7 +2730,7 @@ mod tests {
             "main:08002ee4",
         );
         assert_eq!(CORRESPONDENCE_SCHEMA_VERSION, 3);
-        assert_eq!(CORPUS_EDITION_BUILD_SCHEMA_VERSION, 2);
+        assert_eq!(CORPUS_EDITION_BUILD_SCHEMA_VERSION, 3);
         assert_eq!(
             location_method_codes(),
             [
@@ -2745,7 +2751,11 @@ mod tests {
             .into_iter()
             .map(|edition| EditionBuildEntry {
                 edition: edition.into(),
-                start: format!("0x0800{:04x}", edition.len()),
+                start: if edition == "en" {
+                    "0x08002ee4".into()
+                } else {
+                    "0x08002ef0".into()
+                },
                 size: if edition == "ja" { 8 } else { 4 },
                 external_symbols: BTreeMap::new(),
                 differing_bytes: (edition != "de").then_some(if edition == "es" { 2 } else { 0 }),
@@ -2768,11 +2778,15 @@ mod tests {
         .expect("compact corpus row");
         let value = serde_json::to_value(row).expect("serialize compact corpus row");
         assert_eq!(value["en_owner"], "main:08002ee4");
-        assert_eq!(value["starts"].as_object().map(|map| map.len()), Some(6));
+        assert_eq!(
+            value["start_overrides"].as_object().map(|map| map.len()),
+            Some(5)
+        );
+        assert!(value["start_overrides"].get("en").is_none());
         assert_eq!(value["size_overrides"]["ja"], 8);
         assert_eq!(value["differing_bytes"]["es"], 2);
         assert_eq!(value["errors"]["de"], "link failed");
-        for removed in ["source", "editions", "all_exact", "byte_exact"] {
+        for removed in ["source", "editions", "starts", "all_exact", "byte_exact"] {
             assert!(value.get(removed).is_none(), "unexpected {removed}");
         }
     }

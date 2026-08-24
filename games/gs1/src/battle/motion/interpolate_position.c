@@ -8,7 +8,7 @@ s32 FixedPoint_Ratio(s32, s32);
 void Object_SetPosition(void *, s32, s32, s32);
 void Object_SetMode(s32, s32);
 
-void Func_080b80b8(void **start_slot, void **end_slot, s32 progress) {
+void BattleMotion_InterpolatePosition(void **start_slot, void **end_slot, s32 progress) {
     s32 z_step;
     s32 start_x;
     s32 x;

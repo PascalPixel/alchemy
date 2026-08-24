@@ -3,7 +3,7 @@
 
 void Func_0800ba30(void *, s32);
 
-void Func_0800c300(void *raw_object, s32 argument)
+void ObjectDispatch_ApplyArgumentToChildren(void *raw_object, s32 argument)
 {
     struct DispatchObject *object;
     void **items;

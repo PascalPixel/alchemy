@@ -2,7 +2,7 @@
 
 void Func_0800baf8(void *child, s32 value);
 
-void Func_0800c344(struct DispatchObject *object, s32 value)
+void ObjectDispatch_ApplyValueToChildren(struct DispatchObject *object, s32 value)
 {
     s32 count;
     void *child;

@@ -1,6 +1,6 @@
 #include "types.h"
 
-void Func_0801e858(u8 *arg0, s32 arg1, s32 arg2, s32 arg3);
+void UiText_DrawString(u8 *arg0, s32 arg1, s32 arg2, s32 arg3);
 
 void Func_08020b64(s32 output, u8 *input)
 {
@@ -25,5 +25,5 @@ void Func_08020b64(s32 output, u8 *input)
     text[length++] = 8;
     text[length++] = 15;
     text[length] = 0;
-    Func_0801e858(text, output, 0, -2);
+            UiText_DrawString(text, output, 0, -2);
 }

@@ -4,7 +4,7 @@ s16 *Runtime_BumpAllocateAlternatePool(s32 arg0);
 void Func_08017c8c(u16 *, s32, s32, s32);
 void Func_08002df0(u16 *);
 
-void Func_0801e940(u8 *text, s32 arg1, u32 x, u32 y)
+void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y)
 {
     u16 *buffer = Runtime_BumpAllocateAlternatePool(0x200);
     u16 *output = buffer;

@@ -14,7 +14,7 @@ void Func_08020150(struct TextRenderWork *arg0, s32 arg1)
         remaining = 3;
         src = (volatile u8 *) (arg1 + 0x28);
         do {
-            Func_0801e9d4((s8) *src, 2, arg0, offset, size);
+            UiText_DrawNumberAtOffset((s8) *src, 2, arg0, offset, size);
             src += 1;
             remaining -= 1;
             offset = offset + 0x18;

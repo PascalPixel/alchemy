@@ -1,9 +1,9 @@
 #include "text_render_runtime.h"
 #include "types.h"
 
-u8 *Func_08017dd4(u8 *, s32, s32);
+u8 *Text_FormatNumber(u8 *, s32, s32);
 
-void Func_0801e9d4(
+void UiText_DrawNumberAtOffset(
     s32 arg0,
     s32 arg1,
     struct TextRenderWork *arg2,
@@ -13,5 +13,5 @@ void Func_0801e9d4(
     u8 data[16];
 
     /* 16バイト一時領域を介して次の処理へ渡す。 */
-    Func_0801e8b0(Func_08017dd4(data, arg0, arg1), arg2, arg3, arg4);
+    UiText_DrawStringAtOffset(Text_FormatNumber(data, arg0, arg1), arg2, arg3, arg4);
 }

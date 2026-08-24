@@ -80,6 +80,13 @@ typedef int bool;
 #define Shop_GetSelectionState Func_08077020
 #define UiText_DrawMessage Func_08015040
 #define UiText_DrawCharacter Func_0801e7c0
+#define Text_FormatNumber Func_08017dd4
+#define UiText_DrawString Func_0801e858
+#define UiText_DrawStringAtOffset Func_0801e8b0
+#define UiText_DrawStringInWindow Func_0801e940
+#define UiText_DrawNumber Func_0801e9a0
+#define UiText_DrawNumberAtOffset Func_0801e9d4
+#define UiText_DrawNumberInWindow Func_0801ea08
 #define Menu_LoadResourceSlot Func_0802875c
 #define GetBattleObjectSlot Func_080b7dd0
 #define GetMotionRecord Func_080b7f70

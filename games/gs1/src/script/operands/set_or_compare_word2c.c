@@ -1,0 +1,19 @@
+#include "script_operands.h"
+
+void Script_SetOrCompareWord2c(struct ScriptOperands *state, s32 operation, s32 value) {
+    s8 result;
+
+    if (operation == 0) {
+        state->word_2c = value;
+        return;
+    }
+    if (operation == 1) {
+        state->word_2c += value;
+        return;
+    }
+    result = 0;
+    if (state->word_2c == value) {
+        result = 1;
+    }
+    state->comparison_result = result;
+}

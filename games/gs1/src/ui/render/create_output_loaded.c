@@ -3,7 +3,7 @@
 
 s32 Resource_FindFreeSlot();
 s32 Func_0801a2a4(s32 arg0, s32 arg1, s32 arg2);
-void *Func_0801eb90(
+void *RenderOutput_CreateLoaded(
     s32 arg0,
     s32 arg1,
     struct RenderInput *arg2,
@@ -17,7 +17,7 @@ void *Func_0801eb90(
     result = NULL;
     if (no != 0x60) {
         Func_0801a2a4(arg0, arg1, no);
-        result = Func_0801eadc(no, 0x40000000, arg2, arg3, arg4);
+        result = RenderOutput_Create(no, 0x40000000, arg2, arg3, arg4);
     }
     return result;
 }

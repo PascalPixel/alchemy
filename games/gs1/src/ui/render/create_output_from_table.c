@@ -3,7 +3,7 @@
 
 s32 Resource_FindFreeSlot();
 s32 Func_0801a32c(u32 value, s32 unused, void *destination);
-void *Func_0801ec24(
+void *RenderOutput_CreateFromTable(
     s32 arg0,
     struct RenderInput *arg1,
     s32 arg2,
@@ -16,7 +16,7 @@ void *Func_0801ec24(
     var_r0 = NULL;
     if (temp_r0 != 0x60) {
         Func_0801a32c(arg0, 0, temp_r0);
-        var_r0 = Func_0801eadc(temp_r0, 0x40000000, arg1, arg2, arg3);
+        var_r0 = RenderOutput_Create(temp_r0, 0x40000000, arg1, arg2, arg3);
     }
     return var_r0;
 }

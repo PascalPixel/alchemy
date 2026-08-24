@@ -9,7 +9,7 @@ void Func_080bac6c(s32);
 void Func_08009108(void **, s32);
 void ActivateBattleObjectSlot(s32);
 
-void Func_080bace8(s32 id)
+void BattleMotion_InitializeActorRecords(s32 id)
 {
     void *items[4];
     u8 *state;

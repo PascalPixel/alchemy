@@ -1,6 +1,6 @@
 #include "battle_effect_runtime.h"
 
-s32 Func_08091584(void)
+s32 BattleEffect_GetAnimationValue(void)
 {
     struct BattleRenderObject *object = ObjectTable_Get();
 

@@ -3,7 +3,7 @@
 
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-void Func_08096cdc(void *object, s32 mode, s32 value);
+void ObjectGroup_SetActionForOthers(void *object, s32 mode, s32 value);
 
 #if defined(GS1_EDITION_JA)
 #define WORK_CELL_ADDR  0x03001F30
@@ -64,14 +64,14 @@ void InitializeEventObject(void)
         M2C_FIELD(event_object, s32 *, 0x6C) = CALLBACK_1;
     }
     if ((s8)M2C_FIELD(event_state, s8 *, 0x23) != 0) {
-        Func_08096cdc(event_object, 1, 0);
+        ObjectGroup_SetActionForOthers(event_object, 1, 0);
         UiText_DrawQuantity((s32)event_index, 4);
         if ((s8)M2C_FIELD(event_state, s8 *, 0x21) != 0) {
             UiText_DrawMessage((void *)MESSAGE_NO, (s32)*(s8 *)((u8 *)(event_state) + 0x71C));
         } else {
             UiText_DrawMessage((void *)MESSAGE_NO, (s32)*(s8 *)((u8 *)(event_state) + 0x71C));
         }
-        Func_08096cdc(event_object, 0, 0x10);
+        ObjectGroup_SetActionForOthers(event_object, 0, 0x10);
     }
     if (GameFlag_IsSet(0x140) != 0) {
         if ((s8)M2C_FIELD(event_state, s8 *, 0x22) != 0) {

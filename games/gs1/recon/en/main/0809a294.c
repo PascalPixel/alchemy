@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define RunBattleEffect07 Func_08098954
+#define RunBattleEffect11 Func_0809a294
 
 struct BattleEffectOrigin {
     s32 reserved_00;
@@ -22,7 +22,7 @@ struct BattleEffectObject {
 extern struct BattleEffectOrigin *Data_03001f30;
 
 void Func_08097384(void);
-struct BattleEffectObject *Func_08098a84(s32, s32, s32, s32);
+struct BattleEffectObject *Func_0809a3c4(s32, s32, s32, s32);
 void Func_080030f8(s32);
 void Func_08096bec(struct BattleEffectObject *, s32, s32);
 void Func_08009158(struct BattleEffectObject *);
@@ -33,7 +33,7 @@ u32 Func_08004458(void);
 void Func_080090d0(struct BattleEffectObject *);
 void Func_0809748c(void);
 
-void RunBattleEffect07(void)
+void RunBattleEffect11(void)
 {
     struct BattleEffectOrigin *origin = Data_03001f30;
     struct BattleEffectObject *anchors[2];
@@ -44,9 +44,9 @@ void RunBattleEffect07(void)
     position[0] = origin->x;
     position[1] = origin->y + 0x100000;
     position[2] = origin->z;
-    anchors[0] = Func_08098a84(
+    anchors[0] = Func_0809a3c4(
         position[0] + 0x200000, position[1], position[2], 0x8000);
-    anchors[1] = Func_08098a84(
+    anchors[1] = Func_0809a3c4(
         position[0] - 0x200000, position[1], position[2], 0);
 
     Func_080030f8(15);

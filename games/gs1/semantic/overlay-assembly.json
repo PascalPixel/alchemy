@@ -2437,6 +2437,36 @@
         "explicit decoded-ROM correspondence proves the 56-byte relocation-normalized core identical in JA, EN, DE, ES, FR and IT",
         "games/gs1/recon/en/overlays/resource_385_c_02000a80.json"
       ]
+    },
+    {
+      "overlay": "resource_3a0",
+      "start": "0x02000324",
+      "end": "0x02000358",
+      "kind": "actor_presentation_flag_allocation_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "complete ordinary-C reconstruction is exactly 52 bytes with zero normalized structural rows",
+        "the three-halfword residual is equivalent r2/r3 result allocation in two presentation-flag branches and immediately resynchronizes at each branch boundary",
+        "twenty-thousand-candidate safe and ten-thousand-candidate classic exact-only heat walks plus the approved compiler-pass matrix found no emitting source",
+        "explicit decoded-ROM correspondence proves the 40-byte relocation-normalized core identical in JA, EN, DE, ES, FR and IT",
+        "games/gs1/recon/en/overlays/resource_3a0_c_02000324.json"
+      ]
+    },
+    {
+      "overlay": "resource_3c0",
+      "start": "0x02000adc",
+      "end": "0x02000b14",
+      "kind": "actor_placement_argument_ordering_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "complete ordinary-C reconstruction is exactly 56 bytes with zero wrong instructions",
+        "the two-halfword residual is one independent shift and actor-argument load swap with immediate resynchronization",
+        "twenty-thousand-candidate safe and ten-thousand-candidate classic exact-only heat walks plus the approved compiler-pass matrix found no emitting source",
+        "explicit decoded-ROM correspondence proves the 28-byte relocation-normalized core identical in JA, EN, DE, ES, FR and IT",
+        "games/gs1/recon/en/overlays/resource_3c0_c_02000adc.json"
+      ]
     }
   ]
 }

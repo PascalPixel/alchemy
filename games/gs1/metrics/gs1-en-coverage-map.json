@@ -7,19 +7,19 @@
   "executable_bytes": 1348458,
   "categories": {
     "exact_c": {
-      "bytes": 318590,
-      "percent_of_executable": 23.63
+      "bytes": 318768,
+      "percent_of_executable": 23.64
     },
     "tracked_c": {
       "bytes": 45250,
       "percent_of_executable": 3.36
     },
     "assembly": {
-      "bytes": 606510,
-      "percent_of_executable": 44.98
+      "bytes": 606278,
+      "percent_of_executable": 44.96
     },
     "retained_asm": {
-      "bytes": 378108,
+      "bytes": 378162,
       "percent_of_executable": 28.04
     },
     "asset_data": {
@@ -29,18 +29,18 @@
   },
   "main": {
     "executable_bytes": 548364,
-    "exact_c_bytes": 109252,
+    "exact_c_bytes": 109382,
     "tracked_c_bytes": 6524
   },
   "overlays": {
     "executable_bytes": 800094,
-    "exact_c_bytes": 209338,
+    "exact_c_bytes": 209386,
     "tracked_c_bytes": 38726
   },
   "provenance": {
     "exact_source": "worktree",
     "tracked_source": "worktree",
-    "tracked_sources": 147,
+    "tracked_sources": 149,
     "main_tracked_census": "games/gs1/recon/en/main/*.json",
     "tracked_superseded_bytes": 0,
     "tracked_outside_extent_bytes": 0,
@@ -52,9 +52,9 @@
       "label": "Main image code",
       "bytes": 548364,
       "categories": {
-        "exact_c": 109252,
+        "exact_c": 109382,
         "tracked_c": 6524,
-        "assembly": 255940,
+        "assembly": 255810,
         "retained_asm": 176648
       },
       "tiles": 9
@@ -64,9 +64,9 @@
       "label": "Compressed code overlays",
       "bytes": 539544,
       "categories": {
-        "exact_c": 149426,
+        "exact_c": 149455,
         "tracked_c": 20748,
-        "assembly": 369370
+        "assembly": 369341
       },
       "tiles": 11
     },
@@ -86,9 +86,9 @@
       "label": "Main image",
       "bytes": 548364,
       "categories": {
-        "exact_c": 109252,
+        "exact_c": 109382,
         "tracked_c": 6524,
-        "assembly": 255940,
+        "assembly": 255810,
         "retained_asm": 176648
       },
       "tiles": 867
@@ -98,10 +98,10 @@
       "label": "Decoded code overlays",
       "bytes": 800094,
       "categories": {
-        "exact_c": 209338,
+        "exact_c": 209386,
         "tracked_c": 38726,
-        "assembly": 350570,
-        "retained_asm": 201460
+        "assembly": 350468,
+        "retained_asm": 201514
       },
       "tiles": 5374
     }

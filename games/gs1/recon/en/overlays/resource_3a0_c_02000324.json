@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "namespace": "resource_3a0",
+  "address": "0x02000324",
+  "status": "proven-retained",
+  "owner_bytes": 52,
+  "candidate_bytes": 52,
+  "differing_halfwords": 3,
+  "wrong_instructions": 6,
+  "classification": "select-actor-twenty-presentation-bit",
+  "resolved_asm_classification": {
+    "kind": "compiler_output",
+    "retention": "c_candidate",
+    "confidence": "likely"
+  },
+  "cross_edition": {
+    "editions": ["ja", "en", "de", "es", "fr", "it"],
+    "relocation_normalized_core_bytes": 40,
+    "core_diff_bytes": 0,
+    "core_identical": true
+  },
+  "bounded_search": {
+    "safe_candidates": 20000,
+    "safe_compile_failures": 0,
+    "classic_candidates": 10000,
+    "classic_compile_failures": 158,
+    "best_differing_halfwords": 3,
+    "exact": false
+  },
+  "notes": [
+    "Complete actor-20 presentation-bit selector: scene phase chooses the actor resolver, then bit 1 is set or cleared through a shared store.",
+    "The readable candidate has exact extent and zero normalized structural rows. Its three-halfword residual is confined to equivalent r2/r3 result allocation in the two flag-update branches, resynchronizing at the unconditional branch and again at the epilogue.",
+    "Explicit --span analysis proves the 40-byte relocation-normalized core identical across all six editions.",
+    "A 20,000-candidate safe heat walk and 10,000-candidate classic heat walk plus the approved compiler-pass matrix found no exact emission; classic source shaping improved the readable baseline from five to three differing halfwords.",
+    "The owner satisfies the narrow compiler-allocation precedent: complete semantics, exact extent, no normalized structural difference, equivalent low-register allocation only, full bounded search, immediate resynchronization, and an all-six identical core."
+  ]
+}

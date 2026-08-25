@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x08097384",
+  "name": "BattleEffect_InitializeSharedScene",
+  "status": "measured-draft",
+  "owner_bytes": 264,
+  "executable_owner_bytes": 264,
+  "candidate_bytes": 264,
+  "differing_halfwords": 68,
+  "wrong_instructions": 86,
+  "cross_edition": {
+    "object_bytes": 264,
+    "relocation_bytes": 40,
+    "literal_bytes": 52,
+    "relocation_normalized_core_bytes": 172,
+    "core_diff_bytes": 0,
+    "core_identical": true,
+    "starts": {
+      "ja": "0x0808e36c",
+      "en": "0x08097384",
+      "de": "0x0809aa20",
+      "es": "0x0809c410",
+      "fr": "0x0809c410",
+      "it": "0x08097410"
+    }
+  },
+  "domain": "Initializes shared graphics and selects the resource variant used by a broad family of battle effects.",
+  "expressed": [
+    "DMA-copies the primary scene resource block",
+    "conditionally copies the alternate scene block when its runtime flag is clear",
+    "copies the shared workspace block used by the effect family",
+    "selects one of eight resource variants from the active state and available resources",
+    "loads the selected shared resource and finalizes effect setup"
+  ],
+  "bounded_search": {
+    "mode": "screen-only",
+    "attempted": 0,
+    "exact": false,
+    "reason": "The complete readable candidate has exact 264-byte extent but remains 68 differing halfwords and 86 wrong instructions away, outside the <=20-halfword admission gate."
+  },
+  "notes": [
+    "Independent object analysis proves all 172 relocation-normalized core bytes identical across the six approved GS1 editions.",
+    "The helper is shared by at least six recovered battle-effect owners. The residual spans DMA operand allocation and eight unrolled resource checks rather than a localized compiler hunk.",
+    "No full search or permanent classification was warranted, and zero DONE bytes are claimed.",
+    "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, recovered battle-effect callers, and the approved compiler. No GS2 evidence or external source was used."
+  ]
+}

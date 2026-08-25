@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global VramBlock_LoadCached
 	.global Func_08003fa4
 	.thumb_func
+VramBlock_LoadCached:
 Func_08003fa4:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8

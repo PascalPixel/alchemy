@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global BattleEffect_FindMatchingEvent
 	.global Func_0808e4b4
 	.thumb_func
+BattleEffect_FindMatchingEvent:
 Func_0808e4b4:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

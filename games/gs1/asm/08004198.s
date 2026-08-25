@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global Scheduler_FindCallback
 	.global Func_08004198
 	.thumb_func
+Scheduler_FindCallback:
 Func_08004198:
 	push	{r5, lr}
 	movs	r5, #1

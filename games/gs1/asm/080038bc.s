@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global QueueIoWriteDelay3
 	.global Func_080038bc
 	.thumb_func
+QueueIoWriteDelay3:
 Func_080038bc:
 	push	{r5, r6, lr}
 	ldr	r4, [pc, #52]

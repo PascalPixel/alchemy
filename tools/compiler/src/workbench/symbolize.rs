@@ -21,12 +21,22 @@ pub fn symbolize(
     source: &Path,
     listing: &Path,
     relocatable: bool,
+    symbol: &str,
+    image: &Path,
 ) -> Result<(String, SymbolizeStats), String> {
     let source_text = std::fs::read_to_string(source)
         .map_err(|error| format!("{}: {error}", source.display()))?;
     let listing_text = std::fs::read_to_string(listing)
         .map_err(|error| format!("{}: {error}", listing.display()))?;
-    symbolize_text(source, &source_text, &listing_text, relocatable)
+    let image = std::fs::read(image).map_err(|error| format!("{}: {error}", image.display()))?;
+    symbolize_text(
+        source,
+        &source_text,
+        &listing_text,
+        relocatable,
+        Some(symbol),
+        Some(&image),
+    )
 }
 
 fn symbolize_text(
@@ -34,6 +44,8 @@ fn symbolize_text(
     source_text: &str,
     listing_text: &str,
     relocatable: bool,
+    symbol: Option<&str>,
+    image: Option<&[u8]>,
 ) -> Result<(String, SymbolizeStats), String> {
     let hex = Regex::new(r"(?i)([0-9a-f]{8})").unwrap();
     let stem = source
@@ -65,6 +77,8 @@ fn symbolize_text(
     let mov_pc = Regex::new(r"\bmov\s+pc,\s*r\d+").unwrap();
     let word = Regex::new(r"\.4byte\s+(0x[0-9A-Fa-f]+)").unwrap();
     let pc_load = Regex::new(r"\[pc,\s*#([0-9]+)\]").unwrap();
+    let absolute_function =
+        Regex::new(r"^(\s*)\.set\s+((?:sub|Func)_[0-9A-Fa-f]{8}),\s*0x[0-9A-Fa-f]+\s*$").unwrap();
     let mut tables = Vec::new();
     let mut index = 0;
     while index < lines.len() {
@@ -112,6 +126,7 @@ fn symbolize_text(
 
     let mut inserts = BTreeMap::<usize, Vec<String>>::new();
     let mut rewrites = BTreeMap::<usize, String>::new();
+    let mut external_pools = BTreeMap::<u64, u32>::new();
     for (table_index, table) in tables.iter().enumerate() {
         let ordinal = table_index + 1;
         let table_label = format!(".Lm2c_jtbl_{ordinal}");
@@ -179,15 +194,30 @@ fn symbolize_text(
             .parse::<u64>()
             .map_err(|error| error.to_string())?;
         let pool_address = ((instruction + 4) & !3) + displacement;
-        let pool_line = address_line
-            .get(&pool_address)
-            .copied()
-            .ok_or_else(|| format!("no source line for literal pool offset 0x{pool_address:x}"))?;
         let pool_label = format!(".Lm2c_pool_{pool_address:04x}");
-        inserts
-            .entry(pool_line - 1)
-            .or_default()
-            .push(format!("{pool_label}:"));
+        if let Some(pool_line) = address_line.get(&pool_address).copied() {
+            inserts
+                .entry(pool_line - 1)
+                .or_default()
+                .push(format!("{pool_label}:"));
+        } else {
+            let image = image.ok_or_else(|| {
+                format!("no source line for literal pool offset 0x{pool_address:x}")
+            })?;
+            let rom_address = base + pool_address;
+            let offset = rom_address
+                .checked_sub(0x0800_0000)
+                .and_then(|value| usize::try_from(value).ok())
+                .ok_or_else(|| {
+                    format!("literal pool address 0x{rom_address:08x} is outside ROM")
+                })?;
+            let bytes: [u8; 4] = image
+                .get(offset..offset + 4)
+                .ok_or_else(|| format!("literal pool address 0x{rom_address:08x} is outside ROM"))?
+                .try_into()
+                .unwrap();
+            external_pools.insert(pool_address, u32::from_le_bytes(bytes));
+        }
         rewrites.insert(
             source_index,
             pc_load.replace(line, pool_label.as_str()).into_owned(),
@@ -207,13 +237,30 @@ fn symbolize_text(
                 output.push('\n');
             }
         }
-        output.push_str(
-            rewrites
-                .get(&source_index)
-                .map(String::as_str)
-                .unwrap_or(line),
-        );
+        let same_address_owner_alias = symbol.is_some_and(|symbol| {
+            source_index > 0
+                && lines[source_index - 1].trim() == format!("{symbol}:")
+                && (line.trim().starts_with("Region_") || line.trim().starts_with("Func_"))
+                && line.trim().ends_with(':')
+        });
+        if same_address_owner_alias {
+            continue;
+        }
+        let rewritten = rewrites
+            .get(&source_index)
+            .map(String::as_str)
+            .unwrap_or(line);
+        if let Some(capture) = absolute_function.captures(rewritten) {
+            output.push_str(&format!("{}\t.global {}", &capture[1], &capture[2]));
+        } else {
+            output.push_str(rewritten);
+        }
         output.push('\n');
+    }
+    for (address, value) in external_pools {
+        output.push_str(&format!(
+            ".Lm2c_pool_{address:04x}:\n.4byte 0x{value:08x}\n"
+        ));
     }
     Ok((
         output,
@@ -234,12 +281,28 @@ mod tests {
         let source = Path::new("08000000.s");
         let asm = ".thumb\nldr r2, [pc, #8]\nmov pc, r2\n.4byte 0x08000008\nnop\n.align 2\n.4byte 0x08000004\n";
         let listing = "1 0000  asm\n2 0000 0000 asm\n3 0002 0000 asm\n4 0004 00000000 asm\n5 0008 0000 asm\n6 000a 00 asm\n7 000c 00000000 asm\n";
-        let (output, stats) = symbolize_text(source, asm, listing, true).unwrap();
+        let (output, stats) = symbolize_text(source, asm, listing, true, None, None).unwrap();
         assert_eq!(stats.jump_tables, 1);
         assert_eq!(stats.table_entries, 1);
         assert!(output.contains("ldr r2, .Lm2c_jtbl_ptr_1"));
         assert!(output.contains(".4byte .Lm2c_08000008"));
         assert!(output.contains(".Lm2c_08000008:\nnop"));
         assert!(output.contains(".Lm2c_jtbl_ptr_1:\n.4byte .Lm2c_jtbl_1"));
+    }
+
+    #[test]
+    fn reads_out_of_owner_pool_from_rom_and_removes_region_alias() {
+        let source = Path::new("08000000.s");
+        let asm = ".thumb\n.set sub_08000100, 0x08000100\nHumanOwner:\nRegion_08000000:\nldr r0, [pc, #4]\nbx lr\n";
+        let listing =
+            "1 0000 asm\n2 0000 asm\n3 0000 asm\n4 0000 asm\n5 0000 0000 asm\n6 0002 0000 asm\n";
+        let mut rom = vec![0; 12];
+        rom[8..12].copy_from_slice(&0x12345678u32.to_le_bytes());
+        let (output, _) =
+            symbolize_text(source, asm, listing, true, Some("HumanOwner"), Some(&rom)).unwrap();
+        assert!(!output.contains("Region_08000000:"));
+        assert!(output.contains(".global sub_08000100"));
+        assert!(output.contains("ldr r0, .Lm2c_pool_0008"));
+        assert!(output.contains(".Lm2c_pool_0008:\n.4byte 0x12345678"));
     }
 }

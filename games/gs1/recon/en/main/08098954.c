@@ -29,7 +29,7 @@ void Func_08009158(struct BattleEffectObject *);
 void Func_080f9010(s32);
 struct BattleEffectObject *Func_08096c80(s32);
 void Func_08009098(struct BattleEffectObject *, u32);
-u16 Func_08004458(void);
+u32 Func_08004458(void);
 void Func_080090d0(struct BattleEffectObject *);
 void Func_0809748c(void);
 

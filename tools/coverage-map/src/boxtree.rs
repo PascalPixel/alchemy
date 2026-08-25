@@ -11,9 +11,7 @@ fn base64(data: &[u8]) -> String {
     const TABLE: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     let mut out = String::new();
     for chunk in data.chunks(3) {
-        let n = (u32::from(chunk[0]) << 16)
-            | (u32::from(*chunk.get(1).unwrap_or(&0)) << 8)
-            | u32::from(*chunk.get(2).unwrap_or(&0));
+        let n = (u32::from(chunk[0]) << 16) | (u32::from(*chunk.get(1).unwrap_or(&0)) << 8) | u32::from(*chunk.get(2).unwrap_or(&0));
         out.push(TABLE[(n >> 18 & 63) as usize] as char);
         out.push(TABLE[(n >> 12 & 63) as usize] as char);
         out.push(if chunk.len() > 1 { TABLE[(n >> 6 & 63) as usize] as char } else { '=' });
@@ -51,15 +49,7 @@ fn fill(tree: &str, category: &str, fraction: f64) -> String {
     let f = fraction.clamp(0.0, 1.0);
     let light = 93.0 - 38.0 * f;
     let sat = (f * 95.0).round();
-    format!(
-        "fill:hsl({} {}% {}%);fill:oklch({:.3} {:.3} {})",
-        js_number_string(h),
-        js_number_string(sat),
-        js_number_string(light.round()),
-        0.93 - 0.38 * f,
-        0.17 * f,
-        js_number_string(okh)
-    )
+    format!("fill:hsl({} {}% {}%);fill:oklch({:.3} {:.3} {})", js_number_string(h), js_number_string(sat), js_number_string(light.round()), 0.93 - 0.38 * f, 0.17 * f, js_number_string(okh))
 }
 fn tile_fraction(tile: &Tile, category: &str) -> f64 {
     if tile.bytes <= 0 {
@@ -119,33 +109,19 @@ fn svg(tree: &str, map: &CoverageMap) -> String {
     if let Ok(bytes) = std::fs::read(root().join("games/gs1/assets/fonts/weyard.otf")) {
         out.push(format!("<defs><style>@font-face{{font-family:Weyard;src:url(data:font/otf;base64,{}) format('opentype');font-style:italic;}}.weyard{{font-family:Weyard;font-size:16px;font-style:italic;fill:#fff;}}.rectangle-label{{font-size:8px;}}</style></defs>", base64(&bytes)));
     } else {
-        out.push(
-            "<style>.weyard{font-family:monospace;font-size:16px;fill:#fff}.rectangle-label{font-size:8px}</style>"
-                .into(),
-        );
+        out.push("<style>.weyard{font-family:monospace;font-size:16px;fill:#fff}.rectangle-label{font-size:8px}</style>".into());
     }
     out.push(format!("<rect x=\"0\" y=\"0\" width=\"540\" height=\"304\" fill=\"{}\" rx=\"8\"/>", edge));
-    out.push(format!(
-        "<rect x=\"1\" y=\"1\" width=\"538\" height=\"302\" fill=\"none\" stroke=\"{}\" stroke-width=\"2\" rx=\"7\"/>",
-        edge
-    ));
+    out.push(format!("<rect x=\"1\" y=\"1\" width=\"538\" height=\"302\" fill=\"none\" stroke=\"{}\" stroke-width=\"2\" rx=\"7\"/>", edge));
     out.push(format!("<text class=\"weyard\" x=\"6\" y=\"15\">{}</text>", esc(&title(tree, area))));
     out.push(format!("<text class=\"weyard\" x=\"534\" y=\"15\" text-anchor=\"end\">{}</text>", commas(area.bytes)));
-    out.push(format!(
-        "<rect x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\" fill=\"#fff\"/>",
-        frame.x, frame.y, frame.width, frame.height
-    ));
+    out.push(format!("<rect x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\" fill=\"#fff\"/>", frame.x, frame.y, frame.width, frame.height));
     for placed in treemap(&tiles, |tile| tile.bytes, frame) {
         let tile = tiles[placed.index];
         let rect = placed.rect;
         out.push(format!("<g aria-label=\"{}: {} bytes\">", esc(&tile.label), commas(tile.bytes)));
         out.push(format!("<title>{}: {} bytes</title>", esc(&tile.label), commas(tile.bytes)));
-        let body = Rect {
-            x: rect.x + 0.5,
-            y: rect.y + 0.5,
-            width: (rect.width - 1.0).max(0.5),
-            height: (rect.height - 1.0).max(0.5),
-        };
+        let body = Rect { x: rect.x + 0.5, y: rect.y + 0.5, width: (rect.width - 1.0).max(0.5), height: (rect.height - 1.0).max(0.5) };
         let mut y = body.y + body.height;
         for category in CATEGORIES {
             let n = tile.category(category);
@@ -154,30 +130,12 @@ fn svg(tree: &str, map: &CoverageMap) -> String {
             }
             let height = body.height * n as f64 / tile.bytes.max(1) as f64;
             y -= height;
-            out.push(format!(
-                "<rect x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\" style=\"{}\"/>",
-                body.x,
-                y,
-                body.width,
-                height,
-                fill(tree, category, tile_fraction(tile, category))
-            ));
+            out.push(format!("<rect x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\" style=\"{}\"/>", body.x, y, body.width, height, fill(tree, category, tile_fraction(tile, category))));
         }
         let name = label(&tile.label, body.width - 6.0, body.height);
         if !name.is_empty() {
-            out.push(format!(
-                "<rect x=\"{}\" y=\"{}\" width=\"{}\" height=\"10\" fill=\"hsl({} 70% 24%)\" fill-opacity=\".9\"/>",
-                rect.x,
-                rect.y,
-                rect.width,
-                js_number_string(h)
-            ));
-            out.push(format!(
-                "<text class=\"weyard rectangle-label\" x=\"{}\" y=\"{}\">{}</text>",
-                rect.x + 3.0,
-                rect.y + 8.0,
-                esc(&name)
-            ));
+            out.push(format!("<rect x=\"{}\" y=\"{}\" width=\"{}\" height=\"10\" fill=\"hsl({} 70% 24%)\" fill-opacity=\".9\"/>", rect.x, rect.y, rect.width, js_number_string(h)));
+            out.push(format!("<text class=\"weyard rectangle-label\" x=\"{}\" y=\"{}\">{}</text>", rect.x + 3.0, rect.y + 8.0, esc(&name)));
         }
         out.push("</g>".into());
     }
@@ -194,27 +152,15 @@ fn svg(tree: &str, map: &CoverageMap) -> String {
         let percentage = 100.0 * category_bytes as f64 / displayed_bytes as f64;
         let display = format!("{name} {percentage:.1}%");
         let fraction = category_bytes as f64 / displayed_bytes as f64;
-        out.push(format!(
-            "<rect x=\"{}\" y=\"288\" width=\"10\" height=\"10\" style=\"{}\"/>",
-            legend_x,
-            fill(tree, category, fraction)
-        ));
-        out.push(format!(
-            "<text class=\"weyard\" x=\"{}\" y=\"293\" dominant-baseline=\"middle\">{}</text>",
-            legend_x + 14.0,
-            esc(&display)
-        ));
+        out.push(format!("<rect x=\"{}\" y=\"288\" width=\"10\" height=\"10\" style=\"{}\"/>", legend_x, fill(tree, category, fraction)));
+        out.push(format!("<text class=\"weyard\" x=\"{}\" y=\"293\" dominant-baseline=\"middle\">{}</text>", legend_x + 14.0, esc(&display)));
         legend_x += 16.0 + display.chars().count() as f64 * 8.0;
     }
     out.push("</svg>".into());
     out.join("\n") + "\n"
 }
 
-pub fn render_box_trees(
-    map: &CoverageMap,
-    _tree: Option<&crate::tree::SourceTree>,
-    _verify: bool,
-) -> Result<Vec<(&'static str, String)>, String> {
+pub fn render_box_trees(map: &CoverageMap, _tree: Option<&crate::tree::SourceTree>, _verify: bool) -> Result<Vec<(&'static str, String)>, String> {
     Ok(BOX_TREES.iter().map(|tree| (*tree, svg(tree, map))).collect())
 }
 pub fn svg_cache_version(svg: &str) -> String {

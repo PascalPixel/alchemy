@@ -101,11 +101,7 @@ fn number_is(value: Option<&Value>, expected: f64) -> bool {
 fn graphic_path(root: &Path, source: &str) -> Res<PathBuf> {
     const PREFIX: &str = "graphics/battle/effects/";
     let accepted = match source.strip_prefix(PREFIX) {
-        Some(rest) => {
-            rest.len() > 4
-                && rest.ends_with(".png")
-                && rest.chars().all(|ch| ch.is_ascii_lowercase() || ch.is_ascii_digit() || "_.-".contains(ch))
-        }
+        Some(rest) => rest.len() > 4 && rest.ends_with(".png") && rest.chars().all(|ch| ch.is_ascii_lowercase() || ch.is_ascii_digit() || "_.-".contains(ch)),
         None => false,
     };
     if !accepted {
@@ -117,8 +113,7 @@ fn read_file(path: &Path) -> Res<Vec<u8>> {
     std::fs::read(path).map_err(|error| format!("ENOENT: {}: {error}", path.display()))
 }
 fn build_direct_graphics(source: &Value, root: &Path) -> Res<Vec<u8>> {
-    let expected =
-        [(BATTLE_DATA_ADDRESS, BATTLE_DATA_ADDRESS + 0x100), (BATTLE_DATA_ADDRESS + 0x100, DIRECT_GRAPHICS_END)];
+    let expected = [(BATTLE_DATA_ADDRESS, BATTLE_DATA_ADDRESS + 0x100), (BATTLE_DATA_ADDRESS + 0x100, DIRECT_GRAPHICS_END)];
     let items = array(source.get("direct_graphics")).ok_or("direct-graphics collection differs")?;
     if items.len() != expected.len() {
         return err("direct-graphics collection differs");
@@ -129,8 +124,7 @@ fn build_direct_graphics(source: &Value, root: &Path) -> Res<Vec<u8>> {
         let name = item.as_str().unwrap_or("");
         let path = graphic_path(root, name)?;
         let (tiles, _, report) = gba_graphics(&read_file(&path)?, 4.0).map_err(|error| error.0)?;
-        if report.get("width") != Some(32.0) || report.get("height") != Some(16.0) || tiles.len() as u32 != end - start
-        {
+        if report.get("width") != Some(32.0) || report.get("height") != Some(16.0) || tiles.len() as u32 != end - start {
             return err("direct-graphic dimensions differ");
         }
         output.extend_from_slice(&tiles);
@@ -194,9 +188,7 @@ fn field_kind(field: &str) -> Res<FieldKind> {
     };
     let mut characters = name.chars();
     let named = match characters.next() {
-        Some(first) if first.is_ascii_lowercase() => {
-            characters.all(|ch| ch.is_ascii_lowercase() || ch.is_ascii_digit() || ch == '_')
-        }
+        Some(first) if first.is_ascii_lowercase() => characters.all(|ch| ch.is_ascii_lowercase() || ch.is_ascii_digit() || ch == '_'),
         _ => false,
     };
     if !named {
@@ -326,9 +318,7 @@ pub fn encode_halfword(decoded: &[u8], tokens: &[HalfwordToken]) -> Res<Vec<u8>>
     for token in tokens {
         match *token {
             HalfwordToken::Literal(count) => {
-                let count =
-                    integer(Some(&Value::from(count)), 1.0, decoded.len() as f64 / 2.0, "halfword literal count")?
-                        as u32;
+                let count = integer(Some(&Value::from(count)), 1.0, decoded.len() as f64 / 2.0, "halfword literal count")? as u32;
                 for _ in 0..count {
                     operations.push(HalfwordOperation::Literal);
                 }
@@ -429,12 +419,7 @@ fn halfword_token_from(value: &Value) -> Res<HalfwordToken> {
 }
 fn build_halfword_graphic(source: &Value, root: &Path) -> Res<Vec<u8>> {
     let graphic = source.get("halfword_graphic").ok_or("halfword graphic layout differs")?;
-    if !text_is(graphic.get("address"), &hex(RULE_TABLES_END))
-        || !text_is(graphic.get("end"), &hex(HALFWORD_GRAPHIC_END))
-        || !number_is(graphic.get("decoded_bytes"), 1536.0)
-        || !number_is(graphic.get("columns"), 12.0)
-        || !text_is(graphic.get("codec"), "halfword-lz")
-    {
+    if !text_is(graphic.get("address"), &hex(RULE_TABLES_END)) || !text_is(graphic.get("end"), &hex(HALFWORD_GRAPHIC_END)) || !number_is(graphic.get("decoded_bytes"), 1536.0) || !number_is(graphic.get("columns"), 12.0) || !text_is(graphic.get("codec"), "halfword-lz") {
         return err("halfword graphic layout differs");
     }
     let tiles = graphic_tiles(graphic, root)?;
@@ -498,18 +483,12 @@ fn palette_group_from(value: &Value) -> Res<PaletteGroup> {
     Ok(PaletteGroup::Group(operations))
 }
 fn build_palette_graphics(source: &Value, root: &Path) -> Res<Vec<(u32, u32, Vec<u8>)>> {
-    let expected: [(u32, u32, f64); 3] =
-        [(0x0809_ff58, 0x080a_001e, 768.0), (0x080a_001e, 0x080a_00b8, 768.0), (0x080a_00b8, 0x080a_0107, 512.0)];
+    let expected: [(u32, u32, f64); 3] = [(0x0809_ff58, 0x080a_001e, 768.0), (0x080a_001e, 0x080a_00b8, 768.0), (0x080a_00b8, 0x080a_0107, 512.0)];
     let graphics = array(source.get("palette_graphics")).ok_or("palette-graphic collection differs")?;
     let mut built = Vec::with_capacity(graphics.len());
     for (index, graphic) in graphics.iter().enumerate() {
         let (start, end, decoded_bytes) = expected[index];
-        if !text_is(graphic.get("address"), &hex(start))
-            || !text_is(graphic.get("end"), &hex(end))
-            || !number_is(graphic.get("decoded_bytes"), decoded_bytes)
-            || !number_is(graphic.get("columns"), 2.0)
-            || !text_is(graphic.get("codec"), "palette-lz")
-        {
+        if !text_is(graphic.get("address"), &hex(start)) || !text_is(graphic.get("end"), &hex(end)) || !number_is(graphic.get("decoded_bytes"), decoded_bytes) || !number_is(graphic.get("columns"), 2.0) || !text_is(graphic.get("codec"), "palette-lz") {
             return err("palette graphic layout differs");
         }
         let tiles = graphic_tiles(graphic, root)?;
@@ -589,9 +568,7 @@ fn build_object_scripts(source: &Value) -> Res<Vec<(u32, u32, Vec<u8>)>> {
                 return err("object-script command differs");
             }
             boundaries.push(start + size);
-            if words.len() == 1
-                && integer(words.first(), -2147483648.0, 4294967295.0, "script word")? as i64 as u32 > 63
-            {
+            if words.len() == 1 && integer(words.first(), -2147483648.0, 4294967295.0, "script word")? as i64 as u32 > 63 {
                 let word = script_word(words.first())?;
                 chunks.extend_from_slice(&word.to_le_bytes());
                 size += 4;
@@ -729,8 +706,7 @@ pub fn build_battle_effect_data(value: &Value, root: &Path) -> Res<Vec<u8>> {
     if prefix.len() as u32 != RULE_TABLES_END - BATTLE_DATA_ADDRESS {
         return err("battle-effect table prefix extent differs");
     }
-    let mut segments: Vec<(u32, u32, Vec<u8>)> =
-        vec![(RULE_TABLES_END, HALFWORD_GRAPHIC_END, build_halfword_graphic(value, root)?)];
+    let mut segments: Vec<(u32, u32, Vec<u8>)> = vec![(RULE_TABLES_END, HALFWORD_GRAPHIC_END, build_halfword_graphic(value, root)?)];
     segments.extend(build_tail_tables(value)?);
     segments.push((0x0809_e686, 0x0809_e6b8, build_sentinel_lookup(value)?));
     segments.extend(build_object_scripts(value)?);

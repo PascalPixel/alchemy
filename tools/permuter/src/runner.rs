@@ -11,10 +11,7 @@ use compiler_core::routing::root;
 use serde_json::json;
 
 use crate::backend::{self, Backend, Measurement};
-use crate::options::{
-    Options, MAX_ITERATIONS, MAX_JOURNAL_ROW_BYTES, MAX_OUTPUT_BYTES, MAX_PLAN_BYTES, MAX_SOURCE_BYTES,
-    MAX_SUMMARY_BYTES,
-};
+use crate::options::{Options, MAX_ITERATIONS, MAX_JOURNAL_ROW_BYTES, MAX_OUTPUT_BYTES, MAX_PLAN_BYTES, MAX_SOURCE_BYTES, MAX_SUMMARY_BYTES};
 use crate::perm::Permutation;
 use crate::randomize::Weights;
 
@@ -60,10 +57,7 @@ impl RunDirectory {
         let owned = if existed {
             let marker = read_text(&path.join(RUN_MARKER))?;
             if marker.trim_end() != identity {
-                return Err(format!(
-                    "{} belongs to a different input/compiler run; refusing to resume",
-                    path.display()
-                ));
+                return Err(format!("{} belongs to a different input/compiler run; refusing to resume", path.display()));
             }
             parse_ownership_manifest(&read_text(&path.join(OWNERSHIP_MANIFEST))?, &path)?
         } else {
@@ -71,13 +65,8 @@ impl RunDirectory {
             fs::write(path.join(OWNERSHIP_MANIFEST), b"").map_err(|e| format!("{}: {e}", path.display()))?;
             BTreeSet::new()
         };
-        let active = File::options().write(true).create_new(true).open(path.join(ACTIVE_MARKER)).map_err(|e| {
-            if e.kind() == io::ErrorKind::AlreadyExists {
-                format!("{} is already claimed by another permuter process (or has a stale claim)", path.display())
-            } else {
-                format!("{}: {e}", path.display())
-            }
-        })?;
+        let active =
+            File::options().write(true).create_new(true).open(path.join(ACTIVE_MARKER)).map_err(|e| if e.kind() == io::ErrorKind::AlreadyExists { format!("{} is already claimed by another permuter process (or has a stale claim)", path.display()) } else { format!("{}: {e}", path.display()) })?;
         Ok(Self { path, owned, _active: active })
     }
 
@@ -126,12 +115,7 @@ impl RunDirectory {
     fn remove_previous_results(&mut self) -> Result<(), String> {
         let old = self.owned.iter().cloned().collect::<Vec<_>>();
         for name in old {
-            if (name.starts_with("candidate-") && name.ends_with(".c"))
-                || matches!(
-                    name.as_str(),
-                    "best.c" | "best-UNVERIFIED.c" | "report.json" | LIVE_SOURCE_TMP | LIVE_REPORT_TMP
-                )
-            {
+            if (name.starts_with("candidate-") && name.ends_with(".c")) || matches!(name.as_str(), "best.c" | "best-UNVERIFIED.c" | "report.json" | LIVE_SOURCE_TMP | LIVE_REPORT_TMP) {
                 let path = self.path.join(&name);
                 match fs::remove_file(&path) {
                     Ok(()) => {}
@@ -178,8 +162,7 @@ impl Journal {
         let mut cached = BTreeMap::new();
         if resume {
             if let Some(bytes) = &existing {
-                let text = String::from_utf8(bytes.clone())
-                    .map_err(|_| format!("{}: journal is not valid UTF-8", path.display()))?;
+                let text = String::from_utf8(bytes.clone()).map_err(|_| format!("{}: journal is not valid UTF-8", path.display()))?;
                 let mut lines = text.lines();
                 if lines.next() != Some(&header) {
                     return Err(format!("{}: journal identity or format does not match this run", path.display()));
@@ -187,11 +170,7 @@ impl Journal {
                 for (line, row) in lines.enumerate() {
                     let fields = row.split('\t').collect::<Vec<_>>();
                     let Some((fingerprint, measurement)) = parse_journal_row(&fields, identity) else {
-                        return Err(format!(
-                            "{}: invalid, unauthenticated, or incomplete row {}",
-                            path.display(),
-                            line + 2
-                        ));
+                        return Err(format!("{}: invalid, unauthenticated, or incomplete row {}", path.display(), line + 2));
                     };
                     cached.insert(fingerprint, measurement);
                 }
@@ -205,13 +184,7 @@ impl Journal {
             run.write_control_file("journal.tsv", format!("{header}\n").as_bytes())?;
         }
         let bytes_written = if existing.is_none() { header.len() + 1 } else { bytes_written };
-        Ok(Self {
-            cached,
-            identity: identity.to_string(),
-            path,
-            writer: Mutex::new(run.open_append("journal.tsv")?),
-            bytes_written: Mutex::new(bytes_written),
-        })
+        Ok(Self { cached, identity: identity.to_string(), path, writer: Mutex::new(run.open_append("journal.tsv")?), bytes_written: Mutex::new(bytes_written) })
     }
 
     fn cached(&self, fingerprint: &str) -> Option<Measurement> {
@@ -227,9 +200,7 @@ impl Journal {
         }
         let mut imported = 0;
         for row in lines {
-            if let Some((fingerprint, measurement)) =
-                parse_journal_row(&row.split('\t').collect::<Vec<_>>(), &self.identity)
-            {
+            if let Some((fingerprint, measurement)) = parse_journal_row(&row.split('\t').collect::<Vec<_>>(), &self.identity) {
                 if self.cached.insert(fingerprint, measurement).is_none() {
                     imported += 1;
                 }
@@ -262,10 +233,7 @@ impl Journal {
             return Err(format!("{} would exceed the {MAX_OUTPUT_BYTES}-byte journal budget", self.path.display()));
         }
         let mut writer = self.writer.lock().map_err(|_| "journal lock is poisoned".to_string())?;
-        writer
-            .write_all(line.as_bytes())
-            .and_then(|_| writer.flush())
-            .map_err(|e| format!("{}: {e}", self.path.display()))?;
+        writer.write_all(line.as_bytes()).and_then(|_| writer.flush()).map_err(|e| format!("{}: {e}", self.path.display()))?;
         *size += line.len();
         Ok(())
     }
@@ -321,12 +289,7 @@ fn parse_journal_row(fields: &[&str], identity: &str) -> Option<(String, Measure
     // Legacy rows import with unknown (zero) signatures, which still serve
     // compile dedup but never satisfy an equal-divergence guard comparison.
     let v3 = fields.len() == 14;
-    if !(v3 || fields.len() == 12)
-        || fields[0].is_empty()
-        || fields[10].len() > MAX_SUMMARY_BYTES
-        || fields[10].contains(['\r', '\n'])
-        || fields[11].is_empty()
-    {
+    if !(v3 || fields.len() == 12) || fields[0].is_empty() || fields[10].len() > MAX_SUMMARY_BYTES || fields[10].contains(['\r', '\n']) || fields[11].is_empty() {
         return None;
     }
     let exact = match fields[1] {
@@ -344,27 +307,10 @@ fn parse_journal_row(fields: &[&str], identity: &str) -> Option<(String, Measure
     let store_divergence = fields[9].parse().ok()?;
     let bl_signature = if v3 { u64::from_str_radix(fields[12], 16).ok()? } else { 0 };
     let store_signature = if v3 { u64::from_str_radix(fields[13], 16).ok()? } else { 0 };
-    if score == u64::MAX
-        || first_difference.is_some_and(|n| n > expected_size.max(actual_size))
-        || (exact && (score != 0 || differences != 0 || expected_size != actual_size || first_difference.is_some()))
-    {
+    if score == u64::MAX || first_difference.is_some_and(|n| n > expected_size.max(actual_size)) || (exact && (score != 0 || differences != 0 || expected_size != actual_size || first_difference.is_some())) {
         return None;
     }
-    let measurement = Measurement {
-        exact,
-        score,
-        differences,
-        expected_size,
-        actual_size,
-        first_difference,
-        fingerprint,
-        heat: Vec::new(),
-        bl_divergence,
-        store_divergence,
-        bl_signature,
-        store_signature,
-        summary: fields[10].into(),
-    };
+    let measurement = Measurement { exact, score, differences, expected_size, actual_size, first_difference, fingerprint, heat: Vec::new(), bl_divergence, store_divergence, bl_signature, store_signature, summary: fields[10].into() };
     (journal_row_auth(identity, fields[0], &measurement, v3) == fields[11]).then(|| (fields[0].into(), measurement))
 }
 
@@ -372,21 +318,12 @@ fn source_fingerprint(source: &str) -> String {
     compiler_core::sha256::hex(source.as_bytes())
 }
 
-fn candidate_plan(
-    permutation: &Permutation,
-    iterations: usize,
-    seed: u64,
-    manual_only: bool,
-    weights: &Weights,
-    source_bytes: usize,
-) -> Result<Vec<Candidate>, String> {
+fn candidate_plan(permutation: &Permutation, iterations: usize, seed: u64, manual_only: bool, weights: &Weights, source_bytes: usize) -> Result<Vec<Candidate>, String> {
     if iterations == 0 || iterations > MAX_ITERATIONS {
         return Err(format!("candidate plan iterations must be between 1 and {MAX_ITERATIONS}"));
     }
     if source_bytes > MAX_SOURCE_BYTES {
-        return Err(format!(
-            "source is {source_bytes} bytes; the maximum permutation source is {MAX_SOURCE_BYTES} bytes"
-        ));
+        return Err(format!("source is {source_bytes} bytes; the maximum permutation source is {MAX_SOURCE_BYTES} bytes"));
     }
     if iterations.saturating_mul(source_bytes.max(1)).saturating_mul(3) > MAX_PLAN_BYTES {
         return Err(format!("{iterations} iterations would exceed the {MAX_PLAN_BYTES}-byte source plan budget"));
@@ -397,8 +334,7 @@ fn candidate_plan(
     let mut pools = Vec::with_capacity(base_count);
     let mut pool_bytes: usize = 0;
     for manual_seed in 0..base_count {
-        let (source, _) =
-            if randomize { permutation.evaluate_marked(manual_seed)? } else { permutation.evaluate(manual_seed)? };
+        let (source, _) = if randomize { permutation.evaluate_marked(manual_seed)? } else { permutation.evaluate(manual_seed)? };
         if source.len() > MAX_SOURCE_BYTES {
             return Err(format!("a materialized base source exceeds the {MAX_SOURCE_BYTES}-byte source budget"));
         }
@@ -406,16 +342,7 @@ fn candidate_plan(
         if pool_bytes.saturating_mul(3) > MAX_PLAN_BYTES {
             return Err(format!("materialized mutation pools exceed the {MAX_PLAN_BYTES}-byte plan budget"));
         }
-        let variants = if randomize {
-            crate::randomize::try_mutate_marked_with_weights(
-                &source,
-                seed ^ (manual_seed as u64).wrapping_mul(0x9e37_79b9_7f4a_7c15),
-                per_base,
-                weights,
-            )?
-        } else {
-            vec![crate::randomize::Mutation { id: "manual".into(), source }]
-        };
+        let variants = if randomize { crate::randomize::try_mutate_marked_with_weights(&source, seed ^ (manual_seed as u64).wrapping_mul(0x9e37_79b9_7f4a_7c15), per_base, weights)? } else { vec![crate::randomize::Mutation { id: "manual".into(), source }] };
         if variants.iter().any(|variant| variant.source.len() > MAX_SOURCE_BYTES) {
             return Err(format!("a generated source exceeds the {MAX_SOURCE_BYTES}-byte source budget"));
         }
@@ -437,13 +364,7 @@ fn candidate_plan(
                 if bytes.saturating_mul(3) > MAX_PLAN_BYTES {
                     return Err(format!("generated source plan exceeds the {MAX_PLAN_BYTES}-byte budget"));
                 }
-                candidates.push(Candidate {
-                    index: candidates.len(),
-                    manual_seed: *manual_seed,
-                    mutation: variant.id.clone(),
-                    source: variant.source.clone(),
-                    fingerprint,
-                });
+                candidates.push(Candidate { index: candidates.len(), manual_seed: *manual_seed, mutation: variant.id.clone(), source: variant.source.clone(), fingerprint });
                 if candidates.len() == iterations {
                     return Ok(candidates);
                 }
@@ -467,21 +388,12 @@ fn measurement_order(left: &(&Candidate, &Measurement), right: &(&Candidate, &Me
         .cmp(&left.1.exact)
         .then_with(|| left.1.score.cmp(&right.1.score))
         .then_with(|| left.1.differences.cmp(&right.1.differences))
-        .then_with(|| {
-            left.1.actual_size.abs_diff(left.1.expected_size).cmp(&right.1.actual_size.abs_diff(right.1.expected_size))
-        })
+        .then_with(|| left.1.actual_size.abs_diff(left.1.expected_size).cmp(&right.1.actual_size.abs_diff(right.1.expected_size)))
         .then_with(|| left.0.index.cmp(&right.0.index))
 }
 
 fn safe_label(input: &backend::Input) -> String {
-    let mut value = input
-        .source_path
-        .file_stem()
-        .and_then(|v| v.to_str())
-        .unwrap_or("candidate")
-        .chars()
-        .map(|c| if c.is_ascii_alphanumeric() || matches!(c, '.' | '-' | '_') { c } else { '_' })
-        .collect::<String>();
+    let mut value = input.source_path.file_stem().and_then(|v| v.to_str()).unwrap_or("candidate").chars().map(|c| if c.is_ascii_alphanumeric() || matches!(c, '.' | '-' | '_') { c } else { '_' }).collect::<String>();
     if value.is_empty() || value == "." || value == ".." {
         value = "candidate".into();
     }
@@ -503,12 +415,7 @@ fn input_identity(input: &backend::Input) -> Result<String, String> {
     Ok(compiler_core::sha256::hex(&bytes))
 }
 
-fn run_identity(
-    input: &backend::Input,
-    target: &dyn Backend,
-    seed: u64,
-    family_template: Option<&str>,
-) -> Result<String, String> {
+fn run_identity(input: &backend::Input, target: &dyn Backend, seed: u64, family_template: Option<&str>) -> Result<String, String> {
     let mut bytes = Vec::new();
     append_identity_field(&mut bytes, "permuter-run-v2");
     append_identity_field(&mut bytes, &input_identity(input)?);
@@ -552,10 +459,7 @@ fn output_location(path: &Path) -> Result<PathBuf, String> {
     if resolved.starts_with(root()) {
         return Err(format!("refusing output path {}: repository outputs must be under out/", path.display()));
     }
-    Err(format!(
-        "refusing output path {}: it must be under repository out/ or the OS temporary directory",
-        path.display()
-    ))
+    Err(format!("refusing output path {}: it must be under repository out/ or the OS temporary directory", path.display()))
 }
 
 fn validate_output_path(path: &Path) -> Result<(), String> {
@@ -567,11 +471,7 @@ fn validate_output_path(path: &Path) -> Result<(), String> {
 }
 
 fn validate_owned_name(name: &str) -> Result<(), String> {
-    let valid = (name.starts_with("candidate-") && name.ends_with(".c"))
-        || matches!(
-            name,
-            "best.c" | "best-UNVERIFIED.c" | "journal.tsv" | "report.json" | LIVE_SOURCE_TMP | LIVE_REPORT_TMP
-        );
+    let valid = (name.starts_with("candidate-") && name.ends_with(".c")) || matches!(name, "best.c" | "best-UNVERIFIED.c" | "journal.tsv" | "report.json" | LIVE_SOURCE_TMP | LIVE_REPORT_TMP);
     if !valid || name.contains('/') || name.contains('\\') {
         Err(format!("invalid owned output name {name:?}"))
     } else {
@@ -588,16 +488,7 @@ fn parse_ownership_manifest(text: &str, path: &Path) -> Result<BTreeSet<String>,
         .collect()
 }
 
-fn save_results(
-    run: &mut RunDirectory,
-    backend_name: &str,
-    search_mode: &str,
-    baseline: &Measurement,
-    retained: &[(&Candidate, &Measurement)],
-    attempted: usize,
-    failures: usize,
-    family_template: Option<&serde_json::Value>,
-) -> Result<(), String> {
+fn save_results(run: &mut RunDirectory, backend_name: &str, search_mode: &str, baseline: &Measurement, retained: &[(&Candidate, &Measurement)], attempted: usize, failures: usize, family_template: Option<&serde_json::Value>) -> Result<(), String> {
     let candidate_bytes = retained.iter().map(|(c, _)| c.source.len()).sum::<usize>();
     if candidate_bytes > MAX_OUTPUT_BYTES {
         return Err(format!("retained candidate output exceeds the {MAX_OUTPUT_BYTES}-byte budget"));
@@ -611,8 +502,7 @@ fn save_results(
         run.replace_owned_file(&name, candidate.source.as_bytes())?;
     }
     if let Some((candidate, measurement)) = retained.first() {
-        let name =
-            if search_mode == "classic-exact-only" && !measurement.exact { "best-UNVERIFIED.c" } else { "best.c" };
+        let name = if search_mode == "classic-exact-only" && !measurement.exact { "best-UNVERIFIED.c" } else { "best.c" };
         run.register(name)?;
         run.replace_owned_file(name, candidate.source.as_bytes())?;
     }
@@ -658,22 +548,14 @@ fn output_budget_preflight(candidates: &[Candidate], top: usize) -> Result<(), S
     let mut sizes = candidates.iter().map(|c| c.source.len()).collect::<Vec<_>>();
     sizes.sort_unstable_by(|a, b| b.cmp(a));
     let candidate_bytes = sizes.into_iter().take(top).sum::<usize>();
-    let mut report_sizes = candidates
-        .iter()
-        .map(|c| 512 + c.mutation.len() * 6 + c.fingerprint.len() + MAX_SUMMARY_BYTES * 6)
-        .collect::<Vec<_>>();
+    let mut report_sizes = candidates.iter().map(|c| 512 + c.mutation.len() * 6 + c.fingerprint.len() + MAX_SUMMARY_BYTES * 6).collect::<Vec<_>>();
     report_sizes.sort_unstable_by(|a, b| b.cmp(a));
     let report_bytes = 2048usize.saturating_add(report_sizes.into_iter().take(top).sum::<usize>());
     if candidate_bytes.saturating_add(report_bytes) > MAX_OUTPUT_BYTES {
-        return Err(format!(
-            "planned retained candidates and report exceed the {MAX_OUTPUT_BYTES}-byte output budget before compilation"
-        ));
+        return Err(format!("planned retained candidates and report exceed the {MAX_OUTPUT_BYTES}-byte output budget before compilation"));
     }
     if 128usize.saturating_add(candidates.len().saturating_mul(MAX_JOURNAL_ROW_BYTES)) > MAX_OUTPUT_BYTES {
-        return Err(format!(
-            "the {MAX_JOURNAL_ROW_BYTES}-byte journal-row bound for {} candidates exceeds the journal budget before compilation",
-            candidates.len()
-        ));
+        return Err(format!("the {MAX_JOURNAL_ROW_BYTES}-byte journal-row bound for {} candidates exceeds the journal budget before compilation", candidates.len()));
     }
     Ok(())
 }
@@ -686,11 +568,8 @@ fn output_budget_preflight(candidates: &[Candidate], top: usize) -> Result<(), S
 /// rows. Exact candidates are definitionally true.
 fn guard_accepts(baseline: &Measurement, value: &Measurement) -> bool {
     value.exact
-        || ((value.bl_divergence < baseline.bl_divergence
-            || (value.bl_divergence == baseline.bl_divergence && value.bl_signature == baseline.bl_signature))
-            && (value.store_divergence < baseline.store_divergence
-                || (value.store_divergence == baseline.store_divergence
-                    && value.store_signature == baseline.store_signature)))
+        || ((value.bl_divergence < baseline.bl_divergence || (value.bl_divergence == baseline.bl_divergence && value.bl_signature == baseline.bl_signature))
+            && (value.store_divergence < baseline.store_divergence || (value.store_divergence == baseline.store_divergence && value.store_signature == baseline.store_signature)))
 }
 
 fn retain_result(options: &Options, baseline: &Measurement, former_best: u64, measurement: &Measurement) -> bool {
@@ -702,30 +581,13 @@ fn retain_result(options: &Options, baseline: &Measurement, former_best: u64, me
         && (measurement.exact || measurement.score <= baseline.score)
 }
 
-fn run_workers(
-    backend: Arc<dyn Backend>,
-    candidates: Arc<Vec<Candidate>>,
-    jobs: usize,
-    stop_exact: bool,
-    baseline: Measurement,
-    journal: Arc<Journal>,
-    live_best: Arc<LiveBest>,
-) -> Result<Vec<Evaluated>, String> {
+fn run_workers(backend: Arc<dyn Backend>, candidates: Arc<Vec<Candidate>>, jobs: usize, stop_exact: bool, baseline: Measurement, journal: Arc<Journal>, live_best: Arc<LiveBest>) -> Result<Vec<Evaluated>, String> {
     let next = Arc::new(AtomicUsize::new(0));
     let stop = Arc::new(AtomicBool::new(false));
     let (sender, receiver) = mpsc::channel::<Result<Evaluated, String>>();
     let mut workers = Vec::new();
     for _ in 0..jobs.min(candidates.len()).max(1) {
-        let (backend, candidates, next, stop, sender, journal, baseline, live_best) = (
-            Arc::clone(&backend),
-            Arc::clone(&candidates),
-            Arc::clone(&next),
-            Arc::clone(&stop),
-            sender.clone(),
-            Arc::clone(&journal),
-            baseline.clone(),
-            Arc::clone(&live_best),
-        );
+        let (backend, candidates, next, stop, sender, journal, baseline, live_best) = (Arc::clone(&backend), Arc::clone(&candidates), Arc::clone(&next), Arc::clone(&stop), sender.clone(), Arc::clone(&journal), baseline.clone(), Arc::clone(&live_best));
         workers.push(std::thread::spawn(move || loop {
             if stop_exact && stop.load(AtomicOrdering::Acquire) {
                 break;
@@ -756,10 +618,7 @@ fn run_workers(
                 if guard_accepts(&baseline, value) {
                     match live_best.publish(&candidate, value) {
                         Ok(Some(saved)) => {
-                            println!(
-                                "new-best={} candidate={} mutation={} saved={} {}",
-                                value.score, candidate.index, candidate.mutation, saved, value.summary
-                            );
+                            println!("new-best={} candidate={} mutation={} saved={} {}", value.score, candidate.index, candidate.mutation, saved, value.summary);
                             let _ = io::stdout().flush();
                         }
                         Ok(None) => {}
@@ -818,13 +677,7 @@ impl LiveBest {
         for name in ["best.c", "best-UNVERIFIED.c", "report.json", LIVE_SOURCE_TMP, LIVE_REPORT_TMP] {
             run.register(name)?;
         }
-        Ok(Self {
-            state: Mutex::new(None),
-            output: run.path.clone(),
-            backend: backend.to_string(),
-            search_mode: search_mode.to_string(),
-            baseline_score,
-        })
+        Ok(Self { state: Mutex::new(None), output: run.path.clone(), backend: backend.to_string(), search_mode: search_mode.to_string(), baseline_score })
     }
 
     fn seed(&self) -> Option<(String, String)> {
@@ -870,11 +723,7 @@ impl LiveBest {
         .map_err(|e| format!("could not serialize live report: {e}"))?
             + "\n";
         atomic_replace(&self.output.join("report.json"), &self.output.join(LIVE_REPORT_TMP), report.as_bytes())?;
-        *best = Some(LiveBestState {
-            score: measurement.score,
-            source: candidate.source.clone(),
-            mutation: candidate.mutation.clone(),
-        });
+        *best = Some(LiveBestState { score: measurement.score, source: candidate.source.clone(), mutation: candidate.mutation.clone() });
         Ok(Some(name))
     }
 }
@@ -885,12 +734,7 @@ fn atomic_replace(path: &Path, temporary: &Path, contents: &[u8]) -> Result<(), 
             return Err(format!("refusing to overwrite symlink {}", candidate.display()));
         }
     }
-    let mut file = File::options()
-        .write(true)
-        .create(true)
-        .truncate(true)
-        .open(temporary)
-        .map_err(|e| format!("{}: {e}", temporary.display()))?;
+    let mut file = File::options().write(true).create(true).truncate(true).open(temporary).map_err(|e| format!("{}: {e}", temporary.display()))?;
     file.write_all(contents).and_then(|_| file.sync_all()).map_err(|e| format!("{}: {e}", temporary.display()))?;
     match fs::rename(temporary, path) {
         Ok(()) => Ok(()),
@@ -923,21 +767,9 @@ fn walk_workers(
     let (sender, receiver) = mpsc::channel::<Result<Evaluated, String>>();
     let mut workers = Vec::new();
     for worker in 0..jobs.max(1) {
-        let (backend, base_source, counter, stop, sender, best, journal, guard, family_template) = (
-            Arc::clone(&backend),
-            Arc::clone(&base_source),
-            Arc::clone(&counter),
-            Arc::clone(&stop),
-            sender.clone(),
-            Arc::clone(&best),
-            Arc::clone(&journal),
-            guard.clone(),
-            family_template.clone(),
-        );
+        let (backend, base_source, counter, stop, sender, best, journal, guard, family_template) = (Arc::clone(&backend), Arc::clone(&base_source), Arc::clone(&counter), Arc::clone(&stop), sender.clone(), Arc::clone(&best), Arc::clone(&journal), guard.clone(), family_template.clone());
         workers.push(std::thread::spawn(move || {
-            let mut rng = crate::randomize::SplitMix64(
-                seed ^ (worker as u64).wrapping_mul(0x9e37_79b9_7f4a_7c15) ^ 0x5851_f42d_4c95_7f2d,
-            );
+            let mut rng = crate::randomize::SplitMix64(seed ^ (worker as u64).wrapping_mul(0x9e37_79b9_7f4a_7c15) ^ 0x5851_f42d_4c95_7f2d);
             let mut current: Option<(String, String)> = None;
             let mut heat = Vec::new();
             loop {
@@ -949,34 +781,24 @@ fn walk_workers(
                     break;
                 }
                 if current.is_none() || rng.index(1000) >= keep_prob_permille as usize {
-                    current = best
-                        .seed()
-                        .map(|(source, lineage)| (source, format!("{lineage}~")))
-                        .or_else(|| Some((base_source.as_ref().clone(), "base".into())));
+                    current = best.seed().map(|(source, lineage)| (source, format!("{lineage}~"))).or_else(|| Some((base_source.as_ref().clone(), "base".into())));
                 }
                 let (source, lineage) = current.clone().expect("walk candidate");
                 let mode = if classic { crate::astpass::AstMode::Classic } else { crate::astpass::AstMode::Safe };
-                let mutated = crate::astpass::AstRandomizer::new_with_mode(&source, rng.0 ^ index as u64, None, mode)
-                    .and_then(|mut randomizer| {
-                        if let Some(template) = family_template.as_deref() {
-                            randomizer.set_family_template(template)?;
-                        }
-                        if heat_enabled {
-                            randomizer.set_heat(heat.clone());
-                        }
-                        randomizer.randomize_named()
-                    });
+                let mutated = crate::astpass::AstRandomizer::new_with_mode(&source, rng.0 ^ index as u64, None, mode).and_then(|mut randomizer| {
+                    if let Some(template) = family_template.as_deref() {
+                        randomizer.set_family_template(template)?;
+                    }
+                    if heat_enabled {
+                        randomizer.set_heat(heat.clone());
+                    }
+                    randomizer.randomize_named()
+                });
                 let Ok((source, pass)) = mutated else {
                     current = None;
                     continue;
                 };
-                let candidate = Candidate {
-                    index,
-                    manual_seed: worker,
-                    mutation: format!("{lineage}>{pass}"),
-                    fingerprint: source_fingerprint(&source),
-                    source: source.clone(),
-                };
+                let candidate = Candidate { index, manual_seed: worker, mutation: format!("{lineage}>{pass}"), fingerprint: source_fingerprint(&source), source: source.clone() };
                 let started = Instant::now();
                 let cached = journal.cached(&candidate.fingerprint);
                 let measurement = match cached.as_ref() {
@@ -995,10 +817,7 @@ fn walk_workers(
                         heat = value.heat.clone();
                         match best.publish(&candidate, value) {
                             Ok(Some(saved)) => {
-                                println!(
-                                    "new-best={} candidate={} mutation={} saved={} {}",
-                                    value.score, candidate.index, candidate.mutation, saved, value.summary
-                                );
+                                println!("new-best={} candidate={} mutation={} saved={} {}", value.score, candidate.index, candidate.mutation, saved, value.summary);
                                 let _ = io::stdout().flush();
                             }
                             Ok(None) => {}
@@ -1065,13 +884,7 @@ fn collect_results(
                 }
                 *exact_found |= measurement.exact;
                 if let Some(round) = round {
-                    if guarded
-                        && measurement.score <= chain_limit.unwrap_or(baseline.score)
-                        && item.candidate.mutation != "identity"
-                        && round_best.is_none_or(|(_, score)| {
-                            measurement.score < score || (measurement.score == score && round % 3 != 0)
-                        })
-                    {
+                    if guarded && measurement.score <= chain_limit.unwrap_or(baseline.score) && item.candidate.mutation != "identity" && round_best.is_none_or(|(_, score)| measurement.score < score || (measurement.score == score && round % 3 != 0)) {
                         round_best = Some((item.candidate.index, measurement.score));
                     }
                 }
@@ -1093,29 +906,20 @@ fn collect_results(
 fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), String> {
     let input = backend::load_input(candidate)?;
     if input.source.len() > MAX_SOURCE_BYTES {
-        return Err(format!(
-            "{} is {} bytes; the maximum permutation source is {MAX_SOURCE_BYTES} bytes",
-            input.source_path.display(),
-            input.source.len()
-        ));
+        return Err(format!("{} is {} bytes; the maximum permutation source is {MAX_SOURCE_BYTES} bytes", input.source_path.display(), input.source.len()));
     }
     let input_key = input_identity(&input)?;
     let output = match &options.output {
         Some(base) if multiple => base.join(format!("{}-{input_key}-seed-{}", safe_label(&input), options.seed)),
         Some(path) => path.clone(),
-        None => root().join("out").join("permuter").join(format!(
-            "{}-{input_key}-seed-{}",
-            safe_label(&input),
-            options.seed
-        )),
+        None => root().join("out").join("permuter").join(format!("{}-{input_key}-seed-{}", safe_label(&input), options.seed)),
     };
     validate_output_path(&output)?;
     let family_template = options
         .family_template
         .as_ref()
         .map(|path| {
-            let source =
-                fs::read_to_string(path).map_err(|error| format!("--family-template {}: {error}", path.display()))?;
+            let source = fs::read_to_string(path).map_err(|error| format!("--family-template {}: {error}", path.display()))?;
             if source.len() > MAX_SOURCE_BYTES {
                 return Err(format!("--family-template {} is larger than {MAX_SOURCE_BYTES} bytes", path.display()));
             }
@@ -1134,14 +938,7 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
     let candidates = if options.walk {
         Vec::new()
     } else {
-        let planned = candidate_plan(
-            &permutation,
-            if options.debug { 1 } else { options.iterations },
-            options.seed,
-            options.manual_only,
-            &weights,
-            input.source.len(),
-        )?;
+        let planned = candidate_plan(&permutation, if options.debug { 1 } else { options.iterations }, options.seed, options.manual_only, &weights, input.source.len())?;
         output_budget_preflight(&planned, options.top)?;
         planned
     };
@@ -1152,12 +949,7 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
     let (base_source, _) = permutation.evaluate(0)?;
     let target = backend::prepare(&input, &base_source, options.show_errors)?;
     let baseline = target.baseline();
-    let identity = run_identity(
-        &input,
-        target.as_ref(),
-        options.seed,
-        family_template.as_ref().map(|(_, source)| source.as_str()),
-    )?;
+    let identity = run_identity(&input, target.as_ref(), options.seed, family_template.as_ref().map(|(_, source)| source.as_str()))?;
     let mut run = RunDirectory::claim(&output, &identity, options.resume)?;
     let cache_identity = target.identity();
     let mut journal = Journal::open(&mut run, &cache_identity, options.resume)?;
@@ -1223,62 +1015,20 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
             Arc::clone(&live_best),
             family_template.as_ref().map(|(_, source)| Arc::new(source.clone())),
         )?;
-        collect_results(
-            &evaluated,
-            options,
-            &baseline,
-            &mut best_score,
-            &mut owned,
-            &mut attempted,
-            &mut failures,
-            &mut compile_time,
-            &mut exact_found,
-            None,
-            None,
-        );
+        collect_results(&evaluated, options, &baseline, &mut best_score, &mut owned, &mut attempted, &mut failures, &mut compile_time, &mut exact_found, None, None);
     } else {
         let mut round_candidates = Some(candidates);
         for round in 0..options.chain.max(1) {
             if round > 0 || round_candidates.is_none() {
                 let permutation = crate::perm::parse(&chain_source)?;
-                round_candidates = Some(candidate_plan(
-                    &permutation,
-                    options.iterations,
-                    options.seed ^ (round as u64).wrapping_mul(0x9e37_79b9_7f4a_7c15),
-                    options.manual_only,
-                    &weights,
-                    chain_source.len(),
-                )?);
+                round_candidates = Some(candidate_plan(&permutation, options.iterations, options.seed ^ (round as u64).wrapping_mul(0x9e37_79b9_7f4a_7c15), options.manual_only, &weights, chain_source.len())?);
             }
             let shared = Arc::new(round_candidates.take().expect("round candidates planned"));
-            let mut evaluated = run_workers(
-                Arc::clone(&target),
-                Arc::clone(&shared),
-                options.jobs,
-                options.stop_exact,
-                baseline.clone(),
-                Arc::clone(&journal),
-                Arc::clone(&live_best),
-            )?;
+            let mut evaluated = run_workers(Arc::clone(&target), Arc::clone(&shared), options.jobs, options.stop_exact, baseline.clone(), Arc::clone(&journal), Arc::clone(&live_best))?;
             evaluated.sort_by_key(|item| item.candidate.index);
-            let round_best = collect_results(
-                &evaluated,
-                options,
-                &baseline,
-                &mut best_score,
-                &mut owned,
-                &mut attempted,
-                &mut failures,
-                &mut compile_time,
-                &mut exact_found,
-                Some(round),
-                Some(chain_score),
-            );
+            let round_best = collect_results(&evaluated, options, &baseline, &mut best_score, &mut owned, &mut attempted, &mut failures, &mut compile_time, &mut exact_found, Some(round), Some(chain_score));
             if !options.quiet {
-                println!(
-                    "round={} attempted={} best={} chain={} failures={}",
-                    round, attempted, best_score, chain_score, failures
-                );
+                println!("round={} attempted={} best={} chain={} failures={}", round, attempted, best_score, chain_score, failures);
             }
             if let Some((index, score)) = round_best {
                 if let Some(item) = evaluated.iter().find(|item| item.candidate.index == index) {
@@ -1294,27 +1044,8 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
     let mut retained = owned.iter().map(|(candidate, measurement)| (candidate, measurement)).collect::<Vec<_>>();
     retained.sort_by(measurement_order);
     retained.truncate(options.top);
-    save_results(
-        &mut run,
-        &backend_name,
-        search_mode,
-        &baseline,
-        &retained,
-        attempted,
-        failures,
-        family_report.as_ref(),
-    )?;
-    println!(
-        "done={} attempted={} failures={} best={} exact={} wall_ms={} compiler_ms={} output={}",
-        backend_name,
-        attempted,
-        failures,
-        best_score,
-        retained.iter().any(|(_, m)| m.exact),
-        started.elapsed().as_millis(),
-        compile_time.as_millis(),
-        output.display()
-    );
+    save_results(&mut run, &backend_name, search_mode, &baseline, &retained, attempted, failures, family_report.as_ref())?;
+    println!("done={} attempted={} failures={} best={} exact={} wall_ms={} compiler_ms={} output={}", backend_name, attempted, failures, best_score, retained.iter().any(|(_, m)| m.exact), started.elapsed().as_millis(), compile_time.as_millis(), output.display());
     Ok(())
 }
 
@@ -1346,10 +1077,7 @@ pub fn self_test() -> Result<(), String> {
     if first != candidate_plan(&permutation, 20, 9, false, &weights, 64)? || first.len() != 2 {
         return Err("runner plan is not deterministic".into());
     }
-    if validate_output_path(&root().join("games/gs1/semantic")).is_ok()
-        || validate_output_path(&root().join("out").join("permuter-self-test")).is_err()
-        || validate_output_path(&std::env::temp_dir().join("permuter-self-test")).is_err()
-    {
+    if validate_output_path(&root().join("games/gs1/semantic")).is_ok() || validate_output_path(&root().join("out").join("permuter-self-test")).is_err() || validate_output_path(&std::env::temp_dir().join("permuter-self-test")).is_err() {
         return Err("output root validation drifted".into());
     }
     Ok(())
@@ -1365,62 +1093,14 @@ mod tests {
         let weights = Weights::for_profile("gcc");
         assert!(candidate_plan(&permutation, MAX_ITERATIONS + 1, 1, false, &weights, 64).is_err());
         assert!(validate_output_path(&root().join("games/gs1/semantic")).is_err());
-        let mut measurement = Measurement {
-            exact: false,
-            score: 17,
-            differences: 3,
-            expected_size: 8,
-            actual_size: 6,
-            first_difference: Some(2),
-            fingerprint: 0x1234,
-            heat: Vec::new(),
-            bl_divergence: 0,
-            store_divergence: 0,
-            bl_signature: 0,
-            store_signature: 0,
-            summary: "journal control".into(),
-        };
+        let mut measurement = Measurement { exact: false, score: 17, differences: 3, expected_size: 8, actual_size: 6, first_difference: Some(2), fingerprint: 0x1234, heat: Vec::new(), bl_divergence: 0, store_divergence: 0, bl_signature: 0, store_signature: 0, summary: "journal control".into() };
         let legacy_auth = journal_row_auth("identity", "candidate", &measurement, false);
-        let legacy = parse_journal_row(
-            &[
-                "candidate",
-                "0",
-                "17",
-                "3",
-                "8",
-                "6",
-                "2",
-                "0000000000001234",
-                "0",
-                "0",
-                "journal control",
-                &legacy_auth,
-            ],
-            "identity",
-        );
+        let legacy = parse_journal_row(&["candidate", "0", "17", "3", "8", "6", "2", "0000000000001234", "0", "0", "journal control", &legacy_auth], "identity");
         assert!(legacy.is_some_and(|(_, m)| m.bl_signature == 0 && m.store_signature == 0));
         measurement.bl_signature = 0xabcd;
         measurement.store_signature = 0xef01;
         let auth = journal_row_auth("identity", "candidate", &measurement, true);
-        let parsed = parse_journal_row(
-            &[
-                "candidate",
-                "0",
-                "17",
-                "3",
-                "8",
-                "6",
-                "2",
-                "0000000000001234",
-                "0",
-                "0",
-                "journal control",
-                &auth,
-                "000000000000abcd",
-                "000000000000ef01",
-            ],
-            "identity",
-        );
+        let parsed = parse_journal_row(&["candidate", "0", "17", "3", "8", "6", "2", "0000000000001234", "0", "0", "journal control", &auth, "000000000000abcd", "000000000000ef01"], "identity");
         assert!(parsed.is_some_and(|(_, m)| m.bl_signature == 0xabcd && m.store_signature == 0xef01));
     }
 
@@ -1456,20 +1136,8 @@ mod tests {
         let stamp = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos();
         let output = std::env::temp_dir().join(format!("alchemy-permuter-live-best-{}-{stamp}", std::process::id()));
         fs::create_dir(&output).unwrap();
-        let best = LiveBest {
-            state: Mutex::new(None),
-            output: output.clone(),
-            backend: "test".into(),
-            search_mode: "safe".into(),
-            baseline_score: 100,
-        };
-        let mut candidate = Candidate {
-            index: 7,
-            manual_seed: 3,
-            mutation: "first".into(),
-            source: "first".into(),
-            fingerprint: source_fingerprint("first"),
-        };
+        let best = LiveBest { state: Mutex::new(None), output: output.clone(), backend: "test".into(), search_mode: "safe".into(), baseline_score: 100 };
+        let mut candidate = Candidate { index: 7, manual_seed: 3, mutation: "first".into(), source: "first".into(), fingerprint: source_fingerprint("first") };
         let mut measurement = Measurement::failed("candidate");
         measurement.score = 110;
         assert_eq!(best.publish(&candidate, &measurement).unwrap(), None);

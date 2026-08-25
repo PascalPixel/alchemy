@@ -18,10 +18,7 @@ use std::io::Read;
 use std::path::Path;
 use std::process::ExitCode;
 
-use crate::{
-    check_push, check_staged, commit_message_reason, conflict_marker_reason, publication_content_reason,
-    publication_entry_reason, publication_path_reason, ACCEPTED_PATHS, REJECTED_PATHS,
-};
+use crate::{check_push, check_staged, commit_message_reason, conflict_marker_reason, publication_content_reason, publication_entry_reason, publication_path_reason, ACCEPTED_PATHS, REJECTED_PATHS};
 
 const USAGE: &str = "Usage: check-publication [--staged | --pre-push | --self-test]\n\nModes:\n  --staged       Check staged files before committing.\n  --pre-push     Check outgoing history using update lines on stdin.\n  --self-test    Run the publication gate's internal checks.\n  -h, --help     Show this help.";
 
@@ -66,48 +63,17 @@ fn self_test() -> ExitCode {
 
     let checks: Vec<(&str, bool)> = vec![
         ("disguised GBA ROM was accepted", publication_content_reason(&rom) == Some("GBA ROM image")),
-        (
-            "disguised ELF was accepted",
-            publication_content_reason(&[0x7f, 0x45, 0x4c, 0x46]) == Some("ELF build product"),
-        ),
-        (
-            "disguised archive was accepted",
-            publication_content_reason(b"!<arch>\n") == Some("archive or object library"),
-        ),
+        ("disguised ELF was accepted", publication_content_reason(&[0x7f, 0x45, 0x4c, 0x46]) == Some("ELF build product")),
+        ("disguised archive was accepted", publication_content_reason(b"!<arch>\n") == Some("archive or object library")),
         ("ordinary source content was rejected", publication_content_reason(b"canonical source").is_none()),
-        (
-            "committed incbin payload was accepted",
-            publication_entry_reason("games/gs1/asm/08000000.s", b".incbin \"rom.gba\"\n").as_deref()
-                == Some("committed incbin payload"),
-        ),
-        (
-            "an opening conflict marker was accepted",
-            conflict_marker_reason("CONTRIBUTING.md", b"a\n<<<<<<< HEAD\nb\n").is_some(),
-        ),
-        (
-            "a closing conflict marker was accepted",
-            conflict_marker_reason("CONTRIBUTING.md", b"a\n>>>>>>> topic\n").is_some(),
-        ),
-        (
-            "the history-facing gate flagged a conflict marker",
-            publication_entry_reason("CONTRIBUTING.md", b"x\n<<<<<<< HEAD\n").is_none(),
-        ),
-        (
-            "a Markdown heading underline was rejected as a conflict marker",
-            conflict_marker_reason("CONTRIBUTING.md", b"Title\n=======\n\nbody\n").is_none(),
-        ),
-        (
-            "a marker-like string without the separator was rejected",
-            conflict_marker_reason("CONTRIBUTING.md", b"see <<<<<<<HEAD in the output\n").is_none(),
-        ),
-        (
-            "a binary extension was scanned for conflict markers",
-            conflict_marker_reason("games/gs1/assets/readme/x.png", b"<<<<<<< HEAD\n").is_none(),
-        ),
-        (
-            "a byte dump in a commit message was accepted",
-            commit_message_reason("fixed the header\n\n00 11 22 33 44 55 66 77\n").is_some(),
-        ),
+        ("committed incbin payload was accepted", publication_entry_reason("games/gs1/asm/08000000.s", b".incbin \"rom.gba\"\n").as_deref() == Some("committed incbin payload")),
+        ("an opening conflict marker was accepted", conflict_marker_reason("CONTRIBUTING.md", b"a\n<<<<<<< HEAD\nb\n").is_some()),
+        ("a closing conflict marker was accepted", conflict_marker_reason("CONTRIBUTING.md", b"a\n>>>>>>> topic\n").is_some()),
+        ("the history-facing gate flagged a conflict marker", publication_entry_reason("CONTRIBUTING.md", b"x\n<<<<<<< HEAD\n").is_none()),
+        ("a Markdown heading underline was rejected as a conflict marker", conflict_marker_reason("CONTRIBUTING.md", b"Title\n=======\n\nbody\n").is_none()),
+        ("a marker-like string without the separator was rejected", conflict_marker_reason("CONTRIBUTING.md", b"see <<<<<<<HEAD in the output\n").is_none()),
+        ("a binary extension was scanned for conflict markers", conflict_marker_reason("games/gs1/assets/readme/x.png", b"<<<<<<< HEAD\n").is_none()),
+        ("a byte dump in a commit message was accepted", commit_message_reason("fixed the header\n\n00 11 22 33 44 55 66 77\n").is_some()),
     ];
     for (message, ok) in checks {
         if !ok {
@@ -116,13 +82,7 @@ fn self_test() -> ExitCode {
     }
     // Everything below is prose a real commit message contains, and blocking
     // any of it would push authors around the gate instead of through it.
-    for accepted in [
-        "Close 12 owners the sweep left open\n",
-        "reverts 3d36cfb0aa11bb22cc33dd44ee55ff6677889900\n",
-        "resource_39b:e6c span 0x02000e6c..0x02000e78 is not audited\n",
-        "the prologue pushes r7 where the reference does not\n",
-        "the low halfword ff 00 stayed wrong\n",
-    ] {
+    for accepted in ["Close 12 owners the sweep left open\n", "reverts 3d36cfb0aa11bb22cc33dd44ee55ff6677889900\n", "resource_39b:e6c span 0x02000e6c..0x02000e78 is not audited\n", "the prologue pushes r7 where the reference does not\n", "the low halfword ff 00 stayed wrong\n"] {
         if commit_message_reason(accepted).is_some() {
             return fail(&format!("a legitimate commit message was rejected: {}", accepted.trim()));
         }

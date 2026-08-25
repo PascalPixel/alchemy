@@ -107,16 +107,7 @@ fn run(mut args: Vec<String>) -> Result<(), String> {
             return Ok(());
         }
     }
-    let rom_path = args
-        .iter()
-        .find(|arg| {
-            !arg.starts_with('-')
-                && !args.iter().enumerate().any(|(index, previous)| {
-                    args.get(index + 1) == Some(*arg) && VALUE_OPTIONS.contains(&previous.as_str())
-                })
-        })
-        .cloned()
-        .ok_or("ROM is required unless only --self-test is used")?;
+    let rom_path = args.iter().find(|arg| !arg.starts_with('-') && !args.iter().enumerate().any(|(index, previous)| args.get(index + 1) == Some(*arg) && VALUE_OPTIONS.contains(&previous.as_str()))).cloned().ok_or("ROM is required unless only --self-test is used")?;
 
     let id_text = option(&args, "--id");
     let address_text = option(&args, "--address");
@@ -170,14 +161,7 @@ fn run(mut args: Vec<String>) -> Result<(), String> {
         "palette" => Some(ResourceKind::Palette),
         _ => return Err("invalid resource format".into()),
     };
-    let (kind, output, cursor) = decode(
-        &data,
-        (address - i64::from(ROM_BASE)) as usize,
-        (input_end - i64::from(ROM_BASE)) as usize,
-        maximum as u64,
-        format,
-    )
-    .map_err(|error| error.0)?;
+    let (kind, output, cursor) = decode(&data, (address - i64::from(ROM_BASE)) as usize, (input_end - i64::from(ROM_BASE)) as usize, maximum as u64, format).map_err(|error| error.0)?;
     let end_address = i64::from(ROM_BASE) + cursor as i64;
     if !verify {
         if let Some(output_path) = output_path {
@@ -190,12 +174,7 @@ fn run(mut args: Vec<String>) -> Result<(), String> {
             std::fs::write(output_path, &output).map_err(|error| error.to_string())?;
         }
     }
-    println!(
-        "format={kind} source={address:08x} end={end:08x} consumed=0x{consumed:x} decoded=0x{decoded:x}",
-        end = end_address,
-        consumed = end_address - address,
-        decoded = output.len()
-    );
+    println!("format={kind} source={address:08x} end={end:08x} consumed=0x{consumed:x} decoded=0x{decoded:x}", end = end_address, consumed = end_address - address, decoded = output.len());
     Ok(())
 }
 

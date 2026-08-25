@@ -608,9 +608,9 @@ non-overlapping audited source-owner scopes (or contiguous unresolved
 executable runs), sorted largest to smallest. Regenerate with `make coverage` -- do not edit by hand.
 
 - **Unfinished scopes:** 1,605
-- **Address spaces scanned:** 97 (86 still contain targets)
-- **Target bytes:** 647,532 tracked-C or unresolved-assembly bytes
-- **Resolved-only bytes:** 540,168 Exact C or audited permanent assembly bytes
+- **Address spaces scanned:** 97 (85 still contain targets)
+- **Target bytes:** 647,978 tracked-C or unresolved-assembly bytes
+- **Resolved-only bytes:** 539,434 Exact C or audited permanent assembly bytes
 - **Executable bytes accounted for:** 1,348,458
 
 ### Main target list

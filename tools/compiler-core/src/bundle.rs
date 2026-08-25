@@ -1,7 +1,5 @@
 use crate::bundle_data::{HostDigests, AGBCC_EXPECTED, EXPECTED};
-use crate::routing::{
-    agbcc_driver, bundle, bundle_for_target, cflags, driver_for_target, root, uses_agbcc_compiler, CompilerTarget,
-};
+use crate::routing::{agbcc_driver, bundle, bundle_for_target, cflags, driver_for_target, root, uses_agbcc_compiler, CompilerTarget};
 use crate::sha256;
 use fs2::FileExt;
 use std::fs::{self, File, OpenOptions};
@@ -26,15 +24,8 @@ static SHARED_BUNDLE_LOCK: OnceLock<Result<SharedBundleLock>> = OnceLock::new();
 pub fn acquire_compiler_bundle_shared_lock() -> Result<()> {
     let result = SHARED_BUNDLE_LOCK.get_or_init(|| {
         let path = bundle_lock_path();
-        let file = OpenOptions::new()
-            .create(true)
-            .read(true)
-            .write(true)
-            .truncate(false)
-            .open(&path)
-            .map_err(|error| format!("cannot open compiler bundle lock {}: {error}", path.display()))?;
-        FileExt::lock_shared(&file)
-            .map_err(|error| format!("cannot acquire shared compiler bundle lock {}: {error}", path.display()))?;
+        let file = OpenOptions::new().create(true).read(true).write(true).truncate(false).open(&path).map_err(|error| format!("cannot open compiler bundle lock {}: {error}", path.display()))?;
+        FileExt::lock_shared(&file).map_err(|error| format!("cannot acquire shared compiler bundle lock {}: {error}", path.display()))?;
         Ok(SharedBundleLock { _file: file })
     });
     result.as_ref().map(|_| ()).map_err(Clone::clone)
@@ -44,22 +35,14 @@ fn canonical_bundle_root() -> PathBuf {
     fs::canonicalize(bundle()).unwrap_or_else(|_| bundle())
 }
 fn resolved_environment_path(path: &Path) -> Result<PathBuf> {
-    let path = if path.is_absolute() {
-        path.to_path_buf()
-    } else {
-        std::env::current_dir().map_err(|error| format!("cannot resolve compiler bundle root: {error}"))?.join(path)
-    };
+    let path = if path.is_absolute() { path.to_path_buf() } else { std::env::current_dir().map_err(|error| format!("cannot resolve compiler bundle root: {error}"))?.join(path) };
     Ok(fs::canonicalize(&path).unwrap_or(path))
 }
 fn root_override_error(variable: &str, requested: &Path, canonical: &Path) -> Option<String> {
     if requested == canonical {
         None
     } else {
-        Some(format!(
-            "Alchemy compiler bundle root is fixed at {}; unset {variable} or set it to that exact path (got {})",
-            canonical.display(),
-            requested.display(),
-        ))
+        Some(format!("Alchemy compiler bundle root is fixed at {}; unset {variable} or set it to that exact path (got {})", canonical.display(), requested.display(),))
     }
 }
 const REFUSED_CODEGEN_ENV_VARS: [&str; 3] = ["ALCHEMY_NO_FOUR_WORD", "ALCHEMY_NO_LOOP0", "ALCHEMY_NO_LOOP1"];
@@ -106,17 +89,7 @@ fn ensure_compiler_bundle_access() -> Result<()> {
     acquire_compiler_bundle_shared_lock()
 }
 pub fn gcc3_cflags() -> Vec<String> {
-    vec![
-        "-O2".into(),
-        "-mthumb".into(),
-        "-mthumb-interwork".into(),
-        "-mcpu=arm7tdmi".into(),
-        "-fno-builtin".into(),
-        "-nostdinc".into(),
-        "-ffreestanding".into(),
-        "-ffixed-r7".into(),
-        format!("-I{}", root().join("games/gs1/include").display()),
-    ]
+    vec!["-O2".into(), "-mthumb".into(), "-mthumb-interwork".into(), "-mcpu=arm7tdmi".into(), "-fno-builtin".into(), "-nostdinc".into(), "-ffreestanding".into(), "-ffixed-r7".into(), format!("-I{}", root().join("games/gs1/include").display())]
 }
 pub const HOST_KEYS: [&str; 4] = ["darwin-arm64", "darwin-x64", "linux-x64", "linux-arm64"];
 pub fn host_key() -> Option<&'static str> {
@@ -128,8 +101,7 @@ pub fn host_key() -> Option<&'static str> {
         _ => None,
     }
 }
-pub const UNSUPPORTED_HOST_MESSAGE: &str =
-    "alchemy-gcc supports darwin/linux on arm64/x86_64; this platform is none of those";
+pub const UNSUPPORTED_HOST_MESSAGE: &str = "alchemy-gcc supports darwin/linux on arm64/x86_64; this platform is none of those";
 pub fn host_admission_message(host: &str, what: &str) -> String {
     [
         format!("alchemy-gcc has no approved {what} digests for host {host} yet."),
@@ -174,11 +146,7 @@ fn smoke(argv: &[String]) -> std::result::Result<(), String> {
     if output.status.success() {
         return Ok(());
     }
-    let detail = if output.stderr.is_empty() {
-        String::from_utf8_lossy(&output.stdout)
-    } else {
-        String::from_utf8_lossy(&output.stderr)
-    };
+    let detail = if output.stderr.is_empty() { String::from_utf8_lossy(&output.stdout) } else { String::from_utf8_lossy(&output.stderr) };
     Err(detail.trim().to_string())
 }
 fn lookup<'a>(table: &'a [HostDigests], host: &str) -> Option<&'a [&'static str]> {
@@ -191,12 +159,7 @@ pub fn validate_bundle(target: CompilerTarget) -> Result<()> {
     }
     let host = host_key().ok_or_else(|| UNSUPPORTED_HOST_MESSAGE.to_string())?;
     let bundle_dir = bundle_for_target(target);
-    let entries = EXPECTED
-        .iter()
-        .find(|(key, _)| *key == host)
-        .and_then(|(_, targets)| targets.iter().find(|(key, _)| *key == target.as_str()))
-        .map(|(_, entries)| *entries)
-        .ok_or_else(|| host_admission_message(host, target.as_str()))?;
+    let entries = EXPECTED.iter().find(|(key, _)| *key == host).and_then(|(_, targets)| targets.iter().find(|(key, _)| *key == target.as_str())).map(|(_, entries)| *entries).ok_or_else(|| host_admission_message(host, target.as_str()))?;
     if entries.iter().all(|(_, expected)| expected.is_empty()) {
         return Err(host_admission_message(host, target.as_str()));
     }
@@ -212,17 +175,7 @@ pub fn validate_bundle(target: CompilerTarget) -> Result<()> {
             return Err(format!("alchemy-gcc {}/{name} has an unapproved digest", target.as_str()));
         }
     }
-    smoke(&[
-        driver_for_target(target).to_string_lossy().into_owned(),
-        format!("-B{}/", bundle_dir.display()),
-        "-S".into(),
-        "-x".into(),
-        "c".into(),
-        "-o".into(),
-        "/dev/null".into(),
-        "/dev/null".into(),
-    ])
-    .map_err(|detail| format!("alchemy-gcc {} smoke compile failed: {detail}", target.as_str()))?;
+    smoke(&[driver_for_target(target).to_string_lossy().into_owned(), format!("-B{}/", bundle_dir.display()), "-S".into(), "-x".into(), "c".into(), "-o".into(), "/dev/null".into(), "/dev/null".into()]).map_err(|detail| format!("alchemy-gcc {} smoke compile failed: {detail}", target.as_str()))?;
     validated().lock().expect("validation memo is not poisoned").push(target.as_str());
     Ok(())
 }
@@ -246,15 +199,7 @@ pub fn validate_agbcc_bundle() -> Result<()> {
     if !expected.contains(&actual.as_str()) {
         return Err("alchemy-gcc agbcc/old_agbcc has an unapproved digest".to_string());
     }
-    smoke(&[
-        driver.to_string_lossy().into_owned(),
-        "/dev/null".into(),
-        "-mthumb-interwork".into(),
-        "-O2".into(),
-        "-o".into(),
-        "/dev/null".into(),
-    ])
-    .map_err(|detail| format!("alchemy-gcc agbcc smoke compile failed: {detail}"))?;
+    smoke(&[driver.to_string_lossy().into_owned(), "/dev/null".into(), "-mthumb-interwork".into(), "-O2".into(), "-o".into(), "/dev/null".into()]).map_err(|detail| format!("alchemy-gcc agbcc smoke compile failed: {detail}"))?;
     *agbcc_validated().lock().expect("memo is not poisoned") = true;
     Ok(())
 }
@@ -276,28 +221,13 @@ pub fn validate_experimental_compiler(name: &str, driver: &Path, expected: &[Hos
     if !approved.contains(&actual.as_str()) {
         return Err(format!("alchemy-gcc experimental {name}/cc1 has an unapproved digest"));
     }
-    smoke(&[
-        driver.to_string_lossy().into_owned(),
-        "/dev/null".into(),
-        "-quiet".into(),
-        "-O2".into(),
-        "-o".into(),
-        "/dev/null".into(),
-    ])
-    .map_err(|detail| format!("alchemy-gcc experimental {name} smoke compile failed: {detail}"))?;
+    smoke(&[driver.to_string_lossy().into_owned(), "/dev/null".into(), "-quiet".into(), "-O2".into(), "-o".into(), "/dev/null".into()]).map_err(|detail| format!("alchemy-gcc experimental {name} smoke compile failed: {detail}"))?;
     experimental_validated().lock().expect("memo is not poisoned").push(name.to_string());
     Ok(())
 }
 pub fn signature_paths() -> Vec<PathBuf> {
     let bundle_dir = bundle();
-    vec![
-        bundle_dir.join("xgcc"),
-        bundle_dir.join("cpp"),
-        bundle_dir.join("tradcpp"),
-        bundle_dir.join("cc1"),
-        agbcc_driver(),
-        gcc3_driver(),
-    ]
+    vec![bundle_dir.join("xgcc"), bundle_dir.join("cpp"), bundle_dir.join("tradcpp"), bundle_dir.join("cc1"), agbcc_driver(), gcc3_driver()]
 }
 fn append_compiler_input_tree(stream: &mut Vec<u8>, directory: &Path, base: &Path) {
     let relative = directory.strip_prefix(base).unwrap_or(directory);
@@ -397,10 +327,7 @@ fn compiler_bundle_signature_for_paths(paths: &[PathBuf], includes: &[PathBuf]) 
 }
 pub fn compiler_bundle_signature_uncached() -> String {
     ensure_compiler_bundle_access().unwrap_or_else(|error| panic!("compiler bundle access rejected: {error}"));
-    compiler_bundle_signature_for_paths(
-        &signature_paths(),
-        &[root().join("games/gs1/include"), root().join("games/gs2/include")],
-    )
+    compiler_bundle_signature_for_paths(&signature_paths(), &[root().join("games/gs1/include"), root().join("games/gs2/include")])
 }
 pub fn compiler_bundle_signature() -> String {
     ensure_compiler_bundle_access().unwrap_or_else(|error| panic!("compiler bundle access rejected: {error}"));
@@ -439,12 +366,7 @@ fn resolve_host_executable(name: &str) -> Result<PathBuf> {
     for directory in std::env::split_paths(&path) {
         let candidate = directory.join(name);
         if executable_mode(&candidate) == Some(true) {
-            return fs::canonicalize(&candidate).map_err(|error| {
-                format!(
-                    "host executable {name} resolved at {} but its path cannot be read: {error}",
-                    candidate.display()
-                )
-            });
+            return fs::canonicalize(&candidate).map_err(|error| format!("host executable {name} resolved at {} but its path cannot be read: {error}", candidate.display()));
         }
     }
     Err(format!("host executable {name} cannot be resolved on PATH"))
@@ -455,9 +377,7 @@ fn host_executable_signature_uncached_names(names: &[String]) -> Result<String> 
     append_signature_frame(&mut stream, &(names.len() as u64).to_be_bytes());
     for name in names {
         let path = resolve_host_executable(name)?;
-        let bytes = fs::read(&path).map_err(|error| {
-            format!("host executable {name} resolved at {} but cannot be read: {error}", path.display())
-        })?;
+        let bytes = fs::read(&path).map_err(|error| format!("host executable {name} resolved at {} but cannot be read: {error}", path.display()))?;
         append_signature_frame(&mut stream, name.as_bytes());
         append_signature_frame(&mut stream, &path_bytes(&path));
         append_signature_frame(&mut stream, &bytes);
@@ -484,16 +404,11 @@ pub fn compiler_command(arguments: &[String]) -> Result<Vec<String>> {
 pub fn compiler_command_for_target(target: CompilerTarget, arguments: &[String]) -> Result<Vec<String>> {
     validate_bundle(target)?;
     let bundle_dir = bundle_for_target(target);
-    let mut argv =
-        vec![driver_for_target(target).to_string_lossy().into_owned(), format!("-B{}/", bundle_dir.display())];
+    let mut argv = vec![driver_for_target(target).to_string_lossy().into_owned(), format!("-B{}/", bundle_dir.display())];
     argv.extend(arguments.iter().cloned());
     Ok(argv)
 }
-pub fn compiler_command_for_target_source(
-    target: CompilerTarget,
-    source: &str,
-    arguments: &[String],
-) -> Result<Vec<String>> {
+pub fn compiler_command_for_target_source(target: CompilerTarget, source: &str, arguments: &[String]) -> Result<Vec<String>> {
     if !uses_agbcc_compiler(target, source) {
         return compiler_command_for_target(target, arguments);
     }

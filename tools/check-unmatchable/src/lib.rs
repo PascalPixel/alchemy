@@ -6,11 +6,7 @@ use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 
 fn root() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .and_then(Path::parent)
-        .expect("owner gate is under tools")
-        .to_path_buf()
+    Path::new(env!("CARGO_MANIFEST_DIR")).parent().and_then(Path::parent).expect("owner gate is under tools").to_path_buf()
 }
 
 fn json(path: &Path) -> Result<Value, String> {
@@ -36,10 +32,7 @@ fn validate_registered_main_symbols(root: &Path) -> Result<usize, String> {
         let Some(stem) = path.file_stem().and_then(|value| value.to_str()) else {
             continue;
         };
-        if path.extension().and_then(|value| value.to_str()) != Some("s")
-            || stem.len() != 8
-            || !stem.bytes().all(|byte| byte.is_ascii_hexdigit())
-        {
+        if path.extension().and_then(|value| value.to_str()) != Some("s") || stem.len() != 8 || !stem.bytes().all(|byte| byte.is_ascii_hexdigit()) {
             continue;
         }
         let text = std::fs::read_to_string(&path).map_err(|error| format!("{}: {error}", path.display()))?;
@@ -66,19 +59,14 @@ fn validate_registered_main_symbols(root: &Path) -> Result<usize, String> {
 fn audited(root: &Path) -> Result<HashSet<String>, String> {
     let document = json(&root.join("games/gs1/semantic/regions.json"))?;
     let mut stems = HashSet::new();
-    for row in document
-        .get("manual_regions")
-        .and_then(Value::as_array)
-        .ok_or("games/gs1/semantic/regions.json has no manual_regions")?
-    {
+    for row in document.get("manual_regions").and_then(Value::as_array).ok_or("games/gs1/semantic/regions.json has no manual_regions")? {
         let Some(overlay) = row.get("overlay").and_then(Value::as_str) else {
             continue;
         };
         let Some(entry) = row.get("entry").and_then(Value::as_str) else {
             continue;
         };
-        let address = u32::from_str_radix(entry.trim_start_matches("0x"), 16)
-            .map_err(|_| format!("invalid owner address {entry}"))?;
+        let address = u32::from_str_radix(entry.trim_start_matches("0x"), 16).map_err(|_| format!("invalid owner address {entry}"))?;
         stems.insert(format!("{overlay}_c_{address:08x}"));
     }
     if stems.is_empty() {
@@ -89,10 +77,7 @@ fn audited(root: &Path) -> Result<HashSet<String>, String> {
 
 fn validate_unmatchable(root: &Path, exact: &HashSet<String>, audited: &HashSet<String>) -> Result<usize, String> {
     let document = json(&root.join("games/gs1/semantic/unmatchable.json"))?;
-    let rows = document
-        .get("unmatchable")
-        .and_then(Value::as_array)
-        .ok_or("games/gs1/semantic/unmatchable.json has no unmatchable array")?;
+    let rows = document.get("unmatchable").and_then(Value::as_array).ok_or("games/gs1/semantic/unmatchable.json has no unmatchable array")?;
     let mut seen = HashSet::new();
     for row in rows {
         let owner = row.get("owner").and_then(Value::as_str).ok_or("unmatchable owner missing")?;
@@ -123,10 +108,7 @@ fn validate_unmatchable(root: &Path, exact: &HashSet<String>, audited: &HashSet<
 
 fn validate_provisional(root: &Path, exact: &HashSet<String>) -> Result<usize, String> {
     let document = json(&root.join("games/gs1/src/provisional.json"))?;
-    let rows = document
-        .get("provisional")
-        .and_then(Value::as_array)
-        .ok_or("games/gs1/src/provisional.json has no provisional array")?;
+    let rows = document.get("provisional").and_then(Value::as_array).ok_or("games/gs1/src/provisional.json has no provisional array")?;
     for row in rows {
         let owner = row.get("owner").and_then(Value::as_str).ok_or("provisional owner missing")?;
         if !exact.contains(owner) {
@@ -161,9 +143,7 @@ fn validate_drafts(root: &Path, exact: &HashSet<String>) -> Result<usize, String
         if record.get("owner").and_then(Value::as_str).unwrap_or("").is_empty() || record.get("score").is_none() {
             return Err(format!("{} lacks an owner or score", path.display()));
         }
-        if record.pointer("/score/differing_halfwords").and_then(Value::as_u64) == Some(0)
-            || record.get("differing_halfwords").and_then(Value::as_u64) == Some(0)
-        {
+        if record.pointer("/score/differing_halfwords").and_then(Value::as_u64) == Some(0) || record.get("differing_halfwords").and_then(Value::as_u64) == Some(0) {
             return Err(format!("{} is exact and must be adopted", path.display()));
         }
         count += 1;
@@ -178,19 +158,12 @@ fn validate_reconstruction_records(root: &Path) -> Result<(), String> {
             if path.extension().and_then(|value| value.to_str()) != Some("json") {
                 continue;
             }
-            let stem = path
-                .file_stem()
-                .and_then(|value| value.to_str())
-                .ok_or_else(|| format!("{} has no UTF-8 owner stem", path.display()))?;
-            SourceOwner::from_legacy_stem(stem)
-                .ok_or_else(|| format!("{} has no owner-qualified filename", path.display()))?;
+            let stem = path.file_stem().and_then(|value| value.to_str()).ok_or_else(|| format!("{} has no UTF-8 owner stem", path.display()))?;
+            SourceOwner::from_legacy_stem(stem).ok_or_else(|| format!("{} has no owner-qualified filename", path.display()))?;
             let record = json(&path)?;
             for duplicate in ["owner", "semantic_name"] {
                 if record.get(duplicate).is_some() {
-                    return Err(format!(
-                        "{} repeats {duplicate}; owner identity comes from the filename and names from games/gs1/source-paths.json",
-                        path.display()
-                    ));
+                    return Err(format!("{} repeats {duplicate}; owner identity comes from the filename and names from games/gs1/source-paths.json", path.display()));
                 }
             }
         }

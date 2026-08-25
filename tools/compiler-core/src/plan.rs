@@ -26,15 +26,9 @@
 
 use std::path::PathBuf;
 
-use crate::bundle::{
-    compiler_command_for_target, gcc3_cflags, gcc3_driver, validate_agbcc_bundle, validate_bundle,
-    validate_experimental_compiler,
-};
+use crate::bundle::{compiler_command_for_target, gcc3_cflags, gcc3_driver, validate_agbcc_bundle, validate_bundle, validate_experimental_compiler};
 use crate::bundle_data::GCC3_EXPECTED;
-use crate::routing::{
-    agbcc_cflags, agbcc_driver, bundle, cflags_for_source, cflags_for_target, cflags_for_target_source, root,
-    uses_agbcc_compiler, CompilerTarget,
-};
+use crate::routing::{agbcc_cflags, agbcc_driver, bundle, cflags_for_source, cflags_for_target, cflags_for_target_source, root, uses_agbcc_compiler, CompilerTarget};
 
 use crate::nodepath::{basename, extname};
 
@@ -94,8 +88,7 @@ impl CompilerFamily {
 
     /// Every member, in the declaration order of the TypeScript union. Callers
     /// that sweep the whole space (the corpus harness) rely on this order.
-    pub const ALL: [CompilerFamily; 4] =
-        [CompilerFamily::Routed, CompilerFamily::Gcc296, CompilerFamily::OldAgbcc, CompilerFamily::Gcc3];
+    pub const ALL: [CompilerFamily; 4] = [CompilerFamily::Routed, CompilerFamily::Gcc296, CompilerFamily::OldAgbcc, CompilerFamily::Gcc3];
 }
 
 impl ResolvedFamily {
@@ -154,23 +147,8 @@ pub struct SourceToAssemblyPlanOptions {
 
 impl SourceToAssemblyPlanOptions {
     /// The four required properties, with every optional one `undefined`.
-    pub fn new(
-        target: CompilerTarget,
-        routing_source: impl Into<String>,
-        input: impl Into<String>,
-        output: impl Into<String>,
-    ) -> Self {
-        Self {
-            target,
-            routing_source: routing_source.into(),
-            input: input.into(),
-            output: output.into(),
-            family: None,
-            flags: None,
-            preprocessor_flags: Vec::new(),
-            preprocessed_output: None,
-            dumpbase: None,
-        }
+    pub fn new(target: CompilerTarget, routing_source: impl Into<String>, input: impl Into<String>, output: impl Into<String>) -> Self {
+        Self { target, routing_source: routing_source.into(), input: input.into(), output: output.into(), family: None, flags: None, preprocessor_flags: Vec::new(), preprocessed_output: None, dumpbase: None }
     }
 }
 
@@ -237,8 +215,7 @@ pub fn mutated_compiler_flags(canonical: &[String], mutations: Option<&CompilerF
             return Err(format!("compiler flag cannot be both added and removed: {flag}"));
         }
     }
-    let mut out: Vec<String> =
-        canonical.iter().filter(|flag| !removed.iter().any(|candidate| candidate == *flag)).cloned().collect();
+    let mut out: Vec<String> = canonical.iter().filter(|flag| !removed.iter().any(|candidate| candidate == *flag)).cloned().collect();
     out.extend(added.iter().cloned());
     Ok(out)
 }
@@ -323,8 +300,7 @@ pub fn source_to_assembly_plan(options: &SourceToAssemblyPlanOptions) -> Result<
             ResolvedFamily::Gcc3 => validate_experimental_compiler(family.as_str(), &driver, GCC3_EXPECTED)?,
             ResolvedFamily::Gcc296 => unreachable!("gcc296 does not use a separate driver"),
         }
-        compiler_input =
-            options.preprocessed_output.clone().unwrap_or_else(|| inferred_preprocessed_output(&options.output));
+        compiler_input = options.preprocessed_output.clone().unwrap_or_else(|| inferred_preprocessed_output(&options.output));
         // old-agbcc preprocesses as GNUC 2.9. See the `-D__GNUC__=2` note on
         // `direct_preprocessor_command` for why the gcc3 value of 0 is a defect
         // that is nonetheless left in place.
@@ -332,22 +308,8 @@ pub fn source_to_assembly_plan(options: &SourceToAssemblyPlanOptions) -> Result<
             ResolvedFamily::Gcc3 => 0,
             _ => 9,
         };
-        steps.push(CompilerCommandStep {
-            kind: StepKind::Preprocess,
-            command: direct_preprocessor_command_for_target_with_minor_and_flags(
-                options.target,
-                &options.input,
-                &compiler_input,
-                gcc_minor,
-                &options.preprocessor_flags,
-            )?,
-        });
-        let mut command = vec![
-            driver.to_string_lossy().into_owned(),
-            compiler_input.clone(),
-            "-dumpbase".to_string(),
-            dumpbase.clone(),
-        ];
+        steps.push(CompilerCommandStep { kind: StepKind::Preprocess, command: direct_preprocessor_command_for_target_with_minor_and_flags(options.target, &options.input, &compiler_input, gcc_minor, &options.preprocessor_flags)? });
+        let mut command = vec![driver.to_string_lossy().into_owned(), compiler_input.clone(), "-dumpbase".to_string(), dumpbase.clone()];
         command.extend(flags.iter().cloned());
         command.push("-o".to_string());
         command.push(options.output.clone());
@@ -359,23 +321,10 @@ pub fn source_to_assembly_plan(options: &SourceToAssemblyPlanOptions) -> Result<
         arguments.push("-o".to_string());
         arguments.push(options.output.clone());
         arguments.push(options.input.clone());
-        steps.push(CompilerCommandStep {
-            kind: StepKind::Compile,
-            command: compiler_command_for_target(options.target, &arguments)?,
-        });
+        steps.push(CompilerCommandStep { kind: StepKind::Compile, command: compiler_command_for_target(options.target, &arguments)? });
     }
 
-    Ok(SourceToAssemblyPlan {
-        target: options.target,
-        requested_family,
-        family,
-        routing_source: options.routing_source.clone(),
-        input: options.input.clone(),
-        output: options.output.clone(),
-        compiler_input,
-        flags,
-        steps,
-    })
+    Ok(SourceToAssemblyPlan { target: options.target, requested_family, family, routing_source: options.routing_source.clone(), input: options.input.clone(), output: options.output.clone(), compiler_input, flags, steps })
 }
 
 // ---------------------------------------------------------------------------
@@ -413,22 +362,11 @@ pub fn direct_preprocessor_command_with_minor(input: &str, output: &str, gcc_min
     direct_preprocessor_command_with_minor_and_flags(input, output, gcc_minor, &[])
 }
 
-fn direct_preprocessor_command_with_minor_and_flags(
-    input: &str,
-    output: &str,
-    gcc_minor: i64,
-    flags: &[String],
-) -> Result<Vec<String>> {
+fn direct_preprocessor_command_with_minor_and_flags(input: &str, output: &str, gcc_minor: i64, flags: &[String]) -> Result<Vec<String>> {
     direct_preprocessor_command_for_target_with_minor_and_flags(CompilerTarget::Gs1, input, output, gcc_minor, flags)
 }
 
-fn direct_preprocessor_command_for_target_with_minor_and_flags(
-    target: CompilerTarget,
-    input: &str,
-    output: &str,
-    gcc_minor: i64,
-    flags: &[String],
-) -> Result<Vec<String>> {
+fn direct_preprocessor_command_for_target_with_minor_and_flags(target: CompilerTarget, input: &str, output: &str, gcc_minor: i64, flags: &[String]) -> Result<Vec<String>> {
     validate_bundle(target)?;
     let mut command = vec![
         bundle().join("cpp").to_string_lossy().into_owned(),
@@ -476,15 +414,8 @@ pub fn direct_compiler_command(input: &str, output: &str, dumpbase: &str, source
     // cc1 is not the driver: it has no `-B` search path and no built-in include
     // handling, so the driver-level `-nostdinc` and `-I` flags are dropped here
     // and the include path arrives via the preprocessor step instead.
-    let flags: Vec<String> =
-        cflags_for_source(source).into_iter().filter(|flag| flag != "-nostdinc" && !flag.starts_with("-I")).collect();
-    let mut out = vec![
-        bundle().join("cc1").to_string_lossy().into_owned(),
-        input.to_string(),
-        "-quiet".to_string(),
-        "-dumpbase".to_string(),
-        dumpbase.to_string(),
-    ];
+    let flags: Vec<String> = cflags_for_source(source).into_iter().filter(|flag| flag != "-nostdinc" && !flag.starts_with("-I")).collect();
+    let mut out = vec![bundle().join("cc1").to_string_lossy().into_owned(), input.to_string(), "-quiet".to_string(), "-dumpbase".to_string(), dumpbase.to_string()];
     out.extend(flags);
     out.push("-o".to_string());
     out.push(output.to_string());
@@ -499,22 +430,12 @@ pub fn direct_compiler_command(input: &str, output: &str, dumpbase: &str, source
 /// in the tree does; the hard-wiring is preserved rather than parameterised.
 /// Note also that the agbcc branch omits `-quiet`, which the gcc296 branch
 /// passes: old_agbcc is a driver-shaped binary, not a bare cc1.
-pub fn direct_compiler_command_for_source(
-    source: &str,
-    input: &str,
-    output: &str,
-    dumpbase: &str,
-) -> Result<Vec<String>> {
+pub fn direct_compiler_command_for_source(source: &str, input: &str, output: &str, dumpbase: &str) -> Result<Vec<String>> {
     if !uses_agbcc_compiler(CompilerTarget::Gs1, source) {
         return direct_compiler_command(input, output, dumpbase, Some(source));
     }
     validate_agbcc_bundle()?;
-    let mut out = vec![
-        agbcc_driver().to_string_lossy().into_owned(),
-        input.to_string(),
-        "-dumpbase".to_string(),
-        dumpbase.to_string(),
-    ];
+    let mut out = vec![agbcc_driver().to_string_lossy().into_owned(), input.to_string(), "-dumpbase".to_string(), dumpbase.to_string()];
     out.extend(cflags_for_target_source(CompilerTarget::Gs1, source));
     out.push("-o".to_string());
     out.push(output.to_string());
@@ -527,12 +448,7 @@ mod tests {
 
     #[test]
     fn edition_define_stays_in_old_agbcc_preprocessor_step() {
-        let mut options = SourceToAssemblyPlanOptions::new(
-            CompilerTarget::Gs1,
-            "games/gs1/src/080000c0.c",
-            "candidate.c",
-            "candidate.s",
-        );
+        let mut options = SourceToAssemblyPlanOptions::new(CompilerTarget::Gs1, "games/gs1/src/080000c0.c", "candidate.c", "candidate.s");
         options.family = Some(CompilerFamily::OldAgbcc);
         options.preprocessor_flags = vec!["-DGS1_EDITION_JA=1".into()];
 
@@ -543,12 +459,7 @@ mod tests {
 
     #[test]
     fn edition_define_reaches_gcc296_driver() {
-        let mut options = SourceToAssemblyPlanOptions::new(
-            CompilerTarget::Gs2,
-            "games/gs2/src/08120450.c",
-            "candidate.c",
-            "candidate.s",
-        );
+        let mut options = SourceToAssemblyPlanOptions::new(CompilerTarget::Gs2, "games/gs2/src/08120450.c", "candidate.c", "candidate.s");
         options.family = Some(CompilerFamily::Gcc296);
         options.preprocessor_flags = vec!["-DGS2_EDITION_IT=1".into()];
 
@@ -559,12 +470,7 @@ mod tests {
 
     #[test]
     fn shared_gs2_audio_owner_routes_through_old_agbcc() {
-        let mut options = SourceToAssemblyPlanOptions::new(
-            CompilerTarget::Gs2,
-            "games/gs2/src/081c28e0.c",
-            "candidate.c",
-            "candidate.s",
-        );
+        let mut options = SourceToAssemblyPlanOptions::new(CompilerTarget::Gs2, "games/gs2/src/081c28e0.c", "candidate.c", "candidate.s");
         options.preprocessor_flags = vec!["-DGS2_EDITION_JA=1".into()];
 
         let plan = source_to_assembly_plan(&options).unwrap();

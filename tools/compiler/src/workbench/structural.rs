@@ -27,23 +27,17 @@ pub fn compare(target: &Path, candidate: &Path, symbol: &str) -> Result<Structur
     // repository's objdiff A/B trial and avoids formatting-only differences.
     config.arm_unified_syntax = false;
 
-    let target_obj =
-        obj::read::read(target, &config, DiffSide::Target).map_err(|error| format!("{}: {error}", target.display()))?;
-    let candidate_obj = obj::read::read(candidate, &config, DiffSide::Base)
-        .map_err(|error| format!("{}: {error}", candidate.display()))?;
-    let symbol_index =
-        target_obj.symbol_by_name(symbol).ok_or_else(|| format!("{}: missing symbol {symbol}", target.display()))?;
-    let candidate_symbol = candidate_symbol_name(&candidate_obj, symbol)
-        .ok_or_else(|| format!("{}: missing symbol {symbol}", candidate.display()))?;
+    let target_obj = obj::read::read(target, &config, DiffSide::Target).map_err(|error| format!("{}: {error}", target.display()))?;
+    let candidate_obj = obj::read::read(candidate, &config, DiffSide::Base).map_err(|error| format!("{}: {error}", candidate.display()))?;
+    let symbol_index = target_obj.symbol_by_name(symbol).ok_or_else(|| format!("{}: missing symbol {symbol}", target.display()))?;
+    let candidate_symbol = candidate_symbol_name(&candidate_obj, symbol).ok_or_else(|| format!("{}: missing symbol {symbol}", candidate.display()))?;
     let mut mappings = MappingConfig::default();
     if candidate_symbol != symbol {
         mappings.mappings.insert(symbol.to_owned(), candidate_symbol);
     }
-    let result = diff_objs(Some(&target_obj), Some(&candidate_obj), None, &config, &mappings)
-        .map_err(|error| format!("objdiff: {error}"))?;
+    let result = diff_objs(Some(&target_obj), Some(&candidate_obj), None, &config, &mappings).map_err(|error| format!("objdiff: {error}"))?;
     let target_diff = result.left.ok_or("objdiff omitted target result")?;
-    let symbol_diff =
-        target_diff.symbols.get(symbol_index).ok_or_else(|| format!("objdiff omitted symbol {symbol}"))?;
+    let symbol_diff = target_diff.symbols.get(symbol_index).ok_or_else(|| format!("objdiff omitted symbol {symbol}"))?;
     let mut report = StructuralReport {
         schema_version: 1,
         architecture: "armv4t".into(),
@@ -59,8 +53,7 @@ pub fn compare(target: &Path, candidate: &Path, symbol: &str) -> Result<Structur
         insertions: 0,
     };
     for row in &symbol_diff.instruction_rows {
-        let argument_mismatch =
-            row.kind == InstructionDiffKind::ArgMismatch || row.arg_diff.iter().any(|index| index.is_some());
+        let argument_mismatch = row.kind == InstructionDiffKind::ArgMismatch || row.arg_diff.iter().any(|index| index.is_some());
         if argument_mismatch {
             report.argument_mismatches += 1;
         }
@@ -74,12 +67,7 @@ pub fn compare(target: &Path, candidate: &Path, symbol: &str) -> Result<Structur
             InstructionDiffKind::Insert => report.insertions += 1,
         }
     }
-    report.exact = report.match_percent == 100.0
-        && report.argument_mismatches == 0
-        && report.opcode_mismatches == 0
-        && report.replacements == 0
-        && report.deletions == 0
-        && report.insertions == 0;
+    report.exact = report.match_percent == 100.0 && report.argument_mismatches == 0 && report.opcode_mismatches == 0 && report.replacements == 0 && report.deletions == 0 && report.insertions == 0;
     Ok(report)
 }
 
@@ -87,11 +75,7 @@ fn candidate_symbol_name(object: &obj::Object, canonical: &str) -> Option<String
     if object.symbol_by_name(canonical).is_some() {
         return Some(canonical.to_owned());
     }
-    let mut defined = object
-        .symbols
-        .iter()
-        .filter(|symbol| symbol.size > 0 && symbol.name.starts_with("Func_"))
-        .map(|symbol| symbol.name.as_str());
+    let mut defined = object.symbols.iter().filter(|symbol| symbol.size > 0 && symbol.name.starts_with("Func_")).map(|symbol| symbol.name.as_str());
     let only = defined.next()?;
     defined.next().is_none().then(|| only.to_owned())
 }

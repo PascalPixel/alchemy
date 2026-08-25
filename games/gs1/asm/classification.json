@@ -1834,33 +1834,6 @@
    ]
   },
   {
-   "kind": "compiler_scheduler_ordering_module",
-   "origin": "compiler",
-   "retention": "keep_structured_asm",
-   "confidence": "proven",
-   "evidence": [
-    "complete_ordinary_c_semantics_and_exact_owner_extent",
-    "normalized_instruction_multisets_control_flow_memory_operations_constants_and_pools_are_exact",
-    "residuals_are_confined_to_independent_instruction_scheduling_or_equivalent_low_register_allocation_and_each_owner_resynchronizes_immediately",
-    "one_hundred_thousand_classic_heat_guided_ordinary_c_candidates_produced_zero_exact_candidates_and_no_improvement_beyond_the_hand_derived_narrow_forms",
-    "approved_compiler_route_family_and_optimization_sweeps_preserve_the_residual_or_regress_broader_shape",
-    "inline_assembly_fixed_register_variables_and_compiler_barriers_are_disallowed",
-    "byte_exact_reconstruction"
-   ],
-   "expected_files": 8,
-   "expected_bytes": 646,
-   "files": [
-    "08004144",
-    "080041d8",
-    "08004198",
-    "080042c8",
-    "0800430c",
-    "08004358",
-    "0800439c",
-    "080043e0"
-   ]
-  },
-  {
    "kind": "thumb_multiple_transfer_module",
    "origin": "program_or_library_assembly",
    "retention": "keep_structured_asm",

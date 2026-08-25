@@ -16,12 +16,7 @@ pub struct Options {
     pub annotate: bool,
 }
 fn root() -> PathBuf {
-    std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .expect("crate dir has a parent")
-        .parent()
-        .expect("tools has a parent")
-        .to_path_buf()
+    std::path::Path::new(env!("CARGO_MANIFEST_DIR")).parent().expect("crate dir has a parent").parent().expect("tools has a parent").to_path_buf()
 }
 fn image_offset(value: i64, label: &str) -> Result<i64, String> {
     let offset = if value >= OVERLAY_BASE { value - OVERLAY_BASE } else { value };
@@ -142,38 +137,17 @@ pub fn run(argv: &[String]) -> Result<Outcome, String> {
     let stop = (options.offset + length) as usize;
     let slice = data.get(start..stop.min(data.len())).unwrap_or(&[]).to_vec();
     std::fs::write(&binary, &slice).map_err(|e| e.to_string())?;
-    let output = Command::new("arm-none-eabi-objdump")
-        .args([
-            "-D",
-            "-b",
-            "binary",
-            "-m",
-            "arm",
-            "-M",
-            "force-thumb",
-            &format!("--adjust-vma=0x{:x}", OVERLAY_BASE + options.offset),
-        ])
-        .arg(&binary)
-        .output()
-        .map_err(|e| e.to_string())?;
+    let output = Command::new("arm-none-eabi-objdump").args(["-D", "-b", "binary", "-m", "arm", "-M", "force-thumb", &format!("--adjust-vma=0x{:x}", OVERLAY_BASE + options.offset)]).arg(&binary).output().map_err(|e| e.to_string())?;
     if !output.status.success() {
         return Err(format!("objdump failed: {}", String::from_utf8_lossy(&output.stderr).trim()));
     }
     let stdout = String::from_utf8_lossy(&output.stdout);
-    let mut listing = stdout
-        .split('\n')
-        .filter(|line| is_listing_line(line))
-        .map(|line| line.trim_end().to_string())
-        .collect::<Vec<_>>()
-        .join("\n");
+    let mut listing = stdout.split('\n').filter(|line| is_listing_line(line)).map(|line| line.trim_end().to_string()).collect::<Vec<_>>().join("\n");
     if options.annotate {
         let names = resolved_call_names(&options.overlay, options.offset, options.offset + length)?;
         let missed = unannotated_call_sites(&listing, &names);
         if !missed.is_empty() {
-            return Err(format!(
-                "overlay show annotation missed {} call site(s); explicit bounds do not cover the listing",
-                missed.len()
-            ));
+            return Err(format!("overlay show annotation missed {} call site(s); explicit bounds do not cover the listing", missed.len()));
         }
         listing = annotate(&listing, &names);
     }

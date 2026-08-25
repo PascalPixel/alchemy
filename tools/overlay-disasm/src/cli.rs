@@ -3,12 +3,7 @@ use std::path::Path;
 use std::process::ExitCode;
 const USAGE: &str = "usage: overlay-disasm --build-source FILE [BASE_HEX]\n       overlay-disasm --assemble FILE [BASE_HEX]\n       overlay-disasm --c-spans FILE [BASE_HEX]";
 fn base_argument(arguments: &[String], index: usize) -> Result<i64, String> {
-    arguments
-        .get(index)
-        .map(|text| i64::from_str_radix(text.trim_start_matches("0x"), 16))
-        .transpose()
-        .map_err(|_| "base must be hex".to_string())
-        .map(|value| value.unwrap_or(crate::OVERLAY_BASE))
+    arguments.get(index).map(|text| i64::from_str_radix(text.trim_start_matches("0x"), 16)).transpose().map_err(|_| "base must be hex".to_string()).map(|value| value.unwrap_or(crate::OVERLAY_BASE))
 }
 fn validate_arguments(arguments: &[String]) -> Result<bool, String> {
     if arguments.len() == 1 && matches!(arguments[0].as_str(), "-h" | "--help") {

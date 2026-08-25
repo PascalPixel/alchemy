@@ -164,11 +164,7 @@ fn extensions_string(items: &[Node<Extension>]) -> String {
             Extension::Attribute(attribute) => {
                 let arguments = attribute.arguments.iter().map(|argument| expr(&argument.node)).collect::<Vec<_>>();
                 let name = &attribute.name.node;
-                Some(if arguments.is_empty() {
-                    format!("__attribute__(({name}))")
-                } else {
-                    format!("__attribute__(({name}({})))", arguments.join(", "))
-                })
+                Some(if arguments.is_empty() { format!("__attribute__(({name}))") } else { format!("__attribute__(({name}({})))", arguments.join(", ")) })
             }
             Extension::AsmLabel(label) => Some(format!("asm({})", string_literal(&label.node))),
             Extension::AvailabilityAttribute(_) => None,
@@ -637,22 +633,13 @@ fn expr(e: &Expression) -> String {
             let op = binary_operator(&b.node.operator.node);
             format!("{} {} {}", sub(&b.node.lhs.node), op, sub(&b.node.rhs.node))
         }
-        Expression::Conditional(c) => format!(
-            "{} ? {} : {}",
-            sub(&c.node.condition.node),
-            sub(&c.node.then_expression.node),
-            sub(&c.node.else_expression.node)
-        ),
+        Expression::Conditional(c) => format!("{} ? {} : {}", sub(&c.node.condition.node), sub(&c.node.then_expression.node), sub(&c.node.else_expression.node)),
         Expression::Comma(items) => {
             let parts: Vec<String> = items.iter().map(|i| comma_safe(&i.node)).collect();
             parts.join(", ")
         }
         Expression::OffsetOf(o) => {
-            let mut s = format!(
-                "__builtin_offsetof({}, {}",
-                type_name(&o.node.type_name.node),
-                o.node.designator.node.base.node.name
-            );
+            let mut s = format!("__builtin_offsetof({}, {}", type_name(&o.node.type_name.node), o.node.designator.node.base.node.name);
             for m in &o.node.designator.node.members {
                 match &m.node {
                     OffsetMember::Member(id) => {
@@ -673,20 +660,14 @@ fn expr(e: &Expression) -> String {
             s.push(')');
             s
         }
-        Expression::GenericSelection(_) | Expression::VaArg(_) | Expression::Statement(_) => {
-            "/* unsupported expression */".to_string()
-        }
+        Expression::GenericSelection(_) | Expression::VaArg(_) | Expression::Statement(_) => "/* unsupported expression */".to_string(),
     }
 }
 
 /// An operand position: wrap anything compound in parentheses.
 fn sub(e: &Expression) -> String {
     match e {
-        Expression::Identifier(_)
-        | Expression::Constant(_)
-        | Expression::StringLiteral(_)
-        | Expression::Call(_)
-        | Expression::Member(_) => expr(e),
+        Expression::Identifier(_) | Expression::Constant(_) | Expression::StringLiteral(_) | Expression::Call(_) | Expression::Member(_) => expr(e),
         Expression::BinaryOperator(b) if b.node.operator.node == BinaryOperator::Index => expr(e),
         _ => format!("({})", expr(e)),
     }
@@ -787,8 +768,7 @@ pub fn emit_expression(e: &Expression) -> String {
 pub fn self_test() -> Result<(), String> {
     let src = "struct P { short a; int b; } __attribute__((packed));\nint f(int a) { return a * 2 + 1; }";
     let cfg = lang_c::driver::Config { flavor: lang_c::driver::Flavor::GnuC11, ..Default::default() };
-    let parsed = lang_c::driver::parse_preprocessed(&cfg, src.to_string())
-        .map_err(|e| format!("cemit self-test parse failed: {e}"))?;
+    let parsed = lang_c::driver::parse_preprocessed(&cfg, src.to_string()).map_err(|e| format!("cemit self-test parse failed: {e}"))?;
     let emitted = emit_translation_unit(&parsed.unit);
     if !emitted.contains("return") {
         return Err("cemit self-test: emitted source lost the return".to_string());

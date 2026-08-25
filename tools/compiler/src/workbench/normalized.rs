@@ -64,28 +64,10 @@ pub fn compare(target: &Path, candidate: &Path, symbol: &str) -> Result<Normaliz
             }
             row += 1;
         }
-        mismatch_runs.push(NormalizedMismatchRun {
-            row_start,
-            row_end: row,
-            rows: row - row_start,
-            candidate_start,
-            candidate_end: candidate_index,
-            target_start,
-            target_end: target_index,
-            candidate: candidate_lines,
-            target: target_lines,
-        });
+        mismatch_runs.push(NormalizedMismatchRun { row_start, row_end: row, rows: row - row_start, candidate_start, candidate_end: candidate_index, target_start, target_end: target_index, candidate: candidate_lines, target: target_lines });
     }
 
-    Ok(NormalizedReport {
-        schema_version: 1,
-        symbol: symbol.into(),
-        target_instructions: target.len(),
-        candidate_instructions: candidate.len(),
-        aligned_rows: pairs.len(),
-        exact_rows,
-        mismatch_runs,
-    })
+    Ok(NormalizedReport { schema_version: 1, symbol: symbol.into(), target_instructions: target.len(), candidate_instructions: candidate.len(), aligned_rows: pairs.len(), exact_rows, mismatch_runs })
 }
 
 fn row_matches(pair: &(Option<String>, Option<String>)) -> bool {

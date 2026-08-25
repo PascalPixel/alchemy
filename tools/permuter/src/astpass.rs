@@ -8,14 +8,10 @@ use std::collections::{BTreeMap, BTreeSet};
 use lang_c::ast::*;
 use lang_c::span::Node;
 
-use crate::asttypes::{
-    allowed_basic_type, build_typemap, decayed_expr_type, ensure, expr_type, is_assign_op, pointer_decay,
-    resolve_typedefs, same_type, CType, Fail, TypeMap,
-};
+use crate::asttypes::{allowed_basic_type, build_typemap, decayed_expr_type, ensure, expr_type, is_assign_op, pointer_decay, resolve_typedefs, same_type, CType, Fail, TypeMap};
 use crate::astutil::{
-    self, binop, equal_expr, expr_stmt, find_var_reads_in_expr, id_expr, insert_block_item, insertion_points, int_expr,
-    int_expr_full, is_effectful, is_lvalue, n, nested_blocks, nid, scan_item_exprs, scan_stmt_exprs, unary,
-    visit_decls_mut, visit_stmts, visit_stmts_mut, walk_stmt_exprs, with_block, InsPoint, Nid,
+    self, binop, equal_expr, expr_stmt, find_var_reads_in_expr, id_expr, insert_block_item, insertion_points, int_expr, int_expr_full, is_effectful, is_lvalue, n, nested_blocks, nid, scan_item_exprs, scan_stmt_exprs, unary, visit_decls_mut, visit_stmts, visit_stmts_mut, walk_stmt_exprs, with_block,
+    InsPoint, Nid,
 };
 use crate::cemit::emit_translation_unit;
 
@@ -211,12 +207,7 @@ pub const CLASSIC_GCC_WEIGHTS: [(AstPass, f64); 16] = [
 
 /// Value-preserving transformations used by the default cumulative walk;
 /// classic-only codegen probes are deliberately omitted.
-pub const SAFE_GCC_WEIGHTS: [(AstPass, f64); 4] = [
-    (AstPass::TempForExpr, 100.0),
-    (AstPass::ExpandExpr, 20.0),
-    (AstPass::ReorderStmts, 10.0),
-    (AstPass::ReorderDecls, 10.0),
-];
+pub const SAFE_GCC_WEIGHTS: [(AstPass, f64); 4] = [(AstPass::TempForExpr, 100.0), (AstPass::ExpandExpr, 20.0), (AstPass::ReorderStmts, 10.0), (AstPass::ReorderDecls, 10.0)];
 
 pub struct AstRandomizer {
     source: String,
@@ -247,22 +238,15 @@ fn lowering_profile(source: &str) -> LoweringProfile {
         declarations,
         initialized_declarations: lines.iter().filter(|line| declaration_line(line) && line.contains('=')).count(),
         assignments: lines.iter().filter(|line| line.contains(" = ") && !line.contains(" == ")).count(),
-        compound_assignments: lines
-            .iter()
-            .filter(|line| [" += ", " -= ", " &= ", " |= ", " ^= ", " *= "].iter().any(|op| line.contains(op)))
-            .count(),
+        compound_assignments: lines.iter().filter(|line| [" += ", " -= ", " &= ", " |= ", " ^= ", " *= "].iter().any(|op| line.contains(op))).count(),
         conditions: lines.iter().filter(|line| line.starts_with("if (") || line.starts_with("switch (")).count(),
-        loops: lines
-            .iter()
-            .filter(|line| line.starts_with("for (") || line.starts_with("while (") || **line == "do {")
-            .count(),
+        loops: lines.iter().filter(|line| line.starts_with("for (") || line.starts_with("while (") || **line == "do {").count(),
         returns: lines.iter().filter(|line| line.starts_with("return")).count(),
     }
 }
 
 fn declaration_line(line: &str) -> bool {
-    ["s8 ", "u8 ", "s16 ", "u16 ", "s32 ", "u32 ", "int ", "void "].iter().any(|prefix| line.starts_with(prefix))
-        && line.ends_with(';')
+    ["s8 ", "u8 ", "s16 ", "u16 ", "s32 ", "u32 ", "int ", "void "].iter().any(|prefix| line.starts_with(prefix)) && line.ends_with(';')
 }
 
 fn family_weights(source: &str, template: &str, mode: AstMode) -> Vec<(AstPass, f64)> {
@@ -283,11 +267,7 @@ fn family_weights(source: &str, template: &str, mode: AstMode) -> Vec<(AstPass, 
     } else {
         boost(AstPass::ReorderDecls, 3.0);
     }
-    if source.assignments.abs_diff(template.assignments) <= 2
-        && source.conditions == template.conditions
-        && source.loops == template.loops
-        && source.returns == template.returns
-    {
+    if source.assignments.abs_diff(template.assignments) <= 2 && source.conditions == template.conditions && source.loops == template.loops && source.returns == template.returns {
         boost(AstPass::ReorderStmts, 5.0);
     }
     if mode == AstMode::Classic {
@@ -310,14 +290,8 @@ pub fn family_weight_summary(source: &str, template: &str, mode: AstMode) -> Vec
 }
 
 fn parse_unit(source: &str) -> Result<TranslationUnit, String> {
-    let config = lang_c::driver::Config {
-        flavor: lang_c::driver::Flavor::GnuC11,
-        cpp_command: String::new(),
-        ..Default::default()
-    };
-    lang_c::driver::parse_preprocessed(&config, source.to_string())
-        .map(|p| p.unit)
-        .map_err(|e| format!("parse failed: {e}"))
+    let config = lang_c::driver::Config { flavor: lang_c::driver::Flavor::GnuC11, cpp_command: String::new(), ..Default::default() };
+    lang_c::driver::parse_preprocessed(&config, source.to_string()).map(|p| p.unit).map_err(|e| format!("parse failed: {e}"))
 }
 
 fn find_fn(unit: &TranslationUnit, name: &str) -> Result<usize, String> {
@@ -366,12 +340,7 @@ impl AstRandomizer {
         Self::new_with_mode(source, seed, only, AstMode::Safe)
     }
 
-    pub fn new_with_mode(
-        source: &str,
-        seed: u64,
-        only: Option<AstPass>,
-        mode: AstMode,
-    ) -> Result<AstRandomizer, String> {
+    pub fn new_with_mode(source: &str, seed: u64, only: Option<AstPass>, mode: AstMode) -> Result<AstRandomizer, String> {
         let unit = parse_unit(source)?;
         let mut fn_name = None;
         for ext in &unit.0 {
@@ -384,15 +353,7 @@ impl AstRandomizer {
         let normalized = emit_translation_unit(&unit);
         // Sanity: the normalized text must reparse.
         parse_unit(&normalized)?;
-        Ok(AstRandomizer {
-            source: normalized,
-            fn_name,
-            rng: Rng::new(seed),
-            only,
-            mode,
-            heat: Vec::new(),
-            family_weights: None,
-        })
+        Ok(AstRandomizer { source: normalized, fn_name, rng: Rng::new(seed), only, mode, heat: Vec::new(), family_weights: None })
     }
 
     pub fn source(&self) -> &str {
@@ -487,11 +448,7 @@ fn block_expressions(body: &Node<Statement>) -> Vec<(Nid, Node<Expression>)> {
 
 /// Replaces the expression with the given id, handing the old node to the
 /// builder. Returns whether a replacement happened.
-fn replace_expr_by_id(
-    body: &mut Node<Statement>,
-    target: Nid,
-    build: &mut dyn FnMut(Node<Expression>) -> Expression,
-) -> bool {
+fn replace_expr_by_id(body: &mut Node<Statement>, target: Nid, build: &mut dyn FnMut(Node<Expression>) -> Expression) -> bool {
     let mut done = false;
     walk_stmt_exprs(body, &mut |e, _| {
         if !done && nid(e) == target {
@@ -530,11 +487,7 @@ fn bisect_left(list: &[usize], value: usize) -> usize {
 }
 
 /// Port of `surrounding_writes`.
-fn surrounding_writes(
-    expr: &Node<Expression>,
-    base_start: usize,
-    writes: &std::collections::BTreeMap<String, Vec<usize>>,
-) -> (usize, usize) {
+fn surrounding_writes(expr: &Node<Expression>, base_start: usize, writes: &std::collections::BTreeMap<String, Vec<usize>>) -> (usize, usize) {
     let mut prev: isize = -1;
     let mut next = MAX_INDEX;
     for (name, _) in find_var_reads_in_expr(expr) {
@@ -588,18 +541,7 @@ fn crosses_control_entry(place_start: usize, expression_start: usize, entries: &
 fn flow_barriers(statement: &Node<Statement>) -> Vec<usize> {
     let mut barriers = Vec::new();
     visit_stmts(statement, &mut |statement| {
-        if matches!(
-            statement.node,
-            Statement::Labeled(_)
-                | Statement::If(_)
-                | Statement::Switch(_)
-                | Statement::While(_)
-                | Statement::DoWhile(_)
-                | Statement::For(_)
-                | Statement::Goto(_)
-                | Statement::Continue
-                | Statement::Break
-        ) {
+        if matches!(statement.node, Statement::Labeled(_) | Statement::If(_) | Statement::Switch(_) | Statement::While(_) | Statement::DoWhile(_) | Statement::For(_) | Statement::Goto(_) | Statement::Continue | Statement::Break) {
             barriers.push(statement.span.start);
             barriers.push(statement.span.end);
         } else if matches!(statement.node, Statement::Return(_)) {
@@ -634,16 +576,7 @@ fn address_taken_variables(statement: &Node<Statement>) -> BTreeSet<String> {
 
 /// Port of `maybe_reuse_var`.
 #[allow(clippy::too_many_arguments)]
-fn maybe_reuse_var(
-    var: Option<&String>,
-    assign_before_start: usize,
-    expr_start: usize,
-    t: &CType,
-    reads: &std::collections::BTreeMap<String, Vec<usize>>,
-    writes: &std::collections::BTreeMap<String, Vec<usize>>,
-    tm: &TypeMap,
-    rng: &mut Rng,
-) -> Option<String> {
+fn maybe_reuse_var(var: Option<&String>, assign_before_start: usize, expr_start: usize, t: &CType, reads: &std::collections::BTreeMap<String, Vec<usize>>, writes: &std::collections::BTreeMap<String, Vec<usize>>, tm: &TypeMap, rng: &mut Rng) -> Option<String> {
     let take = rng.chance(PROB_REUSE_VAR);
     let var = var?;
     if !take {
@@ -682,18 +615,7 @@ fn perm_temp_for_expr(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng
     let address_taken = address_taken_variables(&f.statement);
     let mut complex_control_flow = false;
     visit_stmts(&f.statement, &mut |statement| {
-        if matches!(
-            statement.node,
-            Statement::Labeled(_)
-                | Statement::If(_)
-                | Statement::Switch(_)
-                | Statement::While(_)
-                | Statement::DoWhile(_)
-                | Statement::For(_)
-                | Statement::Goto(_)
-                | Statement::Continue
-                | Statement::Break
-        ) {
+        if matches!(statement.node, Statement::Labeled(_) | Statement::If(_) | Statement::Switch(_) | Statement::While(_) | Statement::DoWhile(_) | Statement::For(_) | Statement::Goto(_) | Statement::Continue | Statement::Break) {
             complex_control_flow = true;
         }
     });
@@ -709,17 +631,7 @@ fn perm_temp_for_expr(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng
     let mut einds: std::collections::BTreeMap<Nid, usize> = Default::default();
 
     #[allow(clippy::too_many_arguments)]
-    fn rec(
-        block: &Node<Statement>,
-        reuse_in: &[String],
-        should_make_ptr: bool,
-        tm: &TypeMap,
-        barriers: &[usize],
-        writes: &std::collections::BTreeMap<String, Vec<usize>>,
-        einds: &mut std::collections::BTreeMap<Nid, usize>,
-        candidates: &mut Vec<(Cand, f64)>,
-        rng: &mut Rng,
-    ) {
+    fn rec(block: &Node<Statement>, reuse_in: &[String], should_make_ptr: bool, tm: &TypeMap, barriers: &[usize], writes: &std::collections::BTreeMap<String, Vec<usize>>, einds: &mut std::collections::BTreeMap<Nid, usize>, candidates: &mut Vec<(Cand, f64)>, rng: &mut Rng) {
         let items = astutil::block_items(block);
         let block_id = nid(block);
         let mut reuse: Vec<String> = reuse_in.to_vec();
@@ -800,21 +712,18 @@ fn perm_temp_for_expr(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng
     }
 
     let mut wrapped = should_make_ptr;
-    let mut t: CType =
-        if wrapped { CType::ptr(expr_type(&orig.node, &tm)?) } else { decayed_expr_type(&orig.node, &tm)? };
+    let mut t: CType = if wrapped { CType::ptr(expr_type(&orig.node, &tm)?) } else { decayed_expr_type(&orig.node, &tm)? };
     // Always use pointers when replacing structs.
     if !wrapped && matches!(resolve_typedefs(t.clone(), &tm), CType::Struct { .. }) && is_lvalue(&orig.node, &tm) {
         wrapped = true;
         t = CType::ptr(expr_type(&orig.node, &tm)?);
     }
-    let assign_expr_node: Node<Expression> =
-        if wrapped { Node::new(unary(UnaryOperator::Address, orig.node.clone()), orig.span) } else { orig.clone() };
+    let assign_expr_node: Node<Expression> = if wrapped { Node::new(unary(UnaryOperator::Address, orig.node.clone()), orig.span) } else { orig.clone() };
 
     // Only pure, non-aliased local-scalar expressions may move or feed
     // multiple uses; embed all effectful assignments at the chosen use.
     let mut dependencies = BTreeSet::new();
-    let movable = pure_local_reads(&assign_expr_node.node, &tm, &mut dependencies).is_ok()
-        && dependencies.iter().all(|dependency| !address_taken.contains(dependency));
+    let movable = pure_local_reads(&assign_expr_node.node, &tm, &mut dependencies).is_ok() && dependencies.iter().all(|dependency| !address_taken.contains(dependency));
     if !movable {
         place = None;
     }
@@ -822,12 +731,7 @@ fn perm_temp_for_expr(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng
     let assign_before_start = place.as_ref().map(|p| p.stmt_start).unwrap_or(orig.span.start);
     // Reuse live variables only in straight-line functions; a textually next
     // conditional write may never execute.
-    let reused_var = if movable && !complex_control_flow {
-        maybe_reuse_var(reuse_cand.as_ref(), assign_before_start, orig.span.start, &t, &reads, &writes, &tm, rng)
-            .filter(|candidate| !address_taken.contains(candidate))
-    } else {
-        None
-    };
+    let reused_var = if movable && !complex_control_flow { maybe_reuse_var(reuse_cand.as_ref(), assign_before_start, orig.span.start, &t, &reads, &writes, &tm, rng).filter(|candidate| !address_taken.contains(candidate)) } else { None };
     let (reused, var) = match reused_var {
         Some(v) => (true, v),
         None => {
@@ -848,13 +752,7 @@ fn perm_temp_for_expr(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng
         replace_cands.push(orig_id);
     } else {
         scan_stmt_exprs(&f.statement, &mut |e, is_expr| {
-            if is_expr
-                && assign_before_start <= e.span.start
-                && prev_write < e.span.start
-                && e.span.start <= next_write
-                && !crosses_control_entry(assign_before_start, e.span.start, &barriers)
-                && equal_expr(&e.node, &orig.node)
-            {
+            if is_expr && assign_before_start <= e.span.start && prev_write < e.span.start && e.span.start <= next_write && !crosses_control_entry(assign_before_start, e.span.start, &barriers) && equal_expr(&e.node, &orig.node) {
                 replace_cands.push(nid(e));
             }
         });
@@ -958,21 +856,11 @@ fn perm_expand_expr(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) 
                 }
             }
         }
-        fn scan(
-            stmt: &Node<Statement>,
-            recs: &mut std::collections::BTreeMap<usize, (String, WriteKind)>,
-            writes: &mut std::collections::BTreeMap<String, Vec<usize>>,
-            statement_assignments: &mut BTreeSet<Nid>,
-        ) {
+        fn scan(stmt: &Node<Statement>, recs: &mut std::collections::BTreeMap<usize, (String, WriteKind)>, writes: &mut std::collections::BTreeMap<String, Vec<usize>>, statement_assignments: &mut BTreeSet<Nid>) {
             // Declarations.
-            fn handle_decl(
-                d: &Node<Declaration>,
-                recs: &mut std::collections::BTreeMap<usize, (String, WriteKind)>,
-                writes: &mut std::collections::BTreeMap<String, Vec<usize>>,
-            ) {
+            fn handle_decl(d: &Node<Declaration>, recs: &mut std::collections::BTreeMap<usize, (String, WriteKind)>, writes: &mut std::collections::BTreeMap<String, Vec<usize>>) {
                 for (di, init) in d.node.declarators.iter().enumerate() {
-                    if let (_, Some(name)) = crate::asttypes::apply_declarator(CType::int(), &init.node.declarator.node)
-                    {
+                    if let (_, Some(name)) = crate::asttypes::apply_declarator(CType::int(), &init.node.declarator.node) {
                         let payload = match &init.node.initializer {
                             Some(i) => match &i.node {
                                 Initializer::Expression(e) => Some(((**e).clone(), false)),
@@ -980,28 +868,15 @@ fn perm_expand_expr(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) 
                             },
                             None => None,
                         };
-                        recs.insert(
-                            d.span.start,
-                            (name.clone(), WriteKind::DeclInit { decl_id: nid(d), declarator: di, init: payload }),
-                        );
+                        recs.insert(d.span.start, (name.clone(), WriteKind::DeclInit { decl_id: nid(d), declarator: di, init: payload }));
                         writes.entry(name).or_default().push(d.span.start);
                     }
                 }
             }
-            fn exprs(
-                e: &Node<Expression>,
-                recs: &mut std::collections::BTreeMap<usize, (String, WriteKind)>,
-                writes: &mut std::collections::BTreeMap<String, Vec<usize>>,
-            ) {
+            fn exprs(e: &Node<Expression>, recs: &mut std::collections::BTreeMap<usize, (String, WriteKind)>, writes: &mut std::collections::BTreeMap<String, Vec<usize>>) {
                 match &e.node {
                     Expression::UnaryOperator(u) => {
-                        if matches!(
-                            u.node.operator.node,
-                            UnaryOperator::PostIncrement
-                                | UnaryOperator::PostDecrement
-                                | UnaryOperator::PreIncrement
-                                | UnaryOperator::PreDecrement
-                        ) {
+                        if matches!(u.node.operator.node, UnaryOperator::PostIncrement | UnaryOperator::PostDecrement | UnaryOperator::PreIncrement | UnaryOperator::PreDecrement) {
                             if let Expression::Identifier(id) = &u.node.operand.node {
                                 recs.insert(e.span.start, (id.node.name.clone(), WriteKind::Other));
                                 writes.entry(id.node.name.clone()).or_default().push(e.span.start);
@@ -1012,18 +887,7 @@ fn perm_expand_expr(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) 
                     Expression::BinaryOperator(b) => {
                         if is_assign_op(&b.node.operator.node) {
                             if let Expression::Identifier(id) = &b.node.lhs.node {
-                                recs.insert(
-                                    e.span.start,
-                                    (
-                                        id.node.name.clone(),
-                                        WriteKind::Assign {
-                                            id: nid(e),
-                                            op_eq: matches!(b.node.operator.node, BinaryOperator::Assign),
-                                            rvalue: (*b.node.rhs).clone(),
-                                            lvalue: (*b.node.lhs).clone(),
-                                        },
-                                    ),
-                                );
+                                recs.insert(e.span.start, (id.node.name.clone(), WriteKind::Assign { id: nid(e), op_eq: matches!(b.node.operator.node, BinaryOperator::Assign), rvalue: (*b.node.rhs).clone(), lvalue: (*b.node.lhs).clone() }));
                                 writes.entry(id.node.name.clone()).or_default().push(e.span.start);
                             }
                         }
@@ -1073,9 +937,7 @@ fn perm_expand_expr(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) 
                 }
                 Statement::Expression(Some(e)) => {
                     if let Expression::BinaryOperator(binary) = &e.node {
-                        if binary.node.operator.node == BinaryOperator::Assign
-                            && matches!(binary.node.lhs.node, Expression::Identifier(_))
-                        {
+                        if binary.node.operator.node == BinaryOperator::Assign && matches!(binary.node.lhs.node, Expression::Identifier(_)) {
                             statement_assignments.insert(nid(e));
                         }
                     }
@@ -1292,17 +1154,9 @@ fn pure_local_reads(expression: &Expression, tm: &TypeMap, reads: &mut BTreeSet<
             reads.insert(name.clone());
             Ok(())
         }
-        Expression::Constant(_)
-        | Expression::StringLiteral(_)
-        | Expression::SizeOfTy(_)
-        | Expression::SizeOfVal(_)
-        | Expression::AlignOf(_)
-        | Expression::OffsetOf(_) => Ok(()),
+        Expression::Constant(_) | Expression::StringLiteral(_) | Expression::SizeOfTy(_) | Expression::SizeOfVal(_) | Expression::AlignOf(_) | Expression::OffsetOf(_) => Ok(()),
         Expression::UnaryOperator(unary) => {
-            ensure(matches!(
-                unary.node.operator.node,
-                UnaryOperator::Plus | UnaryOperator::Minus | UnaryOperator::Complement | UnaryOperator::Negate
-            ))?;
+            ensure(matches!(unary.node.operator.node, UnaryOperator::Plus | UnaryOperator::Minus | UnaryOperator::Complement | UnaryOperator::Negate))?;
             pure_local_reads(&unary.node.operand.node, tm, reads)
         }
         Expression::Cast(cast) => pure_local_reads(&cast.node.expression.node, tm, reads),
@@ -1322,12 +1176,7 @@ fn pure_local_reads(expression: &Expression, tm: &TypeMap, reads: &mut BTreeSet<
             }
             Ok(())
         }
-        Expression::Member(_)
-        | Expression::Call(_)
-        | Expression::CompoundLiteral(_)
-        | Expression::GenericSelection(_)
-        | Expression::VaArg(_)
-        | Expression::Statement(_) => Err(Fail),
+        Expression::Member(_) | Expression::Call(_) | Expression::CompoundLiteral(_) | Expression::GenericSelection(_) | Expression::VaArg(_) | Expression::Statement(_) => Err(Fail),
     }
 }
 
@@ -1372,17 +1221,10 @@ fn local_effects(item: &Node<BlockItem>, tm: &TypeMap) -> Result<LocalEffects, F
 }
 
 fn effects_commute(left: &LocalEffects, right: &LocalEffects) -> bool {
-    left.writes.is_disjoint(&right.writes)
-        && left.writes.is_disjoint(&right.reads)
-        && left.reads.is_disjoint(&right.writes)
+    left.writes.is_disjoint(&right.writes) && left.writes.is_disjoint(&right.reads) && left.reads.is_disjoint(&right.writes)
 }
 
-fn collect_reorder_facts(
-    statement: &Node<Statement>,
-    tm: &TypeMap,
-    blocks: &mut BTreeMap<Nid, Vec<Nid>>,
-    effects: &mut BTreeMap<Nid, LocalEffects>,
-) {
+fn collect_reorder_facts(statement: &Node<Statement>, tm: &TypeMap, blocks: &mut BTreeMap<Nid, Vec<Nid>>, effects: &mut BTreeMap<Nid, LocalEffects>) {
     match &statement.node {
         Statement::Labeled(labeled) => collect_reorder_facts(&labeled.node.statement, tm, blocks, effects),
         Statement::Compound(items) => {
@@ -1420,24 +1262,13 @@ fn perm_reorder_stmts(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng
     collect_reorder_facts(&f.statement, &tm, &mut blocks, &mut effects);
     let mut cands: Vec<InsPoint> = insertion_points(&f.statement, true);
     cands.retain(|c| match &c.after {
-        Some(info) if info.is_decl => {
-            info.decl.as_ref().and_then(|d| d.single.as_ref()).map(|(_, has_init)| *has_init).unwrap_or(false)
-        }
+        Some(info) if info.is_decl => info.decl.as_ref().and_then(|d| d.single.as_ref()).map(|(_, has_init)| *has_init).unwrap_or(false),
         _ => true,
     });
 
-    let source_inds: Vec<usize> = cands
-        .iter()
-        .enumerate()
-        .filter_map(|(index, point)| {
-            point.after.as_ref().and_then(|info| {
-                (!info.has_nested_block && !info.is_jump && effects.contains_key(&info.id)).then_some(index)
-            })
-        })
-        .collect();
+    let source_inds: Vec<usize> = cands.iter().enumerate().filter_map(|(index, point)| point.after.as_ref().and_then(|info| (!info.has_nested_block && !info.is_jump && effects.contains_key(&info.id)).then_some(index))).collect();
     ensure(!source_inds.is_empty())?;
-    let spans: Vec<usize> =
-        source_inds.iter().map(|index| cands[*index].after.as_ref().map_or(0, |info| info.start)).collect();
+    let spans: Vec<usize> = source_inds.iter().map(|index| cands[*index].after.as_ref().map_or(0, |info| info.start)).collect();
     let sourcei = source_inds[rng.weighted_index_by_span(&spans)];
     let source = &cands[sourcei];
     let from_info = source.after.as_ref().ok_or(Fail)?;
@@ -1446,11 +1277,7 @@ fn perm_reorder_stmts(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng
 
     let mut weighted: Vec<(usize, f64)> = Vec::new();
     for (toi_index, to) in cands.iter().enumerate() {
-        if to.block != source.block
-            || to.index == source.index
-            || to.index == source.index + 1
-            || to.after.as_ref().map(|a| a.is_decl).unwrap_or(false)
-        {
+        if to.block != source.block || to.index == source.index || to.index == source.index + 1 || to.after.as_ref().map(|a| a.is_decl).unwrap_or(false) {
             continue;
         }
         // A declaration stays in place while its initializer becomes an
@@ -1458,12 +1285,8 @@ fn perm_reorder_stmts(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng
         if from_info.is_decl && to.index <= source.index + 1 {
             continue;
         }
-        let crossed =
-            if to.index < source.index { &items[to.index..source.index] } else { &items[source.index + 1..to.index] };
-        if !crossed
-            .iter()
-            .all(|item| effects.get(item).map(|other| effects_commute(from_effects, other)).unwrap_or(false))
-        {
+        let crossed = if to.index < source.index { &items[to.index..source.index] } else { &items[source.index + 1..to.index] };
+        if !crossed.iter().all(|item| effects.get(item).map(|other| effects_commute(from_effects, other)).unwrap_or(false)) {
             continue;
         }
         let distance = source.index.abs_diff(to.index);
@@ -1523,26 +1346,8 @@ fn perm_reorder_stmts(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng
 fn perm_reorder_decls(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) -> Result<(), Fail> {
     let f = fdef(unit, fn_index);
     let all = insertion_points(&f.statement, true);
-    let cands: Vec<InsPoint> = all
-        .into_iter()
-        .filter(|c| {
-            c.index == 0
-                || c.before.as_ref().map(|b| b.is_decl).unwrap_or(false)
-                || c.after.as_ref().map(|a| a.is_decl).unwrap_or(false)
-        })
-        .collect();
-    let source_inds: Vec<usize> = cands
-        .iter()
-        .enumerate()
-        .filter(|(_, c)| {
-            c.after
-                .as_ref()
-                .and_then(|after| after.decl.as_ref())
-                .and_then(|decl| decl.single.as_ref())
-                .is_some_and(|(_, has_initializer)| !has_initializer)
-        })
-        .map(|(i, _)| i)
-        .collect();
+    let cands: Vec<InsPoint> = all.into_iter().filter(|c| c.index == 0 || c.before.as_ref().map(|b| b.is_decl).unwrap_or(false) || c.after.as_ref().map(|a| a.is_decl).unwrap_or(false)).collect();
+    let source_inds: Vec<usize> = cands.iter().enumerate().filter(|(_, c)| c.after.as_ref().and_then(|after| after.decl.as_ref()).and_then(|decl| decl.single.as_ref()).is_some_and(|(_, has_initializer)| !has_initializer)).map(|(i, _)| i).collect();
     ensure(!source_inds.is_empty())?;
     let sourcei = *rng.choice(&source_inds);
     let from = cands[sourcei].clone();
@@ -1647,8 +1452,7 @@ fn perm_add_mask(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) -> 
     }
     let body = fbody_mut(unit, fn_index);
     ensure(replace_expr_by_id(body, id, &mut |old| {
-        let mut e =
-            binop(BinaryOperator::BitwiseAnd, old.node, int_expr_full(&mask, IntegerBase::Hexadecimal, unsigned));
+        let mut e = binop(BinaryOperator::BitwiseAnd, old.node, int_expr_full(&mask, IntegerBase::Hexadecimal, unsigned));
         for _ in 0..extra {
             e = binop(BinaryOperator::BitwiseAnd, e, int_expr_full(&mask, IntegerBase::Hexadecimal, unsigned));
         }
@@ -1699,9 +1503,7 @@ fn perm_mult_zero(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) ->
         .iter()
         .filter(|(_, e)| match &e.node {
             Expression::Constant(c) => match &c.node {
-                Constant::Integer(i) => {
-                    &*i.number == "0" && !i.suffix.unsigned && matches!(i.base, IntegerBase::Decimal)
-                }
+                Constant::Integer(i) => &*i.number == "0" && !i.suffix.unsigned && matches!(i.base, IntegerBase::Decimal),
                 Constant::Float(fl) => &*fl.number == "0.0",
                 _ => false,
             },
@@ -1751,12 +1553,7 @@ fn perm_cast_simple(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) 
         specifiers.push(n(SpecifierQualifier::TypeSpecifier(n(ts))));
     }
     let body = fbody_mut(unit, fn_index);
-    ensure(replace_expr_by_id(body, id, &mut |old| {
-        Expression::Cast(Box::new(n(CastExpression {
-            type_name: n(TypeName { specifiers: specifiers.clone(), declarator: None }),
-            expression: Box::new(old),
-        })))
-    }))
+    ensure(replace_expr_by_id(body, id, &mut |old| Expression::Cast(Box::new(n(CastExpression { type_name: n(TypeName { specifiers: specifiers.clone(), declarator: None }), expression: Box::new(old) })))))
 }
 
 /// Port of `perm_commutative`: swap the operands of a commutative binary
@@ -1880,13 +1677,7 @@ fn perm_inequalities(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng)
     let mut cands: Vec<Nid> = Vec::new();
     scan_stmt_exprs(&f.statement, &mut |e, _| {
         if let Expression::BinaryOperator(b) = &e.node {
-            if matches!(
-                b.node.operator.node,
-                BinaryOperator::Less
-                    | BinaryOperator::Greater
-                    | BinaryOperator::LessOrEqual
-                    | BinaryOperator::GreaterOrEqual
-            ) {
+            if matches!(b.node.operator.node, BinaryOperator::Less | BinaryOperator::Greater | BinaryOperator::LessOrEqual | BinaryOperator::GreaterOrEqual) {
                 cands.push(nid(e));
             }
         }
@@ -1899,8 +1690,7 @@ fn perm_inequalities(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng)
         BothSides(bool), // true = plus1
         ShiftOp(bool),   // true = change left side
     }
-    let plan =
-        if rng.f() < 0.25 { Plan::BothSides(*rng.choice(&[true, false])) } else { Plan::ShiftOp(rng.chance(0.5)) };
+    let plan = if rng.f() < 0.25 { Plan::BothSides(*rng.choice(&[true, false])) } else { Plan::ShiftOp(rng.chance(0.5)) };
     let mut done = false;
     let body = fbody_mut(unit, fn_index);
     walk_stmt_exprs(body, &mut |e, _| {
@@ -1993,8 +1783,7 @@ fn perm_compound_assignment(unit: &mut TranslationUnit, fn_index: usize, rng: &m
                 cands.push(nid(e));
             } else if matches!(op, BinaryOperator::Assign) {
                 if let Expression::BinaryOperator(rb) = &b.node.rhs.node {
-                    if compound_of(&rb.node.operator.node).is_some() && equal_expr(&b.node.lhs.node, &rb.node.lhs.node)
-                    {
+                    if compound_of(&rb.node.operator.node).is_some() && equal_expr(&b.node.lhs.node, &rb.node.lhs.node) {
                         cands.push(nid(e));
                     }
                 }
@@ -2055,17 +1844,7 @@ fn perm_condition(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) ->
         Left,
         Wrap { op_eq: bool, unwrap_negate: bool, zero: Expression },
     }
-    let is_cmp = |op: &BinaryOperator| {
-        matches!(
-            op,
-            BinaryOperator::Equals
-                | BinaryOperator::NotEquals
-                | BinaryOperator::Less
-                | BinaryOperator::Greater
-                | BinaryOperator::LessOrEqual
-                | BinaryOperator::GreaterOrEqual
-        )
-    };
+    let is_cmp = |op: &BinaryOperator| matches!(op, BinaryOperator::Equals | BinaryOperator::NotEquals | BinaryOperator::Less | BinaryOperator::Greater | BinaryOperator::LessOrEqual | BinaryOperator::GreaterOrEqual);
     let cmp_cond = matches!(&cond.node, Expression::BinaryOperator(b) if is_cmp(&b.node.operator.node));
     let plan = if cmp_cond && rng.chance(0.9) {
         if let Expression::BinaryOperator(b) = &cond.node {
@@ -2165,9 +1944,7 @@ fn perm_split_assignment(unit: &mut TranslationUnit, fn_index: usize, rng: &mut 
     let mut cands: Vec<(Nid, Node<Expression>)> = Vec::new();
     scan_stmt_exprs(&f.statement, &mut |e, _| {
         if let Expression::BinaryOperator(b) = &e.node {
-            if matches!(b.node.operator.node, BinaryOperator::Assign)
-                && matches!(b.node.rhs.node, Expression::BinaryOperator(_))
-            {
+            if matches!(b.node.operator.node, BinaryOperator::Assign) && matches!(b.node.rhs.node, Expression::BinaryOperator(_)) {
                 cands.push((nid(e), e.clone()));
             }
         }
@@ -2297,18 +2074,7 @@ fn perm_ins_block(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) ->
     with_block(body, block_id, &mut |items| {
         let inner: Vec<Node<BlockItem>> = items.drain(lo..hi).collect();
         let compound = n(Statement::Compound(inner));
-        let stmt = if dowhile {
-            Statement::DoWhile(n(DoWhileStatement {
-                statement: Box::new(compound),
-                expression: Box::new(n(int_expr("0"))),
-            }))
-        } else {
-            Statement::If(n(IfStatement {
-                condition: Box::new(n(int_expr("1"))),
-                then_statement: Box::new(compound),
-                else_statement: None,
-            }))
-        };
+        let stmt = if dowhile { Statement::DoWhile(n(DoWhileStatement { statement: Box::new(compound), expression: Box::new(n(int_expr("0"))) })) } else { Statement::If(n(IfStatement { condition: Box::new(n(int_expr("1"))), then_statement: Box::new(compound), else_statement: None })) };
         items.insert(lo, n(BlockItem::Statement(n(stmt))));
     })
     .ok_or(Fail)?;
@@ -2321,13 +2087,7 @@ fn perm_empty_stmt(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) -
     let cands = insertion_points(&f.statement, false);
     ensure(!cands.is_empty())?;
     let label_name = format!("dummy_label_{}", rng.randint(1, 1_000_000));
-    let if_empty = |value: &str| {
-        Statement::If(n(IfStatement {
-            condition: Box::new(n(int_expr(value))),
-            then_statement: Box::new(astutil::empty_compound()),
-            else_statement: None,
-        }))
-    };
+    let if_empty = |value: &str| Statement::If(n(IfStatement { condition: Box::new(n(int_expr(value))), then_statement: Box::new(astutil::empty_compound()), else_statement: None }));
     let mut stmts: Vec<Statement> = Vec::new();
     let kind = rng.randrange(0, 6);
     match kind {
@@ -2339,20 +2099,11 @@ fn perm_empty_stmt(unit: &mut TranslationUnit, fn_index: usize, rng: &mut Rng) -
             }
         }
         1 => stmts.push(if_empty("0")),
-        2 => stmts.push(Statement::DoWhile(n(DoWhileStatement {
-            statement: Box::new(astutil::empty_compound()),
-            expression: Box::new(n(int_expr("0"))),
-        }))),
-        3 => stmts.push(Statement::Labeled(n(LabeledStatement {
-            label: n(Label::Identifier(n(Identifier { name: label_name.clone() }))),
-            statement: Box::new(n(Statement::Expression(None))),
-        }))),
+        2 => stmts.push(Statement::DoWhile(n(DoWhileStatement { statement: Box::new(astutil::empty_compound()), expression: Box::new(n(int_expr("0"))) }))),
+        3 => stmts.push(Statement::Labeled(n(LabeledStatement { label: n(Label::Identifier(n(Identifier { name: label_name.clone() }))), statement: Box::new(n(Statement::Expression(None))) }))),
         4 => {
             stmts.push(Statement::Goto(n(Identifier { name: label_name.clone() })));
-            stmts.push(Statement::Labeled(n(LabeledStatement {
-                label: n(Label::Identifier(n(Identifier { name: label_name.clone() }))),
-                statement: Box::new(n(Statement::Expression(None))),
-            })));
+            stmts.push(Statement::Labeled(n(LabeledStatement { label: n(Label::Identifier(n(Identifier { name: label_name.clone() }))), statement: Box::new(n(Statement::Expression(None))) })));
         }
         _ => stmts.push(Statement::Expression(None)),
     }
@@ -2371,11 +2122,7 @@ pub fn preprocess_for_ast(source: &str) -> Result<String, String> {
     std::fs::create_dir_all(&dir).map_err(|e| format!("{}: {e}", dir.display()))?;
     let input = dir.join(format!("pp-{}.c", std::process::id()));
     std::fs::write(&input, source).map_err(|e| format!("{}: {e}", input.display()))?;
-    let out = std::process::Command::new("alchemy-gcc/dist/xgcc")
-        .args(["-B", "alchemy-gcc/dist/", "-E", "-P", "-Igames/gs1/include"])
-        .arg(&input)
-        .output()
-        .map_err(|e| format!("xgcc -E: {e}"))?;
+    let out = std::process::Command::new("alchemy-gcc/dist/xgcc").args(["-B", "alchemy-gcc/dist/", "-E", "-P", "-Igames/gs1/include"]).arg(&input).output().map_err(|e| format!("xgcc -E: {e}"))?;
     let _ = std::fs::remove_file(&input);
     if !out.status.success() {
         return Err(format!("xgcc -E failed: {}", String::from_utf8_lossy(&out.stderr)));
@@ -2388,9 +2135,7 @@ pub fn self_test() -> Result<(), String> {
     if !source.contains("permuter_ast_probe") {
         return Err("AST preprocessor dropped the probe declaration".into());
     }
-    let packed = preprocess_for_ast(
-        "struct Packed { short head; int body; } __attribute__((packed));\nint f(void) { return sizeof(struct Packed); }\n",
-    )?;
+    let packed = preprocess_for_ast("struct Packed { short head; int body; } __attribute__((packed));\nint f(void) { return sizeof(struct Packed); }\n")?;
     let randomizer = AstRandomizer::new(&packed, 1, None)?;
     if !randomizer.source().contains("__attribute__((packed))") {
         return Err("AST normalization dropped a packed layout".into());
@@ -2398,8 +2143,7 @@ pub fn self_test() -> Result<(), String> {
     let candidate = "int f(void) {\nint a;\na = 1;\nreturn a;\n}";
     let template = "int g(void) {\nint a;\nint b;\na = 1;\nb = a;\nreturn b;\n}";
     let weights = family_weight_summary(candidate, template, AstMode::Safe);
-    let temp =
-        weights.iter().find(|(name, _)| *name == "perm_temp_for_expr").map(|(_, weight)| *weight).unwrap_or_default();
+    let temp = weights.iter().find(|(name, _)| *name == "perm_temp_for_expr").map(|(_, weight)| *weight).unwrap_or_default();
     if temp <= SAFE_GCC_WEIGHTS[0].1 {
         return Err("family template did not bias the missing-temporary pass".into());
     }

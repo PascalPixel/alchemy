@@ -7,8 +7,7 @@ use crate::build_localization_font;
 pub fn entry(arguments: &[String]) -> ExitCode {
     let result = match arguments {
         [command, source, root_flag, root] if command == "build-stdout" && root_flag == "--root" => (|| {
-            let source = serde_json::from_slice(&std::fs::read(source).map_err(|e| e.to_string())?)
-                .map_err(|e| e.to_string())?;
+            let source = serde_json::from_slice(&std::fs::read(source).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?;
             let bytes = build_localization_font(&source, Path::new(root)).map_err(|e| e.0)?;
             std::io::stdout().write_all(&bytes).map_err(|e| e.to_string())
         })(),

@@ -83,24 +83,15 @@ fn png_error(message: impl fmt::Display) -> ArchiveError {
 }
 
 /// Lay the decoded chunks into a row-major atlas and encode it as PNG.
-pub fn make_atlas(
-    chunks: &[Vec<u8>],
-    chunk_width: usize,
-    chunk_height: usize,
-    columns: usize,
-    pixel_format: PixelFormat,
-) -> Result<Vec<u8>, ArchiveError> {
+pub fn make_atlas(chunks: &[Vec<u8>], chunk_width: usize, chunk_height: usize, columns: usize, pixel_format: PixelFormat) -> Result<Vec<u8>, ArchiveError> {
     let depth = pixel_size(pixel_format);
-    let unit =
-        checked_product(&[chunk_width, chunk_height, depth], "archive chunks have inconsistent RGBA dimensions")?;
+    let unit = checked_product(&[chunk_width, chunk_height, depth], "archive chunks have inconsistent RGBA dimensions")?;
     if chunks.is_empty() || chunks.iter().any(|chunk| chunk.len() != unit) || columns == 0 {
         return Err(error("archive chunks have inconsistent RGBA dimensions"));
     }
     let rows = chunks.len().div_ceil(columns);
-    let width =
-        columns.checked_mul(chunk_width).ok_or_else(|| error("archive chunks have inconsistent RGBA dimensions"))?;
-    let atlas_len =
-        checked_product(&[width, rows, chunk_height, depth], "archive chunks have inconsistent RGBA dimensions")?;
+    let width = columns.checked_mul(chunk_width).ok_or_else(|| error("archive chunks have inconsistent RGBA dimensions"))?;
+    let atlas_len = checked_product(&[width, rows, chunk_height, depth], "archive chunks have inconsistent RGBA dimensions")?;
     let mut atlas = vec![0u8; atlas_len];
     for (index, chunk) in chunks.iter().enumerate() {
         let left = index % columns * chunk_width;
@@ -118,14 +109,7 @@ pub fn make_atlas(
 }
 
 /// Split a PNG atlas back into its original chunks.
-pub fn read_atlas(
-    data: &[u8],
-    count: usize,
-    chunk_width: usize,
-    chunk_height: usize,
-    columns: usize,
-    pixel_format: PixelFormat,
-) -> Result<Vec<Vec<u8>>, ArchiveError> {
+pub fn read_atlas(data: &[u8], count: usize, chunk_width: usize, chunk_height: usize, columns: usize, pixel_format: PixelFormat) -> Result<Vec<Vec<u8>>, ArchiveError> {
     if columns == 0 {
         return Err(error("archive atlas dimensions differ from its plan"));
     }
@@ -161,8 +145,7 @@ pub fn read_atlas(
 
 /// Rebuild an archive from an atlas and its extracted plan.
 pub fn build_archive(atlas: &[u8], plan: &ArchivePlan) -> Result<Vec<u8>, ArchiveError> {
-    let chunks =
-        read_atlas(atlas, plan.streams.len(), plan.chunk_width, plan.chunk_height, plan.columns, plan.pixel_format)?;
+    let chunks = read_atlas(atlas, plan.streams.len(), plan.chunk_width, plan.chunk_height, plan.columns, plan.pixel_format)?;
     let mut encoded = Vec::with_capacity(chunks.len());
     for (chunk, stream) in chunks.iter().zip(&plan.streams) {
         if chunk.len() != stream.decoded_size {
@@ -184,10 +167,7 @@ pub fn build_archive(atlas: &[u8], plan: &ArchivePlan) -> Result<Vec<u8>, Archiv
     if alignment == 0 {
         return Err(error("stream alignment must be positive"));
     }
-    let mut offset = encoded
-        .len()
-        .checked_mul(offset_width)
-        .ok_or_else(|| error("archive offsets do not fit their configured width"))?;
+    let mut offset = encoded.len().checked_mul(offset_width).ok_or_else(|| error("archive offsets do not fit their configured width"))?;
     let mut offsets = Vec::with_capacity(encoded.len());
     let mut slots = Vec::with_capacity(encoded.len());
     for payload in encoded {
@@ -195,8 +175,7 @@ pub fn build_archive(atlas: &[u8], plan: &ArchivePlan) -> Result<Vec<u8>, Archiv
         let padding = (alignment - payload.len() % alignment) % alignment;
         let mut slot = payload;
         slot.resize(slot.len() + padding, 0);
-        offset =
-            offset.checked_add(slot.len()).ok_or_else(|| error("archive offsets do not fit their configured width"))?;
+        offset = offset.checked_add(slot.len()).ok_or_else(|| error("archive offsets do not fit their configured width"))?;
         slots.push(slot);
     }
     let limit = 1usize << (offset_width * 8);
@@ -231,10 +210,7 @@ fn palette_operation_value(operation: PaletteOperation) -> Value {
 fn palette_group_value(group: &PaletteGroup) -> Value {
     match group {
         PaletteGroup::Zeros => json!(["z"]),
-        PaletteGroup::Group(operations) => Value::Array(vec![
-            Value::String("g".to_string()),
-            Value::Array(operations.iter().copied().map(palette_operation_value).collect()),
-        ]),
+        PaletteGroup::Group(operations) => Value::Array(vec![Value::String("g".to_string()), Value::Array(operations.iter().copied().map(palette_operation_value).collect())]),
     }
 }
 
@@ -266,10 +242,7 @@ fn plan_value(plan: &ArchivePlan) -> Value {
                     let mut item = Map::new();
                     item.insert("decoded_size".to_string(), json!(stream.decoded_size));
                     item.insert("encoded_size".to_string(), json!(stream.encoded_size));
-                    item.insert(
-                        "tokens".to_string(),
-                        Value::Array(stream.tokens.iter().map(palette_group_value).collect()),
-                    );
+                    item.insert("tokens".to_string(), Value::Array(stream.tokens.iter().map(palette_group_value).collect()));
                     item.insert("lookahead".to_string(), json!(hex(&stream.lookahead)));
                     Value::Object(item)
                 })
@@ -282,18 +255,7 @@ fn plan_value(plan: &ArchivePlan) -> Value {
     Value::Object(value)
 }
 
-pub fn extract_archive(
-    rom: &[u8],
-    address: usize,
-    input_end: usize,
-    source_end: usize,
-    chunk_width: usize,
-    chunk_height: usize,
-    columns: usize,
-    pixel_format: PixelFormat,
-    offset_width: usize,
-    stream_alignment: usize,
-) -> Result<(ArchivePlan, Vec<u8>, usize), ArchiveError> {
+pub fn extract_archive(rom: &[u8], address: usize, input_end: usize, source_end: usize, chunk_width: usize, chunk_height: usize, columns: usize, pixel_format: PixelFormat, offset_width: usize, stream_alignment: usize) -> Result<(ArchivePlan, Vec<u8>, usize), ArchiveError> {
     if source_end < address || source_end > input_end {
         return Err(error("archive source end lies outside its boundary"));
     }
@@ -330,16 +292,12 @@ pub fn extract_archive(
         return Err(error("archive offsets are not monotonic"));
     }
 
-    let maximum = checked_product(
-        &[chunk_width, chunk_height, pixel_size(pixel_format)],
-        "archive stream has an unexpected decoded size",
-    )?;
+    let maximum = checked_product(&[chunk_width, chunk_height, pixel_size(pixel_format)], "archive stream has an unexpected decoded size")?;
     let mut chunks = Vec::with_capacity(count);
     let mut streams = Vec::with_capacity(count);
     for (index, offset) in offsets.iter().copied().enumerate() {
         let stream_end = offsets.get(index + 1).copied().unwrap_or(archive.len());
-        let (decoded, cursor, tokens) =
-            decode_palette_trace(archive, offset, stream_end, maximum as u64).map_err(png_error)?;
+        let (decoded, cursor, tokens) = decode_palette_trace(archive, offset, stream_end, maximum as u64).map_err(png_error)?;
         if decoded.len() != maximum {
             return Err(error("archive stream has an unexpected decoded size"));
         }
@@ -350,9 +308,7 @@ pub fn extract_archive(
         }
         let lookahead = subarray(original, replay.len(), original.len()).to_vec();
         let padding = subarray(archive, cursor, stream_end);
-        if padding.len() != (stream_alignment - original.len() % stream_alignment) % stream_alignment
-            || padding.iter().any(|byte| *byte != 0)
-        {
+        if padding.len() != (stream_alignment - original.len() % stream_alignment) % stream_alignment || padding.iter().any(|byte| *byte != 0) {
             return Err(error("archive stream padding differs from its alignment"));
         }
         chunks.push(decoded.clone());
@@ -360,18 +316,7 @@ pub fn extract_archive(
     }
 
     let alignment_tail = if tail.is_empty() { None } else { Some(inspect_alignment_tail(tail, 3).map_err(png_error)?) };
-    let plan = ArchivePlan {
-        format: 1,
-        codec: "golden-sun-offset-palette-lz".to_string(),
-        chunk_width,
-        chunk_height,
-        columns,
-        pixel_format,
-        offset_width,
-        stream_alignment,
-        streams,
-        alignment_tail,
-    };
+    let plan = ArchivePlan { format: 1, codec: "golden-sun-offset-palette-lz".to_string(), chunk_width, chunk_height, columns, pixel_format, offset_width, stream_alignment, streams, alignment_tail };
     let atlas = make_atlas(&chunks, chunk_width, chunk_height, columns, pixel_format)?;
     if build_archive(&atlas, &plan)? != rom[address..input_end] {
         return Err(error("rebuilt archive differs"));

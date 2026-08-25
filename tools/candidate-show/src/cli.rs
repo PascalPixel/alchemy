@@ -28,10 +28,7 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
         rom: Some(root.join("roms/gs1-en.gba").to_string_lossy().into_owned()),
         work: None,
         flags: Vec::new(),
-        configuration: CandidateCompilerConfiguration {
-            family: Some(CandidateCompilerFamily::Routed),
-            ..Default::default()
-        },
+        configuration: CandidateCompilerConfiguration { family: Some(CandidateCompilerFamily::Routed), ..Default::default() },
         target: CompilerTarget::Gs1,
         size: None,
         align: false,
@@ -99,23 +96,15 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
     Ok(ParseOutcome::Options(Box::new(options)))
 }
 fn parse_size(value: &str) -> Result<usize, String> {
-    let parsed =
-        if let Some(hex) = value.strip_prefix("0x") { usize::from_str_radix(hex, 16) } else { value.parse::<usize>() };
-    parsed
-        .ok()
-        .filter(|size| *size > 0)
-        .ok_or_else(|| "--size must be a positive decimal or 0x-prefixed byte count".into())
+    let parsed = if let Some(hex) = value.strip_prefix("0x") { usize::from_str_radix(hex, 16) } else { value.parse::<usize>() };
+    parsed.ok().filter(|size| *size > 0).ok_or_else(|| "--size must be a positive decimal or 0x-prefixed byte count".into())
 }
 fn split(value: Option<&String>) -> Result<Vec<String>, String> {
     let value = value.ok_or("undefined is not an object (evaluating 'argv[++index].split')")?;
     Ok(value.split(',').filter(|value| !value.is_empty()).map(str::to_string).collect())
 }
 fn default_work(root: &Path, source: &str) -> String {
-    let stem = Path::new(source)
-        .file_stem()
-        .and_then(|value| value.to_str())
-        .filter(|value| !value.is_empty() && value.chars().all(|c| c.is_ascii_alphanumeric() || matches!(c, '_' | '-')))
-        .unwrap_or("candidate");
+    let stem = Path::new(source).file_stem().and_then(|value| value.to_str()).filter(|value| !value.is_empty() && value.chars().all(|c| c.is_ascii_alphanumeric() || matches!(c, '_' | '-'))).unwrap_or("candidate");
     root.join("scratch/candidate-show").join(stem).to_string_lossy().into_owned()
 }
 
@@ -126,10 +115,7 @@ mod tests {
     #[test]
     fn parses_cross_game_reference_options() {
         let root = Path::new("/repo");
-        let args = ["games/gs2/recon/ja/main/08120450.c", "--target", "gs2", "--size", "0x206c", "--reference-symbols"]
-            .into_iter()
-            .map(str::to_string)
-            .collect::<Vec<_>>();
+        let args = ["games/gs2/recon/ja/main/08120450.c", "--target", "gs2", "--size", "0x206c", "--reference-symbols"].into_iter().map(str::to_string).collect::<Vec<_>>();
         let ParseOutcome::Options(options) = options_of(root, &args).unwrap() else {
             panic!("expected parsed options");
         };

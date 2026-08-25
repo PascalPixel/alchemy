@@ -17,8 +17,7 @@ pub const TABLE_ADDRESS: usize = 0x0801_3784;
 pub const RESOURCE_BASE: u32 = 0x128;
 pub const RECORDS: usize = 186;
 pub const RECORD_SIZE: usize = 12;
-pub const FIELDS: [&str; 6] =
-    ["container", "palette", "vram_charblock1", "vram_charblock2", "vram_charblock3", "animation_source"];
+pub const FIELDS: [&str; 6] = ["container", "palette", "vram_charblock1", "vram_charblock2", "vram_charblock3", "animation_source"];
 
 #[derive(Debug)]
 pub enum TableError {
@@ -112,13 +111,7 @@ pub fn build_table(source: &Path) -> Result<Vec<u8>, TableError> {
     if document.get("format").and_then(Value::as_u64) != Some(1) {
         return Err(TableError::UnsupportedFormat);
     }
-    let base = document
-        .get("resource_base")
-        .and_then(Value::as_str)
-        .and_then(|text| {
-            text.strip_prefix("0x").map(|digits| u32::from_str_radix(digits, 16)).unwrap_or_else(|| text.parse()).ok()
-        })
-        .ok_or(TableError::WrongResourceBase)?;
+    let base = document.get("resource_base").and_then(Value::as_str).and_then(|text| text.strip_prefix("0x").map(|digits| u32::from_str_radix(digits, 16)).unwrap_or_else(|| text.parse()).ok()).ok_or(TableError::WrongResourceBase)?;
     if base != RESOURCE_BASE {
         return Err(TableError::WrongResourceBase);
     }
@@ -133,13 +126,7 @@ pub fn build_table(source: &Path) -> Result<Vec<u8>, TableError> {
             return Err(TableError::NonSequentialIndex(map_index));
         }
         for (index, field) in FIELDS.iter().enumerate() {
-            let value = row
-                .get(*field)
-                .and_then(Value::as_str)
-                .and_then(|text| u32::from_str_radix(text, 16).ok())
-                .and_then(|value| value.checked_sub(RESOURCE_BASE))
-                .filter(|value| *value <= 0xffff)
-                .ok_or(TableError::OffsetOutsideU16 { record: map_index, field })?;
+            let value = row.get(*field).and_then(Value::as_str).and_then(|text| u32::from_str_radix(text, 16).ok()).and_then(|value| value.checked_sub(RESOURCE_BASE)).filter(|value| *value <= 0xffff).ok_or(TableError::OffsetOutsideU16 { record: map_index, field })?;
             let at = map_index * RECORD_SIZE + index * 2;
             encoded[at..at + 2].copy_from_slice(&(value as u16).to_le_bytes());
         }
@@ -153,8 +140,7 @@ pub fn records_by_container(source: &Path) -> Result<Vec<(String, Vec<Value>)>, 
     let records = document.get("records").and_then(Value::as_array).ok_or(TableError::UnsupportedFormat)?;
     let mut result: Vec<(String, Vec<Value>)> = Vec::new();
     for row in records {
-        let container =
-            row.get("container").and_then(Value::as_str).ok_or(TableError::UnsupportedFormat)?.to_ascii_lowercase();
+        let container = row.get("container").and_then(Value::as_str).ok_or(TableError::UnsupportedFormat)?.to_ascii_lowercase();
         match result.iter_mut().find(|(name, _)| *name == container) {
             Some((_, rows)) => rows.push(row.clone()),
             None => result.push((container, vec![row.clone()])),

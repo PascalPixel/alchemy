@@ -2,9 +2,7 @@
 
 pub mod cli;
 
-use late_runtime_data::{
-    read_late_runtime_catalog, ComponentKind, LateRuntimeCatalog, LateRuntimeComponent, TableKind,
-};
+use late_runtime_data::{read_late_runtime_catalog, ComponentKind, LateRuntimeCatalog, LateRuntimeComponent, TableKind};
 use serde_json::Value;
 use std::path::Path;
 
@@ -51,41 +49,22 @@ fn type_name(component: &LateRuntimeComponent) -> &'static str {
 fn component_bytes(value: &Value, component: &LateRuntimeComponent) -> Result<Vec<u8>> {
     let address_text = format!("0x{:08x}", component.address);
     let end_text = format!("0x{:08x}", component.end);
-    for (key, expected) in [
-        ("name", component.name.as_str()),
-        ("address", address_text.as_str()),
-        ("end", end_text.as_str()),
-        ("role", component.role.as_str()),
-        ("type", type_name(component)),
-    ] {
+    for (key, expected) in [("name", component.name.as_str()), ("address", address_text.as_str()), ("end", end_text.as_str()), ("role", component.role.as_str()), ("type", type_name(component))] {
         if text(field(value, key)?) != Some(expected) {
             return Err(format!("{} metadata differs", component.name));
         }
     }
     match text(field(value, "representation")?) {
         Some("uniform_fill") => {
-            let fill = field(value, "value")?
-                .as_i64()
-                .filter(|n| *n == 0 || *n == 255)
-                .ok_or_else(|| format!("{} fill differs", component.name))?;
+            let fill = field(value, "value")?.as_i64().filter(|n| *n == 0 || *n == 255).ok_or_else(|| format!("{} fill differs", component.name))?;
             Ok(vec![fill as u8; component.size()])
         }
         Some("byte_values") => {
-            let values =
-                field(value, "values")?.as_array().ok_or_else(|| format!("{} values differ", component.name))?;
+            let values = field(value, "values")?.as_array().ok_or_else(|| format!("{} values differ", component.name))?;
             if values.len() != component.size() {
                 return Err(format!("{} values differ", component.name));
             }
-            values
-                .iter()
-                .map(|value| {
-                    value
-                        .as_i64()
-                        .filter(|n| (0..=255).contains(n))
-                        .map(|n| n as u8)
-                        .ok_or_else(|| format!("{} value differs", component.name))
-                })
-                .collect()
+            values.iter().map(|value| value.as_i64().filter(|n| (0..=255).contains(n)).map(|n| n as u8).ok_or_else(|| format!("{} value differs", component.name))).collect()
         }
         _ => Err(format!("{} representation differs", component.name)),
     }
@@ -93,12 +72,8 @@ fn component_bytes(value: &Value, component: &LateRuntimeComponent) -> Result<Ve
 
 pub fn build_late_runtime_residual(index_path: &Path, catalog_path: &Path) -> Result<LateRuntimeResidualBuild> {
     let catalog: LateRuntimeCatalog = read_late_runtime_catalog(catalog_path)?;
-    let source: Value =
-        serde_json::from_slice(&std::fs::read(index_path).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?;
-    if field(&source, "format")?.as_i64() != Some(1)
-        || text(field(&source, "kind")?) != Some("golden-sun-late-runtime-residual")
-        || field(&source, "source_bytes")?.as_i64() != Some(SOURCE_BYTES)
-    {
+    let source: Value = serde_json::from_slice(&std::fs::read(index_path).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?;
+    if field(&source, "format")?.as_i64() != Some(1) || text(field(&source, "kind")?) != Some("golden-sun-late-runtime-residual") || field(&source, "source_bytes")?.as_i64() != Some(SOURCE_BYTES) {
         return Err("late residual source identity differs".into());
     }
     let regions = field(&source, "regions")?.as_array().ok_or("late residual regions differ")?;
@@ -107,10 +82,7 @@ pub fn build_late_runtime_residual(index_path: &Path, catalog_path: &Path) -> Re
     }
     let mut built = Regions::default();
     for (raw, range) in regions.iter().zip(&catalog.ranges) {
-        if text(field(raw, "name")?) != Some(range.name.as_str())
-            || address(field(raw, "address")?)? != range.address
-            || address(field(raw, "end")?)? != range.end
-        {
+        if text(field(raw, "name")?) != Some(range.name.as_str()) || address(field(raw, "address")?)? != range.address || address(field(raw, "end")?)? != range.end {
             return Err(format!("{} layout differs", range.name));
         }
         let components = field(raw, "components")?.as_array().ok_or("late residual components differ")?;

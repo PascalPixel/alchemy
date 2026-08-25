@@ -41,27 +41,15 @@ pub fn int_expr(number: &str) -> Expression {
 }
 
 pub fn int_expr_full(number: &str, base: IntegerBase, unsigned: bool) -> Expression {
-    Expression::Constant(Box::new(n(Constant::Integer(Integer {
-        base,
-        number: number.into(),
-        suffix: IntegerSuffix { size: IntegerSize::Int, unsigned, imaginary: false },
-    }))))
+    Expression::Constant(Box::new(n(Constant::Integer(Integer { base, number: number.into(), suffix: IntegerSuffix { size: IntegerSize::Int, unsigned, imaginary: false } }))))
 }
 
 pub fn float_expr(number: &str, single: bool) -> Expression {
-    Expression::Constant(Box::new(n(Constant::Float(Float {
-        base: FloatBase::Decimal,
-        number: number.into(),
-        suffix: FloatSuffix { format: if single { FloatFormat::Float } else { FloatFormat::Double }, imaginary: false },
-    }))))
+    Expression::Constant(Box::new(n(Constant::Float(Float { base: FloatBase::Decimal, number: number.into(), suffix: FloatSuffix { format: if single { FloatFormat::Float } else { FloatFormat::Double }, imaginary: false } }))))
 }
 
 pub fn binop(op: BinaryOperator, lhs: Expression, rhs: Expression) -> Expression {
-    Expression::BinaryOperator(Box::new(n(BinaryOperatorExpression {
-        operator: n(op),
-        lhs: Box::new(n(lhs)),
-        rhs: Box::new(n(rhs)),
-    })))
+    Expression::BinaryOperator(Box::new(n(BinaryOperatorExpression { operator: n(op), lhs: Box::new(n(lhs)), rhs: Box::new(n(rhs)) })))
 }
 
 pub fn unary(op: UnaryOperator, operand: Expression) -> Expression {
@@ -100,13 +88,7 @@ pub fn is_effectful(e: &Expression) -> bool {
     let mut found = false;
     for_each_expr(e, &mut |sub| match sub {
         Expression::UnaryOperator(u) => {
-            if matches!(
-                u.node.operator.node,
-                UnaryOperator::PostIncrement
-                    | UnaryOperator::PostDecrement
-                    | UnaryOperator::PreIncrement
-                    | UnaryOperator::PreDecrement
-            ) {
+            if matches!(u.node.operator.node, UnaryOperator::PostIncrement | UnaryOperator::PostDecrement | UnaryOperator::PreIncrement | UnaryOperator::PreDecrement) {
                 found = true;
             }
         }
@@ -223,12 +205,7 @@ fn walk_decl_exprs(d: &mut Node<Declaration>, f: &mut dyn FnMut(&mut Node<Expres
     }
 }
 
-fn walk_expr(
-    e: &mut Node<Expression>,
-    toplevel: bool,
-    lvalue: bool,
-    f: &mut dyn FnMut(&mut Node<Expression>, bool) -> bool,
-) {
+fn walk_expr(e: &mut Node<Expression>, toplevel: bool, lvalue: bool, f: &mut dyn FnMut(&mut Node<Expression>, bool) -> bool) {
     let is_expr = !toplevel && !lvalue;
     if f(e, is_expr) {
         return;
@@ -253,11 +230,7 @@ fn walk_expr(
         }
         Expression::Cast(c) => walk_expr(&mut c.node.expression, false, false, f),
         Expression::UnaryOperator(u) => match u.node.operator.node {
-            UnaryOperator::PostIncrement
-            | UnaryOperator::PostDecrement
-            | UnaryOperator::PreIncrement
-            | UnaryOperator::PreDecrement
-            | UnaryOperator::Address => walk_expr(&mut u.node.operand, false, true, f),
+            UnaryOperator::PostIncrement | UnaryOperator::PostDecrement | UnaryOperator::PreIncrement | UnaryOperator::PreDecrement | UnaryOperator::Address => walk_expr(&mut u.node.operand, false, true, f),
             _ => walk_expr(&mut u.node.operand, false, false, f),
         },
         Expression::Call(c) => {
@@ -384,11 +357,7 @@ fn scan_expr(e: &Node<Expression>, toplevel: bool, lvalue: bool, f: &mut dyn FnM
         }
         Expression::Cast(c) => scan_expr(&c.node.expression, false, false, f),
         Expression::UnaryOperator(u) => match u.node.operator.node {
-            UnaryOperator::PostIncrement
-            | UnaryOperator::PostDecrement
-            | UnaryOperator::PreIncrement
-            | UnaryOperator::PreDecrement
-            | UnaryOperator::Address => scan_expr(&u.node.operand, false, true, f),
+            UnaryOperator::PostIncrement | UnaryOperator::PostDecrement | UnaryOperator::PreIncrement | UnaryOperator::PreDecrement | UnaryOperator::Address => scan_expr(&u.node.operand, false, true, f),
             _ => scan_expr(&u.node.operand, false, false, f),
         },
         Expression::Call(c) => {
@@ -527,16 +496,7 @@ fn collect_nested<'a>(stmt: &'a Node<Statement>, out: &mut Vec<&'a Node<Statemen
 
 pub fn has_nested_block(item: &BlockItem) -> bool {
     match item {
-        BlockItem::Statement(s) => matches!(
-            &s.node,
-            Statement::Compound(_)
-                | Statement::For(_)
-                | Statement::While(_)
-                | Statement::DoWhile(_)
-                | Statement::If(_)
-                | Statement::Switch(_)
-                | Statement::Labeled(_)
-        ),
+        BlockItem::Statement(s) => matches!(&s.node, Statement::Compound(_) | Statement::For(_) | Statement::While(_) | Statement::DoWhile(_) | Statement::If(_) | Statement::Switch(_) | Statement::Labeled(_)),
         _ => false,
     }
 }
@@ -550,11 +510,7 @@ pub fn block_items(block: &Node<Statement>) -> &Vec<Node<BlockItem>> {
 
 /// Finds the compound statement with the given id and hands its item list
 /// to the callback. Returns None when the block was not found.
-pub fn with_block<R>(
-    root: &mut Node<Statement>,
-    target: Nid,
-    f: &mut dyn FnMut(&mut Vec<Node<BlockItem>>) -> R,
-) -> Option<R> {
+pub fn with_block<R>(root: &mut Node<Statement>, target: Nid, f: &mut dyn FnMut(&mut Vec<Node<BlockItem>>) -> R) -> Option<R> {
     let root_id = nid(root);
     if let Statement::Compound(items) = &mut root.node {
         if root_id == target {
@@ -635,14 +591,7 @@ pub struct InsPoint {
 fn stmt_info(item: &Node<BlockItem>) -> StmtInfo {
     let (is_decl, decl) = match &item.node {
         BlockItem::Declaration(d) => {
-            let names: Vec<String> = d
-                .node
-                .declarators
-                .iter()
-                .filter_map(|i| {
-                    crate::asttypes::apply_declarator(crate::asttypes::CType::int(), &i.node.declarator.node).1
-                })
-                .collect();
+            let names: Vec<String> = d.node.declarators.iter().filter_map(|i| crate::asttypes::apply_declarator(crate::asttypes::CType::int(), &i.node.declarator.node).1).collect();
             let single = if d.node.declarators.len() == 1 && names.len() == 1 {
                 let init = &d.node.declarators[0].node.initializer;
                 let ok_init = matches!(
@@ -664,14 +613,7 @@ fn stmt_info(item: &Node<BlockItem>) -> StmtInfo {
             Statement::Break | Statement::Continue | Statement::Return(_) | Statement::Goto(_)
         )
     );
-    StmtInfo {
-        id: item_nid(item),
-        start: item_nid(item).0,
-        is_decl,
-        has_nested_block: has_nested_block(&item.node),
-        is_jump,
-        decl,
-    }
+    StmtInfo { id: item_nid(item), start: item_nid(item).0, is_decl, has_nested_block: has_nested_block(&item.node), is_jump, decl }
 }
 
 pub fn item_nid(item: &Node<BlockItem>) -> Nid {
@@ -741,9 +683,7 @@ fn collect_writes(stmt: &Node<Statement>, add: &mut dyn FnMut(&str, usize)) {
     // Declarations.
     fn decl_writes(d: &Node<Declaration>, add: &mut dyn FnMut(&str, usize)) {
         for init in &d.node.declarators {
-            if let (_, Some(name)) =
-                crate::asttypes::apply_declarator(crate::asttypes::CType::int(), &init.node.declarator.node)
-            {
+            if let (_, Some(name)) = crate::asttypes::apply_declarator(crate::asttypes::CType::int(), &init.node.declarator.node) {
                 add(&name, d.span.start);
             }
             if let Some(i) = &init.node.initializer {
@@ -757,13 +697,7 @@ fn collect_writes(stmt: &Node<Statement>, add: &mut dyn FnMut(&str, usize)) {
         let start = e.span.start;
         match &e.node {
             Expression::UnaryOperator(u) => {
-                if matches!(
-                    u.node.operator.node,
-                    UnaryOperator::PostIncrement
-                        | UnaryOperator::PostDecrement
-                        | UnaryOperator::PreIncrement
-                        | UnaryOperator::PreDecrement
-                ) {
+                if matches!(u.node.operator.node, UnaryOperator::PostIncrement | UnaryOperator::PostDecrement | UnaryOperator::PreIncrement | UnaryOperator::PreDecrement) {
                     if let Expression::Identifier(id) = &u.node.operand.node {
                         add(&id.node.name, start);
                     }
@@ -939,9 +873,7 @@ fn reads_expr(e: &Node<Expression>, out: &mut Vec<(String, usize)>) {
     match &e.node {
         Expression::Identifier(id) => out.push((id.node.name.clone(), e.span.start)),
         Expression::UnaryOperator(u) => {
-            if matches!(u.node.operator.node, UnaryOperator::Address)
-                && matches!(&u.node.operand.node, Expression::Identifier(_))
-            {
+            if matches!(u.node.operator.node, UnaryOperator::Address) && matches!(&u.node.operand.node, Expression::Identifier(_)) {
                 return;
             }
             reads_expr(&u.node.operand, out);
@@ -949,9 +881,7 @@ fn reads_expr(e: &Node<Expression>, out: &mut Vec<(String, usize)>) {
         Expression::Member(m) => reads_expr(&m.node.expression, out),
         Expression::BinaryOperator(b) => {
             if is_assign_op(&b.node.operator.node) {
-                if b.node.operator.node != BinaryOperator::Assign
-                    || !matches!(&b.node.lhs.node, Expression::Identifier(_))
-                {
+                if b.node.operator.node != BinaryOperator::Assign || !matches!(&b.node.lhs.node, Expression::Identifier(_)) {
                     reads_expr(&b.node.lhs, out);
                 }
                 reads_expr(&b.node.rhs, out);
@@ -1033,20 +963,13 @@ pub fn make_decl(name: &str, t: &crate::asttypes::CType) -> Option<Node<Declarat
             if tag.is_empty() {
                 return None;
             }
-            specifiers.push(n(DeclarationSpecifier::TypeSpecifier(n(TypeSpecifier::Struct(n(StructType {
-                kind: n(if *is_union { StructKind::Union } else { StructKind::Struct }),
-                identifier: Some(n(Identifier { name: tag.clone() })),
-                declarations: None,
-            }))))));
+            specifiers.push(n(DeclarationSpecifier::TypeSpecifier(n(TypeSpecifier::Struct(n(StructType { kind: n(if *is_union { StructKind::Union } else { StructKind::Struct }), identifier: Some(n(Identifier { name: tag.clone() })), declarations: None }))))));
         }
         CType::Enum(tag) => {
             if tag.is_empty() {
                 return None;
             }
-            specifiers.push(n(DeclarationSpecifier::TypeSpecifier(n(TypeSpecifier::Enum(n(EnumType {
-                identifier: Some(n(Identifier { name: tag.clone() })),
-                enumerators: Vec::new(),
-            }))))));
+            specifiers.push(n(DeclarationSpecifier::TypeSpecifier(n(TypeSpecifier::Enum(n(EnumType { identifier: Some(n(Identifier { name: tag.clone() })), enumerators: Vec::new() }))))));
         }
         _ => return None,
     }
@@ -1054,13 +977,6 @@ pub fn make_decl(name: &str, t: &crate::asttypes::CType) -> Option<Node<Declarat
     for _ in 0..ptrs {
         derived.push(n(DerivedDeclarator::Pointer(Vec::new())));
     }
-    let declarator = Declarator {
-        kind: n(DeclaratorKind::Identifier(n(Identifier { name: name.to_string() }))),
-        derived,
-        extensions: Vec::new(),
-    };
-    Some(n(Declaration {
-        specifiers,
-        declarators: vec![n(InitDeclarator { declarator: n(declarator), initializer: None })],
-    }))
+    let declarator = Declarator { kind: n(DeclaratorKind::Identifier(n(Identifier { name: name.to_string() }))), derived, extensions: Vec::new() };
+    Some(n(Declaration { specifiers, declarators: vec![n(InitDeclarator { declarator: n(declarator), initializer: None })] }))
 }

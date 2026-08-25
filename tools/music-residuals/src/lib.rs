@@ -89,15 +89,8 @@ fn validate_index(index_path: &Path) -> Result<PathBuf> {
     if value != fixed_index() {
         return Err("music residual index differs from the audited catalog".into());
     }
-    let prefix = index_path
-        .file_name()
-        .and_then(|name| name.to_str())
-        .and_then(|name| name.strip_suffix("index.json"))
-        .ok_or_else(|| "music residual index name is invalid".to_string())?;
-    let source = index_path
-        .parent()
-        .unwrap_or_else(|| Path::new("."))
-        .join(format!("{prefix}orphan_stream_after_item_break.json"));
+    let prefix = index_path.file_name().and_then(|name| name.to_str()).and_then(|name| name.strip_suffix("index.json")).ok_or_else(|| "music residual index name is invalid".to_string())?;
+    let source = index_path.parent().unwrap_or_else(|| Path::new(".")).join(format!("{prefix}orphan_stream_after_item_break.json"));
     let (_, orphan_stream) = read_json(&source, "reserve sound stream")?;
     if orphan_stream != fixed_orphan_stream() {
         return Err("reserve sound stream differs from the audited events".into());
@@ -114,13 +107,7 @@ fn header(address: u32, priority: u8, reverb: u8, tone_bank: u32) -> BuiltMusicR
 pub fn build_music_residuals(index_path: &Path) -> Result<Vec<BuiltMusicResidual>> {
     validate_index(index_path)?;
     let (orphan_stream, report) = build_reserve_sequence(ORPHAN_STREAM_ADDRESS);
-    if report.base != ORPHAN_STREAM_ADDRESS
-        || report.bytes != 18
-        || report.streams != 1
-        || report.tracks != 0
-        || report.events != 11
-        || orphan_stream.len() != 18
-    {
+    if report.base != ORPHAN_STREAM_ADDRESS || report.bytes != 18 || report.streams != 1 || report.tracks != 0 || report.events != 11 || orphan_stream.len() != 18 {
         return Err("reserve sound stream has an unexpected report".into());
     }
     let mut regions = vec![
@@ -147,14 +134,7 @@ fn read_u32(rom: &[u8], offset: usize) -> Result<u32> {
 }
 
 fn verify_sound_table_links(rom: &[u8]) -> Result<()> {
-    for (sound, header) in [
-        (19u32, 0x0816_52d8),
-        (95, 0x0818_10b8),
-        (138, ORPHAN_STREAM_ADDRESS - 12),
-        (139, 0x0818_19d4),
-        (288, 0x0818_41f8),
-        (298, 0x0818_4358),
-    ] {
+    for (sound, header) in [(19u32, 0x0816_52d8), (95, 0x0818_10b8), (138, ORPHAN_STREAM_ADDRESS - 12), (139, 0x0818_19d4), (288, 0x0818_41f8), (298, 0x0818_4358)] {
         let offset = (SOUND_TABLE_ADDRESS - ROM_BASE + sound * 8) as usize;
         if read_u32(rom, offset)? != header {
             return Err(format!("sound-table entry {sound} does not select its residual header"));
@@ -177,11 +157,8 @@ fn verify_sound_table_links(rom: &[u8]) -> Result<()> {
 fn verify_regions(rom: &[u8], regions: &[BuiltMusicResidual]) -> Result<usize> {
     let mut bytes = 0;
     for region in regions {
-        let start =
-            region.address.checked_sub(ROM_BASE).ok_or_else(|| "music residual address is below ROM".to_string())?
-                as usize;
-        let original =
-            rom.get(start..start + region.data.len()).ok_or_else(|| "music residual lies outside ROM".to_string())?;
+        let start = region.address.checked_sub(ROM_BASE).ok_or_else(|| "music residual address is below ROM".to_string())? as usize;
+        let original = rom.get(start..start + region.data.len()).ok_or_else(|| "music residual lies outside ROM".to_string())?;
         if original != region.data.as_slice() {
             return Err(format!("music residual at 0x{:x} differs from ROM", region.address));
         }
@@ -202,10 +179,7 @@ pub fn verify_music_residuals(rom_path: &Path, index_path: &Path) -> Result<Stri
 
 pub fn self_test() -> Result<()> {
     let (bytes, report) = build_reserve_sequence(ORPHAN_STREAM_ADDRESS);
-    if bytes.len() != 18
-        || report.events != 11
-        || bytes != vec![0xbe, 120, 0xbc, 0, 0xbb, 30, 0xbd, 21, 0xd0, 61, 127, 0x81, 66, 0x81, 0xee, 69, 0xa0, 0xb1]
-    {
+    if bytes.len() != 18 || report.events != 11 || bytes != vec![0xbe, 120, 0xbc, 0, 0xbb, 30, 0xbd, 21, 0xd0, 61, 127, 0x81, 66, 0x81, 0xee, 69, 0xa0, 0xb1] {
         return Err("reserve sound stream self-test failed".into());
     }
     if ALIGNMENT_END - ALIGNMENT_ADDRESS != 0x968 {
@@ -215,9 +189,5 @@ pub fn self_test() -> Result<()> {
 }
 
 pub fn build_region(index_path: &Path, address: u32) -> Result<Vec<u8>> {
-    build_music_residuals(index_path)?
-        .into_iter()
-        .find(|region| region.address == address)
-        .map(|region| region.data)
-        .ok_or_else(|| format!("music residual address 0x{address:x} is not a produced region"))
+    build_music_residuals(index_path)?.into_iter().find(|region| region.address == address).map(|region| region.data).ok_or_else(|| format!("music residual address 0x{address:x} is not a produced region"))
 }

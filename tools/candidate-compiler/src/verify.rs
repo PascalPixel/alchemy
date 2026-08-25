@@ -9,9 +9,7 @@ use std::path::Path;
 use std::process::Command;
 
 use compiler_core::nodepath::{basename, extname};
-use compiler_core::plan::{
-    source_to_assembly_plan, CompilerFamily, CompilerFlagMutations, SourceToAssemblyPlanOptions,
-};
+use compiler_core::plan::{source_to_assembly_plan, CompilerFamily, CompilerFlagMutations, SourceToAssemblyPlanOptions};
 use compiler_core::routing::{root, CompilerTarget};
 use compiler_core::{external_symbol, external_symbol_assembly, CALL_VIA_BASE};
 
@@ -133,39 +131,15 @@ pub fn js_subarray(data: &[u8], begin: f64, end: f64) -> Vec<u8> {
 
 /// `verifyCandidate(source, rom, outputDirectory, extraCompilerFlags, imageBase,
 /// compiler, configuration)`.
-pub fn verify_candidate(
-    source: &str,
-    rom: &[u8],
-    output_directory: &str,
-    extra_compiler_flags: &[String],
-    image_base: f64,
-    compiler: CompilerTarget,
-    configuration: &CandidateCompilerConfiguration,
-) -> Result<Verification, String> {
-    verify_candidate_routed(
-        source,
-        source,
-        rom,
-        output_directory,
-        extra_compiler_flags,
-        image_base,
-        compiler,
-        configuration,
-    )
+pub fn verify_candidate(source: &str, rom: &[u8], output_directory: &str, extra_compiler_flags: &[String], image_base: f64, compiler: CompilerTarget, configuration: &CandidateCompilerConfiguration) -> Result<Verification, String> {
+    verify_candidate_routed(source, source, rom, output_directory, extra_compiler_flags, image_base, compiler, configuration)
 }
 
 /// gcc `-S` only: same flags as [`verify_candidate_routed`], no assembler,
 /// linker, or ROM. The confirmation loop that git-diffs `.s` files needs this
 /// and nothing else -- linking the owner is what turned a 30 ms compile into
 /// half a second.
-pub fn compile_to_assembly(
-    source: &str,
-    routing_source: &str,
-    output_directory: &str,
-    extra_compiler_flags: &[String],
-    compiler: CompilerTarget,
-    configuration: &CandidateCompilerConfiguration,
-) -> Result<String, String> {
+pub fn compile_to_assembly(source: &str, routing_source: &str, output_directory: &str, extra_compiler_flags: &[String], compiler: CompilerTarget, configuration: &CandidateCompilerConfiguration) -> Result<String, String> {
     let stem = source_stem(source);
     std::fs::create_dir_all(output_directory).map_err(|error| format!("{output_directory}: {error}"))?;
     let assembly = Path::new(output_directory).join(format!("{stem}.s")).to_string_lossy().into_owned();
@@ -190,28 +164,9 @@ pub fn compile_to_assembly(
 /// repository path is required by parallel search tools; otherwise every
 /// temporary file silently falls back to the default compiler route.
 #[allow(clippy::too_many_arguments)]
-pub fn verify_candidate_routed(
-    source: &str,
-    routing_source: &str,
-    rom: &[u8],
-    output_directory: &str,
-    extra_compiler_flags: &[String],
-    image_base: f64,
-    compiler: CompilerTarget,
-    configuration: &CandidateCompilerConfiguration,
-) -> Result<Verification, String> {
+pub fn verify_candidate_routed(source: &str, routing_source: &str, rom: &[u8], output_directory: &str, extra_compiler_flags: &[String], image_base: f64, compiler: CompilerTarget, configuration: &CandidateCompilerConfiguration) -> Result<Verification, String> {
     let stem = source_stem(source);
-    verify_candidate_owned_routed(
-        source,
-        routing_source,
-        &stem,
-        rom,
-        output_directory,
-        extra_compiler_flags,
-        image_base,
-        compiler,
-        configuration,
-    )
+    verify_candidate_owned_routed(source, routing_source, &stem, rom, output_directory, extra_compiler_flags, image_base, compiler, configuration)
 }
 
 /// Compile a source whose descriptive filename no longer encodes its owner.
@@ -220,20 +175,11 @@ pub fn verify_candidate_routed(
 /// source path remains untouched so source-relative includes keep working;
 /// `routing_source` remains the stable owner identity used by compiler tables.
 #[allow(clippy::too_many_arguments)]
-pub fn verify_candidate_owned_routed(
-    source: &str,
-    routing_source: &str,
-    owner_stem: &str,
-    rom: &[u8],
-    output_directory: &str,
-    extra_compiler_flags: &[String],
-    image_base: f64,
-    compiler: CompilerTarget,
-    configuration: &CandidateCompilerConfiguration,
-) -> Result<Verification, String> {
+pub fn verify_candidate_owned_routed(source: &str, routing_source: &str, owner_stem: &str, rom: &[u8], output_directory: &str, extra_compiler_flags: &[String], image_base: f64, compiler: CompilerTarget, configuration: &CandidateCompilerConfiguration) -> Result<Verification, String> {
     let stem = owner_stem.to_string();
     let address = parse_hex(&stem)?;
-    let symbol = format!("Func_{}", hex8(address));
+    let canonical_symbol = format!("Func_{}", hex8(address));
+    let short_symbol = format!("Func_{}", hex8(address).trim_start_matches('0'));
 
     let out = Path::new(output_directory);
     let path = |suffix: &str| out.join(format!("{stem}{suffix}")).to_string_lossy().into_owned();
@@ -260,6 +206,25 @@ pub fn verify_candidate_owned_routed(
     }
     run(&argv(&["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", &object, &assembly]), cwd)?;
 
+    // GCC 2.96 keeps observable state across functions, so some owners need
+    // their original translation-unit context. Link the section so the
+    // requested symbol, rather than the start of .text, lands at its address.
+    let object_symbols = run(&argv(&["arm-none-eabi-nm", "-S", &object]), cwd)?;
+    let object_rows = js_split_lines(&object_symbols);
+    let symbol = [&canonical_symbol, &short_symbol].into_iter().find(|candidate| object_rows.iter().any(|line| line.ends_with(&format!(" {candidate}")))).ok_or_else(|| format!("missing object symbol: {canonical_symbol}"))?;
+    let object_needle = format!(" {symbol}");
+    let object_row = object_rows.into_iter().find(|line| line.ends_with(&object_needle)).ok_or_else(|| format!("missing object symbol: {symbol}"))?;
+    let object_fields = js_split_whitespace_runs(js_trim(object_row));
+    let owner_section_offset = parse_hex(object_fields.first().ok_or("missing object symbol address")?)?;
+    let owner_size = parse_hex(object_fields.get(1).ok_or("missing object symbol size")?)?;
+    let link_address = address - owner_section_offset;
+    if link_address < 0.0 {
+        return Err(format!("owner symbol offset exceeds link address: {symbol}"));
+    }
+    let owner_offset = usize::try_from(exact_u64(owner_section_offset, "owner object offset")?).map_err(|_| "owner object offset is too large")?;
+    let owner_size = usize::try_from(exact_u64(owner_size, "owner object size")?).map_err(|_| "owner object size is too large")?;
+    let owner_relocations = object_relocations(&object, owner_offset, owner_size)?;
+
     // A `Vec`, not a `Set`. `nm -u` can list the same undefined symbol twice
     // and the TypeScript pushes both, emitting a duplicate `.global`/`.thumb_set`
     // pair. Deduplicating here would change the generated assembly.
@@ -274,6 +239,11 @@ pub fn verify_candidate_owned_routed(
         let fields = js_split_whitespace_runs(js_trim(line));
         // `.at(-1)!` -- the array is never empty, so this cannot be undefined.
         let external = *fields.last().expect("split always yields one field");
+        // Grouped translation units can contain unrelated imports belonging
+        // only to neighboring functions. They cannot affect this owner.
+        if !owner_relocations.contains_key(external) {
+            continue;
+        }
         if !configuration.reference_symbols && external_symbol(external, CALL_VIA_BASE).is_none() {
             return Err(format!("unsupported external symbol: {external}"));
         }
@@ -282,10 +252,9 @@ pub fn verify_candidate_owned_routed(
 
     let mut symbols_text = String::from(".syntax unified\n.thumb\n");
     if configuration.reference_symbols {
-        let resolved = derive_reference_symbols(&object, &symbol, &names, rom, address, image_base)?;
+        let resolved = derive_reference_symbols(&object, symbol, owner_size, &names, rom, address, image_base)?;
         for name in &names {
-            let symbol =
-                resolved.get(name).ok_or_else(|| format!("no reference relocation for external symbol: {name}"))?;
+            let symbol = resolved.get(name).ok_or_else(|| format!("no reference relocation for external symbol: {name}"))?;
             let directive = if symbol.thumb { ".thumb_set" } else { ".set" };
             symbols_text.push_str(&format!(".global {name}\n{directive} {name}, 0x{:08x}\n", symbol.address));
         }
@@ -295,40 +264,24 @@ pub fn verify_candidate_owned_routed(
         }
     }
     write(&symbols_source, symbols_text.as_bytes())?;
-    run(
-        &argv(&["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", &symbols_object, &symbols_source]),
-        cwd,
-    )?;
-    run(
-        &argv(&[
-            "arm-none-eabi-ld",
-            &format!("-Ttext=0x{}", hex8(address)),
-            "-e",
-            &symbol,
-            "-o",
-            &elf,
-            &object,
-            &symbols_object,
-        ]),
-        cwd,
-    )?;
+    run(&argv(&["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", &symbols_object, &symbols_source]), cwd)?;
+    run(&argv(&["arm-none-eabi-ld", "--unresolved-symbols=ignore-all", &format!("-Ttext=0x{}", hex8(link_address)), "-e", symbol, "-o", &elf, &object, &symbols_object]), cwd)?;
     run(&argv(&["arm-none-eabi-objcopy", "-O", "binary", "-j", ".text", &elf, &binary]), cwd)?;
 
     let symbols = run(&argv(&["arm-none-eabi-nm", "-S", &elf]), cwd)?;
     let needle = format!(" {symbol}");
-    let row = js_split_lines(&symbols)
-        .into_iter()
-        .find(|line| line.ends_with(&needle))
-        .ok_or_else(|| format!("missing linked symbol: {symbol}"))?;
+    let row = js_split_lines(&symbols).into_iter().find(|line| line.ends_with(&needle)).ok_or_else(|| format!("missing linked symbol: {symbol}"))?;
     let fields = js_split_whitespace_runs(js_trim(row));
     // Thumb/COFF assembly from stock GCC 2.95.1 has no ELF `.size` directive,
     // so nm reports `address T symbol` instead of `address size T symbol`.
-    // Candidate translation units contain one text region; in that case the
-    // linked binary's complete .text extent is the function extent.
+    // A compiler without `.size` still requires a single-function candidate;
+    // GCC 2.96 emits the size needed to extract one owner from a grouped TU.
     let binary_bytes = std::fs::read(&binary).map_err(|error| format!("{binary}: {error}"))?;
     let size = if fields.len() >= 4 { parse_hex(fields[1])? } else { binary_bytes.len() as f64 };
+    let linked_symbol_address = parse_hex(fields.first().ok_or("missing linked symbol address")?)?;
+    let binary_offset = linked_symbol_address - link_address;
 
-    let actual = js_subarray(&binary_bytes, 0.0, size);
+    let actual = js_subarray(&binary_bytes, binary_offset, binary_offset + size);
     let offset = address - image_base;
     let expected = js_subarray(rom, offset, offset + size);
     Ok(Verification { actual, expected, size })
@@ -346,20 +299,13 @@ struct ReferenceRelocation {
     kind: String,
 }
 
-fn derive_reference_symbols(
-    object: &str,
-    owner_symbol: &str,
-    names: &[String],
-    rom: &[u8],
-    address: f64,
-    image_base: f64,
-) -> Result<BTreeMap<String, ResolvedSymbol>, String> {
+fn derive_reference_symbols(object: &str, owner_symbol: &str, owner_size: usize, names: &[String], rom: &[u8], address: f64, image_base: f64) -> Result<BTreeMap<String, ResolvedSymbol>, String> {
     let address = exact_u64(address, "owner address")?;
     let image_base = exact_u64(image_base, "image base")?;
     let rom_start = address.checked_sub(image_base).ok_or("owner address precedes image base")?;
     let rom_start = usize::try_from(rom_start).map_err(|_| "ROM offset is too large")?;
     let owner_offset = object_symbol_offset(object, owner_symbol)?;
-    let relocations = object_relocations(object, owner_offset)?;
+    let relocations = object_relocations(object, owner_offset, owner_size)?;
 
     let object_text_path = format!("{object}.text.bin");
     run(&argv(&["arm-none-eabi-objcopy", "-O", "binary", "-j", ".text", object, &object_text_path]), root())?;
@@ -367,14 +313,9 @@ fn derive_reference_symbols(
 
     let mut resolved = BTreeMap::new();
     for name in names {
-        let sites =
-            relocations.get(name).ok_or_else(|| format!("no reference relocation for external symbol: {name}"))?;
+        let sites = relocations.get(name).ok_or_else(|| format!("no reference relocation for external symbol: {name}"))?;
         let known = external_symbol(name, CALL_VIA_BASE);
-        let thumb =
-            known.map(|symbol| symbol.thumb).unwrap_or_else(|| sites.iter().all(|site| site.kind == "R_ARM_THM_CALL"));
-        if known.is_none() && sites.iter().any(|site| site.kind != "R_ARM_THM_CALL") {
-            return Err(format!("cannot infer code/data type for reference symbol {name}"));
-        }
+        let thumb = known.map(|symbol| symbol.thumb).unwrap_or_else(|| sites.iter().any(|site| site.kind == "R_ARM_THM_CALL"));
 
         let mut value = None;
         for site in sites {
@@ -400,10 +341,7 @@ fn derive_reference_symbols(
                 value = Some(site_value);
             }
         }
-        resolved.insert(
-            name.clone(),
-            ResolvedSymbol { address: value.ok_or_else(|| format!("no reference relocation for {name}"))?, thumb },
-        );
+        resolved.insert(name.clone(), ResolvedSymbol { address: value.ok_or_else(|| format!("no reference relocation for {name}"))?, thumb });
     }
     Ok(resolved)
 }
@@ -421,14 +359,13 @@ fn object_symbol_offset(object: &str, owner_symbol: &str) -> Result<usize, Strin
         let fields = js_split_whitespace_runs(js_trim(line));
         if fields.len() >= 3 && fields.last() == Some(&owner_symbol) {
             let address = parse_hex(fields[0])?;
-            return usize::try_from(exact_u64(address, "owner object offset")?)
-                .map_err(|_| "owner object offset is too large".into());
+            return usize::try_from(exact_u64(address, "owner object offset")?).map_err(|_| "owner object offset is too large".into());
         }
     }
     Err(format!("missing object symbol: {owner_symbol}"))
 }
 
-fn object_relocations(object: &str, owner_offset: usize) -> Result<BTreeMap<String, Vec<ReferenceRelocation>>, String> {
+fn object_relocations(object: &str, owner_offset: usize, owner_size: usize) -> Result<BTreeMap<String, Vec<ReferenceRelocation>>, String> {
     let output = run(&argv(&["arm-none-eabi-objdump", "-r", object]), root())?;
     let mut relocations = BTreeMap::<String, Vec<ReferenceRelocation>>::new();
     for line in js_split_lines(&output) {
@@ -436,31 +373,26 @@ fn object_relocations(object: &str, owner_offset: usize) -> Result<BTreeMap<Stri
         if fields.len() < 3 || !fields[1].starts_with("R_ARM_") {
             continue;
         }
-        let raw_offset = usize::from_str_radix(fields[0], 16)
-            .map_err(|error| format!("invalid relocation offset {}: {error}", fields[0]))?;
+        let raw_offset = usize::from_str_radix(fields[0], 16).map_err(|error| format!("invalid relocation offset {}: {error}", fields[0]))?;
         let Some(offset) = raw_offset.checked_sub(owner_offset) else {
             continue;
         };
+        if offset >= owner_size {
+            continue;
+        }
         let symbol = fields[2].split('+').next().unwrap_or(fields[2]);
-        relocations
-            .entry(symbol.to_string())
-            .or_default()
-            .push(ReferenceRelocation { offset, kind: fields[1].to_string() });
+        relocations.entry(symbol.to_string()).or_default().push(ReferenceRelocation { offset, kind: fields[1].to_string() });
     }
     Ok(relocations)
 }
 
 fn read_word(data: &[u8], offset: usize, symbol: &str, label: &str) -> Result<u32, String> {
-    let bytes = data
-        .get(offset..offset + 4)
-        .ok_or_else(|| format!("{label} relocation for {symbol} extends past its image"))?;
+    let bytes = data.get(offset..offset + 4).ok_or_else(|| format!("{label} relocation for {symbol} extends past its image"))?;
     Ok(u32::from_le_bytes(bytes.try_into().expect("four-byte slice")))
 }
 
 fn thumb_bl_target(rom: &[u8], rom_start: usize, address: u64, offset: usize) -> Result<u64, String> {
-    let bytes = rom
-        .get(rom_start + offset..rom_start + offset + 4)
-        .ok_or_else(|| format!("call at 0x{offset:x} extends past the reference image"))?;
+    let bytes = rom.get(rom_start + offset..rom_start + offset + 4).ok_or_else(|| format!("call at 0x{offset:x} extends past the reference image"))?;
     let high = u16::from_le_bytes([bytes[0], bytes[1]]);
     let low = u16::from_le_bytes([bytes[2], bytes[3]]);
     if high & 0xf800 != 0xf000 || low & 0xf800 != 0xf800 {

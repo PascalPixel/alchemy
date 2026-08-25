@@ -59,10 +59,7 @@ fn decode_hex(value: &str) -> Result<Vec<u8>> {
     if value.len() % 2 != 0 || !value.bytes().all(|b| b.is_ascii_hexdigit()) {
         return Err("invalid kind-2 lookahead".into());
     }
-    (0..value.len())
-        .step_by(2)
-        .map(|i| u8::from_str_radix(&value[i..i + 2], 16).map_err(|_| err("invalid kind-2 lookahead")))
-        .collect()
+    (0..value.len()).step_by(2).map(|i| u8::from_str_radix(&value[i..i + 2], 16).map_err(|_| err("invalid kind-2 lookahead"))).collect()
 }
 fn child(root: &Path, name: &str) -> Result<PathBuf> {
     if name.contains('/') || name.contains('\\') || name == "." || name == ".." {
@@ -229,10 +226,7 @@ fn parse_tokens(value: &Value) -> Result<Vec<Token>> {
             if pair.len() != 2 {
                 return Err(format!("invalid tag-2 token {index}"));
             }
-            Ok(Token::Copy {
-                distance: number(&pair[0], "tag-2 copy distance")?,
-                length: number(&pair[1], "tag-2 copy length")?,
-            })
+            Ok(Token::Copy { distance: number(&pair[0], "tag-2 copy distance")?, length: number(&pair[1], "tag-2 copy length")? })
         })
         .collect()
 }
@@ -240,9 +234,7 @@ fn parse_tokens(value: &Value) -> Result<Vec<Token>> {
 fn parse_encoding_plan(path: &Path) -> Result<(usize, Vec<Token>, Vec<u8>, Option<usize>)> {
     let value = json(path)?;
     let plan = object(&value, "kind-2 encoding plan")?;
-    if number(field(plan, "format")?, "format")? != 1
-        || string(field(plan, "codec")?, "codec")? != "golden-sun-kind2-lz"
-    {
+    if number(field(plan, "format")?, "format")? != 1 || string(field(plan, "codec")?, "codec")? != "golden-sun-kind2-lz" {
         return Err("unsupported tag-2 plan".into());
     }
     let decoded_size = number(field(plan, "decoded_size")?, "decoded_size")?;
@@ -296,29 +288,13 @@ fn parse_plan(path: &Path) -> Result<Plan> {
     let decoded_size = parse_hex(&string(field(stream, "decoded_size")?, "decoded_size")?, "decoded_size")?;
     let lookahead = decode_hex(&string(field(stream, "lookahead")?, "lookahead")?)?;
     let (prefix, palette_image) = match plan.get("prefix_palette") {
-        Some(Value::Object(value)) => (
-            parse_hex(&string(field(value, "size")?, "palette size")?, "palette size")?,
-            Some(string(field(value, "source")?, "palette source")?),
-        ),
+        Some(Value::Object(value)) => (parse_hex(&string(field(value, "size")?, "palette size")?, "palette size")?, Some(string(field(value, "source")?, "palette source")?)),
         _ => (0, None),
     };
     if encoded_size != size.saturating_sub(prefix) || lookahead.len() > 3 {
         return Err("kind-2 stream extent is invalid".into());
     }
-    Ok(Plan {
-        id,
-        address,
-        size,
-        encoding,
-        image: image_name,
-        status,
-        tokens: parse_tokens(field(stream, "tokens")?)?,
-        decoded_size,
-        encoded_size,
-        lookahead,
-        prefix,
-        palette_image,
-    })
+    Ok(Plan { id, address, size, encoding, image: image_name, status, tokens: parse_tokens(field(stream, "tokens")?)?, decoded_size, encoded_size, lookahead, prefix, palette_image })
 }
 
 pub fn build_kind2_resource(plan_path: &Path) -> Result<BuiltResource> {
@@ -340,8 +316,7 @@ pub fn build_kind2_resource(plan_path: &Path) -> Result<BuiltResource> {
         return Err("kind-2 image has nonzero data outside its decoded stream".into());
     }
     let palette_path = plan.palette_image.as_deref().map(|name| child(directory, name)).transpose()?;
-    let prefix =
-        if let Some(path) = &palette_path { gba_palette_rgba(&read(path)?).map_err(|e| e.0)?.0 } else { Vec::new() };
+    let prefix = if let Some(path) = &palette_path { gba_palette_rgba(&read(path)?).map_err(|e| e.0)?.0 } else { Vec::new() };
     if prefix.len() != plan.prefix {
         return Err("kind-2 palette source has the wrong size".into());
     }
@@ -358,14 +333,7 @@ pub fn build_kind2_resource(plan_path: &Path) -> Result<BuiltResource> {
     if let Some(path) = palette_path {
         sources.push(path);
     }
-    Ok(BuiltResource {
-        id: plan.id,
-        address: plan.address,
-        data,
-        prefix_palette_size: prefix.len(),
-        presentation_status: plan.status,
-        sources,
-    })
+    Ok(BuiltResource { id: plan.id, address: plan.address, data, prefix_palette_size: prefix.len(), presentation_status: plan.status, sources })
 }
 
 pub fn build_kind2_series(index_path: &Path) -> Result<Vec<BuiltResource>> {
@@ -375,8 +343,7 @@ pub fn build_kind2_series(index_path: &Path) -> Result<Vec<BuiltResource>> {
         return Err("unsupported kind-2 series index".into());
     }
     let directory = index_path.parent().ok_or_else(|| err("kind-2 index has no parent"))?;
-    let entries =
-        field(index, "resources")?.as_array().ok_or_else(|| err("kind-2 index resources must be an array"))?;
+    let entries = field(index, "resources")?.as_array().ok_or_else(|| err("kind-2 index resources must be an array"))?;
     entries
         .iter()
         .map(|entry| {
@@ -395,11 +362,7 @@ pub fn build_kind2_series(index_path: &Path) -> Result<Vec<BuiltResource>> {
 }
 
 fn range(rom: &[u8], address: usize, size: usize) -> Result<&[u8]> {
-    rom.get(
-        address.checked_sub(ROM_BASE).ok_or_else(|| err("kind-2 range is outside the ROM"))?
-            ..address.checked_sub(ROM_BASE).unwrap() + size,
-    )
-    .ok_or_else(|| err("kind-2 range is outside the ROM"))
+    rom.get(address.checked_sub(ROM_BASE).ok_or_else(|| err("kind-2 range is outside the ROM"))?..address.checked_sub(ROM_BASE).unwrap() + size).ok_or_else(|| err("kind-2 range is outside the ROM"))
 }
 pub fn verify_kind2_series(rom_path: &Path, index_path: &Path) -> Result<String> {
     let rom = read(rom_path)?;

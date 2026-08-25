@@ -8,8 +8,7 @@ use std::path::{Path, PathBuf};
 use tempfile::tempdir;
 fn resolve(root: &Path, target: &str) -> Result<(String, i64), String> {
     if let Some((overlay, address)) = target.split_once(':') {
-        let address = i64::from_str_radix(address.trim_start_matches("0x"), 16)
-            .map_err(|_| format!("{target}: address must be hexadecimal"))?;
+        let address = i64::from_str_radix(address.trim_start_matches("0x"), 16).map_err(|_| format!("{target}: address must be hexadecimal"))?;
         let address = if address < OVERLAY_BASE { address + OVERLAY_BASE } else { address };
         return Ok((overlay.to_string(), address));
     }
@@ -17,10 +16,7 @@ fn resolve(root: &Path, target: &str) -> Result<(String, i64), String> {
         let overlay = owner.overlay_id().ok_or_else(|| format!("{target}: not an overlay source"))?;
         return Ok((overlay, owner.address() as i64));
     }
-    let name = Path::new(target)
-        .file_stem()
-        .map(|stem| stem.to_string_lossy().to_string())
-        .ok_or_else(|| format!("{target}: not a source path"))?;
+    let name = Path::new(target).file_stem().map(|stem| stem.to_string_lossy().to_string()).ok_or_else(|| format!("{target}: not a source path"))?;
     let (overlay, address) = name.split_once("_c_").ok_or_else(|| format!("{target}: not an overlay source name"))?;
     let address = i64::from_str_radix(address, 16).map_err(|_| format!("{target}: address must be hexadecimal"))?;
     let _ = root;
@@ -86,9 +82,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
             continue;
         }
         if expecting_span {
-            override_span = Some(
-                argument.parse::<i64>().map_err(|_| format!("--span wants a decimal byte count, got {argument:?}"))?,
-            );
+            override_span = Some(argument.parse::<i64>().map_err(|_| format!("--span wants a decimal byte count, got {argument:?}"))?);
             expecting_span = false;
             continue;
         }
@@ -115,30 +109,17 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     let target = target.ok_or("a <overlay>:<addressHex> or source path is required")?;
     let (overlay, address) = resolve(root, &target)?;
     let explicit = Path::new(&target);
-    let source = if explicit.is_file() {
-        explicit.canonicalize().map_err(|error| format!("{}: {error}", explicit.display()))?
-    } else {
-        source_for(root, &overlay, address)?
-    };
+    let source = if explicit.is_file() { explicit.canonicalize().map_err(|error| format!("{}: {error}", explicit.display()))? } else { source_for(root, &overlay, address)? };
     let span = match override_span {
         Some(span) => Some(span),
-        None => placeholder_span(root, &overlay, address)?
-            .or_else(|| inventory_span(root, &overlay, address))
-            .or_else(|| reviewed_span(root, &overlay, address))
-            .or(crate::audited_code_span(root, &overlay, address)?),
+        None => placeholder_span(root, &overlay, address)?.or_else(|| inventory_span(root, &overlay, address)).or_else(|| reviewed_span(root, &overlay, address)).or(crate::audited_code_span(root, &overlay, address)?),
     }
     .ok_or_else(|| format!("{overlay}:{address:08x} has neither a placeholder nor an audited span"))?;
     let (reference, oracle) = truth_window(root, &overlay, address, span)?;
     let work = tempdir().map_err(|error| error.to_string())?;
     let compiled = compile_overlay_c(&source, work.path(), &overlay, None, &extra)?;
-    let differing = reference.chunks(2).zip(compiled.data.chunks(2)).filter(|(left, right)| left != right).count()
-        + reference.len().abs_diff(compiled.data.len()).div_ceil(2);
-    println!(
-        "candidate={} reference={} differing_halfwords={differing} source={} reference_from={oracle}",
-        compiled.data.len(),
-        reference.len(),
-        source.strip_prefix(root).unwrap_or(&source).display(),
-    );
+    let differing = reference.chunks(2).zip(compiled.data.chunks(2)).filter(|(left, right)| left != right).count() + reference.len().abs_diff(compiled.data.len()).div_ceil(2);
+    println!("candidate={} reference={} differing_halfwords={differing} source={} reference_from={oracle}", compiled.data.len(), reference.len(), source.strip_prefix(root).unwrap_or(&source).display(),);
     let bin = tempdir().map_err(|error| error.to_string())?;
     let ours = bin.path().join("candidate.bin");
     let theirs = bin.path().join("reference.bin");

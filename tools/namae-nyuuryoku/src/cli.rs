@@ -6,8 +6,7 @@ use std::io::{self, Write};
 use std::path::Path;
 use std::process::ExitCode;
 
-const USAGE: &str =
-    "usage: namae_nyuuryoku build SOURCE --output FILE | build-stdout SOURCE | verify ROM SOURCE | --self-test";
+const USAGE: &str = "usage: namae_nyuuryoku build SOURCE --output FILE | build-stdout SOURCE | verify ROM SOURCE | --self-test";
 
 fn run(args: &[String]) -> Result<(), Error> {
     match args {

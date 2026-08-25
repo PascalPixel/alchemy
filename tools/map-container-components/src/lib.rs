@@ -32,11 +32,7 @@ fn number(value: &Value, label: &str) -> Result<u64> {
     }
     if let Some(value) = value.as_str() {
         let value = value.trim();
-        let parsed = if let Some(value) = value.strip_prefix("0x").or_else(|| value.strip_prefix("0X")) {
-            u64::from_str_radix(value, 16)
-        } else {
-            value.parse::<u64>()
-        };
+        let parsed = if let Some(value) = value.strip_prefix("0x").or_else(|| value.strip_prefix("0X")) { u64::from_str_radix(value, 16) } else { value.parse::<u64>() };
         return parsed.map_err(|_| format!("{label} must be an integer"));
     }
     err(format!("{label} must be an integer"))
@@ -70,10 +66,7 @@ fn general_tokens(value: &Value) -> Result<Vec<GeneralToken>> {
             let token = token.as_array().ok_or_else(|| format!("token {i} is invalid"))?;
             match token.first().and_then(Value::as_str) {
                 Some("l") if token.len() == 2 => Ok(GeneralToken::Literal(number(&token[1], "literal count")? as u32)),
-                Some("c") if token.len() == 3 => Ok(GeneralToken::Copy {
-                    length: number(&token[1], "copy length")? as u32,
-                    distance: number(&token[2], "copy distance")? as u32,
-                }),
+                Some("c") if token.len() == 3 => Ok(GeneralToken::Copy { length: number(&token[1], "copy length")? as u32, distance: number(&token[2], "copy distance")? as u32 }),
                 _ => err(format!("token {i} is invalid")),
             }
         })
@@ -90,10 +83,7 @@ fn palette_operations(value: &Value) -> Result<Vec<PaletteOperation>> {
             match operation.first().and_then(Value::as_str) {
                 Some("l") if operation.len() == 1 => Ok(PaletteOperation::Literal),
                 Some("e") if operation.len() == 1 => Ok(PaletteOperation::End),
-                Some("c") if operation.len() == 3 => Ok(PaletteOperation::Copy {
-                    length: number(&operation[1], "palette copy length")? as u32,
-                    distance: number(&operation[2], "palette copy distance")? as u32,
-                }),
+                Some("c") if operation.len() == 3 => Ok(PaletteOperation::Copy { length: number(&operation[1], "palette copy length")? as u32, distance: number(&operation[2], "palette copy distance")? as u32 }),
                 _ => err(format!("palette operation {i} is invalid")),
             }
         })
@@ -152,20 +142,12 @@ pub fn build_header(source: &Path, offsets_check: Option<&OffsetChecks>) -> Resu
     if number(field(object, "format")?, "format")? != 1 {
         return err("unsupported map container header source");
     }
-    let parameters = field(object, "parameters")?
-        .as_array()
-        .ok_or_else(|| "container header requires twelve parameter bytes".to_string())?;
+    let parameters = field(object, "parameters")?.as_array().ok_or_else(|| "container header requires twelve parameter bytes".to_string())?;
     if parameters.len() != 12 {
         return err("container header requires twelve parameter bytes");
     }
-    let parameters: Vec<u8> = parameters
-        .iter()
-        .enumerate()
-        .map(|(i, value)| byte(value, &format!("container parameter {i}")))
-        .collect::<Result<_>>()?;
-    let records = field(object, "records")?
-        .as_array()
-        .ok_or_else(|| "container header requires three four-u16 records".to_string())?;
+    let parameters: Vec<u8> = parameters.iter().enumerate().map(|(i, value)| byte(value, &format!("container parameter {i}"))).collect::<Result<_>>()?;
+    let records = field(object, "records")?.as_array().ok_or_else(|| "container header requires three four-u16 records".to_string())?;
     if records.len() != 3 {
         return err("container header requires three four-u16 records");
     }
@@ -173,21 +155,14 @@ pub fn build_header(source: &Path, offsets_check: Option<&OffsetChecks>) -> Resu
         .iter()
         .enumerate()
         .map(|(index, record)| {
-            let record =
-                record.as_array().ok_or_else(|| "container header requires three four-u16 records".to_string())?;
+            let record = record.as_array().ok_or_else(|| "container header requires three four-u16 records".to_string())?;
             if record.len() != 4 {
                 return err("container header requires three four-u16 records");
             }
-            record
-                .iter()
-                .enumerate()
-                .map(|(field, value)| word(value, &format!("record {index} field {field}")))
-                .collect()
+            record.iter().enumerate().map(|(field, value)| word(value, &format!("record {index} field {field}"))).collect()
         })
         .collect::<Result<_>>()?;
-    let offsets = field(object, "component_offsets")?
-        .as_array()
-        .ok_or_else(|| "container header requires six component offsets".to_string())?;
+    let offsets = field(object, "component_offsets")?.as_array().ok_or_else(|| "container header requires six component offsets".to_string())?;
     if offsets.len() != 6 {
         return err("container header requires six component offsets");
     }
@@ -250,8 +225,7 @@ pub fn encode_metatiles(entries: &[u16], mode: u8) -> Result<Vec<u8>> {
     Ok(output)
 }
 pub fn build_metatiles(source: &Path, plan_path: &Path) -> Result<Vec<u8>> {
-    let raw = import_tilemap(&String::from_utf8(read(source)?).map_err(|error| error.to_string())?)
-        .map_err(|error| error.to_string())?;
+    let raw = import_tilemap(&String::from_utf8(read(source)?).map_err(|error| error.to_string())?).map_err(|error| error.to_string())?;
     let plan = json_file(plan_path)?;
     let object = object(&plan, "metatile plan")?;
     let mode = byte(field(object, "transform_mode")?, "transform mode")?;
@@ -265,9 +239,7 @@ pub fn build_descriptors(source: &Path, plan_path: &Path) -> Result<Vec<u8>> {
     if number(field(object, "format")?, "format")? != 1 || number(field(object, "record_size")?, "record size")? != 4 {
         return err("unsupported map descriptor source");
     }
-    let records = field(object, "records")?
-        .as_array()
-        .ok_or_else(|| "map descriptors must contain four byte values".to_string())?;
+    let records = field(object, "records")?.as_array().ok_or_else(|| "map descriptors must contain four byte values".to_string())?;
     let mut decoded = Vec::new();
     for record in records {
         let record = record.as_array().ok_or_else(|| "map descriptors must contain four byte values".to_string())?;
@@ -301,17 +273,12 @@ pub fn encode_queues(queues: &[AnimationQueue]) -> Result<Vec<u8>> {
 }
 fn parse_number_text(value: &str, label: &str) -> Result<u64> {
     let value = value.trim();
-    let parsed = if let Some(value) = value.strip_prefix("0x").or_else(|| value.strip_prefix("0X")) {
-        u64::from_str_radix(value, 16)
-    } else {
-        value.parse::<u64>()
-    };
+    let parsed = if let Some(value) = value.strip_prefix("0x").or_else(|| value.strip_prefix("0X")) { u64::from_str_radix(value, 16) } else { value.parse::<u64>() };
     parsed.map_err(|_| format!("{label} must be an integer"))
 }
 fn encode_word_list(document: &Value) -> Result<Vec<u8>> {
     let object = object(document, "component word source")?;
-    let words =
-        field(object, "words")?.as_array().ok_or_else(|| "component word source must contain words".to_string())?;
+    let words = field(object, "words")?.as_array().ok_or_else(|| "component word source must contain words".to_string())?;
     words.iter().map(|value| word(value, "component word")).collect::<Result<Vec<_>>>().map(|words| pack_u16(&words))
 }
 pub fn build_queues(source: &Path, plan_path: &Path) -> Result<Vec<u8>> {
@@ -321,27 +288,18 @@ pub fn build_queues(source: &Path, plan_path: &Path) -> Result<Vec<u8>> {
         return err("unsupported animation queue source");
     }
     let decoded = if source_object.contains_key("queues") {
-        let queues = field(source_object, "queues")?
-            .as_array()
-            .ok_or_else(|| "animation queues must be an array".to_string())?;
+        let queues = field(source_object, "queues")?.as_array().ok_or_else(|| "animation queues must be an array".to_string())?;
         let queues: Vec<AnimationQueue> = queues
             .iter()
             .enumerate()
             .map(|(index, value)| {
                 let queue = object(value, &format!("queue {index}"))?;
-                let header = field(queue, "header")?
-                    .as_str()
-                    .ok_or_else(|| "animation queue header must be text".to_string())?
-                    .to_string();
-                let commands = field(queue, "commands")?
-                    .as_array()
-                    .ok_or_else(|| "animation commands must be an array".to_string())?;
+                let header = field(queue, "header")?.as_str().ok_or_else(|| "animation queue header must be text".to_string())?.to_string();
+                let commands = field(queue, "commands")?.as_array().ok_or_else(|| "animation commands must be an array".to_string())?;
                 let commands = commands
                     .iter()
                     .map(|command| {
-                        let command = command
-                            .as_array()
-                            .ok_or_else(|| "animation command must contain two u16 values".to_string())?;
+                        let command = command.as_array().ok_or_else(|| "animation command must contain two u16 values".to_string())?;
                         if command.len() != 2 {
                             return err("animation command must contain two u16 values");
                         }
@@ -406,16 +364,9 @@ fn parse_blend_commands(value: &Value) -> Result<Vec<BlendCommand>> {
             match op {
                 "reset" => Ok(BlendCommand::Reset),
                 "stop" => Ok(BlendCommand::Stop),
-                "jump" => {
-                    Ok(BlendCommand::Jump { target_pair: byte(field(object, "target_pair")?, "blend jump target")? })
-                }
-                "set_blend_control" => {
-                    Ok(BlendCommand::SetBlendControl { value: blend_value(field(object, "value")?, "blend control")? })
-                }
-                "write_blend_value" => Ok(BlendCommand::WriteBlendValue {
-                    value: blend_value(field(object, "value")?, "blend value")?,
-                    duration: word(field(object, "duration")?, "blend duration")?,
-                }),
+                "jump" => Ok(BlendCommand::Jump { target_pair: byte(field(object, "target_pair")?, "blend jump target")? }),
+                "set_blend_control" => Ok(BlendCommand::SetBlendControl { value: blend_value(field(object, "value")?, "blend control")? }),
+                "write_blend_value" => Ok(BlendCommand::WriteBlendValue { value: blend_value(field(object, "value")?, "blend value")?, duration: word(field(object, "duration")?, "blend duration")? }),
                 _ => err(format!("unsupported blend animation operation: {op}")),
             }
         })
@@ -427,11 +378,7 @@ pub fn build_blend_animation(source: &Path, plan_path: &Path) -> Result<Vec<u8>>
     if number(field(object, "format")?, "format")? != 1 || number(field(object, "word_size")?, "word size")? != 2 {
         return err("unsupported blend animation source");
     }
-    let decoded = if object.contains_key("commands") {
-        pack_u16(&decode_blend_commands_from_json(field(object, "commands")?)?)
-    } else {
-        encode_word_list(&document)?
-    };
+    let decoded = if object.contains_key("commands") { pack_u16(&decode_blend_commands_from_json(field(object, "commands")?)?) } else { encode_word_list(&document)? };
     encode_plan(&decoded, &json_file(plan_path)?)
 }
 fn decode_blend_commands_from_json(value: &Value) -> Result<Vec<u16>> {
@@ -442,19 +389,13 @@ fn decode_blend_commands_from_json(value: &Value) -> Result<Vec<u16>> {
 pub fn build_sparse(source: &Path) -> Result<Vec<u8>> {
     let document = json_file(source)?;
     let object = object(&document, "sparse-cell source")?;
-    if number(field(object, "format")?, "format")? != 1
-        || number(field(object, "record_size")?, "record size")? != 3
-        || field(object, "terminator")?.as_str() != Some("ffffff")
-    {
+    if number(field(object, "format")?, "format")? != 1 || number(field(object, "record_size")?, "record size")? != 3 || field(object, "terminator")?.as_str() != Some("ffffff") {
         return err("unsupported sparse-cell source");
     }
-    let records = field(object, "records")?
-        .as_array()
-        .ok_or_else(|| "sparse-cell records must contain three byte values".to_string())?;
+    let records = field(object, "records")?.as_array().ok_or_else(|| "sparse-cell records must contain three byte values".to_string())?;
     let mut output = Vec::new();
     for record in records {
-        let record =
-            record.as_array().ok_or_else(|| "sparse-cell records must contain three byte values".to_string())?;
+        let record = record.as_array().ok_or_else(|| "sparse-cell records must contain three byte values".to_string())?;
         if record.len() != 3 {
             return err("sparse-cell records must contain three byte values");
         }
@@ -484,11 +425,7 @@ pub fn self_test() -> Result<()> {
     if encode_plan(b"ABAB", &plan)? != expected {
         return err("general component self-test failed");
     }
-    let blend = encode_blend_commands(&[
-        BlendCommand::SetBlendControl { value: 0x3f40 },
-        BlendCommand::WriteBlendValue { value: 0x0010, duration: 3 },
-        BlendCommand::Stop,
-    ])?;
+    let blend = encode_blend_commands(&[BlendCommand::SetBlendControl { value: 0x3f40 }, BlendCommand::WriteBlendValue { value: 0x0010, duration: 3 }, BlendCommand::Stop])?;
     if blend != [0x40, 0x3f, 0x10, 0x00, 0x03, 0x00, 0xff, 0xfe] {
         return err("blend component self-test failed");
     }

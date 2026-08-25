@@ -6,8 +6,7 @@ use std::io::{self, Write};
 use std::path::Path;
 use std::process::ExitCode;
 
-const USAGE: &str =
-    "usage: resource-byte-canvases export ROM --directory DIR | verify ROM --directory DIR | --self-test";
+const USAGE: &str = "usage: resource-byte-canvases export ROM --directory DIR | verify ROM --directory DIR | --self-test";
 
 fn run(args: &[String]) -> Result<(), Error> {
     if args.len() == 1 && args[0] == "--self-test" {
@@ -20,10 +19,7 @@ fn run(args: &[String]) -> Result<(), Error> {
         return Ok(());
     }
     if args.len() == 3 && args[0] == "build-stdout" {
-        let resource = crate::build_resource_byte_canvases(Path::new(&args[1]))?
-            .into_iter()
-            .find(|item| item.id == args[2].to_lowercase())
-            .ok_or_else(|| Error(format!("resource {} is absent", args[2])))?;
+        let resource = crate::build_resource_byte_canvases(Path::new(&args[1]))?.into_iter().find(|item| item.id == args[2].to_lowercase()).ok_or_else(|| Error(format!("resource {} is absent", args[2])))?;
         io::stdout().write_all(&resource.data).map_err(|e| Error(e.to_string()))?;
         return Ok(());
     }

@@ -19,21 +19,8 @@ use std::{
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
-const TREES: [(&str, &str); 4] =
-    [("core", "Main image"), ("overlays", "Code overlays"), ("images", "Images"), ("music", "Music")];
-const COVERAGE_DIRS: [&str; 11] = [
-    "games/gs1/asm",
-    "games/gs1/assets",
-    "games/gs1/metrics",
-    "games/gs1/semantic",
-    "games/gs1/src",
-    "games/gs1/source-paths.json",
-    "games/gs1/recon",
-    "games/gs1/project.json",
-    "games/gs2",
-    "games/gs2/project.json",
-    "games/alchemy",
-];
+const TREES: [(&str, &str); 4] = [("core", "Main image"), ("overlays", "Code overlays"), ("images", "Images"), ("music", "Music")];
+const COVERAGE_DIRS: [&str; 11] = ["games/gs1/asm", "games/gs1/assets", "games/gs1/metrics", "games/gs1/semantic", "games/gs1/src", "games/gs1/source-paths.json", "games/gs1/recon", "games/gs1/project.json", "games/gs2", "games/gs2/project.json", "games/alchemy"];
 
 pub mod cli {
     pub fn entry(args: &[String]) {
@@ -114,9 +101,7 @@ fn write_json(v: &Json, out: &mut String) {
     match v {
         Json::Undefined => out.push_str("null"),
         Json::Bool(b) => out.push_str(if *b { "true" } else { "false" }),
-        Json::Num(n) => {
-            out.push_str(if n.is_finite() { coverage_map::jsnum::js_number_string(*n) } else { "null".into() }.as_str())
-        }
+        Json::Num(n) => out.push_str(if n.is_finite() { coverage_map::jsnum::js_number_string(*n) } else { "null".into() }.as_str()),
         Json::Str(s) => out.push_str(&quote(s)),
         Json::Obj(xs) => {
             out.push('{');
@@ -139,20 +124,13 @@ fn write_json(v: &Json, out: &mut String) {
 }
 
 fn root() -> PathBuf {
-    std::env::var_os("ALCHEMY_DASHBOARD_ROOT")
-        .map(PathBuf::from)
-        .filter(|p| !p.as_os_str().is_empty())
-        .unwrap_or_else(|| Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap().parent().unwrap().into())
+    std::env::var_os("ALCHEMY_DASHBOARD_ROOT").map(PathBuf::from).filter(|p| !p.as_os_str().is_empty()).unwrap_or_else(|| Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap().parent().unwrap().into())
 }
 fn font() -> PathBuf {
     root().join("games/gs1/assets/fonts/weyard.otf")
 }
 fn mtime(path: &Path) -> f64 {
-    std::fs::metadata(path)
-        .and_then(|m| m.modified())
-        .ok()
-        .and_then(|t| t.duration_since(UNIX_EPOCH).ok())
-        .map_or(0.0, |d| d.as_secs() as f64 * 1000.0 + f64::from(d.subsec_nanos()) / 1e6)
+    std::fs::metadata(path).and_then(|m| m.modified()).ok().and_then(|t| t.duration_since(UNIX_EPOCH).ok()).map_or(0.0, |d| d.as_secs() as f64 * 1000.0 + f64::from(d.subsec_nanos()) / 1e6)
 }
 fn page_version() -> String {
     let client = client::bundled_client().unwrap_or_default();
@@ -162,10 +140,7 @@ fn port() -> u16 {
     std::env::var("ALCHEMY_DASHBOARD_PORT").ok().and_then(|v| v.parse().ok()).unwrap_or(4649)
 }
 fn host() -> IpAddr {
-    std::env::var("ALCHEMY_DASHBOARD_HOST")
-        .ok()
-        .and_then(|v| v.parse().ok())
-        .unwrap_or(IpAddr::V4(Ipv4Addr::UNSPECIFIED))
+    std::env::var("ALCHEMY_DASHBOARD_HOST").ok().and_then(|v| v.parse().ok()).unwrap_or(IpAddr::V4(Ipv4Addr::UNSPECIFIED))
 }
 
 pub struct Live {
@@ -199,13 +174,7 @@ struct Correspondence {
 }
 impl Correspondence {
     fn add(self, other: Self) -> Self {
-        Self {
-            total: self.total + other.total,
-            matched: self.matched + other.matched,
-            shared: self.shared + other.shared,
-            regional: self.regional + other.regional,
-            unresolved: self.unresolved + other.unresolved,
-        }
+        Self { total: self.total + other.total, matched: self.matched + other.matched, shared: self.shared + other.shared, regional: self.regional + other.regional, unresolved: self.unresolved + other.unresolved }
     }
 }
 #[derive(Default)]
@@ -245,54 +214,25 @@ fn count_c(path: &Path) -> usize {
 }
 fn correspondence(path: &Path) -> Result<Correspondence, String> {
     let bytes = std::fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?;
-    let value: serde_json::Value =
-        serde_json::from_slice(&bytes).map_err(|error| format!("{}: {error}", path.display()))?;
-    let number = |key: &str| {
-        value
-            .get(key)
-            .and_then(serde_json::Value::as_u64)
-            .map(|value| value as usize)
-            .ok_or_else(|| format!("{} lacks numeric {key}", path.display()))
-    };
-    Ok(Correspondence {
-        total: number("owners_total")?,
-        matched: number("matched_owners")?,
-        shared: number("shared_core_owners")?,
-        regional: number("regional_core_owners")?,
-        unresolved: number("unresolved_owners")?,
-    })
+    let value: serde_json::Value = serde_json::from_slice(&bytes).map_err(|error| format!("{}: {error}", path.display()))?;
+    let number = |key: &str| value.get(key).and_then(serde_json::Value::as_u64).map(|value| value as usize).ok_or_else(|| format!("{} lacks numeric {key}", path.display()));
+    Ok(Correspondence { total: number("owners_total")?, matched: number("matched_owners")?, shared: number("shared_core_owners")?, regional: number("regional_core_owners")?, unresolved: number("unresolved_owners")? })
 }
 fn compute() -> Result<Live, String> {
     let tree = work_tree_at(root());
-    let map = build_coverage_map(&BuildOptions {
-        target: "gs1-en".into(),
-        exact: &tree,
-        recon: Some(&tree),
-        validate_tracked_progress: false,
-        prefer_verified_assets: true,
-    })?;
+    let map = build_coverage_map(&BuildOptions { target: "gs1-en".into(), exact: &tree, recon: Some(&tree), validate_tracked_progress: false, prefer_verified_assets: true })?;
     let trees = render_box_trees(&map, Some(&tree), true)?;
     let gs1_ja_sources = count_c(&root().join("games/gs1/recon/ja"));
     let gs1_en_sources = count_c(&root().join("games/gs1/recon/en"));
     let gs2_ja_sources = count_c(&root().join("games/gs2/recon/ja"));
     let gs2_en_sources = count_c(&root().join("games/gs2/recon/en"));
-    let correspondence = correspondence(&root().join("games/gs1/recon/exact-correspondence.json"))?
-        .add(correspondence(&root().join("games/gs1/recon/exact-overlay-correspondence.json"))?);
+    let correspondence = correspondence(&root().join("games/gs1/recon/exact-correspondence.json"))?.add(correspondence(&root().join("games/gs1/recon/exact-overlay-correspondence.json"))?);
     let revision = BOX_TREES
         .iter()
         .map(|name| svg_cache_version(trees.iter().find(|(id, _)| id == name).map_or("", |(_, s)| s)))
         .collect::<Vec<_>>()
         .into_iter()
-        .chain([
-            gs1_ja_sources.to_string(),
-            gs1_en_sources.to_string(),
-            gs2_ja_sources.to_string(),
-            gs2_en_sources.to_string(),
-            correspondence.matched.to_string(),
-            correspondence.shared.to_string(),
-            correspondence.regional.to_string(),
-            correspondence.unresolved.to_string(),
-        ])
+        .chain([gs1_ja_sources.to_string(), gs1_en_sources.to_string(), gs2_ja_sources.to_string(), gs2_en_sources.to_string(), correspondence.matched.to_string(), correspondence.shared.to_string(), correspondence.regional.to_string(), correspondence.unresolved.to_string()])
         .collect::<Vec<_>>()
         .join("-");
     let n = |key| map_number(&map, key).unwrap_or(0.0);
@@ -331,13 +271,7 @@ fn iso_now() -> String {
     let day = doy - (153 * mp + 2) / 5 + 1;
     let month = if mp < 10 { mp + 3 } else { mp - 9 };
     let year = if month <= 2 { y + 1 } else { y };
-    format!(
-        "{year:04}-{month:02}-{day:02}T{:02}:{:02}:{:02}.{:03}Z",
-        rest / 3_600_000,
-        rest / 60_000 % 60,
-        rest / 1000 % 60,
-        rest % 1000
-    )
+    format!("{year:04}-{month:02}-{day:02}T{:02}:{:02}:{:02}.{:03}Z", rest / 3_600_000, rest / 60_000 % 60, rest / 1000 % 60, rest % 1000)
 }
 fn snapshot() -> Json {
     state(|s| {
@@ -373,16 +307,7 @@ fn snapshot() -> Json {
             ("scanning", Json::Bool(s.scanning)),
             ("error", s.error.clone().map_or(Json::Undefined, Json::Str)),
             ("trees", trees),
-            (
-                "project",
-                Json::obj(vec![
-                    ("title", Json::str("Golden Sun · The Lost Age")),
-                    ("gs1", Json::str("ja · en · de · es · fr · it")),
-                    ("gs2", Json::str("ja · en · de · es · fr · it")),
-                    ("fullTarget", Json::str("gs1-en")),
-                    ("integration", Json::str("Alchemy")),
-                ]),
-            ),
+            ("project", Json::obj(vec![("title", Json::str("Golden Sun · The Lost Age")), ("gs1", Json::str("ja · en · de · es · fr · it")), ("gs2", Json::str("ja · en · de · es · fr · it")), ("fullTarget", Json::str("gs1-en")), ("integration", Json::str("Alchemy"))])),
             ("summary", summary),
         ])
     })
@@ -434,9 +359,7 @@ fn unregister(id: u64) {
 }
 fn notify() {
     let msg = frame("update", &snapshot().stringify());
-    SUBSCRIBERS.lock().unwrap().retain(|s| {
-        !matches!(s.tx.try_send(msg.clone()), Err(TrySendError::Disconnected(_)) | Err(TrySendError::Full(_)))
-    })
+    SUBSCRIBERS.lock().unwrap().retain(|s| !matches!(s.tx.try_send(msg.clone()), Err(TrySendError::Disconnected(_)) | Err(TrySendError::Full(_))))
 }
 
 struct Response {
@@ -446,13 +369,7 @@ struct Response {
     body: Vec<u8>,
 }
 impl Response {
-    fn new(
-        status: u16,
-        reason: &'static str,
-        ty: Option<&'static str>,
-        cache: &'static str,
-        body: impl Into<Vec<u8>>,
-    ) -> Self {
+    fn new(status: u16, reason: &'static str, ty: Option<&'static str>, cache: &'static str, body: impl Into<Vec<u8>>) -> Self {
         let mut headers = vec![("Cache-Control", cache.into())];
         if let Some(ty) = ty {
             headers.insert(0, ("Content-Type", ty.into()))
@@ -500,7 +417,33 @@ fn request(stream: &TcpStream) -> Result<(String, String), &'static str> {
     Ok((method, target.split('?').next().unwrap_or(&target).into()))
 }
 fn response(path: &str) -> Result<Response, Route> {
-    match path { "/" => Ok(Response::new(200, "OK", Some("text/html; charset=utf-8"), "no-store", format!("<!doctype html><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Alchemy</title><link rel=\"stylesheet\" href=\"/styles.css?v={}\"><script type=\"module\" src=\"/client.js?v={}\"></script>", page_version(), page_version()).into_bytes())), "/styles.css" => Ok(Response::new(200, "OK", Some("text/css; charset=utf-8"), "no-store", assets::STYLES.as_bytes())), "/client.js" => Ok(Response::new(200, "OK", Some("text/javascript; charset=utf-8"), "no-store", client::bundled_client().unwrap().into_bytes())), "/snapshot" => Ok(Response { status: 200, reason: "OK", headers: vec![("Cache-Control", "no-store".into()), ("Content-Type", "application/json;charset=utf-8".into())], body: snapshot().stringify().into_bytes() }), "/events" => Err(Route::Events), "/weyard.otf" => Ok(Response::new(200, "OK", Some("font/otf"), "public, max-age=300", std::fs::read(font()).unwrap_or_default())), path if path.starts_with("/svg/") && TREES.iter().any(|(id, _)| path == format!("/svg/{id}")) => { let id = &path[5..]; Ok(state(|s| s.coverage.as_ref().and_then(|c| c.trees.iter().find(|(k, _)| *k == id).map(|(_, v)| v.clone())).ok_or_else(|| s.error.clone().unwrap_or_else(|| "Coverage is still being read".into())).map(|s| Response::new(200, "OK", Some("image/svg+xml; charset=utf-8"), "no-store", s.into_bytes())).unwrap_or_else(|e| Response::new(503, "Service Unavailable", Some("text/plain; charset=utf-8"), "no-store", e.into_bytes())))) }, _ => Err(Route::Response(Response::new(404, "Not Found", Some("text/plain; charset=utf-8"), "no-store", b"Not found".to_vec()))) }
+    match path {
+        "/" => Ok(Response::new(
+            200,
+            "OK",
+            Some("text/html; charset=utf-8"),
+            "no-store",
+            format!("<!doctype html><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Alchemy</title><link rel=\"stylesheet\" href=\"/styles.css?v={}\"><script type=\"module\" src=\"/client.js?v={}\"></script>", page_version(), page_version())
+                .into_bytes(),
+        )),
+        "/styles.css" => Ok(Response::new(200, "OK", Some("text/css; charset=utf-8"), "no-store", assets::STYLES.as_bytes())),
+        "/client.js" => Ok(Response::new(200, "OK", Some("text/javascript; charset=utf-8"), "no-store", client::bundled_client().unwrap().into_bytes())),
+        "/snapshot" => Ok(Response { status: 200, reason: "OK", headers: vec![("Cache-Control", "no-store".into()), ("Content-Type", "application/json;charset=utf-8".into())], body: snapshot().stringify().into_bytes() }),
+        "/events" => Err(Route::Events),
+        "/weyard.otf" => Ok(Response::new(200, "OK", Some("font/otf"), "public, max-age=300", std::fs::read(font()).unwrap_or_default())),
+        path if path.starts_with("/svg/") && TREES.iter().any(|(id, _)| path == format!("/svg/{id}")) => {
+            let id = &path[5..];
+            Ok(state(|s| {
+                s.coverage
+                    .as_ref()
+                    .and_then(|c| c.trees.iter().find(|(k, _)| *k == id).map(|(_, v)| v.clone()))
+                    .ok_or_else(|| s.error.clone().unwrap_or_else(|| "Coverage is still being read".into()))
+                    .map(|s| Response::new(200, "OK", Some("image/svg+xml; charset=utf-8"), "no-store", s.into_bytes()))
+                    .unwrap_or_else(|e| Response::new(503, "Service Unavailable", Some("text/plain; charset=utf-8"), "no-store", e.into_bytes()))
+            }))
+        }
+        _ => Err(Route::Response(Response::new(404, "Not Found", Some("text/plain; charset=utf-8"), "no-store", b"Not found".to_vec()))),
+    }
 }
 enum Route {
     Events,
@@ -536,16 +479,8 @@ struct Watcher {
 impl Watcher {
     fn new() -> Self {
         let r = root();
-        let mut coverage =
-            COVERAGE_DIRS.iter().map(|d| r.join(d)).map(|p| (p.clone(), fingerprint(&p))).collect::<Vec<_>>();
-        for p in [
-            "out/gs1-en/full/asm/manifest.json",
-            "out/gs1-en/full/assets/manifest.json",
-            "out/decomp/diagnose/.revision",
-        ]
-        .iter()
-        .map(|p| r.join(p))
-        {
+        let mut coverage = COVERAGE_DIRS.iter().map(|d| r.join(d)).map(|p| (p.clone(), fingerprint(&p))).collect::<Vec<_>>();
+        for p in ["out/gs1-en/full/asm/manifest.json", "out/gs1-en/full/assets/manifest.json", "out/decomp/diagnose/.revision"].iter().map(|p| r.join(p)) {
             coverage.push((p.clone(), fingerprint(&p)))
         }
         let mut files = Vec::new();
@@ -594,14 +529,7 @@ fn serve(mut stream: TcpStream) {
     };
     let include = method != "HEAD";
     if method != "GET" && method != "HEAD" {
-        let _ = Response::new(
-            405,
-            "Method Not Allowed",
-            Some("text/plain; charset=utf-8"),
-            "no-store",
-            b"Method not allowed".to_vec(),
-        )
-        .write(&mut stream, include);
+        let _ = Response::new(405, "Method Not Allowed", Some("text/plain; charset=utf-8"), "no-store", b"Method not allowed".to_vec()).write(&mut stream, include);
         return;
     }
     match response(&path) {
@@ -643,9 +571,7 @@ pub fn run(bind: Option<SocketAddr>) -> std::io::Result<()> {
     std::thread::spawn(|| loop {
         std::thread::sleep(Duration::from_secs(5));
         let msg = b": keepalive\n\n";
-        SUBSCRIBERS.lock().unwrap().retain(|s| {
-            !matches!(s.tx.try_send(msg.to_vec()), Err(TrySendError::Disconnected(_)) | Err(TrySendError::Full(_)))
-        })
+        SUBSCRIBERS.lock().unwrap().retain(|s| !matches!(s.tx.try_send(msg.to_vec()), Err(TrySendError::Disconnected(_)) | Err(TrySendError::Full(_))))
     });
     std::thread::spawn(|| {
         let mut w = Watcher::new();
@@ -664,13 +590,7 @@ pub fn run(bind: Option<SocketAddr>) -> std::io::Result<()> {
 
 pub fn self_test() -> Result<String, String> {
     let js = client::bundled_client().map_err(|e| e.to_string())?;
-    if !assets::STYLES.contains(".hover-tooltip")
-        || !assets::STYLES.contains(".products")
-        || !js.contains("EventSource")
-        || !js.contains("closest(\"g[aria-label]\")")
-        || !js.contains("historicalProduct")
-        || !js.contains("compile-only")
-    {
+    if !assets::STYLES.contains(".hover-tooltip") || !assets::STYLES.contains(".products") || !js.contains("EventSource") || !js.contains("closest(\"g[aria-label]\")") || !js.contains("historicalProduct") || !js.contains("compile-only") {
         return Err("dashboard assets are incomplete".into());
     }
     if !response("/").map_err(|_| "shell route failed")?.body.starts_with(b"<!doctype html>") {

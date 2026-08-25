@@ -62,11 +62,7 @@ struct Region {
 }
 
 pub fn repository_root() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .and_then(Path::parent)
-        .expect("build-full lives under tools")
-        .to_path_buf()
+    Path::new(env!("CARGO_MANIFEST_DIR")).parent().and_then(Path::parent).expect("build-full lives under tools").to_path_buf()
 }
 
 fn default_jobs() -> usize {
@@ -196,14 +192,7 @@ fn has_assembly_sources(directory: &Path) -> Result<bool, String> {
 
 fn run(root: &Path, command: &[String]) -> Result<(), String> {
     let (program, args) = command.split_first().ok_or("empty command")?;
-    let status = Command::new(program)
-        .args(args)
-        .current_dir(root)
-        .stdin(Stdio::null())
-        .stdout(Stdio::inherit())
-        .stderr(Stdio::inherit())
-        .status()
-        .map_err(|error| format!("{program}: {error}"))?;
+    let status = Command::new(program).args(args).current_dir(root).stdin(Stdio::null()).stdout(Stdio::inherit()).stderr(Stdio::inherit()).status().map_err(|error| format!("{program}: {error}"))?;
     if status.success() {
         Ok(())
     } else {
@@ -225,16 +214,7 @@ fn cargo_child(root: &Path, stage: &str) -> Vec<String> {
         "assets" => "tools/build-assets/Cargo.toml",
         _ => "tools/build-stage/Cargo.toml",
     };
-    let mut command = vec![
-        "cargo".into(),
-        "run".into(),
-        "--quiet".into(),
-        "--release".into(),
-        "--offline".into(),
-        "--manifest-path".into(),
-        root.join(manifest).to_string_lossy().into_owned(),
-        "--".into(),
-    ];
+    let mut command = vec!["cargo".into(), "run".into(), "--quiet".into(), "--release".into(), "--offline".into(), "--manifest-path".into(), root.join(manifest).to_string_lossy().into_owned(), "--".into()];
     if manifest.ends_with("build-stage/Cargo.toml") {
         command.push(stage.into());
     }
@@ -291,8 +271,7 @@ pub fn unowned_regions(mask: &[u8], base: u64) -> Result<Vec<GapRegion>, String>
 }
 
 fn assembly_accounting(regions: &[Region]) -> Result<AssemblyAccounting, String> {
-    let debt =
-        ["c_candidate", "split_first", "merge_with_owner", "merge_with_function_owner", "merge_with_continuations"];
+    let debt = ["c_candidate", "split_first", "merge_with_owner", "merge_with_function_owner", "merge_with_continuations"];
     let retained = ["keep_asm", "keep_structured_asm", "adjacent_section_alignment"];
     let mut result = AssemblyAccounting::default();
     for region in regions {
@@ -314,31 +293,18 @@ fn assembly_accounting(regions: &[Region]) -> Result<AssemblyAccounting, String>
 }
 
 fn validate_alignments(claimed: &[Region], assembly: &[Region]) -> Result<(), String> {
-    let bodies =
-        claimed.iter().chain(assembly.iter().filter(|region| region.kind.as_deref() != Some("alignment_padding")));
+    let bodies = claimed.iter().chain(assembly.iter().filter(|region| region.kind.as_deref() != Some("alignment_padding")));
     let starts: BTreeSet<u64> = bodies.clone().map(|region| region.address).collect();
     let ends: BTreeSet<u64> = bodies.map(|region| region.address + region.size as u64).collect();
     for region in assembly.iter().filter(|region| region.kind.as_deref() == Some("alignment_padding")) {
-        if region.size != 2
-            || region.address & 3 != 2
-            || region.retention.as_deref() != Some("adjacent_section_alignment")
-            || !ends.contains(&region.address)
-            || !starts.contains(&(region.address + 2))
-        {
+        if region.size != 2 || region.address & 3 != 2 || region.retention.as_deref() != Some("adjacent_section_alignment") || !ends.contains(&region.address) || !starts.contains(&(region.address + 2)) {
             return Err(format!("unproven assembly alignment at 0x{:08x}", region.address));
         }
     }
     Ok(())
 }
 
-pub fn reconstruction_progress(
-    rom_size: usize,
-    code: usize,
-    assets: usize,
-    retained: usize,
-    debt: usize,
-    unowned: usize,
-) -> Result<ReconstructionProgress, String> {
+pub fn reconstruction_progress(rom_size: usize, code: usize, assets: usize, retained: usize, debt: usize, unowned: usize) -> Result<ReconstructionProgress, String> {
     if rom_size == 0 {
         return Err("invalid byte reconstruction count".into());
     }
@@ -369,15 +335,7 @@ fn measured(bytes: usize, total: usize) -> Value {
     json!({"status":"measured","bytes":bytes,"total_bytes":total,"remaining_bytes":total-bytes,"percent":percentage(round_percent(bytes,total))})
 }
 
-fn project_audit(
-    rom_size: usize,
-    source: usize,
-    reconstructed: usize,
-    code: usize,
-    debt: usize,
-    asset_regions: usize,
-    asset_bytes: usize,
-) -> Value {
+fn project_audit(rom_size: usize, source: usize, reconstructed: usize, code: usize, debt: usize, asset_regions: usize, asset_bytes: usize) -> Value {
     json!({
         "status":"audit_pending", "percent":Value::Null,
         "scoring":"withheld_until_all_dimensions_are_audited",
@@ -393,8 +351,7 @@ fn project_audit(
 }
 
 fn write_json(path: &Path, value: Value) -> Result<(), String> {
-    std::fs::write(path, format!("{}\n", canonical_json(&value)))
-        .map_err(|error| format!("{}: {error}", path.display()))
+    std::fs::write(path, format!("{}\n", canonical_json(&value))).map_err(|error| format!("{}: {error}", path.display()))
 }
 
 fn gap_values(gaps: &[GapRegion], prefix: &str, kind: &str) -> Value {
@@ -408,24 +365,10 @@ fn require_source_ownership(source_only: bool, unowned_bytes: usize) -> Result<(
     Ok(())
 }
 
-fn place_regions(
-    regions: &[Region],
-    image: &[u8],
-    image_base: Option<u64>,
-    rom: Option<&[u8]>,
-    rebuilt: &mut Option<Vec<u8>>,
-    mask: &mut [u8],
-    label: &str,
-) -> Result<(), String> {
+fn place_regions(regions: &[Region], image: &[u8], image_base: Option<u64>, rom: Option<&[u8]>, rebuilt: &mut Option<Vec<u8>>, mask: &mut [u8], label: &str) -> Result<(), String> {
     for region in regions {
-        let start = region
-            .address
-            .checked_sub(ROM_BASE)
-            .ok_or_else(|| format!("{label} outside ROM image at 0x{:08x}", region.address))?
-            as usize;
-        let end = start
-            .checked_add(region.size)
-            .ok_or_else(|| format!("{label} outside ROM image at 0x{:08x}", region.address))?;
+        let start = region.address.checked_sub(ROM_BASE).ok_or_else(|| format!("{label} outside ROM image at 0x{:08x}", region.address))? as usize;
+        let end = start.checked_add(region.size).ok_or_else(|| format!("{label} outside ROM image at 0x{:08x}", region.address))?;
         if end > mask.len() || end <= start {
             return Err(format!("{label} outside ROM image at 0x{:08x}", region.address));
         }
@@ -457,13 +400,9 @@ fn place_regions(
 pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, String> {
     let target = target_for(options.target);
     if target.build_support != BuildSupport::Full {
-        return Err(format!(
-            "{} is compile-only; run `make {}` until its edition link map, assembly, and assets are reconstructed",
-            target.id, target.id
-        ));
+        return Err(format!("{} is compile-only; run `make {}` until its edition link map, assembly, and assets are reconstructed", target.id, target.id));
     }
-    let rom_path =
-        if Path::new(&options.rom).is_absolute() { PathBuf::from(&options.rom) } else { cwd.join(&options.rom) };
+    let rom_path = if Path::new(&options.rom).is_absolute() { PathBuf::from(&options.rom) } else { cwd.join(&options.rom) };
     let rom = if options.source_only {
         None
     } else {
@@ -484,27 +423,13 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     } else {
         command.push(rom_path.to_string_lossy().into_owned());
     }
-    command.extend([
-        "--jobs".into(),
-        options.jobs.to_string(),
-        "--output".into(),
-        claimed_dir.to_string_lossy().into_owned(),
-    ]);
+    command.extend(["--jobs".into(), options.jobs.to_string(), "--output".into(), claimed_dir.to_string_lossy().into_owned()]);
     run(root, &command)?;
     let claimed_document = read_json(&claimed_dir.join("manifest.json"))?;
     let claimed_regions = regions(&claimed_document)?;
-    let claimed_image =
-        std::fs::read(claimed_dir.join("claimed.bin")).map_err(|error| format!("claimed.bin: {error}"))?;
+    let claimed_image = std::fs::read(claimed_dir.join("claimed.bin")).map_err(|error| format!("claimed.bin: {error}"))?;
     let image_base = value_u64(&claimed_document["image_base"], "image base")?;
-    place_regions(
-        &claimed_regions,
-        &claimed_image,
-        Some(image_base),
-        rom.as_deref(),
-        &mut rebuilt,
-        &mut mask,
-        "source",
-    )?;
+    place_regions(&claimed_regions, &claimed_image, Some(image_base), rom.as_deref(), &mut rebuilt, &mut mask, "source")?;
 
     let mut asm_regions = Vec::new();
     let asm_dir = rooted(root, target.asm_dir);
@@ -534,12 +459,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
         } else {
             command.push(rom_path.to_string_lossy().into_owned());
         }
-        command.extend([
-            "--manifest".into(),
-            asset_manifest.to_string_lossy().into_owned(),
-            "--output".into(),
-            output.to_string_lossy().into_owned(),
-        ]);
+        command.extend(["--manifest".into(), asset_manifest.to_string_lossy().into_owned(), "--output".into(), output.to_string_lossy().into_owned()]);
         run(root, &command)?;
         asset_regions = regions(&read_json(&output.join("manifest.json"))?)?;
         place_regions(&asset_regions, &[], None, rom.as_deref(), &mut rebuilt, &mut mask, "asset")?;
@@ -566,26 +486,13 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     if unowned_bytes != mask.len() - source_bytes {
         return Err("unowned coverage count differs".into());
     }
-    let progress = reconstruction_progress(
-        mask.len(),
-        code_bytes,
-        asset_bytes,
-        accounting.retained_bytes,
-        accounting.c_debt_bytes,
-        unowned_bytes,
-    )?;
+    let progress = reconstruction_progress(mask.len(), code_bytes, asset_bytes, accounting.retained_bytes, accounting.c_debt_bytes, unowned_bytes)?;
 
     let report_base = output.with_extension("");
     let unowned_path = PathBuf::from(format!("{}.unowned.json", report_base.to_string_lossy()));
     let fallback_path = PathBuf::from(format!("{}.fallback.json", report_base.to_string_lossy()));
-    write_json(
-        &unowned_path,
-        json!({"format":1,"semantics":"source_ownership","verification":if options.source_only{"source_only"}else{"rom"},"rom_base":ROM_BASE,"rom_size":mask.len(),"regions":gap_values(&gaps,"unowned","unowned")}),
-    )?;
-    write_json(
-        &fallback_path,
-        json!({"format":1,"semantics":if options.source_only{"compatibility_alias_for_unowned_ranges"}else{"private_rom_fallback"},"rom_base":ROM_BASE,"rom_size":mask.len(),"regions":gap_values(&gaps,"rom-fallback","rom_fallback")}),
-    )?;
+    write_json(&unowned_path, json!({"format":1,"semantics":"source_ownership","verification":if options.source_only{"source_only"}else{"rom"},"rom_base":ROM_BASE,"rom_size":mask.len(),"regions":gap_values(&gaps,"unowned","unowned")}))?;
+    write_json(&fallback_path, json!({"format":1,"semantics":if options.source_only{"compatibility_alias_for_unowned_ranges"}else{"private_rom_fallback"},"rom_base":ROM_BASE,"rom_size":mask.len(),"regions":gap_values(&gaps,"rom-fallback","rom_fallback")}))?;
 
     require_source_ownership(options.source_only, unowned_bytes)?;
 
@@ -619,18 +526,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     field!("asset_bytes", number(asset_bytes));
     field!("source_regions", number(claimed_regions.len() + asm_regions.len() + asset_regions.len()));
     field!("source_bytes", number(source_bytes));
-    field!(
-        "project_completion",
-        project_audit(
-            mask.len(),
-            source_bytes,
-            progress.bytes,
-            code_bytes,
-            accounting.c_debt_bytes,
-            asset_regions.len(),
-            asset_bytes
-        )
-    );
+    field!("project_completion", project_audit(mask.len(), source_bytes, progress.bytes, code_bytes, accounting.c_debt_bytes, asset_regions.len(), asset_bytes));
     field!("byte_reconstruction_bytes", number(progress.bytes));
     field!("byte_reconstruction_remaining_bytes", number(progress.remaining_bytes));
     field!("byte_reconstruction_percent", percentage(progress.percent));
@@ -650,9 +546,21 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     field!("output", if options.source_only { Value::Null } else { json!(options.output) });
     write_json(&PathBuf::from(format!("{}.json", report_base.to_string_lossy())), Value::Object(report))?;
 
-    Ok(format!("{} regions={} code={} asm={} assets={} source_bytes={} unowned_bytes={} asm_c_debt_bytes={} asm_retained_structural_bytes={} source_owned={} byte_identical={}{}",
-        if options.source_only{"source_only=True"}else{"identical=True"}, claimed_regions.len()+asm_regions.len()+asset_regions.len(), claimed_regions.len(), asm_regions.len(), asset_regions.len(), source_bytes, unowned_bytes, accounting.c_debt_bytes, accounting.retained_bytes,
-        if unowned_bytes==0{"yes"}else{"no"}, if options.source_only{"not-applicable"}else{"yes"}, if options.source_only{"".into()}else{format!(" rom_fallback_bytes={unowned_bytes}")}))
+    Ok(format!(
+        "{} regions={} code={} asm={} assets={} source_bytes={} unowned_bytes={} asm_c_debt_bytes={} asm_retained_structural_bytes={} source_owned={} byte_identical={}{}",
+        if options.source_only { "source_only=True" } else { "identical=True" },
+        claimed_regions.len() + asm_regions.len() + asset_regions.len(),
+        claimed_regions.len(),
+        asm_regions.len(),
+        asset_regions.len(),
+        source_bytes,
+        unowned_bytes,
+        accounting.c_debt_bytes,
+        accounting.retained_bytes,
+        if unowned_bytes == 0 { "yes" } else { "no" },
+        if options.source_only { "not-applicable" } else { "yes" },
+        if options.source_only { "".into() } else { format!(" rom_fallback_bytes={unowned_bytes}") }
+    ))
 }
 
 pub fn self_test() -> Result<(), String> {

@@ -12,17 +12,6 @@ const GS1: &[ExecutableDigests] = &[
 const EMPTY_GS1: &[ExecutableDigests] = &[("xgcc", &[]), ("cpp", &[]), ("tradcpp", &[]), ("cc1", &[])];
 const EMPTY: &[TargetExecutables] = &[("gs1", EMPTY_GS1), ("gs2", EMPTY_GS1)];
 
-pub static EXPECTED: &[HostTargets] = &[
-    ("darwin-arm64", &[("gs1", GS1), ("gs2", GS1)]),
-    ("darwin-x64", EMPTY),
-    ("linux-x64", EMPTY),
-    ("linux-arm64", EMPTY),
-];
-pub static AGBCC_EXPECTED: &[HostDigests] = &[
-    ("darwin-arm64", &["dfbbb5a8a0a9e14e7ed84a0a723eb6e68974836159a2c3e925b904058382e15a"]),
-    ("darwin-x64", &[]),
-    ("linux-x64", &[]),
-    ("linux-arm64", &[]),
-];
-pub static GCC3_EXPECTED: &[HostDigests] =
-    &[("darwin-arm64", &[]), ("darwin-x64", &[]), ("linux-x64", &[]), ("linux-arm64", &[])];
+pub static EXPECTED: &[HostTargets] = &[("darwin-arm64", &[("gs1", GS1), ("gs2", GS1)]), ("darwin-x64", EMPTY), ("linux-x64", EMPTY), ("linux-arm64", EMPTY)];
+pub static AGBCC_EXPECTED: &[HostDigests] = &[("darwin-arm64", &["dfbbb5a8a0a9e14e7ed84a0a723eb6e68974836159a2c3e925b904058382e15a"]), ("darwin-x64", &[]), ("linux-x64", &[]), ("linux-arm64", &[])];
+pub static GCC3_EXPECTED: &[HostDigests] = &[("darwin-arm64", &[]), ("darwin-x64", &[]), ("linux-x64", &[]), ("linux-arm64", &[])];

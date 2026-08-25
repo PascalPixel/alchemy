@@ -127,16 +127,7 @@ fn pcm_from_wav(data: &[u8], rate: f64) -> Result<Vec<u8>, String> {
     chunk(data, 12, "fmt ")?;
     chunk(data, 36, "data")?;
     let length = data.len() as f64;
-    if u32_at(data, 4) != length - 8.0
-        || u32_at(data, 16) != 16.0
-        || u16_at(data, 20) != 1.0
-        || u16_at(data, 22) != 1.0
-        || u32_at(data, 24) != rate
-        || u32_at(data, 28) != rate
-        || u16_at(data, 32) != 1.0
-        || u16_at(data, 34) != 8.0
-        || u32_at(data, 40) != length - 44.0
-    {
+    if u32_at(data, 4) != length - 8.0 || u32_at(data, 16) != 16.0 || u16_at(data, 20) != 1.0 || u16_at(data, 22) != 1.0 || u32_at(data, 24) != rate || u32_at(data, 28) != rate || u16_at(data, 32) != 1.0 || u16_at(data, 34) != 8.0 || u32_at(data, 40) != length - 44.0 {
         return Err("WAV is not canonical mono 8-bit PCM".into());
     }
     Ok(data[44..].iter().map(|byte| byte.wrapping_sub(128)).collect())
@@ -152,8 +143,7 @@ pub fn build_wave_record(source: &WaveRecordSource, wav: &[u8]) -> Result<(Vec<u
         return Err("wave catalog frequency differs from exact header".into());
     }
     let size = integer(&source.size, "wave record size")?;
-    let rate =
-        (frequency / 1024.0).floor() + if frequency / 1024.0 - (frequency / 1024.0).floor() >= 0.5 { 1.0 } else { 0.0 };
+    let rate = (frequency / 1024.0).floor() + if frequency / 1024.0 - (frequency / 1024.0).floor() >= 0.5 { 1.0 } else { 0.0 };
     let samples = pcm_from_wav(wav, rate)?;
     if samples.is_empty() {
         return Err("wave record has no samples".into());
@@ -173,8 +163,7 @@ pub fn build_wave_record(source: &WaveRecordSource, wav: &[u8]) -> Result<(Vec<u
         None => source.loop_start.map_or(Ok(0.0), |value| word(&Scalar::Num(value), "wave loop start"))?,
     };
     let looped = (control as u32 & 0xc000_0000) != 0;
-    let catalog_loop =
-        source.loop_start.map(|value| word(&Scalar::Num(value), "wave catalog loop start")).transpose()?;
+    let catalog_loop = source.loop_start.map(|value| word(&Scalar::Num(value), "wave catalog loop start")).transpose()?;
     if exact.is_some() && catalog_loop != if looped { Some(loop_start) } else { None } {
         return Err("wave catalog loop differs from exact header".into());
     }
@@ -210,17 +199,5 @@ pub fn build_wave_record(source: &WaveRecordSource, wav: &[u8]) -> Result<(Vec<u
     put_u32(&mut result, 8, loop_start);
     put_u32(&mut result, 12, samples.len() as f64 - 1.0);
     result[16..16 + samples.len()].copy_from_slice(&samples);
-    Ok((
-        result,
-        WaveReport {
-            samples: samples.len() as f64,
-            rate,
-            frequency,
-            control,
-            looped,
-            loop_start: looped.then_some(loop_start),
-            padding_bytes: padding_size,
-            padding_fill,
-        },
-    ))
+    Ok((result, WaveReport { samples: samples.len() as f64, rate, frequency, control, looped, loop_start: looped.then_some(loop_start), padding_bytes: padding_size, padding_fill }))
 }

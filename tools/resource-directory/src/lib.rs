@@ -7,11 +7,7 @@ pub const ROM_BASE: f64 = 0x0800_0000 as f64;
 pub type Res<T> = Result<T, String>;
 
 fn is_js_whitespace(c: char) -> bool {
-    matches!(
-        c,
-        '\t' | '\n' | '\u{0b}' | '\u{0c}' | '\r' | ' ' | '\u{a0}' | '\u{1680}' | '\u{2000}'
-            ..='\u{200a}' | '\u{2028}' | '\u{2029}' | '\u{202f}' | '\u{205f}' | '\u{3000}' | '\u{feff}'
-    )
+    matches!(c, '\t' | '\n' | '\u{0b}' | '\u{0c}' | '\r' | ' ' | '\u{a0}' | '\u{1680}' | '\u{2000}'..='\u{200a}' | '\u{2028}' | '\u{2029}' | '\u{202f}' | '\u{205f}' | '\u{3000}' | '\u{feff}')
 }
 
 pub fn js_number(text: &str) -> f64 {
@@ -168,10 +164,7 @@ pub fn build_resource_directory(value: &Value) -> Res<Vec<u8>> {
             Some("reserved-null") => 0.0,
             Some(text) if text.starts_with("resource:") => {
                 let literal = &text["resource:".len()..];
-                let target = address(
-                    Some(&Value::String(literal.to_string())),
-                    &format!("resource pointer {}", id(index as f64, count)),
-                )?;
+                let target = address(Some(&Value::String(literal.to_string())), &format!("resource pointer {}", id(index as f64, count)))?;
                 if hex(target) != literal {
                     return Err(format!("resource pointer {} is not canonical hexadecimal", id(index as f64, count)));
                 }

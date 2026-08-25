@@ -50,14 +50,7 @@ pub fn zlib(data: &[u8]) -> Vec<u8> {
     encoder.finish().expect("writing to memory cannot fail")
 }
 
-fn encode_png(
-    width: usize,
-    height: usize,
-    color: ColorType,
-    depth: BitDepth,
-    palette: Option<&[u8]>,
-    pixels: &[u8],
-) -> Result<Vec<u8>, ExportError> {
+fn encode_png(width: usize, height: usize, color: ColorType, depth: BitDepth, palette: Option<&[u8]>, pixels: &[u8]) -> Result<Vec<u8>, ExportError> {
     let mut output = Vec::new();
     {
         let mut encoder = Encoder::new(&mut output, width as u32, height as u32);
@@ -83,12 +76,7 @@ fn dimensions(count: usize, width: f64, message: &str) -> Result<(usize, usize),
     Ok((width, count / width))
 }
 
-pub fn tile_png(
-    raw: &[u8],
-    bpp: f64,
-    columns: f64,
-    palette_colors: Option<&[Rgb]>,
-) -> Result<(Vec<u8>, Report), ExportError> {
+pub fn tile_png(raw: &[u8], bpp: f64, columns: f64, palette_colors: Option<&[Rgb]>) -> Result<(Vec<u8>, Report), ExportError> {
     let four = match bpp {
         4.0 => true,
         8.0 => false,
@@ -121,11 +109,7 @@ pub fn tile_png(
             }
         }
     }
-    let generated: Vec<Rgb> = if four {
-        (0..16).map(|i| [i * 16, i * 16, i * 16]).collect()
-    } else {
-        (0..256u16).map(|i| [((i & 31) * 8) as u8, (((i >> 5) & 7) * 8) as u8, 0]).collect()
-    };
+    let generated: Vec<Rgb> = if four { (0..16).map(|i| [i * 16, i * 16, i * 16]).collect() } else { (0..256u16).map(|i| [((i & 31) * 8) as u8, (((i >> 5) & 7) * 8) as u8, 0]).collect() };
     let palette = palette_colors.unwrap_or(&generated);
     let limit = if four { 16 } else { 256 };
     if palette.is_empty() || palette.len() > limit || pixels.iter().any(|pixel| *pixel as usize >= palette.len()) {
@@ -133,14 +117,7 @@ pub fn tile_png(
     }
     let palette_bytes: Vec<u8> = palette.iter().flatten().copied().collect();
     let data = if four { pixels.chunks_exact(2).map(|pair| pair[0] << 4 | pair[1]).collect() } else { pixels };
-    let image = encode_png(
-        width,
-        height,
-        ColorType::Indexed,
-        if four { BitDepth::Four } else { BitDepth::Eight },
-        Some(&palette_bytes),
-        &data,
-    )?;
+    let image = encode_png(width, height, ColorType::Indexed, if four { BitDepth::Four } else { BitDepth::Eight }, Some(&palette_bytes), &data)?;
     let mut report = Report::default();
     report.set("width", width as f64);
     report.set("height", height as f64);
@@ -160,11 +137,7 @@ pub fn palette_png(raw: &[u8]) -> Result<(Vec<u8>, Report), ExportError> {
         if value & 0x8000 != 0 {
             return err("palette contains a non-BGR555 high bit");
         }
-        palette.extend([
-            ((value & 31) << 3) as u8,
-            (((value >> 5) & 31) << 3) as u8,
-            (((value >> 10) & 31) << 3) as u8,
-        ]);
+        palette.extend([((value & 31) << 3) as u8, (((value >> 5) & 31) << 3) as u8, (((value >> 10) & 31) << 3) as u8]);
     }
     let entries = raw.len() / 2;
     let mut pixels: Vec<u8> = (0..entries).map(|index| index as u8).collect();
@@ -212,15 +185,9 @@ pub fn palette_rgba_image(raw: &[u8], width: f64) -> Result<(Vec<u8>, Report), E
     let mut pixels = Vec::with_capacity(raw.len() * 2);
     for bytes in raw.chunks_exact(2) {
         let value = u16::from_le_bytes([bytes[0], bytes[1]]);
-        pixels.extend([
-            ((value & 31) << 3) as u8,
-            (((value >> 5) & 31) << 3) as u8,
-            (((value >> 10) & 31) << 3) as u8,
-            if value & 0x8000 == 0 { 255 } else { 254 },
-        ]);
+        pixels.extend([((value & 31) << 3) as u8, (((value >> 5) & 31) << 3) as u8, (((value >> 10) & 31) << 3) as u8, if value & 0x8000 == 0 { 255 } else { 254 }]);
     }
-    let (image, mut report) = rgba_image(&pixels, width)
-        .map_err(|_| ExportError("palette RGBA dimensions must divide whole colors".into()))?;
+    let (image, mut report) = rgba_image(&pixels, width).map_err(|_| ExportError("palette RGBA dimensions must divide whole colors".into()))?;
     report.set("palette_entries", (raw.len() / 2) as f64);
     Ok((image, report))
 }

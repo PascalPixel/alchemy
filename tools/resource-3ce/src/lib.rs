@@ -78,24 +78,7 @@ fn json_file(path: &Path) -> Result<Value> {
 }
 
 fn parse_layout(v: &Value) -> Result<Layout> {
-    let o = keys(
-        v,
-        &[
-            "format",
-            "kind",
-            "resource_id",
-            "address",
-            "decoded_address",
-            "stream_size",
-            "decoded_size",
-            "overlay",
-            "compression_plan",
-            "selection",
-            "padding",
-            "zero_fill",
-        ],
-        "resource 3ce layout",
-    )?;
+    let o = keys(v, &["format", "kind", "resource_id", "address", "decoded_address", "stream_size", "decoded_size", "overlay", "compression_plan", "selection", "padding", "zero_fill"], "resource 3ce layout")?;
     if !same_number(field(o, "format")?, 1.0)
         || !same_string(field(o, "kind")?, "golden-sun-final-battle-overlay")
         || !same_string(field(o, "resource_id")?, "0x3ce")
@@ -108,11 +91,7 @@ fn parse_layout(v: &Value) -> Result<Layout> {
     {
         return err("resource 3ce layout identity differs");
     }
-    let s = keys(
-        field(o, "selection")?,
-        &["table", "record_index", "record_address", "resource_id", "group", "variant", "effect_id", "consumers"],
-        "resource 3ce selection",
-    )?;
+    let s = keys(field(o, "selection")?, &["table", "record_index", "record_address", "resource_id", "group", "variant", "effect_id", "consumers"], "resource 3ce selection")?;
     let consumers = field(s, "consumers")?.as_array().ok_or_else(|| "resource 3ce selection differs".to_string())?;
     let wanted = ["Func_0808a8e4", "Func_0808ab48", "Func_0808ab74"];
     if !same_string(field(s, "table")?, "0x0809f1a8")
@@ -128,32 +107,19 @@ fn parse_layout(v: &Value) -> Result<Layout> {
         return err("resource 3ce selection differs");
     }
     let p = keys(field(o, "padding")?, &["address", "size", "alignment", "policy"], "resource 3ce padding")?;
-    if !same_string(field(p, "address")?, &address(PADDING_ADDRESS))
-        || !same_number(field(p, "size")?, 3.0)
-        || !same_number(field(p, "alignment")?, 4.0)
-        || !same_string(field(p, "policy")?, "fallback")
-    {
+    if !same_string(field(p, "address")?, &address(PADDING_ADDRESS)) || !same_number(field(p, "size")?, 3.0) || !same_number(field(p, "alignment")?, 4.0) || !same_string(field(p, "policy")?, "fallback") {
         return err("resource 3ce padding must remain an unclaimed aligned gap");
     }
     let f = keys(field(o, "zero_fill")?, &["address", "end", "value"], "resource 3ce zero fill")?;
-    if !same_string(field(f, "address")?, &address(FILL_ADDRESS))
-        || !same_string(field(f, "end")?, &address(ROM_END))
-        || !same_number(field(f, "value")?, 0.0)
-    {
+    if !same_string(field(f, "address")?, &address(FILL_ADDRESS)) || !same_string(field(f, "end")?, &address(ROM_END)) || !same_number(field(f, "value")?, 0.0) {
         return err("resource 3ce zero fill differs");
     }
-    Ok(Layout {
-        overlay: field(o, "overlay")?.as_str().unwrap().into(),
-        plan: field(o, "compression_plan")?.as_str().unwrap().into(),
-    })
+    Ok(Layout { overlay: field(o, "overlay")?.as_str().unwrap().into(), plan: field(o, "compression_plan")?.as_str().unwrap().into() })
 }
 
 fn parse_plan(v: &Value) -> Result<Vec<GeneralToken>> {
     let o = keys(v, &["format", "codec", "decoded_size", "tokens"], "resource 3ce stream plan")?;
-    if !same_number(field(o, "format")?, 1.0)
-        || !same_string(field(o, "codec")?, "golden-sun-general-lz")
-        || !same_string(field(o, "decoded_size")?, &hex(DECODED_SIZE, 4))
-    {
+    if !same_number(field(o, "format")?, 1.0) || !same_string(field(o, "codec")?, "golden-sun-general-lz") || !same_string(field(o, "decoded_size")?, &hex(DECODED_SIZE, 4)) {
         return err("resource 3ce stream plan differs");
     }
     let raw = field(o, "tokens")?.as_array().ok_or_else(|| "resource 3ce stream plan differs".to_string())?;
@@ -207,10 +173,7 @@ fn parse_plan(v: &Value) -> Result<Vec<GeneralToken>> {
 
 fn layout_paths(path: &Path, layout: &Layout) -> Result<(PathBuf, PathBuf)> {
     let dir = path.parent().unwrap_or_else(|| Path::new("."));
-    let name = path
-        .file_name()
-        .and_then(|n| n.to_str())
-        .ok_or_else(|| "resource 3ce layout path must name a file".to_string())?;
+    let name = path.file_name().and_then(|n| n.to_str()).ok_or_else(|| "resource 3ce layout path must name a file".to_string())?;
     let prefix = name.strip_suffix("layout.json").unwrap_or(name);
     let local = |leaf: String| -> Result<PathBuf> {
         if Path::new(&leaf).file_name().and_then(|n| n.to_str()) != Some(leaf.as_str()) {
@@ -233,14 +196,7 @@ pub fn build_resource_3ce(path: &Path) -> Result<Resource3ceBuild> {
     if stream.len() != STREAM_SIZE {
         return err("resource 3ce stream size differs");
     }
-    Ok(Resource3ceBuild {
-        stream_address: RESOURCE_ADDRESS,
-        stream,
-        fill_address: FILL_ADDRESS,
-        fill: vec![0; ROM_END - FILL_ADDRESS],
-        fallback_address: PADDING_ADDRESS,
-        fallback_size: PADDING_SIZE,
-    })
+    Ok(Resource3ceBuild { stream_address: RESOURCE_ADDRESS, stream, fill_address: FILL_ADDRESS, fill: vec![0; ROM_END - FILL_ADDRESS], fallback_address: PADDING_ADDRESS, fallback_size: PADDING_SIZE })
 }
 
 pub fn run(args: Vec<String>) -> Result<()> {

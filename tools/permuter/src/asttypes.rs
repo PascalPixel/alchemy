@@ -152,9 +152,7 @@ pub fn same_type(a: &CType, b: &CType, tm: &TypeMap, allow_similar: bool) -> boo
                 b = resolve_typedefs(*y, tm);
                 allow_similar = false;
             }
-            (CType::Struct { is_union: u1, name: n1 }, CType::Struct { is_union: u2, name: n2 }) => {
-                return u1 == u2 && n1 == n2
-            }
+            (CType::Struct { is_union: u1, name: n1 }, CType::Struct { is_union: u2, name: n2 }) => return u1 == u2 && n1 == n2,
             (CType::Enum(n1), CType::Enum(n2)) => {
                 return allow_similar || n1 == n2;
             }
@@ -215,10 +213,7 @@ fn base_from_type_specifier(ts: &TypeSpecifier, names: &mut Vec<String>) -> Opti
             return None;
         }
         TypeSpecifier::Struct(st) => {
-            return Some(CType::Struct {
-                is_union: matches!(st.node.kind.node, StructKind::Union),
-                name: st.node.identifier.as_ref().map(|i| i.node.name.clone()).unwrap_or_default(),
-            });
+            return Some(CType::Struct { is_union: matches!(st.node.kind.node, StructKind::Union), name: st.node.identifier.as_ref().map(|i| i.node.name.clone()).unwrap_or_default() });
         }
         TypeSpecifier::Enum(et) => {
             return Some(CType::Enum(et.node.identifier.as_ref().map(|i| i.node.name.clone()).unwrap_or_default()));
@@ -484,10 +479,7 @@ pub fn expr_type(e: &Expression, tm: &TypeMap) -> Result<CType, Fail> {
         Expression::UnaryOperator(u) => {
             let sub = &u.node.operand.node;
             match u.node.operator.node {
-                UnaryOperator::PostIncrement
-                | UnaryOperator::PostDecrement
-                | UnaryOperator::PreIncrement
-                | UnaryOperator::PreDecrement => expr_type(sub, tm),
+                UnaryOperator::PostIncrement | UnaryOperator::PostDecrement | UnaryOperator::PreIncrement | UnaryOperator::PreDecrement => expr_type(sub, tm),
                 UnaryOperator::Address => Ok(CType::ptr(expr_type(sub, tm)?)),
                 UnaryOperator::Indirection => deref_type(&expr_type(sub, tm)?, tm),
                 UnaryOperator::Minus | UnaryOperator::Plus => {

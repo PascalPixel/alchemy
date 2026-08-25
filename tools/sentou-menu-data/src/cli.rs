@@ -6,8 +6,7 @@ use std::io::{self, Write};
 use std::path::Path;
 use std::process::ExitCode;
 
-const USAGE: &str =
-    "usage: sentou_menu_data build INDEX --output FILE | build-stdout INDEX | verify ROM INDEX | --self-test";
+const USAGE: &str = "usage: sentou_menu_data build INDEX --output FILE | build-stdout INDEX | verify ROM INDEX | --self-test";
 
 fn run(args: &[String]) -> Result<(), Error> {
     match args {

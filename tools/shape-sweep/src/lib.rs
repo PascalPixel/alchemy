@@ -12,15 +12,7 @@ pub enum TransformId {
 }
 
 impl TransformId {
-    pub const ALL: [Self; 7] = [
-        Self::HoistArgsAfterFirst,
-        Self::InlineSingleUseTemp,
-        Self::NameRepeatedSubexpression,
-        Self::UnsignComparison,
-        Self::IndexToPointer,
-        Self::SinkDeclarationToBlock,
-        Self::InvertToEarlyReturn,
-    ];
+    pub const ALL: [Self; 7] = [Self::HoistArgsAfterFirst, Self::InlineSingleUseTemp, Self::NameRepeatedSubexpression, Self::UnsignComparison, Self::IndexToPointer, Self::SinkDeclarationToBlock, Self::InvertToEarlyReturn];
 
     pub const fn id(self) -> &'static str {
         match self {
@@ -77,9 +69,7 @@ fn identifier_at(source: &str, at: usize) -> Option<(String, usize)> {
 }
 
 fn token_at(source: &str, at: usize, token: &str) -> bool {
-    source.as_bytes().get(at..at + token.len()) == Some(token.as_bytes())
-        && (at == 0 || !is_ident_continue(source.as_bytes()[at - 1]))
-        && (at + token.len() == source.len() || !is_ident_continue(source.as_bytes()[at + token.len()]))
+    source.as_bytes().get(at..at + token.len()) == Some(token.as_bytes()) && (at == 0 || !is_ident_continue(source.as_bytes()[at - 1])) && (at + token.len() == source.len() || !is_ident_continue(source.as_bytes()[at + token.len()]))
 }
 
 fn replace_first_token(source: &str, token: &str, replacement: &str) -> Option<String> {
@@ -180,23 +170,15 @@ fn apply_hoist_args_after_first(source: &str) -> Option<String> {
     if args.len() < 2 {
         return Some(source.to_string());
     }
-    let bound: String =
-        args.iter().skip(1).enumerate().map(|(index, arg)| format!("s32 shape_arg{index} = {arg}; ")).collect();
-    let call_args = std::iter::once(args[0].clone())
-        .chain((0..args.len() - 1).map(|index| format!("shape_arg{index}")))
-        .collect::<Vec<_>>()
-        .join(", ");
+    let bound: String = args.iter().skip(1).enumerate().map(|(index, arg)| format!("s32 shape_arg{index} = {arg}; ")).collect();
+    let call_args = std::iter::once(args[0].clone()).chain((0..args.len() - 1).map(|index| format!("shape_arg{index}"))).collect::<Vec<_>>().join(", ");
     let replacement = format!("{{ {bound}{name}({call_args}); }}");
     Some(format!("{}{}{}", &source[..start], replacement, &source[end..]))
 }
 
 fn typed_name_start(source: &str, at: usize, types: &[&str]) -> Option<(String, usize)> {
     let mut cursor = at;
-    let type_name = types.iter().find(|type_name| {
-        source.as_bytes().get(cursor..cursor + type_name.len()) == Some(type_name.as_bytes())
-            && (cursor + type_name.len() == source.len()
-                || source.as_bytes()[cursor + type_name.len()].is_ascii_whitespace())
-    })?;
+    let type_name = types.iter().find(|type_name| source.as_bytes().get(cursor..cursor + type_name.len()) == Some(type_name.as_bytes()) && (cursor + type_name.len() == source.len() || source.as_bytes()[cursor + type_name.len()].is_ascii_whitespace()))?;
     cursor += type_name.len();
     cursor = skip_space(source, cursor);
     let (name, after) = identifier_at(source, cursor)?;

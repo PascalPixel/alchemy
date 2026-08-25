@@ -21,17 +21,48 @@ pub mod cli;
 use std::path::Path;
 use std::process::Command;
 
-const BLOCKED_EXTENSIONS: &[&str] = &["a", "bin", "bps", "bsdiff", "d", "diff", "dis", "dll", "dmp", "dump", "dylib", "elf", "exe", "gba", "gz", "ips", "lst", "log", "map", "o", "patch", "raw", "rom", "sav", "so", "sym", "tar", "tgz", "ups", "xdelta", "xdelta3", "zip", "7z"];
+const BLOCKED_EXTENSIONS: &[&str] = &[
+    "a", "bin", "bps", "bsdiff", "d", "diff", "dis", "dll", "dmp", "dump", "dylib", "elf", "exe",
+    "gba", "gz", "ips", "lst", "log", "map", "o", "patch", "raw", "rom", "sav", "so", "sym", "tar",
+    "tgz", "ups", "xdelta", "xdelta3", "zip", "7z",
+];
 
-const BLOCKED_DIRECTORIES: &[&str] =
-    &[".cache", "alchemy-gcc", "analysis", "build", "builds", "cmatch", "comparisons", "compiler-output", "diffs", "disassembly", "dist", "dump", "dumps", "m2c", "objdump", "out", "private", "report", "reports", "rom", "roms", "scratch", "toolchain", "toolchains", "work"];
+const BLOCKED_DIRECTORIES: &[&str] = &[
+    ".cache",
+    "alchemy-gcc",
+    "analysis",
+    "build",
+    "builds",
+    "cmatch",
+    "comparisons",
+    "compiler-output",
+    "diffs",
+    "disassembly",
+    "dist",
+    "dump",
+    "dumps",
+    "m2c",
+    "objdump",
+    "out",
+    "private",
+    "report",
+    "reports",
+    "rom",
+    "roms",
+    "scratch",
+    "toolchain",
+    "toolchains",
+    "work",
+];
 
 const REPORT_EXTENSIONS: &[&str] = &["csv", "json", "jsonl", "log", "tsv", "txt"];
 
 /// The words `PRIVATE_REPORT` looks for, delimited by `.`, `_`, `-`, or an end.
 const PRIVATE_REPORT_WORDS: &[&str] = &["analysis", "comparison", "diff", "dump", "report"];
 
-const MARKER_EXTENSIONS: &[&str] = &["md", "ts", "js", "json", "sh", "c", "h", "s", "asm", "tsv", "txt"];
+const MARKER_EXTENSIONS: &[&str] = &[
+    "md", "ts", "js", "json", "sh", "c", "h", "s", "asm", "tsv", "txt",
+];
 
 /// `/^0+$/` --- a git object id of all zeroes means "no such ref".
 fn zero_oid(value: &str) -> bool {
@@ -92,14 +123,26 @@ fn canonical_binary_source(path: &str) -> bool {
 /// Why a repository path may not be published, or `None` if it may.
 pub fn publication_path_reason(path: &str) -> Option<&'static str> {
     let normalized = path.replace('\\', "/");
-    let components: Vec<&str> = normalized.split('/').filter(|item| !item.is_empty()).collect();
-    let leaf = components.last().map(|item| item.to_lowercase()).unwrap_or_default();
-    let directories: Vec<String> = components[..components.len().saturating_sub(1)].iter().map(|item| item.to_lowercase()).collect();
+    let components: Vec<&str> = normalized
+        .split('/')
+        .filter(|item| !item.is_empty())
+        .collect();
+    let leaf = components
+        .last()
+        .map(|item| item.to_lowercase())
+        .unwrap_or_default();
+    let directories: Vec<String> = components[..components.len().saturating_sub(1)]
+        .iter()
+        .map(|item| item.to_lowercase())
+        .collect();
     let suffix = extension(&normalized);
     if normalized.starts_with('/') || components.contains(&"..") {
         return Some("invalid repository path");
     }
-    if directories.iter().any(|item| BLOCKED_DIRECTORIES.contains(&item.as_str()) || item.starts_with(".cmatch")) {
+    if directories
+        .iter()
+        .any(|item| BLOCKED_DIRECTORIES.contains(&item.as_str()) || item.starts_with(".cmatch"))
+    {
         return Some("private or generated directory");
     }
     if leaf == "baserom" || leaf.starts_with("baserom.") {
@@ -152,7 +195,17 @@ pub fn publication_content_reason(data: &[u8]) -> Option<&'static str> {
     }
     if data.len() >= 4 {
         let magic = u32::from_be_bytes([data[0], data[1], data[2], data[3]]);
-        const MAGICS: [u32; 9] = [0xfeed_face, 0xcefa_edfe, 0xfeed_facf, 0xcffa_edfe, 0xcafe_babe, 0xbeba_feca, 0xcafe_babf, 0xbfba_feca, 0x0061_736d];
+        const MAGICS: [u32; 9] = [
+            0xfeed_face,
+            0xcefa_edfe,
+            0xfeed_facf,
+            0xcffa_edfe,
+            0xcafe_babe,
+            0xbeba_feca,
+            0xcafe_babf,
+            0xbfba_feca,
+            0x0061_736d,
+        ];
         if MAGICS.contains(&magic) {
             return Some("native executable");
         }
@@ -215,14 +268,22 @@ pub fn conflict_marker_reason(path: &str, data: &[u8]) -> Option<String> {
         return None;
     }
     let text = String::from_utf8_lossy(data);
-    let found = line_starts(&text).into_iter().any(|start| marker_line(&text[start..]));
+    let found = line_starts(&text)
+        .into_iter()
+        .any(|start| marker_line(&text[start..]));
     if !found {
         return None;
     }
     // The reported line number comes from a plain `\n` split, exactly as the
     // TypeScript does; a `\r`-only match therefore reports line 0 in both.
-    let line = text.split('\n').position(marker_line).map(|index| index as isize + 1).unwrap_or(0);
-    Some(format!("unresolved conflict marker at line {line}; resolve the merge before committing"))
+    let line = text
+        .split('\n')
+        .position(marker_line)
+        .map(|index| index as isize + 1)
+        .unwrap_or(0);
+    Some(format!(
+        "unresolved conflict marker at line {line}; resolve the merge before committing"
+    ))
 }
 
 /// The only markdown files this repository keeps.
@@ -237,7 +298,10 @@ pub const ALLOWED_MARKDOWN: &[&str] = &["README.md", "CONTRIBUTING.md"];
 /// about growth, not about the ten data files already tracked.
 ///
 /// `tracked` is the set of paths already in HEAD.
-pub fn new_text_file_reason(path: &str, tracked: &std::collections::BTreeSet<String>) -> Option<String> {
+pub fn new_text_file_reason(
+    path: &str,
+    tracked: &std::collections::BTreeSet<String>,
+) -> Option<String> {
     let suffix = extension(path);
     if suffix != "txt" && suffix != "md" {
         return None;
@@ -293,14 +357,22 @@ fn byte_dump(message: &str) -> bool {
             index += 1;
         }
     }
-    let pair = |run: &(usize, usize)| run.1 - run.0 == 2 && bytes[run.0..run.1].iter().all(u8::is_ascii_hexdigit);
+    let pair = |run: &(usize, usize)| {
+        run.1 - run.0 == 2 && bytes[run.0..run.1].iter().all(u8::is_ascii_hexdigit)
+    };
     let mut streak = 0usize;
     for position in 0..runs.len() {
         if !pair(&runs[position]) {
             streak = 0;
             continue;
         }
-        let joined = position > 0 && pair(&runs[position - 1]) && streak > 0 && bytes[runs[position - 1].1..runs[position].0].iter().all(|byte| *byte == b' ' || *byte == b'\t') && runs[position].0 > runs[position - 1].1;
+        let joined = position > 0
+            && pair(&runs[position - 1])
+            && streak > 0
+            && bytes[runs[position - 1].1..runs[position].0]
+                .iter()
+                .all(|byte| *byte == b' ' || *byte == b'\t')
+            && runs[position].0 > runs[position - 1].1;
         streak = if joined { streak + 1 } else { 1 };
         if streak >= 8 {
             return true;
@@ -332,25 +404,56 @@ fn git(root: &Path, args: &[&str], input: Option<&str>, label: &str) -> Result<V
     use std::io::Write;
     use std::process::Stdio;
     let mut command = Command::new("git");
-    command.arg("-C").arg(root).args(args).stdout(Stdio::piped()).stderr(Stdio::piped()).stdin(if input.is_some() { Stdio::piped() } else { Stdio::null() });
-    let mut child = command.spawn().map_err(|error| format!("{label} failed: {error}"))?;
+    command
+        .arg("-C")
+        .arg(root)
+        .args(args)
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .stdin(if input.is_some() {
+            Stdio::piped()
+        } else {
+            Stdio::null()
+        });
+    let mut child = command
+        .spawn()
+        .map_err(|error| format!("{label} failed: {error}"))?;
     if let Some(text) = input {
-        child.stdin.as_mut().ok_or_else(|| format!("{label} failed"))?.write_all(text.as_bytes()).map_err(|error| format!("{label} failed: {error}"))?;
+        child
+            .stdin
+            .as_mut()
+            .ok_or_else(|| format!("{label} failed"))?
+            .write_all(text.as_bytes())
+            .map_err(|error| format!("{label} failed: {error}"))?;
     }
-    let result = child.wait_with_output().map_err(|error| format!("{label} failed: {error}"))?;
+    let result = child
+        .wait_with_output()
+        .map_err(|error| format!("{label} failed: {error}"))?;
     if !result.status.success() {
         let stderr = String::from_utf8_lossy(&result.stderr).trim().to_string();
-        return Err(if stderr.is_empty() { format!("{label} failed") } else { stderr });
+        return Err(if stderr.is_empty() {
+            format!("{label} failed")
+        } else {
+            stderr
+        });
     }
     Ok(result.stdout)
 }
 
 fn nul_list(value: &[u8]) -> Vec<String> {
-    String::from_utf8_lossy(value).split('\0').filter(|item| !item.is_empty()).map(str::to_string).collect()
+    String::from_utf8_lossy(value)
+        .split('\0')
+        .filter(|item| !item.is_empty())
+        .map(str::to_string)
+        .collect()
 }
 
 fn lines(value: &[u8]) -> Vec<String> {
-    String::from_utf8_lossy(value).split('\n').map(|item| item.trim().to_string()).filter(|item| !item.is_empty()).collect()
+    String::from_utf8_lossy(value)
+        .split('\n')
+        .map(|item| item.trim().to_string())
+        .filter(|item| !item.is_empty())
+        .collect()
 }
 
 /// One thing to scan. `data` is fetched lazily, exactly as in the TypeScript.
@@ -367,7 +470,11 @@ impl Entry<'_> {
 }
 
 fn rename_destinations(value: &[u8]) -> std::collections::BTreeSet<String> {
-    let fields = String::from_utf8_lossy(value).split('\0').filter(|field| !field.is_empty()).map(str::to_string).collect::<Vec<_>>();
+    let fields = String::from_utf8_lossy(value)
+        .split('\0')
+        .filter(|field| !field.is_empty())
+        .map(str::to_string)
+        .collect::<Vec<_>>();
     let mut destinations = std::collections::BTreeSet::new();
     let mut index = 0usize;
     while index < fields.len() {
@@ -393,8 +500,25 @@ fn rename_destinations(value: &[u8]) -> std::collections::BTreeSet<String> {
 fn tracked_paths(root: &Path) -> std::collections::BTreeSet<String> {
     // ls-files reads the INDEX, which already contains the file being staged, so
     // every new file would look tracked and the rule would never fire. Read HEAD.
-    let mut tracked: std::collections::BTreeSet<String> = git(root, &["ls-tree", "-r", "HEAD", "--name-only"], None, "tracked path scan").map(|out| String::from_utf8_lossy(&out).lines().map(str::to_string).collect()).unwrap_or_default();
-    if let Ok(out) = git(root, &["diff", "--cached", "--name-status", "--find-renames", "-z"], None, "staged rename scan") {
+    let mut tracked: std::collections::BTreeSet<String> = git(
+        root,
+        &["ls-tree", "-r", "HEAD", "--name-only"],
+        None,
+        "tracked path scan",
+    )
+    .map(|out| {
+        String::from_utf8_lossy(&out)
+            .lines()
+            .map(str::to_string)
+            .collect()
+    })
+    .unwrap_or_default();
+    if let Ok(out) = git(
+        root,
+        &["diff", "--cached", "--name-status", "--find-renames", "-z"],
+        None,
+        "staged rename scan",
+    ) {
         tracked.extend(rename_destinations(&out));
     }
     tracked
@@ -420,16 +544,36 @@ pub fn reject(entries: &[Entry]) -> Result<(), String> {
     if failures.is_empty() {
         Ok(())
     } else {
-        Err(format!("publication gate rejected:\n{}", failures.join("\n")))
+        Err(format!(
+            "publication gate rejected:\n{}",
+            failures.join("\n")
+        ))
     }
 }
 
 fn staged_paths(root: &Path) -> Result<Vec<String>, String> {
-    let paths = nul_list(&git(root, &["diff", "--cached", "--name-only", "--diff-filter=ACMRT", "-z"], None, "staged path scan")?);
+    let paths = nul_list(&git(
+        root,
+        &[
+            "diff",
+            "--cached",
+            "--name-only",
+            "--diff-filter=ACMRT",
+            "-z",
+        ],
+        None,
+        "staged path scan",
+    )?);
     // Exclude submodules which are tracked as commit objects, not blobs.
     let mut kept = Vec::new();
     for path in paths {
-        let stage = String::from_utf8_lossy(&git(root, &["ls-files", "--stage", &path], None, "ls-files")?).to_string();
+        let stage = String::from_utf8_lossy(&git(
+            root,
+            &["ls-files", "--stage", &path],
+            None,
+            "ls-files",
+        )?)
+        .to_string();
         if !stage.is_empty() && !stage.starts_with("160000") {
             kept.push(path);
         }
@@ -441,14 +585,35 @@ fn staged_paths(root: &Path) -> Result<Vec<String>, String> {
 /// scanned-nothing guard, so that a deletion-only commit is not mistaken for an
 /// empty index.
 fn staged_anything(root: &Path) -> Result<Vec<String>, String> {
-    Ok(nul_list(&git(root, &["diff", "--cached", "--name-only", "-z"], None, "staged path scan")?))
+    Ok(nul_list(&git(
+        root,
+        &["diff", "--cached", "--name-only", "-z"],
+        None,
+        "staged path scan",
+    )?))
 }
 
 fn changed_paths(root: &Path, commit: &str) -> Result<Vec<String>, String> {
-    let paths = nul_list(&git(root, &["diff-tree", "--root", "--no-commit-id", "--name-only", "--diff-filter=ACMRT", "-r", "-z", commit], None, &format!("commit path scan {commit}"))?);
+    let paths = nul_list(&git(
+        root,
+        &[
+            "diff-tree",
+            "--root",
+            "--no-commit-id",
+            "--name-only",
+            "--diff-filter=ACMRT",
+            "-r",
+            "-z",
+            commit,
+        ],
+        None,
+        &format!("commit path scan {commit}"),
+    )?);
     let mut kept = Vec::new();
     for path in paths {
-        let ls_tree = String::from_utf8_lossy(&git(root, &["ls-tree", commit, &path], None, "ls-tree")?).to_string();
+        let ls_tree =
+            String::from_utf8_lossy(&git(root, &["ls-tree", commit, &path], None, "ls-tree")?)
+                .to_string();
         if !ls_tree.is_empty() && !ls_tree.contains(" commit ") {
             kept.push(path);
         }
@@ -469,7 +634,18 @@ pub fn check_staged(root: &Path) -> Result<(), String> {
         .into_iter()
         .map(|path| {
             let owned = path.clone();
-            Entry { scope: "staged".to_string(), path, data: Box::new(move || git(root, &["show", &format!(":{owned}")], None, &format!("staged blob {owned}"))) }
+            Entry {
+                scope: "staged".to_string(),
+                path,
+                data: Box::new(move || {
+                    git(
+                        root,
+                        &["show", &format!(":{owned}")],
+                        None,
+                        &format!("staged blob {owned}"),
+                    )
+                }),
+            }
         })
         .collect();
     reject(&entries)?;
@@ -484,7 +660,10 @@ pub fn check_staged(root: &Path) -> Result<(), String> {
     if failures.is_empty() {
         Ok(())
     } else {
-        Err(format!("publication gate rejected:\n{}", failures.join("\n")))
+        Err(format!(
+            "publication gate rejected:\n{}",
+            failures.join("\n")
+        ))
     }
 }
 
@@ -494,11 +673,22 @@ fn revisions(root: &Path, local: &str, remote: &str) -> Result<Vec<String>, Stri
     if !zero_oid(remote) {
         args.push(&negated);
     }
-    Ok(lines(&git(root, &args, None, &format!("outgoing revision scan {local}"))?))
+    Ok(lines(&git(
+        root,
+        &args,
+        None,
+        &format!("outgoing revision scan {local}"),
+    )?))
 }
 
 fn commit_message(root: &Path, commit: &str) -> Result<String, String> {
-    Ok(String::from_utf8_lossy(&git(root, &["log", "-1", "--format=%B", commit], None, &format!("commit message {commit}"))?).to_string())
+    Ok(String::from_utf8_lossy(&git(
+        root,
+        &["log", "-1", "--format=%B", commit],
+        None,
+        &format!("commit message {commit}"),
+    )?)
+    .to_string())
 }
 
 /// Gate outgoing history. `updates` is the pre-push hook's stdin.
@@ -513,9 +703,15 @@ fn commit_message(root: &Path, commit: &str) -> Result<String, String> {
 pub fn check_push(root: &Path, updates: &str) -> Result<(), PushError> {
     let updates = lines(updates.as_bytes());
     if updates.is_empty() {
-        return Err(PushError { message_failures: Vec::new(), error: "publication gate scanned nothing: no ref update on stdin".to_string() });
+        return Err(PushError {
+            message_failures: Vec::new(),
+            error: "publication gate scanned nothing: no ref update on stdin".to_string(),
+        });
     }
-    let fail = |error: String| PushError { message_failures: Vec::new(), error };
+    let fail = |error: String| PushError {
+        message_failures: Vec::new(),
+        error,
+    };
     let mut commits: Vec<String> = Vec::new();
     for update in updates {
         let fields: Vec<&str> = update.split_whitespace().collect();
@@ -541,7 +737,10 @@ pub fn check_push(root: &Path, updates: &str) -> Result<(), PushError> {
     }
     if !message_failures.is_empty() {
         let count = message_failures.len();
-        return Err(PushError { message_failures, error: format!("refusing to publish {count} commit message(s)") });
+        return Err(PushError {
+            message_failures,
+            error: format!("refusing to publish {count} commit message(s)"),
+        });
     }
     let mut entries: Vec<Entry> = Vec::new();
     for commit in &commits {
@@ -549,7 +748,18 @@ pub fn check_push(root: &Path, updates: &str) -> Result<(), PushError> {
             let scope = commit[..12.min(commit.len())].to_string();
             let owned_commit = commit.clone();
             let owned_path = path.clone();
-            entries.push(Entry { scope, path, data: Box::new(move || git(root, &["show", &format!("{owned_commit}:{owned_path}")], None, &format!("commit blob {owned_commit}:{owned_path}"))) });
+            entries.push(Entry {
+                scope,
+                path,
+                data: Box::new(move || {
+                    git(
+                        root,
+                        &["show", &format!("{owned_commit}:{owned_path}")],
+                        None,
+                        &format!("commit blob {owned_commit}:{owned_path}"),
+                    )
+                }),
+            });
         }
     }
     reject(&entries).map_err(fail)
@@ -620,7 +830,9 @@ mod tests {
         assert_eq!(ALLOWED_MARKDOWN, &["README.md", "CONTRIBUTING.md"]);
         assert!(new_text_file_reason("README.md", &tracked).is_none());
         assert!(new_text_file_reason("CONTRIBUTING.md", &tracked).is_none());
-        assert!(new_text_file_reason("AGENTS.md", &tracked).expect("AGENTS.md must not return as a third guide").contains("exactly two"));
+        assert!(new_text_file_reason("AGENTS.md", &tracked)
+            .expect("AGENTS.md must not return as a third guide")
+            .contains("exactly two"));
         assert!(new_text_file_reason("CLAUDE.md", &tracked).is_some());
     }
 

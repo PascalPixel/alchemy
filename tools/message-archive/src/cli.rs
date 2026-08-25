@@ -38,10 +38,15 @@ const COMMANDS: &[(u32, &str, usize)] = &[
     (30, "end_now", 0),
 ];
 fn command_by_name(name: &str) -> Option<(u32, usize)> {
-    COMMANDS.iter().find(|(_, candidate, _)| *candidate == name).map(|(opcode, _, arguments)| (*opcode, *arguments))
+    COMMANDS
+        .iter()
+        .find(|(_, candidate, _)| *candidate == name)
+        .map(|(opcode, _, arguments)| (*opcode, *arguments))
 }
 fn integer(value: Option<&Value>, label: &str) -> Res<i64> {
-    value.and_then(Value::as_i64).ok_or_else(|| format!("{label} must be an integer"))
+    value
+        .and_then(Value::as_i64)
+        .ok_or_else(|| format!("{label} must be an integer"))
 }
 fn bounded(value: Option<&Value>, minimum: i64, maximum: i64, label: &str) -> Res<i64> {
     let parsed = integer(value, label)?;
@@ -102,7 +107,11 @@ fn packed_leaves(leaves: &[u32]) -> Res<Vec<u8>> {
             break;
         }
         let second = bounded_raw(leaves[index + 1] as i64, 0, 0xfff, "context symbol")? as u32;
-        groups.push(vec![(second & 0xff) as u8, (((first & 0x0f) << 4) | (second >> 8)) as u8, (first >> 4) as u8]);
+        groups.push(vec![
+            (second & 0xff) as u8,
+            (((first & 0x0f) << 4) | (second >> 8)) as u8,
+            (first >> 4) as u8,
+        ]);
         index += 2;
     }
     groups.reverse();
@@ -134,7 +143,8 @@ fn compile_context(source: &ContextSource) -> Res<CompiledContext> {
             if state.leaf >= state.leaves.len() {
                 return Err(format!("context {} has too few leaves", state.id));
             }
-            let symbol = bounded_raw(state.leaves[state.leaf] as i64, 0, 0xfff, "context symbol")? as u32;
+            let symbol =
+                bounded_raw(state.leaves[state.leaf] as i64, 0, 0xfff, "context symbol")? as u32;
             state.leaf += 1;
             if state.paths.contains_key(&symbol) {
                 return Err(format!("context {} repeats symbol {}", state.id, symbol));
@@ -146,7 +156,14 @@ fn compile_context(source: &ContextSource) -> Res<CompiledContext> {
         let right = parse(state, format!("{path}1"))?;
         Ok(TreeNode::Branch(Box::new(left), Box::new(right)))
     }
-    let mut state = State { bits, leaves: &source.leaves, id: source.id, position: 0, leaf: 0, paths: HashMap::new() };
+    let mut state = State {
+        bits,
+        leaves: &source.leaves,
+        id: source.id,
+        position: 0,
+        leaf: 0,
+        paths: HashMap::new(),
+    };
     let _root = parse(&mut state, String::new())?;
     if state.position != bits.len() || state.leaf != source.leaves.len() {
         return Err(format!("context {} tree and leaves differ", source.id));
@@ -183,10 +200,16 @@ fn parse_document(value: &Value) -> Res<&Vec<Value>> {
     if sorted_keys(source) != "address,bank_size,banks,format,kind,size" {
         return Err("message archive source has unknown fields".into());
     }
-    if strict_number(source.get("format")) != Some(1.0) || source.get("kind").and_then(Value::as_str) != Some("golden-sun-message-archive") {
+    if strict_number(source.get("format")) != Some(1.0)
+        || source.get("kind").and_then(Value::as_str) != Some("golden-sun-message-archive")
+    {
         return Err("unsupported message archive source".into());
     }
-    if source.get("address").and_then(Value::as_str) != Some(hex8(ARCHIVE_ADDRESS).as_str()) || source.get("size").and_then(Value::as_str) != Some(hex8(ARCHIVE_END - ARCHIVE_ADDRESS).as_str()) || strict_number(source.get("bank_size")) != Some(BANK_SIZE as f64) {
+    if source.get("address").and_then(Value::as_str) != Some(hex8(ARCHIVE_ADDRESS).as_str())
+        || source.get("size").and_then(Value::as_str)
+            != Some(hex8(ARCHIVE_END - ARCHIVE_ADDRESS).as_str())
+        || strict_number(source.get("bank_size")) != Some(BANK_SIZE as f64)
+    {
         return Err("message archive layout differs".into());
     }
     let banks = match source.get("banks") {
@@ -194,7 +217,11 @@ fn parse_document(value: &Value) -> Res<&Vec<Value>> {
         _ => return Err("message archive collections differ".into()),
     };
     for (index, bank) in banks.iter().enumerate() {
-        let expected = if index + 1 == BANK_COUNT { LAST_BANK_SIZE } else { BANK_SIZE };
+        let expected = if index + 1 == BANK_COUNT {
+            LAST_BANK_SIZE
+        } else {
+            BANK_SIZE
+        };
         match bank {
             Value::Array(items) if items.len() == expected => {}
             _ => return Err(format!("message bank {index} has the wrong size")),
@@ -265,7 +292,9 @@ fn tokens_from_message(source: &Value) -> Res<Option<Vec<u32>>> {
             Value::Object(map) => Some(map),
             _ => None,
         };
-        let is_control = object.map(|map| map.len() == 1 && map.contains_key("control")).unwrap_or(false);
+        let is_control = object
+            .map(|map| map.len() == 1 && map.contains_key("control"))
+            .unwrap_or(false);
         if !is_control {
             let map = match object {
                 Some(map) => map,
@@ -289,7 +318,8 @@ fn tokens_from_message(source: &Value) -> Res<Option<Vec<u32>>> {
                     return Err(format!("message command {name} requires an argument"));
                 }
                 tokens.push(opcode);
-                tokens.push(bounded(map.get("argument"), 0, 122, "message command argument")? as u32);
+                tokens
+                    .push(bounded(map.get("argument"), 0, 122, "message command argument")? as u32);
             }
             continue;
         }
@@ -304,7 +334,9 @@ fn derived_contexts(banks: &[Value]) -> Res<Vec<ContextSource>> {
         count: u64,
         order: usize,
     }
-    let mut transitions: Vec<(Vec<Transition>, HashMap<u32, usize>)> = (0..CONTEXT_COUNT).map(|_| (Vec::new(), HashMap::new())).collect();
+    let mut transitions: Vec<(Vec<Transition>, HashMap<u32, usize>)> = (0..CONTEXT_COUNT)
+        .map(|_| (Vec::new(), HashMap::new()))
+        .collect();
     for bank in banks {
         let messages = bank.as_array().expect("bank is an array");
         for message in messages {
@@ -321,7 +353,11 @@ fn derived_contexts(banks: &[Value]) -> Res<Vec<ContextSource>> {
                     None => {
                         let order = context.0.len();
                         context.1.insert(symbol, order);
-                        context.0.push(Transition { symbol, count: 1, order });
+                        context.0.push(Transition {
+                            symbol,
+                            count: 1,
+                            order,
+                        });
                     }
                 }
                 previous = symbol;
@@ -339,12 +375,27 @@ fn derived_contexts(banks: &[Value]) -> Res<Vec<ContextSource>> {
             continue;
         }
         let mut order = symbols.len();
-        let mut nodes: Vec<Item> = symbols.iter().map(|item| Item { count: item.count, order: item.order, node: TreeNode::Leaf(item.symbol) }).collect();
+        let mut nodes: Vec<Item> = symbols
+            .iter()
+            .map(|item| Item {
+                count: item.count,
+                order: item.order,
+                node: TreeNode::Leaf(item.symbol),
+            })
+            .collect();
         while nodes.len() > 1 {
-            nodes.sort_by(|left, right| left.count.cmp(&right.count).then(left.order.cmp(&right.order)));
+            nodes.sort_by(|left, right| {
+                left.count
+                    .cmp(&right.count)
+                    .then(left.order.cmp(&right.order))
+            });
             let left = nodes.remove(0);
             let right = nodes.remove(0);
-            nodes.push(Item { count: left.count + right.count, order, node: TreeNode::Branch(Box::new(left.node), Box::new(right.node)) });
+            nodes.push(Item {
+                count: left.count + right.count,
+                order,
+                node: TreeNode::Branch(Box::new(left.node), Box::new(right.node)),
+            });
             order += 1;
         }
         let mut tree = String::new();
@@ -412,9 +463,13 @@ pub fn build_message_archive(value: &Value) -> Res<Vec<u8>> {
                 None => Vec::new(),
                 Some(tokens) => encode_message(tokens, &contexts)?,
             };
-            let allowed = bank + 1 == BANK_COUNT && index + 1 == messages.len() && message.is_null();
+            let allowed =
+                bank + 1 == BANK_COUNT && index + 1 == messages.len() && message.is_null();
             if encoded.is_empty() && !allowed {
-                return Err(format!("message {} is unexpectedly null", hex(((bank as u32) << 8) | index as u32, 4)));
+                return Err(format!(
+                    "message {} is unexpectedly null",
+                    hex(((bank as u32) << 8) | index as u32, 4)
+                ));
             }
             lengths.extend_from_slice(&encoded_length(encoded.len())?);
             payload.extend_from_slice(&encoded);
@@ -443,7 +498,9 @@ pub fn entry(arguments: &[String]) {
         [command, source] if command == "build-stdout" => (|| {
             let bytes = std::fs::read(source).map_err(|error| format!("{source}: {error}"))?;
             let value: Value = serde_json::from_slice(&bytes).map_err(|error| error.to_string())?;
-            std::io::stdout().write_all(&build_message_archive(&value)?).map_err(|error| error.to_string())
+            std::io::stdout()
+                .write_all(&build_message_archive(&value)?)
+                .map_err(|error| error.to_string())
         })(),
         [argument] if matches!(argument.as_str(), "-h" | "--help") => {
             println!("{USAGE}");

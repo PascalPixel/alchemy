@@ -33,20 +33,43 @@ fn run(mut options: crate::cli::Options) -> Result<String, String> {
         return render(root(), &options).map(|output| output.stdout);
     };
     let manifest = TranslationUnits::load(root())?;
-    let unit = manifest.unit(&id).ok_or_else(|| format!("unknown translation unit {id}"))?.clone();
+    let unit = manifest
+        .unit(&id)
+        .ok_or_else(|| format!("unknown translation unit {id}"))?
+        .clone();
     if unit.target()? != options.target {
-        return Err(format!("translation unit {id} belongs to {}, not {}", unit.game, options.target.as_str()));
+        return Err(format!(
+            "translation unit {id} belongs to {}, not {}",
+            unit.game,
+            options.target.as_str()
+        ));
     }
     options.source = unit.source.to_string_lossy().into_owned();
     options.configuration.absolute_symbols = unit.absolute_symbols.clone();
-    let work = options.work.clone().unwrap_or_else(|| root().join("scratch/candidate-show").join(&id).to_string_lossy().into_owned());
+    let work = options.work.clone().unwrap_or_else(|| {
+        root()
+            .join("scratch/candidate-show")
+            .join(&id)
+            .to_string_lossy()
+            .into_owned()
+    });
     options.work = Some(work.clone());
     if let Some(overlay) = &unit.overlay {
         options.overlay = Some(overlay.clone());
         options.configuration.call_via_base = Some(overlay_call_via_base(overlay));
         options.configuration.label_word_bias = Some(OVERLAY_LINK_BIAS as u64);
-        let reference = assemble_overlay(&OverlaySource::path(root().join("games/gs1/assets/code").join(format!("{overlay}_overlay.s"))), OVERLAY_BASE)?;
-        let path = Path::new(&work).join(format!("reference-{}.bin", compiler_core::sha256::hex(&reference)));
+        let reference = assemble_overlay(
+            &OverlaySource::path(
+                root()
+                    .join("games/gs1/assets/code")
+                    .join(format!("{overlay}_overlay.s")),
+            ),
+            OVERLAY_BASE,
+        )?;
+        let path = Path::new(&work).join(format!(
+            "reference-{}.bin",
+            compiler_core::sha256::hex(&reference)
+        ));
         std::fs::create_dir_all(&work).map_err(|error| format!("{work}: {error}"))?;
         std::fs::write(&path, reference).map_err(|error| format!("{}: {error}", path.display()))?;
         options.rom = Some(path.to_string_lossy().into_owned());
@@ -61,46 +84,99 @@ fn run(mut options: crate::cli::Options) -> Result<String, String> {
         options.owner = Some(address);
         options.size = Some(owner.extent);
         if index == 1 {
-            options.precompiled_object = Some(Path::new(&work).join(format!("{:08x}.o", unit.owners[0].address)).to_string_lossy().into_owned());
+            options.precompiled_object = Some(
+                Path::new(&work)
+                    .join(format!("{:08x}.o", unit.owners[0].address))
+                    .to_string_lossy()
+                    .into_owned(),
+            );
         }
         let rendered = render(root(), &options)?;
         if exact_unit && exact_mismatch(&rendered) {
             byte_mismatches.push(address_text.clone());
         }
         if index == 0 {
-            layout_mismatches = validate_layout(&unit, &Path::new(&work).join(format!("{:08x}.o", address)), address)?;
+            layout_mismatches = validate_layout(
+                &unit,
+                &Path::new(&work).join(format!("{:08x}.o", address)),
+                address,
+            )?;
             if !layout_mismatches.is_empty() && exact_unit {
-                return Err(format!("translation unit {id} has {} symbol offset mismatches", layout_mismatches.len()));
+                return Err(format!(
+                    "translation unit {id} has {} symbol offset mismatches",
+                    layout_mismatches.len()
+                ));
             }
         }
         output.push_str(&format!("owner={address_text}\n{}", rendered.stdout));
     }
     if !layout_mismatches.is_empty() {
-        output.push_str(&format!("layout_mismatches={} owners={}\n", layout_mismatches.len(), layout_mismatches.join(",")));
+        output.push_str(&format!(
+            "layout_mismatches={} owners={}\n",
+            layout_mismatches.len(),
+            layout_mismatches.join(",")
+        ));
     }
     if !byte_mismatches.is_empty() {
-        return Err(format!("translation unit {id} has byte mismatches in {}", byte_mismatches.join(",")));
+        return Err(format!(
+            "translation unit {id} has byte mismatches in {}",
+            byte_mismatches.join(",")
+        ));
     }
     Ok(output)
 }
 fn exact_mismatch(output: &RenderOutput) -> bool {
-    output.differing_halfwords != 0 || output.candidate_length != output.reference_length || (output.candidate_length == 0 && !output.stdout.contains("\nclass=exact wrong_instructions=0\n"))
+    output.differing_halfwords != 0
+        || output.candidate_length != output.reference_length
+        || (output.candidate_length == 0
+            && !output
+                .stdout
+                .contains("\nclass=exact wrong_instructions=0\n"))
 }
-fn validate_layout(unit: &TranslationUnit, object: &Path, base: u32) -> Result<Vec<String>, String> {
-    let output = Command::new("arm-none-eabi-nm").args(["-S", "--defined-only"]).arg(object).output().map_err(|error| format!("arm-none-eabi-nm failed: {error}"))?;
+fn validate_layout(
+    unit: &TranslationUnit,
+    object: &Path,
+    base: u32,
+) -> Result<Vec<String>, String> {
+    let output = Command::new("arm-none-eabi-nm")
+        .args(["-S", "--defined-only"])
+        .arg(object)
+        .output()
+        .map_err(|error| format!("arm-none-eabi-nm failed: {error}"))?;
     if !output.status.success() {
-        return Err(format!("cannot inspect translation unit {}", object.display()));
+        return Err(format!(
+            "cannot inspect translation unit {}",
+            object.display()
+        ));
     }
     let rows = String::from_utf8_lossy(&output.stdout);
-    let declared = unit.owners.iter().map(|entry| (entry.address, entry.extent)).chain(unit.local_symbols.iter().map(|entry| (entry.address, entry.extent)));
+    let declared = unit
+        .owners
+        .iter()
+        .map(|entry| (entry.address, entry.extent))
+        .chain(
+            unit.local_symbols
+                .iter()
+                .map(|entry| (entry.address, entry.extent)),
+        );
     let mut mismatches = Vec::new();
     for (address, extent) in declared {
         let owner = unit.source_owner(address)?;
         let symbol = owner.legacy_name();
-        let offset = address.checked_sub(base).ok_or_else(|| format!("{} precedes its translation unit", owner.id()))?;
+        let offset = address
+            .checked_sub(base)
+            .ok_or_else(|| format!("{} precedes its translation unit", owner.id()))?;
         let found = rows.lines().any(|row| {
             let fields: Vec<_> = row.split_whitespace().collect();
-            fields.first().and_then(|field| u32::from_str_radix(field, 16).ok()) == Some(offset) && fields.get(1).and_then(|field| usize::from_str_radix(field, 16).ok()) == Some(extent) && fields.last() == Some(&symbol.as_str())
+            fields
+                .first()
+                .and_then(|field| u32::from_str_radix(field, 16).ok())
+                == Some(offset)
+                && fields
+                    .get(1)
+                    .and_then(|field| usize::from_str_radix(field, 16).ok())
+                    == Some(extent)
+                && fields.last() == Some(&symbol.as_str())
         });
         if !found {
             mismatches.push(owner.id());
@@ -119,7 +195,13 @@ mod tests {
 
     #[test]
     fn exact_state_requires_equal_bytes() {
-        let output = |difference| RenderOutput { stdout: String::new(), candidate_length: 4, reference_length: 4, differing_halfwords: difference, rows: 2 };
+        let output = |difference| RenderOutput {
+            stdout: String::new(),
+            candidate_length: 4,
+            reference_length: 4,
+            differing_halfwords: difference,
+            rows: 2,
+        };
         assert!(!exact_mismatch(&output(0)));
         assert!(exact_mismatch(&output(1)));
     }
@@ -128,8 +210,19 @@ mod tests {
     fn overlay_unit_compiles_once_and_scores_every_owner() {
         let work = std::env::temp_dir().join("alchemy-overlay-unit-test");
         let _ = std::fs::remove_dir_all(&work);
-        let arguments = ["--unit", "scene-event-runtime", "--first", "--work", work.to_str().unwrap()].into_iter().map(str::to_string).collect::<Vec<_>>();
-        let ParseOutcome::Options(options) = options_of(root(), &arguments).unwrap() else { panic!("expected options") };
+        let arguments = [
+            "--unit",
+            "scene-event-runtime",
+            "--first",
+            "--work",
+            work.to_str().unwrap(),
+        ]
+        .into_iter()
+        .map(str::to_string)
+        .collect::<Vec<_>>();
+        let ParseOutcome::Options(options) = options_of(root(), &arguments).unwrap() else {
+            panic!("expected options")
+        };
         let output = run(*options).unwrap();
         assert_eq!(output.matches("differing_halfwords=0").count(), 5);
         assert_eq!(output.matches("compile=fresh").count(), 1);

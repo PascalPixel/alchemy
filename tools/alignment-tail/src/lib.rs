@@ -63,7 +63,10 @@ fn fail<T>(message: impl Into<String>) -> Result<T, AlignmentTailError> {
     Err(AlignmentTailError(message.into()))
 }
 
-pub fn inspect_alignment_tail(data: &[u8], maximum: usize) -> Result<AlignmentTail, AlignmentTailError> {
+pub fn inspect_alignment_tail(
+    data: &[u8],
+    maximum: usize,
+) -> Result<AlignmentTail, AlignmentTailError> {
     if maximum < 1 {
         return fail("alignment-tail maximum must be positive");
     }
@@ -71,12 +74,21 @@ pub fn inspect_alignment_tail(data: &[u8], maximum: usize) -> Result<AlignmentTa
         return fail("alignment tail is outside its bounded extent");
     }
     if data.iter().all(|byte| *byte == data[0]) {
-        return Ok(AlignmentTail::Fill { size: data.len(), value: data[0] });
+        return Ok(AlignmentTail::Fill {
+            size: data.len(),
+            value: data[0],
+        });
     }
-    Ok(AlignmentTail::Bytes { values: data.to_vec() })
+    Ok(AlignmentTail::Bytes {
+        values: data.to_vec(),
+    })
 }
 
-fn exact_keys(object: &serde_json::Map<String, Value>, keys: &[&str], label: &str) -> Result<(), AlignmentTailError> {
+fn exact_keys(
+    object: &serde_json::Map<String, Value>,
+    keys: &[&str],
+    label: &str,
+) -> Result<(), AlignmentTailError> {
     let mut actual: Vec<&str> = object.keys().map(String::as_str).collect();
     actual.sort_unstable();
     let mut expected = keys.to_vec();
@@ -94,7 +106,12 @@ fn byte(value: Option<&Value>, label: &str) -> Result<u8, AlignmentTailError> {
     }
 }
 
-pub fn parse_alignment_tail(value: &Value, expected_size: usize, maximum: usize, label: &str) -> Result<AlignmentTail, AlignmentTailError> {
+pub fn parse_alignment_tail(
+    value: &Value,
+    expected_size: usize,
+    maximum: usize,
+    label: &str,
+) -> Result<AlignmentTail, AlignmentTailError> {
     if expected_size < 1 || expected_size > maximum {
         return fail(format!("{label} has an invalid expected size"));
     }
@@ -107,7 +124,10 @@ pub fn parse_alignment_tail(value: &Value, expected_size: usize, maximum: usize,
     match tail.get("encoding").and_then(Value::as_str) {
         Some("fill") => {
             exact_keys(tail, &["size", "encoding", "value"], label)?;
-            Ok(AlignmentTail::Fill { size: expected_size, value: byte(tail.get("value"), &format!("{label} fill"))? })
+            Ok(AlignmentTail::Fill {
+                size: expected_size,
+                value: byte(tail.get("value"), &format!("{label} fill"))?,
+            })
         }
         Some("bytes") => {
             exact_keys(tail, &["size", "encoding", "values"], label)?;

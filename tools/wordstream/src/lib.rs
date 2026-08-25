@@ -36,15 +36,16 @@ pub fn parse_literal(token: &str) -> Option<i64> {
     if rest.is_empty() {
         return None;
     }
-    let (radix, digits) = if let Some(d) = rest.strip_prefix("0x").or_else(|| rest.strip_prefix("0X")) {
-        (16, d)
-    } else if let Some(d) = rest.strip_prefix("0b").or_else(|| rest.strip_prefix("0B")) {
-        (2, d)
-    } else if let Some(d) = rest.strip_prefix("0o").or_else(|| rest.strip_prefix("0O")) {
-        (8, d)
-    } else {
-        (10, rest)
-    };
+    let (radix, digits) =
+        if let Some(d) = rest.strip_prefix("0x").or_else(|| rest.strip_prefix("0X")) {
+            (16, d)
+        } else if let Some(d) = rest.strip_prefix("0b").or_else(|| rest.strip_prefix("0B")) {
+            (2, d)
+        } else if let Some(d) = rest.strip_prefix("0o").or_else(|| rest.strip_prefix("0O")) {
+            (8, d)
+        } else {
+            (10, rest)
+        };
     if digits.is_empty() {
         return None;
     }
@@ -64,7 +65,10 @@ pub fn export_words(data: &[u8]) -> Result<String, WordError> {
     }
     let mut result = String::new();
     for chunk in data.chunks_exact(2) {
-        result.push_str(&format!("0x{:04x}\n", u16::from_le_bytes([chunk[0], chunk[1]])));
+        result.push_str(&format!(
+            "0x{:04x}\n",
+            u16::from_le_bytes([chunk[0], chunk[1]])
+        ));
     }
     Ok(result)
 }
@@ -88,7 +92,10 @@ pub fn import_words(text: &str) -> Result<Vec<u8>, WordError> {
 /// Exercise the binary's actual word-stream format in both directions and
 /// retain a negative case so a parser that accepts everything cannot pass.
 pub fn self_test() -> Result<String, String> {
-    let raw: Vec<u8> = [0u16, 1, 0x1234, 0xabcd, 0xffff].iter().flat_map(|word| word.to_le_bytes()).collect();
+    let raw: Vec<u8> = [0u16, 1, 0x1234, 0xabcd, 0xffff]
+        .iter()
+        .flat_map(|word| word.to_le_bytes())
+        .collect();
     let text = export_words(&raw).map_err(|error| error.to_string())?;
     let rebuilt = import_words(&text).map_err(|error| error.to_string())?;
     if rebuilt != raw {

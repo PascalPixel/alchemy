@@ -74,7 +74,13 @@ pub struct LsbBits<'a> {
 
 impl<'a> LsbBits<'a> {
     pub fn new(data: &'a [u8], cursor: usize, end: usize) -> Result<Self, DecodeError> {
-        let mut bits = LsbBits { data, cursor, end, value: 0, count: 0 };
+        let mut bits = LsbBits {
+            data,
+            cursor,
+            end,
+            value: 0,
+            count: 0,
+        };
         if cursor & 1 != 0 {
             bits.value = u32::from(bits.byte()?);
             bits.count = 8;
@@ -131,9 +137,17 @@ fn bit_length(value: u32) -> u32 {
 // general stream
 // ---------------------------------------------------------------------------
 
-pub fn append_copy(output: &mut Vec<u8>, distance: u32, length: u32, maximum: u64) -> Result<(), DecodeError> {
+pub fn append_copy(
+    output: &mut Vec<u8>,
+    distance: u32,
+    length: u32,
+    maximum: u64,
+) -> Result<(), DecodeError> {
     if distance < 1 || u64::from(distance) > output.len() as u64 {
-        return err(format!("invalid back-reference distance at output offset 0x{:x}", output.len()));
+        return err(format!(
+            "invalid back-reference distance at output offset 0x{:x}",
+            output.len()
+        ));
     }
     if length < 1 || output.len() as u64 + u64::from(length) > maximum {
         return err("decoded output crossed configured bound");
@@ -169,7 +183,14 @@ fn decode_length(bits: &mut LsbBits) -> Result<Option<u32>, DecodeError> {
 }
 
 /// Shared body of `decode_general_trace` and `decode_general_prefill_trace`.
-fn decode_general_body(data: &[u8], start: usize, end: usize, maximum: u64, prefill: usize, header: usize) -> Result<(Vec<u8>, usize, Vec<GeneralToken>), DecodeError> {
+fn decode_general_body(
+    data: &[u8],
+    start: usize,
+    end: usize,
+    maximum: u64,
+    prefill: usize,
+    header: usize,
+) -> Result<(Vec<u8>, usize, Vec<GeneralToken>), DecodeError> {
     let mut bits = LsbBits::new(data, start + header, end)?;
     let mut output: Vec<u8> = vec![0; prefill];
     let mut tokens: Vec<GeneralToken> = Vec::new();
@@ -193,7 +214,11 @@ fn decode_general_body(data: &[u8], start: usize, end: usize, maximum: u64, pref
             bits.get(5)? + 1
         } else {
             let window = output.len() as i64 - prefill as i64 - 33;
-            let width = if (0..2048).contains(&window) { bit_length(window as u32) } else { 12 };
+            let width = if (0..2048).contains(&window) {
+                bit_length(window as u32)
+            } else {
+                12
+            };
             bits.get(width)? + 33
         };
         tokens.push(GeneralToken::Copy { length, distance });
@@ -201,19 +226,36 @@ fn decode_general_body(data: &[u8], start: usize, end: usize, maximum: u64, pref
     }
 }
 
-pub fn decode_general_trace(data: &[u8], start: usize, end: usize, maximum: u64) -> Result<(Vec<u8>, usize, Vec<GeneralToken>), DecodeError> {
+pub fn decode_general_trace(
+    data: &[u8],
+    start: usize,
+    end: usize,
+    maximum: u64,
+) -> Result<(Vec<u8>, usize, Vec<GeneralToken>), DecodeError> {
     if start >= end || data[start] != 0 {
         return err("general stream is missing its kind-zero header");
     }
     decode_general_body(data, start, end, maximum, 0, 1)
 }
 
-pub fn decode_general(data: &[u8], start: usize, end: usize, maximum: u64) -> Result<(Vec<u8>, usize), DecodeError> {
+pub fn decode_general(
+    data: &[u8],
+    start: usize,
+    end: usize,
+    maximum: u64,
+) -> Result<(Vec<u8>, usize), DecodeError> {
     let (output, cursor, _) = decode_general_trace(data, start, end, maximum)?;
     Ok((output, cursor))
 }
 
-pub fn decode_general_prefill_trace(data: &[u8], start: usize, end: usize, maximum: u64, prefill: usize, header: usize) -> Result<(Vec<u8>, usize, Vec<GeneralToken>), DecodeError> {
+pub fn decode_general_prefill_trace(
+    data: &[u8],
+    start: usize,
+    end: usize,
+    maximum: u64,
+    prefill: usize,
+    header: usize,
+) -> Result<(Vec<u8>, usize, Vec<GeneralToken>), DecodeError> {
     if start >= end {
         return err("general stream is empty");
     }
@@ -281,7 +323,12 @@ fn finish_bits(bits: &[u8], header: usize) -> Vec<u8> {
     packed
 }
 
-fn encode_general_inner(decoded: &[u8], tokens: &[GeneralToken], prefill: usize, header: usize) -> Result<Vec<u8>, DecodeError> {
+fn encode_general_inner(
+    decoded: &[u8],
+    tokens: &[GeneralToken],
+    prefill: usize,
+    header: usize,
+) -> Result<Vec<u8>, DecodeError> {
     let mut bits: Vec<u8> = Vec::new();
     let mut replay: Vec<u8> = vec![0; prefill];
     let mut cursor: usize = 0;
@@ -310,7 +357,11 @@ fn encode_general_inner(decoded: &[u8], tokens: &[GeneralToken], prefill: usize,
                 } else {
                     put(&mut bits, 0, 1);
                     let window = replay.len() as i64 - prefill as i64 - 33;
-                    let width = if (0..2048).contains(&window) { bit_length(window as u32) } else { 12 };
+                    let width = if (0..2048).contains(&window) {
+                        bit_length(window as u32)
+                    } else {
+                        12
+                    };
                     if u64::from(distance - 33) >= 1u64 << width {
                         return err("copy distance exceeds position-dependent width");
                     }
@@ -338,7 +389,11 @@ fn encode_general_inner(decoded: &[u8], tokens: &[GeneralToken], prefill: usize,
                 differing += 1;
             }
         }
-        let first_diff = if at < 0 { "none".to_string() } else { format!("0x{at:x}") };
+        let first_diff = if at < 0 {
+            "none".to_string()
+        } else {
+            format!("0x{at:x}")
+        };
         return err(format!("token plan does not reconstruct decoded input (replay={} decoded={} cursor={} first_diff={} differing={})", rebuilt.len(), decoded.len(), cursor, first_diff, differing));
     }
     Ok(finish_bits(&bits, header))
@@ -348,7 +403,12 @@ pub fn encode_general(decoded: &[u8], tokens: &[GeneralToken]) -> Result<Vec<u8>
     encode_general_inner(decoded, tokens, 0, 1)
 }
 
-pub fn encode_general_prefill(decoded: &[u8], tokens: &[GeneralToken], prefill: usize, header: usize) -> Result<Vec<u8>, DecodeError> {
+pub fn encode_general_prefill(
+    decoded: &[u8],
+    tokens: &[GeneralToken],
+    prefill: usize,
+    header: usize,
+) -> Result<Vec<u8>, DecodeError> {
     encode_general_inner(decoded, tokens, prefill, header)
 }
 
@@ -356,7 +416,12 @@ pub fn encode_general_prefill(decoded: &[u8], tokens: &[GeneralToken], prefill: 
 // palette stream
 // ---------------------------------------------------------------------------
 
-pub fn decode_palette_trace(data: &[u8], start: usize, end: usize, maximum: u64) -> Result<(Vec<u8>, usize, Vec<PaletteGroup>), DecodeError> {
+pub fn decode_palette_trace(
+    data: &[u8],
+    start: usize,
+    end: usize,
+    maximum: u64,
+) -> Result<(Vec<u8>, usize, Vec<PaletteGroup>), DecodeError> {
     let mut cursor = start;
     let mut output: Vec<u8> = Vec::new();
     let mut groups: Vec<PaletteGroup> = Vec::new();
@@ -414,7 +479,12 @@ pub fn decode_palette_trace(data: &[u8], start: usize, end: usize, maximum: u64)
     }
 }
 
-pub fn decode_palette(data: &[u8], start: usize, end: usize, maximum: u64) -> Result<(Vec<u8>, usize), DecodeError> {
+pub fn decode_palette(
+    data: &[u8],
+    start: usize,
+    end: usize,
+    maximum: u64,
+) -> Result<(Vec<u8>, usize), DecodeError> {
     let (output, cursor, _) = decode_palette_trace(data, start, end, maximum)?;
     Ok((output, cursor))
 }
@@ -531,7 +601,13 @@ impl fmt::Display for ResourceKind {
     }
 }
 
-pub fn decode(data: &[u8], start: usize, end: usize, maximum: u64, kind: Option<ResourceKind>) -> Result<(ResourceKind, Vec<u8>, usize), DecodeError> {
+pub fn decode(
+    data: &[u8],
+    start: usize,
+    end: usize,
+    maximum: u64,
+    kind: Option<ResourceKind>,
+) -> Result<(ResourceKind, Vec<u8>, usize), DecodeError> {
     if let Some(kind) = kind {
         let (output, cursor) = match kind {
             ResourceKind::General => decode_general(data, start, end, maximum)?,
@@ -555,7 +631,10 @@ pub fn decode(data: &[u8], start: usize, end: usize, maximum: u64, kind: Option<
         return Ok(valid.remove(0));
     }
     if valid.is_empty() {
-        return err(format!("no decoder accepted stream ({})", errors.join("; ")));
+        return err(format!(
+            "no decoder accepted stream ({})",
+            errors.join("; ")
+        ));
     }
     err("stream is ambiguous; specify --format general or palette")
 }
@@ -595,7 +674,8 @@ pub fn synthetic_general() -> Vec<u8> {
 /// TypeScript would have thrown.
 pub fn self_test() -> Result<(), String> {
     let general = synthetic_general();
-    let (output, cursor, tokens) = decode_general_trace(&general, 0, general.len(), 4).map_err(|error| error.0)?;
+    let (output, cursor, tokens) =
+        decode_general_trace(&general, 0, general.len(), 4).map_err(|error| error.0)?;
     if output != b"ABAB" || cursor > general.len() {
         return Err("general decoder self-test failed".into());
     }
@@ -604,7 +684,8 @@ pub fn self_test() -> Result<(), String> {
         return Err("general encoder self-test failed".into());
     }
     let palette: Vec<u8> = vec![0x30, 65, 66, 0x01, 0x02, 0, 0];
-    let (output, cursor, groups) = decode_palette_trace(&palette, 0, palette.len(), 4).map_err(|error| error.0)?;
+    let (output, cursor, groups) =
+        decode_palette_trace(&palette, 0, palette.len(), 4).map_err(|error| error.0)?;
     if output != b"ABAB" || cursor != palette.len() {
         return Err("palette decoder self-test failed".into());
     }

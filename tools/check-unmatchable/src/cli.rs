@@ -1,7 +1,10 @@
 use std::process::ExitCode;
 
 pub fn entry(arguments: &[String]) -> ExitCode {
-    if arguments.iter().any(|argument| matches!(argument.as_str(), "-h" | "--help")) {
+    if arguments
+        .iter()
+        .any(|argument| matches!(argument.as_str(), "-h" | "--help"))
+    {
         println!("usage: check owners");
         return ExitCode::SUCCESS;
     }

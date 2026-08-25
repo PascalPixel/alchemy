@@ -3,7 +3,9 @@ mod normalized;
 mod structural;
 mod symbolize;
 
-use candidate_compiler::verify::{compile_to_assembly, CandidateCompilerConfiguration, CandidateCompilerFamily};
+use candidate_compiler::verify::{
+    compile_to_assembly, CandidateCompilerConfiguration, CandidateCompilerFamily,
+};
 use compiler_core::{
     plan::direct_preprocessor_command,
     routing::{root, uses_agbcc_compiler, CompilerTarget},
@@ -20,7 +22,8 @@ use std::{
 use structural::StructuralReport;
 use walkdir::WalkDir;
 
-const USAGE: &str = "usage: compiler workbench <candidate.c> [--m2c PATH] [--output DIR] [--no-run]";
+const USAGE: &str =
+    "usage: compiler workbench <candidate.c> [--m2c PATH] [--output DIR] [--no-run]";
 
 #[derive(Debug)]
 struct Options {
@@ -63,7 +66,10 @@ pub(crate) struct FamilyM2cSeed {
 }
 
 pub fn run(arguments: &[String]) -> Result<(), String> {
-    if arguments.iter().any(|argument| matches!(argument.as_str(), "-h" | "--help")) {
+    if arguments
+        .iter()
+        .any(|argument| matches!(argument.as_str(), "-h" | "--help"))
+    {
         println!("{USAGE}");
         return Ok(());
     }
@@ -73,11 +79,19 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     let stem = owner_stem(&source)?;
     let reference_asm = repository.join("games/gs1/asm").join(format!("{stem}.s"));
     if !reference_asm.is_file() {
-        return Err(format!("{}: missing main-image reference assembly", reference_asm.display()));
+        return Err(format!(
+            "{}: missing main-image reference assembly",
+            reference_asm.display()
+        ));
     }
-    let owner = SourceOwner::Main(u32::from_str_radix(&stem, 16).map_err(|error| format!("{stem}: {error}"))?);
+    let owner = SourceOwner::Main(
+        u32::from_str_radix(&stem, 16).map_err(|error| format!("{stem}: {error}"))?,
+    );
     let register = SourcePaths::load(repository)?;
-    let symbol = register.registered_name(owner).ok_or_else(|| format!("{} has no registered owner name", owner.id()))?.to_string();
+    let symbol = register
+        .registered_name(owner)
+        .ok_or_else(|| format!("{} has no registered owner name", owner.id()))?
+        .to_string();
     let m2c = locate_m2c(repository, options.m2c.as_deref())?;
     let m2c_macros = m2c.parent().unwrap_or(Path::new(".")).join("m2c_macros.h");
     if !m2c_macros.is_file() {
@@ -85,7 +99,19 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     }
     let output = prepare_output(repository, options.output.as_deref(), &stem)?;
     let executable = env::current_exe().map_err(|error| format!("current executable: {error}"))?;
-    let plan = NinjaPlan { executable, source, reference_asm: reference_asm.canonicalize().map_err(|error| format!("{}: {error}", reference_asm.display()))?, output: output.clone(), stem, symbol, m2c, m2c_macros, headers: headers(repository)? };
+    let plan = NinjaPlan {
+        executable,
+        source,
+        reference_asm: reference_asm
+            .canonicalize()
+            .map_err(|error| format!("{}: {error}", reference_asm.display()))?,
+        output: output.clone(),
+        stem,
+        symbol,
+        m2c,
+        m2c_macros,
+        headers: headers(repository)?,
+    };
     let ninja = plan.render()?;
     write_if_changed(&output.join("build.ninja"), ninja.as_bytes())?;
     println!("workbench={}", output.display());
@@ -93,7 +119,10 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         println!("generated={}", output.join("build.ninja").display());
         return Ok(());
     }
-    let status = Command::new("ninja").args([OsStr::new("-C"), output.as_os_str()]).status().map_err(|error| format!("ninja: {error}"))?;
+    let status = Command::new("ninja")
+        .args([OsStr::new("-C"), output.as_os_str()])
+        .status()
+        .map_err(|error| format!("ninja: {error}"))?;
     if !status.success() {
         return Err(format!("ninja failed with {status}"));
     }
@@ -101,18 +130,45 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
 }
 
 pub fn run_step(arguments: &[String]) -> Result<(), String> {
-    let command = arguments.first().map(String::as_str).ok_or("missing workbench step")?;
+    let command = arguments
+        .first()
+        .map(String::as_str)
+        .ok_or("missing workbench step")?;
     let rest = &arguments[1..];
     match (command, rest) {
-        ("compile", [source, routing, work]) => compile_object(Path::new(source), Path::new(routing), Path::new(work)).map(|_| ()),
-        ("target", [source, symbol, object, listing]) => assemble_target(Path::new(source), symbol, Path::new(object), Path::new(listing)),
+        ("compile", [source, routing, work]) => {
+            compile_object(Path::new(source), Path::new(routing), Path::new(work)).map(|_| ())
+        }
+        ("target", [source, symbol, object, listing]) => assemble_target(
+            Path::new(source),
+            symbol,
+            Path::new(object),
+            Path::new(listing),
+        ),
         ("symbolize", [source, listing, symbol, image, output]) => {
-            let (text, stats) = symbolize::symbolize(Path::new(source), Path::new(listing), true, symbol, Path::new(image))?;
+            let (text, stats) = symbolize::symbolize(
+                Path::new(source),
+                Path::new(listing),
+                true,
+                symbol,
+                Path::new(image),
+            )?;
             write(Path::new(output), text.as_bytes())?;
-            println!("symbolized={} tables={} entries={} references={}", output, stats.jump_tables, stats.table_entries, stats.references);
+            println!(
+                "symbolized={} tables={} entries={} references={}",
+                output, stats.jump_tables, stats.table_entries, stats.references
+            );
             Ok(())
         }
-        ("m2c", [m2c, assembly, context, symbol, output]) => run_m2c(Path::new(m2c), Path::new(assembly), Some(Path::new(context)), None, symbol, Path::new(output)).map(|_| ()),
+        ("m2c", [m2c, assembly, context, symbol, output]) => run_m2c(
+            Path::new(m2c),
+            Path::new(assembly),
+            Some(Path::new(context)),
+            None,
+            symbol,
+            Path::new(output),
+        )
+        .map(|_| ()),
         ("structural", [target, candidate, symbol, output]) => {
             let report = structural::compare(Path::new(target), Path::new(candidate), symbol)?;
             write_json(Path::new(output), &report)
@@ -121,7 +177,14 @@ pub fn run_step(arguments: &[String]) -> Result<(), String> {
             let report = normalized::compare(Path::new(target), Path::new(candidate), symbol)?;
             write_json(Path::new(output), &report)
         }
-        ("probe", [source, routing, work, target, symbol, output]) => probe_m2c(Path::new(source), Path::new(routing), Path::new(work), Path::new(target), symbol, Path::new(output)),
+        ("probe", [source, routing, work, target, symbol, output]) => probe_m2c(
+            Path::new(source),
+            Path::new(routing),
+            Path::new(work),
+            Path::new(target),
+            symbol,
+            Path::new(output),
+        ),
         _ => Err(format!("unknown or malformed workbench step: {command}")),
     }
 }
@@ -155,36 +218,62 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         }
         index += 1;
     }
-    Ok(Options { source: source.ok_or(USAGE)?, m2c, output, run })
+    Ok(Options {
+        source: source.ok_or(USAGE)?,
+        m2c,
+        output,
+        run,
+    })
 }
 
 fn owner_stem(path: &Path) -> Result<String, String> {
-    let stem = path.file_stem().and_then(OsStr::to_str).ok_or("non-UTF-8 owner name")?;
+    let stem = path
+        .file_stem()
+        .and_then(OsStr::to_str)
+        .ok_or("non-UTF-8 owner name")?;
     if stem.len() == 8 && stem.bytes().all(|byte| byte.is_ascii_hexdigit()) {
         return Ok(stem.to_ascii_lowercase());
     }
-    let text = std::fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
+    let text =
+        std::fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
     let mut owners = text.lines().filter_map(|line| {
         let fields = line.split_ascii_whitespace().collect::<Vec<_>>();
-        let owner = matches!(fields.as_slice(), ["#define", _, owner] if owner.starts_with("Func_")).then(|| fields[2].trim_start_matches("Func_"))?;
-        (owner.len() == 8 && owner.bytes().all(|byte| byte.is_ascii_hexdigit())).then(|| owner.to_ascii_lowercase())
+        let owner =
+            matches!(fields.as_slice(), ["#define", _, owner] if owner.starts_with("Func_"))
+                .then(|| fields[2].trim_start_matches("Func_"))?;
+        (owner.len() == 8 && owner.bytes().all(|byte| byte.is_ascii_hexdigit()))
+            .then(|| owner.to_ascii_lowercase())
     });
-    let owner = owners.next().ok_or_else(|| format!("{}: no canonical owner declaration", path.display()))?;
+    let owner = owners
+        .next()
+        .ok_or_else(|| format!("{}: no canonical owner declaration", path.display()))?;
     if owners.any(|candidate| candidate != owner) {
-        return Err(format!("{}: multiple canonical owner declarations", path.display()));
+        return Err(format!(
+            "{}: multiple canonical owner declarations",
+            path.display()
+        ));
     }
     Ok(owner)
 }
 
 fn absolute_existing(repository: &Path, path: &Path) -> Result<PathBuf, String> {
-    let path = if path.is_absolute() { path.to_path_buf() } else { repository.join(path) };
-    path.canonicalize().map_err(|error| format!("{}: {error}", path.display()))
+    let path = if path.is_absolute() {
+        path.to_path_buf()
+    } else {
+        repository.join(path)
+    };
+    path.canonicalize()
+        .map_err(|error| format!("{}: {error}", path.display()))
 }
 
 fn locate_m2c(repository: &Path, requested: Option<&Path>) -> Result<PathBuf, String> {
     let mut candidates = Vec::new();
     if let Some(path) = requested {
-        candidates.push(if path.is_absolute() { path.to_path_buf() } else { repository.join(path) });
+        candidates.push(if path.is_absolute() {
+            path.to_path_buf()
+        } else {
+            repository.join(path)
+        });
     } else {
         if let Some(path) = env::var_os("M2C") {
             candidates.push(PathBuf::from(path));
@@ -194,33 +283,62 @@ fn locate_m2c(repository: &Path, requested: Option<&Path>) -> Result<PathBuf, St
             candidates.extend(env::split_paths(&paths).map(|path| path.join("m2c.py")));
         }
     }
-    candidates.into_iter().find(|path| path.is_file()).and_then(|path| path.canonicalize().ok()).ok_or_else(|| "m2c.py not found; clone upstream m2c into ignored m2c/ or pass --m2c PATH".into())
+    candidates
+        .into_iter()
+        .find(|path| path.is_file())
+        .and_then(|path| path.canonicalize().ok())
+        .ok_or_else(|| {
+            "m2c.py not found; clone upstream m2c into ignored m2c/ or pass --m2c PATH".into()
+        })
 }
 
-fn prepare_output(repository: &Path, requested: Option<&Path>, stem: &str) -> Result<PathBuf, String> {
+fn prepare_output(
+    repository: &Path,
+    requested: Option<&Path>,
+    stem: &str,
+) -> Result<PathBuf, String> {
     let repository_out = repository.join("out");
-    std::fs::create_dir_all(&repository_out).map_err(|error| format!("{}: {error}", repository_out.display()))?;
+    std::fs::create_dir_all(&repository_out)
+        .map_err(|error| format!("{}: {error}", repository_out.display()))?;
     let path = match requested {
         Some(path) if path.is_absolute() => path.to_path_buf(),
         Some(path) => repository.join(path),
         None => repository_out.join("workbench").join(stem),
     };
     std::fs::create_dir_all(&path).map_err(|error| format!("{}: {error}", path.display()))?;
-    let resolved = path.canonicalize().map_err(|error| format!("{}: {error}", path.display()))?;
-    let trusted_out = repository_out.canonicalize().map_err(|error| format!("{}: {error}", repository_out.display()))?;
-    let temp = env::temp_dir().canonicalize().unwrap_or_else(|_| env::temp_dir());
+    let resolved = path
+        .canonicalize()
+        .map_err(|error| format!("{}: {error}", path.display()))?;
+    let trusted_out = repository_out
+        .canonicalize()
+        .map_err(|error| format!("{}: {error}", repository_out.display()))?;
+    let temp = env::temp_dir()
+        .canonicalize()
+        .unwrap_or_else(|_| env::temp_dir());
     if resolved == trusted_out || resolved == temp {
-        return Err(format!("refusing shared output root {}", resolved.display()));
+        return Err(format!(
+            "refusing shared output root {}",
+            resolved.display()
+        ));
     }
     if !resolved.starts_with(&trusted_out) && !resolved.starts_with(&temp) {
-        return Err(format!("workbench output must be under out/ or {}", temp.display()));
+        return Err(format!(
+            "workbench output must be under out/ or {}",
+            temp.display()
+        ));
     }
     Ok(resolved)
 }
 
 fn headers(repository: &Path) -> Result<Vec<PathBuf>, String> {
     let include = repository.join("games/gs1/include");
-    let mut paths = WalkDir::new(&include).into_iter().filter_map(Result::ok).filter(|entry| entry.file_type().is_file()).filter(|entry| entry.path().extension() == Some(OsStr::new("h"))).map(|entry| entry.into_path()).collect::<Vec<_>>();
+    let mut paths = WalkDir::new(&include)
+        .into_iter()
+        .filter_map(Result::ok)
+        .filter(|entry| entry.file_type().is_file())
+        .filter(|entry| entry.path().extension() == Some(OsStr::new("h")))
+        .map(|entry| entry.into_path())
+        .collect::<Vec<_>>();
     paths.sort();
     Ok(paths)
 }
@@ -230,8 +348,18 @@ fn compile_object(source: &Path, routing: &Path, work: &Path) -> Result<PathBuf,
     let source = text_path(source)?;
     let routing = text_path(routing)?;
     let work_text = text_path(work)?;
-    let config = CandidateCompilerConfiguration { family: Some(CandidateCompilerFamily::Routed), ..Default::default() };
-    let assembly = compile_to_assembly(&source, &routing, &work_text, &[], CompilerTarget::Gs1, &config)?;
+    let config = CandidateCompilerConfiguration {
+        family: Some(CandidateCompilerFamily::Routed),
+        ..Default::default()
+    };
+    let assembly = compile_to_assembly(
+        &source,
+        &routing,
+        &work_text,
+        &[],
+        CompilerTarget::Gs1,
+        &config,
+    )?;
     let context = work.join(format!("{}.i", owner_stem(Path::new(&source))?));
     // gcc296's driver compiles the original source directly, whereas old-agbcc
     // already consumes and retains a preprocessed file. Produce the same
@@ -242,15 +370,24 @@ fn compile_object(source: &Path, routing: &Path, work: &Path) -> Result<PathBuf,
         candidate_compiler::verify::run(&command, root())?;
     }
     if !context.is_file() {
-        return Err(format!("{}: compiler did not produce m2c context", context.display()));
+        return Err(format!(
+            "{}: compiler did not produce m2c context",
+            context.display()
+        ));
     }
     let object = work.join(format!("{}.o", owner_stem(Path::new(&source))?));
     assemble(Path::new(&assembly), &object, None)?;
     Ok(object)
 }
 
-fn assemble_target(source: &Path, symbol: &str, object: &Path, listing: &Path) -> Result<(), String> {
-    let text = std::fs::read_to_string(source).map_err(|error| format!("{}: {error}", source.display()))?;
+fn assemble_target(
+    source: &Path,
+    symbol: &str,
+    object: &Path,
+    listing: &Path,
+) -> Result<(), String> {
+    let text = std::fs::read_to_string(source)
+        .map_err(|error| format!("{}: {error}", source.display()))?;
     let canonical = canonical_target_text(&text, symbol);
     let canonical_source = object.with_extension("canonical.s");
     write(&canonical_source, canonical.as_bytes())?;
@@ -262,7 +399,8 @@ fn canonical_target_text(text: &str, symbol: &str) -> String {
     let mut canonical = String::new();
     for line in text.lines() {
         let trimmed = line.trim();
-        let owner_alias = (trimmed.starts_with("Region_") || trimmed.starts_with("Func_")) && trimmed.ends_with(':');
+        let owner_alias = (trimmed.starts_with("Region_") || trimmed.starts_with("Func_"))
+            && trimmed.ends_with(':');
         if previous_is_symbol && owner_alias {
             canonical.push_str("@ canonical same-address owner alias omitted\n");
         } else {
@@ -289,11 +427,13 @@ mod canonical_target_tests {
 
 fn assemble(source: &Path, object: &Path, listing: Option<&Path>) -> Result<(), String> {
     if let Some(parent) = object.parent() {
-        std::fs::create_dir_all(parent).map_err(|error| format!("{}: {error}", parent.display()))?;
+        std::fs::create_dir_all(parent)
+            .map_err(|error| format!("{}: {error}", parent.display()))?;
     }
     if let Some(listing) = listing {
         if let Some(parent) = listing.parent() {
-            std::fs::create_dir_all(parent).map_err(|error| format!("{}: {error}", parent.display()))?;
+            std::fs::create_dir_all(parent)
+                .map_err(|error| format!("{}: {error}", parent.display()))?;
         }
     }
     let mut command = Command::new("arm-none-eabi-as");
@@ -301,17 +441,40 @@ fn assemble(source: &Path, object: &Path, listing: Option<&Path>) -> Result<(), 
     if let Some(listing) = listing {
         command.arg(format!("-alhnd={}", listing.display()));
     }
-    let output = command.arg("-o").arg(object).arg(source).current_dir(root()).output().map_err(|error| format!("arm-none-eabi-as: {error}"))?;
+    let output = command
+        .arg("-o")
+        .arg(object)
+        .arg(source)
+        .current_dir(root())
+        .output()
+        .map_err(|error| format!("arm-none-eabi-as: {error}"))?;
     if !output.status.success() {
         return Err(process_error("arm-none-eabi-as", &output));
     }
     Ok(())
 }
 
-fn run_m2c(m2c: &Path, assembly: &Path, candidate_context: Option<&Path>, family_context: Option<&Path>, symbol: &str, output: &Path) -> Result<M2cContextKind, String> {
+fn run_m2c(
+    m2c: &Path,
+    assembly: &Path,
+    candidate_context: Option<&Path>,
+    family_context: Option<&Path>,
+    symbol: &str,
+    output: &Path,
+) -> Result<M2cContextKind, String> {
     let attempt = |contexts: &[&Path]| {
         let mut command = Command::new("python3");
-        command.arg(m2c).args(["-t", "gba-gcc-c", "-f", symbol, "--valid-syntax", "--deterministic-vars"]).args(["--globals", "none", "--no-cache"]);
+        command
+            .arg(m2c)
+            .args([
+                "-t",
+                "gba-gcc-c",
+                "-f",
+                symbol,
+                "--valid-syntax",
+                "--deterministic-vars",
+            ])
+            .args(["--globals", "none", "--no-cache"]);
         for context in contexts {
             command.arg("--context").arg(context);
         }
@@ -333,7 +496,11 @@ fn run_m2c(m2c: &Path, assembly: &Path, candidate_context: Option<&Path>, family
             accepted = Some((kind, result));
             break;
         }
-        failures.push(format!("{}: {}", kind.as_str(), process_error("m2c", &result)));
+        failures.push(format!(
+            "{}: {}",
+            kind.as_str(),
+            process_error("m2c", &result)
+        ));
     }
     let Some((kind, result)) = accepted else {
         return Err(failures.join("\n"));
@@ -341,7 +508,8 @@ fn run_m2c(m2c: &Path, assembly: &Path, candidate_context: Option<&Path>, family
     for failure in failures {
         eprintln!("m2c context rejected; {failure}");
     }
-    let macros = std::fs::read(m2c.parent().unwrap_or(Path::new(".")).join("m2c_macros.h")).map_err(|error| format!("m2c_macros.h: {error}"))?;
+    let macros = std::fs::read(m2c.parent().unwrap_or(Path::new(".")).join("m2c_macros.h"))
+        .map_err(|error| format!("m2c_macros.h: {error}"))?;
     let mut source = b"#include \"types.h\"\n\n".to_vec();
     source.extend(macros);
     source.push(b'\n');
@@ -357,58 +525,142 @@ fn run_m2c(m2c: &Path, assembly: &Path, candidate_context: Option<&Path>, family
 /// family member. m2c consumes preprocessed C, so the exact member is compiled
 /// through its registered owner route and its function symbol is retargeted to
 /// the unresolved owner before being supplied with `--context`.
-pub(crate) fn generate_family_m2c_seed(target_owner: SourceOwner, target_assembly: &Path, target_symbol: &str, template_owner: SourceOwner, template_source: &Path, template_symbol: &str, output: &Path) -> Result<FamilyM2cSeed, String> {
+pub(crate) fn generate_family_m2c_seed(
+    target_owner: SourceOwner,
+    target_assembly: &Path,
+    target_symbol: &str,
+    template_owner: SourceOwner,
+    template_source: &Path,
+    template_symbol: &str,
+    output: &Path,
+) -> Result<FamilyM2cSeed, String> {
     std::fs::create_dir_all(output).map_err(|error| format!("{}: {error}", output.display()))?;
     let template_work = output.join("template-build");
-    let configuration = CandidateCompilerConfiguration { family: Some(CandidateCompilerFamily::Routed), ..Default::default() };
+    let configuration = CandidateCompilerConfiguration {
+        family: Some(CandidateCompilerFamily::Routed),
+        ..Default::default()
+    };
     let template_source_text = text_path(template_source)?;
     let template_route = text_path(&template_owner.routing_path())?;
     let template_work_text = text_path(&template_work)?;
-    let template_assembly = compile_to_assembly(&template_source_text, &template_route, &template_work_text, &[], CompilerTarget::Gs1, &configuration)?;
+    let template_assembly = compile_to_assembly(
+        &template_source_text,
+        &template_route,
+        &template_work_text,
+        &[],
+        CompilerTarget::Gs1,
+        &configuration,
+    )?;
     let generated_context = Path::new(&template_assembly).with_extension("i");
     if !uses_agbcc_compiler(CompilerTarget::Gs1, &template_route) {
         let generated_context_text = text_path(&generated_context)?;
         let command = direct_preprocessor_command(&template_source_text, &generated_context_text)?;
         candidate_compiler::verify::run(&command, root())?;
     }
-    let context_text = std::fs::read_to_string(&generated_context).map_err(|error| format!("{}: {error}", generated_context.display()))?;
+    let context_text = std::fs::read_to_string(&generated_context)
+        .map_err(|error| format!("{}: {error}", generated_context.display()))?;
     if !context_text.contains(template_symbol) {
-        return Err(format!("{}: preprocessed exact template does not define {template_symbol}", template_source.display()));
+        return Err(format!(
+            "{}: preprocessed exact template does not define {template_symbol}",
+            template_source.display()
+        ));
     }
     let context = output.join("family-template.i");
-    write(&context, context_text.replace(template_symbol, target_symbol).as_bytes())?;
+    write(
+        &context,
+        context_text
+            .replace(template_symbol, target_symbol)
+            .as_bytes(),
+    )?;
 
     let target_object = output.join("target.o");
     let target_listing = output.join("target.lst");
-    assemble_target(target_assembly, target_symbol, &target_object, &target_listing)?;
+    assemble_target(
+        target_assembly,
+        target_symbol,
+        &target_object,
+        &target_listing,
+    )?;
     let symbolized = output.join("symbolized.s");
     let image = root().join("roms/gs1-en.gba");
-    let (text, _) = symbolize::symbolize(target_assembly, &target_listing, true, target_symbol, &image)?;
+    let (text, _) = symbolize::symbolize(
+        target_assembly,
+        &target_listing,
+        true,
+        target_symbol,
+        &image,
+    )?;
     write(&symbolized, text.as_bytes())?;
 
     let m2c = locate_m2c(root(), None)?;
     let source = output.join(format!("{}.c", target_owner.address_stem()));
-    let kind = run_m2c(&m2c, &symbolized, None, Some(&context), target_symbol, &source)?;
+    let kind = run_m2c(
+        &m2c,
+        &symbolized,
+        None,
+        Some(&context),
+        target_symbol,
+        &source,
+    )?;
     if kind != M2cContextKind::FamilyTemplate {
-        return Err(format!("m2c rejected the exact-template context for {}; accepted {} instead", target_owner.id(), kind.as_str()));
+        return Err(format!(
+            "m2c rejected the exact-template context for {}; accepted {} instead",
+            target_owner.id(),
+            kind.as_str()
+        ));
     }
-    Ok(FamilyM2cSeed { source, context, context_kind: kind.as_str() })
+    Ok(FamilyM2cSeed {
+        source,
+        context,
+        context_kind: kind.as_str(),
+    })
 }
 
-fn probe_m2c(source: &Path, routing: &Path, work: &Path, target: &Path, symbol: &str, output: &Path) -> Result<(), String> {
+fn probe_m2c(
+    source: &Path,
+    routing: &Path,
+    work: &Path,
+    target: &Path,
+    symbol: &str,
+    output: &Path,
+) -> Result<(), String> {
     let report = match compile_object(source, routing, work) {
         Ok(candidate) => match structural::compare(target, &candidate, symbol) {
-            Ok(structural) => ProbeReport { schema_version: 1, compile_ok: true, error: None, structural: Some(structural) },
-            Err(error) => ProbeReport { schema_version: 1, compile_ok: true, error: Some(error), structural: None },
+            Ok(structural) => ProbeReport {
+                schema_version: 1,
+                compile_ok: true,
+                error: None,
+                structural: Some(structural),
+            },
+            Err(error) => ProbeReport {
+                schema_version: 1,
+                compile_ok: true,
+                error: Some(error),
+                structural: None,
+            },
         },
-        Err(error) => ProbeReport { schema_version: 1, compile_ok: false, error: Some(error), structural: None },
+        Err(error) => ProbeReport {
+            schema_version: 1,
+            compile_ok: false,
+            error: Some(error),
+            structural: None,
+        },
     };
     write_json(output, &report)
 }
 
 fn print_reports(plan: &NinjaPlan) -> Result<(), String> {
     let structural: StructuralReport = read_json(&plan.structural_report())?;
-    println!("objdiff={:.5}% instructions={} arg={} op={} replace={} delete={} insert={}", structural.match_percent, structural.instructions, structural.argument_mismatches, structural.opcode_mismatches, structural.replacements, structural.deletions, structural.insertions,);
+    println!(
+        "objdiff={:.5}% instructions={} arg={} op={} replace={} delete={} insert={}",
+        structural.match_percent,
+        structural.instructions,
+        structural.argument_mismatches,
+        structural.opcode_mismatches,
+        structural.replacements,
+        structural.deletions,
+        structural.insertions,
+    );
     let probe: ProbeReport = read_json(&plan.m2c_probe_report())?;
     match probe.structural {
         Some(report) => println!("m2c_compile=ok m2c_objdiff={:.5}%", report.match_percent),
@@ -423,13 +675,19 @@ fn print_reports(plan: &NinjaPlan) -> Result<(), String> {
 }
 
 fn text_path(path: &Path) -> Result<String, String> {
-    path.to_str().map(str::to_string).ok_or_else(|| format!("{}: non-UTF-8 path", path.display()))
+    path.to_str()
+        .map(str::to_string)
+        .ok_or_else(|| format!("{}: non-UTF-8 path", path.display()))
 }
 
 fn process_error(name: &str, output: &std::process::Output) -> String {
     let stderr = String::from_utf8_lossy(&output.stderr);
     let stdout = String::from_utf8_lossy(&output.stdout);
-    let detail = if stderr.trim().is_empty() { stdout.trim() } else { stderr.trim() };
+    let detail = if stderr.trim().is_empty() {
+        stdout.trim()
+    } else {
+        stderr.trim()
+    };
     if detail.is_empty() {
         format!("{name} failed")
     } else {
@@ -439,7 +697,8 @@ fn process_error(name: &str, output: &std::process::Output) -> String {
 
 fn write(path: &Path, bytes: &[u8]) -> Result<(), String> {
     if let Some(parent) = path.parent() {
-        std::fs::create_dir_all(parent).map_err(|error| format!("{}: {error}", parent.display()))?;
+        std::fs::create_dir_all(parent)
+            .map_err(|error| format!("{}: {error}", parent.display()))?;
     }
     std::fs::write(path, bytes).map_err(|error| format!("{}: {error}", path.display()))
 }
@@ -468,15 +727,27 @@ mod tests {
 
     #[test]
     fn parses_workbench_options() {
-        let options = parse_options(&["games/gs1/recon/en/main/080ab5e4.c".into(), "--m2c".into(), "m2c/m2c.py".into(), "--no-run".into()]).unwrap();
-        assert_eq!(options.source, PathBuf::from("games/gs1/recon/en/main/080ab5e4.c"));
+        let options = parse_options(&[
+            "games/gs1/recon/en/main/080ab5e4.c".into(),
+            "--m2c".into(),
+            "m2c/m2c.py".into(),
+            "--no-run".into(),
+        ])
+        .unwrap();
+        assert_eq!(
+            options.source,
+            PathBuf::from("games/gs1/recon/en/main/080ab5e4.c")
+        );
         assert_eq!(options.m2c, Some(PathBuf::from("m2c/m2c.py")));
         assert!(!options.run);
     }
 
     #[test]
     fn validates_owner_stems() {
-        assert_eq!(owner_stem(Path::new("games/gs1/recon/en/main/080AB5E4.c")).unwrap(), "080ab5e4");
+        assert_eq!(
+            owner_stem(Path::new("games/gs1/recon/en/main/080AB5E4.c")).unwrap(),
+            "080ab5e4"
+        );
         assert!(owner_stem(Path::new("games/gs1/recon/en/main/best.c")).is_err());
     }
 }

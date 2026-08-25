@@ -8,11 +8,9 @@ edition = "2021"
 [dependencies]
 compiler-core = { path = "../compiler-core" }
 candidate-compiler = { path = "../candidate-compiler" }
-candidate-show = { path = "../candidate-show" }
-lang-c = "0.15.1"
 overlay-disasm = { path = "../overlay-disasm" }
-shape-sweep = { path = "../shape-sweep" }
-serde_json = { version = "1", features = ["preserve_order"] }
+serde_json = "1"
+tempfile = "3"
 
 [lib]
 name = "permuter"

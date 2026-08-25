@@ -11,7 +11,9 @@ fn run(args: &[String]) -> Result<(), Error> {
     }
     let plan = args.get(1).ok_or_else(|| Error(USAGE.into()))?;
     let (bytes, _) = build_resource_01c(Path::new(plan))?;
-    io::stdout().write_all(&bytes).map_err(|e| Error(e.to_string()))?;
+    io::stdout()
+        .write_all(&bytes)
+        .map_err(|e| Error(e.to_string()))?;
     Ok(())
 }
 

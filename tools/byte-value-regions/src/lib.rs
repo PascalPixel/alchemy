@@ -76,14 +76,20 @@ fn parse_address(value: &Value) -> Option<u32> {
     if !matches!(digits.as_bytes()[2], b'0'..=b'7') {
         return None;
     }
-    if !digits[3..].bytes().all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte)) {
+    if !digits[3..]
+        .bytes()
+        .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+    {
         return None;
     }
     u32::from_str_radix(digits, 16).ok()
 }
 
 fn is_region_name(name: &str) -> bool {
-    !name.is_empty() && name.bytes().all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'_')
+    !name.is_empty()
+        && name
+            .bytes()
+            .all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'_')
 }
 
 fn hex(value: u32) -> String {
@@ -93,10 +99,17 @@ fn hex(value: u32) -> String {
 pub fn build_byte_value_regions(path: &Path) -> Result<Vec<ByteValueRegion>, RegionError> {
     let text = fs::read_to_string(path)?;
     let value: Value = serde_json::from_str(&text).map_err(|e| RegionError::Json(e.to_string()))?;
-    if !value.is_object() || !is_canonical_json_text(&text, &value) || value.get("format").and_then(Value::as_u64) != Some(1) || value.get("kind").and_then(Value::as_str) != Some("golden-sun-byte-value-regions") {
+    if !value.is_object()
+        || !is_canonical_json_text(&text, &value)
+        || value.get("format").and_then(Value::as_u64) != Some(1)
+        || value.get("kind").and_then(Value::as_str) != Some("golden-sun-byte-value-regions")
+    {
         return Err(RegionError::SourceIdentityDiffers);
     }
-    let regions = value.get("regions").and_then(Value::as_array).ok_or(RegionError::SourceIdentityDiffers)?;
+    let regions = value
+        .get("regions")
+        .and_then(Value::as_array)
+        .ok_or(RegionError::SourceIdentityDiffers)?;
 
     // `previous` is the last byte already claimed, so the first region only has
     // to start at or after the ROM base.
@@ -109,19 +122,29 @@ pub fn build_byte_value_regions(path: &Path) -> Result<Vec<ByteValueRegion>, Reg
         if fields != ["address", "name", "representation", "values"] {
             return Err(RegionError::RegionFieldsDiffer(index));
         }
-        let named = item.get("name").and_then(Value::as_str).is_some_and(is_region_name);
-        let representation = item.get("representation").and_then(Value::as_str) == Some("byte_values");
+        let named = item
+            .get("name")
+            .and_then(Value::as_str)
+            .is_some_and(is_region_name);
+        let representation =
+            item.get("representation").and_then(Value::as_str) == Some("byte_values");
         let values = item.get("values").and_then(Value::as_array);
         let (true, true, Some(values)) = (named, representation, values) else {
             return Err(RegionError::RegionDiffers(index));
         };
-        let address = parse_address(&item["address"]).ok_or(RegionError::RegionAddressDiffers(index))?;
+        let address =
+            parse_address(&item["address"]).ok_or(RegionError::RegionAddressDiffers(index))?;
         if address <= previous || values.is_empty() {
             return Err(RegionError::RegionOrderingDiffers(index));
         }
         let mut data = Vec::with_capacity(values.len());
         for (offset, entry) in values.iter().enumerate() {
-            let byte = entry.as_u64().filter(|value| *value <= 0xff).ok_or(RegionError::RegionByteDiffers { region: index, offset })?;
+            let byte = entry.as_u64().filter(|value| *value <= 0xff).ok_or(
+                RegionError::RegionByteDiffers {
+                    region: index,
+                    offset,
+                },
+            )?;
             data.push(byte as u8);
         }
         previous = address + data.len() as u32 - 1;
@@ -143,10 +166,15 @@ fn rom_slice(rom: &[u8], address: u32, size: usize) -> Option<&[u8]> {
 
 /// Write `index.json` for the given regions, then read it back and compare
 /// every byte against the ROM before returning.
-pub fn export_byte_value_regions(rom: &[u8], directory: &Path, regions: &[RegionSpec]) -> Result<(), RegionError> {
+pub fn export_byte_value_regions(
+    rom: &[u8],
+    directory: &Path,
+    regions: &[RegionSpec],
+) -> Result<(), RegionError> {
     let mut described = Vec::with_capacity(regions.len());
     for region in regions {
-        let data = rom_slice(rom, region.address, region.size).ok_or_else(|| RegionError::OutsideRom(region.name.clone()))?;
+        let data = rom_slice(rom, region.address, region.size)
+            .ok_or_else(|| RegionError::OutsideRom(region.name.clone()))?;
         described.push(json!({
             "name": region.name,
             "address": hex(region.address),
@@ -174,19 +202,35 @@ pub fn export_byte_value_regions(rom: &[u8], directory: &Path, regions: &[Region
 
 /// Verify the public export/read path and one representative rejection path.
 pub fn self_test() -> Result<String, String> {
-    let directory = std::env::temp_dir().join(format!("alchemy-byte-value-regions-self-test-{}", std::process::id()));
+    let directory = std::env::temp_dir().join(format!(
+        "alchemy-byte-value-regions-self-test-{}",
+        std::process::id()
+    ));
     let _ = fs::remove_dir_all(&directory);
     let rom: Vec<u8> = (0..0x100u16).map(|value| value as u8).collect();
-    let specs = [RegionSpec { name: "fixture".into(), address: ROM_BASE + 0x10, size: 8 }];
+    let specs = [RegionSpec {
+        name: "fixture".into(),
+        address: ROM_BASE + 0x10,
+        size: 8,
+    }];
     let result = (|| {
         export_byte_value_regions(&rom, &directory, &specs).map_err(|error| error.to_string())?;
-        let built = build_byte_value_regions(&directory.join("index.json")).map_err(|error| error.to_string())?;
-        if built != [ByteValueRegion { address: ROM_BASE + 0x10, data: (0x10..0x18).collect() }] {
+        let built = build_byte_value_regions(&directory.join("index.json"))
+            .map_err(|error| error.to_string())?;
+        if built
+            != [ByteValueRegion {
+                address: ROM_BASE + 0x10,
+                data: (0x10..0x18).collect(),
+            }]
+        {
             return Err("byte-value-regions self-test round trip changed".into());
         }
         let path = directory.join("invalid.json");
         fs::write(&path, "{}\n").map_err(|error| error.to_string())?;
-        if !matches!(build_byte_value_regions(&path), Err(RegionError::SourceIdentityDiffers)) {
+        if !matches!(
+            build_byte_value_regions(&path),
+            Err(RegionError::SourceIdentityDiffers)
+        ) {
             return Err("byte-value-regions self-test accepted an invalid source".into());
         }
         Ok::<_, String>(format!("self-test=ok regions={}", built.len()))

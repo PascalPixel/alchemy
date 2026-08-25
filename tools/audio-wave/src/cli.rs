@@ -18,21 +18,39 @@ fn source(text: &str) -> Result<WaveRecordSource, String> {
         .get("header")
         .map(|value| -> Result<ExactWaveHeaderSource, String> {
             let item = value.as_object().ok_or("wave header must be an object")?;
-            Ok(ExactWaveHeaderSource { control: scalar(item.get("control"), "wave control")?, frequency: scalar(item.get("frequency"), "wave frequency")?, loop_start: scalar(item.get("loop_start"), "wave loop start")?, sample_count: scalar(item.get("sample_count"), "wave sample count")? })
+            Ok(ExactWaveHeaderSource {
+                control: scalar(item.get("control"), "wave control")?,
+                frequency: scalar(item.get("frequency"), "wave frequency")?,
+                loop_start: scalar(item.get("loop_start"), "wave loop start")?,
+                sample_count: scalar(item.get("sample_count"), "wave sample count")?,
+            })
         })
         .transpose()?;
     let padding = object
         .get("padding")
         .map(|value| -> Result<ExactWavePaddingSource, String> {
             let item = value.as_object().ok_or("wave padding must be an object")?;
-            Ok(ExactWavePaddingSource { size: scalar(item.get("size"), "wave padding size")?, fill: scalar(item.get("fill"), "wave padding fill")? })
+            Ok(ExactWavePaddingSource {
+                size: scalar(item.get("size"), "wave padding size")?,
+                fill: scalar(item.get("fill"), "wave padding fill")?,
+            })
         })
         .transpose()?;
     let loop_start = match object.get("loop_start") {
         None | Some(serde_json::Value::Null) => None,
-        Some(value) => Some(value.as_f64().ok_or("wave loop start must be numeric or null")?),
+        Some(value) => Some(
+            value
+                .as_f64()
+                .ok_or("wave loop start must be numeric or null")?,
+        ),
     };
-    Ok(WaveRecordSource { frequency: scalar(object.get("frequency"), "wave catalog frequency")?, loop_start, size: scalar(object.get("size"), "wave record size")?, header, padding })
+    Ok(WaveRecordSource {
+        frequency: scalar(object.get("frequency"), "wave catalog frequency")?,
+        loop_start,
+        size: scalar(object.get("size"), "wave record size")?,
+        header,
+        padding,
+    })
 }
 
 pub fn entry(arguments: &[String]) -> ExitCode {
@@ -54,7 +72,9 @@ pub fn entry(arguments: &[String]) -> ExitCode {
                     "padding_fill": report.padding_fill as u64,
                 })
             );
-            std::io::stdout().write_all(&built).map_err(|error| error.to_string())
+            std::io::stdout()
+                .write_all(&built)
+                .map_err(|error| error.to_string())
         })(),
         [argument] if matches!(argument.as_str(), "-h" | "--help") => {
             println!("usage: audio-wave build-record-stdout SOURCE WAV");

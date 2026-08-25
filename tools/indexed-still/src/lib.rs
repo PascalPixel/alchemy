@@ -92,7 +92,8 @@ fn palette_bytes(palette: &[Rgb]) -> Result<Vec<u8>> {
         if red & 7 != 0 || green & 7 != 0 || blue & 7 != 0 {
             return err("still palette channels must be exact five-bit values");
         }
-        let value = u16::from(red >> 3) | (u16::from(green >> 3) << 5) | (u16::from(blue >> 3) << 10);
+        let value =
+            u16::from(red >> 3) | (u16::from(green >> 3) << 5) | (u16::from(blue >> 3) << 10);
         result.extend_from_slice(&value.to_le_bytes());
     }
     Ok(result)
@@ -104,7 +105,11 @@ pub fn build_still(image: &[u8]) -> Result<(Vec<u8>, Report)> {
         return err("still PNG must be 256x120");
     }
     let colors = palette_bytes(&decoded.palette)?;
-    let pixels: Vec<u8> = decoded.pixels.into_iter().map(|pixel| pixel as u8).collect();
+    let pixels: Vec<u8> = decoded
+        .pixels
+        .into_iter()
+        .map(|pixel| pixel as u8)
+        .collect();
     let encoded = encode_delta7(&pixels)?;
     let mut result = colors;
     result.extend_from_slice(&encoded);

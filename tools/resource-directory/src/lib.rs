@@ -7,7 +7,17 @@ pub const ROM_BASE: f64 = 0x0800_0000 as f64;
 pub type Res<T> = Result<T, String>;
 
 fn is_js_whitespace(c: char) -> bool {
-    matches!(c, '\t' | '\n' | '\u{0b}' | '\u{0c}' | '\r' | ' ' | '\u{a0}' | '\u{1680}' | '\u{2000}'..='\u{200a}' | '\u{2028}' | '\u{2029}' | '\u{202f}' | '\u{205f}' | '\u{3000}' | '\u{feff}')
+    matches!(
+        c,
+        '\t' | '\n' | '\u{0b}' | '\u{0c}' | '\r' | ' ' | '\u{a0}' | '\u{1680}' | '\u{2000}'
+            ..='\u{200a}'
+                | '\u{2028}'
+                | '\u{2029}'
+                | '\u{202f}'
+                | '\u{205f}'
+                | '\u{3000}'
+                | '\u{feff}'
+    )
 }
 
 pub fn js_number(text: &str) -> f64 {
@@ -53,7 +63,11 @@ pub fn js_number_string(value: f64) -> String {
     if value.is_finite() && value.fract() == 0.0 && value.abs() < 1e21 {
         let integral = value.abs();
         let text = format!("{}", integral as u64);
-        return if value.is_sign_negative() && integral != 0.0 { format!("-{text}") } else { text };
+        return if value.is_sign_negative() && integral != 0.0 {
+            format!("-{text}")
+        } else {
+            text
+        };
     }
     format!("{value}")
 }
@@ -130,7 +144,8 @@ pub fn document(value: &Value) -> Res<(f64, f64)> {
     let Some(source) = value.as_object() else {
         return Err("resource directory source must be an object".to_string());
     };
-    let format_ok = matches!(source.get("format"), Some(Value::Number(n)) if n.as_f64() == Some(1.0));
+    let format_ok =
+        matches!(source.get("format"), Some(Value::Number(n)) if n.as_f64() == Some(1.0));
     let kind_ok = matches!(source.get("kind"), Some(Value::String(k)) if k == "golden-sun-resource-directory");
     if !format_ok || !kind_ok {
         return Err("unsupported resource directory source".to_string());
@@ -164,25 +179,46 @@ pub fn build_resource_directory(value: &Value) -> Res<Vec<u8>> {
             Some("reserved-null") => 0.0,
             Some(text) if text.starts_with("resource:") => {
                 let literal = &text["resource:".len()..];
-                let target = address(Some(&Value::String(literal.to_string())), &format!("resource pointer {}", id(index as f64, count)))?;
+                let target = address(
+                    Some(&Value::String(literal.to_string())),
+                    &format!("resource pointer {}", id(index as f64, count)),
+                )?;
                 if hex(target) != literal {
-                    return Err(format!("resource pointer {} is not canonical hexadecimal", id(index as f64, count)));
+                    return Err(format!(
+                        "resource pointer {} is not canonical hexadecimal",
+                        id(index as f64, count)
+                    ));
                 }
                 target
             }
             Some(text) if text.starts_with("alias:") => {
                 let literal = &text["alias:".len()..];
-                let target = parse_id(literal, count, &format!("alias {}", id(index as f64, count)))?;
+                let target = parse_id(
+                    literal,
+                    count,
+                    &format!("alias {}", id(index as f64, count)),
+                )?;
                 if target >= index as f64 {
-                    return Err(format!("alias {} must reference an earlier slot", id(index as f64, count)));
+                    return Err(format!(
+                        "alias {} must reference an earlier slot",
+                        id(index as f64, count)
+                    ));
                 }
                 let value = resolved[target as usize];
                 if value == 0.0 {
-                    return Err(format!("alias {} references a reserved slot", id(index as f64, count)));
+                    return Err(format!(
+                        "alias {} references a reserved slot",
+                        id(index as f64, count)
+                    ));
                 }
                 value
             }
-            _ => return Err(format!("invalid resource directory slot {}", id(index as f64, count))),
+            _ => {
+                return Err(format!(
+                    "invalid resource directory slot {}",
+                    id(index as f64, count)
+                ))
+            }
         };
         resolved.push(value);
         result[index * 4..index * 4 + 4].copy_from_slice(&(value as u32).to_le_bytes());

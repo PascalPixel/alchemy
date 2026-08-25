@@ -3,8 +3,10 @@
 @ 未達。build_asm.tsでROMとの一致を確認する。
 .syntax unified
 	.thumb
+	.global BattleLink_ResetTransferState
 	.global Func_0800651c
 	.thumb_func
+BattleLink_ResetTransferState:
 Func_0800651c:
 	ldr	r1, [pc, #36]
 	ldr	r0, [pc, #40]

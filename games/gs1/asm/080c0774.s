@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global BattlePresentation_ConfigurePaletteFade
 	.global Func_080c0774
 	.thumb_func
+BattlePresentation_ConfigurePaletteFade:
 Func_080c0774:
 	push	{r5, r6, r7, lr}
 	ldr	r3, [pc, #168]

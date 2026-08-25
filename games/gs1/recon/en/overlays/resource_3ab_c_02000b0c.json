@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "namespace": "resource_3ab",
+  "address": "0x02000b0c",
+  "status": "measured-draft",
+  "owner_bytes": 96,
+  "executable_owner_bytes": 88,
+  "candidate_bytes": 96,
+  "differing_halfwords": 2,
+  "wrong_instructions": 0,
+  "classification": "setup-actor-zero-and-camera-scene",
+  "resolved_asm_classification": {
+    "kind": "compiler_output",
+    "retention": "c_candidate",
+    "confidence": "likely"
+  },
+  "cross_edition": {
+    "editions_attempted": ["ja", "en", "de", "es", "fr", "it"],
+    "core_identical": null,
+    "failure": "JA decoded resource has no relocation-free anchor for the explicit 96-byte span"
+  },
+  "bounded_search": {
+    "source_shapes": [
+      "direct constants",
+      "scoped zero and command carriers",
+      "shifted and multiplied command expressions",
+      "signed and unsigned 16-bit command casts"
+    ],
+    "best_differing_halfwords": 2,
+    "exact": false
+  },
+  "notes": [
+    "Complete eleven-call actor-zero presentation wrapper with two literal callbacks and no omitted branches or memory operations.",
+    "The 96-byte candidate has exact extent and zero wrong instructions. Its sole EN residual swaps independent `lsls r1, #1` and `movs r0, #0` argument setup instructions.",
+    "Readable carrier, expression, and width variants did not change the residual.",
+    "Explicit six-edition --span validation failed because JA provides no relocation-free anchor. This draft therefore claims zero DONE bytes and is not assigned a canonical source path or retained interval."
+  ]
+}

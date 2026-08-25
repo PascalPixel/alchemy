@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x0800651c",
+  "name": "BattleLink_ResetTransferState",
+  "status": "measured-draft",
+  "owner_bytes": 64,
+  "executable_owner_bytes": 64,
+  "candidate_bytes": 74,
+  "differing_halfwords": 35,
+  "wrong_instructions": 35,
+  "cross_edition": {
+    "object_bytes": 64,
+    "relocation_normalized_core_bytes": 40,
+    "core_diff_bytes": 0,
+    "core_identical": true,
+    "starts": {
+      "ja": "0x0800651c",
+      "en": "0x0800651c",
+      "de": "0x0800654c",
+      "es": "0x0800657c",
+      "fr": "0x0800652c",
+      "it": "0x0800655c"
+    }
+  },
+  "domain": "Resets the shared battle-link transfer state while preserving and restoring the interrupt-enable register.",
+  "expressed": [
+    "saves the interrupt-enable register and applies the original temporary write",
+    "marks the local link-transfer state as resetting",
+    "clears the transfer counters, shared pointer, status bytes, and synchronization halfword",
+    "restores the saved interrupt-enable value"
+  ],
+  "bounded_search": {
+    "mode": "screen-only",
+    "attempted": 0,
+    "exact": false,
+    "reason": "The readable candidate is 10 bytes long with 35 differing halfwords and fails both exact-extent and <=20-halfword admission."
+  },
+  "notes": [
+    "Independent object analysis bounds this leaf at 64 executable bytes and proves all 40 relocation-normalized core bytes identical across the six approved GS1 editions.",
+    "The remaining mismatch starts with GCC access-width and register-allocation choices for the saved interrupt value and continues through literal scheduling; it is not an immediately resynchronizing residual.",
+    "No full search or permanent classification was warranted, and zero DONE bytes are claimed.",
+    "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, the recovered linked-action caller, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used."
+  ]
+}

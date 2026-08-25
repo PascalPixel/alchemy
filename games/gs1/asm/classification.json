@@ -1731,16 +1731,17 @@
    "evidence": [
     "complete_ordinary_c_semantics_and_exact_owner_extent",
     "six_edition_relocation_normalized_core_is_identical",
-    "only_residual_is_one_independent_store_load_ordering_pair",
+    "only_residual_is_one_independent_instruction_ordering_pair",
     "all_other_instructions_registers_literals_and_control_flow_match",
     "fifty_thousand_bounded_ordinary_c_candidates_produced_no_exact_candidate",
     "approved_compiler_scheduling_and_optimization_sweep_preserves_defect_or_regresses",
     "inline_assembly_fixed_registers_and_compiler_barriers_are_disallowed",
     "byte_exact_reconstruction"
    ],
-   "expected_files": 1,
-   "expected_bytes": 104,
+   "expected_files": 2,
+   "expected_bytes": 232,
    "files": [
+    "080b6a60",
     "080974d8"
    ]
   },

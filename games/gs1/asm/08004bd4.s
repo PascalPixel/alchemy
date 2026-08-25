@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global SceneTransform_ApplyPitch
 	.global Func_08004bd4
 	.thumb_func
+SceneTransform_ApplyPitch:
 Func_08004bd4:
 	push	{r5, r6, lr}
 	sub	sp, #48

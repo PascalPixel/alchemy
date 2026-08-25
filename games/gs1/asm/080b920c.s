@@ -1,9 +1,11 @@
 @ コード間隙関数の再構築サム逆アセンブル。範囲は
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
-.syntax unified
+	.syntax unified
 	.thumb
+	.global BattlePresentation_BuildUnitEntries
 	.global Func_080b920c
 	.thumb_func
+BattlePresentation_BuildUnitEntries:
 Func_080b920c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

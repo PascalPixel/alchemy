@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global BattlePresentation_ApplyUnitDamage
 	.global Func_080b8db8
 	.thumb_func
+BattlePresentation_ApplyUnitDamage:
 Func_080b8db8:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8

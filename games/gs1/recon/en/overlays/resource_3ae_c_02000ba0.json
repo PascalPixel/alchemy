@@ -1,0 +1,12 @@
+{
+  "span_bytes":672,
+  "score":{"measured":"2026-08-24","candidate_bytes":696,"reference_bytes":672,"wrong_instructions":122,"differing_halfwords":332,"class":"compiler-cse-allocation-ordering"},
+  "shape":{"calls":69,"loops":0,"memory_operations":8,"reference_high_register_moves":0},
+  "verified_against_reference":[
+    "complete reconstruction accounts for all 69 calls, every argument, actor state write, both pointer-derived signed coordinate arguments, and both final signed fixed-point correction stores",
+    "the 648-byte executable reference has zero high-register saves while approved compiler CSE retains repeated fixed-point constants in r5/r6/r8-r10 and emits a 696-byte owner",
+    "direct constant expressions and named pointer temporaries preserve the compiler's shared-constant allocation; the remaining aligned differences are allocation and independent argument ordering"
+  ],
+  "retention":"keep_structured_asm",
+  "note":"Complete no-loop event setup retained because approved compiler CSE and allocation do not reproduce the ROM's repeated immediate construction."
+}

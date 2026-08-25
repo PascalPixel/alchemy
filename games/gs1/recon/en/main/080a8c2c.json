@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080a8c2c",
+  "status": "measured-draft",
+  "owner_bytes": 148,
+  "executable_owner_bytes": 148,
+  "candidate_bytes": 136,
+  "differing_halfwords": 73,
+  "wrong_instructions": 22,
+  "classification": "build-character-menu-tile-masks",
+  "resolved_asm_classification": {
+    "kind": "compiler_output",
+    "retention": "c_candidate",
+    "confidence": "likely"
+  },
+  "cross_edition": {
+    "editions": ["ja", "en", "de", "es", "fr", "it"],
+    "relocation_normalized_core_bytes": 128,
+    "core_diff_bytes": 0,
+    "core_identical": true
+  },
+  "notes": [
+    "Builds two groups of six character-menu tile masks by filling each 64-byte tile and applying paired XOR masks across seven columns.",
+    "The all-six core is identical, but pointer induction, mask-index clamping, loop layout, and saved-register allocation remain broad. It did not meet the bounded-search or permanent-residual gate."
+  ]
+}

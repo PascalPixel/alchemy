@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x08021e6c",
+  "name": "Ui_RunSelectionScreen",
+  "status": "measured-draft",
+  "owner_bytes": 2300,
+  "candidate_bytes": 2232,
+  "differing_halfwords": 1131,
+  "classification": "unemittable-draft",
+  "evidence": {
+    "reference": "games/gs1/asm/08021e6c.s",
+    "method": "complete local assembly symbolization and m2c control-flow recovery",
+    "pc_relative_references": 44,
+    "jump_tables": 0
+  },
+  "notes": [
+    "The complete retained assembly owner and all 44 PC-relative references were symbolized before generating this draft; no jump table was found.",
+    "The two local callers pass mode 0 and mode 1 and consume the return value as a selection/status result, supporting the deliberately broad UI selection-screen name.",
+    "Pointer-width repairs make the complete generated control flow compile as ordinary C; unresolved fields and address-named callees remain deliberately generic.",
+    "The candidate is 68 bytes short and remains structurally distant. It claims zero progress bytes; retained assembly remains authoritative.",
+    "No external source, copied instruction bytes, inline assembly, fixed-register variable, compiler barrier, or compiler modification was used."
+  ]
+}

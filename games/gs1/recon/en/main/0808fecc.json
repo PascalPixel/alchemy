@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x0808fecc",
+  "status": "measured-draft",
+  "owner_bytes": 48,
+  "executable_owner_bytes": 48,
+  "candidate_bytes": 44,
+  "differing_halfwords": 21,
+  "wrong_instructions": 14,
+  "classification": "allocate-and-clear-dma-buffer",
+  "cross_edition": {
+    "editions": ["ja", "en", "de", "es", "fr", "it"],
+    "relocation_normalized_core_bytes": 36,
+    "core_diff_bytes": 0,
+    "core_identical": true
+  },
+  "notes": [
+    "Allocates a 0x540-byte buffer and uses DMA3 to fill it from a zero word on the stack.",
+    "The retained owner is already covered by the proven thumb_multiple_transfer_module matcher because the three-register STMIA has no ordinary approved-C lowering. The semantic candidate remains broad and was not promoted."
+  ]
+}

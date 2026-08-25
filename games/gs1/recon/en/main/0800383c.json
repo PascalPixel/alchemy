@@ -1,0 +1,106 @@
+{
+  "span_bytes": 64,
+  "edition": {
+    "role": "derived-edition-candidate",
+    "edition": "en",
+    "rebase_status": "ja-owner-not-yet-recovered"
+  },
+  "score": {
+    "measured": "2026-08-25",
+    "candidate_bytes": 64,
+    "reference_bytes": 64,
+    "differing_halfwords": 13,
+    "wrong_instructions": 12,
+    "class": "allocation",
+    "note": "The executable instruction sequence and owner length agree; the residual is the queue/IME pointer allocation and the resulting literal order. Pool words account for the reported normalized wrong-instruction rows. This candidate claims zero DONE bytes."
+  },
+  "family": {
+    "owners": [
+      "0800383c",
+      "0800387c",
+      "080038bc",
+      "080038fc",
+      "0800393c",
+      "0800397c",
+      "080039bc",
+      "080039fc",
+      "08003a3c"
+    ],
+    "owner_bytes": 576,
+    "delay_values": [
+      "0x10000",
+      "0x20000",
+      "0x30000",
+      "0x50000",
+      "0x60000",
+      "0x70000",
+      "0x90000",
+      "0xa0000",
+      "0xb0000"
+    ],
+    "difference": "Direct ROM comparison finds no body difference outside the delay materialization at owner offsets 0x28 and 0x2a; the 0x20000 sibling changes only one of those halfwords. Every other instruction and both pool words agree.",
+    "shared_candidate_score": {
+      "candidate_bytes": 64,
+      "reference_bytes": 64,
+      "differing_halfwords": 13,
+      "wrong_instructions": 12,
+      "owners_measured": 9
+    }
+  },
+  "cross_edition": {
+    "owner_bytes": 64,
+    "relocation_bytes": 8,
+    "core_bytes": 56,
+    "core_identical_for_all_nine": true,
+    "edition_starts": {
+      "ja": "en + 0x00",
+      "en": "listed owner",
+      "de": "en + 0x30",
+      "es": "en + 0x60",
+      "fr": "en + 0x10",
+      "it": "en + 0x40"
+    },
+    "note": "Each of the nine relocation-bearing candidates uniquely locates one 64-byte owner in every edition; all 54 comparisons have zero core differences."
+  },
+  "domain": "Queues one memory-mapped write and its destination for delayed execution while preserving interrupt-master state.",
+  "expressed": [
+    "the 32-entry queue bound",
+    "the 12-byte value/address/delay record layout",
+    "interrupt-master save, disable spelling, and restore",
+    "the first owner's 0x10000 delay"
+  ],
+  "remaining": [
+    {
+      "op": "register allocation",
+      "count": 1,
+      "where": "the candidate keeps the interrupt-master address in r4 and queue base in r1; the reference keeps the queue in r4 and interrupt-master address in r1"
+    }
+  ],
+  "rejected_experiments": [
+    {
+      "experiment": "20,000 heat-guided classic ordinary-C permutations",
+      "result": "no candidate improved the allocation residual or reached zero"
+    },
+    {
+      "experiment": "volatile queue access, raw integer bases, nested pointer lifetimes, post-increment and structured record spellings, and old-agbcc",
+      "result": "all either retained the pointer swap or introduced extra loads, spills, or prologue registers"
+    },
+    {
+      "experiment": "the nine existing GCC 2.96 owner-route flag families",
+      "result": "none reached zero; seven preserved the 13-halfword allocation residual, -fno-cse-skip-blocks regressed to 29, and -fno-schedule-insns2 changed scheduling but still differed in 10 halfwords"
+    },
+    {
+      "experiment": "joint family transfer through one shared body and nine constant-only wrappers",
+      "result": "all nine emit 64 bytes and the same 13-halfword/12-wrong-instruction allocation residual; -fno-schedule-insns2 gives all nine the same 10-halfword/16-wrong-instruction residual, so no sibling is independently exact"
+    },
+    {
+      "experiment": "joint declaration, integer-width, queue-view, raw-pointer, IME-pointer, early-destination, compiler-family, optimization, CSE, GCSE, scheduler, strength-reduction, regmove, and expensive-optimization matrix",
+      "result": "no source/compiler pairing reached zero; ordinary spellings either retain the queue/IME allocation swap or introduce a broader extent/instruction disagreement. GCC 2.96 matches the routed 13-halfword residual, old-agbcc regresses to 24, and the recorded GCC 3 compiler is unavailable."
+    }
+  ],
+  "next": "Keep the readable shared family as measured reconstruction evidence. Do not classify the broad queue-in-r4/IME-in-r1 allocation residual as permanent without a new independently narrow compiler result.",
+  "notes": [
+    "Recovered only from the retained owner assembly, approved local ROM, in-repository callers, and the approved compiler.",
+    "No external game source, copied instruction bytes, inline assembly, fixed-register variable, or compiler barrier was used."
+  ]
+}

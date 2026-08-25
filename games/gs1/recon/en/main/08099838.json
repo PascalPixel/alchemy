@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x08099838",
+  "status": "measured-draft",
+  "owner_bytes": 232,
+  "candidate_bytes": 230,
+  "differing_halfwords": 107,
+  "wrong_instructions": 96,
+  "classification": "battle-effect-runner",
+  "exact_search": {
+    "status": "not_run",
+    "candidate_cap": 20000,
+    "reason": "direct baseline remains broad at 96 wrong instructions across the 232-byte owner"
+  },
+  "cross_edition": {
+    "core_bytes": 186,
+    "core_identical": true,
+    "core_diff_bytes": {"ja": 0, "en": 0, "de": 0, "es": 0, "fr": 0, "it": 0}
+  },
+  "notes": [
+    "Direct RunBattleEffect10 sibling in the battle-effect dispatcher.",
+    "Fresh cross-edition analysis measures 230 executable bytes plus final owner alignment and proves the 186-byte normalized core is identical in all six GS1 editions.",
+    "Ranked ahead of the other unresolved sub-432-byte RunBattleEffect siblings by exact-length proximity and current wrong-instruction count.",
+    "The complete initial candidate is two bytes short and remains broad in allocation and loop-carrier formation; it is preserved as evidence but is not adoptable.",
+    "Adoption requires zero differing halfwords in all six editions."
+  ]
+}

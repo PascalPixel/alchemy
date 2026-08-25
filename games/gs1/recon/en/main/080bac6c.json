@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080bac6c",
+  "status": "measured-draft",
+  "owner_bytes": 124,
+  "candidate_bytes": 122,
+  "differing_halfwords": 57,
+  "wrong_instructions": 49,
+  "classification": "battle-actor-list-removal",
+  "cross_edition": {
+    "core_bytes": 104,
+    "core_identical": true,
+    "relocations": 2,
+    "literal_fields": 3,
+    "starts": {
+      "ja": "0x080b1c6c",
+      "en": "0x080bac6c",
+      "de": "0x080bd284",
+      "es": "0x080bec84",
+      "fr": "0x080bec84",
+      "it": "0x080bac84"
+    },
+    "core_diff_bytes": {
+      "ja": 0,
+      "en": 0,
+      "de": 0,
+      "es": 0,
+      "fr": 0,
+      "it": 0
+    }
+  },
+  "domain": "Removes one actor from the live or placement list, clears its live marker, updates related actor state, and clears matching queued action slots.",
+  "expressed": [
+    "the live actor marker at unit offset 0x12a",
+    "the 0xff-terminated live list at battle-work offset 0x58",
+    "the 0xff-terminated placement list at battle-work offset 0x66",
+    "the 0xfe vacant marker used by both lists",
+    "the direct state-update call after a successful removal",
+    "the twenty 16-byte queued action slots beginning at battle-work offset 0x2ec"
+  ],
+  "call_evidence": [
+    "the direct 080bd898 battle presentation caller removes its current actor during teardown",
+    "BattleActor_DestroyTemporaryObject and BattleMotion_InitializeActorRecords call this owner in their matching actor-cleanup paths",
+    "the owner directly calls the battle unit lookup and 080c1ebc actor-state cleanup owners"
+  ],
+  "ranking": {
+    "reason": "Largest previously unmeasured owner at or below 192 bytes in the one-hop caller/callee neighborhood of exact 080bbb0c, with a six-edition identical normalized core.",
+    "other_identical_candidates": [
+      {"address": "0x080bd850", "bytes": 72, "core_bytes": 56, "disposition": "skipped: relies on a caller-established r9 hidden argument before an indirect IWRAM call; ordinary local C semantics are not yet proved"},
+      {"address": "0x0800393c", "bytes": 64, "core_bytes": 56, "disposition": "already has a bounded 20,000-candidate family draft with a 13-halfword allocation residual"},
+      {"address": "0x080039fc", "bytes": 64, "core_bytes": 56, "disposition": "constant-only sibling of the already bounded interrupt-guarded queue family"},
+      {"address": "0x080b7548", "bytes": 148, "core_bytes": 136, "disposition": "already has a complete draft and a prior bounded 50,000-candidate search without exact output"}
+    ]
+  },
+  "bounded_checks": [
+    "natural pointer, structured-array, integer-base, structured-loop, and evidence-equivalent goto forms were directly scored",
+    "the local structural reconstruction confirmed the two sentinel scans and the final twenty-entry loop",
+    "-fno-schedule-insns2, -fno-strength-reduce, -fno-cse-follow-jumps, -fno-cse-skip-blocks, -fno-schedule-insns, and -fno-regmove did not produce a narrow residual",
+    "the best normalized draft remains too far from parity for the requested 20,000-candidate last-mile cap"
+  ],
+  "adoption": "none; retained assembly remains authoritative and this draft claims zero DONE bytes",
+  "notes": [
+    "Recovered only from retained owner assembly, approved local ROMs, in-repository callers/callees, and the approved compiler.",
+    "No GS2 source or data was inspected or changed for this reconstruction."
+  ]
+}

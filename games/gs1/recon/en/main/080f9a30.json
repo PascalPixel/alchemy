@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080f9a30",
+  "status": "measured-draft",
+  "owner_bytes": 32,
+  "executable_owner_bytes": 32,
+  "candidate_bytes": 36,
+  "differing_halfwords": 18,
+  "wrong_instructions": 12,
+  "classification": "unlink-audio-channel",
+  "resolved_asm_classification": {
+    "kind": "compiler_output",
+    "retention": "c_candidate",
+    "confidence": "likely"
+  },
+  "cross_edition": {
+    "editions": ["ja", "en", "de", "es", "fr", "it"],
+    "relocation_normalized_core_bytes": 32,
+    "core_diff_bytes": 0,
+    "core_identical": true
+  },
+  "notes": [
+    "Unlinks a CGB channel from its music track's doubly linked channel chain and clears the channel's track pointer.",
+    "Correct MusicTrackState and CgbChannel types remove every opcode mismatch, but the target remains a leaf while the approved compiler adds a prologue and schedules the three live pointers differently. The residual is broad, so no bounded search or permanent claim was made."
+  ]
+}

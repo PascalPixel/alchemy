@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global Scheduler_DisableCallbacks
 	.global Func_0800439c
 	.thumb_func
+Scheduler_DisableCallbacks:
 Func_0800439c:
 	push	{r5, r6, r7, lr}
 	movs	r5, #1

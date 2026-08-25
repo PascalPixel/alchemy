@@ -564,16 +564,16 @@ This section is generated. It is the primary contributor target list:
 non-overlapping audited source-owner scopes (or contiguous unresolved
 executable runs), sorted largest to smallest. Regenerate with `make coverage` -- do not edit by hand.
 
-- **Unfinished scopes:** 1,650
+- **Unfinished scopes:** 1,647
 - **Address spaces scanned:** 97 (86 still contain targets)
-- **Target bytes:** 654,838 tracked-C or unresolved-assembly bytes
-- **Resolved-only bytes:** 533,646 Exact C or audited permanent assembly bytes
-- **Executable bytes accounted for:** 1,348,422
+- **Target bytes:** 653,676 tracked-C or unresolved-assembly bytes
+- **Resolved-only bytes:** 534,232 Exact C or audited permanent assembly bytes
+- **Executable bytes accounted for:** 1,348,458
 
 ### Main target list
 
 This table contains every scope of at least 1,000 bytes (195 rows). The complete
-1,650-row index, including the smallest audited owners, is
+1,647-row index, including the smallest audited owners, is
 [`games/gs1/metrics/gs1-en-core-targets.json`](games/gs1/metrics/gs1-en-core-targets.json).
 
 | Rank | Scope | Target | Namespace / owner |
@@ -618,7 +618,7 @@ This table contains every scope of at least 1,000 bytes (195 rows). The complete
 | 38 | 3,452 | 2,396 | `main:0x080ec100` |
 | 39 | 3,442 | 3,442 | `resource_378:0x0200088c` |
 | 40 | 3,408 | 3,408 | `resource_378:0x02001874` |
-| 41 | 3,364 | 1,212 | `main:0x08096c80` |
+| 41 | 3,364 | 1,108 | `main:0x08096c80` |
 | 42 | 3,274 | 2,500 | `main:0x080bae40` |
 | 43 | 3,238 | 2,386 | `main:0x080e6638` |
 | 44 | 3,156 | 2,514 | `main:0x080d765c` |
@@ -683,7 +683,7 @@ This table contains every scope of at least 1,000 bytes (195 rows). The complete
 | 103 | 1,902 | 1,292 | `main:0x080983a0` |
 | 104 | 1,866 | 1,722 | `main:0x080b9b30` |
 | 105 | 1,810 | 500 | `main:0x08006088` |
-| 106 | 1,800 | 992 | `main:0x0809b0dc` |
+| 106 | 1,800 | 644 | `main:0x0809b0dc` |
 | 107 | 1,782 | 1,660 | `main:0x080de2f8` |
 | 108 | 1,778 | 1,778 | `resource_3b9:0x02001cd4` |
 | 109 | 1,770 | 1,770 | `resource_3b1:0x020028c8` |
@@ -706,7 +706,7 @@ This table contains every scope of at least 1,000 bytes (195 rows). The complete
 | 126 | 1,458 | 1,458 | `resource_3c8:0x020047ac` |
 | 127 | 1,448 | 1,448 | `resource_3b0:0x02000af8` |
 | 128 | 1,448 | 1,448 | `resource_3b1:0x020050dc` |
-| 129 | 1,426 | 912 | `main:0x0809a8c4` |
+| 129 | 1,426 | 444 | `main:0x0809a8c4` |
 | 130 | 1,410 | 1,410 | `resource_383:0x020036e8` |
 | 131 | 1,410 | 1,138 | `main:0x08090000` |
 | 132 | 1,410 | 908 | `main:0x080c1a24` |
@@ -738,7 +738,7 @@ This table contains every scope of at least 1,000 bytes (195 rows). The complete
 | 158 | 1,176 | 1,176 | `resource_37b:0x02000a18` |
 | 159 | 1,170 | 1,170 | `resource_3b3:0x0200174c` |
 | 160 | 1,162 | 392 | `main:0x08094730` |
-| 161 | 1,160 | 908 | `main:0x080a847c` |
+| 161 | 1,160 | 768 | `main:0x080a847c` |
 | 162 | 1,158 | 344 | `main:0x0808ec50` |
 | 163 | 1,150 | 1,150 | `resource_375:0x020014f4` |
 | 164 | 1,136 | 908 | `main:0x080d0ee0` |

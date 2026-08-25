@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080983a0",
+  "status": "measured-draft",
+  "owner_bytes": 288,
+  "candidate_bytes": 312,
+  "differing_halfwords": 124,
+  "classification": "allocation-and-scheduling",
+  "notes": [
+    "This complete semantic draft reconstructs the battle-effect setup, scene-coordinate transfer, display setup, optional helper dispatch, state publication, nineteen-frame update loop, and delayed callback.",
+    "The candidate is 24 bytes long and diverges in long-lived register allocation and literal-pool placement; retained assembly remains authoritative and this draft claims zero bytes.",
+    "No external source, copied instruction bytes, inline assembly, fixed-register variable, compiler barrier, or compiler modification was used."
+  ]
+}

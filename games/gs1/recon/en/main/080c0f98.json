@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080c0f98",
+  "status": "measured-draft",
+  "owner_bytes": 122,
+  "candidate_bytes": 122,
+  "differing_halfwords": 19,
+  "classification": "register-allocation-only",
+  "cross_edition": {
+    "core_bytes": 118,
+    "core_diff_bytes": 0,
+    "core_identical": true,
+    "callee_correspondences": 1
+  },
+  "notes": [
+    "Relocation-aware comparison proves all 118 core bytes identical across JA, EN, DE, ES, FR, and IT; only the Actor_GetObject call is relocated.",
+    "The complete bitfield-based candidate has exact 122-byte extent. Its residual contains the same operations and control flow but allocates the record pointer and shifted two-bit value to different registers.",
+    "Changing the record field from untyped to typed pointers and applying register storage-class hints is byte-neutral. Old agbcc preserves the 128-byte earlier shape but diverges substantially.",
+    "The candidate is not byte-exact, so retained assembly remains authoritative and this record claims zero bytes."
+  ]
+}

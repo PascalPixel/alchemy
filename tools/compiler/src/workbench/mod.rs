@@ -114,11 +114,20 @@ pub fn run_step(arguments: &[String]) -> Result<(), String> {
         ("compile", [source, routing, work]) => {
             compile_object(Path::new(source), Path::new(routing), Path::new(work)).map(|_| ())
         }
-        ("target", [source, object, listing]) => {
-            assemble_target(Path::new(source), Path::new(object), Path::new(listing))
-        }
-        ("symbolize", [source, listing, output]) => {
-            let (text, stats) = symbolize::symbolize(Path::new(source), Path::new(listing), true)?;
+        ("target", [source, symbol, object, listing]) => assemble_target(
+            Path::new(source),
+            symbol,
+            Path::new(object),
+            Path::new(listing),
+        ),
+        ("symbolize", [source, listing, symbol, image, output]) => {
+            let (text, stats) = symbolize::symbolize(
+                Path::new(source),
+                Path::new(listing),
+                true,
+                symbol,
+                Path::new(image),
+            )?;
             write(Path::new(output), text.as_bytes())?;
             println!(
                 "symbolized={} tables={} entries={} references={}",
@@ -328,8 +337,49 @@ fn compile_object(source: &Path, routing: &Path, work: &Path) -> Result<PathBuf,
     Ok(object)
 }
 
-fn assemble_target(source: &Path, object: &Path, listing: &Path) -> Result<(), String> {
-    assemble(source, object, Some(listing))
+fn assemble_target(
+    source: &Path,
+    symbol: &str,
+    object: &Path,
+    listing: &Path,
+) -> Result<(), String> {
+    let text = std::fs::read_to_string(source)
+        .map_err(|error| format!("{}: {error}", source.display()))?;
+    let canonical = canonical_target_text(&text, symbol);
+    let canonical_source = object.with_extension("canonical.s");
+    write(&canonical_source, canonical.as_bytes())?;
+    assemble(&canonical_source, object, Some(listing))
+}
+
+fn canonical_target_text(text: &str, symbol: &str) -> String {
+    let mut previous_is_symbol = false;
+    let mut canonical = String::new();
+    for line in text.lines() {
+        let trimmed = line.trim();
+        let owner_alias = (trimmed.starts_with("Region_") || trimmed.starts_with("Func_"))
+            && trimmed.ends_with(':');
+        if previous_is_symbol && owner_alias {
+            canonical.push_str("@ canonical same-address owner alias omitted\n");
+        } else {
+            canonical.push_str(line);
+            canonical.push('\n');
+        }
+        previous_is_symbol = trimmed == format!("{symbol}:");
+    }
+    canonical
+}
+
+#[cfg(test)]
+mod canonical_target_tests {
+    use super::canonical_target_text;
+
+    #[test]
+    fn removes_only_same_address_owner_alias_after_canonical_symbol() {
+        let text = ".global Human\nHuman:\nFunc_08000000:\n nop\nRegion_08000002:\n bx lr\n";
+        let output = canonical_target_text(text, "Human");
+        assert!(output.contains("Human:\n@ canonical same-address owner alias omitted\n nop"));
+        assert!(output.contains("Region_08000002:"));
+    }
 }
 
 fn assemble(source: &Path, object: &Path, listing: Option<&Path>) -> Result<(), String> {

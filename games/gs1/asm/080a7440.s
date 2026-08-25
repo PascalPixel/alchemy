@@ -2,8 +2,10 @@
 @ games/gs1/semantic/main/080a7440.c; C/H assembly escape constructs are forbidden.
 .syntax unified
 	.thumb
+	.global CharacterSelector_Run
 	.global Func_080a7440
 	.thumb_func
+CharacterSelector_Run:
 Func_080a7440:
 	push	{r5, lr}
 	ldr	r3, .Lpool

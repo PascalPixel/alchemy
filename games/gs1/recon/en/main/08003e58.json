@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x08003e58",
+  "name": "ResourceTable_AllocateBlocks",
+  "status": "measured-draft",
+  "owner_bytes": 124,
+  "executable_owner_bytes": 124,
+  "candidate": {
+    "routed": {
+      "candidate_bytes": 116,
+      "reference_bytes": 124,
+      "differing_halfwords": 61,
+      "wrong_instructions": 78
+    },
+    "best_bounded_axis": {
+      "flags": ["-fno-gcse"],
+      "candidate_bytes": 124,
+      "reference_bytes": 124,
+      "differing_halfwords": 50,
+      "wrong_instructions": 38
+    }
+  },
+  "cross_edition": {
+    "owner_bytes": 124,
+    "relocation_bytes": 8,
+    "core_bytes": 116,
+    "core_identical": true,
+    "editions": {
+      "ja": "0x08003e58",
+      "en": "0x08003e58",
+      "de": "0x08003e88",
+      "es": "0x08003eb8",
+      "fr": "0x08003e68",
+      "it": "0x08003e98"
+    }
+  },
+  "behavior": [
+    "rejects resource-table identifiers above 95",
+    "converts the requested byte size to 64-byte blocks",
+    "searches a 512-byte ownership map for a contiguous free run marked 0xff",
+    "skips occupied runs by reading their resource-table entry size",
+    "marks an accepted run with the identifier and returns its byte offset"
+  ],
+  "remaining": "The complete algorithm and owner extent are established, but the approved routed compiler emits a broad control-layout and r6/r7 allocation disagreement. Disabling GCSE restores the reference extent but leaves 38 wrong instructions, so neither exact adoption nor narrow permanent classification is justified.",
+  "notes": [
+    "Recovered only from retained assembly, approved local GS1 ROMs, neighboring exact resource-table owners, and the approved compiler.",
+    "This candidate claims zero DONE bytes."
+  ]
+}

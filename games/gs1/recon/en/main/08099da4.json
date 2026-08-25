@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x08099da4",
+  "status": "measured-draft",
+  "owner_bytes": 1264,
+  "executable_owner_bytes": 1262,
+  "candidate_bytes": 1236,
+  "differing_halfwords": 612,
+  "wrong_instructions": 446,
+  "classification": "battle-effect-runner",
+  "cross_edition": {
+    "editions": ["ja", "en", "de", "es", "fr", "it"],
+    "relocation_normalized_core_bytes": 934,
+    "core_diff_bytes": 0,
+    "core_identical": true
+  },
+  "bounded_search": {
+    "kind": "classic_heat_guided_walk",
+    "seed": 99,
+    "candidates": 20000,
+    "compile_failures": 217,
+    "exact_candidates": 0,
+    "best_differing_halfwords": 577,
+    "best_candidate_bytes": 1260
+  },
+  "notes": [
+    "Complete first-pass semantic reconstruction of the ordinary battle-effect owner adjacent to RunBattleEffect05 and RunBattleEffect11.",
+    "The six GS1 editions share an identical relocation-normalized 934-byte executable core; the two remaining owner bytes are alignment.",
+    "The bounded search improved the byte residual from 612 to 577 halfwords but remains broad, so neither exact-C adoption nor permanent-assembly promotion is justified."
+  ]
+}

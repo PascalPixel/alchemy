@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080b7548",
+  "status": "measured-draft",
+  "owner_bytes": 148,
+  "candidate_bytes": 156,
+  "differing_halfwords": 69,
+  "wrong_instructions": 60,
+  "classification": "battle-summon-placement",
+  "cross_edition": {
+    "core_bytes": 136,
+    "core_identical": true,
+    "starts": {
+      "ja": "0x080ae548",
+      "en": "0x080b7548",
+      "de": "0x080b9b60",
+      "es": "0x080bb560",
+      "fr": "0x080bb560",
+      "it": "0x080b7560"
+    },
+    "core_diff_bytes": {"ja": 0, "en": 0, "de": 0, "es": 0, "fr": 0, "it": 0}
+  },
+  "notes": [
+    "Direct callee of the exact 080bbb0c battle-command owner.",
+    "The complete control flow, destructive count loop, 76-byte local layout, summon-slot sentinel handling, placement call, and exact battle-motion lookup are expressed.",
+    "A bounded 50,000-candidate classic heat-guided walk found no exact candidate and did not improve the real byte delta; packed structural scores favored shorter but bytewise-equivalent-or-worse candidates and were rejected.",
+    "The remaining residual is dominated by the approved compiler folding the long-lived summon-slot pointer and widening the signed sentinel comparison differently from the reference; adoption requires zero differing halfwords in all six editions."
+  ]
+}

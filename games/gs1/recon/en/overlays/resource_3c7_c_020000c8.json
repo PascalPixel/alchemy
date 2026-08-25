@@ -1,0 +1,13 @@
+{
+  "span_bytes": 148,
+  "score": {"measured":"2026-08-24","candidate_bytes":148,"reference_bytes":148,"wrong_instructions":18,"differing_halfwords":49,"class":"literal-pool-and-argument-ordering"},
+  "shape": {"calls":12,"loops":0,"memory_operations":1,"reference_high_register_moves":0},
+  "verified_against_reference": [
+    "complete control flow accounts for all twelve calls, every argument and literal, the actor-facing test, and the sole actor-angle load",
+    "candidate and reference have equal owner extent; the dominant residual moves the mask from the ROM's early pool into the terminal compiler pool",
+    "after alignment, the only executable scheduling residual is one swapped zero/value argument-setup pair; direct and named-local forms preserve the compiler order",
+    "four neighboring owners independently reproduce the same approved-compiler terminal-pool preference"
+  ],
+  "retention": "keep_structured_asm",
+  "note": "Largest actor-facing message-selection family member; retained because ordinary C cannot select the ROM pool boundary and one call's argument schedule."
+}

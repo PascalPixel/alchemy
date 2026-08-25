@@ -4,7 +4,7 @@
  "target": "gs1-en",
  "derivation": "full-c-progress-v1",
  "audit": "complete",
- "total_union_bytes": 1348422,
+  "total_union_bytes": 1348458,
  "main": {
   "id": "main",
   "executable_bytes": 548364,
@@ -20904,16 +20904,28 @@
   {
    "id": "resource_3a2",
    "decoded_bytes": 7648,
-   "executable_bytes": 5628,
-   "excluded_bytes": 2020,
+      "executable_bytes": 5664,
+      "excluded_bytes": 1984,
    "audit": "complete",
    "intervals": [
-    {
-     "start": 33554432,
-     "end": 33554480,
-     "kind": "veneer",
-     "evidence": "resource_3a2_overlay.s:fixed-ldr-bx-veneer"
-    },
+        {
+          "start": 33554432,
+          "end": 33554480,
+          "kind": "veneer",
+          "evidence": "resource_3a2_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33554480,
+          "end": 33554514,
+          "kind": "thumb",
+          "evidence": "resource_3a2_overlay.s:complete argument-reading leaf verified by exact C"
+        },
+        {
+          "start": 33554514,
+          "end": 33554516,
+          "kind": "executable_alignment",
+          "evidence": "resource_3a2_overlay.s:two-byte-zero-between-executable-spans"
+        },
     {
      "start": 33554516,
      "end": 33554554,

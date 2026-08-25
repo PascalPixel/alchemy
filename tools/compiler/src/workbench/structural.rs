@@ -39,15 +39,20 @@ pub fn compare(target: &Path, candidate: &Path, symbol: &str) -> Result<Structur
     let symbol_index = target_obj
         .symbol_by_name(symbol)
         .ok_or_else(|| format!("{}: missing symbol {symbol}", target.display()))?;
-    if candidate_obj.symbol_by_name(symbol).is_none() {
-        return Err(format!("{}: missing symbol {symbol}", candidate.display()));
+    let candidate_symbol = candidate_symbol_name(&candidate_obj, symbol)
+        .ok_or_else(|| format!("{}: missing symbol {symbol}", candidate.display()))?;
+    let mut mappings = MappingConfig::default();
+    if candidate_symbol != symbol {
+        mappings
+            .mappings
+            .insert(symbol.to_owned(), candidate_symbol);
     }
     let result = diff_objs(
         Some(&target_obj),
         Some(&candidate_obj),
         None,
         &config,
-        &MappingConfig::default(),
+        &mappings,
     )
     .map_err(|error| format!("objdiff: {error}"))?;
     let target_diff = result.left.ok_or("objdiff omitted target result")?;
@@ -92,4 +97,38 @@ pub fn compare(target: &Path, candidate: &Path, symbol: &str) -> Result<Structur
         && report.deletions == 0
         && report.insertions == 0;
     Ok(report)
+}
+
+fn candidate_symbol_name(object: &obj::Object, canonical: &str) -> Option<String> {
+    if object.symbol_by_name(canonical).is_some() {
+        return Some(canonical.to_owned());
+    }
+    let mut defined = object
+        .symbols
+        .iter()
+        .filter(|symbol| symbol.size > 0 && symbol.name.starts_with("Func_"))
+        .map(|symbol| symbol.name.as_str());
+    let only = defined.next()?;
+    defined.next().is_none().then(|| only.to_owned())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::candidate_symbol_name;
+    use objdiff_core::obj::{Object, Symbol};
+
+    #[test]
+    fn falls_back_to_the_only_defined_candidate_owner() {
+        let mut object = Object::default();
+        object.symbols.push(Symbol {
+            name: "Func_08000000".into(),
+            size: 4,
+            section: Some(0),
+            ..Default::default()
+        });
+        assert_eq!(
+            candidate_symbol_name(&object, "HumanOwner"),
+            Some("Func_08000000".into())
+        );
+    }
 }

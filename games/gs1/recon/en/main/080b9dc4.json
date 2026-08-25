@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080b9dc4",
+  "status": "measured-draft",
+  "owner_bytes": 252,
+  "executable_owner_bytes": 250,
+  "candidate_bytes": 244,
+  "differing_halfwords": 116,
+  "wrong_instructions": 33,
+  "classification": "resolve-battle-presentation-trigger",
+  "resolved_asm_classification": {
+    "kind": "compiler_output",
+    "retention": "c_candidate",
+    "confidence": "likely"
+  },
+  "cross_edition": {
+    "editions": ["ja", "en", "de", "es", "fr", "it"],
+    "relocation_normalized_core_bytes": 182,
+    "core_diff_bytes": 0,
+    "core_identical": true
+  },
+  "notes": [
+    "Resolves a battle presentation trigger: either announces the encounter, visits unstunned living party units, or activates and tears down a selected battle object based on a bounded random test.",
+    "Correct party and unit layouts raise structural similarity to 85.58 percent, but stack layout, branch shaping, loop allocation, and call scheduling remain broad. It did not meet the bounded-search or permanent-residual gate."
+  ]
+}

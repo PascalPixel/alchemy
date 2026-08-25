@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global Scheduler_SetCallbackMask
 	.global Func_08004358
 	.thumb_func
+Scheduler_SetCallbackMask:
 Func_08004358:
 	push	{r5, r6, lr}
 	adds	r6, r1, #0

@@ -1,0 +1,36 @@
+{
+  "span_bytes": 64,
+  "status": "measured-draft",
+  "family": {
+    "replicated_en_bytes": 256,
+    "members": [
+      "resource_392:02000bcc",
+      "resource_393:02000d9c",
+      "resource_394:02000f74",
+      "resource_395:02001878"
+    ],
+    "cross_resource_core_identical": true,
+    "six_edition_core_bytes": 44,
+    "six_edition_core_identical": true
+  },
+  "score": {
+    "candidate_bytes": 64,
+    "reference_bytes": 64,
+    "wrong_instructions": 32,
+    "differing_halfwords": 16,
+    "class": "unemittable"
+  },
+  "expressed": [
+    "load the shared battle-effect palette buffer",
+    "transfer its first palette block to 0x05000000",
+    "transfer its second palette block from offset 0x1c0 to 0x05000200",
+    "publish both transfers through DMA3 and finalize the palette update"
+  ],
+  "blocked_by": "the reference uses two stmia transfers; approved GCC 2.96 emits six scalar stores for the same ordinary-C assignments",
+  "evidence": [
+    "relocation and reached-literal masking finds four byte-identical 64-byte English owners in resources 392 through 395",
+    "the complete canonical draft has exact owner extent",
+    "the family is already independently retained in semantic/overlay-assembly.json as thumb_multi_register_module because the approved compiler cannot emit the reference transfers",
+    "the explicit decoded-ROM cross-edition path proves every member's 44-byte relocation/literal-masked core identical in all six editions; no source mapping or additional exact-byte coverage is claimed"
+  ]
+}

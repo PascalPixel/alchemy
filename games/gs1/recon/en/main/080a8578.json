@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080a8578",
+  "status": "proven-permanent",
+  "owner_bytes": 140,
+  "executable_owner_bytes": 140,
+  "candidate_bytes": 140,
+  "differing_halfwords": 3,
+  "wrong_instructions": 2,
+  "classification": "regional_compiler_scheduling",
+  "resolved_asm_classification": {
+    "kind": "compiler_output",
+    "retention": "c_candidate",
+    "confidence": "likely"
+  },
+  "cross_edition": {
+    "editions": ["ja", "en", "de", "es", "fr", "it"],
+    "relocation_normalized_core_bytes": 100,
+    "core_identical": false,
+    "core_diff_bytes": {
+      "ja": 40,
+      "en": 0,
+      "de": 0,
+      "es": 0,
+      "fr": 0,
+      "it": 0
+    },
+    "starts": {
+      "ja": "0x0809f490",
+      "en": "0x080a8578",
+      "de": "0x080ab3f4",
+      "es": "0x080acde8",
+      "fr": "0x080ace04",
+      "it": "0x080a85f4"
+    }
+  },
+  "bounded_search": {
+    "mode": "classic-walk",
+    "candidates": 50000,
+    "compile_failures": 827,
+    "exact": false,
+    "baseline_differing_halfwords": 11,
+    "best_differing_halfwords": 3,
+    "best_structural_rows": 2
+  },
+  "notes": [
+    "Selects a status message variant, renders remaining experience for a non-max-level owner, and copies the temporary message buffer to its destination.",
+    "A semantics-preserving wide temporary collapses the EN residual to two structural rows, but the bounded search found no exact candidate.",
+    "The DE, ES, FR, and IT normalized cores match EN exactly. The uniquely located JA source variant uses a 0x80-byte allocation and 0x40-byte render limit instead of EN's 0x100 and 0x80, independently proving that it is not another compiler rendering of the same source constants.",
+    "The EN residual is limited to exchanging the independent allocator-result save and message-literal load at offsets 0x54 and 0x56, plus the consequent literal register at 0x5a; both streams resynchronize immediately afterward. Fifty thousand bounded candidates found no exact approved-C rendering."
+  ]
+}

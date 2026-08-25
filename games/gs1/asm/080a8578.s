@@ -2,9 +2,11 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global StatusMenu_ShowOwnerProgressMessage
 	.global Func_080a8578
+	.set Func_080a8578, StatusMenu_ShowOwnerProgressMessage
 	.thumb_func
-Func_080a8578:
+StatusMenu_ShowOwnerProgressMessage:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}

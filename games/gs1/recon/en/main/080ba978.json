@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080ba978",
+  "status": "measured-draft",
+  "owner_bytes": 612,
+  "candidate_bytes": 612,
+  "differing_halfwords": 261,
+  "classification": "allocation-and-scheduling",
+  "edition_starts": {
+    "ja": "0x080b1978",
+    "en": "0x080ba978",
+    "de": "0x080bcf90",
+    "es": "0x080be990",
+    "fr": "0x080be990",
+    "it": "0x080ba990"
+  },
+  "domain": "Sets battle-presentation facing, constructs motion work, dispatches queued script events, runs the direct presentation path, and cleans up participating actors.",
+  "notes": [
+    "All six starts are bounded by the exact 080ba918 and 080babdc sibling correspondences and preserve the same 612-byte owner extent.",
+    "Removing a cached primary-id scalar repaired the frame extent from 616 to 612 bytes and reduced the aligned residual from 286 to 218 wrong instructions.",
+    "The remaining mismatch is long-lived allocation: the candidate saves fp/r9 and places flags in r8, while the reference retains input in r7, flags in sl, the work pointer in r5, and the resolved object in r8.",
+    "Retained assembly remains authoritative and this measured candidate claims zero bytes."
+  ]
+}

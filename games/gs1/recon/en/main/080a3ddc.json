@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080a3ddc",
+  "name": "InventoryMenu_CollectItems",
+  "status": "measured-draft",
+  "owner_bytes": 76,
+  "executable_owner_bytes": 76,
+  "candidate": {
+    "routed": {
+      "candidate_bytes": 68,
+      "reference_bytes": 76,
+      "differing_halfwords": 37,
+      "wrong_instructions": 52
+    },
+    "bounded_axes": {
+      "families": ["routed", "gcc296", "old-agbcc"],
+      "flags": [
+        "-fno-gcse",
+        "-fno-regmove",
+        "-fno-strength-reduce",
+        "-fno-schedule-insns",
+        "-fno-schedule-insns2",
+        "-fno-cse-follow-jumps",
+        "-fno-expensive-optimizations"
+      ],
+      "exact": false
+    }
+  },
+  "cross_edition": {
+    "owner_bytes": 76,
+    "literal_bytes": 4,
+    "core_bytes": 72,
+    "core_identical": true,
+    "editions": {
+      "ja": "0x0809acd4",
+      "en": "0x080a3ddc",
+      "de": "0x080a6bdc",
+      "es": "0x080a85d0",
+      "fr": "0x080a85ec",
+      "it": "0x080a3ddc"
+    }
+  },
+  "behavior": [
+    "clears the 32-entry destination list",
+    "visits all 15 item halfwords in the supplied owner record",
+    "compacts nonzero items at the front of the destination list",
+    "returns the number of collected items"
+  ],
+  "remaining": "The complete behavior and six-edition owner identity are established, but the approved compilers retain a broad loop-control and register-allocation disagreement. The draft is eight bytes short and is neither exact nor eligible for narrow permanent classification.",
+  "notes": [
+    "The human name was already established by inventory_menu.h and is confirmed by local callers and OwnerInventoryState::inventory.",
+    "Recovered only from retained assembly, approved local GS1 ROMs, local types and callers, and the approved compiler. This candidate claims zero DONE bytes."
+  ]
+}

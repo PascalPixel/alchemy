@@ -1,0 +1,22 @@
+{
+  "span_bytes": 64,
+  "score": {
+    "measured": "2026-08-24",
+    "candidate_bytes": 64,
+    "reference_bytes": 64,
+    "wrong_instructions": 0,
+    "differing_halfwords": 2,
+    "class": "compiler-scheduling-retention"
+  },
+  "domain": "Disables scheduler callbacks whose address lies in the 0x02 overlay range while preserving interrupt-master state.",
+  "expressed": ["complete owner extent and literal pool", "20-entry overlay-address scan", "state-high enable-bit clear", "interrupt-master save, disable, and restore"],
+  "unexpressed": [],
+  "verified_against_reference": ["byte count 64 = 64", "normalized instruction multiset, control flow, memory operations, constants, and pools agree", "the 56-byte relocation-independent core is identical across all six GS1 editions"],
+  "blocked_by": "the approved compiler schedules the negation of the -1 result before the scheduler-table literal load; the reference schedules that independent load first",
+  "rejected": [
+    "10,000-candidate classic heat-guided ordinary-C walk: 9,777 compiled, exact 0, no candidate improved the two-halfword baseline",
+    "scheduler-on GCC 2.96 and old-agbcc change broader instruction shape or extent"
+  ],
+  "notes": ["The byte at callback+3 equals 2 exactly when the stored callback address is in the 0x02 overlay range; no stronger callback-kind claim is made.", "No external source, copied instruction bytes, inline assembly, fixed-register variable, compiler barrier, or compiler modification was used."],
+  "retention": "keep_structured_asm"
+}

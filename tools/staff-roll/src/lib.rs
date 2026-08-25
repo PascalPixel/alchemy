@@ -75,16 +75,7 @@ fn text_field<'a>(value: &'a Value, name: &str) -> Result<&'a str> {
 }
 
 fn integer(value: &Value, minimum: u32, maximum: u32, name: &str) -> Result<u32> {
-    let number = value
-        .as_u64()
-        .or_else(|| {
-            text_field(value, name).ok().and_then(|text| {
-                text.strip_prefix("0x")
-                    .or_else(|| text.strip_prefix("0X"))
-                    .map_or_else(|| text.parse().ok(), |hex| u64::from_str_radix(hex, 16).ok())
-            })
-        })
-        .ok_or_else(|| err(format!("{name} is outside its range")))?;
+    let number = value.as_u64().or_else(|| text_field(value, name).ok().and_then(|text| text.strip_prefix("0x").or_else(|| text.strip_prefix("0X")).map_or_else(|| text.parse().ok(), |hex| u64::from_str_radix(hex, 16).ok()))).ok_or_else(|| err(format!("{name} is outside its range")))?;
     if number < u64::from(minimum) || number > u64::from(maximum) {
         return Err(err(format!("{name} is outside its range")));
     }
@@ -98,29 +89,8 @@ fn read_document(path: &Path) -> Result<Value> {
         return Err(err(format!("{}: source is not canonical JSON", path.display())));
     }
     let map = object(&value, "staff-roll source")?;
-    exact_keys(
-        map,
-        &[
-            "format",
-            "kind",
-            "address",
-            "end",
-            "size",
-            "preload_table",
-            "text_pool",
-            "glyph_widths",
-            "lines",
-            "font",
-            "alignment",
-        ],
-        "staff-roll source",
-    )?;
-    if field(&value, "format")?.as_u64() != Some(1)
-        || text_field(&value, "kind")? != "golden-sun-staff-roll"
-        || text_field(&value, "address")? != hex(STAFF_ROLL_ADDRESS)
-        || text_field(&value, "end")? != hex(STAFF_ROLL_END)
-        || field(&value, "size")?.as_u64() != Some(STAFF_ROLL_SIZE as u64)
-    {
+    exact_keys(map, &["format", "kind", "address", "end", "size", "preload_table", "text_pool", "glyph_widths", "lines", "font", "alignment"], "staff-roll source")?;
+    if field(&value, "format")?.as_u64() != Some(1) || text_field(&value, "kind")? != "golden-sun-staff-roll" || text_field(&value, "address")? != hex(STAFF_ROLL_ADDRESS) || text_field(&value, "end")? != hex(STAFF_ROLL_END) || field(&value, "size")?.as_u64() != Some(STAFF_ROLL_SIZE as u64) {
         return Err(err("staff-roll extent differs"));
     }
     Ok(value)
@@ -133,16 +103,8 @@ fn list<'a>(value: &'a Value, name: &str) -> Result<&'a Vec<Value>> {
 fn build_inner(index_path: &Path) -> Result<Vec<u8>> {
     let source = read_document(index_path)?;
     let preload = field(&source, "preload_table")?;
-    exact_keys(
-        object(preload, "preload resource table")?,
-        &["address", "end", "slots", "resource_ids", "terminator"],
-        "preload resource table",
-    )?;
-    if text_field(preload, "address")? != hex(STAFF_ROLL_ADDRESS)
-        || text_field(preload, "end")? != hex(RESOURCE_END)
-        || field(preload, "slots")?.as_u64() != Some(33)
-        || field(preload, "terminator")?.as_u64() != Some(0)
-    {
+    exact_keys(object(preload, "preload resource table")?, &["address", "end", "slots", "resource_ids", "terminator"], "preload resource table")?;
+    if text_field(preload, "address")? != hex(STAFF_ROLL_ADDRESS) || text_field(preload, "end")? != hex(RESOURCE_END) || field(preload, "slots")?.as_u64() != Some(33) || field(preload, "terminator")?.as_u64() != Some(0) {
         return Err(err("preload resource-table layout differs"));
     }
     let ids = list(preload, "resource_ids")?;
@@ -151,20 +113,12 @@ fn build_inner(index_path: &Path) -> Result<Vec<u8>> {
     }
     let mut output = vec![0u8; STAFF_ROLL_SIZE];
     for (i, id) in ids.iter().enumerate() {
-        output[i * 4..i * 4 + 4]
-            .copy_from_slice(&integer(id, 1, 0xffff, &format!("preload resource ID {i}"))?.to_le_bytes());
+        output[i * 4..i * 4 + 4].copy_from_slice(&integer(id, 1, 0xffff, &format!("preload resource ID {i}"))?.to_le_bytes());
     }
 
     let text_pool = field(&source, "text_pool")?;
-    exact_keys(
-        object(text_pool, "staff-roll text pool")?,
-        &["address", "end", "alignment", "strings"],
-        "staff-roll text pool",
-    )?;
-    if text_field(text_pool, "address")? != hex(TEXT_ADDRESS)
-        || text_field(text_pool, "end")? != hex(WIDTH_ADDRESS)
-        || field(text_pool, "alignment")?.as_u64() != Some(4)
-    {
+    exact_keys(object(text_pool, "staff-roll text pool")?, &["address", "end", "alignment", "strings"], "staff-roll text pool")?;
+    if text_field(text_pool, "address")? != hex(TEXT_ADDRESS) || text_field(text_pool, "end")? != hex(WIDTH_ADDRESS) || field(text_pool, "alignment")?.as_u64() != Some(4) {
         return Err(err("staff-roll text-pool layout differs"));
     }
     let strings = list(text_pool, "strings")?;
@@ -196,11 +150,7 @@ fn build_inner(index_path: &Path) -> Result<Vec<u8>> {
     let width_map = object(widths, "staff-roll glyph widths")?;
     exact_keys(width_map, &["address", "end", "count", "values", "padding"], "staff-roll glyph widths")?;
     let padding = field(widths, "padding")?;
-    exact_keys(
-        object(padding, "staff-roll glyph-width padding")?,
-        &["end", "size", "fill"],
-        "staff-roll glyph-width padding",
-    )?;
+    exact_keys(object(padding, "staff-roll glyph-width padding")?, &["end", "size", "fill"], "staff-roll glyph-width padding")?;
     if text_field(widths, "address")? != hex(WIDTH_ADDRESS)
         || text_field(widths, "end")? != hex(WIDTH_END)
         || field(widths, "count")?.as_u64() != Some(96)
@@ -215,20 +165,12 @@ fn build_inner(index_path: &Path) -> Result<Vec<u8>> {
         return Err(err("staff-roll glyph widths requires 96 entries"));
     }
     for (i, value) in values.iter().enumerate() {
-        output[(WIDTH_ADDRESS - STAFF_ROLL_ADDRESS) as usize + i] =
-            integer(value, 1, 8, &format!("staff-roll glyph width {i}"))? as u8;
+        output[(WIDTH_ADDRESS - STAFF_ROLL_ADDRESS) as usize + i] = integer(value, 1, 8, &format!("staff-roll glyph width {i}"))? as u8;
     }
 
     let lines = field(&source, "lines")?;
-    exact_keys(
-        object(lines, "staff-roll lines")?,
-        &["address", "count", "string_indices", "terminator"],
-        "staff-roll lines",
-    )?;
-    if text_field(lines, "address")? != hex(LINE_ADDRESS)
-        || field(lines, "count")?.as_u64() != Some(LINE_COUNT as u64)
-        || field(lines, "terminator")?.as_u64() != Some(0)
-    {
+    exact_keys(object(lines, "staff-roll lines")?, &["address", "count", "string_indices", "terminator"], "staff-roll lines")?;
+    if text_field(lines, "address")? != hex(LINE_ADDRESS) || field(lines, "count")?.as_u64() != Some(LINE_COUNT as u64) || field(lines, "terminator")?.as_u64() != Some(0) {
         return Err(err("staff-roll line-table layout differs"));
     }
     let indices = list(lines, "string_indices")?;
@@ -237,17 +179,11 @@ fn build_inner(index_path: &Path) -> Result<Vec<u8>> {
     }
     for (i, item) in indices.iter().enumerate() {
         let index = integer(item, 0, (STRING_COUNT - 1) as u32, &format!("staff-roll line index {i}"))? as usize;
-        output[(LINE_ADDRESS - STAFF_ROLL_ADDRESS) as usize + i * 4
-            ..(LINE_ADDRESS - STAFF_ROLL_ADDRESS) as usize + i * 4 + 4]
-            .copy_from_slice(&addresses[index].to_le_bytes());
+        output[(LINE_ADDRESS - STAFF_ROLL_ADDRESS) as usize + i * 4..(LINE_ADDRESS - STAFF_ROLL_ADDRESS) as usize + i * 4 + 4].copy_from_slice(&addresses[index].to_le_bytes());
     }
 
     let font = field(&source, "font")?;
-    exact_keys(
-        object(font, "staff-roll font")?,
-        &["address", "end", "source", "encoding", "first_code", "glyphs", "columns"],
-        "staff-roll font",
-    )?;
+    exact_keys(object(font, "staff-roll font")?, &["address", "end", "source", "encoding", "first_code", "glyphs", "columns"], "staff-roll font")?;
     if text_field(font, "address")? != hex(FONT_ADDRESS)
         || text_field(font, "end")? != hex(ALIGNMENT_ADDRESS)
         || text_field(font, "source")? != FONT_SOURCE
@@ -258,19 +194,10 @@ fn build_inner(index_path: &Path) -> Result<Vec<u8>> {
     {
         return Err(err("staff-roll font layout differs"));
     }
-    let prefix = index_path
-        .file_name()
-        .and_then(|name| name.to_str())
-        .and_then(|name| name.strip_suffix("index.json"))
-        .ok_or_else(|| err("staff-roll index filename differs"))?;
+    let prefix = index_path.file_name().and_then(|name| name.to_str()).and_then(|name| name.strip_suffix("index.json")).ok_or_else(|| err("staff-roll index filename differs"))?;
     let font_path = index_path.parent().unwrap_or_else(|| Path::new(".")).join(format!("{prefix}{FONT_SOURCE}"));
-    let image = indexed_png(&fs::read(&font_path).map_err(|e| err(format!("{}: {e}", font_path.display())))?)
-        .map_err(|e| err(e.0))?;
-    if image.width != 128
-        || image.height != 48
-        || image.palette != vec![[0, 0, 0], [255, 255, 255]]
-        || image.pixels.iter().any(|pixel| *pixel > 1)
-    {
+    let image = indexed_png(&fs::read(&font_path).map_err(|e| err(format!("{}: {e}", font_path.display())))?).map_err(|e| err(e.0))?;
+    if image.width != 128 || image.height != 48 || image.palette != vec![[0, 0, 0], [255, 255, 255]] || image.pixels.iter().any(|pixel| *pixel > 1) {
         return Err(err("staff-roll font differs"));
     }
     let font_offset = (FONT_ADDRESS - STAFF_ROLL_ADDRESS) as usize;
@@ -288,10 +215,7 @@ fn build_inner(index_path: &Path) -> Result<Vec<u8>> {
 
     let alignment = field(&source, "alignment")?;
     exact_keys(object(alignment, "staff-roll alignment")?, &["address", "end", "fill"], "staff-roll alignment")?;
-    if text_field(alignment, "address")? != hex(ALIGNMENT_ADDRESS)
-        || text_field(alignment, "end")? != hex(STAFF_ROLL_END)
-        || field(alignment, "fill")?.as_u64() != Some(0)
-    {
+    if text_field(alignment, "address")? != hex(ALIGNMENT_ADDRESS) || text_field(alignment, "end")? != hex(STAFF_ROLL_END) || field(alignment, "fill")?.as_u64() != Some(0) {
         return Err(err("staff-roll alignment differs"));
     }
     Ok(output)

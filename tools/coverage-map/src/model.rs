@@ -41,9 +41,7 @@ pub fn intersect(left: &[Span], right: &[Span]) -> Vec<Span> {
             if b.start >= a.end {
                 break;
             }
-            if let Some(span) =
-                (a.start.max(b.start) < a.end.min(b.end)).then(|| Span::new(a.start.max(b.start), a.end.min(b.end)))
-            {
+            if let Some(span) = (a.start.max(b.start) < a.end.min(b.end)).then(|| Span::new(a.start.max(b.start), a.end.min(b.end))) {
                 out.push(span);
             }
         }
@@ -128,13 +126,7 @@ pub fn area(id: &str, label: &str, tiles: Vec<Tile>) -> Area {
             *slot += value;
         }
     }
-    Area {
-        id: id.into(),
-        label: label.into(),
-        bytes,
-        categories,
-        tiles: tiles.into_iter().filter(|t| t.bytes > 0).collect(),
-    }
+    Area { id: id.into(), label: label.into(), bytes, categories, tiles: tiles.into_iter().filter(|t| t.bytes > 0).collect() }
 }
 
 #[derive(Clone, Copy, Debug, Default)]

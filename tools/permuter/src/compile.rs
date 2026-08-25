@@ -61,10 +61,7 @@ impl Drop for TempDir {
 }
 
 fn basename(path: &Path) -> Result<String, String> {
-    path.file_name()
-        .and_then(|name| name.to_str())
-        .map(str::to_string)
-        .ok_or_else(|| format!("{} has no UTF-8 filename", path.display()))
+    path.file_name().and_then(|name| name.to_str()).map(str::to_string).ok_or_else(|| format!("{} has no UTF-8 filename", path.display()))
 }
 
 fn stem(path: &Path) -> Result<String, String> {
@@ -82,18 +79,12 @@ fn source_owner(path: &Path) -> Result<SourceOwner, String> {
         return Ok(owner);
     }
     let legacy = stem(path)?;
-    SourceOwner::from_legacy_stem(&legacy)
-        .ok_or_else(|| format!("{} is not registered to a source owner", path.display()))
+    SourceOwner::from_legacy_stem(&legacy).ok_or_else(|| format!("{} is not registered to a source owner", path.display()))
 }
 
 fn overlay_name(stem: &str) -> Option<String> {
     let (prefix, address) = stem.split_once("_c_")?;
-    if !prefix.starts_with("resource_")
-        || prefix[9..].is_empty()
-        || !prefix[9..].bytes().all(|byte| byte.is_ascii_hexdigit())
-        || address.len() != 8
-        || !address.bytes().all(|byte| byte.is_ascii_hexdigit())
-    {
+    if !prefix.starts_with("resource_") || prefix[9..].is_empty() || !prefix[9..].bytes().all(|byte| byte.is_ascii_hexdigit()) || address.len() != 8 || !address.bytes().all(|byte| byte.is_ascii_hexdigit()) {
         return None;
     }
     Some(prefix.to_string())
@@ -109,9 +100,7 @@ fn slice_clamped(bytes: &[u8], start: i64, length: usize) -> Vec<u8> {
 
 fn quoted_field(line: &str, key: &str) -> Option<String> {
     let (_, value) = line.trim().split_once(':')?;
-    line.trim()
-        .starts_with(&format!("\"{key}\""))
-        .then(|| value.trim().trim_end_matches(',').trim_matches('"').to_string())
+    line.trim().starts_with(&format!("\"{key}\"")).then(|| value.trim().trim_end_matches(',').trim_matches('"').to_string())
 }
 
 fn integer_field(line: &str, key: &str) -> Option<usize> {
@@ -132,9 +121,7 @@ fn registered_overlay_span(name: &str, address: i64) -> Result<usize, String> {
             span = None;
         }
         overlay = quoted_field(line, "overlay").or(overlay);
-        entry = quoted_field(line, "entry")
-            .and_then(|value| i64::from_str_radix(value.trim_start_matches("0x"), 16).ok())
-            .or(entry);
+        entry = quoted_field(line, "entry").and_then(|value| i64::from_str_radix(value.trim_start_matches("0x"), 16).ok()).or(entry);
         span = integer_field(line, "span_bytes").or(span);
         if line.trim().starts_with('}') && overlay.as_deref() == Some(name) && entry == Some(address) {
             return span.ok_or_else(|| format!("{name} 0x{address:08x} has no span_bytes in {}", path.display()));
@@ -144,19 +131,11 @@ fn registered_overlay_span(name: &str, address: i64) -> Result<usize, String> {
 }
 
 fn checked(program: &str, arguments: &[String], work: &Path) -> Result<(), String> {
-    let output = Command::new(program)
-        .args(arguments)
-        .current_dir(root())
-        .output()
-        .map_err(|error| format!("cannot run {program}: {error}"))?;
+    let output = Command::new(program).args(arguments).current_dir(root()).output().map_err(|error| format!("cannot run {program}: {error}"))?;
     if output.status.success() {
         Ok(())
     } else {
-        let detail = if output.stderr.is_empty() {
-            String::from_utf8_lossy(&output.stdout)
-        } else {
-            String::from_utf8_lossy(&output.stderr)
-        };
+        let detail = if output.stderr.is_empty() { String::from_utf8_lossy(&output.stdout) } else { String::from_utf8_lossy(&output.stderr) };
         Err(format!("{program} failed in {}: {}", work.display(), detail.trim()))
     }
 }
@@ -173,11 +152,7 @@ fn core_reference_span(stem: &str, work: &Path) -> Result<usize, String> {
             let Ok(document) = serde_json::from_str::<serde_json::Value>(&text) else {
                 continue;
             };
-            let size = document["regions"].as_array().and_then(|regions| {
-                regions.iter().find_map(|region| {
-                    (region["address"].as_u64() == Some(u64::from(address))).then(|| region["size"].as_u64()).flatten()
-                })
-            });
+            let size = document["regions"].as_array().and_then(|regions| regions.iter().find_map(|region| (region["address"].as_u64() == Some(u64::from(address))).then(|| region["size"].as_u64()).flatten()));
             if let Some(size) = size {
                 return usize::try_from(size).map_err(|error| error.to_string());
             }
@@ -186,29 +161,8 @@ fn core_reference_span(stem: &str, work: &Path) -> Result<usize, String> {
     }
     let object = work.join(format!("{stem}.reference.o"));
     let binary = work.join(format!("{stem}.reference.bin"));
-    checked(
-        "arm-none-eabi-as",
-        &[
-            "-mcpu=arm7tdmi".into(),
-            "-mthumb-interwork".into(),
-            "-o".into(),
-            object.to_string_lossy().into_owned(),
-            source.to_string_lossy().into_owned(),
-        ],
-        work,
-    )?;
-    checked(
-        "arm-none-eabi-objcopy",
-        &[
-            "-O".into(),
-            "binary".into(),
-            "-j".into(),
-            ".text".into(),
-            object.to_string_lossy().into_owned(),
-            binary.to_string_lossy().into_owned(),
-        ],
-        work,
-    )?;
+    checked("arm-none-eabi-as", &["-mcpu=arm7tdmi".into(), "-mthumb-interwork".into(), "-o".into(), object.to_string_lossy().into_owned(), source.to_string_lossy().into_owned()], work)?;
+    checked("arm-none-eabi-objcopy", &["-O".into(), "binary".into(), "-j".into(), ".text".into(), object.to_string_lossy().into_owned(), binary.to_string_lossy().into_owned()], work)?;
     let size = fs::metadata(&binary).map_err(|error| format!("{}: {error}", binary.display()))?.len() as usize;
     if size == 0 {
         return Err(format!("{} assembled to an empty .text", source.display()));
@@ -233,19 +187,8 @@ fn differing_halfwords(actual: &[u8], expected: &[u8]) -> usize {
 }
 
 fn score(actual: Vec<u8>, expected: &[u8]) -> Score {
-    let first_difference = actual
-        .iter()
-        .zip(expected)
-        .position(|(left, right)| left != right)
-        .or_else(|| (actual.len() != expected.len()).then_some(actual.len().min(expected.len())));
-    Score {
-        exact: actual == expected,
-        differing_halfwords: differing_halfwords(&actual, expected),
-        expected_size: expected.len(),
-        actual_size: actual.len(),
-        first_difference,
-        actual,
-    }
+    let first_difference = actual.iter().zip(expected).position(|(left, right)| left != right).or_else(|| (actual.len() != expected.len()).then_some(actual.len().min(expected.len())));
+    Score { exact: actual == expected, differing_halfwords: differing_halfwords(&actual, expected), expected_size: expected.len(), actual_size: actual.len(), first_difference, actual }
 }
 
 impl PreparedTarget {
@@ -270,30 +213,12 @@ impl PreparedTarget {
                 return Err(format!("{} registered span extends beyond {name} reference image", original.display()));
             }
             let baseline = score(compiled.data, &expected);
-            Ok(Self {
-                original,
-                basename,
-                owner,
-                expected,
-                baseline,
-                baseline_assembly: None,
-                kind: Kind::Overlay { name, address: compiled.address },
-            })
+            Ok(Self { original, basename, owner, expected, baseline, baseline_assembly: None, kind: Kind::Overlay { name, address: compiled.address } })
         } else {
             let rom_path = root().join("roms").join("gs1-en.gba");
             let rom = fs::read(&rom_path).map_err(|error| format!("{}: {error}", rom_path.display()))?;
             let routing = owner.routing_path();
-            let verification = verify_candidate_owned_routed(
-                &base.to_string_lossy(),
-                &routing.to_string_lossy(),
-                &owner_stem,
-                &rom,
-                &work.path().to_string_lossy(),
-                &local_flags,
-                ROM_BASE,
-                CompilerTarget::Gs1,
-                &CandidateCompilerConfiguration::default(),
-            )?;
+            let verification = verify_candidate_owned_routed(&base.to_string_lossy(), &routing.to_string_lossy(), &owner_stem, &rom, &work.path().to_string_lossy(), &local_flags, ROM_BASE, CompilerTarget::Gs1, &CandidateCompilerConfiguration::default())?;
             let span = core_reference_span(&owner_stem, work.path())?;
             let address = owner.address() as i64;
             let expected = slice_clamped(&rom, address - ROM_BASE as i64, span);
@@ -302,17 +227,8 @@ impl PreparedTarget {
             }
             let baseline = score(verification.actual, &expected);
             let assembly_path = work.path().join(format!("{owner_stem}.s"));
-            let baseline_assembly =
-                fs::read_to_string(&assembly_path).map_err(|error| format!("{}: {error}", assembly_path.display()))?;
-            Ok(Self {
-                original,
-                basename,
-                owner,
-                expected,
-                baseline,
-                baseline_assembly: Some(baseline_assembly),
-                kind: Kind::Core { rom },
-            })
+            let baseline_assembly = fs::read_to_string(&assembly_path).map_err(|error| format!("{}: {error}", assembly_path.display()))?;
+            Ok(Self { original, basename, owner, expected, baseline, baseline_assembly: Some(baseline_assembly), kind: Kind::Core { rom } })
         }
     }
 
@@ -357,20 +273,9 @@ impl PreparedTarget {
             Kind::Core { rom } => {
                 let owner_stem = self.owner.address_stem();
                 let routing = self.owner.routing_path();
-                let verification = verify_candidate_owned_routed(
-                    &path.to_string_lossy(),
-                    &routing.to_string_lossy(),
-                    &owner_stem,
-                    rom,
-                    &work.path().to_string_lossy(),
-                    &local_flags,
-                    ROM_BASE,
-                    CompilerTarget::Gs1,
-                    &CandidateCompilerConfiguration::default(),
-                )?;
+                let verification = verify_candidate_owned_routed(&path.to_string_lossy(), &routing.to_string_lossy(), &owner_stem, rom, &work.path().to_string_lossy(), &local_flags, ROM_BASE, CompilerTarget::Gs1, &CandidateCompilerConfiguration::default())?;
                 let assembly_path = work.path().join(format!("{owner_stem}.s"));
-                let assembly = fs::read_to_string(&assembly_path)
-                    .map_err(|error| format!("{}: {error}", assembly_path.display()))?;
+                let assembly = fs::read_to_string(&assembly_path).map_err(|error| format!("{}: {error}", assembly_path.display()))?;
                 (verification.actual, Some(assembly))
             }
         };

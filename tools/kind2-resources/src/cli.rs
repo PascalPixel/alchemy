@@ -24,12 +24,8 @@ fn run(mut args: Vec<String>) -> Result<()> {
         }
     }
     match args.first().map(String::as_str) {
-        Some("build-stdout") => {
-            write_build_stdout(Path::new(args.get(1).ok_or_else(|| "build-stdout requires a plan".to_string())?))
-        }
-        Some("encode-stdout") => {
-            write_encode_stdout(Path::new(args.get(1).ok_or_else(|| "encode-stdout requires a plan".to_string())?))
-        }
+        Some("build-stdout") => write_build_stdout(Path::new(args.get(1).ok_or_else(|| "build-stdout requires a plan".to_string())?)),
+        Some("encode-stdout") => write_encode_stdout(Path::new(args.get(1).ok_or_else(|| "encode-stdout requires a plan".to_string())?)),
         Some("verify") => {
             let rom = args.get(1).ok_or_else(|| USAGE.to_string())?;
             println!("{}", verify_kind2_series(Path::new(rom), Path::new(&option(&args, "--index")?))?);

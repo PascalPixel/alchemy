@@ -5,27 +5,16 @@ use std::process::ExitCode;
 const USAGE: &str = "usage: music build-stdout SOURCE";
 
 fn source(path: &str) -> Result<SoundTableSource> {
-    let value: serde_json::Value =
-        serde_json::from_slice(&std::fs::read(path).map_err(|e| format!("{path}: {e}"))?).map_err(|e| e.to_string())?;
+    let value: serde_json::Value = serde_json::from_slice(&std::fs::read(path).map_err(|e| format!("{path}: {e}"))?).map_err(|e| e.to_string())?;
     let object = value.as_object().ok_or_else(|| "sound table must be an object".to_string())?;
-    let fields = object
-        .get("fields")
-        .and_then(serde_json::Value::as_array)
-        .ok_or_else(|| "sound table fields are missing".to_string())?
-        .iter()
-        .map(|item| item.as_str().map(str::to_owned).ok_or_else(|| "sound table field is not a string".to_string()))
-        .collect::<Result<Vec<_>>>()?;
+    let fields = object.get("fields").and_then(serde_json::Value::as_array).ok_or_else(|| "sound table fields are missing".to_string())?.iter().map(|item| item.as_str().map(str::to_owned).ok_or_else(|| "sound table field is not a string".to_string())).collect::<Result<Vec<_>>>()?;
     let symbols = object
         .get("symbols")
         .and_then(serde_json::Value::as_object)
         .ok_or_else(|| "sound table symbols are missing".to_string())?
         .iter()
         .map(|(name, item)| {
-            let value = item
-                .as_str()
-                .map(|v| SymbolValue::Text(v.to_owned()))
-                .or_else(|| item.as_f64().map(SymbolValue::Number))
-                .ok_or_else(|| "sound table symbol is not scalar".to_string())?;
+            let value = item.as_str().map(|v| SymbolValue::Text(v.to_owned())).or_else(|| item.as_f64().map(SymbolValue::Number)).ok_or_else(|| "sound table symbol is not scalar".to_string())?;
             Ok((name.clone(), value))
         })
         .collect::<Result<Vec<_>>>()?;
@@ -39,23 +28,13 @@ fn source(path: &str) -> Result<SoundTableSource> {
             if pair.len() != 2 {
                 return Err("sound table entry is not a pair".into());
             }
-            Ok(SoundTableEntry {
-                header: pair[0].as_str().ok_or_else(|| "sound table header is not a string".to_string())?.to_owned(),
-                player: pair[1].as_i64().ok_or_else(|| "sound table player is not an integer".to_string())?,
-            })
+            Ok(SoundTableEntry { header: pair[0].as_str().ok_or_else(|| "sound table header is not a string".to_string())?.to_owned(), player: pair[1].as_i64().ok_or_else(|| "sound table player is not an integer".to_string())? })
         })
         .collect::<Result<Vec<_>>>()?;
     Ok(SoundTableSource {
-        format: object
-            .get("format")
-            .and_then(serde_json::Value::as_i64)
-            .ok_or_else(|| "sound table format is missing".to_string())?,
+        format: object.get("format").and_then(serde_json::Value::as_i64).ok_or_else(|| "sound table format is missing".to_string())?,
         fields,
-        auxiliary: object
-            .get("auxiliary")
-            .and_then(serde_json::Value::as_str)
-            .ok_or_else(|| "sound table auxiliary is missing".to_string())?
-            .to_owned(),
+        auxiliary: object.get("auxiliary").and_then(serde_json::Value::as_str).ok_or_else(|| "sound table auxiliary is missing".to_string())?.to_owned(),
         symbols,
         entries,
     })

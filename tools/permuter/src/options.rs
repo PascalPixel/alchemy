@@ -64,20 +64,14 @@ pub struct Options {
 }
 
 fn positive(value: Option<&String>, flag: &str) -> Result<usize, String> {
-    value
-        .ok_or_else(|| format!("{flag} requires a value"))?
-        .parse::<usize>()
-        .ok()
-        .filter(|number| *number > 0)
-        .ok_or_else(|| format!("{flag} must be a positive integer"))
+    value.ok_or_else(|| format!("{flag} requires a value"))?.parse::<usize>().ok().filter(|number| *number > 0).ok_or_else(|| format!("{flag} must be a positive integer"))
 }
 
 impl Options {
     pub fn parse(args: &[String]) -> Result<Self, String> {
         let mut candidates = Vec::new();
         let mut iterations = 1000usize;
-        let mut jobs =
-            std::thread::available_parallelism().map(|count| count.get().saturating_sub(2).clamp(1, 16)).unwrap_or(1);
+        let mut jobs = std::thread::available_parallelism().map(|count| count.get().saturating_sub(2).clamp(1, 16)).unwrap_or(1);
         let mut seed = 1u64;
         let mut top = 12usize;
         let mut output = None;
@@ -118,11 +112,7 @@ impl Options {
                     at += 1;
                 }
                 "--keep-prob" => {
-                    let value = args
-                        .get(at + 1)
-                        .and_then(|v| v.parse::<f64>().ok())
-                        .filter(|v| (0.0..=1.0).contains(v))
-                        .ok_or_else(|| "--keep-prob requires a float in 0..1".to_string())?;
+                    let value = args.get(at + 1).and_then(|v| v.parse::<f64>().ok()).filter(|v| (0.0..=1.0).contains(v)).ok_or_else(|| "--keep-prob requires a float in 0..1".to_string())?;
                     keep_prob_permille = (value * 1000.0).round() as u32;
                     keep_prob_supplied = true;
                     at += 2;
@@ -144,11 +134,7 @@ impl Options {
                     at += 2;
                 }
                 "--seed" => {
-                    seed = args
-                        .get(at + 1)
-                        .ok_or("--seed requires a value")?
-                        .parse::<u64>()
-                        .map_err(|_| "--seed must be an unsigned integer")?;
+                    seed = args.get(at + 1).ok_or("--seed requires a value")?.parse::<u64>().map_err(|_| "--seed must be an unsigned integer")?;
                     at += 2;
                 }
                 "--top" => {
@@ -183,12 +169,7 @@ impl Options {
                     at += 1;
                 }
                 "--only-if-below" => {
-                    score_threshold = Some(
-                        args.get(at + 1)
-                            .ok_or("--only-if-below requires a value")?
-                            .parse::<u64>()
-                            .map_err(|_| "--only-if-below must be an unsigned integer")?,
-                    );
+                    score_threshold = Some(args.get(at + 1).ok_or("--only-if-below requires a value")?.parse::<u64>().map_err(|_| "--only-if-below must be an unsigned integer")?);
                     at += 2;
                 }
                 "--quiet" => {
@@ -200,13 +181,11 @@ impl Options {
                     at += 1;
                 }
                 "--journal-from" => {
-                    journal_from =
-                        Some(std::path::PathBuf::from(args.get(at + 1).ok_or("--journal-from requires a value")?));
+                    journal_from = Some(std::path::PathBuf::from(args.get(at + 1).ok_or("--journal-from requires a value")?));
                     at += 2;
                 }
                 "--family-template" => {
-                    family_template =
-                        Some(std::path::PathBuf::from(args.get(at + 1).ok_or("--family-template requires a value")?));
+                    family_template = Some(std::path::PathBuf::from(args.get(at + 1).ok_or("--family-template requires a value")?));
                     at += 2;
                 }
                 "--heat" => {
@@ -259,63 +238,14 @@ impl Options {
         if !walk && family_template.is_some() {
             return Err("--family-template requires --walk".to_string());
         }
-        Ok(Self {
-            candidates,
-            iterations,
-            jobs,
-            seed,
-            top,
-            output,
-            weights,
-            chain,
-            walk,
-            classic,
-            keep_prob_permille,
-            manual_only,
-            stop_exact,
-            show_errors,
-            continue_on_error,
-            better_only,
-            best_only,
-            score_threshold,
-            quiet,
-            debug,
-            resume,
-            journal_from,
-            family_template,
-            heat,
-        })
+        Ok(Self { candidates, iterations, jobs, seed, top, output, weights, chain, walk, classic, keep_prob_permille, manual_only, stop_exact, show_errors, continue_on_error, better_only, best_only, score_threshold, quiet, debug, resume, journal_from, family_template, heat })
     }
 }
 
 pub fn self_test() -> Result<(), String> {
-    let args = [
-        "games/gs1/recon/en/overlays/resource_373_c_02005b48.c",
-        "--iterations",
-        "9",
-        "--jobs",
-        "2",
-        "--seed",
-        "7",
-        "--walk",
-        "--classic",
-        "--continue-on-error",
-        "--heat",
-        "--family-template",
-        "template.c",
-    ]
-    .into_iter()
-    .map(str::to_string)
-    .collect::<Vec<_>>();
+    let args = ["games/gs1/recon/en/overlays/resource_373_c_02005b48.c", "--iterations", "9", "--jobs", "2", "--seed", "7", "--walk", "--classic", "--continue-on-error", "--heat", "--family-template", "template.c"].into_iter().map(str::to_string).collect::<Vec<_>>();
     let options = Options::parse(&args)?;
-    if options.iterations != 9
-        || options.jobs != 2
-        || options.seed != 7
-        || !options.classic
-        || !options.continue_on_error
-        || !options.heat
-        || options.family_template.as_deref() != Some(std::path::Path::new("template.c"))
-    {
+    if options.iterations != 9 || options.jobs != 2 || options.seed != 7 || !options.classic || !options.continue_on_error || !options.heat || options.family_template.as_deref() != Some(std::path::Path::new("template.c")) {
         return Err("option parser lost a supplied value".into());
     }
     if Options::parse(&["x.c".into(), "--family-template".into(), "t.c".into()]).is_ok() {

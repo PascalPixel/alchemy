@@ -115,9 +115,5 @@ pub fn external_symbol_assembly(name: &str, call_via_base: u64) -> Result<String
 /// The overlay-wide bank. Owner-specific exceptions live with their owner
 /// records in `source-paths.json`.
 pub fn overlay_call_via_base(overlay: &str) -> u64 {
-    OVERLAY_CALL_VIA_BASE
-        .iter()
-        .find(|(candidate, _)| *candidate == overlay)
-        .map(|(_, base)| *base)
-        .unwrap_or(CALL_VIA_BASE)
+    OVERLAY_CALL_VIA_BASE.iter().find(|(candidate, _)| *candidate == overlay).map(|(_, base)| *base).unwrap_or(CALL_VIA_BASE)
 }

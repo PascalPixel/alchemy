@@ -31,8 +31,7 @@ pub fn hex8(value: f64) -> String {
 /// PORT NOTE -- the guard is ASCII-only, matching JavaScript character classes.
 /// Fullwidth digits and Arabic-Indic digits are rejected here as they are there.
 pub fn parse_hex(value: &str) -> Result<f64, String> {
-    let ok = !value.is_empty()
-        && value.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b) || (b'A'..=b'F').contains(&b));
+    let ok = !value.is_empty() && value.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b) || (b'A'..=b'F').contains(&b));
     if !ok {
         return Err(format!("invalid hexadecimal value: {value}"));
     }

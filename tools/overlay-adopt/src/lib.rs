@@ -87,14 +87,7 @@ pub fn listing_offsets(assembly: &Path) -> Result<Vec<(i64, i64)>, String> {
     let work = tempdir().map_err(|error| error.to_string())?;
     let listing = work.path().join("listing.txt");
     let object = work.path().join("listing.o");
-    let output = Command::new("arm-none-eabi-as")
-        .args(["-mcpu=arm7tdmi", "-mthumb-interwork"])
-        .arg(format!("-al={}", listing.display()))
-        .arg("-o")
-        .arg(&object)
-        .arg(assembly)
-        .output()
-        .map_err(|error| format!("as failed: {error}"))?;
+    let output = Command::new("arm-none-eabi-as").args(["-mcpu=arm7tdmi", "-mthumb-interwork"]).arg(format!("-al={}", listing.display())).arg("-o").arg(&object).arg(assembly).output().map_err(|error| format!("as failed: {error}"))?;
     if !output.status.success() {
         let stderr = String::from_utf8_lossy(&output.stderr);
         return Err(format!("as failed: {}", stderr.trim()));
@@ -112,8 +105,7 @@ pub fn listing_offsets(assembly: &Path) -> Result<Vec<(i64, i64)>, String> {
     Ok(offsets)
 }
 pub fn region_lines(offsets: &[(i64, i64)], offset: i64, span: i64) -> Result<(i64, i64), String> {
-    let inside: Vec<i64> =
-        offsets.iter().filter(|&&(_, at)| at >= offset && at < offset + span).map(|&(line, _)| line).collect();
+    let inside: Vec<i64> = offsets.iter().filter(|&&(_, at)| at >= offset && at < offset + span).map(|&(line, _)| line).collect();
     if inside.is_empty() {
         return Err(format!("no assembly covers offset 0x{:x}", offset));
     }
@@ -188,21 +180,10 @@ fn word_boundary_contains(haystack: &str, needle: &str) -> bool {
     }
     false
 }
-pub fn internal_aliases(
-    lines: &[String],
-    first: i64,
-    last: i64,
-    region_offset: i64,
-    span: i64,
-) -> Result<Vec<InternalAlias>, String> {
+pub fn internal_aliases(lines: &[String], first: i64, last: i64, region_offset: i64, span: i64) -> Result<Vec<InternalAlias>, String> {
     let first_u = (first - 1).max(0) as usize;
     let last_u = (last.max(0)) as usize;
-    let outside: String = lines[..first_u.min(lines.len())]
-        .iter()
-        .chain(lines[last_u.min(lines.len())..].iter())
-        .map(|line| strip_comments(line))
-        .collect::<Vec<_>>()
-        .join("\n");
+    let outside: String = lines[..first_u.min(lines.len())].iter().chain(lines[last_u.min(lines.len())..].iter()).map(|line| strip_comments(line)).collect::<Vec<_>>().join("\n");
     let mut aliases: Vec<InternalAlias> = Vec::new();
     for index in first_u..last_u.min(lines.len()) {
         let Some(label) = parse_local_label(&lines[index]) else {
@@ -212,8 +193,7 @@ pub fn internal_aliases(
             continue;
         }
         let hex_part = &label[3..]; // strip ".L_"
-        let value = i64::from_str_radix(hex_part, 16)
-            .map_err(|_| format!("referenced label {label} lies outside its encoded region"))?;
+        let value = i64::from_str_radix(hex_part, 16).map_err(|_| format!("referenced label {label} lies outside its encoded region"))?;
         let offset = value - OVERLAY_BASE - region_offset;
         if offset < 0 || offset >= span {
             return Err(format!("referenced label {label} lies outside its encoded region"));
@@ -245,26 +225,16 @@ fn audit_intervals(root: &Path, overlay: &str) -> Result<Option<Vec<AuditInterva
     }
     let text = fs::read_to_string(&report).map_err(|error| error.to_string())?;
     let value: Value = serde_json::from_str(&text).map_err(|error| error.to_string())?;
-    let overlays = value
-        .get("overlays")
-        .and_then(Value::as_array)
-        .ok_or_else(|| "games/gs1/metrics/gs1-en-executable.json: unexpected shape".to_string())?;
+    let overlays = value.get("overlays").and_then(Value::as_array).ok_or_else(|| "games/gs1/metrics/gs1-en-executable.json: unexpected shape".to_string())?;
     let mut found: Option<Vec<AuditInterval>> = None;
     for row in overlays {
         if row.get("id").and_then(Value::as_str) != Some(overlay) {
             continue;
         }
-        let intervals = row
-            .get("intervals")
-            .and_then(Value::as_array)
-            .ok_or_else(|| "games/gs1/metrics/gs1-en-executable.json: unexpected shape".to_string())?;
+        let intervals = row.get("intervals").and_then(Value::as_array).ok_or_else(|| "games/gs1/metrics/gs1-en-executable.json: unexpected shape".to_string())?;
         let mut out = Vec::with_capacity(intervals.len());
         for interval in intervals {
-            out.push(AuditInterval {
-                start: interval.get("start").and_then(Value::as_i64).unwrap_or(0),
-                end: interval.get("end").and_then(Value::as_i64).unwrap_or(0),
-                kind: interval.get("kind").and_then(Value::as_str).unwrap_or("").to_string(),
-            });
+            out.push(AuditInterval { start: interval.get("start").and_then(Value::as_i64).unwrap_or(0), end: interval.get("end").and_then(Value::as_i64).unwrap_or(0), kind: interval.get("kind").and_then(Value::as_str).unwrap_or("").to_string() });
         }
         found = Some(out);
     }
@@ -275,9 +245,7 @@ pub fn audited_code_span(root: &Path, overlay: &str, entry: i64) -> Result<Optio
         Some(intervals) => intervals,
         None => return Ok(None),
     };
-    let code = intervals.iter().find(|interval| {
-        interval.start <= entry && entry < interval.end && (interval.kind == "thumb" || interval.kind == "arm")
-    });
+    let code = intervals.iter().find(|interval| interval.start <= entry && entry < interval.end && (interval.kind == "thumb" || interval.kind == "arm"));
     Ok(code.map(|interval| interval.end - entry))
 }
 pub fn span_is_adoptable(root: &Path, overlay: &str, entry: i64, span_bytes: i64) -> bool {
@@ -295,13 +263,9 @@ fn audited_span(root: &Path, overlay: &str, start: i64, span_bytes: i64, id: &st
     if intervals.iter().any(|interval| interval.start <= start && end <= interval.end) {
         return Ok(());
     }
-    let mut touched: Vec<&AuditInterval> =
-        intervals.iter().filter(|interval| interval.start < end && start < interval.end).collect();
+    let mut touched: Vec<&AuditInterval> = intervals.iter().filter(|interval| interval.start < end && start < interval.end).collect();
     touched.sort_by_key(|interval| interval.start);
-    let tiles = !touched.is_empty()
-        && touched[0].start <= start
-        && touched[touched.len() - 1].end >= end
-        && touched.windows(2).all(|pair| pair[0].end == pair[1].start);
+    let tiles = !touched.is_empty() && touched[0].start <= start && touched[touched.len() - 1].end >= end && touched.windows(2).all(|pair| pair[0].end == pair[1].start);
     let last = touched.last();
     if tiles && last.map(|interval| interval.kind.as_str()) != Some("executable_alignment") {
         return Ok(());
@@ -313,15 +277,7 @@ fn audited_span(root: &Path, overlay: &str, start: i64, span_bytes: i64, id: &st
     if reviewed_owner_span(root, overlay, start, span_bytes)? {
         return Ok(());
     }
-    let detail = if touched.is_empty() {
-        "no audited executable interval covers it".to_string()
-    } else {
-        touched
-            .iter()
-            .map(|interval| format!("[0x{:08x},0x{:08x}) {}", interval.start, interval.end, interval.kind))
-            .collect::<Vec<_>>()
-            .join(" + ")
-    };
+    let detail = if touched.is_empty() { "no audited executable interval covers it".to_string() } else { touched.iter().map(|interval| format!("[0x{:08x},0x{:08x}) {}", interval.start, interval.end, interval.kind)).collect::<Vec<_>>().join(" + ") };
     let code = touched.iter().find(|interval| interval.kind == "thumb" || interval.kind == "arm");
     let suggestion = match code {
         Some(code) if code.start == start && code.end < end => {
@@ -329,28 +285,18 @@ fn audited_span(root: &Path, overlay: &str, start: i64, span_bytes: i64, id: &st
         }
         _ => String::new(),
     };
-    Err(format!(
-        "{} span 0x{:08x}..0x{:08x} is not inside one audited executable interval: {}{}",
-        id, start, end, detail, suggestion
-    ))
+    Err(format!("{} span 0x{:08x}..0x{:08x} is not inside one audited executable interval: {}{}", id, start, end, detail, suggestion))
 }
 
 fn reviewed_owner_span(root: &Path, overlay: &str, start: i64, span_bytes: i64) -> Result<bool, String> {
     let path = root.join("games/gs1/semantic/regions.json");
-    let document: Value =
-        serde_json::from_str(&fs::read_to_string(&path).map_err(|error| format!("{}: {error}", path.display()))?)
-            .map_err(|error| format!("{}: {error}", path.display()))?;
+    let document: Value = serde_json::from_str(&fs::read_to_string(&path).map_err(|error| format!("{}: {error}", path.display()))?).map_err(|error| format!("{}: {error}", path.display()))?;
     let Some(regions) = document.get("manual_regions").and_then(Value::as_array) else {
         return Err(format!("{} has no manual_regions array", path.display()));
     };
     Ok(regions.iter().any(|region| {
-        let entry = region
-            .get("entry")
-            .and_then(Value::as_str)
-            .and_then(|value| i64::from_str_radix(value.trim_start_matches("0x"), 16).ok());
-        region.get("overlay").and_then(Value::as_str) == Some(overlay)
-            && entry == Some(start)
-            && region.get("span_bytes").and_then(Value::as_i64) == Some(span_bytes)
+        let entry = region.get("entry").and_then(Value::as_str).and_then(|value| i64::from_str_radix(value.trim_start_matches("0x"), 16).ok());
+        region.get("overlay").and_then(Value::as_str) == Some(overlay) && entry == Some(start) && region.get("span_bytes").and_then(Value::as_i64) == Some(span_bytes)
     }))
 }
 const USAGE: &str = "usage: overlay-adopt <overlay:offsetHex> --source FILE [--span BYTES] [--apply] [--where]";
@@ -443,10 +389,7 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
     let inventory_path: PathBuf = root.join("out/decomp/overlays.json");
     let inventory_text = fs::read_to_string(&inventory_path).map_err(|error| error.to_string())?;
     let inventory: Value = serde_json::from_str(&inventory_text).map_err(|error| error.to_string())?;
-    let functions = inventory
-        .get("functions")
-        .and_then(Value::as_array)
-        .ok_or_else(|| "out/decomp/overlays.json: unexpected shape".to_string())?;
+    let functions = inventory.get("functions").and_then(Value::as_array).ok_or_else(|| "out/decomp/overlays.json: unexpected shape".to_string())?;
     let found = functions.iter().find(|row| row.get("id").and_then(Value::as_str) == Some(options.id.as_str()));
     let fn_row: FunctionRow = if let Some(row) = found {
         FunctionRow {
@@ -460,15 +403,11 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
         let mut parts = options.id.splitn(2, ':');
         let overlay = parts.next().unwrap_or("").to_string();
         let offset_text = parts.next().unwrap_or("");
-        let offset = i64::from_str_radix(offset_text.trim_start_matches("0x"), 16)
-            .map_err(|_| format!("unparseable overlay id: {}", options.id))?;
+        let offset = i64::from_str_radix(offset_text.trim_start_matches("0x"), 16).map_err(|_| format!("unparseable overlay id: {}", options.id))?;
         let offset = if offset >= OVERLAY_BASE { offset - OVERLAY_BASE } else { offset };
         FunctionRow { id: options.id.clone(), overlay, entry: OVERLAY_BASE + offset, offset, span_bytes: span }
     } else {
-        return Err(format!(
-            "no such overlay function: {} (pass --span BYTES to adopt an undiscovered entry)",
-            options.id
-        ));
+        return Err(format!("no such overlay function: {} (pass --span BYTES to adopt an undiscovered entry)", options.id));
     };
     let stem = hex8(fn_row.entry);
     if fn_row.entry - OVERLAY_BASE != fn_row.offset {
@@ -495,23 +434,15 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
     let owner = SourceOwner::parse(&format!("{}:{}", fn_row.overlay, stem))?;
     let source_paths = SourcePaths::load(root)?;
     let installed = source_paths.registered_source_path(owner)?;
-    let preexisting =
-        if installed.exists() { Some(fs::read(&installed).map_err(|error| error.to_string())?) } else { None };
-    let shared_with_other_owners =
-        source_paths.owners_for_path(&installed).into_iter().any(|registered| registered != owner);
+    let preexisting = if installed.exists() { Some(fs::read(&installed).map_err(|error| error.to_string())?) } else { None };
+    let shared_with_other_owners = source_paths.owners_for_path(&installed).into_iter().any(|registered| registered != owner);
     if shared_with_other_owners {
         let candidate = fs::read(&options.source).map_err(|error| error.to_string())?;
         if preexisting.as_deref() != Some(candidate.as_slice()) {
-            return Err(format!(
-                "{} is shared by other exact owners; refusing to overwrite it with differing source",
-                installed.display()
-            ));
+            return Err(format!("{} is shared by other exact owners; refusing to overwrite it with differing source", installed.display()));
         }
     }
-    let source_is_installed = fs::canonicalize(&options.source)
-        .ok()
-        .zip(fs::canonicalize(&installed).ok())
-        .is_some_and(|(source, destination)| source == destination);
+    let source_is_installed = fs::canonicalize(&options.source).ok().zip(fs::canonicalize(&installed).ok()).is_some_and(|(source, destination)| source == destination);
     let rebuild: Result<Vec<u8>, String> = (|| {
         if let Some(parent) = installed.parent() {
             fs::create_dir_all(parent).map_err(|error| error.to_string())?;
@@ -546,13 +477,7 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
             }
         }
         revert(&installed, &assembly, &preexisting, &original_text)?;
-        println!(
-            "adopt=rejected {} differing_bytes={} size={}/{}",
-            options.id,
-            differing,
-            rebuilt.len(),
-            baseline.len()
-        );
+        println!("adopt=rejected {} differing_bytes={} size={}/{}", options.id, differing, rebuilt.len(), baseline.len());
         if options.where_ {
             let mut runs: Vec<String> = Vec::new();
             let mut index = 0usize;
@@ -573,27 +498,10 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
     }
     if !options.apply {
         revert(&installed, &assembly, &preexisting, &original_text)?;
-        let source_base = Path::new(&options.source)
-            .file_name()
-            .map(|name| name.to_string_lossy().to_string())
-            .unwrap_or_else(|| options.source.clone());
-        println!(
-            "adopt=ready {} span={} aliases={} lines={}-{} source={} (pass --apply to install)",
-            options.id,
-            fn_row.span_bytes,
-            aliases.len(),
-            first,
-            last,
-            source_base
-        );
+        let source_base = Path::new(&options.source).file_name().map(|name| name.to_string_lossy().to_string()).unwrap_or_else(|| options.source.clone());
+        println!("adopt=ready {} span={} aliases={} lines={}-{} source={} (pass --apply to install)", options.id, fn_row.span_bytes, aliases.len(), first, last, source_base);
         return Ok(0);
     }
-    println!(
-        "adopt=applied {} span={} aliases={} c={}",
-        options.id,
-        fn_row.span_bytes,
-        aliases.len(),
-        source_paths.repository_relative_path(owner).display()
-    );
+    println!("adopt=applied {} span={} aliases={} c={}", options.id, fn_row.span_bytes, aliases.len(), source_paths.repository_relative_path(owner).display());
     Ok(0)
 }

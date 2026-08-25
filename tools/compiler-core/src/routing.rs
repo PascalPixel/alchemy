@@ -19,14 +19,7 @@ use crate::routing_data::*;
 /// Repository root: `<crate>/../..`.
 pub fn root() -> &'static Path {
     static ROOT: OnceLock<PathBuf> = OnceLock::new();
-    ROOT.get_or_init(|| {
-        Path::new(env!("CARGO_MANIFEST_DIR"))
-            .parent()
-            .expect("crate dir has a parent")
-            .parent()
-            .expect("tools has a parent")
-            .to_path_buf()
-    })
+    ROOT.get_or_init(|| Path::new(env!("CARGO_MANIFEST_DIR")).parent().expect("crate dir has a parent").parent().expect("tools has a parent").to_path_buf())
 }
 
 pub fn bundle() -> PathBuf {
@@ -77,20 +70,7 @@ fn include_flag(target: CompilerTarget) -> String {
 }
 
 fn base_cflags(target: CompilerTarget) -> Vec<String> {
-    [
-        "-O2",
-        "-mthumb",
-        "-mthumb-interwork",
-        "-mcpu=arm7tdmi",
-        "-fno-builtin",
-        "-nostdinc",
-        "-ffreestanding",
-        "-fcall-used-r4",
-    ]
-    .iter()
-    .map(|s| (*s).to_string())
-    .chain(std::iter::once(include_flag(target)))
-    .collect()
+    ["-O2", "-mthumb", "-mthumb-interwork", "-mcpu=arm7tdmi", "-fno-builtin", "-nostdinc", "-ffreestanding", "-fcall-used-r4"].iter().map(|s| (*s).to_string()).chain(std::iter::once(include_flag(target))).collect()
 }
 
 pub fn cflags() -> Vec<String> {
@@ -125,6 +105,13 @@ mod target_tests {
         assert!(gs1.iter().any(|flag| flag.ends_with("/games/gs1/include")));
         assert!(gs2.iter().any(|flag| flag.ends_with("/games/gs2/include")));
         assert!(!gs2.iter().any(|flag| flag.ends_with("/games/gs1/include")));
+    }
+
+    #[test]
+    fn scheduler_translation_unit_uses_the_canonical_flags() {
+        for owner in ["08004144.c", "08004198.c", "080042c8.c", "0800430c.c", "08004358.c", "0800439c.c", "080043e0.c"] {
+            assert_eq!(cflags_for_source(owner), cflags(), "unexpected override for {owner}");
+        }
     }
 }
 
@@ -181,8 +168,7 @@ fn normalize(path: &Path) -> PathBuf {
 
 /// `sourceKey`: `relative(ROOT, resolve(ROOT, source))` with `/` separators.
 pub fn source_key(source: &str) -> String {
-    let resolved =
-        if Path::new(source).is_absolute() { normalize(Path::new(source)) } else { normalize(&root().join(source)) };
+    let resolved = if Path::new(source).is_absolute() { normalize(Path::new(source)) } else { normalize(&root().join(source)) };
     let base = normalize(root());
     let resolved_parts: Vec<_> = resolved.components().collect();
     let base_parts: Vec<_> = base.components().collect();
@@ -260,11 +246,7 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     // to them no longer reproduce. That is the point: the difference is back in
     // the source, where it can be found and fixed, instead of hidden behind a
     // switch.
-    let mut out: Vec<String> = if has(NO_INTERWORK_SOURCES, stem) || has_owner(NO_INTERWORK_OVERLAY_SOURCES, source) {
-        cflags().into_iter().filter(|f| f != "-mthumb-interwork").collect()
-    } else {
-        cflags()
-    };
+    let mut out: Vec<String> = if has(NO_INTERWORK_SOURCES, stem) || has_owner(NO_INTERWORK_OVERLAY_SOURCES, source) { cflags().into_iter().filter(|f| f != "-mthumb-interwork").collect() } else { cflags() };
 
     // Subtracted, not added: the soft-float library leaves take the stock ABI
     // with r4 callee-saved, so the base set's `-fcall-used-r4` comes back off.

@@ -38,11 +38,7 @@ fn gas_lines(lines: Vec<&str>) -> Vec<String> {
             // pools as `mov r0, r0`; GCC emits the equivalent `.align 2, 0`.
             // It is a real byte and remains covered by linked-byte scoring,
             // but it is not a source-structure difference.
-            let next_is_pool = lines[index + 1..]
-                .iter()
-                .map(|line| line.trim())
-                .find(|line| !line.is_empty() && !line.starts_with('@'))
-                .is_some_and(|line| line.starts_with(".4byte") || line.starts_with(".word"));
+            let next_is_pool = lines[index + 1..].iter().map(|line| line.trim()).find(|line| !line.is_empty() && !line.starts_with('@')).is_some_and(|line| line.starts_with(".4byte") || line.starts_with(".word"));
             (!(matches!(instruction.as_str(), "movs r0, r0" | "nop") && next_is_pool)).then_some(instruction)
         })
         .collect()
@@ -55,47 +51,18 @@ fn canonical(line: &str) -> String {
     if let Some(word) = words[0].strip_suffix(".n") {
         words[0] = word.into();
     }
-    let ops = [
-        ("mov", "movs"),
-        ("add", "adds"),
-        ("sub", "subs"),
-        ("lsl", "lsls"),
-        ("lsr", "lsrs"),
-        ("asr", "asrs"),
-        ("ror", "rors"),
-        ("neg", "negs"),
-        ("mul", "muls"),
-        ("and", "ands"),
-        ("orr", "orrs"),
-        ("eor", "eors"),
-        ("bic", "bics"),
-        ("mvn", "mvns"),
-        ("cmp", "cmps"),
-        ("cmn", "cmns"),
-        ("tst", "tsts"),
-    ];
+    let ops =
+        [("mov", "movs"), ("add", "adds"), ("sub", "subs"), ("lsl", "lsls"), ("lsr", "lsrs"), ("asr", "asrs"), ("ror", "rors"), ("neg", "negs"), ("mul", "muls"), ("and", "ands"), ("orr", "orrs"), ("eor", "eors"), ("bic", "bics"), ("mvn", "mvns"), ("cmp", "cmps"), ("cmn", "cmns"), ("tst", "tsts")];
     if let Some((_, replacement)) = ops.iter().find(|(name, _)| words[0] == *name) {
         words[0] = (*replacement).into();
     }
-    if words.len() == 4
-        && matches!(words[0].as_str(), "adds" | "subs")
-        && words[1].trim_end_matches(',') == words[2].trim_end_matches(',')
-    {
+    if words.len() == 4 && matches!(words[0].as_str(), "adds" | "subs") && words[1].trim_end_matches(',') == words[2].trim_end_matches(',') {
         words.remove(2);
     }
-    if words.len() == 3
-        && words[0] == "movs"
-        && lo(words[1].trim_end_matches(','))
-        && lo(&words[2])
-        && words[1].trim_end_matches(',') != words[2]
-    {
+    if words.len() == 3 && words[0] == "movs" && lo(words[1].trim_end_matches(',')) && lo(&words[2]) && words[1].trim_end_matches(',') != words[2] {
         return format!("adds {}, {}, #0", words[1].trim_end_matches(','), words[2]);
     }
-    if words.len() == 4
-        && ["adds", "subs", "muls", "ands", "orrs", "eors", "bics", "adcs", "sbcs", "lsls", "lsrs", "asrs", "rors"]
-            .contains(&words[0].as_str())
-        && words[1].trim_end_matches(',') == words[2].trim_end_matches(',')
-    {
+    if words.len() == 4 && ["adds", "subs", "muls", "ands", "orrs", "eors", "bics", "adcs", "sbcs", "lsls", "lsrs", "asrs", "rors"].contains(&words[0].as_str()) && words[1].trim_end_matches(',') == words[2].trim_end_matches(',') {
         words.remove(2);
     }
     let mut text = words.join(" ");

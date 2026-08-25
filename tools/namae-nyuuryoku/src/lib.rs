@@ -51,11 +51,7 @@ fn number(value: &Value, label: &str) -> Result<usize> {
         return usize::try_from(n).map_err(|_| Error(format!("{label} must be an integer")));
     }
     if let Some(s) = value.as_str() {
-        let n = s
-            .strip_prefix("0x")
-            .or_else(|| s.strip_prefix("0X"))
-            .map_or_else(|| s.parse::<u64>(), |h| u64::from_str_radix(h, 16))
-            .map_err(|_| Error(format!("{label} must be an integer")))?;
+        let n = s.strip_prefix("0x").or_else(|| s.strip_prefix("0X")).map_or_else(|| s.parse::<u64>(), |h| u64::from_str_radix(h, 16)).map_err(|_| Error(format!("{label} must be an integer")))?;
         return usize::try_from(n).map_err(|_| Error(format!("{label} must be an integer")));
     }
     fail(format!("{label} must be an integer"))
@@ -133,24 +129,7 @@ fn tokens(value: &Value) -> Result<Vec<GeneralToken>> {
 }
 
 fn tilemap(source: &Map<String, Value>) -> Result<Vec<u8>> {
-    exact_keys(
-        source,
-        &[
-            "address",
-            "codec",
-            "decoded_size",
-            "width",
-            "height",
-            "copied_width",
-            "copied_height",
-            "palette",
-            "tiles",
-            "horizontal_flips",
-            "vertical_flips",
-            "tokens",
-        ],
-        "name-entry tilemap",
-    )?;
+    exact_keys(source, &["address", "codec", "decoded_size", "width", "height", "copied_width", "copied_height", "palette", "tiles", "horizontal_flips", "vertical_flips", "tokens"], "name-entry tilemap")?;
     if string(source, "address")? != hex(TILEMAP)
         || string(source, "codec")? != "golden-sun-general-lz"
         || number(field(source, "decoded_size")?, "decoded_size")? != TILEMAP_BYTES
@@ -162,8 +141,7 @@ fn tilemap(source: &Map<String, Value>) -> Result<Vec<u8>> {
     {
         return fail("name-entry tilemap layout differs");
     }
-    let rows =
-        field(source, "tiles")?.as_array().ok_or_else(|| Error("name-entry tilemap row extents differ".into()))?;
+    let rows = field(source, "tiles")?.as_array().ok_or_else(|| Error("name-entry tilemap row extents differ".into()))?;
     if rows.len() != HEIGHT {
         return fail("name-entry tilemap row extents differ");
     }
@@ -201,11 +179,7 @@ pub fn build_namae_nyuuryoku(path: &Path) -> Result<Vec<u8>> {
     let text = fs::read_to_string(path).map_err(|e| Error(format!("{}: {e}", path.display())))?;
     let value: Value = serde_json::from_str(&text).map_err(|e| Error(format!("{}: {e}", path.display())))?;
     let source = object(&value, "name-entry source")?;
-    exact_keys(
-        source,
-        &["format", "kind", "address", "end", "resource_ids", "tilemap", "ui_tile_address", "next_code_address"],
-        "name-entry source",
-    )?;
+    exact_keys(source, &["format", "kind", "address", "end", "resource_ids", "tilemap", "ui_tile_address", "next_code_address"], "name-entry source")?;
     if number(field(source, "format")?, "format")? != 1
         || string(source, "kind")? != "golden-sun-namae-nyuuryoku"
         || string(source, "address")? != hex(ADDRESS)
@@ -215,8 +189,7 @@ pub fn build_namae_nyuuryoku(path: &Path) -> Result<Vec<u8>> {
     {
         return fail("name-entry source metadata differs");
     }
-    let ids =
-        field(source, "resource_ids")?.as_array().ok_or_else(|| Error("name-entry resource IDs differ".into()))?;
+    let ids = field(source, "resource_ids")?.as_array().ok_or_else(|| Error("name-entry resource IDs differ".into()))?;
     let expected = ["0x05a", "0x05b", "0x05c", "0x05d"];
     if ids.len() != expected.len() || ids.iter().zip(expected).any(|(v, e)| v.as_str() != Some(e)) {
         return fail("name-entry source metadata differs");

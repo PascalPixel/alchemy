@@ -29,12 +29,7 @@ fn run(args: &[String]) -> Result<(), String> {
     // argument is still used verbatim, exactly as in the TypeScript.
     let source: PathBuf = match args.first() {
         Some(path) => PathBuf::from(path),
-        None => Path::new(env!("CARGO_MANIFEST_DIR"))
-            .parent()
-            .expect("crate directory has a parent")
-            .parent()
-            .expect("tools has a parent")
-            .join("games/gs1/assets/data/byte_henkan_hyou.json"),
+        None => Path::new(env!("CARGO_MANIFEST_DIR")).parent().expect("crate directory has a parent").parent().expect("tools has a parent").join("games/gs1/assets/data/byte_henkan_hyou.json"),
     };
     println!("bytes={}", build_byte_henkan_tables(&source)?.len());
     Ok(())

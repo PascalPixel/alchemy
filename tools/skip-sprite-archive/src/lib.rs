@@ -67,26 +67,15 @@ pub fn encode_stream(pixels: &[u8]) -> Result<Vec<u8>> {
 pub type Rgb = [u8; 3];
 
 pub fn read_palette(path: &Path, offset: usize, entries: usize) -> Result<Vec<Rgb>> {
-    let image =
-        indexed_png(&fs::read(path).map_err(|error| Error(error.to_string()))?).map_err(|error| Error(error.0))?;
+    let image = indexed_png(&fs::read(path).map_err(|error| Error(error.to_string()))?).map_err(|error| Error(error.0))?;
     if offset + entries > image.pixels.len() {
         return fail("shared palette PNG is too small");
     }
-    image.pixels[offset..offset + entries]
-        .iter()
-        .map(|pixel| {
-            image
-                .palette
-                .get(*pixel as usize)
-                .copied()
-                .ok_or_else(|| Error("shared palette PNG references a missing color".into()))
-        })
-        .collect()
+    image.pixels[offset..offset + entries].iter().map(|pixel| image.palette.get(*pixel as usize).copied().ok_or_else(|| Error("shared palette PNG references a missing color".into()))).collect()
 }
 
 fn read_image(path: &Path, width: usize, height: usize, palette: &[Rgb]) -> Result<Vec<u8>> {
-    let image =
-        indexed_png(&fs::read(path).map_err(|error| Error(error.to_string()))?).map_err(|error| Error(error.0))?;
+    let image = indexed_png(&fs::read(path).map_err(|error| Error(error.to_string()))?).map_err(|error| Error(error.0))?;
     if image.width as usize != width || image.height as usize != height {
         return fail(format!("{}: expected {width}x{height}", path.display()));
     }
@@ -101,9 +90,7 @@ fn read_image(path: &Path, width: usize, height: usize, palette: &[Rgb]) -> Resu
 
 fn parse_plan(value: &Value) -> Result<(usize, usize, usize, usize, usize, Vec<usize>)> {
     let plan = value.as_object().ok_or_else(|| Error("unsupported zero-skip sprite plan".into()))?;
-    if plan_field(plan, "format")?.as_u64() != Some(1)
-        || plan_field(plan, "codec")?.as_str() != Some("zero-skip-sprite-archive")
-    {
+    if plan_field(plan, "format")?.as_u64() != Some(1) || plan_field(plan, "codec")?.as_str() != Some("zero-skip-sprite-archive") {
         return fail("unsupported zero-skip sprite plan");
     }
     let width = integer(plan.get("width"), "width")?;
@@ -111,12 +98,7 @@ fn parse_plan(value: &Value) -> Result<(usize, usize, usize, usize, usize, Vec<u
     let images = integer(plan.get("images"), "images")?;
     let palette_offset = integer(plan.get("palette_offset"), "palette_offset")?;
     let palette_entries = integer(plan.get("palette_entries"), "palette_entries")?;
-    let order = plan_field(plan, "stream_order")?
-        .as_array()
-        .ok_or_else(|| Error("stream_order must be an array".into()))?
-        .iter()
-        .map(|value| integer(Some(value), "stream_order entry"))
-        .collect::<Result<Vec<_>>>()?;
+    let order = plan_field(plan, "stream_order")?.as_array().ok_or_else(|| Error("stream_order must be an array".into()))?.iter().map(|value| integer(Some(value), "stream_order entry")).collect::<Result<Vec<_>>>()?;
     let mut sorted = order.clone();
     sorted.sort_unstable();
     if sorted != (0..images).collect::<Vec<_>>() {

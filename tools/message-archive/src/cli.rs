@@ -183,15 +183,10 @@ fn parse_document(value: &Value) -> Res<&Vec<Value>> {
     if sorted_keys(source) != "address,bank_size,banks,format,kind,size" {
         return Err("message archive source has unknown fields".into());
     }
-    if strict_number(source.get("format")) != Some(1.0)
-        || source.get("kind").and_then(Value::as_str) != Some("golden-sun-message-archive")
-    {
+    if strict_number(source.get("format")) != Some(1.0) || source.get("kind").and_then(Value::as_str) != Some("golden-sun-message-archive") {
         return Err("unsupported message archive source".into());
     }
-    if source.get("address").and_then(Value::as_str) != Some(hex8(ARCHIVE_ADDRESS).as_str())
-        || source.get("size").and_then(Value::as_str) != Some(hex8(ARCHIVE_END - ARCHIVE_ADDRESS).as_str())
-        || strict_number(source.get("bank_size")) != Some(BANK_SIZE as f64)
-    {
+    if source.get("address").and_then(Value::as_str) != Some(hex8(ARCHIVE_ADDRESS).as_str()) || source.get("size").and_then(Value::as_str) != Some(hex8(ARCHIVE_END - ARCHIVE_ADDRESS).as_str()) || strict_number(source.get("bank_size")) != Some(BANK_SIZE as f64) {
         return Err("message archive layout differs".into());
     }
     let banks = match source.get("banks") {
@@ -309,8 +304,7 @@ fn derived_contexts(banks: &[Value]) -> Res<Vec<ContextSource>> {
         count: u64,
         order: usize,
     }
-    let mut transitions: Vec<(Vec<Transition>, HashMap<u32, usize>)> =
-        (0..CONTEXT_COUNT).map(|_| (Vec::new(), HashMap::new())).collect();
+    let mut transitions: Vec<(Vec<Transition>, HashMap<u32, usize>)> = (0..CONTEXT_COUNT).map(|_| (Vec::new(), HashMap::new())).collect();
     for bank in banks {
         let messages = bank.as_array().expect("bank is an array");
         for message in messages {
@@ -345,19 +339,12 @@ fn derived_contexts(banks: &[Value]) -> Res<Vec<ContextSource>> {
             continue;
         }
         let mut order = symbols.len();
-        let mut nodes: Vec<Item> = symbols
-            .iter()
-            .map(|item| Item { count: item.count, order: item.order, node: TreeNode::Leaf(item.symbol) })
-            .collect();
+        let mut nodes: Vec<Item> = symbols.iter().map(|item| Item { count: item.count, order: item.order, node: TreeNode::Leaf(item.symbol) }).collect();
         while nodes.len() > 1 {
             nodes.sort_by(|left, right| left.count.cmp(&right.count).then(left.order.cmp(&right.order)));
             let left = nodes.remove(0);
             let right = nodes.remove(0);
-            nodes.push(Item {
-                count: left.count + right.count,
-                order,
-                node: TreeNode::Branch(Box::new(left.node), Box::new(right.node)),
-            });
+            nodes.push(Item { count: left.count + right.count, order, node: TreeNode::Branch(Box::new(left.node), Box::new(right.node)) });
             order += 1;
         }
         let mut tree = String::new();

@@ -30,12 +30,7 @@ fn integer_value(value: &Value, name: &str) -> Result<i64> {
         Value::Number(number) => number
             .as_i64()
             .or_else(|| number.as_u64().and_then(|value| i64::try_from(value).ok()))
-            .or_else(|| {
-                number
-                    .as_f64()
-                    .filter(|value| value.is_finite() && value.fract() == 0.0 && value.abs() <= 9_007_199_254_740_991.0)
-                    .map(|value| value as i64)
-            })
+            .or_else(|| number.as_f64().filter(|value| value.is_finite() && value.fract() == 0.0 && value.abs() <= 9_007_199_254_740_991.0).map(|value| value as i64))
             .ok_or_else(|| Error(format!("invalid {name}"))),
         _ => fail(format!("invalid {name}")),
     }
@@ -45,13 +40,7 @@ fn parse_integer(text: &str, name: &str) -> Result<i64> {
     let parsed = if let Some(digits) = text.strip_prefix("0x").or_else(|| text.strip_prefix("0X")) {
         u64::from_str_radix(digits, 16).ok().and_then(|value| i64::try_from(value).ok())
     } else {
-        text.parse::<f64>().ok().and_then(|value| {
-            if value.is_finite() && value.fract() == 0.0 && value.abs() <= 9_007_199_254_740_991.0 {
-                Some(value as i64)
-            } else {
-                None
-            }
-        })
+        text.parse::<f64>().ok().and_then(|value| if value.is_finite() && value.fract() == 0.0 && value.abs() <= 9_007_199_254_740_991.0 { Some(value as i64) } else { None })
     };
     parsed.ok_or_else(|| Error(format!("invalid {name}")))
 }
@@ -101,10 +90,7 @@ fn encode_command(value: &Value) -> Result<(u8, u8)> {
         if values.len() != 3 {
             return fail("invalid frame command");
         }
-        return Ok((
-            bounded(&values[1], 0, 0xee, "frame number")? as u8,
-            bounded(&values[2], 0, 0xff, "frame time")? as u8,
-        ));
+        return Ok((bounded(&values[1], 0, 0xee, "frame number")? as u8, bounded(&values[2], 0, 0xff, "frame time")? as u8));
     }
     if values.len() != 2 {
         return fail("invalid control command");
@@ -157,10 +143,7 @@ fn build_animations(index: &Value) -> Result<AnimationBuild> {
         if symbols.insert(group_name.to_string(), u32::try_from(cursor).expect("animation address")).is_some() {
             return fail(format!("duplicate animation symbol {group_name}"));
         }
-        let table_entries = object(group, "animation group")?
-            .get("table_entries")
-            .map(|value| array(value, "animation table entries"))
-            .transpose()?;
+        let table_entries = object(group, "animation group")?.get("table_entries").map(|value| array(value, "animation table entries")).transpose()?;
         let table_count = table_entries.map_or(entry_addresses.len(), Vec::len);
         table_counts.insert(group_name.to_string(), table_count);
         if let Some(table_entries) = table_entries {
@@ -177,19 +160,11 @@ fn build_animations(index: &Value) -> Result<AnimationBuild> {
         if let Some(extras) = object(group, "animation group")?.get("extra_tables") {
             for extra in array(extras, "extra animation tables")? {
                 let extra = object(extra, "extra animation table")?;
-                let name = text(
-                    extra.get("name").ok_or_else(|| Error("invalid extra animation table".into()))?,
-                    "animation symbol",
-                )?;
+                let name = text(extra.get("name").ok_or_else(|| Error("invalid extra animation table".into()))?, "animation symbol")?;
                 if symbols.insert(name.to_string(), u32::try_from(cursor).expect("animation address")).is_some() {
                     return fail(format!("duplicate animation symbol {name}"));
                 }
-                let count = bounded(
-                    extra.get("count").ok_or_else(|| Error("invalid extra animation table".into()))?,
-                    1,
-                    0xffff,
-                    "extra animation table count",
-                )? as usize;
+                let count = bounded(extra.get("count").ok_or_else(|| Error("invalid extra animation table".into()))?, 1, 0xffff, "extra animation table count")? as usize;
                 let address = symbols[name];
                 for _ in 0..count {
                     data.extend_from_slice(&address.to_le_bytes());
@@ -202,9 +177,7 @@ fn build_animations(index: &Value) -> Result<AnimationBuild> {
 }
 
 pub fn build_character_catalog(index: &Value) -> Result<Vec<u8>> {
-    if integer_value(field(index, "format")?, "format")? != 4
-        || text(field(index, "codec")?, "codec")? != "golden-sun-character-catalog"
-    {
+    if integer_value(field(index, "format")?, "format")? != 4 || text(field(index, "codec")?, "codec")? != "golden-sun-character-catalog" {
         return fail("unsupported character catalog format");
     }
     let address = integer_value(field(index, "address")?, "catalog address")?;
@@ -212,10 +185,7 @@ pub fn build_character_catalog(index: &Value) -> Result<Vec<u8>> {
     let descriptor_count = integer_value(field(index, "descriptor_count")?, "descriptor count")?;
     let descriptor_size = integer_value(field(index, "descriptor_size")?, "descriptor size")?;
     let animation_address = integer_value(field(index, "animation_address")?, "animation address")?;
-    if descriptor_count != CHARACTER_DESCRIPTOR_COUNT as i64
-        || descriptor_size != CHARACTER_DESCRIPTOR_SIZE as i64
-        || animation_address != address + descriptor_count * descriptor_size
-    {
+    if descriptor_count != CHARACTER_DESCRIPTOR_COUNT as i64 || descriptor_size != CHARACTER_DESCRIPTOR_SIZE as i64 || animation_address != address + descriptor_count * descriptor_size {
         return fail("character descriptor layout differs");
     }
     let mut frames = BTreeMap::new();
@@ -225,10 +195,7 @@ pub fn build_character_catalog(index: &Value) -> Result<Vec<u8>> {
             return fail("invalid frame directory");
         }
         let name = text(&item[0], "frame directory name")?.to_string();
-        if frames
-            .insert(name.clone(), bounded(&item[1], ROM_BASE, 0xffff_ffff, "frame directory address")? as u32)
-            .is_some()
-        {
+        if frames.insert(name.clone(), bounded(&item[1], ROM_BASE, 0xffff_ffff, "frame directory address")? as u32).is_some() {
             return fail(format!("duplicate frame directory {name}"));
         }
     }
@@ -271,22 +238,13 @@ pub fn build_character_catalog(index: &Value) -> Result<Vec<u8>> {
         let frame_value = item.get(10).unwrap_or(&default_frame);
         if !frame_value.is_null() {
             let frame_name = text(frame_value, "descriptor frame directory")?;
-            let frame_address = frames
-                .get(frame_name)
-                .copied()
-                .ok_or_else(|| Error(format!("undefined frame directory {frame_name}")))?;
+            let frame_address = frames.get(frame_name).copied().ok_or_else(|| Error(format!("undefined frame directory {frame_name}")))?;
             write_u32(&mut descriptors, offset + 12, frame_address);
         }
         let default_animation = Value::String(format!("anm_{key}"));
         let animation_name = text(item.get(11).unwrap_or(&default_animation), "descriptor animation table")?;
-        let animation_directory = symbols
-            .get(animation_name)
-            .copied()
-            .ok_or_else(|| Error(format!("undefined animation table {animation_name}")))?;
-        let table_count = table_counts
-            .get(animation_name)
-            .copied()
-            .ok_or_else(|| Error(format!("undefined animation table {animation_name}")))?;
+        let animation_directory = symbols.get(animation_name).copied().ok_or_else(|| Error(format!("undefined animation table {animation_name}")))?;
+        let table_count = table_counts.get(animation_name).copied().ok_or_else(|| Error(format!("undefined animation table {animation_name}")))?;
         if usize::from(animation_count) > table_count {
             return fail(format!("descriptor {key} exceeds its animation table"));
         }

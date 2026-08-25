@@ -8,8 +8,7 @@ use tempfile::tempdir;
 pub const ROM_BASE: i64 = 0x0800_0000;
 pub const OVERLAY_BASE: i64 = 0x0200_0000;
 const ROW: &str = r"\s*([0-9a-f]+):\t((?:[0-9a-f]{2,4} )+)\s*(\S.*)";
-const TARGET: &str =
-    r"\b(b|bl|beq|bne|bcs|bcc|bmi|bpl|bvs|bvc|bhi|bls|bge|blt|bgt|ble|bhs|blo)(\.[nw])?\s+0x([0-9a-f]+)\b";
+const TARGET: &str = r"\b(b|bl|beq|bne|bcs|bcc|bmi|bpl|bvs|bvc|bhi|bls|bge|blt|bgt|ble|bhs|blo)(\.[nw])?\s+0x([0-9a-f]+)\b";
 const ERRLINE: &str = r":(\d+): Error:";
 type Row = (i64, String);
 fn objdump_rows(data: &[u8], base: i64) -> Result<BTreeMap<i64, Row>, String> {
@@ -32,13 +31,9 @@ fn objdump_rows(data: &[u8], base: i64) -> Result<BTreeMap<i64, Row>, String> {
         let Some(found) = row.exec(&line) else {
             continue;
         };
-        let address = crate::compile::js_parse_int_hex(found.group(&line, 1).expect("group 1"))
-            .ok_or_else(|| format!("objdump row address is not hex: {line}"))?;
+        let address = crate::compile::js_parse_int_hex(found.group(&line, 1).expect("group 1")).ok_or_else(|| format!("objdump row address is not hex: {line}"))?;
         let bytes = found.group(&line, 2).expect("group 2");
-        let count = crate::regex::js_trim(bytes)
-            .split(|c: char| crate::regex::is_js_space(c))
-            .filter(|part| !part.is_empty())
-            .count() as i64;
+        let count = crate::regex::js_trim(bytes).split(|c: char| crate::regex::is_js_space(c)).filter(|part| !part.is_empty()).count() as i64;
         let mnemonic = found.group(&line, 3).expect("group 3");
         let text = crate::regex::js_trim(mnemonic.split(';').next().unwrap_or("")).to_string();
         rows.insert(address, (2 * count, text));
@@ -67,10 +62,7 @@ fn reachable(input: &[u8], base: i64) -> BTreeMap<i64, i64> {
         let following = read_u16(offset + 2);
         if (0x4800..=0x48ff).contains(&word) && (0x4700..=0x47ff).contains(&following) {
             let at = (offset + 4) as usize;
-            let target = input[at] as i64
-                | ((input[at + 1] as i64) << 8)
-                | ((input[at + 2] as i64) << 16)
-                | ((input[at + 3] as i64) << 24);
+            let target = input[at] as i64 | ((input[at + 1] as i64) << 8) | ((input[at + 2] as i64) << 16) | ((input[at + 3] as i64) << 24);
             let target = target & !1;
             if inside(target, 2) {
                 queue.push(target);
@@ -108,10 +100,7 @@ fn reachable(input: &[u8], base: i64) -> BTreeMap<i64, i64> {
                 if inside(target, 2) {
                     queue.push(target);
                 }
-            } else if half & 0xff87 == 0x4700
-                || half & 0xff00 == 0xbd00
-                || (half & 0xfc00 == 0x4400 && half & 0x0087 == 0x0087)
-            {
+            } else if half & 0xff87 == 0x4700 || half & 0xff00 == 0xbd00 || (half & 0xfc00 == 0x4400 && half & 0x0087 == 0x0087) {
                 stop = true;
             }
             instructions.insert(pc, size);
@@ -135,8 +124,7 @@ pub fn call_via_bank_base(image: &[u8], base: i64) -> Option<i64> {
         let mut matched = true;
         let mut slot = 0i64;
         while slot < 4 && matched {
-            matched =
-                halfword(offset + slot * 4) == (0x4700 | (slot << 3)) && halfword(offset + slot * 4 + 2) == 0x46c0;
+            matched = halfword(offset + slot * 4) == (0x4700 | (slot << 3)) && halfword(offset + slot * 4 + 2) == 0x46c0;
             slot += 1;
         }
         if matched {
@@ -205,12 +193,8 @@ pub fn build_overlay_source(input: &[u8], base: i64) -> Result<String, String> {
         };
         if let Some(found) = target_pattern.exec(&row.1) {
             let text = &row.1;
-            let target = crate::compile::js_parse_int_hex(found.group(text, 3).expect("group 3"))
-                .ok_or_else(|| format!("branch target is not hex: {text}"))?;
-            if instructions.contains_key(&target)
-                && instructions.get(&(target - 2)).copied() != Some(4)
-                && rows.get(&(target - 2)).is_none_or(|row| row.0 != 4)
-            {
+            let target = crate::compile::js_parse_int_hex(found.group(text, 3).expect("group 3")).ok_or_else(|| format!("branch target is not hex: {text}"))?;
+            if instructions.contains_key(&target) && instructions.get(&(target - 2)).copied() != Some(4) && rows.get(&(target - 2)).is_none_or(|row| row.0 != 4) {
                 labels.entry(target).or_insert_with(|| format!(".L_{}", hex(target, 8)));
             }
         }
@@ -219,10 +203,7 @@ pub fn build_overlay_source(input: &[u8], base: i64) -> Result<String, String> {
     let mut raw: BTreeSet<i64> = BTreeSet::new();
     let read_u32 = |offset: i64| -> i64 {
         let at = offset as usize;
-        decoded[at] as i64
-            | ((decoded[at + 1] as i64) << 8)
-            | ((decoded[at + 2] as i64) << 16)
-            | ((decoded[at + 3] as i64) << 24)
+        decoded[at] as i64 | ((decoded[at + 1] as i64) << 8) | ((decoded[at + 2] as i64) << 16) | ((decoded[at + 3] as i64) << 24)
     };
     let read_u16 = |offset: i64| -> i64 {
         let at = offset as usize;
@@ -245,8 +226,7 @@ pub fn build_overlay_source(input: &[u8], base: i64) -> Result<String, String> {
                 let retargeted = match target_pattern.exec(mnemonic) {
                     None => mnemonic.clone(),
                     Some(found) => {
-                        let target = crate::compile::js_parse_int_hex(found.group(mnemonic, 3).expect("group 3"))
-                            .ok_or_else(|| format!("branch target is not hex: {mnemonic}"))?;
+                        let target = crate::compile::js_parse_int_hex(found.group(mnemonic, 3).expect("group 3")).ok_or_else(|| format!("branch target is not hex: {mnemonic}"))?;
                         let replacement = match labels.get(&target) {
                             Some(local) => local.clone(),
                             None => {
@@ -255,9 +235,7 @@ pub fn build_overlay_source(input: &[u8], base: i64) -> Result<String, String> {
                                 symbol
                             }
                         };
-                        let cut = mnemonic
-                            .rfind("0x")
-                            .ok_or_else(|| format!("branch mnemonic matched but has no 0x: {mnemonic}"))?;
+                        let cut = mnemonic.rfind("0x").ok_or_else(|| format!("branch mnemonic matched but has no 0x: {mnemonic}"))?;
                         format!("{}{replacement}", &mnemonic[..cut])
                     }
                 };
@@ -265,11 +243,7 @@ pub fn build_overlay_source(input: &[u8], base: i64) -> Result<String, String> {
                 cursor += row.0;
                 continue;
             }
-            let aligned = cursor % 4 == 0
-                && cursor + 4 <= end
-                && (0..4).all(|byte| !covered.contains(&(cursor + byte)))
-                && !labels.contains_key(&(cursor + 2))
-                && !instructions.contains_key(&(cursor + 4));
+            let aligned = cursor % 4 == 0 && cursor + 4 <= end && (0..4).all(|byte| !covered.contains(&(cursor + byte))) && !labels.contains_key(&(cursor + 2)) && !instructions.contains_key(&(cursor + 4));
             if aligned {
                 body.push((cursor, "data", format!("\t.4byte 0x{}", hex(read_u32(cursor - base), 8))));
                 cursor += 4;
@@ -293,11 +267,7 @@ pub fn build_overlay_source(input: &[u8], base: i64) -> Result<String, String> {
                 let Some(found) = error_line.exec(&error) else {
                     return Err(error);
                 };
-                let reported: i64 = found
-                    .group(&error, 1)
-                    .expect("group 1")
-                    .parse()
-                    .map_err(|parse: std::num::ParseIntError| parse.to_string())?;
+                let reported: i64 = found.group(&error, 1).expect("group 1").parse().map_err(|parse: std::num::ParseIntError| parse.to_string())?;
                 let index = reported - head.len() as i64 - 1;
                 if index < 0 || index >= body.len() as i64 || raw.contains(&body[index as usize].0) {
                     return Err(format!("cannot reconstruct near line {reported}"));

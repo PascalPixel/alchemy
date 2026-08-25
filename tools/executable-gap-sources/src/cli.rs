@@ -17,8 +17,7 @@ pub fn entry(args: &[String]) -> ExitCode {
         let path = Path::new(&args[1]);
         let sections = build_executable_gap_data(path)?;
         let data = if let Some(text) = args.get(2) {
-            let address = u64::from_str_radix(text.strip_prefix("0x").ok_or("invalid address")?, 16)
-                .map_err(|_| "invalid address".to_string())?;
+            let address = u64::from_str_radix(text.strip_prefix("0x").ok_or("invalid address")?, 16).map_err(|_| "invalid address".to_string())?;
             build_section(path, address)?
         } else if sections.len() == 1 {
             sections[0].data.clone()

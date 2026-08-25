@@ -22,23 +22,7 @@ fn err<T>(message: impl Into<String>) -> Result<T> {
     Err(Error(message.into()))
 }
 
-const PREFIX: [&str; 15] = [
-    "00",
-    "010",
-    "011",
-    "100",
-    "101",
-    "110",
-    "11100",
-    "11101",
-    "11110",
-    "1111100",
-    "1111101",
-    "1111110",
-    "111111100",
-    "111111101",
-    "111111110",
-];
+const PREFIX: [&str; 15] = ["00", "010", "011", "100", "101", "110", "11100", "11101", "11110", "1111100", "1111101", "1111110", "111111100", "111111101", "111111110"];
 
 pub fn encode_pixels(pixels: &[u8]) -> Result<Vec<u8>> {
     let mut move_to_front: Vec<u8> = (0..16).collect();
@@ -51,8 +35,7 @@ pub fn encode_pixels(pixels: &[u8]) -> Result<Vec<u8>> {
             bits.push(0);
             continue;
         }
-        let index =
-            move_to_front.iter().position(|item| item == value).expect("4bpp value is in the move-to-front table");
+        let index = move_to_front.iter().position(|item| item == value).expect("4bpp value is in the move-to-front table");
         bits.push(1);
         bits.extend(PREFIX[index - 1].bytes().map(|byte| byte - b'0'));
         let value = move_to_front.remove(index);
@@ -117,28 +100,12 @@ struct Plan {
 }
 
 fn parse_plan(value: &Value) -> Result<Plan> {
-    if value.get("format").and_then(Value::as_u64) != Some(1)
-        || value.get("codec").and_then(Value::as_str) != Some(CODEC)
-    {
+    if value.get("format").and_then(Value::as_u64) != Some(1) || value.get("codec").and_then(Value::as_str) != Some(CODEC) {
         return err("unsupported F0 archive plan");
     }
-    let images = value
-        .get("images")
-        .and_then(Value::as_u64)
-        .and_then(|n| usize::try_from(n).ok())
-        .ok_or_else(|| Error("F0 archive plan images must be an integer".into()))?;
-    let entries = value
-        .get("entries")
-        .and_then(Value::as_array)
-        .ok_or_else(|| Error("F0 archive plan entries must be an array".into()))?
-        .iter()
-        .map(|entry| {
-            entry
-                .as_u64()
-                .map(|n| usize::try_from(n).map_err(|_| Error("F0 image index is too large".into())))
-                .transpose()
-        })
-        .collect::<Result<Vec<_>>>()?;
+    let images = value.get("images").and_then(Value::as_u64).and_then(|n| usize::try_from(n).ok()).ok_or_else(|| Error("F0 archive plan images must be an integer".into()))?;
+    let entries =
+        value.get("entries").and_then(Value::as_array).ok_or_else(|| Error("F0 archive plan entries must be an array".into()))?.iter().map(|entry| entry.as_u64().map(|n| usize::try_from(n).map_err(|_| Error("F0 image index is too large".into()))).transpose()).collect::<Result<Vec<_>>>()?;
     Ok(Plan { images, entries })
 }
 
@@ -161,9 +128,7 @@ pub fn build_archive(plan_value: &Value, directory: &Path) -> Result<Vec<u8>> {
     for (index, entry) in plan.entries.iter().enumerate() {
         let value = match entry {
             None => 0,
-            Some(image) => {
-                *offsets.get(*image).ok_or_else(|| Error("F0 archive entry references a missing image".into()))?
-            }
+            Some(image) => *offsets.get(*image).ok_or_else(|| Error("F0 archive entry references a missing image".into()))?,
         };
         result[index * 2..index * 2 + 2].copy_from_slice(&(value as u16).to_le_bytes());
     }

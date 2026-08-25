@@ -148,9 +148,7 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
         let (op, args) = operands(&r.text);
         if (op == "b" || op == "b.n") && args.len() == 1 {
             if let Some(target) = hex(&args[0]) {
-                if target > r.addr
-                    && !rows.iter().any(|x| x.addr > r.addr && x.addr < target && branch_targets.contains(&x.addr))
-                {
+                if target > r.addr && !rows.iter().any(|x| x.addr > r.addr && x.addr < target && branch_targets.contains(&x.addr)) {
                     pool_skip.insert(r.addr);
                     for x in rows.iter().filter(|x| x.addr > r.addr && x.addr < target) {
                         pool_words.insert(x.addr);
@@ -204,10 +202,7 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
     let mut and_join: BTreeMap<i64, String> = BTreeMap::new();
     for (i, r) in rows.iter().enumerate() {
         let (op, args) = operands(&r.text);
-        let cond = matches!(
-            op.as_str(),
-            "beq" | "beq.n" | "bne" | "bne.n" | "blt" | "blt.n" | "bgt" | "bgt.n" | "bge" | "bge.n" | "ble" | "ble.n"
-        );
+        let cond = matches!(op.as_str(), "beq" | "beq.n" | "bne" | "bne.n" | "blt" | "blt.n" | "bgt" | "bgt.n" | "bge" | "bge.n" | "ble" | "ble.n");
         if !cond || args.len() != 1 {
             continue;
         }
@@ -286,10 +281,7 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
         if op == "ldr" && args.len() == 2 && args[0].starts_with("r") {
             let n: u32 = args[0][1..].parse().unwrap_or(0);
             if (4..=7).contains(&n) && args[1].starts_with("[pc") {
-                if let Some(off) = args
-                    .get(1)
-                    .and_then(|a| a.split('#').nth(1).and_then(|s| s.trim_end_matches(']').parse::<i64>().ok()))
-                {
+                if let Some(off) = args.get(1).and_then(|a| a.split('#').nth(1).and_then(|s| s.trim_end_matches(']').parse::<i64>().ok())) {
                     if let Some(v) = word_at(&halfwords, ((r.addr + 4) & !3) + off) {
                         if v > 0 && v < 0x10000 {
                             base_values.insert(v);
@@ -330,10 +322,7 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
                 "<"
             };
             let step = if cmp == ">=" { "--" } else { "++" };
-            out.push(format!(
-                "{}for (i{loop_n} = {start}; i{loop_n} {cmp} {bound}; i{loop_n}{step}) {{",
-                indent(depth)
-            ));
+            out.push(format!("{}for (i{loop_n} = {start}; i{loop_n} {cmp} {bound}; i{loop_n}{step}) {{", indent(depth)));
             depth += 1;
         }
         while let Some(n) = close_at.get_mut(&r.addr) {
@@ -423,11 +412,7 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
                                 continue;
                             }
                         }
-                        let v = loaded
-                            .get(&args[0])
-                            .cloned()
-                            .or_else(|| reg.get(&args[0]).map(|v| v.render()))
-                            .unwrap_or_else(|| "0".to_string());
+                        let v = loaded.get(&args[0]).cloned().or_else(|| reg.get(&args[0]).map(|v| v.render())).unwrap_or_else(|| "0".to_string());
                         out.push(format!("{}{place} = {v};", indent(depth)));
                         continue;
                     }
@@ -450,11 +435,7 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
                 ptr.remove(&args[0]);
             }
             "lsls" if args.len() >= 2 => {
-                let (src, shift) = if args.len() == 3 {
-                    (args[1].clone(), immediate(&args[2]))
-                } else {
-                    (args[0].clone(), immediate(&args[1]))
-                };
+                let (src, shift) = if args.len() == 3 { (args[1].clone(), immediate(&args[2])) } else { (args[0].clone(), immediate(&args[1])) };
                 if let (Some(Val::Num(n)), Some(s)) = (reg.get(&src).cloned(), shift) {
                     reg.insert(args[0].clone(), Val::Num(n << s));
                     fresh.insert(args[0].clone(), Val::Num(n << s));
@@ -477,19 +458,10 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
                     reg.remove(&args[0]);
                     continue;
                 }
-                let (a, b) = if args.len() == 3 {
-                    (
-                        reg.get(&args[1]).cloned(),
-                        immediate(&args[2]).map(Val::Num).or_else(|| reg.get(&args[2]).cloned()),
-                    )
-                } else {
-                    (reg.get(&args[0]).cloned(), immediate(&args[1]).map(Val::Num))
-                };
+                let (a, b) = if args.len() == 3 { (reg.get(&args[1]).cloned(), immediate(&args[2]).map(Val::Num).or_else(|| reg.get(&args[2]).cloned())) } else { (reg.get(&args[0]).cloned(), immediate(&args[1]).map(Val::Num)) };
                 let sum = match (a, b) {
                     (Some(Val::Num(x)), Some(Val::Num(y))) => Some(Val::Num(x + y)),
-                    (Some(Val::Named(n)), Some(Val::Num(y))) => {
-                        Some(if y == 0 { Val::Named(n) } else { Val::Named(format!("{n} + {y}")) })
-                    }
+                    (Some(Val::Named(n)), Some(Val::Num(y))) => Some(if y == 0 { Val::Named(n) } else { Val::Named(format!("{n} + {y}")) }),
                     _ => None,
                 };
                 match sum {
@@ -520,8 +492,7 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
                     _ => "^",
                 };
                 let place = loaded.get(&args[1]).cloned().or_else(|| loaded.get(&args[0]).cloned());
-                let mask =
-                    if loaded.contains_key(&args[1]) { reg.get(&args[0]).cloned() } else { reg.get(&args[1]).cloned() };
+                let mask = if loaded.contains_key(&args[1]) { reg.get(&args[0]).cloned() } else { reg.get(&args[1]).cloned() };
                 if let (Some(place), Some(Val::Num(m))) = (place, mask) {
                     pending.insert(args[0].clone(), (place, sym.to_string(), m));
                 }
@@ -529,8 +500,7 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
                 fresh.remove(&args[0]);
             }
             "ldr" if args.len() == 2 && args[1].starts_with("[pc") => {
-                let off =
-                    args[1].split('#').nth(1).and_then(|s| s.trim_end_matches(']').parse::<i64>().ok()).unwrap_or(0);
+                let off = args[1].split('#').nth(1).and_then(|s| s.trim_end_matches(']').parse::<i64>().ok()).unwrap_or(0);
                 match word_at(&halfwords, ((r.addr + 4) & !3) + off) {
                     Some(v) if base_values.contains(&v) => {
                         reg.insert(args[0].clone(), Val::Named("base".into()));
@@ -548,8 +518,7 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
                 }
             }
             "str" if args.len() == 2 && args[1].starts_with("[sp") => {
-                let off =
-                    args[1].split('#').nth(1).and_then(|s| s.trim_end_matches(']').parse::<i64>().ok()).unwrap_or(0);
+                let off = args[1].split('#').nth(1).and_then(|s| s.trim_end_matches(']').parse::<i64>().ok()).unwrap_or(0);
                 if let Some(v) = reg.get(&args[0]).cloned() {
                     stack.insert(off, v);
                 }
@@ -624,10 +593,7 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
     let mut lines = Vec::new();
     lines.push("#include \"types.h\"".to_string());
     lines.push(String::new());
-    lines.push(format!(
-        "/* DRAFT for {func}: {calls} calls, {loops} loops, {memory} memory operations.",
-        loops = loop_n
-    ));
+    lines.push(format!("/* DRAFT for {func}: {calls} calls, {loops} loops, {memory} memory operations.", loops = loop_n));
     lines.push(" * Written by reconstruct from the owner's own disassembly.".to_string());
     lines.push(" * It is a starting point, not a reconstruction: read the assembly and".to_string());
     lines.push(" * fix it. Score it before believing any of it. */".to_string());
@@ -664,17 +630,10 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
 /// Draft one overlay owner from its disassembly into the ignored scratch tree.
 pub fn run(argv: &[String]) -> Result<Vec<String>, String> {
     if argv.iter().any(|argument| matches!(argument.as_str(), "-h" | "--help")) {
-        return Ok(vec![
-            "usage: overlay reconstruct <overlay>:<offsetHex> [--span BYTES] [--out PATH]".to_string(),
-            "Drafts one owner into scratch/. Score and read it before promotion.".to_string(),
-        ]);
+        return Ok(vec!["usage: overlay reconstruct <overlay>:<offsetHex> [--span BYTES] [--out PATH]".to_string(), "Drafts one owner into scratch/. Score and read it before promotion.".to_string()]);
     }
-    let value_after =
-        |flag: &str| argv.iter().position(|argument| argument == flag).and_then(|index| argv.get(index + 1)).cloned();
-    let target = argv
-        .iter()
-        .find(|argument| argument.contains(':') && !argument.starts_with('-'))
-        .ok_or("give an owner as <overlay>:<offsetHex>")?;
+    let value_after = |flag: &str| argv.iter().position(|argument| argument == flag).and_then(|index| argv.get(index + 1)).cloned();
+    let target = argv.iter().find(|argument| argument.contains(':') && !argument.starts_with('-')).ok_or("give an owner as <overlay>:<offsetHex>")?;
     let (overlay, offset) = target.split_once(':').ok_or("expected <overlay>:<offsetHex>")?;
     let mut show = vec![overlay.to_string(), offset.to_string()];
     if let Some(span) = value_after("--span") {
@@ -687,18 +646,11 @@ pub fn run(argv: &[String]) -> Result<Vec<String>, String> {
     if listing.is_empty() {
         return Err(format!("{target}: no disassembly; check the overlay and offset"));
     }
-    let address =
-        i64::from_str_radix(offset.trim_start_matches("0x"), 16).map_err(|_| format!("{offset}: not a hex offset"))?;
+    let address = i64::from_str_radix(offset.trim_start_matches("0x"), 16).map_err(|_| format!("{offset}: not a hex offset"))?;
     let draft = draft(&listing, &format!("Func_{:08x}", 0x0200_0000 + address));
     let output = value_after("--out").unwrap_or_else(|| format!("scratch/{overlay}_c_{:08x}.c", 0x0200_0000 + address));
     write_draft(&output, &draft)?;
-    Ok(vec![
-        format!(
-            "{target}: {} calls, {} loops, {} memory operations -> {output}",
-            draft.calls, draft.loops, draft.memory
-        ),
-        "score it before believing any of it".to_string(),
-    ])
+    Ok(vec![format!("{target}: {} calls, {} loops, {} memory operations -> {output}", draft.calls, draft.loops, draft.memory), "score it before believing any of it".to_string()])
 }
 
 fn write_draft(output: &str, draft: &Draft) -> Result<(), String> {

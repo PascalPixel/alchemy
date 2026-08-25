@@ -77,26 +77,16 @@ fn canonical(v: &Value) -> String {
     out
 }
 fn read(path: &Path) -> Result<String, String> {
-    std::fs::read(path)
-        .map(|b| String::from_utf8_lossy(&b).into_owned())
-        .map_err(|e| format!("cannot read {}: {e}", path.display()))
+    std::fs::read(path).map(|b| String::from_utf8_lossy(&b).into_owned()).map_err(|e| format!("cannot read {}: {e}", path.display()))
 }
 fn write(path: &Path, text: &str) -> Result<(), String> {
     std::fs::write(path, text).map_err(|e| format!("cannot write {}: {e}", path.display()))
 }
 fn map_path(target: &str) -> PathBuf {
-    root()
-        .join("games")
-        .join(target.split('-').next().unwrap_or("gs1"))
-        .join("metrics")
-        .join(format!("{target}-coverage-map.json"))
+    root().join("games").join(target.split('-').next().unwrap_or("gs1")).join("metrics").join(format!("{target}-coverage-map.json"))
 }
 fn target_path(target: &str) -> PathBuf {
-    root()
-        .join("games")
-        .join(target.split('-').next().unwrap_or("gs1"))
-        .join("metrics")
-        .join(format!("{target}-core-targets.json"))
+    root().join("games").join(target.split('-').next().unwrap_or("gs1")).join("metrics").join(format!("{target}-core-targets.json"))
 }
 #[derive(Default)]
 struct Options {
@@ -118,9 +108,7 @@ fn parse(argv: &[String]) -> Result<Options, String> {
                 o.target = match argv.get(i).map(String::as_str) {
                     Some("gs1-en") => "gs1-en".into(),
                     Some("gs2-en") => "gs2-en".into(),
-                    Some(v) => {
-                        return Err(format!("unsupported decomp target {}; expected gs1-en or gs2-en", quote(v)))
-                    }
+                    Some(v) => return Err(format!("unsupported decomp target {}; expected gs1-en or gs2-en", quote(v))),
                     None => return Err("unsupported decomp target undefined; expected gs1-en or gs2-en".into()),
                 };
             }
@@ -172,7 +160,19 @@ fn summary(doc: &Value) -> Result<String, String> {
     }
     let ceiling = executable - retained;
     let percent = crate::jsnum::round_half_up(exact as i64, ceiling as i64);
-    Ok(format!("target={} rom={} executable={} exact={} ({}%) tracked={} ({}%) c_able={} exact_of_c_able={}% tracked_source={}", get(doc, "target").and_then(Value::as_str).unwrap_or("undefined"), commas(field(doc, &["rom_bytes"]) as i64), commas(executable as i64), commas(exact as i64), number(field(doc, &["categories", "exact_c", "percent_of_executable"])), commas(semantic as i64), number(field(doc, &["categories", "tracked_c", "percent_of_executable"])), commas(ceiling as i64), number(percent), get(get(doc, "provenance").unwrap_or(&Value::Null), "tracked_source").and_then(Value::as_str).unwrap_or("undefined")))
+    Ok(format!(
+        "target={} rom={} executable={} exact={} ({}%) tracked={} ({}%) c_able={} exact_of_c_able={}% tracked_source={}",
+        get(doc, "target").and_then(Value::as_str).unwrap_or("undefined"),
+        commas(field(doc, &["rom_bytes"]) as i64),
+        commas(executable as i64),
+        commas(exact as i64),
+        number(field(doc, &["categories", "exact_c", "percent_of_executable"])),
+        commas(semantic as i64),
+        number(field(doc, &["categories", "tracked_c", "percent_of_executable"])),
+        commas(ceiling as i64),
+        number(percent),
+        get(get(doc, "provenance").unwrap_or(&Value::Null), "tracked_source").and_then(Value::as_str).unwrap_or("undefined")
+    ))
 }
 
 #[derive(Clone)]
@@ -193,36 +193,14 @@ fn targets(map: &CoverageMap, target: &str) -> (Value, String) {
     for area in &map.executable_areas {
         for tile in &area.tiles {
             let target_bytes = tile.category("tracked_c") + tile.category("assembly");
-            let namespace = if area.id == "main" {
-                "main".into()
-            } else {
-                format!("resource_{}", tile.group.as_deref().unwrap_or("unknown"))
-            };
+            let namespace = if area.id == "main" { "main".into() } else { format!("resource_{}", tile.group.as_deref().unwrap_or("unknown")) };
             spaces.insert(namespace.clone());
             if target_bytes > 0 {
-                rows.push(Target {
-                    namespace,
-                    address: tile.address,
-                    label: tile.label.clone(),
-                    scope: tile.bytes,
-                    target: target_bytes,
-                    semantic: tile.category("tracked_c"),
-                    assembly: tile.category("assembly"),
-                    exact: tile.category("exact_c"),
-                    retained: tile.category("retained_asm"),
-                });
+                rows.push(Target { namespace, address: tile.address, label: tile.label.clone(), scope: tile.bytes, target: target_bytes, semantic: tile.category("tracked_c"), assembly: tile.category("assembly"), exact: tile.category("exact_c"), retained: tile.category("retained_asm") });
             }
         }
     }
-    rows.sort_by(|a, b| {
-        (b.scope, b.target, &a.namespace, a.address, &a.label).cmp(&(
-            a.scope,
-            a.target,
-            &b.namespace,
-            b.address,
-            &b.label,
-        ))
-    });
+    rows.sort_by(|a, b| (b.scope, b.target, &a.namespace, a.address, &a.label).cmp(&(a.scope, a.target, &b.namespace, b.address, &b.label)));
     let values: Vec<Value> = rows
         .iter()
         .enumerate()
@@ -257,16 +235,8 @@ fn targets(map: &CoverageMap, target: &str) -> (Value, String) {
             "policy",
             obj(vec![
                 ("unit", Value::String("audited source-owner scope or contiguous unresolved executable run".into())),
-                (
-                    "ordering",
-                    Value::String(
-                        "scope_bytes descending, then target_bytes descending, then namespace and address".into(),
-                    ),
-                ),
-                (
-                    "target_categories",
-                    Value::Array(vec![Value::String("tracked_c".into()), Value::String("assembly".into())]),
-                ),
+                ("ordering", Value::String("scope_bytes descending, then target_bytes descending, then namespace and address".into())),
+                ("target_categories", Value::Array(vec![Value::String("tracked_c".into()), Value::String("assembly".into())])),
                 ("overlap", Value::String("none; broader campaign cuts are intentionally excluded".into())),
             ]),
         ),
@@ -275,11 +245,7 @@ fn targets(map: &CoverageMap, target: &str) -> (Value, String) {
             obj(vec![
                 ("executable_bytes", num(executable)),
                 ("audited_address_spaces", num(spaces.len() as i64)),
-                (
-                    "address_spaces_with_targets",
-                    num(rows.iter().map(|r| r.namespace.as_str()).collect::<std::collections::BTreeSet<_>>().len()
-                        as i64),
-                ),
+                ("address_spaces_with_targets", num(rows.iter().map(|r| r.namespace.as_str()).collect::<std::collections::BTreeSet<_>>().len() as i64)),
                 ("target_count", num(rows.len() as i64)),
                 ("target_scope_bytes", num(scope)),
                 ("target_bytes", num(unresolved)),
@@ -295,14 +261,7 @@ fn targets(map: &CoverageMap, target: &str) -> (Value, String) {
     let visible: Vec<_> = rows.iter().enumerate().filter(|(_, r)| r.scope >= 1000).collect();
     let mut md = format!("This section is generated. It is the primary contributor target list:\nnon-overlapping audited source-owner scopes (or contiguous unresolved\nexecutable runs), sorted largest to smallest. Regenerate with `make coverage` -- do not edit by hand.\n\n- **Unfinished scopes:** {}\n- **Address spaces scanned:** {} ({} still contain targets)\n- **Target bytes:** {} tracked-C or unresolved-assembly bytes\n- **Resolved-only bytes:** {} Exact C or audited permanent assembly bytes\n- **Executable bytes accounted for:** {}\n\n### Main target list\n\nThis table contains every scope of at least 1,000 bytes ({} rows). The complete\n{}-row index, including the smallest audited owners, is\n[`games/gs1/metrics/gs1-en-core-targets.json`](games/gs1/metrics/gs1-en-core-targets.json).\n\n| Rank | Scope | Target | Namespace / owner |\n|---:|---:|---:|---|\n", commas(rows.len() as i64), commas(spaces.len() as i64), commas(rows.iter().map(|r| r.namespace.as_str()).collect::<std::collections::BTreeSet<_>>().len() as i64), commas(unresolved), commas(executable - scope), commas(executable), visible.len(), commas(rows.len() as i64));
     for (i, r) in visible {
-        md.push_str(&format!(
-            "| {} | {} | {} | `{}:{}` |\n",
-            i + 1,
-            commas(r.scope),
-            commas(r.target),
-            r.namespace,
-            r.address.map_or_else(|| "unknown".into(), |a| format!("0x{a:08x}"))
-        ));
+        md.push_str(&format!("| {} | {} | {} | `{}:{}` |\n", i + 1, commas(r.scope), commas(r.target), r.namespace, r.address.map_or_else(|| "unknown".into(), |a| format!("0x{a:08x}"))));
     }
     (document, md)
 }
@@ -422,24 +381,14 @@ fn run(argv: &[String]) -> Result<String, String> {
         None | Some("worktree") => Some(work_tree()),
         Some(id) => Some(ref_tree(id).ok_or_else(|| format!("reconstruction source ref {id} is not available here"))?),
     };
-    let map = build_coverage_map(&BuildOptions {
-        target: o.target.clone(),
-        exact: &exact,
-        recon: semantic.as_ref(),
-        validate_tracked_progress: true,
-        prefer_verified_assets: true,
-    })?;
+    let map = build_coverage_map(&BuildOptions { target: o.target.clone(), exact: &exact, recon: semantic.as_ref(), validate_tracked_progress: true, prefer_verified_assets: true })?;
     let rendered = render_box_trees(&map, Some(&exact), true)?;
     let (index, markdown) = targets(&map, &o.target);
     let map_json = canonical(&tracked(&map.document));
     let index_json = canonical(&index);
     if o.check {
         let tracked_map: Value = serde_json::from_str(&read(&map_path(&o.target))?).map_err(|e| e.to_string())?;
-        for (path, expected) in [
-            ("executable_bytes", field(&map.document, &["executable_bytes"])),
-            ("exact C", field(&map.document, &["categories", "exact_c", "bytes"])),
-            ("retained ASM", field(&map.document, &["categories", "retained_asm", "bytes"])),
-        ] {
+        for (path, expected) in [("executable_bytes", field(&map.document, &["executable_bytes"])), ("exact C", field(&map.document, &["categories", "exact_c", "bytes"])), ("retained ASM", field(&map.document, &["categories", "retained_asm", "bytes"]))] {
             let actual = match path {
                 "executable_bytes" => field(&tracked_map, &["executable_bytes"]),
                 "exact C" => field(&tracked_map, &["categories", "exact_c", "bytes"]),
@@ -449,10 +398,7 @@ fn run(argv: &[String]) -> Result<String, String> {
                 return Err(format!("tracked coverage map is stale ({path}); run: make coverage"));
             }
         }
-        if !target_path(&o.target).exists()
-            || rendered.iter().any(|(id, _)| !box_tree_path(&o.target, id).exists())
-            || !root().join("CONTRIBUTING.md").exists()
-        {
+        if !target_path(&o.target).exists() || rendered.iter().any(|(id, _)| !box_tree_path(&o.target, id).exists()) || !root().join("CONTRIBUTING.md").exists() {
             return Err("coverage outputs are incomplete; run: make coverage".into());
         }
         return Ok(format!("coverage-map=current {}", summary(&map.document)?));

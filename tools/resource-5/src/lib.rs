@@ -35,8 +35,7 @@ fn exact_keys(value: &Map<String, Value>, expected: &[&str], label: &str) -> Res
 }
 
 fn sparse_keys(value: &Map<String, Value>, allowed: &[&str], required: &[&str], label: &str) -> Result<()> {
-    if value.keys().any(|key| !allowed.contains(&key.as_str())) || required.iter().any(|key| !value.contains_key(*key))
-    {
+    if value.keys().any(|key| !allowed.contains(&key.as_str())) || required.iter().any(|key| !value.contains_key(*key)) {
         return err(format!("{label} fields differ"));
     }
     Ok(())
@@ -51,11 +50,7 @@ fn list<'a>(value: &'a Value, size: usize, label: &str) -> Result<&'a Vec<Value>
 }
 
 fn integer(value: &Value, minimum: i128, maximum: i128, label: &str) -> Result<i128> {
-    let number = value
-        .as_i64()
-        .map(i128::from)
-        .or_else(|| value.as_u64().map(i128::from))
-        .ok_or_else(|| format!("{label} must be an integer"))?;
+    let number = value.as_i64().map(i128::from).or_else(|| value.as_u64().map(i128::from)).ok_or_else(|| format!("{label} must be an integer"))?;
     if !(minimum..=maximum).contains(&number) {
         return err(format!("{label} is outside {minimum}..{maximum}"));
     }
@@ -85,14 +80,7 @@ fn u32(value: &Value, label: &str) -> Result<u32> {
     Ok(unsigned(value, 0xffff_ffff, label)? as u32)
 }
 
-fn integer_or(
-    value: &Map<String, Value>,
-    key: &str,
-    default: i128,
-    minimum: i128,
-    maximum: i128,
-    label: &str,
-) -> Result<i128> {
+fn integer_or(value: &Map<String, Value>, key: &str, default: i128, minimum: i128, maximum: i128, label: &str) -> Result<i128> {
     value.get(key).map_or(Ok(default), |value| integer(value, minimum, maximum, label))
 }
 
@@ -109,22 +97,7 @@ fn write_i32(data: &mut [u8], offset: usize, value: i32) {
     data[offset..offset + 4].copy_from_slice(&value.to_le_bytes());
 }
 
-const ITEM_KEYS: &[&str] = &[
-    "name",
-    "price",
-    "type",
-    "flags",
-    "equip_mask",
-    "icon",
-    "primary_bonus",
-    "secondary_bonus",
-    "secondary_flags",
-    "use_type",
-    "description_message",
-    "element",
-    "effects",
-    "action_id",
-];
+const ITEM_KEYS: &[&str] = &["name", "price", "type", "flags", "equip_mask", "icon", "primary_bonus", "secondary_bonus", "secondary_flags", "use_type", "description_message", "element", "effects", "action_id"];
 
 fn is_snake_case(name: &str) -> bool {
     let mut bytes = name.bytes();
@@ -251,11 +224,7 @@ fn build_item_definition(value: &Value, index: usize) -> Result<Vec<u8>> {
     result[10] = integer_or(item, "secondary_bonus", 0, -0x80, 0x7f, "item secondary_bonus")? as i8 as u8;
     result[11] = integer_or(item, "secondary_flags", 0, 0, 0xff, "item secondary_flags")? as u8;
     result[12] = integer_or(item, "use_type", 0, 0, 0xff, "item use_type")? as u8;
-    write_u16(
-        &mut result,
-        14,
-        integer_or(item, "description_message", 0, 0, 0xffff, "item description_message")? as u16,
-    );
+    write_u16(&mut result, 14, integer_or(item, "description_message", 0, 0, 0xffff, "item description_message")? as u16);
     result[20] = integer_or(item, "element", 4, 0, 0xff, "item element")? as u8;
     if let Some(effects) = item.get("effects") {
         for (effect_index, raw) in list(effects, 4, "item effects")?.iter().enumerate() {
@@ -270,13 +239,8 @@ fn build_item_definition(value: &Value, index: usize) -> Result<Vec<u8>> {
 }
 
 fn build_ability(value: &Value, index: usize) -> Result<Vec<u8>> {
-    let ability = value
-        .as_array()
-        .filter(|values| values.len() <= 9)
-        .ok_or_else(|| format!("abilities[{index}] must contain at most 9 values"))?;
-    let value = |index: usize, maximum: i128, label: &str| {
-        ability.get(index).map_or(Ok(0), |value| integer(value, 0, maximum, label))
-    };
+    let ability = value.as_array().filter(|values| values.len() <= 9).ok_or_else(|| format!("abilities[{index}] must contain at most 9 values"))?;
+    let value = |index: usize, maximum: i128, label: &str| ability.get(index).map_or(Ok(0), |value| integer(value, 0, maximum, label));
     let mut result = vec![0; 16];
     for (offset, field) in [(0, 0), (1, 1), (2, 2), (3, 3), (8, 5), (9, 6)] {
         result[offset] = value(field, 0xff, "ability byte")? as u8;
@@ -288,13 +252,8 @@ fn build_ability(value: &Value, index: usize) -> Result<Vec<u8>> {
 }
 
 fn build_combatant(value: &Value, index: usize) -> Result<Vec<u8>> {
-    let item = value
-        .as_array()
-        .filter(|values| values.len() <= 37)
-        .ok_or_else(|| format!("combatants[{index}] must contain at most 37 values"))?;
-    let value = |index: usize, default: i128, maximum: i128, label: &str| {
-        item.get(index).map_or(Ok(default), |value| integer(value, 0, maximum, label))
-    };
+    let item = value.as_array().filter(|values| values.len() <= 37).ok_or_else(|| format!("combatants[{index}] must contain at most 37 values"))?;
+    let value = |index: usize, default: i128, maximum: i128, label: &str| item.get(index).map_or(Ok(default), |value| integer(value, 0, maximum, label));
     let mut result = vec![0; 84];
     match value(0, 0, 2, "combatant name slot")? {
         0 => result[0..14].fill(0x20),
@@ -303,25 +262,17 @@ fn build_combatant(value: &Value, index: usize) -> Result<Vec<u8>> {
         _ => unreachable!(),
     }
     result[15] = value(1, 0, 0xff, "combatant level")? as u8;
-    for (offset, field) in
-        [(16, 2), (18, 3), (20, 4), (22, 5), (24, 6), (28, 9), (54, 20), (76, 33), (78, 34), (80, 35), (82, 36)]
-    {
+    for (offset, field) in [(16, 2), (18, 3), (20, 4), (22, 5), (24, 6), (28, 9), (54, 20), (76, 33), (78, 34), (80, 35), (82, 36)] {
         write_u16(&mut result, offset, value(field, 0, 0xffff, "combatant halfword")? as u16);
     }
     result[26] = value(7, 0, 0xff, "combatant luck")? as u8;
     result[27] = value(8, 1, 0xff, "combatant turns")? as u8;
-    for (field, offset, label) in [
-        (10, 40, "combatant initial ability"),
-        (21, 56, "combatant secondary ability"),
-        (29, 68, "combatant battle trait"),
-    ] {
+    for (field, offset, label) in [(10, 40, "combatant initial ability"), (21, 56, "combatant secondary ability"), (29, 68, "combatant battle trait")] {
         for slot in 0..4 {
             write_u16(&mut result, offset + slot * 2, value(field + slot, 0, 0xffff, label)? as u16);
         }
     }
-    for (field, offset, label) in
-        [(14, 48, "combatant initial ability count"), (25, 64, "combatant secondary ability count")]
-    {
+    for (field, offset, label) in [(14, 48, "combatant initial ability count"), (25, 64, "combatant secondary ability count")] {
         for slot in 0..4 {
             result[offset + slot] = value(field + slot, 0, 0xff, label)? as u8;
         }
@@ -333,11 +284,7 @@ fn build_combatant(value: &Value, index: usize) -> Result<Vec<u8>> {
 
 fn build_hero_growth(value: &Value, index: usize) -> Result<Vec<u8>> {
     let growth = object(value, &format!("hero_growth[{index}]"))?;
-    exact_keys(
-        growth,
-        &["hp", "pp", "attack", "defense", "agility", "luck", "elemental_levels", "class_id", "initial_abilities"],
-        &format!("hero_growth[{index}]"),
-    )?;
+    exact_keys(growth, &["hp", "pp", "attack", "defense", "agility", "luck", "elemental_levels", "class_id", "initial_abilities"], &format!("hero_growth[{index}]"))?;
     let mut result = vec![0; 180];
     for (offset, key) in [(80, "hp"), (92, "pp"), (104, "attack"), (116, "defense"), (128, "agility")] {
         for (slot, entry) in list(field(growth, key)?, 6, &format!("hero growth {key}"))?.iter().enumerate() {
@@ -347,14 +294,11 @@ fn build_hero_growth(value: &Value, index: usize) -> Result<Vec<u8>> {
     for (slot, entry) in list(field(growth, "luck")?, 6, "hero growth luck")?.iter().enumerate() {
         result[140 + slot] = u8(entry, "hero growth luck")?;
     }
-    for (slot, entry) in list(field(growth, "elemental_levels")?, 4, "hero growth elemental_levels")?.iter().enumerate()
-    {
+    for (slot, entry) in list(field(growth, "elemental_levels")?, 4, "hero growth elemental_levels")?.iter().enumerate() {
         result[146 + slot] = u8(entry, "hero growth elemental level")?;
     }
     result[150] = u8(field(growth, "class_id")?, "hero growth class_id")?;
-    for (slot, entry) in
-        list(field(growth, "initial_abilities")?, 13, "hero growth initial_abilities")?.iter().enumerate()
-    {
+    for (slot, entry) in list(field(growth, "initial_abilities")?, 13, "hero growth initial_abilities")?.iter().enumerate() {
         write_u16(&mut result, 152 + slot * 2, u16(entry, "hero growth initial ability")?);
     }
     Ok(result)
@@ -362,12 +306,7 @@ fn build_hero_growth(value: &Value, index: usize) -> Result<Vec<u8>> {
 
 fn build_class(value: &Value, index: usize) -> Result<Vec<u8>> {
     let item = object(value, &format!("classes[{index}]"))?;
-    sparse_keys(
-        item,
-        &["family", "djinn_requirements", "stat_multipliers", "abilities", "traits"],
-        &[],
-        &format!("classes[{index}]"),
-    )?;
+    sparse_keys(item, &["family", "djinn_requirements", "stat_multipliers", "abilities", "traits"], &[], &format!("classes[{index}]"))?;
     let mut result = vec![0; 84];
     write_i32(&mut result, 0, integer_or(item, "family", 0, -0x8000_0000, 0x7fff_ffff, "class family")? as i32);
     if let Some(requirements) = item.get("djinn_requirements") {
@@ -414,12 +353,7 @@ fn build_elemental_profile(value: &Value, index: usize) -> Result<Vec<u8>> {
 pub fn build_gameplay_databases(value: &Value) -> Result<Vec<u8>> {
     let source = parse_gameplay_databases(value)?;
     let mut result = Vec::with_capacity(RESOURCE_SIZE);
-    result.extend(
-        list(field(source, "progression_groups")?, 8, "progression_groups")?
-            .iter()
-            .map(|entry| u8(entry, "progression group"))
-            .collect::<Result<Vec<_>>>()?,
-    );
+    result.extend(list(field(source, "progression_groups")?, 8, "progression_groups")?.iter().map(|entry| u8(entry, "progression group")).collect::<Result<Vec<_>>>()?);
     let mut experience = vec![0; 8 * 99 * 4];
     for (hero, row) in list(field(source, "level_experience")?, 8, "level_experience")?.iter().enumerate() {
         for (level, entry) in list(row, 99, &format!("level_experience[{hero}]"))?.iter().enumerate() {
@@ -430,15 +364,7 @@ pub fn build_gameplay_databases(value: &Value) -> Result<Vec<u8>> {
     result.extend(
         list(field(source, "inventory_counter_slots")?, 512, "inventory_counter_slots")?
             .iter()
-            .map(|entry| {
-                if entry.is_null() {
-                    Ok(0)
-                } else {
-                    Ok(u8(entry, "inventory counter slot")?
-                        .checked_add(1)
-                        .ok_or_else(|| "inventory counter slot is outside 0..0xfe".to_string())?)
-                }
-            })
+            .map(|entry| if entry.is_null() { Ok(0) } else { Ok(u8(entry, "inventory counter slot")?.checked_add(1).ok_or_else(|| "inventory counter slot is outside 0..0xfe".to_string())?) })
             .collect::<Result<Vec<_>>>()?,
     );
     let mut party = vec![0; 24];
@@ -446,48 +372,11 @@ pub fn build_gameplay_databases(value: &Value) -> Result<Vec<u8>> {
         write_i32(&mut party, index * 4, s32(entry, "party order")?);
     }
     result.extend(party);
-    result.extend(
-        list(field(source, "items")?, 324, "items")?
-            .iter()
-            .enumerate()
-            .map(|(index, value)| build_item_definition(value, index))
-            .collect::<Result<Vec<_>>>()?
-            .into_iter()
-            .flatten(),
-    );
-    result.extend(
-        list(field(source, "abilities")?, 519, "abilities")?
-            .iter()
-            .enumerate()
-            .map(|(index, value)| build_ability(value, index))
-            .collect::<Result<Vec<_>>>()?
-            .into_iter()
-            .flatten(),
-    );
-    result.extend(
-        list(field(source, "combatants")?, 165, "combatants")?
-            .iter()
-            .enumerate()
-            .map(|(index, value)| build_combatant(value, index))
-            .collect::<Result<Vec<_>>>()?
-            .into_iter()
-            .flatten(),
-    );
-    result.extend(
-        list(field(source, "hero_growth")?, 8, "hero_growth")?
-            .iter()
-            .enumerate()
-            .map(|(index, value)| build_hero_growth(value, index))
-            .collect::<Result<Vec<_>>>()?
-            .into_iter()
-            .flatten(),
-    );
-    result.extend(
-        list(field(source, "summon_order")?, 16, "summon_order")?
-            .iter()
-            .map(|entry| u8(entry, "summon order"))
-            .collect::<Result<Vec<_>>>()?,
-    );
+    result.extend(list(field(source, "items")?, 324, "items")?.iter().enumerate().map(|(index, value)| build_item_definition(value, index)).collect::<Result<Vec<_>>>()?.into_iter().flatten());
+    result.extend(list(field(source, "abilities")?, 519, "abilities")?.iter().enumerate().map(|(index, value)| build_ability(value, index)).collect::<Result<Vec<_>>>()?.into_iter().flatten());
+    result.extend(list(field(source, "combatants")?, 165, "combatants")?.iter().enumerate().map(|(index, value)| build_combatant(value, index)).collect::<Result<Vec<_>>>()?.into_iter().flatten());
+    result.extend(list(field(source, "hero_growth")?, 8, "hero_growth")?.iter().enumerate().map(|(index, value)| build_hero_growth(value, index)).collect::<Result<Vec<_>>>()?.into_iter().flatten());
+    result.extend(list(field(source, "summon_order")?, 16, "summon_order")?.iter().map(|entry| u8(entry, "summon order")).collect::<Result<Vec<_>>>()?);
     for (index, raw) in list(field(source, "summons")?, 16, "summons")?.iter().enumerate() {
         let summon = list(raw, 2, &format!("summons[{index}]"))?;
         let mut bytes = vec![0; 8];
@@ -497,15 +386,7 @@ pub fn build_gameplay_databases(value: &Value) -> Result<Vec<u8>> {
         }
         result.extend(bytes);
     }
-    result.extend(
-        list(field(source, "classes")?, 203, "classes")?
-            .iter()
-            .enumerate()
-            .map(|(index, value)| build_class(value, index))
-            .collect::<Result<Vec<_>>>()?
-            .into_iter()
-            .flatten(),
-    );
+    result.extend(list(field(source, "classes")?, 203, "classes")?.iter().enumerate().map(|(index, value)| build_class(value, index)).collect::<Result<Vec<_>>>()?.into_iter().flatten());
     let mut matrix = vec![0; 128];
     for (row_index, row) in list(field(source, "class_family_matrix")?, 8, "class_family_matrix")?.iter().enumerate() {
         for (column, entry) in list(row, 4, &format!("class_family_matrix[{row_index}]"))?.iter().enumerate() {
@@ -513,15 +394,7 @@ pub fn build_gameplay_databases(value: &Value) -> Result<Vec<u8>> {
         }
     }
     result.extend(matrix);
-    result.extend(
-        list(field(source, "elemental_profiles")?, 44, "elemental_profiles")?
-            .iter()
-            .enumerate()
-            .map(|(index, value)| build_elemental_profile(value, index))
-            .collect::<Result<Vec<_>>>()?
-            .into_iter()
-            .flatten(),
-    );
+    result.extend(list(field(source, "elemental_profiles")?, 44, "elemental_profiles")?.iter().enumerate().map(|(index, value)| build_elemental_profile(value, index)).collect::<Result<Vec<_>>>()?.into_iter().flatten());
     for (index, raw) in list(field(source, "signed_scale_curve")?, 5, "signed_scale_curve")?.iter().enumerate() {
         let point = list(raw, 2, &format!("signed_scale_curve[{index}]"))?;
         let mut bytes = vec![0; 4];

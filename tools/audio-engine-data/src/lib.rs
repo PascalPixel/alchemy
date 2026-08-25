@@ -70,10 +70,7 @@ fn address(value: &Value, label: &str, minimum: usize, maximum: usize) -> Result
     let Some(text) = value.as_str() else {
         return error(format!("{label} is not a canonical address"));
     };
-    if text.len() != 10
-        || !text.starts_with("0x")
-        || !text[2..].bytes().all(|b| b.is_ascii_hexdigit() && !b.is_ascii_uppercase())
-    {
+    if text.len() != 10 || !text.starts_with("0x") || !text[2..].bytes().all(|b| b.is_ascii_hexdigit() && !b.is_ascii_uppercase()) {
         return error(format!("{label} is not a canonical address"));
     }
     let parsed = usize::from_str_radix(&text[2..], 16).map_err(|_| format!("{label} is outside its address range"))?;
@@ -92,10 +89,7 @@ fn parse_function(value: &Value, label: &str) -> Result<u32> {
     let Some(text) = value.as_str() else {
         return error(format!("{label} is not a function symbol"));
     };
-    if text.len() != 13
-        || !text.starts_with("Func_0")
-        || !text[5..].bytes().all(|b| b.is_ascii_hexdigit() && !b.is_ascii_uppercase())
-    {
+    if text.len() != 13 || !text.starts_with("Func_0") || !text[5..].bytes().all(|b| b.is_ascii_hexdigit() && !b.is_ascii_uppercase()) {
         return error(format!("{label} is not a function symbol"));
     }
     let code = u32::from_str_radix(&text[5..], 16).map_err(|_| format!("{label} is not a function symbol"))?;
@@ -108,19 +102,13 @@ fn alignment(value: &Value, expected_address: usize, expected_size: usize, label
     let object = object(value, label)?;
     exact_keys(object, &["address", "size", "fill"], label)?;
     address_exact(field(object, "address")?, expected_address, label)?;
-    if integer(field(object, "size")?, 0, i64::MAX, label)? != expected_size as i64
-        || integer(field(object, "fill")?, 0, 255, label)? != 0
-    {
+    if integer(field(object, "size")?, 0, i64::MAX, label)? != expected_size as i64 || integer(field(object, "fill")?, 0, 255, label)? != 0 {
         return error(format!("{label} differs"));
     }
     Ok(vec![0; expected_size])
 }
 fn unsigned_bytes(value: &Value, count: usize, label: &str) -> Result<Vec<u8>> {
-    array(value, count, label)?
-        .iter()
-        .enumerate()
-        .map(|(index, item)| integer(item, 0, 255, &format!("{label} {index}")).map(|v| v as u8))
-        .collect::<Result<Vec<_>>>()
+    array(value, count, label)?.iter().enumerate().map(|(index, item)| integer(item, 0, 255, &format!("{label} {index}")).map(|v| v as u8)).collect::<Result<Vec<_>>>()
 }
 fn unsigned_halfwords(value: &Value, count: usize, label: &str) -> Result<Vec<u8>> {
     let mut output = Vec::with_capacity(count * 2);
@@ -144,10 +132,7 @@ fn words(value: &Value, count: usize, label: &str) -> Result<Vec<u8>> {
         let Some(text) = item.as_str() else {
             return error(format!("{label} {index} is not a word"));
         };
-        if text.len() != 10
-            || !text.starts_with("0x")
-            || !text[2..].bytes().all(|b| b.is_ascii_hexdigit() && !b.is_ascii_uppercase())
-        {
+        if text.len() != 10 || !text.starts_with("0x") || !text[2..].bytes().all(|b| b.is_ascii_hexdigit() && !b.is_ascii_uppercase()) {
             return error(format!("{label} {index} is not a word"));
         }
         let value = u32::from_str_radix(&text[2..], 16).map_err(|_| format!("{label} {index} is not a word"))?;
@@ -183,12 +168,7 @@ fn read_index(path: &Path) -> Result<Map<String, Value>> {
     }
     let sources = object(field(index_object, "sources")?, "audio-engine sources")?;
     exact_keys(sources, &["control", "tones", "waveforms", "players"], "audio-engine sources")?;
-    for (role, expected) in [
-        ("control", SOURCE_NAMES[0]),
-        ("tones", SOURCE_NAMES[1]),
-        ("waveforms", SOURCE_NAMES[2]),
-        ("players", SOURCE_NAMES[3]),
-    ] {
+    for (role, expected) in [("control", SOURCE_NAMES[0]), ("tones", SOURCE_NAMES[1]), ("waveforms", SOURCE_NAMES[2]), ("players", SOURCE_NAMES[3])] {
         if field(sources, role)?.as_str() != Some(expected) {
             return error("audio-engine source catalog differs");
         }
@@ -202,12 +182,7 @@ fn child(index_path: &Path, name: &str) -> Result<PathBuf> {
     if !SOURCE_NAMES.contains(&name) {
         return error("audio-engine source name differs");
     }
-    let prefix = index_path
-        .file_name()
-        .and_then(|n| n.to_str())
-        .unwrap_or_default()
-        .strip_suffix("index.json")
-        .unwrap_or_default();
+    let prefix = index_path.file_name().and_then(|n| n.to_str()).unwrap_or_default().strip_suffix("index.json").unwrap_or_default();
     let root = canonical_path(index_path.parent().unwrap_or_else(|| Path::new(".")))?;
     let path = canonical_path(&root.join(format!("{prefix}{name}")))?;
     let relative = path.strip_prefix(&root).map_err(|_| "audio-engine source escaped its directory".to_string())?;
@@ -223,11 +198,7 @@ fn read_source(path: &Path, label: &str, keys: &[&str]) -> Result<Map<String, Va
     Ok(object.clone())
 }
 fn check_extent(object: &Map<String, Value>, kind: &str, address: usize, end: usize, label: &str) -> Result<()> {
-    if integer(field(object, "format")?, 0, i64::MAX, label)? != 1
-        || field(object, "kind")?.as_str() != Some(kind)
-        || field(object, "address")?.as_str() != Some(&hex(address))
-        || field(object, "end")?.as_str() != Some(&hex(end))
-    {
+    if integer(field(object, "format")?, 0, i64::MAX, label)? != 1 || field(object, "kind")?.as_str() != Some(kind) || field(object, "address")?.as_str() != Some(&hex(address)) || field(object, "end")?.as_str() != Some(&hex(end)) {
         return error(format!("{label} extent differs"));
     }
     Ok(())
@@ -256,21 +227,11 @@ fn read_control(path: &Path) -> Result<Map<String, Value>> {
             "cgb_command_dispatch",
         ],
     )?;
-    check_extent(
-        &object,
-        "golden-sun-audio-engine-control",
-        AUDIO_ENGINE_ADDRESS,
-        CONTROL_END,
-        "audio-engine control",
-    )?;
+    check_extent(&object, "golden-sun-audio-engine-control", AUDIO_ENGINE_ADDRESS, CONTROL_END, "audio-engine control")?;
     Ok(object)
 }
 fn build_control(source: &Map<String, Value>) -> Result<Vec<u8>> {
-    let diagnostic = array(field(source, "diagnostic_sounds")?, 3, "diagnostic sounds")?
-        .iter()
-        .enumerate()
-        .map(|(index, item)| integer(item, 0, 0xffff, &format!("diagnostic sound {index}")))
-        .collect::<Result<Vec<_>>>()?;
+    let diagnostic = array(field(source, "diagnostic_sounds")?, 3, "diagnostic sounds")?.iter().enumerate().map(|(index, item)| integer(item, 0, 0xffff, &format!("diagnostic sound {index}"))).collect::<Result<Vec<_>>>()?;
     if diagnostic.iter().collect::<BTreeSet<_>>().len() != diagnostic.len() {
         return error("diagnostic sounds must be distinct");
     }
@@ -281,8 +242,7 @@ fn build_control(source: &Map<String, Value>) -> Result<Vec<u8>> {
     let ratios = words(field(source, "direct_frequency_ratios")?, 12, "direct frequency ratios")?;
     for index in 0..12 {
         let value = u32::from_le_bytes(ratios[index * 4..index * 4 + 4].try_into().unwrap());
-        let previous =
-            if index == 0 { 0 } else { u32::from_le_bytes(ratios[(index - 1) * 4..index * 4].try_into().unwrap()) };
+        let previous = if index == 0 { 0 } else { u32::from_le_bytes(ratios[(index - 1) * 4..index * 4].try_into().unwrap()) };
         if value & 0x8000_0000 == 0 || (index > 0 && value <= previous) {
             return error("direct frequency ratios are not increasing fixed-point values");
         }
@@ -290,8 +250,7 @@ fn build_control(source: &Map<String, Value>) -> Result<Vec<u8>> {
     let samples = unsigned_halfwords(field(source, "pcm_samples_per_vblank")?, 12, "PCM samples per VBlank")?;
     for index in 0..12 {
         let value = u16::from_le_bytes(samples[index * 2..index * 2 + 2].try_into().unwrap());
-        let previous =
-            if index == 0 { 0 } else { u16::from_le_bytes(samples[(index - 1) * 2..index * 2].try_into().unwrap()) };
+        let previous = if index == 0 { 0 } else { u16::from_le_bytes(samples[(index - 1) * 2..index * 2].try_into().unwrap()) };
         if value == 0 || (index > 0 && value <= previous) {
             return error("PCM sample counts are not increasing");
         }
@@ -325,12 +284,7 @@ fn tone_address(value: &Value) -> Result<usize> {
         return error("rhythm tone symbol differs");
     };
     let bytes = symbol.as_bytes();
-    if bytes.len() != 10
-        || !symbol.starts_with("bank_")
-        || !matches!(bytes[5], b'0' | b'1')
-        || bytes[6] != b'_'
-        || !bytes[7..].iter().all(u8::is_ascii_digit)
-    {
+    if bytes.len() != 10 || !symbol.starts_with("bank_") || !matches!(bytes[5], b'0' | b'1') || bytes[6] != b'_' || !bytes[7..].iter().all(u8::is_ascii_digit) {
         return error("rhythm tone symbol differs");
     }
     let bank = (bytes[5] - b'0') as usize;
@@ -380,11 +334,7 @@ fn build_tone_record(value: &Value, label: &str) -> Result<Vec<u8>> {
         return Ok(output);
     }
     let kind = kind.ok_or_else(|| format!("{label} tone kind differs"))?;
-    let base = [("pcm", 0), ("pulse_1", 1), ("pulse_2", 2), ("wave", 3), ("noise", 4)]
-        .iter()
-        .find(|(name, _)| *name == kind)
-        .map(|(_, base)| *base)
-        .ok_or_else(|| format!("{label} tone kind differs"))?;
+    let base = [("pcm", 0), ("pulse_1", 1), ("pulse_2", 2), ("wave", 3), ("noise", 4)].iter().find(|(name, _)| *name == kind).map(|(_, base)| *base).ok_or_else(|| format!("{label} tone kind differs"))?;
     let fixed = field(object, "fixed_pitch")?.as_bool().ok_or_else(|| format!("{label} fixed-pitch flag differs"))?;
     let type_byte = base | if fixed { 8 } else { 0 };
     if ![0, 1, 8, 9, 10, 11, 12].contains(&type_byte) {
@@ -415,14 +365,10 @@ fn build_tones(source: &Map<String, Value>) -> Result<Vec<u8>> {
         exact_keys(item, &["name", "address", "records"], &format!("tone bank {bank}"))?;
         let base = if bank == 0 { BANK_0_ADDRESS } else { BANK_1_ADDRESS };
         let count = if bank == 0 { 144 } else { 81 };
-        if field(item, "name")?.as_str() != Some(&format!("bank_{bank}"))
-            || field(item, "address")?.as_str() != Some(&hex(base))
-        {
+        if field(item, "name")?.as_str() != Some(&format!("bank_{bank}")) || field(item, "address")?.as_str() != Some(&hex(base)) {
             return error(format!("tone bank {bank} identity differs"));
         }
-        for (index, record) in
-            array(field(item, "records")?, count, &format!("tone bank {bank} records"))?.iter().enumerate()
-        {
+        for (index, record) in array(field(item, "records")?, count, &format!("tone bank {bank} records"))?.iter().enumerate() {
             output.extend(build_tone_record(record, &format!("tone bank {bank} record {index}"))?);
         }
     }
@@ -444,9 +390,7 @@ fn build_waveforms(source: &Map<String, Value>) -> Result<Vec<u8>> {
         if field(object, "name")?.as_str() != Some(&waveform_symbol(index)) {
             return error(format!("CGB waveform {index} name differs"));
         }
-        for (sample, value) in
-            array(field(object, "samples")?, 32, &format!("CGB waveform {index} samples"))?.iter().enumerate()
-        {
+        for (sample, value) in array(field(object, "samples")?, 32, &format!("CGB waveform {index} samples"))?.iter().enumerate() {
             let value = integer(value, 0, 15, &format!("CGB waveform {index} sample {sample}"))? as u8;
             if sample % 2 == 0 {
                 output[index * 16 + sample / 2] = value << 4;
@@ -482,8 +426,7 @@ fn build_players(source: &Map<String, Value>) -> Result<Vec<u8>> {
         }
         output[index * 12..index * 12 + 4].copy_from_slice(&(state as u32).to_le_bytes());
         output[index * 12 + 4..index * 12 + 8].copy_from_slice(&(storage as u32).to_le_bytes());
-        output[index * 12 + 8] =
-            integer(field(object, "max_tracks")?, 1, 16, &format!("music player {index} max tracks"))? as u8;
+        output[index * 12 + 8] = integer(field(object, "max_tracks")?, 1, 16, &format!("music player {index} max tracks"))? as u8;
     }
     Ok(output)
 }
@@ -502,12 +445,7 @@ pub fn build_audio_engine_data(index_path: &Path) -> Result<BuiltAudioEngineData
         child(index_path, field(sources, "waveforms")?.as_str().unwrap_or_default())?,
         child(index_path, field(sources, "players")?.as_str().unwrap_or_default())?,
     ];
-    let data = concat([
-        build_control(&read_control(&paths[0])?),
-        build_tones(&read_tones(&paths[1])?),
-        build_waveforms(&read_waveforms(&paths[2])?),
-        build_players(&read_players(&paths[3])?),
-    ])?;
+    let data = concat([build_control(&read_control(&paths[0])?), build_tones(&read_tones(&paths[1])?), build_waveforms(&read_waveforms(&paths[2])?), build_players(&read_players(&paths[3])?)])?;
     if data.len() != AUDIO_ENGINE_SIZE {
         return error("audio-engine package size differs");
     }

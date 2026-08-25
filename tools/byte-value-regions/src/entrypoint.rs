@@ -19,14 +19,7 @@ fn parse_args(args: &[String]) -> Result<Action, String> {
     match args {
         [arg] if arg == "-h" || arg == "--help" => Ok(Action::Help),
         [arg] if arg == "--self-test" => Ok(Action::SelfTest),
-        [command, source, address, size]
-            if command == "build-region-stdout"
-                && !source.starts_with('-')
-                && !address.starts_with('-')
-                && !size.starts_with('-') =>
-        {
-            Ok(Action::Build { source: source.clone(), address: address.clone(), size: size.clone() })
-        }
+        [command, source, address, size] if command == "build-region-stdout" && !source.starts_with('-') && !address.starts_with('-') && !size.starts_with('-') => Ok(Action::Build { source: source.clone(), address: address.clone(), size: size.clone() }),
         _ => Err(USAGE.to_string()),
     }
 }
@@ -57,11 +50,7 @@ fn run(arguments: &[String]) -> Result<(), String> {
     let address = parse_u32(&address)?;
     let size: usize = size.parse().map_err(|_| format!("invalid size: {size}"))?;
     let regions = build_byte_value_regions(Path::new(&source)).map_err(|error| error.to_string())?;
-    let region = regions
-        .iter()
-        .find(|region| region.address == address)
-        .filter(|region| region.data.len() == size)
-        .ok_or_else(|| "byte-value region differs from manifest".to_string())?;
+    let region = regions.iter().find(|region| region.address == address).filter(|region| region.data.len() == size).ok_or_else(|| "byte-value region differs from manifest".to_string())?;
     eprintln!(
         "{}",
         json!({

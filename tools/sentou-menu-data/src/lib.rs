@@ -14,13 +14,8 @@ pub const ADDRESS: usize = 0x080b_3940;
 pub const END: usize = 0x080b_5000;
 pub const SIZE: usize = END - ADDRESS;
 
-const GRAPHICS: &[(usize, usize, &str, usize, usize, usize, usize)] = &[
-    (0x080b_3940, 0x300, "hyouji_00.4bpp.png", 6, 2, 2, 6),
-    (0x080b_3c40, 0x100, "hyouji_01.4bpp.png", 2, 2, 2, 2),
-    (0x080b_3d40, 0x140, "moji.4bpp.png", 10, 1, 1, 10),
-    (0x080b_3e80, 0x100, "hyouji_02.4bpp.png", 2, 2, 2, 2),
-    (0x080b_3f80, 0x180, "hyouji_03.4bpp.png", 3, 2, 2, 3),
-];
+const GRAPHICS: &[(usize, usize, &str, usize, usize, usize, usize)] =
+    &[(0x080b_3940, 0x300, "hyouji_00.4bpp.png", 6, 2, 2, 6), (0x080b_3c40, 0x100, "hyouji_01.4bpp.png", 2, 2, 2, 2), (0x080b_3d40, 0x140, "moji.4bpp.png", 10, 1, 1, 10), (0x080b_3e80, 0x100, "hyouji_02.4bpp.png", 2, 2, 2, 2), (0x080b_3f80, 0x180, "hyouji_03.4bpp.png", 3, 2, 2, 3)];
 
 pub type Result<T> = std::result::Result<T, Error>;
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -77,12 +72,10 @@ fn hex(address: usize) -> String {
 
 fn atlas(path: &Path, spec: &(usize, usize, &str, usize, usize, usize, usize)) -> Result<Vec<u8>> {
     let (_, size, _, frames, tiles_wide, tiles_high, columns) = *spec;
-    let image =
-        indexed_png(&fs::read(path).map_err(|e| Error(format!("{}: {e}", path.display())))?).map_err(|e| Error(e.0))?;
+    let image = indexed_png(&fs::read(path).map_err(|e| Error(format!("{}: {e}", path.display())))?).map_err(|e| Error(e.0))?;
     let frame_width = tiles_wide * 8;
     let frame_height = tiles_high * 8;
-    if image.width as usize != columns * frame_width || image.height as usize != frames.div_ceil(columns) * frame_height
-    {
+    if image.width as usize != columns * frame_width || image.height as usize != frames.div_ceil(columns) * frame_height {
         return fail(format!("{}: atlas dimensions differ", path.display()));
     }
     let palette = (0..16)
@@ -125,18 +118,12 @@ fn unsigned_halfwords(values: Option<&Value>, count: usize, maximum: i64, name: 
 fn signed_halfwords(values: Option<&Value>, count: usize, name: &str) -> Result<Vec<u8>> {
     let mut output = Vec::with_capacity(count * 2);
     for (index, value) in array(values, count, name)?.iter().enumerate() {
-        output.extend_from_slice(
-            &(integer(Some(value), -0x8000, 0x7fff, &format!("{name} {index}"))? as i16).to_le_bytes(),
-        );
+        output.extend_from_slice(&(integer(Some(value), -0x8000, 0x7fff, &format!("{name} {index}"))? as i16).to_le_bytes());
     }
     Ok(output)
 }
 fn signed_bytes(values: Option<&Value>, count: usize, name: &str) -> Result<Vec<u8>> {
-    array(values, count, name)?
-        .iter()
-        .enumerate()
-        .map(|(index, value)| Ok(integer(Some(value), -0x80, 0x7f, &format!("{name} {index}"))? as i8 as u8))
-        .collect()
+    array(values, count, name)?.iter().enumerate().map(|(index, value)| Ok(integer(Some(value), -0x80, 0x7f, &format!("{name} {index}"))? as i8 as u8)).collect()
 }
 fn selector_ids(value: Option<&Value>) -> Result<Vec<u8>> {
     let mut ids = Vec::with_capacity(20);
@@ -157,14 +144,8 @@ fn loadouts(value: Option<&Value>) -> Result<Vec<u8>> {
     for (index, entry) in entries.iter().enumerate() {
         expected_keys(entry, &["main_ids", "extra_ids", "group"], &format!("loadout {index}"))?;
         let item = object(entry, "loadout")?;
-        let main = item
-            .get("main_ids")
-            .and_then(Value::as_array)
-            .ok_or_else(|| Error(format!("loadout {index} main IDs invalid")))?;
-        let extra = item
-            .get("extra_ids")
-            .and_then(Value::as_array)
-            .ok_or_else(|| Error(format!("loadout {index} extra IDs invalid")))?;
+        let main = item.get("main_ids").and_then(Value::as_array).ok_or_else(|| Error(format!("loadout {index} main IDs invalid")))?;
+        let extra = item.get("extra_ids").and_then(Value::as_array).ok_or_else(|| Error(format!("loadout {index} extra IDs invalid")))?;
         if main.len() > 23 || extra.len() > 7 {
             return fail(format!("loadout {index} exceeds its terminated fields"));
         }
@@ -196,26 +177,7 @@ fn loadouts(value: Option<&Value>) -> Result<Vec<u8>> {
 
 pub fn build_sentou_menu_data(index: &Path) -> Result<Vec<u8>> {
     let source = read_json(index)?;
-    expected_keys(
-        &source,
-        &[
-            "format",
-            "kind",
-            "address",
-            "end",
-            "size",
-            "graphics",
-            "cell_offsets",
-            "row_offsets",
-            "thresholds",
-            "selector_ids",
-            "loadouts",
-            "sound_ids",
-            "multipliers",
-            "alignment",
-        ],
-        "battle-menu source",
-    )?;
+    expected_keys(&source, &["format", "kind", "address", "end", "size", "graphics", "cell_offsets", "row_offsets", "thresholds", "selector_ids", "loadouts", "sound_ids", "multipliers", "alignment"], "battle-menu source")?;
     let item = object(&source, "battle-menu source")?;
     if item.get("format").and_then(Value::as_i64) != Some(1)
         || item.get("kind").and_then(Value::as_str) != Some("golden-sun-sentou-menu-data")
@@ -226,16 +188,11 @@ pub fn build_sentou_menu_data(index: &Path) -> Result<Vec<u8>> {
         return fail("battle-menu extent differs");
     }
     let graphics = array(item.get("graphics"), GRAPHICS.len(), "battle-menu graphics")?;
-    let prefix =
-        index.file_name().and_then(|name| name.to_str()).unwrap_or("").strip_suffix("index.json").unwrap_or("");
+    let prefix = index.file_name().and_then(|name| name.to_str()).unwrap_or("").strip_suffix("index.json").unwrap_or("");
     let root = index.parent().unwrap_or_else(|| Path::new("."));
     let mut output = Vec::with_capacity(SIZE);
     for (position, entry) in graphics.iter().enumerate() {
-        expected_keys(
-            entry,
-            &["address", "size", "source", "frames", "frame_tiles_wide", "frame_tiles_high", "columns"],
-            &format!("battle-menu graphic {position}"),
-        )?;
+        expected_keys(entry, &["address", "size", "source", "frames", "frame_tiles_wide", "frame_tiles_high", "columns"], &format!("battle-menu graphic {position}"))?;
         let graphic = object(entry, "battle-menu graphic")?;
         let spec = GRAPHICS[position];
         if graphic.get("address").and_then(Value::as_str) != Some(&hex(spec.0))
@@ -264,10 +221,7 @@ pub fn build_sentou_menu_data(index: &Path) -> Result<Vec<u8>> {
     }
     output.extend(signed_bytes(item.get("multipliers"), 13, "multipliers")?);
     let alignment = object(item.get("alignment").unwrap(), "battle-menu alignment")?;
-    if alignment.get("address").and_then(Value::as_str) != Some("0x080b4ac3")
-        || alignment.get("end").and_then(Value::as_str) != Some(&hex(END))
-        || alignment.get("fill").and_then(Value::as_i64) != Some(0)
-    {
+    if alignment.get("address").and_then(Value::as_str) != Some("0x080b4ac3") || alignment.get("end").and_then(Value::as_str) != Some(&hex(END)) || alignment.get("fill").and_then(Value::as_i64) != Some(0) {
         return fail("battle-menu alignment differs");
     }
     output.resize(SIZE, 0);

@@ -45,23 +45,8 @@ fn integer(value: &Value, label: &str) -> Result<u64, String> {
 }
 
 fn span(value: &Value, label: &str) -> Result<(u64, u64), String> {
-    let start = integer(
-        value
-            .get("start")
-            .or_else(|| value.get("address"))
-            .ok_or_else(|| format!("{label} has no start or address"))?,
-        &format!("{label}.start"),
-    )?;
-    let end = if let Some(end) = value.get("end") {
-        integer(end, &format!("{label}.end"))?
-    } else {
-        start
-            .checked_add(integer(
-                value.get("size").ok_or_else(|| format!("{label} has no size"))?,
-                &format!("{label}.size"),
-            )?)
-            .ok_or_else(|| format!("{label} overflows"))?
-    };
+    let start = integer(value.get("start").or_else(|| value.get("address")).ok_or_else(|| format!("{label} has no start or address"))?, &format!("{label}.start"))?;
+    let end = if let Some(end) = value.get("end") { integer(end, &format!("{label}.end"))? } else { start.checked_add(integer(value.get("size").ok_or_else(|| format!("{label} has no size"))?, &format!("{label}.size"))?).ok_or_else(|| format!("{label} overflows"))? };
     if end <= start || start < ROM_BASE || end > ROM_BASE + ROM_SIZE as u64 {
         return Err(format!("{label} is empty or outside the ROM"));
     }
@@ -84,14 +69,8 @@ fn regions(document: &Value, assembly: bool) -> Result<Vec<Region>, String> {
             let (start, end) = span(value, &format!("region {index}"))?;
             let text = |key: &str| value.get(key).and_then(Value::as_str).unwrap_or("").to_string();
             let retention = text("retention");
-            let region =
-                Region { start, end, kind: text("kind"), confidence: text("confidence"), evidence: text("evidence") };
-            if assembly
-                && (region.kind.is_empty()
-                    || region.confidence.is_empty()
-                    || region.evidence.is_empty()
-                    || retention.is_empty())
-            {
+            let region = Region { start, end, kind: text("kind"), confidence: text("confidence"), evidence: text("evidence") };
+            if assembly && (region.kind.is_empty() || region.confidence.is_empty() || region.evidence.is_empty() || retention.is_empty()) {
                 return Err(format!("assembly region at 0x{start:08x} lacks retained classification evidence"));
             }
             Ok(region)
@@ -110,10 +89,7 @@ fn mark_source(mask: &mut [u8], region: &Region, bit: u8, label: &str) -> Result
     let end = (region.end - ROM_BASE) as usize;
     for (offset, byte) in mask[start..end].iter_mut().enumerate() {
         if *byte & 1 == 0 {
-            return Err(format!(
-                "{label} at 0x{:08x} lies outside the executable inventory",
-                region.start + offset as u64
-            ));
+            return Err(format!("{label} at 0x{:08x} lies outside the executable inventory", region.start + offset as u64));
         }
         if *byte & 6 != 0 {
             return Err(format!("source regions overlap at 0x{:08x}", region.start + offset as u64));
@@ -124,12 +100,8 @@ fn mark_source(mask: &mut [u8], region: &Region, bit: u8, label: &str) -> Result
 }
 
 fn stale(output: &Path, source: &Path) -> Result<(), String> {
-    let built = std::fs::metadata(output)
-        .and_then(|metadata| metadata.modified())
-        .map_err(|error| format!("{}: {error}", output.display()))?;
-    let edited = std::fs::metadata(source)
-        .and_then(|metadata| metadata.modified())
-        .map_err(|error| format!("{}: {error}", source.display()))?;
+    let built = std::fs::metadata(output).and_then(|metadata| metadata.modified()).map_err(|error| format!("{}: {error}", output.display()))?;
+    let edited = std::fs::metadata(source).and_then(|metadata| metadata.modified()).map_err(|error| format!("{}: {error}", source.display()))?;
     if built < edited {
         Err(format!("{} is stale; run make build-full", output.display()))
     } else {
@@ -167,9 +139,7 @@ pub fn audit(root: &Path) -> Result<Audit, String> {
     let retained = mask.iter().filter(|byte| **byte & 4 != 0).count();
     let uncovered = mask.iter().filter(|byte| **byte == 1).count();
     if executable == 0 || uncovered != 0 || exact + retained != executable {
-        return Err(format!(
-            "retained complement differs: executable={executable} exact={exact} retained={retained} uncovered={uncovered}"
-        ));
+        return Err(format!("retained complement differs: executable={executable} exact={exact} retained={retained} uncovered={uncovered}"));
     }
 
     let mut kinds = BTreeMap::new();
@@ -183,13 +153,7 @@ pub fn audit(root: &Path) -> Result<Audit, String> {
 
 impl Audit {
     pub fn json(&self) -> Value {
-        let kinds = self
-            .kinds
-            .iter()
-            .map(|((kind, confidence), (regions, bytes))| {
-                json!({"kind":kind,"confidence":confidence,"regions":regions,"bytes":bytes})
-            })
-            .collect::<Vec<_>>();
+        let kinds = self.kinds.iter().map(|((kind, confidence), (regions, bytes))| json!({"kind":kind,"confidence":confidence,"regions":regions,"bytes":bytes})).collect::<Vec<_>>();
         json!({
             "format": 1,
             "kind": "core-retained-complement-audit",

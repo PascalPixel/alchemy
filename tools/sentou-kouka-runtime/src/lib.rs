@@ -110,10 +110,7 @@ fn build_keisu(path: &Path) -> Result<Vec<u8>> {
     let document = read_document(path)?;
     let source = object(&document, "effect coefficients")?;
 
-    if source.get("format").and_then(Value::as_i64) != Some(1)
-        || string(source, "address", "effect coefficients")? != hex(KEISU_ADDRESS)
-        || source.get("size").and_then(Value::as_u64) != Some((GOUSEI_ADDRESS - KEISU_ADDRESS) as u64)
-    {
+    if source.get("format").and_then(Value::as_i64) != Some(1) || string(source, "address", "effect coefficients")? != hex(KEISU_ADDRESS) || source.get("size").and_then(Value::as_u64) != Some((GOUSEI_ADDRESS - KEISU_ADDRESS) as u64) {
         return fail("effect coefficient extent differs");
     }
     let mut output = Vec::new();
@@ -150,15 +147,10 @@ fn build_table(path: &Path, address: u32, end: u32, first_u16: bool) -> Result<V
     let document = read_document(path)?;
     let source = object(&document, "effect table source")?;
 
-    if source.get("format").and_then(Value::as_i64) != Some(1)
-        || string(source, "address", "effect table")? != hex(address)
-        || source.get("size").and_then(Value::as_u64) != Some((end - address) as u64)
-    {
+    if source.get("format").and_then(Value::as_i64) != Some(1) || string(source, "address", "effect table")? != hex(address) || source.get("size").and_then(Value::as_u64) != Some((end - address) as u64) {
         return fail("effect table extent differs");
     }
-    let tables = field(source, "tables", "effect tables")?
-        .as_array()
-        .ok_or_else(|| Error("effect tables must be an array".to_string()))?;
+    let tables = field(source, "tables", "effect tables")?.as_array().ok_or_else(|| Error("effect tables must be an array".to_string()))?;
     if tables.is_empty() {
         return fail("effect tables must not be empty");
     }
@@ -167,21 +159,15 @@ fn build_table(path: &Path, address: u32, end: u32, first_u16: bool) -> Result<V
     for (index, table) in tables.iter().enumerate() {
         let table = object(table, &format!("effect table {index}"))?;
         let kind = if first_u16 && index == 0 { TableType::U16 } else { TableType::U8 };
-        let expected_name =
-            format!("{}_{}", if address == HYOU_A_ADDRESS { "hyou_a" } else { "hyou_b" }, format!("{index:03}"));
+        let expected_name = format!("{}_{}", if address == HYOU_A_ADDRESS { "hyou_a" } else { "hyou_b" }, format!("{index:03}"));
         let expected_type = if matches!(kind, TableType::U16) { "u16" } else { "u8" };
-        if string(table, "name", "effect table")? != expected_name
-            || string(table, "address", "effect table")? != hex(cursor)
-            || string(table, "type", "effect table")? != expected_type
-        {
+        if string(table, "name", "effect table")? != expected_name || string(table, "address", "effect table")? != hex(cursor) || string(table, "type", "effect table")? != expected_type {
             return fail(format!("effect table {index} identity differs"));
         }
         let values = field(table, "values", "effect table")?;
         let count = values.as_array().ok_or_else(|| Error(format!("{expected_name} requires an array")))?.len();
         let encoded = encode_values(values, kind, count, &expected_name)?;
-        cursor = cursor
-            .checked_add(encoded.len() as u32)
-            .ok_or_else(|| Error("effect table extent overflowed".to_string()))?;
+        cursor = cursor.checked_add(encoded.len() as u32).ok_or_else(|| Error("effect table extent overflowed".to_string()))?;
         output.extend(encoded);
     }
     if cursor != end || output.len() != (end - address) as usize {
@@ -215,8 +201,7 @@ fn build_callbacks(path: &Path) -> Result<Vec<u8>> {
     {
         return fail("effect callback directory identity differs");
     }
-    let entries =
-        array(field(source, "entries", "effect callback directory")?, CALLBACK_COUNT, "effect callback directory")?;
+    let entries = array(field(source, "entries", "effect callback directory")?, CALLBACK_COUNT, "effect callback directory")?;
     let mut output = vec![0; CALLBACK_COUNT * 4];
     let mut nonnull = 0;
     let mut unique = std::collections::HashSet::new();
@@ -277,36 +262,9 @@ fn assemble(path: &Path, base: u32, expected_size: usize) -> Result<Vec<u8>> {
     let elf = work.join("source.elf");
     let binary = work.join("source.bin");
     let result = (|| {
-        command(
-            "arm-none-eabi-as",
-            &[
-                "-mcpu=arm7tdmi".into(),
-                "-mthumb-interwork".into(),
-                "-o".into(),
-                object.to_string_lossy().into_owned(),
-                path.to_string_lossy().into_owned(),
-            ],
-        )?;
-        command(
-            "arm-none-eabi-ld",
-            &[
-                format!("-Ttext={}", hex(base)),
-                "-o".into(),
-                elf.to_string_lossy().into_owned(),
-                object.to_string_lossy().into_owned(),
-            ],
-        )?;
-        command(
-            "arm-none-eabi-objcopy",
-            &[
-                "-O".into(),
-                "binary".into(),
-                "-j".into(),
-                ".text".into(),
-                elf.to_string_lossy().into_owned(),
-                binary.to_string_lossy().into_owned(),
-            ],
-        )?;
+        command("arm-none-eabi-as", &["-mcpu=arm7tdmi".into(), "-mthumb-interwork".into(), "-o".into(), object.to_string_lossy().into_owned(), path.to_string_lossy().into_owned()])?;
+        command("arm-none-eabi-ld", &[format!("-Ttext={}", hex(base)), "-o".into(), elf.to_string_lossy().into_owned(), object.to_string_lossy().into_owned()])?;
+        command("arm-none-eabi-objcopy", &["-O".into(), "binary".into(), "-j".into(), ".text".into(), elf.to_string_lossy().into_owned(), binary.to_string_lossy().into_owned()])?;
         let bytes = fs::read(&binary).map_err(|e| Error(e.to_string()))?;
         if bytes.len() != expected_size {
             return fail(format!("{}: assembled size differs", path.display()));
@@ -342,37 +300,15 @@ fn parse_index(path: &Path) -> Result<Sources> {
     }
     let sources = object(field(index, "sources", "runtime sources")?, "runtime sources")?;
 
-    let expected = [
-        ("keisu", "keisu.json"),
-        ("gousei", "gousei.s"),
-        ("hyou_a", "hyou_a.json"),
-        ("kansuu", "kansuu_hyou.json"),
-        ("hyou_b", "hyou_b.json"),
-        ("gousei_iro", "gousei_iro.s"),
-        ("bit_mask", "bit_mask.json"),
-        ("tenkai", "tenkai.s"),
-    ];
+    let expected = [("keisu", "keisu.json"), ("gousei", "gousei.s"), ("hyou_a", "hyou_a.json"), ("kansuu", "kansuu_hyou.json"), ("hyou_b", "hyou_b.json"), ("gousei_iro", "gousei_iro.s"), ("bit_mask", "bit_mask.json"), ("tenkai", "tenkai.s")];
     for (key, value) in expected {
         if string(sources, key, "runtime source")? != value {
             return fail(format!("battle effect runtime {key} source differs"));
         }
     }
     let name = path.file_name().and_then(|x| x.to_str()).unwrap_or("");
-    let prefix = name
-        .strip_suffix("index.json")
-        .ok_or_else(|| Error("battle effect runtime index name differs".into()))?
-        .to_string();
-    Ok(Sources {
-        prefix,
-        keisu: "keisu.json".into(),
-        gousei: "gousei.s".into(),
-        hyou_a: "hyou_a.json".into(),
-        kansuu: "kansuu_hyou.json".into(),
-        hyou_b: "hyou_b.json".into(),
-        gousei_iro: "gousei_iro.s".into(),
-        bit_mask: "bit_mask.json".into(),
-        tenkai: "tenkai.s".into(),
-    })
+    let prefix = name.strip_suffix("index.json").ok_or_else(|| Error("battle effect runtime index name differs".into()))?.to_string();
+    Ok(Sources { prefix, keisu: "keisu.json".into(), gousei: "gousei.s".into(), hyou_a: "hyou_a.json".into(), kansuu: "kansuu_hyou.json".into(), hyou_b: "hyou_b.json".into(), gousei_iro: "gousei_iro.s".into(), bit_mask: "bit_mask.json".into(), tenkai: "tenkai.s".into() })
 }
 fn source_path(directory: &Path, sources: &Sources, name: &str) -> PathBuf {
     directory.join(format!("{}{}", sources.prefix, name))
@@ -382,36 +318,14 @@ pub fn build_sentou_kouka_runtime(index_path: &Path) -> Result<Vec<u8>> {
     let directory = index_path.parent().ok_or_else(|| Error("index has no parent".into()))?;
     let mut output = Vec::new();
     output.extend(build_keisu(&source_path(directory, &sources, &sources.keisu))?);
-    output.extend(assemble(
-        &source_path(directory, &sources, &sources.gousei),
-        GOUSEI_ADDRESS,
-        (HYOU_A_ADDRESS - GOUSEI_ADDRESS) as usize,
-    )?);
-    output.extend(build_table(
-        &source_path(directory, &sources, &sources.hyou_a),
-        HYOU_A_ADDRESS,
-        KANSUU_ADDRESS,
-        true,
-    )?);
+    output.extend(assemble(&source_path(directory, &sources, &sources.gousei), GOUSEI_ADDRESS, (HYOU_A_ADDRESS - GOUSEI_ADDRESS) as usize)?);
+    output.extend(build_table(&source_path(directory, &sources, &sources.hyou_a), HYOU_A_ADDRESS, KANSUU_ADDRESS, true)?);
     output.extend(build_callbacks(&source_path(directory, &sources, &sources.kansuu))?);
-    output.extend(build_table(
-        &source_path(directory, &sources, &sources.hyou_b),
-        HYOU_B_ADDRESS,
-        GOUSEI_IRO_ADDRESS,
-        false,
-    )?);
-    output.extend(assemble(
-        &source_path(directory, &sources, &sources.gousei_iro),
-        GOUSEI_IRO_ADDRESS,
-        (BIT_MASK_ADDRESS - GOUSEI_IRO_ADDRESS) as usize,
-    )?);
+    output.extend(build_table(&source_path(directory, &sources, &sources.hyou_b), HYOU_B_ADDRESS, GOUSEI_IRO_ADDRESS, false)?);
+    output.extend(assemble(&source_path(directory, &sources, &sources.gousei_iro), GOUSEI_IRO_ADDRESS, (BIT_MASK_ADDRESS - GOUSEI_IRO_ADDRESS) as usize)?);
     output.extend(build_masks(&source_path(directory, &sources, &sources.bit_mask))?);
     output.resize(output.len() + (TENKAI_ADDRESS - ZERO_FILL_ADDRESS) as usize, 0);
-    output.extend(assemble(
-        &source_path(directory, &sources, &sources.tenkai),
-        TENKAI_ADDRESS,
-        (SENTOU_KOUKA_END - TENKAI_ADDRESS) as usize,
-    )?);
+    output.extend(assemble(&source_path(directory, &sources, &sources.tenkai), TENKAI_ADDRESS, (SENTOU_KOUKA_END - TENKAI_ADDRESS) as usize)?);
     if output.len() != SENTOU_KOUKA_SIZE {
         return fail("battle effect runtime output size differs");
     }
@@ -423,9 +337,7 @@ pub fn run(args: Vec<String>) -> Result<()> {
         return Ok(());
     }
     match args.as_slice() {
-        [command, index] if command == "build-stdout" => io::stdout()
-            .write_all(&build_sentou_kouka_runtime(Path::new(index))?)
-            .map_err(|error| Error(error.to_string())),
+        [command, index] if command == "build-stdout" => io::stdout().write_all(&build_sentou_kouka_runtime(Path::new(index))?).map_err(|error| Error(error.to_string())),
         _ => fail(USAGE),
     }
 }

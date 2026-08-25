@@ -171,11 +171,7 @@ fn read_mask(path: &Path) -> Result<Vec<u8>> {
     if image.pixels.len() != PLANE {
         return Err(err("map sentinel mask is invalid"));
     }
-    image
-        .pixels
-        .into_iter()
-        .map(|value| if value == 0 || value == 1 { Ok(value as u8) } else { Err(err("map sentinel mask is invalid")) })
-        .collect()
+    image.pixels.into_iter().map(|value| if value == 0 || value == 1 { Ok(value as u8) } else { Err(err("map sentinel mask is invalid")) }).collect()
 }
 
 fn token_value(token: &PaletteGroup) -> Value {
@@ -225,16 +221,8 @@ fn parse_tokens(value: &Value) -> Result<Vec<PaletteGroup>> {
             match token.first().and_then(Value::as_str) {
                 Some("z") if token.len() == 1 => Ok(PaletteGroup::Zeros),
                 Some("g") if token.len() == 2 => {
-                    let operations = token[1]
-                        .as_array()
-                        .ok_or_else(|| err(format!("palette token group {index} must be an array")))?;
-                    Ok(PaletteGroup::Group(
-                        operations
-                            .iter()
-                            .enumerate()
-                            .map(|(operation_index, operation)| parse_operation(operation, operation_index))
-                            .collect::<Result<Vec<_>>>()?,
-                    ))
+                    let operations = token[1].as_array().ok_or_else(|| err(format!("palette token group {index} must be an array")))?;
+                    Ok(PaletteGroup::Group(operations.iter().enumerate().map(|(operation_index, operation)| parse_operation(operation, operation_index)).collect::<Result<Vec<_>>>()?))
                 }
                 _ => Err(err(format!("palette token {index} is invalid"))),
             }
@@ -255,17 +243,11 @@ fn plan_value(decoded_size: usize, encoded_size: usize, tokens: &[PaletteGroup],
 
 fn plan_parts(plan: &Value) -> Result<(Vec<PaletteGroup>, String)> {
     let object: &Map<String, Value> = plan.as_object().ok_or_else(|| err("kind-1 grid plan must be an object"))?;
-    if number(object.get("format").ok_or_else(|| err("invalid format"))?, "format")? != 1
-        || text(object.get("codec").ok_or_else(|| err("invalid codec"))?, "codec")? != "golden-sun-kind1-grid"
-    {
+    if number(object.get("format").ok_or_else(|| err("invalid format"))?, "format")? != 1 || text(object.get("codec").ok_or_else(|| err("invalid codec"))?, "codec")? != "golden-sun-kind1-grid" {
         return Err(err("unsupported kind-1 grid plan"));
     }
     let tokens = parse_tokens(object.get("tokens").ok_or_else(|| err("invalid tokens"))?)?;
-    let lookahead = object
-        .get("lookahead")
-        .map(|value| text(value, "lookahead").map(str::to_owned))
-        .transpose()?
-        .unwrap_or_default();
+    let lookahead = object.get("lookahead").map(|value| text(value, "lookahead").map(str::to_owned)).transpose()?.unwrap_or_default();
     Ok((tokens, lookahead))
 }
 
@@ -301,11 +283,7 @@ pub fn export_grid(data: &[u8], directory: &Path) -> Result<ExportStats> {
     if rebuilt != data {
         return Err(err("exported kind-1 grid does not round-trip"));
     }
-    Ok(ExportStats {
-        tokens: tokens.len(),
-        sentinels: mask.iter().filter(|value| **value != 0).count(),
-        encoded: data.len(),
-    })
+    Ok(ExportStats { tokens: tokens.len(), sentinels: mask.iter().filter(|value| **value != 0).count(), encoded: data.len() })
 }
 
 pub fn verify_grid(rom: &[u8], address: usize, size: usize, directory: &Path) -> Result<ExportStats> {
@@ -318,11 +296,7 @@ pub fn verify_grid(rom: &[u8], address: usize, size: usize, directory: &Path) ->
     }
     let (decoded, _, tokens) = decode_palette_trace(&data, 1, data.len(), 0x10000).map_err(|error| error.0)?;
     let (_, mask) = transform(&decoded)?;
-    Ok(ExportStats {
-        tokens: tokens.len(),
-        sentinels: mask.iter().filter(|value| **value != 0).count(),
-        encoded: data.len(),
-    })
+    Ok(ExportStats { tokens: tokens.len(), sentinels: mask.iter().filter(|value| **value != 0).count(), encoded: data.len() })
 }
 
 fn rom_range(rom: &[u8], address: usize, size: usize) -> Result<&[u8]> {

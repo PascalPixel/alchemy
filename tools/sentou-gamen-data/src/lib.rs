@@ -53,56 +53,11 @@ struct GraphicSpec {
 }
 
 const GRAPHICS: [GraphicSpec; 5] = [
-    GraphicSpec {
-        address: ADDRESS,
-        size: 0x600,
-        source: "koma.4bpp.png",
-        role: Role::FrameAtlas,
-        tiles_wide: 2,
-        tiles_high: 2,
-        frames: 12,
-        columns: 3,
-    },
-    GraphicSpec {
-        address: 0x080a_f04c,
-        size: 0x40,
-        source: "obi.4bpp.png",
-        role: Role::Flat,
-        tiles_wide: 2,
-        tiles_high: 1,
-        frames: 0,
-        columns: 0,
-    },
-    GraphicSpec {
-        address: 0x080a_f08c,
-        size: 0x100,
-        source: "men.4bpp.png",
-        role: Role::Flat,
-        tiles_wide: 4,
-        tiles_high: 2,
-        frames: 0,
-        columns: 0,
-    },
-    GraphicSpec {
-        address: 0x080a_f18c,
-        size: 0x80,
-        source: "hyouji.4bpp.png",
-        role: Role::Flat,
-        tiles_wide: 2,
-        tiles_high: 2,
-        frames: 0,
-        columns: 0,
-    },
-    GraphicSpec {
-        address: MASK_TILE_ADDRESS,
-        size: 0x20,
-        source: "masuku.4bpp.png",
-        role: Role::Flat,
-        tiles_wide: 1,
-        tiles_high: 1,
-        frames: 0,
-        columns: 0,
-    },
+    GraphicSpec { address: ADDRESS, size: 0x600, source: "koma.4bpp.png", role: Role::FrameAtlas, tiles_wide: 2, tiles_high: 2, frames: 12, columns: 3 },
+    GraphicSpec { address: 0x080a_f04c, size: 0x40, source: "obi.4bpp.png", role: Role::Flat, tiles_wide: 2, tiles_high: 1, frames: 0, columns: 0 },
+    GraphicSpec { address: 0x080a_f08c, size: 0x100, source: "men.4bpp.png", role: Role::Flat, tiles_wide: 4, tiles_high: 2, frames: 0, columns: 0 },
+    GraphicSpec { address: 0x080a_f18c, size: 0x80, source: "hyouji.4bpp.png", role: Role::Flat, tiles_wide: 2, tiles_high: 2, frames: 0, columns: 0 },
+    GraphicSpec { address: MASK_TILE_ADDRESS, size: 0x20, source: "masuku.4bpp.png", role: Role::Flat, tiles_wide: 1, tiles_high: 1, frames: 0, columns: 0 },
 ];
 
 fn object<'a>(value: &'a Value, name: &str) -> Result<&'a serde_json::Map<String, Value>> {
@@ -158,31 +113,8 @@ fn source_json(path: &Path) -> Result<Value> {
     if !is_canonical_json_text(&text, &value) {
         return err("battle-screen source is not canonical JSON");
     }
-    keys(
-        &value,
-        &[
-            "format",
-            "kind",
-            "address",
-            "end",
-            "size",
-            "graphics",
-            "display_glyphs",
-            "mask_rows",
-            "auxiliary_display_glyphs",
-            "offsets",
-            "orders",
-            "lookup_ids",
-            "mode_selectors",
-            "object_resource_ids",
-            "alignment",
-        ],
-        "battle-screen source",
-    )?;
-    if value.get("format") != Some(&Value::from(1))
-        || value.get("kind").and_then(Value::as_str) != Some("golden-sun-sentou-gamen-data")
-        || value.get("size").and_then(Value::as_u64) != Some(SIZE as u64)
-    {
+    keys(&value, &["format", "kind", "address", "end", "size", "graphics", "display_glyphs", "mask_rows", "auxiliary_display_glyphs", "offsets", "orders", "lookup_ids", "mode_selectors", "object_resource_ids", "alignment"], "battle-screen source")?;
+    if value.get("format") != Some(&Value::from(1)) || value.get("kind").and_then(Value::as_str) != Some("golden-sun-sentou-gamen-data") || value.get("size").and_then(Value::as_u64) != Some(SIZE as u64) {
         return err("battle-screen extent differs");
     }
     address(value.get("address"), ADDRESS, "battle-screen address")?;
@@ -202,9 +134,7 @@ fn layout(spec: GraphicSpec) -> (usize, usize, Vec<(usize, usize)>) {
     let mut tiles = Vec::new();
     for frame in 0..frame_count {
         let (left, top) = match spec.role {
-            Role::FrameAtlas => {
-                (frame % spec.columns * spec.tiles_wide * 8, frame / spec.columns * spec.tiles_high * 8)
-            }
+            Role::FrameAtlas => (frame % spec.columns * spec.tiles_wide * 8, frame / spec.columns * spec.tiles_high * 8),
             Role::Flat => (0, 0),
         };
         for y in 0..spec.tiles_high {
@@ -232,8 +162,7 @@ fn child(index_path: &Path, name: &str) -> Result<PathBuf> {
 }
 
 fn graphic(path: &Path, spec: GraphicSpec) -> Result<Vec<u8>> {
-    let image =
-        indexed_png(&fs::read(path).map_err(|e| Error(format!("{}: {e}", path.display())))?).map_err(|e| Error(e.0))?;
+    let image = indexed_png(&fs::read(path).map_err(|e| Error(format!("{}: {e}", path.display())))?).map_err(|e| Error(e.0))?;
     let (width, height, tiles) = layout(spec);
     if image.width as usize != width || image.height as usize != height {
         return err(format!("{}: graphic dimensions differ", path.display()));
@@ -276,8 +205,7 @@ fn glyph_cells(value: &Value, rows: usize, columns: usize, name: &str) -> Result
     let mut out = vec![0u8; rows * columns * 4];
     for (r, row) in array(value, rows, name)?.iter().enumerate() {
         for (c, cell) in array(row, columns, &format!("{name} row {r}"))?.iter().enumerate() {
-            let glyphs =
-                cell.as_array().ok_or_else(|| Error(format!("{name} {r}:{c} requires one to three glyphs")))?;
+            let glyphs = cell.as_array().ok_or_else(|| Error(format!("{name} {r}:{c} requires one to three glyphs")))?;
             if !(1..=3).contains(&glyphs.len()) {
                 return err(format!("{name} {r}:{c} requires one to three glyphs"));
             }
@@ -290,22 +218,14 @@ fn glyph_cells(value: &Value, rows: usize, columns: usize, name: &str) -> Result
 }
 
 fn signed_bytes(value: &Value, count: usize, name: &str) -> Result<Vec<u8>> {
-    Ok(array(value, count, name)?
-        .iter()
-        .enumerate()
-        .map(|(i, v)| integer(Some(v), -128, 127, &format!("{name} {i}")).map(|n| n as i8 as u8))
-        .collect::<Result<Vec<_>>>()?)
+    Ok(array(value, count, name)?.iter().enumerate().map(|(i, v)| integer(Some(v), -128, 127, &format!("{name} {i}")).map(|n| n as i8 as u8)).collect::<Result<Vec<_>>>()?)
 }
 
 fn orders(value: &Value) -> Result<Vec<u8>> {
     let lengths = [10, 10, 19, 19];
     let mut out = Vec::new();
     for (i, row) in array(value, 4, "orders")?.iter().enumerate() {
-        let values: Vec<u8> = array(row, lengths[i], "order")?
-            .iter()
-            .enumerate()
-            .map(|(j, v)| unsigned(Some(v), 0xfe, &format!("order {i}:{j}")).map(|n| n as u8))
-            .collect::<Result<_>>()?;
+        let values: Vec<u8> = array(row, lengths[i], "order")?.iter().enumerate().map(|(j, v)| unsigned(Some(v), 0xfe, &format!("order {i}:{j}")).map(|n| n as u8)).collect::<Result<_>>()?;
         let mut sorted = values.clone();
         sorted.sort_unstable();
         let mut expected: Vec<u8> = (0..10).collect();
@@ -329,25 +249,16 @@ pub fn build_sentou_gamen_data(index_path: &Path) -> Result<(Vec<u8>, Vec<PathBu
     for (i, entry) in entries.iter().enumerate() {
         let spec = GRAPHICS[i];
         let role_keys = match spec.role {
-            Role::FrameAtlas => {
-                &["address", "size", "source", "role", "frames", "frame_tiles_wide", "frame_tiles_high", "columns"][..]
-            }
+            Role::FrameAtlas => &["address", "size", "source", "role", "frames", "frame_tiles_wide", "frame_tiles_high", "columns"][..],
             Role::Flat => &["address", "size", "source", "role", "tiles_wide", "tiles_high"][..],
         };
         keys(entry, role_keys, &format!("battle-screen graphic {i}"))?;
         let o = object(entry, "battle-screen graphic")?;
         address(o.get("address"), spec.address, &format!("battle-screen graphic {i} address"))?;
-        if o.get("size").and_then(Value::as_u64) != Some(spec.size as u64)
-            || o.get("source").and_then(Value::as_str) != Some(spec.source)
-        {
+        if o.get("size").and_then(Value::as_u64) != Some(spec.size as u64) || o.get("source").and_then(Value::as_str) != Some(spec.source) {
             return err(format!("battle-screen graphic {i} layout differs"));
         }
-        if matches!(spec.role, Role::FrameAtlas)
-            && (o.get("frames").and_then(Value::as_u64) != Some(12)
-                || o.get("frame_tiles_wide").and_then(Value::as_u64) != Some(2)
-                || o.get("frame_tiles_high").and_then(Value::as_u64) != Some(2)
-                || o.get("columns").and_then(Value::as_u64) != Some(3))
-        {
+        if matches!(spec.role, Role::FrameAtlas) && (o.get("frames").and_then(Value::as_u64) != Some(12) || o.get("frame_tiles_wide").and_then(Value::as_u64) != Some(2) || o.get("frame_tiles_high").and_then(Value::as_u64) != Some(2) || o.get("columns").and_then(Value::as_u64) != Some(3)) {
             return err(format!("battle-screen graphic {i} frame layout differs"));
         }
         let path = child(index_path, spec.source)?;

@@ -25,9 +25,7 @@ impl Rows {
 }
 pub fn parse_row(line: &str) -> Option<(&str, &str, &str)> {
     static ROW: std::sync::OnceLock<Regex> = std::sync::OnceLock::new();
-    ROW.get_or_init(|| Regex::new(r"^\s+([0-9a-f]+):\t([0-9a-f ]+)\t(.*)$").unwrap()).captures(line).map(|captures| {
-        (captures.get(1).unwrap().as_str(), captures.get(2).unwrap().as_str(), captures.get(3).unwrap().as_str())
-    })
+    ROW.get_or_init(|| Regex::new(r"^\s+([0-9a-f]+):\t([0-9a-f ]+)\t(.*)$").unwrap()).captures(line).map(|captures| (captures.get(1).unwrap().as_str(), captures.get(2).unwrap().as_str(), captures.get(3).unwrap().as_str()))
 }
 pub fn rows_from_output(output: &str, base: f64) -> Rows {
     let mut rows = Rows::default();
@@ -39,20 +37,7 @@ pub fn rows_from_output(output: &str, base: f64) -> Rows {
     rows
 }
 pub fn disassemble(binary: &str, base: f64) -> Result<Rows, String> {
-    let output = Command::new("arm-none-eabi-objdump")
-        .args([
-            "-D",
-            "-b",
-            "binary",
-            "-m",
-            "arm",
-            "-M",
-            "force-thumb",
-            &format!("--adjust-vma=0x{:x}", base as u64),
-            binary,
-        ])
-        .output()
-        .map_err(|error| format!("objdump failed: {error}"))?;
+    let output = Command::new("arm-none-eabi-objdump").args(["-D", "-b", "binary", "-m", "arm", "-M", "force-thumb", &format!("--adjust-vma=0x{:x}", base as u64), binary]).output().map_err(|error| format!("objdump failed: {error}"))?;
     if !output.status.success() {
         return Err(format!("objdump failed: {}", String::from_utf8_lossy(&output.stderr).trim()));
     }

@@ -66,13 +66,7 @@ pub fn js_number(text: &str) -> f64 {
         return sign * f64::INFINITY;
     }
     match body.parse::<f64>() {
-        Ok(v)
-            if !body.eq_ignore_ascii_case("inf")
-                && !body.eq_ignore_ascii_case("infinity")
-                && !body.eq_ignore_ascii_case("nan") =>
-        {
-            sign * v
-        }
+        Ok(v) if !body.eq_ignore_ascii_case("inf") && !body.eq_ignore_ascii_case("infinity") && !body.eq_ignore_ascii_case("nan") => sign * v,
         _ => f64::NAN,
     }
 }
@@ -131,14 +125,7 @@ pub struct SequenceBuildReport {
 
 pub fn build_reserve_sequence(base: u32) -> (Vec<u8>, SequenceBuildReport) {
     let data = vec![0xbe, 120, 0xbc, 0, 0xbb, 30, 0xbd, 21, 0xd0, 61, 127, 0x81, 66, 0x81, 0xee, 69, 0xa0, 0xb1];
-    let report = SequenceBuildReport {
-        base,
-        end: base + data.len() as u32,
-        bytes: data.len(),
-        streams: 1,
-        tracks: 0,
-        events: 11,
-    };
+    let report = SequenceBuildReport { base, end: base + data.len() as u32, bytes: data.len(), streams: 1, tracks: 0, events: 11 };
     (data, report)
 }
 
@@ -186,11 +173,6 @@ pub fn build_sound_table(source: &SoundTableSource) -> Result<(Vec<u8>, SoundTab
     if !unused.is_empty() {
         return Err(format!("unused sound symbols: {}", unused.join(", ")));
     }
-    let report = SoundTableReport {
-        entries: source.entries.len(),
-        unique_headers: symbols.len(),
-        players,
-        mirrored_auxiliary: true,
-    };
+    let report = SoundTableReport { entries: source.entries.len(), unique_headers: symbols.len(), players, mirrored_auxiliary: true };
     Ok((built, report))
 }

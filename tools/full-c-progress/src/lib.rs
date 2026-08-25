@@ -18,17 +18,11 @@ use std::path::{Path, PathBuf};
 const DEFAULT_TARGET: &str = "gs1-en";
 
 fn root() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .and_then(Path::parent)
-        .expect("crate lives two levels below the repository")
-        .to_path_buf()
+    Path::new(env!("CARGO_MANIFEST_DIR")).parent().and_then(Path::parent).expect("crate lives two levels below the repository").to_path_buf()
 }
 
 fn read(path: &Path) -> Result<String, String> {
-    std::fs::read(path)
-        .map(|bytes| String::from_utf8_lossy(&bytes).into_owned())
-        .map_err(|error| format!("cannot read {}: {error}", path.display()))
+    std::fs::read(path).map(|bytes| String::from_utf8_lossy(&bytes).into_owned()).map_err(|error| format!("cannot read {}: {error}", path.display()))
 }
 
 fn json(path: &Path) -> Result<Value, String> {
@@ -44,9 +38,7 @@ fn text(value: &Value, key: &str) -> String {
 }
 
 fn integer(value: &Value, key: &str) -> Option<i64> {
-    get(value, key)
-        .and_then(Value::as_i64)
-        .or_else(|| get(value, key).and_then(Value::as_u64).and_then(|n| i64::try_from(n).ok()))
+    get(value, key).and_then(Value::as_i64).or_else(|| get(value, key).and_then(Value::as_u64).and_then(|n| i64::try_from(n).ok()))
 }
 
 fn array<'a>(value: &'a Value, key: &str) -> &'a [Value] {
@@ -121,8 +113,7 @@ fn namespace(value: &Value) -> Result<Namespace, String> {
     Ok(Namespace {
         id: text(value, "id"),
         decoded_bytes: get(value, "decoded_bytes").and_then(Value::as_i64),
-        executable_bytes: integer(value, "executable_bytes")
-            .ok_or_else(|| "executable inventory has a non-integer byte count".to_string())?,
+        executable_bytes: integer(value, "executable_bytes").ok_or_else(|| "executable inventory has a non-integer byte count".to_string())?,
         excluded_bytes: get(value, "excluded_bytes").and_then(Value::as_i64),
         audit: text(value, "audit"),
         regions,
@@ -138,30 +129,15 @@ fn inventory(value: &Value) -> Result<Inventory, String> {
         target: text(value, "target"),
         derivation: text(value, "derivation"),
         audit: text(value, "audit"),
-        total_union_bytes: integer(value, "total_union_bytes")
-            .ok_or_else(|| "executable inventory has no total_union_bytes".to_string())?,
+        total_union_bytes: integer(value, "total_union_bytes").ok_or_else(|| "executable inventory has no total_union_bytes".to_string())?,
         main: namespace(get(value, "main").ok_or("executable inventory has no main")?)?,
         overlays: array(value, "overlays").iter().map(namespace).collect::<Result<_, _>>()?,
-        caveats: get(value, "caveats")
-            .and_then(Value::as_array)
-            .map(|items| items.iter().filter_map(Value::as_str).map(str::to_string).collect()),
+        caveats: get(value, "caveats").and_then(Value::as_array).map(|items| items.iter().filter_map(Value::as_str).map(str::to_string).collect()),
     })
 }
 
 fn regions_json(regions: &[Region]) -> Value {
-    Value::Array(
-        regions
-            .iter()
-            .map(|row| {
-                object(vec![
-                    ("start", number(row.span.start)),
-                    ("end", number(row.span.end)),
-                    ("kind", string(&row.kind)),
-                    ("evidence", string(&row.evidence)),
-                ])
-            })
-            .collect(),
-    )
+    Value::Array(regions.iter().map(|row| object(vec![("start", number(row.span.start)), ("end", number(row.span.end)), ("kind", string(&row.kind)), ("evidence", string(&row.evidence))])).collect())
 }
 
 fn namespace_json(value: &Namespace) -> Value {
@@ -173,11 +149,7 @@ fn namespace_json(value: &Namespace) -> Value {
     if let Some(bytes) = value.excluded_bytes {
         fields.push(("excluded_bytes", number(bytes)));
     }
-    fields.extend([
-        ("audit", string(&value.audit)),
-        ("intervals", regions_json(&value.regions)),
-        ("evidence", Value::Array(value.evidence.iter().map(string).collect())),
-    ]);
+    fields.extend([("audit", string(&value.audit)), ("intervals", regions_json(&value.regions)), ("evidence", Value::Array(value.evidence.iter().map(string).collect()))]);
     object(fields)
 }
 
@@ -207,20 +179,8 @@ fn report_json(value: &Report) -> Value {
         ("executable_bytes", number(value.executable_bytes)),
         ("remaining_bytes", number(value.remaining_bytes)),
         ("percent", serde_json::Number::from_f64(value.percent).map(Value::Number).unwrap_or(Value::Null)),
-        (
-            "main",
-            object(vec![
-                ("full_c_bytes", number(value.main_full_c_bytes)),
-                ("executable_bytes", number(value.main_executable_bytes)),
-            ]),
-        ),
-        (
-            "overlays",
-            object(vec![
-                ("full_c_bytes", number(value.overlays_full_c_bytes)),
-                ("executable_bytes", number(value.overlays_executable_bytes)),
-            ]),
-        ),
+        ("main", object(vec![("full_c_bytes", number(value.main_full_c_bytes)), ("executable_bytes", number(value.main_executable_bytes))])),
+        ("overlays", object(vec![("full_c_bytes", number(value.overlays_full_c_bytes)), ("executable_bytes", number(value.overlays_executable_bytes))])),
         ("audit", string("complete")),
     ])
 }
@@ -239,10 +199,7 @@ fn validate_namespace(namespace: &Namespace) -> Result<(), String> {
     }
     let measured = bytes(&executable(namespace));
     if measured != namespace.executable_bytes {
-        return Err(format!(
-            "{} executable total is stale: {} != {}",
-            namespace.id, namespace.executable_bytes, measured
-        ));
+        return Err(format!("{} executable total is stale: {} != {}", namespace.id, namespace.executable_bytes, measured));
     }
     if let Some(decoded) = namespace.decoded_bytes {
         if namespace.excluded_bytes != Some(decoded - namespace.executable_bytes) {
@@ -271,11 +228,7 @@ fn validate_inventory(value: &Inventory) -> Result<(), String> {
 }
 
 fn canonical(source: &str) -> bool {
-    !source.contains(".incbin")
-        && !source.contains("M2C_ERROR")
-        && !source.contains("__asm__")
-        && !source.contains("asm volatile")
-        && !source.lines().any(|line| line.contains("register") && line.contains("asm") && line.contains('('))
+    !source.contains(".incbin") && !source.contains("M2C_ERROR") && !source.contains("__asm__") && !source.contains("asm volatile") && !source.lines().any(|line| line.contains("register") && line.contains("asm") && line.contains('('))
 }
 
 fn source_span(value: &Value, root: &Path) -> Option<Span> {
@@ -374,11 +327,7 @@ fn overlay_source_spans(root: &Path, file: &str, namespace: &Namespace) -> Resul
 }
 
 fn overlay_exact(root: &Path, value: &Inventory) -> Result<BTreeMap<String, Vec<Span>>, String> {
-    let mut files = std::fs::read_dir(root.join("games/gs1/assets/code"))
-        .map_err(|error| format!("cannot list overlay assembly: {error}"))?
-        .filter_map(|item| item.ok().map(|item| item.file_name().to_string_lossy().into_owned()))
-        .filter(|name| name.ends_with("_overlay.s"))
-        .collect::<Vec<_>>();
+    let mut files = std::fs::read_dir(root.join("games/gs1/assets/code")).map_err(|error| format!("cannot list overlay assembly: {error}"))?.filter_map(|item| item.ok().map(|item| item.file_name().to_string_lossy().into_owned())).filter(|name| name.ends_with("_overlay.s")).collect::<Vec<_>>();
     files.sort();
     let by_id: BTreeMap<_, _> = value.overlays.iter().map(|item| (item.id.as_str(), item)).collect();
     let mut result = BTreeMap::new();
@@ -416,11 +365,7 @@ fn report(root: &Path, target: &str, value: &Inventory) -> Result<Report, String
     let main = main_exact(root, target, &value.main)?;
     let overlays = overlay_exact(root, value)?;
     let main_bytes = bytes(&main);
-    let overlay_bytes = value
-        .overlays
-        .iter()
-        .map(|namespace| bytes(overlays.get(&namespace.id).map(Vec::as_slice).unwrap_or(&[])))
-        .sum::<i64>();
+    let overlay_bytes = value.overlays.iter().map(|namespace| bytes(overlays.get(&namespace.id).map(Vec::as_slice).unwrap_or(&[]))).sum::<i64>();
     let full = main_bytes + overlay_bytes;
     let executable = value.total_union_bytes;
     let remaining = executable - full;
@@ -441,31 +386,16 @@ fn report(root: &Path, target: &str, value: &Inventory) -> Result<Report, String
 }
 
 fn report_path(root: &Path, target: &str) -> PathBuf {
-    root.join("games")
-        .join(target.split('-').next().unwrap_or("gs1"))
-        .join("metrics")
-        .join(format!("{target}-progress.json"))
+    root.join("games").join(target.split('-').next().unwrap_or("gs1")).join("metrics").join(format!("{target}-progress.json"))
 }
 
 fn inventory_path(root: &Path, target: &str) -> PathBuf {
-    root.join("games")
-        .join(target.split('-').next().unwrap_or("gs1"))
-        .join("metrics")
-        .join(format!("{target}-executable.json"))
+    root.join("games").join(target.split('-').next().unwrap_or("gs1")).join("metrics").join(format!("{target}-executable.json"))
 }
 
 fn permanent_bytes(root: &Path, target: &str) -> Result<i64, String> {
-    let value = json(
-        &root
-            .join("games")
-            .join(target.split('-').next().unwrap_or("gs1"))
-            .join("metrics")
-            .join(format!("{target}-coverage-map.json")),
-    )?;
-    get(get(&value, "categories").ok_or("coverage map has no categories")?, "retained_asm")
-        .and_then(|value| get(value, "bytes"))
-        .and_then(Value::as_i64)
-        .ok_or_else(|| "coverage map has no categories.retained_asm.bytes".into())
+    let value = json(&root.join("games").join(target.split('-').next().unwrap_or("gs1")).join("metrics").join(format!("{target}-coverage-map.json")))?;
+    get(get(&value, "categories").ok_or("coverage map has no categories")?, "retained_asm").and_then(|value| get(value, "bytes")).and_then(Value::as_i64).ok_or_else(|| "coverage map has no categories.retained_asm.bytes".into())
 }
 
 fn check_build(root: &Path, target: &str) -> Result<(), String> {
@@ -509,9 +439,13 @@ fn subject(report: &Report, retained: i64) -> Result<String, String> {
 fn display(report: &Report) -> String {
     format!(
         "Full-C Byte Share: {} / {} executable bytes ({}%)\nMain image: {} / {} executable bytes\nCode overlays: {} / {} executable bytes",
-        comma(report.full_c_bytes), comma(report.executable_bytes), fixed2(report.percent),
-        comma(report.main_full_c_bytes), comma(report.main_executable_bytes),
-        comma(report.overlays_full_c_bytes), comma(report.overlays_executable_bytes)
+        comma(report.full_c_bytes),
+        comma(report.executable_bytes),
+        fixed2(report.percent),
+        comma(report.main_full_c_bytes),
+        comma(report.main_executable_bytes),
+        comma(report.overlays_full_c_bytes),
+        comma(report.overlays_executable_bytes)
     )
 }
 
@@ -550,9 +484,7 @@ fn options(argv: &[String]) -> Result<Option<Options>, String> {
                 i += 1;
                 options.target = match argv.get(i).map(String::as_str) {
                     Some(target @ ("gs1-en" | "gs2-en")) => target.into(),
-                    Some(other) => {
-                        return Err(format!("unsupported decomp target \"{other}\"; expected gs1-en or gs2-en"))
-                    }
+                    Some(other) => return Err(format!("unsupported decomp target \"{other}\"; expected gs1-en or gs2-en")),
                     None => return Err("unsupported decomp target undefined; expected gs1-en or gs2-en".into()),
                 };
             }
@@ -583,27 +515,15 @@ fn run(argv: &[String]) -> Result<String, String> {
     let root = root();
     let tracked = inventory(&json(&inventory_path(&root, &options.target))?)?;
     if options.write_inventory {
-        let output = serde_json::to_string_pretty(&inventory_json(&derive_inventory(&root, &options.target)?))
-            .map_err(|error| error.to_string())?;
-        std::fs::write(inventory_path(&root, &options.target), format!("{output}\n"))
-            .map_err(|error| error.to_string())?;
-        return Ok(format!(
-            "inventory={} audit={} executable_bytes={}",
-            relative(&root, &inventory_path(&root, &options.target)),
-            tracked.audit,
-            tracked.total_union_bytes
-        ));
+        let output = serde_json::to_string_pretty(&inventory_json(&derive_inventory(&root, &options.target)?)).map_err(|error| error.to_string())?;
+        std::fs::write(inventory_path(&root, &options.target), format!("{output}\n")).map_err(|error| error.to_string())?;
+        return Ok(format!("inventory={} audit={} executable_bytes={}", relative(&root, &inventory_path(&root, &options.target)), tracked.audit, tracked.total_union_bytes));
     }
     let current = report(&root, &options.target, &tracked)?;
     if options.write_report {
         let output = serde_json::to_string_pretty(&report_json(&current)).map_err(|error| error.to_string())?;
-        std::fs::write(report_path(&root, &options.target), format!("{output}\n"))
-            .map_err(|error| error.to_string())?;
-        return Ok(format!(
-            "report={} {}",
-            relative(&root, &report_path(&root, &options.target)),
-            subject(&current, permanent_bytes(&root, &options.target)?)?
-        ));
+        std::fs::write(report_path(&root, &options.target), format!("{output}\n")).map_err(|error| error.to_string())?;
+        return Ok(format!("report={} {}", relative(&root, &report_path(&root, &options.target)), subject(&current, permanent_bytes(&root, &options.target)?)?));
     }
     if options.check {
         validate_inventory(&tracked)?;

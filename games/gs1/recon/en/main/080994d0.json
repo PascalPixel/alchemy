@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080994d0",
+  "name": "RunBattleEffect03",
+  "status": "measured-draft",
+  "owner_bytes": 424,
+  "executable_owner_bytes": 422,
+  "candidate_bytes": 400,
+  "differing_halfwords": 207,
+  "wrong_instructions": 140,
+  "family": {
+    "exact_c_dispatcher": "main:08096810",
+    "exact_c_dispatcher_bytes": 336,
+    "aggregate_reusable_bytes": 760
+  },
+  "cross_edition": {
+    "core_bytes": 310,
+    "core_diff_bytes": 0,
+    "core_identical": true,
+    "starts": {
+      "ja": "0x080904c4",
+      "en": "0x080994d0",
+      "de": "0x0809cb78",
+      "es": "0x0809e568",
+      "fr": "0x0809e568",
+      "it": "0x08099568"
+    }
+  },
+  "notes": [
+    "Complete typed effect-3 runner reached directly from the exact-C battle-effect dispatcher. It creates and links eight phased objects above the target, runs the central object's timed mode alternation, then launches and releases it before invoking the optional battle-state completion callback.",
+    "Local exact-C object-spawn, mode, motion, random and delay functions establish the object fields and callback contract. Together with the exact dispatcher, this family covers 760 executable bytes.",
+    "The first readable model compiles to 400 bytes against 422 executable owner bytes (424 including alignment), with 207 differing halfwords and 140 wrong instructions. This is broad complete evidence and claims zero bytes.",
+    "Independent relocation-aware matching proves all 310 normalized core bytes identical at unique JA, EN, DE, ES, FR, and IT anchors. Twenty-three call relocations and five literal fields explain regional raw differences.",
+    "Recovered only from retained GS1 assembly, local exact-C dispatcher/object analogues, the approved compiler, and the six local GS1 editions. No GS2 or external source was used."
+  ]
+}

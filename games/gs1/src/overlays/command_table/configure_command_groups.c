@@ -60,7 +60,9 @@ extern s32 Func_02001d3e();
 extern s32 Func_02001d48();
 extern s32 Func_02001d52();
 
-void Func_020008c4(void) {
+#define CommandTable_ConfigureCommandGroups Func_020008c4
+
+void CommandTable_ConfigureCommandGroups(void) {
     u8 buf[256];
     Func_02001a7e(0xc1d, 1);
     Func_02001b38(0, 0, 0);

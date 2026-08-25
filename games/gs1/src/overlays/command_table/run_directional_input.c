@@ -12,7 +12,9 @@ extern void Func_02001264(s32);
 extern void Func_020012fc(void);
 extern void Func_020012b4(s32, s32);
 
-void Func_0200007c(s32 x, s32 count)
+#define CommandTable_RunDirectionalInput Func_0200007c
+
+void CommandTable_RunDirectionalInput(s32 x, s32 count)
 {
     s16 *table = Data_02000240;
     volatile s32 *flags;

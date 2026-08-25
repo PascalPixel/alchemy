@@ -2594,24 +2594,8 @@ AlchemyC_020015a4:
 	.space 0x18
 AlchemyC_020015bc:
 	.space 0x18
-	push	{lr}
-	movs	r1, #208
-	movs	r2, #224
-	movs	r0, #2
-	lsls	r1, r1, #16
-	lsls	r2, r2, #15
-	movs	r3, #0
-	bl	sub_02003a08
-	movs	r0, #10
-	movs	r1, #14
-	movs	r2, #7
-	bl	sub_020031d6
-	cmp	r0, #0
-	beq.n	.L_020015f8
-	bl	sub_0200383a
-.L_020015f8:
-	pop	{r0}
-	bx	r0
+AlchemyC_020015d4:
+	.space 0x28
 	push	{lr}
 	movs	r1, #176
 	movs	r2, #224

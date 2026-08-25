@@ -16,16 +16,8 @@ fn base64(data: &[u8]) -> String {
             | u32::from(*chunk.get(2).unwrap_or(&0));
         out.push(TABLE[(n >> 18 & 63) as usize] as char);
         out.push(TABLE[(n >> 12 & 63) as usize] as char);
-        out.push(if chunk.len() > 1 {
-            TABLE[(n >> 6 & 63) as usize] as char
-        } else {
-            '='
-        });
-        out.push(if chunk.len() > 2 {
-            TABLE[(n & 63) as usize] as char
-        } else {
-            '='
-        });
+        out.push(if chunk.len() > 1 { TABLE[(n >> 6 & 63) as usize] as char } else { '=' });
+        out.push(if chunk.len() > 2 { TABLE[(n & 63) as usize] as char } else { '=' });
     }
     out
 }
@@ -39,11 +31,7 @@ fn hue(tree: &str) -> (f64, f64, &'static str, &'static str) {
     }
 }
 fn esc(value: &str) -> String {
-    value
-        .replace('&', "&amp;")
-        .replace('<', "&lt;")
-        .replace('>', "&gt;")
-        .replace('"', "&quot;")
+    value.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;").replace('"', "&quot;")
 }
 fn label(text: &str, width: f64, height: f64) -> String {
     if width >= 90.0 && height >= 12.0 {
@@ -84,11 +72,7 @@ fn tree_tiles<'a>(map: &'a CoverageMap, tree: &str) -> (&'a Area, Vec<&'a Tile>)
     let area = match tree {
         "core" => &map.executable_areas[0],
         "overlays" => &map.executable_areas[1],
-        _ => map
-            .rom_areas
-            .iter()
-            .find(|a| a.id == "rom-data")
-            .unwrap_or(&map.rom_areas[0]),
+        _ => map.rom_areas.iter().find(|a| a.id == "rom-data").unwrap_or(&map.rom_areas[0]),
     };
     let mut tiles: Vec<&Tile> = area.tiles.iter().collect();
     if tree == "music" {
@@ -97,10 +81,7 @@ fn tree_tiles<'a>(map: &'a CoverageMap, tree: &str) -> (&'a Area, Vec<&'a Tile>)
             .copied()
             .filter(|t| {
                 let l = t.label.to_ascii_lowercase();
-                l.contains("music")
-                    || l.contains("sound")
-                    || l.contains("pcm")
-                    || l.contains("wave")
+                l.contains("music") || l.contains("sound") || l.contains("pcm") || l.contains("wave")
             })
             .collect();
         if !filtered.is_empty() {
@@ -132,32 +113,24 @@ fn legend_label(category: &str) -> Option<&'static str> {
 fn svg(tree: &str, map: &CoverageMap) -> String {
     let (area, tiles) = tree_tiles(map, tree);
     let (h, _, edge, description) = hue(tree);
-    let frame = Rect {
-        x: 3.0,
-        y: 22.0,
-        width: 534.0,
-        height: 258.0,
-    };
+    let frame = Rect { x: 3.0, y: 22.0, width: 534.0, height: 258.0 };
     let mut out = vec![format!("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 540 304\" width=\"540\" height=\"304\" shape-rendering=\"crispEdges\" role=\"img\" aria-label=\"{} box tree, {} band\">", description, edge)];
     out.push(format!("<title>{}</title>", esc(&title(tree, area))));
     if let Ok(bytes) = std::fs::read(root().join("games/gs1/assets/fonts/weyard.otf")) {
         out.push(format!("<defs><style>@font-face{{font-family:Weyard;src:url(data:font/otf;base64,{}) format('opentype');font-style:italic;}}.weyard{{font-family:Weyard;font-size:16px;font-style:italic;fill:#fff;}}.rectangle-label{{font-size:8px;}}</style></defs>", base64(&bytes)));
     } else {
-        out.push("<style>.weyard{font-family:monospace;font-size:16px;fill:#fff}.rectangle-label{font-size:8px}</style>".into());
+        out.push(
+            "<style>.weyard{font-family:monospace;font-size:16px;fill:#fff}.rectangle-label{font-size:8px}</style>"
+                .into(),
+        );
     }
+    out.push(format!("<rect x=\"0\" y=\"0\" width=\"540\" height=\"304\" fill=\"{}\" rx=\"8\"/>", edge));
     out.push(format!(
-        "<rect x=\"0\" y=\"0\" width=\"540\" height=\"304\" fill=\"{}\" rx=\"8\"/>",
+        "<rect x=\"1\" y=\"1\" width=\"538\" height=\"302\" fill=\"none\" stroke=\"{}\" stroke-width=\"2\" rx=\"7\"/>",
         edge
     ));
-    out.push(format!("<rect x=\"1\" y=\"1\" width=\"538\" height=\"302\" fill=\"none\" stroke=\"{}\" stroke-width=\"2\" rx=\"7\"/>", edge));
-    out.push(format!(
-        "<text class=\"weyard\" x=\"6\" y=\"15\">{}</text>",
-        esc(&title(tree, area))
-    ));
-    out.push(format!(
-        "<text class=\"weyard\" x=\"534\" y=\"15\" text-anchor=\"end\">{}</text>",
-        commas(area.bytes)
-    ));
+    out.push(format!("<text class=\"weyard\" x=\"6\" y=\"15\">{}</text>", esc(&title(tree, area))));
+    out.push(format!("<text class=\"weyard\" x=\"534\" y=\"15\" text-anchor=\"end\">{}</text>", commas(area.bytes)));
     out.push(format!(
         "<rect x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\" fill=\"#fff\"/>",
         frame.x, frame.y, frame.width, frame.height
@@ -165,16 +138,8 @@ fn svg(tree: &str, map: &CoverageMap) -> String {
     for placed in treemap(&tiles, |tile| tile.bytes, frame) {
         let tile = tiles[placed.index];
         let rect = placed.rect;
-        out.push(format!(
-            "<g aria-label=\"{}: {} bytes\">",
-            esc(&tile.label),
-            commas(tile.bytes)
-        ));
-        out.push(format!(
-            "<title>{}: {} bytes</title>",
-            esc(&tile.label),
-            commas(tile.bytes)
-        ));
+        out.push(format!("<g aria-label=\"{}: {} bytes\">", esc(&tile.label), commas(tile.bytes)));
+        out.push(format!("<title>{}: {} bytes</title>", esc(&tile.label), commas(tile.bytes)));
         let body = Rect {
             x: rect.x + 0.5,
             y: rect.y + 0.5,
@@ -200,7 +165,13 @@ fn svg(tree: &str, map: &CoverageMap) -> String {
         }
         let name = label(&tile.label, body.width - 6.0, body.height);
         if !name.is_empty() {
-            out.push(format!("<rect x=\"{}\" y=\"{}\" width=\"{}\" height=\"10\" fill=\"hsl({} 70% 24%)\" fill-opacity=\".9\"/>", rect.x, rect.y, rect.width, js_number_string(h)));
+            out.push(format!(
+                "<rect x=\"{}\" y=\"{}\" width=\"{}\" height=\"10\" fill=\"hsl({} 70% 24%)\" fill-opacity=\".9\"/>",
+                rect.x,
+                rect.y,
+                rect.width,
+                js_number_string(h)
+            ));
             out.push(format!(
                 "<text class=\"weyard rectangle-label\" x=\"{}\" y=\"{}\">{}</text>",
                 rect.x + 3.0,
@@ -244,18 +215,13 @@ pub fn render_box_trees(
     _tree: Option<&crate::tree::SourceTree>,
     _verify: bool,
 ) -> Result<Vec<(&'static str, String)>, String> {
-    Ok(BOX_TREES
-        .iter()
-        .map(|tree| (*tree, svg(tree, map)))
-        .collect())
+    Ok(BOX_TREES.iter().map(|tree| (*tree, svg(tree, map))).collect())
 }
 pub fn svg_cache_version(svg: &str) -> String {
     sha1_hex(svg.as_bytes())[..16].into()
 }
 pub fn box_tree_path(target: &str, tree: &str) -> std::path::PathBuf {
-    root()
-        .join("games/gs1/assets/readme")
-        .join(format!("{target}-{tree}.svg"))
+    root().join("games/gs1/assets/readme").join(format!("{target}-{tree}.svg"))
 }
 pub fn readme_path() -> std::path::PathBuf {
     root().join("README.md")

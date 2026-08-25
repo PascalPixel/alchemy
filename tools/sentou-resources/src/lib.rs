@@ -5,9 +5,7 @@
 //! token streams are encoded by `extract-resource`.
 
 use alignment_tail::{build_alignment_tail, parse_alignment_tail};
-use extract_resource::{
-    encode_general_prefill, encode_palette, GeneralToken, PaletteGroup, PaletteOperation,
-};
+use extract_resource::{encode_general_prefill, encode_palette, GeneralToken, PaletteGroup, PaletteOperation};
 use import_asset::{gba_graphics, gba_palette_rgba, indexed_png};
 use serde_json::{Map, Value};
 use std::fs;
@@ -23,28 +21,19 @@ fn fail<T>(message: impl Into<String>) -> Result<T> {
 }
 
 fn object<'a>(value: &'a Value, label: &str) -> Result<&'a Map<String, Value>> {
-    value
-        .as_object()
-        .ok_or_else(|| format!("{label} must be an object"))
+    value.as_object().ok_or_else(|| format!("{label} must be an object"))
 }
 
 fn field<'a>(value: &'a Map<String, Value>, name: &str) -> Result<&'a Value> {
-    value
-        .get(name)
-        .ok_or_else(|| format!("missing field {name}"))
+    value.get(name).ok_or_else(|| format!("missing field {name}"))
 }
 
 fn number(value: &Value, label: &str) -> Result<usize> {
     if let Some(text) = value.as_str() {
-        let text = text
-            .strip_prefix("0x")
-            .ok_or_else(|| format!("{label} must be an integer"))?;
+        let text = text.strip_prefix("0x").ok_or_else(|| format!("{label} must be an integer"))?;
         return usize::from_str_radix(text, 16).map_err(|_| format!("{label} must be an integer"));
     }
-    value
-        .as_u64()
-        .map(|n| n as usize)
-        .ok_or_else(|| format!("{label} must be an integer"))
+    value.as_u64().map(|n| n as usize).ok_or_else(|| format!("{label} must be an integer"))
 }
 
 fn json_file(path: &Path) -> Result<Value> {
@@ -57,20 +46,15 @@ fn token_number(value: &Value, label: &str) -> Result<u32> {
 }
 
 fn general_tokens(value: &Value) -> Result<Vec<GeneralToken>> {
-    let list = value
-        .as_array()
-        .ok_or_else(|| "sentou general tokens must be an array".to_string())?;
+    let list = value.as_array().ok_or_else(|| "sentou general tokens must be an array".to_string())?;
     list.iter()
         .enumerate()
         .map(|(index, token)| {
-            let token = token
-                .as_array()
-                .ok_or_else(|| format!("sentou general token {index} is invalid"))?;
+            let token = token.as_array().ok_or_else(|| format!("sentou general token {index} is invalid"))?;
             match token.first().and_then(Value::as_str) {
-                Some("l") if token.len() == 2 => Ok(GeneralToken::Literal(token_number(
-                    &token[1],
-                    "sentou literal length",
-                )?)),
+                Some("l") if token.len() == 2 => {
+                    Ok(GeneralToken::Literal(token_number(&token[1], "sentou literal length")?))
+                }
                 Some("c") if token.len() == 3 => Ok(GeneralToken::Copy {
                     length: token_number(&token[1], "sentou copy length")?,
                     distance: token_number(&token[2], "sentou copy distance")?,
@@ -82,9 +66,7 @@ fn general_tokens(value: &Value) -> Result<Vec<GeneralToken>> {
 }
 
 fn palette_operation(value: &Value) -> Result<PaletteOperation> {
-    let token = value
-        .as_array()
-        .ok_or_else(|| "sentou palette token is invalid".to_string())?;
+    let token = value.as_array().ok_or_else(|| "sentou palette token is invalid".to_string())?;
     match token.first().and_then(Value::as_str) {
         Some("l") if token.len() == 1 => Ok(PaletteOperation::Literal),
         Some("e") if token.len() == 1 => Ok(PaletteOperation::End),
@@ -97,26 +79,16 @@ fn palette_operation(value: &Value) -> Result<PaletteOperation> {
 }
 
 fn palette_groups(value: &Value) -> Result<Vec<PaletteGroup>> {
-    let list = value
-        .as_array()
-        .ok_or_else(|| "sentou palette groups must be an array".to_string())?;
+    let list = value.as_array().ok_or_else(|| "sentou palette groups must be an array".to_string())?;
     list.iter()
         .map(|group| {
-            let group = group
-                .as_array()
-                .ok_or_else(|| "sentou palette group is invalid".to_string())?;
+            let group = group.as_array().ok_or_else(|| "sentou palette group is invalid".to_string())?;
             match group.first().and_then(Value::as_str) {
                 Some("z") if group.len() == 1 => Ok(PaletteGroup::Zeros),
                 Some("g") if group.len() == 2 => {
-                    let operations = group[1]
-                        .as_array()
-                        .ok_or_else(|| "sentou palette group is invalid".to_string())?;
-                    Ok(PaletteGroup::Group(
-                        operations
-                            .iter()
-                            .map(palette_operation)
-                            .collect::<Result<Vec<_>>>()?,
-                    ))
+                    let operations =
+                        group[1].as_array().ok_or_else(|| "sentou palette group is invalid".to_string())?;
+                    Ok(PaletteGroup::Group(operations.iter().map(palette_operation).collect::<Result<Vec<_>>>()?))
                 }
                 _ => fail("sentou palette group is invalid"),
             }
@@ -125,14 +97,9 @@ fn palette_groups(value: &Value) -> Result<Vec<PaletteGroup>> {
 }
 
 fn sibling(plan: &Path, suffix: &str) -> PathBuf {
-    let file = plan
-        .file_name()
-        .and_then(|name| name.to_str())
-        .unwrap_or_default();
+    let file = plan.file_name().and_then(|name| name.to_str()).unwrap_or_default();
     let prefix = file.strip_suffix("stream.json").unwrap_or_default();
-    plan.parent()
-        .unwrap_or_else(|| Path::new("."))
-        .join(format!("{prefix}{suffix}"))
+    plan.parent().unwrap_or_else(|| Path::new(".")).join(format!("{prefix}{suffix}"))
 }
 
 fn build_decoded(
@@ -142,23 +109,16 @@ fn build_decoded(
     canvas_size: usize,
 ) -> Result<Vec<u8>> {
     let image = object(field(plan, "image")?, "sentou image")?;
-    let source = field(image, "source")?
-        .as_str()
-        .ok_or_else(|| "sentou image source must be a string".to_string())?;
+    let source = field(image, "source")?.as_str().ok_or_else(|| "sentou image source must be a string".to_string())?;
     let image_path = sibling(plan_path, source);
-    let image_bytes =
-        fs::read(&image_path).map_err(|e| format!("{}: {e}", image_path.display()))?;
+    let image_bytes = fs::read(&image_path).map_err(|e| format!("{}: {e}", image_path.display()))?;
     let encoding = field(image, "encoding")?.as_str().unwrap_or_default();
     let data = if encoding == "naiyou" {
         let image = indexed_png(&image_bytes).map_err(|e| e.0)?;
         if image.width != 64 {
             return fail("sentou data image must be 64 bytes wide");
         }
-        image
-            .pixels
-            .into_iter()
-            .map(|pixel| pixel as u8)
-            .collect::<Vec<_>>()
+        image.pixels.into_iter().map(|pixel| pixel as u8).collect::<Vec<_>>()
     } else {
         let bpp = if encoding == "koma-4bpp" { 4.0 } else { 8.0 };
         let (pixels, _, report) = gba_graphics(&image_bytes, bpp).map_err(|e| e.0)?;
@@ -190,19 +150,11 @@ pub fn build_sentou_resource(plan_path: &Path) -> Result<(Vec<u8>, Vec<PathBuf>)
     let decoded = build_decoded(plan, plan_path, decoded_size, canvas_size)?;
     let codec = field(stream, "codec")?.as_str().unwrap_or_default();
     let encoded = if codec == "general-lz-prefill" {
-        encode_general_prefill(
-            &decoded,
-            &general_tokens(field(stream, "tokens")?)?,
-            PREFILL,
-            1,
-        )
-        .map_err(|e| e.0)?
+        encode_general_prefill(&decoded, &general_tokens(field(stream, "tokens")?)?, PREFILL, 1).map_err(|e| e.0)?
     } else if codec == "palette-lz" {
         let mut encoded = vec![1u8];
-        encoded.extend_from_slice(
-            &encode_palette(&decoded, &palette_groups(field(stream, "tokens")?)?)
-                .map_err(|e| e.0)?,
-        );
+        encoded
+            .extend_from_slice(&encode_palette(&decoded, &palette_groups(field(stream, "tokens")?)?).map_err(|e| e.0)?);
         encoded
     } else {
         return fail("unsupported sentou codec");
@@ -217,23 +169,15 @@ pub fn build_sentou_resource(plan_path: &Path) -> Result<(Vec<u8>, Vec<PathBuf>)
         }
     };
     let source_size = number(field(plan, "source_size")?, "sentou source size")?;
-    let boundary_size = number(
-        field(plan, "resource_boundary_size")?,
-        "sentou boundary size",
-    )?;
+    let boundary_size = number(field(plan, "resource_boundary_size")?, "sentou boundary size")?;
     let mut result = prefix;
     result.extend_from_slice(&encoded);
     if result.len() != source_size {
         return fail("sentou resource differs from its audited source size");
     }
     if let Some(tail) = plan.get("boundary_suffix").filter(|value| !value.is_null()) {
-        let tail = parse_alignment_tail(
-            tail,
-            boundary_size - source_size,
-            3,
-            "sentou boundary suffix",
-        )
-        .map_err(|e| e.0)?;
+        let tail =
+            parse_alignment_tail(tail, boundary_size - source_size, 3, "sentou boundary suffix").map_err(|e| e.0)?;
         result.extend_from_slice(&build_alignment_tail(&tail));
     }
     if result.len() != source_size && result.len() != boundary_size {
@@ -250,13 +194,9 @@ pub fn build_sentou_resource(plan_path: &Path) -> Result<(Vec<u8>, Vec<PathBuf>)
 pub fn build_sentou_series(index_path: &Path) -> Result<Vec<(usize, Vec<u8>, Vec<PathBuf>)>> {
     let document = json_file(index_path)?;
     let index = object(&document, "sentou index")?;
-    let resources = field(index, "resources")?
-        .as_array()
-        .ok_or_else(|| "sentou index resources must be an array".to_string())?;
-    let file = index_path
-        .file_name()
-        .and_then(|name| name.to_str())
-        .unwrap_or_default();
+    let resources =
+        field(index, "resources")?.as_array().ok_or_else(|| "sentou index resources must be an array".to_string())?;
+    let file = index_path.file_name().and_then(|name| name.to_str()).unwrap_or_default();
     let prefix = file.strip_suffix("index.json").unwrap_or_default();
     resources
         .iter()
@@ -264,13 +204,9 @@ pub fn build_sentou_series(index_path: &Path) -> Result<Vec<(usize, Vec<u8>, Vec
             let entry = object(entry, "sentou index entry")?;
             let address = number(field(entry, "address")?, "sentou address")?;
             let expected = number(field(entry, "size")?, "sentou index size")?;
-            let source = field(entry, "source")?
-                .as_str()
-                .ok_or_else(|| "sentou index source must be a string".to_string())?;
-            let plan = index_path
-                .parent()
-                .unwrap_or_else(|| Path::new("."))
-                .join(format!("{prefix}{source}"));
+            let source =
+                field(entry, "source")?.as_str().ok_or_else(|| "sentou index source must be a string".to_string())?;
+            let plan = index_path.parent().unwrap_or_else(|| Path::new(".")).join(format!("{prefix}{source}"));
             let (data, sources) = build_sentou_resource(&plan)?;
             if data.len() != expected {
                 return fail("sentou index size differs from its canonical source");
@@ -290,18 +226,13 @@ pub fn verify_sentou_resources(rom_path: &Path, directory: &Path) -> Result<Stri
     let mut claimed = 0usize;
     let mut boundary = 0usize;
     for (position, (address, data, _)) in built.iter().enumerate() {
-        let start = address
-            .checked_sub(ROM_BASE)
-            .ok_or_else(|| "sentou address lies before ROM base".to_string())?;
+        let start = address.checked_sub(ROM_BASE).ok_or_else(|| "sentou address lies before ROM base".to_string())?;
         if start + data.len() > rom.len() || rom[start..start + data.len()] != *data {
             return fail(format!("sentou resource {position} differs from ROM"));
         }
         claimed += data.len();
         boundary += number(
-            field(
-                object(&resources[position], "sentou index entry")?,
-                "resource_boundary_size",
-            )?,
+            field(object(&resources[position], "sentou index entry")?, "resource_boundary_size")?,
             "sentou boundary",
         )?;
     }
@@ -315,18 +246,14 @@ pub fn verify_sentou_resources(rom_path: &Path, directory: &Path) -> Result<Stri
 }
 
 pub fn self_test() -> Result<()> {
-    let encoded = encode_general_prefill(b"TEST", &[GeneralToken::Literal(4)], PREFILL, 1)
-        .map_err(|e| e.0)?;
+    let encoded = encode_general_prefill(b"TEST", &[GeneralToken::Literal(4)], PREFILL, 1).map_err(|e| e.0)?;
     if encoded.is_empty() {
         return fail("sentou general self-test failed");
     }
     let mut operations = vec![PaletteOperation::Literal; 7];
     operations.push(PaletteOperation::End);
     let groups = [PaletteGroup::Group(operations)];
-    if encode_palette(&[0u8; 7], &groups)
-        .map_err(|e| e.0)?
-        .is_empty()
-    {
+    if encode_palette(&[0u8; 7], &groups).map_err(|e| e.0)?.is_empty() {
         return fail("sentou palette self-test failed");
     }
     println!("self-test=ok");
@@ -349,10 +276,7 @@ pub fn run(args: &[String]) -> Result<()> {
         return Ok(());
     }
     if args.len() == 4 && args[0] == "verify" && args[2] == "--directory" {
-        println!(
-            "{}",
-            verify_sentou_resources(Path::new(&args[1]), Path::new(&args[3]))?
-        );
+        println!("{}", verify_sentou_resources(Path::new(&args[1]), Path::new(&args[3]))?);
         return Ok(());
     }
     if args.len() == 1 && matches!(args[0].as_str(), "-h" | "--help") {

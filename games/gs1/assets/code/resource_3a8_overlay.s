@@ -1198,60 +1198,8 @@ AlchemyC_02000420:
 	.4byte 0x03001ebc
 	.2byte 0xd0e0
 	.2byte 0x0200
-	push	{r5, lr}
-	sub	sp, #8
-	bl	sub_020040fe
-	movs	r0, #188
-	bl	sub_0200428c
-	movs	r5, #2
-	movs	r1, #23
-	movs	r2, #43
-	movs	r3, #12
-	movs	r0, #36
-	str	r5, [sp, #0]
-	str	r5, [sp, #4]
-	bl	sub_020040be
-	movs	r0, #5
-	bl	sub_0200403c
-	movs	r3, #12
-	movs	r1, #23
-	movs	r2, #43
-	movs	r0, #39
-	str	r5, [sp, #0]
-	str	r5, [sp, #4]
-	bl	sub_020040d4
-	movs	r0, #5
-	bl	sub_02004052
-	movs	r1, #128
-	movs	r2, #128
-	lsls	r2, r2, #7
-	lsls	r1, r1, #8
-	movs	r0, #0
-	bl	sub_02004178
-	movs	r0, #0
-	bl	sub_0200416e
-	movs	r3, #0
-	adds	r0, #85
-	strb	r3, [r0, #0]
-	movs	r1, #2
-	movs	r0, #0
-	bl	sub_020041dc
-	movs	r2, #8
-	movs	r1, #0
-	negs	r2, r2
-	movs	r0, #0
-	bl	sub_020041d8
-	movs	r0, #10
-	bl	sub_0200415e
-	movs	r0, #2
-	bl	sub_0200429c
-	bl	sub_020042b0
-	bl	sub_020042bc
-	bl	sub_02004180
-	add	sp, #8
-	pop	{r5}
-	pop	{r0}
-	bx	r0
+AlchemyC_02000504:
+	.space 0x8a
 	.2byte 0x0000
 	push	{r5, r6, r7, lr}
 	mov	r7, r8

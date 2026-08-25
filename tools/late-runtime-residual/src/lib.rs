@@ -38,8 +38,7 @@ fn text(value: &Value) -> Option<&str> {
 }
 fn address(value: &Value) -> Result<u32> {
     let text = text(value).ok_or("invalid address")?;
-    u32::from_str_radix(text.strip_prefix("0x").ok_or("invalid address")?, 16)
-        .map_err(|_| "invalid address".into())
+    u32::from_str_radix(text.strip_prefix("0x").ok_or("invalid address")?, 16).map_err(|_| "invalid address".into())
 }
 fn type_name(component: &LateRuntimeComponent) -> &'static str {
     match component.kind {
@@ -72,9 +71,8 @@ fn component_bytes(value: &Value, component: &LateRuntimeComponent) -> Result<Ve
             Ok(vec![fill as u8; component.size()])
         }
         Some("byte_values") => {
-            let values = field(value, "values")?
-                .as_array()
-                .ok_or_else(|| format!("{} values differ", component.name))?;
+            let values =
+                field(value, "values")?.as_array().ok_or_else(|| format!("{} values differ", component.name))?;
             if values.len() != component.size() {
                 return Err(format!("{} values differ", component.name));
             }
@@ -93,23 +91,17 @@ fn component_bytes(value: &Value, component: &LateRuntimeComponent) -> Result<Ve
     }
 }
 
-pub fn build_late_runtime_residual(
-    index_path: &Path,
-    catalog_path: &Path,
-) -> Result<LateRuntimeResidualBuild> {
+pub fn build_late_runtime_residual(index_path: &Path, catalog_path: &Path) -> Result<LateRuntimeResidualBuild> {
     let catalog: LateRuntimeCatalog = read_late_runtime_catalog(catalog_path)?;
     let source: Value =
-        serde_json::from_slice(&std::fs::read(index_path).map_err(|e| e.to_string())?)
-            .map_err(|e| e.to_string())?;
+        serde_json::from_slice(&std::fs::read(index_path).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?;
     if field(&source, "format")?.as_i64() != Some(1)
         || text(field(&source, "kind")?) != Some("golden-sun-late-runtime-residual")
         || field(&source, "source_bytes")?.as_i64() != Some(SOURCE_BYTES)
     {
         return Err("late residual source identity differs".into());
     }
-    let regions = field(&source, "regions")?
-        .as_array()
-        .ok_or("late residual regions differ")?;
+    let regions = field(&source, "regions")?.as_array().ok_or("late residual regions differ")?;
     if regions.len() != catalog.ranges.len() {
         return Err("late residual region count differs".into());
     }
@@ -121,27 +113,19 @@ pub fn build_late_runtime_residual(
         {
             return Err(format!("{} layout differs", range.name));
         }
-        let components = field(raw, "components")?
-            .as_array()
-            .ok_or("late residual components differ")?;
+        let components = field(raw, "components")?.as_array().ok_or("late residual components differ")?;
         if components.len() != range.components.len() {
             return Err(format!("{} component count differs", range.name));
         }
-        let data = range.components.iter().zip(components).try_fold(
-            Vec::new(),
-            |mut data, (component, raw)| {
-                data.extend(component_bytes(raw, component)?);
-                Ok::<_, String>(data)
-            },
-        )?;
+        let data = range.components.iter().zip(components).try_fold(Vec::new(), |mut data, (component, raw)| {
+            data.extend(component_bytes(raw, component)?);
+            Ok::<_, String>(data)
+        })?;
         if data.len() != (range.end - range.address) as usize {
             return Err(format!("{} length differs", range.name));
         }
         built.push(range.address, data);
     }
     let source_bytes = built.iter().map(|(_, data)| data.len() as i64).sum();
-    Ok(LateRuntimeResidualBuild {
-        regions: built,
-        source_bytes,
-    })
+    Ok(LateRuntimeResidualBuild { regions: built, source_bytes })
 }

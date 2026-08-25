@@ -7,9 +7,7 @@ use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 
 use canonical_json::canonical_json;
-use decomp_targets::{
-    parse_decomp_target, target_for, BuildSupport, DecompTargetId, DEFAULT_TARGET,
-};
+use decomp_targets::{parse_decomp_target, target_for, BuildSupport, DecompTargetId, DEFAULT_TARGET};
 use serde_json::{json, Map, Number, Value};
 
 const ROM_BASE: u64 = 0x0800_0000;
@@ -72,9 +70,7 @@ pub fn repository_root() -> PathBuf {
 }
 
 fn default_jobs() -> usize {
-    std::thread::available_parallelism()
-        .map_or(1, usize::from)
-        .min(16)
+    std::thread::available_parallelism().map_or(1, usize::from).min(16)
 }
 
 fn defaults(target_id: DecompTargetId) -> Options {
@@ -126,9 +122,7 @@ pub fn parse_args(argv: &[String]) -> Result<ParseOutcome, String> {
             index += 1;
             continue;
         }
-        let (option, inline) = argument
-            .split_once('=')
-            .map_or((argument.as_str(), None), |(a, b)| (a, Some(b)));
+        let (option, inline) = argument.split_once('=').map_or((argument.as_str(), None), |(a, b)| (a, Some(b)));
         let field = match option {
             "-o" | "--output" => Some("output"),
             "--claimed-output" => Some("claimed"),
@@ -143,9 +137,7 @@ pub fn parse_args(argv: &[String]) -> Result<ParseOutcome, String> {
                 value.to_string()
             } else {
                 index += 1;
-                argv.get(index)
-                    .ok_or_else(|| format!("{option} requires a value"))?
-                    .clone()
+                argv.get(index).ok_or_else(|| format!("{option} requires a value"))?.clone()
             };
             match field {
                 "output" => options.output = value,
@@ -171,15 +163,9 @@ pub fn parse_args(argv: &[String]) -> Result<ParseOutcome, String> {
 }
 
 fn parse_jobs(value: &str) -> Result<usize, String> {
-    let digits: String = value
-        .chars()
-        .take_while(|ch| ch.is_ascii_digit() || *ch == '+' || *ch == '-')
-        .collect();
+    let digits: String = value.chars().take_while(|ch| ch.is_ascii_digit() || *ch == '+' || *ch == '-').collect();
     let parsed = digits.parse::<isize>().ok();
-    parsed
-        .filter(|jobs| *jobs >= 1)
-        .map(|jobs| jobs as usize)
-        .ok_or_else(|| "jobs must be positive".into())
+    parsed.filter(|jobs| *jobs >= 1).map(|jobs| jobs as usize).ok_or_else(|| "jobs must be positive".into())
 }
 
 fn rooted(root: &Path, value: &str) -> PathBuf {
@@ -192,16 +178,12 @@ fn rooted(root: &Path, value: &str) -> PathBuf {
 }
 
 fn has_assembly_sources(directory: &Path) -> Result<bool, String> {
-    for entry in
-        std::fs::read_dir(directory).map_err(|error| format!("{}: {error}", directory.display()))?
-    {
+    for entry in std::fs::read_dir(directory).map_err(|error| format!("{}: {error}", directory.display()))? {
         let entry = entry.map_err(|error| format!("{}: {error}", directory.display()))?;
         if entry.file_name().to_string_lossy().starts_with('.') {
             continue;
         }
-        let kind = entry
-            .file_type()
-            .map_err(|error| format!("{}: {error}", entry.path().display()))?;
+        let kind = entry.file_type().map_err(|error| format!("{}: {error}", entry.path().display()))?;
         if kind.is_file() && entry.path().extension().is_some_and(|ext| ext == "s") {
             return Ok(true);
         }
@@ -225,11 +207,7 @@ fn run(root: &Path, command: &[String]) -> Result<(), String> {
     if status.success() {
         Ok(())
     } else {
-        Err(format!(
-            "{} failed with status {}",
-            args.first().unwrap_or(program),
-            status.code().unwrap_or(-1)
-        ))
+        Err(format!("{} failed with status {}", args.first().unwrap_or(program), status.code().unwrap_or(-1)))
     }
 }
 
@@ -269,10 +247,7 @@ fn read_json(path: &Path) -> Result<Value, String> {
 }
 
 fn value_u64(value: &Value, label: &str) -> Result<u64, String> {
-    value
-        .as_u64()
-        .or_else(|| value.as_str()?.parse().ok())
-        .ok_or_else(|| format!("invalid {label}"))
+    value.as_u64().or_else(|| value.as_str()?.parse().ok()).ok_or_else(|| format!("invalid {label}"))
 }
 
 fn regions(document: &Value) -> Result<Vec<Region>, String> {
@@ -284,9 +259,7 @@ fn regions(document: &Value) -> Result<Vec<Region>, String> {
             Ok(Region {
                 address: value_u64(&item["address"], "region address")?,
                 size: value_u64(&item["size"], "region size")? as usize,
-                output: item["output"]
-                    .as_str()
-                    .map_or_else(PathBuf::new, PathBuf::from),
+                output: item["output"].as_str().map_or_else(PathBuf::new, PathBuf::from),
                 kind: item["kind"].as_str().map(str::to_string),
                 retention: item["retention"].as_str().map(str::to_string),
             })
@@ -295,10 +268,7 @@ fn regions(document: &Value) -> Result<Vec<Region>, String> {
 }
 
 pub fn unowned_regions(mask: &[u8], base: u64) -> Result<Vec<GapRegion>, String> {
-    if base
-        .checked_add(mask.len() as u64)
-        .is_none_or(|end| end > u32::MAX as u64 + 1)
-    {
+    if base.checked_add(mask.len() as u64).is_none_or(|end| end > u32::MAX as u64 + 1) {
         return Err("invalid coverage base".into());
     }
     let mut result = Vec::new();
@@ -313,10 +283,7 @@ pub fn unowned_regions(mask: &[u8], base: u64) -> Result<Vec<GapRegion>, String>
         }
         if value == 1 {
             if let Some(begin) = start.take() {
-                result.push(GapRegion {
-                    address: base + begin as u64,
-                    size: index - begin,
-                });
+                result.push(GapRegion { address: base + begin as u64, size: index - begin });
             }
         }
     }
@@ -324,27 +291,15 @@ pub fn unowned_regions(mask: &[u8], base: u64) -> Result<Vec<GapRegion>, String>
 }
 
 fn assembly_accounting(regions: &[Region]) -> Result<AssemblyAccounting, String> {
-    let debt = [
-        "c_candidate",
-        "split_first",
-        "merge_with_owner",
-        "merge_with_function_owner",
-        "merge_with_continuations",
-    ];
-    let retained = [
-        "keep_asm",
-        "keep_structured_asm",
-        "adjacent_section_alignment",
-    ];
+    let debt =
+        ["c_candidate", "split_first", "merge_with_owner", "merge_with_function_owner", "merge_with_continuations"];
+    let retained = ["keep_asm", "keep_structured_asm", "adjacent_section_alignment"];
     let mut result = AssemblyAccounting::default();
     for region in regions {
         if region.size == 0 {
             return Err("invalid assembly accounting size".into());
         }
-        let retention = region
-            .retention
-            .as_deref()
-            .ok_or("unsupported assembly retention: null")?;
+        let retention = region.retention.as_deref().ok_or("unsupported assembly retention: null")?;
         if debt.contains(&retention) {
             result.c_debt_regions += 1;
             result.c_debt_bytes += region.size;
@@ -359,29 +314,18 @@ fn assembly_accounting(regions: &[Region]) -> Result<AssemblyAccounting, String>
 }
 
 fn validate_alignments(claimed: &[Region], assembly: &[Region]) -> Result<(), String> {
-    let bodies = claimed.iter().chain(
-        assembly
-            .iter()
-            .filter(|region| region.kind.as_deref() != Some("alignment_padding")),
-    );
+    let bodies =
+        claimed.iter().chain(assembly.iter().filter(|region| region.kind.as_deref() != Some("alignment_padding")));
     let starts: BTreeSet<u64> = bodies.clone().map(|region| region.address).collect();
-    let ends: BTreeSet<u64> = bodies
-        .map(|region| region.address + region.size as u64)
-        .collect();
-    for region in assembly
-        .iter()
-        .filter(|region| region.kind.as_deref() == Some("alignment_padding"))
-    {
+    let ends: BTreeSet<u64> = bodies.map(|region| region.address + region.size as u64).collect();
+    for region in assembly.iter().filter(|region| region.kind.as_deref() == Some("alignment_padding")) {
         if region.size != 2
             || region.address & 3 != 2
             || region.retention.as_deref() != Some("adjacent_section_alignment")
             || !ends.contains(&region.address)
             || !starts.contains(&(region.address + 2))
         {
-            return Err(format!(
-                "unproven assembly alignment at 0x{:08x}",
-                region.address
-            ));
+            return Err(format!("unproven assembly alignment at 0x{:08x}", region.address));
         }
     }
     Ok(())
@@ -403,11 +347,7 @@ pub fn reconstruction_progress(
     if bytes + remaining_bytes != rom_size {
         return Err("byte reconstruction count differs".into());
     }
-    Ok(ReconstructionProgress {
-        bytes,
-        remaining_bytes,
-        percent: round_percent(bytes, rom_size),
-    })
+    Ok(ReconstructionProgress { bytes, remaining_bytes, percent: round_percent(bytes, rom_size) })
 }
 
 fn round_percent(bytes: usize, total: usize) -> f64 {
@@ -463,9 +403,7 @@ fn gap_values(gaps: &[GapRegion], prefix: &str, kind: &str) -> Value {
 
 fn require_source_ownership(source_only: bool, unowned_bytes: usize) -> Result<(), String> {
     if !source_only && unowned_bytes != 0 {
-        return Err(format!(
-            "full build leaves {unowned_bytes} ROM bytes unowned; ROM fallback is forbidden"
-        ));
+        return Err(format!("full build leaves {unowned_bytes} ROM bytes unowned; ROM fallback is forbidden"));
     }
     Ok(())
 }
@@ -489,39 +427,23 @@ fn place_regions(
             .checked_add(region.size)
             .ok_or_else(|| format!("{label} outside ROM image at 0x{:08x}", region.address))?;
         if end > mask.len() || end <= start {
-            return Err(format!(
-                "{label} outside ROM image at 0x{:08x}",
-                region.address
-            ));
+            return Err(format!("{label} outside ROM image at 0x{:08x}", region.address));
         }
         if mask[start..end].iter().any(|byte| *byte != 0) {
-            return Err(format!(
-                "{label} overlaps another source at 0x{:08x}",
-                region.address
-            ));
+            return Err(format!("{label} overlaps another source at 0x{:08x}", region.address));
         }
         let source = if let Some(image_base) = image_base {
-            let offset = region
-                .address
-                .checked_sub(image_base)
-                .ok_or("compiled image region differs")? as usize;
-            image
-                .get(offset..offset + region.size)
-                .ok_or("compiled image region differs")?
-                .to_vec()
+            let offset = region.address.checked_sub(image_base).ok_or("compiled image region differs")? as usize;
+            image.get(offset..offset + region.size).ok_or("compiled image region differs")?.to_vec()
         } else {
-            std::fs::read(&region.output)
-                .map_err(|error| format!("{}: {error}", region.output.display()))?
+            std::fs::read(&region.output).map_err(|error| format!("{}: {error}", region.output.display()))?
         };
         if source.len() != region.size {
             return Err(format!("{label} size differs at 0x{:08x}", region.address));
         }
         if let Some(expected) = rom {
             if source != expected[start..end] {
-                return Err(format!(
-                    "{label} mismatch at 0x{:08x} (0x{:x} bytes)",
-                    region.address, region.size
-                ));
+                return Err(format!("{label} mismatch at 0x{:08x} (0x{:x} bytes)", region.address, region.size));
             }
         }
         if let Some(output) = rebuilt.as_mut() {
@@ -540,21 +462,14 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
             target.id, target.id
         ));
     }
-    let rom_path = if Path::new(&options.rom).is_absolute() {
-        PathBuf::from(&options.rom)
-    } else {
-        cwd.join(&options.rom)
-    };
+    let rom_path =
+        if Path::new(&options.rom).is_absolute() { PathBuf::from(&options.rom) } else { cwd.join(&options.rom) };
     let rom = if options.source_only {
         None
     } else {
-        let bytes =
-            std::fs::read(&rom_path).map_err(|error| format!("{}: {error}", rom_path.display()))?;
+        let bytes = std::fs::read(&rom_path).map_err(|error| format!("{}: {error}", rom_path.display()))?;
         if bytes.len() != target.rom_size as usize {
-            return Err(format!(
-                "{} ROM must contain exactly {} bytes",
-                target.id, target.rom_size
-            ));
+            return Err(format!("{} ROM must contain exactly {} bytes", target.id, target.rom_size));
         }
         Some(bytes)
     };
@@ -578,8 +493,8 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     run(root, &command)?;
     let claimed_document = read_json(&claimed_dir.join("manifest.json"))?;
     let claimed_regions = regions(&claimed_document)?;
-    let claimed_image = std::fs::read(claimed_dir.join("claimed.bin"))
-        .map_err(|error| format!("claimed.bin: {error}"))?;
+    let claimed_image =
+        std::fs::read(claimed_dir.join("claimed.bin")).map_err(|error| format!("claimed.bin: {error}"))?;
     let image_base = value_u64(&claimed_document["image_base"], "image base")?;
     place_regions(
         &claimed_regions,
@@ -605,15 +520,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
         run(root, &command)?;
         asm_regions = regions(&read_json(&output.join("manifest.json"))?)?;
         validate_alignments(&claimed_regions, &asm_regions)?;
-        place_regions(
-            &asm_regions,
-            &[],
-            None,
-            rom.as_deref(),
-            &mut rebuilt,
-            &mut mask,
-            "assembly",
-        )?;
+        place_regions(&asm_regions, &[], None, rom.as_deref(), &mut rebuilt, &mut mask, "assembly")?;
     }
     let accounting = assembly_accounting(&asm_regions)?;
 
@@ -635,15 +542,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
         ]);
         run(root, &command)?;
         asset_regions = regions(&read_json(&output.join("manifest.json"))?)?;
-        place_regions(
-            &asset_regions,
-            &[],
-            None,
-            rom.as_deref(),
-            &mut rebuilt,
-            &mut mask,
-            "asset",
-        )?;
+        place_regions(&asset_regions, &[], None, rom.as_deref(), &mut rebuilt, &mut mask, "asset")?;
     }
     if let (Some(actual), Some(expected)) = (&rebuilt, &rom) {
         if actual != expected {
@@ -655,10 +554,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     let source_bytes = mask.iter().map(|byte| *byte as usize).sum::<usize>();
     let code_bytes = value_u64(&claimed_document["claimed_bytes"], "claimed bytes")? as usize;
     let asm_bytes = asm_regions.iter().map(|region| region.size).sum::<usize>();
-    let asset_bytes = asset_regions
-        .iter()
-        .map(|region| region.size)
-        .sum::<usize>();
+    let asset_bytes = asset_regions.iter().map(|region| region.size).sum::<usize>();
     if code_bytes + asm_bytes + asset_bytes != source_bytes {
         return Err("source component count differs".into());
     }
@@ -694,8 +590,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     require_source_ownership(options.source_only, unowned_bytes)?;
 
     if let Some(parent) = output.parent() {
-        std::fs::create_dir_all(parent)
-            .map_err(|error| format!("{}: {error}", parent.display()))?;
+        std::fs::create_dir_all(parent).map_err(|error| format!("{}: {error}", parent.display()))?;
     }
     if let Some(bytes) = &rebuilt {
         std::fs::write(&output, bytes).map_err(|error| format!("{}: {error}", output.display()))?;
@@ -718,20 +613,11 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     field!("asm_bytes", number(asm_bytes));
     field!("asm_c_debt_regions", number(accounting.c_debt_regions));
     field!("asm_c_debt_bytes", number(accounting.c_debt_bytes));
-    field!(
-        "asm_retained_structural_regions",
-        number(accounting.retained_regions)
-    );
-    field!(
-        "asm_retained_structural_bytes",
-        number(accounting.retained_bytes)
-    );
+    field!("asm_retained_structural_regions", number(accounting.retained_regions));
+    field!("asm_retained_structural_bytes", number(accounting.retained_bytes));
     field!("asset_regions", number(asset_regions.len()));
     field!("asset_bytes", number(asset_bytes));
-    field!(
-        "source_regions",
-        number(claimed_regions.len() + asm_regions.len() + asset_regions.len())
-    );
+    field!("source_regions", number(claimed_regions.len() + asm_regions.len() + asset_regions.len()));
     field!("source_bytes", number(source_bytes));
     field!(
         "project_completion",
@@ -746,21 +632,12 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
         )
     );
     field!("byte_reconstruction_bytes", number(progress.bytes));
-    field!(
-        "byte_reconstruction_remaining_bytes",
-        number(progress.remaining_bytes)
-    );
+    field!("byte_reconstruction_remaining_bytes", number(progress.remaining_bytes));
     field!("byte_reconstruction_percent", percentage(progress.percent));
     field!("total_decompilation_bytes", number(progress.bytes));
-    field!(
-        "total_decompilation_remaining_bytes",
-        number(progress.remaining_bytes)
-    );
+    field!("total_decompilation_remaining_bytes", number(progress.remaining_bytes));
     field!("total_decompilation_percent", percentage(progress.percent));
-    field!(
-        "total_decompilation_semantics",
-        json!("deprecated_alias_for_byte_reconstruction")
-    );
+    field!("total_decompilation_semantics", json!("deprecated_alias_for_byte_reconstruction"));
     field!("unowned_bytes", number(unowned_bytes));
     field!("unowned_regions", number(gaps.len()));
     field!("unowned_manifest", json!(unowned_path.to_string_lossy()));
@@ -768,27 +645,10 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     field!("fallback_regions", number(gaps.len()));
     field!("fallback_manifest", json!(fallback_path.to_string_lossy()));
     field!("rom_fallback_applicable", json!(!options.source_only));
-    field!(
-        "verification",
-        json!(if options.source_only {
-            "source_only"
-        } else {
-            "rom"
-        })
-    );
+    field!("verification", json!(if options.source_only { "source_only" } else { "rom" }));
     field!("byte_identical", json!(!options.source_only));
-    field!(
-        "output",
-        if options.source_only {
-            Value::Null
-        } else {
-            json!(options.output)
-        }
-    );
-    write_json(
-        &PathBuf::from(format!("{}.json", report_base.to_string_lossy())),
-        Value::Object(report),
-    )?;
+    field!("output", if options.source_only { Value::Null } else { json!(options.output) });
+    write_json(&PathBuf::from(format!("{}.json", report_base.to_string_lossy())), Value::Object(report))?;
 
     Ok(format!("{} regions={} code={} asm={} assets={} source_bytes={} unowned_bytes={} asm_c_debt_bytes={} asm_retained_structural_bytes={} source_owned={} byte_identical={}{}",
         if options.source_only{"source_only=True"}else{"identical=True"}, claimed_regions.len()+asm_regions.len()+asset_regions.len(), claimed_regions.len(), asm_regions.len(), asset_regions.len(), source_bytes, unowned_bytes, accounting.c_debt_bytes, accounting.retained_bytes,
@@ -797,28 +657,11 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
 
 pub fn self_test() -> Result<(), String> {
     let gaps = unowned_regions(&[1, 0, 0, 1, 0], ROM_BASE)?;
-    if gaps
-        != [
-            GapRegion {
-                address: ROM_BASE + 1,
-                size: 2,
-            },
-            GapRegion {
-                address: ROM_BASE + 4,
-                size: 1,
-            },
-        ]
-    {
+    if gaps != [GapRegion { address: ROM_BASE + 1, size: 2 }, GapRegion { address: ROM_BASE + 4, size: 1 }] {
         return Err("unowned coverage self-test failed".into());
     }
     let progress = reconstruction_progress(100, 10, 50, 5, 25, 10)?;
-    if progress
-        != (ReconstructionProgress {
-            bytes: 65,
-            remaining_bytes: 35,
-            percent: 65.0,
-        })
-    {
+    if progress != (ReconstructionProgress { bytes: 65, remaining_bytes: 35, percent: 65.0 }) {
         return Err("byte reconstruction progress self-test failed".into());
     }
     if reconstruction_progress(100, 10, 50, 5, 25, 9).is_ok() {

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080a24d0",
+  "name": "RunAssetSelectionScreen",
+  "status": "measured-draft",
+  "owner_bytes": 432,
+  "candidate_bytes": 436,
+  "differing_halfwords": 179,
+  "wrong_instructions": 102,
+  "classification": "asset-selection-screen",
+  "domain": "Backs up display memory, runs a modal selection screen, publishes an accepted selection, and restores the prior display state.",
+  "notes": [
+    "Recovered from retained owner assembly, local state layouts, and the approved compiler through the family-assisted m2c workbench.",
+    "The generated void signature was corrected because the owner explicitly returns its selection result in r0 after preserving it across cleanup.",
+    "All generated register and stack-slot identifiers were replaced with role-based names before retaining the candidate.",
+    "The typed reconstruction improves the compiling family-assisted m2c draft from 201 differing halfwords to 179 while remaining four bytes over the owner extent.",
+    "A 5,000-candidate safe family-template walk produced no exact object and did not improve the byte delta; its best structural score increased the byte mismatch and is not retained as canonical source.",
+    "Exact-C adoption remains gated on an independently compiled zero-difference object."
+  ]
+}

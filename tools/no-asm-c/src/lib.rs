@@ -89,8 +89,7 @@ pub fn code_only(text: &str) -> String {
                     index += 2;
                     continue;
                 }
-                let closes = (state == State::Str && char == b'"')
-                    || (state == State::Char && char == b'\'');
+                let closes = (state == State::Str && char == b'"') || (state == State::Char && char == b'\'');
                 if closes {
                     output.push(' ');
                     state = State::Code;
@@ -156,19 +155,13 @@ pub fn source_files(directory: &Path) -> io::Result<Vec<PathBuf>> {
     if !directory.is_dir() {
         return Ok(Vec::new());
     }
-    let mut names: Vec<PathBuf> = fs::read_dir(directory)?
-        .filter_map(Result::ok)
-        .map(|entry| entry.path())
-        .collect();
+    let mut names: Vec<PathBuf> = fs::read_dir(directory)?.filter_map(Result::ok).map(|entry| entry.path()).collect();
     names.sort();
     let mut files = Vec::new();
     for path in names {
         if path.is_dir() {
             files.extend(source_files(&path)?);
-        } else if matches!(
-            path.extension().and_then(|e| e.to_str()),
-            Some("c") | Some("h")
-        ) {
+        } else if matches!(path.extension().and_then(|e| e.to_str()), Some("c") | Some("h")) {
             files.push(path);
         }
     }
@@ -184,8 +177,7 @@ pub fn self_test() -> Result<String, String> {
     if !find_forbidden("fixture.c", "const char *text = \"asm(\\\"\\\")\";\n").is_empty() {
         return Err("no-asm-c self-test flagged assembly in a string".into());
     }
-    let directory =
-        std::env::temp_dir().join(format!("alchemy-no-asm-c-self-test-{}", std::process::id()));
+    let directory = std::env::temp_dir().join(format!("alchemy-no-asm-c-self-test-{}", std::process::id()));
     let _ = fs::remove_dir_all(&directory);
     let result = (|| {
         fs::create_dir_all(directory.join("nested")).map_err(|error| error.to_string())?;
@@ -193,11 +185,7 @@ pub fn self_test() -> Result<String, String> {
         fs::write(directory.join("b.h"), "int b;\n").map_err(|error| error.to_string())?;
         fs::write(directory.join("notes.md"), "not C\n").map_err(|error| error.to_string())?;
         let files = source_files(&directory).map_err(|error| error.to_string())?;
-        if files.len() != 2
-            || files
-                .iter()
-                .any(|path| path.extension().and_then(|x| x.to_str()) == Some("md"))
-        {
+        if files.len() != 2 || files.iter().any(|path| path.extension().and_then(|x| x.to_str()) == Some("md")) {
             return Err("no-asm-c self-test source boundary changed".into());
         }
         Ok("self-test=ok files=2".into())

@@ -13,15 +13,7 @@ use std::process::ExitCode;
 
 use crate::{decode, self_test, ResourceKind, ROM_BASE, TABLE};
 
-const VALUE_OPTIONS: [&str; 7] = [
-    "--id",
-    "--address",
-    "--format",
-    "--input-end",
-    "--max-output",
-    "-o",
-    "--output",
-];
+const VALUE_OPTIONS: [&str; 7] = ["--id", "--address", "--format", "--input-end", "--max-output", "-o", "--output"];
 
 const USAGE: &str = "usage: extract-resource [ROM] [--id ID | --address ADDRESS] [--format {auto,general,palette}] [-o OUTPUT | --verify-only]";
 
@@ -36,11 +28,7 @@ fn js_number(text: &str) -> f64 {
     if text.is_empty() {
         return 0.0;
     }
-    let radix_prefix = if text.len() > 2 {
-        Some(&text[..2])
-    } else {
-        None
-    };
+    let radix_prefix = if text.len() > 2 { Some(&text[..2]) } else { None };
     if let Some(prefix) = radix_prefix {
         let radix = match prefix {
             "0x" | "0X" => Some(16u32),
@@ -100,8 +88,7 @@ fn same(a: &str, b: &str) -> bool {
     match (std::fs::canonicalize(a), std::fs::canonicalize(b)) {
         (Ok(left), Ok(right)) => left == right,
         _ => {
-            let resolve =
-                |path: &str| std::path::absolute(path).unwrap_or_else(|_| PathBuf::from(path));
+            let resolve = |path: &str| std::path::absolute(path).unwrap_or_else(|_| PathBuf::from(path));
             resolve(a) == resolve(b)
         }
     }
@@ -166,12 +153,7 @@ fn run(mut args: Vec<String>) -> Result<(), String> {
             return Err("resource ID lies outside the ROM pointer table".into());
         }
         let entry = entry as usize;
-        i64::from(u32::from_le_bytes([
-            data[entry],
-            data[entry + 1],
-            data[entry + 2],
-            data[entry + 3],
-        ]))
+        i64::from(u32::from_le_bytes([data[entry], data[entry + 1], data[entry + 2], data[entry + 3]]))
     } else {
         integer(address_text, "--address")?
     };
@@ -203,11 +185,7 @@ fn run(mut args: Vec<String>) -> Result<(), String> {
                 return Err("refusing to overwrite the input ROM".into());
             }
             let parent = Path::new(output_path).parent().unwrap_or(Path::new(""));
-            let parent = if parent.as_os_str().is_empty() {
-                Path::new(".")
-            } else {
-                parent
-            };
+            let parent = if parent.as_os_str().is_empty() { Path::new(".") } else { parent };
             std::fs::create_dir_all(parent).map_err(|error| error.to_string())?;
             std::fs::write(output_path, &output).map_err(|error| error.to_string())?;
         }

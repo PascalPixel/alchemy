@@ -2,19 +2,51 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x0809b208",
-  "status": "complete-structured-asm",
+  "name": "RunBattleEffect15",
+  "status": "proven-retained-assembly",
   "retention": "keep_structured_asm",
   "owner_bytes": 348,
+  "executable_owner_bytes": 348,
   "candidate_bytes": 348,
   "differing_halfwords": 2,
   "wrong_instructions": 0,
-  "classification": "battle-effect-runner",
+  "classification": "battle_effect_compiler_scheduling_mismatch",
+  "resolved_asm_classification": {
+    "kind": "battle_effect_compiler_scheduling_mismatch",
+    "retention": "keep_structured_asm",
+    "confidence": "proven"
+  },
   "cross_edition": {
     "editions": ["ja", "en", "de", "es", "fr", "it"],
     "relocation_normalized_core_bytes": 216,
     "core_diff_bytes": 0,
     "core_identical": true
   },
+  "bounded_search": {
+    "classic_semantic_search": {
+      "requested_candidates": 30000,
+      "attempted_candidates": 30000,
+      "exact_candidates": 0,
+      "best_differing_halfwords": 7
+    },
+    "final_pair_search": {
+      "requested_candidates": 20000,
+      "attempted_candidates": 19116,
+      "compile_failures": 884,
+      "exact_candidates": 0,
+      "best_differing_halfwords": 2,
+      "best_wrong_instructions": 0
+    }
+  },
+  "residual": [
+    {
+      "scope": "arming the main object's callback and timer",
+      "candidate": "adds the timer-field offset to the independent r2 pointer before storing the callback through r5",
+      "reference": "stores the callback through r5 before adding the timer-field offset to r2",
+      "equivalence": "the add writes only r2 while the callback store reads r3 and r5, so the operations have no register or memory dependency",
+      "resynchronization": "both streams have identical registers and memory before materializing zero for the timer store"
+    }
+  ],
   "notes": [
     "Selected from the stale local census at 87.42553% structural similarity, then reconstructed independently from retained assembly and current headers.",
     "This is effect 15 in the exact battle-effect dispatcher used by the resolve-action presentation graph.",

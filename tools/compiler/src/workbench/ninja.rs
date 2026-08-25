@@ -154,18 +154,10 @@ impl NinjaPlan {
             ),
         ];
         for (name, command, description) in steps {
-            output.push_str(&format!(
-                "rule {name}\n  command = {command}\n  description = {description}\n\n"
-            ));
+            output.push_str(&format!("rule {name}\n  command = {command}\n  description = {description}\n\n"));
         }
 
-        let headers = self
-            .headers
-            .iter()
-            .map(PathBuf::as_path)
-            .map(ninja_path)
-            .collect::<Vec<_>>()
-            .join(" ");
+        let headers = self.headers.iter().map(PathBuf::as_path).map(ninja_path).collect::<Vec<_>>().join(" ");
         output.push_str(&format!(
             "build {} {} {}: compile_candidate {} | {} {}\n",
             ninja_path(&self.candidate_object()),
@@ -235,10 +227,7 @@ fn command(parts: &[&OsStr]) -> Result<String, String> {
 }
 
 fn ninja_path(path: &Path) -> String {
-    path.to_string_lossy()
-        .replace('$', "$$")
-        .replace(' ', "$ ")
-        .replace(':', "$:")
+    path.to_string_lossy().replace('$', "$$").replace(' ', "$ ").replace(':', "$:")
 }
 
 #[cfg(test)]

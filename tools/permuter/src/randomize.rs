@@ -5,9 +5,7 @@ use std::path::Path;
 use shape_sweep::{apply_transform, TransformId};
 
 use crate::options::{MAX_PLAN_BYTES, MAX_SOURCE_BYTES};
-use crate::perm::{
-    materialize, IGNORE_END, IGNORE_START, PRETEND_END, PRETEND_START, RANDOM_END, RANDOM_START,
-};
+use crate::perm::{materialize, IGNORE_END, IGNORE_START, PRETEND_END, PRETEND_START, RANDOM_END, RANDOM_START};
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Mutation {
@@ -51,10 +49,12 @@ pub enum PassId {
     PadVarDecl,
     Inline,
     VarCondBlock,
+    CallWrapper,
 }
 
 impl PassId {
-    pub const ALL: [Self; 34] = [
+    pub const ALL: [Self; 35] = [
+        Self::CallWrapper,
         Self::TempForExpr,
         Self::ExpandExpr,
         Self::ReorderStmts,
@@ -127,6 +127,7 @@ impl PassId {
             Self::PadVarDecl => "perm_pad_var_decl",
             Self::Inline => "perm_inline",
             Self::VarCondBlock => "perm_var_cond_block",
+            Self::CallWrapper => "perm_call_wrapper",
         }
     }
 
@@ -170,6 +171,7 @@ impl PassId {
             Self::PadVarDecl => "insert an unused local declaration",
             Self::Inline => "inline a single-use local temporary",
             Self::VarCondBlock => "duplicate a block across a variable condition",
+            Self::CallWrapper => "route a computed call through an inline wrapper",
         }
     }
 }
@@ -217,6 +219,7 @@ impl Weights {
             (PassId::PadVarDecl, 10),
             (PassId::Inline, 100),
             (PassId::VarCondBlock, 50),
+            (PassId::CallWrapper, 100),
         ] {
             values[pass.index()] = weight;
         }
@@ -267,8 +270,7 @@ impl Weights {
         if !path.is_file() {
             return Ok(Self::for_profile(fallback_profile));
         }
-        let text =
-            fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
+        let text = fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
         let mut profile = fallback_profile.to_string();
         let mut overrides = Vec::<(String, u32)>::new();
         let mut section = String::new();
@@ -360,11 +362,7 @@ fn replace_range(source: &str, start: usize, end: usize, replacement: &str) -> S
 
 fn declaration(line: &str) -> bool {
     let trimmed = line.trim();
-    [
-        "s32 ", "u32 ", "s16 ", "u16 ", "s8 ", "u8 ", "int ", "void *",
-    ]
-    .iter()
-    .any(|prefix| trimmed.starts_with(prefix))
+    ["s32 ", "u32 ", "s16 ", "u16 ", "s8 ", "u8 ", "int ", "void *"].iter().any(|prefix| trimmed.starts_with(prefix))
         && trimmed.ends_with(';')
 }
 
@@ -381,26 +379,14 @@ fn scalar_declaration_name(line: &str) -> Option<&str> {
     {
         return None;
     }
-    let left = statement
-        .split_once(" = ")
-        .map_or(statement, |(left, _)| left);
+    let left = statement.split_once(" = ").map_or(statement, |(left, _)| left);
     let mut words = left.split_whitespace();
     let type_name = words.next()?;
     let name = words.next()?;
     if words.next().is_some()
         || !matches!(
             type_name,
-            "s8" | "u8"
-                | "s16"
-                | "u16"
-                | "s32"
-                | "u32"
-                | "s64"
-                | "u64"
-                | "char"
-                | "short"
-                | "int"
-                | "long"
+            "s8" | "u8" | "s16" | "u16" | "s32" | "u32" | "s64" | "u64" | "char" | "short" | "int" | "long"
         )
         || !c_identifier(name)
     {
@@ -418,13 +404,7 @@ fn swap_adjacent_declarations(source: &str) -> Vec<Mutation> {
         if declaration(first) && declaration(second) {
             output.push(Mutation {
                 id: format!("swap-declarations-{index}"),
-                source: format!(
-                    "{}{}{}{}",
-                    &source[..pair[0].0],
-                    second,
-                    first,
-                    &source[pair[1].1..]
-                ),
+                source: format!("{}{}{}{}", &source[..pair[0].0], second, first, &source[pair[1].1..]),
             });
         }
     }
@@ -504,11 +484,7 @@ fn commute_rhs(source: &str) -> Vec<Mutation> {
                 continue;
             }
             let indent = &line[..line.len() - line.trim_start().len()];
-            let replacement = format!(
-                "{indent}{left} = {}{operator}{};\n",
-                second.trim(),
-                first.trim()
-            );
+            let replacement = format!("{indent}{left} = {}{operator}{};\n", second.trim(), first.trim());
             output.push(Mutation {
                 id: format!("commute-rhs-{line_index}-{}", operator.trim()),
                 source: replace_range(source, start, end, &replacement),
@@ -520,12 +496,7 @@ fn commute_rhs(source: &str) -> Vec<Mutation> {
 
 fn type_variants(source: &str) -> Vec<Mutation> {
     let mut output = Vec::new();
-    for (from, to) in [
-        ("s32", "u32"),
-        ("u32", "s32"),
-        ("s16", "u16"),
-        ("u16", "s16"),
-    ] {
+    for (from, to) in [("s32", "u32"), ("u32", "s32"), ("s16", "u16"), ("u16", "s16")] {
         let mut cursor = 0usize;
         let mut occurrence = 0usize;
         while let Some(relative) = source[cursor..].find(from) {
@@ -560,8 +531,7 @@ fn c_identifier(text: &str) -> bool {
     let Some(first) = bytes.next() else {
         return false;
     };
-    (first.is_ascii_alphabetic() || first == b'_')
-        && bytes.all(|byte| byte.is_ascii_alphanumeric() || byte == b'_')
+    (first.is_ascii_alphabetic() || first == b'_') && bytes.all(|byte| byte.is_ascii_alphanumeric() || byte == b'_')
 }
 
 fn simple_assignment_parts(line: &str) -> Option<(&str, &str)> {
@@ -592,9 +562,7 @@ fn identifiers(text: &str) -> BTreeSet<&str> {
 }
 
 fn contains_call(expression: &str) -> bool {
-    const TYPE_NAMES: [&str; 11] = [
-        "char", "short", "int", "long", "s8", "u8", "s16", "u16", "s32", "u32", "void",
-    ];
+    const TYPE_NAMES: [&str; 11] = ["char", "short", "int", "long", "s8", "u8", "s16", "u16", "s32", "u32", "void"];
     let bytes = expression.as_bytes();
     let mut at = 0usize;
     while at < bytes.len() {
@@ -633,11 +601,8 @@ fn statements_can_swap(first: &str, second: &str, locals: &BTreeSet<String>) -> 
     {
         return false;
     }
-    let identifiers_are_local = |text: &str| {
-        identifiers(text)
-            .into_iter()
-            .all(|identifier| locals.contains(identifier))
-    };
+    let identifiers_are_local =
+        |text: &str| identifiers(text).into_iter().all(|identifier| locals.contains(identifier));
     if !identifiers_are_local(first_write)
         || !identifiers_are_local(first_rhs)
         || !identifiers_are_local(second_write)
@@ -647,15 +612,11 @@ fn statements_can_swap(first: &str, second: &str, locals: &BTreeSet<String>) -> 
     }
     let first_reads = identifiers(first_rhs);
     let second_reads = identifiers(second_rhs);
-    first_write != second_write
-        && !second_reads.contains(first_write)
-        && !first_reads.contains(second_write)
+    first_write != second_write && !second_reads.contains(first_write) && !first_reads.contains(second_write)
 }
 
 fn contains_unproven_memory_access(expression: &str) -> bool {
-    expression
-        .chars()
-        .any(|character| matches!(character, '[' | ']' | '.' | '&' | '*'))
+    expression.chars().any(|character| matches!(character, '[' | ']' | '.' | '&' | '*'))
         || expression.contains("->")
         || expression.contains("volatile")
 }
@@ -670,11 +631,7 @@ fn swap_adjacent_statements(source: &str) -> Vec<Mutation> {
     let mut root = None;
     for (index, (start, end)) in lines.iter().copied().enumerate() {
         let line = &source[start..end];
-        if root.is_none()
-            && line
-                .find('{')
-                .is_some_and(|brace| line[..brace].contains(')'))
-        {
+        if root.is_none() && line.find('{').is_some_and(|brace| line[..brace].contains(')')) {
             root = Some(locals_by_root.len());
             locals_by_root.push(Vec::new());
         }
@@ -703,12 +660,10 @@ fn swap_adjacent_statements(source: &str) -> Vec<Mutation> {
     for (index, pair) in lines.windows(2).enumerate() {
         let first = &source[pair[0].0..pair[0].1];
         let second = &source[pair[1].0..pair[1].1];
-        let same_function = roots[index].is_some()
-            && roots[index] == roots[index + 1]
-            && scopes[index] == scopes[index + 1];
-        let locals = roots[index]
-            .and_then(|root| locals_by_root.get(root))
-            .map_or_else(BTreeSet::new, |declarations| {
+        let same_function =
+            roots[index].is_some() && roots[index] == roots[index + 1] && scopes[index] == scopes[index + 1];
+        let locals =
+            roots[index].and_then(|root| locals_by_root.get(root)).map_or_else(BTreeSet::new, |declarations| {
                 declarations
                     .iter()
                     .filter(|(declaration_index, declaration_scope, _)| {
@@ -717,20 +672,10 @@ fn swap_adjacent_statements(source: &str) -> Vec<Mutation> {
                     .map(|(_, _, name)| name.clone())
                     .collect()
             });
-        if same_function
-            && statement(first)
-            && statement(second)
-            && statements_can_swap(first, second, &locals)
-        {
+        if same_function && statement(first) && statement(second) && statements_can_swap(first, second, &locals) {
             output.push(Mutation {
                 id: format!("reorder-statements-{index}"),
-                source: format!(
-                    "{}{}{}{}",
-                    &source[..pair[0].0],
-                    second,
-                    first,
-                    &source[pair[1].1..]
-                ),
+                source: format!("{}{}{}{}", &source[..pair[0].0], second, first, &source[pair[1].1..]),
             });
         }
     }
@@ -761,10 +706,8 @@ fn rhs_variants(source: &str, label: &str, prefix: &str, suffix: &str) -> Vec<Mu
         } else {
             format!("{indent}{head} = {prefix}{expression}{suffix};\n")
         };
-        output.push(Mutation {
-            id: format!("{label}-{index}"),
-            source: replace_range(source, start, end, &replacement),
-        });
+        output
+            .push(Mutation { id: format!("{label}-{index}"), source: replace_range(source, start, end, &replacement) });
     }
     output
 }
@@ -841,10 +784,7 @@ fn empty_statements(source: &str) -> Vec<Mutation> {
         if source.as_bytes().get(at) == Some(&b'}') {
             continue;
         }
-        output.push(Mutation {
-            id: format!("empty-statement-{index}"),
-            source: replace_range(source, at, at, "; "),
-        });
+        output.push(Mutation { id: format!("empty-statement-{index}"), source: replace_range(source, at, at, "; ") });
     }
     output
 }
@@ -863,12 +803,7 @@ fn condition_variants(source: &str) -> Vec<Mutation> {
         }
         output.push(Mutation {
             id: format!("condition-{index}"),
-            source: replace_range(
-                source,
-                expression_start,
-                end,
-                &format!("({expression}) != 0"),
-            ),
+            source: replace_range(source, expression_start, end, &format!("({expression}) != 0")),
         });
     }
     output
@@ -889,11 +824,8 @@ fn factor_multiplication(source: &str) -> Vec<Mutation> {
         if left_operand.is_empty() || left_operand != right_operand {
             continue;
         }
-        let replacement = line.replacen(
-            &format!("{left_operand} + {right_operand}"),
-            &format!("{left_operand} * 2"),
-            1,
-        );
+        let replacement =
+            line.replacen(&format!("{left_operand} + {right_operand}"), &format!("{left_operand} * 2"), 1);
         output.push(Mutation {
             id: format!("factor-mult-{index}"),
             source: replace_range(source, start, end, &replacement),
@@ -942,12 +874,7 @@ fn inequality_variants(source: &str) -> Vec<Mutation> {
     let mut output = Vec::new();
     for (line_index, (start, end)) in line_offsets(source).into_iter().enumerate() {
         let line = &source[start..end];
-        for (operator, reverse) in [
-            (" < ", " > "),
-            (" > ", " < "),
-            (" <= ", " >= "),
-            (" >= ", " <= "),
-        ] {
+        for (operator, reverse) in [(" < ", " > "), (" > ", " < "), (" <= ", " >= "), (" >= ", " <= ")] {
             let Some((left, right)) = line.split_once(operator) else {
                 continue;
             };
@@ -962,14 +889,7 @@ fn inequality_variants(source: &str) -> Vec<Mutation> {
             if lhs.is_empty() || rhs.is_empty() {
                 continue;
             }
-            let replacement = format!(
-                "{}{}{}{}{}",
-                &line[..left_start],
-                rhs,
-                reverse,
-                lhs,
-                &right[right_end..]
-            );
+            let replacement = format!("{}{}{}{}{}", &line[..left_start], rhs, reverse, lhs, &right[right_end..]);
             output.push(Mutation {
                 id: format!("inequality-{line_index}-{}", operator.trim()),
                 source: replace_range(source, start, end, &replacement),
@@ -1045,10 +965,8 @@ fn chain_assignments(source: &str, length: usize) -> Vec<Mutation> {
     let lines = line_offsets(source);
     let mut output = Vec::new();
     for (index, window) in lines.windows(length).enumerate() {
-        let parts = window
-            .iter()
-            .map(|(start, end)| assignment_parts(&source[*start..*end]))
-            .collect::<Option<Vec<_>>>();
+        let parts =
+            window.iter().map(|(start, end)| assignment_parts(&source[*start..*end])).collect::<Option<Vec<_>>>();
         let Some(parts) = parts else {
             continue;
         };
@@ -1057,11 +975,7 @@ fn chain_assignments(source: &str, length: usize) -> Vec<Mutation> {
         }
         let indent = &source[window[0].0..window[0].1];
         let indent = &indent[..indent.len() - indent.trim_start().len()];
-        let lefts = parts
-            .iter()
-            .map(|part| part.0)
-            .collect::<Vec<_>>()
-            .join(" = ");
+        let lefts = parts.iter().map(|part| part.0).collect::<Vec<_>>().join(" = ");
         let replacement = format!("{indent}{lefts} = {};\n", parts[0].1);
         output.push(Mutation {
             id: format!("chain-{length}-{index}"),
@@ -1072,10 +986,7 @@ fn chain_assignments(source: &str, length: usize) -> Vec<Mutation> {
 }
 
 fn pad_variable(source: &str) -> Vec<Mutation> {
-    let Some((at, _)) = source
-        .match_indices('{')
-        .find(|(at, _)| source[..*at].contains(')'))
-    else {
+    let Some((at, _)) = source.match_indices('{').find(|(at, _)| source[..*at].contains(')')) else {
         return Vec::new();
     };
     vec![Mutation {
@@ -1179,22 +1090,74 @@ fn float_literals(source: &str) -> Vec<Mutation> {
     output
 }
 
+fn call_wrappers(source: &str) -> Vec<Mutation> {
+    let mut output = Vec::new();
+    for (index, (start, end)) in line_offsets(source).into_iter().enumerate() {
+        let line = &source[start..end];
+        let call = line.trim();
+        let Some(open) = call.find('(') else { continue };
+        if !call.starts_with("Func_") || !call.ends_with(");") {
+            continue;
+        }
+        let name = &call[..open];
+        let arguments = &call[open + 1..call.len() - 2];
+        if arguments.contains('(') || arguments.contains(')') {
+            continue;
+        }
+        let args: Vec<&str> = arguments.split(',').map(str::trim).collect();
+        let computed = args.iter().any(|arg| {
+            arg.contains("<<")
+                || arg.contains(">>")
+                || arg.starts_with('-')
+                || arg.strip_prefix("0x").and_then(|n| u32::from_str_radix(n, 16).ok()).is_some_and(|n| n > 255)
+                || arg.parse::<i32>().is_ok_and(|n| n.abs() > 255)
+        });
+        if args.is_empty() || !computed {
+            continue;
+        }
+        let needle = format!("void {name}(");
+        let Some(prototype_start) = source[..start].rfind(&needle) else {
+            continue;
+        };
+        let Some(relative_end) = source[prototype_start..].find(";\n") else {
+            continue;
+        };
+        let prototype_end = prototype_start + relative_end + 2;
+        let prototype = &source[prototype_start + needle.len()..prototype_end - 3];
+        if !prototype.trim().is_empty()
+            && (prototype.split(',').count() != args.len() || prototype.split(',').any(|ty| ty.trim() != "s32"))
+        {
+            continue;
+        }
+        let helper = format!("PermuterCallWrapper{index}");
+        let params = (0..args.len()).map(|i| format!("s32 a{i}")).collect::<Vec<_>>().join(", ");
+        let forwards = (0..args.len()).map(|i| format!("a{i}")).collect::<Vec<_>>().join(", ");
+        let definition = format!("\nstatic __inline__ void {helper}({params})\n{{\n    {name}({forwards});\n}}\n");
+        let replacement = line.replacen(name, &helper, 1);
+        output.push(Mutation {
+            id: format!("call-wrapper-{index}"),
+            source: format!(
+                "{}{}{}{}{}",
+                &source[..prototype_end],
+                definition,
+                &source[prototype_end..start],
+                replacement,
+                &source[end..]
+            ),
+        });
+    }
+    output
+}
+
 fn pass_variants(pass: PassId, source: &str) -> Vec<Mutation> {
     let mut variants = match pass {
         PassId::TempForExpr | PassId::ReferToVar => split_initializers(source),
         PassId::ExpandExpr | PassId::Inline => TransformId::ALL
             .into_iter()
-            .filter(|id| {
-                matches!(
-                    id,
-                    TransformId::InlineSingleUseTemp | TransformId::HoistArgsAfterFirst
-                )
-            })
+            .filter(|id| matches!(id, TransformId::InlineSingleUseTemp | TransformId::HoistArgsAfterFirst))
             .filter_map(|id| {
-                apply_transform(id, source).map(|source| Mutation {
-                    id: format!("{}-{}", pass.name(), id.id()),
-                    source,
-                })
+                apply_transform(id, source)
+                    .map(|source| Mutation { id: format!("{}-{}", pass.name(), id.id()), source })
             })
             .collect(),
         PassId::ReorderStmts => swap_adjacent_statements(source),
@@ -1203,9 +1166,9 @@ fn pass_variants(pass: PassId, source: &str) -> Vec<Mutation> {
         PassId::XorZero => rhs_variants(source, "xor-zero", "(", ") ^ 0"),
         PassId::CastSimple => rhs_variants(source, "cast-simple", "(s32)(", ")"),
         PassId::FloatLiteral => float_literals(source),
-        PassId::RandomizeInternalType
-        | PassId::RandomizeExternalType
-        | PassId::RandomizeFunctionType => type_variants(source),
+        PassId::RandomizeInternalType | PassId::RandomizeExternalType | PassId::RandomizeFunctionType => {
+            type_variants(source)
+        }
         PassId::SplitAssignment => split_initializers(source),
         PassId::Sameline => same_line(source),
         PassId::InsertBlock => insert_blocks(source),
@@ -1231,6 +1194,7 @@ fn pass_variants(pass: PassId, source: &str) -> Vec<Mutation> {
         PassId::LongChainAssignment => chain_assignments(source, 3),
         PassId::PadVarDecl => pad_variable(source),
         PassId::VarCondBlock => variable_condition_blocks(source),
+        PassId::CallWrapper => call_wrappers(source),
     };
     for variant in &mut variants {
         variant.id = format!("{}:{}", pass.name(), variant.id);
@@ -1258,15 +1222,11 @@ fn source_variants_with_weights_bounded(
                 break;
             }
             if variant.source.len() > MAX_SOURCE_BYTES {
-                return Err(format!(
-                    "generated mutation exceeds the {MAX_SOURCE_BYTES}-byte source budget"
-                ));
+                return Err(format!("generated mutation exceeds the {MAX_SOURCE_BYTES}-byte source budget"));
             }
             bytes = bytes.saturating_add(variant.source.len());
             if bytes > byte_budget {
-                return Err(format!(
-                    "generated mutation stream exceeds the {byte_budget}-byte budget"
-                ));
+                return Err(format!("generated mutation stream exceeds the {byte_budget}-byte budget"));
             }
             output.push(variant);
         }
@@ -1278,20 +1238,13 @@ fn source_variants_with_weights_bounded(
         if let Some(mutated) = apply_transform(id, source) {
             if mutated != source {
                 if mutated.len() > MAX_SOURCE_BYTES {
-                    return Err(format!(
-                        "generated transform exceeds the {MAX_SOURCE_BYTES}-byte source budget"
-                    ));
+                    return Err(format!("generated transform exceeds the {MAX_SOURCE_BYTES}-byte source budget"));
                 }
                 bytes = bytes.saturating_add(mutated.len());
                 if bytes > byte_budget {
-                    return Err(format!(
-                        "generated mutation stream exceeds the {byte_budget}-byte budget"
-                    ));
+                    return Err(format!("generated mutation stream exceeds the {byte_budget}-byte budget"));
                 }
-                output.push(Mutation {
-                    id: format!("shape-{}", id.id()),
-                    source: mutated,
-                });
+                output.push(Mutation { id: format!("shape-{}", id.id()), source: mutated });
             }
         }
     }
@@ -1299,16 +1252,10 @@ fn source_variants_with_weights_bounded(
 }
 
 fn fingerprint(text: &str) -> u64 {
-    text.bytes().fold(0xcbf2_9ce4_8422_2325, |hash, byte| {
-        (hash ^ byte as u64).wrapping_mul(0x100_0000_01b3)
-    })
+    text.bytes().fold(0xcbf2_9ce4_8422_2325, |hash, byte| (hash ^ byte as u64).wrapping_mul(0x100_0000_01b3))
 }
 
-fn marker_spans(
-    source: &str,
-    start_marker: &str,
-    end_marker: &str,
-) -> Vec<(usize, usize, usize, usize)> {
+fn marker_spans(source: &str, start_marker: &str, end_marker: &str) -> Vec<(usize, usize, usize, usize)> {
     let mut spans = Vec::new();
     let mut cursor = 0usize;
     while let Some(relative_start) = source[cursor..].find(start_marker) {
@@ -1368,10 +1315,7 @@ fn randomizable_ranges(source: &str) -> Vec<(usize, usize)> {
     let base = if random.is_empty() {
         vec![(0, source.len())]
     } else {
-        random
-            .into_iter()
-            .map(|(_, content_start, content_end, _)| (content_start, content_end))
-            .collect()
+        random.into_iter().map(|(_, content_start, content_end, _)| (content_start, content_end)).collect()
     };
     let mut protected = marker_spans(source, IGNORE_START, IGNORE_END)
         .into_iter()
@@ -1381,11 +1325,7 @@ fn randomizable_ranges(source: &str) -> Vec<(usize, usize)> {
     protected.sort_unstable();
     subtract_ranges(&base, &protected)
         .into_iter()
-        .filter(|(start, end)| {
-            source[*start..*end]
-                .chars()
-                .any(|character| !character.is_whitespace())
-        })
+        .filter(|(start, end)| source[*start..*end].chars().any(|character| !character.is_whitespace()))
         .collect()
 }
 
@@ -1413,9 +1353,7 @@ fn marked_variants_bounded(
             }
             bytes = bytes.saturating_add(variant.source.len());
             if bytes > byte_budget {
-                return Err(format!(
-                    "marked mutation stream exceeds the {byte_budget}-byte budget"
-                ));
+                return Err(format!("marked mutation stream exceeds the {byte_budget}-byte budget"));
             }
             output.push(Mutation {
                 id: format!("region-{region}:{}", variant.id),
@@ -1431,17 +1369,11 @@ fn marked_variants(source: &str, weights: &Weights) -> Vec<Mutation> {
 }
 
 fn mutation_weight(mutation: &Mutation, weights: &Weights) -> u32 {
-    PassId::ALL
-        .into_iter()
-        .find(|pass| mutation.id.contains(pass.name()))
-        .map_or(10, |pass| weights.get(pass))
+    PassId::ALL.into_iter().find(|pass| mutation.id.contains(pass.name())).map_or(10, |pass| weights.get(pass))
 }
 
 fn weighted_index(variants: &[Mutation], weights: &Weights, random: &mut SplitMix64) -> usize {
-    let total = variants
-        .iter()
-        .map(|variant| mutation_weight(variant, weights) as u64)
-        .sum::<u64>();
+    let total = variants.iter().map(|variant| mutation_weight(variant, weights) as u64).sum::<u64>();
     if total == 0 {
         return random.index(variants.len());
     }
@@ -1480,24 +1412,15 @@ pub(crate) fn try_mutate_marked_with_weights(
     // Enumerate more variants than requested and sample them with the seed;
     // taking the enumeration head made every seed test the same plan, which
     // silently turned seed sweeps into reruns of one fixed candidate set.
-    let mut pool = marked_variants_bounded(
-        source,
-        weights,
-        limit.saturating_mul(4).min(MAX_ITERATION_POOL),
-        MAX_PLAN_BYTES,
-    )?;
+    let mut pool =
+        marked_variants_bounded(source, weights, limit.saturating_mul(4).min(MAX_ITERATION_POOL), MAX_PLAN_BYTES)?;
     let mut order: Vec<usize> = (0..pool.len()).collect();
     for at in (1..order.len()).rev() {
         order.swap(at, random.index(at + 1));
     }
     for pick in order {
-        let mutation = std::mem::replace(
-            &mut pool[pick],
-            crate::randomize::Mutation {
-                id: String::new(),
-                source: String::new(),
-            },
-        );
+        let mutation =
+            std::mem::replace(&mut pool[pick], crate::randomize::Mutation { id: String::new(), source: String::new() });
         if mutation.source.is_empty() {
             continue;
         }
@@ -1507,10 +1430,7 @@ pub(crate) fn try_mutate_marked_with_weights(
             if output.len() == limit {
                 return Ok(output
                     .into_iter()
-                    .map(|(id, source)| Mutation {
-                        id,
-                        source: materialize(&source),
-                    })
+                    .map(|(id, source)| Mutation { id, source: materialize(&source) })
                     .collect());
             }
         }
@@ -1519,12 +1439,7 @@ pub(crate) fn try_mutate_marked_with_weights(
     while output.len() < limit && misses < limit.saturating_mul(20).max(100) {
         let parent_index = random.index(output.len());
         let parent = output[parent_index].clone();
-        let variants = marked_variants_bounded(
-            &parent.1,
-            weights,
-            limit.saturating_sub(output.len()),
-            MAX_PLAN_BYTES,
-        )?;
+        let variants = marked_variants_bounded(&parent.1, weights, limit.saturating_sub(output.len()), MAX_PLAN_BYTES)?;
         if variants.is_empty() {
             misses += 1;
             continue;
@@ -1538,29 +1453,15 @@ pub(crate) fn try_mutate_marked_with_weights(
             misses += 1;
         }
     }
-    Ok(output
-        .into_iter()
-        .map(|(id, source)| Mutation {
-            id,
-            source: materialize(&source),
-        })
-        .collect())
+    Ok(output.into_iter().map(|(id, source)| Mutation { id, source: materialize(&source) }).collect())
 }
 
-pub(crate) fn mutate_marked_with_weights(
-    source: &str,
-    seed: u64,
-    limit: usize,
-    weights: &Weights,
-) -> Vec<Mutation> {
+pub(crate) fn mutate_marked_with_weights(source: &str, seed: u64, limit: usize, weights: &Weights) -> Vec<Mutation> {
     try_mutate_marked_with_weights(source, seed, limit, weights).unwrap_or_else(|_| {
         if limit == 0 {
             Vec::new()
         } else {
-            vec![Mutation {
-                id: "identity".into(),
-                source: materialize(source),
-            }]
+            vec![Mutation { id: "identity".into(), source: materialize(source) }]
         }
     })
 }
@@ -1583,10 +1484,7 @@ pub fn self_test() -> Result<(), String> {
     if first[0].id != "identity" || first[0].source != source {
         return Err("identity candidate is not first".into());
     }
-    let unique = first
-        .iter()
-        .map(|item| item.source.as_str())
-        .collect::<BTreeSet<_>>();
+    let unique = first.iter().map(|item| item.source.as_str()).collect::<BTreeSet<_>>();
     if unique.len() != first.len() {
         return Err("mutation plan contains duplicate sources".into());
     }
@@ -1594,10 +1492,7 @@ pub fn self_test() -> Result<(), String> {
         .into_iter()
         .find(|mutation| mutation.id == "self-assignment-3")
         .ok_or_else(|| "safe self-assignment mutation is missing".to_string())?;
-    if !self_assignment
-        .source
-        .contains("    b = x & y;\n    b = b;\n")
-    {
+    if !self_assignment.source.contains("    b = x & y;\n    b = b;\n") {
         return Err("self-assignment must follow initialization".into());
     }
     let dependent = "void f(void) {\n    s32 step;\n    s32 probe;\n    s32 input;\n    step = input;\n    probe = step + input;\n}\n";
@@ -1620,7 +1515,8 @@ pub fn self_test() -> Result<(), String> {
     if !swap_adjacent_statements(memory).is_empty() {
         return Err("statement reorder crossed unproven memory access".into());
     }
-    let global = "s32 global;\nvoid f(void) {\n    s32 x;\n    s32 y;\n    s32 local;\n    x = global;\n    y = local;\n}\n";
+    let global =
+        "s32 global;\nvoid f(void) {\n    s32 x;\n    s32 y;\n    s32 local;\n    x = global;\n    y = local;\n}\n";
     if !swap_adjacent_statements(global).is_empty() {
         return Err("statement reorder touched a global scalar access".into());
     }
@@ -1639,19 +1535,21 @@ pub fn self_test() -> Result<(), String> {
     if !variable_condition_blocks(prototype).is_empty() {
         return Err("function prototype was used as a synthetic condition".into());
     }
-    let names = PassId::ALL
-        .into_iter()
-        .map(PassId::name)
-        .collect::<BTreeSet<_>>();
+    let names = PassId::ALL.into_iter().map(PassId::name).collect::<BTreeSet<_>>();
     if names.len() != PassId::ALL.len()
         || !names.contains("perm_temp_for_expr")
+        || !names.contains("perm_call_wrapper")
         || !names.contains("perm_var_cond_block")
     {
         return Err("randomization pass registry is incomplete or duplicated".into());
     }
-    let permutation = crate::perm::parse(
-        "outside = 1; PERM_RANDOMIZE(inside = x & y;) PERM_IGNORE(protected = a & b;)",
-    )?;
+    let wrapper_source = "void Func_02000100(s32, s32);\nvoid f(void)\n{\n    Func_02000100(0, 0x8000);\n}\n";
+    let wrapped = call_wrappers(wrapper_source).pop().ok_or("call wrapper missing")?;
+    if !wrapped.source.contains("static __inline__ void PermuterCallWrapper") {
+        return Err("call wrapper was not emitted".into());
+    }
+    let permutation =
+        crate::perm::parse("outside = 1; PERM_RANDOMIZE(inside = x & y;) PERM_IGNORE(protected = a & b;)")?;
     let marked = permutation.evaluate_marked(0)?.0;
     let regional = marked_variants(&marked, &Weights::for_profile("gcc"));
     if regional.is_empty()

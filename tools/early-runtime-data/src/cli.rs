@@ -35,12 +35,7 @@ fn build_region(source: &str, address: i64) -> Result<(), Error> {
         .iter()
         .find(|(start, _)| *start == address)
         .ok_or_else(|| Error("early-runtime asset address is not a produced region".into()))?;
-    eprintln!(
-        "{{\"source_bytes\":{},\"region_address\":\"0x{address:08x}\"}}",
-        built.source_bytes
-    );
-    std::io::stdout()
-        .write_all(&region.1)
-        .map_err(|error| Error(error.to_string()))?;
+    eprintln!("{{\"source_bytes\":{},\"region_address\":\"0x{address:08x}\"}}", built.source_bytes);
+    std::io::stdout().write_all(&region.1).map_err(|error| Error(error.to_string()))?;
     Ok(())
 }

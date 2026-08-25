@@ -3,10 +3,8 @@
 //! `permuter` carries the productive local workflow of pret's
 //! decomp-permuter into Alchemy's native tooling layer: explicit `PERM_*`
 //! alternatives, deterministic source mutation, parallel candidate
-//! compilation, deduplication, and exact-byte scoring. A separate directory
-//! backend retains the portable compile-script and instruction-scoring
-//! boundary for non-Alchemy targets. It deliberately does not port
-//! permuter@home networking.
+//! compilation, deduplication, and exact-byte scoring. It deliberately does
+//! not port generic compile-script backends or permuter@home networking.
 
 pub mod astpass;
 pub mod asttypes;
@@ -24,10 +22,7 @@ pub use perm::{parse as parse_permutation, EvalState, Permutation};
 pub use randomize::{mutate, Mutation, PassId, Weights};
 
 pub fn run(args: Vec<String>) -> Result<(), String> {
-    if args
-        .iter()
-        .any(|arg| matches!(arg.as_str(), "--help" | "-h"))
-    {
+    if args.iter().any(|arg| matches!(arg.as_str(), "--help" | "-h")) {
         println!("{USAGE}");
         return Ok(());
     }

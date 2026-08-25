@@ -71,19 +71,13 @@ pub fn source_stem(path: &str) -> String {
 /// does not (it is a non-empty string, so it wins and then trims to nothing,
 /// producing the bare `X failed`). Both halves are reproduced.
 pub fn run(command: &[String], cwd: &Path) -> Result<String, String> {
-    let program = command
-        .first()
-        .ok_or_else(|| "run: empty command".to_string())?;
-    let output = Command::new(program)
-        .args(&command[1..])
-        .current_dir(cwd)
-        .output()
-        .map_err(|error| {
-            // Bun reports a missing binary as an ENOENT thrown from spawn,
-            // before the exit-code check. Same failure, different prose; the
-            // parity harness compares exit status and offending path, not text.
-            format!("{}: {error}", basename(program))
-        })?;
+    let program = command.first().ok_or_else(|| "run: empty command".to_string())?;
+    let output = Command::new(program).args(&command[1..]).current_dir(cwd).output().map_err(|error| {
+        // Bun reports a missing binary as an ENOENT thrown from spawn,
+        // before the exit-code check. Same failure, different prose; the
+        // parity harness compares exit status and offending path, not text.
+        format!("{}: {error}", basename(program))
+    })?;
     let stdout = String::from_utf8_lossy(&output.stdout).into_owned();
     if output.status.success() {
         return Ok(stdout);
@@ -114,11 +108,7 @@ pub fn js_subarray(data: &[u8], begin: f64, end: f64) -> Vec<u8> {
     let len = data.len() as f64;
     let resolve = |relative: f64| -> usize {
         // `ToIntegerOrInfinity`: NaN becomes 0.
-        let value = if relative.is_nan() {
-            0.0
-        } else {
-            relative.trunc()
-        };
+        let value = if relative.is_nan() { 0.0 } else { relative.trunc() };
         let resolved = if value < 0.0 {
             let from_end = len + value;
             if from_end > 0.0 {
@@ -177,26 +167,15 @@ pub fn compile_to_assembly(
     configuration: &CandidateCompilerConfiguration,
 ) -> Result<String, String> {
     let stem = source_stem(source);
-    std::fs::create_dir_all(output_directory)
-        .map_err(|error| format!("{output_directory}: {error}"))?;
-    let assembly = Path::new(output_directory)
-        .join(format!("{stem}.s"))
-        .to_string_lossy()
-        .into_owned();
-    let preprocessed = Path::new(output_directory)
-        .join(format!("{stem}.i"))
-        .to_string_lossy()
-        .into_owned();
+    std::fs::create_dir_all(output_directory).map_err(|error| format!("{output_directory}: {error}"))?;
+    let assembly = Path::new(output_directory).join(format!("{stem}.s")).to_string_lossy().into_owned();
+    let preprocessed = Path::new(output_directory).join(format!("{stem}.i")).to_string_lossy().into_owned();
 
-    let mut options =
-        SourceToAssemblyPlanOptions::new(compiler, routing_source, source, assembly.clone());
+    let mut options = SourceToAssemblyPlanOptions::new(compiler, routing_source, source, assembly.clone());
     options.family = configuration.family;
     let mut add_flags = extra_compiler_flags.to_vec();
     add_flags.extend(configuration.add_flags.iter().cloned());
-    options.flags = Some(CompilerFlagMutations {
-        add_flags,
-        remove_flags: configuration.remove_flags.clone(),
-    });
+    options.flags = Some(CompilerFlagMutations { add_flags, remove_flags: configuration.remove_flags.clone() });
     options.preprocessed_output = Some(preprocessed);
     let plan = source_to_assembly_plan(&options)?;
     let cwd = root();
@@ -257,11 +236,7 @@ pub fn verify_candidate_owned_routed(
     let symbol = format!("Func_{}", hex8(address));
 
     let out = Path::new(output_directory);
-    let path = |suffix: &str| {
-        out.join(format!("{stem}{suffix}"))
-            .to_string_lossy()
-            .into_owned()
-    };
+    let path = |suffix: &str| out.join(format!("{stem}{suffix}")).to_string_lossy().into_owned();
     let assembly = path(".s");
     let object = path(".o");
     let symbols_source = path(".symbols.s");
@@ -269,17 +244,13 @@ pub fn verify_candidate_owned_routed(
     let elf = path(".elf");
     let binary = path(".bin");
 
-    let mut options =
-        SourceToAssemblyPlanOptions::new(compiler, routing_source, source, assembly.clone());
+    let mut options = SourceToAssemblyPlanOptions::new(compiler, routing_source, source, assembly.clone());
     options.family = configuration.family;
     // ORDER IS BEHAVIOUR: `[...extraCompilerFlags, ...(configuration.addFlags ?? [])]`,
     // and gcc is later-flag-wins. Swapping these two changes the machine code.
     let mut add_flags = extra_compiler_flags.to_vec();
     add_flags.extend(configuration.add_flags.iter().cloned());
-    options.flags = Some(CompilerFlagMutations {
-        add_flags,
-        remove_flags: configuration.remove_flags.clone(),
-    });
+    options.flags = Some(CompilerFlagMutations { add_flags, remove_flags: configuration.remove_flags.clone() });
     options.preprocessed_output = Some(path(".i"));
     let plan = source_to_assembly_plan(&options)?;
 
@@ -287,17 +258,7 @@ pub fn verify_candidate_owned_routed(
     for step in &plan.steps {
         run(&step.command, cwd)?;
     }
-    run(
-        &argv(&[
-            "arm-none-eabi-as",
-            "-mcpu=arm7tdmi",
-            "-mthumb-interwork",
-            "-o",
-            &object,
-            &assembly,
-        ]),
-        cwd,
-    )?;
+    run(&argv(&["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", &object, &assembly]), cwd)?;
 
     // A `Vec`, not a `Set`. `nm -u` can list the same undefined symbol twice
     // and the TypeScript pushes both, emitting a duplicate `.global`/`.thumb_set`
@@ -321,17 +282,12 @@ pub fn verify_candidate_owned_routed(
 
     let mut symbols_text = String::from(".syntax unified\n.thumb\n");
     if configuration.reference_symbols {
-        let resolved =
-            derive_reference_symbols(&object, &symbol, &names, rom, address, image_base)?;
+        let resolved = derive_reference_symbols(&object, &symbol, &names, rom, address, image_base)?;
         for name in &names {
-            let symbol = resolved
-                .get(name)
-                .ok_or_else(|| format!("no reference relocation for external symbol: {name}"))?;
+            let symbol =
+                resolved.get(name).ok_or_else(|| format!("no reference relocation for external symbol: {name}"))?;
             let directive = if symbol.thumb { ".thumb_set" } else { ".set" };
-            symbols_text.push_str(&format!(
-                ".global {name}\n{directive} {name}, 0x{:08x}\n",
-                symbol.address
-            ));
+            symbols_text.push_str(&format!(".global {name}\n{directive} {name}, 0x{:08x}\n", symbol.address));
         }
     } else {
         for name in &names {
@@ -340,14 +296,7 @@ pub fn verify_candidate_owned_routed(
     }
     write(&symbols_source, symbols_text.as_bytes())?;
     run(
-        &argv(&[
-            "arm-none-eabi-as",
-            "-mcpu=arm7tdmi",
-            "-mthumb-interwork",
-            "-o",
-            &symbols_object,
-            &symbols_source,
-        ]),
+        &argv(&["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", &symbols_object, &symbols_source]),
         cwd,
     )?;
     run(
@@ -363,18 +312,7 @@ pub fn verify_candidate_owned_routed(
         ]),
         cwd,
     )?;
-    run(
-        &argv(&[
-            "arm-none-eabi-objcopy",
-            "-O",
-            "binary",
-            "-j",
-            ".text",
-            &elf,
-            &binary,
-        ]),
-        cwd,
-    )?;
+    run(&argv(&["arm-none-eabi-objcopy", "-O", "binary", "-j", ".text", &elf, &binary]), cwd)?;
 
     let symbols = run(&argv(&["arm-none-eabi-nm", "-S", &elf]), cwd)?;
     let needle = format!(" {symbol}");
@@ -388,20 +326,12 @@ pub fn verify_candidate_owned_routed(
     // Candidate translation units contain one text region; in that case the
     // linked binary's complete .text extent is the function extent.
     let binary_bytes = std::fs::read(&binary).map_err(|error| format!("{binary}: {error}"))?;
-    let size = if fields.len() >= 4 {
-        parse_hex(fields[1])?
-    } else {
-        binary_bytes.len() as f64
-    };
+    let size = if fields.len() >= 4 { parse_hex(fields[1])? } else { binary_bytes.len() as f64 };
 
     let actual = js_subarray(&binary_bytes, 0.0, size);
     let offset = address - image_base;
     let expected = js_subarray(rom, offset, offset + size);
-    Ok(Verification {
-        actual,
-        expected,
-        size,
-    })
+    Ok(Verification { actual, expected, size })
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -426,42 +356,24 @@ fn derive_reference_symbols(
 ) -> Result<BTreeMap<String, ResolvedSymbol>, String> {
     let address = exact_u64(address, "owner address")?;
     let image_base = exact_u64(image_base, "image base")?;
-    let rom_start = address
-        .checked_sub(image_base)
-        .ok_or("owner address precedes image base")?;
+    let rom_start = address.checked_sub(image_base).ok_or("owner address precedes image base")?;
     let rom_start = usize::try_from(rom_start).map_err(|_| "ROM offset is too large")?;
     let owner_offset = object_symbol_offset(object, owner_symbol)?;
     let relocations = object_relocations(object, owner_offset)?;
 
     let object_text_path = format!("{object}.text.bin");
-    run(
-        &argv(&[
-            "arm-none-eabi-objcopy",
-            "-O",
-            "binary",
-            "-j",
-            ".text",
-            object,
-            &object_text_path,
-        ]),
-        root(),
-    )?;
-    let object_text =
-        std::fs::read(&object_text_path).map_err(|error| format!("{object_text_path}: {error}"))?;
+    run(&argv(&["arm-none-eabi-objcopy", "-O", "binary", "-j", ".text", object, &object_text_path]), root())?;
+    let object_text = std::fs::read(&object_text_path).map_err(|error| format!("{object_text_path}: {error}"))?;
 
     let mut resolved = BTreeMap::new();
     for name in names {
-        let sites = relocations
-            .get(name)
-            .ok_or_else(|| format!("no reference relocation for external symbol: {name}"))?;
+        let sites =
+            relocations.get(name).ok_or_else(|| format!("no reference relocation for external symbol: {name}"))?;
         let known = external_symbol(name, CALL_VIA_BASE);
-        let thumb = known
-            .map(|symbol| symbol.thumb)
-            .unwrap_or_else(|| sites.iter().all(|site| site.kind == "R_ARM_THM_CALL"));
+        let thumb =
+            known.map(|symbol| symbol.thumb).unwrap_or_else(|| sites.iter().all(|site| site.kind == "R_ARM_THM_CALL"));
         if known.is_none() && sites.iter().any(|site| site.kind != "R_ARM_THM_CALL") {
-            return Err(format!(
-                "cannot infer code/data type for reference symbol {name}"
-            ));
+            return Err(format!("cannot infer code/data type for reference symbol {name}"));
         }
 
         let mut value = None;
@@ -470,12 +382,7 @@ fn derive_reference_symbols(
                 "R_ARM_THM_CALL" => thumb_bl_target(rom, rom_start, address, site.offset)?,
                 "R_ARM_ABS32" => {
                     let reference = read_word(rom, rom_start + site.offset, name, "reference")?;
-                    let addend = read_word(
-                        &object_text,
-                        owner_offset + site.offset,
-                        name,
-                        "object addend",
-                    )?;
+                    let addend = read_word(&object_text, owner_offset + site.offset, name, "object addend")?;
                     let address = reference.wrapping_sub(addend) as u64;
                     if thumb {
                         address & !1
@@ -483,17 +390,11 @@ fn derive_reference_symbols(
                         address
                     }
                 }
-                kind => {
-                    return Err(format!(
-                        "unsupported reference relocation {kind} for {name}"
-                    ))
-                }
+                kind => return Err(format!("unsupported reference relocation {kind} for {name}")),
             };
             if let Some(previous) = value {
                 if previous != site_value {
-                    return Err(format!(
-                        "{name} resolves inconsistently: 0x{previous:08x} and 0x{site_value:08x}"
-                    ));
+                    return Err(format!("{name} resolves inconsistently: 0x{previous:08x} and 0x{site_value:08x}"));
                 }
             } else {
                 value = Some(site_value);
@@ -501,18 +402,14 @@ fn derive_reference_symbols(
         }
         resolved.insert(
             name.clone(),
-            ResolvedSymbol {
-                address: value.ok_or_else(|| format!("no reference relocation for {name}"))?,
-                thumb,
-            },
+            ResolvedSymbol { address: value.ok_or_else(|| format!("no reference relocation for {name}"))?, thumb },
         );
     }
     Ok(resolved)
 }
 
 fn exact_u64(value: f64, label: &str) -> Result<u64, String> {
-    if !value.is_finite() || value < 0.0 || value.fract() != 0.0 || value > 9_007_199_254_740_991.0
-    {
+    if !value.is_finite() || value < 0.0 || value.fract() != 0.0 || value > 9_007_199_254_740_991.0 {
         return Err(format!("{label} is not an exact non-negative integer"));
     }
     Ok(value as u64)
@@ -531,10 +428,7 @@ fn object_symbol_offset(object: &str, owner_symbol: &str) -> Result<usize, Strin
     Err(format!("missing object symbol: {owner_symbol}"))
 }
 
-fn object_relocations(
-    object: &str,
-    owner_offset: usize,
-) -> Result<BTreeMap<String, Vec<ReferenceRelocation>>, String> {
+fn object_relocations(object: &str, owner_offset: usize) -> Result<BTreeMap<String, Vec<ReferenceRelocation>>, String> {
     let output = run(&argv(&["arm-none-eabi-objdump", "-r", object]), root())?;
     let mut relocations = BTreeMap::<String, Vec<ReferenceRelocation>>::new();
     for line in js_split_lines(&output) {
@@ -551,10 +445,7 @@ fn object_relocations(
         relocations
             .entry(symbol.to_string())
             .or_default()
-            .push(ReferenceRelocation {
-                offset,
-                kind: fields[1].to_string(),
-            });
+            .push(ReferenceRelocation { offset, kind: fields[1].to_string() });
     }
     Ok(relocations)
 }
@@ -563,26 +454,17 @@ fn read_word(data: &[u8], offset: usize, symbol: &str, label: &str) -> Result<u3
     let bytes = data
         .get(offset..offset + 4)
         .ok_or_else(|| format!("{label} relocation for {symbol} extends past its image"))?;
-    Ok(u32::from_le_bytes(
-        bytes.try_into().expect("four-byte slice"),
-    ))
+    Ok(u32::from_le_bytes(bytes.try_into().expect("four-byte slice")))
 }
 
-fn thumb_bl_target(
-    rom: &[u8],
-    rom_start: usize,
-    address: u64,
-    offset: usize,
-) -> Result<u64, String> {
+fn thumb_bl_target(rom: &[u8], rom_start: usize, address: u64, offset: usize) -> Result<u64, String> {
     let bytes = rom
         .get(rom_start + offset..rom_start + offset + 4)
         .ok_or_else(|| format!("call at 0x{offset:x} extends past the reference image"))?;
     let high = u16::from_le_bytes([bytes[0], bytes[1]]);
     let low = u16::from_le_bytes([bytes[2], bytes[3]]);
     if high & 0xf800 != 0xf000 || low & 0xf800 != 0xf800 {
-        return Err(format!(
-            "reference relocation at 0x{offset:x} is not a Thumb BL"
-        ));
+        return Err(format!("reference relocation at 0x{offset:x} is not a Thumb BL"));
     }
     let mut displacement = (((high & 0x07ff) as i64) << 12) | (((low & 0x07ff) as i64) << 1);
     if displacement & (1 << 22) != 0 {
@@ -607,10 +489,7 @@ mod reference_symbol_tests {
     #[test]
     fn decodes_a_forward_thumb_call_at_the_owner_address() {
         let rom = [0x00, 0xf0, 0x18, 0xf9];
-        assert_eq!(
-            thumb_bl_target(&rom, 0, 0x0800_1000, 0).unwrap(),
-            0x0800_1234
-        );
+        assert_eq!(thumb_bl_target(&rom, 0, 0x0800_1000, 0).unwrap(), 0x0800_1234);
     }
 
     #[test]

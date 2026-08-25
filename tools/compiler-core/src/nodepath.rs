@@ -87,9 +87,7 @@ pub fn extname(path: &str) -> &str {
     let (Some(start_dot), Some(end)) = (start_dot, end) else {
         return "";
     };
-    if pre_dot_state == 0
-        || (pre_dot_state == 1 && start_dot == end - 1 && start_dot == start_part + 1)
-    {
+    if pre_dot_state == 0 || (pre_dot_state == 1 && start_dot == end - 1 && start_dot == start_part + 1) {
         return "";
     }
     &path[start_dot..end]

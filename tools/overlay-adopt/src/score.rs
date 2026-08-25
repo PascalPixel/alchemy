@@ -10,28 +10,19 @@ fn resolve(root: &Path, target: &str) -> Result<(String, i64), String> {
     if let Some((overlay, address)) = target.split_once(':') {
         let address = i64::from_str_radix(address.trim_start_matches("0x"), 16)
             .map_err(|_| format!("{target}: address must be hexadecimal"))?;
-        let address = if address < OVERLAY_BASE {
-            address + OVERLAY_BASE
-        } else {
-            address
-        };
+        let address = if address < OVERLAY_BASE { address + OVERLAY_BASE } else { address };
         return Ok((overlay.to_string(), address));
     }
     if let Some(owner) = SourcePaths::load(root)?.owner_for_path(Path::new(target))? {
-        let overlay = owner
-            .overlay_id()
-            .ok_or_else(|| format!("{target}: not an overlay source"))?;
+        let overlay = owner.overlay_id().ok_or_else(|| format!("{target}: not an overlay source"))?;
         return Ok((overlay, owner.address() as i64));
     }
     let name = Path::new(target)
         .file_stem()
         .map(|stem| stem.to_string_lossy().to_string())
         .ok_or_else(|| format!("{target}: not a source path"))?;
-    let (overlay, address) = name
-        .split_once("_c_")
-        .ok_or_else(|| format!("{target}: not an overlay source name"))?;
-    let address = i64::from_str_radix(address, 16)
-        .map_err(|_| format!("{target}: address must be hexadecimal"))?;
+    let (overlay, address) = name.split_once("_c_").ok_or_else(|| format!("{target}: not an overlay source name"))?;
+    let address = i64::from_str_radix(address, 16).map_err(|_| format!("{target}: address must be hexadecimal"))?;
     let _ = root;
     Ok((overlay.to_string(), address))
 }
@@ -41,15 +32,11 @@ fn source_for(root: &Path, overlay: &str, address: i64) -> Result<PathBuf, Strin
     if exact.exists() {
         return Ok(exact);
     }
-    let recon = root.join(format!(
-        "games/gs1/recon/en/overlays/{overlay}_c_{address:08x}.c"
-    ));
+    let recon = root.join(format!("games/gs1/recon/en/overlays/{overlay}_c_{address:08x}.c"));
     if recon.exists() {
         return Ok(recon);
     }
-    Err(format!(
-        "no tracked or exact source for {overlay}:{address:08x}"
-    ))
+    Err(format!("no tracked or exact source for {overlay}:{address:08x}"))
 }
 fn inventory_span(root: &Path, overlay: &str, address: i64) -> Option<i64> {
     let text = std::fs::read_to_string(root.join("out/decomp/overlays.json")).ok()?;
@@ -59,9 +46,7 @@ fn inventory_span(root: &Path, overlay: &str, address: i64) -> Option<i64> {
             continue;
         }
         let entry = match function.get("entry")? {
-            serde_json::Value::String(text) => {
-                i64::from_str_radix(text.trim_start_matches("0x"), 16).ok()?
-            }
+            serde_json::Value::String(text) => i64::from_str_radix(text.trim_start_matches("0x"), 16).ok()?,
             other => other.as_i64()?,
         };
         if entry == address {
@@ -78,9 +63,7 @@ fn reviewed_span(root: &Path, overlay: &str, address: i64) -> Option<i64> {
             continue;
         }
         let entry = match region.get("entry")? {
-            serde_json::Value::String(text) => {
-                i64::from_str_radix(text.trim_start_matches("0x"), 16).ok()?
-            }
+            serde_json::Value::String(text) => i64::from_str_radix(text.trim_start_matches("0x"), 16).ok()?,
             other => other.as_i64()?,
         };
         if entry == address {
@@ -104,9 +87,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
         }
         if expecting_span {
             override_span = Some(
-                argument
-                    .parse::<i64>()
-                    .map_err(|_| format!("--span wants a decimal byte count, got {argument:?}"))?,
+                argument.parse::<i64>().map_err(|_| format!("--span wants a decimal byte count, got {argument:?}"))?,
             );
             expecting_span = false;
             continue;
@@ -135,9 +116,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     let (overlay, address) = resolve(root, &target)?;
     let explicit = Path::new(&target);
     let source = if explicit.is_file() {
-        explicit
-            .canonicalize()
-            .map_err(|error| format!("{}: {error}", explicit.display()))?
+        explicit.canonicalize().map_err(|error| format!("{}: {error}", explicit.display()))?
     } else {
         source_for(root, &overlay, address)?
     };
@@ -148,17 +127,11 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
             .or_else(|| reviewed_span(root, &overlay, address))
             .or(crate::audited_code_span(root, &overlay, address)?),
     }
-    .ok_or_else(|| {
-        format!("{overlay}:{address:08x} has neither a placeholder nor an audited span")
-    })?;
+    .ok_or_else(|| format!("{overlay}:{address:08x} has neither a placeholder nor an audited span"))?;
     let (reference, oracle) = truth_window(root, &overlay, address, span)?;
     let work = tempdir().map_err(|error| error.to_string())?;
     let compiled = compile_overlay_c(&source, work.path(), &overlay, None, &extra)?;
-    let differing = reference
-        .chunks(2)
-        .zip(compiled.data.chunks(2))
-        .filter(|(left, right)| left != right)
-        .count()
+    let differing = reference.chunks(2).zip(compiled.data.chunks(2)).filter(|(left, right)| left != right).count()
         + reference.len().abs_diff(compiled.data.len()).div_ceil(2);
     println!(
         "candidate={} reference={} differing_halfwords={differing} source={} reference_from={oracle}",
@@ -177,9 +150,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     let ordered = |rows: &candidate_show::disasm::Rows| -> Vec<String> {
         let mut keys: Vec<f64> = rows.keys().collect();
         keys.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
-        keys.iter()
-            .map(|key| rows.get(*key).unwrap_or("").to_string())
-            .collect()
+        keys.iter().map(|key| rows.get(*key).unwrap_or("").to_string()).collect()
     };
     let left_lines = ordered(&left);
     let right_lines = ordered(&right);

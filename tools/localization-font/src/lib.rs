@@ -42,9 +42,7 @@ fn err<T>(message: impl Into<String>) -> Result<T, Error> {
     Err(Error(message.into()))
 }
 fn object<'a>(value: &'a Value, label: &str) -> Result<&'a Map<String, Value>, Error> {
-    value
-        .as_object()
-        .ok_or_else(|| Error(format!("{label} must be an object")))
+    value.as_object().ok_or_else(|| Error(format!("{label} must be an object")))
 }
 fn exact_keys(value: &Map<String, Value>, keys: &[&str], label: &str) -> Result<(), Error> {
     let mut actual: Vec<&str> = value.keys().map(String::as_str).collect();
@@ -64,20 +62,10 @@ fn usize_field(value: &Map<String, Value>, name: &str, label: &str) -> Result<us
         .ok_or_else(|| Error(format!("{label} metadata differs")))
 }
 fn bool_field(value: &Map<String, Value>, name: &str, label: &str) -> Result<bool, Error> {
-    value
-        .get(name)
-        .and_then(Value::as_bool)
-        .ok_or_else(|| Error(format!("{label} metadata differs")))
+    value.get(name).and_then(Value::as_bool).ok_or_else(|| Error(format!("{label} metadata differs")))
 }
-fn string_field<'a>(
-    value: &'a Map<String, Value>,
-    name: &str,
-    label: &str,
-) -> Result<&'a str, Error> {
-    value
-        .get(name)
-        .and_then(Value::as_str)
-        .ok_or_else(|| Error(format!("{label} metadata differs")))
+fn string_field<'a>(value: &'a Map<String, Value>, name: &str, label: &str) -> Result<&'a str, Error> {
+    value.get(name).and_then(Value::as_str).ok_or_else(|| Error(format!("{label} metadata differs")))
 }
 fn array<'a>(value: &'a Map<String, Value>, name: &str, label: &str) -> Result<&'a [Value], Error> {
     value
@@ -100,9 +88,7 @@ fn path(root: &Path, source: &str) -> Result<PathBuf, Error> {
         .ok_or_else(|| Error("localization-font image path differs".into()))?;
     if tail.is_empty()
         || tail.contains('/')
-        || !tail
-            .bytes()
-            .all(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || b"_.-".contains(&b))
+        || !tail.bytes().all(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || b"_.-".contains(&b))
     {
         return err("localization-font image path differs");
     }
@@ -122,13 +108,9 @@ fn atlas_frames(
     depth: u8,
 ) -> Result<Vec<Vec<u8>>, Error> {
     let image =
-        indexed_png(&fs::read(path).map_err(|e| Error(format!("{}: {e}", path.display())))?)
-            .map_err(|e| Error(e.0))?;
+        indexed_png(&fs::read(path).map_err(|e| Error(format!("{}: {e}", path.display())))?).map_err(|e| Error(e.0))?;
     let rows = count.div_ceil(columns);
-    if columns == 0
-        || image.width as usize != columns * width
-        || image.height as usize != rows * height
-    {
+    if columns == 0 || image.width as usize != columns * width || image.height as usize != rows * height {
         return err(format!("{}: atlas dimensions differ", path.display()));
     }
     if image.pixels.iter().any(|pixel| *pixel >= 1u32 << depth) {
@@ -163,10 +145,7 @@ fn pack_tiles(pixels: &[u8], width: usize, height: usize) -> Result<Vec<u8>, Err
         for left in (0..width).step_by(8) {
             for y in 0..8 {
                 for x in (0..8).step_by(2) {
-                    output.push(
-                        pixels[(top + y) * width + left + x]
-                            | pixels[(top + y) * width + left + x + 1] << 4,
-                    );
+                    output.push(pixels[(top + y) * width + left + x] | pixels[(top + y) * width + left + x + 1] << 4);
                 }
             }
         }
@@ -221,17 +200,7 @@ fn parse_source(value: &Value) -> Result<&Map<String, Value>, Error> {
     let source = object(value, "localization-font source")?;
     exact_keys(
         source,
-        &[
-            "format",
-            "kind",
-            "address",
-            "size",
-            "direct_tiles",
-            "mtf_banks",
-            "packed_images",
-            "font",
-            "articles",
-        ],
+        &["format", "kind", "address", "size", "direct_tiles", "mtf_banks", "packed_images", "font", "articles"],
         "localization-font source",
     )?;
     if source.get("format").and_then(Value::as_u64) != Some(1)
@@ -256,62 +225,24 @@ fn parse_source(value: &Value) -> Result<&Map<String, Value>, Error> {
     for item in banks {
         exact_keys(
             object(item, "MTF-bank source")?,
-            &[
-                "address",
-                "end",
-                "entries",
-                "terminal",
-                "images",
-                "columns",
-                "tail_zeros",
-                "source",
-            ],
+            &["address", "end", "entries", "terminal", "images", "columns", "tail_zeros", "source"],
             "MTF-bank source",
         )?;
     }
     exact_keys(
         object(source.get("packed_images").unwrap(), "packed-image source")?,
-        &[
-            "address",
-            "end",
-            "images",
-            "columns",
-            "tail_zeros",
-            "source",
-            "tokens",
-        ],
+        &["address", "end", "images", "columns", "tail_zeros", "source", "tokens"],
         "packed-image source",
     )?;
     exact_keys(
         object(source.get("font").unwrap(), "font source")?,
-        &[
-            "address",
-            "first_code",
-            "glyphs",
-            "columns",
-            "source",
-            "advances",
-        ],
+        &["address", "first_code", "glyphs", "columns", "source", "advances"],
         "font source",
     )?;
     let articles = object(source.get("articles").unwrap(), "article source")?;
-    exact_keys(
-        articles,
-        &[
-            "data_address",
-            "table_address",
-            "data_size",
-            "records",
-            "entries",
-        ],
-        "article source",
-    )?;
+    exact_keys(articles, &["data_address", "table_address", "data_size", "records", "entries"], "article source")?;
     for item in array(articles, "records", "article source")? {
-        exact_keys(
-            object(item, "article record")?,
-            &["offset", "text"],
-            "article record",
-        )?;
+        exact_keys(object(item, "article record")?, &["offset", "text"], "article record")?;
     }
     Ok(source)
 }
@@ -320,23 +251,15 @@ fn numbers(value: &Map<String, Value>, name: &str, label: &str) -> Result<Vec<us
     array(value, name, label)?
         .iter()
         .map(|item| {
-            item.as_u64()
-                .and_then(|n| usize::try_from(n).ok())
-                .ok_or_else(|| Error(format!("{label} differs")))
+            item.as_u64().and_then(|n| usize::try_from(n).ok()).ok_or_else(|| Error(format!("{label} differs")))
         })
         .collect()
 }
 
 fn build_direct(source: &Map<String, Value>, root: &Path) -> Result<Vec<Vec<u8>>, Error> {
-    let expected = [
-        (TILE0_ADDRESS, TILE0_END, 2),
-        (UI_TILE_ADDRESS, UI_TILE_END, 2),
-    ];
+    let expected = [(TILE0_ADDRESS, TILE0_END, 2), (UI_TILE_ADDRESS, UI_TILE_END, 2)];
     let mut output = Vec::new();
-    for (index, item) in array(source, "direct_tiles", "localization-font source")?
-        .iter()
-        .enumerate()
-    {
+    for (index, item) in array(source, "direct_tiles", "localization-font source")?.iter().enumerate() {
         let item = object(item, "direct-tile source")?;
         let (start, end, columns) = expected[index];
         if address(item.get("address").unwrap(), "direct tile")? != start
@@ -345,12 +268,10 @@ fn build_direct(source: &Map<String, Value>, root: &Path) -> Result<Vec<Vec<u8>>
         {
             return err("direct-tile source extent differs");
         }
-        let bytes = fs::read(path(root, string_field(item, "source", "direct-tile")?)?)
-            .map_err(|e| Error(e.to_string()))?;
+        let bytes =
+            fs::read(path(root, string_field(item, "source", "direct-tile")?)?).map_err(|e| Error(e.to_string()))?;
         let image = indexed_png(&bytes).map_err(|e| Error(e.0))?;
-        let raw = import_asset::gba_graphics(&bytes, 4.0)
-            .map_err(|e| Error(e.0))?
-            .0;
+        let raw = import_asset::gba_graphics(&bytes, 4.0).map_err(|e| Error(e.0))?.0;
         if image.width % 8 != 0 || raw.len() != (end - start) as usize {
             return err("direct-tile source extent differs");
         }
@@ -360,20 +281,13 @@ fn build_direct(source: &Map<String, Value>, root: &Path) -> Result<Vec<Vec<u8>>
 }
 
 fn palette_group(value: &Value) -> Result<PaletteGroup, Error> {
-    let items = value
-        .as_array()
-        .ok_or_else(|| Error("packed-image tokens differ".into()))?;
+    let items = value.as_array().ok_or_else(|| Error("packed-image tokens differ".into()))?;
     match (items.first().and_then(Value::as_str), items.len()) {
         (Some("z"), 1) => Ok(PaletteGroup::Zeros),
         (Some("g"), 2) => {
             let mut operations = Vec::new();
-            for item in items[1]
-                .as_array()
-                .ok_or_else(|| Error("packed-image tokens differ".into()))?
-            {
-                let item = item
-                    .as_array()
-                    .ok_or_else(|| Error("packed-image tokens differ".into()))?;
+            for item in items[1].as_array().ok_or_else(|| Error("packed-image tokens differ".into()))? {
+                let item = item.as_array().ok_or_else(|| Error("packed-image tokens differ".into()))?;
                 match (
                     item.first().and_then(Value::as_str),
                     item.get(1).and_then(Value::as_u64),
@@ -382,10 +296,7 @@ fn palette_group(value: &Value) -> Result<PaletteGroup, Error> {
                     (Some("l"), None, None) => operations.push(PaletteOperation::Literal),
                     (Some("e"), None, None) => operations.push(PaletteOperation::End),
                     (Some("c"), Some(length), Some(distance)) => {
-                        operations.push(PaletteOperation::Copy {
-                            length: length as u32,
-                            distance: distance as u32,
-                        })
+                        operations.push(PaletteOperation::Copy { length: length as u32, distance: distance as u32 })
                     }
                     _ => return err("packed-image tokens differ"),
                 }
@@ -398,10 +309,7 @@ fn palette_group(value: &Value) -> Result<PaletteGroup, Error> {
 
 fn build_mtf(source: &Map<String, Value>, root: &Path) -> Result<Vec<Vec<u8>>, Error> {
     let mut output = Vec::new();
-    for (index, item) in array(source, "mtf_banks", "localization-font source")?
-        .iter()
-        .enumerate()
-    {
+    for (index, item) in array(source, "mtf_banks", "localization-font source")?.iter().enumerate() {
         let item = object(item, "MTF-bank source")?;
         let (start, end, entry_count, terminal) = MTF_LAYOUT[index];
         let entries = numbers(item, "entries", "MTF-bank")?;
@@ -418,18 +326,8 @@ fn build_mtf(source: &Map<String, Value>, root: &Path) -> Result<Vec<Vec<u8>>, E
         {
             return err(format!("MTF bank {index} metadata differs"));
         }
-        let frames = atlas_frames(
-            &path(root, string_field(item, "source", "MTF-bank")?)?,
-            images,
-            16,
-            16,
-            columns,
-            4,
-        )?;
-        let streams: Vec<Vec<u8>> = frames
-            .iter()
-            .map(|frame| encode_pixels(frame))
-            .collect::<Result<_, _>>()?;
+        let frames = atlas_frames(&path(root, string_field(item, "source", "MTF-bank")?)?, images, 16, 16, columns, 4)?;
+        let streams: Vec<Vec<u8>> = frames.iter().map(|frame| encode_pixels(frame)).collect::<Result<_, _>>()?;
         let header_size = entries.len() * 4 + usize::from(terminal) * 4;
         let mut pointers = Vec::new();
         let mut cursor = start + header_size as u32;
@@ -442,8 +340,7 @@ fn build_mtf(source: &Map<String, Value>, root: &Path) -> Result<Vec<Vec<u8>>, E
             header[slot * 4..slot * 4 + 4].copy_from_slice(&pointers[*entry].to_le_bytes());
         }
         if terminal {
-            header[entries.len() * 4..entries.len() * 4 + 4]
-                .copy_from_slice(&u32::MAX.to_le_bytes());
+            header[entries.len() * 4..entries.len() * 4 + 4].copy_from_slice(&u32::MAX.to_le_bytes());
         }
         let mut built = header;
         for stream in streams {
@@ -483,19 +380,11 @@ fn build_packed(source: &Map<String, Value>, root: &Path) -> Result<Vec<u8>, Err
     if tokens.len() != images {
         return err("packed-image metadata differs");
     }
-    let frames = atlas_frames(
-        &path(root, string_field(packed, "source", "packed-image")?)?,
-        images,
-        32,
-        32,
-        columns,
-        4,
-    )?;
+    let frames =
+        atlas_frames(&path(root, string_field(packed, "source", "packed-image")?)?, images, 32, 32, columns, 4)?;
     let mut streams = Vec::new();
     for (index, frame) in frames.iter().enumerate() {
-        streams.push(
-            encode_palette(&pack_tiles(frame, 32, 32)?, &tokens[index]).map_err(|e| Error(e.0))?,
-        );
+        streams.push(encode_palette(&pack_tiles(frame, 32, 32)?, &tokens[index]).map_err(|e| Error(e.0))?);
     }
     let mut header = vec![0; images * 4];
     let mut cursor = PACKED_ADDRESS + 32;
@@ -508,8 +397,7 @@ fn build_packed(source: &Map<String, Value>, root: &Path) -> Result<Vec<u8>, Err
         output.extend(stream);
     }
     output.extend(std::iter::repeat_n(0, tail));
-    if output.len() != (PACKED_END - PACKED_ADDRESS) as usize || cursor + tail as u32 != PACKED_END
-    {
+    if output.len() != (PACKED_END - PACKED_ADDRESS) as usize || cursor + tail as u32 != PACKED_END {
         return err("packed-image extent differs");
     }
     Ok(output)
@@ -545,8 +433,7 @@ fn build_font(source: &Map<String, Value>, root: &Path) -> Result<Vec<u8>, Error
             for x in 0..16 {
                 row |= u16::from(frame[y * 16 + x]) << (15 - x);
             }
-            output[index * 32 + 2 + y * 2..index * 32 + 4 + y * 2]
-                .copy_from_slice(&row.to_le_bytes());
+            output[index * 32 + 2 + y * 2..index * 32 + 4 + y * 2].copy_from_slice(&row.to_le_bytes());
         }
     }
     if output.len() != (FONT_END - FONT_ADDRESS) as usize {
@@ -570,9 +457,7 @@ fn build_articles(source: &Map<String, Value>) -> Result<Vec<u8>, Error> {
         let record = object(record, "article record")?;
         let offset = usize_field(record, "offset", "article record")?;
         let text = string_field(record, "text", "article record")?;
-        if !text.bytes().all(|byte| (0x20..=0x7e).contains(&byte))
-            || offset + text.len() + 1 > data.len()
-        {
+        if !text.bytes().all(|byte| (0x20..=0x7e).contains(&byte)) || offset + text.len() + 1 > data.len() {
             return err("article record differs");
         }
         data[offset..offset + text.len()].copy_from_slice(text.as_bytes());
@@ -586,13 +471,8 @@ fn build_articles(source: &Map<String, Value>) -> Result<Vec<u8>, Error> {
         if *entry >= records.len() {
             return err("article entry differs");
         }
-        let offset = usize_field(
-            object(&records[*entry], "article record")?,
-            "offset",
-            "article record",
-        )?;
-        table[index * 4..index * 4 + 4]
-            .copy_from_slice(&(ARTICLE_DATA_ADDRESS + offset as u32).to_le_bytes());
+        let offset = usize_field(object(&records[*entry], "article record")?, "offset", "article record")?;
+        table[index * 4..index * 4 + 4].copy_from_slice(&(ARTICLE_DATA_ADDRESS + offset as u32).to_le_bytes());
     }
     data.extend(table);
     Ok(data)

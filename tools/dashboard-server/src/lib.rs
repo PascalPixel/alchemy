@@ -19,12 +19,8 @@ use std::{
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
-const TREES: [(&str, &str); 4] = [
-    ("core", "Main image"),
-    ("overlays", "Code overlays"),
-    ("images", "Images"),
-    ("music", "Music"),
-];
+const TREES: [(&str, &str); 4] =
+    [("core", "Main image"), ("overlays", "Code overlays"), ("images", "Images"), ("music", "Music")];
 const COVERAGE_DIRS: [&str; 11] = [
     "games/gs1/asm",
     "games/gs1/assets",
@@ -45,9 +41,7 @@ pub mod cli {
         let mut i = 0;
         while i < args.len() {
             match args[i].as_str() {
-                "-h" | "--help" => {
-                    return println!("Usage: dashboard-server [--bind HOST:PORT] [--self-test]")
-                }
+                "-h" | "--help" => return println!("Usage: dashboard-server [--bind HOST:PORT] [--self-test]"),
                 "--self-test" if i + 1 == args.len() => {
                     return match crate::self_test() {
                         Ok(s) => println!("{s}"),
@@ -120,14 +114,9 @@ fn write_json(v: &Json, out: &mut String) {
     match v {
         Json::Undefined => out.push_str("null"),
         Json::Bool(b) => out.push_str(if *b { "true" } else { "false" }),
-        Json::Num(n) => out.push_str(
-            if n.is_finite() {
-                coverage_map::jsnum::js_number_string(*n)
-            } else {
-                "null".into()
-            }
-            .as_str(),
-        ),
+        Json::Num(n) => {
+            out.push_str(if n.is_finite() { coverage_map::jsnum::js_number_string(*n) } else { "null".into() }.as_str())
+        }
         Json::Str(s) => out.push_str(&quote(s)),
         Json::Obj(xs) => {
             out.push('{');
@@ -153,14 +142,7 @@ fn root() -> PathBuf {
     std::env::var_os("ALCHEMY_DASHBOARD_ROOT")
         .map(PathBuf::from)
         .filter(|p| !p.as_os_str().is_empty())
-        .unwrap_or_else(|| {
-            Path::new(env!("CARGO_MANIFEST_DIR"))
-                .parent()
-                .unwrap()
-                .parent()
-                .unwrap()
-                .into()
-        })
+        .unwrap_or_else(|| Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap().parent().unwrap().into())
 }
 fn font() -> PathBuf {
     root().join("games/gs1/assets/fonts/weyard.otf")
@@ -170,19 +152,14 @@ fn mtime(path: &Path) -> f64 {
         .and_then(|m| m.modified())
         .ok()
         .and_then(|t| t.duration_since(UNIX_EPOCH).ok())
-        .map_or(0.0, |d| {
-            d.as_secs() as f64 * 1000.0 + f64::from(d.subsec_nanos()) / 1e6
-        })
+        .map_or(0.0, |d| d.as_secs() as f64 * 1000.0 + f64::from(d.subsec_nanos()) / 1e6)
 }
 fn page_version() -> String {
     let client = client::bundled_client().unwrap_or_default();
     coverage_map::sha1::sha1_hex(format!("{}\0{client}", assets::STYLES).as_bytes())[..16].into()
 }
 fn port() -> u16 {
-    std::env::var("ALCHEMY_DASHBOARD_PORT")
-        .ok()
-        .and_then(|v| v.parse().ok())
-        .unwrap_or(4649)
+    std::env::var("ALCHEMY_DASHBOARD_PORT").ok().and_then(|v| v.parse().ok()).unwrap_or(4649)
 }
 fn host() -> IpAddr {
     std::env::var("ALCHEMY_DASHBOARD_HOST")
@@ -240,10 +217,7 @@ pub struct State {
 }
 static STATE: Mutex<Option<State>> = Mutex::new(None);
 fn state<R>(f: impl FnOnce(&mut State) -> R) -> R {
-    f(STATE
-        .lock()
-        .unwrap_or_else(|e| e.into_inner())
-        .get_or_insert_with(State::default))
+    f(STATE.lock().unwrap_or_else(|e| e.into_inner()).get_or_insert_with(State::default))
 }
 fn map_number(map: &CoverageMap, path: &[&str]) -> Option<f64> {
     let mut v = &map.document;
@@ -303,19 +277,10 @@ fn compute() -> Result<Live, String> {
     let gs2_ja_sources = count_c(&root().join("games/gs2/recon/ja"));
     let gs2_en_sources = count_c(&root().join("games/gs2/recon/en"));
     let correspondence = correspondence(&root().join("games/gs1/recon/exact-correspondence.json"))?
-        .add(correspondence(
-            &root().join("games/gs1/recon/exact-overlay-correspondence.json"),
-        )?);
+        .add(correspondence(&root().join("games/gs1/recon/exact-overlay-correspondence.json"))?);
     let revision = BOX_TREES
         .iter()
-        .map(|name| {
-            svg_cache_version(
-                trees
-                    .iter()
-                    .find(|(id, _)| id == name)
-                    .map_or("", |(_, s)| s),
-            )
-        })
+        .map(|name| svg_cache_version(trees.iter().find(|(id, _)| id == name).map_or("", |(_, s)| s)))
         .collect::<Vec<_>>()
         .into_iter()
         .chain([
@@ -353,9 +318,7 @@ fn compute() -> Result<Live, String> {
     })
 }
 fn iso_now() -> String {
-    let ms = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map_or(0, |d| d.as_millis() as i64);
+    let ms = SystemTime::now().duration_since(UNIX_EPOCH).map_or(0, |d| d.as_millis() as i64);
     let days = ms.div_euclid(86_400_000);
     let rest = ms.rem_euclid(86_400_000);
     let z = days + 719468;
@@ -378,12 +341,7 @@ fn iso_now() -> String {
 }
 fn snapshot() -> Json {
     state(|s| {
-        let trees = Json::Obj(
-            TREES
-                .iter()
-                .map(|(k, v)| ((*k).into(), Json::str(v)))
-                .collect(),
-        );
+        let trees = Json::Obj(TREES.iter().map(|(k, v)| ((*k).into(), Json::str(v))).collect());
         let summary = s.coverage.as_ref().map_or(Json::Undefined, |c| {
             Json::obj(vec![
                 ("executableBytes", Json::Num(c.executable)),
@@ -393,10 +351,7 @@ fn snapshot() -> Json {
                 ("trackedPercent", Json::Num(c.tracked_percent)),
                 ("retainedBytes", Json::Num(c.retained)),
                 ("doneBytes", Json::Num(c.exact + c.retained)),
-                (
-                    "donePercent",
-                    Json::Num((c.exact + c.retained) * 100.0 / c.executable.max(1.0)),
-                ),
+                ("donePercent", Json::Num((c.exact + c.retained) * 100.0 / c.executable.max(1.0))),
                 ("gs1JaSources", Json::Num(c.gs1_ja_sources as f64)),
                 ("gs1EnSources", Json::Num(c.gs1_en_sources as f64)),
                 ("gs2JaSources", Json::Num(c.gs2_ja_sources as f64)),
@@ -404,44 +359,17 @@ fn snapshot() -> Json {
                 ("historicalTargets", Json::Num(12.0)),
                 ("fullTargets", Json::Num(1.0)),
                 ("compileOnlyTargets", Json::Num(11.0)),
-                (
-                    "correspondenceTotal",
-                    Json::Num(c.correspondence_total as f64),
-                ),
-                (
-                    "correspondenceMatched",
-                    Json::Num(c.correspondence_matched as f64),
-                ),
-                (
-                    "correspondenceShared",
-                    Json::Num(c.correspondence_shared as f64),
-                ),
-                (
-                    "correspondenceRegional",
-                    Json::Num(c.correspondence_regional as f64),
-                ),
-                (
-                    "correspondenceUnresolved",
-                    Json::Num(c.correspondence_unresolved as f64),
-                ),
+                ("correspondenceTotal", Json::Num(c.correspondence_total as f64)),
+                ("correspondenceMatched", Json::Num(c.correspondence_matched as f64)),
+                ("correspondenceShared", Json::Num(c.correspondence_shared as f64)),
+                ("correspondenceRegional", Json::Num(c.correspondence_regional as f64)),
+                ("correspondenceUnresolved", Json::Num(c.correspondence_unresolved as f64)),
             ])
         });
         Json::obj(vec![
             ("page", Json::str(&page_version())),
-            (
-                "revision",
-                Json::str(
-                    &s.coverage
-                        .as_ref()
-                        .map_or_else(|| "starting".into(), |c| c.revision.clone()),
-                ),
-            ),
-            (
-                "generatedAt",
-                s.coverage
-                    .as_ref()
-                    .map_or(Json::Undefined, |c| Json::str(&c.generated)),
-            ),
+            ("revision", Json::str(&s.coverage.as_ref().map_or_else(|| "starting".into(), |c| c.revision.clone()))),
+            ("generatedAt", s.coverage.as_ref().map_or(Json::Undefined, |c| Json::str(&c.generated))),
             ("scanning", Json::Bool(s.scanning)),
             ("error", s.error.clone().map_or(Json::Undefined, Json::Str)),
             ("trees", trees),
@@ -460,13 +388,7 @@ fn snapshot() -> Json {
     })
 }
 fn rebuild() {
-    state(|s| {
-        if s.scanning {
-            s.queued = true
-        } else {
-            s.scanning = true
-        }
-    });
+    state(|s| if s.scanning { s.queued = true } else { s.scanning = true });
     notify();
     loop {
         let result = compute();
@@ -513,10 +435,7 @@ fn unregister(id: u64) {
 fn notify() {
     let msg = frame("update", &snapshot().stringify());
     SUBSCRIBERS.lock().unwrap().retain(|s| {
-        !matches!(
-            s.tx.try_send(msg.clone()),
-            Err(TrySendError::Disconnected(_)) | Err(TrySendError::Full(_))
-        )
+        !matches!(s.tx.try_send(msg.clone()), Err(TrySendError::Disconnected(_)) | Err(TrySendError::Full(_)))
     })
 }
 
@@ -538,22 +457,14 @@ impl Response {
         if let Some(ty) = ty {
             headers.insert(0, ("Content-Type", ty.into()))
         }
-        Self {
-            status,
-            reason,
-            headers,
-            body: body.into(),
-        }
+        Self { status, reason, headers, body: body.into() }
     }
     fn write(self, stream: &mut TcpStream, body: bool) -> std::io::Result<()> {
         let mut h = format!("HTTP/1.1 {} {}\r\n", self.status, self.reason);
         for (k, v) in self.headers {
             h.push_str(&format!("{k}: {v}\r\n"))
         }
-        h.push_str(&format!(
-            "Content-Length: {}\r\nConnection: close\r\n\r\n",
-            self.body.len()
-        ));
+        h.push_str(&format!("Content-Length: {}\r\nConnection: close\r\n\r\n", self.body.len()));
         stream.write_all(h.as_bytes())?;
         if body {
             stream.write_all(&self.body)?
@@ -603,10 +514,7 @@ struct Fingerprint {
 }
 fn fingerprint(path: &Path) -> Fingerprint {
     let mut stack = vec![path.to_path_buf()];
-    let mut out = Fingerprint {
-        newest: 0.0,
-        entries: 0,
-    };
+    let mut out = Fingerprint { newest: 0.0, entries: 0 };
     while let Some(p) = stack.pop() {
         let Ok(m) = std::fs::symlink_metadata(&p) else {
             continue;
@@ -628,11 +536,8 @@ struct Watcher {
 impl Watcher {
     fn new() -> Self {
         let r = root();
-        let mut coverage = COVERAGE_DIRS
-            .iter()
-            .map(|d| r.join(d))
-            .map(|p| (p.clone(), fingerprint(&p)))
-            .collect::<Vec<_>>();
+        let mut coverage =
+            COVERAGE_DIRS.iter().map(|d| r.join(d)).map(|p| (p.clone(), fingerprint(&p))).collect::<Vec<_>>();
         for p in [
             "out/gs1-en/full/asm/manifest.json",
             "out/gs1-en/full/assets/manifest.json",
@@ -644,20 +549,11 @@ impl Watcher {
             coverage.push((p.clone(), fingerprint(&p)))
         }
         let mut files = Vec::new();
-        for d in [
-            r.join("tools/dashboard-server/src"),
-            r.join("tools/coverage-map/src"),
-        ] {
+        for d in [r.join("tools/dashboard-server/src"), r.join("tools/coverage-map/src")] {
             collect_rs(&d, &mut files)
         }
         files.sort();
-        Self {
-            coverage,
-            restart: files
-                .into_iter()
-                .map(|p| (p.clone(), fingerprint(&p)))
-                .collect(),
-        }
+        Self { coverage, restart: files.into_iter().map(|p| (p.clone(), fingerprint(&p))).collect() }
     }
     fn tick(&mut self) -> bool {
         for (p, old) in &mut self.restart {
@@ -748,10 +644,7 @@ pub fn run(bind: Option<SocketAddr>) -> std::io::Result<()> {
         std::thread::sleep(Duration::from_secs(5));
         let msg = b": keepalive\n\n";
         SUBSCRIBERS.lock().unwrap().retain(|s| {
-            !matches!(
-                s.tx.try_send(msg.to_vec()),
-                Err(TrySendError::Disconnected(_)) | Err(TrySendError::Full(_))
-            )
+            !matches!(s.tx.try_send(msg.to_vec()), Err(TrySendError::Disconnected(_)) | Err(TrySendError::Full(_)))
         })
     });
     std::thread::spawn(|| {
@@ -780,17 +673,10 @@ pub fn self_test() -> Result<String, String> {
     {
         return Err("dashboard assets are incomplete".into());
     }
-    if !response("/")
-        .map_err(|_| "shell route failed")?
-        .body
-        .starts_with(b"<!doctype html>")
-    {
+    if !response("/").map_err(|_| "shell route failed")?.body.starts_with(b"<!doctype html>") {
         return Err("dashboard shell failed".into());
     }
-    if !matches!(
-        response("/nope"),
-        Err(Route::Response(Response { status: 404, .. }))
-    ) {
+    if !matches!(response("/nope"), Err(Route::Response(Response { status: 404, .. }))) {
         return Err("404 route failed".into());
     }
     Ok("self-test=ok dashboard".into())

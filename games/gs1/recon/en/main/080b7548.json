@@ -4,9 +4,9 @@
   "address": "0x080b7548",
   "status": "measured-draft",
   "owner_bytes": 148,
-  "candidate_bytes": 152,
-  "differing_halfwords": 70,
-  "wrong_instructions": 50,
+  "candidate_bytes": 148,
+  "differing_halfwords": 21,
+  "wrong_instructions": 32,
   "classification": "battle-summon-placement",
   "cross_edition": {
     "core_bytes": 136,
@@ -25,10 +25,14 @@
     "Direct callee of the exact 080bbb0c battle-command owner.",
     "The complete control flow, destructive count loop, 76-byte local layout, summon-slot sentinel handling, placement call, and exact battle-motion lookup are expressed.",
     "A bounded 50,000-candidate classic heat-guided walk found no exact candidate and did not improve the real byte delta; packed structural scores favored shorter but bytewise-equivalent-or-worse candidates and were rejected.",
-    "A fresh fixed-route rebuild on 2026-08-25 improves the earlier measured draft from 156/69/60 to 152 candidate bytes, 70 differing halfwords, and 50 wrong instructions against the 148-byte reference. The executable residual begins after the five-instruction high-register prologue: the compiler folds placement+102 into a separate pointer instead of advancing the long-lived placement base by two, then coalesces the two source/destination offsets in the gather loop. The final pool is consequently four bytes late.",
+    "A fresh fixed-route rebuild on 2026-08-25 first improved the earlier measured draft from 156/69/60 to 152 candidate bytes, 70 differing halfwords, and 50 wrong instructions against the 148-byte reference.",
     "The 136-byte relocation-masked core remains identical in JA, EN, DE, ES, FR, and IT at the recorded starts. This is shared machine-code evidence, not exact-C correspondence.",
     "Readable raw-pointer, split-assignment, independent byte-offset, direct-sentinel, reversed-addend, carrier-width, and declaration-lifetime spellings were rebuilt. The best either reproduces 152/70/50 or regresses to 156/69/60; none changes the key pointer fold under the fixed route.",
     "A bounded compiler-axis sweep found no narrow residual: -fno-schedule-insns2, -fno-cse-follow-jumps, -fno-cse-skip-blocks, -fno-regmove, and -fno-expensive-optimizations tie 152/70/50; -fno-gcse is 132/71/74; -fno-strength-reduce is 156/71/66; old-agbcc is 144/72/112. -fno-rerun-cse-after-loop reaches exact extent 148 but remains broad at 60 differing halfwords and 56 wrong instructions.",
-    "The remaining residual is broad compiler pointer/allocation shape, not a narrow regional scheduling or allocation tie. Adoption requires zero differing halfwords; no permanent classification is warranted."
+    "The exact 080bbb0c source was preprocessed through its registered route and supplied to m2c as context. It establishes this direct callee's void signature, but the generated machine-shaped seed still required recovered aggregate types and did not compile as emitted; its raw-pointer spelling regressed when repaired with ordinary types.",
+    "A valid 5,000-candidate safe heat-guided walk biased by the exact 080bbb0c source found one semantics-preserving source fact: retaining an explicit zero slot for the first summon read. Pared to the ordinary slot local and independently rescored, it improves the canonical draft from 152/70/50 to exact extent at 148 candidate bytes, 21 differing halfwords, and 32 wrong instructions.",
+    "An earlier apparent 152/66 improvement was discarded because the AST preprocessor had deleted __attribute__((packed)) and moved the placement payload from offset 2 to offset 4. The permuter now preserves GNU layout attributes and has a regression test for this owner class.",
+    "A subsequent 20,000-candidate classic exact-only walk found no improvement or exact output. Repeating the approved pass matrix on the improved source ties at 148/21/32 or regresses; 080bbb0c's -fno-cse-follow-jumps route is byte-neutral here. The direct m2c base-pointer and explicit dual-offset source models regress to 152/70/50 and 156/70/52 respectively.",
+    "The remaining equal-length residual is fifteen normalized instruction choices: placement+2 and gather-loop register allocation, two commutative indexed-load encodings, and the return-pop register. Adoption still requires zero differing halfwords; no permanent classification is inferred from this bounded negative result."
   ]
 }

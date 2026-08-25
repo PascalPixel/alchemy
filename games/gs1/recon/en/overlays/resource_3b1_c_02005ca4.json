@@ -1,28 +1,11 @@
 {
   "span_bytes": 108,
-  "score": {
-    "measured": "2026-08-17",
-    "candidate_bytes": 108,
-    "reference_bytes": 108,
-    "wrong_instructions": 0,
-    "differing_halfwords": 2,
-    "class": "ordering"
-  },
-  "expressed": [
-    "drafted whole by `overlay reconstruct`"
-  ],
-  "unexpressed": [],
+  "score": {"measured":"2026-08-25","candidate_bytes":108,"reference_bytes":108,"wrong_instructions":0,"differing_halfwords":0,"class":"exact"},
+  "expressed": ["complete actors-eight-and-nine map event call sequence"],
   "verified_against_reference": [
-    "byte count 108 = 108",
-    "wrong_instructions 0"
+    "a static inline direction wrapper resolves the former two-halfword scheduling swap",
+    "linked candidate and reference are byte-identical across the complete 108-byte owner"
   ],
-  "blocked_by": "instruction order only: one swapped pair",
-  "rejected": [
-    "2026-08-23 bounded routing sweep: -fno-schedule-insns, -fno-gcse, -fno-expensive-optimizations, -fno-rerun-cse-after-loop, -fno-regmove, -fno-strength-reduce, -fno-cse-follow-jumps, -fno-cse-skip-blocks, and -O3 preserve the two-halfword ordering defect; -fno-schedule-insns2 and -O1 regress to 17",
-    "2026-08-23 ordinary-C source sweep: actor and scale locals in both declaration orders, constant and shifted scale forms, and typed prototypes all preserve the same two-halfword shift ordering defect",
-    "2026-08-23 twenty-thousand-candidate safe heat walk: 20,000 compiled, exact 0, best unchanged at the two-halfword baseline",
-    "2026-08-23 ten-thousand-candidate classic exact-only heat walk: 9,965 compiled, exact 0, best unchanged at the two-halfword baseline"
-  ],
-  "retention": "keep_structured_asm",
-  "note": "Found by a full sweep of 1,201 unfinished owners. Exact size, zero wrong instructions; retained only after ordinary-C, routing, safe-walk, and classic exact-only searches preserved the same swapped pair."
+  "retention": "adopted_exact_c",
+  "note": "The earlier 20,000-candidate and 10,000-candidate searches did not create an inline call boundary, so their unchanged baseline does not contradict this exact source."
 }

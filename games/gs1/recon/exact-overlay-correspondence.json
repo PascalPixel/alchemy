@@ -5,12 +5,12 @@
   "base_edition": "ja",
   "source_state": "byte-exact overlay C",
   "resources_total": 96,
-  "owners_total": 2573,
-  "owner_symbol_bytes": 210558,
-  "matched_owners": 2535,
-  "matched_bytes": 207482,
-  "shared_core_owners": 2529,
-  "shared_core_bytes": 206222,
+  "owners_total": 2597,
+  "owner_symbol_bytes": 212560,
+  "matched_owners": 2559,
+  "matched_bytes": 209484,
+  "shared_core_owners": 2553,
+  "shared_core_bytes": 208224,
   "regional_core_owners": 6,
   "regional_core_bytes": 1260,
   "unresolved_owners": 38,
@@ -32,55 +32,55 @@
   "editions": [
     {
       "edition": "ja",
-      "matched_owners": 2535,
-      "matched_bytes": 207482,
-      "core_identical_owners": 2535,
-      "core_identical_bytes": 207482,
+      "matched_owners": 2559,
+      "matched_bytes": 209484,
+      "core_identical_owners": 2559,
+      "core_identical_bytes": 209484,
       "core_different_owners": 0,
       "core_different_bytes": 0
     },
     {
       "edition": "en",
-      "matched_owners": 2535,
-      "matched_bytes": 207482,
-      "core_identical_owners": 2530,
-      "core_identical_bytes": 206530,
+      "matched_owners": 2559,
+      "matched_bytes": 209484,
+      "core_identical_owners": 2554,
+      "core_identical_bytes": 208532,
       "core_different_owners": 5,
       "core_different_bytes": 952
     },
     {
       "edition": "de",
-      "matched_owners": 2535,
-      "matched_bytes": 207482,
-      "core_identical_owners": 2530,
-      "core_identical_bytes": 206530,
+      "matched_owners": 2559,
+      "matched_bytes": 209484,
+      "core_identical_owners": 2554,
+      "core_identical_bytes": 208532,
       "core_different_owners": 5,
       "core_different_bytes": 952
     },
     {
       "edition": "es",
-      "matched_owners": 2535,
-      "matched_bytes": 207482,
-      "core_identical_owners": 2529,
-      "core_identical_bytes": 206222,
+      "matched_owners": 2559,
+      "matched_bytes": 209484,
+      "core_identical_owners": 2553,
+      "core_identical_bytes": 208224,
       "core_different_owners": 6,
       "core_different_bytes": 1260
     },
     {
       "edition": "fr",
-      "matched_owners": 2535,
-      "matched_bytes": 207482,
-      "core_identical_owners": 2529,
-      "core_identical_bytes": 206222,
+      "matched_owners": 2559,
+      "matched_bytes": 209484,
+      "core_identical_owners": 2553,
+      "core_identical_bytes": 208224,
       "core_different_owners": 6,
       "core_different_bytes": 1260
     },
     {
       "edition": "it",
-      "matched_owners": 2535,
-      "matched_bytes": 207482,
-      "core_identical_owners": 2529,
-      "core_identical_bytes": 206222,
+      "matched_owners": 2559,
+      "matched_bytes": 209484,
+      "core_identical_owners": 2553,
+      "core_identical_bytes": 208224,
       "core_different_owners": 6,
       "core_different_bytes": 1260
     }
@@ -2151,6 +2151,12 @@
       "location_methods": "tstttt"
     },
     {
+      "en_owner": "resource_37a:02001380",
+      "size": 400,
+      "core_bytes": 184,
+      "location_methods": "tstttt"
+    },
+    {
       "en_owner": "resource_37a:02001a58",
       "size": 400,
       "core_bytes": 212,
@@ -2255,6 +2261,12 @@
       "en_owner": "resource_37b:020015bc",
       "size": 24,
       "core_bytes": 16,
+      "location_methods": "osoooo"
+    },
+    {
+      "en_owner": "resource_37b:020015d4",
+      "size": 40,
+      "core_bytes": 28,
       "location_methods": "osoooo"
     },
     {
@@ -3116,6 +3128,12 @@
       "location_methods": "tstttt"
     },
     {
+      "en_owner": "resource_382:02000ef4",
+      "size": 72,
+      "core_bytes": 56,
+      "location_methods": "tstttt"
+    },
+    {
       "en_owner": "resource_382:02000f3c",
       "size": 40,
       "core_bytes": 24,
@@ -3855,6 +3873,12 @@
       "location_methods": "tstttt"
     },
     {
+      "en_owner": "resource_385:02000a80",
+      "size": 72,
+      "core_bytes": 56,
+      "location_methods": "tstttt"
+    },
+    {
       "en_owner": "resource_385:02000ac8",
       "size": 40,
       "core_bytes": 24,
@@ -4269,6 +4293,12 @@
       "location_methods": "tstttt"
     },
     {
+      "en_owner": "resource_389:020009dc",
+      "size": 36,
+      "core_bytes": 24,
+      "location_methods": "nsoooo"
+    },
+    {
       "en_owner": "resource_389:02000a00",
       "size": 88,
       "core_bytes": 88,
@@ -4572,6 +4602,12 @@
       "location_methods": "osoooo"
     },
     {
+      "en_owner": "resource_38c:020001a8",
+      "size": 56,
+      "core_bytes": 28,
+      "location_methods": "nsnnnn"
+    },
+    {
       "en_owner": "resource_38c:020002b4",
       "size": 32,
       "core_bytes": 12,
@@ -4593,6 +4629,12 @@
       "en_owner": "resource_38c:020003f4",
       "size": 60,
       "core_bytes": 28,
+      "location_methods": "nsnnnn"
+    },
+    {
+      "en_owner": "resource_38c:02000430",
+      "size": 64,
+      "core_bytes": 32,
       "location_methods": "nsnnnn"
     },
     {
@@ -4731,6 +4773,18 @@
       "en_owner": "resource_38d:020004ec",
       "size": 124,
       "core_bytes": 64,
+      "location_methods": "osoooo"
+    },
+    {
+      "en_owner": "resource_38d:02001958",
+      "size": 42,
+      "core_bytes": 30,
+      "location_methods": "osoooo"
+    },
+    {
+      "en_owner": "resource_38d:02001984",
+      "size": 42,
+      "core_bytes": 30,
       "location_methods": "osoooo"
     },
     {
@@ -7796,6 +7850,12 @@
       "location_methods": "nsnnnn"
     },
     {
+      "en_owner": "resource_39e:02002484",
+      "size": 132,
+      "core_bytes": 64,
+      "location_methods": "nsnnnn"
+    },
+    {
       "en_owner": "resource_39e:02002508",
       "size": 68,
       "core_bytes": 32,
@@ -8435,6 +8495,12 @@
       "size": 36,
       "core_bytes": 16,
       "location_methods": "nsnnnn"
+    },
+    {
+      "en_owner": "resource_3a2:02000870",
+      "size": 54,
+      "core_bytes": 42,
+      "location_methods": "tstttt"
     },
     {
       "en_owner": "resource_3a2:020008e0",
@@ -9540,6 +9606,12 @@
       "location_methods": "tstttt"
     },
     {
+      "en_owner": "resource_3a8:02000504",
+      "size": 138,
+      "core_bytes": 78,
+      "location_methods": "nsoooo"
+    },
+    {
       "en_owner": "resource_3a8:0200158c",
       "size": 40,
       "core_bytes": 28,
@@ -9786,6 +9858,12 @@
       "location_methods": "tstttt"
     },
     {
+      "en_owner": "resource_3aa:0200140c",
+      "size": 68,
+      "core_bytes": 48,
+      "location_methods": "osoooo"
+    },
+    {
       "en_owner": "resource_3ab:02000030",
       "size": 22,
       "core_bytes": 22,
@@ -9954,6 +10032,16 @@
       "start_overrides": {
         "es": "0x02000ad0",
         "it": "0x02000ad0"
+      },
+      "location_methods": "nsnnnn"
+    },
+    {
+      "en_owner": "resource_3ab:02000b0c",
+      "size": 96,
+      "core_bytes": 44,
+      "start_overrides": {
+        "es": "0x02000b4c",
+        "it": "0x02000b4c"
       },
       "location_methods": "nsnnnn"
     },
@@ -11052,6 +11140,12 @@
       "en_owner": "resource_3b1:02005780",
       "size": 108,
       "core_bytes": 56,
+      "location_methods": "osoooo"
+    },
+    {
+      "en_owner": "resource_3b1:02005ca4",
+      "size": 108,
+      "core_bytes": 64,
       "location_methods": "osoooo"
     },
     {
@@ -12159,6 +12253,12 @@
       "location_methods": "tstttt"
     },
     {
+      "en_owner": "resource_3b4:020011d8",
+      "size": 44,
+      "core_bytes": 36,
+      "location_methods": "tstttt"
+    },
+    {
       "en_owner": "resource_3b4:02001204",
       "size": 52,
       "core_bytes": 28,
@@ -12427,6 +12527,12 @@
       "size": 8,
       "core_bytes": 4,
       "location_methods": "osoooo"
+    },
+    {
+      "en_owner": "resource_3b5:02000260",
+      "size": 44,
+      "core_bytes": 36,
+      "location_methods": "tstttt"
     },
     {
       "en_owner": "resource_3b5:020002b8",
@@ -12758,6 +12864,17 @@
         "it": "0x020005b4"
       },
       "location_methods": "nsnnnn"
+    },
+    {
+      "en_owner": "resource_3b8:02003df8",
+      "size": 72,
+      "core_bytes": 36,
+      "start_overrides": {
+        "es": "0x02003e08",
+        "fr": "0x02003e08",
+        "it": "0x02003e08"
+      },
+      "location_methods": "osonnn"
     },
     {
       "en_owner": "resource_3b8:02003f84",
@@ -14540,6 +14657,12 @@
       "location_methods": "osoooo"
     },
     {
+      "en_owner": "resource_3be:02001158",
+      "size": 108,
+      "core_bytes": 64,
+      "location_methods": "tstttt"
+    },
+    {
       "en_owner": "resource_3be:020011c4",
       "size": 4,
       "core_bytes": 4,
@@ -14652,6 +14775,12 @@
       "size": 10,
       "core_bytes": 6,
       "location_methods": "osoooo"
+    },
+    {
+      "en_owner": "resource_3bf:02000c78",
+      "size": 24,
+      "core_bytes": 16,
+      "location_methods": "nsoooo"
     },
     {
       "en_owner": "resource_3bf:02000c90",
@@ -15449,6 +15578,12 @@
       "location_methods": "osoooo"
     },
     {
+      "en_owner": "resource_3c0:02000adc",
+      "size": 56,
+      "core_bytes": 28,
+      "location_methods": "osoooo"
+    },
+    {
       "en_owner": "resource_3c0:02000b14",
       "size": 16,
       "core_bytes": 12,
@@ -15507,6 +15642,12 @@
       "size": 40,
       "core_bytes": 28,
       "location_methods": "tstttt"
+    },
+    {
+      "en_owner": "resource_3c1:02000120",
+      "size": 116,
+      "core_bytes": 88,
+      "location_methods": "osnooo"
     },
     {
       "en_owner": "resource_3c1:02000208",
@@ -16252,6 +16393,12 @@
       "location_methods": "tstttt"
     },
     {
+      "en_owner": "resource_3c5:02001158",
+      "size": 42,
+      "core_bytes": 26,
+      "location_methods": "tstttt"
+    },
+    {
       "en_owner": "resource_3c5:02001184",
       "size": 24,
       "core_bytes": 8,
@@ -16374,6 +16521,12 @@
     {
       "en_owner": "resource_3c6:020000c4",
       "size": 72,
+      "core_bytes": 40,
+      "location_methods": "nsnnnn"
+    },
+    {
+      "en_owner": "resource_3c6:0200010c",
+      "size": 76,
       "core_bytes": 40,
       "location_methods": "nsnnnn"
     },

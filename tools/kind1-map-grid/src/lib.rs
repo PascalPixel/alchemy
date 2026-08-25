@@ -26,12 +26,7 @@ pub const DECODED_SIZE: usize = 4 * PLANE;
 pub const WIDTH: usize = 128;
 pub const HEIGHT: usize = 128;
 
-const FILES: [&str; 4] = [
-    "value_low.png",
-    "value_high.png",
-    "attribute_a.png",
-    "attribute_b.png",
-];
+const FILES: [&str; 4] = ["value_low.png", "value_high.png", "attribute_a.png", "attribute_b.png"];
 
 pub type Result<T> = std::result::Result<T, String>;
 
@@ -110,11 +105,7 @@ pub fn inverse(planes: &[Vec<u8>], mask: &[u8]) -> Result<Vec<u8>> {
         let value = u16::from(planes[0][index]) | (u16::from(planes[1][index]) << 8);
         let mut restored = value;
         if mask[index] != 0 {
-            let expected = if ordinal < 0x0fff {
-                (value & 0xf000) | ordinal as u16
-            } else {
-                value
-            };
+            let expected = if ordinal < 0x0fff { (value & 0xf000) | ordinal as u16 } else { value };
             if value != expected {
                 return Err(err("sentinel mask disagrees with transformed value"));
             }
@@ -170,10 +161,7 @@ pub fn mask_png(mask: &[u8]) -> Result<Vec<u8>> {
 fn read_plane(path: &Path) -> Result<Vec<u8>> {
     let image = indexed_png(&read(path)?).map_err(|error| error.0)?;
     if image.width != WIDTH as u32 || image.height != HEIGHT as u32 || image.pixels.len() != PLANE {
-        return Err(err(format!(
-            "{}: expected one 128x128 byte plane",
-            path.display()
-        )));
+        return Err(err(format!("{}: expected one 128x128 byte plane", path.display())));
     }
     Ok(image.pixels.into_iter().map(|value| value as u8).collect())
 }
@@ -186,23 +174,14 @@ fn read_mask(path: &Path) -> Result<Vec<u8>> {
     image
         .pixels
         .into_iter()
-        .map(|value| {
-            if value == 0 || value == 1 {
-                Ok(value as u8)
-            } else {
-                Err(err("map sentinel mask is invalid"))
-            }
-        })
+        .map(|value| if value == 0 || value == 1 { Ok(value as u8) } else { Err(err("map sentinel mask is invalid")) })
         .collect()
 }
 
 fn token_value(token: &PaletteGroup) -> Value {
     match token {
         PaletteGroup::Zeros => json!(["z"]),
-        PaletteGroup::Group(operations) => json!([
-            "g",
-            operations.iter().map(operation_value).collect::<Vec<_>>()
-        ]),
+        PaletteGroup::Group(operations) => json!(["g", operations.iter().map(operation_value).collect::<Vec<_>>()]),
     }
 }
 
@@ -215,60 +194,45 @@ fn operation_value(operation: &PaletteOperation) -> Value {
 }
 
 fn number(value: &Value, label: &str) -> Result<u64> {
-    value
-        .as_u64()
-        .ok_or_else(|| err(format!("invalid {label}")))
+    value.as_u64().ok_or_else(|| err(format!("invalid {label}")))
 }
 
 fn text<'a>(value: &'a Value, label: &str) -> Result<&'a str> {
-    value
-        .as_str()
-        .ok_or_else(|| err(format!("invalid {label}")))
+    value.as_str().ok_or_else(|| err(format!("invalid {label}")))
 }
 
 fn parse_operation(value: &Value, index: usize) -> Result<PaletteOperation> {
-    let operation = value
-        .as_array()
-        .ok_or_else(|| err(format!("palette token operation {index} must be an array")))?;
+    let operation = value.as_array().ok_or_else(|| err(format!("palette token operation {index} must be an array")))?;
     match operation.first().and_then(Value::as_str) {
         Some("l") if operation.len() == 1 => Ok(PaletteOperation::Literal),
         Some("e") if operation.len() == 1 => Ok(PaletteOperation::End),
         Some("c") if operation.len() == 3 => {
             let length = number(&operation[1], "palette copy length")?;
             let distance = number(&operation[2], "palette copy distance")?;
-            Ok(PaletteOperation::Copy {
-                length: length as u32,
-                distance: distance as u32,
-            })
+            Ok(PaletteOperation::Copy { length: length as u32, distance: distance as u32 })
         }
         _ => Err(err(format!("palette token operation {index} is invalid"))),
     }
 }
 
 fn parse_tokens(value: &Value) -> Result<Vec<PaletteGroup>> {
-    let tokens = value
-        .as_array()
-        .ok_or_else(|| err("palette tokens must be an array"))?;
+    let tokens = value.as_array().ok_or_else(|| err("palette tokens must be an array"))?;
     tokens
         .iter()
         .enumerate()
         .map(|(index, token)| {
-            let token = token
-                .as_array()
-                .ok_or_else(|| err(format!("palette token {index} must be an array")))?;
+            let token = token.as_array().ok_or_else(|| err(format!("palette token {index} must be an array")))?;
             match token.first().and_then(Value::as_str) {
                 Some("z") if token.len() == 1 => Ok(PaletteGroup::Zeros),
                 Some("g") if token.len() == 2 => {
-                    let operations = token[1].as_array().ok_or_else(|| {
-                        err(format!("palette token group {index} must be an array"))
-                    })?;
+                    let operations = token[1]
+                        .as_array()
+                        .ok_or_else(|| err(format!("palette token group {index} must be an array")))?;
                     Ok(PaletteGroup::Group(
                         operations
                             .iter()
                             .enumerate()
-                            .map(|(operation_index, operation)| {
-                                parse_operation(operation, operation_index)
-                            })
+                            .map(|(operation_index, operation)| parse_operation(operation, operation_index))
                             .collect::<Result<Vec<_>>>()?,
                     ))
                 }
@@ -278,12 +242,7 @@ fn parse_tokens(value: &Value) -> Result<Vec<PaletteGroup>> {
         .collect()
 }
 
-fn plan_value(
-    decoded_size: usize,
-    encoded_size: usize,
-    tokens: &[PaletteGroup],
-    lookahead: &str,
-) -> Value {
+fn plan_value(decoded_size: usize, encoded_size: usize, tokens: &[PaletteGroup], lookahead: &str) -> Value {
     json!({
         "format": 1,
         "codec": "golden-sun-kind1-grid",
@@ -295,17 +254,9 @@ fn plan_value(
 }
 
 fn plan_parts(plan: &Value) -> Result<(Vec<PaletteGroup>, String)> {
-    let object: &Map<String, Value> = plan
-        .as_object()
-        .ok_or_else(|| err("kind-1 grid plan must be an object"))?;
-    if number(
-        object.get("format").ok_or_else(|| err("invalid format"))?,
-        "format",
-    )? != 1
-        || text(
-            object.get("codec").ok_or_else(|| err("invalid codec"))?,
-            "codec",
-        )? != "golden-sun-kind1-grid"
+    let object: &Map<String, Value> = plan.as_object().ok_or_else(|| err("kind-1 grid plan must be an object"))?;
+    if number(object.get("format").ok_or_else(|| err("invalid format"))?, "format")? != 1
+        || text(object.get("codec").ok_or_else(|| err("invalid codec"))?, "codec")? != "golden-sun-kind1-grid"
     {
         return Err(err("unsupported kind-1 grid plan"));
     }
@@ -326,9 +277,7 @@ pub fn build_grid(plan: &Value, directory: &Path) -> Result<Vec<u8>> {
     let decoded = inverse(&planes, &mask)?;
     let mut encoded = vec![1u8];
     encoded.extend_from_slice(&encode_palette(&decoded, &tokens).map_err(|error| error.0)?);
-    encoded.extend_from_slice(
-        &hex::decode(&lookahead).map_err(|_| err("kind-1 lookahead is not hexadecimal"))?,
-    );
+    encoded.extend_from_slice(&hex::decode(&lookahead).map_err(|_| err("kind-1 lookahead is not hexadecimal"))?);
     Ok(encoded)
 }
 
@@ -336,14 +285,11 @@ pub fn export_grid(data: &[u8], directory: &Path) -> Result<ExportStats> {
     if data.is_empty() || data[0] != 1 {
         return Err(err("kind-1 map grid must begin with byte 1"));
     }
-    let (decoded, used, tokens) =
-        decode_palette_trace(data, 1, data.len(), 0x10000).map_err(|error| error.0)?;
+    let (decoded, used, tokens) = decode_palette_trace(data, 1, data.len(), 0x10000).map_err(|error| error.0)?;
     let (planes, mask) = transform(&decoded)?;
     fs::create_dir_all(directory).map_err(|error| format!("{}: {error}", directory.display()))?;
     for (index, name) in FILES.iter().enumerate() {
-        let image = byte_png(&planes[index], WIDTH as f64)
-            .map_err(|error| error.0)?
-            .0;
+        let image = byte_png(&planes[index], WIDTH as f64).map_err(|error| error.0)?.0;
         write(&grid_path(directory, name), &image)?;
     }
     write(&grid_path(directory, "sentinels.png"), &mask_png(&mask)?)?;
@@ -362,12 +308,7 @@ pub fn export_grid(data: &[u8], directory: &Path) -> Result<ExportStats> {
     })
 }
 
-pub fn verify_grid(
-    rom: &[u8],
-    address: usize,
-    size: usize,
-    directory: &Path,
-) -> Result<ExportStats> {
+pub fn verify_grid(rom: &[u8], address: usize, size: usize, directory: &Path) -> Result<ExportStats> {
     let data = rom_range(rom, address, size)?;
     let plan_text = fs::read_to_string(plan_path(directory)).map_err(|error| error.to_string())?;
     let plan: Value = serde_json::from_str(&plan_text).map_err(|error| error.to_string())?;
@@ -375,8 +316,7 @@ pub fn verify_grid(
     if rebuilt != data {
         return Err(err("kind-1 grid source differs from ROM"));
     }
-    let (decoded, _, tokens) =
-        decode_palette_trace(&data, 1, data.len(), 0x10000).map_err(|error| error.0)?;
+    let (decoded, _, tokens) = decode_palette_trace(&data, 1, data.len(), 0x10000).map_err(|error| error.0)?;
     let (_, mask) = transform(&decoded)?;
     Ok(ExportStats {
         tokens: tokens.len(),
@@ -390,9 +330,7 @@ fn rom_range(rom: &[u8], address: usize, size: usize) -> Result<&[u8]> {
         return Err(err("kind-1 grid range is outside the ROM"));
     }
     let start = address - ROM_BASE;
-    let end = start
-        .checked_add(size)
-        .ok_or_else(|| err("kind-1 grid range is outside the ROM"))?;
+    let end = start.checked_add(size).ok_or_else(|| err("kind-1 grid range is outside the ROM"))?;
     if end > rom.len() {
         return Err(err("kind-1 grid range is outside the ROM"));
     }
@@ -402,13 +340,10 @@ fn rom_range(rom: &[u8], address: usize, size: usize) -> Result<&[u8]> {
 pub fn self_test() -> Result<()> {
     let mut decoded = vec![0u8; DECODED_SIZE];
     for (index, value) in [0x0fff_u16, 0x2fff, 0x1234, 0x4fff].into_iter().enumerate() {
-        decoded[2 * PLANE + index * 2..2 * PLANE + index * 2 + 2]
-            .copy_from_slice(&value.to_le_bytes());
+        decoded[2 * PLANE + index * 2..2 * PLANE + index * 2 + 2].copy_from_slice(&value.to_le_bytes());
     }
     let (planes, mask) = transform(&decoded)?;
-    if inverse(&planes.to_vec(), &mask)? != decoded
-        || mask.iter().filter(|value| **value != 0).count() != 3
-    {
+    if inverse(&planes.to_vec(), &mask)? != decoded || mask.iter().filter(|value| **value != 0).count() != 3 {
         return Err(err("kind-1 map transform self-test failed"));
     }
     if mask_png(&mask)?.is_empty() {

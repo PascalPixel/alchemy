@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x08097194",
+  "name": "BattleEffect_CleanupSceneObjects",
+  "status": "measured-draft",
+  "owner_bytes": 248,
+  "candidate_bytes": 248,
+  "differing_halfwords": 109,
+  "wrong_instructions": 88,
+  "classification": "battle-effect-scene-cleanup",
+  "domain": "Removes active scene-effect objects, waits briefly for two effect callbacks to drain, restores the saved scene position, and releases the effect asset.",
+  "notes": [
+    "Recovered from retained owner assembly, all local callers, adjacent battle-effect state, and the approved compiler through the exact-family workbench.",
+    "Every caller invokes this owner without arguments; the generated two-argument signature was inherited from the unrelated exact template and has been corrected.",
+    "Generated register, stack-slot, and control-flow labels were replaced with role-based names before retaining the candidate.",
+    "Typed global-state layouts and a signed activity byte produce the exact owner extent and improve the raw m2c draft from 119 to 109 differing halfwords.",
+    "A 5,000-candidate safe family-template walk produced no improvement and no exact object.",
+    "Exact-C adoption remains gated on an independently compiled zero-difference object."
+  ]
+}

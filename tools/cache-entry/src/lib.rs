@@ -35,16 +35,10 @@ static COUNTER: AtomicU64 = AtomicU64::new(0);
 /// process must never be mistaken for an entry by a `*.bin` listing, and can
 /// never be found by a key lookup because the key names the final path.
 fn temporary_path(final_path: &Path) -> std::path::PathBuf {
-    let nanos = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map(|elapsed| elapsed.subsec_nanos() as u64)
-        .unwrap_or(0);
+    let nanos = SystemTime::now().duration_since(UNIX_EPOCH).map(|elapsed| elapsed.subsec_nanos() as u64).unwrap_or(0);
     let unique = COUNTER.fetch_add(1, Ordering::Relaxed);
     let mut name = final_path.as_os_str().to_os_string();
-    name.push(format!(
-        ".{}-{nanos:x}{unique:x}.partial",
-        std::process::id()
-    ));
+    name.push(format!(".{}-{nanos:x}{unique:x}.partial", std::process::id()));
     name.into()
 }
 

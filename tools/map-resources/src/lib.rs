@@ -10,8 +10,8 @@ pub mod entry_tokushu;
 use canonical_json::is_canonical_json_text;
 use kind1_map_grid::{build_grid, self_test as grid_self_test};
 use map_container_components::{
-    build_blend_animation, build_descriptors, build_header, build_metatiles, build_queues,
-    build_sparse, self_test as components_self_test,
+    build_blend_animation, build_descriptors, build_header, build_metatiles, build_queues, build_sparse,
+    self_test as components_self_test,
 };
 use serde_json::{Map, Value};
 use std::fs;
@@ -53,49 +53,17 @@ struct IndexEntry {
 }
 
 const TOKUSHU: [ResourceSpec; 6] = [
-    ResourceSpec {
-        id: 0x1f3,
-        address: 0x085c_d0d8,
-        size: 0x1e00,
-    },
-    ResourceSpec {
-        id: 0x1f6,
-        address: 0x085d_0188,
-        size: 0x1d5c,
-    },
-    ResourceSpec {
-        id: 0x28c,
-        address: 0x086a_bcc0,
-        size: 0x1f68,
-    },
-    ResourceSpec {
-        id: 0x2d4,
-        address: 0x086f_4ae8,
-        size: 0x1b04,
-    },
-    ResourceSpec {
-        id: 0x307,
-        address: 0x0873_5e84,
-        size: 0x1b68,
-    },
-    ResourceSpec {
-        id: 0x331,
-        address: 0x0876_a00c,
-        size: 0x0a1c,
-    },
+    ResourceSpec { id: 0x1f3, address: 0x085c_d0d8, size: 0x1e00 },
+    ResourceSpec { id: 0x1f6, address: 0x085d_0188, size: 0x1d5c },
+    ResourceSpec { id: 0x28c, address: 0x086a_bcc0, size: 0x1f68 },
+    ResourceSpec { id: 0x2d4, address: 0x086f_4ae8, size: 0x1b04 },
+    ResourceSpec { id: 0x307, address: 0x0873_5e84, size: 0x1b68 },
+    ResourceSpec { id: 0x331, address: 0x0876_a00c, size: 0x0a1c },
 ];
 
 const CHIIKI: [ResourceSpec; 2] = [
-    ResourceSpec {
-        id: 0x1e5,
-        address: 0x085b_b860,
-        size: 0x182c,
-    },
-    ResourceSpec {
-        id: 0x320,
-        address: 0x0875_3b18,
-        size: 0x2040,
-    },
+    ResourceSpec { id: 0x1e5, address: 0x085b_b860, size: 0x182c },
+    ResourceSpec { id: 0x320, address: 0x0875_3b18, size: 0x2040 },
 ];
 
 impl SeriesKind {
@@ -149,9 +117,7 @@ fn json(path: &Path, label: &str) -> Result<Value> {
 }
 
 fn object<'a>(value: &'a Value, label: &str) -> Result<&'a Map<String, Value>> {
-    value
-        .as_object()
-        .ok_or_else(|| format!("{label} must be an object"))
+    value.as_object().ok_or_else(|| format!("{label} must be an object"))
 }
 
 fn field<'a>(value: &'a Map<String, Value>, name: &str) -> Result<&'a Value> {
@@ -162,23 +128,16 @@ fn number(value: &Value, label: &str) -> Result<usize> {
     if let Some(value) = value.as_u64() {
         return usize::try_from(value).map_err(|_| format!("{label} is too large"));
     }
-    let text = value
-        .as_str()
-        .ok_or_else(|| format!("{label} must be an integer"))?;
+    let text = value.as_str().ok_or_else(|| format!("{label} must be an integer"))?;
     let parsed = text
         .strip_prefix("0x")
-        .map_or_else(
-            || text.parse::<usize>(),
-            |digits| usize::from_str_radix(digits, 16),
-        )
+        .map_or_else(|| text.parse::<usize>(), |digits| usize::from_str_radix(digits, 16))
         .map_err(|_| format!("{label} must be an integer"))?;
     Ok(parsed)
 }
 
 fn text<'a>(value: &'a Value, label: &str) -> Result<&'a str> {
-    value
-        .as_str()
-        .ok_or_else(|| format!("{label} must be a string"))
+    value.as_str().ok_or_else(|| format!("{label} must be a string"))
 }
 
 fn id_text(id: usize) -> String {
@@ -193,20 +152,14 @@ fn parse_id(value: &str, label: &str) -> Result<usize> {
 fn parse_index(index_path: &Path, kind: SeriesKind) -> Result<Vec<IndexEntry>> {
     let value = json(index_path, &format!("{} index", kind.label()))?;
     let index = object(&value, &format!("{} index", kind.label()))?;
-    if number(field(index, "format")?, "format")? != 1
-        || text(field(index, "kind")?, "kind")? != kind.kind_name()
-    {
+    if number(field(index, "format")?, "format")? != 1 || text(field(index, "kind")?, "kind")? != kind.kind_name() {
         return Err(format!("unsupported {} index", kind.label()));
     }
-    let resources = field(index, "resources")?
-        .as_array()
-        .ok_or_else(|| format!("{} resources must be an array", kind.label()))?;
+    let resources =
+        field(index, "resources")?.as_array().ok_or_else(|| format!("{} resources must be an array", kind.label()))?;
     let specs = kind.specs();
     if resources.len() != specs.len() {
-        return Err(format!(
-            "{} index has a different resource count",
-            kind.label()
-        ));
+        return Err(format!("{} index has a different resource count", kind.label()));
     }
     resources
         .iter()
@@ -218,21 +171,11 @@ fn parse_index(index_path: &Path, kind: SeriesKind) -> Result<Vec<IndexEntry>> {
             let size = number(field(entry, "size")?, "resource size")?;
             let directory = text(field(entry, "directory")?, "resource directory")?.to_string();
             let spec = specs[position];
-            if id != spec.id
-                || address != spec.address
-                || size != spec.size
-                || directory != format!("{:03x}", spec.id)
+            if id != spec.id || address != spec.address || size != spec.size || directory != format!("{:03x}", spec.id)
             {
-                return Err(format!(
-                    "{} resource entry differs from the audited catalog",
-                    kind.label()
-                ));
+                return Err(format!("{} resource entry differs from the audited catalog", kind.label()));
             }
-            Ok(IndexEntry {
-                id,
-                address,
-                directory,
-            })
+            Ok(IndexEntry { id, address, directory })
         })
         .collect()
 }
@@ -252,10 +195,7 @@ fn component_offsets(header: &[u8], size: usize, kind: SeriesKind) -> Result<[us
         }
     }
     if offsets[0] != HEADER_SIZE {
-        return Err(format!(
-            "{} container has an invalid header offset",
-            kind.label()
-        ));
+        return Err(format!("{} container has an invalid header offset", kind.label()));
     }
     let mut previous = HEADER_SIZE - 1;
     for offset in offsets {
@@ -263,10 +203,7 @@ fn component_offsets(header: &[u8], size: usize, kind: SeriesKind) -> Result<[us
             continue;
         }
         if offset <= previous || offset >= size {
-            return Err(format!(
-                "{} component offsets are not ordered",
-                kind.label()
-            ));
+            return Err(format!("{} component offsets are not ordered", kind.label()));
         }
         previous = offset;
     }
@@ -278,20 +215,15 @@ fn component_end(offsets: &[usize; 6], slot: usize, size: usize) -> Result<usize
     if start == 0 {
         return Err("map component is absent".into());
     }
-    Ok(offsets[slot + 1..]
-        .iter()
-        .copied()
-        .find(|offset| *offset != 0)
-        .unwrap_or(size))
+    Ok(offsets[slot + 1..].iter().copied().find(|offset| *offset != 0).unwrap_or(size))
 }
 
 fn component_sources(directory: &Path, slot: usize) -> Result<Vec<PathBuf>> {
     let stem = directory.display().to_string();
     Ok(match slot {
-        0 => vec![
-            PathBuf::from(format!("{stem}_metatiles.tilemap")),
-            PathBuf::from(format!("{stem}_metatiles.lz.json")),
-        ],
+        0 => {
+            vec![PathBuf::from(format!("{stem}_metatiles.tilemap")), PathBuf::from(format!("{stem}_metatiles.lz.json"))]
+        }
         1 => vec![
             PathBuf::from(format!("{stem}_descriptors.json")),
             PathBuf::from(format!("{stem}_descriptors.lz.json")),
@@ -341,9 +273,7 @@ fn build_resource(
     spec: ResourceSpec,
     kind: SeriesKind,
 ) -> Result<BuiltMapResource> {
-    let root = index_path
-        .parent()
-        .ok_or_else(|| "map index has no parent".to_string())?;
+    let root = index_path.parent().ok_or_else(|| "map index has no parent".to_string())?;
     let directory = root.join(format!("{}{}", kind.prefix(), entry.directory));
     let header_path = PathBuf::from(format!("{}_header.json", directory.display()));
     let header = build_header(&header_path, None).map_err(|error| error.to_string())?;
@@ -359,17 +289,9 @@ fn build_resource(
         sources.extend(component_sources(&directory, slot)?);
     }
     if data.len() != spec.size {
-        return Err(format!(
-            "resource {} has the wrong rebuilt size",
-            id_text(entry.id)
-        ));
+        return Err(format!("resource {} has the wrong rebuilt size", id_text(entry.id)));
     }
-    Ok(BuiltMapResource {
-        id: entry.id,
-        address: entry.address,
-        data,
-        sources,
-    })
+    Ok(BuiltMapResource { id: entry.id, address: entry.address, data, sources })
 }
 
 pub fn build_series(index_path: &Path, kind: SeriesKind) -> Result<Vec<BuiltMapResource>> {
@@ -381,11 +303,7 @@ pub fn build_series(index_path: &Path, kind: SeriesKind) -> Result<Vec<BuiltMapR
         .collect()
 }
 
-pub fn build_resource_by_id(
-    index_path: &Path,
-    kind: SeriesKind,
-    id: usize,
-) -> Result<BuiltMapResource> {
+pub fn build_resource_by_id(index_path: &Path, kind: SeriesKind, id: usize) -> Result<BuiltMapResource> {
     build_series(index_path, kind)?
         .into_iter()
         .find(|resource| resource.id == id)
@@ -407,38 +325,24 @@ pub fn verify_series(rom_path: &Path, index_path: &Path, kind: SeriesKind) -> Re
         let actual = u32::from_le_bytes(rom[pointer..pointer + 4].try_into().unwrap()) as usize;
         let next = u32::from_le_bytes(rom[pointer + 4..pointer + 8].try_into().unwrap()) as usize;
         if actual != resource.address || next != resource.address + resource.data.len() {
-            return Err(format!(
-                "resource {} directory bounds differ",
-                id_text(resource.id)
-            ));
+            return Err(format!("resource {} directory bounds differ", id_text(resource.id)));
         }
-        let start = resource
-            .address
-            .checked_sub(ROM_BASE)
-            .ok_or_else(|| "resource lies before ROM base".to_string())?;
+        let start =
+            resource.address.checked_sub(ROM_BASE).ok_or_else(|| "resource lies before ROM base".to_string())?;
         let end = start + resource.data.len();
         if end > rom.len() || rom[start..end] != resource.data {
-            return Err(format!(
-                "resource {} differs from ROM",
-                id_text(resource.id)
-            ));
+            return Err(format!("resource {} differs from ROM", id_text(resource.id)));
         }
         bytes += resource.data.len();
     }
-    Ok(format!(
-        "identical=true resources={} source_bytes={bytes}",
-        resources.len()
-    ))
+    Ok(format!("identical=true resources={} source_bytes={bytes}", resources.len()))
 }
 
 pub fn self_test() -> Result<()> {
     components_self_test().map_err(|error| error.to_string())?;
     grid_self_test().map_err(|error| error.to_string())?;
     let mut header = vec![0u8; HEADER_SIZE];
-    for (slot, offset) in [0x3c_u32, 0x80, 0xa0, 0x120, 0, 0x140]
-        .into_iter()
-        .enumerate()
-    {
+    for (slot, offset) in [0x3c_u32, 0x80, 0xa0, 0x120, 0, 0x140].into_iter().enumerate() {
         header[0x24 + slot * 4..0x28 + slot * 4].copy_from_slice(&offset.to_le_bytes());
     }
     let offsets = component_offsets(&header, 0x148, SeriesKind::Tokushu)?;
@@ -467,39 +371,25 @@ pub fn run(args: Vec<String>, kind: SeriesKind) -> Result<()> {
     }
     match args.first().map(String::as_str) {
         Some("build-stdout") if args.len() == 3 => {
-            let resource = build_resource_by_id(
-                Path::new(&args[1]),
-                kind,
-                parse_id(&args[2], "resource id")?,
-            )?;
-            std::io::stdout()
-                .write_all(&resource.data)
-                .map_err(|error| error.to_string())?;
+            let resource = build_resource_by_id(Path::new(&args[1]), kind, parse_id(&args[2], "resource id")?)?;
+            std::io::stdout().write_all(&resource.data).map_err(|error| error.to_string())?;
             Ok(())
         }
         Some("series-stdout") if args.len() == 2 => {
             for resource in build_series(Path::new(&args[1]), kind)? {
-                std::io::stdout()
-                    .write_all(&resource.data)
-                    .map_err(|error| error.to_string())?;
+                std::io::stdout().write_all(&resource.data).map_err(|error| error.to_string())?;
             }
             Ok(())
         }
         Some("build") if args.len() == 4 && args[2] == "--output" => {
             let resources = build_series(Path::new(&args[1]), kind)?;
-            let bytes: Vec<u8> = resources
-                .iter()
-                .flat_map(|resource| resource.data.iter().copied())
-                .collect();
+            let bytes: Vec<u8> = resources.iter().flat_map(|resource| resource.data.iter().copied()).collect();
             fs::write(&args[3], &bytes).map_err(|error| error.to_string())?;
             println!("resources={} source_bytes={}", resources.len(), bytes.len());
             Ok(())
         }
         Some("verify") if args.len() == 4 && args[2] == "--index" => {
-            println!(
-                "{}",
-                verify_series(Path::new(&args[1]), Path::new(&args[3]), kind)?
-            );
+            println!("{}", verify_series(Path::new(&args[1]), Path::new(&args[3]), kind)?);
             Ok(())
         }
         _ => Err(usage),

@@ -30,28 +30,21 @@ fn err<T>(s: impl Into<String>) -> Result<T> {
     Err(Error(s.into()))
 }
 fn object<'a>(v: &'a Value, name: &str) -> Result<&'a serde_json::Map<String, Value>> {
-    v.as_object()
-        .ok_or_else(|| Error(format!("{name} must be an object")))
+    v.as_object().ok_or_else(|| Error(format!("{name} must be an object")))
 }
 fn integer(v: Option<&Value>, name: &str, min: i64, max: i64) -> Result<i64> {
-    let n = v
-        .and_then(Value::as_i64)
-        .ok_or_else(|| Error(format!("invalid {name}")))?;
+    let n = v.and_then(Value::as_i64).ok_or_else(|| Error(format!("invalid {name}")))?;
     if n < min || n > max {
         return err(format!("invalid {name}"));
     }
     Ok(n)
 }
 fn u32v(v: Option<&Value>, name: &str) -> Result<u32> {
-    let n = v
-        .and_then(Value::as_u64)
-        .ok_or_else(|| Error(format!("invalid {name}")))?;
+    let n = v.and_then(Value::as_u64).ok_or_else(|| Error(format!("invalid {name}")))?;
     u32::try_from(n).map_err(|_| Error(format!("invalid {name}")))
 }
 fn arr<'a>(v: &'a Value, count: usize, name: &str) -> Result<&'a [Value]> {
-    let a = v
-        .as_array()
-        .ok_or_else(|| Error(format!("{name} requires {count} entries")))?;
+    let a = v.as_array().ok_or_else(|| Error(format!("{name} requires {count} entries")))?;
     if a.len() != count {
         return err(format!("{name} requires {count} entries"));
     }
@@ -70,8 +63,7 @@ fn keys(v: &Value, expected: &[&str], name: &str) -> Result<()> {
 }
 fn value(path: &Path) -> Result<Value> {
     let text = fs::read_to_string(path).map_err(|e| Error(format!("{}: {e}", path.display())))?;
-    let v: Value =
-        serde_json::from_str(&text).map_err(|e| Error(format!("{}: {e}", path.display())))?;
+    let v: Value = serde_json::from_str(&text).map_err(|e| Error(format!("{}: {e}", path.display())))?;
     if v.get("format") != Some(&Value::from(1)) {
         return err(format!("{}: unsupported source format", path.display()));
     }
@@ -119,15 +111,9 @@ fn sparse(v: &Value, count: usize, name: &str, allowed: &[u8]) -> Result<Vec<u8>
     }
     let mut out = vec![0; count];
     let mut previous = None;
-    for (i, e) in arr(
-        o.get("entries").unwrap(),
-        o.get("entries")
-            .and_then(Value::as_array)
-            .map_or(0, Vec::len),
-        name,
-    )?
-    .iter()
-    .enumerate()
+    for (i, e) in arr(o.get("entries").unwrap(), o.get("entries").and_then(Value::as_array).map_or(0, Vec::len), name)?
+        .iter()
+        .enumerate()
     {
         keys(e, &["id", "value"], &format!("{name} entry {i}"))?;
         let id = integer(object(e, "entry")?.get("id"), "ID", 0, (count - 1) as i64)? as usize;
@@ -159,11 +145,7 @@ fn flags(v: &Value) -> Result<Vec<u8>> {
         .iter()
         .enumerate()
     {
-        keys(
-            e,
-            &["id", "animation_id", "descriptor_flags"],
-            &format!("display flag {i}"),
-        )?;
+        keys(e, &["id", "animation_id", "descriptor_flags"], &format!("display flag {i}"))?;
         let eo = object(e, "display flag")?;
         let id = integer(eo.get("id"), "display flag ID", 0, 518)? as usize;
         if previous.is_some_and(|p| id <= p) {
@@ -240,29 +222,16 @@ fn build_kihon(path: &Path) -> Result<Vec<u8>> {
     let o = object(&s, "basic")?;
     let mut out = vec![0, 0];
     word(&mut out, o.get("party_capacity"), "party capacity")?;
-    for (i, x) in arr(
-        o.get("party_order_offsets").unwrap(),
-        12,
-        "party order offsets",
-    )?
-    .iter()
-    .enumerate()
-    {
+    for (i, x) in arr(o.get("party_order_offsets").unwrap(), 12, "party order offsets")?.iter().enumerate() {
         out.push(signed_byte(Some(x), &format!("party order offset {i}"))?);
     }
-    for (i, row) in arr(o.get("actor_pose_rows").unwrap(), 5, "actor pose rows")?
-        .iter()
-        .enumerate()
-    {
+    for (i, row) in arr(o.get("actor_pose_rows").unwrap(), 5, "actor pose rows")?.iter().enumerate() {
         let ro = object(row, "actor pose row")?;
         let actor = [0, 1, 2, 3, 5][i];
         if ro.get("actor").and_then(Value::as_i64) != Some(actor) {
             return err("actor pose row actor differs");
         }
-        for (x, p) in arr(ro.get("pose_ids").unwrap(), 7, "pose IDs")?
-            .iter()
-            .enumerate()
-        {
+        for (x, p) in arr(ro.get("pose_ids").unwrap(), 7, "pose IDs")?.iter().enumerate() {
             half(&mut out, Some(p), &format!("pose {i}:{x}"))?;
         }
     }
@@ -271,112 +240,55 @@ fn build_kihon(path: &Path) -> Result<Vec<u8>> {
         out.push(signed_byte(po.get("x"), "party x")?);
         out.push(signed_byte(po.get("y"), "party y")?);
     }
-    for (i, x) in arr(o.get("transform_q16").unwrap(), 15, "transform")?
-        .iter()
-        .enumerate()
-    {
+    for (i, x) in arr(o.get("transform_q16").unwrap(), 15, "transform")?.iter().enumerate() {
         signed_word(&mut out, Some(x), &format!("transform {i}"))?;
     }
-    for (i, x) in arr(o.get("formula_control").unwrap(), 8, "formula control")?
-        .iter()
-        .enumerate()
-    {
+    for (i, x) in arr(o.get("formula_control").unwrap(), 8, "formula control")?.iter().enumerate() {
         out.push(byte(Some(x), &format!("formula control {i}"))?);
     }
-    for (row, r) in arr(o.get("rate_tables").unwrap(), 8, "rate tables")?
-        .iter()
-        .enumerate()
-    {
+    for (row, r) in arr(o.get("rate_tables").unwrap(), 8, "rate tables")?.iter().enumerate() {
         for (col, x) in arr(r, 6, "rate table")?.iter().enumerate() {
             word(&mut out, Some(x), &format!("rate {row}:{col}"))?;
         }
     }
-    for (r, row) in arr(
-        o.get("probability_curves").unwrap(),
-        3,
-        "probability curves",
-    )?
-    .iter()
-    .enumerate()
-    {
+    for (r, row) in arr(o.get("probability_curves").unwrap(), 3, "probability curves")?.iter().enumerate() {
         for (c, x) in arr(row, 8, "probability curve")?.iter().enumerate() {
             out.push(byte(Some(x), &format!("probability {r}:{c}"))?);
         }
     }
-    out.extend(sparse(
-        o.get("action_modes").unwrap(),
-        518,
-        "action modes",
-        &[2, 3, 5, 6, 8, 9],
-    )?);
+    out.extend(sparse(o.get("action_modes").unwrap(), 518, "action modes", &[2, 3, 5, 6, 8, 9])?);
     out.extend([0, 0]);
     out.extend(flags(o.get("action_display").unwrap())?);
-    for (n, x) in arr(
-        object(o.get("selection_layout").unwrap(), "selection")?
-            .get("defaults")
-            .unwrap(),
-        2,
-        "selection defaults",
-    )?
-    .iter()
-    .enumerate()
+    for (n, x) in
+        arr(object(o.get("selection_layout").unwrap(), "selection")?.get("defaults").unwrap(), 2, "selection defaults")?
+            .iter()
+            .enumerate()
     {
         word(&mut out, Some(x), &format!("selection default {n}"))?;
     }
     let sel = object(o.get("selection_layout").unwrap(), "selection")?;
-    for (n, x) in arr(sel.get("order").unwrap(), 16, "selection order")?
-        .iter()
-        .enumerate()
-    {
+    for (n, x) in arr(sel.get("order").unwrap(), 16, "selection order")?.iter().enumerate() {
         out.push(byte(Some(x), &format!("selection order {n}"))?);
     }
-    for (row, r) in arr(sel.get("matrix_q16").unwrap(), 4, "selection matrix")?
-        .iter()
-        .enumerate()
-    {
+    for (row, r) in arr(sel.get("matrix_q16").unwrap(), 4, "selection matrix")?.iter().enumerate() {
         for (col, x) in arr(r, 3, "selection matrix row")?.iter().enumerate() {
             signed_word(&mut out, Some(x), &format!("selection {row}:{col}"))?;
         }
     }
-    for (n, x) in arr(o.get("particle_offsets").unwrap(), 7, "particle offsets")?
-        .iter()
-        .enumerate()
-    {
+    for (n, x) in arr(o.get("particle_offsets").unwrap(), 7, "particle offsets")?.iter().enumerate() {
         word(&mut out, Some(x), &format!("particle offset {n}"))?;
     }
-    for (n, x) in arr(
-        o.get("particle_dimensions").unwrap(),
-        7,
-        "particle dimensions",
-    )?
-    .iter()
-    .enumerate()
-    {
+    for (n, x) in arr(o.get("particle_dimensions").unwrap(), 7, "particle dimensions")?.iter().enumerate() {
         out.push(byte(Some(x), &format!("particle dimension {n}"))?);
     }
     out.push(0);
-    for (n, x) in arr(o.get("particle_sources").unwrap(), 4, "particle sources")?
-        .iter()
-        .enumerate()
-    {
+    for (n, x) in arr(o.get("particle_sources").unwrap(), 4, "particle sources")?.iter().enumerate() {
         word(&mut out, Some(x), &format!("particle source {n}"))?;
     }
-    for (n, x) in arr(
-        o.get("particle_adjustments").unwrap(),
-        4,
-        "particle adjustments",
-    )?
-    .iter()
-    .enumerate()
-    {
+    for (n, x) in arr(o.get("particle_adjustments").unwrap(), 4, "particle adjustments")?.iter().enumerate() {
         word(&mut out, Some(x), &format!("particle adjustment {n}"))?;
     }
-    out.extend(pairs(
-        o.get("short_id_map").unwrap(),
-        8,
-        "short ID map",
-        true,
-    )?);
+    out.extend(pairs(o.get("short_id_map").unwrap(), 8, "short ID map", true)?);
     let long = o.get("long_id_map").unwrap();
     for (i, e) in arr(long, 49, "long ID map")?.iter().enumerate() {
         if object(e, "long")?.get("slot").and_then(Value::as_i64) != Some(i as i64) {
@@ -426,21 +338,11 @@ fn atlas(path: &Path, frames: usize, tw: usize, th: usize, cols: usize) -> Resul
 }
 fn haichi(path: &Path) -> Result<Vec<u8>> {
     let s = value(path)?;
-    extent(
-        &s,
-        HAICHI_ADDRESS,
-        HAICHI_END - HAICHI_ADDRESS,
-        "formation display table",
-    )?;
+    extent(&s, HAICHI_ADDRESS, HAICHI_END - HAICHI_ADDRESS, "formation display table")?;
     let o = object(&s, "formation")?;
     let mut out = Vec::new();
-    for (g, group) in arr(o.get("groups").unwrap(), 72, "formation groups")?
-        .iter()
-        .enumerate()
-    {
-        let a = group
-            .as_array()
-            .ok_or_else(|| Error("formation group invalid".into()))?;
+    for (g, group) in arr(o.get("groups").unwrap(), 72, "formation groups")?.iter().enumerate() {
+        let a = group.as_array().ok_or_else(|| Error("formation group invalid".into()))?;
         if a.len() > 6 || ((g < 71 && a.is_empty()) || (g == 71 && !a.is_empty())) {
             return err("formation groups require 71 presets and one final terminator");
         }
@@ -449,27 +351,16 @@ fn haichi(path: &Path) -> Result<Vec<u8>> {
             let mut r = vec![0; 20];
             r[0] = integer(eo.get("actor"), "actor", 0, 5)? as u8;
             r[1] = byte(eo.get("level"), "level")?;
-            for (i, x) in arr(eo.get("djinn_counts").unwrap(), 4, "Djinn counts")?
-                .iter()
-                .enumerate()
-            {
+            for (i, x) in arr(eo.get("djinn_counts").unwrap(), 4, "Djinn counts")?.iter().enumerate() {
                 r[i + 2] = byte(Some(x), "Djinn count")?;
             }
-            for (i, x) in arr(eo.get("equipment").unwrap(), 4, "equipment")?
-                .iter()
-                .enumerate()
-            {
-                r[6 + i * 2..8 + i * 2].copy_from_slice(
-                    &(integer(Some(x), "equipment", 0, 65535)? as u16).to_le_bytes(),
-                );
+            for (i, x) in arr(eo.get("equipment").unwrap(), 4, "equipment")?.iter().enumerate() {
+                r[6 + i * 2..8 + i * 2]
+                    .copy_from_slice(&(integer(Some(x), "equipment", 0, 65535)? as u16).to_le_bytes());
             }
-            for (i, x) in arr(eo.get("abilities").unwrap(), 2, "abilities")?
-                .iter()
-                .enumerate()
-            {
-                r[14 + i * 2..16 + i * 2].copy_from_slice(
-                    &(integer(Some(x), "ability", 0, 65535)? as u16).to_le_bytes(),
-                );
+            for (i, x) in arr(eo.get("abilities").unwrap(), 2, "abilities")?.iter().enumerate() {
+                r[14 + i * 2..16 + i * 2]
+                    .copy_from_slice(&(integer(Some(x), "ability", 0, 65535)? as u16).to_le_bytes());
             }
             out.extend(r);
         }
@@ -484,12 +375,7 @@ fn haichi(path: &Path) -> Result<Vec<u8>> {
 }
 fn hosei(path: &Path) -> Result<Vec<u8>> {
     let s = value(path)?;
-    extent(
-        &s,
-        HOSEI_ADDRESS,
-        HOSEI_END - HOSEI_ADDRESS,
-        "battle correction tables",
-    )?;
+    extent(&s, HOSEI_ADDRESS, HOSEI_END - HOSEI_ADDRESS, "battle correction tables")?;
     let o = object(&s, "correction")?;
     let mut out = Vec::new();
     word(&mut out, o.get("object_descriptor"), "object descriptor")?;
@@ -501,12 +387,7 @@ fn hosei(path: &Path) -> Result<Vec<u8>> {
     }
     out.extend_from_slice(&u16::MAX.to_le_bytes());
     let curves = object(o.get("object_curves").unwrap(), "object curves")?;
-    for n in [
-        "field_52_q16",
-        "field_48_q16",
-        "field_40_q16",
-        "effect_percent",
-    ] {
+    for n in ["field_52_q16", "field_48_q16", "field_40_q16", "effect_percent"] {
         for x in arr(curves.get(n).unwrap(), 8, n)? {
             word(&mut out, Some(x), n)?;
         }
@@ -522,48 +403,28 @@ fn hosei(path: &Path) -> Result<Vec<u8>> {
 
 pub fn build_sentou_hyouji(index_path: &Path) -> Result<Vec<u8>> {
     let i = value(index_path)?;
-    keys(
-        &i,
-        &["format", "kind", "address", "size", "end", "sources"],
-        "battle display index",
-    )?;
+    keys(&i, &["format", "kind", "address", "size", "end", "sources"], "battle display index")?;
     let o = object(&i, "index")?;
     if o.get("kind").and_then(Value::as_str) != Some("golden-sun-sentou-hyouji") {
         return err("battle display index extent differs");
     }
     let src = object(o.get("sources").unwrap(), "battle display sources")?;
     let dir = index_path.parent().unwrap_or(Path::new("."));
-    let prefix = index_path
-        .file_name()
-        .and_then(|name| name.to_str())
-        .unwrap_or("")
-        .strip_suffix("index.json")
-        .unwrap_or("");
+    let prefix =
+        index_path.file_name().and_then(|name| name.to_str()).unwrap_or("").strip_suffix("index.json").unwrap_or("");
     let p = |s: &str| dir.join(format!("{prefix}{s}"));
     let mut out = build_kihon(&p(src.get("kihon").and_then(Value::as_str).unwrap()))?;
     out.extend(atlas(
-        &p(object(src.get("koma").unwrap(), "koma")?
-            .get("source")
-            .and_then(Value::as_str)
-            .unwrap()),
+        &p(object(src.get("koma").unwrap(), "koma")?.get("source").and_then(Value::as_str).unwrap()),
         16,
         2,
         2,
         8,
     )?);
-    out.extend(haichi(&p(src
-        .get("haichi")
-        .and_then(Value::as_str)
-        .unwrap()))?);
-    out.extend(hosei(&p(src
-        .get("hosei")
-        .and_then(Value::as_str)
-        .unwrap()))?);
+    out.extend(haichi(&p(src.get("haichi").and_then(Value::as_str).unwrap()))?);
+    out.extend(hosei(&p(src.get("hosei").and_then(Value::as_str).unwrap()))?);
     out.extend(atlas(
-        &p(object(src.get("gauge").unwrap(), "gauge")?
-            .get("source")
-            .and_then(Value::as_str)
-            .unwrap()),
+        &p(object(src.get("gauge").unwrap(), "gauge")?.get("source").and_then(Value::as_str).unwrap()),
         8,
         1,
         1,
@@ -576,9 +437,8 @@ pub fn build_sentou_hyouji(index_path: &Path) -> Result<Vec<u8>> {
 }
 pub fn verify_sentou_hyouji(rom: &[u8], index: &Path) -> Result<()> {
     let start = ADDRESS - ROM_BASE;
-    let expected = rom
-        .get(start..start + SIZE)
-        .ok_or_else(|| Error("ROM is too small for battle display data".into()))?;
+    let expected =
+        rom.get(start..start + SIZE).ok_or_else(|| Error("ROM is too small for battle display data".into()))?;
     let built = build_sentou_hyouji(index)?;
     if built != expected {
         return err("battle display differs from ROM");
@@ -586,8 +446,7 @@ pub fn verify_sentou_hyouji(rom: &[u8], index: &Path) -> Result<()> {
     Ok(())
 }
 pub fn self_test() -> Result<()> {
-    let index = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../assets/graphics/sentou_hyouji_index.json");
+    let index = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../assets/graphics/sentou_hyouji_index.json");
     if index.exists() {
         build_sentou_hyouji(&index)?;
     }

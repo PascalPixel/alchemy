@@ -361,6 +361,49 @@ only invalidated stages. Use `--m2c PATH`, `--output DIR`, or `--no-run` when
 needed. m2c output is a source-shape draft, and objdiff is a structural compass;
 neither can establish exactness.
 
+#### Transfer an exact compiler family
+
+Use the exact corpus as compiler evidence across related unresolved owners:
+
+```sh
+make families
+tools/compiler/target/release/compiler families transplant main:08095dd0
+```
+
+`make families` deterministically ranks every unresolved compiler-produced
+main-image owner against byte-exact C using canonical instruction unigrams and
+bigrams, owner length, shared call targets, call count, and branches. The
+generated `games/gs1/recon/compiler-families.json` records up to three
+compatible templates even when no score clears the family threshold. A high
+score is a transplant lead, not semantic proof. `080bbb0c` is the largest exact
+C owner at 6,332 bytes and is the broadest single record of this compiler's
+lowering behaviour; smaller exact siblings are usually better whole-function
+templates when their emitted shape is closer.
+
+The transplant workspace under ignored `out/family-transplants/` contains the
+best existing semantic candidate (or a symbol-retargeted exact seed), the exact
+template, normalized alignment blocks, and finite safe and classic search
+recipes. It also preprocesses the exact member through its registered compiler
+route, retargets that exact function signature to the unresolved owner, and
+passes the result to m2c through its supported `--context` input. m2c uses that
+example for recovered declarations, types, and the function signature; it does
+not imitate the example's statement spelling. `--family-template` supplies
+that separate source-shape signal to the semantics-preserving AST walk and is
+included in the authenticated run identity and report.
+
+Permanent-assembly family evidence is checked as a whole:
+
+```sh
+make family-check
+```
+
+The check regenerates the family index, requires every member of a named
+classification to be covered by `games/gs1/recon/family-retention.json`, checks
+the recorded six-edition and bounded-search evidence, recompiles every semantic
+candidate live, and accepts only equal-length linked output whose residual is
+pure instruction ordering with local resynchronization. Adding one convenient
+member while omitting a harder sibling fails the gate.
+
 ### 4. Iterate against the compiler
 
 Keep one active edition-qualified corpus file. New shared recovery begins in
@@ -564,16 +607,16 @@ This section is generated. It is the primary contributor target list:
 non-overlapping audited source-owner scopes (or contiguous unresolved
 executable runs), sorted largest to smallest. Regenerate with `make coverage` -- do not edit by hand.
 
-- **Unfinished scopes:** 1,621
+- **Unfinished scopes:** 1,605
 - **Address spaces scanned:** 97 (86 still contain targets)
-- **Target bytes:** 648,208 tracked-C or unresolved-assembly bytes
-- **Resolved-only bytes:** 539,492 Exact C or audited permanent assembly bytes
+- **Target bytes:** 647,532 tracked-C or unresolved-assembly bytes
+- **Resolved-only bytes:** 540,168 Exact C or audited permanent assembly bytes
 - **Executable bytes accounted for:** 1,348,458
 
 ### Main target list
 
 This table contains every scope of at least 1,000 bytes (195 rows). The complete
-1,621-row index, including the smallest audited owners, is
+1,605-row index, including the smallest audited owners, is
 [`games/gs1/metrics/gs1-en-core-targets.json`](games/gs1/metrics/gs1-en-core-targets.json).
 
 | Rank | Scope | Target | Namespace / owner |

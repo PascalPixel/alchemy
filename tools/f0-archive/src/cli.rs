@@ -12,12 +12,10 @@ fn run(args: &[String]) -> Result<(), Error> {
     }
     let plan = args.get(1).ok_or_else(|| Error(USAGE.into()))?;
     let images = args.get(2).ok_or_else(|| Error(USAGE.into()))?;
-    let value = serde_json::from_slice(&fs::read(plan).map_err(|e| Error(e.to_string()))?)
-        .map_err(|e| Error(e.to_string()))?;
+    let value =
+        serde_json::from_slice(&fs::read(plan).map_err(|e| Error(e.to_string()))?).map_err(|e| Error(e.to_string()))?;
     let bytes = build_archive(&value, Path::new(images))?;
-    io::stdout()
-        .write_all(&bytes)
-        .map_err(|e| Error(e.to_string()))?;
+    io::stdout().write_all(&bytes).map_err(|e| Error(e.to_string()))?;
     Ok(())
 }
 

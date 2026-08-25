@@ -127,15 +127,13 @@ const EXPECTED_COMPONENTS: [(&str, &str); 18] = [
 ];
 
 fn address(text: &str) -> Result<u32> {
-    u32::from_str_radix(text.strip_prefix("0x").ok_or("invalid address")?, 16)
-        .map_err(|_| "invalid address".into())
+    u32::from_str_radix(text.strip_prefix("0x").ok_or("invalid address")?, 16).map_err(|_| "invalid address".into())
 }
 
 pub fn read_late_runtime_catalog(path: &Path) -> Result<LateRuntimeCatalog> {
-    let raw: Document = serde_json::from_slice(&std::fs::read(path).map_err(|e| e.to_string())?)
-        .map_err(|e| e.to_string())?;
-    if raw.format != 1 || raw.kind != "golden-sun-late-runtime-data-layout" || raw.ranges.len() != 3
-    {
+    let raw: Document =
+        serde_json::from_slice(&std::fs::read(path).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?;
+    if raw.format != 1 || raw.kind != "golden-sun-late-runtime-data-layout" || raw.ranges.len() != 3 {
         return Err("unsupported late runtime catalog".into());
     }
     let mut all = Vec::new();
@@ -153,8 +151,7 @@ pub fn read_late_runtime_catalog(path: &Path) -> Result<LateRuntimeCatalog> {
             let end = address(&item.end)?;
             if end <= component_start
                 || matches!(kind, ComponentKind::Table(_))
-                    && item.count.unwrap_or(0) * i64::from(kind.width())
-                        != i64::from(end - component_start)
+                    && item.count.unwrap_or(0) * i64::from(kind.width()) != i64::from(end - component_start)
             {
                 return Err("late runtime component extent differs".into());
             }
@@ -169,12 +166,7 @@ pub fn read_late_runtime_catalog(path: &Path) -> Result<LateRuntimeCatalog> {
                 decoded_bytes: item.decoded_bytes,
             });
         }
-        ranges.push(LateRuntimeRange {
-            name: range.name,
-            address: start,
-            end,
-            components,
-        });
+        ranges.push(LateRuntimeRange { name: range.name, address: start, end, components });
     }
     if all.len() != EXPECTED_COMPONENTS.len()
         || all

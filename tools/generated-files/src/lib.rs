@@ -42,11 +42,7 @@ pub fn prune_files(
 ) -> io::Result<Vec<PathBuf>> {
     let expected: BTreeSet<String> = keep
         .into_iter()
-        .filter_map(|name| {
-            name.as_ref()
-                .file_name()
-                .map(|name| name.to_string_lossy().into_owned())
-        })
+        .filter_map(|name| name.as_ref().file_name().map(|name| name.to_string_lossy().into_owned()))
         .collect();
     if !directory.exists() {
         return Ok(Vec::new());
@@ -70,9 +66,7 @@ pub fn prune_files(
 
 fn is_image(name: &str) -> bool {
     let lowered = name.to_ascii_lowercase();
-    IMAGE_SUFFIXES
-        .iter()
-        .any(|suffix| lowered.ends_with(suffix))
+    IMAGE_SUFFIXES.iter().any(|suffix| lowered.ends_with(suffix))
 }
 
 fn normalize(name: &str) -> String {
@@ -91,25 +85,16 @@ pub fn unused_tracked_images(
         return Ok(Vec::new());
     }
     let mut command = Command::new("git");
-    command
-        .arg("ls-files")
-        .arg("-z")
-        .arg("--")
-        .current_dir(root);
+    command.arg("ls-files").arg("-z").arg("--").current_dir(root);
     for suffix in IMAGE_SUFFIXES {
         command.arg(format!("*{suffix}"));
     }
     let output = command.output()?;
     if !output.status.success() {
-        return Err(io::Error::other(
-            String::from_utf8_lossy(&output.stderr).into_owned(),
-        ));
+        return Err(io::Error::other(String::from_utf8_lossy(&output.stderr).into_owned()));
     }
-    let tracked: BTreeSet<String> = String::from_utf8_lossy(&output.stdout)
-        .split('\0')
-        .filter(|name| !name.is_empty())
-        .map(normalize)
-        .collect();
+    let tracked: BTreeSet<String> =
+        String::from_utf8_lossy(&output.stdout).split('\0').filter(|name| !name.is_empty()).map(normalize).collect();
 
     let claimed: BTreeSet<String> = sources
         .into_iter()
@@ -128,10 +113,7 @@ pub fn unused_tracked_images(
         })
         .collect();
 
-    let ignored: Vec<String> = ignored_prefixes
-        .into_iter()
-        .map(|prefix| normalize(prefix.as_ref()))
-        .collect();
+    let ignored: Vec<String> = ignored_prefixes.into_iter().map(|prefix| normalize(prefix.as_ref())).collect();
 
     Ok(tracked
         .into_iter()

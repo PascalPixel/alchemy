@@ -1,23 +1,11 @@
 {
   "span_bytes": 400,
-  "score": {
-    "measured": "2026-08-23",
-    "candidate_bytes": 400,
-    "reference_bytes": 400,
-    "wrong_instructions": 0,
-    "differing_halfwords": 7,
-    "class": "ordering"
-  },
-  "expressed": [
-    "Sol Shinden trap-event setup",
-    "all five paired effect loops",
-    "scene-state writes at offsets 448 and 456"
+  "score": {"measured":"2026-08-25","candidate_bytes":400,"reference_bytes":400,"wrong_instructions":0,"differing_halfwords":0,"class":"exact"},
+  "expressed": ["Sol Shinden trap-event setup", "all five paired effect loops", "scene-state writes at offsets 448 and 456"],
+  "verified_against_reference": [
+    "three static inline wrappers reproduce the original scale and direction argument scheduling without register bindings or assembly",
+    "linked candidate and reference are byte-identical across the complete 400-byte owner"
   ],
-  "blocked_by": "three argument setup order positions that ordinary GCC 2.96 C does not currently reproduce",
-  "rejected": [
-    {
-      "shape": "fixed-register local variables",
-      "result": "byte-exact, but forbidden by the repository no-asm gate because GCC register bindings are an assembly escape"
-    }
-  ]
+  "retention": "adopted_exact_c",
+  "note": "Earlier ordinary-expression searches did not synthesize inline call boundaries; fixed-register experiments remain rejected and are not used by the adopted source."
 }

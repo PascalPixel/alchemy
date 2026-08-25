@@ -1,11 +1,5 @@
 pub fn sha1_hex(data: &[u8]) -> String {
-    let mut h = [
-        0x67452301u32,
-        0xefcdab89,
-        0x98badcfe,
-        0x10325476,
-        0xc3d2e1f0,
-    ];
+    let mut h = [0x67452301u32, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0];
     let bit_len = (data.len() as u64) * 8;
     let mut input = data.to_vec();
     input.push(0x80);
@@ -29,12 +23,7 @@ pub fn sha1_hex(data: &[u8]) -> String {
                 40..=59 => ((b & c) | (b & d) | (c & d), 0x8f1bbcdc),
                 _ => (b ^ c ^ d, 0xca62c1d6),
             };
-            let next = a
-                .rotate_left(5)
-                .wrapping_add(f)
-                .wrapping_add(e)
-                .wrapping_add(k)
-                .wrapping_add(word);
+            let next = a.rotate_left(5).wrapping_add(f).wrapping_add(e).wrapping_add(k).wrapping_add(word);
             (e, d, c, b, a) = (d, c, b.rotate_left(30), a, next);
         }
         h[0] = h[0].wrapping_add(a);

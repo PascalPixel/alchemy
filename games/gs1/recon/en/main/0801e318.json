@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x0801e318",
+  "name": "UiWindow_MarkVisibleTileAttributes",
+  "status": "measured-draft",
+  "owner_bytes": 176,
+  "candidate_bytes": 160,
+  "differing_halfwords": 85,
+  "wrong_instructions": 98,
+  "classification": "visible-tile-attribute-marking",
+  "domain": "Marks attribute entries referenced by the visible 30 by 20 tilemap and clears stale one-bit marks.",
+  "notes": [
+    "Caller evidence proves this owner takes no arguments; the family-assisted m2c draft incorrectly inherited the four-argument signature of its exact template.",
+    "The generated u16-pointer increment advanced four bytes per tile. The retained semantic reconstruction corrects it to the two-byte walk emitted by the owner.",
+    "The typed reconstruction improves the raw m2c result from 87 to 85 differing halfwords while replacing every generated register and stack-slot identifier.",
+    "A 5,000-candidate safe family-template walk reached 168 bytes and 80 differing halfwords through artificial address-taken scalar temporaries. That generated spelling is not retained as canonical source because it obscures the recovered tile-marking behavior and is still far from exact.",
+    "Exact-C adoption remains gated on an independently compiled zero-difference object."
+  ]
+}

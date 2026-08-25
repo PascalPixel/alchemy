@@ -11,8 +11,8 @@ fn run(args: &[String]) -> Res<()> {
         return Err(USAGE.into());
     }
     let source = args.get(1).ok_or_else(|| USAGE.to_string())?;
-    let value: Value = serde_json::from_slice(&fs::read(source).map_err(|e| e.to_string())?)
-        .map_err(|e| e.to_string())?;
+    let value: Value =
+        serde_json::from_slice(&fs::read(source).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?;
     let bytes = build_resource_directory(&value)?;
     io::stdout().write_all(&bytes).map_err(|e| e.to_string())
 }

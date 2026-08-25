@@ -280,154 +280,21 @@ macro_rules! decomp_target {
     };
 }
 
-decomp_target!(
-    GS1_JA,
-    Gs1Ja,
-    Gs1,
-    Ja,
-    "gs1-ja",
-    0x0080_0000,
-    Gs1,
-    CompileOnly,
-    "GS1_EDITION_JA",
-    "games/gs1"
-);
-decomp_target!(
-    GS1_EN,
-    Gs1En,
-    Gs1,
-    En,
-    "gs1-en",
-    0x0080_0000,
-    Gs1,
-    Full,
-    "GS1_EDITION_EN",
-    "games/gs1"
-);
-decomp_target!(
-    GS1_DE,
-    Gs1De,
-    Gs1,
-    De,
-    "gs1-de",
-    0x0080_0000,
-    Gs1,
-    CompileOnly,
-    "GS1_EDITION_DE",
-    "games/gs1"
-);
-decomp_target!(
-    GS1_ES,
-    Gs1Es,
-    Gs1,
-    Es,
-    "gs1-es",
-    0x0080_0000,
-    Gs1,
-    CompileOnly,
-    "GS1_EDITION_ES",
-    "games/gs1"
-);
-decomp_target!(
-    GS1_FR,
-    Gs1Fr,
-    Gs1,
-    Fr,
-    "gs1-fr",
-    0x0080_0000,
-    Gs1,
-    CompileOnly,
-    "GS1_EDITION_FR",
-    "games/gs1"
-);
-decomp_target!(
-    GS1_IT,
-    Gs1It,
-    Gs1,
-    It,
-    "gs1-it",
-    0x0080_0000,
-    Gs1,
-    CompileOnly,
-    "GS1_EDITION_IT",
-    "games/gs1"
-);
-decomp_target!(
-    GS2_JA,
-    Gs2Ja,
-    Gs2,
-    Ja,
-    "gs2-ja",
-    0x0100_0000,
-    Gs2,
-    CompileOnly,
-    "GS2_EDITION_JA",
-    "games/gs2"
-);
-decomp_target!(
-    GS2_EN,
-    Gs2En,
-    Gs2,
-    En,
-    "gs2-en",
-    0x0100_0000,
-    Gs2,
-    CompileOnly,
-    "GS2_EDITION_EN",
-    "games/gs2"
-);
-decomp_target!(
-    GS2_DE,
-    Gs2De,
-    Gs2,
-    De,
-    "gs2-de",
-    0x0100_0000,
-    Gs2,
-    CompileOnly,
-    "GS2_EDITION_DE",
-    "games/gs2"
-);
-decomp_target!(
-    GS2_ES,
-    Gs2Es,
-    Gs2,
-    Es,
-    "gs2-es",
-    0x0100_0000,
-    Gs2,
-    CompileOnly,
-    "GS2_EDITION_ES",
-    "games/gs2"
-);
-decomp_target!(
-    GS2_FR,
-    Gs2Fr,
-    Gs2,
-    Fr,
-    "gs2-fr",
-    0x0100_0000,
-    Gs2,
-    CompileOnly,
-    "GS2_EDITION_FR",
-    "games/gs2"
-);
-decomp_target!(
-    GS2_IT,
-    Gs2It,
-    Gs2,
-    It,
-    "gs2-it",
-    0x0100_0000,
-    Gs2,
-    CompileOnly,
-    "GS2_EDITION_IT",
-    "games/gs2"
-);
+decomp_target!(GS1_JA, Gs1Ja, Gs1, Ja, "gs1-ja", 0x0080_0000, Gs1, CompileOnly, "GS1_EDITION_JA", "games/gs1");
+decomp_target!(GS1_EN, Gs1En, Gs1, En, "gs1-en", 0x0080_0000, Gs1, Full, "GS1_EDITION_EN", "games/gs1");
+decomp_target!(GS1_DE, Gs1De, Gs1, De, "gs1-de", 0x0080_0000, Gs1, CompileOnly, "GS1_EDITION_DE", "games/gs1");
+decomp_target!(GS1_ES, Gs1Es, Gs1, Es, "gs1-es", 0x0080_0000, Gs1, CompileOnly, "GS1_EDITION_ES", "games/gs1");
+decomp_target!(GS1_FR, Gs1Fr, Gs1, Fr, "gs1-fr", 0x0080_0000, Gs1, CompileOnly, "GS1_EDITION_FR", "games/gs1");
+decomp_target!(GS1_IT, Gs1It, Gs1, It, "gs1-it", 0x0080_0000, Gs1, CompileOnly, "GS1_EDITION_IT", "games/gs1");
+decomp_target!(GS2_JA, Gs2Ja, Gs2, Ja, "gs2-ja", 0x0100_0000, Gs2, CompileOnly, "GS2_EDITION_JA", "games/gs2");
+decomp_target!(GS2_EN, Gs2En, Gs2, En, "gs2-en", 0x0100_0000, Gs2, CompileOnly, "GS2_EDITION_EN", "games/gs2");
+decomp_target!(GS2_DE, Gs2De, Gs2, De, "gs2-de", 0x0100_0000, Gs2, CompileOnly, "GS2_EDITION_DE", "games/gs2");
+decomp_target!(GS2_ES, Gs2Es, Gs2, Es, "gs2-es", 0x0100_0000, Gs2, CompileOnly, "GS2_EDITION_ES", "games/gs2");
+decomp_target!(GS2_FR, Gs2Fr, Gs2, Fr, "gs2-fr", 0x0100_0000, Gs2, CompileOnly, "GS2_EDITION_FR", "games/gs2");
+decomp_target!(GS2_IT, Gs2It, Gs2, It, "gs2-it", 0x0100_0000, Gs2, CompileOnly, "GS2_EDITION_IT", "games/gs2");
 
-const TARGETS: [DecompTarget; 12] = [
-    GS1_JA, GS1_EN, GS1_DE, GS1_ES, GS1_FR, GS1_IT, GS2_JA, GS2_EN, GS2_DE, GS2_ES, GS2_FR, GS2_IT,
-];
+const TARGETS: [DecompTarget; 12] =
+    [GS1_JA, GS1_EN, GS1_DE, GS1_ES, GS1_FR, GS1_IT, GS2_JA, GS2_EN, GS2_DE, GS2_ES, GS2_FR, GS2_IT];
 
 pub const TARGET_IDS: [DecompTargetId; 12] = [
     DecompTargetId::Gs1Ja,
@@ -467,11 +334,7 @@ fn json_quote(value: &str) -> String {
 }
 
 fn target_ids_joined() -> String {
-    TARGET_IDS
-        .iter()
-        .map(|id| id.as_str())
-        .collect::<Vec<_>>()
-        .join(" or ")
+    TARGET_IDS.iter().map(|id| id.as_str()).collect::<Vec<_>>().join(" or ")
 }
 
 /// Parse any of the twelve historical ROM ids. Unlike `parse_decomp_target`,
@@ -499,13 +362,7 @@ pub fn parse_decomp_target(value: &str) -> Result<DecompTargetId, String> {
         .iter()
         .find(|t| t.id.as_str() == value)
         .map(|t| t.id)
-        .ok_or_else(|| {
-            format!(
-                "unsupported decomp target {}; expected {}",
-                json_quote(value),
-                target_ids_joined()
-            )
-        })
+        .ok_or_else(|| format!("unsupported decomp target {}; expected {}", json_quote(value), target_ids_joined()))
 }
 
 /// Look up a target by id string. `None` means "use the default target",
@@ -558,10 +415,7 @@ pub fn self_test() -> Result<String, String> {
     {
         return Err("GS1 target registry self-test failed".to_string());
     }
-    if gs2.rom != "roms/gs2-en.gba"
-        || gs2.rom_size != 0x0100_0000
-        || gs2.compiler != DecompCompilerTarget::Gs2
-    {
+    if gs2.rom != "roms/gs2-en.gba" || gs2.rom_size != 0x0100_0000 || gs2.compiler != DecompCompilerTarget::Gs2 {
         return Err("GS2 target registry self-test failed".to_string());
     }
 
@@ -604,13 +458,7 @@ pub fn self_test() -> Result<String, String> {
     let mut outputs = std::collections::HashSet::new();
     let mut full_builds = 0usize;
     for target in TARGETS {
-        for path in [
-            target.rom,
-            target.source_dir,
-            target.asm_dir,
-            target.asset_manifest,
-            target.output_dir,
-        ] {
+        for path in [target.rom, target.source_dir, target.asm_dir, target.asset_manifest, target.output_dir] {
             if !relative_path(path) {
                 return Err(format!("{} has a non-relative path", target.id));
             }
@@ -619,10 +467,7 @@ pub fn self_test() -> Result<String, String> {
             return Err(format!("{} does not have an isolated output", target.id));
         }
         if target_for(parse_decomp_target(target.id.as_str())?) != target {
-            return Err(format!(
-                "{} cannot round-trip through the registry",
-                target.id
-            ));
+            return Err(format!("{} cannot round-trip through the registry", target.id));
         }
         if target.build_support == BuildSupport::Full {
             full_builds += 1;
@@ -663,10 +508,7 @@ mod tests {
 
     #[test]
     fn registry_covers_two_six_edition_products() {
-        assert_eq!(
-            self_test().unwrap(),
-            "self-test=ok reference_targets=12 build_targets=12 bases=2 default=gs1-en"
-        );
+        assert_eq!(self_test().unwrap(), "self-test=ok reference_targets=12 build_targets=12 bases=2 default=gs1-en");
         assert_eq!(
             reference_target(parse_reference_target("gs2-it").unwrap()),
             ReferenceTarget {

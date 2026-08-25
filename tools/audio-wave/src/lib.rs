@@ -52,22 +52,13 @@ fn js_number(value: &str) -> f64 {
     if value.is_empty() {
         return 0.0;
     }
-    if let Some(digits) = value
-        .strip_prefix("0x")
-        .or_else(|| value.strip_prefix("0X"))
-    {
+    if let Some(digits) = value.strip_prefix("0x").or_else(|| value.strip_prefix("0X")) {
         return u128::from_str_radix(digits, 16).map_or(f64::NAN, |n| n as f64);
     }
-    if let Some(digits) = value
-        .strip_prefix("0o")
-        .or_else(|| value.strip_prefix("0O"))
-    {
+    if let Some(digits) = value.strip_prefix("0o").or_else(|| value.strip_prefix("0O")) {
         return u128::from_str_radix(digits, 8).map_or(f64::NAN, |n| n as f64);
     }
-    if let Some(digits) = value
-        .strip_prefix("0b")
-        .or_else(|| value.strip_prefix("0B"))
-    {
+    if let Some(digits) = value.strip_prefix("0b").or_else(|| value.strip_prefix("0B")) {
         return u128::from_str_radix(digits, 2).map_or(f64::NAN, |n| n as f64);
     }
     match value {
@@ -110,12 +101,7 @@ fn byte(value: &Scalar, label: &str) -> Result<f64, String> {
 
 fn chunk(data: &[u8], at: usize, name: &str) -> Result<(), String> {
     let end = at.saturating_add(4).min(data.len());
-    let text: String = data
-        .get(at..end)
-        .unwrap_or_default()
-        .iter()
-        .map(|byte| char::from(byte & 0x7f))
-        .collect();
+    let text: String = data.get(at..end).unwrap_or_default().iter().map(|byte| char::from(byte & 0x7f)).collect();
     if text == name {
         Ok(())
     } else {
@@ -126,12 +112,7 @@ fn u16_at(data: &[u8], at: usize) -> f64 {
     f64::from(u16::from_le_bytes([data[at], data[at + 1]]))
 }
 fn u32_at(data: &[u8], at: usize) -> f64 {
-    f64::from(u32::from_le_bytes([
-        data[at],
-        data[at + 1],
-        data[at + 2],
-        data[at + 3],
-    ]))
+    f64::from(u32::from_le_bytes([data[at], data[at + 1], data[at + 2], data[at + 3]]))
 }
 fn put_u32(data: &mut [u8], at: usize, value: f64) {
     data[at..at + 4].copy_from_slice(&(value as u32).to_le_bytes());
@@ -158,16 +139,10 @@ fn pcm_from_wav(data: &[u8], rate: f64) -> Result<Vec<u8>, String> {
     {
         return Err("WAV is not canonical mono 8-bit PCM".into());
     }
-    Ok(data[44..]
-        .iter()
-        .map(|byte| byte.wrapping_sub(128))
-        .collect())
+    Ok(data[44..].iter().map(|byte| byte.wrapping_sub(128)).collect())
 }
 
-pub fn build_wave_record(
-    source: &WaveRecordSource,
-    wav: &[u8],
-) -> Result<(Vec<u8>, WaveReport), String> {
+pub fn build_wave_record(source: &WaveRecordSource, wav: &[u8]) -> Result<(Vec<u8>, WaveReport), String> {
     let exact = source.header.as_ref();
     let frequency = match exact {
         Some(header) => word(&header.frequency, "wave frequency")?,
@@ -177,12 +152,8 @@ pub fn build_wave_record(
         return Err("wave catalog frequency differs from exact header".into());
     }
     let size = integer(&source.size, "wave record size")?;
-    let rate = (frequency / 1024.0).floor()
-        + if frequency / 1024.0 - (frequency / 1024.0).floor() >= 0.5 {
-            1.0
-        } else {
-            0.0
-        };
+    let rate =
+        (frequency / 1024.0).floor() + if frequency / 1024.0 - (frequency / 1024.0).floor() >= 0.5 { 1.0 } else { 0.0 };
     let samples = pcm_from_wav(wav, rate)?;
     if samples.is_empty() {
         return Err("wave record has no samples".into());
@@ -199,15 +170,11 @@ pub fn build_wave_record(
     };
     let loop_start = match exact {
         Some(header) => word(&header.loop_start, "wave loop start")?,
-        None => source.loop_start.map_or(Ok(0.0), |value| {
-            word(&Scalar::Num(value), "wave loop start")
-        })?,
+        None => source.loop_start.map_or(Ok(0.0), |value| word(&Scalar::Num(value), "wave loop start"))?,
     };
     let looped = (control as u32 & 0xc000_0000) != 0;
-    let catalog_loop = source
-        .loop_start
-        .map(|value| word(&Scalar::Num(value), "wave catalog loop start"))
-        .transpose()?;
+    let catalog_loop =
+        source.loop_start.map(|value| word(&Scalar::Num(value), "wave catalog loop start")).transpose()?;
     if exact.is_some() && catalog_loop != if looped { Some(loop_start) } else { None } {
         return Err("wave catalog loop differs from exact header".into());
     }
@@ -227,10 +194,7 @@ pub fn build_wave_record(
         None if padding_size <= 3.0 => 0.0,
         None => return Err("wave record size has invalid alignment".into()),
         Some(_) => {
-            let padding = source
-                .padding
-                .as_ref()
-                .ok_or("wave padding size differs from record extent")?;
+            let padding = source.padding.as_ref().ok_or("wave padding size differs from record extent")?;
             if integer(&padding.size, "wave padding size")? != padding_size {
                 return Err("wave padding size differs from record extent".into());
             }

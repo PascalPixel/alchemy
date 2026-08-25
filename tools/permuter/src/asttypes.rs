@@ -46,10 +46,7 @@ pub enum CType {
 
 impl CType {
     pub fn basic(name: &str) -> CType {
-        CType::Basic {
-            names: vec![name.to_string()],
-            volatile: false,
-        }
+        CType::Basic { names: vec![name.to_string()], volatile: false }
     }
     pub fn int() -> CType {
         CType::basic("int")
@@ -155,22 +152,13 @@ pub fn same_type(a: &CType, b: &CType, tm: &TypeMap, allow_similar: bool) -> boo
                 b = resolve_typedefs(*y, tm);
                 allow_similar = false;
             }
-            (
-                CType::Struct {
-                    is_union: u1,
-                    name: n1,
-                },
-                CType::Struct {
-                    is_union: u2,
-                    name: n2,
-                },
-            ) => return u1 == u2 && n1 == n2,
+            (CType::Struct { is_union: u1, name: n1 }, CType::Struct { is_union: u2, name: n2 }) => {
+                return u1 == u2 && n1 == n2
+            }
             (CType::Enum(n1), CType::Enum(n2)) => {
                 return allow_similar || n1 == n2;
             }
-            (CType::Enum(_), CType::Basic { .. }) | (CType::Basic { .. }, CType::Enum(_)) => {
-                return allow_similar
-            }
+            (CType::Enum(_), CType::Basic { .. }) | (CType::Basic { .. }, CType::Enum(_)) => return allow_similar,
             (CType::Basic { names: n1, .. }, CType::Basic { names: n2, .. }) => {
                 if allow_similar {
                     return true;
@@ -193,9 +181,7 @@ fn wrap_derived(mut t: CType, derived: &[Node<DerivedDeclarator>]) -> CType {
         t = match &d.node {
             DerivedDeclarator::Pointer(_) | DerivedDeclarator::Block(_) => CType::Ptr(Box::new(t)),
             DerivedDeclarator::Array(_) => CType::Array(Box::new(t)),
-            DerivedDeclarator::Function(_) | DerivedDeclarator::KRFunction(_) => {
-                CType::Func(Box::new(t))
-            }
+            DerivedDeclarator::Function(_) | DerivedDeclarator::KRFunction(_) => CType::Func(Box::new(t)),
         };
     }
     t
@@ -231,22 +217,11 @@ fn base_from_type_specifier(ts: &TypeSpecifier, names: &mut Vec<String>) -> Opti
         TypeSpecifier::Struct(st) => {
             return Some(CType::Struct {
                 is_union: matches!(st.node.kind.node, StructKind::Union),
-                name: st
-                    .node
-                    .identifier
-                    .as_ref()
-                    .map(|i| i.node.name.clone())
-                    .unwrap_or_default(),
+                name: st.node.identifier.as_ref().map(|i| i.node.name.clone()).unwrap_or_default(),
             });
         }
         TypeSpecifier::Enum(et) => {
-            return Some(CType::Enum(
-                et.node
-                    .identifier
-                    .as_ref()
-                    .map(|i| i.node.name.clone())
-                    .unwrap_or_default(),
-            ));
+            return Some(CType::Enum(et.node.identifier.as_ref().map(|i| i.node.name.clone()).unwrap_or_default()));
         }
         _ => return None,
     };
@@ -501,9 +476,7 @@ pub fn expr_type(e: &Expression, tm: &TypeMap) -> Result<CType, Fail> {
                 lhs = deref_type(&lhs, tm)?;
             }
             match resolve_typedefs(lhs, tm) {
-                CType::Struct { name, .. } => {
-                    struct_member_type(&name, &m.node.identifier.node.name, tm)
-                }
+                CType::Struct { name, .. } => struct_member_type(&name, &m.node.identifier.node.name, tm),
                 _ => Err(Fail),
             }
         }
@@ -530,9 +503,7 @@ pub fn expr_type(e: &Expression, tm: &TypeMap) -> Result<CType, Fail> {
                 UnaryOperator::Complement | UnaryOperator::Negate => Ok(CType::int()),
             }
         }
-        Expression::SizeOfTy(_) | Expression::SizeOfVal(_) | Expression::AlignOf(_) => {
-            Ok(CType::int())
-        }
+        Expression::SizeOfTy(_) | Expression::SizeOfVal(_) | Expression::AlignOf(_) => Ok(CType::int()),
         Expression::BinaryOperator(b) => {
             let op = &b.node.operator.node;
             if is_assign_op(op) {

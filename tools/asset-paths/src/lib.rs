@@ -20,27 +20,17 @@ impl AssetPaths {
         let root = root.as_ref().to_path_buf();
         let graphics_listing = fs::read_dir(root.join("games/gs1/assets/graphics"))
             .map(|entries| {
-                entries
-                    .filter_map(Result::ok)
-                    .map(|entry| entry.file_name().to_string_lossy().into_owned())
-                    .collect()
+                entries.filter_map(Result::ok).map(|entry| entry.file_name().to_string_lossy().into_owned()).collect()
             })
             .unwrap_or_default();
-        Self {
-            root,
-            graphics_listing,
-        }
+        Self { root, graphics_listing }
     }
 
     /// map/ へ移設済みの資源を優先し、未移設の資源は従来位置へ退避する。
     /// 返り値はROOT基準の相対パス。
     pub fn resource_graphics_dir(&self, name: &str) -> String {
         let relocated = format!("map_resource_{name}_");
-        if self
-            .graphics_listing
-            .iter()
-            .any(|file| file.starts_with(&relocated))
-        {
+        if self.graphics_listing.iter().any(|file| file.starts_with(&relocated)) {
             return format!("games/gs1/assets/graphics/map_resource_{name}");
         }
         format!("games/gs1/assets/graphics/resource_{name}")
@@ -52,10 +42,7 @@ impl AssetPaths {
     pub fn character_bank_path(&self, family_root: impl AsRef<Path>, plan: &str) -> PathBuf {
         let flat = plan.replace('/', "_");
         for semantic in ["battle", "field"] {
-            let relocated = self
-                .root
-                .join("games/gs1/assets/graphics")
-                .join(format!("{semantic}_characters_{flat}"));
+            let relocated = self.root.join("games/gs1/assets/graphics").join(format!("{semantic}_characters_{flat}"));
             if relocated.exists() {
                 return relocated;
             }

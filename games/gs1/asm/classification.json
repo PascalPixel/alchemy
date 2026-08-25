@@ -1709,16 +1709,17 @@
    "confidence": "proven",
    "evidence": [
     "complete_semantic_reconstruction_and_exact_owner_extent",
-    "all_code_after_the_entry_facing_block_resynchronizes_exactly",
+    "all_code_after_each_owner_entry_block_resynchronizes_exactly",
     "six_edition_relocation_normalized_core_is_identical",
-    "thirty_thousand_safe_source_candidates_found_no_improvement",
+    "sixty_thousand_bounded_source_candidates_found_no_improvement_beyond_the_hand_derived_narrow_forms",
     "approved_compiler_family_and_optimization_sweep_preserves_the_entry_defect_or_regresses",
     "approved_compiler_cannot_express_reference_entry_schedule_without_forbidden_register_constraints",
     "byte_exact_reconstruction"
    ],
-   "expected_files": 1,
-   "expected_bytes": 708,
+   "expected_files": 2,
+   "expected_bytes": 976,
    "files": [
+    "080b8db8",
     "080ba2c0"
    ]
   },

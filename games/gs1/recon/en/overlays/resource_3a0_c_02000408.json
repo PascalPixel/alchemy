@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "namespace": "resource_3a0",
+  "address": "0x02000408",
+  "status": "measured-draft",
+  "owner_bytes": 248,
+  "executable_owner_bytes": 220,
+  "candidate_bytes": 248,
+  "differing_halfwords": 54,
+  "wrong_instructions": 82,
+  "classification": "select-facing-by-distance",
+  "resolved_asm_classification": {
+    "kind": "compiler_output",
+    "retention": "c_candidate",
+    "confidence": "likely"
+  },
+  "cross_edition": {
+    "editions": ["ja", "en", "de", "es", "fr", "it"],
+    "relocation_normalized_core_bytes": 220,
+    "core_diff_bytes": 0,
+    "core_identical": true
+  },
+  "bounded_search": {
+    "generated_candidates": 10000,
+    "compile_failures": 176,
+    "best_differing_halfwords": 54,
+    "exact": false
+  },
+  "notes": [
+    "Complete actor tracking-mode selector: handles the existing tracking state, compares actor/target distance, derives a facing sector from their coordinate delta, accepts the current or either adjacent sector, and updates tracking state and mode through the appropriate presentation calls.",
+    "The unusual reached word 0xfa7ef001 is intentional owner data used in the third sector adjustment; it happens to decode as a Thumb BL pair but is loaded as a value by this owner.",
+    "Correct veneer identities, typed actor offsets, all result arms and the reached adjustment word produce an exact-extent 248-byte candidate. Explicit --span analysis proves the 220-byte relocation-normalized executable core identical at 0x02000408 in all six editions.",
+    "A capped 10,000-candidate heat-guided classic search found no byte-score improvement. The remaining 54 differing halfwords and 82 wrong instructions include a long-lived actor/force r5-r6 inversion and reordered sector arithmetic, so the residual is broad and claims zero DONE bytes.",
+    "If this owner is later adopted, its public source must use a human actor-facing/distance gameplay path rather than the resource identifier; this address-qualified path is reconstruction evidence only."
+  ]
+}

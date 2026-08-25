@@ -36,16 +36,16 @@
     "core_identical": true
   },
   "score": {
-    "measured": "2026-08-23",
-    "candidate_bytes": 1332,
+    "measured": "2026-08-25",
+    "candidate_bytes": 1336,
     "reference_bytes": 1336,
-    "differing_halfwords": 487,
-    "wrong_instructions": 448,
+    "differing_halfwords": 437,
+    "wrong_instructions": 412,
     "class": "wrong",
     "candidate_instructions": 481,
     "reference_instructions": 484,
-    "objdiff_structural_percent": 87.99648,
-    "note": "The 080bbb0c transfer pass made the target parameter the live mutable target ID, retained the best zero-carrier lifetime order, recovered the damage-stat indexed access, and shortened the raw-halfword carriers to the cases that need them. Repeated signed/raw HP and PP access forms account for the largest retained structural gain."
+    "objdiff_structural_percent": 88.47452,
+    "note": "The second 080bbb0c transfer pass corrected the result carrier to its promoted register width, made target-id 9 an explicit exceptional remap, and removed the cached range carrier so both multi-target tests independently reload the byte field. A phase audit then caught the inverse width on the runtime destination: the local carrier is promoted s32, but the runtime field is a halfword. Restoring that evidence-backed pairing preserves exact owner length and lowers the residual to 437 differing halfwords and 412 wrong instructions."
   },
   "shape": {
     "calls": 15,
@@ -67,8 +67,8 @@
   "unexpressed": [
     {
       "op": "source-shape and allocation repair",
-      "count": 448,
-      "where": "the 481/484 normalized-instruction residual remains dominated by the initial zero/target-selection ancestry, register coloring, primary PP load ordering, and the random-adjustment branch"
+      "count": 412,
+      "where": "the remaining residual is still dominated by the initial distinct-zero/target-selection ancestry, register coloring across the three switch phases, primary PP load ordering, and the random-adjustment branch"
     },
     {
       "op": "semantic field naming",
@@ -80,10 +80,11 @@
     "true owner extent 0x080a9f10-0x080aa448 is 1336 bytes; 0x080aa448-0x080aa56c consists of already-exact neighboring owners",
     "workbench symbolization found 3 jump tables, 74 entries, and 89 pool/table references",
     "relocation-aware comparison locates the JA owner at 0x080a0e0c; all 942 non-relocation, non-literal core bytes agree in every edition",
-    "the candidate is 1332 linked bytes against the 1336-byte reference and emits 481 normalized instructions against 484",
-    "independent ARMv4T objdiff structural match improved from 84.70123% to 87.99648%"
+    "the candidate is now exactly 1336 linked bytes against the 1336-byte reference",
+    "candidate-show improved from 487 to 437 differing halfwords and from 448 to 412 wrong instructions",
+    "independent ARMv4T objdiff structural match is 88.47452%; linked byte/instruction scoring is preferred because the deliberate range reload restores owner length while changing alignment across jump-table rows"
   ],
-  "blocked_by": "The remaining 487-halfword residual is still structural. Continue the initial carrier/target-selection ancestry and primary PP access-form recovery before allocator flags or permutation.",
+  "blocked_by": "The remaining 437-halfword residual is still broad. The measured phase partition ranks the primary switch first and the follow-up switch second; continue phase-local register ancestry and load scheduling there. The owner is not eligible for permanent classification or whole-function permutation.",
   "rejected": [
     {
       "shape": "halfword unions plus a u16 working amount",
@@ -136,6 +137,18 @@
     {
       "shape": "block-scope lookup, scale, random, healing, and explicit tail carriers or change the HP fields to unsigned with signed access casts",
       "result": "each controlled build was byte-identical to the retained candidate; the redundant source-only forms were removed"
+    },
+    {
+      "shape": "retest all six initial later-target, changed, and result assignment orders after the second transfer pass",
+      "result": "the retained order remains the best linked candidate; the structurally closest alternative grows to 1336 bytes but regresses to 522 differing halfwords and 576 wrong instructions"
+    },
+    {
+      "shape": "narrow later-target, changed, or result carriers independently",
+      "result": "later-target and changed widths are byte-neutral, while correcting result_code from s16 to its promoted s32 register lifetime reduces the linked residual from 487 to 474 halfwords"
+    },
+    {
+      "shape": "change the two target-loop increments to ordinary increment or an explicit 0xff mask",
+      "result": "ordinary u32 increment regresses to 1324 bytes and 486 halfwords; the mask reaches 463 halfwords but regresses to 1332 bytes and 444 wrong instructions, so the byte-width cast remains the best balanced exact-length form"
     }
   ],
   "notes": [
@@ -143,6 +156,9 @@
     "BattleAction field names and the max_hp/max_pp/hp/pp/poison vocabulary are inherited only where exact local layouts coincide; the unresolved early BattleUnit fields remain in an owner-local view.",
     "The retained lookup branch reduced the 564-halfword baseline to 557; the damage-class branch and indexed stat access reduced it to 539; direct raw-field access in the two follow-up cases then reduced it to 487.",
     "Removing the primary HP raw carriers was linked-score neutral at 539 but removed two wrong instructions and enabled the later follow-up lifetime improvements; primary PP deliberately retains its carriers because removing them re-enters the 581-halfword allocation family.",
+    "Changing result_code to its promoted s32 lifetime reduced the linked residual by 13 halfwords without altering behavior; the runtime store remains halfword-wide.",
+    "Expressing target-id 9 as a zero-default exceptional remap reduced wrong instructions by eight, and independently reloading effect->range at both multi-target decisions removed another twelve wrong instructions while restoring the exact 1336-byte owner length.",
+    "The second-pass target-sequence partition measured 189 nonexact target instructions in the primary switch, 156 in the follow-up switch, 30 in the tail, and 22 in entry/selection. Correcting the runtime result destination back to its evidenced halfword width while retaining the promoted local carrier reduced the linked residual by another 35 halfwords and 12 wrong instructions.",
     "No inline assembly, fixed-register variables, compiler barriers, copied instruction bytes, compiler changes, or nonlocal evidence were used.",
     "This is a measured draft only; retained reference assembly remains authoritative."
   ]

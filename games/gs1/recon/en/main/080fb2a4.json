@@ -7,7 +7,7 @@
   "executable_owner_bytes": 40,
   "candidate_bytes": 32,
   "differing_halfwords": 20,
-  "wrong_instructions": 12,
+  "wrong_instructions": 22,
   "classification": "update-music-player-pitch",
   "resolved_asm_classification": {
     "kind": "compiler_output",
@@ -16,12 +16,38 @@
   },
   "cross_edition": {
     "editions": ["ja", "en", "de", "es", "fr", "it"],
-    "relocation_normalized_core_bytes": 36,
+    "starts": {
+      "ja": "0x080f22a4",
+      "en": "0x080fb2a4",
+      "de": "0x080fc0a4",
+      "es": "0x080fdaa4",
+      "fr": "0x080fdaa4",
+      "it": "0x080fb2a4"
+    },
+    "relocation_normalized_core_bytes": 34,
     "core_diff_bytes": 0,
     "core_identical": true
   },
+  "bounded_search": {
+    "mode": "classic-heat-walk",
+    "candidates": 20000,
+    "exact_candidates": 0,
+    "best_readable_candidate_bytes": 40,
+    "best_readable_differing_halfwords": 8,
+    "best_readable_wrong_instructions": 10,
+    "best_unverified_differing_halfwords": 7
+  },
+  "bounded_checks": [
+    "all six statement-order permutations of pitch truncation, scale load, and identity load were compiled; the only 40-byte improvement loads pitch_scale before validating the identity",
+    "direct identity access, local identity, register hints, nested assignment, duplicate guarded loads, and approved optimization-pass toggles did not close the residual",
+    "an explicit gcc296 scheduling route regressed to 15 differing halfwords",
+    "the 20,000-candidate walk found no exact output; its seven-halfword generated best changes the multiplication input and is not a semantic candidate"
+  ],
   "notes": [
     "Stores a validated music-player pitch and derives its scaled pitch from the player's 8.8 fixed-point scale.",
-    "Correct field widths eliminate opcode mismatches, but the reference deliberately keeps a callee-saved scale register and prologue while approved C compiles as a shorter leaf. The residual is broad and was not searched or promoted."
+    "Correct field widths eliminate opcode mismatches, but the honest guarded source compiles as a shorter leaf because the scale does not remain live in a callee-saved register.",
+    "The best readable 40-byte diagnostic has the reference instruction multiset but retains an eight-halfword linked allocation/scheduling residual and speculatively reads pitch_scale before the identity guard. That access change is not justified by the reference semantics, so it was not retained.",
+    "The residual exceeds the narrow permanent-assembly gate. Retained assembly remains authoritative and this draft claims zero DONE bytes.",
+    "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, and the approved compiler. No GS2 source or data was inspected or changed."
   ]
 }

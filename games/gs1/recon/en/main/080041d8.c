@@ -9,11 +9,14 @@ struct TransferSlot {
 
 extern volatile u8 Data_03001a10;
 extern struct TransferSlot Data_03001a20[20];
+extern volatile u16 Data_04000208;
 void Func_08004144(void);
 
-s32 Func_080041d8(s32 source, s32 size)
+#define Scheduler_AddOrUpdateCallback Func_080041d8
+
+s32 Scheduler_AddOrUpdateCallback(s32 source, s32 size)
 {
-    u16 saved_interrupt_state;
+    u32 saved_interrupt_state;
     s32 index;
     struct TransferSlot *slot;
     s32 i;
@@ -21,8 +24,8 @@ s32 Func_080041d8(s32 source, s32 size)
     index = -1;
     slot = Data_03001a20;
     (void)Data_03001a10;
-    saved_interrupt_state = *(volatile u16 *)0x04000208;
-    *(volatile u16 *)0x04000208 = 0x0208;
+    saved_interrupt_state = Data_04000208;
+    Data_04000208 = (u16)&Data_04000208;
 
     i = 0;
     if (slot->source == source) {
@@ -66,6 +69,10 @@ find_empty:
         }
     }
     Func_08004144();
-    *(volatile u16 *)0x04000208 = saved_interrupt_state;
+    Data_04000208 = saved_interrupt_state;
     return index;
+}
+
+void Scheduler_Idle(void)
+{
 }

@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080b0958",
+  "name": "ShopCursor_MoveTowardTarget",
+  "status": "proven-permanent",
+  "owner_bytes": 164,
+  "executable_owner_bytes": 164,
+  "candidate_bytes": 164,
+  "differing_halfwords": 4,
+  "wrong_instructions": 8,
+  "classification": "shop_cursor_compiler_allocation_module",
+  "resolved_asm_classification": {
+    "kind": "compiler_output",
+    "retention": "c_candidate",
+    "confidence": "likely"
+  },
+  "cross_edition": {
+    "editions": ["ja", "en", "de", "es", "fr", "it"],
+    "relocation_normalized_core_bytes": 152,
+    "core_identical": true,
+    "starts": {
+      "ja": "0x080a7958",
+      "en": "0x080b0958",
+      "de": "0x080b2f58",
+      "es": "0x080b4958",
+      "fr": "0x080b4958",
+      "it": "0x080b0958"
+    }
+  },
+  "bounded_search": {
+    "mode": "classic-walk-heat",
+    "candidates": 20000,
+    "compile_failures": 1053,
+    "exact": false,
+    "baseline_differing_halfwords": 4,
+    "best_differing_halfwords": 2,
+    "best_structural_rows": 0
+  },
+  "notes": [
+    "Moves the cursor sprite one quarter of its remaining signed X and Y distance, with a one-pixel minimum step, and refreshes the packed screen coordinates.",
+    "The complete candidate matches every instruction outside one immediately resynchronizing attribute-bit merge. Its four-halfword residual consists only of equivalent low-register allocation and load ordering.",
+    "The bounded winner emitted the exact normalized instruction sequence only by narrowing the retained 0xfffffe00 mask literal to 0x0000fe00. This is behaviorally equivalent for the halfword field but remains two linked halfwords from the reference and is not exact C.",
+    "The routed and gcc296 families preserve the four-halfword residual. The old-agbcc family and approved optimization-axis changes regress the complete shape."
+  ]
+}

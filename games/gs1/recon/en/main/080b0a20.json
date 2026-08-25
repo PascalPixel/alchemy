@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080b0a20",
+  "name": "ShopCursor_SetPositionImmediate",
+  "status": "measured-draft",
+  "owner_bytes": 74,
+  "executable_owner_bytes": 74,
+  "candidate_bytes": 74,
+  "differing_halfwords": 26,
+  "wrong_instructions": 22,
+  "cross_edition": {
+    "owner_bytes": 74,
+    "literal_bytes": 16,
+    "core_bytes": 58,
+    "core_identical": true,
+    "editions": {
+      "ja": "0x080a7a20",
+      "en": "0x080b0a20",
+      "de": "0x080b3020",
+      "es": "0x080b4a20",
+      "fr": "0x080b4a20",
+      "it": "0x080b0a20"
+    }
+  },
+  "behavior": [
+    "sets both current and target cursor coordinates",
+    "writes the same coordinates to the cursor sprite",
+    "refreshes the sprite's packed X and Y screen coordinates",
+    "marks the cursor as immediate and inactive"
+  ],
+  "remaining": "The complete behavior and six-edition owner identity are established and the readable candidate now has the exact 74-byte extent, but it retains 26 differing halfwords and 22 wrong instructions across constant-load placement, packed-coordinate masking, register allocation, and the literal-pool boundary. A 20,000-candidate classic search reached an unverified generated score with 20 differing halfwords but required numerous synthetic aliases and one-shot loops; paring those constructs restored the broad residual. This owner remains ordinary assembly debt and claims zero DONE bytes.",
+  "notes": [
+    "The name is bounded by the established ShopCursor type, sibling Shop_SetCursorPosition, and local shop callers.",
+    "Readable type and lifetime corrections improved the baseline from 68 bytes / 27 wrong instructions to exact extent / 22 wrong instructions.",
+    "The bounded 20,000-candidate search exhausted its approved budget without exact C; its generated best was rejected as production source because the residual remained broad and its source shape was not meaningful.",
+    "Recovered only from retained assembly, approved local GS1 ROMs, local types and callers, and the approved compiler."
+  ]
+}

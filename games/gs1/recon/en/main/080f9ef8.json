@@ -7,7 +7,7 @@
   "executable_owner_bytes": 68,
   "candidate_bytes": 72,
   "differing_halfwords": 36,
-  "wrong_instructions": 24,
+  "wrong_instructions": 50,
   "classification": "stop-music-track",
   "resolved_asm_classification": {
     "kind": "compiler_output",
@@ -22,6 +22,8 @@
   },
   "notes": [
     "Stops every CGB channel owned by an active music track, invokes the configured oscillator-disable callback for hardware channel types, and clears both sides of the ownership link.",
-    "Reshaping the loop to the retained control flow raised structural similarity to 80.75 percent, but register allocation, flag testing, indirect-call lowering, and entry scheduling remain broad. It did not meet the bounded-search or permanent-residual gate."
+    "The six editions retain an identical 60-byte relocation-normalized executable core inside the same 68-byte owner boundary.",
+    "A fresh fixed-route rebuild after the shared audio-channel declarations changed reports 72 candidate bytes, 36 differing halfwords, and 50 wrong instructions; the earlier stored 24-row score was stale.",
+    "A bounded 20,000-candidate classic source/lifetime search found no improvement over the readable semantic draft. Register allocation, flag testing, indirect-call lowering, entry scheduling, and the four-byte extent excess remain broad, so this owner is neither adopted nor eligible for narrow permanent classification."
   ]
 }

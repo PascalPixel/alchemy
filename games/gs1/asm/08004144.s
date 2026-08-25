@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global Scheduler_SortTasks
 	.global Func_08004144
 	.thumb_func
+Scheduler_SortTasks:
 Func_08004144:
 	push	{r5, r6, lr}
 	sub	sp, #8

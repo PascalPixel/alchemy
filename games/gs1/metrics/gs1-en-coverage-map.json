@@ -7,20 +7,20 @@
   "executable_bytes": 1348458,
   "categories": {
     "exact_c": {
-      "bytes": 317608,
-      "percent_of_executable": 23.55
+      "bytes": 317900,
+      "percent_of_executable": 23.58
     },
     "tracked_c": {
-      "bytes": 44772,
-      "percent_of_executable": 3.32
+      "bytes": 44688,
+      "percent_of_executable": 3.31
     },
     "assembly": {
-      "bytes": 608904,
-      "percent_of_executable": 45.16
+      "bytes": 608294,
+      "percent_of_executable": 45.11
     },
     "retained_asm": {
-      "bytes": 377174,
-      "percent_of_executable": 27.97
+      "bytes": 377576,
+      "percent_of_executable": 28.0
     },
     "asset_data": {
       "bytes": 7300700,
@@ -29,8 +29,8 @@
   },
   "main": {
     "executable_bytes": 548364,
-    "exact_c_bytes": 108822,
-    "tracked_c_bytes": 6608
+    "exact_c_bytes": 109114,
+    "tracked_c_bytes": 6524
   },
   "overlays": {
     "executable_bytes": 800094,
@@ -52,10 +52,10 @@
       "label": "Main image code",
       "bytes": 548364,
       "categories": {
-        "exact_c": 108822,
-        "tracked_c": 6608,
-        "assembly": 257084,
-        "retained_asm": 175850
+        "exact_c": 109114,
+        "tracked_c": 6524,
+        "assembly": 256474,
+        "retained_asm": 176252
       },
       "tiles": 9
     },
@@ -86,10 +86,10 @@
       "label": "Main image",
       "bytes": 548364,
       "categories": {
-        "exact_c": 108822,
-        "tracked_c": 6608,
-        "assembly": 257084,
-        "retained_asm": 175850
+        "exact_c": 109114,
+        "tracked_c": 6524,
+        "assembly": 256474,
+        "retained_asm": 176252
       },
       "tiles": 867
     },

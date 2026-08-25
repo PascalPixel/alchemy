@@ -5,11 +5,17 @@
   "status": "measured-draft",
   "owner_bytes": 84,
   "candidate_bytes": 84,
-  "differing_halfwords": 35,
+  "differing_halfwords": 10,
+  "wrong_instructions": 16,
   "notes": [
     "This owner and 080ae9f0 share the same resource-selection, object-creation, failure, and initialization tail.",
-    "The complete ordinary-C candidate emits the exact reference length; its residual remains concentrated in entry allocation and branch scheduling.",
-    "A bounded 30,000-candidate classic search produced no exact candidate. Retained assembly remains authoritative and this draft claims zero bytes.",
+    "The complete ordinary-C candidate emits the exact reference length. Sharing 080ae9f0's data-base/resource-selection shape improves this owner from 35 differing halfwords / 22 wrong instructions to 10 / 16 while keeping its post-call tail exact.",
+    "The earlier 30,000-candidate search plus a joint sibling matrix over raw pointer versus selected pointer, direct versus split variant lifetime, branch statement order, addend order, carrier widths, declaration order, approved GCC pass flags, -O1/-O3/-Os, and old-agbcc produced no exact candidate. The fixed-route shared-data shape is the unique readable improvement.",
+    "A last-mile heat-guided classic walk evaluated 13,522 additional generated candidates from the improved source (8,670 in the first capped process and 4,852 in a journal-seeded continuation). None improved the four normalized structural rows / sixteen raw rows / ten differing halfwords baseline and no exact candidate appeared.",
+    "Further joint source axes after that walk included signed and unsigned variant carriers, explicit offset selection before the resource load, duplicated versus joined branch loads, and pre/post resource tile adjustment ordering. Signedness is byte-neutral; the explicit offset join regresses to 80 bytes / 41 differing halfwords / 26 wrong instructions; the readable shared-data baseline remains best.",
+    "The remaining exact-extent residual is candidate-show class allocation: the candidate preserves tile in r4, x in r5, and the data base in r2; the reference preserves variant in r5, x in r4, tile in r2, and the data base in r3. Although semantically equivalent and tail-exact, ten differing halfwords across a sixteen-instruction entry allocation family are broader than the repository's narrow proven subset gate.",
+    "080ae9f0 has an independently recorded all-six 82-byte normalized core. This preceding sibling has the same EN tail but no exact-object correspondence row, so compiler cross-edition cannot independently validate its full regional owner; no family-wide or regional permanent claim is inferred from adjacency.",
+    "Explicit compiler cross-edition --object proof remains unavailable for this non-exact owner because the command requires a claimed exact object/correspondence row. The existing 080ae9f0 proof can validate the tail family only, not this owner's entry allocation.",
     "No external source, copied instruction bytes, inline assembly, fixed-register variable, compiler barrier, or compiler modification was used."
   ]
 }

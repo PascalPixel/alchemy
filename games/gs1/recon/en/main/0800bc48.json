@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x0800bc48",
+  "status": "measured-draft",
+  "owner_bytes": 40,
+  "executable_owner_bytes": 30,
+  "candidate_bytes": 40,
+  "differing_halfwords": 14,
+  "wrong_instructions": 12,
+  "classification": "clear-resource-metadata-with-dma",
+  "resolved_asm_classification": {
+    "kind": "compiler_output",
+    "retention": "c_candidate",
+    "confidence": "likely"
+  },
+  "cross_edition": {
+    "editions": ["ja", "en", "de", "es", "fr", "it"],
+    "relocation_normalized_core_bytes": 30,
+    "core_diff_bytes": 0,
+    "core_identical": true,
+    "raw_identical": true,
+    "starts": {
+      "ja": "0x0800bc48",
+      "en": "0x0800bc48",
+      "de": "0x0800b448",
+      "es": "0x0800b448",
+      "fr": "0x0800b448",
+      "it": "0x0800bc48"
+    }
+  },
+  "notes": [
+    "Null-guards a resource-metadata record, then uses DMA3 fixed-source 32-bit fill control 0x85000006 to clear six words (24 bytes) from a zero word on the stack.",
+    "Explicit object-based six-ROM analysis found all 40 owner bytes raw-identical in JA, EN, DE, ES, FR, and IT; the instruction core is 30 bytes and the remaining 10 bytes are reached literals and alignment.",
+    "The complete readable direct-field source has exact 40-byte extent at 14 differing halfwords and 12 wrong instructions. The reference emits one restored-writeback stmia block transfer; the approved compiler emits three scalar descriptor stores.",
+    "Bounded pointer-postincrement, scalar/pointer field typing, volatile and nonvolatile descriptor, compound-literal, register aggregate, explicit temporary aggregate, inline factory, compiler-family, and optimization variants either preserve the scalar-store residual, call memcpy, or add stack block copies. No exact or narrow permanent candidate was found, so this draft claims zero DONE bytes."
+  ]
+}

@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global ShopCursor_MoveTowardTarget
 	.global Func_080b0958
 	.thumb_func
+ShopCursor_MoveTowardTarget:
 Func_080b0958:
 	push	{r5, lr}
 	adds	r5, r0, #0

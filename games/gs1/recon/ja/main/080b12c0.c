@@ -56,7 +56,7 @@ extern void *Data_03001e74;
 struct Slot_080b12c0 *Func_080b7dd0(s32 id);
 s32 Func_080044d0(s32 first, s32 second);
 void Func_080030f8(s32 frames);
-void Func_080c10e8(s32 first, s32 second);
+void Func_080c10e8(u16 *actors, s32 mode);
 void Func_080b9d34(void *input, struct Work_080b12c0 *work);
 struct Unit_080b12c0 *Func_08077008(s32 id);
 struct Record_080b12c0 *Func_080b7f70(

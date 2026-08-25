@@ -6,7 +6,7 @@ s32 WaitFrames(s32);
 s32 Func_080bb65c();
 s32 Func_080bb938();
 s32 Func_080bbb0c(void *, s32);
-s32 Func_080c10e8(s32, s32);
+void Func_080c10e8(u16 *, s32);
 
 s32 Func_080ba27c(void *arg0) {
     s32 var_r5;

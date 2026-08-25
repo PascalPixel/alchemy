@@ -1,8 +1,4 @@
-//! `verifyCandidate` -- compile one candidate C file, link it at its ROM
-//! address, and hand back the produced bytes beside the ROM's bytes.
-//!
-//! Every step spawns a real process, so runtime is dominated by the same five
-//! toolchain binaries regardless of the caller.
+//! Compile candidate C, link it at its ROM address, and return both byte spans.
 
 use std::collections::BTreeMap;
 use std::path::Path;
@@ -11,49 +7,37 @@ use std::process::Command;
 use compiler_core::nodepath::{basename, extname};
 use compiler_core::plan::{source_to_assembly_plan, CompilerFamily, CompilerFlagMutations, SourceToAssemblyPlanOptions};
 use compiler_core::routing::{root, CompilerTarget};
+use compiler_core::translation_units::{AbsoluteSymbol, AbsoluteSymbolKind};
 use compiler_core::{external_symbol, external_symbol_assembly, CALL_VIA_BASE};
 
 use crate::jsnum::{hex8, parse_hex};
 use crate::jsstring::{js_split_lines, js_split_whitespace_runs, js_trim};
 
-/// `ROM_BASE`.
 pub const ROM_BASE: f64 = 0x0800_0000 as f64;
 
-/// `CandidateCompilerFamily` is `compiler_core`'s `CompilerFamily`; the
-/// TypeScript declares the same six-member union a second time rather than
-/// importing it. One name here, deliberately.
 pub type CandidateCompilerFamily = CompilerFamily;
 
-/// `CandidateCompilerConfiguration`.
 #[derive(Debug, Clone, Default)]
 pub struct CandidateCompilerConfiguration {
     pub family: Option<CandidateCompilerFamily>,
     pub add_flags: Vec<String>,
     pub remove_flags: Vec<String>,
-    /// Resolve external relocation targets from the selected reference image.
-    /// This is required when one source model is measured at another edition's
-    /// addresses, or when a readable external name deliberately carries no
-    /// address. Every relocation site for one symbol must resolve consistently.
     pub reference_symbols: bool,
+    pub absolute_symbols: BTreeMap<String, AbsoluteSymbol>,
+    pub call_via_base: Option<u64>,
+    pub label_word_bias: Option<u64>,
 }
 
-/// `interface Verification`.
 #[derive(Debug, Clone)]
 pub struct Verification {
     pub actual: Vec<u8>,
     pub expected: Vec<u8>,
-    /// `size` is a JavaScript number, and `parseHex` can in principle produce a
-    /// non-integer for an absurd `nm` field. Kept as `f64` so the value written
-    /// into the report is the value that was computed.
     pub size: f64,
 }
 
-/// `sourceStem(path)` -- `basename(path, extname(path))`.
 pub fn source_stem(path: &str) -> String {
     let base = basename(path);
     let ext = extname(path);
-    // Node's `basename(path, ext)` strips `ext` only when it is a proper,
-    // non-equal suffix; `basename(".c", ".c")` is `.c`, not "".
     if !ext.is_empty() && base.len() > ext.len() && base.ends_with(ext) {
         base[..base.len() - ext.len()].to_string()
     } else {
@@ -61,21 +45,9 @@ pub fn source_stem(path: &str) -> String {
     }
 }
 
-/// `run(command, cwd = ROOT)`.
-///
-/// PORT NOTE -- the failure message is `${basename(command[0])} failed` plus
-/// `: ${detail}` where `detail` is `(stderr || stdout).trim()`. The `||` means
-/// an EMPTY stderr falls through to stdout, and a stderr of only whitespace
-/// does not (it is a non-empty string, so it wins and then trims to nothing,
-/// producing the bare `X failed`). Both halves are reproduced.
 pub fn run(command: &[String], cwd: &Path) -> Result<String, String> {
     let program = command.first().ok_or_else(|| "run: empty command".to_string())?;
-    let output = Command::new(program).args(&command[1..]).current_dir(cwd).output().map_err(|error| {
-        // Bun reports a missing binary as an ENOENT thrown from spawn,
-        // before the exit-code check. Same failure, different prose; the
-        // parity harness compares exit status and offending path, not text.
-        format!("{}: {error}", basename(program))
-    })?;
+    let output = Command::new(program).args(&command[1..]).current_dir(cwd).output().map_err(|error| format!("{}: {error}", basename(program)))?;
     let stdout = String::from_utf8_lossy(&output.stdout).into_owned();
     if output.status.success() {
         return Ok(stdout);
@@ -91,21 +63,9 @@ pub fn run(command: &[String], cwd: &Path) -> Result<String, String> {
     }
 }
 
-/// `%TypedArray%.prototype.subarray(begin, end)`, which is what
-/// `Buffer#subarray` is.
-///
-/// PORT NOTE -- this is the trap that Rust slicing cannot express. `arr[a..b]`
-/// PANICS on an out-of-range index; `subarray` CLAMPS, and a NEGATIVE index is
-/// measured from the end rather than being an error. The historical verifier computes
-/// `address - imageBase`, which is hugely negative for an overlay address such
-/// as `0x02000000` against `ROM_BASE`; JavaScript clamps that to 0 and returns
-/// a slice from the start of the ROM. That is almost certainly not what anyone
-/// intended, but it is what every recorded sweep measured, so it is reproduced
-/// exactly. See the `overlay_address_clamps_to_rom_start` test.
 pub fn js_subarray(data: &[u8], begin: f64, end: f64) -> Vec<u8> {
     let len = data.len() as f64;
     let resolve = |relative: f64| -> usize {
-        // `ToIntegerOrInfinity`: NaN becomes 0.
         let value = if relative.is_nan() { 0.0 } else { relative.trunc() };
         let resolved = if value < 0.0 {
             let from_end = len + value;
@@ -129,16 +89,6 @@ pub fn js_subarray(data: &[u8], begin: f64, end: f64) -> Vec<u8> {
     data[start..stop].to_vec()
 }
 
-/// `verifyCandidate(source, rom, outputDirectory, extraCompilerFlags, imageBase,
-/// compiler, configuration)`.
-pub fn verify_candidate(source: &str, rom: &[u8], output_directory: &str, extra_compiler_flags: &[String], image_base: f64, compiler: CompilerTarget, configuration: &CandidateCompilerConfiguration) -> Result<Verification, String> {
-    verify_candidate_routed(source, source, rom, output_directory, extra_compiler_flags, image_base, compiler, configuration)
-}
-
-/// gcc `-S` only: same flags as [`verify_candidate_routed`], no assembler,
-/// linker, or ROM. The confirmation loop that git-diffs `.s` files needs this
-/// and nothing else -- linking the owner is what turned a 30 ms compile into
-/// half a second.
 pub fn compile_to_assembly(source: &str, routing_source: &str, output_directory: &str, extra_compiler_flags: &[String], compiler: CompilerTarget, configuration: &CandidateCompilerConfiguration) -> Result<String, String> {
     let stem = source_stem(source);
     std::fs::create_dir_all(output_directory).map_err(|error| format!("{output_directory}: {error}"))?;
@@ -156,26 +106,28 @@ pub fn compile_to_assembly(source: &str, routing_source: &str, output_directory:
     for step in &plan.steps {
         run(&step.command, cwd)?;
     }
+    apply_label_word_bias(&assembly, configuration.label_word_bias)?;
     Ok(assembly)
 }
 
-/// Compile a temporary candidate using the compiler family and flags owned by
-/// `routing_source`. Keeping the physical input separate from its eventual
-/// repository path is required by parallel search tools; otherwise every
-/// temporary file silently falls back to the default compiler route.
-#[allow(clippy::too_many_arguments)]
-pub fn verify_candidate_routed(source: &str, routing_source: &str, rom: &[u8], output_directory: &str, extra_compiler_flags: &[String], image_base: f64, compiler: CompilerTarget, configuration: &CandidateCompilerConfiguration) -> Result<Verification, String> {
-    let stem = source_stem(source);
-    verify_candidate_owned_routed(source, routing_source, &stem, rom, output_directory, extra_compiler_flags, image_base, compiler, configuration)
-}
-
-/// Compile a source whose descriptive filename no longer encodes its owner.
-///
-/// `owner_stem` is the canonical eight-digit main-image address. The physical
-/// source path remains untouched so source-relative includes keep working;
-/// `routing_source` remains the stable owner identity used by compiler tables.
 #[allow(clippy::too_many_arguments)]
 pub fn verify_candidate_owned_routed(source: &str, routing_source: &str, owner_stem: &str, rom: &[u8], output_directory: &str, extra_compiler_flags: &[String], image_base: f64, compiler: CompilerTarget, configuration: &CandidateCompilerConfiguration) -> Result<Verification, String> {
+    verify_candidate_owned_routed_with_object(source, routing_source, owner_stem, rom, output_directory, extra_compiler_flags, image_base, compiler, configuration, None)
+}
+
+#[allow(clippy::too_many_arguments)]
+pub fn verify_candidate_owned_routed_with_object(
+    source: &str,
+    routing_source: &str,
+    owner_stem: &str,
+    rom: &[u8],
+    output_directory: &str,
+    extra_compiler_flags: &[String],
+    image_base: f64,
+    compiler: CompilerTarget,
+    configuration: &CandidateCompilerConfiguration,
+    precompiled_object: Option<&str>,
+) -> Result<Verification, String> {
     let stem = owner_stem.to_string();
     let address = parse_hex(&stem)?;
     let canonical_symbol = format!("Func_{}", hex8(address));
@@ -184,7 +136,7 @@ pub fn verify_candidate_owned_routed(source: &str, routing_source: &str, owner_s
     let out = Path::new(output_directory);
     let path = |suffix: &str| out.join(format!("{stem}{suffix}")).to_string_lossy().into_owned();
     let assembly = path(".s");
-    let object = path(".o");
+    let object = precompiled_object.map(str::to_owned).unwrap_or_else(|| path(".o"));
     let symbols_source = path(".symbols.s");
     let symbols_object = path(".symbols.o");
     let elf = path(".elf");
@@ -201,10 +153,13 @@ pub fn verify_candidate_owned_routed(source: &str, routing_source: &str, owner_s
     let plan = source_to_assembly_plan(&options)?;
 
     let cwd = root();
-    for step in &plan.steps {
-        run(&step.command, cwd)?;
+    if precompiled_object.is_none() {
+        for step in &plan.steps {
+            run(&step.command, cwd)?;
+        }
+        apply_label_word_bias(&assembly, configuration.label_word_bias)?;
+        run(&argv(&["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", &object, &assembly]), cwd)?;
     }
-    run(&argv(&["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", &object, &assembly]), cwd)?;
 
     // GCC 2.96 keeps observable state across functions, so some owners need
     // their original translation-unit context. Link the section so the
@@ -225,42 +180,41 @@ pub fn verify_candidate_owned_routed(source: &str, routing_source: &str, owner_s
     let owner_size = usize::try_from(exact_u64(owner_size, "owner object size")?).map_err(|_| "owner object size is too large")?;
     let owner_relocations = object_relocations(&object, owner_offset, owner_size)?;
 
-    // A `Vec`, not a `Set`. `nm -u` can list the same undefined symbol twice
-    // and the TypeScript pushes both, emitting a duplicate `.global`/`.thumb_set`
-    // pair. Deduplicating here would change the generated assembly.
+    let call_via_base = configuration.call_via_base.unwrap_or(CALL_VIA_BASE);
     let mut names: Vec<String> = Vec::new();
     let undefined_symbols = run(&argv(&["arm-none-eabi-nm", "-u", &object]), cwd)?;
     for line in js_split_lines(&undefined_symbols) {
-        // `.filter(Boolean)` drops only the empty string, not a
-        // whitespace-only line.
         if line.is_empty() {
             continue;
         }
         let fields = js_split_whitespace_runs(js_trim(line));
-        // `.at(-1)!` -- the array is never empty, so this cannot be undefined.
         let external = *fields.last().expect("split always yields one field");
         // Grouped translation units can contain unrelated imports belonging
         // only to neighboring functions. They cannot affect this owner.
         if !owner_relocations.contains_key(external) {
             continue;
         }
-        if !configuration.reference_symbols && external_symbol(external, CALL_VIA_BASE).is_none() {
+        if !configuration.absolute_symbols.contains_key(external) && external_symbol(external, call_via_base).is_none() {
+            if configuration.reference_symbols {
+                return Err(format!("reference-symbol inference requires an address-encoded or manifest absolute symbol: {external}"));
+            }
             return Err(format!("unsupported external symbol: {external}"));
         }
         names.push(external.to_string());
     }
 
     let mut symbols_text = String::from(".syntax unified\n.thumb\n");
-    if configuration.reference_symbols {
-        let resolved = derive_reference_symbols(&object, symbol, owner_size, &names, rom, address, image_base)?;
-        for name in &names {
-            let symbol = resolved.get(name).ok_or_else(|| format!("no reference relocation for external symbol: {name}"))?;
+    let inferred = names.iter().filter(|name| !configuration.absolute_symbols.contains_key(*name)).cloned().collect::<Vec<_>>();
+    let resolved = if configuration.reference_symbols && !inferred.is_empty() { derive_reference_symbols(&object, symbol, owner_size, &inferred, rom, address, image_base)? } else { BTreeMap::new() };
+    for name in &names {
+        if let Some(symbol) = configuration.absolute_symbols.get(name) {
+            let directive = absolute_symbol_directive(symbol.kind);
+            symbols_text.push_str(&format!(".global {name}\n{directive} {name}, 0x{:08x}\n", symbol.address));
+        } else if let Some(symbol) = resolved.get(name) {
             let directive = if symbol.thumb { ".thumb_set" } else { ".set" };
             symbols_text.push_str(&format!(".global {name}\n{directive} {name}, 0x{:08x}\n", symbol.address));
-        }
-    } else {
-        for name in &names {
-            symbols_text.push_str(&external_symbol_assembly(name, CALL_VIA_BASE)?);
+        } else {
+            symbols_text.push_str(&external_symbol_assembly(name, call_via_base)?);
         }
     }
     write(&symbols_source, symbols_text.as_bytes())?;
@@ -272,10 +226,6 @@ pub fn verify_candidate_owned_routed(source: &str, routing_source: &str, owner_s
     let needle = format!(" {symbol}");
     let row = js_split_lines(&symbols).into_iter().find(|line| line.ends_with(&needle)).ok_or_else(|| format!("missing linked symbol: {symbol}"))?;
     let fields = js_split_whitespace_runs(js_trim(row));
-    // Thumb/COFF assembly from stock GCC 2.95.1 has no ELF `.size` directive,
-    // so nm reports `address T symbol` instead of `address size T symbol`.
-    // A compiler without `.size` still requires a single-function candidate;
-    // GCC 2.96 emits the size needed to extract one owner from a grouped TU.
     let binary_bytes = std::fs::read(&binary).map_err(|error| format!("{binary}: {error}"))?;
     let size = if fields.len() >= 4 { parse_hex(fields[1])? } else { binary_bytes.len() as f64 };
     let linked_symbol_address = parse_hex(fields.first().ok_or("missing linked symbol address")?)?;
@@ -285,6 +235,36 @@ pub fn verify_candidate_owned_routed(source: &str, routing_source: &str, owner_s
     let offset = address - image_base;
     let expected = js_subarray(rom, offset, offset + size);
     Ok(Verification { actual, expected, size })
+}
+
+fn absolute_symbol_directive(kind: AbsoluteSymbolKind) -> &'static str {
+    if kind == AbsoluteSymbolKind::Thumb {
+        ".thumb_set"
+    } else {
+        ".set"
+    }
+}
+
+fn apply_label_word_bias(path: &str, bias: Option<u64>) -> Result<(), String> {
+    let Some(bias) = bias.filter(|bias| *bias != 0) else { return Ok(()) };
+    let text = std::fs::read_to_string(path).map_err(|error| format!("{path}: {error}"))?;
+    let labels = text.lines().filter_map(|line| line.trim().strip_suffix(':').filter(|label| label.starts_with(".L"))).map(str::to_string).collect::<std::collections::BTreeSet<_>>();
+    let mut output = text
+        .lines()
+        .map(|line| {
+            let operand = line.trim().strip_prefix(".word").map(str::trim);
+            if operand.is_some_and(|operand| labels.contains(operand)) {
+                format!("{line} + 0x{bias:x}")
+            } else {
+                line.to_string()
+            }
+        })
+        .collect::<Vec<_>>()
+        .join("\n");
+    if text.ends_with('\n') {
+        output.push('\n');
+    }
+    write(path, output.as_bytes())
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -299,6 +279,16 @@ struct ReferenceRelocation {
     kind: String,
 }
 
+fn validate_reference_topology(object_text: &[u8], owner_offset: usize, owner_size: usize, rom: &[u8], rom_start: usize, relocations: &BTreeMap<String, Vec<ReferenceRelocation>>) -> Result<(), String> {
+    let object = object_text.get(owner_offset..owner_offset + owner_size).ok_or("candidate owner extends past object text")?;
+    let reference = rom.get(rom_start..rom_start + owner_size).ok_or("candidate owner extends past reference image")?;
+    let relocated = |offset| relocations.values().flatten().any(|site| matches!(site.kind.as_str(), "R_ARM_ABS32" | "R_ARM_THM_CALL") && (site.offset..site.offset.saturating_add(4)).contains(&offset));
+    if let Some(offset) = (0..owner_size).find(|offset| !relocated(*offset) && object[*offset] != reference[*offset]) {
+        return Err(format!("reference-symbol inference requires relocation-aligned code; non-relocation byte differs at owner offset 0x{offset:x}; use manifest absolute symbols until the core aligns"));
+    }
+    Ok(())
+}
+
 fn derive_reference_symbols(object: &str, owner_symbol: &str, owner_size: usize, names: &[String], rom: &[u8], address: f64, image_base: f64) -> Result<BTreeMap<String, ResolvedSymbol>, String> {
     let address = exact_u64(address, "owner address")?;
     let image_base = exact_u64(image_base, "image base")?;
@@ -310,6 +300,7 @@ fn derive_reference_symbols(object: &str, owner_symbol: &str, owner_size: usize,
     let object_text_path = format!("{object}.text.bin");
     run(&argv(&["arm-none-eabi-objcopy", "-O", "binary", "-j", ".text", object, &object_text_path]), root())?;
     let object_text = std::fs::read(&object_text_path).map_err(|error| format!("{object_text_path}: {error}"))?;
+    validate_reference_topology(&object_text, owner_offset, owner_size, rom, rom_start, &relocations)?;
 
     let mut resolved = BTreeMap::new();
     for name in names {
@@ -434,5 +425,33 @@ mod reference_symbol_tests {
     fn exact_integer_gate_rejects_fractional_addresses() {
         assert!(exact_u64(0x0800_0000 as f64, "address").is_ok());
         assert!(exact_u64(1.5, "address").is_err());
+    }
+
+    #[test]
+    fn absolute_symbol_kind_not_name_selects_thumb_state() {
+        assert_eq!(absolute_symbol_directive(AbsoluteSymbolKind::Thumb), ".thumb_set");
+        assert_eq!(absolute_symbol_directive(AbsoluteSymbolKind::Data), ".set");
+        assert_eq!(absolute_symbol_directive(AbsoluteSymbolKind::Arm), ".set");
+    }
+
+    #[test]
+    fn reference_inference_allows_relocated_targets_but_rejects_core_differences() {
+        let relocations = BTreeMap::from([("Data_02000000".to_string(), vec![ReferenceRelocation { offset: 4, kind: "R_ARM_ABS32".to_string() }])]);
+        let object = [0x09, 0x48, 0x70, 0x47, 0, 0, 0, 0];
+        let reference = [0x09, 0x48, 0x70, 0x47, 1, 2, 3, 4];
+        assert!(validate_reference_topology(&object, 0, object.len(), &reference, 0, &relocations).is_ok());
+        let mut swapped = reference;
+        swapped[1] = 0x49;
+        let error = validate_reference_topology(&object, 0, object.len(), &swapped, 0, &relocations).unwrap_err();
+        assert!(error.contains("non-relocation byte differs at owner offset 0x1"));
+    }
+
+    #[test]
+    fn overlay_bias_applies_only_to_defined_local_label_words() {
+        let path = std::env::temp_dir().join("alchemy-overlay-label-bias.s");
+        std::fs::write(&path, ".L2:\n.word .L2\n.word External\n").unwrap();
+        apply_label_word_bias(path.to_str().unwrap(), Some(0x8000)).unwrap();
+        assert_eq!(std::fs::read_to_string(&path).unwrap(), ".L2:\n.word .L2 + 0x8000\n.word External\n");
+        let _ = std::fs::remove_file(path);
     }
 }

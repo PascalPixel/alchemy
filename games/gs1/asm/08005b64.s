@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global SaveState_InvalidateSlot
 	.global Func_08005b64
 	.thumb_func
+SaveState_InvalidateSlot:
 Func_08005b64:
 	push	{r5, r6, lr}
 	ldr	r3, [pc, #136]

@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global Runtime_CopyAndCallRoutine
 	.global Func_08003e10
 	.thumb_func
+Runtime_CopyAndCallRoutine:
 Func_08003e10:
 	push	{r5, r6, lr}
 	mov	r6, r8

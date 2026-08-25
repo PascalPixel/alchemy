@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global TitlePalette_InitializeBuffers
 	.global Func_080f377c
 	.thumb_func
+TitlePalette_InitializeBuffers:
 Func_080f377c:
 	push	{lr}
 	ldr	r1, [pc, #84]

@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global BlendTransition_Update
 	.global Func_08003adc
 	.thumb_func
+BlendTransition_Update:
 Func_08003adc:
 	push	{r5, r6, r7, lr}
 	ldr	r3, [pc, #28]

@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global IoWriteQueue_FlushPending
 	.global Func_08003a7c
 	.thumb_func
+IoWriteQueue_FlushPending:
 Func_08003a7c:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

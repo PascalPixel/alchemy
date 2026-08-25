@@ -25,7 +25,9 @@ extern s32 Func_02002376();
 extern s32 Func_0200237c();
 extern s32 Func_02002382();
 
-s32 Func_020010a8(void) {
+#define CommandTable_ConfigureCommandList Func_020010a8
+
+s32 CommandTable_ConfigureCommandList(void) {
     Func_02002306(5);
     Func_02002304(1);
     Func_0200230a(3);

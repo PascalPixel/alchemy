@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global BattleEffect_SelectNearbyTargetObject
 	.global Func_0808df1c
 	.thumb_func
+BattleEffect_SelectNearbyTargetObject:
 Func_0808df1c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

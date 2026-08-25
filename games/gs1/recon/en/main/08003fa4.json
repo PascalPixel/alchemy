@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x08003fa4",
+  "name": "VramBlock_LoadCached",
+  "status": "measured-draft",
+  "owner_bytes": 152,
+  "executable_owner_bytes": 152,
+  "candidate_bytes": 160,
+  "differing_halfwords": 76,
+  "wrong_instructions": 70,
+  "cross_edition": {
+    "object_bytes": 152,
+    "relocation_bytes": 12,
+    "literal_bytes": 16,
+    "relocation_normalized_core_bytes": 124,
+    "core_diff_bytes": 0,
+    "core_identical": true,
+    "starts": {
+      "ja": "0x08003fa4",
+      "en": "0x08003fa4",
+      "de": "0x08003fd4",
+      "es": "0x08004004",
+      "fr": "0x08003fb4",
+      "it": "0x08003fe4"
+    }
+  },
+  "domain": "Allocates or reuses a cached VRAM block, optionally fills or DMA-loads it, and returns its tile index.",
+  "expressed": [
+    "validates the cache slot and maximum block size",
+    "reuses a same-sized cached allocation or frees and reallocates a changed entry",
+    "records the size and VRAM offset in the slot cache",
+    "supports no-load, shared-fill, and DMA-copy source modes",
+    "returns the allocated VRAM offset as a 32-byte tile index"
+  ],
+  "bounded_search": {
+    "mode": "screen-only",
+    "attempted": 0,
+    "exact": false,
+    "reason": "The complete readable candidate is eight bytes long with 76 differing halfwords and fails exact-extent and <=20-halfword admission."
+  },
+  "notes": [
+    "Independent object analysis bounds this owner at 152 executable bytes and proves all 124 relocation-normalized core bytes identical across the six approved GS1 editions.",
+    "The residual spans cache-entry address lifetime, allocator result placement, sentinel-source control flow, and volatile DMA scheduling rather than a localized compiler hunk.",
+    "No full search or permanent classification was warranted, and zero DONE bytes are claimed.",
+    "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, recovered battle-effect caller 0809b698, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used."
+  ]
+}

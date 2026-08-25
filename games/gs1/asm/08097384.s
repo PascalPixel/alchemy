@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global BattleEffect_InitializeSharedScene
 	.global Func_08097384
 	.thumb_func
+BattleEffect_InitializeSharedScene:
 Func_08097384:
 	push	{r5, lr}
 	ldr	r3, [pc, #208]

@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x0808fe38",
+  "name": "BattleEffect_InitializeObjectPool",
+  "status": "measured-draft",
+  "owner_bytes": 120,
+  "executable_owner_bytes": 120,
+  "candidate_bytes": 126,
+  "differing_halfwords": 51,
+  "wrong_instructions": 47,
+  "cross_edition": {
+    "object_bytes": 120,
+    "relocation_bytes": 12,
+    "literal_bytes": 28,
+    "relocation_normalized_core_bytes": 80,
+    "core_diff_bytes": 0,
+    "core_identical": true,
+    "starts": {
+      "ja": "0x08086e38",
+      "en": "0x0808fe38",
+      "de": "0x080934a4",
+      "es": "0x08094ea4",
+      "fr": "0x08094ea4",
+      "it": "0x0808fea4"
+    }
+  },
+  "domain": "Allocates and clears the battle-effect object pool, seeds its control fields, and schedules its two runtime callbacks.",
+  "expressed": [
+    "allocates the 0x540-byte effect object pool",
+    "clears the complete pool with a fixed-source DMA transfer",
+    "stores the requested mode and initializes the trailing control fields",
+    "schedules the update and presentation callbacks at their original priorities"
+  ],
+  "bounded_search": {
+    "mode": "screen-only",
+    "attempted": 0,
+    "exact": false,
+    "reason": "The complete readable candidate is six bytes long with 51 differing halfwords and fails exact-extent and <=20-halfword admission."
+  },
+  "notes": [
+    "Independent object analysis bounds this owner at 120 executable bytes and proves all 80 relocation-normalized core bytes identical across the six approved GS1 editions.",
+    "The residual spans argument lifetime, pool pointer allocation, and volatile DMA/literal scheduling rather than an immediately resynchronizing compiler hunk.",
+    "No full search or permanent classification was warranted, and zero DONE bytes are claimed.",
+    "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, recovered battle-effect caller 080983a0, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used."
+  ]
+}

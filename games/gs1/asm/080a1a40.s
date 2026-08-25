@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global BattleEffect_PositionSprite
 	.global Func_080a1a40
 	.thumb_func
+BattleEffect_PositionSprite:
 Func_080a1a40:
 	push	{r5, r6, lr}
 	ldr	r3, [pc, #96]

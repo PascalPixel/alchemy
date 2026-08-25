@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x08004c1c",
+  "name": "SceneTransform_ApplyYaw",
+  "status": "measured-draft",
+  "owner_bytes": 80,
+  "executable_owner_bytes": 80,
+  "candidate_bytes": 76,
+  "differing_halfwords": 39,
+  "wrong_instructions": 38,
+  "cross_edition": {
+    "object_bytes": 80,
+    "relocation_bytes": 12,
+    "literal_bytes": 4,
+    "relocation_normalized_core_bytes": 64,
+    "core_diff_bytes": 0,
+    "core_identical": true,
+    "starts": {
+      "ja": "0x08004c1c",
+      "en": "0x08004c1c",
+      "de": "0x08004c4c",
+      "es": "0x08004c7c",
+      "fr": "0x08004c2c",
+      "it": "0x08004c5c"
+    }
+  },
+  "domain": "Builds and publishes the yaw rotation matrix used by the battle-presentation camera.",
+  "expressed": [
+    "computes the fixed-point sine and cosine for the requested angle",
+    "initializes the three-record identity transform",
+    "places cosine, sine, and negated sine in the Y-axis yaw rotation cells",
+    "publishes the complete transform to the shared scene workspace"
+  ],
+  "bounded_search": {
+    "mode": "screen-only",
+    "attempted": 0,
+    "exact": false,
+    "reason": "The complete readable candidate is four bytes short with 39 differing halfwords and misses exact-extent and <=20-halfword admission."
+  },
+  "notes": [
+    "Independent object analysis bounds this leaf at 80 executable bytes and proves all 64 relocation-normalized core bytes identical across the six approved GS1 editions.",
+    "The ROM keeps sine in r8 across the three grouped STMIA initializers. Readable scalar initialization produces a different old-GCC lifetime and store schedule rather than a localized residual.",
+    "The sibling at 08004bd4 was corrected to SceneTransform_ApplyPitch after auditing the matrix cells; 08004c1c is the Y-axis yaw transform.",
+    "No full search or permanent classification was warranted, and zero DONE bytes are claimed.",
+    "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, the recovered transition-scene caller, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used."
+  ]
+}

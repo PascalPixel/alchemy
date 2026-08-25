@@ -109,6 +109,7 @@ typedef int bool;
 #define Owner_RefreshActiveRatios Func_0807808c
 #define Owner_RecalculateRatios Func_0807822c
 #define Owner_UpdateRatioPair Func_080782a0
+#define Owner_UpdateSecondInputAndRatios Func_08078320
 #define Owner_AdjustFirstValue Func_080783a4
 #define Owner_AdjustSecondValue Func_080783dc
 #define Resource_FindFreeSlot Func_08004080

@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080b60a0",
+  "name": "BattlePresentation_WaitForLinkedState",
+  "status": "measured-draft",
+  "owner_bytes": 166,
+  "executable_owner_bytes": 166,
+  "candidate_bytes": 180,
+  "differing_halfwords": 86,
+  "wrong_instructions": 73,
+  "cross_edition": {
+    "object_bytes": 166,
+    "relocation_normalized_core_bytes": 134,
+    "core_diff_bytes": 0,
+    "core_identical": true,
+    "starts": {
+      "ja": "0x080ad0a0",
+      "en": "0x080b60a0",
+      "de": "0x080b86b8",
+      "es": "0x080ba0b8",
+      "fr": "0x080ba0b8",
+      "it": "0x080b60b8"
+    }
+  },
+  "domain": "Waits for the opposite battle-presentation side to publish the expected linked-action synchronization values.",
+  "expressed": [
+    "returns immediately when linked presentation synchronization is inactive",
+    "selects the opposite side's 24-byte shared-state slot",
+    "seeds the local four-halfword synchronization record",
+    "waits up to thirty ticks for both ready bits and matching shared values",
+    "rejects twenty-five consecutive not-ready observations and disabled synchronization modes"
+  ],
+  "bounded_search": {
+    "mode": "screen-only",
+    "attempted": 0,
+    "exact": false,
+    "reason": "The complete readable candidate is 14 bytes long with 86 differing halfwords and 73 wrong instructions, outside the exact-extent and <=20-halfword admission gate."
+  },
+  "notes": [
+    "Independent object analysis bounds this owner at 166 executable bytes and proves all 134 relocation-normalized core bytes identical across the six approved GS1 editions.",
+    "The source expresses the complete opposite-side selection, ready-bit polling, consecutive-miss limit, value comparison, delay loop, and success/failure behavior.",
+    "The residual spans loop layout and register allocation rather than a localized scheduling hunk. No full search or permanent classification was warranted, and zero DONE bytes are claimed.",
+    "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, the recovered presentation caller, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used."
+  ]
+}

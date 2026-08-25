@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080c00d8",
+  "name": "BattlePresentation_BuildTilemap",
+  "status": "measured-draft",
+  "owner_bytes": 88,
+  "executable_owner_bytes": 88,
+  "candidate_bytes": 84,
+  "differing_halfwords": 42,
+  "wrong_instructions": 32,
+  "cross_edition": {
+    "object_bytes": 88,
+    "relocation_bytes": 12,
+    "literal_bytes": 16,
+    "relocation_normalized_core_bytes": 60,
+    "core_diff_bytes": 0,
+    "core_identical": true,
+    "starts": {
+      "ja": "0x080b70d8",
+      "en": "0x080c00d8",
+      "de": "0x080c26f0",
+      "es": "0x080c40f0",
+      "fr": "0x080c40f0",
+      "it": "0x080c00f0"
+    }
+  },
+  "domain": "Builds the battle-presentation tilemap and clears its surrounding map regions before upload.",
+  "expressed": [
+    "clears the first 256-byte region to the empty tile value",
+    "fills the following 128 bytes with the shared boundary tile pair",
+    "writes 240 sequential paired tile indices",
+    "clears the trailing 640-byte region using the shared fill source"
+  ],
+  "bounded_search": {
+    "mode": "screen-only",
+    "attempted": 0,
+    "exact": false,
+    "reason": "The complete readable candidate is four bytes short with 42 differing halfwords and fails exact-extent and <=20-halfword admission."
+  },
+  "notes": [
+    "Independent object analysis bounds this leaf at 88 executable bytes and proves all 60 relocation-normalized core bytes identical across the six approved GS1 editions.",
+    "An integer cursor and assembly-shaped do-while loop reduce structural mismatches while keeping the source readable, but the remaining allocation and literal schedule is not localized.",
+    "No full search or permanent classification was warranted, and zero DONE bytes are claimed.",
+    "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, the recovered palette caller, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used."
+  ]
+}

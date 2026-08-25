@@ -4,12 +4,12 @@
   "source_edition": "en",
   "base_edition": "ja",
   "source_state": "byte-exact C",
-  "owners_total": 1400,
-  "owner_symbol_bytes": 108780,
-  "matched_owners": 1359,
-  "matched_bytes": 105430,
-  "shared_core_owners": 1326,
-  "shared_core_bytes": 99660,
+  "owners_total": 1401,
+  "owner_symbol_bytes": 108918,
+  "matched_owners": 1360,
+  "matched_bytes": 105568,
+  "shared_core_owners": 1327,
+  "shared_core_bytes": 99798,
   "regional_core_owners": 33,
   "regional_core_bytes": 5770,
   "unresolved_owners": 41,
@@ -23,55 +23,55 @@
   "editions": [
     {
       "edition": "ja",
-      "matched_owners": 1359,
-      "matched_bytes": 105430,
-      "core_identical_owners": 1359,
-      "core_identical_bytes": 105430,
+      "matched_owners": 1360,
+      "matched_bytes": 105568,
+      "core_identical_owners": 1360,
+      "core_identical_bytes": 105568,
       "core_different_owners": 0,
       "core_different_bytes": 0
     },
     {
       "edition": "en",
-      "matched_owners": 1359,
-      "matched_bytes": 105430,
-      "core_identical_owners": 1331,
-      "core_identical_bytes": 100616,
+      "matched_owners": 1360,
+      "matched_bytes": 105568,
+      "core_identical_owners": 1332,
+      "core_identical_bytes": 100754,
       "core_different_owners": 28,
       "core_different_bytes": 4814
     },
     {
       "edition": "de",
-      "matched_owners": 1359,
-      "matched_bytes": 105430,
-      "core_identical_owners": 1327,
-      "core_identical_bytes": 99808,
+      "matched_owners": 1360,
+      "matched_bytes": 105568,
+      "core_identical_owners": 1328,
+      "core_identical_bytes": 99946,
       "core_different_owners": 32,
       "core_different_bytes": 5622
     },
     {
       "edition": "es",
-      "matched_owners": 1359,
-      "matched_bytes": 105430,
-      "core_identical_owners": 1329,
-      "core_identical_bytes": 100228,
+      "matched_owners": 1360,
+      "matched_bytes": 105568,
+      "core_identical_owners": 1330,
+      "core_identical_bytes": 100366,
       "core_different_owners": 30,
       "core_different_bytes": 5202
     },
     {
       "edition": "fr",
-      "matched_owners": 1359,
-      "matched_bytes": 105430,
-      "core_identical_owners": 1327,
-      "core_identical_bytes": 99808,
+      "matched_owners": 1360,
+      "matched_bytes": 105568,
+      "core_identical_owners": 1328,
+      "core_identical_bytes": 99946,
       "core_different_owners": 32,
       "core_different_bytes": 5622
     },
     {
       "edition": "it",
-      "matched_owners": 1359,
-      "matched_bytes": 105430,
-      "core_identical_owners": 1328,
-      "core_identical_bytes": 100080,
+      "matched_owners": 1360,
+      "matched_bytes": 105568,
+      "core_identical_owners": 1329,
+      "core_identical_bytes": 100218,
       "core_different_owners": 31,
       "core_different_bytes": 5350
     }
@@ -13951,6 +13951,17 @@
         "es": "0x080d9e60",
         "fr": "0x080d9e60",
         "ja": "0x080cd660"
+      },
+      "location_methods": "asaaaa"
+    },
+    {
+      "en_owner": "main:080d6750",
+      "size": 138,
+      "start_overrides": {
+        "de": "0x080d8550",
+        "es": "0x080d9f50",
+        "fr": "0x080d9f50",
+        "ja": "0x080cd750"
       },
       "location_methods": "asaaaa"
     },

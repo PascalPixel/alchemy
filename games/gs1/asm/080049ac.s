@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global Render_ResetTransformState
 	.global Func_080049ac
 	.thumb_func
+Render_ResetTransformState:
 Func_080049ac:
 	push	{r5, lr}
 	movs	r1, #48

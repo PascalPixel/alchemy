@@ -564,16 +564,16 @@ This section is generated. It is the primary contributor target list:
 non-overlapping audited source-owner scopes (or contiguous unresolved
 executable runs), sorted largest to smallest. Regenerate with `make coverage` -- do not edit by hand.
 
-- **Unfinished scopes:** 1,643
+- **Unfinished scopes:** 1,638
 - **Address spaces scanned:** 97 (86 still contain targets)
-- **Target bytes:** 652,440 tracked-C or unresolved-assembly bytes
-- **Resolved-only bytes:** 535,474 Exact C or audited permanent assembly bytes
+- **Target bytes:** 651,760 tracked-C or unresolved-assembly bytes
+- **Resolved-only bytes:** 536,498 Exact C or audited permanent assembly bytes
 - **Executable bytes accounted for:** 1,348,458
 
 ### Main target list
 
 This table contains every scope of at least 1,000 bytes (195 rows). The complete
-1,643-row index, including the smallest audited owners, is
+1,638-row index, including the smallest audited owners, is
 [`games/gs1/metrics/gs1-en-core-targets.json`](games/gs1/metrics/gs1-en-core-targets.json).
 
 | Rank | Scope | Target | Namespace / owner |
@@ -627,7 +627,7 @@ This table contains every scope of at least 1,000 bytes (195 rows). The complete
 | 47 | 3,074 | 3,074 | `resource_383:0x02000b48` |
 | 48 | 3,068 | 1,300 | `main:0x080ece7c` |
 | 49 | 2,946 | 2,426 | `main:0x080167e0` |
-| 50 | 2,918 | 824 | `main:0x080b6148` |
+| 50 | 2,918 | 696 | `main:0x080b6148` |
 | 51 | 2,908 | 2,908 | `resource_381:0x020003cc` |
 | 52 | 2,854 | 2,854 | `resource_374:0x0200155c` |
 | 53 | 2,778 | 904 | `main:0x08020bd8` |

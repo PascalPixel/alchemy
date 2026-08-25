@@ -1,6 +1,4 @@
-use candidate_compiler::verify::{
-    compile_to_assembly, CandidateCompilerConfiguration, CandidateCompilerFamily,
-};
+use candidate_compiler::verify::{compile_to_assembly, CandidateCompilerConfiguration, CandidateCompilerFamily};
 use compiler_core::routing::CompilerTarget;
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use objdiff_core::{
@@ -354,31 +352,18 @@ pub fn run(args: &[String]) -> Result<(), String> {
     }
     let owner_address = owner_address(owner)?;
     let object_path = resolve_object(owner, options.object.as_deref(), &options.object_dir)?;
-    let report = analyze_owner(
-        owner,
-        owner_address,
-        &object_path,
-        &roms,
-        options.calls,
-        None,
-    )?;
+    let report = analyze_owner(owner, owner_address, &object_path, &roms, options.calls, None)?;
     let edition_build = options
         .edition_build
         .as_deref()
         .map(|path| write_edition_build(path, owner, &object_path, &report, &roms))
         .transpose()?;
     if options.json {
-        println!(
-            "{}",
-            serde_json::to_string_pretty(&report)
-                .map_err(|error| format!("serialize report: {error}"))?
-        );
+        println!("{}", serde_json::to_string_pretty(&report).map_err(|error| format!("serialize report: {error}"))?);
     } else {
         print_report(&report, options.calls);
     }
-    let all_exact = edition_build
-        .as_ref()
-        .map_or(report.core_identical, |build| build.all_exact);
+    let all_exact = edition_build.as_ref().map_or(report.core_identical, |build| build.all_exact);
     if all_exact {
         Ok(())
     } else {
@@ -394,8 +379,7 @@ fn analyze_owner(
     calls: bool,
     hints: Option<&BTreeMap<&str, usize>>,
 ) -> Result<Report, String> {
-    let (size, symbol_address, _, relocation_mask, relocations) =
-        relocation_mask(object_path, owner)?;
+    let (size, symbol_address, _, relocation_mask, relocations) = relocation_mask(object_path, owner)?;
     let literals = literal_sites(object_path, symbol_address, size)?;
     let mut mask = relocation_mask.clone();
     for literal in &literals {
@@ -403,26 +387,15 @@ fn analyze_owner(
     }
     let en_rom = &roms.images["en"];
     let en_offset = rom_offset(owner_address, en_rom.len())?;
-    let en_owner = en_rom
-        .get(en_offset..en_offset + size)
-        .ok_or("EN owner extends past ROM")?;
+    let en_owner = en_rom.get(en_offset..en_offset + size).ok_or("EN owner extends past ROM")?;
 
     let anchors = anchors(en_owner, &mask);
     if anchors.is_empty() && hints.is_none() {
-        return Err(
-            "owner has no relocation-free anchor long enough to locate counterparts".into(),
-        );
+        return Err("owner has no relocation-free anchor long enough to locate counterparts".into());
     }
 
     let mut found = BTreeMap::new();
-    found.insert(
-        "en",
-        FoundEdition {
-            start: en_offset,
-            bytes: en_owner.to_vec(),
-            anchor_matches: anchors.len(),
-        },
-    );
+    found.insert("en", FoundEdition { start: en_offset, bytes: en_owner.to_vec(), anchor_matches: anchors.len() });
     for edition in EDITIONS.into_iter().filter(|edition| *edition != "en") {
         let rom = &roms.images[edition];
         let located = if anchors.is_empty() {
@@ -435,19 +408,11 @@ fn analyze_owner(
                 hints
                     .and_then(|values| values.get(edition).copied())
                     .ok_or(global_error)
-                    .and_then(|predicted| {
-                        locate_near_exact(en_owner, &mask, rom, predicted, 0x1000, ROM_BASE)
-                    })
+                    .and_then(|predicted| locate_near_exact(en_owner, &mask, rom, predicted, 0x1000, ROM_BASE))
             })
             .map_err(|error| format!("{edition}: {error}"))?;
-        found.insert(
-            edition,
-            FoundEdition {
-                start,
-                bytes: rom[start..start + size].to_vec(),
-                anchor_matches: support,
-            },
-        );
+        found
+            .insert(edition, FoundEdition { start, bytes: rom[start..start + size].to_vec(), anchor_matches: support });
     }
 
     let ja = found.get("ja").ok_or("JA counterpart was not located")?;
@@ -463,20 +428,10 @@ fn analyze_owner(
         .into_iter()
         .map(|edition| {
             let entry = &found[edition];
-            edition_report(
-                edition,
-                entry.start,
-                &entry.bytes,
-                &context,
-                entry.anchor_matches,
-            )
+            edition_report(edition, entry.start, &entry.bytes, &context, entry.anchor_matches)
         })
         .collect::<Vec<_>>();
-    let call_targets = if calls {
-        call_targets(&relocations, &found)?
-    } else {
-        Vec::new()
-    };
+    let call_targets = if calls { call_targets(&relocations, &found)? } else { Vec::new() };
     let mut relocation_kinds = BTreeMap::new();
     for relocation in &relocations {
         *relocation_kinds.entry(relocation.kind.clone()).or_default() += 1;
@@ -523,8 +478,7 @@ fn write_edition_build(
 }
 
 fn source_uses_edition_variant(source: &Path) -> Result<bool, String> {
-    let text =
-        fs::read_to_string(source).map_err(|error| format!("{}: {error}", source.display()))?;
+    let text = fs::read_to_string(source).map_err(|error| format!("{}: {error}", source.display()))?;
     Ok(source_text_uses_edition_variant(&text))
 }
 
@@ -533,49 +487,23 @@ fn source_text_uses_edition_variant(text: &str) -> bool {
 }
 
 fn compile_edition_object(owner: &str, edition: &str, source: &Path) -> Result<PathBuf, String> {
-    let output = PathBuf::from("out")
-        .join("cross-edition")
-        .join(owner)
-        .join("compiled")
-        .join(edition);
+    let output = PathBuf::from("out").join("cross-edition").join(owner).join("compiled").join(edition);
     fs::create_dir_all(&output).map_err(|error| format!("{}: {error}", output.display()))?;
     let wrapper = output.join("source.c");
-    let source =
-        fs::canonicalize(source).map_err(|error| format!("{}: {error}", source.display()))?;
-    let include = source
-        .to_string_lossy()
-        .replace('\\', "\\\\")
-        .replace('"', "\\\"");
-    fs::write(
-        &wrapper,
-        format!(
-            "#define GS1_EDITION_{} 1\n#include \"{}\"\n",
-            edition.to_ascii_uppercase(),
-            include
-        ),
-    )
-    .map_err(|error| format!("{}: {error}", wrapper.display()))?;
+    let source = fs::canonicalize(source).map_err(|error| format!("{}: {error}", source.display()))?;
+    let include = source.to_string_lossy().replace('\\', "\\\\").replace('"', "\\\"");
+    fs::write(&wrapper, format!("#define GS1_EDITION_{} 1\n#include \"{}\"\n", edition.to_ascii_uppercase(), include))
+        .map_err(|error| format!("{}: {error}", wrapper.display()))?;
 
     let wrapper_text = wrapper.to_string_lossy().into_owned();
-    let owner_address = u32::from_str_radix(owner, 16)
-        .map_err(|error| format!("invalid main owner {owner}: {error}"))?;
-    let routing_text = SourceOwner::Main(owner_address)
-        .routing_path()
-        .to_string_lossy()
-        .into_owned();
+    let owner_address =
+        u32::from_str_radix(owner, 16).map_err(|error| format!("invalid main owner {owner}: {error}"))?;
+    let routing_text = SourceOwner::Main(owner_address).routing_path().to_string_lossy().into_owned();
     let output_text = output.to_string_lossy().into_owned();
-    let configuration = CandidateCompilerConfiguration {
-        family: Some(CandidateCompilerFamily::Routed),
-        ..Default::default()
-    };
-    let assembly = compile_to_assembly(
-        &wrapper_text,
-        &routing_text,
-        &output_text,
-        &[],
-        CompilerTarget::Gs1,
-        &configuration,
-    )?;
+    let configuration =
+        CandidateCompilerConfiguration { family: Some(CandidateCompilerFamily::Routed), ..Default::default() };
+    let assembly =
+        compile_to_assembly(&wrapper_text, &routing_text, &output_text, &[], CompilerTarget::Gs1, &configuration)?;
     let object = output.join("owner.o");
     run_tool(
         Command::new("arm-none-eabi-as")
@@ -593,28 +521,17 @@ fn edition_build_report(
     report: &Report,
     roms: &EditionRoms,
 ) -> Result<EditionBuildReport, String> {
-    let (size, symbol_offset, owner_bytes, owner_mask, relocations) =
-        relocation_mask(object_path, owner)?;
+    let (size, symbol_offset, owner_bytes, owner_mask, relocations) = relocation_mask(object_path, owner)?;
     if size != report.size {
-        return Err(format!(
-            "edition build object size {size} differs from located owner size {}",
-            report.size
-        ));
+        return Err(format!("edition build object size {size} differs from located owner size {}", report.size));
     }
     let owner_symbol = format!("Func_{owner}");
-    let output_root = PathBuf::from("out")
-        .join("cross-edition")
-        .join(owner)
-        .join("linked");
-    fs::create_dir_all(&output_root)
-        .map_err(|error| format!("{}: {error}", output_root.display()))?;
+    let output_root = PathBuf::from("out").join("cross-edition").join(owner).join("linked");
+    fs::create_dir_all(&output_root).map_err(|error| format!("{}: {error}", output_root.display()))?;
     let source_paths = SourcePaths::load(compiler_core::routing::root())?;
     let source_owner = SourceOwner::parse(&format!("main:{owner}"))?;
     let source_path = source_paths.source_path(source_owner);
-    let source_report_path = source_paths
-        .repository_relative_path(source_owner)
-        .to_string_lossy()
-        .replace('\\', "/");
+    let source_report_path = source_paths.repository_relative_path(source_owner).to_string_lossy().replace('\\', "/");
     let edition_variant = source_uses_edition_variant(&source_path)?;
 
     let mut editions = Vec::with_capacity(EDITIONS.len());
@@ -625,56 +542,38 @@ fn edition_build_report(
         } else {
             object_path.to_path_buf()
         };
-        let (variant_size, variant_symbol_offset, variant_bytes, variant_mask, variant_relocations) =
-            if edition_variant {
-                relocation_mask(&variant_object, owner)?
-            } else {
-                (
-                    size,
-                    symbol_offset,
-                    owner_bytes.clone(),
-                    owner_mask.clone(),
-                    relocations.clone(),
-                )
-            };
+        let (variant_size, variant_symbol_offset, variant_bytes, variant_mask, variant_relocations) = if edition_variant
+        {
+            relocation_mask(&variant_object, owner)?
+        } else {
+            (size, symbol_offset, owner_bytes.clone(), owner_mask.clone(), relocations.clone())
+        };
         let start = if edition_variant && edition != "en" {
-            locate_near_exact(
-                &variant_bytes,
-                &variant_mask,
-                &roms.images[edition],
-                reported_start,
-                0x1000,
-                ROM_BASE,
-            )
-            .map(|(start, _)| start)
-            .unwrap_or(reported_start)
+            locate_near_exact(&variant_bytes, &variant_mask, &roms.images[edition], reported_start, 0x1000, ROM_BASE)
+                .map(|(start, _)| start)
+                .unwrap_or(reported_start)
         } else {
             reported_start
         };
         let reference = roms.images[edition]
             .get(start..start + variant_size)
             .ok_or_else(|| format!("{edition}: owner extends past ROM"))?;
-        let built =
-            derive_external_symbols(&variant_relocations, reference, start).and_then(|values| {
-                link_owner_for_edition(
-                    &output_root,
-                    edition,
-                    &variant_object,
-                    &owner_symbol,
-                    ROM_BASE + start as u64,
-                    variant_symbol_offset,
-                    variant_size,
-                    &values,
-                )
-                .map(|linked| (values, linked))
-            });
+        let built = derive_external_symbols(&variant_relocations, reference, start).and_then(|values| {
+            link_owner_for_edition(
+                &output_root,
+                edition,
+                &variant_object,
+                &owner_symbol,
+                ROM_BASE + start as u64,
+                variant_symbol_offset,
+                variant_size,
+                &values,
+            )
+            .map(|linked| (values, linked))
+        });
         match built {
             Ok((values, linked)) => {
-                let differing_bytes = reference
-                    .iter()
-                    .zip(&linked)
-                    .filter(|(left, right)| left != right)
-                    .count()
+                let differing_bytes = reference.iter().zip(&linked).filter(|(left, right)| left != right).count()
                     + reference.len().abs_diff(linked.len());
                 editions.push(EditionBuildEntry {
                     edition: edition.into(),
@@ -717,22 +616,15 @@ fn edition_build_report(
 }
 
 fn write_json<T: Serialize>(path: &Path, value: &T, label: &str) -> Result<(), String> {
-    if let Some(parent) = path
-        .parent()
-        .filter(|parent| !parent.as_os_str().is_empty())
-    {
+    if let Some(parent) = path.parent().filter(|parent| !parent.as_os_str().is_empty()) {
         fs::create_dir_all(parent).map_err(|error| format!("{}: {error}", parent.display()))?;
     }
-    let json = serde_json::to_string_pretty(value)
-        .map_err(|error| format!("serialize {label}: {error}"))?
-        + "\n";
+    let json = serde_json::to_string_pretty(value).map_err(|error| format!("serialize {label}: {error}"))? + "\n";
     fs::write(path, json).map_err(|error| format!("{}: {error}", path.display()))?;
     Ok(())
 }
 
-fn compact_corpus_edition_build_owner(
-    owner: EditionBuildReport,
-) -> Result<CorpusEditionBuildOwner, String> {
+fn compact_corpus_edition_build_owner(owner: EditionBuildReport) -> Result<CorpusEditionBuildOwner, String> {
     let en_owner = canonical_main_owner_id(owner.owner_symbol.trim_start_matches("Func_"))?;
     let canonical_start = format!("0x{}", en_owner.trim_start_matches("main:"));
     let mut editions = BTreeSet::new();
@@ -753,10 +645,7 @@ fn compact_corpus_edition_build_owner(
         match (entry.differing_bytes, entry.error) {
             (Some(difference), None) => {
                 if entry.byte_exact != (difference == 0) {
-                    return Err(format!(
-                        "{en_owner}: {} byte_exact disagrees with differing_bytes",
-                        entry.edition
-                    ));
+                    return Err(format!("{en_owner}: {} byte_exact disagrees with differing_bytes", entry.edition));
                 }
                 if difference != 0 {
                     differing_bytes.insert(entry.edition, difference);
@@ -766,25 +655,16 @@ fn compact_corpus_edition_build_owner(
                 errors.insert(entry.edition, error);
             }
             _ => {
-                return Err(format!(
-                    "{en_owner}: {} must have either differing_bytes or an error",
-                    entry.edition
-                ));
+                return Err(format!("{en_owner}: {} must have either differing_bytes or an error", entry.edition));
             }
         }
     }
-    if editions.len() != EDITIONS.len()
-        || EDITIONS
-            .into_iter()
-            .any(|edition| !editions.contains(edition))
-    {
+    if editions.len() != EDITIONS.len() || EDITIONS.into_iter().any(|edition| !editions.contains(edition)) {
         return Err(format!("{en_owner}: edition build set is incomplete"));
     }
     let derived_all_exact = differing_bytes.is_empty() && errors.is_empty();
     if owner.all_exact != derived_all_exact {
-        return Err(format!(
-            "{en_owner}: all_exact disagrees with sparse edition evidence"
-        ));
+        return Err(format!("{en_owner}: all_exact disagrees with sparse edition evidence"));
     }
     Ok(CorpusEditionBuildOwner {
         en_owner,
@@ -812,18 +692,10 @@ fn write_corpus_edition_build(
         let object = object_dir.join(format!("{owner}.o"));
         match edition_build_report(owner, &object, report, roms) {
             Ok(build) => owners.push(build),
-            Err(error) => failures.push(EditionBuildFailure {
-                en_owner: canonical_main_owner_id(owner)?,
-                error,
-            }),
+            Err(error) => failures.push(EditionBuildFailure { en_owner: canonical_main_owner_id(owner)?, error }),
         }
         if (index + 1) % 100 == 0 || index + 1 == reports.len() {
-            eprintln!(
-                "edition builds={}/{} failures={}",
-                owners.len(),
-                index + 1,
-                failures.len()
-            );
+            eprintln!("edition builds={}/{} failures={}", owners.len(), index + 1, failures.len());
         }
     }
 
@@ -866,15 +738,8 @@ fn write_corpus_edition_build(
         })
         .collect::<Vec<_>>();
     let all_exact_owners = owners.iter().filter(|owner| owner.all_exact).count();
-    let all_exact_bytes = owners
-        .iter()
-        .filter(|owner| owner.all_exact)
-        .map(|owner| owner.size)
-        .sum();
-    let owners = owners
-        .into_iter()
-        .map(compact_corpus_edition_build_owner)
-        .collect::<Result<Vec<_>, String>>()?;
+    let all_exact_bytes = owners.iter().filter(|owner| owner.all_exact).map(|owner| owner.size).sum();
+    let owners = owners.into_iter().map(compact_corpus_edition_build_owner).collect::<Result<Vec<_>, String>>()?;
     let build = CorpusEditionBuildReport {
         schema_version: CORPUS_EDITION_BUILD_SCHEMA_VERSION,
         game: "gs1",
@@ -929,17 +794,11 @@ fn derive_external_symbols(
                 value
             }
         } else {
-            return Err(format!(
-                "unsupported external relocation {} for {}",
-                site.kind, site.symbol
-            ));
+            return Err(format!("unsupported external relocation {} for {}", site.kind, site.symbol));
         };
         if let Some(previous) = values.insert(site.symbol.clone(), value) {
             if previous != value {
-                return Err(format!(
-                    "{} resolves inconsistently: 0x{previous:08x} and 0x{value:08x}",
-                    site.symbol
-                ));
+                return Err(format!("{} resolves inconsistently: 0x{previous:08x} and 0x{value:08x}", site.symbol));
             }
         }
     }
@@ -968,17 +827,10 @@ fn link_owner_for_edition(
     let binary = output.join("owner.bin");
     let mut source = String::from(".syntax unified\n.thumb\n");
     for (name, value) in values {
-        let directive = if symbol_is_thumb(name) {
-            ".thumb_set"
-        } else {
-            ".set"
-        };
-        source.push_str(&format!(
-            ".global {name}\n{directive} {name}, 0x{value:08x}\n"
-        ));
+        let directive = if symbol_is_thumb(name) { ".thumb_set" } else { ".set" };
+        source.push_str(&format!(".global {name}\n{directive} {name}, 0x{value:08x}\n"));
     }
-    fs::write(&symbols_source, source)
-        .map_err(|error| format!("{}: {error}", symbols_source.display()))?;
+    fs::write(&symbols_source, source).map_err(|error| format!("{}: {error}", symbols_source.display()))?;
 
     run_tool(
         Command::new("arm-none-eabi-as")
@@ -991,9 +843,7 @@ fn link_owner_for_edition(
         Command::new("arm-none-eabi-ld")
             .arg(format!(
                 "-Ttext=0x{:08x}",
-                start
-                    .checked_sub(symbol_offset)
-                    .ok_or("owner symbol offset exceeds destination address")?
+                start.checked_sub(symbol_offset).ok_or("owner symbol offset exceeds destination address")?
             ))
             .arg("--unresolved-symbols=ignore-all")
             .args(["-e", owner_symbol, "-o"])
@@ -1003,10 +853,7 @@ fn link_owner_for_edition(
         "link edition owner",
     )?;
     run_tool(
-        Command::new("arm-none-eabi-objcopy")
-            .args(["-O", "binary", "-j", ".text"])
-            .arg(&elf)
-            .arg(&binary),
+        Command::new("arm-none-eabi-objcopy").args(["-O", "binary", "-j", ".text"]).arg(&elf).arg(&binary),
         "extract edition owner",
     )?;
     let bytes = fs::read(&binary).map_err(|error| format!("{}: {error}", binary.display()))?;
@@ -1015,22 +862,16 @@ fn link_owner_for_edition(
         .get(offset..offset + size)
         .map(Vec::from)
         .ok_or_else(|| format!("{}: linked owner extends past .text", binary.display()))?;
-    fs::write(output.join("owner.slice.bin"), &owner)
-        .map_err(|error| format!("{}: {error}", output.display()))?;
+    fs::write(output.join("owner.slice.bin"), &owner).map_err(|error| format!("{}: {error}", output.display()))?;
     Ok(owner)
 }
 
 fn run_tool(command: &mut Command, label: &str) -> Result<(), String> {
-    let output = command
-        .output()
-        .map_err(|error| format!("{label}: {error}"))?;
+    let output = command.output().map_err(|error| format!("{label}: {error}"))?;
     if output.status.success() {
         Ok(())
     } else {
-        Err(format!(
-            "{label} failed: {}",
-            String::from_utf8_lossy(&output.stderr).trim()
-        ))
+        Err(format!("{label} failed: {}", String::from_utf8_lossy(&output.stderr).trim()))
     }
 }
 
@@ -1083,18 +924,14 @@ fn parse(args: &[String]) -> Result<Options, String> {
                 span = Some(parsed);
             }
             "-h" | "--help" => return Err(USAGE.into()),
-            value if value.starts_with('-') => {
-                return Err(format!("unknown option: {value}\n{USAGE}"))
-            }
+            value if value.starts_with('-') => return Err(format!("unknown option: {value}\n{USAGE}")),
             value if owner.is_none() => owner = Some(value.to_ascii_lowercase()),
             value => return Err(format!("unexpected argument: {value}\n{USAGE}")),
         }
         index += 1;
     }
     if all && all_overlays {
-        return Err(format!(
-            "--all and --all-overlays are mutually exclusive\n{USAGE}"
-        ));
+        return Err(format!("--all and --all-overlays are mutually exclusive\n{USAGE}"));
     }
     if (all || all_overlays) && span.is_some() {
         return Err(format!("corpus scans do not accept --span\n{USAGE}"));
@@ -1106,14 +943,10 @@ fn parse(args: &[String]) -> Result<Options, String> {
         return Err(format!("--write requires a corpus scan\n{USAGE}"));
     }
     if all_overlays && edition_build.is_some() {
-        return Err(format!(
-            "--edition-build does not yet support overlay corpus scans\n{USAGE}"
-        ));
+        return Err(format!("--edition-build does not yet support overlay corpus scans\n{USAGE}"));
     }
     if (all || all_overlays) && (object.is_some() || calls || json) {
-        return Err(format!(
-            "corpus scans omit single-object options and write JSON directly\n{USAGE}"
-        ));
+        return Err(format!("corpus scans omit single-object options and write JSON directly\n{USAGE}"));
     }
     if !all && !all_overlays {
         let value = owner.as_deref().ok_or(USAGE)?;
@@ -1127,25 +960,11 @@ fn parse(args: &[String]) -> Result<Options, String> {
         } else {
             owner_address(value)?;
             if span.is_some() {
-                return Err(format!(
-                    "--span is only for explicit overlay owners\n{USAGE}"
-                ));
+                return Err(format!("--span is only for explicit overlay owners\n{USAGE}"));
             }
         }
     }
-    Ok(Options {
-        owner,
-        object,
-        object_dir,
-        rom_dir,
-        json,
-        calls,
-        all,
-        all_overlays,
-        write,
-        edition_build,
-        span,
-    })
+    Ok(Options { owner, object, object_dir, rom_dir, json, calls, all, all_overlays, write, edition_build, span })
 }
 
 fn parse_explicit_overlay_owner(value: &str, span: Option<usize>) -> Result<OverlayOwner, String> {
@@ -1155,14 +974,11 @@ fn parse_explicit_overlay_owner(value: &str, span: Option<usize>) -> Result<Over
     };
     let resource = resource as usize;
     if !(OVERLAY_FIRST..=OVERLAY_LAST).contains(&resource) {
-        return Err(format!(
-            "overlay resource {resource:03x} is outside the GS1 code-overlay range"
-        ));
+        return Err(format!("overlay resource {resource:03x} is outside the GS1 code-overlay range"));
     }
     let en_offset = u64::from(address)
         .checked_sub(OVERLAY_BASE)
-        .ok_or_else(|| format!("{value}: address is below the overlay base"))?
-        as usize;
+        .ok_or_else(|| format!("{value}: address is below the overlay base"))? as usize;
     Ok(OverlayOwner {
         name: source.id(),
         resource,
@@ -1173,12 +989,9 @@ fn parse_explicit_overlay_owner(value: &str, span: Option<usize>) -> Result<Over
 
 fn owner_address(owner: &str) -> Result<u64, String> {
     if owner.len() != 8 || !owner.bytes().all(|byte| byte.is_ascii_hexdigit()) {
-        return Err(format!(
-            "owner must be an 8-digit hexadecimal address: {owner}"
-        ));
+        return Err(format!("owner must be an 8-digit hexadecimal address: {owner}"));
     }
-    let address = u64::from_str_radix(owner, 16)
-        .map_err(|error| format!("invalid owner {owner}: {error}"))?;
+    let address = u64::from_str_radix(owner, 16).map_err(|error| format!("invalid owner {owner}: {error}"))?;
     if address < ROM_BASE {
         return Err(format!("owner is below GBA ROM: {owner}"));
     }
@@ -1212,30 +1025,15 @@ fn location_method_code(method: &str) -> Result<char, String> {
     }
 }
 
-fn resolve_object(
-    owner: &str,
-    explicit: Option<&Path>,
-    object_dir: &Path,
-) -> Result<PathBuf, String> {
+fn resolve_object(owner: &str, explicit: Option<&Path>, object_dir: &Path) -> Result<PathBuf, String> {
     if let Some(path) = explicit {
-        return path
-            .is_file()
-            .then(|| path.to_path_buf())
-            .ok_or_else(|| format!("missing object: {}", path.display()));
+        return path.is_file().then(|| path.to_path_buf()).ok_or_else(|| format!("missing object: {}", path.display()));
     }
-    let paths = [
-        object_dir.join(format!("{owner}.o")),
-        PathBuf::from(format!("out/gs1-en/claimed/obj/{owner}.o")),
-    ];
+    let paths = [object_dir.join(format!("{owner}.o")), PathBuf::from(format!("out/gs1-en/claimed/obj/{owner}.o"))];
     paths
         .into_iter()
         .find(|path| path.is_file())
-        .ok_or_else(|| {
-            format!(
-                "missing exact object for {}; run `make build-claimed`",
-                owner
-            )
-        })
+        .ok_or_else(|| format!("missing exact object for {}; run `make build-claimed`", owner))
 }
 
 fn read_roms(directory: &Path) -> Result<EditionRoms, String> {
@@ -1286,12 +1084,7 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
             }
         }
         if (index + 1) % 100 == 0 || index + 1 == owner_names.len() {
-            eprintln!(
-                "global matched={}/{} unresolved={}",
-                reports.len(),
-                index + 1,
-                failures.len()
-            );
+            eprintln!("global matched={}/{} unresolved={}", reports.len(), index + 1, failures.len());
         }
     }
 
@@ -1301,14 +1094,7 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
     for (index, owner) in retry_names.iter().enumerate() {
         let hints = nearest_location_hints(owner_address(owner)?, &location_anchors)?;
         let object = options.object_dir.join(format!("{owner}.o"));
-        match analyze_owner(
-            owner,
-            owner_address(owner)?,
-            &object,
-            roms,
-            false,
-            Some(&hints),
-        ) {
+        match analyze_owner(owner, owner_address(owner)?, &object, roms, false, Some(&hints)) {
             Ok(report) => {
                 reports.insert(owner.clone(), report);
                 failures.remove(owner);
@@ -1318,12 +1104,7 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
             }
         }
         if (index + 1) % 100 == 0 || index + 1 == retry_names.len() {
-            eprintln!(
-                "locality matched={}/{} unresolved={}",
-                reports.len(),
-                owner_names.len(),
-                failures.len()
-            );
+            eprintln!("locality matched={}/{} unresolved={}", reports.len(), owner_names.len(), failures.len());
         }
     }
     remove_order_conflicts(&mut reports, &mut failures, "locality")?;
@@ -1344,10 +1125,7 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
     let mut matched_bytes = 0;
     let mut shared_core_bytes = 0;
     let mut regional_core_bytes = 0;
-    let mut edition_totals = EDITIONS
-        .into_iter()
-        .map(|edition| (edition, [0usize; 6]))
-        .collect::<BTreeMap<_, _>>();
+    let mut edition_totals = EDITIONS.into_iter().map(|edition| (edition, [0usize; 6])).collect::<BTreeMap<_, _>>();
 
     for (owner, report) in reports {
         matched_bytes += report.size;
@@ -1374,9 +1152,7 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
             if edition.core_diff_bytes != 0 {
                 core_diff_bytes_from_ja.insert(edition.edition.clone(), edition.core_diff_bytes);
             }
-            let totals = edition_totals
-                .get_mut(edition.edition.as_str())
-                .expect("known edition");
+            let totals = edition_totals.get_mut(edition.edition.as_str()).expect("known edition");
             totals[0] += 1;
             totals[1] += report.size;
             if edition.core_identical {
@@ -1398,12 +1174,7 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
 
     let unresolved = failures
         .into_iter()
-        .map(|(owner, error)| {
-            Ok(UnresolvedOwner {
-                en_owner: canonical_main_owner_id(&owner)?,
-                error,
-            })
-        })
+        .map(|(owner, error)| Ok(UnresolvedOwner { en_owner: canonical_main_owner_id(&owner)?, error }))
         .collect::<Result<Vec<_>, String>>()?;
 
     let editions = EDITIONS
@@ -1431,15 +1202,9 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
         owner_symbol_bytes,
         matched_owners: owners.len(),
         matched_bytes,
-        shared_core_owners: owners
-            .iter()
-            .filter(|owner| owner.core_diff_bytes_from_ja.is_empty())
-            .count(),
+        shared_core_owners: owners.iter().filter(|owner| owner.core_diff_bytes_from_ja.is_empty()).count(),
         shared_core_bytes,
-        regional_core_owners: owners
-            .iter()
-            .filter(|owner| !owner.core_diff_bytes_from_ja.is_empty())
-            .count(),
+        regional_core_owners: owners.iter().filter(|owner| !owner.core_diff_bytes_from_ja.is_empty()).count(),
         regional_core_bytes,
         unresolved_owners: unresolved.len(),
         location_method_codes: location_method_codes(),
@@ -1447,14 +1212,10 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
         owners,
         unresolved,
     };
-    let json = serde_json::to_string_pretty(&report)
-        .map_err(|error| format!("serialize corpus report: {error}"))?
-        + "\n";
+    let json =
+        serde_json::to_string_pretty(&report).map_err(|error| format!("serialize corpus report: {error}"))? + "\n";
     if let Some(path) = &options.write {
-        if let Some(parent) = path
-            .parent()
-            .filter(|parent| !parent.as_os_str().is_empty())
-        {
+        if let Some(parent) = path.parent().filter(|parent| !parent.as_os_str().is_empty()) {
             fs::create_dir_all(parent).map_err(|error| format!("{}: {error}", parent.display()))?;
         }
         fs::write(path, json).map_err(|error| format!("{}: {error}", path.display()))?;
@@ -1489,22 +1250,14 @@ fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String>
             }
         }
         if (index + 1) % 200 == 0 || index + 1 == owner_list.len() {
-            eprintln!(
-                "overlay global matched={}/{} unresolved={}",
-                matches.len(),
-                index + 1,
-                failures.len()
-            );
+            eprintln!("overlay global matched={}/{} unresolved={}", matches.len(), index + 1, failures.len());
         }
     }
 
     remove_overlay_order_conflicts(&mut matches, &mut failures, "global")?;
     let global_hints = overlay_location_anchors(&matches);
     let retry = failures.keys().cloned().collect::<Vec<_>>();
-    let by_name = owner_list
-        .iter()
-        .map(|owner| (owner.name.as_str(), owner))
-        .collect::<BTreeMap<_, _>>();
+    let by_name = owner_list.iter().map(|owner| (owner.name.as_str(), owner)).collect::<BTreeMap<_, _>>();
     for (index, name) in retry.iter().enumerate() {
         let owner = by_name[name.as_str()];
         let hints = match nearest_overlay_hints(owner, &global_hints) {
@@ -1524,32 +1277,18 @@ fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String>
             }
         }
         if (index + 1) % 200 == 0 || index + 1 == retry.len() {
-            eprintln!(
-                "overlay locality matched={}/{} unresolved={}",
-                matches.len(),
-                owner_list.len(),
-                failures.len()
-            );
+            eprintln!("overlay locality matched={}/{} unresolved={}", matches.len(), owner_list.len(), failures.len());
         }
     }
     remove_overlay_order_conflicts(&mut matches, &mut failures, "locality")?;
 
     let mut owners = Vec::new();
-    let mut edition_totals = EDITIONS
-        .into_iter()
-        .map(|edition| (edition, [0usize; 6]))
-        .collect::<BTreeMap<_, _>>();
+    let mut edition_totals = EDITIONS.into_iter().map(|edition| (edition, [0usize; 6])).collect::<BTreeMap<_, _>>();
     let mut shared_core_bytes = 0;
     let mut regional_core_bytes = 0;
     for found in matches.into_values() {
         let ja_start = found.starts["ja"];
-        let ja = overlay_window(
-            &decoded,
-            "ja",
-            found.owner.resource,
-            ja_start,
-            found.owner.size,
-        )?;
+        let ja = overlay_window(&decoded, "ja", found.owner.resource, ja_start, found.owner.size)?;
         let canonical_start = format!("0x{:08x}", OVERLAY_BASE + found.owner.en_offset as u64);
         let mut start_overrides = BTreeMap::new();
         let mut methods = String::with_capacity(EDITIONS.len());
@@ -1557,13 +1296,7 @@ fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String>
         let mut shared = true;
         for edition in EDITIONS {
             let start = found.starts[edition];
-            let other = overlay_window(
-                &decoded,
-                edition,
-                found.owner.resource,
-                start,
-                found.owner.size,
-            )?;
+            let other = overlay_window(&decoded, edition, found.owner.resource, start, found.owner.size)?;
             let difference = core_diff_bytes(ja, other, &found.mask);
             shared &= difference == 0;
             let start = format!("0x{:08x}", OVERLAY_BASE + start as u64);
@@ -1604,13 +1337,11 @@ fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String>
     let unresolved = owner_list
         .iter()
         .filter_map(|owner| {
-            failures
-                .get(&owner.name)
-                .map(|error| OverlayUnresolvedOwner {
-                    en_owner: owner.name.clone(),
-                    size: owner.size,
-                    error: error.clone(),
-                })
+            failures.get(&owner.name).map(|error| OverlayUnresolvedOwner {
+                en_owner: owner.name.clone(),
+                size: owner.size,
+                error: error.clone(),
+            })
         })
         .collect::<Vec<_>>();
     let editions = EDITIONS
@@ -1639,15 +1370,9 @@ fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String>
         owner_symbol_bytes: owner_list.iter().map(|owner| owner.size).sum(),
         matched_owners: owners.len(),
         matched_bytes: owners.iter().map(|owner| owner.size).sum(),
-        shared_core_owners: owners
-            .iter()
-            .filter(|owner| owner.core_diff_bytes_from_ja.is_empty())
-            .count(),
+        shared_core_owners: owners.iter().filter(|owner| owner.core_diff_bytes_from_ja.is_empty()).count(),
         shared_core_bytes,
-        regional_core_owners: owners
-            .iter()
-            .filter(|owner| !owner.core_diff_bytes_from_ja.is_empty())
-            .count(),
+        regional_core_owners: owners.iter().filter(|owner| !owner.core_diff_bytes_from_ja.is_empty()).count(),
         regional_core_bytes,
         unresolved_owners: unresolved.len(),
         resource_tables,
@@ -1660,10 +1385,7 @@ fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String>
         .map_err(|error| format!("serialize overlay corpus report: {error}"))?
         + "\n";
     if let Some(path) = &options.write {
-        if let Some(parent) = path
-            .parent()
-            .filter(|parent| !parent.as_os_str().is_empty())
-        {
+        if let Some(parent) = path.parent().filter(|parent| !parent.as_os_str().is_empty()) {
             fs::create_dir_all(parent).map_err(|error| format!("{}: {error}", parent.display()))?;
         }
         fs::write(path, json).map_err(|error| format!("{}: {error}", path.display()))?;
@@ -1783,17 +1505,9 @@ fn exact_overlay_owners() -> Result<Vec<OverlayOwner>, String> {
             }
         }
         if size == 0 {
-            return Err(format!(
-                "{}: exact placeholder has no span",
-                source.owner.id()
-            ));
+            return Err(format!("{}: exact placeholder has no span", source.owner.id()));
         }
-        owners.push(OverlayOwner {
-            name: source.owner.id(),
-            resource,
-            en_offset,
-            size,
-        });
+        owners.push(OverlayOwner { name: source.owner.id(), resource, en_offset, size });
     }
     owners.sort_by_key(|owner| (owner.resource, owner.en_offset));
     if owners.is_empty() {
@@ -1811,25 +1525,18 @@ fn parse_usize(value: &str) -> Result<usize, String> {
 
 type DecodedOverlays = BTreeMap<&'static str, BTreeMap<usize, Vec<u8>>>;
 
-fn decode_overlay_resources(
-    roms: &EditionRoms,
-) -> Result<(BTreeMap<String, String>, DecodedOverlays), String> {
+fn decode_overlay_resources(roms: &EditionRoms) -> Result<(BTreeMap<String, String>, DecodedOverlays), String> {
     let mut tables = BTreeMap::new();
     let mut decoded = BTreeMap::new();
     for edition in EDITIONS {
         let rom = &roms.images[edition];
         let table = resource_table(rom)?;
-        tables.insert(
-            edition.to_string(),
-            format!("0x{:08x}", ROM_BASE + table as u64),
-        );
+        tables.insert(edition.to_string(), format!("0x{:08x}", ROM_BASE + table as u64));
         let mut resources = BTreeMap::new();
         for resource in OVERLAY_FIRST..=OVERLAY_LAST {
             let start = resource_pointer(rom, table, resource)?;
             let next = resource_pointer(rom, table, resource + 1).ok();
-            let end = next
-                .filter(|next| *next > start && *next <= rom.len())
-                .unwrap_or(rom.len());
+            let end = next.filter(|next| *next > start && *next <= rom.len()).unwrap_or(rom.len());
             let (bytes, _) = match rom[start] {
                 0 => extract_resource::decode_general(rom, start, end, 0x10_0000),
                 1 => extract_resource::decode_palette(rom, start + 1, end, 0x10_0000),
@@ -1855,15 +1562,10 @@ fn resource_table(rom: &[u8]) -> Result<usize, String> {
 }
 
 fn resource_pointer(rom: &[u8], table: usize, resource: usize) -> Result<usize, String> {
-    let at = table
-        .checked_add(resource * 4)
-        .ok_or("resource directory offset overflow")?;
-    let address = u32::from_le_bytes(
-        rom.get(at..at + 4)
-            .ok_or("resource directory extends past ROM")?
-            .try_into()
-            .unwrap(),
-    ) as u64;
+    let at = table.checked_add(resource * 4).ok_or("resource directory offset overflow")?;
+    let address =
+        u32::from_le_bytes(rom.get(at..at + 4).ok_or("resource directory extends past ROM")?.try_into().unwrap())
+            as u64;
     rom_offset(address, rom.len())
 }
 
@@ -1915,15 +1617,9 @@ fn analyze_overlay_owner(
     let mask = overlay_mask(en, owner.en_offset);
     let core_bytes = mask.iter().filter(|masked| !**masked).count();
     if core_bytes < 4 {
-        let raw_identical = EDITIONS.into_iter().all(|edition| {
-            overlay_window(
-                decoded,
-                edition,
-                owner.resource,
-                owner.en_offset,
-                owner.size,
-            ) == Ok(en)
-        });
+        let raw_identical = EDITIONS
+            .into_iter()
+            .all(|edition| overlay_window(decoded, edition, owner.resource, owner.en_offset, owner.size) == Ok(en));
         if raw_identical {
             return Ok(OverlayMatch {
                 owner: OverlayOwner {
@@ -1933,28 +1629,14 @@ fn analyze_overlay_owner(
                     size: owner.size,
                 },
                 mask,
-                starts: EDITIONS
-                    .into_iter()
-                    .map(|edition| (edition, owner.en_offset))
-                    .collect(),
+                starts: EDITIONS.into_iter().map(|edition| (edition, owner.en_offset)).collect(),
                 methods: EDITIONS
                     .into_iter()
-                    .map(|edition| {
-                        (
-                            edition,
-                            if edition == "en" {
-                                "source"
-                            } else {
-                                "resource_offset_exact"
-                            },
-                        )
-                    })
+                    .map(|edition| (edition, if edition == "en" { "source" } else { "resource_offset_exact" }))
                     .collect(),
             });
         }
-        return Err(format!(
-            "only {core_bytes} bytes remain after masking Thumb calls and literal fields"
-        ));
+        return Err(format!("only {core_bytes} bytes remain after masking Thumb calls and literal fields"));
     }
     let owner_anchors = anchors(en, &mask);
     let mut starts = BTreeMap::new();
@@ -1978,9 +1660,8 @@ fn analyze_overlay_owner(
                     .and_then(|values| values.get(edition).copied())
                     .ok_or(global_error)
                     .map_err(|error| format!("{edition}: {error}"))?;
-                let (start, _) =
-                    locate_near_exact(en, &mask, container, predicted, 0x1000, OVERLAY_BASE)
-                        .map_err(|error| format!("{edition}: {error}"))?;
+                let (start, _) = locate_near_exact(en, &mask, container, predicted, 0x1000, OVERLAY_BASE)
+                    .map_err(|error| format!("{edition}: {error}"))?;
                 (start, "neighbor_exact")
             }
         };
@@ -2006,9 +1687,7 @@ struct OverlayLocationAnchor {
     starts: BTreeMap<&'static str, usize>,
 }
 
-fn overlay_location_anchors(
-    matches: &BTreeMap<String, OverlayMatch>,
-) -> Vec<OverlayLocationAnchor> {
+fn overlay_location_anchors(matches: &BTreeMap<String, OverlayMatch>) -> Vec<OverlayLocationAnchor> {
     matches
         .values()
         .map(|found| OverlayLocationAnchor {
@@ -2030,8 +1709,7 @@ fn nearest_overlay_hints(
         .ok_or_else(|| format!("resource_{:03x}: no global anchors", owner.resource))?;
     let mut hints = BTreeMap::new();
     for edition in EDITIONS.into_iter().filter(|edition| *edition != "en") {
-        let predicted =
-            anchor.starts[edition] as i128 + owner.en_offset as i128 - anchor.en_offset as i128;
+        let predicted = anchor.starts[edition] as i128 + owner.en_offset as i128 - anchor.en_offset as i128;
         if predicted >= 0 {
             hints.insert(edition, predicted as usize);
         }
@@ -2072,16 +1750,10 @@ fn remove_overlay_order_conflicts(
         };
         let left_error = overlay_prediction_error(&left, edition, matches, [&left, &right]);
         let right_error = overlay_prediction_error(&right, edition, matches, [&left, &right]);
-        let rejected = if right_error >= left_error {
-            right
-        } else {
-            left
-        };
+        let rejected = if right_error >= left_error { right } else { left };
         matches.remove(&rejected);
-        failures.insert(
-            rejected,
-            format!("{edition}: {phase} counterpart conflicts with neighboring proved owner order"),
-        );
+        failures
+            .insert(rejected, format!("{edition}: {phase} counterpart conflicts with neighboring proved owner order"));
     }
 }
 
@@ -2101,8 +1773,7 @@ fn overlay_prediction_error(
     let Some((_, neighbor)) = neighbor else {
         return usize::MAX;
     };
-    let predicted = neighbor.starts[edition] as i128 + found.owner.en_offset as i128
-        - neighbor.owner.en_offset as i128;
+    let predicted = neighbor.starts[edition] as i128 + found.owner.en_offset as i128 - neighbor.owner.en_offset as i128;
     found.starts[edition].abs_diff(predicted.max(0) as usize)
 }
 
@@ -2119,10 +1790,7 @@ fn location_anchors(reports: &BTreeMap<String, Report>) -> Result<Vec<LocationAn
                     .ok_or_else(|| format!("{} lacks {edition} location", report.owner))?;
                 starts.insert(edition, parse_rom_address(&value.start)?);
             }
-            Ok(LocationAnchor {
-                en_offset: rom_offset(owner_address(&report.owner)?, usize::MAX)?,
-                starts,
-            })
+            Ok(LocationAnchor { en_offset: rom_offset(owner_address(&report.owner)?, usize::MAX)?, starts })
         })
         .collect()
 }
@@ -2155,16 +1823,10 @@ fn remove_order_conflicts(
         };
         let left_error = location_prediction_error(&left, edition, reports, [&left, &right])?;
         let right_error = location_prediction_error(&right, edition, reports, [&left, &right])?;
-        let rejected = if right_error >= left_error {
-            right
-        } else {
-            left
-        };
+        let rejected = if right_error >= left_error { right } else { left };
         reports.remove(&rejected);
-        failures.insert(
-            rejected,
-            format!("{edition}: {phase} counterpart conflicts with neighboring proved owner order"),
-        );
+        failures
+            .insert(rejected, format!("{edition}: {phase} counterpart conflicts with neighboring proved owner order"));
     }
 }
 
@@ -2227,48 +1889,26 @@ fn parse_rom_address(value: &str) -> Result<usize, String> {
     rom_offset(address, usize::MAX)
 }
 
-fn relocation_mask(
-    path: &Path,
-    owner: &str,
-) -> Result<(usize, u64, Vec<u8>, Vec<bool>, Vec<RelocationSite>), String> {
-    let config = DiffObjConfig {
-        arm_arch_version: ArmArchVersion::V4t,
-        ..Default::default()
-    };
-    let object = obj::read::read(path, &config, DiffSide::Base)
-        .map_err(|error| format!("{}: {error}", path.display()))?;
+fn relocation_mask(path: &Path, owner: &str) -> Result<(usize, u64, Vec<u8>, Vec<bool>, Vec<RelocationSite>), String> {
+    let config = DiffObjConfig { arm_arch_version: ArmArchVersion::V4t, ..Default::default() };
+    let object =
+        obj::read::read(path, &config, DiffSide::Base).map_err(|error| format!("{}: {error}", path.display()))?;
     let legacy_symbol = format!("Func_{owner}");
     let source_owner = SourceOwner::parse(&format!("main:{owner}"))?;
     let source_paths = SourcePaths::load(compiler_core::routing::root())?;
     let registered_symbol = source_paths.registered_name(source_owner);
     let (symbol_name, symbol_index) = registered_symbol
         .and_then(|name| object.symbol_by_name(name).map(|index| (name, index)))
-        .or_else(|| {
-            object
-                .symbol_by_name(&legacy_symbol)
-                .map(|index| (legacy_symbol.as_str(), index))
-        })
+        .or_else(|| object.symbol_by_name(&legacy_symbol).map(|index| (legacy_symbol.as_str(), index)))
         .ok_or_else(|| {
-            format!(
-                "{}: missing owner symbol {}",
-                path.display(),
-                registered_symbol.unwrap_or(&legacy_symbol)
-            )
+            format!("{}: missing owner symbol {}", path.display(), registered_symbol.unwrap_or(&legacy_symbol))
         })?;
     let symbol = &object.symbols[symbol_index];
     let section = &object.sections[symbol.section.ok_or("owner symbol has no section")?];
-    let section_offset = symbol
-        .address
-        .checked_sub(section.address)
-        .ok_or("owner symbol precedes its section")?;
-    let section_offset =
-        usize::try_from(section_offset).map_err(|_| "owner section offset is too large")?;
+    let section_offset = symbol.address.checked_sub(section.address).ok_or("owner symbol precedes its section")?;
+    let section_offset = usize::try_from(section_offset).map_err(|_| "owner section offset is too large")?;
     let size = if symbol.size == 0 {
-        section
-            .data
-            .len()
-            .checked_sub(section_offset)
-            .ok_or("owner symbol extends past its section")?
+        section.data.len().checked_sub(section_offset).ok_or("owner symbol extends past its section")?
     } else {
         usize::try_from(symbol.size).map_err(|_| "owner is too large")?
     };
@@ -2291,10 +1931,7 @@ fn relocation_mask(
         }
         let relocation_size = object.arch.data_reloc_size(relocation.flags);
         let start = usize::try_from(offset).map_err(|_| "relocation offset is too large")?;
-        let end = start
-            .checked_add(relocation_size)
-            .ok_or("relocation range overflow")?
-            .min(mask.len());
+        let end = start.checked_add(relocation_size).ok_or("relocation range overflow")?.min(mask.len());
         mask[start..end].fill(true);
         let kind = object
             .arch
@@ -2302,9 +1939,7 @@ fn relocation_mask(
             .map(str::to_string)
             .unwrap_or_else(|| format!("{:?}", relocation.flags));
         let target = object.symbols.get(relocation.target_symbol);
-        let symbol = target
-            .map(|symbol| symbol.name.clone())
-            .unwrap_or_else(|| "<missing>".into());
+        let symbol = target.map(|symbol| symbol.name.clone()).unwrap_or_else(|| "<missing>".into());
         sites.push(RelocationSite {
             offset: start,
             size: end - start,
@@ -2317,27 +1952,16 @@ fn relocation_mask(
     Ok((size, symbol.address, bytes, mask, sites))
 }
 
-fn literal_sites(
-    path: &Path,
-    symbol_address: u64,
-    size: usize,
-) -> Result<Vec<LiteralSite>, String> {
+fn literal_sites(path: &Path, symbol_address: u64, size: usize) -> Result<Vec<LiteralSite>, String> {
     let output = Command::new("arm-none-eabi-objdump")
         .args(["-dr"])
         .arg(path)
         .output()
         .map_err(|error| format!("arm-none-eabi-objdump: {error}"))?;
     if !output.status.success() {
-        return Err(format!(
-            "arm-none-eabi-objdump failed: {}",
-            String::from_utf8_lossy(&output.stderr).trim()
-        ));
+        return Err(format!("arm-none-eabi-objdump failed: {}", String::from_utf8_lossy(&output.stderr).trim()));
     }
-    Ok(parse_literal_sites(
-        &String::from_utf8_lossy(&output.stdout),
-        symbol_address,
-        size,
-    ))
+    Ok(parse_literal_sites(&String::from_utf8_lossy(&output.stdout), symbol_address, size))
 }
 
 fn parse_literal_sites(output: &str, symbol_address: u64, size: usize) -> Vec<LiteralSite> {
@@ -2363,10 +1987,7 @@ fn parse_literal_sites(output: &str, symbol_address: u64, size: usize) -> Vec<Li
             continue;
         };
         if offset + field_size <= size {
-            sites.push(LiteralSite {
-                offset,
-                size: field_size,
-            });
+            sites.push(LiteralSite { offset, size: field_size });
         }
     }
     sites.sort_by_key(|site| site.offset);
@@ -2379,13 +2000,9 @@ fn read_rom(path: &Path) -> Result<Vec<u8>, String> {
 }
 
 fn rom_offset(address: u64, rom_len: usize) -> Result<usize, String> {
-    let offset = address
-        .checked_sub(ROM_BASE)
-        .ok_or("address is below ROM")?;
+    let offset = address.checked_sub(ROM_BASE).ok_or("address is below ROM")?;
     let offset = usize::try_from(offset).map_err(|_| "address is too large")?;
-    (offset < rom_len)
-        .then_some(offset)
-        .ok_or_else(|| format!("address 0x{address:08x} is outside ROM"))
+    (offset < rom_len).then_some(offset).ok_or_else(|| format!("address 0x{address:08x} is outside ROM"))
 }
 
 #[derive(Clone, Copy)]
@@ -2413,19 +2030,11 @@ fn anchors(owner: &[u8], mask: &[bool]) -> Vec<Anchor> {
     runs.sort_by(|left, right| right.cmp(left));
     runs.into_iter()
         .take(16)
-        .map(|(size, offset)| Anchor {
-            offset,
-            size: size.min(32).min(owner.len() - offset),
-        })
+        .map(|(size, offset)| Anchor { offset, size: size.min(32).min(owner.len() - offset) })
         .collect()
 }
 
-fn locate(
-    owner: &[u8],
-    mask: &[bool],
-    anchors: &[Anchor],
-    rom: &[u8],
-) -> Result<(usize, usize), String> {
+fn locate(owner: &[u8], mask: &[bool], anchors: &[Anchor], rom: &[u8]) -> Result<(usize, usize), String> {
     let mut support = BTreeMap::<usize, usize>::new();
     for anchor in anchors {
         let needle = &owner[anchor.offset..anchor.offset + anchor.size];
@@ -2462,13 +2071,8 @@ fn locate(
     let Some(&(best_diff, _, best_start, best_support)) = scored.first() else {
         return Err("no relocation-free anchor found in ROM".into());
     };
-    if scored
-        .get(1)
-        .is_some_and(|next| next.0 == best_diff && next.1 == scored[0].1)
-    {
-        return Err(format!(
-            "ambiguous counterpart with {best_diff} core byte differences"
-        ));
+    if scored.get(1).is_some_and(|next| next.0 == best_diff && next.1 == scored[0].1) {
+        return Err(format!("ambiguous counterpart with {best_diff} core byte differences"));
     }
     Ok((best_start, best_support))
 }
@@ -2485,10 +2089,7 @@ fn locate_near_exact(
         return Err("owner is larger than ROM".into());
     }
     let first = predicted.saturating_sub(radius) & !1;
-    let last = predicted
-        .saturating_add(radius)
-        .min(rom.len().saturating_sub(owner.len()))
-        & !1;
+    let last = predicted.saturating_add(radius).min(rom.len().saturating_sub(owner.len())) & !1;
     let mut exact = (first..=last)
         .step_by(2)
         .filter(|start| core_diff_bytes(owner, &rom[*start..*start + owner.len()], mask) == 0)
@@ -2502,10 +2103,7 @@ fn locate_near_exact(
         ));
     };
     if exact.get(1).is_some_and(|next| next.0 == distance) {
-        return Err(format!(
-            "ambiguous exact core near predicted 0x{:08x}",
-            address_base + predicted as u64
-        ));
+        return Err(format!("ambiguous exact core near predicted 0x{:08x}", address_base + predicted as u64));
     }
     Ok((start, 0))
 }
@@ -2530,16 +2128,9 @@ fn edition_report(
     anchor_matches: usize,
 ) -> EditionReport {
     let base = context.base;
-    let raw_diff_bytes = base
-        .iter()
-        .zip(other)
-        .filter(|(left, right)| left != right)
-        .count();
-    let raw_diff_halfwords = base
-        .chunks_exact(2)
-        .zip(other.chunks_exact(2))
-        .filter(|(left, right)| left != right)
-        .count();
+    let raw_diff_bytes = base.iter().zip(other).filter(|(left, right)| left != right).count();
+    let raw_diff_halfwords =
+        base.chunks_exact(2).zip(other.chunks_exact(2)).filter(|(left, right)| left != right).count();
     let relocation_diff_bytes = base
         .iter()
         .zip(other)
@@ -2561,10 +2152,7 @@ fn edition_report(
     let changed = context
         .relocations
         .iter()
-        .filter(|site| {
-            base[site.offset..site.offset + site.size]
-                != other[site.offset..site.offset + site.size]
-        })
+        .filter(|site| base[site.offset..site.offset + site.size] != other[site.offset..site.offset + site.size])
         .collect::<Vec<_>>();
     EditionReport {
         edition: edition.into(),
@@ -2578,16 +2166,10 @@ fn edition_report(
         literal_fields_changed: context
             .literals
             .iter()
-            .filter(|site| {
-                base[site.offset..site.offset + site.size]
-                    != other[site.offset..site.offset + site.size]
-            })
+            .filter(|site| base[site.offset..site.offset + site.size] != other[site.offset..site.offset + site.size])
             .count(),
         call_fields_changed: changed.iter().filter(|site| is_thumb_call(site)).count(),
-        absolute_fields_changed: changed
-            .iter()
-            .filter(|site| site.kind == "R_ARM_ABS32")
-            .count(),
+        absolute_fields_changed: changed.iter().filter(|site| site.kind == "R_ARM_ABS32").count(),
         core_diff_bytes,
         anchor_matches,
         core_identical: core_diff_bytes == 0,
@@ -2622,29 +2204,17 @@ fn call_targets(
                 targets.sort_unstable();
                 targets.dedup();
                 if targets.len() != 1 {
-                    return Err(format!(
-                        "{edition}: {symbol} resolves to {} call targets",
-                        targets.len()
-                    ));
+                    return Err(format!("{edition}: {symbol} resolves to {} call targets", targets.len()));
                 }
-                editions.push(TargetAddress {
-                    edition: edition.into(),
-                    address: format!("0x{:08x}", targets[0]),
-                });
+                editions.push(TargetAddress { edition: edition.into(), address: format!("0x{:08x}", targets[0]) });
             }
-            Ok(CallTarget {
-                en_symbol: symbol.into(),
-                sites: offsets.len(),
-                editions,
-            })
+            Ok(CallTarget { en_symbol: symbol.into(), sites: offsets.len(), editions })
         })
         .collect()
 }
 
 fn thumb_bl_target(owner: &[u8], start: usize, offset: usize) -> Result<u64, String> {
-    let bytes = owner
-        .get(offset..offset + 4)
-        .ok_or_else(|| format!("call at 0x{offset:x} extends past owner"))?;
+    let bytes = owner.get(offset..offset + 4).ok_or_else(|| format!("call at 0x{offset:x} extends past owner"))?;
     let high = u16::from_le_bytes([bytes[0], bytes[1]]);
     let low = u16::from_le_bytes([bytes[2], bytes[3]]);
     if high & 0xf800 != 0xf000 || low & 0xf800 != 0xf800 {
@@ -2659,11 +2229,7 @@ fn thumb_bl_target(owner: &[u8], start: usize, offset: usize) -> Result<u64, Str
 }
 
 fn core_diff_bytes(left: &[u8], right: &[u8], mask: &[bool]) -> usize {
-    left.iter()
-        .zip(right)
-        .zip(mask)
-        .filter(|((left, right), relocated)| !**relocated && left != right)
-        .count()
+    left.iter().zip(right).zip(mask).filter(|((left, right), relocated)| !**relocated && left != right).count()
 }
 
 fn print_report(report: &Report, calls: bool) {
@@ -2711,10 +2277,7 @@ fn print_report(report: &Report, calls: bool) {
                 .map(|target| format!("{}={}", target.edition, target.address))
                 .collect::<Vec<_>>()
                 .join(" ");
-            println!(
-                "callee={} sites={} {}",
-                call.en_symbol, call.sites, addresses
-            );
+            println!("callee={} sites={} {}", call.en_symbol, call.sites, addresses);
         }
     }
 }
@@ -2725,21 +2288,15 @@ mod tests {
 
     #[test]
     fn accepts_corpus_edition_build_output() {
-        let options = parse(&[
-            "--all".into(),
-            "--edition-build".into(),
-            "out/builds.json".into(),
-        ])
-        .expect("corpus edition build options");
+        let options = parse(&["--all".into(), "--edition-build".into(), "out/builds.json".into()])
+            .expect("corpus edition build options");
         assert!(options.all);
         assert_eq!(options.edition_build, Some("out/builds.json".into()));
     }
 
     #[test]
     fn detects_explicit_edition_variant_sources() {
-        assert!(source_text_uses_edition_variant(
-            "#include \"types.h\"\n#include \"gs1_edition.h\"\n"
-        ));
+        assert!(source_text_uses_edition_variant("#include \"types.h\"\n#include \"gs1_edition.h\"\n"));
         assert!(!source_text_uses_edition_variant("#include \"types.h\"\n"));
     }
 
@@ -2784,10 +2341,7 @@ mod tests {
         let mut rom = vec![0xff; 128];
         rom[24..36].copy_from_slice(&owner);
         rom[88..100].copy_from_slice(&owner);
-        assert_eq!(
-            locate_near_exact(&owner, &mask, &rom, 80, 32, ROM_BASE),
-            Ok((88, 0))
-        );
+        assert_eq!(locate_near_exact(&owner, &mask, &rom, 80, 32, ROM_BASE), Ok((88, 0)));
     }
 
     #[test]
@@ -2797,9 +2351,7 @@ mod tests {
         let mut rom = vec![0xff; 128];
         rom[24..36].copy_from_slice(&owner);
         rom[56..68].copy_from_slice(&owner);
-        assert!(locate_near_exact(&owner, &mask, &rom, 40, 32, ROM_BASE)
-            .unwrap_err()
-            .contains("ambiguous"));
+        assert!(locate_near_exact(&owner, &mask, &rom, 40, 32, ROM_BASE).unwrap_err().contains("ambiguous"));
     }
 
     #[test]
@@ -2824,8 +2376,7 @@ mod tests {
 
     #[test]
     fn parses_explicit_unresolved_overlay_owner_with_span() {
-        let owner = parse_explicit_overlay_owner("resource_392:02000bcc", Some(64))
-            .expect("explicit overlay owner");
+        let owner = parse_explicit_overlay_owner("resource_392:02000bcc", Some(64)).expect("explicit overlay owner");
         assert_eq!(owner.resource, 0x392);
         assert_eq!(owner.en_offset, 0xbcc);
         assert_eq!(owner.size, 64);
@@ -2857,14 +2408,8 @@ mod tests {
             }
             decoded.insert(edition, [(resource, image)].into_iter().collect());
         }
-        let owner = OverlayOwner {
-            name: "resource_392:02000010".into(),
-            resource,
-            en_offset: 16,
-            size: bytes.len(),
-        };
-        let found =
-            analyze_overlay_owner(&owner, &decoded, None).expect("masked owner correspondence");
+        let owner = OverlayOwner { name: "resource_392:02000010".into(), resource, en_offset: 16, size: bytes.len() };
+        let found = analyze_overlay_owner(&owner, &decoded, None).expect("masked owner correspondence");
         assert_eq!(found.starts["en"], 16);
         for edition in EDITIONS.into_iter().filter(|edition| *edition != "en") {
             assert_eq!(found.starts[edition], 24);
@@ -2890,27 +2435,15 @@ mod tests {
         };
         assert_identity(&owner, "main:08002ee4");
         let compact = serde_json::to_value(owner).expect("serialize compact owner");
-        for derived in [
-            "status",
-            "starts",
-            "start_overrides",
-            "core_diff_bytes_from_ja",
-        ] {
+        for derived in ["status", "starts", "start_overrides", "core_diff_bytes_from_ja"] {
             assert!(compact.get(derived).is_none(), "unexpected {derived}");
         }
         assert_eq!(compact["location_methods"], "asaaaa");
         assert_identity(
-            &UnresolvedOwner {
-                en_owner: SourceOwner::Main(0x0800_2ee4).id(),
-                error: "unresolved".into(),
-            },
+            &UnresolvedOwner { en_owner: SourceOwner::Main(0x0800_2ee4).id(), error: "unresolved".into() },
             "main:08002ee4",
         );
-        let overlay_owner = SourceOwner::Overlay {
-            resource: 0x36f,
-            address: 0x0200_0030,
-        }
-        .id();
+        let overlay_owner = SourceOwner::Overlay { resource: 0x36f, address: 0x0200_0030 }.id();
         assert_identity(
             &OverlayCorpusOwner {
                 en_owner: overlay_owner.clone(),
@@ -2923,18 +2456,11 @@ mod tests {
             "resource_36f:02000030",
         );
         assert_identity(
-            &OverlayUnresolvedOwner {
-                en_owner: overlay_owner,
-                size: 4,
-                error: "unresolved".into(),
-            },
+            &OverlayUnresolvedOwner { en_owner: overlay_owner, size: 4, error: "unresolved".into() },
             "resource_36f:02000030",
         );
         assert_identity(
-            &EditionBuildFailure {
-                en_owner: SourceOwner::Main(0x0800_2ee4).id(),
-                error: "unbuildable".into(),
-            },
+            &EditionBuildFailure { en_owner: SourceOwner::Main(0x0800_2ee4).id(), error: "unbuildable".into() },
             "main:08002ee4",
         );
         assert_eq!(CORRESPONDENCE_SCHEMA_VERSION, 3);
@@ -2959,11 +2485,7 @@ mod tests {
             .into_iter()
             .map(|edition| EditionBuildEntry {
                 edition: edition.into(),
-                start: if edition == "en" {
-                    "0x08002ee4".into()
-                } else {
-                    "0x08002ef0".into()
-                },
+                start: if edition == "en" { "0x08002ee4".into() } else { "0x08002ef0".into() },
                 size: if edition == "ja" { 8 } else { 4 },
                 external_symbols: BTreeMap::new(),
                 differing_bytes: (edition != "de").then_some(if edition == "es" { 2 } else { 0 }),
@@ -2986,10 +2508,7 @@ mod tests {
         .expect("compact corpus row");
         let value = serde_json::to_value(row).expect("serialize compact corpus row");
         assert_eq!(value["en_owner"], "main:08002ee4");
-        assert_eq!(
-            value["start_overrides"].as_object().map(|map| map.len()),
-            Some(5)
-        );
+        assert_eq!(value["start_overrides"].as_object().map(|map| map.len()), Some(5));
         assert!(value["start_overrides"].get("en").is_none());
         assert_eq!(value["size_overrides"]["ja"], 8);
         assert_eq!(value["differing_bytes"]["es"], 2);

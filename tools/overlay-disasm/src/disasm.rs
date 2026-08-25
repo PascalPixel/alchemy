@@ -8,7 +8,8 @@ use tempfile::tempdir;
 pub const ROM_BASE: i64 = 0x0800_0000;
 pub const OVERLAY_BASE: i64 = 0x0200_0000;
 const ROW: &str = r"\s*([0-9a-f]+):\t((?:[0-9a-f]{2,4} )+)\s*(\S.*)";
-const TARGET: &str = r"\b(b|bl|beq|bne|bcs|bcc|bmi|bpl|bvs|bvc|bhi|bls|bge|blt|bgt|ble|bhs|blo)(\.[nw])?\s+0x([0-9a-f]+)\b";
+const TARGET: &str =
+    r"\b(b|bl|beq|bne|bcs|bcc|bmi|bpl|bvs|bvc|bhi|bls|bge|blt|bgt|ble|bhs|blo)(\.[nw])?\s+0x([0-9a-f]+)\b";
 const ERRLINE: &str = r":(\d+): Error:";
 type Row = (i64, String);
 fn objdump_rows(data: &[u8], base: i64) -> Result<BTreeMap<i64, Row>, String> {
@@ -17,14 +18,7 @@ fn objdump_rows(data: &[u8], base: i64) -> Result<BTreeMap<i64, Row>, String> {
     fs::write(&binary, data).map_err(|error| error.to_string())?;
     let stdout = spawn_raw(
         &{
-            let mut command = strings(&[
-                "arm-none-eabi-objdump",
-                "-D",
-                "-b",
-                "binary",
-                "-marmv4t",
-                "-Mforce-thumb",
-            ]);
+            let mut command = strings(&["arm-none-eabi-objdump", "-D", "-b", "binary", "-marmv4t", "-Mforce-thumb"]);
             command.push(format!("--adjust-vma=0x{}", hex(base, 8)));
             command.push(binary.to_string_lossy().to_string());
             command
@@ -97,8 +91,7 @@ fn reachable(input: &[u8], base: i64) -> BTreeMap<i64, i64> {
                 let low = read_u16(pc + 2 - base);
                 if low & 0xf800 == 0xf800 {
                     size = 4;
-                    let displacement =
-                        sign_extend(((half & 0x7ff) << 12) | ((low & 0x7ff) << 1), 23);
+                    let displacement = sign_extend(((half & 0x7ff) << 12) | ((low & 0x7ff) << 1), 23);
                     let target = pc + 4 + displacement;
                     if inside(target, 2) {
                         queue.push(target);
@@ -142,8 +135,8 @@ pub fn call_via_bank_base(image: &[u8], base: i64) -> Option<i64> {
         let mut matched = true;
         let mut slot = 0i64;
         while slot < 4 && matched {
-            matched = halfword(offset + slot * 4) == (0x4700 | (slot << 3))
-                && halfword(offset + slot * 4 + 2) == 0x46c0;
+            matched =
+                halfword(offset + slot * 4) == (0x4700 | (slot << 3)) && halfword(offset + slot * 4 + 2) == 0x46c0;
             slot += 1;
         }
         if matched {
@@ -218,9 +211,7 @@ pub fn build_overlay_source(input: &[u8], base: i64) -> Result<String, String> {
                 && instructions.get(&(target - 2)).copied() != Some(4)
                 && rows.get(&(target - 2)).is_none_or(|row| row.0 != 4)
             {
-                labels
-                    .entry(target)
-                    .or_insert_with(|| format!(".L_{}", hex(target, 8)));
+                labels.entry(target).or_insert_with(|| format!(".L_{}", hex(target, 8)));
             }
         }
     }
@@ -247,18 +238,15 @@ pub fn build_overlay_source(input: &[u8], base: i64) -> Result<String, String> {
                 body.push((cursor, "label", format!("{local}:")));
             }
             let row = rows.get(&cursor);
-            let whole_row_covered =
-                row.is_some_and(|row| (0..row.0).all(|byte| covered.contains(&(cursor + byte))));
+            let whole_row_covered = row.is_some_and(|row| (0..row.0).all(|byte| covered.contains(&(cursor + byte))));
             if !raw.contains(&cursor) && instructions.contains_key(&cursor) && whole_row_covered {
                 let row = row.expect("checked above");
                 let mnemonic = &row.1;
                 let retargeted = match target_pattern.exec(mnemonic) {
                     None => mnemonic.clone(),
                     Some(found) => {
-                        let target = crate::compile::js_parse_int_hex(
-                            found.group(mnemonic, 3).expect("group 3"),
-                        )
-                        .ok_or_else(|| format!("branch target is not hex: {mnemonic}"))?;
+                        let target = crate::compile::js_parse_int_hex(found.group(mnemonic, 3).expect("group 3"))
+                            .ok_or_else(|| format!("branch target is not hex: {mnemonic}"))?;
                         let replacement = match labels.get(&target) {
                             Some(local) => local.clone(),
                             None => {
@@ -267,9 +255,9 @@ pub fn build_overlay_source(input: &[u8], base: i64) -> Result<String, String> {
                                 symbol
                             }
                         };
-                        let cut = mnemonic.rfind("0x").ok_or_else(|| {
-                            format!("branch mnemonic matched but has no 0x: {mnemonic}")
-                        })?;
+                        let cut = mnemonic
+                            .rfind("0x")
+                            .ok_or_else(|| format!("branch mnemonic matched but has no 0x: {mnemonic}"))?;
                         format!("{}{replacement}", &mnemonic[..cut])
                     }
                 };
@@ -283,18 +271,10 @@ pub fn build_overlay_source(input: &[u8], base: i64) -> Result<String, String> {
                 && !labels.contains_key(&(cursor + 2))
                 && !instructions.contains_key(&(cursor + 4));
             if aligned {
-                body.push((
-                    cursor,
-                    "data",
-                    format!("\t.4byte 0x{}", hex(read_u32(cursor - base), 8)),
-                ));
+                body.push((cursor, "data", format!("\t.4byte 0x{}", hex(read_u32(cursor - base), 8))));
                 cursor += 4;
             } else {
-                body.push((
-                    cursor,
-                    "data",
-                    format!("\t.2byte 0x{}", hex(read_u16(cursor - base), 4)),
-                ));
+                body.push((cursor, "data", format!("\t.2byte 0x{}", hex(read_u16(cursor - base), 4))));
                 cursor += 2;
             }
         }
@@ -319,8 +299,7 @@ pub fn build_overlay_source(input: &[u8], base: i64) -> Result<String, String> {
                     .parse()
                     .map_err(|parse: std::num::ParseIntError| parse.to_string())?;
                 let index = reported - head.len() as i64 - 1;
-                if index < 0 || index >= body.len() as i64 || raw.contains(&body[index as usize].0)
-                {
+                if index < 0 || index >= body.len() as i64 || raw.contains(&body[index as usize].0) {
                     return Err(format!("cannot reconstruct near line {reported}"));
                 }
                 raw.insert(body[index as usize].0);
@@ -331,9 +310,7 @@ pub fn build_overlay_source(input: &[u8], base: i64) -> Result<String, String> {
             return Ok(text);
         }
         let mut difference = 0usize;
-        while difference < built.len().min(decoded.len())
-            && built[difference] == decoded[difference]
-        {
+        while difference < built.len().min(decoded.len()) && built[difference] == decoded[difference] {
             difference += 1;
         }
         let owner = base + difference as i64;

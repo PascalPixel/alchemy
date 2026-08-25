@@ -11,9 +11,9 @@
   "wrong_instructions": 0,
   "classification": "battle_effect_compiler_scheduling_mismatch",
   "resolved_asm_classification": {
-    "kind": "compiler_output",
-    "retention": "c_candidate",
-    "confidence": "likely"
+    "kind": "battle_effect_compiler_scheduling_mismatch",
+    "retention": "keep_structured_asm",
+    "confidence": "proven"
   },
   "cross_edition": {
     "editions": ["ja", "en", "de", "es", "fr", "it"],

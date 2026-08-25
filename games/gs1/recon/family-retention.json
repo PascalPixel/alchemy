@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "families": [
+    {
+      "id": "battle-effect-compiler-scheduling",
+      "classification": "battle_effect_compiler_scheduling_mismatch",
+      "exact_templates": [
+        "main:08095a44",
+        "main:0809641c",
+        "main:0809b11c"
+      ],
+      "members": [
+        "main:0809b208",
+        "main:08095c08",
+        "main:08095dd0"
+      ],
+      "minimum_attempted_candidates_per_member": 30000,
+      "maximum_mismatch_run_rows": 8
+    }
+  ]
+}

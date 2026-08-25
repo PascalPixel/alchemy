@@ -19,9 +19,7 @@ fn run(args: &[String]) -> Result<(), String> {
     if let [command, source] = args {
         if command == "build-stdout" {
             let bytes = build_byte_henkan_tables(Path::new(source))?;
-            std::io::stdout()
-                .write_all(&bytes)
-                .map_err(|error| error.to_string())?;
+            std::io::stdout().write_all(&bytes).map_err(|error| error.to_string())?;
             return Ok(());
         }
     }

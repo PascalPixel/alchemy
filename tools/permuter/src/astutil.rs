@@ -33,9 +33,7 @@ pub fn n<T>(t: T) -> Node<T> {
 // ---------------------------------------------------------- constructors
 
 pub fn id_expr(name: &str) -> Expression {
-    Expression::Identifier(Box::new(n(Identifier {
-        name: name.to_string(),
-    })))
+    Expression::Identifier(Box::new(n(Identifier { name: name.to_string() })))
 }
 
 pub fn int_expr(number: &str) -> Expression {
@@ -46,11 +44,7 @@ pub fn int_expr_full(number: &str, base: IntegerBase, unsigned: bool) -> Express
     Expression::Constant(Box::new(n(Constant::Integer(Integer {
         base,
         number: number.into(),
-        suffix: IntegerSuffix {
-            size: IntegerSize::Int,
-            unsigned,
-            imaginary: false,
-        },
+        suffix: IntegerSuffix { size: IntegerSize::Int, unsigned, imaginary: false },
     }))))
 }
 
@@ -58,14 +52,7 @@ pub fn float_expr(number: &str, single: bool) -> Expression {
     Expression::Constant(Box::new(n(Constant::Float(Float {
         base: FloatBase::Decimal,
         number: number.into(),
-        suffix: FloatSuffix {
-            format: if single {
-                FloatFormat::Float
-            } else {
-                FloatFormat::Double
-            },
-            imaginary: false,
-        },
+        suffix: FloatSuffix { format: if single { FloatFormat::Float } else { FloatFormat::Double }, imaginary: false },
     }))))
 }
 
@@ -78,16 +65,11 @@ pub fn binop(op: BinaryOperator, lhs: Expression, rhs: Expression) -> Expression
 }
 
 pub fn unary(op: UnaryOperator, operand: Expression) -> Expression {
-    Expression::UnaryOperator(Box::new(n(UnaryOperatorExpression {
-        operator: n(op),
-        operand: Box::new(n(operand)),
-    })))
+    Expression::UnaryOperator(Box::new(n(UnaryOperatorExpression { operator: n(op), operand: Box::new(n(operand)) })))
 }
 
 pub fn expr_stmt(e: Expression) -> Node<BlockItem> {
-    n(BlockItem::Statement(n(Statement::Expression(Some(
-        Box::new(n(e)),
-    )))))
+    n(BlockItem::Statement(n(Statement::Expression(Some(Box::new(n(e)))))))
 }
 
 pub fn empty_compound() -> Node<Statement> {
@@ -175,10 +157,7 @@ pub fn for_each_expr(e: &Expression, f: &mut dyn FnMut(&Expression)) {
 // lvalue). The mutable callback returns true when it replaced the node,
 // which stops descent into it.
 
-pub fn walk_stmt_exprs(
-    stmt: &mut Node<Statement>,
-    f: &mut dyn FnMut(&mut Node<Expression>, bool) -> bool,
-) {
+pub fn walk_stmt_exprs(stmt: &mut Node<Statement>, f: &mut dyn FnMut(&mut Node<Expression>, bool) -> bool) {
     match &mut stmt.node {
         Statement::Labeled(l) => walk_stmt_exprs(&mut l.node.statement, f),
         Statement::Compound(items) => {
@@ -226,10 +205,7 @@ pub fn walk_stmt_exprs(
     }
 }
 
-fn walk_block_item_exprs(
-    item: &mut Node<BlockItem>,
-    f: &mut dyn FnMut(&mut Node<Expression>, bool) -> bool,
-) {
+fn walk_block_item_exprs(item: &mut Node<BlockItem>, f: &mut dyn FnMut(&mut Node<Expression>, bool) -> bool) {
     match &mut item.node {
         BlockItem::Declaration(d) => walk_decl_exprs(d, f),
         BlockItem::Statement(s) => walk_stmt_exprs(s, f),
@@ -237,10 +213,7 @@ fn walk_block_item_exprs(
     }
 }
 
-fn walk_decl_exprs(
-    d: &mut Node<Declaration>,
-    f: &mut dyn FnMut(&mut Node<Expression>, bool) -> bool,
-) {
+fn walk_decl_exprs(d: &mut Node<Declaration>, f: &mut dyn FnMut(&mut Node<Expression>, bool) -> bool) {
     for init in d.node.declarators.iter_mut() {
         if let Some(i) = &mut init.node.initializer {
             if let Initializer::Expression(e) = &mut i.node {
@@ -388,12 +361,7 @@ fn scan_decl(d: &Node<Declaration>, f: &mut dyn FnMut(&Node<Expression>, bool)) 
     }
 }
 
-fn scan_expr(
-    e: &Node<Expression>,
-    toplevel: bool,
-    lvalue: bool,
-    f: &mut dyn FnMut(&Node<Expression>, bool),
-) {
+fn scan_expr(e: &Node<Expression>, toplevel: bool, lvalue: bool, f: &mut dyn FnMut(&Node<Expression>, bool)) {
     let is_expr = !toplevel && !lvalue;
     f(e, is_expr);
     match &e.node {
@@ -622,12 +590,7 @@ pub fn with_block<R>(
     }
 }
 
-pub fn insert_block_item(
-    root: &mut Node<Statement>,
-    block: Nid,
-    index: usize,
-    item: Node<BlockItem>,
-) -> bool {
+pub fn insert_block_item(root: &mut Node<Statement>, block: Nid, index: usize, item: Node<BlockItem>) -> bool {
     let mut item = Some(item);
     with_block(root, block, &mut |items| {
         let at = index.min(items.len());
@@ -677,11 +640,7 @@ fn stmt_info(item: &Node<BlockItem>) -> StmtInfo {
                 .declarators
                 .iter()
                 .filter_map(|i| {
-                    crate::asttypes::apply_declarator(
-                        crate::asttypes::CType::int(),
-                        &i.node.declarator.node,
-                    )
-                    .1
+                    crate::asttypes::apply_declarator(crate::asttypes::CType::int(), &i.node.declarator.node).1
                 })
                 .collect();
             let single = if d.node.declarators.len() == 1 && names.len() == 1 {
@@ -737,12 +696,7 @@ fn rec_points(block: &Node<Statement>, out: &mut Vec<InsPoint>) {
     let mut last: Option<StmtInfo> = None;
     for (i, item) in items.iter().enumerate() {
         let info = stmt_info(item);
-        out.push(InsPoint {
-            block: block_id,
-            index: i,
-            before: last.clone(),
-            after: Some(info.clone()),
-        });
+        out.push(InsPoint { block: block_id, index: i, before: last.clone(), after: Some(info.clone()) });
         if let BlockItem::Statement(s) = &item.node {
             for nb in nested_blocks(s) {
                 rec_points(nb, out);
@@ -750,12 +704,7 @@ fn rec_points(block: &Node<Statement>, out: &mut Vec<InsPoint>) {
         }
         last = Some(info);
     }
-    out.push(InsPoint {
-        block: block_id,
-        index: items.len(),
-        before: last,
-        after: None,
-    });
+    out.push(InsPoint { block: block_id, index: items.len(), before: last, after: None });
 }
 
 // ------------------------------------------------- reads / writes / decls
@@ -763,9 +712,7 @@ fn rec_points(block: &Node<Statement>, out: &mut Vec<InsPoint>) {
 /// Port of `compute_write_locations`: declaration sites, `++`/`--` on plain
 /// identifiers, and assignments whose lvalue is a plain identifier, keyed by
 /// span start (monotone in traversal order).
-pub fn compute_write_locations(
-    fdef: &FunctionDefinition,
-) -> std::collections::BTreeMap<String, Vec<usize>> {
+pub fn compute_write_locations(fdef: &FunctionDefinition) -> std::collections::BTreeMap<String, Vec<usize>> {
     let mut writes: std::collections::BTreeMap<String, Vec<usize>> = Default::default();
     let mut add = |name: &str, loc: usize| {
         writes.entry(name.to_string()).or_default().push(loc);
@@ -775,9 +722,7 @@ pub fn compute_write_locations(
         if let DerivedDeclarator::Function(fd) = &der.node {
             for p in &fd.node.parameters {
                 if let Some(d) = &p.node.declarator {
-                    if let (_, Some(name)) =
-                        crate::asttypes::apply_declarator(crate::asttypes::CType::int(), &d.node)
-                    {
+                    if let (_, Some(name)) = crate::asttypes::apply_declarator(crate::asttypes::CType::int(), &d.node) {
                         add(&name, p.span.start);
                     }
                 }
@@ -796,10 +741,9 @@ fn collect_writes(stmt: &Node<Statement>, add: &mut dyn FnMut(&str, usize)) {
     // Declarations.
     fn decl_writes(d: &Node<Declaration>, add: &mut dyn FnMut(&str, usize)) {
         for init in &d.node.declarators {
-            if let (_, Some(name)) = crate::asttypes::apply_declarator(
-                crate::asttypes::CType::int(),
-                &init.node.declarator.node,
-            ) {
+            if let (_, Some(name)) =
+                crate::asttypes::apply_declarator(crate::asttypes::CType::int(), &init.node.declarator.node)
+            {
                 add(&name, d.span.start);
             }
             if let Some(i) = &init.node.initializer {
@@ -1038,9 +982,7 @@ fn reads_expr(e: &Node<Expression>, out: &mut Vec<(String, usize)>) {
     }
 }
 
-pub fn compute_read_locations(
-    fdef: &FunctionDefinition,
-) -> std::collections::BTreeMap<String, Vec<usize>> {
+pub fn compute_read_locations(fdef: &FunctionDefinition) -> std::collections::BTreeMap<String, Vec<usize>> {
     let mut reads: std::collections::BTreeMap<String, Vec<usize>> = Default::default();
     for (name, loc) in find_var_reads(fdef) {
         reads.entry(name).or_default().push(loc);
@@ -1069,9 +1011,7 @@ pub fn make_decl(name: &str, t: &crate::asttypes::CType) -> Option<Node<Declarat
     match cur {
         CType::Basic { names, volatile } => {
             if *volatile {
-                specifiers.push(n(DeclarationSpecifier::TypeQualifier(n(
-                    TypeQualifier::Volatile,
-                ))));
+                specifiers.push(n(DeclarationSpecifier::TypeQualifier(n(TypeQualifier::Volatile))));
             }
             for name in names {
                 let ts = match name.as_str() {
@@ -1084,42 +1024,29 @@ pub fn make_decl(name: &str, t: &crate::asttypes::CType) -> Option<Node<Declarat
                     "double" => TypeSpecifier::Double,
                     "signed" => TypeSpecifier::Signed,
                     "unsigned" => TypeSpecifier::Unsigned,
-                    other => TypeSpecifier::TypedefName(n(Identifier {
-                        name: other.to_string(),
-                    })),
+                    other => TypeSpecifier::TypedefName(n(Identifier { name: other.to_string() })),
                 };
                 specifiers.push(n(DeclarationSpecifier::TypeSpecifier(n(ts))));
             }
         }
-        CType::Struct {
-            is_union,
-            name: tag,
-        } => {
+        CType::Struct { is_union, name: tag } => {
             if tag.is_empty() {
                 return None;
             }
-            specifiers.push(n(DeclarationSpecifier::TypeSpecifier(n(
-                TypeSpecifier::Struct(n(StructType {
-                    kind: n(if *is_union {
-                        StructKind::Union
-                    } else {
-                        StructKind::Struct
-                    }),
-                    identifier: Some(n(Identifier { name: tag.clone() })),
-                    declarations: None,
-                })),
-            ))));
+            specifiers.push(n(DeclarationSpecifier::TypeSpecifier(n(TypeSpecifier::Struct(n(StructType {
+                kind: n(if *is_union { StructKind::Union } else { StructKind::Struct }),
+                identifier: Some(n(Identifier { name: tag.clone() })),
+                declarations: None,
+            }))))));
         }
         CType::Enum(tag) => {
             if tag.is_empty() {
                 return None;
             }
-            specifiers.push(n(DeclarationSpecifier::TypeSpecifier(n(
-                TypeSpecifier::Enum(n(EnumType {
-                    identifier: Some(n(Identifier { name: tag.clone() })),
-                    enumerators: Vec::new(),
-                })),
-            ))));
+            specifiers.push(n(DeclarationSpecifier::TypeSpecifier(n(TypeSpecifier::Enum(n(EnumType {
+                identifier: Some(n(Identifier { name: tag.clone() })),
+                enumerators: Vec::new(),
+            }))))));
         }
         _ => return None,
     }
@@ -1128,17 +1055,12 @@ pub fn make_decl(name: &str, t: &crate::asttypes::CType) -> Option<Node<Declarat
         derived.push(n(DerivedDeclarator::Pointer(Vec::new())));
     }
     let declarator = Declarator {
-        kind: n(DeclaratorKind::Identifier(n(Identifier {
-            name: name.to_string(),
-        }))),
+        kind: n(DeclaratorKind::Identifier(n(Identifier { name: name.to_string() }))),
         derived,
         extensions: Vec::new(),
     };
     Some(n(Declaration {
         specifiers,
-        declarators: vec![n(InitDeclarator {
-            declarator: n(declarator),
-            initializer: None,
-        })],
+        declarators: vec![n(InitDeclarator { declarator: n(declarator), initializer: None })],
     }))
 }

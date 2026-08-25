@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global BattleEffect_CleanupSceneObjects
 	.global Func_08097194
 	.thumb_func
+BattleEffect_CleanupSceneObjects:
 Func_08097194:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

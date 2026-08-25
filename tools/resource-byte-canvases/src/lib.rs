@@ -26,54 +26,14 @@ pub struct ResourceSpec {
 }
 
 pub const RESOURCES: [ResourceSpec; 8] = [
-    ResourceSpec {
-        id: "049",
-        address: 0x083c_d090,
-        size: 0x488,
-        source: "resource_049.png",
-    },
-    ResourceSpec {
-        id: "04a",
-        address: 0x083c_d518,
-        size: 0x5ec,
-        source: "resource_04a.png",
-    },
-    ResourceSpec {
-        id: "061",
-        address: 0x083d_85e0,
-        size: 0x444,
-        source: "resource_061.png",
-    },
-    ResourceSpec {
-        id: "064",
-        address: 0x083d_c1f8,
-        size: 0x220,
-        source: "resource_064.png",
-    },
-    ResourceSpec {
-        id: "066",
-        address: 0x083d_c854,
-        size: 0x114,
-        source: "resource_066.png",
-    },
-    ResourceSpec {
-        id: "073",
-        address: 0x083e_2ae4,
-        size: 0x29c,
-        source: "resource_073.png",
-    },
-    ResourceSpec {
-        id: "0a5",
-        address: 0x083f_5f4c,
-        size: 0x7b0,
-        source: "resource_0a5.png",
-    },
-    ResourceSpec {
-        id: "0a6",
-        address: 0x083f_66fc,
-        size: 0x518,
-        source: "resource_0a6.png",
-    },
+    ResourceSpec { id: "049", address: 0x083c_d090, size: 0x488, source: "resource_049.png" },
+    ResourceSpec { id: "04a", address: 0x083c_d518, size: 0x5ec, source: "resource_04a.png" },
+    ResourceSpec { id: "061", address: 0x083d_85e0, size: 0x444, source: "resource_061.png" },
+    ResourceSpec { id: "064", address: 0x083d_c1f8, size: 0x220, source: "resource_064.png" },
+    ResourceSpec { id: "066", address: 0x083d_c854, size: 0x114, source: "resource_066.png" },
+    ResourceSpec { id: "073", address: 0x083e_2ae4, size: 0x29c, source: "resource_073.png" },
+    ResourceSpec { id: "0a5", address: 0x083f_5f4c, size: 0x7b0, source: "resource_0a5.png" },
+    ResourceSpec { id: "0a6", address: 0x083f_66fc, size: 0x518, source: "resource_0a6.png" },
 ];
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -128,14 +88,8 @@ fn resource_json(resource: ResourceSpec) -> Value {
 pub fn index_json() -> Value {
     let mut index = Map::new();
     index.insert("format".into(), json!(1));
-    index.insert(
-        "kind".into(),
-        json!("golden-sun-resource-byte-canvas-series"),
-    );
-    index.insert(
-        "resources".into(),
-        Value::Array(RESOURCES.iter().copied().map(resource_json).collect()),
-    );
+    index.insert("kind".into(), json!("golden-sun-resource-byte-canvas-series"));
+    index.insert("resources".into(), Value::Array(RESOURCES.iter().copied().map(resource_json).collect()));
     Value::Object(index)
 }
 
@@ -144,18 +98,14 @@ fn number(value: &Value) -> Option<u64> {
         value.as_str().and_then(|text| {
             text.strip_prefix("0x")
                 .or_else(|| text.strip_prefix("0X"))
-                .map_or_else(
-                    || text.parse().ok(),
-                    |hex| u64::from_str_radix(hex, 16).ok(),
-                )
+                .map_or_else(|| text.parse().ok(), |hex| u64::from_str_radix(hex, 16).ok())
         })
     })
 }
 
 fn parse_index(path: &Path) -> Result<(), Error> {
     let text = String::from_utf8(read(path)?).map_err(|_| err("resource canvas index differs"))?;
-    let value: Value =
-        serde_json::from_str(&text).map_err(|_| err("resource canvas index differs"))?;
+    let value: Value = serde_json::from_str(&text).map_err(|_| err("resource canvas index differs"))?;
     if !is_canonical_json_text(&text, &value) {
         return Err(err("resource canvas index differs"));
     }
@@ -163,8 +113,7 @@ fn parse_index(path: &Path) -> Result<(), Error> {
         return Err(err("resource canvas index differs"));
     };
     if object.get("format").and_then(number) != Some(1)
-        || object.get("kind").and_then(Value::as_str)
-            != Some("golden-sun-resource-byte-canvas-series")
+        || object.get("kind").and_then(Value::as_str) != Some("golden-sun-resource-byte-canvas-series")
     {
         return Err(err("resource canvas index identity differs"));
     }
@@ -192,10 +141,7 @@ fn parse_index(path: &Path) -> Result<(), Error> {
 
 fn image_path(index_path: &Path, source: &str) -> PathBuf {
     let directory = index_path.parent().unwrap_or_else(|| Path::new("."));
-    let basename = index_path
-        .file_name()
-        .and_then(|name| name.to_str())
-        .unwrap_or_default();
+    let basename = index_path.file_name().and_then(|name| name.to_str()).unwrap_or_default();
     let prefix = basename.strip_suffix("index.json").unwrap_or(basename);
     directory.join(format!("{prefix}{source}"))
 }
@@ -213,9 +159,7 @@ pub fn build_resource_byte_canvases(index_path: &Path) -> Result<Vec<BuiltResour
             if image.width as usize != expected_width
                 || image.height as usize != expected_height
                 || image.pixels.len() != expected_width * expected_height
-                || image.pixels[resource.size..]
-                    .iter()
-                    .any(|pixel| *pixel != 0)
+                || image.pixels[resource.size..].iter().any(|pixel| *pixel != 0)
             {
                 return Err(err(format!("resource {} canvas differs", resource.id)));
             }
@@ -234,13 +178,11 @@ fn rom_region<'a>(rom: &'a [u8], resource: ResourceSpec) -> Result<&'a [u8], Err
     let start = resource
         .address
         .checked_sub(ROM_BASE)
-        .ok_or_else(|| err(format!("resource {} lies outside the ROM", resource.id)))?
-        as usize;
+        .ok_or_else(|| err(format!("resource {} lies outside the ROM", resource.id)))? as usize;
     let end = start
         .checked_add(resource.size)
         .ok_or_else(|| err(format!("resource {} lies outside the ROM", resource.id)))?;
-    rom.get(start..end)
-        .ok_or_else(|| err(format!("resource {} lies outside the ROM", resource.id)))
+    rom.get(start..end).ok_or_else(|| err(format!("resource {} lies outside the ROM", resource.id)))
 }
 
 fn spec_for_id(id: &str) -> Result<ResourceSpec, Error> {
@@ -262,10 +204,7 @@ fn directory_index(directory: &Path) -> Result<PathBuf, Error> {
         .map(|entry| entry.path())
         .filter(|path| {
             path.is_file()
-                && path
-                    .file_name()
-                    .and_then(|name| name.to_str())
-                    .is_some_and(|name| name.ends_with("_index.json"))
+                && path.file_name().and_then(|name| name.to_str()).is_some_and(|name| name.ends_with("_index.json"))
         })
         .filter(|path| parse_index(path).is_ok())
         .collect::<Vec<_>>();
@@ -277,19 +216,13 @@ fn directory_index(directory: &Path) -> Result<PathBuf, Error> {
 
 pub fn export_resource_byte_canvases(rom_path: &Path, directory: &Path) -> Result<(), Error> {
     let rom = read(rom_path)?;
-    fs::create_dir_all(directory)
-        .map_err(|error| err(format!("{}: {error}", directory.display())))?;
-    write(
-        &directory.join("index.json"),
-        format!("{}\n", canonical_json(&index_json())).as_bytes(),
-    )?;
+    fs::create_dir_all(directory).map_err(|error| err(format!("{}: {error}", directory.display())))?;
+    write(&directory.join("index.json"), format!("{}\n", canonical_json(&index_json())).as_bytes())?;
     for resource in RESOURCES {
         let data = rom_region(&rom, resource)?;
         let mut canvas = vec![0; width(resource.size) * height(resource.size)];
         canvas[..resource.size].copy_from_slice(data);
-        let encoded = byte_png(&canvas, width(resource.size) as f64)
-            .map_err(|error| err(error.0))?
-            .0;
+        let encoded = byte_png(&canvas, width(resource.size) as f64).map_err(|error| err(error.0))?.0;
         write(&directory.join(resource.source), &encoded)?;
     }
     for resource in build_resource_byte_canvases(&directory.join("index.json"))? {
@@ -315,14 +248,8 @@ pub fn verify_resource_byte_canvases(rom_path: &Path, directory: &Path) -> Resul
 }
 
 pub fn self_test() -> Result<(), Error> {
-    if RESOURCES
-        .iter()
-        .map(|resource| resource.size)
-        .sum::<usize>()
-        != SOURCE_BYTES
-        || RESOURCES
-            .iter()
-            .any(|resource| height(resource.size) % 8 != 0)
+    if RESOURCES.iter().map(|resource| resource.size).sum::<usize>() != SOURCE_BYTES
+        || RESOURCES.iter().any(|resource| height(resource.size) % 8 != 0)
     {
         return Err(err("resource canvas layout differs"));
     }

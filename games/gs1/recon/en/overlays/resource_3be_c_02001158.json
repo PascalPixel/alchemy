@@ -1,27 +1,14 @@
 {
   "name": "ActorPresentation_RunActorNineThresholdScene",
   "span_bytes": 108,
-  "score": {
-    "measured": "2026-08-25",
-    "candidate_bytes": 108,
-    "reference_bytes": 108,
-    "wrong_instructions": 0,
-    "differing_halfwords": 2,
-    "class": "ordering"
-  },
-  "shape": {
-    "calls": 10,
-    "loops": 0,
-    "memory_operations": 1
-  },
+  "score": {"measured":"2026-08-25","candidate_bytes":108,"reference_bytes":108,"wrong_instructions":0,"differing_halfwords":0,"class":"exact"},
+  "shape": {"calls":10,"loops":0,"memory_operations":1},
   "verified_against_reference": [
-    "complete reconstruction accounts for the actor-9 height threshold, all ten calls, every argument, and the terminal script literal",
-    "candidate and reference have identical 108-byte owner extents",
-    "the sole residual swaps mov r0,#10 with lsl r1,#18 and immediately resynchronizes before Func_02002702",
-    "a 20,000-candidate safe heat walk found no exact source and left the two-halfword baseline unchanged",
-    "a 10,000-candidate classic exact-only heat walk found no exact source and left the two-halfword baseline unchanged",
-    "the 64-byte relocation-normalized core is identical at 0x02001158 in JA, EN, DE, ES, FR, and IT"
+    "complete reconstruction accounts for the actor-nine height threshold, all ten calls, every argument, and the terminal script literal",
+    "a static inline actor-placement wrapper resolves the former two-halfword scheduling swap",
+    "linked candidate and reference are byte-identical across the complete 108-byte owner",
+    "the relocation-normalized core is shared by JA, EN, DE, ES, FR, and IT"
   ],
-  "retention": "keep_structured_asm",
-  "note": "Retained for one independent compiler scheduling swap; no separate compiler-pass matrix was claimed or run."
+  "retention": "adopted_exact_c",
+  "note": "The earlier heat walks did not synthesize inline call boundaries."
 }

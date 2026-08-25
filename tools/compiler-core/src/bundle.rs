@@ -1,7 +1,6 @@
 use crate::bundle_data::{HostDigests, AGBCC_EXPECTED, EXPECTED};
 use crate::routing::{
-    agbcc_driver, bundle, bundle_for_target, cflags, driver_for_target, root, uses_agbcc_compiler,
-    CompilerTarget,
+    agbcc_driver, bundle, bundle_for_target, cflags, driver_for_target, root, uses_agbcc_compiler, CompilerTarget,
 };
 use crate::sha256;
 use fs2::FileExt;
@@ -33,26 +32,14 @@ pub fn acquire_compiler_bundle_shared_lock() -> Result<()> {
             .write(true)
             .truncate(false)
             .open(&path)
-            .map_err(|error| {
-                format!(
-                    "cannot open compiler bundle lock {}: {error}",
-                    path.display()
-                )
-            })?;
-        FileExt::lock_shared(&file).map_err(|error| {
-            format!(
-                "cannot acquire shared compiler bundle lock {}: {error}",
-                path.display()
-            )
-        })?;
+            .map_err(|error| format!("cannot open compiler bundle lock {}: {error}", path.display()))?;
+        FileExt::lock_shared(&file)
+            .map_err(|error| format!("cannot acquire shared compiler bundle lock {}: {error}", path.display()))?;
         Ok(SharedBundleLock { _file: file })
     });
     result.as_ref().map(|_| ()).map_err(Clone::clone)
 }
-const ALTERNATE_BUNDLE_ROOT_ENV_VARS: [&str; 2] = [
-    "ALCHEMY_GCC_DIST_ROOT",
-    "ALCHEMY_GCC296_EXPERIMENTAL_DIST_ROOT",
-];
+const ALTERNATE_BUNDLE_ROOT_ENV_VARS: [&str; 2] = ["ALCHEMY_GCC_DIST_ROOT", "ALCHEMY_GCC296_EXPERIMENTAL_DIST_ROOT"];
 fn canonical_bundle_root() -> PathBuf {
     fs::canonicalize(bundle()).unwrap_or_else(|_| bundle())
 }
@@ -60,9 +47,7 @@ fn resolved_environment_path(path: &Path) -> Result<PathBuf> {
     let path = if path.is_absolute() {
         path.to_path_buf()
     } else {
-        std::env::current_dir()
-            .map_err(|error| format!("cannot resolve compiler bundle root: {error}"))?
-            .join(path)
+        std::env::current_dir().map_err(|error| format!("cannot resolve compiler bundle root: {error}"))?.join(path)
     };
     Ok(fs::canonicalize(&path).unwrap_or(path))
 }
@@ -77,11 +62,7 @@ fn root_override_error(variable: &str, requested: &Path, canonical: &Path) -> Op
         ))
     }
 }
-const REFUSED_CODEGEN_ENV_VARS: [&str; 3] = [
-    "ALCHEMY_NO_FOUR_WORD",
-    "ALCHEMY_NO_LOOP0",
-    "ALCHEMY_NO_LOOP1",
-];
+const REFUSED_CODEGEN_ENV_VARS: [&str; 3] = ["ALCHEMY_NO_FOUR_WORD", "ALCHEMY_NO_LOOP0", "ALCHEMY_NO_LOOP1"];
 fn codegen_override_error(variable: &str, set: bool) -> Option<String> {
     if set {
         Some(format!(
@@ -185,10 +166,7 @@ fn executable_mode(path: &Path) -> Option<bool> {
     }
 }
 fn smoke(argv: &[String]) -> std::result::Result<(), String> {
-    let output = Command::new(&argv[0])
-        .args(&argv[1..])
-        .current_dir(root())
-        .output();
+    let output = Command::new(&argv[0]).args(&argv[1..]).current_dir(root()).output();
     let output = match output {
         Ok(output) => output,
         Err(error) => return Err(error.to_string()),
@@ -204,18 +182,11 @@ fn smoke(argv: &[String]) -> std::result::Result<(), String> {
     Err(detail.trim().to_string())
 }
 fn lookup<'a>(table: &'a [HostDigests], host: &str) -> Option<&'a [&'static str]> {
-    table
-        .iter()
-        .find(|(key, _)| *key == host)
-        .map(|(_, digests)| *digests)
+    table.iter().find(|(key, _)| *key == host).map(|(_, digests)| *digests)
 }
 pub fn validate_bundle(target: CompilerTarget) -> Result<()> {
     ensure_compiler_bundle_access()?;
-    if validated()
-        .lock()
-        .expect("validation memo is not poisoned")
-        .contains(&target.as_str())
-    {
+    if validated().lock().expect("validation memo is not poisoned").contains(&target.as_str()) {
         return Ok(());
     }
     let host = host_key().ok_or_else(|| UNSUPPORTED_HOST_MESSAGE.to_string())?;
@@ -231,20 +202,14 @@ pub fn validate_bundle(target: CompilerTarget) -> Result<()> {
     }
     for (name, expected) in entries {
         let path = bundle_dir.join(name);
-        let missing = format!(
-            "alchemy-gcc {} bundle is missing executable {name}",
-            target.as_str()
-        );
+        let missing = format!("alchemy-gcc {} bundle is missing executable {name}", target.as_str());
         if executable_mode(&path) != Some(true) {
             return Err(missing);
         }
         let bytes = fs::read(&path).map_err(|_| missing)?;
         let actual = sha256::hex(&bytes);
         if !expected.contains(&actual.as_str()) {
-            return Err(format!(
-                "alchemy-gcc {}/{name} has an unapproved digest",
-                target.as_str()
-            ));
+            return Err(format!("alchemy-gcc {}/{name} has an unapproved digest", target.as_str()));
         }
     }
     smoke(&[
@@ -257,16 +222,8 @@ pub fn validate_bundle(target: CompilerTarget) -> Result<()> {
         "/dev/null".into(),
         "/dev/null".into(),
     ])
-    .map_err(|detail| {
-        format!(
-            "alchemy-gcc {} smoke compile failed: {detail}",
-            target.as_str()
-        )
-    })?;
-    validated()
-        .lock()
-        .expect("validation memo is not poisoned")
-        .push(target.as_str());
+    .map_err(|detail| format!("alchemy-gcc {} smoke compile failed: {detail}", target.as_str()))?;
+    validated().lock().expect("validation memo is not poisoned").push(target.as_str());
     Ok(())
 }
 pub fn validate_agbcc_bundle() -> Result<()> {
@@ -301,38 +258,23 @@ pub fn validate_agbcc_bundle() -> Result<()> {
     *agbcc_validated().lock().expect("memo is not poisoned") = true;
     Ok(())
 }
-pub fn validate_experimental_compiler(
-    name: &str,
-    driver: &Path,
-    expected: &[HostDigests],
-) -> Result<()> {
+pub fn validate_experimental_compiler(name: &str, driver: &Path, expected: &[HostDigests]) -> Result<()> {
     ensure_compiler_bundle_access()?;
-    if experimental_validated()
-        .lock()
-        .expect("memo is not poisoned")
-        .iter()
-        .any(|seen| seen == name)
-    {
+    if experimental_validated().lock().expect("memo is not poisoned").iter().any(|seen| seen == name) {
         return Ok(());
     }
     let host = host_key().ok_or_else(|| UNSUPPORTED_HOST_MESSAGE.to_string())?;
     if executable_mode(driver) != Some(true) {
         return Ok(());
     }
-    let bytes = fs::read(driver)
-        .map_err(|_| format!("alchemy-gcc experimental {name} is missing executable cc1"))?;
+    let bytes = fs::read(driver).map_err(|_| format!("alchemy-gcc experimental {name} is missing executable cc1"))?;
     let actual = sha256::hex(&bytes);
     let approved = lookup(expected, host).unwrap_or(&[]);
     if approved.is_empty() {
-        return Err(host_admission_message(
-            host,
-            &format!("experimental {name}/cc1"),
-        ));
+        return Err(host_admission_message(host, &format!("experimental {name}/cc1")));
     }
     if !approved.contains(&actual.as_str()) {
-        return Err(format!(
-            "alchemy-gcc experimental {name}/cc1 has an unapproved digest"
-        ));
+        return Err(format!("alchemy-gcc experimental {name}/cc1 has an unapproved digest"));
     }
     smoke(&[
         driver.to_string_lossy().into_owned(),
@@ -343,10 +285,7 @@ pub fn validate_experimental_compiler(
         "/dev/null".into(),
     ])
     .map_err(|detail| format!("alchemy-gcc experimental {name} smoke compile failed: {detail}"))?;
-    experimental_validated()
-        .lock()
-        .expect("memo is not poisoned")
-        .push(name.to_string());
+    experimental_validated().lock().expect("memo is not poisoned").push(name.to_string());
     Ok(())
 }
 pub fn signature_paths() -> Vec<PathBuf> {
@@ -364,9 +303,7 @@ fn append_compiler_input_tree(stream: &mut Vec<u8>, directory: &Path, base: &Pat
     let relative = directory.strip_prefix(base).unwrap_or(directory);
     let entries = match fs::read_dir(directory) {
         Ok(entries) => {
-            let mut entries = entries
-                .filter_map(std::result::Result::ok)
-                .collect::<Vec<_>>();
+            let mut entries = entries.filter_map(std::result::Result::ok).collect::<Vec<_>>();
             entries.sort_by_key(|entry| entry.file_name());
             entries
         }
@@ -421,11 +358,7 @@ fn permission_bits(metadata: &fs::Metadata) -> u32 {
 }
 fn append_metadata_state(stream: &mut Vec<u8>, path: &Path, follow_links: bool) {
     append_signature_frame(stream, if follow_links { b"stat" } else { b"lstat" });
-    let metadata = if follow_links {
-        fs::metadata(path)
-    } else {
-        fs::symlink_metadata(path)
-    };
+    let metadata = if follow_links { fs::metadata(path) } else { fs::symlink_metadata(path) };
     match metadata {
         Ok(metadata) => {
             append_signature_frame(stream, b"present");
@@ -463,23 +396,16 @@ fn compiler_bundle_signature_for_paths(paths: &[PathBuf], includes: &[PathBuf]) 
     sha256::hex(&stream)
 }
 pub fn compiler_bundle_signature_uncached() -> String {
-    ensure_compiler_bundle_access()
-        .unwrap_or_else(|error| panic!("compiler bundle access rejected: {error}"));
+    ensure_compiler_bundle_access().unwrap_or_else(|error| panic!("compiler bundle access rejected: {error}"));
     compiler_bundle_signature_for_paths(
         &signature_paths(),
-        &[
-            root().join("games/gs1/include"),
-            root().join("games/gs2/include"),
-        ],
+        &[root().join("games/gs1/include"), root().join("games/gs2/include")],
     )
 }
 pub fn compiler_bundle_signature() -> String {
-    ensure_compiler_bundle_access()
-        .unwrap_or_else(|error| panic!("compiler bundle access rejected: {error}"));
+    ensure_compiler_bundle_access().unwrap_or_else(|error| panic!("compiler bundle access rejected: {error}"));
     static SIGNATURE: OnceLock<String> = OnceLock::new();
-    SIGNATURE
-        .get_or_init(compiler_bundle_signature_uncached)
-        .clone()
+    SIGNATURE.get_or_init(compiler_bundle_signature_uncached).clone()
 }
 pub fn compiler_bundle_signature_checked() -> Result<String> {
     ensure_compiler_bundle_access()?;
@@ -509,8 +435,7 @@ fn resolve_host_executable(name: &str) -> Result<PathBuf> {
     if name.is_empty() {
         return Err("host executable name is empty".to_string());
     }
-    let path = std::env::var_os("PATH")
-        .ok_or_else(|| "PATH is unset; cannot resolve host executable".to_string())?;
+    let path = std::env::var_os("PATH").ok_or_else(|| "PATH is unset; cannot resolve host executable".to_string())?;
     for directory in std::env::split_paths(&path) {
         let candidate = directory.join(name);
         if executable_mode(&candidate) == Some(true) {
@@ -531,10 +456,7 @@ fn host_executable_signature_uncached_names(names: &[String]) -> Result<String> 
     for name in names {
         let path = resolve_host_executable(name)?;
         let bytes = fs::read(&path).map_err(|error| {
-            format!(
-                "host executable {name} resolved at {} but cannot be read: {error}",
-                path.display()
-            )
+            format!("host executable {name} resolved at {} but cannot be read: {error}", path.display())
         })?;
         append_signature_frame(&mut stream, name.as_bytes());
         append_signature_frame(&mut stream, &path_bytes(&path));
@@ -544,9 +466,7 @@ fn host_executable_signature_uncached_names(names: &[String]) -> Result<String> 
 }
 pub fn host_executable_signature(executables: &[&str]) -> Result<String> {
     let names: Vec<String> = executables.iter().map(|name| (*name).to_string()).collect();
-    let mut cache = host_executable_signature_cache()
-        .lock()
-        .expect("host executable signature memo is not poisoned");
+    let mut cache = host_executable_signature_cache().lock().expect("host executable signature memo is not poisoned");
     if let Some((_, result)) = cache.iter().find(|(cached, _)| *cached == names) {
         return result.clone();
     }
@@ -561,16 +481,11 @@ pub fn host_executable_signature_uncached(executables: &[&str]) -> Result<String
 pub fn compiler_command(arguments: &[String]) -> Result<Vec<String>> {
     compiler_command_for_target(CompilerTarget::Gs1, arguments)
 }
-pub fn compiler_command_for_target(
-    target: CompilerTarget,
-    arguments: &[String],
-) -> Result<Vec<String>> {
+pub fn compiler_command_for_target(target: CompilerTarget, arguments: &[String]) -> Result<Vec<String>> {
     validate_bundle(target)?;
     let bundle_dir = bundle_for_target(target);
-    let mut argv = vec![
-        driver_for_target(target).to_string_lossy().into_owned(),
-        format!("-B{}/", bundle_dir.display()),
-    ];
+    let mut argv =
+        vec![driver_for_target(target).to_string_lossy().into_owned(), format!("-B{}/", bundle_dir.display())];
     argv.extend(arguments.iter().cloned());
     Ok(argv)
 }

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080a1d08",
+  "name": "InventoryMenu_ShowModalMessage",
+  "status": "measured-draft",
+  "owner_bytes": 302,
+  "candidate_bytes": 282,
+  "differing_halfwords": 146,
+  "wrong_instructions": 104,
+  "classification": "inventory-modal-message",
+  "domain": "Creates or reuses an inventory-menu message window, renders a message, optionally waits for acknowledgement, and restores menu cursor state.",
+  "notes": [
+    "Recovered from retained owner assembly, its inventory-menu callers, established menu layout, and the approved compiler through the exact-family workbench.",
+    "The return value is ignored by all recovered callers and the owner has no deliberate result; the generated void signature is retained.",
+    "Generated register, stack-slot, and control-flow labels were replaced with role-based names before retaining the candidate.",
+    "The raw family-assisted m2c seed compiles to 286 bytes at 80 differing halfwords, but retains generated register and stack-slot vocabulary; the canonical source favors the recovered inventory-menu roles until a closer readable spelling is found.",
+    "A 10,000-candidate safe family-template walk from the stronger raw seed produced no improvement and no exact object.",
+    "Exact-C adoption remains gated on an independently compiled zero-difference object."
+  ]
+}

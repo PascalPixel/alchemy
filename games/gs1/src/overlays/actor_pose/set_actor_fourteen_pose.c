@@ -7,10 +7,13 @@
 
 void SetActorPose(s32 actor, s32 pose);
 
+static __inline__ void ConfigureActorPose(s32 actor, s32 pose)
+{
+    SetActorPose(actor, pose);
+}
+
 s32 SetActorFourteenPose(void)
 {
-    do {
-        SetActorPose(14, 258);
-        return 0;
-    } while (0);
+    ConfigureActorPose(14, 258);
+    return 0;
 }

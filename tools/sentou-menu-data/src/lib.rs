@@ -36,23 +36,17 @@ fn fail<T>(message: impl Into<String>) -> Result<T> {
 }
 
 fn object<'a>(value: &'a Value, name: &str) -> Result<&'a serde_json::Map<String, Value>> {
-    value
-        .as_object()
-        .ok_or_else(|| Error(format!("{name} must be an object")))
+    value.as_object().ok_or_else(|| Error(format!("{name} must be an object")))
 }
 fn array<'a>(value: Option<&'a Value>, count: usize, name: &str) -> Result<&'a [Value]> {
-    let values = value
-        .and_then(Value::as_array)
-        .ok_or_else(|| Error(format!("{name} requires {count} entries")))?;
+    let values = value.and_then(Value::as_array).ok_or_else(|| Error(format!("{name} requires {count} entries")))?;
     if values.len() != count {
         return fail(format!("{name} requires {count} entries"));
     }
     Ok(values)
 }
 fn integer(value: Option<&Value>, minimum: i64, maximum: i64, name: &str) -> Result<i64> {
-    let number = value
-        .and_then(Value::as_i64)
-        .ok_or_else(|| Error(format!("{name} is outside its range")))?;
+    let number = value.and_then(Value::as_i64).ok_or_else(|| Error(format!("{name} is outside its range")))?;
     if number < minimum || number > maximum {
         return fail(format!("{name} is outside its range"));
     }
@@ -71,8 +65,7 @@ fn expected_keys(value: &Value, expected: &[&str], name: &str) -> Result<()> {
 }
 fn read_json(path: &Path) -> Result<Value> {
     let text = fs::read_to_string(path).map_err(|e| Error(format!("{}: {e}", path.display())))?;
-    let value: Value =
-        serde_json::from_str(&text).map_err(|e| Error(format!("{}: {e}", path.display())))?;
+    let value: Value = serde_json::from_str(&text).map_err(|e| Error(format!("{}: {e}", path.display())))?;
     if !is_canonical_json_text(&text, &value) {
         return fail("battle-menu source is not canonical JSON");
     }
@@ -85,12 +78,10 @@ fn hex(address: usize) -> String {
 fn atlas(path: &Path, spec: &(usize, usize, &str, usize, usize, usize, usize)) -> Result<Vec<u8>> {
     let (_, size, _, frames, tiles_wide, tiles_high, columns) = *spec;
     let image =
-        indexed_png(&fs::read(path).map_err(|e| Error(format!("{}: {e}", path.display())))?)
-            .map_err(|e| Error(e.0))?;
+        indexed_png(&fs::read(path).map_err(|e| Error(format!("{}: {e}", path.display())))?).map_err(|e| Error(e.0))?;
     let frame_width = tiles_wide * 8;
     let frame_height = tiles_high * 8;
-    if image.width as usize != columns * frame_width
-        || image.height as usize != frames.div_ceil(columns) * frame_height
+    if image.width as usize != columns * frame_width || image.height as usize != frames.div_ceil(columns) * frame_height
     {
         return fail(format!("{}: atlas dimensions differ", path.display()));
     }
@@ -111,11 +102,8 @@ fn atlas(path: &Path, spec: &(usize, usize, &str, usize, usize, usize, usize)) -
             for tile_x in 0..tiles_wide {
                 for y in 0..8 {
                     for x in (0..8).step_by(2) {
-                        let offset =
-                            (top + tile_y * 8 + y) * image.width as usize + left + tile_x * 8 + x;
-                        output.push(
-                            image.pixels[offset] as u8 | (image.pixels[offset + 1] as u8) << 4,
-                        );
+                        let offset = (top + tile_y * 8 + y) * image.width as usize + left + tile_x * 8 + x;
+                        output.push(image.pixels[offset] as u8 | (image.pixels[offset + 1] as u8) << 4);
                     }
                 }
             }
@@ -127,17 +115,10 @@ fn atlas(path: &Path, spec: &(usize, usize, &str, usize, usize, usize, usize)) -
     Ok(output)
 }
 
-fn unsigned_halfwords(
-    values: Option<&Value>,
-    count: usize,
-    maximum: i64,
-    name: &str,
-) -> Result<Vec<u8>> {
+fn unsigned_halfwords(values: Option<&Value>, count: usize, maximum: i64, name: &str) -> Result<Vec<u8>> {
     let mut output = Vec::with_capacity(count * 2);
     for (index, value) in array(values, count, name)?.iter().enumerate() {
-        output.extend_from_slice(
-            &(integer(Some(value), 0, maximum, &format!("{name} {index}"))? as u16).to_le_bytes(),
-        );
+        output.extend_from_slice(&(integer(Some(value), 0, maximum, &format!("{name} {index}"))? as u16).to_le_bytes());
     }
     Ok(output)
 }
@@ -145,8 +126,7 @@ fn signed_halfwords(values: Option<&Value>, count: usize, name: &str) -> Result<
     let mut output = Vec::with_capacity(count * 2);
     for (index, value) in array(values, count, name)?.iter().enumerate() {
         output.extend_from_slice(
-            &(integer(Some(value), -0x8000, 0x7fff, &format!("{name} {index}"))? as i16)
-                .to_le_bytes(),
+            &(integer(Some(value), -0x8000, 0x7fff, &format!("{name} {index}"))? as i16).to_le_bytes(),
         );
     }
     Ok(output)
@@ -155,9 +135,7 @@ fn signed_bytes(values: Option<&Value>, count: usize, name: &str) -> Result<Vec<
     array(values, count, name)?
         .iter()
         .enumerate()
-        .map(|(index, value)| {
-            Ok(integer(Some(value), -0x80, 0x7f, &format!("{name} {index}"))? as i8 as u8)
-        })
+        .map(|(index, value)| Ok(integer(Some(value), -0x80, 0x7f, &format!("{name} {index}"))? as i8 as u8))
         .collect()
 }
 fn selector_ids(value: Option<&Value>) -> Result<Vec<u8>> {
@@ -177,11 +155,7 @@ fn loadouts(value: Option<&Value>) -> Result<Vec<u8>> {
     let entries = array(value, 35, "loadouts")?;
     let mut output = vec![0u8; 35 * 66];
     for (index, entry) in entries.iter().enumerate() {
-        expected_keys(
-            entry,
-            &["main_ids", "extra_ids", "group"],
-            &format!("loadout {index}"),
-        )?;
+        expected_keys(entry, &["main_ids", "extra_ids", "group"], &format!("loadout {index}"))?;
         let item = object(entry, "loadout")?;
         let main = item
             .get("main_ids")
@@ -196,12 +170,7 @@ fn loadouts(value: Option<&Value>) -> Result<Vec<u8>> {
         }
         let mut main_seen = Vec::new();
         for (position, value) in main.iter().enumerate() {
-            let id = integer(
-                Some(value),
-                1,
-                0x7fff,
-                &format!("loadout {index} main ID {position}"),
-            )? as u16;
+            let id = integer(Some(value), 1, 0x7fff, &format!("loadout {index} main ID {position}"))? as u16;
             if main_seen.contains(&id) {
                 return fail(format!("loadout {index} contains duplicate IDs"));
             }
@@ -211,12 +180,7 @@ fn loadouts(value: Option<&Value>) -> Result<Vec<u8>> {
         }
         let mut extra_seen = Vec::new();
         for (position, value) in extra.iter().enumerate() {
-            let id = integer(
-                Some(value),
-                1,
-                0x7fff,
-                &format!("loadout {index} extra ID {position}"),
-            )? as u16;
+            let id = integer(Some(value), 1, 0x7fff, &format!("loadout {index} extra ID {position}"))? as u16;
             if extra_seen.contains(&id) {
                 return fail(format!("loadout {index} contains duplicate IDs"));
             }
@@ -262,26 +226,14 @@ pub fn build_sentou_menu_data(index: &Path) -> Result<Vec<u8>> {
         return fail("battle-menu extent differs");
     }
     let graphics = array(item.get("graphics"), GRAPHICS.len(), "battle-menu graphics")?;
-    let prefix = index
-        .file_name()
-        .and_then(|name| name.to_str())
-        .unwrap_or("")
-        .strip_suffix("index.json")
-        .unwrap_or("");
+    let prefix =
+        index.file_name().and_then(|name| name.to_str()).unwrap_or("").strip_suffix("index.json").unwrap_or("");
     let root = index.parent().unwrap_or_else(|| Path::new("."));
     let mut output = Vec::with_capacity(SIZE);
     for (position, entry) in graphics.iter().enumerate() {
         expected_keys(
             entry,
-            &[
-                "address",
-                "size",
-                "source",
-                "frames",
-                "frame_tiles_wide",
-                "frame_tiles_high",
-                "columns",
-            ],
+            &["address", "size", "source", "frames", "frame_tiles_wide", "frame_tiles_high", "columns"],
             &format!("battle-menu graphic {position}"),
         )?;
         let graphic = object(entry, "battle-menu graphic")?;
@@ -299,28 +251,15 @@ pub fn build_sentou_menu_data(index: &Path) -> Result<Vec<u8>> {
         let source_name = graphic.get("source").and_then(Value::as_str).unwrap();
         output.extend(atlas(&root.join(format!("{prefix}{source_name}")), &spec)?);
     }
-    output.extend(unsigned_halfwords(
-        item.get("cell_offsets"),
-        30,
-        231,
-        "cell offsets",
-    )?);
-    output.extend(unsigned_halfwords(
-        item.get("row_offsets"),
-        5,
-        978,
-        "row offsets",
-    )?);
+    output.extend(unsigned_halfwords(item.get("cell_offsets"), 30, 231, "cell offsets")?);
+    output.extend(unsigned_halfwords(item.get("row_offsets"), 5, 978, "row offsets")?);
     for row in array(item.get("thresholds"), 6, "threshold rows")? {
         output.extend(signed_halfwords(Some(row), 5, "threshold row")?);
     }
     output.extend(selector_ids(item.get("selector_ids"))?);
     output.extend([0, 0]);
     output.extend(loadouts(item.get("loadouts"))?);
-    for (index, value) in array(item.get("sound_ids"), 4, "sound IDs")?
-        .iter()
-        .enumerate()
-    {
+    for (index, value) in array(item.get("sound_ids"), 4, "sound IDs")?.iter().enumerate() {
         output.push(integer(Some(value), 1, 0x7f, &format!("sound ID {index}"))? as u8);
     }
     output.extend(signed_bytes(item.get("multipliers"), 13, "multipliers")?);
@@ -339,12 +278,8 @@ pub fn build_sentou_menu_data(index: &Path) -> Result<Vec<u8>> {
 }
 
 pub fn verify_sentou_menu_data(rom: &[u8], index: &Path) -> Result<()> {
-    let start = ADDRESS
-        .checked_sub(ROM_BASE)
-        .ok_or_else(|| Error("ROM address is invalid".into()))?;
-    let expected = rom
-        .get(start..start + SIZE)
-        .ok_or_else(|| Error("ROM is too small for battle-menu data".into()))?;
+    let start = ADDRESS.checked_sub(ROM_BASE).ok_or_else(|| Error("ROM address is invalid".into()))?;
+    let expected = rom.get(start..start + SIZE).ok_or_else(|| Error("ROM is too small for battle-menu data".into()))?;
     if build_sentou_menu_data(index)? != expected {
         return fail("battle-menu package differs from ROM");
     }
@@ -352,8 +287,7 @@ pub fn verify_sentou_menu_data(rom: &[u8], index: &Path) -> Result<()> {
 }
 
 pub fn self_test() -> Result<()> {
-    let index =
-        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../assets/data/sentou_menu_index.json");
+    let index = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../assets/data/sentou_menu_index.json");
     if index.exists() && build_sentou_menu_data(&index)?.len() != SIZE {
         return fail("battle-menu self-test size differs");
     }

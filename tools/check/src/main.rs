@@ -1,6 +1,7 @@
 use std::process::ExitCode;
 
-const USAGE: &str = "usage: check <publication|commit-progress|owners|retained|coverage|integrate|no-asm|progress|routes> [args]";
+const USAGE: &str =
+    "usage: check <publication|commit-progress|owners|retained|coverage|integrate|no-asm|progress|routes> [args]";
 
 fn main() -> ExitCode {
     let arguments: Vec<String> = std::env::args().skip(1).collect();

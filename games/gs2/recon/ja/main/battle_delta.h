@@ -1,7 +1,229 @@
 #ifndef GS2_BATTLE_DELTA_H
 #define GS2_BATTLE_DELTA_H
 
+#if defined(GS2_EDITION_EN)
+#include "battle_literal_en.h"
+#elif defined(GS2_EDITION_DE) || defined(GS2_EDITION_ES) \
+    || defined(GS2_EDITION_FR) || defined(GS2_EDITION_IT)
+#include "battle_literal_continental.h"
+#else
+#include "battle_literal_delta.h"
+#endif
+
 #define BATTLE_SECOND_ACTOR
+
+/* Retarget the first shared semantic callees before the GS1 headers expand
+ * them through GS1 owner symbols.  These bindings were measured at identical
+ * call sites in all six GS2 editions. */
+#if defined(GS2_EDITION_DE)
+#define Func_08004938 Func_08014da4
+#define Func_08077080 Func_080ba078
+#define Func_08077008 Func_08016cd0
+#define Func_080bbabc Func_08120378
+#define Func_080771a0 Func_080ba148
+#define Func_08125390 Func_081253a8
+#define Func_08077178 Func_080ba120
+#define Func_080b7514 Func_0811b2ac
+#define Func_080c1fa8 Func_08127c98
+#define Func_080b6cdc Func_0811a4a8
+#define Func_080c1df4 Func_08127af4
+#define Func_080c1f50 Func_08127c44
+#define Func_08077140 Func_080ba0e8
+#define Func_081203c8 Func_081203e0
+#define Func_080b7548 Func_0811b2dc
+#define Func_080b7dd0 Func_0811be54
+#define Func_080b6f44 Func_0811a7c4
+#define Func_080b6c90 Func_0811a464
+#define Func_080b6ae0 Func_0811a144
+#define Func_080b8000 Func_0811be80
+#define Func_080772b8 Func_080ba280
+#define Func_08077180 Func_080ba128
+#define Func_080022ec Func_08002054
+#define Func_080022f4 Func_0800205c
+#define Func_080770c0 Func_08016d10
+#define Func_081203a8 Func_081203c0
+#define Func_08077188 Func_080ba130
+#define Func_08077128 Func_080ba0d0
+#define Func_08077190 Func_080ba138
+#define Func_080bbae8 Func_081203a0
+#define Func_08077010 Func_080ba008
+#define Func_08077120 Func_080ba0c8
+#define Func_08002df0 Func_08013164
+#define Func_08015130 Func_08038130
+#elif defined(GS2_EDITION_ES)
+#define Func_08004938 Func_08014da4
+#define Func_08077080 Func_080b6078
+#define Func_08077008 Func_08016cd0
+#define Func_080bbabc Func_08120378
+#define Func_080771a0 Func_080b6148
+#define Func_08125390 Func_081253a8
+#define Func_08077178 Func_080b6120
+#define Func_080b7514 Func_0811b2ac
+#define Func_080c1fa8 Func_08127c98
+#define Func_080b6cdc Func_0811a4a8
+#define Func_080c1df4 Func_08127af4
+#define Func_080c1f50 Func_08127c44
+#define Func_08077140 Func_080b60e8
+#define Func_081203c8 Func_081203e0
+#define Func_080b7548 Func_0811b2dc
+#define Func_080b7dd0 Func_0811be54
+#define Func_080b6f44 Func_0811a7c4
+#define Func_080b6c90 Func_0811a464
+#define Func_080b6ae0 Func_0811a144
+#define Func_080b8000 Func_0811be80
+#define Func_080772b8 Func_080b6280
+#define Func_08077180 Func_080b6128
+#define Func_080022ec Func_08002054
+#define Func_080022f4 Func_0800205c
+#define Func_080770c0 Func_08016d10
+#define Func_081203a8 Func_081203c0
+#define Func_08077188 Func_080b6130
+#define Func_08077128 Func_080b60d0
+#define Func_08077190 Func_080b6138
+#define Func_080bbae8 Func_081203a0
+#define Func_08077010 Func_080b6008
+#define Func_08077120 Func_080b60c8
+#define Func_08002df0 Func_08013164
+#define Func_08015130 Func_08038130
+#elif defined(GS2_EDITION_FR)
+#define Func_08004938 Func_08014da4
+#define Func_08077080 Func_080b2078
+#define Func_08077008 Func_08016cd0
+#define Func_080bbabc Func_08120378
+#define Func_080771a0 Func_080b2148
+#define Func_08125390 Func_081253a8
+#define Func_08077178 Func_080b2120
+#define Func_080b7514 Func_0811b2ac
+#define Func_080c1fa8 Func_08127c98
+#define Func_080b6cdc Func_0811a4a8
+#define Func_080c1df4 Func_08127af4
+#define Func_080c1f50 Func_08127c44
+#define Func_08077140 Func_080b20e8
+#define Func_081203c8 Func_081203e0
+#define Func_080b7548 Func_0811b2dc
+#define Func_080b7dd0 Func_0811be54
+#define Func_080b6f44 Func_0811a7c4
+#define Func_080b6c90 Func_0811a464
+#define Func_080b6ae0 Func_0811a144
+#define Func_080b8000 Func_0811be80
+#define Func_080772b8 Func_080b2280
+#define Func_08077180 Func_080b2128
+#define Func_080022ec Func_08002054
+#define Func_080022f4 Func_0800205c
+#define Func_080770c0 Func_08016d10
+#define Func_081203a8 Func_081203c0
+#define Func_08077188 Func_080b2130
+#define Func_08077128 Func_080b20d0
+#define Func_08077190 Func_080b2138
+#define Func_080bbae8 Func_081203a0
+#define Func_08077010 Func_080b2008
+#define Func_08077120 Func_080b20c8
+#define Func_08002df0 Func_08013164
+#define Func_08015130 Func_08038130
+#elif defined(GS2_EDITION_IT)
+#define Func_08004938 Func_08014da4
+#define Func_08077080 Func_080ad078
+#define Func_08077008 Func_08016cd0
+#define Func_080bbabc Func_08120378
+#define Func_080771a0 Func_080ad148
+#define Func_08125390 Func_081253a8
+#define Func_08077178 Func_080ad120
+#define Func_080b7514 Func_0811b2ac
+#define Func_080c1fa8 Func_08127c98
+#define Func_080b6cdc Func_0811a4a8
+#define Func_080c1df4 Func_08127af4
+#define Func_080c1f50 Func_08127c44
+#define Func_08077140 Func_080ad0e8
+#define Func_081203c8 Func_081203e0
+#define Func_080b7548 Func_0811b2dc
+#define Func_080b7dd0 Func_0811be54
+#define Func_080b6f44 Func_0811a7c4
+#define Func_080b6c90 Func_0811a464
+#define Func_080b6ae0 Func_0811a144
+#define Func_080b8000 Func_0811be80
+#define Func_080772b8 Func_080ad280
+#define Func_08077180 Func_080ad128
+#define Func_080022ec Func_08002054
+#define Func_080022f4 Func_0800205c
+#define Func_080770c0 Func_08016d10
+#define Func_081203a8 Func_081203c0
+#define Func_08077188 Func_080ad130
+#define Func_08077128 Func_080ad0d0
+#define Func_08077190 Func_080ad138
+#define Func_080bbae8 Func_081203a0
+#define Func_08077010 Func_080ad008
+#define Func_08077120 Func_080ad0c8
+#define Func_08002df0 Func_08013164
+#define Func_08015130 Func_08038130
+#elif defined(GS2_EDITION_EN)
+#define Func_08004938 Func_08014d78
+#define Func_08077080 Func_080ad078
+#define Func_08077008 Func_08016ca4
+#define Func_080bbabc Func_08120360
+#define Func_080771a0 Func_080ad148
+#define Func_08077178 Func_080ad120
+#define Func_080b7514 Func_0811b294
+#define Func_080c1fa8 Func_08127c80
+#define Func_080b6cdc Func_0811a490
+#define Func_080c1df4 Func_08127adc
+#define Func_080c1f50 Func_08127c2c
+#define Func_08077140 Func_080ad0e8
+#define Func_080b7548 Func_0811b2c4
+#define Func_080b7dd0 Func_0811be3c
+#define Func_080b6f44 Func_0811a7ac
+#define Func_080b6c90 Func_0811a44c
+#define Func_080b6ae0 Func_0811a12c
+#define Func_080b8000 Func_0811be68
+#define Func_080772b8 Func_080ad280
+#define Func_08077180 Func_080ad128
+#define Func_080022ec Func_08002054
+#define Func_080022f4 Func_0800205c
+#define Func_080770c0 Func_08016ce4
+#define Func_081203a8 Func_081203a8
+#define Func_08077188 Func_080ad130
+#define Func_08077128 Func_080ad0d0
+#define Func_08077190 Func_080ad138
+#define Func_080bbae8 Func_08120388
+#define Func_08077010 Func_080ad008
+#define Func_08077120 Func_080ad0c8
+#define Func_08002df0 Func_08013164
+#define Func_08015130 Func_08038130
+#else
+#define Func_08004938 Func_08014d78
+#define Func_08077080 Func_080a8078
+#define Func_08077008 Func_08016ca4
+#define Func_080bbabc Func_0812035c
+#define Func_080771a0 Func_080a8148
+#define Func_08125390 Func_0812538c
+#define Func_08077178 Func_080a8120
+#define Func_080b7514 Func_0811b290
+#define Func_080c1fa8 Func_08127c7c
+#define Func_080b6cdc Func_0811a48c
+#define Func_080c1df4 Func_08127ad8
+#define Func_080c1f50 Func_08127c28
+#define Func_08077140 Func_080a80e8
+#define Func_081203c8 Func_081203c4
+#define Func_080b7548 Func_0811b2c0
+#define Func_080b7dd0 Func_0811be38
+#define Func_080b6f44 Func_0811a7a8
+#define Func_080b6c90 Func_0811a448
+#define Func_080b6ae0 Func_0811a128
+#define Func_080b8000 Func_0811be64
+#define Func_080772b8 Func_080a8280
+#define Func_08077180 Func_080a8128
+#define Func_080022ec Func_08002054
+#define Func_080022f4 Func_0800205c
+#define Func_080770c0 Func_08016ce4
+#define Func_081203a8 Func_081203a4
+#define Func_08077188 Func_080a8130
+#define Func_08077128 Func_080a80d0
+#define Func_08077190 Func_080a8138
+#define Func_080bbae8 Func_08120384
+#define Func_08077010 Func_080a8008
+#define Func_08077120 Func_080a80c8
+#define Func_08002df0 Func_08013164
+#define Func_08015130 Func_08038130
+#endif
 
 struct BattleWorkPage {
     unsigned char unused_00[0x24];
@@ -181,8 +403,8 @@ struct BattleWorkPage {
 /* GS2 reserves element zero of each target array for its second actor. */
 #define BATTLE_PLAN_LOADS()                                                  \
     {                                                                        \
-        /* This order lets GCC hoist range while preserving the target and   \
-         * action temporaries used by the reference schedule. */             \
+        /* Exhaustive sweep of all 720 assignment orders (2026-08-25): this \
+         * is the unique lowest-residual order for the complete owner. */     \
         actor_id = BATTLE_PLAN_ACTOR_ID(plan, action_id);                    \
         action_id = plan->action_id;                                         \
         target_id = BATTLE_PLAN_TARGET_ID(plan, slot);                       \
@@ -604,16 +826,16 @@ struct BattleWorkPage {
         s32 maxu;                                                         \
         s32 inc;                                                          \
         s32 maxv;                                                         \
-        u16 *stat_ptr;                                                    \
+        s32 effect;                                                       \
                                                                            \
-        stat_ptr = (u16 *)&target->pp;                                    \
-        old = *stat_ptr--;                                                \
-        heal = *(s16 *)(stat_ptr + 1);                                    \
-        if (action->effect == 0x4d) {                                     \
+        effect = action->effect;                                          \
+        heal = target->pp;                                                \
+        old = *(u16 *)&target->pp;                                        \
+        if (effect == 0x4d) {                                             \
             maxv = *(s16 *)((u8 *)target + 54);                           \
             maxu = *(u16 *)((u8 *)target + 54);                           \
             inc = (s16)Math_Div(maxv, 10);                                \
-        } else if (action->effect == 0x4e) {                              \
+        } else if (effect == 0x4e) {                                      \
             maxv = *(s16 *)((u8 *)target + 54);                           \
             maxu = *(u16 *)((u8 *)target + 54);                           \
             inc = Math_Div(maxv * 3, 10);                                 \

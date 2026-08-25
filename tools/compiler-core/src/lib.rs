@@ -9,6 +9,4 @@ pub mod sha256;
 pub mod source_paths;
 pub mod symbols;
 
-pub use symbols::{
-    external_symbol, external_symbol_assembly, overlay_call_via_base, ExternalSymbol, CALL_VIA_BASE,
-};
+pub use symbols::{external_symbol, external_symbol_assembly, overlay_call_via_base, ExternalSymbol, CALL_VIA_BASE};

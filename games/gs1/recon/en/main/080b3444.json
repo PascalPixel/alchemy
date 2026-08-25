@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080b3444",
+  "name": "Shop_SelectPartyMemberItem",
+  "status": "measured-draft",
+  "owner_bytes": 488,
+  "candidate_bytes": 484,
+  "differing_halfwords": 190,
+  "wrong_instructions": 70,
+  "classification": "shop-party-member-item-selection",
+  "domain": "Runs the shop's two-stage party-member and owned-item selection flow and returns both selections to the caller.",
+  "notes": [
+    "Recovered from the retained owner, its local callers, the byte-exact Shop_SelectPartyMember template, and the established ShopRuntime layout.",
+    "The candidate deliberately names every recovered local role; generated register and stack-slot identifiers are not retained as source vocabulary.",
+    "The typed semantic reconstruction improves the repaired raw m2c result from 232 differing halfwords and 184 wrong instructions to 190 and 70 respectively.",
+    "A 5,000-candidate safe family-template walk reduced the ranking score to 101 structural rows and 187 differing halfwords but did not produce an exact object; its generated temporary spelling is retained only in the ignored search workspace.",
+    "Exact-C adoption remains gated on an independently compiled zero-difference object."
+  ]
+}

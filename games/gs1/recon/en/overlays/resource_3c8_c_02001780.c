@@ -14,11 +14,16 @@ void Func_0200674c();
 void Func_02006766();
 void Func_02006772();
 
+static __inline__ void SetActorDirection(s32 actor, s32 direction, s32 duration)
+{
+    Func_02006720(actor, direction, duration);
+}
+
 void Func_02001780(void)
 {
     u8 *state = *(u8 **)0x03001ebc;
-    register s32 zero = 0;
-    register s32 one = 1;
+    s32 zero = 0;
+    s32 one = 1;
 
     *(s16 *)(state + 0xcba) = zero;
     *(s16 *)(state + 0xcb6) = one;
@@ -27,7 +32,7 @@ void Func_02001780(void)
     Func_020066cc(10, 0, 0);
     Func_0200663a(10);
     Func_0200670c(10, 0, 20);
-    Func_02006720(10, 57344, 0);
+    SetActorDirection(10, 57344, 0);
     Func_0200674c(65536, 8192);
     Func_02006766(29360128, -1, 28311552, 1);
     Func_02006772();

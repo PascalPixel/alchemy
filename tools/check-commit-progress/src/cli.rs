@@ -18,12 +18,7 @@ struct Subject {
 }
 
 fn root() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .unwrap()
-        .parent()
-        .unwrap()
-        .to_path_buf()
+    Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap().parent().unwrap().to_path_buf()
 }
 
 fn command_output(program: &Path, args: &[&str], cwd: &Path) -> Result<String, String> {
@@ -48,13 +43,7 @@ fn command_output(program: &Path, args: &[&str], cwd: &Path) -> Result<String, S
 fn cargo_command(root: &Path, subcommand: &str) -> Command {
     let mut command = Command::new("cargo");
     command
-        .args([
-            "run",
-            "--offline",
-            "--quiet",
-            "--release",
-            "--manifest-path",
-        ])
+        .args(["run", "--offline", "--quiet", "--release", "--manifest-path"])
         .arg(root.join("tools").join("check").join("Cargo.toml"))
         .arg("--")
         .arg(subcommand)
@@ -87,10 +76,8 @@ fn permanent_asm_bytes(root: &Path, target: &str) -> Result<u64, String> {
     // not contain it.
     let game = target.split('-').next().unwrap_or("gs1");
     let path = format!("games/{game}/metrics/{target}-coverage-map.json");
-    let text = git(root, &["show", &format!(":{path}")])
-        .map_err(|_| format!("stage {path} before committing"))?;
-    let document: serde_json::Value =
-        serde_json::from_str(&text).map_err(|error| format!("{path}: {error}"))?;
+    let text = git(root, &["show", &format!(":{path}")]).map_err(|_| format!("stage {path} before committing"))?;
+    let document: serde_json::Value = serde_json::from_str(&text).map_err(|error| format!("{path}: {error}"))?;
     document["categories"]["retained_asm"]["bytes"]
         .as_u64()
         .ok_or_else(|| format!("{path} has no categories.retained_asm.bytes"))
@@ -99,16 +86,11 @@ fn permanent_asm_bytes(root: &Path, target: &str) -> Result<u64, String> {
 /// The nearest whole DONE share. It was the Exact-C share alone until 2026-08;
 /// the sun is the project's headline and the headline is DONE.
 fn done_percent(report: &Report, permanent: u64) -> Result<u64, String> {
-    let done = report
-        .full_c_bytes
-        .checked_add(permanent)
-        .ok_or("DONE percentage arithmetic overflow")?;
+    let done = report.full_c_bytes.checked_add(permanent).ok_or("DONE percentage arithmetic overflow")?;
     if done > report.executable_bytes {
         return Err("DONE numerator exceeds executable denominator".to_string());
     }
-    let scaled = done
-        .checked_mul(100)
-        .ok_or("DONE percentage arithmetic overflow")?;
+    let scaled = done.checked_mul(100).ok_or("DONE percentage arithmetic overflow")?;
     scaled
         .checked_add(report.executable_bytes / 2)
         .ok_or_else(|| "DONE percentage arithmetic overflow".to_string())
@@ -121,9 +103,7 @@ fn format_subject(report: &Report, permanent: u64) -> Result<String, String> {
 
 fn parse_subject(text: &str) -> Option<Subject> {
     let rest = text.strip_prefix("☀️ ")?;
-    let count = rest
-        .find(|character: char| !character.is_ascii_digit())
-        .unwrap_or(rest.len());
+    let count = rest.find(|character: char| !character.is_ascii_digit()).unwrap_or(rest.len());
     if count == 0 || count > 3 {
         return None;
     }
@@ -136,25 +116,17 @@ fn parse_subject(text: &str) -> Option<Subject> {
 }
 
 fn report(value: &Value, target: &str) -> Result<Report, String> {
-    let object = value
-        .as_object()
-        .ok_or("staged Full-C report is not an object")?;
+    let object = value.as_object().ok_or("staged Full-C report is not an object")?;
     let string = |key: &str| object.get(key).and_then(Value::as_str);
     if object.get("format").and_then(Value::as_u64) != Some(1)
         || string("metric") != Some("full-c-byte-share")
         || string("target") != Some(target)
         || string("audit") != Some("complete")
     {
-        return Err(format!(
-            "staged {target} Full-C report is missing, incomplete, or has the wrong format"
-        ));
+        return Err(format!("staged {target} Full-C report is missing, incomplete, or has the wrong format"));
     }
-    let count = |key: &str| {
-        object
-            .get(key)
-            .and_then(Value::as_u64)
-            .ok_or_else(|| format!("staged report {key} is invalid"))
-    };
+    let count =
+        |key: &str| object.get(key).and_then(Value::as_u64).ok_or_else(|| format!("staged report {key} is invalid"));
     let result = Report {
         full_c_bytes: count("full_c_bytes")?,
         executable_bytes: count("executable_bytes")?,
@@ -172,13 +144,9 @@ fn report(value: &Value, target: &str) -> Result<Report, String> {
 fn check(message: &str, report: &Report, permanent: u64) -> Result<(), String> {
     let subject = message.lines().next().unwrap_or("");
     let expected = format_subject(report, permanent)?;
-    let parsed = parse_subject(subject)
-        .ok_or_else(|| format!("commit subject must start with {expected}"))?;
+    let parsed = parse_subject(subject).ok_or_else(|| format!("commit subject must start with {expected}"))?;
     if parsed.exact_c_percent != done_percent(report, permanent)? {
-        return Err(format!(
-            "commit DONE percentage is stale; expected {}",
-            expected
-        ));
+        return Err(format!("commit DONE percentage is stale; expected {}", expected));
     }
     Ok(())
 }
@@ -187,13 +155,7 @@ fn staged_paths(root: &Path) -> Result<Vec<String>, String> {
     if !git(root, &["ls-files", "-u"])?.trim().is_empty() {
         return Err("cannot validate Full-C progress with unmerged index entries".into());
     }
-    Ok(git(
-        root,
-        &["diff", "--cached", "--name-only", "--diff-filter=ACMRT"],
-    )?
-    .lines()
-    .map(str::to_string)
-    .collect())
+    Ok(git(root, &["diff", "--cached", "--name-only", "--diff-filter=ACMRT"])?.lines().map(str::to_string).collect())
 }
 
 fn report_required(paths: &[String], target: &str) -> bool {
@@ -206,10 +168,7 @@ fn report_required(paths: &[String], target: &str) -> bool {
                 || path == "games/gs1/metrics/gs1-en-executable.json"
                 || (path.starts_with("games/gs1/assets/code/resource_")
                     && (path.ends_with("_overlay.s")
-                        || path
-                            .rsplit('/')
-                            .next()
-                            .is_some_and(|n| n.starts_with("c_") && n.ends_with(".c"))))
+                        || path.rsplit('/').next().is_some_and(|n| n.starts_with("c_") && n.ends_with(".c"))))
         } else {
             path.starts_with("games/gs2/src/")
                 || path.starts_with("games/gs2/asm/")
@@ -225,20 +184,11 @@ fn current_report(root: &Path, target: &str) -> Result<Value, String> {
 }
 
 fn self_test() -> Result<(), String> {
-    let report = Report {
-        full_c_bytes: 123456,
-        executable_bytes: 1234567,
-        remaining_bytes: 1111111,
-    };
+    let report = Report { full_c_bytes: 123456, executable_bytes: 1234567, remaining_bytes: 1111111 };
     check("☀️ 10% – valid DONE prefix", &report, 0)?;
-    for bad in [
-        "missing",
-        "☀️ 1000% – too wide",
-        "☀️ 9% – stale",
-        "☀️ 10% - wrong dash",
-        "☀️ 10% –",
-        "old [ ☀️ 123 / 1,234 ]",
-    ] {
+    for bad in
+        ["missing", "☀️ 1000% – too wide", "☀️ 9% – stale", "☀️ 10% - wrong dash", "☀️ 10% –", "old [ ☀️ 123 / 1,234 ]"]
+    {
         if check(bad, &report, 0).is_ok() {
             return Err(format!("invalid subject accepted: {bad}"));
         }
@@ -267,9 +217,7 @@ fn run(arguments: &[String]) -> Result<(), String> {
     if target != "gs1-en" && target != "gs2-en" {
         return Err(format!("unknown target: {target}"));
     }
-    let message_path = args
-        .first()
-        .ok_or("usage: check-commit-progress [--target TARGET] COMMIT_MESSAGE")?;
+    let message_path = args.first().ok_or("usage: check-commit-progress [--target TARGET] COMMIT_MESSAGE")?;
     let root = root();
     let paths = staged_paths(&root)?;
     let game = target.split('-').next().unwrap_or("gs1");

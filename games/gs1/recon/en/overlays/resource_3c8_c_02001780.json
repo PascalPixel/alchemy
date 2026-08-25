@@ -1,11 +1,12 @@
 {
   "span_bytes":136,
-  "score":{"measured":"2026-08-24","candidate_bytes":136,"reference_bytes":136,"wrong_instructions":12,"differing_halfwords":10,"class":"allocation"},
+  "score":{"measured":"2026-08-25","candidate_bytes":136,"reference_bytes":136,"wrong_instructions":12,"differing_halfwords":8,"class":"allocation"},
   "shape":{"calls":11,"loops":0,"memory_operations":5,"reference_high_register_moves":0},
   "verified_against_reference":[
     "complete reconstruction accounts for both global halfword stores, all eleven calls, every argument, and all four terminal literals",
     "candidate and reference have identical 136-byte owner extent",
-    "the ten-halfword residual is confined to register allocation for the two stores and one independent shift placement"
+    "an inline direction wrapper removes the independent shift placement; the remaining eight halfwords are confined to equivalent low-register allocation for the two stores",
+    "a 20,000-candidate safe heat walk from the improved source compiled without failures and left the eight-halfword baseline unchanged"
   ],
   "retention":"keep_structured_asm",
   "note":"Retained because approved compiler chooses a different low-register allocation for the global state writes."

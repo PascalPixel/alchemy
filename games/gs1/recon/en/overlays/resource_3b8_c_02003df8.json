@@ -1,24 +1,10 @@
 {
   "span_bytes": 72,
-  "score": {
-    "measured": "2026-08-17",
-    "candidate_bytes": 72,
-    "reference_bytes": 72,
-    "wrong_instructions": 0,
-    "differing_halfwords": 2,
-    "class": "ordering"
-  },
-  "expressed": [
-    "drafted whole by `overlay reconstruct`"
-  ],
-  "unexpressed": [],
+  "score": {"measured":"2026-08-25","candidate_bytes":72,"reference_bytes":72,"wrong_instructions":0,"differing_halfwords":0,"class":"exact"},
+  "expressed": ["complete scene-effect setup call sequence"],
   "verified_against_reference": [
-    "byte count 72 = 72",
-    "wrong_instructions 0"
+    "a static inline offset wrapper reproduces the original negation and argument scheduling",
+    "linked candidate and reference are byte-identical across the complete 72-byte owner"
   ],
-  "blocked_by": "instruction order only: `negs r2, r2` scheduled after `movs r1, #2` rather than before it",
-  "rejected": [
-    "2026-08-23 bounded routing sweep: -fno-schedule-insns, -fno-gcse, -fno-expensive-optimizations, -fno-rerun-cse-after-loop, -fno-regmove, -fno-strength-reduce, -fno-cse-follow-jumps, -fno-cse-skip-blocks, and -O3 preserve the two-halfword ordering defect; -fno-schedule-insns2 and -O1 regress to 5"
-  ],
-  "note": "Found by a full sweep of 1,201 unfinished owners. Exact size, zero wrong instructions."
+  "retention": "adopted_exact_c"
 }

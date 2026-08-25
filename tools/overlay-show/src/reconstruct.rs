@@ -149,9 +149,7 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
         if (op == "b" || op == "b.n") && args.len() == 1 {
             if let Some(target) = hex(&args[0]) {
                 if target > r.addr
-                    && !rows.iter().any(|x| {
-                        x.addr > r.addr && x.addr < target && branch_targets.contains(&x.addr)
-                    })
+                    && !rows.iter().any(|x| x.addr > r.addr && x.addr < target && branch_targets.contains(&x.addr))
                 {
                     pool_skip.insert(r.addr);
                     for x in rows.iter().filter(|x| x.addr > r.addr && x.addr < target) {
@@ -208,18 +206,7 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
         let (op, args) = operands(&r.text);
         let cond = matches!(
             op.as_str(),
-            "beq"
-                | "beq.n"
-                | "bne"
-                | "bne.n"
-                | "blt"
-                | "blt.n"
-                | "bgt"
-                | "bgt.n"
-                | "bge"
-                | "bge.n"
-                | "ble"
-                | "ble.n"
+            "beq" | "beq.n" | "bne" | "bne.n" | "blt" | "blt.n" | "bgt" | "bgt.n" | "bge" | "bge.n" | "ble" | "ble.n"
         );
         if !cond || args.len() != 1 {
             continue;
@@ -234,8 +221,7 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
             continue;
         };
         let (pop_, pargs) = operands(&prev.text);
-        if pop_ != "cmp" || pargs.len() != 2 || pargs[0] != "r0" || immediate(&pargs[1]) != Some(0)
-        {
+        if pop_ != "cmp" || pargs.len() != 2 || pargs[0] != "r0" || immediate(&pargs[1]) != Some(0) {
             continue;
         }
         let test = match op.trim_end_matches(".n") {
@@ -259,11 +245,7 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
                 }
             }
         }
-        if let Some(prior) = if_at
-            .iter()
-            .find(|(_, v)| v.1 == target && v.2.is_none())
-            .map(|(k, _)| *k)
-        {
+        if let Some(prior) = if_at.iter().find(|(_, v)| v.1 == target && v.2.is_none()).map(|(k, _)| *k) {
             if join.is_some() {
                 let existing = if_at.remove(&prior).unwrap();
                 if_at.insert(prior, (existing.0, target, join));
@@ -304,11 +286,10 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
         if op == "ldr" && args.len() == 2 && args[0].starts_with("r") {
             let n: u32 = args[0][1..].parse().unwrap_or(0);
             if (4..=7).contains(&n) && args[1].starts_with("[pc") {
-                if let Some(off) = args.get(1).and_then(|a| {
-                    a.split('#')
-                        .nth(1)
-                        .and_then(|s| s.trim_end_matches(']').parse::<i64>().ok())
-                }) {
+                if let Some(off) = args
+                    .get(1)
+                    .and_then(|a| a.split('#').nth(1).and_then(|s| s.trim_end_matches(']').parse::<i64>().ok()))
+                {
                     if let Some(v) = word_at(&halfwords, ((r.addr + 4) & !3) + off) {
                         if v > 0 && v < 0x10000 {
                             base_values.insert(v);
@@ -326,11 +307,7 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
             "ldrsb" => "s8",
             _ => "s32",
         };
-        let inner = if base.contains(' ') {
-            format!("({base})")
-        } else {
-            base.to_string()
-        };
+        let inner = if base.contains(' ') { format!("({base})") } else { base.to_string() };
         if off == 0 {
             format!("*({cast} *){inner}")
         } else {
@@ -391,16 +368,9 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
                             tested.insert(name.to_string());
                         }
                     }
-                    if let Some(open) = out
-                        .iter_mut()
-                        .rev()
-                        .find(|l| l.trim_start().starts_with("if ("))
-                    {
+                    if let Some(open) = out.iter_mut().rev().find(|l| l.trim_start().starts_with("if (")) {
                         let closed = open.trim_end().trim_end_matches('{').trim_end().to_string();
-                        let inner = closed
-                            .trim_start()
-                            .trim_start_matches("if (")
-                            .trim_end_matches(')');
+                        let inner = closed.trim_start().trim_start_matches("if (").trim_end_matches(')');
                         let lead: String = open.chars().take_while(|c| c.is_whitespace()).collect();
                         *open = format!("{lead}if ({inner} && {call} {test}) {{");
                     }
@@ -466,9 +436,7 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
         }
         match op.as_str() {
             "movs" if args.len() == 2 => {
-                let v = immediate(&args[1])
-                    .map(Val::Num)
-                    .or_else(|| reg.get(&args[1]).cloned());
+                let v = immediate(&args[1]).map(Val::Num).or_else(|| reg.get(&args[1]).cloned());
                 match v {
                     Some(v) => {
                         reg.insert(args[0].clone(), v.clone());
@@ -512,23 +480,16 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
                 let (a, b) = if args.len() == 3 {
                     (
                         reg.get(&args[1]).cloned(),
-                        immediate(&args[2])
-                            .map(Val::Num)
-                            .or_else(|| reg.get(&args[2]).cloned()),
+                        immediate(&args[2]).map(Val::Num).or_else(|| reg.get(&args[2]).cloned()),
                     )
                 } else {
-                    (
-                        reg.get(&args[0]).cloned(),
-                        immediate(&args[1]).map(Val::Num),
-                    )
+                    (reg.get(&args[0]).cloned(), immediate(&args[1]).map(Val::Num))
                 };
                 let sum = match (a, b) {
                     (Some(Val::Num(x)), Some(Val::Num(y))) => Some(Val::Num(x + y)),
-                    (Some(Val::Named(n)), Some(Val::Num(y))) => Some(if y == 0 {
-                        Val::Named(n)
-                    } else {
-                        Val::Named(format!("{n} + {y}"))
-                    }),
+                    (Some(Val::Named(n)), Some(Val::Num(y))) => {
+                        Some(if y == 0 { Val::Named(n) } else { Val::Named(format!("{n} + {y}")) })
+                    }
                     _ => None,
                 };
                 match sum {
@@ -558,15 +519,9 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
                     "bics" => "&~",
                     _ => "^",
                 };
-                let place = loaded
-                    .get(&args[1])
-                    .cloned()
-                    .or_else(|| loaded.get(&args[0]).cloned());
-                let mask = if loaded.contains_key(&args[1]) {
-                    reg.get(&args[0]).cloned()
-                } else {
-                    reg.get(&args[1]).cloned()
-                };
+                let place = loaded.get(&args[1]).cloned().or_else(|| loaded.get(&args[0]).cloned());
+                let mask =
+                    if loaded.contains_key(&args[1]) { reg.get(&args[0]).cloned() } else { reg.get(&args[1]).cloned() };
                 if let (Some(place), Some(Val::Num(m))) = (place, mask) {
                     pending.insert(args[0].clone(), (place, sym.to_string(), m));
                 }
@@ -574,11 +529,8 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
                 fresh.remove(&args[0]);
             }
             "ldr" if args.len() == 2 && args[1].starts_with("[pc") => {
-                let off = args[1]
-                    .split('#')
-                    .nth(1)
-                    .and_then(|s| s.trim_end_matches(']').parse::<i64>().ok())
-                    .unwrap_or(0);
+                let off =
+                    args[1].split('#').nth(1).and_then(|s| s.trim_end_matches(']').parse::<i64>().ok()).unwrap_or(0);
                 match word_at(&halfwords, ((r.addr + 4) & !3) + off) {
                     Some(v) if base_values.contains(&v) => {
                         reg.insert(args[0].clone(), Val::Named("base".into()));
@@ -596,11 +548,8 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
                 }
             }
             "str" if args.len() == 2 && args[1].starts_with("[sp") => {
-                let off = args[1]
-                    .split('#')
-                    .nth(1)
-                    .and_then(|s| s.trim_end_matches(']').parse::<i64>().ok())
-                    .unwrap_or(0);
+                let off =
+                    args[1].split('#').nth(1).and_then(|s| s.trim_end_matches(']').parse::<i64>().ok()).unwrap_or(0);
                 if let Some(v) = reg.get(&args[0]).cloned() {
                     stack.insert(off, v);
                 }
@@ -660,10 +609,7 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
     }
     let mut used: BTreeSet<String> = BTreeSet::new();
     for (name, at) in &temp_line {
-        let referenced = out
-            .iter()
-            .enumerate()
-            .any(|(i, l)| i != *at && l.contains(name.as_str()));
+        let referenced = out.iter().enumerate().any(|(i, l)| i != *at && l.contains(name.as_str()));
         if referenced && out.get(*at).is_some_and(|l| is_call_stmt(l)) {
             used.insert(name.clone());
             if let Some(f) = temp_fn.get(name) {
@@ -683,8 +629,7 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
         loops = loop_n
     ));
     lines.push(" * Written by reconstruct from the owner's own disassembly.".to_string());
-    lines
-        .push(" * It is a starting point, not a reconstruction: read the assembly and".to_string());
+    lines.push(" * It is a starting point, not a reconstruction: read the assembly and".to_string());
     lines.push(" * fix it. Score it before believing any of it. */".to_string());
     lines.push(String::new());
     for n in &names {
@@ -713,39 +658,24 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
     }
     lines.extend(balance_braces(out));
     lines.push("}".to_string());
-    Draft {
-        lines,
-        calls,
-        loops: loop_n,
-        memory,
-    }
+    Draft { lines, calls, loops: loop_n, memory }
 }
 
 /// Draft one overlay owner from its disassembly into the ignored scratch tree.
 pub fn run(argv: &[String]) -> Result<Vec<String>, String> {
-    if argv
-        .iter()
-        .any(|argument| matches!(argument.as_str(), "-h" | "--help"))
-    {
+    if argv.iter().any(|argument| matches!(argument.as_str(), "-h" | "--help")) {
         return Ok(vec![
-            "usage: overlay reconstruct <overlay>:<offsetHex> [--span BYTES] [--out PATH]"
-                .to_string(),
+            "usage: overlay reconstruct <overlay>:<offsetHex> [--span BYTES] [--out PATH]".to_string(),
             "Drafts one owner into scratch/. Score and read it before promotion.".to_string(),
         ]);
     }
-    let value_after = |flag: &str| {
-        argv.iter()
-            .position(|argument| argument == flag)
-            .and_then(|index| argv.get(index + 1))
-            .cloned()
-    };
+    let value_after =
+        |flag: &str| argv.iter().position(|argument| argument == flag).and_then(|index| argv.get(index + 1)).cloned();
     let target = argv
         .iter()
         .find(|argument| argument.contains(':') && !argument.starts_with('-'))
         .ok_or("give an owner as <overlay>:<offsetHex>")?;
-    let (overlay, offset) = target
-        .split_once(':')
-        .ok_or("expected <overlay>:<offsetHex>")?;
+    let (overlay, offset) = target.split_once(':').ok_or("expected <overlay>:<offsetHex>")?;
     let mut show = vec![overlay.to_string(), offset.to_string()];
     if let Some(span) = value_after("--span") {
         show.extend(["-n".to_string(), span]);
@@ -755,15 +685,12 @@ pub fn run(argv: &[String]) -> Result<Vec<String>, String> {
         _ => return Err("overlay show produced no listing".to_string()),
     };
     if listing.is_empty() {
-        return Err(format!(
-            "{target}: no disassembly; check the overlay and offset"
-        ));
+        return Err(format!("{target}: no disassembly; check the overlay and offset"));
     }
-    let address = i64::from_str_radix(offset.trim_start_matches("0x"), 16)
-        .map_err(|_| format!("{offset}: not a hex offset"))?;
+    let address =
+        i64::from_str_radix(offset.trim_start_matches("0x"), 16).map_err(|_| format!("{offset}: not a hex offset"))?;
     let draft = draft(&listing, &format!("Func_{:08x}", 0x0200_0000 + address));
-    let output = value_after("--out")
-        .unwrap_or_else(|| format!("scratch/{overlay}_c_{:08x}.c", 0x0200_0000 + address));
+    let output = value_after("--out").unwrap_or_else(|| format!("scratch/{overlay}_c_{:08x}.c", 0x0200_0000 + address));
     write_draft(&output, &draft)?;
     Ok(vec![
         format!(
@@ -776,13 +703,10 @@ pub fn run(argv: &[String]) -> Result<Vec<String>, String> {
 
 fn write_draft(output: &str, draft: &Draft) -> Result<(), String> {
     if !output.starts_with("scratch/") {
-        return Err(format!(
-            "{output}: drafter output belongs under scratch/, which is gitignored"
-        ));
+        return Err(format!("{output}: drafter output belongs under scratch/, which is gitignored"));
     }
     if let Some(parent) = std::path::Path::new(output).parent() {
         std::fs::create_dir_all(parent).map_err(|error| error.to_string())?;
     }
-    std::fs::write(output, format!("{}\n", draft.lines.join("\n")))
-        .map_err(|error| error.to_string())
+    std::fs::write(output, format!("{}\n", draft.lines.join("\n"))).map_err(|error| error.to_string())
 }

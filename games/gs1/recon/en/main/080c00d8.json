@@ -33,15 +33,20 @@
     "clears the trailing 640-byte region using the shared fill source"
   ],
   "bounded_search": {
-    "mode": "screen-only",
-    "attempted": 0,
+    "mode": "080bbb0c-family-calibration",
+    "safe_attempted": 5000,
+    "classic_attempted": 10000,
     "exact": false,
-    "reason": "The complete readable candidate is four bytes short with 42 differing halfwords and fails exact-extent and <=20-halfword admission."
+    "best_safe": "84 candidate bytes, 42 differing halfwords, and 32 wrong instructions; structural alignment improved without a linked-byte improvement",
+    "best_classic_unverified": "84 candidate bytes and 40 differing halfwords; a transient candidate reached 39, but no exact candidate appeared and classic nonzero output is not semantic evidence",
+    "reason": "Both bounded axes remained four bytes short and broad; more volume without a new source model is closed."
   },
   "notes": [
     "Independent object analysis bounds this leaf at 88 executable bytes and proves all 60 relocation-normalized core bytes identical across the six approved GS1 editions.",
     "An integer cursor and assembly-shaped do-while loop reduce structural mismatches while keeping the source readable, but the remaining allocation and literal schedule is not localized.",
     "No full search or permanent classification was warranted, and zero DONE bytes are claimed.",
-    "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, the recovered palette caller, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used."
+    "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, the recovered palette caller, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used.",
+    "Supplying the exact preprocessed 080bbb0c source as m2c context produced the same 52.62162% structural draft as the candidate's own context; this owner has no declaration or type relationship that the large battle resolver can transfer.",
+    "A 5,000-candidate safe walk and a 10,000-candidate classic exact-only walk biased by 080bbb0c produced no exact or exact-extent candidate. No generated source replaced the readable draft."
   ]
 }

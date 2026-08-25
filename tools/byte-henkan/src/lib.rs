@@ -50,11 +50,7 @@ pub struct SourceDocument {
 
 /// Mirrors the TypeScript `exactKeys`: the value must be a plain object whose
 /// key set is exactly `keys` (no extras, no omissions).
-fn exact_keys<'a>(
-    value: &'a Value,
-    keys: &[&str],
-    label: &str,
-) -> Result<&'a serde_json::Map<String, Value>, String> {
+fn exact_keys<'a>(value: &'a Value, keys: &[&str], label: &str) -> Result<&'a serde_json::Map<String, Value>, String> {
     let object = match value {
         Value::Object(map) => map,
         _ => return Err(format!("{label} must be an object")),
@@ -74,8 +70,7 @@ fn exact_keys<'a>(
 fn as_js_safe_integer(value: &Value) -> Option<i64> {
     const MAX_SAFE: f64 = 9_007_199_254_740_991.0;
     let number = value.as_f64()?;
-    if !value.is_number() || !number.is_finite() || number.fract() != 0.0 || number.abs() > MAX_SAFE
-    {
+    if !value.is_number() || !number.is_finite() || number.fract() != 0.0 || number.abs() > MAX_SAFE {
         return None;
     }
     Some(number as i64)
@@ -99,16 +94,7 @@ fn string_is(value: Option<&Value>, expected: &str) -> bool {
 pub fn parse_document(value: &Value) -> Result<SourceDocument, String> {
     let object = exact_keys(
         value,
-        &[
-            "format",
-            "kind",
-            "address",
-            "end",
-            "table_width",
-            "source_rows",
-            "reserved_rows",
-            "tables",
-        ],
+        &["format", "kind", "address", "end", "table_width", "source_rows", "reserved_rows", "tables"],
         "byte conversion source",
     )?;
     let tables_value = object.get("tables").and_then(Value::as_array);
@@ -127,17 +113,9 @@ pub fn parse_document(value: &Value) -> Result<SourceDocument, String> {
 
     let mut tables = Vec::with_capacity(TABLE_COUNT);
     for (table_index, item) in tables_value.iter().enumerate() {
-        let table = exact_keys(
-            item,
-            &["name", "kind", "rows"],
-            &format!("byte conversion table {table_index}"),
-        )?;
+        let table = exact_keys(item, &["name", "kind", "rows"], &format!("byte conversion table {table_index}"))?;
         let expected_name = format!("hyou_{table_index:02}");
-        let expected_kind = if table_index < PERMUTATION_TABLES {
-            TableKind::Permutation
-        } else {
-            TableKind::Mapping
-        };
+        let expected_kind = if table_index < PERMUTATION_TABLES { TableKind::Permutation } else { TableKind::Mapping };
         let rows_value = table.get("rows").and_then(Value::as_array);
         if !string_is(table.get("name"), &expected_name)
             || !string_is(table.get("kind"), expected_kind.as_str())
@@ -151,17 +129,11 @@ pub fn parse_document(value: &Value) -> Result<SourceDocument, String> {
         for (row_index, row) in rows_value.iter().enumerate() {
             let entries = match row.as_array() {
                 Some(entries) if entries.len() == 16 => entries,
-                _ => {
-                    return Err(format!(
-                        "byte conversion table {table_index} row {row_index} differs"
-                    ))
-                }
+                _ => return Err(format!("byte conversion table {table_index} row {row_index} differs")),
             };
             let mut parsed = Vec::with_capacity(16);
             for (column_index, entry) in entries.iter().enumerate() {
-                let label = format!(
-                    "byte conversion table {table_index} row {row_index} column {column_index}"
-                );
+                let label = format!("byte conversion table {table_index} row {row_index} column {column_index}");
                 parsed.push(integer(entry, 0, 223, &label)? as u8);
             }
             rows.push(parsed);
@@ -170,30 +142,15 @@ pub fn parse_document(value: &Value) -> Result<SourceDocument, String> {
         if expected_kind == TableKind::Permutation {
             let mut ordered: Vec<u8> = rows.iter().flatten().copied().collect();
             ordered.sort_unstable();
-            if ordered
-                .iter()
-                .enumerate()
-                .any(|(index, entry)| usize::from(*entry) != index)
-            {
-                return Err(format!(
-                    "byte conversion table {table_index} is not a permutation"
-                ));
+            if ordered.iter().enumerate().any(|(index, entry)| usize::from(*entry) != index) {
+                return Err(format!("byte conversion table {table_index} is not a permutation"));
             }
         }
 
-        tables.push(TableSource {
-            name: expected_name,
-            kind: expected_kind,
-            rows,
-        });
+        tables.push(TableSource { name: expected_name, kind: expected_kind, rows });
     }
 
-    Ok(SourceDocument {
-        table_width: 16,
-        source_rows: 14,
-        reserved_rows: 2,
-        tables,
-    })
+    Ok(SourceDocument { table_width: 16, source_rows: 14, reserved_rows: 2, tables })
 }
 
 pub fn build_from_text(text: &str) -> Result<Vec<u8>, String> {
@@ -221,30 +178,13 @@ pub fn build_byte_henkan_tables(path: &Path) -> Result<Vec<u8>, String> {
 }
 
 fn test_document() -> Value {
-    let permutation: Vec<Value> = (0..14)
-        .map(|row| {
-            Value::Array(
-                (0..16)
-                    .map(|column| Value::from(row * 16 + column))
-                    .collect(),
-            )
-        })
-        .collect();
-    let mapping: Vec<Value> = (0..14)
-        .map(|_| Value::Array((0..16).map(|_| Value::from(7)).collect()))
-        .collect();
+    let permutation: Vec<Value> =
+        (0..14).map(|row| Value::Array((0..16).map(|column| Value::from(row * 16 + column)).collect())).collect();
+    let mapping: Vec<Value> = (0..14).map(|_| Value::Array((0..16).map(|_| Value::from(7)).collect())).collect();
     let tables: Vec<Value> = (0..TABLE_COUNT)
         .map(|index| {
-            let kind = if index < PERMUTATION_TABLES {
-                "permutation"
-            } else {
-                "mapping"
-            };
-            let rows = if index < PERMUTATION_TABLES {
-                &permutation
-            } else {
-                &mapping
-            };
+            let kind = if index < PERMUTATION_TABLES { "permutation" } else { "mapping" };
+            let rows = if index < PERMUTATION_TABLES { &permutation } else { &mapping };
             serde_json::json!({
                 "name": format!("hyou_{index:02}"),
                 "kind": kind,

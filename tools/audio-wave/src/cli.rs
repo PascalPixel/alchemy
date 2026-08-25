@@ -38,11 +38,7 @@ fn source(text: &str) -> Result<WaveRecordSource, String> {
         .transpose()?;
     let loop_start = match object.get("loop_start") {
         None | Some(serde_json::Value::Null) => None,
-        Some(value) => Some(
-            value
-                .as_f64()
-                .ok_or("wave loop start must be numeric or null")?,
-        ),
+        Some(value) => Some(value.as_f64().ok_or("wave loop start must be numeric or null")?),
     };
     Ok(WaveRecordSource {
         frequency: scalar(object.get("frequency"), "wave catalog frequency")?,
@@ -72,9 +68,7 @@ pub fn entry(arguments: &[String]) -> ExitCode {
                     "padding_fill": report.padding_fill as u64,
                 })
             );
-            std::io::stdout()
-                .write_all(&built)
-                .map_err(|error| error.to_string())
+            std::io::stdout().write_all(&built).map_err(|error| error.to_string())
         })(),
         [argument] if matches!(argument.as_str(), "-h" | "--help") => {
             println!("usage: audio-wave build-record-stdout SOURCE WAV");

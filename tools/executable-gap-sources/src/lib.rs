@@ -16,17 +16,13 @@ fn field<'a>(value: &'a Value, key: &str) -> Result<&'a Value, String> {
 }
 
 fn address(value: &Value) -> Result<u64, String> {
-    let text = value
-        .as_str()
-        .ok_or_else(|| "invalid address".to_string())?;
+    let text = value.as_str().ok_or_else(|| "invalid address".to_string())?;
     u64::from_str_radix(text.strip_prefix("0x").ok_or("invalid address")?, 16)
         .map_err(|_| "invalid address".to_string())
 }
 
 fn words(values: &Value, width: usize) -> Result<Vec<u8>, String> {
-    let values = values
-        .as_array()
-        .ok_or_else(|| "values are not an array".to_string())?;
+    let values = values.as_array().ok_or_else(|| "values are not an array".to_string())?;
     let mut data = Vec::with_capacity(values.len() * width);
     for value in values {
         let text = value.as_str().ok_or_else(|| "invalid word".to_string())?;
@@ -44,20 +40,14 @@ fn section_data(section: &Value) -> Result<Option<Vec<u8>>, String> {
         "u32-values" => Ok(Some(words(field(section, "values")?, 4)?)),
         "u32-records" => {
             let mut data = Vec::new();
-            for record in field(section, "records")?
-                .as_array()
-                .ok_or("records are not an array")?
-            {
+            for record in field(section, "records")?.as_array().ok_or("records are not an array")? {
                 data.extend(words(field(record, "words")?, 4)?);
             }
             Ok(Some(data))
         }
         "u16-tables" => {
             let mut data = Vec::new();
-            for table in field(section, "tables")?
-                .as_array()
-                .ok_or("tables are not an array")?
-            {
+            for table in field(section, "tables")?.as_array().ok_or("tables are not an array")? {
                 data.extend(words(field(table, "values")?, 2)?);
             }
             Ok(Some(data))
@@ -68,22 +58,13 @@ fn section_data(section: &Value) -> Result<Option<Vec<u8>>, String> {
 }
 
 pub fn build_executable_gap_data(path: &Path) -> Result<Vec<BuiltSection>, String> {
-    let package: Value = serde_json::from_slice(&std::fs::read(path).map_err(|e| e.to_string())?)
-        .map_err(|e| e.to_string())?;
+    let package: Value =
+        serde_json::from_slice(&std::fs::read(path).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?;
     let mut sections = Vec::new();
-    for gap in field(&package, "gaps")?
-        .as_array()
-        .ok_or("gaps are not an array")?
-    {
-        for section in field(gap, "sections")?
-            .as_array()
-            .ok_or("sections are not an array")?
-        {
+    for gap in field(&package, "gaps")?.as_array().ok_or("gaps are not an array")? {
+        for section in field(gap, "sections")?.as_array().ok_or("sections are not an array")? {
             if let Some(data) = section_data(section)? {
-                sections.push(BuiltSection {
-                    address: address(field(section, "address")?)?,
-                    data,
-                });
+                sections.push(BuiltSection { address: address(field(section, "address")?)?, data });
             }
         }
     }

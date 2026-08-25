@@ -21,16 +21,12 @@ fn run(args: Vec<String>) -> Result<(), String> {
         if command == "build-stdout" {
             let text = fs::read_to_string(input).map_err(|e| e.to_string())?;
             let bytes = import_words(&text).map_err(|e| e.to_string())?;
-            std::io::stdout()
-                .write_all(&bytes)
-                .map_err(|e| e.to_string())?;
+            std::io::stdout().write_all(&bytes).map_err(|e| e.to_string())?;
             return Ok(());
         }
     }
     let (command, input, output) = match args.as_slice() {
-        [command, input, output] if command == "export" || command == "build" => {
-            (command, input, output)
-        }
+        [command, input, output] if command == "export" || command == "build" => (command, input, output),
         _ => return Err("a word-stream command is required".to_string()),
     };
     if let Some(parent) = Path::new(output).parent() {
@@ -38,12 +34,10 @@ fn run(args: Vec<String>) -> Result<(), String> {
     }
     if command == "export" {
         let data = fs::read(input).map_err(|e| e.to_string())?;
-        fs::write(output, export_words(&data).map_err(|e| e.to_string())?)
-            .map_err(|e| e.to_string())
+        fs::write(output, export_words(&data).map_err(|e| e.to_string())?).map_err(|e| e.to_string())
     } else {
         let text = fs::read_to_string(input).map_err(|e| e.to_string())?;
-        fs::write(output, import_words(&text).map_err(|e| e.to_string())?)
-            .map_err(|e| e.to_string())
+        fs::write(output, import_words(&text).map_err(|e| e.to_string())?).map_err(|e| e.to_string())
     }
 }
 

@@ -8,13 +8,7 @@ const USAGE: &str = "usage: late-runtime-residual build-region-stdout INDEX ADDR
 fn catalog_path() -> PathBuf {
     std::env::var_os("ALCHEMY_ROOT")
         .map(PathBuf::from)
-        .unwrap_or_else(|| {
-            Path::new(env!("CARGO_MANIFEST_DIR"))
-                .ancestors()
-                .nth(2)
-                .unwrap()
-                .to_path_buf()
-        })
+        .unwrap_or_else(|| Path::new(env!("CARGO_MANIFEST_DIR")).ancestors().nth(2).unwrap().to_path_buf())
         .join("games/gs1/assets/data/late_runtime_catalog.json")
 }
 

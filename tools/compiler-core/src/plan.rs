@@ -32,8 +32,8 @@ use crate::bundle::{
 };
 use crate::bundle_data::GCC3_EXPECTED;
 use crate::routing::{
-    agbcc_cflags, agbcc_driver, bundle, cflags_for_source, cflags_for_target,
-    cflags_for_target_source, root, uses_agbcc_compiler, CompilerTarget,
+    agbcc_cflags, agbcc_driver, bundle, cflags_for_source, cflags_for_target, cflags_for_target_source, root,
+    uses_agbcc_compiler, CompilerTarget,
 };
 
 use crate::nodepath::{basename, extname};
@@ -94,12 +94,8 @@ impl CompilerFamily {
 
     /// Every member, in the declaration order of the TypeScript union. Callers
     /// that sweep the whole space (the corpus harness) rely on this order.
-    pub const ALL: [CompilerFamily; 4] = [
-        CompilerFamily::Routed,
-        CompilerFamily::Gcc296,
-        CompilerFamily::OldAgbcc,
-        CompilerFamily::Gcc3,
-    ];
+    pub const ALL: [CompilerFamily; 4] =
+        [CompilerFamily::Routed, CompilerFamily::Gcc296, CompilerFamily::OldAgbcc, CompilerFamily::Gcc3];
 }
 
 impl ResolvedFamily {
@@ -231,26 +227,18 @@ pub struct SourceToAssemblyPlan {
 /// first reaches the `throw`; and because the check runs before the filter, a
 /// conflicting flag that is not even in `canonical` still throws. Both fall out
 /// of the original's structure, not from a decision made here.
-pub fn mutated_compiler_flags(
-    canonical: &[String],
-    mutations: Option<&CompilerFlagMutations>,
-) -> Result<Vec<String>> {
+pub fn mutated_compiler_flags(canonical: &[String], mutations: Option<&CompilerFlagMutations>) -> Result<Vec<String>> {
     let empty = CompilerFlagMutations::default();
     let mutations = mutations.unwrap_or(&empty);
     let added = &mutations.add_flags;
     let removed = &mutations.remove_flags;
     for flag in added {
         if removed.iter().any(|candidate| candidate == flag) {
-            return Err(format!(
-                "compiler flag cannot be both added and removed: {flag}"
-            ));
+            return Err(format!("compiler flag cannot be both added and removed: {flag}"));
         }
     }
-    let mut out: Vec<String> = canonical
-        .iter()
-        .filter(|flag| !removed.iter().any(|candidate| candidate == *flag))
-        .cloned()
-        .collect();
+    let mut out: Vec<String> =
+        canonical.iter().filter(|flag| !removed.iter().any(|candidate| candidate == *flag)).cloned().collect();
     out.extend(added.iter().cloned());
     Ok(out)
 }
@@ -281,9 +269,7 @@ pub fn inferred_preprocessed_output(output: &str) -> String {
 // ---------------------------------------------------------------------------
 
 /// `sourceToAssemblyPlan(options)`.
-pub fn source_to_assembly_plan(
-    options: &SourceToAssemblyPlanOptions,
-) -> Result<SourceToAssemblyPlan> {
+pub fn source_to_assembly_plan(options: &SourceToAssemblyPlanOptions) -> Result<SourceToAssemblyPlan> {
     let requested_family = options.family.unwrap_or(CompilerFamily::Routed);
     let family = match requested_family {
         // The routed family follows owner evidence. The shared audio-engine
@@ -321,10 +307,7 @@ pub fn source_to_assembly_plan(
         cflags_for_target(options.target)
     };
     let flags = mutated_compiler_flags(&canonical, options.flags.as_ref())?;
-    let dumpbase = options
-        .dumpbase
-        .clone()
-        .unwrap_or_else(|| basename(&options.routing_source).to_string());
+    let dumpbase = options.dumpbase.clone().unwrap_or_else(|| basename(&options.routing_source).to_string());
     let mut compiler_input = options.input.clone();
     let mut steps: Vec<CompilerCommandStep> = Vec::new();
 
@@ -337,15 +320,11 @@ pub fn source_to_assembly_plan(
         };
         match family {
             ResolvedFamily::OldAgbcc => validate_agbcc_bundle()?,
-            ResolvedFamily::Gcc3 => {
-                validate_experimental_compiler(family.as_str(), &driver, GCC3_EXPECTED)?
-            }
+            ResolvedFamily::Gcc3 => validate_experimental_compiler(family.as_str(), &driver, GCC3_EXPECTED)?,
             ResolvedFamily::Gcc296 => unreachable!("gcc296 does not use a separate driver"),
         }
-        compiler_input = options
-            .preprocessed_output
-            .clone()
-            .unwrap_or_else(|| inferred_preprocessed_output(&options.output));
+        compiler_input =
+            options.preprocessed_output.clone().unwrap_or_else(|| inferred_preprocessed_output(&options.output));
         // old-agbcc preprocesses as GNUC 2.9. See the `-D__GNUC__=2` note on
         // `direct_preprocessor_command` for why the gcc3 value of 0 is a defect
         // that is nonetheless left in place.
@@ -372,10 +351,7 @@ pub fn source_to_assembly_plan(
         command.extend(flags.iter().cloned());
         command.push("-o".to_string());
         command.push(options.output.clone());
-        steps.push(CompilerCommandStep {
-            kind: StepKind::Compile,
-            command,
-        });
+        steps.push(CompilerCommandStep { kind: StepKind::Compile, command });
     } else {
         let mut arguments = flags.clone();
         arguments.extend(options.preprocessor_flags.iter().cloned());
@@ -433,11 +409,7 @@ pub fn direct_preprocessor_command(input: &str, output: &str) -> Result<Vec<Stri
 /// `Display` for non-integers (`1` vs `1.0`). This takes an `i64`, where the two
 /// agree exactly, and pushes any float away from the boundary. The four values
 /// the tree passes -- 96, 95, 9, 0 -- are all integers and are pinned by a test.
-pub fn direct_preprocessor_command_with_minor(
-    input: &str,
-    output: &str,
-    gcc_minor: i64,
-) -> Result<Vec<String>> {
+pub fn direct_preprocessor_command_with_minor(input: &str, output: &str, gcc_minor: i64) -> Result<Vec<String>> {
     direct_preprocessor_command_with_minor_and_flags(input, output, gcc_minor, &[])
 }
 
@@ -447,13 +419,7 @@ fn direct_preprocessor_command_with_minor_and_flags(
     gcc_minor: i64,
     flags: &[String],
 ) -> Result<Vec<String>> {
-    direct_preprocessor_command_for_target_with_minor_and_flags(
-        CompilerTarget::Gs1,
-        input,
-        output,
-        gcc_minor,
-        flags,
-    )
+    direct_preprocessor_command_for_target_with_minor_and_flags(CompilerTarget::Gs1, input, output, gcc_minor, flags)
 }
 
 fn direct_preprocessor_command_for_target_with_minor_and_flags(
@@ -483,14 +449,7 @@ fn direct_preprocessor_command_for_target_with_minor_and_flags(
         "-D__ELF__".into(),
         "-Dthumb".into(),
         "-D__thumb__".into(),
-        format!(
-            "-I{}",
-            root()
-                .join("games")
-                .join(target.as_str())
-                .join("include")
-                .display()
-        ),
+        format!("-I{}", root().join("games").join(target.as_str()).join("include").display()),
     ];
     command.extend(flags.iter().cloned());
     command.push(input.to_string());
@@ -511,21 +470,14 @@ fn direct_preprocessor_command_for_target_with_minor_and_flags(
 /// below always does. Left alone: making the parameter required is a signature
 /// change across the TypeScript tree, and silently substituting a full path
 /// would change the `-dumpbase` argument, which appears in the emitted `.s`.
-pub fn direct_compiler_command(
-    input: &str,
-    output: &str,
-    dumpbase: &str,
-    source: Option<&str>,
-) -> Result<Vec<String>> {
+pub fn direct_compiler_command(input: &str, output: &str, dumpbase: &str, source: Option<&str>) -> Result<Vec<String>> {
     validate_bundle(CompilerTarget::Gs1)?;
     let source = source.unwrap_or(dumpbase);
     // cc1 is not the driver: it has no `-B` search path and no built-in include
     // handling, so the driver-level `-nostdinc` and `-I` flags are dropped here
     // and the include path arrives via the preprocessor step instead.
-    let flags: Vec<String> = cflags_for_source(source)
-        .into_iter()
-        .filter(|flag| flag != "-nostdinc" && !flag.starts_with("-I"))
-        .collect();
+    let flags: Vec<String> =
+        cflags_for_source(source).into_iter().filter(|flag| flag != "-nostdinc" && !flag.starts_with("-I")).collect();
     let mut out = vec![
         bundle().join("cc1").to_string_lossy().into_owned(),
         input.to_string(),
@@ -585,14 +537,8 @@ mod tests {
         options.preprocessor_flags = vec!["-DGS1_EDITION_JA=1".into()];
 
         let plan = source_to_assembly_plan(&options).unwrap();
-        assert!(plan.steps[0]
-            .command
-            .iter()
-            .any(|argument| argument == "-DGS1_EDITION_JA=1"));
-        assert!(!plan.steps[1]
-            .command
-            .iter()
-            .any(|argument| argument.starts_with("-DGS1_EDITION_")));
+        assert!(plan.steps[0].command.iter().any(|argument| argument == "-DGS1_EDITION_JA=1"));
+        assert!(!plan.steps[1].command.iter().any(|argument| argument.starts_with("-DGS1_EDITION_")));
     }
 
     #[test]
@@ -608,10 +554,7 @@ mod tests {
 
         let plan = source_to_assembly_plan(&options).unwrap();
         assert_eq!(plan.steps.len(), 1);
-        assert!(plan.steps[0]
-            .command
-            .iter()
-            .any(|argument| argument == "-DGS2_EDITION_IT=1"));
+        assert!(plan.steps[0].command.iter().any(|argument| argument == "-DGS2_EDITION_IT=1"));
     }
 
     #[test]
@@ -626,9 +569,6 @@ mod tests {
 
         let plan = source_to_assembly_plan(&options).unwrap();
         assert!(plan.steps[1].command[0].ends_with("/agbcc/old_agbcc"));
-        assert!(plan.steps[0]
-            .command
-            .iter()
-            .any(|argument| argument == "-DGS2_EDITION_JA=1"));
+        assert!(plan.steps[0].command.iter().any(|argument| argument == "-DGS2_EDITION_JA=1"));
     }
 }

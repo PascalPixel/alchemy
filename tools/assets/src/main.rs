@@ -17,10 +17,7 @@ const COMMANDS: &[(&str, &str)] = &[
     ("pairtable", "extract pairtable data from the ROM"),
     ("indexed-still", "extract indexed still data from the ROM"),
     ("encounter-data", "extract encounter data data from the ROM"),
-    (
-        "character-catalog",
-        "extract character catalog data from the ROM",
-    ),
+    ("character-catalog", "extract character catalog data from the ROM"),
     ("staff-roll", "extract staff roll data from the ROM"),
     ("audio-wave", "extract audio wave data from the ROM"),
     ("localization-tables", "build the localization tables"),
@@ -28,50 +25,20 @@ const COMMANDS: &[(&str, &str)] = &[
     ("executable-gap-sources", "build executable-gap sources"),
     ("music-residuals", "build music residuals"),
     ("f0-archive", "extract f0 archive data from the ROM"),
-    (
-        "simple-resources",
-        "extract simple resources data from the ROM",
-    ),
-    (
-        "kind2-resources",
-        "extract kind2 resources data from the ROM",
-    ),
+    ("simple-resources", "extract simple resources data from the ROM"),
+    ("kind2-resources", "extract kind2 resources data from the ROM"),
     ("resource-01c", "extract resource 01c data from the ROM"),
-    (
-        "resource-byte-canvases",
-        "extract resource byte canvases data from the ROM",
-    ),
-    (
-        "skip-sprite-archive",
-        "extract skip sprite archive data from the ROM",
-    ),
-    (
-        "static-sprite-series",
-        "extract static sprite series data from the ROM",
-    ),
-    (
-        "localization-font",
-        "extract localization font data from the ROM",
-    ),
-    (
-        "map-container-components",
-        "extract map container components data from the ROM",
-    ),
+    ("resource-byte-canvases", "extract resource byte canvases data from the ROM"),
+    ("skip-sprite-archive", "extract skip sprite archive data from the ROM"),
+    ("static-sprite-series", "extract static sprite series data from the ROM"),
+    ("localization-font", "extract localization font data from the ROM"),
+    ("map-container-components", "extract map container components data from the ROM"),
     ("byte-henkan", "extract byte henkan data from the ROM"),
-    (
-        "namae-nyuuryoku",
-        "extract namae nyuuryoku data from the ROM",
-    ),
+    ("namae-nyuuryoku", "extract namae nyuuryoku data from the ROM"),
     ("music", "extract music data from the ROM"),
     ("kind1-map-grid", "extract kind1 map grid data from the ROM"),
-    (
-        "resource-directory",
-        "extract resource directory data from the ROM",
-    ),
-    (
-        "late-runtime-residual",
-        "extract late runtime residual data from the ROM",
-    ),
+    ("resource-directory", "extract resource directory data from the ROM"),
+    ("late-runtime-residual", "extract late runtime residual data from the ROM"),
     ("early-runtime-data", "early runtime data"),
     ("message-archive", "message archive"),
     ("3ce", "decode resource 3ce"),
@@ -83,19 +50,10 @@ const COMMANDS: &[(&str, &str)] = &[
     ("map-chiiki", "decode regional (chiiki) map resources"),
     ("battle-effect", "build the battle-effect data package"),
     ("runtime-support", "build the runtime support data package"),
-    (
-        "battle-runtime",
-        "build and verify the battle-effect runtime (sentou kouka)",
-    ),
+    ("battle-runtime", "build and verify the battle-effect runtime (sentou kouka)"),
     ("battle-menu", "build the battle menu data (sentou menu)"),
-    (
-        "battle-screen",
-        "build the battle screen data (sentou gamen)",
-    ),
-    (
-        "battle-display",
-        "build the battle display data (sentou hyouji)",
-    ),
+    ("battle-screen", "build the battle screen data (sentou gamen)"),
+    ("battle-display", "build the battle display data (sentou hyouji)"),
 ];
 
 fn report<E: std::fmt::Display>(result: Result<(), E>) -> ExitCode {

@@ -34,9 +34,7 @@ use std::collections::BTreeSet;
 use std::path::Path;
 use std::process::ExitCode;
 
-use compiler_core::routing::{
-    cflags_for_source, cflags_for_target, uses_agbcc_compiler, CompilerTarget,
-};
+use compiler_core::routing::{cflags_for_source, cflags_for_target, uses_agbcc_compiler, CompilerTarget};
 use compiler_core::source_paths::SourcePaths;
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
@@ -54,22 +52,13 @@ fn baseline() -> Vec<String> {
 /// The per-source flags that are not part of the baseline, in routed order.
 fn routed_extras(routing: &str) -> Vec<String> {
     let base: BTreeSet<String> = baseline().into_iter().collect();
-    cflags_for_source(routing)
-        .into_iter()
-        .filter(|flag| !base.contains(flag))
-        .collect()
+    cflags_for_source(routing).into_iter().filter(|flag| !base.contains(flag)).collect()
 }
 
 fn source_records(paths: Option<&SourcePaths>, source: &str) -> Vec<LiveSource> {
-    let owners = paths
-        .map(|paths| paths.owners_for_path(Path::new(source)))
-        .unwrap_or_default();
+    let owners = paths.map(|paths| paths.owners_for_path(Path::new(source))).unwrap_or_default();
     if owners.is_empty() {
-        return vec![LiveSource {
-            display: source.to_string(),
-            owner: None,
-            routing: source.to_string(),
-        }];
+        return vec![LiveSource { display: source.to_string(), owner: None, routing: source.to_string() }];
     }
     owners
         .into_iter()
@@ -93,25 +82,16 @@ fn live_sources() -> Vec<LiveSource> {
                 continue;
             }
             if let Some(text) = path.to_str() {
-                found.push(LiveSource {
-                    display: text.to_string(),
-                    owner: None,
-                    routing: text.to_string(),
-                });
+                found.push(LiveSource { display: text.to_string(), owner: None, routing: text.to_string() });
             }
         }
     }
     if let Ok(paths) = SourcePaths::load(compiler_core::routing::root()) {
         if let Ok(sources) = paths.all_sources() {
-            found.extend(sources.into_iter().map(|source| {
-                LiveSource {
-                    display: paths
-                        .repository_relative_path(source.owner)
-                        .to_string_lossy()
-                        .into_owned(),
-                    owner: Some(source.owner.id()),
-                    routing: source.owner.routing_path().to_string_lossy().into_owned(),
-                }
+            found.extend(sources.into_iter().map(|source| LiveSource {
+                display: paths.repository_relative_path(source.owner).to_string_lossy().into_owned(),
+                owner: Some(source.owner.id()),
+                routing: source.owner.routing_path().to_string_lossy().into_owned(),
             }));
         }
     }
@@ -145,10 +125,7 @@ fn self_test() -> Result<(), String> {
     for source in live_sources().into_iter().take(400) {
         for flag in routed_extras(&source.routing) {
             if baseline_set.contains(&flag) {
-                return Err(format!(
-                    "{}: {flag} is both baseline and routed",
-                    source.display
-                ));
+                return Err(format!("{}: {flag} is both baseline and routed", source.display));
             }
         }
     }
@@ -180,20 +157,14 @@ pub fn entry(arguments: &[String]) -> ExitCode {
         let deviating = sources
             .iter()
             .filter(|source| {
-                !routed_extras(&source.routing).is_empty()
-                    || uses_agbcc_compiler(CompilerTarget::Gs1, &source.routing)
+                !routed_extras(&source.routing).is_empty() || uses_agbcc_compiler(CompilerTarget::Gs1, &source.routing)
             })
             .count();
-        println!(
-            "routing debt: {deviating} of {} live sources deviate from the standard",
-            sources.len()
-        );
+        println!("routing debt: {deviating} of {} live sources deviate from the standard", sources.len());
         return ExitCode::SUCCESS;
     }
     if arguments.is_empty() || arguments.iter().any(|a| a == "-h" || a == "--help") {
-        eprintln!(
-            "usage: route-dump <source>... | --all | --routed | --standard | --debt | --self-test"
-        );
+        eprintln!("usage: route-dump <source>... | --all | --routed | --standard | --debt | --self-test");
         return ExitCode::FAILURE;
     }
     let only_routed = arguments.iter().any(|a| a == "--routed");
@@ -208,10 +179,7 @@ pub fn entry(arguments: &[String]) -> ExitCode {
             .collect()
     };
     for source in sources {
-        if !Path::new(&source.display).exists()
-            && !source
-                .display
-                .starts_with("games/gs1/recon/en/main/does_not_exist")
+        if !Path::new(&source.display).exists() && !source.display.starts_with("games/gs1/recon/en/main/does_not_exist")
         {
             eprintln!("warning: {} does not exist on disk", source.display);
         }
@@ -240,20 +208,11 @@ mod tests {
 }"#,
         )
         .unwrap();
-        let records = source_records(
-            Some(&paths),
-            "games/gs1/src/overlays/shared/integrate_effect_motion.c",
-        );
+        let records = source_records(Some(&paths), "games/gs1/src/overlays/shared/integrate_effect_motion.c");
         assert_eq!(records.len(), 2);
         assert_eq!(records[0].owner.as_deref(), Some("resource_39b:02000104"));
-        assert_eq!(
-            records[0].routing,
-            "games/gs1/src/resource_39b_c_02000104.c"
-        );
+        assert_eq!(records[0].routing, "games/gs1/src/resource_39b_c_02000104.c");
         assert_eq!(records[1].owner.as_deref(), Some("resource_39c:02000104"));
-        assert_eq!(
-            records[1].routing,
-            "games/gs1/src/resource_39c_c_02000104.c"
-        );
+        assert_eq!(records[1].routing, "games/gs1/src/resource_39c_c_02000104.c");
     }
 }

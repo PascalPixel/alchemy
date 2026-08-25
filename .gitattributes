@@ -9,11 +9,10 @@
 # Merging venus, mars and jupiter paid that cost per branch, and every lane that
 # merges main back in would pay it again.
 #
-# `merge=generated` keeps our side so the merge completes, and `make coverage`
-# then produces the true values from the merged tree. `make verify` runs
-# `coverage-check`, so a forgotten regeneration fails the gate rather than
-# committing a stale artifact -- that gate is what makes keeping-ours safe, and
-# it was added in the same commit as this file.
+# `merge=generated` keeps our side so the merge completes; the owning generator
+# then produces the true value from the merged tree. `make verify` checks every
+# generated artifact below, so a forgotten regeneration fails the gate rather
+# than committing a stale artifact.
 #
 # The driver is registered once per clone, next to the hooks line:
 #     git config merge.generated.driver true
@@ -31,3 +30,4 @@ metrics/gs1-en-progress.json       merge=generated
 metrics/gs1-en-coverage-map.json   merge=generated
 metrics/gs1-en-core-targets.json   merge=generated
 assets/readme/*.svg                merge=generated
+games/gs1/recon/compiler-families.json merge=generated

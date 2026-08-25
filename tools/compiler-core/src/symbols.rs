@@ -42,10 +42,7 @@ pub struct ExternalSymbol {
 }
 
 fn is_lower_hex8(value: &str) -> bool {
-    value.len() == 8
-        && value
-            .bytes()
-            .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+    value.len() == 8 && value.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
 }
 
 /// `externalSymbol(name, callViaBase)`.
@@ -74,10 +71,7 @@ pub fn external_symbol(name: &str, call_via_base: u64) -> Option<ExternalSymbol>
             if !is_lower_hex8(hex) {
                 return None;
             }
-            return Some(ExternalSymbol {
-                address: u64::from_str_radix(hex, 16).ok()?,
-                thumb,
-            });
+            return Some(ExternalSymbol { address: u64::from_str_radix(hex, 16).ok()?, thumb });
         }
     }
     // CALL_VIA_SYMBOL.
@@ -85,26 +79,15 @@ pub fn external_symbol(name: &str, call_via_base: u64) -> Option<ExternalSymbol>
         let bytes = rest.as_bytes();
         let register: u64 = match bytes.len() {
             1 if bytes[0].is_ascii_digit() => u64::from(bytes[0] - b'0'),
-            2 if bytes[0] == b'1' && (b'0'..=b'3').contains(&bytes[1]) => {
-                10 + u64::from(bytes[1] - b'0')
-            }
+            2 if bytes[0] == b'1' && (b'0'..=b'3').contains(&bytes[1]) => 10 + u64::from(bytes[1] - b'0'),
             _ => return None,
         };
-        return Some(ExternalSymbol {
-            address: call_via_base + register * 4,
-            thumb: true,
-        });
+        return Some(ExternalSymbol { address: call_via_base + register * 4, thumb: true });
     }
     // CALL_VIA_ALIAS.
     if let Some(rest) = name.strip_prefix("_call_via_") {
-        let register = CALL_VIA_REGISTERS
-            .iter()
-            .find(|(alias, _)| *alias == rest)
-            .map(|(_, register)| *register)?;
-        return Some(ExternalSymbol {
-            address: call_via_base + register * 4,
-            thumb: true,
-        });
+        let register = CALL_VIA_REGISTERS.iter().find(|(alias, _)| *alias == rest).map(|(_, register)| *register)?;
+        return Some(ExternalSymbol { address: call_via_base + register * 4, thumb: true });
     }
     None
 }
@@ -120,17 +103,13 @@ pub fn external_symbol(name: &str, call_via_base: u64) -> Option<ExternalSymbol>
 /// tests `externalSymbol(...) === null` first, so the throw is a guard rather
 /// than control flow. Returned as `Err` here with the identical message text.
 pub fn external_symbol_assembly(name: &str, call_via_base: u64) -> Result<String, String> {
-    let symbol = external_symbol(name, call_via_base)
-        .ok_or_else(|| format!("unsupported external symbol: {name}"))?;
+    let symbol = external_symbol(name, call_via_base).ok_or_else(|| format!("unsupported external symbol: {name}"))?;
     let directive = if symbol.thumb { ".thumb_set" } else { ".set" };
     // `symbol.address.toString(16).padStart(8, "0")`. Every address this can
     // produce is a non-negative integer below 2^32 for real inputs, but
     // `padStart` only pads and never truncates, so a wider value would widen the
     // field rather than wrap -- `{:08x}` behaves the same way.
-    Ok(format!(
-        ".global {name}\n{directive} {name}, 0x{:08x}\n",
-        symbol.address
-    ))
+    Ok(format!(".global {name}\n{directive} {name}, 0x{:08x}\n", symbol.address))
 }
 
 /// The overlay-wide bank. Owner-specific exceptions live with their owner

@@ -10,9 +10,7 @@ fn run(args: &[String]) -> Result<(), Error> {
     }
     let source = args.get(1).ok_or_else(|| Error(USAGE.into()))?;
     let bytes = build_character_catalog(&read_json(source)?)?;
-    io::stdout()
-        .write_all(&bytes)
-        .map_err(|e| Error(e.to_string()))?;
+    io::stdout().write_all(&bytes).map_err(|e| Error(e.to_string()))?;
     Ok(())
 }
 

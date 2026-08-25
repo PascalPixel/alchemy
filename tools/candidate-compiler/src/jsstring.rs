@@ -105,11 +105,7 @@ pub fn js_split_lines(text: &str) -> Vec<&str> {
     let mut i = 0usize;
     while i < bytes.len() {
         if bytes[i] == b'\n' {
-            let end = if i > start && bytes[i - 1] == b'\r' {
-                i - 1
-            } else {
-                i
-            };
+            let end = if i > start && bytes[i - 1] == b'\r' { i - 1 } else { i };
             fields.push(&text[start..end]);
             start = i + 1;
         }

@@ -35,10 +35,7 @@ fn reflow(value: &Value, indent: &str) -> String {
                 let parts: Vec<String> = items.iter().map(encode_scalar).collect();
                 return format!("[{}]", parts.join(", "));
             }
-            let parts: Vec<String> = items
-                .iter()
-                .map(|item| format!("{inner}{}", reflow(item, &inner)))
-                .collect();
+            let parts: Vec<String> = items.iter().map(|item| format!("{inner}{}", reflow(item, &inner))).collect();
             format!("[\n{}\n{indent}]", parts.join(",\n"))
         }
         Value::Object(entries) => {

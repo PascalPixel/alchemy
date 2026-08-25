@@ -196,7 +196,6 @@ mod tests {
             candidate_length: 4,
             reference_length: 4,
             differing_halfwords: difference,
-            rows: 2,
         };
         assert!(!exact_mismatch(&output(0)));
         assert!(exact_mismatch(&output(1)));
@@ -206,9 +205,14 @@ mod tests {
         assert!(error.contains("roms/gs1-en.gba"));
         let work = std::env::temp_dir().join("alchemy-overlay-unit-test");
         let _ = std::fs::remove_dir_all(&work);
+        std::fs::create_dir_all(&work).unwrap();
+        let patch = work.join("unit-relative-include.patch");
+        std::fs::write(&patch, "diff --git a/accessors.c b/accessors.c\n--- a/accessors.c\n+++ b/accessors.c\n@@ -1 +1 @@\n-#include \"types.h\"\n+#include \"../../../include/types.h\"\n").unwrap();
         let arguments = [
             "--unit",
             "scene-event-runtime",
+            "--patch",
+            patch.to_str().unwrap(),
             "--first",
             "--work",
             work.to_str().unwrap(),
@@ -220,6 +224,10 @@ mod tests {
             panic!("expected options")
         };
         let output = run(*options).unwrap();
+        let staged = work.join("try/games/gs1/src/overlays/scene_event_runtime/accessors.c");
+        assert!(std::fs::read_to_string(staged)
+            .unwrap()
+            .contains("../../../include/types.h"));
         assert_eq!(output.matches("differing_halfwords=0").count(), 5);
         assert_eq!(output.matches("compile=fresh").count(), 1);
         assert_eq!(output.matches("compile=shared-object").count(), 4);

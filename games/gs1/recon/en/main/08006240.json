@@ -3,38 +3,29 @@
   "namespace": "main",
   "address": "0x08006240",
   "name": "SerialRuntime_HandleTransferInterrupt",
-  "status": "measured-draft",
+  "status": "exact",
   "owner_bytes": 280,
-  "candidate_bytes": 276,
-  "differing_halfwords": 119,
-  "wrong_instructions": 163,
-  "classification": "serial-transfer-interrupt",
+  "candidate_bytes": 280,
+  "differing_halfwords": 0,
+  "wrong_instructions": 0,
+  "classification": "exact-c",
   "translation_unit": "serial-runtime",
   "compiler_route": "canonical-gcc296",
-  "residual": {
-    "matched_normalized_prefix_instructions": 1,
-    "note": "The residual spans most of the function. The reference reads both serial words through one hardware-register base and preserves channel-scale temporaries across the receive loop; the candidate still materializes separate absolute loads and strength-reduces the parallel state-array accesses differently."
+  "source_shape": {
+    "hardware_snapshot": "A volatile eight-byte serial-register capture is copied through one restricted, stable local union view.",
+    "state_lifetimes": "Distinct send, receive, and loop-tail state views preserve the original register lifetimes across the interrupt handler.",
+    "receive_loop": "The explicit loop join keeps channel-halfword and channel-word offsets in the reference control-flow shape.",
+    "compiler_result": "GCC 2.96 emits the reference stack capture, shared literal pool, register allocation, receive-loop schedule, and timer-control tail byte for byte."
   },
-  "bounded_search": {
-    "exact": false,
-    "best_differing_halfwords": 119,
-    "best_candidate_bytes": 276,
-    "tested": [
-      "48 ordinary-C input-copy, swap, promotion, sentinel, and receive-loop shapes in the routed owner workbench, with the best form rescored in the complete serial-runtime translation unit",
-      "12 focused stock compiler-flag variants and 20 flag pairs through the complete serial-runtime translation unit",
-      "local m2c structural drafts with and without stack-structure recovery"
-    ],
-    "result": "No source shape or compiler-context experiment improved on 119 differing halfwords or reached byte exactness. Canonical flags retain the best complete-unit score; neutral flag ties did not improve instruction correctness."
+  "proof": {
+    "complete_translation_unit": "280/280 bytes, zero differing halfwords",
+    "production_source": "280/280 bytes, zero differing halfwords",
+    "compiler_flags": "canonical; no per-owner override"
   },
-  "improvements": [
-    "Promoting the received halfword temporary to u32 reduced the complete-unit result from 143 to 119 differing halfwords.",
-    "Writing the send-buffer swap in reference load order preserves the 119-halfword score and reduces wrong instructions from 169 to 163.",
-    "Reading the high serial word before the low word follows the reference's volatile access order without regressing the complete-unit score."
-  ],
-  "next": "Recover the source ancestry that yields one register-base aggregate read and a single channel-times-four loop scale without per-owner compiler flags; retain assembly until the complete-unit owner verifies byte exact.",
   "notes": [
-    "The strongest readable complete-unit draft is retained, while the translation-unit manifest remains retained-assembly and zero DONE bytes are claimed.",
+    "The final source is ordinary C: it uses no inline assembly, fixed-register variable, compiler barrier, forbidden ABI attribute, copied instruction bytes, compiler modification, or flag override.",
+    "The GCC 2.96 __restrict spelling expresses the single stable local snapshot view; every later snapshot access derives from that view.",
     "Recovered only from retained owner assembly, approved local ROM correspondence, in-repository callers and types, local m2c structural output, and the approved GCC 2.96 compiler.",
-    "No external game source, copied instruction bytes, inline assembly, fixed-register variable, compiler barrier, compiler modification, or per-owner flag override was used."
+    "The owner is byte-identical in all six editions at the corresponding translated address."
   ]
 }

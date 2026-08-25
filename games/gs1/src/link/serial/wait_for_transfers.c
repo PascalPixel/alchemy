@@ -1,6 +1,6 @@
 #include "types.h"
 
-void WaitFrames(u32);
+s32 WaitFrames(s32);
 
 #define SerialRuntime_WaitForTransfers Func_080064b8
 

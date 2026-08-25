@@ -23,7 +23,7 @@ fn include_dirs(root: &Path, commands: &[Vec<String>]) -> Vec<PathBuf> {
         .collect()
 }
 
-fn quoted_include(line: &str) -> Option<&str> {
+pub fn quoted_include(line: &str) -> Option<&str> {
     let rest = line
         .trim_start()
         .strip_prefix("#include")?

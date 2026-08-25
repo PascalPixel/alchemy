@@ -2,7 +2,7 @@ use crate::{
     cli::Options,
     disasm::{disassemble, Rows},
     insns::gas_function_insns,
-    patch::apply_unified_diff,
+    patch::apply_unified_diff_in_tree,
 };
 use candidate_compiler::verify::{
     compile_to_assembly, source_stem, verify_candidate_owned_routed_with_object,
@@ -28,7 +28,6 @@ pub struct RenderOutput {
     pub candidate_length: usize,
     pub reference_length: usize,
     pub differing_halfwords: usize,
-    pub rows: usize,
 }
 fn main_source_identity(
     root: &Path,
@@ -84,34 +83,27 @@ fn main_source_identity(
     }
 }
 fn region_size(root: &Path, address: u32) -> Option<usize> {
-    let manifests = [
+    for manifest in [
         "out/gs1-en/full/claimed/manifest.json",
         "out/gs1-en/claimed/manifest.json",
         "out/gs1-en/full/asm/manifest.json",
         "out/gs1-en/asm/manifest.json",
-    ];
-    for manifest in manifests {
-        let Ok(text) = std::fs::read_to_string(root.join(manifest)) else {
+    ] {
+        let size = std::fs::read_to_string(root.join(manifest))
+            .ok()
+            .and_then(|text| serde_json::from_str::<Value>(&text).ok())
+            .and_then(|document| {
+                document["regions"]
+                    .as_array()?
+                    .iter()
+                    .find(|region| region["address"].as_u64() == Some(u64::from(address)))?["size"]
+                    .as_u64()
+                    .and_then(|size| usize::try_from(size).ok())
+            });
+        let Some(size) = size else {
             continue;
         };
-        let Ok(document) = serde_json::from_str::<Value>(&text) else {
-            continue;
-        };
-        let Some(regions) = document["regions"].as_array() else {
-            continue;
-        };
-        let size = regions.iter().find_map(|region| {
-            (region["address"].as_u64() == Some(u64::from(address)))
-                .then(|| {
-                    region["size"]
-                        .as_u64()
-                        .and_then(|size| usize::try_from(size).ok())
-                })
-                .flatten()
-        });
-        if size.is_some() {
-            return size;
-        }
+        return Some(size);
     }
     None
 }
@@ -165,7 +157,6 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
                 candidate_length: 0,
                 reference_length: 0,
                 differing_halfwords: 0,
-                rows: 1,
             });
         }
     }
@@ -176,8 +167,8 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
     } else {
         let source = match patch_text.as_deref() {
             Some(patch) => {
-                let dest = work.join("try").join(format!("{source_label}.c"));
-                apply_unified_diff(&options.source, patch, &dest)?;
+                let dest =
+                    apply_unified_diff_in_tree(root, &options.source, patch, &work.join("try"))?;
                 dest.to_string_lossy().into_owned()
             }
             None => options.source.clone(),
@@ -320,12 +311,10 @@ fn render_bytes(
         candidate_length: actual.len(),
         reference_length: expected.len(),
         differing_halfwords: differing.len(),
-        rows: left.len().max(right.len()),
     })
 }
 fn render_asm(root: &Path, options: &Options, work: &str) -> Result<RenderOutput, String> {
     let started = Instant::now();
-    let source_label = source_stem(&options.source);
     let (owner, routing_source) = main_source_identity(
         root,
         &options.source,
@@ -347,10 +336,12 @@ fn render_asm(root: &Path, options: &Options, work: &str) -> Result<RenderOutput
     }
     let source = match read_patch(options.patch.as_deref())? {
         Some(patch) => {
-            let dest = Path::new(work)
-                .join("try")
-                .join(format!("{source_label}.c"));
-            apply_unified_diff(&options.source, &patch, &dest)?;
+            let dest = apply_unified_diff_in_tree(
+                root,
+                &options.source,
+                &patch,
+                &Path::new(work).join("try"),
+            )?;
             dest.to_string_lossy().into_owned()
         }
         None => options.source.clone(),
@@ -403,7 +394,6 @@ fn render_asm(root: &Path, options: &Options, work: &str) -> Result<RenderOutput
         candidate_length: candidate.len(),
         reference_length: expected.len(),
         differing_halfwords: 0,
-        rows: 1,
     })
 }
 fn git_diff_stat(old: &Path, new: &Path) -> Result<String, String> {
@@ -682,11 +672,7 @@ fn source_cache_key_with_environment(
         hasher.update([4]);
         hasher.update(patch.as_bytes());
     }
-    Ok(hasher
-        .finalize()
-        .iter()
-        .map(|byte| format!("{byte:02x}"))
-        .collect())
+    Ok(compiler_core::sha256::hex(&hasher.finalize()))
 }
 
 fn source_input_signature(
@@ -695,29 +681,22 @@ fn source_input_signature(
     routing_source: &str,
     flags: &[String],
 ) -> Result<Vec<u8>, String> {
-    let source = rooted_path(root, Path::new(source));
-    let mut include_dirs = Vec::new();
-    if let Some(game) = routing_source
+    let source = root.join(source);
+    let include_dirs = routing_source
         .strip_prefix("games/")
         .and_then(|path| path.split('/').next())
-    {
-        include_dirs.push(root.join("games").join(game).join("include"));
-    }
-    include_dirs.extend(flags.iter().filter_map(|flag| {
-        flag.strip_prefix("-I")
-            .filter(|path| !path.is_empty())
-            .map(|path| rooted_path(root, Path::new(path)))
-    }));
-
+        .map(|game| root.join("games").join(game).join("include"))
+        .into_iter()
+        .chain(flags.iter().filter_map(|flag| {
+            let path = Path::new(flag.strip_prefix("-I").filter(|path| !path.is_empty())?);
+            Some(
+                path.is_absolute()
+                    .then(|| path.into())
+                    .unwrap_or_else(|| root.join(path)),
+            )
+        }))
+        .collect::<Vec<_>>();
     source_tree_signature(&source, &include_dirs)
-}
-
-fn rooted_path(root: &Path, path: &Path) -> PathBuf {
-    if path.is_absolute() {
-        path.to_path_buf()
-    } else {
-        root.join(path)
-    }
 }
 
 #[cfg(test)]

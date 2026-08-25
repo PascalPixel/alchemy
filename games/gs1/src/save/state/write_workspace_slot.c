@@ -38,7 +38,8 @@ struct Work_08005868 {
 
 #define SaveState_WriteWorkspaceSlot Func_08005868
 
-u32 SaveState_WriteWorkspaceSlot(u16 code)
+u32 SaveState_WriteWorkspaceSlot(code)
+u16 code;
 {
     s32 *param = (s32 *)0x02004C04;
     s32 result;

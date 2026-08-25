@@ -2482,6 +2482,21 @@
         "a uniquely anchored 160-byte containing window proves zero relocation/literal-masked core differences across JA, EN, DE, ES, FR and IT",
         "games/gs1/recon/en/overlays/resource_3ab_c_02000b0c.json"
       ]
+    },
+    {
+      "overlay": "resource_3be",
+      "start": "0x02001158",
+      "end": "0x020011c4",
+      "kind": "actor_presentation_shift_ordering_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "complete ordinary-C reconstruction is exactly 108 bytes with zero wrong instructions",
+        "the two-halfword residual is one independent actor-argument load and command-shift swap with immediate resynchronization before the call",
+        "twenty-thousand-candidate safe and ten-thousand-candidate classic exact-only heat walks found no emitting source",
+        "explicit decoded-ROM correspondence proves the 64-byte relocation-normalized core identical at 0x02001158 in JA, EN, DE, ES, FR and IT",
+        "games/gs1/recon/en/overlays/resource_3be_c_02001158.json"
+      ]
     }
   ]
 }

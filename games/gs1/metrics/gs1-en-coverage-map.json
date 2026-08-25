@@ -7,19 +7,19 @@
   "executable_bytes": 1348458,
   "categories": {
     "exact_c": {
-      "bytes": 320394,
-      "percent_of_executable": 23.76
+      "bytes": 320924,
+      "percent_of_executable": 23.8
     },
     "tracked_c": {
       "bytes": 45156,
       "percent_of_executable": 3.35
     },
     "assembly": {
-      "bytes": 604708,
-      "percent_of_executable": 44.84
+      "bytes": 604072,
+      "percent_of_executable": 44.8
     },
     "retained_asm": {
-      "bytes": 378200,
+      "bytes": 378306,
       "percent_of_executable": 28.05
     },
     "asset_data": {
@@ -29,7 +29,7 @@
   },
   "main": {
     "executable_bytes": 548364,
-    "exact_c_bytes": 109940,
+    "exact_c_bytes": 110470,
     "tracked_c_bytes": 6524
   },
   "overlays": {
@@ -40,7 +40,7 @@
   "provenance": {
     "exact_source": "worktree",
     "tracked_source": "worktree",
-    "tracked_sources": 149,
+    "tracked_sources": 150,
     "main_tracked_census": "games/gs1/recon/en/main/*.json",
     "tracked_superseded_bytes": 0,
     "tracked_outside_extent_bytes": 0,
@@ -52,9 +52,9 @@
       "label": "Main image code",
       "bytes": 548364,
       "categories": {
-        "exact_c": 109940,
+        "exact_c": 110470,
         "tracked_c": 6524,
-        "assembly": 255252,
+        "assembly": 254722,
         "retained_asm": 176648
       },
       "tiles": 9
@@ -86,9 +86,9 @@
       "label": "Main image",
       "bytes": 548364,
       "categories": {
-        "exact_c": 109940,
+        "exact_c": 110470,
         "tracked_c": 6524,
-        "assembly": 255252,
+        "assembly": 254722,
         "retained_asm": 176648
       },
       "tiles": 867
@@ -100,10 +100,10 @@
       "categories": {
         "exact_c": 210454,
         "tracked_c": 38632,
-        "assembly": 349456,
-        "retained_asm": 201552
+        "assembly": 349350,
+        "retained_asm": 201658
       },
-      "tiles": 5367
+      "tiles": 5364
     }
   ]
 }

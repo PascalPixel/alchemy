@@ -331,6 +331,7 @@ typedef int bool;
 #define BattleEffect_UpdateOrbitAndReturn Func_08097f80
 #define BattleEffect_UpdateRadialLaunch Func_0809b11c
 #define BattleEffect_UpdateRadialSpread Func_08096048
+#define BattleEffect_UpdateRandomTargetParticle Func_0809641c
 #define BattleEffect_EmitRandomParticle Func_0808ee0c
 #define BattleEffect_FinishHeavyImpact Func_08095a44
 #define Object_CollectResources Func_0801c7fc

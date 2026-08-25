@@ -21,6 +21,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "candidate-compiler"
+version = "0.1.0"
+dependencies = [
+ "compiler-core",
+ "decomp-targets",
+]
+
+[[package]]
 name = "cfg-if"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -105,6 +113,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "decomp-targets"
+version = "0.1.0"
+
+[[package]]
 name = "digest"
 version = "0.10.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -168,8 +180,9 @@ dependencies = [
 name = "integrate-matches"
 version = "0.1.0"
 dependencies = [
+ "candidate-compiler",
  "compiler-core",
- "regex",
+ "no-asm-c",
 ]
 
 [[package]]
@@ -193,6 +206,11 @@ checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
 [[package]]
 name = "no-asm-c"
 version = "0.1.0"
+dependencies = [
+ "compiler-core",
+ "decomp-targets",
+ "regex",
+]
 
 [[package]]
 name = "proc-macro2"

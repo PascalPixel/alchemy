@@ -137,7 +137,7 @@
         {"address":"0x08005e88","alias":"SerialRuntime_DisableTransfer","extent":86,"state":"exact-c"},
         {"address":"0x08005ee0","alias":"SerialRuntime_PollAndTransfer","extent":234,"state":"retained-assembly"},
         {"address":"0x08005fcc","alias":"SerialRuntime_PollStatus","extent":186,"state":"retained-assembly"},
-        {"address":"0x08006088","alias":"SerialRuntime_ExchangePayloads","extent":96,"state":"exact-c"},
+        {"address":"0x08006088","alias":"SerialRuntime_ExchangePayloads","extent":96,"state":"retained-assembly"},
         {"address":"0x080060e8","alias":"SerialRuntime_PrepareSendPacket","extent":116,"state":"retained-assembly"},
         {"address":"0x0800615c","alias":"SerialRuntime_CollectReceivedPayloads","extent":228,"state":"retained-assembly"},
         {"address":"0x08006240","alias":"SerialRuntime_HandleTransferInterrupt","extent":280,"state":"retained-assembly"},
@@ -155,7 +155,7 @@
     {
       "id": "scene-event-runtime",
       "game": "gs1",
-      "source": "games/gs1/recon/en/units/scene_event_runtime.c",
+      "source": "games/gs1/src/overlays/scene_event_runtime/accessors.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37b",
       "absolute_symbols": {

@@ -17,6 +17,7 @@ path = "src/lib.rs"
 # of the layer this tool calls; a second copy of any of them is exactly the
 # hand-sync problem the Rust effort exists to end.
 compiler-core = { path = "../compiler-core" }
+candidate-compiler = { path = "../candidate-compiler" }
 decomp-targets = { path = "../decomp-targets" }
 cache-entry = { path = "../cache-entry" }
 canonical-json = { path = "../canonical-json" }

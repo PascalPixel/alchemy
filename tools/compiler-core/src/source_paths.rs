@@ -269,13 +269,16 @@ impl SourcePaths {
             if owners.len() <= 1 {
                 continue;
             }
-            let address = owners[0].address();
-            if owners
+            let first = owners[0];
+            let same_address = owners
                 .iter()
-                .any(|owner| owner.is_main() || owner.address() != address)
-            {
+                .all(|owner| owner.address() == first.address());
+            let same_overlay = owners
+                .iter()
+                .all(|owner| owner.overlay_id() == first.overlay_id());
+            if owners.iter().any(|owner| owner.is_main()) || (!same_address && !same_overlay) {
                 return Err(format!(
-                    "{} may be shared only by overlay owners at one load address",
+                    "{} may be shared only by one overlay translation unit or by overlay owners at one load address",
                     path.display()
                 ));
             }
@@ -784,6 +787,21 @@ mod tests {
                 resource: 0x39b,
                 address: 0x0200_013c
             })
+        );
+    }
+
+    #[test]
+    fn one_overlay_translation_unit_can_map_multiple_owners() {
+        let root = tempdir().unwrap();
+        let text = r#"{"format":3,"owners":{
+            "resource_37b:02000030":"overlays/scene/accessors.c",
+            "resource_37b:02000038":"overlays/scene/accessors.c"}}"#;
+        let paths = SourcePaths::parse(root.path(), text).unwrap();
+        assert_eq!(
+            paths
+                .owners_for_path(Path::new("overlays/scene/accessors.c"))
+                .len(),
+            2
         );
     }
 

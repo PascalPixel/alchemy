@@ -89,9 +89,39 @@ impl TranslationUnit {
     }
 
     pub fn exact(&self) -> bool {
+        self.exact_owner_count() == self.owners.len()
+    }
+
+    pub fn exact_owner_count(&self) -> usize {
         self.owners
             .iter()
-            .all(|owner| owner.state == OwnerState::ExactC)
+            .filter(|owner| owner.state == OwnerState::ExactC)
+            .count()
+    }
+
+    pub fn symbols(&self) -> impl Iterator<Item = (u32, &str, usize)> {
+        self.owners
+            .iter()
+            .map(|symbol| (symbol.address, symbol.alias.as_str(), symbol.extent))
+            .chain(
+                self.local_symbols
+                    .iter()
+                    .map(|symbol| (symbol.address, symbol.alias.as_str(), symbol.extent)),
+            )
+    }
+
+    pub fn canonical_symbols(&self) -> Result<BTreeMap<String, AbsoluteSymbol>, String> {
+        let mut symbols = self.absolute_symbols.clone();
+        for (address, _, _) in self.symbols() {
+            symbols.insert(
+                self.source_owner(address)?.legacy_name(),
+                AbsoluteSymbol {
+                    address: u64::from(address),
+                    kind: AbsoluteSymbolKind::Thumb,
+                },
+            );
+        }
+        Ok(symbols)
     }
 }
 
@@ -118,6 +148,7 @@ impl TranslationUnits {
         }
         let mut ids = BTreeSet::new();
         let mut claimed = BTreeSet::new();
+        let mut main_aliases = BTreeSet::new();
         for unit in &document.units {
             if !unit_id(&unit.id)
                 || !ids.insert(&unit.id)
@@ -169,6 +200,9 @@ impl TranslationUnits {
                         source_owner.id()
                     ));
                 }
+                if unit.overlay.is_none() && !main_aliases.insert(alias) {
+                    return Err(format!("duplicate main symbol alias {alias}"));
+                }
             }
             let mut spans = unit
                 .owners
@@ -203,6 +237,9 @@ impl TranslationUnits {
                     return Err(format!("{}: invalid absolute symbol {name:?}", unit.id));
                 }
             }
+            let source = root.join(&unit.source);
+            let grouped = source.starts_with(names.source_root());
+            validate_production_state(root, unit, &source, grouped, &names)?;
         }
         Ok(document)
     }
@@ -211,18 +248,144 @@ impl TranslationUnits {
         self.units.iter().find(|unit| unit.id == id)
     }
 
-    pub fn unit_for_owner(&self, owner: SourceOwner) -> Option<&TranslationUnit> {
+    pub fn unit_for_game_owner(&self, game: &str, owner: SourceOwner) -> Option<&TranslationUnit> {
         let overlay = owner.overlay_id();
         self.units.iter().find(|unit| {
-            unit.overlay.as_deref() == overlay.as_deref()
+            unit.game == game
+                && unit.overlay.as_deref() == overlay.as_deref()
                 && unit
                     .owners
                     .iter()
                     .any(|member| member.address == owner.address())
         })
     }
+
+    /// Compatibility for callers whose entire input domain is GS1.
+    pub fn unit_for_owner(&self, owner: SourceOwner) -> Option<&TranslationUnit> {
+        self.unit_for_game_owner("gs1", owner)
+    }
+
+    pub fn main_symbol(&self, name: &str) -> Option<AbsoluteSymbol> {
+        self.units
+            .iter()
+            .filter(|unit| unit.overlay.is_none())
+            .flat_map(|unit| unit.symbols())
+            .find(|(_, alias, _)| *alias == name)
+            .map(|(address, _, _)| AbsoluteSymbol {
+                address: u64::from(address),
+                kind: AbsoluteSymbolKind::Thumb,
+            })
+    }
+
+    pub fn main_symbol_exports(&self) -> String {
+        self.units
+            .iter()
+            .filter(|unit| unit.overlay.is_none())
+            .flat_map(|unit| unit.symbols())
+            .fold(
+                String::from(".syntax unified\n.thumb\n"),
+                |mut out, (address, alias, _)| {
+                    out.push_str(&format!(
+                        ".global {alias}\n.thumb_set {alias}, 0x{address:08x}\n"
+                    ));
+                    out
+                },
+            )
+    }
 }
 
+fn validate_production_state(
+    root: &Path,
+    unit: &TranslationUnit,
+    source: &Path,
+    grouped: bool,
+    names: &SourcePaths,
+) -> Result<(), String> {
+    if unit.exact() && !grouped {
+        return Err(format!(
+            "{}: complete exact C must use its declared TU source",
+            unit.id
+        ));
+    }
+    if grouped && unit.overlay.is_some() && !unit.exact() {
+        return Err(format!(
+            "{}: grouped overlay C must be wholly exact",
+            unit.id
+        ));
+    }
+    if grouped && unit.overlay.is_some() {
+        let mapped = names
+            .owners_for_path(source)
+            .into_iter()
+            .collect::<BTreeSet<_>>();
+        let declared = unit
+            .owners
+            .iter()
+            .map(|member| unit.source_owner(member.address))
+            .collect::<Result<BTreeSet<_>, _>>()?;
+        if mapped != declared {
+            return Err(format!(
+                "{}: grouped overlay source and owners disagree",
+                unit.id
+            ));
+        }
+    }
+    let placeholders = unit
+        .overlay
+        .as_ref()
+        .map(|overlay| {
+            let assembly = root
+                .join("games")
+                .join(&unit.game)
+                .join("assets/code")
+                .join(format!("{overlay}_overlay.s"));
+            std::fs::read_to_string(&assembly)
+                .map_err(|error| format!("{}: {error}", assembly.display()))
+                .map(|text| {
+                    text.lines()
+                        .filter_map(|line| {
+                            line.trim()
+                                .strip_prefix("AlchemyC_")?
+                                .strip_suffix(':')
+                                .and_then(|value| u32::from_str_radix(value, 16).ok())
+                        })
+                        .collect::<BTreeSet<_>>()
+                })
+        })
+        .transpose()?;
+    for member in &unit.owners {
+        let owner = unit.source_owner(member.address)?;
+        let mapped = names.mapped_source_path(owner);
+        let retained = placeholders.as_ref().map_or_else(
+            || {
+                root.join("games")
+                    .join(&unit.game)
+                    .join("asm")
+                    .join(format!("{:08x}.s", member.address))
+                    .is_file()
+            },
+            |set| !set.contains(&member.address),
+        );
+        let exact_source = if grouped {
+            mapped.as_ref().is_some_and(|path| path == source)
+                || (unit.overlay.is_none() && mapped.is_none())
+        } else {
+            mapped.as_ref().is_some_and(|path| path.is_file())
+        };
+        let valid = match member.state {
+            OwnerState::ExactC => exact_source && !retained,
+            OwnerState::RetainedAssembly => mapped.is_none() && retained,
+        };
+        if !valid {
+            return Err(format!(
+                "{}: {} state disagrees with production C/assembly ownership",
+                unit.id,
+                owner.id()
+            ));
+        }
+    }
+    Ok(())
+}
 fn validate_member(
     unit: &TranslationUnit,
     owner: SourceOwner,
@@ -277,5 +440,13 @@ mod tests {
             overlay.absolute_symbols["SceneEventRuntime_ScriptData"].kind,
             AbsoluteSymbolKind::Data
         );
+        let export = manifest.main_symbol("Scheduler_ResetTaskTable").unwrap();
+        assert_eq!(export.address, 0x0800_40e8);
+        assert!(manifest
+            .main_symbol_exports()
+            .contains(".thumb_set Scheduler_ResetTaskTable, 0x080040e8"));
+        let owner = SourceOwner::Main(0x0800_40e8);
+        assert!(manifest.unit_for_game_owner("gs1", owner).is_some());
+        assert!(manifest.unit_for_game_owner("gs2", owner).is_none());
     }
 }

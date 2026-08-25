@@ -9,14 +9,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-# Sibling crates, not third-party dependencies. `integrate-matches` imports
-# exactly three names from the compiler surface, and they live in two native
-# crates:
-#   compiler-core -> compilation plans, node-style paths, and external symbols
+candidate-compiler = { path = "../candidate-compiler" }
 compiler-core = { path = "../compiler-core" }
-# `root()`, the repository root, and `CompilerTarget::Gs1` for the fixed
-# `target: "gs1"` this tool passes.
-regex = "1.13.1"
+no-asm-c = { path = "../no-asm-c" }
 
 [lib]
 name = "integrate_matches"

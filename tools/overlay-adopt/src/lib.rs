@@ -1,9 +1,14 @@
 pub mod park;
 pub mod score;
 pub mod twins;
+use candidate_compiler::verify::run as run_command;
+use compiler_core::plan::direct_preprocessor_command;
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
+use no_asm_c::find_forbidden;
 use overlay_disasm::{assemble_overlay, OverlaySource, OVERLAY_BASE};
+use serde::Deserialize;
 use serde_json::Value;
+use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -29,11 +34,30 @@ pub struct InternalAlias {
     pub label: String,
     pub offset: i64,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct AuditInterval {
     pub start: i64,
     pub end: i64,
     pub kind: String,
+}
+#[derive(Deserialize)]
+struct AuditReport {
+    overlays: Vec<AuditOverlay>,
+}
+#[derive(Deserialize)]
+struct AuditOverlay {
+    id: String,
+    intervals: Vec<AuditInterval>,
+}
+#[derive(Deserialize)]
+struct ReviewedRegions {
+    manual_regions: Vec<ReviewedRegion>,
+}
+#[derive(Deserialize)]
+struct ReviewedRegion {
+    overlay: String,
+    entry: String,
+    span_bytes: usize,
 }
 enum ParseOutcome {
     Help,
@@ -219,8 +243,8 @@ pub fn internal_aliases(
         .collect::<Vec<_>>()
         .join("\n");
     let mut aliases: Vec<InternalAlias> = Vec::new();
-    for index in first_u..last_u.min(lines.len()) {
-        let Some(label) = parse_local_label(&lines[index]) else {
+    for line in lines.iter().take(last_u.min(lines.len())).skip(first_u) {
+        let Some(label) = parse_local_label(line) else {
             continue;
         };
         if !word_boundary_contains(&outside, &label) {
@@ -256,68 +280,50 @@ pub fn placeholder_lines(stem: &str, span: i64, aliases: &[InternalAlias]) -> Ve
     result
 }
 fn audit_intervals(root: &Path, overlay: &str) -> Result<Option<Vec<AuditInterval>>, String> {
-    let report = root
+    let path = root
         .join("games/gs1/metrics")
         .join("gs1-en-executable.json");
-    if !report.exists() {
+    if !path.exists() {
         return Ok(None);
     }
-    let text = fs::read_to_string(&report).map_err(|error| error.to_string())?;
-    let value: Value = serde_json::from_str(&text).map_err(|error| error.to_string())?;
-    let overlays = value
-        .get("overlays")
-        .and_then(Value::as_array)
-        .ok_or_else(|| "games/gs1/metrics/gs1-en-executable.json: unexpected shape".to_string())?;
-    let mut found: Option<Vec<AuditInterval>> = None;
-    for row in overlays {
-        if row.get("id").and_then(Value::as_str) != Some(overlay) {
-            continue;
-        }
-        let intervals = row
-            .get("intervals")
-            .and_then(Value::as_array)
-            .ok_or_else(|| {
-                "games/gs1/metrics/gs1-en-executable.json: unexpected shape".to_string()
-            })?;
-        let mut out = Vec::with_capacity(intervals.len());
-        for interval in intervals {
-            out.push(AuditInterval {
-                start: interval.get("start").and_then(Value::as_i64).unwrap_or(0),
-                end: interval.get("end").and_then(Value::as_i64).unwrap_or(0),
-                kind: interval
-                    .get("kind")
-                    .and_then(Value::as_str)
-                    .unwrap_or("")
-                    .to_string(),
-            });
-        }
-        found = Some(out);
-    }
-    Ok(found)
-}
-pub fn audited_code_span(root: &Path, overlay: &str, entry: i64) -> Result<Option<i64>, String> {
-    let intervals = match audit_intervals(root, overlay)? {
-        Some(intervals) => intervals,
-        None => return Ok(None),
-    };
-    let code = intervals.iter().find(|interval| {
-        interval.start <= entry
-            && entry < interval.end
-            && (interval.kind == "thumb" || interval.kind == "arm")
-    });
-    Ok(code.map(|interval| interval.end - entry))
-}
-pub fn span_is_adoptable(root: &Path, overlay: &str, entry: i64, span_bytes: i64) -> bool {
-    audited_span(root, overlay, entry, span_bytes, overlay).is_ok()
-}
-fn audited_interval(root: &Path, fn_row: &FunctionRow) -> Result<(), String> {
-    audited_span(
-        root,
-        &fn_row.overlay,
-        fn_row.entry,
-        fn_row.span_bytes,
-        &fn_row.id,
+    let report: AuditReport = serde_json::from_slice(
+        &fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?,
     )
+    .map_err(|error| format!("{}: {error}", path.display()))?;
+    Ok(report
+        .overlays
+        .into_iter()
+        .find(|row| row.id == overlay)
+        .map(|row| row.intervals))
+}
+pub fn audited_kind(root: &Path, overlay: &str, entry: i64) -> Result<Option<String>, String> {
+    Ok(audit_intervals(root, overlay)?.and_then(|intervals| {
+        intervals
+            .into_iter()
+            .find(|interval| interval.start <= entry && entry < interval.end)
+            .map(|interval| interval.kind)
+    }))
+}
+pub(crate) fn reviewed_spans(root: &Path) -> Result<BTreeMap<SourceOwner, usize>, String> {
+    let path = root.join("games/gs1/semantic/regions.json");
+    let document: ReviewedRegions = serde_json::from_slice(
+        &fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?,
+    )
+    .map_err(|error| format!("{}: {error}", path.display()))?;
+    document
+        .manual_regions
+        .into_iter()
+        .map(|region| {
+            let owner = SourceOwner::parse(&format!(
+                "{}:{}",
+                region.overlay,
+                region.entry.trim_start_matches("0x")
+            ))?;
+            (region.span_bytes > 0)
+                .then_some((owner, region.span_bytes))
+                .ok_or_else(|| "overlay region has no positive span_bytes".into())
+        })
+        .collect()
 }
 fn audited_span(
     root: &Path,
@@ -326,15 +332,14 @@ fn audited_span(
     span_bytes: i64,
     id: &str,
 ) -> Result<(), String> {
-    let intervals = match audit_intervals(root, overlay)? {
-        Some(intervals) => intervals,
-        None => return Ok(()), // un-audited overlay: not this check's call to make
-    };
+    let intervals = audit_intervals(root, overlay)?
+        .ok_or_else(|| format!("{id}: {overlay} has no executable audit"))?;
     let end = start + span_bytes;
-    if intervals
-        .iter()
-        .any(|interval| interval.start <= start && end <= interval.end)
-    {
+    if intervals.iter().any(|interval| {
+        interval.start <= start
+            && end <= interval.end
+            && matches!(interval.kind.as_str(), "thumb" | "arm")
+    }) {
         return Ok(());
     }
     let mut touched: Vec<&AuditInterval> = intervals
@@ -346,108 +351,60 @@ fn audited_span(
         && touched[0].start <= start
         && touched[touched.len() - 1].end >= end
         && touched.windows(2).all(|pair| pair[0].end == pair[1].start);
-    let last = touched.last();
-    if tiles && last.map(|interval| interval.kind.as_str()) != Some("executable_alignment") {
+    let starts_in_code = touched
+        .first()
+        .is_some_and(|interval| matches!(interval.kind.as_str(), "thumb" | "arm"));
+    if tiles
+        && starts_in_code
+        && touched.last().map(|interval| interval.kind.as_str()) != Some("executable_alignment")
+    {
         return Ok(());
     }
-    // Some GCC by-value entry points reserve incoming stack arguments before
-    // the conventional push. The interval audit can miss that first
-    // instruction even though the reviewed owner record explicitly includes
-    // it. Only the exact recorded owner span may bridge such a gap.
-    if reviewed_owner_span(root, overlay, start, span_bytes)? {
+    // Only an exact reviewed owner may bridge a missed pre-prologue instruction.
+    let owner = SourceOwner::parse(&format!("{overlay}:{start:08x}"))?;
+    if reviewed_spans(root)?.get(&owner).copied() == usize::try_from(span_bytes).ok() {
         return Ok(());
     }
-    let detail = if touched.is_empty() {
-        "no audited executable interval covers it".to_string()
-    } else {
-        touched
-            .iter()
-            .map(|interval| {
-                format!(
-                    "[0x{:08x},0x{:08x}) {}",
-                    interval.start, interval.end, interval.kind
-                )
-            })
-            .collect::<Vec<_>>()
-            .join(" + ")
-    };
-    let code = touched
+    let mut detail = touched
         .iter()
-        .find(|interval| interval.kind == "thumb" || interval.kind == "arm");
-    let suggestion = match code {
-        Some(code) if code.start == start && code.end < end => {
+        .map(|interval| {
             format!(
-                " -- the audited code ends at 0x{:08x}; retry with --span {}",
-                code.end,
-                code.end - start
+                "[{:#010x},{:#010x}) {}",
+                interval.start, interval.end, interval.kind
             )
-        }
-        _ => String::new(),
-    };
+        })
+        .collect::<Vec<_>>()
+        .join(" + ");
+    if detail.is_empty() {
+        detail.push_str("no audited executable interval covers it");
+    }
     Err(format!(
-        "{} span 0x{:08x}..0x{:08x} is not inside one audited executable interval: {}{}",
-        id, start, end, detail, suggestion
+        "{id} span 0x{start:08x}..0x{end:08x} is not inside one audited executable interval: {detail}"
     ))
-}
-
-fn reviewed_owner_span(
-    root: &Path,
-    overlay: &str,
-    start: i64,
-    span_bytes: i64,
-) -> Result<bool, String> {
-    let path = root.join("games/gs1/semantic/regions.json");
-    let document: Value = serde_json::from_str(
-        &fs::read_to_string(&path).map_err(|error| format!("{}: {error}", path.display()))?,
-    )
-    .map_err(|error| format!("{}: {error}", path.display()))?;
-    let Some(regions) = document.get("manual_regions").and_then(Value::as_array) else {
-        return Err(format!("{} has no manual_regions array", path.display()));
-    };
-    Ok(regions.iter().any(|region| {
-        let entry = region
-            .get("entry")
-            .and_then(Value::as_str)
-            .and_then(|value| i64::from_str_radix(value.trim_start_matches("0x"), 16).ok());
-        region.get("overlay").and_then(Value::as_str) == Some(overlay)
-            && entry == Some(start)
-            && region.get("span_bytes").and_then(Value::as_i64) == Some(span_bytes)
-    }))
 }
 const USAGE: &str =
     "usage: overlay-adopt <overlay:offsetHex> --source FILE [--span BYTES] [--apply] [--where]";
 fn options_of(argv: &[String]) -> Result<ParseOutcome, String> {
-    let mut span: Option<i64> = None;
-    let mut id = String::new();
-    let mut source = String::new();
-    let mut apply = false;
-    let mut where_ = false;
-    let mut index = 0usize;
-    while index < argv.len() {
-        let argument = argv[index].as_str();
-        if argument == "--source" || argument == "-s" {
-            index += 1;
-            source = argv.get(index).cloned().unwrap_or_default();
-        } else if argument == "--apply" {
-            apply = true;
-        } else if argument == "--where" {
-            where_ = true;
-        } else if argument == "--span" {
-            index += 1;
-            let raw = argv.get(index).cloned().unwrap_or_default();
-            let parsed: f64 = raw.trim().parse().unwrap_or(f64::NAN);
-            if !parsed.is_finite() || parsed.fract() != 0.0 || parsed <= 0.0 {
-                return Err("--span must be a positive byte count".to_string());
+    let (mut span, mut id, mut source) = (None, String::new(), String::new());
+    let (mut apply, mut where_) = (false, false);
+    let mut args = argv.iter();
+    while let Some(argument) = args.next() {
+        match argument.as_str() {
+            "--source" | "-s" => source = args.next().cloned().unwrap_or_default(),
+            "--span" => {
+                span = Some(
+                    args.next()
+                        .and_then(|value| value.parse::<i64>().ok())
+                        .filter(|value| *value > 0)
+                        .ok_or("--span must be a positive byte count")?,
+                )
             }
-            span = Some(parsed as i64);
-        } else if argument == "-h" || argument == "--help" {
-            return Ok(ParseOutcome::Help);
-        } else if id.is_empty() {
-            id = argument.to_string();
-        } else {
-            return Err(format!("unrecognized argument: {argument}"));
+            "--apply" => apply = true,
+            "--where" => where_ = true,
+            "-h" | "--help" => return Ok(ParseOutcome::Help),
+            _ if id.is_empty() => id = argument.clone(),
+            _ => return Err(format!("unrecognized argument: {argument}")),
         }
-        index += 1;
     }
     if id.is_empty() || source.is_empty() {
         return Err("both an overlay function id and --source are required".to_string());
@@ -512,6 +469,24 @@ fn revert(
     }
     fs::write(assembly, original_text).map_err(|error| error.to_string())
 }
+pub(crate) fn expanded_forbidden(root: &Path, source: &Path) -> Result<String, String> {
+    let work = tempdir().map_err(|error| error.to_string())?;
+    let output = work.path().join("ordinary.i");
+    let command =
+        direct_preprocessor_command(&source.to_string_lossy(), &output.to_string_lossy())?;
+    run_command(&command, root)?;
+    let text = fs::read_to_string(&output).map_err(|error| error.to_string())?;
+    Ok(find_forbidden(&output.to_string_lossy(), &text)
+        .into_iter()
+        .map(|finding| format!("{}:{}:expanded", finding.token, finding.line))
+        .collect::<Vec<_>>()
+        .join(","))
+}
+pub(crate) fn ordinary_source(root: &Path, source: &Path) -> Result<bool, String> {
+    let text = fs::read_to_string(source).map_err(|error| error.to_string())?;
+    Ok(find_forbidden(&source.to_string_lossy(), &text).is_empty()
+        && expanded_forbidden(root, source)?.is_empty())
+}
 pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
     let options = match options_of(args)? {
         ParseOutcome::Help => {
@@ -520,6 +495,13 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
         }
         ParseOutcome::Options(options) => options,
     };
+    let source_text = fs::read_to_string(&options.source)
+        .map_err(|error| format!("{}: {error}", options.source))?;
+    let mut forbidden = find_forbidden(&options.source, &source_text)
+        .into_iter()
+        .map(|finding| format!("{}:{}", finding.token, finding.line))
+        .collect::<Vec<_>>()
+        .join(",");
     let inventory_path: PathBuf = root.join("out/decomp/overlays.json");
     let inventory_text = fs::read_to_string(&inventory_path).map_err(|error| error.to_string())?;
     let inventory: Value =
@@ -571,7 +553,13 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
     if fn_row.entry - OVERLAY_BASE != fn_row.offset {
         return Err("inventory entry and offset disagree".to_string());
     }
-    audited_interval(root, &fn_row)?;
+    audited_span(
+        root,
+        &fn_row.overlay,
+        fn_row.entry,
+        fn_row.span_bytes,
+        &fn_row.id,
+    )?;
     let assembly = root
         .join("games/gs1/assets/code")
         .join(format!("{}_overlay.s", fn_row.overlay));
@@ -677,6 +665,23 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
             };
             println!("differing_at {text}");
         }
+        return Ok(1);
+    }
+    if forbidden.is_empty() {
+        forbidden = match expanded_forbidden(root, &installed) {
+            Ok(forbidden) => forbidden,
+            Err(error) => {
+                revert(&installed, &assembly, &preexisting, &original_text)?;
+                return Err(error);
+            }
+        };
+    }
+    if !forbidden.is_empty() {
+        revert(&installed, &assembly, &preexisting, &original_text)?;
+        println!(
+            "adopt=evidence-only {} exact_bytes={} forbidden={} source_retained=true",
+            options.id, fn_row.span_bytes, forbidden
+        );
         return Ok(1);
     }
     if !options.apply {

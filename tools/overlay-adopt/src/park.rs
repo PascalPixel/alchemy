@@ -1,12 +1,13 @@
 use crate::{listing_offsets, region_lines};
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use overlay_disasm::compile::assemble_overlay;
-use overlay_disasm::{OverlaySource, OVERLAY_BASE};
+use overlay_disasm::{canonical_overlay, CanonicalRom, OverlaySource, OVERLAY_BASE};
 use std::fs;
 use std::path::Path;
 use std::process::Command;
+use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::Mutex;
 use tempfile::tempdir;
-
 fn number(row: &serde_json::Value, key: &str) -> Option<i64> {
     row.get(key).and_then(|value| {
         value.as_i64().or_else(|| {
@@ -16,7 +17,6 @@ fn number(row: &serde_json::Value, key: &str) -> Option<i64> {
         })
     })
 }
-
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct ThumbTransfer {
     load: bool,
@@ -24,12 +24,10 @@ struct ThumbTransfer {
     registers: Vec<u8>,
     targeted: bool,
 }
-
 fn low_register(text: &str) -> Option<u8> {
     let register = text.trim().strip_prefix('r')?.parse::<u8>().ok()?;
     (register <= 7).then_some(register)
 }
-
 fn thumb_transfer(line: &str) -> Option<ThumbTransfer> {
     let code = line.split('@').next().unwrap_or("").trim();
     if code.is_empty() {
@@ -73,7 +71,6 @@ fn thumb_transfer(line: &str) -> Option<ThumbTransfer> {
         targeted,
     })
 }
-
 fn approved_thumb_block_copy_pair(load: &ThumbTransfer, store: &ThumbTransfer) -> bool {
     load.load
         && !store.load
@@ -85,7 +82,6 @@ fn approved_thumb_block_copy_pair(load: &ThumbTransfer, store: &ThumbTransfer) -
         && !load.registers.contains(&load.base)
         && !store.registers.contains(&store.base)
 }
-
 fn thumb_standalone_wide_transfer_lines(source: &str) -> Vec<usize> {
     let significant: Vec<_> = source
         .lines()
@@ -116,30 +112,21 @@ fn thumb_standalone_wide_transfer_lines(source: &str) -> Vec<usize> {
         })
         .collect()
 }
-
 fn audit_multi_register_evidence(root: &Path, overlays: &[String]) -> Result<Vec<String>, String> {
-    let regions: serde_json::Value = serde_json::from_slice(
-        &fs::read(root.join("games/gs1/semantic/regions.json")).map_err(|e| e.to_string())?,
-    )
-    .map_err(|e| e.to_string())?;
     let evidence: serde_json::Value = serde_json::from_slice(
         &fs::read(root.join("games/gs1/semantic/overlay-assembly.json"))
             .map_err(|e| e.to_string())?,
     )
     .map_err(|e| e.to_string())?;
     let wanted: std::collections::BTreeSet<_> = overlays.iter().cloned().collect();
-    let owners: Vec<_> = regions["manual_regions"]
-        .as_array()
+    let owners: Vec<_> = crate::reviewed_spans(root)?
         .into_iter()
-        .flatten()
-        .filter_map(|row| {
-            Some((
-                row["overlay"].as_str()?.to_string(),
-                number(row, "entry")?,
-                number(row, "span_bytes")?,
-            ))
+        .filter_map(|(owner, span)| {
+            let overlay = owner.overlay_id()?;
+            wanted
+                .contains(&overlay)
+                .then_some((overlay, i64::from(owner.address()), span as i64))
         })
-        .filter(|(overlay, _, _)| wanted.contains(overlay))
         .collect();
     let claimed: std::collections::BTreeSet<_> = evidence["regions"]
         .as_array()
@@ -436,24 +423,25 @@ pub fn reference_bytes(
     }
     Ok(image[start..end].to_vec())
 }
-pub fn audit(root: &Path, overlay: &str) -> Result<Vec<String>, String> {
+type AuditResult = Result<Vec<String>, String>;
+pub fn audit(root: &Path, overlay: &str) -> AuditResult {
+    audit_with_rom(root, overlay, None)
+}
+fn audit_with_rom(root: &Path, overlay: &str, rom: Option<&CanonicalRom>) -> AuditResult {
     let path = root.join(format!("games/gs1/assets/code/{overlay}_overlay.s"));
     let assembly = fs::read_to_string(&path).map_err(|error| error.to_string())?;
     let lines: Vec<&str> = assembly.split('\n').collect();
-    let mut addresses = Vec::new();
-    for line in &lines {
-        let trimmed = line.trim();
-        if let Some(rest) = trimmed.strip_prefix("AlchemyC_") {
-            if let Some(hex) = rest.strip_suffix(':') {
-                if let Ok(address) = i64::from_str_radix(hex, 16) {
-                    addresses.push(address);
-                }
-            }
-        }
-    }
+    let addresses = lines
+        .iter()
+        .filter_map(|line| {
+            let hex = line.trim().strip_prefix("AlchemyC_")?.strip_suffix(':')?;
+            i64::from_str_radix(hex, 16).ok()
+        })
+        .collect::<Vec<_>>();
     let work = tempdir().map_err(|error| error.to_string())?;
     let source_paths = SourcePaths::load(root)?;
     let mut findings = Vec::new();
+    let mut canonical = None;
     for address in addresses {
         let Some((_, _, span)) = placeholder_block(&lines, address) else {
             continue;
@@ -467,18 +455,29 @@ pub fn audit(root: &Path, overlay: &str) -> Result<Vec<String>, String> {
             ));
             continue;
         }
-        let reference = match truth_window(root, overlay, address, span) {
-            Ok((bytes, _)) => bytes,
+        let image = match canonical.get_or_insert_with(|| match rom {
+            Some(rom) => rom.overlay(overlay),
+            None => canonical_overlay(root, overlay),
+        }) {
+            Ok(image) => image,
             Err(error) => {
                 findings.push(format!("{overlay}:{address:08x}\tUNVERIFIED\t{error}"));
                 continue;
             }
         };
+        let start = (address - OVERLAY_BASE) as usize;
+        let Some(reference) = image.get(start..start + span as usize).map(<[u8]>::to_vec) else {
+            findings.push(format!(
+                "{overlay}:{address:08x}\tUNVERIFIED\tcanonical overlay is {} bytes and the row needs {}",
+                image.len(), start + span as usize
+            ));
+            continue;
+        };
         let compiled = match overlay_disasm::compile::compile_overlay_c(
             &source,
             work.path(),
             overlay,
-            None,
+            Some(&owner.routing_path()),
             &[],
         ) {
             Ok(compiled) => compiled.data,
@@ -491,22 +490,21 @@ pub fn audit(root: &Path, overlay: &str) -> Result<Vec<String>, String> {
             && reference[..compiled.len()] == compiled[..]
             && reference[compiled.len()..].iter().all(|byte| *byte == 0);
         if compiled != reference && !padded {
-            let shared = compiled.len().min(reference.len());
-            let mut differing = (compiled.len().abs_diff(reference.len())).div_ceil(2);
-            for index in (0..shared).step_by(2) {
-                if compiled[index] != reference[index]
-                    || compiled.get(index + 1) != reference.get(index + 1)
-                {
-                    differing += 1;
-                }
-            }
+            let differing = compiled
+                .chunks(2)
+                .zip(reference.chunks(2))
+                .filter(|(left, right)| left != right)
+                .count()
+                + compiled.len().abs_diff(reference.len()).div_ceil(2);
             findings.push(format!("{overlay}:{address:08x}\tDIFFERS\treference={}\tcompiled={}\tdiffering={differing}", reference.len(), compiled.len()));
         }
     }
-    let _ = fs::remove_dir_all(&work);
     Ok(findings)
 }
 pub fn run_audit(root: &Path, argv: &[String]) -> Result<i32, String> {
+    if argv == ["--corpus"] {
+        return crate::score::audit_corpus(root);
+    }
     let overlays: Vec<String> = if argv.is_empty() || argv[0] == "--all" {
         let mut names = Vec::new();
         for entry in fs::read_dir(root.join("games/gs1/assets/code")).map_err(|e| e.to_string())? {
@@ -529,20 +527,53 @@ pub fn run_audit(root: &Path, argv: &[String]) -> Result<i32, String> {
         println!("{line}");
         findings += 1;
     }
-    for overlay in overlays {
-        for line in audit(root, &overlay)? {
+    let rom = CanonicalRom::load(root)?;
+    let total = overlays.len();
+    let workers = std::thread::available_parallelism()
+        .map_or(1, |count| count.get())
+        .min(8)
+        .min(total.max(1));
+    let next = AtomicUsize::new(0);
+    let done = AtomicUsize::new(0);
+    let results = Mutex::new(Vec::with_capacity(overlays.len()));
+    std::thread::scope(|scope| {
+        for _ in 0..workers {
+            let results = &results;
+            let next = &next;
+            let done = &done;
+            let overlays = &overlays;
+            let rom = &rom;
+            scope.spawn(move || loop {
+                let index = next.fetch_add(1, Ordering::Relaxed);
+                if index >= overlays.len() {
+                    break;
+                }
+                let result = audit_with_rom(root, &overlays[index], Some(rom));
+                let count = done.fetch_add(1, Ordering::Relaxed) + 1;
+                eprintln!("overlay audit {count}/{total}: {}", overlays[index]);
+                results.lock().unwrap().push((index, result));
+            });
+        }
+    });
+    let mut results = results.into_inner().unwrap();
+    results.sort_by_key(|result| result.0);
+    for (_, result) in results {
+        for line in result? {
             println!("{line}");
             findings += 1;
         }
     }
     eprintln!("audited rows with findings: {findings}");
-    Ok(if findings == 0 { 0 } else { 1 })
+    Ok(i32::from(findings != 0))
 }
-fn rom_overlay(root: &Path, overlay: &str) -> Result<Vec<u8>, String> {
-    let rom = fs::read(root.join("roms/gs1-en.gba"))
-        .map_err(|error| format!("roms/gs1-en.gba: {error}"))?;
-    let table = crate::twins::resource_table(&rom)?;
-    crate::twins::decode_overlay(&rom, table, overlay)
+fn image_window(image: Vec<u8>, start: usize, span: usize, label: &str) -> Result<Vec<u8>, String> {
+    let end = start + span;
+    image.get(start..end).map(<[u8]>::to_vec).ok_or_else(|| {
+        format!(
+            "the {label} is {} bytes and the row needs {end}",
+            image.len()
+        )
+    })
 }
 pub fn truth_window(
     root: &Path,
@@ -551,38 +582,26 @@ pub fn truth_window(
     span: i64,
 ) -> Result<(Vec<u8>, &'static str), String> {
     let start = (address - OVERLAY_BASE) as usize;
-    let rom = match rom_overlay(root, overlay) {
-        Ok(image) => match image.get(start..start + span as usize) {
-            Some(window) => return Ok((window.to_vec(), "rom")),
-            None => {
-                format!(
-                    "the decoded container is {} bytes and the row needs {}",
-                    image.len(),
-                    start + span as usize
-                )
-            }
-        },
-        Err(message) => message,
+    let rom = match canonical_overlay(root, overlay)
+        .and_then(|image| image_window(image, start, span as usize, "decoded container"))
+    {
+        Ok(window) => return Ok((window, "rom")),
+        Err(error) => error,
     };
     let assembled = match placeholder_span(root, overlay, address) {
         Ok(None) => {
             let path = root
                 .join("games/gs1/assets/code")
                 .join(format!("{overlay}_overlay.s"));
-            match assemble_overlay(&OverlaySource::path(&path), OVERLAY_BASE) {
-                Ok(image) => match image.get(start..start + span as usize) {
-                    Some(window) => return Ok((window.to_vec(), "assembly")),
-                    None => format!(
-                        "the assembled overlay is {} bytes and the row needs {}",
-                        image.len(),
-                        start + span as usize
-                    ),
-                },
-                Err(message) => message,
-            }
+            assemble_overlay(&OverlaySource::path(&path), OVERLAY_BASE)
+                .and_then(|image| image_window(image, start, span as usize, "assembled overlay"))
         }
-        Ok(Some(_)) => "the row is adopted, so its assembly is a placeholder".to_string(),
-        Err(message) => message,
+        Ok(Some(_)) => Err("the row is adopted, so its assembly is a placeholder".into()),
+        Err(error) => Err(error),
+    };
+    let assembled = match assembled {
+        Ok(window) => return Ok((window, "assembly")),
+        Err(error) => error,
     };
     reference_bytes(root, overlay, address, span)
         .map(|bytes| (bytes, "git"))
@@ -624,7 +643,7 @@ pub fn park_one(root: &Path, overlay: &str, address: i64, apply: bool) -> Result
     let restored = match from_git {
         Ok(lines) if usable(&lines) => lines,
         _ => {
-            let image = rom_overlay(root, overlay)?;
+            let image = canonical_overlay(root, overlay)?;
             let text = overlay_disasm::build_overlay_source(&image, OVERLAY_BASE)?;
             region_text(&define_dangling_labels(&text), address, span)?
         }
@@ -745,17 +764,8 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     }
     let mut failures = 0;
     for row in rows {
-        let (overlay, address) = row
-            .split_once(':')
-            .ok_or_else(|| format!("expected <overlay>:<addressHex>, got {row}"))?;
-        let address = i64::from_str_radix(address.trim_start_matches("0x"), 16)
-            .map_err(|_| format!("{row}: address must be hexadecimal"))?;
-        let address = if address < OVERLAY_BASE {
-            OVERLAY_BASE + address
-        } else {
-            address
-        };
-        match park_one(root, overlay, address, apply) {
+        let (overlay, address) = crate::score::resolve(root, &row)?;
+        match park_one(root, &overlay, address, apply) {
             Ok(parked) => println!(
                 "parked {}:{:08x} span={} lines={}{}",
                 parked.overlay,
@@ -772,10 +782,10 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     }
     Ok(if failures == 0 { 0 } else { 1 })
 }
-
 #[cfg(test)]
 mod tests {
-    use super::{audit, rom_overlay, thumb_standalone_wide_transfer_lines};
+    use super::{audit, thumb_standalone_wide_transfer_lines};
+    use crate::audited_span;
     use std::fs;
     use tempfile::tempdir;
 
@@ -816,26 +826,16 @@ mod tests {
     }
 
     #[test]
-    fn rom_overlay_uses_live_directory_and_dispatches_tag_one() {
-        const ROM_BASE: usize = 0x0800_0000;
-        const RESOURCE: usize = 0x36f;
+    fn literal_pool_address_is_not_adoptable() {
         let root = tempdir().unwrap();
-        let table = 0x100usize;
-        let start = 0x1000usize;
-        let stream = [1, 0x30, b'A', b'B', 0x01, 0x02, 0, 0];
-        let mut rom = vec![0u8; start + stream.len() + 16];
-
-        rom[table..table + 4].copy_from_slice(&(ROM_BASE as u32).to_le_bytes());
-        rom[table + 4..table + 8].copy_from_slice(&((ROM_BASE + table) as u32).to_le_bytes());
-        let pointer = table + RESOURCE * 4;
-        rom[pointer..pointer + 4].copy_from_slice(&((ROM_BASE + start) as u32).to_le_bytes());
-        rom[pointer + 4..pointer + 8]
-            .copy_from_slice(&((ROM_BASE + start + stream.len()) as u32).to_le_bytes());
-        rom[start..start + stream.len()].copy_from_slice(&stream);
-
-        fs::create_dir_all(root.path().join("roms")).unwrap();
-        fs::write(root.path().join("roms/gs1-en.gba"), rom).unwrap();
-
-        assert_eq!(rom_overlay(root.path(), "resource_36f").unwrap(), b"ABAB");
+        let metrics = root.path().join("games/gs1/metrics");
+        fs::create_dir_all(&metrics).unwrap();
+        fs::write(
+            metrics.join("gs1-en-executable.json"),
+            r#"{"overlays":[{"id":"resource_371","intervals":[{"start":33554432,"end":33554448,"kind":"literal_pool"},{"start":33554448,"end":33554464,"kind":"thumb"}]}]}"#,
+        )
+        .unwrap();
+        assert!(audited_span(root.path(), "resource_371", 0x02000000, 4, "resource_371").is_err());
+        assert!(audited_span(root.path(), "resource_371", 0x02000010, 4, "resource_371").is_ok());
     }
 }

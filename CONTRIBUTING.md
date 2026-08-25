@@ -114,6 +114,10 @@ claims zero bytes. Exactness and assembly displacement are recorded separately
 for every edition. This preserves the old semantic corpus without repeating
 its accounting mistake.
 
+Every exact source consumed through the owner register must be tracked and
+must not match an ignore rule. A local ignored file is not reproducible source,
+even when it compiles and reproduces reference bytes in one checkout.
+
 The source graph is directional: JA is the shared base, and EN, DE, ES, FR,
 and IT are measured deltas. The inherited sources under
 `games/gs1/recon/en/` remain EN hypotheses until their JA owners are recovered.
@@ -571,6 +575,10 @@ make build-claimed   # compile and link every adopted main-image owner
 make build-asm       # assemble retained main-image regions
 make build-assets    # rebuild tracked source assets
 make build-full      # compose and compare every owned region
+make full-rom-check  # assert the complete rebuilt ROM and report contract
+make overlay-check   # audit every exact overlay owner
+make strict-tu-check # assert production translation-unit composition/exports
+make candidate-corpus-check # rescore every retained reconstruction candidate
 make build-rom       # produce the final ROM locally
 make coverage        # regenerate metrics, figures, and Targets
 make test            # tooling, policy, and focused regression tests
@@ -582,9 +590,18 @@ only full-build target, `gs1-en`. Compile-only targets intentionally reject
 full linking until their edition address map, ownership, assembly, and assets
 are installed.
 
-`make verify` must finish with a byte-identical full build and fresh generated
-artifacts. A clean compile count is insufficient: overlay reconstruction,
-compressed assets, ownership manifests, and final composition can fail later.
+`make verify` must finish with all twelve compile-only target routes, a
+byte-identical full GS1 EN build, every overlay audit, strict production
+translation-unit composition, six-edition correspondence and exact-owner
+linking, classification/family retention, the tooling budget, and fresh
+generated artifacts. A clean compile count is insufficient: overlay
+reconstruction, compressed assets, ownership manifests, and final composition
+can fail later.
+
+`candidate-corpus-check` resolves each candidate to a registered main owner,
+an audited overlay owner, or classified literal-pool data before exactness is
+counted. An exact ordinary-C owner still retained as assembly is a failure;
+exact nonordinary or unmapped C is evidence-only and also fails pending review.
 Do not describe a change as verified when the authoritative gate stopped at a
 baseline or environment error; report that blocker separately.
 
@@ -622,7 +639,7 @@ executable runs), sorted largest to smallest. Regenerate with `make coverage` --
 
 - **Unfinished scopes:** 1,603
 - **Address spaces scanned:** 97 (85 still contain targets)
-- **Target bytes:** 647,332 tracked-C or unresolved-assembly bytes
+- **Target bytes:** 647,428 tracked-C or unresolved-assembly bytes
 - **Resolved-only bytes:** 540,368 Exact C or audited permanent assembly bytes
 - **Executable bytes accounted for:** 1,348,458
 
@@ -738,7 +755,7 @@ This table contains every scope of at least 1,000 bytes (195 rows). The complete
 | 102 | 1,906 | 1,906 | `resource_378:0x0200290c` |
 | 103 | 1,902 | 1,292 | `main:0x080983a0` |
 | 104 | 1,866 | 1,722 | `main:0x080b9b30` |
-| 105 | 1,810 | 500 | `main:0x08006088` |
+| 105 | 1,810 | 596 | `main:0x08006088` |
 | 106 | 1,800 | 644 | `main:0x0809b0dc` |
 | 107 | 1,782 | 1,660 | `main:0x080de2f8` |
 | 108 | 1,778 | 1,778 | `resource_3b9:0x02001cd4` |

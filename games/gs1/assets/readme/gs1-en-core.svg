@@ -278,8 +278,8 @@
 </g>
 <g aria-label="0x08006088–0x0800679a: 1,810 bytes">
 <title>0x08006088–0x0800679a: 1,810 bytes</title>
-<rect x="3.5" y="144.32990525659366" width="24.28823013933341" height="3.6967620036681037" style="fill:hsl(275 21% 85%);fill:oklch(0.847 0.037 295)"/>
-<rect x="3.5" y="139.63858291691332" width="24.28823013933341" height="4.691322339680335" style="fill:hsl(275 26% 83%);fill:oklch(0.825 0.047 295)"/>
+<rect x="3.5" y="145.2306391458123" width="24.28823013933341" height="2.7960281144494794" style="fill:hsl(275 16% 87%);fill:oklch(0.867 0.028 295)"/>
+<rect x="3.5" y="139.63858291691332" width="24.28823013933341" height="5.592056228898959" style="fill:hsl(275 31% 80%);fill:oklch(0.805 0.056 295)"/>
 <rect x="3.5" y="131.04408039061894" width="24.28823013933341" height="8.594502526294374" style="fill:#7dd3fc"/>
 </g>
 <g aria-label="0x0800679a–0x0800679c: 2 bytes">
@@ -3725,7 +3725,7 @@
 <rect x="534.7355617592607" y="277.9552614633638" width="1.7644382407393877" height="1.5447385366362336" style="fill:hsl(275 95% 55%);fill:oklch(0.550 0.170 295)"/>
 </g>
 <rect x="6" y="288" width="10" height="10" style="fill:hsl(275 19% 85%);fill:oklch(0.853 0.034 295)"/>
-<text class="weyard" x="20" y="293" dominant-baseline="middle">Exact C 20.3%</text>
+<text class="weyard" x="20" y="293" dominant-baseline="middle">Exact C 20.2%</text>
 <rect x="126" y="288" width="10" height="10" style="fill:#f4c95d"/>
 <text class="weyard" x="140" y="293" dominant-baseline="middle">WIP 1.2%</text>
 <rect x="206" y="288" width="10" height="10" style="fill:hsl(275 44% 75%);fill:oklch(0.754 0.079 295)"/>

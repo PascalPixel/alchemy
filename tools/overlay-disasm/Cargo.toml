@@ -15,6 +15,7 @@ path = "src/lib.rs"
 compiler-core = { path = "../compiler-core" }
 # `CompilerTarget` lives here. This dependency is read-only for this crate.
 cache-entry = { path = "../cache-entry" }
+extract-resource = { path = "../extract-resource" }
 regex = "1.13.1"
 tempfile = "3"
 

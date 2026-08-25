@@ -10,6 +10,7 @@ use candidate_compiler::verify::{
 };
 use compiler_core::bundle::compiler_bundle_signature_checked;
 use compiler_core::routing::CompilerTarget;
+use compiler_core::source_inputs::source_tree_signature;
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use overlay_disasm::OVERLAY_BASE;
 use regex::Regex;
@@ -17,7 +18,7 @@ use serde_json::Value;
 use sha2::{Digest, Sha256};
 use std::{
     cmp::Ordering,
-    collections::{BTreeMap, BTreeSet},
+    collections::BTreeMap,
     path::{Path, PathBuf},
     process::Command,
     time::Instant,
@@ -269,14 +270,7 @@ fn render_bytes(
             keys
         });
     offsets.sort_by(js_cmp);
-    let ordered = |rows: &Rows| {
-        let mut keys: Vec<_> = rows.keys().collect();
-        keys.sort_by(js_cmp);
-        keys.into_iter()
-            .map(|key| rows.get(key).unwrap_or("").to_string())
-            .collect::<Vec<_>>()
-    };
-    let (left_lines, right_lines) = (ordered(&left), ordered(&right));
+    let (left_lines, right_lines) = (ordered_lines(&left), ordered_lines(&right));
     let (class, wrong) = residual_class(&left_lines, &right_lines);
     let mut out = format!("candidate={} reference={} differing_halfwords={}\ncompile={compile}\nclass={class} wrong_instructions={wrong}\n", actual.len(), expected.len(), differing.len());
     if options.align {
@@ -297,20 +291,7 @@ fn render_bytes(
             ));
         }
         out.push_str("      candidate                      reference\n");
-        for (candidate, reference) in &pairs[start..end] {
-            let mark = match (candidate, reference) {
-                (Some(a), Some(b)) if a == b => " ",
-                (Some(_), Some(_)) => "!",
-                (Some(_), None) => "+",
-                (None, Some(_)) => "-",
-                _ => " ",
-            };
-            out.push_str(&format!(
-                "  {mark} {:<30.30} {}\n",
-                candidate.as_deref().unwrap_or(""),
-                reference.as_deref().unwrap_or("")
-            ));
-        }
+        out.push_str(&side_by_side(&pairs[start..end]));
         if options.first {
             std::fs::write(first_path, &out)
                 .map_err(|error| format!("{}: {error}", first_path.display()))?;
@@ -507,6 +488,32 @@ pub fn residual_class(left: &[String], right: &[String]) -> (&'static str, i64) 
         ("wrong", wrong)
     }
 }
+pub fn ordered_lines(rows: &Rows) -> Vec<String> {
+    let mut keys: Vec<_> = rows.keys().collect();
+    keys.sort_by(js_cmp);
+    keys.into_iter()
+        .map(|key| rows.get(key).unwrap_or("").to_string())
+        .collect()
+}
+pub fn side_by_side(pairs: &[(Option<String>, Option<String>)]) -> String {
+    pairs
+        .iter()
+        .map(|(candidate, reference)| {
+            let mark = if candidate == reference {
+                " "
+            } else if candidate.is_none() {
+                "-"
+            } else if reference.is_none() {
+                "+"
+            } else {
+                "!"
+            };
+            let candidate = candidate.as_deref().unwrap_or("");
+            let reference = reference.as_deref().unwrap_or("");
+            format!("  {mark} {candidate:<30.30} {reference}\n")
+        })
+        .collect()
+}
 fn multiple(line: &str) -> bool {
     line.split(|c: char| !c.is_ascii_alphanumeric())
         .any(|word| matches!(word, "stmia" | "ldmia" | "stmdb" | "ldmdb" | "stm" | "ldm"))
@@ -702,17 +709,7 @@ fn source_input_signature(
             .map(|path| rooted_path(root, Path::new(path)))
     }));
 
-    let mut seen = BTreeSet::new();
-    let mut inputs = Vec::new();
-    collect_source_inputs(&source, &include_dirs, &mut seen, &mut inputs)?;
-    let mut hasher = Sha256::new();
-    for (path, bytes) in inputs {
-        hasher.update(path.to_string_lossy().as_bytes());
-        hasher.update([0]);
-        hasher.update(bytes);
-        hasher.update([0xff]);
-    }
-    Ok(hasher.finalize().to_vec())
+    source_tree_signature(&source, &include_dirs)
 }
 
 fn rooted_path(root: &Path, path: &Path) -> PathBuf {
@@ -723,54 +720,12 @@ fn rooted_path(root: &Path, path: &Path) -> PathBuf {
     }
 }
 
-fn collect_source_inputs(
-    path: &Path,
-    include_dirs: &[PathBuf],
-    seen: &mut BTreeSet<PathBuf>,
-    inputs: &mut Vec<(PathBuf, Vec<u8>)>,
-) -> Result<(), String> {
-    let canonical =
-        std::fs::canonicalize(path).map_err(|error| format!("{}: {error}", path.display()))?;
-    if !seen.insert(canonical.clone()) {
-        return Ok(());
-    }
-    let bytes =
-        std::fs::read(&canonical).map_err(|error| format!("{}: {error}", canonical.display()))?;
-    let text = String::from_utf8_lossy(&bytes);
-    let mut includes = Vec::new();
-    for line in text.lines() {
-        let Some(rest) = line.trim_start().strip_prefix("#include") else {
-            continue;
-        };
-        let rest = rest.trim_start();
-        let Some(rest) = rest.strip_prefix('"') else {
-            continue;
-        };
-        let Some((include, _)) = rest.split_once('"') else {
-            continue;
-        };
-        let include = Path::new(include);
-        let local = canonical.parent().unwrap_or(Path::new("")).join(include);
-        let resolved = std::iter::once(local)
-            .chain(include_dirs.iter().map(|directory| directory.join(include)))
-            .find(|candidate| candidate.is_file());
-        if let Some(resolved) = resolved {
-            includes.push(resolved);
-        }
-    }
-    inputs.push((canonical, bytes));
-    for include in includes {
-        collect_source_inputs(&include, include_dirs, seen, inputs)?;
-    }
-    Ok(())
-}
-
 #[cfg(test)]
 mod cache_key_tests {
     use super::*;
 
     #[test]
-    fn compiler_family_and_flag_mutations_are_part_of_the_cache_identity() {
+    fn compiler_route_flags_host_and_bundle_are_cache_identity() {
         let source = std::env::temp_dir().join("candidate-show-cache-key.c");
         std::fs::write(&source, "void Func_08000000(void) {}\n").unwrap();
         let source = source.to_str().unwrap();
@@ -787,119 +742,40 @@ mod cache_key_tests {
             remove_flags: vec!["-fgcse".into()],
             ..Default::default()
         };
-        let route = "games/gs1/src/08000000.c";
-        let base =
-            source_cache_key(source, route, "08000000", &[], &routed, None, None, None).unwrap();
-        assert_ne!(
-            base,
-            source_cache_key(source, route, "08000000", &[], &gcc296, None, None, None).unwrap()
-        );
-        assert_ne!(
-            base,
-            source_cache_key(source, route, "08000000", &[], &removed, None, None, None).unwrap()
-        );
-        assert_ne!(
-            base,
-            source_cache_key(
+        let key = |route, owner, configuration, host: &[u8], bundle: &[u8]| {
+            source_cache_key_with_environment(
                 source,
+                route,
+                owner,
+                &[],
+                configuration,
+                None,
+                None,
+                None,
+                host,
+                bundle,
+            )
+            .unwrap()
+        };
+        let route = "games/gs1/src/08000000.c";
+        let base = key(route, "08000000", &routed, b"host-a", b"bundle-a");
+        for changed in [
+            key(route, "08000000", &gcc296, b"host-a", b"bundle-a"),
+            key(route, "08000000", &removed, b"host-a", b"bundle-a"),
+            key(
                 "games/gs1/recon/en/main/08000000.c",
                 "08000000",
-                &[],
                 &routed,
-                None,
-                None,
-                None
-            )
-            .unwrap()
-        );
-        assert_ne!(
-            base,
-            source_cache_key(source, route, "08000004", &[], &routed, None, None, None).unwrap()
-        );
-        let _ = std::fs::remove_file(source);
-    }
-
-    #[test]
-    fn host_and_compiler_bundle_are_part_of_the_cache_identity() {
-        let source = std::env::temp_dir().join("candidate-show-environment-cache-key.c");
-        std::fs::write(&source, "void Func_08000000(void) {}\n").unwrap();
-        let source = source.to_str().unwrap();
-        let configuration = CandidateCompilerConfiguration::default();
-        let base = source_cache_key_with_environment(
-            source,
-            "games/gs1/src/08000000.c",
-            "08000000",
-            &[],
-            &configuration,
-            None,
-            None,
-            None,
-            b"host-a",
-            b"bundle-a",
-        )
-        .unwrap();
-        assert_ne!(
-            base,
-            source_cache_key_with_environment(
-                source,
-                "games/gs1/src/08000000.c",
-                "08000000",
-                &[],
-                &configuration,
-                None,
-                None,
-                None,
-                b"host-b",
-                b"bundle-a",
-            )
-            .unwrap()
-        );
-        assert_ne!(
-            base,
-            source_cache_key_with_environment(
-                source,
-                "games/gs1/src/08000000.c",
-                "08000000",
-                &[],
-                &configuration,
-                None,
-                None,
-                None,
                 b"host-a",
-                b"bundle-b",
-            )
-            .unwrap()
-        );
+                b"bundle-a",
+            ),
+            key(route, "08000004", &routed, b"host-a", b"bundle-a"),
+            key(route, "08000000", &routed, b"host-b", b"bundle-a"),
+            key(route, "08000000", &routed, b"host-a", b"bundle-b"),
+        ] {
+            assert_ne!(base, changed);
+        }
         let _ = std::fs::remove_file(source);
-    }
-
-    #[test]
-    fn included_source_changes_are_part_of_the_cache_identity() {
-        let root = std::env::temp_dir().join("candidate-show-include-cache-key");
-        let _ = std::fs::remove_dir_all(&root);
-        std::fs::create_dir_all(root.join("games/gs1/include")).unwrap();
-        std::fs::create_dir_all(root.join("games/gs1/recon/en/main")).unwrap();
-        let source = root.join("games/gs1/recon/en/main/08000000.c");
-        let body = root.join("games/gs1/recon/en/main/body.c");
-        std::fs::write(&source, "#include \"body.c\"\n").unwrap();
-        std::fs::write(&body, "void Func_08000000(void) {}\n").unwrap();
-        let first = source_input_signature(
-            &root,
-            source.to_str().unwrap(),
-            "games/gs1/src/08000000.c",
-            &[],
-        )
-        .unwrap();
-        std::fs::write(&body, "void Func_08000000(void) { for (;;) {} }\n").unwrap();
-        let second = source_input_signature(
-            &root,
-            source.to_str().unwrap(),
-            "games/gs1/src/08000000.c",
-            &[],
-        )
-        .unwrap();
-        assert_ne!(first, second);
-        let _ = std::fs::remove_dir_all(&root);
     }
 }
 fn cached_first(key_path: &Path, key: &str, report: &Path) -> Option<String> {
@@ -938,20 +814,15 @@ mod region_size_tests {
     }
 
     #[test]
-    fn reads_the_owner_size_from_the_generated_manifest() {
-        let root = scratch_root("present");
+    fn owner_size_requires_a_matching_generated_manifest_region() {
+        let root = scratch_root("lookup");
+        assert_eq!(region_size(&root, 0x080a_b5e4), None);
         fs::write(
             root.join("out/gs1-en/asm/manifest.json"),
-            r#"{"regions":[{"address":134919652,"size":4888}]}"#,
+            r#"{"regions":[{"address":134986508,"size":6332}]}"#,
         )
         .unwrap();
-        assert_eq!(region_size(&root, 0x080a_b5e4), Some(4888));
-        let _ = fs::remove_dir_all(&root);
-    }
-
-    #[test]
-    fn reads_a_nested_source_size_by_owner_address() {
-        let root = scratch_root("claimed-nested");
+        assert_eq!(region_size(&root, 0x080a_b5e4), None);
         fs::create_dir_all(root.join("out/gs1-en/claimed")).unwrap();
         fs::write(
             root.join("out/gs1-en/claimed/manifest.json"),
@@ -959,25 +830,6 @@ mod region_size_tests {
         )
         .unwrap();
         assert_eq!(region_size(&root, 0x080b_0fa4), Some(296));
-        let _ = fs::remove_dir_all(&root);
-    }
-
-    #[test]
-    fn returns_none_without_falling_back_when_the_manifest_is_absent() {
-        let root = scratch_root("absent");
-        assert_eq!(region_size(&root, 0x080a_b5e4), None);
-        let _ = fs::remove_dir_all(&root);
-    }
-
-    #[test]
-    fn returns_none_when_the_manifest_lacks_this_owner() {
-        let root = scratch_root("other-owner");
-        fs::write(
-            root.join("out/gs1-en/asm/manifest.json"),
-            r#"{"regions":[{"address":134986508,"size":6332}]}"#,
-        )
-        .unwrap();
-        assert_eq!(region_size(&root, 0x080a_b5e4), None);
         let _ = fs::remove_dir_all(&root);
     }
 }
@@ -995,8 +847,8 @@ mod source_identity_tests {
     }
 
     #[test]
-    fn nested_source_uses_manifest_owner_and_stable_route() {
-        let root = scratch_root("nested");
+    fn source_identity_uses_manifest_and_stable_routes() {
+        let root = scratch_root("routes");
         fs::write(
             root.join("games/gs1/source-paths.json"),
             r#"{"format":3,"owners":{"main:080b0fa4":"battle/inventory/draw_paged_item_list.c"}}"#,
@@ -1012,23 +864,11 @@ mod source_identity_tests {
         .unwrap();
         assert_eq!(owner, SourceOwner::Main(0x080b0fa4));
         assert_eq!(route, PathBuf::from("games/gs1/src/080b0fa4.c"));
-        let _ = fs::remove_dir_all(&root);
-    }
-
-    #[test]
-    fn address_named_recon_candidate_keeps_its_legacy_route() {
-        let root = scratch_root("recon");
         let source = "games/gs1/recon/en/main/080ab5e4.c";
         let (owner, route) =
             main_source_identity(&root, source, CompilerTarget::Gs1, None, None).unwrap();
         assert_eq!(owner, SourceOwner::Main(0x080ab5e4));
         assert_eq!(route, PathBuf::from(source));
-        let _ = fs::remove_dir_all(&root);
-    }
-
-    #[test]
-    fn explicit_owner_uses_its_stable_route() {
-        let root = scratch_root("selected");
         let (_, route) = main_source_identity(
             &root,
             "candidate.c",

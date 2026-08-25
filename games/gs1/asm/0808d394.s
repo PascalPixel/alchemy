@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global BattleAction_FindDescriptor
 	.global Func_0808d394
 	.thumb_func
+BattleAction_FindDescriptor:
 Func_0808d394:
 	push	{r5, r6, r7, lr}
 	ldr	r3, [pc, #140]

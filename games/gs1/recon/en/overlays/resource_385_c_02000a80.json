@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "namespace": "resource_385",
+  "address": "0x02000a80",
+  "status": "measured-draft",
+  "owner_bytes": 72,
+  "executable_owner_bytes": 56,
+  "candidate_bytes": 72,
+  "differing_halfwords": 2,
+  "wrong_instructions": 0,
+  "classification": "place-actor-and-set-scene-delay",
+  "resolved_asm_classification": {
+    "kind": "compiler_output",
+    "retention": "c_candidate",
+    "confidence": "likely"
+  },
+  "cross_edition": {
+    "editions": ["ja", "en", "de", "es", "fr", "it"],
+    "relocation_normalized_core_bytes": 56,
+    "core_diff_bytes": 0,
+    "core_identical": true
+  },
+  "bounded_search": {
+    "generated_candidates": 5000,
+    "compile_failures": 62,
+    "best_differing_halfwords": 2,
+    "exact": false
+  },
+  "notes": [
+    "Complete three-argument helper: installs actor-zero placement defaults, applies caller coordinates, writes scene delay 16 at workspace offset 456, and runs the caller-selected continuation.",
+    "The 72-byte candidate has exact extent and zero wrong instructions. Its sole residual swaps independent `lsls r2, #7` and `movs r0, #0` argument setup instructions.",
+    "Explicit --span analysis proves the 56-byte relocation-normalized core identical across JA, EN, DE, ES, FR, and IT.",
+    "A 5,000-candidate classic heat walk and the approved optimization, scheduler, CSE, regmove and compiler-pass matrix left the two-halfword residual unchanged. This is strong narrow-ordering evidence, but it does not satisfy the repository precedent's full 20,000-safe plus 10,000-classic exhaustion gate, so this draft honestly claims zero DONE bytes."
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080b9324",
+  "name": "BattlePresentation_BuildOpponentEntries",
+  "status": "measured-draft",
+  "owner_bytes": 332,
+  "executable_owner_bytes": 332,
+  "candidate_bytes": 332,
+  "differing_halfwords": 129,
+  "wrong_instructions": 96,
+  "cross_edition": {
+    "object_bytes": 332,
+    "relocation_bytes": 24,
+    "literal_bytes": 8,
+    "relocation_normalized_core_bytes": 300,
+    "core_diff_bytes": 0,
+    "core_identical": true,
+    "starts": {
+      "ja": "0x080b0324",
+      "en": "0x080b9324",
+      "de": "0x080bb93c",
+      "es": "0x080bd33c",
+      "fr": "0x080bd33c",
+      "it": "0x080b933c"
+    }
+  },
+  "domain": "Builds shuffled battle-presentation entries for the opposing side, with encounter-mode limits and per-copy display values.",
+  "expressed": [
+    "returns no entries for the excluded battle-presentation mode",
+    "loads the opposing-side unit list and randomizes it with 32 swaps",
+    "limits the selected unit count in the special encounter mode",
+    "emits one 16-byte entry per presentation copy, halving the displayed value after the first copy",
+    "uses fixed dimensions for already-present units and delegates the remaining entry layout"
+  ],
+  "bounded_search": {
+    "mode": "screen-only",
+    "attempted": 0,
+    "exact": false,
+    "reason": "The first complete readable exact-extent candidate remained broad at 129 differing halfwords and 96 wrong instructions, outside the <=20-halfword/immediate-resynchronization gate."
+  },
+  "notes": [
+    "Independent object analysis bounds the owner at 332 executable bytes and proves all 300 relocation-normalized core bytes identical across the six approved GS1 editions.",
+    "Moving the entry-count increment to the source point expressed by the assembly reduced the candidate from 350 to the exact 332-byte extent and improved it from 153 to 129 differing halfwords.",
+    "The remaining differences span register allocation and scheduling across the shuffle and nested entry loops rather than a localized compiler residual, so no full permutation search or permanent classification was warranted.",
+    "No exact C or narrow compiler residual was found. Retained assembly remains ordinary unresolved compiler output and this draft claims zero DONE bytes.",
+    "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, local presentation callers and records, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used."
+  ]
+}

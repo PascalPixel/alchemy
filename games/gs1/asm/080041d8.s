@@ -2,8 +2,10 @@
 @ 探索では未到達。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global Scheduler_AddOrUpdateCallback
 	.global Func_080041d8
 	.thumb_func
+Scheduler_AddOrUpdateCallback:
 Func_080041d8:
 	push	{r5, r6, lr}
 	ldr	r3, [pc, #84]

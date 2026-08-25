@@ -2,11 +2,11 @@
   "span_bytes": 84,
   "score": {
     "measured": "2026-08-25",
-    "candidate_bytes": 80,
+    "candidate_bytes": 84,
     "reference_bytes": 84,
-    "wrong_instructions": 40,
-    "differing_halfwords": 41,
-    "class": "broad-allocation-and-loop-layout"
+    "wrong_instructions": 6,
+    "differing_halfwords": 4,
+    "class": "allocation"
   },
   "domain": "Orders the scheduler task table by each entry's signed order field using an adjacent-entry exchange pass.",
   "expressed": [
@@ -17,7 +17,7 @@
     "the observed outer bound from 19 down through 2"
   ],
   "cross_edition": {
-    "core_bytes": 80,
+    "core_bytes": 78,
     "core_identical": true,
     "starts": {
       "ja": "0x08004144",
@@ -31,11 +31,16 @@
   "bounded_checks": [
     "plain aggregate assignment emits four scalar load/store pairs and no temporary frame",
     "constant-size compiler memcpy builtins recover the reference 8-byte stack temporary and all three matching ldmia/stmia pairs",
-    "the remaining table-base lifetime, saved-register allocation, and loop layout are broad rather than a four-halfword scheduling residual"
+    "an explicit pass-local task base recovers the reference literal reloads and saved-register set",
+    "two bounded 20,000-candidate classic heat-guided walks from the broad and narrow readable forms found no exact candidate",
+    "approved compiler route, scheduling, CSE, GCSE, regmove, strength-reduction, and optimization axes preserve the four-halfword residual or regress",
+    "the remaining hunk is an equivalent low-register allocation during the middle 8-byte copy and resynchronizes before the final copy completes"
   ],
-  "adoption": "none; retained assembly remains authoritative",
+  "adoption": "proven compiler_scheduler_ordering_module; retained assembly remains authoritative",
   "notes": [
-    "No permanent classification was added: the approved compiler can emit the reference multiple-transfer shapes, and the remaining mismatch has not been proved compiler-intrinsic.",
-    "No GS2 evidence was used."
+    "The complete readable candidate emits the exact 84-byte owner extent, exact 8-byte frame, exact 39-instruction count, and the complete reference control flow, memory operations, constants, literal pool, and multiple-transfer shapes.",
+    "Only four halfwords differ: the candidate carries the first word of the second copy in r1 and moves the advanced destination into r1 afterward, while the reference advances r1 first and carries both words in r5/r6. The streams resynchronize immediately with equivalent state.",
+    "The residual meets the existing proven compiler_scheduler_ordering_module gate shared by the neighboring scheduler owners and adds 84 executable DONE bytes.",
+    "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, scheduler callers and siblings, and the approved compiler. No GS2 evidence was used."
   ]
 }

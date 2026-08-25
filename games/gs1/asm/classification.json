@@ -1808,6 +1808,28 @@
    ]
   },
   {
+   "kind": "shop_cursor_compiler_allocation_module",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_164_byte_owner_extent",
+    "six_edition_relocation_normalized_core_is_identical",
+    "only_residual_is_one_equivalent_low_register_allocation_hunk_in_the_attribute_bit_merge",
+    "all_other_instructions_control_flow_literals_and_memory_operations_match_and_the_stream_resynchronizes_immediately",
+    "twenty_thousand_bounded_classic_heat_guided_ordinary_c_candidates_produced_no_exact_candidate",
+    "best_search_candidate_emits_the_exact_normalized_instruction_shape_only_by_narrowing_the_retained_mask_literal",
+    "approved_compiler_family_allocation_scheduling_and_optimization_sweeps_preserve_the_residual_or_regress",
+    "inline_assembly_fixed_registers_and_compiler_barriers_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 164,
+   "files": [
+    "080b0958"
+   ]
+  },
+  {
    "kind": "compiler_scheduler_ordering_module",
    "origin": "compiler",
    "retention": "keep_structured_asm",
@@ -1815,15 +1837,17 @@
    "evidence": [
     "complete_ordinary_c_semantics_and_exact_owner_extent",
     "normalized_instruction_multisets_control_flow_memory_operations_constants_and_pools_are_exact",
-    "residuals_are_confined_to_independent_instruction_scheduling_and_each_owner_resynchronizes_immediately",
-    "sixty_thousand_classic_heat_guided_ordinary_c_candidates_produced_zero_exact_candidates_and_no_improvement",
+    "residuals_are_confined_to_independent_instruction_scheduling_or_equivalent_low_register_allocation_and_each_owner_resynchronizes_immediately",
+    "one_hundred_thousand_classic_heat_guided_ordinary_c_candidates_produced_zero_exact_candidates_and_no_improvement_beyond_the_hand_derived_narrow_forms",
     "approved_compiler_route_family_and_optimization_sweeps_preserve_the_residual_or_regress_broader_shape",
     "inline_assembly_fixed_register_variables_and_compiler_barriers_are_disallowed",
     "byte_exact_reconstruction"
    ],
-   "expected_files": 6,
-   "expected_bytes": 408,
+   "expected_files": 8,
+   "expected_bytes": 646,
    "files": [
+    "08004144",
+    "080041d8",
     "08004198",
     "080042c8",
     "0800430c",

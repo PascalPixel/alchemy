@@ -6,8 +6,8 @@
   "owner_bytes": 40,
   "executable_owner_bytes": 26,
   "candidate_bytes": 28,
-  "differing_halfwords": 12,
-  "wrong_instructions": 15,
+  "differing_halfwords": 10,
+  "wrong_instructions": 17,
   "classification": "reset-runtime-node-flags",
   "cross_edition": {
     "editions": ["ja", "en", "de", "es", "fr", "it"],
@@ -17,6 +17,10 @@
   },
   "notes": [
     "Clears two node state bytes and selects flag bits 0x0c or 0x03 from the node mode byte. The live node pointer is the second argument, matching all callers.",
-    "Correcting the prototype and byte fields preserves the semantics but leaves broad prologue, register-allocation, branch, and OR scheduling differences. It is neither exact nor a narrow permanent residual."
+    "The assembly file's 40-byte span is composite: this owner has 26 executable bytes at 0x080fa1ac..0x080fa1c6, followed by two executable-alignment bytes, the already exact 10-byte 080fa1c8 owner, and two more alignment bytes. Scoring and classification therefore use the 26-byte owner, not the aggregate assembly file.",
+    "A readable explicit updated_flags carrier improves the fixed-route candidate from 28 bytes / 12 differing halfwords / 21 wrong instructions to 28 / 10 / 17. It reproduces the reference's final ldrb/orrs/strb register allocation exactly.",
+    "A bounded heat-guided classic walk evaluated 7,662 generated candidates. Its only improvement was the same explicit result carrier, which was pared from a mutation artifact to the readable updated_flags local; no exact candidate appeared.",
+    "The approved compiler pass matrix is byte-neutral or broader. -fno-regmove also reaches 28/10/17 diagnostically; old-agbcc reaches 24/13/17. The remaining residual includes a push/pop return sequence, the zero/flag register choice, and inverted conditional scheduling against the reference bx-lr leaf, so it is neither exact nor a narrow permanent residual.",
+    "The recorded six-ROM relocation-normalized 26-byte core remains identical across JA, EN, DE, ES, FR, and IT. This proves regional semantics but does not make the broad fixed-route compiler residual permanent."
   ]
 }

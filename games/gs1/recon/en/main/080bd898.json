@@ -36,16 +36,20 @@
   },
   "score": {
     "measured": "2026-08-23",
-    "candidate_bytes": 1852,
+    "candidate_bytes": 1868,
     "reference_bytes": 1876,
     "differing_halfwords": 687,
-    "wrong_instructions": 410,
+    "wrong_instructions": 403,
     "initial_wrong_instructions": 876,
-    "wrong_instruction_residual_reduction": 466,
-    "wrong_instruction_residual_reduction_percent": 53.19635,
+    "wrong_instruction_residual_reduction": 473,
+    "wrong_instruction_residual_reduction_percent": 53.99543,
+    "best_diagnostic_wrong_instructions": 371,
+    "best_diagnostic_differing_halfwords": 672,
+    "best_diagnostic_candidate_bytes": 1846,
+    "best_diagnostic_route": "approved GCC 2.96 with -fno-gcse; diagnostic only, not an adoptable route",
     "matched_prefix_instructions": 9,
     "class": "wrong",
-    "note": "The first 080bbb0c transfer pass recovered the complete state machine and cut the candidate-show wrong-instruction residual by 53.2%, from 876 to 410. Repeated operand loads, reference-shaped record cursors, exact access width, and declaration lifetime were all material; the retained assembly remains authoritative."
+    "note": "Two 080bbb0c transfer passes recovered the complete state machine and cut the candidate-show wrong-instruction residual by 54.0%, from 876 to 403. Repeated operand loads, a full-width animation-frame carrier, a loop-invariant part-flag carrier, reference-shaped record cursors, exact access width, and declaration lifetime were all material; the retained assembly remains authoritative."
   },
   "shape": {
     "workbench_reference_instructions": 838,
@@ -61,20 +65,22 @@
     "all presentation phases 1, 2, 3, 5, 10, 11, and 13, including timer, input, display, motion-record, and sound behavior",
     "typed playback/runtime, display, motion-record, BattlePlan, BattleUnit, and BattleObjectSlot layouts backed by exact local offsets",
     "reference-shaped record cursors and the halfword write at BattleObjectSlot offset 0x2a"
+    ,"the phase-11 record gather expressed as an explicit top-tested loop, matching the reference store-after-success shape and bringing the fixed-route candidate within 8 bytes of the owner extent"
   ],
   "unexpressed": [
     {
       "op": "source-shape and allocation repair",
-      "count": 410,
+      "count": 403,
       "where": "the residual is concentrated in register coloring, stack-slot placement, shared-tail formation, literal-pool placement, and a few load/store orderings"
     }
   ],
   "next": "Keep the EN file as a macro-only wrapper. Refine the phase-5 carrier order and phase-11 stack workspace first; both affect long exact runs without changing recovered behavior.",
   "verified_against_reference": [
-    "fresh candidate-show build: 1852 candidate bytes versus 1876 reference bytes, 687 differing halfwords, and 410 wrong aligned instructions",
-    "the initial compilable stub was 2 bytes with a wrong-instruction residual of 876; the full typed recovery reduces that residual by 466, or 53.2%",
+    "fresh candidate-show build: 1868 candidate bytes versus 1876 reference bytes, 687 differing halfwords, and 403 wrong aligned instructions",
+    "the initial compilable stub was 2 bytes with a wrong-instruction residual of 876; the full typed recovery reduces that residual by 473, or 54.0%",
     "relocation-aware comparison locates the JA owner at 0x080b4898; all 1476 non-relocation, non-literal core bytes agree in every edition",
     "the reference has one 15-entry jump table, 838 instructions, 43 symbolized references, and 32 established callee correspondences"
+    ,"a bounded fresh route sweep found -fno-gcse at 1846 bytes / 672 differing halfwords / 371 wrong instructions, a 39-row diagnostic reduction from the routed readable candidate; every tested paired flag regressed from that result"
   ],
   "rejected": [
     {
@@ -92,6 +98,26 @@
     {
       "shape": "inherit 080bbb0c's -fno-cse-follow-jumps route",
       "result": "the flag is owner-specific; adjacent controlled probing was byte-neutral and it was not added here"
+    },
+    {
+      "shape": "reference-shaped 44-byte frame through a trailing or leading reserved word",
+      "result": "the trailing word reached the exact frame extent but regressed to 420 wrong instructions; the leading word also aligned records at sp+12 and selection at sp+28 but regressed to 416, because the runtime carrier remained at sp+4 instead of the reference sp+8"
+    },
+    {
+      "shape": "store the phase-5 viewport in the explicit phase-local aggregate",
+      "result": "this moved records and selection to the reference stack offsets and grew the candidate to 1868 bytes, only 8 bytes short of the reference, but still scored 412 wrong instructions and 691 differing halfwords; it was rejected in favor of the smaller readable 410-row baseline"
+    },
+    {
+      "shape": "bounded compiler pass sweep after the stack audit",
+      "result": "-fno-gcse was the sole material diagnostic at 371 wrong instructions (from 410). Pairing it with -fno-schedule-insns2, -fno-cse-follow-jumps, -fno-cse-skip-blocks, -fno-regmove, -fno-rerun-cse-after-loop, or -fno-expensive-optimizations scored 424, 415, 543, 373, 459, and 616 respectively. The flag is not an approved owner route and therefore was not adopted; it isolates GCSE/PRE shaping as the next source-level axis."
+    },
+    {
+      "shape": "full-width frame plus loop-invariant part flag and explicit record-gather loop",
+      "result": "this fixed-route source improvement removes the byte truncation absent from the reference, hoists the 0xff part flag into the reference-shaped high-register carrier, and stores gathered records only after a successful lookup. It improves the readable routed candidate from 1852/687/410 to 1868/687/403. Re-running -fno-gcse on the improved source gives 1856/683/382, confirming that the source change absorbs part of the earlier PRE signal without relying on a nonstandard route."
+    },
+    {
+      "shape": "third-pass dispatcher carrier and phase-5 lifetime audit",
+      "result": "the reference keeps the loaded event index in r5 and copies it to r6 for dispatch, but a distinct readable dispatch_index local is coalesced by the fixed compiler and is byte-neutral. Moving phase-5 viewport/display carriers into the narrow phase scope is also byte-neutral; reversing the tile/scroll expression order regresses to 413 wrong instructions. register hints are ignored. The remaining dispatcher and phase-5 distance is allocation/literal placement rather than a missing switch case, width conversion, or observable source lifetime, so none of these spellings replaced the 403-row best source."
     }
   ],
   "notes": [

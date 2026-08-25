@@ -18,7 +18,7 @@ struct BattleTrigger {
 };
 
 struct BattleUnit *Func_08077008(s32 unit_id);
-void Func_080c10e8(s32, s32);
+void Func_080c10e8(u16 *, s32);
 void Func_080151c8(s32 message_id);
 void Func_080bb65c(void);
 void Func_080b8064(s32 unit_id);

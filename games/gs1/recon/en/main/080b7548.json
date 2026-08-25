@@ -4,9 +4,9 @@
   "address": "0x080b7548",
   "status": "measured-draft",
   "owner_bytes": 148,
-  "candidate_bytes": 156,
-  "differing_halfwords": 69,
-  "wrong_instructions": 60,
+  "candidate_bytes": 152,
+  "differing_halfwords": 70,
+  "wrong_instructions": 50,
   "classification": "battle-summon-placement",
   "cross_edition": {
     "core_bytes": 136,
@@ -25,6 +25,10 @@
     "Direct callee of the exact 080bbb0c battle-command owner.",
     "The complete control flow, destructive count loop, 76-byte local layout, summon-slot sentinel handling, placement call, and exact battle-motion lookup are expressed.",
     "A bounded 50,000-candidate classic heat-guided walk found no exact candidate and did not improve the real byte delta; packed structural scores favored shorter but bytewise-equivalent-or-worse candidates and were rejected.",
-    "The remaining residual is dominated by the approved compiler folding the long-lived summon-slot pointer and widening the signed sentinel comparison differently from the reference; adoption requires zero differing halfwords in all six editions."
+    "A fresh fixed-route rebuild on 2026-08-25 improves the earlier measured draft from 156/69/60 to 152 candidate bytes, 70 differing halfwords, and 50 wrong instructions against the 148-byte reference. The executable residual begins after the five-instruction high-register prologue: the compiler folds placement+102 into a separate pointer instead of advancing the long-lived placement base by two, then coalesces the two source/destination offsets in the gather loop. The final pool is consequently four bytes late.",
+    "The 136-byte relocation-masked core remains identical in JA, EN, DE, ES, FR, and IT at the recorded starts. This is shared machine-code evidence, not exact-C correspondence.",
+    "Readable raw-pointer, split-assignment, independent byte-offset, direct-sentinel, reversed-addend, carrier-width, and declaration-lifetime spellings were rebuilt. The best either reproduces 152/70/50 or regresses to 156/69/60; none changes the key pointer fold under the fixed route.",
+    "A bounded compiler-axis sweep found no narrow residual: -fno-schedule-insns2, -fno-cse-follow-jumps, -fno-cse-skip-blocks, -fno-regmove, and -fno-expensive-optimizations tie 152/70/50; -fno-gcse is 132/71/74; -fno-strength-reduce is 156/71/66; old-agbcc is 144/72/112. -fno-rerun-cse-after-loop reaches exact extent 148 but remains broad at 60 differing halfwords and 56 wrong instructions.",
+    "The remaining residual is broad compiler pointer/allocation shape, not a narrow regional scheduling or allocation tie. Adoption requires zero differing halfwords; no permanent classification is warranted."
   ]
 }

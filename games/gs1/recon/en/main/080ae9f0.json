@@ -26,6 +26,7 @@
     "The post-call failure and initialization tail is instruction-exact. The residual is an entry allocation family: the reference retains variant in r5, x in r4, y in r6, and tile in r2.",
     "A bounded 40,000-candidate classic search improved one diagnostic byte but produced no exact candidate. Retained assembly remains authoritative and this draft claims zero bytes.",
     "Compiler-family and optimization diagnostic sweeps did not improve the residual.",
+    "A joint sibling matrix with 080ae99c confirmed the same entry coloring under the fixed route. Sharing the data-base/resource-selection form materially improves 080ae99c but leaves this owner at 92/92 bytes, 13 differing halfwords, and 22 wrong instructions; statement-order variants regress to 14 differing halfwords, while all approved pass toggles tie or regress.",
     "The 22-instruction entry allocation residual is not narrow enough for the permanent-assembly exception; no promotion is claimed.",
     "No external source, copied instruction bytes, inline assembly, fixed-register variable, compiler barrier, or compiler modification was used."
   ]

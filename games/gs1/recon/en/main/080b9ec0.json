@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080b9ec0",
+  "name": "BattlePresentation_RunUnitTransition",
+  "status": "measured-draft",
+  "owner_bytes": 954,
+  "executable_owner_bytes": 954,
+  "candidate_bytes": 960,
+  "differing_halfwords": 467,
+  "wrong_instructions": 363,
+  "cross_edition": {
+    "object_bytes": 954,
+    "relocation_bytes": 124,
+    "literal_bytes": 68,
+    "relocation_normalized_core_bytes": 762,
+    "core_diff_bytes": 0,
+    "core_identical": true,
+    "starts": {
+      "ja": "0x080b0ec0",
+      "en": "0x080b9ec0",
+      "de": "0x080bc4d8",
+      "es": "0x080bded8",
+      "fr": "0x080bded8",
+      "it": "0x080b9ed8"
+    }
+  },
+  "domain": "Runs the selected-unit battle presentation transition, temporarily hiding incompatible unit sprites, preparing presentation context and ability data, executing the selected transition, and restoring the visible-unit set.",
+  "expressed": [
+    "transition direction and palette/blend setup from the selected unit side",
+    "initial and refreshed visible-unit enumeration with ally/enemy filtering",
+    "selected-unit sprite handling and sixteen-frame blend ramps",
+    "message-driven and context-driven presentation branches",
+    "presentation-context unit and ability preparation",
+    "flag-selected transition callback and final sprite restoration"
+  ],
+  "bounded_search": {
+    "mode": "classic-exact-only",
+    "attempted": 10000,
+    "compile_failures": 261,
+    "exact": false,
+    "baseline_structural_rows": 230,
+    "best_structural_rows": 162,
+    "best_generated_candidate_bytes": 948,
+    "best_generated_differing_halfwords": 446
+  },
+  "notes": [
+    "The address gap to 080ba2c0 is 1024 bytes, but independent executable-owner analysis proves this function is 954 bytes; the trailing 70 bytes are not part of the owner.",
+    "The complete readable candidate is six bytes longer than the owner and retains a broad register-allocation, frame-layout, literal-pool, and loop-shape residual, so it claims zero DONE bytes.",
+    "The 10,000-candidate search reduced the structural row count only through a long chain of synthetic temporaries, declaration reorderings, one-shot blocks, and expression rewrites. Its best remained shorter than the reference and 446 halfwords different, so the generated artifact was rejected.",
+    "No exact C or narrow compiler residual was found; retained assembly remains ordinary unresolved compiler output and was not promoted permanently.",
+    "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, local battle callers and types, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used."
+  ]
+}

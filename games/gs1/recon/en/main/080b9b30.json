@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080b9b30",
+  "name": "BattlePresentation_DispatchAction",
+  "status": "measured-draft",
+  "owner_bytes": 516,
+  "executable_owner_bytes": 516,
+  "candidate_bytes": 512,
+  "differing_halfwords": 153,
+  "wrong_instructions": 126,
+  "cross_edition": {
+    "object_bytes": 516,
+    "relocation_bytes": 104,
+    "literal_bytes": 68,
+    "relocation_normalized_core_bytes": 344,
+    "core_diff_bytes": 0,
+    "core_identical": true,
+    "starts": {
+      "ja": "0x080b0b30",
+      "en": "0x080b9b30",
+      "de": "0x080bc148",
+      "es": "0x080bdb48",
+      "fr": "0x080bdb48",
+      "it": "0x080b9b48"
+    }
+  },
+  "domain": "Validates and prepares a queued battle action, dispatches its presentation mode, restores visible units, and reports whether the action must remain active.",
+  "expressed": [
+    "invalid and inactive actor rejection",
+    "battle presentation transition and render-state setup",
+    "temporary selected-unit visibility mode",
+    "nine-way presentation dispatch from battle action state",
+    "visible-unit restoration and action completion",
+    "special transition result that preserves the queued action"
+  ],
+  "bounded_search": {
+    "mode": "classic-exact-only",
+    "attempted": 10000,
+    "compile_failures": 962,
+    "exact": false,
+    "baseline_structural_rows": 30,
+    "best_structural_rows": 19,
+    "best_generated_candidate_bytes": 508,
+    "best_generated_differing_halfwords": 132
+  },
+  "notes": [
+    "Auditing the jump-table targets corrected the inherited draft's semantic case mapping: cases 3/4 run the paired-unit transition, cases 5/6/7 select presentation variants 0/1/2, case 8 runs the action-aware presentation, and case 9 is the action-preserving presentation. This reduces the readable residual from 177 halfwords / 140 wrong instructions to 153 / 126.",
+    "The readable candidate reproduces the exact 32-byte frame and complete control-flow semantics but retains broad register-allocation, literal-pool, and switch-layout differences, so it claims zero DONE bytes.",
+    "A bounded 10,000-candidate search reduced structural rows from 30 to 19, but its best source was eight bytes short, still differed by 132 halfwords, and accumulated a type-changing cast plus synthetic temporary and one-shot-block mutations. It was rejected rather than weakening the readable semantics.",
+    "Declaration-order and split palette-result carriers were byte-neutral. A pointer/decrement cleanup loop shortened the owner and regressed wrong-instruction count, so the clearer indexed cleanup loop remains.",
+    "The six approved GS1 editions share all 344 relocation- and literal-normalized core bytes; edition differences are confined to expected relocated calls and literals.",
+    "Recovered only from retained owner assembly, the six local GS1 ROMs, exact local callers, nearby presentation drafts, and the approved compiler. No external source, copied instruction bytes, inline assembly, fixed-register variable, compiler barrier, or compiler modification was used."
+  ]
+}

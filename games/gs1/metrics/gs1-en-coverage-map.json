@@ -11,16 +11,16 @@
       "percent_of_executable": 23.58
     },
     "tracked_c": {
-      "bytes": 44688,
-      "percent_of_executable": 3.31
+      "bytes": 45156,
+      "percent_of_executable": 3.35
     },
     "assembly": {
-      "bytes": 608294,
-      "percent_of_executable": 45.11
+      "bytes": 607558,
+      "percent_of_executable": 45.06
     },
     "retained_asm": {
-      "bytes": 377576,
-      "percent_of_executable": 28.0
+      "bytes": 377844,
+      "percent_of_executable": 28.02
     },
     "asset_data": {
       "bytes": 7300700,
@@ -35,12 +35,12 @@
   "overlays": {
     "executable_bytes": 800094,
     "exact_c_bytes": 208786,
-    "tracked_c_bytes": 38164
+    "tracked_c_bytes": 38632
   },
   "provenance": {
     "exact_source": "worktree",
     "tracked_source": "worktree",
-    "tracked_sources": 142,
+    "tracked_sources": 144,
     "main_tracked_census": "games/gs1/recon/en/main/*.json",
     "tracked_superseded_bytes": 0,
     "tracked_outside_extent_bytes": 0,
@@ -54,8 +54,8 @@
       "categories": {
         "exact_c": 109114,
         "tracked_c": 6524,
-        "assembly": 256474,
-        "retained_asm": 176252
+        "assembly": 256206,
+        "retained_asm": 176520
       },
       "tiles": 9
     },
@@ -65,8 +65,8 @@
       "bytes": 539544,
       "categories": {
         "exact_c": 149010,
-        "tracked_c": 20301,
-        "assembly": 370233
+        "tracked_c": 20681,
+        "assembly": 369853
       },
       "tiles": 11
     },
@@ -88,8 +88,8 @@
       "categories": {
         "exact_c": 109114,
         "tracked_c": 6524,
-        "assembly": 256474,
-        "retained_asm": 176252
+        "assembly": 256206,
+        "retained_asm": 176520
       },
       "tiles": 867
     },
@@ -99,11 +99,11 @@
       "bytes": 800094,
       "categories": {
         "exact_c": 208786,
-        "tracked_c": 38164,
-        "assembly": 351820,
+        "tracked_c": 38632,
+        "assembly": 351352,
         "retained_asm": 201324
       },
-      "tiles": 5376
+      "tiles": 5378
     }
   ]
 }

@@ -52,9 +52,7 @@ impl Node {
     fn count(&self) -> Result<usize, String> {
         match self {
             Self::Text(_) | Self::Ignore(_) | Self::Pretend(_) | Self::Randomize(_) | Self::SameLine(_) => match self {
-                Self::Ignore(inner) | Self::Pretend(inner) | Self::Randomize(inner) | Self::SameLine(inner) => {
-                    inner.count()
-                }
+                Self::Ignore(inner) | Self::Pretend(inner) | Self::Randomize(inner) | Self::SameLine(inner) => inner.count(),
                 _ => Ok(1),
             },
             Self::Combine(parts) => parts.iter().try_fold(1usize, |total, part| checked_mul(total, part.count()?)),
@@ -71,21 +69,15 @@ impl Node {
                 let variants = lines.iter().try_fold(1usize, |total, line| checked_mul(total, line.count()?))?;
                 checked_mul(factorial(lines.len())?, variants)
             }
-            Self::Int { low, high } => {
-                usize::try_from(high - low + 1).map_err(|_| "PERM_INT range is too large".to_string())
-            }
+            Self::Int { low, high } => usize::try_from(high - low + 1).map_err(|_| "PERM_INT range is too large".to_string()),
         }
     }
 
     fn is_random(&self) -> bool {
         matches!(self, Self::Randomize(_))
             || match self {
-                Self::Combine(parts) | Self::General(parts) | Self::LineSwap(parts) => {
-                    parts.iter().any(Self::is_random)
-                }
-                Self::Once { inner, .. } | Self::Ignore(inner) | Self::Pretend(inner) | Self::SameLine(inner) => {
-                    inner.is_random()
-                }
+                Self::Combine(parts) | Self::General(parts) | Self::LineSwap(parts) => parts.iter().any(Self::is_random),
+                Self::Once { inner, .. } | Self::Ignore(inner) | Self::Pretend(inner) | Self::SameLine(inner) => inner.is_random(),
                 Self::Var { name, value } => name.is_random() || value.as_deref().is_some_and(Self::is_random),
                 _ => false,
             }
@@ -108,9 +100,7 @@ impl Node {
                     value.collect_once(found);
                 }
             }
-            Self::Ignore(inner) | Self::Pretend(inner) | Self::Randomize(inner) | Self::SameLine(inner) => {
-                inner.collect_once(found)
-            }
+            Self::Ignore(inner) | Self::Pretend(inner) | Self::Randomize(inner) | Self::SameLine(inner) => inner.collect_once(found),
             Self::Text(_) | Self::Int { .. } => {}
         }
     }
@@ -231,11 +221,7 @@ fn remove_pretend(mut source: String) -> String {
 }
 
 pub(crate) fn materialize(source: &str) -> String {
-    remove_pretend(source.to_string())
-        .replace(IGNORE_START, "")
-        .replace(IGNORE_END, "")
-        .replace(RANDOM_START, "")
-        .replace(RANDOM_END, "")
+    remove_pretend(source.to_string()).replace(IGNORE_START, "").replace(IGNORE_END, "").replace(RANDOM_START, "").replace(RANDOM_END, "")
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -274,9 +260,7 @@ fn find_macro(text: &str) -> Option<(usize, usize, String)> {
                     at += 1;
                     continue;
                 }
-                if bytes.get(at..at + 5) == Some(b"PERM_")
-                    && (at == 0 || (!(bytes[at - 1] as char).is_ascii_alphanumeric() && bytes[at - 1] != b'_'))
-                {
+                if bytes.get(at..at + 5) == Some(b"PERM_") && (at == 0 || (!(bytes[at - 1] as char).is_ascii_alphanumeric() && bytes[at - 1] != b'_')) {
                     let mut end = at + 5;
                     while bytes.get(end).is_some_and(|byte| byte.is_ascii_alphanumeric() || *byte == b'_') {
                         end += 1;
@@ -566,11 +550,7 @@ impl Parser {
     }
 
     fn line_nodes(&mut self, text: &str) -> Result<Vec<Node>, String> {
-        split_top(text, b'\n')?
-            .into_iter()
-            .filter(|line| !line.trim().is_empty())
-            .map(|line| self.parse(&line))
-            .collect()
+        split_top(text, b'\n')?.into_iter().filter(|line| !line.trim().is_empty()).map(|line| self.parse(&line)).collect()
     }
 
     fn macro_node(&mut self, name: &str, text: &str) -> Result<Node, String> {
@@ -605,10 +585,7 @@ impl Parser {
                 if !(1..=2).contains(&parts.len()) {
                     return Err("PERM_VAR takes one or two arguments".into());
                 }
-                Ok(Node::Var {
-                    name: Box::new(self.parse(&parts[0])?),
-                    value: if parts.len() == 2 { Some(Box::new(self.parse(&parts[1])?)) } else { None },
-                })
+                Ok(Node::Var { name: Box::new(self.parse(&parts[0])?), value: if parts.len() == 2 { Some(Box::new(self.parse(&parts[1])?)) } else { None } })
             }
             "PERM_IGNORE" => Ok(Node::Ignore(Box::new(self.parse(text)?))),
             "PERM_PRETEND" => Ok(Node::Pretend(Box::new(self.parse(text)?))),
@@ -639,19 +616,12 @@ pub fn parse(source: &str) -> Result<Permutation, String> {
 
 pub fn self_test() -> Result<(), String> {
     let general = parse("x=PERM_GENERAL(1,2,PERM_INT(3,4));")?;
-    let values =
-        (0..general.count()).map(|seed| general.evaluate(seed).map(|pair| pair.0)).collect::<Result<Vec<_>, _>>()?;
+    let values = (0..general.count()).map(|seed| general.evaluate(seed).map(|pair| pair.0)).collect::<Result<Vec<_>, _>>()?;
     if values != ["x=1;", "x=2;", "x=3;", "x=4;"] {
         return Err(format!("PERM_GENERAL/INT parity failed: {values:?}"));
     }
     let nested = parse("return PERM_GENERAL(1,PERM_GENERAL(100,101),3) + PERM_GENERAL(3,6,9);")?;
-    if nested.count() != 12
-        || !(0..nested.count())
-            .map(|seed| nested.evaluate(seed).map(|value| value.0))
-            .collect::<Result<Vec<_>, _>>()?
-            .iter()
-            .any(|source| source == "return 101 + 9;")
-    {
+    if nested.count() != 12 || !(0..nested.count()).map(|seed| nested.evaluate(seed).map(|value| value.0)).collect::<Result<Vec<_>, _>>()?.iter().any(|source| source == "return 101 + 9;") {
         return Err("nested PERM_GENERAL mixed-radix evaluation drifted".into());
     }
     let swapped = parse("PERM_LINESWAP_TEXT(a();\nb();\nc();)")?;

@@ -22,11 +22,7 @@ fn root() -> PathBuf {
 }
 
 fn command_output(program: &Path, args: &[&str], cwd: &Path) -> Result<String, String> {
-    let output = Command::new(program)
-        .args(args)
-        .current_dir(cwd)
-        .output()
-        .map_err(|e| format!("could not run {}: {e}", program.display()))?;
+    let output = Command::new(program).args(args).current_dir(cwd).output().map_err(|e| format!("could not run {}: {e}", program.display()))?;
     if !output.status.success() {
         return Err(String::from_utf8_lossy(&output.stderr).trim().to_string());
     }
@@ -42,20 +38,12 @@ fn command_output(program: &Path, args: &[&str], cwd: &Path) -> Result<String, S
 /// through.
 fn cargo_command(root: &Path, subcommand: &str) -> Command {
     let mut command = Command::new("cargo");
-    command
-        .args(["run", "--offline", "--quiet", "--release", "--manifest-path"])
-        .arg(root.join("tools").join("check").join("Cargo.toml"))
-        .arg("--")
-        .arg(subcommand)
-        .current_dir(root);
+    command.args(["run", "--offline", "--quiet", "--release", "--manifest-path"]).arg(root.join("tools").join("check").join("Cargo.toml")).arg("--").arg(subcommand).current_dir(root);
     command
 }
 
 fn cargo_output(root: &Path, crate_name: &str, args: &[&str]) -> Result<String, String> {
-    let output = cargo_command(root, crate_name)
-        .args(args)
-        .output()
-        .map_err(|e| format!("could not run cargo for {crate_name}: {e}"))?;
+    let output = cargo_command(root, crate_name).args(args).output().map_err(|e| format!("could not run cargo for {crate_name}: {e}"))?;
     if !output.status.success() {
         return Err(String::from_utf8_lossy(&output.stderr).trim().to_string());
     }
@@ -78,9 +66,7 @@ fn permanent_asm_bytes(root: &Path, target: &str) -> Result<u64, String> {
     let path = format!("games/{game}/metrics/{target}-coverage-map.json");
     let text = git(root, &["show", &format!(":{path}")]).map_err(|_| format!("stage {path} before committing"))?;
     let document: serde_json::Value = serde_json::from_str(&text).map_err(|error| format!("{path}: {error}"))?;
-    document["categories"]["retained_asm"]["bytes"]
-        .as_u64()
-        .ok_or_else(|| format!("{path} has no categories.retained_asm.bytes"))
+    document["categories"]["retained_asm"]["bytes"].as_u64().ok_or_else(|| format!("{path} has no categories.retained_asm.bytes"))
 }
 
 /// The nearest whole DONE share. It was the Exact-C share alone until 2026-08;
@@ -91,10 +77,7 @@ fn done_percent(report: &Report, permanent: u64) -> Result<u64, String> {
         return Err("DONE numerator exceeds executable denominator".to_string());
     }
     let scaled = done.checked_mul(100).ok_or("DONE percentage arithmetic overflow")?;
-    scaled
-        .checked_add(report.executable_bytes / 2)
-        .ok_or_else(|| "DONE percentage arithmetic overflow".to_string())
-        .map(|rounded| rounded / report.executable_bytes)
+    scaled.checked_add(report.executable_bytes / 2).ok_or_else(|| "DONE percentage arithmetic overflow".to_string()).map(|rounded| rounded / report.executable_bytes)
 }
 
 fn format_subject(report: &Report, permanent: u64) -> Result<String, String> {
@@ -118,24 +101,12 @@ fn parse_subject(text: &str) -> Option<Subject> {
 fn report(value: &Value, target: &str) -> Result<Report, String> {
     let object = value.as_object().ok_or("staged Full-C report is not an object")?;
     let string = |key: &str| object.get(key).and_then(Value::as_str);
-    if object.get("format").and_then(Value::as_u64) != Some(1)
-        || string("metric") != Some("full-c-byte-share")
-        || string("target") != Some(target)
-        || string("audit") != Some("complete")
-    {
+    if object.get("format").and_then(Value::as_u64) != Some(1) || string("metric") != Some("full-c-byte-share") || string("target") != Some(target) || string("audit") != Some("complete") {
         return Err(format!("staged {target} Full-C report is missing, incomplete, or has the wrong format"));
     }
-    let count =
-        |key: &str| object.get(key).and_then(Value::as_u64).ok_or_else(|| format!("staged report {key} is invalid"));
-    let result = Report {
-        full_c_bytes: count("full_c_bytes")?,
-        executable_bytes: count("executable_bytes")?,
-        remaining_bytes: count("remaining_bytes")?,
-    };
-    if result.executable_bytes == 0
-        || result.full_c_bytes > result.executable_bytes
-        || result.full_c_bytes.checked_add(result.remaining_bytes) != Some(result.executable_bytes)
-    {
+    let count = |key: &str| object.get(key).and_then(Value::as_u64).ok_or_else(|| format!("staged report {key} is invalid"));
+    let result = Report { full_c_bytes: count("full_c_bytes")?, executable_bytes: count("executable_bytes")?, remaining_bytes: count("remaining_bytes")? };
+    if result.executable_bytes == 0 || result.full_c_bytes > result.executable_bytes || result.full_c_bytes.checked_add(result.remaining_bytes) != Some(result.executable_bytes) {
         return Err("staged report arithmetic is invalid".into());
     }
     Ok(result)
@@ -166,14 +137,9 @@ fn report_required(paths: &[String], target: &str) -> bool {
                 || path.starts_with("games/gs1/asm/")
                 || path.starts_with("games/gs1/include/")
                 || path == "games/gs1/metrics/gs1-en-executable.json"
-                || (path.starts_with("games/gs1/assets/code/resource_")
-                    && (path.ends_with("_overlay.s")
-                        || path.rsplit('/').next().is_some_and(|n| n.starts_with("c_") && n.ends_with(".c"))))
+                || (path.starts_with("games/gs1/assets/code/resource_") && (path.ends_with("_overlay.s") || path.rsplit('/').next().is_some_and(|n| n.starts_with("c_") && n.ends_with(".c"))))
         } else {
-            path.starts_with("games/gs2/src/")
-                || path.starts_with("games/gs2/asm/")
-                || path.starts_with("games/gs2/include/")
-                || path == "games/gs2/metrics/gs2-en-executable.json"
+            path.starts_with("games/gs2/src/") || path.starts_with("games/gs2/asm/") || path.starts_with("games/gs2/include/") || path == "games/gs2/metrics/gs2-en-executable.json"
         }
     })
 }
@@ -186,9 +152,7 @@ fn current_report(root: &Path, target: &str) -> Result<Value, String> {
 fn self_test() -> Result<(), String> {
     let report = Report { full_c_bytes: 123456, executable_bytes: 1234567, remaining_bytes: 1111111 };
     check("☀️ 10% – valid DONE prefix", &report, 0)?;
-    for bad in
-        ["missing", "☀️ 1000% – too wide", "☀️ 9% – stale", "☀️ 10% - wrong dash", "☀️ 10% –", "old [ ☀️ 123 / 1,234 ]"]
-    {
+    for bad in ["missing", "☀️ 1000% – too wide", "☀️ 9% – stale", "☀️ 10% - wrong dash", "☀️ 10% –", "old [ ☀️ 123 / 1,234 ]"] {
         if check(bad, &report, 0).is_ok() {
             return Err(format!("invalid subject accepted: {bad}"));
         }
@@ -222,8 +186,7 @@ fn run(arguments: &[String]) -> Result<(), String> {
     let paths = staged_paths(&root)?;
     let game = target.split('-').next().unwrap_or("gs1");
     let report_path = format!("games/{game}/metrics/{target}-progress.json");
-    let staged_text = git(&root, &["show", &format!(":{report_path}")])
-        .map_err(|_| format!("stage {report_path} before committing"))?;
+    let staged_text = git(&root, &["show", &format!(":{report_path}")]).map_err(|_| format!("stage {report_path} before committing"))?;
     let staged_value: Value = serde_json::from_str(&staged_text).map_err(|e| e.to_string())?;
     let metric = report(&staged_value, &target)?;
     if report_required(&paths, &target) && current_report(&root, &target)? != staged_value {

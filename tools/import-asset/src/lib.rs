@@ -85,12 +85,7 @@ pub struct IndexedImage {
 
 pub fn indexed_png(data: &[u8]) -> Result<IndexedImage, AssetError> {
     let (output, bytes, info) = decode(data)?;
-    if output.color_type != png::ColorType::Indexed
-        || !matches!(
-            output.bit_depth,
-            png::BitDepth::One | png::BitDepth::Two | png::BitDepth::Four | png::BitDepth::Eight
-        )
-    {
+    if output.color_type != png::ColorType::Indexed || !matches!(output.bit_depth, png::BitDepth::One | png::BitDepth::Two | png::BitDepth::Four | png::BitDepth::Eight) {
         return err("PNG must use an indexed 1/2/4/8-bit palette");
     }
     let (width, height) = (output.width, output.height);
@@ -162,10 +157,7 @@ pub fn gba_palette_rgba(data: &[u8]) -> Result<(Vec<u8>, Report), AssetError> {
         if a != 254 && a != 255 {
             return err("RGBA palette alpha must be 254 or 255");
         }
-        palette.extend_from_slice(
-            &(u16::from(r >> 3) | u16::from(g >> 3) << 5 | u16::from(b >> 3) << 10 | u16::from(255 - a) << 15)
-                .to_le_bytes(),
-        );
+        palette.extend_from_slice(&(u16::from(r >> 3) | u16::from(g >> 3) << 5 | u16::from(b >> 3) << 10 | u16::from(255 - a) << 15).to_le_bytes());
     }
     let mut report = Report::default();
     report.set("width", image.width.into());
@@ -186,8 +178,7 @@ pub fn gba_graphics(data: &[u8], bpp: f64) -> Result<(Vec<u8>, Vec<u8>, Report),
         if r & 7 != 0 || g & 7 != 0 || b & 7 != 0 {
             return err("palette channels must be exact five-bit values (multiples of 8)");
         }
-        palette
-            .extend_from_slice(&(u16::from(r >> 3) | u16::from(g >> 3) << 5 | u16::from(b >> 3) << 10).to_le_bytes());
+        palette.extend_from_slice(&(u16::from(r >> 3) | u16::from(g >> 3) << 5 | u16::from(b >> 3) << 10).to_le_bytes());
     }
     let width = image.width as usize;
     let mut tiles = Vec::with_capacity(width * image.height as usize / if four { 2 } else { 1 });
@@ -282,8 +273,7 @@ pub fn midi_events(data: &[u8]) -> Result<MidiReport, AssetError> {
     if !matches!(format, 0 | 1) || tracks == 0 || division & 0x8000 != 0 {
         return err("only format 0/1 PPQN MIDI is supported");
     }
-    let tracks_data: Vec<&[u8]> =
-        chunks.iter().skip(1).filter(|(kind, _)| kind == "MTrk").map(|(_, body)| *body).collect();
+    let tracks_data: Vec<&[u8]> = chunks.iter().skip(1).filter(|(kind, _)| kind == "MTrk").map(|(_, body)| *body).collect();
     if tracks_data.len() != tracks as usize {
         return err("MIDI track count mismatch");
     }
@@ -345,10 +335,7 @@ pub fn midi_events(data: &[u8]) -> Result<MidiReport, AssetError> {
 }
 
 pub fn canonical_midi_json(report: &MidiReport) -> String {
-    let mut out = format!(
-        "{{\n  \"format\": {},\n  \"tracks\": {},\n  \"ticks_per_quarter\": {},\n  \"events\": ",
-        report.format, report.tracks, report.ticks_per_quarter
-    );
+    let mut out = format!("{{\n  \"format\": {},\n  \"tracks\": {},\n  \"ticks_per_quarter\": {},\n  \"events\": ", report.format, report.tracks, report.ticks_per_quarter);
     if report.events.is_empty() {
         out.push_str("[]");
     } else {
@@ -356,32 +343,13 @@ pub fn canonical_midi_json(report: &MidiReport) -> String {
             .events
             .iter()
             .map(|event| {
-                let mut fields = vec![
-                    format!("\"tick\": {}", event.tick),
-                    format!("\"track\": {}", event.track),
-                    format!("\"order\": {}", event.order),
-                ];
+                let mut fields = vec![format!("\"tick\": {}", event.tick), format!("\"track\": {}", event.track), format!("\"order\": {}", event.order)];
                 match &event.body {
-                    EventBody::Meta { meta, data } => fields.extend([
-                        "\"type\": \"meta\"".into(),
-                        format!("\"meta\": {meta}"),
-                        format!("\"data\": \"{data}\""),
-                    ]),
-                    EventBody::Sysex { status, data } => fields.extend([
-                        "\"type\": \"sysex\"".into(),
-                        format!("\"status\": {status}"),
-                        format!("\"data\": \"{data}\""),
-                    ]),
-                    EventBody::Channel { status, data } => fields.extend([
-                        "\"type\": \"channel\"".into(),
-                        format!("\"status\": {status}"),
-                        format!("\"data\": [{}]", data.iter().map(u8::to_string).collect::<Vec<_>>().join(", ")),
-                    ]),
+                    EventBody::Meta { meta, data } => fields.extend(["\"type\": \"meta\"".into(), format!("\"meta\": {meta}"), format!("\"data\": \"{data}\"")]),
+                    EventBody::Sysex { status, data } => fields.extend(["\"type\": \"sysex\"".into(), format!("\"status\": {status}"), format!("\"data\": \"{data}\"")]),
+                    EventBody::Channel { status, data } => fields.extend(["\"type\": \"channel\"".into(), format!("\"status\": {status}"), format!("\"data\": [{}]", data.iter().map(u8::to_string).collect::<Vec<_>>().join(", "))]),
                 }
-                format!(
-                    "    {{\n{}\n    }}",
-                    fields.into_iter().map(|field| format!("      {field}")).collect::<Vec<_>>().join(",\n")
-                )
+                format!("    {{\n{}\n    }}", fields.into_iter().map(|field| format!("      {field}")).collect::<Vec<_>>().join(",\n"))
             })
             .collect();
         out.push_str("[\n");
@@ -395,24 +363,10 @@ pub fn canonical_midi_json(report: &MidiReport) -> String {
 pub fn sorted_json(report: &Report) -> String {
     let mut values: Vec<_> = report.0.iter().collect();
     values.sort_by(|a, b| a.0.cmp(&b.0));
-    format!(
-        "{{{}}}",
-        values
-            .iter()
-            .map(|(key, value)| format!("\"{key}\": {}", js_number_json(*value)))
-            .collect::<Vec<_>>()
-            .join(", ")
-    )
+    format!("{{{}}}", values.iter().map(|(key, value)| format!("\"{key}\": {}", js_number_json(*value))).collect::<Vec<_>>().join(", "))
 }
 
-fn encode_png(
-    width: usize,
-    height: usize,
-    color: png::ColorType,
-    depth: png::BitDepth,
-    palette: Option<&[u8]>,
-    pixels: &[u8],
-) -> Result<Vec<u8>, AssetError> {
+fn encode_png(width: usize, height: usize, color: png::ColorType, depth: png::BitDepth, palette: Option<&[u8]>, pixels: &[u8]) -> Result<Vec<u8>, AssetError> {
     let mut output = Vec::new();
     let mut encoder = png::Encoder::new(&mut output, width as u32, height as u32);
     encoder.set_color(color);

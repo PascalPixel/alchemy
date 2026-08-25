@@ -11,8 +11,7 @@ pub fn js_parse_int_radix(text: &str, radix: u32) -> f64 {
     if digits == 0 {
         return f64::NAN;
     }
-    let value =
-        text[..digits].bytes().fold(0.0, |value, byte| value * f64::from(radix) + f64::from(digit(byte).unwrap()));
+    let value = text[..digits].bytes().fold(0.0, |value, byte| value * f64::from(radix) + f64::from(digit(byte).unwrap()));
     if negative {
         -value
     } else {

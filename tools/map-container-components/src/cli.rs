@@ -1,6 +1,4 @@
-use crate::{
-    build_blend_animation, build_descriptors, build_header, build_metatiles, build_queues, build_sparse, Result,
-};
+use crate::{build_blend_animation, build_descriptors, build_header, build_metatiles, build_queues, build_sparse, Result};
 use std::io::{self, Write};
 use std::path::Path;
 use std::process::ExitCode;

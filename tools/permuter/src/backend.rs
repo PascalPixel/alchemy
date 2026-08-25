@@ -14,8 +14,7 @@ use crate::compile::{PreparedTarget, Score as ByteScore};
 static TEMP_COUNTER: AtomicU64 = AtomicU64::new(0);
 
 /// Alchemy candidates are scored from linked bytes, so objdump is not an input.
-const ALCHEMY_HOST_TOOLS: [&str; 4] =
-    ["arm-none-eabi-as", "arm-none-eabi-nm", "arm-none-eabi-ld", "arm-none-eabi-objcopy"];
+const ALCHEMY_HOST_TOOLS: [&str; 4] = ["arm-none-eabi-as", "arm-none-eabi-nm", "arm-none-eabi-ld", "arm-none-eabi-objcopy"];
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Measurement {
@@ -55,21 +54,7 @@ pub struct Measurement {
 #[cfg(test)]
 impl Measurement {
     pub fn failed(message: &str) -> Self {
-        Self {
-            exact: false,
-            score: u64::MAX,
-            differences: usize::MAX,
-            expected_size: 0,
-            actual_size: 0,
-            first_difference: None,
-            fingerprint: 0,
-            summary: message.to_string(),
-            heat: Vec::new(),
-            bl_divergence: 0,
-            store_divergence: 0,
-            bl_signature: 0,
-            store_signature: 0,
-        }
+        Self { exact: false, score: u64::MAX, differences: usize::MAX, expected_size: 0, actual_size: 0, first_difference: None, fingerprint: 0, summary: message.to_string(), heat: Vec::new(), bl_divergence: 0, store_divergence: 0, bl_signature: 0, store_signature: 0 }
     }
 }
 
@@ -89,10 +74,7 @@ impl From<&ByteScore> for Measurement {
             store_divergence: 0,
             bl_signature: 0,
             store_signature: 0,
-            summary: format!(
-                "{} differing halfwords, {} / {} bytes",
-                score.differing_halfwords, score.actual_size, score.expected_size
-            ),
+            summary: format!("{} differing halfwords, {} / {} bytes", score.differing_halfwords, score.actual_size, score.expected_size),
         }
     }
 }
@@ -135,13 +117,7 @@ fn expand_local_c_includes(path: &Path, source: &str, active: &mut BTreeSet<Path
     }
     let mut expanded = String::new();
     for line in source.lines() {
-        let include = line
-            .trim()
-            .strip_prefix("#include")
-            .map(str::trim)
-            .and_then(|value| value.strip_prefix('"'))
-            .and_then(|value| value.split_once('"').map(|(name, _)| name))
-            .filter(|name| name.ends_with(".c"));
+        let include = line.trim().strip_prefix("#include").map(str::trim).and_then(|value| value.strip_prefix('"')).and_then(|value| value.split_once('"').map(|(name, _)| name)).filter(|name| name.ends_with(".c"));
         if let Some(include) = include {
             let included = canonical.parent().unwrap_or(Path::new("")).join(include);
             let body = fs::read_to_string(&included).map_err(|error| format!("{}: {error}", included.display()))?;
@@ -179,45 +155,22 @@ impl AlchemyBackend {
         let target_instructions = disassemble_bytes(target.expected())?;
         let target_source_instructions = if target.baseline_assembly().is_some() {
             let reference = root().join("games/gs1/asm").join(format!("{stem}.s"));
-            fs::read_to_string(&reference)
-                .ok()
-                .map(|source| candidate_show::insns::gas_function_insns(&source, &symbol))
+            fs::read_to_string(&reference).ok().map(|source| candidate_show::insns::gas_function_insns(&source, &symbol))
         } else {
             None
         };
-        let baseline_source_instructions =
-            target.baseline_assembly().map(|assembly| candidate_show::insns::gas_function_insns(assembly, &symbol));
-        let baseline_measurement = alchemy_measurement(
-            target.baseline(),
-            &target_instructions,
-            baseline_source_instructions.as_deref(),
-            target_source_instructions.as_deref(),
-        )?;
+        let baseline_source_instructions = target.baseline_assembly().map(|assembly| candidate_show::insns::gas_function_insns(assembly, &symbol));
+        let baseline_measurement = alchemy_measurement(target.baseline(), &target_instructions, baseline_source_instructions.as_deref(), target_source_instructions.as_deref())?;
         let implementation_signature = current_executable_signature()?;
         let compiler_signature = compiler_core::bundle::compiler_bundle_signature();
-        let host_signature = compiler_core::bundle::host_executable_signature(&ALCHEMY_HOST_TOOLS)
-            .map_err(|error| format!("Alchemy host tool signature: {error}"))?;
-        Ok(Self {
-            name,
-            symbol,
-            identity: alchemy_identity(
-                &target.identity(),
-                &implementation_signature,
-                &compiler_signature,
-                &host_signature,
-            ),
-            target,
-            target_instructions,
-            target_source_instructions,
-            baseline_measurement,
-        })
+        let host_signature = compiler_core::bundle::host_executable_signature(&ALCHEMY_HOST_TOOLS).map_err(|error| format!("Alchemy host tool signature: {error}"))?;
+        Ok(Self { name, symbol, identity: alchemy_identity(&target.identity(), &implementation_signature, &compiler_signature, &host_signature), target, target_instructions, target_source_instructions, baseline_measurement })
     }
 }
 
 fn current_executable_signature() -> Result<String, String> {
     let path = std::env::current_exe().map_err(|error| format!("cannot locate current executable: {error}"))?;
-    let bytes =
-        fs::read(&path).map_err(|error| format!("cannot read current executable {}: {error}", path.display()))?;
+    let bytes = fs::read(&path).map_err(|error| format!("cannot read current executable {}: {error}", path.display()))?;
     if bytes.is_empty() {
         return Err(format!("current executable {} is empty", path.display()));
     }
@@ -229,12 +182,7 @@ fn append_identity_field(stream: &mut Vec<u8>, value: &str) {
     stream.extend_from_slice(value.as_bytes());
 }
 
-fn alchemy_identity(
-    target_identity: &str,
-    implementation_signature: &str,
-    compiler_signature: &str,
-    host_signature: &str,
-) -> String {
+fn alchemy_identity(target_identity: &str, implementation_signature: &str, compiler_signature: &str, host_signature: &str) -> String {
     let mut stream = Vec::new();
     append_identity_field(&mut stream, "permuter-alchemy-backend-v5-owner-scoped-insns");
     append_identity_field(&mut stream, target_identity);
@@ -259,14 +207,8 @@ impl Backend for AlchemyBackend {
 
     fn measure(&self, source: &str) -> Result<Measurement, String> {
         let (score, assembly) = self.target.compile(source)?;
-        let candidate_source_instructions =
-            assembly.as_deref().map(|assembly| candidate_show::insns::gas_function_insns(assembly, &self.symbol));
-        alchemy_measurement(
-            &score,
-            &self.target_instructions,
-            candidate_source_instructions.as_deref(),
-            self.target_source_instructions.as_deref(),
-        )
+        let candidate_source_instructions = assembly.as_deref().map(|assembly| candidate_show::insns::gas_function_insns(assembly, &self.symbol));
+        alchemy_measurement(&score, &self.target_instructions, candidate_source_instructions.as_deref(), self.target_source_instructions.as_deref())
     }
 }
 
@@ -294,11 +236,7 @@ fn sequence_divergence(a: &[&str], e: &[&str]) -> usize {
     let mut lcs = vec![0u32; (a.len() + 1) * width];
     for left in (0..a.len()).rev() {
         for right in (0..e.len()).rev() {
-            lcs[left * width + right] = if a[left] == e[right] {
-                1 + lcs[(left + 1) * width + right + 1]
-            } else {
-                lcs[(left + 1) * width + right].max(lcs[left * width + right + 1])
-            };
+            lcs[left * width + right] = if a[left] == e[right] { 1 + lcs[(left + 1) * width + right + 1] } else { lcs[(left + 1) * width + right].max(lcs[left * width + right + 1]) };
         }
     }
     let common = lcs[0] as usize;
@@ -387,10 +325,7 @@ fn packed_alchemy_score(structural: usize, raw: usize, halfwords: usize) -> u64 
     // canonical rows break structural ties, and linked halfwords break only
     // those remaining ties. Each field has a disjoint decimal range so a
     // downstream metric can never outweigh an upstream one.
-    (structural as u64)
-        .saturating_mul(1_000_000_000)
-        .saturating_add((raw as u64).min(9_999).saturating_mul(100_000))
-        .saturating_add((halfwords as u64).min(99_999))
+    (structural as u64).saturating_mul(1_000_000_000).saturating_add((raw as u64).min(9_999).saturating_mul(100_000)).saturating_add((halfwords as u64).min(99_999))
 }
 
 /// Exact insertion/deletion distance and the candidate-side rows omitted by
@@ -466,15 +401,7 @@ fn row_diff(a: &[&str], e: &[&str]) -> (usize, Vec<usize>) {
                     let back_i = back_depth as isize;
                     let diagonal = bx - by;
                     let prior = &trace[back_depth - 1];
-                    let prior_diagonal = if diagonal == -back_i
-                        || (diagonal != back_i
-                            && band_get(prior, back_depth - 1, diagonal - 1)
-                                < band_get(prior, back_depth - 1, diagonal + 1))
-                    {
-                        diagonal + 1
-                    } else {
-                        diagonal - 1
-                    };
+                    let prior_diagonal = if diagonal == -back_i || (diagonal != back_i && band_get(prior, back_depth - 1, diagonal - 1) < band_get(prior, back_depth - 1, diagonal + 1)) { diagonal + 1 } else { diagonal - 1 };
                     let prior_x = band_get(prior, back_depth - 1, prior_diagonal);
                     let prior_y = prior_x - prior_diagonal;
 
@@ -507,21 +434,12 @@ fn row_diff(a: &[&str], e: &[&str]) -> (usize, Vec<usize>) {
     unreachable!("an insertion/deletion path always exists")
 }
 
-fn alchemy_measurement(
-    score: &ByteScore,
-    target_instructions: &[Instruction],
-    candidate_source_instructions: Option<&[String]>,
-    target_source_instructions: Option<&[String]>,
-) -> Result<Measurement, String> {
+fn alchemy_measurement(score: &ByteScore, target_instructions: &[Instruction], candidate_source_instructions: Option<&[String]>, target_source_instructions: Option<&[String]>) -> Result<Measurement, String> {
     let (raw_a_owned, raw_e_owned, metric) = match (candidate_source_instructions, target_source_instructions) {
         (Some(candidate), Some(reference)) => (candidate.to_vec(), reference.to_vec(), "source"),
         _ => {
             let actual = disassemble_bytes(&score.actual)?;
-            (
-                actual.into_iter().map(|row| row.row).collect(),
-                target_instructions.iter().map(|row| row.row.clone()).collect(),
-                "binary",
-            )
+            (actual.into_iter().map(|row| row.row).collect(), target_instructions.iter().map(|row| row.row.clone()).collect(), "binary")
         }
     };
     let raw_a: Vec<&str> = raw_a_owned.iter().map(String::as_str).collect();
@@ -563,12 +481,7 @@ fn alchemy_measurement(
         store_divergence,
         bl_signature,
         store_signature,
-        summary: format!(
-            "{differing} structural rows/{metric} ({} ours, {} reference); {raw_differing} raw rows; {}",
-            a.len() - common,
-            e.len() - common,
-            byte.summary
-        ),
+        summary: format!("{differing} structural rows/{metric} ({} ours, {} reference); {raw_differing} raw rows; {}", a.len() - common, e.len() - common, byte.summary),
     })
 }
 
@@ -597,12 +510,7 @@ struct Instruction {
 }
 
 fn command_output(command: &[String], extra: &[&Path], directory: &Path) -> Result<Vec<u8>, String> {
-    let output = Command::new(&command[0])
-        .args(&command[1..])
-        .args(extra)
-        .current_dir(directory)
-        .output()
-        .map_err(|error| format!("cannot run {}: {error}", command.join(" ")))?;
+    let output = Command::new(&command[0]).args(&command[1..]).args(extra).current_dir(directory).output().map_err(|error| format!("cannot run {}: {error}", command.join(" ")))?;
     if output.status.success() {
         Ok(output.stdout)
     } else {
@@ -620,10 +528,7 @@ fn parse_disassembly(text: &str) -> Vec<Instruction> {
             let fields = rest.split_whitespace().collect::<Vec<_>>();
             let first = fields.first()?.trim_end_matches(':');
             let mut index = usize::from(first.bytes().all(|byte| byte.is_ascii_hexdigit()));
-            while fields
-                .get(index)
-                .is_some_and(|field| field.len() == 2 && field.bytes().all(|byte| byte.is_ascii_hexdigit()))
-            {
+            while fields.get(index).is_some_and(|field| field.len() == 2 && field.bytes().all(|byte| byte.is_ascii_hexdigit())) {
                 index += 1;
             }
             let mnemonic = fields.get(index)?.trim().to_ascii_lowercase();
@@ -647,10 +552,7 @@ fn disassemble_bytes(bytes: &[u8]) -> Result<Vec<Instruction>, String> {
     let temp = TempDir::new("insns")?;
     let path = temp.0.join("image.bin");
     fs::write(&path, bytes).map_err(|error| format!("{}: {error}", path.display()))?;
-    let command: Vec<String> = ["arm-none-eabi-objdump", "-D", "-b", "binary", "-m", "armv4t", "-M", "force-thumb"]
-        .into_iter()
-        .map(String::from)
-        .collect();
+    let command: Vec<String> = ["arm-none-eabi-objdump", "-D", "-b", "binary", "-m", "armv4t", "-M", "force-thumb"].into_iter().map(String::from).collect();
     let output = command_output(&command, &[path.as_path()], &temp.0)?;
     let text = String::from_utf8(output).map_err(|_| "objdump emitted non-UTF-8 output")?;
     let mut instructions = parse_disassembly(&text);
@@ -677,12 +579,7 @@ fn disassemble_bytes(bytes: &[u8]) -> Result<Vec<Instruction>, String> {
         // Branch and call targets are file offsets that shift with any size
         // change upstream; fold them so a moved block is not billed as a
         // difference on every branch row.
-        if instruction.mnemonic == "bl"
-            || instruction.mnemonic == "blx"
-            || instruction.mnemonic.starts_with('b')
-                && !instruction.mnemonic.starts_with("bic")
-                && instruction.mnemonic != "bkpt"
-        {
+        if instruction.mnemonic == "bl" || instruction.mnemonic == "blx" || instruction.mnemonic.starts_with('b') && !instruction.mnemonic.starts_with("bic") && instruction.mnemonic != "bkpt" {
             if let Some(space) = instruction.row.find(' ') {
                 let target = &instruction.row[space + 1..];
                 if target.trim_start_matches("0x").chars().all(|c| c.is_ascii_hexdigit()) && !target.is_empty() {
@@ -704,10 +601,7 @@ pub fn fingerprint(bytes: &[u8]) -> u64 {
 
 pub fn self_test() -> Result<(), String> {
     let base = alchemy_identity("target", "implementation-a", "compiler-a", "host-a");
-    if base == alchemy_identity("target", "implementation-b", "compiler-a", "host-a")
-        || base == alchemy_identity("target", "implementation-a", "compiler-b", "host-a")
-        || base == alchemy_identity("target", "implementation-a", "compiler-a", "host-b")
-    {
+    if base == alchemy_identity("target", "implementation-b", "compiler-a", "host-a") || base == alchemy_identity("target", "implementation-a", "compiler-b", "host-a") || base == alchemy_identity("target", "implementation-a", "compiler-a", "host-b") {
         return Err("Alchemy backend identity did not invalidate a changed input".into());
     }
     if current_executable_signature()?.len() != 64 {

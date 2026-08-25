@@ -36,12 +36,7 @@ pub const OVERLAY_BASE: i64 = 0x0200_0000;
 const RETURN_WINDOW: i64 = 128;
 
 fn root() -> PathBuf {
-    std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .expect("crate dir has a parent")
-        .parent()
-        .expect("tools has a parent")
-        .to_path_buf()
+    std::path::Path::new(env!("CARGO_MANIFEST_DIR")).parent().expect("crate dir has a parent").parent().expect("tools has a parent").to_path_buf()
 }
 
 /// Decode a Thumb BL pair into the displacement the instruction stores.
@@ -159,10 +154,7 @@ pub fn classify(image: &[u8], target: i64, prologues: &HashSet<i64>) -> Classifi
         // ldr r4,[pc,#0] == 0x4c00, bx r4 == 0x4720
         if first == 0x4c00 && second == 0x4720 {
             let at = target as usize;
-            let word = (image[at + 4] as u32)
-                | ((image[at + 5] as u32) << 8)
-                | ((image[at + 6] as u32) << 16)
-                | ((image[at + 7] as u32) << 24);
+            let word = (image[at + 4] as u32) | ((image[at + 5] as u32) << 8) | ((image[at + 6] as u32) << 16) | ((image[at + 7] as u32) << 24);
             // The stored word carries the Thumb bit; the import's address is even.
             return Classified { kind: Kind::Veneer, imported: Some((word & !1) as i64) };
         }
@@ -195,8 +187,7 @@ struct InventoryRow {
 
 fn inventory() -> Result<Vec<InventoryRow>, String> {
     let path = root().join("out/decomp/overlays.json");
-    let text = std::fs::read_to_string(&path)
-        .map_err(|_| format!("missing {}; run the overlay inventory first", path.display()))?;
+    let text = std::fs::read_to_string(&path).map_err(|_| format!("missing {}; run the overlay inventory first", path.display()))?;
     let value: Value = serde_json::from_str(&text).map_err(|error| error.to_string())?;
     let functions = value.get("functions").and_then(Value::as_array).ok_or("overlays.json: missing functions array")?;
     let mut rows = Vec::with_capacity(functions.len());
@@ -228,16 +219,8 @@ pub fn resolve_overlay(overlay: &str, owner: Option<i64>, owner_end: Option<i64>
         span_bytes: i64,
     }
     let mut spans: Vec<Span> = match owner {
-        None => rows
-            .iter()
-            .filter(|row| row.contained_by_len == 0)
-            .map(|row| Span { offset: row.offset, span_bytes: row.span_bytes })
-            .collect(),
-        Some(owner) => rows
-            .iter()
-            .filter(|row| row.offset == owner)
-            .map(|row| Span { offset: row.offset, span_bytes: row.span_bytes })
-            .collect(),
+        None => rows.iter().filter(|row| row.contained_by_len == 0).map(|row| Span { offset: row.offset, span_bytes: row.span_bytes }).collect(),
+        Some(owner) => rows.iter().filter(|row| row.offset == owner).map(|row| Span { offset: row.offset, span_bytes: row.span_bytes }).collect(),
     };
 
     if let Some(owner) = owner {
@@ -291,8 +274,7 @@ pub fn resolve_overlay(overlay: &str, owner: Option<i64>, owner_end: Option<i64>
 pub fn resolved_call_names(overlay: &str, owner: i64, owner_end: i64) -> Result<Vec<(i64, String)>, String> {
     let image = overlay_image(overlay)?;
     let rows = inventory()?;
-    let prologues: HashSet<i64> =
-        rows.iter().filter(|row| row.overlay == overlay && row.starts_with_prologue).map(|row| row.offset).collect();
+    let prologues: HashSet<i64> = rows.iter().filter(|row| row.overlay == overlay && row.starts_with_prologue).map(|row| row.offset).collect();
     let mut names = Vec::new();
     for site in resolve_overlay(overlay, Some(owner), Some(owner_end))? {
         let detail = classify(&image, site.target, &prologues);
@@ -423,8 +405,7 @@ const KNOWN_FLAGS: [&str; 3] = ["--self-test", "--json", "--annotate"];
 
 /// `/^resource_[0-9a-f]+$/` — lowercase only, no `i` flag in the original.
 fn is_resource_name(text: &str) -> bool {
-    text.strip_prefix("resource_")
-        .is_some_and(|rest| !rest.is_empty() && rest.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)))
+    text.strip_prefix("resource_").is_some_and(|rest| !rest.is_empty() && rest.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)))
 }
 
 /// Pick the owner/end bounds out of the command line.
@@ -455,10 +436,7 @@ pub fn parse_bounds(args: &[String], overlay: Option<&str>) -> Result<Vec<i64>, 
         ));
     }
     if bounds.len() > 2 {
-        return Err(format!(
-            "overlay_call_targets: {} bounds given, at most two are used (owner start and end). Refusing rather than silently ignoring the rest.",
-            bounds.len()
-        ));
+        return Err(format!("overlay_call_targets: {} bounds given, at most two are used (owner start and end). Refusing rather than silently ignoring the rest.", bounds.len()));
     }
     Ok(bounds)
 }

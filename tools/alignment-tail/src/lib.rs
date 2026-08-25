@@ -94,12 +94,7 @@ fn byte(value: Option<&Value>, label: &str) -> Result<u8, AlignmentTailError> {
     }
 }
 
-pub fn parse_alignment_tail(
-    value: &Value,
-    expected_size: usize,
-    maximum: usize,
-    label: &str,
-) -> Result<AlignmentTail, AlignmentTailError> {
+pub fn parse_alignment_tail(value: &Value, expected_size: usize, maximum: usize, label: &str) -> Result<AlignmentTail, AlignmentTailError> {
     if expected_size < 1 || expected_size > maximum {
         return fail(format!("{label} has an invalid expected size"));
     }

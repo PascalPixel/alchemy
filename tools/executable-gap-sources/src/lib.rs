@@ -17,8 +17,7 @@ fn field<'a>(value: &'a Value, key: &str) -> Result<&'a Value, String> {
 
 fn address(value: &Value) -> Result<u64, String> {
     let text = value.as_str().ok_or_else(|| "invalid address".to_string())?;
-    u64::from_str_radix(text.strip_prefix("0x").ok_or("invalid address")?, 16)
-        .map_err(|_| "invalid address".to_string())
+    u64::from_str_radix(text.strip_prefix("0x").ok_or("invalid address")?, 16).map_err(|_| "invalid address".to_string())
 }
 
 fn words(values: &Value, width: usize) -> Result<Vec<u8>, String> {
@@ -58,8 +57,7 @@ fn section_data(section: &Value) -> Result<Option<Vec<u8>>, String> {
 }
 
 pub fn build_executable_gap_data(path: &Path) -> Result<Vec<BuiltSection>, String> {
-    let package: Value =
-        serde_json::from_slice(&std::fs::read(path).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?;
+    let package: Value = serde_json::from_slice(&std::fs::read(path).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?;
     let mut sections = Vec::new();
     for gap in field(&package, "gaps")?.as_array().ok_or("gaps are not an array")? {
         for section in field(gap, "sections")?.as_array().ok_or("sections are not an array")? {
@@ -73,9 +71,5 @@ pub fn build_executable_gap_data(path: &Path) -> Result<Vec<BuiltSection>, Strin
 }
 
 pub fn build_section(path: &Path, wanted: u64) -> Result<Vec<u8>, String> {
-    build_executable_gap_data(path)?
-        .into_iter()
-        .find(|section| section.address == wanted)
-        .map(|section| section.data)
-        .ok_or_else(|| format!("executable gap section 0x{wanted:08x} is not present"))
+    build_executable_gap_data(path)?.into_iter().find(|section| section.address == wanted).map(|section| section.data).ok_or_else(|| format!("executable gap section 0x{wanted:08x} is not present"))
 }

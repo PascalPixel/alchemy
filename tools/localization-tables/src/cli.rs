@@ -50,12 +50,7 @@ struct Region {
 
 use Element::{Ascii, S8, U16, U32, U8};
 
-const REGION_0: [Segment; 4] = [
-    segment(0x0803_3e60, 0x0803_3eb0, U8, 1, &["Func_080191cc"]),
-    segment(0x0803_3eb0, 0x0803_3ed8, S8, 2, &["Func_080191cc"]),
-    segment(0x0803_3ed8, 0x0803_3ee8, U8, 1, &[]),
-    segment(0x0803_3ee8, 0x0803_3ef8, S8, 1, &["Func_080191cc"]),
-];
+const REGION_0: [Segment; 4] = [segment(0x0803_3e60, 0x0803_3eb0, U8, 1, &["Func_080191cc"]), segment(0x0803_3eb0, 0x0803_3ed8, S8, 2, &["Func_080191cc"]), segment(0x0803_3ed8, 0x0803_3ee8, U8, 1, &[]), segment(0x0803_3ee8, 0x0803_3ef8, S8, 1, &["Func_080191cc"])];
 
 const REGION_1: [Segment; 13] = [
     segment(0x0803_66f8, 0x0803_6738, U16, 2, &["Func_0801908c", "Func_08021e6c", "Func_08028194"]),
@@ -111,11 +106,7 @@ const REGION_2: [Segment; 35] = [
     segment(0x0803_7460, 0x0803_7464, Ascii, 1, &["Func_08029554"]),
 ];
 
-const REGIONS: [Region; 3] = [
-    Region { start: 0x0803_3e60, end: 0x0803_3ef8, segments: &REGION_0 },
-    Region { start: 0x0803_66f8, end: 0x0803_68d4, segments: &REGION_1 },
-    Region { start: 0x0803_70d4, end: 0x0803_7464, segments: &REGION_2 },
-];
+const REGIONS: [Region; 3] = [Region { start: 0x0803_3e60, end: 0x0803_3ef8, segments: &REGION_0 }, Region { start: 0x0803_66f8, end: 0x0803_68d4, segments: &REGION_1 }, Region { start: 0x0803_70d4, end: 0x0803_7464, segments: &REGION_2 }];
 
 fn hex(value: u32) -> String {
     format!("0x{value:08x}")
@@ -137,10 +128,7 @@ fn exact_keys(value: &serde_json::Map<String, Value>, keys: &[&str], label: &str
 }
 
 fn number(value: Option<&Value>, label: &str) -> Result<f64, String> {
-    value
-        .and_then(Value::as_f64)
-        .filter(|n| n.is_finite() && n.fract() == 0.0)
-        .ok_or_else(|| format!("{label} must be an integer"))
+    value.and_then(Value::as_f64).filter(|n| n.is_finite() && n.fract() == 0.0).ok_or_else(|| format!("{label} must be an integer"))
 }
 
 fn array<'a>(value: &'a serde_json::Map<String, Value>, name: &str, label: &str) -> Result<&'a [Value], String> {
@@ -151,11 +139,7 @@ fn numeric(source: &serde_json::Map<String, Value>, element: Element, size: usiz
     let stride = number(source.get("stride"), "table stride")?;
     let values = array(source, "values", "numeric table")?;
     let width = element.width() as f64;
-    if stride < width
-        || stride % width != 0.0
-        || size as f64 % stride != 0.0
-        || values.len() as f64 != size as f64 / width
-    {
+    if stride < width || stride % width != 0.0 || size as f64 % stride != 0.0 || values.len() as f64 != size as f64 / width {
         return Err("numeric table layout differs".into());
     }
     let mut output = vec![0; size];
@@ -164,12 +148,8 @@ fn numeric(source: &serde_json::Map<String, Value>, element: Element, size: usiz
         match element {
             Element::U8 if (0.0..=255.0).contains(&value) => output[index] = value as u8,
             Element::S8 if (-128.0..=127.0).contains(&value) => output[index] = (value as i8) as u8,
-            Element::U16 if (0.0..=65535.0).contains(&value) => {
-                output[index * 2..index * 2 + 2].copy_from_slice(&(value as u16).to_le_bytes())
-            }
-            Element::U32 if (0.0..=4_294_967_295.0).contains(&value) => {
-                output[index * 4..index * 4 + 4].copy_from_slice(&(value as u32).to_le_bytes())
-            }
+            Element::U16 if (0.0..=65535.0).contains(&value) => output[index * 2..index * 2 + 2].copy_from_slice(&(value as u16).to_le_bytes()),
+            Element::U32 if (0.0..=4_294_967_295.0).contains(&value) => output[index * 4..index * 4 + 4].copy_from_slice(&(value as u32).to_le_bytes()),
             Element::U8 => return Err("u8 table value is outside its range".into()),
             Element::S8 => return Err("s8 table value is outside its range".into()),
             Element::U16 => return Err("u16 table value is outside its range".into()),
@@ -196,21 +176,13 @@ fn text(source: &serde_json::Map<String, Value>, size: usize) -> Result<Vec<u8>,
 fn build(value: &Value) -> Result<Vec<u8>, String> {
     let source = object(value, "localization-table source")?;
     exact_keys(source, &["format", "kind", "address", "size", "segments"], "localization-table source")?;
-    if number(source.get("format"), "format")? != 1.0
-        || source.get("kind").and_then(Value::as_str) != Some("golden-sun-localization-tables")
-    {
+    if number(source.get("format"), "format")? != 1.0 || source.get("kind").and_then(Value::as_str) != Some("golden-sun-localization-tables") {
         return Err("localization-table source differs".into());
     }
     let address = source.get("address").and_then(Value::as_str).unwrap_or("");
     let size = source.get("size").and_then(Value::as_str).unwrap_or("");
-    let region = REGIONS
-        .iter()
-        .find(|region| address == hex(region.start) && size == hex(region.end - region.start))
-        .ok_or_else(|| "localization-table region differs".to_string())?;
-    let segments = source
-        .get("segments")
-        .and_then(Value::as_array)
-        .ok_or_else(|| "localization-table source differs".to_string())?;
+    let region = REGIONS.iter().find(|region| address == hex(region.start) && size == hex(region.end - region.start)).ok_or_else(|| "localization-table region differs".to_string())?;
+    let segments = source.get("segments").and_then(Value::as_array).ok_or_else(|| "localization-table source differs".to_string())?;
     if segments.len() != region.segments.len() {
         return Err("localization-table segment count differs".into());
     }
@@ -218,27 +190,18 @@ fn build(value: &Value) -> Result<Vec<u8>, String> {
     for (index, value) in segments.iter().enumerate() {
         let expected = &region.segments[index];
         let segment = object(value, &format!("localization-table segment {index}"))?;
-        let keys = if segment.get("element").and_then(Value::as_str) == Some("ascii-fixed") {
-            &["address", "end", "element", "stride", "consumers", "text"][..]
-        } else {
-            &["address", "end", "element", "stride", "consumers", "values"][..]
-        };
+        let keys = if segment.get("element").and_then(Value::as_str) == Some("ascii-fixed") { &["address", "end", "element", "stride", "consumers", "text"][..] } else { &["address", "end", "element", "stride", "consumers", "values"][..] };
         exact_keys(segment, keys, &format!("localization-table segment {index}"))?;
         let consumers = Value::Array(expected.consumers.iter().map(|name| Value::String((*name).into())).collect());
         if segment.get("address").and_then(Value::as_str) != Some(hex(expected.start).as_str())
             || segment.get("end").and_then(Value::as_str) != Some(hex(expected.end).as_str())
             || segment.get("element").and_then(Value::as_str) != Some(expected.element.name())
             || number(segment.get("stride"), "segment stride")? != f64::from(expected.stride)
-            || serde_json::to_string(segment.get("consumers").unwrap()).unwrap()
-                != serde_json::to_string(&consumers).unwrap()
+            || serde_json::to_string(segment.get("consumers").unwrap()).unwrap() != serde_json::to_string(&consumers).unwrap()
         {
             return Err(format!("localization-table segment {index} differs"));
         }
-        let bytes = if expected.element == Element::Ascii {
-            text(segment, (expected.end - expected.start) as usize)?
-        } else {
-            numeric(segment, expected.element, (expected.end - expected.start) as usize)?
-        };
+        let bytes = if expected.element == Element::Ascii { text(segment, (expected.end - expected.start) as usize)? } else { numeric(segment, expected.element, (expected.end - expected.start) as usize)? };
         result.extend(bytes);
     }
     if result.len() != (region.end - region.start) as usize {

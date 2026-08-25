@@ -94,13 +94,7 @@ pub fn index_json() -> Value {
 }
 
 fn number(value: &Value) -> Option<u64> {
-    value.as_u64().or_else(|| {
-        value.as_str().and_then(|text| {
-            text.strip_prefix("0x")
-                .or_else(|| text.strip_prefix("0X"))
-                .map_or_else(|| text.parse().ok(), |hex| u64::from_str_radix(hex, 16).ok())
-        })
-    })
+    value.as_u64().or_else(|| value.as_str().and_then(|text| text.strip_prefix("0x").or_else(|| text.strip_prefix("0X")).map_or_else(|| text.parse().ok(), |hex| u64::from_str_radix(hex, 16).ok())))
 }
 
 fn parse_index(path: &Path) -> Result<(), Error> {
@@ -112,9 +106,7 @@ fn parse_index(path: &Path) -> Result<(), Error> {
     let Some(object) = value.as_object() else {
         return Err(err("resource canvas index differs"));
     };
-    if object.get("format").and_then(number) != Some(1)
-        || object.get("kind").and_then(Value::as_str) != Some("golden-sun-resource-byte-canvas-series")
-    {
+    if object.get("format").and_then(number) != Some(1) || object.get("kind").and_then(Value::as_str) != Some("golden-sun-resource-byte-canvas-series") {
         return Err(err("resource canvas index identity differs"));
     }
     let Some(resources) = object.get("resources").and_then(Value::as_array) else {
@@ -128,10 +120,7 @@ fn parse_index(path: &Path) -> Result<(), Error> {
             return Err(err(format!("resource canvas {index} layout differs")));
         };
         let expected = RESOURCES[index];
-        let matches = item.get("id").and_then(Value::as_str) == Some(expected.id)
-            && item.get("address").and_then(number) == Some(expected.address)
-            && item.get("size").and_then(number) == Some(expected.size as u64)
-            && item.get("source").and_then(Value::as_str) == Some(expected.source);
+        let matches = item.get("id").and_then(Value::as_str) == Some(expected.id) && item.get("address").and_then(number) == Some(expected.address) && item.get("size").and_then(number) == Some(expected.size as u64) && item.get("source").and_then(Value::as_str) == Some(expected.source);
         if !matches {
             return Err(err(format!("resource canvas {index} layout differs")));
         }
@@ -156,41 +145,23 @@ pub fn build_resource_byte_canvases(index_path: &Path) -> Result<Vec<BuiltResour
             let image = indexed_png(&encoded).map_err(|error| err(error.0))?;
             let expected_width = width(resource.size);
             let expected_height = height(resource.size);
-            if image.width as usize != expected_width
-                || image.height as usize != expected_height
-                || image.pixels.len() != expected_width * expected_height
-                || image.pixels[resource.size..].iter().any(|pixel| *pixel != 0)
-            {
+            if image.width as usize != expected_width || image.height as usize != expected_height || image.pixels.len() != expected_width * expected_height || image.pixels[resource.size..].iter().any(|pixel| *pixel != 0) {
                 return Err(err(format!("resource {} canvas differs", resource.id)));
             }
             let canvas: Vec<u8> = image.pixels.iter().map(|pixel| *pixel as u8).collect();
-            Ok(BuiltResource {
-                id: resource.id.to_string(),
-                address: resource.address,
-                data: canvas[..resource.size].to_vec(),
-                source: resource.source.to_string(),
-            })
+            Ok(BuiltResource { id: resource.id.to_string(), address: resource.address, data: canvas[..resource.size].to_vec(), source: resource.source.to_string() })
         })
         .collect()
 }
 
 fn rom_region<'a>(rom: &'a [u8], resource: ResourceSpec) -> Result<&'a [u8], Error> {
-    let start = resource
-        .address
-        .checked_sub(ROM_BASE)
-        .ok_or_else(|| err(format!("resource {} lies outside the ROM", resource.id)))? as usize;
-    let end = start
-        .checked_add(resource.size)
-        .ok_or_else(|| err(format!("resource {} lies outside the ROM", resource.id)))?;
+    let start = resource.address.checked_sub(ROM_BASE).ok_or_else(|| err(format!("resource {} lies outside the ROM", resource.id)))? as usize;
+    let end = start.checked_add(resource.size).ok_or_else(|| err(format!("resource {} lies outside the ROM", resource.id)))?;
     rom.get(start..end).ok_or_else(|| err(format!("resource {} lies outside the ROM", resource.id)))
 }
 
 fn spec_for_id(id: &str) -> Result<ResourceSpec, Error> {
-    RESOURCES
-        .iter()
-        .copied()
-        .find(|candidate| candidate.id == id)
-        .ok_or_else(|| err("resource canvas index identity differs"))
+    RESOURCES.iter().copied().find(|candidate| candidate.id == id).ok_or_else(|| err("resource canvas index identity differs"))
 }
 
 fn directory_index(directory: &Path) -> Result<PathBuf, Error> {
@@ -202,10 +173,7 @@ fn directory_index(directory: &Path) -> Result<PathBuf, Error> {
         .map_err(|error| err(format!("{}: {error}", directory.display())))?
         .filter_map(Result::ok)
         .map(|entry| entry.path())
-        .filter(|path| {
-            path.is_file()
-                && path.file_name().and_then(|name| name.to_str()).is_some_and(|name| name.ends_with("_index.json"))
-        })
+        .filter(|path| path.is_file() && path.file_name().and_then(|name| name.to_str()).is_some_and(|name| name.ends_with("_index.json")))
         .filter(|path| parse_index(path).is_ok())
         .collect::<Vec<_>>();
     if candidates.len() == 1 {
@@ -248,9 +216,7 @@ pub fn verify_resource_byte_canvases(rom_path: &Path, directory: &Path) -> Resul
 }
 
 pub fn self_test() -> Result<(), Error> {
-    if RESOURCES.iter().map(|resource| resource.size).sum::<usize>() != SOURCE_BYTES
-        || RESOURCES.iter().any(|resource| height(resource.size) % 8 != 0)
-    {
+    if RESOURCES.iter().map(|resource| resource.size).sum::<usize>() != SOURCE_BYTES || RESOURCES.iter().any(|resource| height(resource.size) % 8 != 0) {
         return Err(err("resource canvas layout differs"));
     }
     Ok(())

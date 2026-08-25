@@ -45,10 +45,7 @@ pub fn parse_integer(text: &str, name: &str) -> Result<i64> {
     let parsed = if let Some(digits) = text.strip_prefix("0x").or_else(|| text.strip_prefix("0X")) {
         i128::from_str_radix(digits, 16).ok().and_then(|v| i64::try_from(v).ok())
     } else {
-        text.parse::<f64>()
-            .ok()
-            .filter(|v| v.is_finite() && v.fract() == 0.0 && v.abs() <= 9_007_199_254_740_991.0)
-            .map(|v| v as i64)
+        text.parse::<f64>().ok().filter(|v| v.is_finite() && v.fract() == 0.0 && v.abs() <= 9_007_199_254_740_991.0).map(|v| v as i64)
     };
     parsed.ok_or_else(|| Error(format!("invalid {name}")))
 }
@@ -69,15 +66,11 @@ fn hex(value: i64) -> String {
     format!("0x{value:08x}")
 }
 pub fn read_json(path: &Path) -> Result<Value> {
-    serde_json::from_slice(&fs::read(path).map_err(|e| Error(format!("{}: {e}", path.display())))?)
-        .map_err(|e| Error(format!("{}: {e}", path.display())))
+    serde_json::from_slice(&fs::read(path).map_err(|e| Error(format!("{}: {e}", path.display())))?).map_err(|e| Error(format!("{}: {e}", path.display())))
 }
 
 fn read_u32(data: &[u8], offset: usize) -> Result<u32> {
-    data.get(offset..offset + 4)
-        .and_then(|b| b.try_into().ok())
-        .map(u32::from_le_bytes)
-        .ok_or_else(|| Error("static-sprite series is outside the ROM".into()))
+    data.get(offset..offset + 4).and_then(|b| b.try_into().ok()).map(u32::from_le_bytes).ok_or_else(|| Error("static-sprite series is outside the ROM".into()))
 }
 fn index_offset(address: i64) -> Result<usize> {
     let offset = address.checked_sub(ROM_BASE).ok_or_else(|| Error("address is below ROM base".into()))?;
@@ -100,23 +93,11 @@ fn palette(path: &Path, offset: i64, entries: i64) -> Result<Vec<Rgb>> {
     if offset + entries > image.pixels.len() {
         return fail("shared palette PNG is too small");
     }
-    image.pixels[offset..offset + entries]
-        .iter()
-        .map(|pixel| {
-            image
-                .palette
-                .get(*pixel as usize)
-                .copied()
-                .ok_or_else(|| Error("shared palette PNG references a missing color".into()))
-        })
-        .collect()
+    image.pixels[offset..offset + entries].iter().map(|pixel| image.palette.get(*pixel as usize).copied().ok_or_else(|| Error("shared palette PNG references a missing color".into()))).collect()
 }
 
 fn png_indexed(pixels: &[u8], width: usize, height: usize, colors: &[Rgb]) -> Result<Vec<u8>> {
-    if pixels.len() != width.checked_mul(height).ok_or_else(|| Error("invalid indexed sprite image".into()))?
-        || colors.is_empty()
-        || colors.len() > 256
-    {
+    if pixels.len() != width.checked_mul(height).ok_or_else(|| Error("invalid indexed sprite image".into()))? || colors.is_empty() || colors.len() > 256 {
         return fail("invalid indexed sprite image");
     }
     if pixels.iter().any(|p| *p as usize >= colors.len()) {
@@ -147,12 +128,7 @@ fn png_indexed(pixels: &[u8], width: usize, height: usize, colors: &[Rgb]) -> Re
 }
 
 fn atlas_image(frames: &[Vec<u8>], width: usize, height: usize, columns: usize, colors: &[Rgb]) -> Result<Vec<u8>> {
-    if frames.is_empty()
-        || !width.is_multiple_of(8)
-        || !height.is_multiple_of(8)
-        || columns == 0
-        || columns > frames.len()
-    {
+    if frames.is_empty() || !width.is_multiple_of(8) || !height.is_multiple_of(8) || columns == 0 || columns > frames.len() {
         return fail("invalid sprite atlas layout");
     }
     let rows = frames.len().div_ceil(columns);
@@ -166,26 +142,15 @@ fn atlas_image(frames: &[Vec<u8>], width: usize, height: usize, columns: usize, 
         let left = index % columns * width;
         let top = index / columns * height;
         for y in 0..height {
-            pixels[(top + y) * atlas_width + left..(top + y) * atlas_width + left + width]
-                .copy_from_slice(&frame[y * width..(y + 1) * width]);
+            pixels[(top + y) * atlas_width + left..(top + y) * atlas_width + left + width].copy_from_slice(&frame[y * width..(y + 1) * width]);
         }
     }
     png_indexed(&pixels, atlas_width, atlas_height, colors)
 }
 
-fn atlas_frames(
-    data: &[u8],
-    width: usize,
-    height: usize,
-    count: usize,
-    columns: usize,
-    colors: &[Rgb],
-) -> Result<Vec<Vec<u8>>> {
+fn atlas_frames(data: &[u8], width: usize, height: usize, count: usize, columns: usize, colors: &[Rgb]) -> Result<Vec<Vec<u8>>> {
     let image = indexed_png(data).map_err(|e| Error(e.0))?;
-    if image.palette != colors
-        || image.width as usize != columns * width
-        || image.height as usize != count.div_ceil(columns) * height
-    {
+    if image.palette != colors || image.width as usize != columns * width || image.height as usize != count.div_ceil(columns) * height {
         return fail("sprite atlas dimensions or palette differ from its plan");
     }
     let mut output = Vec::with_capacity(count);
@@ -195,9 +160,7 @@ fn atlas_frames(
         let left = index % columns * width;
         let top = index / columns * height;
         for y in 0..height {
-            frame[y * width..(y + 1) * width].copy_from_slice(
-                &pixels[(top + y) * image.width as usize + left..(top + y) * image.width as usize + left + width],
-            );
+            frame[y * width..(y + 1) * width].copy_from_slice(&pixels[(top + y) * image.width as usize + left..(top + y) * image.width as usize + left + width]);
         }
         output.push(frame);
     }
@@ -205,10 +168,7 @@ fn atlas_frames(
         let left = index % columns * width;
         let top = index / columns * height;
         for y in 0..height {
-            if pixels[(top + y) * image.width as usize + left..(top + y) * image.width as usize + left + width]
-                .iter()
-                .any(|p| *p != 0)
-            {
+            if pixels[(top + y) * image.width as usize + left..(top + y) * image.width as usize + left + width].iter().any(|p| *p != 0) {
                 return fail("sprite atlas padding must be transparent");
             }
         }
@@ -332,9 +292,7 @@ fn mode3_decode(data: &[u8], offset: usize) -> Result<(Vec<u8>, usize, Value)> {
                 if nibble == 0 {
                     cursor += 1;
                 }
-                let source = base
-                    .checked_sub(distance)
-                    .ok_or_else(|| Error("mode-3 copy is outside the encoded arena".into()))?;
+                let source = base.checked_sub(distance).ok_or_else(|| Error("mode-3 copy is outside the encoded arena".into()))?;
                 if source + length > data.len() {
                     return fail("mode-3 copy is outside the encoded arena");
                 }
@@ -382,10 +340,7 @@ fn mode3_encode(stream: &[u8], wrapper: &Value, preceding: &[u8]) -> Result<Vec<
         let values = op.as_array().ok_or_else(|| Error("unknown mode-3 operation".into()))?;
         match values.first().and_then(Value::as_str) {
             Some("l") => {
-                let count = int(
-                    values.get(1).ok_or_else(|| Error("mode-3 literal run is invalid".into()))?,
-                    "mode-3 literal run",
-                )? as usize;
+                let count = int(values.get(1).ok_or_else(|| Error("mode-3 literal run is invalid".into()))?, "mode-3 literal run")? as usize;
                 if output + count > stream.len() {
                     return fail("mode-3 literal exceeds decoded stream");
                 }
@@ -397,14 +352,8 @@ fn mode3_encode(stream: &[u8], wrapper: &Value, preceding: &[u8]) -> Result<Vec<
                 }
             }
             Some("c") => {
-                let distance = int(
-                    values.get(1).ok_or_else(|| Error("mode-3 copy operation is invalid".into()))?,
-                    "mode-3 copy distance",
-                )? as usize;
-                let length = int(
-                    values.get(2).ok_or_else(|| Error("mode-3 copy operation is invalid".into()))?,
-                    "mode-3 copy length",
-                )? as usize;
+                let distance = int(values.get(1).ok_or_else(|| Error("mode-3 copy operation is invalid".into()))?, "mode-3 copy distance")? as usize;
+                let length = int(values.get(2).ok_or_else(|| Error("mode-3 copy operation is invalid".into()))?, "mode-3 copy length")? as usize;
                 let (word, extra) = copy_word(distance, length)?;
                 if output + length > stream.len() {
                     return fail("mode-3 copy exceeds decoded stream");
@@ -464,9 +413,7 @@ fn mode3_encode(stream: &[u8], wrapper: &Value, preceding: &[u8]) -> Result<Vec<
         } else {
             let distance = int(&values[1], "mode-3 copy distance")? as usize;
             let length = int(&values[2], "mode-3 copy length")? as usize;
-            let source = base
-                .checked_sub(distance)
-                .ok_or_else(|| Error("mode-3 copy source has not been reconstructed".into()))?;
+            let source = base.checked_sub(distance).ok_or_else(|| Error("mode-3 copy source has not been reconstructed".into()))?;
             if source + length > combined.len() {
                 return fail("mode-3 copy source has not been reconstructed");
             }
@@ -519,10 +466,7 @@ fn parse_general(value: &Value) -> Result<Vec<GeneralToken>> {
             let a = item.as_array().ok_or_else(|| Error("invalid general-stream token".into()))?;
             match a.first().and_then(Value::as_str) {
                 Some("l") => Ok(GeneralToken::Literal(int(&a[1], "literal run")? as u32)),
-                Some("c") => Ok(GeneralToken::Copy {
-                    length: int(&a[1], "copy length")? as u32,
-                    distance: int(&a[2], "copy distance")? as u32,
-                }),
+                Some("c") => Ok(GeneralToken::Copy { length: int(&a[1], "copy length")? as u32, distance: int(&a[2], "copy distance")? as u32 }),
                 _ => fail("invalid general-stream token"),
             }
         })
@@ -536,10 +480,7 @@ fn parse_palette(value: &Value) -> Result<Vec<PaletteGroup>> {
             match a.first().and_then(Value::as_str) {
                 Some("z") => Ok(PaletteGroup::Zeros),
                 Some("g") => {
-                    let ops = a
-                        .get(1)
-                        .and_then(Value::as_array)
-                        .ok_or_else(|| Error("invalid palette token group".into()))?;
+                    let ops = a.get(1).and_then(Value::as_array).ok_or_else(|| Error("invalid palette token group".into()))?;
                     Ok(PaletteGroup::Group(
                         ops.iter()
                             .map(|op| {
@@ -547,10 +488,7 @@ fn parse_palette(value: &Value) -> Result<Vec<PaletteGroup>> {
                                 match x.first().and_then(Value::as_str) {
                                     Some("l") => Ok(PaletteOperation::Literal),
                                     Some("e") => Ok(PaletteOperation::End),
-                                    Some("c") => Ok(PaletteOperation::Copy {
-                                        length: int(&x[1], "copy length")? as u32,
-                                        distance: int(&x[2], "copy distance")? as u32,
-                                    }),
+                                    Some("c") => Ok(PaletteOperation::Copy { length: int(&x[1], "copy length")? as u32, distance: int(&x[2], "copy distance")? as u32 }),
                                     _ => fail("invalid palette token"),
                                 }
                             })
@@ -566,13 +504,7 @@ fn array_value(value: &Value) -> Result<&Vec<Value>> {
     value.as_array().ok_or_else(|| Error("invalid token list".into()))
 }
 
-fn decode_frame(
-    arena: &[u8],
-    offset: usize,
-    mode: i64,
-    pixels: usize,
-    physical_end: usize,
-) -> Result<(Vec<u8>, usize, Value)> {
+fn decode_frame(arena: &[u8], offset: usize, mode: i64, pixels: usize, physical_end: usize) -> Result<(Vec<u8>, usize, Value)> {
     let (decoded, encoded, plan) = match mode {
         0 => {
             let (p, n) = zero_decode(&arena[..physical_end], offset, MAX_PIXELS)?;
@@ -583,16 +515,12 @@ fn decode_frame(
             let kind = *arena.get(offset).ok_or_else(|| Error("mode-1 compression kind is truncated".into()))?;
             if kind == 0 {
                 let readable = physical_end.saturating_add(1).min(arena.len());
-                let (p, _cursor, tokens) =
-                    extract_resource::decode_general_trace(arena, offset, readable, MAX_PIXELS as u64)
-                        .map_err(|e| Error(e.0))?;
+                let (p, _cursor, tokens) = extract_resource::decode_general_trace(arena, offset, readable, MAX_PIXELS as u64).map_err(|e| Error(e.0))?;
                 let encoded = extract_resource::encode_general(&p, &tokens).map_err(|e| Error(e.0))?;
                 let plan = json!({"format":1,"codec":"golden-sun-static-sprite-mode1","pixels":p.len(),"encoded_bytes":encoded.len(),"compression":{"kind":0,"tokens":general_json(&tokens)}});
                 (p, encoded.len(), plan)
             } else if kind == 1 {
-                let (p, _cursor, groups) =
-                    extract_resource::decode_palette_trace(arena, offset + 1, physical_end, MAX_PIXELS as u64)
-                        .map_err(|e| Error(e.0))?;
+                let (p, _cursor, groups) = extract_resource::decode_palette_trace(arena, offset + 1, physical_end, MAX_PIXELS as u64).map_err(|e| Error(e.0))?;
                 let mut encoded = vec![1];
                 encoded.extend(extract_resource::encode_palette(&p, &groups).map_err(|e| Error(e.0))?);
                 let plan = json!({"format":1,"codec":"golden-sun-static-sprite-mode1","pixels":p.len(),"encoded_bytes":encoded.len(),"compression":{"kind":1,"groups":palette_json(&groups)}});
@@ -608,11 +536,7 @@ fn decode_frame(
                 return fail("mode-3 output continues after the zero-skip terminator");
             }
             let length = p.len();
-            (
-                p,
-                n,
-                json!({"format":1,"codec":"golden-sun-static-sprite-mode3","pixels":length,"stream_bytes":stream.len(),"encoded_bytes":n,"wrapper":wrapper}),
-            )
+            (p, n, json!({"format":1,"codec":"golden-sun-static-sprite-mode3","pixels":length,"stream_bytes":stream.len(),"encoded_bytes":n,"wrapper":wrapper}))
         }
         _ => return fail("unsupported static-sprite mode"),
     };
@@ -727,25 +651,11 @@ fn descriptor_packages(rom: &[u8], address: i64, end: i64, table_address: i64, c
         let records = grouped.get(directory).unwrap();
         if records.iter().any(|r| r.1 != records[0].1 || r.2 != records[0].2 || r.3 != records[0].3) {
             return fail("sprite aliases disagree on their descriptor");
-        } else if records[0].1 == 0
-            || records[0].2 == 0
-            || !records[0].1.is_multiple_of(8)
-            || !records[0].2.is_multiple_of(8)
-        {
+        } else if records[0].1 == 0 || records[0].2 == 0 || !records[0].1.is_multiple_of(8) || !records[0].2.is_multiple_of(8) {
             return fail("sprite package has invalid dimensions");
         }
         let first = *unique.first().unwrap();
-        packages.push(Package {
-            ids: records.iter().map(|r| r.0).collect(),
-            width: records[0].1,
-            height: records[0].2,
-            mode: records[0].3,
-            address: first,
-            directory: *directory,
-            end: current_end,
-            pointers,
-            unique,
-        });
+        packages.push(Package { ids: records.iter().map(|r| r.0).collect(), width: records[0].1, height: records[0].2, mode: records[0].3, address: first, directory: *directory, end: current_end, pointers, unique });
         current_end = first;
     }
     packages.reverse();
@@ -791,29 +701,20 @@ fn read_frames(root: &Path, item: &Value, plan_path: &Path, plan: &Value, colors
             })
             .collect();
     }
-    let source = item
-        .get("source")
-        .and_then(Value::as_str)
-        .ok_or_else(|| Error("sprite package lacks its atlas source".into()))?;
+    let source = item.get("source").and_then(Value::as_str).ok_or_else(|| Error("sprite package lacks its atlas source".into()))?;
     let columns = int(required(plan, "atlas_columns")?, "atlas_columns")? as usize;
     atlas_frames(&fs::read(root.join(source)).map_err(|e| Error(e.to_string()))?, width, height, count, columns, colors)
 }
 
 pub fn build_series(index: &Value, index_path: &Path, palette_path: &Path) -> Result<Vec<u8>> {
-    if index.get("format") != Some(&json!(1))
-        || index.get("codec").and_then(Value::as_str) != Some("golden-sun-static-sprite-series")
-    {
+    if index.get("format") != Some(&json!(1)) || index.get("codec").and_then(Value::as_str) != Some("golden-sun-static-sprite-series") {
         return fail("unsupported static-sprite series index");
     }
     let base = int(required(index, "address")?, "address")?;
     let size = int(required(index, "size")?, "size")? as usize;
     let prefix = int(required(index, "prefix_zeros")?, "prefix_zeros")? as usize;
     let suffix = int(index.get("suffix_zeros").unwrap_or(&json!(0)), "suffix_zeros")? as usize;
-    let colors = palette(
-        palette_path,
-        int(required(index, "palette_offset")?, "palette_offset")?,
-        int(required(index, "palette_entries")?, "palette_entries")?,
-    )?;
+    let colors = palette(palette_path, int(required(index, "palette_offset")?, "palette_offset")?, int(required(index, "palette_entries")?, "palette_entries")?)?;
     let root = index_path.parent().unwrap_or(Path::new("."));
     let mut result = vec![0; prefix];
     let packages = array(index, "packages")?;
@@ -837,8 +738,7 @@ pub fn build_series(index: &Value, index_path: &Path, palette_path: &Path) -> Re
         let mut offsets = Vec::new();
         for (i, frame) in frames.iter().enumerate() {
             offsets.push(result.len());
-            let encoded =
-                encode_frame(frame, &frame_plans[i], &result).map_err(|e| Error(format!("{id} frame {i}: {}", e.0)))?;
+            let encoded = encode_frame(frame, &frame_plans[i], &result).map_err(|e| Error(format!("{id} frame {i}: {}", e.0)))?;
             result.extend_from_slice(&encoded);
         }
         let alignment = int(plan.get("alignment_zeros").unwrap_or(&json!(0)), "alignment")? as usize;
@@ -880,15 +780,12 @@ pub fn export_series(rom: &[u8], directory: &Path, palette_path: &Path, options:
         return fail("ROM is too small for the static-sprite series");
     }
     let arena = &rom[start..end];
-    let suffix =
-        bounded(options.suffix_zeros, 0, (arena.len().saturating_sub(1)) as i64, "static-sprite suffix alignment")?
-            as usize;
+    let suffix = bounded(options.suffix_zeros, 0, (arena.len().saturating_sub(1)) as i64, "static-sprite suffix alignment")? as usize;
     if arena[arena.len() - suffix..].iter().any(|b| *b != 0) {
         return fail("static-sprite suffix alignment is not zero");
     }
     let content_end = options.end - suffix as i64;
-    let packages =
-        descriptor_packages(rom, options.address, content_end, options.descriptor_table, options.descriptor_count)?;
+    let packages = descriptor_packages(rom, options.address, content_end, options.descriptor_table, options.descriptor_count)?;
     let colors = palette(palette_path, options.palette_offset, options.palette_entries)?;
     fs::create_dir_all(directory).map_err(|e| Error(e.to_string()))?;
     let prefix = packages[0].address - options.address;
@@ -938,15 +835,13 @@ pub fn export_series(rom: &[u8], directory: &Path, palette_path: &Path, options:
         plan.insert("alignment_zeros".into(), json!(alignment));
         plan.insert("frames".into(), Value::Array(plans));
         plan.insert("directory".into(), Value::Array(directory_indices.iter().map(|v| json!(v)).collect()));
-        fs::write(&plan_path, format!("{}\n", serde_json::to_string(&Value::Object(plan)).unwrap()))
-            .map_err(|e| Error(e.to_string()))?;
+        fs::write(&plan_path, format!("{}\n", serde_json::to_string(&Value::Object(plan)).unwrap())).map_err(|e| Error(e.to_string()))?;
         let mut entry = Map::new();
         entry.insert("id".into(), json!(id));
         if package.mode != 3 {
             entry.insert("mode".into(), json!(package.mode));
         }
-        entry
-            .insert("aliases".into(), Value::Array(package.ids[1..].iter().map(|v| json!(format!("{v:x}"))).collect()));
+        entry.insert("aliases".into(), Value::Array(package.ids[1..].iter().map(|v| json!(format!("{v:x}"))).collect()));
         entry.insert("address".into(), json!(hex(package.address)));
         entry.insert("size".into(), json!(hex(package.end - package.address)));
         entry.insert("directory".into(), json!(hex(package.directory)));

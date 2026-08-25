@@ -93,11 +93,7 @@ fn hex(value: u32) -> String {
 pub fn build_byte_value_regions(path: &Path) -> Result<Vec<ByteValueRegion>, RegionError> {
     let text = fs::read_to_string(path)?;
     let value: Value = serde_json::from_str(&text).map_err(|e| RegionError::Json(e.to_string()))?;
-    if !value.is_object()
-        || !is_canonical_json_text(&text, &value)
-        || value.get("format").and_then(Value::as_u64) != Some(1)
-        || value.get("kind").and_then(Value::as_str) != Some("golden-sun-byte-value-regions")
-    {
+    if !value.is_object() || !is_canonical_json_text(&text, &value) || value.get("format").and_then(Value::as_u64) != Some(1) || value.get("kind").and_then(Value::as_str) != Some("golden-sun-byte-value-regions") {
         return Err(RegionError::SourceIdentityDiffers);
     }
     let regions = value.get("regions").and_then(Value::as_array).ok_or(RegionError::SourceIdentityDiffers)?;
@@ -125,10 +121,7 @@ pub fn build_byte_value_regions(path: &Path) -> Result<Vec<ByteValueRegion>, Reg
         }
         let mut data = Vec::with_capacity(values.len());
         for (offset, entry) in values.iter().enumerate() {
-            let byte = entry
-                .as_u64()
-                .filter(|value| *value <= 0xff)
-                .ok_or(RegionError::RegionByteDiffers { region: index, offset })?;
+            let byte = entry.as_u64().filter(|value| *value <= 0xff).ok_or(RegionError::RegionByteDiffers { region: index, offset })?;
             data.push(byte as u8);
         }
         previous = address + data.len() as u32 - 1;
@@ -153,8 +146,7 @@ fn rom_slice(rom: &[u8], address: u32, size: usize) -> Option<&[u8]> {
 pub fn export_byte_value_regions(rom: &[u8], directory: &Path, regions: &[RegionSpec]) -> Result<(), RegionError> {
     let mut described = Vec::with_capacity(regions.len());
     for region in regions {
-        let data =
-            rom_slice(rom, region.address, region.size).ok_or_else(|| RegionError::OutsideRom(region.name.clone()))?;
+        let data = rom_slice(rom, region.address, region.size).ok_or_else(|| RegionError::OutsideRom(region.name.clone()))?;
         described.push(json!({
             "name": region.name,
             "address": hex(region.address),

@@ -93,9 +93,7 @@ fn half(out: &mut Vec<u8>, v: Option<&Value>, name: &str) -> Result<()> {
 }
 fn extent(v: &Value, address: usize, size: usize, name: &str) -> Result<()> {
     let o = object(v, name)?;
-    if o.get("address").and_then(Value::as_str) != Some(&format!("0x{address:08x}"))
-        || o.get("size").and_then(Value::as_u64) != Some(size as u64)
-    {
+    if o.get("address").and_then(Value::as_str) != Some(&format!("0x{address:08x}")) || o.get("size").and_then(Value::as_u64) != Some(size as u64) {
         return err(format!("{name} extent differs"));
     }
     Ok(())
@@ -104,17 +102,12 @@ fn extent(v: &Value, address: usize, size: usize, name: &str) -> Result<()> {
 fn sparse(v: &Value, count: usize, name: &str, allowed: &[u8]) -> Result<Vec<u8>> {
     keys(v, &["count", "default", "entries"], name)?;
     let o = object(v, name)?;
-    if o.get("count").and_then(Value::as_u64) != Some(count as u64)
-        || o.get("default").and_then(Value::as_u64) != Some(0)
-    {
+    if o.get("count").and_then(Value::as_u64) != Some(count as u64) || o.get("default").and_then(Value::as_u64) != Some(0) {
         return err(format!("{name} shape differs"));
     }
     let mut out = vec![0; count];
     let mut previous = None;
-    for (i, e) in arr(o.get("entries").unwrap(), o.get("entries").and_then(Value::as_array).map_or(0, Vec::len), name)?
-        .iter()
-        .enumerate()
-    {
+    for (i, e) in arr(o.get("entries").unwrap(), o.get("entries").and_then(Value::as_array).map_or(0, Vec::len), name)?.iter().enumerate() {
         keys(e, &["id", "value"], &format!("{name} entry {i}"))?;
         let id = integer(object(e, "entry")?.get("id"), "ID", 0, (count - 1) as i64)? as usize;
         if previous.is_some_and(|p| id <= p) {
@@ -137,14 +130,7 @@ fn flags(v: &Value) -> Result<Vec<u8>> {
     }
     let mut out = vec![0; 519 * 4];
     let mut previous = None;
-    for (i, e) in o
-        .get("entries")
-        .unwrap()
-        .as_array()
-        .ok_or_else(|| Error("display flag shape differs".into()))?
-        .iter()
-        .enumerate()
-    {
+    for (i, e) in o.get("entries").unwrap().as_array().ok_or_else(|| Error("display flag shape differs".into()))?.iter().enumerate() {
         keys(e, &["id", "animation_id", "descriptor_flags"], &format!("display flag {i}"))?;
         let eo = object(e, "display flag")?;
         let id = integer(eo.get("id"), "display flag ID", 0, 518)? as usize;
@@ -259,11 +245,7 @@ fn build_kihon(path: &Path) -> Result<Vec<u8>> {
     out.extend(sparse(o.get("action_modes").unwrap(), 518, "action modes", &[2, 3, 5, 6, 8, 9])?);
     out.extend([0, 0]);
     out.extend(flags(o.get("action_display").unwrap())?);
-    for (n, x) in
-        arr(object(o.get("selection_layout").unwrap(), "selection")?.get("defaults").unwrap(), 2, "selection defaults")?
-            .iter()
-            .enumerate()
-    {
+    for (n, x) in arr(object(o.get("selection_layout").unwrap(), "selection")?.get("defaults").unwrap(), 2, "selection defaults")?.iter().enumerate() {
         word(&mut out, Some(x), &format!("selection default {n}"))?;
     }
     let sel = object(o.get("selection_layout").unwrap(), "selection")?;
@@ -355,12 +337,10 @@ fn haichi(path: &Path) -> Result<Vec<u8>> {
                 r[i + 2] = byte(Some(x), "Djinn count")?;
             }
             for (i, x) in arr(eo.get("equipment").unwrap(), 4, "equipment")?.iter().enumerate() {
-                r[6 + i * 2..8 + i * 2]
-                    .copy_from_slice(&(integer(Some(x), "equipment", 0, 65535)? as u16).to_le_bytes());
+                r[6 + i * 2..8 + i * 2].copy_from_slice(&(integer(Some(x), "equipment", 0, 65535)? as u16).to_le_bytes());
             }
             for (i, x) in arr(eo.get("abilities").unwrap(), 2, "abilities")?.iter().enumerate() {
-                r[14 + i * 2..16 + i * 2]
-                    .copy_from_slice(&(integer(Some(x), "ability", 0, 65535)? as u16).to_le_bytes());
+                r[14 + i * 2..16 + i * 2].copy_from_slice(&(integer(Some(x), "ability", 0, 65535)? as u16).to_le_bytes());
             }
             out.extend(r);
         }
@@ -410,26 +390,13 @@ pub fn build_sentou_hyouji(index_path: &Path) -> Result<Vec<u8>> {
     }
     let src = object(o.get("sources").unwrap(), "battle display sources")?;
     let dir = index_path.parent().unwrap_or(Path::new("."));
-    let prefix =
-        index_path.file_name().and_then(|name| name.to_str()).unwrap_or("").strip_suffix("index.json").unwrap_or("");
+    let prefix = index_path.file_name().and_then(|name| name.to_str()).unwrap_or("").strip_suffix("index.json").unwrap_or("");
     let p = |s: &str| dir.join(format!("{prefix}{s}"));
     let mut out = build_kihon(&p(src.get("kihon").and_then(Value::as_str).unwrap()))?;
-    out.extend(atlas(
-        &p(object(src.get("koma").unwrap(), "koma")?.get("source").and_then(Value::as_str).unwrap()),
-        16,
-        2,
-        2,
-        8,
-    )?);
+    out.extend(atlas(&p(object(src.get("koma").unwrap(), "koma")?.get("source").and_then(Value::as_str).unwrap()), 16, 2, 2, 8)?);
     out.extend(haichi(&p(src.get("haichi").and_then(Value::as_str).unwrap()))?);
     out.extend(hosei(&p(src.get("hosei").and_then(Value::as_str).unwrap()))?);
-    out.extend(atlas(
-        &p(object(src.get("gauge").unwrap(), "gauge")?.get("source").and_then(Value::as_str).unwrap()),
-        8,
-        1,
-        1,
-        8,
-    )?);
+    out.extend(atlas(&p(object(src.get("gauge").unwrap(), "gauge")?.get("source").and_then(Value::as_str).unwrap()), 8, 1, 1, 8)?);
     if out.len() != SIZE {
         return err("battle display output size differs");
     }
@@ -437,8 +404,7 @@ pub fn build_sentou_hyouji(index_path: &Path) -> Result<Vec<u8>> {
 }
 pub fn verify_sentou_hyouji(rom: &[u8], index: &Path) -> Result<()> {
     let start = ADDRESS - ROM_BASE;
-    let expected =
-        rom.get(start..start + SIZE).ok_or_else(|| Error("ROM is too small for battle display data".into()))?;
+    let expected = rom.get(start..start + SIZE).ok_or_else(|| Error("ROM is too small for battle display data".into()))?;
     let built = build_sentou_hyouji(index)?;
     if built != expected {
         return err("battle display differs from ROM");

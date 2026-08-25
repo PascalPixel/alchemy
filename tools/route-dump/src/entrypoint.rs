@@ -32,14 +32,7 @@ fn source_records(paths: Option<&SourcePaths>, source: &str) -> Vec<LiveSource> 
     if owners.is_empty() {
         return vec![LiveSource { display: source.to_string(), owner: None, routing: source.to_string() }];
     }
-    owners
-        .into_iter()
-        .map(|owner| LiveSource {
-            display: source.to_string(),
-            owner: Some(owner.id()),
-            routing: owner.routing_path().to_string_lossy().into_owned(),
-        })
-        .collect()
+    owners.into_iter().map(|owner| LiveSource { display: source.to_string(), owner: Some(owner.id()), routing: owner.routing_path().to_string_lossy().into_owned() }).collect()
 }
 
 fn live_sources() -> Vec<LiveSource> {
@@ -60,11 +53,7 @@ fn live_sources() -> Vec<LiveSource> {
     }
     if let Ok(paths) = SourcePaths::load(compiler_core::routing::root()) {
         if let Ok(sources) = paths.all_sources() {
-            found.extend(sources.into_iter().map(|source| LiveSource {
-                display: paths.repository_relative_path(source.owner).to_string_lossy().into_owned(),
-                owner: Some(source.owner.id()),
-                routing: source.owner.routing_path().to_string_lossy().into_owned(),
-            }));
+            found.extend(sources.into_iter().map(|source| LiveSource { display: paths.repository_relative_path(source.owner).to_string_lossy().into_owned(), owner: Some(source.owner.id()), routing: source.owner.routing_path().to_string_lossy().into_owned() }));
         }
     }
     found.sort();
@@ -74,13 +63,7 @@ fn live_sources() -> Vec<LiveSource> {
 fn emit(source: &LiveSource) {
     let extras = routed_extras(&source.routing);
     let agbcc = uses_agbcc_compiler(CompilerTarget::Gs1, &source.routing);
-    println!(
-        "{}\t{}\t{}\t{}",
-        source.display,
-        source.owner.as_deref().unwrap_or("-"),
-        if agbcc { "agbcc" } else { "gcc296" },
-        extras.join(" ")
-    );
+    println!("{}\t{}\t{}\t{}", source.display, source.owner.as_deref().unwrap_or("-"), if agbcc { "agbcc" } else { "gcc296" }, extras.join(" "));
 }
 
 fn self_test() -> Result<(), String> {
@@ -126,12 +109,7 @@ pub fn entry(arguments: &[String]) -> ExitCode {
     }
     if arguments.iter().any(|a| a == "--debt") {
         let sources = live_sources();
-        let deviating = sources
-            .iter()
-            .filter(|source| {
-                !routed_extras(&source.routing).is_empty() || uses_agbcc_compiler(CompilerTarget::Gs1, &source.routing)
-            })
-            .count();
+        let deviating = sources.iter().filter(|source| !routed_extras(&source.routing).is_empty() || uses_agbcc_compiler(CompilerTarget::Gs1, &source.routing)).count();
         println!("routing debt: {deviating} of {} live sources deviate from the standard", sources.len());
         return ExitCode::SUCCESS;
     }
@@ -144,15 +122,10 @@ pub fn entry(arguments: &[String]) -> ExitCode {
         live_sources()
     } else {
         let paths = SourcePaths::load(compiler_core::routing::root()).ok();
-        arguments
-            .iter()
-            .filter(|a| !a.starts_with("--"))
-            .flat_map(|source| source_records(paths.as_ref(), source))
-            .collect()
+        arguments.iter().filter(|a| !a.starts_with("--")).flat_map(|source| source_records(paths.as_ref(), source)).collect()
     };
     for source in sources {
-        if !Path::new(&source.display).exists() && !source.display.starts_with("games/gs1/recon/en/main/does_not_exist")
-        {
+        if !Path::new(&source.display).exists() && !source.display.starts_with("games/gs1/recon/en/main/does_not_exist") {
             eprintln!("warning: {} does not exist on disk", source.display);
         }
         if only_routed && routed_extras(&source.routing).is_empty() {

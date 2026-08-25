@@ -8,11 +8,7 @@ use std::process::Command;
 use tempfile::tempdir;
 
 fn number(row: &serde_json::Value, key: &str) -> Option<i64> {
-    row.get(key).and_then(|value| {
-        value
-            .as_i64()
-            .or_else(|| value.as_str().and_then(|text| i64::from_str_radix(text.trim_start_matches("0x"), 16).ok()))
-    })
+    row.get(key).and_then(|value| value.as_i64().or_else(|| value.as_str().and_then(|text| i64::from_str_radix(text.trim_start_matches("0x"), 16).ok())))
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -68,15 +64,7 @@ fn thumb_transfer(line: &str) -> Option<ThumbTransfer> {
 }
 
 fn approved_thumb_block_copy_pair(load: &ThumbTransfer, store: &ThumbTransfer) -> bool {
-    load.load
-        && !store.load
-        && !load.targeted
-        && !store.targeted
-        && matches!(load.registers.len(), 2 | 3)
-        && load.registers == store.registers
-        && load.base != store.base
-        && !load.registers.contains(&load.base)
-        && !store.registers.contains(&store.base)
+    load.load && !store.load && !load.targeted && !store.targeted && matches!(load.registers.len(), 2 | 3) && load.registers == store.registers && load.base != store.base && !load.registers.contains(&load.base) && !store.registers.contains(&store.base)
 }
 
 fn thumb_standalone_wide_transfer_lines(source: &str) -> Vec<usize> {
@@ -96,38 +84,18 @@ fn thumb_standalone_wide_transfer_lines(source: &str) -> Vec<usize> {
             if transfer.registers.len() < 3 {
                 return None;
             }
-            let paired_as_load = significant
-                .get(index + 1)
-                .and_then(|(_, next)| next.as_ref())
-                .is_some_and(|next| approved_thumb_block_copy_pair(transfer, next));
-            let paired_as_store = index
-                .checked_sub(1)
-                .and_then(|previous| significant.get(previous))
-                .and_then(|(_, previous)| previous.as_ref())
-                .is_some_and(|previous| approved_thumb_block_copy_pair(previous, transfer));
+            let paired_as_load = significant.get(index + 1).and_then(|(_, next)| next.as_ref()).is_some_and(|next| approved_thumb_block_copy_pair(transfer, next));
+            let paired_as_store = index.checked_sub(1).and_then(|previous| significant.get(previous)).and_then(|(_, previous)| previous.as_ref()).is_some_and(|previous| approved_thumb_block_copy_pair(previous, transfer));
             (!paired_as_load && !paired_as_store).then_some(*line)
         })
         .collect()
 }
 
 fn audit_multi_register_evidence(root: &Path, overlays: &[String]) -> Result<Vec<String>, String> {
-    let regions: serde_json::Value =
-        serde_json::from_slice(&fs::read(root.join("games/gs1/semantic/regions.json")).map_err(|e| e.to_string())?)
-            .map_err(|e| e.to_string())?;
-    let evidence: serde_json::Value = serde_json::from_slice(
-        &fs::read(root.join("games/gs1/semantic/overlay-assembly.json")).map_err(|e| e.to_string())?,
-    )
-    .map_err(|e| e.to_string())?;
+    let regions: serde_json::Value = serde_json::from_slice(&fs::read(root.join("games/gs1/semantic/regions.json")).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?;
+    let evidence: serde_json::Value = serde_json::from_slice(&fs::read(root.join("games/gs1/semantic/overlay-assembly.json")).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?;
     let wanted: std::collections::BTreeSet<_> = overlays.iter().cloned().collect();
-    let owners: Vec<_> = regions["manual_regions"]
-        .as_array()
-        .into_iter()
-        .flatten()
-        .filter_map(|row| {
-            Some((row["overlay"].as_str()?.to_string(), number(row, "entry")?, number(row, "span_bytes")?))
-        })
-        .filter(|(overlay, _, _)| wanted.contains(overlay))
-        .collect();
+    let owners: Vec<_> = regions["manual_regions"].as_array().into_iter().flatten().filter_map(|row| Some((row["overlay"].as_str()?.to_string(), number(row, "entry")?, number(row, "span_bytes")?))).filter(|(overlay, _, _)| wanted.contains(overlay)).collect();
     let claimed: std::collections::BTreeSet<_> = evidence["regions"]
         .as_array()
         .into_iter()
@@ -150,17 +118,14 @@ fn audit_multi_register_evidence(root: &Path, overlays: &[String]) -> Result<Vec
                 continue;
             };
             let address = OVERLAY_BASE + offset;
-            if let Some((_, entry, span)) =
-                owners.iter().find(|(id, entry, span)| id == overlay && address >= *entry && address < *entry + *span)
-            {
+            if let Some((_, entry, span)) = owners.iter().find(|(id, entry, span)| id == overlay && address >= *entry && address < *entry + *span) {
                 found.insert((overlay.clone(), *entry, *entry + *span));
             }
         }
     }
     let mut findings = Vec::new();
     for row in &found {
-        let mut parts: Vec<_> =
-            claimed.iter().filter(|part| part.0 == row.0 && part.1 >= row.1 && part.2 <= row.2).collect();
+        let mut parts: Vec<_> = claimed.iter().filter(|part| part.0 == row.0 && part.1 >= row.1 && part.2 <= row.2).collect();
         parts.sort_by_key(|part| part.1);
         if parts.first().is_none_or(|part| part.1 != row.1) || parts.last().is_none_or(|part| part.2 != row.2) {
             findings.push(format!("{}:{:08x}\tUNCLAIMED_MULTI_REGISTER_OWNER\tend={:08x}", row.0, row.1, row.2));
@@ -200,11 +165,7 @@ pub(crate) fn placeholder_block(lines: &[&str], address: i64) -> Option<(usize, 
     Some((start, end, span))
 }
 fn git(root: &Path, arguments: &[&str]) -> Result<String, String> {
-    let output = Command::new("git")
-        .current_dir(root)
-        .args(arguments)
-        .output()
-        .map_err(|error| format!("git failed: {error}"))?;
+    let output = Command::new("git").current_dir(root).args(arguments).output().map_err(|error| format!("git failed: {error}"))?;
     if !output.status.success() {
         return Err(format!("git {} failed: {}", arguments.join(" "), String::from_utf8_lossy(&output.stderr).trim()));
     }
@@ -230,8 +191,7 @@ fn pre_adoption_text(root: &Path, overlay: &str, address: i64) -> Result<String,
     for revision in &revisions {
         let text = git(root, &["show", &format!("{}:{}", revision.0, revision.1)]).unwrap_or_default();
         if text.lines().any(|line| line.trim() == tag) {
-            let (commit, name) =
-                previous.ok_or_else(|| format!("{tag} is present in the first revision of {relative}"))?;
+            let (commit, name) = previous.ok_or_else(|| format!("{tag} is present in the first revision of {relative}"))?;
             return git(root, &["show", &format!("{commit}:{name}")]);
         }
         previous = Some(revision);
@@ -360,9 +320,7 @@ fn region_text(text: &str, address: i64, span: i64) -> Result<Vec<String>, Strin
     let offsets = listing_offsets(&path)?;
     let (first, last) = region_lines(&offsets, address - OVERLAY_BASE, span)?;
     let lines: Vec<&str> = text.split('\n').collect();
-    let slice = lines
-        .get((first as usize - 1)..(last as usize))
-        .ok_or_else(|| format!("lines {first}-{last} are outside the historical revision"))?;
+    let slice = lines.get((first as usize - 1)..(last as usize)).ok_or_else(|| format!("lines {first}-{last} are outside the historical revision"))?;
     Ok(slice.iter().map(|line| line.to_string()).collect())
 }
 pub fn reference_bytes(root: &Path, overlay: &str, address: i64, span: i64) -> Result<Vec<u8>, String> {
@@ -417,9 +375,7 @@ pub fn audit(root: &Path, overlay: &str) -> Result<Vec<String>, String> {
                 continue;
             }
         };
-        let padded = compiled.len() < reference.len()
-            && reference[..compiled.len()] == compiled[..]
-            && reference[compiled.len()..].iter().all(|byte| *byte == 0);
+        let padded = compiled.len() < reference.len() && reference[..compiled.len()] == compiled[..] && reference[compiled.len()..].iter().all(|byte| *byte == 0);
         if compiled != reference && !padded {
             let shared = compiled.len().min(reference.len());
             let mut differing = (compiled.len().abs_diff(reference.len())).div_ceil(2);
@@ -428,11 +384,7 @@ pub fn audit(root: &Path, overlay: &str) -> Result<Vec<String>, String> {
                     differing += 1;
                 }
             }
-            findings.push(format!(
-                "{overlay}:{address:08x}\tDIFFERS\treference={}\tcompiled={}\tdiffering={differing}",
-                reference.len(),
-                compiled.len()
-            ));
+            findings.push(format!("{overlay}:{address:08x}\tDIFFERS\treference={}\tcompiled={}\tdiffering={differing}", reference.len(), compiled.len()));
         }
     }
     let _ = fs::remove_dir_all(&work);
@@ -488,11 +440,7 @@ pub fn truth_window(root: &Path, overlay: &str, address: i64, span: i64) -> Resu
             match assemble_overlay(&OverlaySource::path(&path), OVERLAY_BASE) {
                 Ok(image) => match image.get(start..start + span as usize) {
                     Some(window) => return Ok((window.to_vec(), "assembly")),
-                    None => format!(
-                        "the assembled overlay is {} bytes and the row needs {}",
-                        image.len(),
-                        start + span as usize
-                    ),
+                    None => format!("the assembled overlay is {} bytes and the row needs {}", image.len(), start + span as usize),
                 },
                 Err(message) => message,
             }
@@ -500,9 +448,7 @@ pub fn truth_window(root: &Path, overlay: &str, address: i64, span: i64) -> Resu
         Ok(Some(_)) => "the row is adopted, so its assembly is a placeholder".to_string(),
         Err(message) => message,
     };
-    reference_bytes(root, overlay, address, span)
-        .map(|bytes| (bytes, "git"))
-        .map_err(|git| format!("{git}; no ROM window either: {rom}; and not from the assembly: {assembled}"))
+    reference_bytes(root, overlay, address, span).map(|bytes| (bytes, "git")).map_err(|git| format!("{git}; no ROM window either: {rom}; and not from the assembly: {assembled}"))
 }
 pub fn placeholder_span(root: &Path, overlay: &str, address: i64) -> Result<Option<i64>, String> {
     let path = root.join(format!("games/gs1/assets/code/{overlay}_overlay.s"));
@@ -520,11 +466,9 @@ pub fn park_one(root: &Path, overlay: &str, address: i64, apply: bool) -> Result
     let assembly = root.join(format!("games/gs1/assets/code/{overlay}_overlay.s"));
     let original = fs::read_to_string(&assembly).map_err(|error| error.to_string())?;
     let lines: Vec<&str> = original.split('\n').collect();
-    let (start, end, span) = placeholder_block(&lines, address)
-        .ok_or_else(|| format!("no AlchemyC_{address:08x} placeholder in {}", assembly.display()))?;
+    let (start, end, span) = placeholder_block(&lines, address).ok_or_else(|| format!("no AlchemyC_{address:08x} placeholder in {}", assembly.display()))?;
     let (reference, oracle) = truth_window(root, overlay, address, span)?;
-    let from_git = pre_adoption_text(root, overlay, address)
-        .and_then(|text| region_text(&define_dangling_labels(&text), address, span));
+    let from_git = pre_adoption_text(root, overlay, address).and_then(|text| region_text(&define_dangling_labels(&text), address, span));
     let usable = |lines: &Vec<String>| !lines.iter().any(|line| line.trim_start().starts_with("AlchemyC_"));
     let restored = match from_git {
         Ok(lines) if usable(&lines) => lines,
@@ -548,8 +492,7 @@ pub fn park_one(root: &Path, overlay: &str, address: i64, apply: bool) -> Result
     }
     let image = assemble_overlay(&OverlaySource::Str(text.clone()), OVERLAY_BASE)?;
     let at = (address - OVERLAY_BASE) as usize;
-    let window =
-        image.get(at..at + span as usize).ok_or_else(|| "the parked region runs past the image".to_string())?;
+    let window = image.get(at..at + span as usize).ok_or_else(|| "the parked region runs past the image".to_string())?;
     if window != reference.as_slice() {
         return Err(format!("parked bytes differ from the {oracle} reference at 0x{address:08x}"));
     }
@@ -624,20 +567,11 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     }
     let mut failures = 0;
     for row in rows {
-        let (overlay, address) =
-            row.split_once(':').ok_or_else(|| format!("expected <overlay>:<addressHex>, got {row}"))?;
-        let address = i64::from_str_radix(address.trim_start_matches("0x"), 16)
-            .map_err(|_| format!("{row}: address must be hexadecimal"))?;
+        let (overlay, address) = row.split_once(':').ok_or_else(|| format!("expected <overlay>:<addressHex>, got {row}"))?;
+        let address = i64::from_str_radix(address.trim_start_matches("0x"), 16).map_err(|_| format!("{row}: address must be hexadecimal"))?;
         let address = if address < OVERLAY_BASE { OVERLAY_BASE + address } else { address };
         match park_one(root, overlay, address, apply) {
-            Ok(parked) => println!(
-                "parked {}:{:08x} span={} lines={}{}",
-                parked.overlay,
-                parked.address,
-                parked.span,
-                parked.lines,
-                if apply { "" } else { " (dry run)" }
-            ),
+            Ok(parked) => println!("parked {}:{:08x} span={} lines={}{}", parked.overlay, parked.address, parked.span, parked.lines, if apply { "" } else { " (dry run)" }),
             Err(error) => {
                 eprintln!("{row}: {error}");
                 failures += 1;
@@ -657,10 +591,7 @@ mod tests {
     fn recognizes_only_standalone_wide_thumb_transfers() {
         assert_eq!(thumb_standalone_wide_transfer_lines("stmia r2!, {r0-r3} @ wide store"), vec![1]);
         assert!(thumb_standalone_wide_transfer_lines("\tldmia r3!, {r0-r2}\n\tstmia r4!, {r0, r1, r2}").is_empty());
-        assert_eq!(
-            thumb_standalone_wide_transfer_lines("\tldmia r3!, {r0-r2}\n.L_target:\n\tstmia r4!, {r0-r2}"),
-            vec![1, 3]
-        );
+        assert_eq!(thumb_standalone_wide_transfer_lines("\tldmia r3!, {r0-r2}\n.L_target:\n\tstmia r4!, {r0-r2}"), vec![1, 3]);
         assert!(thumb_standalone_wide_transfer_lines("\tldmia r3!, {r0}").is_empty());
         assert!(thumb_standalone_wide_transfer_lines("@ stmia r3!, {r0-r2}").is_empty());
         assert!(thumb_standalone_wide_transfer_lines("\tpush {r4, r5, lr}").is_empty());

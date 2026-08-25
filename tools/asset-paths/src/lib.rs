@@ -18,11 +18,7 @@ impl AssetPaths {
     /// empty listing, which resolves every resource to its unrelocated path.
     pub fn new(root: impl AsRef<Path>) -> Self {
         let root = root.as_ref().to_path_buf();
-        let graphics_listing = fs::read_dir(root.join("games/gs1/assets/graphics"))
-            .map(|entries| {
-                entries.filter_map(Result::ok).map(|entry| entry.file_name().to_string_lossy().into_owned()).collect()
-            })
-            .unwrap_or_default();
+        let graphics_listing = fs::read_dir(root.join("games/gs1/assets/graphics")).map(|entries| entries.filter_map(Result::ok).map(|entry| entry.file_name().to_string_lossy().into_owned()).collect()).unwrap_or_default();
         Self { root, graphics_listing }
     }
 

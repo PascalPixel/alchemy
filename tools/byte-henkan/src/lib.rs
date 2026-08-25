@@ -92,11 +92,7 @@ fn string_is(value: Option<&Value>, expected: &str) -> bool {
 }
 
 pub fn parse_document(value: &Value) -> Result<SourceDocument, String> {
-    let object = exact_keys(
-        value,
-        &["format", "kind", "address", "end", "table_width", "source_rows", "reserved_rows", "tables"],
-        "byte conversion source",
-    )?;
+    let object = exact_keys(value, &["format", "kind", "address", "end", "table_width", "source_rows", "reserved_rows", "tables"], "byte conversion source")?;
     let tables_value = object.get("tables").and_then(Value::as_array);
     if !number_is(object.get("format"), 1)
         || !string_is(object.get("kind"), "golden-sun-byte-henkan-tables")
@@ -117,10 +113,7 @@ pub fn parse_document(value: &Value) -> Result<SourceDocument, String> {
         let expected_name = format!("hyou_{table_index:02}");
         let expected_kind = if table_index < PERMUTATION_TABLES { TableKind::Permutation } else { TableKind::Mapping };
         let rows_value = table.get("rows").and_then(Value::as_array);
-        if !string_is(table.get("name"), &expected_name)
-            || !string_is(table.get("kind"), expected_kind.as_str())
-            || rows_value.map(|rows| rows.len()) != Some(14)
-        {
+        if !string_is(table.get("name"), &expected_name) || !string_is(table.get("kind"), expected_kind.as_str()) || rows_value.map(|rows| rows.len()) != Some(14) {
             return Err(format!("byte conversion table {table_index} differs"));
         }
         let rows_value = rows_value.expect("row count already checked");
@@ -178,8 +171,7 @@ pub fn build_byte_henkan_tables(path: &Path) -> Result<Vec<u8>, String> {
 }
 
 fn test_document() -> Value {
-    let permutation: Vec<Value> =
-        (0..14).map(|row| Value::Array((0..16).map(|column| Value::from(row * 16 + column)).collect())).collect();
+    let permutation: Vec<Value> = (0..14).map(|row| Value::Array((0..16).map(|column| Value::from(row * 16 + column)).collect())).collect();
     let mapping: Vec<Value> = (0..14).map(|_| Value::Array((0..16).map(|_| Value::from(7)).collect())).collect();
     let tables: Vec<Value> = (0..TABLE_COUNT)
         .map(|index| {
@@ -215,12 +207,7 @@ pub fn self_test() -> Result<(), String> {
         }
         result.resize(result.len() + 32, 0);
     }
-    if result.len() != BYTE_HENKAN_SIZE
-        || result[223] != 223
-        || result[224] != 0
-        || result[5 * 256] != 7
-        || *result.last().expect("result is not empty") != 0
-    {
+    if result.len() != BYTE_HENKAN_SIZE || result[223] != 223 || result[224] != 0 || result[5 * 256] != 7 || *result.last().expect("result is not empty") != 0 {
         return Err("byte conversion build self-test failed".to_string());
     }
 

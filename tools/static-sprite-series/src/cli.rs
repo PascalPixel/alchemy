@@ -6,32 +6,16 @@ use std::io::{self, Write};
 use std::path::Path;
 use std::process::ExitCode;
 
-use crate::{
-    build_series, export_series, read_json, self_test, verify_series, Error, Options, STATIC_DESCRIPTOR_COUNT,
-    STATIC_DESCRIPTOR_TABLE, STATIC_PALETTE_ENTRIES, STATIC_PALETTE_OFFSET, STATIC_SERIES_ADDRESS, STATIC_SERIES_END,
-};
+use crate::{build_series, export_series, read_json, self_test, verify_series, Error, Options, STATIC_DESCRIPTOR_COUNT, STATIC_DESCRIPTOR_TABLE, STATIC_PALETTE_ENTRIES, STATIC_PALETTE_OFFSET, STATIC_SERIES_ADDRESS, STATIC_SERIES_END};
 
-const USAGE: &str = "usage: static-sprite-series export-series ROM --directory DIR --palette PNG [--address N --end N] [--descriptor-table N --descriptor-count N] [--palette-offset N --palette-entries N] [--suffix-zeros N] | build INDEX --palette PNG --output FILE | verify ROM INDEX --palette PNG | --self-test";
+const USAGE: &str =
+    "usage: static-sprite-series export-series ROM --directory DIR --palette PNG [--address N --end N] [--descriptor-table N --descriptor-count N] [--palette-offset N --palette-entries N] [--suffix-zeros N] | build INDEX --palette PNG --output FILE | verify ROM INDEX --palette PNG | --self-test";
 
-const OPTIONS: &[&str] = &[
-    "--directory",
-    "--palette",
-    "--address",
-    "--end",
-    "--descriptor-table",
-    "--descriptor-count",
-    "--palette-offset",
-    "--palette-entries",
-    "--suffix-zeros",
-    "--output",
-];
+const OPTIONS: &[&str] = &["--directory", "--palette", "--address", "--end", "--descriptor-table", "--descriptor-count", "--palette-offset", "--palette-entries", "--suffix-zeros", "--output"];
 
 fn reject_unknown_options(args: &[String]) -> Result<(), Error> {
     for arg in args {
-        if arg.starts_with('-')
-            && !matches!(arg.as_str(), "-h" | "--help" | "--self-test")
-            && !OPTIONS.contains(&arg.as_str())
-        {
+        if arg.starts_with('-') && !matches!(arg.as_str(), "-h" | "--help" | "--self-test") && !OPTIONS.contains(&arg.as_str()) {
             return Err(Error(format!("unknown option {arg}\n{USAGE}")));
         }
     }
@@ -92,20 +76,7 @@ fn run(args: &[String]) -> Result<(), Error> {
             let palette_entries = number(optional(args, "--palette-entries")?, STATIC_PALETTE_ENTRIES)?;
             let suffix_zeros = number(optional(args, "--suffix-zeros")?, 0)?;
             let rom = fs::read(rom_path).map_err(|e| Error(format!("{rom_path}: {e}")))?;
-            let index = export_series(
-                &rom,
-                Path::new(&directory),
-                Path::new(&palette),
-                Options {
-                    address,
-                    end,
-                    descriptor_table,
-                    descriptor_count,
-                    palette_offset,
-                    palette_entries,
-                    suffix_zeros,
-                },
-            )?;
+            let index = export_series(&rom, Path::new(&directory), Path::new(&palette), Options { address, end, descriptor_table, descriptor_count, palette_offset, palette_entries, suffix_zeros })?;
             let frames = index["packages"]
                 .as_array()
                 .unwrap()
@@ -115,12 +86,7 @@ fn run(args: &[String]) -> Result<(), Error> {
                     read_json(&path).unwrap()["frames"].as_array().unwrap().len()
                 })
                 .sum::<usize>();
-            println!(
-                "packages={} frames={} bytes={}",
-                index["packages"].as_array().unwrap().len(),
-                frames,
-                number_field(&index, "size")?
-            );
+            println!("packages={} frames={} bytes={}", index["packages"].as_array().unwrap().len(), frames, number_field(&index, "size")?);
             Ok(())
         }
         Some("build") => {

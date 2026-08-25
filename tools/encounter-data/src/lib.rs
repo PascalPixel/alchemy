@@ -173,12 +173,7 @@ pub fn build_brightness_curve(path: &str) -> Result<Vec<u8>> {
     exact_keys(&source, &["format", "address", "size", "phases"], "brightness curve")?;
     checked_extent(&source, BRIGHTNESS_CURVE_ADDRESS, BRIGHTNESS_CURVE_SIZE, "brightness curve")?;
     let phases = match source.get("phases") {
-        Some(Value::Array(phases))
-            if phases.len() == 2
-                && phases.iter().all(|phase| matches!(phase, Value::Array(steps) if steps.len() == 16)) =>
-        {
-            phases
-        }
+        Some(Value::Array(phases)) if phases.len() == 2 && phases.iter().all(|phase| matches!(phase, Value::Array(steps) if steps.len() == 16)) => phases,
         _ => return Err("brightness curve requires two sixteen-step phases".to_string()),
     };
     let mut output = Vec::with_capacity(32);
@@ -207,24 +202,9 @@ fn slot_triple(slot: &Value, name: &str) -> Result<(i64, i64, i64)> {
 
 pub fn build_encounter_tables(path: &str) -> Result<Vec<u8>> {
     let source = document(path)?;
-    exact_keys(
-        &source,
-        &[
-            "format",
-            "address",
-            "size",
-            "formation_record_size",
-            "metadata_record_size",
-            "formations",
-            "preload_ids",
-            "metadata",
-        ],
-        "encounter tables",
-    )?;
+    exact_keys(&source, &["format", "address", "size", "formation_record_size", "metadata_record_size", "formations", "preload_ids", "metadata"], "encounter tables")?;
     checked_extent(&source, ENCOUNTER_TABLE_ADDRESS, ENCOUNTER_TABLE_SIZE, "encounter tables")?;
-    if !js_strict_int(source.get("formation_record_size"), 16.0)
-        || !js_strict_int(source.get("metadata_record_size"), 8.0)
-    {
+    if !js_strict_int(source.get("formation_record_size"), 16.0) || !js_strict_int(source.get("metadata_record_size"), 8.0) {
         return Err("encounter record sizes differ".to_string());
     }
 
@@ -276,8 +256,7 @@ pub fn build_encounter_tables(path: &str) -> Result<Vec<u8>> {
         metadata[offset..offset + 2].copy_from_slice(&value.to_le_bytes());
         metadata[offset + 2] = flag_byte(at(1), &format!("metadata {index} flags 0"))?;
         metadata[offset + 3] = flag_byte(at(2), &format!("metadata {index} flags 1"))?;
-        metadata[offset + 4] =
-            integer(at(3).unwrap_or(&Value::Null), 0, 0xff, &format!("metadata {index} attribute 4"))? as u8;
+        metadata[offset + 4] = integer(at(3).unwrap_or(&Value::Null), 0, 0xff, &format!("metadata {index} attribute 4"))? as u8;
     }
 
     let mut output = formations;
@@ -293,8 +272,7 @@ pub fn build_alignment(path: &str) -> Result<Vec<u8>> {
     let source = document(path)?;
     exact_keys(&source, &["format", "address", "size", "end", "fill"], "encounter alignment")?;
     checked_extent(&source, ALIGNMENT_ADDRESS, ALIGNMENT_SIZE, "encounter alignment")?;
-    if source.get("end").map_or(f64::NAN, js_number) != ALIGNMENT_END as f64 || !js_strict_int(source.get("fill"), 0.0)
-    {
+    if source.get("end").map_or(f64::NAN, js_number) != ALIGNMENT_END as f64 || !js_strict_int(source.get("fill"), 0.0) {
         return Err("encounter alignment boundary differs".to_string());
     }
     Ok(vec![0u8; ALIGNMENT_SIZE])
@@ -302,11 +280,8 @@ pub fn build_alignment(path: &str) -> Result<Vec<u8>> {
 
 pub fn build_encounter_regions(directory: &str) -> Result<Vec<EncounterRegion>> {
     type Builder = fn(&str) -> Result<Vec<u8>>;
-    let sources: [(usize, usize, &'static str, Builder); 3] = [
-        (BRIGHTNESS_CURVE_ADDRESS, BRIGHTNESS_CURVE_SIZE, "brightness_curve.json", build_brightness_curve),
-        (ENCOUNTER_TABLE_ADDRESS, ENCOUNTER_TABLE_SIZE, "encounter_tables.json", build_encounter_tables),
-        (ALIGNMENT_ADDRESS, ALIGNMENT_SIZE, "alignment.json", build_alignment),
-    ];
+    let sources: [(usize, usize, &'static str, Builder); 3] =
+        [(BRIGHTNESS_CURVE_ADDRESS, BRIGHTNESS_CURVE_SIZE, "brightness_curve.json", build_brightness_curve), (ENCOUNTER_TABLE_ADDRESS, ENCOUNTER_TABLE_SIZE, "encounter_tables.json", build_encounter_tables), (ALIGNMENT_ADDRESS, ALIGNMENT_SIZE, "alignment.json", build_alignment)];
     let mut regions = Vec::with_capacity(3);
     for (address, size, source, builder) in sources {
         let data = builder(&format!("{directory}_{source}"))?;

@@ -26,7 +26,7 @@ PORTABLE_TOOLS := alignment-tail asset-paths cache-entry canonical-json \
 	overlay-adopt overlay-call-targets check check-commit-progress \
 	check-publication check-unmatchable core-retained-audit coverage-map \
 	full-c-progress integrate-matches route-dump decomp-targets
-TOOLING_LINE_LIMIT := 35000
+TOOLING_LINE_LIMIT := 30000
 TARGET ?= gs1-en
 HISTORICAL_TARGETS := gs1-ja gs1-en gs1-de gs1-es gs1-fr gs1-it \
 	gs2-ja gs2-en gs2-de gs2-es gs2-fr gs2-it

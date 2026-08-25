@@ -138,11 +138,7 @@ pub fn find_forbidden(file: &str, text: &str) -> Vec<Finding> {
         }
         let word = &code[start..index];
         if forbidden_token(word) {
-            findings.push(Finding {
-                file: file.to_string(),
-                line: code[..start].bytes().filter(|byte| *byte == b'\n').count() + 1,
-                token: word.to_string(),
-            });
+            findings.push(Finding { file: file.to_string(), line: code[..start].bytes().filter(|byte| *byte == b'\n').count() + 1, token: word.to_string() });
         }
     }
     findings

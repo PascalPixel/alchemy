@@ -17,33 +17,17 @@ struct JumpTable {
     loader: usize,
 }
 
-pub fn symbolize(
-    source: &Path,
-    listing: &Path,
-    relocatable: bool,
-    symbol: &str,
-    image: &Path,
-) -> Result<(String, SymbolizeStats), String> {
+pub fn symbolize(source: &Path, listing: &Path, relocatable: bool, symbol: &str, image: &Path) -> Result<(String, SymbolizeStats), String> {
     let source_text = std::fs::read_to_string(source).map_err(|error| format!("{}: {error}", source.display()))?;
     let listing_text = std::fs::read_to_string(listing).map_err(|error| format!("{}: {error}", listing.display()))?;
     let image = std::fs::read(image).map_err(|error| format!("{}: {error}", image.display()))?;
     symbolize_text(source, &source_text, &listing_text, relocatable, Some(symbol), Some(&image))
 }
 
-fn symbolize_text(
-    source: &Path,
-    source_text: &str,
-    listing_text: &str,
-    relocatable: bool,
-    symbol: Option<&str>,
-    image: Option<&[u8]>,
-) -> Result<(String, SymbolizeStats), String> {
+fn symbolize_text(source: &Path, source_text: &str, listing_text: &str, relocatable: bool, symbol: Option<&str>, image: Option<&[u8]>) -> Result<(String, SymbolizeStats), String> {
     let hex = Regex::new(r"(?i)([0-9a-f]{8})").unwrap();
     let stem = source.file_stem().and_then(|value| value.to_str()).unwrap_or("");
-    let base = hex
-        .captures(stem)
-        .and_then(|capture| u64::from_str_radix(&capture[1], 16).ok())
-        .ok_or_else(|| format!("cannot derive image address from {}", source.display()))?;
+    let base = hex.captures(stem).and_then(|capture| u64::from_str_radix(&capture[1], 16).ok()).ok_or_else(|| format!("cannot derive image address from {}", source.display()))?;
     let lines: Vec<&str> = source_text.lines().collect();
     let listing_row = Regex::new(r"^\s*(\d+)\s+([0-9A-Fa-f]{4,8})\s+").unwrap();
     let mut line_address = BTreeMap::<usize, u64>::new();
@@ -81,22 +65,14 @@ fn symbolize_text(
             let Some(capture) = word.captures(lines[cursor]) else {
                 break;
             };
-            targets
-                .push(u64::from_str_radix(capture[1].trim_start_matches("0x"), 16).map_err(|error| error.to_string())?);
+            targets.push(u64::from_str_radix(capture[1].trim_start_matches("0x"), 16).map_err(|error| error.to_string())?);
             cursor += 1;
         }
         if targets.is_empty() {
             return Err(format!("no jump table after source line {}", index + 1));
         }
-        let address = base
-            + line_address
-                .get(&(start + 1))
-                .copied()
-                .ok_or_else(|| format!("listing omits source line {}", start + 1))?;
-        let loader = (index.saturating_sub(24)..index)
-            .rev()
-            .find(|candidate| pc_load.is_match(lines[*candidate]))
-            .ok_or_else(|| format!("no PC-relative jump-table load before line {}", index + 1))?;
+        let address = base + line_address.get(&(start + 1)).copied().ok_or_else(|| format!("listing omits source line {}", start + 1))?;
+        let loader = (index.saturating_sub(24)..index).rev().find(|candidate| pc_load.is_match(lines[*candidate])).ok_or_else(|| format!("no PC-relative jump-table load before line {}", index + 1))?;
         tables.push(JumpTable { start, end: cursor, address, targets, loader });
         index = cursor;
     }
@@ -118,10 +94,7 @@ fn symbolize_text(
                 replacement.push_str(&format!(" + 0x{base:08x}"));
             }
             rewrites.insert(source_index, word.replace(line, format!(".4byte {replacement}")).into_owned());
-            let target_line = address_line
-                .get(&target.saturating_sub(base))
-                .copied()
-                .ok_or_else(|| format!("no source line for jump target 0x{target:08x}"))?;
+            let target_line = address_line.get(&target.saturating_sub(base)).copied().ok_or_else(|| format!("no source line for jump target 0x{target:08x}"))?;
             inserts.entry(target_line - 1).or_default().push(format!("{target_label}:"));
         }
         let pointer_text = format!("0x{:08x}", table.address);
@@ -145,10 +118,7 @@ fn symbolize_text(
         let Some(capture) = pc_load.captures(line) else {
             continue;
         };
-        let instruction = line_address
-            .get(&(source_index + 1))
-            .copied()
-            .ok_or_else(|| format!("listing omits PC load on source line {}", source_index + 1))?;
+        let instruction = line_address.get(&(source_index + 1)).copied().ok_or_else(|| format!("listing omits PC load on source line {}", source_index + 1))?;
         let displacement = capture[1].parse::<u64>().map_err(|error| error.to_string())?;
         let pool_address = ((instruction + 4) & !3) + displacement;
         let pool_label = format!(".Lm2c_pool_{pool_address:04x}");
@@ -157,15 +127,8 @@ fn symbolize_text(
         } else {
             let image = image.ok_or_else(|| format!("no source line for literal pool offset 0x{pool_address:x}"))?;
             let rom_address = base + pool_address;
-            let offset = rom_address
-                .checked_sub(0x0800_0000)
-                .and_then(|value| usize::try_from(value).ok())
-                .ok_or_else(|| format!("literal pool address 0x{rom_address:08x} is outside ROM"))?;
-            let bytes: [u8; 4] = image
-                .get(offset..offset + 4)
-                .ok_or_else(|| format!("literal pool address 0x{rom_address:08x} is outside ROM"))?
-                .try_into()
-                .unwrap();
+            let offset = rom_address.checked_sub(0x0800_0000).and_then(|value| usize::try_from(value).ok()).ok_or_else(|| format!("literal pool address 0x{rom_address:08x} is outside ROM"))?;
+            let bytes: [u8; 4] = image.get(offset..offset + 4).ok_or_else(|| format!("literal pool address 0x{rom_address:08x} is outside ROM"))?.try_into().unwrap();
             external_pools.insert(pool_address, u32::from_le_bytes(bytes));
         }
         rewrites.insert(source_index, pc_load.replace(line, pool_label.as_str()).into_owned());
@@ -184,12 +147,7 @@ fn symbolize_text(
                 output.push('\n');
             }
         }
-        let same_address_owner_alias = symbol.is_some_and(|symbol| {
-            source_index > 0
-                && lines[source_index - 1].trim() == format!("{symbol}:")
-                && (line.trim().starts_with("Region_") || line.trim().starts_with("Func_"))
-                && line.trim().ends_with(':')
-        });
+        let same_address_owner_alias = symbol.is_some_and(|symbol| source_index > 0 && lines[source_index - 1].trim() == format!("{symbol}:") && (line.trim().starts_with("Region_") || line.trim().starts_with("Func_")) && line.trim().ends_with(':'));
         if same_address_owner_alias {
             continue;
         }
@@ -204,14 +162,7 @@ fn symbolize_text(
     for (address, value) in external_pools {
         output.push_str(&format!(".Lm2c_pool_{address:04x}:\n.4byte 0x{value:08x}\n"));
     }
-    Ok((
-        output,
-        SymbolizeStats {
-            jump_tables: tables.len(),
-            table_entries: tables.iter().map(|table| table.targets.len()).sum(),
-            references: rewrites.len(),
-        },
-    ))
+    Ok((output, SymbolizeStats { jump_tables: tables.len(), table_entries: tables.iter().map(|table| table.targets.len()).sum(), references: rewrites.len() }))
 }
 
 #[cfg(test)]

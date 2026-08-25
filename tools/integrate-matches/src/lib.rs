@@ -61,16 +61,8 @@ fn parse_hex(value: &str) -> Option<u64> {
 
 fn command(argv: &[String], cwd: &Path) -> Result<Output, String> {
     let program = argv.first().ok_or_else(|| "empty command".to_string())?;
-    let output = Command::new(program)
-        .args(&argv[1..])
-        .current_dir(cwd)
-        .output()
-        .map_err(|error| format!("{program}: {error}"))?;
-    Ok(Output {
-        code: output.status.code().unwrap_or(-1),
-        stdout: String::from_utf8_lossy(&output.stdout).into_owned(),
-        stderr: String::from_utf8_lossy(&output.stderr).into_owned(),
-    })
+    let output = Command::new(program).args(&argv[1..]).current_dir(cwd).output().map_err(|error| format!("{program}: {error}"))?;
+    Ok(Output { code: output.status.code().unwrap_or(-1), stdout: String::from_utf8_lossy(&output.stdout).into_owned(), stderr: String::from_utf8_lossy(&output.stderr).into_owned() })
 }
 
 fn command_error(output: &Output) -> &str {
@@ -111,9 +103,7 @@ fn linked_extent(output: &str, target: &str, address: u64, length: usize) -> Res
             entries.push((start, end, name));
         }
     }
-    if !entries.iter().any(|(start, _, name)| *start == address && *name == target)
-        || entries.iter().any(|(_, end, _)| *end <= address || *end > limit)
-    {
+    if !entries.iter().any(|(start, _, name)| *start == address && *name == target) || entries.iter().any(|(_, end, _)| *end <= address || *end > limit) {
         return Err("compiled function extent differs".to_string());
     }
     let end = entries.iter().map(|(_, end, _)| *end).max().unwrap();
@@ -121,15 +111,11 @@ fn linked_extent(output: &str, target: &str, address: u64, length: usize) -> Res
 }
 
 fn first_difference(left: &[u8], right: &[u8]) -> Option<usize> {
-    left.iter()
-        .zip(right)
-        .position(|(left, right)| left != right)
-        .or_else(|| (left.len() != right.len()).then_some(left.len().min(right.len())))
+    left.iter().zip(right).position(|(left, right)| left != right).or_else(|| (left.len() != right.len()).then_some(left.len().min(right.len())))
 }
 
 fn linked_bytes(stem: &str, source: &Path, scratch: &Path, kind: Kind, repository: &Path) -> Result<Vec<u8>, String> {
-    let address =
-        parse_hex(stem).filter(|_| valid_address(stem)).ok_or_else(|| "invalid source address".to_string())?;
+    let address = parse_hex(stem).filter(|_| valid_address(stem)).ok_or_else(|| "invalid source address".to_string())?;
     fs::create_dir_all(scratch).map_err(|error| format!("{}: {error}", scratch.display()))?;
     let prefix = scratch.join(format!("{stem}.{}probe", if kind == Kind::Asm { "asm" } else { "c" }));
     let prefix = prefix.to_string_lossy().into_owned();
@@ -138,12 +124,7 @@ fn linked_bytes(stem: &str, source: &Path, scratch: &Path, kind: Kind, repositor
 
     if kind == Kind::C {
         let routing_source = repository.join("games/gs1/src").join(format!("{stem}.c"));
-        let mut options = SourceToAssemblyPlanOptions::new(
-            CompilerTarget::Gs1,
-            routing_source.to_string_lossy().to_string(),
-            source.to_string_lossy().to_string(),
-            listing.clone(),
-        );
+        let mut options = SourceToAssemblyPlanOptions::new(CompilerTarget::Gs1, routing_source.to_string_lossy().to_string(), source.to_string_lossy().to_string(), listing.clone());
         options.preprocessed_output = Some(format!("{prefix}.i"));
         for step in source_to_assembly_plan(&options)?.steps {
             let result = command(&step.command, root())?;
@@ -163,8 +144,7 @@ fn linked_bytes(stem: &str, source: &Path, scratch: &Path, kind: Kind, repositor
     if undefined.code != 0 {
         return Err(format!("nm failed: {}", command_error(&undefined)));
     }
-    let names: Vec<String> =
-        undefined.stdout.lines().filter_map(|line| line.split_whitespace().last().map(str::to_owned)).collect();
+    let names: Vec<String> = undefined.stdout.lines().filter_map(|line| line.split_whitespace().last().map(str::to_owned)).collect();
     for name in &names {
         if external_symbol(name, CALL_VIA_BASE).is_none() {
             return Err(format!("unsupported external symbol {name}"));
@@ -186,19 +166,7 @@ fn linked_bytes(stem: &str, source: &Path, scratch: &Path, kind: Kind, repositor
     let address_text = format!("{address:08x}");
     let elf = format!("{prefix}.elf");
     let binary = format!("{prefix}.bin");
-    let result = command(
-        &argv(&[
-            "arm-none-eabi-ld",
-            &format!("-Ttext=0x{address_text}"),
-            "-e",
-            &format!("Func_{address_text}"),
-            "-o",
-            &elf,
-            &object,
-            &symbols_object,
-        ]),
-        root(),
-    )?;
+    let result = command(&argv(&["arm-none-eabi-ld", &format!("-Ttext=0x{address_text}"), "-e", &format!("Func_{address_text}"), "-o", &elf, &object, &symbols_object]), root())?;
     if result.code != 0 {
         return Err(format!("linker failed: {}", command_error(&result)));
     }
@@ -219,10 +187,7 @@ fn linked_bytes(stem: &str, source: &Path, scratch: &Path, kind: Kind, repositor
 }
 
 fn root_directory() -> PathBuf {
-    std::env::var_os(ROOT_OVERRIDE)
-        .filter(|value| !value.is_empty())
-        .map(PathBuf::from)
-        .unwrap_or_else(|| root().to_path_buf())
+    std::env::var_os(ROOT_OVERRIDE).filter(|value| !value.is_empty()).map(PathBuf::from).unwrap_or_else(|| root().to_path_buf())
 }
 
 fn close_dossier(path: &Path, state: &str) -> Result<bool, String> {
@@ -242,16 +207,7 @@ fn close_dossier(path: &Path, state: &str) -> Result<bool, String> {
         }
         offset += line.len();
     }
-    let updated = updated.unwrap_or_else(|| {
-        if source.starts_with('#') {
-            source.find('\n').map_or_else(
-                || source.clone(),
-                |end| format!("{}\n{}\n{}", &source[..end + 1], state, &source[end + 1..]),
-            )
-        } else {
-            source.clone()
-        }
-    });
+    let updated = updated.unwrap_or_else(|| if source.starts_with('#') { source.find('\n').map_or_else(|| source.clone(), |end| format!("{}\n{}\n{}", &source[..end + 1], state, &source[end + 1..])) } else { source.clone() });
     fs::write(path, updated).map_err(|error| format!("{}: {error}", path.display()))?;
     Ok(true)
 }
@@ -286,9 +242,7 @@ fn cleanup(stem: &str, work_root: &Path, date: &str) -> Result<Cleanup, String> 
 }
 
 fn today_utc() -> String {
-    let days = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .map_or(0, |duration| duration.as_secs() / 86_400) as i64;
+    let days = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_or(0, |duration| duration.as_secs() / 86_400) as i64;
     let z = days + 719_468;
     let era = (if z >= 0 { z } else { z - 146_096 }) / 146_097;
     let doe = z - era * 146_097;
@@ -343,10 +297,7 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<Vec<String>, String> {
             let wanted = linked_bytes(stem, &asm, &gate, Kind::Asm, &repository)?;
             let got = linked_bytes(stem, &candidate, &gate, Kind::C, &repository)?;
             if let Some(offset) = first_difference(&wanted, &got) {
-                rejected.push((
-                    stem.to_string(),
-                    format!("bytes differ at +0x{offset:x} (asm={}B c={}B)", wanted.len(), got.len()),
-                ));
+                rejected.push((stem.to_string(), format!("bytes differ at +0x{offset:x} (asm={}B c={}B)", wanted.len(), got.len())));
             } else {
                 accepted.push((stem.to_string(), wanted.len()));
             }
@@ -374,21 +325,12 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<Vec<String>, String> {
             let scratch = cleanup(stem, &repository.join("scratch"), &date)?;
             let draft = cleanup(stem, &repository.join("draft"), &date)?;
             if scratch.removed + draft.removed > 0 || scratch.closed || draft.closed {
-                lines.push(format!(
-                    "clean {stem} scratch={} wall={}",
-                    scratch.removed + draft.removed,
-                    if scratch.closed || draft.closed { "closed" } else { "absent" }
-                ));
+                lines.push(format!("clean {stem} scratch={} wall={}", scratch.removed + draft.removed, if scratch.closed || draft.closed { "closed" } else { "absent" }));
             }
         }
     }
     lines.extend(rejected.iter().map(|(stem, reason)| format!("reject {stem}: {reason}")));
-    lines.push(format!(
-        "accepted={} rejected={}{}",
-        accepted.len(),
-        rejected.len(),
-        if apply { " (applied)" } else { " (dry run)" }
-    ));
+    lines.push(format!("accepted={} rejected={}{}", accepted.len(), rejected.len(), if apply { " (applied)" } else { " (dry run)" }));
     Ok(lines)
 }
 

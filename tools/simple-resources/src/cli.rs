@@ -24,12 +24,10 @@ fn run(mut args: Vec<String>) -> Result<(), Error> {
             return Ok(());
         }
     }
-    let command =
-        args.first().map(String::as_str).ok_or_else(|| Error("export or verify and a ROM are required".into()))?;
+    let command = args.first().map(String::as_str).ok_or_else(|| Error("export or verify and a ROM are required".into()))?;
     if command == "build-stdout" {
         let root = args.get(1).ok_or_else(|| Error("build-stdout requires an assets root".into()))?;
-        let id =
-            args.get(2).ok_or_else(|| Error("build-stdout requires a resource id".into()))?.trim_start_matches("0x");
+        let id = args.get(2).ok_or_else(|| Error("build-stdout requires a resource id".into()))?.trim_start_matches("0x");
         let id = u32::from_str_radix(id, 16).map_err(|_| Error("invalid resource id".into()))?;
         let bytes = build_simple_resource(id, Path::new(root))?;
         io::stdout().write_all(&bytes).map_err(|e| Error(e.to_string()))?;
@@ -45,8 +43,7 @@ fn run(mut args: Vec<String>) -> Result<(), Error> {
     if crate::same_paths(rom, root) {
         return Err(Error("refusing to overwrite the input ROM".into()));
     }
-    let line =
-        if command == "export" { export_simple_resources(rom, root)? } else { verify_simple_resources(rom, root)? };
+    let line = if command == "export" { export_simple_resources(rom, root)? } else { verify_simple_resources(rom, root)? };
     println!("{line}");
     Ok(())
 }

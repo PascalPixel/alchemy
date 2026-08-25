@@ -21,19 +21,9 @@ pub const GBA_LOGO_HEIGHT: u32 = 16;
 
 const LOGO_SHA256: &str = "08a0153cfd6b0ea54b938f7d209933fa849da0d56f5a34c481060c9ff2fad818";
 const LOGO_PNG_SHA256: &str = "060df97f1ea5afefd2c32a471614d116ef855b545800695a451915d8f5f350ba";
-const CODEWORDS: [&str; 16] = [
-    "1", "0110", "01010", "0100", "00010", "011110", "010110", "000110", "00110", "011111", "010111", "000111", "0010",
-    "01110", "00111", "0000",
-];
+const CODEWORDS: [&str; 16] = ["1", "0110", "01010", "0100", "00010", "011110", "010110", "000110", "00110", "011111", "010111", "000111", "0010", "01110", "00111", "0000"];
 const EXPECTED_RESERVED: [(&str, usize); 2] = [("0x080000b5", 7), ("0x080000be", 2)];
-const EXPECTED_UNRESOLVED: [(&str, &str, usize); 6] = [
-    ("entry_branch", "0x08000000", 4),
-    ("title", "0x080000a0", 12),
-    ("game_code", "0x080000ac", 4),
-    ("maker_code", "0x080000b0", 2),
-    ("software_version", "0x080000bc", 1),
-    ("complement_checksum", "0x080000bd", 1),
-];
+const EXPECTED_UNRESOLVED: [(&str, &str, usize); 6] = [("entry_branch", "0x08000000", 4), ("title", "0x080000a0", 12), ("game_code", "0x080000ac", 4), ("maker_code", "0x080000b0", 2), ("software_version", "0x080000bc", 1), ("complement_checksum", "0x080000bd", 1)];
 
 fn sha256_hex(data: &[u8]) -> String {
     format!("{:x}", Sha256::digest(data))
@@ -89,10 +79,7 @@ fn safe_integer(value: Option<&Value>) -> Option<i64> {
 
 fn canonical_address(value: Option<&Value>, label: &str) -> Result<(String, u32), String> {
     let text = value.and_then(Value::as_str).ok_or_else(|| format!("{label} is not a canonical address"))?;
-    if text.len() != 10
-        || !text.starts_with("0x")
-        || !text[2..].bytes().all(|byte| byte.is_ascii_hexdigit() && !byte.is_ascii_uppercase())
-    {
+    if text.len() != 10 || !text.starts_with("0x") || !text[2..].bytes().all(|byte| byte.is_ascii_hexdigit() && !byte.is_ascii_uppercase()) {
         return Err(format!("{label} is not a canonical address"));
     }
     let address = u32::from_str_radix(&text[2..], 16).map_err(|_| format!("{label} is not a canonical address"))?;
@@ -103,11 +90,7 @@ fn parse_record(value: &Value, label: &str, with_name: bool) -> Result<(Option<S
     let record = object(value, label)?;
     let keys = if with_name { &["name", "address", "size"][..] } else { &["address", "size"][..] };
     exact_keys(record, keys, label)?;
-    let name = if with_name {
-        Some(record.get("name").and_then(Value::as_str).ok_or_else(|| format!("{label} name differs"))?.to_string())
-    } else {
-        None
-    };
+    let name = if with_name { Some(record.get("name").and_then(Value::as_str).ok_or_else(|| format!("{label} name differs"))?.to_string()) } else { None };
     let (address, _) = canonical_address(record.get("address"), &format!("{label} address"))?;
     let size = safe_positive_integer(record.get("size"));
     if size.is_none() {
@@ -136,16 +119,10 @@ fn title_bytes(title: &str) -> Result<[u8; 12], String> {
 
 fn parse_edition(value: &Value) -> Result<Edition, String> {
     let edition = object(value, "GBA header edition")?;
-    exact_keys(
-        edition,
-        &["entry_branch", "title", "game_code", "maker_code", "software_version", "complement_checksum"],
-        "GBA header edition",
-    )?;
+    exact_keys(edition, &["entry_branch", "title", "game_code", "maker_code", "software_version", "complement_checksum"], "GBA header edition")?;
     let entry = object(edition.get("entry_branch").ok_or("GBA entry branch must be an object")?, "GBA entry branch")?;
     exact_keys(entry, &["instruction_set", "operation", "target"], "GBA entry branch")?;
-    if entry.get("instruction_set").and_then(Value::as_str) != Some("arm")
-        || entry.get("operation").and_then(Value::as_str) != Some("b")
-    {
+    if entry.get("instruction_set").and_then(Value::as_str) != Some("arm") || entry.get("operation").and_then(Value::as_str) != Some("b") {
         return Err("GBA entry branch differs".to_string());
     }
     let (_, target) = canonical_address(entry.get("target"), "GBA entry target")?;
@@ -167,37 +144,17 @@ fn parse_edition(value: &Value) -> Result<Edition, String> {
     if edition.get("complement_checksum").and_then(Value::as_str) != Some("derived") {
         return Err("GBA checksum policy differs".to_string());
     }
-    Ok(Edition {
-        target,
-        title: title_text.to_string(),
-        game_code,
-        maker_code,
-        software_version: version.unwrap() as u8,
-    })
+    Ok(Edition { target, title: title_text.to_string(), game_code, maker_code, software_version: version.unwrap() as u8 })
 }
 
 pub fn parse_gba_header_source(value: &Value) -> Result<(), String> {
     let source = object(value, "GBA header source")?;
-    exact_keys(
-        source,
-        &["format", "kind", "address", "standard", "edition", "unresolved_fields"],
-        "GBA header source",
-    )?;
-    if !number_equals(source.get("format"), 2)
-        || source.get("kind").and_then(Value::as_str) != Some("gba-cartridge-header-standard-fields")
-        || source.get("address").and_then(Value::as_str) != Some("0x08000000")
-    {
+    exact_keys(source, &["format", "kind", "address", "standard", "edition", "unresolved_fields"], "GBA header source")?;
+    if !number_equals(source.get("format"), 2) || source.get("kind").and_then(Value::as_str) != Some("gba-cartridge-header-standard-fields") || source.get("address").and_then(Value::as_str) != Some("0x08000000") {
         return Err("unsupported GBA header source".to_string());
     }
-    let standard = object(
-        source.get("standard").ok_or("GBA header standard fields must be an object")?,
-        "GBA header standard fields",
-    )?;
-    exact_keys(
-        standard,
-        &["logo", "fixed_value", "unit_code", "device_type", "reserved_zero_ranges"],
-        "GBA header standard fields",
-    )?;
+    let standard = object(source.get("standard").ok_or("GBA header standard fields must be an object")?, "GBA header standard fields")?;
+    exact_keys(standard, &["logo", "fixed_value", "unit_code", "device_type", "reserved_zero_ranges"], "GBA header standard fields")?;
     let logo = object(standard.get("logo").ok_or("GBA header logo must be an object")?, "GBA header logo")?;
     exact_keys(logo, &["codec", "source", "width", "height", "bpp"], "GBA header logo")?;
     if logo.get("codec").and_then(Value::as_str) != Some("gba-bios-huffman-logo")
@@ -212,36 +169,16 @@ pub fn parse_gba_header_source(value: &Value) -> Result<(), String> {
         return Err("GBA header standard values differ".to_string());
     }
     let reserved = source_array(standard.get("reserved_zero_ranges"), "GBA header reserved ranges differ")?;
-    let parsed_reserved: Vec<(Option<String>, String, usize)> = reserved
-        .iter()
-        .enumerate()
-        .map(|(index, value)| parse_record(value, &format!("GBA header reserved range {index}"), false))
-        .collect::<Result<_, _>>()?;
-    if parsed_reserved.len() != EXPECTED_RESERVED.len()
-        || parsed_reserved.iter().zip(EXPECTED_RESERVED).any(
-            |((_, address, size), (expected_address, expected_size))| {
-                address != expected_address || *size != expected_size
-            },
-        )
-    {
+    let parsed_reserved: Vec<(Option<String>, String, usize)> = reserved.iter().enumerate().map(|(index, value)| parse_record(value, &format!("GBA header reserved range {index}"), false)).collect::<Result<_, _>>()?;
+    if parsed_reserved.len() != EXPECTED_RESERVED.len() || parsed_reserved.iter().zip(EXPECTED_RESERVED).any(|((_, address, size), (expected_address, expected_size))| address != expected_address || *size != expected_size) {
         return Err("GBA header reserved ranges differ".to_string());
     }
 
     let unresolved = source_array(source.get("unresolved_fields"), "GBA header unresolved fields differ")?;
-    let parsed_unresolved: Vec<(Option<String>, String, usize)> = unresolved
-        .iter()
-        .enumerate()
-        .map(|(index, value)| parse_record(value, &format!("GBA header unresolved field {index}"), true))
-        .collect::<Result<_, _>>()?;
+    let parsed_unresolved: Vec<(Option<String>, String, usize)> = unresolved.iter().enumerate().map(|(index, value)| parse_record(value, &format!("GBA header unresolved field {index}"), true)).collect::<Result<_, _>>()?;
     match source.get("edition") {
         Some(Value::Null) => {
-            if parsed_unresolved.len() != EXPECTED_UNRESOLVED.len()
-                || parsed_unresolved.iter().zip(EXPECTED_UNRESOLVED).any(
-                    |((name, address, size), (expected_name, expected_address, expected_size))| {
-                        name.as_deref() != Some(expected_name) || address != expected_address || *size != expected_size
-                    },
-                )
-            {
+            if parsed_unresolved.len() != EXPECTED_UNRESOLVED.len() || parsed_unresolved.iter().zip(EXPECTED_UNRESOLVED).any(|((name, address, size), (expected_name, expected_address, expected_size))| name.as_deref() != Some(expected_name) || address != expected_address || *size != expected_size) {
                 return Err("GBA header unresolved fields differ".to_string());
             }
         }
@@ -325,11 +262,7 @@ fn huffman_logo(data: &[u8]) -> Result<Vec<u8>, String> {
 pub fn encode_gba_logo(image: &[u8]) -> Result<Vec<u8>, String> {
     let decoded = indexed_png(image).map_err(|error| error.0)?;
     let pixels: Vec<u8> = decoded.pixels.iter().map(|pixel| *pixel as u8).collect();
-    if decoded.width != GBA_LOGO_WIDTH
-        || decoded.height != GBA_LOGO_HEIGHT
-        || decoded.palette != vec![[255, 255, 255], [0, 0, 0]]
-        || sha256_hex(image) != LOGO_PNG_SHA256
-    {
+    if decoded.width != GBA_LOGO_WIDTH || decoded.height != GBA_LOGO_HEIGHT || decoded.palette != vec![[255, 255, 255], [0, 0, 0]] || sha256_hex(image) != LOGO_PNG_SHA256 {
         return Err("GBA logo source must be the canonical 104x16 monochrome PNG".to_string());
     }
     let output = huffman_logo(&addition_deltas(&tiled_logo_bits(&pixels)))?;
@@ -405,12 +338,7 @@ pub fn build_gba_header(source: &Value, logo_image: &[u8]) -> Result<Vec<u8>, St
     Ok(output)
 }
 
-pub fn build_gba_header_component(
-    source: &Value,
-    logo_image: &[u8],
-    address: u32,
-    size: usize,
-) -> Result<Vec<u8>, String> {
+pub fn build_gba_header_component(source: &Value, logo_image: &[u8], address: u32, size: usize) -> Result<Vec<u8>, String> {
     parse_gba_header_source(source)?;
     if address == GBA_LOGO_ADDRESS && size == GBA_LOGO_SIZE {
         return encode_gba_logo(logo_image);
@@ -421,11 +349,7 @@ pub fn build_gba_header_component(
     if address == GBA_RESERVED_END_ADDRESS && size == GBA_RESERVED_END_SIZE {
         return Ok(vec![0, 0]);
     }
-    if object(source, "GBA header source")?.get("edition").is_some_and(|value| !value.is_null())
-        && size > 0
-        && address >= GBA_HEADER_ADDRESS
-        && (address as u64 + size as u64) <= GBA_HEADER_ADDRESS as u64 + GBA_HEADER_SIZE as u64
-    {
+    if object(source, "GBA header source")?.get("edition").is_some_and(|value| !value.is_null()) && size > 0 && address >= GBA_HEADER_ADDRESS && (address as u64 + size as u64) <= GBA_HEADER_ADDRESS as u64 + GBA_HEADER_SIZE as u64 {
         let header = build_gba_header(source, logo_image)?;
         let offset = (address - GBA_HEADER_ADDRESS) as usize;
         return Ok(header[offset..offset + size].to_vec());

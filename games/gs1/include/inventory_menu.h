@@ -154,6 +154,7 @@ s32 Func_080a32b8(void);
 void Func_080a345c(void);
 void Func_080a3480(void);
 void Func_080a34c0(void);
+void Func_080a3354(void);
 s32 Func_080a355c(s32 party_slot);
 s32 Func_080a4110(s32 column, s32 row);
 s32 Func_080a413c(s32 column, s32 row);
@@ -190,6 +191,7 @@ void Func_08015298(s32 style, u16 item, u8 target, s32 flags);
 #define InventoryMenu_HideAllItemIcons     Func_080a345c
 #define InventoryMenu_HidePageStartIcons   Func_080a3480
 #define InventoryMenu_CloseWindows         Func_080a34c0
+#define InventoryMenu_InitializeInterface  Func_080a3354
 #define InventoryMenu_PrepareOwnerItems    Func_080a355c
 #define InventoryMenu_GetCommandCursorX    Func_080a4110
 #define InventoryMenu_GetCommandCursorY    Func_080a413c

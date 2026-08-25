@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x0809abb4",
+  "name": "BattleEffect_RunFallbackObjectTransition",
+  "status": "measured-draft",
+  "owner_bytes": 444,
+  "candidate_bytes": 448,
+  "differing_halfwords": 197,
+  "wrong_instructions": 102,
+  "family": {
+    "exact_c_dispatcher": "main:08096810",
+    "exact_c_dispatcher_bytes": 336,
+    "exact_c_setup": "main:0809ab98",
+    "exact_c_setup_bytes": 28,
+    "aggregate_reusable_bytes": 808
+  },
+  "cross_edition": {
+    "core_bytes": 320,
+    "core_diff_bytes": 0,
+    "core_identical": true,
+    "starts": {
+      "ja": "0x08091ba8",
+      "en": "0x0809abb4",
+      "de": "0x0809e25c",
+      "es": "0x0809fc4c",
+      "fr": "0x0809fc4c",
+      "it": "0x0809ac4c"
+    }
+  },
+  "notes": [
+    "Complete typed fallback path for battle effect 9. It interpolates a temporary object from the selected target toward the battle origin, runs the timed sound sequence, spawns sixteen motion records around the final position, then releases the temporary object after fixed delays.",
+    "The exact-C dispatcher enters exact 0809ab98 only when target-object setup fails; 0809ab98 marks the active object and immediately calls this owner. The three-owner producer/consumer chain covers 808 executable bytes.",
+    "The first readable model compiles to 448 bytes against the 444-byte owner, with 197 differing halfwords and 102 wrong instructions. The residual is broad, so this draft claims zero bytes and is not eligible for permanent classification.",
+    "Independent relocation-aware matching proves all 320 normalized core bytes identical at unique JA, EN, DE, ES, FR, and IT anchors. Twenty-eight call relocations and three literal fields account for regional raw differences.",
+    "Recovered only from retained GS1 assembly, local exact-C dispatcher/setup and motion analogues, the approved compiler, and the six local GS1 editions. No GS2 or external source was used."
+  ]
+}

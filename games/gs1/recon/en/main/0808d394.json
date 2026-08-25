@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x0808d394",
+  "name": "BattleAction_FindDescriptor",
+  "status": "measured-draft",
+  "owner_bytes": 148,
+  "executable_owner_bytes": 148,
+  "candidate_bytes": 128,
+  "differing_halfwords": 70,
+  "wrong_instructions": 86,
+  "cross_edition": {
+    "relocation_normalized_core_bytes": 144,
+    "core_diff_bytes": 0,
+    "core_identical": true,
+    "starts": {"ja":"0x08084394","en":"0x0808d394","de":"0x0809099c","es":"0x0809239c","fr":"0x0809239c","it":"0x0808d39c"}
+  },
+  "domain": "Searches the four runtime action-descriptor tables by direct identifier or by the ordinal assigned to identifiers above seven.",
+  "bounded_search": {"mode":"screen-only","attempted":0,"exact":false,"reason":"The readable complete candidate is 20 bytes short and has a broad 70-halfword residual."},
+  "notes": ["All 144 normalized core bytes are identical across the six approved GS1 editions.", "The table count, 24-byte record stride, -1 terminator, and high-ID ordinal behavior come directly from the complete owner assembly. Zero DONE bytes are claimed."]
+}

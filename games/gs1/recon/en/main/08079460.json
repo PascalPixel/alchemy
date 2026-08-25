@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x08079460",
+  "name": "BattleUnit_Assign",
+  "status": "measured-draft",
+  "owner_bytes": 412,
+  "executable_owner_bytes": 410,
+  "candidate_bytes": 400,
+  "differing_halfwords": 192,
+  "wrong_instructions": 205,
+  "structural_score": {
+    "match_percent": 69.71066,
+    "instructions": 218,
+    "unchanged": 75,
+    "argument_mismatches": 83,
+    "opcode_mismatches": 4,
+    "replacements": 9,
+    "deletions": 28,
+    "insertions": 21
+  },
+  "family": {
+    "direct_recalculation_owner": "main:08077428",
+    "direct_recalculation_owner_bytes": 2024,
+    "aggregate_reusable_bytes": 2436
+  },
+  "cross_edition": {
+    "core_bytes": 378,
+    "derived_edition_core_diff_bytes": 2,
+    "core_identical": false,
+    "starts": {
+      "ja": "0x0806f460",
+      "en": "0x08079460",
+      "de": "0x0807d260",
+      "es": "0x0807e460",
+      "fr": "0x0807e460",
+      "it": "0x08079460"
+    }
+  },
+  "notes": [
+    "Complete typed implementation behind the BattleUnit_Assign public veneer. It validates the unit and definition IDs, clears the unit record, copies the 84-byte definition's base stats and AI fields, builds the localized display name, expands four ability groups into fifteen slots, initializes equipment, and invokes the unit-stat recalculation owner.",
+    "The readable model compiles to 400 bytes against 410 executable reference bytes (412 including alignment). Its broad 69.71 percent structural score claims zero bytes; it is retained as reusable semantic evidence rather than forced through random source shaping.",
+    "Independent differential matching locates the same owner uniquely in all six GS1 editions. JA supplies a 378-byte normalized core; EN, DE, ES, FR, and IT each differ in only two core bytes, establishing a narrowly bounded regional compiler/source variant rather than falsely claiming six-ROM identity.",
+    "The direct 2,024-byte BattleUnit_Recalculate consumer makes this a coherent 2,436-byte assignment/recalculation family. Existing exact-C item-definition, localized-name, equipment, and ratio-update code supplied the local layout and source-shape analogues.",
+    "Recovered only from retained GS1 assembly, exact local GS1 analogues, the approved compiler, and all six local GS1 editions. No GS2 or external source was used."
+  ]
+}

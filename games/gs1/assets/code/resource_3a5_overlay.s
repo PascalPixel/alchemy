@@ -1421,26 +1421,8 @@ AlchemyC_020004dc:
 	.4byte 0x00000303
 	.4byte 0x00000305
 	.4byte 0x00000301
-	push {lr}
-	ldmia r0!, {r3}
-	ldmia r1!, {r4}
-	ldr r2, [r0, #4]
-	subs r4, r4, r3
-	ldr r3, [r1, #0]
-	subs r3, r3, r2
-	asrs r3, r3, #16
-	asrs r4, r4, #16
-	adds r2, r3, #0
-	muls r2, r3
-	adds r0, r4, #0
-	muls r0, r4
-	adds r3, r2, #0
-	adds r0, r0, r3
-	ldr r3, [pc, #8]
-	bl sub_02002c7a
-	pop {r1}
-	bx r1
-	.4byte 0x030001d8
+AlchemyC_02000e00:
+	.space 0x2c
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

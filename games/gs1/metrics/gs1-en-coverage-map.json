@@ -7,19 +7,19 @@
   "executable_bytes": 1348458,
   "categories": {
     "exact_c": {
-      "bytes": 320046,
-      "percent_of_executable": 23.73
+      "bytes": 320394,
+      "percent_of_executable": 23.76
     },
     "tracked_c": {
       "bytes": 45156,
       "percent_of_executable": 3.35
     },
     "assembly": {
-      "bytes": 605014,
-      "percent_of_executable": 44.87
+      "bytes": 604708,
+      "percent_of_executable": 44.84
     },
     "retained_asm": {
-      "bytes": 378242,
+      "bytes": 378200,
       "percent_of_executable": 28.05
     },
     "asset_data": {
@@ -29,12 +29,12 @@
   },
   "main": {
     "executable_bytes": 548364,
-    "exact_c_bytes": 109792,
+    "exact_c_bytes": 109940,
     "tracked_c_bytes": 6524
   },
   "overlays": {
     "executable_bytes": 800094,
-    "exact_c_bytes": 210254,
+    "exact_c_bytes": 210454,
     "tracked_c_bytes": 38632
   },
   "provenance": {
@@ -52,9 +52,9 @@
       "label": "Main image code",
       "bytes": 548364,
       "categories": {
-        "exact_c": 109792,
+        "exact_c": 109940,
         "tracked_c": 6524,
-        "assembly": 255400,
+        "assembly": 255252,
         "retained_asm": 176648
       },
       "tiles": 9
@@ -64,9 +64,9 @@
       "label": "Compressed code overlays",
       "bytes": 539544,
       "categories": {
-        "exact_c": 150107,
+        "exact_c": 150251,
         "tracked_c": 20681,
-        "assembly": 368756
+        "assembly": 368612
       },
       "tiles": 11
     },
@@ -86,9 +86,9 @@
       "label": "Main image",
       "bytes": 548364,
       "categories": {
-        "exact_c": 109792,
+        "exact_c": 109940,
         "tracked_c": 6524,
-        "assembly": 255400,
+        "assembly": 255252,
         "retained_asm": 176648
       },
       "tiles": 867
@@ -98,10 +98,10 @@
       "label": "Decoded code overlays",
       "bytes": 800094,
       "categories": {
-        "exact_c": 210254,
+        "exact_c": 210454,
         "tracked_c": 38632,
-        "assembly": 349614,
-        "retained_asm": 201594
+        "assembly": 349456,
+        "retained_asm": 201552
       },
       "tiles": 5367
     }

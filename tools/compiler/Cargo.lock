@@ -449,6 +449,7 @@ version = "0.1.0"
 dependencies = [
  "cache-entry",
  "compiler-core",
+ "extract-resource",
  "regex",
  "tempfile",
 ]

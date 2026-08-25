@@ -1,8 +1,15 @@
 [package]
 name = "no-asm-c"
-version.workspace = true
-edition.workspace = true
+version = "0.1.0"
+edition = "2021"
 
 [lib]
 name = "no_asm_c"
 path = "src/lib.rs"
+
+[dependencies]
+compiler-core = { path = "../compiler-core" }
+decomp-targets = { path = "../decomp-targets" }
+regex = "1"
+
+[workspace]

@@ -7,6 +7,7 @@ use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 
 use canonical_json::canonical_json;
+use compiler_core::translation_units::{OwnerState, TranslationUnits};
 use decomp_targets::{
     parse_decomp_target, target_for, BuildSupport, DecompTargetId, DEFAULT_TARGET,
 };
@@ -61,6 +62,15 @@ struct Region {
     output: PathBuf,
     kind: Option<String>,
     retention: Option<String>,
+    translation_unit: Option<String>,
+    composition: Option<String>,
+    byte_verification: Option<String>,
+}
+
+impl Region {
+    fn is_owner(&self, address: u64, size: usize) -> bool {
+        self.address == address && self.size == size
+    }
 }
 
 pub fn repository_root() -> PathBuf {
@@ -233,15 +243,7 @@ fn run(root: &Path, command: &[String]) -> Result<(), String> {
     }
 }
 
-/// `cargo run` for one child build stage.
-///
-/// The stages are subcommands of `build-stage`, not separate executables:
-/// `build-claimed` and `build-asm` lost their `[[bin]]` in the entry-point
-/// consolidation and are linked as libraries. Naming their manifests here made
-/// every `build-full` fail with cargo's "a bin target must be available",
-/// which -- because `make progress` reads `out/gs1-en/full/` and only this stage
-/// writes it -- left the reported percentage frozen at the last complete run
-/// with nothing saying so.
+/// Run a `build-stage` subcommand, except for the separate asset binary.
 fn cargo_child(root: &Path, stage: &str) -> Vec<String> {
     let manifest = match stage {
         "assets" => "tools/build-assets/Cargo.toml",
@@ -289,6 +291,9 @@ fn regions(document: &Value) -> Result<Vec<Region>, String> {
                     .map_or_else(PathBuf::new, PathBuf::from),
                 kind: item["kind"].as_str().map(str::to_string),
                 retention: item["retention"].as_str().map(str::to_string),
+                translation_unit: item["translation_unit"].as_str().map(str::to_string),
+                composition: item["composition"].as_str().map(str::to_string),
+                byte_verification: item["byte_verification"].as_str().map(str::to_string),
             })
         })
         .collect()
@@ -385,6 +390,118 @@ fn validate_alignments(claimed: &[Region], assembly: &[Region]) -> Result<(), St
         }
     }
     Ok(())
+}
+
+fn validate_translation_units(
+    root: &Path,
+    document: &Value,
+    claimed: &[Region],
+    assembly: &[Region],
+) -> Result<usize, String> {
+    let units = TranslationUnits::load(root)?;
+    let verification = document["verification"]
+        .as_str()
+        .ok_or("claimed manifest lacks byte-verification mode")?;
+    let compiles = document["translation_unit_compiles"]
+        .as_array()
+        .ok_or("claimed manifest lacks translation-unit compile evidence")?;
+    let main = units
+        .units
+        .iter()
+        .filter(|unit| unit.game == "gs1" && unit.overlay.is_none())
+        .collect::<Vec<_>>();
+    let expected = main.iter().map(|unit| {
+        let exact = unit.exact_owner_count();
+        let retained = unit.owners.len() - exact;
+        json!({"id":unit.id,"source":unit.source,"c_compiles":1,"composition":if retained==0{"complete-tu-object"}else{"complete-tu-owner-slices"},"exact_owners":exact,"retained_owners":retained})
+    }).collect::<Vec<_>>();
+    if compiles != &expected {
+        return Err("production TU compile records differ from manifest".into());
+    }
+    for unit in &main {
+        let exact = unit.exact_owner_count();
+        let retained = unit.owners.len() - exact;
+        let mixed = retained > 0;
+        let regions = claimed
+            .iter()
+            .filter(|region| region.translation_unit.as_deref() == Some(unit.id.as_str()))
+            .collect::<Vec<_>>();
+        let expected_regions = if exact == 0 {
+            0
+        } else if mixed {
+            exact
+        } else {
+            1
+        };
+        let composition = if mixed {
+            "complete-tu-owner-slice"
+        } else {
+            "complete-tu-object"
+        };
+        if regions.len() != expected_regions
+            || regions.iter().any(|region| {
+                region.composition.as_deref() != Some(composition)
+                    || region.byte_verification.as_deref() != Some(verification)
+            })
+        {
+            return Err(format!("{}: invalid exact-owner region metadata", unit.id));
+        }
+        if exact > 0 && !mixed {
+            let (start, end) =
+                unit.symbols()
+                    .fold((u64::MAX, 0), |(start, end), (address, _, extent)| {
+                        (
+                            start.min(u64::from(address)),
+                            end.max(u64::from(address) + extent as u64),
+                        )
+                    });
+            if !regions[0].is_owner(start, (end - start) as usize) {
+                return Err(format!("{}: complete TU object extent differs", unit.id));
+            }
+        }
+        for owner in &unit.owners {
+            let address = u64::from(owner.address);
+            let present = match owner.state {
+                OwnerState::ExactC if mixed => {
+                    regions
+                        .iter()
+                        .filter(|region| region.is_owner(address, owner.extent))
+                        .count()
+                        == 1
+                }
+                OwnerState::ExactC => true,
+                OwnerState::RetainedAssembly => {
+                    assembly
+                        .iter()
+                        .filter(|region| region.is_owner(address, owner.extent))
+                        .count()
+                        == 1
+                }
+            };
+            if !present {
+                return Err(format!(
+                    "{}: {:08x} is absent from its production component",
+                    unit.id, owner.address
+                ));
+            }
+        }
+    }
+    if claimed
+        .iter()
+        .filter_map(|region| region.translation_unit.as_deref())
+        .any(|id| !main.iter().any(|unit| unit.id == id))
+    {
+        return Err("claimed region names an unexpected translation unit".into());
+    }
+    let exports = document["main_symbol_exports"]
+        .as_str()
+        .ok_or("claimed manifest lacks main symbol exports")?;
+    if std::fs::read(rooted(root, exports)).map_err(|error| format!("{exports}: {error}"))?
+        != units.main_symbol_exports().as_bytes()
+    {
+        return Err("claimed main symbol exports differ from translation-unit manifest".into());
+    }
+    Ok(main.len())
 }
 
 pub fn reconstruction_progress(
@@ -612,6 +729,11 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
             "assembly",
         )?;
     }
+    let translation_units =
+        validate_translation_units(root, &claimed_document, &claimed_regions, &asm_regions)?;
+    let main_symbol_exports = claimed_document["main_symbol_exports"]
+        .as_str()
+        .ok_or("claimed manifest lacks main symbol exports")?;
     let accounting = assembly_accounting(&asm_regions)?;
 
     let mut asset_regions = Vec::new();
@@ -711,6 +833,9 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     field!("rom_size", number(mask.len()));
     field!("code_regions", number(claimed_regions.len()));
     field!("code_bytes", number(code_bytes));
+    field!("translation_units", number(translation_units));
+    field!("strict_translation_units", json!(true));
+    field!("main_symbol_exports", json!(main_symbol_exports));
     field!("asm_regions", number(asm_regions.len()));
     field!("asm_bytes", number(asm_bytes));
     field!("asm_c_debt_regions", number(accounting.c_debt_regions));
@@ -807,27 +932,15 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
 pub fn self_test() -> Result<(), String> {
     let gaps = unowned_regions(&[1, 0, 0, 1, 0], ROM_BASE)?;
     if gaps
-        != [
-            GapRegion {
-                address: ROM_BASE + 1,
-                size: 2,
-            },
-            GapRegion {
-                address: ROM_BASE + 4,
-                size: 1,
-            },
-        ]
+        .iter()
+        .map(|gap| (gap.address, gap.size))
+        .collect::<Vec<_>>()
+        != [(ROM_BASE + 1, 2), (ROM_BASE + 4, 1)]
     {
         return Err("unowned coverage self-test failed".into());
     }
     let progress = reconstruction_progress(100, 10, 50, 5, 25, 10)?;
-    if progress
-        != (ReconstructionProgress {
-            bytes: 65,
-            remaining_bytes: 35,
-            percent: 65.0,
-        })
-    {
+    if progress.bytes != 65 || progress.remaining_bytes != 35 || progress.percent != 65.0 {
         return Err("byte reconstruction progress self-test failed".into());
     }
     if reconstruction_progress(100, 10, 50, 5, 25, 9).is_ok() {

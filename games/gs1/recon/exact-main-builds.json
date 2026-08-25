@@ -3,21 +3,21 @@
   "game": "gs1",
   "source_edition": "en",
   "source_state": "byte-exact C compiled or relinked per edition",
-  "owners_total": 1417,
-  "owner_symbol_bytes": 110792,
-  "located_owners": 1374,
+  "owners_total": 1416,
+  "owner_symbol_bytes": 110696,
+  "located_owners": 1373,
   "unresolved_owners": 43,
-  "built_owners": 1374,
-  "all_exact_owners": 1371,
-  "all_exact_bytes": 106532,
+  "built_owners": 1373,
+  "all_exact_owners": 1369,
+  "all_exact_bytes": 106388,
   "all_exact": false,
   "editions": [
     {
       "edition": "ja",
-      "checked_owners": 1374,
-      "checked_bytes": 107272,
-      "byte_exact_owners": 1372,
-      "byte_exact_bytes": 106684,
+      "checked_owners": 1373,
+      "checked_bytes": 107176,
+      "byte_exact_owners": 1371,
+      "byte_exact_bytes": 106588,
       "nonexact_owners": 2,
       "nonexact_bytes": 588,
       "differing_bytes": 8,
@@ -25,10 +25,10 @@
     },
     {
       "edition": "en",
-      "checked_owners": 1374,
-      "checked_bytes": 107268,
-      "byte_exact_owners": 1374,
-      "byte_exact_bytes": 107268,
+      "checked_owners": 1373,
+      "checked_bytes": 107172,
+      "byte_exact_owners": 1373,
+      "byte_exact_bytes": 107172,
       "nonexact_owners": 0,
       "nonexact_bytes": 0,
       "differing_bytes": 0,
@@ -36,10 +36,10 @@
     },
     {
       "edition": "de",
-      "checked_owners": 1374,
-      "checked_bytes": 107338,
-      "byte_exact_owners": 1372,
-      "byte_exact_bytes": 106750,
+      "checked_owners": 1373,
+      "checked_bytes": 107242,
+      "byte_exact_owners": 1371,
+      "byte_exact_bytes": 106654,
       "nonexact_owners": 2,
       "nonexact_bytes": 588,
       "differing_bytes": 7,
@@ -47,32 +47,32 @@
     },
     {
       "edition": "es",
-      "checked_owners": 1374,
-      "checked_bytes": 107338,
-      "byte_exact_owners": 1372,
-      "byte_exact_bytes": 106750,
-      "nonexact_owners": 2,
-      "nonexact_bytes": 588,
+      "checked_owners": 1373,
+      "checked_bytes": 107242,
+      "byte_exact_owners": 1370,
+      "byte_exact_bytes": 106606,
+      "nonexact_owners": 3,
+      "nonexact_bytes": 636,
       "differing_bytes": 6,
-      "unbuildable_owners": 0
+      "unbuildable_owners": 1
     },
     {
       "edition": "fr",
-      "checked_owners": 1374,
-      "checked_bytes": 107338,
-      "byte_exact_owners": 1372,
-      "byte_exact_bytes": 106750,
-      "nonexact_owners": 2,
-      "nonexact_bytes": 588,
+      "checked_owners": 1373,
+      "checked_bytes": 107242,
+      "byte_exact_owners": 1370,
+      "byte_exact_bytes": 106606,
+      "nonexact_owners": 3,
+      "nonexact_bytes": 636,
       "differing_bytes": 6,
-      "unbuildable_owners": 0
+      "unbuildable_owners": 1
     },
     {
       "edition": "it",
-      "checked_owners": 1374,
-      "checked_bytes": 107338,
-      "byte_exact_owners": 1371,
-      "byte_exact_bytes": 106602,
+      "checked_owners": 1373,
+      "checked_bytes": 107242,
+      "byte_exact_owners": 1370,
+      "byte_exact_bytes": 106506,
       "nonexact_owners": 3,
       "nonexact_bytes": 736,
       "differing_bytes": 5,
@@ -828,16 +828,6 @@
         "es": "0x08005ee8",
         "fr": "0x08005e98",
         "it": "0x08005ec8"
-      }
-    },
-    {
-      "en_owner": "main:08006088",
-      "size": 96,
-      "start_overrides": {
-        "de": "0x080060b8",
-        "es": "0x080060e8",
-        "fr": "0x08006098",
-        "it": "0x080060c8"
       }
     },
     {
@@ -4551,6 +4541,10 @@
         "fr": "0x08020bd8",
         "it": "0x08021bdc",
         "ja": "0x08021c98"
+      },
+      "errors": {
+        "es": "es: Func_0801e940 decodes to 0x0801d8cc, proved at 0x0801d95c",
+        "fr": "fr: Func_0801e940 decodes to 0x0801d81c, proved at 0x0801d8ac"
       }
     },
     {

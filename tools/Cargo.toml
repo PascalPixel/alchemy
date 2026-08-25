@@ -7,7 +7,6 @@ members = [
   "canonical-json",
   "generated-files",
   "map-load-table",
-  "no-asm-c",
   "pairtable",
   "tilemap",
   "wordstream",

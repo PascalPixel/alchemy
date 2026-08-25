@@ -225,6 +225,7 @@ pub fn verify_candidate_owned_routed_with_object(
         .unwrap_or_else(|| path(".o"));
     let symbols_source = path(".symbols.s");
     let symbols_object = path(".symbols.o");
+    let canonical_object = path(".canonical.o");
     let elf = path(".elf");
     let binary = path(".bin");
 
@@ -263,11 +264,26 @@ pub fn verify_candidate_owned_routed_with_object(
     let owner_offset =
         usize::try_from(owner_section_offset).map_err(|_| "owner object offset is too large")?;
     let owner_size = usize::try_from(owner_size).map_err(|_| "owner object size is too large")?;
-    let owner_relocations = object_relocations(&object, owner_offset, owner_size)?;
+    let peers = configuration
+        .absolute_symbols
+        .keys()
+        .filter(|name| **name != canonical_symbol && **name != short_symbol)
+        .filter(|name| symbol_fields(&object_symbols, name).is_some())
+        .collect::<Vec<_>>();
+    let link_object = if peers.is_empty() {
+        &object
+    } else {
+        let mut command = vec!["arm-none-eabi-objcopy".to_string()];
+        command.extend(peers.iter().map(|name| format!("--weaken-symbol={name}")));
+        command.extend([object.clone(), canonical_object.clone()]);
+        run(&command, cwd)?;
+        &canonical_object
+    };
+    let owner_relocations = object_relocations(link_object, owner_offset, owner_size)?;
 
     let call_via_base = configuration.call_via_base.unwrap_or(CALL_VIA_BASE);
     let mut names: Vec<String> = Vec::new();
-    let undefined_symbols = run(&["arm-none-eabi-nm", "-u", &object], cwd)?;
+    let undefined_symbols = run(&["arm-none-eabi-nm", "-u", link_object], cwd)?;
     for external in undefined_symbols
         .lines()
         .filter_map(|line| line.split_whitespace().last())
@@ -287,6 +303,14 @@ pub fn verify_candidate_owned_routed_with_object(
         }
         names.push(external.to_string());
     }
+    names.extend(
+        peers
+            .into_iter()
+            .filter(|name| owner_relocations.contains_key(name.as_str()))
+            .cloned(),
+    );
+    names.sort();
+    names.dedup();
 
     let mut symbols_text = String::from(".syntax unified\n.thumb\n");
     let inferred = names
@@ -296,7 +320,7 @@ pub fn verify_candidate_owned_routed_with_object(
         .collect::<Vec<_>>();
     let resolved = if configuration.reference_symbols && !inferred.is_empty() {
         derive_reference_symbols(
-            &object,
+            link_object,
             owner_offset,
             owner_size,
             &owner_relocations,
@@ -337,7 +361,7 @@ pub fn verify_candidate_owned_routed_with_object(
             symbol,
             "-o",
             &elf,
-            &object,
+            link_object,
             &symbols_object,
         ],
         cwd,

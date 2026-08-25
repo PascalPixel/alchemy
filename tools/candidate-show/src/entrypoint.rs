@@ -8,7 +8,7 @@ use compiler_core::{
     routing::root,
     translation_units::{TranslationUnit, TranslationUnits},
 };
-use overlay_disasm::{assemble_overlay, OverlaySource, OVERLAY_BASE, OVERLAY_LINK_BIAS};
+use overlay_disasm::{canonical_overlay, OVERLAY_LINK_BIAS};
 use std::path::Path;
 use std::process::Command;
 pub fn entry(arguments: &[String]) {
@@ -45,7 +45,7 @@ fn run(mut options: crate::cli::Options) -> Result<String, String> {
         ));
     }
     options.source = unit.source.to_string_lossy().into_owned();
-    options.configuration.absolute_symbols = unit.absolute_symbols.clone();
+    options.configuration.absolute_symbols = unit.canonical_symbols()?;
     let work = options.work.clone().unwrap_or_else(|| {
         root()
             .join("scratch/candidate-show")
@@ -58,14 +58,7 @@ fn run(mut options: crate::cli::Options) -> Result<String, String> {
         options.overlay = Some(overlay.clone());
         options.configuration.call_via_base = Some(overlay_call_via_base(overlay));
         options.configuration.label_word_bias = Some(OVERLAY_LINK_BIAS as u64);
-        let reference = assemble_overlay(
-            &OverlaySource::path(
-                root()
-                    .join("games/gs1/assets/code")
-                    .join(format!("{overlay}_overlay.s")),
-            ),
-            OVERLAY_BASE,
-        )?;
+        let reference = overlay_reference(root(), overlay)?;
         let path = Path::new(&work).join(format!(
             "reference-{}.bin",
             compiler_core::sha256::hex(&reference)
@@ -124,6 +117,9 @@ fn run(mut options: crate::cli::Options) -> Result<String, String> {
         ));
     }
     Ok(output)
+}
+fn overlay_reference(repository: &Path, overlay: &str) -> Result<Vec<u8>, String> {
+    canonical_overlay(repository, overlay)
 }
 fn exact_mismatch(output: &RenderOutput) -> bool {
     output.differing_halfwords != 0
@@ -194,7 +190,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn exact_state_requires_equal_bytes() {
+    fn entrypoint_contracts() {
         let output = |difference| RenderOutput {
             stdout: String::new(),
             candidate_length: 4,
@@ -204,10 +200,10 @@ mod tests {
         };
         assert!(!exact_mismatch(&output(0)));
         assert!(exact_mismatch(&output(1)));
-    }
-
-    #[test]
-    fn overlay_unit_compiles_once_and_scores_every_owner() {
+        let repository =
+            std::env::temp_dir().join(format!("candidate-show-no-rom-{}", std::process::id()));
+        let error = overlay_reference(&repository, "resource_36f").unwrap_err();
+        assert!(error.contains("roms/gs1-en.gba"));
         let work = std::env::temp_dir().join("alchemy-overlay-unit-test");
         let _ = std::fs::remove_dir_all(&work);
         let arguments = [

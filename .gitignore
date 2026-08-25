@@ -73,6 +73,16 @@ target/
 *.rmeta
 *.pdb
 
+# These are installed exact-C source domains, not scratch or Rust output.
+# Keep each mapped source visible to Git despite the generic directory rules.
+!games/gs1/src/ui/work/
+!games/gs1/src/ui/work/finalize.c
+!games/gs1/src/ui/work/finalize_pending.c
+!games/gs1/src/ui/work/is_complete.c
+!games/gs1/src/ui/work/reserved_no_op.c
+!games/gs1/src/battle/target/
+!games/gs1/src/battle/target/replace_defeated.c
+
 # Worktree convenience symlink to the shared ROM set.
 /roms
 

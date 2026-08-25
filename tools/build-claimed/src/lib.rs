@@ -1,23 +1,27 @@
-//! Compile and verify every exact C owner claimed by the main image.
-//! Paths and numbers are native Rust types; `serde_json` and `sha2` provide the
-//! only serialization and hashing needed by the cache and manifest.
+//! Compile, verify, cache, and manifest every exact C owner in the main image.
 
 pub mod cli;
 
 use cache_entry::write_cache_entry_atomically;
+use candidate_compiler::verify::{
+    verify_candidate_owned_routed_with_object, CandidateCompilerConfiguration,
+};
 use canonical_json::canonical_json;
 use compiler_core::bundle::{compiler_bundle_signature, host_executable_signature};
 use compiler_core::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
 use compiler_core::routing::CompilerTarget;
+use compiler_core::source_inputs::compiler_source_tree_signature;
 use compiler_core::source_paths::{SourceFile, SourceOwner, SourcePaths};
 use compiler_core::symbols::{external_symbol, external_symbol_assembly, CALL_VIA_BASE};
+use compiler_core::translation_units::{OwnerState, TranslationUnit, TranslationUnits};
 use decomp_targets::{
     decomp_target, parse_decomp_target, target_for, BuildSupport, DecompCompilerTarget,
     DecompTarget, DecompTargetId, DEFAULT_TARGET,
 };
-use serde_json::{Map, Value};
+use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use std::{
+    collections::{BTreeMap, BTreeSet},
     io::Write,
     path::{Path, PathBuf},
     process::Command,
@@ -42,23 +46,11 @@ fn basename(path: &str) -> &str {
         .and_then(|s| s.to_str())
         .unwrap_or(path)
 }
-fn stem(path: &str) -> &str {
-    Path::new(path)
-        .file_stem()
-        .and_then(|s| s.to_str())
-        .unwrap_or(path)
-}
 fn text(path: PathBuf) -> String {
     path.to_string_lossy().into_owned()
 }
-fn root_path() -> PathBuf {
-    compiler_core::routing::root().to_path_buf()
-}
 pub fn root() -> String {
-    text(root_path())
-}
-pub fn object_cache_dir(root: &str) -> String {
-    text(Path::new(root).join("out/cache/claimed-objects"))
+    text(compiler_core::routing::root().to_path_buf())
 }
 fn strings(items: &[&str]) -> Vec<String> {
     items.iter().map(|s| (*s).into()).collect()
@@ -89,28 +81,13 @@ fn function_name(name: &str) -> bool {
             .bytes()
             .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
 }
-fn fields(line: &str) -> impl Iterator<Item = &str> {
-    line.split_whitespace()
-}
 fn last_fields(output: &str) -> Vec<String> {
     output
         .lines()
         .filter(|l| !l.is_empty())
-        .filter_map(|l| fields(l).last())
+        .filter_map(|l| l.split_whitespace().last())
         .map(str::to_string)
         .collect()
-}
-fn json_strings(items: &[String]) -> Value {
-    Value::Array(items.iter().cloned().map(Value::String).collect())
-}
-fn json_stringify(items: &[String]) -> String {
-    serde_json::to_string(&json_strings(items)).expect("strings serialize")
-}
-fn number(value: u32) -> Value {
-    Value::from(value)
-}
-fn usize_number(value: usize) -> Value {
-    Value::from(value as u64)
 }
 fn subarray(bytes: &[u8], start: u32, end: u32) -> &[u8] {
     let (start, end) = (start as usize, end as usize);
@@ -144,13 +121,6 @@ impl CacheSignatures {
             implementation: digest(&std::fs::read(executable).map_err(|e| e.to_string())?),
         })
     }
-    pub fn injected(compiler_bundle: &str, binutils: &str, implementation: &str) -> Self {
-        Self {
-            compiler_bundle: compiler_bundle.into(),
-            binutils: binutils.into(),
-            implementation: implementation.into(),
-        }
-    }
 }
 fn frame(out: &mut Vec<u8>, bytes: &[u8]) {
     out.extend_from_slice(&(bytes.len() as u64).to_be_bytes());
@@ -179,114 +149,13 @@ pub fn toolchain_stamp_with_signatures(commands: &[Vec<String>], sig: &CacheSign
     frame(&mut out, sig.implementation.as_bytes());
     digest(&out)
 }
-pub fn toolchain_stamp(commands: &[Vec<String>]) -> Result<String> {
-    Ok(toolchain_stamp_with_signatures(
-        commands,
-        &CacheSignatures::production()?,
-    ))
-}
-pub struct ToolchainStampCache {
-    signatures: CacheSignatures,
-    entries: Mutex<Vec<(Vec<u8>, String)>>,
-}
-impl ToolchainStampCache {
-    pub fn new() -> Result<Self> {
-        Ok(Self::with_signatures(CacheSignatures::production()?))
-    }
-    pub fn with_signatures(signatures: CacheSignatures) -> Self {
-        Self {
-            signatures,
-            entries: Mutex::new(Vec::new()),
-        }
-    }
-    pub fn stamp(&self, commands: &[Vec<String>]) -> String {
-        let key = command_frame(commands);
-        let mut entries = self.entries.lock().unwrap();
-        if let Some((_, value)) = entries.iter().find(|(old, _)| *old == key) {
-            return value.clone();
-        }
-        let value = toolchain_stamp_with_signatures(commands, &self.signatures);
-        entries.push((key, value.clone()));
-        value
-    }
-}
-
-#[derive(Debug, Default, Clone)]
-pub struct SymbolTable {
-    entries: Vec<(String, (u32, usize))>,
-}
-impl SymbolTable {
-    pub fn new() -> Self {
-        Self::default()
-    }
-    pub fn set(&mut self, name: &str, address: u32, size: usize) {
-        if let Some((_, value)) = self.entries.iter_mut().find(|(key, _)| key == name) {
-            *value = (address, size);
-        } else {
-            self.entries.push((name.into(), (address, size)));
-        }
-    }
-    pub fn get(&self, name: &str) -> Option<(u32, usize)> {
-        self.entries
-            .iter()
-            .find(|(key, _)| key == name)
-            .map(|(_, v)| *v)
-    }
-    pub fn has(&self, name: &str) -> bool {
-        self.get(name).is_some()
-    }
-    pub fn len(&self) -> usize {
-        self.entries.len()
-    }
-    pub fn is_empty(&self) -> bool {
-        self.entries.is_empty()
-    }
-    pub fn addresses(&self) -> Vec<u32> {
-        self.entries.iter().map(|(_, (a, _))| *a).collect()
-    }
-}
-impl FromIterator<(String, (u32, usize))> for SymbolTable {
-    fn from_iter<T: IntoIterator<Item = (String, (u32, usize))>>(items: T) -> Self {
-        let mut out = Self::new();
-        for (n, (a, s)) in items {
-            out.set(&n, a, s);
-        }
-        out
-    }
-}
-#[derive(Debug, Default, Clone)]
-pub struct OrderedStringSet(Vec<String>);
-impl OrderedStringSet {
-    pub fn new() -> Self {
-        Self::default()
-    }
-    pub fn add(&mut self, value: &str) {
-        if !self.has(value) {
-            self.0.push(value.into());
-        }
-    }
-    pub fn has(&self, value: &str) -> bool {
-        self.0.iter().any(|item| item == value)
-    }
-    pub fn len(&self) -> usize {
-        self.0.len()
-    }
-    pub fn is_empty(&self) -> bool {
-        self.0.is_empty()
-    }
-    pub fn iter(&self) -> std::slice::Iter<'_, String> {
-        self.0.iter()
-    }
-}
-pub fn module_end(names: &[String], symbols: &SymbolTable) -> Result<u32> {
-    if names.is_empty() {
-        return Err("C module has no functions".into());
-    }
+pub fn module_end(names: &[String], symbols: &BTreeMap<String, (u32, usize)>) -> Result<u32> {
     names
         .iter()
         .map(|name| {
             symbols
                 .get(name)
+                .copied()
                 .filter(|(_, size)| *size > 0)
                 .map(|(a, s)| a.saturating_add(s as u32))
                 .ok_or_else(|| format!("invalid module symbol {name}"))
@@ -294,6 +163,49 @@ pub fn module_end(names: &[String], symbols: &SymbolTable) -> Result<u32> {
         .max()
         .transpose()?
         .ok_or_else(|| "C module has no functions".into())
+}
+
+fn module_contract(
+    root: &Path,
+    game: &str,
+    source: &SourceFile,
+    units: &TranslationUnits,
+) -> Result<Vec<(String, u32, usize)>> {
+    let Some(unit) = units.units.iter().find(|unit| {
+        unit.game == game
+            && unit.overlay.is_none()
+            && unit
+                .owners
+                .iter()
+                .any(|owner| owner.address == source.owner.address())
+    }) else {
+        return Ok(Vec::new());
+    };
+    if root.join(&unit.source) == source.path {
+        if !unit.exact() {
+            return Err(format!(
+                "{}: grouped production C must be wholly exact",
+                unit.id
+            ));
+        }
+        return unit
+            .symbols()
+            .map(|(address, _, extent)| {
+                Ok((unit.source_owner(address)?.legacy_name(), address, extent))
+            })
+            .collect();
+    }
+    let owner = unit
+        .owners
+        .iter()
+        .find(|owner| owner.address == source.owner.address())
+        .filter(|owner| owner.state == OwnerState::ExactC)
+        .ok_or_else(|| format!("{}: C source is not an exact owner", source.owner.id()))?;
+    Ok(vec![(
+        source.owner.legacy_name(),
+        owner.address,
+        owner.extent,
+    )])
 }
 
 pub fn self_test() -> Result<String> {
@@ -395,12 +307,7 @@ pub fn parse_args(argv: &[String]) -> Result<ParsedArgs> {
     Ok(ParsedArgs::Run(Box::new(options)))
 }
 
-#[derive(Debug, Clone)]
-pub struct RunResult {
-    pub stdout: String,
-    pub stderr: String,
-}
-pub fn run(root: &str, command: &[String]) -> Result<RunResult> {
+pub fn run(root: &str, command: &[String]) -> Result<String> {
     let program = command.first().ok_or("run() requires a command")?;
     let output = Command::new(program)
         .args(&command[1..])
@@ -417,7 +324,7 @@ pub fn run(root: &str, command: &[String]) -> Result<RunResult> {
         };
         return Err(format!("{} failed: {detail}", basename(program)));
     }
-    Ok(RunResult { stdout, stderr })
+    Ok(stdout)
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -426,10 +333,79 @@ pub struct Compiled {
     pub defined_names: Vec<String>,
     pub undefined_names: Vec<String>,
 }
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum CacheOutcome {
-    Hit,
-    Miss,
+
+#[allow(clippy::too_many_arguments)]
+fn materialize_unit_owner(
+    root: &str,
+    unit: &TranslationUnit,
+    owner: u32,
+    extent: usize,
+    object: &str,
+    object_dir: &Path,
+    compiler: CompilerTarget,
+    rom: Option<&Vec<u8>>,
+) -> Result<Compiled> {
+    let stem = format!("{owner:08x}");
+    let source = text(Path::new(root).join(&unit.source));
+    let work = text(object_dir.join("tu").join(&unit.id));
+    let verification = verify_candidate_owned_routed_with_object(
+        &source,
+        &unit
+            .source_owner(unit.owners[0].address)?
+            .routing_path()
+            .to_string_lossy(),
+        &stem,
+        rom.map(Vec::as_slice).unwrap_or_default(),
+        &work,
+        &[],
+        f64::from(ROM_BASE),
+        compiler,
+        &CandidateCompilerConfiguration {
+            absolute_symbols: unit.canonical_symbols()?,
+            ..Default::default()
+        },
+        Some(object),
+    )?;
+    if verification.actual.len() != extent
+        || rom.is_some() && verification.actual != verification.expected
+    {
+        return Err(format!("{}: Func_{stem} is not byte-exact", unit.id));
+    }
+    let assembly = object_dir.join(format!("{stem}.s"));
+    let slice_assembly = Path::new(&work).join(format!("{stem}.slice.s"));
+    let output = object_dir.join(format!("{stem}.o"));
+    let mut generated = format!(".syntax unified\n.thumb\n.global Func_{stem}\n.type Func_{stem},%function\n.thumb_func\nFunc_{stem}:\n");
+    for bytes in verification.actual.chunks(16) {
+        generated.push_str(".byte ");
+        generated.push_str(
+            &bytes
+                .iter()
+                .map(|byte| format!("0x{byte:02x}"))
+                .collect::<Vec<_>>()
+                .join(","),
+        );
+        generated.push('\n');
+    }
+    generated.push_str(&format!(".size Func_{stem},.-Func_{stem}\n"));
+    write_file(&slice_assembly, generated.as_bytes())?;
+    run(
+        root,
+        &strings(&[
+            "arm-none-eabi-as",
+            "-mcpu=arm7tdmi",
+            "-mthumb-interwork",
+            "-o",
+            &text(output.clone()),
+            &text(slice_assembly),
+        ]),
+    )?;
+    std::fs::copy(Path::new(object).with_extension("s"), &assembly)
+        .map_err(|error| format!("{}: {error}", assembly.display()))?;
+    Ok(Compiled {
+        object: text(output),
+        defined_names: vec![format!("Func_{stem}")],
+        undefined_names: Vec::new(),
+    })
 }
 fn write_cache(items: &[(&str, &[u8])]) -> Result<()> {
     for (path, bytes) in items {
@@ -438,14 +414,14 @@ fn write_cache(items: &[(&str, &[u8])]) -> Result<()> {
     Ok(())
 }
 fn metadata(object: &[u8], assembly: &[u8], defined: &[String], undefined: &[String]) -> String {
-    let mut map = Map::new();
-    map.insert("definedNames".into(), json_strings(defined));
-    map.insert("undefinedNames".into(), json_strings(undefined));
-    map.insert("objectSize".into(), usize_number(object.len()));
-    map.insert("objectSha256".into(), Value::String(digest(object)));
-    map.insert("assemblySize".into(), usize_number(assembly.len()));
-    map.insert("assemblySha256".into(), Value::String(digest(assembly)));
-    canonical_json(&Value::Object(map))
+    canonical_json(&json!({
+        "definedNames": defined,
+        "undefinedNames": undefined,
+        "objectSize": object.len(),
+        "objectSha256": digest(object),
+        "assemblySize": assembly.len(),
+        "assemblySha256": digest(assembly),
+    }))
 }
 fn string_array(value: Option<&Value>) -> Option<Vec<String>> {
     value?
@@ -480,33 +456,7 @@ fn compiler_target(target: DecompCompilerTarget) -> CompilerTarget {
     }
 }
 
-pub fn compile_source(
-    root: &str,
-    object_cache: &str,
-    source: &str,
-    object_dir: &str,
-    compiler: DecompCompilerTarget,
-    edition_define: &str,
-    stamps: &ToolchainStampCache,
-) -> Result<(Compiled, CacheOutcome)> {
-    let owner = address(stem(source)).ok_or_else(|| {
-        format!(
-            "{}: legacy source filename is not an address",
-            basename(source)
-        )
-    })?;
-    compile_source_for_owner(
-        owner,
-        root,
-        object_cache,
-        source,
-        object_dir,
-        compiler,
-        edition_define,
-        stamps,
-    )
-}
-
+#[allow(clippy::too_many_arguments)]
 pub fn compile_source_for_owner(
     owner: u32,
     root: &str,
@@ -515,8 +465,9 @@ pub fn compile_source_for_owner(
     object_dir: &str,
     compiler: DecompCompilerTarget,
     edition_define: &str,
-    stamps: &ToolchainStampCache,
-) -> Result<(Compiled, CacheOutcome)> {
+    signatures: &CacheSignatures,
+    allowed_undefined: &[String],
+) -> Result<Compiled> {
     let name = format!("{owner:08x}");
     let object = text(Path::new(object_dir).join(format!("{name}.o")));
     let assembly = text(Path::new(object_dir).join(format!("{name}.s")));
@@ -539,9 +490,13 @@ pub fn compile_source_for_owner(
     options.preprocessor_flags = vec![format!("-D{edition_define}=1")];
     options.preprocessed_output = Some(text(Path::new(object_dir).join(format!("{name}.i"))));
     let plan = source_to_assembly_plan(&options)?;
-    let source_bytes = std::fs::read(source).map_err(|e| format!("{source}: {e}"))?;
     let commands: Vec<Vec<String>> = plan.steps.iter().map(|step| step.command.clone()).collect();
-    let key = object_cache_key(&source_bytes, &stamps.stamp(&commands));
+    let source_inputs =
+        compiler_source_tree_signature(Path::new(root), Path::new(source), &commands)?;
+    let key = object_cache_key(
+        &source_inputs,
+        &toolchain_stamp_with_signatures(&commands, signatures),
+    );
     let cached = [
         text(Path::new(object_cache).join(format!("{key}.o"))),
         text(Path::new(object_cache).join(format!("{key}.s"))),
@@ -550,14 +505,16 @@ pub fn compile_source_for_owner(
     if let Some((defined_names, undefined_names)) =
         cache_hit([&cached[0], &cached[1], &cached[2]], [&object, &assembly])
     {
-        return Ok((
-            Compiled {
-                object,
-                defined_names,
-                undefined_names,
-            },
-            CacheOutcome::Hit,
-        ));
+        if let Some(name) = undefined_names.iter().find(|name| {
+            external_symbol(name, CALL_VIA_BASE).is_none() && !allowed_undefined.contains(name)
+        }) {
+            return Err(format!("{}: unsupported external {name}", basename(source)));
+        }
+        return Ok(Compiled {
+            object,
+            defined_names,
+            undefined_names,
+        });
     }
     for step in &plan.steps {
         run(root, &step.command)?;
@@ -573,24 +530,21 @@ pub fn compile_source_for_owner(
             &assembly,
         ]),
     )?;
-    let defined = last_fields(
-        &run(
-            root,
-            &strings(&["arm-none-eabi-nm", "-g", "--defined-only", &object]),
-        )?
-        .stdout,
-    );
+    let defined = last_fields(&run(
+        root,
+        &strings(&["arm-none-eabi-nm", "-g", "--defined-only", &object]),
+    )?);
     let expected = format!("Func_{name}");
     if !defined.iter().any(|s| s == &expected) || defined.iter().any(|s| !function_name(s)) {
         return Err(format!(
             "{}: expected {expected} and address-named functions, found {}",
             basename(source),
-            json_stringify(&defined)
+            serde_json::to_string(&defined).unwrap()
         ));
     }
-    let undefined = last_fields(&run(root, &strings(&["arm-none-eabi-nm", "-u", &object]))?.stdout);
+    let undefined = last_fields(&run(root, &strings(&["arm-none-eabi-nm", "-u", &object]))?);
     for name in &undefined {
-        if external_symbol(name, CALL_VIA_BASE).is_none() {
+        if external_symbol(name, CALL_VIA_BASE).is_none() && !allowed_undefined.contains(name) {
             return Err(format!("{}: unsupported external {name}", basename(source)));
         }
     }
@@ -603,14 +557,11 @@ pub fn compile_source_for_owner(
         (&cached[1], &assembly_bytes),
         (&cached[2], meta.as_bytes()),
     ])?;
-    Ok((
-        Compiled {
-            object,
-            defined_names: defined,
-            undefined_names: undefined,
-        },
-        CacheOutcome::Miss,
-    ))
+    Ok(Compiled {
+        object,
+        defined_names: defined,
+        undefined_names: undefined,
+    })
 }
 
 pub fn map_limit<T: Sync, U: Send, F: Fn(&T) -> Result<U> + Sync>(
@@ -650,9 +601,6 @@ pub struct BuildSummary {
     pub failures: Vec<String>,
     pub claimed_bytes: String,
     pub image_bytes: usize,
-    pub written: Vec<String>,
-    pub cache_hits: usize,
-    pub cache_misses: usize,
 }
 impl BuildSummary {
     pub fn summary_line(&self) -> String {
@@ -691,11 +639,10 @@ fn relative(root: &str, path: &str) -> String {
     );
     parts.join("/")
 }
-fn write_file(path: &Path, bytes: &[u8], written: &mut Vec<String>) -> Result<()> {
+fn write_file(path: &Path, bytes: &[u8]) -> Result<()> {
     let mut file = std::fs::File::create(path).map_err(|e| format!("{}: {e}", path.display()))?;
     file.write_all(bytes)
         .map_err(|e| format!("{}: {e}", path.display()))?;
-    written.push(text(path.to_path_buf()));
     Ok(())
 }
 
@@ -740,7 +687,6 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     if !options.compile_only && target.build_support != BuildSupport::Full {
         return Err(format!("{} is compile-only; run `make {}` until its edition link map and ownership surfaces are reconstructed", target.id, target.id));
     }
-    let mut written = Vec::new();
     let rom_path = Path::new(cwd).join(&options.rom);
     let rom = (!options.source_only && !options.compile_only)
         .then(|| std::fs::read(&rom_path).map_err(|e| format!("{}: {e}", rom_path.display())))
@@ -757,6 +703,12 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     if sources.is_empty() {
         return Err("no reconstructed sources".into());
     }
+    let units = TranslationUnits::load(Path::new(root))?;
+    let game = compiler_target(target.compiler).as_str();
+    let contracts = sources
+        .iter()
+        .map(|source| module_contract(Path::new(root), game, source, &units))
+        .collect::<Result<Vec<_>>>()?;
     let addresses: Vec<_> = sources
         .iter()
         .map(|source| source.owner.address())
@@ -771,9 +723,33 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     let output = rooted(root, &options.output);
     let object_dir = output.join("obj");
     std::fs::create_dir_all(&object_dir).map_err(|e| format!("{}: {e}", object_dir.display()))?;
-    let cache_dir = object_cache_dir(root);
-    let stamps = ToolchainStampCache::new()?;
-    let pairs = map_limit(&sources, options.jobs as usize, |source| {
+    let export_path = (!options.compile_only).then(|| output.join("main-symbols.s"));
+    if let Some(path) = &export_path {
+        write_file(path, units.main_symbol_exports().as_bytes())?;
+    }
+    let cache_dir = text(Path::new(root).join("out/cache/claimed-objects"));
+    let signatures = CacheSignatures::production()?;
+    let declared_units = units
+        .units
+        .iter()
+        .filter(|unit| unit.game == game && unit.overlay.is_none())
+        .collect::<Vec<_>>();
+    let unit_ids = declared_units
+        .iter()
+        .map(|unit| unit.id.as_str())
+        .collect::<BTreeSet<_>>();
+    let standalone = sources
+        .iter()
+        .enumerate()
+        .filter(|(_, source)| {
+            units
+                .unit_for_game_owner(game, source.owner)
+                .is_none_or(|unit| !unit_ids.contains(unit.id.as_str()))
+        })
+        .map(|(index, _)| index)
+        .collect::<Vec<_>>();
+    let ordinary = map_limit(&standalone, options.jobs as usize, |index| {
+        let source = &sources[*index];
         compile_source_for_owner(
             source.owner.address(),
             root,
@@ -782,84 +758,145 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
             &text(object_dir.clone()),
             target.compiler,
             target.edition_define,
-            &stamps,
+            &signatures,
+            &[],
         )
     })?;
-    let cache_hits = pairs
-        .iter()
-        .filter(|(_, hit)| *hit == CacheOutcome::Hit)
-        .count();
-    let cache_misses = pairs.len() - cache_hits;
-    let mut compiled: Vec<_> = pairs.into_iter().map(|(c, _)| c).collect();
+    let mut compiled = vec![None; sources.len()];
+    for (index, module) in standalone.iter().copied().zip(ordinary) {
+        compiled[index] = Some(module);
+    }
+    let mut unit_compiles = Vec::new();
+    for unit in declared_units {
+        let mixed = !unit.exact();
+        let work = if mixed {
+            object_dir.join("tu").join(&unit.id)
+        } else {
+            object_dir.clone()
+        };
+        std::fs::create_dir_all(&work).map_err(|error| format!("{}: {error}", work.display()))?;
+        let base = compile_source_for_owner(
+            unit.owners[0].address,
+            root,
+            &cache_dir,
+            &text(Path::new(root).join(&unit.source)),
+            &text(work),
+            target.compiler,
+            target.edition_define,
+            &signatures,
+            &unit.absolute_symbols.keys().cloned().collect::<Vec<_>>(),
+        )?;
+        let mut declared = unit
+            .symbols()
+            .map(|(address, _, _)| Ok((address, unit.source_owner(address)?.legacy_name())))
+            .collect::<Result<Vec<_>>>()?;
+        declared.sort();
+        if base.defined_names != declared.into_iter().map(|item| item.1).collect::<Vec<_>>() {
+            return Err(format!(
+                "{}: object functions disagree with ordered manifest",
+                unit.id
+            ));
+        }
+        for owner in unit
+            .owners
+            .iter()
+            .filter(|owner| owner.state == OwnerState::ExactC)
+        {
+            let index = sources
+                .iter()
+                .position(|source| {
+                    if mixed {
+                        source.owner.address() == owner.address
+                    } else {
+                        source.path == Path::new(root).join(&unit.source)
+                    }
+                })
+                .ok_or_else(|| format!("{}: exact owner is absent from source paths", unit.id))?;
+            if mixed {
+                compiled[index] = Some(materialize_unit_owner(
+                    root,
+                    unit,
+                    owner.address,
+                    owner.extent,
+                    &base.object,
+                    &object_dir,
+                    compiler_target(target.compiler),
+                    rom.as_ref(),
+                )?);
+            } else {
+                compiled[index] = Some(base.clone());
+                break;
+            }
+        }
+        let exact = unit.exact_owner_count();
+        let retained = unit.owners.len() - exact;
+        unit_compiles.push(json!({"id":unit.id,"source":unit.source,"c_compiles":1,"composition":if mixed{"complete-tu-owner-slices"}else{"complete-tu-object"},"exact_owners":exact,"retained_owners":retained}));
+    }
+    let mut compiled = compiled
+        .into_iter()
+        .map(|module| module.ok_or_else(|| "source lacks a production module".into()))
+        .collect::<Result<Vec<_>>>()?;
+    let c_compiles = standalone.len() + unit_compiles.len();
+    for ((source, module), contract) in sources.iter().zip(&compiled).zip(&contracts) {
+        if !contract.is_empty() {
+            let expected = contract.iter().map(|item| &item.0).collect::<BTreeSet<_>>();
+            let actual = module.defined_names.iter().collect::<BTreeSet<_>>();
+            if actual != expected {
+                return Err(format!(
+                    "{}: definitions disagree with translation-unit contract",
+                    source.owner.id()
+                ));
+            }
+        }
+    }
     let objects: Vec<_> = compiled.iter().map(|c| c.object.clone()).collect();
     let definitions: Vec<_> = compiled
         .iter()
         .flat_map(|c| c.defined_names.clone())
         .collect();
-    let mut defined = OrderedStringSet::new();
-    for name in &definitions {
-        defined.add(name);
-    }
+    let defined = definitions.iter().cloned().collect::<BTreeSet<_>>();
     if defined.len() != definitions.len() {
         return Err("duplicate function definition across C modules".into());
     }
-    let mut undefined_set = OrderedStringSet::new();
+    let mut undefined_set = BTreeSet::new();
     for name in compiled.iter().flat_map(|c| c.undefined_names.iter()) {
-        if !defined.has(name) {
-            undefined_set.add(name);
+        if !defined.contains(name) {
+            undefined_set.insert(name.clone());
         }
     }
-    let mut undefined: Vec<_> = undefined_set.iter().cloned().collect();
-    undefined.sort();
+    let undefined: Vec<_> = undefined_set.into_iter().collect();
     if options.compile_only {
-        let modules = sources
+        let modules: Vec<_> = sources
             .iter()
             .zip(&compiled)
             .map(|(source, module)| {
-                let mut row = Map::new();
-                row.insert(
-                    "source".into(),
-                    Value::String(relative(root, &text(source.path.clone()))),
-                );
-                row.insert(
-                    "object".into(),
-                    Value::String(relative(root, &module.object)),
-                );
-                row.insert("symbols".into(), json_strings(&module.defined_names));
-                row.insert(
-                    "undefined_symbols".into(),
-                    json_strings(&module.undefined_names),
-                );
-                Value::Object(row)
+                json!({
+                    "source": relative(root, &text(source.path.clone())),
+                    "object": relative(root, &module.object),
+                    "symbols": module.defined_names,
+                    "undefined_symbols": module.undefined_names,
+                })
             })
             .collect();
-        let mut document = Map::new();
-        document.insert("format".into(), number(1));
-        document.insert("target".into(), Value::String(target.id.to_string()));
-        document.insert(
-            "compiler".into(),
-            Value::String(target.compiler.to_string()),
-        );
-        document.insert(
-            "edition_define".into(),
-            Value::String(target.edition_define.into()),
-        );
-        document.insert("verification".into(), Value::String("compile_only".into()));
-        document.insert("modules".into(), Value::Array(modules));
+        let document = json!({
+            "format": 1,
+            "target": target.id.to_string(),
+            "compiler": target.compiler.to_string(),
+            "edition_define": target.edition_define,
+            "verification": "compile_only",
+            "translation_unit_compiles": unit_compiles,
+            "modules": modules,
+        });
         write_file(
             &output.join("manifest.json"),
-            format!("{}\n", canonical_json(&Value::Object(document))).as_bytes(),
-            &mut written,
+            format!("{}\n", canonical_json(&document)).as_bytes(),
         )?;
         return Ok(BuildSummary {
-            compiled: compiled.len(),
+            compiled: c_compiles,
             linked: 0,
             failures: Vec::new(),
             claimed_bytes: "not-linked".into(),
             image_bytes: 0,
-            written,
-            cache_hits,
-            cache_misses,
         });
     }
     let symbols_source = output.join("externals.s");
@@ -868,7 +905,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     for name in &undefined {
         externals.push_str(&external_symbol_assembly(name, CALL_VIA_BASE)?);
     }
-    write_file(&symbols_source, externals.as_bytes(), &mut written)?;
+    write_file(&symbols_source, externals.as_bytes())?;
     run(
         root,
         &strings(&[
@@ -880,7 +917,6 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
             &text(symbols_source.clone()),
         ]),
     )?;
-    written.push(text(symbols_object.clone()));
     let linker = output.join("claimed.ld");
     let mut script = format!(
         "OUTPUT_ARCH(arm)\nENTRY(Func_{})\nSECTIONS\n{{\n",
@@ -896,7 +932,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
         ));
     }
     script.push_str("  /DISCARD/ : { *(.comment) *(.note*) }\n}\n");
-    write_file(&linker, script.as_bytes(), &mut written)?;
+    write_file(&linker, script.as_bytes())?;
     let elf = output.join("claimed.elf");
     let binary = output.join("claimed.bin");
     run(
@@ -910,7 +946,6 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
             &text(symbols_object.clone()),
         ]),
     )?;
-    written.push(text(elf.clone()));
     run(
         root,
         &strings(&[
@@ -921,34 +956,36 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
             &text(binary.clone()),
         ]),
     )?;
-    written.push(text(binary.clone()));
     let nm = run(
         root,
         &strings(&["arm-none-eabi-nm", "-S", "--defined-only", &text(elf)]),
     )?;
-    let mut symbols = SymbolTable::new();
-    for line in nm.stdout.lines() {
-        let f: Vec<_> = fields(line).collect();
-        if f.len() == 4 && defined.has(f[3]) {
+    let mut symbols = BTreeMap::new();
+    for line in nm.lines() {
+        let f: Vec<_> = line.split_whitespace().collect();
+        if f.len() == 4 && defined.contains(f[3]) {
             if let (Some(a), Some(s)) = (address(f[0]), address(f[1])) {
-                symbols.set(f[3], a, s as usize);
+                symbols.insert(f[3].into(), (a, s as usize));
             }
         }
     }
     if symbols.len() != defined.len() {
-        let mut missing: Vec<_> = defined
+        let missing: Vec<_> = defined
             .iter()
-            .filter(|n| !symbols.has(n))
+            .filter(|n| !symbols.contains_key(*n))
             .cloned()
             .collect();
-        missing.sort();
         return Err(format!(
             "missing linked functions: {}",
-            json_stringify(&missing)
+            serde_json::to_string(&missing).unwrap()
         ));
     }
     let image = std::fs::read(&binary).map_err(|e| format!("{}: {e}", binary.display()))?;
-    let image_base = symbols.addresses().into_iter().min().unwrap_or(0);
+    let image_base = symbols
+        .values()
+        .map(|(address, _)| *address)
+        .min()
+        .unwrap_or(0);
     let mut manifest = Vec::new();
     let mut failures = Vec::new();
     let mut total = 0usize;
@@ -959,6 +996,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
         let symbol_name = format!("Func_{owner}");
         let (start, _) = symbols
             .get(&symbol_name)
+            .copied()
             .ok_or_else(|| format!("missing linked function {symbol_name}"))?;
         let claimed = source.owner.address();
         if start != claimed {
@@ -970,10 +1008,18 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
         }
         compiled[i]
             .defined_names
-            .sort_by_key(|n| symbols.get(n).map(|(a, _)| a).unwrap_or(u32::MAX));
+            .sort_by_key(|n| symbols.get(n).map(|(a, _)| *a).unwrap_or(u32::MAX));
         let names = compiled[i].defined_names.clone();
         let end =
             module_end(&names, &symbols).map_err(|e| format!("{}: {e}", basename(&source_text)))?;
+        for (name, address, extent) in &contracts[i] {
+            if symbols.get(name).copied() != Some((*address, *extent)) {
+                return Err(format!(
+                    "{}: linked symbol {name} disagrees with translation-unit contract",
+                    source.owner.id()
+                ));
+            }
+        }
         let size = end.saturating_sub(start) as usize;
         if start < previous_end {
             failures.push(format!(
@@ -996,10 +1042,10 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
         }
         for name in &names {
             let expected = address(name.strip_prefix("Func_").unwrap_or(""));
-            if expected != symbols.get(name).map(|(a, _)| a)
+            if expected != symbols.get(name).map(|(a, _)| *a)
                 || symbols
                     .get(name)
-                    .map(|(a, _)| a < start || a >= end)
+                    .map(|(a, _)| *a < start || *a >= end)
                     .unwrap_or(true)
             {
                 failures.push(format!(
@@ -1008,90 +1054,71 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
                 ));
             }
         }
-        let mut region = Map::new();
-        region.insert("source".into(), Value::String(relative(root, &source_text)));
-        region.insert("symbol".into(), Value::String(symbol_name));
-        region.insert("symbols".into(), json_strings(&names));
-        region.insert("address".into(), number(start));
-        region.insert("size".into(), usize_number(size));
-        region.insert("end".into(), number(end));
-        manifest.push(Value::Object(region));
+        let production_unit = units.unit_for_game_owner(game, source.owner);
+        let production_source = production_unit.map_or_else(
+            || source_text.clone(),
+            |unit| text(Path::new(root).join(&unit.source)),
+        );
+        manifest.push(json!({
+            "source": relative(root, &production_source),
+            "symbol": symbol_name,
+            "symbols": names,
+            "address": start,
+            "size": size,
+            "end": end,
+            "translation_unit": production_unit.map(|unit| unit.id.as_str()),
+            "composition": production_unit.map(|unit| if unit.exact() { "complete-tu-object" } else { "complete-tu-owner-slice" }),
+            "byte_verification": if rom.is_some() { "rom" } else { "source_only" },
+        }));
         total += size;
     }
-    let mut document = Map::new();
-    document.insert("format".into(), number(1));
-    document.insert("target".into(), Value::String(target.id.to_string()));
-    document.insert(
-        "compiler".into(),
-        Value::String(target.compiler.to_string()),
-    );
-    document.insert("rom_base".into(), number(ROM_BASE));
-    document.insert("rom_size".into(), Value::from(target.rom_size));
-    document.insert(
-        "verification".into(),
-        Value::String(
-            if options.source_only {
-                "source_only"
-            } else {
-                "rom"
-            }
-            .into(),
-        ),
-    );
-    document.insert("image_base".into(), number(image_base));
-    document.insert("image_size".into(), usize_number(image.len()));
-    document.insert("claimed_bytes".into(), usize_number(total));
-    document.insert("regions".into(), Value::Array(manifest.clone()));
+    let document = json!({
+        "format": 1,
+        "target": target.id.to_string(),
+        "compiler": target.compiler.to_string(),
+        "rom_base": ROM_BASE,
+        "rom_size": target.rom_size,
+        "verification": if options.source_only { "source_only" } else { "rom" },
+        "image_base": image_base,
+        "image_size": image.len(),
+        "claimed_bytes": total,
+        "translation_unit_manifest": "games/gs1/recon/translation-units.json",
+        "main_symbol_exports": export_path
+            .as_ref()
+            .map(|path| relative(root, &text(path.clone()))),
+        "translation_unit_compiles": unit_compiles,
+        "regions": manifest,
+    });
     write_file(
         &output.join("manifest.json"),
-        format!("{}\n", canonical_json(&Value::Object(document))).as_bytes(),
-        &mut written,
+        format!("{}\n", canonical_json(&document)).as_bytes(),
     )?;
     Ok(BuildSummary {
-        compiled: compiled.len(),
+        compiled: c_compiles,
         linked: manifest.len(),
         failures,
         claimed_bytes: total.to_string(),
         image_bytes: image.len(),
-        written,
-        cache_hits,
-        cache_misses,
     })
-}
-
-pub fn exists(path: &str) -> bool {
-    Path::new(path).exists()
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     #[test]
-    fn self_test_ok() {
+    fn fundamentals() {
         assert_eq!(self_test().unwrap(), "self-test=ok");
-    }
-    #[test]
-    fn cache_key_separates_inputs() {
         assert_ne!(object_cache_key(b"yz", "x"), object_cache_key(b"z", "xy"));
-    }
-    #[test]
-    fn module_range() {
-        let mut s = SymbolTable::new();
-        s.set("a", 100, 4);
-        s.set("b", 200, 8);
+        let mut s = BTreeMap::new();
+        s.insert("a".into(), (100, 4));
+        s.insert("b".into(), (200, 8));
         assert_eq!(module_end(&["a".into(), "b".into()], &s).unwrap(), 208);
-    }
-    #[test]
-    fn args_resolve_target_before_default_output() {
         let ParsedArgs::Run(o) =
             parse_args(&["--source-only".into(), "--target=gs2-en".into()]).unwrap()
         else {
             panic!()
         };
         assert_eq!(o.output, "out/gs2-en/claimed");
-    }
-    #[test]
-    fn compile_only_is_an_explicit_non_linking_mode() {
         let ParsedArgs::Run(options) = parse_args(&[
             "--target=gs1-de".into(),
             "--compile-only".into(),
@@ -1104,17 +1131,11 @@ mod tests {
         assert!(!options.source_only);
         assert_eq!(options.output, "out/gs1-de/compile");
         assert!(parse_args(&["--source-only".into(), "--compile-only".into()]).is_err());
-    }
-    #[test]
-    fn map_is_ordered() {
         let values: Vec<_> = (0..32).collect();
         assert_eq!(
             map_limit(&values, 4, |v| Ok(v * 2)).unwrap(),
             values.iter().map(|v| v * 2).collect::<Vec<_>>()
         );
-    }
-    #[test]
-    fn function_names_are_strict() {
         assert!(function_name("Func_0801c0c8"));
         assert!(!function_name("Func_0801C0C8"));
     }

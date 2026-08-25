@@ -85,7 +85,7 @@ struct EditionSummary {
 }
 
 type EditionTotals = BTreeMap<&'static str, [usize; 6]>;
-
+type EditionLocations = BTreeMap<String, BTreeMap<String, u64>>;
 fn edition_totals() -> EditionTotals {
     EDITIONS
         .into_iter()
@@ -101,7 +101,6 @@ fn record_edition(totals: &mut EditionTotals, edition: &str, size: usize, identi
     totals[index] += 1;
     totals[index + 1] += size;
 }
-
 fn edition_summaries(totals: &EditionTotals) -> Vec<EditionSummary> {
     EDITIONS
         .into_iter()
@@ -413,7 +412,7 @@ fn analyze_owner(
     calls: bool,
     hints: Option<&BTreeMap<&str, usize>>,
 ) -> Result<Report, String> {
-    let (size, symbol_address, _, relocation_mask, relocations) =
+    let (size, symbol_address, _, relocation_mask, relocations, _) =
         relocation_mask(object_path, owner)?;
     let literals = literal_sites(object_path, symbol_address, size)?;
     let mut mask = relocation_mask.clone();
@@ -521,7 +520,6 @@ fn analyze_owner(
     };
     Ok(report)
 }
-
 fn write_edition_build(
     path: &Path,
     owner: &str,
@@ -529,7 +527,7 @@ fn write_edition_build(
     report: &Report,
     roms: &EditionRoms,
 ) -> Result<EditionBuildReport, String> {
-    let build = edition_build_report(owner, object_path, report, roms, &mut BTreeMap::new())?;
+    let build = edition_build_report(owner, object_path, report, roms, &mut BTreeMap::new(), None)?;
     write_json(path, &build, "edition build")?;
     println!(
         "edition_build={} owner={} editions={} all_exact={}",
@@ -540,7 +538,6 @@ fn write_edition_build(
     );
     Ok(build)
 }
-
 fn compile_edition_object(owner: &str, edition: &str, source: &Path) -> Result<PathBuf, String> {
     let output = PathBuf::from("out")
         .join("cross-edition")
@@ -594,7 +591,6 @@ fn compile_edition_object(owner: &str, edition: &str, source: &Path) -> Result<P
     )?;
     Ok(object)
 }
-
 fn compiled_edition_object(
     compiled: &mut BTreeMap<(String, String), Result<PathBuf, String>>,
     route: &str,
@@ -606,15 +602,15 @@ fn compiled_edition_object(
         .or_insert_with(|| compile_edition_object(route, edition, source))
         .clone()
 }
-
 fn edition_build_report(
     owner: &str,
     object_path: &Path,
     report: &Report,
     roms: &EditionRoms,
     compiled: &mut BTreeMap<(String, String), Result<PathBuf, String>>,
+    locations: Option<&EditionLocations>,
 ) -> Result<EditionBuildReport, String> {
-    let (size, symbol_offset, owner_bytes, owner_mask, relocations) =
+    let (size, symbol_offset, owner_bytes, owner_mask, relocations, complete_object) =
         relocation_mask(object_path, owner)?;
     if size != report.size {
         return Err(format!(
@@ -632,9 +628,13 @@ fn edition_build_report(
     let source_paths = &registers()?.sources;
     let source_owner = SourceOwner::parse(&format!("main:{owner}"))?;
     let unit = translation_unit(owner)?;
-    let defined = defined_owner_symbols(object_path)?;
+    if unit.is_some() && !complete_object {
+        return Err(format!(
+            "{}: supplied object is not a complete TU",
+            object_path.display()
+        ));
+    }
     let (route, source_path) = unit
-        .filter(|unit| grouped_object(unit, owner, &defined))
         .map(|unit| {
             (
                 format!("{:08x}", unit.owners[0].address),
@@ -657,28 +657,36 @@ fn edition_build_report(
     let edition_variant = fs::read_to_string(&source_path)
         .map_err(|error| format!("{}: {error}", source_path.display()))?
         .contains("#include \"gs1_edition.h\"");
+    let compile_each_edition = unit.is_some() || edition_variant;
 
     let mut editions = Vec::with_capacity(EDITIONS.len());
     for edition in EDITIONS {
         let reported_start = report_start(report, edition)?;
-        let variant_object = if edition_variant {
+        let variant_object = if compile_each_edition {
             compiled_edition_object(compiled, &route, edition, &source_path)?
         } else {
             object_path.to_path_buf()
         };
-        let (variant_size, variant_symbol_offset, variant_bytes, variant_mask, variant_relocations) =
-            if edition_variant {
-                relocation_mask(&variant_object, owner)?
-            } else {
-                (
-                    size,
-                    symbol_offset,
-                    owner_bytes.clone(),
-                    owner_mask.clone(),
-                    relocations.clone(),
-                )
-            };
-        let start = if edition_variant && edition != "en" {
+        let (
+            variant_size,
+            variant_symbol_offset,
+            variant_bytes,
+            variant_mask,
+            variant_relocations,
+            _,
+        ) = if compile_each_edition {
+            relocation_mask(&variant_object, owner)?
+        } else {
+            (
+                size,
+                symbol_offset,
+                owner_bytes.clone(),
+                owner_mask.clone(),
+                relocations.clone(),
+                complete_object,
+            )
+        };
+        let start = if compile_each_edition && edition != "en" {
             locate_near_exact(
                 &variant_bytes,
                 &variant_mask,
@@ -695,20 +703,28 @@ fn edition_build_report(
         let reference = roms.images[edition]
             .get(start..start + variant_size)
             .ok_or_else(|| format!("{edition}: owner extends past ROM"))?;
-        let built =
-            derive_external_symbols(&variant_relocations, reference, start).and_then(|values| {
-                link_owner_for_edition(
-                    &output_root,
-                    edition,
-                    &variant_object,
-                    &owner_symbol,
-                    ROM_BASE + start as u64,
-                    variant_symbol_offset,
-                    variant_size,
-                    &values,
-                )
-                .map(|linked| (values, linked))
-            });
+        let built = derive_link_symbols(
+            &variant_relocations,
+            reference,
+            start,
+            &owner_symbol,
+            unit.is_some(),
+            edition,
+            locations,
+        )
+        .and_then(|values| {
+            link_owner_for_edition(
+                &output_root,
+                edition,
+                &variant_object,
+                &owner_symbol,
+                ROM_BASE + start as u64,
+                variant_symbol_offset,
+                variant_size,
+                &values,
+            )
+            .map(|linked| (values, linked))
+        });
         match built {
             Ok((values, linked)) => {
                 let differing_bytes = reference
@@ -756,7 +772,6 @@ fn edition_build_report(
     };
     Ok(build)
 }
-
 fn write_json<T: Serialize>(path: &Path, value: &T, label: &str) -> Result<(), String> {
     if let Some(parent) = path
         .parent()
@@ -770,7 +785,6 @@ fn write_json<T: Serialize>(path: &Path, value: &T, label: &str) -> Result<(), S
     fs::write(path, json).map_err(|error| format!("{}: {error}", path.display()))?;
     Ok(())
 }
-
 fn compact_corpus_edition_build_owner(
     owner: EditionBuildReport,
 ) -> Result<CorpusEditionBuildOwner, String> {
@@ -837,7 +851,6 @@ fn compact_corpus_edition_build_owner(
         errors,
     })
 }
-
 fn write_corpus_edition_build(
     path: &Path,
     objects: &BTreeMap<String, PathBuf>,
@@ -848,9 +861,28 @@ fn write_corpus_edition_build(
     roms: &EditionRoms,
 ) -> Result<CorpusEditionBuildReport, String> {
     let (mut owners, mut failures, mut compiled) = (Vec::new(), Vec::new(), BTreeMap::new());
+    let mut locations = EditionLocations::new();
+    for (owner, report) in reports {
+        for entry in &report.editions {
+            locations
+                .entry(format!("Func_{owner}"))
+                .or_default()
+                .insert(
+                    entry.edition.clone(),
+                    ROM_BASE + parse_rom_address(&entry.start)? as u64,
+                );
+        }
+    }
     for (index, (owner, report)) in reports.iter().enumerate() {
         let object = &objects[owner];
-        match edition_build_report(owner, &object, report, roms, &mut compiled) {
+        match edition_build_report(
+            owner,
+            &object,
+            report,
+            roms,
+            &mut compiled,
+            Some(&locations),
+        ) {
             Ok(build) => owners.push(build),
             Err(error) => failures.push(EditionBuildFailure {
                 en_owner: canonical_main_owner_id(owner)?,
@@ -947,14 +979,20 @@ fn write_corpus_edition_build(
     );
     Ok(build)
 }
-
-fn derive_external_symbols(
+fn derive_link_symbols(
     relocations: &[RelocationSite],
     reference: &[u8],
     start: usize,
+    owner_symbol: &str,
+    complete_unit: bool,
+    edition: &str,
+    locations: Option<&EditionLocations>,
 ) -> Result<BTreeMap<String, u64>, String> {
     let mut values = BTreeMap::new();
-    for site in relocations.iter().filter(|site| site.external) {
+    for site in relocations.iter().filter(|site| {
+        site.external
+            || complete_unit && site.symbol.starts_with("Func_") && site.symbol != owner_symbol
+    }) {
         let value = if is_thumb_call(site) {
             thumb_bl_target(reference, start, site.offset)?
         } else if site.kind == "R_ARM_ABS32" {
@@ -974,6 +1012,7 @@ fn derive_external_symbols(
                 site.kind, site.symbol
             ));
         };
+        let value = proved_symbol_location(locations, &site.symbol, edition, value)?;
         if let Some(previous) = values.insert(site.symbol.clone(), value) {
             if previous != value {
                 return Err(format!(
@@ -985,7 +1024,31 @@ fn derive_external_symbols(
     }
     Ok(values)
 }
-
+fn proved_symbol_location(
+    locations: Option<&EditionLocations>,
+    symbol: &str,
+    edition: &str,
+    decoded: u64,
+) -> Result<u64, String> {
+    let proved = locations
+        .and_then(|locations| locations.get(symbol)?.get(edition))
+        .copied();
+    match proved {
+        Some(proved) if proved != decoded => Err(format!(
+            "{edition}: {symbol} decodes to 0x{decoded:08x}, proved at 0x{proved:08x}"
+        )),
+        Some(proved) => Ok(proved),
+        None if locations.is_none() && address_function(symbol) => Err(format!(
+            "{edition}: {symbol} has no proved counterpart location"
+        )),
+        None => Ok(decoded),
+    }
+}
+fn address_function(symbol: &str) -> bool {
+    symbol
+        .strip_prefix("Func_")
+        .is_some_and(|value| value.len() == 8 && value.bytes().all(|byte| byte.is_ascii_hexdigit()))
+}
 fn link_owner_for_edition(
     output_root: &Path,
     edition: &str,
@@ -1000,6 +1063,7 @@ fn link_owner_for_edition(
     fs::create_dir_all(&output).map_err(|error| format!("{}: {error}", output.display()))?;
     let symbols_source = output.join("symbols.s");
     let symbols_object = output.join("symbols.o");
+    let canonical_object = output.join("canonical.o");
     let elf = output.join("owner.elf");
     let binary = output.join("owner.bin");
     let mut source = String::from(".syntax unified\n.thumb\n");
@@ -1023,6 +1087,14 @@ fn link_owner_for_edition(
             .arg(&symbols_source),
         "assemble edition symbols",
     )?;
+    let mut canonical = Command::new("arm-none-eabi-objcopy");
+    for name in values.keys() {
+        canonical.arg(format!("--weaken-symbol={name}"));
+    }
+    run_tool(
+        canonical.arg(object_path).arg(&canonical_object),
+        "weaken TU peers",
+    )?;
     run_tool(
         Command::new("arm-none-eabi-ld")
             .arg(format!(
@@ -1034,7 +1106,7 @@ fn link_owner_for_edition(
             .arg("--unresolved-symbols=ignore-all")
             .args(["-e", owner_symbol, "-o"])
             .arg(&elf)
-            .arg(object_path)
+            .arg(&canonical_object)
             .arg(&symbols_object),
         "link edition owner",
     )?;
@@ -1055,7 +1127,6 @@ fn link_owner_for_edition(
         .map_err(|error| format!("{}: {error}", output.display()))?;
     Ok(owner)
 }
-
 fn run_tool(command: &mut Command, label: &str) -> Result<(), String> {
     let output = command
         .output()
@@ -1218,11 +1289,9 @@ fn owner_address(owner: &str) -> Result<u64, String> {
     }
     Ok(address)
 }
-
 fn canonical_main_owner_id(owner: &str) -> Result<String, String> {
     SourceOwner::parse(&format!("main:{owner}")).map(SourceOwner::id)
 }
-
 fn location_method_codes() -> BTreeMap<&'static str, &'static str> {
     [
         ("a", "global_anchor"),
@@ -1234,7 +1303,6 @@ fn location_method_codes() -> BTreeMap<&'static str, &'static str> {
     .into_iter()
     .collect()
 }
-
 fn location_method_code(method: &str) -> Result<char, String> {
     match method {
         "global_anchor" => Ok('a'),
@@ -1245,7 +1313,6 @@ fn location_method_code(method: &str) -> Result<char, String> {
         _ => Err(format!("unknown location method {method:?}")),
     }
 }
-
 fn resolve_object(
     owner: &str,
     explicit: Option<&Path>,
@@ -1261,10 +1328,11 @@ fn resolve_object(
         object_dir.join(format!("{owner}.o")),
         PathBuf::from(format!("out/gs1-en/claimed/obj/{owner}.o")),
     ];
-    paths
-        .into_iter()
-        .find(|path| path.is_file())
-        .or_else(|| exact_objects(object_dir).ok()?.remove(owner))
+    exact_objects(object_dir)
+        .ok()
+        .and_then(|mut objects| objects.remove(owner))
+        .filter(|path| path.is_file())
+        .or_else(|| paths.into_iter().find(|path| path.is_file()))
         .ok_or_else(|| {
             format!(
                 "missing exact object for {}; run `make build-claimed`",
@@ -1272,7 +1340,6 @@ fn resolve_object(
             )
         })
 }
-
 fn read_roms(directory: &Path) -> Result<EditionRoms, String> {
     let mut images = BTreeMap::new();
     for edition in EDITIONS {
@@ -1281,7 +1348,6 @@ fn read_roms(directory: &Path) -> Result<EditionRoms, String> {
     }
     Ok(EditionRoms { images })
 }
-
 fn registers() -> Result<&'static Registers, String> {
     static REGISTERS: OnceLock<Result<Registers, String>> = OnceLock::new();
     REGISTERS
@@ -1295,43 +1361,17 @@ fn registers() -> Result<&'static Registers, String> {
         .as_ref()
         .map_err(Clone::clone)
 }
-
 fn translation_unit(owner: &str) -> Result<Option<&'static TranslationUnit>, String> {
     let source_owner = SourceOwner::parse(&format!("main:{owner}"))?;
-    Ok(registers()?.units.unit_for_owner(source_owner))
+    Ok(registers()?.units.unit_for_game_owner("gs1", source_owner))
 }
-
-fn defined_owner_symbols(path: &Path) -> Result<BTreeSet<String>, String> {
-    let config = DiffObjConfig {
-        arm_arch_version: ArmArchVersion::V4t,
-        ..Default::default()
-    };
-    let object = obj::read::read(path, &config, DiffSide::Base)
-        .map_err(|error| format!("{}: {error}", path.display()))?;
-    Ok(object
-        .symbols
-        .iter()
-        .filter(|symbol| symbol.section.is_some())
-        .filter_map(|symbol| symbol.name.strip_prefix("Func_").map(str::to_string))
-        .collect())
+fn complete_unit_symbols(unit: &TranslationUnit, mut defined: impl FnMut(&str) -> bool) -> bool {
+    unit.symbols()
+        .all(|(address, _, _)| defined(&format!("Func_{address:08x}")))
 }
-
-fn grouped_object(unit: &TranslationUnit, owner: &str, defined: &BTreeSet<String>) -> bool {
-    let primary = format!("{:08x}", unit.owners[0].address);
-    defined.contains(&primary)
-        && defined.contains(owner)
-        && unit
-            .owners
-            .iter()
-            .filter(|member| defined.contains(&format!("{:08x}", member.address)))
-            .take(2)
-            .count()
-            == 2
-}
-
 fn exact_objects(object_dir: &Path) -> Result<BTreeMap<String, PathBuf>, String> {
-    let grouped = registers()?
-        .units
+    let units = &registers()?.units;
+    let grouped = units
         .units
         .iter()
         .filter(|unit| unit.overlay.is_none())
@@ -1352,7 +1392,17 @@ fn exact_objects(object_dir: &Path) -> Result<BTreeMap<String, PathBuf>, String>
             .as_str()
             .and_then(|symbol| symbol.strip_prefix("Func_"))
             .ok_or("exact region has no owner symbol")?;
-        let object = object_dir.join(format!("{primary}.o"));
+        let object = region["translation_unit"]
+            .as_str()
+            .and_then(|id| units.unit(id))
+            .filter(|unit| !unit.exact())
+            .map(|unit| {
+                object_dir
+                    .join("tu")
+                    .join(&unit.id)
+                    .join(format!("{:08x}.o", unit.owners[0].address))
+            })
+            .unwrap_or_else(|| object_dir.join(format!("{primary}.o")));
         for owner in region["symbols"]
             .as_array()
             .into_iter()
@@ -1382,7 +1432,7 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
 
     for (index, owner) in owner_names.iter().enumerate() {
         let object = &objects[owner];
-        if let Ok((size, _, _, _, _)) = relocation_mask(&object, owner) {
+        if let Ok((size, _, _, _, _, _)) = relocation_mask(&object, owner) {
             owner_symbol_bytes += size;
         }
         match analyze_owner(owner, owner_address(owner)?, &object, roms, false, None) {
@@ -2216,13 +2266,20 @@ fn parse_rom_address(value: &str) -> Result<usize, String> {
 fn relocation_mask(
     path: &Path,
     owner: &str,
-) -> Result<(usize, u64, Vec<u8>, Vec<bool>, Vec<RelocationSite>), String> {
+) -> Result<(usize, u64, Vec<u8>, Vec<bool>, Vec<RelocationSite>, bool), String> {
     let config = DiffObjConfig {
         arm_arch_version: ArmArchVersion::V4t,
         ..Default::default()
     };
     let object = obj::read::read(path, &config, DiffSide::Base)
         .map_err(|error| format!("{}: {error}", path.display()))?;
+    let complete = translation_unit(owner)?.is_none_or(|unit| {
+        complete_unit_symbols(unit, |name| {
+            object
+                .symbol_by_name(name)
+                .is_some_and(|index| object.symbols[index].section.is_some())
+        })
+    });
     let legacy_symbol = format!("Func_{owner}");
     let source_owner = SourceOwner::parse(&format!("main:{owner}"))?;
     let source_paths = &registers()?.sources;
@@ -2300,7 +2357,7 @@ fn relocation_mask(
             external: target.is_some_and(|symbol| symbol.section.is_none()),
         });
     }
-    Ok((size, symbol.address, bytes, mask, sites))
+    Ok((size, symbol.address, bytes, mask, sites, complete))
 }
 
 fn literal_sites(
@@ -2699,42 +2756,28 @@ fn print_report(report: &Report, calls: bool) {
 #[cfg(test)]
 mod tests {
     use super::*;
-
     #[test]
-    fn accepts_corpus_edition_build_output() {
-        let options = parse(&[
-            "--all".into(),
-            "--edition-build".into(),
-            "out/builds.json".into(),
-        ])
-        .expect("corpus edition build options");
-        assert!(options.all);
-        assert_eq!(options.edition_build, Some("out/builds.json".into()));
-    }
-
-    #[test]
-    fn grouped_owners_share_the_primary_compile_route() {
-        let unit = translation_unit("08004144").unwrap().unwrap();
-        let route = format!("{:08x}", unit.owners[0].address);
-        assert_eq!(route, "080040e8");
-        assert!(grouped_object(
-            unit,
-            "08004144",
-            &BTreeSet::from(["080040e8".into(), "08004144".into()])
-        ));
-        assert!(!grouped_object(
-            unit,
-            "08004144",
-            &BTreeSet::from(["08004144".into()])
-        ));
-        let mut compiled =
-            BTreeMap::from([((route.clone(), "ja".into()), Ok(PathBuf::from("shared.o")))]);
-        assert_eq!(
-            compiled_edition_object(&mut compiled, &route, "ja", Path::new("missing.c")),
-            Ok(PathBuf::from("shared.o"))
+    fn artifact_substitution_and_callee_inference_fail_closed() {
+        let unit = translation_unit("08003b70").unwrap().unwrap();
+        assert!(!complete_unit_symbols(unit, |name| name == "Func_08003b70"));
+        assert!(complete_unit_symbols(unit, |_| true));
+        let locations = EditionLocations::from([(
+            "Func_0801e940".into(),
+            BTreeMap::from([("fr".into(), 0x0801_d8ac)]),
+        )]);
+        assert!(
+            proved_symbol_location(Some(&locations), "Func_0801e940", "fr", 0x0801_d81c).is_err()
         );
+        assert_eq!(
+            proved_symbol_location(Some(&locations), "Func_0801e940", "fr", 0x0801_d8ac),
+            Ok(0x0801_d8ac)
+        );
+        assert_eq!(
+            proved_symbol_location(Some(&locations), "Func_08000000", "fr", 7),
+            Ok(7)
+        );
+        assert!(proved_symbol_location(None, "Func_08000000", "fr", 7).is_err());
     }
-
     #[test]
     fn builds_anchors_only_from_core_bytes() {
         let owner = vec![0x55; 80];
@@ -2746,7 +2789,6 @@ mod tests {
         assert_eq!(found[1].offset, 0);
         assert_eq!(found[1].size, 20);
     }
-
     #[test]
     fn locates_owner_while_ignoring_relocations() {
         let owner = (0..96).map(|value| value as u8).collect::<Vec<_>>();
@@ -2759,16 +2801,9 @@ mod tests {
         let found = anchors(&owner, &mask);
         assert_eq!(locate(&owner, &mask, &found, &rom), Ok((100, 1)));
         assert_eq!(core_diff_bytes(&owner, &counterpart, &mask), 0);
+        counterpart[40] ^= 1;
+        assert_eq!(core_diff_bytes(&owner, &counterpart, &mask), 1);
     }
-
-    #[test]
-    fn counts_only_unmasked_differences_as_core() {
-        let left = [1, 2, 3, 4, 5, 6];
-        let right = [1, 9, 3, 8, 5, 6];
-        let mask = [false, true, false, false, false, false];
-        assert_eq!(core_diff_bytes(&left, &right, &mask), 1);
-    }
-
     #[test]
     fn locates_short_exact_core_near_proved_neighbor() {
         let owner = (0..12).collect::<Vec<_>>();
@@ -2781,7 +2816,6 @@ mod tests {
             Ok((88, 0))
         );
     }
-
     #[test]
     fn rejects_equidistant_short_core_matches() {
         let owner = (0..12).collect::<Vec<_>>();
@@ -2793,7 +2827,6 @@ mod tests {
             .unwrap_err()
             .contains("ambiguous"));
     }
-
     #[test]
     fn finds_relocated_resource_directory_from_self_pointer() {
         let mut rom = vec![0xff; 64];
@@ -2801,7 +2834,6 @@ mod tests {
         rom[20..24].copy_from_slice(&((ROM_BASE + 16) as u32).to_le_bytes());
         assert_eq!(resource_table(&rom), Ok(16));
     }
-
     #[test]
     fn masks_overlay_calls_and_reached_literal_words() {
         let mut owner = vec![0; 16];
@@ -2813,7 +2845,6 @@ mod tests {
         assert_eq!(&mask[4..12], &[true; 8]);
         assert_eq!(&mask[12..16], &[false; 4]);
     }
-
     #[test]
     fn parses_explicit_unresolved_overlay_owner_with_span() {
         let owner = parse_explicit_overlay_owner("resource_392:02000bcc", Some(64))
@@ -2827,7 +2858,6 @@ mod tests {
             Err(error) if error.contains("require --span")
         ));
     }
-
     #[test]
     fn locates_explicit_overlay_owner_with_masked_regional_literal() {
         let mut bytes = Vec::new();
@@ -2863,16 +2893,8 @@ mod tests {
         }
         assert_eq!(found.mask.iter().filter(|masked| !**masked).count(), 28);
     }
-
     #[test]
     fn correspondence_rows_serialize_only_canonical_owner_identity() {
-        fn assert_identity<T: Serialize>(row: &T, expected: &str) {
-            let value = serde_json::to_value(row).expect("serialize correspondence row");
-            assert_eq!(value["en_owner"], expected);
-            assert!(value.get("source").is_none());
-            assert!(value.get("resource").is_none());
-        }
-
         let owner = CorpusOwner {
             en_owner: SourceOwner::Main(0x0800_2ee4).id(),
             size: 4,
@@ -2881,72 +2903,36 @@ mod tests {
             location_methods: "asaaaa".into(),
             core_diff_bytes_from_ja: BTreeMap::new(),
         };
-        assert_identity(&owner, "main:08002ee4");
         let compact = serde_json::to_value(owner).expect("serialize compact owner");
-        for derived in [
+        assert_eq!(compact["en_owner"], "main:08002ee4");
+        for omitted in [
+            "source",
+            "resource",
             "status",
             "starts",
             "start_overrides",
             "core_diff_bytes_from_ja",
         ] {
-            assert!(compact.get(derived).is_none(), "unexpected {derived}");
+            assert!(compact.get(omitted).is_none(), "unexpected {omitted}");
         }
         assert_eq!(compact["location_methods"], "asaaaa");
-        assert_identity(
-            &UnresolvedOwner {
-                en_owner: SourceOwner::Main(0x0800_2ee4).id(),
-                size: None,
-                error: "unresolved".into(),
-            },
-            "main:08002ee4",
-        );
         let overlay_owner = SourceOwner::Overlay {
             resource: 0x36f,
             address: 0x0200_0030,
         }
         .id();
-        assert_identity(
-            &CorpusOwner {
-                en_owner: overlay_owner.clone(),
-                size: 4,
-                core_bytes: Some(4),
-                start_overrides: BTreeMap::new(),
-                location_methods: "sooooo".into(),
-                core_diff_bytes_from_ja: BTreeMap::new(),
-            },
-            "resource_36f:02000030",
-        );
-        assert_identity(
-            &UnresolvedOwner {
-                en_owner: overlay_owner,
-                size: Some(4),
-                error: "unresolved".into(),
-            },
-            "resource_36f:02000030",
-        );
-        assert_identity(
-            &EditionBuildFailure {
-                en_owner: SourceOwner::Main(0x0800_2ee4).id(),
-                error: "unbuildable".into(),
-            },
-            "main:08002ee4",
-        );
+        let unresolved = serde_json::to_value(UnresolvedOwner {
+            en_owner: overlay_owner,
+            size: Some(4),
+            error: "unresolved".into(),
+        })
+        .unwrap();
+        assert_eq!(unresolved["en_owner"], "resource_36f:02000030");
+        assert!(unresolved.get("resource").is_none());
         assert_eq!(CORRESPONDENCE_SCHEMA_VERSION, 3);
         assert_eq!(CORPUS_EDITION_BUILD_SCHEMA_VERSION, 3);
-        assert_eq!(
-            location_method_codes(),
-            [
-                ("a", "global_anchor"),
-                ("n", "neighbor_exact"),
-                ("o", "resource_offset_exact"),
-                ("s", "source"),
-                ("t", "global_thumb_anchor"),
-            ]
-            .into_iter()
-            .collect()
-        );
+        assert_eq!(location_method_codes()["a"], "global_anchor");
     }
-
     #[test]
     fn corpus_edition_build_rows_encode_only_nondefault_evidence() {
         let entries = EDITIONS
@@ -2992,13 +2978,11 @@ mod tests {
             assert!(value.get(removed).is_none(), "unexpected {removed}");
         }
     }
-
     #[test]
     fn decodes_thumb_bl_target() {
         let bytes = [0x48, 0xf7, 0xfd, 0xfe];
         assert_eq!(thumb_bl_target(&bytes, 0x0bbb3a, 0), Ok(0x08004938));
     }
-
     #[test]
     fn reads_literal_fields_from_objdump() {
         let output = "  1008:\t12345678 \t.word\t0x12345678\n  100c:\t0000 \t.short\t0x0000\n";

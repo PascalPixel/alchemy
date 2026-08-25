@@ -6,6 +6,7 @@ pub mod plan;
 pub mod routing;
 pub mod routing_data;
 pub mod sha256;
+pub mod source_inputs;
 pub mod source_paths;
 pub mod symbols;
 pub mod translation_units;

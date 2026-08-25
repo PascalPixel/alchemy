@@ -96,6 +96,10 @@
     {
       "experiment": "joint declaration, integer-width, queue-view, raw-pointer, IME-pointer, early-destination, compiler-family, optimization, CSE, GCSE, scheduler, strength-reduction, regmove, and expensive-optimization matrix",
       "result": "no isolated source/compiler pairing reached zero. This result predates the complete translation-unit reconstruction and is retained only as evidence that per-owner flag searches did not explain the reference."
+    },
+    {
+      "experiment": "complete-unit follow-up over the shared nine-owner macro: canonical scheduling, both scheduler toggles, regmove, CSE-follow, CSE-skip, expensive-optimization, declaration/scope order, register hints, direct-global access, and a shared inline helper",
+      "result": "the representative 0800383c owner remained at the canonical four-halfword ordering residual for every neutral flag and register-hint variant; -fno-schedule-insns2 regressed to eight, declaration/scope variants regressed to thirteen, the inline helper to twenty-three, and direct-global access to twenty-five. The shared source shape therefore remains the best bounded whole-unit result."
     }
   ],
   "next": "Keep the coherent translation unit as measured reconstruction evidence and resolve the two source-ordering pairs. No permanent compiler classification is warranted.",

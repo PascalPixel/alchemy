@@ -3,8 +3,8 @@
   "target": "gs1-en",
   "derivation": "canonical-instruction-ngram-and-call-target-cosine-v2",
   "minimum_score_basis_points": 7500,
-  "exact_templates": 1417,
-  "unresolved_targets": 437,
+  "exact_templates": 1416,
+  "unresolved_targets": 438,
   "clustered_targets": 123,
   "clustered_bytes": 41012,
   "families": [
@@ -21,7 +21,7 @@
     {
       "id": "template-main-08005b24",
       "template_owner": "main:08005b24",
-      "template_source": "games/gs1/src/save/state/find_latest_slot.c",
+      "template_source": "games/gs1/recon/en/units/save_state.c",
       "members": [
         "main:080a3ddc"
       ],
@@ -1302,6 +1302,58 @@
       ]
     },
     {
+      "owner": "main:08006088",
+      "symbol": "Func_08006088",
+      "source": "games/gs1/asm/08006088.s",
+      "size": 96,
+      "instructions": 41,
+      "family": null,
+      "alternatives": [
+        {
+          "owner": "main:0800a97c",
+          "symbol": "Func_0800a97c",
+          "source": "games/gs1/src/resource/decompress_lz.c",
+          "assembly": "out/gs1-en/claimed/obj/0800a97c.s",
+          "size": 144,
+          "instructions": 69,
+          "score_basis_points": 5556,
+          "ngram_similarity_basis_points": 6904,
+          "length_similarity_basis_points": 5942,
+          "call_target_similarity_basis_points": 0,
+          "call_count_similarity_basis_points": 3333,
+          "branch_similarity_basis_points": 6153
+        },
+        {
+          "owner": "main:080bf4c4",
+          "symbol": "Func_080bf4c4",
+          "source": "games/gs1/src/unidentified/main/field/field_owner_128.c",
+          "assembly": "out/gs1-en/claimed/obj/080bf4c4.s",
+          "size": 96,
+          "instructions": 43,
+          "score_basis_points": 5554,
+          "ngram_similarity_basis_points": 5750,
+          "length_similarity_basis_points": 9534,
+          "call_target_similarity_basis_points": 0,
+          "call_count_similarity_basis_points": 10000,
+          "branch_similarity_basis_points": 7272
+        },
+        {
+          "owner": "main:08077348",
+          "symbol": "Func_08077348",
+          "source": "games/gs1/src/party/get_average_level.c",
+          "assembly": "out/gs1-en/claimed/obj/08077348.s",
+          "size": 76,
+          "instructions": 33,
+          "score_basis_points": 5535,
+          "ngram_similarity_basis_points": 5932,
+          "length_similarity_basis_points": 8048,
+          "call_target_similarity_basis_points": 0,
+          "call_count_similarity_basis_points": 7500,
+          "branch_similarity_basis_points": 10000
+        }
+      ]
+    },
+    {
       "owner": "main:08006240",
       "symbol": "Func_08006240",
       "source": "games/gs1/asm/08006240.s",
@@ -1392,7 +1444,7 @@
         {
           "owner": "main:08003c80",
           "symbol": "Func_08003c80",
-          "source": "games/gs1/src/display/blend/configure_transition.c",
+          "source": "games/gs1/recon/en/units/video_dma_queue.c",
           "assembly": "out/gs1-en/claimed/obj/08003c80.s",
           "size": 96,
           "instructions": 29,
@@ -1430,7 +1482,7 @@
         {
           "owner": "main:08003b70",
           "symbol": "Func_08003b70",
-          "source": "games/gs1/src/display/blend/set_darken_target_16.c",
+          "source": "games/gs1/recon/en/units/video_dma_queue.c",
           "assembly": "out/gs1-en/claimed/obj/08003b70.s",
           "size": 66,
           "instructions": 19,
@@ -1444,7 +1496,7 @@
         {
           "owner": "main:08003bf8",
           "symbol": "Func_08003bf8",
-          "source": "games/gs1/src/display/blend/set_brighten_target_16.c",
+          "source": "games/gs1/recon/en/units/video_dma_queue.c",
           "assembly": "out/gs1-en/claimed/obj/08003bf8.s",
           "size": 66,
           "instructions": 19,
@@ -1482,7 +1534,7 @@
         {
           "owner": "main:08003b70",
           "symbol": "Func_08003b70",
-          "source": "games/gs1/src/display/blend/set_darken_target_16.c",
+          "source": "games/gs1/recon/en/units/video_dma_queue.c",
           "assembly": "out/gs1-en/claimed/obj/08003b70.s",
           "size": 66,
           "instructions": 19,
@@ -1496,7 +1548,7 @@
         {
           "owner": "main:08003bf8",
           "symbol": "Func_08003bf8",
-          "source": "games/gs1/src/display/blend/set_brighten_target_16.c",
+          "source": "games/gs1/recon/en/units/video_dma_queue.c",
           "assembly": "out/gs1-en/claimed/obj/08003bf8.s",
           "size": 66,
           "instructions": 19,
@@ -10288,7 +10340,7 @@
         {
           "owner": "main:08003d28",
           "symbol": "Func_08003d28",
-          "source": "games/gs1/src/graphics/affine/build_matrix.c",
+          "source": "games/gs1/recon/en/units/video_dma_queue.c",
           "assembly": "out/gs1-en/claimed/obj/08003d28.s",
           "size": 196,
           "instructions": 85,
@@ -10714,7 +10766,7 @@
         {
           "owner": "main:08005b24",
           "symbol": "Func_08005b24",
-          "source": "games/gs1/src/save/state/find_latest_slot.c",
+          "source": "games/gs1/recon/en/units/save_state.c",
           "assembly": "out/gs1-en/claimed/obj/08005b24.s",
           "size": 64,
           "instructions": 30,
@@ -10728,7 +10780,7 @@
         {
           "owner": "main:08005c2c",
           "symbol": "Func_08005c2c",
-          "source": "games/gs1/src/save/state/get_latest_sequence.c",
+          "source": "games/gs1/recon/en/units/save_state.c",
           "assembly": "out/gs1-en/claimed/obj/08005c2c.s",
           "size": 60,
           "instructions": 27,
@@ -13018,7 +13070,7 @@
         {
           "owner": "main:08005e88",
           "symbol": "Func_08005e88",
-          "source": "games/gs1/src/link/serial/disable_serial_transfer.c",
+          "source": "games/gs1/recon/en/units/serial_runtime.c",
           "assembly": "out/gs1-en/claimed/obj/08005e88.s",
           "size": 86,
           "instructions": 23,

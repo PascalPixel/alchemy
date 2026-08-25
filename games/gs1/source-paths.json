@@ -210,7 +210,7 @@
     "main:080ad658": "object/motion/four_object/clear_slots_and_schedule_alt.c", "main:080be0b4": "battle/placement/count_valid_entries.c",
     "main:080bf5a8": "battle/placement/update_timed_entries.c", "main:08099d18": "battle/effects/particles/spawn_falling.c",
     "main:0809a484": {"name":"BattleEffect_CreateRadialParticle"}, "main:0809abb4": {"name":"BattleEffect_RunFallbackObjectTransition"}, "main:0809a6b8": "battle/effects/particles/spawn_radial_particle_ring.c", "main:08092624": "battle/effects/particles/spawn_burst.c",
-    "main:0809b11c": "battle/effects/particles/update_radial_launch.c", "main:08096048": "battle/effects/particles/update_radial_spread.c",
+    "main:0809b11c": "battle/effects/particles/update_radial_launch.c", "main:08096048": "battle/effects/particles/update_radial_spread.c", "main:0809641c": "battle/effects/particles/update_random_target_particle.c",
     "main:0808ee0c": "battle/effects/particles/emit_random.c", "main:08092708": "battle/effects/objects/run_rising_sequence.c",
     "main:08097f80": "battle/effects/orbiting_particles/update_return.c", "main:08095a44": "battle/effects/heavy_impact/finish.c",
     "main:080903bc": "display/transition/update.c", "main:08090378": "display/state/clear_flags.c",
@@ -245,7 +245,7 @@
     "main:08092878": "object/link/rotate_pair_toward.c", "main:08092ba8": "object/table/read_active_value.c",
     "main:08092454": "object/motion/set_position_with_terrain.c", "main:080923e4": "object/motion/set_horizontal_position_with_terrain.c",
     "main:08096bec": "object/motion/set_target_position_from_magnitude_angle.c", "main:08092208": "object/motion/snap_heading_and_offset.c",
-    "main:08092560": "object/motion/launch.c", "main:080925e0": "battle/effects/particles/update_linear_motion.c",
+    "main:08092560": "object/motion/launch.c", "main:080925e0": "battle/effects/particles/update_linear_motion.c", "main:080937b8": "battle/effects/objects/spawn_linked_resource_object.c",
     "main:08092a74": "object/motion/step_angle.c", "main:080f6038": "graphics/color/scale_rgb555.c",
     "main:080f9438": "audio/initialize_runtime_defaults.c", "main:080f94e0": "audio/command/set_pitch.c",
     "main:080f94c8": "audio/command/set_pitch_and_update_frequency.c", "main:080f950c": "audio/command/set_volume.c",
@@ -351,6 +351,7 @@
     "main:08078414": "item/get_definition.c", "main:08079bc4": "battle/random_16.c",
     "main:08079be8": "battle/random_percent.c", "main:08079cbc": "item/get_unleash_rate_bonus.c",
     "main:08079d1c": "item/roll_weapon_unleash.c", "main:08079d7c": "battle/effects/get_base_success_rate.c",
+    "main:0808e680": {"name":"BattleCommand_ExecuteSelectedAction"},
     "main:08079460": {"name":"BattleUnit_Assign"},
     "main:08079e9c": "battle/effects/target_is_weak.c", "main:08079ef8": "battle/effects/is_revive.c",
     "main:08079f10": "battle/effects/roll_success.c", "main:0808bd24": "map/get_focused_object_collision.c",
@@ -2072,6 +2073,6 @@
     "resource_3b8:02003df8": {"name":"RunSceneEffectSetup"}, "resource_3c6:0200010c": {"name":"RunActor18EventSetup"},
     "resource_3b9:02000708": {"name":"RunEventScript01"}, "resource_3bf:0200298c": {"name":"RunEventScript01"},
     "resource_3c5:02001238": {"name":"RunEventScript01"}, "resource_3c5:0200186c": {"name":"RunEventScript02"},
-    "resource_3ce:0200029c": {"name":"RunCallScript"}
+    "resource_3ce:0200029c": {"name":"RunCallScript"}, "resource_3be:02001158": {"name":"ActorPresentation_RunActorNineThresholdScene"}
   }
 }

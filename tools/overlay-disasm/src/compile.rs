@@ -5,19 +5,21 @@ use compiler_core::plan::{
 };
 use compiler_core::routing::CompilerTarget;
 use compiler_core::sha256;
+use compiler_core::source_inputs::compiler_source_tree_signature;
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
-use compiler_core::{external_symbol, external_symbol_assembly, overlay_call_via_base};
+use compiler_core::translation_units::{
+    AbsoluteSymbol, AbsoluteSymbolKind, TranslationUnit, TranslationUnits,
+};
+use compiler_core::{external_symbol_assembly, overlay_call_via_base};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
-use std::sync::Mutex;
+use std::sync::{Mutex, OnceLock};
 use tempfile::tempdir;
 pub fn hex(value: i64, width: usize) -> String {
     if value < 0 {
-        let body = format!("{:x}", value.unsigned_abs());
-        let padded = format!("{body:0>width$}", width = width);
-        return format!("-{padded}");
+        return format!("-{:0width$x}", value.unsigned_abs());
     }
     format!("{value:0width$x}", width = width)
 }
@@ -66,6 +68,14 @@ pub fn overlay_c_cache_dir() -> PathBuf {
     match std::env::var_os("ALCHEMY_OVERLAY_C_CACHE") {
         Some(value) => PathBuf::from(value),
         None => root().join("out/cache/overlay-c"),
+    }
+}
+
+fn translation_units() -> Result<&'static TranslationUnits, String> {
+    static UNITS: OnceLock<Result<TranslationUnits, String>> = OnceLock::new();
+    match UNITS.get_or_init(|| TranslationUnits::load(&root())) {
+        Ok(units) => Ok(units),
+        Err(error) => Err(error.clone()),
     }
 }
 const SELF_SOURCE: [&[u8]; 6] = [
@@ -152,30 +162,8 @@ fn command_identity(commands: &[Vec<String>], work: &str) -> Vec<u8> {
     }
     identity
 }
-fn overlay_c_sources_checked(source: &OverlaySource) -> Result<Vec<PathBuf>, String> {
-    let Some(anchor) = source.c_source_anchor() else {
-        return Ok(Vec::new());
-    };
-    let overlay = Regex::new(r"_overlay\.s$", "").replace_first(basename(anchor), "");
-    let text = source.read_text().map_err(|error| error.to_string())?;
-    let paths = SourcePaths::load(&root())?;
-    let mut found = Vec::new();
-    for address in placeholder_addresses(&text) {
-        let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;
-        let path = paths.source_path(owner);
-        if !path.exists() {
-            return Err(format!(
-                "{overlay}:{address:08x} has an AlchemyC placeholder but no exact C source at {}",
-                path.display()
-            ));
-        }
-        found.push(path);
-    }
-    Ok(found)
-}
-
 fn placeholder_addresses(assembly: &str) -> Vec<u32> {
-    let mut found = assembly
+    assembly
         .lines()
         .filter_map(|line| {
             line.trim()
@@ -183,14 +171,9 @@ fn placeholder_addresses(assembly: &str) -> Vec<u32> {
                 .strip_suffix(':')
                 .and_then(|address| u32::from_str_radix(address, 16).ok())
         })
-        .collect::<Vec<_>>();
-    found.sort_unstable();
-    found.dedup();
-    found
-}
-
-pub fn overlay_c_sources(source: &OverlaySource) -> Result<Vec<PathBuf>, String> {
-    overlay_c_sources_checked(source)
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect()
 }
 
 fn address_stem(path: &Path, overlay: &str) -> Result<(SourceOwner, String, i64), String> {
@@ -223,26 +206,52 @@ fn address_stem(path: &Path, overlay: &str) -> Result<(SourceOwner, String, i64)
     Ok((owner, tail.to_ascii_lowercase(), address))
 }
 fn checked(command: &[String], cwd: &Path) -> Result<String, String> {
-    let Some((binary, rest)) = command.split_first() else {
-        return Err("empty command".to_string());
-    };
+    let (binary, rest) = command.split_first().ok_or("empty command")?;
     let output = Command::new(binary)
         .args(rest)
         .current_dir(cwd)
         .output()
         .map_err(|error| format!("{} failed: {error}", basename(binary)))?;
     let stdout = String::from_utf8_lossy(&output.stdout).to_string();
-    if output.status.code() != Some(0) {
+    if !output.status.success() {
         let stderr = String::from_utf8_lossy(&output.stderr).to_string();
         let detail = crate::regex::js_trim(if stderr.is_empty() { &stdout } else { &stderr });
-        let suffix = if detail.is_empty() {
-            String::new()
+        return Err(if detail.is_empty() {
+            format!("{} failed", basename(binary))
         } else {
-            format!(": {detail}")
-        };
-        return Err(format!("{} failed{suffix}", basename(binary)));
+            format!("{} failed: {detail}", basename(binary))
+        });
     }
     Ok(stdout)
+}
+fn assemble_file(source: &str, object: &str, work: &Path) -> Result<(), String> {
+    checked(
+        &strings(&[
+            "arm-none-eabi-as",
+            "-mcpu=arm7tdmi",
+            "-mthumb-interwork",
+            "-o",
+            object,
+            source,
+        ]),
+        work,
+    )
+    .map(drop)
+}
+fn copy_text(elf: &str, binary: &str, work: &Path) -> Result<(), String> {
+    checked(
+        &strings(&[
+            "arm-none-eabi-objcopy",
+            "-O",
+            "binary",
+            "-j",
+            ".text",
+            elf,
+            binary,
+        ]),
+        work,
+    )
+    .map(drop)
 }
 pub(crate) fn spawn_raw(command: &[String], cwd: &Path) -> Result<Vec<u8>, String> {
     let (binary, rest) = command
@@ -325,136 +334,64 @@ fn overlay_cache_key(
     sha256::hex(&key)
 }
 
-fn rooted_path(path: &Path) -> PathBuf {
-    if path.is_absolute() {
-        path.to_path_buf()
-    } else {
-        root().join(path)
-    }
+fn absolute_symbol_assembly(name: &str, symbol: AbsoluteSymbol) -> String {
+    let directive = [".set", ".thumb_set"][(symbol.kind == AbsoluteSymbolKind::Thumb) as usize];
+    format!(
+        ".global {name}\n{directive} {name}, 0x{:08x}\n",
+        symbol.address
+    )
 }
 
-fn compiler_include_dirs(commands: &[Vec<String>]) -> Vec<PathBuf> {
-    let mut directories = BTreeSet::new();
-    for command in commands {
-        let mut arguments = command.iter();
-        while let Some(argument) = arguments.next() {
-            let include = if argument == "-I" {
-                arguments.next().map(String::as_str)
-            } else {
-                argument.strip_prefix("-I").filter(|path| !path.is_empty())
-            };
-            if let Some(include) = include {
-                directories.insert(rooted_path(Path::new(include)));
-            }
-        }
+fn overlay_external_assembly(
+    name: &str,
+    unit: Option<&TranslationUnit>,
+    units: &TranslationUnits,
+    call_via_base: u64,
+) -> Result<String, String> {
+    let symbol = unit
+        .and_then(|unit| unit.absolute_symbols.get(name).copied())
+        .or_else(|| units.main_symbol(name));
+    if let Some(symbol) = symbol {
+        return Ok(absolute_symbol_assembly(name, symbol));
     }
-    directories.into_iter().collect()
+    external_symbol_assembly(name, call_via_base)
 }
 
-fn collect_source_inputs(
-    path: &Path,
-    include_dirs: &[PathBuf],
-    seen: &mut BTreeSet<PathBuf>,
-    inputs: &mut Vec<(PathBuf, Vec<u8>)>,
-) -> Result<(), String> {
-    let canonical =
-        fs::canonicalize(path).map_err(|error| format!("{}: {error}", path.display()))?;
-    if !seen.insert(canonical.clone()) {
-        return Ok(());
-    }
-    let bytes =
-        fs::read(&canonical).map_err(|error| format!("{}: {error}", canonical.display()))?;
-    let text = String::from_utf8_lossy(&bytes);
-    let mut includes = Vec::new();
-    for include in text.lines().filter_map(quoted_include) {
-        let include = Path::new(include);
-        let local = canonical.parent().unwrap_or(Path::new("")).join(include);
-        if let Some(resolved) = std::iter::once(local)
-            .chain(include_dirs.iter().map(|directory| directory.join(include)))
-            .find(|candidate| candidate.is_file())
-        {
-            includes.push(resolved);
-        }
-    }
-    inputs.push((canonical, bytes));
-    for include in includes {
-        collect_source_inputs(&include, include_dirs, seen, inputs)?;
-    }
-    Ok(())
+fn translation_unit_signature() -> Result<Vec<u8>, String> {
+    fs::read(root().join("games/gs1/recon/translation-units.json"))
+        .map_err(|error| error.to_string())
 }
-
-fn source_input_signature(source: &Path, commands: &[Vec<String>]) -> Result<Vec<u8>, String> {
-    let mut seen = BTreeSet::new();
-    let mut inputs = Vec::new();
-    collect_source_inputs(
-        source,
-        &compiler_include_dirs(commands),
-        &mut seen,
-        &mut inputs,
-    )?;
-    let mut stream = Vec::new();
-    for (path, bytes) in inputs {
-        append_frame(&mut stream, path.to_string_lossy().as_bytes());
-        append_frame(&mut stream, &bytes);
+fn link_object(
+    files: [&str; 5],
+    work: &Path,
+    address: i64,
+    entry: Option<&str>,
+    unit: Option<&TranslationUnit>,
+    units: &TranslationUnits,
+    call_via: u64,
+) -> Result<Vec<u8>, String> {
+    let [object, symbols_source, symbols_object, elf, binary] = files;
+    let undefined = checked(&strings(&["arm-none-eabi-nm", "-u", object]), work)?;
+    let mut stubs = String::from(".syntax unified\n.thumb\n");
+    for name in undefined
+        .lines()
+        .filter_map(|line| line.split_whitespace().last())
+    {
+        stubs.push_str(
+            &overlay_external_assembly(name, unit, units, call_via)
+                .map_err(|_| format!("unsupported overlay C external symbol: {name}"))?,
+        );
     }
-    Ok(sha256::hex(&stream).into_bytes())
-}
-fn definition_guard(name: &str) -> Regex {
-    Regex::new(&format!(r"\b{name}\s*\([^;{{}}]*\)\s*\{{"), "")
-}
-fn c_identifier(text: &str) -> bool {
-    let mut bytes = text.bytes();
-    if !matches!(bytes.next(), Some(first) if first == b'_' || first.is_ascii_alphabetic()) {
-        return false;
+    fs::write(symbols_source, stubs).map_err(|error| format!("{symbols_source}: {error}"))?;
+    assemble_file(symbols_source, symbols_object, work)?;
+    let mut command = strings(&["arm-none-eabi-ld", &format!("-Ttext=0x{}", hex(address, 8))]);
+    if let Some(entry) = entry {
+        command.extend(strings(&["-e", entry]));
     }
-    bytes.all(|byte| byte == b'_' || byte.is_ascii_alphanumeric())
-}
-fn aliases_for_symbol(text: &str, symbol: &str) -> Vec<String> {
-    let mut aliases = Vec::new();
-    for line in text.lines() {
-        let fields: Vec<_> = line.split_ascii_whitespace().collect();
-        if fields.len() != 3 || fields[0] != "#define" || fields[2] != symbol {
-            continue;
-        }
-        let alias = fields[1];
-        if c_identifier(alias) {
-            aliases.push(alias.to_string());
-        }
-    }
-    aliases
-}
-fn source_defines_symbol(text: &str, symbol: &str) -> bool {
-    definition_guard(symbol).is_match(text)
-        || aliases_for_symbol(text, symbol)
-            .iter()
-            .any(|alias| definition_guard(alias).is_match(text))
-}
-fn quoted_include(line: &str) -> Option<&str> {
-    let rest = line.trim().strip_prefix("#include")?.trim();
-    let rest = rest.strip_prefix('"')?;
-    let end = rest.find('"')?;
-    Some(&rest[..end])
-}
-fn source_defines_symbol_through_header(source: &Path, text: &str, symbol: &str) -> bool {
-    if source_defines_symbol(text, symbol) {
-        return true;
-    }
-    for include in text.lines().filter_map(quoted_include) {
-        let local = source.parent().map(|parent| parent.join(include));
-        let project = root().join("games/gs1/include").join(include);
-        for header in local.into_iter().chain(std::iter::once(project)) {
-            let Ok(header_text) = fs::read_to_string(header) else {
-                continue;
-            };
-            if aliases_for_symbol(&header_text, symbol)
-                .iter()
-                .any(|alias| definition_guard(alias).is_match(text))
-            {
-                return true;
-            }
-        }
-    }
-    false
+    command.extend(strings(&["-o", elf, object, symbols_object]));
+    checked(&command, work)?;
+    copy_text(elf, binary, work)?;
+    fs::read(binary).map_err(|error| format!("{binary}: {error}"))
 }
 pub fn compile_overlay_c(
     source: &Path,
@@ -463,14 +400,10 @@ pub fn compile_overlay_c(
     routing_source: Option<&Path>,
     extra_flags: &[String],
 ) -> Result<Compiled, String> {
-    let mutations = if extra_flags.is_empty() {
-        None
-    } else {
-        Some(CompilerFlagMutations {
-            add_flags: extra_flags.to_vec(),
-            remove_flags: Vec::new(),
-        })
-    };
+    let mutations = (!extra_flags.is_empty()).then(|| CompilerFlagMutations {
+        add_flags: extra_flags.to_vec(),
+        remove_flags: Vec::new(),
+    });
     compile_overlay_with_mutations(source, work, overlay, routing_source, mutations.as_ref())
 }
 fn compile_overlay_with_mutations(
@@ -497,6 +430,8 @@ fn compile_overlay_with_mutations(
         Some(owner) => (owner, owner.address_stem(), owner.address() as i64),
         None => address_stem(source, overlay)?,
     };
+    let units = translation_units()?;
+    let unit = units.unit_for_owner(owner);
     let routing_source = match routing_source {
         Some(path) => source_paths
             .overlay_owner_for_path(overlay, path)?
@@ -511,12 +446,6 @@ fn compile_overlay_with_mutations(
         .map(u64::from)
         .unwrap_or_else(|| overlay_call_via_base(overlay)) as i64;
     let symbol = format!("Func_{}", stem.to_lowercase());
-    let text = fs::read_to_string(source).map_err(|error| format!("{source_display}: {error}"))?;
-    if !source_defines_symbol_through_header(source, &text, &symbol) {
-        return Err(format!(
-            "overlay C source does not define {symbol}: {source_display}"
-        ));
-    }
     let work_display = work.to_string_lossy().to_string();
     let at = |name: &str| work.join(name).to_string_lossy().to_string();
     let assembly = at(&format!("{stem}.s"));
@@ -537,7 +466,8 @@ fn compile_overlay_with_mutations(
     }
     let plan = source_to_assembly_plan(&options).map_err(|error| error.to_string())?;
     let steps: Vec<Vec<String>> = plan.steps.iter().map(|step| step.command.clone()).collect();
-    let source_inputs = source_input_signature(source, &steps)?;
+    let mut source_inputs = compiler_source_tree_signature(&root(), source, &steps)?;
+    append_frame(&mut source_inputs, &translation_unit_signature()?);
     let plan_signature = plan_stamp(&steps, &work_display);
     let host_signature = compiler_core::bundle::host_executable_signature(&OVERLAY_HOST_TOOLS)
         .map_err(|error| format!("overlay host tool signature: {error}"))?;
@@ -563,76 +493,20 @@ fn compile_overlay_with_mutations(
     let produced = fs::read_to_string(&assembly).map_err(|error| format!("{assembly}: {error}"))?;
     fs::write(&assembly, bias_in_image_label_words(&produced).text)
         .map_err(|error| format!("{assembly}: {error}"))?;
-    checked(
-        &strings(&[
-            "arm-none-eabi-as",
-            "-mcpu=arm7tdmi",
-            "-mthumb-interwork",
-            "-o",
-            &object,
-            &assembly,
-        ]),
+    assemble_file(&assembly, &object, work)?;
+    let object_listing = checked(&strings(&["arm-none-eabi-nm", "-S", &object]), work)?;
+    let (object_offset, object_size) = symbol_span(&object_listing, &symbol)?;
+    let link_address = address
+        .checked_sub(object_offset as i64)
+        .ok_or_else(|| format!("overlay owner {symbol} precedes its translation unit"))?;
+    let whole = link_object(
+        [&object, &symbols_source, &symbols_object, &elf, &binary],
         work,
-    )?;
-    let undefined_symbols: Vec<String> = split_lines(&checked(
-        &strings(&["arm-none-eabi-nm", "-u", &object]),
-        work,
-    )?)
-    .into_iter()
-    .filter(|line| !line.is_empty())
-    .map(|line| {
-        crate::regex::js_trim(&line)
-            .split(|c: char| crate::regex::is_js_space(c))
-            .rfind(|part| !part.is_empty())
-            .expect("a non-empty trimmed line has a last field")
-            .to_string()
-    })
-    .collect();
-    for external in &undefined_symbols {
-        if external_symbol(external, call_via_base as u64).is_none() {
-            return Err(format!("unsupported overlay C external symbol: {external}"));
-        }
-    }
-    let mut stubs = String::from(".syntax unified\n.thumb\n");
-    for name in &undefined_symbols {
-        stubs.push_str(&external_symbol_assembly(name, call_via_base as u64)?);
-    }
-    fs::write(&symbols_source, stubs).map_err(|error| format!("{symbols_source}: {error}"))?;
-    checked(
-        &strings(&[
-            "arm-none-eabi-as",
-            "-mcpu=arm7tdmi",
-            "-mthumb-interwork",
-            "-o",
-            &symbols_object,
-            &symbols_source,
-        ]),
-        work,
-    )?;
-    checked(
-        &strings(&[
-            "arm-none-eabi-ld",
-            &format!("-Ttext=0x{}", hex(address, 8)),
-            "-e",
-            &symbol,
-            "-o",
-            &elf,
-            &object,
-            &symbols_object,
-        ]),
-        work,
-    )?;
-    checked(
-        &strings(&[
-            "arm-none-eabi-objcopy",
-            "-O",
-            "binary",
-            "-j",
-            ".text",
-            &elf,
-            &binary,
-        ]),
-        work,
+        link_address,
+        Some(&symbol),
+        unit,
+        units,
+        call_via_base as u64,
     )?;
     let listing = checked(&strings(&["arm-none-eabi-nm", "-S", &elf]), work)?;
     let needle = format!(" {symbol}");
@@ -648,9 +522,14 @@ fn compile_overlay_with_mutations(
         .to_string();
     let size = js_parse_int_hex(&size_field)
         .ok_or_else(|| format!("nm -S size is not hex: {size_field}"))?;
-    let whole = fs::read(&binary).map_err(|error| format!("{binary}: {error}"))?;
-    let end = (size.max(0) as usize).min(whole.len());
-    let data = whole[..end].to_vec();
+    if size as usize != object_size {
+        return Err(format!("linked overlay C symbol size changed: {symbol}"));
+    }
+    let end = object_offset + size.max(0) as usize;
+    let data = whole
+        .get(object_offset..end)
+        .ok_or_else(|| format!("linked overlay C symbol is truncated: {symbol}"))?
+        .to_vec();
     let _ = fs::create_dir_all(overlay_c_cache_dir());
     publish_cache_entry(&cached, &data);
     Ok(Compiled { address, data })
@@ -673,6 +552,206 @@ pub fn compile_overlay_mutated(
 ) -> Result<Compiled, String> {
     compile_overlay_with_mutations(source, work, overlay, routing_source, Some(mutations))
 }
+
+fn symbol_span(listing: &str, name: &str) -> Result<(usize, usize), String> {
+    let fields = listing
+        .lines()
+        .map(|line| line.split_whitespace().collect::<Vec<_>>())
+        .find(|fields| fields.last() == Some(&name))
+        .ok_or_else(|| format!("missing translation-unit symbol {name}"))?;
+    let value = |index: usize| {
+        fields
+            .get(index)
+            .and_then(|field| usize::from_str_radix(field, 16).ok())
+            .ok_or_else(|| format!("invalid translation-unit symbol {name}"))
+    };
+    Ok((value(0)?, value(1)?))
+}
+
+fn compile_overlay_unit(
+    unit: &TranslationUnit,
+    work: &Path,
+    overlay: &str,
+) -> Result<Compiled, String> {
+    let units = translation_units()?;
+    let names = SourcePaths::load(&root())?;
+    let source = root().join(&unit.source);
+    let first = unit
+        .owners
+        .first()
+        .ok_or("empty overlay translation unit")?;
+    let base = first.address as i64;
+    let call_via = unit
+        .owners
+        .iter()
+        .map(|member| {
+            unit.source_owner(member.address).map(|owner| {
+                names
+                    .registered_call_via(owner)
+                    .map(u64::from)
+                    .unwrap_or_else(|| overlay_call_via_base(overlay))
+            })
+        })
+        .collect::<Result<BTreeSet<_>, _>>()?;
+    if call_via.len() != 1 {
+        return Err(format!(
+            "{}: grouped owners disagree on call-via bank",
+            unit.id
+        ));
+    }
+    let call_via = *call_via.first().unwrap();
+    let at = |suffix: &str| {
+        work.join(format!("{}.{suffix}", unit.id))
+            .to_string_lossy()
+            .into_owned()
+    };
+    let [assembly, object, symbols_source, symbols_object, elf, binary] =
+        ["s", "o", "symbols.s", "symbols.o", "elf", "bin"].map(at);
+    let mut options = SourceToAssemblyPlanOptions::new(
+        CompilerTarget::Gs1,
+        unit.source_owner(first.address)?
+            .routing_path()
+            .to_string_lossy(),
+        source.to_string_lossy(),
+        assembly.clone(),
+    );
+    options.preprocessed_output = Some(at("i"));
+    for step in source_to_assembly_plan(&options)?.steps {
+        checked(&step.command, work)?;
+    }
+    let produced = fs::read_to_string(&assembly).map_err(|error| error.to_string())?;
+    fs::write(&assembly, bias_in_image_label_words(&produced).text)
+        .map_err(|error| error.to_string())?;
+    assemble_file(&assembly, &object, work)?;
+    let listing = checked(
+        &strings(&["arm-none-eabi-nm", "-S", "--defined-only", &object]),
+        work,
+    )?;
+    let mut members = unit.symbols().collect::<Vec<_>>();
+    members.sort_by_key(|member| member.0);
+    let mut cursor = first.address;
+    for (address, _, extent) in &members {
+        if *address != cursor {
+            return Err(format!("{}: grouped text has an undeclared gap", unit.id));
+        }
+        let symbol = unit.source_owner(*address)?.legacy_name();
+        let offset = address
+            .checked_sub(first.address)
+            .ok_or_else(|| format!("{}: symbol precedes first owner", unit.id))?;
+        let expected = (offset as usize, *extent);
+        if symbol_span(&listing, &symbol)? != expected {
+            return Err(format!("{}: {symbol} offset or extent differs", unit.id));
+        }
+        cursor = *address + *extent as u32;
+    }
+    let whole = link_object(
+        [&object, &symbols_source, &symbols_object, &elf, &binary],
+        work,
+        base,
+        None,
+        Some(unit),
+        units,
+        call_via,
+    )?;
+    if whole.len() != (cursor - first.address) as usize {
+        return Err(format!("{}: grouped text extent differs", unit.id));
+    }
+    Ok(Compiled {
+        address: base,
+        data: whole,
+    })
+}
+
+fn validate_shared_overlay_source(
+    repository: &Path,
+    names: &SourcePaths,
+    units: &[TranslationUnit],
+    overlay: &str,
+    path: &Path,
+) -> Result<(), String> {
+    let owners = names
+        .owners_for_path(path)
+        .into_iter()
+        .filter(|owner| owner.overlay_id().as_deref() == Some(overlay))
+        .map(|owner| owner.address())
+        .collect::<BTreeSet<_>>();
+    if owners.len() <= 1 {
+        return Ok(());
+    }
+    let covering = units
+        .iter()
+        .filter(|unit| {
+            unit.overlay.as_deref() == Some(overlay)
+                && unit.exact()
+                && repository.join(&unit.source) == path
+                && unit
+                    .owners
+                    .iter()
+                    .map(|owner| owner.address)
+                    .collect::<BTreeSet<_>>()
+                    == owners
+        })
+        .count();
+    if covering == 1 {
+        return Ok(());
+    }
+    Err(format!(
+        "{} maps to multiple {overlay} owners without one wholly exact translation unit",
+        path.display()
+    ))
+}
+
+fn compile_production_overlay(
+    source: &OverlaySource,
+    work: &Path,
+    overlay: &str,
+) -> Result<Vec<Compiled>, String> {
+    let text = source.read_text().map_err(|error| error.to_string())?;
+    let placeholders = placeholder_addresses(&text)
+        .into_iter()
+        .collect::<BTreeSet<_>>();
+    let names = SourcePaths::load(&root())?;
+    let units = translation_units()?;
+    let mut paths = BTreeSet::new();
+    for address in &placeholders {
+        let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;
+        paths.insert(names.source_path(owner));
+    }
+    for path in paths {
+        validate_shared_overlay_source(&root(), &names, &units.units, overlay, &path)?;
+    }
+    let mut handled = BTreeSet::new();
+    let mut compiled = Vec::new();
+    for unit in units.units.iter().filter(|unit| {
+        unit.overlay.as_deref() == Some(overlay)
+            && unit.exact()
+            && root().join(&unit.source).starts_with(names.source_root())
+    }) {
+        for (address, _, _) in unit.symbols() {
+            if !placeholders.contains(&address) || !handled.insert(address) {
+                return Err(format!(
+                    "{}: undeclared or duplicate grouped owner",
+                    unit.id
+                ));
+            }
+        }
+        compiled.push(compile_overlay_unit(unit, work, overlay)?);
+    }
+    for address in placeholders.difference(&handled) {
+        let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;
+        let path = names.source_path(owner);
+        if !path.is_file() {
+            return Err(format!(
+                "{} has an AlchemyC placeholder but no exact C source at {}",
+                owner.id(),
+                path.display()
+            ));
+        }
+        compiled.push(compile_overlay_c(&path, work, overlay, None, &[])?);
+    }
+    compiled.sort_by_key(|member| member.address);
+    Ok(compiled)
+}
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Span {
     pub start: i64,
@@ -681,18 +760,16 @@ pub struct Span {
 pub fn overlay_c_spans(source: &OverlaySource, base: i64) -> Result<Vec<Span>, String> {
     let display = source.to_display_string();
     let overlay = Regex::new(r"_overlay\.s$", "").replace_first(basename(&display), "");
-    let mut spans = Vec::new();
-    for c_source in overlay_c_sources(source)? {
-        let work = tempdir().map_err(|error| error.to_string())?;
-        let compiled = compile_overlay_c(&c_source, work.path(), &overlay, None, &[])?;
-        let start = compiled.address - base;
-        spans.push(Span {
-            start,
-            end: start + compiled.data.len() as i64,
-        });
-    }
-    spans.sort_by_key(|span| span.start);
-    Ok(spans)
+    let work = tempdir().map_err(|error| error.to_string())?;
+    compile_production_overlay(source, work.path(), &overlay).map(|members| {
+        members
+            .into_iter()
+            .map(|member| Span {
+                start: member.address - base,
+                end: member.address - base + member.data.len() as i64,
+            })
+            .collect()
+    })
 }
 pub fn assemble_overlay(source: &OverlaySource, base: i64) -> Result<Vec<u8>, String> {
     let work = tempdir().map_err(|error| error.to_string())?;
@@ -740,19 +817,12 @@ pub fn assemble_overlay(source: &OverlaySource, base: i64) -> Result<Vec<u8>, St
     let display = source.to_display_string();
     let overlay = Regex::new(r"_overlay\.s$", "").replace_first(basename(&display), "");
     let mut occupied: std::collections::BTreeSet<usize> = std::collections::BTreeSet::new();
-    for c_source in overlay_c_sources_checked(source)? {
-        let compiled =
-            compile_overlay_c(&c_source, work.path(), &overlay, None, &[]).map_err(|cause| {
-                format!(
-                    "{overlay}: {}: {cause}",
-                    basename(&c_source.to_string_lossy())
-                )
-            })?;
+    for compiled in compile_production_overlay(source, work.path(), &overlay)? {
         let offset = compiled.address - base;
         if offset < 0 || offset + compiled.data.len() as i64 > result.len() as i64 {
             return Err(format!(
                 "overlay C span is outside {display}: {}",
-                c_source.display()
+                hex(compiled.address, 8)
             ));
         }
         let offset = offset as usize;
@@ -764,7 +834,7 @@ pub fn assemble_overlay(source: &OverlaySource, base: i64) -> Result<Vec<u8>, St
             if occupied.contains(&byte) {
                 return Err(format!(
                     "overlapping overlay C span: {}",
-                    c_source.display()
+                    hex(compiled.address, 8)
                 ));
             }
             occupied.insert(byte);
@@ -783,26 +853,13 @@ pub(crate) fn strings(parts: &[&str]) -> Vec<String> {
     parts.iter().map(|part| (*part).to_string()).collect()
 }
 pub(crate) fn split_lines(text: &str) -> Vec<String> {
-    let mut out = Vec::new();
-    let mut current = String::new();
-    let mut chars = text.chars().peekable();
-    while let Some(c) = chars.next() {
-        if c == '\r' && chars.peek() == Some(&'\n') {
-            chars.next();
-            out.push(std::mem::take(&mut current));
-        } else if c == '\n' {
-            out.push(std::mem::take(&mut current));
-        } else {
-            current.push(c);
-        }
-    }
-    out.push(current);
-    out
+    text.lines().map(str::to_owned).collect()
 }
 
 #[cfg(test)]
 mod source_activation_tests {
     use super::*;
+    use compiler_core::translation_units::{OwnerState, TranslationOwner};
     use tempfile::tempdir;
 
     #[test]
@@ -821,40 +878,53 @@ mod source_activation_tests {
         let work = tempdir().unwrap();
         let assembly = work.path().join("resource_382_overlay.s");
         fs::write(&assembly, "AlchemyC_0200dead:\n  .space 4\n").unwrap();
-        let error = overlay_c_sources(&OverlaySource::path(assembly)).unwrap_err();
+        let error = overlay_c_spans(&OverlaySource::path(assembly), 0x0200_0000).unwrap_err();
         assert!(error.contains("resource_382:0200dead has an AlchemyC placeholder"));
     }
 
     #[test]
-    fn included_header_can_name_an_overlay_owner() {
-        let work = tempdir().unwrap();
-        let source = work.path().join("spawn_effect.c");
-        let header = work.path().join("effect.h");
-        fs::write(
-            &source,
-            "#include \"effect.h\"\nvoid SceneEffect_Spawn(void) {}\n",
+    fn shared_overlay_source_requires_one_wholly_exact_unit() {
+        let root = tempdir().unwrap();
+        let names = SourcePaths::parse(
+            root.path(),
+            r#"{"format":3,"owners":{
+                "resource_382:02000100":"overlays/shared.c",
+                "resource_382:02000104":"overlays/shared.c"}}"#,
         )
         .unwrap();
-        fs::write(header, "#define SceneEffect_Spawn Func_0200013c\n").unwrap();
-        let text = fs::read_to_string(&source).unwrap();
-        assert!(source_defines_symbol_through_header(
-            &source,
-            &text,
-            "Func_0200013c"
-        ));
+        let path = names.source_path(SourceOwner::parse("resource_382:02000100").unwrap());
+        let owner = |address| TranslationOwner {
+            address,
+            alias: format!("Owner_{address:08x}"),
+            extent: 4,
+            state: OwnerState::ExactC,
+        };
+        let mut unit = TranslationUnit {
+            id: "shared".into(),
+            game: "gs1".into(),
+            source: "games/gs1/src/overlays/shared.c".into(),
+            compiler_route: "canonical-gcc296".into(),
+            overlay: Some("resource_382".into()),
+            absolute_symbols: BTreeMap::new(),
+            local_symbols: Vec::new(),
+            owners: vec![owner(0x0200_0100), owner(0x0200_0104)],
+        };
+        let check = |units: &[TranslationUnit]| {
+            validate_shared_overlay_source(root.path(), &names, units, "resource_382", &path)
+        };
+        assert!(check(&[]).is_err());
+        assert!(check(std::slice::from_ref(&unit)).is_ok());
+        unit.owners[1].state = OwnerState::RetainedAssembly;
+        assert!(check(&[unit]).is_err());
     }
 
     #[test]
-    fn included_source_changes_are_part_of_the_overlay_cache_identity() {
-        let work = tempdir().unwrap();
-        let source = work.path().join("owner.c");
-        let body = work.path().join("body.inc");
-        fs::write(&source, "#include \"body.inc\"\n").unwrap();
-        fs::write(&body, "void owner(void) {}\n").unwrap();
-        let first = source_input_signature(&source, &[]).unwrap();
-        fs::write(&body, "void owner(void) { for (;;) {} }\n").unwrap();
-        let second = source_input_signature(&source, &[]).unwrap();
-        assert_ne!(first, second);
+    fn semantic_main_alias_uses_the_generated_export_binding() {
+        let units = translation_units().unwrap();
+        let binding =
+            overlay_external_assembly("Scheduler_ResetTaskTable", None, units, 0).unwrap();
+        assert!(binding.contains("0x080040e8"));
+        assert!(units.main_symbol_exports().contains(&binding));
     }
 }
 pub(crate) fn js_parse_int_hex(text: &str) -> Option<i64> {

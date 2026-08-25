@@ -47,16 +47,4 @@ impl OverlaySource {
             }
         }
     }
-    pub fn c_source_anchor(&self) -> Option<&str> {
-        match self {
-            OverlaySource::Url(_) => None,
-            OverlaySource::Str(text) => {
-                if text.contains('\n') || !Path::new(text).exists() {
-                    None
-                } else {
-                    Some(text)
-                }
-            }
-        }
-    }
 }

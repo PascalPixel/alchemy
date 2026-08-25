@@ -21,6 +21,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "candidate-compiler"
+version = "0.1.0"
+dependencies = [
+ "compiler-core",
+ "decomp-targets",
+]
+
+[[package]]
 name = "cfg-if"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -31,6 +39,7 @@ name = "compiler-core"
 version = "0.1.0"
 dependencies = [
  "fs2",
+ "serde",
  "serde_json",
  "sha2",
 ]
@@ -53,6 +62,10 @@ dependencies = [
  "generic-array",
  "typenum",
 ]
+
+[[package]]
+name = "decomp-targets"
+version = "0.1.0"
 
 [[package]]
 name = "digest"
@@ -88,8 +101,9 @@ dependencies = [
 name = "integrate-matches"
 version = "0.1.0"
 dependencies = [
+ "candidate-compiler",
  "compiler-core",
- "regex",
+ "no-asm-c",
 ]
 
 [[package]]
@@ -109,6 +123,15 @@ name = "memchr"
 version = "2.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
+
+[[package]]
+name = "no-asm-c"
+version = "0.1.0"
+dependencies = [
+ "compiler-core",
+ "decomp-targets",
+ "regex",
+]
 
 [[package]]
 name = "proc-macro2"
@@ -164,6 +187,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4148590afebada386688f18773da617792bf2ef03ffc1e4cbd2b1d45b023e0ba"
 dependencies = [
  "serde_core",
+ "serde_derive",
 ]
 
 [[package]]

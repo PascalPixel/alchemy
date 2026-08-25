@@ -373,8 +373,8 @@ void Func_08006240(void)
     u32 serial_data[2];
     s32 channel;
 
-    serial_data[0] = REG_SIODATA32[0];
     serial_data[1] = REG_SIODATA32[1];
+    serial_data[0] = REG_SIODATA32[0];
     state = SERIAL_RUNTIME;
     state->is_parent = (REG_SIOCNT << 25) >> 31;
 
@@ -382,9 +382,9 @@ void Func_08006240(void)
         u16 *swap;
 
         REG_SIODATA8 = 0xfefe;
-        swap = state->send_buffer[0];
-        state->send_buffer[0] = state->send_buffer[1];
-        state->send_buffer[1] = swap;
+        swap = state->send_buffer[1];
+        state->send_buffer[1] = state->send_buffer[0];
+        state->send_buffer[0] = swap;
     } else if (state->send_index >= 0) {
         REG_SIODATA8 = state->send_buffer[1][state->send_index];
     }
@@ -393,7 +393,8 @@ void Func_08006240(void)
 
     for (channel = 0; channel <= 1; channel++) {
         s32 receive_index;
-        u16 value;
+        /* The reference keeps the received halfword promoted and zero-extended. */
+        u32 value;
 
         value = ((u16 *)serial_data)[channel];
         receive_index = state->receive_index[channel];

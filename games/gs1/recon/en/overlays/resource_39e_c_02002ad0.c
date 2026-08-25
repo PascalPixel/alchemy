@@ -441,7 +441,7 @@ void Func_020080c6();
 void Func_020080d0();
 void Func_020080da();
 void Func_020080de();
-void Func_020080e6();
+s32 Func_020080e6();
 void Func_020080ea();
 void Func_020080ee();
 void Func_02008100();

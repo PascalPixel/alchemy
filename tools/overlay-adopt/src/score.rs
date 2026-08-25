@@ -1,12 +1,12 @@
 use crate::park::{placeholder_span, truth_window};
 use candidate_show::disasm::disassemble;
-use candidate_show::render::align_streams;
+use candidate_show::render::{align_streams, ordered_lines, side_by_side};
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use overlay_disasm::compile::compile_overlay_c;
 use overlay_disasm::OVERLAY_BASE;
 use std::path::{Path, PathBuf};
 use tempfile::tempdir;
-fn resolve(root: &Path, target: &str) -> Result<(String, i64), String> {
+pub(crate) fn resolve(root: &Path, target: &str) -> Result<(String, i64), String> {
     if let Some((overlay, address)) = target.split_once(':') {
         let address = i64::from_str_radix(address.trim_start_matches("0x"), 16)
             .map_err(|_| format!("{target}: address must be hexadecimal"))?;
@@ -17,118 +17,71 @@ fn resolve(root: &Path, target: &str) -> Result<(String, i64), String> {
         };
         return Ok((overlay.to_string(), address));
     }
-    if let Some(owner) = SourcePaths::load(root)?.owner_for_path(Path::new(target))? {
-        let overlay = owner
-            .overlay_id()
-            .ok_or_else(|| format!("{target}: not an overlay source"))?;
-        return Ok((overlay, owner.address() as i64));
-    }
-    let name = Path::new(target)
+    if let Some((overlay, address)) = Path::new(target)
         .file_stem()
-        .map(|stem| stem.to_string_lossy().to_string())
-        .ok_or_else(|| format!("{target}: not a source path"))?;
-    let (overlay, address) = name
-        .split_once("_c_")
-        .ok_or_else(|| format!("{target}: not an overlay source name"))?;
-    let address = i64::from_str_radix(address, 16)
-        .map_err(|_| format!("{target}: address must be hexadecimal"))?;
-    let _ = root;
-    Ok((overlay.to_string(), address))
+        .and_then(|stem| stem.to_str())
+        .and_then(|stem| stem.split_once("_c_"))
+        .and_then(|(overlay, address)| {
+            i64::from_str_radix(address, 16)
+                .ok()
+                .map(|address| (overlay.to_string(), address))
+        })
+    {
+        return Ok((overlay, address));
+    }
+    let owner = SourcePaths::load(root)?
+        .owner_for_path(Path::new(target))?
+        .ok_or_else(|| format!("{target}: not a mapped overlay source"))?;
+    Ok((
+        owner
+            .overlay_id()
+            .ok_or_else(|| format!("{target}: not an overlay source"))?,
+        i64::from(owner.address()),
+    ))
 }
 fn source_for(root: &Path, overlay: &str, address: i64) -> Result<PathBuf, String> {
     let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;
-    let exact = SourcePaths::load(root)?.source_path(owner);
-    if exact.exists() {
-        return Ok(exact);
-    }
-    let recon = root.join(format!(
-        "games/gs1/recon/en/overlays/{overlay}_c_{address:08x}.c"
-    ));
-    if recon.exists() {
-        return Ok(recon);
-    }
-    Err(format!(
-        "no tracked or exact source for {overlay}:{address:08x}"
-    ))
-}
-fn inventory_span(root: &Path, overlay: &str, address: i64) -> Option<i64> {
-    let text = std::fs::read_to_string(root.join("out/decomp/overlays.json")).ok()?;
-    let value: serde_json::Value = serde_json::from_str(&text).ok()?;
-    for function in value.get("functions")?.as_array()? {
-        if function.get("overlay")?.as_str()? != overlay {
-            continue;
-        }
-        let entry = match function.get("entry")? {
-            serde_json::Value::String(text) => {
-                i64::from_str_radix(text.trim_start_matches("0x"), 16).ok()?
-            }
-            other => other.as_i64()?,
-        };
-        if entry == address {
-            return function.get("span_bytes")?.as_i64();
-        }
-    }
-    None
-}
-fn reviewed_span(root: &Path, overlay: &str, address: i64) -> Option<i64> {
-    let text = std::fs::read_to_string(root.join("games/gs1/semantic/regions.json")).ok()?;
-    let value: serde_json::Value = serde_json::from_str(&text).ok()?;
-    for region in value.get("manual_regions")?.as_array()? {
-        if region.get("overlay")?.as_str()? != overlay {
-            continue;
-        }
-        let entry = match region.get("entry")? {
-            serde_json::Value::String(text) => {
-                i64::from_str_radix(text.trim_start_matches("0x"), 16).ok()?
-            }
-            other => other.as_i64()?,
-        };
-        if entry == address {
-            return region.get("span_bytes")?.as_i64();
-        }
-    }
-    None
+    let candidates = [
+        SourcePaths::load(root)?.source_path(owner),
+        root.join(format!(
+            "games/gs1/recon/en/overlays/{overlay}_c_{address:08x}.c"
+        )),
+    ];
+    candidates
+        .into_iter()
+        .find(|candidate| candidate.exists())
+        .ok_or_else(|| format!("no source for {overlay}:{address:08x}"))
 }
 pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
-    let mut align = false;
-    let mut target = None;
-    let mut extra: Vec<String> = Vec::new();
-    let mut expecting_flags = false;
-    let mut expecting_span = false;
-    let mut override_span: Option<i64> = None;
-    for argument in argv {
-        if expecting_flags {
-            extra.extend(argument.split(',').map(str::to_string));
-            expecting_flags = false;
-            continue;
-        }
-        if expecting_span {
-            override_span = Some(
-                argument
-                    .parse::<i64>()
-                    .map_err(|_| format!("--span wants a decimal byte count, got {argument:?}"))?,
-            );
-            expecting_span = false;
-            continue;
-        }
+    let (mut align, mut target, mut override_span) = (false, None, None);
+    let mut extra = Vec::new();
+    let mut args = argv.iter();
+    while let Some(argument) = args.next() {
         match argument.as_str() {
-            "--flags" => expecting_flags = true,
-            "--span" => expecting_span = true,
+            "--flags" => extra.extend(
+                args.next()
+                    .ok_or("--flags needs a comma-separated value")?
+                    .split(',')
+                    .map(str::to_string),
+            ),
+            "--span" => {
+                override_span = Some(
+                    args.next()
+                        .and_then(|value| value.parse().ok())
+                        .ok_or("--span wants a decimal byte count")?,
+                )
+            }
             "--align" => align = true,
             "-h" | "--help" => {
                 println!(
                     "usage: overlay score <overlay>:<addressHex> | <source.c> [--align]\n\n\
-                     Prints the candidate and the ROM reference side by side, in the same\n\
-                     shape as `candidate-show`. The span is derived.\n\n\
-                     --span BYTES overrides that derivation. It is a DIAGNOSTIC, for\n\
-                     the rows whose audited extent is wrong or absent -- a jump table\n\
-                     leaves a hole and `adopt` refuses before any byte is compared, so\n\
-                     without this there is no way to ask whether such a row is already\n\
-                     exact. It does not adopt anything and does not change any gate."
+                     Compare candidate and reference bytes. A mapped owner supplies the span;\n\
+                     --span BYTES is an explicit read-only diagnostic override."
                 );
                 return Ok(0);
             }
-            other => target = Some(other.to_string()),
+            other if target.is_none() => target = Some(other.to_string()),
+            other => return Err(format!("unexpected argument {other:?}")),
         }
     }
     let target = target.ok_or("a <overlay>:<addressHex> or source path is required")?;
@@ -141,16 +94,24 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     } else {
         source_for(root, &overlay, address)?
     };
+    let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;
+    let reviewed = crate::reviewed_spans(root)?;
     let span = match override_span {
         Some(span) => Some(span),
         None => placeholder_span(root, &overlay, address)?
-            .or_else(|| inventory_span(root, &overlay, address))
-            .or_else(|| reviewed_span(root, &overlay, address))
-            .or(crate::audited_code_span(root, &overlay, address)?),
-    }
-    .ok_or_else(|| {
-        format!("{overlay}:{address:08x} has neither a placeholder nor an audited span")
-    })?;
+            .or_else(|| reviewed.get(&owner).map(|span| *span as i64)),
+    };
+    let span = match span {
+        Some(span) => span,
+        None => match crate::audited_kind(root, &overlay, address)? {
+            Some(kind) => {
+                return Err(format!(
+                    "{overlay}:{address:08x} begins in audited {kind}; it is not a mapped owner"
+                ))
+            }
+            None => return Err(format!("{overlay}:{address:08x} has no mapped owner span")),
+        },
+    };
     let (reference, oracle) = truth_window(root, &overlay, address, span)?;
     let work = tempdir().map_err(|error| error.to_string())?;
     let compiled = compile_overlay_c(&source, work.path(), &overlay, None, &extra)?;
@@ -169,44 +130,79 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     let base = address as f64;
     let left = disassemble(&ours.to_string_lossy(), base)?;
     let right = disassemble(&theirs.to_string_lossy(), base)?;
-    let ordered = |rows: &candidate_show::disasm::Rows| -> Vec<String> {
-        let mut keys: Vec<f64> = rows.keys().collect();
-        keys.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
-        keys.iter()
-            .map(|key| rows.get(*key).unwrap_or("").to_string())
-            .collect()
-    };
-    let left_lines = ordered(&left);
-    let right_lines = ordered(&right);
+    let left_lines = ordered_lines(&left);
+    let right_lines = ordered_lines(&right);
     let (class, wrong) = candidate_show::render::residual_class(&left_lines, &right_lines);
     println!("class={class} wrong_instructions={wrong}");
-    if align {
-        println!("      candidate                      reference");
-        for (candidate, reference) in align_streams(&left_lines, &right_lines) {
-            let mark = match (&candidate, &reference) {
-                (Some(a), Some(b)) if a == b => " ",
-                (Some(_), Some(_)) => "!",
-                (Some(_), None) => "+",
-                (None, Some(_)) => "-",
-                (None, None) => " ",
-            };
-            let a = candidate.unwrap_or_default();
-            println!("  {mark} {a:<30} {}", reference.unwrap_or_default());
-        }
-    } else {
-        if left_lines.len() != right_lines.len() {
-            println!(
-                "  note: the two sides have different instruction counts, so the rows below\n\
-                 \x20       are phase-shifted. Re-run with --align."
-            );
-        }
-        println!("      candidate                      reference");
-        for index in 0..left_lines.len().max(right_lines.len()) {
-            let a = left_lines.get(index).cloned().unwrap_or_default();
-            let b = right_lines.get(index).cloned().unwrap_or_default();
-            let mark = if a == b { " " } else { "!" };
-            println!("  {mark} {a:<30} {b}");
-        }
+    if !align && left_lines.len() != right_lines.len() {
+        println!("note: instruction counts differ; use --align to resynchronize");
     }
+    let rows = if align {
+        align_streams(&left_lines, &right_lines)
+    } else {
+        (0..left_lines.len().max(right_lines.len()))
+            .map(|i| (left_lines.get(i).cloned(), right_lines.get(i).cloned()))
+            .collect()
+    };
+    println!("      candidate                      reference");
+    print!("{}", side_by_side(&rows));
     Ok(if differing == 0 { 0 } else { 1 })
+}
+pub fn audit_corpus(root: &Path) -> Result<i32, String> {
+    let directory = root.join("games/gs1/recon/en/overlays");
+    let mut sources = std::fs::read_dir(&directory)
+        .map_err(|error| format!("{}: {error}", directory.display()))?
+        .filter_map(Result::ok)
+        .map(|entry| entry.path())
+        .filter(|path| path.extension().and_then(|value| value.to_str()) == Some("c"))
+        .collect::<Vec<_>>();
+    sources.sort();
+    if sources.is_empty() {
+        return Err("overlay reconstruction corpus is empty".into());
+    }
+    let paths = SourcePaths::load(root)?;
+    let reviewed = crate::reviewed_spans(root)?;
+    // mapped, nonowner, installed, nonexact, ordinary, nonordinary, unmapped exact
+    let mut count = [0usize; 7];
+    for source in &sources {
+        let target = source.to_string_lossy();
+        let (overlay, address) = resolve(root, &target)?;
+        let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;
+        let span = placeholder_span(root, &overlay, address)?
+            .or_else(|| reviewed.get(&owner).map(|span| *span as i64));
+        let Some(span) = span else {
+            if crate::audited_kind(root, &overlay, address)?.as_deref() != Some("literal_pool") {
+                return Err(format!(
+                    "{} has no mapped owner and is not audited literal-pool data",
+                    source.display()
+                ));
+            }
+            count[1] += 1;
+            println!("not-owner\t{overlay}:{address:08x}\taudited-literal-pool");
+            continue;
+        };
+        count[0] += 1;
+        let (reference, _) = truth_window(root, &overlay, address, span)?;
+        let work = tempdir().map_err(|error| error.to_string())?;
+        if compile_overlay_c(source, work.path(), &overlay, None, &[])?.data != reference {
+            count[3] += 1;
+            continue;
+        }
+        let destination = paths.registered_source_path(owner);
+        if destination.as_ref().is_ok_and(|path| path.is_file()) {
+            count[2] += 1;
+            continue;
+        }
+        let class = if destination.is_err() {
+            count[6] += 1;
+            "unmapped"
+        } else {
+            let ordinary = crate::ordinary_source(root, source)?;
+            count[5 - usize::from(ordinary)] += 1;
+            ["nonordinary", "ordinary"][usize::from(ordinary)]
+        };
+        println!("exact-retained\t{}\t{class}", owner.id());
+    }
+    println!("overlay-corpus sources={} mapped={} literal_pool_nonowners={} installed_exact={} nonexact={} exact_retained_ordinary={} exact_retained_nonordinary={} exact_unmapped={}", sources.len(), count[0], count[1], count[2], count[3], count[4], count[5], count[6]);
+    Ok(i32::from(count[4..].iter().sum::<usize>() != 0))
 }

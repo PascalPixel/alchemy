@@ -376,7 +376,7 @@ next_run:
                 pos++;
             }
             for (i = 0; i < blocks; i++) {
-                map[start + i] = id;
+                ResourceBlockOwners[start + i] = id;
             }
             result = start << 6;
             goto done;

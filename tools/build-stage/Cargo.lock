@@ -27,6 +27,7 @@ name = "build-claimed"
 version = "0.1.0"
 dependencies = [
  "cache-entry",
+ "candidate-compiler",
  "canonical-json",
  "compiler-core",
  "decomp-targets",
@@ -39,6 +40,7 @@ name = "build-full"
 version = "0.1.0"
 dependencies = [
  "canonical-json",
+ "compiler-core",
  "decomp-targets",
  "serde_json",
 ]
@@ -55,6 +57,14 @@ dependencies = [
 [[package]]
 name = "cache-entry"
 version = "0.1.0"
+
+[[package]]
+name = "candidate-compiler"
+version = "0.1.0"
+dependencies = [
+ "compiler-core",
+ "decomp-targets",
+]
 
 [[package]]
 name = "canonical-json"

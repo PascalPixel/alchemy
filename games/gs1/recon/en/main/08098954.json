@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x08098954",
+  "name": "RunBattleEffect07",
+  "status": "measured-draft",
+  "owner_bytes": 304,
+  "candidate_bytes": 308,
+  "differing_halfwords": 131,
+  "wrong_instructions": 102,
+  "family": {
+    "structural_twin": "main:0809a294",
+    "shared_tail": "main:08099da4",
+    "aggregate_reusable_bytes": 1872
+  },
+  "notes": [
+    "This complete typed reconstruction creates two effect-specific anchor objects around the battle origin, configures both, then creates and randomizes twenty-four secondary objects before releasing the anchors.",
+    "RunBattleEffect07 and RunBattleEffect11 are 304-byte instruction/control-flow twins. Their call skeletons differ only at the two effect-specific constructor calls, and the same create/configure/release tail recurs inside the 1,264-byte RunBattleEffect05/11 owner.",
+    "The readable first model compiles to 308 bytes with 131 differing halfwords and 102 wrong instructions. This is a broad source-shape baseline, not an exact-C or narrow-residual candidate, and it claims zero bytes.",
+    "Relocation-aware six-ROM matching is ambiguous because the two sibling runners have zero-difference normalized cores. The ambiguity independently confirms the family identity but does not establish a unique per-edition owner correspondence, so no regional claim is made.",
+    "Recovered only from retained GS1 assembly, local exact-C object-update analogues, the approved compiler, and the six local GS1 editions. No GS2 evidence was used."
+  ]
+}

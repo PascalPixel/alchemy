@@ -64,6 +64,12 @@ impl NinjaPlan {
         let m2c_source = self.m2c_source();
         let m2c_build_dir = self.m2c_build_dir();
         let m2c_probe_report = self.m2c_probe_report();
+        let image = self
+            .reference_asm
+            .ancestors()
+            .nth(4)
+            .ok_or("reference assembly is not under games/gs1/asm")?
+            .join("roms/gs1-en.gba");
         let steps = [
             (
                 "compile_candidate",
@@ -84,6 +90,7 @@ impl NinjaPlan {
                     OsStr::new("__workbench-step"),
                     OsStr::new("target"),
                     self.reference_asm.as_os_str(),
+                    OsStr::new(&self.symbol),
                     target_object.as_os_str(),
                     target_listing.as_os_str(),
                 ])?,
@@ -97,6 +104,8 @@ impl NinjaPlan {
                     OsStr::new("symbolize"),
                     self.reference_asm.as_os_str(),
                     target_listing.as_os_str(),
+                    OsStr::new(&self.symbol),
+                    image.as_os_str(),
                     symbolized_asm.as_os_str(),
                 ])?,
                 format!("SYMBOLIZE {}", self.stem),

@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global ResourceTable_AllocateBlocks
 	.global Func_08003e58
 	.thumb_func
+ResourceTable_AllocateBlocks:
 Func_08003e58:
 	push	{r5, r6, r7, lr}
 	adds	r6, r0, #0

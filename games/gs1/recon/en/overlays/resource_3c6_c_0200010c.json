@@ -1,0 +1,15 @@
+{
+  "span_bytes": 76,
+  "score": {"measured":"2026-08-24","candidate_bytes":76,"reference_bytes":76,"wrong_instructions":0,"differing_halfwords":5,"class":"ordering"},
+  "shape": {"calls":7,"loops":0,"memory_operations":0,"reference_high_register_moves":0},
+  "verified_against_reference": [
+    "complete reconstruction accounts for all seven calls, every argument, both terminal literals, and the exact 76-byte owner extent",
+    "candidate and reference have zero normalized wrong instructions",
+    "the five-halfword residual is confined to moving actor id 18 across two independent shift or negation operations"
+  ],
+  "rejected": [
+    "2026-08-25 twenty-thousand-candidate classic exact-only heat walk: 19,931 compiled, 69 failed, exact 0, best unchanged at the five-halfword baseline"
+  ],
+  "retention": "keep_structured_asm",
+  "note": "Short deterministic call script retained because the approved compiler schedules two independent argument instructions differently."
+}

@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x0809b698",
+  "status": "measured-draft",
+  "owner_bytes": 332,
+  "candidate_bytes": 368,
+  "differing_halfwords": 168,
+  "wrong_instructions": 149,
+  "classification": "battle-effect-runner",
+  "cross_edition": {
+    "editions": ["ja", "en", "de", "es", "fr", "it"],
+    "relocation_normalized_core_bytes": 256,
+    "core_diff_bytes": 0,
+    "core_identical": true
+  },
+  "notes": [
+    "Complete first-pass semantic reconstruction of RunBattleEffect16, a direct sibling in the exact battle-effect dispatcher.",
+    "The canonical workbench now handles its same-address human/Region symbol alias and its literal pool outside the owner assembly without editing retained assembly.",
+    "The initial ordinary-C baseline is broad and is not eligible for exact-C adoption or permanent-assembly classification."
+  ]
+}

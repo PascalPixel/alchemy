@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080fb2a4",
+  "status": "measured-draft",
+  "owner_bytes": 40,
+  "executable_owner_bytes": 40,
+  "candidate_bytes": 32,
+  "differing_halfwords": 20,
+  "wrong_instructions": 12,
+  "classification": "update-music-player-pitch",
+  "resolved_asm_classification": {
+    "kind": "compiler_output",
+    "retention": "c_candidate",
+    "confidence": "likely"
+  },
+  "cross_edition": {
+    "editions": ["ja", "en", "de", "es", "fr", "it"],
+    "relocation_normalized_core_bytes": 36,
+    "core_diff_bytes": 0,
+    "core_identical": true
+  },
+  "notes": [
+    "Stores a validated music-player pitch and derives its scaled pitch from the player's 8.8 fixed-point scale.",
+    "Correct field widths eliminate opcode mismatches, but the reference deliberately keeps a callee-saved scale register and prologue while approved C compiles as a shorter leaf. The residual is broad and was not searched or promoted."
+  ]
+}

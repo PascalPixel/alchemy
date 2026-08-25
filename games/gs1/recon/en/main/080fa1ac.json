@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080fa1ac",
+  "status": "measured-draft",
+  "owner_bytes": 40,
+  "executable_owner_bytes": 26,
+  "candidate_bytes": 28,
+  "differing_halfwords": 12,
+  "wrong_instructions": 15,
+  "classification": "reset-runtime-node-flags",
+  "cross_edition": {
+    "editions": ["ja", "en", "de", "es", "fr", "it"],
+    "relocation_normalized_core_bytes": 26,
+    "core_diff_bytes": 0,
+    "core_identical": true
+  },
+  "notes": [
+    "Clears two node state bytes and selects flag bits 0x0c or 0x03 from the node mode byte. The live node pointer is the second argument, matching all callers.",
+    "Correcting the prototype and byte fields preserves the semantics but leaves broad prologue, register-allocation, branch, and OR scheduling differences. It is neither exact nor a narrow permanent residual."
+  ]
+}

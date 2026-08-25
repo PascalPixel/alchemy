@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080b9470",
+  "status": "measured-draft",
+  "owner_bytes": 228,
+  "executable_owner_bytes": 228,
+  "candidate_bytes": 232,
+  "differing_halfwords": 106,
+  "wrong_instructions": 53,
+  "classification": "prepare-and-sort-battle-queue",
+  "resolved_asm_classification": {
+    "kind": "compiler_output",
+    "retention": "c_candidate",
+    "confidence": "likely"
+  },
+  "cross_edition": {
+    "editions": ["ja", "en", "de", "es", "fr", "it"],
+    "relocation_normalized_core_bytes": 192,
+    "core_diff_bytes": 0,
+    "core_identical": true
+  },
+  "notes": [
+    "Boosts queue priority for command-kind-five actions with effects 46, 47, or 53, then bubble-sorts the sixteen-byte queue entries by descending priority.",
+    "Typed reconstruction removes all opcode mismatches, but wide register pressure, loop-carrier allocation, and three-copy swap scheduling remain broad. It was not searched, adopted, or classified permanently."
+  ]
+}

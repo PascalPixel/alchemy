@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080f9ef8",
+  "status": "measured-draft",
+  "owner_bytes": 68,
+  "executable_owner_bytes": 68,
+  "candidate_bytes": 72,
+  "differing_halfwords": 36,
+  "wrong_instructions": 24,
+  "classification": "stop-music-track",
+  "resolved_asm_classification": {
+    "kind": "compiler_output",
+    "retention": "c_candidate",
+    "confidence": "likely"
+  },
+  "cross_edition": {
+    "editions": ["ja", "en", "de", "es", "fr", "it"],
+    "relocation_normalized_core_bytes": 60,
+    "core_diff_bytes": 0,
+    "core_identical": true
+  },
+  "notes": [
+    "Stops every CGB channel owned by an active music track, invokes the configured oscillator-disable callback for hardware channel types, and clears both sides of the ownership link.",
+    "Reshaping the loop to the retained control flow raised structural similarity to 80.75 percent, but register allocation, flag testing, indirect-call lowering, and entry scheduling remain broad. It did not meet the bounded-search or permanent-residual gate."
+  ]
+}

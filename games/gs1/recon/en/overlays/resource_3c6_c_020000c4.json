@@ -1,0 +1,12 @@
+{
+  "span_bytes":72,
+  "score":{"measured":"2026-08-24","candidate_bytes":76,"reference_bytes":72,"wrong_instructions":20,"differing_halfwords":27,"class":"compiler-constant-allocation"},
+  "shape":{"calls":7,"loops":0,"memory_operations":0,"reference_high_register_moves":0},
+  "verified_against_reference":[
+    "complete reconstruction accounts for the input lifetime, message base and increments, all seven calls, all branches, and every argument",
+    "the ROM retains message base 0x28be in r5 and input in r6; approved compiler direct integer, typed pointer, and register-pointer forms propagate the three message constants instead",
+    "the source variants produce no exact emission and the best bounded form remains 76 bytes versus the 72-byte owner"
+  ],
+  "retention":"keep_structured_asm",
+  "note":"Retained because approved compiler constant propagation replaces the ROM's persistent message-base allocation."
+}

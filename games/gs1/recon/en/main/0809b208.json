@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x0809b208",
+  "status": "complete-structured-asm",
+  "retention": "keep_structured_asm",
+  "owner_bytes": 348,
+  "candidate_bytes": 348,
+  "differing_halfwords": 2,
+  "wrong_instructions": 0,
+  "classification": "battle-effect-runner",
+  "cross_edition": {
+    "editions": ["ja", "en", "de", "es", "fr", "it"],
+    "relocation_normalized_core_bytes": 216,
+    "core_diff_bytes": 0,
+    "core_identical": true
+  },
+  "notes": [
+    "Selected from the stale local census at 87.42553% structural similarity, then reconstructed independently from retained assembly and current headers.",
+    "This is effect 15 in the exact battle-effect dispatcher used by the resolve-action presentation graph.",
+    "The only remaining EN residual is one independent pointer-offset add scheduled before rather than after the callback store; every other instruction and the complete 348-byte extent agree.",
+    "A 30,000-candidate bounded classic search reached a seven-halfword exact-length intermediate; manual semantic source recovery then reduced it to two halfwords. A second 20,000-candidate final-pair search compiled 19,116 candidates and found no improvement.",
+    "The approved compiler cannot express the reference ordering without disallowed register constraints or barriers; the exact retained assembly is therefore permanent under the repository's structured-assembly contract."
+  ]
+}

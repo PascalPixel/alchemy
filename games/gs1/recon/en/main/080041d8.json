@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080041d8",
+  "status": "measured-draft",
+  "owner_bytes": 154,
+  "candidate_bytes": 162,
+  "differing_halfwords": 79,
+  "wrong_instructions": 46,
+  "classification": "literal-pool-and-loop-scheduling",
+  "cross_edition": {
+    "core_bytes": 126,
+    "core_identical": true,
+    "starts": {
+      "ja": "0x080041d8",
+      "en": "0x080041d8",
+      "de": "0x08004208",
+      "es": "0x08004238",
+      "fr": "0x080041e8",
+      "it": "0x08004218"
+    }
+  },
+  "domain": "Updates or allocates one of twenty transfer slots while preserving interrupt-master state and publishing the queue update.",
+  "notes": [
+    "This complete semantic candidate was selected as a smaller direct callee of the 080ba978 battle-presentation caller.",
+    "Pointer-walking loops reduced the aligned residual from 118 to 46 wrong instructions, but the routed compiler places the first literal pool early and produces 162 bytes rather than 152.",
+    "Direct object and ROM scoring establish a 154-byte owner extent with a 126-byte normalized core; the core is identical in all six GS1 editions.",
+    "Old agbcc emits 152 bytes but has 77 differing halfwords; routed GCC 2.96 emits 162 bytes with 79 differing halfwords. The bounded optimization, CSE, scheduler, strength-reduction, and regmove axes do not improve that broad residual.",
+    "Retained assembly remains authoritative and this draft claims zero bytes."
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x0809a8c4",
+  "status": "complete-structured-asm",
+  "retention": "keep_structured_asm",
+  "owner_bytes": 468,
+  "candidate_bytes": 468,
+  "differing_halfwords": 12,
+  "wrong_instructions": 24,
+  "classification": "battle-effect-runner",
+  "cross_edition": {
+    "core_bytes": 340,
+    "core_identical": true,
+    "core_diff_bytes": {"ja": 0, "en": 0, "de": 0, "es": 0, "fr": 0, "it": 0}
+  },
+  "notes": [
+    "Direct RunBattleEffect14 sibling in the battle-effect dispatcher.",
+    "Reconstructed independently from retained assembly and current project headers. The candidate now has exact extent and complete control flow; the remaining residual is confined to equivalent low-register choices and the first interpolation loop's equivalent compare-and-branch spelling.",
+    "Two independent bounded classic heat-guided walks evaluated 50,000 ordinary-C candidates without improving the 12-halfword residual. The only earlier bytewise improvement reduced the residual from 15 to 12 halfwords by preserving separate generic spawn-result and typed particle views.",
+    "Routed GCC 2.96 and explicit GCC 2.96 agree; old agbcc regresses to 432/468 bytes, while CSE, scheduling, regmove, GCSE, and expensive-optimization diagnostics preserve the residual or regress.",
+    "The approved compiler cannot express the remaining low-register allocation and equivalent loop comparison without disallowed fixed-register constraints or barriers; exact retained assembly is permanent under the repository contract."
+  ]
+}

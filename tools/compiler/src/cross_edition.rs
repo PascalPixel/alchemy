@@ -22,7 +22,7 @@ const OVERLAY_FIRST: usize = 0x36f;
 const OVERLAY_LAST: usize = 0x3ce;
 const CORRESPONDENCE_SCHEMA_VERSION: u32 = 3;
 const CORPUS_EDITION_BUILD_SCHEMA_VERSION: u32 = 3;
-const USAGE: &str = "usage: compiler cross-edition ([--calls] [--json] [--rom-dir DIR] [--object FILE] [--edition-build FILE] <8-digit-owner> | --all [--rom-dir DIR] [--object-dir DIR] [--write FILE] [--edition-build FILE] | --all-overlays [--rom-dir DIR] [--write FILE])";
+const USAGE: &str = "usage: compiler cross-edition ([--calls] [--json] [--rom-dir DIR] [--object FILE] [--edition-build FILE] <8-digit-owner> | [--json] [--rom-dir DIR] --span BYTES <resource_xxx:02xxxxxx> | --all [--rom-dir DIR] [--object-dir DIR] [--write FILE] [--edition-build FILE] | --all-overlays [--rom-dir DIR] [--write FILE])";
 
 #[derive(Debug, Serialize)]
 struct Report {
@@ -194,6 +194,7 @@ struct Options {
     all_overlays: bool,
     write: Option<PathBuf>,
     edition_build: Option<PathBuf>,
+    span: Option<usize>,
 }
 
 #[derive(Debug, Serialize)]
@@ -318,6 +319,26 @@ struct OverlayMatch {
     methods: BTreeMap<&'static str, &'static str>,
 }
 
+#[derive(Debug, Serialize)]
+struct OverlayOwnerReport {
+    schema_version: u32,
+    game: &'static str,
+    owner: String,
+    size: usize,
+    core_bytes: usize,
+    core_identical: bool,
+    editions: Vec<OverlayOwnerEdition>,
+}
+
+#[derive(Debug, Serialize)]
+struct OverlayOwnerEdition {
+    edition: String,
+    start: String,
+    location_method: String,
+    core_diff_bytes: usize,
+    core_identical: bool,
+}
+
 pub fn run(args: &[String]) -> Result<(), String> {
     let options = parse(args)?;
     let roms = read_roms(&options.rom_dir)?;
@@ -328,6 +349,9 @@ pub fn run(args: &[String]) -> Result<(), String> {
         return run_all(&options, &roms);
     }
     let owner = options.owner.as_deref().ok_or(USAGE)?;
+    if owner.starts_with("resource_") {
+        return run_overlay_owner(&options, &roms, owner);
+    }
     let owner_address = owner_address(owner)?;
     let object_path = resolve_object(owner, options.object.as_deref(), &options.object_dir)?;
     let report = analyze_owner(
@@ -1021,6 +1045,7 @@ fn parse(args: &[String]) -> Result<Options, String> {
     let mut all_overlays = false;
     let mut write = None;
     let mut edition_build = None;
+    let mut span = None;
     let mut index = 0;
     while index < args.len() {
         match args[index].as_str() {
@@ -1048,6 +1073,15 @@ fn parse(args: &[String]) -> Result<Options, String> {
                 index += 1;
                 edition_build = Some(PathBuf::from(args.get(index).ok_or(USAGE)?));
             }
+            "--span" => {
+                index += 1;
+                let value = args.get(index).ok_or(USAGE)?;
+                let parsed = parse_usize(value)?;
+                if parsed == 0 {
+                    return Err("--span wants a positive byte count".into());
+                }
+                span = Some(parsed);
+            }
             "-h" | "--help" => return Err(USAGE.into()),
             value if value.starts_with('-') => {
                 return Err(format!("unknown option: {value}\n{USAGE}"))
@@ -1061,6 +1095,9 @@ fn parse(args: &[String]) -> Result<Options, String> {
         return Err(format!(
             "--all and --all-overlays are mutually exclusive\n{USAGE}"
         ));
+    }
+    if (all || all_overlays) && span.is_some() {
+        return Err(format!("corpus scans do not accept --span\n{USAGE}"));
     }
     if (all || all_overlays) && owner.is_some() {
         return Err(format!("corpus scans do not accept an owner\n{USAGE}"));
@@ -1080,7 +1117,21 @@ fn parse(args: &[String]) -> Result<Options, String> {
     }
     if !all && !all_overlays {
         let value = owner.as_deref().ok_or(USAGE)?;
-        owner_address(value)?;
+        if value.starts_with("resource_") {
+            parse_explicit_overlay_owner(value, span)?;
+            if object.is_some() || calls || edition_build.is_some() {
+                return Err(format!(
+                    "explicit overlay owners do not accept --object, --calls, or --edition-build\n{USAGE}"
+                ));
+            }
+        } else {
+            owner_address(value)?;
+            if span.is_some() {
+                return Err(format!(
+                    "--span is only for explicit overlay owners\n{USAGE}"
+                ));
+            }
+        }
     }
     Ok(Options {
         owner,
@@ -1093,6 +1144,30 @@ fn parse(args: &[String]) -> Result<Options, String> {
         all_overlays,
         write,
         edition_build,
+        span,
+    })
+}
+
+fn parse_explicit_overlay_owner(value: &str, span: Option<usize>) -> Result<OverlayOwner, String> {
+    let source = SourceOwner::parse(value)?;
+    let SourceOwner::Overlay { resource, address } = source else {
+        return Err(format!("expected an overlay owner: {value}"));
+    };
+    let resource = resource as usize;
+    if !(OVERLAY_FIRST..=OVERLAY_LAST).contains(&resource) {
+        return Err(format!(
+            "overlay resource {resource:03x} is outside the GS1 code-overlay range"
+        ));
+    }
+    let en_offset = u64::from(address)
+        .checked_sub(OVERLAY_BASE)
+        .ok_or_else(|| format!("{value}: address is below the overlay base"))?
+        as usize;
+    Ok(OverlayOwner {
+        name: source.id(),
+        resource,
+        en_offset,
+        size: span.ok_or_else(|| format!("explicit overlay owners require --span\n{USAGE}"))?,
     })
 }
 
@@ -1607,6 +1682,67 @@ fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String>
     Ok(())
 }
 
+fn run_overlay_owner(options: &Options, roms: &EditionRoms, value: &str) -> Result<(), String> {
+    let owner = parse_explicit_overlay_owner(value, options.span)?;
+    let (_, decoded) = decode_overlay_resources(roms)?;
+    let found = analyze_overlay_owner(&owner, &decoded, None)?;
+    let en = overlay_window(&decoded, "en", owner.resource, owner.en_offset, owner.size)?;
+    let editions = EDITIONS
+        .into_iter()
+        .map(|edition| {
+            let start = found.starts[edition];
+            let other = overlay_window(&decoded, edition, owner.resource, start, owner.size)?;
+            let difference = core_diff_bytes(en, other, &found.mask);
+            Ok(OverlayOwnerEdition {
+                edition: edition.into(),
+                start: format!("0x{:08x}", OVERLAY_BASE + start as u64),
+                location_method: found.methods[edition].into(),
+                core_diff_bytes: difference,
+                core_identical: difference == 0,
+            })
+        })
+        .collect::<Result<Vec<_>, String>>()?;
+    let report = OverlayOwnerReport {
+        schema_version: CORRESPONDENCE_SCHEMA_VERSION,
+        game: "gs1",
+        owner: owner.name,
+        size: owner.size,
+        core_bytes: found.mask.iter().filter(|masked| !**masked).count(),
+        core_identical: editions.iter().all(|edition| edition.core_identical),
+        editions,
+    };
+    if options.json {
+        println!(
+            "{}",
+            serde_json::to_string_pretty(&report)
+                .map_err(|error| format!("serialize overlay owner report: {error}"))?
+        );
+    } else {
+        println!(
+            "owner={} size={} core_bytes={} core_identical={}",
+            report.owner,
+            report.size,
+            report.core_bytes,
+            if report.core_identical { "yes" } else { "no" }
+        );
+        for edition in &report.editions {
+            println!(
+                "edition={} start={} location_method={} core_diff_bytes={} core_identical={}",
+                edition.edition,
+                edition.start,
+                edition.location_method,
+                edition.core_diff_bytes,
+                if edition.core_identical { "yes" } else { "no" }
+            );
+        }
+    }
+    if report.core_identical {
+        Ok(())
+    } else {
+        Err("overlay owner has regional core differences".into())
+    }
+}
+
 fn exact_overlay_owners() -> Result<Vec<OverlayOwner>, String> {
     let mut assembly = BTreeMap::<usize, Vec<String>>::new();
     let mut owners = Vec::new();
@@ -2101,22 +2237,44 @@ fn relocation_mask(
     };
     let object = obj::read::read(path, &config, DiffSide::Base)
         .map_err(|error| format!("{}: {error}", path.display()))?;
-    let symbol_name = format!("Func_{owner}");
-    let symbol_index = object
-        .symbol_by_name(&symbol_name)
-        .ok_or_else(|| format!("{}: missing symbol {symbol_name}", path.display()))?;
+    let legacy_symbol = format!("Func_{owner}");
+    let source_owner = SourceOwner::parse(&format!("main:{owner}"))?;
+    let source_paths = SourcePaths::load(compiler_core::routing::root())?;
+    let registered_symbol = source_paths.registered_name(source_owner);
+    let (symbol_name, symbol_index) = registered_symbol
+        .and_then(|name| object.symbol_by_name(name).map(|index| (name, index)))
+        .or_else(|| {
+            object
+                .symbol_by_name(&legacy_symbol)
+                .map(|index| (legacy_symbol.as_str(), index))
+        })
+        .ok_or_else(|| {
+            format!(
+                "{}: missing owner symbol {}",
+                path.display(),
+                registered_symbol.unwrap_or(&legacy_symbol)
+            )
+        })?;
     let symbol = &object.symbols[symbol_index];
     let section = &object.sections[symbol.section.ok_or("owner symbol has no section")?];
-    let size = usize::try_from(symbol.size).map_err(|_| "owner is too large")?;
-    if size == 0 {
-        return Err(format!("{symbol_name} has zero size"));
-    }
     let section_offset = symbol
         .address
         .checked_sub(section.address)
         .ok_or("owner symbol precedes its section")?;
     let section_offset =
         usize::try_from(section_offset).map_err(|_| "owner section offset is too large")?;
+    let size = if symbol.size == 0 {
+        section
+            .data
+            .len()
+            .checked_sub(section_offset)
+            .ok_or("owner symbol extends past its section")?
+    } else {
+        usize::try_from(symbol.size).map_err(|_| "owner is too large")?
+    };
+    if size == 0 {
+        return Err(format!("{symbol_name} has zero size"));
+    }
     let bytes = section
         .data
         .get(section_offset..section_offset + size)
@@ -2662,6 +2820,56 @@ mod tests {
         assert_eq!(&mask[0..4], &[false; 4]);
         assert_eq!(&mask[4..12], &[true; 8]);
         assert_eq!(&mask[12..16], &[false; 4]);
+    }
+
+    #[test]
+    fn parses_explicit_unresolved_overlay_owner_with_span() {
+        let owner = parse_explicit_overlay_owner("resource_392:02000bcc", Some(64))
+            .expect("explicit overlay owner");
+        assert_eq!(owner.resource, 0x392);
+        assert_eq!(owner.en_offset, 0xbcc);
+        assert_eq!(owner.size, 64);
+        assert_eq!(owner.name, "resource_392:02000bcc");
+        assert!(matches!(
+            parse_explicit_overlay_owner("resource_392:02000bcc", None),
+            Err(error) if error.contains("require --span")
+        ));
+    }
+
+    #[test]
+    fn locates_explicit_overlay_owner_with_masked_regional_literal() {
+        let mut bytes = Vec::new();
+        bytes.extend_from_slice(&0x4806u16.to_le_bytes());
+        for immediate in 1..14u16 {
+            bytes.extend_from_slice(&(0x2000 | immediate).to_le_bytes());
+        }
+        bytes.extend_from_slice(&0x0300_1234u32.to_le_bytes());
+        assert_eq!(bytes.len(), 32);
+
+        let resource = 0x392;
+        let mut decoded = DecodedOverlays::new();
+        for edition in EDITIONS {
+            let start = if edition == "en" { 16 } else { 24 };
+            let mut image = vec![0xff; 96];
+            image[start..start + bytes.len()].copy_from_slice(&bytes);
+            if edition != "en" {
+                image[start + 28..start + 32].copy_from_slice(&(0x0300_5678u32).to_le_bytes());
+            }
+            decoded.insert(edition, [(resource, image)].into_iter().collect());
+        }
+        let owner = OverlayOwner {
+            name: "resource_392:02000010".into(),
+            resource,
+            en_offset: 16,
+            size: bytes.len(),
+        };
+        let found =
+            analyze_overlay_owner(&owner, &decoded, None).expect("masked owner correspondence");
+        assert_eq!(found.starts["en"], 16);
+        for edition in EDITIONS.into_iter().filter(|edition| *edition != "en") {
+            assert_eq!(found.starts[edition], 24);
+        }
+        assert_eq!(found.mask.iter().filter(|masked| !**masked).count(), 28);
     }
 
     #[test]

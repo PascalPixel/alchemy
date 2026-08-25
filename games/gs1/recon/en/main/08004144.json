@@ -1,0 +1,41 @@
+{
+  "span_bytes": 84,
+  "score": {
+    "measured": "2026-08-25",
+    "candidate_bytes": 80,
+    "reference_bytes": 84,
+    "wrong_instructions": 40,
+    "differing_halfwords": 41,
+    "class": "broad-allocation-and-loop-layout"
+  },
+  "domain": "Orders the scheduler task table by each entry's signed order field using an adjacent-entry exchange pass.",
+  "expressed": [
+    "complete 84-byte owner boundary",
+    "8-byte scheduler entry extent",
+    "signed comparison of adjacent order fields",
+    "descending adjacent exchange",
+    "the observed outer bound from 19 down through 2"
+  ],
+  "cross_edition": {
+    "core_bytes": 80,
+    "core_identical": true,
+    "starts": {
+      "ja": "0x08004144",
+      "en": "0x08004144",
+      "de": "0x08004174",
+      "es": "0x080041a4",
+      "fr": "0x08004154",
+      "it": "0x08004184"
+    }
+  },
+  "bounded_checks": [
+    "plain aggregate assignment emits four scalar load/store pairs and no temporary frame",
+    "constant-size compiler memcpy builtins recover the reference 8-byte stack temporary and all three matching ldmia/stmia pairs",
+    "the remaining table-base lifetime, saved-register allocation, and loop layout are broad rather than a four-halfword scheduling residual"
+  ],
+  "adoption": "none; retained assembly remains authoritative",
+  "notes": [
+    "No permanent classification was added: the approved compiler can emit the reference multiple-transfer shapes, and the remaining mismatch has not been proved compiler-intrinsic.",
+    "No GS2 evidence was used."
+  ]
+}

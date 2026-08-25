@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080ba6ac",
+  "status": "measured-draft",
+  "owner_bytes": 620,
+  "candidate_bytes": 624,
+  "differing_halfwords": 306,
+  "classification": "allocation-and-scheduling",
+  "domain": "Runs a battle presentation, copies motion-child state, performs a palette fade, cleans up actors, and dispatches the selected ability result through the battle-event queue.",
+  "notes": [
+    "The complete semantic draft preserves the three-argument ABI: the selection pointer arrives in r2 and the r1 argument is unused.",
+    "The routed GCC 2.96 candidate is four bytes long and diverges because it saves fp, allocates a 92-byte frame, and spills the input and primary object; the reference uses r8 for selection, r9 for the object, sl for input, r5 for the 84-byte work record, and an 88-byte frame.",
+    "Explicit register-qualified pointer carriers were byte-neutral. Narrow loop scopes and typed pointer/child layouts establish the correct behavior and near-exact extent but do not reproduce the reference lifetimes.",
+    "Old agbcc produces 572 bytes with 308 differing halfwords; the routed and explicit gcc296 routes both produce 624 bytes with 306 differing halfwords.",
+    "Retained assembly remains authoritative and this draft claims zero bytes. No inline assembly, fixed-register variable, compiler barrier, or copied instruction bytes were used."
+  ]
+}

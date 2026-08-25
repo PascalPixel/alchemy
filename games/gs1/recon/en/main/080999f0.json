@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080999f0",
+  "status": "measured-draft",
+  "owner_bytes": 808,
+  "executable_bytes": 786,
+  "candidate_bytes": 808,
+  "differing_halfwords": 368,
+  "classification": "stack-layout-and-allocation",
+  "edition_starts": {
+    "ja": "0x080909e4",
+    "en": "0x080999f0",
+    "de": "0x0809d098",
+    "es": "0x0809ea88",
+    "fr": "0x0809ea88",
+    "it": "0x08099a88"
+  },
+  "cross_edition": {
+    "core_bytes": 650,
+    "core_diff_bytes": 0,
+    "core_identical": true,
+    "callee_correspondences": 12
+  },
+  "search": {
+    "permuter_candidates": 20000,
+    "compile_failures": 275,
+    "exact": false,
+    "best_unverified_differing_halfwords": 323
+  },
+  "notes": [
+    "Exact neighboring correspondences bound an 808-byte owner interval in all six editions; stripping the duplicate RunBattleEffect05 alias exposes a 786-byte executable symbol plus trailing pool and alignment.",
+    "Relocation-aware comparison proves all 650 non-relocation core bytes identical across the six editions with twelve callee correspondences.",
+    "The complete draft covers object creation, target-derived initialization, both eleven-frame interpolations, both particle branches, waits, sound calls, callbacks, object configuration, and cleanup.",
+    "The baseline candidate has exact owner extent but 368 differing halfwords and 192 wrong instructions. A capped 20,000-candidate search found no exact result; its unverified structural best still differs by 323 halfwords.",
+    "The residual is broad allocation and stack-layout drift, so retained assembly remains authoritative and this draft claims zero bytes."
+  ]
+}

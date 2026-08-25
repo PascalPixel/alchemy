@@ -1,0 +1,24 @@
+{
+  "span_bytes": 108,
+  "score": {
+    "measured": "2026-08-24",
+    "candidate_bytes": 104,
+    "reference_bytes": 108,
+    "wrong_instructions": 18,
+    "differing_halfwords": 33,
+    "class": "literal-pool-placement"
+  },
+  "shape": {
+    "calls": 7,
+    "loops": 0,
+    "memory_operations": 1,
+    "reference_high_register_moves": 0
+  },
+  "verified_against_reference": [
+    "complete control flow accounts for the actor-facing test, all seven calls, all four literal values, and the sole actor-angle load",
+    "the executable instruction sequence is preserved; the ROM places the 0xffffc000 mask in an early pool after the first unconditional branch while the approved compiler merges it into the terminal pool",
+    "direct-expression, named-local, declaration-order, nested-else, and early-return source forms all retain the terminal compiler pool"
+  ],
+  "retention": "keep_structured_asm",
+  "note": "One member of a repeated actor-facing message-selection family. Retained as assembly because ordinary C cannot select the ROM's non-required early literal-pool boundary."
+}

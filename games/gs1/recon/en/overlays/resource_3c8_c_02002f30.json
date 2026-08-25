@@ -1,0 +1,12 @@
+{
+  "span_bytes":92,
+  "score":{"measured":"2026-08-24","candidate_bytes":94,"reference_bytes":92,"wrong_instructions":11,"differing_halfwords":24,"class":"compiler-cse-and-ordering"},
+  "shape":{"calls":9,"loops":0,"memory_operations":0,"reference_high_register_moves":0},
+  "verified_against_reference":[
+    "complete deterministic reconstruction accounts for all nine calls and every argument over the full 92-byte executable owner",
+    "approved compiler shares repeated 0x4000 through r5 while the reference reconstructs it and uses no high-register save",
+    "remaining executable differences are independent argument-setup ordering around the four-argument call"
+  ],
+  "retention":"keep_structured_asm",
+  "note":"No-loop call script retained because approved compiler CSE and argument scheduling do not reproduce the ROM allocation."
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080ae99c",
+  "status": "measured-draft",
+  "owner_bytes": 84,
+  "candidate_bytes": 84,
+  "differing_halfwords": 35,
+  "notes": [
+    "This owner and 080ae9f0 share the same resource-selection, object-creation, failure, and initialization tail.",
+    "The complete ordinary-C candidate emits the exact reference length; its residual remains concentrated in entry allocation and branch scheduling.",
+    "A bounded 30,000-candidate classic search produced no exact candidate. Retained assembly remains authoritative and this draft claims zero bytes.",
+    "No external source, copied instruction bytes, inline assembly, fixed-register variable, compiler barrier, or compiler modification was used."
+  ]
+}

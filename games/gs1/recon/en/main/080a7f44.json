@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080a7f44",
+  "status": "measured-draft",
+  "owner_bytes": 240,
+  "executable_owner_bytes": 238,
+  "candidate_bytes": 232,
+  "differing_halfwords": 116,
+  "wrong_instructions": 99,
+  "classification": "move-character-selector-entry",
+  "resolved_asm_classification": {
+    "kind": "compiler_output",
+    "retention": "c_candidate",
+    "confidence": "likely"
+  },
+  "cross_edition": {
+    "editions": ["ja", "en", "de", "es", "fr", "it"],
+    "relocation_normalized_core_bytes": 222,
+    "core_diff_bytes": 0,
+    "core_identical": true
+  },
+  "notes": [
+    "Moves a character one position in the selector order, rebuilds the runtime order through the remove/add callbacks, and refreshes the stored character count.",
+    "The complete regional-invariant semantics compile broadly because the retained stack clearing, widened character-id array, loop carriers, and swap schedule differ throughout. It did not meet the bounded-search or permanent-residual gate."
+  ]
+}

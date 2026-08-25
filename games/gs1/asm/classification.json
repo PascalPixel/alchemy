@@ -1726,12 +1726,13 @@
    "kind": "compiler_local_scheduling_mismatch",
    "origin": "compiler",
    "retention": "keep_structured_asm",
-   "confidence": "strong",
+   "confidence": "proven",
    "evidence": [
     "complete_ordinary_c_semantics_and_exact_owner_extent",
+    "six_edition_relocation_normalized_core_is_identical",
     "only_residual_is_one_independent_store_load_ordering_pair",
     "all_other_instructions_registers_literals_and_control_flow_match",
-    "twenty_thousand_safe_source_candidates_found_no_exact_candidate",
+    "fifty_thousand_bounded_ordinary_c_candidates_produced_no_exact_candidate",
     "approved_compiler_scheduling_and_optimization_sweep_preserves_defect_or_regresses",
     "inline_assembly_fixed_registers_and_compiler_barriers_are_disallowed",
     "byte_exact_reconstruction"
@@ -1743,6 +1744,70 @@
    ]
   },
   {
+   "kind": "regional_compiler_scheduling",
+   "origin": "regional_compiler_output",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_english_owner_extent",
+    "english_german_spanish_french_and_italian_relocation_normalized_cores_are_identical",
+    "japanese_source_variant_uses_a_0x80_byte_buffer_and_0x40_byte_render_limit_instead_of_0x100_and_0x80",
+    "only_english_residual_is_one_independent_allocator_result_save_and_message_literal_load_ordering_pair",
+    "instruction_streams_resynchronize_immediately_after_the_message_id_add",
+    "fifty_thousand_bounded_semantics_preserving_candidates_produced_no_exact_candidate",
+    "approved_compiler_allocation_and_scheduling_axes_preserve_the_residual_or_regress",
+    "inline_assembly_fixed_registers_and_compiler_barriers_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 140,
+   "files": [
+    "080a8578"
+   ]
+  },
+  {
+   "kind": "battle_effect_compiler_scheduling_mismatch",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_348_byte_owner_extent",
+    "six_edition_relocation_normalized_core_is_identical",
+    "only_residual_is_one_independent_pointer_add_callback_store_ordering_pair",
+    "all_other_instructions_registers_literals_control_flow_and_memory_operations_match",
+    "fifty_thousand_bounded_ordinary_c_candidates_produced_no_exact_candidate",
+    "approved_compiler_scheduling_and_optimization_sweeps_preserve_the_residual_or_regress",
+    "inline_assembly_fixed_registers_and_compiler_barriers_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 348,
+   "files": [
+    "0809b208"
+   ]
+  },
+  {
+   "kind": "battle_effect_compiler_allocation_module",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_468_byte_owner_extent",
+    "six_edition_relocation_normalized_core_is_identical",
+    "all_residual_rows_are_equivalent_low_register_choices_or_one_equivalent_loop_comparison",
+    "all_other_instructions_literals_control_flow_and_memory_operations_match",
+    "fifty_thousand_bounded_ordinary_c_candidates_produced_no_improvement",
+    "approved_compiler_family_allocation_scheduling_and_optimization_sweeps_preserve_the_residual_or_regress",
+    "inline_assembly_fixed_registers_and_compiler_barriers_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 468,
+   "files": [
+    "0809a8c4"
+   ]
+  },
+  {
    "kind": "compiler_scheduler_ordering_module",
    "origin": "compiler",
    "retention": "keep_structured_asm",
@@ -1751,15 +1816,16 @@
     "complete_ordinary_c_semantics_and_exact_owner_extent",
     "normalized_instruction_multisets_control_flow_memory_operations_constants_and_pools_are_exact",
     "residuals_are_confined_to_independent_instruction_scheduling_and_each_owner_resynchronizes_immediately",
-    "fifty_thousand_classic_heat_guided_ordinary_c_candidates_produced_zero_exact_candidates_and_no_improvement",
+    "sixty_thousand_classic_heat_guided_ordinary_c_candidates_produced_zero_exact_candidates_and_no_improvement",
     "approved_compiler_route_family_and_optimization_sweeps_preserve_the_residual_or_regress_broader_shape",
     "inline_assembly_fixed_register_variables_and_compiler_barriers_are_disallowed",
     "byte_exact_reconstruction"
    ],
-   "expected_files": 5,
-   "expected_bytes": 340,
+   "expected_files": 6,
+   "expected_bytes": 408,
    "files": [
     "08004198",
+    "080042c8",
     "0800430c",
     "08004358",
     "0800439c",

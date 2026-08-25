@@ -7,14 +7,14 @@
     {"overlay":"resource_370","start":"0x02000054","end":"0x02000154","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_380","start":"0x0200478c","end":"0x02004854","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_381","start":"0x0200330c","end":"0x020033d4","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
-    {"overlay":"resource_392","start":"0x02000bcc","end":"0x02000c0c","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
+    {"overlay":"resource_392","start":"0x02000bcc","end":"0x02000c0c","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip","explicit decoded-ROM correspondence proves the 44-byte relocation/literal-masked core identical in JA, EN, DE, ES, FR and IT"]},
     {"overlay":"resource_392","start":"0x02000c0c","end":"0x02000c4c","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
-    {"overlay":"resource_393","start":"0x02000d9c","end":"0x02000ddc","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
+    {"overlay":"resource_393","start":"0x02000d9c","end":"0x02000ddc","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip","explicit decoded-ROM correspondence proves the 44-byte relocation/literal-masked core identical in all six editions; the JA counterpart starts at 0x02000d88 and the other five at 0x02000d9c"]},
     {"overlay":"resource_393","start":"0x02000ddc","end":"0x02000e1c","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_394","start":"0x02000980","end":"0x02000a90","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
-    {"overlay":"resource_394","start":"0x02000f74","end":"0x02000fb4","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
+    {"overlay":"resource_394","start":"0x02000f74","end":"0x02000fb4","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip","explicit decoded-ROM correspondence proves the 44-byte relocation/literal-masked core identical in JA, EN, DE, ES, FR and IT"]},
     {"overlay":"resource_394","start":"0x02000fb4","end":"0x02000ff4","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
-    {"overlay":"resource_395","start":"0x02001878","end":"0x020018b8","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
+    {"overlay":"resource_395","start":"0x02001878","end":"0x020018b8","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip","explicit decoded-ROM correspondence proves the 44-byte relocation/literal-masked core identical in JA, EN, DE, ES, FR and IT"]},
     {"overlay":"resource_395","start":"0x020018b8","end":"0x020018f8","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_39b","start":"0x02001a3c","end":"0x02001bc8","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_39c","start":"0x02004fcc","end":"0x02005158","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
@@ -281,6 +281,21 @@
         "direct bl at 0x02000494 targets intra-owner 0x020004ea, which the same entry also reaches by fallthrough from 0x020004e8",
         "the approved Thumb backend accepts SYMBOL_REF but not an intra-function LABEL_REF and has no outlining pass",
         "byte-exact decoded-overlay assembly round trip"
+      ]
+    },
+    {
+      "overlay": "resource_371",
+      "start": "0x020002cc",
+      "end": "0x020002f0",
+      "kind": "compiler_allocation_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "complete ordinary-C reconstruction accounts for the shared animation-frame read, both map-object stores, and the success return with exact 36-byte owner extent",
+        "candidate and reference have zero normalized structural rows; the two-halfword residual is only equivalent r2/r3 allocation for the shared-data pointer",
+        "twenty-thousand-candidate safe exact-only search produced zero failures and left the two-halfword baseline unchanged",
+        "explicit decoded-ROM correspondence proves the 28-byte relocation/literal-masked core identical in JA, EN, DE, ES, FR and IT",
+        "games/gs1/recon/en/overlays/resource_371_c_020002cc.json"
       ]
     },
     {
@@ -2337,6 +2352,7 @@
       "evidence": [
         "complete reconstruction accounts for all seven calls, arguments, and terminal literals with exact owner extent",
         "candidate and reference have zero normalized wrong instructions; five halfwords are two independent argument-setup scheduling displacements",
+        "twenty-thousand-candidate classic exact-only heat walk found no emitting source and left the five-halfword baseline unchanged",
         "games/gs1/recon/en/overlays/resource_3c6_c_0200010c.json"
       ]
     },

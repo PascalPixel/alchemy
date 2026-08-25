@@ -62,6 +62,7 @@ struct BattlePlaybackPhaseLocals {
     void *records[4];
     u16 selection[2];
     u8 call_workspace[12];
+    u32 reserved;
 };
 
 typedef char BattlePlaybackState_Phase[

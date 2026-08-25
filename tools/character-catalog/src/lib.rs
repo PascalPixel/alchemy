@@ -33,11 +33,7 @@ fn integer_value(value: &Value, name: &str) -> Result<i64> {
             .or_else(|| {
                 number
                     .as_f64()
-                    .filter(|value| {
-                        value.is_finite()
-                            && value.fract() == 0.0
-                            && value.abs() <= 9_007_199_254_740_991.0
-                    })
+                    .filter(|value| value.is_finite() && value.fract() == 0.0 && value.abs() <= 9_007_199_254_740_991.0)
                     .map(|value| value as i64)
             })
             .ok_or_else(|| Error(format!("invalid {name}"))),
@@ -47,9 +43,7 @@ fn integer_value(value: &Value, name: &str) -> Result<i64> {
 
 fn parse_integer(text: &str, name: &str) -> Result<i64> {
     let parsed = if let Some(digits) = text.strip_prefix("0x").or_else(|| text.strip_prefix("0X")) {
-        u64::from_str_radix(digits, 16)
-            .ok()
-            .and_then(|value| i64::try_from(value).ok())
+        u64::from_str_radix(digits, 16).ok().and_then(|value| i64::try_from(value).ok())
     } else {
         text.parse::<f64>().ok().and_then(|value| {
             if value.is_finite() && value.fract() == 0.0 && value.abs() <= 9_007_199_254_740_991.0 {
@@ -78,21 +72,15 @@ fn text<'a>(value: &'a Value, name: &str) -> Result<&'a str> {
 }
 
 fn object<'a>(value: &'a Value, name: &str) -> Result<&'a Map<String, Value>> {
-    value
-        .as_object()
-        .ok_or_else(|| Error(format!("invalid {name}")))
+    value.as_object().ok_or_else(|| Error(format!("invalid {name}")))
 }
 
 fn field<'a>(value: &'a Value, name: &str) -> Result<&'a Value> {
-    object(value, "object")?
-        .get(name)
-        .ok_or_else(|| Error(format!("missing {name}")))
+    object(value, "object")?.get(name).ok_or_else(|| Error(format!("missing {name}")))
 }
 
 fn array<'a>(value: &'a Value, name: &str) -> Result<&'a Vec<Value>> {
-    value
-        .as_array()
-        .ok_or_else(|| Error(format!("invalid {name}")))
+    value.as_array().ok_or_else(|| Error(format!("invalid {name}")))
 }
 
 fn write_u16(data: &mut [u8], offset: usize, value: u16) {
@@ -154,12 +142,7 @@ fn build_animations(index: &Value) -> Result<AnimationBuild> {
         let mut label_indexes = BTreeSet::new();
         let mut entry_addresses = Vec::with_capacity(entry_commands.len());
         for (entry_index, command_value) in entry_commands.iter().enumerate() {
-            let command = bounded(
-                command_value,
-                0,
-                commands.len() as i64 - 1,
-                "animation entry command",
-            )? as usize;
+            let command = bounded(command_value, 0, commands.len() as i64 - 1, "animation entry command")? as usize;
             if !label_indexes.insert(command) {
                 return fail(format!("duplicate command label in {group_name}"));
             }
@@ -171,13 +154,7 @@ fn build_animations(index: &Value) -> Result<AnimationBuild> {
             entry_addresses.push(address);
         }
         cursor += i64::try_from(commands.len() * 2).expect("command size");
-        if symbols
-            .insert(
-                group_name.to_string(),
-                u32::try_from(cursor).expect("animation address"),
-            )
-            .is_some()
-        {
+        if symbols.insert(group_name.to_string(), u32::try_from(cursor).expect("animation address")).is_some() {
             return fail(format!("duplicate animation symbol {group_name}"));
         }
         let table_entries = object(group, "animation group")?
@@ -188,12 +165,7 @@ fn build_animations(index: &Value) -> Result<AnimationBuild> {
         table_counts.insert(group_name.to_string(), table_count);
         if let Some(table_entries) = table_entries {
             for entry in table_entries {
-                let entry = bounded(
-                    entry,
-                    0,
-                    entry_addresses.len() as i64 - 1,
-                    "animation table entry",
-                )? as usize;
+                let entry = bounded(entry, 0, entry_addresses.len() as i64 - 1, "animation table entry")? as usize;
                 data.extend_from_slice(&entry_addresses[entry].to_le_bytes());
             }
         } else {
@@ -206,24 +178,14 @@ fn build_animations(index: &Value) -> Result<AnimationBuild> {
             for extra in array(extras, "extra animation tables")? {
                 let extra = object(extra, "extra animation table")?;
                 let name = text(
-                    extra
-                        .get("name")
-                        .ok_or_else(|| Error("invalid extra animation table".into()))?,
+                    extra.get("name").ok_or_else(|| Error("invalid extra animation table".into()))?,
                     "animation symbol",
                 )?;
-                if symbols
-                    .insert(
-                        name.to_string(),
-                        u32::try_from(cursor).expect("animation address"),
-                    )
-                    .is_some()
-                {
+                if symbols.insert(name.to_string(), u32::try_from(cursor).expect("animation address")).is_some() {
                     return fail(format!("duplicate animation symbol {name}"));
                 }
                 let count = bounded(
-                    extra
-                        .get("count")
-                        .ok_or_else(|| Error("invalid extra animation table".into()))?,
+                    extra.get("count").ok_or_else(|| Error("invalid extra animation table".into()))?,
                     1,
                     0xffff,
                     "extra animation table count",
@@ -264,10 +226,7 @@ pub fn build_character_catalog(index: &Value) -> Result<Vec<u8>> {
         }
         let name = text(&item[0], "frame directory name")?.to_string();
         if frames
-            .insert(
-                name.clone(),
-                bounded(&item[1], ROM_BASE, 0xffff_ffff, "frame directory address")? as u32,
-            )
+            .insert(name.clone(), bounded(&item[1], ROM_BASE, 0xffff_ffff, "frame directory address")? as u32)
             .is_some()
         {
             return fail(format!("duplicate frame directory {name}"));
@@ -281,15 +240,10 @@ pub fn build_character_catalog(index: &Value) -> Result<Vec<u8>> {
     let descriptor_object = object(field(index, "descriptors")?, "descriptors")?;
     let mut used = BTreeSet::new();
     for (key, item_value) in descriptor_object {
-        if key.len() != 3
-            || !key
-                .bytes()
-                .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
-        {
+        if key.len() != 3 || !key.bytes().all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte)) {
             return fail(format!("invalid descriptor id {key}"));
         }
-        let record_id = usize::from_str_radix(key, 16)
-            .map_err(|_| Error(format!("invalid descriptor id {key}")))?;
+        let record_id = usize::from_str_radix(key, 16).map_err(|_| Error(format!("invalid descriptor id {key}")))?;
         if record_id >= CHARACTER_DESCRIPTOR_COUNT || !used.insert(record_id) {
             return fail(format!("duplicate descriptor id {key}"));
         }
@@ -300,20 +254,13 @@ pub fn build_character_catalog(index: &Value) -> Result<Vec<u8>> {
         let offset = record_id * CHARACTER_DESCRIPTOR_SIZE;
         descriptors[offset] = bounded(&item[0], 0, 0xff, "descriptor width")? as u8;
         descriptors[offset + 1] = bounded(&item[1], 0, 0xff, "descriptor height")? as u8;
-        write_u16(
-            &mut descriptors,
-            offset + 2,
-            bounded(&item[2], 0, 0xffff, "descriptor scale")? as u16,
-        );
+        write_u16(&mut descriptors, offset + 2, bounded(&item[2], 0, 0xffff, "descriptor scale")? as u16);
         descriptors[offset + 4] = bounded(&item[3], 0, 0xff, "descriptor draw kind")? as u8;
         let animation_count = bounded(&item[4], 0, 0xff, "descriptor animation count")? as u8;
         descriptors[offset + 5] = animation_count;
-        descriptors[offset + 6] =
-            bounded(&item[5], -0x80, 0x7f, "descriptor adjustment x")? as i8 as u8;
-        descriptors[offset + 7] =
-            bounded(&item[6], -0x80, 0x7f, "descriptor adjustment y")? as i8 as u8;
-        descriptors[offset + 8] =
-            bounded(&item[7], -0x80, 0x7f, "descriptor anchor x")? as i8 as u8;
+        descriptors[offset + 6] = bounded(&item[5], -0x80, 0x7f, "descriptor adjustment x")? as i8 as u8;
+        descriptors[offset + 7] = bounded(&item[6], -0x80, 0x7f, "descriptor adjustment y")? as i8 as u8;
+        descriptors[offset + 8] = bounded(&item[7], -0x80, 0x7f, "descriptor anchor x")? as i8 as u8;
         descriptors[offset + 9] = bounded(&item[8], 0, 0xff, "descriptor anchor y")? as u8;
         let codec = bounded(&item[9], 0, 3, "descriptor frame codec")? as u8;
         if !matches!(codec, 0 | 1 | 3) {
@@ -331,10 +278,7 @@ pub fn build_character_catalog(index: &Value) -> Result<Vec<u8>> {
             write_u32(&mut descriptors, offset + 12, frame_address);
         }
         let default_animation = Value::String(format!("anm_{key}"));
-        let animation_name = text(
-            item.get(11).unwrap_or(&default_animation),
-            "descriptor animation table",
-        )?;
+        let animation_name = text(item.get(11).unwrap_or(&default_animation), "descriptor animation table")?;
         let animation_directory = symbols
             .get(animation_name)
             .copied()
@@ -354,6 +298,5 @@ pub fn build_character_catalog(index: &Value) -> Result<Vec<u8>> {
 
 pub fn read_json(path: &str) -> Result<Value> {
     let bytes = fs::read(path).map_err(|error| Error(format!("{path}: {error}")))?;
-    serde_json::from_str(&String::from_utf8_lossy(&bytes))
-        .map_err(|error| Error(format!("{path}: {error}")))
+    serde_json::from_str(&String::from_utf8_lossy(&bytes)).map_err(|error| Error(format!("{path}: {error}")))
 }

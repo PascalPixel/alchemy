@@ -43,19 +43,12 @@ fn gas_lines(lines: Vec<&str>) -> Vec<String> {
                 .map(|line| line.trim())
                 .find(|line| !line.is_empty() && !line.starts_with('@'))
                 .is_some_and(|line| line.starts_with(".4byte") || line.starts_with(".word"));
-            (!(matches!(instruction.as_str(), "movs r0, r0" | "nop") && next_is_pool))
-                .then_some(instruction)
+            (!(matches!(instruction.as_str(), "movs r0, r0" | "nop") && next_is_pool)).then_some(instruction)
         })
         .collect()
 }
 fn canonical(line: &str) -> String {
-    let mut words: Vec<_> = line
-        .split('@')
-        .next()
-        .unwrap_or(line)
-        .split_whitespace()
-        .map(str::to_string)
-        .collect();
+    let mut words: Vec<_> = line.split('@').next().unwrap_or(line).split_whitespace().map(str::to_string).collect();
     if words.is_empty() {
         return String::new();
     }
@@ -99,11 +92,8 @@ fn canonical(line: &str) -> String {
         return format!("adds {}, {}, #0", words[1].trim_end_matches(','), words[2]);
     }
     if words.len() == 4
-        && [
-            "adds", "subs", "muls", "ands", "orrs", "eors", "bics", "adcs", "sbcs", "lsls", "lsrs",
-            "asrs", "rors",
-        ]
-        .contains(&words[0].as_str())
+        && ["adds", "subs", "muls", "ands", "orrs", "eors", "bics", "adcs", "sbcs", "lsls", "lsrs", "asrs", "rors"]
+            .contains(&words[0].as_str())
         && words[1].trim_end_matches(',') == words[2].trim_end_matches(',')
     {
         words.remove(2);
@@ -112,15 +102,8 @@ fn canonical(line: &str) -> String {
     if let Some(open) = text.rfind('[') {
         if let Some(close) = text[open..].find(']') {
             let inner = &text[open + 1..open + close];
-            if inner == "sp"
-                || inner.starts_with('r') && inner[1..].chars().all(|c| c.is_ascii_digit())
-            {
-                text = format!(
-                    "{}[{}, #0]{}",
-                    &text[..open],
-                    inner,
-                    &text[open + close + 1..]
-                );
+            if inner == "sp" || inner.starts_with('r') && inner[1..].chars().all(|c| c.is_ascii_digit()) {
+                text = format!("{}[{}, #0]{}", &text[..open], inner, &text[open + close + 1..]);
             }
         }
     }
@@ -130,18 +113,13 @@ fn canonical(line: &str) -> String {
         }
     }
     while let Some(at) = text.find(".L") {
-        let end = text[at..]
-            .find(|c: char| c.is_whitespace() || c == ',')
-            .map_or(text.len(), |n| at + n);
+        let end = text[at..].find(|c: char| c.is_whitespace() || c == ',').map_or(text.len(), |n| at + n);
         text.replace_range(at..end, "<pool>");
     }
     text
 }
 fn lo(reg: &str) -> bool {
-    reg.len() == 2
-        && reg.starts_with('r')
-        && reg.as_bytes()[1].is_ascii_digit()
-        && reg.as_bytes()[1] <= b'7'
+    reg.len() == 2 && reg.starts_with('r') && reg.as_bytes()[1].is_ascii_digit() && reg.as_bytes()[1] <= b'7'
 }
 
 #[cfg(test)]
@@ -160,17 +138,11 @@ Func_08000000:
 Helper:
         bx lr
 "#;
-        assert_eq!(
-            gas_function_insns(source, "Func_08000000"),
-            ["adds r1, r2, #0", "bx lr"]
-        );
+        assert_eq!(gas_function_insns(source, "Func_08000000"), ["adds r1, r2, #0", "bx lr"]);
     }
 
     #[test]
     fn falls_back_for_unsymbolized_snippets() {
-        assert_eq!(
-            gas_function_insns("mov r0, r1\n", "missing"),
-            ["adds r0, r1, #0"]
-        );
+        assert_eq!(gas_function_insns("mov r0, r1\n", "missing"), ["adds r0, r1, #0"]);
     }
 }

@@ -38,20 +38,8 @@ struct Segment {
     consumers: &'static [&'static str],
 }
 
-const fn segment(
-    start: u32,
-    end: u32,
-    element: Element,
-    stride: u32,
-    consumers: &'static [&'static str],
-) -> Segment {
-    Segment {
-        start,
-        end,
-        element,
-        stride,
-        consumers,
-    }
+const fn segment(start: u32, end: u32, element: Element, stride: u32, consumers: &'static [&'static str]) -> Segment {
+    Segment { start, end, element, stride, consumers }
 }
 
 struct Region {
@@ -70,61 +58,19 @@ const REGION_0: [Segment; 4] = [
 ];
 
 const REGION_1: [Segment; 13] = [
-    segment(
-        0x0803_66f8,
-        0x0803_6738,
-        U16,
-        2,
-        &["Func_0801908c", "Func_08021e6c", "Func_08028194"],
-    ),
+    segment(0x0803_66f8, 0x0803_6738, U16, 2, &["Func_0801908c", "Func_08021e6c", "Func_08028194"]),
     segment(0x0803_6738, 0x0803_6740, S8, 1, &["Func_0801908c"]),
     segment(0x0803_6740, 0x0803_6750, S8, 1, &["Func_0801a98c"]),
-    segment(
-        0x0803_6750,
-        0x0803_67b0,
-        U8,
-        1,
-        &["Func_0801ca1c", "Func_0801ccc0"],
-    ),
+    segment(0x0803_6750, 0x0803_67b0, U8, 1, &["Func_0801ca1c", "Func_0801ccc0"]),
     segment(0x0803_67b0, 0x0803_67c9, U8, 1, &[]),
-    segment(
-        0x0803_67c9,
-        0x0803_67cc,
-        S8,
-        1,
-        &["Func_0801d108", "Func_0801d4cc"],
-    ),
-    segment(
-        0x0803_67cc,
-        0x0803_67ce,
-        S8,
-        1,
-        &["Func_0801d108", "Func_0801d4cc"],
-    ),
-    segment(
-        0x0803_67ce,
-        0x0803_67d0,
-        S8,
-        1,
-        &["Func_0801d108", "Func_0801d4cc"],
-    ),
+    segment(0x0803_67c9, 0x0803_67cc, S8, 1, &["Func_0801d108", "Func_0801d4cc"]),
+    segment(0x0803_67cc, 0x0803_67ce, S8, 1, &["Func_0801d108", "Func_0801d4cc"]),
+    segment(0x0803_67ce, 0x0803_67d0, S8, 1, &["Func_0801d108", "Func_0801d4cc"]),
     segment(0x0803_67d0, 0x0803_67d6, S8, 1, &["Func_0801d9d4"]),
     segment(0x0803_67d6, 0x0803_67dc, S8, 1, &["Func_0801d9d4"]),
     segment(0x0803_67dc, 0x0803_67e4, S8, 1, &["Func_0801d9d4"]),
-    segment(
-        0x0803_67e4,
-        0x0803_680c,
-        U16,
-        2,
-        &["Func_08019d2c", "Func_0802977c"],
-    ),
-    segment(
-        0x0803_680c,
-        0x0803_68d4,
-        U16,
-        4,
-        &["Func_08019d2c", "Func_0802977c"],
-    ),
+    segment(0x0803_67e4, 0x0803_680c, U16, 2, &["Func_08019d2c", "Func_0802977c"]),
+    segment(0x0803_680c, 0x0803_68d4, U16, 4, &["Func_08019d2c", "Func_0802977c"]),
 ];
 
 const REGION_2: [Segment; 35] = [
@@ -156,13 +102,7 @@ const REGION_2: [Segment; 35] = [
     segment(0x0803_73f7, 0x0803_7403, U8, 1, &["Func_08028920"]),
     segment(0x0803_7403, 0x0803_740f, U8, 1, &["Func_08028920"]),
     segment(0x0803_740f, 0x0803_7428, U8, 1, &["Func_080289e8"]),
-    segment(
-        0x0803_7428,
-        0x0803_742c,
-        Ascii,
-        1,
-        &["Func_08028ef0", "Func_080292c4"],
-    ),
+    segment(0x0803_7428, 0x0803_742c, Ascii, 1, &["Func_08028ef0", "Func_080292c4"]),
     segment(0x0803_742c, 0x0803_7440, Ascii, 1, &["Func_080292c4"]),
     segment(0x0803_7440, 0x0803_7448, Ascii, 1, &["Func_08029554"]),
     segment(0x0803_7448, 0x0803_7450, Ascii, 1, &["Func_08029554"]),
@@ -172,21 +112,9 @@ const REGION_2: [Segment; 35] = [
 ];
 
 const REGIONS: [Region; 3] = [
-    Region {
-        start: 0x0803_3e60,
-        end: 0x0803_3ef8,
-        segments: &REGION_0,
-    },
-    Region {
-        start: 0x0803_66f8,
-        end: 0x0803_68d4,
-        segments: &REGION_1,
-    },
-    Region {
-        start: 0x0803_70d4,
-        end: 0x0803_7464,
-        segments: &REGION_2,
-    },
+    Region { start: 0x0803_3e60, end: 0x0803_3ef8, segments: &REGION_0 },
+    Region { start: 0x0803_66f8, end: 0x0803_68d4, segments: &REGION_1 },
+    Region { start: 0x0803_70d4, end: 0x0803_7464, segments: &REGION_2 },
 ];
 
 fn hex(value: u32) -> String {
@@ -194,16 +122,10 @@ fn hex(value: u32) -> String {
 }
 
 fn object<'a>(value: &'a Value, label: &str) -> Result<&'a serde_json::Map<String, Value>, String> {
-    value
-        .as_object()
-        .ok_or_else(|| format!("{label} must be an object"))
+    value.as_object().ok_or_else(|| format!("{label} must be an object"))
 }
 
-fn exact_keys(
-    value: &serde_json::Map<String, Value>,
-    keys: &[&str],
-    label: &str,
-) -> Result<(), String> {
+fn exact_keys(value: &serde_json::Map<String, Value>, keys: &[&str], label: &str) -> Result<(), String> {
     let mut actual: Vec<&str> = value.keys().map(String::as_str).collect();
     let mut expected = keys.to_vec();
     actual.sort_unstable();
@@ -221,23 +143,11 @@ fn number(value: Option<&Value>, label: &str) -> Result<f64, String> {
         .ok_or_else(|| format!("{label} must be an integer"))
 }
 
-fn array<'a>(
-    value: &'a serde_json::Map<String, Value>,
-    name: &str,
-    label: &str,
-) -> Result<&'a [Value], String> {
-    value
-        .get(name)
-        .and_then(Value::as_array)
-        .map(Vec::as_slice)
-        .ok_or_else(|| format!("{label} differs"))
+fn array<'a>(value: &'a serde_json::Map<String, Value>, name: &str, label: &str) -> Result<&'a [Value], String> {
+    value.get(name).and_then(Value::as_array).map(Vec::as_slice).ok_or_else(|| format!("{label} differs"))
 }
 
-fn numeric(
-    source: &serde_json::Map<String, Value>,
-    element: Element,
-    size: usize,
-) -> Result<Vec<u8>, String> {
+fn numeric(source: &serde_json::Map<String, Value>, element: Element, size: usize) -> Result<Vec<u8>, String> {
     let stride = number(source.get("stride"), "table stride")?;
     let values = array(source, "values", "numeric table")?;
     let width = element.width() as f64;
@@ -285,11 +195,7 @@ fn text(source: &serde_json::Map<String, Value>, size: usize) -> Result<Vec<u8>,
 
 fn build(value: &Value) -> Result<Vec<u8>, String> {
     let source = object(value, "localization-table source")?;
-    exact_keys(
-        source,
-        &["format", "kind", "address", "size", "segments"],
-        "localization-table source",
-    )?;
+    exact_keys(source, &["format", "kind", "address", "size", "segments"], "localization-table source")?;
     if number(source.get("format"), "format")? != 1.0
         || source.get("kind").and_then(Value::as_str) != Some("golden-sun-localization-tables")
     {
@@ -317,18 +223,8 @@ fn build(value: &Value) -> Result<Vec<u8>, String> {
         } else {
             &["address", "end", "element", "stride", "consumers", "values"][..]
         };
-        exact_keys(
-            segment,
-            keys,
-            &format!("localization-table segment {index}"),
-        )?;
-        let consumers = Value::Array(
-            expected
-                .consumers
-                .iter()
-                .map(|name| Value::String((*name).into()))
-                .collect(),
-        );
+        exact_keys(segment, keys, &format!("localization-table segment {index}"))?;
+        let consumers = Value::Array(expected.consumers.iter().map(|name| Value::String((*name).into())).collect());
         if segment.get("address").and_then(Value::as_str) != Some(hex(expected.start).as_str())
             || segment.get("end").and_then(Value::as_str) != Some(hex(expected.end).as_str())
             || segment.get("element").and_then(Value::as_str) != Some(expected.element.name())
@@ -341,11 +237,7 @@ fn build(value: &Value) -> Result<Vec<u8>, String> {
         let bytes = if expected.element == Element::Ascii {
             text(segment, (expected.end - expected.start) as usize)?
         } else {
-            numeric(
-                segment,
-                expected.element,
-                (expected.end - expected.start) as usize,
-            )?
+            numeric(segment, expected.element, (expected.end - expected.start) as usize)?
         };
         result.extend(bytes);
     }
@@ -360,9 +252,7 @@ pub fn entry(arguments: &[String]) {
         [command, source] if command == "build-stdout" => (|| {
             let bytes = std::fs::read(source).map_err(|error| format!("{source}: {error}"))?;
             let value: Value = serde_json::from_slice(&bytes).map_err(|error| error.to_string())?;
-            std::io::stdout()
-                .write_all(&build(&value)?)
-                .map_err(|error| error.to_string())
+            std::io::stdout().write_all(&build(&value)?).map_err(|error| error.to_string())
         })(),
         [argument] if matches!(argument.as_str(), "-h" | "--help") => {
             println!("usage: localization-tables build-stdout SOURCE");

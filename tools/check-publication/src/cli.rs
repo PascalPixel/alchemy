@@ -19,9 +19,8 @@ use std::path::Path;
 use std::process::ExitCode;
 
 use crate::{
-    check_push, check_staged, commit_message_reason, conflict_marker_reason,
-    publication_content_reason, publication_entry_reason, publication_path_reason, ACCEPTED_PATHS,
-    REJECTED_PATHS,
+    check_push, check_staged, commit_message_reason, conflict_marker_reason, publication_content_reason,
+    publication_entry_reason, publication_path_reason, ACCEPTED_PATHS, REJECTED_PATHS,
 };
 
 const USAGE: &str = "Usage: check-publication [--staged | --pre-push | --self-test]\n\nModes:\n  --staged       Check staged files before committing.\n  --pre-push     Check outgoing history using update lines on stdin.\n  --self-test    Run the publication gate's internal checks.\n  -h, --help     Show this help.";
@@ -32,11 +31,7 @@ fn help() -> ExitCode {
 }
 
 fn root() -> &'static Path {
-    Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .unwrap()
-        .parent()
-        .unwrap()
+    Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap().parent().unwrap()
 }
 
 fn fail(message: &str) -> ExitCode {
@@ -70,10 +65,7 @@ fn self_test() -> ExitCode {
     rom[0xbd] = 0u8.wrapping_sub(sum).wrapping_sub(0x19);
 
     let checks: Vec<(&str, bool)> = vec![
-        (
-            "disguised GBA ROM was accepted",
-            publication_content_reason(&rom) == Some("GBA ROM image"),
-        ),
+        ("disguised GBA ROM was accepted", publication_content_reason(&rom) == Some("GBA ROM image")),
         (
             "disguised ELF was accepted",
             publication_content_reason(&[0x7f, 0x45, 0x4c, 0x46]) == Some("ELF build product"),
@@ -82,14 +74,10 @@ fn self_test() -> ExitCode {
             "disguised archive was accepted",
             publication_content_reason(b"!<arch>\n") == Some("archive or object library"),
         ),
-        (
-            "ordinary source content was rejected",
-            publication_content_reason(b"canonical source").is_none(),
-        ),
+        ("ordinary source content was rejected", publication_content_reason(b"canonical source").is_none()),
         (
             "committed incbin payload was accepted",
-            publication_entry_reason("games/gs1/asm/08000000.s", b".incbin \"rom.gba\"\n")
-                .as_deref()
+            publication_entry_reason("games/gs1/asm/08000000.s", b".incbin \"rom.gba\"\n").as_deref()
                 == Some("committed incbin payload"),
         ),
         (
@@ -136,10 +124,7 @@ fn self_test() -> ExitCode {
         "the low halfword ff 00 stayed wrong\n",
     ] {
         if commit_message_reason(accepted).is_some() {
-            return fail(&format!(
-                "a legitimate commit message was rejected: {}",
-                accepted.trim()
-            ));
+            return fail(&format!("a legitimate commit message was rejected: {}", accepted.trim()));
         }
     }
     println!("self-test=ok");

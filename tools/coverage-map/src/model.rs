@@ -41,8 +41,8 @@ pub fn intersect(left: &[Span], right: &[Span]) -> Vec<Span> {
             if b.start >= a.end {
                 break;
             }
-            if let Some(span) = (a.start.max(b.start) < a.end.min(b.end))
-                .then(|| Span::new(a.start.max(b.start), a.end.min(b.end)))
+            if let Some(span) =
+                (a.start.max(b.start) < a.end.min(b.end)).then(|| Span::new(a.start.max(b.start), a.end.min(b.end)))
             {
                 out.push(span);
             }
@@ -76,18 +76,10 @@ pub fn subtract(input: &[Span], cuts: &[Span]) -> Vec<Span> {
 }
 
 pub fn contains(outer: &[Span], inner: Span) -> bool {
-    normalize(outer)
-        .iter()
-        .any(|span| span.start <= inner.start && inner.end <= span.end)
+    normalize(outer).iter().any(|span| span.start <= inner.start && inner.end <= span.end)
 }
 
-pub const CATEGORIES: [&str; 5] = [
-    "exact_c",
-    "tracked_c",
-    "assembly",
-    "retained_asm",
-    "asset_data",
-];
+pub const CATEGORIES: [&str; 5] = ["exact_c", "tracked_c", "assembly", "retained_asm", "asset_data"];
 
 fn category_index(name: &str) -> Option<usize> {
     CATEGORIES.iter().position(|item| *item == name)
@@ -168,10 +160,7 @@ pub fn treemap<T, F: Fn(&T) -> i64>(items: &[T], weight: F, frame: Rect) -> Vec<
             return;
         }
         if weighted.len() == 1 {
-            out.push(Placed {
-                index: weighted[0].0,
-                rect: frame,
-            });
+            out.push(Placed { index: weighted[0].0, rect: frame });
             return;
         }
 
@@ -185,24 +174,10 @@ pub fn treemap<T, F: Fn(&T) -> i64>(items: &[T], weight: F, frame: Rect) -> Vec<
         let share = first as f64 / total as f64;
         let (a, b) = if frame.width >= frame.height {
             let width = frame.width * share;
-            (
-                Rect { width, ..frame },
-                Rect {
-                    x: frame.x + width,
-                    width: frame.width - width,
-                    ..frame
-                },
-            )
+            (Rect { width, ..frame }, Rect { x: frame.x + width, width: frame.width - width, ..frame })
         } else {
             let height = frame.height * share;
-            (
-                Rect { height, ..frame },
-                Rect {
-                    y: frame.y + height,
-                    height: frame.height - height,
-                    ..frame
-                },
-            )
+            (Rect { height, ..frame }, Rect { y: frame.y + height, height: frame.height - height, ..frame })
         };
         place(&weighted[..split], a, out);
         place(&weighted[split..], b, out);
@@ -228,12 +203,7 @@ mod tests {
 
     #[test]
     fn treemap_uses_both_dimensions_and_preserves_area() {
-        let frame = Rect {
-            x: 3.0,
-            y: 7.0,
-            width: 120.0,
-            height: 80.0,
-        };
+        let frame = Rect { x: 3.0, y: 7.0, width: 120.0, height: 80.0 };
         let placed = treemap(&[1, 1, 1, 1], |n| *n, frame);
         assert_eq!(placed.len(), 4);
         assert!(placed.iter().any(|p| p.rect.width < frame.width));
@@ -244,16 +214,7 @@ mod tests {
 
     #[test]
     fn treemap_ignores_non_positive_weights_and_keeps_indexes() {
-        let placed = treemap(
-            &[4, 0, -2, 6],
-            |n| *n,
-            Rect {
-                x: 0.0,
-                y: 0.0,
-                width: 100.0,
-                height: 50.0,
-            },
-        );
+        let placed = treemap(&[4, 0, -2, 6], |n| *n, Rect { x: 0.0, y: 0.0, width: 100.0, height: 50.0 });
         assert_eq!(placed.iter().map(|p| p.index).collect::<Vec<_>>(), [0, 3]);
     }
 }

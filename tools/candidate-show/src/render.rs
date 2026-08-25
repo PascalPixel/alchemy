@@ -8,8 +8,8 @@ use crate::{
 use candidate_compiler::{
     jsnum::to_js_number_string,
     verify::{
-        compile_to_assembly, js_subarray, verify_candidate_owned_routed,
-        CandidateCompilerConfiguration, CandidateCompilerFamily, ROM_BASE,
+        compile_to_assembly, js_subarray, verify_candidate_owned_routed, CandidateCompilerConfiguration,
+        CandidateCompilerFamily, ROM_BASE,
     },
 };
 use compiler_core::bundle::compiler_bundle_signature_checked;
@@ -33,21 +33,11 @@ pub struct RenderOutput {
     pub rows: usize,
 }
 fn basename_without<'a>(path: &'a str, extension: &str) -> &'a str {
-    let base = path
-        .trim_end_matches('/')
-        .rsplit('/')
-        .next()
-        .unwrap_or(path);
-    base.strip_suffix(extension)
-        .filter(|value| !value.is_empty())
-        .unwrap_or(base)
+    let base = path.trim_end_matches('/').rsplit('/').next().unwrap_or(path);
+    base.strip_suffix(extension).filter(|value| !value.is_empty()).unwrap_or(base)
 }
 
-fn main_source_identity(
-    root: &Path,
-    source: &str,
-    target: CompilerTarget,
-) -> Result<(SourceOwner, PathBuf), String> {
+fn main_source_identity(root: &Path, source: &str, target: CompilerTarget) -> Result<(SourceOwner, PathBuf), String> {
     let paths = SourcePaths::load_for_game(root, target.as_str())?;
     let path = Path::new(source);
     let mut owner = paths.owner_for_path(path)?;
@@ -55,17 +45,10 @@ fn main_source_identity(
         owner = paths.owner_for_path(&root.join(path))?;
     }
     let routed_by_manifest = owner.is_some();
-    let owner = owner.or_else(|| {
-        path.file_stem()
-            .and_then(|stem| stem.to_str())
-            .and_then(SourceOwner::from_legacy_stem)
-    });
-    let owner = owner.ok_or_else(|| {
-        format!(
-            "no {} source owner registered for {source}",
-            target.as_str().to_ascii_uppercase()
-        )
-    })?;
+    let owner =
+        owner.or_else(|| path.file_stem().and_then(|stem| stem.to_str()).and_then(SourceOwner::from_legacy_stem));
+    let owner = owner
+        .ok_or_else(|| format!("no {} source owner registered for {source}", target.as_str().to_ascii_uppercase()))?;
     match owner {
         SourceOwner::Main(_) => {
             let routing = if target == CompilerTarget::Gs2 {
@@ -77,10 +60,9 @@ fn main_source_identity(
             };
             Ok((owner, routing))
         }
-        SourceOwner::Overlay { .. } => Err(format!(
-            "candidate-show expects a main-image owner, but {source} is {}",
-            owner.id()
-        )),
+        SourceOwner::Overlay { .. } => {
+            Err(format!("candidate-show expects a main-image owner, but {source} is {}", owner.id()))
+        }
     }
 }
 /// The reference owner's byte length, from a generated build manifest.
@@ -107,9 +89,7 @@ fn region_size(root: &Path, address: u32) -> Option<f64> {
             continue;
         };
         let size = regions.iter().find_map(|region| {
-            (region["address"].as_u64() == Some(u64::from(address)))
-                .then(|| region["size"].as_f64())
-                .flatten()
+            (region["address"].as_u64() == Some(u64::from(address))).then(|| region["size"].as_f64()).flatten()
         });
         if size.is_some() {
             return size;
@@ -118,18 +98,12 @@ fn region_size(root: &Path, address: u32) -> Option<f64> {
     None
 }
 pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
-    let work = options
-        .work
-        .as_deref()
-        .ok_or("The \"path\" argument must be of type string. Received undefined")?;
+    let work = options.work.as_deref().ok_or("The \"path\" argument must be of type string. Received undefined")?;
     std::fs::create_dir_all(work).map_err(|error| format!("{work}: {error}"))?;
     if options.asm {
         return render_asm(root, options, work);
     }
-    let rom_path = options
-        .rom
-        .as_deref()
-        .ok_or("The \"path\" argument must be of type string. Received undefined")?;
+    let rom_path = options.rom.as_deref().ok_or("The \"path\" argument must be of type string. Received undefined")?;
     let patch_text = read_patch(options.patch.as_deref())?;
     let source_label = basename_without(&options.source, ".c").to_string();
     let (owner, routing_source) = main_source_identity(root, &options.source, options.target)?;
@@ -160,8 +134,7 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
             });
         }
     }
-    let (actual, expected, compile) = if let Some(pair) =
-        cached_bins(&key, &key_path, &candidate_path, &reference_path)
+    let (actual, expected, compile) = if let Some(pair) = cached_bins(&key, &key_path, &candidate_path, &reference_path)
     {
         pair
     } else {
@@ -187,15 +160,10 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         )?;
         let address = js_parse_int_radix(&stem, 16);
         let linked_path = work.join(format!("{stem}.bin"));
-        let linked = std::fs::read(&linked_path)
-            .map_err(|error| format!("{}: {error}", linked_path.display()))?;
-        let extent = nm_extent(
-            work.join(format!("{stem}.elf")),
-            &format!("Func_{stem}"),
-            address,
-            linked.len() as f64,
-        )?
-        .unwrap_or(verification.actual.len() as f64);
+        let linked = std::fs::read(&linked_path).map_err(|error| format!("{}: {error}", linked_path.display()))?;
+        let extent =
+            nm_extent(work.join(format!("{stem}.elf")), &format!("Func_{stem}"), address, linked.len() as f64)?
+                .unwrap_or(verification.actual.len() as f64);
         let size = options.size.map(|size| size as f64).or_else(|| region_size(root, owner.address())).ok_or_else(|| {
                 format!(
                     "no owner-size entry for {stem} in the claimed or asm build manifests -- pass `--size BYTES` for an independently established owner boundary, or run `make build-claimed` (or `make build-full`) before scoring against the ROM. Falling back to the candidate's own linked length would compare the source against itself."
@@ -203,24 +171,13 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
             })?;
         let actual = js_subarray(&linked, 0.0, extent);
         let expected = js_subarray(&rom, address - ROM_BASE, address - ROM_BASE + size);
-        std::fs::write(&candidate_path, &actual)
-            .map_err(|error| format!("{}: {error}", candidate_path.display()))?;
-        std::fs::write(&reference_path, &expected)
-            .map_err(|error| format!("{}: {error}", reference_path.display()))?;
-        std::fs::write(&key_path, key.as_bytes())
-            .map_err(|error| format!("{}: {error}", key_path.display()))?;
+        std::fs::write(&candidate_path, &actual).map_err(|error| format!("{}: {error}", candidate_path.display()))?;
+        std::fs::write(&reference_path, &expected).map_err(|error| format!("{}: {error}", reference_path.display()))?;
+        std::fs::write(&key_path, key.as_bytes()).map_err(|error| format!("{}: {error}", key_path.display()))?;
         let _ = std::fs::remove_file(&first_path);
         (actual, expected, "fresh")
     };
-    render_bytes(
-        actual,
-        expected,
-        compile,
-        options,
-        &candidate_path,
-        &reference_path,
-        &first_path,
-    )
+    render_bytes(actual, expected, compile, options, &candidate_path, &reference_path, &first_path)
 }
 fn read_patch(path: Option<&str>) -> Result<Option<String>, String> {
     path.map(|path| {
@@ -235,12 +192,7 @@ fn read_patch(path: Option<&str>) -> Result<Option<String>, String> {
     })
     .transpose()
 }
-fn nm_extent(
-    path: PathBuf,
-    target: &str,
-    address: f64,
-    length: f64,
-) -> Result<Option<f64>, String> {
+fn nm_extent(path: PathBuf, target: &str, address: f64, length: f64) -> Result<Option<f64>, String> {
     let output = Command::new("arm-none-eabi-nm")
         .args(["-S", "--defined-only"])
         .arg(&path)
@@ -259,24 +211,14 @@ fn nm_extent(
             }
             let name = fields[fields.len() - 1];
             let hex = name.strip_prefix("Func_")?;
-            if hex.len() != 8
-                || !hex
-                    .bytes()
-                    .all(|b| b.is_ascii_digit() || matches!(b, b'a'..=b'f'))
-            {
+            if hex.len() != 8 || !hex.bytes().all(|b| b.is_ascii_digit() || matches!(b, b'a'..=b'f')) {
                 return None;
             }
-            Some((
-                js_parse_int_radix(fields[0], 16),
-                js_parse_int_radix(fields[1], 16),
-                name,
-            ))
+            Some((js_parse_int_radix(fields[0], 16), js_parse_int_radix(fields[1], 16), name))
         })
         .filter(|(entry, _, _)| *entry >= address && *entry < address + length)
         .collect();
-    if !entries
-        .iter()
-        .any(|(entry, _, name)| *entry == address && *name == target)
+    if !entries.iter().any(|(entry, _, name)| *entry == address && *name == target)
         || entries.iter().any(|(entry, size, _)| {
             !entry.is_finite()
                 || !size.is_finite()
@@ -289,10 +231,7 @@ fn nm_extent(
     {
         return Err("compiled function symbols differ".into());
     }
-    let end = entries
-        .iter()
-        .map(|(entry, size, _)| entry + size)
-        .fold(f64::NEG_INFINITY, f64::max);
+    let end = entries.iter().map(|(entry, size, _)| entry + size).fold(f64::NEG_INFINITY, f64::max);
     if end <= address || end - address > length {
         return Err("compiled function extent differs".into());
     }
@@ -310,22 +249,17 @@ fn render_bytes(
     let left = disassemble(&candidate_path.to_string_lossy(), 0.0)?;
     let right = disassemble(&reference_path.to_string_lossy(), 0.0)?;
     let differing = crate::diff::differing_offsets(&actual, &expected);
-    let mut offsets: Vec<_> = left
-        .keys()
-        .chain(right.keys())
-        .fold(Vec::new(), |mut keys, key| {
-            if !keys.contains(&key) {
-                keys.push(key);
-            }
-            keys
-        });
+    let mut offsets: Vec<_> = left.keys().chain(right.keys()).fold(Vec::new(), |mut keys, key| {
+        if !keys.contains(&key) {
+            keys.push(key);
+        }
+        keys
+    });
     offsets.sort_by(js_cmp);
     let ordered = |rows: &Rows| {
         let mut keys: Vec<_> = rows.keys().collect();
         keys.sort_by(js_cmp);
-        keys.into_iter()
-            .map(|key| rows.get(key).unwrap_or("").to_string())
-            .collect::<Vec<_>>()
+        keys.into_iter().map(|key| rows.get(key).unwrap_or("").to_string()).collect::<Vec<_>>()
     };
     let (left_lines, right_lines) = (ordered(&left), ordered(&right));
     let (class, wrong) = residual_class(&left_lines, &right_lines);
@@ -335,17 +269,9 @@ fn render_bytes(
         let matched = first_residual_index(&pairs);
         out.push_str(&format!("matched_prefix={}\n", n(matched)?));
         let start = if options.first { matched } else { 0 };
-        let end = if options.first {
-            pairs.len().min(matched + 48)
-        } else {
-            pairs.len()
-        };
+        let end = if options.first { pairs.len().min(matched + 48) } else { pairs.len() };
         if options.first {
-            out.push_str(&format!(
-                "showing={} omitted={}\n",
-                n(end - start)?,
-                n(pairs.len() - end)?
-            ));
+            out.push_str(&format!("showing={} omitted={}\n", n(end - start)?, n(pairs.len() - end)?));
         }
         out.push_str("      candidate                      reference\n");
         for (candidate, reference) in &pairs[start..end] {
@@ -363,8 +289,7 @@ fn render_bytes(
             ));
         }
         if options.first {
-            std::fs::write(first_path, &out)
-                .map_err(|error| format!("{}: {error}", first_path.display()))?;
+            std::fs::write(first_path, &out).map_err(|error| format!("{}: {error}", first_path.display()))?;
         }
     } else {
         if actual.len() != expected.len() {
@@ -372,11 +297,7 @@ fn render_bytes(
         }
         out.push_str("      offset  candidate                      reference\n");
         for offset in offsets {
-            let mark = if differing.contains(&(offset as usize)) {
-                "!"
-            } else {
-                " "
-            };
+            let mark = if differing.contains(&(offset as usize)) { "!" } else { " " };
             out.push_str(&format!(
                 "  {mark} {}  {} {}\n",
                 pad_start_zero(&format!("{:x}", offset as u64), 4),
@@ -398,22 +319,13 @@ fn render_asm(root: &Path, options: &Options, work: &str) -> Result<RenderOutput
     let source_label = basename_without(&options.source, ".c").to_string();
     let (owner, routing_source) = main_source_identity(root, &options.source, options.target)?;
     let stem = owner.address_stem();
-    let reference = root
-        .join("games")
-        .join(options.target.as_str())
-        .join("asm")
-        .join(format!("{stem}.s"));
+    let reference = root.join("games").join(options.target.as_str()).join("asm").join(format!("{stem}.s"));
     if !reference.is_file() {
-        return Err(format!(
-            "--asm expects a main-image owner with {}",
-            reference.display()
-        ));
+        return Err(format!("--asm expects a main-image owner with {}", reference.display()));
     }
     let source = match read_patch(options.patch.as_deref())? {
         Some(patch) => {
-            let dest = Path::new(work)
-                .join("try")
-                .join(format!("{source_label}.c"));
+            let dest = Path::new(work).join("try").join(format!("{source_label}.c"));
             apply_unified_diff(&options.source, &patch, &dest)?;
             dest.to_string_lossy().into_owned()
         }
@@ -433,8 +345,7 @@ fn render_asm(root: &Path, options: &Options, work: &str) -> Result<RenderOutput
         &symbol,
     );
     let expected = gas_function_insns(
-        &std::fs::read_to_string(&reference)
-            .map_err(|error| format!("{}: {error}", reference.display()))?,
+        &std::fs::read_to_string(&reference).map_err(|error| format!("{}: {error}", reference.display()))?,
         &symbol,
     );
     let dir = Path::new(work);
@@ -457,10 +368,7 @@ fn render_asm(root: &Path, options: &Options, work: &str) -> Result<RenderOutput
         git_diff_stat(&reference_path, &candidate_path)?
     );
     if had_previous {
-        out.push_str(&format!(
-            "vs previous candidate:\n{}",
-            git_diff_stat(&previous, &candidate_path)?
-        ));
+        out.push_str(&format!("vs previous candidate:\n{}", git_diff_stat(&previous, &candidate_path)?));
     }
     Ok(RenderOutput {
         stdout: out,
@@ -472,14 +380,7 @@ fn render_asm(root: &Path, options: &Options, work: &str) -> Result<RenderOutput
 }
 fn git_diff_stat(old: &Path, new: &Path) -> Result<String, String> {
     let output = Command::new("git")
-        .args([
-            "diff",
-            "--no-index",
-            "--stat",
-            "--stat-width=80",
-            &old.to_string_lossy(),
-            &new.to_string_lossy(),
-        ])
+        .args(["diff", "--no-index", "--stat", "--stat-width=80", &old.to_string_lossy(), &new.to_string_lossy()])
         .output()
         .map_err(|error| format!("git diff: {error}"))?;
     Ok(if output.stdout.is_empty() {
@@ -513,9 +414,7 @@ pub fn alignment_key(instruction: &str) -> String {
 pub fn without_pc_offset(instruction: &str) -> String {
     let mut out = instruction.to_string();
     while let Some(start) = out.find("[pc, #") {
-        let end = out[start..]
-            .find(']')
-            .map_or(out.len() - start, |end| end + 1);
+        let end = out[start..].find(']').map_or(out.len() - start, |end| end + 1);
         out = format!("{}[pc]{}", &out[..start], &out[start + end..]);
     }
     out
@@ -534,19 +433,12 @@ pub fn residual_class(left: &[String], right: &[String]) -> (&'static str, i64) 
     let pool = count(without_pc_offset);
     let wrong = pool.values().map(|count| count.abs()).sum();
     if wrong == 0 {
-        return if left == right {
-            ("exact", 0)
-        } else {
-            ("ordering", 0)
-        };
+        return if left == right { ("exact", 0) } else { ("ordering", 0) };
     }
     if right.iter().any(|line| multiple(line)) && !left.iter().any(|line| multiple(line)) {
         return ("unemittable", wrong);
     }
-    if count(|line| without_register(&without_pc_offset(line)))
-        .values()
-        .all(|count| *count == 0)
-    {
+    if count(|line| without_register(&without_pc_offset(line))).values().all(|count| *count == 0) {
         ("allocation", wrong)
     } else {
         ("wrong", wrong)
@@ -573,18 +465,12 @@ pub fn first_residual_index(pairs: &[(Option<String>, Option<String>)]) -> usize
         .unwrap_or(pairs.len())
 }
 pub fn align_streams(left: &[String], right: &[String]) -> Vec<(Option<String>, Option<String>)> {
-    let (a, b): (Vec<_>, Vec<_>) = (
-        left.iter().map(|line| alignment_key(line)).collect(),
-        right.iter().map(|line| alignment_key(line)).collect(),
-    );
+    let (a, b): (Vec<_>, Vec<_>) =
+        (left.iter().map(|line| alignment_key(line)).collect(), right.iter().map(|line| alignment_key(line)).collect());
     let mut table = vec![vec![0; b.len() + 1]; a.len() + 1];
     for i in (0..a.len()).rev() {
         for j in (0..b.len()).rev() {
-            table[i][j] = if a[i] == b[j] {
-                table[i + 1][j + 1] + 1
-            } else {
-                table[i + 1][j].max(table[i][j + 1])
-            };
+            table[i][j] = if a[i] == b[j] { table[i + 1][j + 1] + 1 } else { table[i + 1][j].max(table[i][j + 1]) };
         }
     }
     let mut out = Vec::new();
@@ -622,10 +508,9 @@ fn source_cache_key(
     size: Option<usize>,
     patch: Option<&str>,
 ) -> Result<String, String> {
-    let executable = std::env::current_exe()
-        .map_err(|error| format!("cannot resolve the candidate-show executable: {error}"))?;
     let executable =
-        std::fs::read(&executable).map_err(|error| format!("{}: {error}", executable.display()))?;
+        std::env::current_exe().map_err(|error| format!("cannot resolve the candidate-show executable: {error}"))?;
+    let executable = std::fs::read(&executable).map_err(|error| format!("{}: {error}", executable.display()))?;
     let bundle = compiler_bundle_signature_checked()?;
     source_cache_key_with_environment(
         source,
@@ -655,12 +540,7 @@ fn source_cache_key_with_environment(
 ) -> Result<String, String> {
     let mut hasher = Sha256::new();
     hasher.update(b"candidate-show-cache-v4");
-    hasher.update(source_input_signature(
-        compiler_core::routing::root(),
-        source,
-        routing_source,
-        flags,
-    )?);
+    hasher.update(source_input_signature(compiler_core::routing::root(), source, routing_source, flags)?);
     hasher.update([7]);
     hasher.update(routing_source.as_bytes());
     hasher.update([8]);
@@ -674,13 +554,7 @@ fn source_cache_key_with_environment(
         hasher.update(flag.as_bytes());
     }
     hasher.update([1]);
-    hasher.update(
-        configuration
-            .family
-            .unwrap_or(CandidateCompilerFamily::Routed)
-            .as_str()
-            .as_bytes(),
-    );
+    hasher.update(configuration.family.unwrap_or(CandidateCompilerFamily::Routed).as_str().as_bytes());
     for flag in &configuration.add_flags {
         hasher.update([2]);
         hasher.update(flag.as_bytes());
@@ -702,11 +576,7 @@ fn source_cache_key_with_environment(
         hasher.update([4]);
         hasher.update(patch.as_bytes());
     }
-    Ok(hasher
-        .finalize()
-        .iter()
-        .map(|byte| format!("{byte:02x}"))
-        .collect())
+    Ok(hasher.finalize().iter().map(|byte| format!("{byte:02x}")).collect())
 }
 
 fn source_input_signature(
@@ -717,16 +587,11 @@ fn source_input_signature(
 ) -> Result<Vec<u8>, String> {
     let source = rooted_path(root, Path::new(source));
     let mut include_dirs = Vec::new();
-    if let Some(game) = routing_source
-        .strip_prefix("games/")
-        .and_then(|path| path.split('/').next())
-    {
+    if let Some(game) = routing_source.strip_prefix("games/").and_then(|path| path.split('/').next()) {
         include_dirs.push(root.join("games").join(game).join("include"));
     }
     include_dirs.extend(flags.iter().filter_map(|flag| {
-        flag.strip_prefix("-I")
-            .filter(|path| !path.is_empty())
-            .map(|path| rooted_path(root, Path::new(path)))
+        flag.strip_prefix("-I").filter(|path| !path.is_empty()).map(|path| rooted_path(root, Path::new(path)))
     }));
 
     let mut seen = BTreeSet::new();
@@ -756,13 +621,11 @@ fn collect_source_inputs(
     seen: &mut BTreeSet<PathBuf>,
     inputs: &mut Vec<(PathBuf, Vec<u8>)>,
 ) -> Result<(), String> {
-    let canonical =
-        std::fs::canonicalize(path).map_err(|error| format!("{}: {error}", path.display()))?;
+    let canonical = std::fs::canonicalize(path).map_err(|error| format!("{}: {error}", path.display()))?;
     if !seen.insert(canonical.clone()) {
         return Ok(());
     }
-    let bytes =
-        std::fs::read(&canonical).map_err(|error| format!("{}: {error}", canonical.display()))?;
+    let bytes = std::fs::read(&canonical).map_err(|error| format!("{}: {error}", canonical.display()))?;
     let text = String::from_utf8_lossy(&bytes);
     let mut includes = Vec::new();
     for line in text.lines() {
@@ -801,48 +664,25 @@ mod cache_key_tests {
         let source = std::env::temp_dir().join("candidate-show-cache-key.c");
         std::fs::write(&source, "void Func_08000000(void) {}\n").unwrap();
         let source = source.to_str().unwrap();
-        let routed = CandidateCompilerConfiguration {
-            family: Some(CandidateCompilerFamily::Routed),
-            ..Default::default()
-        };
-        let gcc296 = CandidateCompilerConfiguration {
-            family: Some(CandidateCompilerFamily::Gcc296),
-            ..Default::default()
-        };
+        let routed =
+            CandidateCompilerConfiguration { family: Some(CandidateCompilerFamily::Routed), ..Default::default() };
+        let gcc296 =
+            CandidateCompilerConfiguration { family: Some(CandidateCompilerFamily::Gcc296), ..Default::default() };
         let removed = CandidateCompilerConfiguration {
             family: Some(CandidateCompilerFamily::Routed),
             remove_flags: vec!["-fgcse".into()],
             ..Default::default()
         };
         let route = "games/gs1/src/08000000.c";
-        let base =
-            source_cache_key(source, route, "08000000", &[], &routed, None, None, None).unwrap();
+        let base = source_cache_key(source, route, "08000000", &[], &routed, None, None, None).unwrap();
+        assert_ne!(base, source_cache_key(source, route, "08000000", &[], &gcc296, None, None, None).unwrap());
+        assert_ne!(base, source_cache_key(source, route, "08000000", &[], &removed, None, None, None).unwrap());
         assert_ne!(
             base,
-            source_cache_key(source, route, "08000000", &[], &gcc296, None, None, None).unwrap()
+            source_cache_key(source, "games/gs1/recon/en/main/08000000.c", "08000000", &[], &routed, None, None, None)
+                .unwrap()
         );
-        assert_ne!(
-            base,
-            source_cache_key(source, route, "08000000", &[], &removed, None, None, None).unwrap()
-        );
-        assert_ne!(
-            base,
-            source_cache_key(
-                source,
-                "games/gs1/recon/en/main/08000000.c",
-                "08000000",
-                &[],
-                &routed,
-                None,
-                None,
-                None
-            )
-            .unwrap()
-        );
-        assert_ne!(
-            base,
-            source_cache_key(source, route, "08000004", &[], &routed, None, None, None).unwrap()
-        );
+        assert_ne!(base, source_cache_key(source, route, "08000004", &[], &routed, None, None, None).unwrap());
         let _ = std::fs::remove_file(source);
     }
 
@@ -910,21 +750,9 @@ mod cache_key_tests {
         let body = root.join("games/gs1/recon/en/main/body.c");
         std::fs::write(&source, "#include \"body.c\"\n").unwrap();
         std::fs::write(&body, "void Func_08000000(void) {}\n").unwrap();
-        let first = source_input_signature(
-            &root,
-            source.to_str().unwrap(),
-            "games/gs1/src/08000000.c",
-            &[],
-        )
-        .unwrap();
+        let first = source_input_signature(&root, source.to_str().unwrap(), "games/gs1/src/08000000.c", &[]).unwrap();
         std::fs::write(&body, "void Func_08000000(void) { for (;;) {} }\n").unwrap();
-        let second = source_input_signature(
-            &root,
-            source.to_str().unwrap(),
-            "games/gs1/src/08000000.c",
-            &[],
-        )
-        .unwrap();
+        let second = source_input_signature(&root, source.to_str().unwrap(), "games/gs1/src/08000000.c", &[]).unwrap();
         assert_ne!(first, second);
         let _ = std::fs::remove_dir_all(&root);
     }
@@ -970,11 +798,8 @@ mod region_size_tests {
     #[test]
     fn reads_the_owner_size_from_the_generated_manifest() {
         let root = scratch_root("present");
-        fs::write(
-            root.join("out/gs1-en/asm/manifest.json"),
-            r#"{"regions":[{"address":134919652,"size":4888}]}"#,
-        )
-        .unwrap();
+        fs::write(root.join("out/gs1-en/asm/manifest.json"), r#"{"regions":[{"address":134919652,"size":4888}]}"#)
+            .unwrap();
         assert_eq!(region_size(&root, 0x080a_b5e4), Some(4888.0));
         let _ = fs::remove_dir_all(&root);
     }
@@ -983,11 +808,8 @@ mod region_size_tests {
     fn reads_a_nested_source_size_by_owner_address() {
         let root = scratch_root("claimed-nested");
         fs::create_dir_all(root.join("out/gs1-en/claimed")).unwrap();
-        fs::write(
-            root.join("out/gs1-en/claimed/manifest.json"),
-            r#"{"regions":[{"address":134942628,"size":296}]}"#,
-        )
-        .unwrap();
+        fs::write(root.join("out/gs1-en/claimed/manifest.json"), r#"{"regions":[{"address":134942628,"size":296}]}"#)
+            .unwrap();
         assert_eq!(region_size(&root, 0x080b_0fa4), Some(296.0));
         let _ = fs::remove_dir_all(&root);
     }
@@ -1007,11 +829,8 @@ mod region_size_tests {
     #[test]
     fn returns_none_when_the_manifest_lacks_this_owner() {
         let root = scratch_root("other-owner");
-        fs::write(
-            root.join("out/gs1-en/asm/manifest.json"),
-            r#"{"regions":[{"address":134986508,"size":6332}]}"#,
-        )
-        .unwrap();
+        fs::write(root.join("out/gs1-en/asm/manifest.json"), r#"{"regions":[{"address":134986508,"size":6332}]}"#)
+            .unwrap();
         assert_eq!(region_size(&root, 0x080a_b5e4), None);
         let _ = fs::remove_dir_all(&root);
     }
@@ -1037,12 +856,9 @@ mod source_identity_tests {
             r#"{"format":3,"owners":{"main:080b0fa4":"battle/inventory/draw_paged_item_list.c"}}"#,
         )
         .unwrap();
-        let (owner, route) = main_source_identity(
-            &root,
-            "games/gs1/src/battle/inventory/draw_paged_item_list.c",
-            CompilerTarget::Gs1,
-        )
-        .unwrap();
+        let (owner, route) =
+            main_source_identity(&root, "games/gs1/src/battle/inventory/draw_paged_item_list.c", CompilerTarget::Gs1)
+                .unwrap();
         assert_eq!(owner, SourceOwner::Main(0x080b0fa4));
         assert_eq!(route, PathBuf::from("games/gs1/src/080b0fa4.c"));
         let _ = fs::remove_dir_all(&root);

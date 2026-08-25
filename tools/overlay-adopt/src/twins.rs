@@ -34,15 +34,12 @@ fn number(row: &Value, field: &str) -> Result<usize, String> {
 }
 
 fn text<'a>(row: &'a Value, field: &str) -> Result<&'a str, String> {
-    row.get(field)
-        .and_then(Value::as_str)
-        .ok_or_else(|| format!("overlay region has no {field}"))
+    row.get(field).and_then(Value::as_str).ok_or_else(|| format!("overlay region has no {field}"))
 }
 
 fn address(row: &Value) -> Result<i64, String> {
     let value = text(row, "entry")?;
-    i64::from_str_radix(value.trim_start_matches("0x"), 16)
-        .map_err(|_| format!("invalid overlay entry {value:?}"))
+    i64::from_str_radix(value.trim_start_matches("0x"), 16).map_err(|_| format!("invalid overlay entry {value:?}"))
 }
 
 fn relocation_mask(bytes: &[u8], offset: usize) -> Vec<bool> {
@@ -90,22 +87,16 @@ pub(crate) fn resource_table(rom: &[u8]) -> Result<usize, String> {
         .step_by(4)
         .find(|offset| {
             u32::from_le_bytes(rom[*offset..*offset + 4].try_into().unwrap()) as usize == ROM_BASE
-                && u32::from_le_bytes(rom[*offset + 4..*offset + 8].try_into().unwrap()) as usize
-                    == ROM_BASE + *offset
+                && u32::from_le_bytes(rom[*offset + 4..*offset + 8].try_into().unwrap()) as usize == ROM_BASE + *offset
         })
         .ok_or("resource directory self-pointer was not found".into())
 }
 
 fn resource_pointer(rom: &[u8], table: usize, resource: usize) -> Result<usize, String> {
-    let at = table
-        .checked_add(resource * 4)
-        .ok_or("resource directory offset overflow")?;
-    let address = u32::from_le_bytes(
-        rom.get(at..at + 4)
-            .ok_or("resource directory extends past ROM")?
-            .try_into()
-            .unwrap(),
-    ) as usize;
+    let at = table.checked_add(resource * 4).ok_or("resource directory offset overflow")?;
+    let address =
+        u32::from_le_bytes(rom.get(at..at + 4).ok_or("resource directory extends past ROM")?.try_into().unwrap())
+            as usize;
     address
         .checked_sub(ROM_BASE)
         .filter(|offset| *offset < rom.len())
@@ -118,10 +109,7 @@ pub(crate) fn decode_overlay(rom: &[u8], table: usize, overlay: &str) -> Result<
         .and_then(|value| usize::from_str_radix(value, 16).ok())
         .ok_or_else(|| format!("invalid overlay name {overlay:?}"))?;
     let start = resource_pointer(rom, table, resource)?;
-    let end = resource_pointer(rom, table, resource + 1)
-        .ok()
-        .filter(|end| *end > start)
-        .unwrap_or(rom.len());
+    let end = resource_pointer(rom, table, resource + 1).ok().filter(|end| *end > start).unwrap_or(rom.len());
     let (bytes, _) = match rom[start] {
         0 => extract_resource::decode_general(rom, start, end, 0x10_0000),
         1 => extract_resource::decode_palette(rom, start + 1, end, 0x10_0000),
@@ -132,17 +120,11 @@ pub(crate) fn decode_overlay(rom: &[u8], table: usize, overlay: &str) -> Result<
 }
 
 fn parse_options(argv: &[String]) -> Result<Option<Options>, String> {
-    if argv
-        .iter()
-        .any(|argument| matches!(argument.as_str(), "-h" | "--help"))
-    {
+    if argv.iter().any(|argument| matches!(argument.as_str(), "-h" | "--help")) {
         println!("{USAGE}");
         return Ok(None);
     }
-    let mut options = Options {
-        minimum: 4,
-        maximum_difference: 0,
-    };
+    let mut options = Options { minimum: 4, maximum_difference: 0 };
     let mut index = 0usize;
     while index < argv.len() {
         let flag = &argv[index];
@@ -156,9 +138,8 @@ fn parse_options(argv: &[String]) -> Result<Option<Options>, String> {
                     .ok_or_else(|| "--min wants a positive decimal byte count".to_string())?;
             }
             "--max-diff" => {
-                options.maximum_difference = value
-                    .parse::<usize>()
-                    .map_err(|_| "--max-diff wants a decimal byte count".to_string())?;
+                options.maximum_difference =
+                    value.parse::<usize>().map_err(|_| "--max-diff wants a decimal byte count".to_string())?;
             }
             _ => return Err(USAGE.to_string()),
         }
@@ -173,13 +154,10 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     };
     let regions_path = root.join("games/gs1/semantic/regions.json");
     let document: Value = serde_json::from_str(
-        &fs::read_to_string(&regions_path)
-            .map_err(|error| format!("{}: {error}", regions_path.display()))?,
+        &fs::read_to_string(&regions_path).map_err(|error| format!("{}: {error}", regions_path.display()))?,
     )
     .map_err(|error| format!("{}: {error}", regions_path.display()))?;
-    let regions = document["manual_regions"]
-        .as_array()
-        .ok_or("semantic regions has no manual_regions array")?;
+    let regions = document["manual_regions"].as_array().ok_or("semantic regions has no manual_regions array")?;
     let source_paths = SourcePaths::load(root)?;
     let rom_path = root.join("roms/gs1-en.gba");
     let rom = fs::read(&rom_path).map_err(|error| format!("{}: {error}", rom_path.display()))?;
@@ -195,17 +173,15 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
             continue;
         }
         let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;
-        let exact_source = source_paths
-            .mapped_source_path(owner)
-            .filter(|path| path.exists());
+        let exact_source = source_paths.mapped_source_path(owner).filter(|path| path.exists());
         if !images.contains_key(&overlay) {
-            let image = decode_overlay(&rom, resource_table, &overlay)
-                .map_err(|error| format!("{overlay}: {error}"))?;
+            let image =
+                decode_overlay(&rom, resource_table, &overlay).map_err(|error| format!("{overlay}: {error}"))?;
             images.insert(overlay.clone(), image);
         }
         let image = &images[&overlay];
-        let offset = usize::try_from(address - OVERLAY_BASE)
-            .map_err(|_| format!("{} is below the overlay base", owner.id()))?;
+        let offset =
+            usize::try_from(address - OVERLAY_BASE).map_err(|_| format!("{} is below the overlay base", owner.id()))?;
         let bytes = image
             .get(offset..offset + span)
             .ok_or_else(|| format!("{} extends past decoded {overlay}", owner.id()))?
@@ -216,37 +192,24 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
             continue;
         }
         let id = owner.id();
-        rows.insert(
-            id.clone(),
-            Row {
-                id,
-                span,
-                exact_source,
-                bytes,
-                mask,
-                core_bytes,
-            },
-        );
+        rows.insert(id.clone(), Row { id, span, exact_source, bytes, mask, core_bytes });
     }
 
     let mut exact_by_overlay = BTreeMap::<String, Vec<(SourceOwner, PathBuf)>>::new();
     for source in source_paths.all_sources()? {
         if let Some(overlay) = source.owner.overlay_id() {
-            exact_by_overlay
-                .entry(overlay)
-                .or_default()
-                .push((source.owner, source.path));
+            exact_by_overlay.entry(overlay).or_default().push((source.owner, source.path));
         }
     }
     for (overlay, sources) in exact_by_overlay {
         if !images.contains_key(&overlay) {
-            let image = decode_overlay(&rom, resource_table, &overlay)
-                .map_err(|error| format!("{overlay}: {error}"))?;
+            let image =
+                decode_overlay(&rom, resource_table, &overlay).map_err(|error| format!("{overlay}: {error}"))?;
             images.insert(overlay.clone(), image);
         }
         let assembly_path = root.join(format!("games/gs1/assets/code/{overlay}_overlay.s"));
-        let assembly = fs::read_to_string(&assembly_path)
-            .map_err(|error| format!("{}: {error}", assembly_path.display()))?;
+        let assembly =
+            fs::read_to_string(&assembly_path).map_err(|error| format!("{}: {error}", assembly_path.display()))?;
         let lines = assembly.lines().collect::<Vec<_>>();
         for (owner, source) in sources {
             let address = i64::from(owner.address());
@@ -271,17 +234,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
                 continue;
             }
             let id = owner.id();
-            rows.insert(
-                id.clone(),
-                Row {
-                    id,
-                    span,
-                    exact_source: Some(source),
-                    bytes,
-                    mask,
-                    core_bytes,
-                },
-            );
+            rows.insert(id.clone(), Row { id, span, exact_source: Some(source), bytes, mask, core_bytes });
         }
     }
 
@@ -292,10 +245,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
 
     let mut candidates = Vec::<(usize, usize, String)>::new();
     for rows in groups.values() {
-        let exact = rows
-            .iter()
-            .filter(|row| row.exact_source.is_some())
-            .collect::<Vec<_>>();
+        let exact = rows.iter().filter(|row| row.exact_source.is_some()).collect::<Vec<_>>();
         if exact.is_empty() {
             continue;
         }
@@ -307,11 +257,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
                 .collect::<Vec<_>>();
             ranked.sort_by(|left, right| {
                 let left_path = left.1.exact_source.as_ref().expect("filtered exact source");
-                let right_path = right
-                    .1
-                    .exact_source
-                    .as_ref()
-                    .expect("filtered exact source");
+                let right_path = right.1.exact_source.as_ref().expect("filtered exact source");
                 left.0
                     .cmp(&right.0)
                     .then_with(|| {
@@ -351,21 +297,13 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
         }
     }
     candidates.sort_by(|left, right| {
-        left.0
-            .cmp(&right.0)
-            .then_with(|| right.1.cmp(&left.1))
-            .then_with(|| left.2.cmp(&right.2))
+        left.0.cmp(&right.0).then_with(|| right.1.cmp(&left.1)).then_with(|| left.2.cmp(&right.2))
     });
     let bytes: usize = candidates.iter().map(|candidate| candidate.1).sum();
     for (_, _, line) in &candidates {
         println!("{line}");
     }
-    eprintln!(
-        "twin_candidates={} candidate_bytes={} decoded_overlays={}",
-        candidates.len(),
-        bytes,
-        images.len()
-    );
+    eprintln!("twin_candidates={} candidate_bytes={} decoded_overlays={}", candidates.len(), bytes, images.len());
     Ok(0)
 }
 
@@ -377,10 +315,7 @@ mod tests {
     fn masks_thumb_calls_and_reached_literals() {
         let bytes = [0x00, 0xf0, 0x00, 0xf8, 0x00, 0x48, 0x70, 0x47, 1, 2, 3, 4];
         let mask = relocation_mask(&bytes, 0);
-        assert_eq!(
-            mask,
-            [true, true, true, true, false, false, false, false, true, true, true, true]
-        );
+        assert_eq!(mask, [true, true, true, true, false, false, false, false, true, true, true, true]);
         let core = mask.iter().filter(|masked| !**masked).count();
         assert_eq!(core, 4);
     }

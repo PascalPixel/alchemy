@@ -14,6 +14,7 @@ s32 Func_020023b2();
 void Func_0200403e();
 s32 Func_020032d8();
 void Func_02004c0c();
+
 void Func_02002040(void)
 {
     struct Rec_3b3 *rec = Func_02004b64(0);

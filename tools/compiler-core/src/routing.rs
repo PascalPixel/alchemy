@@ -73,14 +73,7 @@ pub fn driver_for_target(target: CompilerTarget) -> PathBuf {
 }
 
 fn include_flag(target: CompilerTarget) -> String {
-    format!(
-        "-I{}",
-        root()
-            .join("games")
-            .join(target.as_str())
-            .join("include")
-            .display()
-    )
+    format!("-I{}", root().join("games").join(target.as_str()).join("include").display())
 }
 
 fn base_cflags(target: CompilerTarget) -> Vec<String> {
@@ -111,10 +104,7 @@ pub fn gs2_cflags() -> Vec<String> {
 }
 
 pub fn agbcc_cflags() -> Vec<String> {
-    ["-mthumb-interwork", "-O2", "-fno-builtin", "-ffreestanding"]
-        .iter()
-        .map(|s| (*s).to_string())
-        .collect()
+    ["-mthumb-interwork", "-O2", "-fno-builtin", "-ffreestanding"].iter().map(|s| (*s).to_string()).collect()
 }
 
 pub fn cflags_for_target(target: CompilerTarget) -> Vec<String> {
@@ -154,10 +144,7 @@ pub fn source_stem(source: &str) -> String {
 }
 
 fn is_hex8(value: &str) -> bool {
-    value.len() == 8
-        && value
-            .bytes()
-            .all(|b| b.is_ascii_hexdigit() && !b.is_ascii_uppercase())
+    value.len() == 8 && value.bytes().all(|b| b.is_ascii_hexdigit() && !b.is_ascii_uppercase())
 }
 
 /// `overlayStem`: an overlay row routes by its bare address, so a candidate
@@ -194,19 +181,12 @@ fn normalize(path: &Path) -> PathBuf {
 
 /// `sourceKey`: `relative(ROOT, resolve(ROOT, source))` with `/` separators.
 pub fn source_key(source: &str) -> String {
-    let resolved = if Path::new(source).is_absolute() {
-        normalize(Path::new(source))
-    } else {
-        normalize(&root().join(source))
-    };
+    let resolved =
+        if Path::new(source).is_absolute() { normalize(Path::new(source)) } else { normalize(&root().join(source)) };
     let base = normalize(root());
     let resolved_parts: Vec<_> = resolved.components().collect();
     let base_parts: Vec<_> = base.components().collect();
-    let shared = resolved_parts
-        .iter()
-        .zip(base_parts.iter())
-        .take_while(|(a, b)| a == b)
-        .count();
+    let shared = resolved_parts.iter().zip(base_parts.iter()).take_while(|(a, b)| a == b).count();
     let mut parts: Vec<String> = vec!["..".to_string(); base_parts.len() - shared];
     for component in &resolved_parts[shared..] {
         parts.push(component.as_os_str().to_string_lossy().into_owned());
@@ -221,8 +201,7 @@ pub fn source_key(source: &str) -> String {
 fn set(table: &'static [&'static str]) -> &'static HashSet<&'static str> {
     // One cache keyed by the table's address; the tables are `static`, so the
     // pointer identifies the set.
-    static CACHE: OnceLock<std::sync::Mutex<HashMap<usize, &'static HashSet<&'static str>>>> =
-        OnceLock::new();
+    static CACHE: OnceLock<std::sync::Mutex<HashMap<usize, &'static HashSet<&'static str>>>> = OnceLock::new();
     let cache = CACHE.get_or_init(|| std::sync::Mutex::new(HashMap::new()));
     let key = table.as_ptr() as usize;
     let mut guard = cache.lock().expect("routing cache is not poisoned");
@@ -239,8 +218,7 @@ fn has(table: &'static [&'static str], value: &str) -> bool {
 /// The same cache, keyed by the table's address, but holding each entry's
 /// FILE STEM rather than its path.
 fn stem_set(table: &'static [&'static str]) -> &'static HashSet<String> {
-    static CACHE: OnceLock<std::sync::Mutex<HashMap<usize, &'static HashSet<String>>>> =
-        OnceLock::new();
+    static CACHE: OnceLock<std::sync::Mutex<HashMap<usize, &'static HashSet<String>>>> = OnceLock::new();
     let cache = CACHE.get_or_init(|| std::sync::Mutex::new(HashMap::new()));
     let key = table.as_ptr() as usize;
     let mut guard = cache.lock().expect("routing cache is not poisoned");
@@ -282,15 +260,11 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     // to them no longer reproduce. That is the point: the difference is back in
     // the source, where it can be found and fixed, instead of hidden behind a
     // switch.
-    let mut out: Vec<String> =
-        if has(NO_INTERWORK_SOURCES, stem) || has_owner(NO_INTERWORK_OVERLAY_SOURCES, source) {
-            cflags()
-                .into_iter()
-                .filter(|f| f != "-mthumb-interwork")
-                .collect()
-        } else {
-            cflags()
-        };
+    let mut out: Vec<String> = if has(NO_INTERWORK_SOURCES, stem) || has_owner(NO_INTERWORK_OVERLAY_SOURCES, source) {
+        cflags().into_iter().filter(|f| f != "-mthumb-interwork").collect()
+    } else {
+        cflags()
+    };
 
     // Subtracted, not added: the soft-float library leaves take the stock ABI
     // with r4 callee-saved, so the base set's `-fcall-used-r4` comes back off.

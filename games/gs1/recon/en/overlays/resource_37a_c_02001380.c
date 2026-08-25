@@ -28,9 +28,9 @@ void Func_02003de2();
 void Func_02003de4();
 void Func_02003dea();
 void Func_02003e00();
-void Func_02003e0e();
+void Func_02003e0e(s32, s32, s32);
 void Func_02003e12();
-void Func_02003e22();
+void Func_02003e22(s32, s32, s32);
 void Func_02003e28();
 void Func_02003e3a();
 void Func_02003e50();
@@ -39,7 +39,7 @@ void Func_02003e62();
 void Func_02003e68();
 void Func_02003e70();
 void Func_02003ea8();
-void Func_02003eae();
+void Func_02003eae(s32, s32, s32);
 void Func_02003ece();
 void Func_02003ed4();
 void Func_02003ede();
@@ -57,6 +57,21 @@ extern u32 Data_03001ebc;
 void Func_02003fbe();
 void Func_02003fca();
 
+static __inline__ void SetInitialScale(s32 actor, s32 scale, s32 duration)
+{
+    Func_02003e0e(actor, scale, duration);
+}
+
+static __inline__ void SetInitialDirection(s32 actor, s32 direction, s32 duration)
+{
+    Func_02003e22(actor, direction, duration);
+}
+
+static __inline__ void SetFinalScale(s32 actor, s32 horizontal, s32 vertical)
+{
+    Func_02003eae(actor, horizontal, vertical);
+}
+
 #define StartSolShindenTrapEvent Func_02001380
 
 void StartSolShindenTrapEvent(void)
@@ -71,18 +86,8 @@ void StartSolShindenTrapEvent(void)
     Func_02003d58();
     Func_020025ec();
     Func_02003de2(4120);
-    {
-        register s32 actor = 16;
-        register s32 scale = 128;
-        scale <<= 7;
-        Func_02003e0e(actor, scale, 20);
-    }
-    {
-        register s32 actor = 16;
-        register s32 scale = 128;
-        scale <<= 1;
-        Func_02003e22(actor, scale, 0);
-    }
+    SetInitialScale(16, 0x4000, 20);
+    SetInitialDirection(16, 256, 0);
     Func_02003de4(16, 6, 30);
     Func_02003e5c(37617664, -1, 11403264, 1);
     Func_02003e68();
@@ -131,14 +136,7 @@ void StartSolShindenTrapEvent(void)
     Func_020016d6();
     Func_02003e70(6);
     Func_02003aa8(32784, 6);
-    {
-        register s32 actor = 16;
-        register s32 horizontal_scale = 128;
-        register s32 vertical_scale = 128;
-        horizontal_scale <<= 10;
-        vertical_scale <<= 9;
-        Func_02003eae(actor, horizontal_scale, vertical_scale);
-    }
+    SetFinalScale(16, 0x20000, 0x10000);
     Func_02003ed4(16, 576, 280);
     scene_state = Data_03001ebc;
     *(s32 *)(scene_state + 448) = 256;

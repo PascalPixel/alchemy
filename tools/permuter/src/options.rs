@@ -8,7 +8,7 @@ pub const MAX_TOP: usize = 256;
 pub const MAX_SUMMARY_BYTES: usize = 1024;
 pub const MAX_JOURNAL_ROW_BYTES: usize = 2 * 1024;
 
-pub const USAGE: &str = "usage: permuter <candidate.c|legacy-directory>... [options]\n\
+pub const USAGE: &str = "usage: permuter <candidate.c>... [options]\n\
   --iterations N   bounded generated candidates (default 1000)\n\
   --jobs N, -j N   parallel compiler workers (default CPUs-2; explicit max 64)\n\
   --seed N         deterministic random seed (default 1)\n\
@@ -21,6 +21,7 @@ pub const USAGE: &str = "usage: permuter <candidate.c|legacy-directory>... [opti
   --keep-prob P    AST-walk continuation probability in 0..1 (default 0.6)\n\
   --manual-only    planned search: evaluate PERM_* choices without mutation\n\
   --show-errors    display failed compiler diagnostics\n\
+  --continue-on-error  finish all inputs, then fail if any input failed\n\
   --better-only    retain only candidates better than the baseline\n\
   --best-only      retain only ties with or improvements over the current best\n\
   --only-if-below N retain only scores below N\n\
@@ -28,6 +29,7 @@ pub const USAGE: &str = "usage: permuter <candidate.c|legacy-directory>... [opti
   --debug          compile and report only the baseline\n\
   --resume         reuse completed candidates from a matching journal\n\
   --journal-from FILE  import cached measurements from a prior run's journal\n\
+  --family-template FILE  bias AST mutations from an exact family member\n\
   --heat           AST walk: bias sites toward currently-differing rows\n\
   --stop-on-zero   stop when an exact candidate is found (default)\n\
   --keep-going     do not stop at the first byte-exact candidate\n\
@@ -49,6 +51,7 @@ pub struct Options {
     pub manual_only: bool,
     pub stop_exact: bool,
     pub show_errors: bool,
+    pub continue_on_error: bool,
     pub better_only: bool,
     pub best_only: bool,
     pub score_threshold: Option<u64>,
@@ -56,6 +59,7 @@ pub struct Options {
     pub debug: bool,
     pub resume: bool,
     pub journal_from: Option<std::path::PathBuf>,
+    pub family_template: Option<std::path::PathBuf>,
     pub heat: bool,
 }
 
@@ -72,9 +76,8 @@ impl Options {
     pub fn parse(args: &[String]) -> Result<Self, String> {
         let mut candidates = Vec::new();
         let mut iterations = 1000usize;
-        let mut jobs = std::thread::available_parallelism()
-            .map(|count| count.get().saturating_sub(2).clamp(1, 16))
-            .unwrap_or(1);
+        let mut jobs =
+            std::thread::available_parallelism().map(|count| count.get().saturating_sub(2).clamp(1, 16)).unwrap_or(1);
         let mut seed = 1u64;
         let mut top = 12usize;
         let mut output = None;
@@ -88,6 +91,7 @@ impl Options {
         let mut manual_only = false;
         let mut stop_exact = true;
         let mut show_errors = false;
+        let mut continue_on_error = false;
         let mut better_only = false;
         let mut best_only = false;
         let mut score_threshold = None;
@@ -95,14 +99,13 @@ impl Options {
         let mut debug = false;
         let mut resume = false;
         let mut journal_from: Option<std::path::PathBuf> = None;
+        let mut family_template: Option<std::path::PathBuf> = None;
         let mut heat = false;
         let mut at = 0usize;
         while at < args.len() {
             match args[at].as_str() {
                 "--weights" => {
-                    let value = args
-                        .get(at + 1)
-                        .ok_or_else(|| "--weights requires a path".to_string())?;
+                    let value = args.get(at + 1).ok_or_else(|| "--weights requires a path".to_string())?;
                     weights = Some(PathBuf::from(value));
                     at += 2;
                 }
@@ -156,9 +159,7 @@ impl Options {
                     at += 2;
                 }
                 "--output" => {
-                    output = Some(PathBuf::from(
-                        args.get(at + 1).ok_or("--output requires a value")?,
-                    ));
+                    output = Some(PathBuf::from(args.get(at + 1).ok_or("--output requires a value")?));
                     at += 2;
                 }
                 "--manual-only" => {
@@ -167,6 +168,10 @@ impl Options {
                 }
                 "--show-errors" => {
                     show_errors = true;
+                    at += 1;
+                }
+                "--continue-on-error" => {
+                    continue_on_error = true;
                     at += 1;
                 }
                 "--better-only" => {
@@ -195,9 +200,13 @@ impl Options {
                     at += 1;
                 }
                 "--journal-from" => {
-                    journal_from = Some(std::path::PathBuf::from(
-                        args.get(at + 1).ok_or("--journal-from requires a value")?,
-                    ));
+                    journal_from =
+                        Some(std::path::PathBuf::from(args.get(at + 1).ok_or("--journal-from requires a value")?));
+                    at += 2;
+                }
+                "--family-template" => {
+                    family_template =
+                        Some(std::path::PathBuf::from(args.get(at + 1).ok_or("--family-template requires a value")?));
                     at += 2;
                 }
                 "--heat" => {
@@ -230,14 +239,10 @@ impl Options {
             return Err(USAGE.to_string());
         }
         if walk && weights.is_some() {
-            return Err(
-                "--weights is not supported with --walk; choose safe or --classic mode".to_string(),
-            );
+            return Err("--weights is not supported with --walk; choose safe or --classic mode".to_string());
         }
         if walk && chain_supplied {
-            return Err(
-                "--chain is not supported with --walk; the walk is already cumulative".to_string(),
-            );
+            return Err("--chain is not supported with --walk; the walk is already cumulative".to_string());
         }
         if walk && manual_only {
             return Err("--manual-only is not supported with --walk".to_string());
@@ -250,6 +255,9 @@ impl Options {
         }
         if !walk && heat {
             return Err("--heat requires --walk".to_string());
+        }
+        if !walk && family_template.is_some() {
+            return Err("--family-template requires --walk".to_string());
         }
         Ok(Self {
             candidates,
@@ -266,6 +274,7 @@ impl Options {
             manual_only,
             stop_exact,
             show_errors,
+            continue_on_error,
             better_only,
             best_only,
             score_threshold,
@@ -273,6 +282,7 @@ impl Options {
             debug,
             resume,
             journal_from,
+            family_template,
             heat,
         })
     }
@@ -289,7 +299,10 @@ pub fn self_test() -> Result<(), String> {
         "7",
         "--walk",
         "--classic",
+        "--continue-on-error",
         "--heat",
+        "--family-template",
+        "template.c",
     ]
     .into_iter()
     .map(str::to_string)
@@ -299,37 +312,25 @@ pub fn self_test() -> Result<(), String> {
         || options.jobs != 2
         || options.seed != 7
         || !options.classic
+        || !options.continue_on_error
         || !options.heat
+        || options.family_template.as_deref() != Some(std::path::Path::new("template.c"))
     {
         return Err("option parser lost a supplied value".into());
     }
-    if options.candidates
-        != [PathBuf::from(
-            "games/gs1/recon/en/overlays/resource_373_c_02005b48.c",
-        )]
-    {
+    if Options::parse(&["x.c".into(), "--family-template".into(), "t.c".into()]).is_ok() {
+        return Err("option parser accepted a family template outside AST walk".into());
+    }
+    if options.candidates != [PathBuf::from("games/gs1/recon/en/overlays/resource_373_c_02005b48.c")] {
         return Err("option parser lost its candidate list".into());
     }
     if Options::parse(&["--jobs".into(), "0".into(), "x.c".into()]).is_ok() {
         return Err("option parser accepted zero jobs".into());
     }
-    if Options::parse(&[
-        "--iterations".into(),
-        (MAX_ITERATIONS + 1).to_string(),
-        "x.c".into(),
-    ])
-    .is_ok()
-    {
+    if Options::parse(&["--iterations".into(), (MAX_ITERATIONS + 1).to_string(), "x.c".into()]).is_ok() {
         return Err("option parser accepted an unbounded iteration request".into());
     }
-    if Options::parse(&[
-        "x.c".into(),
-        "--walk".into(),
-        "--weights".into(),
-        "settings.toml".into(),
-    ])
-    .is_ok()
-    {
+    if Options::parse(&["x.c".into(), "--walk".into(), "--weights".into(), "settings.toml".into()]).is_ok() {
         return Err("option parser silently ignored walk weights".into());
     }
     Ok(())

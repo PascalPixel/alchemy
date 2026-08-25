@@ -15,19 +15,7 @@ name = "asset-paths"
 version = "0.1.0"
 
 [[package]]
-name = "byte-value-regions"
-version = "0.1.0"
-dependencies = [
- "canonical-json",
- "serde_json",
-]
-
-[[package]]
 name = "cache-entry"
-version = "0.1.0"
-
-[[package]]
-name = "cache-key-lint"
 version = "0.1.0"
 
 [[package]]
@@ -36,10 +24,6 @@ version = "0.1.0"
 dependencies = [
  "serde_json",
 ]
-
-[[package]]
-name = "dispatch"
-version = "0.1.0"
 
 [[package]]
 name = "equivalent"
@@ -72,14 +56,6 @@ name = "itoa"
 version = "1.0.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
-
-[[package]]
-name = "jobs"
-version = "0.1.0"
-
-[[package]]
-name = "lang-ban"
-version = "0.1.0"
 
 [[package]]
 name = "map-load-table"

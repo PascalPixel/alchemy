@@ -106,9 +106,7 @@ const GRAPHICS: [GraphicSpec; 5] = [
 ];
 
 fn object<'a>(value: &'a Value, name: &str) -> Result<&'a serde_json::Map<String, Value>> {
-    value
-        .as_object()
-        .ok_or_else(|| Error(format!("{name} must be an object")))
+    value.as_object().ok_or_else(|| Error(format!("{name} must be an object")))
 }
 
 fn keys(value: &Value, expected: &[&str], name: &str) -> Result<()> {
@@ -124,9 +122,7 @@ fn keys(value: &Value, expected: &[&str], name: &str) -> Result<()> {
 }
 
 fn array<'a>(value: &'a Value, count: usize, name: &str) -> Result<&'a [Value]> {
-    let values = value
-        .as_array()
-        .ok_or_else(|| Error(format!("{name} requires {count} entries")))?;
+    let values = value.as_array().ok_or_else(|| Error(format!("{name} requires {count} entries")))?;
     if values.len() != count {
         return err(format!("{name} requires {count} entries"));
     }
@@ -134,9 +130,7 @@ fn array<'a>(value: &'a Value, count: usize, name: &str) -> Result<&'a [Value]> 
 }
 
 fn integer(value: Option<&Value>, min: i64, max: i64, name: &str) -> Result<i64> {
-    let n = value
-        .and_then(Value::as_i64)
-        .ok_or_else(|| Error(format!("{name} is outside its range")))?;
+    let n = value.and_then(Value::as_i64).ok_or_else(|| Error(format!("{name} is outside its range")))?;
     if !(min..=max).contains(&n) {
         return err(format!("{name} is outside its range"));
     }
@@ -144,9 +138,7 @@ fn integer(value: Option<&Value>, min: i64, max: i64, name: &str) -> Result<i64>
 }
 
 fn unsigned(value: Option<&Value>, max: u64, name: &str) -> Result<u64> {
-    let n = value
-        .and_then(Value::as_u64)
-        .ok_or_else(|| Error(format!("{name} is outside its range")))?;
+    let n = value.and_then(Value::as_u64).ok_or_else(|| Error(format!("{name} is outside its range")))?;
     if n > max {
         return err(format!("{name} is outside its range"));
     }
@@ -162,8 +154,7 @@ fn address(value: Option<&Value>, expected: usize, name: &str) -> Result<()> {
 
 fn source_json(path: &Path) -> Result<Value> {
     let text = fs::read_to_string(path).map_err(|e| Error(format!("{}: {e}", path.display())))?;
-    let value: Value =
-        serde_json::from_str(&text).map_err(|e| Error(format!("{}: {e}", path.display())))?;
+    let value: Value = serde_json::from_str(&text).map_err(|e| Error(format!("{}: {e}", path.display())))?;
     if !is_canonical_json_text(&text, &value) {
         return err("battle-screen source is not canonical JSON");
     }
@@ -204,21 +195,16 @@ fn layout(spec: GraphicSpec) -> (usize, usize, Vec<(usize, usize)>) {
         Role::FrameAtlas => {
             let fw = spec.tiles_wide * 8;
             let fh = spec.tiles_high * 8;
-            (
-                spec.columns * fw,
-                spec.frames.div_ceil(spec.columns) * fh,
-                spec.frames,
-            )
+            (spec.columns * fw, spec.frames.div_ceil(spec.columns) * fh, spec.frames)
         }
         Role::Flat => (spec.tiles_wide * 8, spec.tiles_high * 8, 1),
     };
     let mut tiles = Vec::new();
     for frame in 0..frame_count {
         let (left, top) = match spec.role {
-            Role::FrameAtlas => (
-                frame % spec.columns * spec.tiles_wide * 8,
-                frame / spec.columns * spec.tiles_high * 8,
-            ),
+            Role::FrameAtlas => {
+                (frame % spec.columns * spec.tiles_wide * 8, frame / spec.columns * spec.tiles_high * 8)
+            }
             Role::Flat => (0, 0),
         };
         for y in 0..spec.tiles_high {
@@ -234,22 +220,11 @@ fn child(index_path: &Path, name: &str) -> Result<PathBuf> {
     if !GRAPHICS.iter().any(|s| s.source == name) {
         return err("battle-screen graphic name differs");
     }
-    let root = index_path
-        .parent()
-        .ok_or_else(|| Error("battle-screen index has no parent".into()))?;
-    let prefix = index_path
-        .file_name()
-        .and_then(|n| n.to_str())
-        .unwrap_or("")
-        .strip_suffix("index.json")
-        .unwrap_or("");
+    let root = index_path.parent().ok_or_else(|| Error("battle-screen index has no parent".into()))?;
+    let prefix = index_path.file_name().and_then(|n| n.to_str()).unwrap_or("").strip_suffix("index.json").unwrap_or("");
     let candidate = root.join(format!("{prefix}{name}"));
-    let path = candidate
-        .canonicalize()
-        .map_err(|e| Error(format!("{}: {e}", candidate.display())))?;
-    let root = root
-        .canonicalize()
-        .map_err(|e| Error(format!("{}: {e}", root.display())))?;
+    let path = candidate.canonicalize().map_err(|e| Error(format!("{}: {e}", candidate.display())))?;
+    let root = root.canonicalize().map_err(|e| Error(format!("{}: {e}", root.display())))?;
     if !path.starts_with(&root) {
         return err("battle-screen graphic escaped its directory");
     }
@@ -258,8 +233,7 @@ fn child(index_path: &Path, name: &str) -> Result<PathBuf> {
 
 fn graphic(path: &Path, spec: GraphicSpec) -> Result<Vec<u8>> {
     let image =
-        indexed_png(&fs::read(path).map_err(|e| Error(format!("{}: {e}", path.display())))?)
-            .map_err(|e| Error(e.0))?;
+        indexed_png(&fs::read(path).map_err(|e| Error(format!("{}: {e}", path.display())))?).map_err(|e| Error(e.0))?;
     let (width, height, tiles) = layout(spec);
     if image.width as usize != width || image.height as usize != height {
         return err(format!("{}: graphic dimensions differ", path.display()));
@@ -290,10 +264,7 @@ fn graphic(path: &Path, spec: GraphicSpec) -> Result<Vec<u8>> {
 fn words(value: &Value, rows: usize, columns: usize, max: u64, name: &str) -> Result<Vec<u8>> {
     let mut out = Vec::with_capacity(rows * columns * 4);
     for (r, row) in array(value, rows, name)?.iter().enumerate() {
-        for (c, item) in array(row, columns, &format!("{name} row {r}"))?
-            .iter()
-            .enumerate()
-        {
+        for (c, item) in array(row, columns, &format!("{name} row {r}"))?.iter().enumerate() {
             let n = unsigned(Some(item), max, &format!("{name} {r}:{c}"))? as u32;
             out.extend_from_slice(&n.to_le_bytes());
         }
@@ -304,19 +275,14 @@ fn words(value: &Value, rows: usize, columns: usize, max: u64, name: &str) -> Re
 fn glyph_cells(value: &Value, rows: usize, columns: usize, name: &str) -> Result<Vec<u8>> {
     let mut out = vec![0u8; rows * columns * 4];
     for (r, row) in array(value, rows, name)?.iter().enumerate() {
-        for (c, cell) in array(row, columns, &format!("{name} row {r}"))?
-            .iter()
-            .enumerate()
-        {
-            let glyphs = cell
-                .as_array()
-                .ok_or_else(|| Error(format!("{name} {r}:{c} requires one to three glyphs")))?;
+        for (c, cell) in array(row, columns, &format!("{name} row {r}"))?.iter().enumerate() {
+            let glyphs =
+                cell.as_array().ok_or_else(|| Error(format!("{name} {r}:{c} requires one to three glyphs")))?;
             if !(1..=3).contains(&glyphs.len()) {
                 return err(format!("{name} {r}:{c} requires one to three glyphs"));
             }
             for (i, glyph) in glyphs.iter().enumerate() {
-                out[r * columns * 4 + c * 4 + i] =
-                    integer(Some(glyph), 1, 255, &format!("{name} {r}:{c}:{i}"))? as u8;
+                out[r * columns * 4 + c * 4 + i] = integer(Some(glyph), 1, 255, &format!("{name} {r}:{c}:{i}"))? as u8;
             }
         }
     }
@@ -357,42 +323,20 @@ fn orders(value: &Value) -> Result<Vec<u8>> {
 
 pub fn build_sentou_gamen_data(index_path: &Path) -> Result<(Vec<u8>, Vec<PathBuf>)> {
     let source = source_json(index_path)?;
-    let entries = array(
-        source.get("graphics").unwrap(),
-        GRAPHICS.len(),
-        "battle-screen graphic catalog",
-    )?;
+    let entries = array(source.get("graphics").unwrap(), GRAPHICS.len(), "battle-screen graphic catalog")?;
     let mut images = Vec::new();
     let mut nested = vec![index_path.to_path_buf()];
     for (i, entry) in entries.iter().enumerate() {
         let spec = GRAPHICS[i];
         let role_keys = match spec.role {
-            Role::FrameAtlas => &[
-                "address",
-                "size",
-                "source",
-                "role",
-                "frames",
-                "frame_tiles_wide",
-                "frame_tiles_high",
-                "columns",
-            ][..],
-            Role::Flat => &[
-                "address",
-                "size",
-                "source",
-                "role",
-                "tiles_wide",
-                "tiles_high",
-            ][..],
+            Role::FrameAtlas => {
+                &["address", "size", "source", "role", "frames", "frame_tiles_wide", "frame_tiles_high", "columns"][..]
+            }
+            Role::Flat => &["address", "size", "source", "role", "tiles_wide", "tiles_high"][..],
         };
         keys(entry, role_keys, &format!("battle-screen graphic {i}"))?;
         let o = object(entry, "battle-screen graphic")?;
-        address(
-            o.get("address"),
-            spec.address,
-            &format!("battle-screen graphic {i} address"),
-        )?;
+        address(o.get("address"), spec.address, &format!("battle-screen graphic {i} address"))?;
         if o.get("size").and_then(Value::as_u64) != Some(spec.size as u64)
             || o.get("source").and_then(Value::as_str) != Some(spec.source)
         {
@@ -410,22 +354,10 @@ pub fn build_sentou_gamen_data(index_path: &Path) -> Result<(Vec<u8>, Vec<PathBu
         nested.push(path.clone());
         images.push(graphic(&path, spec)?);
     }
-    keys(
-        source.get("offsets").unwrap(),
-        &["x", "y"],
-        "battle-screen offsets",
-    )?;
-    keys(
-        source.get("alignment").unwrap(),
-        &["address", "end", "fill"],
-        "battle-screen alignment",
-    )?;
+    keys(source.get("offsets").unwrap(), &["x", "y"], "battle-screen offsets")?;
+    keys(source.get("alignment").unwrap(), &["address", "end", "fill"], "battle-screen alignment")?;
     let alignment = object(source.get("alignment").unwrap(), "alignment")?;
-    address(
-        alignment.get("address"),
-        ALIGNMENT_ADDRESS,
-        "battle-screen alignment address",
-    )?;
+    address(alignment.get("address"), ALIGNMENT_ADDRESS, "battle-screen alignment address")?;
     address(alignment.get("end"), END, "battle-screen alignment end")?;
     if alignment.get("fill").and_then(Value::as_i64) != Some(0) {
         return err("battle-screen alignment differs");
@@ -435,36 +367,16 @@ pub fn build_sentou_gamen_data(index_path: &Path) -> Result<(Vec<u8>, Vec<PathBu
     out.extend(&images[1]);
     out.extend(&images[2]);
     out.extend(&images[3]);
-    out.extend(glyph_cells(
-        source.get("display_glyphs").unwrap(),
-        3,
-        4,
-        "display glyphs",
-    )?);
-    out.extend(words(
-        source.get("mask_rows").unwrap(),
-        6,
-        2,
-        u32::MAX as u64,
-        "mask rows",
-    )?);
+    out.extend(glyph_cells(source.get("display_glyphs").unwrap(), 3, 4, "display glyphs")?);
+    out.extend(words(source.get("mask_rows").unwrap(), 6, 2, u32::MAX as u64, "mask rows")?);
     out.extend(&images[4]);
-    let auxiliary = Value::Array(vec![source
-        .get("auxiliary_display_glyphs")
-        .unwrap()
-        .clone()]);
+    let auxiliary = Value::Array(vec![source.get("auxiliary_display_glyphs").unwrap().clone()]);
     out.extend(glyph_cells(&auxiliary, 1, 2, "auxiliary display glyphs")?);
     let offsets = object(source.get("offsets").unwrap(), "offsets")?;
     out.extend(signed_bytes(offsets.get("x").unwrap(), 9, "x offsets")?);
     out.extend(signed_bytes(offsets.get("y").unwrap(), 9, "y offsets")?);
     out.extend(orders(source.get("orders").unwrap())?);
-    out.extend(words(
-        source.get("lookup_ids").unwrap(),
-        2,
-        3,
-        0xffff,
-        "lookup IDs",
-    )?);
+    out.extend(words(source.get("lookup_ids").unwrap(), 2, 3, 0xffff, "lookup IDs")?);
     let selectors = array(source.get("mode_selectors").unwrap(), 5, "mode selectors")?;
     for (i, v) in selectors.iter().enumerate() {
         let n = unsigned(Some(v), 7, &format!("mode selectors {i}"))?;

@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global UiWindow_MarkVisibleTileAttributes
 	.global Func_0801e318
 	.thumb_func
+UiWindow_MarkVisibleTileAttributes:
 Func_0801e318:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

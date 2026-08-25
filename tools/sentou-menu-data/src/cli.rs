@@ -6,7 +6,8 @@ use std::io::{self, Write};
 use std::path::Path;
 use std::process::ExitCode;
 
-const USAGE: &str = "usage: sentou_menu_data build INDEX --output FILE | build-stdout INDEX | verify ROM INDEX | --self-test";
+const USAGE: &str =
+    "usage: sentou_menu_data build INDEX --output FILE | build-stdout INDEX | verify ROM INDEX | --self-test";
 
 fn run(args: &[String]) -> Result<(), Error> {
     match args {
@@ -30,9 +31,7 @@ fn run(args: &[String]) -> Result<(), Error> {
         }
         [command, index] if command == "build-stdout" => {
             let bytes = build_sentou_menu_data(Path::new(index))?;
-            io::stdout()
-                .write_all(&bytes)
-                .map_err(|e| Error(e.to_string()))?;
+            io::stdout().write_all(&bytes).map_err(|e| Error(e.to_string()))?;
             Ok(())
         }
         [command, rom, index] if command == "verify" => {

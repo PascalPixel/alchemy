@@ -24,38 +24,23 @@ fn root() -> PathBuf {
         .to_path_buf()
 }
 fn image_offset(value: i64, label: &str) -> Result<i64, String> {
-    let offset = if value >= OVERLAY_BASE {
-        value - OVERLAY_BASE
-    } else {
-        value
-    };
+    let offset = if value >= OVERLAY_BASE { value - OVERLAY_BASE } else { value };
     if offset < 0 {
         return Err(format!("{label} must be hexadecimal"));
     }
     Ok(offset)
 }
 fn parse_hex(text: &str) -> Option<i64> {
-    let stripped = text
-        .strip_prefix("0x")
-        .or_else(|| text.strip_prefix("0X"))
-        .unwrap_or(text);
+    let stripped = text.strip_prefix("0x").or_else(|| text.strip_prefix("0X")).unwrap_or(text);
     i64::from_str_radix(stripped, 16).ok()
 }
 fn is_hex_text(text: &str) -> bool {
-    let stripped = text
-        .strip_prefix("0x")
-        .or_else(|| text.strip_prefix("0X"))
-        .unwrap_or(text);
+    let stripped = text.strip_prefix("0x").or_else(|| text.strip_prefix("0X")).unwrap_or(text);
     !stripped.is_empty() && stripped.bytes().all(|b| b.is_ascii_hexdigit())
 }
 pub fn options_of(argv: &[String]) -> Result<Options, String> {
     let mut rest: Vec<String> = Vec::new();
-    let mut options = Options {
-        overlay: String::new(),
-        offset: -1,
-        length: 0,
-        annotate: false,
-    };
+    let mut options = Options { overlay: String::new(), offset: -1, length: 0, annotate: false };
     let mut explicit_length = false;
     let mut index = 0usize;
     while index < argv.len() {
@@ -84,8 +69,7 @@ pub fn options_of(argv: &[String]) -> Result<Options, String> {
         return Err(format!("{USAGE}\nunexpected argument: {}", rest[3]));
     }
     options.overlay = overlay;
-    let offset_value =
-        parse_hex(&offset_text).ok_or_else(|| "offset must be hexadecimal".to_string())?;
+    let offset_value = parse_hex(&offset_text).ok_or_else(|| "offset must be hexadecimal".to_string())?;
     options.offset = image_offset(offset_value, "offset")?;
     if let Some(end_text) = end_text {
         if explicit_length {
@@ -94,8 +78,7 @@ pub fn options_of(argv: &[String]) -> Result<Options, String> {
         if !is_hex_text(&end_text) {
             return Err(format!("end bound must be hexadecimal: {end_text}"));
         }
-        let end_value = parse_hex(&end_text)
-            .ok_or_else(|| format!("end bound must be hexadecimal: {end_text}"))?;
+        let end_value = parse_hex(&end_text).ok_or_else(|| format!("end bound must be hexadecimal: {end_text}"))?;
         let end = image_offset(end_value, "end bound")?;
         if end <= options.offset {
             return Err("end bound must be greater than the start offset".to_string());
@@ -110,10 +93,7 @@ fn read_u16le(data: &[u8], at: i64) -> u16 {
 }
 fn read_u32le(data: &[u8], at: i64) -> u32 {
     let at = at as usize;
-    (data[at] as u32)
-        | ((data[at + 1] as u32) << 8)
-        | ((data[at + 2] as u32) << 16)
-        | ((data[at + 3] as u32) << 24)
+    (data[at] as u32) | ((data[at + 1] as u32) << 8) | ((data[at + 2] as u32) << 16) | ((data[at + 3] as u32) << 24)
 }
 pub fn pool_target(insn_offset: i64, half: u16) -> i64 {
     ((insn_offset + 4) & !3) + ((half & 0xff) as i64) * 4
@@ -152,24 +132,15 @@ pub fn run(argv: &[String]) -> Result<Outcome, String> {
             return Err(message);
         }
     };
-    let source_path = root()
-        .join("games/gs1/assets/code")
-        .join(format!("{}_overlay.s", options.overlay));
+    let source_path = root().join("games/gs1/assets/code").join(format!("{}_overlay.s", options.overlay));
     let data = assemble_overlay(&OverlaySource::path(&source_path), OVERLAY_BASE)?;
-    let length = if options.length > 0 {
-        options.length
-    } else {
-        extent_of(&data, options.offset)
-    };
+    let length = if options.length > 0 { options.length } else { extent_of(&data, options.offset) };
     let work = root().join("work/overlay-show");
     std::fs::create_dir_all(&work).map_err(|e| e.to_string())?;
     let binary = work.join(format!("{}_{:x}.bin", options.overlay, options.offset));
     let start = options.offset as usize;
     let stop = (options.offset + length) as usize;
-    let slice = data
-        .get(start..stop.min(data.len()))
-        .unwrap_or(&[])
-        .to_vec();
+    let slice = data.get(start..stop.min(data.len())).unwrap_or(&[]).to_vec();
     std::fs::write(&binary, &slice).map_err(|e| e.to_string())?;
     let output = Command::new("arm-none-eabi-objdump")
         .args([
@@ -186,10 +157,7 @@ pub fn run(argv: &[String]) -> Result<Outcome, String> {
         .output()
         .map_err(|e| e.to_string())?;
     if !output.status.success() {
-        return Err(format!(
-            "objdump failed: {}",
-            String::from_utf8_lossy(&output.stderr).trim()
-        ));
+        return Err(format!("objdump failed: {}", String::from_utf8_lossy(&output.stderr).trim()));
     }
     let stdout = String::from_utf8_lossy(&output.stdout);
     let mut listing = stdout

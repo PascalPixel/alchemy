@@ -56,11 +56,7 @@ pub fn stored_displacement(high: u16, low: u16) -> Option<i64> {
     let upper = (high & 0x07ff) as i64;
     let lower = (low & 0x07ff) as i64;
     // The prefix carries a signed 11-bit field; sign-extend before combining.
-    let signed = if upper >= 0x0400 {
-        upper - 0x0800
-    } else {
-        upper
-    };
+    let signed = if upper >= 0x0400 { upper - 0x0800 } else { upper };
     Some((signed << 12) | (lower << 1))
 }
 
@@ -73,9 +69,7 @@ pub fn target_offset(high: u16, low: u16) -> Option<i64> {
 /// same path `overlay_show` reads, so the offsets here line up with its
 /// listing.
 pub fn overlay_image(overlay: &str) -> Result<Vec<u8>, String> {
-    let path = root()
-        .join("games/gs1/assets/code")
-        .join(format!("{overlay}_overlay.s"));
+    let path = root().join("games/gs1/assets/code").join(format!("{overlay}_overlay.s"));
     if !path.exists() {
         return Err(format!("no reconstruction assembly for {overlay}"));
     }
@@ -145,26 +139,17 @@ fn reaches_return(image: &[u8], offset: i64) -> bool {
 /// the main-image address in its trailing word.
 pub fn classify(image: &[u8], target: i64, prologues: &HashSet<i64>) -> Classified {
     if prologues.contains(&target) {
-        return Classified {
-            kind: Kind::Prologue,
-            imported: None,
-        };
+        return Classified { kind: Kind::Prologue, imported: None };
     }
     if target >= 0 && (target + 1) < image.len() as i64 {
         let opening = read_u16le(image, target);
         if (opening & 0xfe00) == 0xb400 {
-            return Classified {
-                kind: Kind::Prologue,
-                imported: None,
-            };
+            return Classified { kind: Kind::Prologue, imported: None };
         }
         if (target + 3) < image.len() as i64 && (opening & 0xff80) == 0xb080 {
             let second = read_u16le(image, target + 2);
             if (second & 0xfe00) == 0xb400 {
-                return Classified {
-                    kind: Kind::Prologue,
-                    imported: None,
-                };
+                return Classified { kind: Kind::Prologue, imported: None };
             }
         }
     }
@@ -179,29 +164,17 @@ pub fn classify(image: &[u8], target: i64, prologues: &HashSet<i64>) -> Classifi
                 | ((image[at + 6] as u32) << 16)
                 | ((image[at + 7] as u32) << 24);
             // The stored word carries the Thumb bit; the import's address is even.
-            return Classified {
-                kind: Kind::Veneer,
-                imported: Some((word & !1) as i64),
-            };
+            return Classified { kind: Kind::Veneer, imported: Some((word & !1) as i64) };
         }
         // A bare `bx rN` slot is the overlay's own call_via bank.
         if (first & 0xff87) == 0x4700 {
-            return Classified {
-                kind: Kind::CallVia,
-                imported: None,
-            };
+            return Classified { kind: Kind::CallVia, imported: None };
         }
     }
     if reaches_return(image, target) {
-        return Classified {
-            kind: Kind::Leaf,
-            imported: None,
-        };
+        return Classified { kind: Kind::Leaf, imported: None };
     }
-    Classified {
-        kind: Kind::Unknown,
-        imported: None,
-    }
+    Classified { kind: Kind::Unknown, imported: None }
 }
 
 /// True when a whole-overlay run resolved nothing and must therefore FAIL.
@@ -222,39 +195,18 @@ struct InventoryRow {
 
 fn inventory() -> Result<Vec<InventoryRow>, String> {
     let path = root().join("out/decomp/overlays.json");
-    let text = std::fs::read_to_string(&path).map_err(|_| {
-        format!(
-            "missing {}; run the overlay inventory first",
-            path.display()
-        )
-    })?;
+    let text = std::fs::read_to_string(&path)
+        .map_err(|_| format!("missing {}; run the overlay inventory first", path.display()))?;
     let value: Value = serde_json::from_str(&text).map_err(|error| error.to_string())?;
-    let functions = value
-        .get("functions")
-        .and_then(Value::as_array)
-        .ok_or("overlays.json: missing functions array")?;
+    let functions = value.get("functions").and_then(Value::as_array).ok_or("overlays.json: missing functions array")?;
     let mut rows = Vec::with_capacity(functions.len());
     for function in functions {
         rows.push(InventoryRow {
-            overlay: function
-                .get("overlay")
-                .and_then(Value::as_str)
-                .unwrap_or("")
-                .to_string(),
+            overlay: function.get("overlay").and_then(Value::as_str).unwrap_or("").to_string(),
             offset: function.get("offset").and_then(Value::as_i64).unwrap_or(0),
-            span_bytes: function
-                .get("span_bytes")
-                .and_then(Value::as_i64)
-                .unwrap_or(0),
-            starts_with_prologue: function
-                .get("starts_with_prologue")
-                .and_then(Value::as_bool)
-                .unwrap_or(false),
-            contained_by_len: function
-                .get("contained_by")
-                .and_then(Value::as_array)
-                .map(Vec::len)
-                .unwrap_or(0),
+            span_bytes: function.get("span_bytes").and_then(Value::as_i64).unwrap_or(0),
+            starts_with_prologue: function.get("starts_with_prologue").and_then(Value::as_bool).unwrap_or(false),
+            contained_by_len: function.get("contained_by").and_then(Value::as_array).map(Vec::len).unwrap_or(0),
         });
     }
     Ok(rows)
@@ -265,19 +217,11 @@ fn inventory() -> Result<Vec<InventoryRow>, String> {
 /// `owner_end` only has an effect when `owner` is `Some`; an explicit end
 /// always wins over the inventory span, matching the TypeScript rule that the
 /// caller stating a boundary outranks a possibly-wrong or absent one.
-pub fn resolve_overlay(
-    overlay: &str,
-    owner: Option<i64>,
-    owner_end: Option<i64>,
-) -> Result<Vec<CallSite>, String> {
+pub fn resolve_overlay(overlay: &str, owner: Option<i64>, owner_end: Option<i64>) -> Result<Vec<CallSite>, String> {
     let image = overlay_image(overlay)?;
     let rows = inventory()?;
     let rows: Vec<&InventoryRow> = rows.iter().filter(|row| row.overlay == overlay).collect();
-    let prologues: HashSet<i64> = rows
-        .iter()
-        .filter(|row| row.starts_with_prologue)
-        .map(|row| row.offset)
-        .collect();
+    let prologues: HashSet<i64> = rows.iter().filter(|row| row.starts_with_prologue).map(|row| row.offset).collect();
 
     struct Span {
         offset: i64,
@@ -287,18 +231,12 @@ pub fn resolve_overlay(
         None => rows
             .iter()
             .filter(|row| row.contained_by_len == 0)
-            .map(|row| Span {
-                offset: row.offset,
-                span_bytes: row.span_bytes,
-            })
+            .map(|row| Span { offset: row.offset, span_bytes: row.span_bytes })
             .collect(),
         Some(owner) => rows
             .iter()
             .filter(|row| row.offset == owner)
-            .map(|row| Span {
-                offset: row.offset,
-                span_bytes: row.span_bytes,
-            })
+            .map(|row| Span { offset: row.offset, span_bytes: row.span_bytes })
             .collect(),
     };
 
@@ -317,10 +255,7 @@ pub fn resolve_overlay(
                     "note: 0x{owner:x} is not an unconverted inventory row (already tracked?).\n      Walking 0x{owner:x}..0x{end:x}, bounded by the next unconverted row — this MAY INCLUDE neighbouring tracked functions.\n      Pass an explicit end offset as a third argument to bound it exactly."
                 );
             }
-            spans = vec![Span {
-                offset: owner,
-                span_bytes: end - owner,
-            }];
+            spans = vec![Span { offset: owner, span_bytes: end - owner }];
         }
     }
 
@@ -338,11 +273,7 @@ pub fn resolve_overlay(
             if let Some(target) = target_offset(high, low) {
                 if target >= 0 && target < image.len() as i64 {
                     let kind = classify(&image, target, &prologues).kind;
-                    sites.push(CallSite {
-                        site: at,
-                        target,
-                        kind,
-                    });
+                    sites.push(CallSite { site: at, target, kind });
                 }
             }
             at += 2;
@@ -357,18 +288,11 @@ pub fn resolve_overlay(
 /// reimplementing the overlay's non-PC-relative BL rule. Explicit bounds are
 /// required by the caller: an unbounded run intentionally has different
 /// inventory semantics and is not safe for a tracked owner.
-pub fn resolved_call_names(
-    overlay: &str,
-    owner: i64,
-    owner_end: i64,
-) -> Result<Vec<(i64, String)>, String> {
+pub fn resolved_call_names(overlay: &str, owner: i64, owner_end: i64) -> Result<Vec<(i64, String)>, String> {
     let image = overlay_image(overlay)?;
     let rows = inventory()?;
-    let prologues: HashSet<i64> = rows
-        .iter()
-        .filter(|row| row.overlay == overlay && row.starts_with_prologue)
-        .map(|row| row.offset)
-        .collect();
+    let prologues: HashSet<i64> =
+        rows.iter().filter(|row| row.overlay == overlay && row.starts_with_prologue).map(|row| row.offset).collect();
     let mut names = Vec::new();
     for site in resolve_overlay(overlay, Some(owner), Some(owner_end))? {
         let detail = classify(&image, site.target, &prologues);
@@ -382,11 +306,7 @@ pub fn resolved_call_names(
 }
 
 fn names_get(names: &[(i64, String)], site: i64) -> Option<&str> {
-    names
-        .iter()
-        .rev()
-        .find(|(at, _)| *at == site)
-        .map(|(_, name)| name.as_str())
+    names.iter().rev().find(|(at, _)| *at == site).map(|(_, name)| name.as_str())
 }
 
 /// A colon-anchored `HHHHHHH:` line-start address, as `overlay_show`/objdump
@@ -503,12 +423,8 @@ const KNOWN_FLAGS: [&str; 3] = ["--self-test", "--json", "--annotate"];
 
 /// `/^resource_[0-9a-f]+$/` — lowercase only, no `i` flag in the original.
 fn is_resource_name(text: &str) -> bool {
-    text.strip_prefix("resource_").is_some_and(|rest| {
-        !rest.is_empty()
-            && rest
-                .bytes()
-                .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
-    })
+    text.strip_prefix("resource_")
+        .is_some_and(|rest| !rest.is_empty() && rest.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)))
 }
 
 /// Pick the owner/end bounds out of the command line.
@@ -529,14 +445,8 @@ pub fn parse_bounds(args: &[String], overlay: Option<&str>) -> Result<Vec<i64>, 
         if overlay.is_none() && is_resource_name(argument) {
             continue;
         }
-        let stripped = argument
-            .strip_prefix("0x")
-            .or_else(|| argument.strip_prefix("0X"))
-            .unwrap_or(argument.as_str());
-        if !stripped.is_empty()
-            && stripped.len() <= 4
-            && stripped.bytes().all(|b| b.is_ascii_hexdigit())
-        {
+        let stripped = argument.strip_prefix("0x").or_else(|| argument.strip_prefix("0X")).unwrap_or(argument.as_str());
+        if !stripped.is_empty() && stripped.len() <= 4 && stripped.bytes().all(|b| b.is_ascii_hexdigit()) {
             bounds.push(i64::from_str_radix(stripped, 16).map_err(|e| e.to_string())?);
             continue;
         }

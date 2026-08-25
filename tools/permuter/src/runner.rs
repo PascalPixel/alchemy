@@ -12,8 +12,8 @@ use serde_json::json;
 
 use crate::backend::{self, Backend, Measurement};
 use crate::options::{
-    Options, MAX_ITERATIONS, MAX_JOURNAL_ROW_BYTES, MAX_OUTPUT_BYTES, MAX_PLAN_BYTES,
-    MAX_SOURCE_BYTES, MAX_SUMMARY_BYTES,
+    Options, MAX_ITERATIONS, MAX_JOURNAL_ROW_BYTES, MAX_OUTPUT_BYTES, MAX_PLAN_BYTES, MAX_SOURCE_BYTES,
+    MAX_SUMMARY_BYTES,
 };
 use crate::perm::Permutation;
 use crate::randomize::Weights;
@@ -54,10 +54,7 @@ impl RunDirectory {
         let path = output_location(output)?;
         let existed = path.exists();
         if existed && !resume {
-            return Err(format!(
-                "{} already exists; use a new dedicated run directory or --resume",
-                path.display()
-            ));
+            return Err(format!("{} already exists; use a new dedicated run directory or --resume", path.display()));
         }
         fs::create_dir_all(&path).map_err(|e| format!("{}: {e}", path.display()))?;
         let owned = if existed {
@@ -70,31 +67,18 @@ impl RunDirectory {
             }
             parse_ownership_manifest(&read_text(&path.join(OWNERSHIP_MANIFEST))?, &path)?
         } else {
-            fs::write(path.join(RUN_MARKER), identity.as_bytes())
-                .map_err(|e| format!("{}: {e}", path.display()))?;
-            fs::write(path.join(OWNERSHIP_MANIFEST), b"")
-                .map_err(|e| format!("{}: {e}", path.display()))?;
+            fs::write(path.join(RUN_MARKER), identity.as_bytes()).map_err(|e| format!("{}: {e}", path.display()))?;
+            fs::write(path.join(OWNERSHIP_MANIFEST), b"").map_err(|e| format!("{}: {e}", path.display()))?;
             BTreeSet::new()
         };
-        let active = File::options()
-            .write(true)
-            .create_new(true)
-            .open(path.join(ACTIVE_MARKER))
-            .map_err(|e| {
-                if e.kind() == io::ErrorKind::AlreadyExists {
-                    format!(
-                        "{} is already claimed by another permuter process (or has a stale claim)",
-                        path.display()
-                    )
-                } else {
-                    format!("{}: {e}", path.display())
-                }
-            })?;
-        Ok(Self {
-            path,
-            owned,
-            _active: active,
-        })
+        let active = File::options().write(true).create_new(true).open(path.join(ACTIVE_MARKER)).map_err(|e| {
+            if e.kind() == io::ErrorKind::AlreadyExists {
+                format!("{} is already claimed by another permuter process (or has a stale claim)", path.display())
+            } else {
+                format!("{}: {e}", path.display())
+            }
+        })?;
+        Ok(Self { path, owned, _active: active })
     }
 
     fn register(&mut self, name: &str) -> Result<(), String> {
@@ -111,10 +95,7 @@ impl RunDirectory {
             return Err(format!("refusing to write unowned output file {name}"));
         }
         let path = self.path.join(name);
-        if fs::symlink_metadata(&path)
-            .map(|m| m.file_type().is_symlink())
-            .unwrap_or(false)
-        {
+        if fs::symlink_metadata(&path).map(|m| m.file_type().is_symlink()).unwrap_or(false) {
             return Err(format!("refusing to overwrite symlink {}", path.display()));
         }
         fs::write(&path, contents).map_err(|e| format!("{}: {e}", path.display()))
@@ -131,18 +112,12 @@ impl RunDirectory {
 
     fn open_append(&self, name: &str) -> Result<File, String> {
         let path = self.path.join(name);
-        File::options()
-            .append(true)
-            .open(&path)
-            .map_err(|e| format!("{}: {e}", path.display()))
+        File::options().append(true).open(&path).map_err(|e| format!("{}: {e}", path.display()))
     }
 
     fn write_control_file(&self, name: &str, contents: &[u8]) -> Result<(), String> {
         let path = self.path.join(name);
-        if fs::symlink_metadata(&path)
-            .map(|m| m.file_type().is_symlink())
-            .unwrap_or(false)
-        {
+        if fs::symlink_metadata(&path).map(|m| m.file_type().is_symlink()).unwrap_or(false) {
             return Err(format!("refusing to overwrite symlink {}", path.display()));
         }
         fs::write(&path, contents).map_err(|e| format!("{}: {e}", path.display()))
@@ -154,11 +129,7 @@ impl RunDirectory {
             if (name.starts_with("candidate-") && name.ends_with(".c"))
                 || matches!(
                     name.as_str(),
-                    "best.c"
-                        | "best-UNVERIFIED.c"
-                        | "report.json"
-                        | LIVE_SOURCE_TMP
-                        | LIVE_REPORT_TMP
+                    "best.c" | "best-UNVERIFIED.c" | "report.json" | LIVE_SOURCE_TMP | LIVE_REPORT_TMP
                 )
             {
                 let path = self.path.join(&name);
@@ -175,11 +146,7 @@ impl RunDirectory {
 
     fn sync_manifest(&self) -> Result<(), String> {
         let text = self.owned.iter().cloned().collect::<Vec<_>>().join("\n");
-        let manifest = if text.is_empty() {
-            String::new()
-        } else {
-            format!("{text}\n")
-        };
+        let manifest = if text.is_empty() { String::new() } else { format!("{text}\n") };
         self.write_control_file(OWNERSHIP_MANIFEST, manifest.as_bytes())
     }
 }
@@ -215,15 +182,11 @@ impl Journal {
                     .map_err(|_| format!("{}: journal is not valid UTF-8", path.display()))?;
                 let mut lines = text.lines();
                 if lines.next() != Some(&header) {
-                    return Err(format!(
-                        "{}: journal identity or format does not match this run",
-                        path.display()
-                    ));
+                    return Err(format!("{}: journal identity or format does not match this run", path.display()));
                 }
                 for (line, row) in lines.enumerate() {
                     let fields = row.split('\t').collect::<Vec<_>>();
-                    let Some((fingerprint, measurement)) = parse_journal_row(&fields, identity)
-                    else {
+                    let Some((fingerprint, measurement)) = parse_journal_row(&fields, identity) else {
                         return Err(format!(
                             "{}: invalid, unauthenticated, or incomplete row {}",
                             path.display(),
@@ -236,19 +199,12 @@ impl Journal {
         }
         let bytes_written = existing.as_ref().map_or(0, Vec::len);
         if bytes_written > MAX_OUTPUT_BYTES {
-            return Err(format!(
-                "{} exceeds the {MAX_OUTPUT_BYTES}-byte journal budget",
-                path.display()
-            ));
+            return Err(format!("{} exceeds the {MAX_OUTPUT_BYTES}-byte journal budget", path.display()));
         }
         if existing.is_none() {
             run.write_control_file("journal.tsv", format!("{header}\n").as_bytes())?;
         }
-        let bytes_written = if existing.is_none() {
-            header.len() + 1
-        } else {
-            bytes_written
-        };
+        let bytes_written = if existing.is_none() { header.len() + 1 } else { bytes_written };
         Ok(Self {
             cached,
             identity: identity.to_string(),
@@ -267,10 +223,7 @@ impl Journal {
         let header = format!("permuter-journal-v3\t{}", self.identity);
         let mut lines = text.lines();
         if lines.next() != Some(&header) {
-            return Err(format!(
-                "{}: journal identity does not match this backend; not importing",
-                path.display()
-            ));
+            return Err(format!("{}: journal identity does not match this backend; not importing", path.display()));
         }
         let mut imported = 0;
         for row in lines {
@@ -287,9 +240,7 @@ impl Journal {
 
     fn record(&self, candidate: &str, measurement: &Measurement) -> Result<(), String> {
         let measurement = persisted_measurement(measurement);
-        let first = measurement
-            .first_difference
-            .map_or_else(|| "-".into(), |n| n.to_string());
+        let first = measurement.first_difference.map_or_else(|| "-".into(), |n| n.to_string());
         let line = format!(
             "{candidate}\t{}\t{}\t{}\t{}\t{}\t{}\t{:016x}\t{}\t{}\t{}\t{}\t{:016x}\t{:016x}\n",
             u8::from(measurement.exact),
@@ -306,20 +257,11 @@ impl Journal {
             measurement.bl_signature,
             measurement.store_signature,
         );
-        let mut size = self
-            .bytes_written
-            .lock()
-            .map_err(|_| "journal size lock is poisoned".to_string())?;
+        let mut size = self.bytes_written.lock().map_err(|_| "journal size lock is poisoned".to_string())?;
         if size.saturating_add(line.len()) > MAX_OUTPUT_BYTES {
-            return Err(format!(
-                "{} would exceed the {MAX_OUTPUT_BYTES}-byte journal budget",
-                self.path.display()
-            ));
+            return Err(format!("{} would exceed the {MAX_OUTPUT_BYTES}-byte journal budget", self.path.display()));
         }
-        let mut writer = self
-            .writer
-            .lock()
-            .map_err(|_| "journal lock is poisoned".to_string())?;
+        let mut writer = self.writer.lock().map_err(|_| "journal lock is poisoned".to_string())?;
         writer
             .write_all(line.as_bytes())
             .and_then(|_| writer.flush())
@@ -346,18 +288,9 @@ fn persisted_measurement(measurement: &Measurement) -> Measurement {
     value
 }
 
-fn journal_row_auth(
-    identity: &str,
-    candidate: &str,
-    measurement: &Measurement,
-    v3: bool,
-) -> String {
+fn journal_row_auth(identity: &str, candidate: &str, measurement: &Measurement, v3: bool) -> String {
     let mut values = vec![
-        if v3 {
-            "permuter-journal-row-v3".to_string()
-        } else {
-            "permuter-journal-row-v2".to_string()
-        },
+        if v3 { "permuter-journal-row-v3".to_string() } else { "permuter-journal-row-v2".to_string() },
         identity.to_string(),
         candidate.to_string(),
         u8::from(measurement.exact).to_string(),
@@ -365,9 +298,7 @@ fn journal_row_auth(
         measurement.differences.to_string(),
         measurement.expected_size.to_string(),
         measurement.actual_size.to_string(),
-        measurement
-            .first_difference
-            .map_or_else(|| "-".into(), |n| n.to_string()),
+        measurement.first_difference.map_or_else(|| "-".into(), |n| n.to_string()),
         measurement.bl_divergence.to_string(),
         measurement.store_divergence.to_string(),
     ];
@@ -407,31 +338,15 @@ fn parse_journal_row(fields: &[&str], identity: &str) -> Option<(String, Measure
     let differences = fields[3].parse().ok()?;
     let expected_size: usize = fields[4].parse().ok()?;
     let actual_size: usize = fields[5].parse().ok()?;
-    let first_difference = if fields[6] == "-" {
-        None
-    } else {
-        Some(fields[6].parse().ok()?)
-    };
+    let first_difference = if fields[6] == "-" { None } else { Some(fields[6].parse().ok()?) };
     let fingerprint = u64::from_str_radix(fields[7], 16).ok()?;
     let bl_divergence = fields[8].parse().ok()?;
     let store_divergence = fields[9].parse().ok()?;
-    let bl_signature = if v3 {
-        u64::from_str_radix(fields[12], 16).ok()?
-    } else {
-        0
-    };
-    let store_signature = if v3 {
-        u64::from_str_radix(fields[13], 16).ok()?
-    } else {
-        0
-    };
+    let bl_signature = if v3 { u64::from_str_radix(fields[12], 16).ok()? } else { 0 };
+    let store_signature = if v3 { u64::from_str_radix(fields[13], 16).ok()? } else { 0 };
     if score == u64::MAX
         || first_difference.is_some_and(|n| n > expected_size.max(actual_size))
-        || (exact
-            && (score != 0
-                || differences != 0
-                || expected_size != actual_size
-                || first_difference.is_some()))
+        || (exact && (score != 0 || differences != 0 || expected_size != actual_size || first_difference.is_some()))
     {
         return None;
     }
@@ -450,8 +365,7 @@ fn parse_journal_row(fields: &[&str], identity: &str) -> Option<(String, Measure
         store_signature,
         summary: fields[10].into(),
     };
-    (journal_row_auth(identity, fields[0], &measurement, v3) == fields[11])
-        .then(|| (fields[0].into(), measurement))
+    (journal_row_auth(identity, fields[0], &measurement, v3) == fields[11]).then(|| (fields[0].into(), measurement))
 }
 
 fn source_fingerprint(source: &str) -> String {
@@ -467,49 +381,30 @@ fn candidate_plan(
     source_bytes: usize,
 ) -> Result<Vec<Candidate>, String> {
     if iterations == 0 || iterations > MAX_ITERATIONS {
-        return Err(format!(
-            "candidate plan iterations must be between 1 and {MAX_ITERATIONS}"
-        ));
+        return Err(format!("candidate plan iterations must be between 1 and {MAX_ITERATIONS}"));
     }
     if source_bytes > MAX_SOURCE_BYTES {
         return Err(format!(
             "source is {source_bytes} bytes; the maximum permutation source is {MAX_SOURCE_BYTES} bytes"
         ));
     }
-    if iterations
-        .saturating_mul(source_bytes.max(1))
-        .saturating_mul(3)
-        > MAX_PLAN_BYTES
-    {
-        return Err(format!(
-            "{iterations} iterations would exceed the {MAX_PLAN_BYTES}-byte source plan budget"
-        ));
+    if iterations.saturating_mul(source_bytes.max(1)).saturating_mul(3) > MAX_PLAN_BYTES {
+        return Err(format!("{iterations} iterations would exceed the {MAX_PLAN_BYTES}-byte source plan budget"));
     }
     let base_count = permutation.count().min(iterations).max(1);
     let randomize = permutation.is_random() && !manual_only;
-    let per_base = if randomize {
-        iterations.div_ceil(base_count)
-    } else {
-        1
-    };
+    let per_base = if randomize { iterations.div_ceil(base_count) } else { 1 };
     let mut pools = Vec::with_capacity(base_count);
     let mut pool_bytes: usize = 0;
     for manual_seed in 0..base_count {
-        let (source, _) = if randomize {
-            permutation.evaluate_marked(manual_seed)?
-        } else {
-            permutation.evaluate(manual_seed)?
-        };
+        let (source, _) =
+            if randomize { permutation.evaluate_marked(manual_seed)? } else { permutation.evaluate(manual_seed)? };
         if source.len() > MAX_SOURCE_BYTES {
-            return Err(format!(
-                "a materialized base source exceeds the {MAX_SOURCE_BYTES}-byte source budget"
-            ));
+            return Err(format!("a materialized base source exceeds the {MAX_SOURCE_BYTES}-byte source budget"));
         }
         pool_bytes = pool_bytes.saturating_add(per_base.saturating_mul(source.len()));
         if pool_bytes.saturating_mul(3) > MAX_PLAN_BYTES {
-            return Err(format!(
-                "materialized mutation pools exceed the {MAX_PLAN_BYTES}-byte plan budget"
-            ));
+            return Err(format!("materialized mutation pools exceed the {MAX_PLAN_BYTES}-byte plan budget"));
         }
         let variants = if randomize {
             crate::randomize::try_mutate_marked_with_weights(
@@ -519,18 +414,10 @@ fn candidate_plan(
                 weights,
             )?
         } else {
-            vec![crate::randomize::Mutation {
-                id: "manual".into(),
-                source,
-            }]
+            vec![crate::randomize::Mutation { id: "manual".into(), source }]
         };
-        if variants
-            .iter()
-            .any(|variant| variant.source.len() > MAX_SOURCE_BYTES)
-        {
-            return Err(format!(
-                "a generated source exceeds the {MAX_SOURCE_BYTES}-byte source budget"
-            ));
+        if variants.iter().any(|variant| variant.source.len() > MAX_SOURCE_BYTES) {
+            return Err(format!("a generated source exceeds the {MAX_SOURCE_BYTES}-byte source budget"));
         }
         pools.push((manual_seed, variants));
     }
@@ -548,9 +435,7 @@ fn candidate_plan(
             if seen.insert(fingerprint.clone()) {
                 bytes = bytes.saturating_add(variant.source.len());
                 if bytes.saturating_mul(3) > MAX_PLAN_BYTES {
-                    return Err(format!(
-                        "generated source plan exceeds the {MAX_PLAN_BYTES}-byte budget"
-                    ));
+                    return Err(format!("generated source plan exceeds the {MAX_PLAN_BYTES}-byte budget"));
                 }
                 candidates.push(Candidate {
                     index: candidates.len(),
@@ -575,10 +460,7 @@ fn candidate_plan(
     }
 }
 
-fn measurement_order(
-    left: &(&Candidate, &Measurement),
-    right: &(&Candidate, &Measurement),
-) -> Ordering {
+fn measurement_order(left: &(&Candidate, &Measurement), right: &(&Candidate, &Measurement)) -> Ordering {
     right
         .1
         .exact
@@ -586,32 +468,19 @@ fn measurement_order(
         .then_with(|| left.1.score.cmp(&right.1.score))
         .then_with(|| left.1.differences.cmp(&right.1.differences))
         .then_with(|| {
-            left.1
-                .actual_size
-                .abs_diff(left.1.expected_size)
-                .cmp(&right.1.actual_size.abs_diff(right.1.expected_size))
+            left.1.actual_size.abs_diff(left.1.expected_size).cmp(&right.1.actual_size.abs_diff(right.1.expected_size))
         })
         .then_with(|| left.0.index.cmp(&right.0.index))
 }
 
 fn safe_label(input: &backend::Input) -> String {
-    let path = if input.directory_mode {
-        &input.requested
-    } else {
-        &input.source_path
-    };
-    let mut value = path
+    let mut value = input
+        .source_path
         .file_stem()
         .and_then(|v| v.to_str())
         .unwrap_or("candidate")
         .chars()
-        .map(|c| {
-            if c.is_ascii_alphanumeric() || matches!(c, '.' | '-' | '_') {
-                c
-            } else {
-                '_'
-            }
-        })
+        .map(|c| if c.is_ascii_alphanumeric() || matches!(c, '.' | '-' | '_') { c } else { '_' })
         .collect::<String>();
     if value.is_empty() || value == "." || value == ".." {
         value = "candidate".into();
@@ -626,33 +495,31 @@ fn append_identity_field(bytes: &mut Vec<u8>, value: &str) {
 }
 
 fn input_identity(input: &backend::Input) -> Result<String, String> {
-    let requested = fs::canonicalize(&input.requested)
-        .map_err(|e| format!("{}: {e}", input.requested.display()))?;
-    let source = fs::canonicalize(&input.source_path)
-        .map_err(|e| format!("{}: {e}", input.source_path.display()))?;
+    let source = fs::canonicalize(&input.source_path).map_err(|e| format!("{}: {e}", input.source_path.display()))?;
     let mut bytes = Vec::new();
     append_identity_field(&mut bytes, "permuter-input-v2");
-    append_identity_field(&mut bytes, &requested.to_string_lossy());
     append_identity_field(&mut bytes, &source.to_string_lossy());
     append_identity_field(&mut bytes, &source_fingerprint(&input.source));
     Ok(compiler_core::sha256::hex(&bytes))
 }
 
-fn run_identity(input: &backend::Input, target: &dyn Backend, seed: u64) -> Result<String, String> {
+fn run_identity(
+    input: &backend::Input,
+    target: &dyn Backend,
+    seed: u64,
+    family_template: Option<&str>,
+) -> Result<String, String> {
     let mut bytes = Vec::new();
     append_identity_field(&mut bytes, "permuter-run-v2");
     append_identity_field(&mut bytes, &input_identity(input)?);
     append_identity_field(&mut bytes, &target.identity());
     append_identity_field(&mut bytes, &seed.to_string());
+    append_identity_field(&mut bytes, &family_template.map(source_fingerprint).unwrap_or_default());
     Ok(compiler_core::sha256::hex(&bytes))
 }
 
 fn output_location(path: &Path) -> Result<PathBuf, String> {
-    let path = if path.is_absolute() {
-        path.to_path_buf()
-    } else {
-        root().join(path)
-    };
+    let path = if path.is_absolute() { path.to_path_buf() } else { root().join(path) };
     let mut out = PathBuf::new();
     for component in path.components() {
         match component {
@@ -668,30 +535,22 @@ fn output_location(path: &Path) -> Result<PathBuf, String> {
     }
     let mut existing = out.clone();
     while fs::symlink_metadata(&existing).is_err() && existing.pop() {}
-    let mut resolved =
-        fs::canonicalize(&existing).map_err(|e| format!("{}: {e}", existing.display()))?;
+    let mut resolved = fs::canonicalize(&existing).map_err(|e| format!("{}: {e}", existing.display()))?;
     if let Ok(relative) = out.strip_prefix(&existing) {
         resolved.extend(relative);
     }
-    let out = fs::canonicalize(root().join("out"))
-        .map_err(|e| format!("{}: {e}", root().join("out").display()))?;
+    let out = fs::canonicalize(root().join("out")).map_err(|e| format!("{}: {e}", root().join("out").display()))?;
     let temp = fs::canonicalize(std::env::temp_dir()).unwrap_or_else(|_| std::env::temp_dir());
     for trusted in [&out, &temp] {
         if resolved == *trusted {
-            return Err(format!(
-                "refusing shared output root {}; choose a dedicated child directory",
-                path.display()
-            ));
+            return Err(format!("refusing shared output root {}; choose a dedicated child directory", path.display()));
         }
         if resolved.starts_with(trusted) {
             return Ok(resolved);
         }
     }
     if resolved.starts_with(root()) {
-        return Err(format!(
-            "refusing output path {}: repository outputs must be under out/",
-            path.display()
-        ));
+        return Err(format!("refusing output path {}: repository outputs must be under out/", path.display()));
     }
     Err(format!(
         "refusing output path {}: it must be under repository out/ or the OS temporary directory",
@@ -711,12 +570,7 @@ fn validate_owned_name(name: &str) -> Result<(), String> {
     let valid = (name.starts_with("candidate-") && name.ends_with(".c"))
         || matches!(
             name,
-            "best.c"
-                | "best-UNVERIFIED.c"
-                | "journal.tsv"
-                | "report.json"
-                | LIVE_SOURCE_TMP
-                | LIVE_REPORT_TMP
+            "best.c" | "best-UNVERIFIED.c" | "journal.tsv" | "report.json" | LIVE_SOURCE_TMP | LIVE_REPORT_TMP
         );
     if !valid || name.contains('/') || name.contains('\\') {
         Err(format!("invalid owned output name {name:?}"))
@@ -742,12 +596,11 @@ fn save_results(
     retained: &[(&Candidate, &Measurement)],
     attempted: usize,
     failures: usize,
+    family_template: Option<&serde_json::Value>,
 ) -> Result<(), String> {
     let candidate_bytes = retained.iter().map(|(c, _)| c.source.len()).sum::<usize>();
     if candidate_bytes > MAX_OUTPUT_BYTES {
-        return Err(format!(
-            "retained candidate output exceeds the {MAX_OUTPUT_BYTES}-byte budget"
-        ));
+        return Err(format!("retained candidate output exceeds the {MAX_OUTPUT_BYTES}-byte budget"));
     }
     run.remove_previous_results()?;
     for (rank, (candidate, measurement)) in retained.iter().enumerate() {
@@ -758,11 +611,8 @@ fn save_results(
         run.replace_owned_file(&name, candidate.source.as_bytes())?;
     }
     if let Some((candidate, measurement)) = retained.first() {
-        let name = if search_mode == "classic-exact-only" && !measurement.exact {
-            "best-UNVERIFIED.c"
-        } else {
-            "best.c"
-        };
+        let name =
+            if search_mode == "classic-exact-only" && !measurement.exact { "best-UNVERIFIED.c" } else { "best.c" };
         run.register(name)?;
         run.replace_owned_file(name, candidate.source.as_bytes())?;
     }
@@ -792,24 +642,20 @@ fn save_results(
         "baseline_score": baseline.score,
         "attempted": attempted,
         "compile_failures": failures,
+        "family_template": family_template,
         "results": results,
     }))
     .map_err(|e| format!("could not serialize report: {e}"))?
         + "\n";
     if candidate_bytes.saturating_add(report.len()) > MAX_OUTPUT_BYTES {
-        return Err(format!(
-            "candidate files and report exceed the {MAX_OUTPUT_BYTES}-byte output budget"
-        ));
+        return Err(format!("candidate files and report exceed the {MAX_OUTPUT_BYTES}-byte output budget"));
     }
     run.register("report.json")?;
     run.replace_owned_file("report.json", report.as_bytes())
 }
 
 fn output_budget_preflight(candidates: &[Candidate], top: usize) -> Result<(), String> {
-    let mut sizes = candidates
-        .iter()
-        .map(|c| c.source.len())
-        .collect::<Vec<_>>();
+    let mut sizes = candidates.iter().map(|c| c.source.len()).collect::<Vec<_>>();
     sizes.sort_unstable_by(|a, b| b.cmp(a));
     let candidate_bytes = sizes.into_iter().take(top).sum::<usize>();
     let mut report_sizes = candidates
@@ -823,9 +669,7 @@ fn output_budget_preflight(candidates: &[Candidate], top: usize) -> Result<(), S
             "planned retained candidates and report exceed the {MAX_OUTPUT_BYTES}-byte output budget before compilation"
         ));
     }
-    if 128usize.saturating_add(candidates.len().saturating_mul(MAX_JOURNAL_ROW_BYTES))
-        > MAX_OUTPUT_BYTES
-    {
+    if 128usize.saturating_add(candidates.len().saturating_mul(MAX_JOURNAL_ROW_BYTES)) > MAX_OUTPUT_BYTES {
         return Err(format!(
             "the {MAX_JOURNAL_ROW_BYTES}-byte journal-row bound for {} candidates exceeds the journal budget before compilation",
             candidates.len()
@@ -843,26 +687,18 @@ fn output_budget_preflight(candidates: &[Candidate], top: usize) -> Result<(), S
 fn guard_accepts(baseline: &Measurement, value: &Measurement) -> bool {
     value.exact
         || ((value.bl_divergence < baseline.bl_divergence
-            || (value.bl_divergence == baseline.bl_divergence
-                && value.bl_signature == baseline.bl_signature))
+            || (value.bl_divergence == baseline.bl_divergence && value.bl_signature == baseline.bl_signature))
             && (value.store_divergence < baseline.store_divergence
                 || (value.store_divergence == baseline.store_divergence
                     && value.store_signature == baseline.store_signature)))
 }
 
-fn retain_result(
-    options: &Options,
-    baseline: &Measurement,
-    former_best: u64,
-    measurement: &Measurement,
-) -> bool {
+fn retain_result(options: &Options, baseline: &Measurement, former_best: u64, measurement: &Measurement) -> bool {
     measurement.score != u64::MAX
         && guard_accepts(baseline, measurement)
         && (!options.better_only || measurement.score < baseline.score)
         && (!options.best_only || measurement.score <= former_best)
-        && !options
-            .score_threshold
-            .is_some_and(|threshold| measurement.score >= threshold)
+        && !options.score_threshold.is_some_and(|threshold| measurement.score >= threshold)
         && (measurement.exact || measurement.score <= baseline.score)
 }
 
@@ -907,8 +743,7 @@ fn run_workers(
                 None => backend.measure(&candidate.source),
             };
             if let Ok(value) = &measurement {
-                if cached.is_none() || cached.as_ref().is_some_and(|old| old.exact && old != value)
-                {
+                if cached.is_none() || cached.as_ref().is_some_and(|old| old.exact && old != value) {
                     if let Err(error) = journal.record(&candidate.fingerprint, value) {
                         stop.store(true, AtomicOrdering::Release);
                         let _ = sender.send(Err(error));
@@ -923,11 +758,7 @@ fn run_workers(
                         Ok(Some(saved)) => {
                             println!(
                                 "new-best={} candidate={} mutation={} saved={} {}",
-                                value.score,
-                                candidate.index,
-                                candidate.mutation,
-                                saved,
-                                value.summary
+                                value.score, candidate.index, candidate.mutation, saved, value.summary
                             );
                             let _ = io::stdout().flush();
                         }
@@ -940,14 +771,7 @@ fn run_workers(
                     }
                 }
             }
-            if sender
-                .send(Ok(Evaluated {
-                    candidate,
-                    measurement,
-                    elapsed: started.elapsed(),
-                }))
-                .is_err()
-            {
+            if sender.send(Ok(Evaluated { candidate, measurement, elapsed: started.elapsed() })).is_err() {
                 break;
             }
         }));
@@ -990,19 +814,8 @@ struct LiveBest {
 }
 
 impl LiveBest {
-    fn new(
-        run: &mut RunDirectory,
-        backend: &str,
-        search_mode: &str,
-        baseline_score: u64,
-    ) -> Result<Self, String> {
-        for name in [
-            "best.c",
-            "best-UNVERIFIED.c",
-            "report.json",
-            LIVE_SOURCE_TMP,
-            LIVE_REPORT_TMP,
-        ] {
+    fn new(run: &mut RunDirectory, backend: &str, search_mode: &str, baseline_score: u64) -> Result<Self, String> {
+        for name in ["best.c", "best-UNVERIFIED.c", "report.json", LIVE_SOURCE_TMP, LIVE_REPORT_TMP] {
             run.register(name)?;
         }
         Ok(Self {
@@ -1015,50 +828,25 @@ impl LiveBest {
     }
 
     fn seed(&self) -> Option<(String, String)> {
-        self.state.lock().ok().and_then(|best| {
-            best.as_ref()
-                .map(|best| (best.source.clone(), best.mutation.clone()))
-        })
+        self.state.lock().ok().and_then(|best| best.as_ref().map(|best| (best.source.clone(), best.mutation.clone())))
     }
 
     fn score(&self) -> u64 {
-        self.state
-            .lock()
-            .ok()
-            .and_then(|best| best.as_ref().map(|best| best.score))
-            .unwrap_or(self.baseline_score)
+        self.state.lock().ok().and_then(|best| best.as_ref().map(|best| best.score)).unwrap_or(self.baseline_score)
     }
 
-    fn publish(
-        &self,
-        candidate: &Candidate,
-        measurement: &Measurement,
-    ) -> Result<Option<&'static str>, String> {
+    fn publish(&self, candidate: &Candidate, measurement: &Measurement) -> Result<Option<&'static str>, String> {
         if measurement.score >= self.baseline_score {
             return Ok(None);
         }
-        let mut best = self
-            .state
-            .lock()
-            .map_err(|_| "live-best lock is poisoned".to_string())?;
-        if best
-            .as_ref()
-            .is_some_and(|best| measurement.score >= best.score)
-        {
+        let mut best = self.state.lock().map_err(|_| "live-best lock is poisoned".to_string())?;
+        if best.as_ref().is_some_and(|best| measurement.score >= best.score) {
             return Ok(None);
         }
 
         let unverified = self.search_mode == "classic-exact-only" && !measurement.exact;
-        let name = if unverified {
-            "best-UNVERIFIED.c"
-        } else {
-            "best.c"
-        };
-        atomic_replace(
-            &self.output.join(name),
-            &self.output.join(LIVE_SOURCE_TMP),
-            candidate.source.as_bytes(),
-        )?;
+        let name = if unverified { "best-UNVERIFIED.c" } else { "best.c" };
+        atomic_replace(&self.output.join(name), &self.output.join(LIVE_SOURCE_TMP), candidate.source.as_bytes())?;
 
         let report = serde_json::to_string_pretty(&json!({
             "backend": self.backend,
@@ -1081,11 +869,7 @@ impl LiveBest {
         }))
         .map_err(|e| format!("could not serialize live report: {e}"))?
             + "\n";
-        atomic_replace(
-            &self.output.join("report.json"),
-            &self.output.join(LIVE_REPORT_TMP),
-            report.as_bytes(),
-        )?;
+        atomic_replace(&self.output.join("report.json"), &self.output.join(LIVE_REPORT_TMP), report.as_bytes())?;
         *best = Some(LiveBestState {
             score: measurement.score,
             source: candidate.source.clone(),
@@ -1097,14 +881,8 @@ impl LiveBest {
 
 fn atomic_replace(path: &Path, temporary: &Path, contents: &[u8]) -> Result<(), String> {
     for candidate in [path, temporary] {
-        if fs::symlink_metadata(candidate)
-            .map(|metadata| metadata.file_type().is_symlink())
-            .unwrap_or(false)
-        {
-            return Err(format!(
-                "refusing to overwrite symlink {}",
-                candidate.display()
-            ));
+        if fs::symlink_metadata(candidate).map(|metadata| metadata.file_type().is_symlink()).unwrap_or(false) {
+            return Err(format!("refusing to overwrite symlink {}", candidate.display()));
         }
     }
     let mut file = File::options()
@@ -1113,15 +891,12 @@ fn atomic_replace(path: &Path, temporary: &Path, contents: &[u8]) -> Result<(), 
         .truncate(true)
         .open(temporary)
         .map_err(|e| format!("{}: {e}", temporary.display()))?;
-    file.write_all(contents)
-        .and_then(|_| file.sync_all())
-        .map_err(|e| format!("{}: {e}", temporary.display()))?;
+    file.write_all(contents).and_then(|_| file.sync_all()).map_err(|e| format!("{}: {e}", temporary.display()))?;
     match fs::rename(temporary, path) {
         Ok(()) => Ok(()),
         Err(first) if path.is_file() => {
             fs::remove_file(path).map_err(|e| format!("{}: {e}", path.display()))?;
-            fs::rename(temporary, path)
-                .map_err(|e| format!("{}: {e} (initial rename: {first})", path.display()))
+            fs::rename(temporary, path).map_err(|e| format!("{}: {e} (initial rename: {first})", path.display()))
         }
         Err(e) => Err(format!("{}: {e}", path.display())),
     }
@@ -1141,13 +916,14 @@ fn walk_workers(
     guard: Measurement,
     journal: Arc<Journal>,
     best: Arc<LiveBest>,
+    family_template: Option<Arc<String>>,
 ) -> Result<Vec<Evaluated>, String> {
     let counter = Arc::new(AtomicUsize::new(0));
     let stop = Arc::new(AtomicBool::new(false));
     let (sender, receiver) = mpsc::channel::<Result<Evaluated, String>>();
     let mut workers = Vec::new();
     for worker in 0..jobs.max(1) {
-        let (backend, base_source, counter, stop, sender, best, journal, guard) = (
+        let (backend, base_source, counter, stop, sender, best, journal, guard, family_template) = (
             Arc::clone(&backend),
             Arc::clone(&base_source),
             Arc::clone(&counter),
@@ -1156,6 +932,7 @@ fn walk_workers(
             Arc::clone(&best),
             Arc::clone(&journal),
             guard.clone(),
+            family_template.clone(),
         );
         workers.push(std::thread::spawn(move || {
             let mut rng = crate::randomize::SplitMix64(
@@ -1178,23 +955,17 @@ fn walk_workers(
                         .or_else(|| Some((base_source.as_ref().clone(), "base".into())));
                 }
                 let (source, lineage) = current.clone().expect("walk candidate");
-                let mode = if classic {
-                    crate::astpass::AstMode::Classic
-                } else {
-                    crate::astpass::AstMode::Safe
-                };
-                let mutated = crate::astpass::AstRandomizer::new_with_mode(
-                    &source,
-                    rng.0 ^ index as u64,
-                    None,
-                    mode,
-                )
-                .and_then(|mut randomizer| {
-                    if heat_enabled {
-                        randomizer.set_heat(heat.clone());
-                    }
-                    randomizer.randomize_named()
-                });
+                let mode = if classic { crate::astpass::AstMode::Classic } else { crate::astpass::AstMode::Safe };
+                let mutated = crate::astpass::AstRandomizer::new_with_mode(&source, rng.0 ^ index as u64, None, mode)
+                    .and_then(|mut randomizer| {
+                        if let Some(template) = family_template.as_deref() {
+                            randomizer.set_family_template(template)?;
+                        }
+                        if heat_enabled {
+                            randomizer.set_heat(heat.clone());
+                        }
+                        randomizer.randomize_named()
+                    });
                 let Ok((source, pass)) = mutated else {
                     current = None;
                     continue;
@@ -1213,9 +984,7 @@ fn walk_workers(
                     _ => backend.measure(&source),
                 };
                 if let Ok(value) = &measurement {
-                    if cached.is_none()
-                        || cached.as_ref().is_some_and(|old| old.exact && old != value)
-                    {
+                    if cached.is_none() || cached.as_ref().is_some_and(|old| old.exact && old != value) {
                         let _ = journal.record(&candidate.fingerprint, value);
                     }
                     if value.exact {
@@ -1228,11 +997,7 @@ fn walk_workers(
                             Ok(Some(saved)) => {
                                 println!(
                                     "new-best={} candidate={} mutation={} saved={} {}",
-                                    value.score,
-                                    candidate.index,
-                                    candidate.mutation,
-                                    saved,
-                                    value.summary
+                                    value.score, candidate.index, candidate.mutation, saved, value.summary
                                 );
                                 let _ = io::stdout().flush();
                             }
@@ -1249,14 +1014,7 @@ fn walk_workers(
                 } else {
                     current = None;
                 }
-                if sender
-                    .send(Ok(Evaluated {
-                        candidate,
-                        measurement,
-                        elapsed: started.elapsed(),
-                    }))
-                    .is_err()
-                {
+                if sender.send(Ok(Evaluated { candidate, measurement, elapsed: started.elapsed() })).is_err() {
                     break;
                 }
             }
@@ -1311,8 +1069,7 @@ fn collect_results(
                         && measurement.score <= chain_limit.unwrap_or(baseline.score)
                         && item.candidate.mutation != "identity"
                         && round_best.is_none_or(|(_, score)| {
-                            measurement.score < score
-                                || (measurement.score == score && round % 3 != 0)
+                            measurement.score < score || (measurement.score == score && round % 3 != 0)
                         })
                     {
                         round_best = Some((item.candidate.index, measurement.score));
@@ -1344,11 +1101,7 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
     }
     let input_key = input_identity(&input)?;
     let output = match &options.output {
-        Some(base) if multiple => base.join(format!(
-            "{}-{input_key}-seed-{}",
-            safe_label(&input),
-            options.seed
-        )),
+        Some(base) if multiple => base.join(format!("{}-{input_key}-seed-{}", safe_label(&input), options.seed)),
         Some(path) => path.clone(),
         None => root().join("out").join("permuter").join(format!(
             "{}-{input_key}-seed-{}",
@@ -1357,14 +1110,24 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
         )),
     };
     validate_output_path(&output)?;
+    let family_template = options
+        .family_template
+        .as_ref()
+        .map(|path| {
+            let source =
+                fs::read_to_string(path).map_err(|error| format!("--family-template {}: {error}", path.display()))?;
+            if source.len() > MAX_SOURCE_BYTES {
+                return Err(format!("--family-template {} is larger than {MAX_SOURCE_BYTES} bytes", path.display()));
+            }
+            crate::astpass::preprocess_for_ast(&source).map(|source| (path.clone(), source))
+        })
+        .transpose()?;
     let permutation = crate::perm::parse(&input.source)?;
     let weights = if let Some(path) = &options.weights {
         if !path.is_file() {
             return Err(format!("--weights {}: no such file", path.display()));
         }
         Weights::from_settings(path, "gcc")?
-    } else if input.directory_mode {
-        Weights::from_settings(&input.requested.join("settings.toml"), "base")?
     } else {
         Weights::for_profile("gcc")
     };
@@ -1389,16 +1152,17 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
     let (base_source, _) = permutation.evaluate(0)?;
     let target = backend::prepare(&input, &base_source, options.show_errors)?;
     let baseline = target.baseline();
-    let identity = run_identity(&input, target.as_ref(), options.seed)?;
+    let identity = run_identity(
+        &input,
+        target.as_ref(),
+        options.seed,
+        family_template.as_ref().map(|(_, source)| source.as_str()),
+    )?;
     let mut run = RunDirectory::claim(&output, &identity, options.resume)?;
     let cache_identity = target.identity();
     let mut journal = Journal::open(&mut run, &cache_identity, options.resume)?;
     if let Some(prior) = &options.journal_from {
-        println!(
-            "journal: imported {} cached measurements from {}",
-            journal.import(prior)?,
-            prior.display()
-        );
+        println!("journal: imported {} cached measurements from {}", journal.import(prior)?, prior.display());
     }
     let journal = Arc::new(journal);
     let search_mode = if options.walk && options.classic {
@@ -1408,21 +1172,22 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
     } else {
         "planned"
     };
+    let family_report = family_template.as_ref().map(|(path, template)| {
+        let mode = if options.classic { crate::astpass::AstMode::Classic } else { crate::astpass::AstMode::Safe };
+        json!({
+            "path": path,
+            "source_fingerprint": source_fingerprint(template),
+            "weights": crate::astpass::family_weight_summary(&base_source, template, mode)
+                .into_iter().collect::<BTreeMap<_, _>>(),
+        })
+    });
     println!(
         "backend={} mode={} bases={} candidates={} jobs={} baseline={} ({})",
         target.name(),
         search_mode,
         permutation.count(),
-        if options.walk {
-            options.iterations
-        } else {
-            candidates.len()
-        },
-        if options.walk {
-            options.jobs
-        } else {
-            options.jobs.min(candidates.len())
-        },
+        if options.walk { options.iterations } else { candidates.len() },
+        if options.walk { options.jobs } else { options.jobs.min(candidates.len()) },
         baseline.score,
         baseline.summary
     );
@@ -1430,12 +1195,7 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
         return Ok(());
     }
     let backend_name = target.name().to_string();
-    let live_best = Arc::new(LiveBest::new(
-        &mut run,
-        &backend_name,
-        search_mode,
-        baseline.score,
-    )?);
+    let live_best = Arc::new(LiveBest::new(&mut run, &backend_name, search_mode, baseline.score)?);
     let target: Arc<dyn Backend> = Arc::from(target);
     let started = Instant::now();
     let mut chain_source = input.source.clone();
@@ -1461,6 +1221,7 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
             baseline.clone(),
             Arc::clone(&journal),
             Arc::clone(&live_best),
+            family_template.as_ref().map(|(_, source)| Arc::new(source.clone())),
         )?;
         collect_results(
             &evaluated,
@@ -1530,10 +1291,7 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
             }
         }
     }
-    let mut retained = owned
-        .iter()
-        .map(|(candidate, measurement)| (candidate, measurement))
-        .collect::<Vec<_>>();
+    let mut retained = owned.iter().map(|(candidate, measurement)| (candidate, measurement)).collect::<Vec<_>>();
     retained.sort_by(measurement_order);
     retained.truncate(options.top);
     save_results(
@@ -1544,6 +1302,7 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
         &retained,
         attempted,
         failures,
+        family_report.as_ref(),
     )?;
     println!(
         "done={} attempted={} failures={} best={} exact={} wall_ms={} compiler_ms={} output={}",
@@ -1561,15 +1320,24 @@ fn run_one(options: &Options, candidate: &Path, multiple: bool) -> Result<(), St
 
 pub fn run(options: Options) -> Result<(), String> {
     let multiple = options.candidates.len() > 1;
-    options
-        .candidates
-        .iter()
-        .try_for_each(|candidate| run_one(&options, candidate, multiple))
+    if !options.continue_on_error {
+        return options.candidates.iter().try_for_each(|candidate| run_one(&options, candidate, multiple));
+    }
+    let mut failed = 0;
+    for candidate in &options.candidates {
+        if let Err(error) = run_one(&options, candidate, multiple) {
+            eprintln!("{}: {error}", candidate.display());
+            failed += 1;
+        }
+    }
+    match failed {
+        0 => Ok(()),
+        count => Err(format!("{count} candidate inputs failed")),
+    }
 }
 
 pub fn self_test() -> Result<(), String> {
-    let permutation =
-        crate::perm::parse("int f(void) { s32 a = PERM_GENERAL(1,2); return a + 0; }")?;
+    let permutation = crate::perm::parse("int f(void) { s32 a = PERM_GENERAL(1,2); return a + 0; }")?;
     let weights = Weights::for_profile("gcc");
     if candidate_plan(&permutation, MAX_ITERATIONS + 1, 9, false, &weights, 64).is_ok() {
         return Err("candidate plan accepted an unbounded iteration request".into());
@@ -1653,9 +1421,7 @@ mod tests {
             ],
             "identity",
         );
-        assert!(
-            parsed.is_some_and(|(_, m)| m.bl_signature == 0xabcd && m.store_signature == 0xef01)
-        );
+        assert!(parsed.is_some_and(|(_, m)| m.bl_signature == 0xabcd && m.store_signature == 0xef01));
     }
 
     #[test]
@@ -1687,14 +1453,8 @@ mod tests {
 
     #[test]
     fn live_best_publishes_strict_improvements_as_they_arrive() {
-        let stamp = std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .unwrap()
-            .as_nanos();
-        let output = std::env::temp_dir().join(format!(
-            "alchemy-permuter-live-best-{}-{stamp}",
-            std::process::id()
-        ));
+        let stamp = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos();
+        let output = std::env::temp_dir().join(format!("alchemy-permuter-live-best-{}-{stamp}", std::process::id()));
         fs::create_dir(&output).unwrap();
         let best = LiveBest {
             state: Mutex::new(None),
@@ -1716,10 +1476,7 @@ mod tests {
         assert!(!output.join("best.c").exists());
 
         measurement.score = 90;
-        assert_eq!(
-            best.publish(&candidate, &measurement).unwrap(),
-            Some("best.c")
-        );
+        assert_eq!(best.publish(&candidate, &measurement).unwrap(), Some("best.c"));
         assert_eq!(fs::read_to_string(output.join("best.c")).unwrap(), "first");
         let report = fs::read_to_string(output.join("report.json")).unwrap();
         assert!(report.contains("\"status\": \"running\""));
@@ -1739,10 +1496,7 @@ mod tests {
         candidate.source = "best".into();
         candidate.mutation = "best".into();
         measurement.score = 80;
-        assert_eq!(
-            best.publish(&candidate, &measurement).unwrap(),
-            Some("best.c")
-        );
+        assert_eq!(best.publish(&candidate, &measurement).unwrap(), Some("best.c"));
         assert_eq!(fs::read_to_string(output.join("best.c")).unwrap(), "best");
         assert_eq!(best.seed(), Some(("best".into(), "best".into())));
         assert_eq!(best.score(), 80);

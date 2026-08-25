@@ -90,9 +90,7 @@ pub fn compare(target: &Path, candidate: &Path, symbol: &str) -> Result<Normaliz
 
 fn row_matches(pair: &(Option<String>, Option<String>)) -> bool {
     match pair {
-        (Some(candidate), Some(target)) => {
-            without_pc_offset(candidate) == without_pc_offset(target)
-        }
+        (Some(candidate), Some(target)) => without_pc_offset(candidate) == without_pc_offset(target),
         (None, None) => true,
         _ => false,
     }
@@ -108,19 +106,13 @@ mod tests {
 
     #[test]
     fn ignores_rendered_pc_offsets() {
-        let pair = (
-            Some("ldr r0, [pc, #12] <pool>".into()),
-            Some("ldr r0, [pc, #48] <pool>".into()),
-        );
+        let pair = (Some("ldr r0, [pc, #12] <pool>".into()), Some("ldr r0, [pc, #48] <pool>".into()));
         assert!(row_matches(&pair));
     }
 
     #[test]
     fn gaps_and_register_changes_are_mismatches() {
         assert!(!row_matches(&(Some("movs r0, #1".into()), None)));
-        assert!(!row_matches(&(
-            Some("movs r0, #1".into()),
-            Some("movs r1, #1".into()),
-        )));
+        assert!(!row_matches(&(Some("movs r0, #1".into()), Some("movs r1, #1".into()),)));
     }
 }

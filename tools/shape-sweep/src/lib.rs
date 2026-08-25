@@ -37,9 +37,7 @@ impl TransformId {
     pub const fn law(self) -> &'static str {
         match self {
             Self::HoistArgsAfterFirst => "argument materialisation order",
-            Self::InlineSingleUseTemp | Self::NameRepeatedSubexpression => {
-                "minimal live-variable form"
-            }
+            Self::InlineSingleUseTemp | Self::NameRepeatedSubexpression => "minimal live-variable form",
             Self::UnsignComparison => "unsigned comparison shape",
             Self::IndexToPointer => "addressing form",
             Self::SinkDeclarationToBlock => "declaration scope",
@@ -57,11 +55,7 @@ fn is_ident_continue(byte: u8) -> bool {
 }
 
 fn skip_space(source: &str, mut at: usize) -> usize {
-    while source
-        .as_bytes()
-        .get(at)
-        .is_some_and(|byte| (*byte as char).is_ascii_whitespace())
-    {
+    while source.as_bytes().get(at).is_some_and(|byte| (*byte as char).is_ascii_whitespace()) {
         at += 1;
     }
     at
@@ -85,20 +79,14 @@ fn identifier_at(source: &str, at: usize) -> Option<(String, usize)> {
 fn token_at(source: &str, at: usize, token: &str) -> bool {
     source.as_bytes().get(at..at + token.len()) == Some(token.as_bytes())
         && (at == 0 || !is_ident_continue(source.as_bytes()[at - 1]))
-        && (at + token.len() == source.len()
-            || !is_ident_continue(source.as_bytes()[at + token.len()]))
+        && (at + token.len() == source.len() || !is_ident_continue(source.as_bytes()[at + token.len()]))
 }
 
 fn replace_first_token(source: &str, token: &str, replacement: &str) -> Option<String> {
     let mut at = 0;
     while at + token.len() <= source.len() {
         if token_at(source, at, token) {
-            return Some(format!(
-                "{}{}{}",
-                &source[..at],
-                replacement,
-                &source[at + token.len()..]
-            ));
+            return Some(format!("{}{}{}", &source[..at], replacement, &source[at + token.len()..]));
         }
         at += 1;
     }
@@ -192,23 +180,14 @@ fn apply_hoist_args_after_first(source: &str) -> Option<String> {
     if args.len() < 2 {
         return Some(source.to_string());
     }
-    let bound: String = args
-        .iter()
-        .skip(1)
-        .enumerate()
-        .map(|(index, arg)| format!("s32 shape_arg{index} = {arg}; "))
-        .collect();
+    let bound: String =
+        args.iter().skip(1).enumerate().map(|(index, arg)| format!("s32 shape_arg{index} = {arg}; ")).collect();
     let call_args = std::iter::once(args[0].clone())
         .chain((0..args.len() - 1).map(|index| format!("shape_arg{index}")))
         .collect::<Vec<_>>()
         .join(", ");
     let replacement = format!("{{ {bound}{name}({call_args}); }}");
-    Some(format!(
-        "{}{}{}",
-        &source[..start],
-        replacement,
-        &source[end..]
-    ))
+    Some(format!("{}{}{}", &source[..start], replacement, &source[end..]))
 }
 
 fn typed_name_start(source: &str, at: usize, types: &[&str]) -> Option<(String, usize)> {
@@ -251,9 +230,7 @@ fn first_inline_declaration(source: &str) -> Option<(usize, usize, String, Strin
 
 fn apply_inline_single_use_temp(source: &str) -> Option<String> {
     let (start, end, name, value) = first_inline_declaration(source)?;
-    let uses = (0..source.len())
-        .filter(|at| token_at(source, *at, &name))
-        .count();
+    let uses = (0..source.len()).filter(|at| token_at(source, *at, &name)).count();
     if uses != 2 {
         return None;
     }
@@ -299,12 +276,7 @@ fn apply_name_repeated_subexpression(source: &str) -> Option<String> {
     let open = first_function_open(source)?;
     let at = open + 1;
     let bound = replace_all(&source[at..], &repeated, "shape_common");
-    Some(format!(
-        "{}\n  s32 shape_common = {};{}",
-        &source[..at],
-        repeated,
-        bound
-    ))
+    Some(format!("{}\n  s32 shape_common = {};{}", &source[..at], repeated, bound))
 }
 
 fn first_comparison(source: &str) -> Option<(usize, String, String, String)> {
@@ -327,24 +299,13 @@ fn first_comparison(source: &str) -> Option<(usize, String, String, String)> {
         };
         let digit_start = skip_space(source, operator_at + operator.len());
         let mut digit_end = digit_start;
-        while source
-            .as_bytes()
-            .get(digit_end)
-            .is_some_and(u8::is_ascii_digit)
-        {
+        while source.as_bytes().get(digit_end).is_some_and(u8::is_ascii_digit) {
             digit_end += 1;
         }
-        if digit_end == digit_start
-            || (digit_end < source.len() && is_ident_continue(source.as_bytes()[digit_end]))
-        {
+        if digit_end == digit_start || (digit_end < source.len() && is_ident_continue(source.as_bytes()[digit_end])) {
             continue;
         }
-        return Some((
-            at,
-            name,
-            operator.to_string(),
-            source[digit_start..digit_end].to_string(),
-        ));
+        return Some((at, name, operator.to_string(), source[digit_start..digit_end].to_string()));
     }
     None
 }
@@ -355,20 +316,10 @@ fn apply_unsign_comparison(source: &str) -> Option<String> {
     let operator_at = skip_space(source, after);
     let digit_at = skip_space(source, operator_at + operator.len());
     let mut digit_end = digit_at;
-    while source
-        .as_bytes()
-        .get(digit_end)
-        .is_some_and(u8::is_ascii_digit)
-    {
+    while source.as_bytes().get(digit_end).is_some_and(u8::is_ascii_digit) {
         digit_end += 1;
     }
-    Some(format!(
-        "{}(u32){name} {} {}u{}",
-        &source[..at],
-        operator,
-        number,
-        &source[digit_end..]
-    ))
+    Some(format!("{}(u32){name} {} {}u{}", &source[..at], operator, number, &source[digit_end..]))
 }
 
 fn first_function_open(source: &str) -> Option<usize> {
@@ -406,12 +357,7 @@ fn apply_sink_declaration_to_block(source: &str) -> Option<String> {
     source[end..].find('{')?;
     let stripped = format!("{}{}", &source[..start], &source[end..]);
     let insert = first_function_open(&stripped)?;
-    Some(format!(
-        "{}\n    {}{}",
-        &stripped[..insert + 1],
-        declaration.trim(),
-        &stripped[insert + 1..]
-    ))
+    Some(format!("{}\n    {}{}", &stripped[..insert + 1], declaration.trim(), &stripped[insert + 1..]))
 }
 
 fn first_if_guard(source: &str) -> Option<(usize, String, usize)> {
@@ -440,12 +386,7 @@ fn apply_invert_to_early_return(source: &str) -> Option<String> {
     if !source[end + 1..].trim_start().starts_with('}') {
         return None;
     }
-    Some(format!(
-        "{}if (!({condition})) return;\n{}{}",
-        &source[..guard_at],
-        body,
-        &source[end + 1..]
-    ))
+    Some(format!("{}if (!({condition})) return;\n{}{}", &source[..guard_at], body, &source[end + 1..]))
 }
 
 pub fn apply_transform(id: TransformId, source: &str) -> Option<String> {
@@ -458,13 +399,7 @@ pub fn apply_transform(id: TransformId, source: &str) -> Option<String> {
             let (start, end, expression) = first_index_expr(source, 0)?;
             let (base, index) = expression.split_once('[')?;
             let index = index.strip_suffix(']')?.trim();
-            Some(format!(
-                "{}*({} + {}){}",
-                &source[..start],
-                base.trim(),
-                index,
-                &source[end..]
-            ))
+            Some(format!("{}*({} + {}){}", &source[..start], base.trim(), index, &source[end..]))
         }
         TransformId::SinkDeclarationToBlock => apply_sink_declaration_to_block(source),
         TransformId::InvertToEarlyReturn => apply_invert_to_early_return(source),

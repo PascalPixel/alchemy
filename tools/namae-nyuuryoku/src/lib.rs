@@ -38,19 +38,13 @@ fn fail<T>(message: impl Into<String>) -> Result<T> {
     Err(Error(message.into()))
 }
 fn object<'a>(value: &'a Value, label: &str) -> Result<&'a Map<String, Value>> {
-    value
-        .as_object()
-        .ok_or_else(|| Error(format!("{label} must be an object")))
+    value.as_object().ok_or_else(|| Error(format!("{label} must be an object")))
 }
 fn field<'a>(value: &'a Map<String, Value>, name: &str) -> Result<&'a Value> {
-    value
-        .get(name)
-        .ok_or_else(|| Error(format!("missing {name}")))
+    value.get(name).ok_or_else(|| Error(format!("missing {name}")))
 }
 fn string<'a>(value: &'a Map<String, Value>, name: &str) -> Result<&'a str> {
-    field(value, name)?
-        .as_str()
-        .ok_or_else(|| Error(format!("{name} must be a string")))
+    field(value, name)?.as_str().ok_or_else(|| Error(format!("{name} must be a string")))
 }
 fn number(value: &Value, label: &str) -> Result<usize> {
     if let Some(n) = value.as_u64() {
@@ -84,14 +78,10 @@ fn align4(value: usize) -> usize {
 }
 
 fn coordinates(value: &Value, label: &str) -> Result<std::collections::HashSet<(usize, usize)>> {
-    let values = value
-        .as_array()
-        .ok_or_else(|| Error(format!("{label} must be an array")))?;
+    let values = value.as_array().ok_or_else(|| Error(format!("{label} must be an array")))?;
     let mut result = std::collections::HashSet::new();
     for coordinate in values {
-        let pair = coordinate
-            .as_array()
-            .ok_or_else(|| Error(format!("{label} coordinate differs")))?;
+        let pair = coordinate.as_array().ok_or_else(|| Error(format!("{label} coordinate differs")))?;
         if pair.len() != 2 {
             return fail(format!("{label} coordinate differs"));
         }
@@ -108,9 +98,7 @@ fn coordinates(value: &Value, label: &str) -> Result<std::collections::HashSet<(
 }
 
 fn tokens(value: &Value) -> Result<Vec<GeneralToken>> {
-    let values = value
-        .as_array()
-        .ok_or_else(|| Error("name-entry token plan length differs".into()))?;
+    let values = value.as_array().ok_or_else(|| Error("name-entry token plan length differs".into()))?;
     if values.is_empty() || values.len() > TILEMAP_BYTES {
         return fail("name-entry token plan length differs");
     }
@@ -118,39 +106,25 @@ fn tokens(value: &Value) -> Result<Vec<GeneralToken>> {
         .iter()
         .enumerate()
         .map(|(index, token)| {
-            let pair = token
-                .as_array()
-                .ok_or_else(|| Error(format!("name-entry token {index} opcode differs")))?;
+            let pair = token.as_array().ok_or_else(|| Error(format!("name-entry token {index} opcode differs")))?;
             match pair.first().and_then(Value::as_str) {
                 Some("l") if pair.len() == 2 => {
-                    let count =
-                        number(&pair[1], &format!("name-entry token {index} literal count"))?;
+                    let count = number(&pair[1], &format!("name-entry token {index} literal count"))?;
                     if !(1..=TILEMAP_BYTES).contains(&count) {
-                        return fail(format!(
-                            "name-entry token {index} literal count is outside its range"
-                        ));
+                        return fail(format!("name-entry token {index} literal count is outside its range"));
                     }
                     Ok(GeneralToken::Literal(count as u32))
                 }
                 Some("c") if pair.len() == 3 => {
-                    let length =
-                        number(&pair[1], &format!("name-entry token {index} copy length"))?;
-                    let distance =
-                        number(&pair[2], &format!("name-entry token {index} copy distance"))?;
+                    let length = number(&pair[1], &format!("name-entry token {index} copy length"))?;
+                    let distance = number(&pair[2], &format!("name-entry token {index} copy distance"))?;
                     if !(2..=137).contains(&length) {
-                        return fail(format!(
-                            "name-entry token {index} copy length is outside its range"
-                        ));
+                        return fail(format!("name-entry token {index} copy length is outside its range"));
                     }
                     if !(1..=TILEMAP_BYTES).contains(&distance) {
-                        return fail(format!(
-                            "name-entry token {index} copy distance is outside its range"
-                        ));
+                        return fail(format!("name-entry token {index} copy distance is outside its range"));
                     }
-                    Ok(GeneralToken::Copy {
-                        length: length as u32,
-                        distance: distance as u32,
-                    })
+                    Ok(GeneralToken::Copy { length: length as u32, distance: distance as u32 })
                 }
                 _ => fail(format!("name-entry token {index} opcode differs")),
             }
@@ -188,9 +162,8 @@ fn tilemap(source: &Map<String, Value>) -> Result<Vec<u8>> {
     {
         return fail("name-entry tilemap layout differs");
     }
-    let rows = field(source, "tiles")?
-        .as_array()
-        .ok_or_else(|| Error("name-entry tilemap row extents differ".into()))?;
+    let rows =
+        field(source, "tiles")?.as_array().ok_or_else(|| Error("name-entry tilemap row extents differ".into()))?;
     if rows.len() != HEIGHT {
         return fail("name-entry tilemap row extents differ");
     }
@@ -198,9 +171,7 @@ fn tilemap(source: &Map<String, Value>) -> Result<Vec<u8>> {
     let vertical = coordinates(field(source, "vertical_flips")?, "vertical flips")?;
     let mut decoded = Vec::with_capacity(TILEMAP_BYTES);
     for (row_index, row) in rows.iter().enumerate() {
-        let values = row
-            .as_array()
-            .ok_or_else(|| Error("name-entry tilemap row extents differ".into()))?;
+        let values = row.as_array().ok_or_else(|| Error("name-entry tilemap row extents differ".into()))?;
         if values.len() != WIDTH {
             return fail("name-entry tilemap row extents differ");
         }
@@ -219,8 +190,7 @@ fn tilemap(source: &Map<String, Value>) -> Result<Vec<u8>> {
             decoded.extend_from_slice(&(entry as u16).to_le_bytes());
         }
     }
-    let encoded =
-        encode_general(&decoded, &tokens(field(source, "tokens")?)?).map_err(|e| Error(e.0))?;
+    let encoded = encode_general(&decoded, &tokens(field(source, "tokens")?)?).map_err(|e| Error(e.0))?;
     if align4(TILEMAP + encoded.len()) != TILE_POINTER {
         return fail("name-entry compressed stream does not reach its aligned pointer table");
     }
@@ -229,21 +199,11 @@ fn tilemap(source: &Map<String, Value>) -> Result<Vec<u8>> {
 
 pub fn build_namae_nyuuryoku(path: &Path) -> Result<Vec<u8>> {
     let text = fs::read_to_string(path).map_err(|e| Error(format!("{}: {e}", path.display())))?;
-    let value: Value =
-        serde_json::from_str(&text).map_err(|e| Error(format!("{}: {e}", path.display())))?;
+    let value: Value = serde_json::from_str(&text).map_err(|e| Error(format!("{}: {e}", path.display())))?;
     let source = object(&value, "name-entry source")?;
     exact_keys(
         source,
-        &[
-            "format",
-            "kind",
-            "address",
-            "end",
-            "resource_ids",
-            "tilemap",
-            "ui_tile_address",
-            "next_code_address",
-        ],
+        &["format", "kind", "address", "end", "resource_ids", "tilemap", "ui_tile_address", "next_code_address"],
         "name-entry source",
     )?;
     if number(field(source, "format")?, "format")? != 1
@@ -255,9 +215,8 @@ pub fn build_namae_nyuuryoku(path: &Path) -> Result<Vec<u8>> {
     {
         return fail("name-entry source metadata differs");
     }
-    let ids = field(source, "resource_ids")?
-        .as_array()
-        .ok_or_else(|| Error("name-entry resource IDs differ".into()))?;
+    let ids =
+        field(source, "resource_ids")?.as_array().ok_or_else(|| Error("name-entry resource IDs differ".into()))?;
     let expected = ["0x05a", "0x05b", "0x05c", "0x05d"];
     if ids.len() != expected.len() || ids.iter().zip(expected).any(|(v, e)| v.as_str() != Some(e)) {
         return fail("name-entry source metadata differs");
@@ -270,18 +229,13 @@ pub fn build_namae_nyuuryoku(path: &Path) -> Result<Vec<u8>> {
     }
     let start = TILEMAP - ADDRESS;
     output[start..start + encoded.len()].copy_from_slice(&encoded);
-    output[TILE_POINTER - ADDRESS..TILE_POINTER - ADDRESS + 4]
-        .copy_from_slice(&(UI_TILE as u32).to_le_bytes());
+    output[TILE_POINTER - ADDRESS..TILE_POINTER - ADDRESS + 4].copy_from_slice(&(UI_TILE as u32).to_le_bytes());
     Ok(output)
 }
 
 pub fn verify_namae_nyuuryoku(rom: &[u8], source: &Path) -> Result<()> {
-    let start = ADDRESS
-        .checked_sub(ROM_BASE)
-        .ok_or_else(|| Error("ROM address is invalid".into()))?;
-    let expected = rom
-        .get(start..start + SIZE)
-        .ok_or_else(|| Error("ROM is too small for name-entry data".into()))?;
+    let start = ADDRESS.checked_sub(ROM_BASE).ok_or_else(|| Error("ROM address is invalid".into()))?;
+    let expected = rom.get(start..start + SIZE).ok_or_else(|| Error("ROM is too small for name-entry data".into()))?;
     let built = build_namae_nyuuryoku(source)?;
     if built != expected {
         return fail("name-entry package differs from ROM");
@@ -290,8 +244,7 @@ pub fn verify_namae_nyuuryoku(rom: &[u8], source: &Path) -> Result<()> {
 }
 
 pub fn self_test() -> Result<()> {
-    let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../assets/graphics/fonts_namae_nyuuryoku_gamen.json");
+    let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../assets/graphics/fonts_namae_nyuuryoku_gamen.json");
     if path.exists() && build_namae_nyuuryoku(&path)?.len() != SIZE {
         return fail("name-entry package size differs");
     }

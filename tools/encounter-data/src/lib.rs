@@ -98,14 +98,7 @@ fn js_string_to_number(text: &str) -> f64 {
         }
         Some(total)
     };
-    for (prefix, base) in [
-        ("0x", 16),
-        ("0X", 16),
-        ("0o", 8),
-        ("0O", 8),
-        ("0b", 2),
-        ("0B", 2),
-    ] {
+    for (prefix, base) in [("0x", 16), ("0X", 16), ("0o", 8), ("0O", 8), ("0b", 2), ("0B", 2)] {
         if let Some(parsed) = radix(prefix, base) {
             return parsed;
         }
@@ -115,10 +108,7 @@ fn js_string_to_number(text: &str) -> f64 {
         "-Infinity" => return f64::NEG_INFINITY,
         _ => {}
     }
-    if trimmed
-        .chars()
-        .any(|c| !matches!(c, '0'..='9' | '+' | '-' | '.' | 'e' | 'E'))
-    {
+    if trimmed.chars().any(|c| !matches!(c, '0'..='9' | '+' | '-' | '.' | 'e' | 'E')) {
         return f64::NAN;
     }
     trimmed.parse::<f64>().unwrap_or(f64::NAN)
@@ -127,8 +117,7 @@ fn js_string_to_number(text: &str) -> f64 {
 fn document(path: &str) -> Result<Map<String, Value>> {
     let bytes = std::fs::read(path).map_err(|e| format!("{path}: {e}"))?;
     let text = String::from_utf8_lossy(&bytes);
-    let parsed: Value =
-        serde_json::from_str(&text).map_err(|e| format!("{path}: invalid JSON: {e}"))?;
+    let parsed: Value = serde_json::from_str(&text).map_err(|e| format!("{path}: invalid JSON: {e}"))?;
     let Value::Object(parsed) = parsed else {
         return Err(format!("{path}: source must be an object"));
     };
@@ -157,12 +146,7 @@ fn exact_keys(value: &Map<String, Value>, keys: &[&str], name: &str) -> Result<(
     Ok(())
 }
 
-fn checked_extent(
-    source: &Map<String, Value>,
-    address: usize,
-    size: usize,
-    name: &str,
-) -> Result<()> {
+fn checked_extent(source: &Map<String, Value>, address: usize, size: usize, name: &str) -> Result<()> {
     let actual_address = source.get("address").map_or(f64::NAN, js_number);
     let actual_size = source.get("size").map_or(f64::NAN, js_number);
     if actual_address != address as f64 || actual_size != size as f64 {
@@ -179,40 +163,19 @@ fn flag_byte(value: Option<&Value>, name: &str) -> Result<u8> {
     let Some(Value::Bool(bit0)) = source.get("bit0") else {
         return Err(format!("{name} bit0 is not boolean"));
     };
-    let middle = integer(
-        source.get("bits_1_4").unwrap_or(&Value::Null),
-        0,
-        0x0f,
-        &format!("{name} bits 1..4"),
-    )?;
-    let high = integer(
-        source.get("bits_5_7").unwrap_or(&Value::Null),
-        0,
-        0x07,
-        &format!("{name} bits 5..7"),
-    )?;
+    let middle = integer(source.get("bits_1_4").unwrap_or(&Value::Null), 0, 0x0f, &format!("{name} bits 1..4"))?;
+    let high = integer(source.get("bits_5_7").unwrap_or(&Value::Null), 0, 0x07, &format!("{name} bits 5..7"))?;
     Ok((u8::from(*bit0)) | (middle as u8) << 1 | (high as u8) << 5)
 }
 
 pub fn build_brightness_curve(path: &str) -> Result<Vec<u8>> {
     let source = document(path)?;
-    exact_keys(
-        &source,
-        &["format", "address", "size", "phases"],
-        "brightness curve",
-    )?;
-    checked_extent(
-        &source,
-        BRIGHTNESS_CURVE_ADDRESS,
-        BRIGHTNESS_CURVE_SIZE,
-        "brightness curve",
-    )?;
+    exact_keys(&source, &["format", "address", "size", "phases"], "brightness curve")?;
+    checked_extent(&source, BRIGHTNESS_CURVE_ADDRESS, BRIGHTNESS_CURVE_SIZE, "brightness curve")?;
     let phases = match source.get("phases") {
         Some(Value::Array(phases))
             if phases.len() == 2
-                && phases
-                    .iter()
-                    .all(|phase| matches!(phase, Value::Array(steps) if steps.len() == 16)) =>
+                && phases.iter().all(|phase| matches!(phase, Value::Array(steps) if steps.len() == 16)) =>
         {
             phases
         }
@@ -258,12 +221,7 @@ pub fn build_encounter_tables(path: &str) -> Result<Vec<u8>> {
         ],
         "encounter tables",
     )?;
-    checked_extent(
-        &source,
-        ENCOUNTER_TABLE_ADDRESS,
-        ENCOUNTER_TABLE_SIZE,
-        "encounter tables",
-    )?;
+    checked_extent(&source, ENCOUNTER_TABLE_ADDRESS, ENCOUNTER_TABLE_SIZE, "encounter tables")?;
     if !js_strict_int(source.get("formation_record_size"), 16.0)
         || !js_strict_int(source.get("metadata_record_size"), 8.0)
     {
@@ -272,11 +230,7 @@ pub fn build_encounter_tables(path: &str) -> Result<Vec<u8>> {
 
     let source_formations = match source.get("formations") {
         Some(Value::Array(items)) if items.len() == FORMATION_COUNT => items,
-        _ => {
-            return Err(format!(
-                "encounter source requires {FORMATION_COUNT} formations"
-            ))
-        }
+        _ => return Err(format!("encounter source requires {FORMATION_COUNT} formations")),
     };
     let mut formations = vec![0u8; FORMATION_COUNT * 16];
     for (index, formation) in source_formations.iter().enumerate() {
@@ -288,8 +242,7 @@ pub fn build_encounter_tables(path: &str) -> Result<Vec<u8>> {
             _ => return Err(format!("formation {index} has invalid slots")),
         };
         let offset = index * 16;
-        formations[offset] =
-            integer(&items[0], 0, 0xff, &format!("formation {index} layout"))? as u8;
+        formations[offset] = integer(&items[0], 0, 0xff, &format!("formation {index} layout"))? as u8;
         for (slot_index, slot) in items[1..].iter().enumerate() {
             let (member, minimum, maximum) = slot_triple(slot, &format!("formation {index}"))?;
             formations[offset + 1 + slot_index] = member as u8;
@@ -300,11 +253,7 @@ pub fn build_encounter_tables(path: &str) -> Result<Vec<u8>> {
 
     let source_preload = match source.get("preload_ids") {
         Some(Value::Array(items)) if items.len() == PRELOAD_COUNT => items,
-        _ => {
-            return Err(format!(
-                "encounter source requires {PRELOAD_COUNT} preload IDs"
-            ))
-        }
+        _ => return Err(format!("encounter source requires {PRELOAD_COUNT} preload IDs")),
     };
     let mut preload = vec![0u8; PRELOAD_COUNT * 2];
     for (index, value) in source_preload.iter().enumerate() {
@@ -314,11 +263,7 @@ pub fn build_encounter_tables(path: &str) -> Result<Vec<u8>> {
 
     let source_metadata = match source.get("metadata") {
         Some(Value::Array(items)) if items.len() == METADATA_COUNT => items,
-        _ => {
-            return Err(format!(
-                "encounter source requires {METADATA_COUNT} metadata records"
-            ))
-        }
+        _ => return Err(format!("encounter source requires {METADATA_COUNT} metadata records")),
     };
     let mut metadata = vec![0u8; METADATA_COUNT * 8];
     for (index, entry) in source_metadata.iter().enumerate() {
@@ -327,21 +272,12 @@ pub fn build_encounter_tables(path: &str) -> Result<Vec<u8>> {
         };
         let at = |slot: usize| items.get(slot);
         let offset = index * 8;
-        let value = integer(
-            at(0).unwrap_or(&Value::Null),
-            0,
-            0xffff,
-            &format!("metadata {index} value"),
-        )? as u16;
+        let value = integer(at(0).unwrap_or(&Value::Null), 0, 0xffff, &format!("metadata {index} value"))? as u16;
         metadata[offset..offset + 2].copy_from_slice(&value.to_le_bytes());
         metadata[offset + 2] = flag_byte(at(1), &format!("metadata {index} flags 0"))?;
         metadata[offset + 3] = flag_byte(at(2), &format!("metadata {index} flags 1"))?;
-        metadata[offset + 4] = integer(
-            at(3).unwrap_or(&Value::Null),
-            0,
-            0xff,
-            &format!("metadata {index} attribute 4"),
-        )? as u8;
+        metadata[offset + 4] =
+            integer(at(3).unwrap_or(&Value::Null), 0, 0xff, &format!("metadata {index} attribute 4"))? as u8;
     }
 
     let mut output = formations;
@@ -355,19 +291,9 @@ pub fn build_encounter_tables(path: &str) -> Result<Vec<u8>> {
 
 pub fn build_alignment(path: &str) -> Result<Vec<u8>> {
     let source = document(path)?;
-    exact_keys(
-        &source,
-        &["format", "address", "size", "end", "fill"],
-        "encounter alignment",
-    )?;
-    checked_extent(
-        &source,
-        ALIGNMENT_ADDRESS,
-        ALIGNMENT_SIZE,
-        "encounter alignment",
-    )?;
-    if source.get("end").map_or(f64::NAN, js_number) != ALIGNMENT_END as f64
-        || !js_strict_int(source.get("fill"), 0.0)
+    exact_keys(&source, &["format", "address", "size", "end", "fill"], "encounter alignment")?;
+    checked_extent(&source, ALIGNMENT_ADDRESS, ALIGNMENT_SIZE, "encounter alignment")?;
+    if source.get("end").map_or(f64::NAN, js_number) != ALIGNMENT_END as f64 || !js_strict_int(source.get("fill"), 0.0)
     {
         return Err("encounter alignment boundary differs".to_string());
     }
@@ -377,24 +303,9 @@ pub fn build_alignment(path: &str) -> Result<Vec<u8>> {
 pub fn build_encounter_regions(directory: &str) -> Result<Vec<EncounterRegion>> {
     type Builder = fn(&str) -> Result<Vec<u8>>;
     let sources: [(usize, usize, &'static str, Builder); 3] = [
-        (
-            BRIGHTNESS_CURVE_ADDRESS,
-            BRIGHTNESS_CURVE_SIZE,
-            "brightness_curve.json",
-            build_brightness_curve,
-        ),
-        (
-            ENCOUNTER_TABLE_ADDRESS,
-            ENCOUNTER_TABLE_SIZE,
-            "encounter_tables.json",
-            build_encounter_tables,
-        ),
-        (
-            ALIGNMENT_ADDRESS,
-            ALIGNMENT_SIZE,
-            "alignment.json",
-            build_alignment,
-        ),
+        (BRIGHTNESS_CURVE_ADDRESS, BRIGHTNESS_CURVE_SIZE, "brightness_curve.json", build_brightness_curve),
+        (ENCOUNTER_TABLE_ADDRESS, ENCOUNTER_TABLE_SIZE, "encounter_tables.json", build_encounter_tables),
+        (ALIGNMENT_ADDRESS, ALIGNMENT_SIZE, "alignment.json", build_alignment),
     ];
     let mut regions = Vec::with_capacity(3);
     for (address, size, source, builder) in sources {
@@ -402,12 +313,7 @@ pub fn build_encounter_regions(directory: &str) -> Result<Vec<EncounterRegion>> 
         if data.len() != size {
             return Err(format!("{source}: built size differs"));
         }
-        regions.push(EncounterRegion {
-            address,
-            size,
-            source,
-            data,
-        });
+        regions.push(EncounterRegion { address, size, source, data });
     }
     Ok(regions)
 }

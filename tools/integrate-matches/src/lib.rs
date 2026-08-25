@@ -46,9 +46,7 @@ fn pattern(name: &str) -> &'static Regex {
         "address" => ADDRESS.get_or_init(|| Regex::new(r"^08[0-9a-f]{6}$").unwrap()),
         "candidate" => CANDIDATE.get_or_init(|| Regex::new(r"^src_.*\.c$").unwrap()),
         "symbol" => SYMBOL.get_or_init(|| Regex::new(r"^Func_[0-9a-f]{8}$").unwrap()),
-        "helper" => {
-            HELPER.get_or_init(|| Regex::new(r"(?m)(?:inline_fn|^(?:static|inline)\b)").unwrap())
-        }
+        "helper" => HELPER.get_or_init(|| Regex::new(r"(?m)(?:inline_fn|^(?:static|inline)\b)").unwrap()),
         _ => unreachable!(),
     }
 }
@@ -88,20 +86,11 @@ fn argv(parts: &[&str]) -> Vec<String> {
 }
 
 fn assemble(object: &str, listing: &str) -> Vec<String> {
-    argv(&[
-        "arm-none-eabi-as",
-        "-mcpu=arm7tdmi",
-        "-mthumb-interwork",
-        "-o",
-        object,
-        listing,
-    ])
+    argv(&["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", object, listing])
 }
 
 fn linked_extent(output: &str, target: &str, address: u64, length: usize) -> Result<usize, String> {
-    let limit = address
-        .checked_add(length as u64)
-        .ok_or_else(|| "compiled function extent differs".to_string())?;
+    let limit = address.checked_add(length as u64).ok_or_else(|| "compiled function extent differs".to_string())?;
     let mut entries = Vec::new();
     for line in output.lines() {
         let fields: Vec<_> = line.split_whitespace().collect();
@@ -122,12 +111,8 @@ fn linked_extent(output: &str, target: &str, address: u64, length: usize) -> Res
             entries.push((start, end, name));
         }
     }
-    if !entries
-        .iter()
-        .any(|(start, _, name)| *start == address && *name == target)
-        || entries
-            .iter()
-            .any(|(_, end, _)| *end <= address || *end > limit)
+    if !entries.iter().any(|(start, _, name)| *start == address && *name == target)
+        || entries.iter().any(|(_, end, _)| *end <= address || *end > limit)
     {
         return Err("compiled function extent differs".to_string());
     }
@@ -142,21 +127,11 @@ fn first_difference(left: &[u8], right: &[u8]) -> Option<usize> {
         .or_else(|| (left.len() != right.len()).then_some(left.len().min(right.len())))
 }
 
-fn linked_bytes(
-    stem: &str,
-    source: &Path,
-    scratch: &Path,
-    kind: Kind,
-    repository: &Path,
-) -> Result<Vec<u8>, String> {
-    let address = parse_hex(stem)
-        .filter(|_| valid_address(stem))
-        .ok_or_else(|| "invalid source address".to_string())?;
+fn linked_bytes(stem: &str, source: &Path, scratch: &Path, kind: Kind, repository: &Path) -> Result<Vec<u8>, String> {
+    let address =
+        parse_hex(stem).filter(|_| valid_address(stem)).ok_or_else(|| "invalid source address".to_string())?;
     fs::create_dir_all(scratch).map_err(|error| format!("{}: {error}", scratch.display()))?;
-    let prefix = scratch.join(format!(
-        "{stem}.{}probe",
-        if kind == Kind::Asm { "asm" } else { "c" }
-    ));
+    let prefix = scratch.join(format!("{stem}.{}probe", if kind == Kind::Asm { "asm" } else { "c" }));
     let prefix = prefix.to_string_lossy().into_owned();
     let listing = format!("{prefix}.s");
     let object = format!("{prefix}.o");
@@ -173,11 +148,7 @@ fn linked_bytes(
         for step in source_to_assembly_plan(&options)?.steps {
             let result = command(&step.command, root())?;
             if result.code != 0 {
-                return Err(format!(
-                    "{} failed: {}",
-                    step.kind.as_str(),
-                    command_error(&result)
-                ));
+                return Err(format!("{} failed: {}", step.kind.as_str(), command_error(&result)));
             }
         }
     } else {
@@ -192,11 +163,8 @@ fn linked_bytes(
     if undefined.code != 0 {
         return Err(format!("nm failed: {}", command_error(&undefined)));
     }
-    let names: Vec<String> = undefined
-        .stdout
-        .lines()
-        .filter_map(|line| line.split_whitespace().last().map(str::to_owned))
-        .collect();
+    let names: Vec<String> =
+        undefined.stdout.lines().filter_map(|line| line.split_whitespace().last().map(str::to_owned)).collect();
     for name in &names {
         if external_symbol(name, CALL_VIA_BASE).is_none() {
             return Err(format!("unsupported external symbol {name}"));
@@ -212,10 +180,7 @@ fn linked_bytes(
     fs::write(&symbols_source, text).map_err(|error| format!("{symbols_source}: {error}"))?;
     let result = command(&assemble(&symbols_object, &symbols_source), root())?;
     if result.code != 0 {
-        return Err(format!(
-            "symbol assembler failed: {}",
-            command_error(&result)
-        ));
+        return Err(format!("symbol assembler failed: {}", command_error(&result)));
     }
 
     let address_text = format!("{address:08x}");
@@ -237,18 +202,7 @@ fn linked_bytes(
     if result.code != 0 {
         return Err(format!("linker failed: {}", command_error(&result)));
     }
-    let result = command(
-        &argv(&[
-            "arm-none-eabi-objcopy",
-            "-O",
-            "binary",
-            "-j",
-            ".text",
-            &elf,
-            &binary,
-        ]),
-        root(),
-    )?;
+    let result = command(&argv(&["arm-none-eabi-objcopy", "-O", "binary", "-j", ".text", &elf, &binary]), root())?;
     if result.code != 0 {
         return Err(format!("objcopy failed: {}", command_error(&result)));
     }
@@ -256,19 +210,11 @@ fn linked_bytes(
     if kind == Kind::Asm {
         return Ok(bytes);
     }
-    let symbols = command(
-        &argv(&["arm-none-eabi-nm", "-S", "--defined-only", &elf]),
-        root(),
-    )?;
+    let symbols = command(&argv(&["arm-none-eabi-nm", "-S", "--defined-only", &elf]), root())?;
     if symbols.code != 0 {
         return Err(format!("nm failed: {}", command_error(&symbols)));
     }
-    let extent = linked_extent(
-        &symbols.stdout,
-        &format!("Func_{address_text}"),
-        address,
-        bytes.len(),
-    )?;
+    let extent = linked_extent(&symbols.stdout, &format!("Func_{address_text}"), address, bytes.len())?;
     Ok(bytes[..extent].to_vec())
 }
 
@@ -283,8 +229,7 @@ fn close_dossier(path: &Path, state: &str) -> Result<bool, String> {
     if !path.exists() {
         return Ok(false);
     }
-    let source =
-        fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
+    let source = fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
     let mut offset = 0;
     let mut updated = None;
     for line in source.split_inclusive('\n') {
@@ -292,13 +237,7 @@ fn close_dossier(path: &Path, state: &str) -> Result<bool, String> {
         let content = content.strip_suffix('\r').unwrap_or(content);
         if content.starts_with("State:") {
             let ending = &line[content.len()..];
-            updated = Some(format!(
-                "{}{}{}{}",
-                &source[..offset],
-                state,
-                ending,
-                &source[offset + line.len()..]
-            ));
+            updated = Some(format!("{}{}{}{}", &source[..offset], state, ending, &source[offset + line.len()..]));
             break;
         }
         offset += line.len();
@@ -324,21 +263,14 @@ fn cleanup(stem: &str, work_root: &Path, date: &str) -> Result<Cleanup, String> 
     let mut removed = 0;
     if work_root.exists() {
         let prefix = format!("{stem}.");
-        for entry in
-            fs::read_dir(work_root).map_err(|error| format!("{}: {error}", work_root.display()))?
-        {
+        for entry in fs::read_dir(work_root).map_err(|error| format!("{}: {error}", work_root.display()))? {
             let entry = entry.map_err(|error| format!("{}: {error}", work_root.display()))?;
-            if !entry
-                .file_type()
-                .map_err(|error| error.to_string())?
-                .is_file()
-            {
+            if !entry.file_type().map_err(|error| error.to_string())?.is_file() {
                 continue;
             }
             let name = entry.file_name().to_string_lossy().into_owned();
             if name.starts_with(&prefix) {
-                fs::remove_file(entry.path())
-                    .map_err(|error| format!("{}: {error}", entry.path().display()))?;
+                fs::remove_file(entry.path()).map_err(|error| format!("{}: {error}", entry.path().display()))?;
                 removed += 1;
             }
         }
@@ -349,10 +281,7 @@ fn cleanup(stem: &str, work_root: &Path, date: &str) -> Result<Cleanup, String> 
         removed += 1;
     }
     let dossier = work_root.join("walls").join(format!("{stem}.md"));
-    let closed = close_dossier(
-        &dossier,
-        &format!("State: CLOSED — {date}. Installed by `tools/integrate-matches`."),
-    )?;
+    let closed = close_dossier(&dossier, &format!("State: CLOSED — {date}. Installed by `tools/integrate-matches`."))?;
     Ok(Cleanup { removed, closed })
 }
 
@@ -380,9 +309,7 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<Vec<String>, String> {
     let gate = directory.join("gate");
     fs::create_dir_all(&gate).map_err(|error| format!("{}: {error}", gate.display()))?;
     let mut candidates = Vec::new();
-    for entry in
-        fs::read_dir(directory).map_err(|error| format!("{}: {error}", directory.display()))?
-    {
+    for entry in fs::read_dir(directory).map_err(|error| format!("{}: {error}", directory.display()))? {
         let entry = entry.map_err(|error| error.to_string())?;
         let name = entry.file_name().to_string_lossy().into_owned();
         if pattern("candidate").is_match(&name) {
@@ -393,10 +320,7 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<Vec<String>, String> {
     let mut accepted = Vec::new();
     let mut rejected = Vec::new();
     for name in candidates {
-        let stem = name
-            .strip_prefix("src_")
-            .and_then(|name| name.strip_suffix(".c"))
-            .unwrap();
+        let stem = name.strip_prefix("src_").and_then(|name| name.strip_suffix(".c")).unwrap();
         let owner = SourceOwner::parse(&format!("main:{stem}"))?;
         if source_paths.source_path(owner).exists() {
             continue;
@@ -421,11 +345,7 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<Vec<String>, String> {
             if let Some(offset) = first_difference(&wanted, &got) {
                 rejected.push((
                     stem.to_string(),
-                    format!(
-                        "bytes differ at +0x{offset:x} (asm={}B c={}B)",
-                        wanted.len(),
-                        got.len()
-                    ),
+                    format!("bytes differ at +0x{offset:x} (asm={}B c={}B)", wanted.len(), got.len()),
                 ));
             } else {
                 accepted.push((stem.to_string(), wanted.len()));
@@ -436,21 +356,16 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<Vec<String>, String> {
             rejected.push((stem.to_string(), error));
         }
     }
-    let mut lines = accepted
-        .iter()
-        .map(|(stem, size)| format!("accept {stem} ({size}B)"))
-        .collect::<Vec<_>>();
+    let mut lines = accepted.iter().map(|(stem, size)| format!("accept {stem} ({size}B)")).collect::<Vec<_>>();
     if apply {
         for (stem, _) in &accepted {
             let candidate = directory.join(format!("src_{stem}.c"));
             let owner = SourceOwner::parse(&format!("main:{stem}"))?;
             let exact = source_paths.registered_source_path(owner)?;
             if let Some(parent) = exact.parent() {
-                fs::create_dir_all(parent)
-                    .map_err(|error| format!("{}: {error}", parent.display()))?;
+                fs::create_dir_all(parent).map_err(|error| format!("{}: {error}", parent.display()))?;
             }
-            fs::copy(&candidate, &exact)
-                .map_err(|error| format!("{}: {error}", exact.display()))?;
+            fs::copy(&candidate, &exact).map_err(|error| format!("{}: {error}", exact.display()))?;
             let asm = repository.join("games/gs1/asm").join(format!("{stem}.s"));
             if asm.exists() {
                 fs::remove_file(&asm).map_err(|error| format!("{}: {error}", asm.display()))?;
@@ -462,20 +377,12 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<Vec<String>, String> {
                 lines.push(format!(
                     "clean {stem} scratch={} wall={}",
                     scratch.removed + draft.removed,
-                    if scratch.closed || draft.closed {
-                        "closed"
-                    } else {
-                        "absent"
-                    }
+                    if scratch.closed || draft.closed { "closed" } else { "absent" }
                 ));
             }
         }
     }
-    lines.extend(
-        rejected
-            .iter()
-            .map(|(stem, reason)| format!("reject {stem}: {reason}")),
-    );
+    lines.extend(rejected.iter().map(|(stem, reason)| format!("reject {stem}: {reason}")));
     lines.push(format!(
         "accepted={} rejected={}{}",
         accepted.len(),

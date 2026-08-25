@@ -23,8 +23,7 @@ pub fn entry(arguments: &[String]) {
     };
     let cwd = std::env::current_dir().unwrap_or_else(|error| fail(&format!("cwd: {error}")));
     let repository = root();
-    let summary = build(&options, &repository, &cwd.to_string_lossy())
-        .unwrap_or_else(|message| fail(&message));
+    let summary = build(&options, &repository, &cwd.to_string_lossy()).unwrap_or_else(|message| fail(&message));
 
     println!("{}", summary.summary_line());
     for failure in &summary.failures {

@@ -5,21 +5,14 @@ pub fn js_parse_int_radix(text: &str, radix: u32) -> f64 {
         text = &text[1..];
     }
     if radix == 16 {
-        text = text
-            .strip_prefix("0x")
-            .or_else(|| text.strip_prefix("0X"))
-            .unwrap_or(text);
+        text = text.strip_prefix("0x").or_else(|| text.strip_prefix("0X")).unwrap_or(text);
     }
-    let digits = text
-        .bytes()
-        .take_while(|byte| digit(*byte).is_some_and(|value| u32::from(value) < radix))
-        .count();
+    let digits = text.bytes().take_while(|byte| digit(*byte).is_some_and(|value| u32::from(value) < radix)).count();
     if digits == 0 {
         return f64::NAN;
     }
-    let value = text[..digits].bytes().fold(0.0, |value, byte| {
-        value * f64::from(radix) + f64::from(digit(byte).unwrap())
-    });
+    let value =
+        text[..digits].bytes().fold(0.0, |value, byte| value * f64::from(radix) + f64::from(digit(byte).unwrap()));
     if negative {
         -value
     } else {

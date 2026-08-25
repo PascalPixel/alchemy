@@ -40,32 +40,20 @@ fn json(path: &Path) -> Result<Value> {
     serde_json::from_slice(&bytes).map_err(|e| format!("{}: {e}", path.display()))
 }
 fn object<'a>(value: &'a Value, label: &str) -> Result<&'a Map<String, Value>> {
-    value
-        .as_object()
-        .ok_or_else(|| err(format!("{label} must be an object")))
+    value.as_object().ok_or_else(|| err(format!("{label} must be an object")))
 }
 fn field<'a>(value: &'a Map<String, Value>, name: &str) -> Result<&'a Value> {
-    value
-        .get(name)
-        .ok_or_else(|| err(format!("missing {name}")))
+    value.get(name).ok_or_else(|| err(format!("missing {name}")))
 }
 fn string(value: &Value, label: &str) -> Result<String> {
-    value
-        .as_str()
-        .map(str::to_owned)
-        .ok_or_else(|| err(format!("{label} must be a string")))
+    value.as_str().map(str::to_owned).ok_or_else(|| err(format!("{label} must be a string")))
 }
 fn parse_hex(value: &str, label: &str) -> Result<usize> {
-    let digits = value
-        .strip_prefix("0x")
-        .ok_or_else(|| err(format!("{label} is not canonical")))?;
+    let digits = value.strip_prefix("0x").ok_or_else(|| err(format!("{label} is not canonical")))?;
     usize::from_str_radix(digits, 16).map_err(|_| err(format!("{label} is not canonical")))
 }
 fn number(value: &Value, label: &str) -> Result<usize> {
-    value
-        .as_u64()
-        .map(|n| n as usize)
-        .ok_or_else(|| err(format!("{label} must be an integer")))
+    value.as_u64().map(|n| n as usize).ok_or_else(|| err(format!("{label} must be an integer")))
 }
 fn decode_hex(value: &str) -> Result<Vec<u8>> {
     if value.len() % 2 != 0 || !value.bytes().all(|b| b.is_ascii_hexdigit()) {
@@ -73,9 +61,7 @@ fn decode_hex(value: &str) -> Result<Vec<u8>> {
     }
     (0..value.len())
         .step_by(2)
-        .map(|i| {
-            u8::from_str_radix(&value[i..i + 2], 16).map_err(|_| err("invalid kind-2 lookahead"))
-        })
+        .map(|i| u8::from_str_radix(&value[i..i + 2], 16).map_err(|_| err("invalid kind-2 lookahead")))
         .collect()
 }
 fn child(root: &Path, name: &str) -> Result<PathBuf> {
@@ -156,10 +142,7 @@ fn put_length(bits: &mut BitWriter, length: usize) -> Result<()> {
     Ok(())
 }
 fn mtf_index(table: &mut Vec<u8>, value: u8) -> usize {
-    let index = table
-        .iter()
-        .position(|candidate| *candidate == value)
-        .unwrap_or(0);
+    let index = table.iter().position(|candidate| *candidate == value).unwrap_or(0);
     let selected = table.remove(index);
     table.insert(0, selected);
     index
@@ -242,9 +225,7 @@ fn parse_tokens(value: &Value) -> Result<Vec<Token>> {
             if let Some(width) = token.as_u64() {
                 return Ok(Token::Literal(width as usize));
             }
-            let pair = token
-                .as_array()
-                .ok_or_else(|| err(format!("invalid tag-2 token {index}")))?;
+            let pair = token.as_array().ok_or_else(|| err(format!("invalid tag-2 token {index}")))?;
             if pair.len() != 2 {
                 return Err(format!("invalid tag-2 token {index}"));
             }
@@ -270,10 +251,7 @@ fn parse_encoding_plan(path: &Path) -> Result<(usize, Vec<Token>, Vec<u8>, Optio
     if lookahead.len() > 3 {
         return Err("tag-2 lookahead is too long".into());
     }
-    let encoded_size = plan
-        .get("encoded_size")
-        .map(|value| number(value, "encoded_size"))
-        .transpose()?;
+    let encoded_size = plan.get("encoded_size").map(|value| number(value, "encoded_size")).transpose()?;
     Ok((decoded_size, tokens, lookahead, encoded_size))
 }
 
@@ -306,10 +284,7 @@ struct Plan {
 fn parse_plan(path: &Path) -> Result<Plan> {
     let value = json(path)?;
     let plan = object(&value, "kind-2 plan")?;
-    let id = parse_hex(
-        &string(field(plan, "resource_id")?, "resource_id")?,
-        "resource_id",
-    )?;
+    let id = parse_hex(&string(field(plan, "resource_id")?, "resource_id")?, "resource_id")?;
     let address = parse_hex(&string(field(plan, "address")?, "address")?, "address")?;
     let size = parse_hex(&string(field(plan, "size")?, "size")?, "size")?;
     let image = object(field(plan, "image")?, "kind-2 image")?;
@@ -317,21 +292,12 @@ fn parse_plan(path: &Path) -> Result<Plan> {
     let image_name = string(field(image, "source")?, "image source")?;
     let status = string(field(image, "status")?, "image status")?;
     let stream = object(field(plan, "stream")?, "kind-2 stream")?;
-    let encoded_size = parse_hex(
-        &string(field(stream, "encoded_size")?, "encoded_size")?,
-        "encoded_size",
-    )?;
-    let decoded_size = parse_hex(
-        &string(field(stream, "decoded_size")?, "decoded_size")?,
-        "decoded_size",
-    )?;
+    let encoded_size = parse_hex(&string(field(stream, "encoded_size")?, "encoded_size")?, "encoded_size")?;
+    let decoded_size = parse_hex(&string(field(stream, "decoded_size")?, "decoded_size")?, "decoded_size")?;
     let lookahead = decode_hex(&string(field(stream, "lookahead")?, "lookahead")?)?;
     let (prefix, palette_image) = match plan.get("prefix_palette") {
         Some(Value::Object(value)) => (
-            parse_hex(
-                &string(field(value, "size")?, "palette size")?,
-                "palette size",
-            )?,
+            parse_hex(&string(field(value, "size")?, "palette size")?, "palette size")?,
             Some(string(field(value, "source")?, "palette source")?),
         ),
         _ => (0, None),
@@ -357,18 +323,11 @@ fn parse_plan(path: &Path) -> Result<Plan> {
 
 pub fn build_kind2_resource(plan_path: &Path) -> Result<BuiltResource> {
     let plan = parse_plan(plan_path)?;
-    let directory = plan_path
-        .parent()
-        .ok_or_else(|| err("kind-2 plan has no parent"))?;
+    let directory = plan_path.parent().ok_or_else(|| err("kind-2 plan has no parent"))?;
     let image_path = child(directory, &plan.image)?;
     let image = read(&image_path)?;
     let decoded = if plan.encoding == "naiyou" {
-        indexed_png(&image)
-            .map_err(|e| e.0)?
-            .pixels
-            .into_iter()
-            .map(|pixel| pixel as u8)
-            .collect::<Vec<_>>()
+        indexed_png(&image).map_err(|e| e.0)?.pixels.into_iter().map(|pixel| pixel as u8).collect::<Vec<_>>()
     } else {
         let bpp = match plan.encoding.as_str() {
             "koma-4bpp" => 4.0,
@@ -377,21 +336,12 @@ pub fn build_kind2_resource(plan_path: &Path) -> Result<BuiltResource> {
         };
         gba_graphics(&image, bpp).map_err(|e| e.0)?.0
     };
-    if decoded.len() < plan.decoded_size
-        || decoded[plan.decoded_size..].iter().any(|byte| *byte != 0)
-    {
+    if decoded.len() < plan.decoded_size || decoded[plan.decoded_size..].iter().any(|byte| *byte != 0) {
         return Err("kind-2 image has nonzero data outside its decoded stream".into());
     }
-    let palette_path = plan
-        .palette_image
-        .as_deref()
-        .map(|name| child(directory, name))
-        .transpose()?;
-    let prefix = if let Some(path) = &palette_path {
-        gba_palette_rgba(&read(path)?).map_err(|e| e.0)?.0
-    } else {
-        Vec::new()
-    };
+    let palette_path = plan.palette_image.as_deref().map(|name| child(directory, name)).transpose()?;
+    let prefix =
+        if let Some(path) = &palette_path { gba_palette_rgba(&read(path)?).map_err(|e| e.0)?.0 } else { Vec::new() };
     if prefix.len() != plan.prefix {
         return Err("kind-2 palette source has the wrong size".into());
     }
@@ -424,19 +374,15 @@ pub fn build_kind2_series(index_path: &Path) -> Result<Vec<BuiltResource>> {
     if field(index, "kind")?.as_str() != Some("golden-sun-kind2-resource-series") {
         return Err("unsupported kind-2 series index".into());
     }
-    let directory = index_path
-        .parent()
-        .ok_or_else(|| err("kind-2 index has no parent"))?;
-    let entries = field(index, "resources")?
-        .as_array()
-        .ok_or_else(|| err("kind-2 index resources must be an array"))?;
+    let directory = index_path.parent().ok_or_else(|| err("kind-2 index has no parent"))?;
+    let entries =
+        field(index, "resources")?.as_array().ok_or_else(|| err("kind-2 index resources must be an array"))?;
     entries
         .iter()
         .map(|entry| {
             let entry = object(entry, "kind-2 index entry")?;
             let id = parse_hex(&string(field(entry, "id")?, "id")?, "id")?;
-            let plan_path =
-                indexed_child(directory, &string(field(entry, "source")?, "source")?, id)?;
+            let plan_path = indexed_child(directory, &string(field(entry, "source")?, "source")?, id)?;
             let built = build_kind2_resource(&plan_path)?;
             let address = parse_hex(&string(field(entry, "address")?, "address")?, "address")?;
             let size = parse_hex(&string(field(entry, "size")?, "size")?, "size")?;
@@ -450,9 +396,7 @@ pub fn build_kind2_series(index_path: &Path) -> Result<Vec<BuiltResource>> {
 
 fn range(rom: &[u8], address: usize, size: usize) -> Result<&[u8]> {
     rom.get(
-        address
-            .checked_sub(ROM_BASE)
-            .ok_or_else(|| err("kind-2 range is outside the ROM"))?
+        address.checked_sub(ROM_BASE).ok_or_else(|| err("kind-2 range is outside the ROM"))?
             ..address.checked_sub(ROM_BASE).unwrap() + size,
     )
     .ok_or_else(|| err("kind-2 range is outside the ROM"))
@@ -463,45 +407,27 @@ pub fn verify_kind2_series(rom_path: &Path, index_path: &Path) -> Result<String>
     let mut bytes = 0;
     for resource in &built {
         if range(&rom, resource.address, resource.data.len())? != resource.data {
-            return Err(format!(
-                "kind-2 resource 0x{:03x} differs from ROM",
-                resource.id
-            ));
+            return Err(format!("kind-2 resource 0x{:03x} differs from ROM", resource.id));
         }
         bytes += resource.data.len();
     }
-    Ok(format!(
-        "identical=true resources={} source_bytes={bytes}",
-        built.len()
-    ))
+    Ok(format!("identical=true resources={} source_bytes={bytes}", built.len()))
 }
 pub fn verify_kind2_resource(rom_path: &Path, plan_path: &Path) -> Result<String> {
     let rom = read(rom_path)?;
     let built = build_kind2_resource(plan_path)?;
     if range(&rom, built.address, built.data.len())? != built.data {
-        return Err(format!(
-            "kind-2 resource 0x{:03x} differs from ROM",
-            built.id
-        ));
+        return Err(format!("kind-2 resource 0x{:03x} differs from ROM", built.id));
     }
-    Ok(format!(
-        "identical=true resource=0x{:03x} source_bytes={}",
-        built.id,
-        built.data.len()
-    ))
+    Ok(format!("identical=true resource=0x{:03x} source_bytes={}", built.id, built.data.len()))
 }
 pub fn self_test() -> Result<()> {
-    let prefix: Vec<u8> = (0..32)
-        .map(|index| ((index * 37 + 11) & 255) as u8)
-        .collect();
+    let prefix: Vec<u8> = (0..32).map(|index| ((index * 37 + 11) & 255) as u8).collect();
     let mut decoded = prefix.clone();
     decoded.extend_from_slice(&prefix[16..]);
     decoded.extend_from_slice(&prefix[16..]);
     let mut tokens = vec![Token::Literal(4); 32];
-    tokens.push(Token::Copy {
-        distance: 16,
-        length: 32,
-    });
+    tokens.push(Token::Copy { distance: 16, length: 32 });
     let encoded = encode_kind2(&decoded, &tokens, &[0xa5, 0x5a])?;
     if encoded.first() != Some(&2) || encoded.len() <= 3 {
         return Err("kind-2 codec self-test failed".into());
@@ -510,18 +436,12 @@ pub fn self_test() -> Result<()> {
 }
 pub fn write_build_stdout(plan: &Path) -> Result<()> {
     let built = build_kind2_resource(plan)?;
-    std::io::stdout()
-        .write_all(&built.data)
-        .map_err(|e| e.to_string())
+    std::io::stdout().write_all(&built.data).map_err(|e| e.to_string())
 }
 
 pub fn write_encode_stdout(plan: &Path) -> Result<()> {
     let mut decoded = Vec::new();
-    std::io::stdin()
-        .read_to_end(&mut decoded)
-        .map_err(|e| e.to_string())?;
+    std::io::stdin().read_to_end(&mut decoded).map_err(|e| e.to_string())?;
     let encoded = encode_kind2_plan(&decoded, plan)?;
-    std::io::stdout()
-        .write_all(&encoded)
-        .map_err(|e| e.to_string())
+    std::io::stdout().write_all(&encoded).map_err(|e| e.to_string())
 }

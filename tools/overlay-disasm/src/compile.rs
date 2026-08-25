@@ -1,8 +1,6 @@
 use crate::paths::{basename, root, OverlaySource};
 use crate::regex::Regex;
-use compiler_core::plan::{
-    source_to_assembly_plan, CompilerFlagMutations, SourceToAssemblyPlanOptions,
-};
+use compiler_core::plan::{source_to_assembly_plan, CompilerFlagMutations, SourceToAssemblyPlanOptions};
 use compiler_core::routing::CompilerTarget;
 use compiler_core::sha256;
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
@@ -57,10 +55,7 @@ pub fn bias_in_image_label_words(assembly: &str) -> BiasResult {
             None => out.push((*line).to_string()),
         }
     }
-    BiasResult {
-        text: out.join("\n"),
-        biased,
-    }
+    BiasResult { text: out.join("\n"), biased }
 }
 pub fn overlay_c_cache_dir() -> PathBuf {
     match std::env::var_os("ALCHEMY_OVERLAY_C_CACHE") {
@@ -94,10 +89,7 @@ pub fn self_digest() -> String {
     for part in LINKED_POSTPROCESS_SOURCE {
         stream.extend_from_slice(part);
     }
-    assert!(
-        !stream.is_empty(),
-        "overlay_disasm read an EMPTY source; refusing to key the cache"
-    );
+    assert!(!stream.is_empty(), "overlay_disasm read an EMPTY source; refusing to key the cache");
     let digest = sha256::hex(&stream);
     *slot = Some(digest.clone());
     digest
@@ -126,9 +118,7 @@ fn plan_stamp(commands: &[Vec<String>], work: &str) -> String {
     }
     let stamp = sha256::hex(&stream);
     let mut guard = MEMO.lock().expect("plan-stamp lock");
-    guard
-        .get_or_insert_with(BTreeMap::new)
-        .insert(identity, stamp.clone());
+    guard.get_or_insert_with(BTreeMap::new).insert(identity, stamp.clone());
     stamp
 }
 fn append_frame(stream: &mut Vec<u8>, bytes: &[u8]) {
@@ -142,11 +132,7 @@ fn command_identity(commands: &[Vec<String>], work: &str) -> Vec<u8> {
     for command in commands {
         identity.extend_from_slice(&(command.len() as u64).to_be_bytes());
         for part in command {
-            let normalized = if part.starts_with(work) {
-                "<work>"
-            } else {
-                part
-            };
+            let normalized = if part.starts_with(work) { "<work>" } else { part };
             append_frame(&mut identity, normalized.as_bytes());
         }
     }
@@ -202,10 +188,7 @@ fn address_stem(path: &Path, overlay: &str) -> Result<(SourceOwner, String, i64)
     let display = path.to_string_lossy().to_string();
     let name = basename(&display);
     let stem = name.strip_suffix(".c").unwrap_or(name);
-    let tail = stem
-        .rsplit_once("_c_")
-        .map(|(_, tail)| tail)
-        .unwrap_or(stem);
+    let tail = stem.rsplit_once("_c_").map(|(_, tail)| tail).unwrap_or(stem);
     if tail.len() != 8 || !tail.bytes().all(|b| b.is_ascii_hexdigit()) {
         return Err(format!("overlay C filename is not an address: {display}"));
     }
@@ -216,10 +199,7 @@ fn address_stem(path: &Path, overlay: &str) -> Result<(SourceOwner, String, i64)
         .ok_or_else(|| format!("invalid overlay owner {overlay:?}"))?;
     let owner = SourceOwner::from_legacy_stem(stem)
         .filter(|owner| owner.overlay_id().as_deref() == Some(overlay))
-        .unwrap_or(SourceOwner::Overlay {
-            resource,
-            address: address as u32,
-        });
+        .unwrap_or(SourceOwner::Overlay { resource, address: address as u32 });
     Ok((owner, tail.to_ascii_lowercase(), address))
 }
 fn checked(command: &[String], cwd: &Path) -> Result<String, String> {
@@ -235,24 +215,15 @@ fn checked(command: &[String], cwd: &Path) -> Result<String, String> {
     if output.status.code() != Some(0) {
         let stderr = String::from_utf8_lossy(&output.stderr).to_string();
         let detail = crate::regex::js_trim(if stderr.is_empty() { &stdout } else { &stderr });
-        let suffix = if detail.is_empty() {
-            String::new()
-        } else {
-            format!(": {detail}")
-        };
+        let suffix = if detail.is_empty() { String::new() } else { format!(": {detail}") };
         return Err(format!("{} failed{suffix}", basename(binary)));
     }
     Ok(stdout)
 }
 pub(crate) fn spawn_raw(command: &[String], cwd: &Path) -> Result<Vec<u8>, String> {
-    let (binary, rest) = command
-        .split_first()
-        .ok_or_else(|| "empty command".to_string())?;
-    let output = Command::new(binary)
-        .args(rest)
-        .current_dir(cwd)
-        .output()
-        .map_err(|error| format!("{binary}: {error}"))?;
+    let (binary, rest) = command.split_first().ok_or_else(|| "empty command".to_string())?;
+    let output =
+        Command::new(binary).args(rest).current_dir(cwd).output().map_err(|error| format!("{binary}: {error}"))?;
     if output.status.code() != Some(0) {
         return Err(crate::regex::js_trim(&String::from_utf8_lossy(&output.stderr)).to_string());
     }
@@ -263,21 +234,13 @@ pub struct Compiled {
     pub address: i64,
     pub data: Vec<u8>,
 }
-const OVERLAY_HOST_TOOLS: [&str; 4] = [
-    "arm-none-eabi-as",
-    "arm-none-eabi-nm",
-    "arm-none-eabi-ld",
-    "arm-none-eabi-objcopy",
-];
+const OVERLAY_HOST_TOOLS: [&str; 4] =
+    ["arm-none-eabi-as", "arm-none-eabi-nm", "arm-none-eabi-ld", "arm-none-eabi-objcopy"];
 fn cache_record_path(cached: &Path) -> PathBuf {
     cached.with_extension("record")
 }
 fn cache_record(data: &[u8]) -> String {
-    format!(
-        "overlay-c-cache-v1\n{}\n{}\n",
-        data.len(),
-        sha256::hex(data)
-    )
+    format!("overlay-c-cache-v1\n{}\n{}\n", data.len(), sha256::hex(data))
 }
 fn read_valid_cache_entry(cached: &Path) -> Option<Vec<u8>> {
     let data = fs::read(cached).ok()?;
@@ -288,21 +251,14 @@ fn read_valid_cache_entry(cached: &Path) -> Option<Vec<u8>> {
     }
     let size = lines.next()?.parse::<usize>().ok()?;
     let digest = lines.next()?;
-    if lines.next().is_some()
-        || size != data.len()
-        || digest.len() != 64
-        || digest != sha256::hex(&data)
-    {
+    if lines.next().is_some() || size != data.len() || digest.len() != 64 || digest != sha256::hex(&data) {
         return None;
     }
     Some(data)
 }
 fn publish_cache_entry(cached: &Path, data: &[u8]) {
     if cache_entry::write_cache_entry_atomically(cached, data).is_ok() {
-        let _ = cache_entry::write_cache_entry_atomically(
-            &cache_record_path(cached),
-            cache_record(data).as_bytes(),
-        );
+        let _ = cache_entry::write_cache_entry_atomically(&cache_record_path(cached), cache_record(data).as_bytes());
     }
 }
 fn overlay_cache_key(
@@ -357,13 +313,11 @@ fn collect_source_inputs(
     seen: &mut BTreeSet<PathBuf>,
     inputs: &mut Vec<(PathBuf, Vec<u8>)>,
 ) -> Result<(), String> {
-    let canonical =
-        fs::canonicalize(path).map_err(|error| format!("{}: {error}", path.display()))?;
+    let canonical = fs::canonicalize(path).map_err(|error| format!("{}: {error}", path.display()))?;
     if !seen.insert(canonical.clone()) {
         return Ok(());
     }
-    let bytes =
-        fs::read(&canonical).map_err(|error| format!("{}: {error}", canonical.display()))?;
+    let bytes = fs::read(&canonical).map_err(|error| format!("{}: {error}", canonical.display()))?;
     let text = String::from_utf8_lossy(&bytes);
     let mut includes = Vec::new();
     for include in text.lines().filter_map(quoted_include) {
@@ -386,12 +340,7 @@ fn collect_source_inputs(
 fn source_input_signature(source: &Path, commands: &[Vec<String>]) -> Result<Vec<u8>, String> {
     let mut seen = BTreeSet::new();
     let mut inputs = Vec::new();
-    collect_source_inputs(
-        source,
-        &compiler_include_dirs(commands),
-        &mut seen,
-        &mut inputs,
-    )?;
+    collect_source_inputs(source, &compiler_include_dirs(commands), &mut seen, &mut inputs)?;
     let mut stream = Vec::new();
     for (path, bytes) in inputs {
         append_frame(&mut stream, path.to_string_lossy().as_bytes());
@@ -425,9 +374,7 @@ fn aliases_for_symbol(text: &str, symbol: &str) -> Vec<String> {
 }
 fn source_defines_symbol(text: &str, symbol: &str) -> bool {
     definition_guard(symbol).is_match(text)
-        || aliases_for_symbol(text, symbol)
-            .iter()
-            .any(|alias| definition_guard(alias).is_match(text))
+        || aliases_for_symbol(text, symbol).iter().any(|alias| definition_guard(alias).is_match(text))
 }
 fn quoted_include(line: &str) -> Option<&str> {
     let rest = line.trim().strip_prefix("#include")?.trim();
@@ -446,10 +393,7 @@ fn source_defines_symbol_through_header(source: &Path, text: &str, symbol: &str)
             let Ok(header_text) = fs::read_to_string(header) else {
                 continue;
             };
-            if aliases_for_symbol(&header_text, symbol)
-                .iter()
-                .any(|alias| definition_guard(alias).is_match(text))
-            {
+            if aliases_for_symbol(&header_text, symbol).iter().any(|alias| definition_guard(alias).is_match(text)) {
                 return true;
             }
         }
@@ -466,10 +410,7 @@ pub fn compile_overlay_c(
     let mutations = if extra_flags.is_empty() {
         None
     } else {
-        Some(CompilerFlagMutations {
-            add_flags: extra_flags.to_vec(),
-            remove_flags: Vec::new(),
-        })
+        Some(CompilerFlagMutations { add_flags: extra_flags.to_vec(), remove_flags: Vec::new() })
     };
     compile_overlay_with_mutations(source, work, overlay, routing_source, mutations.as_ref())
 }
@@ -489,10 +430,8 @@ fn compile_overlay_with_mutations(
         .unwrap_or_default();
     let source_display = source.to_string_lossy().to_string();
     let source_paths = SourcePaths::load(&root())?;
-    let routed_owner = routing_source
-        .map(|path| source_paths.overlay_owner_for_path(overlay, path))
-        .transpose()?
-        .flatten();
+    let routed_owner =
+        routing_source.map(|path| source_paths.overlay_owner_for_path(overlay, path)).transpose()?.flatten();
     let (owner, stem, address) = match routed_owner {
         Some(owner) => (owner, owner.address_stem(), owner.address() as i64),
         None => address_stem(source, overlay)?,
@@ -506,16 +445,12 @@ fn compile_overlay_with_mutations(
     }
     .to_string_lossy()
     .into_owned();
-    let call_via_base = source_paths
-        .registered_call_via(owner)
-        .map(u64::from)
-        .unwrap_or_else(|| overlay_call_via_base(overlay)) as i64;
+    let call_via_base =
+        source_paths.registered_call_via(owner).map(u64::from).unwrap_or_else(|| overlay_call_via_base(overlay)) as i64;
     let symbol = format!("Func_{}", stem.to_lowercase());
     let text = fs::read_to_string(source).map_err(|error| format!("{source_display}: {error}"))?;
     if !source_defines_symbol_through_header(source, &text, &symbol) {
-        return Err(format!(
-            "overlay C source does not define {symbol}: {source_display}"
-        ));
+        return Err(format!("overlay C source does not define {symbol}: {source_display}"));
     }
     let work_display = work.to_string_lossy().to_string();
     let at = |name: &str| work.join(name).to_string_lossy().to_string();
@@ -525,12 +460,8 @@ fn compile_overlay_with_mutations(
     let symbols_object = at(&format!("{stem}.symbols.o"));
     let elf = at(&format!("{stem}.elf"));
     let binary = at(&format!("{stem}.bin"));
-    let mut options = SourceToAssemblyPlanOptions::new(
-        CompilerTarget::Gs1,
-        routing_source,
-        source_display.clone(),
-        assembly.clone(),
-    );
+    let mut options =
+        SourceToAssemblyPlanOptions::new(CompilerTarget::Gs1, routing_source, source_display.clone(), assembly.clone());
     options.preprocessed_output = Some(at(&format!("{stem}.i")));
     if let Some(requested) = mutations {
         options.flags = Some(requested.clone());
@@ -561,33 +492,19 @@ fn compile_overlay_with_mutations(
         checked(&step.command, work)?;
     }
     let produced = fs::read_to_string(&assembly).map_err(|error| format!("{assembly}: {error}"))?;
-    fs::write(&assembly, bias_in_image_label_words(&produced).text)
-        .map_err(|error| format!("{assembly}: {error}"))?;
-    checked(
-        &strings(&[
-            "arm-none-eabi-as",
-            "-mcpu=arm7tdmi",
-            "-mthumb-interwork",
-            "-o",
-            &object,
-            &assembly,
-        ]),
-        work,
-    )?;
-    let undefined_symbols: Vec<String> = split_lines(&checked(
-        &strings(&["arm-none-eabi-nm", "-u", &object]),
-        work,
-    )?)
-    .into_iter()
-    .filter(|line| !line.is_empty())
-    .map(|line| {
-        crate::regex::js_trim(&line)
-            .split(|c: char| crate::regex::is_js_space(c))
-            .rfind(|part| !part.is_empty())
-            .expect("a non-empty trimmed line has a last field")
-            .to_string()
-    })
-    .collect();
+    fs::write(&assembly, bias_in_image_label_words(&produced).text).map_err(|error| format!("{assembly}: {error}"))?;
+    checked(&strings(&["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", &object, &assembly]), work)?;
+    let undefined_symbols: Vec<String> = split_lines(&checked(&strings(&["arm-none-eabi-nm", "-u", &object]), work)?)
+        .into_iter()
+        .filter(|line| !line.is_empty())
+        .map(|line| {
+            crate::regex::js_trim(&line)
+                .split(|c: char| crate::regex::is_js_space(c))
+                .rfind(|part| !part.is_empty())
+                .expect("a non-empty trimmed line has a last field")
+                .to_string()
+        })
+        .collect();
     for external in &undefined_symbols {
         if external_symbol(external, call_via_base as u64).is_none() {
             return Err(format!("unsupported overlay C external symbol: {external}"));
@@ -599,14 +516,7 @@ fn compile_overlay_with_mutations(
     }
     fs::write(&symbols_source, stubs).map_err(|error| format!("{symbols_source}: {error}"))?;
     checked(
-        &strings(&[
-            "arm-none-eabi-as",
-            "-mcpu=arm7tdmi",
-            "-mthumb-interwork",
-            "-o",
-            &symbols_object,
-            &symbols_source,
-        ]),
+        &strings(&["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", &symbols_object, &symbols_source]),
         work,
     )?;
     checked(
@@ -622,18 +532,7 @@ fn compile_overlay_with_mutations(
         ]),
         work,
     )?;
-    checked(
-        &strings(&[
-            "arm-none-eabi-objcopy",
-            "-O",
-            "binary",
-            "-j",
-            ".text",
-            &elf,
-            &binary,
-        ]),
-        work,
-    )?;
+    checked(&strings(&["arm-none-eabi-objcopy", "-O", "binary", "-j", ".text", &elf, &binary]), work)?;
     let listing = checked(&strings(&["arm-none-eabi-nm", "-S", &elf]), work)?;
     let needle = format!(" {symbol}");
     let row = split_lines(&listing)
@@ -646,8 +545,7 @@ fn compile_overlay_with_mutations(
         .nth(1)
         .ok_or_else(|| format!("nm -S row has no size field: {row}"))?
         .to_string();
-    let size = js_parse_int_hex(&size_field)
-        .ok_or_else(|| format!("nm -S size is not hex: {size_field}"))?;
+    let size = js_parse_int_hex(&size_field).ok_or_else(|| format!("nm -S size is not hex: {size_field}"))?;
     let whole = fs::read(&binary).map_err(|error| format!("{binary}: {error}"))?;
     let end = (size.max(0) as usize).min(whole.len());
     let data = whole[..end].to_vec();
@@ -686,10 +584,7 @@ pub fn overlay_c_spans(source: &OverlaySource, base: i64) -> Result<Vec<Span>, S
         let work = tempdir().map_err(|error| error.to_string())?;
         let compiled = compile_overlay_c(&c_source, work.path(), &overlay, None, &[])?;
         let start = compiled.address - base;
-        spans.push(Span {
-            start,
-            end: start + compiled.data.len() as i64,
-        });
+        spans.push(Span { start, end: start + compiled.data.len() as i64 });
     }
     spans.sort_by_key(|span| span.start);
     Ok(spans)
@@ -704,75 +599,34 @@ pub fn assemble_overlay(source: &OverlaySource, base: i64) -> Result<Vec<u8>, St
     let text = source.read_text().map_err(|error| error.to_string())?;
     fs::write(&assembly, text).map_err(|error| error.to_string())?;
     spawn_raw(
-        &strings(&[
-            "arm-none-eabi-as",
-            "-mcpu=arm7tdmi",
-            "-mthumb-interwork",
-            "-o",
-            &object,
-            &assembly,
-        ]),
+        &strings(&["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork", "-o", &object, &assembly]),
         work.path(),
     )?;
     spawn_raw(
-        &strings(&[
-            "arm-none-eabi-ld",
-            &format!("-Ttext=0x{}", hex(base, 8)),
-            "-o",
-            &elf,
-            &object,
-        ]),
+        &strings(&["arm-none-eabi-ld", &format!("-Ttext=0x{}", hex(base, 8)), "-o", &elf, &object]),
         work.path(),
     )?;
-    spawn_raw(
-        &strings(&[
-            "arm-none-eabi-objcopy",
-            "-O",
-            "binary",
-            "-j",
-            ".text",
-            &elf,
-            &binary,
-        ]),
-        work.path(),
-    )?;
+    spawn_raw(&strings(&["arm-none-eabi-objcopy", "-O", "binary", "-j", ".text", &elf, &binary]), work.path())?;
     let mut result = fs::read(&binary).map_err(|error| error.to_string())?;
     let display = source.to_display_string();
     let overlay = Regex::new(r"_overlay\.s$", "").replace_first(basename(&display), "");
     let mut occupied: std::collections::BTreeSet<usize> = std::collections::BTreeSet::new();
     for c_source in overlay_c_sources_checked(source)? {
-        let compiled =
-            compile_overlay_c(&c_source, work.path(), &overlay, None, &[]).map_err(|cause| {
-                format!(
-                    "{overlay}: {}: {cause}",
-                    basename(&c_source.to_string_lossy())
-                )
-            })?;
+        let compiled = compile_overlay_c(&c_source, work.path(), &overlay, None, &[])
+            .map_err(|cause| format!("{overlay}: {}: {cause}", basename(&c_source.to_string_lossy())))?;
         let offset = compiled.address - base;
         if offset < 0 || offset + compiled.data.len() as i64 > result.len() as i64 {
-            return Err(format!(
-                "overlay C span is outside {display}: {}",
-                c_source.display()
-            ));
+            return Err(format!("overlay C span is outside {display}: {}", c_source.display()));
         }
         let offset = offset as usize;
-        for (index, existing) in result[offset..offset + compiled.data.len()]
-            .iter()
-            .enumerate()
-        {
+        for (index, existing) in result[offset..offset + compiled.data.len()].iter().enumerate() {
             let byte = offset + index;
             if occupied.contains(&byte) {
-                return Err(format!(
-                    "overlapping overlay C span: {}",
-                    c_source.display()
-                ));
+                return Err(format!("overlapping overlay C span: {}", c_source.display()));
             }
             occupied.insert(byte);
             if *existing != 0 {
-                return Err(format!(
-                    "overlay C placeholder is not zero at 0x{}",
-                    hex(base + byte as i64, 8)
-                ));
+                return Err(format!("overlay C placeholder is not zero at 0x{}", hex(base + byte as i64, 8)));
             }
         }
         result[offset..offset + compiled.data.len()].copy_from_slice(&compiled.data);
@@ -808,9 +662,7 @@ mod source_activation_tests {
     #[test]
     fn only_explicit_overlay_placeholders_activate_exact_c() {
         assert_eq!(
-            placeholder_addresses(
-                "Func_02000104:\n  bx lr\nAlchemyC_02000104:\n  .space 8\nAlchemyC_02000314:\n"
-            ),
+            placeholder_addresses("Func_02000104:\n  bx lr\nAlchemyC_02000104:\n  .space 8\nAlchemyC_02000314:\n"),
             vec![0x0200_0104, 0x0200_0314]
         );
         assert!(placeholder_addresses("Func_02000104:\n  bx lr\n").is_empty());
@@ -830,18 +682,10 @@ mod source_activation_tests {
         let work = tempdir().unwrap();
         let source = work.path().join("spawn_effect.c");
         let header = work.path().join("effect.h");
-        fs::write(
-            &source,
-            "#include \"effect.h\"\nvoid SceneEffect_Spawn(void) {}\n",
-        )
-        .unwrap();
+        fs::write(&source, "#include \"effect.h\"\nvoid SceneEffect_Spawn(void) {}\n").unwrap();
         fs::write(header, "#define SceneEffect_Spawn Func_0200013c\n").unwrap();
         let text = fs::read_to_string(&source).unwrap();
-        assert!(source_defines_symbol_through_header(
-            &source,
-            &text,
-            "Func_0200013c"
-        ));
+        assert!(source_defines_symbol_through_header(&source, &text, "Func_0200013c"));
     }
 
     #[test]
@@ -863,10 +707,7 @@ pub(crate) fn js_parse_int_hex(text: &str) -> Option<i64> {
         Some(rest) => (true, rest),
         None => (false, body.strip_prefix('+').unwrap_or(body)),
     };
-    let body = body
-        .strip_prefix("0x")
-        .or_else(|| body.strip_prefix("0X"))
-        .unwrap_or(body);
+    let body = body.strip_prefix("0x").or_else(|| body.strip_prefix("0X")).unwrap_or(body);
     let digits: String = body.chars().take_while(|c| c.is_ascii_hexdigit()).collect();
     if digits.is_empty() {
         return None;

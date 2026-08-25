@@ -3,17 +3,12 @@ use std::process::ExitCode;
 const USAGE: &str = "usage: core-retained-audit --check [--json]";
 
 pub fn entry(arguments: &[String]) -> ExitCode {
-    if arguments
-        .iter()
-        .any(|argument| matches!(argument.as_str(), "-h" | "--help"))
-    {
+    if arguments.iter().any(|argument| matches!(argument.as_str(), "-h" | "--help")) {
         println!("{USAGE}");
         return ExitCode::SUCCESS;
     }
     if !arguments.iter().any(|argument| argument == "--check")
-        || arguments
-            .iter()
-            .any(|argument| !matches!(argument.as_str(), "--check" | "--json"))
+        || arguments.iter().any(|argument| !matches!(argument.as_str(), "--check" | "--json"))
     {
         eprintln!("{USAGE}");
         return ExitCode::from(2);

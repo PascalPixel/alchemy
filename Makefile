@@ -26,7 +26,7 @@ PORTABLE_TOOLS := alignment-tail asset-paths cache-entry canonical-json \
 	overlay-adopt overlay-call-targets check check-commit-progress \
 	check-publication check-unmatchable core-retained-audit coverage-map \
 	full-c-progress integrate-matches route-dump decomp-targets
-TOOLING_LINE_LIMIT := 40000
+TOOLING_LINE_LIMIT := 35000
 TARGET ?= gs1-en
 HISTORICAL_TARGETS := gs1-ja gs1-en gs1-de gs1-es gs1-fr gs1-it \
 	gs2-ja gs2-en gs2-de gs2-es gs2-fr gs2-it
@@ -36,7 +36,7 @@ HISTORICAL_TARGETS := gs1-ja gs1-en gs1-de gs1-es gs1-fr gs1-it \
 	standard-check pristine-options-check corpus-check core-retained-check \
 	check-owners progress progress-check progress-subject \
 	correspondence correspondence-check edition-builds edition-builds-check \
-	coverage coverage-check dashboard clean clean-preview
+	families family-check coverage coverage-check dashboard clean clean-preview
 .PHONY: targets $(HISTORICAL_TARGETS)
 
 help:
@@ -52,6 +52,8 @@ help:
 		'make progress         print byte-exact progress' \
 		'make progress-subject print the required commit prefix' \
 		'make correspondence   match exact EN owners across GS1 editions' \
+		'make families         rank unresolved compiler owners by exact-C family' \
+		'make family-check     prove the family index and retained-family evidence' \
 		'make edition-builds   relink exact EN C across GS1 editions' \
 		'make coverage         refresh dashboard data and figures' \
 		'make dashboard        serve the dashboard on localhost:4649'
@@ -97,6 +99,13 @@ correspondence-check: build-claimed
 	$(COMPILER) cross-edition --all-overlays --write out/exact-overlay-correspondence.check.json
 	cmp games/gs1/recon/exact-correspondence.json out/exact-correspondence.check.json
 	cmp games/gs1/recon/exact-overlay-correspondence.json out/exact-overlay-correspondence.check.json
+
+families: build-claimed build-asm
+	$(COMPILER) families cluster --write games/gs1/recon/compiler-families.json
+
+family-check: build-claimed build-asm
+	$(COMPILER) families cluster --check games/gs1/recon/compiler-families.json
+	$(COMPILER) families prove games/gs1/recon/family-retention.json
 
 edition-builds: build-claimed
 	$(COMPILER) cross-edition --all --object-dir out/gs1-en/claimed/obj \
@@ -170,7 +179,7 @@ lint: standard-check pristine-options-check
 test: lint tooling-size tool-tests
 	$(CHECK) publication --self-test
 
-verify: test build-full corpus-check core-retained-check check-owners progress-check coverage-check
+verify: test build-full corpus-check core-retained-check family-check check-owners progress-check coverage-check
 
 standard-check:
 	@printf '%s\n' $(GCC296_CFLAGS) | grep -v '^-I' | sort > /tmp/alchemy-standard-makefile.txt

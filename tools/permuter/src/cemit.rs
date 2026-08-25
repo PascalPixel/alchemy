@@ -98,9 +98,7 @@ fn declaration_specifiers(specs: &[Node<DeclarationSpecifier>]) -> String {
         match &s.node {
             DeclarationSpecifier::StorageClass(sc) => parts.push(storage_class(&sc.node)),
             DeclarationSpecifier::TypeSpecifier(ts) => parts.push(type_specifier(&ts.node)),
-            DeclarationSpecifier::TypeQualifier(tq) => {
-                parts.push(type_qualifier(&tq.node).to_string())
-            }
+            DeclarationSpecifier::TypeQualifier(tq) => parts.push(type_qualifier(&tq.node).to_string()),
             DeclarationSpecifier::Function(fs) => parts.push(
                 match fs.node {
                     FunctionSpecifier::Inline => "inline",
@@ -109,7 +107,12 @@ fn declaration_specifiers(specs: &[Node<DeclarationSpecifier>]) -> String {
                 .to_string(),
             ),
             DeclarationSpecifier::Alignment(_) => {}
-            DeclarationSpecifier::Extension(_) => {}
+            DeclarationSpecifier::Extension(items) => {
+                let text = extensions_string(items);
+                if !text.is_empty() {
+                    parts.push(text);
+                }
+            }
         }
     }
     parts.join(" ")
@@ -120,10 +123,13 @@ fn specifier_qualifiers(specs: &[Node<SpecifierQualifier>]) -> String {
     for s in specs {
         match &s.node {
             SpecifierQualifier::TypeSpecifier(ts) => parts.push(type_specifier(&ts.node)),
-            SpecifierQualifier::TypeQualifier(tq) => {
-                parts.push(type_qualifier(&tq.node).to_string())
+            SpecifierQualifier::TypeQualifier(tq) => parts.push(type_qualifier(&tq.node).to_string()),
+            SpecifierQualifier::Extension(items) => {
+                let text = extensions_string(items);
+                if !text.is_empty() {
+                    parts.push(text);
+                }
             }
-            SpecifierQualifier::Extension(_) => {}
         }
     }
     parts.join(" ")
@@ -149,6 +155,26 @@ fn type_qualifier(tq: &TypeQualifier) -> &'static str {
         TypeQualifier::Atomic => "_Atomic",
         _ => "",
     }
+}
+
+fn extensions_string(items: &[Node<Extension>]) -> String {
+    items
+        .iter()
+        .filter_map(|item| match &item.node {
+            Extension::Attribute(attribute) => {
+                let arguments = attribute.arguments.iter().map(|argument| expr(&argument.node)).collect::<Vec<_>>();
+                let name = &attribute.name.node;
+                Some(if arguments.is_empty() {
+                    format!("__attribute__(({name}))")
+                } else {
+                    format!("__attribute__(({name}({})))", arguments.join(", "))
+                })
+            }
+            Extension::AsmLabel(label) => Some(format!("asm({})", string_literal(&label.node))),
+            Extension::AvailabilityAttribute(_) => None,
+        })
+        .collect::<Vec<_>>()
+        .join(" ")
 }
 
 fn type_specifier(ts: &TypeSpecifier) -> String {
@@ -262,9 +288,15 @@ fn declarator_string(d: &Declarator) -> String {
             DerivedDeclarator::Pointer(quals) | DerivedDeclarator::Block(quals) => {
                 prefix.push('*');
                 for q in quals {
-                    if let PointerQualifier::TypeQualifier(tq) = &q.node {
-                        prefix.push_str(type_qualifier(&tq.node));
-                        prefix.push(' ');
+                    match &q.node {
+                        PointerQualifier::TypeQualifier(tq) => {
+                            prefix.push_str(type_qualifier(&tq.node));
+                            prefix.push(' ');
+                        }
+                        PointerQualifier::Extension(items) => {
+                            prefix.push_str(&extensions_string(items));
+                            prefix.push(' ');
+                        }
                     }
                 }
             }
@@ -310,7 +342,12 @@ fn declarator_string(d: &Declarator) -> String {
         DeclaratorKind::Identifier(id) => id.node.name.clone(),
         DeclaratorKind::Declarator(inner) => format!("({})", declarator_string(&inner.node)),
     };
-    format!("{prefix}{core}{suffix}")
+    let extensions = extensions_string(&d.extensions);
+    if extensions.is_empty() {
+        format!("{prefix}{core}{suffix}")
+    } else {
+        format!("{prefix}{core}{suffix} {extensions}")
+    }
 }
 
 fn parameter(p: &ParameterDeclaration) -> String {
@@ -323,6 +360,13 @@ fn parameter(p: &ParameterDeclaration) -> String {
             }
             s.push_str(&ds);
         }
+    }
+    let extensions = extensions_string(&p.extensions);
+    if !extensions.is_empty() {
+        if !s.is_empty() {
+            s.push(' ');
+        }
+        s.push_str(&extensions);
     }
     s
 }
@@ -555,20 +599,10 @@ fn expr(e: &Expression) -> String {
                 MemberOperator::Direct => ".",
                 MemberOperator::Indirect => "->",
             };
-            format!(
-                "{}{}{}",
-                sub(&m.node.expression.node),
-                op,
-                m.node.identifier.node.name
-            )
+            format!("{}{}{}", sub(&m.node.expression.node), op, m.node.identifier.node.name)
         }
         Expression::Call(c) => {
-            let args: Vec<String> = c
-                .node
-                .arguments
-                .iter()
-                .map(|a| comma_safe(&a.node))
-                .collect();
+            let args: Vec<String> = c.node.arguments.iter().map(|a| comma_safe(&a.node)).collect();
             format!("{}({})", sub(&c.node.callee.node), args.join(", "))
         }
         Expression::CompoundLiteral(cl) => {
@@ -595,11 +629,7 @@ fn expr(e: &Expression) -> String {
                 UnaryOperator::Negate => format!("!{operand}"),
             }
         }
-        Expression::Cast(c) => format!(
-            "({}){}",
-            type_name(&c.node.type_name.node),
-            sub(&c.node.expression.node)
-        ),
+        Expression::Cast(c) => format!("({}){}", type_name(&c.node.type_name.node), sub(&c.node.expression.node)),
         Expression::BinaryOperator(b) => {
             if b.node.operator.node == BinaryOperator::Index {
                 return format!("{}[{}]", sub(&b.node.lhs.node), expr(&b.node.rhs.node));
@@ -755,16 +785,17 @@ pub fn emit_expression(e: &Expression) -> String {
 }
 
 pub fn self_test() -> Result<(), String> {
-    let src = "int f(int a) { return a * 2 + 1; }";
-    let cfg = lang_c::driver::Config {
-        flavor: lang_c::driver::Flavor::GnuC11,
-        ..Default::default()
-    };
+    let src = "struct P { short a; int b; } __attribute__((packed));\nint f(int a) { return a * 2 + 1; }";
+    let cfg = lang_c::driver::Config { flavor: lang_c::driver::Flavor::GnuC11, ..Default::default() };
     let parsed = lang_c::driver::parse_preprocessed(&cfg, src.to_string())
         .map_err(|e| format!("cemit self-test parse failed: {e}"))?;
     let emitted = emit_translation_unit(&parsed.unit);
     if !emitted.contains("return") {
         return Err("cemit self-test: emitted source lost the return".to_string());
     }
+    if !emitted.contains("__attribute__((packed))") {
+        return Err("cemit self-test: emitted source lost a packed layout".to_string());
+    }
+    lang_c::driver::parse_preprocessed(&cfg, emitted).map_err(|e| format!("cemit self-test reparse failed: {e}"))?;
     Ok(())
 }

@@ -11,13 +11,12 @@ const USAGE: &str =
 fn run(a: &[String]) -> Result<(), Error> {
     match a {
         [x] if x == "--self-test" => self_test().map(|_| println!("self-test=ok")),
-        [cmd, index, flag, out] if cmd == "build" && flag == "--output" => {
-            build_sentou_hyouji(Path::new(index)).and_then(|b| {
+        [cmd, index, flag, out] if cmd == "build" && flag == "--output" => build_sentou_hyouji(Path::new(index))
+            .and_then(|b| {
                 std::fs::write(out, &b).map_err(|e| Error(e.to_string()))?;
                 println!("address=0x{ADDRESS:08x} bytes={SIZE}");
                 Ok(())
-            })
-        }
+            }),
         [cmd, index] if cmd == "build-stdout" => build_sentou_hyouji(Path::new(index))
             .and_then(|b| io::stdout().write_all(&b).map_err(|e| Error(e.to_string()))),
         [cmd, rom, index] if cmd == "verify" => std::fs::read(rom)

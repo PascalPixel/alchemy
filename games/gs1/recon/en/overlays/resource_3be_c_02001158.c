@@ -7,9 +7,14 @@ void Func_0200269a();
 void Func_020026b6();
 void Func_020026da();
 void Func_020026f4();
-void Func_02002702();
+void Func_02002702(s32, s32, s32);
 void Func_02002712();
 void Func_02002780();
+
+static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
+{
+    Func_02002702(actor, x, y);
+}
 
 #define ActorPresentation_RunActorNineThresholdScene Func_02001158
 
@@ -23,7 +28,7 @@ void ActorPresentation_RunActorNineThresholdScene(void)
         Func_0200264c(108, 17, 1, 1, x, y);
         Func_0200269a(8);
         Func_020026f4(9, 0, 0);
-        Func_02002702(10, 45613056, 18874368);
+        PlaceActor(10, 45613056, 18874368);
         Func_02002712(10, 3);
         Func_02002780(154);
         Func_020026b6(2469);

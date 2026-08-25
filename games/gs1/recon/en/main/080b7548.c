@@ -25,6 +25,7 @@ struct BattleMotionObject *Func_080b7dd0(s32 actor_id);
 
 void RefreshSummonPositions(void)
 {
+    s32 slot;
     struct BattlePlacementPayload *placement = &Data_03001e74->placement;
     u16 actor_ids[14];
     s32 x_positions[6];
@@ -32,7 +33,8 @@ void RefreshSummonPositions(void)
     s32 count = 0;
     s32 first_actor_id;
 
-    first_actor_id = (s16)placement->summon_slots[0];
+    slot = 0;
+    first_actor_id = (s16)placement->summon_slots[slot];
     if (first_actor_id != 0xff) {
         do {
             actor_ids[count] = placement->summon_slots[count];

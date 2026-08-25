@@ -19,18 +19,13 @@ fn is_plain_object(value: Option<&Value>) -> bool {
 fn normalize_numbers(value: Value) -> Value {
     match value {
         Value::Number(number) if number.is_f64() => match number.as_f64() {
-            Some(raw) if raw.fract() == 0.0 && raw.abs() <= 9_007_199_254_740_992.0 => {
-                Value::from(raw as i64)
-            }
+            Some(raw) if raw.fract() == 0.0 && raw.abs() <= 9_007_199_254_740_992.0 => Value::from(raw as i64),
             _ => Value::Number(number),
         },
         Value::Array(items) => Value::Array(items.into_iter().map(normalize_numbers).collect()),
-        Value::Object(entries) => Value::Object(
-            entries
-                .into_iter()
-                .map(|(key, value)| (key, normalize_numbers(value)))
-                .collect(),
-        ),
+        Value::Object(entries) => {
+            Value::Object(entries.into_iter().map(|(key, value)| (key, normalize_numbers(value))).collect())
+        }
         other => other,
     }
 }
@@ -51,16 +46,13 @@ pub const EARLY_RUNTIME_ADDRESS: i64 = 0x0801_2f20;
 pub const EARLY_RUNTIME_END: i64 = 0x0801_3784;
 pub const POST_MAP_ADDRESS: i64 = 0x0801_403c;
 pub const POST_MAP_END: i64 = 0x0801_5000;
-pub const EARLY_RUNTIME_SOURCE_BYTES: i64 =
-    EARLY_RUNTIME_END - EARLY_RUNTIME_ADDRESS + POST_MAP_END - POST_MAP_ADDRESS;
+pub const EARLY_RUNTIME_SOURCE_BYTES: i64 = EARLY_RUNTIME_END - EARLY_RUNTIME_ADDRESS + POST_MAP_END - POST_MAP_ADDRESS;
 const DISPLAY_SOURCE: &str = "display.4bpp.png";
 const DISPLAY_WIDTH: usize = 32;
 const DISPLAY_HEIGHT: usize = 8;
 pub type Rgb = [u8; 3];
 fn palette() -> Vec<Rgb> {
-    (0..16u8)
-        .map(|index| [index * 8, index * 8, index * 8])
-        .collect()
+    (0..16u8).map(|index| [index * 8, index * 8, index * 8]).collect()
 }
 fn typed_width(encoding: &str) -> Option<usize> {
     match encoding {
@@ -80,34 +72,25 @@ pub fn repo_root() -> String {
         .into_owned()
 }
 pub fn default_catalog_path() -> String {
-    Path::new(&repo_root())
-        .join("games/gs1/assets/data/early_runtime_data.json")
-        .to_string_lossy()
-        .into_owned()
+    Path::new(&repo_root()).join("games/gs1/assets/data/early_runtime_data.json").to_string_lossy().into_owned()
 }
 fn is_rom_address(text: &str) -> bool {
     text.len() == 10
         && text.starts_with("0x080")
         && text.as_bytes()[5..].iter().all(u8::is_ascii_hexdigit)
-        && text.as_bytes()[5..]
-            .iter()
-            .all(|byte| !byte.is_ascii_uppercase())
+        && text.as_bytes()[5..].iter().all(|byte| !byte.is_ascii_uppercase())
 }
 fn is_canonical_word(text: &str) -> bool {
     text.len() == 10
         && text.starts_with("0x")
-        && text.as_bytes()[2..]
-            .iter()
-            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(byte))
+        && text.as_bytes()[2..].iter().all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(byte))
 }
 fn is_thumb_symbol(text: &str) -> bool {
     let bytes = text.as_bytes();
     text.len() == 13
         && text.starts_with("Func_080")
         && (b'0'..=b'7').contains(&bytes[8])
-        && bytes[9..]
-            .iter()
-            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(byte))
+        && bytes[9..].iter().all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(byte))
 }
 fn hexadecimal(value: i64) -> String {
     format!("0x{:08x}", value as u32)
@@ -166,26 +149,19 @@ fn find_entry<'a>(region: &'a Value, id: &str, view: bool) -> Result<&'a Value> 
         .unwrap_or(&[]);
     match list.iter().find(|item| as_str(get(item, "id")) == Some(id)) {
         Some(found) => Ok(found),
-        None => fail(format!(
-            "{}: missing {id}",
-            as_str(get(region, "id")).unwrap_or("unknown")
-        )),
+        None => fail(format!("{}: missing {id}", as_str(get(region, "id")).unwrap_or("unknown"))),
     }
 }
 fn find_region<'a>(catalog: &'a Value, id: &str) -> Option<&'a Value> {
     get(catalog, "regions")
         .and_then(Value::as_array)
-        .and_then(|regions| {
-            regions
-                .iter()
-                .find(|region| as_str(get(region, "id")) == Some(id))
-        })
+        .and_then(|regions| regions.iter().find(|region| as_str(get(region, "id")) == Some(id)))
 }
 fn canonical_layout(catalog: &Value) -> Result<(&Value, &Value)> {
-    let early = find_region(catalog, "early_runtime_tables")
-        .ok_or_else(|| Error("missing early-runtime region".into()))?;
-    let residual = find_region(catalog, "post_map_load_residual")
-        .ok_or_else(|| Error("missing post-map region".into()))?;
+    let early =
+        find_region(catalog, "early_runtime_tables").ok_or_else(|| Error("missing early-runtime region".into()))?;
+    let residual =
+        find_region(catalog, "post_map_load_residual").ok_or_else(|| Error("missing post-map region".into()))?;
     Ok((early, residual))
 }
 fn read_utf8(path: &str) -> Result<String> {
@@ -222,12 +198,7 @@ pub fn encode_typed(values: &[Value], encoding: &str) -> Result<Vec<u8>> {
     let (minimum, maximum) = value_range(encoding)?;
     let mut data = vec![0u8; values.len() * width];
     for (index, item) in values.iter().enumerate() {
-        let value = integer(
-            Some(item),
-            minimum,
-            maximum,
-            &format!("{encoding} value {index}"),
-        )?;
+        let value = integer(Some(item), minimum, maximum, &format!("{encoding} value {index}"))?;
         let offset = index * width;
         match encoding {
             "u8" => data[offset] = value as u8,
@@ -242,41 +213,20 @@ fn encode_numbers(values: &[i64], encoding: &str) -> Result<Vec<u8>> {
     let boxed: Vec<Value> = values.iter().map(|value| Value::from(*value)).collect();
     encode_typed(&boxed, encoding)
 }
-fn flat_values(
-    value: Option<&Value>,
-    count: usize,
-    encoding: &str,
-    label: &str,
-) -> Result<Vec<i64>> {
+fn flat_values(value: Option<&Value>, count: usize, encoding: &str, label: &str) -> Result<Vec<i64>> {
     let (minimum, maximum) = value_range(encoding)?;
     let items = array(value, count, label)?;
     let mut result = Vec::with_capacity(items.len());
     for (index, item) in items.iter().enumerate() {
-        result.push(integer(
-            Some(item),
-            minimum,
-            maximum,
-            &format!("{label} {index}"),
-        )?);
+        result.push(integer(Some(item), minimum, maximum, &format!("{label} {index}"))?);
     }
     Ok(result)
 }
-fn rows(
-    value: Option<&Value>,
-    row_count: usize,
-    columns: usize,
-    encoding: &str,
-    label: &str,
-) -> Result<Vec<i64>> {
+fn rows(value: Option<&Value>, row_count: usize, columns: usize, encoding: &str, label: &str) -> Result<Vec<i64>> {
     let items = array(value, row_count, label)?;
     let mut result = Vec::new();
     for (index, row) in items.iter().enumerate() {
-        result.extend(flat_values(
-            Some(row),
-            columns,
-            encoding,
-            &format!("{label} row {index}"),
-        )?);
+        result.extend(flat_values(Some(row), columns, encoding, &format!("{label} row {index}"))?);
     }
     Ok(result)
 }
@@ -323,16 +273,9 @@ fn build_residual(value: Option<&Value>, size: usize, label: &str) -> Result<Vec
     }
     exact_keys(source, &["kind", "values"], label)?;
     if as_str(source.get("kind")) != Some("byte_values") {
-        return fail(format!(
-            "{label} has an unsupported residual representation"
-        ));
+        return fail(format!("{label} has an unsupported residual representation"));
     }
-    let values = flat_values(
-        get(&source_value, "values"),
-        size,
-        "u8",
-        &format!("{label} values"),
-    )?;
+    let values = flat_values(get(&source_value, "values"), size, "u8", &format!("{label} values"))?;
     encode_numbers(&values, "u8")
 }
 fn view_sources(region: &Value) -> Vec<Value> {
@@ -401,11 +344,7 @@ fn build_programs(value: Option<&Value>, spec: &Value) -> Result<Vec<u8>> {
             return fail(format!("object program {index} identity differs"));
         }
         let count = segment.as_f64().unwrap_or(f64::NAN);
-        let count = if count.is_finite() && count >= 0.0 {
-            count as usize
-        } else {
-            usize::MAX
-        };
+        let count = if count.is_finite() && count >= 0.0 { count as usize } else { usize::MAX };
         let words = array(program.get("words"), count, &format!("{label} words"))?;
         for (word_index, item) in words.iter().enumerate() {
             values.push(word(Some(item), &format!("{label} word {word_index}"))?);
@@ -423,14 +362,7 @@ fn source_index(path: &str, catalog: &Value) -> Result<Value> {
     }
     exact_keys(
         &source,
-        &[
-            "format",
-            "kind",
-            "catalog_format",
-            "source_bytes",
-            "early_runtime_tables",
-            "post_map_load_residual",
-        ],
+        &["format", "kind", "catalog_format", "source_bytes", "early_runtime_tables", "post_map_load_residual"],
         "early-runtime source",
     )?;
     if source.get("format") != Some(&Value::from(1))
@@ -468,21 +400,11 @@ fn child(index_path: &str, name: Option<&Value>) -> Result<String> {
         return fail("display tile source name differs");
     }
     let index = Path::new(index_path);
-    let prefix = strip_index_suffix(
-        index
-            .file_name()
-            .and_then(|name| name.to_str())
-            .unwrap_or_default(),
-    );
+    let prefix = strip_index_suffix(index.file_name().and_then(|name| name.to_str()).unwrap_or_default());
     let root = realpath(index.parent().unwrap_or(Path::new(".")))?;
     let wanted = format!("{prefix}{DISPLAY_SOURCE}");
     let path = realpath(&Path::new(&root).join(&wanted))?;
-    if Path::new(&path)
-        .strip_prefix(&root)
-        .ok()
-        .and_then(Path::to_str)
-        != Some(wanted.as_str())
-    {
+    if Path::new(&path).strip_prefix(&root).ok().and_then(Path::to_str) != Some(wanted.as_str()) {
         return fail("display tile source escaped its package");
     }
     Ok(path)
@@ -496,21 +418,10 @@ fn is_symlink(path: &str) -> Result<bool> {
 fn checked_package_files(index_path: &str, catalog_path: &str) -> Result<()> {
     let index = Path::new(index_path);
     let root = index.parent().unwrap_or(Path::new("."));
-    let prefix = strip_index_suffix(
-        index
-            .file_name()
-            .and_then(|name| name.to_str())
-            .unwrap_or_default(),
-    );
-    let mut expected = vec![
-        format!("{prefix}{DISPLAY_SOURCE}"),
-        format!("{prefix}index.json"),
-    ];
+    let prefix = strip_index_suffix(index.file_name().and_then(|name| name.to_str()).unwrap_or_default());
+    let mut expected = vec![format!("{prefix}{DISPLAY_SOURCE}"), format!("{prefix}index.json")];
     expected.sort();
-    let catalog_name = Path::new(catalog_path)
-        .file_name()
-        .and_then(|name| name.to_str())
-        .unwrap_or_default();
+    let catalog_name = Path::new(catalog_path).file_name().and_then(|name| name.to_str()).unwrap_or_default();
     let entries = match std::fs::read_dir(&root) {
         Ok(entries) => entries,
         Err(error) => return Err(Error(error.to_string())),
@@ -543,8 +454,7 @@ pub fn build_early_runtime_data(index_path: &str, catalog_path: &str) -> Result<
     let (early, residual) = canonical_layout(&catalog)?;
     let source = source_index(index_path, &catalog)?;
     checked_package_files(index_path, catalog_path)?;
-    let early_source =
-        object(get(&source, "early_runtime_tables"), "early-runtime tables")?.clone();
+    let early_source = object(get(&source, "early_runtime_tables"), "early-runtime tables")?.clone();
     exact_keys(
         &early_source,
         &[
@@ -562,72 +472,33 @@ pub fn build_early_runtime_data(index_path: &str, catalog_path: &str) -> Result<
         ],
         "early-runtime tables",
     )?;
-    if early_source.get("address") != get(early, "address")
-        || early_source.get("end") != get(early, "end")
-    {
+    if early_source.get("address") != get(early, "address") || early_source.get("end") != get(early, "end") {
         return fail("early-runtime table extent differs");
     }
     let mut output = vec![0u8; (EARLY_RUNTIME_END - EARLY_RUNTIME_ADDRESS) as usize];
     let display = object(early_source.get("display_tiles"), "display tiles")?;
     exact_keys(display, &["source", "encoding", "tiles"], "display tiles")?;
-    if as_str(display.get("encoding")) != Some("gba-4bpp")
-        || display.get("tiles") != Some(&Value::from(4))
-    {
+    if as_str(display.get("encoding")) != Some("gba-4bpp") || display.get("tiles") != Some(&Value::from(4)) {
         return fail("display tile source metadata differs");
     }
     let tiles = read_display_tiles(&child(index_path, display.get("source"))?)?;
-    place(
-        &mut output,
-        EARLY_RUNTIME_ADDRESS,
-        find_entry(early, "display_tiles", false)?,
-        &tiles,
-    )?;
-    let lookup = object(
-        early_source.get("shared_lookup_storage"),
-        "shared lookup storage",
-    )?;
-    exact_keys(
-        lookup,
-        &["encoding", "values", "views"],
-        "shared lookup storage",
-    )?;
+    place(&mut output, EARLY_RUNTIME_ADDRESS, find_entry(early, "display_tiles", false)?, &tiles)?;
+    let lookup = object(early_source.get("shared_lookup_storage"), "shared lookup storage")?;
+    exact_keys(lookup, &["encoding", "values", "views"], "shared lookup storage")?;
     if as_str(lookup.get("encoding")) != Some("u8-backing") {
         return fail("shared lookup backing encoding differs");
     }
     validate_view_sources(lookup.get("views"), early)?;
     let lookup_spec = find_entry(early, "shared_lookup_storage", false)?;
-    let lookup_size =
-        (address(get(lookup_spec, "end"))? - address(get(lookup_spec, "address"))?) as usize;
-    let lookup_values = flat_values(
-        lookup.get("values"),
-        lookup_size,
-        "u8",
-        "shared lookup values",
-    )?;
-    place(
-        &mut output,
-        EARLY_RUNTIME_ADDRESS,
-        lookup_spec,
-        &encode_numbers(&lookup_values, "u8")?,
-    )?;
-    let coefficients = object(
-        early_source.get("interpolation_coefficients"),
-        "interpolation coefficients",
-    )?;
-    exact_keys(
-        coefficients,
-        &["encoding", "values"],
-        "interpolation coefficients",
-    )?;
+    let lookup_size = (address(get(lookup_spec, "end"))? - address(get(lookup_spec, "address"))?) as usize;
+    let lookup_values = flat_values(lookup.get("values"), lookup_size, "u8", "shared lookup values")?;
+    place(&mut output, EARLY_RUNTIME_ADDRESS, lookup_spec, &encode_numbers(&lookup_values, "u8")?)?;
+    let coefficients = object(early_source.get("interpolation_coefficients"), "interpolation coefficients")?;
+    exact_keys(coefficients, &["encoding", "values"], "interpolation coefficients")?;
     if as_str(coefficients.get("encoding")) != Some("u32le") {
         return fail("interpolation coefficient encoding differs");
     }
-    let coefficient_values = flat_values(
-        coefficients.get("values"),
-        16,
-        "u32le",
-        "interpolation coefficients",
-    )?;
+    let coefficient_values = flat_values(coefficients.get("values"), 16, "u32le", "interpolation coefficients")?;
     place(
         &mut output,
         EARLY_RUNTIME_ADDRESS,
@@ -647,19 +518,9 @@ pub fn build_early_runtime_data(index_path: &str, catalog_path: &str) -> Result<
         &encode_numbers(&surface_values, "u8")?,
     )?;
     let unresolved_a = find_entry(early, "unclassified_0801356c", false)?;
-    let size_a =
-        (address(get(unresolved_a, "end"))? - address(get(unresolved_a, "address"))?) as usize;
-    let residual_a = build_residual(
-        early_source.get("unclassified_0801356c"),
-        size_a,
-        &entry_id(unresolved_a),
-    )?;
-    place(
-        &mut output,
-        EARLY_RUNTIME_ADDRESS,
-        unresolved_a,
-        &residual_a,
-    )?;
+    let size_a = (address(get(unresolved_a, "end"))? - address(get(unresolved_a, "address"))?) as usize;
+    let residual_a = build_residual(early_source.get("unclassified_0801356c"), size_a, &entry_id(unresolved_a))?;
+    place(&mut output, EARLY_RUNTIME_ADDRESS, unresolved_a, &residual_a)?;
     let limits = object(early_source.get("render_limits"), "render limits")?;
     exact_keys(limits, &["encoding", "values"], "render limits")?;
     if as_str(limits.get("encoding")) != Some("s32le") {
@@ -679,12 +540,7 @@ pub fn build_early_runtime_data(index_path: &str, catalog_path: &str) -> Result<
     }
     let program_spec = find_entry(early, "object_programs", false)?;
     let program_data = build_programs(programs.get("programs"), program_spec)?;
-    place(
-        &mut output,
-        EARLY_RUNTIME_ADDRESS,
-        program_spec,
-        &program_data,
-    )?;
+    place(&mut output, EARLY_RUNTIME_ADDRESS, program_spec, &program_data)?;
     let handlers = object(early_source.get("object_handlers"), "object handlers")?;
     exact_keys(handlers, &["encoding", "values"], "object handlers")?;
     if as_str(handlers.get("encoding")) != Some("thumb-function-pointer32le") {
@@ -693,10 +549,7 @@ pub fn build_early_runtime_data(index_path: &str, catalog_path: &str) -> Result<
     let handler_items = array(handlers.get("values"), 64, "object handlers")?;
     let mut handler_values: Vec<i64> = Vec::with_capacity(64);
     for (index, item) in handler_items.iter().enumerate() {
-        handler_values.push(handler_value(
-            Some(item),
-            &format!("object handler {index}"),
-        )?);
+        handler_values.push(handler_value(Some(item), &format!("object handler {index}"))?);
     }
     place(
         &mut output,
@@ -705,28 +558,12 @@ pub fn build_early_runtime_data(index_path: &str, catalog_path: &str) -> Result<
         &encode_numbers(&handler_values, "pointer32le")?,
     )?;
     let unresolved_b = find_entry(early, "unclassified_08013724", false)?;
-    let size_b =
-        (address(get(unresolved_b, "end"))? - address(get(unresolved_b, "address"))?) as usize;
-    let residual_b = build_residual(
-        early_source.get("unclassified_08013724"),
-        size_b,
-        &entry_id(unresolved_b),
-    )?;
-    place(
-        &mut output,
-        EARLY_RUNTIME_ADDRESS,
-        unresolved_b,
-        &residual_b,
-    )?;
+    let size_b = (address(get(unresolved_b, "end"))? - address(get(unresolved_b, "address"))?) as usize;
+    let residual_b = build_residual(early_source.get("unclassified_08013724"), size_b, &entry_id(unresolved_b))?;
+    place(&mut output, EARLY_RUNTIME_ADDRESS, unresolved_b, &residual_b)?;
     let residual_src = object(get(&source, "post_map_load_residual"), "post-map residual")?.clone();
-    exact_keys(
-        &residual_src,
-        &["address", "end", "unreferenced_storage"],
-        "post-map residual",
-    )?;
-    if residual_src.get("address") != get(residual, "address")
-        || residual_src.get("end") != get(residual, "end")
-    {
+    exact_keys(&residual_src, &["address", "end", "unreferenced_storage"], "post-map residual")?;
+    if residual_src.get("address") != get(residual, "address") || residual_src.get("end") != get(residual, "end") {
         return fail("post-map residual extent differs");
     }
     let residual_output = build_residual(
@@ -736,10 +573,7 @@ pub fn build_early_runtime_data(index_path: &str, catalog_path: &str) -> Result<
     )?;
     let source_bytes = (output.len() + residual_output.len()) as i64;
     Ok(EarlyRuntimeBuild {
-        regions: vec![
-            (EARLY_RUNTIME_ADDRESS, output),
-            (POST_MAP_ADDRESS, residual_output),
-        ],
+        regions: vec![(EARLY_RUNTIME_ADDRESS, output), (POST_MAP_ADDRESS, residual_output)],
         source_bytes,
     })
 }

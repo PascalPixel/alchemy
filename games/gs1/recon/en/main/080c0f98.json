@@ -2,12 +2,13 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x080c0f98",
-  "status": "measured-draft",
+  "name": "BattlePresentation_SetActorRecordMode",
+  "status": "exact",
   "owner_bytes": 122,
   "candidate_bytes": 122,
-  "differing_halfwords": 19,
-  "wrong_instructions": 36,
-  "classification": "register-allocation-only",
+  "differing_halfwords": 0,
+  "wrong_instructions": 0,
+  "classification": "exact-c",
   "cross_edition": {
     "core_bytes": 118,
     "core_diff_bytes": 0,
@@ -16,9 +17,8 @@
   },
   "notes": [
     "Relocation-aware comparison proves all 118 core bytes identical across JA, EN, DE, ES, FR, and IT; only the Actor_GetObject call is relocated.",
-    "The complete bitfield-based candidate has exact 122-byte extent. Its residual contains the same operations and control flow but allocates the record pointer and shifted two-bit value to different registers.",
-    "Changing the record field from untyped to typed pointers and applying register storage-class hints is byte-neutral. Explicit shifted-mode/raw-byte forms shorten the owner to 118-120 bytes and broaden the residual; old agbcc preserves the 128-byte earlier shape but diverges substantially.",
-    "A bounded 20,000-candidate classic source search attempted every candidate, rejected 271 compiler failures, and found no improvement over the 19-halfword allocation residual.",
-    "The candidate is not byte-exact, so retained assembly remains authoritative and this record claims zero bytes."
+    "The complete bitfield-based candidate has exact 122-byte extent and zero differing halfwords.",
+    "Moving the record pointer, record-list cursor, and loop counter to function scope transfers the lifetime shape used by exact nearby bitfield and object-record code. agbcc then assigns the record to r4, list cursor to r1, shifted mode to r0, and loop counter to r6 exactly as the ROM does.",
+    "Relocation-aware comparison of the exact candidate independently confirms identical executable output at all six edition anchors."
   ]
 }

@@ -3,7 +3,7 @@
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 WaitFrames(s32);
-s32 Func_080bb65c();
+void Func_080bb65c(void);
 s32 Func_080bb938();
 s32 Func_080bbb0c(void *, s32);
 void Func_080c10e8(u16 *, s32);

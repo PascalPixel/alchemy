@@ -5,12 +5,12 @@
   "base_edition": "ja",
   "source_state": "byte-exact overlay C",
   "resources_total": 96,
-  "owners_total": 2561,
-  "owner_symbol_bytes": 209386,
-  "matched_owners": 2523,
-  "matched_bytes": 206310,
-  "shared_core_owners": 2517,
-  "shared_core_bytes": 205050,
+  "owners_total": 2564,
+  "owner_symbol_bytes": 209722,
+  "matched_owners": 2526,
+  "matched_bytes": 206646,
+  "shared_core_owners": 2520,
+  "shared_core_bytes": 205386,
   "regional_core_owners": 6,
   "regional_core_bytes": 1260,
   "unresolved_owners": 38,
@@ -32,55 +32,55 @@
   "editions": [
     {
       "edition": "ja",
-      "matched_owners": 2523,
-      "matched_bytes": 206310,
-      "core_identical_owners": 2523,
-      "core_identical_bytes": 206310,
+      "matched_owners": 2526,
+      "matched_bytes": 206646,
+      "core_identical_owners": 2526,
+      "core_identical_bytes": 206646,
       "core_different_owners": 0,
       "core_different_bytes": 0
     },
     {
       "edition": "en",
-      "matched_owners": 2523,
-      "matched_bytes": 206310,
-      "core_identical_owners": 2518,
-      "core_identical_bytes": 205358,
+      "matched_owners": 2526,
+      "matched_bytes": 206646,
+      "core_identical_owners": 2521,
+      "core_identical_bytes": 205694,
       "core_different_owners": 5,
       "core_different_bytes": 952
     },
     {
       "edition": "de",
-      "matched_owners": 2523,
-      "matched_bytes": 206310,
-      "core_identical_owners": 2518,
-      "core_identical_bytes": 205358,
+      "matched_owners": 2526,
+      "matched_bytes": 206646,
+      "core_identical_owners": 2521,
+      "core_identical_bytes": 205694,
       "core_different_owners": 5,
       "core_different_bytes": 952
     },
     {
       "edition": "es",
-      "matched_owners": 2523,
-      "matched_bytes": 206310,
-      "core_identical_owners": 2517,
-      "core_identical_bytes": 205050,
+      "matched_owners": 2526,
+      "matched_bytes": 206646,
+      "core_identical_owners": 2520,
+      "core_identical_bytes": 205386,
       "core_different_owners": 6,
       "core_different_bytes": 1260
     },
     {
       "edition": "fr",
-      "matched_owners": 2523,
-      "matched_bytes": 206310,
-      "core_identical_owners": 2517,
-      "core_identical_bytes": 205050,
+      "matched_owners": 2526,
+      "matched_bytes": 206646,
+      "core_identical_owners": 2520,
+      "core_identical_bytes": 205386,
       "core_different_owners": 6,
       "core_different_bytes": 1260
     },
     {
       "edition": "it",
-      "matched_owners": 2523,
-      "matched_bytes": 206310,
-      "core_identical_owners": 2517,
-      "core_identical_bytes": 205050,
+      "matched_owners": 2526,
+      "matched_bytes": 206646,
+      "core_identical_owners": 2520,
+      "core_identical_bytes": 205386,
       "core_different_owners": 6,
       "core_different_bytes": 1260
     }
@@ -2978,6 +2978,18 @@
       "location_methods": "nsnnnn"
     },
     {
+      "en_owner": "resource_382:020007ec",
+      "size": 112,
+      "core_bytes": 72,
+      "location_methods": "tstttt"
+    },
+    {
+      "en_owner": "resource_382:0200085c",
+      "size": 112,
+      "core_bytes": 72,
+      "location_methods": "nsnnnn"
+    },
+    {
       "en_owner": "resource_382:0200090c",
       "size": 44,
       "core_bytes": 24,
@@ -3011,6 +3023,12 @@
       "en_owner": "resource_382:02000a2c",
       "size": 32,
       "core_bytes": 12,
+      "location_methods": "nsnnnn"
+    },
+    {
+      "en_owner": "resource_382:02000acc",
+      "size": 112,
+      "core_bytes": 72,
       "location_methods": "nsnnnn"
     },
     {

@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x08095dd0",
+  "name": "BattleEffect_RunPhasedRadialParticleSequence",
+  "status": "proven-retained-assembly",
+  "owner_bytes": 460,
+  "executable_owner_bytes": 460,
+  "candidate_bytes": 460,
+  "differing_halfwords": 11,
+  "wrong_instructions": 0,
+  "classification": "battle_effect_compiler_scheduling_mismatch",
+  "resolved_asm_classification": {
+    "kind": "compiler_output",
+    "retention": "c_candidate",
+    "confidence": "likely"
+  },
+  "cross_edition": {
+    "editions": ["ja", "en", "de", "es", "fr", "it"],
+    "relocation_normalized_core_bytes": 284,
+    "core_identical": true,
+    "starts": {
+      "ja": "0x0808cdb8",
+      "en": "0x08095dd0",
+      "de": "0x0809946c",
+      "es": "0x0809ae5c",
+      "fr": "0x0809ae5c",
+      "it": "0x08095e5c"
+    }
+  },
+  "domain": "Runs the locally linked phased-radial-particle callback across 24 effect slots, advances the active slots through states two and five, and restores the target object before cleanup.",
+  "expressed": [
+    "the source and target object lookup and early return",
+    "the observed audio and motion sequence on the source object",
+    "normalizing the source position and configuring all 24 effect slots",
+    "installing BattleEffect_UpdatePhasedRadialParticle as each slot callback",
+    "the delayed state-two and state-five transitions for active slots",
+    "restoring the target object's callback and scale before effect cleanup"
+  ],
+  "bounded_search": {
+    "safe_heat_walk": {
+      "requested_candidates": 20000,
+      "attempted_candidates": 20000,
+      "compile_failures": 896,
+      "exact_candidates": 0,
+      "best_differing_halfwords": 11,
+      "best_wrong_instructions": 0
+    },
+    "classic_exact_only_heat_walk": {
+      "requested_candidates": 10000,
+      "attempted_candidates": 10000,
+      "compile_failures": 270,
+      "exact_candidates": 0,
+      "best_differing_halfwords": 9,
+      "best_wrong_instructions": 0,
+      "best_shape": "a do-while-zero spelling around EffectSlot_SetObjectMode"
+    }
+  },
+  "compiler_axes": {
+    "tied_at_readable_baseline": [
+      "routed",
+      "-fno-schedule-insns",
+      "-fno-strength-reduce",
+      "-fno-expensive-optimizations",
+      "-fregmove",
+      "-O3"
+    ],
+    "regressed": [
+      "-fno-schedule-insns2",
+      "-fno-gcse",
+      "-fno-rerun-cse-after-loop"
+    ]
+  },
+  "residual": [
+    {
+      "scope": "arming the source-object callback",
+      "candidate": "forms the 0x4000 argument, copies the object id, then materializes the zero argument",
+      "reference": "materializes zero before forming 0x4000 and copying the independent object id",
+      "equivalence": "the three instructions write distinct argument registers and neither reads another argument register",
+      "resynchronization": "both streams have identical r0, r1, and r2 at the following call"
+    },
+    {
+      "scope": "setting each slot object's action",
+      "candidate": "materializes action 10 before loading the slot object pointer",
+      "reference": "loads the slot object pointer before materializing the independent action constant",
+      "equivalence": "the load writes r0 and the constant materialization writes r1, with no intervening memory write",
+      "resynchronization": "both streams match at the following call"
+    },
+    {
+      "scope": "initializing the active-slot state-two loop",
+      "candidate": "adds 152 to the slot base and initializes the loop counter before materializing state two",
+      "reference": "materializes state two before the independent address add and counter initialization",
+      "equivalence": "the reordered instructions write distinct r1, r2, and r6 values and perform no memory access",
+      "resynchronization": "both streams match before the first active-byte load"
+    },
+    {
+      "scope": "initializing the active-slot state-five loop",
+      "candidate": "adds 152 to the slot base and initializes the loop counter before materializing state five",
+      "reference": "materializes state five before the independent address add and counter initialization",
+      "equivalence": "the reordered instructions write distinct r1, r2, and r6 values and perform no memory access",
+      "resynchronization": "both streams match before the first active-byte load"
+    }
+  ],
+  "notes": [
+    "The readable reconstruction emits the complete 460-byte owner extent with identical calls, branches, registers, memory operations, constants, literal words, and control flow outside four localized instruction-ordering hunks.",
+    "The classic exact-only winner reduces the raw residual to nine halfwords without changing semantics, but the readable 11-halfword source is retained as the evidence artifact.",
+    "Relocation-aware comparison of the independently assembled retained owner proves all 284 unmasked core bytes identical across the six GS1 editions.",
+    "The exact caller at 0x080955b0 selects this runner for page two, and this owner installs the locally named callback at 0x08095c08 on each of 24 slots before later advancing those slots to states two and five.",
+    "Recovered only from retained owner assembly, approved local GS1 ROMs, local callers and exact battle-effect sources, and the approved compiler. No GS2 evidence or external game source was used."
+  ]
+}

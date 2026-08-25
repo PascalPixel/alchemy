@@ -111,38 +111,7 @@ void Func_08003a7c(void)
     }
 }
 
-extern u8 Data_03001ac0;
-extern volatile u8 Data_03001ca8;
-extern u8 Data_03001aec;
-extern volatile u8 Data_03001c98;
-extern u8 Data_03001cd4;
-extern u16 Data_03001cf8;
-
-s32 Func_080022ec(s32 numerator, s32 denominator);
-
-void Func_08003adc(void)
-{
-    if (Data_03001c98 != 0) {
-        s32 delta;
-        s32 level;
-        s32 step;
-        u32 control;
-
-        if (Data_03001cd4 != 0)
-            control = Data_03001cf8 | 0x80;
-        else
-            control = Data_03001cf8 | 0xc0;
-        *(volatile u16 *)0x04000050 = control;
-        Data_03001ac0--;
-        level = Data_03001ca8;
-        delta = Data_03001aec - Data_03001ca8;
-        step = Data_03001ac0;
-        level += Func_080022ec(delta * step, Data_03001c98);
-        *(volatile u16 *)0x04000054 = level;
-        if (Data_03001ac0 == 0)
-            Data_03001c98 = 0;
-    }
-}
+#include "../../../src/display/blend/update_transition.c"
 
 void Func_08003b70(s32 duration)
 {

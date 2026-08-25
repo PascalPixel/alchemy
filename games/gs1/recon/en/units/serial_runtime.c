@@ -3,6 +3,8 @@
 
 /* Ordered serial/runtime translation unit: 08005d10 through 0800651c. */
 
+#define SERIAL_RUNTIME_TU
+
 typedef void (*InterruptHandler)(void);
 
 struct DmaRegisters {
@@ -17,6 +19,11 @@ struct SerialPacket {
     u16 checksum;
     u8 payload[24];
     u8 padding[4];
+};
+
+union SerialDataRegisters {
+    u32 words[2];
+    u16 halfwords[4];
 };
 
 struct SerialRuntime {
@@ -141,27 +148,8 @@ void Func_08005d10(void)
     REG_IME = interrupt_enable;
 }
 
-void Func_08005e70(void)
-{
-    struct SerialRuntime *state = SERIAL_RUNTIME;
-
-    if (state->mode != 0)
-        state->transfer_enabled = 1;
-}
-
-void Func_08005e88(void)
-{
-    struct SerialRuntime *state;
-
-    REG_IME = 0;
-    REG_IE &= 0xff3f;
-    REG_IME = 1;
-    REG_SIOCNT16 = 0x2003;
-    REG_TM3CNT = 0xc963;
-    REG_IF = 0xc0;
-    state = SERIAL_RUNTIME;
-    state->transfer_enabled = 0;
-}
+#include "../../../src/link/serial/enable_transfer_timer.c"
+#include "../../../src/link/serial/disable_serial_transfer.c"
 
 s32 Func_08005ee0(void *send, void *receive)
 {
@@ -367,89 +355,9 @@ u8 Func_0800615c(void *payload)
     return state->current_mask;
 }
 
-void Func_08006240(void)
-{
-    struct SerialRuntime *state;
-    u32 serial_data[2];
-    s32 channel;
-
-    serial_data[1] = REG_SIODATA32[1];
-    serial_data[0] = REG_SIODATA32[0];
-    state = SERIAL_RUNTIME;
-    state->is_parent = (REG_SIOCNT << 25) >> 31;
-
-    if (state->send_index == -1) {
-        u16 *swap;
-
-        REG_SIODATA8 = 0xfefe;
-        swap = state->send_buffer[1];
-        state->send_buffer[1] = state->send_buffer[0];
-        state->send_buffer[0] = swap;
-    } else if (state->send_index >= 0) {
-        REG_SIODATA8 = state->send_buffer[1][state->send_index];
-    }
-    if (state->send_index <= 14)
-        state->send_index++;
-
-    for (channel = 0; channel <= 1; channel++) {
-        s32 receive_index;
-        /* The reference keeps the received halfword promoted and zero-extended. */
-        u32 value;
-
-        value = ((u16 *)serial_data)[channel];
-        receive_index = state->receive_index[channel];
-        if (value == 0xfefe && receive_index > 13) {
-            state->receive_index[channel] = -1;
-        } else {
-            state->incoming_buffer[channel][receive_index] = value;
-            if (receive_index == 13) {
-                u16 *swap = state->ready_buffer[channel];
-
-                state->ready_buffer[channel] = state->incoming_buffer[channel];
-                state->incoming_buffer[channel] = swap;
-                state->channel_flags[channel] |= 1;
-            }
-        }
-        if (state->is_parent != 0)
-            state->channel_flags[channel] |= 2;
-        if (state->receive_index[channel] <= 14)
-            state->receive_index[channel]++;
-    }
-
-    if (state->mode == 8) {
-        REG_TM3CNT_H = 0;
-        REG_SIOCNT16 = REG_SIOCNT16 | 0x80;
-        REG_TM3CNT_H = 0xc0;
-    }
-}
-
-void Func_08006358(void)
-{
-    s16 *work;
-    s32 handler;
-
-    work = (s16 *)ADDR_03001CB0;
-    do {
-        do {
-        } while (0);
-        *work = 0;
-        Func_0800307c(7, 0, (InterruptHandler)(handler = 0));
-    } while (0);
-    handler = 6;
-    Func_0800307c(handler, 0, 0);
-}
-
-extern volatile u16 Data_03001f64;
-
-u32 Func_08006384(s32 mask)
-{
-    if ((mask & Data_03001f64) != mask) {
-        do {
-            Func_080030f8(1);
-        } while ((mask & Data_03001f64) != mask);
-    }
-    return (REG_SIOCNT << 26) >> 30;
-}
+#include "../../../src/link/serial/handle_transfer_interrupt.c"
+#include "../../../src/link/serial/remove_serial_irq_handlers.c"
+#include "../../../src/link/serial/wait_for_status_mask.c"
 
 s32 Func_080063bc(s32 value, s32 transfer_value)
 {
@@ -507,76 +415,10 @@ finish:
     return result;
 }
 
-void Func_08006458(void)
-{
-    u32 work;
-    u32 count;
-
-    count = 0;
-    if (*(volatile s32 *)0x02002080 != 0) {
-        work = 0x02002080;
-loop_a:
-        Func_080030f8(1);
-        count += 1;
-        if (count <= 0x927bf) {
-            if (*(volatile s32 *)work != 0)
-                goto loop_a;
-        }
-    }
-}
-
-void Func_08006488(void)
-{
-    s32 work;
-    u32 count;
-    s32 idle;
-
-    count = 0;
-    if (*(volatile s32 *)0x020023ac != 0) {
-        work = 0x020023ac;
-loop_b:
-        Func_080030f8(1);
-        count += 1;
-        idle = 0;
-        if (count <= 0x927bf) {
-            if (*(volatile s32 *)work != idle)
-                goto loop_b;
-        }
-    }
-}
-
-void Func_080064b8(void)
-{
-    u32 count;
-
-    count = 0;
-    if (*(volatile s32 *)0x02002080 != 0)
-        goto loop_c;
-    if (*(volatile s32 *)0x020023ac != 0)
-        goto loop_c;
-    return;
-loop_c:
-    Func_080030f8(1);
-    count++;
-    if (count > 0x927bf)
-        return;
-    if (*(volatile s32 *)0x02002080 != 0)
-        goto loop_c;
-    if (*(volatile s32 *)0x020023ac != 0)
-        goto loop_c;
-}
-
-s32 Func_080064f4(void)
-{
-    s32 flags;
-
-    flags = 0;
-    if (*(volatile s32 *)0x02002080 != 0)
-        flags = 1;
-    if (*(volatile s32 *)0x020023ac != 0)
-        flags |= 2;
-    return flags;
-}
+#include "../../../src/link/serial/wait_for_transfer_a.c"
+#include "../../../src/link/serial/wait_for_transfer_b.c"
+#include "../../../src/link/serial/wait_for_transfers.c"
+#include "../../../src/link/serial/get_active_transfers.c"
 
 void Func_0800651c(void)
 {

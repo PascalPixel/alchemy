@@ -3,48 +3,27 @@
   "namespace": "main",
   "address": "0x08003adc",
   "name": "BlendTransition_Update",
-  "status": "measured-draft",
+  "status": "exact",
   "owner_bytes": 146,
   "candidate_bytes": 146,
-  "differing_halfwords": 8,
-  "wrong_instructions": 8,
-  "classification": "blend-transition-update",
+  "differing_halfwords": 0,
+  "wrong_instructions": 0,
+  "classification": "exact-c",
   "translation_unit": "video-dma-queue",
   "compiler_route": "canonical-gcc296",
-  "residual": {
-    "matched_normalized_prefix_instructions": 25,
-    "executable_window": {
-      "candidate": "orrs r2, r3; ldr r6, =Data_03001ac0; ldr r3, =0x04000050; strh r2, [r3]",
-      "reference": "orrs r3, r2; ldr r2, =0x04000050; strh r3, [r2]; ldr r6, =Data_03001ac0"
-    },
-    "remaining_executable_instructions_identical": true,
-    "literal_halfwords": 4,
-    "note": "The other four differing halfwords are the two swapped 32-bit pool entries induced by the join-window load order."
+  "source_shape": {
+    "branch_join": "Each mode branch assigns both the blend-control value and its BLDCNT lvalue before the common store.",
+    "post_store_lifetime": "A scoped pointer owns the remaining-frame counter after the BLDCNT write.",
+    "compiler_result": "GCC 2.96 merges the branch results into r3, keeps the coefficient in r2, emits the BLDCNT address and store before loading the counter into r6, and reproduces the reference literal pool."
   },
-  "compiler_evidence": {
-    "pre_allocation": "GCC already emits constant-first IOR RTL in both arms and merges both definitions into control pseudo 40. The blend-register address is pseudo 56; the two pseudos conflict.",
-    "candidate_allocation": "pseudo 40 -> r2; pseudo 56 -> r3",
-    "required_allocation": "pseudo 40 -> r3; pseudo 56 -> r2",
-    "scheduler": "After reload, sched2 sees the independent Data_03001ac0 load, blend-register address load, and later arithmetic as ready at the join. With the candidate allocation it selects the r6 load before the address/store pair; the reference completes the address/store pair first.",
-    "invariant": "At the join after either mask arm, preserve the mask/result in r3 and the coefficient in r2, then emit the blend-register address load and store before loading Data_03001ac0."
+  "proof": {
+    "complete_translation_unit": "146/146 bytes, zero differing halfwords",
+    "production_source": "146/146 bytes, zero differing halfwords",
+    "compiler_flags": "canonical; no per-owner override"
   },
-  "bounded_search": {
-    "exact": false,
-    "best_differing_halfwords": 8,
-    "best_candidate_bytes": 146,
-    "tested": [
-      "commutative operand order, signed and unsigned 32-bit control, register-qualified control, and explicit truncation",
-      "volatile and signed coefficient declarations plus signed mode declaration",
-      "declaration-order and named hardware-register pointer spellings",
-      "inline u16/u32 hardware-register writers",
-      "compound-assignment, branch-local mask, conditional-expression, direct-branch-store, and m2c-derived mask-first forms"
-    ],
-    "result": "Neutral type, pointer, helper, cast, and declaration variants retained the eight-halfword allocation residual. Forms that changed value ancestry also changed constant materialization or control flow and regressed to 47-67 differing halfwords."
-  },
-  "next": "Invert the merged result/address allocation without changing either branch's already-exact instruction stream. Do not add a per-owner compiler override; score the complete video/DMA translation unit under canonical flags.",
   "notes": [
-    "The readable complete-unit C draft is retained as the best honest result and claims zero DONE bytes.",
-    "Recovered only from retained owner assembly, the approved local ROM, in-repository callers and types, the local m2c structural draft, and approved GCC 2.96 pass dumps under ignored out/.",
-    "No external game source, copied instruction bytes, inline assembly, fixed-register variable, compiler barrier, compiler modification, or per-owner flag override was used."
+    "The final source is ordinary C: it uses no inline assembly, fixed-register variable, compiler barrier, forbidden ABI attribute, copied instruction bytes, compiler modification, or flag override.",
+    "The duplicated pointer assignment preserves the two branch-local lvalue ancestries that GCC tail-merges at the common store; it is semantically ordinary and has no side effects.",
+    "Recovered only from the retained owner, approved local ROM, in-repository callers and types, local m2c structure, and GCC 2.96 pass evidence."
   ]
 }

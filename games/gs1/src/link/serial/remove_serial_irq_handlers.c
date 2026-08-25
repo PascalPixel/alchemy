@@ -1,9 +1,11 @@
 #include "types.h"
 #include "global_cells.h"
 
+#ifndef SERIAL_RUNTIME_TU
 typedef void (*InterruptHandler)(void);
 
 void Func_0800307c(s32, s32, InterruptHandler);
+#endif
 
 #define SerialRuntime_RemoveIrqHandlers Func_08006358
 

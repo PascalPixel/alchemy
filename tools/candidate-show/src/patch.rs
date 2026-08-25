@@ -1,41 +1,60 @@
+use compiler_core::source_inputs::quoted_include;
 use std::path::{Path, PathBuf};
 use std::process::Command;
-pub fn strip_level_for_basename(header_path: &str, basename: &str) -> Option<usize> {
-    let path = header_path
-        .trim()
-        .strip_prefix("a/")
-        .or_else(|| header_path.trim().strip_prefix("b/"))
-        .unwrap_or(header_path.trim());
-    let parts: Vec<_> = path.split('/').filter(|part| !part.is_empty()).collect();
-    (parts.last().copied() == Some(basename)).then_some(parts.len())
+
+pub fn apply_unified_diff_in_tree(
+    root: &Path,
+    source: &str,
+    patch: &str,
+    try_root: &Path,
+) -> Result<PathBuf, String> {
+    let repository = root.canonicalize().map_err(text)?;
+    let original = root.join(source).canonicalize().map_err(text)?;
+    let dest = try_root.join(original.strip_prefix(&repository).map_err(text)?);
+    apply_unified_diff(&original, patch, &dest)?;
+    for include in std::fs::read_to_string(&dest)
+        .map_err(text)?
+        .lines()
+        .filter_map(quoted_include)
+    {
+        let included = original.parent().unwrap_or(&repository).join(include);
+        if !included.is_file() {
+            continue;
+        }
+        let included = included.canonicalize().map_err(text)?;
+        let staged = try_root.join(included.strip_prefix(&repository).map_err(text)?);
+        std::fs::create_dir_all(staged.parent().unwrap_or(try_root)).map_err(text)?;
+        std::fs::copy(included, staged).map_err(text)?;
+    }
+    Ok(dest)
 }
-pub fn apply_unified_diff(source: &str, patch_text: &str, dest: &Path) -> Result<(), String> {
+
+fn apply_unified_diff(source: &Path, patch_text: &str, dest: &Path) -> Result<(), String> {
     let basename = dest
         .file_name()
-        .and_then(|name| name.to_str())
         .ok_or_else(|| format!("{}: not a file path", dest.display()))?;
     let parent = dest
         .parent()
         .ok_or_else(|| format!("{}: missing parent", dest.display()))?;
-    std::fs::create_dir_all(parent).map_err(|error| format!("{}: {error}", parent.display()))?;
-    std::fs::copy(source, dest)
-        .map_err(|error| format!("{source} -> {}: {error}", dest.display()))?;
-    let header = patch_text
+    std::fs::create_dir_all(parent).map_err(text)?;
+    std::fs::copy(source, dest).map_err(text)?;
+    let path = patch_text
         .lines()
-        .find_map(|line| {
-            line.strip_prefix("--- ")
-                .or_else(|| line.strip_prefix("+++ "))
-        })
-        .ok_or("patch: no ---/+++ header")?;
-    let path = header.split_whitespace().next().unwrap_or(header);
-    let strip = strip_level_for_basename(path, basename)
-        .ok_or_else(|| format!("patch: header {path:?} does not end in {basename}"))?;
-    let patch_path: PathBuf = parent.join("incoming.diff");
-    std::fs::write(&patch_path, patch_text)
-        .map_err(|error| format!("{}: {error}", patch_path.display()))?;
+        .find_map(|line| line.strip_prefix("--- "))
+        .and_then(|line| line.split_whitespace().next())
+        .ok_or("patch: no --- header")?;
+    if Path::new(path).file_name() != dest.file_name() {
+        return Err(format!(
+            "patch: header {path:?} does not end in {basename:?}"
+        ));
+    }
+    let strip = path.trim_start_matches("a/").split('/').count();
+    let patch_path = parent.join("incoming.diff");
+    std::fs::write(&patch_path, patch_text).map_err(text)?;
     let output = Command::new("git")
         .args([
             "apply",
+            "--unidiff-zero",
             "--unsafe-paths",
             "--whitespace=nowarn",
             &format!("-p{strip}"),
@@ -43,7 +62,7 @@ pub fn apply_unified_diff(source: &str, patch_text: &str, dest: &Path) -> Result
         ])
         .current_dir(parent)
         .output()
-        .map_err(|error| format!("git apply: {error}"))?;
+        .map_err(text)?;
     if output.status.success() {
         return Ok(());
     }
@@ -53,4 +72,8 @@ pub fn apply_unified_diff(source: &str, patch_text: &str, dest: &Path) -> Result
         &output.stderr
     });
     Err(format!("git apply failed: {}", detail.trim()))
+}
+
+fn text(error: impl ToString) -> String {
+    error.to_string()
 }

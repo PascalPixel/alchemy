@@ -55,7 +55,6 @@ s32 Func_080072f0(s32, s32, s32, s32);
 s32 Func_08006c68(u16 sector, s32 source);
 s32 Func_080058ac(s32 index);
 u32 Func_08005810(s32 record_id);
-u32 Func_08005868();
 s32 Func_08005920(s32 record_id, void *source);
 u32 Func_08005a78(s32 record_id, void *destination);
 u32 Func_08005ac0(s32 record_id);
@@ -120,54 +119,8 @@ s32 Func_080056cc(void)
     return 0;
 }
 
-u32 Func_08005810(s32 mode)
-{
-    u32 empty[16];
-    s32 count;
-    u32 index;
-    u8 *slot;
-    u8 value;
-
-    slot = *(u8 **)ADDR_03001F1C;
-    count = 0;
-    index = 0;
-    do {
-        value = *slot++;
-        if (value == 0)
-            empty[count++] = index;
-        index += 1;
-    } while (index <= 0xFU);
-    index = 0x10;
-    if (count != 0) {
-        if (count == 1) {
-            index = empty[0];
-            if (Func_08005b24(mode) == 0x10)
-                index = 0x10;
-        } else {
-            index = UnsignedModulo(Random16(), count);
-            index = empty[index];
-        }
-    }
-    return index;
-}
-
-u32 Func_08005868(code)
-u16 code;
-{
-    s32 *param = (s32 *)0x02004c04;
-    s32 result;
-    struct SaveWorkspace *work;
-    s32 value;
-
-    work = SAVE_WORKSPACE;
-    value = code & 0xffff;
-    if ((Func_080072f0(value, (s32)&work->slot,
-                       (s32)param, *param) << 16) != 0) {
-        return 1U;
-    }
-    result = Func_08006c68(value, (s32)&work->slot);
-    return (u32)((0 - result) | result) >> 31;
-}
+#include "../../../src/save/state/select_write_slot.c"
+#include "../../../src/save/state/write_workspace_slot.c"
 
 s32 Func_080058ac(s32 index)
 {
@@ -183,13 +136,7 @@ s32 Func_080058ac(s32 index)
     return (u16)checksum - header.checksum;
 }
 
-typedef u16 (*Callback_08005904)(u16);
-extern Callback_08005904 Data_02004c14;
-
-u16 Func_08005904(u16 value)
-{
-    return Data_02004c14(value);
-}
+#include "../../../src/save/state/erase_slot_sector.c"
 
 s32 Func_08005920(s32 record_id, void *source)
 {
@@ -261,65 +208,9 @@ u32 Func_08005a78(s32 record_id, void *destination)
     return 0;
 }
 
-u32 Func_08005ac0(s32 record_id)
-{
-    u32 index;
-    s32 result;
-
-    index = Func_08005b24(record_id);
-    if (index > 15)
-        return 1U;
-    result = Func_08005b64(index);
-    return (u32)((0 - result) | result) >> 31;
-}
-
-s32 Func_08005ae0(void)
-{
-    struct SaveWorkspace *work;
-    u32 limit;
-    u32 offset;
-    s32 sum;
-
-    work = SAVE_WORKSPACE;
-    limit = 0xfe7;
-    sum = 0;
-    offset = 0;
-    do {
-        sum += work->slot.bytes[offset + 0x10];
-        sum += work->slot.bytes[offset + 0x11];
-        sum += work->slot.bytes[offset + 0x12];
-        sum += work->slot.bytes[offset + 0x13];
-        sum += work->slot.bytes[offset + 0x14];
-        sum += work->slot.bytes[offset + 0x15];
-        sum += work->slot.bytes[offset + 0x16];
-        sum += work->slot.bytes[offset + 0x17];
-        offset += 8;
-    } while (offset <= limit);
-    return sum;
-}
-
-u32 Func_08005b24(s32 record_id)
-{
-    struct SaveWorkspace *work;
-    u32 best_sequence;
-    u32 best_slot;
-    u32 index;
-
-    work = SAVE_WORKSPACE;
-    best_slot = 0x10;
-    best_sequence = 0;
-    index = 0;
-    do {
-        if (work->occupied[index] != 0 && record_id == work->record_id[index]) {
-            if (best_sequence < work->sequence[index]) {
-                best_sequence = work->sequence[index];
-                best_slot = index;
-            }
-        }
-        index++;
-    } while (index <= 15);
-    return best_slot;
-}
+#include "../../../src/save/state/delete_record.c"
+#include "../../../src/save/state/checksum_workspace.c"
+#include "../../../src/save/state/find_latest_slot.c"
 
 s32 Func_08005b64(s32 index)
 {
@@ -345,39 +236,8 @@ s32 Func_08005b64(s32 index)
     return 0;
 }
 
-s32 Func_08005c08(u8 *left, u8 *right, s32 count)
-{
-    s32 difference = 0;
-
-    while (count != 0) {
-        difference = *left - *right;
-        if (difference != 0)
-            break;
-        count--;
-        left++;
-        right++;
-    }
-    return difference;
-}
-
-u32 Func_08005c2c(s32 record_id)
-{
-    struct SaveWorkspace *work;
-    u32 best_sequence;
-    u32 index;
-
-    work = SAVE_WORKSPACE;
-    best_sequence = 0;
-    index = 0;
-    do {
-        if (work->occupied[index] != 0 && record_id == work->record_id[index]) {
-            if (best_sequence < work->sequence[index])
-                best_sequence = work->sequence[index];
-        }
-        index++;
-    } while (index <= 15);
-    return best_sequence;
-}
+#include "../../../src/save/state/compare_bytes.c"
+#include "../../../src/save/state/get_latest_sequence.c"
 
 s32 Func_08005c68(void)
 {

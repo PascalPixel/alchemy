@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global BattleEffect_UpdatePhasedRadialParticle
 	.global Func_08095c08
 	.thumb_func
+BattleEffect_UpdatePhasedRadialParticle:
 Func_08095c08:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

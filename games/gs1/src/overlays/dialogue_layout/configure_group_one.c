@@ -1,7 +1,7 @@
 #include "types.h"
 
 /*
- * Resource 39a overlay scene step at 0x02001050.
+ * Dialogue-layout group at 0x02001050.
  *
  * Complete owner: `push {r5, lr}` and `sub sp, #8` at 0x02001050, and the
  * matching `add sp, #8 / pop {r5} / pop {r0} / bx r0` at 0x0200113e, so
@@ -44,7 +44,8 @@ extern void Func_0200210c();
 extern void Func_0200340c();
 extern void Func_0200212c();
 extern void Func_0200342c();
-void Func_02001050(void)
+#define DialogueLayout_ConfigureGroupOne Func_02001050
+void DialogueLayout_ConfigureGroupOne(void)
 {
     { s32 f1 = 8; s32 g1 = 29; Func_02003356(8, 42, 15, 5,  f1, g1); }
 

@@ -3698,8 +3698,8 @@
 <title>382 · set_effect_record_mode · byte-exact C: 22 bytes</title>
 <rect x="127.84468013863659" y="212.68364902196257" width="0.860418030065139" height="1.0362546563765385" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
-<g aria-label="382 · state_update_0360 · byte-exact C: 86 bytes">
-<title>382 · state_update_0360 · byte-exact C: 86 bytes</title>
+<g aria-label="382 · prepare_scene_object · byte-exact C: 86 bytes">
+<title>382 · prepare_scene_object · byte-exact C: 86 bytes</title>
 <rect x="129.70509816870174" y="212.68364902196257" width="6.272543208436453" height="1.0362546563765385" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="382 · create_configured_overlay_object · byte-exact C: 98 bytes">
@@ -3718,8 +3718,8 @@
 <title>382 · update_actor_proximity · byte-exact C: 152 bytes</title>
 <rect x="69.68094647200749" y="222.6986559157659" width="5.608666984443286" height="2.9604968238029907" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
-<g aria-label="382 · state_update_0424 · byte-exact C: 108 bytes">
-<title>382 · state_update_0424 · byte-exact C: 108 bytes</title>
+<g aria-label="382 · update_entity_from_leader · byte-exact C: 108 bytes">
+<title>382 · update_entity_from_leader · byte-exact C: 108 bytes</title>
 <rect x="69.68094647200749" y="226.6591527395689" width="3.3520489897553354" height="3.2731676256821736" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="382 · leaf_0273 · byte-exact C: 8 bytes">
@@ -3754,16 +3754,16 @@
 <title>382 · leaf_0721 · byte-exact C: 36 bytes</title>
 <rect x="79.78515612001254" y="224.72095946476225" width="2.4059133644960884" height="0.8200731940967207" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
-<g aria-label="382 · state_update_0010 · byte-exact C: 92 bytes">
-<title>382 · state_update_0010 · byte-exact C: 92 bytes</title>
+<g aria-label="382 · run_actor_thirteen_scene_setup · byte-exact C: 92 bytes">
+<title>382 · run_actor_thirteen_scene_setup · byte-exact C: 92 bytes</title>
 <rect x="76.28961345645078" y="226.54103265885897" width="2.6075792873938823" height="3.391287706392088" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
-<g aria-label="382 · state_update_0023 · byte-exact C: 84 bytes">
-<title>382 · state_update_0023 · byte-exact C: 84 bytes</title>
+<g aria-label="382 · run_actor_seventeen_scene_setup · byte-exact C: 84 bytes">
+<title>382 · run_actor_seventeen_scene_setup · byte-exact C: 84 bytes</title>
 <rect x="79.89719274384467" y="226.54103265885897" width="2.29387674066398" height="3.391287706392088" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
-<g aria-label="382 · state_update_0191 · byte-exact C: 84 bytes">
-<title>382 · state_update_0191 · byte-exact C: 84 bytes</title>
+<g aria-label="382 · run_actor_eighteen_scene_setup · byte-exact C: 84 bytes">
+<title>382 · run_actor_eighteen_scene_setup · byte-exact C: 84 bytes</title>
 <rect x="83.19106948450865" y="214.7199036783391" width="3.3581041975810155" height="2.318957000999902" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="382 · leaf_0577 · byte-exact C: 32 bytes">
@@ -3794,8 +3794,8 @@
 <title>382 · run_actor_command · byte-exact C: 68 bytes</title>
 <rect x="91.49637091247018" y="217.59345952336068" width="1.3284728141361426" height="4.028722728787731" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
-<g aria-label="382 · state_update_0588 · byte-exact C: 84 bytes">
-<title>382 · state_update_0588 · byte-exact C: 84 bytes</title>
+<g aria-label="382 · run_actor_eight_scene_setup · byte-exact C: 84 bytes">
+<title>382 · run_actor_eight_scene_setup · byte-exact C: 84 bytes</title>
 <rect x="93.82484372660633" y="217.59345952336068" width="1.8763487704034705" height="4.028722728787731" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="382 · leaf_0829 · byte-exact C: 32 bytes">
@@ -3818,12 +3818,12 @@
 <title>382 · run_actor_fifteen_followup_dialogue · byte-exact C: 112 bytes</title>
 <rect x="88.41277347093546" y="222.6221822521484" width="7.288419026074324" height="1.326838671668749" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
-<g aria-label="382 · state_update_0405 · byte-exact C: 92 bytes">
-<title>382 · state_update_0405 · byte-exact C: 92 bytes</title>
+<g aria-label="382 · run_actor_sixteen_scene_setup · byte-exact C: 92 bytes">
+<title>382 · run_actor_sixteen_scene_setup · byte-exact C: 92 bytes</title>
 <rect x="88.41277347093546" y="224.94902092381716" width="1.6476894111070757" height="4.983299441433925" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
-<g aria-label="382 · state_update_0890 · byte-exact C: 84 bytes">
-<title>382 · state_update_0890 · byte-exact C: 84 bytes</title>
+<g aria-label="382 · run_actor_eighteen_followup_scene_setup · byte-exact C: 84 bytes">
+<title>382 · run_actor_eighteen_followup_scene_setup · byte-exact C: 84 bytes</title>
 <rect x="91.06046288204254" y="224.94902092381716" width="4.640729614967249" height="1.5642711891859675" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="382 · leaf_0713 · byte-exact C: 56 bytes">
@@ -3846,12 +3846,12 @@
 <title>382 · run_actor_fifteen_script_branch · byte-exact C: 92 bytes</title>
 <rect x="69.68094647200749" y="236.03538480151104" width="5.073812797745483" height="1.6082329340884178" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
-<g aria-label="382 · state_update_0155 · byte-exact C: 56 bytes">
-<title>382 · state_update_0155 · byte-exact C: 56 bytes</title>
+<g aria-label="382 · run_actor_sixteen_script_branch · byte-exact C: 56 bytes">
+<title>382 · run_actor_sixteen_script_branch · byte-exact C: 56 bytes</title>
 <rect x="75.75475926975298" y="230.9323203652511" width="6.234982891432119" height="0.5" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
-<g aria-label="382 · state_update_0725 · byte-exact C: 120 bytes">
-<title>382 · state_update_0725 · byte-exact C: 120 bytes</title>
+<g aria-label="382 · run_actor_nineteen_script_branch · byte-exact C: 120 bytes">
+<title>382 · run_actor_nineteen_script_branch · byte-exact C: 120 bytes</title>
 <rect x="75.75475926975298" y="232.265137194694" width="2.2395445782531875" height="5.378480540905439" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="382 · leaf_0323 · byte-exact C: 32 bytes">
@@ -3898,8 +3898,8 @@
 <title>382 · leaf_0768 · byte-exact C: 24 bytes</title>
 <rect x="81.48780910535315" y="238.64361773559946" width="0.5019330558319552" height="1.7515703144755357" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
-<g aria-label="382 · state_update_0869 · byte-exact C: 136 bytes">
-<title>382 · state_update_0869 · byte-exact C: 136 bytes</title>
+<g aria-label="382 · move_actor_to_position_and_wait · byte-exact C: 136 bytes">
+<title>382 · move_actor_to_position_and_wait · byte-exact C: 136 bytes</title>
 <rect x="75.73039905799732" y="241.395188050075" width="3.04619123784237" height="4.787785833896816" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="382 · state_update_0777 · byte-exact C: 60 bytes">
@@ -7658,16 +7658,16 @@
 <title>39a · state_update_0765 · byte-exact C: 76 bytes</title>
 <rect x="155.5460465691692" y="161.8271949493474" width="2.350649025083631" height="2.9057514537509697" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
-<g aria-label="39a · state_update_0570 · byte-exact C: 260 bytes">
-<title>39a · state_update_0570 · byte-exact C: 260 bytes</title>
+<g aria-label="39a · configure_group_one · byte-exact C: 260 bytes">
+<title>39a · configure_group_one · byte-exact C: 260 bytes</title>
 <rect x="158.89669559425283" y="151.37228872288722" width="6.626104202453451" height="4.870709114551719" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
-<g aria-label="39a · state_update_0656 · byte-exact C: 376 bytes">
-<title>39a · state_update_0656 · byte-exact C: 376 bytes</title>
+<g aria-label="39a · configure_group_two · byte-exact C: 376 bytes">
+<title>39a · configure_group_two · byte-exact C: 376 bytes</title>
 <rect x="158.89669559425283" y="157.24299783743893" width="6.626104202453451" height="7.489948565659408" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
-<g aria-label="39a · state_update_0895 · byte-exact C: 784 bytes">
-<title>39a · state_update_0895 · byte-exact C: 784 bytes</title>
+<g aria-label="39a · configure_group_three · byte-exact C: 784 bytes">
+<title>39a · configure_group_three · byte-exact C: 784 bytes</title>
 <rect x="136.97764137713818" y="165.73294640309834" width="11.796379871786444" height="9.549913238798418" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="39a · state_update_0009 · byte-exact C: 304 bytes">

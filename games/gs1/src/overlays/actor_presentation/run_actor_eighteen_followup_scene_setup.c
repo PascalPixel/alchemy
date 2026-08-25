@@ -10,7 +10,8 @@ extern int Func_0200260c(int,int);
 extern int Func_02002594(int,int);
 extern void Func_02002638(int,int);
 extern void Func_0200259c(void);
-void Func_02000b98(void)
+#define ActorPresentation_RunActorEighteenFollowupSceneSetup Func_02000b98
+void ActorPresentation_RunActorEighteenFollowupSceneSetup(void)
 {
     u8 *workspace;
     Func_02002554(); Func_020025f2(0x133f); Func_020022e8(18, 0, 2); Func_0200260c(18, 0);

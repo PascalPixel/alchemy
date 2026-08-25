@@ -11,9 +11,9 @@ void Func_02001ad0(void *, s32);
 #define RunOverlayObjectCommand0  Func_020019d8
 #define RunOverlayObjectCommand1  Func_020019f0
 #define RunOverlayObjectCommand14 Func_02001ad0
-#define PrepareOverlayObject      Func_02000048
+#define PrepareSceneObject        Func_02000048
 
-void *PrepareOverlayObject(s32 first, s32 second, s32 third, s32 fourth) {
+void *PrepareSceneObject(s32 first, s32 second, s32 third, s32 fourth) {
     void *overlay_object;
     void *object_record;
     s32 flags_mask;

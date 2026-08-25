@@ -1,7 +1,7 @@
 #include "types.h"
 
 /*
- * Resource 39a overlay dialogue layout at 0x020012cc.
+ * Dialogue-layout group at 0x020012cc.
  *
  * Complete owner: `push {r5, lr}` and `sub sp, #8` at 0x020012cc, and the
  * matching `add sp, #8 / pop {r5} / pop {r0} / bx r0` at 0x020015b4, so
@@ -80,7 +80,8 @@ void Func_02003884();
 s32 Func_0200388a();
 void Func_02003896();
 
-void Func_020012cc(void)
+#define DialogueLayout_ConfigureGroupThree Func_020012cc
+void DialogueLayout_ConfigureGroupThree(void)
 {
     { s32 k5 = 12, k6 = 21; Func_020035d2(12, 3, 9, 16, k5, k6); }
 

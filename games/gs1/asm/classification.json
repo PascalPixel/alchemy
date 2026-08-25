@@ -1773,19 +1773,20 @@
    "retention": "keep_structured_asm",
    "confidence": "proven",
    "evidence": [
-    "complete_ordinary_c_semantics_and_exact_348_byte_owner_extent",
+    "complete_ordinary_c_semantics_and_exact_owner_extents",
     "six_edition_relocation_normalized_core_is_identical",
-    "only_residual_is_one_independent_pointer_add_callback_store_ordering_pair",
+    "only_residuals_are_independent_instruction_ordering_pairs_with_immediate_resynchronization",
     "all_other_instructions_registers_literals_control_flow_and_memory_operations_match",
-    "fifty_thousand_bounded_ordinary_c_candidates_produced_no_exact_candidate",
+    "owner_specific_bounded_ordinary_c_searches_produced_no_exact_candidate",
     "approved_compiler_scheduling_and_optimization_sweeps_preserve_the_residual_or_regress",
     "inline_assembly_fixed_registers_and_compiler_barriers_are_disallowed",
     "byte_exact_reconstruction"
    ],
-   "expected_files": 1,
-   "expected_bytes": 348,
+   "expected_files": 2,
+   "expected_bytes": 804,
    "files": [
-    "0809b208"
+    "0809b208",
+    "08095c08"
    ]
   },
   {

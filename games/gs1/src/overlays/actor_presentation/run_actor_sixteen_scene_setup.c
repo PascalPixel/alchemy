@@ -12,7 +12,8 @@ extern int Func_020025b8(int,int);
 extern int Func_02002540(int,int);
 extern void Func_020025e4(int,int);
 extern void Func_02002548(void);
-void Func_02000b3c(void)
+#define ActorPresentation_RunActorSixteenSceneSetup Func_02000b3c
+void ActorPresentation_RunActorSixteenSceneSetup(void)
 {
     u8 *workspace;
     Func_020024f8(); Func_02002596(0x133c); Func_0200256e(16, 1); Func_02002294(16, 0, 2); Func_020025b8(16, 0);

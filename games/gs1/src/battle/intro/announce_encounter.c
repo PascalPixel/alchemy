@@ -9,7 +9,7 @@ void Func_08015118(void);
 void UiText_DrawQuantity(s32, s32);
 void UiText_ShowMessageAndWait(s32);
 void Func_08015218(void);
-s32 Func_080bb65c(void);
+void Func_080bb65c(void);
 
 void BattleIntro_AnnounceEncounter(s32 enemy_count)
 {

@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080bb65c",
+  "name": "BattlePresentation_WaitForAdvance",
+  "status": "measured-draft",
+  "owner_bytes": 356,
+  "executable_owner_bytes": 356,
+  "candidate_bytes": 392,
+  "differing_halfwords": 180,
+  "wrong_instructions": 142,
+  "cross_edition": {
+    "object_bytes": 354,
+    "relocation_bytes": 48,
+    "literal_bytes": 48,
+    "relocation_normalized_core_bytes": 258,
+    "alignment_bytes": 2,
+    "core_diff_bytes": 0,
+    "core_identical": true,
+    "starts": {
+      "ja": "0x080b265c",
+      "en": "0x080bb65c",
+      "de": "0x080bdc74",
+      "es": "0x080bf674",
+      "fr": "0x080bf674",
+      "it": "0x080bb674"
+    }
+  },
+  "domain": "Renders the animated battle-presentation advance prompt and waits for accepted input before releasing its sprite resources.",
+  "expressed": [
+    "waits for the presentation event queue to become ready",
+    "allocates the prompt sprite and derives phase-specific tile data",
+    "updates window registers and the prompt's packed tile, X, and animated Y fields each frame",
+    "accepts the primary button, shared presentation input, or delayed alternate input",
+    "plays the confirmation sound, releases the prompt sprite, and advances one final frame"
+  ],
+  "bounded_search": {
+    "mode": "screen-only",
+    "attempted": 0,
+    "exact": false,
+    "reason": "The complete readable candidate is 36 bytes long with 180 differing halfwords and fails exact-extent and <=20-halfword admission."
+  },
+  "notes": [
+    "Independent object analysis finds 354 object bytes plus two alignment bytes and proves all 258 relocation-normalized core bytes identical across the six approved GS1 editions.",
+    "The helper is called throughout the recovered battle-presentation event family. The residual spans packed prompt construction, render-register scheduling, and loop allocation rather than a localized compiler hunk.",
+    "No full search or permanent classification was warranted, and zero DONE bytes are claimed.",
+    "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, recovered battle-presentation callers, and the approved compiler. No GS2 evidence or external source was used."
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080b9934",
+  "name": "BattlePresentation_BuildActions",
+  "status": "measured-draft",
+  "owner_bytes": 272,
+  "candidate_bytes": 280,
+  "differing_halfwords": 139,
+  "wrong_instructions": 110,
+  "classification": "battle-presentation-action-builder",
+  "cross_edition": {
+    "starts": {
+      "ja": "0x080b0934",
+      "en": "0x080b9934",
+      "de": "0x080bbf4c",
+      "es": "0x080bd94c",
+      "fr": "0x080bd94c",
+      "it": "0x080b994c"
+    },
+    "object_bytes": 272,
+    "relocation_bytes": 56,
+    "literal_bytes": 16,
+    "relocation_normalized_core_bytes": 200,
+    "core_diff_bytes": 0,
+    "core_identical": true
+  },
+  "domain": "Resets the twenty battle-action slots, builds and merges presentation actions, publishes per-character presentation sides, and restores the transition state.",
+  "expressed": [
+    "the twenty 16-byte action-slot reset",
+    "mode-dependent base action construction",
+    "conditional action append or enemy-side construction",
+    "error propagation and action finalization",
+    "per-record kind 3/7 presentation-side publication",
+    "shared resource and transition cleanup"
+  ],
+  "bounded_search": {
+    "mode": "classic-exact-only",
+    "attempted": 10000,
+    "compile_failures": 139,
+    "exact": false,
+    "baseline_structural_rows": 29,
+    "best_structural_rows": 11,
+    "best_generated_candidate_bytes": 272,
+    "best_generated_differing_halfwords": 125
+  },
+  "notes": [
+    "This complete orchestration owner directly calls the neighboring action builders at 080b920c, 080b9324, and 080b9724 and the measured finalizer at 080b9470.",
+    "Independent object comparison proves all 200 relocation- and literal-normalized core bytes identical across all six approved GS1 editions.",
+    "The earlier 276-byte / 99-halfword draft initialized the caller output array instead of the distinct global twenty-slot display table at battle+0x2ec. The lower score was semantically wrong and was rejected; the corrected readable source is 280 bytes / 139 halfwords / 110 wrong instructions.",
+    "A fresh bounded 10,000-candidate search from the corrected source reached exact extent and eleven structural rows only through a long chain of synthetic temporaries and expression rewrites; it still differed by 125 halfwords and was rejected.",
+    "Retained assembly remains authoritative; this measured draft claims zero DONE bytes.",
+    "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, and local callers and callees. No GS2 source or data was inspected or changed."
+  ]
+}

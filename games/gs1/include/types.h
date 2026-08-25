@@ -222,6 +222,7 @@ typedef int bool;
 #define UiText_DrawNumber Func_0801e9a0
 #define UiText_DrawNumberAtOffset Func_0801e9d4
 #define UiText_DrawNumberInWindow Func_0801ea08
+#define UiText_DrawPrefixedNumberAtOffset Func_0801ea3c
 #define Menu_LoadResourceSlot Func_0802875c
 #define GetBattleObjectSlot Func_080b7dd0
 #define GetMotionRecord Func_080b7f70

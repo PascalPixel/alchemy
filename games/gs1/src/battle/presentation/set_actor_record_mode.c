@@ -23,10 +23,15 @@ struct EffectActorSlot {
 
 struct EffectActorSlot *Func_080b7dd0(s32);
 
-void Func_080c0f98(s32 actor_id, s32 mode)
+#define BattlePresentation_SetActorRecordMode Func_080c0f98
+
+void BattlePresentation_SetActorRecordMode(s32 actor_id, s32 mode)
 {
     struct EffectActorSlot *slot = Func_080b7dd0(actor_id);
     struct EffectActorObject *object;
+    struct EffectActorRecord *record;
+    struct EffectActorRecord **records;
+    s32 i;
 
     if (slot == 0)
         return;
@@ -36,18 +41,17 @@ void Func_080c0f98(s32 actor_id, s32 mode)
     switch (object->kind & 15) {
     case 1:
     {
-        register struct EffectActorRecord *record = object->records;
+        record = object->records;
         record->mode_a = mode;
         record->mode_b = mode;
         break;
     }
     case 2:
     {
-        register struct EffectActorRecord **records =
-            (struct EffectActorRecord **)object->records;
-        s32 i = 0;
+        records = (struct EffectActorRecord **)object->records;
+        i = 0;
         do {
-            register struct EffectActorRecord *record = *records++;
+            record = *records++;
             if (record == 0)
                 break;
             record->mode_a = mode;

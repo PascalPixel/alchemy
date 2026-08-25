@@ -64,15 +64,35 @@ pub fn compare(target: &Path, candidate: &Path, symbol: &str) -> Result<Normaliz
             }
             row += 1;
         }
-        mismatch_runs.push(NormalizedMismatchRun { row_start, row_end: row, rows: row - row_start, candidate_start, candidate_end: candidate_index, target_start, target_end: target_index, candidate: candidate_lines, target: target_lines });
+        mismatch_runs.push(NormalizedMismatchRun {
+            row_start,
+            row_end: row,
+            rows: row - row_start,
+            candidate_start,
+            candidate_end: candidate_index,
+            target_start,
+            target_end: target_index,
+            candidate: candidate_lines,
+            target: target_lines,
+        });
     }
 
-    Ok(NormalizedReport { schema_version: 1, symbol: symbol.into(), target_instructions: target.len(), candidate_instructions: candidate.len(), aligned_rows: pairs.len(), exact_rows, mismatch_runs })
+    Ok(NormalizedReport {
+        schema_version: 1,
+        symbol: symbol.into(),
+        target_instructions: target.len(),
+        candidate_instructions: candidate.len(),
+        aligned_rows: pairs.len(),
+        exact_rows,
+        mismatch_runs,
+    })
 }
 
 fn row_matches(pair: &(Option<String>, Option<String>)) -> bool {
     match pair {
-        (Some(candidate), Some(target)) => without_pc_offset(candidate) == without_pc_offset(target),
+        (Some(candidate), Some(target)) => {
+            without_pc_offset(candidate) == without_pc_offset(target)
+        }
         (None, None) => true,
         _ => false,
     }
@@ -88,13 +108,19 @@ mod tests {
 
     #[test]
     fn ignores_rendered_pc_offsets() {
-        let pair = (Some("ldr r0, [pc, #12] <pool>".into()), Some("ldr r0, [pc, #48] <pool>".into()));
+        let pair = (
+            Some("ldr r0, [pc, #12] <pool>".into()),
+            Some("ldr r0, [pc, #48] <pool>".into()),
+        );
         assert!(row_matches(&pair));
     }
 
     #[test]
     fn gaps_and_register_changes_are_mismatches() {
         assert!(!row_matches(&(Some("movs r0, #1".into()), None)));
-        assert!(!row_matches(&(Some("movs r0, #1".into()), Some("movs r1, #1".into()),)));
+        assert!(!row_matches(&(
+            Some("movs r0, #1".into()),
+            Some("movs r1, #1".into()),
+        )));
     }
 }

@@ -25,7 +25,11 @@ pub struct Audit {
 }
 
 pub fn repository_root() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).parent().and_then(Path::parent).expect("audit is under tools").to_path_buf()
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .and_then(Path::parent)
+        .expect("audit is under tools")
+        .to_path_buf()
 }
 
 fn document(path: &Path) -> Result<Value, String> {
@@ -38,15 +42,34 @@ fn integer(value: &Value, label: &str) -> Result<u64, String> {
         return Ok(number);
     }
     if let Some(text) = value.as_str() {
-        let parsed = text.strip_prefix("0x").map_or_else(|| text.parse(), |hex| u64::from_str_radix(hex, 16));
+        let parsed = text
+            .strip_prefix("0x")
+            .map_or_else(|| text.parse(), |hex| u64::from_str_radix(hex, 16));
         return parsed.map_err(|_| format!("{label} must be an integer"));
     }
     Err(format!("{label} must be an integer"))
 }
 
 fn span(value: &Value, label: &str) -> Result<(u64, u64), String> {
-    let start = integer(value.get("start").or_else(|| value.get("address")).ok_or_else(|| format!("{label} has no start or address"))?, &format!("{label}.start"))?;
-    let end = if let Some(end) = value.get("end") { integer(end, &format!("{label}.end"))? } else { start.checked_add(integer(value.get("size").ok_or_else(|| format!("{label} has no size"))?, &format!("{label}.size"))?).ok_or_else(|| format!("{label} overflows"))? };
+    let start = integer(
+        value
+            .get("start")
+            .or_else(|| value.get("address"))
+            .ok_or_else(|| format!("{label} has no start or address"))?,
+        &format!("{label}.start"),
+    )?;
+    let end = if let Some(end) = value.get("end") {
+        integer(end, &format!("{label}.end"))?
+    } else {
+        start
+            .checked_add(integer(
+                value
+                    .get("size")
+                    .ok_or_else(|| format!("{label} has no size"))?,
+                &format!("{label}.size"),
+            )?)
+            .ok_or_else(|| format!("{label} overflows"))?
+    };
     if end <= start || start < ROM_BASE || end > ROM_BASE + ROM_SIZE as u64 {
         return Err(format!("{label} is empty or outside the ROM"));
     }
@@ -56,9 +79,13 @@ fn span(value: &Value, label: &str) -> Result<(u64, u64), String> {
 fn values<'a>(document: &'a Value, path: &[&str]) -> Result<&'a Vec<Value>, String> {
     let mut value = document;
     for key in path {
-        value = value.get(*key).ok_or_else(|| format!("missing {}", path.join(".")))?;
+        value = value
+            .get(*key)
+            .ok_or_else(|| format!("missing {}", path.join(".")))?;
     }
-    value.as_array().ok_or_else(|| format!("{} is not an array", path.join(".")))
+    value
+        .as_array()
+        .ok_or_else(|| format!("{} is not an array", path.join(".")))
 }
 
 fn regions(document: &Value, assembly: bool) -> Result<Vec<Region>, String> {
@@ -67,11 +94,30 @@ fn regions(document: &Value, assembly: bool) -> Result<Vec<Region>, String> {
         .enumerate()
         .map(|(index, value)| {
             let (start, end) = span(value, &format!("region {index}"))?;
-            let text = |key: &str| value.get(key).and_then(Value::as_str).unwrap_or("").to_string();
+            let text = |key: &str| {
+                value
+                    .get(key)
+                    .and_then(Value::as_str)
+                    .unwrap_or("")
+                    .to_string()
+            };
             let retention = text("retention");
-            let region = Region { start, end, kind: text("kind"), confidence: text("confidence"), evidence: text("evidence") };
-            if assembly && (region.kind.is_empty() || region.confidence.is_empty() || region.evidence.is_empty() || retention.is_empty()) {
-                return Err(format!("assembly region at 0x{start:08x} lacks retained classification evidence"));
+            let region = Region {
+                start,
+                end,
+                kind: text("kind"),
+                confidence: text("confidence"),
+                evidence: text("evidence"),
+            };
+            if assembly
+                && (region.kind.is_empty()
+                    || region.confidence.is_empty()
+                    || region.evidence.is_empty()
+                    || retention.is_empty())
+            {
+                return Err(format!(
+                    "assembly region at 0x{start:08x} lacks retained classification evidence"
+                ));
             }
             Ok(region)
         })
@@ -84,31 +130,52 @@ fn mark_executable(mask: &mut [u8], start: u64, end: u64) {
     mask[start..end].iter_mut().for_each(|byte| *byte |= 1);
 }
 
-fn mark_source(mask: &mut [u8], region: &Region, bit: u8, label: &str, strict: bool) -> Result<(), String> {
+fn mark_source(
+    mask: &mut [u8],
+    region: &Region,
+    bit: u8,
+    label: &str,
+    strict: bool,
+) -> Result<(), String> {
     let start = (region.start - ROM_BASE) as usize;
     let end = (region.end - ROM_BASE) as usize;
     let mut marked = false;
     for (offset, byte) in mask[start..end].iter_mut().enumerate() {
         if *byte & 1 == 0 {
             if strict {
-                return Err(format!("{label} at 0x{:08x} lies outside the executable inventory", region.start + offset as u64));
+                return Err(format!(
+                    "{label} at 0x{:08x} lies outside the executable inventory",
+                    region.start + offset as u64
+                ));
             }
             continue;
         }
         if *byte & 6 != 0 {
-            return Err(format!("source regions overlap at 0x{:08x}", region.start + offset as u64));
+            return Err(format!(
+                "source regions overlap at 0x{:08x}",
+                region.start + offset as u64
+            ));
         }
         *byte |= bit;
         marked = true;
     }
-    marked.then_some(()).ok_or_else(|| format!("{label} has no audited executable bytes"))
+    marked
+        .then_some(())
+        .ok_or_else(|| format!("{label} has no audited executable bytes"))
 }
 
 fn stale(output: &Path, source: &Path) -> Result<(), String> {
-    let built = std::fs::metadata(output).and_then(|metadata| metadata.modified()).map_err(|error| format!("{}: {error}", output.display()))?;
-    let edited = std::fs::metadata(source).and_then(|metadata| metadata.modified()).map_err(|error| format!("{}: {error}", source.display()))?;
+    let built = std::fs::metadata(output)
+        .and_then(|metadata| metadata.modified())
+        .map_err(|error| format!("{}: {error}", output.display()))?;
+    let edited = std::fs::metadata(source)
+        .and_then(|metadata| metadata.modified())
+        .map_err(|error| format!("{}: {error}", source.display()))?;
     if built < edited {
-        Err(format!("{} is stale; run make build-full", output.display()))
+        Err(format!(
+            "{} is stale; run make build-full",
+            output.display()
+        ))
     } else {
         Ok(())
     }
@@ -128,7 +195,10 @@ pub fn audit(root: &Path) -> Result<Audit, String> {
     }
 
     let mut mask = vec![0u8; ROM_SIZE];
-    for (index, value) in values(&inventory, &["main", "intervals"])?.iter().enumerate() {
+    for (index, value) in values(&inventory, &["main", "intervals"])?
+        .iter()
+        .enumerate()
+    {
         let (start, end) = span(value, &format!("executable interval {index}"))?;
         mark_executable(&mut mask, start, end);
     }
@@ -149,11 +219,18 @@ pub fn audit(root: &Path) -> Result<Audit, String> {
 
     let mut kinds = BTreeMap::new();
     for region in asm {
-        let row = kinds.entry((region.kind, region.confidence)).or_insert((0usize, 0usize));
+        let row = kinds
+            .entry((region.kind, region.confidence))
+            .or_insert((0usize, 0usize));
         row.0 += 1;
         row.1 += (region.end - region.start) as usize;
     }
-    Ok(Audit { executable, exact, retained, kinds })
+    Ok(Audit {
+        executable,
+        exact,
+        retained,
+        kinds,
+    })
 }
 
 impl Audit {
@@ -176,7 +253,13 @@ mod tests {
 
     #[test]
     fn claimed_placement_projects_through_inventory_but_assembly_stays_strict() {
-        let region = Region { start: ROM_BASE, end: ROM_BASE + 4, kind: String::new(), confidence: String::new(), evidence: String::new() };
+        let region = Region {
+            start: ROM_BASE,
+            end: ROM_BASE + 4,
+            kind: String::new(),
+            confidence: String::new(),
+            evidence: String::new(),
+        };
         let mut mask = [1, 0, 0, 1];
         assert!(mark_source(&mut mask, &region, 2, "exact C", false).is_ok());
         assert_eq!(mask, [3, 0, 0, 3]);

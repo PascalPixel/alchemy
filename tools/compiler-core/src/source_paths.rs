@@ -32,8 +32,13 @@ impl SourceOwner {
         let Some((resource, address)) = id.split_once(':') else {
             return Err(format!("invalid source owner {id:?}"));
         };
-        let resource = resource.strip_prefix("resource_").ok_or_else(|| format!("invalid source owner {id:?}"))?;
-        Ok(Self::Overlay { resource: parse_lower_hex(resource, 3, id)? as u16, address: parse_lower_hex(address, 8, id)? })
+        let resource = resource
+            .strip_prefix("resource_")
+            .ok_or_else(|| format!("invalid source owner {id:?}"))?;
+        Ok(Self::Overlay {
+            resource: parse_lower_hex(resource, 3, id)? as u16,
+            address: parse_lower_hex(address, 8, id)?,
+        })
     }
 
     pub fn from_legacy_stem(stem: &str) -> Option<Self> {
@@ -42,10 +47,14 @@ impl SourceOwner {
         }
         let (resource, address) = stem.split_once("_c_")?;
         let resource = resource.strip_prefix("resource_")?;
-        if resource.len() != 3 || address.len() != 8 || !lower_hex(resource) || !lower_hex(address) {
+        if resource.len() != 3 || address.len() != 8 || !lower_hex(resource) || !lower_hex(address)
+        {
             return None;
         }
-        Some(Self::Overlay { resource: u16::from_str_radix(resource, 16).ok()?, address: u32::from_str_radix(address, 16).ok()? })
+        Some(Self::Overlay {
+            resource: u16::from_str_radix(resource, 16).ok()?,
+            address: u32::from_str_radix(address, 16).ok()?,
+        })
     }
 
     pub fn id(self) -> String {
@@ -102,15 +111,20 @@ impl SourceOwner {
     }
 
     pub fn routing_path_for_game(self, game: &str) -> PathBuf {
-        Path::new("games").join(game).join("src").join(self.legacy_relative_path())
+        Path::new("games")
+            .join(game)
+            .join("src")
+            .join(self.legacy_relative_path())
     }
 }
 
-fn lower_hex(value: &str) -> bool {
-    value.bytes().all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+pub(crate) fn lower_hex(value: &str) -> bool {
+    value
+        .bytes()
+        .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
 }
 
-fn c_identifier(value: &str) -> bool {
+pub(crate) fn c_identifier(value: &str) -> bool {
     let mut bytes = value.bytes();
     if !matches!(bytes.next(), Some(first) if first == b'_' || first.is_ascii_alphabetic()) {
         return false;
@@ -120,9 +134,12 @@ fn c_identifier(value: &str) -> bool {
 
 fn parse_lower_hex(value: &str, width: usize, owner: &str) -> Result<u32, String> {
     if value.len() != width || !lower_hex(value) {
-        return Err(format!("source owner {owner:?} is not canonical lowercase hex"));
+        return Err(format!(
+            "source owner {owner:?} is not canonical lowercase hex"
+        ));
     }
-    u32::from_str_radix(value, 16).map_err(|error| format!("invalid source owner {owner:?}: {error}"))
+    u32::from_str_radix(value, 16)
+        .map_err(|error| format!("invalid source owner {owner:?}: {error}"))
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -158,8 +175,10 @@ impl SourcePaths {
         if !path.exists() {
             return Ok(Self::empty(repository, source_directory, manifest));
         }
-        let text = fs::read_to_string(&path).map_err(|error| format!("{}: {error}", path.display()))?;
-        Self::parse_for_game(repository, game, &text).map_err(|error| format!("{}: {error}", path.display()))
+        let text =
+            fs::read_to_string(&path).map_err(|error| format!("{}: {error}", path.display()))?;
+        Self::parse_for_game(repository, game, &text)
+            .map_err(|error| format!("{}: {error}", path.display()))
     }
 
     pub fn parse(repository: &Path, text: &str) -> Result<Self, String> {
@@ -172,7 +191,10 @@ impl SourcePaths {
         if value.get("format").and_then(Value::as_u64) != Some(3) {
             return Err("format must be 3".into());
         }
-        let owners = value.get("owners").and_then(Value::as_object).ok_or("owners must be an object")?;
+        let owners = value
+            .get("owners")
+            .and_then(Value::as_object)
+            .ok_or("owners must be an object")?;
         let mut records = BTreeMap::new();
         let mut by_path = BTreeMap::<PathBuf, Vec<SourceOwner>>::new();
         for (id, value) in owners {
@@ -180,20 +202,63 @@ impl SourcePaths {
             let (explicit_name, source, call_via) = if let Some(source) = value.as_str() {
                 (None, Some(validate_source_path(source)?), None)
             } else {
-                let record = value.as_object().ok_or_else(|| format!("{id}: owner record must be a source string or object"))?;
-                let explicit_name = record.get("name").map(|name| name.as_str().ok_or_else(|| format!("{id}: owner name must be a string"))).transpose()?;
-                let source = record.get("source").map(|source| source.as_str().ok_or_else(|| format!("{id}: source path must be a string")).and_then(validate_source_path)).transpose()?;
-                let call_via = record.get("call_via").map(|value| value.as_str().ok_or_else(|| format!("{id}: call_via must be a string")).and_then(|value| parse_lower_hex(value, 8, id))).transpose()?;
+                let record = value.as_object().ok_or_else(|| {
+                    format!("{id}: owner record must be a source string or object")
+                })?;
+                let explicit_name = record
+                    .get("name")
+                    .map(|name| {
+                        name.as_str()
+                            .ok_or_else(|| format!("{id}: owner name must be a string"))
+                    })
+                    .transpose()?;
+                let source = record
+                    .get("source")
+                    .map(|source| {
+                        source
+                            .as_str()
+                            .ok_or_else(|| format!("{id}: source path must be a string"))
+                            .and_then(validate_source_path)
+                    })
+                    .transpose()?;
+                let call_via = record
+                    .get("call_via")
+                    .map(|value| {
+                        value
+                            .as_str()
+                            .ok_or_else(|| format!("{id}: call_via must be a string"))
+                            .and_then(|value| parse_lower_hex(value, 8, id))
+                    })
+                    .transpose()?;
                 (explicit_name, source, call_via)
             };
-            let name = explicit_name.map(str::to_owned).or_else(|| source.as_deref().and_then(source_stem)).ok_or_else(|| format!("{id}: owner record needs a name or source"))?;
+            let name = explicit_name
+                .map(str::to_owned)
+                .or_else(|| source.as_deref().and_then(source_stem))
+                .ok_or_else(|| format!("{id}: owner record needs a name or source"))?;
             if !c_identifier(&name) {
                 return Err(format!("{id}: owner name {name:?} is not a C identifier"));
             }
-            if call_via.is_some_and(|address| owner.is_main() || !(0x0200_0000..0x0204_0000).contains(&address) || address & 1 != 0) {
-                return Err(format!("{id}: call_via must be an aligned overlay RAM address"));
+            if call_via.is_some_and(|address| {
+                owner.is_main()
+                    || !(0x0200_0000..0x0204_0000).contains(&address)
+                    || address & 1 != 0
+            }) {
+                return Err(format!(
+                    "{id}: call_via must be an aligned overlay RAM address"
+                ));
             }
-            if records.insert(owner, SourceRecord { name, path: source.clone(), call_via }).is_some() {
+            if records
+                .insert(
+                    owner,
+                    SourceRecord {
+                        name,
+                        path: source.clone(),
+                        call_via,
+                    },
+                )
+                .is_some()
+            {
                 return Err(format!("duplicate source owner {id}"));
             }
             if let Some(path) = source {
@@ -205,15 +270,33 @@ impl SourcePaths {
                 continue;
             }
             let address = owners[0].address();
-            if owners.iter().any(|owner| owner.is_main() || owner.address() != address) {
-                return Err(format!("{} may be shared only by overlay owners at one load address", path.display()));
+            if owners
+                .iter()
+                .any(|owner| owner.is_main() || owner.address() != address)
+            {
+                return Err(format!(
+                    "{} may be shared only by overlay owners at one load address",
+                    path.display()
+                ));
             }
         }
-        Ok(Self { repository: repository.to_path_buf(), source_directory, manifest, records, by_path })
+        Ok(Self {
+            repository: repository.to_path_buf(),
+            source_directory,
+            manifest,
+            records,
+            by_path,
+        })
     }
 
     fn empty(repository: &Path, source_directory: PathBuf, manifest: PathBuf) -> Self {
-        Self { repository: repository.to_path_buf(), source_directory, manifest, records: BTreeMap::new(), by_path: BTreeMap::new() }
+        Self {
+            repository: repository.to_path_buf(),
+            source_directory,
+            manifest,
+            records: BTreeMap::new(),
+            by_path: BTreeMap::new(),
+        }
     }
 
     pub fn source_root(&self) -> PathBuf {
@@ -225,11 +308,14 @@ impl SourcePaths {
     }
 
     pub fn mapped_relative_path(&self, owner: SourceOwner) -> Option<&Path> {
-        self.records.get(&owner).and_then(|record| record.path.as_deref())
+        self.records
+            .get(&owner)
+            .and_then(|record| record.path.as_deref())
     }
 
     pub fn mapped_source_path(&self, owner: SourceOwner) -> Option<PathBuf> {
-        self.mapped_relative_path(owner).map(|path| self.source_root().join(path))
+        self.mapped_relative_path(owner)
+            .map(|path| self.source_root().join(path))
     }
 
     pub fn registered_name(&self, owner: SourceOwner) -> Option<&str> {
@@ -244,7 +330,13 @@ impl SourcePaths {
     /// intentionally excluded: new writes must never recreate the flat,
     /// address-named layout.
     pub fn registered_source_path(&self, owner: SourceOwner) -> Result<PathBuf, String> {
-        self.mapped_source_path(owner).ok_or_else(|| format!("register a descriptive path for {} in {} before adopting exact C", owner.id(), self.manifest_path().display()))
+        self.mapped_source_path(owner).ok_or_else(|| {
+            format!(
+                "register a descriptive path for {} in {} before adopting exact C",
+                owner.id(),
+                self.manifest_path().display()
+            )
+        })
     }
 
     /// Remove an owner's exact-C path after parking it back to assembly. Its
@@ -254,14 +346,20 @@ impl SourcePaths {
         if !manifest.exists() {
             return Ok(false);
         }
-        let text = fs::read_to_string(&manifest).map_err(|error| format!("{}: {error}", manifest.display()))?;
-        let mut value: Value = serde_json::from_str(&text).map_err(|error| format!("{}: {error}", manifest.display()))?;
-        let owners = value.get_mut("owners").and_then(Value::as_object_mut).ok_or_else(|| format!("{}: owners must be an object", manifest.display()))?;
+        let text = fs::read_to_string(&manifest)
+            .map_err(|error| format!("{}: {error}", manifest.display()))?;
+        let mut value: Value = serde_json::from_str(&text)
+            .map_err(|error| format!("{}: {error}", manifest.display()))?;
+        let owners = value
+            .get_mut("owners")
+            .and_then(Value::as_object_mut)
+            .ok_or_else(|| format!("{}: owners must be an object", manifest.display()))?;
         let Some(owner_value) = owners.get_mut(&owner.id()) else {
             return Ok(false);
         };
         let name = match owner_value {
-            Value::String(source) => source_stem(&validate_source_path(source)?).ok_or_else(|| format!("{}: source has no filename stem", owner.id()))?,
+            Value::String(source) => source_stem(&validate_source_path(source)?)
+                .ok_or_else(|| format!("{}: source has no filename stem", owner.id()))?,
             Value::Object(record) => {
                 let Some(source) = record.remove("source") else {
                     return Ok(false);
@@ -269,8 +367,11 @@ impl SourcePaths {
                 if record.contains_key("name") {
                     String::new()
                 } else {
-                    let source = source.as_str().ok_or_else(|| format!("{}: source path must be a string", owner.id()))?;
-                    source_stem(&validate_source_path(source)?).ok_or_else(|| format!("{}: source has no filename stem", owner.id()))?
+                    let source = source
+                        .as_str()
+                        .ok_or_else(|| format!("{}: source path must be a string", owner.id()))?;
+                    source_stem(&validate_source_path(source)?)
+                        .ok_or_else(|| format!("{}: source has no filename stem", owner.id()))?
                 }
             }
             _ => return Err(format!("{}: invalid owner record", owner.id())),
@@ -278,16 +379,21 @@ impl SourcePaths {
         if !name.is_empty() {
             *owner_value = serde_json::json!({"name": name});
         }
-        let mut rendered = serde_json::to_string_pretty(&value).map_err(|error| error.to_string())?;
+        let mut rendered =
+            serde_json::to_string_pretty(&value).map_err(|error| error.to_string())?;
         rendered.push('\n');
         let temporary = manifest.with_extension("json.tmp");
-        fs::write(&temporary, rendered).map_err(|error| format!("{}: {error}", temporary.display()))?;
-        fs::rename(&temporary, &manifest).map_err(|error| format!("{}: {error}", manifest.display()))?;
+        fs::write(&temporary, rendered)
+            .map_err(|error| format!("{}: {error}", temporary.display()))?;
+        fs::rename(&temporary, &manifest)
+            .map_err(|error| format!("{}: {error}", manifest.display()))?;
         Ok(true)
     }
 
     pub fn relative_path(&self, owner: SourceOwner) -> PathBuf {
-        self.mapped_relative_path(owner).map(Path::to_path_buf).unwrap_or_else(|| owner.legacy_relative_path())
+        self.mapped_relative_path(owner)
+            .map(Path::to_path_buf)
+            .unwrap_or_else(|| owner.legacy_relative_path())
     }
 
     pub fn source_path(&self, owner: SourceOwner) -> PathBuf {
@@ -308,7 +414,12 @@ impl SourcePaths {
         if relative.components().count() != 1 {
             return Vec::new();
         }
-        relative.file_stem().and_then(|stem| stem.to_str()).and_then(SourceOwner::from_legacy_stem).into_iter().collect()
+        relative
+            .file_stem()
+            .and_then(|stem| stem.to_str())
+            .and_then(SourceOwner::from_legacy_stem)
+            .into_iter()
+            .collect()
     }
 
     pub fn owner_for_path(&self, path: &Path) -> Result<Option<SourceOwner>, String> {
@@ -316,16 +427,30 @@ impl SourcePaths {
         match owners.as_slice() {
             [] => Ok(None),
             [owner] => Ok(Some(*owner)),
-            _ => Err(format!("{} is shared by multiple source owners; supply an owner context", path.display())),
+            _ => Err(format!(
+                "{} is shared by multiple source owners; supply an owner context",
+                path.display()
+            )),
         }
     }
 
-    pub fn overlay_owner_for_path(&self, overlay: &str, path: &Path) -> Result<Option<SourceOwner>, String> {
-        let owners = self.owners_for_path(path).into_iter().filter(|owner| owner.overlay_id().as_deref() == Some(overlay)).collect::<Vec<_>>();
+    pub fn overlay_owner_for_path(
+        &self,
+        overlay: &str,
+        path: &Path,
+    ) -> Result<Option<SourceOwner>, String> {
+        let owners = self
+            .owners_for_path(path)
+            .into_iter()
+            .filter(|owner| owner.overlay_id().as_deref() == Some(overlay))
+            .collect::<Vec<_>>();
         match owners.as_slice() {
             [] => Ok(None),
             [owner] => Ok(Some(*owner)),
-            _ => Err(format!("{} maps to multiple owners in {overlay}", path.display())),
+            _ => Err(format!(
+                "{} maps to multiple owners in {overlay}",
+                path.display()
+            )),
         }
     }
 
@@ -343,14 +468,24 @@ impl SourcePaths {
         self.sources(None, None, true)
     }
 
-    fn sources(&self, main: Option<bool>, overlay: Option<&str>, mapped_files_required: bool) -> Result<Vec<SourceFile>, String> {
+    fn sources(
+        &self,
+        main: Option<bool>,
+        overlay: Option<&str>,
+        mapped_files_required: bool,
+    ) -> Result<Vec<SourceFile>, String> {
         let mut found = BTreeMap::<SourceOwner, PathBuf>::new();
         let source_root = self.source_root();
         if source_root.exists() {
-            let entries = fs::read_dir(&source_root).map_err(|error| format!("{}: {error}", source_root.display()))?;
+            let entries = fs::read_dir(&source_root)
+                .map_err(|error| format!("{}: {error}", source_root.display()))?;
             for entry in entries {
                 let entry = entry.map_err(|error| error.to_string())?;
-                if !entry.file_type().map_err(|error| error.to_string())?.is_file() {
+                if !entry
+                    .file_type()
+                    .map_err(|error| error.to_string())?
+                    .is_file()
+                {
                     continue;
                 }
                 let path = entry.path();
@@ -364,7 +499,10 @@ impl SourcePaths {
                     continue;
                 }
                 if self.mapped_relative_path(owner).is_some() {
-                    return Err(format!("{} exists at both its legacy path and its mapped source path", owner.id()));
+                    return Err(format!(
+                        "{} exists at both its legacy path and its mapped source path",
+                        owner.id()
+                    ));
                 }
                 found.insert(owner, path);
             }
@@ -379,7 +517,11 @@ impl SourcePaths {
             let path = source_root.join(relative);
             if !path.is_file() {
                 if mapped_files_required {
-                    return Err(format!("{} maps to missing source {}", owner.id(), path.display()));
+                    return Err(format!(
+                        "{} maps to missing source {}",
+                        owner.id(),
+                        path.display()
+                    ));
                 }
                 continue;
             }
@@ -387,23 +529,36 @@ impl SourcePaths {
                 return Err(format!("duplicate source owner {}", owner.id()));
             }
         }
-        Ok(found.into_iter().map(|(owner, path)| SourceFile { owner, path }).collect())
+        Ok(found
+            .into_iter()
+            .map(|(owner, path)| SourceFile { owner, path })
+            .collect())
     }
 
     fn path_within_source_root(&self, path: &Path) -> Option<PathBuf> {
         if path.is_absolute() {
-            return path.strip_prefix(self.source_root()).ok().map(Path::to_path_buf);
+            return path
+                .strip_prefix(self.source_root())
+                .ok()
+                .map(Path::to_path_buf);
         }
-        path.strip_prefix(&self.source_directory).ok().map(Path::to_path_buf).or_else(|| {
-            // A manifest-relative path is useful to in-memory tooling and
-            // tests, but an arbitrary path elsewhere in the repository is
-            // never inferred from its basename.
-            validate_source_path(&path.to_string_lossy()).ok()
-        })
+        path.strip_prefix(&self.source_directory)
+            .ok()
+            .map(Path::to_path_buf)
+            .or_else(|| {
+                // A manifest-relative path is useful to in-memory tooling and
+                // tests, but an arbitrary path elsewhere in the repository is
+                // never inferred from its basename.
+                validate_source_path(&path.to_string_lossy()).ok()
+            })
     }
 
     pub fn validate_tree(&self) -> Result<(), String> {
-        let known: BTreeSet<PathBuf> = self.all_sources()?.into_iter().map(|source| source.path).collect();
+        let known: BTreeSet<PathBuf> = self
+            .all_sources()?
+            .into_iter()
+            .map(|source| source.path)
+            .collect();
         let mut unowned = Vec::new();
         visit_c_files(&self.source_root(), &mut |path| {
             if !known.contains(path) {
@@ -411,14 +566,22 @@ impl SourcePaths {
             }
         })?;
         if let Some(path) = unowned.first() {
-            return Err(format!("nested exact source is absent from {}: {}", self.manifest.display(), path.display()));
+            return Err(format!(
+                "nested exact source is absent from {}: {}",
+                self.manifest.display(),
+                path.display()
+            ));
         }
         Ok(())
     }
 }
 
 fn game_paths(game: &str) -> Result<(PathBuf, PathBuf), String> {
-    if game.is_empty() || !game.bytes().all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit()) {
+    if game.is_empty()
+        || !game
+            .bytes()
+            .all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit())
+    {
         return Err(format!("invalid game id {game:?}"));
     }
     let root = Path::new("games").join(game);
@@ -434,22 +597,39 @@ fn matches_filter(owner: SourceOwner, main: Option<bool>, overlay: Option<&str>)
 
 fn validate_source_path(source: &str) -> Result<PathBuf, String> {
     let path = Path::new(source);
-    let address_named = path.file_stem().and_then(|stem| stem.to_str()).and_then(SourceOwner::from_legacy_stem).is_some();
-    if path.is_absolute() || path.components().count() < 2 || path.extension().and_then(|value| value.to_str()) != Some("c") || address_named || path.components().any(|component| !matches!(component, Component::Normal(_))) {
-        return Err(format!("source path {source:?} must be a nested, relative .c path"));
+    let address_named = path
+        .file_stem()
+        .and_then(|stem| stem.to_str())
+        .and_then(SourceOwner::from_legacy_stem)
+        .is_some();
+    if path.is_absolute()
+        || path.components().count() < 2
+        || path.extension().and_then(|value| value.to_str()) != Some("c")
+        || address_named
+        || path
+            .components()
+            .any(|component| !matches!(component, Component::Normal(_)))
+    {
+        return Err(format!(
+            "source path {source:?} must be a nested, relative .c path"
+        ));
     }
     Ok(path.to_path_buf())
 }
 
 fn source_stem(path: &Path) -> Option<String> {
-    path.file_stem().and_then(|stem| stem.to_str()).map(str::to_owned)
+    path.file_stem()
+        .and_then(|stem| stem.to_str())
+        .map(str::to_owned)
 }
 
 fn visit_c_files(directory: &Path, visit: &mut impl FnMut(&Path)) -> Result<(), String> {
     if !directory.exists() {
         return Ok(());
     }
-    for entry in fs::read_dir(directory).map_err(|error| format!("{}: {error}", directory.display()))? {
+    for entry in
+        fs::read_dir(directory).map_err(|error| format!("{}: {error}", directory.display()))?
+    {
         let entry = entry.map_err(|error| error.to_string())?;
         let path = entry.path();
         if path.is_dir() {
@@ -478,35 +658,88 @@ mod tests {
 
     #[test]
     fn parses_main_and_overlay_owner_ids() {
-        assert_eq!(SourceOwner::parse("main:080bbb0c").unwrap(), SourceOwner::Main(0x080b_bb0c));
-        assert_eq!(SourceOwner::parse("resource_39c:0200013c").unwrap(), SourceOwner::Overlay { resource: 0x39c, address: 0x0200_013c });
+        assert_eq!(
+            SourceOwner::parse("main:080bbb0c").unwrap(),
+            SourceOwner::Main(0x080b_bb0c)
+        );
+        assert_eq!(
+            SourceOwner::parse("resource_39c:0200013c").unwrap(),
+            SourceOwner::Overlay {
+                resource: 0x39c,
+                address: 0x0200_013c
+            }
+        );
         assert!(SourceOwner::parse("main:080BBB0C").is_err());
-        assert_eq!(SourceOwner::Main(0x080b_bb0c).legacy_name(), "Func_080bbb0c");
+        assert_eq!(
+            SourceOwner::Main(0x080b_bb0c).legacy_name(),
+            "Func_080bbb0c"
+        );
     }
 
     #[test]
     fn mapped_paths_and_legacy_fallback_share_one_resolver() {
         let root = tempdir().unwrap();
         let paths = SourcePaths::parse(root.path(), manifest()).unwrap();
-        assert_eq!(paths.relative_path(SourceOwner::Main(0x080b_bb0c)), PathBuf::from("battle/resolve_action.c"));
-        assert_eq!(paths.relative_path(SourceOwner::Main(0x0800_2efc)), PathBuf::from("08002efc.c"));
-        assert_eq!(paths.registered_call_via(SourceOwner::Overlay { resource: 0x39c, address: 0x0200_013c }), Some(0x0200_66d2));
-        assert!(paths.registered_source_path(SourceOwner::Main(0x0800_2efc)).unwrap_err().contains("register a descriptive path"));
-        assert_eq!(paths.registered_source_path(SourceOwner::Main(0x080b_bb0c)).unwrap(), root.path().join(SOURCE_DIRECTORY).join("battle/resolve_action.c"));
+        assert_eq!(
+            paths.relative_path(SourceOwner::Main(0x080b_bb0c)),
+            PathBuf::from("battle/resolve_action.c")
+        );
+        assert_eq!(
+            paths.relative_path(SourceOwner::Main(0x0800_2efc)),
+            PathBuf::from("08002efc.c")
+        );
+        assert_eq!(
+            paths.registered_call_via(SourceOwner::Overlay {
+                resource: 0x39c,
+                address: 0x0200_013c
+            }),
+            Some(0x0200_66d2)
+        );
+        assert!(paths
+            .registered_source_path(SourceOwner::Main(0x0800_2efc))
+            .unwrap_err()
+            .contains("register a descriptive path"));
+        assert_eq!(
+            paths
+                .registered_source_path(SourceOwner::Main(0x080b_bb0c))
+                .unwrap(),
+            root.path()
+                .join(SOURCE_DIRECTORY)
+                .join("battle/resolve_action.c")
+        );
     }
 
     #[test]
     fn reverse_lookup_understands_nested_and_legacy_sources() {
         let root = tempdir().unwrap();
         let paths = SourcePaths::parse(root.path(), manifest()).unwrap();
-        assert_eq!(paths.owner_for_path(Path::new("games/gs1/src/battle/resolve_action.c")).unwrap(), Some(SourceOwner::Main(0x080b_bb0c)));
-        assert_eq!(paths.owner_for_path(Path::new("games/gs1/src/resource_382_c_0200013c.c")).unwrap(), Some(SourceOwner::Overlay { resource: 0x382, address: 0x0200_013c }));
+        assert_eq!(
+            paths
+                .owner_for_path(Path::new("games/gs1/src/battle/resolve_action.c"))
+                .unwrap(),
+            Some(SourceOwner::Main(0x080b_bb0c))
+        );
+        assert_eq!(
+            paths
+                .owner_for_path(Path::new("games/gs1/src/resource_382_c_0200013c.c"))
+                .unwrap(),
+            Some(SourceOwner::Overlay {
+                resource: 0x382,
+                address: 0x0200_013c
+            })
+        );
     }
 
     #[test]
     fn paths_cannot_escape_or_recreate_the_flat_address_convention() {
         let root = tempdir().unwrap();
-        for path in ["../outside.c", "080bbb0c.c", "battle/080bbb0c.c", "/tmp/source.c", "battle/readme.md"] {
+        for path in [
+            "../outside.c",
+            "080bbb0c.c",
+            "battle/080bbb0c.c",
+            "/tmp/source.c",
+            "battle/readme.md",
+        ] {
             let text = format!("{{\"format\":3,\"owners\":{{\"main:080bbb0c\":{{\"name\":\"resolve_action\",\"source\":{path:?}}}}}}}");
             assert!(SourcePaths::parse(root.path(), &text).is_err(), "{path}");
         }
@@ -515,8 +748,16 @@ mod tests {
     #[test]
     fn call_via_accepts_only_canonical_overlay_ram_addresses() {
         let root = tempdir().unwrap();
-        for (owner, call_via) in [("main:080bbb0c", r#""020066d2""#), ("resource_39c:0200013c", r#""020066d3""#), ("resource_39c:0200013c", r#""080066d2""#), ("resource_39c:0200013c", r#""020066D2""#), ("resource_39c:0200013c", "33580754")] {
-            let text = format!(r#"{{"format":3,"owners":{{"{owner}":{{"name":"owner","call_via":{call_via}}}}}}}"#);
+        for (owner, call_via) in [
+            ("main:080bbb0c", r#""020066d2""#),
+            ("resource_39c:0200013c", r#""020066d3""#),
+            ("resource_39c:0200013c", r#""080066d2""#),
+            ("resource_39c:0200013c", r#""020066D2""#),
+            ("resource_39c:0200013c", "33580754"),
+        ] {
+            let text = format!(
+                r#"{{"format":3,"owners":{{"{owner}":{{"name":"owner","call_via":{call_via}}}}}}}"#
+            );
             assert!(SourcePaths::parse(root.path(), &text).is_err());
         }
     }
@@ -532,7 +773,18 @@ mod tests {
   }
 }"#;
         let paths = SourcePaths::parse(root.path(), text).unwrap();
-        assert_eq!(paths.overlay_owner_for_path("resource_39b", Path::new("games/gs1/src/battle/effects/spawn_configured_effect.c")).unwrap(), Some(SourceOwner::Overlay { resource: 0x39b, address: 0x0200_013c }));
+        assert_eq!(
+            paths
+                .overlay_owner_for_path(
+                    "resource_39b",
+                    Path::new("games/gs1/src/battle/effects/spawn_configured_effect.c")
+                )
+                .unwrap(),
+            Some(SourceOwner::Overlay {
+                resource: 0x39b,
+                address: 0x0200_013c
+            })
+        );
     }
 
     #[test]
@@ -552,10 +804,29 @@ mod tests {
         )
         .unwrap();
         let paths = SourcePaths::load(root.path()).unwrap();
-        assert!(paths.unregister_owner(SourceOwner::Overlay { resource: 0x39b, address: 0x0200_0104 }).unwrap());
+        assert!(paths
+            .unregister_owner(SourceOwner::Overlay {
+                resource: 0x39b,
+                address: 0x0200_0104
+            })
+            .unwrap());
         let reloaded = SourcePaths::load(root.path()).unwrap();
-        assert_eq!(reloaded.registered_name(SourceOwner::Overlay { resource: 0x39b, address: 0x0200_0104 }), Some("integrate_effect_motion"));
-        assert_eq!(reloaded.owners_for_path(Path::new("games/gs1/src/overlays/shared/integrate_effect_motion.c")), vec![SourceOwner::Overlay { resource: 0x39c, address: 0x0200_0104 }]);
+        assert_eq!(
+            reloaded.registered_name(SourceOwner::Overlay {
+                resource: 0x39b,
+                address: 0x0200_0104
+            }),
+            Some("integrate_effect_motion")
+        );
+        assert_eq!(
+            reloaded.owners_for_path(Path::new(
+                "games/gs1/src/overlays/shared/integrate_effect_motion.c"
+            )),
+            vec![SourceOwner::Overlay {
+                resource: 0x39c,
+                address: 0x0200_0104
+            }]
+        );
     }
 
     #[test]
@@ -563,9 +834,19 @@ mod tests {
         let root = tempdir().unwrap();
         let manifest_path = root.path().join("games/gs2/source-paths.json");
         fs::create_dir_all(manifest_path.parent().unwrap()).unwrap();
-        fs::write(&manifest_path, r#"{"format":3,"owners":{"main:080132cc":"runtime/constant_zero_result.c"}}"#).unwrap();
+        fs::write(
+            &manifest_path,
+            r#"{"format":3,"owners":{"main:080132cc":"runtime/constant_zero_result.c"}}"#,
+        )
+        .unwrap();
         let paths = SourcePaths::load_for_game(root.path(), "gs2").unwrap();
-        assert_eq!(paths.repository_relative_path(SourceOwner::Main(0x0801_32cc)), PathBuf::from("games/gs2/src/runtime/constant_zero_result.c"));
-        assert_eq!(SourceOwner::Main(0x0801_32cc).routing_path_for_game("gs2"), PathBuf::from("games/gs2/src/080132cc.c"));
+        assert_eq!(
+            paths.repository_relative_path(SourceOwner::Main(0x0801_32cc)),
+            PathBuf::from("games/gs2/src/runtime/constant_zero_result.c")
+        );
+        assert_eq!(
+            SourceOwner::Main(0x0801_32cc).routing_path_for_game("gs2"),
+            PathBuf::from("games/gs2/src/080132cc.c")
+        );
     }
 }

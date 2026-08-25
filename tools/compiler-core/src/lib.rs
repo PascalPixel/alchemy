@@ -10,4 +10,7 @@ pub mod source_paths;
 pub mod symbols;
 pub mod translation_units;
 
-pub use symbols::{external_symbol, external_symbol_assembly, overlay_call_via_base, ExternalSymbol, CALL_VIA_BASE};
+pub use symbols::{
+    external_symbol, external_symbol_assembly, overlay_call_via_base, symbol_is_thumb,
+    ExternalSymbol, CALL_VIA_BASE,
+};

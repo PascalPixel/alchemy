@@ -30,7 +30,9 @@ fn run(args: &[String]) -> Result<(), Error> {
         }
         [command, index] if command == "build-stdout" => {
             let bytes = build_sentou_menu_data(Path::new(index))?;
-            io::stdout().write_all(&bytes).map_err(|e| Error(e.to_string()))?;
+            io::stdout()
+                .write_all(&bytes)
+                .map_err(|e| Error(e.to_string()))?;
             Ok(())
         }
         [command, rom, index] if command == "verify" => {

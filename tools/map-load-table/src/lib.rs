@@ -17,7 +17,14 @@ pub const TABLE_ADDRESS: usize = 0x0801_3784;
 pub const RESOURCE_BASE: u32 = 0x128;
 pub const RECORDS: usize = 186;
 pub const RECORD_SIZE: usize = 12;
-pub const FIELDS: [&str; 6] = ["container", "palette", "vram_charblock1", "vram_charblock2", "vram_charblock3", "animation_source"];
+pub const FIELDS: [&str; 6] = [
+    "container",
+    "palette",
+    "vram_charblock1",
+    "vram_charblock2",
+    "vram_charblock3",
+    "animation_source",
+];
 
 #[derive(Debug)]
 pub enum TableError {
@@ -42,13 +49,22 @@ impl std::fmt::Display for TableError {
                 write!(f, "map graphics load table has the wrong resource base")
             }
             Self::WrongRecordCount(count) => {
-                write!(f, "map graphics load table requires {RECORDS} records, found {count}")
+                write!(
+                    f,
+                    "map graphics load table requires {RECORDS} records, found {count}"
+                )
             }
             Self::NonSequentialIndex(index) => {
-                write!(f, "map graphics load table indices must be sequential at {index}")
+                write!(
+                    f,
+                    "map graphics load table indices must be sequential at {index}"
+                )
             }
             Self::OffsetOutsideU16 { record, field } => {
-                write!(f, "record {record} field {field}: resource offset is outside u16")
+                write!(
+                    f,
+                    "record {record} field {field}: resource offset is outside u16"
+                )
             }
             Self::RomTooSmall => write!(f, "rom does not contain the map graphics load table"),
             Self::DoesNotRoundTrip => write!(f, "map graphics load table does not round-trip"),
@@ -66,7 +82,8 @@ impl From<io::Error> for TableError {
 
 fn table_slice(rom: &[u8]) -> Result<&[u8], TableError> {
     let start = TABLE_ADDRESS - ROM_BASE;
-    rom.get(start..start + RECORDS * RECORD_SIZE).ok_or(TableError::RomTooSmall)
+    rom.get(start..start + RECORDS * RECORD_SIZE)
+        .ok_or(TableError::RomTooSmall)
 }
 
 /// Write the table as JSON, then rebuild it and compare against the ROM.
@@ -111,11 +128,23 @@ pub fn build_table(source: &Path) -> Result<Vec<u8>, TableError> {
     if document.get("format").and_then(Value::as_u64) != Some(1) {
         return Err(TableError::UnsupportedFormat);
     }
-    let base = document.get("resource_base").and_then(Value::as_str).and_then(|text| text.strip_prefix("0x").map(|digits| u32::from_str_radix(digits, 16)).unwrap_or_else(|| text.parse()).ok()).ok_or(TableError::WrongResourceBase)?;
+    let base = document
+        .get("resource_base")
+        .and_then(Value::as_str)
+        .and_then(|text| {
+            text.strip_prefix("0x")
+                .map(|digits| u32::from_str_radix(digits, 16))
+                .unwrap_or_else(|| text.parse())
+                .ok()
+        })
+        .ok_or(TableError::WrongResourceBase)?;
     if base != RESOURCE_BASE {
         return Err(TableError::WrongResourceBase);
     }
-    let records = document.get("records").and_then(Value::as_array).ok_or(TableError::UnsupportedFormat)?;
+    let records = document
+        .get("records")
+        .and_then(Value::as_array)
+        .ok_or(TableError::UnsupportedFormat)?;
     if records.len() != RECORDS {
         return Err(TableError::WrongRecordCount(records.len()));
     }
@@ -126,7 +155,16 @@ pub fn build_table(source: &Path) -> Result<Vec<u8>, TableError> {
             return Err(TableError::NonSequentialIndex(map_index));
         }
         for (index, field) in FIELDS.iter().enumerate() {
-            let value = row.get(*field).and_then(Value::as_str).and_then(|text| u32::from_str_radix(text, 16).ok()).and_then(|value| value.checked_sub(RESOURCE_BASE)).filter(|value| *value <= 0xffff).ok_or(TableError::OffsetOutsideU16 { record: map_index, field })?;
+            let value = row
+                .get(*field)
+                .and_then(Value::as_str)
+                .and_then(|text| u32::from_str_radix(text, 16).ok())
+                .and_then(|value| value.checked_sub(RESOURCE_BASE))
+                .filter(|value| *value <= 0xffff)
+                .ok_or(TableError::OffsetOutsideU16 {
+                    record: map_index,
+                    field,
+                })?;
             let at = map_index * RECORD_SIZE + index * 2;
             encoded[at..at + 2].copy_from_slice(&(value as u16).to_le_bytes());
         }
@@ -137,10 +175,17 @@ pub fn build_table(source: &Path) -> Result<Vec<u8>, TableError> {
 /// Group records by their lowercased container name, preserving record order.
 pub fn records_by_container(source: &Path) -> Result<Vec<(String, Vec<Value>)>, TableError> {
     let document = read_document(source)?;
-    let records = document.get("records").and_then(Value::as_array).ok_or(TableError::UnsupportedFormat)?;
+    let records = document
+        .get("records")
+        .and_then(Value::as_array)
+        .ok_or(TableError::UnsupportedFormat)?;
     let mut result: Vec<(String, Vec<Value>)> = Vec::new();
     for row in records {
-        let container = row.get("container").and_then(Value::as_str).ok_or(TableError::UnsupportedFormat)?.to_ascii_lowercase();
+        let container = row
+            .get("container")
+            .and_then(Value::as_str)
+            .ok_or(TableError::UnsupportedFormat)?
+            .to_ascii_lowercase();
         match result.iter_mut().find(|(name, _)| *name == container) {
             Some((_, rows)) => rows.push(row.clone()),
             None => result.push((container, vec![row.clone()])),

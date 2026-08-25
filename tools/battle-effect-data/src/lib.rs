@@ -20,12 +20,52 @@ fn err<T>(message: &str) -> Res<T> {
 }
 type TableRow = (u32, u32, &'static [&'static str]);
 const RULE_LAYOUT: &[TableRow] = &[
-    (0x0809_d170, 0x0809_d7a8, &["selector_a:s16", "selector_b:s16", "condition:s16", "result:s16"]),
-    (0x0809_d7a8, 0x0809_d8b0, &["selector_a:s16", "selector_b:s16", "condition:s16", "result:s16"]),
+    (
+        0x0809_d170,
+        0x0809_d7a8,
+        &[
+            "selector_a:s16",
+            "selector_b:s16",
+            "condition:s16",
+            "result:s16",
+        ],
+    ),
+    (
+        0x0809_d7a8,
+        0x0809_d8b0,
+        &[
+            "selector_a:s16",
+            "selector_b:s16",
+            "condition:s16",
+            "result:s16",
+        ],
+    ),
     (0x0809_d8b0, 0x0809_d9f0, &["value:u16", "phase:u16"]),
-    (0x0809_d9f0, 0x0809_ddd8, &["selector_a:s16", "selector_b:s16", "condition:s16", "result:s16"]),
-    (0x0809_ddd8, 0x0809_e1d8, &["selector_a:s16", "selector_b:s16", "result:u32"]),
-    (0x0809_e1d8, 0x0809_e270, &["selector_a:s16", "selector_b:s16", "value_a:u16", "value_b:u16"]),
+    (
+        0x0809_d9f0,
+        0x0809_ddd8,
+        &[
+            "selector_a:s16",
+            "selector_b:s16",
+            "condition:s16",
+            "result:s16",
+        ],
+    ),
+    (
+        0x0809_ddd8,
+        0x0809_e1d8,
+        &["selector_a:s16", "selector_b:s16", "result:u32"],
+    ),
+    (
+        0x0809_e1d8,
+        0x0809_e270,
+        &[
+            "selector_a:s16",
+            "selector_b:s16",
+            "value_a:u16",
+            "value_b:u16",
+        ],
+    ),
     (0x0809_e270, 0x0809_e488, &["value:u32"]),
     (0x0809_e488, 0x0809_e4ce, &["value:u16"]),
 ];
@@ -40,26 +80,102 @@ const TAIL_TABLE_LAYOUT: &[TableRow] = &[
     (0x0809_e9ae, 0x0809_e9ee, &["color:u16"]),
     (0x0809_e9f0, 0x0809_ebfc, &["id:u16", "value:s16"]),
     (0x0809_ed80, 0x0809_ed84, &["phase:u16"]),
-    (0x0809_ef84, 0x0809_f024, &["x:s16", "y:s16", "tile:u16", "attribute_a:u16", "attribute_b:u16"]),
-    (0x0809_f024, 0x0809_f0b0, &["y_offset:s16", "tile_offset:u16"]),
+    (
+        0x0809_ef84,
+        0x0809_f024,
+        &[
+            "x:s16",
+            "y:s16",
+            "tile:u16",
+            "attribute_a:u16",
+            "attribute_b:u16",
+        ],
+    ),
+    (
+        0x0809_f024,
+        0x0809_f0b0,
+        &["y_offset:s16", "tile_offset:u16"],
+    ),
     (0x0809_f0f8, 0x0809_f118, &["phase:u16"]),
     (0x0809_f118, 0x0809_f11c, &["order:u8"]),
     (0x0809_f128, 0x0809_f12c, &["order:u8"]),
     (0x0809_f160, 0x0809_f168, &["slot:s8"]),
     (0x0809_f168, 0x0809_f188, &["curve:u8"]),
     (0x0809_f188, 0x0809_f1a8, &["offset:s16"]),
-    (0x0809_f1a8, 0x0809_f810, &["resource_id:s16", "group:s8", "variant:s8", "effect_id:u16", "reserved:u16"]),
-    (0x0809_f810, 0x0809_f840, &["word_0:u32", "script:ptr", "word_2:u32", "word_3:u32", "word_4:u32", "word_5:u32"]),
+    (
+        0x0809_f1a8,
+        0x0809_f810,
+        &[
+            "resource_id:s16",
+            "group:s8",
+            "variant:s8",
+            "effect_id:u16",
+            "reserved:u16",
+        ],
+    ),
+    (
+        0x0809_f810,
+        0x0809_f840,
+        &[
+            "word_0:u32",
+            "script:ptr",
+            "word_2:u32",
+            "word_3:u32",
+            "word_4:u32",
+            "word_5:u32",
+        ],
+    ),
     (0x0809_fbc0, 0x0809_fbd0, &["packed_config:u32"]),
     (0x0809_fc28, 0x0809_fc2c, &["value:u8"]),
     (0x080a_0108, 0x080a_0128, &["palette_code:u32"]),
 ];
-#[rustfmt::skip]
-const OPCODE_ARITIES: &[u32] = &[1,0,3,3,3,0,0,2,3,3,0,0,2,1,1,1,0,1,1,1,1,2,2,2,0,0,0,0,1,1,1,0,0,0,1,0,0,0,0,0];
-#[rustfmt::skip]
-const SCRIPT_LAYOUT: &[(u32,u32,&[u32])] = &[(0x0809_e6c0,0x0809_e75c,&[0x0809_e6c0]),(0x0809_e75c,0x0809_e87c,&[0x0809_e75c]),(0x0809_e87c,0x0809_e8a0,&[0x0809_e87c]),(0x0809_e8a0,0x0809_e8ac,&[0x0809_e8a0]),(0x0809_ebfc,0x0809_ed80,&[0x0809_ebfc,0x0809_ec7c,0x0809_ecfc]),(0x0809_f0b0,0x0809_f0b4,&[0x0809_f0b0]),(0x0809_f0b4,0x0809_f0bc,&[0x0809_f0b4]),(0x0809_f0bc,0x0809_f0f8,&[0x0809_f0bc,0x0809_f0d4]),(0x0809_f11c,0x0809_f128,&[0x0809_f11c]),(0x0809_f12c,0x0809_f13c,&[0x0809_f12c]),(0x0809_f13c,0x0809_f148,&[0x0809_f13c]),(0x0809_f148,0x0809_f154,&[0x0809_f148]),(0x0809_f154,0x0809_f160,&[0x0809_f154]),(0x0809_f80c,0x0809_f810,&[0x0809_f80c]),(0x0809_fbcc,0x0809_fbec,&[0x0809_fbcc]),(0x0809_fbec,0x0809_fc04,&[0x0809_fbec]),(0x0809_fc04,0x0809_fc1c,&[0x0809_fc04]),(0x0809_fc1c,0x0809_fc28,&[0x0809_fc1c]),(0x0809_fc2c,0x0809_fd38,&[0x0809_fc2c]),(0x0809_fd38,0x0809_fd44,&[0x0809_fd38]),(0x0809_fd44,0x0809_fe00,&[0x0809_fd44]),(0x0809_fe00,0x0809_fe04,&[0x0809_fe00]),(0x0809_fe04,0x0809_fe10,&[0x0809_fe04]),(0x0809_fe10,0x0809_fecc,&[0x0809_fe10]),(0x0809_fecc,0x0809_ff18,&[0x0809_fecc]),(0x0809_ff18,0x0809_ff2c,&[0x0809_ff18]),(0x0809_ff2c,0x0809_ff40,&[0x0809_ff2c]),(0x0809_ff40,0x0809_ff58,&[0x0809_ff40]),(0x080a_0128,0x080a_012c,&[0x080a_0128])];
-#[rustfmt::skip]
-const CALLBACK_SYMBOLS: &[(u32,&str)] = &[(0x0808_f305,"Func_0808f304"),(0x0809_2a75,"Func_08092a74"),(0x0809_3965,"Func_08093964"),(0x0809_397d,"Func_0809397c"),(0x0809_3a15,"Func_08093a14"),(0x0809_8c09,"Func_08098c08")];
+const OPCODE_ARITIES: &[u32] = &[
+    1, 0, 3, 3, 3, 0, 0, 2, 3, 3, 0, 0, 2, 1, 1, 1, 0, 1, 1, 1, 1, 2, 2, 2, 0, 0, 0, 0, 1, 1, 1, 0,
+    0, 0, 1, 0, 0, 0, 0, 0,
+];
+const SCRIPT_LAYOUT: &[(u32, u32, &[u32])] = &[
+    (0x0809_e6c0, 0x0809_e75c, &[0x0809_e6c0]),
+    (0x0809_e75c, 0x0809_e87c, &[0x0809_e75c]),
+    (0x0809_e87c, 0x0809_e8a0, &[0x0809_e87c]),
+    (0x0809_e8a0, 0x0809_e8ac, &[0x0809_e8a0]),
+    (
+        0x0809_ebfc,
+        0x0809_ed80,
+        &[0x0809_ebfc, 0x0809_ec7c, 0x0809_ecfc],
+    ),
+    (0x0809_f0b0, 0x0809_f0b4, &[0x0809_f0b0]),
+    (0x0809_f0b4, 0x0809_f0bc, &[0x0809_f0b4]),
+    (0x0809_f0bc, 0x0809_f0f8, &[0x0809_f0bc, 0x0809_f0d4]),
+    (0x0809_f11c, 0x0809_f128, &[0x0809_f11c]),
+    (0x0809_f12c, 0x0809_f13c, &[0x0809_f12c]),
+    (0x0809_f13c, 0x0809_f148, &[0x0809_f13c]),
+    (0x0809_f148, 0x0809_f154, &[0x0809_f148]),
+    (0x0809_f154, 0x0809_f160, &[0x0809_f154]),
+    (0x0809_f80c, 0x0809_f810, &[0x0809_f80c]),
+    (0x0809_fbcc, 0x0809_fbec, &[0x0809_fbcc]),
+    (0x0809_fbec, 0x0809_fc04, &[0x0809_fbec]),
+    (0x0809_fc04, 0x0809_fc1c, &[0x0809_fc04]),
+    (0x0809_fc1c, 0x0809_fc28, &[0x0809_fc1c]),
+    (0x0809_fc2c, 0x0809_fd38, &[0x0809_fc2c]),
+    (0x0809_fd38, 0x0809_fd44, &[0x0809_fd38]),
+    (0x0809_fd44, 0x0809_fe00, &[0x0809_fd44]),
+    (0x0809_fe00, 0x0809_fe04, &[0x0809_fe00]),
+    (0x0809_fe04, 0x0809_fe10, &[0x0809_fe04]),
+    (0x0809_fe10, 0x0809_fecc, &[0x0809_fe10]),
+    (0x0809_fecc, 0x0809_ff18, &[0x0809_fecc]),
+    (0x0809_ff18, 0x0809_ff2c, &[0x0809_ff18]),
+    (0x0809_ff2c, 0x0809_ff40, &[0x0809_ff2c]),
+    (0x0809_ff40, 0x0809_ff58, &[0x0809_ff40]),
+    (0x080a_0128, 0x080a_012c, &[0x080a_0128]),
+];
+const CALLBACK_SYMBOLS: &[(u32, &str)] = &[
+    (0x0808_f305, "Func_0808f304"),
+    (0x0809_2a75, "Func_08092a74"),
+    (0x0809_3965, "Func_08093964"),
+    (0x0809_397d, "Func_0809397c"),
+    (0x0809_3a15, "Func_08093a14"),
+    (0x0809_8c09, "Func_08098c08"),
+];
 fn hex(value: u32) -> String {
     format!("0x{value:08x}")
 }
@@ -101,19 +217,31 @@ fn number_is(value: Option<&Value>, expected: f64) -> bool {
 fn graphic_path(root: &Path, source: &str) -> Res<PathBuf> {
     const PREFIX: &str = "graphics/battle/effects/";
     let accepted = match source.strip_prefix(PREFIX) {
-        Some(rest) => rest.len() > 4 && rest.ends_with(".png") && rest.chars().all(|ch| ch.is_ascii_lowercase() || ch.is_ascii_digit() || "_.-".contains(ch)),
+        Some(rest) => {
+            rest.len() > 4
+                && rest.ends_with(".png")
+                && rest
+                    .chars()
+                    .all(|ch| ch.is_ascii_lowercase() || ch.is_ascii_digit() || "_.-".contains(ch))
+        }
         None => false,
     };
     if !accepted {
         return err("battle-effect graphic path differs");
     }
-    Ok(root.join(format!("graphics/battle_effects_{}", &source[PREFIX.len()..])))
+    Ok(root.join(format!(
+        "graphics/battle_effects_{}",
+        &source[PREFIX.len()..]
+    )))
 }
 fn read_file(path: &Path) -> Res<Vec<u8>> {
     std::fs::read(path).map_err(|error| format!("ENOENT: {}: {error}", path.display()))
 }
 fn build_direct_graphics(source: &Value, root: &Path) -> Res<Vec<u8>> {
-    let expected = [(BATTLE_DATA_ADDRESS, BATTLE_DATA_ADDRESS + 0x100), (BATTLE_DATA_ADDRESS + 0x100, DIRECT_GRAPHICS_END)];
+    let expected = [
+        (BATTLE_DATA_ADDRESS, BATTLE_DATA_ADDRESS + 0x100),
+        (BATTLE_DATA_ADDRESS + 0x100, DIRECT_GRAPHICS_END),
+    ];
     let items = array(source.get("direct_graphics")).ok_or("direct-graphics collection differs")?;
     if items.len() != expected.len() {
         return err("direct-graphics collection differs");
@@ -124,7 +252,10 @@ fn build_direct_graphics(source: &Value, root: &Path) -> Res<Vec<u8>> {
         let name = item.as_str().unwrap_or("");
         let path = graphic_path(root, name)?;
         let (tiles, _, report) = gba_graphics(&read_file(&path)?, 4.0).map_err(|error| error.0)?;
-        if report.get("width") != Some(32.0) || report.get("height") != Some(16.0) || tiles.len() as u32 != end - start {
+        if report.get("width") != Some(32.0)
+            || report.get("height") != Some(16.0)
+            || tiles.len() as u32 != end - start
+        {
             return err("direct-graphic dimensions differ");
         }
         output.extend_from_slice(&tiles);
@@ -138,8 +269,14 @@ fn graphic_tiles(graphic: &Value, root: &Path) -> Res<Vec<u8>> {
     let name = graphic.get("source").and_then(Value::as_str).unwrap_or("");
     let path = graphic_path(root, name)?;
     let (tiles, _, report) = gba_graphics(&read_file(&path)?, 4.0).map_err(|error| error.0)?;
-    let columns = graphic.get("columns").and_then(Value::as_f64).unwrap_or(f64::NAN);
-    let decoded = graphic.get("decoded_bytes").and_then(Value::as_f64).unwrap_or(f64::NAN);
+    let columns = graphic
+        .get("columns")
+        .and_then(Value::as_f64)
+        .unwrap_or(f64::NAN);
+    let decoded = graphic
+        .get("decoded_bytes")
+        .and_then(Value::as_f64)
+        .unwrap_or(f64::NAN);
     if report.get("width") != Some(columns * 8.0) || tiles.len() as f64 != decoded {
         return err("compressed graphic dimensions differ");
     }
@@ -158,8 +295,16 @@ fn build_weighted_records(source: &Value) -> Res<Vec<u8>> {
             return err("weighted-record extent differs");
         }
         let offset = index * 28;
-        write_u16(&mut output, offset, integer(values.first(), 0.0, 65535.0, "base result")? as u16);
-        write_u16(&mut output, offset + 2, integer(values.get(1), 0.0, 65535.0, "rank origin")? as u16);
+        write_u16(
+            &mut output,
+            offset,
+            integer(values.first(), 0.0, 65535.0, "base result")? as u16,
+        );
+        write_u16(
+            &mut output,
+            offset + 2,
+            integer(values.get(1), 0.0, 65535.0, "rank origin")? as u16,
+        );
         for (slot, value) in values[2..10].iter().enumerate() {
             let value = integer(Some(value), 0.0, 65535.0, "weighted result")?;
             write_u16(&mut output, offset + 4 + slot * 2, value as u16);
@@ -188,7 +333,9 @@ fn field_kind(field: &str) -> Res<FieldKind> {
     };
     let mut characters = name.chars();
     let named = match characters.next() {
-        Some(first) if first.is_ascii_lowercase() => characters.all(|ch| ch.is_ascii_lowercase() || ch.is_ascii_digit() || ch == '_'),
+        Some(first) if first.is_ascii_lowercase() => {
+            characters.all(|ch| ch.is_ascii_lowercase() || ch.is_ascii_digit() || ch == '_')
+        }
         _ => false,
     };
     if !named {
@@ -212,7 +359,12 @@ fn field_size(kind: FieldKind) -> usize {
         FieldKind::S32 | FieldKind::U32 | FieldKind::Ptr => 4,
     }
 }
-fn write_field(output: &mut [u8], offset: usize, kind: FieldKind, value: Option<&Value>) -> Res<()> {
+fn write_field(
+    output: &mut [u8],
+    offset: usize,
+    kind: FieldKind,
+    value: Option<&Value>,
+) -> Res<()> {
     match kind {
         FieldKind::S8 => {
             let number = integer(value, -128.0, 127.0, "signed byte table value")?;
@@ -226,10 +378,19 @@ fn write_field(output: &mut [u8], offset: usize, kind: FieldKind, value: Option<
             write_u16(output, offset, number as i64 as u16);
         }
         FieldKind::U16 => {
-            write_u16(output, offset, integer(value, 0.0, 65535.0, "table value")? as u16);
+            write_u16(
+                output,
+                offset,
+                integer(value, 0.0, 65535.0, "table value")? as u16,
+            );
         }
         FieldKind::S32 => {
-            let number = integer(value, -2147483648.0, 2147483647.0, "signed word table value")?;
+            let number = integer(
+                value,
+                -2147483648.0,
+                2147483647.0,
+                "signed word table value",
+            )?;
             write_u32(output, offset, number as i64 as u32);
         }
         FieldKind::U32 => {
@@ -247,7 +408,11 @@ fn write_field(output: &mut [u8], offset: usize, kind: FieldKind, value: Option<
     }
     Ok(())
 }
-fn build_table_collection(tables: &[Value], layout: &[TableRow], label: &str) -> Res<Vec<(u32, u32, Vec<u8>)>> {
+fn build_table_collection(
+    tables: &[Value],
+    layout: &[TableRow],
+    label: &str,
+) -> Res<Vec<(u32, u32, Vec<u8>)>> {
     let mut built = Vec::with_capacity(tables.len());
     if tables.len() != layout.len() {
         return Err(format!("{label} collection differs"));
@@ -318,14 +483,29 @@ pub fn encode_halfword(decoded: &[u8], tokens: &[HalfwordToken]) -> Res<Vec<u8>>
     for token in tokens {
         match *token {
             HalfwordToken::Literal(count) => {
-                let count = integer(Some(&Value::from(count)), 1.0, decoded.len() as f64 / 2.0, "halfword literal count")? as u32;
+                let count = integer(
+                    Some(&Value::from(count)),
+                    1.0,
+                    decoded.len() as f64 / 2.0,
+                    "halfword literal count",
+                )? as u32;
                 for _ in 0..count {
                     operations.push(HalfwordOperation::Literal);
                 }
             }
             HalfwordToken::Copy { length, distance } => {
-                let length = integer(Some(&Value::from(length)), 2.0, 33.0, "halfword copy length")? as u32;
-                let distance = integer(Some(&Value::from(distance)), 1.0, 2047.0, "halfword copy distance")? as u32;
+                let length = integer(
+                    Some(&Value::from(length)),
+                    2.0,
+                    33.0,
+                    "halfword copy length",
+                )? as u32;
+                let distance = integer(
+                    Some(&Value::from(distance)),
+                    1.0,
+                    2047.0,
+                    "halfword copy distance",
+                )? as u32;
                 operations.push(HalfwordOperation::Copy { length, distance });
             }
             HalfwordToken::End => operations.push(HalfwordOperation::End),
@@ -411,15 +591,25 @@ fn halfword_token_from(value: &Value) -> Res<HalfwordToken> {
             }
             let length = integer(items.get(1), 2.0, 33.0, "halfword copy length")?;
             let distance = integer(items.get(2), 1.0, 2047.0, "halfword copy distance")?;
-            Ok(HalfwordToken::Copy { length: length as u32, distance: distance as u32 })
+            Ok(HalfwordToken::Copy {
+                length: length as u32,
+                distance: distance as u32,
+            })
         }
         Some("e") if items.len() == 1 => Ok(HalfwordToken::End),
         _ => err("halfword plan token differs"),
     }
 }
 fn build_halfword_graphic(source: &Value, root: &Path) -> Res<Vec<u8>> {
-    let graphic = source.get("halfword_graphic").ok_or("halfword graphic layout differs")?;
-    if !text_is(graphic.get("address"), &hex(RULE_TABLES_END)) || !text_is(graphic.get("end"), &hex(HALFWORD_GRAPHIC_END)) || !number_is(graphic.get("decoded_bytes"), 1536.0) || !number_is(graphic.get("columns"), 12.0) || !text_is(graphic.get("codec"), "halfword-lz") {
+    let graphic = source
+        .get("halfword_graphic")
+        .ok_or("halfword graphic layout differs")?;
+    if !text_is(graphic.get("address"), &hex(RULE_TABLES_END))
+        || !text_is(graphic.get("end"), &hex(HALFWORD_GRAPHIC_END))
+        || !number_is(graphic.get("decoded_bytes"), 1536.0)
+        || !number_is(graphic.get("columns"), 12.0)
+        || !text_is(graphic.get("codec"), "halfword-lz")
+    {
         return err("halfword graphic layout differs");
     }
     let tiles = graphic_tiles(graphic, root)?;
@@ -476,19 +666,32 @@ fn palette_group_from(value: &Value) -> Res<PaletteGroup> {
                 if !is_integer(length) || !is_integer(distance) || length < 0.0 || distance < 0.0 {
                     return err("palette copy length is invalid");
                 }
-                operations.push(PaletteOperation::Copy { length: length as u32, distance: distance as u32 });
+                operations.push(PaletteOperation::Copy {
+                    length: length as u32,
+                    distance: distance as u32,
+                });
             }
         }
     }
     Ok(PaletteGroup::Group(operations))
 }
 fn build_palette_graphics(source: &Value, root: &Path) -> Res<Vec<(u32, u32, Vec<u8>)>> {
-    let expected: [(u32, u32, f64); 3] = [(0x0809_ff58, 0x080a_001e, 768.0), (0x080a_001e, 0x080a_00b8, 768.0), (0x080a_00b8, 0x080a_0107, 512.0)];
-    let graphics = array(source.get("palette_graphics")).ok_or("palette-graphic collection differs")?;
+    let expected: [(u32, u32, f64); 3] = [
+        (0x0809_ff58, 0x080a_001e, 768.0),
+        (0x080a_001e, 0x080a_00b8, 768.0),
+        (0x080a_00b8, 0x080a_0107, 512.0),
+    ];
+    let graphics =
+        array(source.get("palette_graphics")).ok_or("palette-graphic collection differs")?;
     let mut built = Vec::with_capacity(graphics.len());
     for (index, graphic) in graphics.iter().enumerate() {
         let (start, end, decoded_bytes) = expected[index];
-        if !text_is(graphic.get("address"), &hex(start)) || !text_is(graphic.get("end"), &hex(end)) || !number_is(graphic.get("decoded_bytes"), decoded_bytes) || !number_is(graphic.get("columns"), 2.0) || !text_is(graphic.get("codec"), "palette-lz") {
+        if !text_is(graphic.get("address"), &hex(start))
+            || !text_is(graphic.get("end"), &hex(end))
+            || !number_is(graphic.get("decoded_bytes"), decoded_bytes)
+            || !number_is(graphic.get("columns"), 2.0)
+            || !text_is(graphic.get("codec"), "palette-lz")
+        {
             return err("palette graphic layout differs");
         }
         let tiles = graphic_tiles(graphic, root)?;
@@ -535,7 +738,10 @@ fn script_symbol(name: &str) -> Option<u32> {
             }
         }
     }
-    CALLBACK_SYMBOLS.iter().find(|(_, symbol)| *symbol == name).map(|(address, _)| *address)
+    CALLBACK_SYMBOLS
+        .iter()
+        .find(|(_, symbol)| *symbol == name)
+        .map(|(address, _)| *address)
 }
 fn script_word(value: Option<&Value>) -> Res<u32> {
     if let Some(Value::String(name)) = value {
@@ -548,7 +754,12 @@ fn script_word(value: Option<&Value>) -> Res<u32> {
     Ok(number as i64 as u32)
 }
 fn opcode_number(value: Option<&Value>) -> Res<usize> {
-    let value = integer(value, 0.0, (OPCODE_ARITIES.len() - 1) as f64, "object-script opcode")?;
+    let value = integer(
+        value,
+        0.0,
+        (OPCODE_ARITIES.len() - 1) as f64,
+        "object-script opcode",
+    )?;
     Ok(value as usize)
 }
 fn build_object_scripts(source: &Value) -> Res<Vec<(u32, u32, Vec<u8>)>> {
@@ -568,7 +779,10 @@ fn build_object_scripts(source: &Value) -> Res<Vec<(u32, u32, Vec<u8>)>> {
                 return err("object-script command differs");
             }
             boundaries.push(start + size);
-            if words.len() == 1 && integer(words.first(), -2147483648.0, 4294967295.0, "script word")? as i64 as u32 > 63 {
+            if words.len() == 1
+                && integer(words.first(), -2147483648.0, 4294967295.0, "script word")? as i64 as u32
+                    > 63
+            {
                 let word = script_word(words.first())?;
                 chunks.extend_from_slice(&word.to_le_bytes());
                 size += 4;
@@ -640,7 +854,10 @@ fn build_gradients(source: &Value) -> Res<Vec<u8>> {
 }
 fn build_symbolic_pointers() -> Vec<u8> {
     let mut output = vec![0u8; 12];
-    for (index, address) in [0x0809_f13cu32, 0x0809_f148, 0x0809_f154].iter().enumerate() {
+    for (index, address) in [0x0809_f13cu32, 0x0809_f148, 0x0809_f154]
+        .iter()
+        .enumerate()
+    {
         write_u32(&mut output, index * 4, *address);
     }
     output
@@ -658,8 +875,18 @@ fn build_sparse_table(source: &Value) -> Res<Vec<u8>> {
             return err("sparse-table index is duplicated");
         }
         indices.push(index);
-        let key = integer(values.get(1), -2147483648.0, 2147483647.0, "sparse-table key")?;
-        let value = integer(values.get(2), -2147483648.0, 2147483647.0, "sparse-table value")?;
+        let key = integer(
+            values.get(1),
+            -2147483648.0,
+            2147483647.0,
+            "sparse-table key",
+        )?;
+        let value = integer(
+            values.get(2),
+            -2147483648.0,
+            2147483647.0,
+            "sparse-table value",
+        )?;
         write_u32(&mut output, index as usize * 8, key as i64 as u32);
         write_u32(&mut output, index as usize * 8 + 4, value as i64 as u32);
     }
@@ -667,7 +894,11 @@ fn build_sparse_table(source: &Value) -> Res<Vec<u8>> {
     Ok(output)
 }
 fn build_zero_fills() -> Vec<(u32, u32, Vec<u8>)> {
-    let expected = [(0x0809_e9eeu32, 0x0809_e9f0u32), (0x080a_0107, 0x080a_0108), (0x080a_0288, BATTLE_DATA_END)];
+    let expected = [
+        (0x0809_e9eeu32, 0x0809_e9f0u32),
+        (0x080a_0107, 0x080a_0108),
+        (0x080a_0288, BATTLE_DATA_END),
+    ];
     let mut built = Vec::with_capacity(expected.len());
     for (start, end) in expected {
         built.push((start, end, vec![0u8; (end - start) as usize]));
@@ -679,25 +910,37 @@ fn assemble_tail(segments: &[(u32, u32, Vec<u8>)]) -> Res<Vec<u8>> {
     let mut output = vec![0u8; span];
     let mut written = vec![0u8; span];
     for (start, end, bytes) in segments {
-        if *start < RULE_TABLES_END || *end > BATTLE_DATA_END || start >= end || bytes.len() as u32 != end - start {
+        if *start < RULE_TABLES_END
+            || *end > BATTLE_DATA_END
+            || start >= end
+            || bytes.len() as u32 != end - start
+        {
             return err("battle-effect tail segment differs");
         }
         let offset = (start - RULE_TABLES_END) as usize;
         for (index, byte) in bytes.iter().enumerate() {
             if written[offset + index] != 0 && output[offset + index] != *byte {
-                return Err(format!("battle-effect overlap differs at {}", hex(start + index as u32)));
+                return Err(format!(
+                    "battle-effect overlap differs at {}",
+                    hex(start + index as u32)
+                ));
             }
             output[offset + index] = *byte;
             written[offset + index] = 1;
         }
     }
     if let Some(hole) = written.iter().position(|flag| *flag == 0) {
-        return Err(format!("battle-effect tail has a hole at {}", hex(RULE_TABLES_END + hole as u32)));
+        return Err(format!(
+            "battle-effect tail has a hole at {}",
+            hex(RULE_TABLES_END + hole as u32)
+        ));
     }
     Ok(output)
 }
 pub fn build_battle_effect_data(value: &Value, root: &Path) -> Res<Vec<u8>> {
-    if !number_is(value.get("format"), 3.0) || !text_is(value.get("kind"), "golden-sun-battle-effect-data") {
+    if !number_is(value.get("format"), 3.0)
+        || !text_is(value.get("kind"), "golden-sun-battle-effect-data")
+    {
         return err("unsupported battle-effect data format");
     }
     let mut prefix = build_direct_graphics(value, root)?;
@@ -706,7 +949,11 @@ pub fn build_battle_effect_data(value: &Value, root: &Path) -> Res<Vec<u8>> {
     if prefix.len() as u32 != RULE_TABLES_END - BATTLE_DATA_ADDRESS {
         return err("battle-effect table prefix extent differs");
     }
-    let mut segments: Vec<(u32, u32, Vec<u8>)> = vec![(RULE_TABLES_END, HALFWORD_GRAPHIC_END, build_halfword_graphic(value, root)?)];
+    let mut segments: Vec<(u32, u32, Vec<u8>)> = vec![(
+        RULE_TABLES_END,
+        HALFWORD_GRAPHIC_END,
+        build_halfword_graphic(value, root)?,
+    )];
     segments.extend(build_tail_tables(value)?);
     segments.push((0x0809_e686, 0x0809_e6b8, build_sentinel_lookup(value)?));
     segments.extend(build_object_scripts(value)?);
@@ -714,7 +961,11 @@ pub fn build_battle_effect_data(value: &Value, root: &Path) -> Res<Vec<u8>> {
     segments.push((GRADIENT_ADDRESS, GRADIENT_END, build_gradients(value)?));
     segments.extend(build_palette_graphics(value, root)?);
     segments.push((0x080a_012c, 0x080a_0138, build_symbolic_pointers()));
-    segments.push((SPARSE_TABLE_ADDRESS, SPARSE_TABLE_END, build_sparse_table(value)?));
+    segments.push((
+        SPARSE_TABLE_ADDRESS,
+        SPARSE_TABLE_END,
+        build_sparse_table(value)?,
+    ));
     segments.extend(build_zero_fills());
     let mut output = prefix;
     output.extend_from_slice(&assemble_tail(&segments)?);
@@ -725,10 +976,18 @@ pub fn build_battle_effect_data(value: &Value, root: &Path) -> Res<Vec<u8>> {
 }
 const USAGE: &str = "usage: battle-effect-data build-stdout SOURCE --root ASSETS";
 fn option(args: &[String], name: &str) -> Option<String> {
-    args.iter().position(|arg| arg == name).and_then(|index| args.get(index + 1)).cloned()
+    args.iter()
+        .position(|arg| arg == name)
+        .and_then(|index| args.get(index + 1))
+        .cloned()
 }
 fn validate_options(args: &[String]) -> Res<()> {
-    if args.len() != 4 || args[0] != "build-stdout" || args[1].is_empty() || args[2] != "--root" || args[3].is_empty() {
+    if args.len() != 4
+        || args[0] != "build-stdout"
+        || args[1].is_empty()
+        || args[2] != "--root"
+        || args[3].is_empty()
+    {
         return err(USAGE);
     }
     Ok(())
@@ -744,7 +1003,9 @@ pub fn run(args: Vec<String>) -> Res<()> {
     let text = String::from_utf8_lossy(&read_file(input)?).into_owned();
     let document: Value = serde_json::from_str(&text).map_err(|error| error.to_string())?;
     let built = build_battle_effect_data(&document, Path::new(&root))?;
-    std::io::stdout().write_all(&built).map_err(|error| error.to_string())?;
+    std::io::stdout()
+        .write_all(&built)
+        .map_err(|error| error.to_string())?;
     eprintln!("{{}}");
     Ok(())
 }

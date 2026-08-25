@@ -40,7 +40,9 @@ fn read(path: &Path) -> Result<Vec<u8>, Error> {
 }
 
 fn object<'a>(value: &'a Value, label: &str) -> Result<&'a Map<String, Value>, Error> {
-    value.as_object().ok_or_else(|| err(format!("{label} must be an object")))
+    value
+        .as_object()
+        .ok_or_else(|| err(format!("{label} must be an object")))
 }
 
 fn exact_keys(value: &Map<String, Value>, expected: &[&str], label: &str) -> Result<(), Error> {
@@ -55,45 +57,77 @@ fn exact_keys(value: &Map<String, Value>, expected: &[&str], label: &str) -> Res
 }
 
 fn string<'a>(value: &'a Value, name: &str) -> Result<&'a str, Error> {
-    value.get(name).and_then(Value::as_str).ok_or_else(|| err(format!("invalid {name}")))
+    value
+        .get(name)
+        .and_then(Value::as_str)
+        .ok_or_else(|| err(format!("invalid {name}")))
 }
 
 fn number(value: &Value) -> Option<u64> {
-    value.as_u64().or_else(|| value.as_str().and_then(|text| text.strip_prefix("0x").or_else(|| text.strip_prefix("0X")).map_or_else(|| text.parse().ok(), |hex| u64::from_str_radix(hex, 16).ok())))
+    value.as_u64().or_else(|| {
+        value.as_str().and_then(|text| {
+            text.strip_prefix("0x")
+                .or_else(|| text.strip_prefix("0X"))
+                .map_or_else(
+                    || text.parse().ok(),
+                    |hex| u64::from_str_radix(hex, 16).ok(),
+                )
+        })
+    })
 }
 
 fn number_field(value: &Value, name: &str) -> Result<u64, Error> {
-    value.get(name).and_then(number).ok_or_else(|| err(format!("invalid {name}")))
+    value
+        .get(name)
+        .and_then(number)
+        .ok_or_else(|| err(format!("invalid {name}")))
 }
 
 fn json_document(path: &Path, label: &str) -> Result<Value, Error> {
-    let text = fs::read_to_string(path).map_err(|error| err(format!("{}: {error}", path.display())))?;
-    let value: Value = serde_json::from_str(&text).map_err(|error| err(format!("{label}: {error}")))?;
+    let text =
+        fs::read_to_string(path).map_err(|error| err(format!("{}: {error}", path.display())))?;
+    let value: Value =
+        serde_json::from_str(&text).map_err(|error| err(format!("{label}: {error}")))?;
     Ok(value)
 }
 
 fn parse_tokens(value: &Value) -> Result<Vec<GeneralToken>, Error> {
-    let values = value.as_array().ok_or_else(|| err("kana tokens must be an array"))?;
+    let values = value
+        .as_array()
+        .ok_or_else(|| err("kana tokens must be an array"))?;
     let mut tokens = Vec::with_capacity(values.len());
     for (index, value) in values.iter().enumerate() {
-        let token = value.as_array().ok_or_else(|| err(format!("kana token {index} must be an array")))?;
+        let token = value
+            .as_array()
+            .ok_or_else(|| err(format!("kana token {index} must be an array")))?;
         match token.first().and_then(Value::as_str) {
             Some("l") if token.len() == 2 => {
                 let count = token[1].as_u64();
                 if count.is_none_or(|count| count == 0) {
-                    return Err(err(format!("kana token {index} has an invalid literal shape")));
+                    return Err(err(format!(
+                        "kana token {index} has an invalid literal shape"
+                    )));
                 }
                 tokens.push(GeneralToken::Literal(count.unwrap() as u32));
             }
             Some("c") if token.len() == 3 => {
                 let length = token[1].as_u64();
                 let distance = token[2].as_u64();
-                if length.is_none_or(|value| !(2..=137).contains(&value)) || distance.is_none_or(|value| !(1..=0x1020).contains(&value)) {
+                if length.is_none_or(|value| !(2..=137).contains(&value))
+                    || distance.is_none_or(|value| !(1..=0x1020).contains(&value))
+                {
                     return Err(err(format!("kana token {index} has an invalid copy shape")));
                 }
-                tokens.push(GeneralToken::Copy { length: length.unwrap() as u32, distance: distance.unwrap() as u32 });
+                tokens.push(GeneralToken::Copy {
+                    length: length.unwrap() as u32,
+                    distance: distance.unwrap() as u32,
+                });
             }
-            _ => return Err(err(format!("kana token {index} has an unsupported operation"))),
+            _ => {
+                return Err(err(format!(
+                    "kana token {index} has an unsupported operation"
+                )))
+            }
         }
     }
     Ok(tokens)
@@ -106,7 +140,27 @@ fn hex(value: u32, width: usize) -> String {
 fn read_plan(path: &Path) -> Result<Plan, Error> {
     let value = json_document(path, "kana plan")?;
     let plan = object(&value, "kana plan")?;
-    exact_keys(plan, &["format", "kind", "codec", "resource_id", "address", "size", "end", "decoded_size", "palette_entries", "glyph_width", "glyph_height", "glyphs", "atlas_columns", "source", "tokens"], "kana plan")?;
+    exact_keys(
+        plan,
+        &[
+            "format",
+            "kind",
+            "codec",
+            "resource_id",
+            "address",
+            "size",
+            "end",
+            "decoded_size",
+            "palette_entries",
+            "glyph_width",
+            "glyph_height",
+            "glyphs",
+            "atlas_columns",
+            "source",
+            "tokens",
+        ],
+        "kana plan",
+    )?;
     if number_field(&value, "format")? != 1
         || string(&value, "kind")? != "golden-sun-kana-glyph-bank"
         || string(&value, "codec")? != "golden-sun-general-lz"
@@ -124,11 +178,18 @@ fn read_plan(path: &Path) -> Result<Plan, Error> {
     {
         return Err(err("kana plan differs from the audited layout"));
     }
-    Ok(Plan { tokens: parse_tokens(plan.get("tokens").unwrap())?, source: string(&value, "source")?.to_string() })
+    Ok(Plan {
+        tokens: parse_tokens(plan.get("tokens").unwrap())?,
+        source: string(&value, "source")?.to_string(),
+    })
 }
 
 fn physical_path(path: &Path) -> PathBuf {
-    let absolute = if path.is_absolute() { path.to_path_buf() } else { std::env::current_dir().unwrap_or_default().join(path) };
+    let absolute = if path.is_absolute() {
+        path.to_path_buf()
+    } else {
+        std::env::current_dir().unwrap_or_default().join(path)
+    };
     let mut existing = absolute.clone();
     let mut suffix = Vec::new();
     while !existing.exists() {
@@ -152,11 +213,30 @@ fn source_path(plan_path: &Path, name: &str) -> Result<PathBuf, Error> {
     if name != "kana.4bpp.png" {
         return Err(err("kana source name differs"));
     }
-    let basename = plan_path.file_name().and_then(|name| name.to_str()).ok_or_else(|| err("kana source name differs"))?;
-    let prefix = if basename.bytes().all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'_' || byte == b'.') { basename.rfind('_').map_or_else(String::new, |index| basename[..=index].to_string()) } else { String::new() };
-    let root = fs::canonicalize(plan_path.parent().ok_or_else(|| err("kana plan has no parent"))?).map_err(|error| err(error.to_string()))?;
-    let path = fs::canonicalize(root.join(format!("{prefix}{name}"))).map_err(|error| err(error.to_string()))?;
-    let relative = path.strip_prefix(&root).map_err(|_| err("kana source escaped its directory"))?;
+    let basename = plan_path
+        .file_name()
+        .and_then(|name| name.to_str())
+        .ok_or_else(|| err("kana source name differs"))?;
+    let prefix = if basename.bytes().all(|byte| {
+        byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'_' || byte == b'.'
+    }) {
+        basename
+            .rfind('_')
+            .map_or_else(String::new, |index| basename[..=index].to_string())
+    } else {
+        String::new()
+    };
+    let root = fs::canonicalize(
+        plan_path
+            .parent()
+            .ok_or_else(|| err("kana plan has no parent"))?,
+    )
+    .map_err(|error| err(error.to_string()))?;
+    let path = fs::canonicalize(root.join(format!("{prefix}{name}")))
+        .map_err(|error| err(error.to_string()))?;
+    let relative = path
+        .strip_prefix(&root)
+        .map_err(|_| err("kana source escaped its directory"))?;
     if relative != Path::new(&format!("{prefix}{name}")) {
         return Err(err("kana source escaped its directory"));
     }
@@ -169,7 +249,13 @@ fn read_kana_image(path: &Path) -> Result<(Vec<u8>, Vec<u8>), Error> {
     if format!("{:x}", Sha256::digest(&encoded)) != ATLAS_SHA256 {
         return Err(err("kana atlas is not a canonical source PNG"));
     }
-    if report.get("width") != Some((ATLAS_COLUMNS * 8) as f64) || report.get("height") != Some((GLYPHS / ATLAS_COLUMNS * 8) as f64) || report.get("tiles") != Some(GLYPHS as f64) || report.get("palette_entries") != Some(16.0) || palette.len() != PALETTE_BYTES || tiles.len() != GLYPHS * TILE_BYTES {
+    if report.get("width") != Some((ATLAS_COLUMNS * 8) as f64)
+        || report.get("height") != Some((GLYPHS / ATLAS_COLUMNS * 8) as f64)
+        || report.get("tiles") != Some(GLYPHS as f64)
+        || report.get("palette_entries") != Some(16.0)
+        || palette.len() != PALETTE_BYTES
+        || tiles.len() != GLYPHS * TILE_BYTES
+    {
         return Err(err("kana atlas differs from the audited dimensions"));
     }
     Ok((tiles, palette))

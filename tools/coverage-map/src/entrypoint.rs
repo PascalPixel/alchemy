@@ -11,7 +11,10 @@ fn get<'a>(v: &'a Value, key: &str) -> Option<&'a Value> {
     v.as_object()?.get(key)
 }
 fn field(v: &Value, path: &[&str]) -> f64 {
-    path.iter().try_fold(v, |node, key| get(node, key)).and_then(Value::as_f64).unwrap_or(f64::NAN)
+    path.iter()
+        .try_fold(v, |node, key| get(node, key))
+        .and_then(Value::as_f64)
+        .unwrap_or(f64::NAN)
 }
 fn quote(s: &str) -> String {
     serde_json::to_string(s).unwrap_or_else(|_| "\"\"".into())
@@ -77,16 +80,26 @@ fn canonical(v: &Value) -> String {
     out
 }
 fn read(path: &Path) -> Result<String, String> {
-    std::fs::read(path).map(|b| String::from_utf8_lossy(&b).into_owned()).map_err(|e| format!("cannot read {}: {e}", path.display()))
+    std::fs::read(path)
+        .map(|b| String::from_utf8_lossy(&b).into_owned())
+        .map_err(|e| format!("cannot read {}: {e}", path.display()))
 }
 fn write(path: &Path, text: &str) -> Result<(), String> {
     std::fs::write(path, text).map_err(|e| format!("cannot write {}: {e}", path.display()))
 }
 fn map_path(target: &str) -> PathBuf {
-    root().join("games").join(target.split('-').next().unwrap_or("gs1")).join("metrics").join(format!("{target}-coverage-map.json"))
+    root()
+        .join("games")
+        .join(target.split('-').next().unwrap_or("gs1"))
+        .join("metrics")
+        .join(format!("{target}-coverage-map.json"))
 }
 fn target_path(target: &str) -> PathBuf {
-    root().join("games").join(target.split('-').next().unwrap_or("gs1")).join("metrics").join(format!("{target}-core-targets.json"))
+    root()
+        .join("games")
+        .join(target.split('-').next().unwrap_or("gs1"))
+        .join("metrics")
+        .join(format!("{target}-core-targets.json"))
 }
 #[derive(Default)]
 struct Options {
@@ -99,7 +112,10 @@ struct Options {
     help: bool,
 }
 fn parse(argv: &[String]) -> Result<Options, String> {
-    let mut o = Options { target: "gs1-en".into(), ..Options::default() };
+    let mut o = Options {
+        target: "gs1-en".into(),
+        ..Options::default()
+    };
     let mut i = 0;
     while i < argv.len() {
         match argv[i].as_str() {
@@ -108,8 +124,17 @@ fn parse(argv: &[String]) -> Result<Options, String> {
                 o.target = match argv.get(i).map(String::as_str) {
                     Some("gs1-en") => "gs1-en".into(),
                     Some("gs2-en") => "gs2-en".into(),
-                    Some(v) => return Err(format!("unsupported decomp target {}; expected gs1-en or gs2-en", quote(v))),
-                    None => return Err("unsupported decomp target undefined; expected gs1-en or gs2-en".into()),
+                    Some(v) => {
+                        return Err(format!(
+                            "unsupported decomp target {}; expected gs1-en or gs2-en",
+                            quote(v)
+                        ))
+                    }
+                    None => {
+                        return Err(
+                            "unsupported decomp target undefined; expected gs1-en or gs2-en".into(),
+                        )
+                    }
                 };
             }
             "--exact-ref" => {
@@ -193,14 +218,36 @@ fn targets(map: &CoverageMap, target: &str) -> (Value, String) {
     for area in &map.executable_areas {
         for tile in &area.tiles {
             let target_bytes = tile.category("tracked_c") + tile.category("assembly");
-            let namespace = if area.id == "main" { "main".into() } else { format!("resource_{}", tile.group.as_deref().unwrap_or("unknown")) };
+            let namespace = if area.id == "main" {
+                "main".into()
+            } else {
+                format!("resource_{}", tile.group.as_deref().unwrap_or("unknown"))
+            };
             spaces.insert(namespace.clone());
             if target_bytes > 0 {
-                rows.push(Target { namespace, address: tile.address, label: tile.label.clone(), scope: tile.bytes, target: target_bytes, semantic: tile.category("tracked_c"), assembly: tile.category("assembly"), exact: tile.category("exact_c"), retained: tile.category("retained_asm") });
+                rows.push(Target {
+                    namespace,
+                    address: tile.address,
+                    label: tile.label.clone(),
+                    scope: tile.bytes,
+                    target: target_bytes,
+                    semantic: tile.category("tracked_c"),
+                    assembly: tile.category("assembly"),
+                    exact: tile.category("exact_c"),
+                    retained: tile.category("retained_asm"),
+                });
             }
         }
     }
-    rows.sort_by(|a, b| (b.scope, b.target, &a.namespace, a.address, &a.label).cmp(&(a.scope, a.target, &b.namespace, b.address, &b.label)));
+    rows.sort_by(|a, b| {
+        (b.scope, b.target, &a.namespace, a.address, &a.label).cmp(&(
+            a.scope,
+            a.target,
+            &b.namespace,
+            b.address,
+            &b.label,
+        ))
+    });
     let values: Vec<Value> = rows
         .iter()
         .enumerate()
@@ -208,7 +255,11 @@ fn targets(map: &CoverageMap, target: &str) -> (Value, String) {
             obj(vec![
                 ("rank", num((i + 1) as i64)),
                 ("namespace", Value::String(r.namespace.clone())),
-                ("address", r.address.map_or(Value::Null, |a| Value::String(format!("0x{a:08x}")))),
+                (
+                    "address",
+                    r.address
+                        .map_or(Value::Null, |a| Value::String(format!("0x{a:08x}"))),
+                ),
                 ("label", Value::String(r.label.clone())),
                 ("scope_bytes", num(r.scope)),
                 ("target_bytes", num(r.target)),
@@ -258,10 +309,22 @@ fn targets(map: &CoverageMap, target: &str) -> (Value, String) {
         ),
         ("targets", Value::Array(values)),
     ]);
-    let visible: Vec<_> = rows.iter().enumerate().filter(|(_, r)| r.scope >= 1000).collect();
+    let visible: Vec<_> = rows
+        .iter()
+        .enumerate()
+        .filter(|(_, r)| r.scope >= 1000)
+        .collect();
     let mut md = format!("This section is generated. It is the primary contributor target list:\nnon-overlapping audited source-owner scopes (or contiguous unresolved\nexecutable runs), sorted largest to smallest. Regenerate with `make coverage` -- do not edit by hand.\n\n- **Unfinished scopes:** {}\n- **Address spaces scanned:** {} ({} still contain targets)\n- **Target bytes:** {} tracked-C or unresolved-assembly bytes\n- **Resolved-only bytes:** {} Exact C or audited permanent assembly bytes\n- **Executable bytes accounted for:** {}\n\n### Main target list\n\nThis table contains every scope of at least 1,000 bytes ({} rows). The complete\n{}-row index, including the smallest audited owners, is\n[`games/gs1/metrics/gs1-en-core-targets.json`](games/gs1/metrics/gs1-en-core-targets.json).\n\n| Rank | Scope | Target | Namespace / owner |\n|---:|---:|---:|---|\n", commas(rows.len() as i64), commas(spaces.len() as i64), commas(rows.iter().map(|r| r.namespace.as_str()).collect::<std::collections::BTreeSet<_>>().len() as i64), commas(unresolved), commas(executable - scope), commas(executable), visible.len(), commas(rows.len() as i64));
     for (i, r) in visible {
-        md.push_str(&format!("| {} | {} | {} | `{}:{}` |\n", i + 1, commas(r.scope), commas(r.target), r.namespace, r.address.map_or_else(|| "unknown".into(), |a| format!("0x{a:08x}"))));
+        md.push_str(&format!(
+            "| {} | {} | {} | `{}:{}` |\n",
+            i + 1,
+            commas(r.scope),
+            commas(r.target),
+            r.namespace,
+            r.address
+                .map_or_else(|| "unknown".into(), |a| format!("0x{a:08x}"))
+        ));
     }
     (document, md)
 }
@@ -274,12 +337,20 @@ fn num(n: i64) -> Value {
 fn targets_section(text: &str) -> Option<(usize, usize)> {
     let marker = "\n## Targets\n";
     let start = text.find(marker)? + marker.len();
-    let end = text[start..].find("\n## ").map_or(text.len(), |n| start + n + 1);
+    let end = text[start..]
+        .find("\n## ")
+        .map_or(text.len(), |n| start + n + 1);
     Some((start, end))
 }
 fn replace_targets(text: &str, section: &str) -> Result<String, String> {
-    let (start, end) = targets_section(text).ok_or("CONTRIBUTING.md has no '## Targets' section")?;
-    Ok(format!("{}\n{}\n{}", &text[..start], section.trim_end(), &text[end..]))
+    let (start, end) =
+        targets_section(text).ok_or("CONTRIBUTING.md has no '## Targets' section")?;
+    Ok(format!(
+        "{}\n{}\n{}",
+        &text[..start],
+        section.trim_end(),
+        &text[end..]
+    ))
 }
 
 fn readme_metrics(exact: f64, retained: f64, executable: f64) -> String {
@@ -306,12 +377,21 @@ fn readme_metrics(exact: f64, retained: f64, executable: f64) -> String {
     )
 }
 
-fn update_readme(text: &str, target: &str, map: &CoverageMap, trees: &[(&'static str, String)]) -> String {
+fn update_readme(
+    text: &str,
+    target: &str,
+    map: &CoverageMap,
+    trees: &[(&'static str, String)],
+) -> String {
     let exact = field(&map.document, &["categories", "exact_c", "bytes"]);
     let retained = field(&map.document, &["categories", "retained_asm", "bytes"]);
     let executable = field(&map.document, &["executable_bytes"]);
     let done = exact + retained;
-    let percent = if executable == 0.0 { 0.0 } else { done * 100.0 / executable };
+    let percent = if executable == 0.0 {
+        0.0
+    } else {
+        done * 100.0 / executable
+    };
     let mut out = text.to_string();
     if let Some(end) = out.find("\n\nDONE measures") {
         if let Some(start) = out[..end].rfind("\n## DONE:") {
@@ -320,16 +400,24 @@ fn update_readme(text: &str, target: &str, map: &CoverageMap, trees: &[(&'static
             out.replace_range(head_end..end, &replacement);
         }
     }
-    if let Some(start) = out.find("|                    |       bytes |                   share |") {
+    if let Some(start) = out.find("|                    |       bytes |                   share |")
+    {
         if let Some(end) = out[start..].find("\n\nPermanent assembly") {
-            out.replace_range(start..start + end, &readme_metrics(exact, retained, executable));
+            out.replace_range(
+                start..start + end,
+                &readme_metrics(exact, retained, executable),
+            );
         }
     }
     if let Some(start) = out.find("**exact C stands at ") {
         let value_start = start + "**exact C stands at ".len();
         if let Some(end) = out[value_start..].find("%**") {
             let c_able = executable - retained;
-            let c_share = if c_able == 0.0 { 0.0 } else { exact * 100.0 / c_able };
+            let c_share = if c_able == 0.0 {
+                0.0
+            } else {
+                exact * 100.0 / c_able
+            };
             out.replace_range(value_start..value_start + end, &format!("{c_share:.1}"));
         }
     }
@@ -374,31 +462,63 @@ fn run(argv: &[String]) -> Result<String, String> {
     }
     let exact = match o.exact.as_deref() {
         None | Some("worktree") => work_tree(),
-        Some(id) => ref_tree(id).ok_or_else(|| format!("exact source ref {id} is not available here"))?,
+        Some(id) => {
+            ref_tree(id).ok_or_else(|| format!("exact source ref {id} is not available here"))?
+        }
     };
     let semantic = match o.recon.as_deref() {
         Some("none") => None,
         None | Some("worktree") => Some(work_tree()),
-        Some(id) => Some(ref_tree(id).ok_or_else(|| format!("reconstruction source ref {id} is not available here"))?),
+        Some(id) => Some(
+            ref_tree(id)
+                .ok_or_else(|| format!("reconstruction source ref {id} is not available here"))?,
+        ),
     };
-    let map = build_coverage_map(&BuildOptions { target: o.target.clone(), exact: &exact, recon: semantic.as_ref(), validate_tracked_progress: true, prefer_verified_assets: true })?;
+    let map = build_coverage_map(&BuildOptions {
+        target: o.target.clone(),
+        exact: &exact,
+        recon: semantic.as_ref(),
+        validate_tracked_progress: true,
+        prefer_verified_assets: true,
+    })?;
     let rendered = render_box_trees(&map, Some(&exact), true)?;
     let (index, markdown) = targets(&map, &o.target);
     let map_json = canonical(&tracked(&map.document));
     let index_json = canonical(&index);
     if o.check {
-        let tracked_map: Value = serde_json::from_str(&read(&map_path(&o.target))?).map_err(|e| e.to_string())?;
-        for (path, expected) in [("executable_bytes", field(&map.document, &["executable_bytes"])), ("exact C", field(&map.document, &["categories", "exact_c", "bytes"])), ("retained ASM", field(&map.document, &["categories", "retained_asm", "bytes"]))] {
+        let tracked_map: Value =
+            serde_json::from_str(&read(&map_path(&o.target))?).map_err(|e| e.to_string())?;
+        for (path, expected) in [
+            (
+                "executable_bytes",
+                field(&map.document, &["executable_bytes"]),
+            ),
+            (
+                "exact C",
+                field(&map.document, &["categories", "exact_c", "bytes"]),
+            ),
+            (
+                "retained ASM",
+                field(&map.document, &["categories", "retained_asm", "bytes"]),
+            ),
+        ] {
             let actual = match path {
                 "executable_bytes" => field(&tracked_map, &["executable_bytes"]),
                 "exact C" => field(&tracked_map, &["categories", "exact_c", "bytes"]),
                 _ => field(&tracked_map, &["categories", "retained_asm", "bytes"]),
             };
             if actual != expected {
-                return Err(format!("tracked coverage map is stale ({path}); run: make coverage"));
+                return Err(format!(
+                    "tracked coverage map is stale ({path}); run: make coverage"
+                ));
             }
         }
-        if !target_path(&o.target).exists() || rendered.iter().any(|(id, _)| !box_tree_path(&o.target, id).exists()) || !root().join("CONTRIBUTING.md").exists() {
+        if !target_path(&o.target).exists()
+            || rendered
+                .iter()
+                .any(|(id, _)| !box_tree_path(&o.target, id).exists())
+            || !root().join("CONTRIBUTING.md").exists()
+        {
             return Err("coverage outputs are incomplete; run: make coverage".into());
         }
         return Ok(format!("coverage-map=current {}", summary(&map.document)?));
@@ -407,18 +527,28 @@ fn run(argv: &[String]) -> Result<String, String> {
         write(&map_path(&o.target), &map_json)?;
         write(&target_path(&o.target), &index_json)?;
         let doc = read(&root().join("CONTRIBUTING.md"))?;
-        write(&root().join("CONTRIBUTING.md"), &replace_targets(&doc, &markdown)?)?;
+        write(
+            &root().join("CONTRIBUTING.md"),
+            &replace_targets(&doc, &markdown)?,
+        )?;
         for (id, svg) in &rendered {
             write(&box_tree_path(&o.target, id), svg)?;
         }
         let readme = read(&root().join("README.md"))?;
-        write(&root().join("README.md"), &update_readme(&readme, &o.target, &map, &rendered))?;
+        write(
+            &root().join("README.md"),
+            &update_readme(&readme, &o.target, &map, &rendered),
+        )?;
         return Ok(format!(
             "map={} core_index={} targets={} trees={} {}",
             map_path(&o.target).display(),
             target_path(&o.target).display(),
             root().join("CONTRIBUTING.md").display(),
-            BOX_TREES.iter().map(|id| box_tree_path(&o.target, id).display().to_string()).collect::<Vec<_>>().join(","),
+            BOX_TREES
+                .iter()
+                .map(|id| box_tree_path(&o.target, id).display().to_string())
+                .collect::<Vec<_>>()
+                .join(","),
             summary(&map.document)?
         ));
     }

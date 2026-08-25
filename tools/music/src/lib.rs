@@ -54,19 +54,37 @@ pub fn js_number(text: &str) -> f64 {
         acc
     };
     if let Some(d) = body.strip_prefix("0x").or_else(|| body.strip_prefix("0X")) {
-        return if sign < 0.0 { f64::NAN } else { radix_parse(d, 16) };
+        return if sign < 0.0 {
+            f64::NAN
+        } else {
+            radix_parse(d, 16)
+        };
     }
     if let Some(d) = body.strip_prefix("0o").or_else(|| body.strip_prefix("0O")) {
-        return if sign < 0.0 { f64::NAN } else { radix_parse(d, 8) };
+        return if sign < 0.0 {
+            f64::NAN
+        } else {
+            radix_parse(d, 8)
+        };
     }
     if let Some(d) = body.strip_prefix("0b").or_else(|| body.strip_prefix("0B")) {
-        return if sign < 0.0 { f64::NAN } else { radix_parse(d, 2) };
+        return if sign < 0.0 {
+            f64::NAN
+        } else {
+            radix_parse(d, 2)
+        };
     }
     if body == "Infinity" {
         return sign * f64::INFINITY;
     }
     match body.parse::<f64>() {
-        Ok(v) if !body.eq_ignore_ascii_case("inf") && !body.eq_ignore_ascii_case("infinity") && !body.eq_ignore_ascii_case("nan") => sign * v,
+        Ok(v)
+            if !body.eq_ignore_ascii_case("inf")
+                && !body.eq_ignore_ascii_case("infinity")
+                && !body.eq_ignore_ascii_case("nan") =>
+        {
+            sign * v
+        }
         _ => f64::NAN,
     }
 }
@@ -124,13 +142,25 @@ pub struct SequenceBuildReport {
 }
 
 pub fn build_reserve_sequence(base: u32) -> (Vec<u8>, SequenceBuildReport) {
-    let data = vec![0xbe, 120, 0xbc, 0, 0xbb, 30, 0xbd, 21, 0xd0, 61, 127, 0x81, 66, 0x81, 0xee, 69, 0xa0, 0xb1];
-    let report = SequenceBuildReport { base, end: base + data.len() as u32, bytes: data.len(), streams: 1, tracks: 0, events: 11 };
+    let data = vec![
+        0xbe, 120, 0xbc, 0, 0xbb, 30, 0xbd, 21, 0xd0, 61, 127, 0x81, 66, 0x81, 0xee, 69, 0xa0, 0xb1,
+    ];
+    let report = SequenceBuildReport {
+        base,
+        end: base + data.len() as u32,
+        bytes: data.len(),
+        streams: 1,
+        tracks: 0,
+        events: 11,
+    };
     (data, report)
 }
 
 pub fn build_sound_table(source: &SoundTableSource) -> Result<(Vec<u8>, SoundTableReport)> {
-    if source.format != 1 || source.fields != ["header", "player"] || source.auxiliary != "copy-player" {
+    if source.format != 1
+        || source.fields != ["header", "player"]
+        || source.auxiliary != "copy-player"
+    {
         return Err("unsupported sound-table source".to_string());
     }
     let mut symbols: HashMap<&str, u32> = HashMap::new();
@@ -169,10 +199,19 @@ pub fn build_sound_table(source: &SoundTableSource) -> Result<(Vec<u8>, SoundTab
             None => players.push((key, 1)),
         }
     }
-    let unused: Vec<&str> = order.iter().copied().filter(|name| !used.contains(name)).collect();
+    let unused: Vec<&str> = order
+        .iter()
+        .copied()
+        .filter(|name| !used.contains(name))
+        .collect();
     if !unused.is_empty() {
         return Err(format!("unused sound symbols: {}", unused.join(", ")));
     }
-    let report = SoundTableReport { entries: source.entries.len(), unique_headers: symbols.len(), players, mirrored_auxiliary: true };
+    let report = SoundTableReport {
+        entries: source.entries.len(),
+        unique_headers: symbols.len(),
+        players,
+        mirrored_auxiliary: true,
+    };
     Ok((built, report))
 }

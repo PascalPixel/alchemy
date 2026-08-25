@@ -12,7 +12,9 @@ fn run(args: &[String]) -> Result<(), Error> {
     let image = args.get(1).ok_or_else(|| Error(USAGE.into()))?;
     let bytes = fs::read(image).map_err(|e| Error(e.to_string()))?;
     let (built, _) = build_still(&bytes)?;
-    io::stdout().write_all(&built).map_err(|e| Error(e.to_string()))?;
+    io::stdout()
+        .write_all(&built)
+        .map_err(|e| Error(e.to_string()))?;
     Ok(())
 }
 

@@ -35,12 +35,26 @@ pub fn glob_matches(pattern: &str, name: &str) -> bool {
 /// Delete every file in `directory` matching `pattern` whose name is not in
 /// `keep`. Returns the paths removed, in sorted order. A missing directory is
 /// not an error: there is nothing to prune.
-pub fn prune_files(directory: &Path, pattern: &str, keep: impl IntoIterator<Item = impl AsRef<Path>>) -> io::Result<Vec<PathBuf>> {
-    let expected: BTreeSet<String> = keep.into_iter().filter_map(|name| name.as_ref().file_name().map(|name| name.to_string_lossy().into_owned())).collect();
+pub fn prune_files(
+    directory: &Path,
+    pattern: &str,
+    keep: impl IntoIterator<Item = impl AsRef<Path>>,
+) -> io::Result<Vec<PathBuf>> {
+    let expected: BTreeSet<String> = keep
+        .into_iter()
+        .filter_map(|name| {
+            name.as_ref()
+                .file_name()
+                .map(|name| name.to_string_lossy().into_owned())
+        })
+        .collect();
     if !directory.exists() {
         return Ok(Vec::new());
     }
-    let mut names: Vec<String> = fs::read_dir(directory)?.filter_map(Result::ok).map(|entry| entry.file_name().to_string_lossy().into_owned()).collect();
+    let mut names: Vec<String> = fs::read_dir(directory)?
+        .filter_map(Result::ok)
+        .map(|entry| entry.file_name().to_string_lossy().into_owned())
+        .collect();
     names.sort();
 
     let mut removed = Vec::new();
@@ -56,7 +70,9 @@ pub fn prune_files(directory: &Path, pattern: &str, keep: impl IntoIterator<Item
 
 fn is_image(name: &str) -> bool {
     let lowered = name.to_ascii_lowercase();
-    IMAGE_SUFFIXES.iter().any(|suffix| lowered.ends_with(suffix))
+    IMAGE_SUFFIXES
+        .iter()
+        .any(|suffix| lowered.ends_with(suffix))
 }
 
 fn normalize(name: &str) -> String {
@@ -66,20 +82,34 @@ fn normalize(name: &str) -> String {
 /// Tracked image files that no region lists as a source. `sources` is every
 /// source path named by every region; `ignored_prefixes` excludes whole
 /// subtrees. Returns nothing when `root` is not a git checkout.
-pub fn unused_tracked_images(root: &Path, sources: impl IntoIterator<Item = impl AsRef<str>>, ignored_prefixes: impl IntoIterator<Item = impl AsRef<str>>) -> io::Result<Vec<String>> {
+pub fn unused_tracked_images(
+    root: &Path,
+    sources: impl IntoIterator<Item = impl AsRef<str>>,
+    ignored_prefixes: impl IntoIterator<Item = impl AsRef<str>>,
+) -> io::Result<Vec<String>> {
     if !root.join(".git").exists() {
         return Ok(Vec::new());
     }
     let mut command = Command::new("git");
-    command.arg("ls-files").arg("-z").arg("--").current_dir(root);
+    command
+        .arg("ls-files")
+        .arg("-z")
+        .arg("--")
+        .current_dir(root);
     for suffix in IMAGE_SUFFIXES {
         command.arg(format!("*{suffix}"));
     }
     let output = command.output()?;
     if !output.status.success() {
-        return Err(io::Error::other(String::from_utf8_lossy(&output.stderr).into_owned()));
+        return Err(io::Error::other(
+            String::from_utf8_lossy(&output.stderr).into_owned(),
+        ));
     }
-    let tracked: BTreeSet<String> = String::from_utf8_lossy(&output.stdout).split('\0').filter(|name| !name.is_empty()).map(normalize).collect();
+    let tracked: BTreeSet<String> = String::from_utf8_lossy(&output.stdout)
+        .split('\0')
+        .filter(|name| !name.is_empty())
+        .map(normalize)
+        .collect();
 
     let claimed: BTreeSet<String> = sources
         .into_iter()
@@ -89,12 +119,26 @@ pub fn unused_tracked_images(root: &Path, sources: impl IntoIterator<Item = impl
                 return None;
             }
             let path = Path::new(name);
-            let relative = if path.is_absolute() { path.strip_prefix(root).ok()?.to_string_lossy().into_owned() } else { name.to_string() };
+            let relative = if path.is_absolute() {
+                path.strip_prefix(root).ok()?.to_string_lossy().into_owned()
+            } else {
+                name.to_string()
+            };
             Some(normalize(&relative))
         })
         .collect();
 
-    let ignored: Vec<String> = ignored_prefixes.into_iter().map(|prefix| normalize(prefix.as_ref())).collect();
+    let ignored: Vec<String> = ignored_prefixes
+        .into_iter()
+        .map(|prefix| normalize(prefix.as_ref()))
+        .collect();
 
-    Ok(tracked.into_iter().filter(|name| !claimed.contains(name) && !ignored.iter().any(|prefix| name.starts_with(prefix)) && root.join(name).exists()).collect())
+    Ok(tracked
+        .into_iter()
+        .filter(|name| {
+            !claimed.contains(name)
+                && !ignored.iter().any(|prefix| name.starts_with(prefix))
+                && root.join(name).exists()
+        })
+        .collect())
 }

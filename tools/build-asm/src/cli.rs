@@ -8,7 +8,9 @@ pub fn entry(arguments: &[String]) {
     if arguments.as_slice() == ["--self-test"] {
         let sample = vec!["--source-only".to_string(), "--output=out/test".to_string()];
         match parse_args(&sample) {
-            Ok(ParseOutcome::Run(options)) if options.source_only && options.output == "out/test" => {
+            Ok(ParseOutcome::Run(options))
+                if options.source_only && options.output == "out/test" =>
+            {
                 println!("self-test=ok");
                 return;
             }
@@ -17,7 +19,9 @@ pub fn entry(arguments: &[String]) {
     }
     let options = match parse_args(&arguments) {
         Ok(ParseOutcome::Help) => {
-            println!("usage: build-asm [-h] [--source-only] [--output OUTPUT] [--source SOURCE] [rom]");
+            println!(
+                "usage: build-asm [-h] [--source-only] [--output OUTPUT] [--source SOURCE] [rom]"
+            );
             return;
         }
         Ok(ParseOutcome::Run(options)) => options,

@@ -1,5 +1,5 @@
 use std::collections::BTreeSet;
-pub fn differing_offsets(actual: &[u8], expected: &[u8]) -> BTreeSet<usize> {
+pub(crate) fn differing_offsets(actual: &[u8], expected: &[u8]) -> BTreeSet<usize> {
     let shared = actual.len().min(expected.len());
     let mut out = BTreeSet::new();
     for at in (0..shared.saturating_sub(1)).step_by(2) {
@@ -12,10 +12,13 @@ pub fn differing_offsets(actual: &[u8], expected: &[u8]) -> BTreeSet<usize> {
     }
     out
 }
-pub fn self_test() -> Result<String, String> {
+pub(crate) fn self_test() -> Result<String, String> {
     let a = [0x00, 0xb5, 0x01, 0x20];
     let b = [0x00, 0xb5, 0x02, 0x20];
-    if !differing_offsets(&a, &a).is_empty() || differing_offsets(&a, &b) != [2].into() || differing_offsets(&a, &a[..2]).len() != 1 {
+    if !differing_offsets(&a, &a).is_empty()
+        || differing_offsets(&a, &b) != [2].into()
+        || differing_offsets(&a, &a[..2]).len() != 1
+    {
         return Err("candidate show self-test failed".into());
     }
     Ok("candidate show self-test passed".into())

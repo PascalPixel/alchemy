@@ -46,11 +46,20 @@ pub fn chunk(kind: &[u8], payload: &[u8]) -> Vec<u8> {
 
 pub fn zlib(data: &[u8]) -> Vec<u8> {
     let mut encoder = ZlibEncoder::new(Vec::new(), Compression::best());
-    encoder.write_all(data).expect("writing to memory cannot fail");
+    encoder
+        .write_all(data)
+        .expect("writing to memory cannot fail");
     encoder.finish().expect("writing to memory cannot fail")
 }
 
-fn encode_png(width: usize, height: usize, color: ColorType, depth: BitDepth, palette: Option<&[u8]>, pixels: &[u8]) -> Result<Vec<u8>, ExportError> {
+fn encode_png(
+    width: usize,
+    height: usize,
+    color: ColorType,
+    depth: BitDepth,
+    palette: Option<&[u8]>,
+    pixels: &[u8],
+) -> Result<Vec<u8>, ExportError> {
     let mut output = Vec::new();
     {
         let mut encoder = Encoder::new(&mut output, width as u32, height as u32);
@@ -76,7 +85,12 @@ fn dimensions(count: usize, width: f64, message: &str) -> Result<(usize, usize),
     Ok((width, count / width))
 }
 
-pub fn tile_png(raw: &[u8], bpp: f64, columns: f64, palette_colors: Option<&[Rgb]>) -> Result<(Vec<u8>, Report), ExportError> {
+pub fn tile_png(
+    raw: &[u8],
+    bpp: f64,
+    columns: f64,
+    palette_colors: Option<&[Rgb]>,
+) -> Result<(Vec<u8>, Report), ExportError> {
     let four = match bpp {
         4.0 => true,
         8.0 => false,
@@ -109,15 +123,42 @@ pub fn tile_png(raw: &[u8], bpp: f64, columns: f64, palette_colors: Option<&[Rgb
             }
         }
     }
-    let generated: Vec<Rgb> = if four { (0..16).map(|i| [i * 16, i * 16, i * 16]).collect() } else { (0..256u16).map(|i| [((i & 31) * 8) as u8, (((i >> 5) & 7) * 8) as u8, 0]).collect() };
+    let generated: Vec<Rgb> = if four {
+        (0..16).map(|i| [i * 16, i * 16, i * 16]).collect()
+    } else {
+        (0..256u16)
+            .map(|i| [((i & 31) * 8) as u8, (((i >> 5) & 7) * 8) as u8, 0])
+            .collect()
+    };
     let palette = palette_colors.unwrap_or(&generated);
     let limit = if four { 16 } else { 256 };
-    if palette.is_empty() || palette.len() > limit || pixels.iter().any(|pixel| *pixel as usize >= palette.len()) {
+    if palette.is_empty()
+        || palette.len() > limit
+        || pixels.iter().any(|pixel| *pixel as usize >= palette.len())
+    {
         return err("tile pixels reference a missing palette entry");
     }
     let palette_bytes: Vec<u8> = palette.iter().flatten().copied().collect();
-    let data = if four { pixels.chunks_exact(2).map(|pair| pair[0] << 4 | pair[1]).collect() } else { pixels };
-    let image = encode_png(width, height, ColorType::Indexed, if four { BitDepth::Four } else { BitDepth::Eight }, Some(&palette_bytes), &data)?;
+    let data = if four {
+        pixels
+            .chunks_exact(2)
+            .map(|pair| pair[0] << 4 | pair[1])
+            .collect()
+    } else {
+        pixels
+    };
+    let image = encode_png(
+        width,
+        height,
+        ColorType::Indexed,
+        if four {
+            BitDepth::Four
+        } else {
+            BitDepth::Eight
+        },
+        Some(&palette_bytes),
+        &data,
+    )?;
     let mut report = Report::default();
     report.set("width", width as f64);
     report.set("height", height as f64);
@@ -137,12 +178,23 @@ pub fn palette_png(raw: &[u8]) -> Result<(Vec<u8>, Report), ExportError> {
         if value & 0x8000 != 0 {
             return err("palette contains a non-BGR555 high bit");
         }
-        palette.extend([((value & 31) << 3) as u8, (((value >> 5) & 31) << 3) as u8, (((value >> 10) & 31) << 3) as u8]);
+        palette.extend([
+            ((value & 31) << 3) as u8,
+            (((value >> 5) & 31) << 3) as u8,
+            (((value >> 10) & 31) << 3) as u8,
+        ]);
     }
     let entries = raw.len() / 2;
     let mut pixels: Vec<u8> = (0..entries).map(|index| index as u8).collect();
     pixels.resize(256, 0);
-    let image = encode_png(16, 16, ColorType::Indexed, BitDepth::Eight, Some(&palette), &pixels)?;
+    let image = encode_png(
+        16,
+        16,
+        ColorType::Indexed,
+        BitDepth::Eight,
+        Some(&palette),
+        &pixels,
+    )?;
     let mut report = Report::default();
     report.set("width", 16.0);
     report.set("height", 16.0);
@@ -151,12 +203,23 @@ pub fn palette_png(raw: &[u8]) -> Result<(Vec<u8>, Report), ExportError> {
 }
 
 pub fn byte_png(raw: &[u8], width: f64) -> Result<(Vec<u8>, Report), ExportError> {
-    let (width, height) = dimensions(raw.len(), width, "byte image dimensions must be nonzero multiples of eight")?;
+    let (width, height) = dimensions(
+        raw.len(),
+        width,
+        "byte image dimensions must be nonzero multiples of eight",
+    )?;
     if !width.is_multiple_of(8) || !height.is_multiple_of(8) {
         return err("byte image dimensions must be nonzero multiples of eight");
     }
     let palette: Vec<u8> = (0..=255).flat_map(|value| [value, value, value]).collect();
-    let image = encode_png(width, height, ColorType::Indexed, BitDepth::Eight, Some(&palette), raw)?;
+    let image = encode_png(
+        width,
+        height,
+        ColorType::Indexed,
+        BitDepth::Eight,
+        Some(&palette),
+        raw,
+    )?;
     let mut report = Report::default();
     report.set("width", width as f64);
     report.set("height", height as f64);
@@ -185,9 +248,15 @@ pub fn palette_rgba_image(raw: &[u8], width: f64) -> Result<(Vec<u8>, Report), E
     let mut pixels = Vec::with_capacity(raw.len() * 2);
     for bytes in raw.chunks_exact(2) {
         let value = u16::from_le_bytes([bytes[0], bytes[1]]);
-        pixels.extend([((value & 31) << 3) as u8, (((value >> 5) & 31) << 3) as u8, (((value >> 10) & 31) << 3) as u8, if value & 0x8000 == 0 { 255 } else { 254 }]);
+        pixels.extend([
+            ((value & 31) << 3) as u8,
+            (((value >> 5) & 31) << 3) as u8,
+            (((value >> 10) & 31) << 3) as u8,
+            if value & 0x8000 == 0 { 255 } else { 254 },
+        ]);
     }
-    let (image, mut report) = rgba_image(&pixels, width).map_err(|_| ExportError("palette RGBA dimensions must divide whole colors".into()))?;
+    let (image, mut report) = rgba_image(&pixels, width)
+        .map_err(|_| ExportError("palette RGBA dimensions must divide whole colors".into()))?;
     report.set("palette_entries", (raw.len() / 2) as f64);
     Ok((image, report))
 }
@@ -215,7 +284,11 @@ pub fn cli_number(text: &str) -> Result<f64, ExportError> {
 pub fn self_test() -> Result<String, ExportError> {
     for (bpp, raw, columns) in [(4.0, vec![0x10; 32], 1.0), (8.0, (0..64).collect(), 1.0)] {
         let image = tile_png(&raw, bpp, columns, None)?.0;
-        if import_asset::gba_graphics(&image, bpp).map_err(|e| ExportError(e.0))?.0 != raw {
+        if import_asset::gba_graphics(&image, bpp)
+            .map_err(|e| ExportError(e.0))?
+            .0
+            != raw
+        {
             return err("tile PNG round-trip failed");
         }
     }

@@ -1,14 +1,4 @@
-//! Native compiler-routing surface used by `verify` through
-//! `source_to_assembly_plan`.
-//! Ported here: `ROOT`, `BUNDLE`/`DRIVER`/`AGBCC_*` path constants,
-//! `CFLAGS`/`GS2_CFLAGS`/`AGBCC_CFLAGS`, `bundleForTarget`, `driverForTarget`,
-//! `cflagsForTarget`, `sourceStem`, `overlayStem`, `sourceKey`,
-//! `cflagsForSource`, `cflagsForTargetSource`, `usesAgbccCompiler`, and every
-//! routing `Set`/`Map` those read. The tables live in `routing_data.rs`.
-//!
-//! This module used to live inside the `verify` crate. It now owns the routing
-//! implementation directly; the tables in `routing_data` are the sole source
-//! of routing decisions.
+//! Compiler routing; `routing_data` is the sole table source.
 
 use std::collections::{HashMap, HashSet};
 use std::path::{Component, Path, PathBuf};
@@ -50,10 +40,7 @@ impl CompilerTarget {
 pub fn bundle_for_target(target: CompilerTarget) -> PathBuf {
     match target {
         CompilerTarget::Gs1 => bundle(),
-        // GS2 is a separate build target, not a separate compiler family.
-        // Battle_08120454 uses ordinary r7 allocation and preserves multiple
-        // GCC 2.96 instruction sequences inherited from GS1; the former GS2
-        // route selected GCC 3.0 and fixed r7, so it could not emit the owner.
+        // GS2 is a build target, not a compiler family; it also uses GCC 2.96.
         CompilerTarget::Gs2 => bundle(),
     }
 }
@@ -78,8 +65,7 @@ pub fn cflags() -> Vec<String> {
 }
 
 pub fn gs2_cflags() -> Vec<String> {
-    // Keep this target-specific surface: GS2 may establish measured flag
-    // deltas without changing its compiler family or GS1's command line.
+    // Keep a target-specific surface for future measured GS2 flag deltas.
     base_cflags(CompilerTarget::Gs2)
 }
 
@@ -108,22 +94,17 @@ mod target_tests {
     }
 
     #[test]
-    fn scheduler_translation_unit_uses_the_canonical_flags() {
-        for owner in ["08004144.c", "08004198.c", "080042c8.c", "0800430c.c", "08004358.c", "0800439c.c", "080043e0.c"] {
+    fn grouped_runtime_candidates_use_canonical_flags() {
+        for owner in ["080040e8.c", "0800412c.c", "08004144.c", "08004198.c", "080041d8.c", "08004278.c", "080042c8.c", "0800430c.c", "08004358.c", "0800439c.c", "080043e0.c", "080060e8.c"] {
             assert_eq!(cflags_for_source(owner), cflags(), "unexpected override for {owner}");
         }
     }
 }
 
-// ---------------------------------------------------------------------------
-// Key derivation (node:path `basename`/`extname`/`relative` semantics).
-// ---------------------------------------------------------------------------
-
 /// `basename(source, extname(source))` for POSIX paths.
 pub fn source_stem(source: &str) -> String {
     let base = source.rsplit('/').next().unwrap_or(source);
-    // node's extname(): the last '.' that is not the first character of the
-    // basename, and not a trailing '.' at position 0.
+    // node:path extname ignores a leading dot.
     match base.rfind('.') {
         Some(index) if index > 0 => base[..index].to_string(),
         _ => base.to_string(),
@@ -180,13 +161,8 @@ pub fn source_key(source: &str) -> String {
     parts.join("/")
 }
 
-// ---------------------------------------------------------------------------
-// Routing tables.
-// ---------------------------------------------------------------------------
-
 fn set(table: &'static [&'static str]) -> &'static HashSet<&'static str> {
-    // One cache keyed by the table's address; the tables are `static`, so the
-    // pointer identifies the set.
+    // Static table addresses are stable cache keys.
     static CACHE: OnceLock<std::sync::Mutex<HashMap<usize, &'static HashSet<&'static str>>>> = OnceLock::new();
     let cache = CACHE.get_or_init(|| std::sync::Mutex::new(HashMap::new()));
     let key = table.as_ptr() as usize;
@@ -201,8 +177,7 @@ fn has(table: &'static [&'static str], value: &str) -> bool {
     set(table).contains(value)
 }
 
-/// The same cache, keyed by the table's address, but holding each entry's
-/// FILE STEM rather than its path.
+/// Cache of each table's file stems.
 fn stem_set(table: &'static [&'static str]) -> &'static HashSet<String> {
     static CACHE: OnceLock<std::sync::Mutex<HashMap<usize, &'static HashSet<String>>>> = OnceLock::new();
     let cache = CACHE.get_or_init(|| std::sync::Mutex::new(HashMap::new()));
@@ -214,42 +189,21 @@ fn stem_set(table: &'static [&'static str]) -> &'static HashSet<String> {
     })
 }
 
-/// Overlay routing follows the OWNER, not the directory its C currently sits
-/// in. `games/gs1/src/` and the edition corpus are two homes for the same owner, and
-/// `adopt` and `park` move the file between them, so an entry written `games/gs1/src/<owner>.c`
-/// has to keep routing that owner after a park. `source_key` is a repo-relative
-/// path and silently stops matching, which drops the owner's sanctioned stock
-/// flags and leaves it compiling as something it never was -- the bytes then
-/// differ for a reason that is not in the source at all.
+/// Overlay flags follow an owner across adopt/park path changes. Path-keyed
+/// matching would silently drop sanctioned flags after either move.
 fn has_owner(table: &'static [&'static str], source: &str) -> bool {
     stem_set(table).contains(&source_stem(source))
 }
 
-/// `cflagsForSource`. The order of the appended flags is load-bearing: later
-/// options win in the driver, and the routed command line for already-verified
-/// regions must not be rewritten.
+/// Append order is load-bearing because later driver options win.
 pub fn cflags_for_source(source: &str) -> Vec<String> {
     let stem = overlay_stem(source);
     let stem = stem.as_str();
 
-    // pret shape. One base flag set, a small number of per-file overrides, and
-    // every override a STOCK gcc 2.96 option.
-    //
-    // pokeemerald's Makefile is the model: one CFLAGS, about eight per-file
-    // lines, each either a compiler selection or a stock flag. agbcc is a fixed
-    // compiler and nobody adds an option to it per function. The 120 options
-    // this fork invented are gone from routing; see
-    // tools/route-dump/data/invented-flags.txt for the list and CONTRIBUTING.md
-    // for the rule that forbids adding another.
-    //
-    // Owners that were reproducing only because an invented option was routed
-    // to them no longer reproduce. That is the point: the difference is back in
-    // the source, where it can be found and fixed, instead of hidden behind a
-    // switch.
+    // Overrides must be evidenced stock GCC 2.96 options, never source disguises.
     let mut out: Vec<String> = if has(NO_INTERWORK_SOURCES, stem) || has_owner(NO_INTERWORK_OVERLAY_SOURCES, source) { cflags().into_iter().filter(|f| f != "-mthumb-interwork").collect() } else { cflags() };
 
-    // Subtracted, not added: the soft-float library leaves take the stock ABI
-    // with r4 callee-saved, so the base set's `-fcall-used-r4` comes back off.
+    // These soft-float leaves require the stock ABI with r4 callee-saved.
     if has_owner(CALLEE_SAVED_R4_OVERLAY_SOURCES, source) || has(CALLEE_SAVED_R4_SOURCES, stem) {
         out.retain(|f| f != "-fcall-used-r4");
     }
@@ -336,7 +290,6 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
     out
 }
 
-/// `usesAgbccCompiler`.
 pub fn uses_agbcc_compiler(target: CompilerTarget, source: &str) -> bool {
     let stem = source_stem(source);
     match target {
@@ -345,7 +298,6 @@ pub fn uses_agbcc_compiler(target: CompilerTarget, source: &str) -> bool {
     }
 }
 
-/// `cflagsForTargetSource`.
 pub fn cflags_for_target_source(target: CompilerTarget, source: &str) -> Vec<String> {
     let stem = source_stem(source);
     if uses_agbcc_compiler(target, source) {

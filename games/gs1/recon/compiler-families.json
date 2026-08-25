@@ -3,15 +3,15 @@
   "target": "gs1-en",
   "derivation": "canonical-instruction-ngram-and-call-target-cosine-v2",
   "minimum_score_basis_points": 7500,
-  "exact_templates": 1408,
-  "unresolved_targets": 445,
-  "clustered_targets": 127,
-  "clustered_bytes": 41280,
+  "exact_templates": 1417,
+  "unresolved_targets": 437,
+  "clustered_targets": 123,
+  "clustered_bytes": 41012,
   "families": [
     {
       "id": "template-main-080040e8",
       "template_owner": "main:080040e8",
-      "template_source": "games/gs1/src/runtime/scheduler/reset_task_table.c",
+      "template_source": "games/gs1/src/runtime/scheduler/callback_scheduler.c",
       "members": [
         "main:080063bc",
         "main:08006408"
@@ -19,21 +19,9 @@
       "target_bytes": 156
     },
     {
-      "id": "template-main-08004278",
-      "template_owner": "main:08004278",
-      "template_source": "games/gs1/src/runtime/scheduler/remove_callback.c",
-      "members": [
-        "main:08004198",
-        "main:080042c8",
-        "main:08004358",
-        "main:0800439c"
-      ],
-      "target_bytes": 268
-    },
-    {
       "id": "template-main-08005b24",
       "template_owner": "main:08005b24",
-      "template_source": "games/gs1/src/unidentified/main/field/field_owner_73.c",
+      "template_source": "games/gs1/src/save/state/find_latest_slot.c",
       "members": [
         "main:080a3ddc"
       ],
@@ -674,18 +662,18 @@
           "branch_similarity_basis_points": 10000
         },
         {
-          "owner": "main:08012078",
-          "symbol": "Func_08012078",
-          "source": "games/gs1/src/map/set_cell_collision.c",
-          "assembly": "out/gs1-en/claimed/obj/08012078.s",
-          "size": 60,
+          "owner": "main:080043e0",
+          "symbol": "Func_080043e0",
+          "source": "games/gs1/src/runtime/scheduler/callback_scheduler.c",
+          "assembly": "out/gs1-en/claimed/obj/080040e8.s",
+          "size": 64,
           "instructions": 27,
-          "score_basis_points": 6833,
-          "ngram_similarity_basis_points": 5129,
+          "score_basis_points": 6875,
+          "ngram_similarity_basis_points": 5385,
           "length_similarity_basis_points": 10000,
           "call_target_similarity_basis_points": 10000,
           "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 10000
+          "branch_similarity_basis_points": 7500
         }
       ]
     },
@@ -726,18 +714,18 @@
           "branch_similarity_basis_points": 10000
         },
         {
-          "owner": "main:08012078",
-          "symbol": "Func_08012078",
-          "source": "games/gs1/src/map/set_cell_collision.c",
-          "assembly": "out/gs1-en/claimed/obj/08012078.s",
-          "size": 60,
+          "owner": "main:080043e0",
+          "symbol": "Func_080043e0",
+          "source": "games/gs1/src/runtime/scheduler/callback_scheduler.c",
+          "assembly": "out/gs1-en/claimed/obj/080040e8.s",
+          "size": 64,
           "instructions": 27,
-          "score_basis_points": 6833,
-          "ngram_similarity_basis_points": 5129,
+          "score_basis_points": 6875,
+          "ngram_similarity_basis_points": 5385,
           "length_similarity_basis_points": 10000,
           "call_target_similarity_basis_points": 10000,
           "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 10000
+          "branch_similarity_basis_points": 7500
         }
       ]
     },
@@ -778,18 +766,18 @@
           "branch_similarity_basis_points": 10000
         },
         {
-          "owner": "main:08012078",
-          "symbol": "Func_08012078",
-          "source": "games/gs1/src/map/set_cell_collision.c",
-          "assembly": "out/gs1-en/claimed/obj/08012078.s",
-          "size": 60,
+          "owner": "main:080043e0",
+          "symbol": "Func_080043e0",
+          "source": "games/gs1/src/runtime/scheduler/callback_scheduler.c",
+          "assembly": "out/gs1-en/claimed/obj/080040e8.s",
+          "size": 64,
           "instructions": 27,
-          "score_basis_points": 6833,
-          "ngram_similarity_basis_points": 5129,
+          "score_basis_points": 6875,
+          "ngram_similarity_basis_points": 5385,
           "length_similarity_basis_points": 10000,
           "call_target_similarity_basis_points": 10000,
           "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 10000
+          "branch_similarity_basis_points": 7500
         }
       ]
     },
@@ -830,18 +818,18 @@
           "branch_similarity_basis_points": 10000
         },
         {
-          "owner": "main:08012078",
-          "symbol": "Func_08012078",
-          "source": "games/gs1/src/map/set_cell_collision.c",
-          "assembly": "out/gs1-en/claimed/obj/08012078.s",
-          "size": 60,
+          "owner": "main:080043e0",
+          "symbol": "Func_080043e0",
+          "source": "games/gs1/src/runtime/scheduler/callback_scheduler.c",
+          "assembly": "out/gs1-en/claimed/obj/080040e8.s",
+          "size": 64,
           "instructions": 27,
-          "score_basis_points": 6833,
-          "ngram_similarity_basis_points": 5129,
+          "score_basis_points": 6875,
+          "ngram_similarity_basis_points": 5385,
           "length_similarity_basis_points": 10000,
           "call_target_similarity_basis_points": 10000,
           "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 10000
+          "branch_similarity_basis_points": 7500
         }
       ]
     },
@@ -882,18 +870,18 @@
           "branch_similarity_basis_points": 10000
         },
         {
-          "owner": "main:08012078",
-          "symbol": "Func_08012078",
-          "source": "games/gs1/src/map/set_cell_collision.c",
-          "assembly": "out/gs1-en/claimed/obj/08012078.s",
-          "size": 60,
+          "owner": "main:080043e0",
+          "symbol": "Func_080043e0",
+          "source": "games/gs1/src/runtime/scheduler/callback_scheduler.c",
+          "assembly": "out/gs1-en/claimed/obj/080040e8.s",
+          "size": 64,
           "instructions": 27,
-          "score_basis_points": 6833,
-          "ngram_similarity_basis_points": 5129,
+          "score_basis_points": 6875,
+          "ngram_similarity_basis_points": 5385,
           "length_similarity_basis_points": 10000,
           "call_target_similarity_basis_points": 10000,
           "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 10000
+          "branch_similarity_basis_points": 7500
         }
       ]
     },
@@ -934,18 +922,18 @@
           "branch_similarity_basis_points": 10000
         },
         {
-          "owner": "main:08012078",
-          "symbol": "Func_08012078",
-          "source": "games/gs1/src/map/set_cell_collision.c",
-          "assembly": "out/gs1-en/claimed/obj/08012078.s",
-          "size": 60,
+          "owner": "main:080043e0",
+          "symbol": "Func_080043e0",
+          "source": "games/gs1/src/runtime/scheduler/callback_scheduler.c",
+          "assembly": "out/gs1-en/claimed/obj/080040e8.s",
+          "size": 64,
           "instructions": 27,
-          "score_basis_points": 6833,
-          "ngram_similarity_basis_points": 5129,
+          "score_basis_points": 6875,
+          "ngram_similarity_basis_points": 5385,
           "length_similarity_basis_points": 10000,
           "call_target_similarity_basis_points": 10000,
           "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 10000
+          "branch_similarity_basis_points": 7500
         }
       ]
     },
@@ -986,18 +974,18 @@
           "branch_similarity_basis_points": 10000
         },
         {
-          "owner": "main:08012078",
-          "symbol": "Func_08012078",
-          "source": "games/gs1/src/map/set_cell_collision.c",
-          "assembly": "out/gs1-en/claimed/obj/08012078.s",
-          "size": 60,
+          "owner": "main:080043e0",
+          "symbol": "Func_080043e0",
+          "source": "games/gs1/src/runtime/scheduler/callback_scheduler.c",
+          "assembly": "out/gs1-en/claimed/obj/080040e8.s",
+          "size": 64,
           "instructions": 27,
-          "score_basis_points": 6833,
-          "ngram_similarity_basis_points": 5129,
+          "score_basis_points": 6875,
+          "ngram_similarity_basis_points": 5385,
           "length_similarity_basis_points": 10000,
           "call_target_similarity_basis_points": 10000,
           "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 10000
+          "branch_similarity_basis_points": 7500
         }
       ]
     },
@@ -1038,18 +1026,18 @@
           "branch_similarity_basis_points": 10000
         },
         {
-          "owner": "main:08012078",
-          "symbol": "Func_08012078",
-          "source": "games/gs1/src/map/set_cell_collision.c",
-          "assembly": "out/gs1-en/claimed/obj/08012078.s",
-          "size": 60,
+          "owner": "main:080043e0",
+          "symbol": "Func_080043e0",
+          "source": "games/gs1/src/runtime/scheduler/callback_scheduler.c",
+          "assembly": "out/gs1-en/claimed/obj/080040e8.s",
+          "size": 64,
           "instructions": 27,
-          "score_basis_points": 6833,
-          "ngram_similarity_basis_points": 5129,
+          "score_basis_points": 6875,
+          "ngram_similarity_basis_points": 5385,
           "length_similarity_basis_points": 10000,
           "call_target_similarity_basis_points": 10000,
           "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 10000
+          "branch_similarity_basis_points": 7500
         }
       ]
     },
@@ -1090,18 +1078,18 @@
           "branch_similarity_basis_points": 10000
         },
         {
-          "owner": "main:08012078",
-          "symbol": "Func_08012078",
-          "source": "games/gs1/src/map/set_cell_collision.c",
-          "assembly": "out/gs1-en/claimed/obj/08012078.s",
-          "size": 60,
+          "owner": "main:080043e0",
+          "symbol": "Func_080043e0",
+          "source": "games/gs1/src/runtime/scheduler/callback_scheduler.c",
+          "assembly": "out/gs1-en/claimed/obj/080040e8.s",
+          "size": 64,
           "instructions": 27,
-          "score_basis_points": 6833,
-          "ngram_similarity_basis_points": 5129,
+          "score_basis_points": 6875,
+          "ngram_similarity_basis_points": 5385,
           "length_similarity_basis_points": 10000,
           "call_target_similarity_basis_points": 10000,
           "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 10000
+          "branch_similarity_basis_points": 7500
         }
       ]
     },
@@ -1206,422 +1194,6 @@
           "call_target_similarity_basis_points": 10000,
           "call_count_similarity_basis_points": 10000,
           "branch_similarity_basis_points": 3076
-        }
-      ]
-    },
-    {
-      "owner": "main:08004144",
-      "symbol": "Func_08004144",
-      "source": "games/gs1/asm/08004144.s",
-      "size": 84,
-      "instructions": 39,
-      "family": null,
-      "alternatives": [
-        {
-          "owner": "main:08005b24",
-          "symbol": "Func_08005b24",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_73.c",
-          "assembly": "out/gs1-en/claimed/obj/08005b24.s",
-          "size": 64,
-          "instructions": 30,
-          "score_basis_points": 6240,
-          "ngram_similarity_basis_points": 4763,
-          "length_similarity_basis_points": 7692,
-          "call_target_similarity_basis_points": 10000,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 7500
-        },
-        {
-          "owner": "main:08011d60",
-          "symbol": "Func_08011d60",
-          "source": "games/gs1/src/unidentified/main/runtime/runtime_owner_277.c",
-          "assembly": "out/gs1-en/claimed/obj/08011d60.s",
-          "size": 50,
-          "instructions": 25,
-          "score_basis_points": 6240,
-          "ngram_similarity_basis_points": 4961,
-          "length_similarity_basis_points": 6410,
-          "call_target_similarity_basis_points": 10000,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 7500
-        },
-        {
-          "owner": "main:08029274",
-          "symbol": "Func_08029274",
-          "source": "games/gs1/src/text/format_hex.c",
-          "assembly": "out/gs1-en/claimed/obj/08029274.s",
-          "size": 80,
-          "instructions": 40,
-          "score_basis_points": 6204,
-          "ngram_similarity_basis_points": 4284,
-          "length_similarity_basis_points": 9750,
-          "call_target_similarity_basis_points": 10000,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 8888
-        }
-      ]
-    },
-    {
-      "owner": "main:08004198",
-      "symbol": "Func_08004198",
-      "source": "games/gs1/asm/08004198.s",
-      "size": 64,
-      "instructions": 27,
-      "family": "template-main-08004278",
-      "alternatives": [
-        {
-          "owner": "main:08004278",
-          "symbol": "Func_08004278",
-          "source": "games/gs1/src/runtime/scheduler/remove_callback.c",
-          "assembly": "out/gs1-en/claimed/obj/08004278.s",
-          "size": 80,
-          "instructions": 34,
-          "score_basis_points": 9311,
-          "ngram_similarity_basis_points": 9258,
-          "length_similarity_basis_points": 7941,
-          "call_target_similarity_basis_points": 10000,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 10000
-        },
-        {
-          "owner": "main:08004080",
-          "symbol": "Func_08004080",
-          "source": "games/gs1/src/resource/table/find_free_slot.c",
-          "assembly": "out/gs1-en/claimed/obj/08004080.s",
-          "size": 52,
-          "instructions": 21,
-          "score_basis_points": 8131,
-          "ngram_similarity_basis_points": 7468,
-          "length_similarity_basis_points": 7777,
-          "call_target_similarity_basis_points": 10000,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 10000
-        },
-        {
-          "owner": "main:0808ec14",
-          "symbol": "Func_0808ec14",
-          "source": "games/gs1/src/effect_runtime/find_slot_by_object.c",
-          "assembly": "out/gs1-en/claimed/obj/0808ec14.s",
-          "size": 56,
-          "instructions": 25,
-          "score_basis_points": 7934,
-          "ngram_similarity_basis_points": 6937,
-          "length_similarity_basis_points": 9259,
-          "call_target_similarity_basis_points": 10000,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 10000
-        }
-      ]
-    },
-    {
-      "owner": "main:080041d8",
-      "symbol": "Func_080041d8",
-      "source": "games/gs1/asm/080041d8.s",
-      "size": 154,
-      "instructions": 63,
-      "family": null,
-      "alternatives": [
-        {
-          "owner": "main:08004278",
-          "symbol": "Func_08004278",
-          "source": "games/gs1/src/runtime/scheduler/remove_callback.c",
-          "assembly": "out/gs1-en/claimed/obj/08004278.s",
-          "size": 80,
-          "instructions": 34,
-          "score_basis_points": 6556,
-          "ngram_similarity_basis_points": 8542,
-          "length_similarity_basis_points": 5396,
-          "call_target_similarity_basis_points": 0,
-          "call_count_similarity_basis_points": 5000,
-          "branch_similarity_basis_points": 4285
-        },
-        {
-          "owner": "main:0801f77c",
-          "symbol": "Func_0801f77c",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_94.c",
-          "assembly": "out/gs1-en/claimed/obj/0801f77c.s",
-          "size": 156,
-          "instructions": 58,
-          "score_basis_points": 6008,
-          "ngram_similarity_basis_points": 6673,
-          "length_similarity_basis_points": 9206,
-          "call_target_similarity_basis_points": 0,
-          "call_count_similarity_basis_points": 5000,
-          "branch_similarity_basis_points": 10000
-        },
-        {
-          "owner": "main:080a847c",
-          "symbol": "Func_080a847c",
-          "source": "games/gs1/src/character_menu/draw_selection_cursor.c",
-          "assembly": "out/gs1-en/claimed/obj/080a847c.s",
-          "size": 140,
-          "instructions": 64,
-          "score_basis_points": 5903,
-          "ngram_similarity_basis_points": 6084,
-          "length_similarity_basis_points": 9843,
-          "call_target_similarity_basis_points": 0,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 9285
-        }
-      ]
-    },
-    {
-      "owner": "main:080042c8",
-      "symbol": "Func_080042c8",
-      "source": "games/gs1/asm/080042c8.s",
-      "size": 68,
-      "instructions": 29,
-      "family": "template-main-08004278",
-      "alternatives": [
-        {
-          "owner": "main:08004278",
-          "symbol": "Func_08004278",
-          "source": "games/gs1/src/runtime/scheduler/remove_callback.c",
-          "assembly": "out/gs1-en/claimed/obj/08004278.s",
-          "size": 80,
-          "instructions": 34,
-          "score_basis_points": 7931,
-          "ngram_similarity_basis_points": 7172,
-          "length_similarity_basis_points": 8529,
-          "call_target_similarity_basis_points": 10000,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 8333
-        },
-        {
-          "owner": "main:08005b24",
-          "symbol": "Func_08005b24",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_73.c",
-          "assembly": "out/gs1-en/claimed/obj/08005b24.s",
-          "size": 64,
-          "instructions": 30,
-          "score_basis_points": 7686,
-          "ngram_similarity_basis_points": 6621,
-          "length_similarity_basis_points": 9666,
-          "call_target_similarity_basis_points": 10000,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 8333
-        },
-        {
-          "owner": "main:08005c2c",
-          "symbol": "Func_08005c2c",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_130.c",
-          "assembly": "out/gs1-en/claimed/obj/08005c2c.s",
-          "size": 60,
-          "instructions": 27,
-          "score_basis_points": 7328,
-          "ngram_similarity_basis_points": 6124,
-          "length_similarity_basis_points": 9310,
-          "call_target_similarity_basis_points": 10000,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 8333
-        }
-      ]
-    },
-    {
-      "owner": "main:0800430c",
-      "symbol": "Func_0800430c",
-      "source": "games/gs1/asm/0800430c.s",
-      "size": 76,
-      "instructions": 33,
-      "family": null,
-      "alternatives": [
-        {
-          "owner": "main:08004278",
-          "symbol": "Func_08004278",
-          "source": "games/gs1/src/runtime/scheduler/remove_callback.c",
-          "assembly": "out/gs1-en/claimed/obj/08004278.s",
-          "size": 80,
-          "instructions": 34,
-          "score_basis_points": 7317,
-          "ngram_similarity_basis_points": 6047,
-          "length_similarity_basis_points": 9705,
-          "call_target_similarity_basis_points": 10000,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 8333
-        },
-        {
-          "owner": "main:08005b24",
-          "symbol": "Func_08005b24",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_73.c",
-          "assembly": "out/gs1-en/claimed/obj/08005b24.s",
-          "size": 64,
-          "instructions": 30,
-          "score_basis_points": 7291,
-          "ngram_similarity_basis_points": 6102,
-          "length_similarity_basis_points": 9090,
-          "call_target_similarity_basis_points": 10000,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 8333
-        },
-        {
-          "owner": "main:0808b824",
-          "symbol": "Func_0808b824",
-          "source": "games/gs1/src/object/table/find_last_active_id.c",
-          "assembly": "out/gs1-en/claimed/obj/0808b824.s",
-          "size": 48,
-          "instructions": 21,
-          "score_basis_points": 7073,
-          "ngram_similarity_basis_points": 6057,
-          "length_similarity_basis_points": 6363,
-          "call_target_similarity_basis_points": 10000,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 10000
-        }
-      ]
-    },
-    {
-      "owner": "main:08004358",
-      "symbol": "Func_08004358",
-      "source": "games/gs1/asm/08004358.s",
-      "size": 68,
-      "instructions": 30,
-      "family": "template-main-08004278",
-      "alternatives": [
-        {
-          "owner": "main:08004278",
-          "symbol": "Func_08004278",
-          "source": "games/gs1/src/runtime/scheduler/remove_callback.c",
-          "assembly": "out/gs1-en/claimed/obj/08004278.s",
-          "size": 80,
-          "instructions": 34,
-          "score_basis_points": 8720,
-          "ngram_similarity_basis_points": 8212,
-          "length_similarity_basis_points": 8823,
-          "call_target_similarity_basis_points": 10000,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 10000
-        },
-        {
-          "owner": "main:08004080",
-          "symbol": "Func_08004080",
-          "source": "games/gs1/src/resource/table/find_free_slot.c",
-          "assembly": "out/gs1-en/claimed/obj/08004080.s",
-          "size": 52,
-          "instructions": 21,
-          "score_basis_points": 7484,
-          "ngram_similarity_basis_points": 6592,
-          "length_similarity_basis_points": 7000,
-          "call_target_similarity_basis_points": 10000,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 10000
-        },
-        {
-          "owner": "main:0808ec14",
-          "symbol": "Func_0808ec14",
-          "source": "games/gs1/src/effect_runtime/find_slot_by_object.c",
-          "assembly": "out/gs1-en/claimed/obj/0808ec14.s",
-          "size": 56,
-          "instructions": 25,
-          "score_basis_points": 7391,
-          "ngram_similarity_basis_points": 6244,
-          "length_similarity_basis_points": 8333,
-          "call_target_similarity_basis_points": 10000,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 10000
-        }
-      ]
-    },
-    {
-      "owner": "main:0800439c",
-      "symbol": "Func_0800439c",
-      "source": "games/gs1/asm/0800439c.s",
-      "size": 68,
-      "instructions": 30,
-      "family": "template-main-08004278",
-      "alternatives": [
-        {
-          "owner": "main:08004278",
-          "symbol": "Func_08004278",
-          "source": "games/gs1/src/runtime/scheduler/remove_callback.c",
-          "assembly": "out/gs1-en/claimed/obj/08004278.s",
-          "size": 80,
-          "instructions": 34,
-          "score_basis_points": 7865,
-          "ngram_similarity_basis_points": 7025,
-          "length_similarity_basis_points": 8823,
-          "call_target_similarity_basis_points": 10000,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 8333
-        },
-        {
-          "owner": "main:08005b24",
-          "symbol": "Func_08005b24",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_73.c",
-          "assembly": "out/gs1-en/claimed/obj/08005b24.s",
-          "size": 64,
-          "instructions": 30,
-          "score_basis_points": 7648,
-          "ngram_similarity_basis_points": 6510,
-          "length_similarity_basis_points": 10000,
-          "call_target_similarity_basis_points": 10000,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 8333
-        },
-        {
-          "owner": "main:08005c2c",
-          "symbol": "Func_08005c2c",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_130.c",
-          "assembly": "out/gs1-en/claimed/obj/08005c2c.s",
-          "size": 60,
-          "instructions": 27,
-          "score_basis_points": 7406,
-          "ngram_similarity_basis_points": 6292,
-          "length_similarity_basis_points": 9000,
-          "call_target_similarity_basis_points": 10000,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 8333
-        }
-      ]
-    },
-    {
-      "owner": "main:080043e0",
-      "symbol": "Func_080043e0",
-      "source": "games/gs1/asm/080043e0.s",
-      "size": 64,
-      "instructions": 27,
-      "family": null,
-      "alternatives": [
-        {
-          "owner": "main:08005b24",
-          "symbol": "Func_08005b24",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_73.c",
-          "assembly": "out/gs1-en/claimed/obj/08005b24.s",
-          "size": 64,
-          "instructions": 30,
-          "score_basis_points": 7322,
-          "ngram_similarity_basis_points": 6291,
-          "length_similarity_basis_points": 9000,
-          "call_target_similarity_basis_points": 10000,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 6666
-        },
-        {
-          "owner": "main:08004278",
-          "symbol": "Func_08004278",
-          "source": "games/gs1/src/runtime/scheduler/remove_callback.c",
-          "assembly": "out/gs1-en/claimed/obj/08004278.s",
-          "size": 80,
-          "instructions": 34,
-          "score_basis_points": 7218,
-          "ngram_similarity_basis_points": 6294,
-          "length_similarity_basis_points": 7941,
-          "call_target_similarity_basis_points": 10000,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 6666
-        },
-        {
-          "owner": "main:08005c2c",
-          "symbol": "Func_08005c2c",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_130.c",
-          "assembly": "out/gs1-en/claimed/obj/08005c2c.s",
-          "size": 60,
-          "instructions": 27,
-          "score_basis_points": 7131,
-          "ngram_similarity_basis_points": 5844,
-          "length_similarity_basis_points": 10000,
-          "call_target_similarity_basis_points": 10000,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 6666
         }
       ]
     },
@@ -1792,7 +1364,7 @@
         {
           "owner": "main:080040e8",
           "symbol": "Func_080040e8",
-          "source": "games/gs1/src/runtime/scheduler/reset_task_table.c",
+          "source": "games/gs1/src/runtime/scheduler/callback_scheduler.c",
           "assembly": "out/gs1-en/claimed/obj/080040e8.s",
           "size": 68,
           "instructions": 25,
@@ -1806,8 +1378,8 @@
         {
           "owner": "main:08004278",
           "symbol": "Func_08004278",
-          "source": "games/gs1/src/runtime/scheduler/remove_callback.c",
-          "assembly": "out/gs1-en/claimed/obj/08004278.s",
+          "source": "games/gs1/src/runtime/scheduler/callback_scheduler.c",
+          "assembly": "out/gs1-en/claimed/obj/080040e8.s",
           "size": 80,
           "instructions": 34,
           "score_basis_points": 7456,
@@ -1820,7 +1392,7 @@
         {
           "owner": "main:08003c80",
           "symbol": "Func_08003c80",
-          "source": "games/gs1/src/unidentified/main/battle/battle_owner_28.c",
+          "source": "games/gs1/src/display/blend/configure_transition.c",
           "assembly": "out/gs1-en/claimed/obj/08003c80.s",
           "size": 96,
           "instructions": 29,
@@ -1844,7 +1416,7 @@
         {
           "owner": "main:080040e8",
           "symbol": "Func_080040e8",
-          "source": "games/gs1/src/runtime/scheduler/reset_task_table.c",
+          "source": "games/gs1/src/runtime/scheduler/callback_scheduler.c",
           "assembly": "out/gs1-en/claimed/obj/080040e8.s",
           "size": 68,
           "instructions": 25,
@@ -1858,7 +1430,7 @@
         {
           "owner": "main:08003b70",
           "symbol": "Func_08003b70",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_99.c",
+          "source": "games/gs1/src/display/blend/set_darken_target_16.c",
           "assembly": "out/gs1-en/claimed/obj/08003b70.s",
           "size": 66,
           "instructions": 19,
@@ -1872,7 +1444,7 @@
         {
           "owner": "main:08003bf8",
           "symbol": "Func_08003bf8",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_69.c",
+          "source": "games/gs1/src/display/blend/set_brighten_target_16.c",
           "assembly": "out/gs1-en/claimed/obj/08003bf8.s",
           "size": 66,
           "instructions": 19,
@@ -1910,7 +1482,7 @@
         {
           "owner": "main:08003b70",
           "symbol": "Func_08003b70",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_99.c",
+          "source": "games/gs1/src/display/blend/set_darken_target_16.c",
           "assembly": "out/gs1-en/claimed/obj/08003b70.s",
           "size": 66,
           "instructions": 19,
@@ -1924,7 +1496,7 @@
         {
           "owner": "main:08003bf8",
           "symbol": "Func_08003bf8",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_69.c",
+          "source": "games/gs1/src/display/blend/set_brighten_target_16.c",
           "assembly": "out/gs1-en/claimed/obj/08003bf8.s",
           "size": 66,
           "instructions": 19,
@@ -4872,8 +4444,8 @@
         {
           "owner": "main:08004278",
           "symbol": "Func_08004278",
-          "source": "games/gs1/src/runtime/scheduler/remove_callback.c",
-          "assembly": "out/gs1-en/claimed/obj/08004278.s",
+          "source": "games/gs1/src/runtime/scheduler/callback_scheduler.c",
+          "assembly": "out/gs1-en/claimed/obj/080040e8.s",
           "size": 80,
           "instructions": 34,
           "score_basis_points": 6572,
@@ -11142,7 +10714,7 @@
         {
           "owner": "main:08005b24",
           "symbol": "Func_08005b24",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_73.c",
+          "source": "games/gs1/src/save/state/find_latest_slot.c",
           "assembly": "out/gs1-en/claimed/obj/08005b24.s",
           "size": 64,
           "instructions": 30,
@@ -11156,7 +10728,7 @@
         {
           "owner": "main:08005c2c",
           "symbol": "Func_08005c2c",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_130.c",
+          "source": "games/gs1/src/save/state/get_latest_sequence.c",
           "assembly": "out/gs1-en/claimed/obj/08005c2c.s",
           "size": 60,
           "instructions": 27,
@@ -13446,7 +13018,7 @@
         {
           "owner": "main:08005e88",
           "symbol": "Func_08005e88",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_122.c",
+          "source": "games/gs1/src/link/serial/disable_serial_transfer.c",
           "assembly": "out/gs1-en/claimed/obj/08005e88.s",
           "size": 86,
           "instructions": 23,
@@ -14734,6 +14306,20 @@
       "family": null,
       "alternatives": [
         {
+          "owner": "main:08004198",
+          "symbol": "Func_08004198",
+          "source": "games/gs1/src/runtime/scheduler/callback_scheduler.c",
+          "assembly": "out/gs1-en/claimed/obj/080040e8.s",
+          "size": 64,
+          "instructions": 27,
+          "score_basis_points": 7053,
+          "ngram_similarity_basis_points": 5766,
+          "length_similarity_basis_points": 8888,
+          "call_target_similarity_basis_points": 10000,
+          "call_count_similarity_basis_points": 10000,
+          "branch_similarity_basis_points": 8333
+        },
+        {
           "owner": "main:08004080",
           "symbol": "Func_08004080",
           "source": "games/gs1/src/resource/table/find_free_slot.c",
@@ -14760,20 +14346,6 @@
           "call_target_similarity_basis_points": 10000,
           "call_count_similarity_basis_points": 10000,
           "branch_similarity_basis_points": 8333
-        },
-        {
-          "owner": "main:08019908",
-          "symbol": "Func_08019908",
-          "source": "games/gs1/src/unidentified/main/graphics/graphics_owner_9.c",
-          "assembly": "out/gs1-en/claimed/obj/08019908.s",
-          "size": 60,
-          "instructions": 24,
-          "score_basis_points": 6750,
-          "ngram_similarity_basis_points": 5001,
-          "length_similarity_basis_points": 10000,
-          "call_target_similarity_basis_points": 10000,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 10000
         }
       ]
     },

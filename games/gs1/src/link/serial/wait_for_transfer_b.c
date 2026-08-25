@@ -1,0 +1,26 @@
+#include "types.h"
+
+s32 WaitFrames(s32);
+
+#define SerialRuntime_WaitForTransferB Func_08006488
+
+void SerialRuntime_WaitForTransferB(void)
+{
+    s32 work;
+    u32 count;
+    s32 idle;
+
+    count = 0;
+    if (*(volatile s32 *)0x020023AC != 0) {
+        work = 0x020023AC;
+loop:
+        WaitFrames(1);
+        count += 1;
+        idle = 0;
+        if (count <= 0x927BFU) {
+            if (*(volatile s32 *)work != idle) {
+                goto loop;
+            }
+        }
+    }
+}

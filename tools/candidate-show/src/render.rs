@@ -7,11 +7,12 @@ use crate::{
 };
 use candidate_compiler::{
     jsnum::to_js_number_string,
-    verify::{compile_to_assembly, js_subarray, verify_candidate_owned_routed, CandidateCompilerConfiguration, CandidateCompilerFamily, ROM_BASE},
+    verify::{compile_to_assembly, js_subarray, verify_candidate_owned_routed_with_object, CandidateCompilerConfiguration, CandidateCompilerFamily, ROM_BASE},
 };
 use compiler_core::bundle::compiler_bundle_signature_checked;
 use compiler_core::routing::CompilerTarget;
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
+use overlay_disasm::OVERLAY_BASE;
 use regex::Regex;
 use serde_json::Value;
 use sha2::{Digest, Sha256};
@@ -34,9 +35,21 @@ fn basename_without<'a>(path: &'a str, extension: &str) -> &'a str {
     base.strip_suffix(extension).filter(|value| !value.is_empty()).unwrap_or(base)
 }
 
-fn main_source_identity(root: &Path, source: &str, target: CompilerTarget) -> Result<(SourceOwner, PathBuf), String> {
-    let paths = SourcePaths::load_for_game(root, target.as_str())?;
+fn main_source_identity(root: &Path, source: &str, target: CompilerTarget, selected: Option<u32>, overlay: Option<&str>) -> Result<(SourceOwner, PathBuf), String> {
     let path = Path::new(source);
+    if let Some(address) = selected {
+        let owner = match overlay {
+            Some(overlay) => SourceOwner::parse(&format!("{overlay}:{address:08x}"))?,
+            None => SourceOwner::Main(address),
+        };
+        let route = match owner {
+            SourceOwner::Main(_) if target == CompilerTarget::Gs2 => Path::new("games/gs2/src").join(owner.legacy_relative_path()),
+            SourceOwner::Main(_) => owner.routing_path(),
+            SourceOwner::Overlay { .. } => owner.routing_path_for_game(target.as_str()),
+        };
+        return Ok((owner, route));
+    }
+    let paths = SourcePaths::load_for_game(root, target.as_str())?;
     let mut owner = paths.owner_for_path(path)?;
     if owner.is_none() && !path.is_absolute() {
         owner = paths.owner_for_path(&root.join(path))?;
@@ -55,15 +68,9 @@ fn main_source_identity(root: &Path, source: &str, target: CompilerTarget) -> Re
             };
             Ok((owner, routing))
         }
-        SourceOwner::Overlay { .. } => Err(format!("candidate-show expects a main-image owner, but {source} is {}", owner.id())),
+        SourceOwner::Overlay { .. } => Ok((owner, owner.routing_path_for_game(target.as_str()))),
     }
 }
-/// The reference owner's byte length, from a generated build manifest.
-/// `out/` is gitignored build output; a fresh git worktree has none until
-/// `make build-claimed`/`make build-full` runs there. Returns `None` in that
-/// case -- the caller must error rather than substitute a fallback, since
-/// any fallback derived from the candidate would compare the source
-/// against itself and silently report a plausible-looking wrong score.
 fn region_size(root: &Path, address: u32) -> Option<f64> {
     let manifests = ["out/gs1-en/full/claimed/manifest.json", "out/gs1-en/claimed/manifest.json", "out/gs1-en/full/asm/manifest.json", "out/gs1-en/asm/manifest.json"];
     for manifest in manifests {
@@ -92,7 +99,8 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
     let rom_path = options.rom.as_deref().ok_or("The \"path\" argument must be of type string. Received undefined")?;
     let patch_text = read_patch(options.patch.as_deref())?;
     let source_label = basename_without(&options.source, ".c").to_string();
-    let (owner, routing_source) = main_source_identity(root, &options.source, options.target)?;
+    let (owner, routing_source) = main_source_identity(root, &options.source, options.target, options.owner, options.overlay.as_deref())?;
+    let image_base = if owner.is_main() { ROM_BASE } else { OVERLAY_BASE as f64 };
     let stem = owner.address_stem();
     let key = source_cache_key(&options.source, &routing_source.to_string_lossy(), &stem, &options.flags, &options.configuration, options.rom.as_deref(), options.size, patch_text.as_deref())?;
     let work = Path::new(work);
@@ -117,7 +125,7 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
             None => options.source.clone(),
         };
         let rom = std::fs::read(rom_path).map_err(|error| format!("{rom_path}: {error}"))?;
-        let verification = verify_candidate_owned_routed(&source, &routing_source.to_string_lossy(), &stem, &rom, work.to_string_lossy().as_ref(), &options.flags, ROM_BASE, options.target, &options.configuration)?;
+        let verification = verify_candidate_owned_routed_with_object(&source, &routing_source.to_string_lossy(), &stem, &rom, work.to_string_lossy().as_ref(), &options.flags, image_base, options.target, &options.configuration, options.precompiled_object.as_deref())?;
         let address = js_parse_int_radix(&stem, 16);
         let linked_path = work.join(format!("{stem}.bin"));
         let linked = std::fs::read(&linked_path).map_err(|error| format!("{}: {error}", linked_path.display()))?;
@@ -131,12 +139,12 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         let text_start = nm_text_start(&elf_path)?.unwrap_or(address);
         let owner_offset = address - text_start;
         let actual = js_subarray(&linked, owner_offset, owner_offset + extent);
-        let expected = js_subarray(&rom, address - ROM_BASE, address - ROM_BASE + size);
+        let expected = js_subarray(&rom, address - image_base, address - image_base + size);
         std::fs::write(&candidate_path, &actual).map_err(|error| format!("{}: {error}", candidate_path.display()))?;
         std::fs::write(&reference_path, &expected).map_err(|error| format!("{}: {error}", reference_path.display()))?;
         std::fs::write(&key_path, key.as_bytes()).map_err(|error| format!("{}: {error}", key_path.display()))?;
         let _ = std::fs::remove_file(&first_path);
-        (actual, expected, "fresh")
+        (actual, expected, if options.precompiled_object.is_some() { "shared-object" } else { "fresh" })
     };
     render_bytes(actual, expected, compile, options, &candidate_path, &reference_path, &first_path)
 }
@@ -173,16 +181,10 @@ fn nm_extent(path: PathBuf, target: &str, address: f64, length: f64) -> Result<O
         })
         .filter(|(entry, _, _)| *entry >= address && *entry < address + length)
         .collect();
-    if !entries.iter().any(|(entry, _, name)| *entry == address && (*name == target || target.strip_prefix("Func_0") == name.strip_prefix("Func_")))
-        || entries.iter().any(|(entry, size, _)| !entry.is_finite() || !size.is_finite() || entry.fract() != 0.0 || size.fract() != 0.0 || *entry > 9_007_199_254_740_991.0 || *size > 9_007_199_254_740_991.0 || *size <= 0.0)
-    {
+    if entries.iter().any(|(entry, size, _)| !entry.is_finite() || !size.is_finite() || entry.fract() != 0.0 || size.fract() != 0.0 || *entry > 9_007_199_254_740_991.0 || *size > 9_007_199_254_740_991.0 || *size <= 0.0) {
         return Err("compiled function symbols differ".into());
     }
-    let end = entries.iter().map(|(entry, size, _)| entry + size).fold(f64::NEG_INFINITY, f64::max);
-    if end <= address || end - address > length {
-        return Err("compiled function extent differs".into());
-    }
-    Ok(Some(end - address))
+    entries.iter().find(|(entry, _, name)| *entry == address && (*name == target || target.strip_prefix("Func_0") == name.strip_prefix("Func_"))).map(|(_, size, _)| Some(*size)).ok_or_else(|| "compiled function symbols differ".into())
 }
 fn nm_text_start(path: &Path) -> Result<Option<f64>, String> {
     let output = Command::new("arm-none-eabi-nm").args(["-S", "--defined-only"]).arg(path).output().map_err(|error| format!("arm-none-eabi-nm failed: {error}"))?;
@@ -255,7 +257,7 @@ fn render_bytes(actual: Vec<u8>, expected: Vec<u8>, compile: &str, options: &Opt
 fn render_asm(root: &Path, options: &Options, work: &str) -> Result<RenderOutput, String> {
     let started = Instant::now();
     let source_label = basename_without(&options.source, ".c").to_string();
-    let (owner, routing_source) = main_source_identity(root, &options.source, options.target)?;
+    let (owner, routing_source) = main_source_identity(root, &options.source, options.target, options.owner, options.overlay.as_deref())?;
     let stem = owner.address_stem();
     let reference = root.join("games").join(options.target.as_str()).join("asm").join(format!("{stem}.s"));
     if !reference.is_file() {
@@ -432,6 +434,14 @@ fn source_cache_key_with_environment(source: &str, routing_source: &str, owner_s
         hasher.update(flag.as_bytes());
     }
     hasher.update([9, u8::from(configuration.reference_symbols)]);
+    for (name, symbol) in &configuration.absolute_symbols {
+        hasher.update([12]);
+        hasher.update(name.as_bytes());
+        hasher.update(symbol.address.to_le_bytes());
+        hasher.update([symbol.kind as u8]);
+    }
+    hasher.update(configuration.call_via_base.unwrap_or_default().to_le_bytes());
+    hasher.update(configuration.label_word_bias.unwrap_or_default().to_le_bytes());
     if let Some(rom) = rom {
         hasher.update([10]);
         hasher.update(rom.as_bytes());
@@ -607,11 +617,6 @@ mod region_size_tests {
 
     #[test]
     fn returns_none_without_falling_back_when_the_manifest_is_absent() {
-        // out/ is gitignored build output; a fresh git worktree has none
-        // until `make build-asm`/`make build-full` runs there. Regression
-        // guard for the bug where render() silently substituted the
-        // candidate's own linked length here, comparing the source
-        // against itself and reporting a plausible-looking wrong score.
         let root = scratch_root("absent");
         assert_eq!(region_size(&root, 0x080a_b5e4), None);
         let _ = fs::remove_dir_all(&root);
@@ -642,7 +647,7 @@ mod source_identity_tests {
     fn nested_source_uses_manifest_owner_and_stable_route() {
         let root = scratch_root("nested");
         fs::write(root.join("games/gs1/source-paths.json"), r#"{"format":3,"owners":{"main:080b0fa4":"battle/inventory/draw_paged_item_list.c"}}"#).unwrap();
-        let (owner, route) = main_source_identity(&root, "games/gs1/src/battle/inventory/draw_paged_item_list.c", CompilerTarget::Gs1).unwrap();
+        let (owner, route) = main_source_identity(&root, "games/gs1/src/battle/inventory/draw_paged_item_list.c", CompilerTarget::Gs1, None, None).unwrap();
         assert_eq!(owner, SourceOwner::Main(0x080b0fa4));
         assert_eq!(route, PathBuf::from("games/gs1/src/080b0fa4.c"));
         let _ = fs::remove_dir_all(&root);
@@ -652,9 +657,17 @@ mod source_identity_tests {
     fn address_named_recon_candidate_keeps_its_legacy_route() {
         let root = scratch_root("recon");
         let source = "games/gs1/recon/en/main/080ab5e4.c";
-        let (owner, route) = main_source_identity(&root, source, CompilerTarget::Gs1).unwrap();
+        let (owner, route) = main_source_identity(&root, source, CompilerTarget::Gs1, None, None).unwrap();
         assert_eq!(owner, SourceOwner::Main(0x080ab5e4));
         assert_eq!(route, PathBuf::from(source));
+        let _ = fs::remove_dir_all(&root);
+    }
+
+    #[test]
+    fn explicit_owner_uses_its_stable_route() {
+        let root = scratch_root("selected");
+        let (_, route) = main_source_identity(&root, "candidate.c", CompilerTarget::Gs1, Some(0x080a8904), None).unwrap();
+        assert_eq!(route, PathBuf::from("games/gs1/src/080a8904.c"));
         let _ = fs::remove_dir_all(&root);
     }
 }

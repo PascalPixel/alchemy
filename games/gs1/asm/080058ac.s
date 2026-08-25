@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global SaveState_ReadSlotAndCheckChecksum
 	.global Func_080058ac
 	.thumb_func
+SaveState_ReadSlotAndCheckChecksum:
 Func_080058ac:
 	push	{r5, lr}
 	ldr	r3, [pc, #72]

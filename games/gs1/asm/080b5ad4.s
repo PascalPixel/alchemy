@@ -2,8 +2,10 @@
 @ 探索では未到達。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global BattlePresentation_InitializeTilePattern
 	.global Func_080b5ad4
 	.thumb_func
+BattlePresentation_InitializeTilePattern:
 Func_080b5ad4:
 	push	{lr}
 	ldr	r3, [pc, #24]

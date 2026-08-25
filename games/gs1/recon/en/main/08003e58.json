@@ -7,13 +7,14 @@
   "owner_bytes": 124,
   "executable_owner_bytes": 124,
   "candidate": {
-    "routed": {
+    "coherent_translation_unit": {
       "candidate_bytes": 116,
       "reference_bytes": 124,
-      "differing_halfwords": 61,
-      "wrong_instructions": 78
+      "differing_halfwords": 56,
+      "wrong_instructions": 58
     },
     "best_bounded_axis": {
+      "scope": "earlier isolated-owner diagnostic",
       "flags": ["-fno-gcse"],
       "candidate_bytes": 124,
       "reference_bytes": 124,
@@ -42,7 +43,7 @@
     "skips occupied runs by reading their resource-table entry size",
     "marks an accepted run with the identifier and returns its byte offset"
   ],
-  "remaining": "The complete algorithm and owner extent are established, but the approved routed compiler emits a broad control-layout and r6/r7 allocation disagreement. Disabling GCSE restores the reference extent but leaves 38 wrong instructions, so neither exact adoption nor narrow permanent classification is justified.",
+  "remaining": "The complete algorithm and reference extent are established, but the coherent canonical translation-unit build remains eight bytes short with a broad control-layout and allocation disagreement. The earlier isolated-owner -fno-gcse diagnostic restored the reference extent but still left 38 wrong instructions, so neither exact adoption nor a narrow permanent classification is justified.",
   "notes": [
     "Recovered only from retained assembly, approved local GS1 ROMs, neighboring exact resource-table owners, and the approved compiler.",
     "This candidate claims zero DONE bytes."

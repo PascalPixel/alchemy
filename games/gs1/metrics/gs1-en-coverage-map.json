@@ -7,19 +7,19 @@
   "executable_bytes": 1348458,
   "categories": {
     "exact_c": {
-      "bytes": 323230,
-      "percent_of_executable": 23.97
+      "bytes": 323890,
+      "percent_of_executable": 24.02
     },
     "tracked_c": {
-      "bytes": 45014,
-      "percent_of_executable": 3.34
+      "bytes": 44522,
+      "percent_of_executable": 3.3
     },
     "assembly": {
-      "bytes": 602964,
-      "percent_of_executable": 44.72
+      "bytes": 602810,
+      "percent_of_executable": 44.7
     },
     "retained_asm": {
-      "bytes": 377250,
+      "bytes": 377236,
       "percent_of_executable": 27.98
     },
     "asset_data": {
@@ -29,8 +29,8 @@
   },
   "main": {
     "executable_bytes": 548364,
-    "exact_c_bytes": 110470,
-    "tracked_c_bytes": 7016
+    "exact_c_bytes": 111130,
+    "tracked_c_bytes": 6524
   },
   "overlays": {
     "executable_bytes": 800094,
@@ -40,7 +40,7 @@
   "provenance": {
     "exact_source": "worktree",
     "tracked_source": "worktree",
-    "tracked_sources": 150,
+    "tracked_sources": 143,
     "main_tracked_census": "games/gs1/recon/en/main/*.json",
     "tracked_superseded_bytes": 0,
     "tracked_outside_extent_bytes": 0,
@@ -52,10 +52,10 @@
       "label": "Main image code",
       "bytes": 548364,
       "categories": {
-        "exact_c": 110470,
-        "tracked_c": 7016,
-        "assembly": 253960,
-        "retained_asm": 176918
+        "exact_c": 111130,
+        "tracked_c": 6524,
+        "assembly": 253806,
+        "retained_asm": 176904
       },
       "tiles": 9
     },
@@ -73,11 +73,11 @@
     {
       "id": "rom-data",
       "label": "Assets & data",
-      "bytes": 7300700,
+      "bytes": 7300694,
       "categories": {
-        "asset_data": 7300700
+        "asset_data": 7300694
       },
-      "tiles": 2336
+      "tiles": 2335
     }
   ],
   "executable_areas": [
@@ -86,10 +86,10 @@
       "label": "Main image",
       "bytes": 548364,
       "categories": {
-        "exact_c": 110470,
-        "tracked_c": 7016,
-        "assembly": 253960,
-        "retained_asm": 176918
+        "exact_c": 111130,
+        "tracked_c": 6524,
+        "assembly": 253806,
+        "retained_asm": 176904
       },
       "tiles": 867
     },

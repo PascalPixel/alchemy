@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global BattleMotion_ProjectScaledPosition
 	.global Func_080b845c
 	.thumb_func
+BattleMotion_ProjectScaledPosition:
 Func_080b845c:
 	push	{r5, r6, lr}
 	mov	r6, sl

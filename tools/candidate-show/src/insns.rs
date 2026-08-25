@@ -2,11 +2,7 @@ pub fn gas_insns(source: &str) -> Vec<String> {
     gas_lines(source.lines().collect())
 }
 
-/// Read only one function from a GCC/GAS translation unit.
-///
-/// Candidate assembly can contain out-of-line helpers emitted after the owner
-/// (for example a non-static GNU89 `inline`). Those helpers are not part of
-/// the reference owner and must not steer structural scoring.
+/// Read one function without letting out-of-line helpers steer its score.
 pub fn gas_function_insns(source: &str, symbol: &str) -> Vec<String> {
     let label = format!("{symbol}:");
     let lines = source.lines().collect::<Vec<_>>();
@@ -34,10 +30,7 @@ fn gas_lines(lines: Vec<&str>) -> Vec<String> {
                 return None;
             }
             let instruction = canonical(line);
-            // Retained reference assembly spells alignment before literal
-            // pools as `mov r0, r0`; GCC emits the equivalent `.align 2, 0`.
-            // It is a real byte and remains covered by linked-byte scoring,
-            // but it is not a source-structure difference.
+            // Treat GCC `.align 2, 0` like retained `mov r0, r0` structure.
             let next_is_pool = lines[index + 1..].iter().map(|line| line.trim()).find(|line| !line.is_empty() && !line.starts_with('@')).is_some_and(|line| line.starts_with(".4byte") || line.starts_with(".word"));
             (!(matches!(instruction.as_str(), "movs r0, r0" | "nop") && next_is_pool)).then_some(instruction)
         })

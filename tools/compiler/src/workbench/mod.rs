@@ -20,7 +20,7 @@ use std::{
 use structural::StructuralReport;
 use walkdir::WalkDir;
 
-const USAGE: &str = "usage: compiler workbench <games/gs1/recon/en/main/ADDRESS.c> [--m2c PATH] [--output DIR] [--no-run]";
+const USAGE: &str = "usage: compiler workbench <candidate.c> [--m2c PATH] [--output DIR] [--no-run]";
 
 #[derive(Debug)]
 struct Options {
@@ -160,10 +160,20 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
 
 fn owner_stem(path: &Path) -> Result<String, String> {
     let stem = path.file_stem().and_then(OsStr::to_str).ok_or("non-UTF-8 owner name")?;
-    if stem.len() != 8 || !stem.bytes().all(|byte| byte.is_ascii_hexdigit()) {
-        return Err(format!("{}: expected an eight-digit main-image owner", path.display()));
+    if stem.len() == 8 && stem.bytes().all(|byte| byte.is_ascii_hexdigit()) {
+        return Ok(stem.to_ascii_lowercase());
     }
-    Ok(stem.to_ascii_lowercase())
+    let text = std::fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
+    let mut owners = text.lines().filter_map(|line| {
+        let fields = line.split_ascii_whitespace().collect::<Vec<_>>();
+        let owner = matches!(fields.as_slice(), ["#define", _, owner] if owner.starts_with("Func_")).then(|| fields[2].trim_start_matches("Func_"))?;
+        (owner.len() == 8 && owner.bytes().all(|byte| byte.is_ascii_hexdigit())).then(|| owner.to_ascii_lowercase())
+    });
+    let owner = owners.next().ok_or_else(|| format!("{}: no canonical owner declaration", path.display()))?;
+    if owners.any(|candidate| candidate != owner) {
+        return Err(format!("{}: multiple canonical owner declarations", path.display()));
+    }
+    Ok(owner)
 }
 
 fn absolute_existing(repository: &Path, path: &Path) -> Result<PathBuf, String> {

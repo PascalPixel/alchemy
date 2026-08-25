@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global FieldEffect_InitializeState
 	.global Func_08090824
 	.thumb_func
+FieldEffect_InitializeState:
 Func_08090824:
 	push	{r5, r6, lr}
 	mov	r6, r8

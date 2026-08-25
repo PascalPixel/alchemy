@@ -9,10 +9,10 @@
     "measured": "2026-08-25",
     "candidate_bytes": 64,
     "reference_bytes": 64,
-    "differing_halfwords": 13,
-    "wrong_instructions": 12,
-    "class": "allocation",
-    "note": "The executable instruction sequence and owner length agree; the residual is the queue/IME pointer allocation and the resulting literal order. Pool words account for the reported normalized wrong-instruction rows. This candidate claims zero DONE bytes."
+    "differing_halfwords": 4,
+    "wrong_instructions": 0,
+    "class": "ordering",
+    "note": "The coherent video/DMA translation unit preserves the 64-byte extent and aligned instruction stream. The residual is two adjacent instruction-order swaps in the owner head. This candidate claims zero DONE bytes."
   },
   "family": {
     "owners": [
@@ -42,8 +42,8 @@
     "shared_candidate_score": {
       "candidate_bytes": 64,
       "reference_bytes": 64,
-      "differing_halfwords": 13,
-      "wrong_instructions": 12,
+      "differing_halfwords": 4,
+      "wrong_instructions": 0,
       "owners_measured": 9
     }
   },
@@ -71,9 +71,9 @@
   ],
   "remaining": [
     {
-      "op": "register allocation",
-      "count": 1,
-      "where": "the candidate keeps the interrupt-master address in r4 and queue base in r1; the reference keeps the queue in r4 and interrupt-master address in r1"
+      "op": "instruction ordering",
+      "count": 2,
+      "where": "the coherent unit emits the argument save before the queue-base load and the interrupt-master save after its disable store; the reference uses the opposite order at both sites"
     }
   ],
   "rejected_experiments": [
@@ -87,18 +87,18 @@
     },
     {
       "experiment": "the nine existing GCC 2.96 owner-route flag families",
-      "result": "none reached zero; seven preserved the 13-halfword allocation residual, -fno-cse-skip-blocks regressed to 29, and -fno-schedule-insns2 changed scheduling but still differed in 10 halfwords"
+      "result": "against the earlier isolated-owner source, none reached zero; seven preserved its 13-halfword allocation residual, -fno-cse-skip-blocks regressed to 29, and -fno-schedule-insns2 still differed in 10 halfwords"
     },
     {
       "experiment": "joint family transfer through one shared body and nine constant-only wrappers",
-      "result": "all nine emit 64 bytes and the same 13-halfword/12-wrong-instruction allocation residual; -fno-schedule-insns2 gives all nine the same 10-halfword/16-wrong-instruction residual, so no sibling is independently exact"
+      "result": "the earlier wrapper-only reconstruction left all nine at 13 differing halfwords. Reconstructing the complete surrounding translation unit later reduced every sibling to the current four-halfword ordering residual under canonical flags"
     },
     {
       "experiment": "joint declaration, integer-width, queue-view, raw-pointer, IME-pointer, early-destination, compiler-family, optimization, CSE, GCSE, scheduler, strength-reduction, regmove, and expensive-optimization matrix",
-      "result": "no source/compiler pairing reached zero; ordinary spellings either retain the queue/IME allocation swap or introduce a broader extent/instruction disagreement. GCC 2.96 matches the routed 13-halfword residual, old-agbcc regresses to 24, and the recorded GCC 3 compiler is unavailable."
+      "result": "no isolated source/compiler pairing reached zero. This result predates the complete translation-unit reconstruction and is retained only as evidence that per-owner flag searches did not explain the reference."
     }
   ],
-  "next": "Keep the readable shared family as measured reconstruction evidence. Do not classify the broad queue-in-r4/IME-in-r1 allocation residual as permanent without a new independently narrow compiler result.",
+  "next": "Keep the coherent translation unit as measured reconstruction evidence and resolve the two source-ordering pairs. No permanent compiler classification is warranted.",
   "notes": [
     "Recovered only from the retained owner assembly, approved local ROM, in-repository callers, and the approved compiler.",
     "No external game source, copied instruction bytes, inline assembly, fixed-register variable, or compiler barrier was used."

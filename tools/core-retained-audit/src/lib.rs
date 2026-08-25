@@ -84,19 +84,24 @@ fn mark_executable(mask: &mut [u8], start: u64, end: u64) {
     mask[start..end].iter_mut().for_each(|byte| *byte |= 1);
 }
 
-fn mark_source(mask: &mut [u8], region: &Region, bit: u8, label: &str) -> Result<(), String> {
+fn mark_source(mask: &mut [u8], region: &Region, bit: u8, label: &str, strict: bool) -> Result<(), String> {
     let start = (region.start - ROM_BASE) as usize;
     let end = (region.end - ROM_BASE) as usize;
+    let mut marked = false;
     for (offset, byte) in mask[start..end].iter_mut().enumerate() {
         if *byte & 1 == 0 {
-            return Err(format!("{label} at 0x{:08x} lies outside the executable inventory", region.start + offset as u64));
+            if strict {
+                return Err(format!("{label} at 0x{:08x} lies outside the executable inventory", region.start + offset as u64));
+            }
+            continue;
         }
         if *byte & 6 != 0 {
             return Err(format!("source regions overlap at 0x{:08x}", region.start + offset as u64));
         }
         *byte |= bit;
+        marked = true;
     }
-    Ok(())
+    marked.then_some(()).ok_or_else(|| format!("{label} has no audited executable bytes"))
 }
 
 fn stale(output: &Path, source: &Path) -> Result<(), String> {
@@ -128,10 +133,10 @@ pub fn audit(root: &Path) -> Result<Audit, String> {
         mark_executable(&mut mask, start, end);
     }
     for region in &claimed {
-        mark_source(&mut mask, region, 2, "exact C")?;
+        mark_source(&mut mask, region, 2, "exact C", false)?;
     }
     for region in &asm {
-        mark_source(&mut mask, region, 4, "assembly")?;
+        mark_source(&mut mask, region, 4, "assembly", true)?;
     }
 
     let executable = mask.iter().filter(|byte| **byte & 1 != 0).count();
@@ -162,5 +167,19 @@ impl Audit {
             "retained_by_kind_confidence": kinds,
             "failures": []
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn claimed_placement_projects_through_inventory_but_assembly_stays_strict() {
+        let region = Region { start: ROM_BASE, end: ROM_BASE + 4, kind: String::new(), confidence: String::new(), evidence: String::new() };
+        let mut mask = [1, 0, 0, 1];
+        assert!(mark_source(&mut mask, &region, 2, "exact C", false).is_ok());
+        assert_eq!(mask, [3, 0, 0, 3]);
+        assert!(mark_source(&mut [1, 0, 0, 1], &region, 4, "assembly", true).is_err());
     }
 }

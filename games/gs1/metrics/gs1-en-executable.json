@@ -3571,8 +3571,8 @@
       {
         "start": 134908164,
         "end": 134908178,
-        "kind": "structural",
-        "evidence": "games/gs1/asm/080a8904.s:deliberate_busy_wait"
+        "kind": "thumb",
+        "evidence": "games/gs1/src/runtime/wait/run_busy_wait_delay.c:byte-identical-claimed-C"
       },
       {
         "start": 134908178,

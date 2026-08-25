@@ -1,0 +1,177 @@
+{
+  "format": 2,
+  "units": [
+    {
+      "id": "scheduler",
+      "game": "gs1",
+      "source": "games/gs1/src/runtime/scheduler/callback_scheduler.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {
+        "Data_03001a10": {"address":"0x03001a10","kind":"data"},
+        "Data_03001a20": {"address":"0x03001a20","kind":"data"},
+        "Data_03001d34": {"address":"0x03001d34","kind":"data"},
+        "Data_04000208": {"address":"0x04000208","kind":"data"}
+      },
+      "local_symbols": [
+        {"address":"0x08004270","alias":"Scheduler_Idle","extent":2},
+        {"address":"0x08004274","alias":"Scheduler_EmptyCallback","extent":2}
+      ],
+      "owners": [
+        {"address":"0x080040e8","alias":"Scheduler_ResetTaskTable","extent":68,"state":"exact-c"},
+        {"address":"0x0800412c","alias":"Scheduler_CopyWords","extent":24,"state":"exact-c"},
+        {"address":"0x08004144","alias":"Scheduler_SortTasks","extent":84,"state":"exact-c"},
+        {"address":"0x08004198","alias":"Scheduler_FindCallback","extent":64,"state":"exact-c"},
+        {"address":"0x080041d8","alias":"Scheduler_AddOrUpdateCallback","extent":150,"state":"exact-c"},
+        {"address":"0x08004278","alias":"Scheduler_RemoveCallback","extent":80,"state":"exact-c"},
+        {"address":"0x080042c8","alias":"Scheduler_EnableCallbacks","extent":68,"state":"exact-c"},
+        {"address":"0x0800430c","alias":"Scheduler_EnableUnmaskedOverlayCallbacks","extent":76,"state":"exact-c"},
+        {"address":"0x08004358","alias":"Scheduler_SetCallbackMask","extent":68,"state":"exact-c"},
+        {"address":"0x0800439c","alias":"Scheduler_DisableCallbacks","extent":68,"state":"exact-c"},
+        {"address":"0x080043e0","alias":"Scheduler_DisableOverlayCallbacks","extent":64,"state":"exact-c"}
+      ]
+    },
+    {
+      "id": "video-dma-queue",
+      "game": "gs1",
+      "source": "games/gs1/recon/en/units/video_dma_queue.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {
+        "TransferCommandExecutor_Size": {"address":"0x00000068","kind":"data"},
+        "LoadedRuntime_Size": {"address":"0x000000e0","kind":"data"},
+        "Data_02002090": {"address":"0x02002090","kind":"data"},
+        "Data_03001400_a": {"address":"0x03001400","kind":"data"},
+        "Data_03001810": {"address":"0x03001810","kind":"data"},
+        "Data_03001ac0": {"address":"0x03001ac0","kind":"data"},
+        "Data_03001aec": {"address":"0x03001aec","kind":"data"},
+        "Data_03001b10": {"address":"0x03001b10","kind":"data"},
+        "Data_03001c98": {"address":"0x03001c98","kind":"data"},
+        "Data_03001c98_a": {"address":"0x03001c98","kind":"data"},
+        "Data_03001ca8": {"address":"0x03001ca8","kind":"data"},
+        "Data_03001cb8_a": {"address":"0x03001cb8","kind":"data"},
+        "Data_03001cd4": {"address":"0x03001cd4","kind":"data"},
+        "Data_03001cf8": {"address":"0x03001cf8","kind":"data"},
+        "Data_03001d00": {"address":"0x03001d00","kind":"data"},
+        "Data_03001d00_a": {"address":"0x03001d00","kind":"data"},
+        "Data_03001d40": {"address":"0x03001d40","kind":"data"},
+        "Data_04000208": {"address":"0x04000208","kind":"data"}
+      },
+      "local_symbols": [],
+      "owners": [
+        {"address":"0x08003810","alias":"Input_InitKeyIrq","extent":44,"state":"exact-c"},
+        {"address":"0x0800383c","alias":"QueueIoWriteDelay1","extent":64,"state":"retained-assembly"},
+        {"address":"0x0800387c","alias":"QueueIoWriteDelay2","extent":64,"state":"retained-assembly"},
+        {"address":"0x080038bc","alias":"QueueIoWriteDelay3","extent":64,"state":"retained-assembly"},
+        {"address":"0x080038fc","alias":"QueueIoWriteDelay5","extent":64,"state":"retained-assembly"},
+        {"address":"0x0800393c","alias":"QueueIoWriteDelay6","extent":64,"state":"retained-assembly"},
+        {"address":"0x0800397c","alias":"QueueIoWriteDelay7","extent":64,"state":"retained-assembly"},
+        {"address":"0x080039bc","alias":"QueueIoWriteDelay9","extent":64,"state":"retained-assembly"},
+        {"address":"0x080039fc","alias":"QueueIoWriteDelay10","extent":64,"state":"retained-assembly"},
+        {"address":"0x08003a3c","alias":"QueueIoWriteDelay11","extent":64,"state":"retained-assembly"},
+        {"address":"0x08003a7c","alias":"IoWriteQueue_FlushPending","extent":96,"state":"retained-assembly"},
+        {"address":"0x08003adc","alias":"BlendTransition_Update","extent":146,"state":"retained-assembly"},
+        {"address":"0x08003b70","alias":"Blend_SetDarkenTarget16","extent":66,"state":"exact-c"},
+        {"address":"0x08003bb4","alias":"Blend_SetDarkenTarget0","extent":66,"state":"exact-c"},
+        {"address":"0x08003bf8","alias":"Blend_SetBrightenTarget16","extent":66,"state":"exact-c"},
+        {"address":"0x08003c3c","alias":"Blend_SetBrightenTarget0","extent":66,"state":"exact-c"},
+        {"address":"0x08003c80","alias":"Blend_ConfigureTransition","extent":96,"state":"exact-c"},
+        {"address":"0x08003ce0","alias":"Blend_WaitForTransition","extent":36,"state":"exact-c"},
+        {"address":"0x08003d04","alias":"Graphics_ResetFrameState","extent":36,"state":"exact-c"},
+        {"address":"0x08003d28","alias":"AffineMatrix_BuildForEffect","extent":196,"state":"exact-c"},
+        {"address":"0x08003dec","alias":"Runtime_PushSlotEntry","extent":36,"state":"exact-c"},
+        {"address":"0x08003e10","alias":"Runtime_CopyAndCallRoutine","extent":72,"state":"retained-assembly"},
+        {"address":"0x08003e58","alias":"ResourceTable_AllocateBlocks","extent":124,"state":"retained-assembly"}
+      ]
+    },
+    {
+      "id": "save-state",
+      "game": "gs1",
+      "source": "games/gs1/recon/en/units/save_state.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {
+        "Data_02004c14": {"address":"0x02004c14","kind":"data"},
+        "Data_03001f1c_a": {"address":"0x03001f1c","kind":"data"}
+      },
+      "local_symbols": [],
+      "owners": [
+        {"address":"0x080056cc","alias":"SaveState_InitializeWorkspace","extent":322,"state":"retained-assembly"},
+        {"address":"0x08005810","alias":"SaveState_SelectWriteSlot","extent":88,"state":"exact-c"},
+        {"address":"0x08005868","alias":"SaveState_WriteWorkspaceSlot","extent":68,"state":"exact-c"},
+        {"address":"0x080058ac","alias":"SaveState_ReadSlotAndCheckChecksum","extent":88,"state":"retained-assembly"},
+        {"address":"0x08005904","alias":"SaveState_EraseSlotSector","extent":28,"state":"exact-c"},
+        {"address":"0x08005920","alias":"SaveState_WriteRecord","extent":344,"state":"retained-assembly"},
+        {"address":"0x08005a78","alias":"SaveState_ReadRecordPayload","extent":72,"state":"retained-assembly"},
+        {"address":"0x08005ac0","alias":"SaveState_DeleteRecord","extent":30,"state":"exact-c"},
+        {"address":"0x08005ae0","alias":"SaveState_ChecksumWorkspace","extent":68,"state":"exact-c"},
+        {"address":"0x08005b24","alias":"SaveState_FindLatestSlot","extent":64,"state":"exact-c"},
+        {"address":"0x08005b64","alias":"SaveState_InvalidateSlot","extent":164,"state":"retained-assembly"},
+        {"address":"0x08005c08","alias":"SaveState_CompareBytes","extent":34,"state":"exact-c"},
+        {"address":"0x08005c2c","alias":"SaveState_GetLatestSequence","extent":60,"state":"exact-c"},
+        {"address":"0x08005c68","alias":"SaveState_LoadSummaryRecords","extent":144,"state":"retained-assembly"}
+      ]
+    },
+    {
+      "id": "serial-runtime",
+      "game": "gs1",
+      "source": "games/gs1/recon/en/units/serial_runtime.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {
+        "Data_00000000": {"address":"0x00000000","kind":"data"},
+        "Data_000000c0": {"address":"0x000000c0","kind":"data"},
+        "Data_02002008": {"address":"0x02002008","kind":"data"},
+        "Data_02002080": {"address":"0x02002080","kind":"data"},
+        "Data_02002220": {"address":"0x02002220","kind":"data"},
+        "Data_02002238": {"address":"0x02002238","kind":"data"},
+        "Data_020023ac": {"address":"0x020023ac","kind":"data"},
+        "Data_03001cb0_a": {"address":"0x03001cb0","kind":"data"},
+        "Data_03001f64": {"address":"0x03001f64","kind":"data"},
+        "Data_04000208": {"address":"0x04000208","kind":"data"}
+      },
+      "local_symbols": [],
+      "owners": [
+        {"address":"0x08005d10","alias":"SerialRuntime_Initialize","extent":350,"state":"retained-assembly"},
+        {"address":"0x08005e70","alias":"SerialRuntime_EnableTransferTimer","extent":24,"state":"exact-c"},
+        {"address":"0x08005e88","alias":"SerialRuntime_DisableTransfer","extent":86,"state":"exact-c"},
+        {"address":"0x08005ee0","alias":"SerialRuntime_PollAndTransfer","extent":234,"state":"retained-assembly"},
+        {"address":"0x08005fcc","alias":"SerialRuntime_PollStatus","extent":186,"state":"retained-assembly"},
+        {"address":"0x08006088","alias":"SerialRuntime_ExchangePayloads","extent":96,"state":"exact-c"},
+        {"address":"0x080060e8","alias":"SerialRuntime_PrepareSendPacket","extent":116,"state":"retained-assembly"},
+        {"address":"0x0800615c","alias":"SerialRuntime_CollectReceivedPayloads","extent":228,"state":"retained-assembly"},
+        {"address":"0x08006240","alias":"SerialRuntime_HandleTransferInterrupt","extent":280,"state":"retained-assembly"},
+        {"address":"0x08006358","alias":"SerialRuntime_RemoveIrqHandlers","extent":44,"state":"exact-c"},
+        {"address":"0x08006384","alias":"SerialRuntime_WaitForStatusMask","extent":56,"state":"exact-c"},
+        {"address":"0x080063bc","alias":"SerialRuntime_BeginTransferA","extent":76,"state":"retained-assembly"},
+        {"address":"0x08006408","alias":"SerialRuntime_BeginTransferB","extent":80,"state":"retained-assembly"},
+        {"address":"0x08006458","alias":"SerialRuntime_WaitForTransferA","extent":48,"state":"exact-c"},
+        {"address":"0x08006488","alias":"SerialRuntime_WaitForTransferB","extent":48,"state":"exact-c"},
+        {"address":"0x080064b8","alias":"SerialRuntime_WaitForTransfers","extent":60,"state":"exact-c"},
+        {"address":"0x080064f4","alias":"SerialRuntime_GetActiveTransfers","extent":40,"state":"exact-c"},
+        {"address":"0x0800651c","alias":"BattleLink_ResetTransferState","extent":64,"state":"retained-assembly"}
+      ]
+    },
+    {
+      "id": "scene-event-runtime",
+      "game": "gs1",
+      "source": "games/gs1/recon/en/units/scene_event_runtime.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_37b",
+      "absolute_symbols": {
+        "SceneEventRuntime_ScriptData": {"address":"0x0200a5c0","kind":"data"},
+        "SceneEventRuntime_MessageData": {"address":"0x0200a698","kind":"data"},
+        "SceneEventRuntime_ActorData": {"address":"0x0200a6bc","kind":"data"},
+        "SceneEventRuntime_EffectData": {"address":"0x0200a80c","kind":"data"}
+      },
+      "local_symbols": [],
+      "owners": [
+        {"address":"0x02000030","alias":"SceneEventRuntime_GetScriptData","extent":8,"state":"exact-c"},
+        {"address":"0x02000038","alias":"SceneEventRuntime_ReturnZero","extent":4,"state":"exact-c"},
+        {"address":"0x0200003c","alias":"SceneEventRuntime_GetMessageData","extent":8,"state":"exact-c"},
+        {"address":"0x02000044","alias":"SceneEventRuntime_GetActorData","extent":8,"state":"exact-c"},
+        {"address":"0x0200004c","alias":"SceneEventRuntime_GetEffectData","extent":8,"state":"exact-c"}
+      ]
+    }
+  ]
+}

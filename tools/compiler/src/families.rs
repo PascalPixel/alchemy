@@ -8,6 +8,7 @@ use compiler_core::{
     routing::CompilerTarget,
     sha256,
     source_paths::{SourceOwner, SourcePaths},
+    translation_units::TranslationUnits,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -34,6 +35,8 @@ struct BuildRegion {
     source: String,
     #[serde(default)]
     symbol: String,
+    #[serde(default)]
+    symbols: Vec<String>,
     address: u64,
     size: usize,
     retention: Option<String>,
@@ -165,11 +168,17 @@ fn cluster_command(arguments: &[String]) -> Result<(), String> {
 fn build_index() -> Result<FamilyIndex, String> {
     let exact_manifest: BuildManifest = json("out/gs1-en/claimed/manifest.json")?;
     let asm_manifest: BuildManifest = json("out/gs1-en/asm/manifest.json")?;
+    let extents = translation_extents()?;
     let mut exact = Vec::new();
     for region in exact_manifest.regions {
         let stem = stem(region.address)?;
         let assembly = format!("out/gs1-en/claimed/obj/{stem}.s");
-        exact.push(owner(format!("main:{stem}"), region.source, assembly, region.size, &region.symbol)?);
+        let symbols = if region.symbols.is_empty() { vec![region.symbol.clone()] } else { region.symbols };
+        for symbol in symbols {
+            let owner_stem = symbol.strip_prefix("Func_").ok_or_else(|| format!("invalid exact symbol {symbol}"))?;
+            let Some(size) = extents.get(owner_stem).copied().or_else(|| (symbol == region.symbol).then_some(region.size)) else { continue };
+            exact.push(owner(format!("main:{owner_stem}"), region.source.clone(), assembly.clone(), size, &symbol)?);
+        }
     }
     let mut targets = Vec::new();
     for region in asm_manifest.regions.into_iter().filter(|region| region.retention.as_deref() == Some("c_candidate") || (region.retention.as_deref() == Some("keep_structured_asm") && region.origin.as_deref() == Some("compiler"))) {
@@ -214,6 +223,11 @@ fn build_index() -> Result<FamilyIndex, String> {
         families,
         targets: matches,
     })
+}
+
+fn translation_extents() -> Result<BTreeMap<String, usize>, String> {
+    let manifest = TranslationUnits::load(compiler_core::routing::root())?;
+    Ok(manifest.units.iter().filter(|unit| unit.overlay.is_none()).flat_map(|unit| &unit.owners).map(|owner| (format!("{:08x}", owner.address), owner.extent)).collect())
 }
 
 fn owner(id: String, source: String, assembly: String, size: usize, symbol: &str) -> Result<Owner, String> {

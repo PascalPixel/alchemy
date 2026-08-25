@@ -8,7 +8,8 @@ extern void Func_02002bea(int,int,int);
 extern void Func_02002c1c(int,int,int);
 extern void Func_02002b24(int);
 extern void Func_02002b7c(u8 *,int);
-void Func_020011b0(int actor, int x, int z, int field40)
+#define ActorPresentation_MoveActorToPositionAndWait Func_020011b0
+void ActorPresentation_MoveActorToPositionAndWait(int actor, int x, int z, int field40)
 {
     u8 *record = Func_02002ba2(actor); int frames;
     Func_02002bba(actor, 0x30000, 0x18000); *(s32 *)(record + 72) = 0x8000;

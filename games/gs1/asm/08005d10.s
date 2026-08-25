@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global SerialRuntime_Initialize
 	.global Func_08005d10
 	.thumb_func
+SerialRuntime_Initialize:
 Func_08005d10:
 	push	{r5, r6, r7, lr}
 	ldr	r6, [pc, #68]

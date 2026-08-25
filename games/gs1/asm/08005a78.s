@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global SaveState_ReadRecordPayload
 	.global Func_08005a78
 	.thumb_func
+SaveState_ReadRecordPayload:
 Func_08005a78:
 	push	{r5, r6, lr}
 	ldr	r3, [pc, #56]

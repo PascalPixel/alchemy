@@ -48,8 +48,8 @@
     "reason": "Largest previously unmeasured owner at or below 192 bytes in the one-hop caller/callee neighborhood of exact 080bbb0c, with a six-edition identical normalized core.",
     "other_identical_candidates": [
       {"address": "0x080bd850", "bytes": 72, "core_bytes": 56, "disposition": "skipped: relies on a caller-established r9 hidden argument before an indirect IWRAM call; ordinary local C semantics are not yet proved"},
-      {"address": "0x0800393c", "bytes": 64, "core_bytes": 56, "disposition": "already has a bounded 20,000-candidate family draft with a 13-halfword allocation residual"},
-      {"address": "0x080039fc", "bytes": 64, "core_bytes": 56, "disposition": "constant-only sibling of the already bounded interrupt-guarded queue family"},
+      {"address": "0x0800393c", "bytes": 64, "core_bytes": 56, "disposition": "the coherent video/DMA translation unit reduces this queue writer to a four-halfword ordering residual under canonical flags"},
+      {"address": "0x080039fc", "bytes": 64, "core_bytes": 56, "disposition": "constant-only sibling with the same coherent-unit four-halfword ordering residual"},
       {"address": "0x080b7548", "bytes": 148, "core_bytes": 136, "disposition": "already has a complete draft and a prior bounded 50,000-candidate search without exact output"}
     ]
   },

@@ -6,9 +6,9 @@
   "status": "measured-draft",
   "owner_bytes": 64,
   "executable_owner_bytes": 64,
-  "candidate_bytes": 74,
-  "differing_halfwords": 35,
-  "wrong_instructions": 35,
+  "candidate_bytes": 64,
+  "differing_halfwords": 9,
+  "wrong_instructions": 4,
   "cross_edition": {
     "object_bytes": 64,
     "relocation_normalized_core_bytes": 40,
@@ -31,14 +31,15 @@
     "restores the saved interrupt-enable value"
   ],
   "bounded_search": {
-    "mode": "screen-only",
-    "attempted": 0,
+    "mode": "source-shape",
+    "attempted": 1000,
     "exact": false,
-    "reason": "The readable candidate is 10 bytes long with 35 differing halfwords and fails both exact-extent and <=20-halfword admission."
+    "reason": "Two bounded 500-candidate searches were flat at nine differing halfwords after named absolute symbols restored the exact extent and literal values."
   },
   "notes": [
     "Independent object analysis bounds this leaf at 64 executable bytes and proves all 40 relocation-normalized core bytes identical across the six approved GS1 editions.",
-    "The remaining mismatch starts with GCC access-width and register-allocation choices for the saved interrupt value and continues through literal scheduling; it is not an immediately resynchronizing residual.",
+    "The coherent translation-unit build and first-class absolute symbols fix the former ten-byte extent excess and preserve the real 0x02002008, 0x02002080, 0x02002220, 0x02002238, 0x020023ac, and 0x04000208 bindings.",
+    "All instructions after the first five match. The remaining nine-halfword residual is the entry load, interrupt save, zero-value scheduling, and consequent literal-pool order; two bounded source-shape searches found no improvement.",
     "No full search or permanent classification was warranted, and zero DONE bytes are claimed.",
     "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, the recovered linked-action caller, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used."
   ]

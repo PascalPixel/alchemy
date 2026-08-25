@@ -3,21 +3,21 @@
   "game": "gs1",
   "source_edition": "en",
   "source_state": "byte-exact C compiled or relinked per edition",
-  "owners_total": 1400,
-  "owner_symbol_bytes": 108780,
-  "located_owners": 1359,
-  "unresolved_owners": 41,
-  "built_owners": 1359,
-  "all_exact_owners": 1356,
-  "all_exact_bytes": 104694,
+  "owners_total": 1417,
+  "owner_symbol_bytes": 110792,
+  "located_owners": 1374,
+  "unresolved_owners": 43,
+  "built_owners": 1374,
+  "all_exact_owners": 1371,
+  "all_exact_bytes": 106532,
   "all_exact": false,
   "editions": [
     {
       "edition": "ja",
-      "checked_owners": 1359,
-      "checked_bytes": 105434,
-      "byte_exact_owners": 1357,
-      "byte_exact_bytes": 104846,
+      "checked_owners": 1374,
+      "checked_bytes": 107272,
+      "byte_exact_owners": 1372,
+      "byte_exact_bytes": 106684,
       "nonexact_owners": 2,
       "nonexact_bytes": 588,
       "differing_bytes": 8,
@@ -25,10 +25,10 @@
     },
     {
       "edition": "en",
-      "checked_owners": 1359,
-      "checked_bytes": 105430,
-      "byte_exact_owners": 1359,
-      "byte_exact_bytes": 105430,
+      "checked_owners": 1374,
+      "checked_bytes": 107268,
+      "byte_exact_owners": 1374,
+      "byte_exact_bytes": 107268,
       "nonexact_owners": 0,
       "nonexact_bytes": 0,
       "differing_bytes": 0,
@@ -36,10 +36,10 @@
     },
     {
       "edition": "de",
-      "checked_owners": 1359,
-      "checked_bytes": 105500,
-      "byte_exact_owners": 1357,
-      "byte_exact_bytes": 104912,
+      "checked_owners": 1374,
+      "checked_bytes": 107338,
+      "byte_exact_owners": 1372,
+      "byte_exact_bytes": 106750,
       "nonexact_owners": 2,
       "nonexact_bytes": 588,
       "differing_bytes": 7,
@@ -47,10 +47,10 @@
     },
     {
       "edition": "es",
-      "checked_owners": 1359,
-      "checked_bytes": 105500,
-      "byte_exact_owners": 1357,
-      "byte_exact_bytes": 104912,
+      "checked_owners": 1374,
+      "checked_bytes": 107338,
+      "byte_exact_owners": 1372,
+      "byte_exact_bytes": 106750,
       "nonexact_owners": 2,
       "nonexact_bytes": 588,
       "differing_bytes": 6,
@@ -58,10 +58,10 @@
     },
     {
       "edition": "fr",
-      "checked_owners": 1359,
-      "checked_bytes": 105500,
-      "byte_exact_owners": 1357,
-      "byte_exact_bytes": 104912,
+      "checked_owners": 1374,
+      "checked_bytes": 107338,
+      "byte_exact_owners": 1372,
+      "byte_exact_bytes": 106750,
       "nonexact_owners": 2,
       "nonexact_bytes": 588,
       "differing_bytes": 6,
@@ -69,10 +69,10 @@
     },
     {
       "edition": "it",
-      "checked_owners": 1359,
-      "checked_bytes": 105500,
-      "byte_exact_owners": 1356,
-      "byte_exact_bytes": 104764,
+      "checked_owners": 1374,
+      "checked_bytes": 107338,
+      "byte_exact_owners": 1371,
+      "byte_exact_bytes": 106602,
       "nonexact_owners": 3,
       "nonexact_bytes": 736,
       "differing_bytes": 5,
@@ -411,6 +411,36 @@
       }
     },
     {
+      "en_owner": "main:08004144",
+      "size": 84,
+      "start_overrides": {
+        "de": "0x08004174",
+        "es": "0x080041a4",
+        "fr": "0x08004154",
+        "it": "0x08004184"
+      }
+    },
+    {
+      "en_owner": "main:08004198",
+      "size": 64,
+      "start_overrides": {
+        "de": "0x080041c8",
+        "es": "0x080041f8",
+        "fr": "0x080041a8",
+        "it": "0x080041d8"
+      }
+    },
+    {
+      "en_owner": "main:080041d8",
+      "size": 150,
+      "start_overrides": {
+        "de": "0x08004208",
+        "es": "0x08004238",
+        "fr": "0x080041e8",
+        "it": "0x08004218"
+      }
+    },
+    {
       "en_owner": "main:08004278",
       "size": 80,
       "start_overrides": {
@@ -418,6 +448,56 @@
         "es": "0x080042d8",
         "fr": "0x08004288",
         "it": "0x080042b8"
+      }
+    },
+    {
+      "en_owner": "main:080042c8",
+      "size": 68,
+      "start_overrides": {
+        "de": "0x080042f8",
+        "es": "0x08004328",
+        "fr": "0x080042d8",
+        "it": "0x08004308"
+      }
+    },
+    {
+      "en_owner": "main:0800430c",
+      "size": 76,
+      "start_overrides": {
+        "de": "0x0800433c",
+        "es": "0x0800436c",
+        "fr": "0x0800431c",
+        "it": "0x0800434c"
+      }
+    },
+    {
+      "en_owner": "main:08004358",
+      "size": 68,
+      "start_overrides": {
+        "de": "0x08004388",
+        "es": "0x080043b8",
+        "fr": "0x08004368",
+        "it": "0x08004398"
+      }
+    },
+    {
+      "en_owner": "main:0800439c",
+      "size": 68,
+      "start_overrides": {
+        "de": "0x080043cc",
+        "es": "0x080043fc",
+        "fr": "0x080043ac",
+        "it": "0x080043dc"
+      }
+    },
+    {
+      "en_owner": "main:080043e0",
+      "size": 64,
+      "start_overrides": {
+        "de": "0x08004410",
+        "es": "0x08004440",
+        "fr": "0x080043f0",
+        "it": "0x08004420"
       }
     },
     {
@@ -4919,6 +4999,16 @@
       }
     },
     {
+      "en_owner": "main:08078320",
+      "size": 130,
+      "start_overrides": {
+        "de": "0x0807c120",
+        "es": "0x0807d320",
+        "fr": "0x0807d320",
+        "ja": "0x0806e320"
+      }
+    },
+    {
       "en_owner": "main:080783a4",
       "size": 54,
       "start_overrides": {
@@ -7648,6 +7738,17 @@
       }
     },
     {
+      "en_owner": "main:080937b8",
+      "size": 186,
+      "start_overrides": {
+        "de": "0x08096e54",
+        "es": "0x08098844",
+        "fr": "0x08098844",
+        "it": "0x08093844",
+        "ja": "0x0808a7a0"
+      }
+    },
+    {
       "en_owner": "main:08093964",
       "size": 24,
       "start_overrides": {
@@ -7927,6 +8028,17 @@
         "fr": "0x0809b0d4",
         "it": "0x080960d4",
         "ja": "0x0808d030"
+      }
+    },
+    {
+      "en_owner": "main:0809641c",
+      "size": 344,
+      "start_overrides": {
+        "de": "0x08099ab8",
+        "es": "0x0809b4a8",
+        "fr": "0x0809b4a8",
+        "it": "0x080964a8",
+        "ja": "0x0808d404"
       }
     },
     {
@@ -9183,6 +9295,17 @@
       },
       "size_overrides": {
         "ja": 164
+      }
+    },
+    {
+      "en_owner": "main:080a3354",
+      "size": 128,
+      "start_overrides": {
+        "de": "0x080a6154",
+        "es": "0x080a7b44",
+        "fr": "0x080a7b64",
+        "it": "0x080a3350",
+        "ja": "0x0809a26c"
       }
     },
     {
@@ -11739,6 +11862,17 @@
       }
     },
     {
+      "en_owner": "main:080c0f98",
+      "size": 122,
+      "start_overrides": {
+        "de": "0x080c35b0",
+        "es": "0x080c4fb0",
+        "fr": "0x080c4fb0",
+        "it": "0x080c0fb0",
+        "ja": "0x080b7f98"
+      }
+    },
+    {
       "en_owner": "main:080c1014",
       "size": 64,
       "start_overrides": {
@@ -11865,6 +11999,18 @@
         "fr": "0x080c5e0c",
         "it": "0x080c1e0c",
         "ja": "0x080b8df4"
+      }
+    },
+    {
+      "en_owner": "main:080c1ebc",
+      "size": 148,
+      "edition_variant": true,
+      "start_overrides": {
+        "de": "0x080c44d4",
+        "es": "0x080c5ed4",
+        "fr": "0x080c5ed4",
+        "it": "0x080c1ed4",
+        "ja": "0x080b8ebc"
       }
     },
     {
@@ -12640,6 +12786,16 @@
         "es": "0x080d9e60",
         "fr": "0x080d9e60",
         "ja": "0x080cd660"
+      }
+    },
+    {
+      "en_owner": "main:080d6750",
+      "size": 138,
+      "start_overrides": {
+        "de": "0x080d8550",
+        "es": "0x080d9f50",
+        "fr": "0x080d9f50",
+        "ja": "0x080cd750"
       }
     },
     {

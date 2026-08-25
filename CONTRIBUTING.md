@@ -420,6 +420,15 @@ Then compare linked bytes:
 tools/compiler/target/release/compiler candidate-show games/gs1/recon/en/main/080bbb0c.c --align
 ```
 
+Reconstructed translation units belong in
+`games/gs1/recon/translation-units.json`. Verify one with `--unit`: the source
+is compiled once, then every declared owner is scored from that shared object
+with its expected extent, alias, absolute symbols, and overlay route.
+
+```sh
+tools/compiler/target/release/compiler candidate-show --unit scheduler --first
+```
+
 When measuring a candidate against an independently established GS2 boundary,
 select the target and explicit owner size:
 
@@ -434,6 +443,10 @@ Once the candidate's relocation sites align with the reference structure,
 `--reference-symbols` derives call and literal targets from the chosen local
 reference image. Inconsistent sites or a non-call where a call is expected are
 errors, never guessed bindings.
+Inference is fail-closed: the relocation-normalized owner core must already
+match, and a semantic external alias must instead be declared in the
+translation-unit manifest's `absolute_symbols`. This prevents a differently
+ordered pair of data loads from being made to look exact by swapping targets.
 
 `--first` crops the first residual window. `--patch FILE` scores a unified diff
 without changing the corpus source.
@@ -607,16 +620,16 @@ This section is generated. It is the primary contributor target list:
 non-overlapping audited source-owner scopes (or contiguous unresolved
 executable runs), sorted largest to smallest. Regenerate with `make coverage` -- do not edit by hand.
 
-- **Unfinished scopes:** 1,605
+- **Unfinished scopes:** 1,603
 - **Address spaces scanned:** 97 (85 still contain targets)
-- **Target bytes:** 647,978 tracked-C or unresolved-assembly bytes
-- **Resolved-only bytes:** 539,434 Exact C or audited permanent assembly bytes
+- **Target bytes:** 647,332 tracked-C or unresolved-assembly bytes
+- **Resolved-only bytes:** 540,368 Exact C or audited permanent assembly bytes
 - **Executable bytes accounted for:** 1,348,458
 
 ### Main target list
 
 This table contains every scope of at least 1,000 bytes (195 rows). The complete
-1,605-row index, including the smallest audited owners, is
+1,603-row index, including the smallest audited owners, is
 [`games/gs1/metrics/gs1-en-core-targets.json`](games/gs1/metrics/gs1-en-core-targets.json).
 
 | Rank | Scope | Target | Namespace / owner |

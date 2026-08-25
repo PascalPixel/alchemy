@@ -73,10 +73,6 @@ pub fn subtract(input: &[Span], cuts: &[Span]) -> Vec<Span> {
     out
 }
 
-pub fn contains(outer: &[Span], inner: Span) -> bool {
-    normalize(outer).iter().any(|span| span.start <= inner.start && inner.end <= span.end)
-}
-
 pub const CATEGORIES: [&str; 5] = ["exact_c", "tracked_c", "assembly", "retained_asm", "asset_data"];
 
 fn category_index(name: &str) -> Option<usize> {

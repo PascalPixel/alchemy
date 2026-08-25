@@ -33,7 +33,9 @@
 // of the probe, not of the data, and the tables are mirrored as they stand.
 
 pub static FIXED_R3_SOURCES: &[&str] = &["080fb6ec", "080fb700", "080fb768", "080fb77c"];
-pub static OPTIMIZE_O1_SOURCES: &[&str] = &["080049e8", "08021e28"];
+// 080a8904's register-only delay loop is exact at -O1; -O2 removes it, while
+// volatile C adds memory traffic and changes the delay.
+pub static OPTIMIZE_O1_SOURCES: &[&str] = &["080049e8", "08021e28", "080a8904"];
 pub static OPTIMIZE_O3_OVERLAY_SOURCES: &[&str] = &["games/gs1/src/resource_3a7_c_02000944.c"];
 pub static NO_INTERWORK_SOURCES: &[&str] = &["0200142c", "0200143c", "0200144c", "02001564", "02001750", "02001760", "02005ac0", "02005ad0", "02005bd8", "02005be8", "02005bf8", "02005dd4", "02005de4", "02005df4"];
 pub static NO_INTERWORK_OVERLAY_SOURCES: &[&str] = &[
@@ -271,4 +273,4 @@ pub static NO_RERUN_CSE_AFTER_LOOP_SOURCES: &[&str] = &["08006088", "0808c30c", 
 
 pub static OPTIMIZE_OS_SOURCES: &[&str] = &["08019d2c"];
 
-pub static SCHED2_OFF_THUMB_SOURCES: &[&str] = &["08029274", "08011590", "080060e8", "0800307c", "08002f10", "08078320", "080f9a30"];
+pub static SCHED2_OFF_THUMB_SOURCES: &[&str] = &["08029274", "08011590", "0800307c", "08002f10", "08078320", "080f9a30"];

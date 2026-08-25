@@ -1,7 +1,7 @@
 use candidate_compiler::verify::{CandidateCompilerConfiguration, CandidateCompilerFamily};
 use compiler_core::routing::CompilerTarget;
 use std::path::Path;
-pub const USAGE: &str = "usage: candidate-show <candidate.c> [--rom FILE] [--target gs1|gs2] [--size BYTES] [--reference-symbols] [--work DIR] [--family routed|gcc296|old-agbcc|gcc3] [--flags -fa,-fb] [--remove-flags -fa,-fb] [--align] [--first] [--asm] [--patch FILE]";
+pub const USAGE: &str = "usage: candidate-show <candidate.c> [--unit ID] [--rom FILE] [--target gs1|gs2] [--owner ADDRESS] [--size BYTES] [--reference-symbols] [--work DIR] [--family routed|gcc296|old-agbcc|gcc3] [--flags -fa,-fb] [--remove-flags -fa,-fb] [--align] [--first] [--asm] [--patch FILE]";
 pub const SHORT_USAGE: &str = "usage: candidate-show <candidate.c> [--rom FILE]";
 #[derive(Debug, Clone)]
 pub struct Options {
@@ -11,6 +11,10 @@ pub struct Options {
     pub flags: Vec<String>,
     pub configuration: CandidateCompilerConfiguration,
     pub target: CompilerTarget,
+    pub owner: Option<u32>,
+    pub overlay: Option<String>,
+    pub unit: Option<String>,
+    pub precompiled_object: Option<String>,
     pub size: Option<usize>,
     pub align: bool,
     pub first: bool,
@@ -30,6 +34,10 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
         flags: Vec::new(),
         configuration: CandidateCompilerConfiguration { family: Some(CandidateCompilerFamily::Routed), ..Default::default() },
         target: CompilerTarget::Gs1,
+        owner: None,
+        overlay: None,
+        unit: None,
+        precompiled_object: None,
         size: None,
         align: false,
         first: false,
@@ -61,6 +69,8 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
                 let value = next(&mut index).ok_or("--size requires a byte count")?;
                 options.size = Some(parse_size(value)?);
             }
+            "--owner" => options.owner = Some(parse_address(next(&mut index).ok_or("--owner requires an address")?)?),
+            "--unit" => options.unit = next(&mut index).cloned(),
             "--reference-symbols" => options.configuration.reference_symbols = true,
             "--work" => options.work = next(&mut index).cloned(),
             "--align" => options.align = true,
@@ -83,14 +93,14 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
         }
         index += 1;
     }
-    if rest.len() != 1 {
+    if (options.unit.is_none() && rest.len() != 1) || (options.unit.is_some() && !rest.is_empty()) {
         return Err(SHORT_USAGE.into());
     }
-    options.source = rest.remove(0);
+    options.source = rest.pop().unwrap_or_default();
     if !rom_explicit && options.target == CompilerTarget::Gs2 {
         options.rom = Some(root.join("roms/gs2-en.gba").to_string_lossy().into_owned());
     }
-    if options.work.is_none() {
+    if options.work.is_none() && options.unit.is_none() {
         options.work = Some(default_work(root, &options.source));
     }
     Ok(ParseOutcome::Options(Box::new(options)))
@@ -98,6 +108,9 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
 fn parse_size(value: &str) -> Result<usize, String> {
     let parsed = if let Some(hex) = value.strip_prefix("0x") { usize::from_str_radix(hex, 16) } else { value.parse::<usize>() };
     parsed.ok().filter(|size| *size > 0).ok_or_else(|| "--size must be a positive decimal or 0x-prefixed byte count".into())
+}
+fn parse_address(value: &str) -> Result<u32, String> {
+    u32::from_str_radix(value.trim_start_matches("0x"), 16).map_err(|_| "--owner must be a hexadecimal ROM address".into())
 }
 fn split(value: Option<&String>) -> Result<Vec<String>, String> {
     let value = value.ok_or("undefined is not an object (evaluating 'argv[++index].split')")?;
@@ -121,6 +134,7 @@ mod tests {
         };
         assert_eq!(options.target, CompilerTarget::Gs2);
         assert_eq!(options.size, Some(8300));
+        assert_eq!(options.owner, None);
         assert!(options.configuration.reference_symbols);
         assert_eq!(options.rom.as_deref(), Some("/repo/roms/gs2-en.gba"));
     }

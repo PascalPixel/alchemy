@@ -2714,24 +2714,24 @@
 <title>37a · Permanent ASM 0x0200296c–0x02002afc: 400 bytes</title>
 <rect x="18.746552669113143" y="212.79912717818445" width="6.503310612553538" height="8.17966886919333" style="fill:#7dd3fc"/>
 </g>
-<g aria-label="37b · get_script_data · byte-exact C: 8 bytes">
-<title>37b · get_script_data · byte-exact C: 8 bytes</title>
+<g aria-label="37b · SceneEventRuntime_GetScriptData · byte-exact C: 8 bytes">
+<title>37b · SceneEventRuntime_GetScriptData · byte-exact C: 8 bytes</title>
 <rect x="18.746552669113143" y="221.97879604737778" width="0.5" height="0.5252372890351991" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
-<g aria-label="37b · state_update_0287 · byte-exact C: 4 bytes">
-<title>37b · state_update_0287 · byte-exact C: 4 bytes</title>
+<g aria-label="37b · SceneEventRuntime_ReturnZero · byte-exact C: 4 bytes">
+<title>37b · SceneEventRuntime_ReturnZero · byte-exact C: 4 bytes</title>
 <rect x="18.746552669113143" y="223.504033336413" width="0.5" height="0.5" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
-<g aria-label="37b · get_message_data · byte-exact C: 8 bytes">
-<title>37b · get_message_data · byte-exact C: 8 bytes</title>
+<g aria-label="37b · SceneEventRuntime_GetMessageData · byte-exact C: 8 bytes">
+<title>37b · SceneEventRuntime_GetMessageData · byte-exact C: 8 bytes</title>
 <rect x="19.649728946550145" y="221.97879604737778" width="0.806352554874" height="0.5" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
-<g aria-label="37b · get_actor_data · byte-exact C: 8 bytes">
-<title>37b · get_actor_data · byte-exact C: 8 bytes</title>
+<g aria-label="37b · SceneEventRuntime_GetActorData · byte-exact C: 8 bytes">
+<title>37b · SceneEventRuntime_GetActorData · byte-exact C: 8 bytes</title>
 <rect x="19.649728946550145" y="222.7414146918954" width="0.5" height="0.5252372890351991" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
-<g aria-label="37b · get_effect_data · byte-exact C: 8 bytes">
-<title>37b · get_effect_data · byte-exact C: 8 bytes</title>
+<g aria-label="37b · SceneEventRuntime_GetEffectData · byte-exact C: 8 bytes">
+<title>37b · SceneEventRuntime_GetEffectData · byte-exact C: 8 bytes</title>
 <rect x="20.552905223987146" y="222.7414146918954" width="0.5" height="0.5252372890351991" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="37b · state_update_0093 · byte-exact C: 68 bytes">

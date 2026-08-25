@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global SerialRuntime_CollectReceivedPayloads
 	.global Func_0800615c
 	.thumb_func
+SerialRuntime_CollectReceivedPayloads:
 Func_0800615c:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

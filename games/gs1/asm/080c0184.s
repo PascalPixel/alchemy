@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global BattlePresentation_UploadTileVariant
 	.global Func_080c0184
 	.thumb_func
+BattlePresentation_UploadTileVariant:
 Func_080c0184:
 	push	{lr}
 	ldr	r3, [pc, #32]

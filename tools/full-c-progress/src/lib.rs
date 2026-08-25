@@ -1,16 +1,11 @@
-//! The small, native Full-C reporter.
-//!
-//! Both coverage tools read the same audited intervals and the same source
-//! ownership convention.  This crate owns only the progress contract; the
-//! interval and treemap primitives live in coverage-map so the dashboard and
-//! the commit gate cannot quietly disagree about byte ranges.
+//! Full-C reporting over the coverage map's shared audited interval model.
 
 #[allow(dead_code)]
 #[path = "../../coverage-map/src/model.rs"]
 mod model;
 
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
-use model::{bytes, contains, normalize, Span};
+use model::{bytes, intersect, normalize, Span};
 use serde_json::Value;
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
@@ -353,11 +348,11 @@ fn owned(spans: &[Span], namespace: &Namespace) -> Result<Vec<Span>, String> {
         }
     }
     for span in &ordered {
-        if !contains(&executable, *span) {
+        if intersect(&[*span], &executable).is_empty() {
             return Err(format!("{} C ownership is outside audited executable intervals", namespace.id));
         }
     }
-    Ok(normalize(&ordered))
+    Ok(intersect(&ordered, &executable))
 }
 
 fn report(root: &Path, target: &str, value: &Inventory) -> Result<Report, String> {
@@ -450,9 +445,7 @@ fn display(report: &Report) -> String {
 }
 
 fn derive_inventory(root: &Path, target: &str) -> Result<Inventory, String> {
-    // The executable inventory is itself the audited, generated source of
-    // truth.  Re-emitting it is deliberately side-effect free with respect to
-    // source ownership; coverage and progress both consume this exact model.
+    // Re-emit the audited inventory without deriving it from source ownership.
     let value = inventory(&json(&inventory_path(root, target))?)?;
     if value.target != target {
         return Err("executable inventory target mismatch".into());

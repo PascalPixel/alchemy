@@ -627,11 +627,6 @@
       "kind": "alignment"
     },
     {
-      "address": "0x08004272",
-      "end": "0x08004278",
-      "kind": "alignment"
-    },
-    {
       "address": "0x08007a20",
       "end": "0x08007aa4",
       "kind": "runtime-support-data"

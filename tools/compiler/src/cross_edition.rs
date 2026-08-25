@@ -1,6 +1,7 @@
 use candidate_compiler::verify::{compile_to_assembly, CandidateCompilerConfiguration, CandidateCompilerFamily};
 use compiler_core::routing::CompilerTarget;
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
+use compiler_core::translation_units::TranslationUnits;
 use objdiff_core::{
     diff::{ArmArchVersion, DiffObjConfig, DiffSide},
     obj,
@@ -429,19 +430,10 @@ fn analyze_owner(owner: &str, owner_address: u64, object_path: &Path, roms: &Edi
 }
 
 fn write_edition_build(path: &Path, owner: &str, object_path: &Path, report: &Report, roms: &EditionRoms) -> Result<EditionBuildReport, String> {
-    let build = edition_build_report(owner, object_path, report, roms)?;
+    let build = edition_build_report(owner, object_path, report, roms, &mut BTreeMap::new())?;
     write_json(path, &build, "edition build")?;
     println!("edition_build={} owner={} editions={} all_exact={}", path.display(), owner, build.editions.len(), build.all_exact);
     Ok(build)
-}
-
-fn source_uses_edition_variant(source: &Path) -> Result<bool, String> {
-    let text = fs::read_to_string(source).map_err(|error| format!("{}: {error}", source.display()))?;
-    Ok(source_text_uses_edition_variant(&text))
-}
-
-fn source_text_uses_edition_variant(text: &str) -> bool {
-    text.contains("#include \"gs1_edition.h\"")
 }
 
 fn compile_edition_object(owner: &str, edition: &str, source: &Path) -> Result<PathBuf, String> {
@@ -456,14 +448,17 @@ fn compile_edition_object(owner: &str, edition: &str, source: &Path) -> Result<P
     let owner_address = u32::from_str_radix(owner, 16).map_err(|error| format!("invalid main owner {owner}: {error}"))?;
     let routing_text = SourceOwner::Main(owner_address).routing_path().to_string_lossy().into_owned();
     let output_text = output.to_string_lossy().into_owned();
-    let configuration = CandidateCompilerConfiguration { family: Some(CandidateCompilerFamily::Routed), ..Default::default() };
-    let assembly = compile_to_assembly(&wrapper_text, &routing_text, &output_text, &[], CompilerTarget::Gs1, &configuration)?;
+    let assembly = compile_to_assembly(&wrapper_text, &routing_text, &output_text, &[], CompilerTarget::Gs1, &CandidateCompilerConfiguration { family: Some(CandidateCompilerFamily::Routed), ..Default::default() })?;
     let object = output.join("owner.o");
     run_tool(Command::new("arm-none-eabi-as").args(["-mcpu=arm7tdmi", "-mthumb-interwork", "-o"]).arg(&object).arg(&assembly), "assemble edition source")?;
     Ok(object)
 }
 
-fn edition_build_report(owner: &str, object_path: &Path, report: &Report, roms: &EditionRoms) -> Result<EditionBuildReport, String> {
+fn compiled_edition_object(compiled: &mut BTreeMap<(String, String), Result<PathBuf, String>>, route: &str, edition: &str, source: &Path) -> Result<PathBuf, String> {
+    compiled.entry((route.into(), edition.into())).or_insert_with(|| compile_edition_object(route, edition, source)).clone()
+}
+
+fn edition_build_report(owner: &str, object_path: &Path, report: &Report, roms: &EditionRoms, compiled: &mut BTreeMap<(String, String), Result<PathBuf, String>>) -> Result<EditionBuildReport, String> {
     let (size, symbol_offset, owner_bytes, owner_mask, relocations) = relocation_mask(object_path, owner)?;
     if size != report.size {
         return Err(format!("edition build object size {size} differs from located owner size {}", report.size));
@@ -473,14 +468,16 @@ fn edition_build_report(owner: &str, object_path: &Path, report: &Report, roms: 
     fs::create_dir_all(&output_root).map_err(|error| format!("{}: {error}", output_root.display()))?;
     let source_paths = SourcePaths::load(compiler_core::routing::root())?;
     let source_owner = SourceOwner::parse(&format!("main:{owner}"))?;
-    let source_path = source_paths.source_path(source_owner);
-    let source_report_path = source_paths.repository_relative_path(source_owner).to_string_lossy().replace('\\', "/");
-    let edition_variant = source_uses_edition_variant(&source_path)?;
+    let unit = translation_unit(owner)?;
+    let defined = defined_owner_symbols(object_path)?;
+    let (route, source_path) = unit.filter(|unit| grouped_object(unit, owner, &defined)).map(|(route, source, _)| (route, source)).unwrap_or_else(|| (owner.into(), source_paths.mapped_source_path(source_owner).unwrap_or_else(|| source_paths.source_path(source_owner))));
+    let source_report_path = source_path.strip_prefix(compiler_core::routing::root()).unwrap_or(&source_path).to_string_lossy().replace('\\', "/");
+    let edition_variant = fs::read_to_string(&source_path).map_err(|error| format!("{}: {error}", source_path.display()))?.contains("#include \"gs1_edition.h\"");
 
     let mut editions = Vec::with_capacity(EDITIONS.len());
     for edition in EDITIONS {
         let reported_start = report_start(report, edition)?;
-        let variant_object = if edition_variant { compile_edition_object(owner, edition, &source_path)? } else { object_path.to_path_buf() };
+        let variant_object = if edition_variant { compiled_edition_object(compiled, &route, edition, &source_path)? } else { object_path.to_path_buf() };
         let (variant_size, variant_symbol_offset, variant_bytes, variant_mask, variant_relocations) = if edition_variant { relocation_mask(&variant_object, owner)? } else { (size, symbol_offset, owner_bytes.clone(), owner_mask.clone(), relocations.clone()) };
         let start = if edition_variant && edition != "en" { locate_near_exact(&variant_bytes, &variant_mask, &roms.images[edition], reported_start, 0x1000, ROM_BASE).map(|(start, _)| start).unwrap_or(reported_start) } else { reported_start };
         let reference = roms.images[edition].get(start..start + variant_size).ok_or_else(|| format!("{edition}: owner extends past ROM"))?;
@@ -560,12 +557,11 @@ fn compact_corpus_edition_build_owner(owner: EditionBuildReport) -> Result<Corpu
     Ok(CorpusEditionBuildOwner { en_owner, size: owner.size, edition_variant: owner.edition_variant, start_overrides, size_overrides, differing_bytes, errors })
 }
 
-fn write_corpus_edition_build(path: &Path, object_dir: &Path, reports: &BTreeMap<String, Report>, owners_total: usize, owner_symbol_bytes: usize, unresolved_owners: usize, roms: &EditionRoms) -> Result<CorpusEditionBuildReport, String> {
-    let mut owners = Vec::new();
-    let mut failures = Vec::new();
+fn write_corpus_edition_build(path: &Path, objects: &BTreeMap<String, PathBuf>, reports: &BTreeMap<String, Report>, owners_total: usize, owner_symbol_bytes: usize, unresolved_owners: usize, roms: &EditionRoms) -> Result<CorpusEditionBuildReport, String> {
+    let (mut owners, mut failures, mut compiled) = (Vec::new(), Vec::new(), BTreeMap::new());
     for (index, (owner, report)) in reports.iter().enumerate() {
-        let object = object_dir.join(format!("{owner}.o"));
-        match edition_build_report(owner, &object, report, roms) {
+        let object = &objects[owner];
+        match edition_build_report(owner, &object, report, roms, &mut compiled) {
             Ok(build) => owners.push(build),
             Err(error) => failures.push(EditionBuildFailure { en_owner: canonical_main_owner_id(owner)?, error }),
         }
@@ -827,7 +823,7 @@ fn resolve_object(owner: &str, explicit: Option<&Path>, object_dir: &Path) -> Re
         return path.is_file().then(|| path.to_path_buf()).ok_or_else(|| format!("missing object: {}", path.display()));
     }
     let paths = [object_dir.join(format!("{owner}.o")), PathBuf::from(format!("out/gs1-en/claimed/obj/{owner}.o"))];
-    paths.into_iter().find(|path| path.is_file()).ok_or_else(|| format!("missing exact object for {}; run `make build-claimed`", owner))
+    paths.into_iter().find(|path| path.is_file()).or_else(|| exact_objects(object_dir).ok()?.remove(owner)).ok_or_else(|| format!("missing exact object for {}; run `make build-claimed`", owner))
 }
 
 fn read_roms(directory: &Path) -> Result<EditionRoms, String> {
@@ -839,11 +835,44 @@ fn read_roms(directory: &Path) -> Result<EditionRoms, String> {
     Ok(EditionRoms { images })
 }
 
-fn exact_owners(object_dir: &Path) -> Result<Vec<String>, String> {
-    let source_paths = SourcePaths::load(compiler_core::routing::root())?;
-    let mut owners = source_paths.main_sources()?.into_iter().map(|source| source.owner.address_stem()).filter(|owner| object_dir.join(format!("{owner}.o")).is_file()).collect::<Vec<_>>();
-    owners.sort();
-    owners.dedup();
+fn translation_manifest() -> Result<TranslationUnits, String> {
+    TranslationUnits::load(compiler_core::routing::root())
+}
+
+fn translation_unit(owner: &str) -> Result<Option<(String, PathBuf, BTreeSet<String>)>, String> {
+    let manifest = translation_manifest()?;
+    let source_owner = SourceOwner::parse(&format!("main:{owner}"))?;
+    let Some(unit) = manifest.unit_for_owner(source_owner) else { return Ok(None) };
+    let primary = format!("{:08x}", unit.owners[0].address);
+    let members = unit.owners.iter().map(|member| format!("{:08x}", member.address)).collect();
+    Ok(Some((primary, compiler_core::routing::root().join(&unit.source), members)))
+}
+
+fn defined_owner_symbols(path: &Path) -> Result<BTreeSet<String>, String> {
+    let config = DiffObjConfig { arm_arch_version: ArmArchVersion::V4t, ..Default::default() };
+    let object = obj::read::read(path, &config, DiffSide::Base).map_err(|error| format!("{}: {error}", path.display()))?;
+    Ok(object.symbols.iter().filter(|symbol| symbol.section.is_some()).filter_map(|symbol| symbol.name.strip_prefix("Func_").map(str::to_string)).collect())
+}
+
+fn grouped_object(unit: &(String, PathBuf, BTreeSet<String>), owner: &str, defined: &BTreeSet<String>) -> bool {
+    defined.contains(&unit.0) && defined.contains(owner) && unit.2.intersection(defined).count() >= 2
+}
+
+fn exact_objects(object_dir: &Path) -> Result<BTreeMap<String, PathBuf>, String> {
+    let grouped = translation_manifest()?;
+    let grouped = grouped.units.iter().filter(|unit| unit.overlay.is_none()).flat_map(|unit| &unit.owners).map(|owner| format!("{:08x}", owner.address)).collect::<BTreeSet<_>>();
+    let path = object_dir.parent().ok_or("object directory has no manifest parent")?.join("manifest.json");
+    let manifest: serde_json::Value = serde_json::from_str(&fs::read_to_string(&path).map_err(|error| format!("{}: {error}", path.display()))?).map_err(|error| error.to_string())?;
+    let mut owners = BTreeMap::new();
+    for region in manifest["regions"].as_array().into_iter().flatten() {
+        let primary = region["symbol"].as_str().and_then(|symbol| symbol.strip_prefix("Func_")).ok_or("exact region has no owner symbol")?;
+        let object = object_dir.join(format!("{primary}.o"));
+        for owner in region["symbols"].as_array().into_iter().flatten().filter_map(|symbol| symbol.as_str()?.strip_prefix("Func_")) {
+            if owner == primary || grouped.contains(owner) {
+                owners.insert(owner.to_string(), object.clone());
+            }
+        }
+    }
     if owners.is_empty() {
         return Err(format!("{} contains no exact main-image owner objects; run `make build-claimed`", object_dir.display()));
     }
@@ -851,13 +880,14 @@ fn exact_owners(object_dir: &Path) -> Result<Vec<String>, String> {
 }
 
 fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
-    let owner_names = exact_owners(&options.object_dir)?;
+    let objects = exact_objects(&options.object_dir)?;
+    let owner_names = objects.keys().cloned().collect::<Vec<_>>();
     let mut reports = BTreeMap::new();
     let mut failures = BTreeMap::new();
     let mut owner_symbol_bytes = 0;
 
     for (index, owner) in owner_names.iter().enumerate() {
-        let object = options.object_dir.join(format!("{owner}.o"));
+        let object = &objects[owner];
         if let Ok((size, _, _, _, _)) = relocation_mask(&object, owner) {
             owner_symbol_bytes += size;
         }
@@ -879,7 +909,7 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
     let retry_names = failures.keys().cloned().collect::<Vec<_>>();
     for (index, owner) in retry_names.iter().enumerate() {
         let hints = nearest_location_hints(owner_address(owner)?, &location_anchors)?;
-        let object = options.object_dir.join(format!("{owner}.o"));
+        let object = &objects[owner];
         match analyze_owner(owner, owner_address(owner)?, &object, roms, false, Some(&hints)) {
             Ok(report) => {
                 reports.insert(owner.clone(), report);
@@ -896,7 +926,7 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
     remove_order_conflicts(&mut reports, &mut failures, "locality")?;
 
     if let Some(path) = &options.edition_build {
-        write_corpus_edition_build(path, &options.object_dir, &reports, owner_names.len(), owner_symbol_bytes, failures.len(), roms)?;
+        write_corpus_edition_build(path, &objects, &reports, owner_names.len(), owner_symbol_bytes, failures.len(), roms)?;
     }
 
     let mut owners = Vec::new();
@@ -1743,9 +1773,14 @@ mod tests {
     }
 
     #[test]
-    fn detects_explicit_edition_variant_sources() {
-        assert!(source_text_uses_edition_variant("#include \"types.h\"\n#include \"gs1_edition.h\"\n"));
-        assert!(!source_text_uses_edition_variant("#include \"types.h\"\n"));
+    fn grouped_owners_share_the_primary_compile_route() {
+        let unit = translation_unit("08004144").unwrap().unwrap();
+        let route = unit.0.clone();
+        assert_eq!(route, "080040e8");
+        assert!(grouped_object(&unit, "08004144", &BTreeSet::from(["080040e8".into(), "08004144".into()])));
+        assert!(!grouped_object(&unit, "08004144", &BTreeSet::from(["08004144".into()])));
+        let mut compiled = BTreeMap::from([((route.clone(), "ja".into()), Ok(PathBuf::from("shared.o")))]);
+        assert_eq!(compiled_edition_object(&mut compiled, &route, "ja", Path::new("missing.c")), Ok(PathBuf::from("shared.o")));
     }
 
     #[test]

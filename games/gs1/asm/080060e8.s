@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global SerialRuntime_PrepareSendPacket
 	.global Func_080060e8
 	.thumb_func
+SerialRuntime_PrepareSendPacket:
 Func_080060e8:
 	push	{r5, lr}
 	ldr	r4, [pc, #96]

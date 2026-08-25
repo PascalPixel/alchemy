@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global BattlePresentation_InitializeTransitionEntries
 	.global Func_080c0eb8
 	.thumb_func
+BattlePresentation_InitializeTransitionEntries:
 Func_080c0eb8:
 	push	{r5, r6, lr}
 	adds	r5, r0, #0

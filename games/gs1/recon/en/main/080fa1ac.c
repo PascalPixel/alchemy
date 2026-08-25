@@ -3,6 +3,7 @@
 void Func_080fa1ac(void *unused, u8 *node)
 {
     s32 flags;
+    s32 updated_flags;
 
     node[0x16] = 0;
     node[0x1a] = 0;
@@ -11,5 +12,6 @@ void Func_080fa1ac(void *unused, u8 *node)
     } else {
         flags = 3;
     }
-    node[0] = node[0] | flags;
+    updated_flags = node[0] | flags;
+    node[0] = updated_flags;
 }

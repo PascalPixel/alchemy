@@ -62,7 +62,6 @@ struct BattlePlaybackPhaseLocals {
     void *records[4];
     u16 selection[2];
     u8 call_workspace[12];
-    u32 reserved;
 };
 
 typedef char BattlePlaybackState_Phase[
@@ -382,7 +381,7 @@ void BATTLE_PLAYBACK_OWNER(void)
 
             timer = state->timer;
             if (timer == 0 || timer >= 0x400) {
-                s8 frame;
+                s32 frame;
 
                 frame = 6;
                 if (timer == 0 && state->actor_mode != 0) {
@@ -419,10 +418,12 @@ void BATTLE_PLAYBACK_OWNER(void)
                 }
 
                 if (frame == 6 || (state->timer & 7) == 0) {
+                    s32 part_flags;
                     struct BattleMotionRecord *record;
                     void **record_cursor;
                     s32 record_index;
 
+                    part_flags = 0xff;
                     record_index = 0;
                     record_cursor = phase_locals.records;
                     while ((record = Func_080b7f70(
@@ -430,7 +431,7 @@ void BATTLE_PLAYBACK_OWNER(void)
                                 record_index)) != NULL) {
                         *record_cursor++ = record;
                         record->part->frame = frame;
-                        record->part->flags |= 0xff;
+                        record->part->flags |= part_flags;
                         record_index++;
                     }
                 }
@@ -442,15 +443,17 @@ void BATTLE_PLAYBACK_OWNER(void)
                 s32 count;
                 s32 frame;
                 s32 scaled_timer;
+                void *record;
 
                 slot = Func_080b7dd0(state->actor_id);
                 *(s16 *)((u8 *)slot + 0x2a) = 1;
                 count = 0;
                 record_cursor = phase_locals.records;
-                while ((*record_cursor = Func_080b7f70(
-                            slot->object, count)) != NULL) {
-                    record_cursor++;
+                record = Func_080b7f70(slot->object, count);
+                while (record != NULL) {
+                    *record_cursor++ = record;
                     count++;
+                    record = Func_080b7f70(slot->object, count);
                 }
 
                 scaled_timer = state->timer * 4;

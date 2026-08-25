@@ -15,8 +15,8 @@ struct ShopCursor {
     struct ShopCursorAnchor *anchor;
     u16 x;
     u16 y;
-    u16 target_x;
-    u16 target_y;
+    s16 target_x;
+    s16 target_y;
     s8 active;
     s8 kind;
 };

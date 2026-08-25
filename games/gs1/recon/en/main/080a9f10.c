@@ -65,8 +65,7 @@ s32 Func_080a9f10(
     s16 current;
     s16 limit;
     s16 new_value;
-    s16 result_code;
-    u8 effect_target;
+    s32 result_code;
 
     effect = Func_08077080(effect_id);
     runtime = Data_03001f2c;
@@ -74,17 +73,15 @@ s32 Func_080a9f10(
     changed = 0;
     result_code = 0;
 
-    if (target_id == 9)
-        lookup_id = 0;
-    else
+    lookup_id = 0;
+    if (target_id != 9)
         lookup_id = target_id;
     target = Func_08077008(lookup_id);
 
-    effect_target = effect->range;
     index = 0;
     if (index < runtime->target_count) {
         do {
-            if (effect_target == 0xff) {
+            if (effect->range == 0xff) {
                 target_id = runtime->targets[index];
                 target = Func_08077008(target_id);
             }
@@ -318,8 +315,7 @@ s32 Func_080a9f10(
                 break;
             }
 
-            effect_target = effect->range;
-            if (effect_target != 0xff)
+            if (effect->range != 0xff)
                 break;
             index = (u8)(index + 1);
         } while (index < runtime->target_count);

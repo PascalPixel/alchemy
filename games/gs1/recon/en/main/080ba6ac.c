@@ -27,7 +27,7 @@ void Func_080b9d34(void *, struct PresentationWork *);
 u32 Func_080bb938(void);
 u32 Func_080bbabc(u32, u32);
 void Func_080be02c(void);
-void Func_080c10e8(s32, s32);
+void Func_080c10e8(u16 *, s32);
 void Func_080c1724(void *, void *, s32, s32);
 void Func_080c9008(struct PresentationWork *);
 void Func_080c9018(struct PresentationWork *);

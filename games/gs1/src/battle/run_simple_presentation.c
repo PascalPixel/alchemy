@@ -46,7 +46,7 @@ extern s32 *Data_03001f00;
 struct PresentationObjectSlot *GetBattleObjectSlot(s32 id);
 s32 ArcTan2(s32 first, s32 second);
 void WaitFrames(s32 frames);
-void Func_080c10e8(s32 first, s32 second);
+void Func_080c10e8(u16 *actors, s32 mode);
 void Func_080b9d34(void *input, struct BattlePresentationWork *work);
 void Runtime_GetObject(s32 id);
 struct MotionRecord *GetMotionRecord(

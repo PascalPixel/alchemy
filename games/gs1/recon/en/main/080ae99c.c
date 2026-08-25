@@ -16,13 +16,12 @@ s32 Func_080ae99c(s32 x, s32 y, s32 tile, s32 variant)
 {
     struct MarkerObject *object;
     u32 resource;
-    u16 *resource_pointer;
+    u8 *data = Data_03001f2c;
 
     if (variant == 0)
-        resource_pointer = (u16 *)(Data_03001f2c + 0x392);
+        resource = *(u16 *)(data + 0x392);
     else
-        resource_pointer = (u16 *)(Data_03001f2c + 0x394);
-    resource = *resource_pointer;
+        resource = *(u16 *)(data + 0x394);
     object = Func_080150c8(resource, 0x40000000, x, y, tile);
     if (object == 0)
         return -1;

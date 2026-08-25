@@ -4,7 +4,8 @@ extern u8 *Data_03001e8c[];
 extern u8 *Func_02001db2(s32);
 extern s32 Func_02001a72(u8 *, const u8 *, s32, s32);
 
-s32 Func_020003ac(u8 *entity)
+#define ActorPresentation_UpdateEntityFromLeader Func_020003ac
+s32 ActorPresentation_UpdateEntityFromLeader(u8 *entity)
 {
     u8 *base = Data_03001e8c[0];
     u8 *workspace = Data_03001e8c[12];

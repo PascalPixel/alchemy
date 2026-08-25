@@ -13,7 +13,8 @@ extern int Func_020020f0(int,int);
 extern int Func_02002078(int,int);
 extern void Func_0200211c(int,int);
 extern void Func_02002080(void);
-void Func_02000674(void)
+#define ActorPresentation_RunActorThirteenSceneSetup Func_02000674
+void ActorPresentation_RunActorThirteenSceneSetup(void)
 {
     u8 *workspace;
 

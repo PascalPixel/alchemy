@@ -4,7 +4,11 @@ use std::process::ExitCode;
 const USAGE: &str = "usage: overlay <adopt|park|audit|score|show|reconstruct|twins|disasm> [args]";
 
 fn root() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).parent().and_then(Path::parent).expect("overlay is under tools").to_path_buf()
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .and_then(Path::parent)
+        .expect("overlay is under tools")
+        .to_path_buf()
 }
 
 fn code(result: Result<i32, String>) -> ExitCode {

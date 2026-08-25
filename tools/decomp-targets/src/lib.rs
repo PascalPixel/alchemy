@@ -219,7 +219,15 @@ pub const DEFAULT_TARGET: DecompTargetId = DecompTargetId::Gs1En;
 
 macro_rules! reference_target {
     ($id:ident, $game:ident, $edition:ident, $rom:literal, $size:expr, $compiler:ident) => {
-        ReferenceTarget { id: ReferenceTargetId::$id, game: DecompGame::$game, edition: DecompEdition::$edition, rom: $rom, rom_size: $size, compiler: DecompCompilerTarget::$compiler, build_target: DecompTargetId::$id }
+        ReferenceTarget {
+            id: ReferenceTargetId::$id,
+            game: DecompGame::$game,
+            edition: DecompEdition::$edition,
+            rom: $rom,
+            rom_size: $size,
+            compiler: DecompCompilerTarget::$compiler,
+            build_target: DecompTargetId::$id,
+        }
     };
 }
 
@@ -272,23 +280,169 @@ macro_rules! decomp_target {
     };
 }
 
-decomp_target!(GS1_JA, Gs1Ja, Gs1, Ja, "gs1-ja", 0x0080_0000, Gs1, CompileOnly, "GS1_EDITION_JA", "games/gs1");
-decomp_target!(GS1_EN, Gs1En, Gs1, En, "gs1-en", 0x0080_0000, Gs1, Full, "GS1_EDITION_EN", "games/gs1");
-decomp_target!(GS1_DE, Gs1De, Gs1, De, "gs1-de", 0x0080_0000, Gs1, CompileOnly, "GS1_EDITION_DE", "games/gs1");
-decomp_target!(GS1_ES, Gs1Es, Gs1, Es, "gs1-es", 0x0080_0000, Gs1, CompileOnly, "GS1_EDITION_ES", "games/gs1");
-decomp_target!(GS1_FR, Gs1Fr, Gs1, Fr, "gs1-fr", 0x0080_0000, Gs1, CompileOnly, "GS1_EDITION_FR", "games/gs1");
-decomp_target!(GS1_IT, Gs1It, Gs1, It, "gs1-it", 0x0080_0000, Gs1, CompileOnly, "GS1_EDITION_IT", "games/gs1");
-decomp_target!(GS2_JA, Gs2Ja, Gs2, Ja, "gs2-ja", 0x0100_0000, Gs2, CompileOnly, "GS2_EDITION_JA", "games/gs2");
-decomp_target!(GS2_EN, Gs2En, Gs2, En, "gs2-en", 0x0100_0000, Gs2, CompileOnly, "GS2_EDITION_EN", "games/gs2");
-decomp_target!(GS2_DE, Gs2De, Gs2, De, "gs2-de", 0x0100_0000, Gs2, CompileOnly, "GS2_EDITION_DE", "games/gs2");
-decomp_target!(GS2_ES, Gs2Es, Gs2, Es, "gs2-es", 0x0100_0000, Gs2, CompileOnly, "GS2_EDITION_ES", "games/gs2");
-decomp_target!(GS2_FR, Gs2Fr, Gs2, Fr, "gs2-fr", 0x0100_0000, Gs2, CompileOnly, "GS2_EDITION_FR", "games/gs2");
-decomp_target!(GS2_IT, Gs2It, Gs2, It, "gs2-it", 0x0100_0000, Gs2, CompileOnly, "GS2_EDITION_IT", "games/gs2");
+decomp_target!(
+    GS1_JA,
+    Gs1Ja,
+    Gs1,
+    Ja,
+    "gs1-ja",
+    0x0080_0000,
+    Gs1,
+    CompileOnly,
+    "GS1_EDITION_JA",
+    "games/gs1"
+);
+decomp_target!(
+    GS1_EN,
+    Gs1En,
+    Gs1,
+    En,
+    "gs1-en",
+    0x0080_0000,
+    Gs1,
+    Full,
+    "GS1_EDITION_EN",
+    "games/gs1"
+);
+decomp_target!(
+    GS1_DE,
+    Gs1De,
+    Gs1,
+    De,
+    "gs1-de",
+    0x0080_0000,
+    Gs1,
+    CompileOnly,
+    "GS1_EDITION_DE",
+    "games/gs1"
+);
+decomp_target!(
+    GS1_ES,
+    Gs1Es,
+    Gs1,
+    Es,
+    "gs1-es",
+    0x0080_0000,
+    Gs1,
+    CompileOnly,
+    "GS1_EDITION_ES",
+    "games/gs1"
+);
+decomp_target!(
+    GS1_FR,
+    Gs1Fr,
+    Gs1,
+    Fr,
+    "gs1-fr",
+    0x0080_0000,
+    Gs1,
+    CompileOnly,
+    "GS1_EDITION_FR",
+    "games/gs1"
+);
+decomp_target!(
+    GS1_IT,
+    Gs1It,
+    Gs1,
+    It,
+    "gs1-it",
+    0x0080_0000,
+    Gs1,
+    CompileOnly,
+    "GS1_EDITION_IT",
+    "games/gs1"
+);
+decomp_target!(
+    GS2_JA,
+    Gs2Ja,
+    Gs2,
+    Ja,
+    "gs2-ja",
+    0x0100_0000,
+    Gs2,
+    CompileOnly,
+    "GS2_EDITION_JA",
+    "games/gs2"
+);
+decomp_target!(
+    GS2_EN,
+    Gs2En,
+    Gs2,
+    En,
+    "gs2-en",
+    0x0100_0000,
+    Gs2,
+    CompileOnly,
+    "GS2_EDITION_EN",
+    "games/gs2"
+);
+decomp_target!(
+    GS2_DE,
+    Gs2De,
+    Gs2,
+    De,
+    "gs2-de",
+    0x0100_0000,
+    Gs2,
+    CompileOnly,
+    "GS2_EDITION_DE",
+    "games/gs2"
+);
+decomp_target!(
+    GS2_ES,
+    Gs2Es,
+    Gs2,
+    Es,
+    "gs2-es",
+    0x0100_0000,
+    Gs2,
+    CompileOnly,
+    "GS2_EDITION_ES",
+    "games/gs2"
+);
+decomp_target!(
+    GS2_FR,
+    Gs2Fr,
+    Gs2,
+    Fr,
+    "gs2-fr",
+    0x0100_0000,
+    Gs2,
+    CompileOnly,
+    "GS2_EDITION_FR",
+    "games/gs2"
+);
+decomp_target!(
+    GS2_IT,
+    Gs2It,
+    Gs2,
+    It,
+    "gs2-it",
+    0x0100_0000,
+    Gs2,
+    CompileOnly,
+    "GS2_EDITION_IT",
+    "games/gs2"
+);
 
-const TARGETS: [DecompTarget; 12] = [GS1_JA, GS1_EN, GS1_DE, GS1_ES, GS1_FR, GS1_IT, GS2_JA, GS2_EN, GS2_DE, GS2_ES, GS2_FR, GS2_IT];
+const TARGETS: [DecompTarget; 12] = [
+    GS1_JA, GS1_EN, GS1_DE, GS1_ES, GS1_FR, GS1_IT, GS2_JA, GS2_EN, GS2_DE, GS2_ES, GS2_FR, GS2_IT,
+];
 
-pub const TARGET_IDS: [DecompTargetId; 12] =
-    [DecompTargetId::Gs1Ja, DecompTargetId::Gs1En, DecompTargetId::Gs1De, DecompTargetId::Gs1Es, DecompTargetId::Gs1Fr, DecompTargetId::Gs1It, DecompTargetId::Gs2Ja, DecompTargetId::Gs2En, DecompTargetId::Gs2De, DecompTargetId::Gs2Es, DecompTargetId::Gs2Fr, DecompTargetId::Gs2It];
+pub const TARGET_IDS: [DecompTargetId; 12] = [
+    DecompTargetId::Gs1Ja,
+    DecompTargetId::Gs1En,
+    DecompTargetId::Gs1De,
+    DecompTargetId::Gs1Es,
+    DecompTargetId::Gs1Fr,
+    DecompTargetId::Gs1It,
+    DecompTargetId::Gs2Ja,
+    DecompTargetId::Gs2En,
+    DecompTargetId::Gs2De,
+    DecompTargetId::Gs2Es,
+    DecompTargetId::Gs2Fr,
+    DecompTargetId::Gs2It,
+];
 
 /// Serialize a string the way `JSON.stringify` would, so the error text is
 /// byte-for-byte what the TS tool produced (quotes included).
@@ -313,24 +467,45 @@ fn json_quote(value: &str) -> String {
 }
 
 fn target_ids_joined() -> String {
-    TARGET_IDS.iter().map(|id| id.as_str()).collect::<Vec<_>>().join(" or ")
+    TARGET_IDS
+        .iter()
+        .map(|id| id.as_str())
+        .collect::<Vec<_>>()
+        .join(" or ")
 }
 
 /// Parse any of the twelve historical ROM ids. Unlike `parse_decomp_target`,
 /// this does not imply that a complete build surface has already been
 /// installed for the edition.
 pub fn parse_reference_target(value: &str) -> Result<ReferenceTargetId, String> {
-    REFERENCE_TARGETS.iter().find(|target| target.id.as_str() == value).map(|target| target.id).ok_or_else(|| format!("unsupported reference target {}", json_quote(value)))
+    REFERENCE_TARGETS
+        .iter()
+        .find(|target| target.id.as_str() == value)
+        .map(|target| target.id)
+        .ok_or_else(|| format!("unsupported reference target {}", json_quote(value)))
 }
 
 pub fn reference_target(id: ReferenceTargetId) -> ReferenceTarget {
-    *REFERENCE_TARGETS.iter().find(|target| target.id == id).expect("REFERENCE_TARGET_IDS and REFERENCE_TARGETS diverged")
+    *REFERENCE_TARGETS
+        .iter()
+        .find(|target| target.id == id)
+        .expect("REFERENCE_TARGET_IDS and REFERENCE_TARGETS diverged")
 }
 
 /// PORT NOTE: the TS threw an `Error`; Rust returns `Err(String)` carrying the
 /// identical message so callers can decide whether to panic or report.
 pub fn parse_decomp_target(value: &str) -> Result<DecompTargetId, String> {
-    TARGETS.iter().find(|t| t.id.as_str() == value).map(|t| t.id).ok_or_else(|| format!("unsupported decomp target {}; expected {}", json_quote(value), target_ids_joined()))
+    TARGETS
+        .iter()
+        .find(|t| t.id.as_str() == value)
+        .map(|t| t.id)
+        .ok_or_else(|| {
+            format!(
+                "unsupported decomp target {}; expected {}",
+                json_quote(value),
+                target_ids_joined()
+            )
+        })
 }
 
 /// Look up a target by id string. `None` means "use the default target",
@@ -364,7 +539,10 @@ pub fn target_for(id: DecompTargetId) -> DecompTarget {
 /// A path is usable only if it is non-empty, not absolute in either slash
 /// style, and never escapes the repo root via a `..` segment.
 fn relative_path(path: &str) -> bool {
-    !path.is_empty() && !path.starts_with('/') && !path.starts_with('\\') && !path.split(['\\', '/']).any(|seg| seg == "..")
+    !path.is_empty()
+        && !path.starts_with('/')
+        && !path.starts_with('\\')
+        && !path.split(['\\', '/']).any(|seg| seg == "..")
 }
 
 /// The registry's invariants, checked at runtime. Kept as a function (not only
@@ -373,10 +551,17 @@ pub fn self_test() -> Result<String, String> {
     let gs1 = decomp_target(None)?;
     let gs2 = decomp_target(Some("gs2-en"))?;
 
-    if gs1.id != DEFAULT_TARGET || gs1.rom != "roms/gs1-en.gba" || gs1.rom_size != 0x0080_0000 || gs1.compiler != DecompCompilerTarget::Gs1 {
+    if gs1.id != DEFAULT_TARGET
+        || gs1.rom != "roms/gs1-en.gba"
+        || gs1.rom_size != 0x0080_0000
+        || gs1.compiler != DecompCompilerTarget::Gs1
+    {
         return Err("GS1 target registry self-test failed".to_string());
     }
-    if gs2.rom != "roms/gs2-en.gba" || gs2.rom_size != 0x0100_0000 || gs2.compiler != DecompCompilerTarget::Gs2 {
+    if gs2.rom != "roms/gs2-en.gba"
+        || gs2.rom_size != 0x0100_0000
+        || gs2.compiler != DecompCompilerTarget::Gs2
+    {
         return Err("GS2 target registry self-test failed".to_string());
     }
 
@@ -384,7 +569,11 @@ pub fn self_test() -> Result<String, String> {
     let mut bases = 0;
     for (index, id) in REFERENCE_TARGET_IDS.iter().copied().enumerate() {
         let target = reference_target(id);
-        if target != REFERENCE_TARGETS[index] || parse_reference_target(id.as_str())? != id || !relative_path(target.rom) || !roms.insert(target.rom) {
+        if target != REFERENCE_TARGETS[index]
+            || parse_reference_target(id.as_str())? != id
+            || !relative_path(target.rom)
+            || !roms.insert(target.rom)
+        {
             return Err(format!("{} reference registry entry is inconsistent", id));
         }
 
@@ -415,7 +604,13 @@ pub fn self_test() -> Result<String, String> {
     let mut outputs = std::collections::HashSet::new();
     let mut full_builds = 0usize;
     for target in TARGETS {
-        for path in [target.rom, target.source_dir, target.asm_dir, target.asset_manifest, target.output_dir] {
+        for path in [
+            target.rom,
+            target.source_dir,
+            target.asm_dir,
+            target.asset_manifest,
+            target.output_dir,
+        ] {
             if !relative_path(path) {
                 return Err(format!("{} has a non-relative path", target.id));
             }
@@ -424,7 +619,10 @@ pub fn self_test() -> Result<String, String> {
             return Err(format!("{} does not have an isolated output", target.id));
         }
         if target_for(parse_decomp_target(target.id.as_str())?) != target {
-            return Err(format!("{} cannot round-trip through the registry", target.id));
+            return Err(format!(
+                "{} cannot round-trip through the registry",
+                target.id
+            ));
         }
         if target.build_support == BuildSupport::Full {
             full_builds += 1;
@@ -434,7 +632,11 @@ pub fn self_test() -> Result<String, String> {
         return Err("full-build target accounting is inconsistent".into());
     }
 
-    for (field, a, b) in [("sourceDir", gs1.source_dir, gs2.source_dir), ("asmDir", gs1.asm_dir, gs2.asm_dir), ("assetManifest", gs1.asset_manifest, gs2.asset_manifest)] {
+    for (field, a, b) in [
+        ("sourceDir", gs1.source_dir, gs2.source_dir),
+        ("asmDir", gs1.asm_dir, gs2.asm_dir),
+        ("assetManifest", gs1.asset_manifest, gs2.asset_manifest),
+    ] {
         if a == b {
             return Err(format!("{field} is not target-isolated"));
         }
@@ -446,7 +648,13 @@ pub fn self_test() -> Result<String, String> {
         }
     }
 
-    Ok(format!("self-test=ok reference_targets={} build_targets={} bases={} default={}", REFERENCE_TARGET_IDS.len(), TARGET_IDS.len(), bases, DEFAULT_TARGET))
+    Ok(format!(
+        "self-test=ok reference_targets={} build_targets={} bases={} default={}",
+        REFERENCE_TARGET_IDS.len(),
+        TARGET_IDS.len(),
+        bases,
+        DEFAULT_TARGET
+    ))
 }
 
 #[cfg(test)]
@@ -455,10 +663,21 @@ mod tests {
 
     #[test]
     fn registry_covers_two_six_edition_products() {
-        assert_eq!(self_test().unwrap(), "self-test=ok reference_targets=12 build_targets=12 bases=2 default=gs1-en");
+        assert_eq!(
+            self_test().unwrap(),
+            "self-test=ok reference_targets=12 build_targets=12 bases=2 default=gs1-en"
+        );
         assert_eq!(
             reference_target(parse_reference_target("gs2-it").unwrap()),
-            ReferenceTarget { id: ReferenceTargetId::Gs2It, game: DecompGame::Gs2, edition: DecompEdition::It, rom: "roms/gs2-it.gba", rom_size: 0x0100_0000, compiler: DecompCompilerTarget::Gs2, build_target: DecompTargetId::Gs2It }
+            ReferenceTarget {
+                id: ReferenceTargetId::Gs2It,
+                game: DecompGame::Gs2,
+                edition: DecompEdition::It,
+                rom: "roms/gs2-it.gba",
+                rom_size: 0x0100_0000,
+                compiler: DecompCompilerTarget::Gs2,
+                build_target: DecompTargetId::Gs2It
+            }
         );
     }
 }

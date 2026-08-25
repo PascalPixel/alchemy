@@ -16,7 +16,10 @@ impl std::fmt::Display for TilemapError {
         match self {
             Self::NotWholeEntries => write!(f, "tilemap must contain whole 16-bit entries"),
             Self::WidthDoesNotDivide { count, width } => {
-                write!(f, "width {width} must divide the tilemap entry count {count}")
+                write!(
+                    f,
+                    "width {width} must divide the tilemap entry count {count}"
+                )
             }
             Self::EmptyText => write!(f, "tilemap text must contain four-digit hex words"),
             Self::NotAHexWord(token) => {
@@ -30,7 +33,10 @@ impl std::error::Error for TilemapError {}
 
 pub fn export_tilemap(data: &[u8], width: usize) -> Result<String, TilemapError> {
     if width == 0 {
-        return Err(TilemapError::WidthDoesNotDivide { count: data.len() / 2, width });
+        return Err(TilemapError::WidthDoesNotDivide {
+            count: data.len() / 2,
+            width,
+        });
     }
     if !data.len().is_multiple_of(2) {
         return Err(TilemapError::NotWholeEntries);

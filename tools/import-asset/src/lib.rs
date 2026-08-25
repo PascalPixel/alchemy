@@ -10,7 +10,10 @@ impl Report {
         }
     }
     pub fn get(&self, key: &str) -> Option<f64> {
-        self.0.iter().find(|(name, _)| name == key).map(|(_, value)| *value)
+        self.0
+            .iter()
+            .find(|(name, _)| name == key)
+            .map(|(_, value)| *value)
     }
 }
 
@@ -36,7 +39,11 @@ pub fn ascii(bytes: &[u8]) -> String {
 
 pub fn hex(bytes: &[u8]) -> String {
     const DIGITS: &[u8; 16] = b"0123456789abcdef";
-    bytes.iter().flat_map(|byte| [DIGITS[(byte >> 4) as usize], DIGITS[(byte & 15) as usize]]).map(char::from).collect()
+    bytes
+        .iter()
+        .flat_map(|byte| [DIGITS[(byte >> 4) as usize], DIGITS[(byte & 15) as usize]])
+        .map(char::from)
+        .collect()
 }
 
 pub fn subarray(data: &[u8], start: usize, end: usize) -> &[u8] {
@@ -85,7 +92,12 @@ pub struct IndexedImage {
 
 pub fn indexed_png(data: &[u8]) -> Result<IndexedImage, AssetError> {
     let (output, bytes, info) = decode(data)?;
-    if output.color_type != png::ColorType::Indexed || !matches!(output.bit_depth, png::BitDepth::One | png::BitDepth::Two | png::BitDepth::Four | png::BitDepth::Eight) {
+    if output.color_type != png::ColorType::Indexed
+        || !matches!(
+            output.bit_depth,
+            png::BitDepth::One | png::BitDepth::Two | png::BitDepth::Four | png::BitDepth::Eight
+        )
+    {
         return err("PNG must use an indexed 1/2/4/8-bit palette");
     }
     let (width, height) = (output.width, output.height);
@@ -93,11 +105,17 @@ pub fn indexed_png(data: &[u8]) -> Result<IndexedImage, AssetError> {
         return err("PNG dimensions must be nonzero multiples of eight");
     }
     let depth = output.bit_depth as u32;
-    let raw_palette = info.palette.as_deref().ok_or_else(|| AssetError("PNG lacks IHDR or PLTE".into()))?;
+    let raw_palette = info
+        .palette
+        .as_deref()
+        .ok_or_else(|| AssetError("PNG lacks IHDR or PLTE".into()))?;
     if raw_palette.len() < 3 || raw_palette.len() > 768 || !raw_palette.len().is_multiple_of(3) {
         return err("invalid PLTE");
     }
-    let palette: Vec<Rgb> = raw_palette.chunks_exact(3).map(|rgb| [rgb[0], rgb[1], rgb[2]]).collect();
+    let palette: Vec<Rgb> = raw_palette
+        .chunks_exact(3)
+        .map(|rgb| [rgb[0], rgb[1], rgb[2]])
+        .collect();
     if palette.len() as u32 > 1 << depth {
         return err("palette exceeds indexed bit depth");
     }
@@ -122,7 +140,12 @@ pub fn indexed_png(data: &[u8]) -> Result<IndexedImage, AssetError> {
     if bytes.len() != row_size * height as usize {
         return err("unexpected decompressed PNG size");
     }
-    Ok(IndexedImage { width, height, pixels, palette })
+    Ok(IndexedImage {
+        width,
+        height,
+        pixels,
+        palette,
+    })
 }
 
 #[derive(Debug)]
@@ -143,7 +166,11 @@ pub fn rgba_png(data: &[u8]) -> Result<RgbaImage, AssetError> {
     if output.line_size != output.width as usize * 4 || bytes.len() != output.buffer_size() {
         return err("unexpected decompressed PNG size");
     }
-    Ok(RgbaImage { width: output.width, height: output.height, pixels: bytes })
+    Ok(RgbaImage {
+        width: output.width,
+        height: output.height,
+        pixels: bytes,
+    })
 }
 
 pub fn gba_palette_rgba(data: &[u8]) -> Result<(Vec<u8>, Report), AssetError> {
@@ -157,7 +184,13 @@ pub fn gba_palette_rgba(data: &[u8]) -> Result<(Vec<u8>, Report), AssetError> {
         if a != 254 && a != 255 {
             return err("RGBA palette alpha must be 254 or 255");
         }
-        palette.extend_from_slice(&(u16::from(r >> 3) | u16::from(g >> 3) << 5 | u16::from(b >> 3) << 10 | u16::from(255 - a) << 15).to_le_bytes());
+        palette.extend_from_slice(
+            &(u16::from(r >> 3)
+                | u16::from(g >> 3) << 5
+                | u16::from(b >> 3) << 10
+                | u16::from(255 - a) << 15)
+                .to_le_bytes(),
+        );
     }
     let mut report = Report::default();
     report.set("width", image.width.into());
@@ -171,14 +204,19 @@ pub fn gba_graphics(data: &[u8], bpp: f64) -> Result<(Vec<u8>, Vec<u8>, Report),
     let four = bpp == 4.0;
     let limit = if four { 16u32 } else { 256 };
     if image.palette.len() > limit as usize || image.pixels.iter().any(|pixel| *pixel >= limit) {
-        return Err(AssetError(format!("image does not fit {}bpp", js_number_json(bpp))));
+        return Err(AssetError(format!(
+            "image does not fit {}bpp",
+            js_number_json(bpp)
+        )));
     }
     let mut palette = Vec::with_capacity(image.palette.len() * 2);
     for [r, g, b] in image.palette {
         if r & 7 != 0 || g & 7 != 0 || b & 7 != 0 {
             return err("palette channels must be exact five-bit values (multiples of 8)");
         }
-        palette.extend_from_slice(&(u16::from(r >> 3) | u16::from(g >> 3) << 5 | u16::from(b >> 3) << 10).to_le_bytes());
+        palette.extend_from_slice(
+            &(u16::from(r >> 3) | u16::from(g >> 3) << 5 | u16::from(b >> 3) << 10).to_le_bytes(),
+        );
     }
     let width = image.width as usize;
     let mut tiles = Vec::with_capacity(width * image.height as usize / if four { 2 } else { 1 });
@@ -206,10 +244,12 @@ pub fn gba_graphics(data: &[u8], bpp: f64) -> Result<(Vec<u8>, Vec<u8>, Report),
 }
 
 fn be_u16(data: &[u8], at: usize) -> Option<u16> {
-    data.get(at..at + 2).map(|x| u16::from_be_bytes([x[0], x[1]]))
+    data.get(at..at + 2)
+        .map(|x| u16::from_be_bytes([x[0], x[1]]))
 }
 fn be_u32(data: &[u8], at: usize) -> Option<u32> {
-    data.get(at..at + 4).map(|x| u32::from_be_bytes([x[0], x[1], x[2], x[3]]))
+    data.get(at..at + 4)
+        .map(|x| u32::from_be_bytes([x[0], x[1], x[2], x[3]]))
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -236,7 +276,9 @@ pub struct MidiReport {
 fn vlq(data: &[u8], mut at: usize) -> Result<(i32, usize), AssetError> {
     let mut value = 0;
     for _ in 0..4 {
-        let byte = *data.get(at).ok_or_else(|| AssetError("truncated variable-length quantity".into()))?;
+        let byte = *data
+            .get(at)
+            .ok_or_else(|| AssetError("truncated variable-length quantity".into()))?;
         at += 1;
         value = value << 7 | i32::from(byte & 0x7f);
         if byte < 0x80 {
@@ -263,7 +305,11 @@ pub fn midi_events(data: &[u8]) -> Result<MidiReport, AssetError> {
         }
         chunks.push((kind, body));
     }
-    if chunks.first().map(|(kind, body)| (kind.as_str(), body.len())) != Some(("MThd", 6)) {
+    if chunks
+        .first()
+        .map(|(kind, body)| (kind.as_str(), body.len()))
+        != Some(("MThd", 6))
+    {
         return err("invalid MIDI header");
     }
     let header = chunks[0].1;
@@ -273,7 +319,12 @@ pub fn midi_events(data: &[u8]) -> Result<MidiReport, AssetError> {
     if !matches!(format, 0 | 1) || tracks == 0 || division & 0x8000 != 0 {
         return err("only format 0/1 PPQN MIDI is supported");
     }
-    let tracks_data: Vec<&[u8]> = chunks.iter().skip(1).filter(|(kind, _)| kind == "MTrk").map(|(_, body)| *body).collect();
+    let tracks_data: Vec<&[u8]> = chunks
+        .iter()
+        .skip(1)
+        .filter(|(kind, _)| kind == "MTrk")
+        .map(|(_, body)| *body)
+        .collect();
     if tracks_data.len() != tracks as usize {
         return err("MIDI track count mismatch");
     }
@@ -284,15 +335,20 @@ pub fn midi_events(data: &[u8]) -> Result<MidiReport, AssetError> {
             let (delta, next) = vlq(bytes, at)?;
             at = next;
             tick += i64::from(delta);
-            let mut status = *bytes.get(at).ok_or_else(|| AssetError("truncated MIDI event".into()))?;
+            let mut status = *bytes
+                .get(at)
+                .ok_or_else(|| AssetError("truncated MIDI event".into()))?;
             if status < 0x80 {
-                status = running.ok_or_else(|| AssetError("running status without channel status".into()))?;
+                status = running
+                    .ok_or_else(|| AssetError("running status without channel status".into()))?;
             } else {
                 at += 1;
             }
             let body = match status {
                 0xff => {
-                    let meta = *bytes.get(at).ok_or_else(|| AssetError("truncated meta event".into()))?;
+                    let meta = *bytes
+                        .get(at)
+                        .ok_or_else(|| AssetError("truncated meta event".into()))?;
                     let (n, next) = vlq(bytes, at + 1)?;
                     at = next;
                     let value = subarray(bytes, at, at.saturating_add(n as usize));
@@ -301,7 +357,10 @@ pub fn midi_events(data: &[u8]) -> Result<MidiReport, AssetError> {
                         return err("truncated meta payload");
                     }
                     running = None;
-                    EventBody::Meta { meta, data: hex(value) }
+                    EventBody::Meta {
+                        meta,
+                        data: hex(value),
+                    }
                 }
                 0xf0 | 0xf7 => {
                     let (n, next) = vlq(bytes, at)?;
@@ -312,30 +371,53 @@ pub fn midi_events(data: &[u8]) -> Result<MidiReport, AssetError> {
                         return err("truncated system-exclusive payload");
                     }
                     running = None;
-                    EventBody::Sysex { status, data: hex(value) }
+                    EventBody::Sysex {
+                        status,
+                        data: hex(value),
+                    }
                 }
                 0x80..=0xef => {
                     running = Some(status);
-                    let n = if matches!(status & 0xf0, 0xc0 | 0xd0) { 1 } else { 2 };
+                    let n = if matches!(status & 0xf0, 0xc0 | 0xd0) {
+                        1
+                    } else {
+                        2
+                    };
                     let value = subarray(bytes, at, at + n);
                     at += n;
                     if value.len() != n || value.iter().any(|byte| byte & 0x80 != 0) {
                         return err("invalid channel event");
                     }
-                    EventBody::Channel { status, data: value.to_vec() }
+                    EventBody::Channel {
+                        status,
+                        data: value.to_vec(),
+                    }
                 }
                 _ => return err("unsupported MIDI system event"),
             };
-            events.push(MidiEvent { tick, track, order, body });
+            events.push(MidiEvent {
+                tick,
+                track,
+                order,
+                body,
+            });
             order += 1;
         }
     }
     events.sort_by_key(|event| (event.tick, event.track, event.order));
-    Ok(MidiReport { format, tracks, ticks_per_quarter: division, events })
+    Ok(MidiReport {
+        format,
+        tracks,
+        ticks_per_quarter: division,
+        events,
+    })
 }
 
 pub fn canonical_midi_json(report: &MidiReport) -> String {
-    let mut out = format!("{{\n  \"format\": {},\n  \"tracks\": {},\n  \"ticks_per_quarter\": {},\n  \"events\": ", report.format, report.tracks, report.ticks_per_quarter);
+    let mut out = format!(
+        "{{\n  \"format\": {},\n  \"tracks\": {},\n  \"ticks_per_quarter\": {},\n  \"events\": ",
+        report.format, report.tracks, report.ticks_per_quarter
+    );
     if report.events.is_empty() {
         out.push_str("[]");
     } else {
@@ -343,13 +425,42 @@ pub fn canonical_midi_json(report: &MidiReport) -> String {
             .events
             .iter()
             .map(|event| {
-                let mut fields = vec![format!("\"tick\": {}", event.tick), format!("\"track\": {}", event.track), format!("\"order\": {}", event.order)];
+                let mut fields = vec![
+                    format!("\"tick\": {}", event.tick),
+                    format!("\"track\": {}", event.track),
+                    format!("\"order\": {}", event.order),
+                ];
                 match &event.body {
-                    EventBody::Meta { meta, data } => fields.extend(["\"type\": \"meta\"".into(), format!("\"meta\": {meta}"), format!("\"data\": \"{data}\"")]),
-                    EventBody::Sysex { status, data } => fields.extend(["\"type\": \"sysex\"".into(), format!("\"status\": {status}"), format!("\"data\": \"{data}\"")]),
-                    EventBody::Channel { status, data } => fields.extend(["\"type\": \"channel\"".into(), format!("\"status\": {status}"), format!("\"data\": [{}]", data.iter().map(u8::to_string).collect::<Vec<_>>().join(", "))]),
+                    EventBody::Meta { meta, data } => fields.extend([
+                        "\"type\": \"meta\"".into(),
+                        format!("\"meta\": {meta}"),
+                        format!("\"data\": \"{data}\""),
+                    ]),
+                    EventBody::Sysex { status, data } => fields.extend([
+                        "\"type\": \"sysex\"".into(),
+                        format!("\"status\": {status}"),
+                        format!("\"data\": \"{data}\""),
+                    ]),
+                    EventBody::Channel { status, data } => fields.extend([
+                        "\"type\": \"channel\"".into(),
+                        format!("\"status\": {status}"),
+                        format!(
+                            "\"data\": [{}]",
+                            data.iter()
+                                .map(u8::to_string)
+                                .collect::<Vec<_>>()
+                                .join(", ")
+                        ),
+                    ]),
                 }
-                format!("    {{\n{}\n    }}", fields.into_iter().map(|field| format!("      {field}")).collect::<Vec<_>>().join(",\n"))
+                format!(
+                    "    {{\n{}\n    }}",
+                    fields
+                        .into_iter()
+                        .map(|field| format!("      {field}"))
+                        .collect::<Vec<_>>()
+                        .join(",\n")
+                )
             })
             .collect();
         out.push_str("[\n");
@@ -363,10 +474,24 @@ pub fn canonical_midi_json(report: &MidiReport) -> String {
 pub fn sorted_json(report: &Report) -> String {
     let mut values: Vec<_> = report.0.iter().collect();
     values.sort_by(|a, b| a.0.cmp(&b.0));
-    format!("{{{}}}", values.iter().map(|(key, value)| format!("\"{key}\": {}", js_number_json(*value))).collect::<Vec<_>>().join(", "))
+    format!(
+        "{{{}}}",
+        values
+            .iter()
+            .map(|(key, value)| format!("\"{key}\": {}", js_number_json(*value)))
+            .collect::<Vec<_>>()
+            .join(", ")
+    )
 }
 
-fn encode_png(width: usize, height: usize, color: png::ColorType, depth: png::BitDepth, palette: Option<&[u8]>, pixels: &[u8]) -> Result<Vec<u8>, AssetError> {
+fn encode_png(
+    width: usize,
+    height: usize,
+    color: png::ColorType,
+    depth: png::BitDepth,
+    palette: Option<&[u8]>,
+    pixels: &[u8],
+) -> Result<Vec<u8>, AssetError> {
     let mut output = Vec::new();
     let mut encoder = png::Encoder::new(&mut output, width as u32, height as u32);
     encoder.set_color(color);
@@ -381,10 +506,21 @@ fn encode_png(width: usize, height: usize, color: png::ColorType, depth: png::Bi
 }
 
 fn rgba_image(raw: &[u8], width: usize) -> Result<Vec<u8>, AssetError> {
-    if raw.is_empty() || !raw.len().is_multiple_of(4) || width == 0 || !(raw.len() / 4).is_multiple_of(width) {
+    if raw.is_empty()
+        || !raw.len().is_multiple_of(4)
+        || width == 0
+        || !(raw.len() / 4).is_multiple_of(width)
+    {
         return err("RGBA input must contain whole nonempty pixels");
     }
-    encode_png(width, raw.len() / width / 4, png::ColorType::Rgba, png::BitDepth::Eight, None, raw)
+    encode_png(
+        width,
+        raw.len() / width / 4,
+        png::ColorType::Rgba,
+        png::BitDepth::Eight,
+        None,
+        raw,
+    )
 }
 
 pub fn self_test() -> Result<String, AssetError> {
@@ -393,7 +529,11 @@ pub fn self_test() -> Result<String, AssetError> {
     encoder.set_color(png::ColorType::Indexed);
     encoder.set_depth(png::BitDepth::One);
     encoder.set_palette(vec![0, 0, 0, 248, 0, 0]);
-    encoder.write_header().map_err(png_error)?.write_image_data(&[0x55; 8]).map_err(png_error)?;
+    encoder
+        .write_header()
+        .map_err(png_error)?
+        .write_image_data(&[0x55; 8])
+        .map_err(png_error)?;
     let (tiles, palette, _) = gba_graphics(&indexed, 4.0)?;
     if tiles != [0x10; 32] || palette != [0, 0, 0x1f, 0] {
         return err("GBA graphics self-test failed");
@@ -422,13 +562,22 @@ mod tests {
         encoder.set_depth(depth);
         encoder.set_palette(vec![0, 0, 0, 248, 0, 0]);
         let data = vec![0; (8 * depth as usize).div_ceil(8) * 8];
-        encoder.write_header().unwrap().write_image_data(&data).unwrap();
+        encoder
+            .write_header()
+            .unwrap()
+            .write_image_data(&data)
+            .unwrap();
         out
     }
 
     #[test]
     fn png_crate_preserves_all_indexed_depths() {
-        for depth in [png::BitDepth::One, png::BitDepth::Two, png::BitDepth::Four, png::BitDepth::Eight] {
+        for depth in [
+            png::BitDepth::One,
+            png::BitDepth::Two,
+            png::BitDepth::Four,
+            png::BitDepth::Eight,
+        ] {
             assert_eq!(indexed_png(&indexed(depth)).unwrap().pixels.len(), 64);
         }
     }

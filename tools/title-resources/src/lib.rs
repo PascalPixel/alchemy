@@ -31,19 +31,29 @@ fn json(path: &Path) -> Result<Value, Error> {
 }
 
 fn field<'a>(value: &'a Value, name: &str) -> Result<&'a Value, Error> {
-    value.get(name).ok_or_else(|| err(format!("missing {name}")))
+    value
+        .get(name)
+        .ok_or_else(|| err(format!("missing {name}")))
 }
 
 fn number(value: &Value, name: &str) -> Result<usize, Error> {
-    value.as_u64().and_then(|n| usize::try_from(n).ok()).ok_or_else(|| err(format!("{name} must be an integer")))
+    value
+        .as_u64()
+        .and_then(|n| usize::try_from(n).ok())
+        .ok_or_else(|| err(format!("{name} must be an integer")))
 }
 
 fn string<'a>(value: &'a Value, name: &str) -> Result<&'a str, Error> {
-    value.as_str().ok_or_else(|| err(format!("{name} must be a string")))
+    value
+        .as_str()
+        .ok_or_else(|| err(format!("{name} must be a string")))
 }
 
 fn component_size(bpp: u8, width: usize, height: usize) -> Result<usize, Error> {
-    let bits = width.checked_mul(height).and_then(|n| n.checked_mul(bpp as usize)).ok_or_else(|| err("component size overflow"))?;
+    let bits = width
+        .checked_mul(height)
+        .and_then(|n| n.checked_mul(bpp as usize))
+        .ok_or_else(|| err("component size overflow"))?;
     if bits % 8 != 0 {
         return Err(err("component size is fractional"));
     }
@@ -73,7 +83,9 @@ fn validate_components(components: &[Value], decoded_size: usize) -> Result<(), 
 }
 
 fn expand_groups(value: &Value) -> Result<Vec<PaletteGroup>, Error> {
-    let groups = value.as_array().ok_or_else(|| err("invalid compact title groups"))?;
+    let groups = value
+        .as_array()
+        .ok_or_else(|| err("invalid compact title groups"))?;
     let mut ended = false;
     let mut result = Vec::new();
     for group in groups {
@@ -84,7 +96,9 @@ fn expand_groups(value: &Value) -> Result<Vec<PaletteGroup>, Error> {
             result.push(PaletteGroup::Zeros);
             continue;
         }
-        let values = group.as_array().ok_or_else(|| err("invalid compact title group"))?;
+        let values = group
+            .as_array()
+            .ok_or_else(|| err("invalid compact title group"))?;
         if values.len() < 3 || values.iter().any(|v| v.as_u64().is_none()) {
             return Err(err("invalid compact title group"));
         }
@@ -124,7 +138,10 @@ fn expand_groups(value: &Value) -> Result<Vec<PaletteGroup>, Error> {
 }
 
 fn plan_components(plan: &Value) -> Result<Vec<Value>, Error> {
-    plan.get("components").and_then(Value::as_array).cloned().ok_or_else(|| err("title components must be an array"))
+    plan.get("components")
+        .and_then(Value::as_array)
+        .cloned()
+        .ok_or_else(|| err("title components must be an array"))
 }
 
 fn source_for(plan_path: &Path, source: &str) -> PathBuf {
@@ -134,13 +151,18 @@ fn source_for(plan_path: &Path, source: &str) -> PathBuf {
     if flat.is_file() {
         flat
     } else {
-        plan_path.parent().unwrap_or_else(|| Path::new(".")).join(source)
+        plan_path
+            .parent()
+            .unwrap_or_else(|| Path::new("."))
+            .join(source)
     }
 }
 
 pub fn build_title_resource(plan_path: &Path) -> Result<Vec<u8>, Error> {
     let plan = json(plan_path)?;
-    if number(field(&plan, "format")?, "format")? != 1 || string(field(&plan, "codec")?, "codec")? != "golden-sun-title-lz" {
+    if number(field(&plan, "format")?, "format")? != 1
+        || string(field(&plan, "codec")?, "codec")? != "golden-sun-title-lz"
+    {
         return Err(err("unsupported title-resource plan"));
     }
     let decoded_size = number(field(&plan, "decoded_size")?, "decoded_size")?;
@@ -160,7 +182,10 @@ pub fn build_title_resource(plan_path: &Path) -> Result<Vec<u8>, Error> {
         let size = number(field(component, "size")?, "component size")?;
         let image = read(&source_for(plan_path, source))?;
         let (tiles, palette, report) = gba_graphics(&image, bpp).map_err(|e| err(e.0))?;
-        if report.get("width") != Some(width as f64) || report.get("height") != Some(height as f64) || tiles.len() != size {
+        if report.get("width") != Some(width as f64)
+            || report.get("height") != Some(height as f64)
+            || tiles.len() != size
+        {
             return Err(err(format!("title image dimensions differ: {source}")));
         }
         if palette.len() == palette_entries * 2 && full_palette.is_none() {
@@ -172,7 +197,10 @@ pub fn build_title_resource(plan_path: &Path) -> Result<Vec<u8>, Error> {
     for (index, component) in components.iter().enumerate() {
         let (tiles, component_palette) = &graphics[index];
         if palette.get(..component_palette.len()) != Some(component_palette.as_slice()) {
-            return Err(err(format!("title image palette differs: {}", string(field(component, "source")?, "component source")?)));
+            return Err(err(format!(
+                "title image palette differs: {}",
+                string(field(component, "source")?, "component source")?
+            )));
         }
         let offset = number(field(component, "offset")?, "component offset")?;
         decoded[offset..offset + tiles.len()].copy_from_slice(tiles);
@@ -199,7 +227,8 @@ pub fn build_title_resource(plan_path: &Path) -> Result<Vec<u8>, Error> {
             _ => return Err(err("unsupported title tail policy")),
         }
     } else {
-        let tail = parse_alignment_tail(tail_value, tail_size, 3, "title tail").map_err(|e| err(e.0))?;
+        let tail =
+            parse_alignment_tail(tail_value, tail_size, 3, "title tail").map_err(|e| err(e.0))?;
         encoded.extend(build_alignment_tail(&tail));
     }
     Ok(encoded)
@@ -211,5 +240,7 @@ pub fn run(args: Vec<String>) -> Result<(), Error> {
     }
     let plan = args.get(1).ok_or_else(|| err(USAGE))?;
     let built = build_title_resource(Path::new(plan))?;
-    io::stdout().write_all(&built).map_err(|e| err(e.to_string()))
+    io::stdout()
+        .write_all(&built)
+        .map_err(|e| err(e.to_string()))
 }

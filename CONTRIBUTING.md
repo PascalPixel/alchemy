@@ -382,14 +382,14 @@ templates when their emitted shape is closer.
 
 The transplant workspace under ignored `out/family-transplants/` contains the
 best existing semantic candidate (or a symbol-retargeted exact seed), the exact
-template, normalized alignment blocks, and finite safe and classic search
-recipes. It also preprocesses the exact member through its registered compiler
+template, normalized alignment blocks, and an explicit bounded-permutation
+recipe. It also preprocesses the exact member through its registered compiler
 route, retargets that exact function signature to the unresolved owner, and
 passes the result to m2c through its supported `--context` input. m2c uses that
 example for recovered declarations, types, and the function signature; it does
-not imitate the example's statement spelling. `--family-template` supplies
-that separate source-shape signal to the semantics-preserving AST walk and is
-included in the authenticated run identity and report.
+not imitate the example's statement spelling. Add only evidence-backed
+`PERM_GENERAL` and `PERM_INT` choices to the semantic candidate before running
+the finite search described below.
 
 Permanent-assembly family evidence is checked as a whole:
 
@@ -468,23 +468,20 @@ byte views above; the adoption gate remains zero differing reference bytes.
 
 The native permuter is useful when the owner extent, behavior, control flow,
 types, declarations, and major expression boundaries are already credible. It
-can explore local expression, statement, and declaration order; it is not a
-decompiler.
+is a bounded manual search tool, not a decompiler or a second C frontend.
 
 ```sh
 tools/compiler/target/release/compiler permute --help
 ```
 
-Use explicit `PERM_*` choices or semantics-preserving AST mutations. Mixed
-guided and unguided seeds are reasonable after a heat-guided run stagnates.
-Keep every run under ignored output. Each strict improvement is published
-immediately as `best.c` (or `best-UNVERIFIED.c` in classic mode) with a running
-`report.json`, so a long or interrupted run does not hide its best source until
-shutdown. Read a winner's complete diff and rescore it independently before
-harvesting it. When a search has a frozen local invariant, apply that admission
-check to every retained winner; a lower internal score that breaks the invariant
-is a rejected candidate. A lower internal score is not proof of semantic
-correctness.
+Mark evidence-backed choices with `PERM_GENERAL(...)` or a bounded integer
+range with `PERM_INT(low, high)`. The tool enumerates those choices in a
+deterministic seed-rotated order, compiles them in parallel, and writes a fresh
+`best.c` plus `report.json` beneath ignored output. Read a winner's complete
+diff and rescore it independently before harvesting it. When a search has a
+frozen local invariant, apply that admission check to every retained winner; a
+lower internal score that breaks the invariant is a rejected candidate. A
+lower internal score is not proof of semantic correctness.
 
 ### 7. Adopt only exact work
 
@@ -557,6 +554,9 @@ those hosts.
 
 Tooling is Rust. Repository code describes GBA and reconstruction-specific
 behavior.
+
+Rust uses the standard `rustfmt` defaults. `make lint` checks every tracked
+Rust source and test; do not trade source size for formatter exceptions.
 
 `make tooling-size` enforces Alchemy's portable-toolkit budget.
 

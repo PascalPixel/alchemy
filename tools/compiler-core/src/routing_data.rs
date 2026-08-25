@@ -37,7 +37,10 @@ pub static FIXED_R3_SOURCES: &[&str] = &["080fb6ec", "080fb700", "080fb768", "08
 // volatile C adds memory traffic and changes the delay.
 pub static OPTIMIZE_O1_SOURCES: &[&str] = &["080049e8", "08021e28", "080a8904"];
 pub static OPTIMIZE_O3_OVERLAY_SOURCES: &[&str] = &["games/gs1/src/resource_3a7_c_02000944.c"];
-pub static NO_INTERWORK_SOURCES: &[&str] = &["0200142c", "0200143c", "0200144c", "02001564", "02001750", "02001760", "02005ac0", "02005ad0", "02005bd8", "02005be8", "02005bf8", "02005dd4", "02005de4", "02005df4"];
+pub static NO_INTERWORK_SOURCES: &[&str] = &[
+    "0200142c", "0200143c", "0200144c", "02001564", "02001750", "02001760", "02005ac0", "02005ad0",
+    "02005bd8", "02005be8", "02005bf8", "02005dd4", "02005de4", "02005df4",
+];
 pub static NO_INTERWORK_OVERLAY_SOURCES: &[&str] = &[
     "games/gs1/src/resource_3a7_c_02001770.c",
     "games/gs1/src/resource_3bf_c_02005e04.c",
@@ -110,16 +113,30 @@ pub static CALLEE_SAVED_R4_SOURCES: &[&str] = &["08006b84"];
 // lets the compiler keep live.
 pub static NO_STRICT_ALIASING_SOURCES: &[&str] = &["0801c34c"];
 pub static UNSCHEDULED_SOURCES: &[&str] = &["08006b84", "080fb768", "080fb77c"];
-pub static UNSCHEDULED_OVERLAY_SOURCES: &[&str] = &["games/gs1/src/resource_39f_c_02000ab0.c", "games/gs1/src/resource_3b2_c_02000ab0.c", "games/gs1/src/resource_3c4_c_02000ab0.c", "games/gs1/src/resource_3c5_c_02000ab0.c", "games/gs1/src/resource_3cb_c_02001050.c"];
+pub static UNSCHEDULED_OVERLAY_SOURCES: &[&str] = &[
+    "games/gs1/src/resource_39f_c_02000ab0.c",
+    "games/gs1/src/resource_3b2_c_02000ab0.c",
+    "games/gs1/src/resource_3c4_c_02000ab0.c",
+    "games/gs1/src/resource_3c5_c_02000ab0.c",
+    "games/gs1/src/resource_3cb_c_02001050.c",
+];
 pub static NO_CSE_FOLLOW_SOURCES: &[&str] = &["0800f9f4", "08019d2c", "080b2b0c", "080bbb0c"];
-pub static NO_GCSE_SOURCES: &[&str] = &["080981b0", "08098c08", "080a45cc", "080b2720", "080b3284", "080d40ec"];
+pub static NO_GCSE_SOURCES: &[&str] = &[
+    "080981b0", "08098c08", "080a45cc", "080b2720", "080b3284", "080d40ec",
+];
 pub static NO_EXPENSIVE_SOURCES: &[&str] = &["08092878"];
 pub static NO_STRENGTH_REDUCE_SOURCES: &[&str] = &["080a9d3c", "02004058", "02005d68"];
 pub static NO_REGMOVE_SOURCES: &[&str] = &["08006088", "080a3d9c", "080ba918"];
 pub static NO_OPTIMIZE_SIBLING_CALLS_SOURCES: &[&str] = &["080b110c"];
 pub static OPTIMIZE_O1_OVERLAY_SOURCES: &[&str] = &["games/gs1/src/resource_3ab_c_020007f4.c"];
-pub static NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES: &[&str] = &["games/gs1/src/resource_383_c_0200082c.c"];
-pub static NO_CSE_SKIP_BLOCKS_OVERLAY_SOURCES: &[&str] = &["games/gs1/src/resource_3b1_c_02000cc8.c", "games/gs1/src/resource_3b1_c_02000b84.c", "games/gs1/src/resource_372_c_02000278.c", "games/gs1/src/resource_398_c_02000304.c"];
+pub static NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES: &[&str] =
+    &["games/gs1/src/resource_383_c_0200082c.c"];
+pub static NO_CSE_SKIP_BLOCKS_OVERLAY_SOURCES: &[&str] = &[
+    "games/gs1/src/resource_3b1_c_02000cc8.c",
+    "games/gs1/src/resource_3b1_c_02000b84.c",
+    "games/gs1/src/resource_372_c_02000278.c",
+    "games/gs1/src/resource_398_c_02000304.c",
+];
 pub static FIXED_R7_OVERLAY_SOURCES: &[&str] = &["games/gs1/src/resource_372_c_02000ec4.c"];
 pub static NO_STRICT_ALIASING_OVERLAY_SOURCES: &[&str] = &[
     // Reference reloads through a differently-typed pointer where strict
@@ -240,7 +257,13 @@ pub static NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES: &[&str] = &[
     "games/gs1/src/resource_3a7_c_020004d0.c",
     "games/gs1/src/resource_3a7_c_0200048c.c",
 ];
-pub static NO_EXPENSIVE_OVERLAY_SOURCES: &[&str] = &["games/gs1/src/resource_370_c_02000384.c", "games/gs1/src/resource_3b2_c_020012b4.c", "games/gs1/src/resource_398_c_02000214.c", "games/gs1/src/resource_398_c_02000538.c", "games/gs1/src/resource_3a2_c_02000924.c"];
+pub static NO_EXPENSIVE_OVERLAY_SOURCES: &[&str] = &[
+    "games/gs1/src/resource_370_c_02000384.c",
+    "games/gs1/src/resource_3b2_c_020012b4.c",
+    "games/gs1/src/resource_398_c_02000214.c",
+    "games/gs1/src/resource_398_c_02000538.c",
+    "games/gs1/src/resource_3a2_c_02000924.c",
+];
 pub static NO_GCSE_OVERLAY_SOURCES: &[&str] = &[
     "games/gs1/recon/en/overlays/resource_3c2_c_0200006c.c",
     "games/gs1/src/resource_3c2_c_0200006c.c",
@@ -252,20 +275,33 @@ pub static NO_GCSE_OVERLAY_SOURCES: &[&str] = &[
     "games/gs1/src/resource_3cd_c_020000c0.c",
 ];
 pub static AGBCC_SOURCES: &[&str] = &[
-    "080fb73c", "080fb728", "080fb714", "080fb75c", "080fb750", "08006878", "080069a4", "08006a00", "08006a78", "08006af8", "08006ba8", "08006c24", "08006c68", "08006cdc", "08006d50", "08006dec", "08006e24", "08006f48", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220",
-    "080f9a30", "080f9a50", "080fada0", "080fadf0", "080fa1fc", "080fa264", "080fa2a0", "080fa324", "080fa350", "080fa39c", "080fa3f0", "080fa424", "080fa458", "080fa490", "080fa514", "080fa55c", "080fa6a0", "080fa83c", "080fa8d4", "080fa928", "080fa9a4", "080fa9e0", "080fab3c", "080fab7c",
-    "080fac44", "080facf8", "080fb2cc", "080fb334", "080fb3a8", "080fb430", "080fb4a4", "080fb670", "080fb6a4", "08006910", "080fa280", "080fa4cc", "080fa798", "080faa58", "080fae58", "080fb2a4", "080fb410", "080fb518",
+    "080fb73c", "080fb728", "080fb714", "080fb75c", "080fb750", "08006878", "080069a4", "08006a00",
+    "08006a78", "08006af8", "08006ba8", "08006c24", "08006c68", "08006cdc", "08006d50", "08006dec",
+    "08006e24", "08006f48", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220",
+    "080f9a30", "080f9a50", "080fada0", "080fadf0", "080fa1fc", "080fa264", "080fa2a0", "080fa324",
+    "080fa350", "080fa39c", "080fa3f0", "080fa424", "080fa458", "080fa490", "080fa514", "080fa55c",
+    "080fa6a0", "080fa83c", "080fa8d4", "080fa928", "080fa9a4", "080fa9e0", "080fab3c", "080fab7c",
+    "080fac44", "080facf8", "080fb2cc", "080fb334", "080fb3a8", "080fb430", "080fb4a4", "080fb670",
+    "080fb6a4", "08006910", "080fa280", "080fa4cc", "080fa798", "080faa58", "080fae58", "080fb2a4",
+    "080fb410", "080fb518",
 ];
-pub static GS2_AGBCC_SOURCES: &[&str] = &["081c2168", "081c2640", "081c28e0", "081c2a3c", "081c2a8c", "081c2f68", "081c2fd0", "081c3044", "081c3340"];
+pub static GS2_AGBCC_SOURCES: &[&str] = &[
+    "081c2168", "081c2640", "081c28e0", "081c2a3c", "081c2a8c", "081c2f68", "081c2fd0", "081c3044",
+    "081c3340",
+];
 pub static AGBCC_LITERAL_BEFORE_SHIFT_SOURCES: &[&str] = &["080fb670"];
-pub static AGBCC_OPTIMIZE_O1_SOURCES: &[&str] = &["08006878", "08006a00", "08006ba8", "08006c68", "08006cdc", "08006d50", "08006e24", "08006f84", "08007028", "08007098", "0800711c", "080071a8", "08007220", "080fa514"];
+pub static AGBCC_OPTIMIZE_O1_SOURCES: &[&str] = &[
+    "08006878", "08006a00", "08006ba8", "08006c68", "08006cdc", "08006d50", "08006e24", "08006f84",
+    "08007028", "08007098", "0800711c", "080071a8", "08007220", "080fa514",
+];
 pub static AGBCC_NO_EXPENSIVE_SOURCES: &[&str] = &["08006910", "08006a78"];
 pub static AGBCC_NO_GCSE_SOURCES: &[&str] = &["080faa58"];
 pub static AGBCC_NO_REGMOVE_SOURCES: &[&str] = &["08006910"];
 pub static AGBCC_COMPARE_ONLY_AND_TST_SOURCES: &[&str] = &["080f9a50"];
 pub static AGBCC_COMMUTATIVE_COPY_CONSTANT_SOURCES: &[&str] = &["080fa514"];
 pub static AGBCC_PROLOGUE_NEXT_HIGH_REG_SOURCES: &[&str] = &["080fb2cc", "080fb334", "080fb3a8"];
-pub static GS2_AGBCC_PROLOGUE_NEXT_HIGH_REG_SOURCES: &[&str] = &["081c2f68", "081c2fd0", "081c3044"];
+pub static GS2_AGBCC_PROLOGUE_NEXT_HIGH_REG_SOURCES: &[&str] =
+    &["081c2f68", "081c2fd0", "081c3044"];
 pub static AGBCC_TRACK_NARROW_VALUE_R1_SOURCES: &[&str] = &["080fa280", "080fa4cc"];
 pub static GS2_AGBCC_TRACK_NARROW_VALUE_R1_SOURCES: &[&str] = &["081c2168"];
 
@@ -273,4 +309,6 @@ pub static NO_RERUN_CSE_AFTER_LOOP_SOURCES: &[&str] = &["08006088", "0808c30c", 
 
 pub static OPTIMIZE_OS_SOURCES: &[&str] = &["08019d2c"];
 
-pub static SCHED2_OFF_THUMB_SOURCES: &[&str] = &["08029274", "08011590", "0800307c", "08002f10", "08078320", "080f9a30"];
+pub static SCHED2_OFF_THUMB_SOURCES: &[&str] = &[
+    "08029274", "08011590", "0800307c", "08002f10", "08078320", "080f9a30",
+];

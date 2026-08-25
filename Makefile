@@ -22,7 +22,7 @@ CORE_TESTS := compiler-core candidate-compiler candidate-show permuter \
 PORTABLE_TOOLS := alignment-tail asset-paths cache-entry canonical-json \
 	generated-files no-asm-c build-stage build-claimed build-asm build-full \
 	compiler compiler-core candidate-compiler candidate-show permuter \
-	shape-sweep dashboard-server overlay overlay-disasm overlay-show \
+	dashboard-server overlay overlay-disasm overlay-show \
 	overlay-adopt overlay-call-targets check check-commit-progress \
 	check-publication check-unmatchable core-retained-audit coverage-map \
 	full-c-progress integrate-matches route-dump decomp-targets
@@ -173,7 +173,9 @@ tooling-size:
 	printf 'portable tooling ok: %s / %s lines\n' "$$lines" '$(TOOLING_LINE_LIMIT)'
 
 lint: standard-check pristine-options-check
-	@rustfmt --edition 2021 --check $$(find $(TOOLS) -path '*/src/*.rs' -type f -not -path '*/target/*')
+	@set -e; git ls-files --cached --others --exclude-standard '*.rs' | while IFS= read -r source; do \
+		test ! -f "$$source" || rustfmt --edition 2021 --check "$$source"; \
+	done
 	$(CHECK) no-asm
 
 test: lint tooling-size tool-tests

@@ -1,6 +1,11 @@
 use std::path::{Path, PathBuf};
 pub fn root() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).parent().expect("crate dir has a parent").parent().expect("tools has a parent").to_path_buf()
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .expect("crate dir has a parent")
+        .parent()
+        .expect("tools has a parent")
+        .to_path_buf()
 }
 pub fn basename(path: &str) -> &str {
     let trimmed = path.trim_end_matches('/');

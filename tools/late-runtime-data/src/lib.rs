@@ -100,7 +100,11 @@ struct RawComponent {
     decoded_bytes: Option<i64>,
 }
 
-const EXPECTED_RANGES: [(&str, u32, u32); 3] = [("range_080f38bc", 0x080f_38bc, 0x080f_4000), ("range_080f53ce", 0x080f_53ce, 0x080f_6000), ("range_080f86f8", 0x080f_86f8, 0x080f_9000)];
+const EXPECTED_RANGES: [(&str, u32, u32); 3] = [
+    ("range_080f38bc", 0x080f_38bc, 0x080f_4000),
+    ("range_080f53ce", 0x080f_53ce, 0x080f_6000),
+    ("range_080f86f8", 0x080f_86f8, 0x080f_9000),
+];
 const EXPECTED_COMPONENTS: [(&str, &str); 18] = [
     ("haikei_stream", "general_lz_stream"),
     ("haichi_hyou", "u8_table"),
@@ -123,12 +127,15 @@ const EXPECTED_COMPONENTS: [(&str, &str); 18] = [
 ];
 
 fn address(text: &str) -> Result<u32> {
-    u32::from_str_radix(text.strip_prefix("0x").ok_or("invalid address")?, 16).map_err(|_| "invalid address".into())
+    u32::from_str_radix(text.strip_prefix("0x").ok_or("invalid address")?, 16)
+        .map_err(|_| "invalid address".into())
 }
 
 pub fn read_late_runtime_catalog(path: &Path) -> Result<LateRuntimeCatalog> {
-    let raw: Document = serde_json::from_slice(&std::fs::read(path).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?;
-    if raw.format != 1 || raw.kind != "golden-sun-late-runtime-data-layout" || raw.ranges.len() != 3 {
+    let raw: Document = serde_json::from_slice(&std::fs::read(path).map_err(|e| e.to_string())?)
+        .map_err(|e| e.to_string())?;
+    if raw.format != 1 || raw.kind != "golden-sun-late-runtime-data-layout" || raw.ranges.len() != 3
+    {
         return Err("unsupported late runtime catalog".into());
     }
     let mut all = Vec::new();
@@ -144,15 +151,37 @@ pub fn read_late_runtime_catalog(path: &Path) -> Result<LateRuntimeCatalog> {
             let kind = ComponentKind::parse(&item.kind).ok_or("late runtime component differs")?;
             let component_start = address(&item.address)?;
             let end = address(&item.end)?;
-            if end <= component_start || matches!(kind, ComponentKind::Table(_)) && item.count.unwrap_or(0) * i64::from(kind.width()) != i64::from(end - component_start) {
+            if end <= component_start
+                || matches!(kind, ComponentKind::Table(_))
+                    && item.count.unwrap_or(0) * i64::from(kind.width())
+                        != i64::from(end - component_start)
+            {
                 return Err("late runtime component extent differs".into());
             }
             all.push((item.name.clone(), item.kind.clone()));
-            components.push(LateRuntimeComponent { name: item.name, kind, address: component_start, end, role: item.role, count: item.count, decoded_bytes: item.decoded_bytes });
+            components.push(LateRuntimeComponent {
+                name: item.name,
+                kind,
+                address: component_start,
+                end,
+                role: item.role,
+                count: item.count,
+                decoded_bytes: item.decoded_bytes,
+            });
         }
-        ranges.push(LateRuntimeRange { name: range.name, address: start, end, components });
+        ranges.push(LateRuntimeRange {
+            name: range.name,
+            address: start,
+            end,
+            components,
+        });
     }
-    if all.len() != EXPECTED_COMPONENTS.len() || all.iter().zip(EXPECTED_COMPONENTS).any(|(actual, expected)| actual.0 != expected.0 || actual.1 != expected.1) {
+    if all.len() != EXPECTED_COMPONENTS.len()
+        || all
+            .iter()
+            .zip(EXPECTED_COMPONENTS)
+            .any(|(actual, expected)| actual.0 != expected.0 || actual.1 != expected.1)
+    {
         return Err("late runtime component layout differs".into());
     }
     Ok(LateRuntimeCatalog { ranges })

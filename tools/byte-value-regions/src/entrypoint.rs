@@ -12,14 +12,29 @@ const USAGE: &str = "usage: byte-value-regions build-region-stdout SOURCE ADDRES
 enum Action {
     Help,
     SelfTest,
-    Build { source: String, address: String, size: String },
+    Build {
+        source: String,
+        address: String,
+        size: String,
+    },
 }
 
 fn parse_args(args: &[String]) -> Result<Action, String> {
     match args {
         [arg] if arg == "-h" || arg == "--help" => Ok(Action::Help),
         [arg] if arg == "--self-test" => Ok(Action::SelfTest),
-        [command, source, address, size] if command == "build-region-stdout" && !source.starts_with('-') && !address.starts_with('-') && !size.starts_with('-') => Ok(Action::Build { source: source.clone(), address: address.clone(), size: size.clone() }),
+        [command, source, address, size]
+            if command == "build-region-stdout"
+                && !source.starts_with('-')
+                && !address.starts_with('-')
+                && !size.starts_with('-') =>
+        {
+            Ok(Action::Build {
+                source: source.clone(),
+                address: address.clone(),
+                size: size.clone(),
+            })
+        }
         _ => Err(USAGE.to_string()),
     }
 }
@@ -39,7 +54,12 @@ pub fn entry(arguments: &[String]) {
 fn run(arguments: &[String]) -> Result<(), String> {
     let args: Vec<String> = arguments.to_vec();
     let action = parse_args(&args)?;
-    let Action::Build { source, address, size } = action else {
+    let Action::Build {
+        source,
+        address,
+        size,
+    } = action
+    else {
         if matches!(action, Action::Help) {
             println!("{USAGE}");
             return Ok(());
@@ -49,8 +69,13 @@ fn run(arguments: &[String]) -> Result<(), String> {
     };
     let address = parse_u32(&address)?;
     let size: usize = size.parse().map_err(|_| format!("invalid size: {size}"))?;
-    let regions = build_byte_value_regions(Path::new(&source)).map_err(|error| error.to_string())?;
-    let region = regions.iter().find(|region| region.address == address).filter(|region| region.data.len() == size).ok_or_else(|| "byte-value region differs from manifest".to_string())?;
+    let regions =
+        build_byte_value_regions(Path::new(&source)).map_err(|error| error.to_string())?;
+    let region = regions
+        .iter()
+        .find(|region| region.address == address)
+        .filter(|region| region.data.len() == size)
+        .ok_or_else(|| "byte-value region differs from manifest".to_string())?;
     eprintln!(
         "{}",
         json!({
@@ -58,6 +83,8 @@ fn run(arguments: &[String]) -> Result<(), String> {
             "region_address": format!("0x{address:08x}"),
         })
     );
-    std::io::stdout().write_all(&region.data).map_err(|error| error.to_string())?;
+    std::io::stdout()
+        .write_all(&region.data)
+        .map_err(|error| error.to_string())?;
     Ok(())
 }

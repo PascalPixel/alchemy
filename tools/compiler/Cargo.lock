@@ -101,6 +101,7 @@ dependencies = [
  "candidate-show",
  "compiler-core",
  "dashboard-server",
+ "no-asm-c",
  "objdiff-core",
  "overlay-disasm",
  "permuter",
@@ -382,6 +383,16 @@ checksum = "fbeff6bd154a309b2ada5639b2661ca6ae4599b34e8487dc276d2cd637da2d76"
 dependencies = [
  "bitflags",
  "itoa",
+]
+
+[[package]]
+name = "no-asm-c"
+version = "0.1.0"
+dependencies = [
+ "compiler-core",
+ "decomp-targets",
+ "regex",
+ "tempfile",
 ]
 
 [[package]]

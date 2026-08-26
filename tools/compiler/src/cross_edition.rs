@@ -23,7 +23,7 @@ const EDITIONS: [&str; 6] = ["ja", "en", "de", "es", "fr", "it"];
 const OVERLAY_BASE: u64 = 0x0200_0000;
 const OVERLAY_FIRST: usize = 0x36f;
 const OVERLAY_LAST: usize = 0x3ce;
-const CORRESPONDENCE_SCHEMA_VERSION: u32 = 3;
+const CORRESPONDENCE_SCHEMA_VERSION: u32 = 4;
 const CORPUS_EDITION_BUILD_SCHEMA_VERSION: u32 = 3;
 const USAGE: &str = "usage: compiler cross-edition ([--calls] [--json] [--rom-dir DIR] [--object FILE] [--edition-build FILE] <8-digit-owner> | [--json] [--rom-dir DIR] --span BYTES <resource_xxx:02xxxxxx> | --all [--rom-dir DIR] [--object-dir DIR] [--write FILE] [--edition-build FILE] | --all-overlays [--rom-dir DIR] [--write FILE] [--edition-build FILE])";
 #[derive(Debug, Serialize)]
@@ -63,6 +63,7 @@ struct CorpusReport {
     regional_core_owners: usize,
     regional_core_bytes: usize,
     unresolved_owners: usize,
+    compliance_excluded_owners: usize,
     #[serde(skip_serializing_if = "Option::is_none")]
     resource_tables: Option<BTreeMap<String, String>>,
     location_method_codes: BTreeMap<&'static str, &'static str>,
@@ -1315,6 +1316,33 @@ fn translation_unit(owner: &str) -> Result<Option<&'static TranslationUnit>, Str
     let source_owner = SourceOwner::parse(&format!("main:{owner}"))?;
     Ok(registers()?.units.unit_for_game_owner("gs1", source_owner))
 }
+/// Refuse to count a corpus probe whose source is unregistered or contains a
+/// forbidden construct; the correspondence record must never rest on
+/// nonordinary or unmapped C. Grouped unit members resolve through their
+/// declared unit source, exactly as the production compile does.
+fn compliance_error_for(owner: SourceOwner) -> Result<Option<String>, String> {
+    let registers = registers()?;
+    let source = match registers
+        .units
+        .unit_for_game_owner("gs1", owner)
+        .map(|unit| compiler_core::routing::root().join(&unit.source))
+    {
+        Some(path) => path,
+        None => match registers.sources.registered_source_path(owner) {
+            Ok(path) => path,
+            Err(_) => return Ok(Some("compliance: unregistered owner".into())),
+        },
+    };
+    let text =
+        fs::read_to_string(&source).map_err(|error| format!("{}: {error}", source.display()))?;
+    let forbidden = no_asm_c::find_forbidden(&source.to_string_lossy(), &text);
+    Ok(forbidden.first().map(|finding| {
+        format!(
+            "compliance: nonordinary C ({} at line {})",
+            finding.token, finding.line
+        )
+    }))
+}
 fn complete_unit_symbols(unit: &TranslationUnit, mut defined: impl FnMut(&str) -> bool) -> bool {
     unit.symbols()
         .all(|(address, _, _)| defined(&format!("Func_{address:08x}")))
@@ -1380,6 +1408,10 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
     let mut owner_symbol_bytes = 0;
     for (index, owner) in owner_names.iter().enumerate() {
         let object = &objects[owner];
+        if let Some(error) = compliance_error_for(SourceOwner::parse(&format!("main:{owner}"))?)? {
+            failures.insert(owner.clone(), error);
+            continue;
+        }
         if let Ok((size, _, _, _, _, _)) = relocation_mask(&object, owner) {
             owner_symbol_bytes += size;
         }
@@ -1402,7 +1434,11 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
     }
     remove_order_conflicts(&mut reports, &mut failures, "global")?;
     let location_anchors = location_anchors(&reports)?;
-    let retry_names = failures.keys().cloned().collect::<Vec<_>>();
+    let retry_names = failures
+        .iter()
+        .filter(|(_, error)| !error.starts_with("compliance:"))
+        .map(|(owner, _)| owner.clone())
+        .collect::<Vec<_>>();
     for (index, owner) in retry_names.iter().enumerate() {
         let hints = nearest_location_hints(
             LocationKey {
@@ -1528,6 +1564,10 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
             .count(),
         regional_core_bytes,
         unresolved_owners: unresolved.len(),
+        compliance_excluded_owners: unresolved
+            .iter()
+            .filter(|owner| owner.error.starts_with("compliance:"))
+            .count(),
         resource_tables: None,
         location_method_codes: location_method_codes(),
         editions,
@@ -1565,6 +1605,10 @@ fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String>
     let mut matches = BTreeMap::new();
     let mut failures = BTreeMap::new();
     for (index, owner) in owner_list.iter().enumerate() {
+        if let Some(error) = compliance_error_for(SourceOwner::parse(&owner.name)?)? {
+            failures.insert(owner.name.clone(), error);
+            continue;
+        }
         match analyze_overlay_owner(owner, &decoded, None) {
             Ok(found) => {
                 matches.insert(owner.name.clone(), found);
@@ -1584,7 +1628,11 @@ fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String>
     }
     remove_order_conflicts(&mut matches, &mut failures, "global")?;
     let global_hints = location_anchors(&matches)?;
-    let retry = failures.keys().cloned().collect::<Vec<_>>();
+    let retry = failures
+        .iter()
+        .filter(|(_, error)| !error.starts_with("compliance:"))
+        .map(|(owner, _)| owner.clone())
+        .collect::<Vec<_>>();
     let by_name = owner_list
         .iter()
         .map(|owner| (owner.name.as_str(), owner))
@@ -1718,6 +1766,10 @@ fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String>
             .count(),
         regional_core_bytes,
         unresolved_owners: unresolved.len(),
+        compliance_excluded_owners: unresolved
+            .iter()
+            .filter(|owner| owner.error.starts_with("compliance:"))
+            .count(),
         resource_tables: Some(resource_tables),
         location_method_codes: location_method_codes(),
         editions,
@@ -2838,7 +2890,7 @@ mod tests {
         .unwrap();
         assert_eq!(unresolved["en_owner"], "resource_36f:02000030");
         assert!(unresolved.get("resource").is_none());
-        assert_eq!(CORRESPONDENCE_SCHEMA_VERSION, 3);
+        assert_eq!(CORRESPONDENCE_SCHEMA_VERSION, 4);
         assert_eq!(CORPUS_EDITION_BUILD_SCHEMA_VERSION, 3);
         assert_eq!(location_method_codes()["a"], "global_anchor");
     }

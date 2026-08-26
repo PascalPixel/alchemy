@@ -42,9 +42,7 @@ void RunBattleEffect15(void)
     struct EffectPosition position;
     u8 *particle;
     u8 *entry;
-    s16 *timer;
     u8 stopped;
-    s32 zero;
     u32 index;
 
     Func_080916b0();
@@ -60,10 +58,8 @@ void RunBattleEffect15(void)
     Func_080f9010(0xdc);
     Func_08009240(main_object, 0);
     Func_08009080(main_object, 3);
-    timer = &effect->timer;
-    effect->callback = Func_0809b0b0;
-    zero = 0;
-    *timer = zero;
+    *(void (**)(void))(main_object + 108) = Func_0809b0b0;
+    effect->timer = 0;
     Func_080030f8(70);
     Func_080091e0(main_object, 0);
     *(u8 *)(main_object + 85) = 0;

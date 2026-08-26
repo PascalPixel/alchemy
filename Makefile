@@ -35,9 +35,9 @@ OWNER_INVENTORY = out/$(TARGET)/full/rebuilt.owner-inventory.json
 HISTORICAL_TARGETS := gs1-ja gs1-en gs1-de gs1-es gs1-fr gs1-it \
 	gs2-ja gs2-en gs2-de gs2-es gs2-fr gs2-it
 CANDIDATE_SINGLE_OWNERS := \
-	08090824=initialize_field_effect_state.c \
-	08091174=initialize_field_palette_buffers.c \
-	080944ec=arm_field_scroll_hblank_dma.c \
+	08090824=initialize_display_transition_state.c \
+	08091174=initialize_battle_effect_buffers.c \
+	080944ec=arm_display_scroll_hblank_dma.c \
 	080b5ad4=initialize_battle_tile_pattern.c \
 	080b7f20=project_battle_object_position.c \
 	080b81c8=initialize_battle_object_motion.c \

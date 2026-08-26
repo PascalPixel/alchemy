@@ -1,20 +1,12 @@
 //! Full-C reporting over the coverage map's shared audited interval model.
-#[allow(dead_code)]
-#[path = "../../coverage-map/src/model.rs"]
-mod model;
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
-use model::{bytes, intersect, normalize, Span};
+use coverage_map::model::{bytes, intersect, normalize, Span};
+use coverage_map::pipeline::{overlay_ids, overlay_name, overlay_owners};
+use coverage_map::tree::{root, work_tree_at};
 use serde_json::Value;
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 const DEFAULT_TARGET: &str = "gs1-en";
-fn root() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .and_then(Path::parent)
-        .expect("crate lives two levels below the repository")
-        .to_path_buf()
-}
 fn read(path: &Path) -> Result<String, String> {
     std::fs::read(path)
         .map(|bytes| String::from_utf8_lossy(&bytes).into_owned())
@@ -329,114 +321,35 @@ fn main_exact(root: &Path, target: &str, namespace: &Namespace) -> Result<Vec<Sp
         .collect();
     owned(&spans, namespace)
 }
-fn hex(value: &str) -> Option<i64> {
-    i64::from_str_radix(value.trim().trim_start_matches("0x"), 16).ok()
-}
-fn space(line: &str) -> Option<i64> {
-    let value = line.trim().strip_prefix(".space")?.trim();
-    if value.starts_with('-') {
-        return None;
-    }
-    value.strip_prefix("0x").map_or_else(
-        || value.parse().ok(),
-        |value| i64::from_str_radix(value, 16).ok(),
-    )
-}
-fn owner_label(line: &str) -> Option<i64> {
-    let value = line.trim().strip_prefix("AlchemyC_")?.trim_end_matches(':');
-    (value.len() == 8 && value.chars().all(|c| c.is_ascii_hexdigit()))
-        .then(|| hex(value))
-        .flatten()
-}
-fn local_label(line: &str) -> bool {
-    line.trim().starts_with(".L_") && line.trim_end().ends_with(':')
-}
-fn overlay_id(file: &str) -> Option<String> {
-    Some(format!(
-        "resource_{}",
-        file.strip_prefix("resource_")?.strip_suffix("_overlay.s")?
-    ))
-}
 fn overlay_source_spans(
     root: &Path,
     file: &str,
     namespace: &Namespace,
 ) -> Result<Vec<Span>, String> {
-    let Some(id) = overlay_id(file) else {
+    let Some(id) = overlay_name(file) else {
         return Ok(Vec::new());
     };
-    let source = read(&root.join("games/gs1/assets/code").join(file))?;
     let source_paths = SourcePaths::load(root)?;
-    let mut owners: Vec<Vec<Span>> = Vec::new();
-    let mut current: Option<Vec<Span>> = None;
-    let mut cursor = 0;
-    for line in source.lines() {
-        if let Some(address) = owner_label(line) {
-            if let Some(spans) = current.take() {
-                if !spans.is_empty() {
-                    owners.push(spans);
-                }
-            }
-            cursor = address;
-            current = Some(Vec::new());
-            continue;
-        }
-        if current.is_some() && (line.trim().is_empty() || local_label(line)) {
-            continue;
-        }
-        if let Some(size) = space(line) {
-            if let Some(spans) = current.as_mut() {
-                spans.push(Span::new(cursor, cursor + size));
-                cursor += size;
-                continue;
-            }
-        }
-        if !line.trim().is_empty() {
-            if let Some(spans) = current.take() {
-                if !spans.is_empty() {
-                    owners.push(spans);
-                }
-            }
-        }
-    }
-    if let Some(spans) = current {
-        if !spans.is_empty() {
-            owners.push(spans);
-        }
-    }
+    let tree = work_tree_at(root.to_path_buf());
     let mut exact = Vec::new();
-    for spans in owners {
-        let Some(entry) = spans.first().map(|span| span.start) else {
-            continue;
-        };
-        let owner = SourceOwner::parse(&format!("{id}:{entry:08x}"))?;
-        let path = source_paths.source_path(owner);
+    for owner in overlay_owners(&tree, file) {
+        let source_owner = SourceOwner::parse(&format!("{id}:{:08x}", owner.entry))?;
+        let path = source_paths.source_path(source_owner);
         if path.exists() && canonical(&read(&path)?) {
-            exact.extend(spans);
+            exact.extend(owner.spans);
         }
     }
     owned(&exact, namespace)
 }
 fn overlay_exact(root: &Path, value: &Inventory) -> Result<BTreeMap<String, Vec<Span>>, String> {
-    let mut files = std::fs::read_dir(root.join("games/gs1/assets/code"))
-        .map_err(|error| format!("cannot list overlay assembly: {error}"))?
-        .filter_map(|item| {
-            item.ok()
-                .map(|item| item.file_name().to_string_lossy().into_owned())
-        })
-        .filter(|name| name.ends_with("_overlay.s"))
-        .collect::<Vec<_>>();
-    files.sort();
+    let tree = work_tree_at(root.to_path_buf());
     let by_id: BTreeMap<_, _> = value
         .overlays
         .iter()
         .map(|item| (item.id.as_str(), item))
         .collect();
     let mut result = BTreeMap::new();
-    for file in files {
-        let Some(id) = overlay_id(&file) else {
-            continue;
-        };
+    for (id, file) in overlay_ids(&tree) {
         let Some(namespace) = by_id.get(id.as_str()) else {
             continue;
         };

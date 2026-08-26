@@ -103,6 +103,7 @@ dependencies = [
  "dashboard-server",
  "extract-resource",
  "objdiff-core",
+ "overlay-disasm",
  "permuter",
  "regex",
  "serde",

@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080060e8",
+  "name": "SerialRuntime_PrepareSendPacket",
+  "status": "retained-assembly",
+  "owner_bytes": 116,
+  "translation_unit": "serial-runtime",
+  "compiler_route": "canonical-gcc296",
+  "canonical_complete_unit": {
+    "candidate_bytes": 120,
+    "reference_bytes": 116,
+    "differing_halfwords": 44,
+    "wrong_instructions": 19,
+    "matched_prefix": 7
+  },
+  "best_ordinary_c_shape": {
+    "shape": "The existing direct three-register DMA macro, using source, destination, and control writes in hardware order.",
+    "candidate_bytes": 120,
+    "reference_bytes": 116,
+    "differing_halfwords": 40,
+    "wrong_instructions": 19,
+    "matched_prefix": 11,
+    "exact_unit_siblings_preserved": true
+  },
+  "stale_override_audit": {
+    "flags": ["-fno-regmove", "-fno-rerun-cse-after-loop"],
+    "owner_result": {
+      "candidate_bytes": 120,
+      "reference_bytes": 116,
+      "differing_halfwords": 44,
+      "wrong_instructions": 19
+    },
+    "exact_owner_regressions": {
+      "0x08005e88": {"candidate_bytes": 86, "differing_halfwords": 2},
+      "0x08006240": {"candidate_bytes": 284, "differing_halfwords": 73},
+      "0x08006384": {"candidate_bytes": 52, "differing_halfwords": 27},
+      "0x08006458": {"candidate_bytes": 48, "differing_halfwords": 3},
+      "0x08006488": {"candidate_bytes": 48, "differing_halfwords": 3}
+    },
+    "decision": "The flags do not improve this owner and break exact serial-runtime siblings. The production route remains canonical GCC 2.96."
+  },
+  "bounded_source_shapes": [
+    "Aggregate DMA assignment, including nonvolatile destination and volatile-member views: 120/116 bytes and 44 differing halfwords.",
+    "Post-incremented scalar DMA pointer: 120/116 bytes and 47 differing halfwords; it emits individual single-register STMIA stores rather than the reference burst.",
+    "Local DMA aggregate copy: 128/116 bytes and 59 differing halfwords; it introduces a stack temporary and an LDMIA/STMIA pair.",
+    "Plain static-inline scalar and aggregate helpers: 124/116 with 58 differing halfwords and 120/116 with 51 differing halfwords respectively.",
+    "Direct DMA macro: 120/116 bytes and 40 differing halfwords; it is the closest ordinary-C form but still emits three STR instructions."
+  ],
+  "remaining": "The reference's 12-byte DMA write is a three-register STMIA followed by base restoration. Across the bounded ordinary-C shapes, canonical GCC 2.96 either emits scalar stores, individual post-increment stores, or a block-copy LDMIA/STMIA pair. No source shape reached zero linked differences, so the structured assembly remains installed.",
+  "notes": [
+    "The owner was remeasured only in the complete declared serial-runtime translation unit under canonical flags.",
+    "No inline assembly, fixed-register variable, compiler barrier, ABI escape, copied instruction bytes, compiler modification, or per-owner production flag override was used.",
+    "This record does not claim a permanent compiler classification; it preserves the measured boundary for a future source-family or compiler-evidence revisit."
+  ]
+}

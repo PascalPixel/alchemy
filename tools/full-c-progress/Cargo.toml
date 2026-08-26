@@ -11,4 +11,5 @@ path = "src/lib.rs"
 
 [dependencies]
 compiler-core = { path = "../compiler-core" }
+coverage-map = { path = "../coverage-map" }
 serde_json = { version = "1", features = ["preserve_order"] }

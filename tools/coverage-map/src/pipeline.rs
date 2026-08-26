@@ -89,6 +89,9 @@ fn hex(value: &str) -> Option<i64> {
 }
 fn space(line: &str) -> Option<i64> {
     let value = line.trim().strip_prefix(".space")?.trim();
+    if value.starts_with('-') {
+        return None;
+    }
     value
         .strip_prefix("0x")
         .map_or_else(|| value.parse().ok(), |v| i64::from_str_radix(v, 16).ok())
@@ -102,7 +105,7 @@ fn c_label(line: &str) -> Option<i64> {
 fn local_label(line: &str) -> bool {
     line.trim().starts_with(".L_") && line.trim_end().ends_with(':')
 }
-fn overlay_name(name: &str) -> Option<String> {
+pub fn overlay_name(name: &str) -> Option<String> {
     name.strip_prefix("resource_")?
         .strip_suffix("_overlay.s")
         .map(|s| format!("resource_{s}"))
@@ -116,7 +119,7 @@ pub struct Owner {
     pub entry: i64,
     pub spans: Vec<Span>,
 }
-fn overlay_owners(tree: &SourceTree, name: &str) -> Vec<Owner> {
+pub fn overlay_owners(tree: &SourceTree, name: &str) -> Vec<Owner> {
     let Some(source) = tree.read(&format!("games/gs1/assets/code/{name}")) else {
         return Vec::new();
     };
@@ -166,7 +169,7 @@ fn overlay_owners(tree: &SourceTree, name: &str) -> Vec<Owner> {
     }
     out
 }
-fn overlay_ids(tree: &SourceTree) -> Vec<(String, String)> {
+pub fn overlay_ids(tree: &SourceTree) -> Vec<(String, String)> {
     let mut names: Vec<_> = tree
         .list("games/gs1/assets/code")
         .into_iter()

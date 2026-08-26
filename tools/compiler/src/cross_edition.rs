@@ -9,6 +9,7 @@ use objdiff_core::{
     diff::{ArmArchVersion, DiffObjConfig, DiffSide},
     obj,
 };
+use overlay_disasm::compile_declared_overlay_unit;
 use serde::Serialize;
 use std::{
     collections::{BTreeMap, BTreeSet},
@@ -24,7 +25,7 @@ const OVERLAY_FIRST: usize = 0x36f;
 const OVERLAY_LAST: usize = 0x3ce;
 const CORRESPONDENCE_SCHEMA_VERSION: u32 = 3;
 const CORPUS_EDITION_BUILD_SCHEMA_VERSION: u32 = 3;
-const USAGE: &str = "usage: compiler cross-edition ([--calls] [--json] [--rom-dir DIR] [--object FILE] [--edition-build FILE] <8-digit-owner> | [--json] [--rom-dir DIR] --span BYTES <resource_xxx:02xxxxxx> | --all [--rom-dir DIR] [--object-dir DIR] [--write FILE] [--edition-build FILE] | --all-overlays [--rom-dir DIR] [--write FILE])";
+const USAGE: &str = "usage: compiler cross-edition ([--calls] [--json] [--rom-dir DIR] [--object FILE] [--edition-build FILE] <8-digit-owner> | [--json] [--rom-dir DIR] --span BYTES <resource_xxx:02xxxxxx> | --all [--rom-dir DIR] [--object-dir DIR] [--write FILE] [--edition-build FILE] | --all-overlays [--rom-dir DIR] [--write FILE] [--edition-build FILE])";
 #[derive(Debug, Serialize)]
 struct Report {
     schema_version: u32,
@@ -1168,11 +1169,6 @@ fn parse(args: &[String]) -> Result<Options, String> {
     if !all && !all_overlays && write.is_some() {
         return Err(format!("--write requires a corpus scan\n{USAGE}"));
     }
-    if all_overlays && edition_build.is_some() {
-        return Err(format!(
-            "--edition-build does not yet support overlay corpus scans\n{USAGE}"
-        ));
-    }
     if (all || all_overlays) && (object.is_some() || calls || json) {
         return Err(format!(
             "corpus scans omit single-object options and write JSON directly\n{USAGE}"
@@ -1627,6 +1623,9 @@ fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String>
         }
     }
     remove_order_conflicts(&mut matches, &mut failures, "locality")?;
+    if let Some(path) = &options.edition_build {
+        write_overlay_edition_build(path, &matches, &decoded)?;
+    }
     let mut owners = Vec::new();
     let mut edition_totals = edition_totals();
     let mut shared_core_bytes = 0;
@@ -1740,6 +1739,70 @@ fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String>
     } else {
         print!("{json}");
     }
+    Ok(())
+}
+fn write_overlay_edition_build(
+    path: &Path,
+    matches: &BTreeMap<String, OverlayMatch>,
+    decoded: &DecodedOverlays,
+) -> Result<(), String> {
+    let units = registers()?
+        .units
+        .units
+        .iter()
+        .filter(|unit| unit.game == "gs1" && unit.overlay.is_some() && unit.exact())
+        .collect::<Vec<_>>();
+    if units.is_empty() {
+        return Err("no declared exact overlay reconstruction composition".into());
+    }
+    let mut reports = Vec::new();
+    for unit in units {
+        for edition in EDITIONS {
+            let compiled = compile_declared_overlay_unit(unit, edition)?;
+            for owner in &unit.owners {
+                let source_owner = unit.source_owner(owner.address)?;
+                let found = matches.get(&source_owner.id()).ok_or_else(|| {
+                    format!("{}: owner lacks overlay correspondence", source_owner.id())
+                })?;
+                if found.owner.size != owner.extent {
+                    return Err(format!(
+                        "{}: owner extent differs from placeholder",
+                        source_owner.id()
+                    ));
+                }
+                let expected = overlay_window(
+                    decoded,
+                    edition,
+                    found.owner.resource,
+                    found.starts[edition],
+                    owner.extent,
+                )?;
+                let offset =
+                    usize::try_from(i64::from(owner.address) - compiled.address).map_err(|_| {
+                        format!("{}: owner precedes compiled overlay", source_owner.id())
+                    })?;
+                let actual = offset
+                    .checked_add(owner.extent)
+                    .and_then(|end| compiled.data.get(offset..end))
+                    .ok_or_else(|| {
+                        format!("{}: compiled owner extent is absent", source_owner.id())
+                    })?;
+                if actual != expected {
+                    return Err(format!(
+                        "{}: {edition} overlay owner differs",
+                        source_owner.id()
+                    ));
+                }
+            }
+        }
+        reports.push(serde_json::json!({"id":unit.id,"overlay":unit.overlay,"source":unit.source,"c_compiles":EDITIONS.len(),"owners":unit.owners.len(),"editions":EDITIONS}));
+    }
+    write_json(
+        path,
+        &serde_json::json!({"format":1,"kind":"declared-overlay-reconstruction-composition-edition-builds","original_translation_units":"unknown","units":&reports}),
+        "overlay edition build",
+    )?;
+    println!("overlay_edition_build={}", path.display());
     Ok(())
 }
 fn run_overlay_owner(options: &Options, roms: &EditionRoms, value: &str) -> Result<(), String> {

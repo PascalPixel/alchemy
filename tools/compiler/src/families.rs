@@ -21,18 +21,15 @@ use std::{
     path::{Component, Path, PathBuf},
 };
 use walkdir::WalkDir;
-
 const USAGE: &str = "usage: compiler families <cluster (--write|--check) FILE | transplant main:ADDRESS [--index FILE] [--output DIR] | prove [FILE]>";
 const DEFAULT_INDEX: &str = "games/gs1/recon/compiler-families.json";
 const DEFAULT_PROOFS: &str = "games/gs1/recon/family-retention.json";
 const INDEX_SCHEMA_VERSION: u32 = 2;
 const MIN_SCORE: u16 = 7500;
-
 #[derive(Debug, Deserialize)]
 struct BuildManifest {
     regions: Vec<BuildRegion>,
 }
-
 #[derive(Debug, Deserialize)]
 struct BuildRegion {
     source: String,
@@ -45,7 +42,6 @@ struct BuildRegion {
     retention: Option<String>,
     origin: Option<String>,
 }
-
 #[derive(Clone)]
 struct Owner {
     id: String,
@@ -59,7 +55,6 @@ struct Owner {
     calls: usize,
     branches: usize,
 }
-
 #[derive(Debug, Deserialize, Serialize)]
 struct FamilyIndex {
     schema_version: u32,
@@ -73,7 +68,6 @@ struct FamilyIndex {
     families: Vec<Family>,
     targets: Vec<TargetMatch>,
 }
-
 #[derive(Debug, Deserialize, Serialize)]
 struct Family {
     id: String,
@@ -82,7 +76,6 @@ struct Family {
     members: Vec<String>,
     target_bytes: usize,
 }
-
 #[derive(Debug, Deserialize, Serialize)]
 struct TargetMatch {
     owner: String,
@@ -93,7 +86,6 @@ struct TargetMatch {
     family: Option<String>,
     alternatives: Vec<TemplateMatch>,
 }
-
 #[derive(Debug, Deserialize, Serialize)]
 struct TemplateMatch {
     owner: String,
@@ -109,13 +101,11 @@ struct TemplateMatch {
     call_count_similarity_basis_points: u16,
     branch_similarity_basis_points: u16,
 }
-
 #[derive(Debug, Deserialize)]
 struct ProofManifest {
     format: u32,
     families: Vec<ProofFamily>,
 }
-
 #[derive(Debug, Deserialize)]
 struct ProofFamily {
     id: String,
@@ -125,7 +115,6 @@ struct ProofFamily {
     minimum_attempted_candidates_per_member: usize,
     maximum_mismatch_run_rows: usize,
 }
-
 #[derive(Debug, Serialize)]
 struct Block {
     kind: &'static str,
@@ -134,7 +123,6 @@ struct Block {
     target_start: usize,
     target_end: usize,
 }
-
 pub fn run(arguments: &[String]) -> Result<(), String> {
     match arguments.first().map(String::as_str) {
         Some("cluster") => cluster_command(&arguments[1..]),
@@ -147,7 +135,6 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         _ => Err(USAGE.into()),
     }
 }
-
 fn cluster_command(arguments: &[String]) -> Result<(), String> {
     let (mode, path) = match arguments {
         [mode, path] if matches!(mode.as_str(), "--write" | "--check") => {
@@ -183,7 +170,6 @@ fn cluster_command(arguments: &[String]) -> Result<(), String> {
     );
     Ok(())
 }
-
 fn build_index() -> Result<FamilyIndex, String> {
     let exact_manifest: BuildManifest = json("out/gs1-en/claimed/manifest.json")?;
     let asm_manifest: BuildManifest = json("out/gs1-en/asm/manifest.json")?;
@@ -308,7 +294,6 @@ fn build_index() -> Result<FamilyIndex, String> {
         targets: matches,
     })
 }
-
 fn translation_extents() -> Result<BTreeMap<String, usize>, String> {
     let manifest = TranslationUnits::load(compiler_core::routing::root())?;
     Ok(manifest
@@ -319,7 +304,6 @@ fn translation_extents() -> Result<BTreeMap<String, usize>, String> {
         .map(|owner| (format!("{:08x}", owner.address), owner.extent))
         .collect())
 }
-
 fn owner(
     id: String,
     source: String,
@@ -367,7 +351,6 @@ fn owner(
         branches,
     })
 }
-
 fn call_target(line: &str) -> Option<String> {
     let mut words = line.split('@').next()?.split_whitespace();
     let mnemonic = words.next()?.trim_end_matches(".n");
@@ -376,7 +359,6 @@ fn call_target(line: &str) -> Option<String> {
     }
     Some(words.next()?.trim_end_matches(',').to_string())
 }
-
 fn token(line: &str) -> String {
     let text = alignment_key(&without_register(&without_pc_offset(line)));
     let Some((mnemonic, operands)) = text.split_once(' ') else {
@@ -401,12 +383,10 @@ fn token(line: &str) -> String {
         .join(" ");
     format!("{mnemonic} {operands}")
 }
-
 fn compatible(left: &Owner, right: &Owner) -> bool {
     let length = ratio(left.instructions.len(), right.instructions.len());
     length >= 4500 && left.calls.abs_diff(right.calls) <= 4.max(left.calls.max(right.calls) / 3)
 }
-
 fn similarity(target: &Owner, template: &Owner) -> TemplateMatch {
     let ngram = cosine(&target.features, &template.features);
     let length = ratio(target.instructions.len(), template.instructions.len());
@@ -438,7 +418,6 @@ fn similarity(target: &Owner, template: &Owner) -> TemplateMatch {
         branch_similarity_basis_points: branches,
     }
 }
-
 fn cosine(left: &BTreeMap<String, u32>, right: &BTreeMap<String, u32>) -> u16 {
     let dot = left
         .iter()
@@ -461,11 +440,9 @@ fn cosine(left: &BTreeMap<String, u32>, right: &BTreeMap<String, u32>) -> u16 {
         (dot / (norm(left) * norm(right)) * 10_000.0).round() as u16
     }
 }
-
 fn ratio(left: usize, right: usize) -> u16 {
     (left.min(right) * 10_000 / left.max(right).max(1)) as u16
 }
-
 fn transplant_command(arguments: &[String]) -> Result<(), String> {
     let owner = arguments.first().ok_or(USAGE)?;
     let mut index = PathBuf::from(DEFAULT_INDEX);
@@ -596,13 +573,11 @@ fn transplant_command(arguments: &[String]) -> Result<(), String> {
     );
     Ok(())
 }
-
 fn require_family(owner: &str, family: Option<&str>) -> Result<(), String> {
     family.map(|_| ()).ok_or_else(|| {
         format!("{owner}: no exact template reaches the {MIN_SCORE}-point family threshold")
     })
 }
-
 fn entry_alias(root: &Path, symbol: &str) -> Result<Option<String>, String> {
     let mut aliases = BTreeSet::new();
     for entry in WalkDir::new(root.join("games/gs1/include"))
@@ -625,7 +600,6 @@ fn entry_alias(root: &Path, symbol: &str) -> Result<Option<String>, String> {
     }
     Ok(aliases.into_iter().next())
 }
-
 fn retarget_seed(
     source: &str,
     template_symbol: &str,
@@ -652,7 +626,6 @@ fn retarget_seed(
     }
     output
 }
-
 fn blocks(template: &[String], target: &[String]) -> Vec<Block> {
     let pairs = align_streams(template, target);
     let mut output = Vec::new();
@@ -678,7 +651,6 @@ fn blocks(template: &[String], target: &[String]) -> Vec<Block> {
     }
     output
 }
-
 fn prove_command(arguments: &[String]) -> Result<(), String> {
     let path = match arguments {
         [] => Path::new(DEFAULT_PROOFS),
@@ -773,7 +745,6 @@ fn prove_command(arguments: &[String]) -> Result<(), String> {
     );
     Ok(())
 }
-
 fn prove_member(owner: &str, family: &ProofFamily) -> Result<usize, String> {
     let stem = owner
         .strip_prefix("main:")
@@ -893,7 +864,6 @@ fn prove_member(owner: &str, family: &ProofFamily) -> Result<usize, String> {
     }
     Ok(owner_bytes)
 }
-
 fn reorder_groups(
     pairs: &[(Option<String>, Option<String>)],
     maximum_rows: usize,
@@ -926,7 +896,6 @@ fn reorder_groups(
     }
     Ok(groups)
 }
-
 fn disassembled(path: &Path) -> Result<Vec<String>, String> {
     let rows = disassemble(&path.to_string_lossy(), 0.0)?;
     let mut offsets = rows.keys().collect::<Vec<_>>();
@@ -936,7 +905,6 @@ fn disassembled(path: &Path) -> Result<Vec<String>, String> {
         .filter_map(|offset| rows.get(offset).map(str::to_string))
         .collect())
 }
-
 fn attempted(value: &Value) -> usize {
     match value {
         Value::Object(map) => {
@@ -954,27 +922,22 @@ fn attempted(value: &Value) -> usize {
         _ => 0,
     }
 }
-
 fn row_matches(pair: &(Option<String>, Option<String>)) -> bool {
     matches!(pair, (Some(left), Some(right)) if without_pc_offset(left) == without_pc_offset(right))
 }
-
 fn stem(address: u64) -> Result<String, String> {
     if !(0x0800_0000..0x0900_0000).contains(&address) {
         return Err(format!("invalid main owner address 0x{address:08x}"));
     }
     Ok(format!("{address:08x}"))
 }
-
 fn json<T: serde::de::DeserializeOwned>(path: impl AsRef<Path>) -> Result<T, String> {
     let path = path.as_ref();
     serde_json::from_str(&read(path)?).map_err(|error| format!("{}: {error}", path.display()))
 }
-
 fn read(path: &Path) -> Result<String, String> {
     fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))
 }
-
 fn write(path: &Path, bytes: &[u8]) -> Result<(), String> {
     if let Some(parent) = path
         .parent()
@@ -984,14 +947,12 @@ fn write(path: &Path, bytes: &[u8]) -> Result<(), String> {
     }
     fs::write(path, bytes).map_err(|error| format!("{}: {error}", path.display()))
 }
-
 fn write_json(path: &Path, value: &impl Serialize) -> Result<(), String> {
     let text = serde_json::to_string_pretty(value)
         .map_err(|error| format!("{}: {error}", path.display()))?
         + "\n";
     write(path, text.as_bytes())
 }
-
 fn output_path(path: &Path) -> Result<PathBuf, String> {
     let root = compiler_core::routing::root();
     let path = if path.is_absolute() {
@@ -1032,18 +993,15 @@ fn output_path(path: &Path) -> Result<PathBuf, String> {
     }
     Ok(resolved)
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;
-
     #[test]
     fn instruction_tokens_erase_addresses_and_registers() {
         assert_eq!(token("bl Func_08001234"), "bl CALL");
         assert_eq!(token("bne .L42"), "bne TARGET");
         assert_eq!(token("ldr r3, [r2, #12]"), "ldr R, [R, #N]");
     }
-
     #[test]
     fn call_targets_preserve_family_identity() {
         assert_eq!(
@@ -1053,7 +1011,6 @@ mod tests {
         assert_eq!(call_target("blx r3"), Some("r3".into()));
         assert_eq!(call_target("bne .L42"), None);
     }
-
     #[test]
     fn search_count_is_recursive_without_double_counting_leaf_fields() {
         let value = serde_json::json!({
@@ -1062,25 +1019,21 @@ mod tests {
         });
         assert_eq!(attempted(&value), 30000);
     }
-
     #[test]
     fn cosine_and_ratios_are_stable_basis_points() {
         let left = BTreeMap::from([("a".into(), 2), ("b".into(), 1)]);
         assert_eq!(cosine(&left, &left), 10_000);
         assert_eq!(ratio(3, 4), 7500);
     }
-
     #[test]
     fn transplant_rejects_unqualified_similarity() {
         assert!(require_family("main:08000000", None).is_err());
         assert!(require_family("main:08000000", Some("family")).is_ok());
     }
-
     #[test]
     fn transplant_retargets_semantic_entry_name() {
         assert_eq!(retarget_seed("#include \"x.h\"\n\ns32 Shop_Select(void) {}", "Func_08001000", "select", Some("Shop_Select"), "Func_08002000"), "#include \"x.h\"\n#undef Shop_Select\n#define Shop_Select Func_08002000\n\n\ns32 Shop_Select(void) {}");
     }
-
     #[test]
     fn reordered_instruction_around_a_match_is_one_group() {
         let pairs = vec![

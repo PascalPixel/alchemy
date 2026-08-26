@@ -1,17 +1,13 @@
 //! Full-C reporting over the coverage map's shared audited interval model.
-
 #[allow(dead_code)]
 #[path = "../../coverage-map/src/model.rs"]
 mod model;
-
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use model::{bytes, intersect, normalize, Span};
 use serde_json::Value;
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
-
 const DEFAULT_TARGET: &str = "gs1-en";
-
 fn root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -19,28 +15,23 @@ fn root() -> PathBuf {
         .expect("crate lives two levels below the repository")
         .to_path_buf()
 }
-
 fn read(path: &Path) -> Result<String, String> {
     std::fs::read(path)
         .map(|bytes| String::from_utf8_lossy(&bytes).into_owned())
         .map_err(|error| format!("cannot read {}: {error}", path.display()))
 }
-
 fn json(path: &Path) -> Result<Value, String> {
     serde_json::from_str(&read(path)?).map_err(|error| format!("{}: {error}", path.display()))
 }
-
 fn get<'a>(value: &'a Value, key: &str) -> Option<&'a Value> {
     value.as_object()?.get(key)
 }
-
 fn text(value: &Value, key: &str) -> String {
     get(value, key)
         .and_then(Value::as_str)
         .unwrap_or_default()
         .to_string()
 }
-
 fn integer(value: &Value, key: &str) -> Option<i64> {
     get(value, key).and_then(Value::as_i64).or_else(|| {
         get(value, key)
@@ -48,33 +39,27 @@ fn integer(value: &Value, key: &str) -> Option<i64> {
             .and_then(|n| i64::try_from(n).ok())
     })
 }
-
 fn array<'a>(value: &'a Value, key: &str) -> &'a [Value] {
     get(value, key)
         .and_then(Value::as_array)
         .map(Vec::as_slice)
         .unwrap_or(&[])
 }
-
 fn number(n: i64) -> Value {
     Value::Number(n.into())
 }
-
 fn string(s: impl Into<String>) -> Value {
     Value::String(s.into())
 }
-
 fn object(fields: Vec<(&str, Value)>) -> Value {
     Value::Object(fields.into_iter().map(|(k, v)| (k.into(), v)).collect())
 }
-
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct Region {
     span: Span,
     kind: String,
     evidence: String,
 }
-
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct Namespace {
     id: String,
@@ -85,7 +70,6 @@ struct Namespace {
     regions: Vec<Region>,
     evidence: Vec<String>,
 }
-
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct Inventory {
     target: String,
@@ -96,7 +80,6 @@ struct Inventory {
     overlays: Vec<Namespace>,
     caveats: Option<Vec<String>>,
 }
-
 #[derive(Clone, Debug, PartialEq)]
 struct Report {
     target: String,
@@ -109,11 +92,9 @@ struct Report {
     overlays_full_c_bytes: i64,
     overlays_executable_bytes: i64,
 }
-
 fn span(value: &Value) -> Option<Span> {
     Some(Span::new(integer(value, "start")?, integer(value, "end")?))
 }
-
 fn region(value: &Value) -> Option<Region> {
     let span = span(value)?;
     (span.end > span.start).then(|| Region {
@@ -122,7 +103,6 @@ fn region(value: &Value) -> Option<Region> {
         evidence: text(value, "evidence"),
     })
 }
-
 fn namespace(value: &Value) -> Result<Namespace, String> {
     let regions = array(value, "intervals")
         .iter()
@@ -143,7 +123,6 @@ fn namespace(value: &Value) -> Result<Namespace, String> {
             .collect(),
     })
 }
-
 fn inventory(value: &Value) -> Result<Inventory, String> {
     if integer(value, "format") != Some(1) || text(value, "metric") != "full-c-byte-share" {
         return Err("unsupported executable inventory format".into());
@@ -170,7 +149,6 @@ fn inventory(value: &Value) -> Result<Inventory, String> {
             }),
     })
 }
-
 fn regions_json(regions: &[Region]) -> Value {
     Value::Array(
         regions
@@ -186,7 +164,6 @@ fn regions_json(regions: &[Region]) -> Value {
             .collect(),
     )
 }
-
 fn namespace_json(value: &Namespace) -> Value {
     let mut fields = vec![("id", string(&value.id))];
     if let Some(bytes) = value.decoded_bytes {
@@ -206,7 +183,6 @@ fn namespace_json(value: &Namespace) -> Value {
     ]);
     object(fields)
 }
-
 fn inventory_json(value: &Inventory) -> Value {
     let mut fields = vec![
         ("format", number(1)),
@@ -229,7 +205,6 @@ fn inventory_json(value: &Inventory) -> Value {
     }
     object(fields)
 }
-
 fn report_json(value: &Report) -> Value {
     object(vec![
         ("format", number(1)),
@@ -261,7 +236,6 @@ fn report_json(value: &Report) -> Value {
         ("audit", string("complete")),
     ])
 }
-
 fn executable(namespace: &Namespace) -> Vec<Span> {
     normalize(
         &namespace
@@ -271,7 +245,6 @@ fn executable(namespace: &Namespace) -> Vec<Span> {
             .collect::<Vec<_>>(),
     )
 }
-
 fn validate_namespace(namespace: &Namespace) -> Result<(), String> {
     let mut regions = namespace.regions.clone();
     regions.sort_by_key(|row| (row.span.start, row.span.end));
@@ -300,7 +273,6 @@ fn validate_namespace(namespace: &Namespace) -> Result<(), String> {
     }
     Ok(())
 }
-
 fn validate_inventory(value: &Inventory) -> Result<(), String> {
     if value.audit != "complete" || value.main.audit != "complete" {
         return Err(format!(
@@ -329,7 +301,6 @@ fn validate_inventory(value: &Inventory) -> Result<(), String> {
     }
     Ok(())
 }
-
 fn canonical(source: &str) -> bool {
     !source.contains(".incbin")
         && !source.contains("M2C_ERROR")
@@ -339,14 +310,12 @@ fn canonical(source: &str) -> bool {
             .lines()
             .any(|line| line.contains("register") && line.contains("asm") && line.contains('('))
 }
-
 fn source_span(value: &Value, root: &Path) -> Option<Span> {
     let start = integer(value, "address")?;
     let size = integer(value, "size")?;
     let source = text(value, "source");
     (size > 0 && canonical(&read(&root.join(source)).ok()?)).then(|| Span::new(start, start + size))
 }
-
 fn main_exact(root: &Path, target: &str, namespace: &Namespace) -> Result<Vec<Span>, String> {
     let manifest = json(
         &root
@@ -360,11 +329,9 @@ fn main_exact(root: &Path, target: &str, namespace: &Namespace) -> Result<Vec<Sp
         .collect();
     owned(&spans, namespace)
 }
-
 fn hex(value: &str) -> Option<i64> {
     i64::from_str_radix(value.trim().trim_start_matches("0x"), 16).ok()
 }
-
 fn space(line: &str) -> Option<i64> {
     let value = line.trim().strip_prefix(".space")?.trim();
     if value.starts_with('-') {
@@ -375,25 +342,21 @@ fn space(line: &str) -> Option<i64> {
         |value| i64::from_str_radix(value, 16).ok(),
     )
 }
-
 fn owner_label(line: &str) -> Option<i64> {
     let value = line.trim().strip_prefix("AlchemyC_")?.trim_end_matches(':');
     (value.len() == 8 && value.chars().all(|c| c.is_ascii_hexdigit()))
         .then(|| hex(value))
         .flatten()
 }
-
 fn local_label(line: &str) -> bool {
     line.trim().starts_with(".L_") && line.trim_end().ends_with(':')
 }
-
 fn overlay_id(file: &str) -> Option<String> {
     Some(format!(
         "resource_{}",
         file.strip_prefix("resource_")?.strip_suffix("_overlay.s")?
     ))
 }
-
 fn overlay_source_spans(
     root: &Path,
     file: &str,
@@ -454,7 +417,6 @@ fn overlay_source_spans(
     }
     owned(&exact, namespace)
 }
-
 fn overlay_exact(root: &Path, value: &Inventory) -> Result<BTreeMap<String, Vec<Span>>, String> {
     let mut files = std::fs::read_dir(root.join("games/gs1/assets/code"))
         .map_err(|error| format!("cannot list overlay assembly: {error}"))?
@@ -482,7 +444,6 @@ fn overlay_exact(root: &Path, value: &Inventory) -> Result<BTreeMap<String, Vec<
     }
     Ok(result)
 }
-
 fn owned(spans: &[Span], namespace: &Namespace) -> Result<Vec<Span>, String> {
     let executable = executable(namespace);
     let mut ordered = spans.to_vec();
@@ -502,7 +463,6 @@ fn owned(spans: &[Span], namespace: &Namespace) -> Result<Vec<Span>, String> {
     }
     Ok(intersect(&ordered, &executable))
 }
-
 fn report(root: &Path, target: &str, value: &Inventory) -> Result<Report, String> {
     validate_inventory(value)?;
     let main = main_exact(root, target, &value.main)?;
@@ -542,21 +502,18 @@ fn report(root: &Path, target: &str, value: &Inventory) -> Result<Report, String
             .sum(),
     })
 }
-
 fn report_path(root: &Path, target: &str) -> PathBuf {
     root.join("games")
         .join(target.split('-').next().unwrap_or("gs1"))
         .join("metrics")
         .join(format!("{target}-progress.json"))
 }
-
 fn inventory_path(root: &Path, target: &str) -> PathBuf {
     root.join("games")
         .join(target.split('-').next().unwrap_or("gs1"))
         .join("metrics")
         .join(format!("{target}-executable.json"))
 }
-
 fn permanent_bytes(root: &Path, target: &str) -> Result<i64, String> {
     let value = json(
         &root
@@ -573,7 +530,6 @@ fn permanent_bytes(root: &Path, target: &str) -> Result<i64, String> {
     .and_then(Value::as_i64)
     .ok_or_else(|| "coverage map has no categories.retained_asm.bytes".into())
 }
-
 fn check_build(root: &Path, target: &str) -> Result<(), String> {
     let value = json(&root.join("out").join(target).join("full/rebuilt.json"))?;
     if get(&value, "byte_identical") != Some(&Value::Bool(true)) {
@@ -586,7 +542,6 @@ fn check_build(root: &Path, target: &str) -> Result<(), String> {
     }
     Ok(())
 }
-
 fn comma(n: i64) -> String {
     let raw = n.to_string();
     let (sign, digits) = raw
@@ -601,11 +556,9 @@ fn comma(n: i64) -> String {
     }
     out
 }
-
 fn fixed2(value: f64) -> String {
     format!("{value:.2}")
 }
-
 fn subject(report: &Report, retained: i64) -> Result<String, String> {
     let done = report.full_c_bytes + retained;
     if done < 0 || done > report.executable_bytes {
@@ -616,7 +569,6 @@ fn subject(report: &Report, retained: i64) -> Result<String, String> {
         (done * 100 + report.executable_bytes / 2) / report.executable_bytes
     ))
 }
-
 fn display(report: &Report) -> String {
     format!(
         "Full-C Byte Share: {} / {} executable bytes ({}%)\nMain image: {} / {} executable bytes\nCode overlays: {} / {} executable bytes",
@@ -629,7 +581,6 @@ fn display(report: &Report) -> String {
         comma(report.overlays_executable_bytes)
     )
 }
-
 fn derive_inventory(root: &Path, target: &str) -> Result<Inventory, String> {
     // Re-emit the audited inventory without deriving it from source ownership.
     let value = inventory(&json(&inventory_path(root, target))?)?;
@@ -638,14 +589,12 @@ fn derive_inventory(root: &Path, target: &str) -> Result<Inventory, String> {
     }
     Ok(value)
 }
-
 fn relative(root: &Path, path: &Path) -> String {
     path.strip_prefix(root)
         .unwrap_or(path)
         .display()
         .to_string()
 }
-
 #[derive(Default)]
 struct Options {
     target: String,
@@ -656,7 +605,6 @@ struct Options {
     write_report: bool,
     self_test: bool,
 }
-
 fn options(argv: &[String]) -> Result<Option<Options>, String> {
     let mut options = Options {
         target: DEFAULT_TARGET.into(),
@@ -694,7 +642,6 @@ fn options(argv: &[String]) -> Result<Option<Options>, String> {
     }
     Ok(Some(options))
 }
-
 fn run(argv: &[String]) -> Result<String, String> {
     let Some(options) = options(argv)? else {
         return Ok("usage: full-c-progress [--target gs1-en|gs2-en] [--check|--subject|--json|--write-inventory|--write-report|--self-test]".into());
@@ -754,7 +701,6 @@ fn run(argv: &[String]) -> Result<String, String> {
         Ok(display(&current))
     }
 }
-
 pub fn entry(arguments: &[String]) {
     match run(arguments) {
         Ok(output) => println!("{output}"),

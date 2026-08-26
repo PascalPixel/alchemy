@@ -70,7 +70,6 @@ pub fn overlay_c_cache_dir() -> PathBuf {
         None => root().join("out/cache/overlay-c"),
     }
 }
-
 fn translation_units() -> Result<&'static TranslationUnits, String> {
     static UNITS: OnceLock<Result<TranslationUnits, String>> = OnceLock::new();
     match UNITS.get_or_init(|| TranslationUnits::load(&root())) {
@@ -175,7 +174,6 @@ fn placeholder_addresses(assembly: &str) -> Vec<u32> {
         .into_iter()
         .collect()
 }
-
 fn address_stem(path: &Path, overlay: &str) -> Result<(SourceOwner, String, i64), String> {
     let paths = SourcePaths::load(&root())?;
     if let Some(owner) = paths.overlay_owner_for_path(overlay, path)? {
@@ -333,7 +331,6 @@ fn overlay_cache_key(
     append_frame(&mut key, source_inputs);
     sha256::hex(&key)
 }
-
 fn absolute_symbol_assembly(name: &str, symbol: AbsoluteSymbol) -> String {
     let directive = [".set", ".thumb_set"][(symbol.kind == AbsoluteSymbolKind::Thumb) as usize];
     format!(
@@ -341,7 +338,6 @@ fn absolute_symbol_assembly(name: &str, symbol: AbsoluteSymbol) -> String {
         symbol.address
     )
 }
-
 fn overlay_external_assembly(
     name: &str,
     unit: Option<&TranslationUnit>,
@@ -356,7 +352,6 @@ fn overlay_external_assembly(
     }
     external_symbol_assembly(name, call_via_base)
 }
-
 fn translation_unit_signature() -> Result<Vec<u8>, String> {
     fs::read(root().join("games/gs1/recon/translation-units.json"))
         .map_err(|error| error.to_string())
@@ -552,7 +547,6 @@ pub fn compile_overlay_mutated(
 ) -> Result<Compiled, String> {
     compile_overlay_with_mutations(source, work, overlay, routing_source, Some(mutations))
 }
-
 fn symbol_span(listing: &str, name: &str) -> Result<(usize, usize), String> {
     let fields = listing
         .lines()
@@ -567,7 +561,6 @@ fn symbol_span(listing: &str, name: &str) -> Result<(usize, usize), String> {
     };
     Ok((value(0)?, value(1)?))
 }
-
 fn compile_overlay_unit(
     unit: &TranslationUnit,
     work: &Path,
@@ -661,7 +654,6 @@ fn compile_overlay_unit(
         data: whole,
     })
 }
-
 fn validate_shared_overlay_source(
     repository: &Path,
     names: &SourcePaths,
@@ -700,7 +692,6 @@ fn validate_shared_overlay_source(
         path.display()
     ))
 }
-
 fn compile_production_overlay(
     source: &OverlaySource,
     work: &Path,
@@ -855,13 +846,11 @@ pub(crate) fn strings(parts: &[&str]) -> Vec<String> {
 pub(crate) fn split_lines(text: &str) -> Vec<String> {
     text.lines().map(str::to_owned).collect()
 }
-
 #[cfg(test)]
 mod source_activation_tests {
     use super::*;
     use compiler_core::translation_units::{OwnerState, TranslationOwner};
     use tempfile::tempdir;
-
     #[test]
     fn only_explicit_overlay_placeholders_activate_exact_c() {
         assert_eq!(
@@ -872,7 +861,6 @@ mod source_activation_tests {
         );
         assert!(placeholder_addresses("Func_02000104:\n  bx lr\n").is_empty());
     }
-
     #[test]
     fn public_source_diagnostic_preserves_missing_source_errors() {
         let work = tempdir().unwrap();
@@ -881,7 +869,6 @@ mod source_activation_tests {
         let error = overlay_c_spans(&OverlaySource::path(assembly), 0x0200_0000).unwrap_err();
         assert!(error.contains("resource_382:0200dead has an AlchemyC placeholder"));
     }
-
     #[test]
     fn shared_overlay_source_requires_one_wholly_exact_unit() {
         let root = tempdir().unwrap();
@@ -917,7 +904,6 @@ mod source_activation_tests {
         unit.owners[1].state = OwnerState::RetainedAssembly;
         assert!(check(&[unit]).is_err());
     }
-
     #[test]
     fn semantic_main_alias_uses_the_generated_export_binding() {
         let units = translation_units().unwrap();

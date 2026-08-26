@@ -1,20 +1,15 @@
 //! Assemble retained source regions and emit their classified manifest.
-
 pub mod cli;
-
-use std::collections::{BTreeMap, BTreeSet};
-use std::path::{Path, PathBuf};
-use std::process::Command;
-
 use cache_entry::write_cache_entry_atomically;
 use canonical_json::canonical_json;
 use compiler_core::{bundle::host_executable_signature, sha256};
 use serde::Deserialize;
 use serde_json::{Map, Number, Value};
-
+use std::collections::{BTreeMap, BTreeSet};
+use std::path::{Path, PathBuf};
+use std::process::Command;
 const ROM_BASE: u64 = 0x0800_0000;
 const ROM_SIZE: u64 = 0x0080_0000;
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Options {
     pub rom: String,
@@ -22,40 +17,34 @@ pub struct Options {
     pub source: Option<String>,
     pub source_only: bool,
 }
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ParseOutcome {
     Help,
     Run(Options),
 }
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BuildReport {
     pub regions: usize,
     pub bytes: usize,
     pub counts: String,
 }
-
 #[derive(Debug, Clone)]
 struct BuiltRegion {
     address: u64,
     run_address: u64,
     data: Vec<u8>,
 }
-
 #[derive(Debug, Clone)]
 struct Placement {
     address: u64,
     run_address: u64,
 }
-
 #[derive(Debug, Clone, Deserialize)]
 struct LayoutRegion {
     source: String,
     address: Option<Value>,
     run_address: Value,
 }
-
 #[derive(Debug, Clone, Deserialize)]
 struct Classification {
     kind: String,
@@ -64,7 +53,6 @@ struct Classification {
     confidence: String,
     evidence: Vec<String>,
 }
-
 #[derive(Debug, Clone, Deserialize)]
 struct ClassificationRule {
     kind: String,
@@ -77,7 +65,6 @@ struct ClassificationRule {
     files: Option<Vec<String>>,
     matcher: Option<String>,
 }
-
 impl ClassificationRule {
     fn classification(&self) -> Classification {
         Classification {
@@ -89,7 +76,6 @@ impl ClassificationRule {
         }
     }
 }
-
 #[derive(Debug, Clone, Deserialize)]
 struct ClassificationConfig {
     format: u64,
@@ -97,13 +83,11 @@ struct ClassificationConfig {
     structural: Vec<ClassificationRule>,
     groups: Vec<ClassificationRule>,
 }
-
 #[derive(Debug, Clone, Copy, Default)]
 struct Count {
     files: usize,
     bytes: usize,
 }
-
 pub fn repository_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -111,7 +95,6 @@ pub fn repository_root() -> PathBuf {
         .expect("build-asm lives under tools")
         .to_path_buf()
 }
-
 pub fn parse_args(argv: &[String]) -> Result<ParseOutcome, String> {
     let mut options = Options {
         rom: "roms/gs1-en.gba".into(),
@@ -155,7 +138,6 @@ pub fn parse_args(argv: &[String]) -> Result<ParseOutcome, String> {
     }
     Ok(ParseOutcome::Run(options))
 }
-
 fn resolve(root: &Path, cwd: &Path, value: &str) -> PathBuf {
     let path = Path::new(value);
     if path.is_absolute() {
@@ -166,7 +148,6 @@ fn resolve(root: &Path, cwd: &Path, value: &str) -> PathBuf {
         cwd.join(path)
     }
 }
-
 fn rooted(root: &Path, value: &str) -> PathBuf {
     let path = Path::new(value);
     if path.is_absolute() {
@@ -175,21 +156,18 @@ fn rooted(root: &Path, value: &str) -> PathBuf {
         root.join(path)
     }
 }
-
 fn relative(root: &Path, path: &Path) -> String {
     path.strip_prefix(root)
         .unwrap_or(path)
         .to_string_lossy()
         .into_owned()
 }
-
 fn stem(path: &Path) -> String {
     path.file_stem()
         .and_then(|name| name.to_str())
         .unwrap_or_default()
         .to_string()
 }
-
 fn assembly_sources(directory: &Path) -> Result<Vec<PathBuf>, String> {
     let mut result = Vec::new();
     let entries = std::fs::read_dir(directory)
@@ -213,7 +191,6 @@ fn assembly_sources(directory: &Path) -> Result<Vec<PathBuf>, String> {
     result.sort();
     Ok(result)
 }
-
 fn run(root: &Path, command: &[String]) -> Result<String, String> {
     let program = command.first().ok_or("empty command")?;
     let output = Command::new(program)
@@ -234,7 +211,6 @@ fn run(root: &Path, command: &[String]) -> Result<String, String> {
         Err(format!("{name} failed: {}", detail.trim()))
     }
 }
-
 fn integer(value: &Value, name: &str) -> Result<u64, String> {
     let parsed = match value {
         Value::Number(number) => number.as_u64(),
@@ -251,12 +227,10 @@ fn integer(value: &Value, name: &str) -> Result<u64, String> {
         .filter(|value| *value <= u32::MAX as u64)
         .ok_or_else(|| format!("{name}: invalid address"))
 }
-
 fn read_json<T: for<'de> Deserialize<'de>>(path: &Path) -> Result<T, String> {
     let bytes = std::fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?;
     serde_json::from_slice(&bytes).map_err(|error| format!("{}: {error}", path.display()))
 }
-
 fn load_layout(root: &Path) -> Result<BTreeMap<String, Placement>, String> {
     let path = root.join("games/gs1/asm/manifest.json");
     if !path.exists() {
@@ -296,7 +270,6 @@ fn load_layout(root: &Path) -> Result<BTreeMap<String, Placement>, String> {
     }
     Ok(result)
 }
-
 fn load_classification(path: &Path) -> Result<ClassificationConfig, String> {
     let config: ClassificationConfig = read_json(path)?;
     if config.format != 1 {
@@ -327,7 +300,6 @@ fn load_classification(path: &Path) -> Result<ClassificationConfig, String> {
     }
     Ok(config)
 }
-
 fn load_alignments(path: &Path) -> Result<Vec<(u64, Vec<u8>)>, String> {
     let value: Value = read_json(path)?;
     if value["format"].as_u64() != Some(1)
@@ -358,7 +330,6 @@ fn load_alignments(path: &Path) -> Result<Vec<(u64, Vec<u8>)>, String> {
     result.sort_by_key(|item| item.0);
     Ok(result)
 }
-
 fn explicit_classifications(
     config: &ClassificationConfig,
 ) -> Result<BTreeMap<String, ClassificationRule>, String> {
@@ -379,18 +350,15 @@ fn explicit_classifications(
     }
     Ok(result)
 }
-
 fn long_call_veneer(data: &[u8]) -> bool {
     data.len() == 8
         && u16::from_le_bytes([data[0], data[1]]) == 0x4c00
         && u16::from_le_bytes([data[2], data[3]]) == 0x4720
         && u32::from_le_bytes([data[4], data[5], data[6], data[7]]) & 1 != 0
 }
-
 fn alignment_padding(data: &[u8]) -> bool {
     data == [0, 0]
 }
-
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct ThumbTransfer {
     load: bool,
@@ -398,12 +366,10 @@ struct ThumbTransfer {
     registers: Vec<u8>,
     targeted: bool,
 }
-
 fn low_register(text: &str) -> Option<u8> {
     let register = text.trim().strip_prefix('r')?.parse::<u8>().ok()?;
     (register <= 7).then_some(register)
 }
-
 fn thumb_transfer(line: &str) -> Option<ThumbTransfer> {
     let code = line.split('@').next().unwrap_or("").trim();
     if code.is_empty() {
@@ -447,7 +413,6 @@ fn thumb_transfer(line: &str) -> Option<ThumbTransfer> {
         targeted,
     })
 }
-
 fn approved_thumb_block_copy_pair(load: &ThumbTransfer, store: &ThumbTransfer) -> bool {
     load.load
         && !store.load
@@ -459,7 +424,6 @@ fn approved_thumb_block_copy_pair(load: &ThumbTransfer, store: &ThumbTransfer) -
         && !load.registers.contains(&load.base)
         && !store.registers.contains(&store.base)
 }
-
 fn thumb_standalone_wide_transfer(source: &str) -> bool {
     let significant: Vec<_> = source
         .lines()
@@ -487,7 +451,6 @@ fn thumb_standalone_wide_transfer(source: &str) -> bool {
         !paired_as_load && !paired_as_store
     })
 }
-
 fn classify(
     name: &str,
     data: &[u8],
@@ -524,7 +487,6 @@ fn classify(
     }
     Ok(config.default.clone())
 }
-
 fn validate_counts(
     config: &ClassificationConfig,
     counts: &BTreeMap<String, Count>,
@@ -540,7 +502,6 @@ fn validate_counts(
     }
     Ok(())
 }
-
 fn self_digest() -> Result<String, String> {
     let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("src/lib.rs");
     let bytes = std::fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?;
@@ -552,14 +513,12 @@ fn self_digest() -> Result<String, String> {
     }
     Ok(sha256::hex(&bytes))
 }
-
 const ASSEMBLY_BINUTILS: [&str; 4] = [
     "arm-none-eabi-as",
     "arm-none-eabi-nm",
     "arm-none-eabi-ld",
     "arm-none-eabi-objcopy",
 ];
-
 fn production_binutil_signatures() -> Result<Vec<(String, String)>, String> {
     ASSEMBLY_BINUTILS
         .iter()
@@ -570,7 +529,6 @@ fn production_binutil_signatures() -> Result<Vec<(String, String)>, String> {
         })
         .collect()
 }
-
 fn region_cache_record(data: &[u8]) -> String {
     let mut record = Map::new();
     record.insert("format".into(), number(1));
@@ -578,7 +536,6 @@ fn region_cache_record(data: &[u8]) -> String {
     record.insert("sha256".into(), Value::String(sha256::hex(data)));
     canonical_json(&Value::Object(record))
 }
-
 fn read_region_cache(payload: &Path, record: &Path) -> Option<Vec<u8>> {
     let data = std::fs::read(payload).ok()?;
     let bytes = std::fs::read(record).ok()?;
@@ -591,12 +548,10 @@ fn read_region_cache(payload: &Path, record: &Path) -> Option<Vec<u8>> {
     }
     Some(data)
 }
-
 fn append_frame(stream: &mut Vec<u8>, bytes: &[u8]) {
     stream.extend_from_slice(&(bytes.len() as u64).to_be_bytes());
     stream.extend_from_slice(bytes);
 }
-
 /// Build a region key from injectable tool signatures so tests do not depend
 /// on an installed ARM toolchain. The ordered name/signature pairs are part of
 /// the key, and this material intentionally migrates the old region namespace
@@ -621,12 +576,10 @@ pub fn region_cache_key_with_signatures(
     append_frame(&mut bytes, source);
     Ok(sha256::hex(&bytes))
 }
-
 pub fn region_cache_key(source: &[u8], linked_address: u64) -> Result<String, String> {
     let binutils = production_binutil_signatures()?;
     region_cache_key_with_signatures(source, linked_address, &binutils)
 }
-
 fn valid_external(name: &str) -> bool {
     let Some((prefix, address)) = name.rsplit_once('_') else {
         return false;
@@ -637,7 +590,6 @@ fn valid_external(name: &str) -> bool {
             .bytes()
             .all(|byte| byte.is_ascii_hexdigit() && !byte.is_ascii_uppercase())
 }
-
 fn build_region(
     root: &Path,
     source: &Path,
@@ -773,11 +725,9 @@ fn build_region(
         data,
     })
 }
-
 fn number(value: u64) -> Value {
     Value::Number(Number::from(value))
 }
-
 fn region_value(
     output: &Path,
     source: &str,
@@ -814,7 +764,6 @@ fn region_value(
     );
     Value::Object(object)
 }
-
 pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, String> {
     let rom = if options.source_only {
         None
@@ -1007,11 +956,9 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
         counts: counts_text,
     })
 }
-
 #[cfg(test)]
 mod tests {
     use super::thumb_standalone_wide_transfer;
-
     #[test]
     fn recognizes_only_standalone_wide_thumb_transfers() {
         assert!(!thumb_standalone_wide_transfer("\tldmia\tr3!, {r2}\n"));
@@ -1024,7 +971,6 @@ mod tests {
             "\tldmia\tr3!, {r0, r1, r2}\n\tstmia\tr4!, {r0-r2}\n"
         ));
     }
-
     #[test]
     fn ignores_comments_and_data() {
         assert!(!thumb_standalone_wide_transfer(

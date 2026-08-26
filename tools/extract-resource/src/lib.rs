@@ -8,36 +8,27 @@
 //! stream problems and plain `Error` for CLI/usage problems. Rust mirrors that with
 //! [`DecodeError`] and, in `main.rs`, a separate usage-error path. Every
 //! message string is character-for-character identical to the former behavior.
-
 pub mod cli;
-
 use std::fmt;
-
 pub const ROM_BASE: u32 = 0x0800_0000;
 pub const TABLE: u32 = 0x0832_0000;
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DecodeError(pub String);
-
 impl fmt::Display for DecodeError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str(&self.0)
     }
 }
-
 impl std::error::Error for DecodeError {}
-
 fn err<T>(message: impl Into<String>) -> Result<T, DecodeError> {
     Err(DecodeError(message.into()))
 }
-
 /// `["l", n]` / `["c", length, distance]` from the TypeScript.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum GeneralToken {
     Literal(u32),
     Copy { length: u32, distance: u32 },
 }
-
 /// `["l"]` / `["e"]` / `["c", length, distance]` from the TypeScript.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum PaletteOperation {
@@ -45,18 +36,15 @@ pub enum PaletteOperation {
     End,
     Copy { length: u32, distance: u32 },
 }
-
 /// `["z"]` / `["g", ops]` from the TypeScript.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum PaletteGroup {
     Zeros,
     Group(Vec<PaletteOperation>),
 }
-
 // ---------------------------------------------------------------------------
 // bit reader
 // ---------------------------------------------------------------------------
-
 /// LSB-first bit reader over 16-bit little-endian words.
 ///
 /// PORT NOTE: the TypeScript accumulator is a JS number normalised with
@@ -71,7 +59,6 @@ pub struct LsbBits<'a> {
     pub value: u32,
     pub count: u32,
 }
-
 impl<'a> LsbBits<'a> {
     pub fn new(data: &'a [u8], cursor: usize, end: usize) -> Result<Self, DecodeError> {
         let mut bits = LsbBits {
@@ -88,21 +75,18 @@ impl<'a> LsbBits<'a> {
         bits.fill()?;
         Ok(bits)
     }
-
     pub fn need(&self, size: usize) -> Result<(), DecodeError> {
         if self.cursor + size > self.end {
             return err("compressed input ended before terminator");
         }
         Ok(())
     }
-
     pub fn byte(&mut self) -> Result<u8, DecodeError> {
         self.need(1)?;
         let value = self.data[self.cursor];
         self.cursor += 1;
         Ok(value)
     }
-
     pub fn fill(&mut self) -> Result<(), DecodeError> {
         self.need(2)?;
         let word = u32::from(self.data[self.cursor]) | u32::from(self.data[self.cursor + 1]) << 8;
@@ -111,7 +95,6 @@ impl<'a> LsbBits<'a> {
         self.count += 16;
         Ok(())
     }
-
     pub fn get(&mut self, count: u32) -> Result<u32, DecodeError> {
         while self.count < count {
             self.fill()?;
@@ -124,7 +107,6 @@ impl<'a> LsbBits<'a> {
         Ok(value)
     }
 }
-
 /// `Math.floor(Math.log2(value)) + 1`, with `0 -> 0`.
 fn bit_length(value: u32) -> u32 {
     if value == 0 {
@@ -132,11 +114,9 @@ fn bit_length(value: u32) -> u32 {
     }
     32 - value.leading_zeros()
 }
-
 // ---------------------------------------------------------------------------
 // general stream
 // ---------------------------------------------------------------------------
-
 pub fn append_copy(
     output: &mut Vec<u8>,
     distance: u32,
@@ -157,7 +137,6 @@ pub fn append_copy(
     }
     Ok(())
 }
-
 fn decode_length(bits: &mut LsbBits) -> Result<Option<u32>, DecodeError> {
     if bits.get(1)? == 0 {
         return Ok(Some(2));
@@ -181,7 +160,6 @@ fn decode_length(bits: &mut LsbBits) -> Result<Option<u32>, DecodeError> {
     let long = bits.get(7)?;
     Ok(if long == 0 { None } else { Some(long + 10) })
 }
-
 /// Shared body of `decode_general_trace` and `decode_general_prefill_trace`.
 fn decode_general_body(
     data: &[u8],
@@ -225,7 +203,6 @@ fn decode_general_body(
         append_copy(&mut output, distance, length, prefill as u64 + maximum)?;
     }
 }
-
 pub fn decode_general_trace(
     data: &[u8],
     start: usize,
@@ -237,7 +214,6 @@ pub fn decode_general_trace(
     }
     decode_general_body(data, start, end, maximum, 0, 1)
 }
-
 pub fn decode_general(
     data: &[u8],
     start: usize,
@@ -247,7 +223,6 @@ pub fn decode_general(
     let (output, cursor, _) = decode_general_trace(data, start, end, maximum)?;
     Ok((output, cursor))
 }
-
 pub fn decode_general_prefill_trace(
     data: &[u8],
     start: usize,
@@ -264,13 +239,11 @@ pub fn decode_general_prefill_trace(
     }
     decode_general_body(data, start, end, maximum, prefill, header)
 }
-
 pub fn put(bits: &mut Vec<u8>, value: u32, count: u32) {
     for index in 0..count {
         bits.push(((value >> index) & 1) as u8);
     }
 }
-
 fn encode_length(bits: &mut Vec<u8>, length: u32) -> Result<(), DecodeError> {
     put(bits, 0, 1);
     match length {
@@ -305,7 +278,6 @@ fn encode_length(bits: &mut Vec<u8>, length: u32) -> Result<(), DecodeError> {
     }
     Ok(())
 }
-
 fn finish_bits(bits: &[u8], header: usize) -> Vec<u8> {
     let mut bits = bits.to_vec();
     put(&mut bits, 0, 1);
@@ -322,7 +294,6 @@ fn finish_bits(bits: &[u8], header: usize) -> Vec<u8> {
     }
     packed
 }
-
 fn encode_general_inner(
     decoded: &[u8],
     tokens: &[GeneralToken],
@@ -398,11 +369,9 @@ fn encode_general_inner(
     }
     Ok(finish_bits(&bits, header))
 }
-
 pub fn encode_general(decoded: &[u8], tokens: &[GeneralToken]) -> Result<Vec<u8>, DecodeError> {
     encode_general_inner(decoded, tokens, 0, 1)
 }
-
 pub fn encode_general_prefill(
     decoded: &[u8],
     tokens: &[GeneralToken],
@@ -411,11 +380,9 @@ pub fn encode_general_prefill(
 ) -> Result<Vec<u8>, DecodeError> {
     encode_general_inner(decoded, tokens, prefill, header)
 }
-
 // ---------------------------------------------------------------------------
 // palette stream
 // ---------------------------------------------------------------------------
-
 pub fn decode_palette_trace(
     data: &[u8],
     start: usize,
@@ -478,7 +445,6 @@ pub fn decode_palette_trace(
         groups.push(PaletteGroup::Group(operations));
     }
 }
-
 pub fn decode_palette(
     data: &[u8],
     start: usize,
@@ -488,7 +454,6 @@ pub fn decode_palette(
     let (output, cursor, _) = decode_palette_trace(data, start, end, maximum)?;
     Ok((output, cursor))
 }
-
 pub fn encode_palette(decoded: &[u8], groups: &[PaletteGroup]) -> Result<Vec<u8>, DecodeError> {
     let mut output: Vec<u8> = Vec::new();
     let mut encoded: Vec<u8> = Vec::new();
@@ -575,17 +540,14 @@ pub fn encode_palette(decoded: &[u8], groups: &[PaletteGroup]) -> Result<Vec<u8>
     }
     Ok(encoded)
 }
-
 // ---------------------------------------------------------------------------
 // dispatch
 // ---------------------------------------------------------------------------
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ResourceKind {
     General,
     Palette,
 }
-
 impl ResourceKind {
     pub fn name(self) -> &'static str {
         match self {
@@ -594,13 +556,11 @@ impl ResourceKind {
         }
     }
 }
-
 impl fmt::Display for ResourceKind {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str(self.name())
     }
 }
-
 pub fn decode(
     data: &[u8],
     start: usize,
@@ -638,11 +598,9 @@ pub fn decode(
     }
     err("stream is ambiguous; specify --format general or palette")
 }
-
 // ---------------------------------------------------------------------------
 // self-test
 // ---------------------------------------------------------------------------
-
 pub fn synthetic_general() -> Vec<u8> {
     let mut bits: Vec<u8> = Vec::new();
     for value in b"AB" {
@@ -669,7 +627,6 @@ pub fn synthetic_general() -> Vec<u8> {
     packed.push(0);
     packed
 }
-
 /// Mirrors the TypeScript `self_test`. Returns `Err` with the same message the
 /// TypeScript would have thrown.
 pub fn self_test() -> Result<(), String> {

@@ -152,11 +152,9 @@ fn default_work(root: &Path, source: &str) -> String {
         .to_string_lossy()
         .into_owned()
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;
-
     #[test]
     fn parses_cross_game_reference_options() {
         let root = Path::new("/repo");
@@ -180,7 +178,6 @@ mod tests {
         assert!(options.configuration.reference_symbols);
         assert_eq!(options.rom.as_deref(), Some("/repo/roms/gs2-en.gba"));
     }
-
     #[test]
     fn size_must_be_positive() {
         assert_eq!(

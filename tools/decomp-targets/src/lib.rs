@@ -4,9 +4,7 @@
 //! that a second game can never quietly share a first game's output directory:
 //! every path here is relative to the repo root and target-isolated, and the
 //! self-test enforces both properties.
-
 pub mod cli;
-
 /// A reconstructed product. Editions belong to a product; GS1 and GS2 are
 /// deliberately not modelled as editions of one ROM.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -14,7 +12,6 @@ pub enum DecompGame {
     Gs1,
     Gs2,
 }
-
 impl DecompGame {
     pub fn as_str(self) -> &'static str {
         match self {
@@ -23,13 +20,11 @@ impl DecompGame {
         }
     }
 }
-
 impl std::fmt::Display for DecompGame {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str(self.as_str())
     }
 }
-
 /// The six approved historical editions of each product. Japanese is the
 /// source base; the remaining editions are measured deltas from it.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -41,7 +36,6 @@ pub enum DecompEdition {
     Fr,
     It,
 }
-
 impl DecompEdition {
     pub fn as_str(self) -> &'static str {
         match self {
@@ -54,13 +48,11 @@ impl DecompEdition {
         }
     }
 }
-
 impl std::fmt::Display for DecompEdition {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str(self.as_str())
     }
 }
-
 /// Target identifiers. The TS side used a string union; an enum gives us the
 /// same closed set with the compiler doing the checking.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -78,7 +70,6 @@ pub enum DecompTargetId {
     Gs2Fr,
     Gs2It,
 }
-
 /// Every reference ROM known to the reconstruction. This is intentionally a
 /// wider set than `DecompTargetId`: a reference target can locate and prove an
 /// owner before the complete build surface for that edition exists.
@@ -97,7 +88,6 @@ pub enum ReferenceTargetId {
     Gs2Fr,
     Gs2It,
 }
-
 impl ReferenceTargetId {
     pub fn as_str(self) -> &'static str {
         match self {
@@ -116,13 +106,11 @@ impl ReferenceTargetId {
         }
     }
 }
-
 impl std::fmt::Display for ReferenceTargetId {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str(self.as_str())
     }
 }
-
 impl DecompTargetId {
     pub fn as_str(self) -> &'static str {
         match self {
@@ -141,20 +129,17 @@ impl DecompTargetId {
         }
     }
 }
-
 impl std::fmt::Display for DecompTargetId {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str(self.as_str())
     }
 }
-
 /// Which compiler configuration a target builds with.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum DecompCompilerTarget {
     Gs1,
     Gs2,
 }
-
 /// The strongest build the repository can currently prove for a target.
 /// Compile-only targets deliberately have no edition address map, retained
 /// assembly ownership, or source assets wired into a link yet.
@@ -163,7 +148,6 @@ pub enum BuildSupport {
     CompileOnly,
     Full,
 }
-
 impl BuildSupport {
     pub fn as_str(self) -> &'static str {
         match self {
@@ -172,7 +156,6 @@ impl BuildSupport {
         }
     }
 }
-
 impl DecompCompilerTarget {
     pub fn as_str(self) -> &'static str {
         match self {
@@ -181,13 +164,11 @@ impl DecompCompilerTarget {
         }
     }
 }
-
 impl std::fmt::Display for DecompCompilerTarget {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str(self.as_str())
     }
 }
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct DecompTarget {
     pub id: DecompTargetId,
@@ -203,7 +184,6 @@ pub struct DecompTarget {
     pub asset_manifest: &'static str,
     pub output_dir: &'static str,
 }
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ReferenceTarget {
     pub id: ReferenceTargetId,
@@ -214,9 +194,7 @@ pub struct ReferenceTarget {
     pub compiler: DecompCompilerTarget,
     pub build_target: DecompTargetId,
 }
-
 pub const DEFAULT_TARGET: DecompTargetId = DecompTargetId::Gs1En;
-
 macro_rules! reference_target {
     ($id:ident, $game:ident, $edition:ident, $rom:literal, $size:expr, $compiler:ident) => {
         ReferenceTarget {
@@ -230,7 +208,6 @@ macro_rules! reference_target {
         }
     };
 }
-
 const REFERENCE_TARGETS: [ReferenceTarget; 12] = [
     reference_target!(Gs1Ja, Gs1, Ja, "roms/gs1-ja.gba", 0x0080_0000, Gs1),
     reference_target!(Gs1En, Gs1, En, "roms/gs1-en.gba", 0x0080_0000, Gs1),
@@ -245,7 +222,6 @@ const REFERENCE_TARGETS: [ReferenceTarget; 12] = [
     reference_target!(Gs2Fr, Gs2, Fr, "roms/gs2-fr.gba", 0x0100_0000, Gs2),
     reference_target!(Gs2It, Gs2, It, "roms/gs2-it.gba", 0x0100_0000, Gs2),
 ];
-
 pub const REFERENCE_TARGET_IDS: [ReferenceTargetId; 12] = [
     ReferenceTargetId::Gs1Ja,
     ReferenceTargetId::Gs1En,
@@ -260,7 +236,6 @@ pub const REFERENCE_TARGET_IDS: [ReferenceTargetId; 12] = [
     ReferenceTargetId::Gs2Fr,
     ReferenceTargetId::Gs2It,
 ];
-
 macro_rules! decomp_target {
     ($name:ident, $id:ident, $game:ident, $edition:ident, $target:literal, $size:expr, $compiler:ident, $support:ident, $define:literal, $root:literal) => {
         const $name: DecompTarget = DecompTarget {
@@ -279,7 +254,6 @@ macro_rules! decomp_target {
         };
     };
 }
-
 decomp_target!(
     GS1_JA,
     Gs1Ja,
@@ -424,11 +398,9 @@ decomp_target!(
     "GS2_EDITION_IT",
     "games/gs2"
 );
-
 const TARGETS: [DecompTarget; 12] = [
     GS1_JA, GS1_EN, GS1_DE, GS1_ES, GS1_FR, GS1_IT, GS2_JA, GS2_EN, GS2_DE, GS2_ES, GS2_FR, GS2_IT,
 ];
-
 pub const TARGET_IDS: [DecompTargetId; 12] = [
     DecompTargetId::Gs1Ja,
     DecompTargetId::Gs1En,
@@ -443,7 +415,6 @@ pub const TARGET_IDS: [DecompTargetId; 12] = [
     DecompTargetId::Gs2Fr,
     DecompTargetId::Gs2It,
 ];
-
 /// Serialize a string the way `JSON.stringify` would, so the error text is
 /// byte-for-byte what the TS tool produced (quotes included).
 fn json_quote(value: &str) -> String {
@@ -465,7 +436,6 @@ fn json_quote(value: &str) -> String {
     out.push('"');
     out
 }
-
 fn target_ids_joined() -> String {
     TARGET_IDS
         .iter()
@@ -473,7 +443,6 @@ fn target_ids_joined() -> String {
         .collect::<Vec<_>>()
         .join(" or ")
 }
-
 /// Parse any of the twelve historical ROM ids. Unlike `parse_decomp_target`,
 /// this does not imply that a complete build surface has already been
 /// installed for the edition.
@@ -484,14 +453,12 @@ pub fn parse_reference_target(value: &str) -> Result<ReferenceTargetId, String> 
         .map(|target| target.id)
         .ok_or_else(|| format!("unsupported reference target {}", json_quote(value)))
 }
-
 pub fn reference_target(id: ReferenceTargetId) -> ReferenceTarget {
     *REFERENCE_TARGETS
         .iter()
         .find(|target| target.id == id)
         .expect("REFERENCE_TARGET_IDS and REFERENCE_TARGETS diverged")
 }
-
 /// PORT NOTE: the TS threw an `Error`; Rust returns `Err(String)` carrying the
 /// identical message so callers can decide whether to panic or report.
 pub fn parse_decomp_target(value: &str) -> Result<DecompTargetId, String> {
@@ -507,7 +474,6 @@ pub fn parse_decomp_target(value: &str) -> Result<DecompTargetId, String> {
             )
         })
 }
-
 /// Look up a target by id string. `None` means "use the default target",
 /// mirroring the TS default parameter.
 pub fn decomp_target(id: Option<&str>) -> Result<DecompTarget, String> {
@@ -517,7 +483,6 @@ pub fn decomp_target(id: Option<&str>) -> Result<DecompTarget, String> {
     };
     Ok(target_for(id))
 }
-
 /// Infallible lookup when the id is already known-good.
 pub fn target_for(id: DecompTargetId) -> DecompTarget {
     match id {
@@ -535,7 +500,6 @@ pub fn target_for(id: DecompTargetId) -> DecompTarget {
         DecompTargetId::Gs2It => GS2_IT,
     }
 }
-
 /// A path is usable only if it is non-empty, not absolute in either slash
 /// style, and never escapes the repo root via a `..` segment.
 fn relative_path(path: &str) -> bool {
@@ -544,13 +508,11 @@ fn relative_path(path: &str) -> bool {
         && !path.starts_with('\\')
         && !path.split(['\\', '/']).any(|seg| seg == "..")
 }
-
 /// The registry's invariants, checked at runtime. Kept as a function (not only
 /// as unit tests) because the TS shipped it as a CLI entry point.
 pub fn self_test() -> Result<String, String> {
     let gs1 = decomp_target(None)?;
     let gs2 = decomp_target(Some("gs2-en"))?;
-
     if gs1.id != DEFAULT_TARGET
         || gs1.rom != "roms/gs1-en.gba"
         || gs1.rom_size != 0x0080_0000
@@ -564,7 +526,6 @@ pub fn self_test() -> Result<String, String> {
     {
         return Err("GS2 target registry self-test failed".to_string());
     }
-
     let mut roms = std::collections::HashSet::new();
     let mut bases = 0;
     for (index, id) in REFERENCE_TARGET_IDS.iter().copied().enumerate() {
@@ -576,7 +537,6 @@ pub fn self_test() -> Result<String, String> {
         {
             return Err(format!("{} reference registry entry is inconsistent", id));
         }
-
         let (size, compiler) = match target.game {
             DecompGame::Gs1 => (0x0080_0000, DecompCompilerTarget::Gs1),
             DecompGame::Gs2 => (0x0100_0000, DecompCompilerTarget::Gs2),
@@ -594,13 +554,11 @@ pub fn self_test() -> Result<String, String> {
     if REFERENCE_TARGET_IDS.len() != TARGET_IDS.len() || bases != 2 {
         return Err("reference/build target accounting is inconsistent".to_string());
     }
-
     for invalid in ["", "gs1", "GS1-en", "gs1-en ", "alchemy"] {
         if parse_reference_target(invalid).is_ok() {
             return Err(format!("invalid reference target was accepted: {invalid}"));
         }
     }
-
     let mut outputs = std::collections::HashSet::new();
     let mut full_builds = 0usize;
     for target in TARGETS {
@@ -631,7 +589,6 @@ pub fn self_test() -> Result<String, String> {
     if full_builds != 1 || gs1.build_support != BuildSupport::Full {
         return Err("full-build target accounting is inconsistent".into());
     }
-
     for (field, a, b) in [
         ("sourceDir", gs1.source_dir, gs2.source_dir),
         ("asmDir", gs1.asm_dir, gs2.asm_dir),
@@ -641,13 +598,11 @@ pub fn self_test() -> Result<String, String> {
             return Err(format!("{field} is not target-isolated"));
         }
     }
-
     for invalid in ["", "gs1", "GS1-en", "gs1-en ", "alchemy"] {
         if parse_decomp_target(invalid).is_ok() {
             return Err(format!("invalid target was accepted: {invalid}"));
         }
     }
-
     Ok(format!(
         "self-test=ok reference_targets={} build_targets={} bases={} default={}",
         REFERENCE_TARGET_IDS.len(),
@@ -656,11 +611,9 @@ pub fn self_test() -> Result<String, String> {
         DEFAULT_TARGET
     ))
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;
-
     #[test]
     fn registry_covers_two_six_edition_products() {
         assert_eq!(

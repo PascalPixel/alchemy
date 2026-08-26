@@ -1,13 +1,4 @@
 //! Native entry point for the asset build stage.
-
-use std::collections::{BTreeMap, BTreeSet, HashMap};
-use std::env;
-use std::fs;
-use std::io::Write;
-use std::path::{Path, PathBuf};
-use std::process::{Command, ExitCode, Stdio};
-use std::sync::{Arc, Mutex, OnceLock};
-
 use alignment_tail::parse_alignment_tail;
 use archive_asset::{
     build_archive, self_test as archive_self_test, ArchivePlan, ArchiveStream, PixelFormat,
@@ -29,8 +20,14 @@ use map_load_table::build_table as build_map_load_table;
 use overlay_disasm::{assemble_overlay, OverlaySource};
 use serde_json::Value;
 use sha1::{Digest, Sha1};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
+use std::env;
+use std::fs;
+use std::io::Write;
+use std::path::{Path, PathBuf};
+use std::process::{Command, ExitCode, Stdio};
+use std::sync::{Arc, Mutex, OnceLock};
 use tilemap::import_tilemap;
-
 const USAGE: &str = "usage: build-assets [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
 const ROM_SIZE: usize = 0x0080_0000;
@@ -42,7 +39,6 @@ const RESOURCE_3CE_STREAM_ADDRESS: usize = 0x087fcd20;
 const RESOURCE_3CE_FILL_ADDRESS: usize = 0x087fd4bc;
 const STAFF_ROLL_ADDRESS: usize = 0x080f_0a5c;
 const STAFF_ROLL_SIZE: usize = 0x15a4;
-
 fn repository_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -50,7 +46,6 @@ fn repository_root() -> PathBuf {
         .expect("build-assets is under tools")
         .to_path_buf()
 }
-
 fn number(value: &Value, label: &str) -> Result<usize, String> {
     let text = match value {
         Value::Number(value) => value.to_string(),
@@ -64,7 +59,6 @@ fn number(value: &Value, label: &str) -> Result<usize, String> {
     };
     parsed.map_err(|_| format!("{label} must be an integer"))
 }
-
 fn required<'a>(
     object: &'a serde_json::Map<String, Value>,
     key: &str,
@@ -73,7 +67,6 @@ fn required<'a>(
         .get(key)
         .ok_or_else(|| format!("archive plan is missing {key}"))
 }
-
 fn parse_operation(value: &Value) -> Result<PaletteOperation, String> {
     let items = value
         .as_array()
@@ -92,7 +85,6 @@ fn parse_operation(value: &Value) -> Result<PaletteOperation, String> {
         _ => Err("unsupported archive token operation".to_string()),
     }
 }
-
 fn parse_group(value: &Value) -> Result<PaletteGroup, String> {
     let items = value
         .as_array()
@@ -115,7 +107,6 @@ fn parse_group(value: &Value) -> Result<PaletteGroup, String> {
         _ => Err("unsupported archive token group".to_string()),
     }
 }
-
 fn hex_bytes(value: &Value, label: &str) -> Result<Vec<u8>, String> {
     let text = value
         .as_str()
@@ -131,7 +122,6 @@ fn hex_bytes(value: &Value, label: &str) -> Result<Vec<u8>, String> {
         })
         .collect()
 }
-
 fn parse_plan(value: Value) -> Result<ArchivePlan, String> {
     let object = value
         .as_object()
@@ -209,7 +199,6 @@ fn parse_plan(value: Value) -> Result<ArchivePlan, String> {
         alignment_tail,
     })
 }
-
 fn build_offset_archive(plan_path: &Path, atlas_path: &Path) -> Result<Vec<u8>, String> {
     let plan = parse_plan(
         serde_json::from_slice(&fs::read(plan_path).map_err(|error| error.to_string())?)
@@ -221,24 +210,19 @@ fn build_offset_archive(plan_path: &Path, atlas_path: &Path) -> Result<Vec<u8>, 
     )
     .map_err(|error| error.to_string())
 }
-
 type Json = Value;
-
 fn json(path: &Path) -> Result<Json, String> {
     serde_json::from_slice(&fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?)
         .map_err(|error| format!("{}: invalid JSON: {error}", path.display()))
 }
-
 fn json_number(value: &Json, label: &str) -> Result<usize, String> {
     number(value, label)
 }
-
 fn json_string<'a>(value: &'a Json, label: &str) -> Result<&'a str, String> {
     value
         .as_str()
         .ok_or_else(|| format!("{label} must be a string"))
 }
-
 fn root_path(root: &Path, name: &str) -> Result<PathBuf, String> {
     let path = if Path::new(name).is_absolute() {
         PathBuf::from(name)
@@ -252,7 +236,6 @@ fn root_path(root: &Path, name: &str) -> Result<PathBuf, String> {
     }
     Ok(path)
 }
-
 fn root_relative(root: &Path, path: &Path) -> Result<String, String> {
     let relative = path.strip_prefix(root).map_err(|_| {
         format!(
@@ -262,11 +245,9 @@ fn root_relative(root: &Path, path: &Path) -> Result<String, String> {
     })?;
     Ok(relative.to_string_lossy().replace('\\', "/"))
 }
-
 fn hex_address(address: usize) -> String {
     format!("0x{address:08x}")
 }
-
 const NATIVE_TOOL_SPECS: &[(&str, &str, &str)] = &[
     ("build-assets", "build-assets", "build-assets"),
     ("message_archive", "message-archive", "message_archive"),
@@ -383,7 +364,6 @@ const NATIVE_TOOL_SPECS: &[(&str, &str, &str)] = &[
     ("music", "music", "music"),
     ("encounter_data", "encounter-data", "encounter-data"),
 ];
-
 /// The `assets` subcommand that now performs each registered asset tool.
 ///
 /// The entry-point consolidation folded 41 of the 42 asset builders into the
@@ -444,7 +424,6 @@ fn assets_subcommand(tool: &str) -> Option<&'static str> {
         _ => return None,
     })
 }
-
 fn tool_spec(tool: &str) -> Result<(&'static str, &'static str), String> {
     NATIVE_TOOL_SPECS
         .iter()
@@ -452,17 +431,13 @@ fn tool_spec(tool: &str) -> Result<(&'static str, &'static str), String> {
         .map(|(_, crate_name, binary_name)| (*crate_name, *binary_name))
         .ok_or_else(|| format!("native asset tool is not registered for cache identity: {tool}"))
 }
-
 type NativeToolKey = (PathBuf, String);
 type NativeToolBuild = OnceLock<Result<PathBuf, String>>;
 type NativeToolCache = Mutex<HashMap<NativeToolKey, Arc<NativeToolBuild>>>;
-
 static NATIVE_TOOL_BUILDS: OnceLock<NativeToolCache> = OnceLock::new();
-
 fn uses_standalone_workspace(manifest: &str) -> bool {
     manifest.lines().any(|line| line.trim() == "[workspace]")
 }
-
 fn native_binary_path(
     root: &Path,
     crate_name: &str,
@@ -474,7 +449,6 @@ fn native_binary_path(
     let target = native_target_dir(root, crate_name, &manifest_text);
     Ok(target.join(binary_name))
 }
-
 fn native_target_dir(root: &Path, crate_name: &str, manifest: &str) -> PathBuf {
     if uses_standalone_workspace(manifest) {
         root.join("tools").join(crate_name).join("target/release")
@@ -482,7 +456,6 @@ fn native_target_dir(root: &Path, crate_name: &str, manifest: &str) -> PathBuf {
         root.join("tools/target/release")
     }
 }
-
 fn build_native_tool(
     root: &Path,
     tool: &str,
@@ -513,7 +486,6 @@ fn build_native_tool(
             format!("Cargo failed to build native {tool}: {detail}")
         });
     }
-
     let binary = native_binary_path(root, crate_name, binary_name, manifest)?;
     if !binary.is_file() {
         return Err(format!(
@@ -523,7 +495,6 @@ fn build_native_tool(
     }
     Ok(binary)
 }
-
 fn native_tool_binary(root: &Path, tool: &str) -> Result<PathBuf, String> {
     let (crate_name, binary_name) = match assets_subcommand(tool) {
         Some(_) => ("assets", "assets"),
@@ -544,14 +515,12 @@ fn native_tool_binary(root: &Path, tool: &str) -> Result<PathBuf, String> {
         .get_or_init(|| build_native_tool(root, tool, crate_name, binary_name, &manifest))
         .clone()
 }
-
 fn implementation_signature() -> Result<String, String> {
     let executable = env::current_exe().map_err(|error| error.to_string())?;
     let bytes =
         fs::read(&executable).map_err(|error| format!("{}: {error}", executable.display()))?;
     Ok(sha256::hex(&bytes))
 }
-
 fn native_helpers_signature(root: &Path) -> Result<String, String> {
     let mut stream = Vec::new();
     for (tool, _, _) in NATIVE_TOOL_SPECS {
@@ -561,12 +530,10 @@ fn native_helpers_signature(root: &Path) -> Result<String, String> {
     }
     Ok(sha256::hex(&stream))
 }
-
 struct ProcessOutput {
     stdout: Vec<u8>,
     stderr: String,
 }
-
 fn run_tool(
     root: &Path,
     tool: &str,
@@ -614,7 +581,6 @@ fn run_tool(
         stderr,
     })
 }
-
 fn native_bytes(
     root: &Path,
     tool: &str,
@@ -626,11 +592,9 @@ fn native_bytes(
     args.extend(extra.iter().cloned());
     Ok(run_tool(root, tool, &args, None)?.stdout)
 }
-
 fn native_command(root: &Path, tool: &str, args: &[String]) -> Result<Vec<u8>, String> {
     Ok(run_tool(root, tool, args, None)?.stdout)
 }
-
 fn native_with_report(root: &Path, tool: &str, args: &[String]) -> Result<(Vec<u8>, Json), String> {
     let output = run_tool(root, tool, args, None)?;
     let line = output
@@ -643,12 +607,10 @@ fn native_with_report(root: &Path, tool: &str, args: &[String]) -> Result<(Vec<u
         serde_json::from_str(line.trim()).map_err(|error| format!("{tool} report: {error}"))?;
     Ok((output.stdout, report))
 }
-
 fn native_json(root: &Path, tool: &str, args: &[String]) -> Result<Json, String> {
     let output = run_tool(root, tool, args, None)?;
     serde_json::from_slice(&output.stdout).map_err(|error| format!("{tool} JSON: {error}"))
 }
-
 fn child_path(plan_path: &Path, name: &str) -> PathBuf {
     let parent = plan_path.parent().unwrap_or(Path::new("."));
     let base = plan_path.file_name().unwrap_or_default().to_string_lossy();
@@ -660,7 +622,6 @@ fn child_path(plan_path: &Path, name: &str) -> PathBuf {
         parent.join(name)
     }
 }
-
 fn dedup_sources(sources: Vec<String>) -> Vec<String> {
     let mut seen = BTreeSet::new();
     sources
@@ -668,14 +629,12 @@ fn dedup_sources(sources: Vec<String>) -> Vec<String> {
         .filter(|source| seen.insert(source.clone()))
         .collect()
 }
-
 #[derive(Debug)]
 struct ComponentResult {
     data: Vec<u8>,
     sources: Vec<String>,
     details: Json,
 }
-
 fn decode_tile_entry(value: u16) -> (usize, usize, bool, bool) {
     (
         usize::from(value & 0x03ff),
@@ -684,7 +643,6 @@ fn decode_tile_entry(value: u16) -> (usize, usize, bool, bool) {
         value & 0x0800 != 0,
     )
 }
-
 fn pack_tile(pixels: &[u8]) -> Result<Vec<u8>, String> {
     if pixels.len() != 64 || pixels.iter().any(|pixel| *pixel >= 16) {
         return Err("object tile does not contain 64 4bpp indices".to_string());
@@ -695,7 +653,6 @@ fn pack_tile(pixels: &[u8]) -> Result<Vec<u8>, String> {
     }
     Ok(output)
 }
-
 fn flip_tile(pixels: &[u8], hflip: bool, vflip: bool) -> Vec<u8> {
     let mut output = Vec::with_capacity(64);
     for y in 0..8 {
@@ -707,7 +664,6 @@ fn flip_tile(pixels: &[u8], hflip: bool, vflip: bool) -> Vec<u8> {
     }
     output
 }
-
 fn build_object_bank(root: &Path, plan_path: &Path) -> Result<ComponentResult, String> {
     let plan = json(plan_path)?;
     if plan.get("format") != Some(&Value::from(1))
@@ -883,7 +839,6 @@ fn build_object_bank(root: &Path, plan_path: &Path) -> Result<ComponentResult, S
         }),
     })
 }
-
 fn build_component(root: &Path, entry: &Json) -> Result<ComponentResult, String> {
     let kind = json_string(
         entry.get("kind").ok_or("asset component kind is missing")?,
@@ -1061,7 +1016,6 @@ fn build_component(root: &Path, entry: &Json) -> Result<ComponentResult, String>
         details,
     })
 }
-
 fn parse_general_tokens(value: &Json) -> Result<Vec<extract_resource::GeneralToken>, String> {
     value
         .as_array()
@@ -1088,7 +1042,6 @@ fn parse_general_tokens(value: &Json) -> Result<Vec<extract_resource::GeneralTok
         })
         .collect()
 }
-
 fn parse_hex_text(value: &Json, label: &str) -> Result<Vec<u8>, String> {
     let text = json_string(value, label)?;
     if text.len() % 2 != 0 {
@@ -1102,7 +1055,6 @@ fn parse_hex_text(value: &Json, label: &str) -> Result<Vec<u8>, String> {
         })
         .collect()
 }
-
 fn build_general_lz(root: &Path, entry: &Json) -> Result<(Vec<u8>, Vec<String>, Json), String> {
     let components = entry
         .get("components")
@@ -1221,7 +1173,6 @@ fn build_general_lz(root: &Path, entry: &Json) -> Result<(Vec<u8>, Vec<String>, 
         serde_json::json!({"decoded_size": decoded.len(), "tokens": plan.get("tokens").and_then(Value::as_array).map_or(0, Vec::len), "components": reports}),
     ))
 }
-
 fn closure_self_test() -> Result<String, String> {
     let root = repository_root();
     let missing = root.join("games/gs1/assets/data/closure/__self_test_missing__/index.json");
@@ -1253,7 +1204,6 @@ fn closure_self_test() -> Result<String, String> {
         "self-test=ok optional=skipped present_regions={present_regions} provenance=verified"
     ))
 }
-
 #[derive(Clone)]
 struct MapResource {
     id: usize,
@@ -1261,14 +1211,12 @@ struct MapResource {
     data: Vec<u8>,
     sources: Vec<String>,
 }
-
 #[derive(Clone)]
 struct MusicResidual {
     address: usize,
     data: Vec<u8>,
     sources: Vec<String>,
 }
-
 struct Context {
     root: PathBuf,
     paths: AssetPaths,
@@ -1276,7 +1224,6 @@ struct Context {
     chiiki: HashMap<String, Vec<MapResource>>,
     music: HashMap<String, Vec<MusicResidual>>,
 }
-
 impl Context {
     fn new(root: &Path) -> Self {
         Self {
@@ -1287,11 +1234,9 @@ impl Context {
             music: HashMap::new(),
         }
     }
-
     fn source(&self, name: &str) -> Result<PathBuf, String> {
         root_path(&self.root, name)
     }
-
     fn map_sources(
         &self,
         index_name: &str,
@@ -1358,7 +1303,6 @@ impl Context {
         }
         Ok(sources)
     }
-
     fn map_series(&mut self, index_name: &str, kind: &str) -> Result<Vec<MapResource>, String> {
         if let Some(cached) = if kind == "tokushu" {
             self.tokushu.get(index_name)
@@ -1424,7 +1368,6 @@ impl Context {
         }
         Ok(built)
     }
-
     fn music_residuals(&mut self, index_name: &str) -> Result<Vec<MusicResidual>, String> {
         if let Some(cached) = self.music.get(index_name) {
             return Ok(cached.clone());
@@ -1481,7 +1424,6 @@ impl Context {
         Ok(built)
     }
 }
-
 fn expand_series(
     ctx: &mut Context,
     manifest: &Json,
@@ -2014,14 +1956,12 @@ fn expand_series(
     }
     Ok(())
 }
-
 fn series_values<'a>(value: &'a Json, key: &str) -> Result<&'a Vec<Json>, String> {
     value
         .get(key)
         .and_then(Value::as_array)
         .ok_or_else(|| format!("{key} is missing or is not an array"))
 }
-
 fn closure_coverage(items: &[Json], label: &str) -> Result<Vec<(usize, usize)>, String> {
     let mut regions = Vec::new();
     for (index, item) in items.iter().enumerate() {
@@ -2057,7 +1997,6 @@ fn closure_coverage(items: &[Json], label: &str) -> Result<Vec<(usize, usize)>, 
     }
     Ok(merged)
 }
-
 fn expand_closure_packages(
     ctx: &mut Context,
     manifest: &Json,
@@ -2139,7 +2078,6 @@ fn expand_closure_packages(
     }
     Ok(())
 }
-
 fn closure_sources(
     ctx: &Context,
     entry: &Json,
@@ -2153,7 +2091,6 @@ fn closure_sources(
     }
     Ok(dedup_sources(sources))
 }
-
 fn build_entry(ctx: &mut Context, entry: &Json) -> Result<(Vec<u8>, Vec<String>, Json), String> {
     let kind = json_string(
         entry.get("kind").ok_or("asset kind is missing")?,
@@ -2454,7 +2391,6 @@ fn build_entry(ctx: &mut Context, entry: &Json) -> Result<(Vec<u8>, Vec<String>,
         _ => build_entry_native_tail(ctx, entry, kind, address, entry_source),
     }
 }
-
 fn build_gba_header_bytes(
     ctx: &Context,
     source: &Path,
@@ -2471,12 +2407,10 @@ fn build_gba_header_bytes(
         size,
     )
 }
-
 const SEQUENCE_DURATIONS: [usize; 49] = [
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 28,
     30, 32, 36, 40, 42, 44, 48, 52, 54, 56, 60, 64, 66, 68, 72, 76, 78, 80, 84, 88, 90, 92, 96,
 ];
-
 fn sequence_control_opcode(name: &str) -> Option<u8> {
     Some(match name {
         "priority" => 0xba,
@@ -2495,7 +2429,6 @@ fn sequence_control_opcode(name: &str) -> Option<u8> {
         _ => return None,
     })
 }
-
 fn sequence_duration_index(value: &Json, label: &str) -> Result<u8, String> {
     let ticks = json_number(value, label)?;
     SEQUENCE_DURATIONS
@@ -2504,7 +2437,6 @@ fn sequence_duration_index(value: &Json, label: &str) -> Result<u8, String> {
         .map(|index| index as u8)
         .ok_or_else(|| format!("{label} is not representable by the engine duration table"))
 }
-
 fn sequence_address(value: &Json, label: &str) -> Result<u32, String> {
     let address = json_number(value, label)?;
     if !(0x0800_0000..0x0a00_0000).contains(&address) {
@@ -2512,7 +2444,6 @@ fn sequence_address(value: &Json, label: &str) -> Result<u32, String> {
     }
     Ok(address as u32)
 }
-
 fn sequence_symbol(value: &Json, label: &str) -> Result<String, String> {
     let symbol = json_string(value, label)?;
     if symbol.is_empty()
@@ -2528,7 +2459,6 @@ fn sequence_symbol(value: &Json, label: &str) -> Result<String, String> {
     }
     Ok(symbol.to_string())
 }
-
 fn sequence_parameter(value: &Json, name: &str) -> Result<u8, String> {
     let number = json_number(value, name)? as i64;
     let signed = matches!(name, "key_shift" | "pan" | "pitch_bend" | "tuning");
@@ -2543,7 +2473,6 @@ fn sequence_parameter(value: &Json, name: &str) -> Result<u8, String> {
         Err(format!("{name} does not fit u8"))
     }
 }
-
 fn sequence_note_parameters(event: &[Json], start: usize, label: &str) -> Result<Vec<u8>, String> {
     if event.len() < start || event.len() - start > 3 {
         return Err(format!("{label} has more than three parameters"));
@@ -2560,21 +2489,18 @@ fn sequence_note_parameters(event: &[Json], start: usize, label: &str) -> Result
         })
         .collect()
 }
-
 #[derive(Clone)]
 struct EncodedSequenceStream {
     data: Vec<u8>,
     labels: Vec<(String, usize)>,
     events: usize,
 }
-
 fn sequence_pointer(opcode: u8, target: &str, labels: Option<&HashMap<String, u32>>) -> Vec<u8> {
     let address = labels.and_then(|map| map.get(target).copied()).unwrap_or(0);
     let mut bytes = vec![opcode];
     bytes.extend_from_slice(&address.to_le_bytes());
     bytes
 }
-
 fn encode_sequence_stream(
     events: &[Json],
     labels: Option<&HashMap<String, u32>>,
@@ -2749,14 +2675,12 @@ fn encode_sequence_stream(
         events: event_count,
     })
 }
-
 fn sequence_alignment_size(offset: usize, boundary: usize) -> Result<usize, String> {
     if !(2..=0x100).contains(&boundary) || !boundary.is_power_of_two() {
         return Err("alignment boundary must be a power of two from 2 through 256".to_string());
     }
     Ok((0usize.wrapping_sub(offset)) & (boundary - 1))
 }
-
 fn build_sequence_source(source: &Json) -> Result<(Vec<u8>, Json), String> {
     if json_number(
         source.get("format").ok_or("sequence format is missing")?,
@@ -2994,7 +2918,6 @@ fn build_sequence_source(source: &Json) -> Result<(Vec<u8>, Json), String> {
         }),
     ))
 }
-
 fn midi_hex(data: &str) -> Result<Vec<u8>, String> {
     if data.len() % 2 != 0 {
         return Err("MIDI metadata has odd hexadecimal length".to_string());
@@ -3007,7 +2930,6 @@ fn midi_hex(data: &str) -> Result<Vec<u8>, String> {
         })
         .collect()
 }
-
 #[derive(Clone)]
 struct MidiNode {
     compact_tick: i64,
@@ -3015,7 +2937,6 @@ struct MidiNode {
     order: usize,
     event: Json,
 }
-
 fn reconstruct_midi_stream(events: &[MidiEvent]) -> Result<Vec<Json>, String> {
     let mut nodes = Vec::<MidiNode>::new();
     let mut grid = Vec::<usize>::new();
@@ -3135,11 +3056,9 @@ fn reconstruct_midi_stream(events: &[MidiEvent]) -> Result<Vec<Json>, String> {
     }
     Ok(output)
 }
-
 fn sha1_hex(data: &[u8]) -> String {
     format!("{:x}", Sha1::digest(data))
 }
-
 fn greedy_sequence(events: &[Json]) -> Result<Vec<Json>, String> {
     let mut output = Vec::new();
     let mut running: Option<u8> = None;
@@ -3208,7 +3127,6 @@ fn greedy_sequence(events: &[Json]) -> Result<Vec<Json>, String> {
     }
     Ok(output)
 }
-
 fn apply_sequence_deviations(
     default: &[Json],
     track: &Json,
@@ -3263,7 +3181,6 @@ fn apply_sequence_deviations(
     output.extend_from_slice(&default[cursor..]);
     Ok(output)
 }
-
 fn build_midi_sequence(
     _root: &Path,
     source: &Path,
@@ -3362,7 +3279,6 @@ fn build_midi_sequence(
     });
     build_sequence_source(&source)
 }
-
 fn build_entry_native_tail(
     ctx: &mut Context,
     entry: &Json,
@@ -4292,7 +4208,6 @@ fn build_entry_native_tail(
         _ => Err(format!("unsupported asset kind: {kind}")),
     }
 }
-
 fn flat_asset_name(name: &str) -> String {
     let parts: Vec<&str> = name.split('/').collect();
     if parts.len() <= 2 {
@@ -4300,14 +4215,12 @@ fn flat_asset_name(name: &str) -> String {
     }
     format!("{}/{}", parts[0], parts[1..].join("_"))
 }
-
 struct BuildOptions {
     rom: String,
     manifest: PathBuf,
     output: PathBuf,
     source_only: bool,
 }
-
 fn parse_build_options(arguments: &[String], root: &Path) -> Result<BuildOptions, String> {
     let mut options = BuildOptions {
         rom: "roms/gs1-en.gba".to_string(),
@@ -4369,7 +4282,6 @@ fn parse_build_options(arguments: &[String], root: &Path) -> Result<BuildOptions
     }
     Ok(options)
 }
-
 fn stamp_files(
     root: &Path,
     directory: &Path,
@@ -4406,11 +4318,9 @@ fn stamp_files(
     }
     Ok(())
 }
-
 fn include_all_stamp_files(_: &str) -> bool {
     true
 }
-
 fn stamp_record(stream: &mut Vec<u8>, label: &str, bytes: &[u8]) {
     stream.extend_from_slice(label.as_bytes());
     stream.push(0);
@@ -4419,14 +4329,12 @@ fn stamp_record(stream: &mut Vec<u8>, label: &str, bytes: &[u8]) {
     stream.extend_from_slice(sha256::hex(bytes).as_bytes());
     stream.push(0);
 }
-
 struct StageSignatures<'a> {
     bundle: &'a str,
     host_binutils: &'a str,
     implementation: &'a str,
     native_helpers: &'a str,
 }
-
 fn stage_stamp_with_signature(
     root: &Path,
     manifest: &Path,
@@ -4441,7 +4349,6 @@ fn stage_stamp_with_signature(
     } else {
         b"mode:rom\0"
     });
-
     let mut files = BTreeMap::new();
     stamp_files(
         root,
@@ -4478,12 +4385,10 @@ fn stage_stamp_with_signature(
     files
         .entry(manifest_relative)
         .or_insert_with(|| manifest.to_path_buf());
-
     for (relative, path) in files {
         let bytes = fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?;
         stamp_record(&mut stream, &relative, &bytes);
     }
-
     stamp_record(
         &mut stream,
         "<compiler-bundle>",
@@ -4510,7 +4415,6 @@ fn stage_stamp_with_signature(
     }
     Ok(sha256::hex(&stream))
 }
-
 fn stage_stamp(
     root: &Path,
     manifest: &Path,
@@ -4539,7 +4443,6 @@ fn stage_stamp(
         },
     )
 }
-
 fn output_matches(region: &Value) -> bool {
     let Some(output) = region.get("output").and_then(Value::as_str) else {
         return false;
@@ -4562,7 +4465,6 @@ fn output_matches(region: &Value) -> bool {
     };
     bytes.len() as u64 == expected_size && sha256::hex(&bytes) == expected_digest
 }
-
 fn reusable_asset_manifest(
     manifest: &Value,
     source_only: bool,
@@ -4601,7 +4503,6 @@ fn reusable_asset_manifest(
     }
     Some((regions.len(), total))
 }
-
 fn native_asset_main(arguments: &[String]) -> Result<(), String> {
     let root = repository_root();
     let options = parse_build_options(arguments, &root)?;
@@ -4655,7 +4556,6 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
             }
         }
     }
-
     let mut ctx = Context::new(&root);
     let mut entries = manifest
         .get("regions")
@@ -4664,7 +4564,6 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
         .unwrap_or_default();
     expand_closure_packages(&mut ctx, &manifest, &mut entries)?;
     expand_series(&mut ctx, &manifest, &mut entries)?;
-
     let mut index = 0;
     while index < entries.len() {
         if entries[index].get("kind").and_then(Value::as_str)
@@ -4705,7 +4604,6 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
             .collect::<Vec<_>>();
         entries.splice(index..index, generated);
     }
-
     entries.sort_unstable_by_key(|entry| {
         json_number(
             entry.get("address").unwrap_or(&Value::Null),
@@ -4830,7 +4728,6 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
     );
     Ok(())
 }
-
 fn run(arguments: Vec<String>) -> Result<ExitCode, String> {
     if arguments.as_slice() == ["--self-test"] {
         archive_self_test().map_err(|error| error.to_string())?;
@@ -4844,7 +4741,6 @@ fn run(arguments: Vec<String>) -> Result<ExitCode, String> {
     native_asset_main(&arguments)?;
     Ok(ExitCode::SUCCESS)
 }
-
 fn main() -> ExitCode {
     match run(env::args().skip(1).collect()) {
         Ok(code) => code,

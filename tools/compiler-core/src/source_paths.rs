@@ -9,21 +9,17 @@
 //! GS1 remains the default resolver for existing callers; target-aware build
 //! paths select the corresponding game registry. Owners absent from a manifest
 //! retain their legacy flat path during the migration.
-
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Component, Path, PathBuf};
-
 pub const SOURCE_DIRECTORY: &str = "games/gs1/src";
 pub const SOURCE_PATHS_MANIFEST: &str = "games/gs1/source-paths.json";
-
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub enum SourceOwner {
     Main(u32),
     Overlay { resource: u16, address: u32 },
 }
-
 impl SourceOwner {
     pub fn parse(id: &str) -> Result<Self, String> {
         if let Some(address) = id.strip_prefix("main:") {
@@ -40,7 +36,6 @@ impl SourceOwner {
             address: parse_lower_hex(address, 8, id)?,
         })
     }
-
     pub fn from_legacy_stem(stem: &str) -> Option<Self> {
         if stem.len() == 8 && lower_hex(stem) {
             return u32::from_str_radix(stem, 16).ok().map(Self::Main);
@@ -56,7 +51,6 @@ impl SourceOwner {
             address: u32::from_str_radix(address, 16).ok()?,
         })
     }
-
     pub fn id(self) -> String {
         match self {
             Self::Main(address) => format!("main:{address:08x}"),
@@ -65,32 +59,26 @@ impl SourceOwner {
             }
         }
     }
-
     pub fn address(self) -> u32 {
         match self {
             Self::Main(address) | Self::Overlay { address, .. } => address,
         }
     }
-
     pub fn address_stem(self) -> String {
         format!("{:08x}", self.address())
     }
-
     pub fn legacy_name(self) -> String {
         format!("Func_{}", self.address_stem())
     }
-
     pub fn overlay_id(self) -> Option<String> {
         match self {
             Self::Main(_) => None,
             Self::Overlay { resource, .. } => Some(format!("resource_{resource:03x}")),
         }
     }
-
     pub fn is_main(self) -> bool {
         matches!(self, Self::Main(_))
     }
-
     pub fn legacy_stem(self) -> String {
         match self {
             Self::Main(address) => format!("{address:08x}"),
@@ -99,17 +87,14 @@ impl SourceOwner {
             }
         }
     }
-
     pub fn legacy_relative_path(self) -> PathBuf {
         PathBuf::from(format!("{}.c", self.legacy_stem()))
     }
-
     /// Stable synthetic route used by the compiler tables. Source location is
     /// presentation; compiler routing belongs to the owner.
     pub fn routing_path(self) -> PathBuf {
         self.routing_path_for_game("gs1")
     }
-
     pub fn routing_path_for_game(self, game: &str) -> PathBuf {
         Path::new("games")
             .join(game)
@@ -117,13 +102,11 @@ impl SourceOwner {
             .join(self.legacy_relative_path())
     }
 }
-
 pub(crate) fn lower_hex(value: &str) -> bool {
     value
         .bytes()
         .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
 }
-
 pub(crate) fn c_identifier(value: &str) -> bool {
     let mut bytes = value.bytes();
     if !matches!(bytes.next(), Some(first) if first == b'_' || first.is_ascii_alphabetic()) {
@@ -131,7 +114,6 @@ pub(crate) fn c_identifier(value: &str) -> bool {
     }
     bytes.all(|byte| byte == b'_' || byte.is_ascii_alphanumeric())
 }
-
 fn parse_lower_hex(value: &str, width: usize, owner: &str) -> Result<u32, String> {
     if value.len() != width || !lower_hex(value) {
         return Err(format!(
@@ -141,20 +123,17 @@ fn parse_lower_hex(value: &str, width: usize, owner: &str) -> Result<u32, String
     u32::from_str_radix(value, 16)
         .map_err(|error| format!("invalid source owner {owner:?}: {error}"))
 }
-
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct SourceFile {
     pub owner: SourceOwner,
     pub path: PathBuf,
 }
-
 #[derive(Clone, Debug)]
 struct SourceRecord {
     name: String,
     path: Option<PathBuf>,
     call_via: Option<u32>,
 }
-
 #[derive(Clone, Debug)]
 pub struct SourcePaths {
     repository: PathBuf,
@@ -163,12 +142,10 @@ pub struct SourcePaths {
     records: BTreeMap<SourceOwner, SourceRecord>,
     by_path: BTreeMap<PathBuf, Vec<SourceOwner>>,
 }
-
 impl SourcePaths {
     pub fn load(repository: &Path) -> Result<Self, String> {
         Self::load_for_game(repository, "gs1")
     }
-
     pub fn load_for_game(repository: &Path, game: &str) -> Result<Self, String> {
         let (source_directory, manifest) = game_paths(game)?;
         let path = repository.join(&manifest);
@@ -180,11 +157,9 @@ impl SourcePaths {
         Self::parse_for_game(repository, game, &text)
             .map_err(|error| format!("{}: {error}", path.display()))
     }
-
     pub fn parse(repository: &Path, text: &str) -> Result<Self, String> {
         Self::parse_for_game(repository, "gs1", text)
     }
-
     pub fn parse_for_game(repository: &Path, game: &str, text: &str) -> Result<Self, String> {
         let (source_directory, manifest) = game_paths(game)?;
         let value: Value = serde_json::from_str(text).map_err(|error| error.to_string())?;
@@ -291,7 +266,6 @@ impl SourcePaths {
             by_path,
         })
     }
-
     fn empty(repository: &Path, source_directory: PathBuf, manifest: PathBuf) -> Self {
         Self {
             repository: repository.to_path_buf(),
@@ -301,34 +275,30 @@ impl SourcePaths {
             by_path: BTreeMap::new(),
         }
     }
-
     pub fn source_root(&self) -> PathBuf {
         self.repository.join(&self.source_directory)
     }
-
     pub fn manifest_path(&self) -> PathBuf {
         self.repository.join(&self.manifest)
     }
-
     pub fn mapped_relative_path(&self, owner: SourceOwner) -> Option<&Path> {
         self.records
             .get(&owner)
             .and_then(|record| record.path.as_deref())
     }
-
     pub fn mapped_source_path(&self, owner: SourceOwner) -> Option<PathBuf> {
         self.mapped_relative_path(owner)
             .map(|path| self.source_root().join(path))
     }
-
     pub fn registered_name(&self, owner: SourceOwner) -> Option<&str> {
         self.records.get(&owner).map(|record| record.name.as_str())
     }
-
     pub fn registered_call_via(&self, owner: SourceOwner) -> Option<u32> {
         self.records.get(&owner).and_then(|record| record.call_via)
     }
-
+    pub fn registered_owners(&self) -> impl Iterator<Item = SourceOwner> + '_ {
+        self.records.keys().copied()
+    }
     /// Destination for a new exact-source adoption. Legacy fallback is
     /// intentionally excluded: new writes must never recreate the flat,
     /// address-named layout.
@@ -341,7 +311,6 @@ impl SourcePaths {
             )
         })
     }
-
     /// Remove an owner's exact-C path after parking it back to assembly. Its
     /// canonical name remains registered.
     pub fn unregister_owner(&self, owner: SourceOwner) -> Result<bool, String> {
@@ -392,21 +361,17 @@ impl SourcePaths {
             .map_err(|error| format!("{}: {error}", manifest.display()))?;
         Ok(true)
     }
-
     pub fn relative_path(&self, owner: SourceOwner) -> PathBuf {
         self.mapped_relative_path(owner)
             .map(Path::to_path_buf)
             .unwrap_or_else(|| owner.legacy_relative_path())
     }
-
     pub fn source_path(&self, owner: SourceOwner) -> PathBuf {
         self.source_root().join(self.relative_path(owner))
     }
-
     pub fn repository_relative_path(&self, owner: SourceOwner) -> PathBuf {
         self.source_directory.join(self.relative_path(owner))
     }
-
     pub fn owners_for_path(&self, path: &Path) -> Vec<SourceOwner> {
         let Some(relative) = self.path_within_source_root(path) else {
             return Vec::new();
@@ -424,7 +389,6 @@ impl SourcePaths {
             .into_iter()
             .collect()
     }
-
     pub fn owner_for_path(&self, path: &Path) -> Result<Option<SourceOwner>, String> {
         let owners = self.owners_for_path(path);
         match owners.as_slice() {
@@ -436,7 +400,6 @@ impl SourcePaths {
             )),
         }
     }
-
     pub fn overlay_owner_for_path(
         &self,
         overlay: &str,
@@ -456,21 +419,17 @@ impl SourcePaths {
             )),
         }
     }
-
     pub fn main_sources(&self) -> Result<Vec<SourceFile>, String> {
         self.sources(Some(true), None, true)
     }
-
     /// Missing mapped files are omitted so `overlay-adopt` can resolve a new
     /// nested destination before it copies the proved candidate into place.
     pub fn overlay_sources(&self, overlay: &str) -> Result<Vec<SourceFile>, String> {
         self.sources(Some(false), Some(overlay), false)
     }
-
     pub fn all_sources(&self) -> Result<Vec<SourceFile>, String> {
         self.sources(None, None, true)
     }
-
     fn sources(
         &self,
         main: Option<bool>,
@@ -537,7 +496,6 @@ impl SourcePaths {
             .map(|(owner, path)| SourceFile { owner, path })
             .collect())
     }
-
     fn path_within_source_root(&self, path: &Path) -> Option<PathBuf> {
         if path.is_absolute() {
             return path
@@ -555,7 +513,6 @@ impl SourcePaths {
                 validate_source_path(&path.to_string_lossy()).ok()
             })
     }
-
     pub fn validate_tree(&self) -> Result<(), String> {
         let known: BTreeSet<PathBuf> = self
             .all_sources()?
@@ -578,7 +535,6 @@ impl SourcePaths {
         Ok(())
     }
 }
-
 fn game_paths(game: &str) -> Result<(PathBuf, PathBuf), String> {
     if game.is_empty()
         || !game
@@ -590,14 +546,12 @@ fn game_paths(game: &str) -> Result<(PathBuf, PathBuf), String> {
     let root = Path::new("games").join(game);
     Ok((root.join("src"), root.join("source-paths.json")))
 }
-
 fn matches_filter(owner: SourceOwner, main: Option<bool>, overlay: Option<&str>) -> bool {
     if main.is_some_and(|main| owner.is_main() != main) {
         return false;
     }
     overlay.is_none_or(|wanted| owner.overlay_id().as_deref() == Some(wanted))
 }
-
 fn validate_source_path(source: &str) -> Result<PathBuf, String> {
     let path = Path::new(source);
     let address_named = path
@@ -619,13 +573,11 @@ fn validate_source_path(source: &str) -> Result<PathBuf, String> {
     }
     Ok(path.to_path_buf())
 }
-
 fn source_stem(path: &Path) -> Option<String> {
     path.file_stem()
         .and_then(|stem| stem.to_str())
         .map(str::to_owned)
 }
-
 fn visit_c_files(directory: &Path, visit: &mut impl FnMut(&Path)) -> Result<(), String> {
     if !directory.exists() {
         return Ok(());
@@ -643,12 +595,10 @@ fn visit_c_files(directory: &Path, visit: &mut impl FnMut(&Path)) -> Result<(), 
     }
     Ok(())
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;
     use tempfile::tempdir;
-
     fn manifest() -> &'static str {
         r#"{
   "format": 3,
@@ -658,7 +608,6 @@ mod tests {
   }
 }"#
     }
-
     #[test]
     fn parses_main_and_overlay_owner_ids() {
         assert_eq!(
@@ -678,7 +627,6 @@ mod tests {
             "Func_080bbb0c"
         );
     }
-
     #[test]
     fn mapped_paths_and_legacy_fallback_share_one_resolver() {
         let root = tempdir().unwrap();
@@ -711,7 +659,6 @@ mod tests {
                 .join("battle/resolve_action.c")
         );
     }
-
     #[test]
     fn reverse_lookup_understands_nested_and_legacy_sources() {
         let root = tempdir().unwrap();
@@ -732,7 +679,6 @@ mod tests {
             })
         );
     }
-
     #[test]
     fn paths_cannot_escape_or_recreate_the_flat_address_convention() {
         let root = tempdir().unwrap();
@@ -747,7 +693,6 @@ mod tests {
             assert!(SourcePaths::parse(root.path(), &text).is_err(), "{path}");
         }
     }
-
     #[test]
     fn call_via_accepts_only_canonical_overlay_ram_addresses() {
         let root = tempdir().unwrap();
@@ -764,7 +709,6 @@ mod tests {
             assert!(SourcePaths::parse(root.path(), &text).is_err());
         }
     }
-
     #[test]
     fn one_source_can_own_the_same_address_in_related_overlays() {
         let root = tempdir().unwrap();
@@ -789,7 +733,6 @@ mod tests {
             })
         );
     }
-
     #[test]
     fn one_overlay_translation_unit_can_map_multiple_owners() {
         let root = tempdir().unwrap();
@@ -804,7 +747,6 @@ mod tests {
             2
         );
     }
-
     #[test]
     fn unregistering_one_shared_owner_preserves_the_other_registration() {
         let root = tempdir().unwrap();
@@ -846,7 +788,6 @@ mod tests {
             }]
         );
     }
-
     #[test]
     fn each_game_owns_an_independent_descriptive_registry() {
         let root = tempdir().unwrap();

@@ -11,15 +11,15 @@
       "candidate_bytes": 120,
       "reference_bytes": 124,
       "differing_halfwords": 56,
-      "wrong_instructions": 56
+      "wrong_instructions": 54
     },
     "best_bounded_axis": {
-      "scope": "complete-unit diagnostic on a nonretained all-local pointer shape",
+      "scope": "complete-unit diagnostic after recovering the selected-position result carrier",
       "flags": ["-fno-gcse"],
       "candidate_bytes": 124,
       "reference_bytes": 124,
-      "differing_halfwords": 41,
-      "wrong_instructions": 54
+      "differing_halfwords": 40,
+      "wrong_instructions": 52
     }
   },
   "cross_edition": {
@@ -51,11 +51,12 @@
       "sixteen finite canonical full-unit variants across function- and block-scope pointer declarations, initialization orders, const and ordinary register qualifiers, pointee volatility, pointer/integer views, and a zero-offset map aggregate",
       "direct-global, local-pointer, mixed-alias, and raw-address diagnostics for the ownership map and resource table",
       "while and guarded do-while free-run scans, separate and shared start/result temporaries, success-label layouts, and indexed versus pointer-induction mark loops",
+      "a canonical shared-result source shape that materializes the selected position before computing the requested run end",
       "canonical complete-translation-unit compilation throughout, plus a diagnostic -fno-gcse compile of the strongest all-local pointer ancestry"
     ],
-    "result": "No ordinary-C canonical shape reached exactness or simultaneously recovered the reference's id, block-count, scan-map, store-map, and table register roles. The retained indexed global mark loop reproduces the reference's six-instruction store loop and raises the candidate from 116 to 120 bytes while reducing wrong instructions from 58 to 56 without increasing linked differing halfwords."
+    "result": "No ordinary-C canonical shape reached exactness or simultaneously recovered the reference's id, block-count, scan-map, store-map, and table register roles. The retained indexed global mark loop reproduces the reference's six-instruction store loop; coupling the selected position to the result carrier preserves 120 bytes and 56 differing halfwords while reducing wrong instructions to 54."
   },
-  "remaining": "The complete algorithm and owner boundary are established, but the coherent canonical translation-unit build remains four bytes short. GCC's GCSE pass coalesces the ownership-map ancestries, removing the reference's long-lived scan-map/store-map distinction and shifting the id/block-count allocation. A noncanonical -fno-gcse diagnostic restores the 124-byte extent but still leaves 41 differing halfwords and 54 wrong instructions; neither exact adoption nor a permanent compiler classification is justified.",
+  "remaining": "The complete algorithm and owner boundary are established, but the coherent canonical translation-unit build remains four bytes short. GCC's GCSE pass copy-propagates the scan-map assignment from the store map, removing the reference's long-lived scan-map/store-map distinction and shifting the id/block-count allocation. A noncanonical -fno-gcse diagnostic restores the 124-byte extent but still leaves 40 differing halfwords and 52 wrong instructions; neither exact adoption nor a permanent compiler classification is justified.",
   "notes": [
     "Recovered only from retained assembly, approved local GS1 ROMs, neighboring exact resource-table owners, and the approved compiler.",
     "The raw-address diagnostic reached 124 bytes and 51 differing halfwords only by adding a duplicate ownership-map pool entry; it was rejected in favor of the named linker-resolved symbol and coherent source.",

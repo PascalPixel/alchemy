@@ -16,15 +16,11 @@ s32 ResourceTable_AllocateBlocks(u32 id, u32 size)
     u8 *scan_map;
     u8 *map;
     u32 blocks;
-    u32 start;
     s32 result;
     s32 pos;
 
     blocks = size >> 6;
-    if (id > 95) {
-        result = -1;
-        goto done;
-    }
+    if (id > 95) return -1;
     map = Data_03001810;
     tbl = Data_03001b10;
     pos = 0;
@@ -39,9 +35,9 @@ next_run:
         u32 i;
         u8 *scan;
 
-        start = pos;
-        end = start + blocks;
-        scan = scan_map + start;
+        result = pos;
+        end = result + blocks;
+        scan = scan_map + result;
         while (pos < end) {
             if (*scan++ != 0xff) {
                 goto occupied;
@@ -49,9 +45,9 @@ next_run:
             pos++;
         }
         for (i = 0; i < blocks; i++) {
-            map[start + i] = id;
+            map[result + i] = id;
         }
-        result = start << 6;
+        result <<= 6;
         goto done;
     }
 occupied:

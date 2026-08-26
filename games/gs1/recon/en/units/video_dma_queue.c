@@ -160,7 +160,6 @@ extern struct ResourceTableEntry Data_03001b10[96];
 s32 ResourceTable_AllocateBlocks(u32 id, u32 size)
 {
     u32 blocks;
-    u32 start;
     s32 result;
 
     blocks = size >> 6;
@@ -183,9 +182,9 @@ next_run:
             u32 i;
             u8 *scan;
 
-            start = pos;
-            end = start + blocks;
-            scan = scan_map + start;
+            result = pos;
+            end = result + blocks;
+            scan = scan_map + result;
             while (pos < end) {
                 if (*scan++ != 0xff) {
                     goto occupied;
@@ -193,9 +192,9 @@ next_run:
                 pos++;
             }
             for (i = 0; i < blocks; i++) {
-                ResourceBlockOwners[start + i] = id;
+                ResourceBlockOwners[result + i] = id;
             }
-            result = start << 6;
+            result <<= 6;
             goto done;
         }
 occupied:

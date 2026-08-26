@@ -16,5 +16,15 @@
     "The typed reconstruction improves the raw m2c result from 87 to 85 differing halfwords while replacing every generated register and stack-slot identifier.",
     "A 5,000-candidate safe family-template walk reached 168 bytes and 80 differing halfwords through artificial address-taken scalar temporaries. That generated spelling is not retained as canonical source because it obscures the recovered tile-marking behavior and is still far from exact.",
     "Exact-C adoption remains gated on an independently compiled zero-difference object."
+  ],
+  "rejected_experiments": [
+    {
+      "experiment": "family transfer of the byte-exact template's ascending for-loop idiom (ui/window/clear_tile_attributes_in_rect.c, |= 2 kept, RENDER_ALT_OFS/RENDER_TILE_ATTR_OFS constants confirmed identical for EN)",
+      "result": "worse (100 wrong instructions): the reference retains an explicit width!=0 guard before the row loop (movs r6,#20; cmp r3,#0; beq) that the template's fixed-4-argument for-loop shape does not emit. This owner's fixed 30x20 constant-loop shares only the inner tile-masking logic with the template, not its loop idiom."
+    },
+    {
+      "experiment": "hoisting the width!=0 guard to wrap the whole row loop instead of re-testing per iteration",
+      "result": "byte-identical to the un-hoisted do-while-with-inner-check spelling; GCC's own loop-invariant code motion already performs this hoist regardless of source placement. The real ~16-byte/8-instruction gap is not guard placement."
+    }
   ]
 }

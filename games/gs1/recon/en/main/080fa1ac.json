@@ -1,26 +1,55 @@
 {
   "schema_version": 1,
-  "namespace": "main",
+  "namespace": "gs1-en-main",
   "address": "0x080fa1ac",
+  "name": "MusicTrack_ClearModulationState",
   "status": "measured-draft",
-  "owner_bytes": 40,
-  "executable_owner_bytes": 26,
-  "candidate_bytes": 28,
-  "differing_halfwords": 10,
-  "wrong_instructions": 17,
-  "classification": "reset-runtime-node-flags",
-  "cross_edition": {
-    "editions": ["ja", "en", "de", "es", "fr", "it"],
-    "relocation_normalized_core_bytes": 26,
-    "core_diff_bytes": 0,
-    "core_identical": true
+  "owner_bytes": 26,
+  "score": {
+    "measured": "2026-08-26",
+    "candidate_bytes": 26,
+    "reference_bytes": 26,
+    "differing_halfwords": 10,
+    "wrong_instructions": 20,
+    "class": "allocation",
+    "command": "compiler candidate-show games/gs1/recon/en/main/080fa1ac.c --owner 080fa1ac --family old-agbcc --flags -O1",
+    "note": "Structurally identical to the reference at old-agbcc -O1: all thirteen instructions match one-for-one in mnemonic, operand shape, and branch structure. The only residual is one uniform register rotation -- the candidate's serial scratch register is r0 where the reference uses r2 (and consequently r2/r3 where the reference uses r3). Under the canonical gcc296 route this owner if-converts and takes a frame; it is an agbcc -O1 family member like the recorded AGBCC_OPTIMIZE_O1_SOURCES."
   },
+  "remaining": [
+    {
+      "op": "register allocation",
+      "count": 10,
+      "where": "one uniform rotation: candidate r0->reference r2 for the serial scratch pseudo and r2->r3 for the loaded flags byte. r0 is never touched by the reference despite the dead first parameter."
+    }
+  ],
+  "rejected_experiments": [
+    {
+      "experiment": "canonical gcc296 route (original candidate and template-text spellings)",
+      "result": "if-converts the diamond (hoisted 12 with conditional 3 overwrite) and emits a push/pop frame; 24-32 bytes, never the reference's 13-instruction frameless diamond"
+    },
+    {
+      "experiment": "template-text |= arms under old-agbcc -O2",
+      "result": "correct diamond and crossjumped or-tail but 28 bytes (extra zero materialization) and r0 scratch"
+    },
+    {
+      "experiment": "non-void declaration (implicit-int style) to reserve r0",
+      "result": "no change; the dead parameter's register is still reused"
+    },
+    {
+      "experiment": "returning the first parameter to keep r0 live",
+      "result": "30 bytes; generates return moves the reference does not have"
+    },
+    {
+      "experiment": "-ffixed-r0 with -O1",
+      "result": "28 bytes; forces an extra parameter move"
+    },
+    {
+      "experiment": "sibling counter-evidence",
+      "result": "byte-exact set_tone_type (main:080fb6ec), same dead-first-parameter signature, freely uses r0 as scratch from its first instruction -- the r2 preference here is owner-specific, not a family or flag property"
+    }
+  ],
   "notes": [
-    "Clears two node state bytes and selects flag bits 0x0c or 0x03 from the node mode byte. The live node pointer is the second argument, matching all callers.",
-    "The assembly file's 40-byte span is composite: this owner has 26 executable bytes at 0x080fa1ac..0x080fa1c6, followed by two executable-alignment bytes, the already exact 10-byte 080fa1c8 owner, and two more alignment bytes. Scoring and classification therefore use the 26-byte owner, not the aggregate assembly file.",
-    "A readable explicit updated_flags carrier improves the fixed-route candidate from 28 bytes / 12 differing halfwords / 21 wrong instructions to 28 / 10 / 17. It reproduces the reference's final ldrb/orrs/strb register allocation exactly.",
-    "A bounded heat-guided classic walk evaluated 7,662 generated candidates. Its only improvement was the same explicit result carrier, which was pared from a mutation artifact to the readable updated_flags local; no exact candidate appeared.",
-    "The approved compiler pass matrix is byte-neutral or broader. -fno-regmove also reaches 28/10/17 diagnostically; old-agbcc reaches 24/13/17. The remaining residual includes a push/pop return sequence, the zero/flag register choice, and inverted conditional scheduling against the reference bx-lr leaf, so it is neither exact nor a narrow permanent residual.",
-    "The recorded six-ROM relocation-normalized 26-byte core remains identical across JA, EN, DE, ES, FR, and IT. This proves regional semantics but does not make the broad fixed-route compiler residual permanent."
+    "Recovered only from the retained owner bytes in the approved local ROM, the adopted audio family sources and headers, and the approved compilers.",
+    "This candidate claims zero DONE bytes."
   ]
 }

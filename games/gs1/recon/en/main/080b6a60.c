@@ -10,8 +10,8 @@ s32 Func_08077148(void);
 s32 BattleParty_PrepareActiveOwners(s16 *owners)
 {
     s32 limit;
-    s32 count;
     s32 left;
+    s32 count;
     s32 index;
 
     limit = 4;

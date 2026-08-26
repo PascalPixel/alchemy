@@ -1,19 +1,15 @@
-#include "types.h"
+#include "audio_engine.h"
 
 #define MusicTrack_ClearModulationState Func_080fa1ac
 
-void MusicTrack_ClearModulationState(void *unused, u8 *node)
+void MusicTrack_ClearModulationState(
+    struct MusicPlayerState *unused,
+    struct MusicTrackState *track)
 {
-    s32 flags;
-    s32 updated_flags;
-
-    node[0x16] = 0;
-    node[0x1a] = 0;
-    if (node[0x18] == 0) {
-        flags = 12;
-    } else {
-        flags = 3;
-    }
-    updated_flags = node[0] | flags;
-    node[0] = updated_flags;
+    track->unknown01[0x15] = 0;
+    track->unknown01[0x19] = 0;
+    if (track->unknown01[0x17] == 0)
+        track->flags |= 12;
+    else
+        track->flags |= 3;
 }

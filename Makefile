@@ -27,7 +27,12 @@ PORTABLE_TOOLS := alignment-tail asset-paths cache-entry canonical-json \
 	overlay-adopt overlay-call-targets check check-commit-progress \
 	check-publication check-unmatchable core-retained-audit coverage-map \
 	full-c-progress integrate-matches route-dump decomp-targets
-TOOLING_LINE_LIMIT := 30400
+# Raised 2026-08-26: tools/cache-entry/src/sqlite.rs adds a shared SQLite-
+# backed cache primitive, replacing the one-file-per-key caches in
+# build-claimed, overlay-disasm, and build-asm that were the dominant source
+# of a 64GB / hundreds-of-thousands-of-file disk-space emergency (out/cache/*
+# and out/cross-edition regenerated on every `make verify`, never evicted).
+TOOLING_LINE_LIMIT := 30600
 TARGET ?= gs1-en
 FULL_REPORT = out/$(TARGET)/full/rebuilt.json
 FULL_ROM = out/$(TARGET)/full/rebuilt.gba

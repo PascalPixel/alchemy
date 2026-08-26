@@ -1,6 +1,6 @@
 //! Compile, verify, cache, and manifest every exact C owner in the main image.
 pub mod cli;
-use cache_entry::write_cache_entry_atomically;
+use cache_entry::sqlite::SqliteCache;
 use candidate_compiler::verify::{
     verify_candidate_owned_routed_with_object, CandidateCompilerConfiguration,
 };
@@ -443,11 +443,8 @@ fn materialize_unit_owner(
         undefined_names,
     })
 }
-fn write_cache(items: &[(&str, &[u8])]) -> Result<()> {
-    for (path, bytes) in items {
-        write_cache_entry_atomically(Path::new(path), bytes).map_err(|e| format!("{path}: {e}"))?;
-    }
-    Ok(())
+fn write_cache(cache: &SqliteCache, key: &str, items: &[(&str, &[u8])]) -> Result<()> {
+    cache.put(key, items)
 }
 fn metadata(object: &[u8], assembly: &[u8], defined: &[String], undefined: &[String]) -> String {
     canonical_json(&json!({
@@ -466,12 +463,23 @@ fn string_array(value: Option<&Value>) -> Option<Vec<String>> {
         .map(|v| v.as_str().map(str::to_string))
         .collect()
 }
-fn cache_hit(cached: [&str; 3], output: [&str; 2]) -> Option<(Vec<String>, Vec<String>)> {
-    let meta: Value = serde_json::from_slice(&std::fs::read(cached[2]).ok()?).ok()?;
+fn cache_hit(
+    cache: &SqliteCache,
+    key: &str,
+    output: [&str; 2],
+) -> Option<(Vec<String>, Vec<String>)> {
+    let entries = cache.get(key).ok().flatten()?;
+    let find = |kind: &str| {
+        entries
+            .iter()
+            .find(|(entry_kind, _)| entry_kind == kind)
+            .map(|(_, value)| value.clone())
+    };
+    let meta: Value = serde_json::from_slice(&find("record")?).ok()?;
     let defined = string_array(meta.get("definedNames"))?;
     let undefined = string_array(meta.get("undefinedNames"))?;
-    let object = std::fs::read(cached[0]).ok()?;
-    let assembly = std::fs::read(cached[1]).ok()?;
+    let object = find("object")?;
+    let assembly = find("assembly")?;
     let valid = |data: &[u8], size: &str, hash: &str| {
         meta.get(size).and_then(Value::as_u64) == Some(data.len() as u64)
             && meta.get(hash).and_then(Value::as_str) == Some(&digest(data))
@@ -496,7 +504,7 @@ fn compiler_target(target: DecompCompilerTarget) -> CompilerTarget {
 pub fn compile_source_for_owner(
     owner: u32,
     root: &str,
-    object_cache: &str,
+    object_cache: &SqliteCache,
     source: &str,
     object_dir: &str,
     compiler: DecompCompilerTarget,
@@ -533,13 +541,8 @@ pub fn compile_source_for_owner(
         &source_inputs,
         &toolchain_stamp_with_signatures(&commands, signatures),
     );
-    let cached = [
-        text(Path::new(object_cache).join(format!("{key}.o"))),
-        text(Path::new(object_cache).join(format!("{key}.s"))),
-        text(Path::new(object_cache).join(format!("{key}.json"))),
-    ];
     if let Some((defined_names, undefined_names)) =
-        cache_hit([&cached[0], &cached[1], &cached[2]], [&object, &assembly])
+        cache_hit(object_cache, &key, [&object, &assembly])
     {
         if let Some(name) = undefined_names.iter().find(|name| {
             external_symbol(name, CALL_VIA_BASE).is_none() && !allowed_undefined.contains(name)
@@ -584,15 +587,18 @@ pub fn compile_source_for_owner(
             return Err(format!("{}: unsupported external {name}", basename(source)));
         }
     }
-    std::fs::create_dir_all(object_cache).map_err(|e| format!("{object_cache}: {e}"))?;
     let object_bytes = std::fs::read(&object).map_err(|e| format!("{object}: {e}"))?;
     let assembly_bytes = std::fs::read(&assembly).map_err(|e| format!("{assembly}: {e}"))?;
     let meta = metadata(&object_bytes, &assembly_bytes, &defined, &undefined);
-    write_cache(&[
-        (&cached[0], &object_bytes),
-        (&cached[1], &assembly_bytes),
-        (&cached[2], meta.as_bytes()),
-    ])?;
+    write_cache(
+        object_cache,
+        &key,
+        &[
+            ("object", object_bytes.as_slice()),
+            ("assembly", assembly_bytes.as_slice()),
+            ("record", meta.as_bytes()),
+        ],
+    )?;
     Ok(Compiled {
         object,
         defined_names: defined,
@@ -728,7 +734,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     if let Some(path) = &export_path {
         write_file(path, source_paths.main_symbol_exports().as_bytes())?;
     }
-    let cache_dir = text(Path::new(root).join("out/cache/claimed-objects"));
+    let cache = SqliteCache::open(&Path::new(root).join("out/cache/claimed-objects.sqlite3"))?;
     let signatures = CacheSignatures::production()?;
     let declared_units = units
         .units
@@ -754,7 +760,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
         compile_source_for_owner(
             source.owner.address(),
             root,
-            &cache_dir,
+            &cache,
             &text(source.path.clone()),
             &text(object_dir.clone()),
             target.compiler,
@@ -779,7 +785,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
         let base = compile_source_for_owner(
             unit.owners[0].address,
             root,
-            &cache_dir,
+            &cache,
             &text(Path::new(root).join(&unit.source)),
             &text(work),
             target.compiler,

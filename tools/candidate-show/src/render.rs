@@ -108,13 +108,15 @@ fn region_size(root: &Path, address: u32) -> Option<usize> {
     None
 }
 pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
-    let work = options
-        .work
-        .as_deref()
-        .ok_or("The \"path\" argument must be of type string. Received undefined")?;
-    std::fs::create_dir_all(work).map_err(|error| format!("{work}: {error}"))?;
+    let work = root.join(
+        options
+            .work
+            .as_deref()
+            .ok_or("The \"path\" argument must be of type string. Received undefined")?,
+    );
+    std::fs::create_dir_all(&work).map_err(|error| format!("{}: {error}", work.display()))?;
     if options.asm {
-        return render_asm(root, options, work);
+        return render_asm(root, options, work.to_string_lossy().as_ref());
     }
     let rom_path = options
         .rom
@@ -145,7 +147,6 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         options.size,
         patch_text.as_deref(),
     )?;
-    let work = Path::new(work);
     let key_path = work.join(format!("{source_label}.key"));
     let candidate_path = work.join("candidate.bin");
     let reference_path = work.join("reference.bin");

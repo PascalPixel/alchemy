@@ -46,19 +46,15 @@ fn run(mut options: crate::cli::Options) -> Result<String, String> {
     }
     options.source = unit.source.to_string_lossy().into_owned();
     options.configuration.absolute_symbols = unit.canonical_symbols()?;
-    let work = options.work.clone().unwrap_or_else(|| {
-        root()
-            .join("scratch/candidate-show")
-            .join(&id)
-            .to_string_lossy()
-            .into_owned()
-    });
+    let default_work = format!("scratch/candidate-show/{id}");
+    let work = options.work.clone().unwrap_or(default_work);
+    let work = root().join(work).to_string_lossy().into_owned();
     options.work = Some(work.clone());
     if let Some(overlay) = &unit.overlay {
         options.overlay = Some(overlay.clone());
         options.configuration.call_via_base = Some(overlay_call_via_base(overlay));
         options.configuration.label_word_bias = Some(OVERLAY_LINK_BIAS as u64);
-        let reference = overlay_reference(root(), overlay)?;
+        let reference = canonical_overlay(root(), overlay)?;
         let path = Path::new(&work).join(format!(
             "reference-{}.bin",
             compiler_core::sha256::hex(&reference)
@@ -66,6 +62,16 @@ fn run(mut options: crate::cli::Options) -> Result<String, String> {
         std::fs::create_dir_all(&work).map_err(|error| format!("{work}: {error}"))?;
         std::fs::write(&path, reference).map_err(|error| format!("{}: {error}", path.display()))?;
         options.rom = Some(path.to_string_lossy().into_owned());
+    }
+    if let Some(address) = options.owner {
+        let owner = unit
+            .owners
+            .iter()
+            .find(|owner| owner.address == address)
+            .ok_or_else(|| format!("{id} does not declare 0x{address:08x}"))?;
+        options.size = Some(owner.extent);
+        return render(root(), &options)
+            .map(|output| format!("owner=0x{address:08x}\n{}", output.stdout));
     }
     let mut output = String::new();
     let mut layout_mismatches = Vec::new();
@@ -118,9 +124,6 @@ fn run(mut options: crate::cli::Options) -> Result<String, String> {
     }
     Ok(output)
 }
-fn overlay_reference(repository: &Path, overlay: &str) -> Result<Vec<u8>, String> {
-    canonical_overlay(repository, overlay)
-}
 fn exact_mismatch(output: &RenderOutput) -> bool {
     output.differing_halfwords != 0
         || output.candidate_length != output.reference_length
@@ -146,17 +149,8 @@ fn validate_layout(
         ));
     }
     let rows = String::from_utf8_lossy(&output.stdout);
-    let declared = unit
-        .owners
-        .iter()
-        .map(|entry| (entry.address, entry.extent))
-        .chain(
-            unit.local_symbols
-                .iter()
-                .map(|entry| (entry.address, entry.extent)),
-        );
     let mut mismatches = Vec::new();
-    for (address, extent) in declared {
+    for (address, _, extent) in unit.symbols() {
         let owner = unit.source_owner(address)?;
         let symbol = owner.legacy_name();
         let offset = address
@@ -184,11 +178,9 @@ fn fail(message: &str) -> ! {
     eprintln!("{message}");
     std::process::exit(1)
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;
-
     #[test]
     fn entrypoint_contracts() {
         let output = |difference| RenderOutput {
@@ -201,9 +193,9 @@ mod tests {
         assert!(exact_mismatch(&output(1)));
         let repository =
             std::env::temp_dir().join(format!("candidate-show-no-rom-{}", std::process::id()));
-        let error = overlay_reference(&repository, "resource_36f").unwrap_err();
+        let error = canonical_overlay(&repository, "resource_36f").unwrap_err();
         assert!(error.contains("roms/gs1-en.gba"));
-        let work = std::env::temp_dir().join("alchemy-overlay-unit-test");
+        let work = Path::new("out/candidate-show-unit-test");
         let _ = std::fs::remove_dir_all(&work);
         std::fs::create_dir_all(&work).unwrap();
         let patch = work.join("unit-relative-include.patch");
@@ -224,7 +216,9 @@ mod tests {
             panic!("expected options")
         };
         let output = run(*options).unwrap();
-        let staged = work.join("try/games/gs1/src/overlays/scene_event_runtime/accessors.c");
+        let staged = root()
+            .join(work)
+            .join("try/games/gs1/src/overlays/scene_event_runtime/accessors.c");
         assert!(std::fs::read_to_string(staged)
             .unwrap()
             .contains("../../../include/types.h"));

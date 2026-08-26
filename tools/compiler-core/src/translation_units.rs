@@ -1,9 +1,9 @@
 use crate::routing::CompilerTarget;
+use crate::source_inputs::quoted_include;
 use crate::source_paths::{c_identifier, lower_hex, SourceOwner, SourcePaths};
 use serde::{de::Error, Deserialize, Deserializer};
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Component, Path, PathBuf};
-
 pub const FORMAT: u32 = 2;
 
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq)]
@@ -13,7 +13,6 @@ pub enum AbsoluteSymbolKind {
     Thumb,
     Arm,
 }
-
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct AbsoluteSymbol {
@@ -21,14 +20,12 @@ pub struct AbsoluteSymbol {
     pub address: u64,
     pub kind: AbsoluteSymbolKind,
 }
-
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq)]
 #[serde(rename_all = "kebab-case")]
 pub enum OwnerState {
     ExactC,
     RetainedAssembly,
 }
-
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct TranslationOwner {
@@ -38,7 +35,6 @@ pub struct TranslationOwner {
     pub extent: usize,
     pub state: OwnerState,
 }
-
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct TranslationSymbol {
@@ -47,7 +43,6 @@ pub struct TranslationSymbol {
     pub alias: String,
     pub extent: usize,
 }
-
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct TranslationUnit {
@@ -71,34 +66,25 @@ impl TranslationUnit {
             _ => Err(format!("{}: unsupported game {}", self.id, self.game)),
         }
     }
-
     pub fn source_owner(&self, address: u32) -> Result<SourceOwner, String> {
-        let owner = match &self.overlay {
-            Some(resource) => SourceOwner::parse(&format!("{resource}:{address:08x}"))?,
-            None => SourceOwner::Main(address),
-        };
-        match owner {
-            SourceOwner::Overlay { .. } if !(0x0200_0000..0x0300_0000).contains(&address) => Err(
-                format!("overlay owner address 0x{address:08x} is outside EWRAM"),
-            ),
-            SourceOwner::Main(_) if address < 0x0800_0000 => {
-                Err(format!("main owner address 0x{address:08x} is below ROM"))
+        match &self.overlay {
+            Some(resource) if (0x0200_0000..0x0300_0000).contains(&address) => {
+                SourceOwner::parse(&format!("{resource}:{address:08x}"))
             }
-            _ => Ok(owner),
+            Some(_) => Err(format!("overlay owner 0x{address:08x} is outside EWRAM")),
+            None if address >= 0x0800_0000 => Ok(SourceOwner::Main(address)),
+            None => Err(format!("main owner address 0x{address:08x} is below ROM")),
         }
     }
-
     pub fn exact(&self) -> bool {
         self.exact_owner_count() == self.owners.len()
     }
-
     pub fn exact_owner_count(&self) -> usize {
         self.owners
             .iter()
             .filter(|owner| owner.state == OwnerState::ExactC)
             .count()
     }
-
     pub fn symbols(&self) -> impl Iterator<Item = (u32, &str, usize)> {
         self.owners
             .iter()
@@ -109,7 +95,6 @@ impl TranslationUnit {
                     .map(|symbol| (symbol.address, symbol.alias.as_str(), symbol.extent)),
             )
     }
-
     pub fn canonical_symbols(&self) -> Result<BTreeMap<String, AbsoluteSymbol>, String> {
         let mut symbols = self.absolute_symbols.clone();
         for (address, _, _) in self.symbols() {
@@ -131,7 +116,6 @@ pub struct TranslationUnits {
     format: u32,
     pub units: Vec<TranslationUnit>,
 }
-
 impl TranslationUnits {
     pub fn load(root: &Path) -> Result<Self, String> {
         let path = root.join("games/gs1/recon/translation-units.json");
@@ -205,14 +189,8 @@ impl TranslationUnits {
                 }
             }
             let mut spans = unit
-                .owners
-                .iter()
-                .map(|member| (member.address, member.extent))
-                .chain(
-                    unit.local_symbols
-                        .iter()
-                        .map(|member| (member.address, member.extent)),
-                )
+                .symbols()
+                .map(|(address, _, extent)| (address, extent))
                 .collect::<Vec<_>>();
             spans.sort_unstable();
             let end = |(address, extent): &(u32, usize)| {
@@ -243,11 +221,9 @@ impl TranslationUnits {
         }
         Ok(document)
     }
-
     pub fn unit(&self, id: &str) -> Option<&TranslationUnit> {
         self.units.iter().find(|unit| unit.id == id)
     }
-
     pub fn unit_for_game_owner(&self, game: &str, owner: SourceOwner) -> Option<&TranslationUnit> {
         let overlay = owner.overlay_id();
         self.units.iter().find(|unit| {
@@ -259,41 +235,30 @@ impl TranslationUnits {
                     .any(|member| member.address == owner.address())
         })
     }
-
-    /// Compatibility for callers whose entire input domain is GS1.
-    pub fn unit_for_owner(&self, owner: SourceOwner) -> Option<&TranslationUnit> {
-        self.unit_for_game_owner("gs1", owner)
-    }
-
-    pub fn main_symbol(&self, name: &str) -> Option<AbsoluteSymbol> {
+    fn main_symbols(&self) -> impl Iterator<Item = (u32, &str, usize)> {
         self.units
             .iter()
             .filter(|unit| unit.overlay.is_none())
             .flat_map(|unit| unit.symbols())
+    }
+    pub fn main_symbol(&self, name: &str) -> Option<AbsoluteSymbol> {
+        self.main_symbols()
             .find(|(_, alias, _)| *alias == name)
             .map(|(address, _, _)| AbsoluteSymbol {
                 address: u64::from(address),
                 kind: AbsoluteSymbolKind::Thumb,
             })
     }
-
     pub fn main_symbol_exports(&self) -> String {
-        self.units
-            .iter()
-            .filter(|unit| unit.overlay.is_none())
-            .flat_map(|unit| unit.symbols())
-            .fold(
-                String::from(".syntax unified\n.thumb\n"),
-                |mut out, (address, alias, _)| {
-                    out.push_str(&format!(
-                        ".global {alias}\n.thumb_set {alias}, 0x{address:08x}\n"
-                    ));
-                    out
-                },
-            )
+        let mut out = String::from(".syntax unified\n.thumb\n");
+        for (address, alias, _) in self.main_symbols() {
+            out.push_str(&format!(
+                ".global {alias}\n.thumb_set {alias}, 0x{address:08x}\n"
+            ));
+        }
+        out
     }
 }
-
 fn validate_production_state(
     root: &Path,
     unit: &TranslationUnit,
@@ -330,6 +295,18 @@ fn validate_production_state(
             ));
         }
     }
+    let requires_direct = unit.overlay.is_none() && !unit.exact();
+    let direct_includes = if requires_direct {
+        let parent = source.parent().unwrap_or(root);
+        let text = std::fs::read_to_string(source)
+            .map_err(|error| format!("{}: {error}", source.display()))?;
+        unconditional_quoted_includes(&text)
+            .into_iter()
+            .filter_map(|name| parent.join(name).canonicalize().ok())
+            .collect()
+    } else {
+        BTreeSet::new()
+    };
     let placeholders = unit
         .overlay
         .as_ref()
@@ -366,11 +343,17 @@ fn validate_production_state(
             },
             |set| !set.contains(&member.address),
         );
-        let exact_source = if grouped {
+        let exact_source = if grouped && !requires_direct {
             mapped.as_ref().is_some_and(|path| path == source)
                 || (unit.overlay.is_none() && mapped.is_none())
         } else {
-            mapped.as_ref().is_some_and(|path| path.is_file())
+            mapped.as_ref().is_some_and(|path| {
+                path.is_file()
+                    && (!requires_direct
+                        || path
+                            .canonicalize()
+                            .is_ok_and(|path| direct_includes.contains(&path)))
+            })
         };
         let valid = match member.state {
             OwnerState::ExactC => exact_source && !retained,
@@ -385,6 +368,31 @@ fn validate_production_state(
         }
     }
     Ok(())
+}
+fn unconditional_quoted_includes(source: &str) -> Vec<&str> {
+    let (mut comments, mut continued, mut names) = (0usize, false, Vec::new());
+    for raw in source.lines() {
+        let was_comment = comments != 0;
+        comments = comments
+            .saturating_add(raw.matches("/*").count())
+            .saturating_sub(raw.matches("*/").count());
+        let line = raw.trim_start();
+        let directive = line
+            .strip_prefix('#')
+            .and_then(|line| line.trim_start().split_ascii_whitespace().next());
+        let allowed = matches!(directive, Some("include" | "define" | "undef"));
+        if line.contains("%:")
+            || line.contains("??=")
+            || (line.contains('#') && (was_comment || comments != 0 || continued || !allowed))
+        {
+            return Vec::new();
+        }
+        if !was_comment && comments == 0 && !continued {
+            names.extend(quoted_include(line));
+        }
+        continued = raw.trim_end().ends_with('\\');
+    }
+    names
 }
 fn validate_member(
     unit: &TranslationUnit,
@@ -402,18 +410,15 @@ fn validate_member(
     }
     Ok(())
 }
-
 fn unit_id(value: &str) -> bool {
     !value.is_empty()
         && value
             .bytes()
             .all(|byte| byte == b'-' || byte.is_ascii_lowercase() || byte.is_ascii_digit())
 }
-
 fn hex32<'de, D: Deserializer<'de>>(deserializer: D) -> Result<u32, D::Error> {
     u32::try_from(hex64(deserializer)?).map_err(D::Error::custom)
 }
-
 fn hex64<'de, D: Deserializer<'de>>(deserializer: D) -> Result<u64, D::Error> {
     let value = String::deserialize(deserializer)?;
     let body = value
@@ -422,11 +427,9 @@ fn hex64<'de, D: Deserializer<'de>>(deserializer: D) -> Result<u64, D::Error> {
         .ok_or_else(|| D::Error::custom("expected 0x-prefixed lowercase hexadecimal"))?;
     u64::from_str_radix(body, 16).map_err(D::Error::custom)
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;
-
     #[test]
     fn loads_typed_main_and_overlay_units() {
         let manifest = TranslationUnits::load(crate::routing::root()).unwrap();
@@ -448,5 +451,8 @@ mod tests {
         let owner = SourceOwner::Main(0x0800_40e8);
         assert!(manifest.unit_for_game_owner("gs1", owner).is_some());
         assert!(manifest.unit_for_game_owner("gs2", owner).is_none());
+        let i = unconditional_quoted_includes;
+        assert!(i("#define X \\\n#include \"x\"").is_empty());
+        assert!(i("/* */ #if 0\n#include \"x\"").is_empty());
     }
 }

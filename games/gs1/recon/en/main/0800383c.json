@@ -100,9 +100,13 @@
     {
       "experiment": "complete-unit follow-up over the shared nine-owner macro: canonical scheduling, both scheduler toggles, regmove, CSE-follow, CSE-skip, expensive-optimization, declaration/scope order, register hints, direct-global access, and a shared inline helper",
       "result": "the representative 0800383c owner remained at the canonical four-halfword ordering residual for every neutral flag and register-hint variant; -fno-schedule-insns2 regressed to eight, declaration/scope variants regressed to thirteen, the inline helper to twenty-three, and direct-global access to twenty-five. The shared source shape therefore remains the best bounded whole-unit result."
+    },
+    {
+      "experiment": "complete-unit GCC scheduler-priority audit of the shared macro",
+      "result": "all nine owners have the same two source-ordering residuals: the queue literal load and destination preservation tie at priority 9, so canonical GCC selects the preservation first; after the interrupt-master load, the saved value copy has priority 4 while the disable store has priority 5, so GCC selects the store first. Neutral ordinary-C declaration, width, pointer, initializer, and control-flow variants did not change that graph or regressed."
     }
   ],
-  "next": "Keep the coherent translation unit as measured reconstruction evidence and resolve the two source-ordering pairs. No permanent compiler classification is warranted.",
+  "next": "Keep the coherent translation unit as measured reconstruction evidence. A future family candidate must preserve the 64-byte extent, literal pools, and all-nine agreement while producing queue-literal-before-destination preservation and saved-IME-copy-before-disable-store under canonical GCC; do not relabel this bounded scheduler tie as a compiler limitation.",
   "notes": [
     "Recovered only from the retained owner assembly, approved local ROM, in-repository callers, and the approved compiler.",
     "No external game source, copied instruction bytes, inline assembly, fixed-register variable, or compiler barrier was used."

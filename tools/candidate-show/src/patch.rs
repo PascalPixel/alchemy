@@ -1,7 +1,6 @@
 use compiler_core::source_inputs::quoted_include;
 use std::path::{Path, PathBuf};
 use std::process::Command;
-
 pub fn apply_unified_diff_in_tree(
     root: &Path,
     source: &str,
@@ -28,16 +27,16 @@ pub fn apply_unified_diff_in_tree(
     }
     Ok(dest)
 }
-
 fn apply_unified_diff(source: &Path, patch_text: &str, dest: &Path) -> Result<(), String> {
     let basename = dest
         .file_name()
-        .ok_or_else(|| format!("{}: not a file path", dest.display()))?;
+        .ok_or_else(|| format!("{}: not a file", dest.display()))?;
     let parent = dest
         .parent()
         .ok_or_else(|| format!("{}: missing parent", dest.display()))?;
     std::fs::create_dir_all(parent).map_err(text)?;
     std::fs::copy(source, dest).map_err(text)?;
+    let parent = parent.canonicalize().map_err(text)?;
     let path = patch_text
         .lines()
         .find_map(|line| line.strip_prefix("--- "))
@@ -54,13 +53,15 @@ fn apply_unified_diff(source: &Path, patch_text: &str, dest: &Path) -> Result<()
     let output = Command::new("git")
         .args([
             "apply",
+            "--no-index",
             "--unidiff-zero",
             "--unsafe-paths",
             "--whitespace=nowarn",
+            &format!("--directory={}", parent.display()),
             &format!("-p{strip}"),
-            "incoming.diff",
         ])
-        .current_dir(parent)
+        .arg(&patch_path)
+        .current_dir("/")
         .output()
         .map_err(text)?;
     if output.status.success() {
@@ -73,7 +74,6 @@ fn apply_unified_diff(source: &Path, patch_text: &str, dest: &Path) -> Result<()
     });
     Err(format!("git apply failed: {}", detail.trim()))
 }
-
 fn text(error: impl ToString) -> String {
     error.to_string()
 }

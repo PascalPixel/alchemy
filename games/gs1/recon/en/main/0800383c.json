@@ -104,6 +104,10 @@
     {
       "experiment": "complete-unit GCC scheduler-priority audit of the shared macro",
       "result": "all nine owners have the same two source-ordering residuals: the queue literal load and destination preservation tie at priority 9, so canonical GCC selects the preservation first; after the interrupt-master load, the saved value copy has priority 4 while the disable store has priority 5, so GCC selects the store first. Neutral ordinary-C declaration, width, pointer, initializer, and control-flow variants did not change that graph or regressed."
+    },
+    {
+      "experiment": "exact-sibling shape transfer (complete-unit inversion pass over the proven Scheduler_FindCallback combination: direct-global interrupt-master access, queue pointer bound before the critical region, saved at function scope)",
+      "result": "Scheduler_FindCallback (0x08004198, byte-exact, same 64-byte class, same save/disable/restore idiom) emits no saved-value copy at all -- its context keeps the loaded value in the load register -- so the proven sibling never faces either scheduling choice and its spelling transfers no ordering evidence. Measured in the complete unit under canonical flags: the full scheduler-shape transfer regressed the representative to 11 differing halfwords; binding the queue pointer before the interrupt-master pointer (site A's literal-first ask) regressed to 13, pinning the recorded declaration/scope family cell; hoisting saved to function scope alone tied the live macro exactly at the same 4-halfword residual with the same two swaps. The dependence graph is unchanged by every binding, scope, and sibling-shape axis; the residual remains the two recorded scheduler decisions and stays open per next -- it is not relabeled a compiler limitation."
     }
   ],
   "next": "Keep the coherent translation unit as measured reconstruction evidence. A future family candidate must preserve the 64-byte extent, literal pools, and all-nine agreement while producing queue-literal-before-destination preservation and saved-IME-copy-before-disable-store under canonical GCC; do not relabel this bounded scheduler tie as a compiler limitation.",

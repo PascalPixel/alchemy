@@ -14,7 +14,7 @@ struct BattleEffectMotionObject {
 
 struct BattleEffectMotionRecord {
     struct BattleEffectMotionObject *object;
-    u8 reserved_04[0x11c];
+    u8 reserved_04[0x44];
 };
 
 struct BattleEffectMotionState {
@@ -49,14 +49,16 @@ void BattleEffect_RunFallbackObjectTransition(void)
     struct BattleEffectMotionState *state = Data_03001f30;
     struct BattleEffectMotionObject *target = state->target;
     struct BattleEffectMotionObject *object;
-    s32 destination[3];
+    struct BattleEffectMotionRecord *record;
     s32 origin[3];
+    s32 destination[3];
     s32 position[3];
     s32 step;
     s32 index;
 
     state->y = target->y;
     object = Func_08096c80(0xfa, 0, 0, 0);
+    step = 0;
     Func_08009080(object, 0);
     if (object == 0)
         return;
@@ -68,7 +70,6 @@ void BattleEffect_RunFallbackObjectTransition(void)
     destination[0] = state->x;
     destination[1] = state->y + 0x80000;
     destination[2] = state->z;
-    step = 0;
     do {
         s32 scale;
 
@@ -95,10 +96,9 @@ void BattleEffect_RunFallbackObjectTransition(void)
     Func_080030f8(10);
     Func_080f9010(0x6d);
 
-    index = 0;
+    record = &state->records[0];
+    index = 15;
     do {
-        struct BattleEffectMotionRecord *record = &state->records[index];
-
         position[0] = object->x;
         position[1] = object->y + 0x80000;
         position[2] = object->z;
@@ -107,8 +107,9 @@ void BattleEffect_RunFallbackObjectTransition(void)
         Func_0809ba90(record, 0x11d, position[0], position[2]);
         Func_0809ba7c(record, &Data_0809aa99);
         Func_08009248(record->object, 7);
-        index++;
-    } while (index < 16);
+        record++;
+        index--;
+    } while (index >= 0);
 
     position[0] = object->x;
     position[1] = object->y + 0x80000;

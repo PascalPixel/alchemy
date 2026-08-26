@@ -533,24 +533,6 @@ fn compile_overlay_with_mutations(
     publish_cache_entry(&cached, &data);
     Ok(Compiled { address, data })
 }
-pub fn compile_overlay_candidate(
-    source: &Path,
-    work: &Path,
-    overlay: &str,
-    routing_source: Option<&Path>,
-    extra_flags: &[String],
-) -> Result<Compiled, String> {
-    compile_overlay_c(source, work, overlay, routing_source, extra_flags)
-}
-pub fn compile_overlay_mutated(
-    source: &Path,
-    work: &Path,
-    overlay: &str,
-    routing_source: Option<&Path>,
-    mutations: &CompilerFlagMutations,
-) -> Result<Compiled, String> {
-    compile_overlay_with_mutations(source, work, overlay, routing_source, Some(mutations))
-}
 fn symbol_span(listing: &str, name: &str) -> Result<(usize, usize), String> {
     let fields = listing
         .lines()
@@ -918,6 +900,7 @@ mod source_activation_tests {
             overlay: Some("resource_382".into()),
             absolute_symbols: BTreeMap::new(),
             local_symbols: Vec::new(),
+            composition_sections: BTreeMap::new(),
             owners: vec![owner(0x0200_0100), owner(0x0200_0104)],
         };
         let check = |units: &[TranslationUnit]| {

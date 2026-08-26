@@ -6,8 +6,7 @@ pub mod regex;
 pub mod rom;
 pub use compile::{
     assemble_overlay, bias_in_image_label_words, compile_declared_overlay_unit, compile_overlay_c,
-    compile_overlay_candidate, overlay_c_spans, self_digest, BiasResult, Compiled, Span,
-    OVERLAY_LINK_BIAS,
+    overlay_c_spans, self_digest, BiasResult, Compiled, Span, OVERLAY_LINK_BIAS,
 };
 pub use disasm::{build_overlay_source, call_via_bank_base, OVERLAY_BASE, ROM_BASE};
 pub use paths::OverlaySource;

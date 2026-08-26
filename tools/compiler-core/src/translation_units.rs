@@ -55,6 +55,8 @@ pub struct TranslationUnit {
     pub absolute_symbols: BTreeMap<String, AbsoluteSymbol>,
     #[serde(default)]
     pub local_symbols: Vec<TranslationSymbol>,
+    #[serde(default)]
+    pub composition_sections: BTreeMap<String, Vec<String>>,
     pub owners: Vec<TranslationOwner>,
 }
 
@@ -192,6 +194,22 @@ impl TranslationUnits {
                 if unit.overlay.is_none() && !main_aliases.insert(alias) {
                     return Err(format!("duplicate main symbol alias {alias}"));
                 }
+            }
+            let mut ordered = unit.symbols().collect::<Vec<_>>();
+            ordered.sort_unstable_by_key(|member| member.0);
+            if unit.composition_sections
+                != BTreeMap::from([(
+                    ".text".into(),
+                    ordered
+                        .into_iter()
+                        .map(|(_, alias, _)| alias.into())
+                        .collect(),
+                )])
+            {
+                return Err(format!(
+                    "{}: .text composition differs from ordered members",
+                    unit.id
+                ));
             }
             let mut spans = unit
                 .symbols()

@@ -19,6 +19,15 @@
         {"address":"0x08004270","alias":"Scheduler_Idle","extent":2},
         {"address":"0x08004274","alias":"Scheduler_EmptyCallback","extent":2}
       ],
+      "composition_sections": {
+        ".text": [
+          "Scheduler_ResetTaskTable", "Scheduler_CopyWords", "Scheduler_SortTasks",
+          "Scheduler_FindCallback", "Scheduler_AddOrUpdateCallback", "Scheduler_Idle",
+          "Scheduler_EmptyCallback", "Scheduler_RemoveCallback", "Scheduler_EnableCallbacks",
+          "Scheduler_EnableUnmaskedOverlayCallbacks", "Scheduler_SetCallbackMask",
+          "Scheduler_DisableCallbacks", "Scheduler_DisableOverlayCallbacks"
+        ]
+      },
       "owners": [
         {"address":"0x080040e8","alias":"Scheduler_ResetTaskTable","extent":68,"state":"exact-c"},
         {"address":"0x0800412c","alias":"Scheduler_CopyWords","extent":24,"state":"exact-c"},
@@ -60,6 +69,17 @@
         "Data_04000208": {"address":"0x04000208","kind":"data"}
       },
       "local_symbols": [],
+      "composition_sections": {
+        ".text": [
+          "Input_InitKeyIrq", "QueueIoWriteDelay1", "QueueIoWriteDelay2", "QueueIoWriteDelay3",
+          "QueueIoWriteDelay5", "QueueIoWriteDelay6", "QueueIoWriteDelay7", "QueueIoWriteDelay9",
+          "QueueIoWriteDelay10", "QueueIoWriteDelay11", "IoWriteQueue_FlushPending",
+          "BlendTransition_Update", "Blend_SetDarkenTarget16", "Blend_SetDarkenTarget0",
+          "Blend_SetBrightenTarget16", "Blend_SetBrightenTarget0", "Blend_ConfigureTransition",
+          "Blend_WaitForTransition", "Graphics_ResetFrameState", "AffineMatrix_BuildForEffect",
+          "Runtime_PushSlotEntry", "Runtime_CopyAndCallRoutine", "ResourceTable_AllocateBlocks"
+        ]
+      },
       "owners": [
         {"address":"0x08003810","alias":"Input_InitKeyIrq","extent":44,"state":"exact-c"},
         {"address":"0x0800383c","alias":"QueueIoWriteDelay1","extent":64,"state":"retained-assembly"},
@@ -97,6 +117,15 @@
         "Data_03001f1c_a": {"address":"0x03001f1c","kind":"data"}
       },
       "local_symbols": [],
+      "composition_sections": {
+        ".text": [
+          "SaveState_InitializeWorkspace", "SaveState_SelectWriteSlot", "SaveState_WriteWorkspaceSlot",
+          "SaveState_ReadSlotAndCheckChecksum", "SaveState_EraseSlotSector", "SaveState_WriteRecord",
+          "SaveState_ReadRecordPayload", "SaveState_DeleteRecord", "SaveState_ChecksumWorkspace",
+          "SaveState_FindLatestSlot", "SaveState_InvalidateSlot", "SaveState_CompareBytes",
+          "SaveState_GetLatestSequence", "SaveState_LoadSummaryRecords"
+        ]
+      },
       "owners": [
         {"address":"0x080056cc","alias":"SaveState_InitializeWorkspace","extent":322,"state":"retained-assembly"},
         {"address":"0x08005810","alias":"SaveState_SelectWriteSlot","extent":88,"state":"exact-c"},
@@ -133,6 +162,18 @@
         "Data_04000208": {"address":"0x04000208","kind":"data"}
       },
       "local_symbols": [],
+      "composition_sections": {
+        ".text": [
+          "SerialRuntime_Initialize", "SerialRuntime_EnableTransferTimer", "SerialRuntime_DisableTransfer",
+          "SerialRuntime_PollAndTransfer", "SerialRuntime_PollStatus", "SerialRuntime_ExchangePayloads",
+          "SerialRuntime_PrepareSendPacket", "SerialRuntime_CollectReceivedPayloads",
+          "SerialRuntime_HandleTransferInterrupt", "SerialRuntime_RemoveIrqHandlers",
+          "SerialRuntime_WaitForStatusMask", "SerialRuntime_BeginTransferA", "SerialRuntime_BeginTransferB",
+          "SerialRuntime_WaitForTransferA", "SerialRuntime_WaitForTransferB",
+          "SerialRuntime_WaitForTransfers", "SerialRuntime_GetActiveTransfers",
+          "BattleLink_ResetTransferState"
+        ]
+      },
       "owners": [
         {"address":"0x08005d10","alias":"SerialRuntime_Initialize","extent":350,"state":"retained-assembly"},
         {"address":"0x08005e70","alias":"SerialRuntime_EnableTransferTimer","extent":24,"state":"exact-c"},
@@ -167,6 +208,13 @@
         "SceneEventRuntime_EffectData": {"address":"0x0200a80c","kind":"data"}
       },
       "local_symbols": [],
+      "composition_sections": {
+        ".text": [
+          "SceneEventRuntime_GetScriptData", "SceneEventRuntime_ReturnZero",
+          "SceneEventRuntime_GetMessageData", "SceneEventRuntime_GetActorData",
+          "SceneEventRuntime_GetEffectData"
+        ]
+      },
       "owners": [
         {"address":"0x02000030","alias":"SceneEventRuntime_GetScriptData","extent":8,"state":"exact-c"},
         {"address":"0x02000038","alias":"SceneEventRuntime_ReturnZero","extent":4,"state":"exact-c"},

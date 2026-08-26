@@ -4,7 +4,7 @@ use crate::source_paths::{c_identifier, lower_hex, SourceOwner, SourcePaths};
 use serde::{de::Error, Deserialize, Deserializer};
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Component, Path, PathBuf};
-pub const FORMAT: u32 = 2;
+pub const FORMAT: u32 = 3;
 
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq)]
 #[serde(rename_all = "kebab-case")]
@@ -114,6 +114,8 @@ impl TranslationUnit {
 #[serde(deny_unknown_fields)]
 pub struct TranslationUnits {
     format: u32,
+    kind: String,
+    original_translation_units: String,
     pub units: Vec<TranslationUnit>,
 }
 impl TranslationUnits {
@@ -124,9 +126,12 @@ impl TranslationUnits {
                 .map_err(|error| format!("{}: {error}", path.display()))?,
         )
         .map_err(|error| format!("{}: {error}", path.display()))?;
-        if document.format != FORMAT {
+        if document.format != FORMAT
+            || document.kind != "reconstruction-composition-contracts"
+            || document.original_translation_units != "unknown"
+        {
             return Err(format!(
-                "{}: expected translation-unit format {FORMAT}",
+                "{}: expected reconstruction-composition format {FORMAT}",
                 path.display()
             ));
         }

@@ -1,5 +1,7 @@
 {
-  "format": 2,
+  "format": 3,
+  "kind": "reconstruction-composition-contracts",
+  "original_translation_units": "unknown",
   "units": [
     {
       "id": "scheduler",

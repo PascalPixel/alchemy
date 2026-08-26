@@ -142,11 +142,14 @@ progress-subject:
 
 correspondence: build-claimed
 	$(COMPILER) cross-edition --all --write games/gs1/recon/exact-correspondence.json
-	$(COMPILER) cross-edition --all-overlays --write games/gs1/recon/exact-overlay-correspondence.json
+	$(COMPILER) cross-edition --all-overlays --write games/gs1/recon/exact-overlay-correspondence.json \
+		--edition-build games/gs1/recon/exact-overlay-builds.json
 
 correspondence-check: edition-builds-check
-	$(COMPILER) cross-edition --all-overlays --write out/exact-overlay-correspondence.check.json
+	$(COMPILER) cross-edition --all-overlays --write out/exact-overlay-correspondence.check.json \
+		--edition-build out/exact-overlay-builds.check.json
 	cmp games/gs1/recon/exact-overlay-correspondence.json out/exact-overlay-correspondence.check.json
+	cmp games/gs1/recon/exact-overlay-builds.json out/exact-overlay-builds.check.json
 
 families: build-claimed build-asm
 	$(COMPILER) families cluster --write games/gs1/recon/compiler-families.json

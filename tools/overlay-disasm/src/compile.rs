@@ -576,6 +576,7 @@ fn compile_overlay_unit(
     unit: &TranslationUnit,
     work: &Path,
     overlay: &str,
+    edition: Option<&str>,
 ) -> Result<Compiled, String> {
     let names = SourcePaths::load(&root())?;
     let source = root().join(&unit.source);
@@ -619,6 +620,11 @@ fn compile_overlay_unit(
         assembly.clone(),
     );
     options.preprocessed_output = Some(at("i"));
+    if let Some(edition) = edition {
+        options
+            .preprocessor_flags
+            .push(format!("-DGS1_EDITION_{}=1", edition.to_ascii_uppercase()));
+    }
     for step in source_to_assembly_plan(&options)?.steps {
         checked(&step.command, work)?;
     }
@@ -663,6 +669,21 @@ fn compile_overlay_unit(
         address: base,
         data: whole,
     })
+}
+pub fn compile_declared_overlay_unit(
+    unit: &TranslationUnit,
+    edition: &str,
+) -> Result<Compiled, String> {
+    if !unit.exact() || unit.overlay.is_none() {
+        return Err(format!("{}: not a wholly exact overlay unit", unit.id));
+    }
+    let work = tempdir().map_err(|error| error.to_string())?;
+    compile_overlay_unit(
+        unit,
+        work.path(),
+        unit.overlay.as_deref().unwrap(),
+        Some(edition),
+    )
 }
 fn validate_shared_overlay_source(
     repository: &Path,
@@ -736,7 +757,7 @@ fn compile_production_overlay(
                 ));
             }
         }
-        compiled.push(compile_overlay_unit(unit, work, overlay)?);
+        compiled.push(compile_overlay_unit(unit, work, overlay, None)?);
     }
     for address in placeholders.difference(&handled) {
         let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;

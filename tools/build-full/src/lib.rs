@@ -1053,9 +1053,9 @@ fn validate_translation_units(
         .as_str()
         .ok_or("claimed manifest lacks main symbol exports")?;
     if std::fs::read(rooted(root, exports)).map_err(|error| format!("{exports}: {error}"))?
-        != units.main_symbol_exports().as_bytes()
+        != SourcePaths::load(root)?.main_symbol_exports().as_bytes()
     {
-        return Err("claimed main symbol exports differ from translation-unit manifest".into());
+        return Err("claimed main symbol exports differ from the owner register".into());
     }
     Ok((main.len(), registered_owner_coverage(root, &units)?))
 }

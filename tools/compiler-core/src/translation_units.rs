@@ -235,29 +235,6 @@ impl TranslationUnits {
                     .any(|member| member.address == owner.address())
         })
     }
-    fn main_symbols(&self) -> impl Iterator<Item = (u32, &str, usize)> {
-        self.units
-            .iter()
-            .filter(|unit| unit.overlay.is_none())
-            .flat_map(|unit| unit.symbols())
-    }
-    pub fn main_symbol(&self, name: &str) -> Option<AbsoluteSymbol> {
-        self.main_symbols()
-            .find(|(_, alias, _)| *alias == name)
-            .map(|(address, _, _)| AbsoluteSymbol {
-                address: u64::from(address),
-                kind: AbsoluteSymbolKind::Thumb,
-            })
-    }
-    pub fn main_symbol_exports(&self) -> String {
-        let mut out = String::from(".syntax unified\n.thumb\n");
-        for (address, alias, _) in self.main_symbols() {
-            out.push_str(&format!(
-                ".global {alias}\n.thumb_set {alias}, 0x{address:08x}\n"
-            ));
-        }
-        out
-    }
 }
 fn validate_production_state(
     root: &Path,
@@ -443,11 +420,6 @@ mod tests {
             overlay.absolute_symbols["SceneEventRuntime_ScriptData"].kind,
             AbsoluteSymbolKind::Data
         );
-        let export = manifest.main_symbol("Scheduler_ResetTaskTable").unwrap();
-        assert_eq!(export.address, 0x0800_40e8);
-        assert!(manifest
-            .main_symbol_exports()
-            .contains(".thumb_set Scheduler_ResetTaskTable, 0x080040e8"));
         let owner = SourceOwner::Main(0x0800_40e8);
         assert!(manifest.unit_for_game_owner("gs1", owner).is_some());
         assert!(manifest.unit_for_game_owner("gs2", owner).is_none());

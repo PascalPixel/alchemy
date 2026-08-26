@@ -1,10 +1,10 @@
 .syntax unified
 .text
 	.thumb
-	.global FieldScroll_ArmHBlankDma
+	.global DisplayScroll_ArmHBlankDma
 	.global Func_080944ec
 	.thumb_func
-FieldScroll_ArmHBlankDma:
+DisplayScroll_ArmHBlankDma:
 Func_080944ec:
 	ldr	r3, [pc, #60]
 	movs	r2, #240

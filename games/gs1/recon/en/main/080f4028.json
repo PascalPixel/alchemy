@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "namespace": "gs1-en-main",
+  "address": "0x080f4028",
+  "name": "SceneCamera_ConfigureAndTransfer",
+  "status": "measured-draft",
+  "owner_bytes": 140,
+  "score": {
+    "measured": "2026-08-26",
+    "candidate_bytes": 140,
+    "reference_bytes": 140,
+    "differing_halfwords": 14,
+    "wrong_instructions": 8,
+    "class": "wrong",
+    "command": "cargo run --offline --quiet --release --manifest-path tools/compiler/Cargo.toml -- candidate-show games/gs1/recon/en/main/080f4028.c",
+    "note": "matched_prefix=36 of 53 instructions: the entire struct-init block, all four leading calls, and the 0x03000250 veneer transfer are byte-exact. Only the last two-call tail diverges."
+  },
+  "shape": {
+    "derivation": "games/gs1/src/unidentified/main/battle/battle_owner_26.c (families-index template-main-080b7f9c) supplied the leading struct-init/four-call idiom. The closing section instead matches games/gs1/src/camera/scene/configure.c's (ConfigureSceneCamera, main:080b8fd4) SceneCameraObject/Data_03001ce0 pattern field-for-field and call-for-call, differing only in literal constants -- confirmed against the target's own disassembly (games/gs1/asm/080f4028.s), not assumed from the families-index score alone. Declared void() since the owner never touches ConfigureSceneCamera's .secondary field."
+  },
+  "rejected_experiments": [
+    {
+      "experiment": "raw-hex vs shift spelling of the repeated 250<<16 immediate",
+      "result": "no change; the compiler folds by value, not text"
+    },
+    {
+      "experiment": "hoisting 250<<16 into one named local reused at both call sites",
+      "result": "no change; the compiler still unifies via register allocation"
+    },
+    {
+      "experiment": "two separately-declared same-value locals (state_update_0256.c's working trick)",
+      "result": "regressed to 152 bytes / matched_prefix=1"
+    },
+    {
+      "experiment": "nesting the veneer call inline as Func_08005258's argument to avoid an intermediate result local",
+      "result": "no change"
+    }
+  ],
+  "notes": [
+    "Recovered only from the retained owner assembly, approved local ROM, the byte-exact template/sibling sources, in-repository headers, and the approved compiler.",
+    "This candidate claims zero DONE bytes."
+  ]
+}

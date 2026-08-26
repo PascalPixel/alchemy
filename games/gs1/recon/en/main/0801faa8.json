@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "namespace": "gs1-en-main",
+  "address": "0x0801faa8",
+  "name": "Runtime_ReportErrorAndCopy",
+  "status": "measured-draft",
+  "owner_bytes": 160,
+  "score": {
+    "measured": "2026-08-26",
+    "candidate_bytes": 160,
+    "reference_bytes": 160,
+    "differing_halfwords": 3,
+    "wrong_instructions": 6,
+    "class": "allocation",
+    "command": "cargo run --offline --quiet --release --manifest-path tools/compiler/Cargo.toml -- candidate-show games/gs1/recon/en/main/0801faa8.c",
+    "note": "Full instruction-order, call-sequence, and literal-pool match with the reference; the only residual is a pure register-bank difference -- the transient error local lands in r6 instead of r7 in both error paths."
+  },
+  "shape": {
+    "derivation": "games/gs1/src/unidentified/main/runtime/runtime_owner_249.c (and its structurally closer sibling runtime_owner_154.c) supplied the value!=-1/Func_080056cc/Func_0801776c error-report idiom. This owner is a fuller sibling: it adds a Func_08004970(0x1000) scratch buffer, a Func_08005a78 call, a Func_080072f0 (Mem_Copy) of 16 bytes into buffer+0x4e4, and a Func_08002df0 free before return -- reconstructed against real signatures in runtime_mem.h and the save_state_family.h-backed 08005a78.c/08005920.c. No prior draft existed for this owner."
+  },
+  "rejected_experiments": [
+    {
+      "experiment": "value cached once and reused across call sites",
+      "result": "wrong shape (66 differing halfwords)"
+    },
+    {
+      "experiment": "Mem_Copy dst as a single grouped (A-B) expression",
+      "result": "wrong operand order"
+    },
+    {
+      "experiment": "merging error into result entirely",
+      "result": "broke r5/r6/r7 register banking function-wide (16-18 differing halfwords)"
+    },
+    {
+      "experiment": "error kept s32 alongside s32 result",
+      "result": "spurious sign-extend before return (9 differing halfwords)"
+    },
+    {
+      "experiment": "declaration-order swaps of found/error/result",
+      "result": "no effect on the residual r6-vs-r7 error banking"
+    }
+  ],
+  "notes": [
+    "Recovered only from the retained owner assembly, approved local ROM, the byte-exact sibling sources, in-repository headers, and the approved compiler.",
+    "This candidate claims zero DONE bytes."
+  ]
+}

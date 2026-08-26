@@ -1,38 +1,32 @@
 {
   "schema_version": 1,
-  "namespace": "main",
+  "namespace": "gs1-en-main",
   "address": "0x0809abb4",
   "name": "BattleEffect_RunFallbackObjectTransition",
   "status": "measured-draft",
   "owner_bytes": 444,
-  "candidate_bytes": 448,
-  "differing_halfwords": 197,
-  "wrong_instructions": 102,
-  "family": {
-    "exact_c_dispatcher": "main:08096810",
-    "exact_c_dispatcher_bytes": 336,
-    "exact_c_setup": "main:0809ab98",
-    "exact_c_setup_bytes": 28,
-    "aggregate_reusable_bytes": 808
+  "score": {
+    "measured": "2026-08-26",
+    "candidate_bytes": 444,
+    "reference_bytes": 444,
+    "differing_halfwords": 165,
+    "wrong_instructions": 72,
+    "class": "wrong",
+    "note": "Improved from a prior draft (448/197/102) by correcting the BattleEffectMotionRecord stride (0x48, not 0x120), hoisting step=0 before the null-object check, and switching the 16-record loop to a descending counter with a walking record pointer -- all three moves match the reference disassembly's own idiom exactly and pulled candidate_bytes to the exact 444-byte target. The remaining 165-halfword residual is concentrated in one region: the compiler's register promotion of the origin/destination interpolation-array base pointers into sl/r8 differs from the reference's choice (which pointer gets sl vs r8), which cascades through the whole interpolation loop and the trailing loop-bound comparison (cmp #10/ble vs cmp #11/blt). Six declaration-order and expression-shape respellings were tried against this one region; none reproduced the reference's exact sl/r8 binding without cost elsewhere, so this is recorded as a genuine register-allocator sensitivity rather than a semantic gap."
   },
-  "cross_edition": {
-    "core_bytes": 320,
-    "core_diff_bytes": 0,
-    "core_identical": true,
-    "starts": {
-      "ja": "0x08091ba8",
-      "en": "0x0809abb4",
-      "de": "0x0809e25c",
-      "es": "0x0809fc4c",
-      "fr": "0x0809fc4c",
-      "it": "0x0809ac4c"
-    }
-  },
+  "rejected_experiments": [
+    "Locals declared position,origin,destination (top-to-bottom) does yield the reference's correct stack offsets (origin@sp+12, destination@sp+0, position@sp+24) but costs 4 extra bytes (448) from a different sl/r8 promotion order -- worse net score (448/174/90) than the accepted origin,destination,position order despite the offsets being individually 'more correct'.",
+    "Explicit origin_ptr/destination_ptr local pointer variables in place of array-literal indexing: 456/222/150, substantially worse -- the compiler synthesizes its own base-pointer temporaries more efficiently than an explicit alias.",
+    "Splitting object->z into a temporary (z) plus a separate delta temporary to try to reproduce the reference's delayed str r5,[r6,#16] scheduling around the scale calc: 456/207/98, worse.",
+    "Locals declared destination,position,origin (top-to-bottom): 448/176/94, worse than accepted order.",
+    "Locals declared destination,origin,position (top-to-bottom): 448/? not adopted -- superseded by testing the full permutation set; origin,destination,position remained best throughout."
+  ],
   "notes": [
-    "Complete typed fallback path for battle effect 9. It interpolates a temporary object from the selected target toward the battle origin, runs the timed sound sequence, spawns sixteen motion records around the final position, then releases the temporary object after fixed delays.",
-    "The exact-C dispatcher enters exact 0809ab98 only when target-object setup fails; 0809ab98 marks the active object and immediately calls this owner. The three-owner producer/consumer chain covers 808 executable bytes.",
-    "The first readable model compiles to 448 bytes against the 444-byte owner, with 197 differing halfwords and 102 wrong instructions. The residual is broad, so this draft claims zero bytes and is not eligible for permanent classification.",
-    "Independent relocation-aware matching proves all 320 normalized core bytes identical at unique JA, EN, DE, ES, FR, and IT anchors. Twenty-eight call relocations and three literal fields account for regional raw differences.",
-    "Recovered only from retained GS1 assembly, local exact-C dispatcher/setup and motion analogues, the approved compiler, and the six local GS1 editions. No GS2 or external source was used."
+    "Recovered only from the retained owner assembly, approved local ROM, the byte-exact template/sibling sources, in-repository headers, and the approved compiler.",
+    "This candidate claims zero DONE bytes.",
+    "Complete typed fallback path for battle effect 9. It interpolates a temporary object from the selected target toward the battle origin over 11 steps, runs a timed sound sequence, spawns sixteen motion records (0x48-byte stride, not the 0x120 previously assumed) walking forward from state->records[0] while a separate index counts 15 downto 0, then releases the temporary object after fixed delays.",
+    "The exact-C dispatcher enters exact 0809ab98 only when target-object setup fails; 0809ab98 marks the active object and immediately calls this owner. The three-owner producer/consumer chain covers 808 executable bytes (see prior dossier revision for exact_c_dispatcher/setup addresses).",
+    "Independent relocation-aware matching (from the prior dossier revision) proved 320 normalized core bytes identical at unique JA/EN/DE/ES/FR/IT anchors; that analysis was not re-verified in this pass but nothing in this revision's struct-layout correction should affect it, since it only changed local variable placement and loop shape, not the cross-edition call/literal skeleton.",
+    "No GS2 or external source was used; the orbiting_particles/run.c family hint was read in full but its loop shape (random per-particle spawn over 15 iterations) does not structurally match this owner's single-object interpolation + fixed 16-record spawn, so it was not used as a direct structural template -- only its general battle-effect idiom (Data_03001f30 scene pointer, WaitFrames/Audio_PlayCue-style helper calls) informed variable naming conventions already present in the prior draft."
   ]
 }

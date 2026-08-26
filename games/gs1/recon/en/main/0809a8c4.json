@@ -19,6 +19,17 @@
     "Reconstructed independently from retained assembly and current project headers. The candidate now has exact extent and complete control flow; the remaining residual is confined to equivalent low-register choices and the first interpolation loop's equivalent compare-and-branch spelling.",
     "Two independent bounded classic heat-guided walks evaluated 50,000 ordinary-C candidates without improving the 12-halfword residual. The only earlier bytewise improvement reduced the residual from 15 to 12 halfwords by preserving separate generic spawn-result and typed particle views.",
     "Routed GCC 2.96 and explicit GCC 2.96 agree; old agbcc regresses to 432/468 bytes, while CSE, scheduling, regmove, GCSE, and expensive-optimization diagnostics preserve the residual or regress.",
-    "The approved compiler cannot express the remaining low-register allocation and equivalent loop comparison without disallowed fixed-register constraints or barriers; exact retained assembly is permanent under the repository contract."
+    "The approved compiler cannot express the remaining low-register allocation and equivalent loop comparison without disallowed fixed-register constraints or barriers; exact retained assembly is permanent under the repository contract.",
+    "Re-measured 2026-08-26: candidate=468 reference=468 differing_halfwords=12 wrong_instructions=24, matching the recorded floor exactly."
+  ],
+  "rejected_experiments": [
+    {
+      "experiment": "respell the first interpolation loop's exit test as `while (step <= 10)` instead of `while (step < 11)`",
+      "result": "no change -- GCC 2.96 still emits cmp r2,#10/ble.n rather than the reference's cmp r3,#11/blt.n; the compare-and-branch spelling is not reachable from this source-level rewrite"
+    },
+    {
+      "experiment": "drop the invariant `target_cursor` pointer local and read `target.x/y/z` directly in the interpolation loop",
+      "result": "regresses sharply from 12/24 to 177/42 -- the pointer indirection is load-bearing for the reference's register allocation, not incidental"
+    }
   ]
 }

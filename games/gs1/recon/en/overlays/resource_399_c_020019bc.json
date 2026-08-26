@@ -1,24 +1,36 @@
 {
-  "span_bytes": 1078,
-  "score": {
-    "measured": "2026-08-23",
-    "candidate_bytes": 908,
-    "reference_bytes": 1078,
-    "wrong_instructions": 192,
-    "differing_halfwords": 514,
-    "class": "generated-call-script-retention"
-  },
-  "shape": {
-    "calls": 109,
-    "loops": 0,
-    "memory_operations": 5,
-    "reference_high_register_moves": 0
-  },
-  "verified_against_reference": [
-    "complete deterministic reconstruction accounts for all 109 calls and their argument values, 0 loops, and 5 explicit memory operations",
-    "the ROM owner contains no high-register moves; approved GCC CSE and allocation introduce high-register carriers or otherwise change the owner extent",
-    "the default route plus -O0, -O1, -O3, -Os, -fno-gcse, and -fno-cse-follow-jumps produced zero exact emissions"
+  "schema_version": 1,
+  "namespace": "resource_399",
+  "address": "0x020019bc",
+  "name": "RunEventScript02",
+  "status": "measured-draft",
+  "owner_bytes": 44,
+  "candidate_bytes": 44,
+  "differing_halfwords": 3,
+  "wrong_instructions": 0,
+  "classification": "event-script-configure-and-dispatch",
+  "notes": [
+    "The file previously at this path claimed reference_bytes=1078 with 109 calls (class generated-call-script-retention); that data belonged to instructions past this owner's actual boundary. games/gs1/semantic/regions.json's reviewed row for resource_399:020019bc is only 44 bytes ('parked by `overlay park`: the adopted C stopped reproducing this span after the pret routing cut'), and `overlay show resource_399 19bc` confirms a 5-call, no-loop, no-branch owner running push {lr} at 0x020019bc through pop {r0}/bx r0 at 0x020019e0-0x020019e2, followed by one directly referenced pool word through 0x020019e8 -- 44 bytes total with no padding. The stale draft's first five statements (Func_02003bf0/Func_02003d44/Func_02003c20(0,0x20000,0x1999)/Func_02003c5a(0,0xe8,0xcc)) happen to be exactly this owner's five calls, byte-for-byte and argument-for-argument; everything the stale draft appended after that belongs to different, later instruction streams (likely subsequent owners sharing some of the same callees) and has been discarded here.",
+    "The task's hinted sibling family (resource_3aa:02001450 RunEventScript04, a four-channel-configure-plus-conditional-handoff shape, callees shifted by a uniform +0x44) does not structurally transfer to this owner: this owner has no loop, no conditional branch, no shared handoff callee, and its five callees (Func_02003bf0, Func_02003d44, Func_02003c20, Func_02003c5a, Func_02003c16) do not appear as a uniform-offset shift of RunEventScript04's callees or its resource_3aa:0200140c template. Recovered independently from this owner's own disassembly instead.",
+    "Two callees (Func_02003bf0, Func_02003d44, Func_02003c16) are called with no register setup and their results are never read afterward, so they are declared void(void); this is a reading aid, not a claim about their true signature -- the same addresses in other overlays host unrelated functions and were not consulted.",
+    "Recovered only from the retained owner bytes in the approved local ROM, in-repository headers, and the approved compiler."
   ],
-  "retention": "keep_structured_asm",
-  "note": "A generated event-call script, retained as structured assembly because the approved compiler cannot preserve its repeated immediate construction and call-argument schedule."
+  "rejected_experiments": [
+    {
+      "experiment": "plain repeated literal: Func_02003c20(0, 0x20000, 0x1999)",
+      "result": "44/44 bytes, 3 differing halfwords, 0 wrong instructions, class=ordering: reference schedules movs r1,#128 / movs r0,#0 / lsls r1,r1,#10 / ldr r2,[pool]; candidate schedules movs r1,#128 / lsls r1,r1,#10 / ldr r2,[pool] / movs r0,#0 -- the r0=0 mov is scheduled last instead of second"
+    },
+    {
+      "experiment": "shift spelled as 0x80 << 10 instead of the folded 0x20000 literal",
+      "result": "byte-identical to the plain form; GCC constant-folds the shift before scheduling either way"
+    },
+    {
+      "experiment": "shift value pre-computed into a named s32 temporary before the call (shifted = 0x80 << 10; Func_02003c20(0, shifted, 0x1999))",
+      "result": "byte-identical to the plain form; the compiler still schedules movs r0,#0 last"
+    },
+    {
+      "experiment": "both the shift and the zero argument pre-computed into separate temporaries in target order (r1-value first, r0-value second, shift applied last)",
+      "result": "byte-identical to the plain form; local scalar values are fully constant-propagated regardless of statement order in this tiny independent-instruction block, unlike the loop-bound-vs-pointer reordering case in 08095dd0.c where real memory writes preserve relative order"
+    }
+  ]
 }

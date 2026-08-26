@@ -186,6 +186,43 @@ fn validate_provisional(root: &Path, exact: &HashSet<String>) -> Result<usize, S
     Ok(rows.len())
 }
 
+fn validate_sealed(root: &Path, exact: &HashSet<String>) -> Result<usize, String> {
+    let document = json(&root.join("games/gs1/semantic/sealed.json"))?;
+    let rows = document
+        .get("sealed")
+        .and_then(Value::as_array)
+        .ok_or("games/gs1/semantic/sealed.json has no sealed array")?;
+    let mut seen = HashSet::new();
+    for row in rows {
+        let owner = row
+            .get("owner")
+            .and_then(Value::as_str)
+            .ok_or("sealed owner missing")?;
+        if owner.len() != 8 || !owner.bytes().all(|byte| byte.is_ascii_hexdigit()) {
+            return Err(format!("{owner} is not an 8-hex main owner"));
+        }
+        if !seen.insert(owner) {
+            return Err(format!("{owner} is sealed twice"));
+        }
+        if exact.contains(owner) {
+            return Err(format!("{owner} has exact C; remove its seal"));
+        }
+        if !root.join(format!("games/gs1/asm/{owner}.s")).is_file() {
+            return Err(format!("{owner} is sealed but has no retained assembly"));
+        }
+        if row
+            .get("reason")
+            .and_then(Value::as_str)
+            .unwrap_or("")
+            .trim()
+            .is_empty()
+        {
+            return Err(format!("{owner} has no sealed reason"));
+        }
+    }
+    Ok(rows.len())
+}
+
 fn validate_drafts(root: &Path, exact: &HashSet<String>) -> Result<usize, String> {
     let directory = root.join("draft");
     let Ok(entries) = std::fs::read_dir(directory) else {
@@ -260,14 +297,22 @@ fn validate_reconstruction_records(root: &Path) -> Result<(), String> {
     Ok(())
 }
 
-pub fn validate() -> Result<(usize, usize, usize, usize, usize), String> {
+pub fn validate() -> Result<(usize, usize, usize, usize, usize, usize), String> {
     let root = root();
     let exact = exact(&root)?;
     let names = validate_registered_main_symbols(&root)?;
     let audited = audited(&root)?;
     let unmatchable = validate_unmatchable(&root, &exact, &audited)?;
     let provisional = validate_provisional(&root, &exact)?;
+    let sealed = validate_sealed(&root, &exact)?;
     let drafts = validate_drafts(&root, &exact)?;
     validate_reconstruction_records(&root)?;
-    Ok((unmatchable, provisional, drafts, audited.len(), names))
+    Ok((
+        unmatchable,
+        provisional,
+        sealed,
+        drafts,
+        audited.len(),
+        names,
+    ))
 }

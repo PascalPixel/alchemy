@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x08003a7c",
+  "name": "IoWriteQueue_FlushPending",
+  "status": "measured-draft",
+  "owner_bytes": 96,
+  "translation_unit": "video-dma-queue",
+  "compiler_route": "canonical-gcc296",
+  "canonical_complete_unit": {
+    "candidate_bytes": 96,
+    "reference_bytes": 96,
+    "differing_halfwords": 35,
+    "wrong_instructions": 38,
+    "matched_prefix": 1
+  },
+  "behavior": "When the queue is nonempty, copies the fixed transfer-command executor to temporary RAM, invokes it with the queue and count, then clears the count.",
+  "probe": {
+    "hypothesis": "An ordinary-C DMA descriptor representation can publish the source, destination, and control words with the reference standalone three-register transfer.",
+    "acceptance": "Canonical complete video-DMA queue composition is byte-exact and all eleven existing exact owners remain byte-exact.",
+    "tested": [
+      "direct scalar, compound-aggregate, volatile, nonvolatile, and post-increment DMA register stores",
+      "local, VLA-backed, and by-value three-word descriptors",
+      "count, zero, declaration-lifetime, and padding variants"
+    ],
+    "result": "No canonical form emits the reference standalone three-register store followed by base restoration. Scalar and post-increment forms use scalar or one-register stores; aggregate forms use a twelve-byte staging copy with LDMIA/STMIA and grow to 108 or 112 bytes. Removing the existing padding probe regresses to 92 bytes and 44 differing halfwords."
+  },
+  "remaining": "The current VLA and call behavior are credible, but the reference needs a standalone DMA publication with the count, zero, and control-base lifetimes allocated differently. The approved compiler's volatile multiple-transfer and BLKmode paths explain the tested alternatives, but do not prove that no ordinary-C source can emit the owner. Retain structured assembly; no permanent compiler classification is claimed.",
+  "notes": [
+    "All measurements compile the complete declared video-dma-queue reconstruction composition once with canonical GCC 2.96.",
+    "No inline assembly, fixed-register variable, compiler barrier, forbidden ABI, copied instruction bytes, compiler modification, or per-owner flag override was used.",
+    "This candidate claims zero DONE bytes."
+  ]
+}

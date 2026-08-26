@@ -48,14 +48,14 @@
     "canonical_best_differing_halfwords": 56,
     "canonical_best_candidate_bytes": 120,
     "tested": [
-      "function- and block-scope pointer declarations, initialization orders, const and ordinary register qualifiers, pointee volatility, pointer/integer views, and a zero-offset map aggregate",
+      "sixteen finite canonical full-unit variants across function- and block-scope pointer declarations, initialization orders, const and ordinary register qualifiers, pointee volatility, pointer/integer views, and a zero-offset map aggregate",
       "direct-global, local-pointer, mixed-alias, and raw-address diagnostics for the ownership map and resource table",
       "while and guarded do-while free-run scans, separate and shared start/result temporaries, success-label layouts, and indexed versus pointer-induction mark loops",
       "canonical complete-translation-unit compilation throughout, plus a diagnostic -fno-gcse compile of the strongest all-local pointer ancestry"
     ],
-    "result": "No ordinary-C canonical shape reached exactness. The retained indexed global mark loop reproduces the reference's six-instruction store loop and raises the candidate from 116 to 120 bytes while reducing wrong instructions from 58 to 56 without increasing linked differing halfwords."
+    "result": "No ordinary-C canonical shape reached exactness or simultaneously recovered the reference's id, block-count, scan-map, store-map, and table register roles. The retained indexed global mark loop reproduces the reference's six-instruction store loop and raises the candidate from 116 to 120 bytes while reducing wrong instructions from 58 to 56 without increasing linked differing halfwords."
   },
-  "remaining": "The complete algorithm and owner boundary are established, but the coherent canonical translation-unit build remains four bytes short. GCC's GCSE pass coalesces the ownership-map ancestries, removing the reference's long-lived map-base copies and shifting the id/block-count allocation. A noncanonical -fno-gcse diagnostic restores the 124-byte extent but still leaves 41 differing halfwords and 54 wrong instructions; neither exact adoption nor a permanent compiler classification is justified.",
+  "remaining": "The complete algorithm and owner boundary are established, but the coherent canonical translation-unit build remains four bytes short. GCC's GCSE pass coalesces the ownership-map ancestries, removing the reference's long-lived scan-map/store-map distinction and shifting the id/block-count allocation. A noncanonical -fno-gcse diagnostic restores the 124-byte extent but still leaves 41 differing halfwords and 54 wrong instructions; neither exact adoption nor a permanent compiler classification is justified.",
   "notes": [
     "Recovered only from retained assembly, approved local GS1 ROMs, neighboring exact resource-table owners, and the approved compiler.",
     "The raw-address diagnostic reached 124 bytes and 51 differing halfwords only by adding a duplicate ownership-map pool entry; it was rejected in favor of the named linker-resolved symbol and coherent source.",

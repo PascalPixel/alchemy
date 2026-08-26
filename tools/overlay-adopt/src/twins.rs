@@ -154,7 +154,6 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
             spans.insert(owner, span);
         }
     }
-
     let rom_path = root.join("roms/gs1-en.gba");
     let rom = fs::read(&rom_path).map_err(|error| format!("{}: {error}", rom_path.display()))?;
     let resource_table = resource_table(&rom)?;
@@ -201,7 +200,6 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
             references,
         });
     }
-
     let mut candidates = Vec::<(usize, usize, String)>::new();
     for (mask, rows) in &groups {
         let exact = rows

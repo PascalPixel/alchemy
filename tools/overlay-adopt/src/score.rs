@@ -162,14 +162,14 @@ pub fn audit_corpus(root: &Path) -> Result<i32, String> {
     }
     let paths = SourcePaths::load(root)?;
     let reviewed = crate::reviewed_spans(root)?;
-    // mapped, nonowner, installed, nonexact, ordinary, nonordinary, unmapped exact
-    let mut count = [0usize; 7];
+    // registered, nonowner, installed, nonexact, ordinary, nonordinary, exact-unmapped, placeholders, unregistered
+    let mut count = [0usize; 9];
     for source in &sources {
         let target = source.to_string_lossy();
         let (overlay, address) = resolve(root, &target)?;
         let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;
-        let span = placeholder_span(root, &overlay, address)?
-            .or_else(|| reviewed.get(&owner).map(|span| *span as i64));
+        let placeholder = placeholder_span(root, &overlay, address)?;
+        let span = placeholder.or_else(|| reviewed.get(&owner).map(|span| *span as i64));
         let Some(span) = span else {
             if crate::audited_kind(root, &overlay, address)?.as_deref() != Some("literal_pool") {
                 return Err(format!(
@@ -181,11 +181,14 @@ pub fn audit_corpus(root: &Path) -> Result<i32, String> {
             println!("not-owner\t{overlay}:{address:08x}\taudited-literal-pool");
             continue;
         };
-        count[0] += 1;
+        let registered = paths.registered_name(owner).is_some();
+        count[0] += usize::from(registered);
+        count[7] += usize::from(placeholder.is_some());
+        count[8] += usize::from(!registered);
         let (reference, _) = truth_window(root, &overlay, address, span)?;
         let work = tempdir().map_err(|error| error.to_string())?;
         if compile_overlay_c(source, work.path(), &overlay, None, &[])?.data != reference {
-            count[3] += 1;
+            count[3] += usize::from(registered);
             continue;
         }
         let destination = paths.registered_source_path(owner);
@@ -193,7 +196,7 @@ pub fn audit_corpus(root: &Path) -> Result<i32, String> {
             count[2] += 1;
             continue;
         }
-        let class = if destination.is_err() {
+        let class = if !registered || destination.is_err() {
             count[6] += 1;
             "unmapped"
         } else {
@@ -203,6 +206,6 @@ pub fn audit_corpus(root: &Path) -> Result<i32, String> {
         };
         println!("exact-retained\t{}\t{class}", owner.id());
     }
-    println!("overlay-corpus sources={} mapped={} literal_pool_nonowners={} installed_exact={} nonexact={} exact_retained_ordinary={} exact_retained_nonordinary={} exact_unmapped={}", sources.len(), count[0], count[1], count[2], count[3], count[4], count[5], count[6]);
-    Ok(i32::from(count[4..].iter().sum::<usize>() != 0))
+    println!("overlay-corpus sources={} registered_owners={} placeholder_spans={} literal_pool_nonowners={} installed_exact={} nonexact={} exact_retained_ordinary={} exact_retained_nonordinary={} exact_unmapped={} unregistered_candidates={}", sources.len(), count[0], count[7], count[1], count[2], count[3], count[4], count[5], count[6], count[8]);
+    Ok(i32::from(count[4..7].iter().sum::<usize>() != 0))
 }

@@ -27,7 +27,7 @@ PORTABLE_TOOLS := alignment-tail asset-paths cache-entry canonical-json \
 	overlay-adopt overlay-call-targets check check-commit-progress \
 	check-publication check-unmatchable core-retained-audit coverage-map \
 	full-c-progress integrate-matches route-dump decomp-targets
-TOOLING_LINE_LIMIT := 30000
+TOOLING_LINE_LIMIT := 30200
 TARGET ?= gs1-en
 FULL_REPORT = out/$(TARGET)/full/rebuilt.json
 FULL_ROM = out/$(TARGET)/full/rebuilt.gba

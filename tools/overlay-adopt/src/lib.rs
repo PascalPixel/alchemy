@@ -1,10 +1,8 @@
 pub mod park;
 pub mod score;
 pub mod twins;
-use candidate_compiler::verify::run as run_command;
-use compiler_core::plan::direct_preprocessor_command;
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
-use no_asm_c::find_forbidden;
+use no_asm_c::{expanded_forbidden, find_forbidden};
 use overlay_disasm::{assemble_overlay, OverlaySource, OVERLAY_BASE};
 use serde::Deserialize;
 use serde_json::Value;
@@ -468,24 +466,6 @@ fn revert(
         }
     }
     fs::write(assembly, original_text).map_err(|error| error.to_string())
-}
-pub(crate) fn expanded_forbidden(root: &Path, source: &Path) -> Result<String, String> {
-    let work = tempdir().map_err(|error| error.to_string())?;
-    let output = work.path().join("ordinary.i");
-    let command =
-        direct_preprocessor_command(&source.to_string_lossy(), &output.to_string_lossy())?;
-    run_command(&command, root)?;
-    let text = fs::read_to_string(&output).map_err(|error| error.to_string())?;
-    Ok(find_forbidden(&output.to_string_lossy(), &text)
-        .into_iter()
-        .map(|finding| format!("{}:{}:expanded", finding.token, finding.line))
-        .collect::<Vec<_>>()
-        .join(","))
-}
-pub(crate) fn ordinary_source(root: &Path, source: &Path) -> Result<bool, String> {
-    let text = fs::read_to_string(source).map_err(|error| error.to_string())?;
-    Ok(find_forbidden(&source.to_string_lossy(), &text).is_empty()
-        && expanded_forbidden(root, source)?.is_empty())
 }
 pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
     let options = match options_of(args)? {

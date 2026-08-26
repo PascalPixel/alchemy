@@ -203,6 +203,7 @@ dependencies = [
  "compiler-core",
  "decomp-targets",
  "regex",
+ "tempfile",
 ]
 
 [[package]]
@@ -224,7 +225,6 @@ dependencies = [
 name = "overlay-adopt"
 version = "0.1.0"
 dependencies = [
- "candidate-compiler",
  "candidate-show",
  "compiler-core",
  "no-asm-c",

@@ -9,6 +9,7 @@ pub mod sha256;
 pub mod source_inputs;
 pub mod source_paths;
 pub mod symbols;
+pub mod thumb;
 pub mod translation_units;
 
 pub use symbols::{

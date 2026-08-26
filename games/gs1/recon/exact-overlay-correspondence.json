@@ -1,5 +1,5 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "game": "gs1",
   "source_edition": "en",
   "base_edition": "ja",
@@ -14,6 +14,7 @@
   "regional_core_owners": 6,
   "regional_core_bytes": 1260,
   "unresolved_owners": 38,
+  "compliance_excluded_owners": 0,
   "resource_tables": {
     "de": "0x0831fe00",
     "en": "0x08320000",

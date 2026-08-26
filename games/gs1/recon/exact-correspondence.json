@@ -1,5 +1,5 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "game": "gs1",
   "source_edition": "en",
   "base_edition": "ja",
@@ -13,6 +13,7 @@
   "regional_core_owners": 34,
   "regional_core_bytes": 5918,
   "unresolved_owners": 43,
+  "compliance_excluded_owners": 0,
   "location_method_codes": {
     "a": "global_anchor",
     "n": "neighbor_exact",

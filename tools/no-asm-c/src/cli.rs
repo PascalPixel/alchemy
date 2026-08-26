@@ -4,6 +4,7 @@ use compiler_core::routing::{
     cflags_for_target_source, root as compiler_root, uses_agbcc_compiler, CompilerTarget,
 };
 use compiler_core::source_paths::SourcePaths;
+use compiler_core::translation_units::TranslationUnits;
 use decomp_targets::{target_for, DecompCompilerTarget, DecompTarget, DecompTargetId, TARGET_IDS};
 use std::collections::BTreeMap;
 use std::fs;
@@ -46,6 +47,7 @@ fn prefix(target: DecompTarget, source: &str) -> Result<Vec<String>, String> {
 }
 fn jobs(root: &Path) -> Result<(Vec<Job>, usize), String> {
     let mut groups = BTreeMap::<(String, Vec<String>), Vec<String>>::new();
+    let units = TranslationUnits::load(root)?;
     for id in TARGET_IDS {
         let target = target_for(id);
         let paths = SourcePaths::load_for_game(root, target.compiler.as_str())?;
@@ -56,6 +58,15 @@ fn jobs(root: &Path) -> Result<(Vec<Job>, usize), String> {
             let command = prefix(target, &routing.to_string_lossy())?;
             let group = groups.entry((id.as_str().into(), command)).or_default();
             group.push(path.to_string_lossy().into_owned());
+        }
+        for unit in &units.units {
+            if unit.game != target.compiler.as_str() {
+                continue;
+            }
+            let source = unit.source.to_string_lossy().into_owned();
+            let command = prefix(target, &source)?;
+            let group = groups.entry((id.as_str().into(), command)).or_default();
+            group.push(source);
         }
     }
     for sources in groups.values_mut() {

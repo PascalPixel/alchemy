@@ -37,6 +37,9 @@ void name(u32 address, u32 value) \
 #define QueueIoWriteDelay9 Func_080039bc
 #define QueueIoWriteDelay10 Func_080039fc
 #define QueueIoWriteDelay11 Func_08003a3c
+#define IoWriteQueue_FlushPending Func_08003a7c
+#define Runtime_CopyAndCallRoutine Func_08003e10
+#define ResourceTable_AllocateBlocks Func_08003e58
 
 DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay1, 0x10000)
 DEFINE_QUEUE_IO_WRITE(QueueIoWriteDelay2, 0x20000)
@@ -72,7 +75,7 @@ typedef void (*QueueFlushRoutine)(struct IoWriteQueue *queue, u32 count);
 /* Linker-resolved absolute size: 0x68. */
 extern u8 TransferCommandExecutor_Size[];
 
-void Func_08003a7c(void)
+void IoWriteQueue_FlushPending(void)
 {
     struct IoWriteQueue *queue;
     u32 count;
@@ -132,7 +135,7 @@ typedef void (*LoadedRoutine)(void *argument);
 /* Linker-resolved absolute size: 0xe0. */
 extern u8 LoadedRuntime_Size[];
 
-void Func_08003e10(void *argument)
+void Runtime_CopyAndCallRoutine(void *argument)
 {
     struct DmaChannel *dma;
     u32 size = (u32)LoadedRuntime_Size;
@@ -154,7 +157,7 @@ struct ResourceTableEntry {
 extern u8 Data_03001810[512];
 extern struct ResourceTableEntry Data_03001b10[96];
 
-s32 Func_08003e58(u32 id, u32 size)
+s32 ResourceTable_AllocateBlocks(u32 id, u32 size)
 {
     u32 blocks;
     u32 start;

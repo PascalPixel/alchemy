@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global DisplayTransition_AllocateAndClearState
 	.global Func_0808fecc
 	.thumb_func
+DisplayTransition_AllocateAndClearState:
 Func_0808fecc:
 	push	{lr}
 	movs	r1, #168

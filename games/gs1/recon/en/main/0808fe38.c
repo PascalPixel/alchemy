@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define BattleEffect_InitializeObjectPool Func_0808fe38
+#define DisplayTransition_InitializeState Func_0808fe38
 
 struct DmaChannelEffect {
     const void *source;
@@ -8,7 +8,7 @@ struct DmaChannelEffect {
     u32 control;
 };
 
-void BattleEffect_InitializeObjectPool(s16 mode)
+void DisplayTransition_InitializeState(s16 mode)
 {
     volatile struct DmaChannelEffect *dma =
         (volatile struct DmaChannelEffect *)0x040000d4;

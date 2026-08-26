@@ -6,7 +6,9 @@ typedef struct DmaTransfer {
     u32 control;
 } DmaTransfer;
 
-void Func_0800bc48(void *destination)
+#define ResourceMetadata_ClearRecord Func_0800bc48
+
+void ResourceMetadata_ClearRecord(void *destination)
 {
     if (destination != 0) {
         u32 clear_value = 0;

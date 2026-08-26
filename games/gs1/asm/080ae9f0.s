@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global UiIcon_DrawVariantWithTileOffset
 	.global Func_080ae9f0
 	.thumb_func
+UiIcon_DrawVariantWithTileOffset:
 Func_080ae9f0:
 	push	{r5, r6, lr}
 	adds	r5, r3, #0

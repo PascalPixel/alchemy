@@ -1,6 +1,6 @@
 #include "audio_engine.h"
 
-void Func_080f9ef8(
+void MusicTrack_Stop(
     struct MusicPlayerState *unused,
     struct MusicTrackState *track)
 {

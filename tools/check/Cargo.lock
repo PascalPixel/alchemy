@@ -147,6 +147,7 @@ name = "full-c-progress"
 version = "0.1.0"
 dependencies = [
  "compiler-core",
+ "coverage-map",
  "serde_json",
 ]
 

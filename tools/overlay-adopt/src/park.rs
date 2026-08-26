@@ -438,12 +438,10 @@ fn audit_with_rom(root: &Path, overlay: &str, rom: Option<&CanonicalRom>) -> Aud
             i64::from_str_radix(hex, 16).ok()
         })
         .collect::<Vec<_>>();
-    let work = tempdir().map_err(|error| error.to_string())?;
     let source_paths = SourcePaths::load(root)?;
     let mut findings = Vec::new();
-    let mut canonical = None;
-    for address in addresses {
-        let Some((_, _, span)) = placeholder_block(&lines, address) else {
+    for &address in &addresses {
+        let Some(_) = placeholder_block(&lines, address) else {
             continue;
         };
         let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;
@@ -455,49 +453,60 @@ fn audit_with_rom(root: &Path, overlay: &str, rom: Option<&CanonicalRom>) -> Aud
             ));
             continue;
         }
-        let image = match canonical.get_or_insert_with(|| match rom {
-            Some(rom) => rom.overlay(overlay),
-            None => canonical_overlay(root, overlay),
-        }) {
-            Ok(image) => image,
-            Err(error) => {
-                findings.push(format!("{overlay}:{address:08x}\tUNVERIFIED\t{error}"));
-                continue;
-            }
+    }
+    if !findings.is_empty() {
+        return Ok(findings);
+    }
+    let image = match rom.map_or_else(
+        || canonical_overlay(root, overlay),
+        |rom| rom.overlay(overlay),
+    ) {
+        Ok(image) => image,
+        Err(error) => return Ok(vec![format!("{overlay}\tUNVERIFIED\t{error}")]),
+    };
+    let built = match assemble_overlay(&OverlaySource::path(&path), OVERLAY_BASE) {
+        Ok(built) => built,
+        Err(error) => {
+            return Ok(addresses
+                .into_iter()
+                .map(|address| format!("{overlay}:{address:08x}\tCOMPILE_FAILED\t{error}"))
+                .collect())
+        }
+    };
+    if built.len() != image.len() {
+        return Ok(vec![format!(
+            "{overlay}\tDIFFERS\treference={}\tassembled={}",
+            image.len(),
+            built.len()
+        )]);
+    }
+    for address in addresses {
+        let Some((_, _, span)) = placeholder_block(&lines, address) else {
+            continue;
         };
         let start = (address - OVERLAY_BASE) as usize;
-        let Some(reference) = image.get(start..start + span as usize).map(<[u8]>::to_vec) else {
+        let Some(reference) = image.get(start..start + span as usize) else {
             findings.push(format!(
                 "{overlay}:{address:08x}\tUNVERIFIED\tcanonical overlay is {} bytes and the row needs {}",
                 image.len(), start + span as usize
             ));
             continue;
         };
-        let compiled = match overlay_disasm::compile::compile_overlay_c(
-            &source,
-            work.path(),
-            overlay,
-            Some(&owner.routing_path()),
-            &[],
-        ) {
-            Ok(compiled) => compiled.data,
-            Err(error) => {
-                findings.push(format!("{overlay}:{address:08x}\tCOMPILE_FAILED\t{error}"));
-                continue;
-            }
-        };
-        let padded = compiled.len() < reference.len()
-            && reference[..compiled.len()] == compiled[..]
-            && reference[compiled.len()..].iter().all(|byte| *byte == 0);
-        if compiled != reference && !padded {
-            let differing = compiled
+        let assembled = &built[start..start + span as usize];
+        if assembled != reference {
+            let differing = assembled
                 .chunks(2)
                 .zip(reference.chunks(2))
                 .filter(|(left, right)| left != right)
                 .count()
-                + compiled.len().abs_diff(reference.len()).div_ceil(2);
-            findings.push(format!("{overlay}:{address:08x}\tDIFFERS\treference={}\tcompiled={}\tdiffering={differing}", reference.len(), compiled.len()));
+                + assembled.len().abs_diff(reference.len()).div_ceil(2);
+            findings.push(format!("{overlay}:{address:08x}\tDIFFERS\treference={}\tassembled={}\tdiffering={differing}", reference.len(), assembled.len()));
         }
+    }
+    if findings.is_empty() && built != image {
+        findings.push(format!(
+            "{overlay}\tDIFFERS\tassembled object differs outside activated C spans"
+        ));
     }
     Ok(findings)
 }

@@ -3,8 +3,8 @@
   "target": "gs1-en",
   "derivation": "canonical-instruction-ngram-and-call-target-cosine-v2",
   "minimum_score_basis_points": 7500,
-  "exact_templates": 1420,
-  "unresolved_targets": 436,
+  "exact_templates": 1421,
+  "unresolved_targets": 435,
   "clustered_targets": 123,
   "clustered_bytes": 41012,
   "families": [
@@ -1245,58 +1245,6 @@
           "length_similarity_basis_points": 8777,
           "call_target_similarity_basis_points": 10000,
           "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 10000
-        }
-      ]
-    },
-    {
-      "owner": "main:08006088",
-      "symbol": "Func_08006088",
-      "source": "games/gs1/asm/08006088.s",
-      "size": 96,
-      "instructions": 41,
-      "family": null,
-      "alternatives": [
-        {
-          "owner": "main:0800a97c",
-          "symbol": "Func_0800a97c",
-          "source": "games/gs1/src/resource/decompress_lz.c",
-          "assembly": "out/gs1-en/claimed/obj/0800a97c.s",
-          "size": 144,
-          "instructions": 69,
-          "score_basis_points": 5556,
-          "ngram_similarity_basis_points": 6904,
-          "length_similarity_basis_points": 5942,
-          "call_target_similarity_basis_points": 0,
-          "call_count_similarity_basis_points": 3333,
-          "branch_similarity_basis_points": 6153
-        },
-        {
-          "owner": "main:080bf4c4",
-          "symbol": "Func_080bf4c4",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_128.c",
-          "assembly": "out/gs1-en/claimed/obj/080bf4c4.s",
-          "size": 96,
-          "instructions": 43,
-          "score_basis_points": 5554,
-          "ngram_similarity_basis_points": 5750,
-          "length_similarity_basis_points": 9534,
-          "call_target_similarity_basis_points": 0,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 7272
-        },
-        {
-          "owner": "main:08077348",
-          "symbol": "Func_08077348",
-          "source": "games/gs1/src/party/get_average_level.c",
-          "assembly": "out/gs1-en/claimed/obj/08077348.s",
-          "size": 76,
-          "instructions": 33,
-          "score_basis_points": 5535,
-          "ngram_similarity_basis_points": 5932,
-          "length_similarity_basis_points": 8048,
-          "call_target_similarity_basis_points": 0,
-          "call_count_similarity_basis_points": 7500,
           "branch_similarity_basis_points": 10000
         }
       ]

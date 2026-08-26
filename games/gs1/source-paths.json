@@ -723,7 +723,7 @@
     "main:08005b24": {"name":"SaveState_FindLatestSlot","source":"save/state/find_latest_slot.c"}, "main:08005c08": {"name":"SaveState_CompareBytes","source":"save/state/compare_bytes.c"},
     "main:08005c2c": {"name":"SaveState_GetLatestSequence","source":"save/state/get_latest_sequence.c"}, "main:08005cf8": "unidentified/main/system/system_owner_11.c",
     "main:08005e70": {"name":"SerialRuntime_EnableTransferTimer","source":"link/serial/enable_transfer_timer.c"}, "main:08005e88": {"name":"SerialRuntime_DisableTransfer","source":"link/serial/disable_serial_transfer.c"},
-    "main:08006088": {"name":"SerialRuntime_ExchangePayloads"}, "main:08006358": {"name":"SerialRuntime_RemoveIrqHandlers","source":"link/serial/remove_serial_irq_handlers.c"},
+    "main:08006088": {"name":"SerialRuntime_ExchangePayloads","source":"link/serial/exchange_payloads.c"}, "main:08006358": {"name":"SerialRuntime_RemoveIrqHandlers","source":"link/serial/remove_serial_irq_handlers.c"},
     "main:08006384": {"name":"SerialRuntime_WaitForStatusMask","source":"link/serial/wait_for_status_mask.c"}, "main:08006458": {"name":"SerialRuntime_WaitForTransferA","source":"link/serial/wait_for_transfer_a.c"},
     "main:08006488": {"name":"SerialRuntime_WaitForTransferB","source":"link/serial/wait_for_transfer_b.c"}, "main:080064b8": {"name":"SerialRuntime_WaitForTransfers","source":"link/serial/wait_for_transfers.c"},
     "main:080064f4": {"name":"SerialRuntime_GetActiveTransfers","source":"link/serial/get_active_transfers.c"}, "main:0800b684": "unidentified/main/runtime/runtime_owner_124.c",

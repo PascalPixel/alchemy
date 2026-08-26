@@ -11,7 +11,9 @@ use compiler_core::routing::CompilerTarget;
 use compiler_core::source_inputs::compiler_source_tree_signature;
 use compiler_core::source_paths::{SourceFile, SourceOwner, SourcePaths};
 use compiler_core::symbols::{external_symbol, external_symbol_assembly, CALL_VIA_BASE};
-use compiler_core::translation_units::{OwnerState, TranslationUnit, TranslationUnits};
+use compiler_core::translation_units::{
+    AbsoluteSymbolKind, OwnerState, TranslationUnit, TranslationUnits,
+};
 use decomp_targets::{
     decomp_target, parse_decomp_target, target_for, BuildSupport, DecompCompilerTarget,
     DecompTarget, DecompTargetId, DEFAULT_TARGET,
@@ -69,13 +71,12 @@ fn parse_jobs(value: &str) -> f64 {
     }
 }
 fn function_name(name: &str) -> bool {
-    let Some(rest) = name.strip_prefix("Func_") else {
-        return false;
-    };
-    rest.len() == 8
-        && rest
-            .bytes()
-            .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+    name.strip_prefix("Func_").is_some_and(|rest| {
+        rest.len() == 8
+            && rest
+                .bytes()
+                .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+    })
 }
 fn last_fields(output: &str) -> Vec<String> {
     output
@@ -186,14 +187,7 @@ fn module_contract(
     source: &SourceFile,
     units: &TranslationUnits,
 ) -> Result<Vec<(String, u32, usize)>> {
-    let Some(unit) = units.units.iter().find(|unit| {
-        unit.game == game
-            && unit.overlay.is_none()
-            && unit
-                .owners
-                .iter()
-                .any(|owner| owner.address == source.owner.address())
-    }) else {
+    let Some(unit) = units.unit_for_game_owner(game, source.owner) else {
         return Ok(Vec::new());
     };
     if root.join(&unit.source) == source.path {
@@ -347,6 +341,48 @@ pub struct Compiled {
     pub undefined_names: Vec<String>,
 }
 
+fn binding(name: &str, address: u64, thumb: bool) -> String {
+    let directive = if thumb { ".thumb_set" } else { ".set" };
+    format!("{directive} {name}, 0x{address:08x}\n")
+}
+fn unit_slice(root: &str, unit: &TranslationUnit, owner: u32, object: &str) -> Result<String> {
+    let symbol = format!("Func_{owner:08x}");
+    let emitted = std::fs::read_to_string(Path::new(object).with_extension("s"))
+        .map_err(|error| format!("{object}: {error}"))?;
+    let body = &emitted[emitted
+        .find(&format!("\t.global\t{symbol}"))
+        .ok_or_else(|| format!("{object}: missing compiler-emitted {symbol}"))?..];
+    let finish = body
+        .find(&format!("\t.size\t {symbol},"))
+        .and_then(|start| body[start..].find('\n').map(|size| start + size + 1))
+        .ok_or_else(|| format!("{object}: missing compiler-emitted size for {symbol}"))?;
+    let body = &body[..finish];
+    if body.matches("\t.global\tFunc_").count() != 1 {
+        return Err(format!("{object}: {symbol} slice spans another owner"));
+    }
+    let symbols = unit.canonical_symbols()?;
+    let mut out = ".code 16\n.text\n".to_string();
+    for (name, value) in symbols.iter().filter(|(name, _)| *name != &symbol) {
+        out.push_str(&binding(
+            name,
+            value.address,
+            value.kind == AbsoluteSymbolKind::Thumb,
+        ));
+    }
+    let paths = SourcePaths::load_for_game(Path::new(root), &unit.game)?;
+    for name in last_fields(&run(root, &strings(&["arm-none-eabi-nm", "-u", object]))?) {
+        if symbols.contains_key(&name) || external_symbol(&name, CALL_VIA_BASE).is_some() {
+            continue;
+        }
+        let address = paths
+            .main_symbol(&name)?
+            .ok_or_else(|| format!("{object}: unsupported compiler import {name}"))?;
+        out.push_str(&binding(&name, u64::from(address), true));
+    }
+    out.push_str(body);
+    Ok(out)
+}
+
 #[allow(clippy::too_many_arguments)]
 fn materialize_unit_owner(
     root: &str,
@@ -361,63 +397,50 @@ fn materialize_unit_owner(
     let stem = format!("{owner:08x}");
     let source = text(Path::new(root).join(&unit.source));
     let work = text(object_dir.join("tu").join(&unit.id));
-    let verification = verify_candidate_owned_routed_with_object(
-        &source,
-        &unit
-            .source_owner(unit.owners[0].address)?
-            .routing_path()
-            .to_string_lossy(),
-        &stem,
-        rom.map(Vec::as_slice).unwrap_or_default(),
-        &work,
-        &[],
-        f64::from(ROM_BASE),
-        compiler,
-        &CandidateCompilerConfiguration {
-            absolute_symbols: unit.canonical_symbols()?,
-            ..Default::default()
-        },
-        Some(object),
-    )?;
-    if verification.actual.len() != extent
-        || rom.is_some() && verification.actual != verification.expected
+    let configuration = CandidateCompilerConfiguration {
+        absolute_symbols: unit.canonical_symbols()?,
+        ..Default::default()
+    };
+    let route = unit.source_owner(unit.owners[0].address)?.routing_path();
+    let verify = |object| {
+        verify_candidate_owned_routed_with_object(
+            &source,
+            &route.to_string_lossy(),
+            &stem,
+            rom.map(Vec::as_slice).unwrap_or_default(),
+            &work,
+            &[],
+            f64::from(ROM_BASE),
+            compiler,
+            &configuration,
+            Some(object),
+        )
+    };
+    let verification = verify(object)?;
+    if !(verification.actual.len() == extent
+        && (rom.is_none() || verification.actual == verification.expected))
     {
         return Err(format!("{}: Func_{stem} is not byte-exact", unit.id));
     }
     let assembly = object_dir.join(format!("{stem}.s"));
-    let slice_assembly = Path::new(&work).join(format!("{stem}.slice.s"));
-    let output = object_dir.join(format!("{stem}.o"));
-    let mut generated = format!(".syntax unified\n.thumb\n.global Func_{stem}\n.type Func_{stem},%function\n.thumb_func\nFunc_{stem}:\n");
-    for bytes in verification.actual.chunks(16) {
-        generated.push_str(".byte ");
-        generated.push_str(
-            &bytes
-                .iter()
-                .map(|byte| format!("0x{byte:02x}"))
-                .collect::<Vec<_>>()
-                .join(","),
-        );
-        generated.push('\n');
+    let output = text(object_dir.join(format!("{stem}.o")));
+    write_file(&assembly, unit_slice(root, unit, owner, object)?.as_bytes())?;
+    let mut assembler = strings(&["arm-none-eabi-as", "-mcpu=arm7tdmi", "-mthumb-interwork"]);
+    assembler.extend(strings(&["-o", &output, &text(assembly)]));
+    run(root, &assembler)?;
+    if verify(&output)?.actual != verification.actual {
+        return Err(format!("{}: emitted {stem} slice changed output", unit.id));
     }
-    generated.push_str(&format!(".size Func_{stem},.-Func_{stem}\n"));
-    write_file(&slice_assembly, generated.as_bytes())?;
-    run(
-        root,
-        &strings(&[
-            "arm-none-eabi-as",
-            "-mcpu=arm7tdmi",
-            "-mthumb-interwork",
-            "-o",
-            &text(output.clone()),
-            &text(slice_assembly),
-        ]),
-    )?;
-    std::fs::copy(Path::new(object).with_extension("s"), &assembly)
-        .map_err(|error| format!("{}: {error}", assembly.display()))?;
+    let undefined_names = last_fields(&run(root, &strings(&["arm-none-eabi-nm", "-u", &output]))?);
+    for name in &undefined_names {
+        if external_symbol(name, CALL_VIA_BASE).is_none() {
+            return Err(format!("{}: unsupported slice import {name}", unit.id));
+        }
+    }
     Ok(Compiled {
-        object: text(output),
+        object: output,
         defined_names: vec![format!("Func_{stem}")],
-        undefined_names: Vec::new(),
+        undefined_names,
     })
 }
 fn write_cache(items: &[(&str, &[u8])]) -> Result<()> {
@@ -659,42 +682,6 @@ fn write_file(path: &Path, bytes: &[u8]) -> Result<()> {
     Ok(())
 }
 
-fn main_sources(root: &str, source_directory: &str) -> Result<Vec<SourceFile>> {
-    if let Some(game) = source_directory
-        .strip_prefix("games/")
-        .and_then(|path| path.strip_suffix("/src"))
-        .filter(|game| !game.contains('/'))
-    {
-        return SourcePaths::load_for_game(Path::new(root), game)?.main_sources();
-    }
-    let directory = rooted(root, source_directory);
-    let mut sources = Vec::new();
-    for entry in std::fs::read_dir(&directory)
-        .map_err(|error| format!("{}: {error}", directory.display()))?
-    {
-        let entry = entry.map_err(|error| error.to_string())?;
-        if !entry
-            .file_type()
-            .map_err(|error| error.to_string())?
-            .is_file()
-        {
-            continue;
-        }
-        let path = entry.path();
-        let Some(owner) = path
-            .file_stem()
-            .and_then(|stem| stem.to_str())
-            .and_then(SourceOwner::from_legacy_stem)
-            .filter(|owner| owner.is_main())
-        else {
-            continue;
-        };
-        sources.push(SourceFile { owner, path });
-    }
-    sources.sort_by_key(|source| source.owner);
-    Ok(sources)
-}
-
 pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     let target: DecompTarget = decomp_target(Some(options.target.as_str()))?;
     if !options.compile_only && target.build_support != BuildSupport::Full {
@@ -712,12 +699,13 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
             ));
         }
     }
-    let sources = main_sources(root, target.source_dir)?;
+    let game = compiler_target(target.compiler).as_str();
+    let source_paths = SourcePaths::load_for_game(Path::new(root), game)?;
+    let sources = source_paths.main_sources()?;
     if sources.is_empty() {
         return Err("no reconstructed sources".into());
     }
     let units = TranslationUnits::load(Path::new(root))?;
-    let game = compiler_target(target.compiler).as_str();
     let contracts = sources
         .iter()
         .map(|source| module_contract(Path::new(root), game, source, &units))
@@ -738,7 +726,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     std::fs::create_dir_all(&object_dir).map_err(|e| format!("{}: {e}", object_dir.display()))?;
     let export_path = (!options.compile_only).then(|| output.join("main-symbols.s"));
     if let Some(path) = &export_path {
-        write_file(path, units.main_symbol_exports().as_bytes())?;
+        write_file(path, source_paths.main_symbol_exports().as_bytes())?;
     }
     let cache_dir = text(Path::new(root).join("out/cache/claimed-objects"));
     let signatures = CacheSignatures::production()?;

@@ -5,9 +5,9 @@
   "status": "measured-draft",
   "owner_bytes": 240,
   "executable_owner_bytes": 238,
-  "candidate_bytes": 232,
-  "differing_halfwords": 116,
-  "wrong_instructions": 99,
+  "candidate_bytes": 236,
+  "differing_halfwords": 114,
+  "wrong_instructions": 122,
   "classification": "move-character-selector-entry",
   "resolved_asm_classification": {
     "kind": "compiler_output",

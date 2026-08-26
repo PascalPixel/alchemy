@@ -20,6 +20,8 @@ void Func_08015030(s32 message_id, void *buffer, s32 length);
 void Func_08015258(void *buffer, void *destination, s32 offset, s32 terminator);
 void Func_08002df0(void *buffer);
 
+#define StatusMenu_ShowOwnerProgressMessage Func_080a8578
+
 void StatusMenu_ShowOwnerProgressMessage(
     void *destination,
     s32 message_variant,

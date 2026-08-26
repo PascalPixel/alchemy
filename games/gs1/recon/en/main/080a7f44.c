@@ -15,7 +15,7 @@ s32 Func_080a7f44(s32 selected_index, s32 direction)
 {
     struct CharacterSelectorOrderState *state =
         *(struct CharacterSelectorOrderState **)0x03001f2c;
-    u32 reordered[14] = {0};
+    u32 reordered[14];
     s32 adjacent_index;
     s32 index;
     u32 temporary;
@@ -35,6 +35,9 @@ s32 Func_080a7f44(s32 selected_index, s32 direction)
         adjacent_index = selected_index - 1;
     }
 
+    for (index = 13; index >= 0; index--) {
+        reordered[index] = 0;
+    }
     for (index = 0; index < state->character_count; index++) {
         reordered[index] = state->character_ids[index];
     }

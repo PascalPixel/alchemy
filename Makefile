@@ -161,16 +161,7 @@ classification-check: core-retained-check family-check
 	@printf 'classification and family-retention contracts ok\n'
 
 candidate-corpus-check:
-	@report=$$(mktemp /tmp/alchemy-main-corpus.XXXXXX); \
-	trap 'rm -f "$$report"' EXIT; \
-	$(CHECK) integrate games/gs1/recon/en/main > "$$report"; \
-	if grep -Eq '^accepted=0 evidence_only=0 rejected=[1-9][0-9]* \(dry run\)$$' "$$report"; then \
-		tail -n 1 "$$report"; \
-	else \
-		cat "$$report"; \
-		printf 'main reconstruction corpus contains exact retained or unclassified C\n'; \
-		exit 1; \
-	fi
+	$(CHECK) integrate --check games/gs1/recon/en/main
 	@actual=$$(find games/gs1/recon/en/units -maxdepth 1 -type f -name '*.c' -exec basename {} \; | LC_ALL=C sort); \
 	covered=$$({ for route in $(CANDIDATE_SINGLE_OWNERS); do printf '%s\n' "$${route#*=}"; done; \
 		awk -F '"' '/"source": "games\/gs1\/recon\/en\/units\//{n=split($$4,part,"/"); print part[n]}' \

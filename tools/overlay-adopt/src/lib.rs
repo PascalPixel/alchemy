@@ -549,6 +549,9 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
             options.id
         ));
     };
+    let owner = SourceOwner::parse(&format!("{}:{}", fn_row.overlay, hex8(fn_row.entry)))?;
+    let source_paths = SourcePaths::load(root)?;
+    let installed = source_paths.registered_source_path(owner)?;
     let stem = hex8(fn_row.entry);
     if fn_row.entry - OVERLAY_BASE != fn_row.offset {
         return Err("inventory entry and offset disagree".to_string());
@@ -582,9 +585,6 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
     replaced_lines.extend(placeholder_lines(&stem, fn_row.span_bytes, &aliases));
     replaced_lines.extend(lines[last as usize..].iter().cloned());
     let replaced = replaced_lines.join("\n");
-    let owner = SourceOwner::parse(&format!("{}:{}", fn_row.overlay, stem))?;
-    let source_paths = SourcePaths::load(root)?;
-    let installed = source_paths.registered_source_path(owner)?;
     let preexisting = if installed.exists() {
         Some(fs::read(&installed).map_err(|error| error.to_string())?)
     } else {

@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080c0184",
+  "name": "BattlePresentation_UploadTileVariant",
+  "status": "measured-draft",
+  "owner_bytes": 56,
+  "candidate_bytes": 60,
+  "differing_halfwords": 25,
+  "wrong_instructions": 28,
+  "classification": "dma-triple-write-shape",
+  "notes": [
+    "The readable candidate decrements and bounds the selected tile variant, then writes a 32-byte source, VRAM destination, and fixed DMA control value.",
+    "The reference keeps that computed source in the first transfer register and emits one restored-writeback three-word DMA transfer. The current canonical source keeps the index in r3 and emits three scalar stores.",
+    "Bounded ordinary-C aggregate trials either retained the scalar-store result (60 bytes, 27 differing halfwords) or introduced a 12-byte stack aggregate and block copy (68 bytes, 31 differing halfwords). Two inline helper argument orderings remained 60 bytes and retained scalar stores.",
+    "No compiler-route change, inline assembly, fixed-register variable, barrier, ABI escape, copied instruction bytes, or external source was used. Retained assembly remains authoritative and this draft claims zero DONE bytes."
+  ]
+}

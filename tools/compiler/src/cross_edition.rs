@@ -1320,7 +1320,7 @@ fn translation_unit(owner: &str) -> Result<Option<&'static TranslationUnit>, Str
 /// forbidden construct; the correspondence record must never rest on
 /// nonordinary or unmapped C. Grouped unit members resolve through their
 /// declared unit source, exactly as the production compile does.
-fn compliance_error_for(owner: SourceOwner) -> Result<Option<String>, String> {
+pub(crate) fn compliance_error_for(owner: SourceOwner) -> Result<Option<String>, String> {
     let registers = registers()?;
     let source = match registers
         .units

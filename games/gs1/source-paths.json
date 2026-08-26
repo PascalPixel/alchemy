@@ -35,6 +35,7 @@
     "main:0807a5bc": "party/sum_djinn_counts.c", "main:0807a628": "inventory/add_and_equip.c",
     "main:08077348": "party/get_average_level.c", "main:080773d8": "owner/get_record.c",
     "main:0807808c": "owner/refresh_active_ratios.c", "main:0807822c": "owner/recalculate_ratios.c",
+    "main:08078144": "owner/refresh_ratios_on_flag.c",
     "main:080782a0": "owner/update_ratio_pair.c", "main:08078320": "owner/update_second_input_and_ratios.c",
     "main:080783a4": "owner/adjust_first_value.c",
     "main:080783dc": "owner/adjust_second_value.c", "main:08077c10": "game_flags/refresh_lure_cap.c",

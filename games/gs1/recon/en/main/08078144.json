@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "namespace": "gs1-en-main",
+  "address": "0x08078144",
+  "name": "Owner_RefreshRatiosOnFlag",
+  "status": "adopted-exact-c",
+  "owner_bytes": 228,
+  "score": {
+    "measured": "2026-08-26",
+    "candidate_bytes": 228,
+    "reference_bytes": 228,
+    "differing_halfwords": 0,
+    "wrong_instructions": 0,
+    "class": "exact",
+    "command": "cargo run --offline --quiet --release --manifest-path tools/compiler/Cargo.toml -- candidate-show games/gs1/recon/en/main/08078144.c",
+    "note": "Byte-exact. Adopted via integrate --apply into games/gs1/src/owner/refresh_ratios_on_flag.c."
+  },
+  "shape": {
+    "derivation": "Template families-index alternative games/gs1/src/owner/refresh_active_ratios.c (main:0807808c) supplied the ratio-clamp/zero-fixup idiom (FixedPoint_Ratio, 0x4000 clamp, one-fixup via a named `one` local), but the target's own disassembly (games/gs1/asm/08078144.s) diverges from that template's control flow: an extra leading guard indexes Data_02000240.active_owners[n] into a byte table at 0x0807a828 to pick a group, then branches on one of two GameFlag_Test pairs (0x110/0x112 vs 0x111/0x113) before doing any ratio work; the tail copies only obj+0x3A from obj+0x36 (not the template's full two-field copy). The guard/dispatch prologue was reconstructed fresh from the target's own instructions, not transferred from the template."
+  },
+  "notes": [
+    "Recovered only from the retained owner assembly, approved local ROM, the families-index template source, in-repository headers, and the approved compiler.",
+    "This candidate claims zero DONE bytes until it passes the integrate adoption gate."
+  ]
+}

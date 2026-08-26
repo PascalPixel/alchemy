@@ -101,7 +101,6 @@ dependencies = [
  "candidate-show",
  "compiler-core",
  "dashboard-server",
- "extract-resource",
  "objdiff-core",
  "overlay-disasm",
  "permuter",

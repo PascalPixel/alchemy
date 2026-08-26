@@ -341,14 +341,21 @@ fn absolute_symbol_assembly(name: &str, symbol: AbsoluteSymbol) -> String {
 fn overlay_external_assembly(
     name: &str,
     unit: Option<&TranslationUnit>,
-    units: &TranslationUnits,
+    names: &SourcePaths,
     call_via_base: u64,
 ) -> Result<String, String> {
-    let symbol = unit
-        .and_then(|unit| unit.absolute_symbols.get(name).copied())
-        .or_else(|| units.main_symbol(name));
+    let symbol = unit.and_then(|unit| unit.absolute_symbols.get(name).copied());
     if let Some(symbol) = symbol {
         return Ok(absolute_symbol_assembly(name, symbol));
+    }
+    if let Some(address) = names.main_symbol(name)? {
+        return Ok(absolute_symbol_assembly(
+            name,
+            AbsoluteSymbol {
+                address: u64::from(address),
+                kind: AbsoluteSymbolKind::Thumb,
+            },
+        ));
     }
     external_symbol_assembly(name, call_via_base)
 }
@@ -362,7 +369,7 @@ fn link_object(
     address: i64,
     entry: Option<&str>,
     unit: Option<&TranslationUnit>,
-    units: &TranslationUnits,
+    names: &SourcePaths,
     call_via: u64,
 ) -> Result<Vec<u8>, String> {
     let [object, symbols_source, symbols_object, elf, binary] = files;
@@ -373,7 +380,7 @@ fn link_object(
         .filter_map(|line| line.split_whitespace().last())
     {
         stubs.push_str(
-            &overlay_external_assembly(name, unit, units, call_via)
+            &overlay_external_assembly(name, unit, names, call_via)
                 .map_err(|_| format!("unsupported overlay C external symbol: {name}"))?,
         );
     }
@@ -463,6 +470,10 @@ fn compile_overlay_with_mutations(
     let steps: Vec<Vec<String>> = plan.steps.iter().map(|step| step.command.clone()).collect();
     let mut source_inputs = compiler_source_tree_signature(&root(), source, &steps)?;
     append_frame(&mut source_inputs, &translation_unit_signature()?);
+    append_frame(
+        &mut source_inputs,
+        &fs::read(source_paths.manifest_path()).map_err(|error| error.to_string())?,
+    );
     let plan_signature = plan_stamp(&steps, &work_display);
     let host_signature = compiler_core::bundle::host_executable_signature(&OVERLAY_HOST_TOOLS)
         .map_err(|error| format!("overlay host tool signature: {error}"))?;
@@ -500,7 +511,7 @@ fn compile_overlay_with_mutations(
         link_address,
         Some(&symbol),
         unit,
-        units,
+        &source_paths,
         call_via_base as u64,
     )?;
     let listing = checked(&strings(&["arm-none-eabi-nm", "-S", &elf]), work)?;
@@ -566,7 +577,6 @@ fn compile_overlay_unit(
     work: &Path,
     overlay: &str,
 ) -> Result<Compiled, String> {
-    let units = translation_units()?;
     let names = SourcePaths::load(&root())?;
     let source = root().join(&unit.source);
     let first = unit
@@ -643,7 +653,7 @@ fn compile_overlay_unit(
         base,
         None,
         Some(unit),
-        units,
+        &names,
         call_via,
     )?;
     if whole.len() != (cursor - first.address) as usize {
@@ -906,11 +916,10 @@ mod source_activation_tests {
     }
     #[test]
     fn semantic_main_alias_uses_the_generated_export_binding() {
-        let units = translation_units().unwrap();
-        let binding =
-            overlay_external_assembly("Scheduler_ResetTaskTable", None, units, 0).unwrap();
-        assert!(binding.contains("0x080040e8"));
-        assert!(units.main_symbol_exports().contains(&binding));
+        let names = SourcePaths::load(&root()).unwrap();
+        let binding = overlay_external_assembly("RunBattleEffect16", None, &names, 0).unwrap();
+        assert!(binding.contains("0x0809b698"));
+        assert!(names.main_symbol_exports().contains(&binding));
     }
 }
 pub(crate) fn js_parse_int_hex(text: &str) -> Option<i64> {

@@ -96,23 +96,19 @@ impl SourceOwner {
         self.routing_path_for_game("gs1")
     }
     pub fn routing_path_for_game(self, game: &str) -> PathBuf {
-        Path::new("games")
-            .join(game)
-            .join("src")
-            .join(self.legacy_relative_path())
+        let root = Path::new("games").join(game).join("src");
+        root.join(self.legacy_relative_path())
     }
 }
 pub(crate) fn lower_hex(value: &str) -> bool {
     value
         .bytes()
-        .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+        .all(|byte| matches!(byte, b'0'..=b'9' | b'a'..=b'f'))
 }
 pub(crate) fn c_identifier(value: &str) -> bool {
     let mut bytes = value.bytes();
-    if !matches!(bytes.next(), Some(first) if first == b'_' || first.is_ascii_alphabetic()) {
-        return false;
-    }
-    bytes.all(|byte| byte == b'_' || byte.is_ascii_alphanumeric())
+    matches!(bytes.next(), Some(first) if first == b'_' || first.is_ascii_alphabetic())
+        && bytes.all(|byte| byte == b'_' || byte.is_ascii_alphanumeric())
 }
 fn parse_lower_hex(value: &str, width: usize, owner: &str) -> Result<u32, String> {
     if value.len() != width || !lower_hex(value) {
@@ -295,6 +291,41 @@ impl SourcePaths {
     }
     pub fn registered_call_via(&self, owner: SourceOwner) -> Option<u32> {
         self.records.get(&owner).and_then(|record| record.call_via)
+    }
+    fn main_symbols(&self) -> BTreeMap<&str, (SourceOwner, Option<SourceOwner>)> {
+        let mut symbols = BTreeMap::<&str, (SourceOwner, Option<SourceOwner>)>::new();
+        for (owner, record) in self.records.iter().filter(|(owner, _)| owner.is_main()) {
+            symbols
+                .entry(&record.name)
+                .and_modify(|(_, duplicate)| *duplicate = duplicate.or(Some(*owner)))
+                .or_insert((*owner, None));
+        }
+        symbols
+    }
+    /// Resolve an unambiguous human main-image import through the owner register.
+    pub fn main_symbol(&self, name: &str) -> Result<Option<u32>, String> {
+        match self.main_symbols().get(name).copied() {
+            None => Ok(None),
+            Some((owner, None)) => Ok(Some(owner.address())),
+            Some((owner, Some(other))) => Err(format!(
+                "registered main symbol {name} is ambiguous between {} and {}",
+                owner.id(),
+                other.id()
+            )),
+        }
+    }
+    /// Partial-link bindings for every unambiguous registered main-image name.
+    pub fn main_symbol_exports(&self) -> String {
+        let mut exports = String::from(".syntax unified\n.thumb\n");
+        for (name, (owner, duplicate)) in self.main_symbols() {
+            if duplicate.is_none() {
+                let address = owner.address();
+                exports.push_str(&format!(
+                    ".global {name}\n.thumb_set {name}, 0x{address:08x}\n"
+                ));
+            }
+        }
+        exports
     }
     pub fn registered_owners(&self) -> impl Iterator<Item = SourceOwner> + '_ {
         self.records.keys().copied()
@@ -547,10 +578,8 @@ fn game_paths(game: &str) -> Result<(PathBuf, PathBuf), String> {
     Ok((root.join("src"), root.join("source-paths.json")))
 }
 fn matches_filter(owner: SourceOwner, main: Option<bool>, overlay: Option<&str>) -> bool {
-    if main.is_some_and(|main| owner.is_main() != main) {
-        return false;
-    }
-    overlay.is_none_or(|wanted| owner.overlay_id().as_deref() == Some(wanted))
+    main.is_none_or(|wanted| owner.is_main() == wanted)
+        && overlay.is_none_or(|wanted| owner.overlay_id().as_deref() == Some(wanted))
 }
 fn validate_source_path(source: &str) -> Result<PathBuf, String> {
     let path = Path::new(source);
@@ -574,9 +603,7 @@ fn validate_source_path(source: &str) -> Result<PathBuf, String> {
     Ok(path.to_path_buf())
 }
 fn source_stem(path: &Path) -> Option<String> {
-    path.file_stem()
-        .and_then(|stem| stem.to_str())
-        .map(str::to_owned)
+    path.file_stem()?.to_str().map(str::to_owned)
 }
 fn visit_c_files(directory: &Path, visit: &mut impl FnMut(&Path)) -> Result<(), String> {
     if !directory.exists() {
@@ -600,13 +627,7 @@ mod tests {
     use super::*;
     use tempfile::tempdir;
     fn manifest() -> &'static str {
-        r#"{
-  "format": 3,
-  "owners": {
-    "main:080bbb0c": "battle/resolve_action.c",
-    "resource_39c:0200013c": {"source":"battle/effects/spawn_configured_effect.c","call_via":"020066d2"}
-  }
-}"#
+        r#"{"format":3,"owners":{"main:080bbb0c":"battle/resolve_action.c","resource_39c:0200013c":{"source":"battle/effects/spawn_configured_effect.c","call_via":"020066d2"}}}"#
     }
     #[test]
     fn parses_main_and_overlay_owner_ids() {
@@ -631,6 +652,10 @@ mod tests {
     fn mapped_paths_and_legacy_fallback_share_one_resolver() {
         let root = tempdir().unwrap();
         let paths = SourcePaths::parse(root.path(), manifest()).unwrap();
+        assert_eq!(
+            paths.main_symbol("resolve_action").unwrap(),
+            Some(0x080b_bb0c)
+        );
         assert_eq!(
             paths.relative_path(SourceOwner::Main(0x080b_bb0c)),
             PathBuf::from("battle/resolve_action.c")
@@ -658,6 +683,13 @@ mod tests {
                 .join(SOURCE_DIRECTORY)
                 .join("battle/resolve_action.c")
         );
+    }
+    #[test]
+    fn ambiguous_main_symbols_are_not_exported() {
+        let root = tempdir().unwrap();
+        let paths = SourcePaths::parse(root.path(), r#"{"format":3,"owners":{"main:08000000":{"name":"same"},"main:08000004":{"name":"same"}}}"#).unwrap();
+        assert!(paths.main_symbol("same").is_err());
+        assert!(!paths.main_symbol_exports().contains(".global same\n"));
     }
     #[test]
     fn reverse_lookup_understands_nested_and_legacy_sources() {
@@ -712,13 +744,7 @@ mod tests {
     #[test]
     fn one_source_can_own_the_same_address_in_related_overlays() {
         let root = tempdir().unwrap();
-        let text = r#"{
-  "format": 3,
-  "owners": {
-    "resource_39b:0200013c": "battle/effects/spawn_configured_effect.c",
-    "resource_39c:0200013c": "battle/effects/spawn_configured_effect.c"
-  }
-}"#;
+        let text = r#"{"format":3,"owners":{"resource_39b:0200013c":"battle/effects/spawn_configured_effect.c","resource_39c:0200013c":"battle/effects/spawn_configured_effect.c"}}"#;
         let paths = SourcePaths::parse(root.path(), text).unwrap();
         assert_eq!(
             paths
@@ -736,9 +762,7 @@ mod tests {
     #[test]
     fn one_overlay_translation_unit_can_map_multiple_owners() {
         let root = tempdir().unwrap();
-        let text = r#"{"format":3,"owners":{
-            "resource_37b:02000030":"overlays/scene/accessors.c",
-            "resource_37b:02000038":"overlays/scene/accessors.c"}}"#;
+        let text = r#"{"format":3,"owners":{"resource_37b:02000030":"overlays/scene/accessors.c","resource_37b:02000038":"overlays/scene/accessors.c"}}"#;
         let paths = SourcePaths::parse(root.path(), text).unwrap();
         assert_eq!(
             paths
@@ -752,17 +776,7 @@ mod tests {
         let root = tempdir().unwrap();
         let manifest_path = root.path().join(SOURCE_PATHS_MANIFEST);
         fs::create_dir_all(manifest_path.parent().unwrap()).unwrap();
-        fs::write(
-            &manifest_path,
-            r#"{
-  "format": 3,
-  "owners": {
-    "resource_39b:02000104": "overlays/shared/integrate_effect_motion.c",
-    "resource_39c:02000104": "overlays/shared/integrate_effect_motion.c"
-  }
-}"#,
-        )
-        .unwrap();
+        fs::write(&manifest_path, r#"{"format":3,"owners":{"resource_39b:02000104":"overlays/shared/integrate_effect_motion.c","resource_39c:02000104":"overlays/shared/integrate_effect_motion.c"}}"#).unwrap();
         let paths = SourcePaths::load(root.path()).unwrap();
         assert!(paths
             .unregister_owner(SourceOwner::Overlay {

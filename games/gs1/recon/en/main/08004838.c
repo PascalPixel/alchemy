@@ -6,7 +6,9 @@ typedef struct DmaTransfer {
     u32 control;
 } DmaTransfer;
 
-void Func_08004838(void)
+#define PaletteDma_LoadBlock Func_08004838
+
+void PaletteDma_LoadBlock(void)
 {
     volatile DmaTransfer *dma = (volatile DmaTransfer *)0x040000d4;
 

@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global MusicPlayer_SetPitchAndUpdateFrequency
 	.global Func_080fb2a4
 	.thumb_func
+MusicPlayer_SetPitchAndUpdateFrequency:
 Func_080fb2a4:
 	push	{r4, lr}
 	adds	r2, r0, #0

@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global Owner_GetState
 	.global Func_08077394
 	.thumb_func
+Owner_GetState:
 Func_08077394:
 	push	{lr}
 	mov	r3, lr

@@ -9,7 +9,9 @@ struct MusicPlayerPitchState {
     u32 ident;
 };
 
-void Func_080fb2a4(struct MusicPlayerPitchState *player, s32 value)
+void MusicPlayer_SetPitchAndUpdateFrequency(
+    struct MusicPlayerPitchState *player,
+    s32 value)
 {
     u16 pitch = value;
 

@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global MusicTrack_Stop
 	.global Func_080f9ef8
 	.thumb_func
+MusicTrack_Stop:
 Func_080f9ef8:
 	push	{r4, r5, r6, lr}
 	adds	r5, r1, #0

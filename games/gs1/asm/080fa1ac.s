@@ -3,8 +3,10 @@
 @ 未達。build_asm.tsでROMとの一致を確認する。
 .syntax unified
 	.thumb
+	.global MusicTrack_ClearModulationState
 	.global Func_080fa1ac
 	.thumb_func
+MusicTrack_ClearModulationState:
 Func_080fa1ac:
 	movs	r2, #0
 	strb	r2, [r1, #22]

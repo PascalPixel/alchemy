@@ -5,7 +5,7 @@
 #define REMOTE_OWNER_FIRST 0x80
 #define REMOTE_OWNER_COUNT 6
 
-void *Func_08077394(u32 owner)
+void *Owner_GetState(u32 owner)
 {
     u8 *remote_states;
 

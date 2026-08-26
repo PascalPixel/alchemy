@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global ResourceMetadata_ClearRecord
 	.global Func_0800bc48
 	.thumb_func
+ResourceMetadata_ClearRecord:
 Func_0800bc48:
 	push	{lr}
 	adds	r1, r0, #0

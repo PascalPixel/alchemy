@@ -16,7 +16,14 @@
     "confidence": "proven"
   },
   "cross_edition": {
-    "editions": ["ja", "en", "de", "es", "fr", "it"],
+    "editions": [
+      "ja",
+      "en",
+      "de",
+      "es",
+      "fr",
+      "it"
+    ],
     "relocation_normalized_core_bytes": 284,
     "core_identical": true,
     "starts": {
@@ -107,5 +114,19 @@
     "Relocation-aware comparison of the independently assembled retained owner proves all 284 unmasked core bytes identical across the six GS1 editions.",
     "The exact caller at 0x080955b0 selects this runner for page two, and this owner installs the locally named callback at 0x08095c08 on each of 24 slots before later advancing those slots to states two and five.",
     "Recovered only from retained owner assembly, approved local GS1 ROMs, local callers and exact battle-effect sources, and the approved compiler. No GS2 evidence or external game source was used."
-  ]
+  ],
+  "rejected_experiments": [
+    {
+      "experiment": "explicit s32 mark = N local (2, 5) replacing the inline constant in each block",
+      "result": "regresses to 13 differing halfwords / 4 wrong instructions -- adds an allocation, not a scheduling fix"
+    },
+    {
+      "experiment": "hoisting remaining=23 above WaitFrames(100) before the second block instead of inside it",
+      "result": "no change from the in-block reorder; the scheduler window does not extend past the WaitFrames call"
+    }
+  ],
+  "score": {
+    "differing_halfwords": 10,
+    "note": " Reordering remaining=23 before the slot_state setup inside each block (matching the reference's constant-before-pointer scheduling) fully resolves the first block's 3-halfword tie; the structurally identical second block still ties by 3 halfwords despite the same source shape -- the two blocks' surrounding context (WaitFrames placement, live ranges) differs enough that GCC schedules them differently even from identical source. 11 -> 10 differing halfwords, still 0 wrong instructions."
+  }
 }

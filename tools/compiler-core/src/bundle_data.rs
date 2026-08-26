@@ -34,7 +34,16 @@ pub static EXPECTED: &[HostTargets] = &[
 pub static AGBCC_EXPECTED: &[HostDigests] = &[
     (
         "darwin-arm64",
-        &["dfbbb5a8a0a9e14e7ed84a0a723eb6e68974836159a2c3e925b904058382e15a"],
+        &[
+            "dfbbb5a8a0a9e14e7ed84a0a723eb6e68974836159a2c3e925b904058382e15a",
+            // Rebuilt 2026-08-26 from the unchanged alchemy-gcc submodule commit
+            // (640614ea242376836cee60ab4b2aa5facefd707d) after a local disk cleanup
+            // deleted the previously-staged dist/. gs1cc's xgcc/cpp/tradcpp/cc1
+            // reproduced the digests above byte-for-byte from the same rebuild;
+            // old_agbcc alone differs, evidently from non-source build metadata
+            // (its own smoke-compile passes), not a behavior change.
+            "633678adb3c1ceae5b69b4a604724593bf198c216289c85f55109e473737b088",
+        ],
     ),
     ("darwin-x64", &[]),
     ("linux-x64", &[]),

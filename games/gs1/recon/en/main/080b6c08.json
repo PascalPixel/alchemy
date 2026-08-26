@@ -1,58 +1,31 @@
 {
   "schema_version": 1,
-  "namespace": "main",
+  "namespace": "gs1-en-main",
   "address": "0x080b6c08",
+  "name": "BattleParty_ListActorIds",
   "status": "measured-draft",
   "owner_bytes": 136,
-  "candidate_bytes": 140,
-  "differing_halfwords": 57,
-  "wrong_instructions": 68,
-  "classification": "battle-party-list-actor-ids",
-  "cross_edition": {
-    "core_bytes": 128,
-    "core_identical": true,
-    "starts": {
-      "ja": "0x080adc08",
-      "en": "0x080b6c08",
-      "de": "0x080b9220",
-      "es": "0x080bac20",
-      "fr": "0x080bac20",
-      "it": "0x080b6c20"
-    },
-    "core_diff_bytes": {
-      "ja": 0,
-      "en": 0,
-      "de": 0,
-      "es": 0,
-      "fr": 0,
-      "it": 0
-    }
+  "score": {
+    "measured": "2026-08-26",
+    "candidate_bytes": 140,
+    "reference_bytes": 136,
+    "differing_halfwords": 57,
+    "wrong_instructions": 68,
+    "class": "wrong",
+    "note": "The reference's first scan walks a pointer (adds r2,#88 base then adds r2,#2 per element) with BOTH load widths present per element (movs rZ,#0; ldrsh [r2,rZ]; ldrh [r2,#0]); its second scan walks the base while keeping the 100 offset constant in a register. The candidate keeps base+walking-offset for both and folds the unsigned read into an extend of the signed one."
   },
-  "domain": "Collects actor IDs from either or both battle-party lists, excludes 0xfe vacancies, optionally writes a 0xff-terminated destination list, and returns the number collected.",
-  "relation": [
-    "direct callee of exact battle/actor/commit_placement.c",
-    "commit_placement is a direct callee of exact battle/resolve_action.c at 080bbb0c",
-    "the two source lists are the same battle-work offsets edited by the adjacent 080bac6c removal owner"
+  "rejected_experiments": [
+    {
+      "experiment": "s16* walking pointer for scan one and base-walk for scan two",
+      "result": "160 bytes, 79 halfwords: Thumb ldrsh has no immediate form, so the pointer spelling forces zero-register materialization per use and the loop shape degrades"
+    },
+    {
+      "experiment": "unsigned-before-signed dual-read order (the heal-prep fold lever)",
+      "result": "identical 57 halfwords, 68 wrong instructions; the fold does not flip here"
+    }
   ],
-  "expressed": [
-    "group flag bit 0 selects the list at battle-work offset 0x58",
-    "group flag bit 1 selects the placement list at battle-work offset 0x66",
-    "0xff terminates each source list and the optional destination list",
-    "0xfe entries are skipped without increasing the returned count",
-    "a null destination performs the count-only form used by local callers"
-  ],
-  "remaining": [
-    "the approved compiler coalesces each signed sentinel load with the unsigned destination value load, while the reference retains distinct ldrsh/ldrh operations",
-    "that load-width choice changes pointer allocation and both loop bodies, so this is not a narrow last-mile residual"
-  ],
-  "bounded_checks": [
-    "pointer, integer-base, structured-loop, explicit signed/raw local, direct reload, and local structural-reconstruction forms were directly scored",
-    "the no-CSE-adjacent routing axes and strength-reduction/scheduler/regmove probes did not make the residual narrow",
-    "no 20,000-candidate search was started because the source has not reached last-mile parity"
-  ],
-  "adoption": "none; retained assembly remains authoritative and this draft claims zero DONE bytes",
   "notes": [
-    "Recovered only from retained owner assembly, approved local ROMs, exact in-repository callers, and the approved compiler.",
-    "No volatile access, barrier, fixed register, inline assembly, or GS2 evidence was retained in the draft."
+    "Recovered only from the retained owner assembly, approved local ROM, and the approved compiler.",
+    "This candidate claims zero DONE bytes."
   ]
 }

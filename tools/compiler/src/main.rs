@@ -2,9 +2,10 @@ use std::process::ExitCode;
 
 mod cross_edition;
 mod families;
+mod twins;
 mod workbench;
 
-const USAGE: &str = "usage: compiler <candidate-show|cross-edition|families|permute|workbench|dashboard-server> [args]";
+const USAGE: &str = "usage: compiler <candidate-show|cross-edition|families|permute|twins|workbench|dashboard-server> [args]";
 
 fn main() -> ExitCode {
     let arguments: Vec<String> = std::env::args().skip(1).collect();
@@ -19,6 +20,7 @@ fn main() -> ExitCode {
             ExitCode::SUCCESS
         }
         "cross-edition" => result(cross_edition::run(rest)),
+        "twins" => result(twins::run(rest)),
         "families" => result(families::run(rest)),
         "permute" => match permuter::run(rest.to_vec()) {
             Ok(()) => ExitCode::SUCCESS,

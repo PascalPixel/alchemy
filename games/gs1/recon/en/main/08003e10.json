@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x08003e10",
+  "name": "Runtime_CopyAndCallRoutine",
+  "status": "measured-draft",
+  "owner_bytes": 72,
+  "candidate_bytes": 72,
+  "differing_halfwords": 13,
+  "wrong_instructions": 16,
+  "translation_unit": "video-dma-queue",
+  "compiler_route": "canonical-gcc296",
+  "algorithm": "Allocates a fixed-size executable buffer, DMA-copies a ROM routine into it, calls the copied routine through the r6 call veneer, then frees the buffer.",
+  "family": {
+    "siblings": ["08002fb0", "08005340", "08005394", "080053e8"],
+    "evidence": "Each sibling has the same allocator, three-word DMA setup, r6 indirect-call veneer, and free sequence; only its arguments, copy extent, or source vary."
+  },
+  "credible_shapes_tried": [
+    "volatile compound DMA-register aggregate assignment: canonical score unchanged",
+    "word-typed DMA-register aggregate assignment: canonical score unchanged",
+    "local three-word descriptor followed by assignment: emits a related LDMIA/STMIA copy, but adds a 12-byte stack object (80 versus 72 bytes; 36 differing halfwords)",
+    "volatile and ordinary word-pointer post-increment stores: retain the 72-byte extent but emit separate one-register stores rather than the reference grouped store"
+  ],
+  "remaining": "The reference groups the source, allocated destination, and control word in a writeback three-register store, then restores the DMA base. Canonical ordinary-C shapes instead keep those values in a nonconsecutive allocation or introduce a stack descriptor. GCC 2.96's Thumb block-copy path explains the local-descriptor LDMIA/STMIA result, but does not account for the reference's standalone grouped store. The shared original DMA-write source shape remains unknown; neither adoption nor a permanent compiler classification is justified.",
+  "notes": [
+    "Measured only in the complete canonical video-dma-queue translation unit; no per-owner flags were used.",
+    "No inline assembly, fixed-register variable, compiler barrier, forbidden ABI, copied instruction bytes, or compiler modification was used.",
+    "This candidate claims zero DONE bytes."
+  ]
+}

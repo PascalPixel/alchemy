@@ -3,6 +3,9 @@ name = "cache-entry"
 version.workspace = true
 edition.workspace = true
 
+[dependencies]
+rusqlite = { version = "0.31", features = ["bundled"] }
+
 [lib]
 name = "cache_entry"
 path = "src/lib.rs"

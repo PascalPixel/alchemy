@@ -503,8 +503,12 @@ fn write_edition_build(
     Ok(build)
 }
 fn compile_edition_object(owner: &str, edition: &str, source: &Path) -> Result<PathBuf, String> {
-    let output = PathBuf::from("out")
-        .join("cross-edition")
+    // Pure per-process compile scratch: nothing outside this run ever reads
+    // it, so it lives under system temp rather than the tracked repo tree
+    // (this used to leave tens of thousands of files under out/cross-edition
+    // that regrew on every `make verify`).
+    let output = std::env::temp_dir()
+        .join("alchemy-cross-edition")
         .join(owner)
         .join("compiled")
         .join(edition);
@@ -582,8 +586,8 @@ fn edition_build_report(
         ));
     }
     let owner_symbol = format!("Func_{owner}");
-    let output_root = PathBuf::from("out")
-        .join("cross-edition")
+    let output_root = std::env::temp_dir()
+        .join("alchemy-cross-edition")
         .join(owner)
         .join("linked");
     fs::create_dir_all(&output_root)

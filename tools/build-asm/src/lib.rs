@@ -1,6 +1,6 @@
 //! Assemble retained source regions and emit their classified manifest.
 pub mod cli;
-use cache_entry::write_cache_entry_atomically;
+use cache_entry::sqlite::SqliteCache;
 use canonical_json::canonical_json;
 use compiler_core::{bundle::host_executable_signature, sha256};
 use serde::Deserialize;
@@ -529,25 +529,6 @@ fn production_binutil_signatures() -> Result<Vec<(String, String)>, String> {
         })
         .collect()
 }
-fn region_cache_record(data: &[u8]) -> String {
-    let mut record = Map::new();
-    record.insert("format".into(), number(1));
-    record.insert("size".into(), number(data.len() as u64));
-    record.insert("sha256".into(), Value::String(sha256::hex(data)));
-    canonical_json(&Value::Object(record))
-}
-fn read_region_cache(payload: &Path, record: &Path) -> Option<Vec<u8>> {
-    let data = std::fs::read(payload).ok()?;
-    let bytes = std::fs::read(record).ok()?;
-    let value: Value = serde_json::from_slice(&bytes).ok()?;
-    if value.get("format").and_then(Value::as_u64) != Some(1)
-        || value.get("size").and_then(Value::as_u64) != Some(data.len() as u64)
-        || value.get("sha256").and_then(Value::as_str) != Some(sha256::hex(&data).as_str())
-    {
-        return None;
-    }
-    Some(data)
-}
 fn append_frame(stream: &mut Vec<u8>, bytes: &[u8]) {
     stream.extend_from_slice(&(bytes.len() as u64).to_be_bytes());
     stream.extend_from_slice(bytes);
@@ -595,7 +576,7 @@ fn build_region(
     source: &Path,
     source_bytes: &[u8],
     output_dir: &Path,
-    cache_dir: &Path,
+    cache: &SqliteCache,
     run_address: Option<u64>,
     binutils: &[(String, String)],
 ) -> Result<BuiltRegion, String> {
@@ -606,12 +587,14 @@ fn build_region(
     let object = output_dir.join(format!("{name}.o"));
     let elf = output_dir.join(format!("{name}.elf"));
     let binary = output_dir.join(format!("{name}.bin"));
-    let cached = cache_dir.join(format!(
-        "{}.bin",
-        region_cache_key_with_signatures(source_bytes, linked_address, binutils)?
-    ));
-    let record = cached.with_extension("record");
-    if let Some(data) = read_region_cache(&cached, &record) {
+    let cache_key = region_cache_key_with_signatures(source_bytes, linked_address, binutils)?;
+    if let Some(data) = cache
+        .get(&cache_key)
+        .ok()
+        .flatten()
+        .and_then(|entries| entries.into_iter().find(|(kind, _)| kind == "payload"))
+        .map(|(_, data)| data)
+    {
         std::fs::write(&binary, &data).map_err(|error| format!("{}: {error}", binary.display()))?;
         return Ok(BuiltRegion {
             address,
@@ -710,15 +693,7 @@ fn build_region(
         ],
     )?;
     let data = std::fs::read(&binary).map_err(|error| format!("{}: {error}", binary.display()))?;
-    std::fs::create_dir_all(cache_dir)
-        .map_err(|error| format!("{}: {error}", cache_dir.display()))?;
-    write_cache_entry_atomically(&cached, &data)
-        .map_err(|error| format!("{}: {error}", cached.display()))?;
-    // The sidecar is the last-published commit marker. A payload without a
-    // matching record is always a miss, so an interrupted or concurrent write
-    // cannot make a partial region look valid.
-    write_cache_entry_atomically(&record, region_cache_record(&data).as_bytes())
-        .map_err(|error| format!("{}: {error}", record.display()))?;
+    cache.put(&cache_key, &[("payload", &data)])?;
     Ok(BuiltRegion {
         address,
         run_address: linked_address,
@@ -806,7 +781,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
             }
         }
     }
-    let cache = root.join("out/cache/asm-regions");
+    let cache = SqliteCache::open(&root.join("out/cache/asm-regions.sqlite3"))?;
     let binutils = production_binutil_signatures()?;
     let mut found = BTreeSet::new();
     let mut counts: BTreeMap<String, Count> = BTreeMap::new();

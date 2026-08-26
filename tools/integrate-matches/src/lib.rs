@@ -204,7 +204,11 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<PipelineReport, String> 
     if !directory.is_dir() {
         return Err(format!("{}: not a directory", directory.display()));
     }
-    let gate = repository.join("scratch/integrate-gate");
+    // Pure per-candidate compile scratch: consumed only within this same
+    // loop iteration to compute a score, so it lives under system temp
+    // rather than the tracked repo tree (this used to leave thousands of
+    // files under scratch/integrate-gate that no cleanup pass ever reached).
+    let gate = std::env::temp_dir().join("alchemy-integrate-gate");
     fs::create_dir_all(&gate).map_err(|error| format!("{}: {error}", gate.display()))?;
     let candidates = source_files(&directory)
         .map_err(|error| format!("{}: {error}", directory.display()))?

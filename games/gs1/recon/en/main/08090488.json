@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "namespace": "gs1-en-main",
+  "address": "0x08090488",
+  "name": "UpdateMapTransition",
+  "status": "measured-draft",
+  "owner_bytes": 250,
+  "score": {
+    "measured": "2026-08-26",
+    "candidate_bytes": 248,
+    "reference_bytes": 250,
+    "differing_halfwords": 49,
+    "wrong_instructions": 32,
+    "class": "layout",
+    "command": "compiler candidate-show games/gs1/recon/en/main/08090488.c",
+    "note": "Every emitted instruction matches the reference one-for-one in mnemonic, registers, operands, and branch structure. The entire residual is literal-pool placement: the reference dumps its ten-word pool mid-function (after the middle display arm's unconditional branch, with a two-byte alignment nop) and places the zero/159 arm plus the shared epilogue after it; the candidate emits the same pool at the function end. Every differing halfword is a pool-shifted pc-relative displacement, a branch over the moved pool, or the pool block itself."
+  },
+  "shape": {
+    "derivation": "Family transfer from byte-exact games/gs1/src/display/transition/update.c (95.5% ngram match). Same state cell (0x03001ECC), display cell (0x03001E70, derived by the compiler as cell-92), and DisplayTransitionState field offsets. Differences from the template, all read from the reference: Scheduler_RemoveCallback(self) instead of ScheduleCallback (pool word 0x08090489), a third display arm gated on *(u32*)0x03001E40 & 1 writing value+80 and pool-forced 0x50 minus value (Data_00000050 extern, the battle-page pool-constant idiom), and a constant 0/159 final arm."
+  },
+  "remaining": [
+    {
+      "op": "literal pool placement",
+      "count": 49,
+      "where": "the reference's mid-function pool site after the middle arm; the 250-byte extent never approaches the Thumb literal range, so the early dump is not range-forced and no ordinary source lever for it is known -- prior owners with this residual class (080983a0, 080bae40, 080bad7c, 080bd898, 080d1350) were all parked on the same grounds"
+    }
+  ],
+  "rejected_experiments": [
+    {
+      "experiment": "nested-else restructure with an early return in the middle arm",
+      "result": "byte-identical output; GCC canonicalizes the chain"
+    }
+  ],
+  "notes": [
+    "Recovered only from the retained owner assembly, approved local ROM, the byte-exact template source, in-repository headers, and the approved compiler.",
+    "This candidate claims zero DONE bytes."
+  ]
+}

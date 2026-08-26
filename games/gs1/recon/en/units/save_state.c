@@ -143,8 +143,8 @@ s32 Func_08005920(s32 record_id, void *source)
     struct SaveWorkspace *work;
     struct SaveSlotHeader header;
     u32 zero;
-    s32 current;
-    s32 slot;
+    u32 current;
+    u32 slot;
 
     work = SAVE_WORKSPACE;
     zero = 0;

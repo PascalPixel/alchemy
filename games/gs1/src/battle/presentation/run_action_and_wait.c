@@ -2,6 +2,8 @@
 
 #define BattleEvent_RunActionAndWait Func_08092f84
 
+extern volatile u32 Data_03001ae8;
+
 void BattleEvent_RunActionAndWait(s32 action)
 {
     u8 *runtime = *(u8 **)0x03001ebc;
@@ -22,14 +24,11 @@ void BattleEvent_RunActionAndWait(s32 action)
 
     if (*(s32 *)(runtime + 0x1cc) == 0) {
         while (Func_08015050(wait_token) == 0) {
-            u32 input;
-
             Func_080030f8(1);
             frames++;
-            input = *(u32 *)0x03001ae8;
             if (frames > 600 ||
-                ((input & 4) && (input & 0x100) &&
-                 (input & 0x200) && (input & 1))) {
+                ((Data_03001ae8 & 4) && (Data_03001ae8 & 0x100) &&
+                 (Data_03001ae8 & 0x200) && (Data_03001ae8 & 1))) {
                 Func_08015140();
             }
         }

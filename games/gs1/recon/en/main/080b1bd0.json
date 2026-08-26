@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "namespace": "gs1-en-main",
+  "address": "0x080b1bd0",
+  "name": "Shop_SellFromPartyMember",
+  "status": "measured-draft",
+  "owner_bytes": 540,
+  "score": {
+    "measured": "2026-08-26",
+    "candidate_bytes": 540,
+    "reference_bytes": 540,
+    "differing_halfwords": 231,
+    "wrong_instructions": 110,
+    "class": "wrong",
+    "note": "Byte size matches exactly (540/540) and the instruction count matches (232/232): every callee, struct field, mask, and sound/message constant is verified against shop.h, battle_types.h, sound_ids.h and sibling shop/*.c idioms (select_sale_quantity.c, sell_replaced_item.c, select_purchase_quantity.c, draw_party_member_items.c). The remaining wrong_instructions are register/stack-slot role swaps (price_window/item_count/redraw trade places between r9/sl/a stack slot) and a basic-block layout difference in where the compiler places the redraw-recompute block relative to the confirm/cancel checks -- not semantic differences. Tried reordering local-variable initialization, hoisting Shop_PlaceCursor's args into named temps, a do-while restatement, and a goto-based rewrite matching the .L19/.L16/.L4/.L17 label topology exactly; all preserve behaviour and the last two reached exact byte-size parity but none reproduced the reference's exact register allocation. This looks like a case needing decomp-permuter-style search rather than further manual respelling."
+  },
+  "rejected_experiments": [
+    "for(;;){ if(redraw){...} } inner loop with window/x/y as plain expressions (no temps): 536 candidate bytes vs 540 reference, worse than the temp-var version.",
+    "do { ... } while (1) restatement of the inner loop: byte-identical output to the for(;;) version, no change (536/544-byte families depending on companion edits) -- confirms the layout choice is not driven by loop-statement syntax.",
+    "Plain for(;;) nested loop with `break`/`continue` (no goto): compiled to 544 candidate bytes vs 540 reference; the goto-based rewrite matching the disassembly's exact label graph fixed the size mismatch to 540/540 but did not close the remaining register-role differences."
+  ],
+  "notes": [
+    "Recovered only from the retained owner assembly, approved local ROM, the byte-exact template/sibling sources, in-repository headers, and the approved compiler.",
+    "This candidate claims zero DONE bytes.",
+    "Twin of 0x080b211c (shop/select_party_member.c family): diffing games/gs1/asm/080b1bd0.s against games/gs1/asm/080b211c.s shows the two are near line-identical raw disassembly, differing only in which price/name callee they invoke (Func_080b19cc Shop_ComputeSalePrice vs Func_080b20e8 Shop_ComputeRepairPrice), literal-pool offsets, and one extra block at the end of 080b1bd0 (a call to Shop_SelectSaleQuantity + Func_080b1f4c that 080b211c's flow replaces with a single call to Func_080b2328) -- confirming 080b1bd0 is the 'sell an item from this party member' flow reached when shop->party_action == 1 in shop/select_party_member.c, and 080b211c is the parallel 'repair' flow.",
+    "Ability_GetAvailability(unit_id) is reused here as an item-availability *count* (its return value minus one clamps the selection index), not just the boolean sense used in draw_party_member_item_grid.c/select_party_member.c -- both usages are consistent with a single s32-returning function.",
+    "Value_00000075 and Value_00000caa are placeholder message-id symbols named after their own address value (the repo's existing Value_XXXXXXXX convention, e.g. select_sale_quantity.c's Value_00000cad); their real message text was not resolved."
+  ]
+}

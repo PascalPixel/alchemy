@@ -5,7 +5,7 @@ use std::process::Command;
 use candidate_compiler::{verify_candidate_owned_routed, CandidateCompilerConfiguration, ROM_BASE};
 use compiler_core::routing::{root, CompilerTarget};
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
-use overlay_disasm::{assemble_overlay, compile_overlay_candidate, OverlaySource, OVERLAY_BASE};
+use overlay_disasm::{assemble_overlay, compile_overlay_c, OverlaySource, OVERLAY_BASE};
 use serde_json::Value;
 use tempfile::tempdir;
 
@@ -218,7 +218,7 @@ impl Target {
         fs::write(&candidate, source)
             .map_err(|error| format!("{}: {error}", candidate.display()))?;
         let (expected, actual, kind) = if let Some(name) = owner.overlay_id() {
-            let compiled = compile_overlay_candidate(
+            let compiled = compile_overlay_c(
                 &candidate,
                 work.path(),
                 &name,
@@ -288,7 +288,7 @@ impl Target {
             .map_err(|error| format!("{}: {error}", candidate.display()))?;
         let actual = match &self.kind {
             Kind::Overlay { name, address } => {
-                let compiled = compile_overlay_candidate(
+                let compiled = compile_overlay_c(
                     &candidate,
                     work.path(),
                     name,

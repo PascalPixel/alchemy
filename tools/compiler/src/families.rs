@@ -798,7 +798,10 @@ fn prove_member(owner: &str, family: &ProofFamily) -> Result<usize, String> {
         return Err(format!("{owner}: incomplete residual evidence"));
     }
     let source = PathBuf::from(format!("games/gs1/recon/en/main/{stem}.c"));
-    let work = PathBuf::from(format!("out/family-proof/{stem}"));
+    // Pure per-member proof scratch: consumed only within this call to
+    // verify the dossier's recorded score, so it lives under system temp
+    // rather than the tracked repo tree.
+    let work = std::env::temp_dir().join("alchemy-family-proof").join(stem);
     fs::create_dir_all(&work).map_err(|error| format!("{}: {error}", work.display()))?;
     let config = CandidateCompilerConfiguration {
         family: Some(CandidateCompilerFamily::Routed),

@@ -64,10 +64,20 @@ pub fn bias_in_image_label_words(assembly: &str) -> BiasResult {
         biased,
     }
 }
-pub fn overlay_c_cache_dir() -> PathBuf {
+fn overlay_c_cache_path() -> PathBuf {
     match std::env::var_os("ALCHEMY_OVERLAY_C_CACHE") {
         Some(value) => PathBuf::from(value),
-        None => root().join("out/cache/overlay-c"),
+        None => root().join("out/cache/overlay-c.sqlite3"),
+    }
+}
+fn overlay_c_cache() -> Result<&'static Mutex<cache_entry::sqlite::SqliteCache>, String> {
+    static CACHE: OnceLock<Result<Mutex<cache_entry::sqlite::SqliteCache>, String>> =
+        OnceLock::new();
+    match CACHE.get_or_init(|| {
+        cache_entry::sqlite::SqliteCache::open(&overlay_c_cache_path()).map(Mutex::new)
+    }) {
+        Ok(cache) => Ok(cache),
+        Err(error) => Err(error.clone()),
     }
 }
 fn translation_units() -> Result<&'static TranslationUnits, String> {
@@ -276,42 +286,6 @@ const OVERLAY_HOST_TOOLS: [&str; 4] = [
     "arm-none-eabi-ld",
     "arm-none-eabi-objcopy",
 ];
-fn cache_record_path(cached: &Path) -> PathBuf {
-    cached.with_extension("record")
-}
-fn cache_record(data: &[u8]) -> String {
-    format!(
-        "overlay-c-cache-v1\n{}\n{}\n",
-        data.len(),
-        sha256::hex(data)
-    )
-}
-fn read_valid_cache_entry(cached: &Path) -> Option<Vec<u8>> {
-    let data = fs::read(cached).ok()?;
-    let record = fs::read_to_string(cache_record_path(cached)).ok()?;
-    let mut lines = record.lines();
-    if lines.next() != Some("overlay-c-cache-v1") {
-        return None;
-    }
-    let size = lines.next()?.parse::<usize>().ok()?;
-    let digest = lines.next()?;
-    if lines.next().is_some()
-        || size != data.len()
-        || digest.len() != 64
-        || digest != sha256::hex(&data)
-    {
-        return None;
-    }
-    Some(data)
-}
-fn publish_cache_entry(cached: &Path, data: &[u8]) {
-    if cache_entry::write_cache_entry_atomically(cached, data).is_ok() {
-        let _ = cache_entry::write_cache_entry_atomically(
-            &cache_record_path(cached),
-            cache_record(data).as_bytes(),
-        );
-    }
-}
 fn overlay_cache_key(
     compiler_signature: &str,
     host_signature: &str,
@@ -470,20 +444,27 @@ fn compile_overlay_with_mutations(
     let plan_signature = plan_stamp(&steps, &work_display);
     let host_signature = compiler_core::bundle::host_executable_signature(&OVERLAY_HOST_TOOLS)
         .map_err(|error| format!("overlay host tool signature: {error}"))?;
-    let cached = overlay_c_cache_dir().join(format!(
-        "{}.bin",
-        overlay_cache_key(
-            &compiler_core::bundle::compiler_bundle_signature(),
-            &host_signature,
-            &plan_signature,
-            address,
-            call_via_base,
-            &source_inputs,
-        )
-    ));
+    let cache_key = overlay_cache_key(
+        &compiler_core::bundle::compiler_bundle_signature(),
+        &host_signature,
+        &plan_signature,
+        address,
+        call_via_base,
+        &source_inputs,
+    );
+    // Flag-mutated compiles (permuter/diagnostic overrides) are throwaway by
+    // construction and must never be persisted: every candidate has unique
+    // source, so caching them would grow the database without bound.
     if extra_flags.is_empty() {
-        if let Some(data) = read_valid_cache_entry(&cached) {
-            return Ok(Compiled { address, data });
+        if let Ok(cache) = overlay_c_cache() {
+            let hit = cache
+                .lock()
+                .ok()
+                .and_then(|cache| cache.get(&cache_key).ok().flatten())
+                .and_then(|entries| entries.into_iter().find(|(kind, _)| kind == "payload"));
+            if let Some((_, data)) = hit {
+                return Ok(Compiled { address, data });
+            }
         }
     }
     for step in &plan.steps {
@@ -529,8 +510,14 @@ fn compile_overlay_with_mutations(
         .get(object_offset..end)
         .ok_or_else(|| format!("linked overlay C symbol is truncated: {symbol}"))?
         .to_vec();
-    let _ = fs::create_dir_all(overlay_c_cache_dir());
-    publish_cache_entry(&cached, &data);
+    // Mirror the read-side guard above: never persist a flag-mutated compile.
+    if extra_flags.is_empty() {
+        if let Ok(cache) = overlay_c_cache() {
+            if let Ok(cache) = cache.lock() {
+                let _ = cache.put(&cache_key, &[("payload", &data)]);
+            }
+        }
+    }
     Ok(Compiled { address, data })
 }
 fn symbol_span(listing: &str, name: &str) -> Result<(usize, usize), String> {

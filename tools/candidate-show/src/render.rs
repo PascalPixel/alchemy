@@ -5,8 +5,8 @@ use crate::{
     patch::apply_unified_diff_in_tree,
 };
 use candidate_compiler::verify::{
-    compile_to_assembly, source_stem, verify_candidate_owned_routed_with_object,
-    CandidateCompilerConfiguration, CandidateCompilerFamily, ROM_BASE,
+    compile_to_assembly, verify_candidate_owned_routed_with_object, CandidateCompilerConfiguration,
+    CandidateCompilerFamily, ROM_BASE,
 };
 use compiler_core::bundle::compiler_bundle_signature_checked;
 use compiler_core::routing::CompilerTarget;
@@ -123,7 +123,6 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         .as_deref()
         .ok_or("The \"path\" argument must be of type string. Received undefined")?;
     let patch_text = read_patch(options.patch.as_deref())?;
-    let source_label = source_stem(&options.source);
     let (owner, routing_source) = main_source_identity(
         root,
         &options.source,
@@ -147,12 +146,11 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         options.size,
         patch_text.as_deref(),
     )?;
-    let key_path = work.join(format!("{source_label}.key"));
+    let cache = cache_entry::sqlite::SqliteCache::open(&work.join("cache.sqlite3"))?;
     let candidate_path = work.join("candidate.bin");
     let reference_path = work.join("reference.bin");
-    let first_path = work.join("first.txt");
     if options.first {
-        if let Some(stdout) = cached_first(&key_path, &key, &first_path) {
+        if let Some(stdout) = cached_first(&cache, &key) {
             return Ok(RenderOutput {
                 stdout,
                 candidate_length: 0,
@@ -161,9 +159,7 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
             });
         }
     }
-    let (actual, expected, compile) = if let Some(pair) =
-        cached_bins(&key, &key_path, &candidate_path, &reference_path)
-    {
+    let (actual, expected, compile) = if let Some(pair) = cached_bins(&cache, &key) {
         pair
     } else {
         let source = match patch_text.as_deref() {
@@ -200,13 +196,9 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         let end = offset.saturating_add(size).min(rom.len());
         let actual = verification.actual;
         let expected = rom[offset.min(end)..end].to_vec();
-        std::fs::write(&candidate_path, &actual)
-            .map_err(|error| format!("{}: {error}", candidate_path.display()))?;
-        std::fs::write(&reference_path, &expected)
-            .map_err(|error| format!("{}: {error}", reference_path.display()))?;
-        std::fs::write(&key_path, key.as_bytes())
-            .map_err(|error| format!("{}: {error}", key_path.display()))?;
-        let _ = std::fs::remove_file(&first_path);
+        cache
+            .put(&key, &[("candidate", &actual), ("reference", &expected)])
+            .map_err(|error| format!("cache: {error}"))?;
         (
             actual,
             expected,
@@ -217,6 +209,10 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
             },
         )
     };
+    std::fs::write(&candidate_path, &actual)
+        .map_err(|error| format!("{}: {error}", candidate_path.display()))?;
+    std::fs::write(&reference_path, &expected)
+        .map_err(|error| format!("{}: {error}", reference_path.display()))?;
     render_bytes(
         actual,
         expected,
@@ -224,7 +220,8 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         options,
         &candidate_path,
         &reference_path,
-        &first_path,
+        &cache,
+        &key,
     )
 }
 fn read_patch(path: Option<&str>) -> Result<Option<String>, String> {
@@ -247,7 +244,8 @@ fn render_bytes(
     options: &Options,
     candidate_path: &Path,
     reference_path: &Path,
-    first_path: &Path,
+    cache: &cache_entry::sqlite::SqliteCache,
+    key: &str,
 ) -> Result<RenderOutput, String> {
     let left = disassemble(&candidate_path.to_string_lossy(), 0.0)?;
     let right = disassemble(&reference_path.to_string_lossy(), 0.0)?;
@@ -285,8 +283,9 @@ fn render_bytes(
         out.push_str("      candidate                      reference\n");
         out.push_str(&side_by_side(&pairs[start..end]));
         if options.first {
-            std::fs::write(first_path, &out)
-                .map_err(|error| format!("{}: {error}", first_path.display()))?;
+            cache
+                .upsert(key, "first", out.as_bytes())
+                .map_err(|error| format!("cache: {error}"))?;
         }
     } else {
         if actual.len() != expected.len() {
@@ -754,24 +753,24 @@ mod cache_key_tests {
         let _ = std::fs::remove_file(source);
     }
 }
-fn cached_first(key_path: &Path, key: &str, report: &Path) -> Option<String> {
-    (std::fs::read_to_string(key_path).ok()?.trim() == key)
-        .then(|| std::fs::read_to_string(report).ok())
-        .flatten()
-        .filter(|text| !text.is_empty())
-        .map(|text| text.replacen("compile=fresh\n", "compile=cache\n", 1))
+fn cached_first(cache: &cache_entry::sqlite::SqliteCache, key: &str) -> Option<String> {
+    let entries = cache.get(key).ok().flatten()?;
+    let text = String::from_utf8(entries.into_iter().find(|(kind, _)| kind == "first")?.1).ok()?;
+    (!text.is_empty()).then(|| text.replacen("compile=fresh\n", "compile=cache\n", 1))
 }
 fn cached_bins(
+    cache: &cache_entry::sqlite::SqliteCache,
     key: &str,
-    key_path: &Path,
-    candidate: &Path,
-    reference: &Path,
 ) -> Option<(Vec<u8>, Vec<u8>, &'static str)> {
-    if std::fs::read_to_string(key_path).ok()?.trim() != key {
-        return None;
-    }
-    let actual = std::fs::read(candidate).ok()?;
-    let expected = std::fs::read(reference).ok()?;
+    let entries = cache.get(key).ok().flatten()?;
+    let find = |kind: &str| {
+        entries
+            .iter()
+            .find(|(entry_kind, _)| entry_kind == kind)
+            .map(|(_, value)| value.clone())
+    };
+    let actual = find("candidate")?;
+    let expected = find("reference")?;
     (!actual.is_empty() && !expected.is_empty()).then_some((actual, expected, "cache"))
 }
 fn js_cmp(a: &f64, b: &f64) -> Ordering {

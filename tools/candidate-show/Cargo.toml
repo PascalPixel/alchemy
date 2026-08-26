@@ -24,6 +24,7 @@ regex = "1"
 sha2 = "0.10"
 compiler-core = { path = "../compiler-core" }
 overlay-disasm = { path = "../overlay-disasm" }
+cache-entry = { path = "../cache-entry" }
 
 [lib]
 name = "candidate_show"

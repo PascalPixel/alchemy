@@ -70,8 +70,8 @@ s32 Func_080056cc(void)
     struct SaveWorkspace *work;
     struct SaveSlotHeader header;
     u32 zero;
-    s32 attempt;
-    s32 index;
+    u32 attempt;
+    u32 index;
 
     work = Func_080048f4(0x33, sizeof(*work));
     zero = 0;
@@ -87,7 +87,7 @@ s32 Func_080056cc(void)
         return 1;
 
     for (index = 0; index <= 15; index++) {
-        s32 status;
+        u32 status;
 
         work->occupied[index] = 0;
         work->record_id[index] = 0x10;

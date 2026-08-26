@@ -7,13 +7,13 @@
   "owner_bytes": 8300,
   "score": {
     "measured": "2026-08-26",
-    "candidate_bytes": 8280,
+    "candidate_bytes": 8276,
     "reference_bytes": 8300,
-    "differing_halfwords": 3908,
-    "wrong_instructions": 2608,
+    "differing_halfwords": 3914,
+    "wrong_instructions": 2574,
     "class": "wrong",
     "command": "compiler candidate-show games/gs2/recon/en/main/08120454.c --owner 08120454 --size 8300 --rom roms/gs2-en.gba",
-    "note": "Raw halfwords are phase-dominated: the entry region differs only by a register-allocation shuffle (r1/r2/r5 permutation, one mov sl placement), long runs align between clusters, and the large +/- runs are literal-pool words placed at different sites. The 20-byte length gap is pool-word count, not missing logic."
+    "note": "Raw halfwords are phase-dominated: the entry region differs only by a register-allocation shuffle (r1/r2/r5 permutation, one mov sl placement), long runs align between clusters, and the large +/- runs are literal-pool words placed at different sites. The 20-byte length gap is pool-word count, not missing logic. After the heal-prep respell, wrong_instructions 2608 -> 2574."
   },
   "shape": {
     "architecture": "Twelve-ROM master: games/gs1/recon/ja/main/080b2b0c.c is the shared body, written against ~60 BATTLE_* hook macros (362 uses). GS1 editions bind the hooks to GS1 semantics; games/gs2/recon/ja/main/battle_delta.h rebinds them with the sequel's grown logic (extra effect/heal/KO/guard cases) plus per-edition literal headers and ~200 per-edition callee retargets. BATTLE_SECOND_ACTOR reshapes struct BattlePlan in games/gs1/include/battle_types.h.",
@@ -35,5 +35,19 @@
     "The JA-native GS1 candidate (games/gs1/recon/ja/main/080b2b0c.c wrapped as Func_080b2b0c) measures 6332/6332 at 272 differing halfwords against roms/gs1-ja.gba; since the production EN object relinks byte-exact at the JA address, those 272 halfwords are JA-side binding/literal gaps in the wrapper, not core differences.",
     "Recovered only from retained/located owner bytes in the approved local ROMs, the adopted GS1 EN source, in-repository headers, and the approved compiler.",
     "This candidate claims zero DONE bytes."
+  ],
+  "rejected_experiments": [
+    {
+      "experiment": "BATTLE_HEAL_PREP with all arms sharing one Math_Div through a goto tail (num/den computed per arm)",
+      "result": "Over-merges: the candidate falls to 8272 bytes as the sign-extend epilogue is shared too; the reference shares the divide call site but keeps per-arm preparation. 3917 halfwords, 2618 wrong instructions. Reverted."
+    },
+    {
+      "experiment": "else arm spelled with direct both-width loads (maxu then maxv via casts of &target->max_hp)",
+      "result": "GCC folds the second load into a sign-extend of the first; the reference emits two loads (ldrh then ldrsh). The GS1 pointer-walk idiom defeats the fold and is kept for that arm only."
+    }
+  ],
+  "expressed": [
+    "BATTLE_HEAL_PREP direct-access respell: the 0x4c/0x47/0x46 arms now read max_hp through direct casts, emitting the reference's movs #52 / ldrsh reg-offset + ldrh immediate forms instead of pre-adding 52 into the base; the else arm keeps the GS1 pointer walk to preserve its unfolded double-width load. Cluster verified locally against the reference; wrong_instructions 2608 -> 2574.",
+    "Remaining in this cluster: the reference shares one Math_Div call site across the calling arms (arms branch to a common 0x1458 tail with the divisor staged per arm) while the candidate duplicates the call; the exact sharing boundary excludes the maxu sign-extend, so a plain goto over-merges."
   ]
 }

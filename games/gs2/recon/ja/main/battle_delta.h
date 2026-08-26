@@ -766,22 +766,18 @@ struct BattleWorkPage {
     case 0x4c:
 #define BATTLE_HEAL_PREP(old, heal, maxu, maxv, stat_ptr)                  \
     {                                                                      \
-        (stat_ptr) = (u16 *)&target->hp;                                   \
-        (old) = *(stat_ptr)--;                                             \
-        (heal) = *(s16 *)(stat_ptr + 1);                                   \
+        (old) = *(u16 *)&target->hp;                                       \
+        (heal) = *(s16 *)&target->hp;                                      \
         if (action->effect == 0x4c) {                                      \
-            (stat_ptr) = (u16 *)&target->max_hp;                           \
-            (maxv) = *(s16 *)(stat_ptr);                                   \
-            (maxu) = *(stat_ptr)--;                                        \
+            (maxv) = *(s16 *)&target->max_hp;                              \
+            (maxu) = *(u16 *)&target->max_hp;                              \
             (heal) += Math_Div((maxv) * 2, 5);                             \
         } else if (action->effect == 0x47) {                               \
-            (stat_ptr) = (u16 *)&target->max_hp;                           \
-            (maxv) = *(s16 *)(stat_ptr);                                   \
-            (maxu) = *(stat_ptr)--;                                        \
+            (maxv) = *(s16 *)&target->max_hp;                              \
+            (maxu) = *(u16 *)&target->max_hp;                              \
             (heal) += Math_Div((maxv) * 7, 10);                            \
         } else if (action->effect == 0x46) {                               \
-            (stat_ptr) = (u16 *)&target->max_hp;                           \
-            (maxu) = *(stat_ptr)--;                                        \
+            (maxu) = *(u16 *)&target->max_hp;                              \
             (heal) += (s16)(maxu) / 2;                                     \
         } else {                                                           \
             (stat_ptr) = (u16 *)&target->max_hp;                           \

@@ -18,10 +18,7 @@ fn main() -> ExitCode {
             coverage_map::entrypoint::entry(rest);
             ExitCode::SUCCESS
         }
-        "integrate" | "integrate-matches" => {
-            integrate_matches::entry_main::entry(rest);
-            ExitCode::SUCCESS
-        }
+        "integrate" | "integrate-matches" => integrate_matches::entry(rest),
         "no-asm" | "no-asm-c" => no_asm_c::cli::entry(rest),
         "progress" => {
             full_c_progress::entry(rest);

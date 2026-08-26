@@ -44,76 +44,6 @@
     {"overlay":"resource_3cd","start":"0x020004b0","end":"0x020006f8","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_3ce","start":"0x02000cf4","end":"0x02000f08","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {
-      "overlay": "resource_37a",
-      "start": "0x02001380",
-      "end": "0x02001510",
-      "kind": "compiler_ordering_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete ordinary-C reconstruction is exactly 400 bytes with zero normalized wrong instructions",
-        "the seven-halfword residual consists only of three argument-setup scheduling displacements",
-        "twenty-thousand-candidate safe and ten-thousand-candidate classic exact-only walks found no emitting source",
-        "games/gs1/recon/en/overlays/resource_37a_c_02001380.json"
-      ]
-    },
-    {
-      "overlay": "resource_39e",
-      "start": "0x02002484",
-      "end": "0x02002508",
-      "kind": "compiler_ordering_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete ordinary-C reconstruction is exactly 132 bytes with zero normalized wrong instructions",
-        "the five-halfword residual is confined to argument setup around one call",
-        "twenty-thousand-candidate safe and ten-thousand-candidate classic exact-only walks found no emitting source",
-        "games/gs1/recon/en/overlays/resource_39e_c_02002484.json"
-      ]
-    },
-    {
-      "overlay": "resource_3a8",
-      "start": "0x02000504",
-      "end": "0x0200058e",
-      "kind": "compiler_ordering_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete ordinary-C reconstruction is exactly 138 bytes with zero normalized wrong instructions",
-        "the two-halfword residual is one swapped instruction pair",
-        "twenty-thousand-candidate safe and ten-thousand-candidate classic exact-only walks found no emitting source",
-        "games/gs1/recon/en/overlays/resource_3a8_c_02000504.json"
-      ]
-    },
-    {
-      "overlay": "resource_3b8",
-      "start": "0x02003df8",
-      "end": "0x02003e40",
-      "kind": "compiler_ordering_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete ordinary-C reconstruction is exactly 72 bytes with zero normalized wrong instructions",
-        "the two-halfword residual is one swapped negation and argument-load pair",
-        "twenty-thousand-candidate safe and ten-thousand-candidate classic exact-only walks found no emitting source",
-        "games/gs1/recon/en/overlays/resource_3b8_c_02003df8.json"
-      ]
-    },
-    {
-      "overlay": "resource_3b1",
-      "start": "0x02005ca4",
-      "end": "0x02005d10",
-      "kind": "compiler_ordering_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete ordinary-C reconstruction is exactly 108 bytes with zero normalized wrong instructions",
-        "the two-halfword residual is one swapped shift and constant-load pair",
-        "twenty-thousand-candidate safe and ten-thousand-candidate classic exact-only walks found no emitting source",
-        "games/gs1/recon/en/overlays/resource_3b1_c_02005ca4.json"
-      ]
-    },
-    {
       "overlay": "resource_3bf",
       "start": "0x02003054",
       "end": "0x02004638",
@@ -2343,33 +2273,6 @@
       ]
     },
     {
-      "overlay": "resource_3c6",
-      "start": "0x0200010c",
-      "end": "0x02000150",
-      "kind": "compiler_ordering_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete reconstruction accounts for all seven calls, arguments, and terminal literals with exact owner extent",
-        "candidate and reference have zero normalized wrong instructions; five halfwords are two independent argument-setup scheduling displacements",
-        "twenty-thousand-candidate classic exact-only heat walk found no emitting source and left the five-halfword baseline unchanged",
-        "games/gs1/recon/en/overlays/resource_3c6_c_0200010c.json"
-      ]
-    },
-    {
-      "overlay": "resource_3c6",
-      "start": "0x020000c4",
-      "end": "0x02000106",
-      "kind": "compiler_constant_allocation_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete reconstruction accounts for the input and message-base lifetimes, all seven calls, all branches, and every argument",
-        "direct integer, typed pointer, and register-pointer forms all propagate message+1/message+2 instead of retaining the ROM's base register",
-        "games/gs1/recon/en/overlays/resource_3c6_c_020000c4.json"
-      ]
-    },
-    {
       "overlay": "resource_3c8",
       "start": "0x02002f30",
       "end": "0x02002f8c",
@@ -2409,36 +2312,6 @@
       ]
     },
     {
-      "overlay": "resource_382",
-      "start": "0x02000ef4",
-      "end": "0x02000f3c",
-      "kind": "actor_placement_argument_ordering_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete ordinary-C reconstruction is exactly 72 bytes with zero wrong instructions",
-        "the two-halfword residual is one independent shift and zero-argument load swap with immediate resynchronization",
-        "twenty-thousand-candidate safe and ten-thousand-candidate classic exact-only heat walks plus the approved compiler-pass matrix found no emitting source",
-        "explicit decoded-ROM correspondence proves the 56-byte relocation-normalized core identical in JA, EN, DE, ES, FR and IT",
-        "games/gs1/recon/en/overlays/resource_382_c_02000ef4.json"
-      ]
-    },
-    {
-      "overlay": "resource_385",
-      "start": "0x02000a80",
-      "end": "0x02000ac8",
-      "kind": "actor_placement_argument_ordering_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete ordinary-C reconstruction is exactly 72 bytes with zero wrong instructions",
-        "the two-halfword residual is one independent shift and zero-argument load swap with immediate resynchronization",
-        "twenty-thousand-candidate safe and ten-thousand-candidate classic exact-only heat walks plus the approved compiler-pass matrix found no emitting source",
-        "explicit decoded-ROM correspondence proves the 56-byte relocation-normalized core identical in JA, EN, DE, ES, FR and IT",
-        "games/gs1/recon/en/overlays/resource_385_c_02000a80.json"
-      ]
-    },
-    {
       "overlay": "resource_3a0",
       "start": "0x02000324",
       "end": "0x02000358",
@@ -2451,51 +2324,6 @@
         "twenty-thousand-candidate safe and ten-thousand-candidate classic exact-only heat walks plus the approved compiler-pass matrix found no emitting source",
         "explicit decoded-ROM correspondence proves the 40-byte relocation-normalized core identical in JA, EN, DE, ES, FR and IT",
         "games/gs1/recon/en/overlays/resource_3a0_c_02000324.json"
-      ]
-    },
-    {
-      "overlay": "resource_3c0",
-      "start": "0x02000adc",
-      "end": "0x02000b14",
-      "kind": "actor_placement_argument_ordering_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete ordinary-C reconstruction is exactly 56 bytes with zero wrong instructions",
-        "the two-halfword residual is one independent shift and actor-argument load swap with immediate resynchronization",
-        "twenty-thousand-candidate safe and ten-thousand-candidate classic exact-only heat walks plus the approved compiler-pass matrix found no emitting source",
-        "explicit decoded-ROM correspondence proves the 28-byte relocation-normalized core identical in JA, EN, DE, ES, FR and IT",
-        "games/gs1/recon/en/overlays/resource_3c0_c_02000adc.json"
-      ]
-    },
-    {
-      "overlay": "resource_3ab",
-      "start": "0x02000b0c",
-      "end": "0x02000b6c",
-      "kind": "actor_presentation_argument_ordering_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete ordinary-C reconstruction is exactly 96 bytes with zero wrong instructions",
-        "the two-halfword residual is one independent zero-argument load and command-shift swap with immediate resynchronization at the call",
-        "twenty-thousand-candidate safe and ten-thousand-candidate classic exact-only heat walks found no emitting source",
-        "a uniquely anchored 160-byte containing window proves zero relocation/literal-masked core differences across JA, EN, DE, ES, FR and IT",
-        "games/gs1/recon/en/overlays/resource_3ab_c_02000b0c.json"
-      ]
-    },
-    {
-      "overlay": "resource_3be",
-      "start": "0x02001158",
-      "end": "0x020011c4",
-      "kind": "actor_presentation_shift_ordering_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete ordinary-C reconstruction is exactly 108 bytes with zero wrong instructions",
-        "the two-halfword residual is one independent actor-argument load and command-shift swap with immediate resynchronization before the call",
-        "twenty-thousand-candidate safe and ten-thousand-candidate classic exact-only heat walks found no emitting source",
-        "explicit decoded-ROM correspondence proves the 64-byte relocation-normalized core identical at 0x02001158 in JA, EN, DE, ES, FR and IT",
-        "games/gs1/recon/en/overlays/resource_3be_c_02001158.json"
       ]
     }
   ]

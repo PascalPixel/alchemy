@@ -4,9 +4,7 @@ use crate::pipeline::{build_coverage_map, BuildOptions, CoverageMap};
 use crate::tree::{ref_tree, root, work_tree};
 use serde_json::Value;
 use std::path::{Path, PathBuf};
-
 const USAGE: &str = "usage: coverage-map [--target gs1-en|gs2-en] [--exact-ref <ref>|worktree] [--recon-ref <ref>|worktree|none] [--write|--check|--self-test]";
-
 fn get<'a>(v: &'a Value, key: &str) -> Option<&'a Value> {
     v.as_object()?.get(key)
 }
@@ -158,7 +156,6 @@ fn parse(argv: &[String]) -> Result<Options, String> {
     }
     Ok(o)
 }
-
 fn tracked(map: &Value) -> Value {
     let mut out = map.clone();
     if let Some(object) = out.as_object_mut() {
@@ -199,7 +196,6 @@ fn summary(doc: &Value) -> Result<String, String> {
         get(get(doc, "provenance").unwrap_or(&Value::Null), "tracked_source").and_then(Value::as_str).unwrap_or("undefined")
     ))
 }
-
 #[derive(Clone)]
 struct Target {
     namespace: String,
@@ -352,7 +348,6 @@ fn replace_targets(text: &str, section: &str) -> Result<String, String> {
         &text[end..]
     ))
 }
-
 fn readme_metrics(exact: f64, retained: f64, executable: f64) -> String {
     let done = exact + retained;
     let share = |bytes: f64| {
@@ -376,7 +371,6 @@ fn readme_metrics(exact: f64, retained: f64, executable: f64) -> String {
         share(done)
     )
 }
-
 fn update_readme(
     text: &str,
     target: &str,
@@ -434,11 +428,9 @@ fn update_readme(
     }
     out
 }
-
 #[cfg(test)]
 mod tests {
     use super::readme_metrics;
-
     #[test]
     fn readme_metrics_reports_all_done_categories() {
         assert_eq!(
@@ -451,7 +443,6 @@ mod tests {
         );
     }
 }
-
 fn run(argv: &[String]) -> Result<String, String> {
     let o = parse(argv)?;
     if o.help {
@@ -554,7 +545,6 @@ fn run(argv: &[String]) -> Result<String, String> {
     }
     summary(&map.document)
 }
-
 pub fn entry(arguments: &[String]) {
     match run(arguments) {
         Ok(line) => println!("{line}"),

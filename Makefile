@@ -31,6 +31,7 @@ TOOLING_LINE_LIMIT := 30000
 TARGET ?= gs1-en
 FULL_REPORT = out/$(TARGET)/full/rebuilt.json
 FULL_ROM = out/$(TARGET)/full/rebuilt.gba
+OWNER_INVENTORY = out/$(TARGET)/full/rebuilt.owner-inventory.json
 HISTORICAL_TARGETS := gs1-ja gs1-en gs1-de gs1-es gs1-fr gs1-it \
 	gs2-ja gs2-en gs2-de gs2-es gs2-fr gs2-it
 CANDIDATE_SINGLE_OWNERS := \
@@ -49,7 +50,7 @@ CANDIDATE_SINGLE_OWNERS := \
 .PHONY: help verify test lint build-tools tool-tests tooling-size \
 	build-claimed build-asm build-assets build-full build-rom \
 	standard-check pristine-options-check corpus-check core-retained-check \
-	full-rom-check overlay-check strict-tu-check classification-check \
+	full-rom-check overlay-check declared-tu-check owner-inventory-check strict-tu-check classification-check \
 	candidate-corpus-check source-tracking-check check-owners progress progress-check progress-subject \
 	correspondence correspondence-check edition-builds edition-builds-check \
 	families family-check coverage coverage-check dashboard clean clean-preview
@@ -64,7 +65,9 @@ help:
 		'make build-full       rebuild and compare every owned byte' \
 		'make full-rom-check   prove the complete gs1-en ROM byte-exact' \
 		'make overlay-check    audit every exact overlay owner' \
-		'make strict-tu-check  prove production translation-unit contracts' \
+		'make declared-tu-check prove declared production translation-unit contracts' \
+		'make owner-inventory-check prove registered owner production coverage' \
+		'make strict-tu-check  prove complete translation-unit inventory coverage' \
 		'make classification-check prove retained-assembly classifications' \
 		'make candidate-corpus-check rescore retained reconstruction C' \
 		'make source-tracking-check reject ignored or untracked exact C' \
@@ -107,9 +110,18 @@ full-rom-check: build-full
 overlay-check:
 	$(OVERLAY) audit --all
 
-strict-tu-check: full-rom-check
+declared-tu-check: full-rom-check
+	@grep -Fq '"declared_main_translation_units_strict": true' $(FULL_REPORT)
+	@printf 'declared translation-unit production contract ok\n'
+
+owner-inventory-check: full-rom-check
+	@test -s $(OWNER_INVENTORY)
+	@grep -Fq '"complete_registered_identity_coverage": true' $(OWNER_INVENTORY)
+	@printf 'registered owner production inventory ok\n'
+
+strict-tu-check: owner-inventory-check
 	@grep -Fq '"strict_translation_units": true' $(FULL_REPORT)
-	@printf 'strict translation-unit production contract ok\n'
+	@printf 'complete translation-unit inventory contract ok\n'
 
 targets: $(HISTORICAL_TARGETS)
 
@@ -294,7 +306,7 @@ test: lint tooling-size tool-tests
 	$(CHECK) publication --self-test
 
 verify: source-tracking-check corpus-check test tooling-size targets \
-	full-rom-check overlay-check strict-tu-check classification-check \
+	full-rom-check overlay-check declared-tu-check owner-inventory-check classification-check \
 	candidate-corpus-check edition-builds-check check-owners \
 	progress-check coverage-check
 

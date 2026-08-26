@@ -1,7 +1,5 @@
 //! Compile, verify, cache, and manifest every exact C owner in the main image.
-
 pub mod cli;
-
 use cache_entry::write_cache_entry_atomically;
 use candidate_compiler::verify::{
     verify_candidate_owned_routed_with_object, CandidateCompilerConfiguration,
@@ -30,11 +28,9 @@ use std::{
         Mutex,
     },
 };
-
 pub const ROM_BASE: u32 = 0x0800_0000;
 pub type Result<T> = std::result::Result<T, String>;
 const BINUTILS: [&str; 2] = ["arm-none-eabi-as", "arm-none-eabi-nm"];
-
 fn digest(bytes: &[u8]) -> String {
     let mut h = Sha256::new();
     h.update(bytes);
@@ -97,7 +93,6 @@ fn subarray(bytes: &[u8], start: u32, end: u32) -> &[u8] {
         &bytes[start..end.min(bytes.len())]
     }
 }
-
 pub fn object_cache_key(source: &[u8], plan: &str) -> String {
     let mut input = Vec::with_capacity(plan.len() + source.len() + 1);
     input.extend_from_slice(plan.as_bytes());
@@ -105,7 +100,6 @@ pub fn object_cache_key(source: &[u8], plan: &str) -> String {
     input.extend_from_slice(source);
     digest(&input)
 }
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CacheSignatures {
     compiler_bundle: String,
@@ -164,7 +158,28 @@ pub fn module_end(names: &[String], symbols: &BTreeMap<String, (u32, usize)>) ->
         .transpose()?
         .ok_or_else(|| "C module has no functions".into())
 }
-
+fn linked_function_record(
+    root: &str,
+    symbol: &str,
+    linked_address: u32,
+    size: usize,
+    source: &str,
+    module_symbol: &str,
+    unit: Option<&TranslationUnit>,
+) -> Result<Value> {
+    if !function_name(symbol)
+        || address(symbol.strip_prefix("Func_").unwrap_or_default()) != Some(linked_address)
+        || size == 0
+        || !function_name(module_symbol)
+    {
+        return Err(format!("invalid linked function {symbol}"));
+    }
+    Ok(json!({
+        "symbol":symbol,"address":linked_address,"size":size,"source":relative(root,source),
+        "module":module_symbol,"extent_evidence":"linked-elf-symbol",
+        "translation_unit":unit.map(|unit| unit.id.as_str()),
+    }))
+}
 fn module_contract(
     root: &Path,
     game: &str,
@@ -207,7 +222,6 @@ fn module_contract(
         owner.extent,
     )])
 }
-
 pub fn self_test() -> Result<String> {
     let key = object_cache_key(b"void Func_08000000(void) {}\n", "plan-a");
     if key != object_cache_key(b"void Func_08000000(void) {}\n", "plan-a")
@@ -218,7 +232,6 @@ pub fn self_test() -> Result<String> {
     }
     Ok("self-test=ok".into())
 }
-
 #[derive(Debug, Clone, PartialEq)]
 pub struct Options {
     pub target: DecompTargetId,
@@ -964,8 +977,13 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     for line in nm.lines() {
         let f: Vec<_> = line.split_whitespace().collect();
         if f.len() == 4 && defined.contains(f[3]) {
+            if !function_name(f[3]) || !matches!(f[2], "T" | "t") {
+                return Err(format!("linked symbol is not a Thumb function: {}", f[3]));
+            }
             if let (Some(a), Some(s)) = (address(f[0]), address(f[1])) {
-                symbols.insert(f[3].into(), (a, s as usize));
+                if symbols.insert(f[3].into(), (a, s as usize)).is_some() {
+                    return Err(format!("duplicate linked function {}", f[3]));
+                }
             }
         }
     }
@@ -987,6 +1005,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
         .min()
         .unwrap_or(0);
     let mut manifest = Vec::new();
+    let mut functions = Vec::new();
     let mut failures = Vec::new();
     let mut total = 0usize;
     let mut previous_end = 0u32;
@@ -1040,6 +1059,11 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
                 failures.push(format!("{}: linked bytes differ", basename(&source_text)));
             }
         }
+        let production_unit = units.unit_for_game_owner(game, source.owner);
+        let production_source = production_unit.map_or_else(
+            || source_text.clone(),
+            |unit| text(Path::new(root).join(&unit.source)),
+        );
         for name in &names {
             let expected = address(name.strip_prefix("Func_").unwrap_or(""));
             if expected != symbols.get(name).map(|(a, _)| *a)
@@ -1053,12 +1077,20 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
                     basename(&source_text)
                 ));
             }
+            let (address, size) = symbols
+                .get(name)
+                .copied()
+                .ok_or_else(|| format!("missing linked function {name}"))?;
+            functions.push(linked_function_record(
+                root,
+                name,
+                address,
+                size,
+                &production_source,
+                &symbol_name,
+                production_unit,
+            )?);
         }
-        let production_unit = units.unit_for_game_owner(game, source.owner);
-        let production_source = production_unit.map_or_else(
-            || source_text.clone(),
-            |unit| text(Path::new(root).join(&unit.source)),
-        );
         manifest.push(json!({
             "source": relative(root, &production_source),
             "symbol": symbol_name,
@@ -1087,6 +1119,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
             .as_ref()
             .map(|path| relative(root, &text(path.clone()))),
         "translation_unit_compiles": unit_compiles,
+        "functions": functions,
         "regions": manifest,
     });
     write_file(
@@ -1138,5 +1171,32 @@ mod tests {
         );
         assert!(function_name("Func_0801c0c8"));
         assert!(!function_name("Func_0801C0C8"));
+    }
+    #[test]
+    fn linked_function_manifest_uses_stable_module_evidence() {
+        let value = linked_function_record(
+            "/repo",
+            "Func_08000000",
+            0x0800_0000,
+            4,
+            "/repo/games/a.c",
+            "Func_08000000",
+            None,
+        )
+        .unwrap();
+        assert_eq!(value["symbol"], "Func_08000000");
+        assert_eq!(value["source"], "games/a.c");
+        assert_eq!(value["module"], "Func_08000000");
+        assert_eq!(value["extent_evidence"], "linked-elf-symbol");
+        assert!(linked_function_record(
+            "/repo",
+            "Func_0800000A",
+            0x0800_0000,
+            4,
+            "x",
+            "Func_08000000",
+            None
+        )
+        .is_err());
     }
 }

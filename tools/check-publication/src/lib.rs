@@ -15,18 +15,14 @@
 //! PORT NOTE: git is invoked with `-C <root>` instead of inheriting the process
 //! working directory, so every scan can be pointed at a temporary tree in
 //! tests. At the repository root the two are identical.
-
 pub mod cli;
-
 use std::path::Path;
 use std::process::Command;
-
 const BLOCKED_EXTENSIONS: &[&str] = &[
     "a", "bin", "bps", "bsdiff", "d", "diff", "dis", "dll", "dmp", "dump", "dylib", "elf", "exe",
     "gba", "gz", "ips", "lst", "log", "map", "o", "patch", "raw", "rom", "sav", "so", "sym", "tar",
     "tgz", "ups", "xdelta", "xdelta3", "zip", "7z",
 ];
-
 const BLOCKED_DIRECTORIES: &[&str] = &[
     ".cache",
     "alchemy-gcc",
@@ -54,25 +50,19 @@ const BLOCKED_DIRECTORIES: &[&str] = &[
     "toolchains",
     "work",
 ];
-
 const REPORT_EXTENSIONS: &[&str] = &["csv", "json", "jsonl", "log", "tsv", "txt"];
-
 /// The words `PRIVATE_REPORT` looks for, delimited by `.`, `_`, `-`, or an end.
 const PRIVATE_REPORT_WORDS: &[&str] = &["analysis", "comparison", "diff", "dump", "report"];
-
 const MARKER_EXTENSIONS: &[&str] = &[
     "md", "ts", "js", "json", "sh", "c", "h", "s", "asm", "tsv", "txt",
 ];
-
 /// `/^0+$/` --- a git object id of all zeroes means "no such ref".
 fn zero_oid(value: &str) -> bool {
     !value.is_empty() && value.bytes().all(|byte| byte == b'0')
 }
-
 fn is_separator(byte: u8) -> bool {
     matches!(byte, b'.' | b'_' | b'-')
 }
-
 /// `/(?:^|[._-])(?:analysis|comparison|diff|dump|report)(?:[._-]|$)/i`
 fn private_report(leaf: &str) -> bool {
     let lower = leaf.to_ascii_lowercase();
@@ -96,7 +86,6 @@ fn private_report(leaf: &str) -> bool {
     }
     false
 }
-
 fn extension(path: &str) -> String {
     let leaf = match path.rfind('/') {
         Some(index) => &path[index + 1..],
@@ -107,7 +96,6 @@ fn extension(path: &str) -> String {
         None => String::new(),
     }
 }
-
 fn canonical_binary_source(path: &str) -> bool {
     let normalized = path.replace('\\', "/").to_lowercase();
     if !normalized.starts_with("games/gs1/assets/maps/") {
@@ -119,7 +107,6 @@ fn canonical_binary_source(path: &str) -> bool {
     };
     leaf == "metatiles.bin" || leaf == "metatile_attributes.bin"
 }
-
 /// Why a repository path may not be published, or `None` if it may.
 pub fn publication_path_reason(path: &str) -> Option<&'static str> {
     let normalized = path.replace('\\', "/");
@@ -159,7 +146,6 @@ pub fn publication_path_reason(path: &str) -> Option<&'static str> {
     }
     None
 }
-
 fn gba_image(data: &[u8]) -> bool {
     if data.len() < 0xc0 || !data.len().is_multiple_of(0x8000) || data.len() > 0x0400_0000 {
         return false;
@@ -178,7 +164,6 @@ fn gba_image(data: &[u8]) -> bool {
     }
     data[0xbd] == (0u8.wrapping_sub(sum).wrapping_sub(0x19))
 }
-
 /// Why a blob's *content* may not be published, or `None` if it may.
 pub fn publication_content_reason(data: &[u8]) -> Option<&'static str> {
     if gba_image(data) {
@@ -212,12 +197,10 @@ pub fn publication_content_reason(data: &[u8]) -> Option<&'static str> {
     }
     None
 }
-
 /// JavaScript `\s` for the character classes this port needs.
 fn is_js_space(ch: char) -> bool {
     ch.is_whitespace() || ch == '\u{feff}'
 }
-
 /// Positions at which JavaScript's `^` matches under the `m` flag.
 fn line_starts(text: &str) -> Vec<usize> {
     let bytes = text.as_bytes();
@@ -229,7 +212,6 @@ fn line_starts(text: &str) -> Vec<usize> {
     }
     starts
 }
-
 /// `/^(?:<{7}|>{7}) /` anchored at the start of `line`.
 fn marker_line(line: &str) -> bool {
     let bytes = line.as_bytes();
@@ -238,7 +220,6 @@ fn marker_line(line: &str) -> bool {
     }
     bytes[..7].iter().all(|byte| *byte == b'<') || bytes[..7].iter().all(|byte| *byte == b'>')
 }
-
 /// `/^\s*\.incbin\b/im`
 fn incbin(text: &str) -> bool {
     for start in line_starts(text) {
@@ -258,7 +239,6 @@ fn incbin(text: &str) -> bool {
     }
     false
 }
-
 /// Why a file carries an unresolved merge conflict, or `None`.
 ///
 /// Only the opening and closing markers are matched. A bare `=======` is a
@@ -285,7 +265,6 @@ pub fn conflict_marker_reason(path: &str, data: &[u8]) -> Option<String> {
         "unresolved conflict marker at line {line}; resolve the merge before committing"
     ))
 }
-
 /// The only markdown files this repository keeps.
 ///
 /// 31 markdown files were collapsed into one because agents did not read any of
@@ -293,7 +272,6 @@ pub fn conflict_marker_reason(path: &str, data: &[u8]) -> Option<String> {
 /// surface nobody can enumerate is a surface nobody opens. Letting new ones
 /// accumulate rebuilds the problem one file at a time.
 pub const ALLOWED_MARKDOWN: &[&str] = &["README.md", "CONTRIBUTING.md"];
-
 /// Reject NEW `.txt` and `.md` files. Existing ones keep working: the rule is
 /// about growth, not about the ten data files already tracked.
 ///
@@ -325,7 +303,6 @@ pub fn new_text_file_reason(
          scratch directory"
     ))
 }
-
 /// Why a staged or committed entry may not be published, or `None`.
 pub fn publication_entry_reason(path: &str, data: &[u8]) -> Option<String> {
     if let Some(reason) = publication_path_reason(path) {
@@ -337,7 +314,6 @@ pub fn publication_entry_reason(path: &str, data: &[u8]) -> Option<String> {
     }
     publication_content_reason(data).map(|reason| reason.to_string())
 }
-
 /// `/(?:\b[0-9a-fA-F]{2}\b[ \t]+){7}\b[0-9a-fA-F]{2}\b/`
 ///
 /// A run of eight space-separated hex byte pairs: someone pasted bytes.
@@ -380,7 +356,6 @@ fn byte_dump(message: &str) -> bool {
     }
     false
 }
-
 /// Reject a commit MESSAGE that carries ROM bytes.
 ///
 /// Everything else in this file scans file blobs. Commit messages were never
@@ -397,9 +372,7 @@ pub fn commit_message_reason(message: &str) -> Option<&'static str> {
         None
     }
 }
-
 // --- git plumbing ----------------------------------------------------------
-
 fn git(root: &Path, args: &[&str], input: Option<&str>, label: &str) -> Result<Vec<u8>, String> {
     use std::io::Write;
     use std::process::Stdio;
@@ -439,7 +412,6 @@ fn git(root: &Path, args: &[&str], input: Option<&str>, label: &str) -> Result<V
     }
     Ok(result.stdout)
 }
-
 fn nul_list(value: &[u8]) -> Vec<String> {
     String::from_utf8_lossy(value)
         .split('\0')
@@ -447,7 +419,6 @@ fn nul_list(value: &[u8]) -> Vec<String> {
         .map(str::to_string)
         .collect()
 }
-
 fn lines(value: &[u8]) -> Vec<String> {
     String::from_utf8_lossy(value)
         .split('\n')
@@ -455,20 +426,17 @@ fn lines(value: &[u8]) -> Vec<String> {
         .filter(|item| !item.is_empty())
         .collect()
 }
-
 /// One thing to scan. `data` is fetched lazily, exactly as in the TypeScript.
 pub struct Entry<'a> {
     pub scope: String,
     pub path: String,
     data: Box<dyn Fn() -> Result<Vec<u8>, String> + 'a>,
 }
-
 impl Entry<'_> {
     pub fn data(&self) -> Result<Vec<u8>, String> {
         (self.data)()
     }
 }
-
 fn rename_destinations(value: &[u8]) -> std::collections::BTreeSet<String> {
     let fields = String::from_utf8_lossy(value)
         .split('\0')
@@ -494,7 +462,6 @@ fn rename_destinations(value: &[u8]) -> std::collections::BTreeSet<String> {
     }
     destinations
 }
-
 /// Paths already in HEAD, plus destinations proved to be staged renames, so
 /// the new-text-file rule fires on growth rather than on directory moves.
 fn tracked_paths(root: &Path) -> std::collections::BTreeSet<String> {
@@ -523,7 +490,6 @@ fn tracked_paths(root: &Path) -> std::collections::BTreeSet<String> {
     }
     tracked
 }
-
 /// The shared reject pass. Failure order follows entry order.
 pub fn reject(entries: &[Entry]) -> Result<(), String> {
     let mut failures: Vec<String> = Vec::new();
@@ -550,7 +516,6 @@ pub fn reject(entries: &[Entry]) -> Result<(), String> {
         ))
     }
 }
-
 fn staged_paths(root: &Path) -> Result<Vec<String>, String> {
     let paths = nul_list(&git(
         root,
@@ -580,7 +545,6 @@ fn staged_paths(root: &Path) -> Result<Vec<String>, String> {
     }
     Ok(kept)
 }
-
 /// Every path with a staged change, deletions included. Used only by the
 /// scanned-nothing guard, so that a deletion-only commit is not mistaken for an
 /// empty index.
@@ -592,7 +556,6 @@ fn staged_anything(root: &Path) -> Result<Vec<String>, String> {
         "staged path scan",
     )?))
 }
-
 fn changed_paths(root: &Path, commit: &str) -> Result<Vec<String>, String> {
     let paths = nul_list(&git(
         root,
@@ -620,7 +583,6 @@ fn changed_paths(root: &Path, commit: &str) -> Result<Vec<String>, String> {
     }
     Ok(kept)
 }
-
 /// Gate the index.
 ///
 /// PORT NOTE: the TypeScript passes trivially when nothing is staged at all --
@@ -666,7 +628,6 @@ pub fn check_staged(root: &Path) -> Result<(), String> {
         ))
     }
 }
-
 fn revisions(root: &Path, local: &str, remote: &str) -> Result<Vec<String>, String> {
     let negated = format!("^{remote}");
     let mut args = vec!["rev-list", local];
@@ -680,7 +641,6 @@ fn revisions(root: &Path, local: &str, remote: &str) -> Result<Vec<String>, Stri
         &format!("outgoing revision scan {local}"),
     )?))
 }
-
 fn commit_message(root: &Path, commit: &str) -> Result<String, String> {
     Ok(String::from_utf8_lossy(&git(
         root,
@@ -690,7 +650,6 @@ fn commit_message(root: &Path, commit: &str) -> Result<String, String> {
     )?)
     .to_string())
 }
-
 /// Gate outgoing history. `updates` is the pre-push hook's stdin.
 ///
 /// PORT NOTE: the TypeScript passes trivially on empty stdin. This port fails
@@ -764,14 +723,12 @@ pub fn check_push(root: &Path, updates: &str) -> Result<(), PushError> {
     }
     reject(&entries).map_err(fail)
 }
-
 /// A push rejection: the per-commit lines to print, then the error itself.
 #[derive(Debug)]
 pub struct PushError {
     pub message_failures: Vec<String>,
     pub error: String,
 }
-
 /// Paths the gate must refuse. Shared by the binary's self-test and the tests.
 pub const REJECTED_PATHS: &[&str] = &[
     "gs1-en.gba",
@@ -802,7 +759,6 @@ pub const REJECTED_PATHS: &[&str] = &[
     "comparisons/shared-runs.json",
     "compiler-output/function.s",
 ];
-
 /// Paths the gate must let through.
 pub const ACCEPTED_PATHS: &[&str] = &[
     "src/main.c",
@@ -818,15 +774,12 @@ pub const ACCEPTED_PATHS: &[&str] = &[
     "games/gs1/assets/maps/town/metatile_attributes.bin",
     "rom.sha1",
 ];
-
 #[cfg(test)]
 mod tests {
     use super::*;
-
     #[test]
     fn only_the_user_and_contributor_guides_are_markdown_roots() {
         let tracked = std::collections::BTreeSet::new();
-
         assert_eq!(ALLOWED_MARKDOWN, &["README.md", "CONTRIBUTING.md"]);
         assert!(new_text_file_reason("README.md", &tracked).is_none());
         assert!(new_text_file_reason("CONTRIBUTING.md", &tracked).is_none());
@@ -835,7 +788,6 @@ mod tests {
             .contains("exactly two"));
         assert!(new_text_file_reason("CLAUDE.md", &tracked).is_some());
     }
-
     #[test]
     fn staged_rename_destinations_are_not_new_files() {
         let destinations = rename_destinations(

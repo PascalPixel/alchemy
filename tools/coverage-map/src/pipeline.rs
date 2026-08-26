@@ -3,7 +3,6 @@ use crate::tree::{read_json, SourceTree, ROM_BASE};
 use compiler_core::source_paths::{SourceOwner, SourcePaths, SOURCE_PATHS_MANIFEST};
 use serde_json::{Map, Value};
 use std::path::Path;
-
 pub struct BuildOptions<'a> {
     pub target: String,
     pub exact: &'a SourceTree,
@@ -11,13 +10,11 @@ pub struct BuildOptions<'a> {
     pub validate_tracked_progress: bool,
     pub prefer_verified_assets: bool,
 }
-
 pub struct CoverageMap {
     pub document: Value,
     pub rom_areas: Vec<Area>,
     pub executable_areas: Vec<Area>,
 }
-
 pub fn rom_size(target: &str) -> Result<i64, String> {
     match target {
         "gs1-en" => Ok(0x800000),
@@ -27,7 +24,6 @@ pub fn rom_size(target: &str) -> Result<i64, String> {
         )),
     }
 }
-
 fn get<'a>(value: &'a Value, key: &str) -> Option<&'a Value> {
     value.as_object()?.get(key)
 }
@@ -54,13 +50,11 @@ fn obj(fields: Vec<(&str, Value)>) -> Value {
 fn num(n: i64) -> Value {
     Value::Number(n.into())
 }
-
 #[derive(Clone, Debug)]
 struct Region {
     span: Span,
     kind: String,
 }
-
 fn regions(value: &Value) -> Vec<Region> {
     array(value, "intervals")
         .iter()
@@ -73,7 +67,6 @@ fn regions(value: &Value) -> Vec<Region> {
         .filter(|r| r.span.end > r.span.start)
         .collect()
 }
-
 pub fn intervals_of(value: &Value) -> Vec<Span> {
     normalize(
         &regions(value)
@@ -82,7 +75,6 @@ pub fn intervals_of(value: &Value) -> Vec<Span> {
             .collect::<Vec<_>>(),
     )
 }
-
 fn canonical(source: &str) -> bool {
     !source.contains(".incbin")
         && !source.contains("M2C_ERROR")
@@ -92,7 +84,6 @@ fn canonical(source: &str) -> bool {
             .lines()
             .any(|line| line.contains("register") && line.contains("asm") && line.contains('('))
 }
-
 fn hex(value: &str) -> Option<i64> {
     i64::from_str_radix(value.trim().trim_start_matches("0x"), 16).ok()
 }
@@ -119,14 +110,12 @@ fn overlay_name(name: &str) -> Option<String> {
 fn overlay_short(id: &str) -> &str {
     id.strip_prefix("resource_").unwrap_or(id)
 }
-
 #[derive(Clone, Debug)]
 pub struct Owner {
     pub label: String,
     pub entry: i64,
     pub spans: Vec<Span>,
 }
-
 fn overlay_owners(tree: &SourceTree, name: &str) -> Vec<Owner> {
     let Some(source) = tree.read(&format!("games/gs1/assets/code/{name}")) else {
         return Vec::new();
@@ -177,7 +166,6 @@ fn overlay_owners(tree: &SourceTree, name: &str) -> Vec<Owner> {
     }
     out
 }
-
 fn overlay_ids(tree: &SourceTree) -> Vec<(String, String)> {
     let mut names: Vec<_> = tree
         .list("games/gs1/assets/code")
@@ -187,7 +175,6 @@ fn overlay_ids(tree: &SourceTree) -> Vec<(String, String)> {
     names.sort_by(|a, b| a.0.cmp(&b.0));
     names
 }
-
 fn exact_main(tree: &SourceTree, executable: &[Span]) -> Vec<Span> {
     let value = tree
         .read("out/gs1-en/full/claimed/manifest.json")
@@ -209,7 +196,6 @@ fn exact_main(tree: &SourceTree, executable: &[Span]) -> Vec<Span> {
     }
     normalize(&spans)
 }
-
 fn candidate_main(tree: &SourceTree, executable: &[Span]) -> (Vec<Span>, usize) {
     let directory = "games/gs1/recon/en/main";
     let mut spans = Vec::new();
@@ -241,7 +227,6 @@ fn candidate_main(tree: &SourceTree, executable: &[Span]) -> (Vec<Span>, usize) 
     }
     (intersect(&normalize(&spans), executable), sources)
 }
-
 fn candidate_overlay(
     tree: &SourceTree,
     executable: &std::collections::BTreeMap<String, Vec<Span>>,
@@ -301,7 +286,6 @@ fn candidate_overlay(
     }
     (spans, sources)
 }
-
 fn exact_overlay(
     tree: &SourceTree,
     pairs: &[(String, String)],
@@ -356,7 +340,6 @@ fn exact_overlay(
     }
     Ok((owners, spans))
 }
-
 fn permanent_main(tree: &SourceTree) -> Vec<Span> {
     let mut spans = Vec::new();
     if let Some(value) = tree
@@ -415,7 +398,6 @@ fn permanent_main(tree: &SourceTree) -> Vec<Span> {
     }
     normalize(&spans)
 }
-
 fn permanent_overlay(inventory: &[Region]) -> Vec<Span> {
     normalize(
         &inventory
@@ -430,7 +412,6 @@ fn permanent_overlay(inventory: &[Region]) -> Vec<Span> {
             .collect::<Vec<_>>(),
     )
 }
-
 fn permanent_overlay_evidence(
     tree: &SourceTree,
     executable: &std::collections::BTreeMap<String, Vec<Span>>,
@@ -442,7 +423,6 @@ fn permanent_overlay_evidence(
         .map_err(|error| format!("games/gs1/semantic/overlay-assembly.json: {error}"))?;
     permanent_overlay_evidence_document(&document, executable)
 }
-
 fn permanent_overlay_evidence_document(
     document: &Value,
     executable: &std::collections::BTreeMap<String, Vec<Span>>,
@@ -496,7 +476,6 @@ fn permanent_overlay_evidence_document(
     }
     Ok(out)
 }
-
 fn partition(executable: &[Span], cuts: &[i64]) -> Vec<Span> {
     let mut out = Vec::new();
     for run in normalize(executable) {
@@ -512,7 +491,6 @@ fn partition(executable: &[Span], cuts: &[i64]) -> Vec<Span> {
     }
     out
 }
-
 fn credit(
     label: String,
     span: Span,
@@ -539,7 +517,6 @@ fn credit(
     tile.set("assembly", (span.bytes() - e - s - r).max(0));
     tile
 }
-
 fn main_tiles(
     executable: &[Span],
     exact: &[Span],
@@ -571,7 +548,6 @@ fn main_tiles(
         })
         .collect()
 }
-
 fn overlay_tiles(
     id: &str,
     executable: &[Span],
@@ -655,7 +631,6 @@ fn overlay_tiles(
     }
     out
 }
-
 fn bands(
     executable: &[Span],
     exact: &[Span],
@@ -712,7 +687,6 @@ fn band_tile(
     tile.set("assembly", n - e - s - r);
     tile
 }
-
 #[derive(Clone)]
 struct Stream {
     id: String,
@@ -752,7 +726,6 @@ fn streams(tree: &SourceTree) -> Vec<Stream> {
     }
     out
 }
-
 fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
     let Some(manifest) = tree
         .read("out/gs1-en/full/assets/manifest.json")
@@ -815,7 +788,6 @@ fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
     }
     out
 }
-
 fn area_json(area: &Area, tracked: bool) -> Value {
     let cats = CATEGORIES
         .iter()
@@ -870,7 +842,6 @@ fn entry(bytes: i64, total: i64) -> Value {
         ),
     ])
 }
-
 pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String> {
     let rom = rom_size(&options.target)?;
     let game = options.target.split('-').next().unwrap_or("gs1");
@@ -1186,17 +1157,14 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
         executable_areas,
     })
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;
     use serde_json::json;
     use std::collections::BTreeMap;
-
     fn evidence(regions: Value) -> Value {
         json!({"format": 1, "regions": regions})
     }
-
     fn region(start: &str, end: &str) -> Value {
         json!({
             "overlay": "resource_test",
@@ -1208,14 +1176,12 @@ mod tests {
             "evidence": ["approved compiler probe"]
         })
     }
-
     fn executable() -> BTreeMap<String, Vec<Span>> {
         BTreeMap::from([(
             "resource_test".into(),
             vec![Span::new(0x0200_0100, 0x0200_0200)],
         )])
     }
-
     #[test]
     fn accepts_proven_overlay_assembly_inside_inventory() {
         let found = permanent_overlay_evidence_document(
@@ -1228,7 +1194,6 @@ mod tests {
             vec![Span::new(0x0200_0120, 0x0200_0140)]
         );
     }
-
     #[test]
     fn rejects_overlay_assembly_outside_inventory() {
         let error = permanent_overlay_evidence_document(
@@ -1238,7 +1203,6 @@ mod tests {
         .unwrap_err();
         assert!(error.contains("outside audited executable bytes"));
     }
-
     #[test]
     fn rejects_overlapping_overlay_assembly_evidence() {
         let error = permanent_overlay_evidence_document(

@@ -2,7 +2,6 @@ mod ninja;
 mod normalized;
 mod structural;
 mod symbolize;
-
 use candidate_compiler::verify::{
     compile_to_assembly, CandidateCompilerConfiguration, CandidateCompilerFamily,
 };
@@ -21,10 +20,8 @@ use std::{
 };
 use structural::StructuralReport;
 use walkdir::WalkDir;
-
 const USAGE: &str =
     "usage: compiler workbench <candidate.c> [--m2c PATH] [--output DIR] [--no-run]";
-
 #[derive(Debug)]
 struct Options {
     source: PathBuf,
@@ -32,7 +29,6 @@ struct Options {
     output: Option<PathBuf>,
     run: bool,
 }
-
 #[derive(Debug, Deserialize, Serialize)]
 struct ProbeReport {
     schema_version: u32,
@@ -40,14 +36,12 @@ struct ProbeReport {
     error: Option<String>,
     structural: Option<StructuralReport>,
 }
-
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 enum M2cContextKind {
     FamilyTemplate,
     SemanticCandidate,
     None,
 }
-
 impl M2cContextKind {
     fn as_str(self) -> &'static str {
         match self {
@@ -57,14 +51,12 @@ impl M2cContextKind {
         }
     }
 }
-
 #[derive(Debug)]
 pub(crate) struct FamilyM2cSeed {
     pub source: PathBuf,
     pub context: PathBuf,
     pub context_kind: &'static str,
 }
-
 pub fn run(arguments: &[String]) -> Result<(), String> {
     if arguments
         .iter()
@@ -128,7 +120,6 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     }
     print_reports(&plan)
 }
-
 pub fn run_step(arguments: &[String]) -> Result<(), String> {
     let command = arguments
         .first()
@@ -188,7 +179,6 @@ pub fn run_step(arguments: &[String]) -> Result<(), String> {
         _ => Err(format!("unknown or malformed workbench step: {command}")),
     }
 }
-
 fn parse_options(arguments: &[String]) -> Result<Options, String> {
     let mut source = None;
     let mut m2c = None;
@@ -225,7 +215,6 @@ fn parse_options(arguments: &[String]) -> Result<Options, String> {
         run,
     })
 }
-
 fn owner_stem(path: &Path) -> Result<String, String> {
     let stem = path
         .file_stem()
@@ -255,7 +244,6 @@ fn owner_stem(path: &Path) -> Result<String, String> {
     }
     Ok(owner)
 }
-
 fn absolute_existing(repository: &Path, path: &Path) -> Result<PathBuf, String> {
     let path = if path.is_absolute() {
         path.to_path_buf()
@@ -265,7 +253,6 @@ fn absolute_existing(repository: &Path, path: &Path) -> Result<PathBuf, String> 
     path.canonicalize()
         .map_err(|error| format!("{}: {error}", path.display()))
 }
-
 fn locate_m2c(repository: &Path, requested: Option<&Path>) -> Result<PathBuf, String> {
     let mut candidates = Vec::new();
     if let Some(path) = requested {
@@ -291,7 +278,6 @@ fn locate_m2c(repository: &Path, requested: Option<&Path>) -> Result<PathBuf, St
             "m2c.py not found; clone upstream m2c into ignored m2c/ or pass --m2c PATH".into()
         })
 }
-
 fn prepare_output(
     repository: &Path,
     requested: Option<&Path>,
@@ -329,7 +315,6 @@ fn prepare_output(
     }
     Ok(resolved)
 }
-
 fn headers(repository: &Path) -> Result<Vec<PathBuf>, String> {
     let include = repository.join("games/gs1/include");
     let mut paths = WalkDir::new(&include)
@@ -342,7 +327,6 @@ fn headers(repository: &Path) -> Result<Vec<PathBuf>, String> {
     paths.sort();
     Ok(paths)
 }
-
 fn compile_object(source: &Path, routing: &Path, work: &Path) -> Result<PathBuf, String> {
     std::fs::create_dir_all(work).map_err(|error| format!("{}: {error}", work.display()))?;
     let source = text_path(source)?;
@@ -379,7 +363,6 @@ fn compile_object(source: &Path, routing: &Path, work: &Path) -> Result<PathBuf,
     assemble(Path::new(&assembly), &object, None)?;
     Ok(object)
 }
-
 fn assemble_target(
     source: &Path,
     symbol: &str,
@@ -393,7 +376,6 @@ fn assemble_target(
     write(&canonical_source, canonical.as_bytes())?;
     assemble(&canonical_source, object, Some(listing))
 }
-
 fn canonical_target_text(text: &str, symbol: &str) -> String {
     let mut previous_is_symbol = false;
     let mut canonical = String::new();
@@ -411,11 +393,9 @@ fn canonical_target_text(text: &str, symbol: &str) -> String {
     }
     canonical
 }
-
 #[cfg(test)]
 mod canonical_target_tests {
     use super::canonical_target_text;
-
     #[test]
     fn removes_only_same_address_owner_alias_after_canonical_symbol() {
         let text = ".global Human\nHuman:\nFunc_08000000:\n nop\nRegion_08000002:\n bx lr\n";
@@ -424,7 +404,6 @@ mod canonical_target_tests {
         assert!(output.contains("Region_08000002:"));
     }
 }
-
 fn assemble(source: &Path, object: &Path, listing: Option<&Path>) -> Result<(), String> {
     if let Some(parent) = object.parent() {
         std::fs::create_dir_all(parent)
@@ -453,7 +432,6 @@ fn assemble(source: &Path, object: &Path, listing: Option<&Path>) -> Result<(), 
     }
     Ok(())
 }
-
 fn run_m2c(
     m2c: &Path,
     assembly: &Path,
@@ -520,7 +498,6 @@ fn run_m2c(
     }
     Ok(kind)
 }
-
 /// Produce an m2c seed whose type/signature context comes from a byte-exact
 /// family member. m2c consumes preprocessed C, so the exact member is compiled
 /// through its registered owner route and its function symbol is retargeted to
@@ -572,7 +549,6 @@ pub(crate) fn generate_family_m2c_seed(
             .replace(template_symbol, target_symbol)
             .as_bytes(),
     )?;
-
     let target_object = output.join("target.o");
     let target_listing = output.join("target.lst");
     assemble_target(
@@ -591,7 +567,6 @@ pub(crate) fn generate_family_m2c_seed(
         &image,
     )?;
     write(&symbolized, text.as_bytes())?;
-
     let m2c = locate_m2c(root(), None)?;
     let source = output.join(format!("{}.c", target_owner.address_stem()));
     let kind = run_m2c(
@@ -615,7 +590,6 @@ pub(crate) fn generate_family_m2c_seed(
         context_kind: kind.as_str(),
     })
 }
-
 fn probe_m2c(
     source: &Path,
     routing: &Path,
@@ -648,7 +622,6 @@ fn probe_m2c(
     };
     write_json(output, &report)
 }
-
 fn print_reports(plan: &NinjaPlan) -> Result<(), String> {
     let structural: StructuralReport = read_json(&plan.structural_report())?;
     println!(
@@ -673,13 +646,11 @@ fn print_reports(plan: &NinjaPlan) -> Result<(), String> {
     }
     Ok(())
 }
-
 fn text_path(path: &Path) -> Result<String, String> {
     path.to_str()
         .map(str::to_string)
         .ok_or_else(|| format!("{}: non-UTF-8 path", path.display()))
 }
-
 fn process_error(name: &str, output: &std::process::Output) -> String {
     let stderr = String::from_utf8_lossy(&output.stderr);
     let stdout = String::from_utf8_lossy(&output.stdout);
@@ -694,7 +665,6 @@ fn process_error(name: &str, output: &std::process::Output) -> String {
         format!("{name} failed: {detail}")
     }
 }
-
 fn write(path: &Path, bytes: &[u8]) -> Result<(), String> {
     if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent)
@@ -702,29 +672,24 @@ fn write(path: &Path, bytes: &[u8]) -> Result<(), String> {
     }
     std::fs::write(path, bytes).map_err(|error| format!("{}: {error}", path.display()))
 }
-
 fn write_if_changed(path: &Path, bytes: &[u8]) -> Result<(), String> {
     if std::fs::read(path).ok().as_deref() == Some(bytes) {
         return Ok(());
     }
     write(path, bytes)
 }
-
 fn write_json<T: Serialize>(path: &Path, value: &T) -> Result<(), String> {
     let mut bytes = serde_json::to_vec_pretty(value).map_err(|error| error.to_string())?;
     bytes.push(b'\n');
     write(path, &bytes)
 }
-
 fn read_json<T: for<'de> Deserialize<'de>>(path: &Path) -> Result<T, String> {
     let bytes = std::fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?;
     serde_json::from_slice(&bytes).map_err(|error| format!("{}: {error}", path.display()))
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;
-
     #[test]
     fn parses_workbench_options() {
         let options = parse_options(&[
@@ -741,7 +706,6 @@ mod tests {
         assert_eq!(options.m2c, Some(PathBuf::from("m2c/m2c.py")));
         assert!(!options.run);
     }
-
     #[test]
     fn validates_owner_stems() {
         assert_eq!(

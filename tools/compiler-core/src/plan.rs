@@ -4,24 +4,19 @@
 //! compiled. Candidate sources need both names. Flag order is behavior because
 //! GCC is later-flag-wins: additions follow the filtered canonical list, and no
 //! unordered container may enter this path.
-
-use std::path::PathBuf;
-
 use crate::bundle::{
     compiler_command_for_target, gcc3_cflags, gcc3_driver, validate_agbcc_bundle, validate_bundle,
     validate_experimental_compiler,
 };
 use crate::bundle_data::GCC3_EXPECTED;
+use crate::nodepath::{basename, extname};
 use crate::routing::{
     agbcc_cflags, agbcc_driver, bundle, cflags_for_target, cflags_for_target_source, root,
     uses_agbcc_compiler, CompilerTarget,
 };
-
-use crate::nodepath::{basename, extname};
-
+use std::path::PathBuf;
 /// Error text is user-facing and retained exactly.
 pub type Result<T> = std::result::Result<T, String>;
-
 /// `Routed` derives the family from routing evidence.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CompilerFamily {
@@ -30,7 +25,6 @@ pub enum CompilerFamily {
     OldAgbcc,
     Gcc3,
 }
-
 /// A resolved family cannot be `Routed`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum ResolvedFamily {
@@ -38,7 +32,6 @@ enum ResolvedFamily {
     OldAgbcc,
     Gcc3,
 }
-
 impl CompilerFamily {
     /// User-facing spelling; changing it changes errors.
     pub fn as_str(self) -> &'static str {
@@ -49,7 +42,6 @@ impl CompilerFamily {
             Self::Gcc3 => "gcc3",
         }
     }
-
     pub fn parse(text: &str) -> Option<Self> {
         Some(match text {
             "routed" => Self::Routed,
@@ -60,13 +52,11 @@ impl CompilerFamily {
         })
     }
 }
-
 impl ResolvedFamily {
     pub fn as_str(self) -> &'static str {
         CompilerFamily::from(self).as_str()
     }
 }
-
 impl From<ResolvedFamily> for CompilerFamily {
     fn from(family: ResolvedFamily) -> Self {
         match family {
@@ -76,14 +66,12 @@ impl From<ResolvedFamily> for CompilerFamily {
         }
     }
 }
-
 /// Ordered flag edits. Do not replace either vector with an unordered container.
 #[derive(Debug, Clone, Default)]
 pub struct CompilerFlagMutations {
     pub add_flags: Vec<String>,
     pub remove_flags: Vec<String>,
 }
-
 /// `None` carries the same defaulting meaning as an omitted option.
 #[derive(Debug, Clone)]
 pub struct SourceToAssemblyPlanOptions {
@@ -99,7 +87,6 @@ pub struct SourceToAssemblyPlanOptions {
     pub preprocessed_output: Option<String>,
     pub dumpbase: Option<String>,
 }
-
 impl SourceToAssemblyPlanOptions {
     pub fn new(
         target: CompilerTarget,
@@ -120,19 +107,16 @@ impl SourceToAssemblyPlanOptions {
         }
     }
 }
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CompilerCommandStep {
     pub kind: StepKind,
     pub command: Vec<String>,
 }
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum StepKind {
     Preprocess,
     Compile,
 }
-
 impl StepKind {
     pub fn as_str(self) -> &'static str {
         match self {
@@ -141,12 +125,10 @@ impl StepKind {
         }
     }
 }
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SourceToAssemblyPlan {
     pub steps: Vec<CompilerCommandStep>,
 }
-
 /// Filter canonical flags, then append additions: GCC's later flag wins.
 /// Conflicts are rejected before filtering, including absent canonical flags.
 pub fn mutated_compiler_flags(
@@ -172,7 +154,6 @@ pub fn mutated_compiler_flags(
     out.extend(added.iter().cloned());
     Ok(out)
 }
-
 /// Preserves the pinned trailing-slash bug: `a.c/` becomes `a..i`. Fixing it
 /// would change a cache-visible intermediate name.
 pub fn inferred_preprocessed_output(output: &str) -> String {
@@ -183,7 +164,6 @@ pub fn inferred_preprocessed_output(output: &str) -> String {
         format!("{}.i", &output[..output.len() - extension.len()])
     }
 }
-
 pub fn source_to_assembly_plan(
     options: &SourceToAssemblyPlanOptions,
 ) -> Result<SourceToAssemblyPlan> {
@@ -204,7 +184,6 @@ pub fn source_to_assembly_plan(
     if family == ResolvedFamily::Gcc3 && options.target != CompilerTarget::Gs1 {
         return Err(format!("{} is only approved for gs1", family.as_str()));
     }
-
     // Only Routed includes per-source flags. Explicit Gcc296 intentionally uses
     // target-base flags; changing that would invalidate recorded sweeps.
     let canonical: Vec<String> = if requested_family == CompilerFamily::Routed {
@@ -222,7 +201,6 @@ pub fn source_to_assembly_plan(
         .clone()
         .unwrap_or_else(|| basename(&options.routing_source).to_string());
     let mut steps: Vec<CompilerCommandStep> = Vec::new();
-
     if family != ResolvedFamily::Gcc296 {
         let driver: PathBuf = match family {
             ResolvedFamily::OldAgbcc => agbcc_driver(),
@@ -281,10 +259,8 @@ pub fn source_to_assembly_plan(
             command: compiler_command_for_target(options.target, &arguments)?,
         });
     }
-
     Ok(SourceToAssemblyPlan { steps })
 }
-
 /// Direct hot-search preprocessing, defaulting the reported GCC minor to 96.
 pub fn direct_preprocessor_command(input: &str, output: &str) -> Result<Vec<String>> {
     direct_preprocessor_command_for_target_with_minor_and_flags(
@@ -295,7 +271,6 @@ pub fn direct_preprocessor_command(input: &str, output: &str) -> Result<Vec<Stri
         &[],
     )
 }
-
 fn direct_preprocessor_command_for_target_with_minor_and_flags(
     target: CompilerTarget,
     input: &str,
@@ -337,11 +312,9 @@ fn direct_preprocessor_command_for_target_with_minor_and_flags(
     command.push(output.to_string());
     Ok(command)
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;
-
     #[test]
     fn edition_define_stays_in_old_agbcc_preprocessor_step() {
         let mut options = SourceToAssemblyPlanOptions::new(
@@ -352,7 +325,6 @@ mod tests {
         );
         options.family = Some(CompilerFamily::OldAgbcc);
         options.preprocessor_flags = vec!["-DGS1_EDITION_JA=1".into()];
-
         let plan = source_to_assembly_plan(&options).unwrap();
         assert!(plan.steps[0]
             .command
@@ -363,7 +335,6 @@ mod tests {
             .iter()
             .any(|argument| argument.starts_with("-DGS1_EDITION_")));
     }
-
     #[test]
     fn edition_define_reaches_gcc296_driver() {
         let mut options = SourceToAssemblyPlanOptions::new(
@@ -374,7 +345,6 @@ mod tests {
         );
         options.family = Some(CompilerFamily::Gcc296);
         options.preprocessor_flags = vec!["-DGS2_EDITION_IT=1".into()];
-
         let plan = source_to_assembly_plan(&options).unwrap();
         assert_eq!(plan.steps.len(), 1);
         assert!(plan.steps[0]
@@ -382,7 +352,6 @@ mod tests {
             .iter()
             .any(|argument| argument == "-DGS2_EDITION_IT=1"));
     }
-
     #[test]
     fn shared_gs2_audio_owner_routes_through_old_agbcc() {
         let mut options = SourceToAssemblyPlanOptions::new(
@@ -392,7 +361,6 @@ mod tests {
             "candidate.s",
         );
         options.preprocessor_flags = vec!["-DGS2_EDITION_JA=1".into()];
-
         let plan = source_to_assembly_plan(&options).unwrap();
         assert!(plan.steps[1].command[0].ends_with("/agbcc/old_agbcc"));
         assert!(plan.steps[0]

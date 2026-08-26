@@ -788,7 +788,6 @@ mod tests {
     use crate::audited_span;
     use std::fs;
     use tempfile::tempdir;
-
     #[test]
     fn recognizes_only_standalone_wide_thumb_transfers() {
         assert_eq!(
@@ -809,7 +808,6 @@ mod tests {
         assert!(thumb_standalone_wide_transfer_lines("@ stmia r3!, {r0-r2}").is_empty());
         assert!(thumb_standalone_wide_transfer_lines("\tpush {r4, r5, lr}").is_empty());
     }
-
     #[test]
     fn audit_reports_a_placeholder_without_exact_source() {
         let root = tempdir().unwrap();
@@ -824,7 +822,6 @@ mod tests {
         assert_eq!(findings.len(), 1);
         assert!(findings[0].contains("resource_382:0200dead\tMISSING_SOURCE\t"));
     }
-
     #[test]
     fn literal_pool_address_is_not_adoptable() {
         let root = tempdir().unwrap();

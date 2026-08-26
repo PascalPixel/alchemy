@@ -63,15 +63,11 @@ fn run(mut options: crate::cli::Options) -> Result<String, String> {
         std::fs::write(&path, reference).map_err(|error| format!("{}: {error}", path.display()))?;
         options.rom = Some(path.to_string_lossy().into_owned());
     }
-    if let Some(address) = options.owner {
-        let owner = unit
-            .owners
-            .iter()
-            .find(|owner| owner.address == address)
-            .ok_or_else(|| format!("{id} does not declare 0x{address:08x}"))?;
-        options.size = Some(owner.extent);
-        return render(root(), &options)
-            .map(|output| format!("owner=0x{address:08x}\n{}", output.stdout));
+    let selected_owner = options.owner;
+    if let Some(address) = selected_owner {
+        if !unit.owners.iter().any(|owner| owner.address == address) {
+            return Err(format!("{id} does not declare 0x{address:08x}"));
+        }
     }
     let mut output = String::new();
     let mut layout_mismatches = Vec::new();
@@ -107,7 +103,12 @@ fn run(mut options: crate::cli::Options) -> Result<String, String> {
                 ));
             }
         }
-        output.push_str(&format!("owner={address_text}\n{}", rendered.stdout));
+        if selected_owner.is_none() || selected_owner == Some(address) {
+            output.push_str(&format!(
+                "scope=translation-unit\nowner={address_text}\n{}",
+                rendered.stdout
+            ));
+        }
     }
     if !layout_mismatches.is_empty() {
         output.push_str(&format!(
@@ -203,6 +204,8 @@ mod tests {
         let arguments = [
             "--unit",
             "scene-event-runtime",
+            "--owner",
+            "0200003c",
             "--patch",
             patch.to_str().unwrap(),
             "--first",
@@ -222,9 +225,11 @@ mod tests {
         assert!(std::fs::read_to_string(staged)
             .unwrap()
             .contains("../../../include/types.h"));
-        assert_eq!(output.matches("differing_halfwords=0").count(), 5);
-        assert_eq!(output.matches("compile=fresh").count(), 1);
-        assert_eq!(output.matches("compile=shared-object").count(), 4);
+        assert_eq!(output.matches("scope=translation-unit").count(), 1);
+        assert_eq!(output.matches("owner=0x0200003c").count(), 1);
+        assert_eq!(output.matches("differing_halfwords=0").count(), 1);
+        assert_eq!(output.matches("compile=fresh").count(), 0);
+        assert_eq!(output.matches("compile=shared-object").count(), 1);
         let _ = std::fs::remove_dir_all(work);
     }
 }

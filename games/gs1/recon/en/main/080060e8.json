@@ -45,6 +45,7 @@
     "Post-incremented scalar DMA pointer: 120/116 bytes and 47 differing halfwords; it emits individual single-register STMIA stores rather than the reference burst.",
     "Local DMA aggregate copy: 128/116 bytes and 59 differing halfwords; it introduces a stack temporary and an LDMIA/STMIA pair.",
     "Plain static-inline scalar and aggregate helpers: 124/116 with 58 differing halfwords and 120/116 with 51 differing halfwords respectively.",
+    "Shared static-inline descriptor-by-value writer: canonical full-unit compilation emits an unsupported memcpy external before owner scoring, so it cannot provide the standalone register burst.",
     "Direct DMA macro: 120/116 bytes and 40 differing halfwords; it is the closest ordinary-C form but still emits three STR instructions."
   ],
   "remaining": "The reference's 12-byte DMA write is a three-register STMIA followed by base restoration. Across the bounded ordinary-C shapes, canonical GCC 2.96 either emits scalar stores, individual post-increment stores, or a block-copy LDMIA/STMIA pair. No source shape reached zero linked differences, so the structured assembly remains installed.",

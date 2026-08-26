@@ -19,7 +19,8 @@
     "volatile compound DMA-register aggregate assignment: canonical score unchanged",
     "word-typed DMA-register aggregate assignment: canonical score unchanged",
     "local three-word descriptor followed by assignment: emits a related LDMIA/STMIA copy, but adds a 12-byte stack object (80 versus 72 bytes; 36 differing halfwords)",
-    "volatile and ordinary word-pointer post-increment stores: retain the 72-byte extent but emit separate one-register stores rather than the reference grouped store"
+    "volatile and ordinary word-pointer post-increment stores: retain the 72-byte extent but emit separate one-register stores rather than the reference grouped store",
+    "static inline three-scalar DMA publisher: retains scalar stores, grows to 76 versus 72 bytes, and scores 30 differing halfwords"
   ],
   "remaining": "The reference groups the source, allocated destination, and control word in a writeback three-register store, then restores the DMA base. Canonical ordinary-C shapes instead keep those values in a nonconsecutive allocation or introduce a stack descriptor. GCC 2.96's Thumb block-copy path explains the local-descriptor LDMIA/STMIA result, but does not account for the reference's standalone grouped store. The shared original DMA-write source shape remains unknown; neither adoption nor a permanent compiler classification is justified.",
   "notes": [

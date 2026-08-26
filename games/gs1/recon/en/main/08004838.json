@@ -7,7 +7,7 @@
   "executable_owner_bytes": 32,
   "candidate_bytes": 32,
   "differing_halfwords": 8,
-  "wrong_instructions": 9,
+  "wrong_instructions": 14,
   "classification": "palette-dma-transfer",
   "cross_edition": {
     "editions": ["ja", "en", "de", "es", "fr", "it"],
@@ -23,7 +23,7 @@
     "best_structural_rows": 5
   },
   "notes": [
-    "Publishes a source address, palette destination, and transfer control word through DMA3.",
+    "Publishes a source address, palette destination, and transfer control word through DMA3. The current standalone canonical score is 32/32 bytes, 8 differing halfwords, and 14 wrong instructions.",
     "The retained owner is already covered by the proven thumb_multiple_transfer_module matcher: its standalone three-register STMIA cannot be emitted from ordinary approved C by the target compiler. No duplicate permanent classification was added."
   ]
 }

@@ -15,11 +15,11 @@
     "address_spaces_with_targets": 85,
     "target_count": 1604,
     "target_scope_bytes": 808090,
-    "target_bytes": 646678,
+    "target_bytes": 646490,
     "tracked_c_bytes": 44554,
-    "assembly_bytes": 602124,
-    "exact_c_leverage_bytes": 66400,
-    "permanent_assembly_leverage_bytes": 95012,
+    "assembly_bytes": 601936,
+    "exact_c_leverage_bytes": 66936,
+    "permanent_assembly_leverage_bytes": 94664,
     "resolved_only_bytes": 540368
   },
   "targets": [
@@ -1292,8 +1292,8 @@
       "target_bytes": 644,
       "tracked_c_bytes": 0,
       "assembly_bytes": 644,
-      "exact_c_leverage_bytes": 808,
-      "permanent_assembly_bytes": 348
+      "exact_c_leverage_bytes": 1156,
+      "permanent_assembly_bytes": 0
     },
     {
       "rank": 107,
@@ -1697,10 +1697,10 @@
       "address": "0x08092b94",
       "label": "0x08092b94–0x080930ba",
       "scope_bytes": 1318,
-      "target_bytes": 1024,
+      "target_bytes": 836,
       "tracked_c_bytes": 0,
-      "assembly_bytes": 1024,
-      "exact_c_leverage_bytes": 294,
+      "assembly_bytes": 836,
+      "exact_c_leverage_bytes": 482,
       "permanent_assembly_bytes": 0
     },
     {

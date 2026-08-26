@@ -1,18 +1,18 @@
 #include "types.h"
 
-struct FieldDisplayState {
+struct DisplayScrollState {
     u8 padding000[0xf00];
     u8 page;
 };
 
-extern struct FieldDisplayState *Data_03001ed8;
+extern struct DisplayScrollState *Data_03001ed8;
 
-#define FieldScroll_ArmHBlankDma Func_080944ec
+#define DisplayScroll_ArmHBlankDma Func_080944ec
 
-void FieldScroll_ArmHBlankDma(void)
+void DisplayScroll_ArmHBlankDma(void)
 {
     volatile u32 *dma;
-    struct FieldDisplayState *state;
+    struct DisplayScrollState *state;
     u32 *source;
     u32 control;
     u16 status;

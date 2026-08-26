@@ -1,18 +1,18 @@
 #include "types.h"
 
-struct FieldEffectDmaTransfer {
+struct DisplayTransitionDmaTransfer {
     const void *source;
     void *destination;
     u32 control;
 };
 
-struct FieldEffectState {
+struct DisplayTransitionState {
     u8 data[0x528];
     s16 value;
     s16 timer;
 };
 
-#define START_FIELD_EFFECT_DMA(source_, destination_, control_) do { \
+#define START_DISPLAY_TRANSITION_DMA(source_, destination_, control_) do { \
     register u32 dma_source = (u32)(source_); \
     register u32 dma_destination = (u32)(destination_); \
     register u32 dma_control = (control_); \
@@ -28,16 +28,16 @@ void Func_080041d8(void (*)(void), s32);
 void Func_080030f8(u32);
 void Func_08090658(void);
 
-#define FieldEffect_InitializeState Func_08090824
+#define DisplayTransition_InitializeState Func_08090824
 
-void FieldEffect_InitializeState(s32 value)
+void DisplayTransition_InitializeState(s32 value)
 {
-    struct FieldEffectState *state;
+    struct DisplayTransitionState *state;
     u32 zero;
 
     state = Func_080048f4(0x1f, 0x540);
     zero = 0;
-    START_FIELD_EFFECT_DMA(&zero, state, 0x85000150);
+    START_DISPLAY_TRANSITION_DMA(&zero, state, 0x85000150);
     Func_080907b0(0);
     state->value = value;
     state->timer = 0;

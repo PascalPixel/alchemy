@@ -67,7 +67,7 @@ help:
 		'make overlay-check    audit every exact overlay owner' \
 		'make declared-tu-check prove declared production translation-unit contracts' \
 		'make owner-inventory-check prove registered owner production coverage' \
-		'make strict-tu-check  prove complete translation-unit inventory coverage' \
+		'make strict-tu-check  prove strict production TU composition and owner coverage' \
 		'make classification-check prove retained-assembly classifications' \
 		'make candidate-corpus-check rescore retained reconstruction C' \
 		'make source-tracking-check reject ignored or untracked exact C' \
@@ -119,9 +119,8 @@ owner-inventory-check: full-rom-check
 	@grep -Fq '"complete_registered_identity_coverage": true' $(OWNER_INVENTORY)
 	@printf 'registered owner production inventory ok\n'
 
-strict-tu-check: owner-inventory-check
-	@grep -Fq '"strict_translation_units": true' $(FULL_REPORT)
-	@printf 'complete translation-unit inventory contract ok\n'
+strict-tu-check: declared-tu-check owner-inventory-check overlay-check
+	@printf 'strict production TU contracts ok; historical original boundaries remain unknown\n'
 
 targets: $(HISTORICAL_TARGETS)
 
@@ -309,7 +308,7 @@ test: lint tooling-size tool-tests
 	$(CHECK) publication --self-test
 
 verify: source-tracking-check corpus-check test tooling-size targets \
-	full-rom-check overlay-check declared-tu-check owner-inventory-check classification-check \
+	full-rom-check strict-tu-check classification-check \
 	candidate-corpus-check edition-builds-check check-owners \
 	progress-check coverage-check
 

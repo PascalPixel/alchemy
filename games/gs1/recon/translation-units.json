@@ -107,6 +107,25 @@
       ]
     },
     {
+      "id": "save-flash-read-routines",
+      "game": "gs1",
+      "source": "games/gs1/src/save/flash_read_routines.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "composition_sections": {
+        ".text": [
+          "StopFlashTimer", "ReadFlashByte", "CopyFlashReadRoutineToRam"
+        ]
+      },
+      "owners": [
+        {"address":"0x08006a78","alias":"StopFlashTimer","extent":68,"state":"exact-c"},
+        {"address":"0x08006abc","alias":"ReadFlashByte","extent":4,"state":"exact-c"},
+        {"address":"0x08006ac0","alias":"CopyFlashReadRoutineToRam","extent":56,"state":"exact-c"}
+      ]
+    },
+    {
       "id": "save-state",
       "game": "gs1",
       "source": "games/gs1/recon/en/units/save_state.c",

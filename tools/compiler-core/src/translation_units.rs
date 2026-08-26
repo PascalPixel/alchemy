@@ -216,6 +216,9 @@ impl TranslationUnits {
             for (name, symbol) in &unit.absolute_symbols {
                 if !c_identifier(name)
                     || (symbol.kind != AbsoluteSymbolKind::Data && symbol.address & 1 != 0)
+                    || (unit.overlay.is_some()
+                        && (symbol.kind != AbsoluteSymbolKind::Data
+                            || names.main_symbol(name)?.is_some()))
                 {
                     return Err(format!("{}: invalid absolute symbol {name:?}", unit.id));
                 }

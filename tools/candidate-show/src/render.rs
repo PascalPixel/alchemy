@@ -593,7 +593,6 @@ fn source_cache_key(
         bundle.as_bytes(),
     )
 }
-
 fn source_cache_key_with_environment(
     source: &str,
     routing_source: &str,
@@ -675,7 +674,6 @@ fn source_cache_key_with_environment(
     }
     Ok(compiler_core::sha256::hex(&hasher.finalize()))
 }
-
 fn source_input_signature(
     root: &Path,
     source: &str,
@@ -699,11 +697,9 @@ fn source_input_signature(
         .collect::<Vec<_>>();
     source_tree_signature(&source, &include_dirs)
 }
-
 #[cfg(test)]
 mod cache_key_tests {
     use super::*;
-
     #[test]
     fn compiler_route_flags_host_and_bundle_are_cache_identity() {
         let source = std::env::temp_dir().join("candidate-show-cache-key.c");

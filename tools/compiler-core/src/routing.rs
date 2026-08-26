@@ -1,10 +1,7 @@
 //! Compiler routing; `routing_data` is the sole table source.
-
+use crate::routing_data::*;
 use std::path::{Path, PathBuf};
 use std::sync::OnceLock;
-
-use crate::routing_data::*;
-
 /// Repository root: `<crate>/../..`.
 pub fn root() -> &'static Path {
     static ROOT: OnceLock<PathBuf> = OnceLock::new();
@@ -17,7 +14,6 @@ pub fn root() -> &'static Path {
             .to_path_buf()
     })
 }
-
 pub fn bundle() -> PathBuf {
     root().join("alchemy-gcc").join("dist")
 }
@@ -27,13 +23,11 @@ pub fn driver() -> PathBuf {
 pub fn agbcc_driver() -> PathBuf {
     bundle().join("agbcc").join("old_agbcc")
 }
-
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum CompilerTarget {
     Gs1,
     Gs2,
 }
-
 impl CompilerTarget {
     pub fn as_str(self) -> &'static str {
         match self {
@@ -42,7 +36,6 @@ impl CompilerTarget {
         }
     }
 }
-
 fn include_flag(target: CompilerTarget) -> String {
     format!(
         "-I{}",
@@ -53,7 +46,6 @@ fn include_flag(target: CompilerTarget) -> String {
             .display()
     )
 }
-
 fn base_cflags(target: CompilerTarget) -> Vec<String> {
     [
         "-O2",
@@ -70,29 +62,24 @@ fn base_cflags(target: CompilerTarget) -> Vec<String> {
     .chain(std::iter::once(include_flag(target)))
     .collect()
 }
-
 pub fn cflags() -> Vec<String> {
     base_cflags(CompilerTarget::Gs1)
 }
-
 pub fn agbcc_cflags() -> Vec<String> {
     ["-mthumb-interwork", "-O2", "-fno-builtin", "-ffreestanding"]
         .iter()
         .map(|s| (*s).to_string())
         .collect()
 }
-
 pub fn cflags_for_target(target: CompilerTarget) -> Vec<String> {
     match target {
         CompilerTarget::Gs1 => cflags(),
         CompilerTarget::Gs2 => base_cflags(CompilerTarget::Gs2),
     }
 }
-
 #[cfg(test)]
 mod target_tests {
     use super::*;
-
     #[test]
     fn each_game_uses_its_own_include_tree() {
         let gs1 = cflags_for_target(CompilerTarget::Gs1);
@@ -101,7 +88,6 @@ mod target_tests {
         assert!(gs2.iter().any(|flag| flag.ends_with("/games/gs2/include")));
         assert!(!gs2.iter().any(|flag| flag.ends_with("/games/gs1/include")));
     }
-
     #[test]
     fn grouped_runtime_candidates_use_canonical_flags() {
         for owner in [
@@ -126,7 +112,6 @@ mod target_tests {
         }
     }
 }
-
 /// `basename(source, extname(source))` for POSIX paths.
 fn source_stem_ref(source: &str) -> &str {
     let base = source.rsplit('/').next().unwrap_or(source);
@@ -136,18 +121,15 @@ fn source_stem_ref(source: &str) -> &str {
         _ => base,
     }
 }
-
 pub fn source_stem(source: &str) -> String {
     source_stem_ref(source).to_string()
 }
-
 fn is_hex8(value: &str) -> bool {
     value.len() == 8
         && value
             .bytes()
             .all(|b| b.is_ascii_hexdigit() && !b.is_ascii_uppercase())
 }
-
 /// `overlayStem`: an overlay row routes by its bare address, so a candidate
 /// verified as `<addr>.c` and the installed `<overlay>_c_<addr>.c` agree.
 fn overlay_stem(source: &str) -> &str {
@@ -163,22 +145,18 @@ fn overlay_stem(source: &str) -> &str {
     }
     stem
 }
-
 fn has(table: &'static [&'static str], value: &str) -> bool {
     table.contains(&value)
 }
-
 /// Overlay flags follow an owner across adopt/park path changes. Path-keyed
 /// matching would silently drop sanctioned flags after either move.
 fn has_owner(table: &'static [&'static str], source: &str) -> bool {
     let stem = source_stem_ref(source);
     table.iter().any(|entry| source_stem_ref(entry) == stem)
 }
-
 /// Append order is load-bearing because later driver options win.
 pub fn cflags_for_source(source: &str) -> Vec<String> {
     let stem = overlay_stem(source);
-
     // Overrides must be evidenced stock GCC 2.96 options, never source disguises.
     let mut out: Vec<String> =
         if has(NO_INTERWORK_SOURCES, stem) || has_owner(NO_INTERWORK_OVERLAY_SOURCES, source) {
@@ -189,12 +167,10 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
         } else {
             cflags()
         };
-
     // These soft-float leaves require the stock ABI with r4 callee-saved.
     if has_owner(CALLEE_SAVED_R4_OVERLAY_SOURCES, source) || has(CALLEE_SAVED_R4_SOURCES, stem) {
         out.retain(|f| f != "-fcall-used-r4");
     }
-
     for (matched, flag) in [
         (has(FIXED_R3_SOURCES, stem), "-ffixed-r3"),
         (has(OPTIMIZE_O1_SOURCES, stem), "-O1"),
@@ -266,10 +242,8 @@ pub fn cflags_for_source(source: &str) -> Vec<String> {
             out.push(flag.to_string());
         }
     }
-
     out
 }
-
 pub fn uses_agbcc_compiler(target: CompilerTarget, source: &str) -> bool {
     let stem = source_stem_ref(source);
     match target {
@@ -277,7 +251,6 @@ pub fn uses_agbcc_compiler(target: CompilerTarget, source: &str) -> bool {
         CompilerTarget::Gs2 => has(GS2_AGBCC_SOURCES, stem),
     }
 }
-
 pub fn cflags_for_target_source(target: CompilerTarget, source: &str) -> Vec<String> {
     let stem = source_stem_ref(source);
     if uses_agbcc_compiler(target, source) {

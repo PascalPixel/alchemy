@@ -1,12 +1,12 @@
 {
   "span_bytes":72,
-  "score":{"measured":"2026-08-24","candidate_bytes":76,"reference_bytes":72,"wrong_instructions":20,"differing_halfwords":27,"class":"compiler-constant-allocation"},
+  "score":{"measured":"2026-08-25","candidate_bytes":72,"reference_bytes":72,"wrong_instructions":0,"differing_halfwords":0,"class":"exact"},
   "shape":{"calls":7,"loops":0,"memory_operations":0,"reference_high_register_moves":0},
   "verified_against_reference":[
     "complete reconstruction accounts for the input lifetime, message base and increments, all seven calls, all branches, and every argument",
-    "the ROM retains message base 0x28be in r5 and input in r6; approved compiler direct integer, typed pointer, and register-pointer forms propagate the three message constants instead",
-    "the source variants produce no exact emission and the best bounded form remains 76 bytes versus the 72-byte owner"
+    "the adopted register-local message base preserves the ROM's input and message-base allocation across the call sequence",
+    "linked candidate and reference are byte-identical across the complete 72-byte owner"
   ],
-  "retention":"keep_structured_asm",
-  "note":"Retained because approved compiler constant propagation replaces the ROM's persistent message-base allocation."
+  "retention":"adopted_exact_c",
+  "note":"Earlier source variants did not preserve the message-base allocation; the adopted register-local ordinary-C form does."
 }

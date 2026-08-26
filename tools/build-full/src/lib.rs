@@ -1,20 +1,16 @@
 //! Compose the claimed C, retained assembly, and asset outputs into the full ROM.
-
 pub mod cli;
-
-use std::collections::BTreeSet;
-use std::path::{Path, PathBuf};
-use std::process::{Command, Stdio};
-
 use canonical_json::canonical_json;
-use compiler_core::translation_units::{OwnerState, TranslationUnits};
+use compiler_core::source_paths::{SourceOwner, SourcePaths};
+use compiler_core::translation_units::{AbsoluteSymbolKind, OwnerState, TranslationUnits};
 use decomp_targets::{
     parse_decomp_target, target_for, BuildSupport, DecompTargetId, DEFAULT_TARGET,
 };
 use serde_json::{json, Map, Number, Value};
-
+use std::collections::{BTreeMap, BTreeSet};
+use std::path::{Path, PathBuf};
+use std::process::{Command, Stdio};
 const ROM_BASE: u64 = 0x0800_0000;
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Options {
     pub target: DecompTargetId,
@@ -27,19 +23,16 @@ pub struct Options {
     pub asset_output: String,
     pub jobs: usize,
 }
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ParseOutcome {
     Help,
     Run(Options),
 }
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GapRegion {
     pub address: u64,
     pub size: usize,
 }
-
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct AssemblyAccounting {
     pub c_debt_regions: usize,
@@ -47,14 +40,12 @@ pub struct AssemblyAccounting {
     pub retained_regions: usize,
     pub retained_bytes: usize,
 }
-
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct ReconstructionProgress {
     pub bytes: usize,
     pub remaining_bytes: usize,
     pub percent: f64,
 }
-
 #[derive(Debug, Clone)]
 struct Region {
     address: u64,
@@ -65,14 +56,18 @@ struct Region {
     translation_unit: Option<String>,
     composition: Option<String>,
     byte_verification: Option<String>,
+    source: Option<String>,
+    symbols: Vec<String>,
+    run_address: Option<u64>,
+    origin: Option<String>,
+    confidence: Option<String>,
+    evidence: Option<String>,
 }
-
 impl Region {
     fn is_owner(&self, address: u64, size: usize) -> bool {
         self.address == address && self.size == size
     }
 }
-
 pub fn repository_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -80,13 +75,11 @@ pub fn repository_root() -> PathBuf {
         .expect("build-full lives under tools")
         .to_path_buf()
 }
-
 fn default_jobs() -> usize {
     std::thread::available_parallelism()
         .map_or(1, usize::from)
         .min(16)
 }
-
 fn defaults(target_id: DecompTargetId) -> Options {
     let target = target_for(target_id);
     let full = Path::new(target.output_dir).join("full");
@@ -102,7 +95,6 @@ fn defaults(target_id: DecompTargetId) -> Options {
         jobs: default_jobs(),
     }
 }
-
 pub fn parse_args(argv: &[String]) -> Result<ParseOutcome, String> {
     if argv.iter().any(|arg| arg == "-h" || arg == "--help") {
         return Ok(ParseOutcome::Help);
@@ -179,7 +171,6 @@ pub fn parse_args(argv: &[String]) -> Result<ParseOutcome, String> {
     }
     Ok(ParseOutcome::Run(options))
 }
-
 fn parse_jobs(value: &str) -> Result<usize, String> {
     let digits: String = value
         .chars()
@@ -191,7 +182,6 @@ fn parse_jobs(value: &str) -> Result<usize, String> {
         .map(|jobs| jobs as usize)
         .ok_or_else(|| "jobs must be positive".into())
 }
-
 fn rooted(root: &Path, value: &str) -> PathBuf {
     let path = Path::new(value);
     if path.is_absolute() {
@@ -200,7 +190,6 @@ fn rooted(root: &Path, value: &str) -> PathBuf {
         root.join(path)
     }
 }
-
 fn has_assembly_sources(directory: &Path) -> Result<bool, String> {
     for entry in
         std::fs::read_dir(directory).map_err(|error| format!("{}: {error}", directory.display()))?
@@ -221,7 +210,6 @@ fn has_assembly_sources(directory: &Path) -> Result<bool, String> {
     }
     Ok(false)
 }
-
 fn run(root: &Path, command: &[String]) -> Result<(), String> {
     let (program, args) = command.split_first().ok_or("empty command")?;
     let status = Command::new(program)
@@ -242,7 +230,6 @@ fn run(root: &Path, command: &[String]) -> Result<(), String> {
         ))
     }
 }
-
 /// Run a `build-stage` subcommand, except for the separate asset binary.
 fn cargo_child(root: &Path, stage: &str) -> Vec<String> {
     let manifest = match stage {
@@ -264,19 +251,23 @@ fn cargo_child(root: &Path, stage: &str) -> Vec<String> {
     }
     command
 }
-
 fn read_json(path: &Path) -> Result<Value, String> {
     let data = std::fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?;
     serde_json::from_slice(&data).map_err(|error| format!("{}: {error}", path.display()))
 }
-
 fn value_u64(value: &Value, label: &str) -> Result<u64, String> {
     value
         .as_u64()
-        .or_else(|| value.as_str()?.parse().ok())
+        .or_else(|| {
+            let text = value.as_str()?.trim();
+            u64::from_str_radix(
+                text.strip_prefix("0x").unwrap_or(text),
+                if text.starts_with("0x") { 16 } else { 10 },
+            )
+            .ok()
+        })
         .ok_or_else(|| format!("invalid {label}"))
 }
-
 fn regions(document: &Value) -> Result<Vec<Region>, String> {
     document["regions"]
         .as_array()
@@ -294,11 +285,26 @@ fn regions(document: &Value) -> Result<Vec<Region>, String> {
                 translation_unit: item["translation_unit"].as_str().map(str::to_string),
                 composition: item["composition"].as_str().map(str::to_string),
                 byte_verification: item["byte_verification"].as_str().map(str::to_string),
+                source: item["source"].as_str().map(str::to_string),
+                symbols: item["symbols"]
+                    .as_array()
+                    .into_iter()
+                    .flatten()
+                    .filter_map(|symbol| symbol.as_str().map(str::to_string))
+                    .chain(item["symbol"].as_str().map(str::to_string))
+                    .collect::<BTreeSet<_>>()
+                    .into_iter()
+                    .collect(),
+                run_address: item["run_address"]
+                    .as_u64()
+                    .or_else(|| item["run_address"].as_str()?.parse().ok()),
+                origin: item["origin"].as_str().map(str::to_string),
+                confidence: item["confidence"].as_str().map(str::to_string),
+                evidence: item["evidence"].as_str().map(str::to_string),
             })
         })
         .collect()
 }
-
 pub fn unowned_regions(mask: &[u8], base: u64) -> Result<Vec<GapRegion>, String> {
     if base
         .checked_add(mask.len() as u64)
@@ -327,7 +333,6 @@ pub fn unowned_regions(mask: &[u8], base: u64) -> Result<Vec<GapRegion>, String>
     }
     Ok(result)
 }
-
 fn assembly_accounting(regions: &[Region]) -> Result<AssemblyAccounting, String> {
     let debt = [
         "c_candidate",
@@ -362,7 +367,6 @@ fn assembly_accounting(regions: &[Region]) -> Result<AssemblyAccounting, String>
     }
     Ok(result)
 }
-
 fn validate_alignments(claimed: &[Region], assembly: &[Region]) -> Result<(), String> {
     let bodies = claimed.iter().chain(
         assembly
@@ -391,13 +395,565 @@ fn validate_alignments(claimed: &[Region], assembly: &[Region]) -> Result<(), St
     }
     Ok(())
 }
-
+struct RegisteredOwnerCoverage {
+    registered: usize,
+    registered_main: usize,
+    registered_overlay: usize,
+    declared: usize,
+    declared_main: usize,
+    declared_overlay: usize,
+    missing: usize,
+    unexpected: usize,
+}
+fn registered_owner_coverage(
+    root: &Path,
+    units: &TranslationUnits,
+) -> Result<RegisteredOwnerCoverage, String> {
+    let registered = SourcePaths::load(root)?
+        .registered_owners()
+        .collect::<BTreeSet<_>>();
+    let mut declared = BTreeSet::new();
+    for unit in &units.units {
+        for (address, _, _) in unit.symbols() {
+            declared.insert(unit.source_owner(address)?);
+        }
+    }
+    let count = |owners: &BTreeSet<SourceOwner>, main| {
+        owners
+            .iter()
+            .filter(|owner| owner.is_main() == main)
+            .count()
+    };
+    Ok(RegisteredOwnerCoverage {
+        registered: registered.len(),
+        registered_main: count(&registered, true),
+        registered_overlay: count(&registered, false),
+        declared: declared.len(),
+        declared_main: count(&declared, true),
+        declared_overlay: count(&declared, false),
+        missing: registered.difference(&declared).count(),
+        unexpected: declared.difference(&registered).count(),
+    })
+}
+#[derive(Clone)]
+struct InventoryMember {
+    unit: String,
+    source: String,
+    role: &'static str,
+    ordinal: usize,
+    state: Option<&'static str>,
+    alias: String,
+    extent: usize,
+}
+fn owner_state(state: OwnerState) -> &'static str {
+    match state {
+        OwnerState::ExactC => "exact-c",
+        OwnerState::RetainedAssembly => "retained-assembly",
+    }
+}
+fn absolute_kind(kind: AbsoluteSymbolKind) -> &'static str {
+    match kind {
+        AbsoluteSymbolKind::Data => "data",
+        AbsoluteSymbolKind::Thumb => "thumb",
+        AbsoluteSymbolKind::Arm => "arm",
+    }
+}
+fn region_starts<'a>(
+    regions: &'a [Region],
+    label: &str,
+) -> Result<BTreeMap<u64, &'a Region>, String> {
+    let mut starts = BTreeMap::new();
+    for region in regions {
+        if starts.insert(region.address, region).is_some() {
+            return Err(format!(
+                "duplicate {label} region at 0x{:08x}",
+                region.address
+            ));
+        }
+    }
+    Ok(starts)
+}
+fn claimed_symbols<'a>(regions: &'a [Region]) -> Result<BTreeMap<String, &'a Region>, String> {
+    let mut symbols = BTreeMap::new();
+    for region in regions {
+        for symbol in &region.symbols {
+            if symbols.insert(symbol.clone(), region).is_some() {
+                return Err(format!("duplicate claimed symbol {symbol}"));
+            }
+        }
+    }
+    Ok(symbols)
+}
+struct LinkedFunction<'a> {
+    address: u64,
+    size: usize,
+    artifact: &'a Region,
+}
+fn linked_functions<'a>(
+    document: &Value,
+    symbols: &BTreeMap<String, &'a Region>,
+) -> Result<BTreeMap<String, LinkedFunction<'a>>, String> {
+    let rows = document["functions"]
+        .as_array()
+        .ok_or("claimed manifest lacks linked function extents")?;
+    let mut functions = BTreeMap::new();
+    for row in rows {
+        let symbol = row["symbol"]
+            .as_str()
+            .ok_or("linked function lacks symbol")?;
+        let address = value_u64(&row["address"], "linked function address")?;
+        let size = value_u64(&row["size"], "linked function size")? as usize;
+        let module = row["module"]
+            .as_str()
+            .ok_or("linked function lacks module")?;
+        if symbol != format!("Func_{address:08x}") || size == 0 {
+            return Err(format!("invalid linked function {symbol}"));
+        }
+        let artifact = symbols
+            .get(module)
+            .copied()
+            .ok_or_else(|| format!("{symbol}: missing claimed module {module}"))?;
+        if !artifact.symbols.iter().any(|item| item == symbol) {
+            return Err(format!("{symbol}: module {module} does not export it"));
+        }
+        if functions
+            .insert(
+                symbol.into(),
+                LinkedFunction {
+                    address,
+                    size,
+                    artifact,
+                },
+            )
+            .is_some()
+        {
+            return Err(format!("duplicate linked function {symbol}"));
+        }
+    }
+    Ok(functions)
+}
+fn inventory_members(
+    units: &TranslationUnits,
+) -> Result<BTreeMap<SourceOwner, InventoryMember>, String> {
+    let mut members = BTreeMap::new();
+    for unit in units.units.iter().filter(|unit| unit.game == "gs1") {
+        for (ordinal, owner) in unit.owners.iter().enumerate() {
+            let key = unit.source_owner(owner.address)?;
+            let value = InventoryMember {
+                unit: unit.id.clone(),
+                source: unit.source.to_string_lossy().into_owned(),
+                role: "owner",
+                ordinal,
+                state: Some(owner_state(owner.state)),
+                alias: owner.alias.clone(),
+                extent: owner.extent,
+            };
+            if members.insert(key, value).is_some() {
+                return Err(format!("duplicate reconstruction-unit member {}", key.id()));
+            }
+        }
+        for (ordinal, symbol) in unit.local_symbols.iter().enumerate() {
+            let key = unit.source_owner(symbol.address)?;
+            let value = InventoryMember {
+                unit: unit.id.clone(),
+                source: unit.source.to_string_lossy().into_owned(),
+                role: "local-symbol",
+                ordinal,
+                state: None,
+                alias: symbol.alias.clone(),
+                extent: symbol.extent,
+            };
+            if members.insert(key, value).is_some() {
+                return Err(format!("duplicate reconstruction-unit member {}", key.id()));
+            }
+        }
+    }
+    Ok(members)
+}
+fn source_group(source: &str) -> Option<String> {
+    Path::new(source)
+        .strip_prefix("games/gs1/src")
+        .ok()?
+        .parent()?
+        .to_str()
+        .filter(|group| !group.is_empty())
+        .map(str::to_string)
+}
+fn source_path(paths: &SourcePaths, owner: SourceOwner) -> Option<String> {
+    paths.mapped_relative_path(owner).map(|path| {
+        Path::new("games/gs1/src")
+            .join(path)
+            .to_string_lossy()
+            .into_owned()
+    })
+}
+fn hex(value: u64) -> String {
+    format!("0x{value:08x}")
+}
+fn span_values(spans: &[(u64, usize)]) -> Value {
+    Value::Array(
+        spans
+            .iter()
+            .map(|(start, size)| json!({"start":hex(*start),"end":hex(*start+*size as u64),"bytes":size}))
+            .collect(),
+    )
+}
+fn c_label(line: &str) -> Option<u64> {
+    let value = line.trim().strip_prefix("AlchemyC_")?.strip_suffix(':')?;
+    (value.len() == 8 && value.bytes().all(|byte| byte.is_ascii_hexdigit()))
+        .then(|| u64::from_str_radix(value, 16).ok())
+        .flatten()
+}
+fn space_size(line: &str) -> Option<usize> {
+    let value = line.trim().strip_prefix(".space")?.trim();
+    let radix = if value.starts_with("0x") { 16 } else { 10 };
+    usize::from_str_radix(value.trim_start_matches("0x"), radix).ok()
+}
+fn overlay_placeholders(root: &Path) -> Result<BTreeMap<SourceOwner, Vec<(u64, usize)>>, String> {
+    let directory = root.join("games/gs1/assets/code");
+    let mut files = std::fs::read_dir(&directory)
+        .map_err(|error| format!("{}: {error}", directory.display()))?
+        .filter_map(Result::ok)
+        .filter_map(|entry| {
+            let name = entry.file_name().to_string_lossy().into_owned();
+            name.strip_prefix("resource_")?
+                .strip_suffix("_overlay.s")
+                .map(|id| (format!("resource_{id}"), entry.path()))
+        })
+        .collect::<Vec<_>>();
+    files.sort_by(|left, right| left.0.cmp(&right.0));
+    let mut placeholders = BTreeMap::new();
+    for (overlay, path) in files {
+        let lines = std::fs::read_to_string(&path)
+            .map_err(|error| format!("{}: {error}", path.display()))?
+            .lines()
+            .map(str::to_string)
+            .collect::<Vec<_>>();
+        for (start, line) in lines.iter().enumerate() {
+            let Some(address) = c_label(line) else {
+                continue;
+            };
+            let mut cursor = address;
+            let mut spans = Vec::new();
+            for line in &lines[start + 1..] {
+                let text = line.trim();
+                if c_label(text).is_some() {
+                    break;
+                }
+                if let Some(size) = space_size(text) {
+                    if size == 0 {
+                        return Err(format!(
+                            "zero overlay placeholder at {overlay}:{address:08x}"
+                        ));
+                    }
+                    spans.push((cursor, size));
+                    cursor += size as u64;
+                    continue;
+                }
+                if !text.is_empty() && !text.starts_with(".L_") {
+                    break;
+                }
+            }
+            if spans.is_empty() {
+                return Err(format!(
+                    "empty overlay placeholder at {overlay}:{address:08x}"
+                ));
+            }
+            let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;
+            if placeholders.insert(owner, spans).is_some() {
+                return Err(format!("duplicate overlay placeholder {}", owner.id()));
+            }
+        }
+    }
+    Ok(placeholders)
+}
+fn semantic_overlay_spans(root: &Path) -> Result<BTreeMap<SourceOwner, Vec<(u64, usize)>>, String> {
+    let document = read_json(&root.join("games/gs1/semantic/overlay-assembly.json"))?;
+    if document["format"].as_u64() != Some(1) {
+        return Err("overlay assembly evidence format differs".into());
+    }
+    let mut spans = BTreeMap::new();
+    for row in document["regions"]
+        .as_array()
+        .ok_or("overlay assembly regions differ")?
+    {
+        if row["retention"].as_str() != Some("keep_structured_asm") {
+            continue;
+        }
+        let overlay = row["overlay"]
+            .as_str()
+            .ok_or("overlay evidence lacks overlay")?;
+        let start = value_u64(&row["start"], "overlay evidence start")?;
+        let end = value_u64(&row["end"], "overlay evidence end")?;
+        let size = end
+            .checked_sub(start)
+            .ok_or("invalid overlay evidence extent")? as usize;
+        if size == 0 {
+            return Err("empty overlay evidence extent".into());
+        }
+        let owner = SourceOwner::parse(&format!("{overlay}:{start:08x}"))?;
+        spans
+            .entry(owner)
+            .or_insert_with(Vec::new)
+            .push((start, size));
+    }
+    Ok(spans)
+}
+fn reject_overlay_evidence_overlap(
+    placeholders: &BTreeMap<SourceOwner, Vec<(u64, usize)>>,
+    semantic: &BTreeMap<SourceOwner, Vec<(u64, usize)>>,
+) -> Result<(), String> {
+    for (exact, c_spans) in placeholders {
+        for (retained, asm_spans) in semantic
+            .iter()
+            .filter(|(owner, _)| owner.overlay_id() == exact.overlay_id())
+        {
+            if c_spans.iter().any(|(start, size)| {
+                asm_spans.iter().any(|(other, extent)| {
+                    *start < *other + *extent as u64 && *other < *start + *size as u64
+                })
+            }) {
+                return Err(format!(
+                    "{} retained assembly overlaps exact C {}",
+                    retained.id(),
+                    exact.id()
+                ));
+            }
+        }
+    }
+    Ok(())
+}
+fn artifact(region: &Region) -> Value {
+    json!({"source":region.source,"start":hex(region.address),"bytes":region.size,"composition":region.composition})
+}
+fn owner_inventory(
+    root: &Path,
+    claimed_document: &Value,
+    claimed: &[Region],
+    assembly: &[Region],
+    units: &TranslationUnits,
+) -> Result<Value, String> {
+    let paths = SourcePaths::load(root)?;
+    let registered = paths.registered_owners().collect::<BTreeSet<_>>();
+    let members = inventory_members(units)?;
+    if let Some(owner) = members.keys().find(|owner| !registered.contains(owner)) {
+        return Err(format!(
+            "reconstruction unit names unregistered owner {}",
+            owner.id()
+        ));
+    }
+    let claimed_symbols = claimed_symbols(claimed)?;
+    let functions = linked_functions(claimed_document, &claimed_symbols)?;
+    let assembly_starts = region_starts(assembly, "assembly")?;
+    let placeholders = overlay_placeholders(root)?;
+    let semantic = semantic_overlay_spans(root)?;
+    reject_overlay_evidence_overlap(&placeholders, &semantic)?;
+    let mut owners = Vec::new();
+    let mut groups = BTreeMap::<String, usize>::new();
+    let mut states = BTreeMap::<String, usize>::new();
+    let mut known_extents = 0usize;
+    for owner in &registered {
+        let member = members.get(owner);
+        let registered_source = source_path(&paths, *owner);
+        let (state, role, alias, unit, source, spans, extent_evidence, artifact_value) = match (
+            owner, member,
+        ) {
+            (SourceOwner::Overlay { resource, .. }, Some(member)) => {
+                let state = member.state.unwrap_or("exact-c");
+                let spans = if state == "exact-c" {
+                    placeholders
+                        .get(owner)
+                        .cloned()
+                        .ok_or_else(|| format!("{} has no overlay placeholder", owner.id()))?
+                } else {
+                    semantic
+                        .get(owner)
+                        .cloned()
+                        .ok_or_else(|| format!("{} has no overlay assembly evidence", owner.id()))?
+                };
+                if spans.iter().map(|(_, size)| *size).sum::<usize>() != member.extent {
+                    return Err(format!(
+                        "{} has a differing declared overlay extent",
+                        owner.id()
+                    ));
+                }
+                (
+                    state,
+                    member.role,
+                    member.alias.clone(),
+                    Some(
+                        json!({"id":member.unit,"role":member.role,"ordinal":member.ordinal,"declared_state":member.state}),
+                    ),
+                    member.source.clone(),
+                    spans,
+                    "declared-reconstruction-unit",
+                    json!({"source":format!("games/gs1/assets/code/resource_{resource:03x}_overlay.s"),"composition":if state=="exact-c"{"overlay-placeholder"}else{"structured-overlay-assembly"},"overlapping_retained_evidence":semantic.get(owner).map(|spans|span_values(spans))}),
+                )
+            }
+            (_, Some(member)) => {
+                let state = member.state.unwrap_or("exact-c");
+                let (region, spans) = if state == "exact-c" {
+                    let function = functions
+                        .get(&owner.legacy_name())
+                        .ok_or_else(|| format!("{} has no linked function", owner.id()))?;
+                    if function.address != u64::from(owner.address())
+                        || function.size != member.extent
+                    {
+                        return Err(format!(
+                            "{} has a differing declared function extent",
+                            owner.id()
+                        ));
+                    }
+                    (function.artifact, vec![(function.address, function.size)])
+                } else {
+                    let region = assembly_starts
+                        .get(&u64::from(owner.address()))
+                        .copied()
+                        .ok_or_else(|| format!("{} has no declared assembly region", owner.id()))?;
+                    if region.size != member.extent {
+                        return Err(format!(
+                            "{} has a differing declared assembly extent",
+                            owner.id()
+                        ));
+                    }
+                    (region, vec![(u64::from(owner.address()), region.size)])
+                };
+                (
+                    state,
+                    member.role,
+                    member.alias.clone(),
+                    Some(
+                        json!({"id":member.unit,"role":member.role,"ordinal":member.ordinal,"declared_state":member.state}),
+                    ),
+                    member.source.clone(),
+                    spans,
+                    "declared-reconstruction-unit",
+                    artifact(region),
+                )
+            }
+            (SourceOwner::Main(address), None) if registered_source.is_some() => {
+                let function = functions
+                    .get(&owner.legacy_name())
+                    .ok_or_else(|| format!("{} has no linked function", owner.id()))?;
+                if function.address != u64::from(*address) {
+                    return Err(format!("{} has a differing linked address", owner.id()));
+                }
+                (
+                    "exact-c",
+                    "owner",
+                    paths
+                        .registered_name(*owner)
+                        .unwrap_or_default()
+                        .to_string(),
+                    None,
+                    registered_source.clone().unwrap(),
+                    vec![(function.address, function.size)],
+                    "linked-elf-symbol",
+                    artifact(function.artifact),
+                )
+            }
+            (SourceOwner::Main(address), None) => {
+                let region = assembly_starts
+                    .get(&u64::from(*address))
+                    .copied()
+                    .ok_or_else(|| format!("{} has no assembly region", owner.id()))?;
+                (
+                    "retained-assembly",
+                    "owner",
+                    paths
+                        .registered_name(*owner)
+                        .unwrap_or_default()
+                        .to_string(),
+                    None,
+                    region.source.clone().unwrap_or_default(),
+                    vec![(u64::from(*address), region.size)],
+                    "assembly-manifest",
+                    artifact(region),
+                )
+            }
+            (SourceOwner::Overlay { resource, .. }, None) if registered_source.is_some() => {
+                let spans = placeholders
+                    .get(owner)
+                    .cloned()
+                    .ok_or_else(|| format!("{} has no overlay placeholder", owner.id()))?;
+                (
+                    "exact-c",
+                    "owner",
+                    paths
+                        .registered_name(*owner)
+                        .unwrap_or_default()
+                        .to_string(),
+                    None,
+                    registered_source.clone().unwrap(),
+                    spans,
+                    "overlay-placeholder",
+                    json!({"source":format!("games/gs1/assets/code/resource_{resource:03x}_overlay.s"),"composition":"overlay-placeholder","overlapping_retained_evidence":semantic.get(owner).map(|spans|span_values(spans))}),
+                )
+            }
+            (SourceOwner::Overlay { resource, .. }, None) => {
+                let spans = semantic
+                    .get(owner)
+                    .cloned()
+                    .ok_or_else(|| format!("{} has no overlay assembly evidence", owner.id()))?;
+                (
+                    "retained-assembly",
+                    "owner",
+                    paths
+                        .registered_name(*owner)
+                        .unwrap_or_default()
+                        .to_string(),
+                    None,
+                    format!("games/gs1/assets/code/resource_{resource:03x}_overlay.s"),
+                    spans,
+                    "overlay-assembly-evidence",
+                    json!({"source":format!("games/gs1/assets/code/resource_{resource:03x}_overlay.s"),"composition":"structured-overlay-assembly"}),
+                )
+            }
+        };
+        let extent = spans.iter().map(|(_, size)| *size).sum::<usize>();
+        if !spans.is_empty() {
+            known_extents += 1;
+        }
+        *states.entry(state.into()).or_default() += 1;
+        if let Some(group) = source_group(&source) {
+            *groups.entry(group).or_default() += 1;
+        }
+        owners.push(json!({
+            "id":owner.id(),"name":paths.registered_name(*owner),"address":hex(u64::from(owner.address())),
+            "container":if owner.is_main(){json!({"kind":"main-rom","overlay":Value::Null})}else{json!({"kind":"overlay-image","overlay":owner.overlay_id()})},
+            "registration":{"source_path":registered_source,"call_via":paths.registered_call_via(*owner).map(|value| hex(u64::from(value)))},
+            "reconstruction_unit":unit,"production":{"state":state,"source":source,"source_group":source_group(&source),"extent_bytes":if spans.is_empty(){Value::Null}else{number(extent)},"extent_evidence":extent_evidence,"segments":span_values(&spans),"artifact":artifact_value},
+            "original_translation_unit":{"status":"unknown"},"role":role,"alias":alias
+        }));
+    }
+    let units = units.units.iter().filter(|unit| unit.game == "gs1").map(|unit| {
+        let members = unit.owners.iter().enumerate().map(|(ordinal, member)| json!({"owner":unit.source_owner(member.address).unwrap().id(),"role":"owner","ordinal":ordinal,"alias":member.alias,"extent":member.extent,"declared_state":owner_state(member.state)})).chain(unit.local_symbols.iter().enumerate().map(|(ordinal, member)| json!({"owner":unit.source_owner(member.address).unwrap().id(),"role":"local-symbol","ordinal":ordinal,"alias":member.alias,"extent":member.extent,"declared_state":Value::Null}))).collect::<Vec<_>>();
+        let absolute_symbols = unit.absolute_symbols.iter().map(|(name, symbol)| json!({"name":name,"address":hex(symbol.address),"kind":absolute_kind(symbol.kind)})).collect::<Vec<_>>();
+        json!({"id":unit.id,"game":unit.game,"source":unit.source,"compiler_route":unit.compiler_route,"container":if unit.overlay.is_none(){json!({"kind":"main-rom","overlay":Value::Null})}else{json!({"kind":"overlay-image","overlay":unit.overlay})},"original_translation_unit":{"status":"unknown"},"absolute_symbols":absolute_symbols,"members":members})
+    }).collect::<Vec<_>>();
+    let auxiliary_regions = assembly.iter().filter(|region| !registered.contains(&SourceOwner::Main(region.address as u32))).map(|region| json!({"role":"non-owner-region","container":{"kind":"main-rom"},"address":hex(region.address),"run_address":region.run_address.map(hex),"extent":region.size,"source":region.source,"kind":region.kind,"origin":region.origin,"retention":region.retention,"confidence":region.confidence,"evidence":region.evidence})).collect::<Vec<_>>();
+    let auxiliary_overlay_regions = semantic
+        .iter()
+        .filter(|(owner, _)| !registered.contains(owner))
+        .flat_map(|(owner, spans)| {
+            spans.iter().map(|(start, size)| {
+                json!({"role":"unregistered-retained-region","container":{"kind":"overlay-image","overlay":owner.overlay_id()},"address":hex(*start),"extent":size,"source":format!("games/gs1/assets/code/{}_overlay.s",owner.overlay_id().unwrap_or_default()),"retention":"keep_structured_asm","evidence":"games/gs1/semantic/overlay-assembly.json"})
+            })
+        })
+        .collect::<Vec<_>>();
+    Ok(json!({
+        "format":1,"kind":"gs1-production-owner-inventory","scope":"derived production/retention inventory; source-paths is the sole name authority and no original translation-unit boundary is asserted",
+        "target":"gs1-en","identity_authority":"games/gs1/source-paths.json","inputs":{"translation_units":"games/gs1/recon/translation-units.json","claimed_manifest":"out/gs1-en/full/claimed/manifest.json","asm_manifest":"out/gs1-en/full/asm/manifest.json","overlay_sources":"games/gs1/assets/code/resource_*_overlay.s","overlay_assembly_evidence":"games/gs1/semantic/overlay-assembly.json"},
+        "summary":{"registered":registered.len(),"main":registered.iter().filter(|owner| owner.is_main()).count(),"overlay":registered.iter().filter(|owner| !owner.is_main()).count(),"known_production_extents":known_extents,"unknown_original_translation_units":registered.len(),"complete_registered_identity_coverage":true,"states":states,"current_source_groups":groups},
+        "reconstruction_units":units,"owners":owners,"auxiliary_main_assembly_regions":auxiliary_regions,"auxiliary_overlay_structured_assembly_regions":auxiliary_overlay_regions
+    }))
+}
 fn validate_translation_units(
     root: &Path,
     document: &Value,
     claimed: &[Region],
     assembly: &[Region],
-) -> Result<usize, String> {
+) -> Result<(usize, RegisteredOwnerCoverage), String> {
     let units = TranslationUnits::load(root)?;
     let verification = document["verification"]
         .as_str()
@@ -501,9 +1057,8 @@ fn validate_translation_units(
     {
         return Err("claimed main symbol exports differ from translation-unit manifest".into());
     }
-    Ok(main.len())
+    Ok((main.len(), registered_owner_coverage(root, &units)?))
 }
-
 pub fn reconstruction_progress(
     rom_size: usize,
     code: usize,
@@ -526,11 +1081,9 @@ pub fn reconstruction_progress(
         percent: round_percent(bytes, rom_size),
     })
 }
-
 fn round_percent(bytes: usize, total: usize) -> f64 {
     ((bytes as f64 * 10_000.0 / total as f64).round()) / 100.0
 }
-
 fn number(value: usize) -> Value {
     Value::Number(Number::from(value as u64))
 }
@@ -541,11 +1094,9 @@ fn percentage(value: f64) -> Value {
         Value::Number(Number::from_f64(value).unwrap())
     }
 }
-
 fn measured(bytes: usize, total: usize) -> Value {
     json!({"status":"measured","bytes":bytes,"total_bytes":total,"remaining_bytes":total-bytes,"percent":percentage(round_percent(bytes,total))})
 }
-
 fn project_audit(
     rom_size: usize,
     source: usize,
@@ -568,16 +1119,13 @@ fn project_audit(
         }
     })
 }
-
 fn write_json(path: &Path, value: Value) -> Result<(), String> {
     std::fs::write(path, format!("{}\n", canonical_json(&value)))
         .map_err(|error| format!("{}: {error}", path.display()))
 }
-
 fn gap_values(gaps: &[GapRegion], prefix: &str, kind: &str) -> Value {
     Value::Array(gaps.iter().map(|gap| json!({"address":gap.address,"size":gap.size,"source":format!("{prefix}/{:08x}",gap.address),"kind":kind})).collect())
 }
-
 fn require_source_ownership(source_only: bool, unowned_bytes: usize) -> Result<(), String> {
     if !source_only && unowned_bytes != 0 {
         return Err(format!(
@@ -586,7 +1134,6 @@ fn require_source_ownership(source_only: bool, unowned_bytes: usize) -> Result<(
     }
     Ok(())
 }
-
 fn place_regions(
     regions: &[Region],
     image: &[u8],
@@ -648,7 +1195,6 @@ fn place_regions(
     }
     Ok(())
 }
-
 pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, String> {
     let target = target_for(options.target);
     if target.build_support != BuildSupport::Full {
@@ -674,7 +1220,6 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     };
     let mut rebuilt = rom.clone();
     let mut mask = vec![0u8; target.rom_size as usize];
-
     let claimed_dir = rooted(root, &options.claimed_output);
     let mut command = cargo_child(root, "claimed");
     command.extend(["--target".into(), target.id.to_string()]);
@@ -704,7 +1249,6 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
         &mut mask,
         "source",
     )?;
-
     let mut asm_regions = Vec::new();
     let asm_dir = rooted(root, target.asm_dir);
     if asm_dir.exists() && has_assembly_sources(&asm_dir)? {
@@ -729,13 +1273,12 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
             "assembly",
         )?;
     }
-    let translation_units =
+    let (translation_units, owner_coverage) =
         validate_translation_units(root, &claimed_document, &claimed_regions, &asm_regions)?;
     let main_symbol_exports = claimed_document["main_symbol_exports"]
         .as_str()
         .ok_or("claimed manifest lacks main symbol exports")?;
     let accounting = assembly_accounting(&asm_regions)?;
-
     let mut asset_regions = Vec::new();
     let asset_manifest = rooted(root, &options.asset_manifest);
     if asset_manifest.exists() {
@@ -770,7 +1313,6 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
         }
     }
     let output = rooted(root, &options.output);
-
     let source_bytes = mask.iter().map(|byte| *byte as usize).sum::<usize>();
     let code_bytes = value_u64(&claimed_document["claimed_bytes"], "claimed bytes")? as usize;
     let asm_bytes = asm_regions.iter().map(|region| region.size).sum::<usize>();
@@ -797,10 +1339,22 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
         accounting.c_debt_bytes,
         unowned_bytes,
     )?;
-
     let report_base = output.with_extension("");
     let unowned_path = PathBuf::from(format!("{}.unowned.json", report_base.to_string_lossy()));
     let fallback_path = PathBuf::from(format!("{}.fallback.json", report_base.to_string_lossy()));
+    let inventory_path = PathBuf::from(format!(
+        "{}.owner-inventory.json",
+        report_base.to_string_lossy()
+    ));
+    let inventory = owner_inventory(
+        root,
+        &claimed_document,
+        &claimed_regions,
+        &asm_regions,
+        &TranslationUnits::load(root)?,
+    )?;
+    let inventory_summary = inventory["summary"].clone();
+    write_json(&inventory_path, inventory)?;
     write_json(
         &unowned_path,
         json!({"format":1,"semantics":"source_ownership","verification":if options.source_only{"source_only"}else{"rom"},"rom_base":ROM_BASE,"rom_size":mask.len(),"regions":gap_values(&gaps,"unowned","unowned")}),
@@ -809,9 +1363,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
         &fallback_path,
         json!({"format":1,"semantics":if options.source_only{"compatibility_alias_for_unowned_ranges"}else{"private_rom_fallback"},"rom_base":ROM_BASE,"rom_size":mask.len(),"regions":gap_values(&gaps,"rom-fallback","rom_fallback")}),
     )?;
-
     require_source_ownership(options.source_only, unowned_bytes)?;
-
     if let Some(parent) = output.parent() {
         std::fs::create_dir_all(parent)
             .map_err(|error| format!("{}: {error}", parent.display()))?;
@@ -819,7 +1371,6 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     if let Some(bytes) = &rebuilt {
         std::fs::write(&output, bytes).map_err(|error| format!("{}: {error}", output.display()))?;
     }
-
     let mut report = Map::new();
     macro_rules! field {
         ($name:expr,$value:expr) => {
@@ -834,7 +1385,32 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     field!("code_regions", number(claimed_regions.len()));
     field!("code_bytes", number(code_bytes));
     field!("translation_units", number(translation_units));
-    field!("strict_translation_units", json!(true));
+    field!("declared_main_translation_units_strict", json!(true));
+    field!(
+        "registered_owner_coverage",
+        json!({
+            "authority":"games/gs1/source-paths.json",
+            "scope":"registered-owner lower bound; does not assert original translation-unit boundaries",
+            "registered":owner_coverage.registered,
+            "registered_main":owner_coverage.registered_main,
+            "registered_overlay":owner_coverage.registered_overlay,
+            "declared":owner_coverage.declared,
+            "declared_main":owner_coverage.declared_main,
+            "declared_overlay":owner_coverage.declared_overlay,
+            "missing":owner_coverage.missing,
+            "unexpected":owner_coverage.unexpected,
+            "complete":owner_coverage.missing == 0 && owner_coverage.unexpected == 0
+        })
+    );
+    field!(
+        "owner_inventory",
+        json!({"path":inventory_path.to_string_lossy(),"summary":inventory_summary})
+    );
+    field!("strict_translation_units", json!(false));
+    field!(
+        "strict_translation_units_scope",
+        json!("requires an authoritative original-translation-unit inventory")
+    );
     field!("main_symbol_exports", json!(main_symbol_exports));
     field!("asm_regions", number(asm_regions.len()));
     field!("asm_bytes", number(asm_bytes));
@@ -873,16 +1449,6 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
         number(progress.remaining_bytes)
     );
     field!("byte_reconstruction_percent", percentage(progress.percent));
-    field!("total_decompilation_bytes", number(progress.bytes));
-    field!(
-        "total_decompilation_remaining_bytes",
-        number(progress.remaining_bytes)
-    );
-    field!("total_decompilation_percent", percentage(progress.percent));
-    field!(
-        "total_decompilation_semantics",
-        json!("deprecated_alias_for_byte_reconstruction")
-    );
     field!("unowned_bytes", number(unowned_bytes));
     field!("unowned_regions", number(gaps.len()));
     field!("unowned_manifest", json!(unowned_path.to_string_lossy()));
@@ -911,7 +1477,6 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
         &PathBuf::from(format!("{}.json", report_base.to_string_lossy())),
         Value::Object(report),
     )?;
-
     Ok(format!(
         "{} regions={} code={} asm={} assets={} source_bytes={} unowned_bytes={} asm_c_debt_bytes={} asm_retained_structural_bytes={} source_owned={} byte_identical={}{}",
         if options.source_only { "source_only=True" } else { "identical=True" },
@@ -928,7 +1493,6 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
         if options.source_only { "".into() } else { format!(" rom_fallback_bytes={unowned_bytes}") }
     ))
 }
-
 pub fn self_test() -> Result<(), String> {
     let gaps = unowned_regions(&[1, 0, 0, 1, 0], ROM_BASE)?;
     if gaps

@@ -1,9 +1,5 @@
 //! Compile candidate C, link it at its ROM address, and return both byte spans.
-
-use std::collections::BTreeMap;
-use std::path::Path;
-use std::process::Command;
-
+use crate::jsnum::{hex8, parse_hex};
 use compiler_core::nodepath::{basename, extname};
 use compiler_core::plan::{
     source_to_assembly_plan, CompilerFamily, CompilerFlagMutations, SourceToAssemblyPlanOptions,
@@ -11,13 +7,11 @@ use compiler_core::plan::{
 use compiler_core::routing::{root, CompilerTarget};
 use compiler_core::translation_units::{AbsoluteSymbol, AbsoluteSymbolKind};
 use compiler_core::{external_symbol, ExternalSymbol, CALL_VIA_BASE};
-
-use crate::jsnum::{hex8, parse_hex};
-
+use std::collections::BTreeMap;
+use std::path::Path;
+use std::process::Command;
 pub const ROM_BASE: f64 = 0x0800_0000 as f64;
-
 pub type CandidateCompilerFamily = CompilerFamily;
-
 #[derive(Debug, Clone, Default)]
 pub struct CandidateCompilerConfiguration {
     pub family: Option<CandidateCompilerFamily>,
@@ -28,13 +22,11 @@ pub struct CandidateCompilerConfiguration {
     pub call_via_base: Option<u64>,
     pub label_word_bias: Option<u64>,
 }
-
 #[derive(Debug, Clone)]
 pub struct Verification {
     pub actual: Vec<u8>,
     pub expected: Vec<u8>,
 }
-
 pub fn source_stem(path: &str) -> String {
     let base = basename(path);
     let ext = extname(path);
@@ -43,7 +35,6 @@ pub fn source_stem(path: &str) -> String {
         .unwrap_or(base)
         .to_string()
 }
-
 pub fn run<S: AsRef<str>>(command: &[S], cwd: &Path) -> Result<String, String> {
     let program = command
         .first()
@@ -68,7 +59,6 @@ pub fn run<S: AsRef<str>>(command: &[S], cwd: &Path) -> Result<String, String> {
         Err(format!("{name} failed: {detail}"))
     }
 }
-
 fn assemble(assembly: &str, object: &str) -> Result<(), String> {
     run(
         &[
@@ -83,7 +73,6 @@ fn assemble(assembly: &str, object: &str) -> Result<(), String> {
     )
     .map(drop)
 }
-
 fn copy_text(object: &str, binary: &str) -> Result<(), String> {
     run(
         &[
@@ -99,7 +88,6 @@ fn copy_text(object: &str, binary: &str) -> Result<(), String> {
     )
     .map(drop)
 }
-
 pub fn js_subarray(data: &[u8], begin: f64, end: f64) -> Vec<u8> {
     let len = data.len() as f64;
     let resolve = |relative: f64| -> usize {
@@ -114,7 +102,6 @@ pub fn js_subarray(data: &[u8], begin: f64, end: f64) -> Vec<u8> {
     let stop = resolve(end);
     data.get(start..stop).unwrap_or_default().to_vec()
 }
-
 pub fn compile_to_assembly(
     source: &str,
     routing_source: &str,
@@ -140,7 +127,6 @@ pub fn compile_to_assembly(
     )?;
     Ok(assembly)
 }
-
 fn compile_source(
     source: &str,
     routing_source: &str,
@@ -168,7 +154,6 @@ fn compile_source(
     }
     apply_label_word_bias(assembly, configuration.label_word_bias)
 }
-
 #[allow(clippy::too_many_arguments)]
 pub fn verify_candidate_owned_routed(
     source: &str,
@@ -194,7 +179,6 @@ pub fn verify_candidate_owned_routed(
         None,
     )
 }
-
 #[allow(clippy::too_many_arguments)]
 pub fn verify_candidate_owned_routed_with_object(
     source: &str,
@@ -212,7 +196,6 @@ pub fn verify_candidate_owned_routed_with_object(
     let address = parse_hex(&stem)?;
     let canonical_symbol = format!("Func_{}", hex8(address));
     let short_symbol = format!("Func_{}", hex8(address).trim_start_matches('0'));
-
     let out = Path::new(output_directory);
     let path = |suffix: &str| {
         out.join(format!("{stem}{suffix}"))
@@ -228,7 +211,6 @@ pub fn verify_candidate_owned_routed_with_object(
     let canonical_object = path(".canonical.o");
     let elf = path(".elf");
     let binary = path(".bin");
-
     let cwd = root();
     if precompiled_object.is_none() {
         compile_source(
@@ -241,7 +223,6 @@ pub fn verify_candidate_owned_routed_with_object(
         )?;
         assemble(&assembly, &object)?;
     }
-
     // GCC 2.96 keeps observable state across functions, so some owners need
     // their original translation-unit context. Link the section so the
     // requested symbol, rather than the start of .text, lands at its address.
@@ -280,7 +261,6 @@ pub fn verify_candidate_owned_routed_with_object(
         &canonical_object
     };
     let owner_relocations = object_relocations(link_object, owner_offset, owner_size)?;
-
     let call_via_base = configuration.call_via_base.unwrap_or(CALL_VIA_BASE);
     let mut names: Vec<String> = Vec::new();
     let undefined_symbols = run(&["arm-none-eabi-nm", "-u", link_object], cwd)?;
@@ -311,7 +291,6 @@ pub fn verify_candidate_owned_routed_with_object(
     );
     names.sort();
     names.dedup();
-
     let mut symbols_text = String::from(".syntax unified\n.thumb\n");
     let inferred = names
         .iter()
@@ -367,7 +346,6 @@ pub fn verify_candidate_owned_routed_with_object(
         cwd,
     )?;
     copy_text(&elf, &binary)?;
-
     let symbols = run(&["arm-none-eabi-nm", "-S", &elf], cwd)?;
     let fields = symbol_fields(&symbols, symbol)
         .ok_or_else(|| format!("missing linked symbol: {symbol}"))?;
@@ -379,20 +357,17 @@ pub fn verify_candidate_owned_routed_with_object(
     };
     let linked_symbol_address = parse_hex(fields.first().ok_or("missing linked symbol address")?)?;
     let binary_offset = linked_symbol_address as f64 - link_address as f64;
-
     let actual = js_subarray(&binary_bytes, binary_offset, binary_offset + size as f64);
     let offset = address as f64 - image_base;
     let expected = js_subarray(rom, offset, offset + size as f64);
     Ok(Verification { actual, expected })
 }
-
 fn symbol_fields<'a>(listing: &'a str, symbol: &str) -> Option<Vec<&'a str>> {
     listing
         .lines()
         .map(|line| line.split_whitespace().collect::<Vec<_>>())
         .find(|fields| fields.last() == Some(&symbol))
 }
-
 fn absolute_symbol_directive(kind: AbsoluteSymbolKind) -> &'static str {
     if kind == AbsoluteSymbolKind::Thumb {
         ".thumb_set"
@@ -400,7 +375,6 @@ fn absolute_symbol_directive(kind: AbsoluteSymbolKind) -> &'static str {
         ".set"
     }
 }
-
 fn apply_label_word_bias(path: &str, bias: Option<u64>) -> Result<(), String> {
     let Some(bias) = bias.filter(|bias| *bias != 0) else {
         return Ok(());
@@ -432,13 +406,11 @@ fn apply_label_word_bias(path: &str, bias: Option<u64>) -> Result<(), String> {
     }
     write(path, output.as_bytes())
 }
-
 #[derive(Clone, Debug)]
 struct ReferenceRelocation {
     offset: usize,
     kind: String,
 }
-
 fn validate_reference_topology(
     object_text: &[u8],
     owner_offset: usize,
@@ -466,7 +438,6 @@ fn validate_reference_topology(
     }
     Ok(())
 }
-
 #[allow(clippy::too_many_arguments)]
 fn derive_reference_symbols(
     object: &str,
@@ -483,7 +454,6 @@ fn derive_reference_symbols(
         .checked_sub(image_base)
         .ok_or("owner address precedes image base")?;
     let rom_start = usize::try_from(rom_start).map_err(|_| "ROM offset is too large")?;
-
     let object_text_path = format!("{object}.text.bin");
     copy_text(object, &object_text_path)?;
     let object_text =
@@ -496,7 +466,6 @@ fn derive_reference_symbols(
         rom_start,
         relocations,
     )?;
-
     let mut resolved = BTreeMap::new();
     for name in names {
         let sites = relocations
@@ -506,7 +475,6 @@ fn derive_reference_symbols(
         let thumb = known
             .map(|symbol| symbol.thumb)
             .unwrap_or_else(|| sites.iter().any(|site| site.kind == "R_ARM_THM_CALL"));
-
         let mut value = None;
         for site in sites {
             let site_value = match site.kind.as_str() {
@@ -552,7 +520,6 @@ fn derive_reference_symbols(
     }
     Ok(resolved)
 }
-
 fn object_relocations(
     object: &str,
     owner_offset: usize,
@@ -584,7 +551,6 @@ fn object_relocations(
     }
     Ok(relocations)
 }
-
 fn read_word(data: &[u8], offset: usize, symbol: &str, label: &str) -> Result<u32, String> {
     let bytes = data
         .get(offset..offset + 4)
@@ -593,7 +559,6 @@ fn read_word(data: &[u8], offset: usize, symbol: &str, label: &str) -> Result<u3
         bytes.try_into().expect("four-byte slice"),
     ))
 }
-
 fn thumb_bl_target(
     rom: &[u8],
     rom_start: usize,
@@ -617,15 +582,12 @@ fn thumb_bl_target(
     let pc = address as i64 + offset as i64 + 4;
     u64::try_from(pc + displacement).map_err(|_| format!("call at 0x{offset:x} is below ROM"))
 }
-
 pub(crate) fn write(path: &str, bytes: &[u8]) -> Result<(), String> {
     std::fs::write(path, bytes).map_err(|error| format!("{path}: {error}"))
 }
-
 #[cfg(test)]
 mod reference_symbol_tests {
     use super::*;
-
     #[test]
     fn decodes_a_forward_thumb_call_at_the_owner_address() {
         let rom = [0x00, 0xf0, 0x18, 0xf9];
@@ -634,13 +596,11 @@ mod reference_symbol_tests {
             0x0800_1234
         );
     }
-
     #[test]
     fn rejects_a_non_call_reference_site() {
         let error = thumb_bl_target(&[0, 0, 0, 0], 0, 0x0800_1000, 0).unwrap_err();
         assert!(error.contains("not a Thumb BL"));
     }
-
     #[test]
     fn absolute_symbol_kind_not_name_selects_thumb_state() {
         assert_eq!(
@@ -650,7 +610,6 @@ mod reference_symbol_tests {
         assert_eq!(absolute_symbol_directive(AbsoluteSymbolKind::Data), ".set");
         assert_eq!(absolute_symbol_directive(AbsoluteSymbolKind::Arm), ".set");
     }
-
     #[test]
     fn reference_inference_allows_relocated_targets_but_rejects_core_differences() {
         let relocations = BTreeMap::from([(
@@ -673,7 +632,6 @@ mod reference_symbol_tests {
                 .unwrap_err();
         assert!(error.contains("non-relocation byte differs at owner offset 0x1"));
     }
-
     #[test]
     fn overlay_bias_applies_only_to_defined_local_label_words() {
         let path = std::env::temp_dir().join("alchemy-overlay-label-bias.s");

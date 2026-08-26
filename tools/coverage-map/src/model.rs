@@ -1,11 +1,9 @@
 //! The one byte-range and treemap model shared by progress and coverage.
-
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Span {
     pub start: i64,
     pub end: i64,
 }
-
 impl Span {
     pub const fn new(start: i64, end: i64) -> Self {
         Self { start, end }
@@ -14,11 +12,9 @@ impl Span {
         self.end - self.start
     }
 }
-
 pub fn bytes(spans: &[Span]) -> i64 {
     spans.iter().map(|s| s.bytes()).sum()
 }
-
 pub fn normalize(input: &[Span]) -> Vec<Span> {
     let mut spans: Vec<_> = input.iter().copied().filter(|s| s.end > s.start).collect();
     spans.sort_by_key(|s| (s.start, s.end));
@@ -31,7 +27,6 @@ pub fn normalize(input: &[Span]) -> Vec<Span> {
     }
     out
 }
-
 pub fn intersect(left: &[Span], right: &[Span]) -> Vec<Span> {
     let left = normalize(left);
     let right = normalize(right);
@@ -50,7 +45,6 @@ pub fn intersect(left: &[Span], right: &[Span]) -> Vec<Span> {
     }
     normalize(&out)
 }
-
 pub fn subtract(input: &[Span], cuts: &[Span]) -> Vec<Span> {
     let cuts = normalize(cuts);
     let mut out = Vec::new();
@@ -74,7 +68,6 @@ pub fn subtract(input: &[Span], cuts: &[Span]) -> Vec<Span> {
     }
     out
 }
-
 pub const CATEGORIES: [&str; 5] = [
     "exact_c",
     "tracked_c",
@@ -82,11 +75,9 @@ pub const CATEGORIES: [&str; 5] = [
     "retained_asm",
     "asset_data",
 ];
-
 fn category_index(name: &str) -> Option<usize> {
     CATEGORIES.iter().position(|item| *item == name)
 }
-
 #[derive(Clone, Debug, Default)]
 pub struct Tile {
     pub label: String,
@@ -96,7 +87,6 @@ pub struct Tile {
     pub subgroup: Option<String>,
     pub address: Option<i64>,
 }
-
 impl Tile {
     pub fn category(&self, name: &str) -> i64 {
         category_index(name).map_or(0, |i| self.categories[i])
@@ -112,7 +102,6 @@ impl Tile {
         }
     }
 }
-
 #[derive(Clone, Debug, Default)]
 pub struct Area {
     pub id: String,
@@ -121,7 +110,6 @@ pub struct Area {
     pub categories: [i64; 5],
     pub tiles: Vec<Tile>,
 }
-
 pub fn area(id: &str, label: &str, tiles: Vec<Tile>) -> Area {
     let mut categories = [0; 5];
     let bytes = tiles.iter().map(|tile| tile.bytes).sum();
@@ -138,7 +126,6 @@ pub fn area(id: &str, label: &str, tiles: Vec<Tile>) -> Area {
         tiles: tiles.into_iter().filter(|t| t.bytes > 0).collect(),
     }
 }
-
 #[derive(Clone, Copy, Debug, Default)]
 pub struct Rect {
     pub x: f64,
@@ -146,13 +133,11 @@ pub struct Rect {
     pub width: f64,
     pub height: f64,
 }
-
 #[derive(Clone, Copy, Debug)]
 pub struct Placed {
     pub index: usize,
     pub rect: Rect,
 }
-
 /// Deterministic, order-preserving binary treemap. Each partition is split
 /// across its longest edge near half of its total weight, producing readable
 /// two-dimensional blocks without changing proportional byte accounting.
@@ -168,7 +153,6 @@ pub fn treemap<T, F: Fn(&T) -> i64>(items: &[T], weight: F, frame: Rect) -> Vec<
             });
             return;
         }
-
         let total: i64 = weighted.iter().map(|(_, n)| *n).sum();
         let mut first = weighted[0].1;
         let mut split = 1;
@@ -201,7 +185,6 @@ pub fn treemap<T, F: Fn(&T) -> i64>(items: &[T], weight: F, frame: Rect) -> Vec<
         place(&weighted[..split], a, out);
         place(&weighted[split..], b, out);
     }
-
     let weighted: Vec<_> = items
         .iter()
         .enumerate()
@@ -215,11 +198,9 @@ pub fn treemap<T, F: Fn(&T) -> i64>(items: &[T], weight: F, frame: Rect) -> Vec<
     out.sort_by_key(|placed| placed.index);
     out
 }
-
 #[cfg(test)]
 mod tests {
     use super::{treemap, Rect};
-
     #[test]
     fn treemap_uses_both_dimensions_and_preserves_area() {
         let frame = Rect {
@@ -235,7 +216,6 @@ mod tests {
         let area: f64 = placed.iter().map(|p| p.rect.width * p.rect.height).sum();
         assert!((area - frame.width * frame.height).abs() < 0.001);
     }
-
     #[test]
     fn treemap_ignores_non_positive_weights_and_keeps_indexes() {
         let placed = treemap(

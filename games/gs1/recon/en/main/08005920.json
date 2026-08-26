@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x08005920",
+  "name": "SaveState_WriteRecord",
+  "status": "measured-draft",
+  "owner_bytes": 344,
+  "translation_unit": "save-state",
+  "compiler_route": "canonical-gcc296",
+  "canonical_complete_unit": {
+    "candidate_bytes": 344,
+    "reference_bytes": 344,
+    "differing_halfwords": 53,
+    "wrong_instructions": 66,
+    "matched_prefix": 9
+  },
+  "signedness_correction": {
+    "baseline_differing_halfwords": 55,
+    "baseline_wrong_instructions": 70,
+    "evidence": "The two locally returned slot indices are u32, and both reference comparisons against 15 use an unsigned branch."
+  },
+  "notes": [
+    "The complete declared save-state reconstruction composition was compiled once with canonical GCC 2.96.",
+    "All eight declared exact-C owners remained byte-exact after the local u32 correction.",
+    "The source remains ordinary C; no inline assembly, fixed-register variable, barrier, forbidden ABI, copied instruction bytes, compiler modification, or per-owner flag override was used."
+  ]
+}

@@ -14,10 +14,36 @@ use compiler_core::routing::{root, CompilerTarget};
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use no_asm_c::{find_forbidden, source_files};
 
-pub mod entry_main;
-
-pub const USAGE: &str = "usage: integrate-matches [-h] [--apply] directory";
+pub const USAGE: &str = "usage: integrate-matches [-h] [--apply|--check] directory";
 pub const ROOT_OVERRIDE: &str = "ALCHEMY_INTEGRATE_ROOT";
+
+#[derive(Default)]
+struct PipelineReport {
+    lines: Vec<String>,
+    candidates: usize,
+    already_installed: usize,
+    accepted: usize,
+    evidence_only: usize,
+    byte_rejected: usize,
+    unscored: usize,
+    apply: bool,
+}
+
+impl PipelineReport {
+    fn clean_for_check(&self) -> bool {
+        !self.apply
+            && self.candidates
+                == self.already_installed
+                    + self.accepted
+                    + self.evidence_only
+                    + self.byte_rejected
+                    + self.unscored
+            && self.accepted == 0
+            && self.evidence_only == 0
+            && self.candidates > 0
+            && self.unscored == 0
+    }
+}
 
 fn valid_address(stem: &str) -> bool {
     stem.len() == 8
@@ -164,7 +190,7 @@ fn today_utc() -> String {
     format!("{year:04}-{month:02}-{day:02}")
 }
 
-fn run_pipeline(directory: &str, apply: bool) -> Result<Vec<String>, String> {
+fn run_pipeline(directory: &str, apply: bool) -> Result<PipelineReport, String> {
     let repository = root_directory();
     let source_paths = SourcePaths::load(&repository)?;
     let directory = PathBuf::from(directory);
@@ -186,14 +212,23 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<Vec<String>, String> {
             Some((stem, path))
         })
         .collect::<Vec<_>>();
+    let candidate_count = candidates.len();
     let rom_path = repository.join("roms/gs1-en.gba");
     let rom = fs::read(&rom_path).map_err(|error| format!("{}: {error}", rom_path.display()))?;
     let mut accepted = Vec::new();
     let mut evidence = Vec::new();
-    let mut rejected = Vec::new();
+    let mut byte_rejected = Vec::new();
+    let mut unscored = Vec::new();
+    let mut already_installed = 0;
     for (stem, candidate) in candidates {
         let owner = SourceOwner::parse(&format!("main:{stem}"))?;
+        let asm = repository.join("games/gs1/asm").join(format!("{stem}.s"));
         if source_paths.source_path(owner).exists() {
+            if asm.exists() {
+                unscored.push((stem, "installed C still has retained assembly".into()));
+            } else {
+                already_installed += 1;
+            }
             continue;
         }
         let source_bytes = fs::read(&candidate).map_err(|error| error.to_string())?;
@@ -204,8 +239,8 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<Vec<String>, String> {
             .collect::<Vec<_>>()
             .join(", ");
         let mapped = source_paths.registered_source_path(owner);
-        let asm = repository.join("games/gs1/asm").join(format!("{stem}.s"));
         if !asm.exists() {
+            unscored.push((stem, "no retained assembly owner".into()));
             continue;
         }
         let result = (|| {
@@ -226,7 +261,7 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<Vec<String>, String> {
             let difference = first_difference(&verified.expected, &verified.actual)
                 .or_else(|| (verified.actual.len() != extent).then_some(verified.actual.len()));
             if let Some(offset) = difference {
-                rejected.push((
+                byte_rejected.push((
                     stem.clone(),
                     format!(
                         "bytes differ at +0x{offset:x} (asm={}B c={}B)",
@@ -266,7 +301,7 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<Vec<String>, String> {
             Ok::<(), String>(())
         })();
         if let Err(error) = result {
-            rejected.push((stem, error));
+            unscored.push((stem, error));
         }
     }
     let mut lines = accepted
@@ -307,56 +342,81 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<Vec<String>, String> {
         }
     }
     lines.extend(
-        rejected
+        byte_rejected
             .iter()
             .map(|(stem, reason)| format!("reject {stem}: {reason}")),
     );
+    lines.extend(
+        unscored
+            .iter()
+            .map(|(stem, reason)| format!("unscored {stem}: {reason}")),
+    );
     lines.push(format!(
-        "accepted={} evidence_only={} rejected={}{}",
+        "candidates={} already_installed={} accepted={} evidence_only={} byte_rejected={} unscored={}{}",
+        candidate_count,
+        already_installed,
         accepted.len(),
         evidence.len(),
-        rejected.len(),
+        byte_rejected.len(),
+        unscored.len(),
         if apply { " (applied)" } else { " (dry run)" }
     ));
-    Ok(lines)
+    Ok(PipelineReport {
+        lines,
+        candidates: candidate_count,
+        already_installed,
+        accepted: accepted.len(),
+        evidence_only: evidence.len(),
+        byte_rejected: byte_rejected.len(),
+        unscored: unscored.len(),
+        apply,
+    })
 }
 
-fn parse_arguments(arguments: &[String]) -> Result<Option<(String, bool)>, String> {
+fn parse_arguments(arguments: &[String]) -> Result<Option<(String, bool, bool)>, String> {
     if arguments
         .iter()
         .any(|arg| matches!(arg.as_str(), "-h" | "--help"))
     {
         return Ok(None);
     }
+    let apply = arguments.iter().any(|arg| arg == "--apply");
+    let check = arguments.iter().any(|arg| arg == "--check");
+    if apply && check {
+        return Err("--apply and --check cannot be combined".into());
+    }
     if let Some(arg) = arguments
         .iter()
-        .find(|arg| arg.starts_with('-') && arg.as_str() != "--apply")
+        .find(|arg| arg.starts_with('-') && !matches!(arg.as_str(), "--apply" | "--check"))
     {
         return Err(format!("unrecognized argument: {arg}"));
     }
     let directories = arguments
         .iter()
-        .filter(|arg| arg.as_str() != "--apply")
+        .filter(|arg| !matches!(arg.as_str(), "--apply" | "--check"))
         .collect::<Vec<_>>();
     match directories.as_slice() {
-        [directory] => Ok(Some((
-            (*directory).clone(),
-            arguments.iter().any(|arg| arg == "--apply"),
-        ))),
+        [directory] => Ok(Some(((*directory).clone(), apply, check))),
         [] => Err("the following arguments are required: directory".into()),
         [_, extra, ..] => Err(format!("unrecognized argument: {extra}")),
     }
 }
 
-pub(crate) fn entry(arguments: &[String]) -> std::process::ExitCode {
+pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     let result = match parse_arguments(arguments) {
         Ok(None) => {
             println!("{USAGE}");
             return std::process::ExitCode::SUCCESS;
         }
-        Ok(Some((directory, apply))) => run_pipeline(&directory, apply).map(|lines| {
-            for line in lines {
+        Ok(Some((directory, apply, check))) => run_pipeline(&directory, apply).and_then(|report| {
+            let clean = report.clean_for_check();
+            for line in report.lines {
                 println!("{line}");
+            }
+            if check && !clean {
+                Err("candidate corpus contains exact retained, evidence-only, or unscored C".into())
+            } else {
+                Ok(())
             }
         }),
         Err(error) => Err(error),
@@ -371,7 +431,7 @@ pub(crate) fn entry(arguments: &[String]) -> std::process::ExitCode {
 
 #[cfg(test)]
 mod tests {
-    use super::{adoptable, candidate_stem};
+    use super::{adoptable, candidate_stem, PipelineReport};
     use std::path::Path;
 
     #[test]
@@ -388,5 +448,20 @@ mod tests {
         assert!(adoptable("", true));
         assert!(!adoptable("ABI attribute naked", true));
         assert!(!adoptable("", false));
+    }
+
+    #[test]
+    fn corpus_check_requires_complete_accounting() {
+        let clean = PipelineReport {
+            candidates: 1,
+            already_installed: 1,
+            ..Default::default()
+        };
+        assert!(clean.clean_for_check());
+        assert!(!PipelineReport {
+            unscored: 1,
+            ..clean
+        }
+        .clean_for_check());
     }
 }

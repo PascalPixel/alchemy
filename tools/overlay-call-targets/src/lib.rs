@@ -204,14 +204,6 @@ pub fn classify(image: &[u8], target: i64, prologues: &HashSet<i64>) -> Classifi
     }
 }
 
-/// True when a whole-overlay run resolved nothing and must therefore FAIL.
-///
-/// A run with explicit bounds is exempt: the caller stated a span, and an
-/// empty result there is a real answer about that span.
-pub fn resolves_nothing(site_count: usize, bound_count: usize) -> bool {
-    site_count == 0 && bound_count == 0
-}
-
 struct InventoryRow {
     overlay: String,
     offset: i64,
@@ -497,55 +489,4 @@ fn contains_bl_word(line: &str) -> bool {
         i += 1;
     }
     false
-}
-
-const KNOWN_FLAGS: [&str; 3] = ["--self-test", "--json", "--annotate"];
-
-/// `/^resource_[0-9a-f]+$/` — lowercase only, no `i` flag in the original.
-fn is_resource_name(text: &str) -> bool {
-    text.strip_prefix("resource_").is_some_and(|rest| {
-        !rest.is_empty()
-            && rest
-                .bytes()
-                .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
-    })
-}
-
-/// Pick the owner/end bounds out of the command line.
-///
-/// `parseBounds` CONSUMES rather than filters: every argument must be
-/// accounted for, and an unrecognised or surplus one is an error with the
-/// offending text quoted. See the TypeScript original's comment for the two
-/// measured failure modes this guards against.
-pub fn parse_bounds(args: &[String], overlay: Option<&str>) -> Result<Vec<i64>, String> {
-    let mut bounds = Vec::new();
-    for argument in args {
-        if KNOWN_FLAGS.contains(&argument.as_str()) {
-            continue;
-        }
-        if Some(argument.as_str()) == overlay {
-            continue;
-        }
-        if overlay.is_none() && is_resource_name(argument) {
-            continue;
-        }
-        let stripped = argument
-            .strip_prefix("0x")
-            .or_else(|| argument.strip_prefix("0X"))
-            .unwrap_or(argument.as_str());
-        if !stripped.is_empty()
-            && stripped.len() <= 4
-            && stripped.bytes().all(|b| b.is_ascii_hexdigit())
-        {
-            bounds.push(i64::from_str_radix(stripped, 16).map_err(|e| e.to_string())?);
-            continue;
-        }
-        return Err(format!(
-            "overlay_call_targets: unrecognised argument {argument:?}.\nBounds are two SEPARATE arguments in either spelling (`1c14 1d0c` or `0x1c14 0x1d0c`).\nIf this looks like two bounds in one string, a shell passed them unsplit — zsh does not word-split an unquoted expansion."
-        ));
-    }
-    if bounds.len() > 2 {
-        return Err(format!("overlay_call_targets: {} bounds given, at most two are used (owner start and end). Refusing rather than silently ignoring the rest.", bounds.len()));
-    }
-    Ok(bounds)
 }

@@ -7,7 +7,7 @@
   "executable_owner_bytes": 140,
   "candidate_bytes": 140,
   "differing_halfwords": 3,
-  "wrong_instructions": 2,
+  "wrong_instructions": 4,
   "classification": "regional_compiler_scheduling",
   "resolved_asm_classification": {
     "kind": "compiler_output",

@@ -341,21 +341,11 @@ fn absolute_symbol_assembly(name: &str, symbol: AbsoluteSymbol) -> String {
 fn overlay_external_assembly(
     name: &str,
     unit: Option<&TranslationUnit>,
-    names: &SourcePaths,
     call_via_base: u64,
 ) -> Result<String, String> {
     let symbol = unit.and_then(|unit| unit.absolute_symbols.get(name).copied());
     if let Some(symbol) = symbol {
         return Ok(absolute_symbol_assembly(name, symbol));
-    }
-    if let Some(address) = names.main_symbol(name)? {
-        return Ok(absolute_symbol_assembly(
-            name,
-            AbsoluteSymbol {
-                address: u64::from(address),
-                kind: AbsoluteSymbolKind::Thumb,
-            },
-        ));
     }
     external_symbol_assembly(name, call_via_base)
 }
@@ -374,13 +364,16 @@ fn link_object(
 ) -> Result<Vec<u8>, String> {
     let [object, symbols_source, symbols_object, elf, binary] = files;
     let undefined = checked(&strings(&["arm-none-eabi-nm", "-u", object]), work)?;
-    let mut stubs = String::from(".syntax unified\n.thumb\n");
+    let mut stubs = names.main_symbol_exports();
     for name in undefined
         .lines()
         .filter_map(|line| line.split_whitespace().last())
     {
+        if names.main_symbol(name)?.is_some() {
+            continue;
+        }
         stubs.push_str(
-            &overlay_external_assembly(name, unit, names, call_via)
+            &overlay_external_assembly(name, unit, call_via)
                 .map_err(|_| format!("unsupported overlay C external symbol: {name}"))?,
         );
     }
@@ -936,9 +929,9 @@ mod source_activation_tests {
         assert!(check(&[unit]).is_err());
     }
     #[test]
-    fn semantic_main_alias_uses_the_generated_export_binding() {
+    fn semantic_main_alias_is_in_the_generated_export_graph() {
         let names = SourcePaths::load(&root()).unwrap();
-        let binding = overlay_external_assembly("RunBattleEffect16", None, &names, 0).unwrap();
+        let binding = ".thumb_set RunBattleEffect16, 0x0809b698\n";
         assert!(binding.contains("0x0809b698"));
         assert!(names.main_symbol_exports().contains(&binding));
     }

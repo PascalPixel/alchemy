@@ -15,7 +15,9 @@
     },
     "best_bounded_axis": {
       "scope": "complete-unit diagnostic after recovering the selected-position result carrier",
-      "flags": ["-fno-gcse"],
+      "flags": [
+        "-fno-gcse"
+      ],
       "candidate_bytes": 124,
       "reference_bytes": 124,
       "differing_halfwords": 40,
@@ -64,5 +66,11 @@
     "The raw-address diagnostic reached 124 bytes and 51 differing halfwords only by adding a duplicate ownership-map pool entry; it was rejected in favor of the named linker-resolved symbol and coherent source.",
     "No inline assembly, fixed-register variable, compiler barrier, ABI trick, compiler modification, or per-owner flag override was used.",
     "This candidate claims zero DONE bytes."
+  ],
+  "rejected_experiments": [
+    {
+      "experiment": "independent symbol re-reference for the scan base (u8 *scan_map = Data_03001810; instead of = map;), complete-unit canonical",
+      "result": "Identical 120/124 bytes and 56 differing halfwords: GCSE still unifies the second symbol reference with the first and collapses the scan/store base distinction, so the PRE-inserted copy does not survive as hoped. Unlike the rejected raw-address diagnostic this adds no duplicate pool entry, but it changes nothing under canonical flags."
+    }
   ]
 }

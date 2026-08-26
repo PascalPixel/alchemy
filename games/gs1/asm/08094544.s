@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global DisplayScroll_BuildAndSwapHBlankPage
 	.global Func_08094544
 	.thumb_func
+DisplayScroll_BuildAndSwapHBlankPage:
 Func_08094544:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

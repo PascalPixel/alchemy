@@ -8,7 +8,9 @@ typedef struct DmaTransfer {
 
 void *Func_080048f4(s32 kind, s32 size);
 
-void *Func_0808fecc(void)
+#define DisplayTransition_AllocateAndClearState Func_0808fecc
+
+void *DisplayTransition_AllocateAndClearState(void)
 {
     u32 clear_value = 0;
     void *destination = Func_080048f4(31, 0x540);

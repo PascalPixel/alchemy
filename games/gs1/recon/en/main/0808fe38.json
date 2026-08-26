@@ -2,7 +2,7 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x0808fe38",
-  "name": "BattleEffect_InitializeObjectPool",
+  "name": "DisplayTransition_InitializeState",
   "status": "measured-draft",
   "owner_bytes": 120,
   "executable_owner_bytes": 120,
@@ -25,10 +25,10 @@
       "it": "0x0808fea4"
     }
   },
-  "domain": "Allocates and clears the battle-effect object pool, seeds its control fields, and schedules its two runtime callbacks.",
+  "domain": "Allocates and clears the shared display-transition state, seeds established control fields, and schedules its two runtime callbacks.",
   "expressed": [
-    "allocates the 0x540-byte effect object pool",
-    "clears the complete pool with a fixed-source DMA transfer",
+    "allocates the 0x540-byte display-transition state",
+    "clears the complete state with a fixed-source DMA transfer",
     "stores the requested mode and initializes the trailing control fields",
     "schedules the update and presentation callbacks at their original priorities"
   ],

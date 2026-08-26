@@ -21,9 +21,9 @@ extern struct BattlePlacementState *Data_03001e74;
 void Func_080b7424(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_positions);
 struct BattleMotionObject *Func_080b7dd0(s32 actor_id);
 
-#define RefreshSummonPositions Func_080b7548
+#define Summon_Refresh Func_080b7548
 
-void RefreshSummonPositions(void)
+void Summon_Refresh(void)
 {
     s32 slot;
     struct BattlePlacementPayload *placement = &Data_03001e74->placement;

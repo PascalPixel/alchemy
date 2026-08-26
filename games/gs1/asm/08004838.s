@@ -3,8 +3,10 @@
 @ 未達。build_asm.tsでROMとの一致を確認する。
 .syntax unified
 	.thumb
+	.global PaletteDma_LoadBlock
 	.global Func_08004838
 	.thumb_func
+PaletteDma_LoadBlock:
 Func_08004838:
 	ldr	r3, [pc, #12]
 	ldr	r0, [pc, #16]

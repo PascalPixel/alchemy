@@ -12,7 +12,9 @@ struct MarkerObject {
 
 struct MarkerObject *Func_080150c8(u32 resource, u32 flags, s32 x, s32 y, s32 tile);
 
-s32 Func_080ae9f0(s32 x, s32 y, s32 tile, s32 variant)
+#define UiIcon_DrawVariantWithTileOffset Func_080ae9f0
+
+s32 UiIcon_DrawVariantWithTileOffset(s32 x, s32 y, s32 tile, s32 variant)
 {
     struct MarkerObject *object;
     u32 resource;

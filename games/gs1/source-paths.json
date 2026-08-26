@@ -2030,7 +2030,7 @@
     "main:0808d394": {"name":"BattleAction_FindDescriptor"},
     "main:0808d48c": {"name":"BattleEffect_FindDescriptor"},
     "main:0808d5dc": {"name":"BattleEffect_RunDescriptorAction"},
-    "main:08004bd4": {"name":"SceneTransform_ApplyPitch"}, "main:08004c1c": {"name":"SceneTransform_ApplyYaw"}, "main:08004cb4": {"name":"SceneTransform_ApplyPosition"}, "main:080049ac": {"name":"Render_ResetTransformState"}, "main:0800651c": {"name":"BattleLink_ResetTransferState"}, "main:0808fe38": {"name":"BattleEffect_InitializeObjectPool"}, "main:080b60a0": {"name":"BattlePresentation_WaitForLinkedState"}, "main:080b8574": {"name":"BattlePresentation_BuildSortedUnitEntries"}, "main:080b88d0": {"name":"BattlePresentation_RunPairedUnitTransition"}, "main:080b920c": {"name":"BattlePresentation_BuildUnitEntries"}, "main:080b9324": {"name":"BattlePresentation_BuildOpponentEntries"}, "main:080b9724": {"name":"BattlePresentation_AppendLinkedActions"}, "main:080b9934": {"name":"BattlePresentation_BuildActions"}, "main:080b9b30": {"name":"BattlePresentation_DispatchAction"}, "main:080b9ec0": {"name":"BattlePresentation_RunUnitTransition"}, "main:080ba2c0": {"name":"RunBattlePresentation"}, "main:080be378": {"name":"FunctionHead_080be378"}, "main:080c00d8": {"name":"BattlePresentation_BuildTilemap"}, "main:080c0774": {"name":"BattlePresentation_ConfigurePaletteFade"}, "main:080c0cec": {"name":"BattlePresentation_SetupTransitionScene"},
+    "main:08004bd4": {"name":"SceneTransform_ApplyPitch"}, "main:08004c1c": {"name":"SceneTransform_ApplyYaw"}, "main:08004cb4": {"name":"SceneTransform_ApplyPosition"}, "main:080049ac": {"name":"Render_ResetTransformState"}, "main:0800651c": {"name":"BattleLink_ResetTransferState"}, "main:0808fe38": {"name":"DisplayTransition_InitializeState"}, "main:0808fecc": {"name":"DisplayTransition_AllocateAndClearState"}, "main:080b60a0": {"name":"BattlePresentation_WaitForLinkedState"}, "main:080b8574": {"name":"BattlePresentation_BuildSortedUnitEntries"}, "main:080b88d0": {"name":"BattlePresentation_RunPairedUnitTransition"}, "main:080b920c": {"name":"BattlePresentation_BuildUnitEntries"}, "main:080b9324": {"name":"BattlePresentation_BuildOpponentEntries"}, "main:080b9724": {"name":"BattlePresentation_AppendLinkedActions"}, "main:080b9934": {"name":"BattlePresentation_BuildActions"}, "main:080b9b30": {"name":"BattlePresentation_DispatchAction"}, "main:080b9ec0": {"name":"BattlePresentation_RunUnitTransition"}, "main:080ba2c0": {"name":"RunBattlePresentation"}, "main:080be378": {"name":"FunctionHead_080be378"}, "main:080c00d8": {"name":"BattlePresentation_BuildTilemap"}, "main:080c0774": {"name":"BattlePresentation_ConfigurePaletteFade"}, "main:080c0cec": {"name":"BattlePresentation_SetupTransitionScene"},
     "main:080be76c": {"name":"Region_080be76c"}, "main:080beb08": {"name":"Region_080beb08"},
     "main:080bef88": {"name":"Region_080bef88"}, "main:080d0ee0": {"name":"Region_080d0ee0"},
     "main:080d12a8": {"name":"Fragment_080d12a8"}, "main:080d4ce8": {"name":"Region_080d4ce8"},
@@ -2107,6 +2107,14 @@
     "main:08097194": {"name":"BattleEffect_CleanupSceneObjects"},
     "main:080a1d08": {"name":"InventoryMenu_ShowModalMessage"},
     "main:080a24d0": {"name":"RunAssetSelectionScreen"},
-    "main:080b3444": {"name":"Shop_SelectPartyMemberItem"}
+    "main:080b3444": {"name":"Shop_SelectPartyMemberItem"},
+    "main:08004838": {"name":"PaletteDma_LoadBlock"},
+    "main:0800bc48": {"name":"ResourceMetadata_ClearRecord"},
+    "main:08077394": {"name":"Owner_GetState"},
+    "main:080ae9f0": {"name":"UiIcon_DrawVariantWithTileOffset"},
+    "main:080b7548": {"name":"Summon_Refresh"},
+    "main:080f9ef8": {"name":"MusicTrack_Stop"},
+    "main:080fa1ac": {"name":"MusicTrack_ClearModulationState"},
+    "main:080fb2a4": {"name":"MusicPlayer_SetPitchAndUpdateFrequency"}
   }
 }

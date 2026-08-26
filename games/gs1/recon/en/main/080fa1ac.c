@@ -1,6 +1,8 @@
 #include "types.h"
 
-void Func_080fa1ac(void *unused, u8 *node)
+#define MusicTrack_ClearModulationState Func_080fa1ac
+
+void MusicTrack_ClearModulationState(void *unused, u8 *node)
 {
     s32 flags;
     s32 updated_flags;

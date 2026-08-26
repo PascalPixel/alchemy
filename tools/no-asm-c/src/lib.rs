@@ -110,6 +110,40 @@ pub fn source_files(directory: &Path) -> io::Result<Vec<PathBuf>> {
     files.sort();
     Ok(files)
 }
+/// Preprocess one source with the routed direct preprocessor and report the
+/// forbidden constructs its expansion contains, as `token:line:expanded`.
+pub fn expanded_forbidden(root: &Path, source: &Path) -> Result<String, String> {
+    let work = tempfile::tempdir().map_err(|error| error.to_string())?;
+    let output = work.path().join("ordinary.i");
+    let command = compiler_core::plan::direct_preprocessor_command(
+        &source.to_string_lossy(),
+        &output.to_string_lossy(),
+    )?;
+    let program = command
+        .first()
+        .ok_or_else(|| "empty preprocessor command".to_string())?;
+    let status = std::process::Command::new(program)
+        .args(&command[1..])
+        .current_dir(root)
+        .output()
+        .map_err(|error| format!("{program}: {error}"))?;
+    if !status.status.success() {
+        let detail = String::from_utf8_lossy(&status.stderr);
+        return Err(format!("{program} failed: {}", detail.trim()));
+    }
+    let text = fs::read_to_string(&output).map_err(|error| error.to_string())?;
+    Ok(find_forbidden(&output.to_string_lossy(), &text)
+        .into_iter()
+        .map(|finding| format!("{}:{}:expanded", finding.token, finding.line))
+        .collect::<Vec<_>>()
+        .join(","))
+}
+/// True when the source is ordinary C both as written and after expansion.
+pub fn ordinary_source(root: &Path, source: &Path) -> Result<bool, String> {
+    let text = fs::read_to_string(source).map_err(|error| error.to_string())?;
+    Ok(find_forbidden(&source.to_string_lossy(), &text).is_empty()
+        && expanded_forbidden(root, source)?.is_empty())
+}
 pub fn self_test() -> Result<(), String> {
     let source = "register int r __asm__(\"r4\"); void f(void) { __asm__(\"nop\"); __asm__ volatile(\"\" ::: \"memory\"); }\n";
     let found = find_forbidden("fixture.c", source);
@@ -138,4 +172,12 @@ pub fn self_test() -> Result<(), String> {
 fn raw_and_macro_escape_hatches() {
     self_test().unwrap();
     cli::macro_self_test().unwrap();
+}
+#[cfg(test)]
+#[test]
+fn nonordinary_source_is_detected_raw() {
+    let path = std::env::temp_dir().join("alchemy-nonordinary-raw.c");
+    fs::write(&path, "void f(void) __attribute__((naked));\n").unwrap();
+    assert!(!ordinary_source(&path, &path).unwrap());
+    let _ = fs::remove_file(path);
 }

@@ -1937,51 +1937,22 @@ fn decode_overlay_resources(
     let mut decoded = BTreeMap::new();
     for edition in EDITIONS {
         let rom = &roms.images[edition];
-        let table = resource_table(rom)?;
+        let table =
+            overlay_disasm::resource_table(rom).map_err(|error| format!("{edition}: {error}"))?;
         tables.insert(
             edition.to_string(),
             format!("0x{:08x}", ROM_BASE + table as u64),
         );
         let mut resources = BTreeMap::new();
         for resource in OVERLAY_FIRST..=OVERLAY_LAST {
-            let start = resource_pointer(rom, table, resource)?;
-            let next = resource_pointer(rom, table, resource + 1).ok();
-            let end = next
-                .filter(|next| *next > start && *next <= rom.len())
-                .unwrap_or(rom.len());
-            let (bytes, _) = match rom[start] {
-                0 => extract_resource::decode_general(rom, start, end, 0x10_0000),
-                1 => extract_resource::decode_palette(rom, start + 1, end, 0x10_0000),
-                tag => return Err(format!("{edition}: resource {resource:03x} has tag {tag}")),
-            }
-            .map_err(|error| format!("{edition}: resource {resource:03x}: {error}"))?;
+            let bytes =
+                overlay_disasm::decode_overlay(rom, table, &format!("resource_{resource:03x}"))
+                    .map_err(|error| format!("{edition}: resource {resource:03x}: {error}"))?;
             resources.insert(resource, bytes);
         }
         decoded.insert(edition, resources);
     }
     Ok((tables, decoded))
-}
-fn resource_table(rom: &[u8]) -> Result<usize, String> {
-    (0..rom.len().saturating_sub(8))
-        .step_by(4)
-        .find(|offset| {
-            u32::from_le_bytes(rom[*offset..*offset + 4].try_into().unwrap()) as u64 == ROM_BASE
-                && u32::from_le_bytes(rom[*offset + 4..*offset + 8].try_into().unwrap()) as u64
-                    == ROM_BASE + *offset as u64
-        })
-        .ok_or("resource directory self-pointer was not found".into())
-}
-fn resource_pointer(rom: &[u8], table: usize, resource: usize) -> Result<usize, String> {
-    let at = table
-        .checked_add(resource * 4)
-        .ok_or("resource directory offset overflow")?;
-    let address = u32::from_le_bytes(
-        rom.get(at..at + 4)
-            .ok_or("resource directory extends past ROM")?
-            .try_into()
-            .unwrap(),
-    ) as u64;
-    rom_offset(address, rom.len())
 }
 fn overlay_window<'a>(
     decoded: &'a DecodedOverlays,
@@ -1995,30 +1966,7 @@ fn overlay_window<'a>(
         .ok_or_else(|| format!("{edition}: resource {resource:03x} owner extends past container"))
 }
 fn overlay_mask(owner: &[u8], en_offset: usize) -> Vec<bool> {
-    let mut mask = vec![false; owner.len()];
-    for at in (0..owner.len().saturating_sub(3)).step_by(2) {
-        let high = u16::from_le_bytes([owner[at], owner[at + 1]]);
-        let low = u16::from_le_bytes([owner[at + 2], owner[at + 3]]);
-        if high & 0xf800 == 0xf000 && low & 0xf800 == 0xf800 {
-            mask[at..at + 4].fill(true);
-        }
-    }
-    for at in (0..owner.len().saturating_sub(1)).step_by(2) {
-        let instruction = u16::from_le_bytes([owner[at], owner[at + 1]]);
-        if instruction & 0xf800 != 0x4800 {
-            continue;
-        }
-        let pc = (OVERLAY_BASE + en_offset as u64 + at as u64 + 4) & !3;
-        let target = pc + u64::from(instruction & 0xff) * 4;
-        let Some(literal) = target.checked_sub(OVERLAY_BASE + en_offset as u64) else {
-            continue;
-        };
-        let literal = literal as usize;
-        if literal + 4 <= mask.len() {
-            mask[literal..literal + 4].fill(true);
-        }
-    }
-    mask
+    compiler_core::thumb::relocation_info(owner, OVERLAY_BASE + en_offset as u64).0
 }
 fn analyze_overlay_owner(
     owner: &OverlayOwner,
@@ -2795,13 +2743,6 @@ mod tests {
         assert!(locate_near_exact(&owner, &mask, &rom, 40, 32, ROM_BASE)
             .unwrap_err()
             .contains("ambiguous"));
-    }
-    #[test]
-    fn finds_relocated_resource_directory_from_self_pointer() {
-        let mut rom = vec![0xff; 64];
-        rom[16..20].copy_from_slice(&(ROM_BASE as u32).to_le_bytes());
-        rom[20..24].copy_from_slice(&((ROM_BASE + 16) as u32).to_le_bytes());
-        assert_eq!(resource_table(&rom), Ok(16));
     }
     #[test]
     fn masks_overlay_calls_and_reached_literal_words() {

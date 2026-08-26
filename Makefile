@@ -27,7 +27,7 @@ PORTABLE_TOOLS := alignment-tail asset-paths cache-entry canonical-json \
 	overlay-adopt overlay-call-targets check check-commit-progress \
 	check-publication check-unmatchable core-retained-audit coverage-map \
 	full-c-progress integrate-matches route-dump decomp-targets
-TOOLING_LINE_LIMIT := 30200
+TOOLING_LINE_LIMIT := 30400
 TARGET ?= gs1-en
 FULL_REPORT = out/$(TARGET)/full/rebuilt.json
 FULL_ROM = out/$(TARGET)/full/rebuilt.gba
@@ -222,6 +222,12 @@ edition-builds-check: build-claimed
 coverage: correspondence
 	$(CHECK) coverage --write
 
+twins: build-full
+	$(COMPILER) twins --write games/gs1/recon/main-twins.json
+
+twins-check: build-full
+	$(COMPILER) twins --check games/gs1/recon/main-twins.json
+
 coverage-check: correspondence-check
 	$(CHECK) coverage --check
 
@@ -300,7 +306,7 @@ test: lint tooling-size tool-tests
 
 verify: source-tracking-check corpus-check test tooling-size targets \
 	full-rom-check strict-tu-check classification-check \
-	candidate-corpus-check edition-builds-check check-owners \
+	candidate-corpus-check edition-builds-check check-owners twins-check \
 	progress-check coverage-check
 
 standard-check:

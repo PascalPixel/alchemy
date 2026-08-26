@@ -275,9 +275,9 @@ fn validate_production_state(
             unit.id
         ));
     }
-    if grouped && unit.overlay.is_some() && !unit.exact() {
+    if unit.overlay.is_some() && !(grouped && unit.exact()) {
         return Err(format!(
-            "{}: grouped overlay C must be wholly exact",
+            "{}: overlay units must be wholly exact grouped C under the source root",
             unit.id
         ));
     }
@@ -358,6 +358,21 @@ fn validate_production_state(
                             .is_ok_and(|path| direct_includes.contains(&path)))
             })
         };
+        if requires_direct && matches!(member.state, OwnerState::RetainedAssembly) {
+            let parent = source.parent().unwrap_or(root);
+            let candidate = parent.join(format!("../main/{:08x}.c", member.address));
+            if !candidate
+                .canonicalize()
+                .is_ok_and(|path| direct_includes.contains(&path))
+            {
+                return Err(format!(
+                    "{}: {} retained C body must be included from ../main/{:08x}.c",
+                    unit.id,
+                    owner.id(),
+                    member.address
+                ));
+            }
+        }
         let valid = match member.state {
             OwnerState::ExactC => exact_source && !retained,
             OwnerState::RetainedAssembly => mapped.is_none() && retained,

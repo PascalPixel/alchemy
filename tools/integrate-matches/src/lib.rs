@@ -12,6 +12,7 @@ use candidate_compiler::{verify_candidate_owned_routed, CandidateCompilerConfigu
 use compiler_core::plan::direct_preprocessor_command;
 use compiler_core::routing::{root, CompilerTarget};
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
+use compiler_core::translation_units::TranslationUnits;
 use no_asm_c::{find_forbidden, source_files};
 
 pub const USAGE: &str = "usage: integrate-matches [-h] [--apply|--check] directory";
@@ -193,6 +194,7 @@ fn today_utc() -> String {
 fn run_pipeline(directory: &str, apply: bool) -> Result<PipelineReport, String> {
     let repository = root_directory();
     let source_paths = SourcePaths::load(&repository)?;
+    let units = TranslationUnits::load(&repository)?;
     let directory = PathBuf::from(directory);
     let directory = if directory.is_absolute() {
         directory
@@ -245,8 +247,23 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<PipelineReport, String> 
         }
         let result = (|| {
             let extent = assembly_extent(&stem, &asm, &gate)?;
-            let fallback = repository.join("games/gs1/src").join(format!("{stem}.c"));
-            let route = mapped.as_ref().unwrap_or(&fallback);
+            // Flags route by the owner's address-stem routing path, exactly as
+            // the production standalone compile does; a descriptive mapped
+            // path must not change the owner's recorded flag family.
+            let route = repository.join(owner.routing_path());
+            // A candidate inside a declared reconstruction-composition unit
+            // links with that unit's manifest symbols, exactly as the unit
+            // compile does.
+            let mut configuration = CandidateCompilerConfiguration::default();
+            if let Some(unit) = units.units.iter().find(|unit| {
+                unit.overlay.is_none()
+                    && unit
+                        .owners
+                        .iter()
+                        .any(|member| member.address == owner.address())
+            }) {
+                configuration.absolute_symbols = unit.canonical_symbols()?;
+            }
             let verified = verify_candidate_owned_routed(
                 &candidate.to_string_lossy(),
                 &route.to_string_lossy(),
@@ -256,7 +273,7 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<PipelineReport, String> 
                 &[],
                 ROM_BASE,
                 CompilerTarget::Gs1,
-                &CandidateCompilerConfiguration::default(),
+                &configuration,
             )?;
             let difference = first_difference(&verified.expected, &verified.actual)
                 .or_else(|| (verified.actual.len() != extent).then_some(verified.actual.len()));

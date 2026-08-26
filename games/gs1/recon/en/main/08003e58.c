@@ -12,47 +12,48 @@ extern struct ResourceTableEntry Data_03001b10[96];
 
 s32 ResourceTable_AllocateBlocks(u32 id, u32 size)
 {
-    struct ResourceTableEntry *tbl;
-    u8 *scan_map;
-    u8 *map;
     u32 blocks;
     s32 result;
-    s32 pos;
 
     blocks = size >> 6;
-    if (id > 95) return -1;
-    map = Data_03001810;
-    tbl = Data_03001b10;
-    pos = 0;
-    scan_map = map;
-next_run:
-    result = -1;
-    if (pos >= 512) {
-        goto done;
+    if (id > 95) {
+        return -1;
     }
-    if (scan_map[pos] == 0xff) {
-        u32 end;
-        u32 i;
-        u8 *scan;
+    {
+        u8 *map = Data_03001810;
+        struct ResourceTableEntry *tbl = Data_03001b10;
+        s32 pos = 0;
+        u8 *scan_map = map;
 
-        result = pos;
-        end = result + blocks;
-        scan = scan_map + result;
-        while (pos < end) {
-            if (*scan++ != 0xff) {
-                goto occupied;
+next_run:
+        result = -1;
+        if (pos >= 512) {
+            goto done;
+        }
+        if (scan_map[pos] == 0xff) {
+            u32 end;
+            u32 i;
+            u8 *scan;
+
+            result = pos;
+            end = result + blocks;
+            scan = scan_map + result;
+            while (pos < end) {
+                if (*scan++ != 0xff) {
+                    goto occupied;
+                }
+                pos++;
             }
-            pos++;
+            for (i = 0; i < blocks; i++) {
+                ResourceBlockOwners[result + i] = id;
+            }
+            result <<= 6;
+            goto done;
         }
-        for (i = 0; i < blocks; i++) {
-            map[result + i] = id;
-        }
-        result <<= 6;
-        goto done;
-    }
 occupied:
-    pos += tbl[map[pos]].size >> 6;
-    goto next_run;
+        pos += tbl[map[pos]].size >> 6;
+        goto next_run;
 done:
-    return result;
+        return result;
+    }
 }

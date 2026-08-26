@@ -1,19 +1,29 @@
-#include "types.h"
+#include "serial_runtime_family.h"
 
-#define BattleLink_ResetTransferState Func_0800651c
-
-void BattleLink_ResetTransferState(void)
+void Func_0800651c(void)
 {
-    u16 interrupt_enable;
+    struct SerialTransferState *state;
+    volatile u16 *interrupt_master;
+    u32 saved_interrupt_master;
+    u32 zero;
 
-    interrupt_enable = *(u16 *)0x04000208;
-    *(u16 *)0x04000208 = 0x04000208;
-    *((s8 *)0x02002220 + 1) = 0x80;
-    *(s32 *)0x02002080 = 0;
-    *(s16 *)0x02002008 = 0;
-    *(s32 *)0x020023ac = 0;
-    *((s8 *)0x02002220 + 3) = 0;
-    *((s8 *)0x02002220 + 2) = 0;
-    *(s16 *)0x02002238 = 0;
-    *(u16 *)0x04000208 = interrupt_enable;
+    do {
+        interrupt_master = &Data_04000208;
+        state = &Data_02002220;
+        zero = 0;
+    } while (0);
+    do {
+        saved_interrupt_master = *interrupt_master;
+        *interrupt_master = (u16)interrupt_master;
+        do {
+            state->status = 0x80;
+            Data_02002080 = zero;
+            Data_02002008 = zero;
+            Data_020023ac = zero;
+            state->peer_flags = zero;
+            state->flags = zero;
+            Data_02002238 = zero;
+        } while (0);
+        *interrupt_master = saved_interrupt_master;
+    } while (0);
 }

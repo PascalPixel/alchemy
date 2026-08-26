@@ -1406,10 +1406,16 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
         "owner_inventory",
         json!({"path":inventory_path.to_string_lossy(),"summary":inventory_summary})
     );
-    field!("strict_translation_units", json!(false));
+    field!(
+        "strict_translation_units",
+        json!(owner_coverage.missing == 0 && owner_coverage.unexpected == 0)
+    );
     field!(
         "strict_translation_units_scope",
-        json!("requires an authoritative original-translation-unit inventory")
+        json!(
+            "complete reconstruction-composition contract coverage; \
+             original translation units remain unknown"
+        )
     );
     field!("main_symbol_exports", json!(main_symbol_exports));
     field!("asm_regions", number(asm_regions.len()));

@@ -184,7 +184,7 @@
       "composition_sections": {
         ".text": [
           "SerialRuntime_Initialize", "SerialRuntime_EnableTransferTimer", "SerialRuntime_DisableTransfer",
-          "SerialRuntime_PollAndTransfer", "SerialRuntime_PollStatus", "SerialRuntime_ExchangePayloads",
+          "SerialRuntime_PollAndTransfer", "SerialRuntime_PollStatus",
           "SerialRuntime_PrepareSendPacket", "SerialRuntime_CollectReceivedPayloads",
           "SerialRuntime_HandleTransferInterrupt", "SerialRuntime_RemoveIrqHandlers",
           "SerialRuntime_WaitForStatusMask", "SerialRuntime_BeginTransferA", "SerialRuntime_BeginTransferB",
@@ -199,7 +199,6 @@
         {"address":"0x08005e88","alias":"SerialRuntime_DisableTransfer","extent":86,"state":"exact-c"},
         {"address":"0x08005ee0","alias":"SerialRuntime_PollAndTransfer","extent":234,"state":"retained-assembly"},
         {"address":"0x08005fcc","alias":"SerialRuntime_PollStatus","extent":186,"state":"retained-assembly"},
-        {"address":"0x08006088","alias":"SerialRuntime_ExchangePayloads","extent":96,"state":"retained-assembly"},
         {"address":"0x080060e8","alias":"SerialRuntime_PrepareSendPacket","extent":116,"state":"retained-assembly"},
         {"address":"0x0800615c","alias":"SerialRuntime_CollectReceivedPayloads","extent":228,"state":"retained-assembly"},
         {"address":"0x08006240","alias":"SerialRuntime_HandleTransferInterrupt","extent":280,"state":"exact-c"},

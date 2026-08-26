@@ -139,7 +139,7 @@ progress-check:
 progress-subject:
 	$(CHECK) progress --subject
 
-correspondence: build-claimed
+correspondence: build-full
 	$(COMPILER) cross-edition --all --write games/gs1/recon/exact-correspondence.json
 	$(COMPILER) cross-edition --all-overlays --write games/gs1/recon/exact-overlay-correspondence.json \
 		--edition-build games/gs1/recon/exact-overlay-builds.json

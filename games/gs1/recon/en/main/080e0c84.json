@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "namespace": "gs1-en-main",
+  "address": "0x080e0c84",
+  "status": "measured-draft",
+  "owner_bytes": 956,
+  "score": {
+    "measured": "2026-08-27",
+    "candidate_bytes": 956,
+    "reference_bytes": 956,
+    "differing_halfwords": 6,
+    "wrong_instructions": 8,
+    "class": "allocation",
+    "command": "cargo run --offline --quiet --release --manifest-path tools/compiler/Cargo.toml -- candidate-show games/gs1/recon/en/main/080e0c84.c --align --size 956",
+    "note": "Drafted from the retained owner assembly (games/gs1/asm/080e0c84.s) and the family-transplant workspace's m2c-assisted context (out/family-transplants/main-080e0c84/), not the naive symbol-renamed seed. Length and structure now match the reference exactly (956/956 bytes); only 6 differing halfwords remain, all clustered in two independent-immediate-load orderings (see rejected_experiments) that match this family's already-documented, evidence-exhausted register-allocation-priority residual (games/gs1/recon/en/main/080e01e4.json note (b)). Three structural fixes got the candidate from an initial 270 differing_halfwords / 4-byte-short frame down to this residual: (1) Func_080072f4/Func_08007314 are the r4/ip slots of the _call_via_rN trampoline at games/gs1/asm/080072e4.s, not real functions -- every call site goes through routine[i&1]/routine[0]/routine[1], a DrawRectangleFn callbacks[2] array Func_080cef64 fills, matching 080e01e4.c's established Func_080cef64(flag, DrawRectangleFn*) signature; (2) the particle-draw call's width/height/src-table reads needed puff_arc/run.c's established `(w = Data_X[i]) / 2` assignment-expression idiom -- pre-computing w/h/x_int/y_int into separate named locals before the call reordered the whole table-read block relative to the reference, inlining them with the assignment-expression trick reproduced the reference's exact read order (table16 -> x_int -> byte-table1 -> byte-table2) instruction-for-instruction; (3) the 4-byte-short stack frame (sub sp,#44 vs reference's #48) was fixed by widening `spawn` from a 2-word to a 3-word local -- Func_080e3980 (an opaque external call taking one output base pointer, no separate count/size argument) evidently writes a 3rd word this owner never reads back, exactly mirroring the template's own 3-int screen-position convention (member_orbit/run.c's `s32 screen[3];` for its analogous Func_080e3944 call)."
+  },
+  "family": {
+    "assigned_template_owner": "main:080ce85c",
+    "assigned_template_source": "games/gs1/src/battle/effects/member_orbit/run.c",
+    "template_note": "Family-matcher score 8059/10000 against member_orbit/run.c, but this owner's size (956 bytes) and body differ substantially from the template's (724 bytes): where member_orbit runs a single 64-frame loop that draws 4 orbiting sprites per active party member, this owner instead seeds a 64-slot randomly-initialized particle pool (fixed-point x/y position plus a sin/cos velocity pair per particle) ahead of the frame loop, then every frame both re-draws every eligible particle (reading its position back through the upper halfword of the s32 fixed-point field, per 080e01e4.c's established M2C_FIELD(ptr,s16*,2/6) idiom) and redraws a 5-column background reveal band whose x-offset depends on `frame/4`. The two owners do share the family's field-offset layout (work+0x7780/0x7784/0x7824/0x7828), the M2C_FIELD macro convention, the heap_cache=(void**)0x03001EEC/cursor/work/canvas prologue, and the Func_080cd594/Func_080041d8/Func_08004278/Func_08002dd8/Func_080cdbc0 setup/teardown bracket -- confirming the family assignment at the subsystem level even though the template's own body was not otherwise reusable."
+  },
+  "rejected_experiments": [
+    {
+      "experiment": "pre-compute the particle-draw call's w/h/x_int/y_int into named locals ahead of the call (routine[i&1](canvas, ..., x_int - w/2, y_int - h/2, w, h);)",
+      "result": "compiled to the right values but a different instruction order (table16 -> byte-table1 -> byte-table2 -> both ldrsh reads, instead of the reference's table16 -> x_int -> byte-table1 -> byte-table2 -> y_int -> byte-table2 interleaving); replaced with puff_arc/run.c's established `(w = Data_X[i]) / 2` assignment-expression idiom, inlined directly in the call, which reproduced the reference's exact read order and dropped differing_halfwords from 270 to 147 in one step"
+    },
+    {
+      "experiment": "spawn as a 2-word local (s32 spawn[2];), matching the caller's own two direct reads (spawn[0], spawn[1])",
+      "result": "left the compiled frame 4 bytes short (sub sp,#44 vs reference's #48) and shifted every later local's stack offset by 8, cascading into ~100 register-choice diffs across the whole function even though every value was individually correct; widening to `s32 spawn[3];` (an unread 3rd word Func_080e3980 evidently still writes, matching the template's own 3-int screen-position convention) fixed the frame size exactly and collapsed nearly all of those cascaded diffs at once (270 -> 81 differing_halfwords)"
+    },
+    {
+      "experiment": "col precomputed into a named local before each routine[0](...) call in the final two 5-iteration reveal-band loops (col = (i<<5) - (frame/4&31); routine[0](canvas, work, col, ...);)",
+      "result": "reference computes the subtraction interleaved with the sp+20/r8 setup rather than immediately after the mask; inlining the expression directly into the call argument (dropping the named `col` local) matched that interleaving and dropped differing_halfwords from 81 to 11"
+    },
+    {
+      "experiment": "amp * Func_08002322(angle) / amp * Func_0800231c(angle) for the particle velocity fields (amp written first, syntactically)",
+      "result": "reference preloads the sin/cos call result into the muls accumulator register first, then multiplies by amp already resident from the mask computation; swapping the C multiplication operand order to `Func_08002322(angle) * amp` matched (11 -> 7 differing halfwords)"
+    },
+    {
+      "experiment": "hoist `p = (Particle *)0x02010000;` above the particle-init for-loop as a separate statement, with `p++` as the loop body's last statement (matching the particle-draw loop's own for(...;...;i++,p++) form only in the second loop)",
+      "result": "folding the init loop to the same `for (i = 0, p = ...; i != 64; i++, p++)` shape used by the particle-draw loop dropped one more differing halfword (7 -> 6) with no size change"
+    },
+    {
+      "experiment": "declaration-order swaps (spawn/screen/routine locals; amp/angle locals) to influence the two remaining independent-immediate-load residuals (the Func_080041d8 callback/interval pool-load-vs-lsls ordering, and the r8/r9 particle-loop mask/base-pointer preload ordering)",
+      "result": "zero effect in every case, consistent with 080e01e4.json's finding that declaration-order and block-scoping levers do not move this compiler's register/scheduling choices on their own -- these two are left as the family's already-documented register-allocation-priority residual, class=allocation"
+    }
+  ],
+  "notes": [
+    "Recovered only from the retained owner assembly (games/gs1/asm/080e0c84.s), the approved local EN ROM, the already-adopted games/gs1/src/battle/effects/member_orbit/run.c and games/gs1/src/battle/effects/puff_arc/run.c, games/gs1/recon/en/main/080e01e4.c and its dossier, in-repository headers, and the approved compiler. The out/family-transplants/main-080e0c84/ workspace's m2c-assisted context (m2c/080e0c84.c, m2c/target.canonical.s) was used as a starting structural scaffold, not copied verbatim -- the naive symbol-renamed 080e0c84.c seed in that directory was confirmed unusable directly (its body is the template's own, not this owner's).",
+    "This candidate claims zero DONE bytes (differing_halfwords=6, not exact).",
+    "Semantic summary: sets BG2 scale, republishes the effect-state pointer at work+0x7828, resolves two draw routines via Func_080cef64 into routine[2] (indirect calls through the r4/ip _call_via_rN trampoline slots, never direct function calls), seeds a 64-slot particle pool at the fixed EWRAM scratch address 0x02010000 with randomized fixed-point positions and a sin/cos velocity pair, then runs 64 animation frames. Each frame conditionally draws one orbiting marker (state->0x1C==1, gated further by a double-draw on the first 4 frames), redraws every eligible particle (frame >= particle_index/4 + 4) at a table-selected sprite cell, on frame 8 fires a one-shot Func_080d6888/Func_080b5088 dispatch pair, and redraws a 5-column background reveal band whose formula (subtract vs add-then-subtract-32) is chosen by state->field_4.",
+    "The remaining 6 differing halfwords / 8 wrong instructions are exactly the family's already-documented (games/gs1/recon/en/main/080e01e4.json, note (b)) evidence-exhausted register-allocation-priority residual: two clusters of independently-computed immediate loads (a pool-load vs a shift-construct for the two Func_080041d8 arguments; a pool-load vs a small-immediate mov for the particle-loop's base-pointer/mask preload into r8/r9) land in a different order than the reference even though every value, register, and net effect matches. Per the family's prior investigation and this session's own declaration-order/block-scoping retries (all zero-effect), this is not source-shape-controllable without hand-forcing register assignment or instruction scheduling, which is out of scope.",
+    "No GS2 or external source was used; no other Golden Sun decompilation project was consulted."
+  ]
+}

@@ -6,8 +6,8 @@
   "owner_bytes": 32,
   "executable_owner_bytes": 32,
   "candidate_bytes": 32,
-  "differing_halfwords": 8,
-  "wrong_instructions": 14,
+  "differing_halfwords": 4,
+  "wrong_instructions": 6,
   "classification": "palette-dma-transfer",
   "cross_edition": {
     "editions": ["ja", "en", "de", "es", "fr", "it"],
@@ -19,11 +19,18 @@
     "mode": "classic-walk",
     "candidates": 20000,
     "exact": false,
-    "best_differing_halfwords": 7,
-    "best_structural_rows": 5
+    "best_differing_halfwords": 4,
+    "best_structural_rows": 5,
+    "perm_general_statement_order": {
+      "choices": 6,
+      "attempted": 6,
+      "best_differing_halfwords": 4,
+      "note": "All 6 field-write statement orders tried via PERM_GENERAL over dma->source/destination/control (out/permute/08004838/report.json); the retained order (control, destination, source) is the unique floor at 4 -- every other order regresses to 6 by scrambling which hard register (r0/r1/r2) holds which field value relative to the reference."
+    }
   },
   "notes": [
-    "Publishes a source address, palette destination, and transfer control word through DMA3. The current standalone canonical score is 32/32 bytes, 8 differing halfwords, and 14 wrong instructions.",
-    "The retained owner is already covered by the proven thumb_multiple_transfer_module matcher: its standalone three-register STMIA cannot be emitted from ordinary approved C by the target compiler. No duplicate permanent classification was added."
+    "Publishes a source address, palette destination, and transfer control word through DMA3. The current standalone canonical score is 32/32 bytes, 4 differing halfwords, and 6 wrong instructions (matched_prefix=4: all four literal-pool loads into r3/r0/r1/r2 already match the reference byte-for-byte).",
+    "The retained owner is already covered by the proven thumb_multiple_transfer_module matcher: its standalone three-register STMIA cannot be emitted from ordinary approved C by the target compiler. Confirmed directly against this route's backend (alchemy-gcc/gs1cc/gcc/config/arm/arm.c thumb_output_move_mem_multiple/thumb_expand_movstrqi and arm.md movmem12b/movmem8b/store_multiple): Thumb's only multi-register-stmia-emitting pattern (movmem12b/8b) always prints a paired ldmia immediately before the stmia as one indivisible output_asm_insn pair for a genuine memory-to-memory block move, and the dedicated ARM store-multiple expander/peepholes are gated TARGET_ARM only with no Thumb equivalent -- so a lone grouped stmia sourced from three independently computed register values (as the reference has, with no preceding ldmia) is unreachable from any ordinary C shape on this compiler route. A local struct-temporary copy and a static-inline struct-by-value-returning helper both confirmed empirically: each instead lowers through the paired movmem12b shape via a stack-materialized 12-byte object (extra sub sp/add sp the reference does not have), never the reference's unpaired form. No duplicate permanent classification was added.",
+    "The remaining 4 differing halfwords are exactly the reference's stmia r3!,{r0,r1,r2} / subs r3,#12 / (trailing pool-alignment nop movs r0,r0) vs. this candidate's three discrete str's / (no alignment nop needed, since its 8-halfword body is already 4-byte aligned before the literal pool while the reference's 7-halfword body needs the pad) -- a compiler-level residual, not a source-shape mistake."
   ]
 }

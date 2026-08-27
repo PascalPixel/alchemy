@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x0800615c",
+  "name": "SerialRuntime_CollectReceivedPayloads",
+  "status": "retained-assembly",
+  "owner_bytes": 228,
+  "translation_unit": "serial-runtime",
+  "compiler_route": "canonical-gcc296",
+  "best_ordinary_c_shape": {
+    "shape": "struct SerialRuntime *state cached once for the ready_buffer swap, pending_buffer walk, and tail received_mask/current_mask update; a 2-element u32 channel_state[] array whose second word is a dead zero store (reproducing the reference's unexplained extra 4-byte stack slot); pp/dst walking pointers (u16 **pp = state->pending_buffer, u8 *dst = payload) incremented once per channel iteration instead of index*24/index*4 recomputation; SERIAL_RUNTIME-> used directly (not through state) for current_mask/channel_flags accesses inside the loop.",
+    "candidate_bytes": 228,
+    "reference_bytes": 228,
+    "differing_halfwords": 100,
+    "wrong_instructions": 136,
+    "matched_prefix": 5
+  },
+  "bounded_source_shapes": [
+    "Baseline (state cached, scalar channel_state, index*4/channel*24 recomputed pending_buffer/payload offsets): 228/228 bytes, 105 differing halfwords.",
+    "channel_state widened to a 2-element array with channel_state[1]=0 as the first statement (reproduces the reference's dead sp+4 zero-store and its sub sp,#8/add sp,#8 frame): 228/228, 101 differing halfwords.",
+    "Above plus pp/dst walking pointers replacing index*4/channel*24 pending_buffer/payload arithmetic (matches the reference's ip += 24 / r6 += 4 per-iteration pointer walk seen via m2c's --context draft): 228/228, 100 differing halfwords -- best found.",
+    "All SERIAL_RUNTIME-> accesses de-aliased through 'state' removed entirely (every access written as a fresh SERIAL_RUNTIME-> macro reference, no state variable at all): length regresses to 232/228 (extra reload of received_mask/current_mask at the tail costs 4 bytes) and differing halfwords rises to ~110-112.",
+    "'state' assignment deferred from immediately after REG_IME=0 to immediately before pp = state->pending_buffer (keeping ready_ptr on the SERIAL_RUNTIME-> macro directly): 228/228, 107 differing halfwords -- worse than caching state from the top.",
+    "dst = (u8 *)payload hoisted to the very first statement (matching the reference's early 'adds r4, r0, #0' payload capture position): length regresses to 232/228, 105 differing halfwords.",
+    "channel_state[1] = 0 moved to after REG_IME = 0 instead of before it: length regresses to 232/228, 110 differing halfwords."
+  ],
+  "remaining": "candidate-show --align and the raw .insns listings (scratch/candidate-show/0800615c/{candidate,reference}.insns) show the residual is not a small last-mile permutation but a genuine global register-allocation/scheduling mismatch: the compiler front-loads SERIAL_RUNTIME's base address, REG_IME's address, and &channel_state[0] into r9/sl within the first ~6 instructions of the prologue (before the ready_buffer swap do-while even starts), which forces gcc296's literal-pool manager to dump 6 pool words immediately after the swap loop's first pass (an unconditional 'b' jump over an inline .word table -- visible in scratch/candidate-show/0800615c/0800615c.s as '.L26'/.L28'), whereas the reference keeps only 2 constants live at that point, defers the &channel_state address materialization ('mov lr, sp') until immediately before its first indexed byte load, and defers DMA3's base address to a fresh load right at the START_DMA call site (letting gcc296 fold the three sequential DMA3-> stores into a single 'stmia r3!, {r0,r1,r2}' that this candidate never produces -- it always emits three separate str instructions because DMA3's address ends up cached in a persistent 'ip' across the whole loop instead of reloaded fresh per call). Every ordinary-C restructuring tried (macro-only aliasing, deferred state assignment, reordered declarations/statements, scalar vs 2-element-array channel_state) either left this early-hoisting behavior unchanged or made the length/diff count worse. This looks like it needs either a different source-level trigger for keeping 'state'/channel_state's address out of a fixed hard register across the whole function (not found among the shapes tried), or is a genuine limit of what this GCC 2.96 route will produce from ordinary C for this control-flow shape.",
+  "notes": [
+    "Measured directly with tools/compiler/target/release/compiler candidate-show games/gs1/recon/en/main/0800615c.c --align (not the complete declared translation unit).",
+    "No inline assembly, fixed-register variable, compiler barrier, ABI escape, copied instruction bytes, compiler modification, or invented compiler flag was used.",
+    "Sibling main:080c1ebc (BattleActor_ClearIndexedMaskBit) was read for house style but is a different compiler family target (battle, not serial-runtime) and did not transplant directly; games/gs1/recon/compiler-families.json has no entry for main:0800615c ('families transplant main:0800615c' returns 'not in family index').",
+    "This record does not claim a permanent compiler classification; it preserves the measured boundary and the specific shapes already tried for a future revisit."
+  ]
+}

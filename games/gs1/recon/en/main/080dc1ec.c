@@ -98,29 +98,31 @@ s32 Func_080dc1ec(void *object)
         Func_08004cb4(record);
 
         velocity_a = outer << 8;
-        star = (u8 *)0x02010000;
         for (j = 0; j != 64; j++) {
             s32 quarter;
 
+            star = (u8 *)0x02010000 + j * 28;
             velocity_b = -velocity_a;
 
             quarter = (j >= 0 ? j : j + 3) >> 2;
             if (outer > quarter && M2C_FIELD(star, s32 *, 24) == 0) {
-                Func_080049e8();
-                switch (j & 3) {
-                case 0:
-                    Func_08004c1c(velocity_a);
-                    break;
-                case 1:
-                    Func_08004bd4(velocity_b);
-                    break;
-                case 2:
-                    Func_08004c6c(velocity_b);
-                    break;
-                case 3:
-                    Func_08004bd4(velocity_b);
-                    Func_08004c6c(velocity_b);
-                    break;
+                {
+                    s32 selector;
+
+                    Func_080049e8();
+                    selector = j & 3;
+                    if (selector > 1) {
+                        if (selector == 2) {
+                            Func_08004c6c(velocity_b);
+                        } else if (selector == 3) {
+                            Func_08004bd4(velocity_b);
+                            Func_08004c6c(velocity_b);
+                        }
+                    } else if (selector == 1) {
+                        Func_08004bd4(velocity_b);
+                    } else if (selector == 0) {
+                        Func_08004c1c(velocity_a);
+                    }
                 }
 
                 Func_080e3944(star, result);
@@ -148,7 +150,7 @@ s32 Func_080dc1ec(void *object)
                     bucket >>= 6;
                     raw = 9 - bucket;
                     src_off = (j & 3) * 770 + Data_080ede48[raw - 1];
-                    half = (raw + ((u32) raw >> 31)) >> 1;
+                    half = (raw + (s32) ((u32) raw >> 31)) >> 1;
                     y = result[0] - half;
                     h = result[1] - raw;
                     Func_080072f4(
@@ -175,7 +177,6 @@ s32 Func_080dc1ec(void *object)
             }
 
             velocity_a += outer << 3;
-            star += 28;
         }
 
         M2C_FIELD(work, s32 *, 0x7824) = 1;

@@ -321,14 +321,15 @@ standard-check:
 	@printf 'compiler standard ok\n'
 
 COMPILER_UPSTREAM := 4087bd2bd7c064da935c2a1bf798b814a125eded
-OPTION_FILES := gs1cc/gcc/toplev.c gs1cc/gcc/flags.h \
-	gs1cc/gcc/config/arm/arm.h agbcc/gcc_arm/toplev.c \
+OPTION_FILES := agscc/gcc/toplev.c agscc/gcc/flags.h \
+	agscc/gcc/config/arm/arm.h agbcc/gcc_arm/toplev.c \
 	agbcc/gcc_arm/flags.h agbcc/gcc_arm/config/arm/arm.h
 
 pristine-options-check:
 	@cd alchemy-gcc && set -e; for file in $(OPTION_FILES); do \
 		test -f "$$file" || { printf 'missing compiler option source: %s\n' "$$file"; exit 1; }; \
-		git show $(COMPILER_UPSTREAM):$$file > /tmp/compiler-options-upstream.c; \
+		upstream_file=$$(printf '%s' "$$file" | sed 's#^agscc/#gs1cc/#'); \
+		git show $(COMPILER_UPSTREAM):$$upstream_file > /tmp/compiler-options-upstream.c; \
 		grep -oE '"(f|m)[a-z0-9-]+"|ARM_FLAG_[A-Z0-9_]+|flag_[a-z0-9_]+' \
 		  /tmp/compiler-options-upstream.c | sort -u > /tmp/compiler-options-stock.txt; \
 		grep -oE '"(f|m)[a-z0-9-]+"|ARM_FLAG_[A-Z0-9_]+|flag_[a-z0-9_]+' $$file \

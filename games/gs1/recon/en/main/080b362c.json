@@ -2,26 +2,31 @@
   "schema_version": 1,
   "namespace": "gs1-en-main",
   "address": "0x080b362c",
-  "status": "measured-draft",
+  "status": "exact",
   "owner_bytes": 576,
   "score": {
     "measured": "2026-08-27",
-    "candidate_bytes": 560,
+    "candidate_bytes": 576,
     "reference_bytes": 576,
-    "differing_halfwords": 277,
-    "wrong_instructions": 172,
-    "class": "wrong",
-    "note": "This is a shop-domain ability/grid picker sharing select_party_member.c's core shape almost exactly: SHOP_RUNTIME, the same cursor.anchor->kind/mode field offsets (kind=18 here vs 4 in the template, mode=12 then 3, matching field-for-field), the same Modulo-based wraparound idiom used twice more (single-step left/right, and a 5-step page scroll clamped to a 15-slot / 5-column grid via Shop_PlaceCursor(Modulo(sel,5)<<4, Math_Div(sel,5)<<4+8)), and the same redraw/WaitFrames(1)/ADDR_03001C94+ADDR_03001B04 poll loop. The callees Func_080022fc/080022ec/08077248/080b0a6c/080b11a4 are already registered project names (Modulo, Math_Div, Ability_GetAvailability, Shop_PlaceCursor, Shop_DrawMessage) and all matched the retained assembly's argument counts and field offsets on inspection. The prologue (four register-saving pushes for fp/sl/r9/r8) matches the reference exactly, confirming the same four-variable cross-call register pressure -- but the compiler assigns them differently: reference keeps the function's own `actor` argument in fp for the whole function and spills the SHOP_RUNTIME pointer and the Runtime_GetObject(actor) result to the stack (sp+20, sp+8), while this candidate's allocator instead put SHOP_RUNTIME in fp and the Runtime_GetObject result in r9. Behaviourally identical; the linked bytes differ because of it, cascading through the rest of the function."
+    "differing_halfwords": 0,
+    "wrong_instructions": 0,
+    "class": "exact",
+    "note": "Byte-exact. Shop-domain ability/grid picker sharing select_party_member.c's core shape with sibling main:080b211c (same SHOP_RUNTIME/cursor.anchor->kind=18,mode=12/redraw+WaitFrames(1) poll loop idiom, same Modulo-based wraparound used for the single-step and 5-step page-scroll cases). Resolved the three residual clusters left open by the prior round (previously 65 differing halfwords, lengths already matched):\n(a) prologue dead-store commit timing for the shared sl=1/r9=1 (count=1/redraw=1) constant: count, result, and redraw are assigned as ordinary statements (count=1; result=0; redraw=1;) right after object=Runtime_GetObject(actor), not as declaration initializers -- this reproduces the reference's single shared `movs r1,#1` being committed to sl (count) then r9 (redraw) immediately before r1 is reused for win1's UiWindow_CreateFar argument.\n(b) the `flags = *(u16*)(object+216+selection*2) & 0x1ff` halfword load: splitting the byte offset into its own statement (`off = selection*2+216; flags = *(u16*)(object+off) & 0x1ff;`) keeps object untouched in its own register through to the load, which folds to a single reg+reg `ldrh r3,[r1,r3]` -- any single-expression algebraic regrouping of the same arithmetic (tried extensively in the prior round and again here) instead always materializes object+offset into one register first (`adds`+`adds`+`ldrh [r,#0]`).\n(c) the `selection -1/+1 + count` wraparound adjustment: writing the -1/+1 as its own statement before the Modulo call (`selection -= 1; selection = Modulo(selection + count, count);`), matching sibling main:080b211c's exact idiom, commits the +-1 into selection's home register (r7) ahead of the add; folding it into a single `selection +- 1 + count` expression instead applies the +-1 to the sum register after the add -- a different, non-matching instruction order.\nNo PERM_GENERAL search was needed in the end; each of the three clusters was resolved by a targeted, evidence-backed statement-splitting/reordering edit matching either the sibling's idiom (a, c) or the reference's register-liveness shape (b), verified individually and then together.",
+    "prior_measured": "277 -> 65 (prior round) -> 0 (this round)"
   },
   "rejected_experiments": [
     {
       "experiment": "drop a leftover no-op `shop->item_window = shop->item_window;` self-assignment left over from an earlier draft of the cursor-placement line",
-      "result": "no change in score -- the compiler had already discarded the dead store on its own, confirming the register-assignment gap above is the real blocker, not dead code"
+      "result": "no change in score -- the compiler had already discarded the dead store on its own; superseded, this stray statement is not present in the final source"
+    },
+    {
+      "experiment": "algebraic reordering of the flags halfword-load expression as a single statement (object+216+selection*2, 216+selection*2+object, selection*2+216+object, ((u16*)(object+216))[selection], etc.)",
+      "result": "identical codegen every time (object folded into the offset register before a base-only ldrh) regardless of term order -- the fix required splitting the byte offset into its own prior statement (`off = ...;`), not reordering terms within one expression"
     }
   ],
   "notes": [
-    "Recovered only from the retained owner assembly, approved local ROM, and the approved compiler.",
-    "The -4 / -3 branch on Func_080772a8's return code (showing message 0xc96 vs 0xc97 via UiWork_Create) is reproduced exactly as the assembly orders it, but the second condition reads the function's own persisted result slot (`result == -3`) rather than the fresh return value, matching the retained instructions; the deeper game-rule reason a stale slot is checked here is not established from this owner alone.",
-    "The remaining gap looks like the same class of last-mile register-allocation mismatch documented for 0x080b5534, not a control-flow or field-offset error: forcing fp onto the function argument instead of the SHOP_RUNTIME pointer needs either a different declaration/use order this compiler responds to, or a targeted permuter search, not more structural rewriting. This candidate claims zero DONE bytes."
+    "Recovered only from the retained owner assembly, approved local ROM, the approved compiler, and sibling owner main:080b211c's already-exact idiom.",
+    "The -4 / -3 branch on Func_080772a8's return code (showing message 0xc96 vs 0xc97 via UiWork_Create) is reproduced exactly as the assembly orders it; the second condition reads the function's own persisted result slot (`result == -3`) rather than the fresh return value, matching the retained instructions -- the deeper game-rule reason a stale slot is checked here is not established from this owner alone.",
+    "Final candidate-show --align: candidate=576 reference=576 differing_halfwords=0 class=exact wrong_instructions=0 matched_prefix=260 (whole function)."
   ]
 }

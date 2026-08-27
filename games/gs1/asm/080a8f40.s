@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global InventoryMenu_DrawAbilityListPage
 	.global Func_080a8f40
 	.thumb_func
+InventoryMenu_DrawAbilityListPage:
 Func_080a8f40:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

@@ -16,7 +16,6 @@ s32 Func_080a7f44(s32 selected_index, s32 direction)
     struct CharacterSelectorOrderState *state =
         *(struct CharacterSelectorOrderState **)0x03001f2c;
     u32 reordered[14];
-    s32 adjacent_index;
     s32 index;
     u32 temporary;
 
@@ -27,12 +26,10 @@ s32 Func_080a7f44(s32 selected_index, s32 direction)
         if (selected_index == state->character_count - 1) {
             return 0;
         }
-        adjacent_index = selected_index + 1;
     } else {
         if (selected_index == 0) {
             return 0;
         }
-        adjacent_index = selected_index - 1;
     }
 
     for (index = 13; index >= 0; index--) {
@@ -41,9 +38,16 @@ s32 Func_080a7f44(s32 selected_index, s32 direction)
     for (index = 0; index < state->character_count; index++) {
         reordered[index] = state->character_ids[index];
     }
-    temporary = reordered[selected_index];
-    reordered[selected_index] = reordered[adjacent_index];
-    reordered[adjacent_index] = temporary;
+
+    if (direction == 1) {
+        temporary = reordered[selected_index];
+        reordered[selected_index] = reordered[selected_index + 1];
+        reordered[selected_index + 1] = temporary;
+    } else {
+        temporary = reordered[selected_index];
+        reordered[selected_index] = reordered[selected_index - 1];
+        reordered[selected_index - 1] = temporary;
+    }
 
     for (index = 0; index < state->character_count; index++) {
         Func_08077168(state->character_ids[index]);

@@ -38,9 +38,6 @@ void Func_080b50e8(s32 id);
 void Func_080f9010(s32 id);
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 s32 Func_080022fc(s32 a, s32 b);
-void Func_080072f4(
-    s32 dest, s32 src, s32 x, s32 y, DrawRectangleFn callback, s32 w,
-    s32 h);
 void Func_080e3908(void *particle, s32 count, s32 flags);
 void Func_080cd52c(void);
 void Func_080030f8(s32 frames);
@@ -206,11 +203,11 @@ s32 Func_080d82b0(void *object)
                                 half = (idx + ((u32) idx >> 31)) >> 1;
                                 y = *(s16 *)((u8 *)particle + 2) - half;
                                 h = *(s16 *)((u8 *)particle + 6) - idx;
-                                Func_080072f4(
-                                    (s32) draw_destination,
-                                    (s32) ((u8 *) extra_target
-                                        + Data_080ede48[raw]),
-                                    y, h, draw_rectangle_fn, idx, idx * 2);
+                                draw_rectangle_fn(
+                                    draw_destination,
+                                    (u8 *) extra_target
+                                        + Data_080ede48[raw],
+                                    y, h, idx, idx * 2);
                                 Func_080e3908(
                                     particle, 62,
                                     Data_080ee9f8[k & 3]);

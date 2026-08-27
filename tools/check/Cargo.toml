@@ -9,6 +9,7 @@ edition = "2021"
 check-commit-progress = { path = "../check-commit-progress" }
 check-publication = { path = "../check-publication" }
 check-unmatchable = { path = "../check-unmatchable" }
+compiler-core = { path = "../compiler-core" }
 core-retained-audit = { path = "../core-retained-audit" }
 coverage-map = { path = "../coverage-map" }
 full-c-progress = { path = "../full-c-progress" }

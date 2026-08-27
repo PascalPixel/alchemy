@@ -47,6 +47,7 @@ dependencies = [
  "check-commit-progress",
  "check-publication",
  "check-unmatchable",
+ "compiler-core",
  "core-retained-audit",
  "coverage-map",
  "full-c-progress",

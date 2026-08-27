@@ -3,7 +3,7 @@
   "namespace": "main",
   "address": "0x080056cc",
   "name": "SaveState_InitializeWorkspace",
-  "status": "measured-draft",
+  "status": "proven-permanent",
   "owner_bytes": 322,
   "translation_unit": "save-state",
   "compiler_route": "canonical-gcc296",
@@ -23,6 +23,7 @@
   "notes": [
     "The complete declared save-state reconstruction composition was compiled once with canonical GCC 2.96.",
     "All eight declared exact-C owners remained byte-exact after the local u32 correction.",
-    "The source remains ordinary C; no inline assembly, fixed-register variable, barrier, forbidden ABI, copied instruction bytes, compiler modification, or per-owner flag override was used."
+    "The source remains ordinary C; no inline assembly, fixed-register variable, barrier, forbidden ABI, copied instruction bytes, compiler modification, or per-owner flag override was used.",
+    "2026-08-27: reclassified measured-draft -> proven-permanent. This owner's retained assembly is already independently proven unreachable from ordinary C at the manifest/classification level: out/gs1-en/full/asm/manifest.json marks it kind=thumb_multiple_transfer_module, retention starting with keep_, confidence=proven, citing arm_md/arm_c line ranges showing GCC 2.96's Thumb backend can only emit a multi-register stmia paired immediately with a matching ldmia (movmem8b/movmem12b), and that ARM's standalone store_multiple/stmsi patterns are TARGET_ARM only -- a lone stmia from independently-computed register values (as this owner's reference has) is architecturally unreachable on this route, not an unexplored search space. This specific pattern was independently rediscovered by multiple dedicated passes this session (08004838, 0800bc48, 08003e10, 0808fecc, 080c0184, and partially 080e7404) before the shared manifest-level proof was found; recording the status correction here so future sessions don't repeat the rediscovery."
   ]
 }

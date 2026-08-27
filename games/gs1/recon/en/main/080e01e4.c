@@ -86,15 +86,14 @@ s32 Func_080e01e4(void *object)
 
     {
         s32 *cursor;
-        s32 n;
 
         cursor = (s32 *) 0x02010018;
-        n = 0;
+        i = 0;
         do {
-            n++;
+            i++;
             *cursor = -1;
             cursor += 7;
-        } while (n != 512);
+        } while (i != 512);
     }
 
     Func_080f9010(171);

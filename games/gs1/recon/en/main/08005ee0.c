@@ -13,21 +13,27 @@ s32 Func_08005ee0(void *send, void *receive)
     control = *sio;
     switch (state->phase) {
     case 0: {
+        u8 mask30 = control & 0x30;
         u8 mode;
 
-        if ((control & 0x30) == 0 && (mode = control & 0x88) == 8) {
+        if (mask30 == 0 && (mode = control & 0x88) == 8) {
             u8 serial_error = control & 4;
 
             if (serial_error == 0 && state->send_index == -1) {
+                u32 ie;
+
                 REG_IME = serial_error;
-                REG_IE = (REG_IE & ~0x80) | 0x40;
+                ie = REG_IE;
+                ie &= ~0x80;
+                ie |= 0x40;
+                REG_IE = ie;
                 REG_IME = 1;
                 *((volatile u8 *)sio + 1) &= ~0x40;
                 REG_IF = 0xc0;
                 REG_TM3CNT = 0xc963;
                 state->mode = mode;
             }
-        } else if ((control & 0x30) != 0) {
+        } else if (mask30 != 0) {
             /* fall through */
         } else {
             break;

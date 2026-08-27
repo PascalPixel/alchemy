@@ -38,12 +38,13 @@ void RunBattleEffect07(void)
     struct BattleEffectOrigin *origin = Data_03001f30;
     struct BattleEffectObject *anchors[2];
     s32 position[3];
+    s32 *pos;
     s32 index;
 
     Func_08097384();
-    position[0] = origin->x;
-    position[1] = origin->y + 0x100000;
     position[2] = origin->z;
+    position[1] = origin->y + 0x100000;
+    position[0] = origin->x;
     anchors[0] = Func_08098a84(
         position[0] + 0x200000, position[1], position[2], 0x8000);
     anchors[1] = Func_08098a84(
@@ -59,14 +60,15 @@ void RunBattleEffect07(void)
 
     Func_08009158(anchors[0]);
     Func_080f9010(0x86);
+    pos = position;
     for (index = 0; index < 24; index++) {
         struct BattleEffectObject *object;
         s32 distance;
         s32 zero;
 
-        position[0] = origin->x;
-        position[1] = origin->y + 0x100000;
-        position[2] = origin->z;
+        pos[1] = origin->y + 0x100000;
+        pos[0] = origin->x;
+        pos[2] = origin->z;
         object = Func_08096c80(0x11d);
         if (object != 0) {
             Func_08009098(object, 0x0809f0d4);

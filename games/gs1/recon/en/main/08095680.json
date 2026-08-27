@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x08095680",
+  "status": "measured-draft",
+  "owner_bytes": 248,
+  "executable_owner_bytes": 248,
+  "candidate_bytes": 248,
+  "differing_halfwords": 90,
+  "wrong_instructions": 84,
+  "domain": "For each id 8..65, looks up a matching battle-action descriptor and its object-table slot, and, when a packed field of the global battle work state clears a game flag and range-check, repositions the matched object and sets its mode.",
+  "bounded_search": {
+    "mode": "hand-traced",
+    "attempted": 6,
+    "exact": false,
+    "reason": "The 7223/10000 family-transplant guess (battle/presentation/set_actor_modes.c) is a confirmed false positive: shape-only register-shuffle prologue match, unrelated Data_03001e74 global, zero shared call targets. The genuine subsystem, found by hand-tracing the retained assembly's own call targets and constants, is the BattleAction_FindDescriptor/BattleEffect_FindDescriptor/BattleEffect_RunDescriptorAction cluster (0x0808d394/0x0808d48c/0x0808d5dc): this owner calls Func_0808d394 (registered name BattleAction_FindDescriptor) by the same loop id it also feeds to ObjectTable_Get (Func_0808ba1c), against the same Data_02000240 global those three siblings use. The struct field at Data_02000240+0x1f4 matches battle_effect_runtime.h's already-declared BattleWork.object_id exactly, and games/gs1/src/battle/effects/objects/start_effect_22.c's exact, adopted `Data_02000240[125]` confirms that same offset/array-style access is the project's real idiom for it. The matched object's writes at +0x14 and +0x55 line up exactly with object_runtime.h's ObjectRuntime.terrain_height and .flags. Both position-setter and mode-setter calls (0x080090f0, 0x08009080) are far-call veneers per the project-wide _call_via_rN-adjacent idiom; 0x08009080's real target (0x0800c300) is already named Object_SetMode in types.h, and 0x080090f0's real target (0x0800d130, retained in games/gs1/src/unidentified/main/battle/battle_owner_11.c) sets object->x/y/z and clears target_x/y/z/velocity, matching the (obj,x,y,z) call shape traced here exactly.",
+    "notes": [
+      "Structure now matches closely: call order, branch targets (several byte-identical), the 141<<2 offset-564 synthesis, and the object_id-pointer hoist ahead of the loop all reproduce the reference. The residual is address-computation register choice (reference keeps the Data_02000240 base in r5 for the whole prologue; this candidate's allocator puts it in r6/sl and the difference cascades through nearly every register letter downstream) plus one load-pattern mismatch: marking the packed flag word's two same-address reads (unsigned low-12-bits, signed high-nibble) as volatile is required to stop this compiler's CSE from merging them into one load the way the reference visibly does not, but it also changes the signed half's codegen from a single ldrsh to a 3-instruction ldrh+lsls+asrs, which the reference does not show either. Tried and rejected: several -fno-{gcse,strength-reduce,expensive-optimizations,cse-follow-jumps,rerun-cse-after-loop,regmove,thread-jumps,cse-skip-blocks} flag combinations, both --family alternatives (gcc296, old-agbcc), and non-volatile M2C_FIELD/array-index/local-pointer phrasings of the Data_02000240 accesses -- none changed the base-register or double-load residuals.",
+      "Verification was cut short mid-session by shared-worktree infrastructure damage: roms/gs1-en.gba (and gs1-ja.gba) became self-referential symlinks partway through this session, breaking every fresh (non-cached) candidate-show run. The 248/100/78 figure recorded at that time turned out to be unreliable -- a fresh, forced (non-cached) recompile in a clean worktree against the confirmed-restored ROM, done independently after the session recovered, measured 248/90/84 instead. The cache apparently held a result computed during the corruption window rather than a genuinely stale-but-valid entry. 90/84 is the authoritative, re-verified score; the source and analysis above are otherwise unchanged."
+    ]
+  },
+  "notes": [
+    "Recovered only from retained owner assembly (games/gs1/asm/08095680.s), the approved GS1-EN ROM, already-adopted exact C under games/gs1/src/ (object/table/get.c, battle/effects/objects/start_effect_22.c, unidentified/main/battle/battle_owner_11.c), in-repo headers (battle_effect_runtime.h, object_runtime.h, types.h, game_flags.h), and the approved compiler. No other Golden Sun decompilation project, symbol map, or disassembly was consulted.",
+    "The residual exceeds the adoption gate (differing_halfwords must be 0). Retained assembly remains authoritative and this draft claims zero DONE bytes.",
+    "No descriptive name was registered: the subsystem (battle-action/effect descriptor dispatch) is well evidenced, but the specific gameplay action this owner performs is not confident enough for a semantic function name yet."
+  ]
+}

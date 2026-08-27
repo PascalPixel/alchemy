@@ -18,7 +18,7 @@ struct DisplayTransitionRegisters {
 
 extern u8 Data_00000050[];
 
-extern s32 Func_08004278(void *);
+extern s32 ScheduleCallback(void (*)(void));
 extern void Func_0800307c(s32, s32, s32);
 extern s32 Func_080072f0(s32, s32, s32, s32);
 
@@ -31,14 +31,14 @@ void UpdateMapTransition(void)
     struct DisplayTransitionRegisters *display =
         *(struct DisplayTransitionRegisters **)0x03001E70;
     s8 *duration = &state->transition_duration;
-    u32 display_value;
+    u16 display_value;
 
     if (*duration != 0) {
         s8 *step = &state->transition_step;
 
         if (*step >= *duration) {
             *duration = 0;
-            Func_08004278((void *)UpdateMapTransition);
+            ScheduleCallback(UpdateMapTransition);
             Func_0800307c(1, 0, 0);
             return;
         } else {

@@ -1,18 +1,15 @@
-#include "types.h"
-
-typedef struct DmaTransfer {
-    const void *source;
-    void *destination;
-    u32 control;
-} DmaTransfer;
+#include "video_dma_family.h"
 
 #define PaletteDma_LoadBlock Func_08004838
 
 void PaletteDma_LoadBlock(void)
 {
-    volatile DmaTransfer *dma = (volatile DmaTransfer *)0x040000d4;
+    const void *src = (const void *)0x0800779c;
+    void *dst = (void *)0x05000200;
+    u32 ctrl = 0x800000e0;
+    struct DmaChannel *dma = (struct DmaChannel *)0x040000d4;
 
-    dma->source = (const void *)0x0800779c;
-    dma->destination = (void *)0x05000200;
-    dma->control = 0x800000e0;
+    dma->control = ctrl;
+    dma->destination = dst;
+    dma->source = src;
 }

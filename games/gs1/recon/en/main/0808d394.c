@@ -25,21 +25,25 @@ struct ActionDescriptor *BattleAction_FindDescriptor(s32 id)
             continue;
         }
         if (id <= 7) {
-            while (entry->id != -1) {
-                if (entry->id == id) {
-                    return entry;
-                }
-                entry++;
-            }
-        } else {
-            while (entry->id != -1) {
-                if (entry->id > 7) {
-                    if (group == id) {
+            if (entry->id != -1) {
+                do {
+                    if (entry->id == id) {
                         return entry;
                     }
-                    group++;
-                }
-                entry++;
+                    entry++;
+                } while (entry->id != -1);
+            }
+        } else {
+            if (entry->id != -1) {
+                do {
+                    if (entry->id > 7) {
+                        if (group == id) {
+                            return entry;
+                        }
+                        group++;
+                    }
+                    entry++;
+                } while (entry->id != -1);
             }
         }
     }

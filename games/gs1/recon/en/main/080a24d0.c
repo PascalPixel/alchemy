@@ -34,7 +34,7 @@ void Func_080a2144(s32);
 void Func_08015418(void *address);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 void Func_080a1070(void);
-void Func_08007310(const void *, void *, s32);
+typedef void (*CopyFn)(const void *source, void *destination, s32 size);
 void Func_080072f0(const void *, s32, u32, void *);
 void Func_080153e0(s32);
 void Func_080a2474(void);
@@ -61,6 +61,7 @@ s32 RunAssetSelectionScreen(void)
     s32 selected_value;
     s32 selected_category;
     s32 result;
+    CopyFn copy_fn = (CopyFn)0x03001388;
 
     display_backup = Func_08004970(0x2000);
     screen = Func_080048b0(0x37, 0xa70);
@@ -75,7 +76,7 @@ s32 RunAssetSelectionScreen(void)
     Func_08015418((void *)0x06002500);
     screen->window = UiWindow_CreateFar(13, 0, 17, 3, 2);
     Func_080a1070();
-    Func_08007310(display_backup, (void *)0x06004000, 0x2000);
+    copy_fn(display_backup, (void *)0x06004000, 0x2000);
     Func_080072f0((void *)0x06004000, 0x2000, 0x33333333, (void *)0x03000168);
     Func_080153e0(1);
     Func_080a2474();
@@ -99,7 +100,7 @@ s32 RunAssetSelectionScreen(void)
     *(s16 *)((u8 *)ASSET_SELECTION_GLOBALS->display_state + 4) = 0;
     Func_080152a8();
     Func_080153e0(0);
-    Func_08007310((void *)0x06004000, display_backup, 0x2000);
+    copy_fn((void *)0x06004000, display_backup, 0x2000);
     ASSET_SELECTION_GLOBALS->process_state[0xea6] = 0;
     Func_08002df0(display_backup);
     WaitFrames(1);

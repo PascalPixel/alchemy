@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080a8d34",
+  "status": "measured-draft",
+  "owner_bytes": 524,
+  "executable_owner_bytes": 524,
+  "candidate_bytes": 448,
+  "differing_halfwords": 223,
+  "wrong_instructions": 154,
+  "classification": "draw-selected-inventory-row",
+  "resolved_asm_classification": {
+    "kind": "compiler_output",
+    "retention": "c_candidate",
+    "confidence": "unresolved"
+  },
+  "family_transplant": {
+    "best_guess": "shop/select_repair_item.c",
+    "score": 7384,
+    "threshold": 7500,
+    "confidence": "low",
+    "verdict": "false positive: shares no callee, field offset, or constant with the retained assembly -- only the generic register-shuffle prologue shape matched. Discarded; this draft is built from the retained assembly and its real call targets only."
+  },
+  "notes": [
+    "Reads Data_03001f2c (the polymorphic menu-runtime cell) as a view exposing a saved window handle at +44 and a 5-column-per-row u16 item-slot grid at +456, indexed by row = *(sel+8) and column = *(sel+16) from the caller-supplied selection-state pointer (arg2). This same +44/+456 view and row*5+col indexing is corroborated by menu/select_quantity.c (Func_08015270(window), Func_080030f8(1) at the same call sites) and by menu/draw_page_indicator.c's real prototype for Func_08015280(s32 window, s32 tile, s32 x, s32 y, s32 style), which matches this owner's calls exactly.",
+    "First block: if the currently selected grid cell holds an item, draws its name-ish message ((rawSlot & 0x3fff) + 0x53a, base unconfirmed -- games/gs1/assets/text/message_archive.json does not resolve id 0x53a to readable text under the simple bank*256+offset scheme), draws an icon-area rect (Func_08015068), then looks the item up via Func_08077080 and inspects byte offsets [1], [2], [12] of the returned pointer. Offsets 2 and 12 line up exactly with item.h's ItemDefinition.type (0x02) and ItemDefinition.use_type (0x0c) LAYOUT_OFFSET_GUARDs, so item.h's struct is reused (via raw u8 casts, since offset 1 -- the high byte of ItemDefinition.price -- is not a guarded field). The three literal message ids loaded at the end of the function (0xb13/0xb14/0xb15) resolve in message_archive.json to 'Can be used in Battle' / 'Can be used in Towns/Dungeons' / 'Can be used in Towns/Dungeons/Battle' -- a strong, confirmed match for the item-usability flag logic decoded from byte offsets 1 and 12 (bits 0x40 and 0x80 of offset 1, overridden to at-least-'dungeon' when offset 12 is nonzero).",
+    "Second block: loops the 5 columns of the selected row, looks each slot's item up the same way, and draws either a single 19-wide cursor rect (item type == 4) or a type icon (Func_08015280, tile = type+1) plus two cursor rects (widths 15 and 3), with field 14 on the selected column and 15 elsewhere. This is very likely the highlighted-row redraw for an equip/item selection grid (5 items per party member row), called after the cursor moves.",
+    "Every callee's argument count, order, and constant operands (call targets, the 0x3fff mask, the 0x53a add, the three message ids, all x/y/width/style constants) are confirmed instruction-by-instruction against games/gs1/asm/080a8d34.s and match the reference exactly. The residual is register-color and post-call reload-conservatism: this build's register allocator assigns fp/sl and r8/r9 to the same two long-lived values (the selection-state pointer and the dereferenced menu pointer) in the opposite pairing from the reference, and it keeps several memory-derived values (grid[cell], sel->8, sel->16) live across intervening bl calls in registers where the reference reloads them from memory after every call. Several source-level rewrites (readback ordering, mask/base as named locals, an explicit `height` local for the loop's constant arg 5, hoisting vs. duplicating the per-column item lookup across the i==selected branch, inverted-branch polarity for the kind==4 case) were tried against candidate-show --align; each changed the halfword/instruction counts but none closed the gap or found a lever that reliably narrows it further, consistent with this project's documented register-letter-swap residual class.",
+    "The family-transplant matcher's best guess (shop/select_repair_item.c, 7384/10000, below the 7500 threshold) was read and shares no callee, field offset, or constant with this owner -- confirmed false positive, discarded per the task brief.",
+    "Not adopted: differing_halfwords=223 of 262 reference halfwords, class=wrong. Retained assembly remains authoritative.",
+    "Recovered only from retained owner assembly, already-adopted exact GS1 EN sources (item.h, menu/select_quantity.c, menu/draw_page_indicator.c), games/gs1/assets/text/message_archive.json, and the approved compiler. No other decompilation project or symbol map was consulted."
+  ]
+}

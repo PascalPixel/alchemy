@@ -412,6 +412,7 @@
     "main:080a6384": "psynergy_menu/refresh_owner_psynergy.c", "main:080a63dc": "psynergy_menu/return_true.c",
     "main:080a65e4": "psynergy_menu/set_shortcut.c", "main:080a6794": "psynergy_menu/create_entry_grid.c",
     "main:080a6874": "psynergy_menu/close_windows.c", "main:080a68a8": "psynergy_menu/draw_psynergy_icons.c",
+    "main:080a68ec": {"name":"PsynergyMenu_CollectActions"},
     "main:080a6a00": "psynergy_menu/build_page_result.c", "main:080a735c": "psynergy_menu/is_action_restricted.c",
     "main:080a9374": "psynergy_menu/draw_prepared_psynergy_icons.c", "main:080a9a5c": "inventory_menu/draw_category_items.c",
     "main:080b0958": {"name":"ShopCursor_MoveTowardTarget"}, "main:080b09fc": "shop/set_cursor_position.c", "main:080b0a20": {"name":"ShopCursor_SetPositionImmediate"}, "main:080b0a6c": "shop/place_cursor.c", "main:080b6a60": {"name":"BattleParty_PrepareActiveOwners"}, "main:080b8db8": {"name":"BattlePresentation_ApplyUnitDamage"}, "main:080bae40": {"name":"BattleTarget_SelectForAction"},

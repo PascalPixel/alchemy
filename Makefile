@@ -322,8 +322,7 @@ standard-check:
 
 COMPILER_UPSTREAM := 4087bd2bd7c064da935c2a1bf798b814a125eded
 OPTION_FILES := gs1cc/gcc/toplev.c gs1cc/gcc/flags.h \
-	gs1cc/gcc/config/arm/arm.h gs2cc/gcc/toplev.c gs2cc/gcc/flags.h \
-	gs2cc/gcc/config/arm/arm.h agbcc/gcc_arm/toplev.c \
+	gs1cc/gcc/config/arm/arm.h agbcc/gcc_arm/toplev.c \
 	agbcc/gcc_arm/flags.h agbcc/gcc_arm/config/arm/arm.h
 
 pristine-options-check:

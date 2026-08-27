@@ -78,9 +78,3 @@ pub static AGBCC_EXPECTED: &[HostDigests] = &[
     ),
     ("linux-arm64", &[]),
 ];
-pub static GCC3_EXPECTED: &[HostDigests] = &[
-    ("darwin-arm64", &[]),
-    ("darwin-x64", &[]),
-    ("linux-x64", &[]),
-    ("linux-arm64", &[]),
-];

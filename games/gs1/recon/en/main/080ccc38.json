@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "namespace": "gs1-en-main",
+  "address": "0x080ccc38",
+  "status": "measured-draft",
+  "owner_bytes": 644,
+  "score": {
+    "measured": "2026-08-27",
+    "candidate_bytes": 640,
+    "reference_bytes": 644,
+    "differing_halfwords": 270,
+    "wrong_instructions": 189,
+    "class": "wrong",
+    "note": "Battle-effect owner reading the kind-39 'battle work' heap cache directly from 0x03001eec (same subsystem as puff_arc/run.c, member_orbit/run.c, and apply_shake.c's ADDR_03001EEC). Structure recovered directly from games/gs1/asm/080ccc38.s and cross-checked against Func_080e0524's real signature (games/gs1/src/resource/load_and_decompress.c), Func_080d6888's real signature (ObjectGroup_UpdateMembers, games/gs1/src/object/group/update_members.c), Func_080e396c's real signature (EffectPosition_ApplyStepAndYOffset, games/gs1/src/effects/position/apply_step_and_y_offset.c), and Func_080b5098's B5Context (games/gs1/include/b5_context.h). Body: republishes param0 at work+0x7828, sets BG2PA to 0x100, calls Func_080ed408(46,7,7,c,d) with c/d selected by whether the state's offset-4 field equals 1, loads two resources (kind ids forced through the pool via the Value_00000071/Value_00000072 idiom) into work and a fixed 0x02010000 EWRAM buffer respectively, conditionally (mode==0) streams a palette through the fixed word-copy routine at 0x03001388, sets a projected BG2X reference point from EffectPosition_ApplyStepAndYOffset's output, then runs a mode-selected 74/48-frame loop that indexes five parallel 6-entry tables at 0x080ee064/06a/070/07c/088 by cell=frame/4 (valid 0-5, table B additionally indexed by cell+side*6) to call the kind-46 rectangle blitter through the r4 trampoline slot (matches Func_080072f4 = 0x080072e4 + 0x10, i.e. _call_via_r4), plus one-shot dispatches on count==8/13/65 that either play a sound and dispatch a party-member group update or write motion-object fields at +40/+68/+72 on the actor's MotionObject."
+  },
+  "family": {
+    "assigned_template_owner": "main:080d9fc8",
+    "assigned_template_source": "games/gs1/src/battle/effects/puff_arc/run.c",
+    "template_note": "The family-matcher's structural score (8308/10000) is real (same kind-39 cache prologue/epilogue shape, same call-target vocabulary), but the template's actual body is NOT this owner's body: a naive verbatim-template transplant (symbol renamed only) measured differing_halfwords=306/644 with materially different field checks and call sequences. This draft was written from games/gs1/asm/080ccc38.s and out/family-transplants/main-080ccc38/m2c/symbolized.s directly, using the template and games/gs1/src/battle/effects/member_orbit/run.c only for calling-convention and heap-cache idioms (0x03001eec base, 0x7828 state-pointer slot, the Value_ pool-forcing spelling, the _call_via_rN indirect-call pattern)."
+  },
+  "rejected_experiments": [
+    {
+      "experiment": "keep the kind-46 draw pointer in a named DrawRectangleFn local (draw = (DrawRectangleFn)cache[46-39];) computed once before the loop and called by name at both draw sites, mirroring puff_arc's own draw variable",
+      "result": "compiles to a different persistent-register assignment than the reference (the pointer lands in r9 or fp instead of being spilled to a stack slot and reloaded via r4 immediately before each call); regressed differing_halfwords from 270 to 288-293 across several variants. Calling ((DrawRectangleFn)cache[46-39])(...) directly at each of the two call sites, with no named local, is what produced the reference's exact _call_via_r4 trampoline selection and the best score found.",
+      "class": "rejected"
+    },
+    {
+      "experiment": "compute the kindArg/tag branch for Func_080ed408's call as one shared call after the if/else (kindArg/tag set per-branch, one Func_080ed408(46,7,7,kindArg,tag) call after the merge) instead of a full call duplicated inside each branch",
+      "result": "structurally closer to the reference's actual single bl Func_080ed408, but regressed differing_halfwords from 270 to 310 -- the reference's specific register-reuse pattern (the branch where the compared field already equals 1 reuses that register as the stack argument without a fresh mov) was reproduced more closely by duplicating the full call inside each branch, even though the reference itself has only one physical bl instruction. Kept the duplicated form since it scores better overall despite this one local mismatch (visible in the diff as an extra bl 0x207d0 in the candidate).",
+      "class": "accepted-as-better-not-exact"
+    },
+    {
+      "experiment": "read Data_080ee070 (the per-cell source-offset table) as bare Data_080ee070[cell] inline at each use versus hoisting it into an explicit `const u16 *tableA = Data_080ee070;` local set once before the loop",
+      "result": "the explicit tableA local improved the score (293->288 in one comparison point, and is part of the current best combination at 270) by giving the register allocator a named loop-invariant value to keep in a persistent register across iterations, matching the reference's `mov fp, r4` done once before the loop and reused via `mov r0, fp` in both cell sub-blocks.",
+      "class": "accepted"
+    },
+    {
+      "experiment": "store the BG2X-store base value (16 or 112) into a shared local before an if/else and do one store after the branches merge, versus writing the full `*(s32*)0x04000028 = (base - position.x) << 8;` statement independently inside each branch",
+      "result": "the reference reads position.x and does the full store independently inside each branch (no shared post-branch store); writing it that way in the source measurably reduced the diff around that region versus the shared-local form.",
+      "class": "accepted"
+    },
+    {
+      "experiment": "read the two cache words via cache[0]/cache[1] instead of the entry=cache; work=*entry++; dst=*entry; pointer-walk idiom",
+      "result": "same differing_halfwords (270) but the compiler classified the candidate 'unemittable' and wrong_instructions rose slightly (189->191); reverted to the pointer-walk form, which is also a more literal reading of the retained ldmia r3!,{...} instruction.",
+      "class": "rejected"
+    }
+  ],
+  "notes": [
+    "Recovered only from the retained owner assembly (games/gs1/asm/080ccc38.s), its m2c-assisted symbolized disassembly (out/family-transplants/main-080ccc38/m2c/symbolized.s, which resolves every pc-relative pool load to a labeled constant), already-adopted exact sibling sources in games/gs1/src/ (puff_arc/run.c, member_orbit/run.c, resource/load_and_decompress.c, object/group/update_members.c, effects/position/apply_step_and_y_offset.c, camera/apply_shake.c, motion/set_approach_motion.c, motion/initialize_rising_object.c), in-repo headers (b5_context.h, effect_step.h, motion_object.h, types.h), and the approved compiler. No other Golden Sun decompilation project, symbol map, or 'gsret' disassembly was consulted; no other owner's in-progress worktree output was read.",
+    "All 23 callees are declared locally per this project's established one-file-one-declaration convention; none are invented -- Func_080e0524, Func_080d6888, Func_080e396c, and Func_080b5098 are cross-checked against their real adopted definitions/headers as noted above. Func_080b50e8 and Func_080b5088 have no adopted definition anywhere in the tracked corpus yet; their signatures (void Func_080b50e8(s32); void Func_080b5088(s32, s32);) are inferred solely from this owner's own call sites (matches puff_arc's existing Func_080b50e8(s32) declaration).",
+    "The kind-46 draw call is confirmed to go through the r4 trampoline slot (Func_080072f4 = games/gs1/asm/080072e4.s + 0x10, i.e. _call_via_r4) in both this draft's compiled output and the reference -- not a fixed-address direct call -- matching this session's project-wide _call_via_rN idiom.",
+    "The remaining 270 differing halfwords are overwhelmingly a single cascading register-allocation artifact, not a semantic/structural defect: the retained assembly and this draft agree on essentially every instruction's operation, operand values, field offsets, call arguments, and branch topology, but the reference keeps 'cache' in r6/'work' in r7 (this draft: r3->r6/r7 swapped) and keeps 'dst' in r9/'mode' in sl across the whole function (this draft: dst in fp, mode in r9) -- one early prologue register-allocation choice that then repeats at dozens of unrelated later sites. No PERM_GENERAL/PERM_INT hand-authored search or forced register assignment was applied (both are against project rules); five structural rewordings were tried and the best-scoring, most literal one was kept. This candidate claims zero DONE bytes and is not close enough to warrant a permuter run without first finding the specific source shape that drives that one register-allocation decision."
+  ]
+}

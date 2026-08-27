@@ -6,9 +6,9 @@
   "status": "measured-draft",
   "owner_bytes": 166,
   "executable_owner_bytes": 166,
-  "candidate_bytes": 180,
-  "differing_halfwords": 86,
-  "wrong_instructions": 73,
+  "candidate_bytes": 166,
+  "differing_halfwords": 6,
+  "wrong_instructions": 12,
   "cross_edition": {
     "object_bytes": 166,
     "relocation_normalized_core_bytes": 134,
@@ -35,12 +35,12 @@
     "mode": "screen-only",
     "attempted": 0,
     "exact": false,
-    "reason": "The complete readable candidate is 14 bytes long with 86 differing halfwords and 73 wrong instructions, outside the exact-extent and <=20-halfword admission gate."
+    "reason": "The candidate now matches the reference extent exactly (166/166 bytes) with 6 differing halfwords and 12 wrong instructions, all confined to one self-contained address computation where the tool classifies the residual as 'allocation' (a register-letter relabeling, not a structural or logic difference). No automated permutation search has been run; the remaining gap did not move across many tried operand orderings, temporary-variable placements, and declared types for that computation, consistent with an allocator tie-break rather than a source-shape error."
   },
   "notes": [
     "Independent object analysis bounds this owner at 166 executable bytes and proves all 134 relocation-normalized core bytes identical across the six approved GS1 editions.",
     "The source expresses the complete opposite-side selection, ready-bit polling, consecutive-miss limit, value comparison, delay loop, and success/failure behavior.",
-    "The residual spans loop layout and register allocation rather than a localized scheduling hunk. No full search or permanent classification was warranted, and zero DONE bytes are claimed.",
+    "2026-08-27: Repaired the structural gap that held the candidate 14 bytes over reference. The fix was two-fold: (1) declaring `local` and `status` as function-scope pointer locals caused the register allocator to run out of callee-saved registers and spill through r8 (extra mov/push/pop r8 pairs); inlining the status dereference and deferring the `local` assignment removed the spill. (2) the `battle[0x52] != 0` early return and the loop it guards needed to be nested inside `if (battle[0x44] != 0) { ... if (battle[0x52] == 0) { ...loop... } return -1; } return 0;` instead of two independent early-return guard clauses, so the compiler's own tail-merging matches the reference's single shared 'return 0' and 'return -1' blocks. Reordering the four `local[]` halfword stores (0,1,2,3 instead of 0,2,1,3) and hoisting `battle[0x50]` into a named `side` local closed the size gap to exact and shrank the residual to a single 6-halfword, allocation-only chunk (previously 86 differing halfwords / 73 wrong instructions at 180 candidate bytes). Roughly a dozen further structural variants (if/else polarity flip in the loop, goto-based shared return, operand-order and type changes on the `side` computation, alternate declaration scopes) were tried and did not improve on this result; several made it measurably worse, so they were discarded. Zero DONE bytes are claimed; the remaining residual is a register-allocation nuance, not a known source-shape defect.",
     "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, the recovered presentation caller, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used."
   ]
 }

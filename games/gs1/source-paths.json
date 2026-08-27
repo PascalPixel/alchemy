@@ -2118,6 +2118,7 @@
     "main:08004838": {"name":"PaletteDma_LoadBlock"},
     "main:0800bc48": {"name":"ResourceMetadata_ClearRecord"},
     "main:08077394": {"name":"Owner_GetState"},
+    "main:080aae14": {"name":"OwnerAction_DiffSlots"},
     "main:080ae9f0": {"name":"UiIcon_DrawVariantWithTileOffset"},
     "main:080b7548": {"name":"Summon_Refresh"},
     "main:080f9ef8": {"name":"MusicTrack_Stop"},

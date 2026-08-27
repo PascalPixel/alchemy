@@ -40,6 +40,9 @@
     "exact": false,
     "reason": "The complete readable candidate is 36 bytes long with 180 differing halfwords and fails exact-extent and <=20-halfword admission."
   },
+  "bounded_checks": [
+    "re-examined this session (verification pass, no source change): the reference's stack frame is only 16 bytes (`sub sp, #16`, matching just a `frames` local at sp+0 plus the 12-byte `prompt` buffer at sp+4), while this candidate's frame is 28 bytes and spills several extra pointer locals (the render/left/right chain) that the reference apparently keeps entirely in registers; the reference also has an entirely different, currently-unaccounted-for conditional near the top of the render loop (a `cmp r3,#15; ble` test against a value this candidate does not compute at all) before it reaches the phase/tile computation. This is a larger structural gap than the dossier's existing 'register scheduling' framing suggests -- there is a genuine missing branch, not just a scheduling difference -- and would need a fresh pass over the raw retained assembly (games/gs1/asm/080bb65c.s) to identify the missing condition before further respelling is worthwhile."
+  ],
   "notes": [
     "Independent object analysis finds 354 object bytes plus two alignment bytes and proves all 258 relocation-normalized core bytes identical across the six approved GS1 editions.",
     "The helper is called throughout the recovered battle-presentation event family. The residual spans packed prompt construction, render-register scheduling, and loop allocation rather than a localized compiler hunk.",

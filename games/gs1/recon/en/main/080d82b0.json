@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080d82b0",
+  "status": "measured-draft",
+  "owner_bytes": 800,
+  "score": {
+    "measured": "2026-08-27",
+    "candidate_bytes": 792,
+    "reference_bytes": 800,
+    "differing_halfwords": 363,
+    "wrong_instructions": 368,
+    "class": "unemittable",
+    "note": "First structural draft, not a permutation search. One full read-through of the retained assembly (games/gs1/asm/080d82b0.s) resolved against the same shared 0x03001eec work-block subsystem as 080d59b0 and 080e7404. The 43-45% differing-halfword ratio is comparable to 080d59b0's first pass on the same family, consistent with genuine source-shape recovery rather than a lucky/unlucky outlier."
+  },
+  "family": {
+    "assigned_template_owner": "main:08099160",
+    "assigned_template_source": "games/gs1/src/battle/effects/orbiting_particles/run.c",
+    "template_note": "Same mismatch as 080d59b0: this owner shares no callees with RunOrbitingParticleEffect (no Object_Spawn/WaitFrames/RotateVectorByMagnitude/Random16/Audio_PlayCue) and its own control flow (per-member confetti physics over a shared 1024-slot pool, driven by an outer loop that runs member_count*20+56 times) bears no resemblance to the template's fixed 15-iteration orbit-spawn loop. The n-gram/call-target clustering evidently matched on generic register-shuffle-prologue and do-while shape, not real kinship.",
+    "actual_sibling_evidence": "Confirmed member of the 0x03001eec 'battle work' subsystem family documented in games/gs1/recon/en/main/080e7404.json and 080d59b0.json: same Func_080cd594(mode)/Func_080ed408(id,a,b,c,d)/Func_080041d8(0x080CD261,0x480)/Func_08004278(0x080CD261)/Func_08002dd8(id)/Func_080cdbc0() shape, the same *(void**)0x03001EEC/0x03001EF0 work/draw_destination globals, and the same *(DrawRectangleFn*)0x03001F08 callback global read once early and spilled to the stack for a much later Func_080072f4 call, exactly like 080d59b0. Also introduces a THIRD adjacent global read here, *(void**)0x03001EF4, passed as Func_080e0524's target argument (0x73=115) and later added to a per-frame table offset (Data_080ede48) to form the draw source address -- worth folding into a shared header alongside 0x03001EEC/0x03001EF0 for this family."
+  },
+  "rejected_experiments": [
+    "None run beyond the single evidence-guided structural pass; given 080d59b0's finding that hoisting a fixed-address function-pointer read into an early local can regress the score by extending its live range across a huge loop, this owner's own draw_rectangle_fn read was deliberately kept as an early local (matching the reference's own str-to-stack-then-reload-much-later shape at sp+20) rather than tested both ways, for time; a follow-up pass should try both placements here the way 080d59b0's dossier did."
+  ],
+  "notes": [
+    "Recovered only from the retained owner assembly (games/gs1/asm/080d82b0.s), the approved local EN ROM, games/gs1/recon/en/main/080e7404.c, 080d59b0.c and their dossiers, in-repository headers, and the approved compiler.",
+    "This candidate claims zero DONE bytes.",
+    "Semantic summary: a bigger battle-presentation sub-effect than 080d59b0. Opens one display window (id 46), copies a palette/tile block through a generic word-copy helper (Func_080072f0 taking the 0x03001388 word-copy routine as a callback argument, matching the WordCopy idiom already established in 080e7404.c), then blanks a 1024-slot shared confetti pool at 0x02010000 (laid out as up to 8 members x 128 slots, 28 bytes each, matching the stride already established in 080d59b0). For each active party member it seeds that member's 128-slot sub-range with randomized polar-coordinate confetti (Func_08002322/Func_0800231c sine/cosine calls) around a position derived from Func_080e3944. The main loop then runs member_count*20+56 times: near the start of each member's staggered window it cues a portrait-swap sound and Func_080d6888, then for every later pass it advances and redraws that member's confetti slots through Func_080072f4/Func_080e3908, expiring slots whose lifetime field crosses a threshold.",
+    "Two open, evidence-backed questions carried over from 080d59b0 and not resolved here either: why this compiler passes what looks like a 5th call argument through r4 (observed again at the Func_080072f4 site, with two more arguments on the stack beyond it), and why the reference keeps the shared work pointer in r9 while this compiler's candidate keeps choosing a different register for it.",
+    "One nearly-tautological reference conditional was preserved literally rather than simplified: `if (member_count * 20 != -56) ...` gates the whole main loop and is true for every realistic non-negative member_count, but the reference genuinely computes it that way (count<<2 + count, then <<2 again, compared to -56), so it is kept as literal arithmetic rather than rewritten to `if (member_count != 0)` or similar, since the point is to reproduce the compiled shape, not simplify the source.",
+    "No GS2 or external source was used; no other Golden Sun decompilation project was consulted."
+  ]
+}

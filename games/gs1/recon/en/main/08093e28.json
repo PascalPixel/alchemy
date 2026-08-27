@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x08093e28",
+  "status": "measured-draft",
+  "owner_bytes": 376,
+  "candidate_bytes": 376,
+  "differing_halfwords": 113,
+  "wrong_instructions": 36,
+  "classification": "grid-effect-placement",
+  "family": {
+    "template": "main:08092708",
+    "template_source": "games/gs1/src/battle/effects/objects/run_rising_sequence.c"
+  },
+  "domain": "Looks up the active effect object (Data_02000240[125]) and derives its ground-grid X/Z tile from the integer half of its fixed-point x/z position. If a static one-shot flag is already set, resets the object (mode 10, teardown state) and clears the flag. Otherwise it computes the object's grid cell index into two parallel 128-wide tile-attribute tables (0x02010000 / 0x02010200) and aborts if their per-cell 'kind' bytes disagree or a placement probe (Func_08009220) rejects the position; on success it re-anchors the effect at the snapped tile, marks the flag active, and starts it moving toward the tile with an upward Y offset.",
+  "notes": [
+    "The listed family template (08092708, run_rising_sequence.c) supplied only the general object/WaitFrames/mode shape; the actual control flow, tile-snap arithmetic, and dual-table comparison were reconstructed directly from the assembly with no close template match.",
+    "Candidate matches the reference length exactly (376/376 bytes). The largest fix was branch polarity: the static-flag check must be written `if (flag == 0) { <large success path> } else { <reset path> }` -- the reverse ordering (testing `flag != 0` first) makes GCC place the reset path inline and the success path out-of-line, which is not what the reference does. A second fix was the tile-index arithmetic: it must be written as two sequential `if (x < 0) x = ...; x >>= 4;` guard statements (matching the assembly's fallthrough-then-shift shape) rather than a `(cond ? a : b) >> 4` ternary, which GCC compiles into extra out-of-line branches. A third fix corrected the struct's byte-offset layout (field_20 at 0x14, field_28 at 0x28, value_55 at 0x55, value_5a at 0x5a) after an initial padding-array miscount had them all landing 12-16 bytes too far into the struct.",
+    "Remaining differences are register/slot allocation only: which physical register the compiler assigns to grid_x vs. grid_z intermediates, the order it evaluates the two parallel-table pointers before their byte loads, and where exactly (relative to `mov fp,r1`) it schedules the `sub sp,#24` frame-reservation instruction (found by trial to require a 6-word stack array here even though only 3 words are read/written, which fixed the stack size but not this scheduling position). No further respellings tried moved these register/scheduling choices to match.",
+    "Recovered only from retained GS1 assembly, the exact-C family template, and already-established local function signatures (Func_08092054, Func_080916b0, Func_080920e8, Func_080091e0, Func_08009080, Func_0809163c) from the wider source tree. No GS2 evidence or external source was used."
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080941e0",
+  "status": "measured-draft",
+  "owner_bytes": 256,
+  "candidate_bytes": 272,
+  "differing_halfwords": 130,
+  "wrong_instructions": 125,
+  "classification": "screen-transition-fade-effect",
+  "family": {
+    "id": "template-main-080a7380",
+    "template_owner": "main:080a7380",
+    "template_source": "games/gs1/src/menu/open_character_selector.c",
+    "note": "Clustered by prologue similarity only. This owner is NOT a character-selector: it plays three sound cues (Func_080f9010), checks a mode field at Data_03001ebc-deref+414 against 3, and runs one of two nearly-identical 16-iteration branches that write an OR'd bit pattern to a hardware-style address each frame while ramping three packed sub-fields, first setting one palette-RAM halfword to white (0x7fff) via Func_080901c0. No allocation, no character-id table, no row_positions loop -- none of the template's shape applies; only the general Data_03001ebc-state-pointer and Data_02000240-array conventions used elsewhere in this project were reused."
+  },
+  "notes": [
+    "Read the raw assembly directly. High confidence: three Func_080f9010 sound-cue calls (args from Data_02000240+494 as s16, then literal 288, then literal 147); mode = *(s16*)(state+414) where state=Data_03001ebc dereferenced; branch on mode==3; each branch clears state+454 to 0, calls WaitFrames(16) [Func_080030f8], then runs a 16-iteration loop calling WaitFrames(1) each pass while three sub-values (starting 0x7800, 960, 30 in one branch counted up, mirrored counted down in the other) are OR'd together and stored to a fixed halfword address, ramping by +0x401 / -64 / -2 per iteration.",
+    "Low confidence, unverified: the exact hardware/VRAM addresses. I guessed 0x050001e6 and 0x05000000 for the two 'write 0x7fff then Func_080901c0(addr,16)' calls (plausible palette-RAM slots given the 0x05000000-range magnitude visible in one branch's `movs r5,#160; lsls r5,r5,#19` = 0x05000000 construction), and guessed 0x04000008/0x0400000a (BG2 affine register range) for the per-frame packed-value write purely by elimination -- I did not independently confirm either address against a memory map, so both are placeholders, not verified reconstructions.",
+    "Also re-hit the same extern-array constant-folding issue already documented on 08099838.json: writing `Data_02000240[247]` (u16-typed index) as an s16 read gets compile-time-folded by this toolchain into a single pooled absolute address, whereas the reference computes the 247*2=494 byte offset via runtime `movs+lsls+adds` arithmetic. This is the same unresolved compiler-internals gap noted there, not something I re-solved here.",
+    "Given the address uncertainty and the size of the gap (125 of roughly 115 total instructions differ, i.e. most of the function), this is a genuine source-shape-plus-unverified-target-address gap, not a near-miss. Next step should be identifying the real target addresses (likely from other confirmed owners in this codebase that already reference the same palette/register locations) before attempting another respelling pass.",
+    "Adoption requires 0 differing_halfwords."
+  ]
+}

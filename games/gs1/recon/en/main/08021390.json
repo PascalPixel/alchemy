@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x08021390",
+  "status": "measured-draft",
+  "owner_bytes": 248,
+  "candidate_bytes": 252,
+  "differing_halfwords": 83,
+  "wrong_instructions": 77,
+  "classification": "ui-resource-wait-dialog",
+  "family": {
+    "template_listed": "main:080984c0 (scene_transition/reset.c, score 7663)",
+    "template_used": "not the listed family template -- recovered directly from the assembly"
+  },
+  "domain": "Opens a UI resource window (Func_080162d4 kind 2, style 1, size 26x5), tags the Data_03001e8c render-state byte at offset 0xea3 busy, feeds a value derived from Func_08021360/Func_08019d2c into a six-argument setup call (Func_0801a4fc), writes a fixed 0x8014000c control word and a masked value into a small stack buffer, clears two adjacent halfwords at Data_03001e8c+0x12f4/0x12f6, plays a configured sound bank (Func_08019ba0(0x1b)) through Func_080165d8, plays cue 81, then loops WaitFrames(1) polling Func_08003dec/Func_080f9048 and the input latch Data_03001c94 until the resource finishes or the input mask 0x303 (a multi-button combo) clears, and finally tears the window down.",
+  "notes": [
+    "The listed family template (080984c0, scene transition reset) shares only the coarse UI-window-teardown shape; the actual body -- a resource-loading wait dialog with a six-argument setup call and a specific 0x8014000c/0x303 constant pair -- was reconstructed directly from the assembly and established local signatures (Func_080162d4, Func_0801e41c, Func_0801a4fc, Func_080165d8, Func_08003dec, Func_08016418 all already have 5/6-argument prototypes fixed by other owners in the tree).",
+    "The seven-word literal pool (0x03001e8c render-state base, 0x00000ea3 busy-flag byte offset, 0x8014000c control word, 0x000012f4 halfword-pair offset, 0x0000001b sound-bank id, 0x00000303 input mask, 0x03001c94 input latch) was recovered by process of elimination: each pc-relative load's approximate position fixed which of the seven words it could be, then the surrounding instruction shapes (byte store vs halfword store vs bitwise OR) confirmed the assignment.",
+    "Candidate is close (252 vs. 248 bytes, 83 differing halfwords) but a genuine stack-layout gap remains: the reference computes and holds a dedicated `&buf[4]` pointer in its own register very early (right after the first buffer word is zeroed, before the first window-open call), reusing that same register for both the final zero-store and the wait-loop's poll-buffer argument, whereas every source shape tried here (indexing `buf[4]` directly, and separately hoisting an explicit `s32 *entry = &buf[4];`) either leaves the address recomputed at both sites or pulls in extra registers and enlarges the stack frame (the explicit-pointer attempt regressed to 268 bytes and was reverted). This looks like a source-order/scoping question about where that pointer's lifetime begins, not yet nailed down.",
+    "Recovered only from retained GS1 assembly and already-established local function signatures from the wider source tree (Func_080162d4, Func_0801e41c, Func_08021360, Func_0801a4fc, Func_08019908, Func_08019ba0, Func_080165d8, Func_08003dec, Func_08016418, Func_08003f3c). No GS2 evidence or external source was used."
+  ]
+}

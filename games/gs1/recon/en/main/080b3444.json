@@ -6,7 +6,7 @@
   "status": "measured-draft",
   "owner_bytes": 488,
   "candidate_bytes": 484,
-  "differing_halfwords": 190,
+  "differing_halfwords": 192,
   "wrong_instructions": 70,
   "classification": "shop-party-member-item-selection",
   "domain": "Runs the shop's two-stage party-member and owned-item selection flow and returns both selections to the caller.",
@@ -15,6 +15,8 @@
     "The candidate deliberately names every recovered local role; generated register and stack-slot identifiers are not retained as source vocabulary.",
     "The typed semantic reconstruction improves the repaired raw m2c result from 232 differing halfwords and 184 wrong instructions to 190 and 70 respectively.",
     "A 5,000-candidate safe family-template walk reduced the ranking score to 101 structural rows and 187 differing halfwords but did not produce an exact object; its generated temporary spelling is retained only in the ignored search workspace.",
-    "Exact-C adoption remains gated on an independently compiled zero-difference object."
+    "Exact-C adoption remains gated on an independently compiled zero-difference object.",
+    "This session's re-inspection confirms the residual is register-allocation drift, not a spelling gap: at the Func_080150c8 call the reference reloads its 5th argument from the [sp,#4] stack slot (the 'result' local, spilled there in the prologue) while the candidate supplies it from a live register, and the candidate/reference disagree on which of redraw/result/unit_id occupies the stack slot vs r9 vs fp after the prologue's three zero/one stores. Reordering the local declarations so 'result' is declared before 'redraw' (testing whether declaration order drives pseudo-register numbering) was tried and made the score strictly worse (191 differing_halfwords, 76 wrong_instructions, reverted).",
+    "Separately, this session found a genuine callee bug in the prior candidate: the cursor-positioning call at reference offset 0x67 (bl target 0xffffd5dc, i.e. Func_080b0a20) was being reconstructed via shop.h's Shop_SetCursorPosition macro (Func_080b09fc, a different, unrelated 4-argument function) rather than the actual 3-argument Func_080b0a20(cursor, target_x, target_y) the reference calls. Declaring Func_080b0a20 directly and calling it with the 3 arguments the assembly actually passes (r0=&shop->cursor, r1=-32, r2=112, with no live r3 argument) makes that one bl instruction match the reference exactly in the aligned diff. This is real, verified-correct groundwork for the next attempt even though the headline count moved from 190/70 to 192/70: fixing the wrong callee removed a phantom 4th argument setup that had been coincidentally absorbing some of the length/alignment mismatch caused by the (still unresolved) register-spill gap documented above. Also re-pointed the two literal-0 arguments in the Func_080a1028 call to the 'result' variable, matching the reference's ldr-from-[sp,#4] read at that site; this was score-neutral (GCC keeps 'result' in fp for the candidate regardless of the C spelling) but is more evidence-true. The candidate.c now calls the verified-correct Func_080b0a20 callee; the remaining gap is still the same compiler-internals register/spill assignment identified above and needs permuter-style search, not manual respelling."
   ]
 }

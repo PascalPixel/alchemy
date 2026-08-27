@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080a1f74",
+  "status": "measured-draft",
+  "owner_bytes": 96,
+  "executable_owner_bytes": 96,
+  "candidate_bytes": 96,
+  "differing_halfwords": 24,
+  "wrong_instructions": 26,
+  "template_family": "template-main-0801ce90",
+  "template_source": "games/gs1/src/unidentified/main/field/field_owner_89.c",
+  "domain": "Copies a 0xff-terminated byte string (up to 32 bytes) selected by a small switch(arg0) -- one of four fixed ROM string addresses (arg0==0,1,2 pick three specific strings; every other value, including negatives and >2, falls back to a fourth default string) -- into the caller's destination buffer.",
+  "behavior": [
+    "src = default string (0x080af2b1); switch(arg0) overrides it to 0x080af2a6 (case 0), 0x080af2d0 (case 1), or 0x080af2bc (case 2)",
+    "copies bytes from src to dst one at a time until a 0xff byte is copied or 32 bytes have been written, whichever comes first"
+  ],
+  "bounded_search": {
+    "mode": "source-shape",
+    "attempted": 3,
+    "exact": false,
+    "reason": "Three respellings: (1) unsigned char with a plain 'c != 0xff' as a sequential if/else-if switch -- wrong dispatch order and no size match; (2) same but with the default-value assigned before the switch instead of only in a fallthrough -- fixed the switch dispatch to match reference's exact binary-comparison tree, but the terminator check stayed a plain byte immediate compare; (3) changing dst/src/c to signed char with 'c != -1' -- brought the candidate to the EXACT reference size (96/96 bytes) with the switch dispatch and every string-selection byte identical, leaving only the terminator-check instruction sequence different."
+  },
+  "remaining": "Same size as reference, and the switch dispatch (13 comparison/branch instructions) matches exactly. The residual is entirely in how the 0xff terminator test compiles: reference computes it as 'lsls r4,#24 / lsls r3,#24 / cmp r3,r4' (an unsigned top-byte compare with no sign-normalization afterward), while this signed-char candidate adds an extra 'asrs r3,r3,#24' to sign-extend back down before comparing against a computed -1, and an unsigned-char version instead collapses to a plain 8-bit immediate compare -- neither of the two obvious signedness choices reproduces reference's specific shift-compare-without-normalizing idiom. This reads as a narrow, well-isolated residual (one comparison idiom, repeated twice) rather than a broad structural gap, and is a good candidate for a small bounded permuter search over just that comparison rather than further manual respelling.",
+  "notes": [
+    "The four string addresses (0x080af2a6, 0x080af2d0, 0x080af2bc, 0x080af2b1) are read directly from the retained assembly's literal pool; their contents were not decoded (no message-archive cross-reference attempted in this pass).",
+    "Recovered only from retained owner assembly and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used. Zero DONE bytes are claimed."
+  ]
+}

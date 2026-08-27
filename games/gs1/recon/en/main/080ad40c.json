@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080ad40c",
+  "status": "measured-draft",
+  "owner_bytes": 252,
+  "candidate_bytes": 228,
+  "differing_halfwords": 115,
+  "wrong_instructions": 84,
+  "classification": "four-object-motion-vertical-speed-update",
+  "family": {
+    "id": "template-main-080ad35c",
+    "template_owner": "main:080ad35c",
+    "template_source": "games/gs1/src/object/motion/four_object/update_all_positions.c",
+    "note": "Same FourObjectMotion domain (4-slot object array, state at Data_03001f2c, object flags-byte &=-13, motion/request buffers passed to Func_08009008), but genuinely different per-object work: the template hardcodes motion={FIXED_ONE,FIXED_ONE} and a fixed limit=0x4000; this owner walks the object pointers via ldmia-postincrement, uses a different vertical-origin constant (241<<17, not the template's 0x01e20000), computes motion[1] from a stored per-object vertical *speed* (state+580+4*index) via an easing call (Func_080022ec) when non-negative, writes the adjusted speed back to state, and picks limit 0x8000 vs 0x4000 based on the sign of the object's y position. motion[0] is never written anywhere in the real assembly (left as whatever the stack held), which the candidate also leaves unset."
+  },
+  "notes": [
+    "Read the raw assembly directly, field by field: Func_08015418(0x06002500) runs first (unrelated to the per-object loop); object_ptr walks state+548 as an array of pointers (ldmia r,{r6}; advance by 4 each entry); per active object: y_val=*(s16*)(state+vertical_offset) [vertical_offset: 324,326,328,330 across the 4 iterations], vertical=(241<<17)-((s32)y_val<<16); object[9] &= -13 (same mask as the template's flags clear); speed=*(s32*)(state+speed_offset) [speed_offset: 580,584,588,592]; if(speed<0) adjusted=-speed; else adjusted=speed+Func_080022ec(0x10000-speed,3); motion[1]=adjusted and state[speed_offset]=adjusted (writes back, unlike the template); pos_x=*(s16*)(state+position_offset) [position_offset: 564,566,568,570], request[0]=(s32)pos_x<<16, request[1]=vertical; pos_y=*(s16*)(state+position_offset+8), request[2]=((s32)pos_y<<16)+vertical, request[3]=0; limit=(pos_y<0)?0x8000:0x4000; Func_08009008(object,request,motion,limit). Loop counter index runs 0..3 (do-while, ble #3).",
+    "Confirmed motion[0] is genuinely never written in the reference disassembly (no store to that stack slot anywhere in the function) -- kept the candidate's motion[0] uninitialized to match rather than guessing a value.",
+    "Reordering `index = 0` to be the first statement after the Func_08015418 call (matching the reference's immediate post-`sub sp,#36` store to sp+8) produced no measurable change; the candidate's compiler still allocated `index` to a register instead of the stack, which is why the candidate only needs `sub sp,#32` against the reference's `sub sp,#36` -- a 4-byte/one-slot difference that cascades into the whole prologue's pool-constant offsets and register roles being shifted by one throughout.",
+    "The back half of the function (the arithmetic sequence for vertical/speed/request construction) reads as structurally sound against the assembly -- the remaining gap looks like a stack-layout/register-pressure difference from `index` not being forced onto the stack, rather than a wrong algorithm. Worth trying an explicit `volatile s32 index` or moving it into the same struct as the other stack-resident loop state to force the spill.",
+    "Adoption requires 0 differing_halfwords."
+  ]
+}

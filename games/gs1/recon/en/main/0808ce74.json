@@ -1,0 +1,19 @@
+{
+  "owner": "main:0808ce74",
+  "symbol": "Func_0808ce74",
+  "family": "template-main-0808bd24",
+  "template_owner": "main:0808bd24",
+  "template_source": "games/gs1/src/map/get_focused_object_collision.c",
+  "candidate_path": "games/gs1/recon/en/main/0808ce74.c",
+  "reference_bytes": 260,
+  "best_candidate_bytes": 252,
+  "best_differing_halfwords": 125,
+  "best_wrong_instructions": 123,
+  "status": "measured_draft",
+  "notes": [
+    "The template (GetFocusedObjectCollision) IS the right shape for the front half of this owner: same Data_02000240.object_id-indexed lookup into the runtime table, same RotateVectorByMagnitude(0x100000, kind, &position) call, same mode==3 (32x32 fine-grid, >>21 shift) vs default (map-layer, >>20 shift, map+0x130 base) tile-address branch, confirmed field-for-field against games/gs1/asm/0808ce74.s. This owner is a genuine superset, though: after reading tile[2] into a byte value, it does NOT just return it. If the tile value is NOT in [242,247] (`(u32)(value-242) > 5`, unsigned range check), it consults Func_0808d48c(value, 3) and returns 0 unless that call is nonzero. If the tile VALUE IS in [242,247], it instead calls Func_080091a8(object+34 byte, position.x, position.y) and only returns the tile value if that result falls within [object->word12, object->word12 + 0x400000]; otherwise returns 0.",
+    "One direct-translation pass was written (adapting the template's struct-offset style with M2C_FIELD-equivalent raw casts rather than pulling in the template's named struct, for speed) and measured: candidate 252B vs reference 260B, wrong_instructions=123 out of roughly 126 total -- i.e. almost the whole instruction stream disagrees, meaning the register-level match is essentially not started despite the semantic/control-flow shape being read correctly from the assembly. Not iterated further given the batch's effort budget.",
+    "Likely sources of the gap that a follow-up pass should target first: (1) the reference computes the `Data_02000240 + 0x1f4` object_id offset as an explicit `250; lsls #1` (500 = 0x1f4) sequence kept in a register across two later uses (both the object_id value AND, unmodified, as the base of the +0x1f4 field for a LATER separate read at that same computed offset for a DIFFERENT purpose that I did not fully trace), whereas the candidate inlines the whole `*(u32*)(...) * 4 + 0x14` as one expression -- given how much the reference visibly reuses this address, splitting it into an explicit named pointer local (matching the discipline the codebase repeatedly rewards, per this batch's other dossiers) is the most promising specific fix; (2) the object_id field itself might not be a plain `u32` at offset 0x1f4 the way the template's `Global_0808bd24.object_id` implies -- worth re-checking against that struct definition rather than re-deriving it from scratch; (3) the exact struct-field types for the position/object fields (s32 vs u32, signed comparisons for the >>21/>>20 shifts) were carried over from the template but not independently re-verified bit-for-bit against this owner's own assembly beyond the parts explicitly traced above.",
+    "Given the size of the remaining gap, this is best treated as needing a fresh, more careful register-level pass (informed by the template's already-confirmed-exact codegen for the shared front half) rather than a permuter search."
+  ]
+}

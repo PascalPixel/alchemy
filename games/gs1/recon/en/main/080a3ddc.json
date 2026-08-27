@@ -11,7 +11,7 @@
       "candidate_bytes": 68,
       "reference_bytes": 76,
       "differing_halfwords": 37,
-      "wrong_instructions": 52
+      "wrong_instructions": 46
     },
     "bounded_axes": {
       "families": ["routed", "gcc296", "old-agbcc"],
@@ -47,9 +47,10 @@
     "compacts nonzero items at the front of the destination list",
     "returns the number of collected items"
   ],
-  "remaining": "The complete behavior and six-edition owner identity are established, but the approved compilers retain a broad loop-control and register-allocation disagreement. The draft is eight bytes short and is neither exact nor eligible for narrow permanent classification.",
+  "remaining": "The complete behavior and six-edition owner identity are established, but the approved compilers retain a broad loop-control and register-allocation disagreement. The draft is eight bytes short and is neither exact nor eligible for narrow permanent classification. Reference assembly shows the clear-loop keeps the descending pointer in r3 separate from the canonical base pointer r5 (cached into the scratch ip register via 'mov ip, r5' for the loop-bound compare), and reuses a single pool-loaded zero literal (not an immediate 'movs #0') across both loops. Introducing a distinct pointer local ('p') for the clear loop, separate from the 'dst' reused by the second loop, closed some of the gap (wrong_instructions 52 -> 46) but did not recover the missing 'mov ip, r5' bound-caching instruction or the pool-vs-immediate zero choice, so the candidate is still 8 bytes (4 instructions) short of the reference's 76-byte extent.",
   "notes": [
     "The human name was already established by inventory_menu.h and is confirmed by local callers and OwnerInventoryState::inventory.",
+    "Second attempt (this session): split the clear-loop pointer from the reused 'dst' local, matching reference's r3-vs-r5 split. Improves wrong_instructions from 52 to 46 at the same 37 differing_halfwords and same 8-byte shortfall; kept as the new tracked draft since it is strictly closer. The remaining gap (an explicit ip-cached loop bound and pool-literal-vs-immediate zero) looks like a genuine source-shape question -- worth another attempt if the zero value is modeled as a shared local rather than a literal 0, rather than a compiler-internals residual.",
     "Recovered only from retained assembly, approved local GS1 ROMs, local types and callers, and the approved compiler. This candidate claims zero DONE bytes."
   ]
 }

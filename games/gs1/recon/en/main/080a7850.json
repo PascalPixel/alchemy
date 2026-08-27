@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "namespace": "gs1-en-main",
+  "address": "0x080a7850",
+  "name": "Func_080a7850",
+  "status": "measured-draft",
+  "owner_bytes": 482,
+  "score": {
+    "measured": "2026-08-27",
+    "candidate_bytes": 200,
+    "reference_bytes": 482,
+    "differing_halfwords": 239,
+    "wrong_instructions": 228,
+    "class": "wrong",
+    "note": "Assigned to the shop/select_party_member.c family by clustering, but this owner does not share the template's selection-loop shape at all: it opens by calling InventoryMenu_ResetCategoryItemPositions (Func_080a9d84, a real, already-named inventory_menu sibling) and Audio_PlayCue(112), then draws two fixed nested grids (a 4x7 outer grid of small icon writes and a further 4-row scanning-highlight loop with 32-step x-increments) before a single Func_080770c0(0x150)-gated wait-for-any-input loop and a close/Audio_PlayCue(113) teardown -- this reads as an equip/browse results screen (a static icon-grid display with a 'press anything to continue' wait), not an interactive up/down/L/R picker. The family match here looks like a weaker/more coincidental n-gram similarity (shared calls to Func_080770c0, Func_08015080, Func_080f9010, and a similar prologue/epilogue register-save shape) rather than genuine structural kinship with Shop_SelectPartyMember. The candidate only captures the entry/exit calls and a rough sketch of the two nested drawing loops; the exact per-cell layout math (row/column pixel offsets, the two 4-halfword-stride write loops before the grids that this draft does not model at all) was not reconstructed, accounting for most of the 282-byte shortfall (200 vs 482)."
+  },
+  "rejected_experiments": [],
+  "notes": [
+    "Recovered from games/gs1/asm/080a7850.s. Confirmed Func_080a9d84 = InventoryMenu_ResetCategoryItemPositions via games/gs1/include/types.h's name registry, which is the basis for placing this owner in the inventory_menu module.",
+    "Two literal-pool-driven halfword-pair write loops near the top of the function (writing to two parallel arrays with a fixed stride, using constants read from offsets +36/+40*4 off the menu pointer) were not modeled in the candidate; they were skipped because the surrounding pixel/stride arithmetic (word 0x46, 0x1e, 0xb17, 0x80, 0xb18, 0x1001, 0x45f, 0xea3, all read off the literal pool but not individually attributed) was not fully traced to concrete field meanings in the time available.",
+    "This candidate claims zero DONE bytes; it is a rough structural skeleton (200 of 482 bytes), not a close attempt. Given this owner's shape diverges most from the template of all six in this batch, it is also the weakest candidate for the family match itself -- worth re-checking during a future clustering pass whether 080a7850 belongs in this family at all, versus a static-display-screen family.",
+    "No sibling draft existed for this owner before this session."
+  ]
+}

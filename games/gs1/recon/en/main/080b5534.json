@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "namespace": "gs1-en-main",
+  "address": "0x080b5534",
+  "status": "measured-draft",
+  "owner_bytes": 428,
+  "score": {
+    "measured": "2026-08-27",
+    "candidate_bytes": 428,
+    "reference_bytes": 428,
+    "differing_halfwords": 177,
+    "wrong_instructions": 166,
+    "class": "wrong",
+    "note": "Byte length now matches and the two persistent high-register roles line up (sl = a toggle variable that starts life as index 0 for the first decoded character and later becomes a mode flag reused across the redraw loop; r8 = a range computed as the difference of two externally-addressed table symbols, recomputed once per outer-loop pass rather than folded). The remaining mismatch is a real extra callee-saved register (r9) my candidate needs to cache the address-of one of those table symbols across a WaitFrames/UiWork_Create call because the source reuses the exact same symbol expression in the mode==0 branch and again in the range subtraction; the reference reloads the literal pool word twice instead of caching, so either its two uses are genuinely different symbols with the same address or this GCC configuration does not rematerialize address-of constants the way mine does here."
+  },
+  "rejected_experiments": [
+    {
+      "experiment": "declare the two message/table markers (0x26fa, 0xad0) and the range endpoint (0x2850) as plain integer literals instead of extern symbol addresses",
+      "result": "reference computes the range with a genuine runtime `subs` from two separate pool loads; plain integer literals let this compiler constant-fold the subtraction into an immediate, dropping the runtime subtraction and the r8 cache entirely (candidate collapsed to 412 bytes vs reference's 428, and the r8/sl split disappeared) -- rejected, restored as extern symbol address-of expressions"
+    },
+    {
+      "experiment": "single shared local variable used first as the char-copy index (value 0) and later as the redraw mode toggle, vs two separate locals",
+      "result": "the reference's very first character read indexes `text[]` through the same register that is initialised to 0 at function entry and is later read again for the mode check (mov r2,sl / ldrh r3,[r5,r2] matches the mode check's mov r2,sl / cmp r2,#0); modelling this as one reused variable brought the prologue's persistent-register set (sl, r8) and the push count into exact agreement with the reference, so this was kept",
+      "class": "accepted"
+    },
+    {
+      "experiment": "compute `range` once before the outer for(;;) loop vs recomputing it every pass right after WaitFrames(10)",
+      "result": "computing it once before the loop put it in sl (colliding with the mode toggle) and pushed the toggle into r8 -- the opposite of the reference's role assignment; moving the computation inside the loop body, positioned after WaitFrames(10) and before the inner poll loop (matching the reference's instruction position exactly), fixed the sl/r8 roles and dropped differing_halfwords from 199 to 177",
+      "class": "accepted"
+    }
+  ],
+  "notes": [
+    "Recovered only from the retained owner assembly, approved local ROM, and the approved compiler.",
+    "Callees Func_08015020/08015000/08015118/08015148 and the extern table symbols at 0x903, 0x26fa, 0xad0 and 0x2850 have no established project name; message-archive bank lookup for 0x903 did not land on a plausible string, so these are kept as raw Func_/Value_ placeholders rather than invented names.",
+    "The remaining gap is a single extra callee-saved register from how the compiler caches one repeated address-of expression across a call; closing it would need either a genuinely different pair of symbols for the two 0x26fa-valued uses or a different compiler flag/family, not more control-flow restructuring. This candidate claims zero DONE bytes."
+  ]
+}

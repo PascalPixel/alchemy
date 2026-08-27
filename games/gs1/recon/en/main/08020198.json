@@ -1,0 +1,20 @@
+{
+  "owner": "main:08020198",
+  "symbol": "Func_08020198",
+  "family": "template-main-08028aa8",
+  "template_owner": "main:08028aa8",
+  "template_source": "games/gs1/src/menu/draw_mode_label.c",
+  "candidate_path": "games/gs1/recon/en/main/08020198.c",
+  "reference_bytes": 172,
+  "best_candidate_bytes": 168,
+  "best_differing_halfwords": 26,
+  "best_wrong_instructions": 28,
+  "status": "measured_draft",
+  "notes": [
+    "Template (Menu_DrawModeLabel, a mode-flag dispatch drawing 1-2 glyphs) is unrelated beyond both being menu-drawing routines. Read games/gs1/asm/08020198.s directly: a null-guarded panel-drawing routine taking (surface, structPtr) and issuing 10 sequential draw/init calls with fixed literal coordinates (Func_08016478, Func_0801e41c, Func_0801e8b0, Func_0801e940 x2, Func_0801e9d4, Func_0801e7c0 x3, Func_0801f680, Func_0801ea08), several pulling arguments from the second struct-pointer param's byte/word fields at offsets 16/28/29/32/36 and one nesting a call's return value directly as the next call's first argument (Func_0801e940(Func_0801f680(...), surface, 48, 40)).",
+    "This is essentially a flat sequence-of-calls function with no real control flow (just the top-level null guard), so nearly the whole candidate matched immediately (matched_prefix low only because a register-choice difference appears in the very first divergent line, but every individual call's argument sequence matches exactly).",
+    "The one structural residual: the reference keeps the struct pointer in r7 (needing 3 callee-saved regs: r5,r6,r7) and uses r6 as a dedicated register for two small constants (0, then later 48) that get stored to the stack as a trailing 5th call argument, loading each constant into r6 well before its str. The candidate instead keeps the struct pointer in r6 (only 2 callee-saved regs needed: r5,r6) and computes each trailing constant into scratch r3 immediately before its str. Introducing an explicit named `s32 extra` local set to 0 then later 48 (instead of passing the literals inline) did not change this -- the compiler still folded it into scratch r3 rather than reserving r6 the way the reference does, so this is a compiler register-allocation choice, not something the one respelling attempt reached.",
+    "A second, smaller residual is pure instruction scheduling: for two of the calls, the reference loads the literal-pool constant destined for r0 immediately after the PRECEDING call returns (before setting up r1/r2/r3 for the current call), while the candidate loads it last, right before the call -- functionally identical, just different scheduling of independent literal loads.",
+    "Given the flat, repetitive shape and that every semantic call/argument already matches, this reads as a small compiler-scheduling/register-preference residual rather than a real logic or field gap. Not adopted; kept as the closest measured draft (94% instruction match) after one respelling attempt."
+  ]
+}

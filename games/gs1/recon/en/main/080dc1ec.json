@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080dc1ec",
+  "status": "measured-draft",
+  "owner_bytes": 616,
+  "score": {
+    "measured": "2026-08-27",
+    "candidate_bytes": 624,
+    "reference_bytes": 616,
+    "differing_halfwords": 242,
+    "wrong_instructions": 242,
+    "class": "unemittable",
+    "note": "First structural draft, not a permutation search. One full read-through of the retained assembly, cross-checked against the exact label placement in games/gs1/asm/080dc1ec.s to confirm loop nesting (the outer 160-pass animation loop's body starts at .L16, which sits immediately after the single-particle facing/portrait setup, so that setup genuinely re-runs every outer pass rather than once)."
+  },
+  "family": {
+    "assigned_template_owner": "main:08099160",
+    "assigned_template_source": "games/gs1/src/battle/effects/orbiting_particles/run.c",
+    "template_note": "Same mismatch as the other three owners assigned alongside this one: no shared callees with RunOrbitingParticleEffect, and the control flow (a fixed 256-slot particle-pool seed, then 160 outer animation passes each re-walking 64 of those slots) does not resemble the template's single 15-iteration spawn loop.",
+    "actual_sibling_evidence": "Same 0x03001eec work-block subsystem as 080d59b0/080d82b0/080e7404: identical Func_080cd594(mode)/Func_080e0524(id,work,f,f)/Func_080041d8(0x080CD261,0x480)/Func_08004278(0x080CD261)/Func_08002dd8(id)/Func_080cdbc0() shape and the same *(void**)0x03001EEC/0x03001EF0 work/draw_destination globals. This owner is the first of the four to call Func_080cef64(flag, &out) to resolve its draw callback dynamically instead of reading a fixed function-pointer global like 0x03001F08 -- worth checking whether 080d59b0/080d82b0's fixed-global reads and this owner's Func_080cef64 call ultimately write the same kind of value, which would let a future pass unify all four under one shared callback-resolution helper."
+  },
+  "rejected_experiments": [
+    "None beyond the single evidence-guided pass; two real bugs were caught and fixed before scoring rather than left in: the result[2] clamp direction was initially inverted (assembly's `cmp r2,#249; bgt .L9` skips the clamp-to-250 only when r2>249, i.e. it is a *minimum* clamp on the low side, not the maximum clamp the mirror-image code in this family might suggest at a glance), and an overcomplicated, incorrect derivation of the table-lookup source offset was simplified to the direct form `(j & 3) * 770 + Data_080ede48[raw - 1]` by re-deriving the register algebra by hand instead of trusting the first pass through it."
+  ],
+  "notes": [
+    "Recovered only from the retained owner assembly (games/gs1/asm/080dc1ec.s), the approved local EN ROM, games/gs1/recon/en/main/080e7404.c, 080d59b0.c, 080d82b0.c and their dossiers, in-repository headers, and the approved compiler.",
+    "This candidate claims zero DONE bytes.",
+    "Semantic summary: a single-target (not per-member-list) battle-presentation sub-effect. Seeds a 256-slot particle pool at 0x02010000 with random signed positions and zeroed velocity/lifetime fields, sets up one fixed 3-word draw record (0,160<<15,0), then runs 160 animation passes. Each pass re-establishes the facing/portrait draw, then walks the first 64 pool slots: once a slot's activation threshold (a function of its index divided by 4) is crossed and it is still marked inactive, it fires one of four velocity-kick calls selected by (index & 3), transforms it through Func_080e3944, clamps and buckets the transformed distance into a lookup-table draw offset, and draws it via Func_080072f4; independently, once a slightly later threshold is crossed, the slot's position is decayed by a shifted, negated velocity term every pass (simple drag).",
+    "Two open questions carried over from the earlier owners in this family and not re-litigated here for time: the observed 5th-argument-in-r4 calling convention at the Func_080072f4 site, and this compiler's register choice for the shared work pointer (kept in fp here, matching the reference this time, unlike 080d59b0 where fp/r9 diverged) -- worth revisiting once the family gets a shared header.",
+    "No GS2 or external source was used; no other Golden Sun decompilation project was consulted."
+  ]
+}

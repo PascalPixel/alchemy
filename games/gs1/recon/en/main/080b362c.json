@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "namespace": "gs1-en-main",
+  "address": "0x080b362c",
+  "status": "measured-draft",
+  "owner_bytes": 576,
+  "score": {
+    "measured": "2026-08-27",
+    "candidate_bytes": 560,
+    "reference_bytes": 576,
+    "differing_halfwords": 277,
+    "wrong_instructions": 172,
+    "class": "wrong",
+    "note": "This is a shop-domain ability/grid picker sharing select_party_member.c's core shape almost exactly: SHOP_RUNTIME, the same cursor.anchor->kind/mode field offsets (kind=18 here vs 4 in the template, mode=12 then 3, matching field-for-field), the same Modulo-based wraparound idiom used twice more (single-step left/right, and a 5-step page scroll clamped to a 15-slot / 5-column grid via Shop_PlaceCursor(Modulo(sel,5)<<4, Math_Div(sel,5)<<4+8)), and the same redraw/WaitFrames(1)/ADDR_03001C94+ADDR_03001B04 poll loop. The callees Func_080022fc/080022ec/08077248/080b0a6c/080b11a4 are already registered project names (Modulo, Math_Div, Ability_GetAvailability, Shop_PlaceCursor, Shop_DrawMessage) and all matched the retained assembly's argument counts and field offsets on inspection. The prologue (four register-saving pushes for fp/sl/r9/r8) matches the reference exactly, confirming the same four-variable cross-call register pressure -- but the compiler assigns them differently: reference keeps the function's own `actor` argument in fp for the whole function and spills the SHOP_RUNTIME pointer and the Runtime_GetObject(actor) result to the stack (sp+20, sp+8), while this candidate's allocator instead put SHOP_RUNTIME in fp and the Runtime_GetObject result in r9. Behaviourally identical; the linked bytes differ because of it, cascading through the rest of the function."
+  },
+  "rejected_experiments": [
+    {
+      "experiment": "drop a leftover no-op `shop->item_window = shop->item_window;` self-assignment left over from an earlier draft of the cursor-placement line",
+      "result": "no change in score -- the compiler had already discarded the dead store on its own, confirming the register-assignment gap above is the real blocker, not dead code"
+    }
+  ],
+  "notes": [
+    "Recovered only from the retained owner assembly, approved local ROM, and the approved compiler.",
+    "The -4 / -3 branch on Func_080772a8's return code (showing message 0xc96 vs 0xc97 via UiWork_Create) is reproduced exactly as the assembly orders it, but the second condition reads the function's own persisted result slot (`result == -3`) rather than the fresh return value, matching the retained instructions; the deeper game-rule reason a stale slot is checked here is not established from this owner alone.",
+    "The remaining gap looks like the same class of last-mile register-allocation mismatch documented for 0x080b5534, not a control-flow or field-offset error: forcing fp onto the function argument instead of the SHOP_RUNTIME pointer needs either a different declaration/use order this compiler responds to, or a targeted permuter search, not more structural rewriting. This candidate claims zero DONE bytes."
+  ]
+}

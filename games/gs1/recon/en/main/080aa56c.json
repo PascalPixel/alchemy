@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080aa56c",
+  "name": "Func_080aa56c",
+  "status": "measured-draft",
+  "owner_bytes": 508,
+  "candidate_bytes": 440,
+  "differing_halfwords": 253,
+  "wrong_instructions": 174,
+  "classification": "shop-scene-open-sequence",
+  "domain": "A largely linear scene/sub-mode setup sequence (allocates a context via Func_080048b0, temporarily forces a global mode byte to 2 while running several small init calls, resolves a status code from a short Func_080770c0 chain, draws a message/status window, then a matching linear teardown that restores the mode byte and returns).",
+  "notes": [
+    "Clustered against the byte-exact Shop_SelectPartyMember template by the family scan on raw n-gram/branch similarity, but the retained assembly is almost entirely straight-line setup/teardown code with only one small 4-way status chain (via three Func_080770c0(id) checks) -- it does not share the template's redraw/input-poll loop shape at all. This is the clearest case among this batch of a family-transplant lead that does not hold up structurally; the template was useful only for compiler-idiom orientation (constant folding via movs+lsls, the ADDR-pointer-dereference pattern), not for its control flow.",
+    "Recovered call sequence and a handful of confirmed literal-pool offsets: a context pointer from Func_080048b0(55, 0xa70) used as the base for most later field writes (offset 388/0x184 to store a second context from Func_08004970, offsets 28/29/372/374/376/0x148 written during teardown-prep), a global mode byte at (0x03001e68 + 0x20c) saved before the call sequence and restored at the very end via the caller-visible r9 register, a pointer stored at address 0x02000240 whose halfword at +4 is set to a small status value (1 by default, overwritten by the branch chain) on entry and cleared on exit, and three status codes (14/27/28) selected by nested Func_080770c0 checks against ids that resolve to small integers rather than shop-relative offsets (0x2130/0x212c/0x2128 in the retained literal pool).",
+    "This session resolved two concrete, verified respellings: (1) the context variable from Func_080048b0 is not consumed until several statements after the call (the mode-save and the *(ptr+4)=status write happen first in the reference, sourced from unrelated registers, before the compiler finally copies r0 into the persistent r7); matching that statement order in this draft was necessary to get the opening sequence's shape close at all. (2) the *(ptr+4) store uses the same register that separately holds a local 'status' variable already initialized to 1, not a fresh literal -- the reference's 'mov r2,sl' / 'mov r3,sl' pattern only makes sense if the source declares and initializes 'status = 1' once and reads it back rather than re-materializing the literal on each branch.",
+    "This owner has the most unresolved literal-pool arithmetic of the six assigned: two pool addresses used as an offset pair added to the Func_08004970 return value (guessed here as +0 and +0x60, unverified), the exact field offsets touched during the drawn-out teardown block (0x148/372/374/376/28/29 on the ctx base, unverified against real pool values), and the two Func_080072f8 destination/size arguments near the end (VRAM-shaped constants 0x06004000/0x000020a8/0x05000080 whose pairing this draft guessed). The 68-byte length gap (440 candidate vs 508 reference) indicates real missing or misshapen statements beyond a few wrong constants, most likely in this teardown block.",
+    "Given the volume of genuinely unresolved literal-pool values here, this is better described as an incomplete source-shape recovery than a compiler-internals residual: the next productive step is resolving the pool constants properly (assembling/disassembling the reference per CONTRIBUTING.md's guidance) rather than further guessing, so this is flagged as worth a dedicated follow-up pass rather than permuter search.",
+    "Exact-C adoption remains gated on an independently compiled zero-difference object."
+  ]
+}

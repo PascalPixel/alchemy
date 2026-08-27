@@ -32,6 +32,7 @@
     "Complete semantic reconstruction of RunBattleEffect13, including both target-selection branches, two eleven-frame interpolation passes, motion phases, audio gates, secondary-object adjustment, and cleanup.",
     "The canonical workbench now completes all six stages for this human-named owner and measures 81.98842% ARMv4T structural similarity.",
     "The clean candidate reaches the exact 588-byte owner extent. A bounded 20,000-candidate classic search found no exact candidate; its generated structural best was deliberately not adopted because it was less readable and eight bytes long.",
-    "All 448 relocation- and literal-normalized core bytes are identical in JA, EN, DE, ES, FR, and IT. Retained assembly remains authoritative and this draft claims zero DONE bytes."
+    "All 448 relocation- and literal-normalized core bytes are identical in JA, EN, DE, ES, FR, and IT. Retained assembly remains authoritative and this draft claims zero DONE bytes.",
+    "2026-08-27 re-verification: fresh candidate-show still measures exactly 588/588 bytes, 254 differing halfwords, 170 wrong instructions, matching this dossier. Tried swapping the declaration/assignment order of `main_object` and `secondary_object` (the reference reads scene+20 before scene+16 and spills it immediately, per the aligned diff) -- byte-for-byte identical output, no effect: these are two independent loads and GCC 2.96 schedules them by its own criteria regardless of source order here. No new productive lead found within bounded reattempt; status unchanged."
   ]
 }

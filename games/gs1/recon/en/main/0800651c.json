@@ -38,6 +38,7 @@
   },
   "notes": [
     "Independent object analysis bounds this leaf at 64 executable bytes and proves all 40 relocation-normalized core bytes identical across the six approved GS1 editions.",
+    "Third attempt (this session): swapping the state/interrupt_master assignment order flips the literal-pool word order to match the reference exactly (0x2220 then 0x0208 vs the current 0x0208 then 0x2220), but the register numbers it then produces for those two pointers are the wrong way round relative to reference, worsening wrong_instructions from 4 to 16. Reverted; the original order remains the best-known candidate.",
     "The coherent translation-unit build and first-class absolute symbols fix the former ten-byte extent excess and preserve the real 0x02002008, 0x02002080, 0x02002220, 0x02002238, 0x020023ac, and 0x04000208 bindings.",
     "All instructions after the first five match. The remaining nine-halfword residual is the entry load, interrupt save, zero-value scheduling, and consequent literal-pool order; two bounded source-shape searches found no improvement.",
     "No full search or permanent classification was warranted, and zero DONE bytes are claimed.",

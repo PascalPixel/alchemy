@@ -43,6 +43,9 @@
     "best_generated_candidate_bytes": 252,
     "best_generated_differing_halfwords": 118
   },
+  "bounded_checks": [
+    "adding explicit prototypes for every callee this draft was missing (Func_08004970, Func_080b6b40, Func_08077008, Func_080151c0, Func_08002df0), which had been left as C89 implicit-int declarations, produced byte-identical output (still 94 differing halfwords / 138 wrong instructions) -- the implicit-declaration signedness class of bug found elsewhere in this family (see main:080c1afc's dossier) does not explain this owner's residual"
+  ],
   "notes": [
     "080b8888 was skipped because the current source register already routes it to exact claimed C; the stale request did not reflect the resolved manifest.",
     "Independent object analysis bounds this owner at 278 executable bytes and proves all 242 normalized core bytes identical across the six approved GS1 editions.",

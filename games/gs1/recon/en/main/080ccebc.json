@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "namespace": "gs1-en-main",
+  "address": "0x080ccebc",
+  "status": "measured-draft",
+  "owner_bytes": 584,
+  "score": {
+    "measured": "2026-08-27",
+    "candidate_bytes": 544,
+    "reference_bytes": 584,
+    "differing_halfwords": 271,
+    "wrong_instructions": 244,
+    "class": "wrong",
+    "note": "Sibling of 0x080dd77c and 0x080ecef4, not select_party_member.c's poll-loop shape; the family clustering is call-target/n-gram, not structural. One void* argument is stashed into the shared 'effects struct' at +0x7828 (the same struct apply_shake.c reaches through ADDR_03001EEC), two EffectPosition_ApplyStepAndYOffset calls average two step positions via the classic signed-divide-by-2 rounding idiom (b-a, add sign bit, shift), then a fixed 63-iteration frame-counter loop draws four repeated Func_080ed408/Func_080072f4/Func_08002dd8 tile groups per frame at rows (33,41)/(64,41)/(33,72)/(64,72), plus a one-shot Func_080d6888 dispatch to each of arg0's field_20 sub-entries on frame 10, and a Scheduler_AddOrUpdateCallback/RemoveCallback pair bracketing the whole routine (callback pointer 0x080cd261, matching the pointer used for the same teardown in the other two siblings)."
+  },
+  "rejected_experiments": [
+    {
+      "experiment": "read the shared struct base directly from ADDR_03001EEC vs loading ADDR_03001EF0 first and subtracting 4",
+      "result": "reference loads ADDR_03001EF0's address into a register, keeps that same register as `second` (used later as Func_080072f4's first argument via `mov r0,fp`), and reaches the +0x7828-holding base struct by subtracting 4 from it rather than loading ADDR_03001EEC separately; matching that order was needed to get the same prologue register set (fp/sl/r9/r8, matching the reference exactly) instead of an extra/missing saved register",
+      "class": "accepted"
+    },
+    {
+      "experiment": "pass `base` (the ADDR_03001EEC-rooted struct pointer) as Func_080072f4's first argument",
+      "result": "the retained assembly's `mov r0,fp` before each Func_080072f4 call uses the OTHER cached pointer (`second`, from ADDR_03001EF0), not `base`; switching the argument to `second` is structurally correct even though the resulting score did not change much, because the call's other three arguments and the surrounding loop shape still differ"
+    }
+  ],
+  "notes": [
+    "Recovered only from the retained owner assembly, approved local ROM, and the approved compiler.",
+    "This is a single-pass structural draft, not iteratively tuned: the loop count/shape, the four draw-call rows, the averaging idiom, and the scheduler bracket are read directly off the assembly and are reasonably solid. The `count`/`Func_080d6888` inner block, the exact Scheduler_AddOrUpdateCallback second argument (written here as a bare 0x480 magic number, `144<<3`), and the +0x59 message id passed to Func_080e0524 are transcribed from the instruction operands without independent confirmation of their semantic meaning.",
+    "This looks like a source-shape gap (the shared 'effects struct' layout and the Func_080072f4/Func_080d6888 argument conventions are not yet established anywhere in the tracked corpus) rather than a compiler-internals residual; a dedicated pass working out that struct across all three siblings (and apply_step_and_y_offset.c / apply_shake.c, which already touch the same struct family) would likely make faster progress than more respelling here. This candidate claims zero DONE bytes."
+  ]
+}

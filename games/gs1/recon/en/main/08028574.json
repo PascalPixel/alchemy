@@ -1,0 +1,19 @@
+{
+  "owner": "main:08028574",
+  "symbol": "Func_08028574",
+  "family": "template-main-080286a0",
+  "template_owner": "main:080286a0",
+  "template_source": "games/gs1/src/menu/select_resource.c",
+  "candidate_path": "games/gs1/recon/en/main/08028574.c",
+  "reference_bytes": 300,
+  "best_candidate_bytes": 260,
+  "best_differing_halfwords": 148,
+  "best_wrong_instructions": 126,
+  "status": "measured_draft",
+  "notes": [
+    "Template (Menu_SelectResource) auto-scrolls toward a fixed target selection with a delay table; this owner (from games/gs1/asm/08028574.s) is a genuinely player-input-driven variant instead: it takes only an initial selection, redraws a character glyph from either a `count`-relative resource id or the same `resource_ids[selection] + &Data_0000001f` idiom as the template depending on whether Data_03001f38's +146 field is nonzero, then polls Data_03001c94 for confirm(bit0)/cancel(bit1 or bit3) and Data_03001b04 for up(bit5 or bit6)/down(bit4 or bit7) d-pad bits each frame, decrementing/incrementing the selection field at +140 with wraparound against a THIRD count-like field at +142 (distinct from the +146 field used for the resource-id branch), playing sound 111 on move, 112 on confirm (returning the selection), 113 on cancel (returning -1).",
+    "One direct-translation pass was written and measured; it did not converge (candidate 260B vs reference 300B, wrong_instructions=126, i.e. the overall shape/length is meaningfully off, not just register-numbering noise) and was not iterated further given the batch's per-owner effort budget and the number of owners still to cover.",
+    "A specific detail I noticed but did not attempt to reproduce: on the down-wraparound path, the reference reuses whatever register happened to hold the (already known to be zero, from the preceding failed bit-64 test) value for the `selection = 0` reset rather than materializing a fresh zero -- a register-reuse coincidence driven by the exact preceding branch history that a straightforward `*selection = 0;` is unlikely to reproduce without deliberately structuring the two up/down branches to share that dead value the way the assembly does.",
+    "Given the size of the remaining gap, this needs a fresh, more careful pass at the register-allocation level (in particular, matching which physical registers persist across the polling loop -- fp/sl/r8/r9/r7 in the reference vs the 3-ish the candidate's structure implies) before it is worth a permuter search; the semantic behavior (which bits move which direction, the two distinct count fields, the sound IDs) is read directly from the assembly and is high-confidence."
+  ]
+}

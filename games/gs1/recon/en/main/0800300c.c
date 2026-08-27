@@ -20,7 +20,7 @@
  *
  * Compiler-backend note (see compiler_backend_evidence in
  * games/gs1/recon/en/main/08003e10.json, and independently confirmed
- * here by reading alchemy-gcc/gs1cc/gcc/config/arm/arm.md and arm.c):
+ * here by reading alchemy-gcc/agscc/gcc/config/arm/arm.md and arm.c):
  * the reference emits two grouped `stmia r3!, {r0, r1, r2}` stores for
  * the two DMA descriptor writes, each fed by three *independently*
  * loaded registers (no preceding ldmia). On this Thumb/GCC 2.96 route

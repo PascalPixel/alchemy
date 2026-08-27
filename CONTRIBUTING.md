@@ -354,9 +354,9 @@ tools/compiler/target/release/compiler workbench games/gs1/recon/en/main/080bbb0
 
 The generated Ninja graph:
 
-- preprocesses and compiles the draft through its routed gs1cc configuration;
+- preprocesses and compiles the draft through its routed agscc configuration;
 - assembles the complete reference owner and symbolizes pools and jump tables;
-- runs m2c with the actual gs1cc type context;
+- runs m2c with the actual agscc type context;
 - compares reference and candidate objects with objdiff's ARMv4T engine; and
 - probes the generated m2c source without treating missing recovered types as a graph failure.
 

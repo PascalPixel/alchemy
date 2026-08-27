@@ -5,7 +5,7 @@ s32 Func_08005c68(void)
     struct SaveWorkspace *work;
     u8 *summary;
     u32 zero;
-    s32 group;
+    u32 group;
     s32 count;
 
     work = SAVE_WORKSPACE;

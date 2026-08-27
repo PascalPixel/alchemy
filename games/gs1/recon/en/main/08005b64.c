@@ -1,5 +1,15 @@
 #include "save_state_family.h"
 
+#undef START_DMA
+#define START_DMA(source_, destination_, control_) do { \
+    u32 src_ = (u32)(source_); \
+    u32 dst_ = (u32)(destination_); \
+    u32 ctl_ = (control_); \
+    DMA3->control = ctl_; \
+    DMA3->destination = dst_; \
+    DMA3->source = src_; \
+} while (0)
+
 s32 Func_08005b64(s32 index)
 {
     struct SaveWorkspace *work;

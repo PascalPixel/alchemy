@@ -212,6 +212,7 @@ typedef int bool;
 #define Ability_GetMaximum Func_08077240
 #define Ability_GetAvailability Func_08077248
 #define Shop_GetSelectionState Func_08077020
+#define ShopCursor_Advance Func_080b08b8
 #define UiText_DrawMessage Func_08015040
 #define UiText_DrawResource Func_0801e74c
 #define UiText_DrawCharacter Func_0801e7c0

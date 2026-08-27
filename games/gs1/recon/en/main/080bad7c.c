@@ -14,24 +14,23 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
     s32 index;
     s32 unit_id;
 
-    turn_order = BATTLE_TURN_ORDER;
     count = 0;
+    turn_order = BATTLE_TURN_ORDER;
 
     if (require_living_unit != 0) {
         index = 0;
-        if (turn_order->normal[0] != 255) {
-            entry = turn_order->normal;
-            do {
-                unit_id = *entry;
-                if (unit_id != 254) {
-                    if (BattleUnit_Get(unit_id)->hp != 0) {
-                        positions[count] = index | 0x100;
-                        count++;
-                    }
+        entry = turn_order->normal;
+        unit_id = *entry;
+        while (unit_id != 255) {
+            if (unit_id != 254) {
+                if (BattleUnit_Get(unit_id)->hp != 0) {
+                    positions[count] = index | 0x100;
+                    count++;
                 }
-                entry++;
-                index++;
-            } while (*entry != 255);
+            }
+            entry++;
+            index++;
+            unit_id = *entry;
         }
     } else {
         index = 0;
@@ -51,5 +50,5 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
 
     if (count == 0)
         return 0;
-    return positions[(u32)(count * Random16()) >> 16];
+    return positions[(u32)(Random16() * count) >> 16];
 }

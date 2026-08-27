@@ -12,24 +12,29 @@ struct BattleQueueEntry {
 };
 
 s32 Func_080771e8(s32 group, s32 index);
-void Func_08007304(void *destination, const void *source, s32 size);
+
+typedef void (*WordCopy)(void *destination, const void *source, s32 size);
+
+extern u8 Value_0000000f;
 
 void Func_080b9470(struct BattleQueueEntry *entries, s32 count)
 {
-    s32 index;
+    s32 i;
+    s32 j;
     s32 swapped;
 
-    for (index = 0; index < count; index++) {
-        struct BattleQueueEntry *entry = &entries[index];
+    for (i = 0; i < count; i++) {
+        struct BattleQueueEntry *entry = &entries[i];
 
         if (entry->command_kind == 5) {
             struct BattleAction *action;
-            u16 encoded = entry->encoded_action;
+            s8 group;
             u8 effect;
 
             Func_08077008(entry->owner_id);
-            action = BattleAction_Get(
-                Func_080771e8(((s8)(encoded >> 8)) & 0x0f, encoded & 0xff));
+            group = (s8)(entry->encoded_action >> 8);
+            action = BattleAction_Get(Func_080771e8(
+                group & (s32)&Value_0000000f, entry->encoded_action & 0xff));
             effect = action->effect;
             if (effect == 46 || effect == 47 || effect == 53) {
                 entry->priority += 10000;
@@ -39,13 +44,13 @@ void Func_080b9470(struct BattleQueueEntry *entries, s32 count)
 
     do {
         swapped = 0;
-        for (index = count - 1; index > 0; index--) {
-            if (entries[index].priority > entries[index - 1].priority) {
+        for (j = count - 1; j > 0; j--) {
+            if (entries[j].priority > entries[j - 1].priority) {
                 struct BattleQueueEntry temporary;
 
-                Func_08007304(&temporary, &entries[index], sizeof(temporary));
-                Func_08007304(&entries[index], &entries[index - 1], sizeof(temporary));
-                Func_08007304(&entries[index - 1], &temporary, sizeof(temporary));
+                ((WordCopy)0x03001388)(&temporary, &entries[j], 16);
+                ((WordCopy)0x03001388)(&entries[j], &entries[j - 1], 16);
+                ((WordCopy)0x03001388)(&entries[j - 1], &temporary, 16);
                 swapped++;
             }
         }

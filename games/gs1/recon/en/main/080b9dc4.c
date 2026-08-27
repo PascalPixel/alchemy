@@ -29,25 +29,33 @@ void Func_080b7e60(s32 unit_id);
 
 s32 Func_080b9dc4(struct BattleTrigger *trigger)
 {
+    u8 *presentation_addr = (u8 *)0x03001f00;
     struct BattlePresentationState *presentation =
-        *(struct BattlePresentationState **)0x03001f00;
+        *(struct BattlePresentationState **)presentation_addr;
     struct BattleSceneContext *scene =
-        *(struct BattleSceneContext **)0x03001e74;
+        *(struct BattleSceneContext **)(presentation_addr - 140);
     s32 completed = 0;
+    s32 party_mode;
 
     presentation->mode = 0x2000;
     presentation->active = 1;
     Func_080c10e8(0, 0);
 
     if (trigger->unit_id <= 7) {
-        if (scene->encounter_mode == 2) {
+        party_mode = completed;
+
+        if (scene->encounter_mode != 2) {
+            party_mode = 1;
+        }
+
+        if (!party_mode) {
             Func_080151c8(0x847);
             Func_080bb65c();
         } else {
-            u16 unit_ids[14];
-            s32 index = BattleParty_ListLivingUnits(1, unit_ids) - 1;
+            s16 unit_ids[14];
+            s32 index = BattleParty_ListLivingUnits(1, (u16 *)unit_ids) - 1;
 
-            while (index >= 0) {
+            while (index != -1) {
                 struct BattleUnit *unit = Func_08077008(unit_ids[index]);
 
                 if (unit->stun == 0 && unit->sleep == 0) {

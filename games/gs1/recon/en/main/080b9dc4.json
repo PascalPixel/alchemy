@@ -5,9 +5,9 @@
   "status": "measured-draft",
   "owner_bytes": 252,
   "executable_owner_bytes": 250,
-  "candidate_bytes": 244,
-  "differing_halfwords": 116,
-  "wrong_instructions": 33,
+  "candidate_bytes": 252,
+  "differing_halfwords": 1,
+  "wrong_instructions": 2,
   "classification": "resolve-battle-presentation-trigger",
   "resolved_asm_classification": {
     "kind": "compiler_output",
@@ -22,6 +22,8 @@
   },
   "notes": [
     "Resolves a battle presentation trigger: either announces the encounter, visits unstunned living party units, or activates and tears down a selected battle object based on a bounded random test.",
-    "Correct party and unit layouts raise structural similarity to 85.58 percent, but stack layout, branch shaping, loop allocation, and call scheduling remain broad. It did not meet the bounded-search or permanent-residual gate."
+    "Correct party and unit layouts raise structural similarity to 85.58 percent, but stack layout, branch shaping, loop allocation, and call scheduling remain broad. It did not meet the bounded-search or permanent-residual gate.",
+    "2026-08-27: bounded search closed differing_halfwords from 116 to 1 (wrong_instructions 33 to 2). Three source-level fixes did the work: (1) unit_ids widened from u16 to s16 (cast to u16* only at the BattleParty_ListLivingUnits call site) so both party-index reads compile to ldrsh instead of ldrh, matching the reference's signed-extend addressing; (2) the living-unit loop condition rewritten from `index >= 0` to `index != -1`, which makes the compiler synthesize the loop bound via movs #1/negs (compare against -1) instead of cmp/blt-bge, matching the reference's loop-footer shape; (3) scene's raw pointer address rewritten as `presentation_addr - 140` (arithmetic from a u8 * holding 0x03001f00) instead of the independent literal 0x03001e74, which makes the compiler reuse the already-loaded 0x03001f00 register via `subs r3,#140` instead of emitting a second literal-pool load -- this alone recovered the full 8-byte size gap and collapsed most of the remaining diff. The encounter_mode==2/party-loop branch was also restructured as a `party_mode = completed; if (cond) party_mode = 1; if (!party_mode) ... else ...` two-statement flag pattern (rather than a direct nested if/else) to reproduce the reference's default-value-then-conditional-override branch shape (movs/beq/movs/cmp/bne) instead of a single collapsed bne -- this matched the branch senses and block order exactly.",
+    "Remaining single differing halfword (wrong_instructions=2, both counting the same spot): candidate emits `movs r2, #0` where the reference emits `adds r2, r7, #0` (copying the already-live completed==0 value from r7) to seed party_mode's default before the encounter_mode compare. Both are 2-byte, flag-setting, functionally identical zero-into-r2 encodings -- pure register-CSE opcode choice, not a control-flow or data difference. Tried and rejected (no effect, or regressed structure/size): `party_mode = completed` vs `= 0` (identical output either way -- proves the compiler constant-propagates completed to 0 before this point regardless of aliasing to the variable); `party_mode = completed + 0` (still folds to a fresh immediate); hoisting party_mode's declaration/init to function scope before the outer if (changed register allocation wholesale, regressed to candidate=260, wrong_instructions=58); u32 vs s32 type for party_mode (no effect); swapping completed/party_mode declaration order (no effect); ternary `party_mode = (encounter_mode==2) ? completed : 1` and plain if/else `party_mode = completed; else party_mode = 1;` in place of the default+override form (both collapse the compiler back to a single direct branch, losing the whole flag-materialize shape and regressing size to 244). This looks like a genuine postreload-CSE/register-allocator threshold difference between our toolchain build and whatever produced the ROM, not reachable by further legitimate C restructuring without forcing register assignment (prohibited by CONTRIBUTING.md). Did not run the adoption gate per instructions; final candidate-show: candidate=252 reference=252 differing_halfwords=1 wrong_instructions=2 matched_prefix=25."
   ]
 }

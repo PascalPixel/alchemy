@@ -18,7 +18,7 @@ typedef void (*DrawRectangleFn)(
 
 void Func_080cd594(s32 mode);
 void Func_080e0524(s32 effect_id, void *work, s32 flag_a, s32 flag_b);
-void Func_080cef64(s32 flag, DrawRectangleFn *out_callback);
+void Func_080cef64(s32 flag, DrawRectangleFn *out_pair);
 u32 Func_08004458(void);
 void Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
@@ -45,7 +45,7 @@ s32 Func_080dc1ec(void *object)
 {
     void *work;
     void *draw_destination;
-    DrawRectangleFn callback;
+    DrawRectangleFn callback_pair[2];
     u8 *star;
     s32 i;
     s32 outer;
@@ -61,7 +61,7 @@ s32 Func_080dc1ec(void *object)
     Func_080e0524(140, work, 1, 1);
     Func_080cef64(
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4) ^ 1,
-        &callback);
+        callback_pair);
 
     star = (u8 *)0x02010000;
     for (i = 0; i != 256; i++) {
@@ -153,7 +153,7 @@ s32 Func_080dc1ec(void *object)
                         h = result[1] - raw;
                         Func_080072f4(
                             (s32) draw_destination,
-                            src_off + (s32) work, y, h, callback,
+                            src_off + (s32) work, y, h, callback_pair[0],
                             raw, raw << 1);
                     }
 

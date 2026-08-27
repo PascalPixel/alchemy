@@ -44,6 +44,10 @@ s32 Func_080d59b0(void *object)
     void *work;
     void *draw_destination;
     void *target;
+    void **heap_cache;
+    void **cursor;
+    DrawRectangleFn callback_a;
+    DrawRectangleFn callback_b;
     u8 *star;
     s32 i;
     s32 j;
@@ -51,15 +55,19 @@ s32 Func_080d59b0(void *object)
     s32 facing;
     s32 record[3];
 
-    work = *(void **)0x03001EEC;
-    draw_destination = *(void **)0x03001EF0;
+    heap_cache = (void **)0x03001EEC;
+    cursor = heap_cache;
+    work = *cursor++;
+    draw_destination = *cursor;
     M2C_FIELD(work, void **, 0x7828) = object;
     Func_080cd594(0);
     M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x0100;
     M2C_FIELD((void *)0x04000050, s16 *, 0) = 0;
     Func_080e0524(0xA8, work, 1, 1);
     Func_080ed408(46, 7, 7, 3, 1);
+    callback_a = (DrawRectangleFn) heap_cache[7];
     Func_080ed408(47, 7, 7, 15, 1);
+    callback_b = (DrawRectangleFn) heap_cache[8];
 
     star = (u8 *)0x02010000;
     for (i = 0; i != 32; i++) {
@@ -135,7 +143,7 @@ s32 Func_080d59b0(void *object)
                             (s32) ((kind << 10) + (s32) work),
                             M2C_FIELD(star, s16 *, 2) - 16,
                             (velocity >> 16) - 16,
-                            *(DrawRectangleFn *)0x03001F08,
+                            callback_a,
                             32, 32);
                     } else {
                         Func_080072f4(
@@ -143,7 +151,7 @@ s32 Func_080d59b0(void *object)
                             (s32) ((kind << 10) + (s32) work - 0x1000),
                             M2C_FIELD(star, s16 *, 2) - 16,
                             (velocity >> 16) - 16,
-                            *(DrawRectangleFn *)0x03001F0C,
+                            callback_b,
                             32, 32);
                     }
 

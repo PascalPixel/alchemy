@@ -379,6 +379,7 @@
     "main:080784b0": "inventory/get_quantity.c", "main:080784d8": "inventory/count.c",
     "main:08078500": "inventory/party_has_space.c", "main:08078550": "inventory/count_party_free_slots.c",
     "main:08078588": "inventory/add.c", "main:08078618": "inventory/add_to_party.c",
+    "main:08078ee8": {"name":"Owner_InitRecords"},
     "main:08078664": "inventory/find.c", "main:08078698": "inventory/find_party_owner.c",
     "main:08078708": "inventory/equip.c", "main:080787dc": "inventory/find_equipped.c",
     "main:0807882c": "inventory/get_equipped_definition.c", "main:08078870": "inventory/get_equipped_item.c",

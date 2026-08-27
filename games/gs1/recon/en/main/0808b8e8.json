@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x0808b8e8",
+  "status": "measured-draft",
+  "owner_bytes": 164,
+  "score": {
+    "measured": "2026-08-27",
+    "candidate_bytes": 164,
+    "reference_bytes": 164,
+    "differing_halfwords": 18,
+    "wrong_instructions": 30,
+    "class": "allocation",
+    "note": "Salvaged from a worktree left uncommitted by an interrupted session; no completed dossier narrative was recovered alongside the source. Independently re-verified fresh (non-cached) against the confirmed-restored roms/gs1-en.gba before committing: candidate-show --owner 0x0808b8e8 --size 164 reports candidate=164 reference=164 differing_halfwords=18 wrong_instructions=30, class=allocation. Not adopted (gate requires differing_halfwords=0); retained assembly (games/gs1/asm/0808b8e8.s) stays authoritative. Byte-count-exact with a moderate residual -- a future pass should read games/gs1/asm/0808b8e8.s directly to verify the draft's semantics before spending further effort on the residual."
+  },
+  "notes": [
+    "Source recovered by a prior agent in this session whose full working notes were lost to an interrupted session; only the .c file survived in its worktree.",
+    "No other Golden Sun decompilation project, symbol map, or disassembly was consulted by this commit."
+  ]
+}

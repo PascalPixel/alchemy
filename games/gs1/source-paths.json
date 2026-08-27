@@ -872,6 +872,7 @@
     "main:0808e990": "unidentified/main/runtime/runtime_owner_135.c", "main:0808feb0": "unidentified/main/runtime/runtime_owner_183.c",
     "main:080911e8": "unidentified/main/runtime/runtime_owner_33.c", "main:08091540": "unidentified/main/runtime/runtime_owner_253.c",
     "main:08091550": "unidentified/main/runtime/runtime_owner_280.c", "main:08091750": "unidentified/main/battle/battle_owner_53.c",
+    "main:08093fa0": { "name": "battle_owner_69" },
     "main:0809177c": "unidentified/main/script/script_owner_2.c", "main:08091780": "unidentified/main/script/script_owner_5.c",
     "main:080917ac": "unidentified/main/script/script_owner_10.c", "main:080917d0": "unidentified/main/script/script_owner_12.c",
     "main:080917f4": "unidentified/main/script/script_owner_16.c", "main:080919d8": "unidentified/main/ui/ui_owner_9.c",

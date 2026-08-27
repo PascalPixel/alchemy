@@ -13,8 +13,10 @@
 	.set sub_08092054, 0x08092054
 	.set sub_08092158, 0x08092158
 	.set sub_080923c4, 0x080923c4
+	.global battle_owner_69
 	.global Func_08093fa0
 	.thumb_func
+battle_owner_69:
 Func_08093fa0:
 	push {r5, r6, r7, lr}
 	mov r7, r11

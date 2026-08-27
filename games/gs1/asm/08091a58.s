@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global PartyInventory_GiveItem
 	.global Func_08091a58
 	.thumb_func
+PartyInventory_GiveItem:
 Func_08091a58:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

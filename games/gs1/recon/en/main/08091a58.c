@@ -16,7 +16,8 @@ s32 Func_080b0058(s32 *owner_out, s32 *slot_out);
 s32 Func_08091d84(s32 value);
 void Func_080f9010(s32 cue);
 
-s32 PartyInventory_GiveItem(s32 item_id)
+/* PartyInventory_GiveItem per games/gs1/source-paths.json. */
+s32 Func_08091a58(s32 item_id)
 {
     s16 *fld;
     s32 saved;

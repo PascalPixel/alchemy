@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x08019854",
+  "name": "UiWork_AdvanceChannelTransition",
+  "status": "measured-draft",
+  "owner_bytes": 136,
+  "candidate": {
+    "coherent_translation_unit": {
+      "candidate_bytes": 140,
+      "reference_bytes": 136,
+      "differing_halfwords": 59,
+      "wrong_instructions": 40
+    },
+    "workbench_objdiff": {
+      "match_percent": 78.51562,
+      "instructions": 71,
+      "arg_mismatches": 17,
+      "op_mismatches": 1,
+      "replace": 1,
+      "delete": 5,
+      "insert": 7
+    }
+  },
+  "family": {
+    "template_matcher_guess": {
+      "owner": "main:08021620",
+      "source": "games/gs1/src/graphics/resource/create_pair.c",
+      "score_basis_points": 7402,
+      "call_target_similarity_basis_points": 0,
+      "verdict": "false positive"
+    },
+    "evidence": "Read create_pair.c (RenderResource_CreatePair): it allocates a resource-table slot, loads a resource pair via Func_0801eadc, and stamps sentinel/table-index fields. It shares zero callees, zero struct-field offsets, and zero constants with this owner, confirming the family-matcher's 7402/10000 score is a shape-only match on the shared register-shuffle prologue (push r5-r7,lr / mov+push r8-fp) that this session already flagged as a common false-positive pattern in the highest-scoring cluster, not real kinship.",
+    "actual_identity": "Discovered directly from an already-adopted exact caller, not from the family matcher. games/gs1/src/ui/runtime/process_render_channels.c (UiWork_ProcessRenderChannels) already forward-declares `void Func_08019854(void *);` and calls `Func_08019854(channel)` whenever the channel's active Work item has a nonzero `pending` (transition-kind) field, i.e. this owner is the handler for an in-progress channel transition. Its two call targets, Func_080170f8 (draws a window border into the BG tilemap, confirmed by reading its own retained assembly: bounds-checks width/height to [2,30] tiles, writes box-drawing tile codes) and Func_08016178 (erases a window border region, same bounds-checking shape, fills with blank/edge tile codes), are both already used by exact, byte-verified sibling owners in games/gs1/src/ui/render/ and games/gs1/src/ui/window/ with the identical (x, y, width, height) argument shape."
+  },
+  "behavior": [
+    "arg0 (`channel`) is one of the three ui/render channel slots at Data_03001e8c + RENDER_CHANNEL_OFS (struct Slot, 0x28 bytes, matching the already-exact games/gs1/src/ui/render/activate_channel.c layout: work ptr @0, field04, field06, values[4], field10, field12, field14, ...)",
+    "dereferences channel->work (a struct Work* -- the same width@8/height@0xA/x@0xC/y@0xE/state@0x14 layout already proven exact in games/gs1/src/ui/render/finalize.c and games/gs1/src/ui/window/update_interpolated_geometry.c) and reads its width, height, x, y, and the transition-kind field at offset 0x12",
+    "no-ops unless that transition-kind field equals 4",
+    "when it is 4: draws a 1-tile-larger highlight border (x-1, y-1, width+2, height+2) via Func_080170f8, then decrements channel->field14 (a per-channel countdown, reset to 0 by UiWork_ActivateChannel and to 1 by UiWork_ProcessRenderChannels)",
+    "when that countdown reaches zero: clears the Work's transition-kind field to 0, erases the highlight border via Func_08016178 using the same expanded rect, then redraws the Work's own (unmodified) border via Func_080170f8"
+  ],
+  "bounded_search": {
+    "exact": false,
+    "canonical_best_differing_halfwords": 59,
+    "canonical_best_candidate_bytes": 140,
+    "tested": [
+      "flat locals x,y,width,height (no separate `pending` local), condition written inline as `if (work->pending == 4)`: reproduces the reference's x->r9, y->fp, width->stack(sp+4), height->stack(sp+0) register/stack assignment exactly (tail of the function -- the decrement idiom, the final Func_080170f8(x,y,width,height) call setup, and the trailing alignment padding -- matches byte-for-byte), but reads `pending` last (right before the branch) instead of between width and height as the reference does; costs one extra spill-store of width plus one extra reload after the branch (140 vs 136 bytes, workbench objdiff 85.875%, wrong_instructions=34)",
+      "same as above but as two sequential early-return guard clauses instead of a nested if (matches the retained assembly's single shared .L0 epilogue label used by both `bne` branches): byte-identical output to the nested-if version, confirming guard-clause-vs-nested-if is not a differentiator here",
+      "switch (work->pending) { case 4: ... } with height declared inside the case body: byte-identical to the plain inline-if version (136 bytes, 56 differing halfwords by candidate-show's raw count, but with height's read moved after the branch -- contradicts the retained assembly, which reads offset 0x0A before the `bne`)",
+      "explicit `s32 pending = work->pending;` local declared between width and height (matching the retained assembly's confirmed read order: offsets 12,14,8,18,10 = x,y,width,pending,height, verified by direct line-by-line trace of games/gs1/asm/08019854.s lines 17-28): reproduces the correct read order, but the extra live SImode pseudo rotates the whole register/stack assignment by one slot (x->fp, y->stack, width->stack, height->r9 instead of the reference's x->r9, y->fp, width->stack, height->stack) -- worse net score (140 bytes, wrong_instructions=40, workbench objdiff 78.5%)",
+      "same as above but `u16 pending` instead of `s32 pending`: avoids disturbing the x/y/width/height allocation (matches the inline-if version's correct allocation exactly), but the load is then scheduled last again, identical to having no separate local at all -- HImode locals apparently do not get hoisted to their declaration position the way an SImode local does on this route",
+      "`pending` read via M2C_FIELD(work, u16 *, 0x12) pointer-cast macro (matching the M2C_FIELD idiom already used in games/gs1/src/ui/render/output_list/redraw_saved_rect.c and prepare_for_redraw.c) instead of struct-member syntax, kept between width and height: worse still (144 bytes, wrong_instructions=44)",
+      "all five locals (x, y, width, pending, height) typed u16 instead of s32: the `-1`/`+2` adjustments then compile as signed 16-bit arithmetic requiring ldrsh/lsls+lsrs sign-extension pairs the reference does not have (160 bytes, wrong_instructions=72) -- confirms x/y/width/height must stay s32/int, matching games/gs1/src/ui/window/update_interpolated_geometry.c's convention for the same struct fields"
+    ],
+    "result": "Every field offset, call target, call argument shape, and the channel/pending/countdown control flow is pinned down with strong evidence (an already-adopted exact caller declares this owner's own signature; both callees and both struct layouts are independently exact elsewhere). The single remaining gap is register allocation for the four struct fields read up front: an SImode `pending` local reproduces the reference's true read order (proven by direct instruction trace) but rotates which of {x,y,width,height} land in the extended registers r9/fp versus the two stack slots; omitting it (or making it HImode) reproduces the reference's register assignment but reads `pending` in the wrong position, which costs two extra instructions the reference does not have. No tried shape gets both right simultaneously."
+  },
+  "remaining": "GCC 2.96's local/global register allocator on this route assigns x, y, width, height (all defined before any call, all live until the final Func_080170f8 call) to r9, fp, and two stack slots. Introducing one more SImode value (`pending`) that is live simultaneously with x/y/width but dies at the following `cmp` -- exactly where the retained assembly's own read order requires it -- rotates that assignment by one slot in every tested variant, even though `pending`'s live range never crosses a function call and so should not need to compete for call-surviving storage at all. A same-shape HImode local sidesteps the rotation but is then scheduled to the end of the block regardless of its declared position, reproducing the no-separate-local case instead. This looks like the same class of GCC-2.96-specific register-allocation/scheduling interaction documented for other owners in this corpus (see e.g. main:08003e10's stmia investigation) rather than a wrong source shape, but confirming the exact mechanism would need reading alchemy-gcc's local-alloc.c/global.c directly, which this pass did not do. Neither exact adoption nor a permanent-assembly classification is justified from this evidence alone.",
+  "notes": [
+    "Recovered only from games/gs1/asm/08019854.s (hand-traced instruction-by-instruction), the approved EN ROM, and already-adopted exact sources under games/gs1/src/ (ui/render/finalize.c, ui/render/activate_channel.c, ui/render/drain_pending.c, ui/render/finalize_pending.c, ui/window/update_interpolated_geometry.c) plus their declared-but-unadopted callees' own retained assembly (games/gs1/asm/080170f8.s, games/gs1/asm/08016178.s) and the already-adopted caller games/gs1/src/ui/runtime/process_render_channels.c.",
+    "The family-matcher's create_pair.c guess (7402/10000, below the 7500 adoption threshold) was independently checked and confirmed a false positive: shared register-shuffle prologue shape only, zero shared callees or field offsets. The real identity was found through the caller's forward declaration, not the family matcher.",
+    "No inline assembly, fixed-register variable, compiler barrier, forbidden ABI attribute, copied instruction bytes, or compiler flag override was used.",
+    "This candidate claims zero DONE bytes.",
+    "games/gs1/source-paths.json registers main:08019854 as {\"name\": \"UiWork_AdvanceChannelTransition\"} (name only, no path -- retaining a descriptive name without exact C, matching the convention already used for main:08003e10). The working draft at games/gs1/recon/en/main/08019854.c keeps the function itself named Func_08019854 because both `compiler candidate-show` and `compiler workbench` resolve the reference object by the literal symbol exported from games/gs1/asm/08019854.s (the registered descriptive name is not applied to that export)."
+  ]
+}

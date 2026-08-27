@@ -4,11 +4,7 @@
 //! compiled. Candidate sources need both names. Flag order is behavior because
 //! GCC is later-flag-wins: additions follow the filtered canonical list, and no
 //! unordered container may enter this path.
-use crate::bundle::{
-    compiler_command_for_target, gcc3_cflags, gcc3_driver, validate_agbcc_bundle, validate_bundle,
-    validate_experimental_compiler,
-};
-use crate::bundle_data::GCC3_EXPECTED;
+use crate::bundle::{compiler_command_for_target, validate_agbcc_bundle, validate_bundle};
 use crate::nodepath::{basename, extname};
 use crate::routing::{
     agbcc_cflags, agbcc_driver, bundle, cflags_for_target, cflags_for_target_source, root,
@@ -23,14 +19,12 @@ pub enum CompilerFamily {
     Routed,
     Gcc296,
     OldAgbcc,
-    Gcc3,
 }
 /// A resolved family cannot be `Routed`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum ResolvedFamily {
     Gcc296,
     OldAgbcc,
-    Gcc3,
 }
 impl CompilerFamily {
     /// User-facing spelling; changing it changes errors.
@@ -39,7 +33,6 @@ impl CompilerFamily {
             Self::Routed => "routed",
             Self::Gcc296 => "gcc296",
             Self::OldAgbcc => "old-agbcc",
-            Self::Gcc3 => "gcc3",
         }
     }
     pub fn parse(text: &str) -> Option<Self> {
@@ -47,23 +40,8 @@ impl CompilerFamily {
             "routed" => Self::Routed,
             "gcc296" => Self::Gcc296,
             "old-agbcc" => Self::OldAgbcc,
-            "gcc3" => Self::Gcc3,
             _ => return None,
         })
-    }
-}
-impl ResolvedFamily {
-    pub fn as_str(self) -> &'static str {
-        CompilerFamily::from(self).as_str()
-    }
-}
-impl From<ResolvedFamily> for CompilerFamily {
-    fn from(family: ResolvedFamily) -> Self {
-        match family {
-            ResolvedFamily::Gcc296 => Self::Gcc296,
-            ResolvedFamily::OldAgbcc => Self::OldAgbcc,
-            ResolvedFamily::Gcc3 => Self::Gcc3,
-        }
     }
 }
 /// Ordered flag edits. Do not replace either vector with an unordered container.
@@ -179,18 +157,12 @@ pub fn source_to_assembly_plan(
         }
         CompilerFamily::Gcc296 => ResolvedFamily::Gcc296,
         CompilerFamily::OldAgbcc => ResolvedFamily::OldAgbcc,
-        CompilerFamily::Gcc3 => ResolvedFamily::Gcc3,
     };
-    if family == ResolvedFamily::Gcc3 && options.target != CompilerTarget::Gs1 {
-        return Err(format!("{} is only approved for gs1", family.as_str()));
-    }
     // Only Routed includes per-source flags. Explicit Gcc296 intentionally uses
     // target-base flags; changing that would invalidate recorded sweeps.
     let canonical: Vec<String> = if requested_family == CompilerFamily::Routed {
         cflags_for_target_source(options.target, &options.routing_source)
-    } else if family == ResolvedFamily::Gcc3 {
-        gcc3_cflags()
-    } else if family != ResolvedFamily::Gcc296 {
+    } else if family == ResolvedFamily::OldAgbcc {
         agbcc_cflags()
     } else {
         cflags_for_target(options.target)
@@ -201,29 +173,15 @@ pub fn source_to_assembly_plan(
         .clone()
         .unwrap_or_else(|| basename(&options.routing_source).to_string());
     let mut steps: Vec<CompilerCommandStep> = Vec::new();
-    if family != ResolvedFamily::Gcc296 {
-        let driver: PathBuf = match family {
-            ResolvedFamily::OldAgbcc => agbcc_driver(),
-            ResolvedFamily::Gcc3 => gcc3_driver(),
-            // gcc296 never takes this branch; it is handled above.
-            ResolvedFamily::Gcc296 => unreachable!("gcc296 does not use a separate driver"),
-        };
-        match family {
-            ResolvedFamily::OldAgbcc => validate_agbcc_bundle()?,
-            ResolvedFamily::Gcc3 => {
-                validate_experimental_compiler(family.as_str(), &driver, GCC3_EXPECTED)?
-            }
-            ResolvedFamily::Gcc296 => unreachable!("gcc296 does not use a separate driver"),
-        }
+    if family == ResolvedFamily::OldAgbcc {
+        let driver: PathBuf = agbcc_driver();
+        validate_agbcc_bundle()?;
         let compiler_input = options
             .preprocessed_output
             .clone()
             .unwrap_or_else(|| inferred_preprocessed_output(&options.output));
-        // old-agbcc identifies as 2.9; the preserved gcc3 defect identifies as 2.0.
-        let gcc_minor = match family {
-            ResolvedFamily::Gcc3 => 0,
-            _ => 9,
-        };
+        // old-agbcc identifies as 2.9.
+        let gcc_minor = 9;
         steps.push(CompilerCommandStep {
             kind: StepKind::Preprocess,
             command: direct_preprocessor_command_for_target_with_minor_and_flags(

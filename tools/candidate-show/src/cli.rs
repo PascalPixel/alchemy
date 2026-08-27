@@ -1,7 +1,7 @@
 use candidate_compiler::verify::{CandidateCompilerConfiguration, CandidateCompilerFamily};
 use compiler_core::routing::CompilerTarget;
 use std::path::Path;
-pub const USAGE: &str = "usage: candidate-show <candidate.c> [--unit ID] [--rom FILE] [--target gs1|gs2] [--owner ADDRESS] [--size BYTES] [--reference-symbols] [--work DIR] [--family routed|gcc296|old-agbcc|gcc3] [--flags -fa,-fb] [--remove-flags -fa,-fb] [--align] [--first] [--asm] [--patch FILE]";
+pub const USAGE: &str = "usage: candidate-show <candidate.c> [--unit ID] [--rom FILE] [--target gs1|gs2] [--owner ADDRESS] [--size BYTES] [--reference-symbols] [--work DIR] [--family routed|gcc296|old-agbcc] [--flags -fa,-fb] [--remove-flags -fa,-fb] [--align] [--first] [--asm] [--patch FILE]";
 pub const SHORT_USAGE: &str = "usage: candidate-show <candidate.c> [--rom FILE]";
 #[derive(Debug, Clone)]
 pub struct Options {
@@ -93,7 +93,7 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
                 options.configuration.family =
                     next(&mut index).and_then(|value| CandidateCompilerFamily::parse(value));
                 if options.configuration.family.is_none() {
-                    return Err("--family must be routed, gcc296, old-agbcc, or gcc3".into());
+                    return Err("--family must be routed, gcc296, or old-agbcc".into());
                 }
             }
             "-h" | "--help" => return Ok(ParseOutcome::Help),

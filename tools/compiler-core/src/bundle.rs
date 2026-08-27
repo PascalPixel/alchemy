@@ -7,9 +7,6 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::sync::{Mutex, OnceLock};
 pub type Result<T> = std::result::Result<T, String>;
-pub fn gcc3_driver() -> PathBuf {
-    bundle().join("gcc3/cc1")
-}
 struct SharedBundleLock {
     _file: File,
 }
@@ -109,19 +106,6 @@ fn ensure_compiler_bundle_access() -> Result<()> {
     ensure_no_codegen_environment_overrides()?;
     ensure_canonical_bundle_root()?;
     acquire_compiler_bundle_shared_lock()
-}
-pub fn gcc3_cflags() -> Vec<String> {
-    vec![
-        "-O2".into(),
-        "-mthumb".into(),
-        "-mthumb-interwork".into(),
-        "-mcpu=arm7tdmi".into(),
-        "-fno-builtin".into(),
-        "-nostdinc".into(),
-        "-ffreestanding".into(),
-        "-ffixed-r7".into(),
-        format!("-I{}", root().join("games/gs1/include").display()),
-    ]
 }
 pub fn host_key() -> Option<&'static str> {
     match (std::env::consts::OS, std::env::consts::ARCH) {
@@ -283,47 +267,6 @@ pub fn validate_agbcc_bundle() -> Result<()> {
     cache_validation("agbcc");
     Ok(())
 }
-pub fn validate_experimental_compiler(
-    name: &str,
-    driver: &Path,
-    expected: &[HostDigests],
-) -> Result<()> {
-    ensure_compiler_bundle_access()?;
-    let cache_key = format!("experimental:{name}");
-    if validation_cached(&cache_key) {
-        return Ok(());
-    }
-    let host = host_key().ok_or_else(|| UNSUPPORTED_HOST_MESSAGE.to_string())?;
-    if executable_mode(driver) != Some(true) {
-        return Ok(());
-    }
-    let bytes = fs::read(driver)
-        .map_err(|_| format!("alchemy-gcc experimental {name} is missing executable cc1"))?;
-    let actual = sha256::hex(&bytes);
-    let approved = lookup(expected, host).unwrap_or(&[]);
-    if approved.is_empty() {
-        return Err(host_admission_message(
-            host,
-            &format!("experimental {name}/cc1"),
-        ));
-    }
-    if !approved.contains(&actual.as_str()) {
-        return Err(format!(
-            "alchemy-gcc experimental {name}/cc1 has an unapproved digest"
-        ));
-    }
-    smoke(&[
-        driver.to_string_lossy().into_owned(),
-        "/dev/null".into(),
-        "-quiet".into(),
-        "-O2".into(),
-        "-o".into(),
-        "/dev/null".into(),
-    ])
-    .map_err(|detail| format!("alchemy-gcc experimental {name} smoke compile failed: {detail}"))?;
-    cache_validation(&cache_key);
-    Ok(())
-}
 pub fn signature_paths() -> Vec<PathBuf> {
     let bundle_dir = bundle();
     vec![
@@ -332,7 +275,6 @@ pub fn signature_paths() -> Vec<PathBuf> {
         bundle_dir.join("tradcpp"),
         bundle_dir.join("cc1"),
         agbcc_driver(),
-        gcc3_driver(),
     ]
 }
 fn append_compiler_input_tree(stream: &mut Vec<u8>, directory: &Path, base: &Path) {

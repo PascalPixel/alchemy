@@ -4,15 +4,15 @@
   "source_edition": "en",
   "base_edition": "ja",
   "source_state": "byte-exact C",
-  "owners_total": 1424,
-  "owner_symbol_bytes": 112042,
-  "matched_owners": 1381,
-  "matched_bytes": 108518,
-  "shared_core_owners": 1347,
-  "shared_core_bytes": 102600,
-  "regional_core_owners": 34,
-  "regional_core_bytes": 5918,
-  "unresolved_owners": 43,
+  "owners_total": 1427,
+  "owner_symbol_bytes": 113062,
+  "matched_owners": 1383,
+  "matched_bytes": 109246,
+  "shared_core_owners": 1348,
+  "shared_core_bytes": 102804,
+  "regional_core_owners": 35,
+  "regional_core_bytes": 6442,
+  "unresolved_owners": 44,
   "compliance_excluded_owners": 0,
   "location_method_codes": {
     "a": "global_anchor",
@@ -24,57 +24,57 @@
   "editions": [
     {
       "edition": "ja",
-      "matched_owners": 1381,
-      "matched_bytes": 108518,
-      "core_identical_owners": 1381,
-      "core_identical_bytes": 108518,
+      "matched_owners": 1383,
+      "matched_bytes": 109246,
+      "core_identical_owners": 1383,
+      "core_identical_bytes": 109246,
       "core_different_owners": 0,
       "core_different_bytes": 0
     },
     {
       "edition": "en",
-      "matched_owners": 1381,
-      "matched_bytes": 108518,
-      "core_identical_owners": 1352,
-      "core_identical_bytes": 103556,
-      "core_different_owners": 29,
-      "core_different_bytes": 4962
+      "matched_owners": 1383,
+      "matched_bytes": 109246,
+      "core_identical_owners": 1353,
+      "core_identical_bytes": 103760,
+      "core_different_owners": 30,
+      "core_different_bytes": 5486
     },
     {
       "edition": "de",
-      "matched_owners": 1381,
-      "matched_bytes": 108518,
-      "core_identical_owners": 1348,
-      "core_identical_bytes": 102748,
-      "core_different_owners": 33,
-      "core_different_bytes": 5770
+      "matched_owners": 1383,
+      "matched_bytes": 109246,
+      "core_identical_owners": 1349,
+      "core_identical_bytes": 102952,
+      "core_different_owners": 34,
+      "core_different_bytes": 6294
     },
     {
       "edition": "es",
-      "matched_owners": 1381,
-      "matched_bytes": 108518,
-      "core_identical_owners": 1350,
-      "core_identical_bytes": 103168,
-      "core_different_owners": 31,
-      "core_different_bytes": 5350
+      "matched_owners": 1383,
+      "matched_bytes": 109246,
+      "core_identical_owners": 1351,
+      "core_identical_bytes": 103372,
+      "core_different_owners": 32,
+      "core_different_bytes": 5874
     },
     {
       "edition": "fr",
-      "matched_owners": 1381,
-      "matched_bytes": 108518,
-      "core_identical_owners": 1348,
-      "core_identical_bytes": 102748,
-      "core_different_owners": 33,
-      "core_different_bytes": 5770
+      "matched_owners": 1383,
+      "matched_bytes": 109246,
+      "core_identical_owners": 1349,
+      "core_identical_bytes": 102952,
+      "core_different_owners": 34,
+      "core_different_bytes": 6294
     },
     {
       "edition": "it",
-      "matched_owners": 1381,
-      "matched_bytes": 108518,
-      "core_identical_owners": 1349,
-      "core_identical_bytes": 103020,
-      "core_different_owners": 32,
-      "core_different_bytes": 5498
+      "matched_owners": 1383,
+      "matched_bytes": 109246,
+      "core_identical_owners": 1350,
+      "core_identical_bytes": 103224,
+      "core_different_owners": 33,
+      "core_different_bytes": 6022
     }
   ],
   "owners": [
@@ -7271,6 +7271,18 @@
       "location_methods": "asaaaa"
     },
     {
+      "en_owner": "main:0808f1c0",
+      "size": 204,
+      "start_overrides": {
+        "de": "0x080927c8",
+        "es": "0x080941c8",
+        "fr": "0x080941c8",
+        "it": "0x0808f1c8",
+        "ja": "0x080861c0"
+      },
+      "location_methods": "asaaaa"
+    },
+    {
       "en_owner": "main:0808f304",
       "size": 40,
       "start_overrides": {
@@ -11657,6 +11669,24 @@
         "ja": "0x080a9134"
       },
       "location_methods": "nsnnnn"
+    },
+    {
+      "en_owner": "main:080b211c",
+      "size": 524,
+      "start_overrides": {
+        "de": "0x080b471c",
+        "es": "0x080b611c",
+        "fr": "0x080b611c",
+        "ja": "0x080a9140"
+      },
+      "location_methods": "asaaaa",
+      "core_diff_bytes_from_ja": {
+        "de": 2,
+        "en": 2,
+        "es": 2,
+        "fr": 2,
+        "it": 2
+      }
     },
     {
       "en_owner": "main:080b26c8",
@@ -16205,6 +16235,10 @@
     {
       "en_owner": "main:080a4754",
       "error": "ja: no exact core within 0x1000 bytes of predicted 0x0809b608"
+    },
+    {
+      "en_owner": "main:080a4800",
+      "error": "ja: no exact core within 0x1000 bytes of predicted 0x0809b6b4"
     },
     {
       "en_owner": "main:080a8904",

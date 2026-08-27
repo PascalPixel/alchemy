@@ -3,10 +3,10 @@
   "target": "gs1-en",
   "derivation": "canonical-instruction-ngram-and-call-target-cosine-v2",
   "minimum_score_basis_points": 7500,
-  "exact_templates": 1424,
-  "unresolved_targets": 432,
-  "clustered_targets": 122,
-  "clustered_bytes": 40876,
+  "exact_templates": 1427,
+  "unresolved_targets": 429,
+  "clustered_targets": 124,
+  "clustered_bytes": 42556,
   "families": [
     {
       "id": "template-main-080040e8",
@@ -197,10 +197,9 @@
       "template_source": "games/gs1/src/menu/run_selection.c",
       "members": [
         "main:08019aa0",
-        "main:08021228",
-        "main:0802977c"
+        "main:08021228"
       ],
-      "target_bytes": 972
+      "target_bytes": 568
     },
     {
       "id": "template-main-08078144",
@@ -239,6 +238,15 @@
       "target_bytes": 260
     },
     {
+      "id": "template-main-0808f1c0",
+      "template_owner": "main:0808f1c0",
+      "template_source": "games/gs1/src/battle/effects/objects/start_effect_22.c",
+      "members": [
+        "main:0808ef70"
+      ],
+      "target_bytes": 344
+    },
+    {
       "id": "template-main-080903bc",
       "template_owner": "main:080903bc",
       "template_source": "games/gs1/src/display/transition/update.c",
@@ -263,21 +271,18 @@
       "template_source": "games/gs1/src/battle/effects/objects/run_rising_sequence.c",
       "members": [
         "main:08093e28",
-        "main:080a1d08",
-        "main:080a4800",
         "main:080b9dc4"
       ],
-      "target_bytes": 1222
+      "target_bytes": 628
     },
     {
       "id": "template-main-080937b8",
       "template_owner": "main:080937b8",
       "template_source": "games/gs1/src/battle/effects/objects/spawn_linked_resource_object.c",
       "members": [
-        "main:0808f1c0",
         "main:08093874"
       ],
-      "target_bytes": 444
+      "target_bytes": 240
     },
     {
       "id": "template-main-08095a44",
@@ -323,10 +328,9 @@
       "template_owner": "main:080984c0",
       "template_source": "games/gs1/src/battle/effects/scene_transition/reset.c",
       "members": [
-        "main:08021390",
         "main:080983a0"
       ],
-      "target_bytes": 536
+      "target_bytes": 288
     },
     {
       "id": "template-main-08099160",
@@ -363,10 +367,9 @@
       "template_owner": "main:0809b208",
       "template_source": "games/gs1/src/battle/effects/run_effect15.c",
       "members": [
-        "main:08028c04",
-        "main:080a5b94"
+        "main:08028c04"
       ],
-      "target_bytes": 668
+      "target_bytes": 368
     },
     {
       "id": "template-main-080a355c",
@@ -377,6 +380,21 @@
         "main:080a77a4"
       ],
       "target_bytes": 338
+    },
+    {
+      "id": "template-main-080a4800",
+      "template_owner": "main:080a4800",
+      "template_source": "games/gs1/src/menu/select_quantity.c",
+      "members": [
+        "main:08021390",
+        "main:08021488",
+        "main:0802977c",
+        "main:080a1d08",
+        "main:080a524c",
+        "main:080a5b94",
+        "main:080a6b64"
+      ],
+      "target_bytes": 2274
     },
     {
       "id": "template-main-080a56c8",
@@ -447,32 +465,40 @@
       "template_owner": "main:080b1a14",
       "template_source": "games/gs1/src/shop/select_party_member.c",
       "members": [
+        "main:080a5388",
+        "main:080a7850",
+        "main:080a7d68",
+        "main:080aa56c",
+        "main:080b24e4",
+        "main:080b29a8",
+        "main:080b3444",
+        "main:080b5534",
+        "main:080ccebc",
+        "main:080ecef4"
+      ],
+      "target_bytes": 4766
+    },
+    {
+      "id": "template-main-080b211c",
+      "template_owner": "main:080b211c",
+      "template_source": "games/gs1/src/shop/select_repair_item.c",
+      "members": [
         "main:0801db70",
-        "main:08021488",
         "main:08029554",
         "main:0809537c",
         "main:080a35f8",
         "main:080a38d0",
-        "main:080a524c",
-        "main:080a5388",
         "main:080a60d4",
         "main:080a63e4",
-        "main:080a7850",
-        "main:080a7d68",
         "main:080a90bc",
-        "main:080aa56c",
         "main:080b1bd0",
-        "main:080b211c",
-        "main:080b24e4",
-        "main:080b29a8",
-        "main:080b3444",
         "main:080b362c",
-        "main:080b5534",
-        "main:080ccebc",
-        "main:080dd77c",
-        "main:080ecef4"
+        "main:080b88d0",
+        "main:080ceff8",
+        "main:080dc6bc",
+        "main:080dd77c"
       ],
-      "target_bytes": 12610
+      "target_bytes": 8656
     },
     {
       "id": "template-main-080b3284",
@@ -3793,6 +3819,20 @@
           "branch_similarity_basis_points": 5517
         },
         {
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 6413,
+          "ngram_similarity_basis_points": 7859,
+          "length_similarity_basis_points": 5040,
+          "call_target_similarity_basis_points": 289,
+          "call_count_similarity_basis_points": 6875,
+          "branch_similarity_basis_points": 8275
+        },
+        {
           "owner": "main:08091c7c",
           "symbol": "Func_08091c7c",
           "source": "games/gs1/src/unidentified/main/field/field_owner_59.c",
@@ -3805,20 +3845,6 @@
           "call_target_similarity_basis_points": 0,
           "call_count_similarity_basis_points": 7333,
           "branch_similarity_basis_points": 8965
-        },
-        {
-          "owner": "main:08098070",
-          "symbol": "Func_08098070",
-          "source": "games/gs1/src/battle/effects/item_break/start.c",
-          "assembly": "out/gs1-en/claimed/obj/08098070.s",
-          "size": 276,
-          "instructions": 117,
-          "score_basis_points": 6041,
-          "ngram_similarity_basis_points": 7448,
-          "length_similarity_basis_points": 4795,
-          "call_target_similarity_basis_points": 0,
-          "call_count_similarity_basis_points": 7857,
-          "branch_similarity_basis_points": 6551
         }
       ]
     },
@@ -4430,6 +4456,20 @@
       "family": null,
       "alternatives": [
         {
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 7149,
+          "ngram_similarity_basis_points": 8420,
+          "length_similarity_basis_points": 6988,
+          "call_target_similarity_basis_points": 314,
+          "call_count_similarity_basis_points": 9375,
+          "branch_similarity_basis_points": 9230
+        },
+        {
           "owner": "main:08028f98",
           "symbol": "Func_08028f98",
           "source": "games/gs1/src/menu/run_selection.c",
@@ -4456,20 +4496,6 @@
           "call_target_similarity_basis_points": 0,
           "call_count_similarity_basis_points": 10000,
           "branch_similarity_basis_points": 10000
-        },
-        {
-          "owner": "main:080c10e8",
-          "symbol": "Func_080c10e8",
-          "source": "games/gs1/src/battle/presentation/set_actor_modes.c",
-          "assembly": "out/gs1-en/claimed/obj/080c10e8.s",
-          "size": 260,
-          "instructions": 109,
-          "score_basis_points": 6955,
-          "ngram_similarity_basis_points": 8562,
-          "length_similarity_basis_points": 6193,
-          "call_target_similarity_basis_points": 0,
-          "call_count_similarity_basis_points": 7333,
-          "branch_similarity_basis_points": 8076
         }
       ]
     },
@@ -4479,8 +4505,22 @@
       "source": "games/gs1/asm/0801db70.s",
       "size": 440,
       "instructions": 187,
-      "family": "template-main-080b1a14",
+      "family": "template-main-080b211c",
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 8574,
+          "ngram_similarity_basis_points": 9240,
+          "length_similarity_basis_points": 8348,
+          "call_target_similarity_basis_points": 6621,
+          "call_count_similarity_basis_points": 7307,
+          "branch_similarity_basis_points": 7500
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -4508,20 +4548,6 @@
           "call_target_similarity_basis_points": 5557,
           "call_count_similarity_basis_points": 7037,
           "branch_similarity_basis_points": 9729
-        },
-        {
-          "owner": "main:08092708",
-          "symbol": "Func_08092708",
-          "source": "games/gs1/src/battle/effects/objects/run_rising_sequence.c",
-          "assembly": "out/gs1-en/claimed/obj/08092708.s",
-          "size": 260,
-          "instructions": 110,
-          "score_basis_points": 7412,
-          "ngram_similarity_basis_points": 7912,
-          "length_similarity_basis_points": 5882,
-          "call_target_similarity_basis_points": 5915,
-          "call_count_similarity_basis_points": 8947,
-          "branch_similarity_basis_points": 6944
         }
       ]
     },
@@ -4712,7 +4738,22 @@
       "size": 980,
       "instructions": 435,
       "family": null,
-      "alternatives": []
+      "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 6935,
+          "ngram_similarity_basis_points": 8653,
+          "length_similarity_basis_points": 5149,
+          "call_target_similarity_basis_points": 406,
+          "call_count_similarity_basis_points": 8125,
+          "branch_similarity_basis_points": 6575
+        }
+      ]
     },
     {
       "owner": "main:0801f818",
@@ -4997,6 +5038,20 @@
           "branch_similarity_basis_points": 9523
         },
         {
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 7822,
+          "ngram_similarity_basis_points": 8424,
+          "length_similarity_basis_points": 10000,
+          "call_target_similarity_basis_points": 2870,
+          "call_count_similarity_basis_points": 10000,
+          "branch_similarity_basis_points": 8333
+        },
+        {
           "owner": "main:08091c7c",
           "symbol": "Func_08091c7c",
           "source": "games/gs1/src/unidentified/main/field/field_owner_59.c",
@@ -5009,20 +5064,6 @@
           "call_target_similarity_basis_points": 2601,
           "call_count_similarity_basis_points": 9375,
           "branch_similarity_basis_points": 7692
-        },
-        {
-          "owner": "main:080c10e8",
-          "symbol": "Func_080c10e8",
-          "source": "games/gs1/src/battle/presentation/set_actor_modes.c",
-          "assembly": "out/gs1-en/claimed/obj/080c10e8.s",
-          "size": 260,
-          "instructions": 109,
-          "score_basis_points": 7716,
-          "ngram_similarity_basis_points": 8718,
-          "length_similarity_basis_points": 8861,
-          "call_target_similarity_basis_points": 2294,
-          "call_count_similarity_basis_points": 6875,
-          "branch_similarity_basis_points": 9523
         }
       ]
     },
@@ -5032,8 +5073,22 @@
       "source": "games/gs1/asm/08021390.s",
       "size": 248,
       "instructions": 94,
-      "family": "template-main-080984c0",
+      "family": "template-main-080a4800",
       "alternatives": [
+        {
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 7699,
+          "ngram_similarity_basis_points": 8560,
+          "length_similarity_basis_points": 7642,
+          "call_target_similarity_basis_points": 3034,
+          "call_count_similarity_basis_points": 10000,
+          "branch_similarity_basis_points": 8333
+        },
         {
           "owner": "main:080984c0",
           "symbol": "Func_080984c0",
@@ -5061,20 +5116,6 @@
           "call_target_similarity_basis_points": 4002,
           "call_count_similarity_basis_points": 8125,
           "branch_similarity_basis_points": 9523
-        },
-        {
-          "owner": "main:08092708",
-          "symbol": "Func_08092708",
-          "source": "games/gs1/src/battle/effects/objects/run_rising_sequence.c",
-          "assembly": "out/gs1-en/claimed/obj/08092708.s",
-          "size": 260,
-          "instructions": 110,
-          "score_basis_points": 7418,
-          "ngram_similarity_basis_points": 7723,
-          "length_similarity_basis_points": 8545,
-          "call_target_similarity_basis_points": 4491,
-          "call_count_similarity_basis_points": 9411,
-          "branch_similarity_basis_points": 8000
         }
       ]
     },
@@ -5084,8 +5125,22 @@
       "source": "games/gs1/asm/08021488.s",
       "size": 344,
       "instructions": 133,
-      "family": "template-main-080b1a14",
+      "family": "template-main-080a4800",
       "alternatives": [
+        {
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 7542,
+          "ngram_similarity_basis_points": 8424,
+          "length_similarity_basis_points": 9248,
+          "call_target_similarity_basis_points": 2115,
+          "call_count_similarity_basis_points": 7272,
+          "branch_similarity_basis_points": 9230
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -5113,20 +5168,6 @@
           "call_target_similarity_basis_points": 2652,
           "call_count_similarity_basis_points": 8148,
           "branch_similarity_basis_points": 7027
-        },
-        {
-          "owner": "main:080931ec",
-          "symbol": "Func_080931ec",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_82.c",
-          "assembly": "out/gs1-en/claimed/obj/080931ec.s",
-          "size": 280,
-          "instructions": 112,
-          "score_basis_points": 7346,
-          "ngram_similarity_basis_points": 7988,
-          "length_similarity_basis_points": 8421,
-          "call_target_similarity_basis_points": 2851,
-          "call_count_similarity_basis_points": 9565,
-          "branch_similarity_basis_points": 8125
         }
       ]
     },
@@ -5762,8 +5803,22 @@
       "source": "games/gs1/asm/08029554.s",
       "size": 552,
       "instructions": 243,
-      "family": "template-main-080b1a14",
+      "family": "template-main-080b211c",
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7845,
+          "ngram_similarity_basis_points": 9074,
+          "length_similarity_basis_points": 9218,
+          "call_target_similarity_basis_points": 1285,
+          "call_count_similarity_basis_points": 7692,
+          "branch_similarity_basis_points": 8958
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -5779,32 +5834,18 @@
           "branch_similarity_basis_points": 8604
         },
         {
-          "owner": "main:08099160",
-          "symbol": "Func_08099160",
-          "source": "games/gs1/src/battle/effects/orbiting_particles/run.c",
-          "assembly": "out/gs1-en/claimed/obj/08099160.s",
-          "size": 400,
-          "instructions": 161,
-          "score_basis_points": 7082,
-          "ngram_similarity_basis_points": 8232,
-          "length_similarity_basis_points": 6625,
-          "call_target_similarity_basis_points": 1794,
-          "call_count_similarity_basis_points": 7407,
-          "branch_similarity_basis_points": 8604
-        },
-        {
-          "owner": "main:08091c7c",
-          "symbol": "Func_08091c7c",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_59.c",
-          "assembly": "out/gs1-en/claimed/obj/08091c7c.s",
-          "size": 264,
-          "instructions": 111,
-          "score_basis_points": 6826,
-          "ngram_similarity_basis_points": 8359,
-          "length_similarity_basis_points": 4567,
-          "call_target_similarity_basis_points": 1729,
-          "call_count_similarity_basis_points": 7500,
-          "branch_similarity_basis_points": 6046
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 7319,
+          "ngram_similarity_basis_points": 8923,
+          "length_similarity_basis_points": 5061,
+          "call_target_similarity_basis_points": 2226,
+          "call_count_similarity_basis_points": 8000,
+          "branch_similarity_basis_points": 5581
         }
       ]
     },
@@ -5814,8 +5855,22 @@
       "source": "games/gs1/asm/0802977c.s",
       "size": 404,
       "instructions": 179,
-      "family": "template-main-08028f98",
+      "family": "template-main-080a4800",
       "alternatives": [
+        {
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 7869,
+          "ngram_similarity_basis_points": 8919,
+          "length_similarity_basis_points": 6871,
+          "call_target_similarity_basis_points": 3769,
+          "call_count_similarity_basis_points": 7500,
+          "branch_similarity_basis_points": 8888
+        },
         {
           "owner": "main:08028f98",
           "symbol": "Func_08028f98",
@@ -5843,20 +5898,6 @@
           "call_target_similarity_basis_points": 3984,
           "call_count_similarity_basis_points": 7058,
           "branch_similarity_basis_points": 9259
-        },
-        {
-          "owner": "main:08091c7c",
-          "symbol": "Func_08091c7c",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_59.c",
-          "assembly": "out/gs1-en/claimed/obj/08091c7c.s",
-          "size": 264,
-          "instructions": 111,
-          "score_basis_points": 6971,
-          "ngram_similarity_basis_points": 7740,
-          "length_similarity_basis_points": 6201,
-          "call_target_similarity_basis_points": 2928,
-          "call_count_similarity_basis_points": 8000,
-          "branch_similarity_basis_points": 9629
         }
       ]
     },
@@ -5930,6 +5971,20 @@
       "family": null,
       "alternatives": [
         {
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 7014,
+          "ngram_similarity_basis_points": 8092,
+          "length_similarity_basis_points": 9349,
+          "call_target_similarity_basis_points": 0,
+          "call_count_similarity_basis_points": 8888,
+          "branch_similarity_basis_points": 7500
+        },
+        {
           "owner": "main:080b8b48",
           "symbol": "Func_080b8b48",
           "source": "games/gs1/src/unidentified/main/battle/battle_owner_48.c",
@@ -5956,20 +6011,6 @@
           "call_target_similarity_basis_points": 0,
           "call_count_similarity_basis_points": 9000,
           "branch_similarity_basis_points": 8437
-        },
-        {
-          "owner": "main:080984c0",
-          "symbol": "Func_080984c0",
-          "source": "games/gs1/src/battle/effects/scene_transition/reset.c",
-          "assembly": "out/gs1-en/claimed/obj/080984c0.s",
-          "size": 232,
-          "instructions": 86,
-          "score_basis_points": 6848,
-          "ngram_similarity_basis_points": 8398,
-          "length_similarity_basis_points": 7478,
-          "call_target_similarity_basis_points": 0,
-          "call_count_similarity_basis_points": 7222,
-          "branch_similarity_basis_points": 5625
         }
       ]
     },
@@ -6152,6 +6193,20 @@
           "branch_similarity_basis_points": 7837
         },
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 4997,
+          "ngram_similarity_basis_points": 5358,
+          "length_similarity_basis_points": 7887,
+          "call_target_similarity_basis_points": 135,
+          "call_count_similarity_basis_points": 8076,
+          "branch_similarity_basis_points": 6041
+        },
+        {
           "owner": "main:0809b208",
           "symbol": "Func_0809b208",
           "source": "games/gs1/src/battle/effects/run_effect15.c",
@@ -6164,20 +6219,6 @@
           "call_target_similarity_basis_points": 1430,
           "call_count_similarity_basis_points": 7777,
           "branch_similarity_basis_points": 9062
-        },
-        {
-          "owner": "main:080b1a14",
-          "symbol": "Func_080b1a14",
-          "source": "games/gs1/src/shop/select_party_member.c",
-          "assembly": "out/gs1-en/claimed/obj/080b1a14.s",
-          "size": 444,
-          "instructions": 188,
-          "score_basis_points": 4678,
-          "ngram_similarity_basis_points": 4930,
-          "length_similarity_basis_points": 6619,
-          "call_target_similarity_basis_points": 0,
-          "call_count_similarity_basis_points": 8400,
-          "branch_similarity_basis_points": 7837
         }
       ]
     },
@@ -7230,6 +7271,20 @@
           "branch_similarity_basis_points": 7551
         },
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7208,
+          "ngram_similarity_basis_points": 8113,
+          "length_similarity_basis_points": 9642,
+          "call_target_similarity_basis_points": 0,
+          "call_count_similarity_basis_points": 9629,
+          "branch_similarity_basis_points": 9795
+        },
+        {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
           "source": "games/gs1/src/shop/select_party_member.c",
@@ -7242,20 +7297,6 @@
           "call_target_similarity_basis_points": 0,
           "call_count_similarity_basis_points": 9259,
           "branch_similarity_basis_points": 7551
-        },
-        {
-          "owner": "main:080931ec",
-          "symbol": "Func_080931ec",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_82.c",
-          "assembly": "out/gs1-en/claimed/obj/080931ec.s",
-          "size": 280,
-          "instructions": 112,
-          "score_basis_points": 6754,
-          "ngram_similarity_basis_points": 8436,
-          "length_similarity_basis_points": 5185,
-          "call_target_similarity_basis_points": 0,
-          "call_count_similarity_basis_points": 8518,
-          "branch_similarity_basis_points": 6530
         }
       ]
     },
@@ -7543,8 +7584,36 @@
       "source": "games/gs1/asm/0808ef70.s",
       "size": 344,
       "instructions": 144,
-      "family": null,
+      "family": "template-main-0808f1c0",
       "alternatives": [
+        {
+          "owner": "main:0808f1c0",
+          "symbol": "Func_0808f1c0",
+          "source": "games/gs1/src/battle/effects/objects/start_effect_22.c",
+          "assembly": "out/gs1-en/claimed/obj/0808f1c0.s",
+          "size": 204,
+          "instructions": 88,
+          "score_basis_points": 8299,
+          "ngram_similarity_basis_points": 8825,
+          "length_similarity_basis_points": 6111,
+          "call_target_similarity_basis_points": 7303,
+          "call_count_similarity_basis_points": 10000,
+          "branch_similarity_basis_points": 7142
+        },
+        {
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 7357,
+          "ngram_similarity_basis_points": 8387,
+          "length_similarity_basis_points": 8541,
+          "call_target_similarity_basis_points": 1806,
+          "call_count_similarity_basis_points": 6875,
+          "branch_similarity_basis_points": 8750
+        },
         {
           "owner": "main:08096048",
           "symbol": "Func_08096048",
@@ -7558,86 +7627,6 @@
           "call_target_similarity_basis_points": 1443,
           "call_count_similarity_basis_points": 10000,
           "branch_similarity_basis_points": 9523
-        },
-        {
-          "owner": "main:08098070",
-          "symbol": "Func_08098070",
-          "source": "games/gs1/src/battle/effects/item_break/start.c",
-          "assembly": "out/gs1-en/claimed/obj/08098070.s",
-          "size": 276,
-          "instructions": 117,
-          "score_basis_points": 7141,
-          "ngram_similarity_basis_points": 8340,
-          "length_similarity_basis_points": 8125,
-          "call_target_similarity_basis_points": 421,
-          "call_count_similarity_basis_points": 7857,
-          "branch_similarity_basis_points": 9047
-        },
-        {
-          "owner": "main:08098b10",
-          "symbol": "Func_08098b10",
-          "source": "games/gs1/src/battle/effects/radial_burst/update.c",
-          "assembly": "out/gs1-en/claimed/obj/08098b10.s",
-          "size": 248,
-          "instructions": 112,
-          "score_basis_points": 7077,
-          "ngram_similarity_basis_points": 7801,
-          "length_similarity_basis_points": 7777,
-          "call_target_similarity_basis_points": 1987,
-          "call_count_similarity_basis_points": 9090,
-          "branch_similarity_basis_points": 9523
-        }
-      ]
-    },
-    {
-      "owner": "main:0808f1c0",
-      "symbol": "Func_0808f1c0",
-      "source": "games/gs1/asm/0808f1c0.s",
-      "size": 204,
-      "instructions": 88,
-      "family": "template-main-080937b8",
-      "alternatives": [
-        {
-          "owner": "main:080937b8",
-          "symbol": "Func_080937b8",
-          "source": "games/gs1/src/battle/effects/objects/spawn_linked_resource_object.c",
-          "assembly": "out/gs1-en/claimed/obj/080937b8.s",
-          "size": 186,
-          "instructions": 80,
-          "score_basis_points": 7821,
-          "ngram_similarity_basis_points": 8584,
-          "length_similarity_basis_points": 9090,
-          "call_target_similarity_basis_points": 3873,
-          "call_count_similarity_basis_points": 6363,
-          "branch_similarity_basis_points": 8666
-        },
-        {
-          "owner": "main:08092f84",
-          "symbol": "Func_08092f84",
-          "source": "games/gs1/src/battle/presentation/run_action_and_wait.c",
-          "assembly": "out/gs1-en/claimed/obj/08092f84.s",
-          "size": 188,
-          "instructions": 78,
-          "score_basis_points": 7529,
-          "ngram_similarity_basis_points": 8406,
-          "length_similarity_basis_points": 8863,
-          "call_target_similarity_basis_points": 2449,
-          "call_count_similarity_basis_points": 9090,
-          "branch_similarity_basis_points": 7142
-        },
-        {
-          "owner": "main:08092624",
-          "symbol": "Func_08092624",
-          "source": "games/gs1/src/battle/effects/particles/spawn_burst.c",
-          "assembly": "out/gs1-en/claimed/obj/08092624.s",
-          "size": 226,
-          "instructions": 91,
-          "score_basis_points": 7476,
-          "ngram_similarity_basis_points": 8212,
-          "length_similarity_basis_points": 9670,
-          "call_target_similarity_basis_points": 1978,
-          "call_count_similarity_basis_points": 9166,
-          "branch_similarity_basis_points": 8333
         }
       ]
     },
@@ -7716,6 +7705,20 @@
           "branch_similarity_basis_points": 6428
         },
         {
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 6476,
+          "ngram_similarity_basis_points": 6579,
+          "length_similarity_basis_points": 8255,
+          "call_target_similarity_basis_points": 3346,
+          "call_count_similarity_basis_points": 8888,
+          "branch_similarity_basis_points": 8571
+        },
+        {
           "owner": "main:080a7380",
           "symbol": "Func_080a7380",
           "source": "games/gs1/src/menu/open_character_selector.c",
@@ -7728,20 +7731,6 @@
           "call_target_similarity_basis_points": 1559,
           "call_count_similarity_basis_points": 7222,
           "branch_similarity_basis_points": 5714
-        },
-        {
-          "owner": "main:080b1a14",
-          "symbol": "Func_080b1a14",
-          "source": "games/gs1/src/shop/select_party_member.c",
-          "assembly": "out/gs1-en/claimed/obj/080b1a14.s",
-          "size": 444,
-          "instructions": 188,
-          "score_basis_points": 6075,
-          "ngram_similarity_basis_points": 6735,
-          "length_similarity_basis_points": 7925,
-          "call_target_similarity_basis_points": 1111,
-          "call_count_similarity_basis_points": 7200,
-          "branch_similarity_basis_points": 7567
         }
       ]
     },
@@ -8014,6 +8003,20 @@
       "family": null,
       "alternatives": [
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7342,
+          "ngram_similarity_basis_points": 8448,
+          "length_similarity_basis_points": 8080,
+          "call_target_similarity_basis_points": 1065,
+          "call_count_similarity_basis_points": 7878,
+          "branch_similarity_basis_points": 9791
+        },
+        {
           "owner": "main:08099160",
           "symbol": "Func_08099160",
           "source": "games/gs1/src/battle/effects/orbiting_particles/run.c",
@@ -8040,20 +8043,6 @@
           "call_target_similarity_basis_points": 290,
           "call_count_similarity_basis_points": 8181,
           "branch_similarity_basis_points": 6808
-        },
-        {
-          "owner": "main:08095a44",
-          "symbol": "Func_08095a44",
-          "source": "games/gs1/src/battle/effects/heavy_impact/finish.c",
-          "assembly": "out/gs1-en/claimed/obj/08095a44.s",
-          "size": 328,
-          "instructions": 118,
-          "score_basis_points": 7151,
-          "ngram_similarity_basis_points": 8446,
-          "length_similarity_basis_points": 6519,
-          "call_target_similarity_basis_points": 839,
-          "call_count_similarity_basis_points": 9166,
-          "branch_similarity_basis_points": 8510
         }
       ]
     },
@@ -8065,6 +8054,20 @@
       "instructions": 393,
       "family": null,
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 6398,
+          "ngram_similarity_basis_points": 7653,
+          "length_similarity_basis_points": 5699,
+          "call_target_similarity_basis_points": 927,
+          "call_count_similarity_basis_points": 6923,
+          "branch_similarity_basis_points": 7384
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -8104,6 +8107,20 @@
           "branch_similarity_basis_points": 5909
         },
         {
+          "owner": "main:0808f1c0",
+          "symbol": "Func_0808f1c0",
+          "source": "games/gs1/src/battle/effects/objects/start_effect_22.c",
+          "assembly": "out/gs1-en/claimed/obj/0808f1c0.s",
+          "size": 204,
+          "instructions": 88,
+          "score_basis_points": 7514,
+          "ngram_similarity_basis_points": 8004,
+          "length_similarity_basis_points": 8148,
+          "call_target_similarity_basis_points": 5590,
+          "call_count_similarity_basis_points": 6363,
+          "branch_similarity_basis_points": 6818
+        },
+        {
           "owner": "main:0809728c",
           "symbol": "Func_0809728c",
           "source": "games/gs1/src/field/event_object/initialize.c",
@@ -8116,20 +8133,6 @@
           "call_target_similarity_basis_points": 3536,
           "call_count_similarity_basis_points": 6363,
           "branch_similarity_basis_points": 8636
-        },
-        {
-          "owner": "main:080a76d0",
-          "symbol": "Func_080a76d0",
-          "source": "games/gs1/src/menu/run_action_flow.c",
-          "assembly": "out/gs1-en/claimed/obj/080a76d0.s",
-          "size": 212,
-          "instructions": 97,
-          "score_basis_points": 6973,
-          "ngram_similarity_basis_points": 7900,
-          "length_similarity_basis_points": 8981,
-          "call_target_similarity_basis_points": 0,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 8800
         }
       ]
     },
@@ -8222,18 +8225,18 @@
           "branch_similarity_basis_points": 7916
         },
         {
-          "owner": "main:08091c7c",
-          "symbol": "Func_08091c7c",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_59.c",
-          "assembly": "out/gs1-en/claimed/obj/08091c7c.s",
-          "size": 264,
-          "instructions": 111,
-          "score_basis_points": 7072,
-          "ngram_similarity_basis_points": 8402,
-          "length_similarity_basis_points": 6809,
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 7251,
+          "ngram_similarity_basis_points": 8457,
+          "length_similarity_basis_points": 7546,
           "call_target_similarity_basis_points": 0,
-          "call_count_similarity_basis_points": 9375,
-          "branch_similarity_basis_points": 9230
+          "call_count_similarity_basis_points": 10000,
+          "branch_similarity_basis_points": 10000
         }
       ]
     },
@@ -8555,8 +8558,22 @@
       "source": "games/gs1/asm/0809537c.s",
       "size": 564,
       "instructions": 241,
-      "family": "template-main-080b1a14",
+      "family": "template-main-080b211c",
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 8317,
+          "ngram_similarity_basis_points": 8998,
+          "length_similarity_basis_points": 9294,
+          "call_target_similarity_basis_points": 4933,
+          "call_count_similarity_basis_points": 7027,
+          "branch_similarity_basis_points": 8958
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -8584,20 +8601,6 @@
           "call_target_similarity_basis_points": 5154,
           "call_count_similarity_basis_points": 7297,
           "branch_similarity_basis_points": 8604
-        },
-        {
-          "owner": "main:08095a44",
-          "symbol": "Func_08095a44",
-          "source": "games/gs1/src/battle/effects/heavy_impact/finish.c",
-          "assembly": "out/gs1-en/claimed/obj/08095a44.s",
-          "size": 328,
-          "instructions": 118,
-          "score_basis_points": 7994,
-          "ngram_similarity_basis_points": 8345,
-          "length_similarity_basis_points": 4896,
-          "call_target_similarity_basis_points": 7530,
-          "call_count_similarity_basis_points": 9729,
-          "branch_similarity_basis_points": 9302
         }
       ]
     },
@@ -8624,6 +8627,20 @@
           "branch_similarity_basis_points": 9047
         },
         {
+          "owner": "main:0808f1c0",
+          "symbol": "Func_0808f1c0",
+          "source": "games/gs1/src/battle/effects/objects/start_effect_22.c",
+          "assembly": "out/gs1-en/claimed/obj/0808f1c0.s",
+          "size": 204,
+          "instructions": 88,
+          "score_basis_points": 7162,
+          "ngram_similarity_basis_points": 7866,
+          "length_similarity_basis_points": 8627,
+          "call_target_similarity_basis_points": 2860,
+          "call_count_similarity_basis_points": 7272,
+          "branch_similarity_basis_points": 7894
+        },
+        {
           "owner": "main:08094380",
           "symbol": "Func_08094380",
           "source": "games/gs1/src/unidentified/main/ui/ui_owner_36.c",
@@ -8636,20 +8653,6 @@
           "call_target_similarity_basis_points": 3419,
           "call_count_similarity_basis_points": 10000,
           "branch_similarity_basis_points": 4736
-        },
-        {
-          "owner": "main:08092f84",
-          "symbol": "Func_08092f84",
-          "source": "games/gs1/src/battle/presentation/run_action_and_wait.c",
-          "assembly": "out/gs1-en/claimed/obj/08092f84.s",
-          "size": 188,
-          "instructions": 78,
-          "score_basis_points": 7111,
-          "ngram_similarity_basis_points": 8273,
-          "length_similarity_basis_points": 7647,
-          "call_target_similarity_basis_points": 778,
-          "call_count_similarity_basis_points": 8000,
-          "branch_similarity_basis_points": 9047
         }
       ]
     },
@@ -9139,18 +9142,18 @@
           "branch_similarity_basis_points": 7812
         },
         {
-          "owner": "main:08091c7c",
-          "symbol": "Func_08091c7c",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_59.c",
-          "assembly": "out/gs1-en/claimed/obj/08091c7c.s",
-          "size": 264,
-          "instructions": 111,
-          "score_basis_points": 6528,
-          "ngram_similarity_basis_points": 7883,
-          "length_similarity_basis_points": 4723,
-          "call_target_similarity_basis_points": 727,
-          "call_count_similarity_basis_points": 8333,
-          "branch_similarity_basis_points": 8125
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 6672,
+          "ngram_similarity_basis_points": 7433,
+          "length_similarity_basis_points": 9531,
+          "call_target_similarity_basis_points": 1390,
+          "call_count_similarity_basis_points": 6923,
+          "branch_similarity_basis_points": 6666
         }
       ]
     },
@@ -9215,18 +9218,18 @@
           "branch_similarity_basis_points": 7600
         },
         {
-          "owner": "main:080c10e8",
-          "symbol": "Func_080c10e8",
-          "source": "games/gs1/src/battle/presentation/set_actor_modes.c",
-          "assembly": "out/gs1-en/claimed/obj/080c10e8.s",
-          "size": 260,
-          "instructions": 109,
-          "score_basis_points": 7185,
-          "ngram_similarity_basis_points": 7500,
-          "length_similarity_basis_points": 9816,
-          "call_target_similarity_basis_points": 3227,
-          "call_count_similarity_basis_points": 7857,
-          "branch_similarity_basis_points": 9047
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 7199,
+          "ngram_similarity_basis_points": 7586,
+          "length_similarity_basis_points": 8699,
+          "call_target_similarity_basis_points": 3769,
+          "call_count_similarity_basis_points": 8750,
+          "branch_similarity_basis_points": 7916
         }
       ]
     },
@@ -9395,6 +9398,20 @@
       "family": null,
       "alternatives": [
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 6817,
+          "ngram_similarity_basis_points": 7820,
+          "length_similarity_basis_points": 6222,
+          "call_target_similarity_basis_points": 2408,
+          "call_count_similarity_basis_points": 7027,
+          "branch_similarity_basis_points": 8000
+        },
+        {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
           "source": "games/gs1/src/shop/select_party_member.c",
@@ -9522,6 +9539,20 @@
       "instructions": 359,
       "family": null,
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7062,
+          "ngram_similarity_basis_points": 7875,
+          "length_similarity_basis_points": 6239,
+          "call_target_similarity_basis_points": 3305,
+          "call_count_similarity_basis_points": 7428,
+          "branch_similarity_basis_points": 9056
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -9792,18 +9823,18 @@
           "branch_similarity_basis_points": 7804
         },
         {
-          "owner": "main:08095a44",
-          "symbol": "Func_08095a44",
-          "source": "games/gs1/src/battle/effects/heavy_impact/finish.c",
-          "assembly": "out/gs1-en/claimed/obj/08095a44.s",
-          "size": 328,
-          "instructions": 118,
-          "score_basis_points": 7116,
-          "ngram_similarity_basis_points": 7509,
-          "length_similarity_basis_points": 4664,
-          "call_target_similarity_basis_points": 5766,
-          "call_count_similarity_basis_points": 8333,
-          "branch_similarity_basis_points": 9756
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7309,
+          "ngram_similarity_basis_points": 7617,
+          "length_similarity_basis_points": 8853,
+          "call_target_similarity_basis_points": 4088,
+          "call_count_similarity_basis_points": 8666,
+          "branch_similarity_basis_points": 8541
         }
       ]
     },
@@ -9896,18 +9927,18 @@
           "branch_similarity_basis_points": 6486
         },
         {
-          "owner": "main:08099160",
-          "symbol": "Func_08099160",
-          "source": "games/gs1/src/battle/effects/orbiting_particles/run.c",
-          "assembly": "out/gs1-en/claimed/obj/08099160.s",
-          "size": 400,
-          "instructions": 161,
-          "score_basis_points": 7225,
-          "ngram_similarity_basis_points": 8643,
-          "length_similarity_basis_points": 9130,
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 7264,
+          "ngram_similarity_basis_points": 8504,
+          "length_similarity_basis_points": 8367,
           "call_target_similarity_basis_points": 0,
-          "call_count_similarity_basis_points": 7407,
-          "branch_similarity_basis_points": 6486
+          "call_count_similarity_basis_points": 8000,
+          "branch_similarity_basis_points": 10000
         }
       ]
     },
@@ -9943,6 +9974,20 @@
           "branch_similarity_basis_points": 5769
         },
         {
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 6716,
+          "ngram_similarity_basis_points": 7463,
+          "length_similarity_basis_points": 9044,
+          "call_target_similarity_basis_points": 0,
+          "call_count_similarity_basis_points": 10000,
+          "branch_similarity_basis_points": 9230
+        },
+        {
           "owner": "main:08028aa8",
           "symbol": "Func_08028aa8",
           "source": "games/gs1/src/menu/draw_mode_label.c",
@@ -9955,20 +10000,6 @@
           "call_target_similarity_basis_points": 0,
           "call_count_similarity_basis_points": 7500,
           "branch_similarity_basis_points": 7307
-        },
-        {
-          "owner": "main:080a45cc",
-          "symbol": "Func_080a45cc",
-          "source": "games/gs1/src/inventory_menu/draw_command_labels.c",
-          "assembly": "out/gs1-en/claimed/obj/080a45cc.s",
-          "size": 232,
-          "instructions": 94,
-          "score_basis_points": 6591,
-          "ngram_similarity_basis_points": 7399,
-          "length_similarity_basis_points": 6911,
-          "call_target_similarity_basis_points": 1397,
-          "call_count_similarity_basis_points": 8000,
-          "branch_similarity_basis_points": 9629
         }
       ]
     },
@@ -10082,8 +10113,22 @@
       "source": "games/gs1/asm/080a1d08.s",
       "size": 302,
       "instructions": 127,
-      "family": "template-main-08092708",
+      "family": "template-main-080a4800",
       "alternatives": [
+        {
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 8000,
+          "ngram_similarity_basis_points": 8382,
+          "length_similarity_basis_points": 9685,
+          "call_target_similarity_basis_points": 4784,
+          "call_count_similarity_basis_points": 8750,
+          "branch_similarity_basis_points": 8571
+        },
         {
           "owner": "main:08092708",
           "symbol": "Func_08092708",
@@ -10111,20 +10156,6 @@
           "call_target_similarity_basis_points": 2163,
           "call_count_similarity_basis_points": 9285,
           "branch_similarity_basis_points": 7500
-        },
-        {
-          "owner": "main:080b5e14",
-          "symbol": "Func_080b5e14",
-          "source": "games/gs1/src/party/update_name_entries.c",
-          "assembly": "out/gs1-en/claimed/obj/080b5e14.s",
-          "size": 248,
-          "instructions": 108,
-          "score_basis_points": 7209,
-          "ngram_similarity_basis_points": 7831,
-          "length_similarity_basis_points": 8503,
-          "call_target_similarity_basis_points": 1913,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 9642
         }
       ]
     },
@@ -10394,8 +10425,22 @@
       "source": "games/gs1/asm/080a35f8.s",
       "size": 688,
       "instructions": 299,
-      "family": "template-main-080b1a14",
+      "family": "template-main-080b211c",
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 8731,
+          "ngram_similarity_basis_points": 9405,
+          "length_similarity_basis_points": 7491,
+          "call_target_similarity_basis_points": 6286,
+          "call_count_similarity_basis_points": 9285,
+          "branch_similarity_basis_points": 9230
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -10432,8 +10477,22 @@
       "source": "games/gs1/asm/080a38d0.s",
       "size": 824,
       "instructions": 343,
-      "family": "template-main-080b1a14",
+      "family": "template-main-080b211c",
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 8031,
+          "ngram_similarity_basis_points": 8960,
+          "length_similarity_basis_points": 6530,
+          "call_target_similarity_basis_points": 5386,
+          "call_count_similarity_basis_points": 7428,
+          "branch_similarity_basis_points": 7500
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -10697,65 +10756,28 @@
       ]
     },
     {
-      "owner": "main:080a4800",
-      "symbol": "Func_080a4800",
-      "source": "games/gs1/asm/080a4800.s",
-      "size": 292,
-      "instructions": 123,
-      "family": "template-main-08092708",
-      "alternatives": [
-        {
-          "owner": "main:08092708",
-          "symbol": "Func_08092708",
-          "source": "games/gs1/src/battle/effects/objects/run_rising_sequence.c",
-          "assembly": "out/gs1-en/claimed/obj/08092708.s",
-          "size": 260,
-          "instructions": 110,
-          "score_basis_points": 8271,
-          "ngram_similarity_basis_points": 8774,
-          "length_similarity_basis_points": 8943,
-          "call_target_similarity_basis_points": 4826,
-          "call_count_similarity_basis_points": 9411,
-          "branch_similarity_basis_points": 9600
-        },
-        {
-          "owner": "main:08091c7c",
-          "symbol": "Func_08091c7c",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_59.c",
-          "assembly": "out/gs1-en/claimed/obj/08091c7c.s",
-          "size": 264,
-          "instructions": 111,
-          "score_basis_points": 7638,
-          "ngram_similarity_basis_points": 8114,
-          "length_similarity_basis_points": 9024,
-          "call_target_similarity_basis_points": 3546,
-          "call_count_similarity_basis_points": 9375,
-          "branch_similarity_basis_points": 9230
-        },
-        {
-          "owner": "main:08028f98",
-          "symbol": "Func_08028f98",
-          "source": "games/gs1/src/menu/run_selection.c",
-          "assembly": "out/gs1-en/claimed/obj/08028f98.s",
-          "size": 252,
-          "instructions": 109,
-          "score_basis_points": 7572,
-          "ngram_similarity_basis_points": 8308,
-          "length_similarity_basis_points": 8861,
-          "call_target_similarity_basis_points": 2949,
-          "call_count_similarity_basis_points": 8125,
-          "branch_similarity_basis_points": 8750
-        }
-      ]
-    },
-    {
       "owner": "main:080a4924",
       "symbol": "Func_080a4924",
       "source": "games/gs1/asm/080a4924.s",
       "size": 1168,
       "instructions": 457,
       "family": null,
-      "alternatives": []
+      "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 6516,
+          "ngram_similarity_basis_points": 8148,
+          "length_similarity_basis_points": 4901,
+          "call_target_similarity_basis_points": 0,
+          "call_count_similarity_basis_points": 8125,
+          "branch_similarity_basis_points": 6486
+        }
+      ]
     },
     {
       "owner": "main:080a524c",
@@ -10763,8 +10785,36 @@
       "source": "games/gs1/asm/080a524c.s",
       "size": 316,
       "instructions": 128,
-      "family": "template-main-080b1a14",
+      "family": "template-main-080a4800",
       "alternatives": [
+        {
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 7954,
+          "ngram_similarity_basis_points": 8942,
+          "length_similarity_basis_points": 9609,
+          "call_target_similarity_basis_points": 2313,
+          "call_count_similarity_basis_points": 8421,
+          "branch_similarity_basis_points": 8275
+        },
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7831,
+          "ngram_similarity_basis_points": 8872,
+          "length_similarity_basis_points": 5714,
+          "call_target_similarity_basis_points": 5509,
+          "call_count_similarity_basis_points": 7307,
+          "branch_similarity_basis_points": 6041
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -10778,34 +10828,6 @@
           "call_target_similarity_basis_points": 5284,
           "call_count_similarity_basis_points": 7600,
           "branch_similarity_basis_points": 7837
-        },
-        {
-          "owner": "main:0809b208",
-          "symbol": "Func_0809b208",
-          "source": "games/gs1/src/battle/effects/run_effect15.c",
-          "assembly": "out/gs1-en/claimed/obj/0809b208.s",
-          "size": 348,
-          "instructions": 133,
-          "score_basis_points": 7567,
-          "ngram_similarity_basis_points": 8378,
-          "length_similarity_basis_points": 9624,
-          "call_target_similarity_basis_points": 2365,
-          "call_count_similarity_basis_points": 7037,
-          "branch_similarity_basis_points": 9062
-        },
-        {
-          "owner": "main:08092708",
-          "symbol": "Func_08092708",
-          "source": "games/gs1/src/battle/effects/objects/run_rising_sequence.c",
-          "assembly": "out/gs1-en/claimed/obj/08092708.s",
-          "size": 260,
-          "instructions": 110,
-          "score_basis_points": 7417,
-          "ngram_similarity_basis_points": 8096,
-          "length_similarity_basis_points": 8593,
-          "call_target_similarity_basis_points": 2782,
-          "call_count_similarity_basis_points": 8947,
-          "branch_similarity_basis_points": 8620
         }
       ]
     },
@@ -10832,6 +10854,20 @@
           "branch_similarity_basis_points": 10000
         },
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 8542,
+          "ngram_similarity_basis_points": 9381,
+          "length_similarity_basis_points": 7901,
+          "call_target_similarity_basis_points": 5384,
+          "call_count_similarity_basis_points": 9230,
+          "branch_similarity_basis_points": 7708
+        },
+        {
           "owner": "main:08099160",
           "symbol": "Func_08099160",
           "source": "games/gs1/src/battle/effects/orbiting_particles/run.c",
@@ -10844,20 +10880,6 @@
           "call_target_similarity_basis_points": 3216,
           "call_count_similarity_basis_points": 8888,
           "branch_similarity_basis_points": 10000
-        },
-        {
-          "owner": "main:08092708",
-          "symbol": "Func_08092708",
-          "source": "games/gs1/src/battle/effects/objects/run_rising_sequence.c",
-          "assembly": "out/gs1-en/claimed/obj/08092708.s",
-          "size": 260,
-          "instructions": 110,
-          "score_basis_points": 7347,
-          "ngram_similarity_basis_points": 8593,
-          "length_similarity_basis_points": 6214,
-          "call_target_similarity_basis_points": 2990,
-          "call_count_similarity_basis_points": 7083,
-          "branch_similarity_basis_points": 6756
         }
       ]
     },
@@ -10919,8 +10941,22 @@
       "source": "games/gs1/asm/080a5b94.s",
       "size": 300,
       "instructions": 116,
-      "family": "template-main-0809b208",
+      "family": "template-main-080a4800",
       "alternatives": [
+        {
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 8151,
+          "ngram_similarity_basis_points": 8752,
+          "length_similarity_basis_points": 9430,
+          "call_target_similarity_basis_points": 4256,
+          "call_count_similarity_basis_points": 7619,
+          "branch_similarity_basis_points": 10000
+        },
         {
           "owner": "main:0809b208",
           "symbol": "Func_0809b208",
@@ -10948,20 +10984,6 @@
           "call_target_similarity_basis_points": 2333,
           "call_count_similarity_basis_points": 8400,
           "branch_similarity_basis_points": 6486
-        },
-        {
-          "owner": "main:08092708",
-          "symbol": "Func_08092708",
-          "source": "games/gs1/src/battle/effects/objects/run_rising_sequence.c",
-          "assembly": "out/gs1-en/claimed/obj/08092708.s",
-          "size": 260,
-          "instructions": 110,
-          "score_basis_points": 7430,
-          "ngram_similarity_basis_points": 7885,
-          "length_similarity_basis_points": 9482,
-          "call_target_similarity_basis_points": 3150,
-          "call_count_similarity_basis_points": 8095,
-          "branch_similarity_basis_points": 9600
         }
       ]
     },
@@ -10986,6 +11008,20 @@
           "call_target_similarity_basis_points": 1181,
           "call_count_similarity_basis_points": 7575,
           "branch_similarity_basis_points": 4805
+        },
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 6867,
+          "ngram_similarity_basis_points": 8099,
+          "length_similarity_basis_points": 7088,
+          "call_target_similarity_basis_points": 1260,
+          "call_count_similarity_basis_points": 7878,
+          "branch_similarity_basis_points": 6233
         },
         {
           "owner": "main:08099160",
@@ -11061,8 +11097,22 @@
       "source": "games/gs1/asm/080a60d4.s",
       "size": 688,
       "instructions": 296,
-      "family": "template-main-080b1a14",
+      "family": "template-main-080b211c",
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 8645,
+          "ngram_similarity_basis_points": 9271,
+          "length_similarity_basis_points": 7567,
+          "call_target_similarity_basis_points": 6722,
+          "call_count_similarity_basis_points": 8666,
+          "branch_similarity_basis_points": 8421
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -11099,8 +11149,22 @@
       "source": "games/gs1/asm/080a63e4.s",
       "size": 512,
       "instructions": 213,
-      "family": "template-main-080b1a14",
+      "family": "template-main-080b211c",
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 8371,
+          "ngram_similarity_basis_points": 8724,
+          "length_similarity_basis_points": 9508,
+          "call_target_similarity_basis_points": 6531,
+          "call_count_similarity_basis_points": 7692,
+          "branch_similarity_basis_points": 7708
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -11128,20 +11192,6 @@
           "call_target_similarity_basis_points": 4514,
           "call_count_similarity_basis_points": 7407,
           "branch_similarity_basis_points": 10000
-        },
-        {
-          "owner": "main:08092708",
-          "symbol": "Func_08092708",
-          "source": "games/gs1/src/battle/effects/objects/run_rising_sequence.c",
-          "assembly": "out/gs1-en/claimed/obj/08092708.s",
-          "size": 260,
-          "instructions": 110,
-          "score_basis_points": 7093,
-          "ngram_similarity_basis_points": 7892,
-          "length_similarity_basis_points": 5164,
-          "call_target_similarity_basis_points": 4566,
-          "call_count_similarity_basis_points": 8500,
-          "branch_similarity_basis_points": 6756
         }
       ]
     },
@@ -11153,6 +11203,20 @@
       "instructions": 157,
       "family": null,
       "alternatives": [
+        {
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 6976,
+          "ngram_similarity_basis_points": 8099,
+          "length_similarity_basis_points": 7834,
+          "call_target_similarity_basis_points": 0,
+          "call_count_similarity_basis_points": 10000,
+          "branch_similarity_basis_points": 8571
+        },
         {
           "owner": "main:080c10e8",
           "symbol": "Func_080c10e8",
@@ -11180,20 +11244,6 @@
           "call_target_similarity_basis_points": 0,
           "call_count_similarity_basis_points": 9375,
           "branch_similarity_basis_points": 9285
-        },
-        {
-          "owner": "main:08028f98",
-          "symbol": "Func_08028f98",
-          "source": "games/gs1/src/menu/run_selection.c",
-          "assembly": "out/gs1-en/claimed/obj/08028f98.s",
-          "size": 252,
-          "instructions": 109,
-          "score_basis_points": 6756,
-          "ngram_similarity_basis_points": 8124,
-          "length_similarity_basis_points": 6942,
-          "call_target_similarity_basis_points": 0,
-          "call_count_similarity_basis_points": 8125,
-          "branch_similarity_basis_points": 7500
         }
       ]
     },
@@ -11307,8 +11357,22 @@
       "source": "games/gs1/asm/080a6b64.s",
       "size": 360,
       "instructions": 150,
-      "family": null,
+      "family": "template-main-080a4800",
       "alternatives": [
+        {
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 7526,
+          "ngram_similarity_basis_points": 8758,
+          "length_similarity_basis_points": 8200,
+          "call_target_similarity_basis_points": 659,
+          "call_count_similarity_basis_points": 9411,
+          "branch_similarity_basis_points": 8888
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -11336,20 +11400,6 @@
           "call_target_similarity_basis_points": 0,
           "call_count_similarity_basis_points": 8095,
           "branch_similarity_basis_points": 10000
-        },
-        {
-          "owner": "main:08091c7c",
-          "symbol": "Func_08091c7c",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_59.c",
-          "assembly": "out/gs1-en/claimed/obj/08091c7c.s",
-          "size": 264,
-          "instructions": 111,
-          "score_basis_points": 7325,
-          "ngram_similarity_basis_points": 8712,
-          "length_similarity_basis_points": 7400,
-          "call_target_similarity_basis_points": 0,
-          "call_count_similarity_basis_points": 8823,
-          "branch_similarity_basis_points": 9629
         }
       ]
     },
@@ -11437,6 +11487,20 @@
           "branch_similarity_basis_points": 7333
         },
         {
+          "owner": "main:0808f1c0",
+          "symbol": "Func_0808f1c0",
+          "source": "games/gs1/src/battle/effects/objects/start_effect_22.c",
+          "assembly": "out/gs1-en/claimed/obj/0808f1c0.s",
+          "size": 204,
+          "instructions": 88,
+          "score_basis_points": 7282,
+          "ngram_similarity_basis_points": 8289,
+          "length_similarity_basis_points": 8181,
+          "call_target_similarity_basis_points": 1118,
+          "call_count_similarity_basis_points": 8181,
+          "branch_similarity_basis_points": 10000
+        },
+        {
           "owner": "main:080b2928",
           "symbol": "Func_080b2928",
           "source": "games/gs1/src/unidentified/main/system/system_owner_2.c",
@@ -11448,20 +11512,6 @@
           "length_similarity_basis_points": 7638,
           "call_target_similarity_basis_points": 2357,
           "call_count_similarity_basis_points": 8888,
-          "branch_similarity_basis_points": 7333
-        },
-        {
-          "owner": "main:080a56c8",
-          "symbol": "Func_080a56c8",
-          "source": "games/gs1/src/inventory_menu/draw_item_name_page.c",
-          "assembly": "out/gs1-en/claimed/obj/080a56c8.s",
-          "size": 188,
-          "instructions": 80,
-          "score_basis_points": 7247,
-          "ngram_similarity_basis_points": 7959,
-          "length_similarity_basis_points": 9000,
-          "call_target_similarity_basis_points": 3162,
-          "call_count_similarity_basis_points": 6666,
           "branch_similarity_basis_points": 7333
         }
       ]
@@ -11489,6 +11539,20 @@
           "branch_similarity_basis_points": 7297
         },
         {
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 7557,
+          "ngram_similarity_basis_points": 8053,
+          "length_similarity_basis_points": 6089,
+          "call_target_similarity_basis_points": 5330,
+          "call_count_similarity_basis_points": 9411,
+          "branch_similarity_basis_points": 8888
+        },
+        {
           "owner": "main:08092708",
           "symbol": "Func_08092708",
           "source": "games/gs1/src/battle/effects/objects/run_rising_sequence.c",
@@ -11501,20 +11565,6 @@
           "call_target_similarity_basis_points": 3944,
           "call_count_similarity_basis_points": 10000,
           "branch_similarity_basis_points": 9259
-        },
-        {
-          "owner": "main:08091c7c",
-          "symbol": "Func_08091c7c",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_59.c",
-          "assembly": "out/gs1-en/claimed/obj/08091c7c.s",
-          "size": 264,
-          "instructions": 111,
-          "score_basis_points": 6656,
-          "ngram_similarity_basis_points": 7498,
-          "length_similarity_basis_points": 5495,
-          "call_target_similarity_basis_points": 2070,
-          "call_count_similarity_basis_points": 8823,
-          "branch_similarity_basis_points": 9629
         }
       ]
     },
@@ -11541,6 +11591,20 @@
           "branch_similarity_basis_points": 10000
         },
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 8568,
+          "ngram_similarity_basis_points": 9081,
+          "length_similarity_basis_points": 9017,
+          "call_target_similarity_basis_points": 6502,
+          "call_count_similarity_basis_points": 8076,
+          "branch_similarity_basis_points": 7708
+        },
+        {
           "owner": "main:08099160",
           "symbol": "Func_08099160",
           "source": "games/gs1/src/battle/effects/orbiting_particles/run.c",
@@ -11553,20 +11617,6 @@
           "call_target_similarity_basis_points": 3329,
           "call_count_similarity_basis_points": 7777,
           "branch_similarity_basis_points": 10000
-        },
-        {
-          "owner": "main:08092708",
-          "symbol": "Func_08092708",
-          "source": "games/gs1/src/battle/effects/objects/run_rising_sequence.c",
-          "assembly": "out/gs1-en/claimed/obj/08092708.s",
-          "size": 260,
-          "instructions": 110,
-          "score_basis_points": 7046,
-          "ngram_similarity_basis_points": 8146,
-          "length_similarity_basis_points": 5445,
-          "call_target_similarity_basis_points": 3095,
-          "call_count_similarity_basis_points": 8095,
-          "branch_similarity_basis_points": 6756
         }
       ]
     },
@@ -11640,6 +11690,20 @@
       "family": null,
       "alternatives": [
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7266,
+          "ngram_similarity_basis_points": 8788,
+          "length_similarity_basis_points": 6787,
+          "call_target_similarity_basis_points": 305,
+          "call_count_similarity_basis_points": 7878,
+          "branch_similarity_basis_points": 8727
+        },
+        {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
           "source": "games/gs1/src/shop/select_party_member.c",
@@ -11678,6 +11742,20 @@
       "family": null,
       "alternatives": [
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7212,
+          "ngram_similarity_basis_points": 8371,
+          "length_similarity_basis_points": 9419,
+          "call_target_similarity_basis_points": 283,
+          "call_count_similarity_basis_points": 9285,
+          "branch_similarity_basis_points": 6458
+        },
+        {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
           "source": "games/gs1/src/shop/select_party_member.c",
@@ -11704,20 +11782,6 @@
           "call_target_similarity_basis_points": 668,
           "call_count_similarity_basis_points": 9642,
           "branch_similarity_basis_points": 9687
-        },
-        {
-          "owner": "main:08099160",
-          "symbol": "Func_08099160",
-          "source": "games/gs1/src/battle/effects/orbiting_particles/run.c",
-          "assembly": "out/gs1-en/claimed/obj/08099160.s",
-          "size": 400,
-          "instructions": 161,
-          "score_basis_points": 6791,
-          "ngram_similarity_basis_points": 7782,
-          "length_similarity_basis_points": 7630,
-          "call_target_similarity_basis_points": 461,
-          "call_count_similarity_basis_points": 9642,
-          "branch_similarity_basis_points": 8378
         }
       ]
     },
@@ -11782,6 +11846,20 @@
       "family": null,
       "alternatives": [
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7384,
+          "ngram_similarity_basis_points": 8620,
+          "length_similarity_basis_points": 9613,
+          "call_target_similarity_basis_points": 661,
+          "call_count_similarity_basis_points": 6923,
+          "branch_similarity_basis_points": 7500
+        },
+        {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
           "source": "games/gs1/src/shop/select_party_member.c",
@@ -11796,32 +11874,18 @@
           "branch_similarity_basis_points": 9729
         },
         {
-          "owner": "main:08028f98",
-          "symbol": "Func_08028f98",
-          "source": "games/gs1/src/menu/run_selection.c",
-          "assembly": "out/gs1-en/claimed/obj/08028f98.s",
-          "size": 252,
-          "instructions": 109,
-          "score_basis_points": 6890,
-          "ngram_similarity_basis_points": 8578,
-          "length_similarity_basis_points": 4678,
-          "call_target_similarity_basis_points": 1295,
-          "call_count_similarity_basis_points": 7222,
-          "branch_similarity_basis_points": 5833
-        },
-        {
-          "owner": "main:08092708",
-          "symbol": "Func_08092708",
-          "source": "games/gs1/src/battle/effects/objects/run_rising_sequence.c",
-          "assembly": "out/gs1-en/claimed/obj/08092708.s",
-          "size": 260,
-          "instructions": 110,
-          "score_basis_points": 6812,
-          "ngram_similarity_basis_points": 8005,
-          "length_similarity_basis_points": 4721,
-          "call_target_similarity_basis_points": 2120,
-          "call_count_similarity_basis_points": 9444,
-          "branch_similarity_basis_points": 6944
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 7194,
+          "ngram_similarity_basis_points": 8531,
+          "length_similarity_basis_points": 5278,
+          "call_target_similarity_basis_points": 2291,
+          "call_count_similarity_basis_points": 8888,
+          "branch_similarity_basis_points": 6666
         }
       ]
     },
@@ -11833,6 +11897,20 @@
       "instructions": 157,
       "family": null,
       "alternatives": [
+        {
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 7245,
+          "ngram_similarity_basis_points": 8327,
+          "length_similarity_basis_points": 7834,
+          "call_target_similarity_basis_points": 818,
+          "call_count_similarity_basis_points": 9375,
+          "branch_similarity_basis_points": 9166
+        },
         {
           "owner": "main:08091c7c",
           "symbol": "Func_08091c7c",
@@ -11860,20 +11938,6 @@
           "call_target_similarity_basis_points": 0,
           "call_count_similarity_basis_points": 7333,
           "branch_similarity_basis_points": 9545
-        },
-        {
-          "owner": "main:080b1e80",
-          "symbol": "Func_080b1e80",
-          "source": "games/gs1/src/shop/select_sale_quantity.c",
-          "assembly": "out/gs1-en/claimed/obj/080b1e80.s",
-          "size": 204,
-          "instructions": 86,
-          "score_basis_points": 7125,
-          "ngram_similarity_basis_points": 8935,
-          "length_similarity_basis_points": 5477,
-          "call_target_similarity_basis_points": 566,
-          "call_count_similarity_basis_points": 7333,
-          "branch_similarity_basis_points": 6363
         }
       ]
     },
@@ -11883,8 +11947,22 @@
       "source": "games/gs1/asm/080a90bc.s",
       "size": 696,
       "instructions": 294,
-      "family": "template-main-080b1a14",
+      "family": "template-main-080b211c",
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 8055,
+          "ngram_similarity_basis_points": 9037,
+          "length_similarity_basis_points": 7619,
+          "call_target_similarity_basis_points": 4247,
+          "call_count_similarity_basis_points": 7647,
+          "branch_similarity_basis_points": 8000
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -11912,20 +11990,6 @@
           "call_target_similarity_basis_points": 3706,
           "call_count_similarity_basis_points": 7941,
           "branch_similarity_basis_points": 6166
-        },
-        {
-          "owner": "main:0809b208",
-          "symbol": "Func_0809b208",
-          "source": "games/gs1/src/battle/effects/run_effect15.c",
-          "assembly": "out/gs1-en/claimed/obj/0809b208.s",
-          "size": 348,
-          "instructions": 133,
-          "score_basis_points": 6664,
-          "ngram_similarity_basis_points": 7606,
-          "length_similarity_basis_points": 4523,
-          "call_target_similarity_basis_points": 4029,
-          "call_count_similarity_basis_points": 7941,
-          "branch_similarity_basis_points": 5333
         }
       ]
     },
@@ -11937,6 +12001,20 @@
       "instructions": 229,
       "family": null,
       "alternatives": [
+        {
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 7458,
+          "ngram_similarity_basis_points": 8861,
+          "length_similarity_basis_points": 5371,
+          "call_target_similarity_basis_points": 2249,
+          "call_count_similarity_basis_points": 10000,
+          "branch_similarity_basis_points": 6486
+        },
         {
           "owner": "main:08092708",
           "symbol": "Func_08092708",
@@ -11964,20 +12042,6 @@
           "call_target_similarity_basis_points": 1529,
           "call_count_similarity_basis_points": 9375,
           "branch_similarity_basis_points": 7027
-        },
-        {
-          "owner": "main:08028f98",
-          "symbol": "Func_08028f98",
-          "source": "games/gs1/src/menu/run_selection.c",
-          "assembly": "out/gs1-en/claimed/obj/08028f98.s",
-          "size": 252,
-          "instructions": 109,
-          "score_basis_points": 6696,
-          "ngram_similarity_basis_points": 8216,
-          "length_similarity_basis_points": 4759,
-          "call_target_similarity_basis_points": 1271,
-          "call_count_similarity_basis_points": 8125,
-          "branch_similarity_basis_points": 5675
         }
       ]
     },
@@ -12296,18 +12360,18 @@
           "branch_similarity_basis_points": 5806
         },
         {
-          "owner": "main:08098070",
-          "symbol": "Func_08098070",
-          "source": "games/gs1/src/battle/effects/item_break/start.c",
-          "assembly": "out/gs1-en/claimed/obj/08098070.s",
-          "size": 276,
-          "instructions": 117,
-          "score_basis_points": 5107,
-          "ngram_similarity_basis_points": 6015,
-          "length_similarity_basis_points": 4624,
-          "call_target_similarity_basis_points": 0,
-          "call_count_similarity_basis_points": 8571,
-          "branch_similarity_basis_points": 6129
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 5554,
+          "ngram_similarity_basis_points": 6404,
+          "length_similarity_basis_points": 4861,
+          "call_target_similarity_basis_points": 957,
+          "call_count_similarity_basis_points": 7500,
+          "branch_similarity_basis_points": 7741
         }
       ]
     },
@@ -12635,18 +12699,18 @@
           "branch_similarity_basis_points": 8222
         },
         {
-          "owner": "main:08099160",
-          "symbol": "Func_08099160",
-          "source": "games/gs1/src/battle/effects/orbiting_particles/run.c",
-          "assembly": "out/gs1-en/claimed/obj/08099160.s",
-          "size": 400,
-          "instructions": 161,
-          "score_basis_points": 7219,
-          "ngram_similarity_basis_points": 8152,
-          "length_similarity_basis_points": 9044,
-          "call_target_similarity_basis_points": 703,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 8222
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7302,
+          "ngram_similarity_basis_points": 8119,
+          "length_similarity_basis_points": 7946,
+          "call_target_similarity_basis_points": 1871,
+          "call_count_similarity_basis_points": 9629,
+          "branch_similarity_basis_points": 9375
         }
       ]
     },
@@ -12925,8 +12989,22 @@
       "source": "games/gs1/asm/080b1bd0.s",
       "size": 540,
       "instructions": 232,
-      "family": "template-main-080b1a14",
+      "family": "template-main-080b211c",
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 9860,
+          "ngram_similarity_basis_points": 9981,
+          "length_similarity_basis_points": 9655,
+          "call_target_similarity_basis_points": 9641,
+          "call_count_similarity_basis_points": 9629,
+          "branch_similarity_basis_points": 9600
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -12954,20 +13032,6 @@
           "call_target_similarity_basis_points": 4219,
           "call_count_similarity_basis_points": 10000,
           "branch_similarity_basis_points": 7400
-        },
-        {
-          "owner": "main:0809b208",
-          "symbol": "Func_0809b208",
-          "source": "games/gs1/src/battle/effects/run_effect15.c",
-          "assembly": "out/gs1-en/claimed/obj/0809b208.s",
-          "size": 348,
-          "instructions": 133,
-          "score_basis_points": 7125,
-          "ngram_similarity_basis_points": 7996,
-          "length_similarity_basis_points": 5732,
-          "call_target_similarity_basis_points": 3568,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 6400
         }
       ]
     },
@@ -12979,6 +13043,20 @@
       "instructions": 161,
       "family": null,
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 6897,
+          "ngram_similarity_basis_points": 7964,
+          "length_similarity_basis_points": 7187,
+          "call_target_similarity_basis_points": 1192,
+          "call_count_similarity_basis_points": 7307,
+          "branch_similarity_basis_points": 9166
+        },
         {
           "owner": "main:080931ec",
           "symbol": "Func_080931ec",
@@ -13006,72 +13084,6 @@
           "call_target_similarity_basis_points": 555,
           "call_count_similarity_basis_points": 7037,
           "branch_similarity_basis_points": 8409
-        },
-        {
-          "owner": "main:08091c7c",
-          "symbol": "Func_08091c7c",
-          "source": "games/gs1/src/unidentified/main/field/field_owner_59.c",
-          "assembly": "out/gs1-en/claimed/obj/08091c7c.s",
-          "size": 264,
-          "instructions": 111,
-          "score_basis_points": 6589,
-          "ngram_similarity_basis_points": 8015,
-          "length_similarity_basis_points": 6894,
-          "call_target_similarity_basis_points": 0,
-          "call_count_similarity_basis_points": 7894,
-          "branch_similarity_basis_points": 5909
-        }
-      ]
-    },
-    {
-      "owner": "main:080b211c",
-      "symbol": "Func_080b211c",
-      "source": "games/gs1/asm/080b211c.s",
-      "size": 524,
-      "instructions": 224,
-      "family": "template-main-080b1a14",
-      "alternatives": [
-        {
-          "owner": "main:080b1a14",
-          "symbol": "Func_080b1a14",
-          "source": "games/gs1/src/shop/select_party_member.c",
-          "assembly": "out/gs1-en/claimed/obj/080b1a14.s",
-          "size": 444,
-          "instructions": 188,
-          "score_basis_points": 8976,
-          "ngram_similarity_basis_points": 9281,
-          "length_similarity_basis_points": 8392,
-          "call_target_similarity_basis_points": 8256,
-          "call_count_similarity_basis_points": 9615,
-          "branch_similarity_basis_points": 7708
-        },
-        {
-          "owner": "main:08099160",
-          "symbol": "Func_08099160",
-          "source": "games/gs1/src/battle/effects/orbiting_particles/run.c",
-          "assembly": "out/gs1-en/claimed/obj/08099160.s",
-          "size": 400,
-          "instructions": 161,
-          "score_basis_points": 7854,
-          "ngram_similarity_basis_points": 8664,
-          "length_similarity_basis_points": 7187,
-          "call_target_similarity_basis_points": 4250,
-          "call_count_similarity_basis_points": 9629,
-          "branch_similarity_basis_points": 7708
-        },
-        {
-          "owner": "main:0809b208",
-          "symbol": "Func_0809b208",
-          "source": "games/gs1/src/battle/effects/run_effect15.c",
-          "assembly": "out/gs1-en/claimed/obj/0809b208.s",
-          "size": 348,
-          "instructions": 133,
-          "score_basis_points": 7127,
-          "ngram_similarity_basis_points": 7970,
-          "length_similarity_basis_points": 5937,
-          "call_target_similarity_basis_points": 3593,
-          "call_count_similarity_basis_points": 9629,
-          "branch_similarity_basis_points": 6666
         }
       ]
     },
@@ -13098,6 +13110,20 @@
           "branch_similarity_basis_points": 7254
         },
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7448,
+          "ngram_similarity_basis_points": 8285,
+          "length_similarity_basis_points": 7500,
+          "call_target_similarity_basis_points": 3334,
+          "call_count_similarity_basis_points": 6842,
+          "branch_similarity_basis_points": 9411
+        },
+        {
           "owner": "main:0809b208",
           "symbol": "Func_0809b208",
           "source": "games/gs1/src/battle/effects/run_effect15.c",
@@ -13110,20 +13136,6 @@
           "call_target_similarity_basis_points": 3936,
           "call_count_similarity_basis_points": 7105,
           "branch_similarity_basis_points": 6274
-        },
-        {
-          "owner": "main:08095a44",
-          "symbol": "Func_08095a44",
-          "source": "games/gs1/src/battle/effects/heavy_impact/finish.c",
-          "assembly": "out/gs1-en/claimed/obj/08095a44.s",
-          "size": 328,
-          "instructions": 118,
-          "score_basis_points": 7108,
-          "ngram_similarity_basis_points": 7539,
-          "length_similarity_basis_points": 7023,
-          "call_target_similarity_basis_points": 4267,
-          "call_count_similarity_basis_points": 9473,
-          "branch_similarity_basis_points": 7843
         }
       ]
     },
@@ -13150,6 +13162,20 @@
           "branch_similarity_basis_points": 8809
         },
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 8382,
+          "ngram_similarity_basis_points": 8879,
+          "length_similarity_basis_points": 8526,
+          "call_target_similarity_basis_points": 5598,
+          "call_count_similarity_basis_points": 9629,
+          "branch_similarity_basis_points": 8750
+        },
+        {
           "owner": "main:08099160",
           "symbol": "Func_08099160",
           "source": "games/gs1/src/battle/effects/orbiting_particles/run.c",
@@ -13162,20 +13188,6 @@
           "call_target_similarity_basis_points": 2964,
           "call_count_similarity_basis_points": 10000,
           "branch_similarity_basis_points": 8809
-        },
-        {
-          "owner": "main:080b3284",
-          "symbol": "Func_080b3284",
-          "source": "games/gs1/src/inn/check_in.c",
-          "assembly": "out/gs1-en/claimed/obj/080b3284.s",
-          "size": 276,
-          "instructions": 110,
-          "score_basis_points": 7363,
-          "ngram_similarity_basis_points": 8885,
-          "length_similarity_basis_points": 5759,
-          "call_target_similarity_basis_points": 2013,
-          "call_count_similarity_basis_points": 7777,
-          "branch_similarity_basis_points": 6428
         }
       ]
     },
@@ -13216,18 +13228,18 @@
           "branch_similarity_basis_points": 9000
         },
         {
-          "owner": "main:08099160",
-          "symbol": "Func_08099160",
-          "source": "games/gs1/src/battle/effects/orbiting_particles/run.c",
-          "assembly": "out/gs1-en/claimed/obj/08099160.s",
-          "size": 400,
-          "instructions": 161,
-          "score_basis_points": 7163,
-          "ngram_similarity_basis_points": 8357,
-          "length_similarity_basis_points": 9006,
-          "call_target_similarity_basis_points": 0,
-          "call_count_similarity_basis_points": 8518,
-          "branch_similarity_basis_points": 8108
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 7665,
+          "ngram_similarity_basis_points": 9004,
+          "length_similarity_basis_points": 8482,
+          "call_target_similarity_basis_points": 1446,
+          "call_count_similarity_basis_points": 6956,
+          "branch_similarity_basis_points": 8000
         }
       ]
     },
@@ -13315,6 +13327,20 @@
           "branch_similarity_basis_points": 10000
         },
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 9138,
+          "ngram_similarity_basis_points": 9389,
+          "length_similarity_basis_points": 9508,
+          "call_target_similarity_basis_points": 8255,
+          "call_count_similarity_basis_points": 9230,
+          "branch_similarity_basis_points": 7708
+        },
+        {
           "owner": "main:08099160",
           "symbol": "Func_08099160",
           "source": "games/gs1/src/battle/effects/orbiting_particles/run.c",
@@ -13327,20 +13353,6 @@
           "call_target_similarity_basis_points": 4483,
           "call_count_similarity_basis_points": 8888,
           "branch_similarity_basis_points": 10000
-        },
-        {
-          "owner": "main:080b3284",
-          "symbol": "Func_080b3284",
-          "source": "games/gs1/src/inn/check_in.c",
-          "assembly": "out/gs1-en/claimed/obj/080b3284.s",
-          "size": 276,
-          "instructions": 110,
-          "score_basis_points": 7279,
-          "ngram_similarity_basis_points": 8600,
-          "length_similarity_basis_points": 5164,
-          "call_target_similarity_basis_points": 2474,
-          "call_count_similarity_basis_points": 8750,
-          "branch_similarity_basis_points": 7297
         }
       ]
     },
@@ -13350,8 +13362,22 @@
       "source": "games/gs1/asm/080b362c.s",
       "size": 576,
       "instructions": 245,
-      "family": "template-main-080b1a14",
+      "family": "template-main-080b211c",
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 9524,
+          "ngram_similarity_basis_points": 9795,
+          "length_similarity_basis_points": 9142,
+          "call_target_similarity_basis_points": 9112,
+          "call_count_similarity_basis_points": 8965,
+          "branch_similarity_basis_points": 8571
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -13379,20 +13405,6 @@
           "call_target_similarity_basis_points": 4808,
           "call_count_similarity_basis_points": 9310,
           "branch_similarity_basis_points": 6607
-        },
-        {
-          "owner": "main:08095a44",
-          "symbol": "Func_08095a44",
-          "source": "games/gs1/src/battle/effects/heavy_impact/finish.c",
-          "assembly": "out/gs1-en/claimed/obj/08095a44.s",
-          "size": 328,
-          "instructions": 118,
-          "score_basis_points": 7116,
-          "ngram_similarity_basis_points": 7523,
-          "length_similarity_basis_points": 4816,
-          "call_target_similarity_basis_points": 6570,
-          "call_count_similarity_basis_points": 8055,
-          "branch_similarity_basis_points": 7142
         }
       ]
     },
@@ -13471,6 +13483,20 @@
           "branch_similarity_basis_points": 9736
         },
         {
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 7765,
+          "ngram_similarity_basis_points": 9116,
+          "length_similarity_basis_points": 6988,
+          "call_target_similarity_basis_points": 2368,
+          "call_count_similarity_basis_points": 9411,
+          "branch_similarity_basis_points": 6315
+        },
+        {
           "owner": "main:08092708",
           "symbol": "Func_08092708",
           "source": "games/gs1/src/battle/effects/objects/run_rising_sequence.c",
@@ -13483,20 +13509,6 @@
           "call_target_similarity_basis_points": 3004,
           "call_count_similarity_basis_points": 10000,
           "branch_similarity_basis_points": 6578
-        },
-        {
-          "owner": "main:0808d828",
-          "symbol": "Func_0808d828",
-          "source": "games/gs1/src/unidentified/main/audio/audio_owner_9.c",
-          "assembly": "out/gs1-en/claimed/obj/0808d828.s",
-          "size": 200,
-          "instructions": 85,
-          "score_basis_points": 6742,
-          "ngram_similarity_basis_points": 8224,
-          "length_similarity_basis_points": 4829,
-          "call_target_similarity_basis_points": 1088,
-          "call_count_similarity_basis_points": 7647,
-          "branch_similarity_basis_points": 7368
         }
       ]
     },
@@ -13508,6 +13520,20 @@
       "instructions": 156,
       "family": null,
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7138,
+          "ngram_similarity_basis_points": 8306,
+          "length_similarity_basis_points": 6964,
+          "call_target_similarity_basis_points": 597,
+          "call_count_similarity_basis_points": 9285,
+          "branch_similarity_basis_points": 9791
+        },
         {
           "owner": "main:08099160",
           "symbol": "Func_08099160",
@@ -13535,20 +13561,6 @@
           "call_target_similarity_basis_points": 945,
           "call_count_similarity_basis_points": 8928,
           "branch_similarity_basis_points": 7872
-        },
-        {
-          "owner": "main:0809b208",
-          "symbol": "Func_0809b208",
-          "source": "games/gs1/src/battle/effects/run_effect15.c",
-          "assembly": "out/gs1-en/claimed/obj/0809b208.s",
-          "size": 348,
-          "instructions": 133,
-          "score_basis_points": 6675,
-          "ngram_similarity_basis_points": 7204,
-          "length_similarity_basis_points": 8525,
-          "call_target_similarity_basis_points": 2116,
-          "call_count_similarity_basis_points": 9642,
-          "branch_similarity_basis_points": 6808
         }
       ]
     },
@@ -14338,8 +14350,22 @@
       "source": "games/gs1/asm/080b88d0.s",
       "size": 632,
       "instructions": 268,
-      "family": null,
+      "family": "template-main-080b211c",
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7672,
+          "ngram_similarity_basis_points": 8680,
+          "length_similarity_basis_points": 8358,
+          "call_target_similarity_basis_points": 1921,
+          "call_count_similarity_basis_points": 10000,
+          "branch_similarity_basis_points": 8135
+        },
         {
           "owner": "main:08099160",
           "symbol": "Func_08099160",
@@ -14367,20 +14393,6 @@
           "call_target_similarity_basis_points": 2605,
           "call_count_similarity_basis_points": 9615,
           "branch_similarity_basis_points": 6271
-        },
-        {
-          "owner": "main:0809b208",
-          "symbol": "Func_0809b208",
-          "source": "games/gs1/src/battle/effects/run_effect15.c",
-          "assembly": "out/gs1-en/claimed/obj/0809b208.s",
-          "size": 348,
-          "instructions": 133,
-          "score_basis_points": 7038,
-          "ngram_similarity_basis_points": 7449,
-          "length_similarity_basis_points": 4962,
-          "call_target_similarity_basis_points": 6317,
-          "call_count_similarity_basis_points": 9629,
-          "branch_similarity_basis_points": 5423
         }
       ]
     },
@@ -14785,18 +14797,18 @@
           "branch_similarity_basis_points": 7400
         },
         {
-          "owner": "main:0809b208",
-          "symbol": "Func_0809b208",
-          "source": "games/gs1/src/battle/effects/run_effect15.c",
-          "assembly": "out/gs1-en/claimed/obj/0809b208.s",
-          "size": 348,
-          "instructions": 133,
-          "score_basis_points": 6810,
-          "ngram_similarity_basis_points": 7502,
-          "length_similarity_basis_points": 6751,
-          "call_target_similarity_basis_points": 2925,
-          "call_count_similarity_basis_points": 10000,
-          "branch_similarity_basis_points": 6400
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7204,
+          "ngram_similarity_basis_points": 8014,
+          "length_similarity_basis_points": 8794,
+          "call_target_similarity_basis_points": 1032,
+          "call_count_similarity_basis_points": 9629,
+          "branch_similarity_basis_points": 9600
         }
       ]
     },
@@ -14861,6 +14873,20 @@
       "family": null,
       "alternatives": [
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7269,
+          "ngram_similarity_basis_points": 8875,
+          "length_similarity_basis_points": 5517,
+          "call_target_similarity_basis_points": 1881,
+          "call_count_similarity_basis_points": 8125,
+          "branch_similarity_basis_points": 5217
+        },
+        {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
           "source": "games/gs1/src/shop/select_party_member.c",
@@ -14923,6 +14949,20 @@
       "family": null,
       "alternatives": [
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7407,
+          "ngram_similarity_basis_points": 8446,
+          "length_similarity_basis_points": 8484,
+          "call_target_similarity_basis_points": 1064,
+          "call_count_similarity_basis_points": 9615,
+          "branch_similarity_basis_points": 8571
+        },
+        {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
           "source": "games/gs1/src/shop/select_party_member.c",
@@ -14949,20 +14989,6 @@
           "call_target_similarity_basis_points": 2427,
           "call_count_similarity_basis_points": 9259,
           "branch_similarity_basis_points": 6607
-        },
-        {
-          "owner": "main:0809b208",
-          "symbol": "Func_0809b208",
-          "source": "games/gs1/src/battle/effects/run_effect15.c",
-          "assembly": "out/gs1-en/claimed/obj/0809b208.s",
-          "size": 348,
-          "instructions": 133,
-          "score_basis_points": 6852,
-          "ngram_similarity_basis_points": 7746,
-          "length_similarity_basis_points": 5037,
-          "call_target_similarity_basis_points": 3769,
-          "call_count_similarity_basis_points": 9259,
-          "branch_similarity_basis_points": 5714
         }
       ]
     },
@@ -14974,6 +15000,20 @@
       "instructions": 264,
       "family": null,
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7291,
+          "ngram_similarity_basis_points": 8312,
+          "length_similarity_basis_points": 8484,
+          "call_target_similarity_basis_points": 1102,
+          "call_count_similarity_basis_points": 10000,
+          "branch_similarity_basis_points": 7500
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -15001,20 +15041,6 @@
           "call_target_similarity_basis_points": 897,
           "call_count_similarity_basis_points": 9629,
           "branch_similarity_basis_points": 5781
-        },
-        {
-          "owner": "main:0809b208",
-          "symbol": "Func_0809b208",
-          "source": "games/gs1/src/battle/effects/run_effect15.c",
-          "assembly": "out/gs1-en/claimed/obj/0809b208.s",
-          "size": 348,
-          "instructions": 133,
-          "score_basis_points": 6518,
-          "ngram_similarity_basis_points": 7903,
-          "length_similarity_basis_points": 5037,
-          "call_target_similarity_basis_points": 975,
-          "call_count_similarity_basis_points": 9629,
-          "branch_similarity_basis_points": 5000
         }
       ]
     },
@@ -15592,6 +15618,20 @@
       "family": null,
       "alternatives": [
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 6018,
+          "ngram_similarity_basis_points": 7115,
+          "length_similarity_basis_points": 5517,
+          "call_target_similarity_basis_points": 594,
+          "call_count_similarity_basis_points": 6923,
+          "branch_similarity_basis_points": 8135
+        },
+        {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
           "source": "games/gs1/src/shop/select_party_member.c",
@@ -15628,6 +15668,20 @@
           "call_target_similarity_basis_points": 3904,
           "call_count_similarity_basis_points": 10000,
           "branch_similarity_basis_points": 4600
+        },
+        {
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 5988,
+          "ngram_similarity_basis_points": 7341,
+          "length_similarity_basis_points": 4712,
+          "call_target_similarity_basis_points": 455,
+          "call_count_similarity_basis_points": 8750,
+          "branch_similarity_basis_points": 4800
         },
         {
           "owner": "main:080bb938",
@@ -15742,6 +15796,20 @@
       "family": null,
       "alternatives": [
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7057,
+          "ngram_similarity_basis_points": 8430,
+          "length_similarity_basis_points": 5910,
+          "call_target_similarity_basis_points": 1287,
+          "call_count_similarity_basis_points": 7878,
+          "branch_similarity_basis_points": 8000
+        },
+        {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
           "source": "games/gs1/src/shop/select_party_member.c",
@@ -15766,6 +15834,20 @@
       "family": null,
       "alternatives": [
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7201,
+          "ngram_similarity_basis_points": 8327,
+          "length_similarity_basis_points": 6170,
+          "call_target_similarity_basis_points": 2003,
+          "call_count_similarity_basis_points": 7428,
+          "branch_similarity_basis_points": 10000
+        },
+        {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
           "source": "games/gs1/src/shop/select_party_member.c",
@@ -15789,6 +15871,20 @@
       "instructions": 320,
       "family": null,
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7391,
+          "ngram_similarity_basis_points": 8242,
+          "length_similarity_basis_points": 7000,
+          "call_target_similarity_basis_points": 3185,
+          "call_count_similarity_basis_points": 8076,
+          "branch_similarity_basis_points": 9056
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -15845,6 +15941,20 @@
       "instructions": 349,
       "family": null,
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7359,
+          "ngram_similarity_basis_points": 8632,
+          "length_similarity_basis_points": 6418,
+          "call_target_similarity_basis_points": 2496,
+          "call_count_similarity_basis_points": 7027,
+          "branch_similarity_basis_points": 7619
+        },
         {
           "owner": "main:08099160",
           "symbol": "Func_08099160",
@@ -16002,6 +16112,20 @@
           "branch_similarity_basis_points": 8409
         },
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7370,
+          "ngram_similarity_basis_points": 8187,
+          "length_similarity_basis_points": 8750,
+          "call_target_similarity_basis_points": 1820,
+          "call_count_similarity_basis_points": 8846,
+          "branch_similarity_basis_points": 9166
+        },
+        {
           "owner": "main:08099160",
           "symbol": "Func_08099160",
           "source": "games/gs1/src/battle/effects/orbiting_particles/run.c",
@@ -16014,20 +16138,6 @@
           "call_target_similarity_basis_points": 1853,
           "call_count_similarity_basis_points": 8518,
           "branch_similarity_basis_points": 8409
-        },
-        {
-          "owner": "main:0809b208",
-          "symbol": "Func_0809b208",
-          "source": "games/gs1/src/battle/effects/run_effect15.c",
-          "assembly": "out/gs1-en/claimed/obj/0809b208.s",
-          "size": 348,
-          "instructions": 133,
-          "score_basis_points": 6547,
-          "ngram_similarity_basis_points": 7594,
-          "length_similarity_basis_points": 5195,
-          "call_target_similarity_basis_points": 2015,
-          "call_count_similarity_basis_points": 8518,
-          "branch_similarity_basis_points": 7272
         }
       ]
     },
@@ -16054,6 +16164,20 @@
           "branch_similarity_basis_points": 9729
         },
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7629,
+          "ngram_similarity_basis_points": 8660,
+          "length_similarity_basis_points": 9613,
+          "call_target_similarity_basis_points": 1223,
+          "call_count_similarity_basis_points": 9615,
+          "branch_similarity_basis_points": 7500
+        },
+        {
           "owner": "main:08099160",
           "symbol": "Func_08099160",
           "source": "games/gs1/src/battle/effects/orbiting_particles/run.c",
@@ -16066,20 +16190,6 @@
           "call_target_similarity_basis_points": 1245,
           "call_count_similarity_basis_points": 9259,
           "branch_similarity_basis_points": 9729
-        },
-        {
-          "owner": "main:080b3284",
-          "symbol": "Func_080b3284",
-          "source": "games/gs1/src/inn/check_in.c",
-          "assembly": "out/gs1-en/claimed/obj/080b3284.s",
-          "size": 276,
-          "instructions": 110,
-          "score_basis_points": 6917,
-          "ngram_similarity_basis_points": 8693,
-          "length_similarity_basis_points": 4721,
-          "call_target_similarity_basis_points": 0,
-          "call_count_similarity_basis_points": 8400,
-          "branch_similarity_basis_points": 7500
         }
       ]
     },
@@ -16352,6 +16462,20 @@
       "family": null,
       "alternatives": [
         {
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 6522,
+          "ngram_similarity_basis_points": 6551,
+          "length_similarity_basis_points": 4624,
+          "call_target_similarity_basis_points": 5973,
+          "call_count_similarity_basis_points": 8125,
+          "branch_similarity_basis_points": 10000
+        },
+        {
           "owner": "main:0809641c",
           "symbol": "Func_0809641c",
           "source": "games/gs1/src/battle/effects/particles/update_random_target_particle.c",
@@ -16378,20 +16502,6 @@
           "call_target_similarity_basis_points": 0,
           "call_count_similarity_basis_points": 6923,
           "branch_similarity_basis_points": 5333
-        },
-        {
-          "owner": "main:08026e80",
-          "symbol": "Func_08026e80",
-          "source": "games/gs1/src/link/update_session_countdown.c",
-          "assembly": "out/gs1-en/claimed/obj/08026e80.s",
-          "size": 296,
-          "instructions": 131,
-          "score_basis_points": 4096,
-          "ngram_similarity_basis_points": 4469,
-          "length_similarity_basis_points": 4924,
-          "call_target_similarity_basis_points": 0,
-          "call_count_similarity_basis_points": 6923,
-          "branch_similarity_basis_points": 7058
         }
       ]
     },
@@ -16619,7 +16729,22 @@
       "size": 884,
       "instructions": 379,
       "family": null,
-      "alternatives": []
+      "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7070,
+          "ngram_similarity_basis_points": 8331,
+          "length_similarity_basis_points": 5910,
+          "call_target_similarity_basis_points": 2059,
+          "call_count_similarity_basis_points": 6842,
+          "branch_similarity_basis_points": 8275
+        }
+      ]
     },
     {
       "owner": "main:080ce85c",
@@ -16629,6 +16754,20 @@
       "instructions": 306,
       "family": null,
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7261,
+          "ngram_similarity_basis_points": 8495,
+          "length_similarity_basis_points": 7320,
+          "call_target_similarity_basis_points": 391,
+          "call_count_similarity_basis_points": 9615,
+          "branch_similarity_basis_points": 9375
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -16666,7 +16805,22 @@
       "size": 1040,
       "instructions": 442,
       "family": null,
-      "alternatives": []
+      "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 6716,
+          "ngram_similarity_basis_points": 7645,
+          "length_similarity_basis_points": 5067,
+          "call_target_similarity_basis_points": 3545,
+          "call_count_similarity_basis_points": 7222,
+          "branch_similarity_basis_points": 6956
+        }
+      ]
     },
     {
       "owner": "main:080ceff8",
@@ -16674,8 +16828,22 @@
       "source": "games/gs1/asm/080ceff8.s",
       "size": 680,
       "instructions": 268,
-      "family": null,
+      "family": "template-main-080b211c",
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7727,
+          "ngram_similarity_basis_points": 8611,
+          "length_similarity_basis_points": 8358,
+          "call_target_similarity_basis_points": 2504,
+          "call_count_similarity_basis_points": 8965,
+          "branch_similarity_basis_points": 9411
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -16703,20 +16871,6 @@
           "call_target_similarity_basis_points": 1904,
           "call_count_similarity_basis_points": 9310,
           "branch_similarity_basis_points": 7254
-        },
-        {
-          "owner": "main:0809b208",
-          "symbol": "Func_0809b208",
-          "source": "games/gs1/src/battle/effects/run_effect15.c",
-          "assembly": "out/gs1-en/claimed/obj/0809b208.s",
-          "size": 348,
-          "instructions": 133,
-          "score_basis_points": 6722,
-          "ngram_similarity_basis_points": 7971,
-          "length_similarity_basis_points": 4962,
-          "call_target_similarity_basis_points": 1774,
-          "call_count_similarity_basis_points": 9310,
-          "branch_similarity_basis_points": 6274
         }
       ]
     },
@@ -16815,7 +16969,22 @@
       "size": 1036,
       "instructions": 436,
       "family": null,
-      "alternatives": []
+      "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 6699,
+          "ngram_similarity_basis_points": 7920,
+          "length_similarity_basis_points": 5137,
+          "call_target_similarity_basis_points": 1972,
+          "call_count_similarity_basis_points": 6842,
+          "branch_similarity_basis_points": 8000
+        }
+      ]
     },
     {
       "owner": "main:080d1350",
@@ -16825,6 +16994,20 @@
       "instructions": 415,
       "family": null,
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 6905,
+          "ngram_similarity_basis_points": 7998,
+          "length_similarity_basis_points": 5397,
+          "call_target_similarity_basis_points": 2446,
+          "call_count_similarity_basis_points": 7428,
+          "branch_similarity_basis_points": 8571
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -16875,7 +17058,22 @@
       "size": 1068,
       "instructions": 441,
       "family": null,
-      "alternatives": []
+      "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 6987,
+          "ngram_similarity_basis_points": 8332,
+          "length_similarity_basis_points": 5079,
+          "call_target_similarity_basis_points": 1832,
+          "call_count_similarity_basis_points": 7647,
+          "branch_similarity_basis_points": 8135
+        }
+      ]
     },
     {
       "owner": "main:080d3c80",
@@ -16884,7 +17082,22 @@
       "size": 1132,
       "instructions": 488,
       "family": null,
-      "alternatives": []
+      "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 6722,
+          "ngram_similarity_basis_points": 7897,
+          "length_similarity_basis_points": 4590,
+          "call_target_similarity_basis_points": 2045,
+          "call_count_similarity_basis_points": 8965,
+          "branch_similarity_basis_points": 7500
+        }
+      ]
     },
     {
       "owner": "main:080d41a4",
@@ -16893,7 +17106,22 @@
       "size": 1096,
       "instructions": 466,
       "family": null,
-      "alternatives": []
+      "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 6804,
+          "ngram_similarity_basis_points": 8232,
+          "length_similarity_basis_points": 4806,
+          "call_target_similarity_basis_points": 1376,
+          "call_count_similarity_basis_points": 8666,
+          "branch_similarity_basis_points": 6666
+        }
+      ]
     },
     {
       "owner": "main:080d4604",
@@ -16936,6 +17164,20 @@
           "branch_similarity_basis_points": 8809
         },
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7359,
+          "ngram_similarity_basis_points": 8325,
+          "length_similarity_basis_points": 8235,
+          "call_target_similarity_basis_points": 1504,
+          "call_count_similarity_basis_points": 9230,
+          "branch_similarity_basis_points": 8750
+        },
+        {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
           "source": "games/gs1/src/shop/select_party_member.c",
@@ -16948,20 +17190,6 @@
           "call_target_similarity_basis_points": 1587,
           "call_count_similarity_basis_points": 9600,
           "branch_similarity_basis_points": 8809
-        },
-        {
-          "owner": "main:0809b208",
-          "symbol": "Func_0809b208",
-          "source": "games/gs1/src/battle/effects/run_effect15.c",
-          "assembly": "out/gs1-en/claimed/obj/0809b208.s",
-          "size": 348,
-          "instructions": 133,
-          "score_basis_points": 6790,
-          "ngram_similarity_basis_points": 7734,
-          "length_similarity_basis_points": 4889,
-          "call_target_similarity_basis_points": 2997,
-          "call_count_similarity_basis_points": 8888,
-          "branch_similarity_basis_points": 7619
         }
       ]
     },
@@ -16988,6 +17216,20 @@
           "branch_similarity_basis_points": 8648
         },
         {
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 6600,
+          "ngram_similarity_basis_points": 7993,
+          "length_similarity_basis_points": 5590,
+          "call_target_similarity_basis_points": 0,
+          "call_count_similarity_basis_points": 9411,
+          "branch_similarity_basis_points": 7500
+        },
+        {
           "owner": "main:08092708",
           "symbol": "Func_08092708",
           "source": "games/gs1/src/battle/effects/objects/run_rising_sequence.c",
@@ -17000,20 +17242,6 @@
           "call_target_similarity_basis_points": 0,
           "call_count_similarity_basis_points": 10000,
           "branch_similarity_basis_points": 7812
-        },
-        {
-          "owner": "main:08098070",
-          "symbol": "Func_08098070",
-          "source": "games/gs1/src/battle/effects/item_break/start.c",
-          "assembly": "out/gs1-en/claimed/obj/08098070.s",
-          "size": 276,
-          "instructions": 117,
-          "score_basis_points": 6296,
-          "ngram_similarity_basis_points": 7778,
-          "length_similarity_basis_points": 5318,
-          "call_target_similarity_basis_points": 0,
-          "call_count_similarity_basis_points": 8235,
-          "branch_similarity_basis_points": 5937
         }
       ]
     },
@@ -17049,6 +17277,20 @@
           "branch_similarity_basis_points": 7872
         },
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7556,
+          "ngram_similarity_basis_points": 8701,
+          "length_similarity_basis_points": 6492,
+          "call_target_similarity_basis_points": 2094,
+          "call_count_similarity_basis_points": 8965,
+          "branch_similarity_basis_points": 9791
+        },
+        {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
           "source": "games/gs1/src/shop/select_party_member.c",
@@ -17072,6 +17314,20 @@
       "instructions": 383,
       "family": null,
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 6811,
+          "ngram_similarity_basis_points": 7845,
+          "length_similarity_basis_points": 5848,
+          "call_target_similarity_basis_points": 1452,
+          "call_count_similarity_basis_points": 8965,
+          "branch_similarity_basis_points": 9230
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -17124,6 +17380,20 @@
       "family": null,
       "alternatives": [
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7055,
+          "ngram_similarity_basis_points": 8020,
+          "length_similarity_basis_points": 8205,
+          "call_target_similarity_basis_points": 2008,
+          "call_count_similarity_basis_points": 6923,
+          "branch_similarity_basis_points": 7500
+        },
+        {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
           "source": "games/gs1/src/shop/select_party_member.c",
@@ -17138,32 +17408,18 @@
           "branch_similarity_basis_points": 9729
         },
         {
-          "owner": "main:0809641c",
-          "symbol": "Func_0809641c",
-          "source": "games/gs1/src/battle/effects/particles/update_random_target_particle.c",
-          "assembly": "out/gs1-en/claimed/obj/0809641c.s",
-          "size": 344,
-          "instructions": 153,
-          "score_basis_points": 5586,
-          "ngram_similarity_basis_points": 6571,
-          "length_similarity_basis_points": 5604,
-          "call_target_similarity_basis_points": 311,
-          "call_count_similarity_basis_points": 7777,
-          "branch_similarity_basis_points": 6388
-        },
-        {
-          "owner": "main:080bb938",
-          "symbol": "Func_080bb938",
-          "source": "games/gs1/src/battle/event_runtime/dispatch_queued_events.c",
-          "assembly": "out/gs1-en/claimed/obj/080bb938.s",
-          "size": 388,
-          "instructions": 133,
-          "score_basis_points": 4409,
-          "ngram_similarity_basis_points": 4591,
-          "length_similarity_basis_points": 4871,
-          "call_target_similarity_basis_points": 401,
-          "call_count_similarity_basis_points": 9000,
-          "branch_similarity_basis_points": 8571
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 6697,
+          "ngram_similarity_basis_points": 7912,
+          "length_similarity_basis_points": 4505,
+          "call_target_similarity_basis_points": 2174,
+          "call_count_similarity_basis_points": 8888,
+          "branch_similarity_basis_points": 6666
         }
       ]
     },
@@ -17174,7 +17430,22 @@
       "size": 1056,
       "instructions": 462,
       "family": null,
-      "alternatives": []
+      "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 6528,
+          "ngram_similarity_basis_points": 7527,
+          "length_similarity_basis_points": 4848,
+          "call_target_similarity_basis_points": 1788,
+          "call_count_similarity_basis_points": 9230,
+          "branch_similarity_basis_points": 8421
+        }
+      ]
     },
     {
       "owner": "main:080da6cc",
@@ -17201,7 +17472,22 @@
       "size": 1124,
       "instructions": 464,
       "family": null,
-      "alternatives": []
+      "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 6689,
+          "ngram_similarity_basis_points": 8245,
+          "length_similarity_basis_points": 4827,
+          "call_target_similarity_basis_points": 1148,
+          "call_count_similarity_basis_points": 6842,
+          "branch_similarity_basis_points": 6666
+        }
+      ]
     },
     {
       "owner": "main:080db6e0",
@@ -17210,7 +17496,22 @@
       "size": 1092,
       "instructions": 470,
       "family": null,
-      "alternatives": []
+      "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 6741,
+          "ngram_similarity_basis_points": 8213,
+          "length_similarity_basis_points": 4765,
+          "call_target_similarity_basis_points": 1295,
+          "call_count_similarity_basis_points": 7878,
+          "branch_similarity_basis_points": 6760
+        }
+      ]
     },
     {
       "owner": "main:080dbc30",
@@ -17244,6 +17545,20 @@
           "branch_similarity_basis_points": 7400
         },
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7131,
+          "ngram_similarity_basis_points": 8057,
+          "length_similarity_basis_points": 8549,
+          "call_target_similarity_basis_points": 396,
+          "call_count_similarity_basis_points": 10000,
+          "branch_similarity_basis_points": 9600
+        },
+        {
           "owner": "main:0809b208",
           "symbol": "Func_0809b208",
           "source": "games/gs1/src/battle/effects/run_effect15.c",
@@ -17256,20 +17571,6 @@
           "call_target_similarity_basis_points": 2453,
           "call_count_similarity_basis_points": 9629,
           "branch_similarity_basis_points": 6400
-        },
-        {
-          "owner": "main:080b1a14",
-          "symbol": "Func_080b1a14",
-          "source": "games/gs1/src/shop/select_party_member.c",
-          "assembly": "out/gs1-en/claimed/obj/080b1a14.s",
-          "size": 444,
-          "instructions": 188,
-          "score_basis_points": 6628,
-          "ngram_similarity_basis_points": 7640,
-          "length_similarity_basis_points": 7175,
-          "call_target_similarity_basis_points": 626,
-          "call_count_similarity_basis_points": 9615,
-          "branch_similarity_basis_points": 7400
         }
       ]
     },
@@ -17281,6 +17582,20 @@
       "instructions": 265,
       "family": null,
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 6647,
+          "ngram_similarity_basis_points": 7720,
+          "length_similarity_basis_points": 8452,
+          "call_target_similarity_basis_points": 568,
+          "call_count_similarity_basis_points": 7307,
+          "branch_similarity_basis_points": 6666
+        },
         {
           "owner": "main:08099160",
           "symbol": "Func_08099160",
@@ -17296,32 +17611,18 @@
           "branch_similarity_basis_points": 8648
         },
         {
-          "owner": "main:080b1a14",
-          "symbol": "Func_080b1a14",
-          "source": "games/gs1/src/shop/select_party_member.c",
-          "assembly": "out/gs1-en/claimed/obj/080b1a14.s",
-          "size": 444,
-          "instructions": 188,
-          "score_basis_points": 6388,
-          "ngram_similarity_basis_points": 7280,
-          "length_similarity_basis_points": 7094,
-          "call_target_similarity_basis_points": 898,
-          "call_count_similarity_basis_points": 7600,
-          "branch_similarity_basis_points": 8648
-        },
-        {
-          "owner": "main:0809641c",
-          "symbol": "Func_0809641c",
-          "source": "games/gs1/src/battle/effects/particles/update_random_target_particle.c",
-          "assembly": "out/gs1-en/claimed/obj/0809641c.s",
-          "size": 344,
-          "instructions": 153,
-          "score_basis_points": 6113,
-          "ngram_similarity_basis_points": 7398,
-          "length_similarity_basis_points": 5773,
-          "call_target_similarity_basis_points": 0,
-          "call_count_similarity_basis_points": 7368,
-          "branch_similarity_basis_points": 7187
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 6400,
+          "ngram_similarity_basis_points": 7341,
+          "length_similarity_basis_points": 4641,
+          "call_target_similarity_basis_points": 2457,
+          "call_count_similarity_basis_points": 8421,
+          "branch_similarity_basis_points": 7500
         }
       ]
     },
@@ -17331,8 +17632,22 @@
       "source": "games/gs1/asm/080dc6bc.s",
       "size": 684,
       "instructions": 292,
-      "family": null,
+      "family": "template-main-080b211c",
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7507,
+          "ngram_similarity_basis_points": 8696,
+          "length_similarity_basis_points": 7671,
+          "call_target_similarity_basis_points": 1142,
+          "call_count_similarity_basis_points": 8965,
+          "branch_similarity_basis_points": 9375
+        },
         {
           "owner": "main:08099160",
           "symbol": "Func_08099160",
@@ -17360,20 +17675,6 @@
           "call_target_similarity_basis_points": 803,
           "call_count_similarity_basis_points": 8620,
           "branch_similarity_basis_points": 8222
-        },
-        {
-          "owner": "main:0809b208",
-          "symbol": "Func_0809b208",
-          "source": "games/gs1/src/battle/effects/run_effect15.c",
-          "assembly": "out/gs1-en/claimed/obj/0809b208.s",
-          "size": 348,
-          "instructions": 133,
-          "score_basis_points": 6700,
-          "ngram_similarity_basis_points": 7878,
-          "length_similarity_basis_points": 4554,
-          "call_target_similarity_basis_points": 2023,
-          "call_count_similarity_basis_points": 9310,
-          "branch_similarity_basis_points": 7111
         }
       ]
     },
@@ -17401,8 +17702,22 @@
       "source": "games/gs1/asm/080dd77c.s",
       "size": 580,
       "instructions": 244,
-      "family": "template-main-080b1a14",
+      "family": "template-main-080b211c",
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7625,
+          "ngram_similarity_basis_points": 8555,
+          "length_similarity_basis_points": 9180,
+          "call_target_similarity_basis_points": 2648,
+          "call_count_similarity_basis_points": 7692,
+          "branch_similarity_basis_points": 7291
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -17430,20 +17745,6 @@
           "call_target_similarity_basis_points": 1961,
           "call_count_similarity_basis_points": 7407,
           "branch_similarity_basis_points": 9459
-        },
-        {
-          "owner": "main:08092708",
-          "symbol": "Func_08092708",
-          "source": "games/gs1/src/battle/effects/objects/run_rising_sequence.c",
-          "assembly": "out/gs1-en/claimed/obj/08092708.s",
-          "size": 260,
-          "instructions": 110,
-          "score_basis_points": 6860,
-          "ngram_similarity_basis_points": 8160,
-          "length_similarity_basis_points": 4508,
-          "call_target_similarity_basis_points": 2160,
-          "call_count_similarity_basis_points": 8500,
-          "branch_similarity_basis_points": 7142
         }
       ]
     },
@@ -17463,7 +17764,22 @@
       "size": 916,
       "instructions": 382,
       "family": null,
-      "alternatives": []
+      "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7057,
+          "ngram_similarity_basis_points": 8751,
+          "length_similarity_basis_points": 5863,
+          "call_target_similarity_basis_points": 274,
+          "call_count_similarity_basis_points": 6842,
+          "branch_similarity_basis_points": 8000
+        }
+      ]
     },
     {
       "owner": "main:080dfe2c",
@@ -17473,6 +17789,20 @@
       "instructions": 413,
       "family": null,
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7271,
+          "ngram_similarity_basis_points": 8562,
+          "length_similarity_basis_points": 5423,
+          "call_target_similarity_basis_points": 2194,
+          "call_count_similarity_basis_points": 8125,
+          "branch_similarity_basis_points": 8571
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -17512,6 +17842,20 @@
           "branch_similarity_basis_points": 7254
         },
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7511,
+          "ngram_similarity_basis_points": 8756,
+          "length_similarity_basis_points": 6436,
+          "call_target_similarity_basis_points": 2000,
+          "call_count_similarity_basis_points": 8125,
+          "branch_similarity_basis_points": 9411
+        },
+        {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
           "source": "games/gs1/src/shop/select_party_member.c",
@@ -17535,6 +17879,20 @@
       "instructions": 362,
       "family": null,
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7474,
+          "ngram_similarity_basis_points": 8701,
+          "length_similarity_basis_points": 6187,
+          "call_target_similarity_basis_points": 2158,
+          "call_count_similarity_basis_points": 8125,
+          "branch_similarity_basis_points": 9411
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -17560,6 +17918,20 @@
       "family": null,
       "alternatives": [
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7219,
+          "ngram_similarity_basis_points": 8750,
+          "length_similarity_basis_points": 5517,
+          "call_target_similarity_basis_points": 1653,
+          "call_count_similarity_basis_points": 7027,
+          "branch_similarity_basis_points": 7619
+        },
+        {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
           "source": "games/gs1/src/shop/select_party_member.c",
@@ -17583,6 +17955,20 @@
       "instructions": 398,
       "family": null,
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7028,
+          "ngram_similarity_basis_points": 8668,
+          "length_similarity_basis_points": 5628,
+          "call_target_similarity_basis_points": 263,
+          "call_count_similarity_basis_points": 7428,
+          "branch_similarity_basis_points": 8421
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -17616,6 +18002,20 @@
       "instructions": 408,
       "family": null,
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7305,
+          "ngram_similarity_basis_points": 8235,
+          "length_similarity_basis_points": 5490,
+          "call_target_similarity_basis_points": 3192,
+          "call_count_similarity_basis_points": 9615,
+          "branch_similarity_basis_points": 8888
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -17729,6 +18129,20 @@
       "family": null,
       "alternatives": [
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7007,
+          "ngram_similarity_basis_points": 8398,
+          "length_similarity_basis_points": 5803,
+          "call_target_similarity_basis_points": 1204,
+          "call_count_similarity_basis_points": 7027,
+          "branch_similarity_basis_points": 8727
+        },
+        {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
           "source": "games/gs1/src/shop/select_party_member.c",
@@ -17804,6 +18218,20 @@
       "instructions": 411,
       "family": null,
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7171,
+          "ngram_similarity_basis_points": 8577,
+          "length_similarity_basis_points": 5450,
+          "call_target_similarity_basis_points": 1845,
+          "call_count_similarity_basis_points": 7222,
+          "branch_similarity_basis_points": 8275
+        },
         {
           "owner": "main:080b1a14",
           "symbol": "Func_080b1a14",
@@ -17940,6 +18368,20 @@
           "branch_similarity_basis_points": 8222
         },
         {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7320,
+          "ngram_similarity_basis_points": 8056,
+          "length_similarity_basis_points": 8839,
+          "call_target_similarity_basis_points": 1669,
+          "call_count_similarity_basis_points": 9615,
+          "branch_similarity_basis_points": 9375
+        },
+        {
           "owner": "main:0809b208",
           "symbol": "Func_0809b208",
           "source": "games/gs1/src/battle/effects/run_effect15.c",
@@ -17952,20 +18394,6 @@
           "call_target_similarity_basis_points": 2661,
           "call_count_similarity_basis_points": 9259,
           "branch_similarity_basis_points": 7111
-        },
-        {
-          "owner": "main:08099160",
-          "symbol": "Func_08099160",
-          "source": "games/gs1/src/battle/effects/orbiting_particles/run.c",
-          "assembly": "out/gs1-en/claimed/obj/08099160.s",
-          "size": 400,
-          "instructions": 161,
-          "score_basis_points": 6915,
-          "ngram_similarity_basis_points": 7542,
-          "length_similarity_basis_points": 8131,
-          "call_target_similarity_basis_points": 2176,
-          "call_count_similarity_basis_points": 9259,
-          "branch_similarity_basis_points": 8222
         }
       ]
     },
@@ -17977,6 +18405,20 @@
       "instructions": 315,
       "family": null,
       "alternatives": [
+        {
+          "owner": "main:080b211c",
+          "symbol": "Func_080b211c",
+          "source": "games/gs1/src/shop/select_repair_item.c",
+          "assembly": "out/gs1-en/claimed/obj/080b211c.s",
+          "size": 524,
+          "instructions": 224,
+          "score_basis_points": 7376,
+          "ngram_similarity_basis_points": 8821,
+          "length_similarity_basis_points": 7111,
+          "call_target_similarity_basis_points": 487,
+          "call_count_similarity_basis_points": 8125,
+          "branch_similarity_basis_points": 9056
+        },
         {
           "owner": "main:08099160",
           "symbol": "Func_08099160",
@@ -18030,6 +18472,20 @@
           "branch_similarity_basis_points": 9047
         },
         {
+          "owner": "main:080a4800",
+          "symbol": "Func_080a4800",
+          "source": "games/gs1/src/menu/select_quantity.c",
+          "assembly": "out/gs1-en/claimed/obj/080a4800.s",
+          "size": 292,
+          "instructions": 123,
+          "score_basis_points": 7487,
+          "ngram_similarity_basis_points": 7746,
+          "length_similarity_basis_points": 9674,
+          "call_target_similarity_basis_points": 4348,
+          "call_count_similarity_basis_points": 8750,
+          "branch_similarity_basis_points": 7916
+        },
+        {
           "owner": "main:080984c0",
           "symbol": "Func_080984c0",
           "source": "games/gs1/src/battle/effects/scene_transition/reset.c",
@@ -18042,20 +18498,6 @@
           "call_target_similarity_basis_points": 2949,
           "call_count_similarity_basis_points": 9285,
           "branch_similarity_basis_points": 9473
-        },
-        {
-          "owner": "main:08092708",
-          "symbol": "Func_08092708",
-          "source": "games/gs1/src/battle/effects/objects/run_rising_sequence.c",
-          "assembly": "out/gs1-en/claimed/obj/08092708.s",
-          "size": 260,
-          "instructions": 110,
-          "score_basis_points": 7121,
-          "ngram_similarity_basis_points": 7202,
-          "length_similarity_basis_points": 9243,
-          "call_target_similarity_basis_points": 4826,
-          "call_count_similarity_basis_points": 8235,
-          "branch_similarity_basis_points": 7600
         }
       ]
     },

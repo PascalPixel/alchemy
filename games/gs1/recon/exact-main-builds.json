@@ -3,32 +3,32 @@
   "game": "gs1",
   "source_edition": "en",
   "source_state": "byte-exact C compiled or relinked per edition",
-  "owners_total": 1424,
-  "owner_symbol_bytes": 112042,
-  "located_owners": 1381,
-  "unresolved_owners": 43,
-  "built_owners": 1381,
-  "all_exact_owners": 1376,
-  "all_exact_bytes": 107546,
+  "owners_total": 1427,
+  "owner_symbol_bytes": 113062,
+  "located_owners": 1383,
+  "unresolved_owners": 44,
+  "built_owners": 1383,
+  "all_exact_owners": 1377,
+  "all_exact_bytes": 107750,
   "all_exact": false,
   "editions": [
     {
       "edition": "ja",
-      "checked_owners": 1381,
-      "checked_bytes": 108522,
-      "byte_exact_owners": 1379,
-      "byte_exact_bytes": 107934,
-      "nonexact_owners": 2,
-      "nonexact_bytes": 588,
-      "differing_bytes": 8,
+      "checked_owners": 1383,
+      "checked_bytes": 109250,
+      "byte_exact_owners": 1380,
+      "byte_exact_bytes": 108138,
+      "nonexact_owners": 3,
+      "nonexact_bytes": 1112,
+      "differing_bytes": 10,
       "unbuildable_owners": 0
     },
     {
       "edition": "en",
-      "checked_owners": 1381,
-      "checked_bytes": 108518,
-      "byte_exact_owners": 1381,
-      "byte_exact_bytes": 108518,
+      "checked_owners": 1383,
+      "checked_bytes": 109246,
+      "byte_exact_owners": 1383,
+      "byte_exact_bytes": 109246,
       "nonexact_owners": 0,
       "nonexact_bytes": 0,
       "differing_bytes": 0,
@@ -36,21 +36,21 @@
     },
     {
       "edition": "de",
-      "checked_owners": 1381,
-      "checked_bytes": 108588,
-      "byte_exact_owners": 1378,
-      "byte_exact_bytes": 107812,
-      "nonexact_owners": 3,
-      "nonexact_bytes": 776,
-      "differing_bytes": 8,
+      "checked_owners": 1383,
+      "checked_bytes": 109316,
+      "byte_exact_owners": 1379,
+      "byte_exact_bytes": 108016,
+      "nonexact_owners": 4,
+      "nonexact_bytes": 1300,
+      "differing_bytes": 10,
       "unbuildable_owners": 0
     },
     {
       "edition": "es",
-      "checked_owners": 1381,
-      "checked_bytes": 108588,
-      "byte_exact_owners": 1378,
-      "byte_exact_bytes": 107952,
+      "checked_owners": 1383,
+      "checked_bytes": 109316,
+      "byte_exact_owners": 1380,
+      "byte_exact_bytes": 108680,
       "nonexact_owners": 3,
       "nonexact_bytes": 636,
       "differing_bytes": 6,
@@ -58,10 +58,10 @@
     },
     {
       "edition": "fr",
-      "checked_owners": 1381,
-      "checked_bytes": 108588,
-      "byte_exact_owners": 1378,
-      "byte_exact_bytes": 107952,
+      "checked_owners": 1383,
+      "checked_bytes": 109316,
+      "byte_exact_owners": 1380,
+      "byte_exact_bytes": 108680,
       "nonexact_owners": 3,
       "nonexact_bytes": 636,
       "differing_bytes": 6,
@@ -69,10 +69,10 @@
     },
     {
       "edition": "it",
-      "checked_owners": 1381,
-      "checked_bytes": 108588,
-      "byte_exact_owners": 1378,
-      "byte_exact_bytes": 107852,
+      "checked_owners": 1383,
+      "checked_bytes": 109316,
+      "byte_exact_owners": 1380,
+      "byte_exact_bytes": 108580,
       "nonexact_owners": 3,
       "nonexact_bytes": 736,
       "differing_bytes": 5,
@@ -6569,6 +6569,17 @@
       }
     },
     {
+      "en_owner": "main:0808f1c0",
+      "size": 204,
+      "start_overrides": {
+        "de": "0x080927c8",
+        "es": "0x080941c8",
+        "fr": "0x080941c8",
+        "it": "0x0808f1c8",
+        "ja": "0x080861c0"
+      }
+    },
+    {
       "en_owner": "main:0808f304",
       "size": 40,
       "start_overrides": {
@@ -10554,6 +10565,20 @@
         "es": "0x080b6110",
         "fr": "0x080b6110",
         "ja": "0x080a9134"
+      }
+    },
+    {
+      "en_owner": "main:080b211c",
+      "size": 524,
+      "start_overrides": {
+        "de": "0x080b471c",
+        "es": "0x080b611c",
+        "fr": "0x080b611c",
+        "ja": "0x080a9140"
+      },
+      "differing_bytes": {
+        "de": 2,
+        "ja": 2
       }
     },
     {

@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "namespace": "gs1-en-main",
+  "address": "0x080a5cc0",
+  "name": null,
+  "status": "measured-draft",
+  "owner_bytes": 798,
+  "score": {
+    "measured": "2026-08-27",
+    "candidate_bytes": 798,
+    "reference_bytes": 798,
+    "differing_halfwords": 232,
+    "wrong_instructions": 122,
+    "class": "wrong",
+    "note": "Instruction count now matches the reference exactly (316 candidate insns vs 316 reference insns; a linear .insns diff is 116 of ~316 lines, almost entirely register-name substitutions). The residual is dominated by one persistent register-bank choice: the reference keeps the function's `result` accumulator in fp (r11) for its whole life, this candidate keeps the same value live the same way but in r9, and that single swap cascades into every instruction that touches it plus a few dependent sl/r9 reuses in state 4. A handful of instruction-order swaps remain independently (argument-load order into two identical Func_080a112c(window, owner, 0, 0) calls; one constant materialization that folds via a delta add in the candidate vs a fresh reload in the reference for the 0x268 field offset)."
+  },
+  "family": {
+    "template_considered": "shop/select_use_item.c (family-matcher score 7287/10000, LOW confidence, below the 7500 adoption-lead threshold)",
+    "verdict": "false-positive template, confirmed by reading it: shares only generic callees (Audio_PlayCue, WaitFrames) and the register-shuffle prologue shape. No shared field offsets, no shared real callees, no shared constants with this owner. The actual identity was recovered entirely from this owner's own retained assembly plus already-adopted callees it shares real evidence with (games/gs1/src/item/use.c, games/gs1/src/inventory_menu/{use_selected_item.c,draw_message.c,position_category_items.c}, games/gs1/src/ability/play_use_animation.c, and games/gs1/include/{inventory_menu.h,psynergy_menu.h,battle_runtime.h,battle_types.h,battle_calc.h})."
+  },
+  "domain": "A do-while-shaped, five-state confirm/execute loop for the currently selected Inventory item or Psynergy ability against the polymorphic Data_03001f2c menu-runtime cell. State 0 clears the selection and primes the info window; state 1 waits a frame, checks the entry count, and (via a byte field at cell offset 0x268 that this draft calls `mode`) either assigns a shortcut and restarts or advances; state 2 classifies the selection through PsynergyMenu_ClassifySelectedPsynergy and either asks for confirmation (state 3), forces a self-target and executes (state 4), or finishes and writes the acting owner id plus the selection (masked 0x3fff) back through the caller's two out-parameters; state 3 re-confirms; state 4 actually calls the low-level ability-apply routine (Func_080a9f10, the same one games/gs1/src/item/use.c's Item_Use calls), pays the ability's PP cost from BattleAction.pp_cost via BattleUnit_Drain, recalculates the unit, plays the use animation or an error cue, and reports success/failure. The loop itself exits on a GameFlag_Test(0x150) check that is re-tested once more after the loop to force a -1 result.",
+  "expressed": [
+    "the exact 5-state switch shape and its physical case layout (source order 0, 1, 3, 2, 4 -- confirmed by matching the reference's case-3-before-case-2 byte layout, not just its behavior)",
+    "the while-loop rotation (goto-condition-first) matching the reference's initial jump to the bottom-of-loop test block rather than straight into the switch",
+    "every real call target, argument, and struct-field offset touched (item_owner/target_owner @0x21a/0x21b, info_window @0x2c, the selected id @0x178 masked 0x3fff, entry_count @0x218, completion_flag @0x222, message_offset @0x25a plus (s32)&Value_00000bef, and the two not-yet-named fields at 0x24 and 0x268)",
+    "the PP-cost payment via BattleAction.pp_cost, matching battle_types.h's named field exactly",
+    "the self-target sentinel (9) correction and its effect on the final state transition",
+    "instruction count parity with the reference (316 = 316)"
+  ],
+  "remaining": [
+    {
+      "op": "register-bank allocation",
+      "count": 1,
+      "where": "the whole-function `result` accumulator: reference allocates fp (r11), this candidate allocates r9. Every one of the ~15 instructions that read or write it, plus its downstream sl/r9 reuse in state 4, differs in encoding even though the operation sequence is identical."
+    },
+    {
+      "op": "instruction ordering",
+      "count": 2,
+      "where": "argument-load order (constant-arg vs field-load) into the two identical Func_080a112c(work->field_024, owner, 0, 0) call sites"
+    },
+    {
+      "op": "constant materialization",
+      "count": 1,
+      "where": "the second read of the 0x268 mode field inside state 1: reference reloads it fresh (movs+lsls), this candidate folds it as a delta add off the still-live 0x218 entry_count offset"
+    }
+  ],
+  "rejected_experiments": [
+    {
+      "experiment": "do-while loop (condition re-tested at the bottom only) instead of a rotated while loop",
+      "result": "wrong physical layout entirely -- the reference's initial branch lands on the bottom-of-loop condition block before ever reaching the switch, which only a `while (cond) { switch }` rotation reproduces. Fixed; not reverted."
+    },
+    {
+      "experiment": "switch cases written in numeric order 0,1,2,3,4",
+      "result": "wrong physical case layout -- case 3's body must precede case 2's in source for the compiler to lay out 0x13a before 0x162. Fixed; not reverted."
+    },
+    {
+      "experiment": "case 3 written as `if (x != -1) { state = 4; break; } else { ...; state = 1; }` vs the pre-set idiom `state = 4; if (x == -1) { ...; state = 1; }`",
+      "result": "byte-identical candidate output either way -- the compiler normalizes both phrasings to the same pre-set-then-override shape. Kept the pre-set form for consistency with the rest of the function; not a residual lever."
+    },
+    {
+      "experiment": "local declaration order (result first vs last among the function's locals; result initialized before vs after state/done)",
+      "result": "moving the declaration alone made no difference; moving the initializing *statement* ahead of state/done regressed to 317 candidate instructions (one extra) and a larger diff. Reverted to state=0; done=0; result=0 statement order."
+    },
+    {
+      "experiment": "case-4 locals (raw, self_flag, action) as a nested block-scope vs promoted to function scope",
+      "result": "no change to the candidate output at all (same 316 insns, same 116-line diff, same fp/r9 residual). Kept the flatter function-scope form since it made no difference."
+    }
+  ],
+  "next": "The residual is a single register-bank choice (fp vs r9) for one long-lived accumulator, not a structural or semantic gap. Closing it likely needs either a genuine source-shape difference not yet tried (a variable ordering or an additional/different local elsewhere in the function that shifts overall register pressure) or the bounded permuter's search over the two evidenced instruction-order ambiguities noted above; do not force the register choice by hand.",
+  "notes": [
+    "Recovered only from the retained owner assembly (games/gs1/asm/080a5cc0.s), the approved local ROM, already-adopted in-repository callers and headers, and the approved compiler.",
+    "The family-matcher's shop/select_use_item.c lead was read and rejected as an unrelated shape-only match per the task's warning; no code, names, or structure were carried over from it.",
+    "No external game source, copied instruction bytes, inline assembly, fixed-register variable, or compiler barrier was used.",
+    "Not registered in games/gs1/source-paths.json: the field at cell offset 0x268 (`mode`) and the exact role of this state machine relative to InventoryMenu_UseSelectedItem are still hypotheses, and the owner is not byte-exact, so no descriptive name or .global alias was added."
+  ]
+}

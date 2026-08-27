@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global UiWindow_SetTilemapEntry
 	.global Func_08019000
 	.thumb_func
+UiWindow_SetTilemapEntry:
 Func_08019000:
 	push	{r5, r6, r7, lr}
 	adds	r4, r3, #0

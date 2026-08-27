@@ -178,6 +178,7 @@
     "main:080a5534": "resource/load_paired_blocks.c", "main:080ae88c": "resource/load_paired_blocks_if_available.c",
     "main:080ae958": "ui/icon/create_with_loaded_resource.c", "main:080ae908": "ui/icon/load_resource_into_slot.c",
     "main:0801fda8": "ui/window/fill_tilemap_rect.c", "main:08020a60": "ui/window/set_tile_attribute_rect.c",
+    "main:08019000": {"name":"UiWindow_SetTilemapEntry"},
     "main:0801f5f0": "ui/window/set_tile_attribute_bit_rect.c", "main:080164ac": "ui/render/output_list/clear.c",
     "main:08016584": "ui/render/output_list/append.c", "main:08016594": "ui/render/output_list/release.c",
     "main:0801b398": "menu/selection/loop.c", "main:0801b424": "menu/selection/wait_for_input.c",

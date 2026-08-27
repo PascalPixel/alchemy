@@ -637,16 +637,16 @@ This section is generated. It is the primary contributor target list:
 non-overlapping audited source-owner scopes (or contiguous unresolved
 executable runs), sorted largest to smallest. Regenerate with `make coverage` -- do not edit by hand.
 
-- **Unfinished scopes:** 1,603
+- **Unfinished scopes:** 1,602
 - **Address spaces scanned:** 97 (85 still contain targets)
-- **Target bytes:** 643,226 tracked-C or unresolved-assembly bytes
-- **Resolved-only bytes:** 540,964 Exact C or audited permanent assembly bytes
+- **Target bytes:** 643,050 tracked-C or unresolved-assembly bytes
+- **Resolved-only bytes:** 541,290 Exact C or audited permanent assembly bytes
 - **Executable bytes accounted for:** 1,348,458
 
 ### Main target list
 
 This table contains every scope of at least 1,000 bytes (195 rows). The complete
-1,603-row index, including the smallest audited owners, is
+1,602-row index, including the smallest audited owners, is
 [`games/gs1/metrics/gs1-en-core-targets.json`](games/gs1/metrics/gs1-en-core-targets.json).
 
 | Rank | Scope | Target | Namespace / owner |

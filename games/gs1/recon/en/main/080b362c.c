@@ -10,18 +10,27 @@ s32 UiWork_Create(s32, s32, s32, s32);
 s32 UiWork_IsCompleteFar(void);
 void UiWork_FinalizePending(void);
 
+extern u8 Value_00000075;
+
 s32 Func_080b362c(s32 actor)
 {
     struct ShopRuntime *shop = SHOP_RUNTIME;
-    u8 *object;
-    s32 win1;
+    /* win2 declared ahead of win1 (and both ahead of object) to match the
+     * reference's sp+8/sp+12/sp+16 spill-slot order for these three
+     * call-result locals; declaring them in call order instead misassigns
+     * object and win2 to each other's slots under this compiler. */
     s32 win2;
+    s32 win1;
+    u8 *object;
     s32 selection = 0;
     s32 redraw = 1;
     s32 count;
     s32 result = 0;
     s32 status;
     s32 flags;
+    void *window;
+    s32 x;
+    s32 y;
 
     object = Runtime_GetObject(actor);
     win1 = UiWindow_CreateFar(14, 8, 16, 4, 2);
@@ -37,13 +46,13 @@ s32 Func_080b362c(s32 actor)
                 selection = count - 1;
 
             flags = *(u16 *)(object + 216 + selection * 2) & 0x1ff;
-            Shop_PlaceCursor(
-                (void *)shop->item_window,
-                Modulo(selection, 5) << 4,
-                (Math_Div(selection, 5) << 4) + 8);
+            window = (void *)shop->item_window;
+            x = Modulo(selection, 5) << 4;
+            y = (Math_Div(selection, 5) << 4) + 8;
+            Shop_PlaceCursor(window, x, y);
             shop->mode = 3;
             Func_080b386c(win1, actor, selection);
-            Shop_DrawMessage(win2, flags + 117);
+            Shop_DrawMessage(win2, flags + (s32)&Value_00000075);
         }
 
         WaitFrames(1);

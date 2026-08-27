@@ -17,7 +17,9 @@ struct BattleEffect03Object {
     void *visual;
     u8 reserved_54;
     u8 mode;
-    u8 reserved_56[14];
+    u8 reserved_56[4];
+    u8 unknown_5a;
+    u8 reserved_5b[9];
     s16 angle;
     s16 phase;
     u8 reserved_68[4];
@@ -56,6 +58,7 @@ void Func_08009158(struct BattleEffect03Object *);
 void Func_080090d0(struct BattleEffect03Object *);
 void Func_08003f3c(u8);
 void Func_0809748c(void);
+void Func_080072f0(void);
 
 void RunBattleEffect03(void)
 {
@@ -63,11 +66,12 @@ void RunBattleEffect03(void)
     struct BattleEffect03Object *target = state->target;
     struct BattleEffect03Object *object;
     struct BattleEffect03Object *particle;
-    struct BattleEffect03Link *last = 0;
+    struct BattleEffect03Link *last;
     u8 link_marker;
     s32 index;
 
     Func_08097384();
+    last = 0;
     index = 0;
     do {
         object = Func_08096c80(
@@ -88,8 +92,8 @@ void RunBattleEffect03(void)
     link_marker = last->marker;
     Func_080f9010(0x82);
     Func_080030f8(110);
-    particle = Func_08096c80(0xe9, 0, 0, 0);
-    object = particle;
+    object = Func_08096c80(0xe9, 0, 0, 0);
+    particle = object;
     if (object != 0) {
         object->scale_y = 0xb333;
         object->scale_x = 0xb333;
@@ -119,13 +123,16 @@ void RunBattleEffect03(void)
     if (particle != 0) {
         object->callback = &Data_080993b1;
         object->angle = 0;
-        Func_080030f8(state->long_delay ? 128 : 192);
+        if (state->long_delay != 0)
+            Func_080030f8(128);
+        else
+            Func_080030f8(192);
     }
     if (object != 0) {
         object->angle = -1;
         object->velocity_x = 0x50000;
         object->velocity_y = 0x6666;
-        object->reserved_54 = 0;
+        object->unknown_5a = 0;
         Func_08096bec(object, 0xc00000, 0xe800);
         Func_08009158(object);
         Func_080090d0(object);
@@ -133,6 +140,6 @@ void RunBattleEffect03(void)
     if (link_marker != 0x60)
         Func_08003f3c(link_marker);
     if (state->finish_callback != 0)
-        state->finish_callback();
+        Func_080072f0();
     Func_0809748c();
 }

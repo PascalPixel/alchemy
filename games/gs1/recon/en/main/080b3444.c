@@ -46,12 +46,12 @@ s32 Shop_SelectPartyMemberItem(s32 *selected_unit, s32 *selected_item)
         list_window,
         0,
         result);
-    cursor_anchor->kind = 4;
     cursor_anchor->unknown_00[4] = result;
+    cursor_anchor->kind = 4;
     Func_080b0a20(&shop->cursor, -32, 112);
     shop->cursor.anchor = cursor_anchor;
     shop->mode = 12;
-    Func_080a1028(list_window, 2, result, 8, result);
+    Func_080a1028(list_window, 2, 0, 8, result);
 
     for (;;) {
         if (redraw != 0) {

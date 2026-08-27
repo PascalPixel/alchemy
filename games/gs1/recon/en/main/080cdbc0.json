@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "namespace": "gs1-en-main",
+  "address": "0x080cdbc0",
+  "name": "Func_080cdbc0",
+  "status": "measured-draft",
+  "owner_bytes": 340,
+  "family_matcher": {
+    "best_alternative": "main:0801b4ec (menu/selection/move_forward.c)",
+    "score_basis_points": 7418,
+    "confidence": "below 7500 threshold",
+    "verdict": "false positive -- shape-only register-shuffle-prologue match, no real kinship",
+    "evidence": "move_forward.c is 8-bit-menu-cursor logic with no shared callees, no shared field offsets, and no shared constants with this owner. Real semantic siblings identified instead by hand-tracing the retained assembly's own call targets, field offsets, and pool constants against already-adopted exact sources: games/gs1/src/runtime/scheduler/callback_scheduler.c (Func_08004278/Scheduler_RemoveCallback, and the `*ime = (u16)(u32)ime` IME-disable idiom), games/gs1/src/unidentified/main/battle/battle_owner_61.c (Func_080cd4b4, the removed scheduler callback, touching the same battle-work offsets 0x77b4/0x77b8 this owner's 0x77a0/0x77a4 sit beside), games/gs1/src/unidentified/main/battle/battle_owner_12.c (the Func_080072f0(dest,size,control,target) 4-arg calling idiom for the IWRAM transfer routine at 0x03000164), games/gs1/src/unidentified/main/system/system_owner_8.c (the immediate successor owner at 0x080cdd14, sharing the battle+0x648 field and the Func_080b5038(2,value,X) call shape), games/gs1/src/camera/scene/configure.c (Data_03001ce0's struct SceneCameraObject, fields field0c@12/anchor@16), and games/gs1/src/unidentified/main/runtime/runtime_owner_266.c + runtime_owner_229.c (Data_03001ad0's struct Position, x@4/y@6, and the adjacent battle-work offset family 0x7790-0x77b8). All six are adopted exact (asm deleted, source-paths.json-registered)."
+  },
+  "score": {
+    "measured": "2026-08-27",
+    "candidate_bytes": 332,
+    "reference_bytes": 340,
+    "differing_halfwords": 109,
+    "wrong_instructions": 86,
+    "matched_prefix_instructions": 7,
+    "class": "unemittable",
+    "note": "The reconstructed source is semantically well-evidenced (every callee, field offset, and pool constant traced against already-adopted exact siblings) but does not yet reach byte-exact linked output. Two register-allocation/instruction-selection divergences from GCC 296 account for most of the remaining differing halfwords: (1) a static-inline bounded-queue-insert helper (the IME-disable-then-count<=31-then-stmia-triplet idiom, proven exact in callback_scheduler.c, paralleled by the still-unadopted draft QueueObjectUpdate in games/gs1/recon/en/main/080c1798.c) compiles in the reference with `bgt` (signed) and no sign-extension of the saved IME value, while the same C shape here compiles with `bhi` (unsigned) and an added `lsls #16; asrs #16` sign-extend of the saved value, and with three individual `str` instead of the reference's `stmia r3!, {rN}` post-increment triplet -- same net effect, different chosen encoding, at both of the two call sites; (2) the reference computes `battle + 0x648` twice independently (once into a scratch register for the Func_080b5038 argument, again later into r7 for the loop), while this GCC 296 build's CSE always folds the second computation into the first and updates the persistent pointer in place -- functionally identical, but not the encoding the reference uses. Everything upstream of these two hunks (the Data_03001eec/Data_03001e74-analog address-of-symbol-minus-120 pool trick, the Data_03001ad0.x/y writes, the Data_03001ce0.field0c/anchor writes, the BG2CNT setup and Func_080072f0 transfer call, and the Func_08004278 callback removal) now matches the reference instruction-for-instruction and register-for-register."
+  },
+  "rejected_experiments": [
+    {
+      "experiment": "Data_03001eec/Data_03001e74 as two independent extern u8* globals (matching how other adopted siblings declare them)",
+      "result": "reference's `subs r3, #120` (deriving one global's address from the other's via a compile-time-constant subtract) cannot be produced from two genuinely separate extern symbols in GCC 296 -- it requires expressing the second read as pointer arithmetic on the first symbol's own address (`*(u8 **)((u8 *)&Data_03001eec - 120)`), which reproduces the reference exactly"
+    },
+    {
+      "experiment": "Data_03001eec modeled as an array (`Data_03001e74[30]` / `Data_03001e74[0]`, and the reverse `Data_03001eec[0]` / `Data_03001eec[-30]`)",
+      "result": "positive-offset array indexing picks an immediate-offset load from the base (`ldr r5,[r3,#120]`), not the reference's pool-load-the-higher-address-then-subs shape; negative indexing forces a register-offset load (`ldr r6,[r2,r3]`) via a computed negs, also not matching. Only address-of-symbol pointer arithmetic reproduces the reference"
+    },
+    {
+      "experiment": "QueueDisplayRequest parameter typed `void *control` instead of `u32 control`, mirroring 080c1798.c's QueueObjectUpdate(void *destination) exactly",
+      "result": "byte-identical candidate output either way -- the sign-extension/bhi-vs-bgt divergence is unrelated to the parameter's pointer-vs-integer type"
+    },
+    {
+      "experiment": "QueueDisplayRequest as `static inline` vs hand-duplicated inline block (no function at all) vs count-as-plain-index instead of a `struct *entry` pointer",
+      "result": "inline-vs-duplicated: byte-identical (GCC's inliner is a no-op difference here). Index-instead-of-pointer: strictly worse (144 differing halfwords, matched_prefix dropped 7->3) -- the `struct DisplayQueueEntry *entry = &queue.entries[queue.count++]` pointer form, matching QueueObjectUpdate's real shape, is closer"
+    },
+    {
+      "experiment": "`Data_02002090.count <= 31` vs `Data_02002090.count < 32`",
+      "result": "byte-identical -- not the source of the bgt/bhi divergence"
+    },
+    {
+      "experiment": "hoisting `&Data_03001ad0` into a named `struct Position *pos` local declared before `actor`/`battle`",
+      "result": "fixed the 'battle' register: r6->r7, matching reference, and improved wrong_instructions 94->86 (differing_halfwords unchanged at 109) -- kept in the final draft"
+    },
+    {
+      "experiment": "hoisting `battle + 0x648` into an explicit `u16 *value_ptr` local computed once, early, and reused for both the Func_080b5038 argument and the loop",
+      "result": "identical output to writing `battle += 0x648;` as a separate later statement -- GCC 296's CSE folds either form into one in-place update of r7, not the reference's scratch-register-then-later-permanent-update shape"
+    }
+  ],
+  "notes": [
+    "Recovered by hand-tracing games/gs1/asm/080cdbc0.s instruction-by-instruction (all PC-relative literal-pool targets resolved programmatically, not by hand, per CONTRIBUTING's caution against hand-counting offsets across alignment), then cross-checking every resolved call target, field offset, and pool constant against already-adopted exact sources under games/gs1/src/.",
+    "This owner sits in the same battle-scene-transition subsystem as battle_owner_61/battle_owner_12/battle_owner_54/system_owner_8 (the immediate successor at 0x080cdd14) and camera/scene/configure.c -- not the family-matcher's move_forward.c guess.",
+    "Semantically this looks like a battle-scene-transition SETUP routine (BG2CNT configuration, a VRAM tile transfer via the shared IWRAM routine at 0x03000164, position/camera-anchor field writes, removing the Func_080cd4b4 per-frame callback, two guarded display-request-queue inserts differing only in a DISPCNT-shaped control word (0x7341 then 0x7541, differing by the BG1-enable bit), and an 8-iteration countdown call to Func_080b5048) -- a plausible counterpart to the already-drafted ResetSceneTransitionEffect (games/gs1/src/battle/effects/scene_transition/reset.c, address 0x080984c0, itself only a 7137-scored weak family-matcher alternative here) but not renamed to that effect pending stronger confirmation.",
+    "This candidate claims zero DONE bytes."
+  ]
+}

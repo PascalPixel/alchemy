@@ -925,7 +925,7 @@
     "main:080a24ac": "unidentified/main/graphics/graphics_owner_8.c", "main:080a24b8": "unidentified/main/graphics/graphics_owner_12.c",
     "main:080a24c4": "unidentified/main/graphics/graphics_owner_5.c", "main:080a33d4": "unidentified/main/runtime/runtime_owner_37.c",
     "main:080a8034": "unidentified/main/field/field_owner_102.c", "main:080a8088": "unidentified/main/field/field_owner_107.c", "main:080a8578": {"name":"StatusMenu_ShowOwnerProgressMessage"},
-    "main:080a8cc0": "unidentified/main/runtime/runtime_owner_119.c", "main:080a99b0": "unidentified/main/runtime/runtime_owner_278.c",
+    "main:080a8cc0": "unidentified/main/runtime/runtime_owner_119.c", "main:080a8f40": {"name":"InventoryMenu_DrawAbilityListPage"}, "main:080a99b0": "unidentified/main/runtime/runtime_owner_278.c",
     "main:080a9a58": "unidentified/main/runtime/runtime_owner_186.c", "main:080a9b94": "unidentified/main/field/field_owner_93.c",
     "main:080a9bd8": "unidentified/main/field/field_owner_32.c", "main:080a9cf8": "unidentified/main/field/field_owner_111.c",
     "main:080aa534": "unidentified/main/runtime/runtime_owner_210.c", "main:080aa538": "unidentified/main/field/field_owner_15.c",

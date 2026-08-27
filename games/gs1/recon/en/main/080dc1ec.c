@@ -43,6 +43,7 @@ extern const u16 Data_080ede48[];
 
 s32 Func_080dc1ec(void *object)
 {
+    void **cursor;
     void *work;
     void *draw_destination;
     DrawRectangleFn callback_pair[2];
@@ -53,9 +54,12 @@ s32 Func_080dc1ec(void *object)
     s32 facing;
     s32 record[3];
     s32 result[3];
+    s32 velocity_a;
+    s32 velocity_b;
 
-    work = *(void **)0x03001EEC;
-    draw_destination = *(void **)0x03001EF0;
+    cursor = (void **)0x03001EEC;
+    work = *cursor++;
+    draw_destination = *cursor;
     M2C_FIELD(work, s32 *, 0x7828) = (s32) object;
     Func_080cd594(0);
     Func_080e0524(140, work, 1, 1);
@@ -93,89 +97,85 @@ s32 Func_080dc1ec(void *object)
         Func_080051d8(facing, facing + 12);
         Func_08004cb4(record);
 
-        {
-            s32 velocity_a;
-            s32 velocity_b;
+        velocity_a = outer << 8;
+        star = (u8 *)0x02010000;
+        for (j = 0; j != 64; j++) {
+            s32 quarter;
 
-            velocity_a = outer << 8;
-            velocity_b = -outer << 8;
+            velocity_b = -velocity_a;
 
-            star = (u8 *)0x02010000;
-            for (j = 0; j != 64; j++) {
-                s32 quarter;
-
-                quarter = (j >= 0 ? j : j + 3) >> 2;
-                if (outer > quarter && M2C_FIELD(star, s32 *, 24) == 0) {
-                    Func_080049e8();
-                    switch (j & 3) {
-                    case 0:
-                        Func_08004c1c(velocity_a);
-                        break;
-                    case 1:
-                        Func_08004bd4(velocity_b);
-                        break;
-                    case 2:
-                        Func_08004c6c(velocity_b);
-                        break;
-                    case 3:
-                        Func_08004bd4(velocity_b);
-                        Func_08004c6c(velocity_b);
-                        break;
-                    }
-
-                    Func_080e3944(star, result);
-                    result[0] = result[0] >> 1;
-                    Func_08004a5c();
-                    if (result[2] <= 249) {
-                        result[2] = 250;
-                    }
-                    if (result[2] > 0x27A) {
-                        result[2] = 0x27A;
-                    }
-
-                    {
-                        s32 bucket;
-                        s32 raw;
-                        s32 src_off;
-                        s32 half;
-                        s32 y;
-                        s32 h;
-
-                        bucket = result[2] - 250;
-                        if (bucket < 0) {
-                            bucket += 63;
-                        }
-                        bucket >>= 6;
-                        raw = 9 - bucket;
-                        src_off = (j & 3) * 770 + Data_080ede48[raw - 1];
-                        half = (raw + ((u32) raw >> 31)) >> 1;
-                        y = result[0] - half;
-                        h = result[1] - raw;
-                        Func_080072f4(
-                            (s32) draw_destination,
-                            src_off + (s32) work, y, h, callback_pair[0],
-                            raw, raw << 1);
-                    }
-
-                    Func_080e38b8(star, 60, 0);
+            quarter = (j >= 0 ? j : j + 3) >> 2;
+            if (outer > quarter && M2C_FIELD(star, s32 *, 24) == 0) {
+                Func_080049e8();
+                switch (j & 3) {
+                case 0:
+                    Func_08004c1c(velocity_a);
+                    break;
+                case 1:
+                    Func_08004bd4(velocity_b);
+                    break;
+                case 2:
+                    Func_08004c6c(velocity_b);
+                    break;
+                case 3:
+                    Func_08004bd4(velocity_b);
+                    Func_08004c6c(velocity_b);
+                    break;
                 }
 
-                quarter = (j >= 0 ? j : j + 3) >> 2;
-                quarter += 30;
-                if (outer > quarter) {
-                    M2C_FIELD(star, s32 *, 12) =
-                        M2C_FIELD(star, s32 *, 12)
-                        + (-M2C_FIELD(star, s32 *, 0) >> 8);
-                    M2C_FIELD(star, s32 *, 16) =
-                        M2C_FIELD(star, s32 *, 16)
-                        + (-M2C_FIELD(star, s32 *, 4) >> 8);
-                    M2C_FIELD(star, s32 *, 20) =
-                        M2C_FIELD(star, s32 *, 20)
-                        + (-M2C_FIELD(star, s32 *, 8) >> 8);
+                Func_080e3944(star, result);
+                result[0] = result[0] >> 1;
+                Func_08004a5c();
+                if (result[2] <= 249) {
+                    result[2] = 250;
+                }
+                if (result[2] > 0x27A) {
+                    result[2] = 0x27A;
                 }
 
-                star += 28;
+                {
+                    s32 bucket;
+                    s32 raw;
+                    s32 src_off;
+                    s32 half;
+                    s32 y;
+                    s32 h;
+
+                    bucket = result[2] - 250;
+                    if (bucket < 0) {
+                        bucket += 63;
+                    }
+                    bucket >>= 6;
+                    raw = 9 - bucket;
+                    src_off = (j & 3) * 770 + Data_080ede48[raw - 1];
+                    half = (raw + ((u32) raw >> 31)) >> 1;
+                    y = result[0] - half;
+                    h = result[1] - raw;
+                    Func_080072f4(
+                        (s32) draw_destination,
+                        src_off + (s32) work, y, h, callback_pair[0],
+                        raw, raw << 1);
+                }
+
+                Func_080e38b8(star, 60, 0);
             }
+
+            quarter = (j >= 0 ? j : j + 3) >> 2;
+            quarter += 30;
+            if (outer > quarter) {
+                M2C_FIELD(star, s32 *, 12) =
+                    M2C_FIELD(star, s32 *, 12)
+                    + (-M2C_FIELD(star, s32 *, 0) >> 8);
+                M2C_FIELD(star, s32 *, 16) =
+                    M2C_FIELD(star, s32 *, 16)
+                    + (-M2C_FIELD(star, s32 *, 4) >> 8);
+                M2C_FIELD(star, s32 *, 20) =
+                    M2C_FIELD(star, s32 *, 20)
+                    + (-M2C_FIELD(star, s32 *, 8) >> 8);
+            }
+
+            velocity_a += outer << 3;
+            star += 28;
         }
 
         M2C_FIELD(work, s32 *, 0x7824) = 1;

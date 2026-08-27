@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global runtime_owner_285
 	.global Func_0808b090
 	.thumb_func
+runtime_owner_285:
 Func_0808b090:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

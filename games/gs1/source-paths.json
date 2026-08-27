@@ -2034,6 +2034,7 @@
     "main:08092f84": "battle/presentation/run_action_and_wait.c",
     "main:080a1a40": {"name":"BattleEffect_PositionSprite"},
     "main:0808e4b4": {"name":"BattleEffect_FindMatchingEvent"},
+    "main:0808e23c": {"name":"BattleCommand_ExecuteSelectedItem"},
     "main:0808d394": {"name":"BattleAction_FindDescriptor"},
     "main:0808d48c": {"name":"BattleEffect_FindDescriptor"},
     "main:0808d5dc": {"name":"BattleEffect_RunDescriptorAction"},

@@ -16,9 +16,9 @@ s16 Func_0801faa8(void)
 {
     void *buffer;
     s16 value;
-    s32 found;
-    s16 error;
     s16 result;
+    s32 found;
+    s32 error;
 
     buffer = Func_08004970(0x1000);
     result = 0;

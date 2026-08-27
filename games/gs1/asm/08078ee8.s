@@ -2,8 +2,10 @@
 @ 探索では未到達。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global Owner_InitRecords
 	.global Func_08078ee8
 	.thumb_func
+Owner_InitRecords:
 Func_08078ee8:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

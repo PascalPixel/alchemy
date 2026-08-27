@@ -55,10 +55,11 @@ void Func_0808f1c0(s32 value, s32 flags)
         struct EffectVisual_0808f1c0 *visual = object->visual;
         s32 mask;
 
-        visual->value_26 = 0;
-        visual->value_27 = 0;
+        s32 zero = 0;
+        visual->value_26 = zero;
+        visual->value_27 = zero;
 
-        visual->flags_a &= ~0x20;
+        visual->flags_a &= zero - 33;
 
         mask = visual->flags_b & 0x0f;
         {

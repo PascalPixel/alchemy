@@ -3,8 +3,8 @@
 #define MENU_SUBOBJECT(menu, offset) (*(u8 **)((u8 *)(menu) + (offset)))
 
 extern u8 *Data_03001f2c;
-extern volatile s32 Data_03001c94;
-extern volatile u32 Data_03001b04;
+extern volatile s32 Data_03001b04;
+extern volatile u32 Data_03001c94;
 void Func_080a19a0(void);
 
 s32 Func_08015010(s32, s32, s32, s32, s32);
@@ -43,7 +43,7 @@ s32 Func_080a4800(s32 value)
 
 adjust:
     {
-        volatile s32 *keys = &Data_03001c94;
+        volatile s32 *keys = &Data_03001b04;
 
         if (*keys & 0x40) {
             quantity -= 1;
@@ -67,7 +67,7 @@ check_exit:
     }
 
     {
-        volatile u32 *keys = &Data_03001b04;
+        volatile u32 *keys = &Data_03001c94;
 
         if (*keys & 1)
             goto done;

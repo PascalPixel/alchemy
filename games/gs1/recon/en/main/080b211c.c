@@ -24,11 +24,11 @@ extern u8 Value_00000cc2;
 s32 Func_080b211c(s32 unit_id)
 {
     struct ShopRuntime *shop;
-    struct BattleUnit *unit;
-    s32 list_window;
-    s32 price_window;
-    s32 selection;
     s32 item_count;
+    s32 price_window;
+    s32 list_window;
+    struct BattleUnit *unit;
+    s32 selection;
     s32 redraw;
     s32 result;
     s32 item_id;
@@ -66,25 +66,26 @@ s32 Func_080b211c(s32 unit_id)
                 Shop_DrawMessage(
                     price_window, item_id + (s32)&Value_00000075);
             }
-
             if ((*(volatile u32 *)ADDR_03001C94 & 1) != 0) {
                 Audio_PlayCue(SOUND_MENU_CONFIRM);
                 result = 0;
-                break;
+                goto done;
             }
             if ((*(volatile u32 *)ADDR_03001C94 & 2) != 0) {
                 Audio_PlayCue(SOUND_MENU_CANCEL);
                 result = -1;
-                break;
+                goto done;
             }
             if ((*(volatile u32 *)ADDR_03001B04 & 0x20) != 0) {
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
-                selection = Modulo(selection - 1 + item_count, item_count);
+                selection -= 1;
+                selection = Modulo(selection + item_count, item_count);
                 redraw = 1;
             }
             if ((*(volatile u32 *)ADDR_03001B04 & 0x10) != 0) {
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
-                selection = Modulo(selection + 1 + item_count, item_count);
+                selection += 1;
+                selection = Modulo(selection + item_count, item_count);
                 redraw = 1;
             }
             if ((*(volatile u32 *)ADDR_03001B04 & 0x40) != 0) {
@@ -107,6 +108,7 @@ s32 Func_080b211c(s32 unit_id)
             }
             WaitFrames(1);
         }
+done:
 
         UiWindow_Close(price_window, 2);
         WaitFrames(1);

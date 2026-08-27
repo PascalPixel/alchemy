@@ -22,21 +22,31 @@ s32 Func_080b362c(s32 actor)
     s32 win2;
     s32 win1;
     u8 *object;
-    s32 selection = 0;
-    s32 redraw = 1;
+    s32 selection;
+    s32 redraw;
     s32 count;
-    s32 result = 0;
+    s32 result;
     s32 status;
     s32 flags;
+    s32 off;
     void *window;
     s32 x;
     s32 y;
 
+    /* count/result/redraw assigned as statements here (not declaration
+     * initializers) so the reference's constant-materialization order is
+     * reproduced: a shared movs r1,#1 is committed to count's and redraw's
+     * home registers (sl, r9) right before r1 is needed again for win1's
+     * call args, in this exact count-then-redraw order. */
     object = Runtime_GetObject(actor);
+    count = 1;
+    result = 0;
+    redraw = 1;
     win1 = UiWindow_CreateFar(14, 8, 16, 4, 2);
     win2 = UiWindow_CreateFar(0, 5, 30, 3, 2);
     shop->cursor.anchor->kind = 18;
     shop->mode = 12;
+    selection = 0;
 
     for (;;) {
         if (redraw != 0) {
@@ -45,7 +55,15 @@ s32 Func_080b362c(s32 actor)
             if (selection > count - 1)
                 selection = count - 1;
 
-            flags = *(u16 *)(object + 216 + selection * 2) & 0x1ff;
+            /* Split into a plain-int offset statement followed by a separate
+             * pointer dereference: writing this as one expression (any
+             * algebraic grouping of object+216+selection*2) always makes the
+             * compiler fold object into the offset register before the load
+             * (adds+adds+ldrh[reg,#0]); computing the byte offset in `off`
+             * first keeps object untouched in its own register so the load
+             * folds to a single reg+reg ldrh, matching the reference. */
+            off = selection * 2 + 216;
+            flags = *(u16 *)(object + off) & 0x1ff;
             window = (void *)shop->item_window;
             x = Modulo(selection, 5) << 4;
             y = (Math_Div(selection, 5) << 4) + 8;
@@ -81,14 +99,22 @@ s32 Func_080b362c(s32 actor)
             goto exit_loop;
         }
 
+        /* selection -= 1 / += 1 as its own statement before the Modulo
+         * call (matching sibling main:080b211c's idiom) so the compiler
+         * commits the +-1 directly into selection's home register (r7)
+         * ahead of the add; folding it into one `selection +- 1 + count`
+         * expression instead subtracts/adds 1 from the sum register after
+         * the add, which is a different (non-matching) instruction order. */
         if ((*(volatile u32 *)ADDR_03001B04 & 0x20) != 0) {
             Audio_PlayCue(111);
-            selection = Modulo(selection - 1 + count, count);
+            selection -= 1;
+            selection = Modulo(selection + count, count);
             redraw = 1;
         }
         if ((*(volatile u32 *)ADDR_03001B04 & 0x10) != 0) {
             Audio_PlayCue(111);
-            selection = Modulo(selection + 1 + count, count);
+            selection += 1;
+            selection = Modulo(selection + count, count);
             redraw = 1;
         }
         if ((*(volatile u32 *)ADDR_03001B04 & 0x40) != 0) {

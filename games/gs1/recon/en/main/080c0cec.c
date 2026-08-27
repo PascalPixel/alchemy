@@ -11,6 +11,7 @@ void BattlePresentation_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 mode)
     s32 measured_bounds[3];
     s32 render_bounds[3];
     s32 width;
+    u32 result;
 
     position[0] = x;
     position[1] = depth;
@@ -19,9 +20,10 @@ void BattlePresentation_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 mode)
     source_bounds[1] = 0;
     source_bounds[2] = 0;
 
+    result = ((u32 (*)(u32, u32))0x0300013c)(0x01fe0000, 0xc000);
     Func_08005258(
         0x01fe0000,
-        Func_08007310(0x01fe0000, 0xc000),
+        result,
         0x03fc0000);
     Func_080049ac();
     Func_08004cb4(position);
@@ -44,8 +46,9 @@ void BattlePresentation_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 mode)
         (120 - measured_bounds[0]) << 8,
         (120 - measured_bounds[1]) << 8,
         scale);
+    result = ((u32 (*)(u32, u32))0x0300013c)(width, 0xc000);
     Func_08005258(
         width,
-        Func_08007310(width, 0xc000),
+        result,
         scale * 0x3fc);
 }

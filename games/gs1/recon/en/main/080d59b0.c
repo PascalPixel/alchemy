@@ -167,7 +167,7 @@ s32 Func_080d59b0(void *object)
                             bounced = -(M2C_FIELD(star, s32 *, 16) + 0x2001);
                             M2C_FIELD(star, s32 *, 8) =
                                 M2C_FIELD(star, s32 *, 8) + 4;
-                            bounced = (bounced + ((u32) bounced >> 31)) >> 1;
+                            bounced = (bounced + (s32) ((u32) bounced >> 31)) >> 1;
                             M2C_FIELD(star, s32 *, 4) = 0x5C00000;
                             M2C_FIELD(star, s32 *, 16) = bounced;
                         }

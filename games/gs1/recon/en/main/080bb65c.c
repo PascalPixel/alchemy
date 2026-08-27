@@ -7,7 +7,8 @@ extern volatile u32 Data_03001c94;
 
 void BattlePresentation_WaitForAdvance(void)
 {
-    u8 prompt[12];
+    u8 prompt_buf[12];
+    u8 *prompt = prompt_buf;
     s32 frames;
     s32 sprite;
 
@@ -17,7 +18,7 @@ void BattlePresentation_WaitForAdvance(void)
 
     sprite = Func_080040b4(0x80);
     frames = 0;
-    for (;;) {
+    while (1) {
         u32 phase = (*(u32 *)0x03001e40 >> 2) & 7;
         const void *tiles = (const void *)(0x080c3734 + phase * 128);
         u8 **render = *(u8 ***)0x03001ee4;

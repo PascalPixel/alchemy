@@ -27,7 +27,15 @@
   "bounded_search": {
     "mode": "manual-respell",
     "attempted": 6,
-    "exact": false
+    "exact": false,
+    "permuter": {
+      "output": "out/permute/080b6d30",
+      "choices": 512,
+      "attempted": 512,
+      "compile_failures": 0,
+      "best_differing_halfwords": 1,
+      "exact": false
+    }
   },
   "bounded_checks": [
     "the reused-per-file struct Layout { u8 pad[4]; s16 field[6]; } idiom and its inner slot-search loop are copied verbatim in shape from the already-exact games/gs1/src/battle/summon/class_is_valid.c, and reproduce the reference's search loop, branch layout, and register roles (r6=table, r8=single_slot, r9=actor) exactly",
@@ -39,6 +47,7 @@
     "Owner byte size (256) matches the family/target-list entry; the candidate reaches the reference's exact 256-byte extent, full control flow, every branch target, every constant (0x129, 0x02018000, 476, 483), and every call target.",
     "The residual is a single 2-byte instruction-selection difference (register-copy vs fresh-immediate for a compile-time-known zero) in a spot where the value is already provably resident in a callee-saved register across an intervening call. This looks like a compiler-internals scheduling/reload residual rather than a source-shape gap: five structurally distinct source respellings that all match the reference's full control flow converged on the identical single-instruction diff, but no compiler evidence yet proves the approved compiler literally cannot emit the reference form, so this is not classified as permanent assembly.",
     "Worth a further attempt later with the native permuter's PERM_GENERAL search across nearby statement orderings/temporaries, which is better suited to a pure RTL-scheduling residual than manual respelling.",
+    "Follow-up: ran the native permuter (out/permute/080b6d30, 512 combinations, 0 compile failures) with PERM_GENERAL over both loop conditions, both increments, the slot<=4 guard, the slot==6 exit test, the buffer_addr and packed-result operand orders, and the sprite_value!=476/483 operand order -- every combination reproduces the identical single-instruction (`mov r4, sl` vs `movs r4, #0`) residual with differing_halfwords=1, none reached exact. This further narrows the residual to a pure post-reload constant-materialization choice (GCC 2.96's reload_cse_simplify_set / cselib register-vs-immediate tie-break) that this owner's downstream statement shape does not influence; the fix, if any, is upstream of every axis tried so far.",
     "Recovered only from retained owner assembly, the already-exact sibling functions at games/gs1/src/battle/summon/find_available_slot.c, class_is_valid.c, release_charge.c, the unresolved sibling Func_080b6e30 and its caller Func_080b6f44 (games/gs1/recon/en/main/080b6f44.c), and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variables, inline assembly, or compiler modification was used."
   ]
 }

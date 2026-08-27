@@ -12,10 +12,12 @@ void ResourceMetadata_ClearRecord(void *destination)
 {
     if (destination != 0) {
         u32 clear_value = 0;
+        void *source = &clear_value;
+        u32 control = 0x85000006;
         DmaTransfer *dma = (DmaTransfer *)0x040000d4;
 
-        dma->source = &clear_value;
+        dma->source = source;
         dma->destination = destination;
-        dma->control = 0x85000006;
+        dma->control = control;
     }
 }

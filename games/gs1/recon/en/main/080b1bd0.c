@@ -23,10 +23,10 @@ extern u8 Value_00000caa;
  */
 s32 Func_080b1bd0(s32 unit_id)
 {
-    struct ShopRuntime *shop;
-    struct BattleUnit *unit;
-    s32 list_window;
     s32 price_window;
+    struct ShopRuntime *shop;
+    s32 list_window;
+    struct BattleUnit *unit;
     s32 selection;
     s32 item_count;
     s32 redraw;
@@ -35,7 +35,6 @@ s32 Func_080b1bd0(s32 unit_id)
     s32 quantity;
     void *window;
     s32 x;
-    s32 y;
 
     shop = SHOP_RUNTIME;
     unit = BattleUnit_Get(unit_id);
@@ -58,11 +57,10 @@ poll_input:
         item_id = 0x1ff & unit->inventory[selection];
         window = (void *)shop->item_window;
         x = Modulo(selection, 5) * 16;
-        y = FixedPoint_Ratio(selection, 5) * 16 + 8;
-        Shop_PlaceCursor(window, x, y);
+        Shop_PlaceCursor(window, x, FixedPoint_Ratio(selection, 5) * 16 + 8);
         shop->mode = 3;
         Shop_DrawItemPrice(
-            price_window,
+            list_window,
             item_id,
             Shop_ComputeSalePrice(unit->inventory[selection]),
             1);
@@ -81,12 +79,14 @@ poll_input:
     }
     if ((*(volatile u32 *)ADDR_03001B04 & 0x20) != 0) {
         Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
-        selection = Modulo(selection - 1 + item_count, item_count);
+        selection -= 1;
+        selection = Modulo(selection + item_count, item_count);
         redraw = 1;
     }
     if ((*(volatile u32 *)ADDR_03001B04 & 0x10) != 0) {
         Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
-        selection = Modulo(selection + 1 + item_count, item_count);
+        selection += 1;
+        selection = Modulo(selection + item_count, item_count);
         redraw = 1;
     }
     if ((*(volatile u32 *)ADDR_03001B04 & 0x40) != 0) {

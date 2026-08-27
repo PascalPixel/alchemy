@@ -18,7 +18,7 @@ struct AnimationMetadata {
 struct AnimationObject {
     s16 id;
     u8 padding02[2];
-    u8 unknown04;
+    u8 draw_kind;
     u8 unknown05;
     u8 padding06;
     u8 frame_codec;
@@ -26,7 +26,7 @@ struct AnimationObject {
     s32 animation;
     u32 current;
     u8 state;
-    u8 draw_kind;
+    u8 padding15;
     u8 marker;
 };
 
@@ -43,6 +43,7 @@ struct AnimationObject *Func_0800bbc0(s32 id)
     struct AnimationObject *object;
     s32 i;
     s32 frames;
+    s32 animation;
     u8 zero;
 
     found = 0;
@@ -52,7 +53,7 @@ struct AnimationObject *Func_0800bbc0(s32 id)
 
     if (metadata->width != 0) {
         for (i = 0; i <= 63; i++, entry++) {
-            if (entry->unknown04 == 0) {
+            if (entry->draw_kind == 0) {
                 found = entry;
                 break;
             }
@@ -64,11 +65,12 @@ struct AnimationObject *Func_0800bbc0(s32 id)
             object->id = (s16)id;
             if (frames == 0)
                 frames = Func_0800b798(id);
+            animation = metadata->animation;
+            object->animation = animation;
             object->frames = frames;
-            object->animation = metadata->animation;
             object->frame_codec = metadata->frame_codec;
             object->marker = 0xff;
-            object->current = *(u32 *)metadata->animation;
+            object->current = *(u32 *)animation;
             object->state = zero;
             object->draw_kind = metadata->draw_kind;
             object->unknown05 = zero;

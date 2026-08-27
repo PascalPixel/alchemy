@@ -2,6 +2,7 @@
   "format": 3,
   "owners": {
     "main:0808f1c0": "battle/effects/objects/start_effect_22.c", "main:080a4800": "menu/select_quantity.c",
+    "main:080a5b94": "menu/open_confirm_prompt.c",
     "main:080d9fc8": "battle/effects/puff_arc/run.c",
     "main:080ce85c": "battle/effects/member_orbit/run.c",
     "main:080b211c": "shop/select_repair_item.c", "main:080b362c": "shop/select_use_item.c",

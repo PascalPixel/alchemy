@@ -33,13 +33,11 @@ void Func_08004bd4(s32 a);
 void Func_08004c6c(s32 a);
 void Func_080e3944(void *src, void *dest);
 void Func_08004a5c(void);
-void Func_080072f4(
-    s32 dest, s32 src, s32 x, s32 y, DrawRectangleFn callback, s32 w,
-    s32 h);
 void Func_080e38b8(void *particle, s32 a, s32 b);
 void Func_080030f8(s32 frames);
 
 extern const u16 Data_080ede48[];
+extern u8 Value_0000008c;
 
 s32 Func_080dc1ec(void *object)
 {
@@ -62,7 +60,7 @@ s32 Func_080dc1ec(void *object)
     draw_destination = *cursor;
     M2C_FIELD(work, s32 *, 0x7828) = (s32) object;
     Func_080cd594(0);
-    Func_080e0524(140, work, 1, 1);
+    Func_080e0524((s32) &Value_0000008c, work, 1, 1);
     Func_080cef64(
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4) ^ 1,
         callback_pair);
@@ -153,10 +151,9 @@ s32 Func_080dc1ec(void *object)
                     half = (raw + (s32) ((u32) raw >> 31)) >> 1;
                     y = result[0] - half;
                     h = result[1] - raw;
-                    Func_080072f4(
-                        (s32) draw_destination,
-                        src_off + (s32) work, y, h, callback_pair[0],
-                        raw, raw << 1);
+                    ((DrawRectangleFn) callback_pair[0])(
+                        draw_destination, (void *) (src_off + (s32) work),
+                        y, h, raw, raw << 1);
                 }
 
                 Func_080e38b8(star, 60, 0);

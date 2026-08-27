@@ -29,9 +29,6 @@ void Func_080f9010(s32 id);
 void Func_080b50e8(s32 id);
 s32 Func_08002322(s32 angle);
 s32 Func_0800231c(s32 angle);
-void Func_080072f4(
-    s32 dest, s32 src, s32 x, s32 y, DrawRectangleFn callback, s32 w,
-    s32 h);
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Func_080b5088(s32 member_id);
 void Func_080e3908(void *particle, s32 count, s32 flags);
@@ -120,9 +117,8 @@ s32 Func_080e01e4(void *object)
             x = ((scale * sin_val) >> 17) + 86;
             cos_val = Func_0800231c(accumulator);
             y = ((scale * cos_val) >> 16) + 28;
-            Func_080072f4(
-                (s32) draw_destination, (s32) work, x, y, callbacks[0],
-                20, 40);
+            callbacks[0](
+                draw_destination, work, x, y, 20, 40);
         }
 
         ring = (u8 *) work + 0x7080;
@@ -135,9 +131,8 @@ s32 Func_080e01e4(void *object)
 
                 rx = M2C_FIELD(ring, s32 *, 0) - 20;
                 ry = M2C_FIELD(ring, s32 *, 4) - 32;
-                Func_080072f4(
-                    (s32) draw_destination, (s32) ((u8 *) work + 800), rx,
-                    ry, callbacks[0], 40, 64);
+                callbacks[0](
+                    draw_destination, (u8 *) work + 800, rx, ry, 40, 64);
 
                 M2C_FIELD(ring, s32 *, 0) =
                     M2C_FIELD(ring, s32 *, 0) - 6;
@@ -220,10 +215,10 @@ s32 Func_080e01e4(void *object)
                 half = (idx + ((u32) idx >> 31)) >> 1;
                 y = M2C_FIELD(particle, s16 *, 2) - half;
                 h = M2C_FIELD(particle, s16 *, 6) - idx;
-                Func_080072f4(
-                    (s32) draw_destination,
-                    (s32) ((u8 *) extra_target + Data_080ede48[idx - 1]),
-                    y, h, callback_ptr[1], idx, idx << 1);
+                callback_ptr[1](
+                    draw_destination,
+                    (u8 *) extra_target + Data_080ede48[idx - 1],
+                    y, h, idx, idx << 1);
                 Func_080e3908(particle, 62, 0x2000);
                 M2C_FIELD(particle, s32 *, 24) =
                     M2C_FIELD(particle, s32 *, 24) - 1;

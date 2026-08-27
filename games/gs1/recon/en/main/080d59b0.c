@@ -35,9 +35,6 @@ void Func_080049ac(void);
 void Func_080051d8(s32 a, s32 b);
 void Func_08004cb4(void *record);
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Func_080072f4(
-    s32 dest, s32 src, s32 x, s32 y, DrawRectangleFn callback, s32 w,
-    s32 h);
 
 s32 Func_080d59b0(void *object)
 {
@@ -138,20 +135,18 @@ s32 Func_080d59b0(void *object)
                     phase = M2C_FIELD(star, s32 *, 24);
                     kind = ((phase >= 0 ? phase : phase + 15) >> 4) & 7;
                     if (kind <= 3) {
-                        Func_080072f4(
-                            (s32) draw_destination,
-                            (s32) ((kind << 10) + (s32) work),
+                        callback_a(
+                            draw_destination,
+                            (void *) ((kind << 10) + (s32) work),
                             M2C_FIELD(star, s16 *, 2) - 16,
                             (velocity >> 16) - 16,
-                            callback_a,
                             32, 32);
                     } else {
-                        Func_080072f4(
-                            (s32) draw_destination,
-                            (s32) ((kind << 10) + (s32) work - 0x1000),
+                        callback_b(
+                            draw_destination,
+                            (void *) ((kind << 10) + (s32) work - 0x1000),
                             M2C_FIELD(star, s16 *, 2) - 16,
                             (velocity >> 16) - 16,
-                            callback_b,
                             32, 32);
                     }
 

@@ -83,7 +83,7 @@ s32 Func_080022f4(s32 numerator, s32 denominator);
  * remaining new_varN/temp_rN/var_rN locals with real computed values or
  * field-offset roles are candidates for the same treatment given above;
  * this is a partial pass, not a finished one. Keep every edit tied to
- * local evidence and score it through gs1cc.
+ * local evidence and score it through agscc.
  */
 s32 Func_080ab5e4(s32 arg0)
 {

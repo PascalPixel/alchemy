@@ -82,7 +82,7 @@
       "evidence": [
         "audited 3604-byte whole owner in games/gs1/semantic/regions.json",
         "23 direct bl targets inside the owner are independently reachable from the entry without taking a call edge; for example bl at 0x0200131a targets fallthrough-reachable 0x02001bc4",
-        "the approved Thumb direct-call patterns in alchemy-gcc/gs1cc/gcc/config/arm/arm.md accept SYMBOL_REF but not an intra-function LABEL_REF, and the ARM backend has no outlining pass",
+        "the approved Thumb direct-call patterns in alchemy-gcc/agscc/gcc/config/arm/arm.md accept SYMBOL_REF but not an intra-function LABEL_REF, and the ARM backend has no outlining pass",
         "ordinary C cannot make one statement sequence both fallthrough code and a callable local subroutine",
         "byte-exact decoded-overlay assembly round trip"
       ]

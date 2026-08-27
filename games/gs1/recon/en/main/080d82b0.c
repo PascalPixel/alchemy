@@ -114,7 +114,7 @@ s32 Func_080d82b0(void *object)
             target = M2C_FIELD(work, void **, 0x7828);
             member_id = M2C_FIELD(target, s16 *, member_id_offset);
             result0 = Func_080b5070(member_id);
-            result0 = (result0 + ((u32) result0 >> 31)) >> 1;
+            result0 = result0 / 2;
             sp44_ptr[0] = M2C_FIELD(member_ptr, s32 *, 8);
             sp44_ptr[1] = result0;
             sp44_ptr[2] = M2C_FIELD(member_ptr, s32 *, 16);
@@ -200,7 +200,7 @@ s32 Func_080d82b0(void *object)
 
                                 raw = Func_080022fc(k, 3);
                                 idx = raw + 1;
-                                half = (idx + ((u32) idx >> 31)) >> 1;
+                                half = idx / 2;
                                 y = *(s16 *)((u8 *)particle + 2) - half;
                                 h = *(s16 *)((u8 *)particle + 6) - idx;
                                 draw_rectangle_fn(

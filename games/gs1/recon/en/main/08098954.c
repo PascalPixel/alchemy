@@ -62,6 +62,7 @@ void RunBattleEffect07(void)
     for (index = 0; index < 24; index++) {
         struct BattleEffectObject *object;
         s32 distance;
+        s32 zero;
 
         position[0] = origin->x;
         position[1] = origin->y + 0x100000;
@@ -71,7 +72,8 @@ void RunBattleEffect07(void)
             Func_08009098(object, 0x0809f0d4);
             object->velocity = 0x20000;
             object->phase = Func_08004458() + 0x20000;
-            object->mode = 0;
+            zero = 0;
+            object->mode = zero;
             distance = Func_08004458() * 24 + 0x80000;
             Func_08096bec(object, distance, Func_08004458());
         }

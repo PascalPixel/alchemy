@@ -96,11 +96,11 @@ s32 Func_080dc1ec(void *object)
         Func_08004cb4(record);
 
         velocity_a = outer << 8;
+        velocity_b = -velocity_a;
         for (j = 0; j != 64; j++) {
             s32 quarter;
 
             star = (u8 *)0x02010000 + j * 28;
-            velocity_b = -velocity_a;
 
             quarter = (j >= 0 ? j : j + 3) >> 2;
             if (outer > quarter && M2C_FIELD(star, s32 *, 24) == 0) {
@@ -173,6 +173,7 @@ s32 Func_080dc1ec(void *object)
                     + (-M2C_FIELD(star, s32 *, 8) >> 8);
             }
 
+            velocity_b -= outer << 3;
             velocity_a += outer << 3;
         }
 

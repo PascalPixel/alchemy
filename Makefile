@@ -58,12 +58,13 @@ CANDIDATE_SINGLE_OWNERS := \
 	full-rom-check overlay-check declared-tu-check owner-inventory-check strict-tu-check classification-check \
 	candidate-corpus-check source-tracking-check check-owners progress progress-check progress-subject \
 	correspondence correspondence-check edition-builds edition-builds-check \
-	families family-check coverage coverage-check dashboard clean clean-preview
+	families family-check coverage coverage-check dashboard clean clean-preview doctor
 .PHONY: targets $(HISTORICAL_TARGETS)
 
 help:
 	@printf '%s\n' \
 		'make verify           authoritative byte-exact gate' \
+		'make doctor           prove roms, compiler bundle, and toolchain before a session' \
 		'make targets          compile shared source for all 12 historical targets' \
 		'make gs1-ja           compile one edition-qualified source target' \
 		'make build-rom        rebuild the ROM' \
@@ -87,6 +88,9 @@ help:
 		'make edition-builds   relink exact EN C across GS1 editions' \
 		'make coverage         refresh dashboard data and figures' \
 		'make dashboard        serve the dashboard on localhost:4649'
+
+doctor:
+	$(CHECK) doctor
 
 build-claimed:
 	$(BUILD) claimed --target $(TARGET)

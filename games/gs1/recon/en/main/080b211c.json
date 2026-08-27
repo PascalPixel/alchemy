@@ -3,33 +3,37 @@
   "namespace": "gs1-en-main",
   "address": "0x080b211c",
   "name": "Func_080b211c",
-  "status": "measured-draft",
+  "status": "exact",
   "owner_bytes": 524,
+  "candidate_bytes": 524,
+  "differing_halfwords": 0,
+  "wrong_instructions": 0,
+  "classification": "exact-c",
   "score": {
-    "measured": "2026-08-26",
+    "measured": "2026-08-27",
     "candidate_bytes": 524,
     "reference_bytes": 524,
-    "differing_halfwords": 221,
-    "wrong_instructions": 112,
-    "class": "wrong",
-    "note": "Correct byte count and matched 7-instruction prologue prefix, but the compiler's register allocator does not reproduce the reference's fp=shop/r9=item_count/stack-homed-unit_id assignment (candidate instead promotes unit_id into fp and shop into r9), which cascades into a differently-scheduled if(redraw) block and most of the body. Semantics were reconstructed with high confidence from the raw ROM bytes (own owner assembly disassembled directly from roms/gs1-en.gba, cross-checked against games/gs1/asm/080b211c.s) and cross-referenced against the near-identical sibling 080b1bd0 (shop/select_party_member.c family, template games/gs1/src/shop/select_sale_quantity.c and shop.h): both functions share an identical ~15-instruction prologue, the same nested for(;;) redraw/input-poll idiom as Shop_SelectPartyMember, and the same 5-column/15-slot inventory grid navigation (Modulo/FixedPoint_Ratio placement, wraparound decrement/increment on ADDR_03001B04 bits 0x20/0x10, and page up/down on bits 0x40/0x80). This owner's specific divergence from 080b1bd0: it calls Shop_ComputeRepairPrice (Func_080b20e8) instead of Shop_ComputeSalePrice, passes price_mode=2 instead of 1 to Shop_DrawItemPrice, and its post-confirm tail is a single unconditional Func_080b2328(unit_id, selection) call (no Shop_SelectSaleQuantity-style return check) followed by UiMessage_ShowAndWait((s32)&Value_00000cc2), verified against the exact literal-pool words extracted from the ROM (0x1ff mask, ADDR_03001F2C/ADDR_03001C94/ADDR_03001B04, +0x75 message-table base, 0xcc2 result message). Tried: (a) baseline direct translation -- wrong stack-frame size (sp,#20 vs #24) because unit_id was never spilled; (b) added dead item_count=1 init plus separated window/x/y locals (matching the sibling's own in-progress draft shape) -- fixed the frame size to 524/524 but did not fix the fp/r9 role swap; (c) extracted price into its own local -- no measurable effect; (d) gave Func_080b2328 a fake s32 return captured into price with a conditional -- made the match worse (536 vs 524 bytes). The sibling 080b1bd0's own in-progress draft has the identical fp/r9 register-role problem (its own candidate-show is also class=wrong, differing_halfwords=237), so this is evidence of a shared, currently-unsolved compiler register-allocation sensitivity for this two-nested-loop idiom rather than a defect specific to this file."
+    "differing_halfwords": 0,
+    "wrong_instructions": 0,
+    "class": "exact"
   },
-  "rejected_experiments": [
-    {
-      "cell": "direct-translation-no-spill-hint",
-      "reason": "Without a second dead-store-shaped local, the compiler keeps the unit_id parameter live in a register instead of spilling it to its stack home at entry, producing a 20-byte frame instead of the reference's 24-byte frame (differing_halfwords=217)."
-    },
-    {
-      "cell": "func_080b2328-fake-return-value",
-      "reason": "Declaring Func_080b2328 to return s32 and gating the follow-up UiMessage_ShowAndWait on it (mirroring the sibling's Shop_SelectSaleQuantity/-1 check) does not fix the fp/r9 register-role swap and adds instructions the real bytes do not have (536 vs 524 bytes, differing_halfwords=229)."
-    }
+  "source_shape": {
+    "confirm_cancel_exit": "Confirm and cancel are the first two checks in the input-poll loop and leave it with `goto done;` to a label placed right after the loop, not a plain `break;`. With `break`, GCC 2.96 recognizes the pair as the loop's first exit test and rotates them (plus everything between the loop top and them) to the bottom of the loop with a single entry jump, which does not match the reference's straight-line, unrotated layout. The `goto`-to-a-post-loop-label form compiles to the same edges without triggering that rotation heuristic.",
+    "declaration_order_for_stack_homes": "`item_count`, `price_window`, `list_window`, then `unit` (before `selection`/`redraw`/etc.) reproduces the reference's stack-slot assignment for the values GCC spills (unit_id at sp+20, unit pointer at sp+8, list_window at sp+12, price_window at sp+16). Declaration order did not affect which scalars land in registers (shop/item_count/redraw still win fp/r9/sl on usage weight regardless of decl order), only the frame offsets chosen for the spilled pointers/handles.",
+    "movement_delta_as_two_statements": "The wraparound single-slot moves are `selection -= 1; selection = Modulo(selection + item_count, item_count);` (and the mirror `+= 1`) as two separate statements, not the single expression `Modulo(selection - 1 + item_count, item_count)`. The single-expression form lets GCC reassociate to `(selection + item_count) - 1`, which schedules the `-1`/`+1` after the add; the reference computes the in-place `selection` update first."
+  },
+  "proof": {
+    "production_source": "524/524 bytes, zero differing halfwords",
+    "compiler_flags": "canonical; no per-owner override"
+  },
+  "method": [
+    "tools/compiler/target/release/compiler families transplant main:080b211c located the exact sibling template main:080b1a14 (Shop_SelectPartyMember, games/gs1/src/shop/select_party_member.c) which confirmed the general nested-for(;;)/redraw/input-poll idiom and its declaration style.",
+    "Instruction-level alignment of candidate-show --align against the reference at matching PC-relative addresses (both streams re-addressed by hand) isolated three independent causes in turn: a register-allocation swap (fp/r9/sl role assignment) driven by confirm/cancel loop position, a stack-slot swap for the spilled pointers/handles driven by local declaration order, and a two-instruction operand-order residual in the up/down wraparound moves driven by expression form.",
+    "Each hypothesis was tested by direct small edits and re-scored with candidate-show --align; the goto-vs-break change alone took differing_halfwords from 92 to 6, and splitting the wraparound expression into two statements reached 0."
   ],
   "notes": [
-    "Recovered only from the retained owner assembly, approved local ROM, the byte-exact template/sibling sources, in-repository headers, and the approved compiler.",
-    "This candidate claims zero DONE bytes.",
-    "Confirmed via direct extraction from roms/gs1-en.gba (0x080b211c, 524 bytes) and arm-none-eabi-objdump --adjust-vma disassembly that games/gs1/asm/080b211c.s is a faithful pre-disassembled listing of the same bytes; used the raw extraction to resolve every PC-relative literal-pool word by address rather than guessing.",
-    "Diffed games/gs1/asm/080b211c.s against games/gs1/asm/080b1bd0.s: identical for the first ~30 instructions; diverges only in (1) Func_080b20e8 vs Func_080b19cc price computation, (2) price_mode operand 2 vs 1, (3) a single unconditional Func_080b2328(unit_id, selection) call in place of the sibling's Shop_SelectSaleQuantity call + -1 check + conditional Func_080b1f4c call, and (4) the trailing literal-pool message id (0x00000cc2 vs 0x00000caa).",
-    "shop.h already declares/macros Shop_PlaceCursor, Shop_DrawItemPrice, Shop_DrawMessage, Shop_ComputeRepairPrice, and BattleUnit_Get(unit_id)->inventory[15] at offset 0xd8, all reused here verbatim; Func_080b2328 and the Value_00000075/Value_00000cc2 address-trick constants have no established project name yet and were declared locally.",
-    "The sibling owner 080b1bd0 (same family, being reconstructed in parallel) already has a non-empty draft at games/gs1/recon/en/main/080b1bd0.c; its structure (declaration order, unit->inventory[selection] field access, separated window/x/y locals) was used as a cross-check, though its own Shop_DrawItemPrice call incorrectly reuses price_window instead of list_window for the first UiWindow_CreateFar result -- this file's own ROM-byte reading was trusted over that in-progress draft for that specific mapping."
+    "The final source is ordinary C: no inline assembly, fixed-register variable, compiler barrier, forbidden ABI attribute, copied instruction bytes, compiler modification, or flag override. The `goto done;`/`done:` label is a plain, ordinary C89 control-transfer identical in effect to `break` out of the inner loop; it is preserved because it is what the compiler evidence requires to reproduce the reference's unrotated loop layout, not a stylistic choice.",
+    "Recovered only from the retained owner assembly, approved local ROM (roms/gs1-en.gba), the byte-exact sibling/template source games/gs1/src/shop/select_party_member.c, in-repository headers (shop.h, battle_runtime.h, sound_ids.h), and GCC 2.96 codegen evidence via candidate-show.",
+    "Verified with a final tools/compiler/target/release/compiler candidate-show games/gs1/recon/en/main/080b211c.c --align run showing candidate=524 reference=524 differing_halfwords=0 class=exact."
   ]
 }

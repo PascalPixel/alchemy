@@ -5,9 +5,9 @@
   "status": "measured-draft",
   "owner_bytes": 240,
   "executable_owner_bytes": 238,
-  "candidate_bytes": 236,
-  "differing_halfwords": 114,
-  "wrong_instructions": 122,
+  "candidate_bytes": 240,
+  "differing_halfwords": 28,
+  "wrong_instructions": 26,
   "classification": "move-character-selector-entry",
   "resolved_asm_classification": {
     "kind": "compiler_output",
@@ -22,6 +22,7 @@
   },
   "notes": [
     "Moves a character one position in the selector order, rebuilds the runtime order through the remove/add callbacks, and refreshes the stored character count.",
-    "The complete regional-invariant semantics compile broadly because the retained stack clearing, widened character-id array, loop carriers, and swap schedule differ throughout. It did not meet the bounded-search or permanent-residual gate."
+    "2026-08-27: bounded search dropped differing_halfwords from 114 to 28 (candidate_bytes now matches owner_bytes exactly, 236->240). Two structural fixes drove the gain: (1) the early direction check was over-eager -- reference recomputes 'adjacent_index' a second time, right at the swap, by re-testing 'direction == 1' rather than carrying one value computed at the top; rewriting the swap as two fully duplicated branches (no shared adjacent_index variable) made the swap, both loops calling Func_08077168/Func_08077150, and the final Func_08077158 call plus epilogue match the reference byte-for-byte (state pointer now lands in r8 exactly as in the reference, matching the caching idiom described for other owners in this corpus). (2) Tried caching &state->character_count and hoisting the clear-loop into a pointer form (u32 *p = &reordered[13]; p >= reordered; p--) -- both looked locally better but cost more overall: the pointer clear-loop makes gcc emit an extra pre-loop guard test (for-loop rotation duplicates the comparison when the compiler can't prove the pointer range non-empty) that a plain 'for (index = 13; index >= 0; index--)' avoids outright, so the plain index form scores better in aggregate despite keeping a redundant r6 counter alongside the address-decrementing store pointer that the reference elides via a cached 'ip' bound.",
+    "2026-08-27: remaining 28-halfword residual is concentrated in two spots verified by an extensive bounded search (~20 independent source rewrites, all re-scored): (a) the array-clear loop keeps a redundant down-counter (r6) instead of reference's single pointer-vs-cached-ip test; every pointer-only rewrite tried (for, do-while, hybrid index+pointer, signed casts) either reproduced this same counter or introduced a worse pre-loop guard elsewhere. (b) the character_ids-copy loop (reordered[index] = state->character_ids[index]) compiles to a value-cached descending loop (character_count loaded once, counted down) instead of the reference's address-cached ascending loop (character_count re-read through a hoisted pointer each iteration) -- the exact ascending/address-cached shape *does* appear for the two structurally identical count-up loops that call Func_08077168/Func_08077150, so the difference is not the loop-control idiom itself; it reproduced identically across for/while/do-while, index-only/pointer-only/dual-pointer, shared/private loop variables, count>0-guard-then-loop, and explicit u32 casts, suggesting it tracks something about the callee-free store-only loop body rather than any tried source phrasing. Did not meet the permanent-residual gate (no compiler-pass evidence collected, only repeated candidate-show outcomes), so this stays a c_candidate pending either a source insight not yet tried or a recorded compiler-evidence classification."
   ]
 }

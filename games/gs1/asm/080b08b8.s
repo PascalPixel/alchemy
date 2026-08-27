@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global ShopCursor_Advance
 	.global Func_080b08b8
 	.thumb_func
+ShopCursor_Advance:
 Func_080b08b8:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

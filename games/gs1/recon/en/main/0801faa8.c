@@ -18,7 +18,6 @@ s16 Func_0801faa8(void)
     s16 value;
     s16 result;
     s32 found;
-    s32 error;
 
     buffer = Func_08004970(0x1000);
     result = 0;
@@ -26,7 +25,7 @@ s16 Func_0801faa8(void)
     if (value != -1) {
         found = Func_080056cc();
         if (found != 0) {
-            error = 9;
+            result = 0 - 9;
             Func_0801776c((s32)&Value_0000000a, 1);
             goto negate;
         } else {
@@ -43,9 +42,9 @@ s16 Func_0801faa8(void)
             found = Func_08005920(*(s16 *)0x02002004, buffer);
             if (found != 0) {
                 Func_0801776c((s32)&Value_0000000b, 1);
-                error = 3;
+                result = 0 - 3;
 negate:
-                result = 0 - error;
+                ;
             }
         }
         Func_08005cf8();

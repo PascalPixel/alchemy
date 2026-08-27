@@ -40,6 +40,9 @@ void Func_080cd52c(void);
 void Func_080030f8(s32 frames);
 
 extern const u16 Data_080ede48[];
+extern u8 Value_00000073;
+extern u8 Value_00000090;
+extern u8 Value_00000089;
 
 s32 Func_080e01e4(void *object)
 {
@@ -47,27 +50,31 @@ s32 Func_080e01e4(void *object)
     void *draw_destination;
     void *extra_target;
     void *target;
-    void **target_slot;
+    void **heap_cache;
+    void **cursor;
     DrawRectangleFn callbacks[2];
+    DrawRectangleFn *callback_ptr;
     u8 *ring;
     u8 *particle;
     s32 i;
+    s32 member;
     s32 fp;
     s32 accumulator;
-    s32 member;
-    s32 member_id_offset;
     s32 member_offset;
 
-    work = *(void **)0x03001EEC;
-    draw_destination = *(void **)0x03001EF0;
-    extra_target = *(void **)0x03001EF4;
+    heap_cache = (void **) 0x03001EEC;
+    cursor = heap_cache;
+    work = *cursor++;
+    draw_destination = *cursor;
+    extra_target = heap_cache[2];
     M2C_FIELD(work, s32 *, 0x7828) = (s32) object;
     Func_080cd594(0);
     M2C_FIELD((void *)0x04000052, s16 *, 0) = 0x1010;
-    Func_080cef64(0, callbacks);
-    Func_080e0524(0x73, extra_target, 0, 0);
-    Func_080e0524(0x90, work, 1, 1);
-    Func_080e0524(0x89, (u8 *) work + 0x320, 1, 0);
+    callback_ptr = callbacks;
+    Func_080cef64(0, callback_ptr);
+    Func_080e0524((s32) &Value_00000073, extra_target, 0, 0);
+    Func_080e0524((s32) &Value_00000090, work, 1, 1);
+    Func_080e0524((s32) &Value_00000089, (u8 *) work + 0x320, 1, 0);
 
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 75;
@@ -130,7 +137,7 @@ s32 Func_080e01e4(void *object)
                 ry = M2C_FIELD(ring, s32 *, 4) - 32;
                 Func_080072f4(
                     (s32) draw_destination, (s32) ((u8 *) work + 800), rx,
-                    ry, callbacks[1], 40, 64);
+                    ry, callbacks[0], 40, 64);
 
                 M2C_FIELD(ring, s32 *, 0) =
                     M2C_FIELD(ring, s32 *, 0) - 6;
@@ -138,8 +145,11 @@ s32 Func_080e01e4(void *object)
                     M2C_FIELD(ring, s32 *, 4) + 12;
 
                 if (M2C_FIELD(ring, s32 *, 4) > 95) {
+                    s32 burst;
+
                     particle = (u8 *) 0x02010000 + member_offset;
-                    for (i = 0; i != 32; i++) {
+                    burst = 0;
+                    do {
                         u32 kind;
                         s32 angle;
 
@@ -156,40 +166,45 @@ s32 Func_080e01e4(void *object)
                         M2C_FIELD(particle, s32 *, 24) =
                             (s32) ((Func_08004458() & 15) + 32);
                         particle += 28;
-                    }
+                        burst++;
+                    } while (burst != 32);
                     Func_080f9010(133);
+
+                    M2C_FIELD(work, s32 *, 0x77A8) = 4;
+                    target = M2C_FIELD(work, void **, 0x7828);
+                    if (M2C_FIELD(target, s32 *, 20) != 0) {
+                        void **target_slot;
+                        s32 member_id_offset;
+                        s32 count;
+                        s32 idx2;
+
+                        target_slot = (void **) ((u8 *) work + 0x7828);
+                        member_id_offset = 36;
+                        idx2 = 0;
+                        do {
+                            s32 member_id;
+
+                            target = *target_slot;
+                            member_id =
+                                M2C_FIELD(target, s16 *, member_id_offset);
+                            Func_080d6888(member_id, 7, 5, idx2, 6);
+                            target = *target_slot;
+                            member_id =
+                                M2C_FIELD(target, s16 *, member_id_offset);
+                            Func_080b5088(member_id);
+                            target = *target_slot;
+                            count = M2C_FIELD(target, s32 *, 20);
+                            idx2++;
+                            member_id_offset += 2;
+                        } while (idx2 != count);
+                    }
                 }
             }
 
-            ring += 28;
-            member_offset += 0x380;
             member++;
+            member_offset += 0x380;
+            ring += 28;
         } while (member != 8);
-
-        M2C_FIELD(work, s32 *, 0x77A8) = 4;
-        target = M2C_FIELD(work, void **, 0x7828);
-        if (M2C_FIELD(target, s32 *, 20) != 0) {
-            s32 count;
-            s32 idx;
-
-            target_slot = (void **) ((u8 *) work + 0x7828);
-            member_id_offset = 36;
-            idx = 0;
-            do {
-                s32 member_id;
-
-                target = *target_slot;
-                member_id = M2C_FIELD(target, s16 *, member_id_offset);
-                Func_080d6888(member_id, 7, 5, idx, 6);
-                target = *target_slot;
-                member_id = M2C_FIELD(target, s16 *, member_id_offset);
-                Func_080b5088(member_id);
-                target = *target_slot;
-                count = M2C_FIELD(target, s32 *, 20);
-                idx++;
-                member_id_offset += 2;
-            } while (idx != count);
-        }
 
         particle = (u8 *) 0x02010000;
         for (i = 0; i != 512; i++) {
@@ -208,7 +223,7 @@ s32 Func_080e01e4(void *object)
                 Func_080072f4(
                     (s32) draw_destination,
                     (s32) ((u8 *) extra_target + Data_080ede48[idx - 1]),
-                    y, h, callbacks[1], idx, idx << 1);
+                    y, h, callback_ptr[1], idx, idx << 1);
                 Func_080e3908(particle, 62, 0x2000);
                 M2C_FIELD(particle, s32 *, 24) =
                     M2C_FIELD(particle, s32 *, 24) - 1;
@@ -221,8 +236,8 @@ s32 Func_080e01e4(void *object)
         M2C_FIELD(work, s32 *, 0x7824) = 1;
         Func_080030f8(1);
 
-        accumulator -= 2048;
         fp++;
+        accumulator -= 2048;
     } while (fp != 96);
 
     Func_08004278((void *) 0x080CD261);

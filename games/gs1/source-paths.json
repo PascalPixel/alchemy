@@ -2,6 +2,7 @@
   "format": 3,
   "owners": {
     "main:0808f1c0": "battle/effects/objects/start_effect_22.c", "main:080a4800": "menu/select_quantity.c",
+    "main:080d9fc8": "battle/effects/puff_arc/run.c",
     "main:080b211c": "shop/select_repair_item.c", "main:080b362c": "shop/select_use_item.c",
     "main:08003008": "runtime/dispatch/reserved_no_op_f.c", "main:0800c0c4": "resource/table/reserved_no_op.c",
     "main:0801a90c": "ui/render/reserved_work_no_op.c", "main:0801c9bc": "graphics/palette/reserved_no_op_a.c",

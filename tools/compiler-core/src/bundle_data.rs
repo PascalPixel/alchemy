@@ -3,22 +3,42 @@ pub type TargetExecutables = (&'static str, &'static [ExecutableDigests]);
 pub type HostTargets = (&'static str, &'static [TargetExecutables]);
 pub type HostDigests = (&'static str, &'static [&'static str]);
 
+// Rebuilt 2026-08-27 from the unchanged alchemy-gcc submodule commit
+// (bcfb458, the agscc-rename commit) after a worktree-isolated subagent's
+// `build`/`stage agscc` populated a fresh build-agscc/ tree with no source
+// change (build-agscc/ and dist/ share the identical Aug 27 11:18 timestamp
+// across all four binaries -- one coherent rebuild event, matching the same
+// non-source-metadata pattern already recorded below for old_agbcc on
+// 2026-08-26). Appended, not replaced; proved with a green
+// `make full-rom-check` before pinning.
 const GS1: &[ExecutableDigests] = &[
     (
         "xgcc",
-        &["1c0b96c0193a3f547bf10c70078d87df10a62d34207da545653165b65c80d4c2"],
+        &[
+            "1c0b96c0193a3f547bf10c70078d87df10a62d34207da545653165b65c80d4c2",
+            "bf6161b89ca5832dff2784d92d2a39c857123e26fa4654ecc8ee46d3937b0b3a",
+        ],
     ),
     (
         "cpp",
-        &["c69d8c0423517be6a4962bd88e343c193a0842a164dd600550ceb36f8155d736"],
+        &[
+            "c69d8c0423517be6a4962bd88e343c193a0842a164dd600550ceb36f8155d736",
+            "05509d9a475f1cc8d7937ad245eaf00f4e00b4f8b659016a4c5e86bad71d5ef7",
+        ],
     ),
     (
         "tradcpp",
-        &["f1e4340c3550029675b49e22976dd7d10588e365816ae0f2decd19729371ee00"],
+        &[
+            "f1e4340c3550029675b49e22976dd7d10588e365816ae0f2decd19729371ee00",
+            "2bed3f31593d16ab3c762be9725090fb7fb4d090ec9581b022070ee66541b759",
+        ],
     ),
     (
         "cc1",
-        &["f7d1aeb098815f9b98c5df25bb47bab89aa14b1ab184b63c1472986f515fa3dd"],
+        &[
+            "f7d1aeb098815f9b98c5df25bb47bab89aa14b1ab184b63c1472986f515fa3dd",
+            "4525e2477f4d903580155e8d79cbb965b5af89e0d9ac903287713736238d37eb",
+        ],
     ),
 ];
 const EMPTY_GS1: &[ExecutableDigests] =
@@ -69,6 +89,14 @@ pub static AGBCC_EXPECTED: &[HostDigests] = &[
             // old_agbcc alone differs, evidently from non-source build metadata
             // (its own smoke-compile passes), not a behavior change.
             "633678adb3c1ceae5b69b4a604724593bf198c216289c85f55109e473737b088",
+            // Rebuilt 2026-08-27 from the unchanged submodule commit bcfb458
+            // (the agscc-rename commit) after a worktree-isolated subagent's
+            // build populated a fresh build tree with dist/agbcc/ missing
+            // entirely from the main checkout (no source change). Confirmed
+            // reproducible: two consecutive `stage agbcc` runs from the same
+            // built tree produced byte-identical output. Proved with a green
+            // `make full-rom-check` before pinning.
+            "0c4cd3bbbb475245ec9ab5c9bada68f99ff4f2f6dec751c5c287731e9dbeaea8",
         ],
     ),
     ("darwin-x64", &[]),

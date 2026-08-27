@@ -9,6 +9,7 @@ s32 InventoryMenu_CollectItems(
     s32 unused)
 {
     u16 *base;
+    u16 *p;
     u16 *dst;
     u16 *src;
     s32 count;
@@ -17,10 +18,10 @@ s32 InventoryMenu_CollectItems(
     u32 item;
 
     base = items;
-    dst = base + 31;
+    p = base + 31;
     do {
-        *dst-- = 0;
-    } while ((s32)dst >= (s32)base);
+        *p-- = 0;
+    } while ((s32)p >= (s32)base);
 
     count = 0;
     dst = base;

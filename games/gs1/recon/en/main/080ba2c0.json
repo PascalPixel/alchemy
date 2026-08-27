@@ -94,6 +94,7 @@
   "notes": [
     "Moving the scripted carrier before the facing pointer repaired the reference stack-slot order; keeping loop coordinate carriers inside the loop repaired the long-lived register allocation.",
     "The linked halfword count is amplified by the one-halfword displacement before the first literal pool; normalized instruction comparison isolates the remaining 18 instructions.",
-    "No external source, git history, compiler modification, copied instruction bytes, fixed-register variables, barriers, or inline assembly was used."
+    "No external source, git history, compiler modification, copied instruction bytes, fixed-register variables, barriers, or inline assembly was used.",
+    "2026-08-27 re-verification only: fresh candidate-show still measures exactly 708/708 bytes, 133 differing halfwords, 18 wrong instructions, matching this dossier -- no drift. Given the already-exhaustive rejected list above (structural respellings, a compiler-family/optimization-level sweep including old-agbcc, and two bounded heat searches totaling 30,000 iterations), no new attempt was made this pass; nothing here suggests a fresh angle beyond what those prior searches already ruled out."
   ]
 }

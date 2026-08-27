@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080b2328",
+  "status": "measured-draft",
+  "owner_bytes": 444,
+  "score": {
+    "measured": "2026-08-27",
+    "candidate_bytes": 440,
+    "reference_bytes": 444,
+    "differing_halfwords": 150,
+    "wrong_instructions": 100,
+    "note": "Two-parameter void function (unit_id, slot). Recovered from the retained owner assembly, cross-referenced against the caller 080b211c (whose dossier already names this call `Func_080b2328(unit_id, selection)`), and against the established shop.h/item.h/battle_runtime.h headers (BattleUnit_Get, Item_Get, Shop_ComputeRepairPrice, Shop_DrawPartyMemberItemGrid, Shop_SellReplacedItem, SHOP_RUNTIME, SHOP_PARTY_STATE.money) plus the sibling games/gs1/src/shop/complete_purchase.c, which calls the same undocumented helpers (Func_08077228, Func_08077230, Func_080b1868) with the same argument shapes. Domain: an item-repair confirmation flow -- validates the item at unit->inventory[slot] is a repairable, damaged, class-compatible item the party can afford to fix, shows a yes/no confirmation, then plays a short animation while the item slot is blanked, pays the price, and finally offers to sell a replaced item."
+  },
+  "domain": "Shop item-repair flow: validate -> confirm -> pay -> animate -> redraw -> optional sell-replaced-item tail, called from the repair-shop selection screen (080b211c) with (unit_id, selection).",
+  "expressed": [
+    "entry validation chain: item use_type == 2 (repairable class), raw item flag bit 0x400 (needs repair) set, and a flags/use_type compatibility check gated behind raw item flag bit 0x200",
+    "affordability check against SHOP_PARTY_STATE.money",
+    "yes/no confirmation dialog via UiMessage_ShowChoice before committing",
+    "temporary zeroing and restore of unit->inventory[slot] while the repair animation (WaitFrames/Audio_PlayCue sequence) plays",
+    "payment via Func_08077230(-price) and Shop_DrawMoney(), two Shop_DrawPartyMemberItemGrid redraws (before and after payment)",
+    "final Func_080b1868(unit_id, slot)-gated call to Shop_SellReplacedItem(unit_id, replaced_slot) using the slot Func_08077228 returned at entry"
+  ],
+  "unexpressed": [
+    {
+      "op": "sl/r8 register-role swap",
+      "count": "cascades through most of the function body (~90 of the 100 wrong instructions)",
+      "where": "the compiled candidate assigns item_id to r8 and the BattleUnit* to sl; the reference does the opposite (item_id -> sl, unit pointer -> r8). Every later instruction that reads either value inherits the swapped register, and the sp+0/sp+4 stack-spill slots for `idx2` (slot*2) and `replaced_slot` are also swapped between candidate and reference in lockstep with this."
+    }
+  ],
+  "retention": "keep_structured_asm_for_now",
+  "verified_against_reference": [
+    "fresh candidate-show build: 440 candidate bytes vs 444 reference bytes, 150 differing halfwords, 100 wrong instructions",
+    "matched_prefix=9 (identical through the shop-pointer fetch and unit_id-into-r7 cache); every later hunk is either the sl/r8 swap or a literal-pool address shift caused by the 4-byte size delta"
+  ],
+  "rejected": [
+    {
+      "shape": "read+mask the item value into a named `raw_item` local before calling Item_Get, matching a literal transliteration of the two separate ldrh instructions",
+      "result": "worse: 201 differing halfwords, 110 wrong instructions, 440/444 bytes. The extra dead pseudo perturbed allocation further away from the reference."
+    },
+    {
+      "shape": "inline the first masked read directly into the Item_Get call argument, only introducing `raw_item` for the second (post-Func_08077228) reload",
+      "result": "the adopted improvement: 150 differing halfwords, 100 wrong instructions (kept)."
+    },
+    {
+      "shape": "reorder the local variable declaration list to put item_id before the BattleUnit* / ItemDefinition* pointers",
+      "result": "byte-for-byte identical to the prior attempt -- GCC 2.96's pseudo numbering here follows statement/use order, not C declaration order, so this had zero effect."
+    }
+  ],
+  "notes": [
+    "Recovered only from the retained owner assembly, the caller 080b211c's existing dossier (which already established the two-argument `Func_080b2328(unit_id, selection)` call shape and the 0xcba..0xcc2 contiguous message-id range shared between the two owners), in-repository headers (shop.h, item.h, battle_runtime.h), the sibling games/gs1/src/shop/complete_purchase.c, and the approved compiler.",
+    "The four fail-path message IDs (0xcba, 0xcbb, 0xcbc, 0xcbd) and the four confirm/success message IDs reached via `message+0..3` off a single `&Value_00000cbe` base were resolved directly from the literal pool at the end of games/gs1/asm/080b2328.s, not guessed; `Value_00000cba`..`Value_00000cbe` were declared locally as `extern char` following the existing `Value_00000ca1`-style address-trick convention used in complete_purchase.c.",
+    "Func_08077068 has no established name or prior declaration anywhere in the repository; it was declared locally as `s32 Func_08077068(s32, s32)` (unit_id, slot) matching its call-site argument shapes only.",
+    "This owner shows the same class of register-allocation nondeterminism (a hi-register role swap between two long-lived, similarly-referenced pseudos) already documented for the structurally adjacent shop-family owner 080b211c (fp/r9 swap) -- cross-owner evidence this is a shared compiler sensitivity for this idiom rather than a defect in this specific source shape. Resolving it further likely needs permuter-style register-allocation search (see CONTRIBUTING.md section 6), not additional manual respelling.",
+    "This candidate claims zero DONE bytes. No external source, git history, compiler modification, copied instruction bytes, fixed-register variables, barriers, or inline assembly was used."
+  ]
+}

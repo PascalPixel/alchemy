@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080063bc",
+  "name": "SerialRuntime_BeginTransferA",
+  "status": "measured-draft",
+  "owner_bytes": 76,
+  "executable_owner_bytes": 76,
+  "candidate": {
+    "candidate_bytes": 76,
+    "reference_bytes": 76,
+    "differing_halfwords": 26,
+    "wrong_instructions": 16
+  },
+  "template_family": "template-main-080040e8",
+  "template_source": "games/gs1/src/runtime/scheduler/callback_scheduler.c",
+  "domain": "Begins a serial-A transfer: refuses when SERIAL_ACTIVE_A is already busy, otherwise disables IME, stamps the shared SerialTransferState, writes SERIAL_VALUE_A/SERIAL_ACTIVE_A, marks the state active, and restores IME.",
+  "behavior": [
+    "returns -1 immediately when SERIAL_ACTIVE_A is nonzero",
+    "saves REG_IME and writes its own address into it as the disable trick shared with sibling 0800651c/08006408",
+    "writes state->status = 0x80, SERIAL_VALUE_A = transfer_value, SERIAL_RESULT = 0, SERIAL_ACTIVE_A = value, state->active = 1",
+    "restores REG_IME and returns 0"
+  ],
+  "bounded_search": {
+    "mode": "source-shape",
+    "attempted": 3,
+    "exact": false,
+    "reason": "Three do-while(0) groupings of the same statement set were tried; none reproduced the reference's register-allocation order."
+  },
+  "remaining": "Sizes and every field written match (76/76 bytes, same 28-instruction/5-word-pool shape), but register assignment disagrees throughout the body. The reference's scheduler evaluates the SERIAL_ACTIVE_A pointer+deref first (r5/r4, the branch-critical chain), then hoists transfer_value into r6 and the state pointer into r7 BEFORE the cmp/beq, leaving the untouched 'value' parameter in r0 all the way to its single store near the end. The adopted candidate's compiler instead evaluates 'state = SERIAL_TRANSFER' as the pointer load feeding the busy-deref (r6/r4), saves 'value' early into r5, and only moves transfer_value into r0 right before the compare -- an extra register shuffle the reference doesn't have. Two alternate C orderings (hoisting all four preamble values into one do-while(0) before the branch; and a fully flat sequential body with no barriers) were tried and scored worse (22 and 20 wrong instructions respectively), so the originally drafted grouping is kept as the best of the three. This reads as a source-shape gap in how the busy-check and the two live parameters are grouped relative to the state-pointer load, not a compiler-internals residual -- worth another attempt if a fourth grouping (e.g. computing transfer_value into a named temp textually before referencing SERIAL_ACTIVE_A, but without introducing a second do-while barrier) is tried.",
+  "notes": [
+    "Sibling 08006408 (also assigned) shares the same SerialTransferState/REG_IME idiom family and is documented separately; its own residual is larger (33 wrong instructions) and independent respellings did not help either.",
+    "Recovered only from retained owner assembly, serial_runtime_family.h (used by the already-adopted 0800651c neighbor), and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used. Zero DONE bytes are claimed."
+  ]
+}

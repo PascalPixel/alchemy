@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080a77a4",
+  "status": "measured-draft",
+  "owner_bytes": 170,
+  "candidate_bytes": 166,
+  "differing_halfwords": 73,
+  "wrong_instructions": 46,
+  "classification": "inventory-owner-slot-refresh-variant",
+  "family": {
+    "id": "template-main-080a355c",
+    "template_owner": "main:080a355c",
+    "template_source": "games/gs1/src/inventory_menu/prepare_owner_items.c",
+    "note": "Sibling of main:080a602c in the same family; genuinely different body from both the template and 080a602c -- reads *(menu+16) and calls Func_08015270 on it, conditionally calls Func_08015070 with 5 args when Func_080770c0(370)!=0, then picks between Func_080a7d68()/Func_080a7a34() based on *(u16*)(menu+544)==3, none of which appear in the template or in 080a602c."
+  },
+  "notes": [
+    "Read the raw assembly directly: offset=party_slot+28, cursor_offset=party_slot*4+20, menu=Data_03001f2c, icon=*(menu+cursor_offset); icon[5]=1, icon[12](u16)=0; owner_index=*(s8*)(menu+offset); Func_08015270(*(s32*)(menu+16)); if (Func_080770c0(370)!=0) Func_08015070(*(s32*)(menu+16),9,1,9,3); if (owner_index==-1) *(menu+offset)=0; else Func_080a1ac0(owner_index*24-10,16); result = (*(u16*)(menu+544)==3) ? Func_080a7d68() : Func_080a7a34(); re-read icon, Func_080a17c4(icon); WaitFrames(1); return result.",
+    "Candidate reproduces the full control flow, all field offsets, all call arguments, and the owner_index*24-10 arithmetic; remaining differences are register-allocation/scheduling only (candidate keeps 'offset' live in r7 across the owner_index test and the final store, the reference keeps it in r8 and instead keeps the post-load owner_index value in r7) plus a 4-byte length gap I have not isolated the source of.",
+    "Tried reading the owner_index==-1 store as `(u8)(s32)&Value_00000000` (matching the pool-loaded-zero idiom the sibling owner 080a602c and this owner's own literal pool both carry at the same relative position -- both .s files embed the identical `.4byte 0x00000000 / .4byte 0x03001f2c` pair right after that branch) instead of a plain `= 0`. This is very likely the semantically correct spelling (it explains why the reference loads that particular zero from the pool while other zero stores in the same function use a plain `movs r?,#0` immediate), but adding it shifted the whole function's register allocation (dropped from push{r5,r6,r7}+r8 to push{r7} only, sl unused) and made the measured gap worse (differing_halfwords 73->84, wrong_instructions 46->58), so it was reverted; the plain-literal version is kept as the better-scoring draft even though the Value_00000000 spelling is the more defensible one long-term.",
+    "This reads as a register-pressure/scheduling gap on an otherwise-correct control-flow reconstruction, not a missing behavior -- a future pass should try re-deriving which local variable the compiler prioritizes into which callee-saved register (e.g. dropping the separate 'offset' local and inlining `party_slot+28` at both use sites, mirroring how the reference recomputes r2 fresh rather than keeping a single named local alive) together with the Value_00000000 spelling.",
+    "Adoption requires 0 differing_halfwords."
+  ]
+}

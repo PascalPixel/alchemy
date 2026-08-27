@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080105d4",
+  "name": null,
+  "status": "measured-draft",
+  "owner_bytes": 304,
+  "candidate_bytes": 292,
+  "differing_halfwords": 135,
+  "wrong_instructions": 195,
+  "classification": "map-tile-copy-with-actor-marker-overlay",
+  "domain": "Byte-for-byte near-duplicate sibling of main:0x08010424 and main:0x08010788 (see games/gs1/recon/en/main/08010424.json for the full technical writeup): copies 12-bit tile indices from one region of the 0x02010000 map buffer to another, mask-merging with the destination's upper 4 bits, and overlays an actor position marker icon (from a table at 0x02020000 into a per-actor 2048-byte-stride table at 0x06002800) for dest cells inside one of 3 actor bounding boxes read from Data_03001e70 + 0x104.",
+  "notes": [
+    "compiler-families.json clustered this owner with template-main-0801e260 (clear_tile_attributes_in_rect.c) at 7956 bp; as with its two siblings this is a family-clustering false positive with no usable structural overlap with the assigned template.",
+    "This owner's assembly is byte-for-byte structurally identical to main:0x08010788's (confirmed with `diff` on the retained .s files -- only register-allocation choices and the pool-word ordering/presence of one 0xfffff000 constant differ), and both use SIGNED loop-bound comparisons (bge/blt) where main:0x08010424 uses UNSIGNED ones (bcs/bcc) for the same three checks. The retained candidate is the shared s32-parameter draft described in 08010424.json, function-renamed to Func_080105d4.",
+    "candidate-show reports 292 candidate bytes vs 304 reference bytes, 135 differing halfwords, 195 wrong instructions -- close to but not identical to the 08010424/08010788 scores because the reference byte length itself differs slightly between the three siblings (304 vs 316/316), not because this candidate was independently tuned for this owner. See 08010424.json for the full rationale, the Data_03001e70+0x104 corroborating evidence from state_update_0082.c, and the family-clustering-false-positive discussion; that writeup applies to this owner unchanged."
+  ],
+  "rejected_experiments": [
+    {
+      "experiment": "reuse the shared triplet draft without owner-specific tuning, verified independently against this owner's own reference bytes rather than assuming 08010424's score transfers unchanged",
+      "result": "confirmed a distinct (slightly better) score of 135/195 at 292/304 bytes for this owner specifically; not identical to either sibling, so each was scored separately rather than reported once for all three."
+    }
+  ]
+}

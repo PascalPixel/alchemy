@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080165d8",
+  "status": "measured-draft",
+  "owner_bytes": 150,
+  "executable_owner_bytes": 150,
+  "candidate_bytes": 152,
+  "differing_halfwords": 73,
+  "wrong_instructions": 108,
+  "template_family": "template-main-0800f9f4",
+  "template_source": "games/gs1/src/map/decode_tile_rows.c",
+  "domain": "Not a tile-row decoder despite the n-gram clustering with decode_tile_rows.c: allocates a free 40-byte slot from a fixed-size array anchored at *(0x03001e8c)+1568 (scanning up to 4 slots for one whose leading word is 0) and populates it as what looks like a floating text/popup entry -- an owner word, an x/y position pair (each shifted left 8), a duration pair (constants 15 and 10), a 4-halfword payload either copied from an optional caller-supplied buffer or zero-filled, and a couple of zeroed status halfwords.",
+  "behavior": [
+    "scans up to 4 slots of stride 40 starting at Data_03001e8c-relative base 1568 for the first whose word-sized 'owner' tag field is 0",
+    "if none is free, the function is a no-op",
+    "otherwise writes: position fields (x<<8 at two offsets, y<<8 at one), the raw second parameter unshifted at another offset, two fixed timer/duration constants (15, 10), the owner id, three zeroed halfword status fields, and the 6th parameter into one more halfword",
+    "then either copies 4 halfwords from an optional pointer parameter into an 8-byte payload region, or fills that region with a shared zero constant (the same Data_00000000 pool-literal-zero idiom seen elsewhere in this corpus) when the pointer is null",
+    "clears one final halfword field before returning"
+  ],
+  "bounded_search": {
+    "mode": "screen-only",
+    "attempted": 1,
+    "exact": false,
+    "reason": "One complete candidate was written and scored; its size already lands within 2 bytes of reference (152 vs 150) and every field write/offset in the populate section is corroborated by the raw assembly, but register allocation diverges heavily from the very first instruction (108 wrong instructions) because the compiler schedules this candidate's free-slot search and field-population statements in a different order than reference does."
+  },
+  "remaining": "The behavior and every struct offset used are read directly off the retained assembly and are reasonably confident, but this is a genuinely unfamiliar struct (no template correspondence beyond superficial loop/store n-grams) with no prior recovery elsewhere in the corpus to cross-check against, so field names are placeholders. The instruction-order gap looks like a source-shape question (which sub-expression the compiler evaluates first) rather than a settled compiler-internals residual, but closing it would need deliberately reordering the populate statements against reference's literal instruction sequence one at a time, which is out of scope for this pass's time budget.",
+  "notes": [
+    "The base pointer *(0x03001e8c) matches the 'runtime globals table' also referenced (at different fixed offsets, e.g. entry 12 = 0x03001ebc) by several already-recovered overlay owners, so this slot array is very likely part of the same global runtime-workspace table; not otherwise cross-checked here.",
+    "Recovered only from retained owner assembly, cross-references to the 0x03001e8c/0x03001ebc runtime-table idiom used by other already-recovered owners, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used. Zero DONE bytes are claimed."
+  ]
+}

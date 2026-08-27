@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x0800bbc0",
+  "status": "measured-draft",
+  "owner_bytes": 134,
+  "executable_owner_bytes": 134,
+  "candidate_bytes": 138,
+  "differing_halfwords": 31,
+  "wrong_instructions": 20,
+  "template_family": "template-main-0800b7c0",
+  "template_source": "games/gs1/src/animation/initialize_objects.c",
+  "domain": "Allocates a new AnimationObject: looks up metadata for id via Func_08185000, scans a fixed 64-entry table at Data_03001e5c for a free slot (byte field at struct offset 4 == 0), and if one is found populates it from metadata and returns its pointer (0 otherwise).",
+  "behavior": [
+    "metadata = Func_08185000(id); if metadata->width == 0, returns 0 without scanning",
+    "scans Data_03001e5c[0..63] (24-byte stride) for the first entry whose offset-4 byte is 0",
+    "on a free slot: object->id = id; object->frames = metadata->frames, falling back to Func_0800b798(id) when that is 0; object->animation = metadata->animation; object->frame_codec = metadata->frame_codec; object->marker = 0xff; object->current = *(u32 *)metadata->animation (a dereference, not a constant zero, unlike the template's initialize_objects.c sibling); object->state and object->offset5 both take a shared zero value sourced from Data_00000000 (matching the pool-literal-zero idiom seen in the 08006408/080063bc serial-runtime family) rather than an immediate; object->draw_kind = metadata->draw_kind"
+  ],
+  "bounded_search": {
+    "mode": "source-shape",
+    "attempted": 4,
+    "exact": false,
+    "reason": "Four respellings converged the control flow and every field write to match reference almost exactly (first 0x40 of 134 bytes byte-identical); the residual is a single extra join branch (plus 3 alignment NOPs) after the conditional Func_0800b798 call that the compiler emits in this candidate but not in reference."
+  },
+  "remaining": "134 vs 138 candidate bytes (4 bytes / 2 instructions over). Reference's 'if (frames==0) frames=call();' compiles so the skip-branch and the call's own fall-through land at the exact same address (no extra instruction needed); this candidate's compiler places extra code between the call and the merge point, forcing a separate unconditional join branch plus NOP padding for alignment. Tried computing frames/zero in a different order, and tried duplicating the store inside each branch instead of merging after -- both were flat or worse (140 bytes/45 wrong). This reads as a residual scheduling/layout choice of the compiler for this specific if/call shape rather than an unexplored source form; a fifth attempt reordering the trailing field writes (current/state/draw_kind/unknown05) relative to the call might still close it.",
+  "notes": [
+    "The struct layout (AnimationObject with a 'draw_kind' at offset4 in the template's sibling 0800ba30/0800bbc0 pairing, but here offset4 is instead a free/occupied marker byte, and offset5 is a second always-zero byte) is inferred purely from this owner's own field accesses; it has not been cross-checked against other owners of the same struct and may need reconciling once more of this table's users are recovered.",
+    "Sibling 0800ba30 (also assigned) operates on the same 24-byte-stride struct family but implements different behavior (updates an existing slot's animation selection rather than allocating a free one); see its own dossier.",
+    "Recovered only from retained owner assembly, the already-adopted initialize_objects.c template, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used. Zero DONE bytes are claimed."
+  ]
+}

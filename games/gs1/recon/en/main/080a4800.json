@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080a4800",
+  "status": "measured-draft",
+  "owner_bytes": 292,
+  "candidate_bytes": 292,
+  "differing_halfwords": 2,
+  "wrong_instructions": 0,
+  "classification": "quantity-selector-dialog",
+  "family": {
+    "template_listed": "main:08092708 (run_rising_sequence.c, score 8271)",
+    "template_used": "not the listed family template -- recovered directly from the assembly as a shop-style quantity-selection dialog loop, sibling to games/gs1/src/shop/select_sale_quantity.c and select_purchase_quantity.c"
+  },
+  "domain": "Opens a small numeric-entry window, marks two menu sub-objects' state byte 5 as 13 (busy), installs Func_080a19a0 as the per-frame update callback, then loops: on D-pad left/right adjusts a running quantity and clamps it through Func_080022fc, redraws it via Func_080a4924, and exits on the Start-equivalent button (Func_080770c0(336)), on A (confirm, keeps quantity) or B (cancel, quantity forced to -1). On exit it tears down both windows, reschedules Func_080a19a0 with a delay, resets the second sub-object's state byte to 1, and returns the final quantity.",
+  "notes": [
+    "The listed family template (08092708, run_rising_sequence.c) was not a useful line-by-line guide; the actual shape -- window create, D-pad quantity loop, A/B confirm-cancel -- was recognized directly from the assembly and matches the surrounding shop quantity-selector siblings in spirit (they call the still-unrecovered Func_080b1614, which this owner is plausibly a component or sibling of).",
+    "Candidate reaches the reference byte length exactly (292/292) with 0 wrong_instructions and only 2 differing halfwords, both inside the trailing literal-pool DATA words rather than in any executable instruction -- every real instruction, branch, register, and constant in the function body matches. The pool holds the same four addresses (the menu-state pointer at 0x03001f2c, the Func_080a19a0 callback used both as the frame-update install and the reschedule target, the held-buttons latch Data_03001b04, and the new-keys latch Data_03001c94) but this candidate's compiled order swaps two adjacent pool words relative to the reference; no source reordering tried (swapping the textual order of the two goto-labelled blocks, swapping which extern is declared first) changed the pool emission order without also regressing the matching code.",
+    "Three concrete source-shape fixes were needed to get here: (1) the confirm/cancel input latch reads Data_03001b04 (a `volatile u32`, the same 'held buttons' global used by menu/selection/loop.c) while the D-pad adjust reads Data_03001c94 (the separate 'new keys' latch) -- they are not the same register despite both gating simple button-mask tests; (2) each latch must be read through a scope-local `volatile u32 *keys = &Data_...;` pointer reused for its own pair of bit tests, not a macro re-expanded at each use, otherwise GCC hoists the address load out of the block it belongs to; (3) the incoming u16-typed argument must be declared `s32`, not `u16` -- a narrower parameter type makes the compiler insert an extra sign-extension pair at entry that the reference does not have.",
+    "This is very likely adoptable with a small amount of further permutation search targeted specifically at literal-pool emission order (a compiler-scheduling question, not a source-shape one) rather than further hand respelling.",
+    "Recovered only from retained GS1 assembly, established local function signatures already used elsewhere in the source tree (Func_08015010, Func_080022fc, Func_08015270, Func_08015018, Func_080a2144, Func_080041d8, Func_08015408), and the already-adopted sibling Func_080a19a0 (games/gs1/src/unidentified/main/ui/ui_owner_25.c). No GS2 evidence or external source was used."
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080e01e4",
+  "status": "measured-draft",
+  "owner_bytes": 832,
+  "score": {
+    "measured": "2026-08-27",
+    "candidate_bytes": 832,
+    "reference_bytes": 832,
+    "differing_halfwords": 330,
+    "wrong_instructions": 376,
+    "class": "unemittable",
+    "note": "First structural draft, not a permutation search. Candidate reaches the exact 832-byte owner extent on the first structural pass. The largest and most complex of the four owners assigned in this batch: it combines 080dc1ec's 32-slot 0x7080-offset record ring, 080d82b0's per-member particle-pool sub-ranges, and a fixed 512-slot shared lifetime/draw scan (080e7404-style) inside one 96-pass outer animation loop."
+  },
+  "family": {
+    "assigned_template_owner": "main:08099160",
+    "assigned_template_source": "games/gs1/src/battle/effects/orbiting_particles/run.c",
+    "template_note": "Same mismatch as the other three owners in this assignment: no callees shared with RunOrbitingParticleEffect, and a control-flow shape (fixed 96-pass outer loop, an 8-member inner loop gated by both a per-member activation threshold and a hard cap of 8, then a 512-slot shared particle scan every pass) that does not resemble the template's single 15-iteration spawn loop at all.",
+    "actual_sibling_evidence": "Confirmed member of the 0x03001eec 'battle work' subsystem family documented in games/gs1/recon/en/main/080e7404.json, 080d59b0.json, 080d82b0.json and 080dc1ec.json: identical Func_080cd594(mode)/Func_080e0524(id,target,f,f)/Func_080041d8(0x080CD261,0x480)/Func_08004278(0x080CD261)/Func_08002dd8(id)/Func_080cdbc0() shape, the same *(void**)0x03001EEC/0x03001EF0/0x03001EF4 work/draw_destination/extra_target globals as 080d82b0, and the same Func_080cef64(flag,&out) callback-resolution call as 080dc1ec -- except here the out-buffer is read back as TWO separate words (offsets 0 and 4), i.e. Func_080cef64 resolves a pair of draw callbacks in one call. This is the strongest cross-owner confirmation yet that Func_080cef64's second argument is a small callback-table output, not a single value, which should be folded into the shared family header once one exists."
+  },
+  "rejected_experiments": [
+    "None beyond the single evidence-guided pass; a leftover dead-code assignment (`member_id_offset = 36 + member * 2` inside the wrong loop, a copy-paste artifact from re-deriving the member_id_offset stepping used by the second, count-driven loop) was caught and removed before scoring since it did not correspond to any instruction in the reference and only accidentally left the score unchanged when present."
+  ],
+  "notes": [
+    "Recovered only from the retained owner assembly (games/gs1/asm/080e01e4.s), the approved local EN ROM, games/gs1/recon/en/main/080e7404.c, 080d59b0.c, 080d82b0.c, 080dc1ec.c and their dossiers, in-repository headers, and the approved compiler.",
+    "This candidate claims zero DONE bytes.",
+    "Semantic summary: the most elaborate of the four sub-effects. Sets hardware alpha-blend register 0x04000052, resolves a pair of draw callbacks via Func_080cef64, opens three effect registrations via Func_080e0524 (against extra_target, work, and work+0x320), seeds a 32-slot ring at work+0x7080 with randomized radii/heights and a 512-slot shared particle pool's lifetime sentinel, then runs 96 animation passes. Each pass draws one orbiting marker at a fp-derived sine/cosine angle, walks up to 8 fixed member slots drawing and advancing each ring entry once its per-slot activation threshold is crossed (bursting 32 fresh particles into that member's private sub-range once its ring entry's height exceeds 95), separately cues Func_080d6888/Func_080b5088 for every real party member from the target's own count field, and finally scans all 512 shared particle slots once per pass, drawing and aging every slot whose lifetime sentinel is not -1.",
+    "The member-activation gate (`fp >= member * 4 + 8`) and the hard 8-member cap on the ring/particle-burst loop (independent of the target's real member count, which only gates the separate Func_080d6888/Func_080b5088 loop) are both taken directly from the reference's literal comparisons rather than simplified, since the point is reproducing the compiled shape.",
+    "Two open questions carried over from the other three owners in this family and not re-litigated here for time: the observed 5th-argument-in-r4 calling convention at every Func_080072f4 site, and how the second Func_080072f4 argument (src) should be typed once a shared work-block header exists -- here it alternates between a plain work-relative offset (`work`, `work+800`) and an extra_target-relative table lookup (`extra_target + Data_080ede48[idx-1]`), exactly mirroring the split already seen in 080d59b0/080d82b0/080dc1ec.",
+    "No GS2 or external source was used; no other Golden Sun decompilation project was consulted."
+  ]
+}

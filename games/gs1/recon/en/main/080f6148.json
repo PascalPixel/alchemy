@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080f6148",
+  "status": "measured-draft",
+  "owner_bytes": 160,
+  "candidate_bytes": 140,
+  "differing_halfwords": 78,
+  "wrong_instructions": 106,
+  "classification": "palette-darken-two-ranges",
+  "family": {
+    "id": "template-main-080aac84",
+    "template_owner": "main:080aac84",
+    "template_source": "games/gs1/src/graphics/palette/adjust_bank.c",
+    "note": "Clustered by prologue/instruction n-gram similarity only. The real owner darkens two disjoint palette ranges by a fixed -1 per channel with a floor of 0 and no ceiling clamp, and has no bl between the two loop bodies (they are duplicated inline, not called). The template's do-while-over-banks control shape, its add(arg0)/dual clamp, and its separate read/write arrays do not apply; only the general RGB555 mask-and-clamp idiom was reusable."
+  },
+  "notes": [
+    "Real ROM behavior: loop 1 darkens 16 halfwords at 0x05000140 (BG palette bank 10); loop 2 darkens 239 halfwords at 0x05000202 (OBJ palette, skipping entry 0). Each channel is extracted, decremented by 1, floored at 0 (no upper clamp needed since subtracting from a 5-bit value cannot exceed 31), and repacked. Confirmed no bl instruction links the two loops -- they are two independently-emitted copies of the same body, not a shared subroutine.",
+    "Attempt 1: static helper DarkenPaletteRange(pltt,count) called twice -- the compiler did NOT inline it (candidate collapsed to 32 bytes with two bl instructions), rejected: candidate=32 wrong_instructions=80.",
+    "Attempt 2 (kept as draft): two straight-line for-loops written out in the body, each using a local `s32 mask = 31;` hoisted out of the loop (mirroring the template's own hoisted-mask idiom) so mask lives in a callee-saved register across the loop, matching the reference's 3-register push (r5,r6,r7) instead of my earlier 2-register push. Result: candidate=140 reference=160 differing_halfwords=78 wrong_instructions=106. Still not exact: the real code extracts blue and green via a shared `(color<<16)>>26` / `(color<<16)>>21` double-shift (reusing one left-shifted copy of the halfword for both fields) while my candidate and the byte-exact adjust_bank.c template both instead do direct `>>10 &mask` / `>>5 &mask`. I confirmed this by compiling the literal template source against its own byte-exact owner 0x080aac84 (candidate-show on games/gs1/src/graphics/palette/adjust_bank.c against 0x080aac84 -- 0 real mismatches in that instruction region, using the direct-shift form), so the double-shift is specific to this owner's source shape, not a toolchain default.",
+    "Attempt 3: read the color through a 3x u16:5 bitfield struct (red/green/blue LSB-first) to try to trigger a genuine bitfield-extraction codegen path. This backfired -- the compiler allocated a 4-byte (word) storage unit for the bitfield struct and emitted a 32-bit `ldr` instead of the reference's `ldrh`, and moved from 2-byte to 4-byte element stride. Rejected: candidate=136 wrong_instructions=112 (worse than attempt 2).",
+    "This narrows to a genuine compiler-internals residual in the two-field shared-shift extraction, not a control-flow or type-category gap: the read width (ldrh), the loop trip counts, the two base addresses, the per-channel -1/floor-0 semantics, and the repack-and-store all already match. Only the specific instruction sequence used to pull blue/green out of the halfword differs. Likely needs a source shape that makes GCC treat blue and green as a shared 2-field extraction (e.g. a genuine >16-bit-wide bitfield container, or the field order/adjacent packing exposed differently) -- worth a targeted permuter-style search over the extraction expression rather than further manual respelling.",
+    "Adoption requires 0 differing_halfwords."
+  ]
+}

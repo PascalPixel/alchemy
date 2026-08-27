@@ -1,0 +1,21 @@
+{
+  "owner": "main:080a6a98",
+  "symbol": "Func_080a6a98",
+  "family": "template-main-08026fa8",
+  "template_owner": "main:08026fa8",
+  "template_source": "games/gs1/src/ui/text/show_localized_message_and_wait.c",
+  "candidate_path": "games/gs1/recon/en/main/080a6a98.c",
+  "reference_bytes": 204,
+  "best_candidate_bytes": 204,
+  "best_differing_halfwords": 36,
+  "best_wrong_instructions": 18,
+  "status": "measured_draft",
+  "notes": [
+    "Template (UiText_ShowLocalizedMessageAndWait) is thematically related (UI + wait) but the actual behavior at 080a6a98 is completely different work read straight from games/gs1/asm/080a6a98.s: a menu-row refresh function taking effectively one live struct-pointer param (r0/r1 are unused), storing computed length (ctx->field8*5 + ctx->field16) into ctx->field24, conditionally playing a sound-effect/message via a table lookup at Data_03001f2c-relative state, then drawing 5 rows via 6-arg calls to Func_080a2268 with a highlighted-row special case (arg 14 vs 15) based on ctx->field16.",
+    "Iterated 5 respellings. Landed on: masking the sound-table lookup as one combined pointer-arithmetic expression `*(u16*)((u8*)state + ctx->field24*2 + 456)` (not split into a separate `offset` local, which measurably hurt the match in combination with either if/else ordering tried); the outer `if (Func_080770c0(0x151) != 0) { short-branch } else { long-branch }` ordering (matching which physical block the compiler places as the branch target vs the fallthrough); and introducing a separately-named `selected = 1;` local (distinct from the loop's `spacing = 1` counter) so the compiler materializes two independent `movs #1` instead of coalescing them into one shared register, matching the reference's two distinct movs into r2/r5.",
+    "This combination got wrong_instructions down from an initial 24 to 18 (candidate/reference both 204 bytes). Tried the mirror-image if/else order (`if (call()==0) {long} else {short}`) combined with a separate `offset` local -- that combination scored worse (34), and each single change in isolation also scored worse than the final combination, so the two are apparently coupled through the compiler's whole-function register allocation, not independently tunable.",
+    "Two residual clusters remain, both looking like compiler-internal instruction-placement/addressing-mode choices rather than logic gaps: (1) the outstanding branch content is IDENTICAL between candidate and reference (same call, same literal, same later block) but the alignment tool still can't line up the physical ordering of the short-vs-long block placement for a handful of rows; (2) the sound-table load compiles to a precompute-full-address-then-immediate-offset ldrh in the candidate versus the reference's fold-only-the-scaled-index-then-register-offset ldrh (`ldrh r2,[r7,r3]`) -- both are valid Thumb encodings for the same address, and neither of two different C phrasings tried (combined expression vs separate offset local) reproduced the register-offset form together with the correct branch order.",
+    "Field names (field8/field16/field24/field32/field44) are inferred purely from the struct-offset accesses in the assembly, not confirmed against any header; M2C_FIELD casts were used throughout rather than guessing a named struct layout, consistent with this codebase's convention for not-yet-typed structs.",
+    "Not adopted; kept as the closest measured draft (91% instruction match)."
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080b29a8",
+  "name": "Shop_ConfirmPartyAction",
+  "status": "measured-draft",
+  "owner_bytes": 360,
+  "candidate_bytes": 364,
+  "differing_halfwords": 83,
+  "wrong_instructions": 84,
+  "classification": "shop-party-action-confirm-dialog",
+  "domain": "Draws a yes/no party-action confirmation prompt for one unit (fetched through Func_0808a080), cycling between two message states while polling Func_08015388 for the user's choice, then tears the prompt down.",
+  "notes": [
+    "Clustered against the byte-exact Shop_SelectPartyMember template by the family scan, but the actual behaviour recovered from the retained assembly is a different shop screen: a message/cursor confirmation loop keyed off shop->party_action rather than a party-member list. Recovered independently from the retained owner's control flow, its literal pool (which resolves cleanly to ADDR_03001F2C, the 0x3aa party_action field offset, and four sequential message ids 0xd21/0xd24-0xd25/0xd22/0xd23), and the established ShopRuntime/ShopCursorAnchor layout from shop.h.",
+    "The recovered control flow is a near-exact structural match to the reference: matching this candidate's assembly against the reference instruction-by-instruction (candidate-show --align) shows essentially the same opcode sequence and the same operand roles throughout the whole function, with almost every '!' marked difference being a register-number swap (candidate keeps the shop pointer in r8 and list_window in r7; reference keeps shop in r7 and list_window in r8) rather than a structural or semantic disagreement.",
+    "This session tried several bounded respellings aimed specifically at flipping that register-bank assignment: (1) storing shop->party_action from an explicit 'party_action' local instead of a literal 0 and moving that local's declaration ahead of 'shop' and 'list_window' in source order (no score change: the compiler's local-initializer ordering already matched regardless of declared order); (2) declaring 'list_window' textually before 'shop' in the local-variable list (no score change); (3) removing the intermediate 'obj' local and inlining the Func_0808a080 call directly into the pointer-chase expression (compiled to byte-identical output, no change); (4) flattening the two nested window-creation fallback 'if's into two sequential 'if's matching the reference's flat bne-to-one-label shape (no score change). None of these moved differing_halfwords off 83 / wrong_instructions off 84, so the register-bank choice is not driven by declaration order, statement nesting, or an extra temporary in this source shape.",
+    "This looks like a compiler-internals register-allocation residual, not a remaining source-shape gap: the recovered algorithm, call sequence, argument values, and branch structure all check out against the reference in the aligned diff, and the only persistent disagreement is which of two comparably-live pointer/handle locals (shop vs list_window) the register allocator prefers for a low vs high Thumb register. Closing it likely needs either a genuinely different overall variable/expression shape that changes relative register pressure at the point both locals become simultaneously live, or a permuter-style bounded search rather than further manual respelling.",
+    "Exact-C adoption remains gated on an independently compiled zero-difference object."
+  ]
+}

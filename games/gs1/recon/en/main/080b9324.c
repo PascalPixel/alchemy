@@ -1,5 +1,10 @@
 #include "types.h"
 
+s32 Func_080b6b40(s32 side, u16 *out_units);
+u32 Func_08004458(void);
+u8 *Func_08077008(s32 unit_id);
+void Func_080bd424(void *entry, s32 arg1);
+
 #define BattlePresentation_BuildOpponentEntries Func_080b9324
 
 struct BattlePresentationOpponentEntry {

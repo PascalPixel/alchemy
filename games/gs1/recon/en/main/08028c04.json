@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x08028c04",
+  "name": "Func_08028c04",
+  "status": "measured-draft",
+  "owner_bytes": 368,
+  "candidate_bytes": 388,
+  "differing_halfwords": 176,
+  "wrong_instructions": 46,
+  "classification": "unemittable-draft",
+  "evidence": {
+    "reference": "games/gs1/asm/08028c04.s",
+    "method": "families transplant (template main:080b1a14 / select_party_member.c, score 7535bp) seeded an m2c control-flow recovery over the complete symbolized owner, cross-checked against six already-exact sibling menu owners (ui_owner_7/12/24/28/30/34/38.c and menu/select_resource.c, menu/draw_mode_label.c) that share every callee here",
+    "family_template": "main:080b1a14",
+    "pc_relative_references": 7,
+    "jump_tables": 0
+  },
+  "notes": [
+    "This owner is a mode-dependent 'open a resource-select menu with 2 or 3 windows' setup, not the family template's for(;;) input loop -- it has no polling loop of its own at all. Its opening/closing idiom (Func_080284dc -> Menu_AppendResourceEntry x2/x3 -> Func_08028808 -> ... -> Func_08028574 -> Func_0802851c) is directly evidenced by six already-adopted exact siblings under unidentified/main/ui/ (ui_owner_7/12/24/28/30/34/38.c) that share Func_080284dc, Func_08028808, Func_08028574, and Func_0802851c verbatim, and Func_080287a8 is independently confirmed there as Menu_AppendResourceEntry(s32). The 0x03001f38 state object's field 0x7C (a window handle) is independently confirmed by the already-adopted menu/draw_mode_label.c's `struct MenuModeLabelState.window` at the same offset.",
+    "The raw m2c draft (unset-register r0 param, 4-register-arg Func_080162d4/Func_0801e74c calls, 4 hardcoded sequential message-id literals 0xC77..0xC7A) scored 396 vs 368 bytes, 98 wrong instructions. Reading the raw instruction stream showed Func_080162d4 takes a 5th stack argument (a repeated literal 2, matching the 08021488 finding), and that the three trailing Func_0801e74c calls in the `mode!=0` branch compute their message ids as `msg_base+1`, `msg_base+2`, then `msg_base+=3` from one base local rather than four separate immediates, with the window-handle argument re-read from the field on the second and third calls but reused fresh from the register on the first (immediately after the store). Applying both, plus reconstructing the field-0x80 access as a persisted `s32 *win_b_field` pointer (mirrored in the m2c draft's own `var_r8_61`) instead of repeated M2C_FIELD stores, dropped the gap to 388 vs 368 bytes, 48 wrong instructions; switching the 0x96 field write from a signed `(s16)-1` to an unsigned `(u16)0xFFFF` immediate (matching the full 32-bit-constant-then-truncate load the reference emits there, the same widening lesson from 0801db70) brought it to 46.",
+    "Remaining disagreement is small and concentrated in two places: (1) the candidate's total size (388 vs 368) pushes some late PC-relative loads far enough that the compiler splits the constant pool mid-function with an extra branch around it -- a downstream symptom of the earlier byte surplus rather than an independent defect; (2) in the `mode==0` branch the reference reloads the 0xC76 message-id literal from a fresh pool word for both its Func_080041d8 and Func_0801e74c call sites even though they are numerically identical, while the candidate's compiler reuses one register for both (an unwanted constant-CSE the reference apparently does not perform there); giving that second occurrence its own named local variable to defeat the reuse made the score measurably worse (70 wrong instructions) rather than better, so that was reverted.",
+    "This reads as a genuine last-mile compiler-scheduling residual, not a remaining source-shape gap -- the call sequence, argument counts, and field layout are now cross-confirmed by independent exact siblings.",
+    "No external source, copied instruction bytes, inline assembly, fixed-register variable, compiler barrier, or compiler modification was used."
+  ]
+}

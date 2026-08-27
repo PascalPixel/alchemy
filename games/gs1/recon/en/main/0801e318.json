@@ -25,6 +25,10 @@
     {
       "experiment": "hoisting the width!=0 guard to wrap the whole row loop instead of re-testing per iteration",
       "result": "byte-identical to the un-hoisted do-while-with-inner-check spelling; GCC's own loop-invariant code motion already performs this hoist regardless of source placement. The real ~16-byte/8-instruction gap is not guard placement."
+    },
+    {
+      "experiment": "splitting the inner column walk into a static MarkRow(base, cursor, alternate, width) helper taking width as a real function parameter (not a local literal), called twice with the literal 30, on the theory that GCC 2.96 would substitute the constant into the inlined body without re-running dead-branch elimination on it, thereby preserving a runtime width!=0 test the way the reference does",
+      "result": "worse, not better: candidate collapsed to 92 candidate bytes (versus 160 before) at 87 differing halfwords / 93 wrong instructions. The router's inliner still fully constant-propagates through the static helper and eliminates the always-true guard, and the smaller helper body lets it additionally cross-jump/merge more of the surrounding row loop than the flat version did, moving further from the reference shape rather than closer. Confirms the guard-retention gap is a property of the compiler's handling of this exact call/inline shape at the routed optimization level, not something reachable by relocating the same source-level condition."
     }
   ]
 }

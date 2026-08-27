@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080d59b0",
+  "status": "measured-draft",
+  "owner_bytes": 664,
+  "score": {
+    "measured": "2026-08-27",
+    "candidate_bytes": 668,
+    "reference_bytes": 664,
+    "differing_halfwords": 286,
+    "wrong_instructions": 298,
+    "class": "unemittable",
+    "note": "First structural draft, not a permutation search. Reached this score after three evidence-guided respellings: (1) reading the two consecutive globals at 0x03001EEC/0x03001EF0 (work pointer, secondary draw-destination pointer) as two independent raw-address dereferences rather than a shared struct -- a struct-typed read was tried first (hoping to reproduce the reference's ldmia r3!,{r1} prologue idiom) but it compiled to two ordinary ldr instructions anyway and regressed the score (281->317 differing halfwords), so the plain dereference form was kept; (2) caching the address of work's 0x7828 field (a void** slot) in one local computed once before the per-member do/while loop, instead of recomputing M2C_FIELD(work,...,0x7828) from scratch at every use -- this matches the reference's own 'adds r7,r1,r2' (compute address once) followed by repeated 'ldr r3,[r7,#0]' (dereference only) and improved 280->286 differing halfwords is misleading in isolation, see next point; (3) fixing a genuine rounding-toward-zero halving bug in the bounce-damping expression (was `(bounced + (u32)bounced >> 31) >> 1` due to C operator precedence putting the outer >>1 over only the >>31 term instead of over the whole sum; corrected to `(bounced + ((u32)bounced >> 31)) >> 1` to match the reference's negs/lsrs/adds/asrs sequence) -- this is a real semantic correction kept even though it nudged the raw score slightly worse (280/295/660 -> 286/298/668), because reproducing the reference's actual rounding behavior matters more than a coincidental byte-count improvement from a wrong formula."
+  },
+  "family": {
+    "assigned_template_owner": "main:08099160",
+    "assigned_template_source": "games/gs1/src/battle/effects/orbiting_particles/run.c",
+    "template_note": "Read in full before drafting. The assigned template does not structurally match this owner: RunOrbitingParticleEffect has no shared callees with this owner at all (no Object_Spawn, WaitFrames-by-that-name, RotateVectorByMagnitude, Random16, or Audio_PlayCue call sites appear here), and its 15-iteration random-orbit spawn loop bears no resemblance to this owner's 32-entry sprite-pool initializer plus 148-frame bounce-physics/member-portrait loop. n-gram/call-target clustering likely grouped this owner with the template purely on generic shape (push r5-r9+fp/lr prologue, several do-while counters, many bl sites), not genuine source-shape kinship.",
+    "actual_sibling_evidence": "This owner's real callee set and constants match games/gs1/recon/en/main/080e7404.c (dossier games/gs1/recon/en/main/080e7404.json) far more closely: identical Func_080cd594(mode)/Func_080e0524(id,work,f,f)/Func_080ed408(id,a,b,c,d)/Func_080041d8(cb,interval)/Func_08004278(cb)/Func_08002dd8(id)/Func_080cdbc0() call shapes, the exact same finish-callback pointer 0x080CD261 with the exact same 0x480-frame interval, the same hardware writes to 0x04000020 (BG2PA=0x100) and 0x04000050 (BLDCNT), and the same work-struct field offsets 0x7780/0x7784/0x7824/0x7828 relative to the shared *(void**)0x03001EEC base pointer. This owner and its three siblings (080d82b0, 080dc1ec, 080e01e4, also assigned to me) plus 080e7404 all appear to be members of one 'battle presentation sub-effect' family keyed off that same 0x03001eec work block, not the orbiting_particles family. A future recovery pass on this subsystem (a small header capturing the work-block layout and the Func_080e0524/Func_080ed408/Func_080041d8/Func_080072f4 signatures) would likely help all five owners at once."
+  },
+  "rejected_experiments": [
+    "Struct-typed single read of the two leading 0x03001EEC/0x03001EF0 globals (hoping to reproduce the reference's ldmia r3!,{r1} load-multiple prologue): compiled to two ordinary back-to-back ldr instructions instead of ldmia and regressed differing_halfwords from 281 to 317; reverted to two independent raw-pointer dereferences.",
+    "Hoisting the two function-pointer reads at 0x03001F08/0x03001F0C (draw_rectangle/alt_draw_rectangle) into named locals read once right after the two Func_080ed408 calls, matching the reference's own early read+stack-spill of these values: this is structurally what the reference does (str to sp+12/sp+16, later reload), but declaring them as ordinary C locals kept them live across the entire 148-frame outer loop in this compiler's allocator and regressed the score (281->309); reverted to inline point-of-use dereferences of the fixed addresses, which the compiler happened to schedule closer to the reference's own load sites."
+  ],
+  "notes": [
+    "Recovered only from the retained owner assembly (games/gs1/asm/080d59b0.s), the approved local EN ROM, games/gs1/recon/en/main/080e7404.c and its dossier (byte-exact-verified sibling with strong field/signature overlap), in-repository headers, and the approved compiler.",
+    "This candidate claims zero DONE bytes.",
+    "Semantic summary: a battle-presentation sub-effect. Seeds a 32-entry sprite-record pool at 0x02010000 with randomized initial falling parameters, opens two display windows (ids 46 and 47), then runs 148 frames. Each frame conditionally walks the active work-target's member list (drawing/positioning each member's portrait via Func_08004cb4 and occasionally cueing Func_080d6888), then integrates simple bounce physics (gravity accumulator, velocity, halved rebound damping) over the first 12 sprite records and draws each active one through one of two rectangle-callback function pointers selected by a phase-derived 0-7 'kind' value, alternating draw target by whether kind is 0-3 or 4-7.",
+    "The 'unemittable' class and the 286/298 residual mean the source shape is still meaningfully off from the reference in several places this pass did not fully resolve: notably the reference keeps the shared work pointer in r9 for the whole function while this compiler consistently chooses fp/r11 for it, and Func_080072f4's calling convention (observed passing a 5th argument through r4, beyond r0-r3, before two more stack-passed arguments) is not fully understood -- both are recorded here as concrete, evidence-backed open questions rather than guessed away.",
+    "No GS2 or external source was used; no other Golden Sun decompilation project was consulted."
+  ]
+}

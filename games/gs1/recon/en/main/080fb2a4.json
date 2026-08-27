@@ -38,6 +38,7 @@
     "best_unverified_differing_halfwords": 7
   },
   "bounded_checks": [
+    "re-examined the retained assembly directly this session: the reference's extra 8 bytes are entirely its push{r4,lr}/pop{r4}/pop{r0}+bx r0 frame, needed because it keeps the truncated pitch value resident in r1 across the ldrh of pitch_scale (forcing pitch_scale into a fresh r4); this candidate's register allocator instead reuses r1 for pitch_scale and keeps pitch in r3, needing no extra register and compiling as a leaf function (bx lr, no frame). Declaring the truncated value as `s32 pitch = (u16)value` instead of `u16 pitch = value` produced byte-identical output, confirming this is the same register-reuse-choice residual as the prior two respellings, not a new lead",
     "all six statement-order permutations of pitch truncation, scale load, and identity load were compiled; the only 40-byte improvement loads pitch_scale before validating the identity",
     "direct identity access, local identity, register hints, nested assignment, duplicate guarded loads, and approved optimization-pass toggles did not close the residual",
     "an explicit gcc296 scheduling route regressed to 15 differing halfwords",

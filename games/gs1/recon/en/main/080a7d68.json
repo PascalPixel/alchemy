@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080a7d68",
+  "name": "Func_080a7d68",
+  "status": "measured-draft",
+  "owner_bytes": 476,
+  "candidate_bytes": 464,
+  "differing_halfwords": 223,
+  "wrong_instructions": 200,
+  "classification": "shop-icon-page-select-loop",
+  "domain": "A paged icon-selection loop that persists its selection index and page count directly in undocumented shop-struct bytes (0x1c/0x1e) rather than in locals, redraws a small icon/window display and an 8-entry cleared array each time the selection changes, and writes the final selection and its looked-up field back into the shop struct on exit.",
+  "notes": [
+    "Clustered against the byte-exact Shop_SelectPartyMember template by the family scan on structural similarity (an input-poll loop with the same INPUT_NEW_KEYS/INPUT_REPEAT_KEYS shape and a redraw-flag-gated update block), but the concrete behaviour is a different, shop-struct-persisted paging screen with no counterpart in the template beyond the loop skeleton itself.",
+    "Recovered from the retained assembly's control flow and literal pool: confirmed offsets are shop+0x1c (persisted selection, s8), shop+0x1e (persisted count, s8), an array of u16 fields at shop+0x208+selection*2 (read repeatedly through the redraw block and again at exit), a single non-indexed field at shop+0x220 (an animation/frame counter cycled with Modulo(saved+3,3) each redraw), an 8-entry u16 clear at shop+0x152 counting down by 2, a selection-indexed halfword store at shop+0x144+selection*2, a window handle read from shop+0x10c, and a fixed pointer shop+0x1c8 passed to several undocumented helper calls (Func_080a68ec/Func_080a68a8/Func_080a3d24). The exact final-store offset at exit (used here as a placeholder 0x21a) and one icon-id constant pair passed to Func_08015080 (placeholders 0x1e/0x1f) were not resolved against the reference's literal pool this session and are recorded as open, not verified.",
+    "The same register-bank drift already documented on 080b29a8, 080b24e4, and 080b3444 reappears here in a new pairing: the reference keeps the shop pointer in r7 (loaded directly, 'ldr r7,[r3,#0]') while this candidate's compile puts it in sl instead, with knock-on reordering of the selection/count byte reads (the candidate loads count before selection despite the source declaring selection first, matching the earlier finding that GCC's pseudo-register/read ordering for these small independent byte loads is not controlled by source declaration order in this codebase). This is the dominant source of the 200 wrong_instructions figure; the underlying algorithm recovered here (persisted paging state, redraw-gated icon/list refresh, the two-array clear-and-stamp pattern, the animation counter) matches the reference's call sequence and argument shapes closely once the register-bank offset is looked past.",
+    "Given this is the third owner in the family showing the same register-allocation-drift shape rather than a control-flow or algorithm disagreement, further manual respelling on this specific residual is not a good use of bounded effort; it is recorded here as compiler-internals-shaped evidence supporting a permuter-style search across the family rather than a source-shape gap.",
+    "Exact-C adoption remains gated on an independently compiled zero-difference object."
+  ]
+}

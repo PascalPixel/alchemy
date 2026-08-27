@@ -2,6 +2,9 @@
 
 #define BattlePresentation_WaitForAdvance Func_080bb65c
 
+extern volatile u32 Data_03001ae8;
+extern volatile u32 Data_03001c94;
+
 void BattlePresentation_WaitForAdvance(void)
 {
     u8 prompt[12];
@@ -21,7 +24,6 @@ void BattlePresentation_WaitForAdvance(void)
         u8 *left = render[0];
         u8 *right = render[1];
         s32 wave;
-        u32 input;
 
         Func_080039fc((void *)0x0400004a, 4);
         Func_0800393c((void *)0x0400004a, 16);
@@ -43,9 +45,13 @@ void BattlePresentation_WaitForAdvance(void)
             (wave >> 15) + (*(u16 *)(left + 14) * 8) + 6;
         Func_08003dec(prompt, 240);
 
-        input = *(u32 *)0x03001ae8;
-        if ((input & 2) || (*(u32 *)0x03001c94 & 0x303) ||
-            (frames > 15 && (input & 0x303))) {
+        if (Data_03001ae8 & 2) {
+            break;
+        }
+        if (Data_03001c94 & 0x303) {
+            break;
+        }
+        if (frames > 15 && (Data_03001ae8 & 0x303)) {
             break;
         }
         Func_080030f8(1);

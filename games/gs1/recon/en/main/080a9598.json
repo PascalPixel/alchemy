@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080a9598",
+  "status": "measured-draft",
+  "owner_bytes": 320,
+  "candidate_bytes": 312,
+  "differing_halfwords": 136,
+  "wrong_instructions": 98,
+  "classification": "shop-party-item-page-panel",
+  "family": {
+    "id": "template-main-080b1470",
+    "template_owner": "main:080b1470",
+    "template_source": "games/gs1/src/shop/draw_party_member_items.c",
+    "note": "Same shop domain (menu=Data_03001f2c, unit via Func_08077008, Func_08015080 message draws) but a page-of-5 item list panel with pagination (Func_08015068 border, Func_080a2324/Func_080a21b0 page-indicator calls) rather than the template's full 15-slot grid; sibling of main:080b386c in the same family entry."
+  },
+  "notes": [
+    "Read the raw assembly directly: menu=Data_03001f2c; unit=Func_08077008(*(u8*)(menu+0x21a)); Func_08015068(window,128,8,224,96) [drawn BEFORE reading the page/count fields -- confirmed by the reference computing this call's args immediately after the Func_08077008 return, using r0 there as the just-returned unit pointer stashed into fp]; page=state->8, first=page*5, visible=(u8)(state->20-first) [confirmed the explicit 24/24 shift truncation-to-byte in the reference, matching the template's own `u8 visible_count` idiom] clamped to <=5; Func_080a2324(5,first,window,119,52); Func_080a21b0(window,state->20,5,page,28); if(menu[536]!=0) loop row=0..visible-1 over u16 slots at menu+first*2+456 masked to 0x1ff plus base 0x182, drawing at (128,row*16+8); else draw message 0xad7 at (120,8); then Func_08015090(unit,window,40,0), two icon draws at pool addresses 0xaf7/0xaf7+1, and two Func_080150b0 calls reading unit+60/unit+62 as quantities.",
+    "Reordering the Func_08015068 call to precede the page/entry_count field reads (matching the reference's call-right-after-Func_08077008-return sequencing) and adding the (u8) truncation on `visible` both measurably improved the score (wrong_instructions 92->102 was a regression from an earlier ordering attempt, corrected back down to 98 with the truncation fix); the algorithm, all constants, and all seven call sites already match. Remaining divergence is concentrated in which physical register holds `state` vs `first` vs `unit` across the function body (reference keeps state in r5/r7 in a different split than the candidate) -- a register-allocation/scheduling gap, not a missing behavior.",
+    "The message-id and icon-address placeholders (0xad7, 0x182, 0xaf7) come directly from the pool dump in first-reference order and follow this project's Value_XXXXXXXX convention; not independently cross-checked against message text.",
+    "Adoption requires 0 differing_halfwords."
+  ]
+}

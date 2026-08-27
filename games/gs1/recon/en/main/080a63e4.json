@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "namespace": "gs1-en-main",
+  "address": "0x080a63e4",
+  "name": "Func_080a63e4",
+  "status": "measured-draft",
+  "owner_bytes": 512,
+  "score": {
+    "measured": "2026-08-27",
+    "candidate_bytes": 404,
+    "reference_bytes": 512,
+    "differing_halfwords": 243,
+    "wrong_instructions": 207,
+    "class": "wrong",
+    "note": "Assigned to the shop/select_party_member.c family by clustering; sits immediately after the tiny stub PsynergyMenu_ReturnTrue (080a63dc) and before PsynergyMenu_RefreshOwnerPsynergy (080a6384) in address order, and reads/writes the same small byte offsets (28, 29, 0x219/0x208-region indices) as sibling 080a38d0, strongly suggesting an inventory/equip-menu owner-selection loop of the same family as 080a38d0 rather than genuine psynergy_menu code (the neighboring named psynergy_menu owners are a coincidence of address proximity, not evidence of module). The candidate reproduces the outer for(;;) shape, the Modulo-driven wraparound selection, the A/B/L/R button polling against ADDR_03001C94/ADDR_03001B04, and the closing struct writes (byte 29, word at +8, byte at +0x21b), but the redraw body's window-bounds/OAM-attribute-packing block (the ~20-instruction shared fragment that also appears verbatim in sibling 080a38d0, manipulating a cursor object's halfword fields at +6 and +22 with a mask/or sequence) is explicitly stubbed out as an unmodeled placeholder rather than reconstructed, which accounts for most of the 108-byte shortfall (404 vs 512) and essentially all of the 207 wrong_instructions. This is a source-shape gap: the missing block's purpose (packing a selection index into an OAM-style attribute halfword) was identified but not translated to C in the time available."
+  },
+  "rejected_experiments": [],
+  "notes": [
+    "Recovered from games/gs1/asm/080a63e4.s. The K constant chain (0x219 loaded once, then mutated in-register to 0x219-17=0x208 for array indexing) was read directly off the literal pool and matches the same offsets seen in sibling 080a38d0, which is the basis for treating both as owners of the same (still only partially identified) menu-state struct rather than PsynergyMenuState.",
+    "The skipped ~20-instruction cursor/OAM-packing fragment is near byte-identical between this owner and 080a38d0 in the retained assembly (same register shuffle, same &-mask/or-mask/store-halfword sequence at struct offsets +6/+22 off a pointer loaded from offset +24) -- worth extracting as a single shared static-inline helper and modeling properly in a follow-up pass rather than guessing its C shape blind.",
+    "This candidate claims zero DONE bytes; it is a rough structural skeleton, not a close attempt -- given six owners in this batch, effort here was intentionally bounded to a single pass so every assigned address got at least one honestly-scored draft.",
+    "No sibling draft existed for this owner before this session."
+  ]
+}

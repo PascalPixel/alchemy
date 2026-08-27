@@ -25,10 +25,36 @@ const EMPTY_GS1: &[ExecutableDigests] =
     &[("xgcc", &[]), ("cpp", &[]), ("tradcpp", &[]), ("cc1", &[])];
 const EMPTY: &[TargetExecutables] = &[("gs1", EMPTY_GS1), ("gs2", EMPTY_GS1)];
 
+// Admitted 2026-08-27: built from the unchanged alchemy-gcc submodule commit
+// (640614ea242376836cee60ab4b2aa5facefd707d) on a fresh linux-x64 container,
+// then proved with a green `make full-rom-check` (identical=True,
+// byte_identical=yes) on that same build before pinning.
+const LINUX_X64_GS1: &[ExecutableDigests] = &[
+    (
+        "xgcc",
+        &["cc35e03215be6ec15aea1463c79e9598b754430c0927c2062ea337c46b725abc"],
+    ),
+    (
+        "cpp",
+        &["c01747023ae601e84c7739317d96bfae5ceab88de7271a83f7073fddeb9893aa"],
+    ),
+    (
+        "tradcpp",
+        &["cbf6602147a0b6cec2884d47ee56d44d1278a1fee31d2c413968c488c278787f"],
+    ),
+    (
+        "cc1",
+        &["d0c3f7857e568272f6d2a0d25f2138daeac2ee0941c4828db3abd10d9204b096"],
+    ),
+];
+
 pub static EXPECTED: &[HostTargets] = &[
     ("darwin-arm64", &[("gs1", GS1), ("gs2", GS1)]),
     ("darwin-x64", EMPTY),
-    ("linux-x64", EMPTY),
+    (
+        "linux-x64",
+        &[("gs1", LINUX_X64_GS1), ("gs2", LINUX_X64_GS1)],
+    ),
     ("linux-arm64", EMPTY),
 ];
 pub static AGBCC_EXPECTED: &[HostDigests] = &[
@@ -46,7 +72,10 @@ pub static AGBCC_EXPECTED: &[HostDigests] = &[
         ],
     ),
     ("darwin-x64", &[]),
-    ("linux-x64", &[]),
+    (
+        "linux-x64",
+        &["9200c74552a980be35fd58c8afdbd07bb76c9b785b57bad78d8303e00d738af3"],
+    ),
     ("linux-arm64", &[]),
 ];
 pub static GCC3_EXPECTED: &[HostDigests] = &[

@@ -2131,6 +2131,7 @@
     "main:080b75dc": {"name":"BattleUnit_RefreshPlacement"},
     "main:080f9ef8": {"name":"MusicTrack_Stop"},
     "main:080fa1ac": {"name":"MusicTrack_ClearModulationState"},
-    "main:080fb2a4": {"name":"MusicPlayer_SetPitchAndUpdateFrequency"}
+    "main:080fb2a4": {"name":"MusicPlayer_SetPitchAndUpdateFrequency"},
+    "main:08091a58": {"name":"PartyInventory_GiveItem"}
   }
 }

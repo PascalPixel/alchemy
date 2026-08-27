@@ -1,5 +1,26 @@
 #include "serial_runtime_family.h"
 
+/*
+ * The reference emits a single Thumb `stmia r3!, {r0, r1, r2}` (with a
+ * `subs r3, #12` afterward to undo the mandatory Thumb STM writeback) for
+ * this DMA3 descriptor write, and no matching `ldmia` anywhere near it.
+ * gs1cc's generic store-multiple combiner (arm.c store_multiple_sequence)
+ * merges consecutive same-base, ascending, adjacent-offset word stores
+ * into one STM, but explicitly refuses to do so when the memory operand
+ * is volatile ("Don't reorder volatile memory references"). The
+ * TU-wide DMA3 macro types its target as `volatile struct DmaRegisters
+ * *`, which would suppress that combine and force three separate `str`
+ * instructions -- not what the reference shows. A non-volatile alias
+ * to the same three-word register block lets the ordinary field stores
+ * below combine the way the reference does.
+ */
+struct DmaRegistersRW {
+    u32 source;
+    u32 destination;
+    u32 control;
+};
+#define DMA3_RW ((struct DmaRegistersRW *)0x040000d4)
+
 void Func_08005d10(void)
 {
     u32 interrupt_enable;
@@ -29,9 +50,9 @@ void Func_08005d10(void)
 
     REG_IME = 1;
     zero = 0;
-    DMA3->source = (u32)&zero;
-    DMA3->destination = (u32)SERIAL_RUNTIME;
-    DMA3->control = 0x85000058;
+    DMA3_RW->source = (u32)&zero;
+    DMA3_RW->destination = (u32)SERIAL_RUNTIME;
+    DMA3_RW->control = 0x85000058;
     SERIAL_RUNTIME->send_index = -1;
     SERIAL_RUNTIME->send_buffer[0] = (u16 *)(SERIAL_RUNTIME->storage + 0);
     SERIAL_RUNTIME->send_buffer[1] = (u16 *)(SERIAL_RUNTIME->storage + 32);

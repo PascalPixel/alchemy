@@ -13,43 +13,76 @@
     "evidence": "games/gs1/asm/080e7404.s contains one global owner; its assembled .text is 0xe38 bytes and the next owner begins at 0x080e823c. The generated 0x080e7404-0x080ec100 target is a contiguous ranked scope containing later owners, not this function boundary."
   },
   "score": {
-    "measured": "2026-08-20",
-    "candidate_bytes": 3620,
+    "measured": "2026-08-27",
+    "candidate_bytes": 3632,
     "reference_bytes": 3640,
-    "candidate_instructions": 1511,
-    "reference_instructions": 1532,
-    "wrong_instructions": 1352,
-    "differing_halfwords": 1736,
+    "candidate_instructions": 1520,
+    "reference_instructions": 1537,
+    "wrong_instructions": 1090,
+    "differing_halfwords": 1714,
     "class": "unemittable",
-    "objdiff_structural_percent": 68.28755,
-    "objdiff": {
-      "aligned_instructions": 1840,
-      "unchanged": 658,
-      "argument_mismatches": 660,
-      "opcode_mismatches": 7,
-      "replacements": 86,
-      "deletions": 223,
-      "insertions": 209
-    }
+    "alignment": {
+      "source": "compiler candidate-show --align, tallied by mnemonic; the workbench objdiff report was not re-run this pass, so the previous objdiff block was dropped rather than carried forward stale",
+      "aligned_rows": 1434,
+      "unchanged": 886,
+      "argument_mismatches": 548,
+      "opcode_mismatches": 0,
+      "insertions": 280,
+      "deletions": 284,
+      "caveat": "rows include literal-pool words disassembled as instructions, so insertions/deletions overstate the code-level gap"
+    },
+    "note": "Sixth pass. Two decisive findings first, because they change what this owner can ever be. (1) Both DMA descriptor writes to 0x040000d4 are a standalone three-register Thumb store multiple: at reference offsets 0x19e and 0x258 (0x080e75a2 and 0x080e765c), `stmia r3!, {r0, r1, r2}` followed by a dead `subs r3, #12`, with r0/r1/r2 loaded individually immediately before (0xc307 0x3b0c verified against roms/gs1-en.gba, not a disassembly artifact). agscc cannot emit this. arm.md's movmem8b/movmem12b are the only Thumb multi-register transfer patterns and arm.c thumb_output_move_mem_multiple always prints `ldmia %1!` immediately before `stmia %0!`; the generic ldmsi/stmsi/store_multiple patterns at arm.md 4977-5058 are TARGET_ARM only. A local 12-byte struct assigned to *(Dma *)0x040000D4 was tried and does produce movmem12b, but with the paired `ldmia` the reference does not have. This is the same evidence basis classification.json already records for owner 080f4f04's mixed_thumb_multiple_transfer_module group. (2) Immediately before each `bl Func_080e7338` the reference does `add r2, sp, #284; mov r9, r2` and never reads r9 again in this owner (r9's next definition is `mov r9, r0` with r0=255 much later, at reference offset 0xc1e). Reading games/gs1/asm/080e7338.s shows why: it opens `mov r4, r9 / adds r3, r4, #0 / adds r1, r3, #0 / subs r1, #136 / ldr r3, [r1, #0]`, i.e. it dereferences r9-136. sp+284 is this frame's top and sp+284-136 = sp+148 = the work-pointer slot. So r9 is an implicit register argument carrying this frame's address into the callee, and Func_080e7338 is already classified hidden_register_context_module ('callee_saved_registers_carry_implicit_context', 'register_pins_disallowed'). The caller side of that contract is equally inexpressible. Conclusion: 080e7404 cannot reach byte identity from ordinary C with the approved compiler and belongs in a keep_structured_asm classification group rather than in the exact-match queue. Everything else this pass was ordinary reconstruction, and it moved a long way. Baseline was candidate=3620 dh=1736 wrong_instructions=1352; final is candidate=3632 dh=1714 wrong_instructions=1090, with opcode_mismatches now zero across the whole aligned comparison. What was fixed, in descending value. (a) Frame layout. m2c's sp50 and sp58 are two-word locals, not scalars: the reference writes sp+80/sp+84 and sp+88/sp+92, the second word always through the retained &sp50 / &sp58 pointer (reference offsets 0x5d6 and 0x624, `str r6, [sp, #88]` beside `str r6, [r3, #4]`). Declaring them s32[2] made the candidate byte-count-exact for the first time. (b) The three-word and four-word scratch records are indexed, not offset: replacing every `M2C_FIELD(&sp60, s32 *, 4)` with `sp60[1]` collapsed a pile of redundant frame-address materializations (wrong_instructions 1360 -> 1206 in one step) and made the reference's `add r5, sp, #96` / `str r3, [r5, #4]` shape appear. (c) m2c's sp94 (work-pointer slot at 148), sp98 (128-byte random table at 152) and sp118 (DMA source word at 280) are one contiguous 136-byte region; the compiler's frame allocator sorts declared locals into size classes (4-byte and 8-byte objects below, >= 12-byte objects above, first-declared highest within a class), so as separate small scalars sp94 and sp118 sank to the bottom of the frame. Merging them as `u8 sp98[132]` plus `s32 sp84[5]` (sp94 = sp84[4]) puts the whole declared block in one class and reproduces the reference's contiguous 80..283 layout up to a 12-byte spill-count difference. This also restored the reference's two-instruction `*sp3C` dereference: the fold of `*p` back to `[sp,#N]` is a CSE address-cost decision that only happens while the local's frame offset is <= 124, which is exactly why the reference (offset 140) keeps the pointer and the old draft (offset 84) did not. (d) Three real pointer-stride bugs: `var_sl_235`, `var_r5_615` (both s16 *) and `var_r3_572` (s32 *) were advanced by the reference's byte stride on a typed pointer, so each step moved two or seven times too far. (e) Eight missing `& 0xFF` masks: the reference hoists 255 into a register (r7, later r9) and ands every raw Func_08004458 result that is not already masked, in the 128-record, 512-record and 64-record initialisers. (f) The `(x >= 0 && x <= 0x7F)` guard in the progressive-reveal walk folds to one unsigned compare; the reference has two ordered signed compares, so it must be nested ifs, not `&&`. (g) Symbolisation with real evidence: Data_03001e50 is a `void *[]` and the owner reads [39], [40], [44] and [46] -- `&Data_03001e50[40]` reproduces the 0x03001ef0 pool word with `subs r3, #4` for [39], `&Data_03001e50[44]` reproduces 0x03001f00 with `[r5,#0]`/`[r5,#8]`, and plain `Data_03001e50[46]` reproduces the reference's `ldr r3, =0x03001e50 / adds r3, #184`. Data_03001ad0 and Data_03001ce0 must be aggregates, not folded absolute addresses, because the reference keeps the base in a register and uses `[r2,#4]`, `[r2,#6]`, `[r2,#16]`; a toy confirmed pointer arithmetic on an extern array folds to symbol+offset in the pool while a struct field does not. Data_080ede48 is indexed. Func_080e0524's and Func_08002f40's id arguments are Value_ pool symbols (0xc0, 0xc1, 0xc4 are all <= 255 and would otherwise be `movs`). (h) The u16/u8 temporaries around the projected-rectangle table forced truncation the reference does not have; widening temp_r6_269, temp_r5_271 and temp_r1_319 to s32 and spelling the halving of temp_r3_916/temp_r3_926 on the shifted word (`(t >> 16) + (s32)((u32) t >> 31)) >> 1`) restored the reference's `ldrh` + `lsls/asrs/lsrs` quartet instead of a folded `ldrsh`. Callee prototypes were added; they compile warning-clean and do not move the score. Residual: the candidate is 8 bytes and 17 instructions short, and every remaining aligned mismatch is a register or spill-slot choice, not a shape. The reference is under enough pressure to keep loop counters in r8 and the phase-two frame counter in fp with 18 spill slots; the candidate keeps counters in low registers and the sp3C pointer in r9 with 16 spill slots. 4 of the 8 missing bytes are the two 0x040000dc pool words the separated DMA writes need and the stmia does not."
   },
   "shape": {
     "reference_calls": 95,
-    "expressed_loops": 23,
+    "expressed_loops": 19,
     "reference_pool_words": 94,
+    "candidate_pool_words": 98,
     "symbolized_pool_references": 107,
     "jump_table": false,
     "frame_bytes_reference": 284,
     "frame_bytes_candidate": 276
   },
+  "unmatchable": [
+    {
+      "shape": "standalone thumb three-register store multiple",
+      "sites": 2,
+      "where": "reference 0x080e75a2 and 0x080e765c: `stmia r3!, {r0, r1, r2}` then a dead `subs r3, #12`, writing the DMA3 descriptor at 0x040000d4",
+      "evidence": [
+        "roms/gs1-en.gba bytes 0xc307 0x3b0c at both sites",
+        "alchemy-gcc/agscc/gcc/config/arm/arm.c thumb_output_move_mem_multiple emits ldmia immediately before stmia for both the 2- and 3-register cases",
+        "alchemy-gcc/agscc/gcc/config/arm/arm.md movmem12b and movmem8b are the only Thumb multi-register transfer insns",
+        "alchemy-gcc/agscc/gcc/config/arm/arm.md ldmsi, store_multiple, stmsi_postinc and stmsi are TARGET_ARM only",
+        "a local 12-byte struct assignment to *(Dma *)0x040000D4 was compiled and produces the paired ldmia/stmia, not the reference's bare stmia"
+      ]
+    },
+    {
+      "shape": "implicit r9 register argument",
+      "sites": 1,
+      "where": "reference 0x080e7c00: `add r2, sp, #284` / `mov r9, r2` immediately before `bl Func_080e7338`, with r9 dead in this owner afterwards",
+      "evidence": [
+        "games/gs1/asm/080e7338.s reads r9 on entry and dereferences r9 - 136",
+        "sp + 284 is this frame's top and sp + 284 - 136 = sp + 148, this owner's work-pointer slot",
+        "games/gs1/asm/classification.json already lists 080e7338 in hidden_register_context_module with 'register_pins_disallowed' and 'approved_compiler_cannot_express_hidden_register_abi'"
+      ]
+    }
+  ],
   "expressed": [
     "complete two-argument entry paths, runtime argument binding, display setup, mode-specific object creation, and shared teardown",
     "all palette, DMA, VRAM, random-tile, and progressive reveal initialization, including the 128-byte random offset table and nested 256-cell clearing walk",
     "the complete first effect phase through its 192-frame bound: palette ramp, 64 moving records, projection, table-driven rectangles, per-frame updates, and early termination gate",
     "the complete second effect phase: 32 runtime records, 128 and 512 particle-record initializers, sound and object gates, three 64-record render/update walks, mode-specific transforms, and 54-frame bound",
     "all six rectangle callback sites and all three word-copy sites as evidence-backed indirect calls through the local callback and IWRAM copy entry rather than phantom direct callees",
-    "all reference branches and tails through Func_080cdbc0, with no jump table or omitted assembly region"
+    "all reference branches and tails through Func_080cdbc0, with no jump table or omitted assembly region",
+    "the reference's declared-local frame region 80..283 in the reference's own order and sizes, including the two two-word records and the merged 136-byte work-slot/random-table/DMA-source block",
+    "the kind-39/40/44/46 heap-cache reads as one Data_03001e50 array, and 0x03001ad0 / 0x03001ce0 as based aggregates rather than folded absolute addresses"
   ],
   "unexpressed": [
+    {
+      "op": "compiler-inexpressible instruction shape",
+      "count": 3,
+      "where": "two standalone thumb store-multiples and one implicit r9 hand-off; see the unmatchable block"
+    },
     {
       "op": "aggregate recovery",
       "count": "whole owner",
@@ -57,8 +90,8 @@
     },
     {
       "op": "source-shape repair",
-      "count": 1352,
-      "where": "normalized comparison still differs in declaration lifetimes, frame placement, register allocation, expression boundaries, and several loop spellings"
+      "count": 1090,
+      "where": "normalized comparison still differs in register allocation and spill placement only; the aligned comparison has zero opcode mismatches, so no remaining difference is a control-flow or instruction-selection error"
     },
     {
       "op": "symbol recovery",
@@ -70,11 +103,35 @@
     {
       "experiment": "retain m2c's direct Func_080072f0/Func_080072f4 calls",
       "result": "3592 candidate bytes and 1772 differing halfwords; rejected because the reference loads 0x03001388 or Data_03001eec+0x1c before call-via-register veneers, proving indirect word-copy and rectangle callbacks"
+    },
+    {
+      "experiment": "declare sp94 and sp118 as one-element arrays so they join the aggregate allocation stream",
+      "result": "no layout change at all; the frame allocator sorts by size class, not by aggregate-ness, so 4-byte objects stay in the low class either way"
+    },
+    {
+      "experiment": "reverse the declaration order of the nine frame locals, and separately move the whole block to the end of the declaration list",
+      "result": "the block moved as a unit but the size-class split remained; only merging sp94/sp98/sp118 into one >= 12-byte object reproduced the reference's contiguous layout"
+    },
+    {
+      "experiment": "index Data_080eeebc and Data_080eeeca as named u16 arrays instead of M2C_FIELD on the folded absolute address",
+      "result": "wrong_instructions 1090 -> 1104; the symbol-based form makes the compiler choose ldrsh plus a re-zero-extend where the folded form keeps the reference's single ldrh, so the folded form was kept despite being the less faithful spelling"
+    },
+    {
+      "experiment": "compose the 0x05000100 palette word through an s32 temporary before the halfword store, to stop the 0xF mask being materialised as a pooled halfword constant instead of the reference's `movs r7, #15`",
+      "result": "wrong_instructions 1090 -> 1118; the narrowing is what keeps the rest of that loop in the reference's shape, so the one extra pool word was accepted"
+    },
+    {
+      "experiment": "spell the s16 halving as `((s16) x) / 2` rather than on the pre-shifted word",
+      "result": "wrong_instructions 1110 -> 1116 either way in aggregate, but the `/2` form emits ldrsh where the reference emits ldrh; the shifted-word form was kept as the faithful one"
+    },
+    {
+      "experiment": "declare var_fp_1329 (the phase-two frame counter) as s32 instead of u32",
+      "result": "wrong_instructions 1090 -> 1094; it does not move the counter from its spill slot into fp, which is where the reference keeps it"
     }
   ],
   "notes": [
     "The complete 0x080e7404-0x080e823c reference assembly and all literal pools were read; workbench symbolization found 107 PC-relative references and no jump table.",
-    "The owner is listed in games/gs1/asm/classification.json's thumb-multiple-transfer group because the reference uses Thumb multiple transfer. This remains ordinary C and does not claim that classified instruction shape.",
-    "Linked differing_halfwords is the completion measure. The draft is 20 bytes short and is not exact or adoptable."
+    "The earlier note claiming this owner is listed in games/gs1/asm/classification.json's thumb-multiple-transfer group was wrong: 080e7404 does not appear anywhere in classification.json, and the mixed_thumb_multiple_transfer_module group holds only 080f4f04. The evidence recorded for that group is nonetheless exactly what rules this owner out, so 080e7404 should be added to a keep_structured_asm group of its own or to that one.",
+    "Linked differing_halfwords is the completion measure. The draft is 8 bytes short and is neither exact nor adoptable, and by the unmatchable block above it cannot become exact from C."
   ]
 }

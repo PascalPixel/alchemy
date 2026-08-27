@@ -5,6 +5,27 @@
  *
  * Aggregate names remain provisional.  Byte-offset accesses are retained
  * where the repository does not yet provide an evidence-backed structure.
+ *
+ * Two reference shapes in this owner are outside what the approved
+ * compiler can emit from C, so this draft is a near reconstruction and
+ * not a candidate for byte identity:
+ *
+ *   1. Both DMA descriptor writes to 0x040000d4 are one standalone
+ *      three-register Thumb store multiple (`stmia r3!, {r0, r1, r2}`
+ *      followed by a dead `subs r3, #12`).  gcc 2.96's Thumb backend
+ *      emits multi-register transfers only from movmem8b/movmem12b, and
+ *      those always print an immediately adjacent `ldmia` before the
+ *      `stmia` (arm.c thumb_output_move_mem_multiple, arm.md movmem12b);
+ *      the generic store_multiple patterns are TARGET_ARM only.  This
+ *      draft writes the three descriptor words separately instead.
+ *
+ *   2. Before each `Func_080e7338` call the reference loads r9 with the
+ *      frame top (`add r2, sp, #284; mov r9, r2`) and never reads r9
+ *      again in this owner.  Func_080e7338 reads r9 on entry and
+ *      dereferences r9 - 136, which is this frame's work-pointer slot,
+ *      so r9 is an implicit register argument.  Func_080e7338 is already
+ *      classified as a hidden_register_context_module; the caller side of
+ *      that contract is equally inexpressible without a register pin.
  */
 #define M2C_FIELD(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))
@@ -13,8 +34,76 @@ typedef void (*WordCopy)(void *, const void *, s32);
 typedef void (*DrawRectangle)(
     void *, const void *, s32, s32, s32, s32);
 
+/* Heap-allocation cache: Data_03001e50[kind] holds kind's block address.
+   This owner reads kinds 39 (its work block), 40 (the draw destination)
+   and 46 (the rectangle entry Func_080ed408 loads), plus kind 44. */
+extern void *Data_03001e50[];
+
+/* Two IWRAM cells the reference addresses through one base register
+   plus a field offset, so each is named as an aggregate rather than
+   as a folded absolute address. */
+struct Cells03001ad0 {
+    u16 unk00;
+    u16 unk02;
+    u16 unk04;
+    u16 unk06;
+};
+extern struct Cells03001ad0 Data_03001ad0;
+
+struct Cells03001ce0 {
+    s32 unk00[4];
+    s32 unk10;
+};
+extern struct Cells03001ce0 Data_03001ce0;
+
+/* Sixteen halfword cell offsets; the reference keeps the table base in
+   a register and indexes it, so it is named rather than folded into a
+   biased literal. */
+extern u16 Data_080ede48[];
+
+/* Value_ symbols carry a literal the reference loads from its pool rather
+   than materializing with a mov. */
+extern u8 Value_000000c0;
+extern u8 Value_000000c1;
+extern u8 Value_000000c4;
+
 void *Func_08009030(s32);
 void **Func_080b5098(s32);
+void Func_080cd594(s32);
+void Func_080d6888(s32, s32, s32, s32, s32);
+void Func_080f9010(s32);
+void Func_080c9048(void);
+void Func_080041d8(s32, s32);
+void Func_080cd104(s32, s32);
+void Func_08004278(s32);
+void Func_08009020(void *, s32);
+void Func_080dbb24(s32, s32, s32);
+void Func_080e0524(s32, void *, s32, s32);
+void *Func_08002f40(s32);
+void Func_080030f8(s32);
+s32 Func_08004458(void);
+void Func_080d6750(s32);
+s32 Func_080ed408(s32, s32, s32, s32, s32);
+void Func_08009008(s32, void *, void *, s32);
+s32 Func_08002322(s32);
+s32 Func_0800231c(s32);
+void Func_080049ac(void);
+void Func_08004cb4(void *);
+void Func_08004c6c(s32);
+void Func_08004c1c(s32);
+void Func_080e3944(const void *, void *);
+void Func_080e7338(s32, s32, s32);
+void Func_08002dd8(s32);
+void Func_080d67dc(void);
+void Func_080e727c(s32, s32, s32);
+void Func_08009038(s32);
+void Func_080b5118(void);
+void Func_080b50e8(s32);
+void Func_080051d8(s32, s32);
+void Func_080e38b8(void *, s32, s32);
+s32 Func_080022ec(s32, s32);
+void Func_080e155c(s32, s32);
+s32 Func_080cdbc0(void);
 
 s32 Func_080e7404(s32 arg0, s32 arg1)
 {
@@ -36,15 +125,6 @@ s32 Func_080e7404(s32 arg0, s32 arg1)
     DrawRectangle draw_rectangle;
     void *draw_destination;
     s32 sp4C;
-    s32 sp50;
-    s32 sp58;
-    s32 sp60[3];
-    s32 sp6C[3];
-    s32 sp78[3];
-    s32 sp84[4];
-    void *sp94;
-    u8 sp98[128];
-    s32 sp118;
     u8 *var_r7_1383;
     u8 *var_r7_1551;
     s16 *var_r5_615;
@@ -118,9 +198,9 @@ s32 Func_080e7404(s32 arg0, s32 arg1)
     s32 var_r8_912;
     s32 var_r8_997;
     s32 var_sl_1491;
-    s8 temp_r1_319;
-    u16 temp_r3_916;
-    u16 temp_r3_926;
+    s32 temp_r1_319;
+    s32 temp_r3_916;
+    s32 temp_r3_926;
     u16 temp_r4_1585;
     u32 temp_r0_1420;
     u32 temp_r0_1587;
@@ -130,15 +210,14 @@ s32 Func_080e7404(s32 arg0, s32 arg1)
     u32 var_fp_1329;
     u32 var_r8_409;
     u8 *var_r5_398;
-    u8 temp_r5_271;
-    u8 temp_r6_269;
+    s32 temp_r5_271;
+    s32 temp_r6_269;
     void *temp_r0_140;
     void *temp_r0_603;
     void *temp_r1_1495;
     void *temp_r1_154;
     void *temp_r2_1063;
     void *temp_r2_1122;
-    void *temp_r2_1161;
     void *temp_r2_1307;
     void *temp_r2_365;
     void *temp_r2_46;
@@ -155,12 +234,22 @@ s32 Func_080e7404(s32 arg0, s32 arg1)
     void *var_r5_1275;
     void *var_r5_995;
     void *var_r7_911;
+    void **cursor;
+    void **display;
+    u8 sp98[132];
+    s32 sp84[5];
+    s32 sp78[3];
+    s32 sp6C[3];
+    s32 sp60[3];
+    s32 sp58[2];
+    s32 sp50[2];
 
+    cursor = &Data_03001e50[40];
     sp4C = arg1;
-    sp3C = &sp94;
-    draw_destination = *(void **)0x03001EF0;
-    temp_r3_24 = *(void **)0x03001EEC;
-    sp94 = temp_r3_24;
+    sp3C = (void **)&sp84[4];
+    draw_destination = *cursor;
+    temp_r3_24 = cursor[-1];
+    *sp3C = temp_r3_24;
     M2C_FIELD(temp_r3_24, s32 *, 0x7828) = arg0;
     Func_080cd594(0x2000);
     M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x100;
@@ -204,13 +293,13 @@ s32 Func_080e7404(s32 arg0, s32 arg1)
     } else {
         Func_080dbb24(1, 0x17D, 3);
     }
-    Func_080e0524(0xC1, *sp3C, 1, 1);
+    Func_080e0524((s32)&Value_000000c1, *sp3C, 1, 1);
     if (sp4C == 1) {
         ((WordCopy)0x03001388)(
-            (void *)0x05000000, (void *)Func_08002f40(0xC4), 0x80);
+            (void *)0x05000000, (void *)Func_08002f40((s32)&Value_000000c4), 0x80);
     }
-    sp118 = 0x01010101;
-    M2C_FIELD((void *)0x040000D4, s32 **, 0) = &sp118;
+    *(s32 *)(sp98 + 128) = 0x01010101;
+    M2C_FIELD((void *)0x040000D4, s32 **, 0) = (s32 *)(sp98 + 128);
     M2C_FIELD((void *)0x040000D4, s32 *, 4) = 0x02010000;
     M2C_FIELD((void *)0x040000D4, s32 *, 8) = 0x85002000;
     ((WordCopy)0x03001388)(
@@ -227,10 +316,10 @@ s32 Func_080e7404(s32 arg0, s32 arg1)
         temp_r5_271 = Func_08004458();
         var_r8_233 += 1;
         *var_sl_235 = (((Func_08004458() & 0xF) + 0x10) << 0xA) | (((temp_r5_271 & 0xF) + 0x10) << 5) | ((temp_r6_269 & 0xF) + 0x10);
-        var_sl_235 += 2;
+        var_sl_235 += 1;
     } while (var_r8_233 != 0x3F);
-    sp118 = 0;
-    M2C_FIELD((void *)0x040000D4, s32 **, 0) = &sp118;
+    *(s32 *)(sp98 + 128) = 0;
+    M2C_FIELD((void *)0x040000D4, s32 **, 0) = (s32 *)(sp98 + 128);
     M2C_FIELD((void *)0x040000D4, void **, 4) = draw_destination;
     M2C_FIELD((void *)0x040000D4, s32 *, 8) = 0x85001000;
     var_r8_303 = 0;
@@ -253,7 +342,7 @@ s32 Func_080e7404(s32 arg0, s32 arg1)
     } while (var_r8_303 != 0x100);
     ((WordCopy)0x03001388)(
         (void *)0x06004000, draw_destination, 0x4000);
-    M2C_FIELD((void *)0x03001CE0, s32 *, 0x10) = 0xF0;
+    Data_03001ce0.unk10 = 0xF0;
     Func_080d6750(M2C_FIELD(*sp3C, s32 *, 0x7828));
     temp_r2_365 = *sp3C;
     M2C_FIELD(temp_r2_365, s32 *, 0x77D0) = 0;
@@ -280,7 +369,11 @@ s32 Func_080e7404(s32 arg0, s32 arg1)
                 var_r0_428 = 0;
 loop_33:
                 temp_r1_434 = var_r5_410 - sp98[var_r0_428 & 0x7F];
-                if ((temp_r1_434 >= 0) && (temp_r1_434 <= 0x7F)) {
+                /* Two ordered signed bounds, not one folded unsigned
+                   range test: the reference compares against 0 and 127
+                   separately. */
+                if (temp_r1_434 >= 0) {
+                if (temp_r1_434 <= 0x7F) {
                     var_r2_439 = temp_r1_434;
                     if (temp_r1_434 < 0) {
                         var_r2_439 = temp_r1_434 + 7;
@@ -290,6 +383,7 @@ loop_33:
                         var_r3_445 = var_r0_428 + 7;
                     }
                     M2C_FIELD((((((((var_r2_439 >> 3) << 5) + (var_r3_445 >> 3)) * 8) + (temp_r1_434 & 7)) * 8) + (var_r0_428 & 7)), s8 *, 0x02010000) = 0;
+                }
                 }
                 var_r0_428 += 1;
                 if (var_r0_428 != 0x100) {
@@ -303,13 +397,14 @@ loop_33:
     } while (var_r6_408 <= 0xBF);
     M2C_FIELD((void *)0x04000050, s16 *, 0) = 0x3F42;
     M2C_FIELD((void *)0x04000050, s16 *, 2) = 0x1010;
-    sp38 = (s32) M2C_FIELD((void *)0x03001AD0, u16 *, 4);
-    sp34 = (s32) M2C_FIELD((void *)0x03001AD0, u16 *, 6);
-    sp30 = M2C_FIELD((void *)0x03001F00, void **, 0);
-    M2C_FIELD((void *)0x03001AD0, u16 *, 4) = 0U;
-    M2C_FIELD((void *)0x03001AD0, u16 *, 6) = 0x20U;
+    sp38 = (s32) Data_03001ad0.unk04;
+    sp34 = (s32) Data_03001ad0.unk06;
+    display = &Data_03001e50[44];
+    sp30 = display[0];
+    Data_03001ad0.unk04 = 0U;
+    Data_03001ad0.unk06 = 0x20U;
     Func_080ed408(0x2E, 8, 7, 3, 2);
-    draw_rectangle = *(DrawRectangle *)0x03001F08;
+    draw_rectangle = (DrawRectangle) display[2];
     temp_r2_553 = *sp3C;
     M2C_FIELD(temp_r2_553, s32 *, 0x7780) = 3;
     M2C_FIELD(temp_r2_553, s32 *, 0x7784) = 0x02020202;
@@ -319,13 +414,13 @@ loop_33:
     do {
         var_r8_570 += 1;
         *var_r3_572 = -1;
-        var_r3_572 += 0x1C;
+        var_r3_572 += 7;
     } while (var_r8_570 != 0x40);
     M2C_FIELD(sp30, s32 *, 0x10) = 1;
     M2C_FIELD(*sp3C, s32 *, 0x778C) = 0;
     var_fp_590 = 0;
     sp18 = sp84;
-    sp2C = &sp58;
+    sp2C = sp58;
     sp28 = sp3C;
     sp10 = 0;
 loop_47:
@@ -354,7 +449,7 @@ block_56:
         do {
             var_r8_649 += 1;
             *var_r5_615 = 0;
-            var_r5_615 += 2;
+            var_r5_615 += 1;
         } while (var_r8_649 != 0xF);
         do {
             temp_r1_660 = var_r8_649 - 0x10;
@@ -379,12 +474,12 @@ block_56:
             }
             var_r8_649 += 1;
             *var_r5_615 = (var_r3_671 << 0xA) | (var_r1_672 << 5) | (var_r1_672 >> 1);
-            var_r5_615 += 2;
+            var_r5_615 += 1;
         } while (var_r8_649 != 0x87);
         do {
             var_r8_649 += 1;
             *var_r5_615 = 0;
-            var_r5_615 += 2;
+            var_r5_615 += 1;
         } while (var_r8_649 != 0xA0);
         if (sp40 == 1) {
             var_r3_713 = var_fp_590;
@@ -404,7 +499,7 @@ block_56:
         M2C_FIELD(sp18, s32 *, 4) = 0xFF0000;
         if (sp4C == 1) {
             var_r6_763 = sp10 + 0xA000;
-            sp58 = var_r6_763;
+            sp58[0] = var_r6_763;
             M2C_FIELD(sp2C, s32 *, 4) = var_r6_763;
             M2C_FIELD(sp18, s32 *, 0) = (s32) ((var_r7_718 << 0x10) + 0x500000);
             M2C_FIELD(sp18, s32 *, 8) = (s32) ((0x40 - temp_r3_748) << 0x10);
@@ -412,7 +507,7 @@ block_56:
             Func_08009008(M2C_FIELD(*sp28, s32 *, 0x77DC), sp18, sp2C, 0);
         } else {
             var_r6_763 = sp10 + 0x10000;
-            sp58 = var_r6_763;
+            sp58[0] = var_r6_763;
             M2C_FIELD(sp2C, s32 *, 4) = var_r6_763;
             M2C_FIELD(sp18, s32 *, 0) = (s32) ((var_r7_718 << 0x10) + 0x600000);
             M2C_FIELD(sp18, s32 *, 8) = (s32) ((0x60 - temp_r3_748) << 0x10);
@@ -444,26 +539,32 @@ loop_84:
                 goto loop_84;
             }
         }
-        M2C_FIELD(&sp60, s32 *, 0) = 0;
-        M2C_FIELD(&sp60, s32 *, 4) = 0;
-        M2C_FIELD(&sp60, s32 *, 8) = 0x02000000;
+        sp60[0] = 0;
+        sp60[1] = 0;
+        sp60[2] = 0x02000000;
         Func_080049ac();
-        Func_08004cb4(&sp60);
+        Func_08004cb4(sp60);
         Func_08004c6c(0x800);
         Func_08004c1c(sp10);
         var_r7_911 = (void *)0x080EEE76;
         var_r8_912 = 0;
         do {
-            temp_r3_916 = M2C_FIELD(var_r7_911, u16 *, 0);
-            M2C_FIELD(&sp78, s32 *, 4) = (s32) ((M2C_FIELD(var_r7_911, s16 *, 2) + var_fp_590) << 0x10);
-            temp_r3_926 = M2C_FIELD(var_r7_911, u16 *, 4);
-            M2C_FIELD(&sp78, s32 *, 0) = (s32) (((s32) ((s16) temp_r3_916 + ((u32) (temp_r3_916 << 0x10) >> 0x1F)) >> 1) << 0x10);
-            M2C_FIELD(&sp78, s32 *, 8) = (s32) (((s32) ((s16) temp_r3_926 + ((u32) (temp_r3_926 << 0x10) >> 0x1F)) >> 1) << 0x10);
-            Func_080e3944(&sp78, &sp6C);
-            temp_r2_941 = M2C_FIELD(&sp6C, s16 *, 2);
-            M2C_FIELD(&sp6C, s32 *, 0) = (s32) (temp_r2_941 + 0x80);
-            temp_r3_946 = M2C_FIELD(&sp6C, s16 *, 6);
-            M2C_FIELD(&sp6C, s32 *, 4) = (s32) (temp_r3_946 + 0x3C);
+            /* The reference keeps the unsigned halfword load and does the
+               sign extension with the same shifted value the rounding bit
+               comes from, so the halving is spelled out on the shifted
+               word rather than through an s16 cast. */
+            temp_r3_916 = M2C_FIELD(var_r7_911, u16 *, 0) << 0x10;
+            sp78[1] = (s32) ((M2C_FIELD(var_r7_911, s16 *, 2) + var_fp_590) << 0x10);
+            temp_r3_926 = M2C_FIELD(var_r7_911, u16 *, 4) << 0x10;
+            sp78[0] = (s32) ((((temp_r3_916 >> 0x10)
+                + (s32) ((u32) temp_r3_916 >> 0x1F)) >> 1) << 0x10);
+            sp78[2] = (s32) ((((temp_r3_926 >> 0x10)
+                + (s32) ((u32) temp_r3_926 >> 0x1F)) >> 1) << 0x10);
+            Func_080e3944(sp78, sp6C);
+            temp_r2_941 = ((s16 *)sp6C)[1];
+            sp6C[0] = (s32) (temp_r2_941 + 0x80);
+            temp_r3_946 = ((s16 *)sp6C)[3];
+            sp6C[1] = (s32) (temp_r3_946 + 0x3C);
             draw_rectangle((void *)0x02010000, *sp3C + 0x1F40,
                 temp_r2_941 + 0x7C, temp_r3_946 + 0x38, 8U, 8);
             var_r8_912 += 1;
@@ -535,19 +636,18 @@ loop_84:
     Func_08004278(0x080C9139);
     Func_08004278(0x080E72E1);
     Func_08004278(0x080CD359);
-    M2C_FIELD((void *)0x03001AD0, u16 *, 4) = (u16) sp38;
-    M2C_FIELD((void *)0x03001AD0, u16 *, 6) = (u16) sp34;
+    Data_03001ad0.unk04 = (u16) sp38;
+    Data_03001ad0.unk06 = (u16) sp34;
     Func_08002dd8(0x2E);
     Func_080d67dc();
     M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x80;
     *(s32 *)0x04000028 = 0;
-    temp_r2_1161 = (void *)0x04000020 + 0xC;
     M2C_FIELD((void *)0x04000020, s32 *, 0xC) = 0xFFFFF000;
-    M2C_FIELD(temp_r2_1161, s16 *, 0x26) = 0x1010;
-    M2C_FIELD(temp_r2_1161, s16 *, -0x20) = 0x2784;
+    M2C_FIELD((void *)0x04000020, s16 *, 0x32) = 0x1010;
+    M2C_FIELD((void *)0x04000020, s16 *, -0x14) = 0x2784;
     Func_080ed408(0x2E, 7, 7, 3, 2);
-    draw_rectangle = *(DrawRectangle *)0x03001F08;
-    Func_080e0524(0xC0, *sp3C, 1, 0);
+    draw_rectangle = (DrawRectangle) Data_03001e50[46];
+    Func_080e0524((s32)&Value_000000c0, *sp3C, 1, 0);
     var_r8_1221 = 0;
     var_r6_1223 = 0;
     do {
@@ -563,10 +663,10 @@ loop_84:
         M2C_FIELD(var_r5_1245, s32 *, 0) = 0;
         M2C_FIELD(var_r5_1245, s32 *, 4) = 0;
         M2C_FIELD(var_r5_1245, s32 *, 8) = 0;
-        M2C_FIELD(var_r5_1245, s32 *, 0xC) = (s32) ((Func_08004458() - 0x7F) << 0xC);
-        M2C_FIELD(var_r5_1245, s32 *, 0x10) = (s32) (Func_08004458() << 0xB);
+        M2C_FIELD(var_r5_1245, s32 *, 0xC) = (s32) (((Func_08004458() & 0xFF) - 0x7F) << 0xC);
+        M2C_FIELD(var_r5_1245, s32 *, 0x10) = (s32) ((Func_08004458() & 0xFF) << 0xB);
         var_r8_1246 += 1;
-        M2C_FIELD(var_r5_1245, s32 *, 0x14) = (s32) ((Func_08004458() - 0x7F) << 0xC);
+        M2C_FIELD(var_r5_1245, s32 *, 0x14) = (s32) (((Func_08004458() & 0xFF) - 0x7F) << 0xC);
         M2C_FIELD(var_r5_1245, s32 *, 0x18) = 0;
         var_r5_1245 += 0x1C;
     } while (var_r8_1246 != 0x80);
@@ -576,10 +676,10 @@ loop_84:
         M2C_FIELD(var_r5_1275, s32 *, 0) = 0;
         M2C_FIELD(var_r5_1275, s32 *, 4) = 0;
         M2C_FIELD(var_r5_1275, s32 *, 8) = 0;
-        M2C_FIELD(var_r5_1275, s32 *, 0xC) = (s32) ((Func_08004458() - 0x80) << 0xD);
-        M2C_FIELD(var_r5_1275, s32 *, 0x10) = (s32) (Func_08004458() << 0xB);
+        M2C_FIELD(var_r5_1275, s32 *, 0xC) = (s32) (((Func_08004458() & 0xFF) - 0x80) << 0xD);
+        M2C_FIELD(var_r5_1275, s32 *, 0x10) = (s32) ((Func_08004458() & 0xFF) << 0xB);
         var_r8_1276 += 1;
-        M2C_FIELD(var_r5_1275, s32 *, 0x14) = (s32) ((Func_08004458() - 0x80) << 0xD);
+        M2C_FIELD(var_r5_1275, s32 *, 0x14) = (s32) (((Func_08004458() & 0xFF) - 0x80) << 0xD);
         M2C_FIELD(var_r5_1275, s32 *, 0x18) = 0;
         var_r5_1275 += 0x1C;
     } while (var_r8_1276 != 0x200);
@@ -588,7 +688,7 @@ loop_84:
     M2C_FIELD(temp_r2_1307, s32 *, 0x7784) = 0x10101010;
     Func_080041d8(0x080CD261, 0x480);
     sp20 = sp3C;
-    sp1C = &sp50;
+    sp1C = sp50;
     sp14 = 0x1D000;
     var_fp_1329 = 0;
 loop_121:
@@ -618,15 +718,15 @@ loop_121:
     var_r8_1386 = 0;
     do {
         if ((s32) M2C_FIELD(var_r7_1383, s32 *, 4) >= 0) {
-            Func_080e3944(var_r7_1383, &sp60);
-            var_r2_1397 = M2C_FIELD(&sp60, s32 *, 8);
-            M2C_FIELD(&sp60, s32 *, 0) = (s32) ((s32) M2C_FIELD(&sp60, s32 *, 0) >> 1);
+            Func_080e3944(var_r7_1383, sp60);
+            var_r2_1397 = sp60[2];
+            sp60[0] = (s32) ((s32) sp60[0] >> 1);
             if (var_r2_1397 <= 0x9F) {
-                M2C_FIELD(&sp60, s32 *, 8) = 0xA0;
+                sp60[2] = 0xA0;
                 var_r2_1397 = 0xA0;
             }
             if (var_r2_1397 > 0x31F) {
-                M2C_FIELD(&sp60, s32 *, 8) = 0x31F;
+                sp60[2] = 0x31F;
                 var_r2_1397 = 0x31F;
             }
             var_r3_1413 = var_r2_1397 - 0xA0;
@@ -636,11 +736,11 @@ loop_121:
             temp_r0_1420 = 9 - (var_r3_1413 >> 6);
             temp_r5_1422 = temp_r0_1420 * 2;
             draw_rectangle(draw_destination,
-                *sp3C + (M2C_FIELD((temp_r5_1422 - 2), u16 *,
-                    0x080EDE48) + ((var_r8_1386 & 1) * 0x302)) + 0x3200,
-                M2C_FIELD(&sp60, s32 *, 0)
+                *sp3C + (Data_080ede48[temp_r0_1420 - 1]
+                    + ((var_r8_1386 & 1) * 0x302)) + 0x3200,
+                sp60[0]
                     - ((s32)(temp_r0_1420 + (temp_r0_1420 >> 0x1F)) >> 1),
-                M2C_FIELD(&sp60, s32 *, 4) - temp_r0_1420,
+                sp60[1] - temp_r0_1420,
                 temp_r0_1420, temp_r5_1422);
             Func_080e38b8(var_r7_1383, 0x40, 0xFFFFE000);
             if ((s32) M2C_FIELD(var_r7_1383, s32 *, 4) <= 0x140000) {
@@ -665,8 +765,8 @@ loop_121:
         temp_r6_1503 = temp_r4_1501 * 2;
         temp_r7_1505 = temp_r3_1499 + 0x7080;
         draw_rectangle(draw_destination,
-            temp_r1_1495 + (M2C_FIELD((temp_r6_1503 - 2), u16 *,
-                0x080EDE48) + ((var_r8_1490 & 1) * 0x302)) + 0x3200,
+            temp_r1_1495 + (Data_080ede48[temp_r4_1501 - 1]
+                + ((var_r8_1490 & 1) * 0x302)) + 0x3200,
             M2C_FIELD(temp_r3_1499, s32 *, 0x7080)
                 - (temp_r4_1501 >> 1),
             M2C_FIELD(temp_r7_1505, s32 *, 4) - temp_r4_1501,
@@ -683,9 +783,9 @@ loop_121:
     var_r8_1552 = 0;
     do {
         if ((Func_080022ec(var_r8_1552, 3) < sp24) && ((s32) M2C_FIELD(var_r7_1551, s32 *, 4) >= 0)) {
-            Func_080e3944(var_r7_1551, &sp60);
-            temp_r6_1570 = (s32) M2C_FIELD(&sp60, s32 *, 0) >> 1;
-            M2C_FIELD(&sp60, s32 *, 0) = temp_r6_1570;
+            Func_080e3944(var_r7_1551, sp60);
+            temp_r6_1570 = (s32) sp60[0] >> 1;
+            sp60[0] = temp_r6_1570;
             temp_r2_1572 = M2C_FIELD(var_r7_1551, u32 *, 0x18);
             if (temp_r2_1572 <= 0xDU) {
                 temp_r3_1580 = ((s32) (temp_r2_1572 + (temp_r2_1572 >> 0x1F)) >> 1) * 2;
@@ -694,7 +794,7 @@ loop_121:
                 draw_rectangle(draw_destination,
                     *sp3C + M2C_FIELD(temp_r3_1580, u16 *, 0x080EEEBC),
                     temp_r6_1570 - temp_r0_1587,
-                    M2C_FIELD(&sp60, s32 *, 4) - temp_r0_1587,
+                    sp60[1] - temp_r0_1587,
                     (u32)temp_r4_1585, (s32)temp_r4_1585);
             }
             temp_r3_1597 = M2C_FIELD(var_r7_1551, u32 *, 0x18) + 1;
@@ -702,9 +802,9 @@ loop_121:
             if (temp_r3_1597 == 0xE) {
                 M2C_FIELD(var_r7_1551, s32 *, 4) = 0x140000;
                 M2C_FIELD(var_r7_1551, s32 *, 0) = 0;
-                M2C_FIELD(var_r7_1551, s32 *, 8) = (s32) ((Func_08004458() - 0x7F) << 0x10);
+                M2C_FIELD(var_r7_1551, s32 *, 8) = (s32) (((Func_08004458() & 0xFF) - 0x7F) << 0x10);
                 M2C_FIELD(var_r7_1551, s32 *, 0xC) = 0;
-                M2C_FIELD(var_r7_1551, s32 *, 0x10) = (s32) (Func_08004458() << 0xB);
+                M2C_FIELD(var_r7_1551, s32 *, 0x10) = (s32) ((Func_08004458() & 0xFF) << 0xB);
                 M2C_FIELD(var_r7_1551, s32 *, 0x14) = 0;
                 M2C_FIELD(var_r7_1551, u32 *, 0x18) = 0U;
             } else {
@@ -724,14 +824,14 @@ loop_121:
     M2C_FIELD(sp18, s32 *, 0xC) = 0;
     M2C_FIELD(sp18, s32 *, 4) = 0xFF0000;
     if (sp4C == 1) {
-        sp50 = sp14;
+        sp50[0] = sp14;
         M2C_FIELD(sp1C, s32 *, 4) = sp14;
         M2C_FIELD(sp18, s32 *, 0) = (s32) ((var_r1_1643 << 0x10) + 0x600000);
         M2C_FIELD(sp18, s32 *, 8) = (s32) ((0x60 - temp_r0_1683) << 0x10);
         Func_08009008(M2C_FIELD(*sp20, s32 *, 0x77D8), sp18, sp1C, 0);
         Func_08009008(M2C_FIELD(*sp20, s32 *, 0x77DC), sp18, sp1C, 0);
     } else {
-        sp50 = temp_r2_1687;
+        sp50[0] = temp_r2_1687;
         M2C_FIELD(sp1C, s32 *, 4) = temp_r2_1687;
         M2C_FIELD(sp18, s32 *, 0) = (s32) ((var_r1_1643 << 0x10) + 0x600000);
         M2C_FIELD(sp18, s32 *, 8) = (s32) ((0x60 - temp_r0_1683) << 0x10);

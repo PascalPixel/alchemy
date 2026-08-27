@@ -6,14 +6,14 @@
   "status": "measured-draft",
   "owner_bytes": 160,
   "score": {
-    "measured": "2026-08-26",
+    "measured": "2026-08-27",
     "candidate_bytes": 160,
     "reference_bytes": 160,
-    "differing_halfwords": 3,
-    "wrong_instructions": 6,
+    "differing_halfwords": 2,
+    "wrong_instructions": 4,
     "class": "allocation",
     "command": "cargo run --offline --quiet --release --manifest-path tools/compiler/Cargo.toml -- candidate-show games/gs1/recon/en/main/0801faa8.c",
-    "note": "Full instruction-order, call-sequence, and literal-pool match with the reference; the only residual is a pure register-bank difference -- the transient error local lands in r6 instead of r7 in both error paths."
+    "note": "Improved from differing_halfwords=3 by eliminating the separate `s32 error` local entirely and writing `result = 0 - 9` / `result = 0 - 3` directly at each site (the goto-target `negate:` label is now a no-op). The second occurrence (result = 0 - 3) now compiles byte-identical to the reference (movs r7,#3 / negs r7,r7), confirming the hypothesis: the reference reuses r7 -- already dead from the early `result = 0` -- for the error/negate computation, and the separate `error` local was blocking that reuse. One residual remains at the FIRST occurrence (result = 0 - 9): r7 is provably 0 on that control-flow path, so this compiler folds the whole computation into a single `subs r7, #9`, where the reference instead materializes `movs r7, #9` and jumps forward to share the second occurrence's `negs r7, r7`. Two attempts to force a real shared negate (goto negate; ... negate: result = -result / result = 0 - result, applied symmetrically) each regressed sharply (wrong length, wrong_instructions >=36) rather than converging -- this compiler will not give up the subs-fold once r7's liveness is transparent enough to prove it. Needs the same class of fix as the allocator-order/liveness lever being built for the wider register-wall cluster, not another manual respelling of this pair."
   },
   "shape": {
     "derivation": "games/gs1/src/unidentified/main/runtime/runtime_owner_249.c (and its structurally closer sibling runtime_owner_154.c) supplied the value!=-1/Func_080056cc/Func_0801776c error-report idiom. This owner is a fuller sibling: it adds a Func_08004970(0x1000) scratch buffer, a Func_08005a78 call, a Func_080072f0 (Mem_Copy) of 16 bytes into buffer+0x4e4, and a Func_08002df0 free before return -- reconstructed against real signatures in runtime_mem.h and the save_state_family.h-backed 08005a78.c/08005920.c. No prior draft existed for this owner."
@@ -38,6 +38,14 @@
     {
       "experiment": "declaration-order swaps of found/error/result",
       "result": "no effect on the residual r6-vs-r7 error banking"
+    },
+    {
+      "experiment": "eliminate the separate `error` local, write `result = 0 - 9` / `result = 0 - 3` directly at each assignment site with an empty goto target",
+      "result": "improved 3->2 differing halfwords; second occurrence now byte-exact, first occurrence still folds to a single subs instead of movs+shared-negs"
+    },
+    {
+      "experiment": "force a real shared negate (result = N; goto negate; ... negate: result = -result, or negate: result = 0 - result, applied symmetrically to both sites)",
+      "result": "regressed sharply -- wrong candidate length, wrong_instructions >=36; this compiler resists un-folding the subs once r7's zero-liveness is provable"
     }
   ],
   "notes": [

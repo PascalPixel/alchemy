@@ -3,12 +3,18 @@
   "namespace": "main",
   "address": "0x080a8f40",
   "name": "InventoryMenu_DrawAbilityListPage",
-  "status": "measured-draft",
+  "status": "exact",
   "owner_bytes": 380,
   "executable_owner_bytes": 380,
   "candidate_bytes": 380,
-  "differing_halfwords": 28,
-  "wrong_instructions": 38,
+  "differing_halfwords": 0,
+  "wrong_instructions": 0,
+  "classification": "exact-c",
+  "resolved_asm_classification": {
+    "kind": "compiler_output",
+    "retention": "c_candidate",
+    "confidence": "likely"
+  },
   "domain": "Draws one page (up to five rows) of an owner's abilities inside the inventory-menu subsystem, alongside a header for the owner currently open in the menu.",
   "expressed": [
     "dereferences the global InventoryMenuState pointer (Data_03001f2c) and resolves the owner object for menu->item_owner via Runtime_GetObject/OwnerState_GetFar (Func_08077008)",
@@ -20,11 +26,37 @@
     "draws the current owner's portrait (Func_08015090), a name/class message built from owner+0x129 plus message-table base Value_00000741, a fixed glyph at ROM address 0x080AF22C (immediately adjacent to InventoryMenu_DrawStatDelta's IncreaseGlyph/DecreaseGlyph at 0x080AF224/0x080AF228), and the owner's level-like byte at owner+15 via UiNumber_DrawAt",
     "always returns 1, matching the InventoryMenu_Draw*Page callback convention"
   ],
-  "bounded_search": {
-    "mode": "screen-only",
-    "attempted": 0,
-    "exact": false,
-    "reason": "candidate now matches the reference's 380-byte extent exactly; 28 differing halfwords / 38 wrong instructions remain, concentrated in a few register-allocation/scheduling hunks, outside the <=20-halfword admission gate."
+  "register_gate_step4": {
+    "date": "2026-08-28",
+    "closure_ordinal": 3,
+    "required_closures": 5,
+    "result": "adopted-byte-exact",
+    "baseline_differing_halfwords": 28,
+    "final_differing_halfwords": 0,
+    "repair_pattern": "materialize-message-and-merge-count-carrier",
+    "decoder_signals": [
+      "reciprocal mask/item register roles at the indexed halfword load",
+      "conditional value and result occupied different lifetimes",
+      "row-coordinate setup outranked the masked-message argument"
+    ],
+    "source_edit": "Inline the two indexed halfword loads with the offset-first address spelling, materialize the masked message before calculating y, and load ability[8] into count before mutating count in place.",
+    "compiler_effect": "The mask remains the r0 result carrier, count remains one r4 carrier through compare and decrement, and the named message makes GCC schedule the indexed load/mask before the row-coordinate shift.",
+    "bounded_confirmation": {
+      "baseline_differing_halfwords": 28,
+      "inline_indexed_loads_differing_halfwords": 15,
+      "merged_count_carrier_differing_halfwords": 6,
+      "materialized_message_differing_halfwords": 0,
+      "candidate_bytes": 380,
+      "reference_bytes": 380,
+      "linked_byte_differences": 0
+    },
+    "production": {
+      "source": "games/gs1/src/inventory_menu/draw_ability_list_page.c",
+      "compiler_route": "canonical-gcc296",
+      "compiler_overrides": [],
+      "retained_assembly_removed": true,
+      "integration_gate": "tools/check integrate accepted 380/380 linked bytes"
+    }
   },
   "notes": [
     "The family-matcher's best guess, games/gs1/src/menu/select_quantity.c (score 7245/10000, below the 7500 confidence threshold), shares only the register-shuffle prologue idiom common to every owner in this size class; it does not share Data_03001f2c's InventoryMenuState typing, any callee, or any field offset with this owner and was treated as a false positive per this session's prior findings about the highest-scoring cluster.",

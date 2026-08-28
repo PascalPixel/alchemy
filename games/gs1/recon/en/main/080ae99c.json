@@ -7,6 +7,27 @@
   "candidate_bytes": 84,
   "differing_halfwords": 10,
   "wrong_instructions": 16,
+  "register_gate_step4_probe": {
+    "date": "2026-08-28",
+    "result": "exhausted-not-a-closure",
+    "baseline": {"candidate_bytes": 84, "reference_bytes": 84, "differing_halfwords": 10},
+    "decoder_signal": "data-load-hard-affinity-bound-to-incoming-tile-register",
+    "decoder_evidence": [
+      "Candidate data pseudo 38 and its address temporary prefer and receive incoming r2, evicting tile to r4; x then takes r5 and variant remains r3.",
+      "The reference needs the data chain in incoming r3, evicting variant to r5 while tile remains r2 and x takes r4.",
+      "The call tail is exact; every mismatch belongs to this entry allocation family."
+    ],
+    "requested_edit": "move the Data_03001f2c load chain's hard affinity from incoming tile r2 to incoming variant r3",
+    "bounded_results": [
+      {"shape": "inline-resource-selection-helper", "candidate_bytes": 84, "differing_halfwords": 10, "effect": "baseline-equivalent"},
+      {"shape": "inline-data-load-helper", "candidate_bytes": 84, "differing_halfwords": 10, "effect": "boundary disappeared before RTL"},
+      {"shape": "inline-object-create-helper", "candidate_bytes": 84, "differing_halfwords": 16, "effect": "changed call coloring but left the data chain in r2"},
+      {"shape": "typed-state-conditional-resource", "candidate_bytes": 84, "differing_halfwords": 15, "effect": "exact-corpus transplant changed branch polarity but not data affinity"},
+      {"shape": "typed-state-conditional-call-operand", "candidate_bytes": 84, "differing_halfwords": 15, "effect": "same regression as the named conditional resource"}
+    ],
+    "supporting_exact_owner": "main:080ad5b4",
+    "decision": "Neither the proven inline boundary nor the one exact-C entry-coloring analogue moved the data chain to r3. The source and retained assembly remain unchanged; this probe does not count toward the five required closures."
+  },
   "notes": [
     "This owner and 080ae9f0 share the same resource-selection, object-creation, failure, and initialization tail.",
     "The complete ordinary-C candidate emits the exact reference length. Sharing 080ae9f0's data-base/resource-selection shape improves this owner from 35 differing halfwords / 22 wrong instructions to 10 / 16 while keeping its post-call tail exact.",

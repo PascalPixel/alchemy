@@ -6,7 +6,7 @@ pub const MAX_SOURCE_BYTES: usize = 8 * 1024 * 1024;
 pub const MAX_TOP: usize = 256;
 
 pub const USAGE: &str = "usage: permuter <candidate.c>... [options]\n\
-  Enumerates explicit PERM_GENERAL(...) alternatives.\n\
+  Decodes allocator evidence and searches a finite catalog over ordinary C.\n\
 \n\
   --iterations N       candidates to compile (default 1000; max 100000)\n\
   --jobs N, -j N       parallel compiler workers (default CPUs-2; max 64)\n\

@@ -1,331 +1,437 @@
+use candidate_show::allocator::Repair;
+use compiler_core::CALL_VIA_BASE;
+use regex::{Captures, Regex};
+use std::{collections::HashSet, ops::Range};
+
+pub const CATALOG_VERSION: &str = "register-wall-v2";
+const MAX_CHOICES: usize = 16;
+type Mutation = (String, String);
+type Mutations = Result<Vec<Mutation>, String>;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
-enum Node {
-    Text(String),
-    Sequence(Vec<Node>),
-    Choice(Vec<Node>),
-    Integer { low: i64, high: i64 },
+struct Variant {
+    source: String,
+    mutations: Vec<String>,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Permutation {
-    root: Node,
-    count: usize,
-}
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-enum Lex {
-    Normal,
-    String,
-    Character,
-    LineComment,
-    BlockComment,
-}
-
-impl Node {
-    fn count(&self) -> Result<usize, String> {
-        match self {
-            Self::Text(_) => Ok(1),
-            Self::Sequence(parts) => parts.iter().try_fold(1usize, |total, part| {
-                total
-                    .checked_mul(part.count()?)
-                    .ok_or_else(|| "permutation count overflow".to_string())
-            }),
-            Self::Choice(parts) => parts.iter().try_fold(0usize, |total, part| {
-                total
-                    .checked_add(part.count()?)
-                    .ok_or_else(|| "permutation count overflow".to_string())
-            }),
-            Self::Integer { low, high } => {
-                usize::try_from(i128::from(*high) - i128::from(*low) + 1)
-                    .map_err(|_| "PERM_INT range is too large".to_string())
-            }
-        }
-    }
-
-    fn evaluate(&self, mut index: usize, output: &mut String) -> Result<(), String> {
-        match self {
-            Self::Text(text) => output.push_str(text),
-            Self::Sequence(parts) => {
-                for part in parts {
-                    let count = part.count()?;
-                    part.evaluate(index % count, output)?;
-                    index /= count;
-                }
-            }
-            Self::Choice(parts) => {
-                for part in parts {
-                    let count = part.count()?;
-                    if index < count {
-                        return part.evaluate(index, output);
-                    }
-                    index -= count;
-                }
-                return Err("PERM_GENERAL index is outside its range".into());
-            }
-            Self::Integer { low, .. } => output.push_str(
-                &low.checked_add(
-                    i64::try_from(index)
-                        .map_err(|_| "PERM_INT index is outside its range".to_string())?,
-                )
-                .ok_or_else(|| "PERM_INT index is outside its range".to_string())?
-                .to_string(),
-            ),
-        }
-        Ok(())
-    }
+    variants: Vec<Variant>,
+    raw_count: usize,
+    dimensions: Vec<&'static str>,
 }
 
 impl Permutation {
     pub fn count(&self) -> usize {
-        self.count
+        self.variants.len()
     }
-
+    pub fn raw_count(&self) -> usize {
+        self.raw_count
+    }
+    pub fn dimensions(&self) -> &[&'static str] {
+        &self.dimensions
+    }
+    pub fn mutations(&self, index: usize) -> Option<&[String]> {
+        Some(&self.variants.get(index)?.mutations)
+    }
     pub fn evaluate(&self, index: usize) -> Result<String, String> {
-        if index >= self.count {
-            return Err(format!(
-                "permutation index {index} exceeds count {}",
-                self.count
-            ));
-        }
-        let mut output = String::new();
-        self.root.evaluate(index, &mut output)?;
-        Ok(output)
+        self.variants
+            .get(index)
+            .map(|variant| variant.source.clone())
+            .ok_or_else(|| format!("permutation index {index} exceeds count {}", self.count()))
     }
 }
 
-fn identifier(byte: u8) -> bool {
-    byte == b'_' || byte.is_ascii_alphanumeric()
+fn regex(pattern: &str) -> Regex {
+    Regex::new(pattern).unwrap()
 }
 
-fn protected(bytes: &[u8], at: &mut usize, state: &mut Lex) -> bool {
-    match *state {
-        Lex::Normal if bytes.get(*at..*at + 2) == Some(b"//") => {
-            *state = Lex::LineComment;
-            *at += 2;
-        }
-        Lex::Normal if bytes.get(*at..*at + 2) == Some(b"/*") => {
-            *state = Lex::BlockComment;
-            *at += 2;
-        }
-        Lex::Normal if matches!(bytes[*at], b'"' | b'\'') => {
-            *state = if bytes[*at] == b'"' {
-                Lex::String
-            } else {
-                Lex::Character
-            };
-            *at += 1;
-        }
-        Lex::Normal => return false,
-        Lex::String | Lex::Character => {
-            let quote = if *state == Lex::String { b'"' } else { b'\'' };
-            if bytes[*at] == b'\\' {
-                *at = (*at + 2).min(bytes.len());
-            } else {
-                if bytes[*at] == quote {
-                    *state = Lex::Normal;
-                }
-                *at += 1;
-            }
-        }
-        Lex::LineComment => {
-            if bytes[*at] == b'\n' {
-                *state = Lex::Normal;
-            }
-            *at += 1;
-        }
-        Lex::BlockComment => {
-            if bytes.get(*at..*at + 2) == Some(b"*/") {
-                *state = Lex::Normal;
-                *at += 2;
-            } else {
-                *at += 1;
-            }
-        }
+fn masked(source: &str) -> String {
+    let pattern =
+        regex(r#"(?s:/\*.*?\*/)|(?m://[^\n]*|^[ \t]*#[^\n]*)|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'"#);
+    let mut output = source.to_string();
+    for found in pattern
+        .find_iter(source)
+        .collect::<Vec<_>>()
+        .into_iter()
+        .rev()
+    {
+        let blank = source[found.range()]
+            .bytes()
+            .map(|byte| if byte == b'\n' { '\n' } else { ' ' })
+            .collect::<String>();
+        output.replace_range(found.range(), &blank);
     }
-    true
+    output
 }
 
-fn find_macro(source: &str, from: usize) -> Option<(usize, usize, String)> {
-    let bytes = source.as_bytes();
-    let mut state = Lex::Normal;
-    let mut at = from;
-    while at < bytes.len() {
-        if protected(bytes, &mut at, &mut state) {
-            continue;
-        }
-        if bytes.get(at..at + 5) == Some(b"PERM_") && (at == 0 || !identifier(bytes[at - 1])) {
-            let start = at;
-            at += 5;
-            while bytes.get(at).is_some_and(|byte| identifier(*byte)) {
-                at += 1;
-            }
-            let name = source[start..at].to_string();
-            while bytes.get(at).is_some_and(|byte| byte.is_ascii_whitespace()) {
-                at += 1;
-            }
-            if bytes.get(at) == Some(&b'(') {
-                return Some((start, at, name));
-            }
-        }
-        at += 1;
+fn only<'a>(pattern: &Regex, text: &'a str, reason: &str) -> Result<Captures<'a>, String> {
+    let mut found = pattern.captures_iter(text);
+    let first = found.next().ok_or_else(|| reason.to_string())?;
+    if found.next().is_some() {
+        return Err(reason.into());
     }
-    None
+    Ok(first)
 }
 
-fn macro_body(source: &str, open: usize) -> Result<(&str, usize), String> {
-    let bytes = source.as_bytes();
-    let mut state = Lex::Normal;
-    let mut depth = 0;
-    let mut at = open + 1;
-    while at < bytes.len() {
-        if protected(bytes, &mut at, &mut state) {
-            continue;
-        }
-        match bytes[at] {
-            b'(' => {
-                depth += 1;
-                at += 1;
-            }
-            b')' if depth == 0 => return Ok((&source[open + 1..at], at + 1)),
-            b')' => {
-                depth -= 1;
-                at += 1;
-            }
-            _ => at += 1,
-        }
-    }
-    Err("unterminated PERM_* argument list".into())
+fn capture<'a>(source: &'a str, found: &Captures, index: usize) -> &'a str {
+    &source[found.get(index).unwrap().range()]
 }
 
-fn split_arguments(body: &str) -> Result<Vec<&str>, String> {
-    let bytes = body.as_bytes();
-    let mut state = Lex::Normal;
-    let mut depths = [0usize; 3];
-    let mut arguments = Vec::new();
-    let mut start = 0;
-    let mut at = 0;
-    while at < bytes.len() {
-        if protected(bytes, &mut at, &mut state) {
-            continue;
-        }
-        match bytes[at] {
-            b'(' | b'[' | b'{' => {
-                let index = match bytes[at] {
-                    b'(' => 0,
-                    b'[' => 1,
-                    _ => 2,
-                };
-                depths[index] += 1;
-                at += 1;
-            }
-            b')' | b']' | b'}' => {
-                let index = match bytes[at] {
-                    b')' => 0,
-                    b']' => 1,
-                    _ => 2,
-                };
-                depths[index] = depths[index]
-                    .checked_sub(1)
-                    .ok_or_else(|| "mismatched delimiter in PERM_*".to_string())?;
-                at += 1;
-            }
-            b',' if depths == [0, 0, 0] => {
-                arguments.push(&body[start..at]);
-                start = at + 1;
-                at += 1;
-            }
-            _ => at += 1,
-        }
+fn edited(source: &str, mut changes: Vec<(Range<usize>, String)>) -> Result<String, String> {
+    changes.sort_by_key(|change| change.0.start);
+    if changes
+        .windows(2)
+        .any(|pair| pair[0].0.end > pair[1].0.start)
+    {
+        return Err("repair edits overlap".into());
     }
-    if depths != [0, 0, 0] || !matches!(state, Lex::Normal | Lex::LineComment) {
-        return Err("mismatched delimiter in PERM_*".into());
+    let mut output = source.to_string();
+    for (range, text) in changes.into_iter().rev() {
+        output.replace_range(range, &text);
     }
-    arguments.push(&body[start..]);
-    Ok(arguments)
+    Ok(output)
 }
 
-fn parse_fragment(source: &str) -> Result<Node, String> {
-    let mut parts = Vec::new();
-    let mut cursor = 0;
-    while let Some((start, open, name)) = find_macro(source, cursor) {
-        if start > cursor {
-            parts.push(Node::Text(source[cursor..start].to_string()));
+fn variants(source: &str, range: Range<usize>, forms: Vec<(&str, String)>) -> Mutations {
+    forms
+        .into_iter()
+        .map(|(id, text)| {
+            Ok((
+                edited(source, vec![(range.clone(), text)])?,
+                format!("{id}@{}", range.start),
+            ))
+        })
+        .collect()
+}
+
+fn words(name: &str) -> Regex {
+    regex(&format!(r"\b{}\b", regex::escape(name)))
+}
+
+fn variable_uses(code: &str, name: &str) -> usize {
+    words(name)
+        .find_iter(code)
+        .filter(|found| {
+            !matches!(
+                code.as_bytes().get(found.start().wrapping_sub(1)),
+                Some(b'.' | b'>')
+            )
+        })
+        .count()
+}
+
+fn fresh(source: &str, stem: &str) -> String {
+    let mut name = stem.to_string();
+    while words(&name).is_match(source) {
+        name.push('_');
+    }
+    name
+}
+
+fn pure(text: &str) -> bool {
+    !["++", "--", "=", ";", ",", "\"", "'"]
+        .iter()
+        .any(|token| text.contains(token))
+        && !regex(r"\b[A-Za-z_][A-Za-z0-9_]*\s*\(").is_match(text)
+}
+
+fn scope(code: &str, end: usize) -> Option<usize> {
+    let mut stack = Vec::new();
+    for (at, byte) in code.as_bytes()[..end].iter().enumerate() {
+        match byte {
+            b'{' => stack.push(at),
+            b'}' => {
+                stack.pop();
+            }
+            _ => {}
         }
-        let (body, end) = macro_body(source, open)?;
-        let arguments = split_arguments(body)?;
-        let node = match name.as_str() {
-            "PERM_GENERAL" => {
-                if body.trim().is_empty() {
-                    return Err("PERM_GENERAL requires at least one alternative".into());
-                }
-                Node::Choice(
-                    arguments
-                        .into_iter()
-                        .map(parse_fragment)
-                        .collect::<Result<Vec<_>, _>>()?,
-                )
-            }
-            "PERM_INT" => {
-                if arguments.len() != 2 {
-                    return Err("PERM_INT takes two arguments".into());
-                }
-                let low = arguments[0]
-                    .trim()
-                    .parse::<i64>()
-                    .map_err(|_| "bad PERM_INT low")?;
-                let high = arguments[1]
-                    .trim()
-                    .parse::<i64>()
-                    .map_err(|_| "bad PERM_INT high")?;
-                if low > high {
-                    return Err("PERM_INT low exceeds high".into());
-                }
-                Node::Integer { low, high }
-            }
-            _ => {
-                return Err(format!(
-                    "unsupported directive {name}; use PERM_GENERAL or PERM_INT"
-                ))
-            }
-        };
-        parts.push(node);
-        cursor = end;
     }
-    if cursor < source.len() || parts.is_empty() {
-        parts.push(Node::Text(source[cursor..].to_string()));
+    stack.last().copied()
+}
+
+fn declaration<'a>(
+    source: &'a str,
+    code: &str,
+    name: &str,
+) -> Result<(Range<usize>, &'a str), String> {
+    let pattern = regex(&format!(
+        r"(?m)^[ \t]+(?:struct[ \t]+[A-Za-z_][A-Za-z0-9_]*|(?:u|s)(?:8|16|32)|void)[ \t*]+{}[ \t]*;[ \t]*(?:\n|$)",
+        regex::escape(name)
+    ));
+    let found = only(
+        &pattern,
+        code,
+        &format!("requires one uninitialized declaration of {name}"),
+    )?;
+    let range = found.get(0).unwrap().range();
+    Ok((range.clone(), &source[range]))
+}
+
+fn swap(source: &str, code: &str, left: &str, right: &str) -> Mutations {
+    let (a, a_line) = declaration(source, code, left)?;
+    let (b, b_line) = declaration(source, code, right)?;
+    if scope(code, a.start) != scope(code, b.start) {
+        return Err("named declarations are not in the same lexical block".into());
     }
-    Ok(if parts.len() == 1 {
-        parts.pop().expect("one parsed part")
-    } else {
-        Node::Sequence(parts)
+    let at = a.start.min(b.start);
+    Ok(vec![(
+        edited(source, vec![(a, b_line.into()), (b, a_line.into())])?,
+        format!("declaration_order:swap_named({left},{right})@{at}"),
+    )])
+}
+
+fn split(source: &str, code: &str, name: &str) -> Mutations {
+    let (declaration, line) = declaration(source, code, name)?;
+    if source.contains("volatile") || !line.contains('*') {
+        return Err(format!(
+            "split-lifetime repair requires nonvolatile pointer {name}"
+        ));
+    }
+    let assignment = regex(&format!(
+        r"(?m)^[ \t]*{}\s*=\s*([^;\n]+);\n?",
+        regex::escape(name)
+    ));
+    let assigned = only(
+        &assignment,
+        code,
+        &format!("requires one assignment of {name}"),
+    )?;
+    let expression = capture(source, &assigned, 1).trim();
+    let dereference = regex(&format!(r"\*\s*\b{}\b", regex::escape(name)));
+    let tail = assigned.get(0).unwrap().end();
+    let uses = dereference
+        .find_iter(&code[tail..])
+        .map(|found| tail + found.start()..tail + found.end())
+        .collect::<Vec<_>>();
+    if variable_uses(&code[declaration.start..], name) != 4 || uses.len() != 2 || !pure(expression)
+    {
+        return Err(format!(
+            "split-lifetime repair found ambiguous uses of {name}"
+        ));
+    }
+    let mut changes = vec![
+        (declaration.clone(), String::new()),
+        (assigned.get(0).unwrap().range(), String::new()),
+    ];
+    changes.extend(
+        uses.into_iter()
+            .map(|range| (range, format!("*({expression})"))),
+    );
+    Ok(vec![(
+        edited(source, changes)?,
+        format!(
+            "block_lifetime+loop_spelling:inline_named({name})@{}",
+            declaration.start
+        ),
+    )])
+}
+
+fn zero(source: &str, code: &str) -> Mutations {
+    let pattern = regex(
+        r"(?m)^([ \t]+)([^;\n=]+?)\s*=\s*0;\n([ \t]+)([^;\n=]+?)\s*=\s*0;\n(?:[ \t]*\n)?([ \t]+)([^;\n=]+?)\s*&=\s*~0x20;",
+    );
+    let found = only(&pattern, code, "zero-carrier repair requires one site")?;
+    if found[1] != found[3]
+        || found[1] != found[5]
+        || ![&found[2], &found[4], &found[6]]
+            .iter()
+            .all(|value| pure(value) && !value.contains('*'))
+    {
+        return Err("zero-carrier repair requires integral nonvolatile lvalues".into());
+    }
+    let name = fresh(source, "perm_zero");
+    let text = format!(
+        "{}s32 {name} = 0;\n{}{} = {name};\n{}{} = {name};\n\n{}{} &= {name} - 33;",
+        &found[1], &found[1], &found[2], &found[3], &found[4], &found[5], &found[6]
+    );
+    variants(
+        source,
+        found.get(0).unwrap().range(),
+        vec![("temporary:merge_zero_carrier", text)],
+    )
+}
+
+fn inline_xor(source: &str, code: &str, found: &Captures) -> Option<Mutation> {
+    let site = found.get(0)?.range();
+    let tail = site.end;
+    let next =
+        regex(r"\A(?:[ \t]*\n)+([ \t]+)([^;\n]+?)\s*\^=\s*([^;\n]+);").captures(&code[tail..])?;
+    let part = |index| {
+        let range = next.get(index).unwrap().range();
+        &source[tail + range.start..tail + range.end]
+    };
+    let (right_indent, right, right_value) = (part(1), part(2).trim(), part(3).trim());
+    let end = tail + next.get(0)?.end();
+    let open = scope(code, site.start)?;
+    let close = end + code[end..].find('}')?;
+    let line = code[..open].rfind('\n').map_or(0, |at| at + 1);
+    let indent = &source[line..open];
+    let left = capture(source, found, 6).trim();
+    if right_indent != &found[1]
+        || left == right
+        || !pure(right)
+        || !pure(right_value)
+        || !code[open + 1..site.start].trim().is_empty()
+        || !code[end..close].trim().is_empty()
+        || !indent.trim().is_empty()
+    {
+        return None;
+    }
+    let insert = regex(r"(?m)^extern\b").find(code)?.start();
+    if insert >= open || scope(code, insert).is_some() {
+        return None;
+    }
+    let kind = &found[2];
+    let expression = capture(source, found, 3);
+    let helper = fresh(source, "perm_xor");
+    let definition = format!(
+        "static __inline__ {kind} {helper}({kind} tile_word, {kind} mask_word)\n{{\n    return tile_word ^ mask_word;\n}}\n\n"
+    );
+    let body = format!(
+        "{indent}{left} = {helper}({left}, {expression});\n{indent}{right} = {helper}({right}, {right_value});"
+    );
+    let changes = vec![(insert..insert, definition), (open..close + 1, body)];
+    let text = edited(source, changes).ok()?;
+    Some((
+        text,
+        format!(
+            "temporary+evaluation_order:inline_xor_helper@{}",
+            site.start
+        ),
+    ))
+}
+
+fn reciprocal(source: &str, code: &str, name: &str) -> Mutations {
+    if source.contains("volatile") {
+        return Err("reciprocal repair refuses volatile source".into());
+    }
+    let pattern = regex(&format!(
+        r"(?m)^([ \t]+)((?:u|s)(?:8|16|32))\s+{}\s*=\s*([^;\n]+);\n([ \t]*\n)?([ \t]+)([^;\n]+?)\s*\^=\s*{};",
+        regex::escape(name),
+        regex::escape(name)
+    ));
+    let found = only(
+        &pattern,
+        code,
+        &format!("requires one reciprocal site for {name}"),
+    )?;
+    if variable_uses(&code[found.get(0).unwrap().start()..], name) != 2
+        || found[1] != found[5]
+        || !pure(&found[3])
+        || !pure(&found[6])
+    {
+        return Err(format!("reciprocal repair found ambiguous uses of {name}"));
+    }
+    let (indent, kind, expression, gap, left) = (
+        &found[1],
+        &found[2],
+        capture(source, &found, 3),
+        capture(source, &found, 4),
+        &found[6],
+    );
+    let declaration = format!("{indent}{kind} {name} = {expression};\n{gap}");
+    let temporary = fresh(
+        source,
+        &format!("perm_value_{}", found.get(0).unwrap().start()),
+    );
+    let mut generated = variants(
+        source,
+        found.get(0).unwrap().range(),
+        vec![
+            ("temporary:merge", format!("{indent}{left} ^= {expression};")),
+            ("temporary:introduce", format!("{declaration}{indent}{kind} {temporary} = {left};\n{indent}{temporary} ^= {name};\n{indent}{left} = {temporary};")),
+            ("evaluation_order:left_before_right", format!("{indent}{kind} {temporary} = {left};\n{declaration}{indent}{temporary} ^= {name};\n{indent}{left} = {temporary};")),
+            ("commutative_order:swap_operands", format!("{declaration}{indent}{left} = {name} ^ {left};")),
+        ],
+    )?;
+    generated.extend(inline_xor(source, code, &found));
+    Ok(generated)
+}
+
+pub fn parse(source: &str, repair: &Repair) -> Result<Permutation, String> {
+    if source.contains("PERM_GENERAL(") || source.contains("PERM_INT(") {
+        return Err("source annotations are retired; pass ordinary C".into());
+    }
+    for register in 0..14 {
+        let symbol = format!("Func_{:08x}(", CALL_VIA_BASE + register * 4);
+        if source.contains(&symbol) {
+            return Err(format!("semantic guard: {symbol} is a main-image call-via trampoline; model the typed indirect call first"));
+        }
+    }
+    if source.lines().any(|line| {
+        matches!(
+            line.trim_start().split_whitespace().next(),
+            Some("#if" | "#ifdef" | "#ifndef" | "#else" | "#elif" | "#endif")
+        )
+    }) {
+        return Err("repair catalog refuses conditional source".into());
+    }
+    let code = masked(source);
+    let generated = match repair {
+        Repair::SwapDeclarations { left, right } => swap(source, &code, left, right)?,
+        Repair::SplitLifetime { name } => split(source, &code, name)?,
+        Repair::MergeZeroCarrier => zero(source, &code)?,
+        Repair::ReciprocalRoleSwap { name } => reciprocal(source, &code, name)?,
+    };
+    let raw_count = 1 + generated.len();
+    if raw_count > MAX_CHOICES {
+        return Err(format!(
+            "finite mutation space {raw_count} exceeds cap {MAX_CHOICES}"
+        ));
+    }
+    let mut variants = vec![Variant {
+        source: source.into(),
+        mutations: Vec::new(),
+    }];
+    let mut seen = HashSet::from([source.to_string()]);
+    for (source, mutation) in generated {
+        if seen.insert(source.clone()) {
+            variants.push(Variant {
+                source,
+                mutations: vec![mutation],
+            });
+        }
+    }
+    Ok(Permutation {
+        variants,
+        raw_count,
+        dimensions: repair.dimensions().to_vec(),
     })
 }
 
-pub fn parse(source: &str) -> Result<Permutation, String> {
-    let root = parse_fragment(source)?;
-    let count = root.count()?;
-    Ok(Permutation { root, count })
-}
-
 pub fn self_test() -> Result<(), String> {
-    let permutation =
-        parse("return PERM_GENERAL(1,PERM_GENERAL(2,3),call(4,5)) + PERM_INT(-1,1);")?;
-    if permutation.count() != 12
-        || permutation.evaluate(0)? != "return 1 + -1;"
-        || permutation.evaluate(11)? != "return call(4,5) + 1;"
+    let repair = Repair::SwapDeclarations {
+        left: "a".into(),
+        right: "c".into(),
+    };
+    let source = "void f(void)\n{\n    u32 a;\n    u32 b;\n    u32 c;\n}\n";
+    let permutation = parse(source, &repair)?;
+    if permutation.count() != 2
+        || !permutation
+            .evaluate(1)?
+            .contains("u32 c;\n    u32 b;\n    u32 a;")
     {
-        return Err("nested mixed-radix permutation drifted".into());
+        return Err("named non-adjacent declaration repair regressed".into());
     }
-    let lexical =
-        parse("const char *s = \"PERM_GENERAL(a,b)\"; /* PERM_INT(1,2) */ PERM_GENERAL(,x);")?;
-    if lexical.count() != 2 || !lexical.evaluate(0)?.ends_with(" ;") {
-        return Err("permutation lexer changed comments, strings, or empty alternatives".into());
-    }
-    if parse("PERM_LINESWAP(a,b)").is_ok()
-        || parse("PERM_GENERAL()").is_ok()
-        || parse("PERM_INT(2,1)").is_ok()
+    if parse("void f(void) { PERM_GENERAL(a,b); }", &repair).is_ok()
+        || parse("void f(void) { Func_080072e4(); }", &repair).is_ok()
     {
-        return Err("permutation parser accepted removed or invalid directives".into());
+        return Err("annotation or trampoline guard regressed".into());
+    }
+    let repair = Repair::ReciprocalRoleSwap {
+        name: "left".into(),
+    };
+    let source = "extern u32 m[];\n\nvoid g(void)\n{\n    {\n        u32 left = m[i].x;\n\n        a[i] ^= left;\n        a[j] ^= m[i].y;\n    }\n}\n";
+    let permutation = parse(source, &repair)?;
+    let helper = permutation.evaluate(5)?;
+    let calls = helper.matches("perm_xor(").count();
+    if permutation.count() != 6 || calls != 3 || helper.contains("u32 left =") {
+        return Err("inline XOR boundary repair regressed".into());
+    }
+    let crowded = source.replace("a[j] ^= m[i].y;", "a[j] ^= m[i].y;\n        b ^= c;");
+    if parse(&crowded, &repair)?.count() != 5 {
+        return Err("inline XOR boundary singleton guard regressed".into());
     }
     Ok(())
 }

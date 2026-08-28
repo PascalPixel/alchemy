@@ -7,9 +7,16 @@ struct TileMaskPair {
 
 typedef void (*FillWordsFn)(void *destination, s32 size, u32 value);
 
+static __inline__ u32 XorTileWord(u32 tile_word, u32 mask_word)
+{
+    return tile_word ^ mask_word;
+}
+
 extern const struct TileMaskPair Data_080af23c[];
 
-void Func_080a8c2c(void)
+#define Menu_BuildDiagonalPatternTiles Func_080a8c2c
+
+void Menu_BuildDiagonalPatternTiles(void)
 {
     u32 *tiles = (u32 *)0x06005000;
     s32 group;
@@ -33,12 +40,10 @@ void Func_080a8c2c(void)
                         mask_index = 0;
                     }
                 }
-                {
-                    u32 left = Data_080af23c[mask_index].left;
-
-                    tile[column] ^= left;
-                    tile[column + 8] ^= Data_080af23c[mask_index].right;
-                }
+                tile[column] = XorTileWord(
+                    tile[column], Data_080af23c[mask_index].left);
+                tile[column + 8] = XorTileWord(
+                    tile[column + 8], Data_080af23c[mask_index].right);
             }
         }
     }

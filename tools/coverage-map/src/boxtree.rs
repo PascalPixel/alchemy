@@ -257,6 +257,3 @@ pub fn box_tree_path(target: &str, tree: &str) -> std::path::PathBuf {
         .join("games/gs1/assets/readme")
         .join(format!("{target}-{tree}.svg"))
 }
-pub fn readme_path() -> std::path::PathBuf {
-    root().join("README.md")
-}

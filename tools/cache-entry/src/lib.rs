@@ -1,4 +1,3 @@
-pub mod cli;
 pub mod sqlite;
 
 // Writing a content-addressed cache entry so it can never be observed

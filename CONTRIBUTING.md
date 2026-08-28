@@ -391,9 +391,9 @@ recipe. It also preprocesses the exact member through its registered compiler
 route, retargets that exact function signature to the unresolved owner, and
 passes the result to m2c through its supported `--context` input. m2c uses that
 example for recovered declarations, types, and the function signature; it does
-not imitate the example's statement spelling. Add only evidence-backed
-`PERM_GENERAL` and `PERM_INT` choices to the semantic candidate before running
-the finite search described below.
+not imitate the example's statement spelling. Keep the semantic candidate as
+ordinary C. If it reaches an allocation floor, the allocator-order decoder and
+finite repair catalog described below select the permitted search dimensions.
 
 Permanent-assembly family evidence is checked as a whole:
 
@@ -472,16 +472,19 @@ byte views above; the adoption gate remains zero differing reference bytes.
 
 The native permuter is useful when the owner extent, behavior, control flow,
 types, declarations, and major expression boundaries are already credible. It
-is a bounded manual search tool, not a decompiler or a second C frontend.
+is a bounded allocator-repair search, not a decompiler or a second C frontend.
 
 ```sh
 tools/compiler/target/release/compiler permute --help
 ```
 
-Mark evidence-backed choices with `PERM_GENERAL(...)` or a bounded integer
-range with `PERM_INT(low, high)`. The tool enumerates those choices in a
-deterministic seed-rotated order, compiles them in parallel, and writes a fresh
-`best.c` plus `report.json` beneath ignored output. Read a winner's complete
+Pass ordinary, annotation-free C. The allocator-order decoder first names the
+implicated dimensions; the permuter then enumerates only the catalogued safe
+named repair from the confirmed catalog for those dimensions. The baseline and
+that repair's alternatives form a finite, deduplicated space whose raw and
+unique sizes are recorded before deterministic seed rotation. The tool compiles the selected candidates in
+parallel and writes a fresh `best.c` plus `report.json` beneath ignored output,
+including every retained candidate's mutation IDs. Read a winner's complete
 diff and rescore it independently before harvesting it. When a search has a
 frozen local invariant, apply that admission check to every retained winner; a
 lower internal score that breaks the invariant is a rejected candidate. A

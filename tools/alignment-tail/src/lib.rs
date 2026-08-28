@@ -13,8 +13,6 @@
 use serde::ser::{Serialize, SerializeMap, Serializer};
 use serde_json::Value;
 
-pub const DEFAULT_MAXIMUM: usize = 3;
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum AlignmentTail {
     Fill { size: usize, value: u8 },

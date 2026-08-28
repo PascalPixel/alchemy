@@ -2,7 +2,9 @@
 pub mod cli;
 use cache_entry::sqlite::SqliteCache;
 use canonical_json::canonical_json;
-use compiler_core::{bundle::host_executable_signature, sha256};
+use compiler_core::{
+    bundle::host_executable_signature, sha256, thumb::standalone_wide_transfer_lines,
+};
 use serde::Deserialize;
 use serde_json::{Map, Number, Value};
 use std::collections::{BTreeMap, BTreeSet};
@@ -359,97 +361,8 @@ fn long_call_veneer(data: &[u8]) -> bool {
 fn alignment_padding(data: &[u8]) -> bool {
     data == [0, 0]
 }
-#[derive(Clone, Debug, PartialEq, Eq)]
-struct ThumbTransfer {
-    load: bool,
-    base: u8,
-    registers: Vec<u8>,
-    targeted: bool,
-}
-fn low_register(text: &str) -> Option<u8> {
-    let register = text.trim().strip_prefix('r')?.parse::<u8>().ok()?;
-    (register <= 7).then_some(register)
-}
-fn thumb_transfer(line: &str) -> Option<ThumbTransfer> {
-    let code = line.split('@').next().unwrap_or("").trim();
-    if code.is_empty() {
-        return None;
-    }
-    let (targeted, instruction) = match code.split_once(':') {
-        Some((_, instruction)) => (true, instruction.trim()),
-        None => (false, code),
-    };
-    let mut words = instruction.split_whitespace();
-    let mnemonic = words.next()?;
-    let load = match mnemonic {
-        "ldmia" => true,
-        "stmia" => false,
-        _ => return None,
-    };
-    let body = instruction.strip_prefix(mnemonic)?.trim_start();
-    let (operands, rest) = body.split_once('{')?;
-    let (registers, _) = rest.split_once('}')?;
-    let base = low_register(operands.split(',').next()?.trim().trim_end_matches('!'))?;
-    let mut parsed = Vec::new();
-    for item in registers.split(',') {
-        let item = item.trim();
-        if let Some((first, last)) = item.split_once('-') {
-            let first = low_register(first)?;
-            let last = low_register(last)?;
-            if first > last {
-                return None;
-            }
-            parsed.extend(first..=last);
-        } else {
-            parsed.push(low_register(item)?);
-        }
-    }
-    parsed.sort_unstable();
-    parsed.dedup();
-    Some(ThumbTransfer {
-        load,
-        base,
-        registers: parsed,
-        targeted,
-    })
-}
-fn approved_thumb_block_copy_pair(load: &ThumbTransfer, store: &ThumbTransfer) -> bool {
-    load.load
-        && !store.load
-        && !load.targeted
-        && !store.targeted
-        && matches!(load.registers.len(), 2 | 3)
-        && load.registers == store.registers
-        && load.base != store.base
-        && !load.registers.contains(&load.base)
-        && !store.registers.contains(&store.base)
-}
 fn thumb_standalone_wide_transfer(source: &str) -> bool {
-    let significant: Vec<_> = source
-        .lines()
-        .filter_map(|line| {
-            let code = line.split('@').next().unwrap_or("").trim();
-            (!code.is_empty()).then(|| thumb_transfer(line))
-        })
-        .collect();
-    significant.iter().enumerate().any(|(index, transfer)| {
-        let Some(transfer) = transfer else {
-            return false;
-        };
-        if transfer.registers.len() < 3 {
-            return false;
-        }
-        let paired_as_load = significant
-            .get(index + 1)
-            .and_then(Option::as_ref)
-            .is_some_and(|next| approved_thumb_block_copy_pair(transfer, next));
-        let paired_as_store = index
-            .checked_sub(1)
-            .and_then(|previous| significant.get(previous))
-            .and_then(Option::as_ref)
-            .is_some_and(|previous| approved_thumb_block_copy_pair(previous, transfer));
-        !paired_as_load && !paired_as_store
-    })
+    !standalone_wide_transfer_lines(source).is_empty()
 }
 fn classify(
     name: &str,
@@ -556,10 +469,6 @@ pub fn region_cache_key_with_signatures(
     }
     append_frame(&mut bytes, source);
     Ok(sha256::hex(&bytes))
-}
-pub fn region_cache_key(source: &[u8], linked_address: u64) -> Result<String, String> {
-    let binutils = production_binutil_signatures()?;
-    region_cache_key_with_signatures(source, linked_address, &binutils)
 }
 fn valid_external(name: &str) -> bool {
     let Some((prefix, address)) = name.rsplit_once('_') else {

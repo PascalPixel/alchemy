@@ -67,14 +67,6 @@ fn regions(value: &Value) -> Vec<Region> {
         .filter(|r| r.span.end > r.span.start)
         .collect()
 }
-pub fn intervals_of(value: &Value) -> Vec<Span> {
-    normalize(
-        &regions(value)
-            .into_iter()
-            .map(|r| r.span)
-            .collect::<Vec<_>>(),
-    )
-}
 fn canonical(source: &str) -> bool {
     !source.contains(".incbin")
         && !source.contains("M2C_ERROR")

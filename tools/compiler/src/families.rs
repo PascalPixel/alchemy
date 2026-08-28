@@ -22,7 +22,7 @@ use std::{
 };
 use walkdir::WalkDir;
 const USAGE: &str = "usage: compiler families <cluster (--write|--check) FILE | transplant main:ADDRESS [--index FILE] [--output DIR] | prove [FILE]>";
-const DEFAULT_INDEX: &str = "games/gs1/recon/compiler-families.json";
+const DEFAULT_INDEX: &str = "out/gs1-en/reports/compiler-families.json";
 const DEFAULT_PROOFS: &str = "games/gs1/recon/family-retention.json";
 const INDEX_SCHEMA_VERSION: u32 = 2;
 const MIN_SCORE: u16 = 7500;

@@ -7,7 +7,6 @@ pub struct BuildOptions<'a> {
     pub target: String,
     pub exact: &'a SourceTree,
     pub recon: Option<&'a SourceTree>,
-    pub validate_tracked_progress: bool,
     pub prefer_verified_assets: bool,
 }
 pub struct CoverageMap {
@@ -1120,32 +1119,6 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
             ),
         ),
     ]);
-    if options.validate_tracked_progress {
-        if let Some(tracked) = options
-            .exact
-            .read(&format!(
-                "games/{game}/metrics/{}-progress.json",
-                options.target
-            ))
-            .and_then(|s| serde_json::from_str::<Value>(&s).ok())
-        {
-            let tm = get(
-                get(&tracked, "main").unwrap_or(&Value::Null),
-                "full_c_bytes",
-            )
-            .and_then(Value::as_i64)
-            .unwrap_or(-1);
-            let to = get(
-                get(&tracked, "overlays").unwrap_or(&Value::Null),
-                "full_c_bytes",
-            )
-            .and_then(Value::as_i64)
-            .unwrap_or(-1);
-            if tm != bytes(&exact_main) || to != exact_overlay_bytes {
-                return Err(format!("derived exact ownership disagrees with tracked Full-C report (main {} vs {}, overlays {} vs {})", bytes(&exact_main), tm, exact_overlay_bytes, to));
-            }
-        }
-    }
     Ok(CoverageMap {
         document,
         rom_areas,

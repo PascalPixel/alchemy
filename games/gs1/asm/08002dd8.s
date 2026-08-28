@@ -2,8 +2,10 @@
 .syntax unified
 	.thumb
 	.align	2
+	.global Runtime_ReleaseHeapBlock
 	.global Func_08002dd8
 	.thumb_func
+Runtime_ReleaseHeapBlock:
 Func_08002dd8:
 	ldr	r4, .L_transfer_state
 	lsls	r0, r0, #2

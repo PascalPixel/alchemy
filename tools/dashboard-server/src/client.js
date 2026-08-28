@@ -114,11 +114,14 @@ function render(snapshot) {
       ),
     ),
   );
+  const correspondenceMetric = summary.correspondenceAvailable
+    ? metric("GS1 corpus ×6", `${bytes(summary.correspondenceMatched)} / ${bytes(summary.correspondenceTotal)}`, `${bytes(summary.correspondenceShared)} shared-core · ${bytes(summary.correspondenceRegional)} regional candidates · ${bytes(summary.correspondenceUnresolved)} unresolved`, "cross")
+    : metric("GS1 corpus ×6", "Unavailable", "Run make reports to refresh cross-edition reports", "cross");
   const metrics = h("section", { className: "metrics", "aria-label": "Project metrics" },
     metric("EN DONE", percent(summary.donePercent), `${bytes(summary.doneBytes)} exact or permanent bytes`, "done"),
     metric("EN exact C", percent(summary.exactPercent), `${bytes(summary.exactBytes)} linked bytes`, "exact"),
     metric("Tracked C", percent(summary.trackedPercent), `${bytes(summary.trackedBytes)} visible bytes · never counted as DONE`, "tracked"),
-    metric("GS1 corpus ×6", `${bytes(summary.correspondenceMatched)} / ${bytes(summary.correspondenceTotal)}`, `${bytes(summary.correspondenceShared)} shared-core · ${bytes(summary.correspondenceRegional)} regional candidates · ${bytes(summary.correspondenceUnresolved)} unresolved`, "cross"),
+    correspondenceMetric,
     metric("Canonical JA", bytes(summary.gs1JaSources + summary.gs2JaSources), `GS1 ${bytes(summary.gs1JaSources)} · GS2 ${bytes(summary.gs2JaSources)} tracked source owners`, "base"),
     metric("Historical targets", bytes(summary.historicalTargets), `${bytes(summary.fullTargets)} full · ${bytes(summary.compileOnlyTargets)} compile-only · Alchemy separate`, "derived"),
   );

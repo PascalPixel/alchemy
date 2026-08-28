@@ -545,7 +545,7 @@ fn inventory_members(
                 role: "owner",
                 ordinal,
                 state: Some(owner_state(owner.state)),
-                alias: owner.alias.clone(),
+                alias: owner.canonical_name.clone(),
                 extent: owner.extent,
             };
             if members.insert(key, value).is_some() {
@@ -560,7 +560,7 @@ fn inventory_members(
                 role: "local-symbol",
                 ordinal,
                 state: None,
-                alias: symbol.alias.clone(),
+                alias: symbol.canonical_name.clone(),
                 extent: symbol.extent,
             };
             if members.insert(key, value).is_some() {
@@ -927,9 +927,9 @@ fn owner_inventory(
         }));
     }
     let units = units.units.iter().filter(|unit| unit.game == "gs1").map(|unit| {
-        let members = unit.owners.iter().enumerate().map(|(ordinal, member)| json!({"owner":unit.source_owner(member.address).unwrap().id(),"role":"owner","ordinal":ordinal,"alias":member.alias,"extent":member.extent,"declared_state":owner_state(member.state)})).chain(unit.local_symbols.iter().enumerate().map(|(ordinal, member)| json!({"owner":unit.source_owner(member.address).unwrap().id(),"role":"local-symbol","ordinal":ordinal,"alias":member.alias,"extent":member.extent,"declared_state":Value::Null}))).collect::<Vec<_>>();
+        let members = unit.owners.iter().enumerate().map(|(ordinal, member)| json!({"owner":unit.source_owner(member.address).unwrap().id(),"role":"owner","ordinal":ordinal,"alias":member.canonical_name,"extent":member.extent,"declared_state":owner_state(member.state)})).chain(unit.local_symbols.iter().enumerate().map(|(ordinal, member)| json!({"owner":unit.source_owner(member.address).unwrap().id(),"role":"local-symbol","ordinal":ordinal,"alias":member.canonical_name,"extent":member.extent,"declared_state":Value::Null}))).collect::<Vec<_>>();
         let absolute_symbols = unit.absolute_symbols.iter().map(|(name, symbol)| json!({"name":name,"address":hex(symbol.address),"kind":absolute_kind(symbol.kind)})).collect::<Vec<_>>();
-        json!({"id":unit.id,"game":unit.game,"source":unit.source,"compiler_route":unit.compiler_route,"container":if unit.overlay.is_none(){json!({"kind":"main-rom","overlay":Value::Null})}else{json!({"kind":"overlay-image","overlay":unit.overlay})},"original_translation_unit":{"status":"unknown"},"production_composition_sections":unit.composition_sections,"absolute_symbols":absolute_symbols,"members":members})
+        json!({"id":unit.id,"game":unit.game,"source":unit.source,"compiler_route":unit.compiler_route,"container":if unit.overlay.is_none(){json!({"kind":"main-rom","overlay":Value::Null})}else{json!({"kind":"overlay-image","overlay":unit.overlay})},"original_translation_unit":{"status":"unknown"},"production_composition_sections":unit.composition_sections(),"absolute_symbols":absolute_symbols,"members":members})
     }).collect::<Vec<_>>();
     let auxiliary_regions = assembly.iter().filter(|region| !registered.contains(&SourceOwner::Main(region.address as u32))).map(|region| json!({"role":"non-owner-region","container":{"kind":"main-rom"},"address":hex(region.address),"run_address":region.run_address.map(hex),"extent":region.size,"source":region.source,"kind":region.kind,"origin":region.origin,"retention":region.retention,"confidence":region.confidence,"evidence":region.evidence})).collect::<Vec<_>>();
     let auxiliary_overlay_regions = semantic

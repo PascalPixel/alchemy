@@ -2,8 +2,10 @@
 @ リンカが遠距離処理へ到達するために生成する。Cでは表現不能。
 .syntax unified
 	.thumb
+	.global ObjectDispatch_InitializeFar
 	.global Func_08009098
 	.thumb_func
+ObjectDispatch_InitializeFar:
 Func_08009098:
 	ldr	r4, [pc, #0]
 	bx	r4

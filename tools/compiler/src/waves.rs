@@ -21,10 +21,11 @@ use std::{
     process::Command,
 };
 
-const USAGE: &str = "usage: compiler waves <inventory|bucket|draft <prepare|score --shard I/N|collect>> [--output PATH] [--family-index FILE]";
+const USAGE: &str = "usage: compiler waves <inventory|bucket|scoreboard|draft <prepare|score --shard I/N|collect>> [--output PATH] [--family-index FILE]";
 const MANIFEST: &str = "out/gs1-en/full/asm/manifest.json";
 const FAMILIES: &str = "out/gs1-en/reports/compiler-families.json";
 const BUCKET: &str = "out/gs1-en/waves/bucket.json";
+const RESIDUAL_SCOREBOARD: &str = "out/gs1-en/reports/residual-scoreboard.json";
 const DRAFT: &str = "out/gs1-en/waves/draft";
 const CATALOG: &str = "games/gs1/recon/compiler-repair-patterns.json";
 const DEBT: [&str; 5] = [
@@ -69,12 +70,14 @@ struct Owner {
     retention: String,
     kind: String,
     reference: String,
+    #[serde(default)]
+    reference_sha256: String,
     symbol: String,
     name: Option<String>,
     scope: Scope,
     unit: Option<String>,
     candidate: Option<String>,
-    candidate_sha256: Option<String>,
+    candidate_inputs_sha256: Option<String>,
 }
 #[derive(Clone, Debug, Deserialize, Serialize)]
 struct Inventory {
@@ -88,7 +91,9 @@ struct BucketEntry {
     size: usize,
     scope: Scope,
     name: Option<String>,
-    candidate_sha256: Option<String>,
+    #[serde(default)]
+    reference_sha256: String,
+    candidate_inputs_sha256: Option<String>,
     verdict: String,
     residual: Option<ResidualReport>,
     allocator_repair: Option<String>,
@@ -174,6 +179,7 @@ pub fn run(argv: &[String]) -> Result<(), String> {
     match command {
         "inventory" => inventory_command(simple_output(&argv[1..])?),
         "bucket" => bucket_command(simple_output(&argv[1..])?),
+        "scoreboard" => scoreboard_command(simple_output(&argv[1..])?),
         "draft" => draft_command(&argv[1..]),
         "-h" | "--help" => {
             println!("{USAGE}");
@@ -196,8 +202,18 @@ fn bucket_command(output: Option<PathBuf>) -> Result<(), String> {
     let repository = root();
     let inventory = inventory(repository)?;
     let output = output.unwrap_or_else(|| repository.join(BUCKET));
+    let report = build_bucket_report(repository, &inventory, &output)?;
+    print_bucket_summary(&report, &output);
+    Ok(())
+}
+
+fn build_bucket_report(
+    repository: &Path,
+    inventory: &Inventory,
+    output: &Path,
+) -> Result<BucketReport, String> {
     let owner_dir = output.with_extension("").join("owners");
-    let mut unit_scores = bucket_translation_units(repository, &inventory, &owner_dir)?;
+    let mut unit_scores = bucket_translation_units(repository, inventory, &owner_dir)?;
     let mut entries = Vec::with_capacity(inventory.owners.len());
     for owner in &inventory.owners {
         let mut entry = BucketEntry {
@@ -205,7 +221,8 @@ fn bucket_command(output: Option<PathBuf>) -> Result<(), String> {
             size: owner.size,
             scope: owner.scope,
             name: owner.name.clone(),
-            candidate_sha256: owner.candidate_sha256.clone(),
+            reference_sha256: owner.reference_sha256.clone(),
+            candidate_inputs_sha256: owner.candidate_inputs_sha256.clone(),
             verdict: String::new(),
             residual: None,
             allocator_repair: None,
@@ -245,12 +262,16 @@ fn bucket_command(output: Option<PathBuf>) -> Result<(), String> {
         entries.push(entry);
     }
     let report = BucketReport {
-        schema_version: 2,
-        manifest_sha256: inventory.manifest_sha256,
+        schema_version: 3,
+        manifest_sha256: inventory.manifest_sha256.clone(),
         scoring_environment_sha256: scoring_environment(repository)?,
         owners: entries,
     };
     write_json(&output, &report)?;
+    Ok(report)
+}
+
+fn print_bucket_summary(report: &BucketReport, output: &Path) {
     let (scored, covered) = report
         .owners
         .iter()
@@ -268,7 +289,213 @@ fn bucket_command(output: Option<PathBuf>) -> Result<(), String> {
         report.owners.len(),
         output.display()
     );
+}
+
+fn scoreboard_command(output: Option<PathBuf>) -> Result<(), String> {
+    let repository = root();
+    let inventory = inventory(repository)?;
+    let environment = scoring_environment(repository)?;
+    let bucket_path = repository.join(BUCKET);
+    let bucket = cached_bucket_report(repository, &inventory, &bucket_path, &environment)?;
+    let report = residual_scoreboard(
+        &inventory,
+        &bucket,
+        json!({
+            "manifest_sha256": inventory.manifest_sha256,
+            "scoring_environment_sha256": environment,
+            "bucket_sha256": hash(&bucket_path)?,
+        }),
+    )?;
+    let output = output.unwrap_or_else(|| repository.join(RESIDUAL_SCOREBOARD));
+    write_json(&output, &report)?;
+    println!("residual_class\towners\tbytes");
+    for (class, counts) in report["scoreboard"]["classes"]
+        .as_object()
+        .ok_or("scoreboard has no class table")?
+    {
+        println!(
+            "{class}\t{}\t{}",
+            counts["owners"].as_u64().unwrap_or(0),
+            counts["bytes"].as_u64().unwrap_or(0)
+        );
+    }
+    println!(
+        "retriaged={} structural={} unclassified=0 report={} sha256={}",
+        report["retriage"]["candidate_owners_retriaged"]
+            .as_u64()
+            .unwrap_or(0),
+        report["retriage"]["classes"]["classes"]["structural_topology"]["owners"]
+            .as_u64()
+            .unwrap_or(0),
+        output.display(),
+        hash(&output)?
+    );
     Ok(())
+}
+
+fn cached_bucket_report(
+    repository: &Path,
+    inventory: &Inventory,
+    output: &Path,
+    environment: &str,
+) -> Result<BucketReport, String> {
+    if let Ok(report) = json_file::<BucketReport>(output) {
+        if bucket_report_is_fresh(&report, inventory, environment) {
+            return Ok(report);
+        }
+    }
+    build_bucket_report(repository, inventory, output)
+}
+
+fn bucket_report_is_fresh(report: &BucketReport, inventory: &Inventory, environment: &str) -> bool {
+    report.schema_version >= 2
+        && report.manifest_sha256 == inventory.manifest_sha256
+        && report.scoring_environment_sha256 == environment
+        && report.owners.len() == inventory.owners.len()
+        && report
+            .owners
+            .iter()
+            .zip(&inventory.owners)
+            .all(|(entry, owner)| {
+                entry.owner == owner.owner
+                    && entry.size == owner.size
+                    && entry.scope == owner.scope
+                    && entry.reference_sha256 == owner.reference_sha256
+                    && entry.candidate_inputs_sha256 == owner.candidate_inputs_sha256
+            })
+}
+
+fn bucket_class(entry: &BucketEntry) -> Result<&str, String> {
+    if entry.residual.is_none()
+        && !matches!(
+            entry.verdict.as_str(),
+            "no_candidate" | "idiom_lint_parked" | "score_failed" | "decoder_failed"
+        )
+    {
+        return Err(format!(
+            "{} has unknown verdict {}",
+            entry.owner, entry.verdict
+        ));
+    }
+    let class = entry
+        .residual
+        .as_ref()
+        .map(|residual| match &residual.class {
+            ResidualClass::Exact => "exact",
+            ResidualClass::LayoutOnly => "layout_only",
+            ResidualClass::AllocationCovered => "allocation_covered",
+            ResidualClass::AllocationUncovered => "allocation_uncovered",
+            ResidualClass::SchedulingFloor => "scheduling_floor",
+            ResidualClass::TypeWidthMismatch => "type_width_mismatch",
+            ResidualClass::StructuralTopology => "structural_topology",
+            ResidualClass::MissingExtraCode => "missing_extra_code",
+            ResidualClass::CompilerUnemittable => "compiler_unemittable",
+            ResidualClass::Unclassified => "unclassified",
+        })
+        .unwrap_or(entry.verdict.as_str());
+    if class.is_empty() || class == "unclassified" {
+        Err(format!("{} has no triage class", entry.owner))
+    } else {
+        Ok(class)
+    }
+}
+
+fn bucket_scoreboard<'a>(entries: impl Iterator<Item = &'a BucketEntry>) -> Result<Value, String> {
+    let mut classes = BTreeMap::<String, (usize, usize)>::new();
+    let mut owners = 0;
+    let mut bytes = 0;
+    for entry in entries {
+        let row = classes.entry(bucket_class(entry)?.into()).or_default();
+        row.0 += 1;
+        row.1 += entry.size;
+        owners += 1;
+        bytes += entry.size;
+    }
+    Ok(json!({
+        "owners": owners,
+        "bytes": bytes,
+        "classes": classes.into_iter().map(|(class, (owners, bytes))| {
+            (class, json!({"owners": owners, "bytes": bytes}))
+        }).collect::<BTreeMap<_, _>>()
+    }))
+}
+
+fn residual_scoreboard(
+    inventory: &Inventory,
+    bucket: &BucketReport,
+    inputs: Value,
+) -> Result<Value, String> {
+    if bucket.owners.len() != inventory.owners.len() {
+        return Err("residual scoreboard inputs do not cover the current inventory".into());
+    }
+    for (owner, entry) in inventory.owners.iter().zip(&bucket.owners) {
+        if entry.owner != owner.owner {
+            return Err(format!("bucket ordering diverges at {}", owner.owner));
+        }
+        bucket_class(entry)?;
+    }
+    let candidates = bucket
+        .owners
+        .iter()
+        .filter(|entry| entry.scope != Scope::NoCandidate)
+        .collect::<Vec<_>>();
+    let topology_coverage = bucket
+        .owners
+        .iter()
+        .filter_map(|entry| entry.residual.as_ref())
+        .fold(
+            (0usize, 0usize, 0usize, 0usize),
+            |(covered_owners, covered_bytes, uncovered_owners, uncovered_bytes), residual| {
+                if matches!(
+                    residual.facts.topology.status,
+                    candidate_show::triage::TopologyStatus::Uncovered
+                ) {
+                    (
+                        covered_owners,
+                        covered_bytes,
+                        uncovered_owners + 1,
+                        uncovered_bytes + residual.facts.reference_bytes,
+                    )
+                } else {
+                    (
+                        covered_owners + 1,
+                        covered_bytes + residual.facts.reference_bytes,
+                        uncovered_owners,
+                        uncovered_bytes,
+                    )
+                }
+            },
+        );
+    let topology_unassessed = bucket
+        .owners
+        .iter()
+        .filter(|entry| entry.scope != Scope::NoCandidate && entry.residual.is_none())
+        .fold((0usize, 0usize), |(owners, bytes), entry| {
+            (owners + 1, bytes + entry.size)
+        });
+    Ok(json!({
+        "schema_version": 2,
+        "kind": "main_rom_residual_scoreboard",
+        "target": "gs1-en",
+        "inventory": {
+            "manifest_sha256": inventory.manifest_sha256,
+            "owners": inventory.owners.len(),
+            "bytes": inventory.owners.iter().map(|owner| owner.size).sum::<usize>(),
+        },
+        "inputs": inputs,
+        "scoreboard": bucket_scoreboard(bucket.owners.iter())?,
+        "retriage": {
+            "method": "ordinary tracked candidate source scored with the current router; pre-score idiom failures remain parked; shared translation units compile once",
+            "candidate_owners_retriaged": candidates.len(),
+            "classes": bucket_scoreboard(candidates.into_iter())?,
+        },
+        "topology_coverage": {
+            "covered": {"owners": topology_coverage.0, "bytes": topology_coverage.1},
+            "uncovered": {"owners": topology_coverage.2, "bytes": topology_coverage.3},
+            "unassessed_not_scored": {"owners": topology_unassessed.0, "bytes": topology_unassessed.1},
+        },
+        "unclassified": 0,
+    }))
 }
 
 fn bucket_score(repository: &Path, owner: &Owner, output: &Path, entry: &mut BucketEntry) {
@@ -826,7 +1053,7 @@ fn draft_route(retention: &str) -> Result<DraftRoute, String> {
     }
 }
 
-fn draft_cohort(repository: &Path, inventory: &Inventory) -> Result<DraftCohort, String> {
+fn draft_cohort(_repository: &Path, inventory: &Inventory) -> Result<DraftCohort, String> {
     let mut owners = inventory
         .owners
         .iter()
@@ -839,7 +1066,7 @@ fn draft_cohort(repository: &Path, inventory: &Inventory) -> Result<DraftCohort,
                 retention: owner.retention.clone(),
                 kind: owner.kind.clone(),
                 reference: owner.reference.clone(),
-                reference_sha256: hash(repository.join(&owner.reference))?,
+                reference_sha256: owner.reference_sha256.clone(),
                 symbol: owner.symbol.clone(),
                 name: owner.name.clone(),
                 route: draft_route(&owner.retention)?,
@@ -1247,12 +1474,13 @@ fn score_draft(
         retention: owner.retention.clone(),
         kind: owner.kind.clone(),
         reference: owner.reference.clone(),
+        reference_sha256: owner.reference_sha256.clone(),
         symbol: owner.symbol.clone(),
         name: owner.name.clone(),
         scope: Scope::StandaloneDraft,
         unit: None,
         candidate: Some(candidate.to_string_lossy().into_owned()),
-        candidate_sha256: Some(hash(candidate)?),
+        candidate_inputs_sha256: Some(candidate_inputs_hash(repository, candidate)?),
     };
     score_with_decoder(repository, &scored_owner, work)
 }
@@ -1262,10 +1490,11 @@ fn score_with_decoder(
     owner: &Owner,
     work: &Path,
 ) -> Result<(RenderOutput, Option<String>), String> {
-    let mut scored = score(repository, owner, work, false)?;
+    let source = owner.candidate.as_deref().unwrap_or("");
+    let mut scored = score(repository, owner, &source, work, false)?;
     let mut decoder_error = None;
     if scored.residual.class == ResidualClass::AllocationUncovered {
-        match score(repository, owner, work, true) {
+        match score(repository, owner, &source, work, true) {
             Ok(decoded) => scored = decoded,
             Err(error) => decoder_error = Some(error),
         }
@@ -1350,13 +1579,14 @@ fn prediction_contract() -> Value {
 fn score(
     repository: &Path,
     owner: &Owner,
+    source: &str,
     work: &Path,
     allocator: bool,
 ) -> Result<RenderOutput, String> {
     render(
         repository,
         &CandidateOptions {
-            source: owner.candidate.clone().unwrap_or_default(),
+            source: source.into(),
             rom: Some(
                 repository
                     .join("roms/gs1-en.gba")
@@ -1399,6 +1629,7 @@ fn pack(
             json!({"schema_version":4,"owner":owner.owner,"status":if owner.route==DraftRoute::OwnerGroup{"owner_group"}else{"split_region"},"route":owner.route,"category":owner.kind,"manifest_sha256":manifest_sha256,"family_index_sha256":family_index_sha256,"reference_sha256":owner.reference_sha256,"m2c_identity":m2c_identity,"contexts":Value::Null,"m2c":Value::Null,"templates":[],"template_count":0}),
         );
     }
+    let target_symbol = SourceOwner::parse(&owner.owner)?.legacy_name();
     let target = catalog.target(&owner.owner);
     let prepared = target
         .into_iter()
@@ -1409,9 +1640,10 @@ fn pack(
                 &details.owner,
                 &template.source,
                 &details.symbol,
-                template.registered_name.as_deref(),
-                &owner.symbol,
-                RetargetMode::EntryMacro,
+                &target_symbol,
+                RetargetMode::EntryMacro {
+                    entry: template.entry_name.as_deref()?,
+                },
             )
             .ok()?;
             Some((details, template, retargeted))
@@ -1425,7 +1657,7 @@ fn pack(
         write(&directory.join(&packed), source.as_bytes())?;
         let retargeted = format!("retargeted-{}.c", index + 1);
         write(&directory.join(&retargeted), retargeted_source.as_bytes())?;
-        templates.push(json!({"rank":index+1,"owner":details.owner,"symbol":details.symbol,"score_basis_points":details.score_basis_points,"source":details.source,"packed_source":packed,"source_sha256":sha256::hex(source.as_bytes()),"retargeted_source":retargeted,"retargeted_sha256":sha256::hex(retargeted_source.as_bytes()),"retargeted":retargeted_source!=source}));
+        templates.push(json!({"rank":index+1,"owner":details.owner,"symbol":details.symbol,"source_entry":template.entry_name.as_deref(),"score_basis_points":details.score_basis_points,"source":details.source,"packed_source":packed,"source_sha256":sha256::hex(source.as_bytes()),"retargeted_source":retargeted,"retargeted_sha256":sha256::hex(retargeted_source.as_bytes()),"retargeted":retargeted_source!=source}));
     }
     let template_count = templates.len();
     let template = prepared.first().map(|(details, _, _)| *details);
@@ -1447,7 +1679,7 @@ fn pack(
         "pack_failed"
     };
     Ok(
-        json!({"schema_version":4,"owner":owner.owner,"name":owner.name,"status":status,"route":owner.route,"category":owner.kind,"manifest_sha256":manifest_sha256,"family_index_sha256":family_index_sha256,"reference_sha256":owner.reference_sha256,"target_symbol":owner.symbol,"family_index_reference":target.map(|target|target.source.as_str()),"family":target.and_then(|target|target.family.as_deref()),"m2c_identity":m2c_identity,"contexts":contexts,"m2c":m2c_seed,"m2c_error":m2c_error,"templates":templates,"template_count":template_count,"raw_diff_included":false}),
+        json!({"schema_version":4,"owner":owner.owner,"name":owner.name,"status":status,"route":owner.route,"category":owner.kind,"manifest_sha256":manifest_sha256,"family_index_sha256":family_index_sha256,"reference_sha256":owner.reference_sha256,"target_symbol":target_symbol,"family_index_reference":target.map(|target|target.source.as_str()),"family":target.and_then(|target|target.family.as_deref()),"m2c_identity":m2c_identity,"contexts":contexts,"m2c":m2c_seed,"m2c_error":m2c_error,"templates":templates,"template_count":template_count,"raw_diff_included":false}),
     )
 }
 
@@ -1530,9 +1762,9 @@ fn inventory(repository: &Path) -> Result<Inventory, String> {
         let candidate = translation_unit
             .map(|u| u.source.to_string_lossy().into_owned())
             .or_else(|| repository.join(&relative).is_file().then_some(relative));
-        let candidate_sha256 = candidate
+        let candidate_inputs_sha256 = candidate
             .as_deref()
-            .map(|p| hash(repository.join(p)))
+            .map(|path| candidate_inputs_hash(repository, Path::new(path)))
             .transpose()?;
         let name = names.registered_name(id).map(str::to_string);
         let symbol = if region.symbol.is_empty() {
@@ -1546,6 +1778,7 @@ fn inventory(repository: &Path) -> Result<Inventory, String> {
         } else {
             region.symbol
         };
+        let reference_sha256 = hash(repository.join(&region.source))?;
         owners.push(Owner {
             owner: id.id(),
             address,
@@ -1553,12 +1786,13 @@ fn inventory(repository: &Path) -> Result<Inventory, String> {
             retention: region.retention.unwrap_or_default(),
             kind: region.kind,
             reference: region.source,
+            reference_sha256,
             symbol,
             name,
             scope,
             unit,
             candidate,
-            candidate_sha256,
+            candidate_inputs_sha256,
         });
     }
     owners.sort_by_key(|o| o.address);
@@ -1609,6 +1843,7 @@ fn simple_output(argv: &[String]) -> Result<Option<PathBuf>, String> {
         _ => Err(USAGE.into()),
     }
 }
+
 fn stem(address: u32) -> String {
     format!("{address:08x}")
 }
@@ -1628,6 +1863,16 @@ fn hash(path: impl AsRef<Path>) -> Result<String, String> {
     fs::read(p)
         .map(|b| sha256::hex(&b))
         .map_err(|e| format!("{}: {e}", p.display()))
+}
+fn candidate_inputs_hash(repository: &Path, source: &Path) -> Result<String, String> {
+    let source = resolve(repository, source);
+    let include = repository.join("games/gs1/include");
+    compiler_core::source_inputs::source_tree_signature(&source, &[include]).map(|digest| {
+        digest
+            .into_iter()
+            .map(|byte| format!("{byte:02x}"))
+            .collect()
+    })
 }
 fn hash_tree(path: &Path) -> Result<String, String> {
     let paths = walkdir::WalkDir::new(path)
@@ -1703,6 +1948,100 @@ mod tests {
             symbol: format!("Fixture_{index}"),
             name: None,
             route: DraftRoute::IndependentM2c,
+        }
+    }
+
+    fn fixture_inventory_owner(index: u32, size: usize, scope: Scope) -> Owner {
+        Owner {
+            owner: format!("main:{:08x}", 0x0800_0000 + index * 4),
+            address: 0x0800_0000 + index * 4,
+            size,
+            retention: "c_candidate".into(),
+            kind: "code".into(),
+            reference: format!("reference-{index}.s"),
+            reference_sha256: format!("reference-{index}"),
+            symbol: format!("Fixture_{index}"),
+            name: None,
+            scope,
+            unit: None,
+            candidate: (scope != Scope::NoCandidate).then(|| format!("candidate-{index}.c")),
+            candidate_inputs_sha256: (scope != Scope::NoCandidate)
+                .then(|| format!("candidate-{index}")),
+        }
+    }
+
+    fn assert_retargeted_template_defines_target(template_owner: &str, target_owner: &str) {
+        let repository = root();
+        let catalog = FamilyCatalog::load(repository, Path::new(FAMILIES)).unwrap();
+        let target = catalog.target(target_owner).unwrap();
+        let details = target
+            .alternatives
+            .iter()
+            .find(|details| details.owner == template_owner)
+            .unwrap();
+        let template = catalog.template(details).unwrap();
+        let entry = template.entry_name.as_deref().unwrap();
+        let source = crate::families::retarget_source(
+            &details.owner,
+            &template.source,
+            &details.symbol,
+            &target.symbol,
+            RetargetMode::EntryMacro { entry },
+        )
+        .unwrap();
+        let owner = SourceOwner::parse(target_owner).unwrap();
+        let work = scratch(&format!(
+            "retarget-{}",
+            target_owner.trim_start_matches("main:")
+        ));
+        let candidate = work.join("candidate.c");
+        write(&candidate, source.as_bytes()).unwrap();
+        fs::create_dir_all(work.join("score")).unwrap();
+        let rom = fs::read(repository.join("roms/gs1-en.gba")).unwrap();
+        let verification = candidate_compiler::verify::verify_candidate_owned_routed(
+            &candidate.to_string_lossy(),
+            &owner.routing_path().to_string_lossy(),
+            &owner.address_stem(),
+            &rom,
+            &work.join("score").to_string_lossy(),
+            &[],
+            candidate_compiler::verify::ROM_BASE,
+            CompilerTarget::Gs1,
+            &CandidateCompilerConfiguration {
+                family: Some(CandidateCompilerFamily::Routed),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        assert!(!verification.actual.is_empty());
+        fs::remove_dir_all(work).unwrap();
+    }
+
+    fn fixture_bucket_entry(owner: &Owner, class: Option<ResidualClass>) -> BucketEntry {
+        BucketEntry {
+            owner: owner.owner.clone(),
+            size: owner.size,
+            scope: owner.scope,
+            name: None,
+            reference_sha256: owner.reference_sha256.clone(),
+            candidate_inputs_sha256: owner.candidate_inputs_sha256.clone(),
+            verdict: class.as_ref().map_or("no_candidate", |_| "scored").into(),
+            residual: class.map(|class| ResidualReport {
+                class,
+                wrong_instructions: 1,
+                facts: candidate_show::triage::ResidualFacts {
+                    actual_bytes: owner.size,
+                    reference_bytes: owner.size,
+                    differing_halfwords: 1,
+                    branch_topology_equal: false,
+                    topology: candidate_show::triage::TopologyEvidence::default(),
+                    type_width_fingerprints: Vec::new(),
+                },
+            }),
+            allocator_repair: None,
+            allocator_dimensions: Vec::new(),
+            lint: None,
+            error: None,
         }
     }
 
@@ -1808,6 +2147,87 @@ mod tests {
     }
 
     #[test]
+    fn residual_scoreboard_covers_inventory_without_claiming_aggregate_effect() {
+        let inventory = Inventory {
+            schema_version: 1,
+            manifest_sha256: "manifest".into(),
+            owners: vec![
+                fixture_inventory_owner(0, 10, Scope::StandaloneDraft),
+                fixture_inventory_owner(1, 7, Scope::TranslationUnit),
+                fixture_inventory_owner(2, 4, Scope::NoCandidate),
+                fixture_inventory_owner(3, 3, Scope::StandaloneDraft),
+            ],
+        };
+        let bucket = BucketReport {
+            schema_version: 3,
+            manifest_sha256: "manifest".into(),
+            scoring_environment_sha256: "environment".into(),
+            owners: vec![
+                fixture_bucket_entry(
+                    &inventory.owners[0],
+                    Some(ResidualClass::StructuralTopology),
+                ),
+                fixture_bucket_entry(&inventory.owners[1], Some(ResidualClass::SchedulingFloor)),
+                fixture_bucket_entry(&inventory.owners[2], None),
+                {
+                    let mut failed = fixture_bucket_entry(&inventory.owners[3], None);
+                    failed.verdict = "score_failed".into();
+                    failed
+                },
+            ],
+        };
+        let report = residual_scoreboard(&inventory, &bucket, json!({})).unwrap();
+        assert_eq!(report["scoreboard"]["owners"], 4);
+        assert_eq!(report["scoreboard"]["bytes"], 24);
+        assert_eq!(report["scoreboard"]["classes"]["no_candidate"]["owners"], 1);
+        assert_eq!(report["retriage"]["candidate_owners_retriaged"], 3);
+        assert_eq!(report["topology_coverage"]["covered"]["owners"], 0);
+        assert_eq!(report["topology_coverage"]["uncovered"]["owners"], 2);
+        assert_eq!(
+            report["topology_coverage"]["unassessed_not_scored"]["owners"],
+            1
+        );
+        assert_eq!(
+            report["topology_coverage"]["unassessed_not_scored"]["bytes"],
+            3
+        );
+    }
+
+    #[test]
+    fn included_recon_source_invalidates_bucket_cache() {
+        let repository = scratch("bucket-inputs");
+        let source = Path::new("games/gs1/recon/en/main/owner.c");
+        let included = repository.join("games/gs1/src/shared.h");
+        write(
+            &repository.join(source),
+            b"#include \"../../../src/shared.h\"\n",
+        )
+        .unwrap();
+        write(&included, b"before\n").unwrap();
+        let mut owner = fixture_inventory_owner(0, 4, Scope::StandaloneDraft);
+        owner.candidate = Some(source.to_string_lossy().into_owned());
+        owner.candidate_inputs_sha256 = Some(candidate_inputs_hash(&repository, source).unwrap());
+        let entry = fixture_bucket_entry(&owner, Some(ResidualClass::StructuralTopology));
+        let report = BucketReport {
+            schema_version: 3,
+            manifest_sha256: "manifest".into(),
+            scoring_environment_sha256: "environment".into(),
+            owners: vec![entry],
+        };
+        let mut inventory = Inventory {
+            schema_version: 1,
+            manifest_sha256: "manifest".into(),
+            owners: vec![owner],
+        };
+        assert!(bucket_report_is_fresh(&report, &inventory, "environment"));
+        write(&included, b"after\n").unwrap();
+        inventory.owners[0].candidate_inputs_sha256 =
+            Some(candidate_inputs_hash(&repository, source).unwrap());
+        assert!(!bucket_report_is_fresh(&report, &inventory, "environment"));
+        fs::remove_dir_all(repository).unwrap();
+    }
+
+    #[test]
     fn authoritative_registry_rejects_translation_unit_templates() {
         let repository = root();
         let units = TranslationUnits::load(repository).unwrap();
@@ -1824,19 +2244,11 @@ mod tests {
             .all(|template| units.unit_for_game_owner("gs1", template.owner).is_none()));
     }
     #[test]
-    fn retarget_uses_registered_entry() {
-        let source =
-            "#include \"types.h\"\n/* Func_08000000() {} */\nvoid Func_08000000(void) {}\n";
-        let output = crate::families::retarget_source(
-            "main:08000000",
-            source,
-            "Func_08000000",
-            None,
-            "Func_08000004",
-            RetargetMode::EntryMacro,
-        )
-        .unwrap();
-        assert!(output.contains("#define Func_08000000 Func_08000004"));
+    fn prepared_templates_define_their_retargeted_object_symbols() {
+        assert_retargeted_template_defines_target("main:08004080", "main:080b6e7c");
+        assert_retargeted_template_defines_target("main:08003538", "main:08017e88");
+        assert_retargeted_template_defines_target("main:080b7424", "main:0800bc70");
+        assert_retargeted_template_defines_target("main:080ae7fc", "main:080a2324");
     }
     #[test]
     fn draft_has_no_adoption_or_freeform_switch() {

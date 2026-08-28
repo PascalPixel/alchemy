@@ -1,4 +1,5 @@
 use crate::render::{alignment_key, without_pc_offset, without_register};
+use crate::topology::Comparison;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -48,11 +49,52 @@ pub struct TypeWidthFingerprint {
     pub reference: String,
 }
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum TopologyStatus {
+    Equal,
+    Different,
+    Uncovered,
+}
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct TopologyEvidence {
+    pub status: TopologyStatus,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub reason: Option<String>,
+}
+impl Default for TopologyEvidence {
+    fn default() -> Self {
+        Self {
+            status: TopologyStatus::Uncovered,
+            reason: Some("legacy-verdict".into()),
+        }
+    }
+}
+impl From<&Comparison> for TopologyEvidence {
+    fn from(value: &Comparison) -> Self {
+        match value {
+            Comparison::Equal => Self {
+                status: TopologyStatus::Equal,
+                reason: None,
+            },
+            Comparison::Different => Self {
+                status: TopologyStatus::Different,
+                reason: None,
+            },
+            Comparison::Uncovered(reason) => Self {
+                status: TopologyStatus::Uncovered,
+                reason: Some(reason.clone()),
+            },
+        }
+    }
+}
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct ResidualFacts {
     pub actual_bytes: usize,
     pub reference_bytes: usize,
     pub differing_halfwords: usize,
     pub branch_topology_equal: bool,
+    #[serde(default)]
+    pub topology: TopologyEvidence,
     pub type_width_fingerprints: Vec<TypeWidthFingerprint>,
 }
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -294,6 +336,32 @@ pub fn classify(
     reference_bytes: usize,
     differing_halfwords: usize,
 ) -> ResidualReport {
+    let pairs = alignment_indices(left, right, |left, right| {
+        usize::from(alignment_key(left) == alignment_key(right))
+    });
+    let topology = if branch_topology_equal(left, right, &pairs) {
+        Comparison::Equal
+    } else {
+        Comparison::Different
+    };
+    classify_with_topology(
+        left,
+        right,
+        actual_bytes,
+        reference_bytes,
+        differing_halfwords,
+        &topology,
+    )
+}
+
+pub fn classify_with_topology(
+    left: &[String],
+    right: &[String],
+    actual_bytes: usize,
+    reference_bytes: usize,
+    differing_halfwords: usize,
+    topology: &Comparison,
+) -> ResidualReport {
     let ordered_pc_normalized_equal = left
         .iter()
         .map(|line| normalized(line))
@@ -314,12 +382,14 @@ pub fn classify(
     let instruction_multiset_equal = instruction_delta.values().all(|count| *count == 0);
     let register_erased_multiset_equal = register_delta.values().all(|count| *count == 0);
     let pool = instruction_delta.values().map(|value| value.abs()).sum();
-    let branch_topology_equal = branch_topology_equal(left, right, &pairs);
+    let branch_topology_equal = matches!(topology, Comparison::Equal);
+    let branch_topology_different = matches!(topology, Comparison::Different);
     let facts = ResidualFacts {
         actual_bytes,
         reference_bytes,
         differing_halfwords,
         branch_topology_equal,
+        topology: TopologyEvidence::from(topology),
         type_width_fingerprints: width,
     };
     let class = if differing_halfwords == 0 && actual_bytes == reference_bytes {
@@ -336,7 +406,7 @@ pub fn classify(
         ResidualClass::AllocationUncovered
     } else if !facts.type_width_fingerprints.is_empty() && facts.branch_topology_equal {
         ResidualClass::TypeWidthMismatch
-    } else if !facts.branch_topology_equal {
+    } else if branch_topology_different {
         ResidualClass::StructuralTopology
     } else if streams_differ || actual_bytes != reference_bytes {
         ResidualClass::MissingExtraCode
@@ -418,5 +488,24 @@ mod tests {
         assert_eq!(report.facts.type_width_fingerprints[0].candidate, "ldrb");
         assert_eq!(report.facts.type_width_fingerprints[0].reference, "ldrsb");
         assert_eq!(report.class, ResidualClass::TypeWidthMismatch);
+    }
+
+    #[test]
+    fn uncovered_topology_never_routes_as_structural() {
+        let left = vec!["beq 0x4".to_string()];
+        let right = vec!["bne 0x4".to_string()];
+        let report = classify_with_topology(
+            &left,
+            &right,
+            2,
+            2,
+            1,
+            &Comparison::Uncovered("fixture".into()),
+        );
+        assert_ne!(report.class, ResidualClass::StructuralTopology);
+        assert!(!report.facts.branch_topology_equal);
+        let value = serde_json::to_value(&report).unwrap();
+        assert_eq!(value["facts"]["topology"]["status"], "uncovered");
+        assert_eq!(value["facts"]["topology"]["reason"], "fixture");
     }
 }

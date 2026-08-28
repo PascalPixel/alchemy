@@ -3,7 +3,8 @@ use crate::{
     disasm::{disassemble, Rows},
     insns::gas_function_insns,
     patch::apply_unified_diff_in_tree,
-    triage::classify,
+    topology::{self, Comparison},
+    triage::{classify, classify_with_topology},
 };
 use candidate_compiler::verify::{
     compile_to_assembly, verify_candidate_owned_routed_with_object, CandidateCompilerConfiguration,
@@ -154,6 +155,7 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         .rom
         .as_deref()
         .ok_or("The \"path\" argument must be of type string. Received undefined")?;
+    let rom = std::fs::read(rom_path).map_err(|error| format!("{rom_path}: {error}"))?;
     let patch_text = read_patch(options.patch.as_deref())?;
     let image_base = if identity.owner.is_main() {
         ROM_BASE as u32
@@ -167,7 +169,8 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         &stem,
         &options.flags,
         &options.configuration,
-        options.rom.as_deref(),
+        rom_path,
+        &rom,
         options.size,
         patch_text.as_deref(),
     )?;
@@ -192,10 +195,9 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
     } else {
         options.source.clone()
     };
-    let (actual, expected, compile) = if let Some(pair) = cached {
+    let (actual, expected, candidate_gas, compile) = if let Some(pair) = cached {
         pair
     } else {
-        let rom = std::fs::read(rom_path).map_err(|error| format!("{rom_path}: {error}"))?;
         let verification = verify_candidate_owned_routed_with_object(
             &source,
             &identity.routing.to_string_lossy(),
@@ -222,14 +224,23 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         let end = offset.saturating_add(size).min(rom.len());
         let actual = verification.actual;
         let expected = rom[offset.min(end)..end].to_vec();
+        let candidate_gas = read_candidate_gas(&work, &stem, options.precompiled_object.as_deref());
         if !options.allocator_order {
+            let mut entries = vec![
+                ("candidate", actual.as_slice()),
+                ("reference", expected.as_slice()),
+            ];
+            if let Some(assembly) = candidate_gas.as_deref() {
+                entries.push(("candidate-gas", assembly));
+            }
             cache
-                .put(&key, &[("candidate", &actual), ("reference", &expected)])
+                .put(&key, &entries)
                 .map_err(|error| format!("cache: {error}"))?;
         }
         (
             actual,
             expected,
+            candidate_gas,
             if options.precompiled_object.is_some() {
                 "shared-object"
             } else {
@@ -237,7 +248,16 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
             },
         )
     };
-    let mut score = render_bytes(actual, expected, compile, options, &work, &cache, &key)?;
+    let topology = topology_for_owner(
+        root,
+        options,
+        identity.owner.is_main(),
+        &stem,
+        candidate_gas.as_deref(),
+    );
+    let mut score = render_bytes(
+        actual, expected, compile, topology, options, &work, &cache, &key,
+    )?;
     let allocator = if options.allocator_order {
         Some(crate::allocator::decode(
             root,
@@ -270,6 +290,17 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
     }
     Ok(rendered)
 }
+
+fn read_candidate_gas(
+    work: &Path,
+    stem: &str,
+    precompiled_object: Option<&str>,
+) -> Option<Vec<u8>> {
+    let path = precompiled_object
+        .map(|object| Path::new(object).with_extension("s"))
+        .unwrap_or_else(|| work.join(format!("{stem}.s")));
+    std::fs::read(path).ok()
+}
 fn read_patch(path: Option<&str>) -> Result<Option<String>, String> {
     path.map(|path| {
         if path == "-" {
@@ -283,10 +314,50 @@ fn read_patch(path: Option<&str>) -> Result<Option<String>, String> {
     })
     .transpose()
 }
+
+fn topology_for_owner(
+    root: &Path,
+    options: &Options,
+    main: bool,
+    stem: &str,
+    candidate: Option<&[u8]>,
+) -> Comparison {
+    if !main {
+        return Comparison::Uncovered("overlay-not-yet-supported".into());
+    }
+    let Some(candidate) = candidate.and_then(|source| std::str::from_utf8(source).ok()) else {
+        return Comparison::Uncovered("candidate-gas-unavailable".into());
+    };
+    let reference = root
+        .join("games")
+        .join(options.target.as_str())
+        .join("asm")
+        .join(format!("{stem}.s"));
+    let Ok(reference) = std::fs::read_to_string(&reference) else {
+        return Comparison::Uncovered("reference-gas-unavailable".into());
+    };
+    let candidate_symbol = format!("Func_{stem}");
+    let reference_symbol = u32::from_str_radix(stem, 16)
+        .ok()
+        .and_then(|address| {
+            SourcePaths::load_for_game(root, options.target.as_str())
+                .ok()
+                .map(|paths| (paths, address))
+        })
+        .and_then(|(paths, address)| {
+            paths
+                .registered_name(SourceOwner::Main(address))
+                .map(str::to_owned)
+        })
+        .unwrap_or_else(|| candidate_symbol.clone());
+    topology::compare_symbols(candidate, &candidate_symbol, &reference, &reference_symbol)
+}
+
 fn render_bytes(
     actual: Vec<u8>,
     expected: Vec<u8>,
     compile: &str,
+    topology: Comparison,
     options: &Options,
     work: &Path,
     cache: &cache_entry::sqlite::SqliteCache,
@@ -302,12 +373,13 @@ fn render_bytes(
     let candidate = ordered_lines(&candidate_rows);
     let reference = ordered_lines(&reference_rows);
     let differing = crate::diff::differing_offsets(&actual, &expected);
-    let residual = classify(
+    let residual = classify_with_topology(
         &candidate,
         &reference,
         actual.len(),
         expected.len(),
         differing.len(),
+        &topology,
     );
     let mut offsets: Vec<_> = candidate_rows.keys().chain(reference_rows.keys()).collect();
     offsets.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
@@ -315,7 +387,7 @@ fn render_bytes(
     let wrong = residual.wrong_instructions;
     let class = residual.class.label();
     let playbook = residual.class.playbook().unwrap_or("smart-queue");
-    let mut out = format!("candidate={} reference={} differing_halfwords={}\ncompile={compile}\nclass={class} wrong_instructions={wrong}\ntriage={class} playbook={playbook}\n", actual.len(), expected.len(), differing.len());
+    let mut out = format!("candidate={} reference={} differing_halfwords={}\ncompile={compile}\ntopology={}\nclass={class} wrong_instructions={wrong}\ntriage={class} playbook={playbook}\n", actual.len(), expected.len(), differing.len(), topology.summary());
     if options.align {
         let pairs = align_streams(&candidate, &reference);
         let matched = pairs
@@ -405,15 +477,13 @@ fn render_asm(
         &options.configuration,
     )?;
     let symbol = format!("Func_{stem}");
-    let candidate = gas_function_insns(
-        &std::fs::read_to_string(&assembly).map_err(|error| format!("{assembly}: {error}"))?,
-        &symbol,
-    );
-    let expected = gas_function_insns(
-        &std::fs::read_to_string(&reference)
-            .map_err(|error| format!("{}: {error}", reference.display()))?,
-        &symbol,
-    );
+    let candidate_gas =
+        std::fs::read_to_string(&assembly).map_err(|error| format!("{assembly}: {error}"))?;
+    let reference_gas = std::fs::read_to_string(&reference)
+        .map_err(|error| format!("{}: {error}", reference.display()))?;
+    let topology = topology::compare(&candidate_gas, &reference_gas, &symbol);
+    let candidate = gas_function_insns(&candidate_gas, &symbol);
+    let expected = gas_function_insns(&reference_gas, &symbol);
     let dir = work;
     let candidate_path = dir.join("candidate.insns");
     let previous = dir.join("previous.insns");
@@ -427,8 +497,9 @@ fn render_asm(
     std::fs::write(&reference_path, expected.join("\n") + "\n")
         .map_err(|error| format!("{}: {error}", reference_path.display()))?;
     let mut out = format!(
-        "elapsed_ms={:.0} compile=s-only\ncandidate_insns={} reference_insns={}\nvs reference:\n{}",
+        "elapsed_ms={:.0} compile=s-only\ntopology={}\ncandidate_insns={} reference_insns={}\nvs reference:\n{}",
         started.elapsed().as_secs_f64() * 1000.0,
+        topology.summary(),
         candidate.len(),
         expected.len(),
         git_diff_stat(&reference_path, &candidate_path)?
@@ -445,12 +516,13 @@ fn render_asm(
         reference_length: expected.len(),
         differing_halfwords: 0,
         allocator: None,
-        residual: classify(
+        residual: classify_with_topology(
             &candidate,
             &expected,
             candidate.len(),
             expected.len(),
             usize::from(candidate != expected),
+            &topology,
         ),
     })
 }
@@ -556,7 +628,8 @@ fn source_cache_key(
     owner_stem: &str,
     flags: &[String],
     configuration: &CandidateCompilerConfiguration,
-    rom: Option<&str>,
+    rom_path: &str,
+    rom: &[u8],
     size: Option<usize>,
     patch: Option<&str>,
 ) -> Result<String, String> {
@@ -571,6 +644,7 @@ fn source_cache_key(
         owner_stem,
         flags,
         configuration,
+        rom_path,
         rom,
         size,
         patch,
@@ -584,14 +658,15 @@ fn source_cache_key_with_environment(
     owner_stem: &str,
     flags: &[String],
     configuration: &CandidateCompilerConfiguration,
-    rom: Option<&str>,
+    rom_path: &str,
+    rom: &[u8],
     size: Option<usize>,
     patch: Option<&str>,
     executable: &[u8],
     compiler_bundle: &[u8],
 ) -> Result<String, String> {
     let mut hasher = Sha256::new();
-    hasher.update(b"candidate-show-cache-v4");
+    hasher.update(b"candidate-show-cache-v5");
     hasher.update(source_input_signature(
         compiler_core::routing::root(),
         source,
@@ -645,10 +720,10 @@ fn source_cache_key_with_environment(
             .unwrap_or_default()
             .to_le_bytes(),
     );
-    if let Some(rom) = rom {
-        hasher.update([10]);
-        hasher.update(rom.as_bytes());
-    }
+    hasher.update([10]);
+    hasher.update(rom_path.as_bytes());
+    hasher.update([13]);
+    hasher.update(Sha256::digest(rom));
     if let Some(size) = size {
         hasher.update([11]);
         hasher.update(size.to_le_bytes());
@@ -710,7 +785,8 @@ mod cache_key_tests {
                 owner,
                 &[],
                 configuration,
-                None,
+                "roms/gs1-en.gba",
+                b"reference-rom",
                 None,
                 None,
                 host,
@@ -738,6 +814,58 @@ mod cache_key_tests {
         }
         let _ = std::fs::remove_file(source);
     }
+
+    #[test]
+    fn changing_rom_contents_at_the_same_path_does_not_reuse_cached_reference() {
+        let directory = std::env::temp_dir().join(format!(
+            "candidate-show-rom-cache-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&directory).unwrap();
+        let source = directory.join("candidate.c");
+        let rom = directory.join("reference.gba");
+        std::fs::write(&source, "void Func_08000000(void) {}\n").unwrap();
+        std::fs::write(&rom, b"first-rom").unwrap();
+        let source = source.to_str().unwrap();
+        let rom_path = rom.to_str().unwrap();
+        let configuration = CandidateCompilerConfiguration::default();
+        let key = |contents: &[u8]| {
+            source_cache_key_with_environment(
+                source,
+                "games/gs1/src/08000000.c",
+                "08000000",
+                &[],
+                &configuration,
+                rom_path,
+                contents,
+                None,
+                None,
+                b"candidate-show",
+                b"compiler-bundle",
+            )
+            .unwrap()
+        };
+        let first_key = key(&std::fs::read(&rom).unwrap());
+        let cache =
+            cache_entry::sqlite::SqliteCache::open(&directory.join("cache.sqlite3")).unwrap();
+        cache
+            .put(
+                &first_key,
+                &[("candidate", b"candidate"), ("reference", b"stale")],
+            )
+            .unwrap();
+        assert_eq!(cached_bins(&cache, &first_key).unwrap().1, b"stale");
+
+        std::fs::write(&rom, b"second-rom").unwrap();
+        let second_key = key(&std::fs::read(&rom).unwrap());
+        assert_ne!(first_key, second_key);
+        assert!(cached_bins(&cache, &second_key).is_none());
+        std::fs::remove_dir_all(directory).unwrap();
+    }
 }
 fn cached_first(cache: &cache_entry::sqlite::SqliteCache, key: &str) -> Option<String> {
     let entries = cache.get(key).ok().flatten()?;
@@ -747,7 +875,7 @@ fn cached_first(cache: &cache_entry::sqlite::SqliteCache, key: &str) -> Option<S
 fn cached_bins(
     cache: &cache_entry::sqlite::SqliteCache,
     key: &str,
-) -> Option<(Vec<u8>, Vec<u8>, &'static str)> {
+) -> Option<(Vec<u8>, Vec<u8>, Option<Vec<u8>>, &'static str)> {
     let entries = cache.get(key).ok().flatten()?;
     let find = |kind: &str| {
         entries
@@ -757,7 +885,13 @@ fn cached_bins(
     };
     let actual = find("candidate")?;
     let expected = find("reference")?;
-    (!actual.is_empty() && !expected.is_empty()).then_some((actual, expected, "cache"))
+    let candidate_gas = find("candidate-gas");
+    (!actual.is_empty() && !expected.is_empty()).then_some((
+        actual,
+        expected,
+        candidate_gas,
+        "cache",
+    ))
 }
 #[cfg(test)]
 mod region_size_tests {
@@ -769,6 +903,19 @@ mod region_size_tests {
         let _ = fs::remove_dir_all(&dir);
         fs::create_dir_all(dir.join("out/gs1-en/asm")).unwrap();
         dir
+    }
+
+    #[test]
+    fn shared_object_reads_translation_unit_assembly() {
+        let dir = scratch_root("shared-gas");
+        let object = dir.join("first.o");
+        fs::write(dir.join("first.s"), b"translation-unit").unwrap();
+        fs::write(dir.join("later.s"), b"stale-member").unwrap();
+        assert_eq!(
+            read_candidate_gas(&dir, "later", object.to_str()).unwrap(),
+            b"translation-unit"
+        );
+        fs::remove_dir_all(dir).unwrap();
     }
 
     #[test]

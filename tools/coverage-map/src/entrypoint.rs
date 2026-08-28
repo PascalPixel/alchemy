@@ -2,6 +2,7 @@ use crate::boxtree::{box_tree_path, render_box_trees, svg_cache_version, BOX_TRE
 use crate::jsnum::{commas, number};
 use crate::pipeline::{build_coverage_map, BuildOptions, CoverageMap};
 use crate::tree::{ref_tree, root, work_tree};
+use canonical_json::canonical_json;
 use serde_json::Value;
 use std::path::{Path, PathBuf};
 const USAGE: &str = "usage: coverage-map [--target gs1-en|gs2-en] [--exact-ref <ref>|worktree] [--recon-ref <ref>|worktree|none] [--write|--check|--self-test]";
@@ -16,66 +17,6 @@ fn field(v: &Value, path: &[&str]) -> f64 {
 }
 fn quote(s: &str) -> String {
     serde_json::to_string(s).unwrap_or_else(|_| "\"\"".into())
-}
-fn primitive(v: &Value) -> bool {
-    !matches!(v, Value::Array(_) | Value::Object(_))
-}
-fn canonical(v: &Value) -> String {
-    fn visit(v: &Value, indent: usize, out: &mut String) {
-        match v {
-            Value::Null => out.push_str("null"),
-            Value::Bool(x) => out.push_str(if *x { "true" } else { "false" }),
-            Value::Number(x) => out.push_str(&x.to_string()),
-            Value::String(x) => out.push_str(&serde_json::to_string(x).unwrap()),
-            Value::Array(xs) if xs.iter().all(primitive) => {
-                out.push('[');
-                for (i, x) in xs.iter().enumerate() {
-                    if i > 0 {
-                        out.push_str(", ");
-                    }
-                    visit(x, indent, out);
-                }
-                out.push(']');
-            }
-            Value::Array(xs) => {
-                out.push('[');
-                if !xs.is_empty() {
-                    out.push('\n');
-                    for (i, x) in xs.iter().enumerate() {
-                        if i > 0 {
-                            out.push_str(",\n");
-                        }
-                        out.push_str(&"  ".repeat(indent + 1));
-                        visit(x, indent + 1, out);
-                    }
-                    out.push('\n');
-                    out.push_str(&"  ".repeat(indent));
-                }
-                out.push(']');
-            }
-            Value::Object(xs) => {
-                out.push('{');
-                if !xs.is_empty() {
-                    out.push('\n');
-                    for (i, (k, x)) in xs.iter().enumerate() {
-                        if i > 0 {
-                            out.push_str(",\n");
-                        }
-                        out.push_str(&"  ".repeat(indent + 1));
-                        out.push_str(&quote(k));
-                        out.push_str(": ");
-                        visit(x, indent + 1, out);
-                    }
-                    out.push('\n');
-                    out.push_str(&"  ".repeat(indent));
-                }
-                out.push('}');
-            }
-        }
-    }
-    let mut out = String::new();
-    visit(v, 0, &mut out);
-    out
 }
 fn read(path: &Path) -> Result<String, String> {
     std::fs::read(path)
@@ -312,7 +253,7 @@ fn run(argv: &[String]) -> Result<String, String> {
         prefer_verified_assets: true,
     })?;
     let rendered = render_box_trees(&map, Some(&exact), true)?;
-    let map_json = canonical(&tracked(&map.document));
+    let map_json = canonical_json(&tracked(&map.document));
     if o.check {
         for (id, svg) in &rendered {
             if read(&box_tree_path(&o.target, id))? != *svg {

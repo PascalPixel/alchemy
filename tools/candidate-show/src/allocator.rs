@@ -1,8 +1,4 @@
-use crate::{
-    cli::Options,
-    disasm::disassemble,
-    render::{align_streams, ordered_lines},
-};
+use crate::{cli::Options, render::align_streams};
 use candidate_compiler::verify::{assemble, compile_source, copy_text, run};
 use regex::Regex;
 use std::path::Path;
@@ -55,6 +51,12 @@ pub enum Repair {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct RepairPlan {
     repairs: Vec<Repair>,
+}
+
+impl From<Repair> for RepairPlan {
+    fn from(repair: Repair) -> Self {
+        Self::one(repair)
+    }
 }
 
 impl RepairPlan {
@@ -164,15 +166,25 @@ impl Repair {
     }
 }
 
-fn report(text: impl Into<String>, repair: Option<Repair>) -> Report {
-    let repair = repair.map(RepairPlan::one);
-    let dimensions = repair
-        .as_ref()
-        .map_or_else(Vec::new, RepairPlan::dimensions);
-    Report {
-        text: text.into(),
-        dimensions,
-        repair,
+impl Report {
+    fn new(text: impl Into<String>, repair: Option<RepairPlan>) -> Self {
+        let dimensions = repair
+            .as_ref()
+            .map_or_else(Vec::new, RepairPlan::dimensions);
+        Self {
+            text: text.into(),
+            dimensions,
+            repair,
+        }
+    }
+
+    fn undecoded(reason: &str) -> Self {
+        Self::new(format!("allocator_order=undecoded reason={reason}\n"), None)
+    }
+
+    fn edit(mut text: String, value: &str, repair: Option<RepairPlan>) -> Self {
+        text += &format!("edit={value}\n");
+        Self::new(text, repair)
     }
 }
 
@@ -181,13 +193,15 @@ fn text_section(object: &Path, output: &Path) -> Result<Vec<u8>, String> {
     std::fs::read(output).map_err(|e| e.to_string())
 }
 
-pub fn decode(
+pub(crate) fn decode(
     root: &Path,
     options: &Options,
     routing: &Path,
     stem: &str,
     source: &str,
     work: &Path,
+    candidate: &[String],
+    reference: &[String],
 ) -> Result<Report, String> {
     let dir = work.join("allocator-order");
     std::fs::create_dir_all(&dir).map_err(|e| format!("{}: {e}", dir.display()))?;
@@ -218,10 +232,7 @@ pub fn decode(
     if text_section(&normal_object, &dir.join("normal.text"))?
         != text_section(&object, &dir.join("diagnostic.text"))?
     {
-        return Ok(report(
-            "allocator_order=undecoded reason=debug-text-drift\n",
-            None,
-        ));
+        return Ok(Report::undecoded("debug-text-drift"));
     }
     let file = input
         .file_name()
@@ -242,23 +253,11 @@ pub fn decode(
     let dumps = [read(".00.rtl")?, read(".17.lreg")?, read(".18.greg")?];
     let uids = asm_uids(&asm, stem);
     if uids.is_empty() {
-        return Ok(report(
-            "allocator_order=undecoded reason=missing-owner-uids\n",
-            None,
-        ));
+        return Ok(Report::undecoded("missing-owner-uids"));
     }
-    let lines = |name: &str| -> Result<Vec<String>, String> {
-        Ok(ordered_lines(&disassemble(
-            &work.join(name).to_string_lossy(),
-            0.0,
-        )?))
-    };
-    let (mut left, mut right) = (lines("candidate.bin")?, lines("reference.bin")?);
+    let (mut left, mut right) = (candidate.to_vec(), reference.to_vec());
     if left.len() < uids.len() || right.len() < uids.len() {
-        return Ok(report(
-            "allocator_order=undecoded reason=instruction-stream-shape\n",
-            None,
-        ));
+        return Ok(Report::undecoded("instruction-stream-shape"));
     }
     left.truncate(uids.len());
     right.truncate(uids.len());
@@ -320,7 +319,7 @@ fn analyze(
         .windows(2)
         .any(|window| window[0].0 == window[1].0 && window[0].2 != window[1].2)
     {
-        return edit(out, "undecoded reason=conflicting-targets", None);
+        return Report::edit(out, "undecoded reason=conflicting-targets", None);
     }
     for &(pseudo, actual, target) in &roles {
         let name = unique(&vars, |v| v.1 == Some(actual)).map_or("expression", |v| &v.0);
@@ -339,7 +338,7 @@ fn analyze(
     }
     if let Some(plan) = paired_phase_plan(source, &vars, &roles) {
         let label = plan.label();
-        return edit_plan(
+        return Report::edit(
             out,
             &format!("{label} detail=two-nonoverlapping-register-phases"),
             Some(plan),
@@ -352,13 +351,16 @@ fn analyze(
                 unique(&vars, |v| v.2 == Some(b))?,
             ))
         }) {
-            return edit(
+            return Report::edit(
                 out,
                 &format!("swap_declarations({},{})", x.0, y.0),
-                Some(Repair::SwapDeclarations {
-                    left: x.0.clone(),
-                    right: y.0.clone(),
-                }),
+                Some(
+                    Repair::SwapDeclarations {
+                        left: x.0.clone(),
+                        right: y.0.clone(),
+                    }
+                    .into(),
+                ),
             );
         }
     }
@@ -369,23 +371,26 @@ fn analyze(
                     && candidate.matches(&format!("[r{reg}")).count() >= 2
             })
         }) {
-            return edit(
+            return Report::edit(
                 out,
                 &format!(
                     "split_lifetime({}) detail=recreate-at-guard-and-backedge",
                     var.0
                 ),
-                Some(Repair::SplitLifetime {
-                    name: var.0.clone(),
-                }),
+                Some(
+                    Repair::SplitLifetime {
+                        name: var.0.clone(),
+                    }
+                    .into(),
+                ),
             );
         }
     }
     if candidate.contains("movs\tr3, #223") && reference.contains("subs\tr3, #33") {
-        return edit(
+        return Report::edit(
             out,
             "merge_lifetime(zero_carrier) detail=keep-zero-live-through-clears-and-mask",
-            Some(Repair::MergeZeroCarrier),
+            Some(Repair::MergeZeroCarrier.into()),
         );
     }
     if reciprocal(roles.iter().map(|&(_, a, b)| (a, b))).is_some() {
@@ -398,9 +403,13 @@ fn analyze(
         let repair = (names.len() == 1).then(|| Repair::ReciprocalRoleSwap {
             name: names.into_iter().next().unwrap(),
         });
-        return edit(out, "undecoded reason=no-unique-source-shape", repair);
+        return Report::edit(
+            out,
+            "undecoded reason=no-unique-source-shape",
+            repair.map(Into::into),
+        );
     }
-    edit(out, "undecoded reason=no-unique-source-shape", None)
+    Report::edit(out, "undecoded reason=no-unique-source-shape", None)
 }
 
 fn word_positions(source: &str, name: &str) -> Vec<usize> {
@@ -623,19 +632,4 @@ fn reciprocal<T: Ord + Copy>(pairs: impl IntoIterator<Item = (T, T)>) -> Option<
         .filter(|&&(a, b)| a < b && pairs.contains(&(b, a)));
     let value = found.next().copied()?;
     found.next().is_none().then_some(value)
-}
-fn edit(mut out: String, value: &str, repair: Option<Repair>) -> Report {
-    out += &format!("edit={value}\n");
-    report(out, repair)
-}
-fn edit_plan(mut out: String, value: &str, repair: Option<RepairPlan>) -> Report {
-    out += &format!("edit={value}\n");
-    let dimensions = repair
-        .as_ref()
-        .map_or_else(Vec::new, RepairPlan::dimensions);
-    Report {
-        text: out,
-        dimensions,
-        repair,
-    }
 }

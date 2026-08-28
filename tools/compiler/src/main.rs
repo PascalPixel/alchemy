@@ -1,5 +1,6 @@
 use std::process::ExitCode;
 
+mod aggregate_context;
 mod cross_edition;
 mod families;
 mod family_m2c;

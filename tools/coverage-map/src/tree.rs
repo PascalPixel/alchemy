@@ -5,12 +5,7 @@ use std::process::Command;
 pub const ROM_BASE: i64 = 0x0800_0000;
 
 pub fn root() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .unwrap()
-        .parent()
-        .unwrap()
-        .into()
+    compiler_core::routing::root().to_path_buf()
 }
 
 #[derive(Clone, Debug)]

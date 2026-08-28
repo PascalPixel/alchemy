@@ -7,10 +7,9 @@
 use crate::bundle::{compiler_command_for_target, validate_agbcc_bundle, validate_bundle};
 use crate::nodepath::{basename, extname};
 use crate::routing::{
-    agbcc_cflags, agbcc_driver, bundle, cflags_for_target, cflags_for_target_source, root,
+    agbcc_cflags, agbcc_driver, bundle, cflags_for_target, cflags_for_target_source, include_flag,
     uses_agbcc_compiler, CompilerTarget,
 };
-use std::path::PathBuf;
 /// Error text is user-facing and retained exactly.
 pub type Result<T> = std::result::Result<T, String>;
 /// `Routed` derives the family from routing evidence.
@@ -174,7 +173,7 @@ pub fn source_to_assembly_plan(
         .unwrap_or_else(|| basename(&options.routing_source).to_string());
     let mut steps: Vec<CompilerCommandStep> = Vec::new();
     if family == ResolvedFamily::OldAgbcc {
-        let driver: PathBuf = agbcc_driver();
+        let driver = agbcc_driver();
         validate_agbcc_bundle()?;
         let compiler_input = options
             .preprocessed_output
@@ -256,14 +255,7 @@ fn direct_preprocessor_command_for_target_with_minor_and_flags(
         "-D__ELF__".into(),
         "-Dthumb".into(),
         "-D__thumb__".into(),
-        format!(
-            "-I{}",
-            root()
-                .join("games")
-                .join(target.as_str())
-                .join("include")
-                .display()
-        ),
+        include_flag(target),
     ];
     command.extend(flags.iter().cloned());
     command.push(input.to_string());

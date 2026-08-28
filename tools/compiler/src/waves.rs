@@ -1,3 +1,4 @@
+use crate::families::{FamilyCatalog, RetargetMode, TemplateMatch};
 use candidate_compiler::verify::{CandidateCompilerConfiguration, CandidateCompilerFamily};
 use candidate_show::{
     cli::Options as CandidateOptions,
@@ -14,16 +15,17 @@ use compiler_core::{
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::{
-    collections::{BTreeMap, BTreeSet},
+    collections::BTreeMap,
     fs,
     path::{Path, PathBuf},
+    process::Command,
 };
 
-const USAGE: &str = "usage: compiler waves <inventory|bucket|pack|dispatch> [--output PATH] [--family-index FILE] [--bucket FILE] [--limit N] [--stall-budget N]";
+const USAGE: &str = "usage: compiler waves <inventory|bucket|draft <prepare|score --shard I/N|collect>> [--output PATH] [--family-index FILE]";
 const MANIFEST: &str = "out/gs1-en/full/asm/manifest.json";
 const FAMILIES: &str = "out/gs1-en/reports/compiler-families.json";
 const BUCKET: &str = "out/gs1-en/waves/bucket.json";
-const PACKS: &str = "out/gs1-en/waves/packs";
+const DRAFT: &str = "out/gs1-en/waves/draft";
 const CATALOG: &str = "games/gs1/recon/compiler-repair-patterns.json";
 const DEBT: [&str; 5] = [
     "c_candidate",
@@ -32,8 +34,10 @@ const DEBT: [&str; 5] = [
     "merge_with_owner",
     "split_first",
 ];
-const WAVE_SIZE: usize = 50;
-const STALL_BUDGET: usize = 18;
+const DRAFT_OWNERS: usize = 260;
+const INDEPENDENT_OWNERS: usize = 175;
+const OWNER_GROUP_OWNERS: usize = 63;
+const SPLIT_REGION_OWNERS: usize = 22;
 
 #[derive(Deserialize)]
 struct Manifest {
@@ -45,32 +49,11 @@ struct Region {
     size: usize,
     source: String,
     #[serde(default)]
+    kind: String,
+    #[serde(default)]
     symbol: String,
     retention: Option<String>,
 }
-#[derive(Deserialize)]
-struct FamilyIndex {
-    schema_version: u32,
-    targets: Vec<FamilyTarget>,
-}
-#[derive(Clone, Deserialize)]
-struct FamilyTarget {
-    owner: String,
-    symbol: String,
-    source: String,
-    family: Option<String>,
-    alternatives: Vec<Template>,
-}
-#[derive(Clone, Deserialize)]
-struct Template {
-    owner: String,
-    symbol: String,
-    source: String,
-    score_basis_points: u16,
-    #[serde(skip)]
-    canonical_name: Option<String>,
-}
-
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "snake_case")]
 enum Scope {
@@ -84,6 +67,7 @@ struct Owner {
     address: u32,
     size: usize,
     retention: String,
+    kind: String,
     reference: String,
     symbol: String,
     name: Option<String>,
@@ -121,25 +105,76 @@ struct BucketReport {
     owners: Vec<BucketEntry>,
 }
 
-#[derive(Clone)]
-struct Args {
-    output: Option<PathBuf>,
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "snake_case")]
+enum DraftRoute {
+    IndependentM2c,
+    OwnerGroup,
+    SplitRegion,
+}
+
+#[derive(Clone, Copy, Debug, Deserialize, Serialize)]
+struct Shard {
+    index: usize,
+    count: usize,
+}
+
+#[derive(Deserialize)]
+struct DraftShardReport {
+    schema_version: u32,
+    cohort_sha256: String,
+    prepare_receipt_sha256: String,
+    scoring_environment_sha256: String,
+    shard: Shard,
+    scoreboard: Value,
+    owners: Vec<Value>,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+struct DraftOwner {
+    owner: String,
+    address: u32,
+    size: usize,
+    retention: String,
+    kind: String,
+    reference: String,
+    reference_sha256: String,
+    symbol: String,
+    name: Option<String>,
+    route: DraftRoute,
+}
+
+#[derive(Debug, Deserialize, Eq, PartialEq, Serialize)]
+struct DraftCohort {
+    schema_version: u32,
+    manifest_sha256: String,
+    ordering: String,
+    owners: Vec<DraftOwner>,
+}
+
+struct DraftArgs {
+    output: PathBuf,
     family_index: PathBuf,
-    bucket: PathBuf,
-    limit: Option<usize>,
-    stall_budget: usize,
+    shard: Option<Shard>,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+struct M2cIdentity {
+    path: String,
+    sha256: String,
+    macros_sha256: String,
+    source_tree_sha256: String,
+    revision: Option<String>,
 }
 
 pub fn run(argv: &[String]) -> Result<(), String> {
     let Some(command) = argv.first().map(String::as_str) else {
         return Err(USAGE.into());
     };
-    let args = parse_args(&argv[1..])?;
     match command {
-        "inventory" => inventory_command(args),
-        "bucket" => bucket_command(args),
-        "pack" => pack_command(args),
-        "dispatch" => dispatch_command(args),
+        "inventory" => inventory_command(simple_output(&argv[1..])?),
+        "bucket" => bucket_command(simple_output(&argv[1..])?),
+        "draft" => draft_command(&argv[1..]),
         "-h" | "--help" => {
             println!("{USAGE}");
             Ok(())
@@ -148,21 +183,19 @@ pub fn run(argv: &[String]) -> Result<(), String> {
     }
 }
 
-fn inventory_command(args: Args) -> Result<(), String> {
+fn inventory_command(output: Option<PathBuf>) -> Result<(), String> {
     let inventory = inventory(root())?;
-    let output = args
-        .output
-        .unwrap_or_else(|| root().join("out/gs1-en/waves/inventory.json"));
+    let output = output.unwrap_or_else(|| root().join("out/gs1-en/waves/inventory.json"));
     write_json(&output, &inventory)?;
     let (unit, draft, none, named) = inventory_counts(&inventory.owners);
     println!("debt_owners={} debt_bytes={} standalone_drafts={draft} translation_units={unit} no_candidate={none} named_wave_ready={named} inventory={}", inventory.owners.len(), inventory.owners.iter().map(|o| o.size).sum::<usize>(), output.display());
     Ok(())
 }
 
-fn bucket_command(args: Args) -> Result<(), String> {
+fn bucket_command(output: Option<PathBuf>) -> Result<(), String> {
     let repository = root();
     let inventory = inventory(repository)?;
-    let output = args.output.unwrap_or_else(|| repository.join(BUCKET));
+    let output = output.unwrap_or_else(|| repository.join(BUCKET));
     let owner_dir = output.with_extension("").join("owners");
     let mut unit_scores = bucket_translation_units(repository, &inventory, &owner_dir)?;
     let mut entries = Vec::with_capacity(inventory.owners.len());
@@ -218,20 +251,18 @@ fn bucket_command(args: Args) -> Result<(), String> {
         owners: entries,
     };
     write_json(&output, &report)?;
-    let scored = report
+    let (scored, covered) = report
         .owners
         .iter()
-        .filter(|o| o.verdict == "scored")
-        .count();
-    let covered = report
-        .owners
-        .iter()
-        .filter(|o| {
-            o.residual
-                .as_ref()
-                .is_some_and(|r| r.class == ResidualClass::AllocationCovered)
-        })
-        .count();
+        .fold((0, 0), |(scored, covered), owner| {
+            (
+                scored + usize::from(owner.verdict == "scored"),
+                covered
+                    + usize::from(owner.residual.as_ref().is_some_and(|residual| {
+                        residual.class == ResidualClass::AllocationCovered
+                    })),
+            )
+        });
     println!(
         "bucketed={} scored={scored} allocation_covered={covered} report={}",
         report.owners.len(),
@@ -246,24 +277,16 @@ fn bucket_score(repository: &Path, owner: &Owner, output: &Path, entry: &mut Buc
         return;
     }
     let directory = output.join(stem(owner.address));
-    match score(repository, owner, &directory, false) {
+    match score_with_decoder(repository, owner, &directory) {
         Err(error) => {
             entry.verdict = "score_failed".into();
             entry.error = Some(error);
         }
-        Ok(mut scored) => {
-            if scored.residual.class == ResidualClass::AllocationUncovered {
-                match score(repository, owner, &directory, true) {
-                    Ok(decoded) => scored = decoded,
-                    Err(error) => {
-                        entry.verdict = "decoder_failed".into();
-                        entry.error = Some(error);
-                        return;
-                    }
-                }
-            }
-            record_score(entry, scored);
+        Ok((_, Some(error))) => {
+            entry.verdict = "decoder_failed".into();
+            entry.error = Some(error);
         }
+        Ok((scored, None)) => record_score(entry, scored),
     }
 }
 
@@ -292,22 +315,7 @@ fn bucket_lint(repository: &Path, owner: &Owner, entry: &mut BucketEntry) {
 }
 
 fn record_score(entry: &mut BucketEntry, scored: RenderOutput) {
-    entry.allocator_repair = scored
-        .allocator
-        .as_ref()
-        .and_then(|report| report.repair.as_ref())
-        .map(|plan| plan.label());
-    entry.allocator_dimensions = scored
-        .allocator
-        .as_ref()
-        .map(|report| {
-            report
-                .dimensions
-                .iter()
-                .map(|dimension| dimension.to_string())
-                .collect()
-        })
-        .unwrap_or_default();
+    (entry.allocator_repair, entry.allocator_dimensions) = allocator_parts(&scored);
     entry.residual = Some(scored.residual);
     entry.verdict = "scored".into();
 }
@@ -420,242 +428,923 @@ fn score_translation_unit(
     Ok(outputs)
 }
 
-fn pack_command(args: Args) -> Result<(), String> {
-    let repository = root();
-    if args.output.is_some() {
-        return Err("waves pack writes the canonical hashed pack directory; omit --output".into());
+fn draft_command(argv: &[String]) -> Result<(), String> {
+    let stage = argv.first().map(String::as_str).ok_or(USAGE)?;
+    let args = draft_args(&argv[1..])?;
+    match stage {
+        "prepare" => draft_prepare(args),
+        "score" => draft_score(args),
+        "collect" => draft_collect(args),
+        _ => Err(USAGE.into()),
     }
-    let inventory = inventory(repository)?;
-    let families = families(repository, &args.family_index)?;
-    let family_sha256 = hash(resolve(repository, &args.family_index))?;
-    let output = repository.join(PACKS);
-    let mut owners = inventory.owners.iter().collect::<Vec<_>>();
-    owners.sort_by_key(|o| (std::cmp::Reverse(o.size), o.address));
-    owners.truncate(args.limit.unwrap_or(owners.len()));
-    let mut generated = 0;
-    for owner in owners {
-        let dir = output.join(stem(owner.address));
-        let verdict = pack(
-            repository,
-            &dir,
-            owner,
-            families.get(&owner.owner),
-            &inventory.manifest_sha256,
-            &family_sha256,
-        );
-        match verdict {
-            Ok(_) => {
-                fs::remove_file(dir.join("verdict.json")).ok();
-                generated += 1;
-            }
-            Err(error) => write_json(
-                &dir.join("verdict.json"),
-                &json!({"owner": owner.owner, "verdict":"template_pack_failed", "error":error}),
-            )?,
-        }
-    }
-    println!("packs_generated={generated} output={}", output.display());
-    Ok(())
 }
 
-fn dispatch_command(args: Args) -> Result<(), String> {
+fn draft_prepare(args: DraftArgs) -> Result<(), String> {
+    if args.shard.is_some() {
+        return Err("draft prepare does not accept --shard".into());
+    }
     let repository = root();
-    let inventory = inventory(repository)?;
-    let bucket = load_bucket(repository, &args.bucket, &inventory)?;
-    let limit = args.limit.unwrap_or(WAVE_SIZE);
-    if limit < WAVE_SIZE {
-        return Err(format!(
-            "an autonomous dispatch must contain at least {WAVE_SIZE} owners"
-        ));
-    }
-    let mut ranked = wave_safe(&inventory, &bucket);
-    ranked.truncate(limit);
-    if ranked.len() < limit {
-        return Err(format!(
-            "only {} named, scored standalone owners are wave-safe",
-            ranked.len()
-        ));
-    }
-    let signature = wave_signature(repository, &args, &inventory, &ranked)?;
-    let output = args.output.unwrap_or_else(|| {
-        repository
-            .join("out/gs1-en/waves")
-            .join(format!("dispatch-{}-{limit}", &signature[..12]))
-    });
-    write_json(&output.join("inventory.json"), &inventory)?;
-    let mut records = Vec::new();
-    for (owner, entry) in ranked {
-        let directory = output.join("owners").join(stem(owner.address));
-        let record = wave_owner(
-            repository,
-            &directory,
-            owner,
-            entry,
-            &args.family_index,
-            &inventory,
-            args.stall_budget,
+    let family_sha256 = hash(resolve(repository, &args.family_index))?;
+    let m2c = crate::family_m2c::locate_m2c()?;
+    let m2c_identity = m2c_identity(&m2c)?;
+    if args.output.join("prepare-receipt.json").is_file() {
+        let (cohort, receipt) = prepared(repository, &args.output).map_err(|error| {
+            format!(
+                "draft output is nonempty but cannot be reused ({error}); choose a new --output"
+            )
+        })?;
+        if receipt["family_index_sha256"] != family_sha256
+            || receipt["m2c_identity"] != json!(m2c_identity)
+        {
+            return Err(
+                "draft output was prepared with other inputs; choose a new --output".into(),
+            );
+        }
+        println!(
+            "draft_reused={} independent={INDEPENDENT_OWNERS} output={}",
+            cohort.owners.len(),
+            args.output.display()
         );
-        write_json(&directory.join("verdict.json"), &record)?;
-        records.push(record);
+        return Ok(());
     }
-    let classes = record_counts(&records, |record| record["residual"]["class"].as_str());
-    let verdicts = record_counts(&records, |record| record["verdict"].as_str());
-    let smart = records
-        .iter()
-        .filter(|record| record["verdict"] != "work_order_ready")
-        .map(|r| json!({"owner":r["owner"],"reason":r["error"],"class":r["residual"]["class"]}))
-        .collect::<Vec<_>>();
-    let templates = records
-        .iter()
-        .filter_map(|record| record["template_count"].as_u64())
-        .sum::<u64>();
-    let ready = verdicts.get("work_order_ready").copied().unwrap_or(0);
-    let smart_count = smart.len();
-    let report = json!({
-        "schema_version":2,
-        "dispatch_id":format!("dispatch-{}-{limit}",&signature[..12]),
-        "stall_budget_compiles":args.stall_budget,
-        "class_counts":classes,
-        "verdict_counts":verdicts,
-        "owners":records,
-        "funnel":{
-            "inventory_debt":inventory.owners.len(),"selected":limit,
-            "packed_templates":templates,"work_order_ready":ready,"smart_queue":smart_count
-        },
-        "smart_queue":smart
-    });
-    write_json(&output.join("smart-queue.json"), &report["smart_queue"])?;
-    write_json(&output.join("dispatch-report.json"), &report)?;
+    let inventory = inventory(repository)?;
+    let cohort = draft_cohort(repository, &inventory)?;
+    fs::create_dir_all(&args.output).map_err(|error| error.to_string())?;
+    resume_cohort(&args.output, &cohort)?;
+    let cohort_sha256 = hash(args.output.join("cohort.json"))?;
+    let environment_sha256 = scoring_environment(repository)?;
+    let state = json!({"schema_version":1,"cohort_sha256":cohort_sha256,"manifest_sha256":cohort.manifest_sha256,"family_index_sha256":family_sha256,"m2c_identity":m2c_identity,"scoring_environment_sha256":environment_sha256,"ordering":cohort.ordering});
+    resume_state(&args.output, &state)?;
+    let families = FamilyCatalog::load(repository, &args.family_index)?;
+    let mut packs = Vec::new();
+    for owner in &cohort.owners {
+        let directory = args.output.join("packs").join(stem(owner.address));
+        fs::create_dir_all(&directory).map_err(|error| error.to_string())?;
+        let pack_path = directory.join("pack.json");
+        let value = match current_pack(&pack_path, owner, &state) {
+            Some(value) => value,
+            None => {
+                let value = pack(
+                    repository,
+                    &directory,
+                    owner,
+                    &families,
+                    &cohort.manifest_sha256,
+                    &family_sha256,
+                    &m2c,
+                    &m2c_identity,
+                )
+                .unwrap_or_else(|error| json!({"schema_version":4,"owner":owner.owner,"status":"pack_failed","route":owner.route,"category":owner.kind,"manifest_sha256":cohort.manifest_sha256,"family_index_sha256":family_sha256,"reference_sha256":owner.reference_sha256,"m2c_identity":m2c_identity,"contexts":Value::Null,"m2c":Value::Null,"templates":[],"template_count":0,"error":error}));
+                write_json(&pack_path, &value)?;
+                value
+            }
+        };
+        packs.push(json!({"owner":owner.owner,"pack_sha256":hash(directory.join("pack.json"))?,"status":value["status"]}));
+    }
+    let receipt = json!({"schema_version":3,"state_sha256":hash(args.output.join("prepare-state.json"))?,"cohort_sha256":cohort_sha256,"manifest_sha256":cohort.manifest_sha256,"family_index_sha256":family_sha256,"m2c_identity":m2c_identity,"scoring_environment_sha256":environment_sha256,"ordering":cohort.ordering,"source_policy":"prepared_sources_only","denominators":{"all_records":DRAFT_OWNERS,"independent_m2c":INDEPENDENT_OWNERS},"predictions":prediction_contract(),"packs":packs});
+    write_json(&args.output.join("prepare-receipt.json"), &receipt)?;
     println!(
-        "dispatch={} selected={limit} packed_templates={templates} work_order_ready={ready} smart_queue={smart_count} output={}",
-        report["dispatch_id"].as_str().unwrap_or("dispatch"),
-        output.display()
+        "draft_prepared={} independent={INDEPENDENT_OWNERS} output={}",
+        cohort.owners.len(),
+        args.output.display()
     );
     Ok(())
 }
 
-fn record_counts(
-    records: &[Value],
-    value: impl for<'a> Fn(&'a Value) -> Option<&'a str>,
-) -> BTreeMap<String, usize> {
-    let mut counts = BTreeMap::new();
-    for label in records.iter().filter_map(value) {
-        *counts.entry(label.into()).or_default() += 1;
+fn draft_score(args: DraftArgs) -> Result<(), String> {
+    let shard = args.shard.ok_or("draft score requires --shard I/N")?;
+    let repository = root();
+    let (cohort, receipt) = prepared(repository, &args.output)?;
+    let mut records = Vec::new();
+    for (ordinal, owner) in cohort.owners.iter().enumerate() {
+        if ordinal % shard.count != shard.index {
+            continue;
+        }
+        let directory = args.output.join("results").join(stem(owner.address));
+        let verdict = directory.join("verdict.json");
+        if let Ok(record) = json_file::<Value>(&verdict) {
+            if record_fresh(&record, owner, &receipt) {
+                records.push(record);
+                continue;
+            }
+        }
+        let record = draft_owner(repository, &args.output, &directory, owner, &receipt);
+        write_json(&verdict, &record)?;
+        records.push(record);
     }
-    counts
+    let report = json!({"schema_version":2,"cohort_sha256":receipt["cohort_sha256"],"prepare_receipt_sha256":receipt["receipt_sha256"],"scoring_environment_sha256":receipt["scoring_environment_sha256"],"shard":{"index":shard.index,"count":shard.count,"rule":"global_size_address_ordinal_modulo_count"},"scoreboard":scoreboard(&records),"owners":records});
+    write_json(
+        &args
+            .output
+            .join("shards")
+            .join(format!("{}-of-{}.json", shard.index, shard.count)),
+        &report,
+    )?;
+    println!(
+        "draft_scored={} shard={}/{} output={}",
+        report["owners"].as_array().map_or(0, Vec::len),
+        shard.index,
+        shard.count,
+        args.output.display()
+    );
+    Ok(())
 }
 
-fn wave_owner(
-    repository: &Path,
-    directory: &Path,
-    owner: &Owner,
-    entry: &BucketEntry,
-    family_index: &Path,
-    inventory: &Inventory,
-    stall: usize,
-) -> Value {
-    let (pack_path, pack) = match load_pack(repository, owner, family_index, inventory) {
-        Ok(v) => v,
-        Err(error) => return wave_record(owner, entry, "template_pack_failed", Some(error), 0),
-    };
-    let residual = entry.residual.as_ref().expect("wave-safe entry is scored");
-    let Some(playbook) = residual.class.playbook() else {
-        return wave_record(
-            owner,
-            entry,
-            "smart_queue",
-            Some("triage class has no executable playbook".into()),
-            pack["template_count"].as_u64().unwrap_or(0),
-        );
-    };
-    let allocator = json!({
-        "repair":entry.allocator_repair,
-        "dimensions":entry.allocator_dimensions,
-    });
-    if let Err(error) = work_order(
-        directory, owner, residual, playbook, &allocator, &pack_path, &pack, stall,
-    ) {
-        return wave_record(owner, entry, "smart_queue", Some(error), 0);
+fn draft_collect(args: DraftArgs) -> Result<(), String> {
+    if args.shard.is_some() {
+        return Err("draft collect does not accept --shard".into());
     }
-    wave_record(
-        owner,
-        entry,
-        "work_order_ready",
-        None,
-        pack["template_count"].as_u64().unwrap_or(0),
-    )
-}
-
-fn wave_record(
-    owner: &Owner,
-    entry: &BucketEntry,
-    verdict: &str,
-    error: Option<String>,
-    template_count: u64,
-) -> Value {
-    json!({"owner":owner.owner,"name":owner.name,"size":owner.size,"verdict":verdict,"error":error,"template_count":template_count,"residual":entry.residual})
-}
-
-fn load_pack(
-    repository: &Path,
-    owner: &Owner,
-    family_index: &Path,
-    inventory: &Inventory,
-) -> Result<(PathBuf, Value), String> {
-    let path = repository
-        .join(PACKS)
-        .join(stem(owner.address))
-        .join("pack.json");
-    let pack: Value = json_file(&path)?;
-    let family_sha256 = hash(resolve(repository, family_index))?;
-    let fresh = pack["schema_version"] == 3
-        && pack["owner"] == owner.owner
-        && pack["candidate_sha256"] == json!(owner.candidate_sha256)
-        && pack["manifest_sha256"] == inventory.manifest_sha256
-        && pack["family_index_sha256"] == family_sha256
-        && pack["reference_sha256"] == hash(repository.join(&owner.reference))?;
-    if !fresh {
+    let repository = root();
+    let (cohort, receipt) = prepared(repository, &args.output)?;
+    let collected = collect_shard_reports(&args.output, &cohort.owners, &receipt);
+    let records = collected.records;
+    let mut errors = collected.errors;
+    errors.extend(result_errors(&records));
+    let independent = records
+        .iter()
+        .filter(|record| record["route"] == "independent_m2c")
+        .collect::<Vec<_>>();
+    let all = scoreboard(&records);
+    let independent_scoreboard = scoreboard(&independent.into_iter().cloned().collect::<Vec<_>>());
+    let comparison = prediction_comparison(&records);
+    let report = json!({"schema_version":2,"complete":errors.is_empty(),"errors":errors,"receipt":receipt,"shard_count":collected.shard_count,"predictions":prediction_contract(),"denominators":{"all_records":DRAFT_OWNERS,"independent_m2c":INDEPENDENT_OWNERS},"scoreboards":{"all_260":all,"independent_175":independent_scoreboard},"comparison":comparison,"owners":records});
+    write_json(&args.output.join("draft-report.json"), &report)?;
+    if !report["complete"].as_bool().unwrap_or(false) {
         return Err(format!(
-            "{} is stale; rerun `compiler waves pack`",
-            path.display()
+            "draft collection failed; see {}",
+            args.output.join("draft-report.json").display()
         ));
     }
-    let directory = path.parent().ok_or("pack has no directory")?;
-    let skeleton = pack["skeleton"].as_str().ok_or("pack has no skeleton")?;
-    if hash(directory.join(skeleton))? != pack["seed_sha256"].as_str().unwrap_or("") {
-        return Err(format!("{} skeleton hash is stale", owner.owner));
+    println!(
+        "draft_collected={DRAFT_OWNERS} output={}",
+        args.output.display()
+    );
+    Ok(())
+}
+
+struct ShardCollection {
+    records: Vec<Value>,
+    errors: Vec<String>,
+    shard_count: Option<usize>,
+}
+
+fn collect_shard_reports(output: &Path, cohort: &[DraftOwner], receipt: &Value) -> ShardCollection {
+    let shard_directory = output.join("shards");
+    let mut paths = fs::read_dir(&shard_directory)
+        .map(|entries| {
+            entries
+                .filter_map(Result::ok)
+                .map(|entry| entry.path())
+                .filter(|path| path.extension().and_then(|value| value.to_str()) == Some("json"))
+                .collect::<Vec<_>>()
+        })
+        .unwrap_or_default();
+    paths.sort();
+    let mut errors = Vec::new();
+    if paths.is_empty() {
+        errors.push(format!("no shard reports in {}", shard_directory.display()));
     }
-    for template in pack["templates"]
-        .as_array()
-        .ok_or("pack has no template array")?
-    {
-        let source = template["source"]
-            .as_str()
-            .ok_or("template has no source")?;
-        let packed = template["packed_source"]
-            .as_str()
-            .ok_or("template has no packed source")?;
-        let retargeted = template["retargeted_source"]
-            .as_str()
-            .ok_or("template has no retargeted source")?;
-        if hash(repository.join(source))? != template["source_sha256"].as_str().unwrap_or("")
-            || hash(directory.join(packed))? != template["source_sha256"].as_str().unwrap_or("")
-            || hash(directory.join(retargeted))?
-                != template["retargeted_sha256"].as_str().unwrap_or("")
-        {
-            return Err(format!("{} template pack is stale", owner.owner));
+    let ordinals = cohort
+        .iter()
+        .enumerate()
+        .map(|(ordinal, owner)| (owner.owner.as_str(), ordinal))
+        .collect::<BTreeMap<_, _>>();
+    let mut assigned = vec![None; cohort.len()];
+    let mut shard_count = None;
+    let mut seen = BTreeMap::new();
+    for path in paths {
+        let report = match json_file::<DraftShardReport>(&path) {
+            Ok(report) => report,
+            Err(error) => {
+                errors.push(error);
+                continue;
+            }
+        };
+        let checked = (|| -> Result<Vec<(usize, Value)>, String> {
+            let Shard { index, count } = report.shard;
+            if report.schema_version != 2
+                || report.cohort_sha256 != receipt["cohort_sha256"]
+                || report.prepare_receipt_sha256 != receipt["receipt_sha256"]
+                || report.scoring_environment_sha256 != receipt["scoring_environment_sha256"]
+            {
+                return Err("does not identify this preparation".into());
+            }
+            let filename = format!("{index}-of-{count}.json");
+            if count == 0
+                || index >= count
+                || path.file_name().and_then(|name| name.to_str()) != Some(&filename)
+                || shard_count.is_some_and(|expected| expected != count)
+                || seen.contains_key(&index)
+            {
+                return Err(format!("has incoherent shard identity {index}/{count}"));
+            }
+            if report.scoreboard != scoreboard(&report.owners) {
+                return Err("has a stale scoreboard".into());
+            }
+            let mut checked = Vec::new();
+            for record in report.owners {
+                let owner_id = record["owner"].as_str().ok_or("owner has no identity")?;
+                let ordinal = *ordinals
+                    .get(owner_id)
+                    .ok_or_else(|| format!("contains unknown owner {owner_id}"))?;
+                if checked
+                    .last()
+                    .is_some_and(|(previous, _)| *previous >= ordinal)
+                    || ordinal % count != index
+                {
+                    return Err(format!("{owner_id} is not in shard {index}/{count} order"));
+                }
+                let owner = &cohort[ordinal];
+                if !record_fresh(&record, owner, receipt) {
+                    return Err(format!("{owner_id} record is stale"));
+                }
+                let verdict = output
+                    .join("results")
+                    .join(stem(owner.address))
+                    .join("verdict.json");
+                if json_file::<Value>(&verdict)? != record {
+                    return Err(format!("{owner_id} shard and saved verdict disagree"));
+                }
+                checked.push((ordinal, record));
+            }
+            Ok(checked)
+        })();
+        match checked {
+            Ok(rows) => {
+                let Shard { index, count } = report.shard;
+                shard_count = Some(count);
+                seen.insert(index, ());
+                for (ordinal, record) in rows {
+                    if assigned[ordinal].replace(record).is_some() {
+                        errors.push(format!("{} is assigned twice", cohort[ordinal].owner));
+                    }
+                }
+            }
+            Err(error) => errors.push(format!("{} {error}", path.display())),
         }
     }
-    if let Some(m2c) = pack["m2c"].as_object() {
-        for (path, digest) in [("seed", "seed_sha256"), ("context", "context_sha256")] {
-            if let Some(relative) = m2c[path].as_str() {
-                if hash(directory.join(relative))? != m2c[digest].as_str().unwrap_or("") {
-                    return Err(format!("{} m2c pack is stale", owner.owner));
-                }
+    if let Some(count) = shard_count {
+        for index in 0..count {
+            if !seen.contains_key(&index) {
+                errors.push(format!("missing shard report {index}/{count}"));
             }
         }
     }
-    Ok((path, pack))
+    let missing = assigned.iter().filter(|record| record.is_none()).count();
+    if missing != 0 {
+        errors.push(format!(
+            "shard reports assign {} of {} cohort ordinals exactly once",
+            cohort.len() - missing,
+            cohort.len()
+        ));
+    }
+    ShardCollection {
+        records: assigned.into_iter().flatten().collect(),
+        errors,
+        shard_count,
+    }
+}
+
+fn result_errors(records: &[Value]) -> Vec<String> {
+    let independent = |record: &&Value| record["route"] == "independent_m2c";
+    let independent_count = records.iter().filter(independent).count();
+    let missing = records
+        .iter()
+        .filter(independent)
+        .filter(|record| record["compiled"] == true && !record["residual"].is_object())
+        .count();
+    let unclassified = records
+        .iter()
+        .filter(|record| record["residual"]["class"] == "unclassified")
+        .count();
+    let nonterminal = records
+        .iter()
+        .filter(|record| !terminal_record(record))
+        .count();
+    let stats = (
+        records.len(),
+        independent_count,
+        missing,
+        unclassified,
+        nonterminal,
+    );
+    if stats == (DRAFT_OWNERS, INDEPENDENT_OWNERS, 0, 0, 0) {
+        Vec::new()
+    } else {
+        vec![format!("completion gate (total, independent, missing residual, unclassified, nonterminal): {stats:?}")]
+    }
+}
+
+fn draft_args(argv: &[String]) -> Result<DraftArgs, String> {
+    let mut args = DraftArgs {
+        output: root().join(DRAFT),
+        family_index: FAMILIES.into(),
+        shard: None,
+    };
+    let mut pairs = argv.chunks_exact(2);
+    for pair in &mut pairs {
+        match pair[0].as_str() {
+            "--output" => args.output = resolve(root(), Path::new(&pair[1])),
+            "--family-index" => args.family_index = pair[1].clone().into(),
+            "--shard" => args.shard = Some(parse_shard(&pair[1])?),
+            _ => return Err(USAGE.into()),
+        }
+    }
+    if !pairs.remainder().is_empty() {
+        return Err(format!("{} requires a value", pairs.remainder()[0]));
+    }
+    validate_draft_output(root(), &args.output)?;
+    Ok(args)
+}
+
+fn validate_draft_output(repository: &Path, output: &Path) -> Result<(), String> {
+    let out = repository.join("out");
+    let relative = output
+        .strip_prefix(&out)
+        .map_err(|_| "draft output must be a resolved path under out/".to_string())?;
+    if relative.as_os_str().is_empty()
+        || relative
+            .components()
+            .any(|part| !matches!(part, std::path::Component::Normal(_)))
+    {
+        return Err("draft output must be a resolved path under out/".into());
+    }
+    let mut current = out;
+    for component in std::iter::once(None).chain(relative.components().map(Some)) {
+        if let Some(component) = component {
+            current.push(component.as_os_str());
+        }
+        match fs::symlink_metadata(&current) {
+            Ok(metadata) if metadata.file_type().is_symlink() => {
+                return Err(format!(
+                    "draft output may not traverse symlink {}",
+                    current.display()
+                ));
+            }
+            Ok(metadata) if current != output && !metadata.is_dir() => {
+                return Err(format!(
+                    "draft output parent is not a directory: {}",
+                    current.display()
+                ));
+            }
+            Ok(_) => {}
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => break,
+            Err(error) => return Err(format!("{}: {error}", current.display())),
+        }
+    }
+    if output.is_dir() {
+        for entry in walkdir::WalkDir::new(output) {
+            let entry = entry.map_err(|error| error.to_string())?;
+            if entry.file_type().is_symlink() {
+                return Err(format!(
+                    "draft output contains symlink {}",
+                    entry.path().display()
+                ));
+            }
+        }
+    }
+    Ok(())
+}
+
+fn parse_shard(value: &str) -> Result<Shard, String> {
+    let (index, count) = value.split_once('/').ok_or("--shard must be I/N")?;
+    let (index, count) = (index.parse::<usize>().ok(), count.parse::<usize>().ok());
+    match (index, count) {
+        (Some(index), Some(count)) if count > 0 && index < count => Ok(Shard { index, count }),
+        _ => Err("--shard uses zero-based I with 0 <= I < N".into()),
+    }
+}
+
+fn draft_route(retention: &str) -> Result<DraftRoute, String> {
+    match retention {
+        "c_candidate" => Ok(DraftRoute::IndependentM2c),
+        "merge_with_owner" | "merge_with_function_owner" | "merge_with_continuations" => {
+            Ok(DraftRoute::OwnerGroup)
+        }
+        "split_first" => Ok(DraftRoute::SplitRegion),
+        _ => Err(format!("unsupported draft retention {retention}")),
+    }
+}
+
+fn draft_cohort(repository: &Path, inventory: &Inventory) -> Result<DraftCohort, String> {
+    let mut owners = inventory
+        .owners
+        .iter()
+        .filter(|owner| owner.scope == Scope::NoCandidate)
+        .map(|owner| {
+            Ok(DraftOwner {
+                owner: owner.owner.clone(),
+                address: owner.address,
+                size: owner.size,
+                retention: owner.retention.clone(),
+                kind: owner.kind.clone(),
+                reference: owner.reference.clone(),
+                reference_sha256: hash(repository.join(&owner.reference))?,
+                symbol: owner.symbol.clone(),
+                name: owner.name.clone(),
+                route: draft_route(&owner.retention)?,
+            })
+        })
+        .collect::<Result<Vec<_>, String>>()?;
+    owners.sort_by_key(|owner| (owner.size, owner.address));
+    validate_cohort(&owners)?;
+    Ok(DraftCohort {
+        schema_version: 1,
+        manifest_sha256: inventory.manifest_sha256.clone(),
+        ordering: "reference_size_ascending_then_address".into(),
+        owners,
+    })
+}
+
+fn cohort_counts(owners: &[DraftOwner]) -> (usize, usize, usize) {
+    let count = |route| owners.iter().filter(|owner| owner.route == route).count();
+    (
+        count(DraftRoute::IndependentM2c),
+        count(DraftRoute::OwnerGroup),
+        count(DraftRoute::SplitRegion),
+    )
+}
+
+fn validate_cohort(owners: &[DraftOwner]) -> Result<(), String> {
+    let (independent, groups, splits) = cohort_counts(owners);
+    let expected = (
+        DRAFT_OWNERS,
+        INDEPENDENT_OWNERS,
+        OWNER_GROUP_OWNERS,
+        SPLIT_REGION_OWNERS,
+    );
+    if (owners.len(), independent, groups, splits) != expected {
+        return Err(format!(
+            "draft cohort changed: {} total, {independent} independent, {groups} owner-group, {splits} split-region",
+            owners.len()
+        ));
+    }
+    let disordered = owners
+        .windows(2)
+        .any(|pair| (pair[0].size, pair[0].address) >= (pair[1].size, pair[1].address));
+    if disordered {
+        return Err("draft cohort is duplicate or not in size/address order".into());
+    }
+    Ok(())
+}
+
+fn output_nonempty(output: &Path) -> Result<bool, String> {
+    if !output.exists() {
+        return Ok(false);
+    }
+    Ok(fs::read_dir(output)
+        .map_err(|error| format!("{}: {error}", output.display()))?
+        .next()
+        .is_some())
+}
+
+fn resume_cohort(output: &Path, cohort: &DraftCohort) -> Result<(), String> {
+    let path = output.join("cohort.json");
+    if path.is_file() {
+        if json_file::<DraftCohort>(&path)? == *cohort {
+            return Ok(());
+        }
+        return Err("partial draft output has another cohort".into());
+    }
+    if [
+        "prepare-state.json",
+        "prepare-receipt.json",
+        "packs",
+        "results",
+        "shards",
+    ]
+    .iter()
+    .any(|name| output.join(name).exists())
+    {
+        return Err("partial draft output has products but no cohort".into());
+    }
+    write_json(&path, cohort)
+}
+
+fn resume_state(output: &Path, state: &Value) -> Result<(), String> {
+    let path = output.join("prepare-state.json");
+    if path.is_file() {
+        return (json_file::<Value>(&path)? == *state)
+            .then_some(())
+            .ok_or_else(|| "partial draft output was prepared with other inputs".into());
+    }
+    let has_products = ["prepare-receipt.json", "packs", "results", "shards"]
+        .iter()
+        .map(|name| output_nonempty(&output.join(name)))
+        .collect::<Result<Vec<_>, _>>()?
+        .into_iter()
+        .any(|present| present);
+    if has_products {
+        return Err("partial draft output has products but no preparation state".into());
+    }
+    write_json(&path, state)
+}
+
+fn current_pack(path: &Path, owner: &DraftOwner, state: &Value) -> Option<Value> {
+    let pack = json_file::<Value>(path).ok()?;
+    let status = pack["status"].as_str()?;
+    let known_status = matches!(
+        status,
+        "ready" | "template_fallback" | "pack_failed" | "owner_group" | "split_region"
+    );
+    (known_status
+        && pack["schema_version"] == 4
+        && pack["owner"] == owner.owner
+        && pack["route"] == json!(owner.route)
+        && pack["reference_sha256"] == owner.reference_sha256
+        && pack["manifest_sha256"] == state["manifest_sha256"]
+        && pack["family_index_sha256"] == state["family_index_sha256"]
+        && pack["m2c_identity"] == state["m2c_identity"]
+        && validate_pack(path, &pack).is_ok())
+    .then_some(pack)
+}
+
+fn m2c_identity(path: &Path) -> Result<M2cIdentity, String> {
+    let path = path
+        .canonicalize()
+        .map_err(|error| format!("{}: {error}", path.display()))?;
+    let macros = path
+        .parent()
+        .ok_or("m2c executable has no parent")?
+        .join("m2c_macros.h");
+    let output = Command::new("git")
+        .args(["-C"])
+        .arg(path.parent().ok_or("m2c executable has no parent")?)
+        .args(["rev-parse", "HEAD"])
+        .output();
+    let revision = output
+        .ok()
+        .filter(|output| output.status.success())
+        .and_then(|output| String::from_utf8(output.stdout).ok())
+        .map(|value| value.trim().to_string());
+    Ok(M2cIdentity {
+        path: path.to_string_lossy().into_owned(),
+        sha256: hash(&path)?,
+        macros_sha256: hash(macros)?,
+        source_tree_sha256: m2c_source_tree(&path)?,
+        revision,
+    })
+}
+
+fn m2c_source_tree(executable: &Path) -> Result<String, String> {
+    let root = executable.parent().ok_or("m2c executable has no parent")?;
+    let mut paths = vec![executable.to_path_buf(), root.join("m2c_macros.h")];
+    for directory in ["m2c", "m2c_pycparser"] {
+        paths.extend(
+            walkdir::WalkDir::new(root.join(directory))
+                .into_iter()
+                .filter_map(Result::ok)
+                .filter(|entry| entry.file_type().is_file())
+                .map(|entry| entry.into_path())
+                .filter(|path| path.extension().and_then(|value| value.to_str()) == Some("py")),
+        );
+    }
+    hash_paths(root, paths)
+}
+
+fn prepared(repository: &Path, output: &Path) -> Result<(DraftCohort, Value), String> {
+    let cohort_path = output.join("cohort.json");
+    let cohort: DraftCohort = json_file(&cohort_path)?;
+    let state_path = output.join("prepare-state.json");
+    let state: Value = json_file(&state_path)?;
+    let receipt_path = output.join("prepare-receipt.json");
+    let mut receipt: Value = json_file(&receipt_path)?;
+    validate_cohort(&cohort.owners)?;
+    if cohort.schema_version != 1
+        || state["schema_version"] != 1
+        || receipt["schema_version"] != 3
+        || receipt["state_sha256"] != hash(&state_path)?
+        || receipt["cohort_sha256"] != hash(&cohort_path)?
+        || receipt["cohort_sha256"] != state["cohort_sha256"]
+        || receipt["manifest_sha256"] != cohort.manifest_sha256
+        || receipt["manifest_sha256"] != state["manifest_sha256"]
+        || receipt["manifest_sha256"] != hash(repository.join(MANIFEST))?
+        || receipt["family_index_sha256"] != state["family_index_sha256"]
+        || receipt["m2c_identity"] != state["m2c_identity"]
+        || receipt["scoring_environment_sha256"] != state["scoring_environment_sha256"]
+        || receipt["scoring_environment_sha256"] != scoring_environment(repository)?
+    {
+        return Err("draft preparation is stale".into());
+    }
+    let packs = receipt["packs"]
+        .as_array()
+        .ok_or("prepare receipt has no packs")?;
+    if packs.len() != DRAFT_OWNERS {
+        return Err("prepare receipt does not cover the cohort".into());
+    }
+    for (row, expected) in packs.iter().zip(&cohort.owners) {
+        let owner = row["owner"].as_str().ok_or("pack receipt has no owner")?;
+        if owner != expected.owner {
+            return Err("prepare receipt pack order does not match the cohort".into());
+        }
+        validate_reference(repository, expected)?;
+        let pack_path = output
+            .join("packs")
+            .join(stem(expected.address))
+            .join("pack.json");
+        if row["pack_sha256"] != hash(&pack_path)? {
+            return Err(format!("{owner} pack is stale"));
+        }
+        current_pack(&pack_path, expected, &state)
+            .ok_or_else(|| format!("{owner} pack is stale"))?;
+    }
+    receipt["receipt_sha256"] = json!(hash(receipt_path)?);
+    Ok((cohort, receipt))
+}
+
+fn validate_reference(repository: &Path, owner: &DraftOwner) -> Result<(), String> {
+    if hash(repository.join(&owner.reference))? != owner.reference_sha256 {
+        return Err(format!("{} reference is stale", owner.owner));
+    }
+    Ok(())
+}
+
+fn validate_pack(path: &Path, pack: &Value) -> Result<(), String> {
+    for (_, source, digest) in pack_sources(path, pack) {
+        if hash(source)? != digest {
+            return Err(format!("{} contains a stale source", pack["owner"]));
+        }
+    }
+    let directory = path.parent().ok_or("pack has no directory")?;
+    let inputs = pack["contexts"]["inputs"]
+        .as_array()
+        .map(Vec::as_slice)
+        .unwrap_or_default();
+    let named = ["aggregate_report", "compile_header"]
+        .into_iter()
+        .map(|name| &pack["contexts"][name]);
+    for item in inputs.iter().chain(named).filter(|item| item.is_object()) {
+        let relative = item["path"].as_str().ok_or("context has no path")?;
+        if hash(directory.join(relative))? != item["sha256"].as_str().unwrap_or("") {
+            return Err(format!("{} contains a stale context", pack["owner"]));
+        }
+    }
+    Ok(())
+}
+
+fn record_fresh(record: &Value, owner: &DraftOwner, receipt: &Value) -> bool {
+    record["owner"] == owner.owner
+        && record["size"] == owner.size
+        && record["route"] == json!(owner.route)
+        && record["reference_sha256"] == owner.reference_sha256
+        && record["cohort_sha256"] == receipt["cohort_sha256"]
+        && record["prepare_receipt_sha256"] == receipt["receipt_sha256"]
+        && record["scoring_environment_sha256"] == receipt["scoring_environment_sha256"]
+}
+
+fn draft_owner(
+    repository: &Path,
+    prepared: &Path,
+    directory: &Path,
+    owner: &DraftOwner,
+    receipt: &Value,
+) -> Value {
+    let base = |verdict: &str, error: Option<String>| json!({"owner":owner.owner,"name":owner.name,"size":owner.size,"retention":owner.retention,"category":owner.kind,"route":owner.route,"reference_sha256":owner.reference_sha256,"cohort_sha256":receipt["cohort_sha256"],"prepare_receipt_sha256":receipt["receipt_sha256"],"scoring_environment_sha256":receipt["scoring_environment_sha256"],"source_policy":"prepared_sources_only","verdict":verdict,"compiled":false,"residual":Value::Null,"error":error});
+    if owner.route != DraftRoute::IndependentM2c {
+        return base(
+            if owner.route == DraftRoute::OwnerGroup {
+                "owner_group_parked"
+            } else {
+                "split_region_parked"
+            },
+            Some("audited non-independent region requires its complete owner group".into()),
+        );
+    }
+    let reference = match read(repository.join(&owner.reference)) {
+        Ok(reference) if sha256::hex(reference.as_bytes()) == owner.reference_sha256 => reference,
+        Ok(_) => return base("reference_stale", Some("reference hash changed".into())),
+        Err(error) => return base("reference_stale", Some(error)),
+    };
+    let pack_path = prepared
+        .join("packs")
+        .join(stem(owner.address))
+        .join("pack.json");
+    let pack = match json_file::<Value>(&pack_path) {
+        Ok(value) => value,
+        Err(error) => return base("pack_failed", Some(error)),
+    };
+    let pack_sha256 = match hash(&pack_path) {
+        Ok(value) => value,
+        Err(error) => return base("pack_failed", Some(error)),
+    };
+    if pack["status"] == "pack_failed" {
+        let error = pack["error"]
+            .as_str()
+            .or_else(|| pack["m2c_error"].as_str())
+            .unwrap_or("prepared pack failed without an error")
+            .to_string();
+        return base("pack_failed", Some(error));
+    }
+    if let Some(header) = pack["contexts"]["compile_header"]["path"].as_str() {
+        let source = pack_path.parent().unwrap_or(Path::new(".")).join(header);
+        let copied = fs::read(&source)
+            .map_err(|error| format!("{}: {error}", source.display()))
+            .and_then(|bytes| write(&directory.join("shared-aggregates.h"), &bytes));
+        if let Err(error) = copied {
+            return base("pack_failed", Some(error));
+        }
+    }
+    let mut attempts = Vec::new();
+    for (origin, path, expected) in pack_sources(&pack_path, &pack) {
+        let source = match read(&path) {
+            Ok(value) => value,
+            Err(error) => {
+                attempts.push(json!({"origin":origin,"compiled":false,"error":error}));
+                continue;
+            }
+        };
+        if sha256::hex(source.as_bytes()) != expected {
+            attempts.push(
+                json!({"origin":origin,"compiled":false,"error":"prepared source hash mismatch"}),
+            );
+            continue;
+        }
+        let candidate = directory.join("candidate.c");
+        if let Err(error) = write(&candidate, source.as_bytes()) {
+            return base("score_failed", Some(error));
+        }
+        let lint_report = lint(&source, &reference, None);
+        match score_draft(repository, owner, &candidate, directory) {
+            Err(error)=>attempts.push(json!({"origin":origin,"source_sha256":sha256::hex(source.as_bytes()),"compiled":false,"error":error})),
+            Ok((scored,decoder_error))=> {
+                let source_sha256 = sha256::hex(source.as_bytes());
+                attempts.push(json!({"origin":origin,"source_sha256":source_sha256,"compiled":true}));
+                let allocator = allocator_receipt(&scored);
+                return json!({"owner":owner.owner,"name":owner.name,"size":owner.size,"retention":owner.retention,"category":owner.kind,"route":owner.route,"reference_sha256":owner.reference_sha256,"cohort_sha256":receipt["cohort_sha256"],"prepare_receipt_sha256":receipt["receipt_sha256"],"scoring_environment_sha256":receipt["scoring_environment_sha256"],"source_policy":"prepared_sources_only","pack_sha256":pack_sha256,"contexts":pack["contexts"],"verdict":if lint_report.passes(){"scored"}else{"scored_lint_flagged"},"compiled":true,"source_winner":{"origin":origin,"sha256":source_sha256},"candidate_sha256":hash(candidate).ok(),"attempts":attempts,"lint":lint_report,"residual":scored.residual,"allocator":allocator,"decoder_error":decoder_error,"error":Value::Null});
+            }
+        }
+    }
+    let mut record = base(
+        "draft_compile_failed",
+        Some("bound-context m2c and ranked templates did not compile".into()),
+    );
+    record["pack_sha256"] = json!(pack_sha256);
+    record["contexts"] = pack["contexts"].clone();
+    record["attempts"] = json!(attempts);
+    record
+}
+
+fn allocator_receipt(scored: &RenderOutput) -> Value {
+    if scored.allocator.is_none() {
+        return Value::Null;
+    }
+    let (repair, dimensions) = allocator_parts(scored);
+    json!({"repair":repair,"dimensions":dimensions})
+}
+
+fn allocator_parts(scored: &RenderOutput) -> (Option<String>, Vec<String>) {
+    scored.allocator.as_ref().map_or_else(
+        || (None, Vec::new()),
+        |report| {
+            (
+                report.repair.as_ref().map(|repair| repair.label()),
+                report.dimensions.iter().map(ToString::to_string).collect(),
+            )
+        },
+    )
+}
+
+fn pack_sources(pack_path: &Path, pack: &Value) -> Vec<(String, PathBuf, String)> {
+    let directory = pack_path.parent().unwrap_or(Path::new("."));
+    let source = |origin: String, receipt: &Value, path: &str, digest: &str| {
+        Some((
+            origin,
+            directory.join(receipt[path].as_str()?),
+            receipt[digest].as_str()?.into(),
+        ))
+    };
+    let seed = source(
+        "bound_aggregate_m2c".into(),
+        &pack["m2c"],
+        "seed",
+        "seed_sha256",
+    );
+    let templates = pack["templates"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .filter_map(|template| {
+            source(
+                format!("retargeted_template_{}", template["rank"].as_u64()?),
+                template,
+                "retargeted_source",
+                "retargeted_sha256",
+            )
+        });
+    seed.into_iter().chain(templates).collect()
+}
+
+fn score_draft(
+    repository: &Path,
+    owner: &DraftOwner,
+    candidate: &Path,
+    work: &Path,
+) -> Result<(RenderOutput, Option<String>), String> {
+    let scored_owner = Owner {
+        owner: owner.owner.clone(),
+        address: owner.address,
+        size: owner.size,
+        retention: owner.retention.clone(),
+        kind: owner.kind.clone(),
+        reference: owner.reference.clone(),
+        symbol: owner.symbol.clone(),
+        name: owner.name.clone(),
+        scope: Scope::StandaloneDraft,
+        unit: None,
+        candidate: Some(candidate.to_string_lossy().into_owned()),
+        candidate_sha256: Some(hash(candidate)?),
+    };
+    score_with_decoder(repository, &scored_owner, work)
+}
+
+fn score_with_decoder(
+    repository: &Path,
+    owner: &Owner,
+    work: &Path,
+) -> Result<(RenderOutput, Option<String>), String> {
+    let mut scored = score(repository, owner, work, false)?;
+    let mut decoder_error = None;
+    if scored.residual.class == ResidualClass::AllocationUncovered {
+        match score(repository, owner, work, true) {
+            Ok(decoded) => scored = decoded,
+            Err(error) => decoder_error = Some(error),
+        }
+    }
+    Ok((scored, decoder_error))
+}
+
+fn scoreboard(records: &[Value]) -> Value {
+    let mut classes = BTreeMap::<String, (usize, usize)>::new();
+    for record in records {
+        let label = record["residual"]["class"]
+            .as_str()
+            .or_else(|| record["verdict"].as_str())
+            .unwrap_or("missing");
+        let row = classes.entry(label.into()).or_default();
+        row.0 += 1;
+        row.1 += record["size"].as_u64().unwrap_or(0) as usize;
+    }
+    json!({"owners":records.len(),"bytes":records.iter().filter_map(|record|record["size"].as_u64()).sum::<u64>(),"classes":classes.into_iter().map(|(name,(owners,bytes))|(name,json!({"owners":owners,"bytes":bytes}))).collect::<BTreeMap<_,_>>()})
+}
+
+fn terminal_record(record: &Value) -> bool {
+    matches!(
+        record["verdict"].as_str(),
+        Some(
+            "scored"
+                | "scored_lint_flagged"
+                | "draft_compile_failed"
+                | "pack_failed"
+                | "reference_stale"
+                | "score_failed"
+                | "owner_group_parked"
+                | "split_region_parked"
+        )
+    )
+}
+
+fn prediction_comparison(records: &[Value]) -> Value {
+    fn measured<'a>(records: impl Iterator<Item = &'a Value>, denominator: usize) -> Value {
+        let floor = [
+            "exact",
+            "allocation_covered",
+            "allocation_uncovered",
+            "scheduling_floor",
+        ];
+        let (mut exact_or_floor, mut scored_nonexact, mut structural) = (0, 0, 0);
+        let mut classes = BTreeMap::<String, (usize, u64)>::new();
+        for record in records {
+            let class = record["residual"]["class"].as_str().unwrap_or("");
+            exact_or_floor += usize::from(floor.contains(&class));
+            scored_nonexact += usize::from(record["compiled"] == true && class != "exact");
+            structural += usize::from(class == "structural_topology");
+            if record["compiled"] == true && !class.is_empty() && class != "exact" {
+                let row = classes.entry(class.into()).or_default();
+                row.0 += 1;
+                row.1 += record["size"].as_u64().unwrap_or(0);
+            }
+        }
+        let dominant = classes.into_iter().fold(None, |best, row| match &best {
+            Some((_, score)) if *score >= row.1 => best,
+            _ => Some(row),
+        });
+        let basis = |n, d| (d > 0).then(|| json!(n * 10000 / d)).unwrap_or(Value::Null);
+        json!({"denominator":denominator,"exact_or_floor":{"owners":exact_or_floor,"basis_points":basis(exact_or_floor,denominator),"prediction_met":exact_or_floor*100<15*denominator},"structural_topology":{"owners":structural,"scored_nonexact_denominator":scored_nonexact,"basis_points":basis(structural,scored_nonexact),"prediction_met":scored_nonexact>0 && structural*100>=60*scored_nonexact},"dominant_scored_nonexact":dominant.map(|(class,(owners,bytes))|json!({"class":class,"owners":owners,"bytes":bytes})).unwrap_or(Value::Null)})
+    }
+    let all = measured(records.iter(), DRAFT_OWNERS);
+    let independent = measured(
+        records
+            .iter()
+            .filter(|record| record["route"] == "independent_m2c"),
+        INDEPENDENT_OWNERS,
+    );
+    let winner = independent["dominant_scored_nonexact"]["class"].clone();
+    let structural_prediction_met = independent["structural_topology"]["prediction_met"].clone();
+    json!({"all_260":all,"independent_175":independent,"winner":winner,"winner_tie_rule":"owners_desc_bytes_desc_class_asc","structural_prediction_met":structural_prediction_met})
+}
+
+fn prediction_contract() -> Value {
+    json!({"exact_or_floor":"<15% of denominator; classes exact, allocation_covered, allocation_uncovered, scheduling_floor","structural_topology":">=60% of scored non-exact","rates_use_basis_points":"numerator * 10000 / denominator"})
 }
 
 fn score(
@@ -698,78 +1387,108 @@ fn score(
 fn pack(
     repository: &Path,
     directory: &Path,
-    owner: &Owner,
-    target: Option<&FamilyTarget>,
+    owner: &DraftOwner,
+    catalog: &FamilyCatalog,
     manifest_sha256: &str,
     family_index_sha256: &str,
+    m2c: &Path,
+    m2c_identity: &M2cIdentity,
 ) -> Result<Value, String> {
-    let status = match owner.scope {
-        Scope::TranslationUnit => "translation_unit_parked",
-        Scope::NoCandidate => "m2c_seed_ready",
-        Scope::StandaloneDraft => "draft_ready",
-    };
-    let candidate_path = owner.candidate.as_deref();
-    let mut m2c = Value::Null;
-    let (candidate, seed_origin, seed_source) = if let Some(path) = candidate_path {
-        (
-            read(repository.join(path))?,
-            "semantic_candidate",
-            Some(path),
-        )
-    } else {
-        let seed = m2c_seed(repository, directory, owner, target)?;
-        let candidate = read(&seed.source)?;
-        let context_sha256 = seed.context.as_ref().map(hash).transpose()?;
-        m2c = json!({"seed":format!("m2c/{}.c",stem(owner.address)),"seed_sha256":sha256::hex(candidate.as_bytes()),"context":seed.context.as_ref().map(|_|"m2c/family-template.i"),"context_sha256":context_sha256,"context_kind":seed.context_kind});
-        (
-            candidate,
-            if seed.context.is_some() {
-                "m2c_exact_sibling_context"
-            } else {
-                "m2c_no_context"
-            },
-            Some(owner.reference.as_str()),
-        )
-    };
-    write(&directory.join("skeleton.c"), candidate.as_bytes())?;
-    let mut templates = Vec::new();
-    for (index, template) in target
+    if owner.route != DraftRoute::IndependentM2c {
+        return Ok(
+            json!({"schema_version":4,"owner":owner.owner,"status":if owner.route==DraftRoute::OwnerGroup{"owner_group"}else{"split_region"},"route":owner.route,"category":owner.kind,"manifest_sha256":manifest_sha256,"family_index_sha256":family_index_sha256,"reference_sha256":owner.reference_sha256,"m2c_identity":m2c_identity,"contexts":Value::Null,"m2c":Value::Null,"templates":[],"template_count":0}),
+        );
+    }
+    let target = catalog.target(&owner.owner);
+    let prepared = target
         .into_iter()
         .flat_map(|target| &target.alternatives)
+        .filter_map(|details| {
+            let template = catalog.template(details)?;
+            let retargeted = crate::families::retarget_source(
+                &details.owner,
+                &template.source,
+                &details.symbol,
+                template.registered_name.as_deref(),
+                &owner.symbol,
+                RetargetMode::EntryMacro,
+            )
+            .ok()?;
+            Some((details, template, retargeted))
+        })
         .take(3)
-        .enumerate()
-    {
-        let source = read(repository.join(&template.source))?;
+        .collect::<Vec<_>>();
+    let mut templates = Vec::new();
+    for (index, (details, template, retargeted_source)) in prepared.iter().enumerate() {
+        let source = &template.source;
         let packed = format!("template-{}.c", index + 1);
         write(&directory.join(&packed), source.as_bytes())?;
-        let target_symbol = owner.symbol.as_str();
-        let retargeted_source = retarget(template, target_symbol, &source)?;
         let retargeted = format!("retargeted-{}.c", index + 1);
         write(&directory.join(&retargeted), retargeted_source.as_bytes())?;
-        templates.push(json!({"rank":index+1,"owner":template.owner,"symbol":template.symbol,"score_basis_points":template.score_basis_points,"source":template.source,"packed_source":packed,"source_sha256":sha256::hex(source.as_bytes()),"retargeted_source":retargeted,"retargeted_sha256":sha256::hex(retargeted_source.as_bytes()),"retargeted":retargeted_source!=source}));
+        templates.push(json!({"rank":index+1,"owner":details.owner,"symbol":details.symbol,"score_basis_points":details.score_basis_points,"source":details.source,"packed_source":packed,"source_sha256":sha256::hex(source.as_bytes()),"retargeted_source":retargeted,"retargeted_sha256":sha256::hex(retargeted_source.as_bytes()),"retargeted":retargeted_source!=source}));
     }
     let template_count = templates.len();
-    let value = json!({"schema_version":3,"owner":owner.owner,"name":owner.name,"scope":owner.scope,"status":status,"manifest_sha256":manifest_sha256,"family_index_sha256":family_index_sha256,"candidate_sha256":owner.candidate_sha256,"reference_sha256":hash(repository.join(&owner.reference))?,"target_symbol":owner.symbol,"family_index_reference":target.map(|target|target.source.as_str()),"family":target.and_then(|target|target.family.as_deref()),"family_threshold_met":target.is_some_and(|target|target.family.is_some()),"seed_origin":seed_origin,"seed_source":seed_source,"seed_sha256":sha256::hex(candidate.as_bytes()),"skeleton":"skeleton.c","m2c":m2c,"templates":templates,"template_count":template_count,"raw_diff_included":false});
-    write_json(&directory.join("pack.json"), &value)?;
-    Ok(value)
+    let template = prepared.first().map(|(details, _, _)| *details);
+    let (m2c_seed, contexts, m2c_error) = match m2c_seed(
+        repository, directory, owner, template, m2c,
+    ) {
+        Ok(seed) => (
+            json!({"seed":seed.source.strip_prefix(directory).unwrap_or(&seed.source),"seed_sha256":seed.source_sha256}),
+            seed_context_receipt(directory, &seed)?,
+            Value::Null,
+        ),
+        Err(error) => (Value::Null, Value::Null, json!(error)),
+    };
+    let status = if m2c_seed.is_object() {
+        "ready"
+    } else if template_count > 0 {
+        "template_fallback"
+    } else {
+        "pack_failed"
+    };
+    Ok(
+        json!({"schema_version":4,"owner":owner.owner,"name":owner.name,"status":status,"route":owner.route,"category":owner.kind,"manifest_sha256":manifest_sha256,"family_index_sha256":family_index_sha256,"reference_sha256":owner.reference_sha256,"target_symbol":owner.symbol,"family_index_reference":target.map(|target|target.source.as_str()),"family":target.and_then(|target|target.family.as_deref()),"m2c_identity":m2c_identity,"contexts":contexts,"m2c":m2c_seed,"m2c_error":m2c_error,"templates":templates,"template_count":template_count,"raw_diff_included":false}),
+    )
+}
+
+fn seed_context_receipt(directory: &Path, seed: &crate::family_m2c::Seed) -> Result<Value, String> {
+    let contexts=seed.contexts.iter().map(|context|json!({"kind":context.kind,"path":context.path.strip_prefix(directory).unwrap_or(&context.path),"sha256":context.sha256})).collect::<Vec<_>>();
+    let report = directory.join("m2c/aggregate-report.json");
+    write(
+        &report,
+        &fs::read(&seed.aggregate_report)
+            .map_err(|error| format!("{}: {error}", seed.aggregate_report.display()))?,
+    )?;
+    Ok(
+        json!({"kind":seed.context_kind,"inputs":contexts,"aggregate_report":{"path":report.strip_prefix(directory).unwrap_or(&report),"sha256":seed.aggregate_report_sha256,"proposals":seed.proposal_count,"structs":seed.struct_count,"rejected_misaligned_fields":seed.rejected_misaligned_fields},"compile_header":{"path":seed.compile_header.strip_prefix(directory).unwrap_or(&seed.compile_header),"sha256":seed.compile_header_sha256}}),
+    )
 }
 
 fn m2c_seed(
     repository: &Path,
     directory: &Path,
-    owner: &Owner,
-    target: Option<&FamilyTarget>,
+    owner: &DraftOwner,
+    template: Option<&TemplateMatch>,
+    m2c: &Path,
 ) -> Result<crate::family_m2c::Seed, String> {
     let target_owner = SourceOwner::parse(&owner.owner)?;
     let assembly = repository.join(&owner.reference);
     let output = directory.join("m2c");
-    let plain =
-        || crate::family_m2c::generate(target_owner, &assembly, &owner.symbol, None, &output);
-    let Some(template) = target.and_then(|family| family.alternatives.first()) else {
+    let plain = || {
+        crate::family_m2c::generate_with_m2c(
+            target_owner,
+            &assembly,
+            &owner.symbol,
+            None,
+            &output,
+            m2c,
+        )
+    };
+    let Some(template) = template else {
         return plain();
     };
     let template_owner = SourceOwner::parse(&template.owner)?;
-    crate::family_m2c::generate(
+    crate::family_m2c::generate_with_m2c(
         target_owner,
         &assembly,
         &owner.symbol,
@@ -779,37 +1498,13 @@ fn m2c_seed(
             &template.symbol,
         )),
         &output,
+        m2c,
     )
     .or_else(|context_error| {
         plain().map_err(|plain_error| {
             format!("exact-sibling context: {context_error}; no context: {plain_error}")
         })
     })
-}
-
-fn work_order(
-    directory: &Path,
-    owner: &Owner,
-    residual: &ResidualReport,
-    playbook: &str,
-    decoder: &Value,
-    pack_path: &Path,
-    pack: &Value,
-    stall: usize,
-) -> Result<(), String> {
-    let template_count = pack["template_count"]
-        .as_u64()
-        .ok_or("template pack has no count")?;
-    let skeleton = pack_path
-        .parent()
-        .ok_or("pack has no directory")?
-        .join(pack["skeleton"].as_str().ok_or("pack has no skeleton")?);
-    let body = json!({"owner":owner.owner,"name":owner.name,"candidate_source":owner.candidate,"candidate_sha256":owner.candidate_sha256,"residual":residual,"playbook":playbook,"decoder":decoder,"template_count":template_count,"stall_budget_compiles":stall,"pack":pack_path,"pack_sha256":sha256::hex(&serde_json::to_vec(pack).map_err(|error|error.to_string())?),"editable_source":skeleton,"allowed_files":[skeleton,"WORK.json"],"constraints":["execute_named_playbook_only","no_raw_diff_improvisation","adopt_only_when_byte_exact"]});
-    let input_sha256 = sha256::hex(&serde_json::to_vec(&body).map_err(|error| error.to_string())?);
-    write_json(
-        &directory.join("WORK.json"),
-        &json!({"schema_version":1,"input_sha256":input_sha256,"work":body}),
-    )
 }
 
 fn inventory(repository: &Path) -> Result<Inventory, String> {
@@ -840,17 +1535,25 @@ fn inventory(repository: &Path) -> Result<Inventory, String> {
             .map(|p| hash(repository.join(p)))
             .transpose()?;
         let name = names.registered_name(id).map(str::to_string);
+        let symbol = if region.symbol.is_empty() {
+            assembly_symbol(&repository.join(&region.source)).unwrap_or_else(|| {
+                if scope == Scope::NoCandidate {
+                    String::new()
+                } else {
+                    name.clone().unwrap_or_else(|| id.legacy_name())
+                }
+            })
+        } else {
+            region.symbol
+        };
         owners.push(Owner {
             owner: id.id(),
             address,
             size: region.size,
             retention: region.retention.unwrap_or_default(),
+            kind: region.kind,
             reference: region.source,
-            symbol: if region.symbol.is_empty() {
-                name.clone().unwrap_or_else(|| id.legacy_name())
-            } else {
-                region.symbol
-            },
+            symbol,
             name,
             scope,
             unit,
@@ -866,6 +1569,16 @@ fn inventory(repository: &Path) -> Result<Inventory, String> {
         schema_version: 1,
         manifest_sha256: sha256::hex(manifest_text.as_bytes()),
         owners,
+    })
+}
+
+fn assembly_symbol(path: &Path) -> Option<String> {
+    fs::read_to_string(path).ok()?.lines().find_map(|line| {
+        line.trim()
+            .strip_prefix(".global ")
+            .map(str::trim)
+            .filter(|name| !name.is_empty())
+            .map(str::to_string)
     })
 }
 
@@ -889,210 +1602,12 @@ fn inventory_counts(owners: &[Owner]) -> (usize, usize, usize, usize) {
     )
 }
 
-fn families(repository: &Path, path: &Path) -> Result<BTreeMap<String, FamilyTarget>, String> {
-    let mut index: FamilyIndex = json_file(&resolve(repository, path))?;
-    if index.schema_version != 2 {
-        return Err("family index must be schema 2".into());
+fn simple_output(argv: &[String]) -> Result<Option<PathBuf>, String> {
+    match argv {
+        [] => Ok(None),
+        [flag, value] if flag == "--output" => Ok(Some(value.into())),
+        _ => Err(USAGE.into()),
     }
-    let names = SourcePaths::load(repository)?;
-    let units = TranslationUnits::load(repository)?;
-    for target in &mut index.targets {
-        let mut alternatives = Vec::new();
-        for mut template in std::mem::take(&mut target.alternatives) {
-            if standalone_template(repository, &names, &units, &template).is_err() {
-                continue;
-            }
-            let owner = SourceOwner::parse(&template.owner).ok();
-            let source = read(repository.join(&template.source))?;
-            template.canonical_name = owner
-                .and_then(|owner| names.registered_name(owner))
-                .map(str::to_string);
-            if retarget(&template, &target.symbol, &source).is_ok() {
-                alternatives.push(template);
-            }
-        }
-        target.alternatives = alternatives;
-    }
-    Ok(index
-        .targets
-        .into_iter()
-        .map(|t| (t.owner.clone(), t))
-        .collect())
-}
-
-fn standalone_template(
-    repository: &Path,
-    names: &SourcePaths,
-    units: &TranslationUnits,
-    template: &Template,
-) -> Result<(), String> {
-    let owner = SourceOwner::parse(&template.owner)?;
-    let relative = Path::new(&template.source);
-    if units.unit_for_game_owner("gs1", owner).is_some() {
-        return Err(format!("{} is a translation-unit template", template.owner));
-    }
-    match names.owners_for_path(&repository.join(relative)).as_slice() {
-        [mapped] if *mapped == owner => Ok(()),
-        [] => Err(format!("unregistered template source {}", template.source)),
-        [_] => Err(format!("{} has the wrong source owner", template.owner)),
-        _ => Err(format!("{} is a multi-owner source", template.source)),
-    }
-}
-
-fn retarget(template: &Template, target: &str, source: &str) -> Result<String, String> {
-    let source_name = template
-        .canonical_name
-        .as_deref()
-        .unwrap_or(&template.symbol);
-    if source_name == target || source.contains(&format!(" {target}(")) {
-        return Err(format!("{} already defines {target}", template.owner));
-    }
-    let mut output = source.to_string();
-    let (mut at, mut cursor) = (0, 0);
-    for line in source.split_inclusive('\n') {
-        cursor += line.len();
-        if line.trim_start().starts_with("#include") {
-            at = cursor;
-        }
-    }
-    output.insert_str(
-        at,
-        &format!("#undef {source_name}\n#define {source_name} {target}\n\n"),
-    );
-    Ok(output)
-}
-
-fn load_bucket(
-    repository: &Path,
-    path: &Path,
-    inventory: &Inventory,
-) -> Result<BucketReport, String> {
-    let report: BucketReport = json_file(&resolve(repository, path))?;
-    if report.schema_version != 2
-        || report.manifest_sha256 != inventory.manifest_sha256
-        || report.scoring_environment_sha256 != scoring_environment(repository)?
-        || report.owners.len() != inventory.owners.len()
-    {
-        return Err("bucket report is stale; run `compiler waves bucket`".into());
-    }
-    let identities = report
-        .owners
-        .iter()
-        .map(|owner| owner.owner.as_str())
-        .collect::<BTreeSet<_>>();
-    if identities.len() != report.owners.len() {
-        return Err("bucket report contains duplicate owner identities".into());
-    }
-    let current = inventory
-        .owners
-        .iter()
-        .map(|o| (&o.owner, &o.candidate_sha256))
-        .collect::<BTreeMap<_, _>>();
-    if report
-        .owners
-        .iter()
-        .any(|o| current.get(&o.owner) != Some(&&o.candidate_sha256))
-    {
-        return Err("bucket candidate hashes are stale; rerun bucket".into());
-    }
-    Ok(report)
-}
-
-fn wave_safe<'a>(
-    inventory: &'a Inventory,
-    bucket: &'a BucketReport,
-) -> Vec<(&'a Owner, &'a BucketEntry)> {
-    let entries = bucket
-        .owners
-        .iter()
-        .map(|e| (e.owner.as_str(), e))
-        .collect::<BTreeMap<_, _>>();
-    let mut owners = inventory
-        .owners
-        .iter()
-        .filter(|o| o.scope == Scope::StandaloneDraft && o.name.is_some())
-        .filter_map(|o| {
-            entries
-                .get(o.owner.as_str())
-                .copied()
-                .filter(|e| e.verdict == "scored" && e.residual.as_ref().is_some())
-                .map(|e| (o, e))
-        })
-        .collect::<Vec<_>>();
-    owners.sort_by_key(|(o, e)| {
-        let r = e.residual.as_ref().unwrap();
-        (
-            r.class != ResidualClass::AllocationCovered,
-            r.facts.actual_bytes != r.facts.reference_bytes,
-            r.facts.differing_halfwords,
-            std::cmp::Reverse(o.size),
-            o.address,
-        )
-    });
-    owners
-}
-
-fn wave_signature(
-    repository: &Path,
-    args: &Args,
-    inventory: &Inventory,
-    selected: &[(&Owner, &BucketEntry)],
-) -> Result<String, String> {
-    let mut bytes = Vec::new();
-    for path in [
-        resolve(repository, &args.family_index),
-        resolve(repository, &args.bucket),
-        repository.join(CATALOG),
-    ] {
-        bytes.extend_from_slice(hash(path)?.as_bytes());
-    }
-    bytes.extend_from_slice(inventory.manifest_sha256.as_bytes());
-    for (owner, _) in selected {
-        bytes.extend_from_slice(owner.candidate_sha256.as_deref().unwrap_or("").as_bytes());
-        bytes.extend_from_slice(
-            hash(
-                repository
-                    .join(PACKS)
-                    .join(stem(owner.address))
-                    .join("pack.json"),
-            )?
-            .as_bytes(),
-        );
-    }
-    Ok(sha256::hex(&bytes))
-}
-
-fn parse_args(argv: &[String]) -> Result<Args, String> {
-    let mut out = Args {
-        output: None,
-        family_index: FAMILIES.into(),
-        bucket: BUCKET.into(),
-        limit: None,
-        stall_budget: STALL_BUDGET,
-    };
-    let mut at = 0;
-    while at < argv.len() {
-        let value = |at: usize| {
-            argv.get(at + 1)
-                .ok_or_else(|| format!("{} requires a value", argv[at]))
-        };
-        match argv[at].as_str() {
-            "--output" => out.output = Some(value(at)?.into()),
-            "--family-index" => out.family_index = value(at)?.into(),
-            "--bucket" => out.bucket = value(at)?.into(),
-            "--limit" => out.limit = Some(positive(value(at)?, "--limit")?),
-            "--stall-budget" => out.stall_budget = positive(value(at)?, "--stall-budget")?,
-            _ => return Err(USAGE.into()),
-        }
-        at += 2;
-    }
-    Ok(out)
-}
-fn positive(text: &str, flag: &str) -> Result<usize, String> {
-    text.parse()
-        .ok()
-        .filter(|v| *v > 0)
-        .ok_or_else(|| format!("{flag} must be positive"))
 }
 fn stem(address: u32) -> String {
     format!("{address:08x}")
@@ -1115,19 +1630,26 @@ fn hash(path: impl AsRef<Path>) -> Result<String, String> {
         .map_err(|e| format!("{}: {e}", p.display()))
 }
 fn hash_tree(path: &Path) -> Result<String, String> {
-    let mut paths = walkdir::WalkDir::new(path)
+    let paths = walkdir::WalkDir::new(path)
         .into_iter()
         .filter_map(Result::ok)
         .filter(|entry| entry.file_type().is_file())
         .map(|entry| entry.into_path())
         .collect::<Vec<_>>();
+    hash_paths(path, paths)
+}
+fn hash_paths(root: &Path, mut paths: Vec<PathBuf>) -> Result<String, String> {
     paths.sort();
-    let bytes = paths
-        .iter()
-        .map(fs::read)
-        .collect::<Result<Vec<_>, _>>()
-        .map_err(|error| error.to_string())?;
-    Ok(sha256::hex(&bytes.concat()))
+    let mut fingerprint = Vec::new();
+    for path in paths {
+        let name = path.strip_prefix(root).unwrap_or(&path).to_string_lossy();
+        let bytes = fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?;
+        fingerprint.extend_from_slice(&(name.len() as u64).to_le_bytes());
+        fingerprint.extend_from_slice(name.as_bytes());
+        fingerprint.extend_from_slice(&(bytes.len() as u64).to_le_bytes());
+        fingerprint.extend_from_slice(&bytes);
+    }
+    Ok(sha256::hex(&fingerprint))
 }
 fn scoring_environment(repository: &Path) -> Result<String, String> {
     let bundle = compiler_core::routing::bundle();
@@ -1164,43 +1686,332 @@ fn write_json(path: &Path, value: &impl Serialize) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn scratch(label: &str) -> PathBuf {
+        std::env::temp_dir().join(format!("alchemy-waves-{label}-{}", std::process::id()))
+    }
+
+    fn fixture_owner(index: u32) -> DraftOwner {
+        DraftOwner {
+            owner: format!("main:{:08x}", 0x0800_0000 + index * 4),
+            address: 0x0800_0000 + index * 4,
+            size: 4,
+            retention: "c_candidate".into(),
+            kind: "code".into(),
+            reference: format!("reference-{index}.s"),
+            reference_sha256: format!("reference-{index}"),
+            symbol: format!("Fixture_{index}"),
+            name: None,
+            route: DraftRoute::IndependentM2c,
+        }
+    }
+
+    fn fixture_receipt() -> Value {
+        json!({"cohort_sha256":"cohort","receipt_sha256":"receipt","scoring_environment_sha256":"environment"})
+    }
+
+    fn fixture_record(owner: &DraftOwner, receipt: &Value) -> Value {
+        json!({"owner":owner.owner,"size":owner.size,"route":owner.route,"reference_sha256":owner.reference_sha256,"cohort_sha256":receipt["cohort_sha256"],"prepare_receipt_sha256":receipt["receipt_sha256"],"scoring_environment_sha256":receipt["scoring_environment_sha256"],"verdict":"scored","compiled":true,"residual":{"class":"structural_topology"}})
+    }
+
+    fn write_fixture_shard(
+        output: &Path,
+        cohort: &[DraftOwner],
+        receipt: &Value,
+        index: usize,
+        count: usize,
+    ) {
+        let rows = cohort
+            .iter()
+            .enumerate()
+            .filter(|(ordinal, _)| ordinal % count == index)
+            .map(|(_, owner)| {
+                let record = fixture_record(owner, receipt);
+                write_json(
+                    &output
+                        .join("results")
+                        .join(stem(owner.address))
+                        .join("verdict.json"),
+                    &record,
+                )
+                .unwrap();
+                record
+            })
+            .collect::<Vec<_>>();
+        let report = json!({"schema_version":2,"cohort_sha256":receipt["cohort_sha256"],"prepare_receipt_sha256":receipt["receipt_sha256"],"scoring_environment_sha256":receipt["scoring_environment_sha256"],"shard":{"index":index,"count":count},"scoreboard":scoreboard(&rows),"owners":rows});
+        write_json(
+            &output
+                .join("shards")
+                .join(format!("{index}-of-{count}.json")),
+            &report,
+        )
+        .unwrap();
+    }
+
+    #[test]
+    fn drafting_cohort_is_the_frozen_smallest_first_experiment() {
+        let repository = root();
+        let inventory = inventory(repository).unwrap();
+        let cohort = draft_cohort(repository, &inventory).unwrap();
+        assert_eq!(cohort.owners.len(), DRAFT_OWNERS);
+        assert_eq!(
+            cohort_counts(&cohort.owners),
+            (INDEPENDENT_OWNERS, OWNER_GROUP_OWNERS, SPLIT_REGION_OWNERS)
+        );
+        assert_eq!(cohort.ordering, "reference_size_ascending_then_address");
+        assert!(cohort.owners.iter().all(|owner| owner.symbol
+            == assembly_symbol(&repository.join(&owner.reference)).unwrap_or_default()));
+    }
+
+    #[test]
+    fn shards_are_zero_based_and_deterministic() {
+        let shard = parse_shard("2/3").unwrap();
+        assert_eq!((shard.index, shard.count), (2, 3));
+        let selected = (0..10).filter(|ordinal| ordinal % shard.count == shard.index);
+        assert_eq!(selected.collect::<Vec<_>>(), vec![2, 5, 8]);
+        assert!(parse_shard("3/3").is_err());
+        assert!(parse_shard("0/0").is_err());
+        assert!(parse_shard("1").is_err());
+    }
+
+    #[test]
+    fn prepared_sources_try_bound_m2c_then_ranked_templates() {
+        let pack = json!({"m2c":{"seed":"m2c/seed.c","seed_sha256":"seed"},"templates":[{"rank":1,"retargeted_source":"retargeted-1.c","retargeted_sha256":"one"},{"rank":2,"retargeted_source":"retargeted-2.c","retargeted_sha256":"two"}]});
+        let sources = pack_sources(Path::new("run/packs/08000000/pack.json"), &pack)
+            .into_iter()
+            .map(|(origin, _, digest)| (origin, digest))
+            .collect::<Vec<_>>();
+        assert_eq!(
+            sources,
+            vec![
+                ("bound_aggregate_m2c".into(), "seed".into()),
+                ("retargeted_template_1".into(), "one".into()),
+                ("retargeted_template_2".into(), "two".into())
+            ]
+        );
+    }
+
+    #[test]
+    fn layout_only_is_not_an_exact_or_floor_prediction_hit() {
+        let comparison = prediction_comparison(&[
+            json!({"route":"independent_m2c","compiled":true,"residual":{"class":"layout_only"}}),
+        ]);
+        assert_eq!(comparison["independent_175"]["exact_or_floor"]["owners"], 0);
+    }
+
+    #[test]
+    fn only_recorded_end_states_are_terminal() {
+        assert!(terminal_record(&json!({"verdict": "scored"})));
+        assert!(terminal_record(&json!({"verdict": "owner_group_parked"})));
+        assert!(!terminal_record(&json!({"verdict": "unclassified"})));
+        assert!(!terminal_record(&json!({})));
+    }
+
     #[test]
     fn authoritative_registry_rejects_translation_unit_templates() {
         let repository = root();
-        let names = SourcePaths::load(repository).unwrap();
         let units = TranslationUnits::load(repository).unwrap();
-        let unit = units
-            .units
+        let catalog = FamilyCatalog::load(repository, Path::new(FAMILIES)).unwrap();
+        let templates = catalog
+            .targets()
             .iter()
-            .find(|unit| unit.game == "gs1" && unit.owners.len() > 1)
-            .unwrap();
-        let owner = unit.source_owner(unit.owners[0].address).unwrap();
-        let template = Template {
-            owner: owner.id(),
-            symbol: owner.legacy_name(),
-            source: unit.source.to_string_lossy().into_owned(),
-            score_basis_points: 10_000,
-            canonical_name: None,
-        };
-        assert!(standalone_template(repository, &names, &units, &template).is_err());
+            .flat_map(|target| &target.alternatives)
+            .filter_map(|details| catalog.template(details))
+            .collect::<Vec<_>>();
+        assert!(!templates.is_empty());
+        assert!(templates
+            .iter()
+            .all(|template| units.unit_for_game_owner("gs1", template.owner).is_none()));
     }
     #[test]
     fn retarget_uses_registered_entry() {
-        let template = Template {
-            owner: "main:08000000".into(),
-            symbol: "Func_08000000".into(),
-            source: "fixture.c".into(),
-            score_basis_points: 10_000,
-            canonical_name: None,
-        };
         let source =
             "#include \"types.h\"\n/* Func_08000000() {} */\nvoid Func_08000000(void) {}\n";
-        let output = retarget(&template, "Func_08000004", source).unwrap();
+        let output = crate::families::retarget_source(
+            "main:08000000",
+            source,
+            "Func_08000000",
+            None,
+            "Func_08000004",
+            RetargetMode::EntryMacro,
+        )
+        .unwrap();
         assert!(output.contains("#define Func_08000000 Func_08000004"));
     }
     #[test]
-    fn dispatch_has_no_implicit_adoption_switch() {
-        assert!(parse_args(&["--apply".into()]).is_err());
+    fn draft_has_no_adoption_or_freeform_switch() {
+        assert!(simple_output(&["--apply".into()]).is_err());
+        assert!(draft_args(&["--edit".into(), "yes".into()]).is_err());
         assert!(!USAGE.contains("--apply"));
+    }
+
+    #[test]
+    fn reference_hash_is_a_preparation_invariant() {
+        let repository = scratch("reference");
+        fs::create_dir_all(&repository).unwrap();
+        let mut owner = fixture_owner(0);
+        write(&repository.join(&owner.reference), b"reference").unwrap();
+        owner.reference_sha256 = hash(repository.join(&owner.reference)).unwrap();
+        assert!(validate_reference(&repository, &owner).is_ok());
+        write(&repository.join(&owner.reference), b"changed").unwrap();
+        assert!(validate_reference(&repository, &owner).is_err());
+        fs::remove_file(repository.join(&owner.reference)).unwrap();
+        assert!(validate_reference(&repository, &owner).is_err());
+        fs::remove_dir_all(repository).unwrap();
+    }
+
+    #[test]
+    fn m2c_identity_fingerprints_the_resolved_script_and_macros() {
+        let directory = scratch("m2c");
+        fs::create_dir_all(&directory).unwrap();
+        let executable = directory.join("selected-m2c.py");
+        write(&executable, b"selected executable").unwrap();
+        write(&directory.join("m2c_macros.h"), b"selected macros").unwrap();
+        write(&directory.join("m2c/main.py"), b"imported module").unwrap();
+        let first = m2c_identity(&executable).unwrap();
+        assert_eq!(Path::new(&first.path), executable.canonicalize().unwrap());
+        assert_eq!(first.sha256, hash(&executable).unwrap());
+        write(&directory.join("m2c/main.py"), b"changed module").unwrap();
+        let changed = m2c_identity(&executable).unwrap();
+        assert_ne!(first, changed);
+        fs::rename(
+            directory.join("m2c/main.py"),
+            directory.join("m2c/renamed.py"),
+        )
+        .unwrap();
+        assert_ne!(changed, m2c_identity(&executable).unwrap());
+        fs::remove_dir_all(directory).unwrap();
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn draft_output_rejects_symlink_escape() {
+        use std::os::unix::fs::symlink;
+
+        let repository = scratch("output-repository");
+        let outside = scratch("output-outside");
+        fs::create_dir_all(repository.join("out")).unwrap();
+        fs::create_dir_all(&outside).unwrap();
+        assert!(validate_draft_output(&repository, &repository.join("out/run")).is_ok());
+        symlink(&outside, repository.join("out/escape")).unwrap();
+        let error =
+            validate_draft_output(&repository, &repository.join("out/escape/run")).unwrap_err();
+        assert!(error.contains("may not traverse symlink"));
+        fs::remove_file(repository.join("out/escape")).unwrap();
+        fs::create_dir_all(repository.join("out/run/packs")).unwrap();
+        symlink(&outside, repository.join("out/run/packs/escape")).unwrap();
+        let error = validate_draft_output(&repository, &repository.join("out/run")).unwrap_err();
+        assert!(error.contains("contains symlink"));
+        fs::remove_dir_all(repository).unwrap();
+        fs::remove_dir_all(outside).unwrap();
+    }
+
+    #[test]
+    fn collector_requires_one_coherent_shard_assignment_per_ordinal() {
+        let output = scratch("shards");
+        let cohort = (0..4).map(fixture_owner).collect::<Vec<_>>();
+        let receipt = fixture_receipt();
+        write_fixture_shard(&output, &cohort, &receipt, 0, 2);
+        write_fixture_shard(&output, &cohort, &receipt, 1, 2);
+        let collected = collect_shard_reports(&output, &cohort, &receipt);
+        assert!(collected.errors.is_empty(), "{:?}", collected.errors);
+        assert_eq!(collected.shard_count, Some(2));
+        assert_eq!(
+            collected
+                .records
+                .iter()
+                .map(|record| record["owner"].as_str().unwrap())
+                .collect::<Vec<_>>(),
+            cohort
+                .iter()
+                .map(|owner| owner.owner.as_str())
+                .collect::<Vec<_>>()
+        );
+
+        let path = output.join("shards/0-of-2.json");
+        let mut duplicate: Value = json_file(&path).unwrap();
+        let row = duplicate["owners"][0].clone();
+        duplicate["owners"].as_array_mut().unwrap().push(row);
+        duplicate["scoreboard"] = scoreboard(duplicate["owners"].as_array().unwrap());
+        write_json(&path, &duplicate).unwrap();
+        let collected = collect_shard_reports(&output, &cohort, &receipt);
+        assert!(collected
+            .errors
+            .iter()
+            .any(|error| error.contains("not in shard")));
+        fs::remove_dir_all(output).unwrap();
+    }
+
+    #[test]
+    fn failed_pack_keeps_its_original_terminal_error() {
+        let repository = scratch("pack-failed");
+        let mut owner = fixture_owner(0);
+        write(&repository.join(&owner.reference), b"reference").unwrap();
+        owner.reference_sha256 = hash(repository.join(&owner.reference)).unwrap();
+        let prepared = repository.join("prepared");
+        let pack_path = prepared.join("packs/08000000/pack.json");
+        write_json(
+            &pack_path,
+            &json!({"status":"pack_failed","error":"m2c rejected fixture"}),
+        )
+        .unwrap();
+        let record = draft_owner(
+            &repository,
+            &prepared,
+            &repository.join("result"),
+            &owner,
+            &fixture_receipt(),
+        );
+        assert_eq!(record["verdict"], "pack_failed");
+        assert_eq!(record["error"], "m2c rejected fixture");
+        fs::remove_dir_all(repository).unwrap();
+    }
+
+    #[test]
+    fn partial_preparation_reuses_current_packs_and_rejects_changed_inputs() {
+        let output = scratch("resume");
+        fs::create_dir_all(&output).unwrap();
+        let cohort = DraftCohort {
+            schema_version: 1,
+            manifest_sha256: "manifest".into(),
+            ordering: "fixture".into(),
+            owners: (0..2).map(fixture_owner).collect(),
+        };
+        write(&output.join("cohort.tmp-interrupted"), b"partial").unwrap();
+        resume_cohort(&output, &cohort).unwrap();
+        let state = json!({"schema_version":1,"manifest_sha256":"manifest","family_index_sha256":"family","m2c_identity":{"source_tree_sha256":"m2c"}});
+        write(&output.join("prepare-state.tmp-interrupted"), b"partial").unwrap();
+        resume_state(&output, &state).unwrap();
+        let path = output.join("packs/08000000/pack.json");
+        write_json(&path,&json!({"schema_version":4,"owner":cohort.owners[0].owner,"route":cohort.owners[0].route,"reference_sha256":cohort.owners[0].reference_sha256,"manifest_sha256":"manifest","family_index_sha256":"family","m2c_identity":state["m2c_identity"],"status":"pack_failed","error":"recorded","contexts":Value::Null,"m2c":Value::Null,"templates":[]})).unwrap();
+        assert!(current_pack(&path, &cohort.owners[0], &state).is_some());
+        let mut stale: Value = json_file(&path).unwrap();
+        stale["reference_sha256"] = json!("stale");
+        write_json(&path, &stale).unwrap();
+        assert!(current_pack(&path, &cohort.owners[0], &state).is_none());
+        assert!(current_pack(
+            &output.join("packs/08000004/pack.json"),
+            &cohort.owners[1],
+            &state
+        )
+        .is_none());
+        let mut changed = state.clone();
+        changed["m2c_identity"]["source_tree_sha256"] = json!("changed");
+        assert!(resume_state(&output, &changed).is_err());
+        fs::remove_dir_all(output).unwrap();
+    }
+
+    #[test]
+    fn winner_is_the_dominant_scored_nonexact_class_with_stable_ties() {
+        let record = |class: &str, size| json!({"route":"independent_m2c","compiled":true,"size":size,"residual":{"class":class}});
+        let comparison = prediction_comparison(&[
+            record("missing_extra_code", 4),
+            record("missing_extra_code", 4),
+            record("structural_topology", 16),
+        ]);
+        assert_eq!(comparison["winner"], "missing_extra_code");
+        assert_eq!(comparison["structural_prediction_met"], false);
+        let tied = prediction_comparison(&[record("beta", 4), record("alpha", 4)]);
+        assert_eq!(tied["winner"], "alpha");
     }
 }

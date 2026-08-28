@@ -1,4 +1,4 @@
-//! Exact-family m2c seed generation for `compiler families transplant`.
+//! Typed aggregate and exact-family context for m2c seed generation.
 
 use candidate_compiler::verify::{
     compile_to_assembly, run, CandidateCompilerConfiguration, CandidateCompilerFamily,
@@ -6,6 +6,7 @@ use candidate_compiler::verify::{
 use compiler_core::{
     plan::direct_preprocessor_command,
     routing::{root, uses_agbcc_compiler, CompilerTarget},
+    sha256,
     source_paths::SourceOwner,
 };
 use regex::Regex;
@@ -15,10 +16,24 @@ use std::{
     path::{Path, PathBuf},
 };
 
+pub(crate) struct ContextReceipt {
+    pub path: PathBuf,
+    pub sha256: String,
+    pub kind: &'static str,
+}
+
 pub(crate) struct Seed {
     pub source: PathBuf,
-    pub context: Option<PathBuf>,
+    pub source_sha256: String,
+    pub contexts: Vec<ContextReceipt>,
     pub context_kind: &'static str,
+    pub aggregate_report: PathBuf,
+    pub aggregate_report_sha256: String,
+    pub compile_header: PathBuf,
+    pub compile_header_sha256: String,
+    pub proposal_count: usize,
+    pub struct_count: usize,
+    pub rejected_misaligned_fields: usize,
 }
 
 pub(crate) fn generate(
@@ -28,8 +43,48 @@ pub(crate) fn generate(
     template: Option<(SourceOwner, &Path, &str)>,
     output: &Path,
 ) -> Result<Seed, String> {
+    let m2c = locate_m2c()?;
+    generate_with_m2c(
+        target_owner,
+        target_assembly,
+        target_symbol,
+        template,
+        output,
+        &m2c,
+    )
+}
+
+pub(crate) fn generate_with_m2c(
+    target_owner: SourceOwner,
+    target_assembly: &Path,
+    target_symbol: &str,
+    template: Option<(SourceOwner, &Path, &str)>,
+    output: &Path,
+    m2c: &Path,
+) -> Result<Seed, String> {
     fs::create_dir_all(output).map_err(|error| format!("{}: {error}", output.display()))?;
-    let context = if let Some((template_owner, template_source, template_symbol)) = template {
+    let aggregate = crate::aggregate_context::artifacts()?;
+    let compile_header = output.join("shared-aggregates.h");
+    write(
+        &compile_header,
+        &fs::read(&aggregate.header)
+            .map_err(|error| format!("{}: {error}", aggregate.header.display()))?,
+    )?;
+    let aggregate_wrapper = output.join("aggregate-context.c");
+    let aggregate_context = output.join("aggregate-context.i");
+    write(
+        &aggregate_wrapper,
+        b"#define ALCHEMY_M2C_CONTEXT 1\n#include \"shared-aggregates.h\"\n",
+    )?;
+    run(
+        &direct_preprocessor_command(
+            text_path(&aggregate_wrapper)?,
+            text_path(&aggregate_context)?,
+        )?,
+        root(),
+    )?;
+    let mut contexts = vec![receipt(aggregate_context, "aggregate")?];
+    if let Some((template_owner, template_source, template_symbol)) = template {
         let route = template_owner.routing_path();
         let assembly = compile_to_assembly(
             text_path(template_source)?,
@@ -63,10 +118,8 @@ pub(crate) fn generate(
                 .replace(template_symbol, target_symbol)
                 .as_bytes(),
         )?;
-        Some(path)
-    } else {
-        None
-    };
+        contexts.push(receipt(path, "family_template")?);
+    }
     let target_text = read(target_assembly)?;
     let mut canonical_text = String::new();
     let mut previous_is_symbol = false;
@@ -102,14 +155,13 @@ pub(crate) fn generate(
     let symbolized = output.join("symbolized.s");
     write(
         &symbolized,
-        symbolize(target_assembly, &listing, target_symbol)?.as_bytes(),
+        symbolize(target_assembly, &listing, target_symbol, &aggregate.roots)?.as_bytes(),
     )?;
 
-    let m2c = locate_m2c()?;
     let source = output.join(format!("{}.c", target_owner.address_stem()));
-    let arguments = m2c_arguments(&m2c, target_symbol, &symbolized, context.as_deref());
+    let arguments = m2c_arguments(m2c, target_symbol, &symbolized, &contexts);
     let translated = run(&arguments, root())?;
-    let mut body = b"#include \"types.h\"\n\n".to_vec();
+    let mut body = b"#include \"shared-aggregates.h\"\n\n".to_vec();
     body.extend(
         fs::read(m2c.parent().unwrap_or(Path::new(".")).join("m2c_macros.h"))
             .map_err(|error| format!("m2c_macros.h: {error}"))?,
@@ -118,17 +170,40 @@ pub(crate) fn generate(
     body.extend(translated.as_bytes());
     write(&source, &body)?;
     Ok(Seed {
+        source_sha256: sha256::hex(&body),
         source,
-        context,
+        contexts,
         context_kind: if template.is_some() {
-            "family_template"
+            "aggregate+family_template"
         } else {
-            "none"
+            "aggregate"
         },
+        aggregate_report: aggregate.report,
+        aggregate_report_sha256: aggregate.report_sha256,
+        compile_header,
+        compile_header_sha256: aggregate.header_sha256,
+        proposal_count: aggregate.proposal_count,
+        struct_count: aggregate.struct_count,
+        rejected_misaligned_fields: aggregate.rejected_misaligned_fields,
     })
 }
 
-fn m2c_arguments(m2c: &Path, symbol: &str, assembly: &Path, context: Option<&Path>) -> Vec<String> {
+fn receipt(path: PathBuf, kind: &'static str) -> Result<ContextReceipt, String> {
+    Ok(ContextReceipt {
+        sha256: sha256::hex(
+            &fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?,
+        ),
+        path,
+        kind,
+    })
+}
+
+fn m2c_arguments(
+    m2c: &Path,
+    symbol: &str,
+    assembly: &Path,
+    contexts: &[ContextReceipt],
+) -> Vec<String> {
     let mut arguments = vec![
         "python3".into(),
         text_path(m2c).unwrap().into(),
@@ -142,14 +217,14 @@ fn m2c_arguments(m2c: &Path, symbol: &str, assembly: &Path, context: Option<&Pat
         "none".into(),
         "--no-cache".into(),
     ];
-    if let Some(context) = context {
-        arguments.extend(["--context".into(), text_path(context).unwrap().into()]);
+    for context in contexts {
+        arguments.extend(["--context".into(), text_path(&context.path).unwrap().into()]);
     }
     arguments.push(text_path(assembly).unwrap().into());
     arguments
 }
 
-fn locate_m2c() -> Result<PathBuf, String> {
+pub(crate) fn locate_m2c() -> Result<PathBuf, String> {
     env::var_os("M2C")
         .map(PathBuf::from)
         .into_iter()
@@ -167,7 +242,12 @@ fn locate_m2c() -> Result<PathBuf, String> {
 
 /// Turn numeric PC-relative operands into the local labels m2c requires. The
 /// assembler listing is the single source of truth for source-line offsets.
-fn symbolize(source: &Path, listing: &Path, symbol: &str) -> Result<String, String> {
+fn symbolize(
+    source: &Path,
+    listing: &Path,
+    symbol: &str,
+    roots: &BTreeMap<u32, String>,
+) -> Result<String, String> {
     let original_text = read(source)?;
     let original = original_text.lines().collect::<Vec<_>>();
     let base_regex = Regex::new(r"(?i)([0-9a-f]{8})").unwrap();
@@ -324,16 +404,35 @@ fn symbolize(source: &Path, listing: &Path, symbol: &str) -> Result<String, Stri
         if let Some(capture) = absolute.captures(&lines[line]) {
             output.push_str(&format!("{}\t.global {}", &capture[1], &capture[2]));
         } else {
-            output.push_str(&lines[line]);
+            output.push_str(&typed_word(&lines[line], roots));
         }
         output.push('\n');
     }
     for (address, value) in external_pools {
-        output.push_str(&format!(
-            ".Lm2c_pool_{address:04x}:\n.4byte 0x{value:08x}\n"
-        ));
+        let value = roots
+            .get(&value)
+            .cloned()
+            .unwrap_or_else(|| format!("0x{value:08x}"));
+        output.push_str(&format!(".Lm2c_pool_{address:04x}:\n.4byte {value}\n"));
     }
     Ok(output)
+}
+
+fn typed_word(line: &str, roots: &BTreeMap<u32, String>) -> String {
+    let Some((prefix, tail)) = line.split_once(".4byte 0x") else {
+        return line.into();
+    };
+    let digits = tail
+        .chars()
+        .take_while(char::is_ascii_hexdigit)
+        .collect::<String>();
+    let Some(name) = u32::from_str_radix(&digits, 16)
+        .ok()
+        .and_then(|address| roots.get(&address))
+    else {
+        return line.into();
+    };
+    format!("{prefix}.4byte {name}{}", &tail[digits.len()..])
 }
 
 fn text_path(path: &Path) -> Result<&str, String> {
@@ -359,7 +458,7 @@ mod tests {
         let listing = directory.join("target.lst");
         write(&source, b".thumb\nldr r2, [pc, #8]\nmov pc, r2\n.4byte 0x08000008\nnop\n.align 2\n.4byte 0x08000004\n").unwrap();
         write(&listing, b"1 0000 asm\n2 0000 0000 asm\n3 0002 0000 asm\n4 0004 00000000 asm\n5 0008 0000 asm\n6 000a 00 asm\n7 000c 00000000 asm\n").unwrap();
-        let output = symbolize(&source, &listing, "Func_08000000").unwrap();
+        let output = symbolize(&source, &listing, "Func_08000000", &BTreeMap::new()).unwrap();
         assert!(output.contains("ldr r2, .Lm2c_jtbl_ptr_1"));
         assert!(output.contains(".4byte .Lm2c_08000008"));
         assert!(output.contains(".Lm2c_jtbl_ptr_1:"));
@@ -369,7 +468,7 @@ mod tests {
             b"1 0000 asm\n2 0000 asm\n3 0000 asm\n4 0000 asm\n5 0000 0000 asm\n6 0002 0000 asm\n",
         )
         .unwrap();
-        let output = symbolize(&source, &listing, "HumanOwner").unwrap();
+        let output = symbolize(&source, &listing, "HumanOwner", &BTreeMap::new()).unwrap();
         assert!(!output.contains("Region_08000000:"));
         assert!(output.contains(".global sub_08000100"));
         assert!(output.contains("ldr r0, .Lm2c_pool_0008"));
@@ -377,17 +476,62 @@ mod tests {
         fs::remove_dir_all(directory).unwrap();
     }
     #[test]
-    fn m2c_context_is_optional() {
-        let plain = m2c_arguments(Path::new("m2c.py"), "Target", Path::new("target.s"), None);
-        let contextual = m2c_arguments(
-            Path::new("m2c.py"),
-            "Target",
-            Path::new("target.s"),
-            Some(Path::new("exact.i")),
-        );
-        assert!(!plain.contains(&"--context".into()));
-        assert!(contextual
-            .windows(2)
-            .any(|pair| pair == ["--context", "exact.i"]));
+    fn m2c_accepts_aggregate_and_family_contexts() {
+        let directory = env::temp_dir().join(format!(
+            "alchemy-family-m2c-contexts-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&directory);
+        fs::create_dir_all(&directory).unwrap();
+        let assembly = directory.join("08000000.s");
+        let aggregate = directory.join("aggregate.i");
+        let family = directory.join("family.i");
+        write(&assembly, b".thumb\n.global CombinedContext\nCombinedContext:\nldr r0, .Lroot\nldr r0, [r0, #4]\nbl FamilyTransform\nbx lr\n.align 2\n.Lroot:\n.4byte absolute_03001000\n").unwrap();
+        write(&aggregate, b"typedef unsigned int u32;\nstruct M2cAggregate_absolute_03001000 { u32 field_0000; u32 field_0004; };\nextern struct M2cAggregate_absolute_03001000 absolute_03001000;\n").unwrap();
+        write(
+            &family,
+            b"unsigned int FamilyTransform(unsigned int value);\n",
+        )
+        .unwrap();
+        let contexts = [
+            receipt(aggregate, "aggregate").unwrap(),
+            receipt(family, "family_template").unwrap(),
+        ];
+        let m2c = locate_m2c().expect("m2c is required for the two-context regression");
+        let output = run(
+            &m2c_arguments(&m2c, "CombinedContext", &assembly, &contexts),
+            root(),
+        )
+        .unwrap();
+        assert!(output.contains("FamilyTransform(absolute_03001000.field_0004)"));
+        fs::remove_dir_all(directory).unwrap();
+    }
+
+    #[test]
+    fn known_absolute_root_becomes_named_field_access() {
+        let directory =
+            env::temp_dir().join(format!("alchemy-family-m2c-field-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&directory);
+        fs::create_dir_all(&directory).unwrap();
+        let source = directory.join("08000000.s");
+        let listing = directory.join("target.lst");
+        let context = directory.join("aggregate.i");
+        write(&source, b".thumb\n.global KnownRoot\nKnownRoot:\nldr r0, [pc, #4]\nldr r0, [r0, #4]\nbx lr\n.align 2\n.4byte 0x03001000\n").unwrap();
+        write(&listing, b"1 0000 asm\n2 0000 asm\n3 0000 asm\n4 0000 0000 asm\n5 0002 0000 asm\n6 0004 0000 asm\n7 0006 00 asm\n8 0008 00000000 asm\n").unwrap();
+        write(&context, b"typedef unsigned int u32;\nstruct M2cAggregate_absolute_03001000 { u32 field_0000; u32 field_0004; };\nextern struct M2cAggregate_absolute_03001000 absolute_03001000;\n").unwrap();
+        let roots = BTreeMap::from([(0x0300_1000, "absolute_03001000".into())]);
+        let symbolized = symbolize(&source, &listing, "KnownRoot", &roots).unwrap();
+        assert!(symbolized.contains(".4byte absolute_03001000"));
+        let assembly = directory.join("symbolized.s");
+        write(&assembly, symbolized.as_bytes()).unwrap();
+        let m2c = locate_m2c().expect("m2c is required for the field-context regression");
+        let contexts = [receipt(context, "aggregate").unwrap()];
+        let output = run(
+            &m2c_arguments(&m2c, "KnownRoot", &assembly, &contexts),
+            root(),
+        )
+        .unwrap();
+        assert!(output.contains("absolute_03001000.field_0004"));
+        fs::remove_dir_all(directory).unwrap();
     }
 }

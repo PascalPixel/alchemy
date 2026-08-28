@@ -6,11 +6,7 @@ use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 
 fn root() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .and_then(Path::parent)
-        .expect("owner gate is under tools")
-        .to_path_buf()
+    compiler_core::routing::root().to_path_buf()
 }
 
 fn json(path: &Path) -> Result<Value, String> {

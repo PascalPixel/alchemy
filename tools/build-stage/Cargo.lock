@@ -50,7 +50,6 @@ dependencies = [
  "compiler-core",
  "decomp-targets",
  "serde_json",
- "sha2",
 ]
 
 [[package]]

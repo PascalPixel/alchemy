@@ -1,7 +1,7 @@
 //! Canonical address-qualified owner, symbol, path, and routing register.
 //! String records use the path stem as their symbol; object records carry
 //! exceptions. GS1 remains the compatibility default during the migration.
-use serde_json::Value;
+use serde_json::{Map, Value};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Component, Path, PathBuf};
@@ -29,19 +29,11 @@ impl SourceOwner {
         })
     }
     pub fn from_legacy_stem(stem: &str) -> Option<Self> {
-        if stem.len() == 8 && lower_hex(stem) {
-            return u32::from_str_radix(stem, 16).ok().map(Self::Main);
+        if let Some((resource, address)) = stem.split_once("_c_") {
+            Self::parse(&format!("{resource}:{address}")).ok()
+        } else {
+            Self::parse(&format!("main:{stem}")).ok()
         }
-        let (resource, address) = stem.split_once("_c_")?;
-        let resource = resource.strip_prefix("resource_")?;
-        if resource.len() != 3 || address.len() != 8 || !lower_hex(resource) || !lower_hex(address)
-        {
-            return None;
-        }
-        Some(Self::Overlay {
-            resource: u16::from_str_radix(resource, 16).ok()?,
-            address: u32::from_str_radix(address, 16).ok()?,
-        })
     }
     pub fn id(self) -> String {
         match self {
@@ -111,6 +103,21 @@ fn parse_lower_hex(value: &str, width: usize, owner: &str) -> Result<u32, String
     u32::from_str_radix(value, 16)
         .map_err(|error| format!("invalid source owner {owner:?}: {error}"))
 }
+fn record_text<'a>(
+    record: &'a Map<String, Value>,
+    id: &str,
+    key: &str,
+    label: &str,
+) -> Result<Option<&'a str>, String> {
+    record
+        .get(key)
+        .map(|value| {
+            value
+                .as_str()
+                .ok_or_else(|| format!("{id}: {label} must be a string"))
+        })
+        .transpose()
+}
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct SourceFile {
     pub owner: SourceOwner,
@@ -168,30 +175,12 @@ impl SourcePaths {
                 let record = value.as_object().ok_or_else(|| {
                     format!("{id}: owner record must be a source string or object")
                 })?;
-                let explicit_name = record
-                    .get("name")
-                    .map(|name| {
-                        name.as_str()
-                            .ok_or_else(|| format!("{id}: owner name must be a string"))
-                    })
+                let explicit_name = record_text(record, id, "name", "owner name")?;
+                let source = record_text(record, id, "source", "source path")?
+                    .map(validate_source_path)
                     .transpose()?;
-                let source = record
-                    .get("source")
-                    .map(|source| {
-                        source
-                            .as_str()
-                            .ok_or_else(|| format!("{id}: source path must be a string"))
-                            .and_then(validate_source_path)
-                    })
-                    .transpose()?;
-                let call_via = record
-                    .get("call_via")
-                    .map(|value| {
-                        value
-                            .as_str()
-                            .ok_or_else(|| format!("{id}: call_via must be a string"))
-                            .and_then(|value| parse_lower_hex(value, 8, id))
-                    })
+                let call_via = record_text(record, id, "call_via", "call_via")?
+                    .map(|value| parse_lower_hex(value, 8, id))
                     .transpose()?;
                 (explicit_name, source, call_via)
             };
@@ -413,8 +402,7 @@ impl SourcePaths {
             .collect()
     }
     pub fn owner_for_path(&self, path: &Path) -> Result<Option<SourceOwner>, String> {
-        let owners = self.owners_for_path(path);
-        match owners.as_slice() {
+        match self.owners_for_path(path).as_slice() {
             [] => Ok(None),
             [owner] => Ok(Some(*owner)),
             _ => Err(format!(

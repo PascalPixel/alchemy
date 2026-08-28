@@ -183,33 +183,22 @@ impl TranslationUnits {
                 ));
             }
             let names = SourcePaths::load_for_game(root, unit.target()?.as_str())?;
-            let owner_names = unit
-                .owners
-                .iter()
-                .map(|member| {
-                    let owner = unit.source_owner(member.address)?;
+            let mut canonical_names = unit
+                .symbols()
+                .map(|(address, _, _)| {
+                    let owner = unit.source_owner(address)?;
                     names
                         .registered_name(owner)
                         .map(str::to_owned)
                         .ok_or_else(|| format!("{}: {} is not registered", unit.id, owner.id()))
                 })
-                .collect::<Result<Vec<_>, String>>()?;
-            for (member, name) in unit.owners.iter_mut().zip(owner_names) {
-                member.canonical_name = name;
+                .collect::<Result<Vec<_>, String>>()?
+                .into_iter();
+            for member in &mut unit.owners {
+                member.canonical_name = canonical_names.next().expect("one name per symbol");
             }
-            let local_names = unit
-                .local_symbols
-                .iter()
-                .map(|member| {
-                    let owner = unit.source_owner(member.address)?;
-                    names
-                        .registered_name(owner)
-                        .map(str::to_owned)
-                        .ok_or_else(|| format!("{}: {} is not registered", unit.id, owner.id()))
-                })
-                .collect::<Result<Vec<_>, String>>()?;
-            for (member, name) in unit.local_symbols.iter_mut().zip(local_names) {
-                member.canonical_name = name;
+            for member in &mut unit.local_symbols {
+                member.canonical_name = canonical_names.next().expect("one name per symbol");
             }
             if unit
                 .owners
@@ -218,26 +207,21 @@ impl TranslationUnits {
             {
                 return Err(format!("{}: owners are not strictly ordered", unit.id));
             }
-            let owners = unit.owners.iter().map(|member| {
-                (
-                    member.address,
-                    member.canonical_name.as_str(),
-                    member.extent,
-                    true,
-                )
-            });
-            let symbols = unit.local_symbols.iter().map(|member| {
-                (
-                    member.address,
-                    member.canonical_name.as_str(),
-                    member.extent,
-                    false,
-                )
-            });
             let mut members = BTreeSet::new();
-            for (address, alias, extent, is_owner) in owners.chain(symbols) {
+            let owner_count = unit.owners.len();
+            for (index, (address, alias, extent)) in unit.symbols().enumerate() {
+                let is_owner = index < owner_count;
                 let source_owner = unit.source_owner(address)?;
-                validate_member(unit, source_owner, alias, extent, &names)?;
+                if extent == 0
+                    || !c_identifier(alias)
+                    || names.registered_name(source_owner) != Some(alias)
+                {
+                    return Err(format!(
+                        "{}: {} has a noncanonical alias or extent",
+                        unit.id,
+                        source_owner.id()
+                    ));
+                }
                 if !members.insert(source_owner) || (is_owner && !claimed.insert(source_owner)) {
                     let kind = if is_owner { "owner" } else { "local symbol" };
                     return Err(format!(
@@ -450,22 +434,6 @@ fn unconditional_quoted_includes(source: &str) -> Vec<&str> {
         continued = raw.trim_end().ends_with('\\');
     }
     names
-}
-fn validate_member(
-    unit: &TranslationUnit,
-    owner: SourceOwner,
-    alias: &str,
-    extent: usize,
-    names: &SourcePaths,
-) -> Result<(), String> {
-    if extent == 0 || !c_identifier(alias) || names.registered_name(owner) != Some(alias) {
-        return Err(format!(
-            "{}: {} has a noncanonical alias or extent",
-            unit.id,
-            owner.id()
-        ));
-    }
-    Ok(())
 }
 fn unit_id(value: &str) -> bool {
     !value.is_empty()

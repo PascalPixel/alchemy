@@ -126,6 +126,40 @@ struct CorpusOwner {
     #[serde(skip_serializing_if = "BTreeMap::is_empty")]
     core_diff_bytes_from_ja: BTreeMap<String, usize>,
 }
+impl CorpusOwner {
+    fn new(en_owner: String, size: usize, core_bytes: Option<usize>) -> Self {
+        Self {
+            en_owner,
+            size,
+            core_bytes,
+            start_overrides: BTreeMap::new(),
+            location_methods: String::with_capacity(EDITIONS.len()),
+            core_diff_bytes_from_ja: BTreeMap::new(),
+        }
+    }
+
+    fn record_edition(
+        &mut self,
+        totals: &mut EditionTotals,
+        edition: &str,
+        start: String,
+        canonical_start: &str,
+        location_method: &str,
+        difference: usize,
+    ) -> Result<(), String> {
+        if start != canonical_start {
+            self.start_overrides.insert(edition.into(), start);
+        }
+        self.location_methods
+            .push(location_method_code(location_method)?);
+        if difference != 0 {
+            self.core_diff_bytes_from_ja
+                .insert(edition.into(), difference);
+        }
+        record_edition(totals, edition, self.size, difference == 0);
+        Ok(())
+    }
+}
 #[derive(Debug, Serialize)]
 struct UnresolvedOwner {
     en_owner: String,
@@ -748,6 +782,72 @@ fn write_json<T: Serialize>(path: &Path, value: &T, label: &str) -> Result<(), S
         .map_err(|error| format!("serialize {label}: {error}"))?
         + "\n";
     fs::write(path, json).map_err(|error| format!("{}: {error}", path.display()))?;
+    Ok(())
+}
+fn corpus_report(
+    source_state: &'static str,
+    resources_total: Option<usize>,
+    owners_total: usize,
+    owner_symbol_bytes: usize,
+    resource_tables: Option<BTreeMap<String, String>>,
+    mut owners: Vec<CorpusOwner>,
+    unresolved: Vec<UnresolvedOwner>,
+    totals: &EditionTotals,
+) -> CorpusReport {
+    owners.sort_by(|left, right| left.en_owner.cmp(&right.en_owner));
+    let shared = |owner: &&CorpusOwner| owner.core_diff_bytes_from_ja.is_empty();
+    let regional = |owner: &&CorpusOwner| !owner.core_diff_bytes_from_ja.is_empty();
+    CorpusReport {
+        schema_version: CORRESPONDENCE_SCHEMA_VERSION,
+        game: "gs1",
+        source_edition: "en",
+        base_edition: "ja",
+        source_state,
+        resources_total,
+        owners_total,
+        owner_symbol_bytes,
+        matched_owners: owners.len(),
+        matched_bytes: owners.iter().map(|owner| owner.size).sum(),
+        shared_core_owners: owners.iter().filter(shared).count(),
+        shared_core_bytes: owners.iter().filter(shared).map(|owner| owner.size).sum(),
+        regional_core_owners: owners.iter().filter(regional).count(),
+        regional_core_bytes: owners.iter().filter(regional).map(|owner| owner.size).sum(),
+        unresolved_owners: unresolved.len(),
+        compliance_excluded_owners: unresolved
+            .iter()
+            .filter(|owner| owner.error.starts_with("compliance:"))
+            .count(),
+        resource_tables,
+        location_method_codes: location_method_codes(),
+        editions: edition_summaries(totals),
+        owners,
+        unresolved,
+    }
+}
+fn emit_corpus_report(
+    options: &Options,
+    report: &CorpusReport,
+    label: &str,
+    output_key: &str,
+) -> Result<(), String> {
+    if let Some(path) = &options.write {
+        write_json(path, report, label)?;
+        println!(
+            "{output_key}={} owners={} matched={} shared_core={} regional_core={} unresolved={}",
+            path.display(),
+            report.owners_total,
+            report.matched_owners,
+            report.shared_core_owners,
+            report.regional_core_owners,
+            report.unresolved_owners
+        );
+    } else {
+        println!(
+            "{}",
+            serde_json::to_string_pretty(report)
+                .map_err(|error| format!("serialize {label}: {error}"))?
+        );
+    }
     Ok(())
 }
 fn compact_corpus_edition_build_owner(
@@ -1490,50 +1590,28 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
         )?;
     }
     let mut owners = Vec::new();
-    let mut matched_bytes = 0;
-    let mut shared_core_bytes = 0;
-    let mut regional_core_bytes = 0;
     let mut edition_totals = edition_totals();
     for (owner, report) in reports {
-        matched_bytes += report.size;
-        if report.core_identical {
-            shared_core_bytes += report.size;
-        } else {
-            regional_core_bytes += report.size;
-        }
         let canonical_start = format!("0x{owner}");
-        let mut start_overrides = BTreeMap::new();
-        let mut location_methods = String::with_capacity(EDITIONS.len());
-        let mut core_diff_bytes_from_ja = BTreeMap::new();
+        let mut row = CorpusOwner::new(canonical_main_owner_id(&owner)?, report.size, None);
         for edition in &report.editions {
-            if edition.start != canonical_start {
-                start_overrides.insert(edition.edition.clone(), edition.start.clone());
-            }
-            location_methods.push(location_method_code(if edition.edition == "en" {
+            let location_method = if edition.edition == "en" {
                 "source"
             } else if edition.anchor_matches == 0 {
                 "neighbor_exact"
             } else {
                 "global_anchor"
-            })?);
-            if edition.core_diff_bytes != 0 {
-                core_diff_bytes_from_ja.insert(edition.edition.clone(), edition.core_diff_bytes);
-            }
-            record_edition(
+            };
+            row.record_edition(
                 &mut edition_totals,
                 &edition.edition,
-                report.size,
-                edition.core_identical,
-            );
+                edition.start.clone(),
+                &canonical_start,
+                location_method,
+                edition.core_diff_bytes,
+            )?;
         }
-        owners.push(CorpusOwner {
-            en_owner: canonical_main_owner_id(&owner)?,
-            size: report.size,
-            core_bytes: None,
-            start_overrides,
-            location_methods,
-            core_diff_bytes_from_ja,
-        });
+        owners.push(row);
     }
     let unresolved = failures
         .into_iter()
@@ -1545,63 +1623,17 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
             })
         })
         .collect::<Result<Vec<_>, String>>()?;
-    let editions = edition_summaries(&edition_totals);
-    let report = CorpusReport {
-        schema_version: CORRESPONDENCE_SCHEMA_VERSION,
-        game: "gs1",
-        source_edition: "en",
-        base_edition: "ja",
-        source_state: "byte-exact C",
-        resources_total: None,
-        owners_total: owner_names.len(),
+    let report = corpus_report(
+        "byte-exact C",
+        None,
+        owner_names.len(),
         owner_symbol_bytes,
-        matched_owners: owners.len(),
-        matched_bytes,
-        shared_core_owners: owners
-            .iter()
-            .filter(|owner| owner.core_diff_bytes_from_ja.is_empty())
-            .count(),
-        shared_core_bytes,
-        regional_core_owners: owners
-            .iter()
-            .filter(|owner| !owner.core_diff_bytes_from_ja.is_empty())
-            .count(),
-        regional_core_bytes,
-        unresolved_owners: unresolved.len(),
-        compliance_excluded_owners: unresolved
-            .iter()
-            .filter(|owner| owner.error.starts_with("compliance:"))
-            .count(),
-        resource_tables: None,
-        location_method_codes: location_method_codes(),
-        editions,
+        None,
         owners,
         unresolved,
-    };
-    let json = serde_json::to_string_pretty(&report)
-        .map_err(|error| format!("serialize corpus report: {error}"))?
-        + "\n";
-    if let Some(path) = &options.write {
-        if let Some(parent) = path
-            .parent()
-            .filter(|parent| !parent.as_os_str().is_empty())
-        {
-            fs::create_dir_all(parent).map_err(|error| format!("{}: {error}", parent.display()))?;
-        }
-        fs::write(path, json).map_err(|error| format!("{}: {error}", path.display()))?;
-        println!(
-            "correspondence={} owners={} matched={} shared_core={} regional_core={} unresolved={}",
-            path.display(),
-            report.owners_total,
-            report.matched_owners,
-            report.shared_core_owners,
-            report.regional_core_owners,
-            report.unresolved_owners
-        );
-    } else {
-        print!("{json}");
-    }
-    Ok(())
+        &edition_totals,
+    );
+    emit_corpus_report(options, &report, "corpus report", "correspondence")
 }
 fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String> {
     let owner_list = exact_overlay_owners()?;
@@ -1680,8 +1712,6 @@ fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String>
     }
     let mut owners = Vec::new();
     let mut edition_totals = edition_totals();
-    let mut shared_core_bytes = 0;
-    let mut regional_core_bytes = 0;
     for found in matches.into_values() {
         let ja_start = found.starts["ja"];
         let ja = overlay_window(
@@ -1692,10 +1722,11 @@ fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String>
             found.owner.size,
         )?;
         let canonical_start = format!("0x{:08x}", OVERLAY_BASE + found.owner.en_offset as u64);
-        let mut start_overrides = BTreeMap::new();
-        let mut methods = String::with_capacity(EDITIONS.len());
-        let mut differences = BTreeMap::new();
-        let mut shared = true;
+        let mut row = CorpusOwner::new(
+            found.owner.name.clone(),
+            found.owner.size,
+            Some(found.mask.iter().filter(|masked| !**masked).count()),
+        );
         for edition in EDITIONS {
             let start = found.starts[edition];
             let other = overlay_window(
@@ -1706,37 +1737,18 @@ fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String>
                 found.owner.size,
             )?;
             let difference = core_diff_bytes(ja, other, &found.mask);
-            shared &= difference == 0;
             let start = format!("0x{:08x}", OVERLAY_BASE + start as u64);
-            if start != canonical_start {
-                start_overrides.insert(edition.to_string(), start);
-            }
-            methods.push(location_method_code(found.methods[edition])?);
-            if difference != 0 {
-                differences.insert(edition.to_string(), difference);
-            }
-            record_edition(
+            row.record_edition(
                 &mut edition_totals,
                 edition,
-                found.owner.size,
-                difference == 0,
-            );
+                start,
+                &canonical_start,
+                found.methods[edition],
+                difference,
+            )?;
         }
-        if shared {
-            shared_core_bytes += found.owner.size;
-        } else {
-            regional_core_bytes += found.owner.size;
-        }
-        owners.push(CorpusOwner {
-            en_owner: found.owner.name.clone(),
-            size: found.owner.size,
-            core_bytes: Some(found.mask.iter().filter(|masked| !**masked).count()),
-            start_overrides,
-            location_methods: methods,
-            core_diff_bytes_from_ja: differences,
-        });
+        owners.push(row);
     }
-    owners.sort_by(|left, right| left.en_owner.cmp(&right.en_owner));
     let unresolved = owner_list
         .iter()
         .filter_map(|owner| {
@@ -1747,55 +1759,22 @@ fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String>
             })
         })
         .collect::<Vec<_>>();
-    let editions = edition_summaries(&edition_totals);
-    let report = CorpusReport {
-        schema_version: CORRESPONDENCE_SCHEMA_VERSION,
-        game: "gs1",
-        source_edition: "en",
-        base_edition: "ja",
-        source_state: "byte-exact overlay C",
-        resources_total: Some(OVERLAY_LAST - OVERLAY_FIRST + 1),
-        owners_total: owner_list.len(),
-        owner_symbol_bytes: owner_list.iter().map(|owner| owner.size).sum(),
-        matched_owners: owners.len(),
-        matched_bytes: owners.iter().map(|owner| owner.size).sum(),
-        shared_core_owners: owners
-            .iter()
-            .filter(|owner| owner.core_diff_bytes_from_ja.is_empty())
-            .count(),
-        shared_core_bytes,
-        regional_core_owners: owners
-            .iter()
-            .filter(|owner| !owner.core_diff_bytes_from_ja.is_empty())
-            .count(),
-        regional_core_bytes,
-        unresolved_owners: unresolved.len(),
-        compliance_excluded_owners: unresolved
-            .iter()
-            .filter(|owner| owner.error.starts_with("compliance:"))
-            .count(),
-        resource_tables: Some(resource_tables),
-        location_method_codes: location_method_codes(),
-        editions,
+    let report = corpus_report(
+        "byte-exact overlay C",
+        Some(OVERLAY_LAST - OVERLAY_FIRST + 1),
+        owner_list.len(),
+        owner_list.iter().map(|owner| owner.size).sum(),
+        Some(resource_tables),
         owners,
         unresolved,
-    };
-    let json = serde_json::to_string_pretty(&report)
-        .map_err(|error| format!("serialize overlay corpus report: {error}"))?
-        + "\n";
-    if let Some(path) = &options.write {
-        if let Some(parent) = path
-            .parent()
-            .filter(|parent| !parent.as_os_str().is_empty())
-        {
-            fs::create_dir_all(parent).map_err(|error| format!("{}: {error}", parent.display()))?;
-        }
-        fs::write(path, json).map_err(|error| format!("{}: {error}", path.display()))?;
-        println!("overlay_correspondence={} owners={} matched={} shared_core={} regional_core={} unresolved={}", path.display(), report.owners_total, report.matched_owners, report.shared_core_owners, report.regional_core_owners, report.unresolved_owners);
-    } else {
-        print!("{json}");
-    }
-    Ok(())
+        &edition_totals,
+    );
+    emit_corpus_report(
+        options,
+        &report,
+        "overlay corpus report",
+        "overlay_correspondence",
+    )
 }
 fn write_overlay_edition_build(
     path: &Path,
@@ -2868,7 +2847,18 @@ mod tests {
             location_methods: "asaaaa".into(),
             core_diff_bytes_from_ja: BTreeMap::new(),
         };
-        let compact = serde_json::to_value(owner).expect("serialize compact owner");
+        let report = corpus_report(
+            "test",
+            None,
+            1,
+            4,
+            None,
+            vec![owner],
+            Vec::new(),
+            &edition_totals(),
+        );
+        assert_eq!((report.matched_owners, report.shared_core_bytes), (1, 4));
+        let compact = serde_json::to_value(&report.owners[0]).expect("serialize compact owner");
         assert_eq!(compact["en_owner"], "main:08002ee4");
         for omitted in [
             "source",

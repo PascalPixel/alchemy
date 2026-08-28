@@ -468,8 +468,14 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
         .map(|finding| format!("{}:{}", finding.token, finding.line))
         .collect::<Vec<_>>()
         .join(",");
+    // The generated function inventory has no writer in the current tree
+    // (its generator was retired in a consolidation wave). Adoption safety
+    // never rested on it — audited_span validates every entry against the
+    // tracked audited intervals — so a missing inventory falls back to the
+    // explicit --span path instead of failing before it.
     let inventory_path: PathBuf = root.join("out/decomp/overlays.json");
-    let inventory_text = fs::read_to_string(&inventory_path).map_err(|error| error.to_string())?;
+    let inventory_text =
+        fs::read_to_string(&inventory_path).unwrap_or_else(|_| r#"{"functions":[]}"#.to_string());
     let inventory: Value =
         serde_json::from_str(&inventory_text).map_err(|error| error.to_string())?;
     let functions = inventory

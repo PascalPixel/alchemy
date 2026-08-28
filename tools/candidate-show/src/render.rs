@@ -3,6 +3,7 @@ use crate::{
     disasm::{disassemble, Rows},
     insns::gas_function_insns,
     patch::apply_unified_diff_in_tree,
+    triage::classify,
 };
 use candidate_compiler::verify::{
     compile_to_assembly, verify_candidate_owned_routed_with_object, CandidateCompilerConfiguration,
@@ -17,7 +18,6 @@ use regex::Regex;
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 use std::{
-    collections::BTreeMap,
     path::{Path, PathBuf},
     process::Command,
     time::Instant,
@@ -28,6 +28,7 @@ pub struct RenderOutput {
     pub reference_length: usize,
     pub differing_halfwords: usize,
     pub allocator: Option<crate::allocator::Report>,
+    pub residual: crate::triage::ResidualReport,
 }
 fn main_source_identity(
     root: &Path,
@@ -157,6 +158,7 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
                 reference_length: 0,
                 differing_halfwords: 0,
                 allocator: None,
+                residual: classify(&[], &[], 0, 0, 0),
             });
         }
     }
@@ -237,6 +239,18 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         let report =
             crate::allocator::decode(root, options, &routing_source, &stem, &source, &work)?;
         rendered.stdout.push_str(&report.text);
+        rendered.residual = rendered
+            .residual
+            .with_decoder_coverage(report.repair.is_some());
+        rendered.stdout.push_str(&format!(
+            "triage_final={} playbook={}\n",
+            rendered.residual.class.label(),
+            rendered
+                .residual
+                .playbook
+                .as_deref()
+                .unwrap_or("smart-queue")
+        ));
         rendered.allocator = Some(report);
     }
     Ok(rendered)
@@ -279,7 +293,15 @@ fn render_bytes(
     offsets.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
     let (left_lines, right_lines) = (ordered_lines(&left), ordered_lines(&right));
     let (class, wrong) = residual_class(&left_lines, &right_lines);
-    let mut out = format!("candidate={} reference={} differing_halfwords={}\ncompile={compile}\nclass={class} wrong_instructions={wrong}\n", actual.len(), expected.len(), differing.len());
+    let residual = classify(
+        &left_lines,
+        &right_lines,
+        actual.len(),
+        expected.len(),
+        differing.len(),
+    );
+    let playbook = residual.playbook.as_deref().unwrap_or("smart-queue");
+    let mut out = format!("candidate={} reference={} differing_halfwords={}\ncompile={compile}\nclass={class} wrong_instructions={wrong}\ntriage={} playbook={playbook}\n", actual.len(), expected.len(), differing.len(), residual.class.label());
     if options.align {
         let pairs = align_streams(&left_lines, &right_lines);
         let matched = pairs
@@ -332,6 +354,7 @@ fn render_bytes(
         reference_length: expected.len(),
         differing_halfwords: differing.len(),
         allocator: None,
+        residual,
     })
 }
 fn render_asm(root: &Path, options: &Options, work: &str) -> Result<RenderOutput, String> {
@@ -416,6 +439,13 @@ fn render_asm(root: &Path, options: &Options, work: &str) -> Result<RenderOutput
         reference_length: expected.len(),
         differing_halfwords: 0,
         allocator: None,
+        residual: classify(
+            &candidate,
+            &expected,
+            candidate.len(),
+            expected.len(),
+            usize::from(candidate != expected),
+        ),
     })
 }
 fn git_diff_stat(old: &Path, new: &Path) -> Result<String, String> {
@@ -470,36 +500,23 @@ pub fn without_pc_offset(instruction: &str) -> String {
     out
 }
 pub fn residual_class(left: &[String], right: &[String]) -> (&'static str, i64) {
-    let count = |key: fn(&str) -> String| {
-        let mut map = BTreeMap::new();
-        for line in left {
-            *map.entry(key(line)).or_insert(0i64) += 1;
-        }
-        for line in right {
-            *map.entry(key(line)).or_insert(0i64) -= 1;
-        }
-        map
+    let report = crate::triage::classify(
+        left,
+        right,
+        left.len() * 2,
+        right.len() * 2,
+        usize::from(left != right),
+    );
+    let class = match report.class {
+        crate::triage::ResidualClass::Exact => "exact",
+        crate::triage::ResidualClass::LayoutOnly => "layout",
+        crate::triage::ResidualClass::AllocationCovered
+        | crate::triage::ResidualClass::AllocationUncovered => "allocation",
+        crate::triage::ResidualClass::SchedulingFloor => "ordering",
+        crate::triage::ResidualClass::CompilerUnemittable => "unemittable",
+        _ => "wrong",
     };
-    let pool = count(without_pc_offset);
-    let wrong = pool.values().map(|count| count.abs()).sum();
-    if wrong == 0 {
-        return if left == right {
-            ("exact", 0)
-        } else {
-            ("ordering", 0)
-        };
-    }
-    if right.iter().any(|line| multiple(line)) && !left.iter().any(|line| multiple(line)) {
-        return ("unemittable", wrong);
-    }
-    if count(|line| without_register(&without_pc_offset(line)))
-        .values()
-        .all(|count| *count == 0)
-    {
-        ("allocation", wrong)
-    } else {
-        ("wrong", wrong)
-    }
+    (class, report.wrong_instructions)
 }
 pub fn ordered_lines(rows: &Rows) -> Vec<String> {
     let mut keys: Vec<_> = rows.keys().collect();
@@ -526,10 +543,6 @@ pub fn side_by_side(pairs: &[(Option<String>, Option<String>)]) -> String {
             format!("  {mark} {candidate:<30.30} {reference}\n")
         })
         .collect()
-}
-fn multiple(line: &str) -> bool {
-    line.split(|c: char| !c.is_ascii_alphanumeric())
-        .any(|word| matches!(word, "stmia" | "ldmia" | "stmdb" | "ldmdb" | "stm" | "ldm"))
 }
 pub fn without_register(instruction: &str) -> String {
     static REG: std::sync::OnceLock<Regex> = std::sync::OnceLock::new();

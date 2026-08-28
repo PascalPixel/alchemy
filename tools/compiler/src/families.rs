@@ -581,7 +581,17 @@ fn require_family(owner: &str, family: Option<&str>) -> Result<(), String> {
     })
 }
 fn entry_alias(root: &Path, symbol: &str) -> Result<Option<String>, String> {
-    let mut aliases = BTreeSet::new();
+    let aliases = entry_aliases(root)?.remove(symbol).unwrap_or_default();
+    if aliases.len() > 1 {
+        return Err(format!(
+            "{symbol} has multiple source aliases: {}",
+            aliases.join(", ")
+        ));
+    }
+    Ok(aliases.into_iter().next())
+}
+pub(crate) fn entry_aliases(root: &Path) -> Result<BTreeMap<String, Vec<String>>, String> {
+    let mut aliases = BTreeMap::<String, BTreeSet<String>>::new();
     for entry in WalkDir::new(root.join("games/gs1/include"))
         .into_iter()
         .filter_map(Result::ok)
@@ -589,18 +599,18 @@ fn entry_alias(root: &Path, symbol: &str) -> Result<Option<String>, String> {
     {
         for line in read(entry.path())?.lines() {
             let words = line.split_whitespace().collect::<Vec<_>>();
-            if words.len() >= 3 && words[0] == "#define" && words[2] == symbol {
-                aliases.insert(words[1].to_string());
+            if words.len() >= 3 && words[0] == "#define" {
+                aliases
+                    .entry(words[2].into())
+                    .or_default()
+                    .insert(words[1].into());
             }
         }
     }
-    if aliases.len() > 1 {
-        return Err(format!(
-            "{symbol} has multiple source aliases: {}",
-            aliases.into_iter().collect::<Vec<_>>().join(", ")
-        ));
-    }
-    Ok(aliases.into_iter().next())
+    Ok(aliases
+        .into_iter()
+        .map(|(symbol, names)| (symbol, names.into_iter().collect()))
+        .collect())
 }
 fn retarget_seed(
     source: &str,

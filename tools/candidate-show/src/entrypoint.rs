@@ -190,6 +190,7 @@ mod tests {
             reference_length: 4,
             differing_halfwords: difference,
             allocator: None,
+            residual: crate::triage::classify(&[], &[], 4, 4, difference),
         };
         assert!(!exact_mismatch(&output(0)));
         assert!(exact_mismatch(&output(1)));

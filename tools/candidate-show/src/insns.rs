@@ -37,7 +37,7 @@ fn gas_lines(lines: Vec<&str>) -> Vec<String> {
         })
         .collect()
 }
-fn canonical(line: &str) -> String {
+pub(crate) fn canonical(line: &str) -> String {
     let mut words: Vec<_> = line
         .split('@')
         .next()

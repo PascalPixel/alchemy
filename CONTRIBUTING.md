@@ -170,6 +170,12 @@ belong beneath ignored `out/gs1-en/waves/`, never `/tmp`. Cheap agents execute
 only prepared shards and named playbooks; exact results still pass through the
 explicit integrator before repository source changes.
 
+`make coverage` also refreshes the main-ROM residual class scoreboard. It
+re-triages ordinary tracked candidate source with the current router, keeps
+absent candidates explicit, and records deterministic source, reference, and
+scoring-environment receipts. Aggregate-aware generated drafts remain wave
+output and do not affect this tracked-source scoreboard.
+
 ## Validate and commit
 
 Portable tooling is capped at 50,000 Rust, JavaScript, and CSS source lines.

@@ -252,6 +252,52 @@ fn compare(candidate: &[Branch], reference: &[Branch]) -> Vec<Divergence> {
     findings
 }
 
+/// Literal-pool words: 4-aligned unreachable offsets read back from the raw
+/// bytes. These carry the call targets, global addresses, and mask constants
+/// a reconstruction needs — evidence the instruction text alone hides, and
+/// the single lever the tier trials proved most valuable.
+fn pool_words(rows: &[(u32, u32, String)], bytes: &[u8]) -> Vec<(u32, u32)> {
+    let live = reachable(rows);
+    rows.iter()
+        .enumerate()
+        .filter(|(index, (offset, _, _))| {
+            !live[*index] && offset % 4 == 0 && (*offset as usize) + 4 <= bytes.len()
+        })
+        .map(|(_, (offset, _, _))| {
+            let at = *offset as usize;
+            let word = u32::from_le_bytes([bytes[at], bytes[at + 1], bytes[at + 2], bytes[at + 3]]);
+            (*offset, word)
+        })
+        .collect()
+}
+
+fn pool_text(candidate: &[(u32, u32)], reference: &[(u32, u32)]) -> String {
+    let mut offsets: Vec<u32> = candidate
+        .iter()
+        .chain(reference)
+        .map(|(offset, _)| *offset)
+        .collect();
+    offsets.sort_unstable();
+    offsets.dedup();
+    let value = |pool: &[(u32, u32)], offset: u32| {
+        pool.iter()
+            .find(|(at, _)| *at == offset)
+            .map(|(_, word)| format!("{word:#010x}"))
+            .unwrap_or_else(|| "absent".into())
+    };
+    offsets
+        .iter()
+        .take(16)
+        .map(|offset| {
+            format!(
+                "pool@{offset:#x} candidate={} reference={}\n",
+                value(candidate, *offset),
+                value(reference, *offset)
+            )
+        })
+        .collect()
+}
+
 fn plan(findings: &[Divergence]) -> Option<RepairPlan> {
     let mirrors = findings
         .iter()
@@ -304,6 +350,16 @@ pub fn augment(report: Report, work: &Path) -> Report {
         text += &format!(
             "structure={} {} advice={}\n",
             finding.kind, finding.detail, finding.advice
+        );
+    }
+    let bins = (
+        std::fs::read(work.join("candidate.bin")),
+        std::fs::read(work.join("reference.bin")),
+    );
+    if let (Ok(candidate_bytes), Ok(reference_bytes)) = bins {
+        text += &pool_text(
+            &pool_words(&candidate, &candidate_bytes),
+            &pool_words(&reference, &reference_bytes),
         );
     }
     match plan(&findings) {
@@ -387,6 +443,21 @@ mod tests {
         assert_eq!(branches.len(), 1);
         assert_eq!(branches[0].op, "bge");
         assert!(!branches[0].backward);
+    }
+
+    #[test]
+    fn pool_words_read_unreachable_aligned_values() {
+        let rows = vec![
+            (0_u32, 2_u32, "cmp\tr0, #0".to_string()),
+            (2, 2, "bx\tlr".to_string()),
+            (4, 2, "blt.n\t0x0".to_string()),
+            (6, 2, "movs\tr0, r0".to_string()),
+        ];
+        let bytes = [0u8, 0, 0, 0, 0x3c, 0x59, 0x0c, 0x08];
+        let pool = pool_words(&rows, &bytes);
+        assert_eq!(pool, vec![(4, 0x080c593c)]);
+        let text = pool_text(&pool, &[]);
+        assert!(text.contains("pool@0x4 candidate=0x080c593c reference=absent"));
     }
 
     #[test]

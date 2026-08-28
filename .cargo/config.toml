@@ -1,0 +1,7 @@
+# One shared Cargo artifact tree for every in-repo invocation — make targets,
+# direct `cargo run --manifest-path tools/...` calls, and agent shells alike.
+# Without this, each of the ~90 tool crates grows its own target/ directory
+# with a full copy of the dependency graph (measured at 15 GB of duplicates).
+# `make clean` prunes the shared tree; nothing rebuilds outside it.
+[build]
+target-dir = "out/cargo-target"

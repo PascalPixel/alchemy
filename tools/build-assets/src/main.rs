@@ -435,21 +435,10 @@ type NativeToolKey = (PathBuf, String);
 type NativeToolBuild = OnceLock<Result<PathBuf, String>>;
 type NativeToolCache = Mutex<HashMap<NativeToolKey, Arc<NativeToolBuild>>>;
 static NATIVE_TOOL_BUILDS: OnceLock<NativeToolCache> = OnceLock::new();
-fn uses_standalone_workspace(manifest: &str) -> bool {
-    manifest.lines().any(|line| line.trim() == "[workspace]")
+fn native_binary_path(root: &Path, binary_name: &str) -> Result<PathBuf, String> {
+    Ok(native_target_dir(root).join(binary_name))
 }
-fn native_binary_path(
-    root: &Path,
-    crate_name: &str,
-    binary_name: &str,
-    manifest: &Path,
-) -> Result<PathBuf, String> {
-    let manifest_text = fs::read_to_string(manifest)
-        .map_err(|error| format!("failed to read native {crate_name} manifest: {error}"))?;
-    let target = native_target_dir(root, crate_name, &manifest_text);
-    Ok(target.join(binary_name))
-}
-fn native_target_dir(root: &Path, crate_name: &str, manifest: &str) -> PathBuf {
+fn native_target_dir(root: &Path) -> PathBuf {
     if let Some(configured) = env::var_os("CARGO_TARGET_DIR") {
         let configured = PathBuf::from(configured);
         return if configured.is_absolute() {
@@ -458,16 +447,13 @@ fn native_target_dir(root: &Path, crate_name: &str, manifest: &str) -> PathBuf {
             root.join(configured).join("release")
         };
     }
-    if uses_standalone_workspace(manifest) {
-        root.join("tools").join(crate_name).join("target/release")
-    } else {
-        root.join("tools/target/release")
-    }
+    // The repository default from .cargo/config.toml: every in-repo Cargo
+    // invocation shares one artifact tree.
+    root.join("out/cargo-target/release")
 }
 fn build_native_tool(
     root: &Path,
     tool: &str,
-    crate_name: &str,
     binary_name: &str,
     manifest: &Path,
 ) -> Result<PathBuf, String> {
@@ -494,7 +480,7 @@ fn build_native_tool(
             format!("Cargo failed to build native {tool}: {detail}")
         });
     }
-    let binary = native_binary_path(root, crate_name, binary_name, manifest)?;
+    let binary = native_binary_path(root, binary_name)?;
     if !binary.is_file() {
         return Err(format!(
             "Cargo built native {tool}, but its release executable is missing: {}",
@@ -520,7 +506,7 @@ fn native_tool_binary(root: &Path, tool: &str) -> Result<PathBuf, String> {
             .clone()
     };
     build
-        .get_or_init(|| build_native_tool(root, tool, crate_name, binary_name, &manifest))
+        .get_or_init(|| build_native_tool(root, tool, binary_name, &manifest))
         .clone()
 }
 fn implementation_signature() -> Result<String, String> {

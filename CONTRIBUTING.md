@@ -110,7 +110,7 @@ owner.
 3. Compile and inspect the linked result:
 
    ```sh
-   tools/compiler/target/release/compiler candidate-show \
+   out/cargo-target/release/compiler candidate-show \
      games/gs1/recon/en/main/<address>.c --align --first
    ```
 
@@ -118,7 +118,7 @@ owner.
    member from the same object:
 
    ```sh
-   tools/compiler/target/release/compiler candidate-show \
+   out/cargo-target/release/compiler candidate-show \
      --unit <translation-unit-id> --first
    ```
 

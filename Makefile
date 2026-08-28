@@ -30,7 +30,9 @@ PORTABLE_TOOLS := alignment-tail asset-paths cache-entry canonical-json \
 	full-c-progress integrate-matches decomp-targets
 # The maintainer-owned ceiling covers the portable Rust, JavaScript, and CSS
 # beside the decompilation. Contributors pare machinery; they do not raise it.
-TOOLING_LINE_LIMIT := 50000
+# Only Pascal moves this number; a diff touching it without his recorded
+# decision is invalid regardless of how good the new machinery is.
+TOOLING_LINE_LIMIT := 33000
 TARGET ?= gs1-en
 FULL_REPORT = out/$(TARGET)/full/rebuilt.json
 FULL_ROM = out/$(TARGET)/full/rebuilt.gba

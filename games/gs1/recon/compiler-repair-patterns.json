@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "format": "alchemy-compiler-repair-patterns",
-  "catalog_version": "register-wall-v3",
+  "catalog_version": "structural-v1",
   "compiler_family": "gcc296",
   "annotation_free": true,
   "search": {
@@ -46,7 +46,8 @@
       "block_lifetime"
     ],
     "split-opposite-side-and-scaled-offset": ["temporary", "evaluation_order"],
-    "merge-carrier-phases": ["temporary", "block_lifetime"]
+    "merge-carrier-phases": ["temporary", "block_lifetime"],
+    "mirror-relational-guards": ["evaluation_order", "commutative_order"]
   },
   "operations": {
     "declaration_order": ["swap_decoder_named_uninitialized_declarations"],
@@ -69,9 +70,13 @@
       "materialize_pure_xor_lvalue_before_decoder_named_rhs",
       "preload_adjacent_halfwords_before_signed_carrier",
       "materialize_indexed_message_and_merge_sentinel_carrier",
-      "split_opposite_side_and_scaled_offset_carriers"
+      "split_opposite_side_and_scaled_offset_carriers",
+      "mirror_decoder_named_relational_guard"
     ],
-    "commutative_order": ["swap_pure_xor_operands"],
+    "commutative_order": [
+      "swap_pure_xor_operands",
+      "mirror_decoder_named_relational_guard"
+    ],
     "loop_spelling": ["recreate_decoder_named_value_at_guard_and_backedge"],
     "type_width": ["preload_adjacent_halfwords_before_signed_carrier"]
   },
@@ -98,8 +103,16 @@
       "not_volatile",
       "assignment expression is side-effect-free"
     ],
-    "evaluation_order": ["xor-only", "side_effect-free expressions"],
-    "commutative_order": ["xor-only", "side_effect-free operands"],
+    "evaluation_order": [
+      "xor-only for materialize operations",
+      "relational-guard mirror requires pure simple operands in an if/while condition",
+      "side_effect-free expressions"
+    ],
+    "commutative_order": [
+      "xor-only for swap_pure_xor_operands",
+      "relational-guard mirror requires pure simple operands in an if/while condition",
+      "side_effect-free operands"
+    ],
     "loop_spelling": [
       "does not rewrite loop control",
       "only inlines the decoder-named pointer expression at its two proven uses"
@@ -170,6 +183,17 @@
       "signal": "reciprocal-register-role-swap",
       "baseline_differing_halfwords": 4,
       "result": "closed-by-inline-two-operand-xor-boundary"
+    },
+    {
+      "id": "mirror-relational-guard",
+      "kind": "controlled-exact-recovery",
+      "owner": "main:0808c3a4",
+      "signal": "mirror-relational-guards",
+      "decoder_edit": "structure guard-polarity (bgt vs blt at one ordinal)",
+      "operation": "mirror_decoder_named_relational_guard",
+      "perturbation": "Spell the relational guard with mirrored operands: count > result.",
+      "perturbed_differing_halfwords": 2,
+      "result": "pass"
     },
     {
       "id": "inline-two-operand-xor-boundary",

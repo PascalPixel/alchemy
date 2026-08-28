@@ -124,7 +124,12 @@ owner.
 
 5. Repair structural mismatches before experimenting with declarations,
    temporary lifetimes, expression order, or loop spelling. Search the C; never
-   force the allocator or scheduler.
+   force the allocator or scheduler. The `--allocator-order` decoder names
+   both layers: register-role repairs when the instruction streams align, and
+   reachability-filtered branch evidence — guard counts, loop shapes,
+   mirrored or inverted guards — when they do not. Strong structural findings
+   take precedence over an allocator proposal, and `compiler permute`
+   searches only the catalogued repairs the decoder names.
 6. Register the semantic destination and adopt only at zero linked differences.
    The `integrate` command is for standalone owners. Shared-unit owners are
    installed and retire their assembly together only after every affected owner

@@ -121,6 +121,12 @@ pub fn run() -> Result<(), String> {
             ],
             expected: "compose(merge_carrier_phases(state,count),merge_carrier_phases(resource,spawn_z))",
         },
+        Case {
+            owner: 0x0808c3a4,
+            source: "games/gs1/src/battle/party/apply_status_damage.c",
+            edits: &[("if (result < count)", "if (count > result)", 1)],
+            expected: "mirror_relational_guards",
+        },
     ];
     let temporary = tempfile::Builder::new()
         .prefix("alchemy-decoder-acceptance-")

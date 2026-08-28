@@ -4,7 +4,7 @@ use crate::source_paths::{c_identifier, lower_hex, SourceOwner, SourcePaths};
 use serde::{de::Error, Deserialize, Deserializer};
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Component, Path, PathBuf};
-pub const FORMAT: u32 = 3;
+pub const FORMAT: u32 = 4;
 
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq)]
 #[serde(rename_all = "kebab-case")]
@@ -31,7 +31,8 @@ pub enum OwnerState {
 pub struct TranslationOwner {
     #[serde(deserialize_with = "hex32")]
     pub address: u32,
-    pub alias: String,
+    #[serde(skip)]
+    pub canonical_name: String,
     pub extent: usize,
     pub state: OwnerState,
 }
@@ -40,7 +41,8 @@ pub struct TranslationOwner {
 pub struct TranslationSymbol {
     #[serde(deserialize_with = "hex32")]
     pub address: u32,
-    pub alias: String,
+    #[serde(skip)]
+    pub canonical_name: String,
     pub extent: usize,
 }
 #[derive(Clone, Debug, Deserialize)]
@@ -55,8 +57,6 @@ pub struct TranslationUnit {
     pub absolute_symbols: BTreeMap<String, AbsoluteSymbol>,
     #[serde(default)]
     pub local_symbols: Vec<TranslationSymbol>,
-    #[serde(default)]
-    pub composition_sections: BTreeMap<String, Vec<String>>,
     pub owners: Vec<TranslationOwner>,
 }
 
@@ -90,12 +90,31 @@ impl TranslationUnit {
     pub fn symbols(&self) -> impl Iterator<Item = (u32, &str, usize)> {
         self.owners
             .iter()
-            .map(|symbol| (symbol.address, symbol.alias.as_str(), symbol.extent))
-            .chain(
-                self.local_symbols
-                    .iter()
-                    .map(|symbol| (symbol.address, symbol.alias.as_str(), symbol.extent)),
-            )
+            .map(|symbol| {
+                (
+                    symbol.address,
+                    symbol.canonical_name.as_str(),
+                    symbol.extent,
+                )
+            })
+            .chain(self.local_symbols.iter().map(|symbol| {
+                (
+                    symbol.address,
+                    symbol.canonical_name.as_str(),
+                    symbol.extent,
+                )
+            }))
+    }
+    pub fn composition_sections(&self) -> BTreeMap<String, Vec<String>> {
+        let mut ordered = self.symbols().collect::<Vec<_>>();
+        ordered.sort_unstable_by_key(|member| member.0);
+        BTreeMap::from([(
+            ".text".into(),
+            ordered
+                .into_iter()
+                .map(|(_, name, _)| name.into())
+                .collect(),
+        )])
     }
     pub fn canonical_symbols(&self) -> Result<BTreeMap<String, AbsoluteSymbol>, String> {
         let mut symbols = self.absolute_symbols.clone();
@@ -123,7 +142,7 @@ pub struct TranslationUnits {
 impl TranslationUnits {
     pub fn load(root: &Path) -> Result<Self, String> {
         let path = root.join("games/gs1/recon/translation-units.json");
-        let document: Self = serde_json::from_str(
+        let mut document: Self = serde_json::from_str(
             &std::fs::read_to_string(&path)
                 .map_err(|error| format!("{}: {error}", path.display()))?,
         )
@@ -140,7 +159,7 @@ impl TranslationUnits {
         let mut ids = BTreeSet::new();
         let mut claimed = BTreeSet::new();
         let mut main_aliases = BTreeSet::new();
-        for unit in &document.units {
+        for unit in &mut document.units {
             if !unit_id(&unit.id)
                 || !ids.insert(&unit.id)
                 || unit.compiler_route != "canonical-gcc296"
@@ -164,6 +183,34 @@ impl TranslationUnits {
                 ));
             }
             let names = SourcePaths::load_for_game(root, unit.target()?.as_str())?;
+            let owner_names = unit
+                .owners
+                .iter()
+                .map(|member| {
+                    let owner = unit.source_owner(member.address)?;
+                    names
+                        .registered_name(owner)
+                        .map(str::to_owned)
+                        .ok_or_else(|| format!("{}: {} is not registered", unit.id, owner.id()))
+                })
+                .collect::<Result<Vec<_>, String>>()?;
+            for (member, name) in unit.owners.iter_mut().zip(owner_names) {
+                member.canonical_name = name;
+            }
+            let local_names = unit
+                .local_symbols
+                .iter()
+                .map(|member| {
+                    let owner = unit.source_owner(member.address)?;
+                    names
+                        .registered_name(owner)
+                        .map(str::to_owned)
+                        .ok_or_else(|| format!("{}: {} is not registered", unit.id, owner.id()))
+                })
+                .collect::<Result<Vec<_>, String>>()?;
+            for (member, name) in unit.local_symbols.iter_mut().zip(local_names) {
+                member.canonical_name = name;
+            }
             if unit
                 .owners
                 .windows(2)
@@ -171,14 +218,22 @@ impl TranslationUnits {
             {
                 return Err(format!("{}: owners are not strictly ordered", unit.id));
             }
-            let owners = unit
-                .owners
-                .iter()
-                .map(|member| (member.address, member.alias.as_str(), member.extent, true));
-            let symbols = unit
-                .local_symbols
-                .iter()
-                .map(|member| (member.address, member.alias.as_str(), member.extent, false));
+            let owners = unit.owners.iter().map(|member| {
+                (
+                    member.address,
+                    member.canonical_name.as_str(),
+                    member.extent,
+                    true,
+                )
+            });
+            let symbols = unit.local_symbols.iter().map(|member| {
+                (
+                    member.address,
+                    member.canonical_name.as_str(),
+                    member.extent,
+                    false,
+                )
+            });
             let mut members = BTreeSet::new();
             for (address, alias, extent, is_owner) in owners.chain(symbols) {
                 let source_owner = unit.source_owner(address)?;
@@ -194,22 +249,6 @@ impl TranslationUnits {
                 if unit.overlay.is_none() && !main_aliases.insert(alias) {
                     return Err(format!("duplicate main symbol alias {alias}"));
                 }
-            }
-            let mut ordered = unit.symbols().collect::<Vec<_>>();
-            ordered.sort_unstable_by_key(|member| member.0);
-            if unit.composition_sections
-                != BTreeMap::from([(
-                    ".text".into(),
-                    ordered
-                        .into_iter()
-                        .map(|(_, alias, _)| alias.into())
-                        .collect(),
-                )])
-            {
-                return Err(format!(
-                    "{}: .text composition differs from ordered members",
-                    unit.id
-                ));
             }
             let mut spans = unit
                 .symbols()

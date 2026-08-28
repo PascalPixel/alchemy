@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global Menu_SetPageIcons
 	.global Func_080a2324
 	.thumb_func
+Menu_SetPageIcons:
 Func_080a2324:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

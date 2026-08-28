@@ -2,7 +2,7 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x080b60a0",
-  "name": "BattlePresentation_WaitForLinkedState",
+  "name": "BattlePresentation_WaitSync",
   "status": "exact",
   "owner_bytes": 166,
   "executable_owner_bytes": 166,
@@ -45,9 +45,9 @@
     "baseline_differing_halfwords": 6,
     "final_differing_halfwords": 0,
     "repair_pattern": "split-opposite-side-and-scaled-offset-carriers",
-    "decoder_signal": "The inline opposite-side calculation coalesced its XOR result with side in r2; the reference retains opposite_side in r3 and reuses r2 for scaling.",
-    "source_edit": "Represent side and opposite_side as two carriers, reuse side for the multiply-by-three chain, and spell the final multiply-by-eight as an in-place shift before forming the address.",
-    "compiler_effect": "GCC emits side in r2, opposite_side in r3, reuses r2 for the scaled offset, loads the base into r3, and performs the final address add in the reference order.",
+    "decoder_signal": "The inline opposite-side calculation coalesced its XOR result with side in r2; the reference retains other in r3 and reuses r2 for scaling.",
+    "source_edit": "Represent side and other as two carriers, reuse side for the multiply-by-three chain, and spell the final multiply-by-eight as an in-place shift before forming the address.",
+    "compiler_effect": "GCC emits side in r2, other in r3, reuses r2 for the scaled offset, loads the base into r3, and performs the final address add in the reference order.",
     "bounded_confirmation": {
       "baseline_differing_halfwords": 6,
       "compound_single_carrier_differing_halfwords": 8,
@@ -58,7 +58,7 @@
       "linked_byte_differences": 0
     },
     "production": {
-      "source": "games/gs1/src/battle/presentation/wait_for_linked_state.c",
+      "source": "games/gs1/src/battle/presentation/wait_sync.c",
       "compiler_route": "canonical-gcc296",
       "compiler_overrides": [],
       "retained_assembly_removed": true,

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x080a8f40",
-  "name": "InventoryMenu_DrawAbilityListPage",
+  "name": "PsynergyMenu_DrawListPage",
   "status": "exact",
   "owner_bytes": 380,
   "executable_owner_bytes": 380,
@@ -15,16 +15,16 @@
     "retention": "c_candidate",
     "confidence": "likely"
   },
-  "domain": "Draws one page (up to five rows) of an owner's abilities inside the inventory-menu subsystem, alongside a header for the owner currently open in the menu.",
+  "domain": "Draws one page of the Psynergy list, including PP cost, range, and the selected owner's name, class, and level.",
   "expressed": [
-    "dereferences the global InventoryMenuState pointer (Data_03001f2c) and resolves the owner object for menu->item_owner via Runtime_GetObject/OwnerState_GetFar (Func_08077008)",
-    "commits the window, then computes first_entry = state->page*5 and visible_count = min(state->entry_count-first_entry, 5), matching InventoryMenu_DrawItemNamePage's (Func_080a56c8) established page-math idiom",
-    "draws the scrollbar/page furniture via Func_080a2324(5, first_entry, window, 80, 58) and Menu_DrawPageIndicator(window, state->entry_count, 5, state->page, 28), then a fixed header string (message 0xAED) at (176,0)",
-    "loops over up to 5 entries of menu->items[] starting at first_entry: for each entry, looks up Ability_GetData(item & 0x3fff) and draws the entry's name/message text at x=88 and its icon (ability[9]) at x=176, both at y = row*16+16",
-    "computes a per-entry count/level value from ability[8] (0xff sentinel maps to 11, otherwise ability[8]-1) and draws it via Func_080a8cc0 (a tile-based two/three-glyph number widget already exact-adopted at this address) at tile position (25, row*2+2)",
-    "after the loop, if menu->item_count == 0 draws an 'empty' message (0xAEF) at (96,17)",
-    "draws the current owner's portrait (Func_08015090), a name/class message built from owner+0x129 plus message-table base Value_00000741, a fixed glyph at ROM address 0x080AF22C (immediately adjacent to InventoryMenu_DrawStatDelta's IncreaseGlyph/DecreaseGlyph at 0x080AF224/0x080AF228), and the owner's level-like byte at owner+15 via UiNumber_DrawAt",
-    "always returns 1, matching the InventoryMenu_Draw*Page callback convention"
+    "dereferences the mode-owned PsynergyMenuState at Data_03001f2c and resolves menu->owner_ids[0] through Runtime_GetObject",
+    "commits the window and computes first = result->page*5 and rows = min(result->entry_count-first, 5)",
+    "positions the page icons, draws the page indicator, and draws message 0xAED, which the local message archive identifies as 'PP'",
+    "loops over up to five entries of menu->psynergies[], masks each action id with 0x3fff, and draws its action-name message and BattleAction.pp_cost",
+    "converts BattleAction.range to the three-tile range marker index, preserving the 0xff sentinel-to-11 behavior",
+    "draws message 0xAEF, 'You have no Psynergy.', when menu->psynergy_count is zero",
+    "draws the owner's name string, class-name message, the ROM string 'Lv', and the owner's level byte",
+    "always returns 1, matching the menu page callback convention"
   ],
   "register_gate_step4": {
     "date": "2026-08-28",
@@ -39,8 +39,8 @@
       "conditional value and result occupied different lifetimes",
       "row-coordinate setup outranked the masked-message argument"
     ],
-    "source_edit": "Inline the two indexed halfword loads with the offset-first address spelling, materialize the masked message before calculating y, and load ability[8] into count before mutating count in place.",
-    "compiler_effect": "The mask remains the r0 result carrier, count remains one r4 carrier through compare and decrement, and the named message makes GCC schedule the indexed load/mask before the row-coordinate shift.",
+    "source_edit": "Inline the two indexed halfword loads with the offset-first address spelling, materialize msg before calculating y, and load act->range into range before mutating it in place.",
+    "compiler_effect": "The mask remains the r0 result carrier, range remains one r4 carrier through compare and decrement, and msg makes GCC schedule the indexed load/mask before the row-coordinate shift.",
     "bounded_confirmation": {
       "baseline_differing_halfwords": 28,
       "inline_indexed_loads_differing_halfwords": 15,
@@ -51,7 +51,7 @@
       "linked_byte_differences": 0
     },
     "production": {
-      "source": "games/gs1/src/inventory_menu/draw_ability_list_page.c",
+      "source": "games/gs1/src/psynergy_menu/draw_list_page.c",
       "compiler_route": "canonical-gcc296",
       "compiler_overrides": [],
       "retained_assembly_removed": true,
@@ -59,14 +59,10 @@
     }
   },
   "notes": [
-    "The family-matcher's best guess, games/gs1/src/menu/select_quantity.c (score 7245/10000, below the 7500 confidence threshold), shares only the register-shuffle prologue idiom common to every owner in this size class; it does not share Data_03001f2c's InventoryMenuState typing, any callee, or any field offset with this owner and was treated as a false positive per this session's prior findings about the highest-scoring cluster.",
-    "Real family evidence instead comes from hand-tracing games/gs1/asm/080a8f40.s directly and following its call targets into already-adopted inventory_menu/ sources: Data_03001f2c dereferences to the exact same InventoryMenuState* used by games/gs1/src/inventory_menu/draw_item_name_page.c (Func_080a56c8, aliased InventoryMenu_DrawItemNamePage), which shares this owner's exact (window, unused, const struct MenuResult*) signature, its Func_080a2324/Menu_DrawPageIndicator call shape, and its first_entry=page*5 / visible_count=min(entry_count-first_entry,5) page math verbatim.",
-    "menu->item_owner (struct field offset 0x21a) and menu->item_count (0x218) match inventory_menu.h's InventoryMenuState exactly. The owner lookup Func_08077008 is the veneer already declared in owner_state.h as OwnerState_GetFar/Runtime_GetObject, used identically (Runtime_GetObject(menu->item_owner)) in the already-adopted games/gs1/src/inventory_menu/draw_selected_item_header.c.",
-    "The per-row lookup Func_08077080 is the veneer already aliased project-wide in types.h as Ability_GetData (also BattleAction_Get in battle_runtime.h -- same address, two subsystem views). Its target Func_08078b9c is already exact-adopted at games/gs1/src/battle/get_action_definition.c (BattleAction_GetDirect), which masks its argument with the identical 0x3fff constant seen at this owner's two ldrh sites, and games/gs1/src/psynergy_menu/classify_selected_psynergy.c independently corroborates both the 0x3fff mask AND the ability[8]==0xff sentinel check on the exact same Ability_GetData return value, from an unrelated subsystem call site -- strong convergent evidence this really is the Ability/BattleAction data pointer, not a coincidental match.",
-    "The fixed glyph pool constant 0x080AF22C sits exactly 4/8 bytes past games/gs1/src/inventory_menu/draw_stat_delta.c's InventoryMenu_IncreaseGlyph (0x080AF224) and InventoryMenu_DecreaseGlyph (0x080AF228) -- the same small glyph-sheet ROM blob, reinforcing the inventory_menu subsystem placement.",
-    "menu->items[] (u16 array at struct offset 0x1c8) is read here as a raw ability/action id feed rather than a plain item id; the field's existing name from inventory_menu.h is kept as-is per this project's low-confidence-naming rule -- this owner does not rename or reinterpret that field, it only records that its runtime contents are consumed as Ability_GetData() input in this particular page.",
-    "2026-08-27, structural workbench + iterative fixes (games/gs1/asm/080a8f40.s traced by hand first; m2c's output via `compiler workbench` used only as a starting hypothesis and independently corroborated the same struct fields/constants/masks derived from the manual trace): the initial draft (menu pointer dereferenced early, item array walked via a separately incremented u16* rather than menu-relative offset arithmetic) scored 87.7% objdiff / 141 differing halfwords with the reference keeping `menu` permanently in fp across the whole function while the draft spilled it to the stack. Rewriting the loop to re-index through `menu` via a raw byte offset accumulator (matching this project's existing LoadByte-style idiom for fields beyond a struct's modeled boundary) let `menu` live in fp for the whole function again and cut the diff to 107 halfwords / 376 candidate bytes (4 short). The single largest remaining fix was branch-body order in the per-row count computation: writing `if (ability[8] == 0xff) count = 11; else count = ability[8]-1;` (matching the reference's actual bne/fallthrough shape) rather than the equivalent `!=`-first phrasing dropped differing halfwords from 107 to 28 and brought candidate_bytes to the exact 380-byte reference extent in one step -- both phrasings are logically identical but this compiler speculatively hoists whichever branch is written first when the other is a bare read-and-subtract, and only the '==0xff -> 11' first ordering matches the reference's un-hoisted branch/fallthrough/jump structure.",
-    "Residual (28 differing halfwords / 38 wrong instructions, all register-allocation/scheduling, no remaining algorithm or call-argument-value mismatch): (1) the two per-row ldrh+ands sequences for the masked item id consistently put the loaded halfword in r0 and the 0x3fff literal in r3 in this draft, versus item-in-r3/mask-in-r0 in the reference -- the final `ands r0,r3` instruction itself is byte-identical either way, only the preceding load's destination register differs; tried both `item & 0x3fff` and `0x3fff & item` operand order with no effect. (2) the count-computation branch, while now correctly un-hoisted for the `==0xff` case, still hoists `ability[8]-1` into r4 before the compare (reference computes it only in the taken branch, reusing the already-loaded r4 rather than reloading r3); introducing a named `u8 uses = ability[8]` local to force a single load regressed candidate size back to 376 bytes, so it was reverted. (3) two 5-argument calls (the icon draw at ability[9]/176/y and the closing UiNumber_DrawAt at owner+15) build their register file in a different order than the reference despite identical left-to-right C argument lists; splitting either argument into its own named local made no measurable difference and was reverted in favor of the more legible direct form. None of these were forced with asm(), register hints, or PERM_GENERAL-style pinning, per project rules -- they are left as an honest residual for a future pass.",
-    "Recovered only from games/gs1/asm/080a8f40.s (hand-traced instruction-by-instruction and via the structural workbench's objdiff/m2c cross-check), the already-adopted games/gs1/src/inventory_menu/*.c and games/gs1/src/battle/get_action_definition.c, in-repo headers (inventory_menu.h, owner_state.h, menu_result.h, item.h, types.h), games/gs1/src/psynergy_menu/classify_selected_psynergy.c, and the approved compiler. No other Golden Sun decompilation project, symbol map, or external disassembly was consulted."
+    "The inventory-menu page family supplied the compiler shape only: page math and the paging helpers are shared. The mode-owned Data_03001f2c view, message text, action fields, and surrounding PsynergyMenu callers establish that this owner belongs to psynergy_menu.",
+    "PsynergyMenuState independently fixes psynergies at 0x1c8, psynergy_count at 0x218, and owner_ids[0] at 0x21a. The local message archive identifies 0xAED as 'PP', 0xAEF as 'You have no Psynergy.', 0x333 as the action-name table base, and 0x741 as the class-name table base.",
+    "BattleAction establishes range at +8 and pp_cost at +9. The local ROM bytes at 0x080AF22C are the NUL-terminated ASCII string 'Lv'. The three 0x08015xxx veneer targets are the exact adopted string/number drawing owners, not portrait or icon routines.",
+    "The byte-exact repair keeps the menu-relative offset loads, materializes msg before y, and mutates one range carrier in place. Those ordinary C choices close the former allocation/scheduling floor without annotations, register hints, or compiler overrides.",
+    "Recovered only from the retained owner assembly, approved local ROM and message archive, already-adopted Psynergy/menu/text sources, in-repo headers, and the approved compiler. No external decompilation or symbol map was consulted."
   ]
 }

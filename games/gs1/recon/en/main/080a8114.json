@@ -43,7 +43,7 @@
   ],
   "notes": [
     "Recovered only from this owner's own retained assembly (games/gs1/asm/080a8114.s), the m2c control-flow reconstruction generated from that same assembly (out/family-transplants/main-080a8114/m2c/080a8114.c), the approved ROM, and already-adopted/already-drafted sibling sources in this repo (games/gs1/src/shop/select_use_item.c, select_repair_item.c, select_party_member.c, select_purchase_quantity.c, select_sale_quantity.c; games/gs1/src/menu/select_quantity.c; games/gs1/src/character_menu/draw_selection_cursor.c; games/gs1/recon/en/main/080a8578.c, 080a5614.c, 080a1a40.c, 080a90bc.c). No other Golden Sun decompilation project, symbol map, or disassembly was consulted.",
-    "This candidate claims zero DONE bytes; games/gs1/metrics/gs1-en-progress.json is unaffected and was not staged.",
+    "This candidate claims zero DONE bytes, so it does not require a progress-report refresh.",
     "Next steps for a future pass: the fp-vs-stack-slot allocation gap looks like it needs either a different overall statement/expression shape for the six small scalars (not just declaration-order or block-scope changes, both tried and ruled out above) or acceptance that this owner's particular register-pressure profile is not reachable from a natural top-down C rewrite under this compiler without forbidden register hints."
   ]
 }

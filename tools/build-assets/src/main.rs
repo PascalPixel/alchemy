@@ -450,6 +450,14 @@ fn native_binary_path(
     Ok(target.join(binary_name))
 }
 fn native_target_dir(root: &Path, crate_name: &str, manifest: &str) -> PathBuf {
+    if let Some(configured) = env::var_os("CARGO_TARGET_DIR") {
+        let configured = PathBuf::from(configured);
+        return if configured.is_absolute() {
+            configured.join("release")
+        } else {
+            root.join(configured).join("release")
+        };
+    }
     if uses_standalone_workspace(manifest) {
         root.join("tools").join(crate_name).join("target/release")
     } else {

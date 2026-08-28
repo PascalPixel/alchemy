@@ -35,8 +35,12 @@ const DEBT: [&str; 5] = [
     "merge_with_owner",
     "split_first",
 ];
-const DRAFT_OWNERS: usize = 260;
-const INDEPENDENT_OWNERS: usize = 175;
+// The drafting cohort is frozen so unintended drift fails loudly; intended
+// drift — an adoption or a draft tracked into the corpus — updates these
+// numbers as its acknowledgment. Last acknowledged: two wave adoptions
+// (080b5c08, 080f4028) and four tier-trial candidates tracked.
+const DRAFT_OWNERS: usize = 256;
+const INDEPENDENT_OWNERS: usize = 171;
 const OWNER_GROUP_OWNERS: usize = 63;
 const SPLIT_REGION_OWNERS: usize = 22;
 

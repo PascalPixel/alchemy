@@ -148,6 +148,25 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         options.owner,
         options.overlay.as_deref(),
     )?;
+    // With an explicit owner symbol the compare address (--owner) names a
+    // different edition's location; compilation must still follow the source
+    // file's own registered route, or the flags change and the codegen with
+    // them.
+    let identity = if options.configuration.owner_symbol.is_some() {
+        let routed = SourceIdentity::resolve(
+            root,
+            &options.source,
+            options.target,
+            None,
+            options.overlay.as_deref(),
+        )?;
+        SourceIdentity {
+            owner: identity.owner,
+            routing: routed.routing,
+        }
+    } else {
+        identity
+    };
     if options.asm {
         return render_asm(root, options, &work, &identity);
     }
@@ -721,6 +740,10 @@ fn source_cache_key_with_environment(
             .unwrap_or_default()
             .to_le_bytes(),
     );
+    if let Some(symbol) = &configuration.owner_symbol {
+        hasher.update([14]);
+        hasher.update(symbol.as_bytes());
+    }
     hasher.update([10]);
     hasher.update(rom_path.as_bytes());
     hasher.update([13]);

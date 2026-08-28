@@ -22,6 +22,25 @@
  * calls through a DrawRectangleFn already loaded into r4 from the saved
  * out_pair pointer, not calls to a real function of that name; modeled the
  * same way games/gs1/recon/en/main/080dc1ec.c and 080e01e4.c already do.
+ *
+ * Reconstruction notes from the reference bytes:
+ *  - The epilogue pops the return address into r0 ("pop {r0}; bx r0"), so the
+ *    function returns void and the trailing Func_080cdbc0() call is a
+ *    statement, not a "return".
+ *  - The whole per-member body (the two Func_080049ac/Func_080051d8 passes,
+ *    the local_frame == 24 sound cue and the particle burst loop) sits inside
+ *    "if (local_frame > 0)": the reference branches straight to the member
+ *    increment block when local_frame <= 0.
+ *  - Func_08004cb4(rec) runs after the second Func_080049ac/Func_080051d8
+ *    pair, not immediately after the rec[] stores.
+ *  - particle[2] uses "frame % 4", not "(frame / 4) % 4".
+ *  - The burst clamp is spelled "if (local_frame > 28) { ... } else burst = 0;"
+ *    so the positive branch reuses the spilled "threshold" directly, matching
+ *    the reference's "adds r3, r2, #0 / cmp r2, #0".
+ *  - The scratch counters are shared the way the reference allocates them:
+ *    one counter (outer) drives the ramp and the particle-burst loops, "frame"
+ *    drives the particle-seed loop and the outer frame loop, and "member"
+ *    drives the ramp inner loop and the member loop.
  */
 #define M2C_FIELD(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))
@@ -63,29 +82,25 @@ void Func_080030f8(s32 frames);
 void Func_08002dd8(s32 id);
 s32 Func_080cdbc0(void);
 
-s32 RunPaletteRampEffect(s32 effect, s32 mode)
+void RunPaletteRampEffect(s32 effect, s32 mode)
 {
     void **heap_cache;
     void **cursor;
     void *work;
     void *draw_destination;
     DrawRectangleFn callback_pair[2];
-    s32 y_offset;
     s32 palette_id;
     void *palette;
     s32 outer;
-    s32 i;
     s32 particle_ceiling;
     u8 *ramp_src;
     u8 *ramp_dst;
     s32 frame;
-    s32 facing;
-    s32 rec[3];
-    s32 screen[3];
-    s32 zero_vec[3];
-    s32 x;
-    s32 y2;
     s32 member;
+    s32 y_offset;
+    s32 zero_vec[3];
+    s32 screen[3];
+    s32 rec[3];
     s32 local_frame;
     s32 threshold;
     s32 particle_base;
@@ -123,11 +138,10 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
         particle_ceiling = 57;
         dst_offset = 696;
         for (outer = 1; outer != 8; outer++) {
-            s32 count;
 
             ramp_src = (u8 *) work + 0x2580;
             ramp_dst = (u8 *) work + 0x2580 + dst_offset;
-            count = 0;
+            member = 0;
             do {
                 s32 v;
 
@@ -141,8 +155,8 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
                 }
                 *ramp_dst = (u8) v;
                 ramp_dst++;
-                count++;
-            } while (count != 696);
+                member++;
+            } while (member != 696);
 
             dst_offset += 696;
             particle_ceiling -= 7;
@@ -173,12 +187,12 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
             if (mode == 0) {
                 bucket = ((frame & 31) / 4) * 3;
                 particle[1] = (bucket << 17) - 0xA0000;
-                quarter = (frame / 4) % 4;
+                quarter = frame % 4;
                 particle[2] = (quarter << 17) - 0x20000;
             } else {
                 bucket = ((frame & 31) / 4) * 3;
                 particle[1] = (bucket << 17) - 0xA0000;
-                quarter = (frame / 4) % 4;
+                quarter = frame % 4;
                 particle[2] = (quarter << 19) - 0x100000;
             }
             if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4) == 1) {
@@ -186,7 +200,7 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
             } else {
                 particle[3] = -0x20000;
             }
-            particle[4] = ((radius * Func_0800231c(angle)) >> 6) + 0x10000;
+            particle[4] = ((Func_0800231c(angle) * radius) >> 6) + 0x10000;
             particle[5] = (Func_08002322(angle) * radius) >> 6;
             particle[6] = (s32) (Func_08004458() & 0xFF);
             particle += 7;
@@ -201,9 +215,14 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
     M2C_FIELD(work, s32 *, 0x7784) = 50;
     Func_080041d8((void *) 0x080CD261, 0x480);
 
+    frame = 0;
     if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20) * 4 != -64) {
-        frame = 0;
         do {
+            s32 facing;
+            s32 facing_end;
+            s32 x;
+            s32 y2;
+
             facing = *(s32 *) 0x03001E80;
 
             if (frame == 72) {
@@ -213,8 +232,6 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
             member = 0;
             if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20)
                     != 0) {
-                s32 facing_end;
-
                 local_frame = frame;
                 threshold = frame - 24;
                 facing_end = facing + 12;
@@ -235,10 +252,10 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
                         rec[0] = M2C_FIELD(member_object, s32 *, 8);
                         rec[1] = 160 << 13;
                         rec[2] = M2C_FIELD(member_object, s32 *, 16);
-                        Func_08004cb4(rec);
 
                         Func_080049ac();
                         Func_080051d8(facing, facing_end);
+                        Func_08004cb4(rec);
 
                         zero_vec[0] = 0;
                         zero_vec[1] = 0;
@@ -269,7 +286,6 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
                                     x - 20, y2 - 20, 40, 40);
                             }
                         }
-                    }
 
                     if (local_frame == 24) {
                         Func_080f9010(143);
@@ -278,44 +294,44 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
                     if ((u32) threshold <= 36) {
                         s32 burst;
                         s32 ramp_offset;
-                        s32 j;
                         s32 *particle;
 
-                        if (local_frame <= 28) {
-                            burst = 0;
-                        } else {
-                            burst = (local_frame - 24) / 4;
+                        if (local_frame > 28) {
+                            burst = threshold / 4;
                             if (burst > 7) {
                                 burst = 7;
                             }
+                        } else {
+                            burst = 0;
                         }
                         ramp_offset = burst * 696;
 
                         particle = (s32 *) ((u8 *) 0x02010000
                             + particle_base);
-                        for (j = 0; j != 24; j++) {
+                        for (outer = 0; outer != 24; outer++) {
                             s32 sel;
                             s32 idx;
-                            s32 sx;
-                            s32 sy;
 
-                            sel = Func_080022fc(
+                            sel = (outer % 4) * 3;
+                            idx = Func_080022fc(
                                 (particle[6] + local_frame) / 8, 3);
                             Func_080e3944(particle, screen);
-                            sx = screen[0] + y_offset;
-                            sy = screen[1];
+                            x = screen[0] + y_offset;
+                            y2 = screen[1];
 
-                            idx = (j % 4) * 3 + sel;
+                            idx = sel + idx;
                             ((DrawRectangleFn) callback_pair[0])(
                                 draw_destination,
-                                (u8 *) work + 0x2580 + ramp_offset
-                                    + Data_080eea08[idx],
-                                sx, sy,
+                                (u8 *) work
+                                    + (ramp_offset + Data_080eea08[idx])
+                                    + 0x2580,
+                                x, y2,
                                 Data_080eea20[idx], Data_080eea2c[idx]);
 
                             Func_080e38b8(particle, 60, 0);
                             particle += 7;
                         }
+                    }
                     }
 
                     member++;
@@ -339,5 +355,5 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
     Func_08004278((void *) 0x080CD261);
     Func_08002dd8(47);
     Func_08002dd8(46);
-    return Func_080cdbc0();
+    Func_080cdbc0();
 }

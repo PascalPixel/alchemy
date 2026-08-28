@@ -7,6 +7,12 @@
 void Func_08021cb8(u8 *base, u32 value, s32 slot_a, s32 slot_b);
 s32 Func_08021c64(u16 packed, u32 value);
 
+typedef struct
+{
+    u16 code : 10;
+    u16 style : 6;
+} CharacterCell;
+
 void UiText_DrawCharacter(u8 *base, s32 index, u32 value)
 {
     u8 *entry;
@@ -22,7 +28,6 @@ void UiText_DrawCharacter(u8 *base, s32 index, u32 value)
     *(u32 *)(entry + 4) = 0x80002000;
     *(u32 *)(entry + 8) = 0;
     load_offset = offset + 0x110;
-    *(u16 *)(entry + 8) =
-        (Func_08021c64(*(u16 *)(base + load_offset), value) & 0x3FF)
-        | (*(u16 *)(entry + 8) & 0xFFFFFC80);
+    ((CharacterCell *)(entry + 8))->code =
+        Func_08021c64(*(u16 *)(base + load_offset), value);
 }

@@ -15,20 +15,8 @@ pub fn run(args: Vec<String>) -> Result<(), String> {
         println!("{USAGE}");
         return Ok(());
     }
-    if args.iter().any(|argument| argument == "--self-test") {
-        return self_test();
-    }
     if args.iter().any(|argument| argument == "--acceptance-test") {
         return acceptance::run();
     }
     runner::run(Options::parse(&args)?)
-}
-
-fn self_test() -> Result<(), String> {
-    options::self_test()?;
-    perm::self_test()?;
-    compile::self_test()?;
-    runner::self_test()?;
-    println!("self-test=ok tool=permuter checks=4");
-    Ok(())
 }

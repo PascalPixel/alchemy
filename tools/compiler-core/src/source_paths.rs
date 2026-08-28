@@ -1,14 +1,6 @@
-//! Canonical owner register for each historical game.
-//!
-//! Exact C historically lived in one flat directory and encoded ownership in
-//! each filename. `games/<game>/source-paths.json` maps stable address-qualified
-//! owner identities to canonical human symbols and descriptive source paths.
-//! A source path is normally the whole record: its filename stem is the symbol.
-//! Object records exist only when a name differs or owner-specific metadata is
-//! needed.
-//! GS1 remains the default resolver for existing callers; target-aware build
-//! paths select the corresponding game registry. Owners absent from a manifest
-//! retain their legacy flat path during the migration.
+//! Canonical address-qualified owner, symbol, path, and routing register.
+//! String records use the path stem as their symbol; object records carry
+//! exceptions. GS1 remains the compatibility default during the migration.
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;

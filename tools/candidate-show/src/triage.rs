@@ -1,4 +1,4 @@
-use crate::render::{align_streams, alignment_key, without_pc_offset, without_register};
+use crate::render::{alignment_key, without_pc_offset, without_register};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -16,33 +16,30 @@ pub enum ResidualClass {
     Unclassified,
 }
 impl ResidualClass {
-    pub fn label(&self) -> &'static str {
+    fn route(&self) -> (&'static str, Option<&'static str>) {
         match self {
-            Self::Exact => "exact",
-            Self::LayoutOnly => "layout-only",
-            Self::AllocationCovered => "allocation-covered",
-            Self::AllocationUncovered => "allocation-uncovered",
-            Self::SchedulingFloor => "scheduling-floor",
-            Self::TypeWidthMismatch => "type-width-mismatch",
-            Self::StructuralTopology => "structural-topology",
-            Self::MissingExtraCode => "missing-extra-code",
-            Self::CompilerUnemittable => "compiler-unemittable",
-            Self::Unclassified => "unclassified",
+            Self::Exact => ("exact", Some("verify-and-integrate")),
+            Self::LayoutOnly => ("layout-only", Some("layout-and-literal-pool")),
+            Self::AllocationCovered => ("allocation-covered", Some("decoder-named-repair")),
+            Self::AllocationUncovered => ("allocation-uncovered", None),
+            Self::SchedulingFloor => ("scheduling-floor", Some("statement-and-evaluation-order")),
+            Self::TypeWidthMismatch => {
+                ("type-width-mismatch", Some("recover-width-and-signedness"))
+            }
+            Self::StructuralTopology => ("structural-topology", Some("reconstruct-block-topology")),
+            Self::MissingExtraCode => (
+                "missing-extra-code",
+                Some("reconstruct-missing-or-extra-code"),
+            ),
+            Self::CompilerUnemittable => ("compiler-unemittable", Some("classification-proof")),
+            Self::Unclassified => ("unclassified", None),
         }
     }
+    pub fn label(&self) -> &'static str {
+        self.route().0
+    }
     pub fn playbook(&self) -> Option<&'static str> {
-        match self {
-            Self::Exact => Some("verify-and-integrate"),
-            Self::LayoutOnly => Some("layout-and-literal-pool"),
-            Self::AllocationCovered => Some("decoder-named-repair"),
-            Self::AllocationUncovered => None,
-            Self::SchedulingFloor => Some("statement-and-evaluation-order"),
-            Self::TypeWidthMismatch => Some("recover-width-and-signedness"),
-            Self::StructuralTopology => Some("reconstruct-block-topology"),
-            Self::MissingExtraCode => Some("reconstruct-missing-or-extra-code"),
-            Self::CompilerUnemittable => Some("classification-proof"),
-            Self::Unclassified => None,
-        }
+        self.route().1
     }
 }
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -55,21 +52,12 @@ pub struct ResidualFacts {
     pub actual_bytes: usize,
     pub reference_bytes: usize,
     pub differing_halfwords: usize,
-    pub candidate_instructions: usize,
-    pub reference_instructions: usize,
-    pub ordered_pc_normalized_equal: bool,
-    pub instruction_multiset_equal: bool,
-    pub register_erased_ordered_equal: bool,
-    pub register_erased_multiset_equal: bool,
     pub branch_topology_equal: bool,
-    pub insertions: usize,
-    pub deletions: usize,
     pub type_width_fingerprints: Vec<TypeWidthFingerprint>,
 }
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct ResidualReport {
     pub class: ResidualClass,
-    pub playbook: Option<String>,
     pub wrong_instructions: i64,
     pub facts: ResidualFacts,
 }
@@ -84,7 +72,6 @@ impl ResidualReport {
             } else {
                 ResidualClass::AllocationUncovered
             };
-            self.playbook = self.class.playbook().map(str::to_string);
         }
         self
     }
@@ -107,28 +94,13 @@ fn mnemonic(line: &str) -> &str {
         .trim_end_matches(".w")
 }
 fn direct_branch(op: &str) -> bool {
-    matches!(
-        op,
-        "b" | "bal"
-            | "beq"
-            | "bne"
-            | "bcs"
-            | "bhs"
-            | "bcc"
-            | "blo"
-            | "bmi"
-            | "bpl"
-            | "bvs"
-            | "bvc"
-            | "bhi"
-            | "bls"
-            | "bge"
-            | "blt"
-            | "bgt"
-            | "ble"
-    )
+    const BRANCHES: &[&str] = &[
+        "b", "bal", "beq", "bne", "bcs", "bhs", "bcc", "blo", "bmi", "bpl", "bvs", "bvc", "bhi",
+        "bls", "bge", "blt", "bgt", "ble",
+    ];
+    BRANCHES.contains(&op)
 }
-fn alignment_indices(
+pub(crate) fn alignment_indices(
     left: &[String],
     right: &[String],
     score: impl Copy + Fn(&str, &str) -> usize,
@@ -164,17 +136,18 @@ fn alignment_indices(
     pairs.extend((j..right.len()).map(|index| (None, Some(index))));
     pairs
 }
-fn aligned_slots(left: &[String], right: &[String]) -> (Vec<usize>, Vec<usize>) {
-    let pairs = alignment_indices(left, right, |left, right| {
-        usize::from(alignment_key(left) == alignment_key(right))
-    });
-    let mut left_slots = vec![0; left.len()];
-    let mut right_slots = vec![0; right.len()];
-    for (slot, (left, right)) in pairs.into_iter().enumerate() {
-        if let Some(index) = left {
+fn aligned_slots(
+    left_len: usize,
+    right_len: usize,
+    pairs: &[(Option<usize>, Option<usize>)],
+) -> (Vec<usize>, Vec<usize>) {
+    let mut left_slots = vec![0; left_len];
+    let mut right_slots = vec![0; right_len];
+    for (slot, (left, right)) in pairs.iter().enumerate() {
+        if let Some(index) = *left {
             left_slots[index] = slot;
         }
-        if let Some(index) = right {
+        if let Some(index) = *right {
             right_slots[index] = slot;
         }
     }
@@ -221,11 +194,6 @@ fn branch_target(line: &str) -> Option<u64> {
 }
 fn branch_edges(lines: &[String], slots: &[usize]) -> Vec<String> {
     let (offsets, extent) = instruction_offsets(lines);
-    let instruction_at = offsets
-        .iter()
-        .enumerate()
-        .map(|(index, offset)| (*offset as u64, index))
-        .collect::<BTreeMap<_, _>>();
     lines
         .iter()
         .enumerate()
@@ -236,9 +204,10 @@ fn branch_edges(lines: &[String], slots: &[usize]) -> Vec<String> {
             }
             let target = match branch_target(line) {
                 Some(target) if target == extent as u64 => "exit".to_string(),
-                Some(target) => instruction_at
-                    .get(&target)
-                    .map(|target| format!("node:{}", slots[*target]))
+                Some(target) => offsets
+                    .iter()
+                    .position(|offset| *offset as u64 == target)
+                    .map(|target| format!("node:{}", slots[target]))
                     .unwrap_or_else(|| format!("external:{target:x}")),
                 None => format!(
                     "symbol:{}",
@@ -252,8 +221,12 @@ fn branch_edges(lines: &[String], slots: &[usize]) -> Vec<String> {
         })
         .collect()
 }
-fn branch_topology_equal(left: &[String], right: &[String]) -> bool {
-    let (left_slots, right_slots) = aligned_slots(left, right);
+fn branch_topology_equal(
+    left: &[String],
+    right: &[String],
+    pairs: &[(Option<usize>, Option<usize>)],
+) -> bool {
+    let (left_slots, right_slots) = aligned_slots(left.len(), right.len(), pairs);
     branch_edges(left, &left_slots) == branch_edges(right, &right_slots)
 }
 fn multiple(line: &str) -> bool {
@@ -330,10 +303,15 @@ pub fn classify(
         .iter()
         .map(|line| register_erased(line))
         .collect::<Vec<_>>();
-    let pairs = align_streams(left, right);
-    let insertions = pairs.iter().filter(|(left, _)| left.is_none()).count();
-    let deletions = pairs.iter().filter(|(_, right)| right.is_none()).count();
+    let pairs = alignment_indices(left, right, |left, right| {
+        usize::from(alignment_key(left) == alignment_key(right))
+    });
+    let streams_differ = pairs
+        .iter()
+        .any(|pair| pair.0.is_none() || pair.1.is_none());
     let width = type_width_fingerprints(left, right);
+    let ordered_pc_normalized_equal = left_pc == right_pc;
+    let register_erased_ordered_equal = left_regs == right_regs;
     let instruction_multiset_equal = balanced(left, right, normalized);
     let register_erased_multiset_equal = balanced(left, right, register_erased);
     let pool = {
@@ -343,45 +321,36 @@ pub fn classify(
         }
         values.values().map(|value| value.abs()).sum()
     };
-    let branch_topology_equal = branch_topology_equal(left, right);
+    let branch_topology_equal = branch_topology_equal(left, right, &pairs);
     let facts = ResidualFacts {
         actual_bytes,
         reference_bytes,
         differing_halfwords,
-        candidate_instructions: left.len(),
-        reference_instructions: right.len(),
-        ordered_pc_normalized_equal: left_pc == right_pc,
-        instruction_multiset_equal,
-        register_erased_ordered_equal: left_regs == right_regs,
-        register_erased_multiset_equal,
         branch_topology_equal,
-        insertions,
-        deletions,
         type_width_fingerprints: width,
     };
     let class = if differing_halfwords == 0 && actual_bytes == reference_bytes {
         ResidualClass::Exact
-    } else if facts.ordered_pc_normalized_equal {
+    } else if ordered_pc_normalized_equal {
         ResidualClass::LayoutOnly
     } else if right.iter().any(|line| multiple(line)) && !left.iter().any(|line| multiple(line)) {
         ResidualClass::CompilerUnemittable
-    } else if facts.register_erased_ordered_equal {
+    } else if register_erased_ordered_equal {
         ResidualClass::AllocationUncovered
-    } else if facts.instruction_multiset_equal {
+    } else if instruction_multiset_equal {
         ResidualClass::SchedulingFloor
-    } else if facts.register_erased_multiset_equal {
+    } else if register_erased_multiset_equal {
         ResidualClass::AllocationUncovered
     } else if !facts.type_width_fingerprints.is_empty() && facts.branch_topology_equal {
         ResidualClass::TypeWidthMismatch
     } else if !facts.branch_topology_equal {
         ResidualClass::StructuralTopology
-    } else if facts.insertions != 0 || facts.deletions != 0 || actual_bytes != reference_bytes {
+    } else if streams_differ || actual_bytes != reference_bytes {
         ResidualClass::MissingExtraCode
     } else {
         ResidualClass::Unclassified
     };
     ResidualReport {
-        playbook: class.playbook().map(str::to_string),
         class,
         wrong_instructions: pool,
         facts,
@@ -391,55 +360,46 @@ pub fn classify(
 mod tests {
     use super::*;
     fn triage(left: &[&str], right: &[&str], differing: usize) -> ResidualReport {
-        classify(
-            &left.iter().map(|line| line.to_string()).collect::<Vec<_>>(),
-            &right
-                .iter()
-                .map(|line| line.to_string())
-                .collect::<Vec<_>>(),
-            left.len() * 2,
-            right.len() * 2,
-            differing,
-        )
+        let left = left.iter().map(ToString::to_string).collect::<Vec<_>>();
+        let right = right.iter().map(ToString::to_string).collect::<Vec<_>>();
+        classify(&left, &right, left.len() * 2, right.len() * 2, differing)
+    }
+    fn assert_route(left: &[&str], right: &[&str], differing: usize, class: ResidualClass) {
+        assert_eq!(triage(left, right, differing).class, class);
     }
     #[test]
     fn routes_each_mechanical_residual() {
-        assert_eq!(
-            triage(&["movs r0, #1"], &["movs r0, #1"], 0).class,
-            ResidualClass::Exact
+        use ResidualClass::*;
+        assert_route(&["movs r0, #1"], &["movs r0, #1"], 0, Exact);
+        assert_route(&["ldr r0, [pc, #4]"], &["ldr r0, [pc, #8]"], 1, LayoutOnly);
+        assert_route(
+            &["adds r0, r1, #0"],
+            &["adds r2, r3, #0"],
+            1,
+            AllocationUncovered,
         );
-        assert_eq!(
-            triage(&["ldr r0, [pc, #4]"], &["ldr r0, [pc, #8]"], 1).class,
-            ResidualClass::LayoutOnly
+        assert_route(
+            &["movs r0, #1", "movs r1, #2"],
+            &["movs r1, #2", "movs r0, #1"],
+            2,
+            SchedulingFloor,
         );
-        assert_eq!(
-            triage(&["adds r0, r1, #0"], &["adds r2, r3, #0"], 1).class,
-            ResidualClass::AllocationUncovered
+        assert_route(
+            &["ldrb r0, [r1, #0]"],
+            &["ldrsb r0, [r1, #0]"],
+            1,
+            TypeWidthMismatch,
         );
-        assert_eq!(
-            triage(
-                &["movs r0, #1", "movs r1, #2"],
-                &["movs r1, #2", "movs r0, #1"],
-                2
-            )
-            .class,
-            ResidualClass::SchedulingFloor
-        );
-        assert_eq!(
-            triage(&["ldrb r0, [r1, #0]"], &["ldrsb r0, [r1, #0]"], 1).class,
-            ResidualClass::TypeWidthMismatch
-        );
-        assert_eq!(
-            triage(&["beq 0x4"], &["bne 0x4"], 1).class,
-            ResidualClass::StructuralTopology
-        );
-        assert_eq!(
-            triage(&["movs r0, #1"], &["movs r0, #1", "str r0, [r1]"], 1).class,
-            ResidualClass::MissingExtraCode
+        assert_route(&["beq 0x4"], &["bne 0x4"], 1, StructuralTopology);
+        assert_route(
+            &["movs r0, #1"],
+            &["movs r0, #1", "str r0, [r1]"],
+            1,
+            MissingExtraCode,
         );
     }
     #[test]
-    fn branch_topology_distinguishes_same_mnemonic_with_different_target() {
+    fn branch_topology_tracks_targets_across_alignment() {
         let report = triage(
             &["beq 0x4", "movs r0, #1", "movs r1, #2", "bx lr"],
             &["beq 0x6", "movs r0, #1", "movs r1, #2", "bx lr"],
@@ -447,9 +407,6 @@ mod tests {
         );
         assert!(!report.facts.branch_topology_equal);
         assert_eq!(report.class, ResidualClass::StructuralTopology);
-    }
-    #[test]
-    fn branch_topology_normalizes_targets_across_an_inserted_instruction() {
         let report = triage(
             &["beq 0x4", "movs r0, #1", "bx lr"],
             &["beq 0x6", "nop", "movs r0, #1", "bx lr"],
@@ -464,13 +421,9 @@ mod tests {
             &["ldrsb r0, [r1, #0]", "bx lr"],
             2,
         );
-        assert_eq!(
-            report.facts.type_width_fingerprints,
-            vec![TypeWidthFingerprint {
-                candidate: "ldrb".to_string(),
-                reference: "ldrsb".to_string(),
-            }]
-        );
+        assert_eq!(report.facts.type_width_fingerprints.len(), 1);
+        assert_eq!(report.facts.type_width_fingerprints[0].candidate, "ldrb");
+        assert_eq!(report.facts.type_width_fingerprints[0].reference, "ldrsb");
         assert_eq!(report.class, ResidualClass::TypeWidthMismatch);
     }
 }

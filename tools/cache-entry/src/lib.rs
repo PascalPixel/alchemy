@@ -1,27 +1,7 @@
 pub mod sqlite;
 
-// Writing a content-addressed cache entry so it can never be observed
-// half-written.
-//
-// THE SECOND DEFECT BEHIND THE POISONED CACHE, and the one that actually
-// explains the symptom. A hand-maintained key (see HANDOVER §5h) yields an
-// entry that is WRONG BUT COMPLETE. It cannot explain one key holding 160
-// bytes in one checkout and 164 in another: a content-addressed key has one
-// correct content by construction, so two different LENGTHS mean one of them
-// was never finished being written.
-//
-// A plain write to the final path is not atomic. A run killed mid-write, or
-// two concurrent builds of the same overlay, leaves a truncated file that the
-// next existence check serves happily for ever. Nothing downstream re-reads or
-// re-checks it, which is why the damage surfaced as a mysterious LZ round-trip
-// failure in a completely different tool, recurred for several runs, and
-// survived across commits: switching commits does not touch `out/`.
-//
-// Writing to a unique temporary name in the SAME directory and renaming makes
-// the entry appear whole or not at all; rename is atomic within a filesystem.
-// A concurrent writer loses the race harmlessly, leaving a complete file.
-//
-// Ported from tools/lib/cache_entry.ts.
+// Same-directory temporary write plus atomic rename prevents truncated cache
+// hits after interruption or concurrent writers. `.partial` files stay inert.
 
 use std::fs;
 use std::io;

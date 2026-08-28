@@ -245,11 +245,7 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         rendered.stdout.push_str(&format!(
             "triage_final={} playbook={}\n",
             rendered.residual.class.label(),
-            rendered
-                .residual
-                .playbook
-                .as_deref()
-                .unwrap_or("smart-queue")
+            rendered.residual.class.playbook().unwrap_or("smart-queue")
         ));
         rendered.allocator = Some(report);
     }
@@ -292,7 +288,6 @@ fn render_bytes(
         });
     offsets.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
     let (left_lines, right_lines) = (ordered_lines(&left), ordered_lines(&right));
-    let (class, wrong) = residual_class(&left_lines, &right_lines);
     let residual = classify(
         &left_lines,
         &right_lines,
@@ -300,8 +295,9 @@ fn render_bytes(
         expected.len(),
         differing.len(),
     );
-    let playbook = residual.playbook.as_deref().unwrap_or("smart-queue");
-    let mut out = format!("candidate={} reference={} differing_halfwords={}\ncompile={compile}\nclass={class} wrong_instructions={wrong}\ntriage={} playbook={playbook}\n", actual.len(), expected.len(), differing.len(), residual.class.label());
+    let wrong = residual.wrong_instructions;
+    let playbook = residual.class.playbook().unwrap_or("smart-queue");
+    let mut out = format!("candidate={} reference={} differing_halfwords={}\ncompile={compile}\nclass={} wrong_instructions={wrong}\ntriage={} playbook={playbook}\n", actual.len(), expected.len(), differing.len(), residual.class.label(), residual.class.label());
     if options.align {
         let pairs = align_streams(&left_lines, &right_lines);
         let matched = pairs
@@ -499,25 +495,6 @@ pub fn without_pc_offset(instruction: &str) -> String {
     }
     out
 }
-pub fn residual_class(left: &[String], right: &[String]) -> (&'static str, i64) {
-    let report = crate::triage::classify(
-        left,
-        right,
-        left.len() * 2,
-        right.len() * 2,
-        usize::from(left != right),
-    );
-    let class = match report.class {
-        crate::triage::ResidualClass::Exact => "exact",
-        crate::triage::ResidualClass::LayoutOnly => "layout",
-        crate::triage::ResidualClass::AllocationCovered
-        | crate::triage::ResidualClass::AllocationUncovered => "allocation",
-        crate::triage::ResidualClass::SchedulingFloor => "ordering",
-        crate::triage::ResidualClass::CompilerUnemittable => "unemittable",
-        _ => "wrong",
-    };
-    (class, report.wrong_instructions)
-}
 pub fn ordered_lines(rows: &Rows) -> Vec<String> {
     let mut keys: Vec<_> = rows.keys().collect();
     keys.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
@@ -551,44 +528,17 @@ pub fn without_register(instruction: &str) -> String {
         .into_owned()
 }
 pub fn align_streams(left: &[String], right: &[String]) -> Vec<(Option<String>, Option<String>)> {
-    let (a, b): (Vec<_>, Vec<_>) = (
-        left.iter().map(|line| alignment_key(line)).collect(),
-        right.iter().map(|line| alignment_key(line)).collect(),
-    );
-    let mut table = vec![vec![0; b.len() + 1]; a.len() + 1];
-    for i in (0..a.len()).rev() {
-        for j in (0..b.len()).rev() {
-            table[i][j] = if a[i] == b[j] {
-                table[i + 1][j + 1] + 1
-            } else {
-                table[i + 1][j].max(table[i][j + 1])
-            };
-        }
-    }
-    let mut out = Vec::new();
-    let (mut i, mut j) = (0, 0);
-    while i < a.len() && j < b.len() {
-        if a[i] == b[j] {
-            out.push((Some(left[i].clone()), Some(right[j].clone())));
-            i += 1;
-            j += 1;
-        } else if table[i + 1][j] >= table[i][j + 1] {
-            out.push((Some(left[i].clone()), None));
-            i += 1;
-        } else {
-            out.push((None, Some(right[j].clone())));
-            j += 1;
-        }
-    }
-    while i < a.len() {
-        out.push((Some(left[i].clone()), None));
-        i += 1;
-    }
-    while j < b.len() {
-        out.push((None, Some(right[j].clone())));
-        j += 1;
-    }
-    out
+    crate::triage::alignment_indices(left, right, |left, right| {
+        usize::from(alignment_key(left) == alignment_key(right))
+    })
+    .into_iter()
+    .map(|(left_index, right_index)| {
+        (
+            left_index.map(|index| left[index].clone()),
+            right_index.map(|index| right[index].clone()),
+        )
+    })
+    .collect()
 }
 fn source_cache_key(
     source: &str,

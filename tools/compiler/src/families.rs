@@ -5,7 +5,8 @@ use candidate_compiler::verify::{
 use candidate_show::{
     disasm::disassemble,
     insns::gas_function_insns,
-    render::{align_streams, alignment_key, residual_class, without_pc_offset, without_register},
+    render::{align_streams, alignment_key, without_pc_offset, without_register},
+    triage::{classify, ResidualClass},
 };
 use compiler_core::{
     routing::CompilerTarget,
@@ -529,13 +530,15 @@ fn transplant_command(arguments: &[String]) -> Result<(), String> {
     }
     let blocks = blocks(&template_lines, &target_lines);
     write_json(&output.join("alignment.json"), &blocks)?;
-    let m2c = crate::workbench::generate_family_m2c_seed(
+    let m2c = crate::family_m2c::generate(
         target_owner,
         Path::new(&target.source),
         &target.symbol,
-        template_owner,
-        Path::new(&template.source),
-        &template.symbol,
+        Some((
+            template_owner,
+            Path::new(&template.source),
+            &template.symbol,
+        )),
         &output.join("m2c"),
     )?;
     let recipe = serde_json::json!({
@@ -858,9 +861,22 @@ fn prove_member(owner: &str, family: &ProofFamily) -> Result<usize, String> {
     write(&reference_binary, &verification.expected)?;
     let candidate = disassembled(&candidate_binary)?;
     let target = disassembled(&reference_binary)?;
-    let (class, wrong) = residual_class(&candidate, &target);
-    if class != "ordering" || wrong != 0 || candidate.len() != target.len() {
-        return Err(format!("{owner}: live residual is {class}/{wrong}"));
+    let report = classify(
+        &candidate,
+        &target,
+        verification.actual.len(),
+        verification.expected.len(),
+        differing,
+    );
+    if report.class != ResidualClass::SchedulingFloor
+        || report.wrong_instructions != 0
+        || candidate.len() != target.len()
+    {
+        return Err(format!(
+            "{owner}: live residual is {}/{}",
+            report.class.label(),
+            report.wrong_instructions
+        ));
     }
     let pairs = align_streams(&candidate, &target);
     let groups = reorder_groups(&pairs, family.maximum_mismatch_run_rows)

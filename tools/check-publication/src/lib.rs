@@ -1,20 +1,4 @@
-//! Publication gate --- port of `tools/check/check_publication.ts`.
-//!
-//! Nothing private or generated may leave this machine: not as a staged blob,
-//! not as a blob in outgoing history, not as a commit message. Every message
-//! this module produces matches the TypeScript original character for
-//! character.
-//!
-//! PORT NOTE: every regular expression is hand-rolled (no regex crate). The
-//! hand-rolled matchers reproduce the JavaScript semantics that are actually
-//! load-bearing here, including `\b` being ASCII-only and `^` under the `m`
-//! flag matching after `\r` as well as `\n`. The one JavaScript behaviour not
-//! reproduced is `^` matching after U+2028/U+2029, which no commit message or
-//! source file in this repository contains.
-//!
-//! PORT NOTE: git is invoked with `-C <root>` instead of inheriting the process
-//! working directory, so every scan can be pointed at a temporary tree in
-//! tests. At the repository root the two are identical.
+//! Fail-closed publication checks for staged changes and outgoing history.
 pub mod cli;
 use std::path::Path;
 use std::process::Command;
@@ -51,97 +35,62 @@ const BLOCKED_DIRECTORIES: &[&str] = &[
     "work",
 ];
 const REPORT_EXTENSIONS: &[&str] = &["csv", "json", "jsonl", "log", "tsv", "txt"];
-/// The words `PRIVATE_REPORT` looks for, delimited by `.`, `_`, `-`, or an end.
-const PRIVATE_REPORT_WORDS: &[&str] = &["analysis", "comparison", "diff", "dump", "report"];
+const REPORT_WORDS: &[&str] = &["analysis", "comparison", "diff", "dump", "report"];
 const MARKER_EXTENSIONS: &[&str] = &[
     "md", "ts", "js", "json", "sh", "c", "h", "s", "asm", "tsv", "txt",
 ];
-/// `/^0+$/` --- a git object id of all zeroes means "no such ref".
-fn zero_oid(value: &str) -> bool {
-    !value.is_empty() && value.bytes().all(|byte| byte == b'0')
+fn listed(value: &str, choices: &[&str]) -> bool {
+    choices
+        .iter()
+        .any(|choice| value.eq_ignore_ascii_case(choice))
 }
-fn is_separator(byte: u8) -> bool {
-    matches!(byte, b'.' | b'_' | b'-')
-}
-/// `/(?:^|[._-])(?:analysis|comparison|diff|dump|report)(?:[._-]|$)/i`
-fn private_report(leaf: &str) -> bool {
-    let lower = leaf.to_ascii_lowercase();
-    let bytes = lower.as_bytes();
-    for word in PRIVATE_REPORT_WORDS {
-        let word = word.as_bytes();
-        if bytes.len() < word.len() {
-            continue;
-        }
-        for start in 0..=(bytes.len() - word.len()) {
-            if &bytes[start..start + word.len()] != word {
-                continue;
-            }
-            let before_ok = start == 0 || is_separator(bytes[start - 1]);
-            let end = start + word.len();
-            let after_ok = end == bytes.len() || is_separator(bytes[end]);
-            if before_ok && after_ok {
-                return true;
-            }
-        }
-    }
-    false
-}
-fn extension(path: &str) -> String {
-    let leaf = match path.rfind('/') {
-        Some(index) => &path[index + 1..],
-        None => path,
-    };
-    match leaf.rfind('.') {
-        Some(dot) => leaf[dot + 1..].to_ascii_lowercase(),
-        None => String::new(),
-    }
+fn extension(path: &str) -> &str {
+    path.rsplit(['/', '\\'])
+        .next()
+        .and_then(|leaf| leaf.rsplit_once('.').map(|(_, suffix)| suffix))
+        .unwrap_or("")
 }
 fn canonical_binary_source(path: &str) -> bool {
-    let normalized = path.replace('\\', "/").to_lowercase();
-    if !normalized.starts_with("games/gs1/assets/maps/") {
-        return false;
-    }
-    let leaf = match normalized.rfind('/') {
-        Some(index) => normalized[index + 1..].to_string(),
-        None => normalized.clone(),
-    };
-    leaf == "metatiles.bin" || leaf == "metatile_attributes.bin"
+    let normalized = path.replace('\\', "/").to_ascii_lowercase();
+    normalized.starts_with("games/gs1/assets/maps/")
+        && matches!(
+            normalized.rsplit('/').next(),
+            Some("metatiles.bin" | "metatile_attributes.bin")
+        )
 }
-/// Why a repository path may not be published, or `None` if it may.
 pub fn publication_path_reason(path: &str) -> Option<&'static str> {
     let normalized = path.replace('\\', "/");
-    let components: Vec<&str> = normalized
+    let components: Vec<_> = normalized
         .split('/')
-        .filter(|item| !item.is_empty())
+        .filter(|component| !component.is_empty())
         .collect();
-    let leaf = components
-        .last()
-        .map(|item| item.to_lowercase())
-        .unwrap_or_default();
-    let directories: Vec<String> = components[..components.len().saturating_sub(1)]
-        .iter()
-        .map(|item| item.to_lowercase())
-        .collect();
-    let suffix = extension(&normalized);
+    let leaf = components.last().copied().unwrap_or("");
+    let directories = &components[..components.len().saturating_sub(1)];
     if normalized.starts_with('/') || components.contains(&"..") {
         return Some("invalid repository path");
     }
-    if directories
-        .iter()
-        .any(|item| BLOCKED_DIRECTORIES.contains(&item.as_str()) || item.starts_with(".cmatch"))
-    {
+    if directories.iter().any(|directory| {
+        listed(directory, BLOCKED_DIRECTORIES)
+            || directory.to_ascii_lowercase().starts_with(".cmatch")
+    }) {
         return Some("private or generated directory");
     }
-    if leaf == "baserom" || leaf.starts_with("baserom.") {
+    let lower_leaf = leaf.to_ascii_lowercase();
+    if lower_leaf == "baserom"
+        || lower_leaf.starts_with("baserom.")
+        || lower_leaf.contains(".gba.")
+        || lower_leaf.contains(".rom.")
+    {
         return Some("private ROM name");
     }
-    if leaf.contains(".gba.") || leaf.contains(".rom.") {
-        return Some("private ROM name");
-    }
-    if BLOCKED_EXTENSIONS.contains(&suffix.as_str()) && !canonical_binary_source(&normalized) {
+    let suffix = extension(&normalized);
+    if listed(suffix, BLOCKED_EXTENSIONS) && !canonical_binary_source(&normalized) {
         return Some("private or generated file type");
     }
-    if REPORT_EXTENSIONS.contains(&suffix.as_str()) && private_report(&leaf) {
+    let report_name = leaf
+        .split(['.', '_', '-'])
+        .any(|word| listed(word, REPORT_WORDS));
+    if listed(suffix, REPORT_EXTENSIONS) && report_name {
         return Some("private analysis report");
     }
     None
@@ -150,145 +99,78 @@ fn gba_image(data: &[u8]) -> bool {
     if data.len() < 0xc0 || !data.len().is_multiple_of(0x8000) || data.len() > 0x0400_0000 {
         return false;
     }
-    if data[0xb2] != 0x96 || data[0xb3] != 0 || data[0xb4] != 0 {
+    if data[0xb2..=0xb4] != [0x96, 0, 0] || data[0xb5..=0xbb].iter().any(|byte| *byte != 0) {
         return false;
     }
-    for byte in &data[0xb5..=0xbb] {
-        if *byte != 0 {
-            return false;
-        }
-    }
-    let mut sum: u8 = 0;
-    for byte in &data[0xa0..=0xbc] {
-        sum = sum.wrapping_add(*byte);
-    }
-    data[0xbd] == (0u8.wrapping_sub(sum).wrapping_sub(0x19))
+    let sum = data[0xa0..=0xbc]
+        .iter()
+        .fold(0u8, |sum, byte| sum.wrapping_add(*byte));
+    data[0xbd] == 0u8.wrapping_sub(sum).wrapping_sub(0x19)
 }
-/// Why a blob's *content* may not be published, or `None` if it may.
 pub fn publication_content_reason(data: &[u8]) -> Option<&'static str> {
     if gba_image(data) {
         return Some("GBA ROM image");
     }
-    if data.len() >= 4 && data[..4] == [0x7f, 0x45, 0x4c, 0x46] {
+    if data.starts_with(&[0x7f, b'E', b'L', b'F']) {
         return Some("ELF build product");
     }
-    if data.len() >= 8 && &data[..8] == b"!<arch>\n" {
+    if data.starts_with(b"!<arch>\n") {
         return Some("archive or object library");
     }
-    if data.len() >= 2 && data[0] == 0x4d && data[1] == 0x5a {
+    if data.starts_with(b"MZ") {
         return Some("native executable");
     }
-    if data.len() >= 4 {
-        let magic = u32::from_be_bytes([data[0], data[1], data[2], data[3]]);
-        const MAGICS: [u32; 9] = [
-            0xfeed_face,
-            0xcefa_edfe,
-            0xfeed_facf,
-            0xcffa_edfe,
-            0xcafe_babe,
-            0xbeba_feca,
-            0xcafe_babf,
-            0xbfba_feca,
-            0x0061_736d,
-        ];
-        if MAGICS.contains(&magic) {
-            return Some("native executable");
-        }
+    let magic = data
+        .get(..4)
+        .map(|bytes| u32::from_be_bytes(bytes.try_into().unwrap()));
+    if matches!(
+        magic,
+        Some(
+            0xfeed_face
+                | 0xcefa_edfe
+                | 0xfeed_facf
+                | 0xcffa_edfe
+                | 0xcafe_babe
+                | 0xbeba_feca
+                | 0xcafe_babf
+                | 0xbfba_feca
+                | 0x0061_736d
+        )
+    ) {
+        return Some("native executable");
     }
     None
 }
-/// JavaScript `\s` for the character classes this port needs.
-fn is_js_space(ch: char) -> bool {
-    ch.is_whitespace() || ch == '\u{feff}'
-}
-/// Positions at which JavaScript's `^` matches under the `m` flag.
-fn line_starts(text: &str) -> Vec<usize> {
-    let bytes = text.as_bytes();
-    let mut starts = vec![0usize];
-    for (index, byte) in bytes.iter().enumerate() {
-        if *byte == b'\n' || *byte == b'\r' {
-            starts.push(index + 1);
-        }
-    }
-    starts
-}
-/// `/^(?:<{7}|>{7}) /` anchored at the start of `line`.
 fn marker_line(line: &str) -> bool {
     let bytes = line.as_bytes();
-    if bytes.len() < 8 || bytes[7] != b' ' {
-        return false;
-    }
-    bytes[..7].iter().all(|byte| *byte == b'<') || bytes[..7].iter().all(|byte| *byte == b'>')
+    bytes.get(7) == Some(&b' ')
+        && (bytes[..7].iter().all(|byte| *byte == b'<')
+            || bytes[..7].iter().all(|byte| *byte == b'>'))
 }
-/// `/^\s*\.incbin\b/im`
-fn incbin(text: &str) -> bool {
-    for start in line_starts(text) {
-        let rest = &text[start..];
-        let trimmed = rest.trim_start_matches(is_js_space);
-        if trimmed.len() < 7 {
-            continue;
-        }
-        if !trimmed.as_bytes()[..7].eq_ignore_ascii_case(b".incbin") {
-            continue;
-        }
-        match trimmed[7..].chars().next() {
-            None => return true,
-            Some(next) if !(next.is_ascii_alphanumeric() || next == '_') => return true,
-            Some(_) => {}
-        }
-    }
-    false
-}
-/// Why a file carries an unresolved merge conflict, or `None`.
-///
-/// Only the opening and closing markers are matched. A bare `=======` is a
-/// valid Markdown heading underline, so it is deliberately not matched.
 pub fn conflict_marker_reason(path: &str, data: &[u8]) -> Option<String> {
-    if !MARKER_EXTENSIONS.contains(&extension(path).as_str()) {
+    if !listed(extension(path), MARKER_EXTENSIONS) {
         return None;
     }
     let text = String::from_utf8_lossy(data);
-    let found = line_starts(&text)
-        .into_iter()
-        .any(|start| marker_line(&text[start..]));
-    if !found {
+    if !text.split(['\n', '\r']).any(marker_line) {
         return None;
     }
-    // The reported line number comes from a plain `\n` split, exactly as the
-    // TypeScript does; a `\r`-only match therefore reports line 0 in both.
     let line = text
         .split('\n')
         .position(marker_line)
-        .map(|index| index as isize + 1)
+        .map(|index| index + 1)
         .unwrap_or(0);
     Some(format!(
         "unresolved conflict marker at line {line}; resolve the merge before committing"
     ))
 }
-/// The only markdown files this repository keeps.
-///
-/// 31 markdown files were collapsed into one because agents did not read any of
-/// them, for the same reason they did not find 121 separate tool binaries: a
-/// surface nobody can enumerate is a surface nobody opens. Letting new ones
-/// accumulate rebuilds the problem one file at a time.
-pub const ALLOWED_MARKDOWN: &[&str] = &["README.md", "CONTRIBUTING.md"];
-/// Reject NEW `.txt` and `.md` files. Existing ones keep working: the rule is
-/// about growth, not about the ten data files already tracked.
-///
-/// `tracked` is the set of paths already in HEAD.
-pub fn new_text_file_reason(
-    path: &str,
-    tracked: &std::collections::BTreeSet<String>,
-) -> Option<String> {
+fn new_text_file_reason(path: &str, existing: bool) -> Option<String> {
     let suffix = extension(path);
-    if suffix != "txt" && suffix != "md" {
+    if (!suffix.eq_ignore_ascii_case("txt") && !suffix.eq_ignore_ascii_case("md")) || existing {
         return None;
     }
-    if tracked.contains(path) {
-        return None;
-    }
-    if suffix == "md" {
-        if ALLOWED_MARKDOWN.contains(&path) {
+    if suffix.eq_ignore_ascii_case("md") {
+        if matches!(path, "README.md" | "CONTRIBUTING.md") {
             return None;
         }
         return Some(format!(
@@ -303,199 +185,130 @@ pub fn new_text_file_reason(
          scratch directory"
     ))
 }
-/// Why a staged or committed entry may not be published, or `None`.
-pub fn publication_entry_reason(path: &str, data: &[u8]) -> Option<String> {
-    if let Some(reason) = publication_path_reason(path) {
-        return Some(reason.to_string());
-    }
-    let suffix = extension(path);
-    if (suffix == "asm" || suffix == "s") && incbin(&String::from_utf8_lossy(data)) {
-        return Some("committed incbin payload".to_string());
-    }
-    publication_content_reason(data).map(|reason| reason.to_string())
+fn incbin(data: &[u8]) -> bool {
+    let text = String::from_utf8_lossy(data);
+    text.split(['\n', '\r']).any(|line| {
+        let trimmed = line.trim_start_matches(|ch: char| ch.is_whitespace() || ch == '\u{feff}');
+        let bytes = trimmed.as_bytes();
+        bytes
+            .get(..7)
+            .is_some_and(|word| word.eq_ignore_ascii_case(b".incbin"))
+            && bytes
+                .get(7)
+                .is_none_or(|next| !(next.is_ascii_alphanumeric() || *next == b'_'))
+    })
 }
-/// `/(?:\b[0-9a-fA-F]{2}\b[ \t]+){7}\b[0-9a-fA-F]{2}\b/`
-///
-/// A run of eight space-separated hex byte pairs: someone pasted bytes.
+fn publication_data_reason(path: &str, data: &[u8]) -> Option<&'static str> {
+    if listed(extension(path), &["asm", "s"]) && incbin(data) {
+        Some("committed incbin payload")
+    } else {
+        publication_content_reason(data)
+    }
+}
 fn byte_dump(message: &str) -> bool {
     let bytes = message.as_bytes();
     let word = |byte: u8| byte.is_ascii_alphanumeric() || byte == b'_';
-    let mut runs: Vec<(usize, usize)> = Vec::new();
     let mut index = 0;
+    let mut previous = None;
+    let mut streak = 0;
     while index < bytes.len() {
-        if word(bytes[index]) {
-            let start = index;
-            while index < bytes.len() && word(bytes[index]) {
-                index += 1;
-            }
-            runs.push((start, index));
-        } else {
+        while index < bytes.len() && !word(bytes[index]) {
             index += 1;
         }
-    }
-    let pair = |run: &(usize, usize)| {
-        run.1 - run.0 == 2 && bytes[run.0..run.1].iter().all(u8::is_ascii_hexdigit)
-    };
-    let mut streak = 0usize;
-    for position in 0..runs.len() {
-        if !pair(&runs[position]) {
+        if index == bytes.len() {
+            break;
+        }
+        let start = index;
+        while index < bytes.len() && word(bytes[index]) {
+            index += 1;
+        }
+        let pair = index - start == 2 && bytes[start..index].iter().all(u8::is_ascii_hexdigit);
+        if !pair {
             streak = 0;
+            previous = None;
             continue;
         }
-        let joined = position > 0
-            && pair(&runs[position - 1])
-            && streak > 0
-            && bytes[runs[position - 1].1..runs[position].0]
+        let joined = previous.is_some_and(|end| {
+            bytes[end..start]
                 .iter()
-                .all(|byte| *byte == b' ' || *byte == b'\t')
-            && runs[position].0 > runs[position - 1].1;
+                .all(|byte| matches!(byte, b' ' | b'\t'))
+        });
         streak = if joined { streak + 1 } else { 1 };
-        if streak >= 8 {
+        previous = Some(index);
+        if streak == 8 {
             return true;
         }
     }
     false
 }
-/// Reject a commit MESSAGE that carries ROM bytes.
-///
-/// Everything else in this file scans file blobs. Commit messages were never
-/// scanned at all, so the gate passing said nothing about them -- and messages
-/// are published to the remote exactly like file contents are.
-///
-/// This deliberately checks one unambiguous thing: a run of space-separated hex
-/// byte pairs, which is a pasted byte dump and never ordinary prose. It does
-/// NOT try to detect quoted disassembly.
 pub fn commit_message_reason(message: &str) -> Option<&'static str> {
-    if byte_dump(message) {
-        Some("commit message contains a raw byte dump")
-    } else {
-        None
-    }
+    byte_dump(message).then_some("commit message contains a raw byte dump")
 }
-// --- git plumbing ----------------------------------------------------------
-fn git(root: &Path, args: &[&str], input: Option<&str>, label: &str) -> Result<Vec<u8>, String> {
-    use std::io::Write;
-    use std::process::Stdio;
-    let mut command = Command::new("git");
-    command
+fn git(root: &Path, args: &[&str], label: &str) -> Result<Vec<u8>, String> {
+    let result = Command::new("git")
         .arg("-C")
         .arg(root)
         .args(args)
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .stdin(if input.is_some() {
-            Stdio::piped()
-        } else {
-            Stdio::null()
-        });
-    let mut child = command
-        .spawn()
+        .output()
         .map_err(|error| format!("{label} failed: {error}"))?;
-    if let Some(text) = input {
-        child
-            .stdin
-            .as_mut()
-            .ok_or_else(|| format!("{label} failed"))?
-            .write_all(text.as_bytes())
-            .map_err(|error| format!("{label} failed: {error}"))?;
+    if result.status.success() {
+        return Ok(result.stdout);
     }
-    let result = child
-        .wait_with_output()
-        .map_err(|error| format!("{label} failed: {error}"))?;
-    if !result.status.success() {
-        let stderr = String::from_utf8_lossy(&result.stderr).trim().to_string();
-        return Err(if stderr.is_empty() {
-            format!("{label} failed")
-        } else {
-            stderr
-        });
-    }
-    Ok(result.stdout)
+    let stderr = String::from_utf8_lossy(&result.stderr).trim().to_string();
+    Err(if stderr.is_empty() {
+        format!("{label} failed")
+    } else {
+        stderr
+    })
+}
+fn existed_in_head(root: &Path, path: &str) -> bool {
+    git(root, &["ls-tree", "HEAD", "--", path], "tracked path scan")
+        .is_ok_and(|output| !output.is_empty())
 }
 fn nul_list(value: &[u8]) -> Vec<String> {
-    String::from_utf8_lossy(value)
-        .split('\0')
-        .filter(|item| !item.is_empty())
-        .map(str::to_string)
-        .collect()
-}
-fn lines(value: &[u8]) -> Vec<String> {
-    String::from_utf8_lossy(value)
-        .split('\n')
-        .map(|item| item.trim().to_string())
-        .filter(|item| !item.is_empty())
-        .collect()
-}
-/// One thing to scan. `data` is fetched lazily, exactly as in the TypeScript.
-pub struct Entry<'a> {
-    pub scope: String,
-    pub path: String,
-    data: Box<dyn Fn() -> Result<Vec<u8>, String> + 'a>,
-}
-impl Entry<'_> {
-    pub fn data(&self) -> Result<Vec<u8>, String> {
-        (self.data)()
-    }
-}
-fn rename_destinations(value: &[u8]) -> std::collections::BTreeSet<String> {
-    let fields = String::from_utf8_lossy(value)
-        .split('\0')
+    value
+        .split(|byte| *byte == 0)
         .filter(|field| !field.is_empty())
-        .map(str::to_string)
-        .collect::<Vec<_>>();
-    let mut destinations = std::collections::BTreeSet::new();
-    let mut index = 0usize;
+        .map(|field| String::from_utf8_lossy(field).into_owned())
+        .collect()
+}
+/// Parse `git diff --raw -z`; rename records have an old and a new path.
+fn raw_changes(value: &[u8]) -> Result<(bool, Vec<(String, bool)>), String> {
+    let fields = nul_list(value);
+    let mut changes = Vec::new();
+    let mut index = 0;
     while index < fields.len() {
-        let status = &fields[index];
+        let metadata: Vec<_> = fields[index].split_whitespace().collect();
+        if metadata.len() != 5 || !metadata[0].starts_with(':') {
+            return Err("invalid raw git diff".to_string());
+        }
         index += 1;
-        if status.starts_with('R') {
-            // A rename record is status, old path, new path. Copies remain
-            // growth and deliberately do not receive this exemption.
-            if index + 1 >= fields.len() {
-                break;
-            }
-            destinations.insert(fields[index + 1].clone());
-            index += 2;
-        } else {
-            index += 1;
+        let paired = metadata[4].starts_with('R') || metadata[4].starts_with('C');
+        if index + usize::from(paired) >= fields.len() {
+            return Err("invalid raw git diff".to_string());
+        }
+        let path = fields[index + usize::from(paired)].clone();
+        index += 1 + usize::from(paired);
+        if metadata[4] != "D" && metadata[1] != "160000" {
+            let existing = metadata[4] != "A" && !metadata[4].starts_with('C');
+            changes.push((path, existing));
         }
     }
-    destinations
+    Ok((!fields.is_empty(), changes))
 }
-/// Paths already in HEAD, plus destinations proved to be staged renames, so
-/// the new-text-file rule fires on growth rather than on directory moves.
-fn tracked_paths(root: &Path) -> std::collections::BTreeSet<String> {
-    // ls-files reads the INDEX, which already contains the file being staged, so
-    // every new file would look tracked and the rule would never fire. Read HEAD.
-    let mut tracked: std::collections::BTreeSet<String> = git(
-        root,
-        &["ls-tree", "-r", "HEAD", "--name-only"],
-        None,
-        "tracked path scan",
-    )
-    .map(|out| {
-        String::from_utf8_lossy(&out)
-            .lines()
-            .map(str::to_string)
-            .collect()
-    })
-    .unwrap_or_default();
-    if let Ok(out) = git(
-        root,
-        &["diff", "--cached", "--name-status", "--find-renames", "-z"],
-        None,
-        "staged rename scan",
-    ) {
-        tracked.extend(rename_destinations(&out));
-    }
-    tracked
+struct Entry {
+    scope: String,
+    path: String,
+    object: String,
+    existing: bool,
 }
-/// The shared reject pass. Failure order follows entry order.
-pub fn reject(entries: &[Entry]) -> Result<(), String> {
-    let mut failures: Vec<String> = Vec::new();
-    let tracked = tracked_paths(Path::new("."));
+fn scan(root: &Path, entries: Vec<Entry>, conflicts: bool) -> Result<(), String> {
+    let mut failures = Vec::new();
     for entry in entries {
-        if let Some(reason) = new_text_file_reason(&entry.path, &tracked) {
+        let existing = entry.existing
+            || (listed(extension(&entry.path), &["txt", "md"])
+                && existed_in_head(root, &entry.path));
+        if let Some(reason) = new_text_file_reason(&entry.path, existing) {
             failures.push(format!("{} {reason}", entry.scope));
             continue;
         }
@@ -503,8 +316,19 @@ pub fn reject(entries: &[Entry]) -> Result<(), String> {
             failures.push(format!("{} {}: {reason}", entry.scope, entry.path));
             continue;
         }
-        if let Some(reason) = publication_entry_reason(&entry.path, &entry.data()?) {
+        let data = git(
+            root,
+            &["show", &entry.object],
+            &format!("blob {}", entry.object),
+        )?;
+        if let Some(reason) = publication_data_reason(&entry.path, &data) {
             failures.push(format!("{} {}: {reason}", entry.scope, entry.path));
+            continue;
+        }
+        if conflicts {
+            if let Some(reason) = conflict_marker_reason(&entry.path, &data) {
+                failures.push(format!("{} {}: {reason}", entry.scope, entry.path));
+            }
         }
     }
     if failures.is_empty() {
@@ -516,287 +340,221 @@ pub fn reject(entries: &[Entry]) -> Result<(), String> {
         ))
     }
 }
-fn staged_paths(root: &Path) -> Result<Vec<String>, String> {
-    let paths = nul_list(&git(
+pub fn check_staged(root: &Path) -> Result<(), String> {
+    let output = git(
         root,
         &[
             "diff",
             "--cached",
-            "--name-only",
-            "--diff-filter=ACMRT",
+            "--raw",
+            "--no-abbrev",
+            "--find-renames",
             "-z",
         ],
-        None,
         "staged path scan",
-    )?);
-    // Exclude submodules which are tracked as commit objects, not blobs.
-    let mut kept = Vec::new();
-    for path in paths {
-        let stage = String::from_utf8_lossy(&git(
-            root,
-            &["ls-files", "--stage", &path],
-            None,
-            "ls-files",
-        )?)
-        .to_string();
-        if !stage.is_empty() && !stage.starts_with("160000") {
-            kept.push(path);
-        }
-    }
-    Ok(kept)
-}
-/// Every path with a staged change, deletions included. Used only by the
-/// scanned-nothing guard, so that a deletion-only commit is not mistaken for an
-/// empty index.
-fn staged_anything(root: &Path) -> Result<Vec<String>, String> {
-    Ok(nul_list(&git(
-        root,
-        &["diff", "--cached", "--name-only", "-z"],
-        None,
-        "staged path scan",
-    )?))
-}
-fn changed_paths(root: &Path, commit: &str) -> Result<Vec<String>, String> {
-    let paths = nul_list(&git(
-        root,
-        &[
-            "diff-tree",
-            "--root",
-            "--no-commit-id",
-            "--name-only",
-            "--diff-filter=ACMRT",
-            "-r",
-            "-z",
-            commit,
-        ],
-        None,
-        &format!("commit path scan {commit}"),
-    )?);
-    let mut kept = Vec::new();
-    for path in paths {
-        let ls_tree =
-            String::from_utf8_lossy(&git(root, &["ls-tree", commit, &path], None, "ls-tree")?)
-                .to_string();
-        if !ls_tree.is_empty() && !ls_tree.contains(" commit ") {
-            kept.push(path);
-        }
-    }
-    Ok(kept)
-}
-/// Gate the index.
-///
-/// PORT NOTE: the TypeScript passes trivially when nothing is staged at all --
-/// a gate that can pass without looking at anything is the defect this gate
-/// exists to police. This port fails instead.
-pub fn check_staged(root: &Path) -> Result<(), String> {
-    if staged_anything(root)?.is_empty() {
+    )?;
+    let (anything, changes) = raw_changes(&output)?;
+    if !anything {
         return Err("publication gate scanned nothing: no staged change to inspect".to_string());
     }
-    let entries: Vec<Entry> = staged_paths(root)?
+    let entries = changes
         .into_iter()
-        .map(|path| {
-            let owned = path.clone();
-            Entry {
-                scope: "staged".to_string(),
-                path,
-                data: Box::new(move || {
-                    git(
-                        root,
-                        &["show", &format!(":{owned}")],
-                        None,
-                        &format!("staged blob {owned}"),
-                    )
-                }),
-            }
+        .map(|(path, existing)| Entry {
+            scope: "staged".to_string(),
+            object: format!(":{path}"),
+            path,
+            existing,
         })
         .collect();
-    reject(&entries)?;
-    // Conflict markers are current-tree hygiene, so scan staged content only.
-    // The publication scan over immutable outgoing history remains separate.
-    let mut failures: Vec<String> = Vec::new();
-    for entry in &entries {
-        if let Some(reason) = conflict_marker_reason(&entry.path, &entry.data()?) {
-            failures.push(format!("{} {}: {reason}", entry.scope, entry.path));
-        }
-    }
-    if failures.is_empty() {
-        Ok(())
-    } else {
-        Err(format!(
-            "publication gate rejected:\n{}",
-            failures.join("\n")
-        ))
-    }
+    scan(root, entries, true)
 }
 fn revisions(root: &Path, local: &str, remote: &str) -> Result<Vec<String>, String> {
-    let negated = format!("^{remote}");
+    let excluded = format!("^{remote}");
     let mut args = vec!["rev-list", local];
-    if !zero_oid(remote) {
-        args.push(&negated);
+    if !remote.bytes().all(|byte| byte == b'0') {
+        args.push(&excluded);
     }
-    Ok(lines(&git(
-        root,
-        &args,
-        None,
-        &format!("outgoing revision scan {local}"),
-    )?))
+    git(root, &args, &format!("outgoing revision scan {local}")).map(|output| {
+        String::from_utf8_lossy(&output)
+            .lines()
+            .map(str::trim)
+            .filter(|line| !line.is_empty())
+            .map(str::to_string)
+            .collect()
+    })
 }
-fn commit_message(root: &Path, commit: &str) -> Result<String, String> {
-    Ok(String::from_utf8_lossy(&git(
-        root,
-        &["log", "-1", "--format=%B", commit],
-        None,
-        &format!("commit message {commit}"),
-    )?)
-    .to_string())
-}
-/// Gate outgoing history. `updates` is the pre-push hook's stdin.
-///
-/// PORT NOTE: the TypeScript passes trivially on empty stdin. This port fails
-/// instead, for the same reason `check_staged` does. An update list that names
-/// only deletions still scans nothing and still passes, which is correct: there
-/// is genuinely no outgoing content in that push.
-///
-/// Returns the message failures it printed alongside the error, so a caller can
-/// reproduce the TypeScript's stderr ordering.
-pub fn check_push(root: &Path, updates: &str) -> Result<(), PushError> {
-    let updates = lines(updates.as_bytes());
+pub fn check_push(root: &Path, updates: &str) -> Result<(), String> {
+    let updates: Vec<_> = updates
+        .lines()
+        .map(str::trim)
+        .filter(|line| !line.is_empty())
+        .collect();
     if updates.is_empty() {
-        return Err(PushError {
-            message_failures: Vec::new(),
-            error: "publication gate scanned nothing: no ref update on stdin".to_string(),
-        });
+        return Err("publication gate scanned nothing: no ref update on stdin".to_string());
     }
-    let fail = |error: String| PushError {
-        message_failures: Vec::new(),
-        error,
-    };
-    let mut commits: Vec<String> = Vec::new();
+    let mut commits = Vec::new();
     for update in updates {
-        let fields: Vec<&str> = update.split_whitespace().collect();
+        let fields: Vec<_> = update.split_whitespace().collect();
         if fields.len() != 4 {
-            return Err(fail("invalid pre-push update".to_string()));
+            return Err("invalid pre-push update".to_string());
         }
-        let (local, remote) = (fields[1], fields[3]);
-        if zero_oid(local) {
+        if fields[1].bytes().all(|byte| byte == b'0') {
             continue;
         }
-        for commit in revisions(root, local, remote).map_err(fail)? {
+        for commit in revisions(root, fields[1], fields[3])? {
             if !commits.contains(&commit) {
                 commits.push(commit);
             }
         }
     }
-    let mut message_failures: Vec<String> = Vec::new();
+    let mut message_failures = Vec::new();
     for commit in &commits {
-        let message = commit_message(root, commit).map_err(fail)?;
-        if let Some(reason) = commit_message_reason(&message) {
+        let message = git(
+            root,
+            &["show", "-s", "--format=%B", commit],
+            &format!("commit message {commit}"),
+        )?;
+        if let Some(reason) = commit_message_reason(&String::from_utf8_lossy(&message)) {
             message_failures.push(format!("{}: {reason}", &commit[..12.min(commit.len())]));
         }
     }
     if !message_failures.is_empty() {
         let count = message_failures.len();
-        return Err(PushError {
-            message_failures,
-            error: format!("refusing to publish {count} commit message(s)"),
-        });
+        return Err(format!(
+            "{}\nrefusing to publish {count} commit message(s)",
+            message_failures.join("\n")
+        ));
     }
-    let mut entries: Vec<Entry> = Vec::new();
-    for commit in &commits {
-        for path in changed_paths(root, commit).map_err(fail)? {
-            let scope = commit[..12.min(commit.len())].to_string();
-            let owned_commit = commit.clone();
-            let owned_path = path.clone();
+    let mut entries = Vec::new();
+    for commit in commits {
+        let output = git(
+            root,
+            &[
+                "diff-tree",
+                "--root",
+                "--no-commit-id",
+                "--raw",
+                "--no-abbrev",
+                "--find-renames",
+                "-r",
+                "-z",
+                &commit,
+            ],
+            &format!("commit path scan {commit}"),
+        )?;
+        let (_, changes) = raw_changes(&output)?;
+        for (path, existing) in changes {
             entries.push(Entry {
-                scope,
+                scope: commit[..12.min(commit.len())].to_string(),
+                object: format!("{commit}:{path}"),
                 path,
-                data: Box::new(move || {
-                    git(
-                        root,
-                        &["show", &format!("{owned_commit}:{owned_path}")],
-                        None,
-                        &format!("commit blob {owned_commit}:{owned_path}"),
-                    )
-                }),
+                existing,
             });
         }
     }
-    reject(&entries).map_err(fail)
+    scan(root, entries, false)
 }
-/// A push rejection: the per-commit lines to print, then the error itself.
-#[derive(Debug)]
-pub struct PushError {
-    pub message_failures: Vec<String>,
-    pub error: String,
+pub fn self_test() -> Result<(), String> {
+    for directory in BLOCKED_DIRECTORIES {
+        let path = format!("{directory}/fixture.c");
+        if publication_path_reason(&path).is_none() {
+            return Err(format!("private path accepted: {path}"));
+        }
+    }
+    for suffix in BLOCKED_EXTENSIONS {
+        let path = format!("fixture.{suffix}");
+        if publication_path_reason(&path).is_none() {
+            return Err(format!("private path accepted: {path}"));
+        }
+    }
+    for path in [
+        "baserom",
+        "private-diff.json",
+        "gs1-en.gba.lz",
+        ".cmatch-fresh/result.s",
+    ] {
+        if publication_path_reason(path).is_none() {
+            return Err(format!("private path accepted: {path}"));
+        }
+    }
+    for path in [
+        "src/main.c",
+        "games/gs1/asm/080000c0.s",
+        "games/gs1/assets/graphics/title.png",
+        "games/gs1/assets/audio/theme.mid",
+        "games/gs1/assets/audio/wave.wav",
+        "games/gs1/assets/data/layout.json",
+        "tools/compare-roms/src/main.rs",
+        "tools/build-full/src/main.rs",
+        "games/gs1/assets/data/resource_2_build_stamp.txt",
+        "games/gs1/assets/maps/town/metatiles.bin",
+        "games/gs1/assets/maps/town/metatile_attributes.bin",
+        "rom.sha1",
+    ] {
+        if let Some(reason) = publication_path_reason(path) {
+            return Err(format!("source path rejected: {path}: {reason}"));
+        }
+    }
+    let mut rom = vec![0u8; 0x8000];
+    rom[0xb2] = 0x96;
+    let sum = rom[0xa0..=0xbc]
+        .iter()
+        .fold(0u8, |sum, byte| sum.wrapping_add(*byte));
+    rom[0xbd] = 0u8.wrapping_sub(sum).wrapping_sub(0x19);
+    let signatures_hold = publication_content_reason(&rom) == Some("GBA ROM image")
+        && publication_content_reason(&[0x7f, b'E', b'L', b'F']) == Some("ELF build product")
+        && publication_content_reason(b"!<arch>\n") == Some("archive or object library")
+        && publication_content_reason(b"canonical source").is_none();
+    if !signatures_hold {
+        return Err("content-signature self-test failed".to_string());
+    }
+    let hygiene_holds =
+        publication_data_reason("games/gs1/asm/08000000.s", b".incbin \"rom.gba\"\n")
+            == Some("committed incbin payload")
+            && conflict_marker_reason("CONTRIBUTING.md", b"a\n<<<<<<< HEAD\nb\n").is_some()
+            && conflict_marker_reason("CONTRIBUTING.md", b"a\n>>>>>>> topic\n").is_some()
+            && publication_data_reason("CONTRIBUTING.md", b"x\n<<<<<<< HEAD\n").is_none()
+            && conflict_marker_reason("CONTRIBUTING.md", b"Title\n=======\n\nbody\n").is_none()
+            && conflict_marker_reason("CONTRIBUTING.md", b"see <<<<<<<HEAD in the output\n")
+                .is_none()
+            && conflict_marker_reason("games/gs1/assets/readme/x.png", b"<<<<<<< HEAD\n").is_none();
+    if !hygiene_holds {
+        return Err("source-hygiene self-test failed".to_string());
+    }
+    if commit_message_reason("fixed the header\n\n00 11 22 33 44 55 66 77\n").is_none() {
+        return Err("a byte dump in a commit message was accepted".to_string());
+    }
+    for message in [
+        "Close 12 owners the sweep left open\n",
+        "reverts 3d36cfb0aa11bb22cc33dd44ee55ff6677889900\n",
+        "resource_39b:e6c span 0x02000e6c..0x02000e78 is not audited\n",
+        "the prologue pushes r7 where the reference does not\n",
+        "the low halfword ff 00 stayed wrong\n",
+    ] {
+        if commit_message_reason(message).is_some() {
+            return Err(format!(
+                "a legitimate commit message was rejected: {}",
+                message.trim()
+            ));
+        }
+    }
+    Ok(())
 }
-/// Paths the gate must refuse. Shared by the binary's self-test and the tests.
-pub const REJECTED_PATHS: &[&str] = &[
-    "gs1-en.gba",
-    "gs1-ja.gba",
-    "gs1-de.gba",
-    "gs1-es.gba",
-    "gs1-fr.gba",
-    "gs1-it.gba",
-    "gs2-en.gba",
-    "gs2-ja.gba",
-    "gs2-de.gba",
-    "gs2-es.gba",
-    "gs2-fr.gba",
-    "gs2-it.gba",
-    "roms/private/gs1-en.gba",
-    "out/diff.json",
-    "work/rom.raw",
-    "alchemy-gcc/bin/compiler",
-    "analysis/regions.json",
-    "reports/comparison.json",
-    "dump.bin",
-    "private-diff.json",
-    "game.elf",
-    "gs1-en.gba.lz",
-    "regional.patch",
-    "engine.bsdiff",
-    ".cmatch-fresh/result.s",
-    "comparisons/shared-runs.json",
-    "compiler-output/function.s",
-];
-/// Paths the gate must let through.
-pub const ACCEPTED_PATHS: &[&str] = &[
-    "src/main.c",
-    "games/gs1/asm/080000c0.s",
-    "games/gs1/assets/graphics/title.png",
-    "games/gs1/assets/audio/theme.mid",
-    "games/gs1/assets/audio/wave.wav",
-    "games/gs1/assets/data/layout.json",
-    "tools/compare-roms/src/main.rs",
-    "tools/build-full/src/main.rs",
-    "games/gs1/assets/data/resource_2_build_stamp.txt",
-    "games/gs1/assets/maps/town/metatiles.bin",
-    "games/gs1/assets/maps/town/metatile_attributes.bin",
-    "rom.sha1",
-];
 #[cfg(test)]
 mod tests {
     use super::*;
     #[test]
-    fn only_the_user_and_contributor_guides_are_markdown_roots() {
-        let tracked = std::collections::BTreeSet::new();
-        assert_eq!(ALLOWED_MARKDOWN, &["README.md", "CONTRIBUTING.md"]);
-        assert!(new_text_file_reason("README.md", &tracked).is_none());
-        assert!(new_text_file_reason("CONTRIBUTING.md", &tracked).is_none());
-        assert!(new_text_file_reason("AGENTS.md", &tracked)
-            .expect("AGENTS.md must not return as a third guide")
-            .contains("exactly two"));
-        assert!(new_text_file_reason("CLAUDE.md", &tracked).is_some());
-    }
-    #[test]
-    fn staged_rename_destinations_are_not_new_files() {
-        let destinations = rename_destinations(
-            b"R100\0assets/data/table.txt\0games/gs1/assets/data/table.txt\0\
-              A\0games/gs1/assets/data/new.txt\0\
-              C100\0assets/data/table.txt\0games/gs2/assets/data/copy.txt\0",
-        );
-        assert!(destinations.contains("games/gs1/assets/data/table.txt"));
-        assert!(!destinations.contains("games/gs1/assets/data/new.txt"));
-        assert!(!destinations.contains("games/gs2/assets/data/copy.txt"));
+    fn git_records_preserve_renames_and_skip_submodules() {
+        let raw = b":100644 100644 a b M\0kept.c\0\
+                    :100644 100644 a b R100\0old.txt\0new.txt\0\
+                    :000000 160000 a b A\0vendor\0";
+        let (_, changes) = raw_changes(raw).unwrap();
+        assert_eq!(changes.len(), 2);
+        assert_eq!(changes[0], ("kept.c".to_string(), true));
+        assert_eq!(changes[1], ("new.txt".to_string(), true));
+        assert!(new_text_file_reason("README.md", false).is_none());
+        assert!(new_text_file_reason("CONTRIBUTING.md", false).is_none());
+        assert!(new_text_file_reason("AGENTS.md", false).is_some());
+        assert!(new_text_file_reason("notes.txt", false).is_some());
     }
 }

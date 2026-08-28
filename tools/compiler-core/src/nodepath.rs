@@ -1,25 +1,7 @@
-//! `node:path` POSIX `basename` and `extname`, reproduced exactly.
-//!
-//! WHY A WHOLE MODULE FOR TWO FUNCTIONS. The plan layer derives two strings
-//! from caller-supplied paths -- the `-dumpbase` argument and the intermediate
-//! `.i` filename -- and both feed a compiler command line. `Path::file_stem`
-//! and `Path::extension` are *not* the same functions: Rust's `extension`
-//! returns `None` for `"a.c/"` where Node returns `".c"`, returns `None` for a
-//! trailing dot where Node returns `"."`, and `file_name` strips a trailing
-//! slash silently. Those differences change the emitted argv, so the Node
-//! algorithms are transcribed here rather than approximated.
-//!
-//! PORT NOTE: Node scans UTF-16 code units and slices by them. This scans UTF-8
-//! bytes. The two agree because the only characters compared are `/` (0x2F) and
-//! `.` (0x2E), which cannot occur inside a multi-byte UTF-8 sequence and cannot
-//! occur as a surrogate half -- so every index found here is a code-point
-//! boundary and the resulting substrings are byte-identical.
-//!
-//! `compiler_core::routing::source_stem` carries a *simplified* extname (last
-//! dot at index > 0). That simplification is correct for the routing keys it
-//! serves and is deliberately not reused here: the plan layer receives output
-//! paths from callers rather than repository-relative source names, so the edge
-//! cases the simplification folds away are reachable.
+//! Exact POSIX `node:path` basename/extname semantics for compiler argv.
+//! Rust path methods differ on trailing slashes/dots. Byte scanning matches
+//! Node's UTF-16 scan because only ASCII `/` and `.` are tested. Do not replace
+//! this with routing's simplified source-stem logic: caller paths reach its edge cases.
 
 /// `path.basename(path)` for POSIX, with no `ext` argument.
 pub fn basename(path: &str) -> &str {
@@ -49,10 +31,8 @@ pub fn basename(path: &str) -> &str {
 
 /// `path.extname(path)` for POSIX.
 ///
-/// The four rejection conditions are Node's, transcribed verbatim rather than
-/// simplified. `pre_dot_state` is the tri-state Node uses to reject a basename
-/// that is nothing but dots: `""` for `"."`, `".."`, and `"/.."`, but `"."` for
-/// `"a.."` and `".c"` for `"a.c"`.
+/// `pre_dot_state` preserves Node's distinction between dot-only basenames and
+/// extensions such as `a..` or `.c`.
 pub fn extname(path: &str) -> &str {
     let bytes = path.as_bytes();
     let mut start_dot: Option<usize> = None;

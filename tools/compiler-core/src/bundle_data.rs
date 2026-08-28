@@ -3,14 +3,8 @@ pub type TargetExecutables = (&'static str, &'static [ExecutableDigests]);
 pub type HostTargets = (&'static str, &'static [TargetExecutables]);
 pub type HostDigests = (&'static str, &'static [&'static str]);
 
-// Rebuilt 2026-08-27 from the unchanged alchemy-gcc submodule commit
-// (bcfb458, the agscc-rename commit) after a worktree-isolated subagent's
-// `build`/`stage agscc` populated a fresh build-agscc/ tree with no source
-// change (build-agscc/ and dist/ share the identical Aug 27 11:18 timestamp
-// across all four binaries -- one coherent rebuild event, matching the same
-// non-source-metadata pattern already recorded below for old_agbcc on
-// 2026-08-26). Appended, not replaced; proved with a green
-// `make full-rom-check` before pinning.
+// Appended after a source-unchanged rebuild of bcfb458 on 2026-08-27; all four
+// binaries came from one staging event and passed `make full-rom-check`.
 const GS1: &[ExecutableDigests] = &[
     (
         "xgcc",
@@ -45,10 +39,8 @@ const EMPTY_GS1: &[ExecutableDigests] =
     &[("xgcc", &[]), ("cpp", &[]), ("tradcpp", &[]), ("cc1", &[])];
 const EMPTY: &[TargetExecutables] = &[("gs1", EMPTY_GS1), ("gs2", EMPTY_GS1)];
 
-// Admitted 2026-08-27: built from the unchanged alchemy-gcc submodule commit
-// (640614ea242376836cee60ab4b2aa5facefd707d) on a fresh linux-x64 container,
-// then proved with a green `make full-rom-check` (identical=True,
-// byte_identical=yes) on that same build before pinning.
+// Source-unchanged 640614e linux-x64 rebuild, admitted 2026-08-27 only after a
+// byte-identical `make full-rom-check` on that build.
 const LINUX_X64_GS1: &[ExecutableDigests] = &[
     (
         "xgcc",
@@ -82,20 +74,11 @@ pub static AGBCC_EXPECTED: &[HostDigests] = &[
         "darwin-arm64",
         &[
             "dfbbb5a8a0a9e14e7ed84a0a723eb6e68974836159a2c3e925b904058382e15a",
-            // Rebuilt 2026-08-26 from the unchanged alchemy-gcc submodule commit
-            // (640614ea242376836cee60ab4b2aa5facefd707d) after a local disk cleanup
-            // deleted the previously-staged dist/. agscc's (then gs1cc's) xgcc/cpp/tradcpp/cc1
-            // reproduced the digests above byte-for-byte from the same rebuild;
-            // old_agbcc alone differs, evidently from non-source build metadata
-            // (its own smoke-compile passes), not a behavior change.
+            // Source-unchanged 640614e rebuild after cleanup; agscc reproduced,
+            // while old_agbcc's metadata-only variant passed its smoke compile.
             "633678adb3c1ceae5b69b4a604724593bf198c216289c85f55109e473737b088",
-            // Rebuilt 2026-08-27 from the unchanged submodule commit bcfb458
-            // (the agscc-rename commit) after a worktree-isolated subagent's
-            // build populated a fresh build tree with dist/agbcc/ missing
-            // entirely from the main checkout (no source change). Confirmed
-            // reproducible: two consecutive `stage agbcc` runs from the same
-            // built tree produced byte-identical output. Proved with a green
-            // `make full-rom-check` before pinning.
+            // Source-unchanged bcfb458 rebuild; two stage runs reproduced it,
+            // then `make full-rom-check` proved it before pinning.
             "0c4cd3bbbb475245ec9ab5c9bada68f99ff4f2f6dec751c5c287731e9dbeaea8",
         ],
     ),

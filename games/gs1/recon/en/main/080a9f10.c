@@ -50,36 +50,28 @@ s32 Func_080a9f10(
     struct Runtime_080a9f10 *runtime;
     struct Object_080a9f10 *target;
     struct Object_080a9f10 *source;
-    s32 lookup_id;
     s32 later_target;
     s32 changed;
     u32 index;
     s16 scale;
     s32 random_adjust;
     s32 random_nonone;
-    u32 random_bucket;
     s32 amount;
-    u16 raw_current;
-    u16 raw_limit;
-    s32 raw_new;
-    s16 current;
-    s16 limit;
-    s16 new_value;
     s32 result_code;
 
     effect = Func_08077080(effect_id);
     runtime = Data_03001f2c;
-    later_target = 0;
     changed = 0;
     result_code = 0;
+    later_target = 0;
 
-    lookup_id = 0;
     if (target_id != 9)
-        lookup_id = target_id;
-    target = Func_08077008(lookup_id);
+        target = Func_08077008(target_id);
+    else
+        target = Func_08077008(0);
 
     index = 0;
-    if (index < runtime->target_count) {
+    if (runtime->target_count != 0) {
         do {
             if (effect->range == 0xff) {
                 target_id = runtime->targets[index];
@@ -101,22 +93,18 @@ s32 Func_080a9f10(
                     amount = Func_08077190(amount, scale, 0x100);
                 }
 
-                current = target->hp;
-                if (current <= 0) {
+                if (target->hp <= 0) {
                     if (later_target == 0)
                         result_code = 2;
                 } else {
-                    limit = target->max_hp;
-                    if (current == limit) {
+                    if (target->hp == target->max_hp) {
                         if (later_target == 0)
                             result_code = 4;
                     } else {
-                        raw_new = (u16)target->hp + amount;
-                        target->hp = raw_new;
-                        new_value = (s16)raw_new;
-                        if (new_value > limit) {
-                            amount -= new_value - limit;
-                            target->hp = (s16)(u16)target->max_hp;
+                        target->hp += amount;
+                        if (target->hp > target->max_hp) {
+                            amount -= target->hp - target->max_hp;
+                            target->hp = target->max_hp;
                             if (later_target == 0)
                                 result_code = 0;
                         } else if (later_target == 0) {
@@ -133,13 +121,14 @@ s32 Func_080a9f10(
                 break;
 
             case 9:
-                random_bucket = ((u32)Func_08004458() * 4) >> 16;
-                if (random_bucket == 0) {
+                random_adjust = ((u32)Func_08004458() * 4) >> 16;
+                if (random_adjust == 0) {
                     random_adjust = -1;
                 } else {
-                    random_nonone = 1 ^ random_bucket;
-                    random_adjust = 1 -
-                        ((u32)((-random_nonone) | random_nonone) >> 31);
+                    random_nonone = 1 ^ random_adjust;
+                    random_adjust =
+                        (u32)((-random_nonone) | random_nonone) >> 31;
+                    random_adjust = 1 - random_adjust;
                 }
 
                 switch (effect_id & 0x3fff) {
@@ -179,20 +168,14 @@ s32 Func_080a9f10(
                 break;
 
             case BATTLE_DAMAGE_PP_HEAL:
-                current = target->pp;
-                raw_current = *(u16 *)&target->pp;
-                limit = target->max_pp;
-                raw_limit = *(u16 *)&target->max_pp;
-                if (current == limit) {
+                if (target->pp == target->max_pp) {
                     if (later_target == 0)
                         result_code = 7;
                 } else {
-                    raw_new = raw_current + amount;
-                    target->pp = raw_new;
-                    new_value = (s16)raw_new;
-                    if (new_value > limit) {
-                        amount -= new_value - limit;
-                        target->pp = raw_limit;
+                    target->pp += amount;
+                    if (target->pp > target->max_pp) {
+                        amount -= target->pp - target->max_pp;
+                        target->pp = target->max_pp;
                         if (later_target == 0)
                             result_code = 5;
                     } else if (later_target == 0) {
@@ -220,44 +203,31 @@ s32 Func_080a9f10(
 
             switch (effect->effect) {
             case 1:
-                current = target->hp;
-                if (current <= 0) {
+                if (target->hp <= 0 || target->hp == target->max_hp) {
                     if (later_target == 0)
                         result_code = 2;
                 } else {
-                    limit = target->max_hp;
-                    if (current == limit) {
+                    target->hp += amount;
+                    if (target->hp > target->max_hp) {
+                        target->hp = target->max_hp;
                         if (later_target == 0)
-                            result_code = 2;
-                    } else {
-                        raw_new = (u16)target->hp + amount;
-                        target->hp = raw_new;
-                        new_value = (s16)raw_new;
-                        if (new_value > limit) {
-                            target->hp = (s16)(u16)target->max_hp;
-                            if (later_target == 0)
-                                result_code = 0;
-                        } else if (later_target == 0) {
-                            result_code = 1;
-                        }
-                        Func_08077128(target_id);
-                        changed = 1;
+                            result_code = 0;
+                    } else if (later_target == 0) {
+                        result_code = 1;
                     }
+                    Func_08077128(target_id);
+                    changed = 1;
                 }
                 break;
 
             case 2:
-                current = target->pp;
-                limit = target->max_pp;
-                if (current == limit) {
+                if (target->pp == target->max_pp) {
                     if (later_target == 0)
                         result_code = 7;
                 } else {
-                    raw_new = (u16)target->pp + amount;
-                    target->pp = raw_new;
-                    new_value = (s16)raw_new;
-                    if (new_value > limit) {
-                        target->pp = (s16)(u16)target->max_pp;
+                    target->pp += amount;
+                    if (target->pp > target->max_pp) {
+                        target->pp = target->max_pp;
                         if (later_target == 0)
                             result_code = 5;
                     } else if (later_target == 0) {

@@ -64,15 +64,14 @@ void Func_080cfef4(void *object)
     void *work;
     void *canvas;
     void *palette;
+    void *sprite_vram;
     u32 status;
     void *rectangle[2];
-    void **rectangle_slot;
     void *second_rectangle;
     void *member_object;
-    s32 pos[3];
+    s32 pos[6];
+    s32 curve[2];
     s32 draw_enabled;
-    s32 curve_x;
-    s32 curve_y;
     s32 idx_a;
     s32 idx_b;
     s32 zero_val;
@@ -82,33 +81,35 @@ void Func_080cfef4(void *object)
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
-    M2C_FIELD(work, void **, 0x7828) = object;
     zero_val = 0;
+    M2C_FIELD(work, void **, 0x7828) = object;
     Func_080cdb24(0);
     M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x100;
     M2C_FIELD((void *)0x04000020, s16 *, 0x32) = 0x1010;
     palette = Func_08002f40((s32)&Value_000000ab);
     status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
-    status = Func_08005340((u8 *)palette + 128, work);
-    status = Func_08005340(
-        (u8 *)Func_08002f40((s32)&Value_000000ac) + 128, (void *)0x02010000);
+    palette = (u8 *)palette + 128;
+    status = Func_08005340(palette, work);
+    sprite_vram = (void *)0x02010000;
+    palette = Func_08002f40((s32)&Value_000000ac);
+    palette = (u8 *)palette + 128;
+    status = Func_08005340(palette, sprite_vram);
     status = Func_080ed408(46, 7, 7, 3, 1);
     rectangle[0] = heap_cache[7];
     status = Func_080ed408(47, 7, 7, 7, 1);
     second_rectangle = heap_cache[8];
-    rectangle_slot = rectangle;
-    rectangle_slot[1] = second_rectangle;
+    rectangle[1] = second_rectangle;
     Func_080041d8((void *)0x080DBB9D, 0x480);
     M2C_FIELD(work, s32 *, 0x7780) = 1;
     M2C_FIELD(work, s32 *, 0x7784) = zero_val;
     Func_080041d8((void *)0x080CD261, 0x480);
     draw_enabled = 1;
     if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4) == 1) {
-        curve_x = -0x500000;
+        curve[0] = -0x500000;
     } else {
-        curve_x = 0x700000;
+        curve[0] = 0x700000;
     }
-    curve_y = -0x200000;
+    curve[1] = -0x200000;
     for (frame = 0; frame != 132; frame++) {
         s32 spin;
         s32 screen_x;
@@ -120,18 +121,18 @@ void Func_080cfef4(void *object)
         s32 *scanline;
 
         spin = frame << 9;
-        screen_x = (curve_x >> 16) + ((Func_08002322(spin) << 4) >> 16) + 48;
-        screen_y = (curve_y >> 16) + ((Func_0800231c(spin) << 2) >> 16) + 16;
+        screen_x = (curve[0] >> 16) + ((Func_08002322(spin) << 4) >> 16) + 48;
+        screen_y = (curve[1] >> 16) + ((Func_0800231c(spin) << 2) >> 16) + 16;
         if (frame == 88) {
             Func_080f9010(134);
         }
         if (frame == 32) {
             if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4) == 1) {
-                curve_x = -0x200000;
+                curve[0] = -0x200000;
             } else {
-                curve_x = 0x480000;
+                curve[0] = 0x480000;
             }
-            curve_y = 0x180000;
+            curve[1] = 0x180000;
             draw_enabled = 0;
         }
         if (frame == 33) {
@@ -143,11 +144,11 @@ void Func_080cfef4(void *object)
                 M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 0x24),
                 pos);
             if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4) == 1) {
-                curve_x = (pos[0] - 128) << 16;
+                curve[0] = (pos[0] - 128) << 16;
             } else {
-                curve_x = (pos[0] - 64) << 16;
+                curve[0] = (pos[0] - 64) << 16;
             }
-            curve_y = 0;
+            curve[1] = 0;
             draw_enabled = 0;
         }
         if (frame == 65) {
@@ -162,18 +163,22 @@ void Func_080cfef4(void *object)
                 M2C_FIELD((void *)0x04000052, s16 *, 0) =
                     (s16)((31 - frame) | 0x1000);
             }
-        } else if (frame <= 63 && frame > 47) {
-            M2C_FIELD((void *)0x04000052, s16 *, 0) =
-                (s16)((63 - frame) | 0x1000);
-            amp = (frame * 2) - 96;
+        } else if (frame <= 63) {
+            if (frame > 47) {
+                amp = (frame * 2) - 96;
+                M2C_FIELD((void *)0x04000052, s16 *, 0) =
+                    (s16)((63 - frame) | 0x1000);
+            }
         }
         if (amp < 0) {
             amp = 0;
         }
         row_base = (6 - screen_x) << 8;
+        i = 0;
         angle = frame << 11;
-        for (i = 0; i != 160; i++) {
-            *scanline++ = row_base - ((amp * Func_08002322(angle)) >> 10);
+        for (; i != 160; i++) {
+            *scanline++ =
+                row_base - ((Func_08002322(angle) * amp) >> 10);
             angle += 0x800;
         }
         if (draw_enabled != 0) {
@@ -182,56 +187,63 @@ void Func_080cfef4(void *object)
                 idx_b = 0;
             } else {
                 idx_a = 1;
-                idx_b = 0;
+                idx_b = i >> 31;
             }
             if (frame <= 87) {
                 ((DrawRectangleFn)rectangle[M2C_FIELD(
                     M2C_FIELD(work, void **, 0x7828), s32 *, 4)])(
                     canvas, work, Data_080ee10c[idx_a * 7],
                     Data_080ee11a[idx_b * 7] + screen_y, 57, 98);
-            } else if (frame <= 91) {
+            } else {
+                if (frame <= 91) {
+                    ((DrawRectangleFn)rectangle[M2C_FIELD(
+                        M2C_FIELD(work, void **, 0x7828), s32 *, 4)])(
+                        canvas, work, Data_080ee10c[idx_a * 7],
+                        Data_080ee11a[idx_b * 7] + screen_y, 57, 98);
+                }
                 ((DrawRectangleFn)rectangle[M2C_FIELD(
                     M2C_FIELD(work, void **, 0x7828), s32 *, 4)])(
-                    canvas, work, Data_080ee10c[idx_a * 7],
-                    Data_080ee11a[idx_b * 7] + screen_y, 57, 98);
-            }
-            ((DrawRectangleFn)rectangle[M2C_FIELD(
-                M2C_FIELD(work, void **, 0x7828), s32 *, 4)])(
-                canvas, (u8 *)work + 0x15D2, Data_080ee10c[idx_a * 7 + 1],
-                Data_080ee11a[idx_b * 7 + 1] + screen_y, 99, 69);
-            if ((u32)(frame - 88) <= 1U) {
-                status = ((WordCopyFn)0x03000168)(
-                    canvas, (void *)0x4000, (void *)0x3F3F3F3F);
-            }
-            if ((u32)(frame - 90) <= 1U) {
-                ((DrawRectangleFn)rectangle[M2C_FIELD(
-                    M2C_FIELD(work, void **, 0x7828), s32 *, 4)])(
-                    canvas, (u8 *)work + 0x3081, Data_080ee10c[idx_a * 7 + 2],
-                    Data_080ee11a[idx_b * 7 + 2] + screen_y, 128, 91);
-            }
-            if ((u32)(frame - 92) <= 1U) {
-                ((DrawRectangleFn)rectangle[M2C_FIELD(
-                    M2C_FIELD(work, void **, 0x7828), s32 *, 4)])(
-                    canvas, (void *)0x02010000, Data_080ee10c[idx_a * 7 + 3],
-                    Data_080ee11a[idx_b * 7 + 3] + screen_y, 128, 91);
-            }
-            if ((u32)(frame - 94) <= 1U) {
-                ((DrawRectangleFn)rectangle[M2C_FIELD(
-                    M2C_FIELD(work, void **, 0x7828), s32 *, 4)])(
-                    canvas, (void *)0x02012D80, Data_080ee10c[idx_a * 7 + 4],
-                    Data_080ee11a[idx_b * 7 + 4] + screen_y, 128, 59);
-            }
-            if ((u32)(frame - 96) <= 1U) {
-                ((DrawRectangleFn)rectangle[M2C_FIELD(
-                    M2C_FIELD(work, void **, 0x7828), s32 *, 4)])(
-                    canvas, (void *)0x02014B00, Data_080ee10c[idx_a * 7 + 5],
-                    Data_080ee11a[idx_b * 7 + 5] + screen_y, 122, 29);
-            }
-            if ((u32)(frame - 98) <= 1U) {
-                ((DrawRectangleFn)rectangle[M2C_FIELD(
-                    M2C_FIELD(work, void **, 0x7828), s32 *, 4)])(
-                    canvas, (void *)0x020158D2, Data_080ee10c[idx_a * 7 + 6],
-                    Data_080ee11a[idx_b * 7 + 6] + screen_y, 76, 25);
+                    canvas, (u8 *)work + 0x15D2, Data_080ee10c[idx_a * 7 + 1],
+                    Data_080ee11a[idx_b * 7 + 1] + screen_y, 99, 69);
+                if ((u32)(frame - 88) <= 1U) {
+                    status = ((WordCopyFn)0x03000168)(
+                        canvas, (void *)0x4000, (void *)0x3F3F3F3F);
+                }
+                if ((u32)(frame - 90) <= 1U) {
+                    ((DrawRectangleFn)rectangle[M2C_FIELD(
+                        M2C_FIELD(work, void **, 0x7828), s32 *, 4)])(
+                        canvas, (u8 *)work + 0x3081,
+                        Data_080ee10c[idx_a * 7 + 2],
+                        Data_080ee11a[idx_b * 7 + 2] + screen_y, 128, 91);
+                }
+                if ((u32)(frame - 92) <= 1U) {
+                    ((DrawRectangleFn)rectangle[M2C_FIELD(
+                        M2C_FIELD(work, void **, 0x7828), s32 *, 4)])(
+                        canvas, (void *)0x02010000,
+                        Data_080ee10c[idx_a * 7 + 3],
+                        Data_080ee11a[idx_b * 7 + 3] + screen_y, 128, 91);
+                }
+                if ((u32)(frame - 94) <= 1U) {
+                    ((DrawRectangleFn)rectangle[M2C_FIELD(
+                        M2C_FIELD(work, void **, 0x7828), s32 *, 4)])(
+                        canvas, (void *)0x02012D80,
+                        Data_080ee10c[idx_a * 7 + 4],
+                        Data_080ee11a[idx_b * 7 + 4] + screen_y, 128, 59);
+                }
+                if ((u32)(frame - 96) <= 1U) {
+                    ((DrawRectangleFn)rectangle[M2C_FIELD(
+                        M2C_FIELD(work, void **, 0x7828), s32 *, 4)])(
+                        canvas, (void *)0x02014B00,
+                        Data_080ee10c[idx_a * 7 + 5],
+                        Data_080ee11a[idx_b * 7 + 5] + screen_y, 122, 29);
+                }
+                if ((u32)(frame - 98) <= 1U) {
+                    ((DrawRectangleFn)rectangle[M2C_FIELD(
+                        M2C_FIELD(work, void **, 0x7828), s32 *, 4)])(
+                        canvas, (void *)0x020158D2,
+                        Data_080ee10c[idx_a * 7 + 6],
+                        Data_080ee11a[idx_b * 7 + 6] + screen_y, 76, 25);
+                }
             }
         }
         if (frame == 88) {

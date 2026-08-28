@@ -15,7 +15,6 @@ coverage-map = { path = "../coverage-map" }
 full-c-progress = { path = "../full-c-progress" }
 integrate-matches = { path = "../integrate-matches" }
 no-asm-c = { path = "../no-asm-c" }
-route-dump = { path = "../route-dump" }
 
 [[bin]]
 name = "check"

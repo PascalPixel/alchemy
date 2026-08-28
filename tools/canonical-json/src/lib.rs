@@ -1,13 +1,5 @@
-// Compact canonical form: objects one key per line, arrays of primitives
-// inline on one line. This replaces pretty-printing with two-space indent as
-// the writer default: the old form spent one line per array element, which put
-// two million lines of numeric bulk into the tracked tree. Checkers accept the
-// compact form, the fully minified form, and (during migration) the legacy
-// two-space form.
-//
-// Ported from tools/lib/canonical_json.ts. Key order is significant, so the
-// serde_json dependency is built with `preserve_order`; a port that sorted keys
-// would rewrite every tracked metrics file on first run.
+// Canonical JSON keeps object keys one per line and primitive arrays inline.
+// `preserve_order` is required because key reordering rewrites tracked metrics.
 
 use serde_json::Value;
 

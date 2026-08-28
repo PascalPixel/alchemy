@@ -48,11 +48,10 @@ Never fill an unfinished build from the reference ROM.
 Install Rust, Ninja, and `arm-none-eabi-binutils`. Put approved ROMs in ignored
 `roms/` and the approved compiler bundle in `alchemy-gcc/dist/`.
 
-Configure the repository hooks once, then check the private inputs:
+Configure the repository hooks once, then build the contributor host:
 
 ```sh
 git config core.hooksPath .hooks
-make doctor
 cargo build --offline --release --manifest-path tools/compiler/Cargo.toml
 ```
 
@@ -140,7 +139,39 @@ main-image C does not prove an overlay. Overlay scoring and audit are available;
 do not retire overlay assembly through an adoption route whose decoded inventory
 cannot be reproduced from a clean checkout.
 
+## Route residual work
+
+The triage router runs as part of `compiler candidate-show` and assigns each
+scored candidate a mechanical residual class and named playbook. Route an owner
+only from that result: allocation, scheduling, structure, type/width, extent,
+layout, and compiler-classification work stay distinct, while `unclassified`
+and uncovered allocation results go to the smart queue rather than a raw-diff
+guess.
+
+The executable repair catalog is
+`games/gs1/recon/compiler-repair-patterns.json`. Add a repair only with a named
+decoder signal, guarded finite operation, recorded verdict, and regression
+fixture; never encode fixed registers or instruction scheduling. Run
+`compiler permute --acceptance-test` (included by `make test`) to prove the
+catalog still names and reverses the controlled perturbations before using a
+catalog operation in a wave.
+
+The residual dispatcher is `compiler waves`: run `inventory`, then `bucket`,
+then `pack`, and finally `dispatch` against the fresh bucket. A no-candidate pack
+uses m2c with exact-sibling context when available and a context-free fallback
+otherwise. Its defaults write the
+inventory, per-owner packs, work orders, class records, and dispatch report beneath
+ignored `out/gs1-en/waves/`; do not redirect durable wave evidence to `/tmp`.
+Cheap agents execute only the recorded class playbook and named finite repair;
+dispatch never edits repository source or claims that a wave ran. Agent results
+must be rescored and exact results passed through the explicit integrator; every
+other owner remains parked with a verdict and class.
+
 ## Validate and commit
+
+Portable tooling is capped at 30,000 Rust, JavaScript, and CSS source lines.
+This is a maintainer-owned ceiling: consolidate or remove machinery when the
+gate fails; do not raise the limit to accommodate a change.
 
 Use narrow commands while iterating:
 
@@ -179,7 +210,7 @@ Run the extra gate only when the change owns it:
 
 `make audit` is the explicit exhaustive audit for a release, merge, or large
 compiler/ownership batch. It covers every edition, retained candidate,
-cross-edition correspondence, family, twin, and progress contract. Use
+cross-edition correspondence, family, and progress contract. Use
 `make reports` when the ignored analysis reports and coverage figures need to
 be refreshed. Neither belongs in the ordinary commit loop.
 

@@ -1,9 +1,14 @@
 use crate::park::{placeholder_span, truth_window};
-use candidate_show::disasm::disassemble;
-use candidate_show::render::{align_streams, ordered_lines, side_by_side};
-use compiler_core::source_paths::{SourceOwner, SourcePaths};
+use candidate_compiler::verify::{CandidateCompilerConfiguration, CandidateCompilerFamily};
+use candidate_show::{cli::Options, render::render};
+use compiler_core::{
+    overlay_call_via_base,
+    routing::CompilerTarget,
+    source_paths::{SourceOwner, SourcePaths},
+    translation_units::TranslationUnits,
+};
 use overlay_disasm::compile::compile_overlay_c;
-use overlay_disasm::OVERLAY_BASE;
+use overlay_disasm::{OVERLAY_BASE, OVERLAY_LINK_BIAS};
 use std::path::{Path, PathBuf};
 use tempfile::tempdir;
 pub(crate) fn resolve(root: &Path, target: &str) -> Result<(String, i64), String> {
@@ -112,41 +117,55 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
             None => return Err(format!("{overlay}:{address:08x} has no mapped owner span")),
         },
     };
-    let (reference, oracle) = truth_window(root, &overlay, address, span)?;
     let work = tempdir().map_err(|error| error.to_string())?;
-    let compiled = compile_overlay_c(&source, work.path(), &overlay, None, &extra)?;
-    let differing = reference
-        .chunks(2)
-        .zip(compiled.data.chunks(2))
-        .filter(|(left, right)| left != right)
-        .count()
-        + reference.len().abs_diff(compiled.data.len()).div_ceil(2);
-    println!("candidate={} reference={} differing_halfwords={differing} source={} reference_from={oracle}", compiled.data.len(), reference.len(), source.strip_prefix(root).unwrap_or(&source).display(),);
-    let bin = tempdir().map_err(|error| error.to_string())?;
-    let ours = bin.path().join("candidate.bin");
-    let theirs = bin.path().join("reference.bin");
-    std::fs::write(&ours, &compiled.data).map_err(|error| error.to_string())?;
-    std::fs::write(&theirs, &reference).map_err(|error| error.to_string())?;
-    let base = address as f64;
-    let left = disassemble(&ours.to_string_lossy(), base)?;
-    let right = disassemble(&theirs.to_string_lossy(), base)?;
-    let left_lines = ordered_lines(&left);
-    let right_lines = ordered_lines(&right);
-    let (class, wrong) = candidate_show::render::residual_class(&left_lines, &right_lines);
-    println!("class={class} wrong_instructions={wrong}");
-    if !align && left_lines.len() != right_lines.len() {
-        println!("note: instruction counts differ; use --align to resynchronize");
-    }
-    let rows = if align {
-        align_streams(&left_lines, &right_lines)
-    } else {
-        (0..left_lines.len().max(right_lines.len()))
-            .map(|i| (left_lines.get(i).cloned(), right_lines.get(i).cloned()))
-            .collect()
+    let reference = work.path().join("reference.bin");
+    let (window, oracle) = truth_window(root, &overlay, address, span)?;
+    let start = (address - OVERLAY_BASE) as usize;
+    let mut image = vec![0; start + window.len()];
+    image[start..].copy_from_slice(&window);
+    std::fs::write(&reference, image).map_err(|error| error.to_string())?;
+    let paths = SourcePaths::load(root)?;
+    let units = TranslationUnits::load(root)?;
+    let mut configuration = CandidateCompilerConfiguration {
+        family: Some(CandidateCompilerFamily::Routed),
+        call_via_base: Some(
+            paths
+                .registered_call_via(owner)
+                .map(u64::from)
+                .unwrap_or_else(|| overlay_call_via_base(&overlay)),
+        ),
+        label_word_bias: Some(OVERLAY_LINK_BIAS as u64),
+        ..Default::default()
     };
-    println!("      candidate                      reference");
-    print!("{}", side_by_side(&rows));
-    Ok(if differing == 0 { 0 } else { 1 })
+    if let Some(unit) = units.unit_for_game_owner("gs1", owner) {
+        configuration.absolute_symbols = unit.canonical_symbols()?;
+    }
+    let rendered = render(
+        root,
+        &Options {
+            source: source.to_string_lossy().into_owned(),
+            rom: Some(reference.to_string_lossy().into_owned()),
+            work: Some(work.path().to_string_lossy().into_owned()),
+            flags: extra,
+            configuration,
+            target: CompilerTarget::Gs1,
+            owner: Some(address as u32),
+            overlay: Some(overlay),
+            unit: None,
+            precompiled_object: None,
+            size: Some(span as usize),
+            align,
+            first: false,
+            allocator_order: false,
+            asm: false,
+            patch: None,
+        },
+    )?;
+    println!("reference_from={oracle}");
+    print!("{}", rendered.stdout);
+    Ok(i32::from(
+        rendered.differing_halfwords != 0 || rendered.candidate_length != rendered.reference_length,
+    ))
 }
 pub fn audit_corpus(root: &Path) -> Result<i32, String> {
     let directory = root.join("games/gs1/recon/en/overlays");

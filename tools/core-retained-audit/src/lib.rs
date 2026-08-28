@@ -1,12 +1,9 @@
 pub mod cli;
-
 use serde_json::{json, Value};
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
-
 const ROM_BASE: u64 = 0x0800_0000;
 const ROM_SIZE: usize = 0x80_0000;
-
 #[derive(Debug)]
 struct Region {
     start: u64,
@@ -15,7 +12,6 @@ struct Region {
     confidence: String,
     evidence: String,
 }
-
 #[derive(Debug)]
 pub struct Audit {
     pub executable: usize,
@@ -23,7 +19,6 @@ pub struct Audit {
     pub retained: usize,
     pub kinds: BTreeMap<(String, String), (usize, usize)>,
 }
-
 pub fn repository_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -31,12 +26,10 @@ pub fn repository_root() -> PathBuf {
         .expect("audit is under tools")
         .to_path_buf()
 }
-
 fn document(path: &Path) -> Result<Value, String> {
     let bytes = std::fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?;
     serde_json::from_slice(&bytes).map_err(|error| format!("{}: {error}", path.display()))
 }
-
 fn integer(value: &Value, label: &str) -> Result<u64, String> {
     if let Some(number) = value.as_u64() {
         return Ok(number);
@@ -49,7 +42,6 @@ fn integer(value: &Value, label: &str) -> Result<u64, String> {
     }
     Err(format!("{label} must be an integer"))
 }
-
 fn span(value: &Value, label: &str) -> Result<(u64, u64), String> {
     let start = integer(
         value
@@ -75,7 +67,6 @@ fn span(value: &Value, label: &str) -> Result<(u64, u64), String> {
     }
     Ok((start, end))
 }
-
 fn values<'a>(document: &'a Value, path: &[&str]) -> Result<&'a Vec<Value>, String> {
     let mut value = document;
     for key in path {
@@ -87,7 +78,6 @@ fn values<'a>(document: &'a Value, path: &[&str]) -> Result<&'a Vec<Value>, Stri
         .as_array()
         .ok_or_else(|| format!("{} is not an array", path.join(".")))
 }
-
 fn regions(document: &Value, assembly: bool) -> Result<Vec<Region>, String> {
     values(document, &["regions"])?
         .iter()
@@ -123,13 +113,11 @@ fn regions(document: &Value, assembly: bool) -> Result<Vec<Region>, String> {
         })
         .collect()
 }
-
 fn mark_executable(mask: &mut [u8], start: u64, end: u64) {
     let start = (start - ROM_BASE) as usize;
     let end = (end - ROM_BASE) as usize;
     mask[start..end].iter_mut().for_each(|byte| *byte |= 1);
 }
-
 fn mark_source(
     mask: &mut [u8],
     region: &Region,
@@ -163,7 +151,6 @@ fn mark_source(
         .then_some(())
         .ok_or_else(|| format!("{label} has no audited executable bytes"))
 }
-
 fn stale(output: &Path, source: &Path) -> Result<(), String> {
     let built = std::fs::metadata(output)
         .and_then(|metadata| metadata.modified())
@@ -180,20 +167,17 @@ fn stale(output: &Path, source: &Path) -> Result<(), String> {
         Ok(())
     }
 }
-
 pub fn audit(root: &Path) -> Result<Audit, String> {
     let inventory_path = root.join("games/gs1/metrics/gs1-en-executable.json");
     let asm_path = root.join("out/gs1-en/full/asm/manifest.json");
     let claimed_path = root.join("out/gs1-en/full/claimed/manifest.json");
     stale(&asm_path, &root.join("games/gs1/asm/classification.json"))?;
-
     let inventory = document(&inventory_path)?;
     let asm = regions(&document(&asm_path)?, true)?;
     let claimed = regions(&document(&claimed_path)?, false)?;
     if asm.is_empty() || claimed.is_empty() {
         return Err("retained audit read an empty build manifest".into());
     }
-
     let mut mask = vec![0u8; ROM_SIZE];
     for (index, value) in values(&inventory, &["main", "intervals"])?
         .iter()
@@ -208,7 +192,6 @@ pub fn audit(root: &Path) -> Result<Audit, String> {
     for region in &asm {
         mark_source(&mut mask, region, 4, "assembly", true)?;
     }
-
     let executable = mask.iter().filter(|byte| **byte & 1 != 0).count();
     let exact = mask.iter().filter(|byte| **byte & 2 != 0).count();
     let retained = mask.iter().filter(|byte| **byte & 4 != 0).count();
@@ -216,7 +199,6 @@ pub fn audit(root: &Path) -> Result<Audit, String> {
     if executable == 0 || uncovered != 0 || exact + retained != executable {
         return Err(format!("retained complement differs: executable={executable} exact={exact} retained={retained} uncovered={uncovered}"));
     }
-
     let mut kinds = BTreeMap::new();
     for region in asm {
         let row = kinds
@@ -232,7 +214,6 @@ pub fn audit(root: &Path) -> Result<Audit, String> {
         kinds,
     })
 }
-
 impl Audit {
     pub fn json(&self) -> Value {
         let kinds = self.kinds.iter().map(|((kind, confidence), (regions, bytes))| json!({"kind":kind,"confidence":confidence,"regions":regions,"bytes":bytes})).collect::<Vec<_>>();
@@ -246,11 +227,9 @@ impl Audit {
         })
     }
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;
-
     #[test]
     fn claimed_placement_projects_through_inventory_but_assembly_stays_strict() {
         let region = Region {

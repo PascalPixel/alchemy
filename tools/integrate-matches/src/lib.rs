@@ -3,10 +3,6 @@
 //! A candidate is adoptable only when its linked bytes equal the bytes produced
 //! by the corresponding hand-written assembly at the same ROM address.
 //! `--apply` performs the move and cleanup only after that proof.
-
-use std::fs;
-use std::path::{Path, PathBuf};
-
 use candidate_compiler::verify::run as run_command;
 use candidate_compiler::{verify_candidate_owned_routed, CandidateCompilerConfiguration, ROM_BASE};
 use compiler_core::plan::direct_preprocessor_command;
@@ -14,10 +10,10 @@ use compiler_core::routing::{root, CompilerTarget};
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use compiler_core::translation_units::TranslationUnits;
 use no_asm_c::{find_forbidden, source_files};
-
+use std::fs;
+use std::path::{Path, PathBuf};
 pub const USAGE: &str = "usage: integrate-matches [-h] [--apply|--check] directory";
 pub const ROOT_OVERRIDE: &str = "ALCHEMY_INTEGRATE_ROOT";
-
 #[derive(Default)]
 struct PipelineReport {
     lines: Vec<String>,
@@ -29,7 +25,6 @@ struct PipelineReport {
     unscored: usize,
     apply: bool,
 }
-
 impl PipelineReport {
     fn clean_for_check(&self) -> bool {
         !self.apply
@@ -45,7 +40,6 @@ impl PipelineReport {
             && self.unscored == 0
     }
 }
-
 fn valid_address(stem: &str) -> bool {
     stem.len() == 8
         && stem.starts_with("08")
@@ -53,24 +47,20 @@ fn valid_address(stem: &str) -> bool {
             .bytes()
             .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
 }
-
 fn candidate_stem(path: &Path) -> Option<&str> {
     let stem = path.file_stem()?.to_str()?;
     let stem = stem.strip_prefix("src_").unwrap_or(stem);
     (path.extension()?.to_str()? == "c" && valid_address(stem)).then_some(stem)
 }
-
 fn adoptable(forbidden: &str, address_mapped: bool) -> bool {
     forbidden.is_empty() && address_mapped
 }
-
 fn first_difference(left: &[u8], right: &[u8]) -> Option<usize> {
     left.iter()
         .zip(right)
         .position(|(left, right)| left != right)
         .or_else(|| (left.len() != right.len()).then_some(left.len().min(right.len())))
 }
-
 fn assembly_extent(stem: &str, source: &Path, scratch: &Path) -> Result<usize, String> {
     fs::create_dir_all(scratch).map_err(|error| format!("{}: {error}", scratch.display()))?;
     let prefix = scratch.join(format!("{stem}.reference"));
@@ -106,14 +96,12 @@ fn assembly_extent(stem: &str, source: &Path, scratch: &Path) -> Result<usize, S
         .map(|metadata| metadata.len() as usize)
         .map_err(|error| format!("{binary}: {error}"))
 }
-
 fn root_directory() -> PathBuf {
     std::env::var_os(ROOT_OVERRIDE)
         .filter(|value| !value.is_empty())
         .map(PathBuf::from)
         .unwrap_or_else(|| root().to_path_buf())
 }
-
 fn close_dossier(path: &Path, state: &str) -> Result<bool, String> {
     if !path.exists() {
         return Ok(false);
@@ -140,7 +128,6 @@ fn close_dossier(path: &Path, state: &str) -> Result<bool, String> {
     fs::write(path, updated).map_err(|error| format!("{}: {error}", path.display()))?;
     Ok(true)
 }
-
 fn cleanup(stem: &str, work_root: &Path, date: &str) -> Result<(usize, bool), String> {
     let mut removed = 0;
     if work_root.exists() {
@@ -173,7 +160,6 @@ fn cleanup(stem: &str, work_root: &Path, date: &str) -> Result<(usize, bool), St
     )?;
     Ok((removed, closed))
 }
-
 fn today_utc() -> String {
     let days = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
@@ -190,7 +176,6 @@ fn today_utc() -> String {
     let year = if month <= 2 { y + 1 } else { y };
     format!("{year:04}-{month:02}-{day:02}")
 }
-
 fn run_pipeline(directory: &str, apply: bool) -> Result<PipelineReport, String> {
     let repository = root_directory();
     let source_paths = SourcePaths::load(&repository)?;
@@ -393,7 +378,6 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<PipelineReport, String> 
         apply,
     })
 }
-
 fn parse_arguments(arguments: &[String]) -> Result<Option<(String, bool, bool)>, String> {
     if arguments
         .iter()
@@ -422,7 +406,6 @@ fn parse_arguments(arguments: &[String]) -> Result<Option<(String, bool, bool)>,
         [_, extra, ..] => Err(format!("unrecognized argument: {extra}")),
     }
 }
-
 pub fn entry(arguments: &[String]) -> std::process::ExitCode {
     let result = match parse_arguments(arguments) {
         Ok(None) => {
@@ -449,12 +432,10 @@ pub fn entry(arguments: &[String]) -> std::process::ExitCode {
         std::process::ExitCode::SUCCESS
     }
 }
-
 #[cfg(test)]
 mod tests {
     use super::{adoptable, candidate_stem, PipelineReport};
     use std::path::Path;
-
     #[test]
     fn discovers_scratch_and_recursive_reconstruction_names() {
         assert_eq!(
@@ -470,7 +451,6 @@ mod tests {
         assert!(!adoptable("ABI attribute naked", true));
         assert!(!adoptable("", false));
     }
-
     #[test]
     fn corpus_check_requires_complete_accounting() {
         let clean = PipelineReport {

@@ -1,15 +1,6 @@
-//! The native `call_via` bank address tables.
-//!
-//! Kept in their own module, and as ordered slices rather than maps, for the
-//! same reason compiler routing does it: `drift` compares the two mirrors
-//! element-wise AND in order, and a map would throw the order away before the
-//! comparison ever ran. Lookup is a linear scan; both tables are tiny and the
-//! callers are not hot.
-//!
-//! An indirect call compiles to `bl _call_via_rN`, a stub that is nothing but
-//! `bx rN`. Every overlay carries its own bank of those stubs, so resolving the
-//! stub to the main image's bank puts the branch a few bytes wrong: the row
-//! compares clean and then fails adoption.
+//! Ordered native `call_via` bank tables. Indirect calls branch to a `bx rN`
+//! stub; each overlay has its own bank, so the main-image address is not valid.
+//! Ordered slices preserve element-wise drift checks; these tiny lookups are cold.
 
 /// `CALL_VIA_BASE` -- the main image's `bx rN` bank, which is what a `src/`
 /// translation unit links against.
@@ -18,10 +9,7 @@ pub const CALL_VIA_BASE: u64 = 0x0800_72e4;
 /// `CALL_VIA_REGISTERS` -- the four register aliases, in declaration order.
 pub static CALL_VIA_REGISTERS: &[(&str, u64)] = &[("sl", 10), ("fp", 11), ("ip", 12), ("sp", 13)];
 
-/// `OVERLAY_CALL_VIA_BASE` -- each overlay's own bank, in the address space the
-/// reconstruction links against. Recorded once per overlay rather than scanned
-/// on demand: the derivation has to read a real `bl` into the bank, and once
-/// that row is C the assembly no longer has one.
+/// Overlay banks are recorded because their deriving `bl` may later become C.
 pub static OVERLAY_CALL_VIA_BASE: &[(&str, u64)] = &[
     ("resource_373", 0x0200_61b4),
     ("resource_382", 0x0200_3138),

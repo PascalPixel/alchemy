@@ -1,17 +1,5 @@
-// A shared content-addressed cache backed by one SQLite database file
-// instead of one filesystem entry per key. Every caller here used to write a
-// pair or triple of loose files per cache key directly under `out/`, keyed by
-// a content hash that changes on every source edit — old keys were never
-// evicted, so the file count grew without bound across a project's history
-// and regrew on every `make verify` run. A single database file replaces
-// that unbounded directory with one file that SQLite manages internally.
-//
-// WAL journal mode plus a busy timeout make concurrent access from multiple
-// processes (parallel `make` targets, parallel tool invocations) safe: readers
-// never block writers, and a writer that finds the database locked retries
-// instead of failing immediately. A transaction either commits whole or not
-// at all, so a killed process can never leave a torn entry the way a plain
-// multi-file write could.
+// One SQLite content cache replaces unbounded per-key files. WAL, a busy
+// timeout, and transactions make parallel readers/writers interruption-safe.
 
 use rusqlite::Connection;
 use std::path::Path;

@@ -1,13 +1,12 @@
 use std::process::ExitCode;
 
-mod aggregate_mine;
 mod cross_edition;
 mod families;
-mod twins;
+mod family_m2c;
 mod waves;
-mod workbench;
 
-const USAGE: &str = "usage: compiler <aggregate-mine|candidate-show|cross-edition|families|permute|twins|waves|workbench|dashboard-server> [args]";
+const USAGE: &str =
+    "usage: compiler <candidate-show|cross-edition|families|permute|waves|dashboard-server> [args]";
 
 fn main() -> ExitCode {
     let arguments: Vec<String> = std::env::args().skip(1).collect();
@@ -17,13 +16,11 @@ fn main() -> ExitCode {
     };
     let rest = &arguments[1..];
     match command {
-        "aggregate-mine" => result(aggregate_mine::run(rest)),
         "candidate-show" => {
             candidate_show::entrypoint::entry(rest);
             ExitCode::SUCCESS
         }
         "cross-edition" => result(cross_edition::run(rest)),
-        "twins" => result(twins::run(rest)),
         "families" => result(families::run(rest)),
         "waves" => result(waves::run(rest)),
         "permute" => match permuter::run(rest.to_vec()) {
@@ -33,8 +30,6 @@ fn main() -> ExitCode {
                 ExitCode::FAILURE
             }
         },
-        "workbench" => result(workbench::run(rest)),
-        "__workbench-step" => result(workbench::run_step(rest)),
         "dashboard-server" => {
             dashboard_server::cli::entry(rest);
             ExitCode::SUCCESS

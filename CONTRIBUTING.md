@@ -223,6 +223,12 @@ cross-edition correspondence, family, and progress contract. Use
 `make reports` when the ignored analysis reports and coverage figures need to
 be refreshed. Neither belongs in the ordinary commit loop.
 
+The tooling ceiling (`TOOLING_LINE_LIMIT`) is Pascal's number, and raising it
+is never part of a task. New machinery fits by paring old machinery; a diff
+that touches the ceiling without his recorded decision is invalid regardless
+of how good the new tools are. Headroom is granted after a tool proves
+conversion, not before.
+
 Commit subjects begin with the value printed by `make progress-subject`, for
 example `☀️ 52% – `. Attribute work to its actual author.
 

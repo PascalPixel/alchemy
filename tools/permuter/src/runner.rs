@@ -15,12 +15,17 @@ struct Evaluation {
     score: Result<Score, String>,
 }
 
+pub(crate) struct RunSummary {
+    pub baseline_differing_halfwords: usize,
+    pub repair: Option<String>,
+    pub exact: bool,
+    pub report: serde_json::Value,
+    best: usize,
+    failures: usize,
+}
+
 fn load(path: &Path) -> Result<(PathBuf, String), String> {
-    let path = if path.is_absolute() {
-        path.to_path_buf()
-    } else {
-        root().join(path)
-    };
+    let path = compiler_core::build_io::rooted(root(), path);
     let source =
         fs::read_to_string(&path).map_err(|error| format!("{}: {error}", path.display()))?;
     if source.len() > MAX_SOURCE_BYTES {
@@ -65,20 +70,17 @@ fn mix(mut value: u64) -> u64 {
 
 fn choice_order(count: usize, limit: usize, seed: u64) -> Vec<usize> {
     let limit = limit.min(count);
-    let mut order = Vec::with_capacity(limit);
-    if limit == 0 {
-        return order;
-    }
-    order.push(0);
-    if limit == 1 || count == 1 {
-        return order;
+    if limit <= 1 {
+        return (0..limit).collect();
     }
     let remaining = count - 1;
     let start = mix(seed) as u128 % remaining as u128;
-    order.extend(
-        (0..limit - 1).map(|offset| 1 + ((start + offset as u128) % remaining as u128) as usize),
-    );
-    order
+    std::iter::once(0)
+        .chain(
+            (0..limit - 1)
+                .map(|offset| 1 + ((start + offset as u128) % remaining as u128) as usize),
+        )
+        .collect()
 }
 
 fn evaluate(
@@ -125,11 +127,7 @@ fn validate_output(path: &Path) -> Result<PathBuf, String> {
     if path.components().any(|part| part == Component::ParentDir) {
         return Err("output path must not contain ..".into());
     }
-    let path = if path.is_absolute() {
-        path.to_path_buf()
-    } else {
-        root().join(path)
-    };
+    let path = compiler_core::build_io::rooted(root(), path);
     let roots = [root().join("out"), std::env::temp_dir()];
     if path.exists()
         || !roots
@@ -150,7 +148,7 @@ fn save(
     options: &Options,
     permutation: &Permutation,
     decoder: &candidate_show::allocator::Report,
-) -> Result<(usize, bool), String> {
+) -> Result<RunSummary, String> {
     let best = evaluations
         .iter()
         .filter_map(|evaluation| {
@@ -181,32 +179,31 @@ fn save(
         .map(|evaluation| {
             let choice = evaluation.choice;
             let outcome = match &evaluation.score {
-                Ok(score) => json!({
-                    "exact": score.exact,
-                    "differing_halfwords": score.differing_halfwords,
-                    "actual_size": score.actual_size,
-                    "expected_size": score.expected_size,
-                    "first_difference": score.first_difference,
-                }),
+                Ok(score) => json!(score),
                 Err(error) => json!({ "compile_error": error }),
             };
-            Ok(json!({
+            json!({
                 "choice": choice,
                 "mutations": permutation.mutations(choice),
                 "outcome": outcome,
-            }))
+            })
         })
-        .collect::<Result<Vec<_>, String>>()?;
+        .collect::<Vec<_>>();
     let baseline = evaluations
         .iter()
         .find(|evaluation| evaluation.choice == 0)
         .and_then(|evaluation| evaluation.score.as_ref().ok())
         .ok_or("baseline result is missing")?;
-    let report = serde_json::to_string_pretty(&json!({
+    let repair = decoder.repair.as_ref().map(|repair| repair.label());
+    let failures = evaluations
+        .iter()
+        .filter(|evaluation| evaluation.score.is_err())
+        .count();
+    let report = json!({
         "catalog_version": crate::perm::CATALOG_VERSION,
         "dimensions": decoder.dimensions,
         "decoder": {
-            "repair": decoder.repair.as_ref().map(|repair| repair.label()),
+            "repair": repair,
             "evidence_sha256": compiler_core::sha256::hex(decoder.text.as_bytes()),
         },
         "raw_choices": permutation.raw_count(),
@@ -214,18 +211,24 @@ fn save(
         "catalog_choices": (0..permutation.count()).filter_map(|choice| permutation.mutations(choice)).collect::<Vec<_>>(),
         "max_edits_per_candidate": decoder.repair.as_ref().map_or(0, |plan| plan.repairs().len()),
         "seed": options.seed,
-        "compile_failures": evaluations.iter().filter(|evaluation| evaluation.score.is_err()).count(),
+        "compile_failures": failures,
         "baseline_differing_halfwords": baseline.differing_halfwords,
         "results": results,
-    }))
-    .map_err(|error| error.to_string())?
-        + "\n";
-    fs::write(output.join("report.json"), report)
+    });
+    let text = serde_json::to_string_pretty(&report).map_err(|error| error.to_string())? + "\n";
+    fs::write(output.join("report.json"), text)
         .map_err(|error| format!("{}: {error}", output.join("report.json").display()))?;
-    Ok((best_score.differing_halfwords, best_score.exact))
+    Ok(RunSummary {
+        baseline_differing_halfwords: baseline.differing_halfwords,
+        repair,
+        exact: best_score.exact,
+        report,
+        best: best_score.differing_halfwords,
+        failures,
+    })
 }
 
-pub fn run(options: Options) -> Result<(), String> {
+pub(crate) fn run(options: Options) -> Result<RunSummary, String> {
     let input = &options.candidate;
     let (path, source) = load(input)?;
     let decoder = allocator_report(&path)?;
@@ -239,23 +242,19 @@ pub fn run(options: Options) -> Result<(), String> {
     let output = validate_output(options.output.as_deref().unwrap_or(&default_output))?;
     let target = Target::prepare(&path, &source)?;
     let evaluations = evaluate(&target, &permutation, &choices, options.jobs)?;
-    let (best, exact) = save(&output, &evaluations, &options, &permutation, &decoder)?;
-    let failures = evaluations
-        .iter()
-        .filter(|evaluation| evaluation.score.is_err())
-        .count();
+    let summary = save(&output, &evaluations, &options, &permutation, &decoder)?;
     println!(
         "done={} raw_choices={} unique_choices={} attempted={} failures={} best={} exact={} output={}",
         path.display(),
         permutation.raw_count(),
         permutation.count(),
         evaluations.len(),
-        failures,
-        best,
-        exact,
+        summary.failures,
+        summary.best,
+        summary.exact,
         output.display()
     );
-    Ok(())
+    Ok(summary)
 }
 #[cfg(test)]
 mod tests {

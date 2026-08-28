@@ -296,6 +296,7 @@ dependencies = [
  "compiler-core",
  "overlay-disasm",
  "regex",
+ "serde",
  "serde_json",
  "tempfile",
 ]

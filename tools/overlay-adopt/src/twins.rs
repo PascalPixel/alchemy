@@ -1,4 +1,4 @@
-use crate::park::placeholder_block;
+use crate::{overlay_assembly, park::placeholder_block};
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use compiler_core::thumb::{reference_map, relocation_info, Reference};
 use overlay_disasm::{decode_overlay, resource_table, OVERLAY_BASE};
@@ -64,15 +64,15 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
         }
     }
     for (overlay, sources) in exact_by_overlay {
-        let assembly_path = root.join(format!("games/gs1/assets/code/{overlay}_overlay.s"));
+        let assembly_path = overlay_assembly(root, &overlay);
         let assembly = fs::read_to_string(&assembly_path)
             .map_err(|error| format!("{}: {error}", assembly_path.display()))?;
         let lines = assembly.lines().collect::<Vec<_>>();
         for owner in sources {
             let address = i64::from(owner.address());
-            let (_, _, span) = placeholder_block(&lines, address)
+            let span = placeholder_block(&lines, address)
                 .ok_or_else(|| format!("{} has exact C but no overlay placeholder", owner.id()))?;
-            let span = usize::try_from(span)
+            let span = usize::try_from(span.span)
                 .ok()
                 .filter(|span| *span > 0)
                 .ok_or_else(|| format!("{} has an invalid placeholder span", owner.id()))?;

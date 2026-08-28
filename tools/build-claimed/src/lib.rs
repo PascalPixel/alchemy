@@ -4,10 +4,13 @@ use cache_entry::sqlite::SqliteCache;
 use candidate_compiler::verify::{
     verify_candidate_owned_routed_with_object, CandidateCompilerConfiguration,
 };
-use canonical_json::canonical_json;
+use canonical_json::{canonical_json, write_canonical};
+use compiler_core::build_io::{argv as strings, read, relative, rooted, text, write as write_file};
 use compiler_core::bundle::{compiler_bundle_signature, host_executable_signature};
+use compiler_core::nodepath::basename;
 use compiler_core::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
 use compiler_core::routing::CompilerTarget;
+use compiler_core::sha256::hex as digest;
 use compiler_core::source_inputs::compiler_source_tree_signature;
 use compiler_core::source_paths::{SourceFile, SourceOwner, SourcePaths};
 use compiler_core::symbols::{external_symbol, external_symbol_assembly, CALL_VIA_BASE};
@@ -19,11 +22,9 @@ use decomp_targets::{
     DecompTarget, DecompTargetId, DEFAULT_TARGET,
 };
 use serde_json::{json, Value};
-use sha2::{Digest, Sha256};
 use std::{
     collections::{BTreeMap, BTreeSet},
-    io::Write,
-    path::{Path, PathBuf},
+    path::Path,
     process::Command,
     sync::{
         atomic::{AtomicUsize, Ordering},
@@ -33,25 +34,8 @@ use std::{
 pub const ROM_BASE: u32 = 0x0800_0000;
 pub type Result<T> = std::result::Result<T, String>;
 const BINUTILS: [&str; 2] = ["arm-none-eabi-as", "arm-none-eabi-nm"];
-fn digest(bytes: &[u8]) -> String {
-    let mut h = Sha256::new();
-    h.update(bytes);
-    format!("{:x}", h.finalize())
-}
-fn basename(path: &str) -> &str {
-    Path::new(path)
-        .file_name()
-        .and_then(|s| s.to_str())
-        .unwrap_or(path)
-}
-fn text(path: PathBuf) -> String {
-    path.to_string_lossy().into_owned()
-}
 pub fn root() -> String {
     text(compiler_core::routing::root().to_path_buf())
-}
-fn strings(items: &[&str]) -> Vec<String> {
-    items.iter().map(|s| (*s).into()).collect()
 }
 fn address(value: &str) -> Option<u32> {
     u32::from_str_radix(value.trim_start_matches("0x"), 16).ok()
@@ -443,9 +427,6 @@ fn materialize_unit_owner(
         undefined_names,
     })
 }
-fn write_cache(cache: &SqliteCache, key: &str, items: &[(&str, &[u8])]) -> Result<()> {
-    cache.put(key, items)
-}
 fn metadata(object: &[u8], assembly: &[u8], defined: &[String], undefined: &[String]) -> String {
     canonical_json(&json!({
         "definedNames": defined,
@@ -515,16 +496,8 @@ pub fn compile_source_for_owner(
     let name = format!("{owner:08x}");
     let object = text(Path::new(object_dir).join(format!("{name}.o")));
     let assembly = text(Path::new(object_dir).join(format!("{name}.s")));
-    let routing_source = match compiler {
-        DecompCompilerTarget::Gs1 => SourceOwner::Main(owner)
-            .routing_path()
-            .to_string_lossy()
-            .into_owned(),
-        DecompCompilerTarget::Gs2 => SourceOwner::Main(owner)
-            .routing_path_for_game("gs2")
-            .to_string_lossy()
-            .into_owned(),
-    };
+    let routing_source =
+        text(SourceOwner::Main(owner).routing_path_for_game(compiler_target(compiler).as_str()));
     let mut options = SourceToAssemblyPlanOptions::new(
         compiler_target(compiler),
         routing_source,
@@ -587,11 +560,10 @@ pub fn compile_source_for_owner(
             return Err(format!("{}: unsupported external {name}", basename(source)));
         }
     }
-    let object_bytes = std::fs::read(&object).map_err(|e| format!("{object}: {e}"))?;
-    let assembly_bytes = std::fs::read(&assembly).map_err(|e| format!("{assembly}: {e}"))?;
+    let object_bytes = read(&object)?;
+    let assembly_bytes = read(&assembly)?;
     let meta = metadata(&object_bytes, &assembly_bytes, &defined, &undefined);
-    write_cache(
-        object_cache,
+    object_cache.put(
         &key,
         &[
             ("object", object_bytes.as_slice()),
@@ -656,38 +628,6 @@ impl BuildSummary {
         )
     }
 }
-fn rooted(root: &str, path: &str) -> PathBuf {
-    let path = Path::new(path);
-    if path.is_absolute() {
-        path.into()
-    } else {
-        Path::new(root).join(path)
-    }
-}
-fn relative(root: &str, path: &str) -> String {
-    let root_path = Path::new(root);
-    let path = Path::new(path);
-    if let Ok(rest) = path.strip_prefix(root_path) {
-        return rest.to_string_lossy().replace('\\', "/");
-    }
-    let from: Vec<_> = root_path.components().collect();
-    let to: Vec<_> = path.components().collect();
-    let common = from.iter().zip(&to).take_while(|(a, b)| a == b).count();
-    let mut parts = vec![".."; from.len().saturating_sub(common)];
-    parts.extend(
-        to[common..]
-            .iter()
-            .map(|part| part.as_os_str().to_str().unwrap_or("")),
-    );
-    parts.join("/")
-}
-fn write_file(path: &Path, bytes: &[u8]) -> Result<()> {
-    let mut file = std::fs::File::create(path).map_err(|e| format!("{}: {e}", path.display()))?;
-    file.write_all(bytes)
-        .map_err(|e| format!("{}: {e}", path.display()))?;
-    Ok(())
-}
-
 pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     let target: DecompTarget = decomp_target(Some(options.target.as_str()))?;
     if !options.compile_only && target.build_support != BuildSupport::Full {
@@ -695,7 +635,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     }
     let rom_path = Path::new(cwd).join(&options.rom);
     let rom = (!options.source_only && !options.compile_only)
-        .then(|| std::fs::read(&rom_path).map_err(|e| format!("{}: {e}", rom_path.display())))
+        .then(|| read(&rom_path))
         .transpose()?;
     if let Some(bytes) = &rom {
         if bytes.len() as u64 != target.rom_size {
@@ -878,7 +818,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
             .zip(&compiled)
             .map(|(source, module)| {
                 json!({
-                    "source": relative(root, &text(source.path.clone())),
+                    "source": relative(root, &source.path),
                     "object": relative(root, &module.object),
                     "symbols": module.defined_names,
                     "undefined_symbols": module.undefined_names,
@@ -894,10 +834,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
             "translation_unit_compiles": unit_compiles,
             "modules": modules,
         });
-        write_file(
-            &output.join("manifest.json"),
-            format!("{}\n", canonical_json(&document)).as_bytes(),
-        )?;
+        write_canonical(&output.join("manifest.json"), &document)?;
         return Ok(BuildSummary {
             compiled: c_compiles,
             linked: 0,
@@ -992,7 +929,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
             serde_json::to_string(&missing).unwrap()
         ));
     }
-    let image = std::fs::read(&binary).map_err(|e| format!("{}: {e}", binary.display()))?;
+    let image = read(&binary)?;
     let image_base = symbols
         .values()
         .map(|(address, _)| *address)
@@ -1111,15 +1048,12 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
         "translation_unit_manifest": "games/gs1/recon/translation-units.json",
         "main_symbol_exports": export_path
             .as_ref()
-            .map(|path| relative(root, &text(path.clone()))),
+            .map(|path| relative(root, path)),
         "translation_unit_compiles": unit_compiles,
         "functions": functions,
         "regions": manifest,
     });
-    write_file(
-        &output.join("manifest.json"),
-        format!("{}\n", canonical_json(&document)).as_bytes(),
-    )?;
+    write_canonical(&output.join("manifest.json"), &document)?;
     Ok(BuildSummary {
         compiled: c_compiles,
         linked: manifest.len(),

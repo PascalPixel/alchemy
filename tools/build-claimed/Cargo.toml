@@ -22,4 +22,3 @@ decomp-targets = { path = "../decomp-targets" }
 cache-entry = { path = "../cache-entry" }
 canonical-json = { path = "../canonical-json" }
 serde_json = { version = "1", features = ["preserve_order"] }
-sha2 = "0.10"

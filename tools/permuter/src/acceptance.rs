@@ -33,35 +33,23 @@ fn run_case(case: &Case, directory: &Path) -> Result<(), String> {
     std::fs::write(&source, perturb(&exact, case.edits)?)
         .map_err(|error| format!("{}: {error}", source.display()))?;
     let output = directory.join("search");
-    crate::runner::run(Options {
+    let summary = crate::runner::run(Options {
         candidate: source,
         iterations: 16,
         jobs: 4,
         seed: 1,
         output: Some(output.clone()),
     })?;
-    let report: serde_json::Value = serde_json::from_str(
-        &std::fs::read_to_string(output.join("report.json")).map_err(|error| error.to_string())?,
-    )
-    .map_err(|error| error.to_string())?;
-    let repair = report["decoder"]["repair"].as_str().unwrap_or("");
-    let recovered = report["results"]
-        .as_array()
-        .into_iter()
-        .flatten()
-        .any(|result| result["outcome"]["exact"] == true);
-    if report["baseline_differing_halfwords"].as_u64() == Some(0)
-        || repair != case.expected
-        || !recovered
-    {
+    let repair = summary.repair.as_deref().unwrap_or("");
+    if summary.baseline_differing_halfwords == 0 || repair != case.expected || !summary.exact {
         return Err(format!(
-            "acceptance failed for {:08x}: expected {}, report={report}",
-            case.owner, case.expected
+            "acceptance failed for {:08x}: expected {}, report={}",
+            case.owner, case.expected, summary.report
         ));
     }
     println!(
         "acceptance=pass owner={:08x} perturbed_halfwords={} repair={repair}",
-        case.owner, report["baseline_differing_halfwords"]
+        case.owner, summary.baseline_differing_halfwords
     );
     Ok(())
 }

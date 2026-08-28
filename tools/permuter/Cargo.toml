@@ -11,6 +11,7 @@ candidate-compiler = { path = "../candidate-compiler" }
 candidate-show = { path = "../candidate-show" }
 overlay-disasm = { path = "../overlay-disasm" }
 serde_json = "1"
+serde = { version = "1", features = ["derive"] }
 tempfile = "3"
 regex = "1"
 

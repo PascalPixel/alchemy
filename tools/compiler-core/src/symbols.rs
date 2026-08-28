@@ -6,18 +6,12 @@
 
 pub use crate::call_via_data::CALL_VIA_BASE;
 use crate::call_via_data::{CALL_VIA_REGISTERS, OVERLAY_CALL_VIA_BASE};
+use crate::source_paths::lower_hex;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ExternalSymbol {
     pub address: u64,
     pub thumb: bool,
-}
-
-fn is_lower_hex8(value: &str) -> bool {
-    value.len() == 8
-        && value
-            .bytes()
-            .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
 }
 
 pub fn symbol_is_thumb(name: &str) -> bool {
@@ -43,7 +37,7 @@ pub fn external_symbol(name: &str, call_via_base: u64) -> Option<ExternalSymbol>
                 }
                 _ => return None,
             };
-            if !is_lower_hex8(hex) {
+            if hex.len() != 8 || !lower_hex(hex) {
                 return None;
             }
             return Some(ExternalSymbol {

@@ -1,12 +1,15 @@
 //! Assemble retained source regions and emit their classified manifest.
 pub mod cli;
 use cache_entry::sqlite::SqliteCache;
-use canonical_json::canonical_json;
+use canonical_json::write_canonical;
 use compiler_core::{
-    bundle::host_executable_signature, sha256, thumb::standalone_wide_transfer_lines,
+    build_io::{argv, read, read_json, relative, rooted, text, write},
+    bundle::host_executable_signature,
+    sha256,
+    thumb::standalone_wide_transfer_lines,
 };
 use serde::Deserialize;
-use serde_json::{Map, Number, Value};
+use serde_json::{json, Value};
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -91,11 +94,7 @@ struct Count {
     bytes: usize,
 }
 pub fn repository_root() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .and_then(Path::parent)
-        .expect("build-asm lives under tools")
-        .to_path_buf()
+    compiler_core::routing::root().to_path_buf()
 }
 pub fn parse_args(argv: &[String]) -> Result<ParseOutcome, String> {
     let mut options = Options {
@@ -149,20 +148,6 @@ fn resolve(root: &Path, cwd: &Path, value: &str) -> PathBuf {
     } else {
         cwd.join(path)
     }
-}
-fn rooted(root: &Path, value: &str) -> PathBuf {
-    let path = Path::new(value);
-    if path.is_absolute() {
-        path.to_path_buf()
-    } else {
-        root.join(path)
-    }
-}
-fn relative(root: &Path, path: &Path) -> String {
-    path.strip_prefix(root)
-        .unwrap_or(path)
-        .to_string_lossy()
-        .into_owned()
 }
 fn stem(path: &Path) -> String {
     path.file_stem()
@@ -228,10 +213,6 @@ fn integer(value: &Value, name: &str) -> Result<u64, String> {
     parsed
         .filter(|value| *value <= u32::MAX as u64)
         .ok_or_else(|| format!("{name}: invalid address"))
-}
-fn read_json<T: for<'de> Deserialize<'de>>(path: &Path) -> Result<T, String> {
-    let bytes = std::fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?;
-    serde_json::from_slice(&bytes).map_err(|error| format!("{}: {error}", path.display()))
 }
 fn load_layout(root: &Path) -> Result<BTreeMap<String, Placement>, String> {
     let path = root.join("games/gs1/asm/manifest.json");
@@ -374,21 +355,23 @@ fn classify(
     if let Some(fixed) = explicit.get(name) {
         return Ok(fixed.classification());
     }
-    if long_call_veneer(data) {
+    let structural = if long_call_veneer(data) {
+        Some(("linker_veneer", "missing linker veneer classification"))
+    } else if alignment_padding(data) {
+        Some((
+            "alignment_padding",
+            "missing alignment padding classification",
+        ))
+    } else {
+        None
+    };
+    if let Some((kind, missing)) = structural {
         return config
             .structural
             .iter()
-            .find(|rule| rule.kind == "linker_veneer")
+            .find(|rule| rule.kind == kind)
             .map(ClassificationRule::classification)
-            .ok_or_else(|| "missing linker veneer classification".into());
-    }
-    if alignment_padding(data) {
-        return config
-            .structural
-            .iter()
-            .find(|rule| rule.kind == "alignment_padding")
-            .map(ClassificationRule::classification)
-            .ok_or_else(|| "missing alignment padding classification".into());
+            .ok_or_else(|| missing.into());
     }
     if thumb_standalone_wide_transfer(source) {
         return config
@@ -417,7 +400,7 @@ fn validate_counts(
 }
 fn self_digest() -> Result<String, String> {
     let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("src/lib.rs");
-    let bytes = std::fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?;
+    let bytes = read(&path)?;
     if bytes.is_empty() {
         return Err(format!(
             "build_asm read an EMPTY source at {}; refusing to key the cache",
@@ -504,7 +487,7 @@ fn build_region(
         .and_then(|entries| entries.into_iter().find(|(kind, _)| kind == "payload"))
         .map(|(_, data)| data)
     {
-        std::fs::write(&binary, &data).map_err(|error| format!("{}: {error}", binary.display()))?;
+        write(&binary, &data)?;
         return Ok(BuiltRegion {
             address,
             run_address: linked_address,
@@ -513,23 +496,16 @@ fn build_region(
     }
     run(
         root,
-        &[
-            "arm-none-eabi-as".into(),
-            "-mcpu=arm7tdmi".into(),
-            "-mthumb-interwork".into(),
-            "-o".into(),
-            object.to_string_lossy().into_owned(),
-            source.to_string_lossy().into_owned(),
-        ],
+        &argv(&[
+            "arm-none-eabi-as",
+            "-mcpu=arm7tdmi",
+            "-mthumb-interwork",
+            "-o",
+            &text(&object),
+            &text(source),
+        ]),
     )?;
-    let undefined = run(
-        root,
-        &[
-            "arm-none-eabi-nm".into(),
-            "-u".into(),
-            object.to_string_lossy().into_owned(),
-        ],
-    )?;
+    let undefined = run(root, &argv(&["arm-none-eabi-nm", "-u", &text(&object)]))?;
     let names: Vec<String> = undefined
         .lines()
         .filter(|line| !line.is_empty())
@@ -559,18 +535,17 @@ fn build_region(
                 external.rsplit_once('_').unwrap().1
             ));
         }
-        std::fs::write(&symbols_source, body)
-            .map_err(|error| format!("{}: {error}", symbols_source.display()))?;
+        write(&symbols_source, body)?;
         run(
             root,
-            &[
-                "arm-none-eabi-as".into(),
-                "-mcpu=arm7tdmi".into(),
-                "-mthumb-interwork".into(),
-                "-o".into(),
-                symbols_object.to_string_lossy().into_owned(),
-                symbols_source.to_string_lossy().into_owned(),
-            ],
+            &argv(&[
+                "arm-none-eabi-as",
+                "-mcpu=arm7tdmi",
+                "-mthumb-interwork",
+                "-o",
+                &text(&symbols_object),
+                &text(&symbols_source),
+            ]),
         )?;
         objects.push(symbols_object);
     }
@@ -581,27 +556,23 @@ fn build_region(
         "-e".into(),
         format!("0x{formatted}"),
         "-o".into(),
-        elf.to_string_lossy().into_owned(),
+        text(&elf),
     ];
-    link.extend(
-        objects
-            .iter()
-            .map(|path| path.to_string_lossy().into_owned()),
-    );
+    link.extend(objects.iter().map(text));
     run(root, &link)?;
     run(
         root,
-        &[
-            "arm-none-eabi-objcopy".into(),
-            "-O".into(),
-            "binary".into(),
-            "-j".into(),
-            ".text".into(),
-            elf.to_string_lossy().into_owned(),
-            binary.to_string_lossy().into_owned(),
-        ],
+        &argv(&[
+            "arm-none-eabi-objcopy",
+            "-O",
+            "binary",
+            "-j",
+            ".text",
+            &text(&elf),
+            &text(&binary),
+        ]),
     )?;
-    let data = std::fs::read(&binary).map_err(|error| format!("{}: {error}", binary.display()))?;
+    let data = read(&binary)?;
     cache.put(&cache_key, &[("payload", &data)])?;
     Ok(BuiltRegion {
         address,
@@ -609,44 +580,24 @@ fn build_region(
         data,
     })
 }
-fn number(value: u64) -> Value {
-    Value::Number(Number::from(value))
-}
 fn region_value(
     output: &Path,
     source: &str,
     built: &BuiltRegion,
     category: &Classification,
 ) -> Value {
-    let mut object = Map::new();
-    object.insert("address".into(), number(built.address));
-    object.insert("run_address".into(), number(built.run_address));
-    object.insert("size".into(), number(built.data.len() as u64));
-    object.insert("source".into(), Value::String(source.to_string()));
-    object.insert(
-        "output".into(),
-        Value::String(
-            output
-                .join(format!("{:08x}.bin", built.address))
-                .to_string_lossy()
-                .into_owned(),
-        ),
-    );
-    object.insert("kind".into(), Value::String(category.kind.clone()));
-    object.insert("origin".into(), Value::String(category.origin.clone()));
-    object.insert(
-        "retention".into(),
-        Value::String(category.retention.clone()),
-    );
-    object.insert(
-        "confidence".into(),
-        Value::String(category.confidence.clone()),
-    );
-    object.insert(
-        "evidence".into(),
-        Value::String(category.evidence.join(",")),
-    );
-    Value::Object(object)
+    json!({
+        "address":built.address,
+        "run_address":built.run_address,
+        "size":built.data.len(),
+        "source":source,
+        "output":output.join(format!("{:08x}.bin", built.address)).to_string_lossy(),
+        "kind":category.kind,
+        "origin":category.origin,
+        "retention":category.retention,
+        "confidence":category.confidence,
+        "evidence":category.evidence.join(","),
+    })
 }
 pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, String> {
     let rom = if options.source_only {
@@ -765,8 +716,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
                     return Err(format!("{name}: alignment bytes differ"));
                 }
             }
-            std::fs::write(&output_path, &data)
-                .map_err(|error| format!("{}: {error}", output_path.display()))?;
+            write(&output_path, &data)?;
             let count = counts.entry(category.kind.clone()).or_default();
             count.files += 1;
             count.bytes += data.len();
@@ -798,33 +748,14 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
         }
         validate_counts(&classification, &counts)?;
     }
-    let mut document = Map::new();
-    document.insert("format".into(), number(1));
-    document.insert("rom_base".into(), number(ROM_BASE));
-    document.insert(
-        "verification".into(),
-        Value::String(
-            if options.source_only {
-                "source_only"
-            } else {
-                "rom"
-            }
-            .into(),
-        ),
-    );
-    document.insert(
-        "classification".into(),
-        Value::String(relative(root, &classification_path)),
-    );
-    document.insert(
-        "regions".into(),
-        Value::Array(regions.iter().map(|item| item.1.clone()).collect()),
-    );
-    std::fs::write(
-        output.join("manifest.json"),
-        format!("{}\n", canonical_json(&Value::Object(document))),
-    )
-    .map_err(|error| format!("{}: {error}", output.join("manifest.json").display()))?;
+    let document = json!({
+        "format":1,
+        "rom_base":ROM_BASE,
+        "verification":if options.source_only { "source_only" } else { "rom" },
+        "classification":relative(root, &classification_path),
+        "regions":regions.iter().map(|item| item.1.clone()).collect::<Vec<_>>(),
+    });
+    write_canonical(&output.join("manifest.json"), &document)?;
     let bytes = regions
         .iter()
         .map(|item| item.1["size"].as_u64().unwrap() as usize)

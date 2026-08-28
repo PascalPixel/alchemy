@@ -4,7 +4,11 @@ use regex::{Captures, Regex};
 use std::{collections::HashSet, ops::Range};
 pub const CATALOG_VERSION: &str = "register-wall-v3";
 const MAX_CHOICES: usize = 16;
-type Mutation = (String, String);
+#[derive(Clone, Debug, Eq, PartialEq)]
+struct Mutation {
+    source: String,
+    description: String,
+}
 type Mutations = Result<Vec<Mutation>, String>;
 #[derive(Clone, Debug, Eq, PartialEq)]
 struct Variant {
@@ -102,14 +106,25 @@ fn edited(source: &str, mut changes: Vec<(Range<usize>, String)>) -> Result<Stri
     }
     Ok(output)
 }
+fn applied(
+    source: &str,
+    changes: Vec<(Range<usize>, String)>,
+    description: String,
+) -> Result<Mutation, String> {
+    Ok(Mutation {
+        source: edited(source, changes)?,
+        description,
+    })
+}
 fn variants(source: &str, range: Range<usize>, forms: Vec<(&str, String)>) -> Mutations {
     forms
         .into_iter()
         .map(|(id, text)| {
-            Ok((
-                edited(source, vec![(range.clone(), text)])?,
+            applied(
+                source,
+                vec![(range.clone(), text)],
                 format!("{id}@{}", range.start),
-            ))
+            )
         })
         .collect()
 }
@@ -141,17 +156,7 @@ fn pure(text: &str) -> bool {
         && !regex(r"\b[A-Za-z_][A-Za-z0-9_]*\s*\(").is_match(text)
 }
 fn scope(code: &str, end: usize) -> Option<usize> {
-    let mut stack = Vec::new();
-    for (at, byte) in code.as_bytes()[..end].iter().enumerate() {
-        match byte {
-            b'{' => stack.push(at),
-            b'}' => {
-                stack.pop();
-            }
-            _ => {}
-        }
-    }
-    stack.last().copied()
+    scope_chain(code, end).last().copied()
 }
 fn declaration<'a>(
     source: &'a str,
@@ -203,10 +208,11 @@ fn swap(source: &str, code: &str, left: &str, right: &str) -> Mutations {
         return Err("named declarations are not in the same lexical block".into());
     }
     let at = a.start.min(b.start);
-    Ok(vec![(
-        edited(source, vec![(a, b_line.into()), (b, a_line.into())])?,
+    Ok(vec![applied(
+        source,
+        vec![(a, b_line.into()), (b, a_line.into())],
         format!("declaration_order:swap_named({left},{right})@{at}"),
-    )])
+    )?])
 }
 fn split(source: &str, code: &str, name: &str) -> Mutations {
     let (declaration, line) = declaration(source, code, name)?;
@@ -245,13 +251,14 @@ fn split(source: &str, code: &str, name: &str) -> Mutations {
         uses.into_iter()
             .map(|range| (range, format!("*({expression})"))),
     );
-    Ok(vec![(
-        edited(source, changes)?,
+    Ok(vec![applied(
+        source,
+        changes,
         format!(
             "block_lifetime+loop_spelling:inline_named({name})@{}",
             declaration.start
         ),
-    )])
+    )?])
 }
 fn zero(source: &str, code: &str) -> Mutations {
     let pattern = regex(
@@ -317,14 +324,15 @@ fn inline_xor(source: &str, code: &str, found: &Captures) -> Option<Mutation> {
         "{indent}{left} = {helper}({left}, {expression});\n{indent}{right} = {helper}({right}, {right_value});"
     );
     let changes = vec![(insert..insert, definition), (open..close + 1, body)];
-    let text = edited(source, changes).ok()?;
-    Some((
-        text,
+    applied(
+        source,
+        changes,
         format!(
             "temporary+evaluation_order:inline_xor_helper@{}",
             site.start
         ),
-    ))
+    )
+    .ok()
 }
 fn reciprocal(source: &str, code: &str, name: &str) -> Mutations {
     if source.contains("volatile") {
@@ -432,19 +440,17 @@ fn preload_adjacent_halfwords(
         "{}{{\n{}    s16 {carrier} = {first_destination};\n\n{}    {} = {}({carrier} << {}, {carrier});\n{}}}\n",
         fields[0], fields[0], fields[0], fields[1].trim(), fields[2], fields[3], fields[0],
     );
-    Ok(vec![(
-        edited(
-            source,
-            vec![
-                (copies.range.clone(), copy),
-                (dependent.range, dependent_text),
-            ],
-        )?,
+    Ok(vec![applied(
+        source,
+        vec![
+            (copies.range.clone(), copy),
+            (dependent.range, dependent_text),
+        ],
         format!(
             "temporary+evaluation_order+type_width:preload_adjacent_halfwords({first_destination},{second_destination},{carrier})@{}",
             copies.range.start
         ),
-    )])
+    )?])
 }
 fn materialize_message_and_merge_count(
     source: &str,
@@ -578,24 +584,22 @@ fn materialize_message_and_merge_count(
         "{}{} = {};\n",
         coordinate_site.fields[0], message, message_rhs
     );
-    Ok(vec![(
-        edited(
-            source,
-            vec![
-                (declaration.range.clone(), format!("{}s32 {message};\n", declaration.fields[0])),
-                (first.range.clone(), String::new()),
-                (first_use, format!("({expression})")),
-                (coordinate_site.range.start..coordinate_site.range.start, message_text),
-                (second.range.clone(), String::new()),
-                (message_range, message.into()),
-                (branch.range, branch_text),
-            ],
-        )?,
+    Ok(vec![applied(
+        source,
+        vec![
+            (declaration.range.clone(), format!("{}s32 {message};\n", declaration.fields[0])),
+            (first.range.clone(), String::new()),
+            (first_use, format!("({expression})")),
+            (coordinate_site.range.start..coordinate_site.range.start, message_text),
+            (second.range.clone(), String::new()),
+            (message_range, message.into()),
+            (branch.range, branch_text),
+        ],
         format!(
             "temporary+evaluation_order+block_lifetime:materialize_message_and_merge_count({message},{count})@{}",
             declaration.range.start
         ),
-    )])
+    )?])
 }
 fn split_opposite_side_and_scaled_offset(
     source: &str,
@@ -635,12 +639,11 @@ fn split_opposite_side_and_scaled_offset(
     {
         return Err("opposite-side expression has ambiguous uses or scope".into());
     }
-    let statement_start = code[..scaled.range.start]
+    let boundary = code[..scaled.range.start]
         .rfind(|character| matches!(character, ';' | '{' | '}'))
-        .map_or(0, |at| at + 1)
-        + code[code[..scaled.range.start]
-            .rfind(|character| matches!(character, ';' | '{' | '}'))
-            .map_or(0, |at| at + 1)..scaled.range.start]
+        .map_or(0, |at| at + 1);
+    let statement_start = boundary
+        + code[boundary..scaled.range.start]
             .find(|character: char| !character.is_ascii_whitespace())
             .ok_or("scaled expression has no containing statement")?;
     let indent = &declaration.fields[0];
@@ -651,20 +654,18 @@ fn split_opposite_side_and_scaled_offset(
     let schedule = format!(
         "{indent}{opposite} ^= {side};\n{indent}{side} = {opposite} << 1;\n{indent}{side} += {opposite};\n{indent}{side} <<= 3;\n"
     );
-    Ok(vec![(
-        edited(
-            source,
-            vec![
-                (declaration.range.clone(), declaration_text),
-                (statement_start..statement_start, schedule),
-                (scaled.range, side.into()),
-            ],
-        )?,
+    Ok(vec![applied(
+        source,
+        vec![
+            (declaration.range.clone(), declaration_text),
+            (statement_start..statement_start, schedule),
+            (scaled.range, side.into()),
+        ],
         format!(
             "temporary+evaluation_order:split_opposite_side_and_scaled_offset({side},{opposite})@{}",
             declaration.range.start
         ),
-    )])
+    )?])
 }
 fn merge_carrier_phases(source: &str, code: &str, earlier: &str, later: &str) -> Mutations {
     if source.contains("volatile") || !identifier(earlier) || !identifier(later) || earlier == later
@@ -781,13 +782,14 @@ fn merge_carrier_phases(source: &str, code: &str, earlier: &str, later: &str) ->
             earlier.into(),
         ));
     }
-    Ok(vec![(
-        edited(source, changes)?,
+    Ok(vec![applied(
+        source,
+        changes,
         format!(
             "temporary+block_lifetime:merge_carrier_phases({earlier},{later})@{}",
             first.range.start
         ),
-    )])
+    )?])
 }
 fn guard_source(source: &str) -> Result<(), String> {
     if source.contains("PERM_GENERAL(") || source.contains("PERM_INT(") {
@@ -811,11 +813,11 @@ fn guard_source(source: &str) -> Result<(), String> {
 }
 fn generate(source: &str, repair: &Repair) -> Mutations {
     let code = masked(source);
-    let generated = match repair {
-        Repair::SwapDeclarations { left, right } => swap(source, &code, left, right)?,
-        Repair::SplitLifetime { name } => split(source, &code, name)?,
-        Repair::MergeZeroCarrier => zero(source, &code)?,
-        Repair::ReciprocalRoleSwap { name } => reciprocal(source, &code, name)?,
+    match repair {
+        Repair::SwapDeclarations { left, right } => swap(source, &code, left, right),
+        Repair::SplitLifetime { name } => split(source, &code, name),
+        Repair::MergeZeroCarrier => zero(source, &code),
+        Repair::ReciprocalRoleSwap { name } => reciprocal(source, &code, name),
         Repair::PreloadAdjacentHalfwords {
             first_destination,
             first_source,
@@ -830,7 +832,7 @@ fn generate(source: &str, repair: &Repair) -> Mutations {
             second_destination,
             second_source,
             carrier,
-        )?,
+        ),
         Repair::MaterializeMessageAndMergeCount {
             indexed_value,
             message,
@@ -843,41 +845,38 @@ fn generate(source: &str, repair: &Repair) -> Mutations {
             message,
             coordinate,
             count,
-        )?,
+        ),
         Repair::SplitOppositeSideAndScaledOffset { side, opposite } => {
-            split_opposite_side_and_scaled_offset(source, &code, side, opposite)?
+            split_opposite_side_and_scaled_offset(source, &code, side, opposite)
         }
         Repair::MergeCarrierPhases { earlier, later } => {
-            merge_carrier_phases(source, &code, earlier, later)?
+            merge_carrier_phases(source, &code, earlier, later)
         }
-    };
-    Ok(generated)
+    }
 }
 pub fn parse(source: &str, plan: &RepairPlan) -> Result<Permutation, String> {
     guard_source(source)?;
     if !(1..=2).contains(&plan.repairs().len()) {
         return Err("decoder repair plan must contain one or two repairs".into());
     }
-    let generated = if plan.repairs().len() == 1 {
-        generate(source, &plan.repairs()[0])?
-            .into_iter()
-            .map(|(source, mutation)| Variant {
-                source,
-                mutations: vec![mutation],
-            })
-            .collect::<Vec<_>>()
-    } else {
-        let mut complete = Vec::new();
-        for (first_source, first_mutation) in generate(source, &plan.repairs()[0])? {
-            for (second_source, second_mutation) in generate(&first_source, &plan.repairs()[1])? {
-                complete.push(Variant {
-                    source: second_source,
-                    mutations: vec![first_mutation.clone(), second_mutation],
+    let mut generated = vec![Variant {
+        source: source.into(),
+        mutations: Vec::new(),
+    }];
+    for repair in plan.repairs() {
+        let mut next = Vec::new();
+        for variant in generated {
+            for mutation in generate(&variant.source, repair)? {
+                let mut mutations = variant.mutations.clone();
+                mutations.push(mutation.description);
+                next.push(Variant {
+                    source: mutation.source,
+                    mutations,
                 });
             }
         }
-        complete
-    };
+        generated = next;
+    }
     let raw_count = 1 + generated.len();
     if raw_count > MAX_CHOICES {
         return Err(format!(

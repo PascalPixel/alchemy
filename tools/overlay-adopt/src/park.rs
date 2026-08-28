@@ -1,4 +1,4 @@
-use crate::{listing_offsets, region_lines};
+use crate::{listing_offsets, overlay_assembly, overlay_offset, region_lines, retained_source};
 use compiler_core::{
     source_paths::{SourceOwner, SourcePaths},
     thumb::standalone_wide_transfer_lines as thumb_standalone_wide_transfer_lines,
@@ -50,9 +50,7 @@ fn audit_multi_register_evidence(root: &Path, overlays: &[String]) -> Result<Vec
         .collect();
     let mut found = std::collections::BTreeSet::new();
     for overlay in &wanted {
-        let path = root
-            .join("games/gs1/assets/code")
-            .join(format!("{overlay}_overlay.s"));
+        let path = overlay_assembly(root, overlay);
         let offsets: std::collections::BTreeMap<_, _> =
             listing_offsets(&path)?.into_iter().collect();
         let source = fs::read_to_string(&path).map_err(|e| e.to_string())?;
@@ -97,20 +95,34 @@ fn audit_multi_register_evidence(root: &Path, overlays: &[String]) -> Result<Vec
     }
     Ok(findings)
 }
-pub(crate) fn placeholder_block(lines: &[&str], address: i64) -> Option<(usize, usize, i64)> {
+#[derive(Clone, Copy)]
+pub(crate) struct Placeholder {
+    pub(crate) start: usize,
+    pub(crate) end: usize,
+    pub(crate) span: i64,
+}
+fn placeholder_address(line: &str) -> Option<i64> {
+    i64::from_str_radix(
+        line.trim().strip_prefix("AlchemyC_")?.strip_suffix(':')?,
+        16,
+    )
+    .ok()
+}
+fn space_size(line: &str) -> Option<i64> {
+    let size = line.trim().strip_prefix(".space ")?.trim();
+    size.strip_prefix("0x")
+        .map(|hex| i64::from_str_radix(hex, 16).ok())
+        .unwrap_or_else(|| size.parse().ok())
+}
+pub(crate) fn placeholder_block(lines: &[&str], address: i64) -> Option<Placeholder> {
     let tag = format!("AlchemyC_{address:08x}:");
     let start = lines.iter().position(|line| line.trim() == tag)?;
     let mut end = start + 1;
     let mut span = 0i64;
     while end < lines.len() {
         let trimmed = lines[end].trim();
-        if let Some(size) = trimmed.strip_prefix(".space ") {
-            let size = size.trim();
-            let value = match size.strip_prefix("0x") {
-                Some(hexadecimal) => i64::from_str_radix(hexadecimal, 16).ok()?,
-                None => size.parse::<i64>().ok()?,
-            };
-            span += value;
+        if trimmed.starts_with(".space ") {
+            span += space_size(trimmed)?;
             end += 1;
         } else if trimmed.starts_with(".L_") && trimmed.ends_with(':') {
             end += 1;
@@ -121,7 +133,13 @@ pub(crate) fn placeholder_block(lines: &[&str], address: i64) -> Option<(usize, 
     if end == start + 1 {
         return None;
     }
-    Some((start, end, span))
+    Some(Placeholder { start, end, span })
+}
+fn placeholder_addresses(lines: &[&str]) -> Vec<i64> {
+    lines
+        .iter()
+        .filter_map(|line| placeholder_address(line))
+        .collect()
 }
 fn git(root: &Path, arguments: &[&str]) -> Result<String, String> {
     let output = Command::new("git")
@@ -138,7 +156,9 @@ fn git(root: &Path, arguments: &[&str]) -> Result<String, String> {
     }
     String::from_utf8(output.stdout).map_err(|error| error.to_string())
 }
-fn pre_adoption_text(root: &Path, overlay: &str, address: i64) -> Result<String, String> {
+fn pre_adoption_text(root: &Path, target: SourceOwner) -> Result<String, String> {
+    let overlay = target.overlay_id().expect("overlay owner");
+    let address = i64::from(target.address());
     let relative = format!("games/gs1/assets/code/{overlay}_overlay.s");
     let tag = format!("AlchemyC_{address:08x}:");
     let log = git(
@@ -177,47 +197,6 @@ fn pre_adoption_text(root: &Path, overlay: &str, address: i64) -> Result<String,
     }
     Err(format!("no revision of {relative} contains {tag}"))
 }
-fn define_dangling_labels(text: &str) -> String {
-    let mut defined = std::collections::BTreeSet::new();
-    let mut referenced = std::collections::BTreeSet::new();
-    for line in text.split('\n') {
-        let code = line.split('@').next().unwrap_or("");
-        let trimmed = code.trim();
-        if let Some(rest) = trimmed.strip_prefix(".L_") {
-            if let Some(label) = rest.strip_suffix(':') {
-                if label.len() == 8 && label.chars().all(|c| c.is_ascii_hexdigit()) {
-                    defined.insert(label.to_string());
-                    continue;
-                }
-            }
-        }
-        let bytes: Vec<char> = code.chars().collect();
-        let mut index = 0;
-        while index + 3 <= bytes.len() {
-            if code[index..].starts_with(".L_") {
-                let label: String = bytes[index + 3..]
-                    .iter()
-                    .take_while(|c| c.is_ascii_hexdigit())
-                    .collect();
-                if label.len() == 8 {
-                    referenced.insert(label);
-                }
-                index += 3;
-            } else {
-                index += 1;
-            }
-        }
-    }
-    let mut additions = String::new();
-    for label in referenced.difference(&defined) {
-        additions.push_str(&format!("\n.set .L_{label}, 0x{label}"));
-    }
-    if additions.is_empty() {
-        text.to_string()
-    } else {
-        format!("{text}{additions}\n")
-    }
-}
 fn label_use(
     text: &str,
 ) -> (
@@ -228,79 +207,70 @@ fn label_use(
     let mut referenced = std::collections::BTreeSet::new();
     for line in text.split('\n') {
         let code = line.split('@').next().unwrap_or("");
-        let trimmed = code.trim();
-        if let Some(rest) = trimmed.strip_prefix(".L_") {
-            if let Some(label) = rest.strip_suffix(':') {
-                if label.len() == 8 && label.chars().all(|c| c.is_ascii_hexdigit()) {
-                    defined.insert(label.to_string());
-                    continue;
-                }
-            }
+        let definition = code
+            .trim()
+            .strip_prefix(".L_")
+            .and_then(|label| label.strip_suffix(':'))
+            .filter(|label| label.len() == 8 && label.chars().all(|c| c.is_ascii_hexdigit()));
+        if let Some(label) = definition {
+            defined.insert(label.to_string());
+            continue;
         }
-        let mut index = 0;
-        while index + 3 <= code.len() {
-            if code.is_char_boundary(index) && code[index..].starts_with(".L_") {
-                let label: String = code[index + 3..]
-                    .chars()
-                    .take_while(|c| c.is_ascii_hexdigit())
-                    .collect();
-                if label.len() == 8 {
-                    referenced.insert(label);
-                }
-                index += 3;
-            } else {
-                index += 1;
+        for (index, _) in code.match_indices(".L_") {
+            let label = code[index + 3..]
+                .chars()
+                .take_while(|c| c.is_ascii_hexdigit())
+                .collect::<String>();
+            if label.len() == 8 {
+                referenced.insert(label);
             }
         }
     }
     (defined, referenced)
 }
+fn define_dangling_labels(text: &str) -> String {
+    let (defined, referenced) = label_use(text);
+    let additions = referenced
+        .difference(&defined)
+        .map(|label| format!("\n.set .L_{label}, 0x{label}"))
+        .collect::<String>();
+    if additions.is_empty() {
+        text.to_string()
+    } else {
+        format!("{text}{additions}\n")
+    }
+}
 fn restore_label(text: &str, label: &str) -> Option<String> {
     let target = i64::from_str_radix(label, 16).ok()?;
     let lines: Vec<&str> = text.split('\n').collect();
-    let mut index = 0usize;
-    while index < lines.len() {
-        let trimmed = lines[index].trim();
-        let Some(rest) = trimmed.strip_prefix("AlchemyC_") else {
-            index += 1;
+    for (index, source) in lines.iter().enumerate() {
+        let Some(base) = placeholder_address(source) else {
             continue;
         };
-        let Some(start_hex) = rest.strip_suffix(':') else {
-            index += 1;
-            continue;
-        };
-        let Ok(base) = i64::from_str_radix(start_hex, 16) else {
-            index += 1;
-            continue;
-        };
+        let placeholder = placeholder_block(&lines, base)?;
         let mut cursor = base;
-        let mut line = index + 1;
-        while line < lines.len() {
+        for line in index + 1..placeholder.end {
             let body = lines[line].trim();
-            if let Some(size) = body.strip_prefix(".space ") {
-                let size = size.trim();
-                let value = match size.strip_prefix("0x") {
-                    Some(hexadecimal) => i64::from_str_radix(hexadecimal, 16).ok()?,
-                    None => size.parse::<i64>().ok()?,
-                };
+            if body.starts_with(".space ") {
+                let value = space_size(body)?;
                 if target > cursor && target < cursor + value {
-                    let mut out: Vec<String> =
-                        lines[..line].iter().map(|line| line.to_string()).collect();
-                    out.push(format!("\t.space 0x{:x}", target - cursor));
-                    out.push(format!(".L_{label}:"));
-                    out.push(format!("\t.space 0x{:x}", cursor + value - target));
-                    out.extend(lines[line + 1..].iter().map(|line| line.to_string()));
+                    let mut out = lines
+                        .iter()
+                        .map(|line| line.to_string())
+                        .collect::<Vec<_>>();
+                    out.splice(
+                        line..=line,
+                        [
+                            format!("\t.space 0x{:x}", target - cursor),
+                            format!(".L_{label}:"),
+                            format!("\t.space 0x{:x}", cursor + value - target),
+                        ],
+                    );
                     return Some(out.join("\n"));
                 }
                 cursor += value;
-                line += 1;
-            } else if body.starts_with(".L_") && body.ends_with(':') {
-                line += 1;
-            } else {
-                break;
             }
         }
-        index = line.max(index + 1);
     }
     None
 }
@@ -316,15 +286,14 @@ fn region_text(text: &str, address: i64, span: i64) -> Result<Vec<String>, Strin
         .ok_or_else(|| format!("lines {first}-{last} are outside the historical revision"))?;
     Ok(slice.iter().map(|line| line.to_string()).collect())
 }
-pub fn reference_bytes(
+pub(crate) fn reference_bytes(
     root: &Path,
-    overlay: &str,
-    address: i64,
+    target: SourceOwner,
     span: i64,
 ) -> Result<Vec<u8>, String> {
-    let text = define_dangling_labels(&pre_adoption_text(root, overlay, address)?);
+    let text = define_dangling_labels(&pre_adoption_text(root, target)?);
     let image = assemble_overlay(&OverlaySource::Str(text), OVERLAY_BASE)?;
-    let start = (address - OVERLAY_BASE) as usize;
+    let start = overlay_offset(target);
     let end = start + span as usize;
     if end > image.len() {
         return Err("the region runs past the historical image".to_string());
@@ -336,22 +305,17 @@ pub fn audit(root: &Path, overlay: &str) -> AuditResult {
     audit_with_rom(root, overlay, None)
 }
 fn audit_with_rom(root: &Path, overlay: &str, rom: Option<&CanonicalRom>) -> AuditResult {
-    let path = root.join(format!("games/gs1/assets/code/{overlay}_overlay.s"));
+    let path = overlay_assembly(root, overlay);
     let assembly = fs::read_to_string(&path).map_err(|error| error.to_string())?;
     let lines: Vec<&str> = assembly.split('\n').collect();
-    let addresses = lines
+    let addresses = placeholder_addresses(&lines);
+    let placeholders = addresses
         .iter()
-        .filter_map(|line| {
-            let hex = line.trim().strip_prefix("AlchemyC_")?.strip_suffix(':')?;
-            i64::from_str_radix(hex, 16).ok()
-        })
+        .filter_map(|address| placeholder_block(&lines, *address).map(|row| (*address, row)))
         .collect::<Vec<_>>();
     let source_paths = SourcePaths::load(root)?;
     let mut findings = Vec::new();
-    for &address in &addresses {
-        let Some(_) = placeholder_block(&lines, address) else {
-            continue;
-        };
+    for &(address, _) in &placeholders {
         let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;
         let source = source_paths.source_path(owner);
         if !source.exists() {
@@ -388,10 +352,8 @@ fn audit_with_rom(root: &Path, overlay: &str, rom: Option<&CanonicalRom>) -> Aud
             built.len()
         )]);
     }
-    for address in addresses {
-        let Some((_, _, span)) = placeholder_block(&lines, address) else {
-            continue;
-        };
+    for (address, placeholder) in placeholders {
+        let span = placeholder.span;
         let start = (address - OVERLAY_BASE) as usize;
         let Some(reference) = image.get(start..start + span as usize) else {
             findings.push(format!(
@@ -402,12 +364,7 @@ fn audit_with_rom(root: &Path, overlay: &str, rom: Option<&CanonicalRom>) -> Aud
         };
         let assembled = &built[start..start + span as usize];
         if assembled != reference {
-            let differing = assembled
-                .chunks(2)
-                .zip(reference.chunks(2))
-                .filter(|(left, right)| left != right)
-                .count()
-                + assembled.len().abs_diff(reference.len()).div_ceil(2);
+            let differing = crate::differing_units(assembled, reference, 2);
             findings.push(format!("{overlay}:{address:08x}\tDIFFERS\treference={}\tassembled={}\tdiffering={differing}", reference.len(), assembled.len()));
         }
     }
@@ -492,24 +449,22 @@ fn image_window(image: Vec<u8>, start: usize, span: usize, label: &str) -> Resul
         )
     })
 }
-pub fn truth_window(
+pub(crate) fn truth_window(
     root: &Path,
-    overlay: &str,
-    address: i64,
+    target: SourceOwner,
     span: i64,
 ) -> Result<(Vec<u8>, &'static str), String> {
-    let start = (address - OVERLAY_BASE) as usize;
-    let rom = match canonical_overlay(root, overlay)
+    let overlay = target.overlay_id().expect("overlay owner");
+    let start = overlay_offset(target);
+    let rom = match canonical_overlay(root, &overlay)
         .and_then(|image| image_window(image, start, span as usize, "decoded container"))
     {
         Ok(window) => return Ok((window, "rom")),
         Err(error) => error,
     };
-    let assembled = match placeholder_span(root, overlay, address) {
+    let assembled = match placeholder_span(root, target) {
         Ok(None) => {
-            let path = root
-                .join("games/gs1/assets/code")
-                .join(format!("{overlay}_overlay.s"));
+            let path = overlay_assembly(root, &overlay);
             assemble_overlay(&OverlaySource::path(&path), OVERLAY_BASE)
                 .and_then(|image| image_window(image, start, span as usize, "assembled overlay"))
         }
@@ -520,18 +475,19 @@ pub fn truth_window(
         Ok(window) => return Ok((window, "assembly")),
         Err(error) => error,
     };
-    reference_bytes(root, overlay, address, span)
+    reference_bytes(root, target, span)
         .map(|bytes| (bytes, "git"))
         .map_err(|git| {
             format!("{git}; no ROM window either: {rom}; and not from the assembly: {assembled}")
         })
 }
-pub fn placeholder_span(root: &Path, overlay: &str, address: i64) -> Result<Option<i64>, String> {
-    let path = root.join(format!("games/gs1/assets/code/{overlay}_overlay.s"));
+pub(crate) fn placeholder_span(root: &Path, target: SourceOwner) -> Result<Option<i64>, String> {
+    let overlay = target.overlay_id().expect("overlay owner");
+    let path = overlay_assembly(root, &overlay);
     let assembly =
         std::fs::read_to_string(&path).map_err(|error| format!("{}: {error}", path.display()))?;
     let lines: Vec<&str> = assembly.split('\n').collect();
-    Ok(placeholder_block(&lines, address).map(|(_, _, span)| span))
+    Ok(placeholder_block(&lines, i64::from(target.address())).map(|row| row.span))
 }
 pub struct Parked {
     pub overlay: String,
@@ -539,28 +495,32 @@ pub struct Parked {
     pub span: i64,
     pub lines: usize,
 }
-pub fn park_one(root: &Path, overlay: &str, address: i64, apply: bool) -> Result<Parked, String> {
-    let assembly = root.join(format!("games/gs1/assets/code/{overlay}_overlay.s"));
+pub(crate) fn park_one(root: &Path, target: SourceOwner, apply: bool) -> Result<Parked, String> {
+    let overlay = target.overlay_id().expect("overlay owner");
+    let address = i64::from(target.address());
+    let assembly = overlay_assembly(root, &overlay);
     let original = fs::read_to_string(&assembly).map_err(|error| error.to_string())?;
     let lines: Vec<&str> = original.split('\n').collect();
-    let (start, end, span) = placeholder_block(&lines, address).ok_or_else(|| {
+    let placeholder = placeholder_block(&lines, address).ok_or_else(|| {
         format!(
             "no AlchemyC_{address:08x} placeholder in {}",
             assembly.display()
         )
     })?;
-    let (reference, oracle) = truth_window(root, overlay, address, span)?;
-    let from_git = pre_adoption_text(root, overlay, address)
+    let (start, end, span) = (placeholder.start, placeholder.end, placeholder.span);
+    let (reference, oracle) = truth_window(root, target, span)?;
+    let from_git = pre_adoption_text(root, target)
         .and_then(|text| region_text(&define_dangling_labels(&text), address, span));
-    let usable = |lines: &Vec<String>| {
-        !lines
-            .iter()
-            .any(|line| line.trim_start().starts_with("AlchemyC_"))
-    };
     let restored = match from_git {
-        Ok(lines) if usable(&lines) => lines,
+        Ok(lines)
+            if !lines
+                .iter()
+                .any(|line| line.trim_start().starts_with("AlchemyC_")) =>
+        {
+            lines
+        }
         _ => {
-            let image = canonical_overlay(root, overlay)?;
+            let image = canonical_overlay(root, &overlay)?;
             let text = overlay_disasm::build_overlay_source(&image, OVERLAY_BASE)?;
             region_text(&define_dangling_labels(&text), address, span)?
         }
@@ -592,16 +552,14 @@ pub fn park_one(root: &Path, overlay: &str, address: i64, apply: bool) -> Result
         ));
     }
     if apply {
-        let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;
+        let owner = target;
         let source_paths = SourcePaths::load(root)?;
         let installed = source_paths.source_path(owner);
         let shared = source_paths
             .owners_for_path(&installed)
             .into_iter()
             .any(|registered| registered != owner);
-        let parked = root.join(format!(
-            "games/gs1/recon/en/overlays/{overlay}_c_{address:08x}.c"
-        ));
+        let parked = retained_source(root, target);
         fs::write(&assembly, &text).map_err(|error| error.to_string())?;
         let parked_before = if shared && parked.exists() {
             Some(fs::read(&parked).map_err(|error| {
@@ -681,8 +639,8 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     }
     let mut failures = 0;
     for row in rows {
-        let (overlay, address) = crate::score::resolve(root, &row)?;
-        match park_one(root, &overlay, address, apply) {
+        let target = crate::score::resolve(root, &row)?;
+        match park_one(root, target, apply) {
             Ok(parked) => println!(
                 "parked {}:{:08x} span={} lines={}{}",
                 parked.overlay,

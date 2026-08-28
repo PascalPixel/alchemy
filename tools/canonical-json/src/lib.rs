@@ -2,6 +2,7 @@
 // `preserve_order` is required because key reordering rewrites tracked metrics.
 
 use serde_json::Value;
+use std::path::Path;
 
 fn is_primitive(value: &Value) -> bool {
     !matches!(value, Value::Array(_) | Value::Object(_))
@@ -52,6 +53,11 @@ fn reflow(value: &Value, indent: &str) -> String {
 
 pub fn canonical_json(value: &Value) -> String {
     reflow(value, "")
+}
+
+pub fn write_canonical(path: &Path, value: &Value) -> Result<(), String> {
+    std::fs::write(path, format!("{}\n", canonical_json(value)))
+        .map_err(|error| format!("{}: {error}", path.display()))
 }
 
 /// Checkers accept three spellings while the migration runs: the canonical

@@ -10,5 +10,7 @@ name = "coverage_map"
 path = "src/lib.rs"
 
 [dependencies]
+canonical-json = { path = "../canonical-json" }
 compiler-core = { path = "../compiler-core" }
 serde_json = { version = "1", features = ["preserve_order"] }
+sha1 = "0.10"

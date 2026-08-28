@@ -25,7 +25,7 @@ use walkdir::WalkDir;
 const USAGE: &str = "usage: compiler families <cluster (--write|--check) FILE | transplant main:ADDRESS [--index FILE] [--output DIR] | prove [FILE]>";
 const DEFAULT_INDEX: &str = "out/gs1-en/reports/compiler-families.json";
 const DEFAULT_PROOFS: &str = "games/gs1/recon/family-retention.json";
-const INDEX_SCHEMA_VERSION: u32 = 2;
+const INDEX_SCHEMA_VERSION: u32 = 3;
 const MIN_SCORE: u16 = 7500;
 #[derive(Debug, Deserialize)]
 struct BuildManifest {
@@ -49,6 +49,8 @@ struct Owner {
     symbol: String,
     source: String,
     assembly: String,
+    source_sha256: String,
+    assembly_sha256: String,
     size: usize,
     instructions: Vec<String>,
     features: BTreeMap<String, u32>,
@@ -78,29 +80,219 @@ struct Family {
     target_bytes: usize,
 }
 #[derive(Debug, Deserialize, Serialize)]
-struct TargetMatch {
-    owner: String,
-    symbol: String,
-    source: String,
+pub(crate) struct TargetMatch {
+    pub(crate) owner: String,
+    pub(crate) symbol: String,
+    pub(crate) source: String,
     size: usize,
     instructions: usize,
-    family: Option<String>,
-    alternatives: Vec<TemplateMatch>,
+    pub(crate) family: Option<String>,
+    pub(crate) alternatives: Vec<TemplateMatch>,
 }
 #[derive(Debug, Deserialize, Serialize)]
-struct TemplateMatch {
-    owner: String,
-    symbol: String,
-    source: String,
-    assembly: String,
+pub(crate) struct TemplateMatch {
+    pub(crate) owner: String,
+    pub(crate) symbol: String,
+    pub(crate) source: String,
+    pub(crate) assembly: String,
+    source_sha256: String,
+    assembly_sha256: String,
     size: usize,
     instructions: usize,
-    score_basis_points: u16,
+    pub(crate) score_basis_points: u16,
     ngram_similarity_basis_points: u16,
     length_similarity_basis_points: u16,
     call_target_similarity_basis_points: u16,
     call_count_similarity_basis_points: u16,
     branch_similarity_basis_points: u16,
+}
+
+pub(crate) struct FamilyCatalog {
+    index: FamilyIndex,
+    templates: BTreeMap<String, TemplateSource>,
+    standalone_templates: BTreeSet<String>,
+}
+
+pub(crate) struct TemplateSource {
+    pub(crate) owner: SourceOwner,
+    pub(crate) source: String,
+    pub(crate) registered_name: Option<String>,
+    source_sha256: String,
+    assembly_sha256: String,
+}
+
+#[derive(Clone)]
+struct ExactRegistration {
+    symbol: String,
+    source: String,
+    assembly: String,
+}
+
+#[derive(Clone, Copy)]
+pub(crate) enum RetargetMode<'a> {
+    EntryMacro,
+    Transplant { alias: Option<&'a str> },
+}
+
+impl FamilyCatalog {
+    pub(crate) fn load(repository: &Path, path: &Path) -> Result<Self, String> {
+        let path = if path.is_absolute() {
+            path.into()
+        } else {
+            repository.join(path)
+        };
+        let index: FamilyIndex = json(path)?;
+        if index.schema_version != INDEX_SCHEMA_VERSION {
+            return Err(format!(
+                "family index schema {} is not supported; run `make families`",
+                index.schema_version
+            ));
+        }
+        let names = SourcePaths::load(repository)?;
+        let units = TranslationUnits::load(repository)?;
+        let exact = exact_template_registrations(repository)?;
+        let mut templates = BTreeMap::<String, TemplateSource>::new();
+        let mut standalone_templates = BTreeSet::new();
+        for details in index.targets.iter().flat_map(|target| &target.alternatives) {
+            let owner = exact_template_owner(details)?;
+            let registration = exact
+                .get(&details.owner)
+                .ok_or_else(|| format!("{} is no longer claimed as exact C", details.owner))?;
+            if registration.symbol != details.symbol
+                || registration.source != details.source
+                || registration.assembly != details.assembly
+            {
+                return Err(format!(
+                    "{} exact source binding changed; run `make families`",
+                    details.owner
+                ));
+            }
+            if let Some(template) = templates.get(&details.owner) {
+                validate_template_hashes(
+                    details,
+                    &template.source_sha256,
+                    &template.assembly_sha256,
+                )?;
+                continue;
+            }
+            let source = read(&resolve(repository, &details.source))?;
+            let assembly = read(&resolve(repository, &details.assembly))?;
+            let source_sha256 = sha256::hex(source.as_bytes());
+            let assembly_sha256 = sha256::hex(assembly.as_bytes());
+            validate_template_hashes(details, &source_sha256, &assembly_sha256)?;
+            let mapped = names.owners_for_path(&repository.join(&details.source));
+            if units.unit_for_game_owner("gs1", owner).is_none()
+                && matches!(mapped.as_slice(), [mapped] if *mapped == owner)
+            {
+                standalone_templates.insert(details.owner.clone());
+            }
+            templates.insert(
+                details.owner.clone(),
+                TemplateSource {
+                    owner,
+                    source,
+                    registered_name: names.registered_name(owner).map(str::to_string),
+                    source_sha256,
+                    assembly_sha256,
+                },
+            );
+        }
+        Ok(Self {
+            index,
+            templates,
+            standalone_templates,
+        })
+    }
+
+    pub(crate) fn target(&self, owner: &str) -> Option<&TargetMatch> {
+        self.index
+            .targets
+            .iter()
+            .find(|target| target.owner == owner)
+    }
+
+    #[cfg(test)]
+    pub(crate) fn targets(&self) -> &[TargetMatch] {
+        &self.index.targets
+    }
+
+    pub(crate) fn template(&self, details: &TemplateMatch) -> Option<&TemplateSource> {
+        self.standalone_templates
+            .contains(&details.owner)
+            .then(|| self.templates.get(&details.owner))
+            .flatten()
+    }
+
+    fn transplant_template(&self, details: &TemplateMatch) -> Option<&TemplateSource> {
+        self.templates.get(&details.owner)
+    }
+}
+
+fn exact_template_owner(details: &TemplateMatch) -> Result<SourceOwner, String> {
+    SourceOwner::parse(&details.owner).map_err(|error| {
+        format!(
+            "invalid exact family alternative {}: {error}",
+            details.owner
+        )
+    })
+}
+
+fn exact_template_registrations(
+    repository: &Path,
+) -> Result<BTreeMap<String, ExactRegistration>, String> {
+    let manifest: BuildManifest = json(repository.join("out/gs1-en/claimed/manifest.json"))?;
+    let mut exact = BTreeMap::new();
+    for region in manifest.regions {
+        let assembly = format!("out/gs1-en/claimed/obj/{}.s", stem(region.address)?);
+        let symbols = if region.symbols.is_empty() {
+            vec![region.symbol]
+        } else {
+            region.symbols
+        };
+        for symbol in symbols {
+            let address = symbol
+                .strip_prefix("Func_")
+                .ok_or_else(|| format!("invalid exact symbol {symbol}"))?;
+            let owner = format!("main:{address}");
+            let registration = ExactRegistration {
+                symbol: symbol.clone(),
+                source: region.source.clone(),
+                assembly: assembly.clone(),
+            };
+            if let Some(previous) = exact.insert(owner.clone(), registration.clone()) {
+                if previous.symbol != registration.symbol
+                    || previous.source != registration.source
+                    || previous.assembly != registration.assembly
+                {
+                    return Err(format!("{owner}: conflicting exact registrations"));
+                }
+            }
+        }
+    }
+    Ok(exact)
+}
+
+fn validate_template_hashes(
+    details: &TemplateMatch,
+    source_sha256: &str,
+    assembly_sha256: &str,
+) -> Result<(), String> {
+    if details.source_sha256 != source_sha256 || details.assembly_sha256 != assembly_sha256 {
+        return Err(format!(
+            "{} exact template bytes changed; run `make families`",
+            details.owner
+        ));
+    }
+    Ok(())
+}
+
+fn resolve(repository: &Path, path: &str) -> PathBuf {
+    let path = Path::new(path);
+    if path.is_absolute() {
+        path.into()
+    } else {
+        repository.join(path)
+    }
 }
 #[derive(Debug, Deserialize)]
 struct ProofManifest {
@@ -285,7 +477,7 @@ fn build_index() -> Result<FamilyIndex, String> {
     Ok(FamilyIndex {
         schema_version: INDEX_SCHEMA_VERSION,
         target: "gs1-en".into(),
-        derivation: "canonical-instruction-ngram-and-call-target-cosine-v2".into(),
+        derivation: "canonical-instruction-ngram-and-call-target-cosine-v3-hash-bound".into(),
         minimum_score_basis_points: MIN_SCORE,
         exact_templates: exact.len(),
         unresolved_targets: targets.len(),
@@ -313,6 +505,7 @@ fn owner(
     symbol: &str,
 ) -> Result<Owner, String> {
     let text = read(Path::new(&assembly))?;
+    let source_text = read(Path::new(&source))?;
     let raw = gas_function_insns(&text, symbol);
     let mut call_features = BTreeMap::new();
     for target in raw.iter().filter_map(|line| call_target(line)) {
@@ -344,6 +537,8 @@ fn owner(
         symbol: symbol.to_string(),
         source,
         assembly,
+        source_sha256: sha256::hex(source_text.as_bytes()),
+        assembly_sha256: sha256::hex(text.as_bytes()),
         size,
         instructions,
         features,
@@ -409,6 +604,8 @@ fn similarity(target: &Owner, template: &Owner) -> TemplateMatch {
         symbol: template.symbol.clone(),
         source: template.source.clone(),
         assembly: template.assembly.clone(),
+        source_sha256: template.source_sha256.clone(),
+        assembly_sha256: template.assembly_sha256.clone(),
         size: template.size,
         instructions: template.instructions.len(),
         score_basis_points: score,
@@ -448,37 +645,34 @@ fn transplant_command(arguments: &[String]) -> Result<(), String> {
     let owner = arguments.first().ok_or(USAGE)?;
     let mut index = PathBuf::from(DEFAULT_INDEX);
     let mut output = PathBuf::from("out/family-transplants").join(owner.replace(':', "-"));
-    let mut at = 1;
-    while at < arguments.len() {
-        let target = arguments.get(at + 1).ok_or(USAGE)?;
-        match arguments[at].as_str() {
-            "--index" => index = target.into(),
-            "--output" => output = target.into(),
+    let mut pairs = arguments[1..].chunks_exact(2);
+    for pair in &mut pairs {
+        match pair[0].as_str() {
+            "--index" => index = pair[1].clone().into(),
+            "--output" => output = pair[1].clone().into(),
             _ => return Err(USAGE.into()),
         }
-        at += 2;
+    }
+    if !pairs.remainder().is_empty() {
+        return Err(USAGE.into());
     }
     let output = output_path(&output)?;
-    let index: FamilyIndex = json(&index)?;
-    if index.schema_version != INDEX_SCHEMA_VERSION {
-        return Err(format!(
-            "family index schema {} is not supported; run `make families`",
-            index.schema_version
-        ));
-    }
-    let target = index
-        .targets
-        .iter()
-        .find(|target| target.owner == *owner)
+    let repository = compiler_core::routing::root();
+    let catalog = FamilyCatalog::load(repository, &index)?;
+    let target = catalog
+        .target(owner)
         .ok_or_else(|| format!("{owner}: not in family index"))?;
     require_family(owner, target.family.as_deref())?;
-    let template = target
+    let details = target
         .alternatives
         .first()
         .ok_or_else(|| format!("{owner}: no compatible exact template"))?;
-    let template_source = read(Path::new(&template.source))?;
+    let template = catalog
+        .transplant_template(details)
+        .ok_or_else(|| format!("{} is not a current exact template", details.owner))?;
+    let template_source = &template.source;
     let target_owner = SourceOwner::parse(owner)?;
-    let template_owner = SourceOwner::parse(&template.owner)?;
+    let template_owner = template.owner;
     if !target_owner.is_main() || !template_owner.is_main() {
         return Err("family transplant currently supports main-image owners".into());
     }
@@ -491,53 +685,52 @@ fn transplant_command(arguments: &[String]) -> Result<(), String> {
             candidate_path.clone(),
         )
     } else {
-        let paths = SourcePaths::load(compiler_core::routing::root())?;
-        let template_name = paths
-            .registered_name(template_owner)
-            .ok_or_else(|| format!("{} has no registered source name", template.owner))?;
-        let alias = entry_alias(compiler_core::routing::root(), &template.symbol)?;
+        let alias = entry_alias(repository, &details.symbol)?;
         (
-            retarget_seed(
-                &template_source,
-                &template.symbol,
-                template_name,
-                alias.as_deref(),
+            retarget_source(
+                &details.owner,
+                &template.source,
+                &details.symbol,
+                template.registered_name.as_deref(),
                 &target.symbol,
-            ),
+                RetargetMode::Transplant {
+                    alias: alias.as_deref(),
+                },
+            )?,
             "exact_template_symbol_seed",
-            PathBuf::from(&template.source),
+            PathBuf::from(&details.source),
         )
     };
     let template_path = output.join("template.c");
     let seed_path = output.join(format!("{stem}.c"));
     write(&template_path, template_source.as_bytes())?;
     write(&seed_path, seed.as_bytes())?;
-    let target_asm = read(Path::new(&target.source))?;
-    let template_asm = read(Path::new(&template.assembly))?;
+    let target_asm = read(&resolve(repository, &target.source))?;
+    let template_asm = read(&resolve(repository, &details.assembly))?;
     let target_lines = gas_function_insns(&target_asm, &target.symbol)
         .into_iter()
         .map(|line| token(&line))
         .collect::<Vec<_>>();
-    let template_lines = gas_function_insns(&template_asm, &template.symbol)
+    let template_lines = gas_function_insns(&template_asm, &details.symbol)
         .into_iter()
         .map(|line| token(&line))
         .collect::<Vec<_>>();
     if target_lines.is_empty() || template_lines.is_empty() {
         return Err(format!(
             "cannot align {} ({}) with {} ({})",
-            target.owner, target.symbol, template.owner, template.symbol
+            target.owner, target.symbol, details.owner, details.symbol
         ));
     }
     let blocks = blocks(&template_lines, &target_lines);
     write_json(&output.join("alignment.json"), &blocks)?;
     let m2c = crate::family_m2c::generate(
         target_owner,
-        Path::new(&target.source),
+        &resolve(repository, &target.source),
         &target.symbol,
         Some((
             template_owner,
-            Path::new(&template.source),
-            &template.symbol,
+            &resolve(repository, &details.source),
+            &details.symbol,
         )),
         &output.join("m2c"),
     )?;
@@ -546,7 +739,7 @@ fn transplant_command(arguments: &[String]) -> Result<(), String> {
         "family": target.family,
         "target": target.owner,
         "target_assembly": target.source,
-        "template": template,
+        "template": details,
         "seed_origin": origin,
         "seed_source": seed_source,
         "seed": seed_path,
@@ -554,9 +747,19 @@ fn transplant_command(arguments: &[String]) -> Result<(), String> {
         "template_sha256": sha256::hex(template_source.as_bytes()),
         "m2c": {
             "seed": m2c.source,
-            "context": m2c.context,
+            "seed_sha256": m2c.source_sha256,
+            "contexts": m2c.contexts.iter().map(|context| serde_json::json!({
+                "path":context.path,"sha256":context.sha256,"kind":context.kind
+            })).collect::<Vec<_>>(),
             "context_kind": m2c.context_kind,
-            "template_symbol": template.symbol,
+            "aggregate_report":m2c.aggregate_report,
+            "aggregate_report_sha256":m2c.aggregate_report_sha256,
+            "compile_header":m2c.compile_header,
+            "compile_header_sha256":m2c.compile_header_sha256,
+            "proposal_count":m2c.proposal_count,
+            "struct_count":m2c.struct_count,
+            "rejected_misaligned_fields":m2c.rejected_misaligned_fields,
+            "template_symbol": details.symbol,
             "target_symbol": target.symbol,
         },
         "permutation": {
@@ -572,8 +775,8 @@ fn transplant_command(arguments: &[String]) -> Result<(), String> {
     println!(
         "transplant={} template={} score={} output={}",
         owner,
-        template.owner,
-        template.score_basis_points,
+        details.owner,
+        details.score_basis_points,
         output.display()
     );
     Ok(())
@@ -584,17 +787,7 @@ fn require_family(owner: &str, family: Option<&str>) -> Result<(), String> {
     })
 }
 fn entry_alias(root: &Path, symbol: &str) -> Result<Option<String>, String> {
-    let aliases = entry_aliases(root)?.remove(symbol).unwrap_or_default();
-    if aliases.len() > 1 {
-        return Err(format!(
-            "{symbol} has multiple source aliases: {}",
-            aliases.join(", ")
-        ));
-    }
-    Ok(aliases.into_iter().next())
-}
-pub(crate) fn entry_aliases(root: &Path) -> Result<BTreeMap<String, Vec<String>>, String> {
-    let mut aliases = BTreeMap::<String, BTreeSet<String>>::new();
+    let mut aliases = BTreeSet::new();
     for entry in WalkDir::new(root.join("games/gs1/include"))
         .into_iter()
         .filter_map(Result::ok)
@@ -602,29 +795,46 @@ pub(crate) fn entry_aliases(root: &Path) -> Result<BTreeMap<String, Vec<String>>
     {
         for line in read(entry.path())?.lines() {
             let words = line.split_whitespace().collect::<Vec<_>>();
-            if words.len() >= 3 && words[0] == "#define" {
-                aliases
-                    .entry(words[2].into())
-                    .or_default()
-                    .insert(words[1].into());
+            if words.len() >= 3 && words[0] == "#define" && words[2] == symbol {
+                aliases.insert(words[1].to_string());
             }
         }
     }
-    Ok(aliases
-        .into_iter()
-        .map(|(symbol, names)| (symbol, names.into_iter().collect()))
-        .collect())
+    if aliases.len() > 1 {
+        return Err(format!(
+            "{symbol} has multiple source aliases: {}",
+            aliases.into_iter().collect::<Vec<_>>().join(", ")
+        ));
+    }
+    Ok(aliases.into_iter().next())
 }
-fn retarget_seed(
+pub(crate) fn retarget_source(
+    template_owner: &str,
     source: &str,
     template_symbol: &str,
-    template_name: &str,
-    alias: Option<&str>,
+    registered_name: Option<&str>,
     target_symbol: &str,
-) -> String {
-    let mut output = source
-        .replace(template_symbol, target_symbol)
-        .replace(template_name, target_symbol);
+    mode: RetargetMode<'_>,
+) -> Result<String, String> {
+    let entry = registered_name.unwrap_or(template_symbol);
+    if matches!(mode, RetargetMode::EntryMacro)
+        && (entry == target_symbol || source.contains(&format!(" {target_symbol}(")))
+    {
+        return Err(format!("{template_owner} already defines {target_symbol}"));
+    }
+    let (mut output, alias) = match mode {
+        RetargetMode::EntryMacro => (source.into(), Some(entry)),
+        RetargetMode::Transplant { alias } => {
+            let name = registered_name
+                .ok_or_else(|| format!("{template_owner} has no registered source name"))?;
+            (
+                source
+                    .replace(template_symbol, target_symbol)
+                    .replace(name, target_symbol),
+                alias,
+            )
+        }
+    };
     if let Some(alias) = alias {
         let mut cursor = 0;
         let mut at = 0;
@@ -639,7 +849,7 @@ fn retarget_seed(
             &format!("#undef {alias}\n#define {alias} {target_symbol}\n\n"),
         );
     }
-    output
+    Ok(output)
 }
 fn blocks(template: &[String], target: &[String]) -> Vec<Block> {
     let pairs = align_streams(template, target);
@@ -1027,6 +1237,24 @@ fn output_path(path: &Path) -> Result<PathBuf, String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    fn template_match() -> TemplateMatch {
+        TemplateMatch {
+            owner: "main:08000000".into(),
+            symbol: "Func_08000000".into(),
+            source: "source.c".into(),
+            assembly: "source.s".into(),
+            source_sha256: "source-hash".into(),
+            assembly_sha256: "assembly-hash".into(),
+            size: 4,
+            instructions: 1,
+            score_basis_points: 10_000,
+            ngram_similarity_basis_points: 10_000,
+            length_similarity_basis_points: 10_000,
+            call_target_similarity_basis_points: 10_000,
+            call_count_similarity_basis_points: 10_000,
+            branch_similarity_basis_points: 10_000,
+        }
+    }
     #[test]
     fn instruction_tokens_erase_addresses_and_registers() {
         assert_eq!(token("bl Func_08001234"), "bl CALL");
@@ -1062,8 +1290,39 @@ mod tests {
         assert!(require_family("main:08000000", Some("family")).is_ok());
     }
     #[test]
+    fn wave_policy_excludes_translation_units_without_blocking_transplants() {
+        let repository = compiler_core::routing::root();
+        let units = TranslationUnits::load(repository).unwrap();
+        let catalog = FamilyCatalog::load(repository, Path::new(DEFAULT_INDEX)).unwrap();
+        let details = catalog
+            .targets()
+            .iter()
+            .flat_map(|target| &target.alternatives)
+            .find(|details| {
+                SourceOwner::parse(&details.owner)
+                    .ok()
+                    .is_some_and(|owner| units.unit_for_game_owner("gs1", owner).is_some())
+            })
+            .expect("family corpus must retain a translation-unit exact alternative");
+        assert!(catalog.template(details).is_none());
+        assert!(catalog.transplant_template(details).is_some());
+    }
+    #[test]
+    fn exact_template_hashes_are_part_of_the_catalog_contract() {
+        let details = template_match();
+        assert!(validate_template_hashes(&details, "source-hash", "assembly-hash").is_ok());
+        assert!(validate_template_hashes(&details, "changed", "assembly-hash").is_err());
+        assert!(validate_template_hashes(&details, "source-hash", "changed").is_err());
+    }
+    #[test]
+    fn invalid_family_alternative_identity_is_an_error() {
+        let mut details = template_match();
+        details.owner = "not-an-owner".into();
+        assert!(exact_template_owner(&details).is_err());
+    }
+    #[test]
     fn transplant_retargets_semantic_entry_name() {
-        assert_eq!(retarget_seed("#include \"x.h\"\n\ns32 Shop_Select(void) {}", "Func_08001000", "select", Some("Shop_Select"), "Func_08002000"), "#include \"x.h\"\n#undef Shop_Select\n#define Shop_Select Func_08002000\n\n\ns32 Shop_Select(void) {}");
+        assert_eq!(retarget_source("main:08001000", "#include \"x.h\"\n\ns32 Shop_Select(void) {}", "Func_08001000", Some("select"), "Func_08002000", RetargetMode::Transplant { alias: Some("Shop_Select") }).unwrap(), "#include \"x.h\"\n#undef Shop_Select\n#define Shop_Select Func_08002000\n\n\ns32 Shop_Select(void) {}");
     }
     #[test]
     fn reordered_instruction_around_a_match_is_one_group() {

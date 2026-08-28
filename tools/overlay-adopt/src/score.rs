@@ -1,4 +1,8 @@
-use crate::park::{placeholder_span, truth_window};
+use crate::{
+    overlay_offset,
+    park::{placeholder_span, truth_window},
+    retained_source,
+};
 use candidate_compiler::verify::{CandidateCompilerConfiguration, CandidateCompilerFamily};
 use candidate_show::{cli::Options, render::render};
 use compiler_core::{
@@ -11,7 +15,7 @@ use overlay_disasm::compile::compile_overlay_c;
 use overlay_disasm::{OVERLAY_BASE, OVERLAY_LINK_BIAS};
 use std::path::{Path, PathBuf};
 use tempfile::tempdir;
-pub(crate) fn resolve(root: &Path, target: &str) -> Result<(String, i64), String> {
+pub(crate) fn resolve(root: &Path, target: &str) -> Result<SourceOwner, String> {
     if let Some((overlay, address)) = target.split_once(':') {
         let address = i64::from_str_radix(address.trim_start_matches("0x"), 16)
             .map_err(|_| format!("{target}: address must be hexadecimal"))?;
@@ -20,7 +24,7 @@ pub(crate) fn resolve(root: &Path, target: &str) -> Result<(String, i64), String
         } else {
             address
         };
-        return Ok((overlay.to_string(), address));
+        return SourceOwner::parse(&format!("{overlay}:{address:08x}"));
     }
     if let Some((overlay, address)) = Path::new(target)
         .file_stem()
@@ -32,30 +36,25 @@ pub(crate) fn resolve(root: &Path, target: &str) -> Result<(String, i64), String
                 .map(|address| (overlay.to_string(), address))
         })
     {
-        return Ok((overlay, address));
+        return SourceOwner::parse(&format!("{overlay}:{address:08x}"));
     }
     let owner = SourcePaths::load(root)?
         .owner_for_path(Path::new(target))?
         .ok_or_else(|| format!("{target}: not a mapped overlay source"))?;
-    Ok((
-        owner
-            .overlay_id()
-            .ok_or_else(|| format!("{target}: not an overlay source"))?,
-        i64::from(owner.address()),
-    ))
+    owner
+        .overlay_id()
+        .ok_or_else(|| format!("{target}: not an overlay source"))?;
+    Ok(owner)
 }
-fn source_for(root: &Path, overlay: &str, address: i64) -> Result<PathBuf, String> {
-    let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;
+fn source_for(root: &Path, owner: SourceOwner) -> Result<PathBuf, String> {
     let candidates = [
         SourcePaths::load(root)?.source_path(owner),
-        root.join(format!(
-            "games/gs1/recon/en/overlays/{overlay}_c_{address:08x}.c"
-        )),
+        retained_source(root, owner),
     ];
     candidates
         .into_iter()
         .find(|candidate| candidate.exists())
-        .ok_or_else(|| format!("no source for {overlay}:{address:08x}"))
+        .ok_or_else(|| format!("no source for {}", owner.id()))
 }
 pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     let (mut align, mut target, mut override_span) = (false, None, None);
@@ -90,20 +89,22 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
         }
     }
     let target = target.ok_or("a <overlay>:<addressHex> or source path is required")?;
-    let (overlay, address) = resolve(root, &target)?;
+    let resolved = resolve(root, &target)?;
+    let overlay = resolved.overlay_id().expect("resolved overlay owner");
+    let address = i64::from(resolved.address());
     let explicit = Path::new(&target);
     let source = if explicit.is_file() {
         explicit
             .canonicalize()
             .map_err(|error| format!("{}: {error}", explicit.display()))?
     } else {
-        source_for(root, &overlay, address)?
+        source_for(root, resolved)?
     };
-    let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;
+    let owner = resolved;
     let reviewed = crate::reviewed_spans(root)?;
     let span = match override_span {
         Some(span) => Some(span),
-        None => placeholder_span(root, &overlay, address)?
+        None => placeholder_span(root, resolved)?
             .or_else(|| reviewed.get(&owner).map(|span| *span as i64)),
     };
     let span = match span {
@@ -119,8 +120,8 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     };
     let work = tempdir().map_err(|error| error.to_string())?;
     let reference = work.path().join("reference.bin");
-    let (window, oracle) = truth_window(root, &overlay, address, span)?;
-    let start = (address - OVERLAY_BASE) as usize;
+    let (window, oracle) = truth_window(root, resolved, span)?;
+    let start = overlay_offset(resolved);
     let mut image = vec![0; start + window.len()];
     image[start..].copy_from_slice(&window);
     std::fs::write(&reference, image).map_err(|error| error.to_string())?;
@@ -185,9 +186,11 @@ pub fn audit_corpus(root: &Path) -> Result<i32, String> {
     let mut count = [0usize; 9];
     for source in &sources {
         let target = source.to_string_lossy();
-        let (overlay, address) = resolve(root, &target)?;
-        let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;
-        let placeholder = placeholder_span(root, &overlay, address)?;
+        let target = resolve(root, &target)?;
+        let overlay = target.overlay_id().expect("resolved overlay owner");
+        let address = i64::from(target.address());
+        let owner = target;
+        let placeholder = placeholder_span(root, target)?;
         let span = placeholder.or_else(|| reviewed.get(&owner).map(|span| *span as i64));
         let Some(span) = span else {
             if crate::audited_kind(root, &overlay, address)?.as_deref() != Some("literal_pool") {
@@ -204,7 +207,7 @@ pub fn audit_corpus(root: &Path) -> Result<i32, String> {
         count[0] += usize::from(registered);
         count[7] += usize::from(placeholder.is_some());
         count[8] += usize::from(!registered);
-        let (reference, _) = truth_window(root, &overlay, address, span)?;
+        let (reference, _) = truth_window(root, target, span)?;
         let work = tempdir().map_err(|error| error.to_string())?;
         if compile_overlay_c(source, work.path(), &overlay, None, &[])?.data != reference {
             count[3] += usize::from(registered);

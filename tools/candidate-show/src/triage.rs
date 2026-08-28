@@ -76,15 +76,19 @@ impl ResidualReport {
         self
     }
 }
-fn counts(lines: &[String], key: impl Fn(&str) -> String) -> BTreeMap<String, i64> {
+fn count_delta(
+    left: &[String],
+    right: &[String],
+    key: impl Copy + Fn(&str) -> String,
+) -> BTreeMap<String, i64> {
     let mut result = BTreeMap::new();
-    for line in lines {
+    for line in left {
         *result.entry(key(line)).or_default() += 1;
     }
+    for line in right {
+        *result.entry(key(line)).or_default() -= 1;
+    }
     result
-}
-fn balanced(left: &[String], right: &[String], key: impl Copy + Fn(&str) -> String) -> bool {
-    counts(left, key) == counts(right, key)
 }
 fn mnemonic(line: &str) -> &str {
     line.split_ascii_whitespace()
@@ -290,19 +294,14 @@ pub fn classify(
     reference_bytes: usize,
     differing_halfwords: usize,
 ) -> ResidualReport {
-    let left_pc = left.iter().map(|line| normalized(line)).collect::<Vec<_>>();
-    let right_pc = right
+    let ordered_pc_normalized_equal = left
         .iter()
         .map(|line| normalized(line))
-        .collect::<Vec<_>>();
-    let left_regs = left
+        .eq(right.iter().map(|line| normalized(line)));
+    let register_erased_ordered_equal = left
         .iter()
         .map(|line| register_erased(line))
-        .collect::<Vec<_>>();
-    let right_regs = right
-        .iter()
-        .map(|line| register_erased(line))
-        .collect::<Vec<_>>();
+        .eq(right.iter().map(|line| register_erased(line)));
     let pairs = alignment_indices(left, right, |left, right| {
         usize::from(alignment_key(left) == alignment_key(right))
     });
@@ -310,17 +309,11 @@ pub fn classify(
         .iter()
         .any(|pair| pair.0.is_none() || pair.1.is_none());
     let width = type_width_fingerprints(left, right);
-    let ordered_pc_normalized_equal = left_pc == right_pc;
-    let register_erased_ordered_equal = left_regs == right_regs;
-    let instruction_multiset_equal = balanced(left, right, normalized);
-    let register_erased_multiset_equal = balanced(left, right, register_erased);
-    let pool = {
-        let mut values = counts(left, normalized);
-        for (key, value) in counts(right, normalized) {
-            *values.entry(key).or_default() -= value;
-        }
-        values.values().map(|value| value.abs()).sum()
-    };
+    let instruction_delta = count_delta(left, right, normalized);
+    let register_delta = count_delta(left, right, register_erased);
+    let instruction_multiset_equal = instruction_delta.values().all(|count| *count == 0);
+    let register_erased_multiset_equal = register_delta.values().all(|count| *count == 0);
+    let pool = instruction_delta.values().map(|value| value.abs()).sum();
     let branch_topology_equal = branch_topology_equal(left, right, &pairs);
     let facts = ResidualFacts {
         actual_bytes,

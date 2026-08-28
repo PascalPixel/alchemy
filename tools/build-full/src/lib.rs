@@ -1,12 +1,13 @@
 //! Compose the claimed C, retained assembly, and asset outputs into the full ROM.
 pub mod cli;
-use canonical_json::canonical_json;
+use canonical_json::write_canonical;
+use compiler_core::build_io::{argv, read, read_json, rooted, text, write};
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use compiler_core::translation_units::{AbsoluteSymbolKind, OwnerState, TranslationUnits};
 use decomp_targets::{
     parse_decomp_target, target_for, BuildSupport, DecompTargetId, DEFAULT_TARGET,
 };
-use serde_json::{json, Map, Number, Value};
+use serde_json::{json, Number, Value};
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
@@ -69,16 +70,23 @@ impl Region {
     }
 }
 pub fn repository_root() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .and_then(Path::parent)
-        .expect("build-full lives under tools")
-        .to_path_buf()
+    compiler_core::routing::root().to_path_buf()
 }
 fn default_jobs() -> usize {
     std::thread::available_parallelism()
         .map_or(1, usize::from)
         .min(16)
+}
+fn sidecar_path(output: &Path, suffix: &str) -> Result<PathBuf, String> {
+    let mut path = output.with_extension("");
+    let mut name = path
+        .file_name()
+        .ok_or_else(|| format!("{} has no output file name", output.display()))?
+        .to_os_string();
+    name.push(".");
+    name.push(suffix);
+    path.set_file_name(name);
+    Ok(path)
 }
 fn defaults(target_id: DecompTargetId) -> Options {
     let target = target_for(target_id);
@@ -87,11 +95,11 @@ fn defaults(target_id: DecompTargetId) -> Options {
         target: target_id,
         rom: target.rom.into(),
         source_only: false,
-        output: full.join("rebuilt.gba").to_string_lossy().into_owned(),
-        claimed_output: full.join("claimed").to_string_lossy().into_owned(),
-        asm_output: full.join("asm").to_string_lossy().into_owned(),
+        output: text(full.join("rebuilt.gba")),
+        claimed_output: text(full.join("claimed")),
+        asm_output: text(full.join("asm")),
         asset_manifest: target.asset_manifest.into(),
-        asset_output: full.join("assets").to_string_lossy().into_owned(),
+        asset_output: text(full.join("assets")),
         jobs: default_jobs(),
     }
 }
@@ -182,14 +190,6 @@ fn parse_jobs(value: &str) -> Result<usize, String> {
         .map(|jobs| jobs as usize)
         .ok_or_else(|| "jobs must be positive".into())
 }
-fn rooted(root: &Path, value: &str) -> PathBuf {
-    let path = Path::new(value);
-    if path.is_absolute() {
-        path.to_path_buf()
-    } else {
-        root.join(path)
-    }
-}
 fn has_assembly_sources(directory: &Path) -> Result<bool, String> {
     for entry in
         std::fs::read_dir(directory).map_err(|error| format!("{}: {error}", directory.display()))?
@@ -236,24 +236,20 @@ fn cargo_child(root: &Path, stage: &str) -> Vec<String> {
         "assets" => "tools/build-assets/Cargo.toml",
         _ => "tools/build-stage/Cargo.toml",
     };
-    let mut command = vec![
-        "cargo".into(),
-        "run".into(),
-        "--quiet".into(),
-        "--release".into(),
-        "--offline".into(),
-        "--manifest-path".into(),
-        root.join(manifest).to_string_lossy().into_owned(),
-        "--".into(),
-    ];
+    let mut command = argv(&[
+        "cargo",
+        "run",
+        "--quiet",
+        "--release",
+        "--offline",
+        "--manifest-path",
+        &text(root.join(manifest)),
+        "--",
+    ]);
     if manifest.ends_with("build-stage/Cargo.toml") {
         command.push(stage.into());
     }
     command
-}
-fn read_json(path: &Path) -> Result<Value, String> {
-    let data = std::fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?;
-    serde_json::from_slice(&data).map_err(|error| format!("{}: {error}", path.display()))
 }
 fn value_u64(value: &Value, label: &str) -> Result<u64, String> {
     value
@@ -269,6 +265,7 @@ fn value_u64(value: &Value, label: &str) -> Result<u64, String> {
         .ok_or_else(|| format!("invalid {label}"))
 }
 fn regions(document: &Value) -> Result<Vec<Region>, String> {
+    let string = |item: &Value, field: &str| item[field].as_str().map(str::to_string);
     document["regions"]
         .as_array()
         .ok_or("manifest regions differ")?
@@ -280,12 +277,12 @@ fn regions(document: &Value) -> Result<Vec<Region>, String> {
                 output: item["output"]
                     .as_str()
                     .map_or_else(PathBuf::new, PathBuf::from),
-                kind: item["kind"].as_str().map(str::to_string),
-                retention: item["retention"].as_str().map(str::to_string),
-                translation_unit: item["translation_unit"].as_str().map(str::to_string),
-                composition: item["composition"].as_str().map(str::to_string),
-                byte_verification: item["byte_verification"].as_str().map(str::to_string),
-                source: item["source"].as_str().map(str::to_string),
+                kind: string(item, "kind"),
+                retention: string(item, "retention"),
+                translation_unit: string(item, "translation_unit"),
+                composition: string(item, "composition"),
+                byte_verification: string(item, "byte_verification"),
+                source: string(item, "source"),
                 symbols: item["symbols"]
                     .as_array()
                     .into_iter()
@@ -298,9 +295,9 @@ fn regions(document: &Value) -> Result<Vec<Region>, String> {
                 run_address: item["run_address"]
                     .as_u64()
                     .or_else(|| item["run_address"].as_str()?.parse().ok()),
-                origin: item["origin"].as_str().map(str::to_string),
-                confidence: item["confidence"].as_str().map(str::to_string),
-                evidence: item["evidence"].as_str().map(str::to_string),
+                origin: string(item, "origin"),
+                confidence: string(item, "confidence"),
+                evidence: string(item, "evidence"),
             })
         })
         .collect()
@@ -418,19 +415,19 @@ fn registered_owner_coverage(
             declared.insert(unit.source_owner(address)?);
         }
     }
-    let count = |owners: &BTreeSet<SourceOwner>, main| {
-        owners
-            .iter()
-            .filter(|owner| owner.is_main() == main)
-            .count()
+    let counts = |owners: &BTreeSet<SourceOwner>| {
+        let main = owners.iter().filter(|owner| owner.is_main()).count();
+        (owners.len(), main, owners.len() - main)
     };
+    let (registered_count, registered_main, registered_overlay) = counts(&registered);
+    let (declared_count, declared_main, declared_overlay) = counts(&declared);
     Ok(RegisteredOwnerCoverage {
-        registered: registered.len(),
-        registered_main: count(&registered, true),
-        registered_overlay: count(&registered, false),
-        declared: declared.len(),
-        declared_main: count(&declared, true),
-        declared_overlay: count(&declared, false),
+        registered: registered_count,
+        registered_main,
+        registered_overlay,
+        declared: declared_count,
+        declared_main,
+        declared_overlay,
         missing: registered.difference(&declared).count(),
         unexpected: declared.difference(&registered).count(),
     })
@@ -537,35 +534,42 @@ fn inventory_members(
 ) -> Result<BTreeMap<SourceOwner, InventoryMember>, String> {
     let mut members = BTreeMap::new();
     for unit in units.units.iter().filter(|unit| unit.game == "gs1") {
-        for (ordinal, owner) in unit.owners.iter().enumerate() {
-            let key = unit.source_owner(owner.address)?;
+        let source = text(&unit.source);
+        let mut insert = |ordinal, address, role, state, alias: &str, extent| {
+            let key = unit.source_owner(address)?;
             let value = InventoryMember {
                 unit: unit.id.clone(),
-                source: unit.source.to_string_lossy().into_owned(),
-                role: "owner",
+                source: source.clone(),
+                role,
                 ordinal,
-                state: Some(owner_state(owner.state)),
-                alias: owner.canonical_name.clone(),
-                extent: owner.extent,
+                state,
+                alias: alias.into(),
+                extent,
             };
             if members.insert(key, value).is_some() {
                 return Err(format!("duplicate reconstruction-unit member {}", key.id()));
             }
+            Ok(())
+        };
+        for (ordinal, owner) in unit.owners.iter().enumerate() {
+            insert(
+                ordinal,
+                owner.address,
+                "owner",
+                Some(owner_state(owner.state)),
+                &owner.canonical_name,
+                owner.extent,
+            )?;
         }
         for (ordinal, symbol) in unit.local_symbols.iter().enumerate() {
-            let key = unit.source_owner(symbol.address)?;
-            let value = InventoryMember {
-                unit: unit.id.clone(),
-                source: unit.source.to_string_lossy().into_owned(),
-                role: "local-symbol",
+            insert(
                 ordinal,
-                state: None,
-                alias: symbol.canonical_name.clone(),
-                extent: symbol.extent,
-            };
-            if members.insert(key, value).is_some() {
-                return Err(format!("duplicate reconstruction-unit member {}", key.id()));
-            }
+                symbol.address,
+                "local-symbol",
+                None,
+                &symbol.canonical_name,
+                symbol.extent,
+            )?;
         }
     }
     Ok(members)
@@ -580,12 +584,9 @@ fn source_group(source: &str) -> Option<String> {
         .map(str::to_string)
 }
 fn source_path(paths: &SourcePaths, owner: SourceOwner) -> Option<String> {
-    paths.mapped_relative_path(owner).map(|path| {
-        Path::new("games/gs1/src")
-            .join(path)
-            .to_string_lossy()
-            .into_owned()
-    })
+    paths
+        .mapped_relative_path(owner)
+        .map(|path| text(Path::new("games/gs1/src").join(path)))
 }
 fn hex(value: u64) -> String {
     format!("0x{value:08x}")
@@ -615,7 +616,7 @@ fn overlay_placeholders(root: &Path) -> Result<BTreeMap<SourceOwner, Vec<(u64, u
         .map_err(|error| format!("{}: {error}", directory.display()))?
         .filter_map(Result::ok)
         .filter_map(|entry| {
-            let name = entry.file_name().to_string_lossy().into_owned();
+            let name = text(entry.file_name());
             name.strip_prefix("resource_")?
                 .strip_suffix("_overlay.s")
                 .map(|id| (format!("resource_{id}"), entry.path()))
@@ -668,7 +669,7 @@ fn overlay_placeholders(root: &Path) -> Result<BTreeMap<SourceOwner, Vec<(u64, u
     Ok(placeholders)
 }
 fn semantic_overlay_spans(root: &Path) -> Result<BTreeMap<SourceOwner, Vec<(u64, usize)>>, String> {
-    let document = read_json(&root.join("games/gs1/semantic/overlay-assembly.json"))?;
+    let document = read_json::<Value>(&root.join("games/gs1/semantic/overlay-assembly.json"))?;
     if document["format"].as_u64() != Some(1) {
         return Err("overlay assembly evidence format differs".into());
     }
@@ -755,12 +756,86 @@ fn owner_inventory(
     for owner in &registered {
         let member = members.get(owner);
         let registered_source = source_path(&paths, *owner);
-        let (state, role, alias, unit, source, spans, extent_evidence, artifact_value) = match (
-            owner, member,
-        ) {
-            (SourceOwner::Overlay { resource, .. }, Some(member)) => {
-                let state = member.state.unwrap_or("exact-c");
-                let spans = if state == "exact-c" {
+        let role = member.map_or("owner", |member| member.role);
+        let alias = member.map_or_else(
+            || {
+                paths
+                    .registered_name(*owner)
+                    .unwrap_or_default()
+                    .to_string()
+            },
+            |member| member.alias.clone(),
+        );
+        let unit = member.map(|member| {
+            json!({"id":member.unit,"role":member.role,"ordinal":member.ordinal,"declared_state":member.state})
+        });
+        let declared = member.is_some();
+        let exact = member.map_or(registered_source.is_some(), |member| {
+            member.state.unwrap_or("exact-c") == "exact-c"
+        });
+        let state = if exact {
+            "exact-c"
+        } else {
+            "retained-assembly"
+        };
+        let (source, spans, extent_evidence, artifact_value) = match owner {
+            SourceOwner::Main(address) => {
+                let (region, spans) = if exact {
+                    let function = functions
+                        .get(&owner.legacy_name())
+                        .ok_or_else(|| format!("{} has no linked function", owner.id()))?;
+                    let differs = function.address != u64::from(*address)
+                        || member.is_some_and(|member| function.size != member.extent);
+                    if differs {
+                        let detail = if declared {
+                            "declared function extent"
+                        } else {
+                            "linked address"
+                        };
+                        return Err(format!("{} has a differing {detail}", owner.id()));
+                    }
+                    (function.artifact, vec![(function.address, function.size)])
+                } else {
+                    let region = assembly_starts
+                        .get(&u64::from(*address))
+                        .copied()
+                        .ok_or_else(|| {
+                            format!(
+                                "{} has no {}assembly region",
+                                owner.id(),
+                                if declared { "declared " } else { "" }
+                            )
+                        })?;
+                    if member.is_some_and(|member| region.size != member.extent) {
+                        return Err(format!(
+                            "{} has a differing declared assembly extent",
+                            owner.id()
+                        ));
+                    }
+                    (region, vec![(u64::from(*address), region.size)])
+                };
+                (
+                    member.map_or_else(
+                        || {
+                            registered_source
+                                .clone()
+                                .unwrap_or_else(|| region.source.clone().unwrap_or_default())
+                        },
+                        |member| member.source.clone(),
+                    ),
+                    spans,
+                    if declared {
+                        "declared-reconstruction-unit"
+                    } else if exact {
+                        "linked-elf-symbol"
+                    } else {
+                        "assembly-manifest"
+                    },
+                    artifact(region),
+                )
+            }
+            SourceOwner::Overlay { resource, .. } => {
+                let spans = if exact {
                     placeholders
                         .get(owner)
                         .cloned()
@@ -771,142 +846,34 @@ fn owner_inventory(
                         .cloned()
                         .ok_or_else(|| format!("{} has no overlay assembly evidence", owner.id()))?
                 };
-                if spans.iter().map(|(_, size)| *size).sum::<usize>() != member.extent {
+                if member.is_some_and(|member| {
+                    spans.iter().map(|(_, size)| *size).sum::<usize>() != member.extent
+                }) {
                     return Err(format!(
                         "{} has a differing declared overlay extent",
                         owner.id()
                     ));
                 }
-                (
-                    state,
-                    member.role,
-                    member.alias.clone(),
-                    Some(
-                        json!({"id":member.unit,"role":member.role,"ordinal":member.ordinal,"declared_state":member.state}),
-                    ),
-                    member.source.clone(),
-                    spans,
-                    "declared-reconstruction-unit",
-                    json!({"source":format!("games/gs1/assets/code/resource_{resource:03x}_overlay.s"),"composition":if state=="exact-c"{"overlay-placeholder"}else{"structured-overlay-assembly"},"overlapping_retained_evidence":semantic.get(owner).map(|spans|span_values(spans))}),
-                )
-            }
-            (_, Some(member)) => {
-                let state = member.state.unwrap_or("exact-c");
-                let (region, spans) = if state == "exact-c" {
-                    let function = functions
-                        .get(&owner.legacy_name())
-                        .ok_or_else(|| format!("{} has no linked function", owner.id()))?;
-                    if function.address != u64::from(owner.address())
-                        || function.size != member.extent
-                    {
-                        return Err(format!(
-                            "{} has a differing declared function extent",
-                            owner.id()
-                        ));
-                    }
-                    (function.artifact, vec![(function.address, function.size)])
+                let overlay = format!("games/gs1/assets/code/resource_{resource:03x}_overlay.s");
+                let artifact = if exact || declared {
+                    json!({"source":overlay,"composition":if exact{"overlay-placeholder"}else{"structured-overlay-assembly"},"overlapping_retained_evidence":semantic.get(owner).map(|spans|span_values(spans))})
                 } else {
-                    let region = assembly_starts
-                        .get(&u64::from(owner.address()))
-                        .copied()
-                        .ok_or_else(|| format!("{} has no declared assembly region", owner.id()))?;
-                    if region.size != member.extent {
-                        return Err(format!(
-                            "{} has a differing declared assembly extent",
-                            owner.id()
-                        ));
-                    }
-                    (region, vec![(u64::from(owner.address()), region.size)])
+                    json!({"source":overlay,"composition":"structured-overlay-assembly"})
                 };
                 (
-                    state,
-                    member.role,
-                    member.alias.clone(),
-                    Some(
-                        json!({"id":member.unit,"role":member.role,"ordinal":member.ordinal,"declared_state":member.state}),
+                    member.map_or_else(
+                        || registered_source.clone().unwrap_or_else(|| overlay.clone()),
+                        |member| member.source.clone(),
                     ),
-                    member.source.clone(),
                     spans,
-                    "declared-reconstruction-unit",
-                    artifact(region),
-                )
-            }
-            (SourceOwner::Main(address), None) if registered_source.is_some() => {
-                let function = functions
-                    .get(&owner.legacy_name())
-                    .ok_or_else(|| format!("{} has no linked function", owner.id()))?;
-                if function.address != u64::from(*address) {
-                    return Err(format!("{} has a differing linked address", owner.id()));
-                }
-                (
-                    "exact-c",
-                    "owner",
-                    paths
-                        .registered_name(*owner)
-                        .unwrap_or_default()
-                        .to_string(),
-                    None,
-                    registered_source.clone().unwrap(),
-                    vec![(function.address, function.size)],
-                    "linked-elf-symbol",
-                    artifact(function.artifact),
-                )
-            }
-            (SourceOwner::Main(address), None) => {
-                let region = assembly_starts
-                    .get(&u64::from(*address))
-                    .copied()
-                    .ok_or_else(|| format!("{} has no assembly region", owner.id()))?;
-                (
-                    "retained-assembly",
-                    "owner",
-                    paths
-                        .registered_name(*owner)
-                        .unwrap_or_default()
-                        .to_string(),
-                    None,
-                    region.source.clone().unwrap_or_default(),
-                    vec![(u64::from(*address), region.size)],
-                    "assembly-manifest",
-                    artifact(region),
-                )
-            }
-            (SourceOwner::Overlay { resource, .. }, None) if registered_source.is_some() => {
-                let spans = placeholders
-                    .get(owner)
-                    .cloned()
-                    .ok_or_else(|| format!("{} has no overlay placeholder", owner.id()))?;
-                (
-                    "exact-c",
-                    "owner",
-                    paths
-                        .registered_name(*owner)
-                        .unwrap_or_default()
-                        .to_string(),
-                    None,
-                    registered_source.clone().unwrap(),
-                    spans,
-                    "overlay-placeholder",
-                    json!({"source":format!("games/gs1/assets/code/resource_{resource:03x}_overlay.s"),"composition":"overlay-placeholder","overlapping_retained_evidence":semantic.get(owner).map(|spans|span_values(spans))}),
-                )
-            }
-            (SourceOwner::Overlay { resource, .. }, None) => {
-                let spans = semantic
-                    .get(owner)
-                    .cloned()
-                    .ok_or_else(|| format!("{} has no overlay assembly evidence", owner.id()))?;
-                (
-                    "retained-assembly",
-                    "owner",
-                    paths
-                        .registered_name(*owner)
-                        .unwrap_or_default()
-                        .to_string(),
-                    None,
-                    format!("games/gs1/assets/code/resource_{resource:03x}_overlay.s"),
-                    spans,
-                    "overlay-assembly-evidence",
-                    json!({"source":format!("games/gs1/assets/code/resource_{resource:03x}_overlay.s"),"composition":"structured-overlay-assembly"}),
+                    if declared {
+                        "declared-reconstruction-unit"
+                    } else if exact {
+                        "overlay-placeholder"
+                    } else {
+                        "overlay-assembly-evidence"
+                    },
+                    artifact,
                 )
             }
         };
@@ -1119,10 +1086,6 @@ fn project_audit(
         }
     })
 }
-fn write_json(path: &Path, value: Value) -> Result<(), String> {
-    std::fs::write(path, format!("{}\n", canonical_json(&value)))
-        .map_err(|error| format!("{}: {error}", path.display()))
-}
 fn gap_values(gaps: &[GapRegion], prefix: &str, kind: &str) -> Value {
     Value::Array(gaps.iter().map(|gap| json!({"address":gap.address,"size":gap.size,"source":format!("{prefix}/{:08x}",gap.address),"kind":kind})).collect())
 }
@@ -1174,8 +1137,7 @@ fn place_regions(
                 .ok_or("compiled image region differs")?
                 .to_vec()
         } else {
-            std::fs::read(&region.output)
-                .map_err(|error| format!("{}: {error}", region.output.display()))?
+            read(&region.output)?
         };
         if source.len() != region.size {
             return Err(format!("{label} size differs at 0x{:08x}", region.address));
@@ -1226,16 +1188,16 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     if options.source_only {
         command.push("--source-only".into());
     } else {
-        command.push(rom_path.to_string_lossy().into_owned());
+        command.push(text(&rom_path));
     }
     command.extend([
         "--jobs".into(),
         options.jobs.to_string(),
         "--output".into(),
-        claimed_dir.to_string_lossy().into_owned(),
+        text(&claimed_dir),
     ]);
     run(root, &command)?;
-    let claimed_document = read_json(&claimed_dir.join("manifest.json"))?;
+    let claimed_document = read_json::<Value>(&claimed_dir.join("manifest.json"))?;
     let claimed_regions = regions(&claimed_document)?;
     let claimed_image = std::fs::read(claimed_dir.join("claimed.bin"))
         .map_err(|error| format!("claimed.bin: {error}"))?;
@@ -1257,11 +1219,11 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
         if options.source_only {
             command.push("--source-only".into());
         } else {
-            command.push(rom_path.to_string_lossy().into_owned());
+            command.push(text(&rom_path));
         }
-        command.extend(["--output".into(), output.to_string_lossy().into_owned()]);
+        command.extend(["--output".into(), text(&output)]);
         run(root, &command)?;
-        asm_regions = regions(&read_json(&output.join("manifest.json"))?)?;
+        asm_regions = regions(&read_json::<Value>(&output.join("manifest.json"))?)?;
         validate_alignments(&claimed_regions, &asm_regions)?;
         place_regions(
             &asm_regions,
@@ -1287,16 +1249,16 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
         if options.source_only {
             command.push("--source-only".into());
         } else {
-            command.push(rom_path.to_string_lossy().into_owned());
+            command.push(text(&rom_path));
         }
         command.extend([
             "--manifest".into(),
-            asset_manifest.to_string_lossy().into_owned(),
+            text(&asset_manifest),
             "--output".into(),
-            output.to_string_lossy().into_owned(),
+            text(&output),
         ]);
         run(root, &command)?;
-        asset_regions = regions(&read_json(&output.join("manifest.json"))?)?;
+        asset_regions = regions(&read_json::<Value>(&output.join("manifest.json"))?)?;
         place_regions(
             &asset_regions,
             &[],
@@ -1339,13 +1301,9 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
         accounting.c_debt_bytes,
         unowned_bytes,
     )?;
-    let report_base = output.with_extension("");
-    let unowned_path = PathBuf::from(format!("{}.unowned.json", report_base.to_string_lossy()));
-    let fallback_path = PathBuf::from(format!("{}.fallback.json", report_base.to_string_lossy()));
-    let inventory_path = PathBuf::from(format!(
-        "{}.owner-inventory.json",
-        report_base.to_string_lossy()
-    ));
+    let unowned_path = sidecar_path(&output, "unowned.json")?;
+    let fallback_path = sidecar_path(&output, "fallback.json")?;
+    let inventory_path = sidecar_path(&output, "owner-inventory.json")?;
     let inventory = owner_inventory(
         root,
         &claimed_document,
@@ -1354,14 +1312,14 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
         &TranslationUnits::load(root)?,
     )?;
     let inventory_summary = inventory["summary"].clone();
-    write_json(&inventory_path, inventory)?;
-    write_json(
+    write_canonical(&inventory_path, &inventory)?;
+    write_canonical(
         &unowned_path,
-        json!({"format":1,"semantics":"source_ownership","verification":if options.source_only{"source_only"}else{"rom"},"rom_base":ROM_BASE,"rom_size":mask.len(),"regions":gap_values(&gaps,"unowned","unowned")}),
+        &json!({"format":1,"semantics":"source_ownership","verification":if options.source_only{"source_only"}else{"rom"},"rom_base":ROM_BASE,"rom_size":mask.len(),"regions":gap_values(&gaps,"unowned","unowned")}),
     )?;
-    write_json(
+    write_canonical(
         &fallback_path,
-        json!({"format":1,"semantics":if options.source_only{"compatibility_alias_for_unowned_ranges"}else{"private_rom_fallback"},"rom_base":ROM_BASE,"rom_size":mask.len(),"regions":gap_values(&gaps,"rom-fallback","rom_fallback")}),
+        &json!({"format":1,"semantics":if options.source_only{"compatibility_alias_for_unowned_ranges"}else{"private_rom_fallback"},"rom_base":ROM_BASE,"rom_size":mask.len(),"regions":gap_values(&gaps,"rom-fallback","rom_fallback")}),
     )?;
     require_source_ownership(options.source_only, unowned_bytes)?;
     if let Some(parent) = output.parent() {
@@ -1369,26 +1327,19 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
             .map_err(|error| format!("{}: {error}", parent.display()))?;
     }
     if let Some(bytes) = &rebuilt {
-        std::fs::write(&output, bytes).map_err(|error| format!("{}: {error}", output.display()))?;
+        write(&output, bytes)?;
     }
-    let mut report = Map::new();
-    macro_rules! field {
-        ($name:expr,$value:expr) => {
-            report.insert($name.into(), $value);
-        };
-    }
-    field!("format", number(1));
-    field!("target", json!(target.id.to_string()));
-    field!("compiler", json!(target.compiler.to_string()));
-    field!("rom_base", json!(ROM_BASE));
-    field!("rom_size", number(mask.len()));
-    field!("code_regions", number(claimed_regions.len()));
-    field!("code_bytes", number(code_bytes));
-    field!("translation_units", number(translation_units));
-    field!("declared_main_translation_units_strict", json!(true));
-    field!(
-        "registered_owner_coverage",
-        json!({
+    let report = json!({
+        "format":1,
+        "target":target.id.to_string(),
+        "compiler":target.compiler.to_string(),
+        "rom_base":ROM_BASE,
+        "rom_size":mask.len(),
+        "code_regions":claimed_regions.len(),
+        "code_bytes":code_bytes,
+        "translation_units":translation_units,
+        "declared_main_translation_units_strict":true,
+        "registered_owner_coverage":{
             "authority":"games/gs1/source-paths.json",
             "scope":"registered-owner lower bound; does not assert original translation-unit boundaries",
             "registered":owner_coverage.registered,
@@ -1400,46 +1351,22 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
             "missing":owner_coverage.missing,
             "unexpected":owner_coverage.unexpected,
             "complete":owner_coverage.missing == 0 && owner_coverage.unexpected == 0
-        })
-    );
-    field!(
-        "owner_inventory",
-        json!({"path":inventory_path.to_string_lossy(),"summary":inventory_summary})
-    );
-    field!(
-        "strict_translation_units",
-        json!(owner_coverage.missing == 0 && owner_coverage.unexpected == 0)
-    );
-    field!(
-        "strict_translation_units_scope",
-        json!(
-            "complete reconstruction-composition contract coverage; \
-             original translation units remain unknown"
-        )
-    );
-    field!("main_symbol_exports", json!(main_symbol_exports));
-    field!("asm_regions", number(asm_regions.len()));
-    field!("asm_bytes", number(asm_bytes));
-    field!("asm_c_debt_regions", number(accounting.c_debt_regions));
-    field!("asm_c_debt_bytes", number(accounting.c_debt_bytes));
-    field!(
-        "asm_retained_structural_regions",
-        number(accounting.retained_regions)
-    );
-    field!(
-        "asm_retained_structural_bytes",
-        number(accounting.retained_bytes)
-    );
-    field!("asset_regions", number(asset_regions.len()));
-    field!("asset_bytes", number(asset_bytes));
-    field!(
-        "source_regions",
-        number(claimed_regions.len() + asm_regions.len() + asset_regions.len())
-    );
-    field!("source_bytes", number(source_bytes));
-    field!(
-        "project_completion",
-        project_audit(
+        },
+        "owner_inventory":{"path":inventory_path.to_string_lossy(),"summary":inventory_summary},
+        "strict_translation_units":owner_coverage.missing == 0 && owner_coverage.unexpected == 0,
+        "strict_translation_units_scope":"complete reconstruction-composition contract coverage; original translation units remain unknown",
+        "main_symbol_exports":main_symbol_exports,
+        "asm_regions":asm_regions.len(),
+        "asm_bytes":asm_bytes,
+        "asm_c_debt_regions":accounting.c_debt_regions,
+        "asm_c_debt_bytes":accounting.c_debt_bytes,
+        "asm_retained_structural_regions":accounting.retained_regions,
+        "asm_retained_structural_bytes":accounting.retained_bytes,
+        "asset_regions":asset_regions.len(),
+        "asset_bytes":asset_bytes,
+        "source_regions":claimed_regions.len() + asm_regions.len() + asset_regions.len(),
+        "source_bytes":source_bytes,
+        "project_completion":project_audit(
             mask.len(),
             source_bytes,
             progress.bytes,
@@ -1447,42 +1374,26 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
             accounting.c_debt_bytes,
             asset_regions.len(),
             asset_bytes
-        )
-    );
-    field!("byte_reconstruction_bytes", number(progress.bytes));
-    field!(
-        "byte_reconstruction_remaining_bytes",
-        number(progress.remaining_bytes)
-    );
-    field!("byte_reconstruction_percent", percentage(progress.percent));
-    field!("unowned_bytes", number(unowned_bytes));
-    field!("unowned_regions", number(gaps.len()));
-    field!("unowned_manifest", json!(unowned_path.to_string_lossy()));
-    field!("rom_fallback_bytes", number(unowned_bytes));
-    field!("fallback_regions", number(gaps.len()));
-    field!("fallback_manifest", json!(fallback_path.to_string_lossy()));
-    field!("rom_fallback_applicable", json!(!options.source_only));
-    field!(
-        "verification",
-        json!(if options.source_only {
+        ),
+        "byte_reconstruction_bytes":progress.bytes,
+        "byte_reconstruction_remaining_bytes":progress.remaining_bytes,
+        "byte_reconstruction_percent":percentage(progress.percent),
+        "unowned_bytes":unowned_bytes,
+        "unowned_regions":gaps.len(),
+        "unowned_manifest":unowned_path.to_string_lossy(),
+        "rom_fallback_bytes":unowned_bytes,
+        "fallback_regions":gaps.len(),
+        "fallback_manifest":fallback_path.to_string_lossy(),
+        "rom_fallback_applicable":!options.source_only,
+        "verification":if options.source_only {
             "source_only"
         } else {
             "rom"
-        })
-    );
-    field!("byte_identical", json!(!options.source_only));
-    field!(
-        "output",
-        if options.source_only {
-            Value::Null
-        } else {
-            json!(options.output)
-        }
-    );
-    write_json(
-        &PathBuf::from(format!("{}.json", report_base.to_string_lossy())),
-        Value::Object(report),
-    )?;
+        },
+        "byte_identical":!options.source_only,
+        "output":if options.source_only { Value::Null } else { json!(options.output) },
+    });
+    write_canonical(&sidecar_path(&output, "json")?, &report)?;
     Ok(format!(
         "{} regions={} code={} asm={} assets={} source_bytes={} unowned_bytes={} asm_c_debt_bytes={} asm_retained_structural_bytes={} source_owned={} byte_identical={}{}",
         if options.source_only { "source_only=True" } else { "identical=True" },
@@ -1521,4 +1432,26 @@ pub fn self_test() -> Result<(), String> {
     }
     require_source_ownership(true, 1)?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn output_sidecars_preserve_multi_dot_stems() {
+        let output = Path::new("out/custom/rebuilt.debug.gba");
+        assert_eq!(
+            sidecar_path(output, "json").unwrap(),
+            Path::new("out/custom/rebuilt.debug.json")
+        );
+        assert_eq!(
+            sidecar_path(output, "owner-inventory.json").unwrap(),
+            Path::new("out/custom/rebuilt.debug.owner-inventory.json")
+        );
+        assert_eq!(
+            sidecar_path(Path::new("out/rebuilt.gba"), "unowned.json").unwrap(),
+            Path::new("out/rebuilt.unowned.json")
+        );
+    }
 }

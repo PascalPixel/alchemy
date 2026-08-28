@@ -68,16 +68,22 @@ pub fn subtract(input: &[Span], cuts: &[Span]) -> Vec<Span> {
     }
     out
 }
-pub const CATEGORIES: [&str; 5] = [
-    "exact_c",
-    "tracked_c",
-    "assembly",
-    "retained_asm",
-    "asset_data",
-];
-fn category_index(name: &str) -> Option<usize> {
-    CATEGORIES.iter().position(|item| *item == name)
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[repr(usize)]
+pub enum Category {
+    ExactC,
+    TrackedC,
+    Assembly,
+    RetainedAsm,
+    AssetData,
 }
+pub const CATEGORIES: [(Category, &str, &str); 5] = [
+    (Category::ExactC, "exact_c", "Exact C"),
+    (Category::TrackedC, "tracked_c", "WIP"),
+    (Category::Assembly, "assembly", "ASM"),
+    (Category::RetainedAsm, "retained_asm", "Permanent ASM"),
+    (Category::AssetData, "asset_data", "Data"),
+];
 #[derive(Clone, Debug, Default)]
 pub struct Tile {
     pub label: String,
@@ -86,21 +92,6 @@ pub struct Tile {
     pub group: Option<String>,
     pub subgroup: Option<String>,
     pub address: Option<i64>,
-}
-impl Tile {
-    pub fn category(&self, name: &str) -> i64 {
-        category_index(name).map_or(0, |i| self.categories[i])
-    }
-    pub fn set(&mut self, name: &str, value: i64) {
-        if let Some(i) = category_index(name) {
-            self.categories[i] = value;
-        }
-    }
-    pub fn add(&mut self, name: &str, value: i64) {
-        if let Some(i) = category_index(name) {
-            self.categories[i] += value;
-        }
-    }
 }
 #[derive(Clone, Debug, Default)]
 pub struct Area {

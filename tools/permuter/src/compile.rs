@@ -1,11 +1,13 @@
 use std::fs;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 
+use candidate_compiler::verify::{assemble, copy_text};
 use candidate_compiler::{verify_candidate_owned_routed, CandidateCompilerConfiguration, ROM_BASE};
+use compiler_core::build_io::read_json;
 use compiler_core::routing::{root, CompilerTarget};
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use overlay_disasm::{assemble_overlay, compile_overlay_c, OverlaySource, OVERLAY_BASE};
+use serde::Serialize;
 use serde_json::Value;
 use tempfile::tempdir;
 
@@ -18,19 +20,18 @@ enum Kind {
 #[derive(Clone, Debug)]
 pub struct Target {
     source: PathBuf,
-    basename: String,
     owner: SourceOwner,
     expected: Vec<u8>,
     baseline: Score,
     kind: Kind,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 pub struct Score {
     pub exact: bool,
     pub differing_halfwords: usize,
-    pub expected_size: usize,
     pub actual_size: usize,
+    pub expected_size: usize,
     pub first_difference: Option<usize>,
 }
 
@@ -59,11 +60,6 @@ fn local_flags(path: &Path) -> Vec<String> {
         .unwrap_or_default()
 }
 
-fn read_json(path: &Path) -> Result<Value, String> {
-    let text = fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
-    serde_json::from_str(&text).map_err(|error| format!("{}: {error}", path.display()))
-}
-
 fn hexadecimal(value: &Value) -> Option<u64> {
     value.as_u64().or_else(|| {
         value
@@ -74,7 +70,7 @@ fn hexadecimal(value: &Value) -> Option<u64> {
 
 fn overlay_span(name: &str, address: u32) -> Result<usize, String> {
     let path = root().join("games/gs1/semantic/regions.json");
-    let document = read_json(&path)?;
+    let document: Value = read_json(&path)?;
     document["manual_regions"]
         .as_array()
         .into_iter()
@@ -93,26 +89,22 @@ fn overlay_span(name: &str, address: u32) -> Result<usize, String> {
         })
 }
 
-fn run(command: &[String], directory: &Path) -> Result<(), String> {
-    let output = Command::new(&command[0])
-        .args(&command[1..])
-        .current_dir(root())
-        .output()
-        .map_err(|error| format!("cannot run {}: {error}", command[0]))?;
-    if output.status.success() {
-        return Ok(());
-    }
-    let detail = if output.stderr.is_empty() {
-        &output.stdout
-    } else {
-        &output.stderr
-    };
-    Err(format!(
-        "{} failed in {}: {}",
-        command[0],
-        directory.display(),
-        String::from_utf8_lossy(detail).trim()
-    ))
+fn reference_tool(
+    program: &str,
+    directory: &Path,
+    result: Result<(), String>,
+) -> Result<(), String> {
+    result.map_err(|error| {
+        error
+            .strip_prefix(&format!("{program} failed: "))
+            .map(|detail| format!("{program} failed in {}: {detail}", directory.display()))
+            .or_else(|| {
+                error
+                    .strip_prefix(&format!("{program}: "))
+                    .map(|detail| format!("cannot run {program}: {detail}"))
+            })
+            .unwrap_or(error)
+    })
 }
 
 fn main_span(stem: &str, directory: &Path) -> Result<usize, String> {
@@ -120,28 +112,15 @@ fn main_span(stem: &str, directory: &Path) -> Result<usize, String> {
     if assembly.is_file() {
         let object = directory.join("reference.o");
         let binary = directory.join("reference.bin");
-        run(
-            &[
-                "arm-none-eabi-as".into(),
-                "-mcpu=arm7tdmi".into(),
-                "-mthumb-interwork".into(),
-                "-o".into(),
-                object.to_string_lossy().into_owned(),
-                assembly.to_string_lossy().into_owned(),
-            ],
+        reference_tool(
+            "arm-none-eabi-as",
             directory,
+            assemble(&assembly.to_string_lossy(), &object.to_string_lossy()),
         )?;
-        run(
-            &[
-                "arm-none-eabi-objcopy".into(),
-                "-O".into(),
-                "binary".into(),
-                "-j".into(),
-                ".text".into(),
-                object.to_string_lossy().into_owned(),
-                binary.to_string_lossy().into_owned(),
-            ],
+        reference_tool(
+            "arm-none-eabi-objcopy",
             directory,
+            copy_text(&object.to_string_lossy(), &binary.to_string_lossy()),
         )?;
         return fs::metadata(&binary)
             .map(|metadata| metadata.len() as usize)
@@ -153,7 +132,7 @@ fn main_span(stem: &str, directory: &Path) -> Result<usize, String> {
         "out/gs1-en/claimed/manifest.json",
     ] {
         let path = root().join(relative);
-        let Ok(document) = read_json(&path) else {
+        let Ok(document) = read_json::<Value>(&path) else {
             continue;
         };
         let size = document["regions"]
@@ -206,11 +185,7 @@ fn score(actual: &[u8], expected: &[u8]) -> Score {
 
 impl Target {
     pub fn prepare(path: &Path, source: &str) -> Result<Self, String> {
-        let source_path = if path.is_absolute() {
-            path.to_path_buf()
-        } else {
-            root().join(path)
-        };
+        let source_path = compiler_core::build_io::rooted(root(), path);
         let basename = basename(&source_path)?;
         let owner = source_owner(&source_path)?;
         let work = tempdir().map_err(|error| error.to_string())?;
@@ -269,7 +244,6 @@ impl Target {
         let baseline = score(&actual, &expected);
         Ok(Self {
             source: source_path,
-            basename,
             owner,
             expected,
             baseline,
@@ -283,7 +257,7 @@ impl Target {
 
     pub fn compile(&self, source: &str) -> Result<Score, String> {
         let work = tempdir().map_err(|error| error.to_string())?;
-        let candidate = work.path().join(&self.basename);
+        let candidate = work.path().join(basename(&self.source)?);
         fs::write(&candidate, source)
             .map_err(|error| format!("{}: {error}", candidate.display()))?;
         let actual = match &self.kind {

@@ -14,12 +14,7 @@ pub const OVERLAY_BASE: i64 = 0x0200_0000;
 /// load-bearing module cycle.
 const RETURN_WINDOW: i64 = 128;
 fn root() -> PathBuf {
-    std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .expect("crate dir has a parent")
-        .parent()
-        .expect("tools has a parent")
-        .to_path_buf()
+    overlay_disasm::paths::root()
 }
 /// Decode a Thumb BL pair into the displacement the instruction stores.
 /// Returns `None` when the halfwords are not a BL prefix/suffix pair.

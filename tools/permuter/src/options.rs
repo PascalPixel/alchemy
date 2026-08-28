@@ -22,8 +22,8 @@ pub struct Options {
     pub output: Option<PathBuf>,
 }
 
-fn value<'a>(args: &'a [String], at: usize, flag: &str) -> Result<&'a str, String> {
-    args.get(at + 1)
+fn value<'a>(args: &mut std::slice::Iter<'a, String>, flag: &str) -> Result<&'a str, String> {
+    args.next()
         .map(String::as_str)
         .ok_or_else(|| format!("{flag} requires a value"))
 }
@@ -51,30 +51,26 @@ impl Options {
             seed: 1,
             output: None,
         };
-        let mut at = 0;
-        while at < args.len() {
-            match args[at].as_str() {
+        let mut args = args.iter();
+        while let Some(argument) = args.next() {
+            match argument.as_str() {
                 "--iterations" => {
                     options.iterations = bounded(
-                        value(args, at, "--iterations")?,
+                        value(&mut args, "--iterations")?,
                         "--iterations",
                         MAX_ITERATIONS,
                     )?;
-                    at += 2;
                 }
                 "--jobs" | "-j" => {
-                    options.jobs = bounded(value(args, at, "--jobs")?, "--jobs", MAX_JOBS)?;
-                    at += 2;
+                    options.jobs = bounded(value(&mut args, "--jobs")?, "--jobs", MAX_JOBS)?;
                 }
                 "--seed" => {
-                    options.seed = value(args, at, "--seed")?
+                    options.seed = value(&mut args, "--seed")?
                         .parse()
                         .map_err(|_| "--seed must be an unsigned integer".to_string())?;
-                    at += 2;
                 }
                 "--output" => {
-                    options.output = Some(PathBuf::from(value(args, at, "--output")?));
-                    at += 2;
+                    options.output = Some(PathBuf::from(value(&mut args, "--output")?));
                 }
                 "-h" | "--help" => return Err(USAGE.to_string()),
                 flag if flag.starts_with('-') => {
@@ -85,7 +81,6 @@ impl Options {
                         return Err("permuter accepts one candidate at a time".into());
                     }
                     options.candidate = PathBuf::from(candidate);
-                    at += 1;
                 }
             }
         }

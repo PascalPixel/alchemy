@@ -1,5 +1,6 @@
 //! Compiler routing; `routing_data` is the sole table source.
 use crate::routing_data::*;
+use crate::source_paths::lower_hex;
 use std::path::{Path, PathBuf};
 use std::sync::OnceLock;
 /// Repository root: `<crate>/../..`.
@@ -36,7 +37,7 @@ impl CompilerTarget {
         }
     }
 }
-fn include_flag(target: CompilerTarget) -> String {
+pub(crate) fn include_flag(target: CompilerTarget) -> String {
     format!(
         "-I{}",
         root()
@@ -72,10 +73,7 @@ pub fn agbcc_cflags() -> Vec<String> {
         .collect()
 }
 pub fn cflags_for_target(target: CompilerTarget) -> Vec<String> {
-    match target {
-        CompilerTarget::Gs1 => cflags(),
-        CompilerTarget::Gs2 => base_cflags(CompilerTarget::Gs2),
-    }
+    base_cflags(target)
 }
 #[cfg(test)]
 mod target_tests {
@@ -125,10 +123,7 @@ pub fn source_stem(source: &str) -> String {
     source_stem_ref(source).to_string()
 }
 fn is_hex8(value: &str) -> bool {
-    value.len() == 8
-        && value
-            .bytes()
-            .all(|b| b.is_ascii_hexdigit() && !b.is_ascii_uppercase())
+    value.len() == 8 && lower_hex(value)
 }
 /// `overlayStem`: an overlay row routes by its bare address, so a candidate
 /// verified as `<addr>.c` and the installed `<overlay>_c_<addr>.c` agree.

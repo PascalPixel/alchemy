@@ -20,12 +20,11 @@ pub struct Options {
     pub where_: bool,
 }
 #[derive(Debug, Clone)]
-pub struct FunctionRow {
-    pub id: String,
-    pub overlay: String,
-    pub entry: i64,
-    pub offset: i64,
-    pub span_bytes: i64,
+struct FunctionRow {
+    overlay: String,
+    entry: i64,
+    offset: i64,
+    span_bytes: i64,
 }
 #[derive(Debug, Clone, PartialEq)]
 pub struct InternalAlias {
@@ -57,53 +56,33 @@ struct ReviewedRegion {
     entry: String,
     span_bytes: usize,
 }
-enum ParseOutcome {
-    Help,
-    Options(Options),
+pub(crate) fn overlay_assembly(root: &Path, overlay: &str) -> PathBuf {
+    root.join(format!("games/gs1/assets/code/{overlay}_overlay.s"))
 }
-fn hex8(value: i64) -> String {
-    format!("{:08x}", value)
+pub(crate) fn retained_source(root: &Path, owner: SourceOwner) -> PathBuf {
+    root.join(format!(
+        "games/gs1/recon/en/overlays/{}.c",
+        owner.legacy_stem()
+    ))
+}
+pub(crate) fn overlay_offset(owner: SourceOwner) -> usize {
+    (i64::from(owner.address()) - OVERLAY_BASE) as usize
 }
 fn parse_listing_row(row: &str) -> Option<(i64, i64)> {
-    let bytes = row.as_bytes();
-    let mut i = 0usize;
-    while i < bytes.len() && (bytes[i] as char).is_whitespace() {
-        i += 1;
-    }
-    let digits_start = i;
-    while i < bytes.len() && bytes[i].is_ascii_digit() {
-        i += 1;
-    }
-    if i == digits_start {
+    let mut fields = row.split_whitespace();
+    let line = fields.next()?;
+    let offset = fields.next()?;
+    let encoded = fields.next()?;
+    if !line.bytes().all(|byte| byte.is_ascii_digit())
+        || offset.len() < 4
+        || !offset
+            .bytes()
+            .all(|byte| byte.is_ascii_digit() || matches!(byte, b'a'..=b'f'))
+        || !encoded.bytes().next()?.is_ascii_hexdigit()
+    {
         return None;
     }
-    let line: i64 = row[digits_start..i].parse().ok()?;
-    let ws1_start = i;
-    while i < bytes.len() && (bytes[i] as char).is_whitespace() {
-        i += 1;
-    }
-    if i == ws1_start {
-        return None;
-    }
-    let hex_start = i;
-    while i < bytes.len() && matches!(bytes[i], b'0'..=b'9' | b'a'..=b'f') {
-        i += 1;
-    }
-    if i - hex_start < 4 {
-        return None;
-    }
-    let offset = i64::from_str_radix(&row[hex_start..i], 16).ok()?;
-    let ws2_start = i;
-    while i < bytes.len() && (bytes[i] as char).is_whitespace() {
-        i += 1;
-    }
-    if i == ws2_start {
-        return None;
-    }
-    if i >= bytes.len() || !(bytes[i] as char).is_ascii_hexdigit() {
-        return None;
-    }
-    Some((line, offset))
+    Some((line.parse().ok()?, i64::from_str_radix(offset, 16).ok()?))
 }
 pub fn listing_offsets(assembly: &Path) -> Result<Vec<(i64, i64)>, String> {
     let work = tempdir().map_err(|error| error.to_string())?;
@@ -181,15 +160,13 @@ fn parse_local_label(line: &str) -> Option<String> {
     }
 }
 fn strip_comments(line: &str) -> String {
-    let step1 = match line.find('@') {
-        Some(index) => &line[..index],
-        None => line,
-    };
-    let step2 = match step1.find("//") {
-        Some(index) => &step1[..index],
-        None => step1,
-    };
-    step2.to_string()
+    line.split('@')
+        .next()
+        .unwrap_or(line)
+        .split("//")
+        .next()
+        .unwrap_or(line)
+        .to_string()
 }
 fn is_word_char(c: char) -> bool {
     c.is_ascii_alphanumeric() || c == '_' || c == '.'
@@ -198,32 +175,12 @@ fn word_boundary_contains(haystack: &str, needle: &str) -> bool {
     if needle.is_empty() {
         return false;
     }
-    let bytes = haystack.as_bytes();
-    let nbytes = needle.as_bytes();
-    let n = nbytes.len();
-    let mut i = 0usize;
-    while i + n <= bytes.len() {
-        if &bytes[i..i + n] == nbytes {
-            let before_ok = if i == 0 {
-                true
-            } else {
-                let c = haystack[..i].chars().last().unwrap();
-                c == '\n' || !is_word_char(c)
-            };
-            let after = i + n;
-            let after_ok = if after == bytes.len() {
-                true
-            } else {
-                let c = haystack[after..].chars().next().unwrap();
-                c == '\n' || !is_word_char(c)
-            };
-            if before_ok && after_ok {
-                return true;
-            }
-        }
-        i += 1;
-    }
-    false
+    haystack.match_indices(needle).any(|(index, _)| {
+        let before = haystack[..index].chars().next_back();
+        let after = haystack[index + needle.len()..].chars().next();
+        before.is_none_or(|character| character == '\n' || !is_word_char(character))
+            && after.is_none_or(|character| character == '\n' || !is_word_char(character))
+    })
 }
 pub fn internal_aliases(
     lines: &[String],
@@ -382,7 +339,7 @@ fn audited_span(
 }
 const USAGE: &str =
     "usage: overlay-adopt <overlay:offsetHex> --source FILE [--span BYTES] [--apply] [--where]";
-fn options_of(argv: &[String]) -> Result<ParseOutcome, String> {
+fn options_of(argv: &[String]) -> Result<Option<Options>, String> {
     let (mut span, mut id, mut source) = (None, String::new(), String::new());
     let (mut apply, mut where_) = (false, false);
     let mut args = argv.iter();
@@ -399,7 +356,7 @@ fn options_of(argv: &[String]) -> Result<ParseOutcome, String> {
             }
             "--apply" => apply = true,
             "--where" => where_ = true,
-            "-h" | "--help" => return Ok(ParseOutcome::Help),
+            "-h" | "--help" => return Ok(None),
             _ if id.is_empty() => id = argument.clone(),
             _ => return Err(format!("unrecognized argument: {argument}")),
         }
@@ -407,7 +364,7 @@ fn options_of(argv: &[String]) -> Result<ParseOutcome, String> {
     if id.is_empty() || source.is_empty() {
         return Err("both an overlay function id and --source are required".to_string());
     }
-    Ok(ParseOutcome::Options(Options {
+    Ok(Some(Options {
         span,
         id,
         source,
@@ -467,13 +424,42 @@ fn revert(
     }
     fs::write(assembly, original_text).map_err(|error| error.to_string())
 }
-pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
-    let options = match options_of(args)? {
-        ParseOutcome::Help => {
-            println!("{USAGE}");
-            return Ok(0);
+pub(crate) fn differing_units(actual: &[u8], expected: &[u8], width: usize) -> usize {
+    actual
+        .chunks(width)
+        .zip(expected.chunks(width))
+        .filter(|(left, right)| left != right)
+        .count()
+        + actual.len().abs_diff(expected.len()).div_ceil(width)
+}
+fn differing_runs(actual: &[u8], expected: &[u8]) -> String {
+    let mut runs = Vec::new();
+    let mut start = None;
+    let mut previous = 0;
+    for offset in
+        (0..actual.len().min(expected.len())).filter(|offset| actual[*offset] != expected[*offset])
+    {
+        if start.is_some() && offset != previous + 1 {
+            runs.push((start.take().unwrap(), previous));
         }
-        ParseOutcome::Options(options) => options,
+        start.get_or_insert(offset);
+        previous = offset;
+    }
+    if let Some(start) = start {
+        runs.push((start, previous));
+    }
+    if runs.is_empty() {
+        return "(none; length change only)".to_string();
+    }
+    runs.into_iter()
+        .map(|(start, end)| format!("0x{:x}+{}", OVERLAY_BASE + start as i64, end - start + 1))
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
+    let Some(options) = options_of(args)? else {
+        println!("{USAGE}");
+        return Ok(0);
     };
     let source_text = fs::read_to_string(&options.source)
         .map_err(|error| format!("{}: {error}", options.source))?;
@@ -495,15 +481,10 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
         .find(|row| row.get("id").and_then(Value::as_str) == Some(options.id.as_str()));
     let fn_row: FunctionRow = if let Some(row) = found {
         FunctionRow {
-            id: options.id.clone(),
-            overlay: row
-                .get("overlay")
-                .and_then(Value::as_str)
-                .unwrap_or("")
-                .to_string(),
-            entry: row.get("entry").and_then(Value::as_i64).unwrap_or(0),
-            offset: row.get("offset").and_then(Value::as_i64).unwrap_or(0),
-            span_bytes: row.get("span_bytes").and_then(Value::as_i64).unwrap_or(0),
+            overlay: row["overlay"].as_str().unwrap_or("").to_string(),
+            entry: row["entry"].as_i64().unwrap_or(0),
+            offset: row["offset"].as_i64().unwrap_or(0),
+            span_bytes: row["span_bytes"].as_i64().unwrap_or(0),
         }
     } else if let Some(span) = options.span {
         let mut parts = options.id.splitn(2, ':');
@@ -517,7 +498,6 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
             offset
         };
         FunctionRow {
-            id: options.id.clone(),
             overlay,
             entry: OVERLAY_BASE + offset,
             offset,
@@ -529,10 +509,10 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
             options.id
         ));
     };
-    let owner = SourceOwner::parse(&format!("{}:{}", fn_row.overlay, hex8(fn_row.entry)))?;
+    let owner = SourceOwner::parse(&format!("{}:{:08x}", fn_row.overlay, fn_row.entry))?;
     let source_paths = SourcePaths::load(root)?;
     let installed = source_paths.registered_source_path(owner)?;
-    let stem = hex8(fn_row.entry);
+    let stem = owner.address_stem();
     if fn_row.entry - OVERLAY_BASE != fn_row.offset {
         return Err("inventory entry and offset disagree".to_string());
     }
@@ -541,11 +521,9 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
         &fn_row.overlay,
         fn_row.entry,
         fn_row.span_bytes,
-        &fn_row.id,
+        &options.id,
     )?;
-    let assembly = root
-        .join("games/gs1/assets/code")
-        .join(format!("{}_overlay.s", fn_row.overlay));
+    let assembly = overlay_assembly(root, &fn_row.overlay);
     let _lock = OverlayLock::acquire(&assembly)?;
     let baseline = assemble_overlay(&OverlaySource::path(&assembly), OVERLAY_BASE)?;
     let original_text = fs::read_to_string(&assembly).map_err(|error| error.to_string())?;
@@ -602,21 +580,7 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
         }
     };
     if rebuilt.len() != baseline.len() || rebuilt != baseline {
-        let mut differing = (rebuilt.len() as i64 - baseline.len() as i64).abs();
-        let min_len = rebuilt.len().min(baseline.len());
-        for byte in 0..min_len {
-            if rebuilt[byte] != baseline[byte] {
-                differing += 1;
-            }
-        }
-        let mut addresses: Vec<i64> = Vec::new();
-        if options.where_ {
-            for byte in 0..min_len {
-                if rebuilt[byte] != baseline[byte] {
-                    addresses.push(byte as i64);
-                }
-            }
-        }
+        let differing = differing_units(&rebuilt, &baseline, 1);
         revert(&installed, &assembly, &preexisting, &original_text)?;
         println!(
             "adopt=rejected {} differing_bytes={} size={}/{}",
@@ -626,24 +590,7 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
             baseline.len()
         );
         if options.where_ {
-            let mut runs: Vec<String> = Vec::new();
-            let mut index = 0usize;
-            while index < addresses.len() {
-                let mut end = index;
-                while end + 1 < addresses.len() && addresses[end + 1] == addresses[end] + 1 {
-                    end += 1;
-                }
-                let from = OVERLAY_BASE + addresses[index];
-                let bytes = (end - index + 1) as i64;
-                runs.push(format!("0x{:x}+{bytes}", from));
-                index = end + 1;
-            }
-            let text = if runs.is_empty() {
-                "(none; length change only)".to_string()
-            } else {
-                runs.join(" ")
-            };
-            println!("differing_at {text}");
+            println!("differing_at {}", differing_runs(&rebuilt, &baseline));
         }
         return Ok(1);
     }
@@ -666,10 +613,7 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
     }
     if !options.apply {
         revert(&installed, &assembly, &preexisting, &original_text)?;
-        let source_base = Path::new(&options.source)
-            .file_name()
-            .map(|name| name.to_string_lossy().to_string())
-            .unwrap_or_else(|| options.source.clone());
+        let source_base = overlay_disasm::paths::basename(&options.source);
         println!(
             "adopt=ready {} span={} aliases={} lines={}-{} source={} (pass --apply to install)",
             options.id,

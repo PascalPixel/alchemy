@@ -105,6 +105,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "canonical-json"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+]
+
+[[package]]
 name = "cc"
 version = "1.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -154,8 +161,10 @@ dependencies = [
 name = "coverage-map"
 version = "0.1.0"
 dependencies = [
+ "canonical-json",
  "compiler-core",
  "serde_json",
+ "sha1",
 ]
 
 [[package]]
@@ -198,6 +207,7 @@ version = "0.1.0"
 dependencies = [
  "coverage-map",
  "serde_json",
+ "walkdir",
 ]
 
 [[package]]
@@ -557,6 +567,7 @@ dependencies = [
  "compiler-core",
  "overlay-disasm",
  "regex",
+ "serde",
  "serde_json",
  "tempfile",
 ]
@@ -731,6 +742,17 @@ dependencies = [
  "serde",
  "serde_core",
  "zmij",
+]
+
+[[package]]
+name = "sha1"
+version = "0.10.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a978451301f4db1d02937a4ab3ccce137717b81826e79b7d49ffe3244a13c3b8"
+dependencies = [
+ "cfg-if",
+ "cpufeatures",
+ "digest",
 ]
 
 [[package]]

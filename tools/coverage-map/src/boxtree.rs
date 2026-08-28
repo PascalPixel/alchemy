@@ -1,5 +1,5 @@
 use crate::jsnum::{commas, js_number_string};
-use crate::model::{treemap, Area, Rect, Tile, CATEGORIES};
+use crate::model::{treemap, Area, Category, Rect, Tile, CATEGORIES};
 use crate::pipeline::CoverageMap;
 use crate::sha1::sha1_hex;
 use crate::tree::root;
@@ -30,12 +30,25 @@ fn base64(data: &[u8]) -> String {
     out
 }
 
-fn hue(tree: &str) -> (f64, f64, &'static str, &'static str) {
+fn style(tree: &str) -> (f64, f64, &'static str, &'static str, &'static str) {
     match tree {
-        "core" => (275.0, 295.0, "#6d4fc2", "Main-image code"),
-        "overlays" => (190.0, 200.0, "#1f7f93", "Decoded code-overlay"),
-        "music" => (28.0, 55.0, "#c85d00", "Music maturity"),
-        _ => (330.0, 355.0, "#bb2f77", "Images maturity"),
+        "core" => (275.0, 295.0, "#6d4fc2", "Main-image code", "Main game"),
+        "overlays" => (
+            190.0,
+            200.0,
+            "#1f7f93",
+            "Decoded code-overlay",
+            "Code overlays",
+        ),
+        "music" => (28.0, 55.0, "#c85d00", "Music maturity", "Music and sound"),
+        "images" => (
+            330.0,
+            355.0,
+            "#bb2f77",
+            "Images maturity",
+            "Images and data",
+        ),
+        _ => (330.0, 355.0, "#bb2f77", "Images maturity", "ROM contents"),
     }
 }
 fn esc(value: &str) -> String {
@@ -45,21 +58,14 @@ fn esc(value: &str) -> String {
         .replace('>', "&gt;")
         .replace('"', "&quot;")
 }
-fn label(text: &str, width: f64, height: f64) -> String {
-    if width >= 90.0 && height >= 12.0 {
-        text.to_string()
-    } else {
-        String::new()
-    }
-}
-fn fill(tree: &str, category: &str, fraction: f64) -> String {
-    if category == "retained_asm" {
+fn fill(tree: &str, category: Category, fraction: f64) -> String {
+    if category == Category::RetainedAsm {
         return format!("fill:{ASM}");
     }
-    if category == "tracked_c" {
+    if category == Category::TrackedC {
         return "fill:#f4c95d".into();
     }
-    let (h, okh, _, _) = hue(tree);
+    let (h, okh, _, _, _) = style(tree);
     let f = fraction.clamp(0.0, 1.0);
     let light = 93.0 - 38.0 * f;
     let sat = (f * 95.0).round();
@@ -72,13 +78,6 @@ fn fill(tree: &str, category: &str, fraction: f64) -> String {
         0.17 * f,
         js_number_string(okh)
     )
-}
-fn tile_fraction(tile: &Tile, category: &str) -> f64 {
-    if tile.bytes <= 0 {
-        0.0
-    } else {
-        tile.category(category) as f64 / tile.bytes as f64
-    }
 }
 fn tree_tiles<'a>(map: &'a CoverageMap, tree: &str) -> (&'a Area, Vec<&'a Tile>) {
     let area = match tree {
@@ -109,29 +108,9 @@ fn tree_tiles<'a>(map: &'a CoverageMap, tree: &str) -> (&'a Area, Vec<&'a Tile>)
     }
     (area, tiles)
 }
-fn title(tree: &str, _area: &Area) -> String {
-    match tree {
-        "core" => "Main game",
-        "overlays" => "Code overlays",
-        "images" => "Images and data",
-        "music" => "Music and sound",
-        _ => "ROM contents",
-    }
-    .into()
-}
-fn legend_label(category: &str) -> Option<&'static str> {
-    match category {
-        "exact_c" => Some("Exact C"),
-        "tracked_c" => Some("WIP"),
-        "assembly" => Some("ASM"),
-        "retained_asm" => Some("Permanent ASM"),
-        "asset_data" => Some("Data"),
-        _ => None,
-    }
-}
 fn svg(tree: &str, map: &CoverageMap) -> String {
     let (area, tiles) = tree_tiles(map, tree);
-    let (h, _, edge, description) = hue(tree);
+    let (h, _, edge, description, title) = style(tree);
     let frame = Rect {
         x: 3.0,
         y: 22.0,
@@ -139,7 +118,7 @@ fn svg(tree: &str, map: &CoverageMap) -> String {
         height: 258.0,
     };
     let mut out = vec![format!("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 540 304\" width=\"540\" height=\"304\" shape-rendering=\"crispEdges\" role=\"img\" aria-label=\"{} box tree, {} band\">", description, edge)];
-    out.push(format!("<title>{}</title>", esc(&title(tree, area))));
+    out.push(format!("<title>{}</title>", esc(title)));
     if let Ok(bytes) = std::fs::read(root().join("games/gs1/assets/fonts/weyard.otf")) {
         out.push(format!("<defs><style>@font-face{{font-family:Weyard;src:url(data:font/otf;base64,{}) format('opentype');font-style:italic;}}.weyard{{font-family:Weyard;font-size:16px;font-style:italic;fill:#fff;}}.rectangle-label{{font-size:8px;}}</style></defs>", base64(&bytes)));
     } else {
@@ -152,7 +131,7 @@ fn svg(tree: &str, map: &CoverageMap) -> String {
     out.push(format!("<rect x=\"1\" y=\"1\" width=\"538\" height=\"302\" fill=\"none\" stroke=\"{}\" stroke-width=\"2\" rx=\"7\"/>", edge));
     out.push(format!(
         "<text class=\"weyard\" x=\"6\" y=\"15\">{}</text>",
-        esc(&title(tree, area))
+        esc(title)
     ));
     out.push(format!(
         "<text class=\"weyard\" x=\"534\" y=\"15\" text-anchor=\"end\">{}</text>",
@@ -182,8 +161,8 @@ fn svg(tree: &str, map: &CoverageMap) -> String {
             height: (rect.height - 1.0).max(0.5),
         };
         let mut y = body.y + body.height;
-        for category in CATEGORIES {
-            let n = tile.category(category);
+        for (category, _, _) in CATEGORIES {
+            let n = tile.categories[category as usize];
             if n <= 0 {
                 continue;
             }
@@ -195,10 +174,12 @@ fn svg(tree: &str, map: &CoverageMap) -> String {
                 y,
                 body.width,
                 height,
-                fill(tree, category, tile_fraction(tile, category))
+                fill(tree, category, n as f64 / tile.bytes as f64)
             ));
         }
-        let name = label(&tile.label, body.width - 6.0, body.height);
+        let name = (body.width - 6.0 >= 90.0 && body.height >= 12.0)
+            .then_some(tile.label.as_str())
+            .unwrap_or("");
         if !name.is_empty() {
             out.push(format!("<rect x=\"{}\" y=\"{}\" width=\"{}\" height=\"10\" fill=\"hsl({} 70% 24%)\" fill-opacity=\".9\"/>", rect.x, rect.y, rect.width, js_number_string(h)));
             out.push(format!(
@@ -212,14 +193,11 @@ fn svg(tree: &str, map: &CoverageMap) -> String {
     }
     let displayed_bytes: i64 = tiles.iter().map(|tile| tile.bytes).sum();
     let mut legend_x = 6.0;
-    for category in CATEGORIES {
-        let category_bytes: i64 = tiles.iter().map(|tile| tile.category(category)).sum();
+    for (category, _, name) in CATEGORIES {
+        let category_bytes: i64 = tiles.iter().map(|t| t.categories[category as usize]).sum();
         if category_bytes <= 0 || displayed_bytes <= 0 {
             continue;
         }
-        let Some(name) = legend_label(category) else {
-            continue;
-        };
         let percentage = 100.0 * category_bytes as f64 / displayed_bytes as f64;
         let display = format!("{name} {percentage:.1}%");
         let fraction = category_bytes as f64 / displayed_bytes as f64;

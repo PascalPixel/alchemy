@@ -1,3 +1,4 @@
+use crate::parse_hex as hex;
 use std::collections::{BTreeMap, BTreeSet};
 struct Row {
     addr: i64,
@@ -44,8 +45,18 @@ fn is_call_stmt(line: &str) -> bool {
     };
     name.starts_with("Func_") && t.ends_with(')') && !t.contains('{') && !t.contains('}')
 }
-fn hex(s: &str) -> Option<i64> {
-    i64::from_str_radix(s.trim_start_matches("0x"), 16).ok()
+fn take_call(out: &mut Vec<String>, tested: &mut BTreeSet<String>) -> Option<String> {
+    let line = out.last().filter(|line| is_call_stmt(line))?;
+    let call = line.trim().trim_end_matches(';').to_string();
+    if let Some(name) = call
+        .split('(')
+        .next()
+        .filter(|name| name.starts_with("Func_"))
+    {
+        tested.insert(name.to_string());
+    }
+    out.pop();
+    Some(call)
 }
 fn parse_row(line: &str) -> Option<Row> {
     let (addr_part, rest) = line.split_once(':')?;
@@ -101,6 +112,34 @@ fn immediate(token: &str) -> Option<i64> {
     } else {
         t.parse().ok()
     }
+}
+fn value(token: &str, registers: &BTreeMap<String, Val>) -> Option<Val> {
+    immediate(token)
+        .map(Val::Num)
+        .or_else(|| registers.get(token).cloned())
+}
+fn set_value(
+    registers: &mut BTreeMap<String, Val>,
+    fresh: &mut BTreeMap<String, Val>,
+    name: &str,
+    value: Val,
+) {
+    registers.insert(name.to_string(), value.clone());
+    fresh.insert(name.to_string(), value);
+}
+fn forget_value(
+    registers: &mut BTreeMap<String, Val>,
+    fresh: &mut BTreeMap<String, Val>,
+    name: &str,
+) {
+    registers.remove(name);
+    fresh.remove(name);
+}
+fn pc_displacement(operand: &str) -> Option<i64> {
+    operand
+        .split('#')
+        .nth(1)
+        .and_then(|text| text.trim_end_matches(']').parse().ok())
 }
 fn word_at(rows: &BTreeMap<i64, u16>, addr: i64) -> Option<i64> {
     let lo = *rows.get(&addr)? as i64;
@@ -206,21 +245,8 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
     let mut and_join: BTreeMap<i64, String> = BTreeMap::new();
     for (i, r) in rows.iter().enumerate() {
         let (op, args) = operands(&r.text);
-        let cond = matches!(
-            op.as_str(),
-            "beq"
-                | "beq.n"
-                | "bne"
-                | "bne.n"
-                | "blt"
-                | "blt.n"
-                | "bgt"
-                | "bgt.n"
-                | "bge"
-                | "bge.n"
-                | "ble"
-                | "ble.n"
-        );
+        let branch = op.trim_end_matches(".n");
+        let cond = matches!(branch, "beq" | "bne" | "blt" | "bgt" | "bge" | "ble");
         if !cond || args.len() != 1 {
             continue;
         }
@@ -238,7 +264,7 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
         {
             continue;
         }
-        let test = match op.trim_end_matches(".n") {
+        let test = match branch {
             "beq" => "!= 0",
             "bne" => "== 0",
             "blt" => ">= 0",
@@ -304,11 +330,7 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
         if op == "ldr" && args.len() == 2 && args[0].starts_with("r") {
             let n: u32 = args[0][1..].parse().unwrap_or(0);
             if (4..=7).contains(&n) && args[1].starts_with("[pc") {
-                if let Some(off) = args.get(1).and_then(|a| {
-                    a.split('#')
-                        .nth(1)
-                        .and_then(|s| s.trim_end_matches(']').parse::<i64>().ok())
-                }) {
+                if let Some(off) = pc_displacement(&args[1]) {
                     if let Some(v) = word_at(&halfwords, ((r.addr + 4) & !3) + off) {
                         if v > 0 && v < 0x10000 {
                             base_values.insert(v);
@@ -383,44 +405,28 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
         }
         let (op, args) = operands(&r.text);
         if let Some(test) = and_join.get(&r.addr).cloned() {
-            if out.last().is_some_and(|l| is_call_stmt(l)) {
-                if let Some(prev) = out.pop() {
-                    let call = prev.trim().trim_end_matches(';').to_string();
-                    if let Some(name) = call.split('(').next() {
-                        if name.starts_with("Func_") {
-                            tested.insert(name.to_string());
-                        }
-                    }
-                    if let Some(open) = out
-                        .iter_mut()
-                        .rev()
-                        .find(|l| l.trim_start().starts_with("if ("))
-                    {
-                        let closed = open.trim_end().trim_end_matches('{').trim_end().to_string();
-                        let inner = closed
-                            .trim_start()
-                            .trim_start_matches("if (")
-                            .trim_end_matches(')');
-                        let lead: String = open.chars().take_while(|c| c.is_whitespace()).collect();
-                        *open = format!("{lead}if ({inner} && {call} {test}) {{");
-                    }
+            if let Some(call) = take_call(&mut out, &mut tested) {
+                if let Some(open) = out
+                    .iter_mut()
+                    .rev()
+                    .find(|line| line.trim_start().starts_with("if ("))
+                {
+                    let closed = open.trim_end().trim_end_matches('{').trim_end();
+                    let inner = closed
+                        .trim_start()
+                        .trim_start_matches("if (")
+                        .trim_end_matches(')');
+                    let lead: String = open.chars().take_while(|c| c.is_whitespace()).collect();
+                    *open = format!("{lead}if ({inner} && {call} {test}) {{");
                 }
             }
             continue;
         }
         if let Some((test, _target, _join)) = if_at.get(&r.addr).cloned() {
-            if out.last().is_some_and(|l| is_call_stmt(l)) {
-                if let Some(prev) = out.pop() {
-                    let call = prev.trim().trim_end_matches(';').to_string();
-                    if let Some(name) = call.split('(').next() {
-                        if name.starts_with("Func_") {
-                            tested.insert(name.to_string());
-                        }
-                    }
-                    out.push(format!("{}if ({call} {test}) {{", indent(depth)));
-                    depth += 1;
-                    continue;
-                }
+            if let Some(call) = take_call(&mut out, &mut tested) {
+                out.push(format!("{}if ({call} {test}) {{", indent(depth)));
+                depth += 1;
+                continue;
             }
         }
         if let Some(rest) = args.get(1) {
@@ -437,8 +443,7 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
                     let place = deref(&pbase, off, &op);
                     if op.starts_with("ldr") {
                         loaded.insert(args[0].clone(), place.clone());
-                        reg.remove(&args[0]);
-                        fresh.remove(&args[0]);
+                        forget_value(&mut reg, &mut fresh, &args[0]);
                         if op == "ldr" {
                             ptr.insert(args[0].clone(), format!("*(void **)({pbase} + {off})"));
                         }
@@ -466,18 +471,10 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
         }
         match op.as_str() {
             "movs" if args.len() == 2 => {
-                let v = immediate(&args[1])
-                    .map(Val::Num)
-                    .or_else(|| reg.get(&args[1]).cloned());
+                let v = value(&args[1], &reg);
                 match v {
-                    Some(v) => {
-                        reg.insert(args[0].clone(), v.clone());
-                        fresh.insert(args[0].clone(), v);
-                    }
-                    None => {
-                        reg.remove(&args[0]);
-                        fresh.remove(&args[0]);
-                    }
+                    Some(v) => set_value(&mut reg, &mut fresh, &args[0], v),
+                    None => forget_value(&mut reg, &mut fresh, &args[0]),
                 }
                 ptr.remove(&args[0]);
             }
@@ -488,11 +485,9 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
                     (args[0].clone(), immediate(&args[1]))
                 };
                 if let (Some(Val::Num(n)), Some(s)) = (reg.get(&src).cloned(), shift) {
-                    reg.insert(args[0].clone(), Val::Num(n << s));
-                    fresh.insert(args[0].clone(), Val::Num(n << s));
+                    set_value(&mut reg, &mut fresh, &args[0], Val::Num(n << s));
                 } else {
-                    reg.remove(&args[0]);
-                    fresh.remove(&args[0]);
+                    forget_value(&mut reg, &mut fresh, &args[0]);
                 }
             }
             "adds" => {
@@ -510,12 +505,7 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
                     continue;
                 }
                 let (a, b) = if args.len() == 3 {
-                    (
-                        reg.get(&args[1]).cloned(),
-                        immediate(&args[2])
-                            .map(Val::Num)
-                            .or_else(|| reg.get(&args[2]).cloned()),
-                    )
+                    (reg.get(&args[1]).cloned(), value(&args[2], &reg))
                 } else {
                     (
                         reg.get(&args[0]).cloned(),
@@ -532,23 +522,15 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
                     _ => None,
                 };
                 match sum {
-                    Some(v) => {
-                        reg.insert(args[0].clone(), v.clone());
-                        fresh.insert(args[0].clone(), v);
-                    }
-                    None => {
-                        reg.remove(&args[0]);
-                        fresh.remove(&args[0]);
-                    }
+                    Some(v) => set_value(&mut reg, &mut fresh, &args[0], v),
+                    None => forget_value(&mut reg, &mut fresh, &args[0]),
                 }
             }
             "negs" if args.len() == 2 => {
                 if let Some(Val::Num(n)) = reg.get(&args[1]).cloned() {
-                    reg.insert(args[0].clone(), Val::Num(-n));
-                    fresh.insert(args[0].clone(), Val::Num(-n));
+                    set_value(&mut reg, &mut fresh, &args[0], Val::Num(-n));
                 } else {
-                    reg.remove(&args[0]);
-                    fresh.remove(&args[0]);
+                    forget_value(&mut reg, &mut fresh, &args[0]);
                 }
             }
             "ands" | "orrs" | "bics" | "eors" if args.len() == 2 => {
@@ -570,37 +552,21 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
                 if let (Some(place), Some(Val::Num(m))) = (place, mask) {
                     pending.insert(args[0].clone(), (place, sym.to_string(), m));
                 }
-                reg.remove(&args[0]);
-                fresh.remove(&args[0]);
+                forget_value(&mut reg, &mut fresh, &args[0]);
             }
             "ldr" if args.len() == 2 && args[1].starts_with("[pc") => {
-                let off = args[1]
-                    .split('#')
-                    .nth(1)
-                    .and_then(|s| s.trim_end_matches(']').parse::<i64>().ok())
-                    .unwrap_or(0);
+                let off = pc_displacement(&args[1]).unwrap_or(0);
                 match word_at(&halfwords, ((r.addr + 4) & !3) + off) {
                     Some(v) if base_values.contains(&v) => {
-                        reg.insert(args[0].clone(), Val::Named("base".into()));
-                        fresh.insert(args[0].clone(), Val::Named("base".into()));
+                        set_value(&mut reg, &mut fresh, &args[0], Val::Named("base".into()));
                         out.push(format!("{}base = {v};", indent(depth)));
                     }
-                    Some(v) => {
-                        reg.insert(args[0].clone(), Val::Num(v));
-                        fresh.insert(args[0].clone(), Val::Num(v));
-                    }
-                    None => {
-                        reg.remove(&args[0]);
-                        fresh.remove(&args[0]);
-                    }
+                    Some(v) => set_value(&mut reg, &mut fresh, &args[0], Val::Num(v)),
+                    None => forget_value(&mut reg, &mut fresh, &args[0]),
                 }
             }
             "str" if args.len() == 2 && args[1].starts_with("[sp") => {
-                let off = args[1]
-                    .split('#')
-                    .nth(1)
-                    .and_then(|s| s.trim_end_matches(']').parse::<i64>().ok())
-                    .unwrap_or(0);
+                let off = pc_displacement(&args[1]).unwrap_or(0);
                 if let Some(v) = reg.get(&args[0]).cloned() {
                     stack.insert(off, v);
                 }

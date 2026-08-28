@@ -30,58 +30,83 @@ pub struct RenderOutput {
     pub allocator: Option<crate::allocator::Report>,
     pub residual: crate::triage::ResidualReport,
 }
-fn main_source_identity(
-    root: &Path,
-    source: &str,
-    target: CompilerTarget,
-    selected: Option<u32>,
-    overlay: Option<&str>,
-) -> Result<(SourceOwner, PathBuf), String> {
-    let path = Path::new(source);
-    if let Some(address) = selected {
-        let owner = match overlay {
-            Some(overlay) => SourceOwner::parse(&format!("{overlay}:{address:08x}"))?,
-            None => SourceOwner::Main(address),
+
+struct SourceIdentity {
+    owner: SourceOwner,
+    routing: PathBuf,
+}
+
+impl SourceIdentity {
+    fn resolve(
+        root: &Path,
+        source: &str,
+        target: CompilerTarget,
+        selected: Option<u32>,
+        overlay: Option<&str>,
+    ) -> Result<Self, String> {
+        let path = Path::new(source);
+        let (owner, registered) = if let Some(address) = selected {
+            (
+                match overlay {
+                    Some(overlay) => SourceOwner::parse(&format!("{overlay}:{address:08x}"))?,
+                    None => SourceOwner::Main(address),
+                },
+                true,
+            )
+        } else {
+            let paths = SourcePaths::load_for_game(root, target.as_str())?;
+            let mut owner = paths.owner_for_path(path)?;
+            if owner.is_none() && !path.is_absolute() {
+                owner = paths.owner_for_path(&root.join(path))?;
+            }
+            let registered = owner.is_some();
+            let owner = owner
+                .or_else(|| {
+                    path.file_stem()
+                        .and_then(|stem| stem.to_str())
+                        .and_then(SourceOwner::from_legacy_stem)
+                })
+                .ok_or_else(|| {
+                    format!(
+                        "no {} source owner registered for {source}",
+                        target.as_str().to_ascii_uppercase()
+                    )
+                })?;
+            (owner, registered)
         };
-        let route = match owner {
+        let routing = match owner {
             SourceOwner::Main(_) if target == CompilerTarget::Gs2 => {
                 Path::new("games/gs2/src").join(owner.legacy_relative_path())
             }
-            SourceOwner::Main(_) => owner.routing_path(),
+            SourceOwner::Main(_) if registered => owner.routing_path(),
+            SourceOwner::Main(_) => path.to_path_buf(),
             SourceOwner::Overlay { .. } => owner.routing_path_for_game(target.as_str()),
         };
-        return Ok((owner, route));
+        Ok(Self { owner, routing })
     }
-    let paths = SourcePaths::load_for_game(root, target.as_str())?;
-    let mut owner = paths.owner_for_path(path)?;
-    if owner.is_none() && !path.is_absolute() {
-        owner = paths.owner_for_path(&root.join(path))?;
+
+    fn stem(&self) -> String {
+        self.owner.address_stem()
     }
-    let routed_by_manifest = owner.is_some();
-    let owner = owner.or_else(|| {
-        path.file_stem()
-            .and_then(|stem| stem.to_str())
-            .and_then(SourceOwner::from_legacy_stem)
-    });
-    let owner = owner.ok_or_else(|| {
-        format!(
-            "no {} source owner registered for {source}",
-            target.as_str().to_ascii_uppercase()
-        )
-    })?;
-    match owner {
-        SourceOwner::Main(_) => {
-            let routing = if target == CompilerTarget::Gs2 {
-                Path::new("games/gs2/src").join(owner.legacy_relative_path())
-            } else if routed_by_manifest {
-                owner.routing_path()
-            } else {
-                path.to_path_buf()
-            };
-            Ok((owner, routing))
-        }
-        SourceOwner::Overlay { .. } => Ok((owner, owner.routing_path_for_game(target.as_str()))),
-    }
+}
+
+fn staged_source(
+    root: &Path,
+    options: &Options,
+    work: &Path,
+    patch: Option<&str>,
+) -> Result<String, String> {
+    let Some(patch) = patch else {
+        return Ok(options.source.clone());
+    };
+    apply_unified_diff_in_tree(root, &options.source, patch, &work.join("try"))
+        .map(|path| path.to_string_lossy().into_owned())
+}
+
+struct RenderedScore {
+    output: RenderOutput,
+    candidate: Vec<String>,
+    reference: Vec<String>,
 }
 fn region_size(root: &Path, address: u32) -> Option<usize> {
     for manifest in [
@@ -90,21 +115,20 @@ fn region_size(root: &Path, address: u32) -> Option<usize> {
         "out/gs1-en/full/asm/manifest.json",
         "out/gs1-en/asm/manifest.json",
     ] {
-        let size = std::fs::read_to_string(root.join(manifest))
-            .ok()
-            .and_then(|text| serde_json::from_str::<Value>(&text).ok())
-            .and_then(|document| {
-                document["regions"]
-                    .as_array()?
-                    .iter()
-                    .find(|region| region["address"].as_u64() == Some(u64::from(address)))?["size"]
-                    .as_u64()
-                    .and_then(|size| usize::try_from(size).ok())
-            });
-        let Some(size) = size else {
+        let Ok(document) = compiler_core::build_io::read_json::<Value>(root.join(manifest)) else {
             continue;
         };
-        return Some(size);
+        let Some(regions) = document["regions"].as_array() else {
+            continue;
+        };
+        let size = regions.iter().find_map(|region| {
+            (region["address"].as_u64() == Some(u64::from(address)))
+                .then(|| usize::try_from(region["size"].as_u64()?).ok())
+                .flatten()
+        });
+        if size.is_some() {
+            return size;
+        }
     }
     None
 }
@@ -116,30 +140,30 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
             .ok_or("The \"path\" argument must be of type string. Received undefined")?,
     );
     std::fs::create_dir_all(&work).map_err(|error| format!("{}: {error}", work.display()))?;
-    if options.asm {
-        return render_asm(root, options, work.to_string_lossy().as_ref());
-    }
-    let rom_path = options
-        .rom
-        .as_deref()
-        .ok_or("The \"path\" argument must be of type string. Received undefined")?;
-    let patch_text = read_patch(options.patch.as_deref())?;
-    let (owner, routing_source) = main_source_identity(
+    let identity = SourceIdentity::resolve(
         root,
         &options.source,
         options.target,
         options.owner,
         options.overlay.as_deref(),
     )?;
-    let image_base = if owner.is_main() {
+    if options.asm {
+        return render_asm(root, options, &work, &identity);
+    }
+    let rom_path = options
+        .rom
+        .as_deref()
+        .ok_or("The \"path\" argument must be of type string. Received undefined")?;
+    let patch_text = read_patch(options.patch.as_deref())?;
+    let image_base = if identity.owner.is_main() {
         ROM_BASE as u32
     } else {
         OVERLAY_BASE as u32
     };
-    let stem = owner.address_stem();
+    let stem = identity.stem();
     let key = source_cache_key(
         &options.source,
-        &routing_source.to_string_lossy(),
+        &identity.routing.to_string_lossy(),
         &stem,
         &options.flags,
         &options.configuration,
@@ -148,8 +172,6 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         patch_text.as_deref(),
     )?;
     let cache = cache_entry::sqlite::SqliteCache::open(&work.join("cache.sqlite3"))?;
-    let candidate_path = work.join("candidate.bin");
-    let reference_path = work.join("reference.bin");
     if options.first && !options.allocator_order {
         if let Some(stdout) = cached_first(&cache, &key) {
             return Ok(RenderOutput {
@@ -166,14 +188,7 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         .then(|| cached_bins(&cache, &key))
         .flatten();
     let source = if options.allocator_order || cached.is_none() {
-        match patch_text.as_deref() {
-            Some(patch) => {
-                apply_unified_diff_in_tree(root, &options.source, patch, &work.join("try"))?
-                    .to_string_lossy()
-                    .into_owned()
-            }
-            None => options.source.clone(),
-        }
+        staged_source(root, options, &work, patch_text.as_deref())?
     } else {
         options.source.clone()
     };
@@ -183,7 +198,7 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         let rom = std::fs::read(rom_path).map_err(|error| format!("{rom_path}: {error}"))?;
         let verification = verify_candidate_owned_routed_with_object(
             &source,
-            &routing_source.to_string_lossy(),
+            &identity.routing.to_string_lossy(),
             &stem,
             &rom,
             work.to_string_lossy().as_ref(),
@@ -193,12 +208,13 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
             &options.configuration,
             options.precompiled_object.as_deref(),
         )?;
-        let size = options.size.or_else(|| region_size(root, owner.address())).ok_or_else(|| {
+        let size = options.size.or_else(|| region_size(root, identity.owner.address())).ok_or_else(|| {
                 format!(
                     "no owner-size entry for {stem} in the claimed or asm build manifests -- pass `--size BYTES` for an independently established owner boundary, or run `make build-claimed` (or `make build-full`) before scoring against the ROM. Falling back to the candidate's own linked length would compare the source against itself."
                 )
             })?;
-        let offset = owner
+        let offset = identity
+            .owner
             .address()
             .checked_sub(image_base)
             .ok_or_else(|| format!("{stem} precedes its image base"))?
@@ -221,27 +237,30 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
             },
         )
     };
-    std::fs::write(&candidate_path, &actual)
-        .map_err(|error| format!("{}: {error}", candidate_path.display()))?;
-    std::fs::write(&reference_path, &expected)
-        .map_err(|error| format!("{}: {error}", reference_path.display()))?;
-    let mut rendered = render_bytes(
-        actual,
-        expected,
-        compile,
-        options,
-        &candidate_path,
-        &reference_path,
-        &cache,
-        &key,
-    )?;
-    if options.allocator_order {
-        let report =
-            crate::allocator::decode(root, options, &routing_source, &stem, &source, &work)?;
-        rendered.stdout.push_str(&report.text);
-        rendered.residual = rendered
+    let mut score = render_bytes(actual, expected, compile, options, &work, &cache, &key)?;
+    let allocator = if options.allocator_order {
+        Some(crate::allocator::decode(
+            root,
+            options,
+            &identity.routing,
+            &stem,
+            &source,
+            &work,
+            &score.candidate,
+            &score.reference,
+        )?)
+    } else {
+        None
+    };
+    if let Some(report) = &allocator {
+        score.output.residual = score
+            .output
             .residual
             .with_decoder_coverage(report.repair.is_some());
+    }
+    let mut rendered = score.output;
+    if let Some(report) = allocator {
+        rendered.stdout.push_str(&report.text);
         rendered.stdout.push_str(&format!(
             "triage_final={} playbook={}\n",
             rendered.residual.class.label(),
@@ -269,37 +288,36 @@ fn render_bytes(
     expected: Vec<u8>,
     compile: &str,
     options: &Options,
-    candidate_path: &Path,
-    reference_path: &Path,
+    work: &Path,
     cache: &cache_entry::sqlite::SqliteCache,
     key: &str,
-) -> Result<RenderOutput, String> {
-    let left = disassemble(&candidate_path.to_string_lossy(), 0.0)?;
-    let right = disassemble(&reference_path.to_string_lossy(), 0.0)?;
+) -> Result<RenderedScore, String> {
+    let candidate_path = work.join("candidate.bin");
+    let reference_path = work.join("reference.bin");
+    for (path, bytes) in [(&candidate_path, &actual), (&reference_path, &expected)] {
+        std::fs::write(path, bytes).map_err(|error| format!("{}: {error}", path.display()))?;
+    }
+    let candidate_rows = disassemble(&candidate_path.to_string_lossy(), 0.0)?;
+    let reference_rows = disassemble(&reference_path.to_string_lossy(), 0.0)?;
+    let candidate = ordered_lines(&candidate_rows);
+    let reference = ordered_lines(&reference_rows);
     let differing = crate::diff::differing_offsets(&actual, &expected);
-    let mut offsets: Vec<_> = left
-        .keys()
-        .chain(right.keys())
-        .fold(Vec::new(), |mut keys, key| {
-            if !keys.contains(&key) {
-                keys.push(key);
-            }
-            keys
-        });
-    offsets.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
-    let (left_lines, right_lines) = (ordered_lines(&left), ordered_lines(&right));
     let residual = classify(
-        &left_lines,
-        &right_lines,
+        &candidate,
+        &reference,
         actual.len(),
         expected.len(),
         differing.len(),
     );
+    let mut offsets: Vec<_> = candidate_rows.keys().chain(reference_rows.keys()).collect();
+    offsets.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+    offsets.dedup();
     let wrong = residual.wrong_instructions;
+    let class = residual.class.label();
     let playbook = residual.class.playbook().unwrap_or("smart-queue");
-    let mut out = format!("candidate={} reference={} differing_halfwords={}\ncompile={compile}\nclass={} wrong_instructions={wrong}\ntriage={} playbook={playbook}\n", actual.len(), expected.len(), differing.len(), residual.class.label(), residual.class.label());
+    let mut out = format!("candidate={} reference={} differing_halfwords={}\ncompile={compile}\nclass={class} wrong_instructions={wrong}\ntriage={class} playbook={playbook}\n", actual.len(), expected.len(), differing.len());
     if options.align {
-        let pairs = align_streams(&left_lines, &right_lines);
+        let pairs = align_streams(&candidate, &reference);
         let matched = pairs
             .iter()
             .position(|(left, right)| left != right)
@@ -339,30 +357,32 @@ fn render_bytes(
             out.push_str(&format!(
                 "  {mark} {:04x}  {:<30.30} {}\n",
                 offset as u64,
-                left.get(offset).unwrap_or(""),
-                right.get(offset).unwrap_or("")
+                candidate_rows.get(offset).unwrap_or(""),
+                reference_rows.get(offset).unwrap_or("")
             ));
         }
     }
-    Ok(RenderOutput {
-        stdout: out,
-        candidate_length: actual.len(),
-        reference_length: expected.len(),
-        differing_halfwords: differing.len(),
-        allocator: None,
-        residual,
+    Ok(RenderedScore {
+        output: RenderOutput {
+            stdout: out,
+            candidate_length: actual.len(),
+            reference_length: expected.len(),
+            differing_halfwords: differing.len(),
+            allocator: None,
+            residual,
+        },
+        candidate,
+        reference,
     })
 }
-fn render_asm(root: &Path, options: &Options, work: &str) -> Result<RenderOutput, String> {
+fn render_asm(
+    root: &Path,
+    options: &Options,
+    work: &Path,
+    identity: &SourceIdentity,
+) -> Result<RenderOutput, String> {
     let started = Instant::now();
-    let (owner, routing_source) = main_source_identity(
-        root,
-        &options.source,
-        options.target,
-        options.owner,
-        options.overlay.as_deref(),
-    )?;
-    let stem = owner.address_stem();
+    let stem = identity.stem();
     let reference = root
         .join("games")
         .join(options.target.as_str())
@@ -374,22 +394,12 @@ fn render_asm(root: &Path, options: &Options, work: &str) -> Result<RenderOutput
             reference.display()
         ));
     }
-    let source = match read_patch(options.patch.as_deref())? {
-        Some(patch) => {
-            let dest = apply_unified_diff_in_tree(
-                root,
-                &options.source,
-                &patch,
-                &Path::new(work).join("try"),
-            )?;
-            dest.to_string_lossy().into_owned()
-        }
-        None => options.source.clone(),
-    };
+    let patch = read_patch(options.patch.as_deref())?;
+    let source = staged_source(root, options, work, patch.as_deref())?;
     let assembly = compile_to_assembly(
         &source,
-        &routing_source.to_string_lossy(),
-        work,
+        &identity.routing.to_string_lossy(),
+        &work.to_string_lossy(),
         &options.flags,
         options.target,
         &options.configuration,
@@ -404,7 +414,7 @@ fn render_asm(root: &Path, options: &Options, work: &str) -> Result<RenderOutput
             .map_err(|error| format!("{}: {error}", reference.display()))?,
         &symbol,
     );
-    let dir = Path::new(work);
+    let dir = work;
     let candidate_path = dir.join("candidate.insns");
     let previous = dir.join("previous.insns");
     let had_previous = candidate_path.is_file();
@@ -802,7 +812,7 @@ mod source_identity_tests {
             r#"{"format":3,"owners":{"main:080b0fa4":"battle/inventory/draw_paged_item_list.c"}}"#,
         )
         .unwrap();
-        let (owner, route) = main_source_identity(
+        let identity = SourceIdentity::resolve(
             &root,
             "games/gs1/src/battle/inventory/draw_paged_item_list.c",
             CompilerTarget::Gs1,
@@ -810,14 +820,14 @@ mod source_identity_tests {
             None,
         )
         .unwrap();
-        assert_eq!(owner, SourceOwner::Main(0x080b0fa4));
-        assert_eq!(route, PathBuf::from("games/gs1/src/080b0fa4.c"));
+        assert_eq!(identity.owner, SourceOwner::Main(0x080b0fa4));
+        assert_eq!(identity.routing, PathBuf::from("games/gs1/src/080b0fa4.c"));
         let source = "games/gs1/recon/en/main/080ab5e4.c";
-        let (owner, route) =
-            main_source_identity(&root, source, CompilerTarget::Gs1, None, None).unwrap();
-        assert_eq!(owner, SourceOwner::Main(0x080ab5e4));
-        assert_eq!(route, PathBuf::from(source));
-        let (_, route) = main_source_identity(
+        let identity =
+            SourceIdentity::resolve(&root, source, CompilerTarget::Gs1, None, None).unwrap();
+        assert_eq!(identity.owner, SourceOwner::Main(0x080ab5e4));
+        assert_eq!(identity.routing, PathBuf::from(source));
+        let identity = SourceIdentity::resolve(
             &root,
             "candidate.c",
             CompilerTarget::Gs1,
@@ -825,7 +835,7 @@ mod source_identity_tests {
             None,
         )
         .unwrap();
-        assert_eq!(route, PathBuf::from("games/gs1/src/080a8904.c"));
+        assert_eq!(identity.routing, PathBuf::from("games/gs1/src/080a8904.c"));
         let _ = fs::remove_dir_all(&root);
     }
 }

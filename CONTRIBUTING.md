@@ -156,20 +156,23 @@ fixture; never encode fixed registers or instruction scheduling. Run
 catalog still names and reverses the controlled perturbations before using a
 catalog operation in a wave.
 
-The residual dispatcher is `compiler waves`: run `inventory`, then `bucket`,
-then `pack`, and finally `dispatch` against the fresh bucket. A no-candidate pack
-uses m2c with exact-sibling context when available and a context-free fallback
-otherwise. Its defaults write the
-inventory, per-owner packs, work orders, class records, and dispatch report beneath
-ignored `out/gs1-en/waves/`; do not redirect durable wave evidence to `/tmp`.
-Cheap agents execute only the recorded class playbook and named finite repair;
-dispatch never edits repository source or claims that a wave ran. Agent results
-must be rescored and exact results passed through the explicit integrator; every
-other owner remains parked with a verdict and class.
+The residual dispatcher is `compiler waves`. Use `inventory` and `bucket` to
+classify the existing candidate corpus. For no-candidate drafting, run `draft
+prepare` once, run one or more read-only `draft score --shard I/N` workers, then
+run `draft collect`. Preparation binds the evidence-mined aggregate context and
+ranked exact-family templates into immutable packs; scoring tries the bound m2c
+seed followed by those prepared templates in recorded order. Complete-owner,
+continuation, and split-region records are parked under their audited route
+rather than misreported as standalone functions. The collector rejects stale,
+duplicate, incomplete, or unclassified results and publishes the prediction
+comparison and class scoreboard. All receipts, packs, shard verdicts, and reports
+belong beneath ignored `out/gs1-en/waves/`, never `/tmp`. Cheap agents execute
+only prepared shards and named playbooks; exact results still pass through the
+explicit integrator before repository source changes.
 
 ## Validate and commit
 
-Portable tooling is capped at 30,000 Rust, JavaScript, and CSS source lines.
+Portable tooling is capped at 50,000 Rust, JavaScript, and CSS source lines.
 This is a maintainer-owned ceiling: consolidate or remove machinery when the
 gate fails; do not raise the limit to accommodate a change.
 

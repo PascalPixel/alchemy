@@ -17,7 +17,6 @@ use regex::Regex;
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 use std::{
-    cmp::Ordering,
     collections::BTreeMap,
     path::{Path, PathBuf},
     process::Command,
@@ -28,6 +27,7 @@ pub struct RenderOutput {
     pub candidate_length: usize,
     pub reference_length: usize,
     pub differing_halfwords: usize,
+    pub allocator: Option<crate::allocator::Report>,
 }
 fn main_source_identity(
     root: &Path,
@@ -149,27 +149,35 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
     let cache = cache_entry::sqlite::SqliteCache::open(&work.join("cache.sqlite3"))?;
     let candidate_path = work.join("candidate.bin");
     let reference_path = work.join("reference.bin");
-    if options.first {
+    if options.first && !options.allocator_order {
         if let Some(stdout) = cached_first(&cache, &key) {
             return Ok(RenderOutput {
                 stdout,
                 candidate_length: 0,
                 reference_length: 0,
                 differing_halfwords: 0,
+                allocator: None,
             });
         }
     }
-    let (actual, expected, compile) = if let Some(pair) = cached_bins(&cache, &key) {
-        pair
-    } else {
-        let source = match patch_text.as_deref() {
+    let cached = (!options.allocator_order)
+        .then(|| cached_bins(&cache, &key))
+        .flatten();
+    let source = if options.allocator_order || cached.is_none() {
+        match patch_text.as_deref() {
             Some(patch) => {
-                let dest =
-                    apply_unified_diff_in_tree(root, &options.source, patch, &work.join("try"))?;
-                dest.to_string_lossy().into_owned()
+                apply_unified_diff_in_tree(root, &options.source, patch, &work.join("try"))?
+                    .to_string_lossy()
+                    .into_owned()
             }
             None => options.source.clone(),
-        };
+        }
+    } else {
+        options.source.clone()
+    };
+    let (actual, expected, compile) = if let Some(pair) = cached {
+        pair
+    } else {
         let rom = std::fs::read(rom_path).map_err(|error| format!("{rom_path}: {error}"))?;
         let verification = verify_candidate_owned_routed_with_object(
             &source,
@@ -196,9 +204,11 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         let end = offset.saturating_add(size).min(rom.len());
         let actual = verification.actual;
         let expected = rom[offset.min(end)..end].to_vec();
-        cache
-            .put(&key, &[("candidate", &actual), ("reference", &expected)])
-            .map_err(|error| format!("cache: {error}"))?;
+        if !options.allocator_order {
+            cache
+                .put(&key, &[("candidate", &actual), ("reference", &expected)])
+                .map_err(|error| format!("cache: {error}"))?;
+        }
         (
             actual,
             expected,
@@ -213,7 +223,7 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         .map_err(|error| format!("{}: {error}", candidate_path.display()))?;
     std::fs::write(&reference_path, &expected)
         .map_err(|error| format!("{}: {error}", reference_path.display()))?;
-    render_bytes(
+    let mut rendered = render_bytes(
         actual,
         expected,
         compile,
@@ -222,7 +232,14 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         &reference_path,
         &cache,
         &key,
-    )
+    )?;
+    if options.allocator_order {
+        let report =
+            crate::allocator::decode(root, options, &routing_source, &stem, &source, &work)?;
+        rendered.stdout.push_str(&report.text);
+        rendered.allocator = Some(report);
+    }
+    Ok(rendered)
 }
 fn read_patch(path: Option<&str>) -> Result<Option<String>, String> {
     path.map(|path| {
@@ -259,13 +276,16 @@ fn render_bytes(
             }
             keys
         });
-    offsets.sort_by(js_cmp);
+    offsets.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
     let (left_lines, right_lines) = (ordered_lines(&left), ordered_lines(&right));
     let (class, wrong) = residual_class(&left_lines, &right_lines);
     let mut out = format!("candidate={} reference={} differing_halfwords={}\ncompile={compile}\nclass={class} wrong_instructions={wrong}\n", actual.len(), expected.len(), differing.len());
     if options.align {
         let pairs = align_streams(&left_lines, &right_lines);
-        let matched = first_residual_index(&pairs);
+        let matched = pairs
+            .iter()
+            .position(|(left, right)| left != right)
+            .unwrap_or(pairs.len());
         out.push_str(&format!("matched_prefix={matched}\n"));
         let start = if options.first { matched } else { 0 };
         let end = if options.first {
@@ -311,6 +331,7 @@ fn render_bytes(
         candidate_length: actual.len(),
         reference_length: expected.len(),
         differing_halfwords: differing.len(),
+        allocator: None,
     })
 }
 fn render_asm(root: &Path, options: &Options, work: &str) -> Result<RenderOutput, String> {
@@ -394,6 +415,7 @@ fn render_asm(root: &Path, options: &Options, work: &str) -> Result<RenderOutput
         candidate_length: candidate.len(),
         reference_length: expected.len(),
         differing_halfwords: 0,
+        allocator: None,
     })
 }
 fn git_diff_stat(old: &Path, new: &Path) -> Result<String, String> {
@@ -415,7 +437,8 @@ fn git_diff_stat(old: &Path, new: &Path) -> Result<String, String> {
     })
 }
 pub fn alignment_key(instruction: &str) -> String {
-    let text = instruction.split('@').next().unwrap_or(instruction);
+    let registered = without_register(instruction);
+    let text = registered.split('@').next().unwrap_or(&registered);
     let mut out = String::new();
     let mut chars = text.chars().peekable();
     while let Some(c) = chars.next() {
@@ -480,7 +503,7 @@ pub fn residual_class(left: &[String], right: &[String]) -> (&'static str, i64) 
 }
 pub fn ordered_lines(rows: &Rows) -> Vec<String> {
     let mut keys: Vec<_> = rows.keys().collect();
-    keys.sort_by(js_cmp);
+    keys.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
     keys.into_iter()
         .map(|key| rows.get(key).unwrap_or("").to_string())
         .collect()
@@ -513,16 +536,6 @@ pub fn without_register(instruction: &str) -> String {
     REG.get_or_init(|| Regex::new(r"(?i)\b(?:r(?:1[0-2]|[0-9])|fp|ip|sl)\b").unwrap())
         .replace_all(instruction, "R")
         .into_owned()
-}
-pub fn first_residual_index(pairs: &[(Option<String>, Option<String>)]) -> usize {
-    pairs
-        .iter()
-        .position(|(left, right)| match (left, right) {
-            (Some(a), Some(b)) => a != b,
-            (None, None) => false,
-            _ => true,
-        })
-        .unwrap_or(pairs.len())
 }
 pub fn align_streams(left: &[String], right: &[String]) -> Vec<(Option<String>, Option<String>)> {
     let (a, b): (Vec<_>, Vec<_>) = (
@@ -772,9 +785,6 @@ fn cached_bins(
     let actual = find("candidate")?;
     let expected = find("reference")?;
     (!actual.is_empty() && !expected.is_empty()).then_some((actual, expected, "cache"))
-}
-fn js_cmp(a: &f64, b: &f64) -> Ordering {
-    a.partial_cmp(b).unwrap_or(Ordering::Equal)
 }
 #[cfg(test)]
 mod region_size_tests {

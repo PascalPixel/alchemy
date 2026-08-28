@@ -3,12 +3,18 @@
   "namespace": "main",
   "address": "0x080b60a0",
   "name": "BattlePresentation_WaitForLinkedState",
-  "status": "measured-draft",
+  "status": "exact",
   "owner_bytes": 166,
   "executable_owner_bytes": 166,
   "candidate_bytes": 166,
-  "differing_halfwords": 6,
-  "wrong_instructions": 12,
+  "differing_halfwords": 0,
+  "wrong_instructions": 0,
+  "classification": "exact-c",
+  "resolved_asm_classification": {
+    "kind": "compiler_output",
+    "retention": "c_candidate",
+    "confidence": "likely"
+  },
   "cross_edition": {
     "object_bytes": 166,
     "relocation_normalized_core_bytes": 134,
@@ -31,11 +37,33 @@
     "waits up to thirty ticks for both ready bits and matching shared values",
     "rejects twenty-five consecutive not-ready observations and disabled synchronization modes"
   ],
-  "bounded_search": {
-    "mode": "screen-only",
-    "attempted": 0,
-    "exact": false,
-    "reason": "The candidate now matches the reference extent exactly (166/166 bytes) with 6 differing halfwords and 12 wrong instructions, all confined to one self-contained address computation where the tool classifies the residual as 'allocation' (a register-letter relabeling, not a structural or logic difference). No automated permutation search has been run; the remaining gap did not move across many tried operand orderings, temporary-variable placements, and declared types for that computation, consistent with an allocator tie-break rather than a source-shape error."
+  "register_gate_step4": {
+    "date": "2026-08-28",
+    "closure_ordinal": 4,
+    "required_closures": 5,
+    "result": "adopted-byte-exact",
+    "baseline_differing_halfwords": 6,
+    "final_differing_halfwords": 0,
+    "repair_pattern": "split-opposite-side-and-scaled-offset-carriers",
+    "decoder_signal": "The inline opposite-side calculation coalesced its XOR result with side in r2; the reference retains opposite_side in r3 and reuses r2 for scaling.",
+    "source_edit": "Represent side and opposite_side as two carriers, reuse side for the multiply-by-three chain, and spell the final multiply-by-eight as an in-place shift before forming the address.",
+    "compiler_effect": "GCC emits side in r2, opposite_side in r3, reuses r2 for the scaled offset, loads the base into r3, and performs the final address add in the reference order.",
+    "bounded_confirmation": {
+      "baseline_differing_halfwords": 6,
+      "compound_single_carrier_differing_halfwords": 8,
+      "two_carrier_differing_halfwords": 3,
+      "in_place_final_shift_differing_halfwords": 0,
+      "candidate_bytes": 166,
+      "reference_bytes": 166,
+      "linked_byte_differences": 0
+    },
+    "production": {
+      "source": "games/gs1/src/battle/presentation/wait_for_linked_state.c",
+      "compiler_route": "canonical-gcc296",
+      "compiler_overrides": [],
+      "retained_assembly_removed": true,
+      "integration_gate": "tools/check integrate accepted 166/166 linked bytes"
+    }
   },
   "notes": [
     "Independent object analysis bounds this owner at 166 executable bytes and proves all 134 relocation-normalized core bytes identical across the six approved GS1 editions.",

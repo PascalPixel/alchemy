@@ -1,0 +1,203 @@
+{
+  "schema_version": 1,
+  "format": "alchemy-compiler-repair-patterns",
+  "catalog_version": "register-wall-v2",
+  "compiler_family": "gcc296",
+  "annotation_free": true,
+  "search": {
+    "baseline_first": true,
+    "discovery_order": "structured-decoder-repair-then-catalog",
+    "seed_rotation": true,
+    "enumeration": "baseline plus the finite alternatives for the single named repair",
+    "max_choices": 16,
+    "max_edits_per_candidate": 1,
+    "report": [
+      "enabled_dimensions",
+      "decoder_repair",
+      "decoder_evidence_sha256",
+      "catalog_choices",
+      "raw_choices",
+      "unique_choices",
+      "seed"
+    ]
+  },
+  "dimensions": [
+    "declaration_order",
+    "temporary",
+    "block_lifetime",
+    "evaluation_order",
+    "commutative_order",
+    "loop_spelling"
+  ],
+  "signals": {
+    "swap_declarations": ["declaration_order"],
+    "split_lifetime": ["block_lifetime", "loop_spelling"],
+    "merge_lifetime": ["temporary"],
+    "reciprocal-register-role-swap": [
+      "temporary",
+      "evaluation_order",
+      "commutative_order"
+    ]
+  },
+  "operations": {
+    "declaration_order": ["swap_decoder_named_uninitialized_declarations"],
+    "temporary": [
+      "merge_decoder_named_xor_temporary",
+      "introduce_xor_result_temporary",
+      "introduce_shared_zero_carrier",
+      "inline_xor_helper"
+    ],
+    "block_lifetime": ["inline_decoder_named_pointer_at_its_two_dereferences"],
+    "evaluation_order": ["materialize_pure_xor_lvalue_before_decoder_named_rhs"],
+    "commutative_order": ["swap_pure_xor_operands"],
+    "loop_spelling": ["recreate_decoder_named_value_at_guard_and_backedge"]
+  },
+  "safety": {
+    "global": [
+      "mask comments, literals, and preprocessor directives before site matching",
+      "refuse preprocessor conditionals",
+      "require_one_decoder-named repair and one matching source site",
+      "deduplicate_before_seed rotation",
+      "generate_collision-free temporary names"
+    ],
+    "declaration_order": ["same_scope", "no_initializer_dependency_crossing"],
+    "temporary": [
+      "decoder-named source temporary has exactly one use",
+      "xor-only reciprocal-role alternatives",
+      "pure expressions and lvalues",
+      "not_volatile",
+      "shared-zero rewrite only for its confirmed two-clear-and-mask shape",
+      "inline helper rewrite requires one named XOR temporary followed by exactly one pure compound XOR in the same singleton block"
+    ],
+    "block_lifetime": [
+      "decoder-named pointer has one assignment and exactly two dereferences",
+      "not_volatile",
+      "assignment expression is side-effect-free"
+    ],
+    "evaluation_order": ["xor-only", "side_effect-free expressions"],
+    "commutative_order": ["xor-only", "side_effect-free operands"],
+    "loop_spelling": [
+      "does not rewrite loop control",
+      "only inlines the decoder-named pointer expression at its two proven uses"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "spill-slot-declaration-order",
+      "kind": "controlled-exact-recovery",
+      "owner": "main:080b362c",
+      "signal": "swap_declarations",
+      "decoder_edit": "swap_declarations(win2,object)",
+      "operation": "swap_decoder_named_uninitialized_declarations",
+      "perturbation": "Move object ahead of win2 in the local declaration order.",
+      "perturbed_differing_halfwords": 5,
+      "result": "pass"
+    },
+    {
+      "id": "loop-guard-lifetime-split",
+      "kind": "controlled-exact-recovery",
+      "owner": "main:0807a550",
+      "signal": "split_lifetime",
+      "decoder_edit": "split_lifetime(limit) detail=recreate-at-guard-and-backedge",
+      "operation": "inline_decoder_named_pointer_at_its_two_dereferences",
+      "perturbation": "Cache limit across the do/while loop instead of recreating it at the guard and backedge.",
+      "perturbed_differing_halfwords": 7,
+      "result": "pass"
+    },
+    {
+      "id": "shared-zero-carrier",
+      "kind": "controlled-exact-recovery",
+      "owner": "main:0808f1c0",
+      "signal": "merge_lifetime",
+      "decoder_edit": "merge_lifetime(zero_carrier) detail=keep-zero-live-through-clears-and-mask",
+      "operation": "introduce_shared_zero_carrier",
+      "perturbation": "Remove the shared zero carrier used by the clears and mask operation.",
+      "perturbed_differing_halfwords": 1,
+      "result": "pass"
+    },
+    {
+      "id": "reciprocal-register-role-floor",
+      "kind": "real-floor-signal",
+      "owner": "main:080a8c2c",
+      "signal": "reciprocal-register-role-swap",
+      "baseline_differing_halfwords": 4,
+      "result": "closed-by-inline-two-operand-xor-boundary"
+    },
+    {
+      "id": "inline-two-operand-xor-boundary",
+      "kind": "real-floor-exact-recovery",
+      "owner": "main:080a8c2c",
+      "signal": "reciprocal-register-role-swap",
+      "decoder_edit": "inline_two_operand_xor_boundary(left)",
+      "operation": "inline_xor_helper",
+      "before_differing_halfwords": 4,
+      "after_differing_halfwords": 0,
+      "effect": "Preserve mask=r3 and tile=r2 while making the first store precede both later loads in sched2.",
+      "result": "pass-adopted"
+    }
+  ],
+  "recorded_repairs": [
+    {
+      "id": "preload-adjacent-halfwords-before-signed-carrier-use",
+      "kind": "real-floor-exact-recovery",
+      "owner": "main:08077f70",
+      "signal": "independent-store-scheduled-behind-carrier-sign-extension",
+      "before_differing_halfwords": 3,
+      "after_differing_halfwords": 0,
+      "source_shape": "Copy both adjacent u16 fields before loading the first field through a named s16 carrier for its dependent ratio expression.",
+      "supporting_exact_owner": "main:0807808c",
+      "catalog_status": "recorded-not-generalized",
+      "result": "pass-adopted"
+    },
+    {
+      "id": "materialize-message-and-merge-count-carrier",
+      "kind": "real-floor-exact-recovery",
+      "owner": "main:080a8f40",
+      "signal": "argument scheduling plus split conditional carrier",
+      "before_differing_halfwords": 28,
+      "after_differing_halfwords": 0,
+      "source_shape": "Inline offset-first indexed loads, materialize the masked message before its coordinate, and update one count carrier in place across the sentinel branch.",
+      "intermediate_differing_halfwords": [15, 6],
+      "catalog_status": "recorded-not-generalized",
+      "result": "pass-adopted"
+    },
+    {
+      "id": "split-opposite-side-and-scaled-offset-carriers",
+      "kind": "real-floor-exact-recovery",
+      "owner": "main:080b60a0",
+      "signal": "reciprocal XOR-result and scaled-offset register roles",
+      "before_differing_halfwords": 6,
+      "after_differing_halfwords": 0,
+      "source_shape": "Keep side and opposite_side distinct, reuse side for scaling, then shift side in place before adding the address base.",
+      "intermediate_differing_halfwords": [8, 3],
+      "catalog_status": "recorded-not-generalized",
+      "result": "pass-adopted"
+    },
+    {
+      "id": "paired-phase-carrier-merge",
+      "kind": "real-floor-exact-recovery",
+      "owner": "main:0808ef70",
+      "signal": "two reciprocal callee-saved registers each carry two non-overlapping semantic phases",
+      "before_differing_halfwords": 11,
+      "after_differing_halfwords": 0,
+      "source_shape": "Merge state with the later loop counter and, in parallel, merge the early resource pointer with the later spawn-Z coordinate; neither one-sided merge nor an adjacent typed copy survives with the required allocation priority.",
+      "negative_control_differing_halfwords": 16,
+      "catalog_status": "recorded-not-generalized",
+      "result": "pass-adopted"
+    }
+  ],
+  "semantic_guards": [
+    {
+      "id": "call-via-is-indirect",
+      "source_of_truth": [
+        "tools/compiler-core/src/call_via_data.rs",
+        "tools/compiler-core/src/symbols.rs"
+      ],
+      "match": "source directly calls Func_080072e4 through Func_08007318, the main-image r0-r13 call-via bank",
+      "effect": "reject a direct-call model and require a typed indirect function-pointer call before mutation",
+      "mutation_dimension": null,
+      "evidence": "main:080a8c2c",
+      "overlay_scope": "not yet implemented; fail-closed named repair matching remains in force"
+    }
+  ]
+}

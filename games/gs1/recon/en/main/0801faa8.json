@@ -15,6 +15,25 @@
     "command": "cargo run --offline --quiet --release --manifest-path tools/compiler/Cargo.toml -- candidate-show games/gs1/recon/en/main/0801faa8.c",
     "note": "Improved from differing_halfwords=3 by eliminating the separate `s32 error` local entirely and writing `result = 0 - 9` / `result = 0 - 3` directly at each site (the goto-target `negate:` label is now a no-op). The second occurrence (result = 0 - 3) now compiles byte-identical to the reference (movs r7,#3 / negs r7,r7), confirming the hypothesis: the reference reuses r7 -- already dead from the early `result = 0` -- for the error/negate computation, and the separate `error` local was blocking that reuse. One residual remains at the FIRST occurrence (result = 0 - 9): r7 is provably 0 on that control-flow path, so this compiler folds the whole computation into a single `subs r7, #9`, where the reference instead materializes `movs r7, #9` and jumps forward to share the second occurrence's `negs r7, r7`. Two attempts to force a real shared negate (goto negate; ... negate: result = -result / result = 0 - result, applied symmetrically) each regressed sharply (wrong length, wrong_instructions >=36) rather than converging -- this compiler will not give up the subs-fold once r7's liveness is transparent enough to prove it. Needs the same class of fix as the allocator-order/liveness lever being built for the wider register-wall cluster, not another manual respelling of this pair."
   },
+  "register_gate_step4_probe": {
+    "date": "2026-08-28",
+    "result": "exhausted-not-a-closure",
+    "baseline": {"candidate_bytes": 160, "reference_bytes": 160, "differing_halfwords": 2},
+    "decoder_signal": "combine-destroys-copy-affinity-or-shared-result-inverts-allocation-priority",
+    "decoder_evidence": [
+      "The structurally correct shared-negate s32 form raises result pseudo 34 from 5 uses, 4 sets, span 82 to 7 uses, 5 sets, span 86.",
+      "That moves result ahead of the save-slot address in lreg priority, so result takes r6 and the address is forced to r7.",
+      "The separate-magnitude form preserves address=r6 and result=r7, but combine replaces magnitude-to-result copy plus negate with a cross-register negate, reusing r6 for the path-disjoint magnitude."
+    ],
+    "requested_edit": "preserve magnitude-to-result copy affinity through combine without raising result ahead of the address pseudo",
+    "bounded_results": [
+      {"shape": "shared-negate-s32", "candidate_bytes": 160, "effect": "correct control flow; result/address r6-r7 bank swap"},
+      {"shape": "separate-s32-magnitude", "candidate_bytes": 160, "differing_halfwords": 3, "effect": "correct banks; magnitude in r6 and cross-register negate into r7"},
+      {"shape": "named-slot-before-allocation-call", "candidate_bytes": 160, "effect": "extended pointer lifetime but did not change the shared form's allocation priority"},
+      {"shape": "inline-negate-boundary-on-separate-magnitude", "candidate_bytes": 160, "differing_halfwords": 3, "effect": "combine still emitted the same cross-register negate"}
+    ],
+    "decision": "The exact adopted corpus contains no untried local idiom satisfying the call ordering, shared negate, and r6/r7 carrier constraints. The source and retained assembly remain unchanged; this probe does not count toward the five required closures."
+  },
   "shape": {
     "derivation": "games/gs1/src/unidentified/main/runtime/runtime_owner_249.c (and its structurally closer sibling runtime_owner_154.c) supplied the value!=-1/Func_080056cc/Func_0801776c error-report idiom. This owner is a fuller sibling: it adds a Func_08004970(0x1000) scratch buffer, a Func_08005a78 call, a Func_080072f0 (Mem_Copy) of 16 bytes into buffer+0x4e4, and a Func_08002df0 free before return -- reconstructed against real signatures in runtime_mem.h and the save_state_family.h-backed 08005a78.c/08005920.c. No prior draft existed for this owner."
   },

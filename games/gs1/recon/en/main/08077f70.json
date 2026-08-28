@@ -2,13 +2,14 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x08077f70",
-  "status": "measured-draft",
+  "name": "Party_ApplyFixedProgressionSetup",
+  "status": "exact",
   "owner_bytes": 284,
   "executable_owner_bytes": 284,
   "candidate_bytes": 284,
-  "differing_halfwords": 3,
+  "differing_halfwords": 0,
   "wrong_instructions": 0,
-  "classification": "reset-two-owner-ratio-bars-and-swap-item",
+  "classification": "exact-c",
   "resolved_asm_classification": {
     "kind": "compiler_output",
     "retention": "c_candidate",
@@ -18,6 +19,34 @@
     "below_threshold_guess": "main:080a4800 (games/gs1/src/menu/select_quantity.c), score 7014/10000 in this session's regenerated games/gs1/recon/compiler-families.json (the task brief's cited main:0807... open_confirm_prompt.c guess at 7361 is stale/no longer present)",
     "call_target_similarity_basis_points": 0,
     "verdict": "false lead, confirmed by hand-trace -- none of this owner's real callees (game_flags/set.c, game_flags/clear.c, owner/refresh_derived_data.c, Func_08077428, FixedPoint_Ratio, inventory/equip.c, owner/action/add.c) are shared with the alternative; only the register-shuffle prologue shape matched"
+  },
+  "register_gate_step4": {
+    "date": "2026-08-28",
+    "closure_ordinal": 2,
+    "required_closures": 5,
+    "result": "adopted-byte-exact",
+    "baseline_differing_halfwords": 3,
+    "final_differing_halfwords": 0,
+    "repair_pattern": "preload-adjacent-halfwords-before-signed-carrier-use",
+    "decoder_signal": "independent second store scheduled behind first carrier sign extension",
+    "source_edit": "Use the exact sibling's unsigned two-field copy block, then introduce one signed X-limit carrier for the ratio call.",
+    "compiler_effect": "Both ldrh values remain live through both strh stores; only after the Y store does GCC sign-extend the X carrier for FixedPoint_Ratio.",
+    "supporting_exact_owner": "main:0807808c",
+    "bounded_confirmation": {
+      "verbatim_sibling_idiom_differing_halfwords": 0,
+      "typed_signed_carriers_differing_halfwords": 6,
+      "typed_unsigned_carriers_differing_halfwords": 6,
+      "candidate_bytes": 284,
+      "reference_bytes": 284,
+      "linked_byte_differences": 0
+    },
+    "production": {
+      "source": "games/gs1/src/party/apply_fixed_progression_setup.c",
+      "compiler_route": "canonical-gcc296",
+      "compiler_overrides": [],
+      "retained_assembly_removed": true,
+      "integration_gate": "tools/check integrate accepted 284/284 linked bytes"
+    }
   },
   "notes": [
     "Recovered entirely from games/gs1/asm/08077f70.s hand-traced instruction-by-instruction, plus already-adopted exact sibling sources reached through its real call targets: game_flags/set.c and game_flags/clear.c (Func_08079358/Func_08079374), owner/refresh_derived_data.c (Func_08079ae8), inventory/equip.c (Func_08078708, confirms the (owner, slot) call signature), owner/action/add.c (Func_08078e28), and owner_state.h (OwnerInventoryState.inventory at 0xd8, Owner_GetState/Func_08077394). The ratio-pair field layout (limitX/limitY/inputX/inputY/outputX/outputY at struct offsets 52/54/56/58/20/22) and its FixedPoint_Ratio(value<<14, value) clamp-to-[0,0x4000] shape were confirmed byte-for-byte against three already-adopted siblings: owner/update_ratio_pair.c, owner/update_second_input_and_ratios.c, and owner/recalculate_ratios.c, which independently document the same struct under three different field-naming schemes. games/gs1/recon/en/main/0807a664.c's dossier independently confirms the Data_02000240 global blob and the Owner_RefreshDerivedData(owner)+Func_08077428(owner) call pairing used here.",

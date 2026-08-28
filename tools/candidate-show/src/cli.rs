@@ -1,7 +1,7 @@
 use candidate_compiler::verify::{CandidateCompilerConfiguration, CandidateCompilerFamily};
 use compiler_core::routing::CompilerTarget;
 use std::path::Path;
-pub const USAGE: &str = "usage: candidate-show <candidate.c> [--unit ID] [--rom FILE] [--target gs1|gs2] [--owner ADDRESS] [--size BYTES] [--reference-symbols] [--work DIR] [--family routed|gcc296|old-agbcc] [--flags -fa,-fb] [--remove-flags -fa,-fb] [--align] [--first] [--asm] [--patch FILE]";
+pub const USAGE: &str = "usage: candidate-show <candidate.c> [--unit ID] [--rom FILE] [--target gs1|gs2] [--owner ADDRESS] [--size BYTES] [--reference-symbols] [--work DIR] [--family routed|gcc296|old-agbcc] [--flags -fa,-fb] [--remove-flags -fa,-fb] [--align] [--first] [--allocator-order] [--asm] [--patch FILE]";
 pub const SHORT_USAGE: &str = "usage: candidate-show <candidate.c> [--rom FILE]";
 #[derive(Debug, Clone)]
 pub struct Options {
@@ -18,6 +18,7 @@ pub struct Options {
     pub size: Option<usize>,
     pub align: bool,
     pub first: bool,
+    pub allocator_order: bool,
     pub asm: bool,
     pub patch: Option<String>,
 }
@@ -44,6 +45,7 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
         size: None,
         align: false,
         first: false,
+        allocator_order: false,
         asm: false,
         patch: None,
     };
@@ -81,8 +83,9 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
             "--reference-symbols" => options.configuration.reference_symbols = true,
             "--work" => options.work = next(&mut index).cloned(),
             "--align" => options.align = true,
-            "--first" => {
-                options.first = true;
+            "--first" | "--allocator-order" => {
+                options.first |= arg == "--first";
+                options.allocator_order |= arg == "--allocator-order";
                 options.align = true;
             }
             "--asm" => options.asm = true,

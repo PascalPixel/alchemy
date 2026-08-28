@@ -8,7 +8,7 @@ use compiler_core::routing::{root, CompilerTarget};
 use compiler_core::translation_units::{AbsoluteSymbol, AbsoluteSymbolKind};
 use compiler_core::{external_symbol, ExternalSymbol, CALL_VIA_BASE};
 use std::collections::BTreeMap;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 pub const ROM_BASE: f64 = 0x0800_0000 as f64;
 pub type CandidateCompilerFamily = CompilerFamily;
@@ -59,7 +59,7 @@ pub fn run<S: AsRef<str>>(command: &[S], cwd: &Path) -> Result<String, String> {
         Err(format!("{name} failed: {detail}"))
     }
 }
-fn assemble(assembly: &str, object: &str) -> Result<(), String> {
+pub fn assemble(assembly: &str, object: &str) -> Result<(), String> {
     run(
         &[
             "arm-none-eabi-as",
@@ -73,7 +73,7 @@ fn assemble(assembly: &str, object: &str) -> Result<(), String> {
     )
     .map(drop)
 }
-fn copy_text(object: &str, binary: &str) -> Result<(), String> {
+pub fn copy_text(object: &str, binary: &str) -> Result<(), String> {
     run(
         &[
             "arm-none-eabi-objcopy",
@@ -124,16 +124,18 @@ pub fn compile_to_assembly(
         extra_compiler_flags,
         compiler,
         configuration,
+        root(),
     )?;
     Ok(assembly)
 }
-fn compile_source(
+pub fn compile_source(
     source: &str,
     routing_source: &str,
     assembly: &str,
     extra_flags: &[String],
     compiler: CompilerTarget,
     configuration: &CandidateCompilerConfiguration,
+    cwd: &Path,
 ) -> Result<(), String> {
     let mut options = SourceToAssemblyPlanOptions::new(compiler, routing_source, source, assembly);
     options.family = configuration.family;
@@ -150,9 +152,21 @@ fn compile_source(
             .into_owned(),
     );
     for step in source_to_assembly_plan(&options)?.steps {
-        run(&step.command, root())?;
+        run(&step.command, cwd)?;
     }
-    apply_label_word_bias(assembly, configuration.label_word_bias)
+    let assembly_path = resolve_against_cwd(assembly, cwd);
+    apply_label_word_bias(
+        &assembly_path.to_string_lossy(),
+        configuration.label_word_bias,
+    )
+}
+fn resolve_against_cwd(path: &str, cwd: &Path) -> PathBuf {
+    let path = Path::new(path);
+    if path.is_absolute() {
+        path.to_path_buf()
+    } else {
+        cwd.join(path)
+    }
 }
 #[allow(clippy::too_many_arguments)]
 pub fn verify_candidate_owned_routed(
@@ -220,6 +234,7 @@ pub fn verify_candidate_owned_routed_with_object(
             extra_compiler_flags,
             compiler,
             configuration,
+            root(),
         )?;
         assemble(&assembly, &object)?;
     }
@@ -642,5 +657,25 @@ mod reference_symbol_tests {
             ".L2:\n.word .L2 + 0x8000\n.word External\n"
         );
         let _ = std::fs::remove_file(path);
+    }
+    #[test]
+    fn overlay_bias_resolves_relative_assembly_against_compile_cwd() {
+        let cwd = std::env::temp_dir().join(format!(
+            "alchemy-overlay-label-bias-cwd-{}",
+            std::process::id()
+        ));
+        let relative = "nested/candidate.s";
+        let path = cwd.join(relative);
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        std::fs::write(&path, ".L2:\n.word .L2\n").unwrap();
+
+        let resolved = resolve_against_cwd(relative, &cwd);
+        apply_label_word_bias(&resolved.to_string_lossy(), Some(0x8000)).unwrap();
+
+        assert_eq!(
+            std::fs::read_to_string(&path).unwrap(),
+            ".L2:\n.word .L2 + 0x8000\n"
+        );
+        let _ = std::fs::remove_dir_all(cwd);
     }
 }

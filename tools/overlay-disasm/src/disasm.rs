@@ -130,67 +130,6 @@ fn reachable(input: &[u8], base: i64) -> BTreeMap<i64, i64> {
     }
     instructions
 }
-pub fn call_via_bank_base(image: &[u8], base: i64) -> Option<i64> {
-    let halfword = |offset: i64| -> i64 {
-        let at = offset as usize;
-        image[at] as i64 | ((image[at + 1] as i64) << 8)
-    };
-    let length = image.len() as i64;
-    let mut bank: i64 = -1;
-    let mut offset = 0i64;
-    while offset + 16 <= length && bank < 0 {
-        let mut matched = true;
-        let mut slot = 0i64;
-        while slot < 4 && matched {
-            matched = halfword(offset + slot * 4) == (0x4700 | (slot << 3))
-                && halfword(offset + slot * 4 + 2) == 0x46c0;
-            slot += 1;
-        }
-        if matched {
-            bank = offset;
-        }
-        offset += 2;
-    }
-    if bank < 0 {
-        return None;
-    }
-    let mut votes: Vec<(i64, i64)> = Vec::new();
-    let mut site = 0i64;
-    while site + 4 <= length {
-        let high = halfword(site);
-        let low = halfword(site + 2);
-        if high & 0xf800 != 0xf000 || low & 0xf800 != 0xf800 {
-            site += 2;
-            continue;
-        }
-        let packed = ((high & 0x7ff) << 12) | ((low & 0x7ff) << 1);
-        let stored = i64::from(((packed as i32) << 9) >> 9);
-        let slot = stored + 2 - bank;
-        if !(0..=13 * 4).contains(&slot) || slot % 4 != 0 {
-            site += 2;
-            continue;
-        }
-        if halfword(bank + slot) != (0x4700 | ((slot / 4) << 3)) {
-            site += 2;
-            continue;
-        }
-        let candidate = base + site + 4 + stored - slot;
-        match votes.iter_mut().find(|(key, _)| *key == candidate) {
-            Some(entry) => entry.1 += 1,
-            None => votes.push((candidate, 1)),
-        }
-        site += 2;
-    }
-    let mut best: Option<i64> = None;
-    let mut best_votes = 0i64;
-    for (candidate, count) in votes {
-        if count > best_votes {
-            best = Some(candidate);
-            best_votes = count;
-        }
-    }
-    best
-}
 pub fn build_overlay_source(input: &[u8], base: i64) -> Result<String, String> {
     let decoded = input;
     if !decoded.len().is_multiple_of(2) {

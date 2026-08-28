@@ -2,34 +2,26 @@ use candidate_show::allocator::{Repair, RepairPlan};
 use compiler_core::CALL_VIA_BASE;
 use regex::{Captures, Regex};
 use std::{collections::HashSet, ops::Range};
-
 pub const CATALOG_VERSION: &str = "register-wall-v3";
 const MAX_CHOICES: usize = 16;
 type Mutation = (String, String);
 type Mutations = Result<Vec<Mutation>, String>;
-
 #[derive(Clone, Debug, Eq, PartialEq)]
 struct Variant {
     source: String,
     mutations: Vec<String>,
 }
-
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Permutation {
     variants: Vec<Variant>,
     raw_count: usize,
-    dimensions: Vec<&'static str>,
 }
-
 impl Permutation {
     pub fn count(&self) -> usize {
         self.variants.len()
     }
     pub fn raw_count(&self) -> usize {
         self.raw_count
-    }
-    pub fn dimensions(&self) -> &[&'static str] {
-        &self.dimensions
     }
     pub fn mutations(&self, index: usize) -> Option<&[String]> {
         Some(&self.variants.get(index)?.mutations)
@@ -41,11 +33,9 @@ impl Permutation {
             .ok_or_else(|| format!("permutation index {index} exceeds count {}", self.count()))
     }
 }
-
 fn regex(pattern: &str) -> Regex {
     Regex::new(pattern).unwrap()
 }
-
 fn masked(source: &str) -> String {
     let pattern =
         regex(r#"(?s:/\*.*?\*/)|(?m://[^\n]*|^[ \t]*#[^\n]*)|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'"#);
@@ -64,7 +54,6 @@ fn masked(source: &str) -> String {
     }
     output
 }
-
 fn only<'a>(pattern: &Regex, text: &'a str, reason: &str) -> Result<Captures<'a>, String> {
     let mut found = pattern.captures_iter(text);
     let first = found.next().ok_or_else(|| reason.to_string())?;
@@ -73,11 +62,32 @@ fn only<'a>(pattern: &Regex, text: &'a str, reason: &str) -> Result<Captures<'a>
     }
     Ok(first)
 }
-
 fn capture<'a>(source: &'a str, found: &Captures, index: usize) -> &'a str {
     &source[found.get(index).unwrap().range()]
 }
-
+#[derive(Debug)]
+struct Site {
+    range: Range<usize>,
+    fields: Vec<String>,
+}
+fn sites(source: &str, code: &str, pattern: &str) -> Vec<Site> {
+    regex(pattern)
+        .captures_iter(code)
+        .map(|found| Site {
+            range: found.get(0).unwrap().range(),
+            fields: (1..found.len())
+                .map(|index| capture(source, &found, index).to_string())
+                .collect(),
+        })
+        .collect()
+}
+fn one_site(source: &str, code: &str, pattern: &str, reason: &str) -> Result<Site, String> {
+    let mut found = sites(source, code, pattern);
+    if found.len() != 1 {
+        return Err(reason.into());
+    }
+    Ok(found.pop().unwrap())
+}
 fn edited(source: &str, mut changes: Vec<(Range<usize>, String)>) -> Result<String, String> {
     changes.sort_by_key(|change| change.0.start);
     if changes
@@ -92,7 +102,6 @@ fn edited(source: &str, mut changes: Vec<(Range<usize>, String)>) -> Result<Stri
     }
     Ok(output)
 }
-
 fn variants(source: &str, range: Range<usize>, forms: Vec<(&str, String)>) -> Mutations {
     forms
         .into_iter()
@@ -104,11 +113,9 @@ fn variants(source: &str, range: Range<usize>, forms: Vec<(&str, String)>) -> Mu
         })
         .collect()
 }
-
 fn words(name: &str) -> Regex {
     regex(&format!(r"\b{}\b", regex::escape(name)))
 }
-
 fn variable_uses(code: &str, name: &str) -> usize {
     words(name)
         .find_iter(code)
@@ -120,7 +127,6 @@ fn variable_uses(code: &str, name: &str) -> usize {
         })
         .count()
 }
-
 fn fresh(source: &str, stem: &str) -> String {
     let mut name = stem.to_string();
     while words(&name).is_match(source) {
@@ -128,14 +134,12 @@ fn fresh(source: &str, stem: &str) -> String {
     }
     name
 }
-
 fn pure(text: &str) -> bool {
     !["++", "--", "=", ";", ",", "\"", "'"]
         .iter()
         .any(|token| text.contains(token))
         && !regex(r"\b[A-Za-z_][A-Za-z0-9_]*\s*\(").is_match(text)
 }
-
 fn scope(code: &str, end: usize) -> Option<usize> {
     let mut stack = Vec::new();
     for (at, byte) in code.as_bytes()[..end].iter().enumerate() {
@@ -149,7 +153,6 @@ fn scope(code: &str, end: usize) -> Option<usize> {
     }
     stack.last().copied()
 }
-
 fn declaration<'a>(
     source: &'a str,
     code: &str,
@@ -167,60 +170,19 @@ fn declaration<'a>(
     let range = found.get(0).unwrap().range();
     Ok((range.clone(), &source[range]))
 }
-
-#[derive(Debug)]
-struct InitializedDeclaration<'a> {
-    range: Range<usize>,
-    indent: &'a str,
-    kind: &'a str,
-    expression: &'a str,
-}
-
-fn initialized_declaration<'a>(
-    source: &'a str,
-    code: &str,
-    name: &str,
-) -> Result<InitializedDeclaration<'a>, String> {
-    let pattern = regex(&format!(
-        r"(?m)^([ \t]+)((?:struct[ \t]+[A-Za-z_][A-Za-z0-9_]*|(?:u|s)(?:8|16|32)|void)[ \t]*\*?)[ \t]*{}[ \t]*=[ \t]*([^;\n]+);[ \t]*(?:\n|$)",
-        regex::escape(name)
-    ));
-    let found = only(
-        &pattern,
-        code,
-        &format!("requires one initialized declaration of {name}"),
-    )?;
-    Ok(InitializedDeclaration {
-        range: found.get(0).unwrap().range(),
-        indent: capture(source, &found, 1),
-        kind: capture(source, &found, 2).trim(),
-        expression: capture(source, &found, 3).trim(),
-    })
-}
-
 fn identifier(name: &str) -> bool {
     regex(r"^[A-Za-z_][A-Za-z0-9_]*$").is_match(name)
 }
-
 fn simple_lvalue(value: &str) -> bool {
     regex(r"^[A-Za-z_][A-Za-z0-9_]*(?:(?:->|\.)[A-Za-z_][A-Za-z0-9_]*)*$").is_match(value)
 }
-
 fn statement_after(code: &str, at: usize) -> Result<Range<usize>, String> {
-    let start = at
-        + code[at..]
-            .find(|character: char| !character.is_ascii_whitespace())
-            .ok_or("expected a following statement")?;
-    let tail = &code[start..];
-    let end = tail
-        .find(';')
-        .ok_or("following statement has no terminator")?;
-    if tail[..end].contains('{') || tail[..end].contains('}') {
-        return Err("following source shape crosses a block boundary".into());
-    }
-    Ok(start..start + end + 1)
+    let found = regex(r"(?s)^\s*([^{};\s][^{};]*;)")
+        .captures(&code[at..])
+        .ok_or("expected one following statement without a block boundary")?;
+    let range = found.get(1).unwrap().range();
+    Ok(at + range.start..at + range.end)
 }
-
 fn scope_chain(code: &str, end: usize) -> Vec<usize> {
     let mut stack = Vec::new();
     for (at, byte) in code.as_bytes()[..end].iter().enumerate() {
@@ -234,7 +196,6 @@ fn scope_chain(code: &str, end: usize) -> Vec<usize> {
     }
     stack
 }
-
 fn swap(source: &str, code: &str, left: &str, right: &str) -> Mutations {
     let (a, a_line) = declaration(source, code, left)?;
     let (b, b_line) = declaration(source, code, right)?;
@@ -247,7 +208,6 @@ fn swap(source: &str, code: &str, left: &str, right: &str) -> Mutations {
         format!("declaration_order:swap_named({left},{right})@{at}"),
     )])
 }
-
 fn split(source: &str, code: &str, name: &str) -> Mutations {
     let (declaration, line) = declaration(source, code, name)?;
     if source.contains("volatile") || !line.contains('*') {
@@ -293,7 +253,6 @@ fn split(source: &str, code: &str, name: &str) -> Mutations {
         ),
     )])
 }
-
 fn zero(source: &str, code: &str) -> Mutations {
     let pattern = regex(
         r"(?m)^([ \t]+)([^;\n=]+?)\s*=\s*0;\n([ \t]+)([^;\n=]+?)\s*=\s*0;\n(?:[ \t]*\n)?([ \t]+)([^;\n=]+?)\s*&=\s*~0x20;",
@@ -318,7 +277,6 @@ fn zero(source: &str, code: &str) -> Mutations {
         vec![("temporary:merge_zero_carrier", text)],
     )
 }
-
 fn inline_xor(source: &str, code: &str, found: &Captures) -> Option<Mutation> {
     let site = found.get(0)?.range();
     let tail = site.end;
@@ -368,7 +326,6 @@ fn inline_xor(source: &str, code: &str, found: &Captures) -> Option<Mutation> {
         ),
     ))
 }
-
 fn reciprocal(source: &str, code: &str, name: &str) -> Mutations {
     if source.contains("volatile") {
         return Err("reciprocal repair refuses volatile source".into());
@@ -415,7 +372,6 @@ fn reciprocal(source: &str, code: &str, name: &str) -> Mutations {
     generated.extend(inline_xor(source, code, &found));
     Ok(generated)
 }
-
 fn preload_adjacent_halfwords(
     source: &str,
     code: &str,
@@ -425,92 +381,71 @@ fn preload_adjacent_halfwords(
     second_source: &str,
     carrier: &str,
 ) -> Mutations {
+    let names = [
+        first_destination,
+        first_source,
+        second_destination,
+        second_source,
+    ];
     if source.contains("volatile")
         || !identifier(carrier)
         || words(carrier).is_match(code)
-        || ![
-            first_destination,
-            first_source,
-            second_destination,
-            second_source,
-        ]
-        .iter()
-        .all(|value| simple_lvalue(value))
+        || !names.iter().all(|name| simple_lvalue(name))
     {
-        return Err(
-            "adjacent-halfword repair requires four named nonvolatile lvalues and a fresh carrier"
-                .into(),
-        );
+        return Err("adjacent-halfword repair requires named nonvolatile lvalues".into());
     }
-    let assignment = |left: &str, right: &str| {
-        let pattern = regex(&format!(
-            r"(?m)^([ \t]+){}[ \t]*=[ \t]*{};[ \t]*(?:\n|$)",
-            regex::escape(left),
-            regex::escape(right)
-        ));
-        only(
-            &pattern,
-            code,
-            &format!("requires one assignment {left} = {right}"),
-        )
-        .map(|found| (found.get(0).unwrap().range(), capture(source, &found, 1)))
-    };
-    let (first, first_indent) = assignment(first_destination, first_source)?;
-    let (second, second_indent) = assignment(second_destination, second_source)?;
-    if first.end > second.start
-        || !code[first.end..second.start].trim().is_empty()
-        || first_indent != second_indent
-        || scope(code, first.start) != scope(code, second.start)
-    {
-        return Err(
-            "adjacent-halfword assignments must be consecutive in one lexical block".into(),
-        );
-    }
-    let dependent = regex(&format!(
-        r"(?m)^([ \t]+)([^;\n=]+?)[ \t]*=[ \t]*([A-Za-z_][A-Za-z0-9_]*)\([ \t]*{}[ \t]*<<[ \t]*([0-9]+)[ \t]*,[ \t]*{}[ \t]*\);[ \t]*(?:\n|$)",
-        regex::escape(first_destination),
-        regex::escape(first_destination)
-    ));
-    let dependent = only(
-        &dependent,
+    let copies = one_site(
+        source,
         code,
-        "requires one dependent two-argument signed-carrier call",
+        &format!(
+            r"(?m)^([ \t]+){}[ \t]*=[ \t]*{};[ \t]*\n([ \t]+){}[ \t]*=[ \t]*{};[ \t]*(?:\n|$)",
+            regex::escape(first_destination),
+            regex::escape(first_source),
+            regex::escape(second_destination),
+            regex::escape(second_source)
+        ),
+        "requires two consecutive named halfword assignments",
     )?;
-    let dependent_range = dependent.get(0).unwrap().range();
-    if dependent_range.start < second.end
-        || scope(code, dependent_range.start) != scope(code, first.start)
-        || !simple_lvalue(capture(source, &dependent, 2).trim())
+    let dependent = one_site(
+        source,
+        code,
+        &format!(
+            r"(?m)^([ \t]+)([^;\n=]+?)[ \t]*=[ \t]*([A-Za-z_][A-Za-z0-9_]*)\([ \t]*{}[ \t]*<<[ \t]*([0-9]+)[ \t]*,[ \t]*{}[ \t]*\);[ \t]*(?:\n|$)",
+            regex::escape(first_destination),
+            regex::escape(first_destination)
+        ),
+        "requires one dependent signed-carrier call",
+    )?;
+    if copies.fields[0] != copies.fields[1]
+        || dependent.range.start < copies.range.end
+        || scope(code, dependent.range.start) != scope(code, copies.range.start)
+        || !simple_lvalue(dependent.fields[1].trim())
     {
-        return Err("dependent signed-carrier call is outside the copy block".into());
+        return Err("named copies and dependent call must share one block".into());
     }
+    let indent = &copies.fields[0];
     let copy = format!(
-        "{first_indent}do {{\n{first_indent}    *(u16 *)&{first_destination} = *(u16 *)&{first_source};\n{first_indent}    *(u16 *)&{second_destination} = *(u16 *)&{second_source};\n{first_indent}}} while (0);\n"
+        "{indent}do {{\n{indent}    *(u16 *)&{first_destination} = *(u16 *)&{first_source};\n{indent}    *(u16 *)&{second_destination} = *(u16 *)&{second_source};\n{indent}}} while (0);\n"
     );
+    let fields = &dependent.fields;
     let dependent_text = format!(
         "{}{{\n{}    s16 {carrier} = {first_destination};\n\n{}    {} = {}({carrier} << {}, {carrier});\n{}}}\n",
-        capture(source, &dependent, 1),
-        capture(source, &dependent, 1),
-        capture(source, &dependent, 1),
-        capture(source, &dependent, 2).trim(),
-        capture(source, &dependent, 3),
-        capture(source, &dependent, 4),
-        capture(source, &dependent, 1),
+        fields[0], fields[0], fields[0], fields[1].trim(), fields[2], fields[3], fields[0],
     );
     Ok(vec![(
         edited(
             source,
             vec![
-                (first.start..second.end, copy),
-                (dependent_range, dependent_text),
+                (copies.range.clone(), copy),
+                (dependent.range, dependent_text),
             ],
         )?,
         format!(
             "temporary+evaluation_order+type_width:preload_adjacent_halfwords({first_destination},{second_destination},{carrier})@{}",
-            first.start
+            copies.range.start
         ),
     )])
 }
-
 fn materialize_message_and_merge_count(
     source: &str,
     code: &str,
@@ -519,172 +454,149 @@ fn materialize_message_and_merge_count(
     coordinate: &str,
     count: &str,
 ) -> Mutations {
+    let names = [indexed_value, message, coordinate, count];
     if source.contains("volatile")
-        || ![indexed_value, message, coordinate, count]
-            .iter()
-            .all(|name| identifier(name))
+        || !names.iter().all(|name| identifier(name))
         || words(message).is_match(code)
     {
-        return Err("message/count repair requires four named nonvolatile identifiers and a fresh message name".into());
+        return Err("message/count repair requires named nonvolatile carriers".into());
     }
-    let item_declaration = regex(&format!(
-        r"(?m)^([ \t]+)u16[ \t]+{}[ \t]*;[ \t]*(?:\n|$)",
-        regex::escape(indexed_value)
-    ));
-    let item_declaration = only(
-        &item_declaration,
+    let declaration = one_site(
+        source,
         code,
-        &format!("requires one u16 declaration of {indexed_value}"),
+        &format!(
+            r"(?m)^([ \t]+)u16[ \t]+{}[ \t]*;[ \t]*(?:\n|$)",
+            regex::escape(indexed_value)
+        ),
+        "requires one indexed-value declaration",
     )?;
-    let count_declaration = regex(&format!(
-        r"(?m)^[ \t]+s32[ \t]+{}[ \t]*;[ \t]*(?:\n|$)",
-        regex::escape(count)
-    ));
-    let count_declaration = only(
-        &count_declaration,
+    let coordinate_site = one_site(
+        source,
         code,
-        &format!("requires one s32 declaration of {count}"),
+        &format!(
+            r"(?m)^([ \t]+){}[ \t]*=[ \t]*([^;\n]+);[ \t]*(?:\n|$)",
+            regex::escape(coordinate)
+        ),
+        "requires one coordinate assignment",
     )?;
-    let coordinate_assignment = regex(&format!(
-        r"(?m)^([ \t]+){}[ \t]*=[ \t]*([^;\n]+);[ \t]*(?:\n|$)",
-        regex::escape(coordinate)
-    ));
-    let coordinate_assignment = only(
-        &coordinate_assignment,
+    let count_declaration = one_site(
+        source,
         code,
-        &format!("requires one coordinate assignment to {coordinate}"),
+        &format!(
+            r"(?m)^[ \t]+s32[ \t]+{}[ \t]*;[ \t]*(?:\n|$)",
+            regex::escape(count)
+        ),
+        "requires one signed count declaration",
     )?;
-    if !pure(capture(source, &coordinate_assignment, 2).trim()) {
-        return Err(
-            "coordinate assignment must be side-effect-free before message scheduling".into(),
-        );
+    let loads = sites(
+        source,
+        code,
+        &format!(
+            r"(?m)^([ \t]+){}[ \t]*=[ \t]*([^;\n]+);[ \t]*(?:\n|$)",
+            regex::escape(indexed_value)
+        ),
+    );
+    if loads.len() != 2 {
+        return Err("requires exactly two indexed loads".into());
     }
-    let item_assignment = regex(&format!(
-        r"(?m)^([ \t]+){}[ \t]*=[ \t]*([^;\n]+);[ \t]*(?:\n|$)",
-        regex::escape(indexed_value)
-    ));
-    let assignments = item_assignment.captures_iter(code).collect::<Vec<_>>();
-    if assignments.len() != 2 {
-        return Err(format!(
-            "message/count repair requires exactly two loads into {indexed_value}"
-        ));
-    }
-    let first = assignments[0].get(0).unwrap().range();
-    let second = assignments[1].get(0).unwrap().range();
-    let first_expression = capture(source, &assignments[0], 2).trim();
-    let second_expression = capture(source, &assignments[1], 2).trim();
-    if first_expression != second_expression
-        || !pure(first_expression)
-        || variable_uses(
-            &code[item_declaration.get(0).unwrap().start()..],
-            indexed_value,
-        ) != 5
-        || scope(code, first.start) != scope(code, second.start)
-        || scope(code, first.start) != scope(code, coordinate_assignment.get(0).unwrap().start())
-        || !(first.end <= coordinate_assignment.get(0).unwrap().start()
-            && coordinate_assignment.get(0).unwrap().end() <= second.start)
+    let branch = one_site(
+        source,
+        code,
+        &format!(
+            r"(?m)^([ \t]*)if \(([^;\n]+?) == ([^)\n]+)\) \{{\n([ \t]+){} = ([^;\n]+);\n[ \t]*\}} else \{{\n([ \t]+){} = ([^;\n]+?) - 1;\n[ \t]*\}}[ \t]*(?:\n|$)",
+            regex::escape(count),
+            regex::escape(count)
+        ),
+        "requires one sentinel branch",
+    )?;
+    let (first, second) = (&loads[0], &loads[1]);
+    let expression = first.fields[1].trim();
+    let fields = &branch.fields;
+    if expression != second.fields[1].trim()
+        || variable_uses(&code[declaration.range.start..], indexed_value) != 5
+        || !(first.range.end <= coordinate_site.range.start
+            && coordinate_site.range.end <= second.range.start
+            && second.range.end <= branch.range.start)
+        || scope(code, first.range.start) != scope(code, branch.range.start)
+        || scope(code, first.range.start) != scope(code, second.range.start)
+        || scope(code, first.range.start) != scope(code, coordinate_site.range.start)
+        || count_declaration.range.start > first.range.start
+        || fields[1].trim() != fields[6].trim()
+        || ![
+            expression,
+            coordinate_site.fields[1].trim(),
+            fields[1].trim(),
+            fields[2].trim(),
+            fields[4].trim(),
+        ]
+        .iter()
+        .all(|value| pure(value))
     {
-        return Err(
-            "indexed-message repair found ambiguous loads, uses, or scheduling order".into(),
-        );
+        return Err("message/count sites are ambiguous or reordered".into());
     }
-    let first_statement = statement_after(code, first.end)?;
-    let second_statement = statement_after(code, second.end)?;
-    let first_uses = words(indexed_value)
-        .find_iter(&code[first_statement.clone()])
-        .collect::<Vec<_>>();
-    if first_uses.len() != 1 {
-        return Err("first indexed load must feed exactly one following statement".into());
-    }
+    let first_statement = statement_after(code, first.range.end)?;
+    let second_statement = statement_after(code, second.range.end)?;
+    let unique_word = |range: Range<usize>| {
+        let found = words(indexed_value)
+            .find_iter(&code[range.clone()])
+            .collect::<Vec<_>>();
+        (found.len() == 1).then(|| range.start + found[0].start()..range.start + found[0].end())
+    };
     let first_use =
-        first_statement.start + first_uses[0].start()..first_statement.start + first_uses[0].end();
-    let message_expression = regex(&format!(
+        unique_word(first_statement).ok_or("first load must feed its next statement")?;
+    let message_pattern = regex(&format!(
         r"\([ \t]*{}[ \t]*&[ \t]*[^)\n]+\)[ \t]*\+[ \t]*[^,\n]+",
         regex::escape(indexed_value)
     ));
-    let message_expression = only(
-        &message_expression,
+    let message_site = only(
+        &message_pattern,
         &code[second_statement.clone()],
-        "second indexed load must feed one masked message expression",
+        "second load must feed its next statement",
     )?;
-    let message_range = second_statement.start + message_expression.get(0).unwrap().start()
-        ..second_statement.start + message_expression.get(0).unwrap().end();
+    let message_range = second_statement.start + message_site.get(0).unwrap().start()
+        ..second_statement.start + message_site.get(0).unwrap().end();
     let message_rhs = words(indexed_value)
-        .replace(
-            &source[message_range.clone()],
-            format!("({first_expression})"),
-        )
+        .replace(&source[message_range.clone()], format!("({expression})"))
         .into_owned();
-    let branch = regex(&format!(
-        r"(?m)^([ \t]*)if \(([^;\n]+?) == ([^)\n]+)\) \{{\n([ \t]+){} = ([^;\n]+);\n([ \t]*)\}} else \{{\n([ \t]+){} = ([^;\n]+?) - 1;\n([ \t]*)\}}[ \t]*(?:\n|$)",
-        regex::escape(count),
-        regex::escape(count)
-    ));
-    let branch = only(
-        &branch,
-        code,
-        &format!("requires one sentinel branch assigning {count}"),
-    )?;
-    if capture(source, &branch, 2).trim() != capture(source, &branch, 8).trim()
-        || capture(source, &branch, 1) != capture(source, &branch, 6)
-        || capture(source, &branch, 1) != capture(source, &branch, 9)
-        || capture(source, &branch, 4) != capture(source, &branch, 7)
-        || scope(code, branch.get(0).unwrap().start()) != scope(code, first.start)
-        || count_declaration.get(0).unwrap().start() > first.start
-        || ![
-            capture(source, &branch, 2),
-            capture(source, &branch, 3),
-            capture(source, &branch, 5),
-        ]
-        .iter()
-        .all(|expression| pure(expression.trim()))
-    {
-        return Err("sentinel branch does not have one reusable count carrier".into());
-    }
     let branch_text = format!(
         "{}{} = {};\n{}if ({} == {}) {{\n{}{} = {};\n{}}} else {{\n{}{}--;\n{}}}\n",
-        capture(source, &branch, 1),
+        fields[0],
         count,
-        capture(source, &branch, 2).trim(),
-        capture(source, &branch, 1),
+        fields[1].trim(),
+        fields[0],
         count,
-        capture(source, &branch, 3).trim(),
-        capture(source, &branch, 4),
+        fields[2].trim(),
+        fields[3],
         count,
-        capture(source, &branch, 5).trim(),
-        capture(source, &branch, 1),
-        capture(source, &branch, 7),
+        fields[4].trim(),
+        fields[0],
+        fields[5],
         count,
-        capture(source, &branch, 1),
+        fields[0],
     );
-    let declaration_text = format!("{}s32 {message};\n", capture(source, &item_declaration, 1));
-    let coordinate_start = coordinate_assignment.get(0).unwrap().start();
     let message_text = format!(
         "{}{} = {};\n",
-        capture(source, &coordinate_assignment, 1),
-        message,
-        message_rhs
+        coordinate_site.fields[0], message, message_rhs
     );
     Ok(vec![(
         edited(
             source,
             vec![
-                (item_declaration.get(0).unwrap().range(), declaration_text),
-                (first, String::new()),
-                (first_use, format!("({first_expression})")),
-                (coordinate_start..coordinate_start, message_text),
-                (second, String::new()),
+                (declaration.range.clone(), format!("{}s32 {message};\n", declaration.fields[0])),
+                (first.range.clone(), String::new()),
+                (first_use, format!("({expression})")),
+                (coordinate_site.range.start..coordinate_site.range.start, message_text),
+                (second.range.clone(), String::new()),
                 (message_range, message.into()),
-                (branch.get(0).unwrap().range(), branch_text),
+                (branch.range, branch_text),
             ],
         )?,
         format!(
             "temporary+evaluation_order+block_lifetime:materialize_message_and_merge_count({message},{count})@{}",
-            item_declaration.get(0).unwrap().start()
+            declaration.range.start
         ),
     )])
 }
-
 fn split_opposite_side_and_scaled_offset(
     source: &str,
     code: &str,
@@ -698,44 +610,43 @@ fn split_opposite_side_and_scaled_offset(
     {
         return Err("opposite-side repair requires two named nonvolatile identifiers and a fresh opposite-side name".into());
     }
-    let declaration = regex(&format!(
-        r"(?m)^([ \t]+)u(?:8|16|32)[ \t]+{}[ \t]*=[ \t]*([^;\n]+);[ \t]*(?:\n|$)",
-        regex::escape(side)
-    ));
-    let declaration = only(
-        &declaration,
+    let declaration = one_site(
+        source,
         code,
+        &format!(
+            r"(?m)^([ \t]+)u(?:8|16|32)[ \t]+{}[ \t]*=[ \t]*([^;\n]+);[ \t]*(?:\n|$)",
+            regex::escape(side)
+        ),
         &format!("requires one initialized integral declaration of {side}"),
     )?;
-    let scaled = regex(&format!(
-        r"\([ \t]*\([ \t]*1[ \t]*\^[ \t]*{}[ \t]*\)[ \t]*\*[ \t]*24[ \t]*\)",
-        regex::escape(side)
-    ));
-    let scaled = only(
-        &scaled,
+    let scaled = one_site(
+        source,
         code,
+        &format!(
+            r"\([ \t]*\([ \t]*1[ \t]*\^[ \t]*{}[ \t]*\)[ \t]*\*[ \t]*24[ \t]*\)",
+            regex::escape(side)
+        ),
         "requires one (1 ^ side) * 24 address expression",
     )?;
     if variable_uses(code, side) != 2
-        || !pure(capture(source, &declaration, 2).trim())
-        || scope(code, declaration.get(0).unwrap().start())
-            != scope(code, scaled.get(0).unwrap().start())
-        || scaled.get(0).unwrap().start() < declaration.get(0).unwrap().end()
+        || !pure(declaration.fields[1].trim())
+        || scope(code, declaration.range.start) != scope(code, scaled.range.start)
+        || scaled.range.start < declaration.range.end
     {
         return Err("opposite-side expression has ambiguous uses or scope".into());
     }
-    let statement_start = code[..scaled.get(0).unwrap().start()]
+    let statement_start = code[..scaled.range.start]
         .rfind(|character| matches!(character, ';' | '{' | '}'))
         .map_or(0, |at| at + 1)
-        + code[code[..scaled.get(0).unwrap().start()]
+        + code[code[..scaled.range.start]
             .rfind(|character| matches!(character, ';' | '{' | '}'))
-            .map_or(0, |at| at + 1)..scaled.get(0).unwrap().start()]
+            .map_or(0, |at| at + 1)..scaled.range.start]
             .find(|character: char| !character.is_ascii_whitespace())
             .ok_or("scaled expression has no containing statement")?;
-    let indent = capture(source, &declaration, 1);
+    let indent = &declaration.fields[0];
     let declaration_text = format!(
         "{indent}u32 {side} = {};\n{indent}u32 {opposite} = 1;\n",
-        capture(source, &declaration, 2).trim()
+        declaration.fields[1].trim()
     );
     let schedule = format!(
         "{indent}{opposite} ^= {side};\n{indent}{side} = {opposite} << 1;\n{indent}{side} += {opposite};\n{indent}{side} <<= 3;\n"
@@ -744,76 +655,83 @@ fn split_opposite_side_and_scaled_offset(
         edited(
             source,
             vec![
-                (declaration.get(0).unwrap().range(), declaration_text),
+                (declaration.range.clone(), declaration_text),
                 (statement_start..statement_start, schedule),
-                (scaled.get(0).unwrap().range(), side.into()),
+                (scaled.range, side.into()),
             ],
         )?,
         format!(
             "temporary+evaluation_order:split_opposite_side_and_scaled_offset({side},{opposite})@{}",
-            declaration.get(0).unwrap().start()
+            declaration.range.start
         ),
     )])
 }
-
 fn merge_carrier_phases(source: &str, code: &str, earlier: &str, later: &str) -> Mutations {
     if source.contains("volatile") || !identifier(earlier) || !identifier(later) || earlier == later
     {
         return Err("phase-carrier repair requires two distinct nonvolatile identifiers".into());
     }
-    let first = initialized_declaration(source, code, earlier)?;
+    let initialized = |name: &str| {
+        one_site(
+            source,
+            code,
+            &format!(
+                r"(?m)^([ \t]+)((?:struct[ \t]+[A-Za-z_][A-Za-z0-9_]*|(?:u|s)(?:8|16|32)|void)[ \t]*\*?)[ \t]*{}[ \t]*=[ \t]*([^;\n]+);[ \t]*(?:\n|$)",
+                regex::escape(name)
+            ),
+            &format!("requires one initialized declaration of {name}"),
+        )
+    };
+    let first = initialized(earlier)?;
     let (second_declaration, second_site, second_indent, second_kind, second_expression) =
-        match initialized_declaration(source, code, later) {
+        match initialized(later) {
             Ok(second) => (
                 second.range.clone(),
                 second.range,
-                second.indent.to_string(),
-                second.kind.to_string(),
-                second.expression.to_string(),
+                second.fields[0].clone(),
+                second.fields[1].trim().to_string(),
+                second.fields[2].trim().to_string(),
             ),
             Err(_) => {
-                let pattern = regex(&format!(
-                    r"(?m)^([ \t]+)((?:u|s)(?:8|16|32))[ \t]+{}[ \t]*;[ \t]*(?:\n|$)",
-                    regex::escape(later)
-                ));
-                let declaration = only(
-                    &pattern,
+                let declaration = one_site(
+                    source,
                     code,
+                    &format!(
+                        r"(?m)^([ \t]+)((?:u|s)(?:8|16|32))[ \t]+{}[ \t]*;[ \t]*(?:\n|$)",
+                        regex::escape(later)
+                    ),
                     &format!("requires one initialized or assigned declaration of {later}"),
                 )?;
-                let assignment = regex(&format!(
-                    r"(?m)^([ \t]+){}[ \t]*=[ \t]*([^;\n]+);[ \t]*(?:\n|$)",
-                    regex::escape(later)
-                ));
-                let assignment = only(
-                    &assignment,
+                let assignment = one_site(
+                    source,
                     code,
+                    &format!(
+                        r"(?m)^([ \t]+){}[ \t]*=[ \t]*([^;\n]+);[ \t]*(?:\n|$)",
+                        regex::escape(later)
+                    ),
                     &format!("requires one assignment starting the {later} phase"),
                 )?;
-                if assignment.get(0).unwrap().start() <= declaration.get(0).unwrap().end()
-                    || words(later).is_match(
-                        &code
-                            [declaration.get(0).unwrap().end()..assignment.get(0).unwrap().start()],
-                    )
+                if assignment.range.start <= declaration.range.end
+                    || words(later).is_match(&code[declaration.range.end..assignment.range.start])
                 {
                     return Err(format!(
                         "later carrier {later} is live before its named phase"
                     ));
                 }
                 (
-                    declaration.get(0).unwrap().range(),
-                    assignment.get(0).unwrap().range(),
-                    capture(source, &assignment, 1).to_string(),
-                    capture(source, &declaration, 2).trim().to_string(),
-                    capture(source, &assignment, 2).trim().to_string(),
+                    declaration.range,
+                    assignment.range,
+                    assignment.fields[0].clone(),
+                    declaration.fields[1].trim().to_string(),
+                    assignment.fields[1].trim().to_string(),
                 )
             }
         };
     if first.range.end >= second_site.start
         || second_kind.contains('*')
         || second_kind != "s32"
-        || !(first.kind.ends_with('*') || first.kind == "s32")
-        || !pure(first.expression)
+        || !(first.fields[1].trim().ends_with('*') || first.fields[1].trim() == "s32")
+        || !pure(first.fields[2].trim())
         || !pure(&second_expression)
         || !scope_chain(code, second_site.start).contains(
             &scope(code, first.range.start).ok_or("earlier carrier is outside a lexical block")?,
@@ -823,15 +741,14 @@ fn merge_carrier_phases(source: &str, code: &str, earlier: &str, later: &str) ->
     {
         return Err("carrier phases overlap, escape scope, or use unsupported types".into());
     }
-    let pointer = first.kind.ends_with('*');
+    let kind = first.fields[1].trim();
+    let expression = first.fields[2].trim();
+    let pointer = kind.ends_with('*');
     let mut changes = Vec::new();
     let first_text = if pointer {
-        format!(
-            "{}s32 {earlier} = (s32){};\n",
-            first.indent, first.expression
-        )
+        format!("{}s32 {earlier} = (s32){};\n", first.fields[0], expression)
     } else {
-        format!("{}s32 {earlier} = {};\n", first.indent, first.expression)
+        format!("{}s32 {earlier} = {expression};\n", first.fields[0])
     };
     changes.push((first.range.clone(), first_text));
     if pointer {
@@ -839,7 +756,7 @@ fn merge_carrier_phases(source: &str, code: &str, earlier: &str, later: &str) ->
             let range = first.range.end + found.start()..first.range.end + found.end();
             let tail = code[range.end..].trim_start();
             if tail.starts_with("->") {
-                changes.push((range, format!("(({}){earlier})", first.kind)));
+                changes.push((range, format!("(({kind}){earlier})")));
             } else if !(tail.starts_with('+')
                 || tail.starts_with('-')
                 || tail.starts_with("==")
@@ -872,7 +789,6 @@ fn merge_carrier_phases(source: &str, code: &str, earlier: &str, later: &str) ->
         ),
     )])
 }
-
 fn guard_source(source: &str) -> Result<(), String> {
     if source.contains("PERM_GENERAL(") || source.contains("PERM_INT(") {
         return Err("source annotations are retired; pass ordinary C".into());
@@ -893,7 +809,6 @@ fn guard_source(source: &str) -> Result<(), String> {
     }
     Ok(())
 }
-
 fn generate(source: &str, repair: &Repair) -> Mutations {
     let code = masked(source);
     let generated = match repair {
@@ -938,7 +853,6 @@ fn generate(source: &str, repair: &Repair) -> Mutations {
     };
     Ok(generated)
 }
-
 pub fn parse(source: &str, plan: &RepairPlan) -> Result<Permutation, String> {
     guard_source(source)?;
     if !(1..=2).contains(&plan.repairs().len()) {
@@ -983,31 +897,17 @@ pub fn parse(source: &str, plan: &RepairPlan) -> Result<Permutation, String> {
     Ok(Permutation {
         variants,
         raw_count,
-        dimensions: plan.dimensions(),
     })
 }
-
-pub fn validate_catalog() -> Result<(), String> {
+#[cfg(test)]
+fn validate_catalog() {
     const TEXT: &str = include_str!("../../../games/gs1/recon/compiler-repair-patterns.json");
-    let catalog: serde_json::Value =
-        serde_json::from_str(TEXT).map_err(|error| error.to_string())?;
-    if catalog["catalog_version"] != CATALOG_VERSION
-        || catalog["search"]["max_edits_per_candidate"] != 2
-        || catalog["generalization_backlog"]
-            .as_array()
-            .is_none_or(|backlog| !backlog.is_empty())
-    {
-        return Err("repair catalog version, edit bound, or generalization backlog drifted".into());
-    }
-    let recorded = catalog["recorded_repairs"]
-        .as_array()
-        .ok_or("repair catalog has no recorded_repairs array")?;
-    if recorded.len() != 4 {
-        return Err(format!(
-            "repair catalog must contain four generalized recorded repairs, got {}",
-            recorded.len()
-        ));
-    }
+    let catalog: serde_json::Value = serde_json::from_str(TEXT).unwrap();
+    assert_eq!(catalog["catalog_version"], CATALOG_VERSION);
+    assert_eq!(catalog["search"]["max_edits_per_candidate"], 2);
+    assert_eq!(catalog["generalization_backlog"], serde_json::json!([]));
+    let recorded = catalog["recorded_repairs"].as_array().unwrap();
+    assert_eq!(recorded.len(), 4);
     let known = HashSet::from([
         "preload_adjacent_halfwords_before_signed_carrier",
         "materialize_indexed_message_and_merge_sentinel_carrier",
@@ -1015,105 +915,76 @@ pub fn validate_catalog() -> Result<(), String> {
         "merge_nonoverlapping_carrier_phases",
     ]);
     for repair in recorded {
-        let id = repair["id"].as_str().unwrap_or("unnamed");
-        if repair["catalog_status"] != "generalized"
-            || repair["regression_fixture"].as_str().is_none()
-        {
-            return Err(format!("recorded repair {id} is not gated and generalized"));
-        }
+        assert_eq!(repair["catalog_status"], "generalized");
+        assert!(repair["regression_fixture"].is_string());
         let operations = repair
             .get("operations")
             .and_then(serde_json::Value::as_array)
             .map(|values| values.iter().collect::<Vec<_>>())
             .unwrap_or_else(|| vec![&repair["operation"]]);
-        if operations.is_empty()
-            || operations.iter().any(|operation| {
-                !operation
-                    .as_str()
-                    .is_some_and(|value| known.contains(value))
-            })
-        {
-            return Err(format!("recorded repair {id} names an unknown operation"));
-        }
+        assert!(!operations.is_empty());
+        assert!(operations.iter().all(|operation| operation
+            .as_str()
+            .is_some_and(|value| known.contains(value))));
     }
     let paired = recorded
         .iter()
         .find(|repair| repair["id"] == "paired-phase-carrier-merge")
-        .ok_or("paired-phase repair is missing")?;
-    if paired["decoder_repairs"]
-        .as_array()
-        .is_none_or(|repairs| repairs.len() != 2)
-    {
-        return Err("paired-phase repair must name exactly two decoder repairs".into());
-    }
-    Ok(())
+        .unwrap();
+    assert_eq!(paired["decoder_repairs"].as_array().unwrap().len(), 2);
 }
-
-pub fn self_test() -> Result<(), String> {
-    validate_catalog()?;
-    let repair = Repair::SwapDeclarations {
-        left: "a".into(),
-        right: "c".into(),
-    };
-    let source = "void f(void)\n{\n    u32 a;\n    u32 b;\n    u32 c;\n}\n";
-    let permutation = parse(source, &RepairPlan::one(repair.clone()))?;
-    if permutation.count() != 2
-        || !permutation
-            .evaluate(1)?
-            .contains("u32 c;\n    u32 b;\n    u32 a;")
-    {
-        return Err("named non-adjacent declaration repair regressed".into());
-    }
-    if parse(
-        "void f(void) { PERM_GENERAL(a,b); }",
-        &RepairPlan::one(repair.clone()),
-    )
-    .is_ok()
-        || parse(
-            "void f(void) { Func_080072e4(); }",
-            &RepairPlan::one(repair),
-        )
-        .is_ok()
-    {
-        return Err("annotation or trampoline guard regressed".into());
-    }
-    let repair = Repair::ReciprocalRoleSwap {
-        name: "left".into(),
-    };
-    let source = "extern u32 m[];\n\nvoid g(void)\n{\n    {\n        u32 left = m[i].x;\n\n        a[i] ^= left;\n        a[j] ^= m[i].y;\n    }\n}\n";
-    let permutation = parse(source, &RepairPlan::one(repair.clone()))?;
-    let helper = permutation.evaluate(5)?;
-    let calls = helper.matches("perm_xor(").count();
-    if permutation.count() != 6 || calls != 3 || helper.contains("u32 left =") {
-        return Err("inline XOR boundary repair regressed".into());
-    }
-    let crowded = source.replace("a[j] ^= m[i].y;", "a[j] ^= m[i].y;\n        b ^= c;");
-    if parse(&crowded, &RepairPlan::one(repair))?.count() != 5 {
-        return Err("inline XOR boundary singleton guard regressed".into());
-    }
-    Ok(())
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
-
     fn candidate(source: &str, repair: Repair) -> String {
         let permutation = parse(source, &RepairPlan::one(repair)).unwrap();
         assert_eq!(permutation.count(), 2);
         assert_eq!(permutation.mutations(1).unwrap().len(), 1);
         permutation.evaluate(1).unwrap()
     }
-
     #[test]
     fn catalog_has_no_ungeneralized_recorded_repairs() {
-        validate_catalog().unwrap();
+        validate_catalog();
         assert!(
             !include_str!("../../../games/gs1/recon/compiler-repair-patterns.json")
                 .contains("recorded-not-generalized")
         );
     }
-
+    #[test]
+    fn annotation_free_search_is_guarded_and_finite() {
+        let plan = RepairPlan::one(Repair::SwapDeclarations {
+            left: "a".into(),
+            right: "b".into(),
+        });
+        let source = "void f(void)\n{\n    u32 a;\n    u32 b;\n}\n";
+        let permutation = parse(source, &plan).unwrap();
+        assert_eq!(permutation.count(), 2);
+        assert!(permutation
+            .evaluate(1)
+            .unwrap()
+            .contains("u32 b;\n    u32 a;"));
+        assert!(parse("void f(void) { PERM_GENERAL(a,b); }", &plan).is_err());
+        assert!(parse("void f(void) { Func_080072e4(); }", &plan).is_err());
+    }
+    #[test]
+    fn inline_xor_operation_remains_bounded() {
+        let plan = RepairPlan::one(Repair::ReciprocalRoleSwap {
+            name: "left".into(),
+        });
+        let source = "extern u32 m[];\n\nvoid g(void)\n{\n    {\n        u32 left = m[i].x;\n\n        a[i] ^= left;\n        a[j] ^= m[i].y;\n    }\n}\n";
+        let permutation = parse(source, &plan).unwrap();
+        assert_eq!(permutation.count(), 6);
+        assert_eq!(
+            permutation
+                .evaluate(5)
+                .unwrap()
+                .matches("perm_xor(")
+                .count(),
+            3
+        );
+        let crowded = source.replace("a[j] ^= m[i].y;", "a[j] ^= m[i].y;\n        b ^= c;");
+        assert_eq!(parse(&crowded, &plan).unwrap().count(), 5);
+    }
     #[test]
     fn preloads_adjacent_halfwords_before_signed_carrier() {
         let source = "void f(void)\n{\n    s16 hp;\n    s16 pp;\n    s16 max_hp;\n    s16 max_pp;\n    s32 ratio;\n\n    hp = max_hp;\n    pp = max_pp;\n    ratio = FixedPoint_Ratio(hp << 14, hp);\n}\n";
@@ -1131,26 +1002,31 @@ mod tests {
         assert!(output.contains("s16 max_hp_carrier = hp;"));
         assert!(output.contains("FixedPoint_Ratio(max_hp_carrier << 14, max_hp_carrier)"));
     }
-
     #[test]
     fn materializes_message_and_merges_count_carrier() {
         let source = "void f(void)\n{\n    u8 *ability;\n    s32 y;\n    s32 range;\n    u16 item;\n\n    item = *(u16 *)(base + offset);\n    ability = Ability_GetData(mask & item);\n    y = row * 16 + 16;\n    item = *(u16 *)(base + offset);\n    Draw((item & mask) + message_base, y);\n    if (ability[8] == 255) {\n        range = 11;\n    } else {\n        range = ability[8] - 1;\n    }\n    DrawRange(range);\n}\n";
-        let output = candidate(
-            source,
-            Repair::MaterializeMessageAndMergeCount {
-                indexed_value: "item".into(),
-                message: "message".into(),
-                coordinate: "y".into(),
-                count: "range".into(),
-            },
-        );
+        let repair = Repair::MaterializeMessageAndMergeCount {
+            indexed_value: "item".into(),
+            message: "message".into(),
+            coordinate: "y".into(),
+            count: "range".into(),
+        };
+        let output = candidate(source, repair.clone());
         assert!(!output.contains("u16 item;"));
         assert!(output.contains("s32 message;"));
         assert!(output.find("\n    message =").unwrap() < output.find("\n    y =").unwrap());
         assert!(output.contains("range = ability[8];"));
         assert!(output.contains("range--;"));
+        let missing = source.replace("    s32 range;\n", "");
+        assert!(parse(&missing, &RepairPlan::one(repair.clone())).is_err());
+        let side_effect = source.replace("    ability =", "    SideEffect();\n    ability =");
+        assert!(parse(&side_effect, &RepairPlan::one(repair.clone())).is_err());
+        let nested = source.replace(
+            "    Draw((item & mask) + message_base, y);",
+            "    {\n        Draw((item & mask) + message_base, y);\n    }",
+        );
+        assert!(parse(&nested, &RepairPlan::one(repair)).is_err());
     }
-
     #[test]
     fn splits_opposite_side_and_scaled_offset_carriers() {
         let source = "void f(void)\n{\n    u8 side = work->side;\n    peer = (u16 *)(base + ((1 ^ side) * 24));\n}\n";
@@ -1166,7 +1042,6 @@ mod tests {
         assert!(output.contains("side <<= 3;"));
         assert!(output.contains("base + side"));
     }
-
     #[test]
     fn composes_only_the_two_named_phase_merges() {
         let source = "struct Node { s32 value; };\n\nvoid f(void)\n{\n    struct Node *state = base;\n    struct Node *resource = *(struct Node **)(state + offset);\n    s32 spawn_z;\n\n    if (resource == 0)\n        return;\n    out = resource->value;\n    spawn_z = z;\n    if (*(s16 *)(state + 4) != 0) {\n        s32 count = 63;\n        do {\n            count--;\n        } while (count >= 0);\n    }\n    Use(spawn_z);\n}\n";
@@ -1194,7 +1069,6 @@ mod tests {
         assert!(output.contains("s32 state = (s32)base;"));
         assert!(output.contains("s32 resource = (s32)*(struct Node **)(state + offset);"));
     }
-
     #[test]
     fn repair_plan_bound_is_enforced() {
         assert!(RepairPlan::try_from_repairs(Vec::new()).is_err());

@@ -1,40 +1,18 @@
-//! `tools/lib/overlay_call_targets.ts`, in Rust.
-//!
-//! Resolves an overlay's `bl` targets correctly. An overlay `bl` does NOT
-//! store a pc-relative displacement the way a linked main-image `bl` does. It
-//! stores the target's image offset minus two:
-//!
-//! ```text
-//! true_target_offset = stored_displacement + 2
-//! ```
-//!
-//! The original's header carries the full rationale and is deliberately not
-//! duplicated here. It was deleted with the rest of the TypeScript layer;
-//! recover it with `git show e3867da35:tools/lib/overlay_call_targets.ts`.
-//!
-//! The TypeScript original is retained: eight other TS tools still import
-//! from it (`overlay_published.ts`, `overlay_twins.ts`, `overlay_unindexed.ts`,
-//! overlay certification, Full-C progress, overlay gap analysis,
-//! `overlay_call_order_check.ts`, and bl-site-symbols). Only `overlay_show.ts`
-//! was ported off it so far, onto this crate.
-
-use std::collections::HashSet;
-use std::path::PathBuf;
-
+//! Overlay `bl` words encode target image offset minus two, unlike linked
+//! main-image PC-relative branches: `target_offset = stored + 2`.
 use overlay_disasm::{assemble_overlay, OverlaySource, OVERLAY_BASE as DISASM_OVERLAY_BASE};
 use serde_json::Value;
-
+use std::collections::HashSet;
+use std::path::PathBuf;
 /// Overlays are linked here, so an in-image address is `pool_word - BASE_SHIFT`.
 pub const BASE_SHIFT: i64 = 0x8000;
 pub const OVERLAY_BASE: i64 = 0x0200_0000;
-
 /// How far a leaf may run before its `bx lr`, in bytes.
 ///
 /// Deliberately a LOCAL copy of the TypeScript original's window: see that
 /// file's comment on why sharing the constant via an import would create a
 /// load-bearing module cycle.
 const RETURN_WINDOW: i64 = 128;
-
 fn root() -> PathBuf {
     std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -43,7 +21,6 @@ fn root() -> PathBuf {
         .expect("tools has a parent")
         .to_path_buf()
 }
-
 /// Decode a Thumb BL pair into the displacement the instruction stores.
 /// Returns `None` when the halfwords are not a BL prefix/suffix pair.
 pub fn stored_displacement(high: u16, low: u16) -> Option<i64> {
@@ -63,12 +40,10 @@ pub fn stored_displacement(high: u16, low: u16) -> Option<i64> {
     };
     Some((signed << 12) | (lower << 1))
 }
-
 /// The rule: the stored displacement is the target offset minus two.
 pub fn target_offset(high: u16, low: u16) -> Option<i64> {
     stored_displacement(high, low).map(|displacement| displacement + 2)
 }
-
 /// Overlay image bytes, as the reconstruction assembles them. This is the
 /// same path `overlay_show` reads, so the offsets here line up with its
 /// listing.
@@ -81,7 +56,6 @@ pub fn overlay_image(overlay: &str) -> Result<Vec<u8>, String> {
     }
     assemble_overlay(&OverlaySource::path(&path), DISASM_OVERLAY_BASE)
 }
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Kind {
     Veneer,
@@ -90,7 +64,6 @@ pub enum Kind {
     Leaf,
     Unknown,
 }
-
 impl Kind {
     pub fn as_str(self) -> &'static str {
         match self {
@@ -102,7 +75,6 @@ impl Kind {
         }
     }
 }
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CallSite {
     /// Offset of the BL prefix halfword within the overlay image.
@@ -112,13 +84,11 @@ pub struct CallSite {
     /// What the target lands on, once classified.
     pub kind: Kind,
 }
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Classified {
     pub kind: Kind,
     pub imported: Option<i64>,
 }
-
 fn read_u16le(image: &[u8], at: i64) -> u16 {
     if at < 0 || (at + 1) as usize >= image.len() {
         return 0;
@@ -126,7 +96,6 @@ fn read_u16le(image: &[u8], at: i64) -> u16 {
     let at = at as usize;
     (image[at] as u16) | ((image[at + 1] as u16) << 8)
 }
-
 /// Does a `bx lr` appear within the window? A function must return.
 fn reaches_return(image: &[u8], offset: i64) -> bool {
     let end = std::cmp::min(image.len() as i64 - 1, offset + RETURN_WINDOW);
@@ -139,7 +108,6 @@ fn reaches_return(image: &[u8], offset: i64) -> bool {
     }
     false
 }
-
 /// Classify a resolved target. A veneer entry is the 8-byte
 /// `ldr r4,[pc,#0] / bx r4 / .word T` shape, so the import's real identity is
 /// the main-image address in its trailing word.
@@ -203,7 +171,6 @@ pub fn classify(image: &[u8], target: i64, prologues: &HashSet<i64>) -> Classifi
         imported: None,
     }
 }
-
 struct InventoryRow {
     overlay: String,
     offset: i64,
@@ -211,7 +178,6 @@ struct InventoryRow {
     starts_with_prologue: bool,
     contained_by_len: usize,
 }
-
 fn inventory() -> Result<Vec<InventoryRow>, String> {
     let path = root().join("out/decomp/overlays.json");
     let text = std::fs::read_to_string(&path).map_err(|_| {
@@ -251,7 +217,6 @@ fn inventory() -> Result<Vec<InventoryRow>, String> {
     }
     Ok(rows)
 }
-
 /// Resolve every `bl` in an overlay (or one bounded owner) to its target.
 ///
 /// `owner_end` only has an effect when `owner` is `Some`; an explicit end
@@ -270,7 +235,6 @@ pub fn resolve_overlay(
         .filter(|row| row.starts_with_prologue)
         .map(|row| row.offset)
         .collect();
-
     struct Span {
         offset: i64,
         span_bytes: i64,
@@ -293,7 +257,6 @@ pub fn resolve_overlay(
             })
             .collect(),
     };
-
     if let Some(owner) = owner {
         if spans.is_empty() {
             if owner >= image.len() as i64 {
@@ -315,7 +278,6 @@ pub fn resolve_overlay(
             }];
         }
     }
-
     let mut sites = Vec::new();
     for span in &spans {
         let claimed = match (owner, owner_end) {
@@ -342,7 +304,6 @@ pub fn resolve_overlay(
     }
     Ok(sites)
 }
-
 /// Resolve every call site in one explicitly bounded owner to its C spelling.
 ///
 /// Kept here so readers such as `overlay_show` can annotate a listing without
@@ -372,7 +333,6 @@ pub fn resolved_call_names(
     }
     Ok(names)
 }
-
 fn names_get(names: &[(i64, String)], site: i64) -> Option<&str> {
     names
         .iter()
@@ -380,7 +340,6 @@ fn names_get(names: &[(i64, String)], site: i64) -> Option<&str> {
         .find(|(at, _)| *at == site)
         .map(|(_, name)| name.as_str())
 }
-
 /// A colon-anchored `HHHHHHH:` line-start address, as `overlay_show`/objdump
 /// listings print it.
 fn line_address(line: &str) -> Option<i64> {
@@ -397,7 +356,6 @@ fn line_address(line: &str) -> Option<i64> {
     }
     i64::from_str_radix(digits, 16).ok()
 }
-
 /// Rewrite an `overlay_show` listing so each `bl` names its REAL callee.
 pub fn annotate(listing: &str, sites: &[(i64, String)]) -> String {
     let mut out: Vec<String> = Vec::new();
@@ -415,7 +373,6 @@ pub fn annotate(listing: &str, sites: &[(i64, String)]) -> String {
     }
     out.join("\n")
 }
-
 /// `line.replace(/\bbl\s+\S+/, replacement)`: replace the FIRST `bl <target>`
 /// run, matching only a whole-word `bl` (so `bls`/`blt`/`bl_x` do not match).
 fn replace_bl_target(line: &str, name: &str) -> String {
@@ -449,11 +406,9 @@ fn replace_bl_target(line: &str, name: &str) -> String {
     }
     line.to_string()
 }
-
 fn is_word_byte(b: u8) -> bool {
     b.is_ascii_alphanumeric() || b == b'_'
 }
-
 /// Every `bl` line in the listing whose site the resolver did NOT cover.
 ///
 /// Matches `bl ` with a trailing space so that `bls`, `blt` and friends,
@@ -474,7 +429,6 @@ pub fn unannotated_call_sites(listing: &str, sites: &[(i64, String)]) -> Vec<i64
     }
     missed
 }
-
 /// `/\bbl\s/.test(line)`.
 fn contains_bl_word(line: &str) -> bool {
     let bytes = line.as_bytes();

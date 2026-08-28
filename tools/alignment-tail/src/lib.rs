@@ -1,24 +1,12 @@
-// The one-to-three padding bytes that sit between a resource and the next
-// alignment boundary. They are recorded either as a fill value or as literal
-// bytes, and either form must rebuild the original bytes exactly.
-//
-// Ported from tools/lib/alignment_tail.ts. Two differences are worth naming.
-// The byte-range check is gone from the constructors because a u8 cannot leave
-// its range; it survives in the JSON parser, where the input is still
-// untrusted. And serialization is written by hand rather than derived, because
-// serde's internally-tagged representation would emit "encoding" first while
-// the tracked files carry "size" first, and reordering keys would rewrite every
-// file holding a tail.
-
+// Exact resource-alignment padding. Hand serialization preserves tracked key
+// order; untrusted JSON still receives the range checks made redundant by u8.
 use serde::ser::{Serialize, SerializeMap, Serializer};
 use serde_json::Value;
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum AlignmentTail {
     Fill { size: usize, value: u8 },
     Bytes { values: Vec<u8> },
 }
-
 impl AlignmentTail {
     pub fn size(&self) -> usize {
         match self {
@@ -27,7 +15,6 @@ impl AlignmentTail {
         }
     }
 }
-
 impl Serialize for AlignmentTail {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let mut map = serializer.serialize_map(Some(3))?;
@@ -45,22 +32,17 @@ impl Serialize for AlignmentTail {
         map.end()
     }
 }
-
 #[derive(Debug, PartialEq, Eq)]
 pub struct AlignmentTailError(pub String);
-
 impl std::fmt::Display for AlignmentTailError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.0)
     }
 }
-
 impl std::error::Error for AlignmentTailError {}
-
 fn fail<T>(message: impl Into<String>) -> Result<T, AlignmentTailError> {
     Err(AlignmentTailError(message.into()))
 }
-
 pub fn inspect_alignment_tail(
     data: &[u8],
     maximum: usize,
@@ -81,7 +63,6 @@ pub fn inspect_alignment_tail(
         values: data.to_vec(),
     })
 }
-
 fn exact_keys(
     object: &serde_json::Map<String, Value>,
     keys: &[&str],
@@ -96,14 +77,12 @@ fn exact_keys(
     }
     Ok(())
 }
-
 fn byte(value: Option<&Value>, label: &str) -> Result<u8, AlignmentTailError> {
     match value.and_then(Value::as_u64) {
         Some(number) if number <= 0xff => Ok(number as u8),
         _ => fail(format!("{label} must be a byte")),
     }
 }
-
 pub fn parse_alignment_tail(
     value: &Value,
     expected_size: usize,
@@ -144,7 +123,6 @@ pub fn parse_alignment_tail(
         _ => fail(format!("{label} has an unsupported encoding")),
     }
 }
-
 pub fn build_alignment_tail(tail: &AlignmentTail) -> Vec<u8> {
     match tail {
         AlignmentTail::Fill { size, value } => vec![*value; *size],

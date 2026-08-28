@@ -1,7 +1,7 @@
 use candidate_compiler::verify::{CandidateCompilerConfiguration, CandidateCompilerFamily};
 use candidate_show::{
     cli::Options as CandidateOptions,
-    idioms::{lint, mine_dossiers},
+    idioms::lint,
     render::{render, RenderOutput},
     triage::{ResidualClass, ResidualReport},
 };
@@ -11,7 +11,6 @@ use compiler_core::{
     source_paths::{SourceOwner, SourcePaths},
     translation_units::{TranslationUnit, TranslationUnits},
 };
-use regex::{Captures, Regex};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::{
@@ -20,10 +19,11 @@ use std::{
     path::{Path, PathBuf},
 };
 
-const USAGE: &str = "usage: compiler waves <inventory|bucket|pack|run> [--output PATH] [--family-index FILE] [--bucket FILE] [--limit N] [--stall-budget N] [--apply]";
+const USAGE: &str = "usage: compiler waves <inventory|bucket|pack|dispatch> [--output PATH] [--family-index FILE] [--bucket FILE] [--limit N] [--stall-budget N]";
 const MANIFEST: &str = "out/gs1-en/full/asm/manifest.json";
 const FAMILIES: &str = "out/gs1-en/reports/compiler-families.json";
 const BUCKET: &str = "out/gs1-en/waves/bucket.json";
+const PACKS: &str = "out/gs1-en/waves/packs";
 const CATALOG: &str = "games/gs1/recon/compiler-repair-patterns.json";
 const DEBT: [&str; 5] = [
     "c_candidate",
@@ -128,20 +128,6 @@ struct Args {
     bucket: PathBuf,
     limit: Option<usize>,
     stall_budget: usize,
-    apply: bool,
-}
-struct Budget {
-    limit: usize,
-    used: usize,
-}
-impl Budget {
-    fn take(&mut self) -> Result<(), String> {
-        if self.used >= self.limit {
-            return Err(format!("compiler stall budget {} exhausted", self.limit));
-        }
-        self.used += 1;
-        Ok(())
-    }
 }
 
 pub fn run(argv: &[String]) -> Result<(), String> {
@@ -153,7 +139,7 @@ pub fn run(argv: &[String]) -> Result<(), String> {
         "inventory" => inventory_command(args),
         "bucket" => bucket_command(args),
         "pack" => pack_command(args),
-        "run" => wave_command(args),
+        "dispatch" => dispatch_command(args),
         "-h" | "--help" => {
             println!("{USAGE}");
             Ok(())
@@ -260,14 +246,14 @@ fn bucket_score(repository: &Path, owner: &Owner, output: &Path, entry: &mut Buc
         return;
     }
     let directory = output.join(stem(owner.address));
-    match score(repository, owner, &directory, false, None) {
+    match score(repository, owner, &directory, false) {
         Err(error) => {
             entry.verdict = "score_failed".into();
             entry.error = Some(error);
         }
         Ok(mut scored) => {
             if scored.residual.class == ResidualClass::AllocationUncovered {
-                match score(repository, owner, &directory, true, None) {
+                match score(repository, owner, &directory, true) {
                     Ok(decoded) => scored = decoded,
                     Err(error) => {
                         entry.verdict = "decoder_failed".into();
@@ -343,7 +329,7 @@ fn bucket_translation_units(
                 owner
                     .unit
                     .clone()
-                    .ok_or("translation-unit owner has no unit id")?,
+                    .ok_or("translation-unit owner has no id")?,
             )
             .or_default()
             .push(owner);
@@ -352,18 +338,14 @@ fn bucket_translation_units(
     for (id, owners) in grouped {
         let unit = units
             .unit(&id)
-            .ok_or_else(|| format!("unknown translation unit {id}"))?;
+            .ok_or_else(|| format!("unknown unit {id}"))?;
         match score_translation_unit(
             repository,
             unit,
             &owners,
             &output.join(format!("unit-{id}")),
         ) {
-            Ok(outputs) => scores.extend(
-                outputs
-                    .into_iter()
-                    .map(|(address, output)| (address, Ok(output))),
-            ),
+            Ok(found) => scores.extend(found.into_iter().map(|row| (row.0, Ok(row.1)))),
             Err(error) => scores.extend(
                 owners
                     .into_iter()
@@ -381,44 +363,42 @@ fn score_translation_unit(
     work: &Path,
 ) -> Result<BTreeMap<u32, RenderOutput>, String> {
     if unit.overlay.is_some() {
-        return Err("main-ROM wave inventory cannot score an overlay translation unit".into());
+        return Err("main-ROM inventory cannot score an overlay unit".into());
     }
     let first = unit
         .owners
         .first()
         .ok_or("translation unit has no owners")?;
-    let configuration = CandidateCompilerConfiguration {
-        family: Some(CandidateCompilerFamily::Routed),
-        absolute_symbols: unit.canonical_symbols()?,
-        ..Default::default()
-    };
     let source = unit.source.to_string_lossy().into_owned();
     let rom = repository
         .join("roms/gs1-en.gba")
         .to_string_lossy()
         .into_owned();
-    let shared_object = work.join("score").join(format!("{:08x}.o", first.address));
+    let object = work.join("score").join(format!("{:08x}.o", first.address));
     let wanted = selected
         .iter()
         .map(|owner| (owner.address, *owner))
         .collect::<BTreeMap<_, _>>();
     let mut outputs = BTreeMap::new();
     for (index, member) in unit.owners.iter().enumerate() {
-        let selected_owner = wanted.get(&member.address).copied();
-        if index != 0 && selected_owner.is_none() {
+        if index != 0 && !wanted.contains_key(&member.address) {
             continue;
         }
-        let options = CandidateOptions {
+        let mut options = CandidateOptions {
             source: source.clone(),
             rom: Some(rom.clone()),
             work: Some(work.join("score").to_string_lossy().into_owned()),
             flags: Vec::new(),
-            configuration: configuration.clone(),
+            configuration: CandidateCompilerConfiguration {
+                family: Some(CandidateCompilerFamily::Routed),
+                absolute_symbols: unit.canonical_symbols()?,
+                ..Default::default()
+            },
             target: CompilerTarget::Gs1,
             owner: Some(member.address),
             overlay: None,
             unit: Some(unit.id.clone()),
-            precompiled_object: (index != 0).then(|| shared_object.to_string_lossy().into_owned()),
+            precompiled_object: (index != 0).then(|| object.to_string_lossy().into_owned()),
             size: Some(member.extent),
             align: true,
             first: false,
@@ -427,12 +407,13 @@ fn score_translation_unit(
             patch: None,
         };
         let mut scored = render(repository, &options)?;
-        if selected_owner.is_some() && scored.residual.class == ResidualClass::AllocationUncovered {
-            let mut decoded_options = options;
-            decoded_options.allocator_order = true;
-            scored = render(repository, &decoded_options)?;
+        if wanted.contains_key(&member.address)
+            && scored.residual.class == ResidualClass::AllocationUncovered
+        {
+            options.allocator_order = true;
+            scored = render(repository, &options)?;
         }
-        if selected_owner.is_some() {
+        if wanted.contains_key(&member.address) {
             outputs.insert(member.address, scored);
         }
     }
@@ -441,21 +422,30 @@ fn score_translation_unit(
 
 fn pack_command(args: Args) -> Result<(), String> {
     let repository = root();
+    if args.output.is_some() {
+        return Err("waves pack writes the canonical hashed pack directory; omit --output".into());
+    }
     let inventory = inventory(repository)?;
     let families = families(repository, &args.family_index)?;
-    let output = args
-        .output
-        .unwrap_or_else(|| repository.join("out/gs1-en/waves/packs"));
+    let family_sha256 = hash(resolve(repository, &args.family_index))?;
+    let output = repository.join(PACKS);
     let mut owners = inventory.owners.iter().collect::<Vec<_>>();
     owners.sort_by_key(|o| (std::cmp::Reverse(o.size), o.address));
     owners.truncate(args.limit.unwrap_or(owners.len()));
     let mut generated = 0;
     for owner in owners {
         let dir = output.join(stem(owner.address));
-        let verdict = pack(repository, &dir, owner, families.get(&owner.owner));
+        let verdict = pack(
+            repository,
+            &dir,
+            owner,
+            families.get(&owner.owner),
+            &inventory.manifest_sha256,
+            &family_sha256,
+        );
         match verdict {
-            Ok(value) => {
-                write_json(&dir.join("pack.json"), &value)?;
+            Ok(_) => {
+                fs::remove_file(dir.join("verdict.json")).ok();
                 generated += 1;
             }
             Err(error) => write_json(
@@ -468,15 +458,14 @@ fn pack_command(args: Args) -> Result<(), String> {
     Ok(())
 }
 
-fn wave_command(args: Args) -> Result<(), String> {
+fn dispatch_command(args: Args) -> Result<(), String> {
     let repository = root();
     let inventory = inventory(repository)?;
     let bucket = load_bucket(repository, &args.bucket, &inventory)?;
-    let families = families(repository, &args.family_index)?;
     let limit = args.limit.unwrap_or(WAVE_SIZE);
     if limit < WAVE_SIZE {
         return Err(format!(
-            "an autonomous wave must contain at least {WAVE_SIZE} owners"
+            "an autonomous dispatch must contain at least {WAVE_SIZE} owners"
         ));
     }
     let mut ranked = wave_safe(&inventory, &bucket);
@@ -491,529 +480,182 @@ fn wave_command(args: Args) -> Result<(), String> {
     let output = args.output.unwrap_or_else(|| {
         repository
             .join("out/gs1-en/waves")
-            .join(format!("wave-{}-{limit}", &signature[..12]))
+            .join(format!("dispatch-{}-{limit}", &signature[..12]))
     });
     write_json(&output.join("inventory.json"), &inventory)?;
-    write_json(
-        &output.join("dossier-mine.json"),
-        &mine_dossiers(&repository.join("games/gs1/recon/en/main"))?,
-    )?;
     let mut records = Vec::new();
-    for (owner, _) in ranked {
+    for (owner, entry) in ranked {
         let directory = output.join("owners").join(stem(owner.address));
         let record = wave_owner(
             repository,
             &directory,
             owner,
-            families.get(&owner.owner),
+            entry,
+            &args.family_index,
+            &inventory,
             args.stall_budget,
         );
         write_json(&directory.join("verdict.json"), &record)?;
         records.push(record);
     }
-    let adopted = integrate_exact(repository, &output, &mut records, args.apply)?;
-    let mut classes = BTreeMap::<String, usize>::new();
-    for record in &records {
-        if let Some(class) = record["residual"]["class"].as_str() {
-            *classes.entry(class.into()).or_default() += 1;
-        }
-    }
-    let needs_human = "smart_queue score_failed template_pack_failed idiom_lint_parked named_repair_parked stall_budget_exhausted integration_parked";
+    let classes = record_counts(&records, |record| record["residual"]["class"].as_str());
+    let verdicts = record_counts(&records, |record| record["verdict"].as_str());
     let smart = records
         .iter()
-        .filter(|record| {
-            record["verdict"]
-                .as_str()
-                .is_some_and(|verdict| needs_human.split_ascii_whitespace().any(|v| v == verdict))
-        })
+        .filter(|record| record["verdict"] != "work_order_ready")
         .map(|r| json!({"owner":r["owner"],"reason":r["error"],"class":r["residual"]["class"]}))
         .collect::<Vec<_>>();
-    let human_routed = smart.len();
-    let verdict = |name: &str| {
-        records
-            .iter()
-            .filter(|record| record["verdict"] == name)
-            .count()
-    };
-    let class = |name: &str| classes.get(name).copied().unwrap_or(0);
-    let template_attempts = records
+    let templates = records
         .iter()
-        .filter_map(|record| record["template_attempt"]["attempted"].as_u64())
+        .filter_map(|record| record["template_count"].as_u64())
         .sum::<u64>();
-    let template_hits = records
-        .iter()
-        .filter(|record| !record["template_attempt"]["exact_rank"].is_null())
-        .count();
-    let template_improvements = records
-        .iter()
-        .filter(|record| !record["template_attempt"]["improved_rank"].is_null())
-        .count();
+    let ready = verdicts.get("work_order_ready").copied().unwrap_or(0);
+    let smart_count = smart.len();
     let report = json!({
         "schema_version":2,
-        "wave_id":format!("wave-{}-{limit}",&signature[..12]),
-        "derivation":"fresh bucket -> ranked retargeted siblings -> pre-score lint -> typed triage -> named finite operation -> exact integrator or parked verdict",
-        "selected_order":"allocation-covered; exact extent; differing halfwords; descending bytes; address",
+        "dispatch_id":format!("dispatch-{}-{limit}",&signature[..12]),
         "stall_budget_compiles":args.stall_budget,
         "class_counts":classes,
+        "verdict_counts":verdicts,
         "owners":records,
         "funnel":{
             "inventory_debt":inventory.owners.len(),"selected":limit,
-            "template_attempts":template_attempts,"template_improved":template_improvements,
-            "template_pack_failed":verdict("template_pack_failed"),
-            "idiom_lint_parked":verdict("idiom_lint_parked"),"score_failed":verdict("score_failed"),
-            "uncovered_floor":class("allocation_uncovered"),"smart_queue":verdict("smart_queue"),
-            "playbook_parked":verdict("playbook_parked"),
-            "named_repair_parked":verdict("named_repair_parked"),
-            "stall_budget_exhausted":verdict("stall_budget_exhausted"),
-            "exact_ready_for_integration":verdict("exact_ready_for_integration"),
-            "integration_parked":verdict("integration_parked"),"adopted":adopted
-        },
-        "template_hit_rate":{
-            "measured":true,"attempts":template_attempts,"attributed_exact_owners":template_hits,
-            "improved_owners":template_improvements,
-            "basis_points":if limit==0{0}else{template_hits*10000/limit},
-            "attribution":"Only exact output from a recorded retargeted template rank counts as a hit."
-        },
-        "success_metric":{
-            "owners_adopted":adopted,"apply_requested":args.apply,"human_routed":human_routed,
-            "note":"Zero is a valid measured result; routing, attempts, and score movement are diagnostics."
+            "packed_templates":templates,"work_order_ready":ready,"smart_queue":smart_count
         },
         "smart_queue":smart
     });
     write_json(&output.join("smart-queue.json"), &report["smart_queue"])?;
-    write_json(&output.join("wave-report.json"), &report)?;
+    write_json(&output.join("dispatch-report.json"), &report)?;
     println!(
-        "wave={} selected={limit} template_attempts={template_attempts} exact_ready={} smart_queue={} adopted={adopted} output={}",
-        report["wave_id"].as_str().unwrap_or("wave"),
-        verdict("exact_ready_for_integration"),
-        report["smart_queue"].as_array().map_or(0, Vec::len),
+        "dispatch={} selected={limit} packed_templates={templates} work_order_ready={ready} smart_queue={smart_count} output={}",
+        report["dispatch_id"].as_str().unwrap_or("dispatch"),
         output.display()
     );
     Ok(())
+}
+
+fn record_counts(
+    records: &[Value],
+    value: impl for<'a> Fn(&'a Value) -> Option<&'a str>,
+) -> BTreeMap<String, usize> {
+    let mut counts = BTreeMap::new();
+    for label in records.iter().filter_map(value) {
+        *counts.entry(label.into()).or_default() += 1;
+    }
+    counts
 }
 
 fn wave_owner(
     repository: &Path,
     directory: &Path,
     owner: &Owner,
-    target: Option<&FamilyTarget>,
+    entry: &BucketEntry,
+    family_index: &Path,
+    inventory: &Inventory,
     stall: usize,
 ) -> Value {
-    let mut stages = vec!["discovered"];
-    let mut budget = Budget {
-        limit: stall,
-        used: 0,
-    };
-    let failed = |verdict: &str, error: String, stages: &[&str], used: usize| json!({"owner":owner.owner,"name":owner.name,"size":owner.size,"verdict":verdict,"error":error,"stages":stages,"compiles_used":used,"stall_budget":stall});
-    let pack = match pack(repository, directory, owner, target) {
+    let (pack_path, pack) = match load_pack(repository, owner, family_index, inventory) {
         Ok(v) => v,
-        Err(e) => return failed("template_pack_failed", e, &stages, budget.used),
+        Err(error) => return wave_record(owner, entry, "template_pack_failed", Some(error), 0),
     };
-    stages.push("packed");
-    let source = match read(repository.join(owner.candidate.as_deref().unwrap_or(""))) {
-        Ok(v) => v,
-        Err(e) => return failed("score_failed", e, &stages, budget.used),
-    };
-    let reference = match read(repository.join(&owner.reference)) {
-        Ok(v) => v,
-        Err(e) => return failed("score_failed", e, &stages, budget.used),
-    };
-    let lint_report = lint(&source, &reference, None);
-    stages.push("linted");
-    if !lint_report.passes() {
-        return json!({"owner":owner.owner,"name":owner.name,"size":owner.size,"verdict":"idiom_lint_parked","error":"pre-score idiom lint finding","stages":stages,"compiles_used":budget.used,"stall_budget":stall,"pack":pack,"lint":lint_report});
-    }
-    if let Err(e) = budget.take() {
-        return failed("stall_budget_exhausted", e, &stages, budget.used);
-    }
-    let mut scored = match score(repository, owner, directory, false, None) {
-        Ok(v) => v,
-        Err(e) => return failed("score_failed", e, &stages, budget.used),
-    };
-    stages.push("draft_scored");
-    let templates = match template_attempts(
-        repository,
-        directory,
-        owner,
-        target,
-        &source,
-        &reference,
-        &scored,
-        &mut budget,
-    ) {
-        Ok(run) => run,
-        Err(error) => return failed("template_pack_failed", error, &stages, budget.used),
-    };
-    let TemplateRun {
-        report: template_report,
-        best: template_best,
-    } = templates;
-    let mut active_source = source.clone();
-    if let Some((candidate, output, _)) = template_best {
-        active_source = candidate;
-        scored = output;
-    }
-    stages.push("templates_scored");
-    if scored.residual.class == ResidualClass::AllocationUncovered {
-        if let Err(e) = budget.take() {
-            return failed("stall_budget_exhausted", e, &stages, budget.used);
-        }
-        let patch_path = (active_source != source).then(|| directory.join("templates/active.diff"));
-        if let Some(path) = &patch_path {
-            if let Err(error) = write(
-                path,
-                unified(
-                    owner.candidate.as_deref().unwrap_or("candidate.c"),
-                    &source,
-                    &active_source,
-                )
-                .as_bytes(),
-            ) {
-                return failed("score_failed", error, &stages, budget.used);
-            }
-        }
-        scored = match score(repository, owner, directory, true, patch_path.as_deref()) {
-            Ok(v) => v,
-            Err(e) => {
-                return failed(
-                    "score_failed",
-                    format!("allocator decoder: {e}"),
-                    &stages,
-                    budget.used,
-                )
-            }
-        };
-        stages.push("decoded");
-    }
-    let allocator = scored
-        .allocator
-        .as_ref()
-        .map(|a| json!({"repair":a.repair.as_ref().map(|p|p.label()),"dimensions":a.dimensions}));
-    let mut residual = scored.residual.clone();
-    if residual.class == ResidualClass::AllocationCovered {
-        stages.push("repair_planned");
-        let repair = match repair(
-            repository,
-            directory,
+    let residual = entry.residual.as_ref().expect("wave-safe entry is scored");
+    let Some(playbook) = residual.class.playbook() else {
+        return wave_record(
             owner,
-            &source,
-            &active_source,
-            &scored,
-            &mut budget,
-        ) {
-            Ok(v) => v,
-            Err(e) => {
-                return json!({"owner":owner.owner,"name":owner.name,"size":owner.size,"verdict":"named_repair_parked","error":e,"stages":stages,"compiles_used":budget.used,"stall_budget":stall,"pack":pack,"lint":lint_report,"template_attempt":template_report,"residual":residual,"allocator":allocator})
-            }
-        };
-        stages.push("repair_scored");
-        if let Some((candidate, best)) = repair.best.as_ref() {
-            active_source = candidate.clone();
-            residual = best.residual.clone();
-        }
-        let exact = residual.class == ResidualClass::Exact;
-        let exact_source = if exact {
-            match stage_exact(directory, owner, &active_source) {
-                Ok(path) => Some(path),
-                Err(error) => return failed("score_failed", error, &stages, budget.used),
-            }
-        } else {
-            None
-        };
-        return json!({"owner":owner.owner,"name":owner.name,"size":owner.size,"verdict":if exact{"exact_ready_for_integration"}else if repair.exhausted{"stall_budget_exhausted"}else{"named_repair_parked"},"error":if exact{Value::Null}else{json!("finite decoder-named repair did not close exactly")},"stages":stages,"compiles_used":budget.used,"stall_budget":stall,"pack":pack,"lint":lint_report,"template_attempt":template_report,"residual":residual,"allocator":allocator,"repair_attempt":repair.report,"exact_source":exact_source});
-    }
-    if residual.class == ResidualClass::Exact {
-        let exact_source = match stage_exact(directory, owner, &active_source) {
-            Ok(path) => Some(path),
-            Err(error) => return failed("score_failed", error, &stages, budget.used),
-        };
-        return json!({"owner":owner.owner,"name":owner.name,"size":owner.size,"verdict":"exact_ready_for_integration","stages":stages,"compiles_used":budget.used,"stall_budget":stall,"pack":pack,"lint":lint_report,"template_attempt":template_report,"residual":residual,"allocator":allocator,"exact_source":exact_source});
-    }
-    let Some(playbook) = residual.playbook.clone() else {
-        return json!({"owner":owner.owner,"name":owner.name,"size":owner.size,"verdict":"smart_queue","error":"triage class has no executable playbook","stages":stages,"compiles_used":budget.used,"stall_budget":stall,"pack":pack,"lint":lint_report,"template_attempt":template_report,"residual":residual,"allocator":allocator});
+            entry,
+            "smart_queue",
+            Some("triage class has no executable playbook".into()),
+            pack["template_count"].as_u64().unwrap_or(0),
+        );
     };
-    if let Err(e) = work_order(
-        directory,
-        owner,
-        &residual,
-        &playbook,
-        allocator.as_ref(),
-        &pack,
-        stall,
-    ) {
-        return failed("smart_queue", e, &stages, budget.used);
-    }
-    stages.push("playbook_recorded");
-    json!({"owner":owner.owner,"name":owner.name,"size":owner.size,"verdict":"playbook_parked","error":"classified playbook has no executable catalog operation; bounded work order recorded after ranked template attempts","stages":stages,"compiles_used":budget.used,"stall_budget":stall,"pack":pack,"lint":lint_report,"template_attempt":template_report,"residual":residual,"allocator":allocator,"playbook":playbook})
-}
-
-fn integrate_exact(
-    repository: &Path,
-    output: &Path,
-    records: &mut [Value],
-    apply: bool,
-) -> Result<usize, String> {
-    let mut ready = Vec::new();
-    for (index, record) in records.iter().enumerate() {
-        if record["verdict"] != "exact_ready_for_integration" {
-            continue;
-        }
-        let owner = record["owner"]
-            .as_str()
-            .ok_or("exact record has no owner")?;
-        let source = record["exact_source"]
-            .as_str()
-            .ok_or_else(|| format!("{owner}: exact record has no staged source"))?;
-        ready.push((index, SourceOwner::parse(owner)?, read(source)?));
-    }
-    if ready.is_empty() || !apply {
-        return Ok(0);
-    }
-    let nonce = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .map_err(|error| error.to_string())?
-        .as_nanos();
-    let candidates = output.join(format!(
-        "integration-candidates-{}-{nonce}",
-        std::process::id()
-    ));
-    fs::create_dir(&candidates).map_err(|error| format!("{}: {error}", candidates.display()))?;
-    for (_, owner, source) in &ready {
-        write(
-            &candidates.join(format!("{}.c", owner.address_stem())),
-            source.as_bytes(),
-        )?;
-    }
-    let arguments = vec![
-        "--apply".to_string(),
-        candidates.to_string_lossy().into_owned(),
-    ];
-    if integrate_matches::entry(&arguments) != std::process::ExitCode::SUCCESS {
-        return Err("exact integration gate failed".into());
-    }
-    let source_paths = SourcePaths::load(repository)?;
-    let mut adopted = 0;
-    for (index, owner, _) in ready {
-        let installed = source_paths
-            .registered_source_path(owner)
-            .is_ok_and(|path| path.is_file());
-        let retained = repository
-            .join("games/gs1/asm")
-            .join(format!("{}.s", owner.address_stem()))
-            .is_file();
-        if installed && !retained {
-            records[index]["verdict"] = json!("adopted");
-            records[index]["error"] = Value::Null;
-            adopted += 1;
-        } else {
-            records[index]["verdict"] = json!("integration_parked");
-            records[index]["error"] = json!(
-                "exact gate did not install the registered source and retire retained assembly"
-            );
-        }
-        write_json(
-            &output
-                .join("owners")
-                .join(owner.address_stem())
-                .join("verdict.json"),
-            &records[index],
-        )?;
-    }
-    Ok(adopted)
-}
-
-struct TemplateRun {
-    report: Value,
-    best: Option<(String, RenderOutput, usize)>,
-}
-
-fn template_attempts(
-    repository: &Path,
-    directory: &Path,
-    owner: &Owner,
-    target: Option<&FamilyTarget>,
-    source: &str,
-    reference: &str,
-    baseline: &RenderOutput,
-    budget: &mut Budget,
-) -> Result<TemplateRun, String> {
-    let mut attempts = Vec::new();
-    let mut best = None;
-    for (index, template) in target
-        .into_iter()
-        .flat_map(|target| &target.alternatives)
-        .take(3)
-        .enumerate()
-    {
-        let rank = index + 1;
-        let template_source = read(repository.join(&template.source))?;
-        let target_symbol = target.map_or(owner.symbol.as_str(), |target| target.symbol.as_str());
-        let candidate = match prepare_template(template, target_symbol, &template_source, reference)
-        {
-            Ok(candidate) => candidate,
-            Err(rejection) => {
-                attempts.push(json!({"rank":rank,"owner":template.owner,"score_basis_points":template.score_basis_points,"compiled":false,"rejection":rejection}));
-                continue;
-            }
-        };
-        if budget.take().is_err() {
-            break;
-        }
-        let work = directory.join("templates").join(format!("rank-{rank}"));
-        let patch = work.join("candidate.diff");
-        write(
-            &patch,
-            unified(
-                owner.candidate.as_deref().unwrap_or("candidate.c"),
-                source,
-                &candidate,
-            )
-            .as_bytes(),
-        )?;
-        match score(repository, owner, &work, false, Some(&patch)) {
-            Err(error) => attempts.push(json!({"rank":rank,"owner":template.owner,"score_basis_points":template.score_basis_points,"compiled":false,"error":error})),
-            Ok(output) => {
-                let exact = output.residual.class == ResidualClass::Exact;
-                attempts.push(json!({"rank":rank,"owner":template.owner,"score_basis_points":template.score_basis_points,"compiled":true,"class":output.residual.class.label(),"differing_halfwords":output.differing_halfwords,"candidate_bytes":output.candidate_length,"reference_bytes":output.reference_length,"exact":exact}));
-                if score_key(&output) < score_key(baseline)
-                    && best.as_ref().is_none_or(|(_, current, _)| {
-                        score_key(&output) < score_key(current)
-                    })
-                {
-                    best = Some((candidate, output, rank));
-                }
-            }
-        }
-    }
-    let best_source = if let Some((candidate, _, _)) = &best {
-        let path = directory.join("templates/best.c");
-        write(&path, candidate.as_bytes())?;
-        write(&directory.join("skeleton.c"), candidate.as_bytes())?;
-        Some(path.to_string_lossy().into_owned())
-    } else {
-        None
-    };
-    let report = json!({
-        "attempted": attempts.len(),
-        "compiled": attempts.iter().filter(|attempt| attempt["compiled"] == true).count(),
-        "exact_rank": best.as_ref().and_then(|(_, output, rank)| (output.residual.class == ResidualClass::Exact).then_some(*rank)),
-        "improved_rank": best.as_ref().map(|(_, _, rank)| *rank),
-        "best_source": best_source,
-        "attempts": attempts,
+    let allocator = json!({
+        "repair":entry.allocator_repair,
+        "dimensions":entry.allocator_dimensions,
     });
-    Ok(TemplateRun { report, best })
-}
-
-fn stage_exact(directory: &Path, owner: &Owner, source: &str) -> Result<String, String> {
-    let path = directory
-        .join("exact")
-        .join(format!("{}.c", stem(owner.address)));
-    write(&path, source.as_bytes())?;
-    Ok(path.to_string_lossy().into_owned())
-}
-
-struct RepairRun {
-    report: Value,
-    best: Option<(String, RenderOutput)>,
-    exhausted: bool,
-}
-fn repair(
-    repository: &Path,
-    directory: &Path,
-    owner: &Owner,
-    base_source: &str,
-    source: &str,
-    baseline: &RenderOutput,
-    budget: &mut Budget,
-) -> Result<RepairRun, String> {
-    let decoder = baseline
-        .allocator
-        .as_ref()
-        .ok_or("covered floor lacks decoder report")?;
-    let plan = decoder
-        .repair
-        .as_ref()
-        .ok_or("covered floor lacks structured repair")?;
-    let permutation = permuter::parse_permutation(source, plan)?;
-    let mut results = vec![
-        json!({"choice":0,"mutations":[],"differing_halfwords":baseline.differing_halfwords,"exact":baseline.residual.class==ResidualClass::Exact,"class":baseline.residual.class.label(),"source_sha256":sha256::hex(source.as_bytes())}),
-    ];
-    let mut best: Option<(String, RenderOutput)> = None;
-    let mut failures = 0;
-    let mut exhausted = false;
-    for choice in 1..permutation.count() {
-        if budget.take().is_err() {
-            exhausted = true;
-            break;
-        }
-        let candidate = permutation.evaluate(choice)?;
-        let work = directory.join("repair").join(format!("choice-{choice:02}"));
-        let patch_path = work.join("repair.diff");
-        write(
-            &patch_path,
-            unified(
-                owner.candidate.as_deref().unwrap_or("candidate.c"),
-                base_source,
-                &candidate,
-            )
-            .as_bytes(),
-        )?;
-        match score(repository, owner, &work, false, Some(&patch_path)) {
-            Err(_) => failures += 1,
-            Ok(output) => {
-                results.push(json!({"choice":choice,"mutations":permutation.mutations(choice).unwrap_or_default(),"differing_halfwords":output.differing_halfwords,"exact":output.residual.class==ResidualClass::Exact,"class":output.residual.class.label(),"source_sha256":sha256::hex(candidate.as_bytes())}));
-                let better = score_key(&output) < score_key(baseline)
-                    && best
-                        .as_ref()
-                        .is_none_or(|(_, current)| score_key(&output) < score_key(current));
-                if better {
-                    best = Some((candidate, output));
-                }
-            }
-        }
+    if let Err(error) = work_order(
+        directory, owner, residual, playbook, &allocator, &pack_path, &pack, stall,
+    ) {
+        return wave_record(owner, entry, "smart_queue", Some(error), 0);
     }
-    let best_source = if let Some((source, _)) = &best {
-        let path = directory.join("repair/best.c");
-        write(&path, source.as_bytes())?;
-        Some(path.to_string_lossy().into_owned())
-    } else {
-        None
-    };
-    let report = json!({"plan":plan.label(),"dimensions":permutation.dimensions(),"raw_choices":permutation.raw_count(),"unique_choices":permutation.count(),"attempted":results.len()+failures,"compile_failures":failures,"baseline_differing_halfwords":baseline.differing_halfwords,"improved":best.is_some(),"exact":best.as_ref().is_some_and(|(_,o)|o.residual.class==ResidualClass::Exact),"best_source":best_source,"choices":results});
-    write_json(&directory.join("repair/report.json"), &report)?;
-    Ok(RepairRun {
-        report,
-        best,
-        exhausted,
-    })
-}
-
-fn score_key(output: &RenderOutput) -> (bool, usize, usize) {
-    (
-        output.residual.class != ResidualClass::Exact,
-        output.differing_halfwords,
-        output.candidate_length.abs_diff(output.reference_length),
+    wave_record(
+        owner,
+        entry,
+        "work_order_ready",
+        None,
+        pack["template_count"].as_u64().unwrap_or(0),
     )
 }
-fn unified(path: &str, old: &str, new: &str) -> String {
-    let name = Path::new(path)
-        .file_name()
-        .and_then(|n| n.to_str())
-        .unwrap_or("candidate.c");
-    let mut patch = format!(
-        "--- a/{name}\n+++ b/{name}\n@@ -1,{} +1,{} @@\n",
-        old.lines().count(),
-        new.lines().count()
-    );
-    for line in old.split_inclusive('\n') {
-        patch.push('-');
-        patch.push_str(line);
+
+fn wave_record(
+    owner: &Owner,
+    entry: &BucketEntry,
+    verdict: &str,
+    error: Option<String>,
+    template_count: u64,
+) -> Value {
+    json!({"owner":owner.owner,"name":owner.name,"size":owner.size,"verdict":verdict,"error":error,"template_count":template_count,"residual":entry.residual})
+}
+
+fn load_pack(
+    repository: &Path,
+    owner: &Owner,
+    family_index: &Path,
+    inventory: &Inventory,
+) -> Result<(PathBuf, Value), String> {
+    let path = repository
+        .join(PACKS)
+        .join(stem(owner.address))
+        .join("pack.json");
+    let pack: Value = json_file(&path)?;
+    let family_sha256 = hash(resolve(repository, family_index))?;
+    let fresh = pack["schema_version"] == 3
+        && pack["owner"] == owner.owner
+        && pack["candidate_sha256"] == json!(owner.candidate_sha256)
+        && pack["manifest_sha256"] == inventory.manifest_sha256
+        && pack["family_index_sha256"] == family_sha256
+        && pack["reference_sha256"] == hash(repository.join(&owner.reference))?;
+    if !fresh {
+        return Err(format!(
+            "{} is stale; rerun `compiler waves pack`",
+            path.display()
+        ));
     }
-    for line in new.split_inclusive('\n') {
-        patch.push('+');
-        patch.push_str(line);
+    let directory = path.parent().ok_or("pack has no directory")?;
+    let skeleton = pack["skeleton"].as_str().ok_or("pack has no skeleton")?;
+    if hash(directory.join(skeleton))? != pack["seed_sha256"].as_str().unwrap_or("") {
+        return Err(format!("{} skeleton hash is stale", owner.owner));
     }
-    patch
+    for template in pack["templates"]
+        .as_array()
+        .ok_or("pack has no template array")?
+    {
+        let source = template["source"]
+            .as_str()
+            .ok_or("template has no source")?;
+        let packed = template["packed_source"]
+            .as_str()
+            .ok_or("template has no packed source")?;
+        let retargeted = template["retargeted_source"]
+            .as_str()
+            .ok_or("template has no retargeted source")?;
+        if hash(repository.join(source))? != template["source_sha256"].as_str().unwrap_or("")
+            || hash(directory.join(packed))? != template["source_sha256"].as_str().unwrap_or("")
+            || hash(directory.join(retargeted))?
+                != template["retargeted_sha256"].as_str().unwrap_or("")
+        {
+            return Err(format!("{} template pack is stale", owner.owner));
+        }
+    }
+    if let Some(m2c) = pack["m2c"].as_object() {
+        for (path, digest) in [("seed", "seed_sha256"), ("context", "context_sha256")] {
+            if let Some(relative) = m2c[path].as_str() {
+                if hash(directory.join(relative))? != m2c[digest].as_str().unwrap_or("") {
+                    return Err(format!("{} m2c pack is stale", owner.owner));
+                }
+            }
+        }
+    }
+    Ok((path, pack))
 }
 
 fn score(
@@ -1021,7 +663,6 @@ fn score(
     owner: &Owner,
     work: &Path,
     allocator: bool,
-    patch: Option<&Path>,
 ) -> Result<RenderOutput, String> {
     render(
         repository,
@@ -1049,7 +690,7 @@ fn score(
             first: false,
             allocator_order: allocator,
             asm: false,
-            patch: patch.map(|p| p.to_string_lossy().into_owned()),
+            patch: None,
         },
     )
 }
@@ -1059,36 +700,37 @@ fn pack(
     directory: &Path,
     owner: &Owner,
     target: Option<&FamilyTarget>,
+    manifest_sha256: &str,
+    family_index_sha256: &str,
 ) -> Result<Value, String> {
     let status = match owner.scope {
         Scope::TranslationUnit => "translation_unit_parked",
-        Scope::NoCandidate => "template_skeleton_only",
+        Scope::NoCandidate => "m2c_seed_ready",
         Scope::StandaloneDraft => "draft_ready",
     };
     let candidate_path = owner.candidate.as_deref();
-    let (candidate, seed_origin) = if let Some(path) = candidate_path {
-        (read(repository.join(path))?, "semantic_candidate")
-    } else if let Some((target, template)) = target.and_then(|target| {
-        target
-            .alternatives
-            .first()
-            .map(|template| (target, template))
-    }) {
-        let source = read(repository.join(&template.source))?;
+    let mut m2c = Value::Null;
+    let (candidate, seed_origin, seed_source) = if let Some(path) = candidate_path {
         (
-            retarget(template, &target.symbol, &source)?,
-            "retargeted_exact_sibling",
+            read(repository.join(path))?,
+            "semantic_candidate",
+            Some(path),
         )
     } else {
+        let seed = m2c_seed(repository, directory, owner, target)?;
+        let candidate = read(&seed.source)?;
+        let context_sha256 = seed.context.as_ref().map(hash).transpose()?;
+        m2c = json!({"seed":format!("m2c/{}.c",stem(owner.address)),"seed_sha256":sha256::hex(candidate.as_bytes()),"context":seed.context.as_ref().map(|_|"m2c/family-template.i"),"context_sha256":context_sha256,"context_kind":seed.context_kind});
         (
-            format!(
-                "/* {} has no semantic draft or ranked exact sibling yet. */\n",
-                owner.owner
-            ),
-            "empty_parked_skeleton",
+            candidate,
+            if seed.context.is_some() {
+                "m2c_exact_sibling_context"
+            } else {
+                "m2c_no_context"
+            },
+            Some(owner.reference.as_str()),
         )
     };
-    write(&directory.join("candidate.c"), candidate.as_bytes())?;
     write(&directory.join("skeleton.c"), candidate.as_bytes())?;
     let mut templates = Vec::new();
     for (index, template) in target
@@ -1100,24 +742,49 @@ fn pack(
         let source = read(repository.join(&template.source))?;
         let packed = format!("template-{}.c", index + 1);
         write(&directory.join(&packed), source.as_bytes())?;
-        let target_symbol = target.map_or(owner.symbol.as_str(), |target| target.symbol.as_str());
+        let target_symbol = owner.symbol.as_str();
         let retargeted_source = retarget(template, target_symbol, &source)?;
         let retargeted = format!("retargeted-{}.c", index + 1);
         write(&directory.join(&retargeted), retargeted_source.as_bytes())?;
         templates.push(json!({"rank":index+1,"owner":template.owner,"symbol":template.symbol,"score_basis_points":template.score_basis_points,"source":template.source,"packed_source":packed,"source_sha256":sha256::hex(source.as_bytes()),"retargeted_source":retargeted,"retargeted_sha256":sha256::hex(retargeted_source.as_bytes()),"retargeted":retargeted_source!=source}));
     }
-    let aggregate = repository.join("out/workbench/shared-aggregates/shared-aggregates.h");
-    let aggregate = if aggregate.is_file() {
-        let source = read(&aggregate)?;
-        write(&directory.join("shared-aggregates.h"), source.as_bytes())?;
-        json!({"source":aggregate,"packed_source":"shared-aggregates.h","source_sha256":sha256::hex(source.as_bytes())})
-    } else {
-        Value::Null
-    };
     let template_count = templates.len();
-    let value = json!({"schema_version":1,"owner":owner.owner,"name":owner.name,"scope":owner.scope,"status":status,"target_symbol":target.map(|target|target.symbol.as_str()).unwrap_or(&owner.symbol),"family_index_reference":target.map(|target|target.source.as_str()),"family":target.and_then(|target|target.family.as_deref()),"family_threshold_met":target.is_some_and(|target|target.family.is_some()),"seed_origin":seed_origin,"seed_source":candidate_path,"seed_sha256":sha256::hex(candidate.as_bytes()),"skeleton":"skeleton.c","templates":templates,"template_count":template_count,"shared_aggregates":aggregate,"raw_diff_included":false});
+    let value = json!({"schema_version":3,"owner":owner.owner,"name":owner.name,"scope":owner.scope,"status":status,"manifest_sha256":manifest_sha256,"family_index_sha256":family_index_sha256,"candidate_sha256":owner.candidate_sha256,"reference_sha256":hash(repository.join(&owner.reference))?,"target_symbol":owner.symbol,"family_index_reference":target.map(|target|target.source.as_str()),"family":target.and_then(|target|target.family.as_deref()),"family_threshold_met":target.is_some_and(|target|target.family.is_some()),"seed_origin":seed_origin,"seed_source":seed_source,"seed_sha256":sha256::hex(candidate.as_bytes()),"skeleton":"skeleton.c","m2c":m2c,"templates":templates,"template_count":template_count,"raw_diff_included":false});
     write_json(&directory.join("pack.json"), &value)?;
     Ok(value)
+}
+
+fn m2c_seed(
+    repository: &Path,
+    directory: &Path,
+    owner: &Owner,
+    target: Option<&FamilyTarget>,
+) -> Result<crate::family_m2c::Seed, String> {
+    let target_owner = SourceOwner::parse(&owner.owner)?;
+    let assembly = repository.join(&owner.reference);
+    let output = directory.join("m2c");
+    let plain =
+        || crate::family_m2c::generate(target_owner, &assembly, &owner.symbol, None, &output);
+    let Some(template) = target.and_then(|family| family.alternatives.first()) else {
+        return plain();
+    };
+    let template_owner = SourceOwner::parse(&template.owner)?;
+    crate::family_m2c::generate(
+        target_owner,
+        &assembly,
+        &owner.symbol,
+        Some((
+            template_owner,
+            &repository.join(&template.source),
+            &template.symbol,
+        )),
+        &output,
+    )
+    .or_else(|context_error| {
+        plain().map_err(|plain_error| {
+            format!("exact-sibling context: {context_error}; no context: {plain_error}")
+        })
+    })
 }
 
 fn work_order(
@@ -1125,17 +792,19 @@ fn work_order(
     owner: &Owner,
     residual: &ResidualReport,
     playbook: &str,
-    allocator: Option<&Value>,
+    decoder: &Value,
+    pack_path: &Path,
     pack: &Value,
     stall: usize,
 ) -> Result<(), String> {
-    if residual.playbook.is_none() {
-        return Err("unclassified owner cannot receive work".into());
-    }
     let template_count = pack["template_count"]
         .as_u64()
         .ok_or("template pack has no count")?;
-    let body = json!({"owner":owner.owner,"name":owner.name,"candidate_source":owner.candidate,"candidate_sha256":owner.candidate_sha256,"residual":residual,"playbook":playbook,"decoder":allocator,"template_count":template_count,"stall_budget_compiles":stall,"pack_sha256":sha256::hex(&serde_json::to_vec(pack).map_err(|error|error.to_string())?),"allowed_files":["skeleton.c","WORK.json"],"constraints":["execute_named_playbook_only","no_raw_diff_improvisation","adopt_only_when_byte_exact"]});
+    let skeleton = pack_path
+        .parent()
+        .ok_or("pack has no directory")?
+        .join(pack["skeleton"].as_str().ok_or("pack has no skeleton")?);
+    let body = json!({"owner":owner.owner,"name":owner.name,"candidate_source":owner.candidate,"candidate_sha256":owner.candidate_sha256,"residual":residual,"playbook":playbook,"decoder":decoder,"template_count":template_count,"stall_budget_compiles":stall,"pack":pack_path,"pack_sha256":sha256::hex(&serde_json::to_vec(pack).map_err(|error|error.to_string())?),"editable_source":skeleton,"allowed_files":[skeleton,"WORK.json"],"constraints":["execute_named_playbook_only","no_raw_diff_improvisation","adopt_only_when_byte_exact"]});
     let input_sha256 = sha256::hex(&serde_json::to_vec(&body).map_err(|error| error.to_string())?);
     write_json(
         &directory.join("WORK.json"),
@@ -1170,6 +839,7 @@ fn inventory(repository: &Path) -> Result<Inventory, String> {
             .as_deref()
             .map(|p| hash(repository.join(p)))
             .transpose()?;
+        let name = names.registered_name(id).map(str::to_string);
         owners.push(Owner {
             owner: id.id(),
             address,
@@ -1177,11 +847,11 @@ fn inventory(repository: &Path) -> Result<Inventory, String> {
             retention: region.retention.unwrap_or_default(),
             reference: region.source,
             symbol: if region.symbol.is_empty() {
-                id.legacy_name()
+                name.clone().unwrap_or_else(|| id.legacy_name())
             } else {
                 region.symbol
             },
-            name: names.registered_name(id).map(str::to_string),
+            name,
             scope,
             unit,
             candidate,
@@ -1226,7 +896,6 @@ fn families(repository: &Path, path: &Path) -> Result<BTreeMap<String, FamilyTar
     }
     let names = SourcePaths::load(repository)?;
     let units = TranslationUnits::load(repository)?;
-    let aliases = crate::families::entry_aliases(repository)?;
     for target in &mut index.targets {
         let mut alternatives = Vec::new();
         for mut template in std::mem::take(&mut target.alternatives) {
@@ -1237,13 +906,7 @@ fn families(repository: &Path, path: &Path) -> Result<BTreeMap<String, FamilyTar
             let source = read(repository.join(&template.source))?;
             template.canonical_name = owner
                 .and_then(|owner| names.registered_name(owner))
-                .filter(|name| definition_count(&source, name) == 1)
-                .map(str::to_string)
-                .or_else(|| {
-                    aliases
-                        .get(&template.symbol)
-                        .and_then(|names| unique_definition(names, &source))
-                });
+                .map(str::to_string);
             if retarget(&template, &target.symbol, &source).is_ok() {
                 alternatives.push(template);
             }
@@ -1265,12 +928,7 @@ fn standalone_template(
 ) -> Result<(), String> {
     let owner = SourceOwner::parse(&template.owner)?;
     let relative = Path::new(&template.source);
-    if units.unit_for_game_owner("gs1", owner).is_some()
-        || units
-            .units
-            .iter()
-            .any(|unit| unit.game == "gs1" && unit.source == relative)
-    {
+    if units.unit_for_game_owner("gs1", owner).is_some() {
         return Err(format!("{} is a translation-unit template", template.owner));
     }
     match names.owners_for_path(&repository.join(relative)).as_slice() {
@@ -1281,45 +939,12 @@ fn standalone_template(
     }
 }
 
-fn unique_definition(names: &[String], source: &str) -> Option<String> {
-    let mut found = names
-        .iter()
-        .filter(|name| definition_count(source, name) == 1);
-    let name = found.next()?.clone();
-    found.next().is_none().then_some(name)
-}
-
-fn definition_count(source: &str, name: &str) -> usize {
-    let literals =
-        Regex::new(r#"(?ms)//[^\n]*|/\*.*?\*/|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'"#).unwrap();
-    let code = literals.replace_all(source, |capture: &Captures| {
-        capture[0]
-            .bytes()
-            .map(|byte| if byte == b'\n' { '\n' } else { ' ' })
-            .collect::<String>()
-    });
-    let pattern = format!(
-        r"(?m)^[ \t]*(?:[A-Za-z_][A-Za-z0-9_]*[\s*]+)+(\b{}\b)\s*\([^;{{}}]*\)\s*\{{",
-        regex::escape(name)
-    );
-    Regex::new(&pattern).unwrap().captures_iter(&code).count()
-}
-
 fn retarget(template: &Template, target: &str, source: &str) -> Result<String, String> {
-    let alias = template
+    let source_name = template
         .canonical_name
         .as_deref()
-        .filter(|name| *name != template.symbol);
-    let source_name = match (
-        definition_count(source, &template.symbol),
-        alias.map_or(0, |name| definition_count(source, name)),
-        alias,
-    ) {
-        (1, 0, _) => template.symbol.as_str(),
-        (0, 1, Some(alias)) => alias,
-        _ => return Err(format!("{} has no unique entry definition", template.owner)),
-    };
-    if definition_count(source, target) != 0 {
+        .unwrap_or(&template.symbol);
+    if source_name == target || source.contains(&format!(" {target}(")) {
         return Err(format!("{} already defines {target}", template.owner));
     }
     let mut output = source.to_string();
@@ -1335,20 +960,6 @@ fn retarget(template: &Template, target: &str, source: &str) -> Result<String, S
         &format!("#undef {source_name}\n#define {source_name} {target}\n\n"),
     );
     Ok(output)
-}
-
-fn prepare_template(
-    template: &Template,
-    target: &str,
-    source: &str,
-    reference: &str,
-) -> Result<String, Value> {
-    let candidate = retarget(template, target, source).map_err(|error| json!({"error":error}))?;
-    let report = lint(&candidate, reference, None);
-    report
-        .passes()
-        .then_some(candidate)
-        .ok_or_else(|| json!({"error":"pre-score idiom lint finding","lint":report}))
 }
 
 fn load_bucket(
@@ -1438,6 +1049,15 @@ fn wave_signature(
     bytes.extend_from_slice(inventory.manifest_sha256.as_bytes());
     for (owner, _) in selected {
         bytes.extend_from_slice(owner.candidate_sha256.as_deref().unwrap_or("").as_bytes());
+        bytes.extend_from_slice(
+            hash(
+                repository
+                    .join(PACKS)
+                    .join(stem(owner.address))
+                    .join("pack.json"),
+            )?
+            .as_bytes(),
+        );
     }
     Ok(sha256::hex(&bytes))
 }
@@ -1449,7 +1069,6 @@ fn parse_args(argv: &[String]) -> Result<Args, String> {
         bucket: BUCKET.into(),
         limit: None,
         stall_budget: STALL_BUDGET,
-        apply: false,
     };
     let mut at = 0;
     while at < argv.len() {
@@ -1458,11 +1077,6 @@ fn parse_args(argv: &[String]) -> Result<Args, String> {
                 .ok_or_else(|| format!("{} requires a value", argv[at]))
         };
         match argv[at].as_str() {
-            "--apply" => {
-                out.apply = true;
-                at += 1;
-                continue;
-            }
             "--output" => out.output = Some(value(at)?.into()),
             "--family-index" => out.family_index = value(at)?.into(),
             "--bucket" => out.bucket = value(at)?.into(),
@@ -1571,7 +1185,7 @@ mod tests {
         assert!(standalone_template(repository, &names, &units, &template).is_err());
     }
     #[test]
-    fn retarget_requires_one_definition_and_lints_before_scoring() {
+    fn retarget_uses_registered_entry() {
         let template = Template {
             owner: "main:08000000".into(),
             symbol: "Func_08000000".into(),
@@ -1583,12 +1197,10 @@ mod tests {
             "#include \"types.h\"\n/* Func_08000000() {} */\nvoid Func_08000000(void) {}\n";
         let output = retarget(&template, "Func_08000004", source).unwrap();
         assert!(output.contains("#define Func_08000000 Func_08000004"));
-        assert!(retarget(&template, "Func_08000004", "/* Func_08000000() {} */").is_err());
-        let wrong = "void Func_08000000(void) { Func_080072f4(); }";
-        assert!(
-            prepare_template(&template, "Func_08000004", wrong, "bl Func_080072f4").unwrap_err()
-                ["lint"]
-                .is_object()
-        );
+    }
+    #[test]
+    fn dispatch_has_no_implicit_adoption_switch() {
+        assert!(parse_args(&["--apply".into()]).is_err());
+        assert!(!USAGE.contains("--apply"));
     }
 }

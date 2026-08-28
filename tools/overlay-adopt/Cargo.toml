@@ -14,6 +14,7 @@ edition = "2021"
 #   ../lib/overlay_disasm.ts -> assembleOverlay, OVERLAY_BASE
 overlay-disasm = { path = "../overlay-disasm" }
 compiler-core = { path = "../compiler-core" }
+candidate-compiler = { path = "../candidate-compiler" }
 candidate-show = { path = "../candidate-show" }
 no-asm-c = { path = "../no-asm-c" }
 serde = { version = "1", features = ["derive"] }

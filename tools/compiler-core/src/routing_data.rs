@@ -1,36 +1,8 @@
-// Native compiler routing tables.
-//
-// These are hand-maintained evidence ledgers. Their order and documented
-// duplicate entries are intentional because the resulting command-line order
-// is part of byte-exact output.
-//
-// PORT NOTE (reachability, measured 2026-08-07). A prior audit claimed EIGHT of
-// these tables are unreachable by `evidencedRoutingFlags`, the flag-capability
-// probe. Re-measured against the live probe, only THREE are:
-//
-//   OPTIMIZE_O3_OVERLAY_SOURCES               keyed by sourceKey; its one path
-//                                             is in none of the sets the probe
-//                                             enumerates, and `-O3` never shows
-//                                             up in the probe's output.
-//   NO_INTERWORK_SOURCES                      keyed by bare stem, but every
-//                                             member is an 0200xxxx overlay
-//                                             address while the probe's sweep
-//                                             covers 08000000..080fffff only.
-//                                             It also SUBTRACTS `-mthumb-interwork`
-//                                             rather than adding a flag, so it
-//                                             could never be evidenced anyway.
-//   SCHED_CALL_DEST_DESCENDING_OVERLAY_SOURCES  keyed by sourceKey; its overlay
-//                                             paths are not enumerated. Main
-//                                             image stems use the separate,
-//                                             reachable table below.
-//
-// The other five the audit named ARE reachable, and the audit was wrong about
-// them: NO_CONSTANT_REUSE_OVERLAY_SOURCES, GROUP_CONTROL_LAST_OVERLAY_SOURCES,
-// ORR_DEAD_INPUT_REUSE_OVERLAY_SOURCES and CALL_LITERAL_ARG1_FIRST_OVERLAY_SOURCES
-// all have members that the probe's explicit overlay-set enumeration visits, and
-// SCHED_LOW_DEST_FIRST_SOURCES contains "08097540", which the address sweep hits
-// directly. Nothing here is fixed on that account -- reachability is a property
-// of the probe, not of the data, and the tables are mirrored as they stand.
+// Ordered evidence ledgers: flag order and intentional duplicates affect bytes.
+// The 2026-08-07 reachability audit found only O3 overlays, bare-stem overlay
+// no-interwork entries, and descending-call overlays absent from its probe.
+// The constant-reuse, group-control, dead-input, literal-argument, and low-dest
+// tables were reachable; probe reachability never licenses changing this data.
 
 pub static FIXED_R3_SOURCES: &[&str] = &["080fb6ec", "080fb700", "080fb768", "080fb77c"];
 // 080a8904's register-only delay loop is exact at -O1; -O2 removes it, while
@@ -63,24 +35,9 @@ pub static NO_INTERWORK_OVERLAY_SOURCES: &[&str] = &[
     "games/gs1/src/resource_3a7_c_02001158.c",
     "games/gs1/src/resource_3bf_c_020057ec.c",
 ];
-// Soft-float library leaves that keep r4 CALLEE-SAVED, i.e. the stock ARM ABI
-// without `-fcall-used-r4`.
-//
-// The base flag set hands r4 to the allocator because Camelot's own code was
-// built that way. These entries are compiler soft-float support routines and
-// keep the stock ABI. For the original leaf set, the entire residual was the
-// r4 bit in otherwise identical `push` and `pop` register lists; the larger
-// add-parts owner independently confirms the same library boundary.
-//
-// Same shape of routing as `NO_INTERWORK_OVERLAY_SOURCES` above, which
-// subtracts `-mthumb-interwork` from this same family, and the same reasoning
-// pret uses when it routes `old_agbcc` at `m4a.o` and `libc.o`: a library
-// object is not game code and does not take the game's ABI. Stock option,
-// subtracted per file, recorded as routing debt.
-// The four members already byte-exact WITHOUT this subtraction -- 3a7:1544,
-// 3a7:1554, 3a7:1740 and 3bf:5ae0 -- are deliberately absent. They reproduce
-// on the base set, so routing them here would change flags under a settled
-// owner to no purpose.
+// Soft-float library leaves keep stock-ABI r4 callee-saved. Their residual was
+// the r4 push/pop bit; the larger add-parts owner confirms the boundary. The
+// already-exact 3a7:1544/1554/1740 and 3bf:5ae0 deliberately stay on base flags.
 pub static CALLEE_SAVED_R4_OVERLAY_SOURCES: &[&str] = &[
     "games/gs1/src/resource_3a7_c_0200145c.c",
     "games/gs1/src/resource_3a7_c_02001574.c",
@@ -99,15 +56,9 @@ pub static CALLEE_SAVED_R4_OVERLAY_SOURCES: &[&str] = &[
     "games/gs1/src/resource_3bf_c_02005c38.c",
     "games/gs1/src/resource_3bf_c_02005e04.c",
 ];
-// Tried and rejected: 3ad:11b8, 3ae:02dc, 3ca:004c, 3ca:00b0 and 3cb:0128 also
-// show r4 in the reference prologue, but subtracting the flag does not close
-// any of them and moves 3ad:11b8 from two differing halfwords to fifteen. A
-// saved r4 alone does not make an owner part of this family.
-// Main-image counterparts of the two overlay tables below/above, keyed by bare
-// stem the way every other main-image table is.
-//
-// 08006b84 is the same soft-library ABI case as the overlay r4 family: its
-// reference prologue saves r4 and ours does not.
+// Rejected r4 lookalikes: 3ad:11b8, 3ae:02dc, 3ca:004c/00b0, 3cb:0128; the flag
+// closes none and worsens 3ad:11b8 from two differing halfwords to fifteen.
+// 08006b84 is the corresponding main-image soft-library ABI case.
 pub static CALLEE_SAVED_R4_SOURCES: &[&str] = &["08006b84"];
 // 0801c34c reloads through a differently-typed pointer that strict aliasing
 // lets the compiler keep live.
@@ -188,21 +139,9 @@ pub static NO_STRICT_ALIASING_OVERLAY_SOURCES: &[&str] = &[
 ];
 pub static NO_THREAD_JUMPS_OVERLAY_SOURCES: &[&str] = &["games/gs1/src/resource_3c4_c_02001aba.c"];
 pub static NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES: &[&str] = &[
-    // The rematerialisation shape: the reference rebuilds a two-instruction
-    // constant at each use, while the rerun of cse after loop commons the two
-    // into one callee-saved register and pays for it with an extra register in
-    // the prologue and a copy at each use. The tell is a `push` that saves one
-    // more register than the reference's.
-    //
-    // DO NOT strip this table on the strength of bef5cad7c's "closed to flag
-    // sweeps". That commit is right that the flag cannot be applied BROADLY --
-    // measured again here, 12 adopted resource_3bf owners that are NOT in this
-    // table go 2 worse and 0 better under it, which is the 7-against-6 it
-    // reports. But routing is per FILE, and every entry below is an owner the
-    // flag closes outright; the owners it would regress are simply not listed.
-    // `overlay audit --all` is the standing proof: 0 findings with all of these
-    // routed and adopted. Blanket application is refused; per-owner is what a
-    // routing table is for.
+    // Reference rematerializes a two-insn constant; rerun-CSE keeps a register.
+    // This flag worsens 12 unlisted 3bf owners but closes every listed owner.
+    // It is per-file only; `overlay audit --all` is the standing exactness proof.
     "games/gs1/src/resource_39c_c_02001568.c",
     "games/gs1/src/resource_3a8_c_020015b4.c",
     "games/gs1/src/resource_3a8_c_0200158c.c",

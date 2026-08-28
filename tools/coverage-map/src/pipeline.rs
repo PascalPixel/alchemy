@@ -14,6 +14,13 @@ pub struct CoverageMap {
     pub rom_areas: Vec<Area>,
     pub executable_areas: Vec<Area>,
 }
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ProgressTally {
+    pub main_exact: i64,
+    pub main_executable: i64,
+    pub overlay_exact: i64,
+    pub overlay_executable: i64,
+}
 pub fn rom_size(target: &str) -> Result<i64, String> {
     match target {
         "gs1-en" => Ok(0x800000),
@@ -169,26 +176,109 @@ pub fn overlay_ids(tree: &SourceTree) -> Vec<(String, String)> {
     names.sort_by(|a, b| a.0.cmp(&b.0));
     names
 }
-fn exact_main(tree: &SourceTree, executable: &[Span]) -> Vec<Span> {
-    let value = tree
-        .read("out/gs1-en/full/claimed/manifest.json")
-        .and_then(|s| serde_json::from_str::<Value>(&s).ok());
+fn exact_main(tree: &SourceTree, target: &str, executable: &[Span]) -> Result<Vec<Span>, String> {
+    let path = format!("out/{target}/full/claimed/manifest.json");
+    let value = read_json(tree, &path)?;
     let mut spans = Vec::new();
-    if let Some(manifest) = value {
-        for region in array(&manifest, "regions") {
-            let Some(start) = integer(region, "address") else {
-                continue;
-            };
-            let Some(size) = integer(region, "size") else {
-                continue;
-            };
-            let source = text(region, "source");
-            if canonical(&tree.read(&source).unwrap_or_default()) {
-                spans.extend(intersect(&[Span::new(start, start + size)], executable));
-            }
+    for region in array(&value, "regions") {
+        let start = integer(region, "address").ok_or_else(|| format!("{path}: bad address"))?;
+        let size = integer(region, "size").ok_or_else(|| format!("{path}: bad size"))?;
+        let source = text(region, "source");
+        let code = tree
+            .read(&source)
+            .ok_or_else(|| format!("{} is missing {source}", tree.id()))?;
+        if size > 0 && canonical(&code) {
+            spans.push(Span::new(start, start + size));
         }
     }
-    normalize(&spans)
+    exact_spans(spans, executable, "main")
+}
+fn exact_spans(mut spans: Vec<Span>, executable: &[Span], id: &str) -> Result<Vec<Span>, String> {
+    spans.sort_by_key(|span| (span.start, span.end));
+    if spans
+        .windows(2)
+        .any(|pair| pair[1].start < pair[0].end && pair[0] != pair[1])
+    {
+        return Err(format!("{id} has overlapping C ownership"));
+    }
+    if spans
+        .iter()
+        .any(|span| intersect(&[*span], executable).is_empty())
+    {
+        return Err(format!(
+            "{id} C ownership is outside audited executable intervals"
+        ));
+    }
+    Ok(intersect(&spans, executable))
+}
+
+fn validated_executable(value: &Value) -> Result<Vec<Span>, String> {
+    let id = text(value, "id");
+    let expected = integer(value, "executable_bytes")
+        .ok_or_else(|| "executable inventory has a non-integer byte count".to_string())?;
+    let mut spans: Vec<_> = regions(value).into_iter().map(|row| row.span).collect();
+    spans.sort_by_key(|span| (span.start, span.end));
+    if spans.windows(2).any(|pair| pair[1].start < pair[0].end) {
+        return Err(format!("{id} has overlapping executable intervals"));
+    }
+    let spans = normalize(&spans);
+    let measured = bytes(&spans);
+    if measured != expected {
+        return Err(format!(
+            "{id} executable total is stale: {expected} != {measured}"
+        ));
+    }
+    if let Some(decoded) = integer(value, "decoded_bytes") {
+        if integer(value, "excluded_bytes") != Some(decoded - expected) {
+            return Err(format!("{id} decoded byte classification is incomplete"));
+        }
+    }
+    Ok(spans)
+}
+
+/// Exact/executable totals without constructing treemaps, asset bands, or
+/// semantic-candidate coverage. Progress reporting and commit hooks use this
+/// narrow view of the same audited intervals and exact-owner model.
+pub fn progress_tally(options: &BuildOptions) -> Result<ProgressTally, String> {
+    let game = options.target.split('-').next().unwrap_or("gs1");
+    let inventory = read_json(
+        options.exact,
+        &format!("games/{game}/metrics/{}-executable.json", options.target),
+    )?;
+    if integer(&inventory, "format") != Some(1)
+        || text(&inventory, "metric") != "full-c-byte-share"
+        || text(&inventory, "target") != options.target
+    {
+        return Err("unsupported executable inventory format or target".into());
+    }
+    let main_node = get(&inventory, "main").ok_or("executable inventory has no main")?;
+    if text(&inventory, "audit") != "complete" || text(main_node, "audit") != "complete" {
+        return Err(format!(
+            "Full-C Byte Share withheld: {} executable audit is incomplete",
+            options.target
+        ));
+    }
+    let main = validated_executable(main_node)?;
+    let mut overlays = std::collections::BTreeMap::new();
+    for node in array(&inventory, "overlays") {
+        let id = text(node, "id");
+        if text(node, "audit") != "complete" {
+            return Err(format!("Full-C Byte Share withheld: {id} is incomplete"));
+        }
+        overlays.insert(id, validated_executable(node)?);
+    }
+    let executable = bytes(&main) + overlays.values().map(|spans| bytes(spans)).sum::<i64>();
+    if integer(&inventory, "total_union_bytes") != Some(executable) {
+        return Err("executable inventory total is stale".into());
+    }
+    let exact_main = exact_main(options.exact, &options.target, &main)?;
+    let (_, exact_overlays) = exact_overlay(options.exact, &overlay_ids(options.exact), &overlays)?;
+    Ok(ProgressTally {
+        main_exact: bytes(&exact_main),
+        main_executable: bytes(&main),
+        overlay_exact: exact_overlays.values().map(|spans| bytes(spans)).sum(),
+        overlay_executable: overlays.values().map(|spans| bytes(spans)).sum(),
+    })
 }
 fn candidate_main(tree: &SourceTree, executable: &[Span]) -> (Vec<Span>, usize) {
     let directory = "games/gs1/recon/en/main";
@@ -862,7 +952,7 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
         );
         overlay_regions.insert(id, rows);
     }
-    let exact_main = exact_main(options.exact, &main_exec);
+    let exact_main = exact_main(options.exact, &options.target, &main_exec)?;
     let pairs = overlay_ids(options.exact);
     let (owners, exact_overlay) = exact_overlay(options.exact, &pairs, &overlay_exec)?;
     let retained_main = permanent_main(options.exact);
@@ -1149,6 +1239,18 @@ mod tests {
             "resource_test".into(),
             vec![Span::new(0x0200_0100, 0x0200_0200)],
         )])
+    }
+    #[test]
+    fn exact_ownership_fails_closed() {
+        let executable = [Span::new(10, 20)];
+        assert!(exact_spans(vec![Span::new(10, 16), Span::new(14, 18)], &executable, "x").is_err());
+        assert!(exact_spans(vec![Span::new(0, 4)], &executable, "x").is_err());
+        let missing = SourceTree::Work {
+            id: "fixture".into(),
+            root: std::env::temp_dir()
+                .join(format!("alchemy-coverage-missing-{}", std::process::id())),
+        };
+        assert!(exact_main(&missing, "gs1-en", &executable).is_err());
     }
     #[test]
     fn accepts_proven_overlay_assembly_inside_inventory() {

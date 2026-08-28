@@ -321,17 +321,3 @@ impl Target {
         Ok(score(&actual, &self.expected))
     }
 }
-
-pub fn self_test() -> Result<(), String> {
-    let changed = score(&[1, 0, 2, 0], &[1, 0, 3, 0]);
-    let short = score(&[1, 0], &[1, 0, 3, 0]);
-    if changed.exact
-        || changed.differing_halfwords != 1
-        || changed.first_difference != Some(2)
-        || short.differing_halfwords != 1
-        || short.actual_size != 2
-    {
-        return Err("linked-byte scorer drifted".into());
-    }
-    Ok(())
-}

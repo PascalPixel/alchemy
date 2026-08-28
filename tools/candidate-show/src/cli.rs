@@ -1,7 +1,7 @@
 use candidate_compiler::verify::{CandidateCompilerConfiguration, CandidateCompilerFamily};
 use compiler_core::routing::CompilerTarget;
 use std::path::Path;
-pub const USAGE: &str = "usage: candidate-show <candidate.c> [--unit ID] [--rom FILE] [--target gs1|gs2] [--owner ADDRESS] [--size BYTES] [--reference-symbols] [--work DIR] [--family routed|gcc296|old-agbcc] [--flags -fa,-fb] [--remove-flags -fa,-fb] [--align] [--first] [--allocator-order] [--asm] [--patch FILE]";
+pub const USAGE: &str = "usage: candidate-show <candidate.c> [--unit ID] [--rom FILE] [--target gs1|gs2] [--owner ADDRESS] [--symbol ADDRESS] [--size BYTES] [--reference-symbols] [--work DIR] [--family routed|gcc296|old-agbcc] [--flags -fa,-fb] [--remove-flags -fa,-fb] [--align] [--first] [--allocator-order] [--asm] [--patch FILE]";
 pub const SHORT_USAGE: &str = "usage: candidate-show <candidate.c> [--rom FILE]";
 #[derive(Debug, Clone)]
 pub struct Options {
@@ -73,6 +73,11 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
             "--size" => {
                 let value = next(&mut index).ok_or("--size requires a byte count")?;
                 options.size = Some(parse_size(value)?);
+            }
+            "--symbol" => {
+                let address =
+                    parse_address(next(&mut index).ok_or("--symbol requires an address")?)?;
+                options.configuration.owner_symbol = Some(format!("Func_{address:08x}"));
             }
             "--owner" => {
                 options.owner = Some(parse_address(

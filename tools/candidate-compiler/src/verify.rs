@@ -21,6 +21,12 @@ pub struct CandidateCompilerConfiguration {
     pub absolute_symbols: BTreeMap<String, AbsoluteSymbol>,
     pub call_via_base: Option<u64>,
     pub label_word_bias: Option<u64>,
+    /// Compiled owner symbol when it differs from the compare address. GCC
+    /// 2.96's codegen is name-dependent (symbol hashes steer allocation
+    /// tie-breaks), so cross-edition scoring compiles the owner under its
+    /// canonical name and links at the edition's address instead of renaming
+    /// the function per edition.
+    pub owner_symbol: Option<String>,
 }
 #[derive(Debug, Clone)]
 pub struct Verification {
@@ -208,8 +214,15 @@ pub fn verify_candidate_owned_routed_with_object(
 ) -> Result<Verification, String> {
     let stem = owner_stem.to_string();
     let address = parse_hex(&stem)?;
-    let canonical_symbol = format!("Func_{}", hex8(address));
-    let short_symbol = format!("Func_{}", hex8(address).trim_start_matches('0'));
+    let canonical_symbol = configuration
+        .owner_symbol
+        .clone()
+        .unwrap_or_else(|| format!("Func_{}", hex8(address)));
+    let short_symbol = if configuration.owner_symbol.is_some() {
+        canonical_symbol.clone()
+    } else {
+        format!("Func_{}", hex8(address).trim_start_matches('0'))
+    };
     let out = Path::new(output_directory);
     let path = |suffix: &str| {
         out.join(format!("{stem}{suffix}"))

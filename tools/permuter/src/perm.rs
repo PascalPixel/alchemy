@@ -2,7 +2,7 @@ use candidate_show::allocator::{Repair, RepairPlan};
 use compiler_core::CALL_VIA_BASE;
 use regex::{Captures, Regex};
 use std::{collections::HashSet, ops::Range};
-pub const CATALOG_VERSION: &str = "register-wall-v3";
+pub const CATALOG_VERSION: &str = "structural-v1";
 const MAX_CHOICES: usize = 16;
 #[derive(Clone, Debug, Eq, PartialEq)]
 struct Mutation {
@@ -852,7 +852,52 @@ fn generate(source: &str, repair: &Repair) -> Mutations {
         Repair::MergeCarrierPhases { earlier, later } => {
             merge_carrier_phases(source, &code, earlier, later)
         }
+        Repair::MirrorRelationalGuards => mirror_guards(source, &code),
     }
+}
+
+fn mirror_operator(op: &str) -> &'static str {
+    match op {
+        "<" => ">",
+        ">" => "<",
+        "<=" => ">=",
+        ">=" => "<=",
+        other => unreachable!("non-relational operator {other} cannot reach the mirror"),
+    }
+}
+
+/// One mirrored spelling per simple relational guard: `if (a < b)` becomes
+/// `if (b > a)`. Behaviour is identical; only the compare's operand order
+/// moves, which is exactly what the structural decoder's guard-polarity
+/// evidence names. Compound conditions, casts, calls, shifts, and impure
+/// operands are refused; the byte score selects among the offered sites.
+fn mirror_guards(source: &str, code: &str) -> Mutations {
+    let found = sites(
+        source,
+        code,
+        r"((?:\bif|\bwhile)\s*\(\s*)([A-Za-z_][A-Za-z0-9_>.\[\]* -]*?)\s*(<=|>=|<|>)\s*([A-Za-z_][A-Za-z0-9_>.\[\]* -]*?)(\s*\))",
+    );
+    let mut mutations = Vec::new();
+    for site in &found {
+        let [prefix, left, op, right, suffix] = &site.fields[..] else {
+            continue;
+        };
+        if !pure(left) || !pure(right) {
+            continue;
+        }
+        mutations.push(applied(
+            source,
+            vec![(
+                site.range.clone(),
+                format!("{prefix}{right} {} {left}{suffix}", mirror_operator(op)),
+            )],
+            format!("mirror_relational_guard({left},{right})"),
+        ));
+    }
+    if mutations.is_empty() {
+        return Err("mirror_relational_guards found no simple relational guard".into());
+    }
+    mutations.into_iter().collect()
 }
 pub fn parse(source: &str, plan: &RepairPlan) -> Result<Permutation, String> {
     guard_source(source)?;

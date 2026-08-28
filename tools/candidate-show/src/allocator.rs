@@ -46,6 +46,11 @@ pub enum Repair {
         earlier: String,
         later: String,
     },
+    /// Structural repair: the reference's comparison branches are the
+    /// mirror of the candidate's, so some relational guard is spelled with
+    /// its operands in the other order. The permuter enumerates one mirror
+    /// per relational guard site; the byte score selects.
+    MirrorRelationalGuards,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -131,6 +136,7 @@ impl Repair {
             }
             Self::SplitOppositeSideAndScaledOffset { .. } => &["temporary", "evaluation_order"],
             Self::MergeCarrierPhases { .. } => &["temporary", "block_lifetime"],
+            Self::MirrorRelationalGuards => &["evaluation_order", "commutative_order"],
         }
     }
     pub fn label(&self) -> String {
@@ -162,6 +168,7 @@ impl Repair {
             Self::MergeCarrierPhases { earlier, later } => {
                 format!("merge_carrier_phases({earlier},{later})")
             }
+            Self::MirrorRelationalGuards => "mirror_relational_guards".into(),
         }
     }
 }

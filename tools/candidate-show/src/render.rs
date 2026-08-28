@@ -259,7 +259,7 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         actual, expected, compile, topology, options, &work, &cache, &key,
     )?;
     let allocator = if options.allocator_order {
-        Some(crate::allocator::decode(
+        let report = crate::allocator::decode(
             root,
             options,
             &identity.routing,
@@ -268,7 +268,8 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
             &work,
             &score.candidate,
             &score.reference,
-        )?)
+        )?;
+        Some(crate::structure::augment(report, &work))
     } else {
         None
     };

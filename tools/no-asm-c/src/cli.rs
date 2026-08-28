@@ -11,7 +11,7 @@ use std::fs;
 use std::path::Path;
 use std::process::{Command, ExitCode};
 use std::sync::Mutex;
-const USAGE: &str = "usage: no-asm-c [--self-test]\n\nScan raw and preprocessed C for instruction, register, and ABI escape hatches.";
+const USAGE: &str = "usage: no-asm-c [--target TARGET|--self-test]\n\nScan raw and preprocessed C for instruction, register, and ABI escape hatches.";
 type Job = (String, Vec<String>);
 fn fail(message: impl std::fmt::Display) -> ExitCode {
     eprintln!("{message}");
@@ -45,10 +45,10 @@ fn prefix(target: DecompTarget, source: &str) -> Result<Vec<String>, String> {
     flags.extend(["-w".into(), "-E".into()]);
     compiler_command_for_target(compiler, &flags)
 }
-fn jobs(root: &Path) -> Result<(Vec<Job>, usize), String> {
+fn jobs(root: &Path, target_ids: &[DecompTargetId]) -> Result<(Vec<Job>, usize), String> {
     let mut groups = BTreeMap::<(String, Vec<String>), Vec<String>>::new();
     let units = TranslationUnits::load(root)?;
-    for id in TARGET_IDS {
+    for &id in target_ids {
         let target = target_for(id);
         let paths = SourcePaths::load_for_game(root, target.compiler.as_str())?;
         paths.validate_tree()?;
@@ -105,8 +105,11 @@ fn run(root: &Path, job: &Job) -> Result<Vec<Finding>, String> {
     let text = String::from_utf8_lossy(&output.stdout);
     Ok(find_preprocessed(&job.0, &text))
 }
-fn scan_preprocessed(root: &Path) -> Result<(usize, usize, Vec<Finding>), String> {
-    let (jobs, inputs) = jobs(root)?;
+fn scan_preprocessed(
+    root: &Path,
+    target_ids: &[DecompTargetId],
+) -> Result<(usize, usize, Vec<Finding>), String> {
+    let (jobs, inputs) = jobs(root, target_ids)?;
     let workers = std::thread::available_parallelism().map_or(1, |count| count.get().min(16));
     let results = Mutex::new(Vec::new());
     std::thread::scope(|scope| {
@@ -167,11 +170,17 @@ pub fn entry(arguments: &[String]) -> ExitCode {
             Ok(()) => success("self-test=ok"),
             Err(error) => fail(error),
         },
-        [] => scan_repository(),
+        [option, value] if option == "--target" => {
+            let Some(id) = TARGET_IDS.iter().copied().find(|id| id.as_str() == value) else {
+                return fail(format!("unknown target: {value}"));
+            };
+            scan_repository(&[id])
+        }
+        [] => scan_repository(&TARGET_IDS),
         _ => fail(USAGE),
     }
 }
-fn scan_repository() -> ExitCode {
+fn scan_repository(target_ids: &[DecompTargetId]) -> ExitCode {
     let root = compiler_root();
     let files = match source_files(&root.join("games")) {
         Ok(files) if !files.is_empty() => files,
@@ -187,7 +196,7 @@ fn scan_repository() -> ExitCode {
         let name = path.strip_prefix(root).unwrap_or(path).to_string_lossy();
         findings.extend(find_forbidden(&name, &text));
     }
-    let (expanded, jobs, mut more) = match scan_preprocessed(root) {
+    let (expanded, jobs, mut more) = match scan_preprocessed(root, target_ids) {
         Ok(result) => result,
         Err(error) => return fail(error),
     };

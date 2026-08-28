@@ -25,7 +25,7 @@ const TREES: [(&str, &str); 4] = [
     ("images", "Images"),
     ("music", "Music"),
 ];
-const COVERAGE_DIRS: [&str; 11] = [
+const COVERAGE_DIRS: [&str; 12] = [
     "games/gs1/asm",
     "games/gs1/assets",
     "games/gs1/metrics",
@@ -37,6 +37,7 @@ const COVERAGE_DIRS: [&str; 11] = [
     "games/gs2",
     "games/gs2/project.json",
     "games/alchemy",
+    "out/gs1-en/reports",
 ];
 
 pub mod cli {
@@ -205,14 +206,9 @@ pub struct Live {
     gs1_en_sources: usize,
     gs2_ja_sources: usize,
     gs2_en_sources: usize,
-    correspondence_total: usize,
-    correspondence_matched: usize,
-    correspondence_shared: usize,
-    correspondence_regional: usize,
-    correspondence_unresolved: usize,
+    correspondence: Option<Correspondence>,
 }
 
-#[derive(Default)]
 struct Correspondence {
     total: usize,
     matched: usize,
@@ -269,8 +265,12 @@ fn count_c(path: &Path) -> usize {
     }
     count
 }
-fn correspondence(path: &Path) -> Result<Correspondence, String> {
-    let bytes = std::fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?;
+fn correspondence(path: &Path) -> Result<Option<Correspondence>, String> {
+    let bytes = match std::fs::read(path) {
+        Ok(bytes) => bytes,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
+        Err(error) => return Err(format!("{}: {error}", path.display())),
+    };
     let value: serde_json::Value =
         serde_json::from_slice(&bytes).map_err(|error| format!("{}: {error}", path.display()))?;
     let number = |key: &str| {
@@ -280,13 +280,13 @@ fn correspondence(path: &Path) -> Result<Correspondence, String> {
             .map(|value| value as usize)
             .ok_or_else(|| format!("{} lacks numeric {key}", path.display()))
     };
-    Ok(Correspondence {
+    Ok(Some(Correspondence {
         total: number("owners_total")?,
         matched: number("matched_owners")?,
         shared: number("shared_core_owners")?,
         regional: number("regional_core_owners")?,
         unresolved: number("unresolved_owners")?,
-    })
+    }))
 }
 fn compute() -> Result<Live, String> {
     let tree = work_tree_at(root());
@@ -294,7 +294,6 @@ fn compute() -> Result<Live, String> {
         target: "gs1-en".into(),
         exact: &tree,
         recon: Some(&tree),
-        validate_tracked_progress: false,
         prefer_verified_assets: true,
     })?;
     let trees = render_box_trees(&map, Some(&tree), true)?;
@@ -302,10 +301,26 @@ fn compute() -> Result<Live, String> {
     let gs1_en_sources = count_c(&root().join("games/gs1/recon/en"));
     let gs2_ja_sources = count_c(&root().join("games/gs2/recon/ja"));
     let gs2_en_sources = count_c(&root().join("games/gs2/recon/en"));
-    let correspondence = correspondence(&root().join("games/gs1/recon/exact-correspondence.json"))?
-        .add(correspondence(
-            &root().join("games/gs1/recon/exact-overlay-correspondence.json"),
-        )?);
+    let reports = root().join("out/gs1-en/reports");
+    let correspondence = match (
+        correspondence(&reports.join("exact-correspondence.json"))?,
+        correspondence(&reports.join("exact-overlay-correspondence.json"))?,
+    ) {
+        (Some(main), Some(overlays)) => Some(main.add(overlays)),
+        _ => None,
+    };
+    let correspondence_revision = correspondence.as_ref().map_or_else(
+        || "correspondence-unavailable".into(),
+        |correspondence| {
+            format!(
+                "{}-{}-{}-{}",
+                correspondence.matched,
+                correspondence.shared,
+                correspondence.regional,
+                correspondence.unresolved
+            )
+        },
+    );
     let revision = BOX_TREES
         .iter()
         .map(|name| {
@@ -323,10 +338,7 @@ fn compute() -> Result<Live, String> {
             gs1_en_sources.to_string(),
             gs2_ja_sources.to_string(),
             gs2_en_sources.to_string(),
-            correspondence.matched.to_string(),
-            correspondence.shared.to_string(),
-            correspondence.regional.to_string(),
-            correspondence.unresolved.to_string(),
+            correspondence_revision,
         ])
         .collect::<Vec<_>>()
         .join("-");
@@ -345,11 +357,7 @@ fn compute() -> Result<Live, String> {
         gs1_en_sources,
         gs2_ja_sources,
         gs2_en_sources,
-        correspondence_total: correspondence.total,
-        correspondence_matched: correspondence.matched,
-        correspondence_shared: correspondence.shared,
-        correspondence_regional: correspondence.regional,
-        correspondence_unresolved: correspondence.unresolved,
+        correspondence,
     })
 }
 fn iso_now() -> String {
@@ -405,24 +413,38 @@ fn snapshot() -> Json {
                 ("fullTargets", Json::Num(1.0)),
                 ("compileOnlyTargets", Json::Num(11.0)),
                 (
+                    "correspondenceAvailable",
+                    Json::Bool(c.correspondence.is_some()),
+                ),
+                (
                     "correspondenceTotal",
-                    Json::Num(c.correspondence_total as f64),
+                    c.correspondence
+                        .as_ref()
+                        .map_or(Json::Undefined, |value| Json::Num(value.total as f64)),
                 ),
                 (
                     "correspondenceMatched",
-                    Json::Num(c.correspondence_matched as f64),
+                    c.correspondence
+                        .as_ref()
+                        .map_or(Json::Undefined, |value| Json::Num(value.matched as f64)),
                 ),
                 (
                     "correspondenceShared",
-                    Json::Num(c.correspondence_shared as f64),
+                    c.correspondence
+                        .as_ref()
+                        .map_or(Json::Undefined, |value| Json::Num(value.shared as f64)),
                 ),
                 (
                     "correspondenceRegional",
-                    Json::Num(c.correspondence_regional as f64),
+                    c.correspondence
+                        .as_ref()
+                        .map_or(Json::Undefined, |value| Json::Num(value.regional as f64)),
                 ),
                 (
                     "correspondenceUnresolved",
-                    Json::Num(c.correspondence_unresolved as f64),
+                    c.correspondence
+                        .as_ref()
+                        .map_or(Json::Undefined, |value| Json::Num(value.unresolved as f64)),
                 ),
             ])
         });
@@ -803,6 +825,7 @@ pub fn self_test() -> Result<String, String> {
         || !js.contains("closest(\"g[aria-label]\")")
         || !js.contains("historicalProduct")
         || !js.contains("compile-only")
+        || !js.contains("Run make reports to refresh cross-edition reports")
     {
         return Err("dashboard assets are incomplete".into());
     }
@@ -820,4 +843,19 @@ pub fn self_test() -> Result<String, String> {
         return Err("404 route failed".into());
     }
     Ok("self-test=ok dashboard".into())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn missing_correspondence_report_is_unavailable() {
+        let path = std::env::temp_dir().join(format!(
+            "alchemy-missing-correspondence-{}-{}.json",
+            std::process::id(),
+            iso_now()
+        ));
+        assert!(correspondence(&path).unwrap().is_none());
+    }
 }

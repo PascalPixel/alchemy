@@ -26,7 +26,8 @@ typedef int bool;
 #define WaitFrames Func_080030f8
 #define Audio_PlayCue Func_080f9010
 #define Object_SetMode Func_08009080
-#define Object_SetCallback Func_08009098
+#define ObjectDispatch_InitializeFar Func_08009098
+#define Object_SetCallback ObjectDispatch_InitializeFar
 #define Object_Spawn Func_08096c80
 #define ObjectMotion_SetTargetPositionFromMagnitudeAngle Func_08096bec
 #define Runtime_GetObject Func_08077008

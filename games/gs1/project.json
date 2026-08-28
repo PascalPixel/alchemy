@@ -14,11 +14,10 @@
     "reconstruction": "games/gs1/recon",
     "semantic": "games/gs1/semantic"
   },
-  "correspondence": {
-    "calibration": "games/gs1/recon/cross-edition.json",
-    "exact_main": "games/gs1/recon/exact-correspondence.json",
-    "exact_main_builds": "games/gs1/recon/exact-main-builds.json",
-    "exact_overlays": "games/gs1/recon/exact-overlay-correspondence.json"
+  "cross_edition_calibration": "games/gs1/recon/cross-edition.json",
+  "reports": {
+    "directory": "out/gs1-en/reports",
+    "refresh": "make reports"
   },
   "editions": {
     "ja": {

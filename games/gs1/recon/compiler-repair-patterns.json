@@ -144,7 +144,7 @@
       "signal": "independent-store-scheduled-behind-carrier-sign-extension",
       "before_differing_halfwords": 3,
       "after_differing_halfwords": 0,
-      "source_shape": "Copy both adjacent u16 fields before loading the first field through a named s16 carrier for its dependent ratio expression.",
+      "source_shape": "Copy HP and PP from their adjacent u16 maxima before loading max_hp through a named s16 carrier for its dependent ratio expression.",
       "supporting_exact_owner": "main:0807808c",
       "catalog_status": "recorded-not-generalized",
       "result": "pass-adopted"
@@ -156,7 +156,7 @@
       "signal": "argument scheduling plus split conditional carrier",
       "before_differing_halfwords": 28,
       "after_differing_halfwords": 0,
-      "source_shape": "Inline offset-first indexed loads, materialize the masked message before its coordinate, and update one count carrier in place across the sentinel branch.",
+      "source_shape": "Inline offset-first indexed loads, materialize msg before its coordinate, and update one range carrier in place across the sentinel branch.",
       "intermediate_differing_halfwords": [15, 6],
       "catalog_status": "recorded-not-generalized",
       "result": "pass-adopted"
@@ -168,7 +168,7 @@
       "signal": "reciprocal XOR-result and scaled-offset register roles",
       "before_differing_halfwords": 6,
       "after_differing_halfwords": 0,
-      "source_shape": "Keep side and opposite_side distinct, reuse side for scaling, then shift side in place before adding the address base.",
+      "source_shape": "Keep side and other distinct, reuse side for scaling, then shift side in place before adding the address base.",
       "intermediate_differing_halfwords": [8, 3],
       "catalog_status": "recorded-not-generalized",
       "result": "pass-adopted"
@@ -180,7 +180,7 @@
       "signal": "two reciprocal callee-saved registers each carry two non-overlapping semantic phases",
       "before_differing_halfwords": 11,
       "after_differing_halfwords": 0,
-      "source_shape": "Merge state with the later loop counter and, in parallel, merge the early resource pointer with the later spawn-Z coordinate; neither one-sided merge nor an adjacent typed copy survives with the required allocation priority.",
+      "source_shape": "Use work for the state-base/pool-count phases and src_z for the source-pointer/spawn-Z phases; neither one-sided merge nor an adjacent typed copy survives with the required allocation priority.",
       "negative_control_differing_halfwords": 16,
       "catalog_status": "recorded-not-generalized",
       "result": "pass-adopted"

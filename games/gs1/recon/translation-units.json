@@ -1,5 +1,5 @@
 {
-  "format": 3,
+  "format": 4,
   "kind": "reconstruction-composition-contracts",
   "original_translation_units": "unknown",
   "units": [
@@ -16,30 +16,21 @@
         "Data_04000208": {"address":"0x04000208","kind":"data"}
       },
       "local_symbols": [
-        {"address":"0x08004270","alias":"Scheduler_Idle","extent":2},
-        {"address":"0x08004274","alias":"Scheduler_EmptyCallback","extent":2}
+        {"address":"0x08004270","extent":2},
+        {"address":"0x08004274","extent":2}
       ],
-      "composition_sections": {
-        ".text": [
-          "Scheduler_ResetTaskTable", "Scheduler_CopyWords", "Scheduler_SortTasks",
-          "Scheduler_FindCallback", "Scheduler_AddOrUpdateCallback", "Scheduler_Idle",
-          "Scheduler_EmptyCallback", "Scheduler_RemoveCallback", "Scheduler_EnableCallbacks",
-          "Scheduler_EnableUnmaskedOverlayCallbacks", "Scheduler_SetCallbackMask",
-          "Scheduler_DisableCallbacks", "Scheduler_DisableOverlayCallbacks"
-        ]
-      },
       "owners": [
-        {"address":"0x080040e8","alias":"Scheduler_ResetTaskTable","extent":68,"state":"exact-c"},
-        {"address":"0x0800412c","alias":"Scheduler_CopyWords","extent":24,"state":"exact-c"},
-        {"address":"0x08004144","alias":"Scheduler_SortTasks","extent":84,"state":"exact-c"},
-        {"address":"0x08004198","alias":"Scheduler_FindCallback","extent":64,"state":"exact-c"},
-        {"address":"0x080041d8","alias":"Scheduler_AddOrUpdateCallback","extent":150,"state":"exact-c"},
-        {"address":"0x08004278","alias":"Scheduler_RemoveCallback","extent":80,"state":"exact-c"},
-        {"address":"0x080042c8","alias":"Scheduler_EnableCallbacks","extent":68,"state":"exact-c"},
-        {"address":"0x0800430c","alias":"Scheduler_EnableUnmaskedOverlayCallbacks","extent":76,"state":"exact-c"},
-        {"address":"0x08004358","alias":"Scheduler_SetCallbackMask","extent":68,"state":"exact-c"},
-        {"address":"0x0800439c","alias":"Scheduler_DisableCallbacks","extent":68,"state":"exact-c"},
-        {"address":"0x080043e0","alias":"Scheduler_DisableOverlayCallbacks","extent":64,"state":"exact-c"}
+        {"address":"0x080040e8","extent":68,"state":"exact-c"},
+        {"address":"0x0800412c","extent":24,"state":"exact-c"},
+        {"address":"0x08004144","extent":84,"state":"exact-c"},
+        {"address":"0x08004198","extent":64,"state":"exact-c"},
+        {"address":"0x080041d8","extent":150,"state":"exact-c"},
+        {"address":"0x08004278","extent":80,"state":"exact-c"},
+        {"address":"0x080042c8","extent":68,"state":"exact-c"},
+        {"address":"0x0800430c","extent":76,"state":"exact-c"},
+        {"address":"0x08004358","extent":68,"state":"exact-c"},
+        {"address":"0x0800439c","extent":68,"state":"exact-c"},
+        {"address":"0x080043e0","extent":64,"state":"exact-c"}
       ]
     },
     {
@@ -69,41 +60,30 @@
         "Data_04000208": {"address":"0x04000208","kind":"data"}
       },
       "local_symbols": [],
-      "composition_sections": {
-        ".text": [
-          "Input_InitKeyIrq", "QueueIoWriteDelay1", "QueueIoWriteDelay2", "QueueIoWriteDelay3",
-          "QueueIoWriteDelay5", "QueueIoWriteDelay6", "QueueIoWriteDelay7", "QueueIoWriteDelay9",
-          "QueueIoWriteDelay10", "QueueIoWriteDelay11", "IoWriteQueue_FlushPending",
-          "BlendTransition_Update", "Blend_SetDarkenTarget16", "Blend_SetDarkenTarget0",
-          "Blend_SetBrightenTarget16", "Blend_SetBrightenTarget0", "Blend_ConfigureTransition",
-          "Blend_WaitForTransition", "Graphics_ResetFrameState", "AffineMatrix_BuildForEffect",
-          "Runtime_PushSlotEntry", "Runtime_CopyAndCallRoutine", "ResourceTable_AllocateBlocks"
-        ]
-      },
       "owners": [
-        {"address":"0x08003810","alias":"Input_InitKeyIrq","extent":44,"state":"exact-c"},
-        {"address":"0x0800383c","alias":"QueueIoWriteDelay1","extent":64,"state":"retained-assembly"},
-        {"address":"0x0800387c","alias":"QueueIoWriteDelay2","extent":64,"state":"retained-assembly"},
-        {"address":"0x080038bc","alias":"QueueIoWriteDelay3","extent":64,"state":"retained-assembly"},
-        {"address":"0x080038fc","alias":"QueueIoWriteDelay5","extent":64,"state":"retained-assembly"},
-        {"address":"0x0800393c","alias":"QueueIoWriteDelay6","extent":64,"state":"retained-assembly"},
-        {"address":"0x0800397c","alias":"QueueIoWriteDelay7","extent":64,"state":"retained-assembly"},
-        {"address":"0x080039bc","alias":"QueueIoWriteDelay9","extent":64,"state":"retained-assembly"},
-        {"address":"0x080039fc","alias":"QueueIoWriteDelay10","extent":64,"state":"retained-assembly"},
-        {"address":"0x08003a3c","alias":"QueueIoWriteDelay11","extent":64,"state":"retained-assembly"},
-        {"address":"0x08003a7c","alias":"IoWriteQueue_FlushPending","extent":96,"state":"retained-assembly"},
-        {"address":"0x08003adc","alias":"BlendTransition_Update","extent":146,"state":"exact-c"},
-        {"address":"0x08003b70","alias":"Blend_SetDarkenTarget16","extent":66,"state":"exact-c"},
-        {"address":"0x08003bb4","alias":"Blend_SetDarkenTarget0","extent":66,"state":"exact-c"},
-        {"address":"0x08003bf8","alias":"Blend_SetBrightenTarget16","extent":66,"state":"exact-c"},
-        {"address":"0x08003c3c","alias":"Blend_SetBrightenTarget0","extent":66,"state":"exact-c"},
-        {"address":"0x08003c80","alias":"Blend_ConfigureTransition","extent":96,"state":"exact-c"},
-        {"address":"0x08003ce0","alias":"Blend_WaitForTransition","extent":36,"state":"exact-c"},
-        {"address":"0x08003d04","alias":"Graphics_ResetFrameState","extent":36,"state":"exact-c"},
-        {"address":"0x08003d28","alias":"AffineMatrix_BuildForEffect","extent":196,"state":"exact-c"},
-        {"address":"0x08003dec","alias":"Runtime_PushSlotEntry","extent":36,"state":"exact-c"},
-        {"address":"0x08003e10","alias":"Runtime_CopyAndCallRoutine","extent":72,"state":"retained-assembly"},
-        {"address":"0x08003e58","alias":"ResourceTable_AllocateBlocks","extent":124,"state":"retained-assembly"}
+        {"address":"0x08003810","extent":44,"state":"exact-c"},
+        {"address":"0x0800383c","extent":64,"state":"retained-assembly"},
+        {"address":"0x0800387c","extent":64,"state":"retained-assembly"},
+        {"address":"0x080038bc","extent":64,"state":"retained-assembly"},
+        {"address":"0x080038fc","extent":64,"state":"retained-assembly"},
+        {"address":"0x0800393c","extent":64,"state":"retained-assembly"},
+        {"address":"0x0800397c","extent":64,"state":"retained-assembly"},
+        {"address":"0x080039bc","extent":64,"state":"retained-assembly"},
+        {"address":"0x080039fc","extent":64,"state":"retained-assembly"},
+        {"address":"0x08003a3c","extent":64,"state":"retained-assembly"},
+        {"address":"0x08003a7c","extent":96,"state":"retained-assembly"},
+        {"address":"0x08003adc","extent":146,"state":"exact-c"},
+        {"address":"0x08003b70","extent":66,"state":"exact-c"},
+        {"address":"0x08003bb4","extent":66,"state":"exact-c"},
+        {"address":"0x08003bf8","extent":66,"state":"exact-c"},
+        {"address":"0x08003c3c","extent":66,"state":"exact-c"},
+        {"address":"0x08003c80","extent":96,"state":"exact-c"},
+        {"address":"0x08003ce0","extent":36,"state":"exact-c"},
+        {"address":"0x08003d04","extent":36,"state":"exact-c"},
+        {"address":"0x08003d28","extent":196,"state":"exact-c"},
+        {"address":"0x08003dec","extent":36,"state":"exact-c"},
+        {"address":"0x08003e10","extent":72,"state":"retained-assembly"},
+        {"address":"0x08003e58","extent":124,"state":"retained-assembly"}
       ]
     },
     {
@@ -114,15 +94,10 @@
       "overlay": null,
       "absolute_symbols": {},
       "local_symbols": [],
-      "composition_sections": {
-        ".text": [
-          "StopFlashTimer", "ReadFlashByte", "CopyFlashReadRoutineToRam"
-        ]
-      },
       "owners": [
-        {"address":"0x08006a78","alias":"StopFlashTimer","extent":68,"state":"exact-c"},
-        {"address":"0x08006abc","alias":"ReadFlashByte","extent":4,"state":"exact-c"},
-        {"address":"0x08006ac0","alias":"CopyFlashReadRoutineToRam","extent":56,"state":"exact-c"}
+        {"address":"0x08006a78","extent":68,"state":"exact-c"},
+        {"address":"0x08006abc","extent":4,"state":"exact-c"},
+        {"address":"0x08006ac0","extent":56,"state":"exact-c"}
       ]
     },
     {
@@ -136,30 +111,21 @@
         "Data_03001f1c_a": {"address":"0x03001f1c","kind":"data"}
       },
       "local_symbols": [],
-      "composition_sections": {
-        ".text": [
-          "SaveState_InitializeWorkspace", "SaveState_SelectWriteSlot", "SaveState_WriteWorkspaceSlot",
-          "SaveState_ReadSlotAndCheckChecksum", "SaveState_EraseSlotSector", "SaveState_WriteRecord",
-          "SaveState_ReadRecordPayload", "SaveState_DeleteRecord", "SaveState_ChecksumWorkspace",
-          "SaveState_FindLatestSlot", "SaveState_InvalidateSlot", "SaveState_CompareBytes",
-          "SaveState_GetLatestSequence", "SaveState_LoadSummaryRecords"
-        ]
-      },
       "owners": [
-        {"address":"0x080056cc","alias":"SaveState_InitializeWorkspace","extent":322,"state":"retained-assembly"},
-        {"address":"0x08005810","alias":"SaveState_SelectWriteSlot","extent":88,"state":"exact-c"},
-        {"address":"0x08005868","alias":"SaveState_WriteWorkspaceSlot","extent":68,"state":"exact-c"},
-        {"address":"0x080058ac","alias":"SaveState_ReadSlotAndCheckChecksum","extent":88,"state":"retained-assembly"},
-        {"address":"0x08005904","alias":"SaveState_EraseSlotSector","extent":28,"state":"exact-c"},
-        {"address":"0x08005920","alias":"SaveState_WriteRecord","extent":344,"state":"retained-assembly"},
-        {"address":"0x08005a78","alias":"SaveState_ReadRecordPayload","extent":72,"state":"retained-assembly"},
-        {"address":"0x08005ac0","alias":"SaveState_DeleteRecord","extent":30,"state":"exact-c"},
-        {"address":"0x08005ae0","alias":"SaveState_ChecksumWorkspace","extent":68,"state":"exact-c"},
-        {"address":"0x08005b24","alias":"SaveState_FindLatestSlot","extent":64,"state":"exact-c"},
-        {"address":"0x08005b64","alias":"SaveState_InvalidateSlot","extent":164,"state":"retained-assembly"},
-        {"address":"0x08005c08","alias":"SaveState_CompareBytes","extent":34,"state":"exact-c"},
-        {"address":"0x08005c2c","alias":"SaveState_GetLatestSequence","extent":60,"state":"exact-c"},
-        {"address":"0x08005c68","alias":"SaveState_LoadSummaryRecords","extent":144,"state":"retained-assembly"}
+        {"address":"0x080056cc","extent":322,"state":"retained-assembly"},
+        {"address":"0x08005810","extent":88,"state":"exact-c"},
+        {"address":"0x08005868","extent":68,"state":"exact-c"},
+        {"address":"0x080058ac","extent":88,"state":"retained-assembly"},
+        {"address":"0x08005904","extent":28,"state":"exact-c"},
+        {"address":"0x08005920","extent":344,"state":"retained-assembly"},
+        {"address":"0x08005a78","extent":72,"state":"retained-assembly"},
+        {"address":"0x08005ac0","extent":30,"state":"exact-c"},
+        {"address":"0x08005ae0","extent":68,"state":"exact-c"},
+        {"address":"0x08005b24","extent":64,"state":"exact-c"},
+        {"address":"0x08005b64","extent":164,"state":"retained-assembly"},
+        {"address":"0x08005c08","extent":34,"state":"exact-c"},
+        {"address":"0x08005c2c","extent":60,"state":"exact-c"},
+        {"address":"0x08005c68","extent":144,"state":"retained-assembly"}
       ]
     },
     {
@@ -181,36 +147,24 @@
         "Data_04000208": {"address":"0x04000208","kind":"data"}
       },
       "local_symbols": [],
-      "composition_sections": {
-        ".text": [
-          "SerialRuntime_Initialize", "SerialRuntime_EnableTransferTimer", "SerialRuntime_DisableTransfer",
-          "SerialRuntime_PollAndTransfer", "SerialRuntime_PollStatus",
-          "SerialRuntime_PrepareSendPacket", "SerialRuntime_CollectReceivedPayloads",
-          "SerialRuntime_HandleTransferInterrupt", "SerialRuntime_RemoveIrqHandlers",
-          "SerialRuntime_WaitForStatusMask", "SerialRuntime_BeginTransferA", "SerialRuntime_BeginTransferB",
-          "SerialRuntime_WaitForTransferA", "SerialRuntime_WaitForTransferB",
-          "SerialRuntime_WaitForTransfers", "SerialRuntime_GetActiveTransfers",
-          "BattleLink_ResetTransferState"
-        ]
-      },
       "owners": [
-        {"address":"0x08005d10","alias":"SerialRuntime_Initialize","extent":350,"state":"retained-assembly"},
-        {"address":"0x08005e70","alias":"SerialRuntime_EnableTransferTimer","extent":24,"state":"exact-c"},
-        {"address":"0x08005e88","alias":"SerialRuntime_DisableTransfer","extent":86,"state":"exact-c"},
-        {"address":"0x08005ee0","alias":"SerialRuntime_PollAndTransfer","extent":234,"state":"retained-assembly"},
-        {"address":"0x08005fcc","alias":"SerialRuntime_PollStatus","extent":186,"state":"retained-assembly"},
-        {"address":"0x080060e8","alias":"SerialRuntime_PrepareSendPacket","extent":116,"state":"retained-assembly"},
-        {"address":"0x0800615c","alias":"SerialRuntime_CollectReceivedPayloads","extent":228,"state":"retained-assembly"},
-        {"address":"0x08006240","alias":"SerialRuntime_HandleTransferInterrupt","extent":280,"state":"exact-c"},
-        {"address":"0x08006358","alias":"SerialRuntime_RemoveIrqHandlers","extent":44,"state":"exact-c"},
-        {"address":"0x08006384","alias":"SerialRuntime_WaitForStatusMask","extent":56,"state":"exact-c"},
-        {"address":"0x080063bc","alias":"SerialRuntime_BeginTransferA","extent":76,"state":"retained-assembly"},
-        {"address":"0x08006408","alias":"SerialRuntime_BeginTransferB","extent":80,"state":"retained-assembly"},
-        {"address":"0x08006458","alias":"SerialRuntime_WaitForTransferA","extent":48,"state":"exact-c"},
-        {"address":"0x08006488","alias":"SerialRuntime_WaitForTransferB","extent":48,"state":"exact-c"},
-        {"address":"0x080064b8","alias":"SerialRuntime_WaitForTransfers","extent":60,"state":"exact-c"},
-        {"address":"0x080064f4","alias":"SerialRuntime_GetActiveTransfers","extent":40,"state":"exact-c"},
-        {"address":"0x0800651c","alias":"BattleLink_ResetTransferState","extent":64,"state":"retained-assembly"}
+        {"address":"0x08005d10","extent":350,"state":"retained-assembly"},
+        {"address":"0x08005e70","extent":24,"state":"exact-c"},
+        {"address":"0x08005e88","extent":86,"state":"exact-c"},
+        {"address":"0x08005ee0","extent":234,"state":"retained-assembly"},
+        {"address":"0x08005fcc","extent":186,"state":"retained-assembly"},
+        {"address":"0x080060e8","extent":116,"state":"retained-assembly"},
+        {"address":"0x0800615c","extent":228,"state":"retained-assembly"},
+        {"address":"0x08006240","extent":280,"state":"exact-c"},
+        {"address":"0x08006358","extent":44,"state":"exact-c"},
+        {"address":"0x08006384","extent":56,"state":"exact-c"},
+        {"address":"0x080063bc","extent":76,"state":"retained-assembly"},
+        {"address":"0x08006408","extent":80,"state":"retained-assembly"},
+        {"address":"0x08006458","extent":48,"state":"exact-c"},
+        {"address":"0x08006488","extent":48,"state":"exact-c"},
+        {"address":"0x080064b8","extent":60,"state":"exact-c"},
+        {"address":"0x080064f4","extent":40,"state":"exact-c"},
+        {"address":"0x0800651c","extent":64,"state":"retained-assembly"}
       ]
     },
     {
@@ -226,19 +180,12 @@
         "SceneEventRuntime_EffectData": {"address":"0x0200a80c","kind":"data"}
       },
       "local_symbols": [],
-      "composition_sections": {
-        ".text": [
-          "SceneEventRuntime_GetScriptData", "SceneEventRuntime_ReturnZero",
-          "SceneEventRuntime_GetMessageData", "SceneEventRuntime_GetActorData",
-          "SceneEventRuntime_GetEffectData"
-        ]
-      },
       "owners": [
-        {"address":"0x02000030","alias":"SceneEventRuntime_GetScriptData","extent":8,"state":"exact-c"},
-        {"address":"0x02000038","alias":"SceneEventRuntime_ReturnZero","extent":4,"state":"exact-c"},
-        {"address":"0x0200003c","alias":"SceneEventRuntime_GetMessageData","extent":8,"state":"exact-c"},
-        {"address":"0x02000044","alias":"SceneEventRuntime_GetActorData","extent":8,"state":"exact-c"},
-        {"address":"0x0200004c","alias":"SceneEventRuntime_GetEffectData","extent":8,"state":"exact-c"}
+        {"address":"0x02000030","extent":8,"state":"exact-c"},
+        {"address":"0x02000038","extent":4,"state":"exact-c"},
+        {"address":"0x0200003c","extent":8,"state":"exact-c"},
+        {"address":"0x02000044","extent":8,"state":"exact-c"},
+        {"address":"0x0200004c","extent":8,"state":"exact-c"}
       ]
     }
   ]

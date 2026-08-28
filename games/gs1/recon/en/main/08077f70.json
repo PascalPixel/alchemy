@@ -2,7 +2,7 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x08077f70",
-  "name": "Party_ApplyFixedProgressionSetup",
+  "name": "Party_ApplyStatePreset",
   "status": "exact",
   "owner_bytes": 284,
   "executable_owner_bytes": 284,
@@ -16,7 +16,7 @@
     "confidence": "likely"
   },
   "family_transplant": {
-    "below_threshold_guess": "main:080a4800 (games/gs1/src/menu/select_quantity.c), score 7014/10000 in this session's regenerated games/gs1/recon/compiler-families.json (the task brief's cited main:0807... open_confirm_prompt.c guess at 7361 is stale/no longer present)",
+    "below_threshold_guess": "main:080a4800 (games/gs1/src/menu/select_quantity.c), score 7014/10000 in this session's generated family report (out/gs1-en/reports/compiler-families.json, refreshed by `make families`; the task brief's cited main:0807... open_confirm_prompt.c guess at 7361 is stale/no longer present)",
     "call_target_similarity_basis_points": 0,
     "verdict": "false lead, confirmed by hand-trace -- none of this owner's real callees (game_flags/set.c, game_flags/clear.c, owner/refresh_derived_data.c, Func_08077428, FixedPoint_Ratio, inventory/equip.c, owner/action/add.c) are shared with the alternative; only the register-shuffle prologue shape matched"
   },
@@ -29,8 +29,8 @@
     "final_differing_halfwords": 0,
     "repair_pattern": "preload-adjacent-halfwords-before-signed-carrier-use",
     "decoder_signal": "independent second store scheduled behind first carrier sign extension",
-    "source_edit": "Use the exact sibling's unsigned two-field copy block, then introduce one signed X-limit carrier for the ratio call.",
-    "compiler_effect": "Both ldrh values remain live through both strh stores; only after the Y store does GCC sign-extend the X carrier for FixedPoint_Ratio.",
+    "source_edit": "Use the exact sibling's unsigned HP/PP copy block, then introduce one signed max-HP carrier for the ratio call.",
+    "compiler_effect": "Both ldrh values remain live through both strh stores; only after the PP store does GCC sign-extend the max-HP carrier for FixedPoint_Ratio.",
     "supporting_exact_owner": "main:0807808c",
     "bounded_confirmation": {
       "verbatim_sibling_idiom_differing_halfwords": 0,
@@ -41,7 +41,7 @@
       "linked_byte_differences": 0
     },
     "production": {
-      "source": "games/gs1/src/party/apply_fixed_progression_setup.c",
+      "source": "games/gs1/src/party/apply_state_preset.c",
       "compiler_route": "canonical-gcc296",
       "compiler_overrides": [],
       "retained_assembly_removed": true,
@@ -49,11 +49,11 @@
     }
   },
   "notes": [
-    "Recovered entirely from games/gs1/asm/08077f70.s hand-traced instruction-by-instruction, plus already-adopted exact sibling sources reached through its real call targets: game_flags/set.c and game_flags/clear.c (Func_08079358/Func_08079374), owner/refresh_derived_data.c (Func_08079ae8), inventory/equip.c (Func_08078708, confirms the (owner, slot) call signature), owner/action/add.c (Func_08078e28), and owner_state.h (OwnerInventoryState.inventory at 0xd8, Owner_GetState/Func_08077394). The ratio-pair field layout (limitX/limitY/inputX/inputY/outputX/outputY at struct offsets 52/54/56/58/20/22) and its FixedPoint_Ratio(value<<14, value) clamp-to-[0,0x4000] shape were confirmed byte-for-byte against three already-adopted siblings: owner/update_ratio_pair.c, owner/update_second_input_and_ratios.c, and owner/recalculate_ratios.c, which independently document the same struct under three different field-naming schemes. games/gs1/recon/en/main/0807a664.c's dossier independently confirms the Data_02000240 global blob and the Owner_RefreshDerivedData(owner)+Func_08077428(owner) call pairing used here.",
-    "Behavior: clears game flags 32 and 33, sets flag 0x901, refreshes derived data and calls Func_08077428 once for owner index 5 (a fixed slot, not loop-driven), clears flag 0x11b, sets flag 282. Then for owner 0 and owner 1: resets both ratio-bar axes by copying each axis's limit into its own input (state->inputX = state->limitX; state->inputY = state->limitY, i.e. drive the bar to its maximum rather than an externally supplied input), recomputes both clamped outputs via FixedPoint_Ratio exactly like the three sibling helpers, scans that owner's 15-slot inventory (offset 0xd8) masked with 0x1ff for a raw item id of 15, and if found overwrites that slot with a raw 16 (discarding any prior equip/quantity bits) and immediately calls Inventory_Equip(owner, slot) on it, then calls Owner_RefreshDerivedData(owner) and Func_08077428(owner) again. After the two-owner loop it queues four OwnerAction_Add entries (action 140 and 149 on owner 0, 140 on owner 1, 141 on owner 2 -- so a third owner is touched only for its action queue, not the ratio/inventory work) and finally adds 300 to a u32 field at Data_02000240+0x10.",
-    "This reads as some kind of scripted transition (a class-change/promotion-style event is the closest plausible shape given the ratio bars being driven to full and a specific item id being force-upgraded and auto-equipped) but no message-archive, item-table, or other in-repo evidence ties item ids 15/16, action codes 140/141/149, or flags 32/33/0x901/0x11b/282 to a named story beat, so no descriptive owner name was registered and Func_08077f70 was left as-is per source-paths.json (no alias line was added to the .s file).",
-    "Compiled candidate matches the reference exactly (wrong_instructions=0, matched_prefix covers every instruction outside one residual) for every one of its ~140 instructions except a single strh (the state->inputY = state->limitY store) that the reference schedules immediately after the two initial ldrh loads (before the sign-extension of the X-axis limit), while this compiler consistently schedules the same store two instructions later, between the sign-extension and the following shift. An 8-way exhaustive PERM_GENERAL search covering both statement orders (inputX-then-inputY vs inputY-then-inputX) crossed with both plausible field choices (state->inputX vs state->limitX) for each FixedPoint_Ratio argument found no combination that moved the store (best=3, exact=false, all 8 candidates identical wrong_instructions=0/differing_halfwords=3). A further comma-operator respelling that forces the inputY store to sequence-point ahead of the X shift inside the call expression itself compiled to the identical 3-halfword residual. This looks like the same class of GCC-scheduler-placement residual noted elsewhere in this project's dead-end catalog (an independent instruction placed by dependency-driven list scheduling rather than program order) rather than a wrong source shape; treating the source as correct but the residual as an unresolved scheduling floor for this session.",
-    "The residual exceeds the zero-differing-halfwords adoption gate. Retained assembly remains authoritative and this draft claims zero DONE bytes.",
+    "Recovered entirely from games/gs1/asm/08077f70.s hand-traced instruction-by-instruction, plus already-adopted exact sibling sources reached through its real call targets: game_flags/set.c and game_flags/clear.c, owner/refresh_derived_data.c, inventory/equip.c, owner/action/add.c, owner_state.h, battle_types.h, and shop.h. Those sources establish the HP/PP fields at 0x34..0x3a, inventory at 0xd8, and money at Data_02000240+0x10.",
+    "Behavior: clears and sets five unresolved game flags, refreshes and recalculates owner 5, then applies a fixed state preset to owners 0 and 1: HP and PP are set to their maxima, their display rates are recomputed, raw item 15 is replaced with item 16 and equipped when present, and derived stats are refreshed. It then queues four unresolved action codes and adds 300 money.",
+    "No local message, item-table, or event evidence ties the numeric flags, items, or action codes to a named story beat. Party_ApplyStatePreset therefore states only the fixed behavior proved here and avoids the former unsupported progression/class-change interpretation.",
+    "The former three-halfword floor was the PP=maximum store scheduled after the max-HP sign extension. Reusing the exact sibling's unsigned two-halfword copy shape keeps both loads live through both stores and closes the owner without a compiler override.",
+    "Adopted after two isolated exact compilations and a linked 284/284-byte verification; the retained assembly was retired.",
     "Recovered only from retained owner assembly, already-adopted exact GS1 EN sources reached through real call targets, in-repo headers, and the approved compiler. No other Golden Sun decompilation project, symbol map, or disassembly was inspected."
   ]
 }

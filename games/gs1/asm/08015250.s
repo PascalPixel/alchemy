@@ -2,8 +2,10 @@
 @ リンカが遠距離処理へ到達するために生成する。Cでは表現不能。
 .syntax unified
 	.thumb
+	.global ItemIcon_LoadTilesFar
 	.global Func_08015250
 	.thumb_func
+ItemIcon_LoadTilesFar:
 Func_08015250:
 	ldr	r4, [pc, #0]
 	bx	r4

@@ -28,7 +28,7 @@
   "notes": [
     "Measured directly with tools/compiler/target/release/compiler candidate-show games/gs1/recon/en/main/0800615c.c --align (not the complete declared translation unit).",
     "No inline assembly, fixed-register variable, compiler barrier, ABI escape, copied instruction bytes, compiler modification, or invented compiler flag was used.",
-    "Sibling main:080c1ebc (BattleActor_ClearIndexedMaskBit) was read for house style but is a different compiler family target (battle, not serial-runtime) and did not transplant directly; games/gs1/recon/compiler-families.json has no entry for main:0800615c ('families transplant main:0800615c' returns 'not in family index').",
+    "Sibling main:080c1ebc (BattleActor_ClearIndexedMaskBit) was read for house style but is a different compiler family target (battle, not serial-runtime) and did not transplant directly; the generated family report (out/gs1-en/reports/compiler-families.json, refreshed by `make families`) has no entry for main:0800615c ('families transplant main:0800615c' returns 'not in family index').",
     "This record does not claim a permanent compiler classification; it preserves the measured boundary and the specific shapes already tried for a future revisit."
   ]
 }

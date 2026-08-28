@@ -2,7 +2,7 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x080a8c2c",
-  "name": "Menu_BuildDiagonalPatternTiles",
+  "name": "Menu_BuildPatternTiles",
   "status": "exact",
   "owner_bytes": 148,
   "executable_owner_bytes": 148,
@@ -277,7 +277,7 @@
       "result_path": "out/register-wall/step4/080a8c2c-catalog-v2/report.json"
     },
     "production": {
-      "source": "games/gs1/src/menu/build_diagonal_pattern_tiles.c",
+      "source": "games/gs1/src/menu/build_pattern_tiles.c",
       "compiler_route": "canonical-gcc296",
       "compiler_overrides": [],
       "retained_assembly_removed": true,

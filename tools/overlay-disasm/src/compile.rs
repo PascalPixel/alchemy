@@ -875,7 +875,7 @@ mod source_activation_tests {
         let path = names.source_path(SourceOwner::parse("resource_382:02000100").unwrap());
         let owner = |address| TranslationOwner {
             address,
-            alias: format!("Owner_{address:08x}"),
+            canonical_name: format!("Owner_{address:08x}"),
             extent: 4,
             state: OwnerState::ExactC,
         };
@@ -887,7 +887,6 @@ mod source_activation_tests {
             overlay: Some("resource_382".into()),
             absolute_symbols: BTreeMap::new(),
             local_symbols: Vec::new(),
-            composition_sections: BTreeMap::new(),
             owners: vec![owner(0x0200_0100), owner(0x0200_0104)],
         };
         let check = |units: &[TranslationUnit]| {

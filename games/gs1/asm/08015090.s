@@ -2,8 +2,10 @@
 @ リンカが遠距離処理へ到達するために生成する。Cでは表現不能。
 .syntax unified
 	.thumb
+	.global UiText_DrawStringAtOffsetFar
 	.global Func_08015090
 	.thumb_func
+UiText_DrawStringAtOffsetFar:
 Func_08015090:
 	ldr	r4, [pc, #0]
 	bx	r4

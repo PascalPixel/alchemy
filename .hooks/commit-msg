@@ -1,4 +1,4 @@
 #!/bin/sh
-# Validate the terminal Full-C Byte Share suffix against the staged report.
+# Validate the DONE prefix against the current byte-identical production build.
 exec cargo run --offline --quiet --release \
   --manifest-path tools/check/Cargo.toml -- check-commit-progress "$1"

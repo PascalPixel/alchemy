@@ -1,7 +1,9 @@
 //! Full-C reporting over the coverage map's shared audited interval model.
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use coverage_map::model::{bytes, intersect, normalize, Span};
-use coverage_map::pipeline::{overlay_ids, overlay_name, overlay_owners};
+use coverage_map::pipeline::{
+    build_coverage_map, overlay_ids, overlay_name, overlay_owners, BuildOptions,
+};
 use coverage_map::tree::{root, work_tree_at};
 use serde_json::Value;
 use std::collections::BTreeMap;
@@ -416,10 +418,7 @@ fn report(root: &Path, target: &str, value: &Inventory) -> Result<Report, String
     })
 }
 fn report_path(root: &Path, target: &str) -> PathBuf {
-    root.join("games")
-        .join(target.split('-').next().unwrap_or("gs1"))
-        .join("metrics")
-        .join(format!("{target}-progress.json"))
+    root.join("out").join(target).join("reports/progress.json")
 }
 fn inventory_path(root: &Path, target: &str) -> PathBuf {
     root.join("games")
@@ -428,13 +427,14 @@ fn inventory_path(root: &Path, target: &str) -> PathBuf {
         .join(format!("{target}-executable.json"))
 }
 fn permanent_bytes(root: &Path, target: &str) -> Result<i64, String> {
-    let value = json(
-        &root
-            .join("games")
-            .join(target.split('-').next().unwrap_or("gs1"))
-            .join("metrics")
-            .join(format!("{target}-coverage-map.json")),
-    )?;
+    let tree = work_tree_at(root.to_path_buf());
+    let value = build_coverage_map(&BuildOptions {
+        target: target.into(),
+        exact: &tree,
+        recon: Some(&tree),
+        prefer_verified_assets: true,
+    })?
+    .document;
     get(
         get(&value, "categories").ok_or("coverage map has no categories")?,
         "retained_asm",
@@ -589,8 +589,11 @@ fn run(argv: &[String]) -> Result<String, String> {
     if options.write_report {
         let output = serde_json::to_string_pretty(&report_json(&current))
             .map_err(|error| error.to_string())?;
-        std::fs::write(report_path(&root, &options.target), format!("{output}\n"))
-            .map_err(|error| error.to_string())?;
+        let path = report_path(&root, &options.target);
+        if let Some(parent) = path.parent() {
+            std::fs::create_dir_all(parent).map_err(|error| error.to_string())?;
+        }
+        std::fs::write(&path, format!("{output}\n")).map_err(|error| error.to_string())?;
         return Ok(format!(
             "report={} {}",
             relative(&root, &report_path(&root, &options.target)),
@@ -599,11 +602,6 @@ fn run(argv: &[String]) -> Result<String, String> {
     }
     if options.check {
         validate_inventory(&tracked)?;
-        let expected = report_json(&current);
-        let cached = json(&report_path(&root, &options.target))?;
-        if cached != expected {
-            return Err(format!("tracked {} Full-C report is stale", options.target));
-        }
         check_build(&root, &options.target)?;
     }
     if options.subject {

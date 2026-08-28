@@ -7,5 +7,6 @@ pub mod idioms;
 pub mod insns;
 pub mod patch;
 pub mod render;
+pub mod structure;
 pub mod topology;
 pub mod triage;

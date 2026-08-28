@@ -14,6 +14,7 @@ use compiler_core::{
     source_paths::{SourceOwner, SourcePaths},
     translation_units::TranslationUnits,
 };
+use regex::Regex;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::{
@@ -117,6 +118,7 @@ pub(crate) struct TemplateSource {
     pub(crate) owner: SourceOwner,
     pub(crate) source: String,
     pub(crate) registered_name: Option<String>,
+    pub(crate) entry_name: Option<String>,
     source_sha256: String,
     assembly_sha256: String,
 }
@@ -130,8 +132,13 @@ struct ExactRegistration {
 
 #[derive(Clone, Copy)]
 pub(crate) enum RetargetMode<'a> {
-    EntryMacro,
-    Transplant { alias: Option<&'a str> },
+    EntryMacro {
+        entry: &'a str,
+    },
+    Transplant {
+        registered_name: Option<&'a str>,
+        alias: Option<&'a str>,
+    },
 }
 
 impl FamilyCatalog {
@@ -151,6 +158,7 @@ impl FamilyCatalog {
         let names = SourcePaths::load(repository)?;
         let units = TranslationUnits::load(repository)?;
         let exact = exact_template_registrations(repository)?;
+        let aliases = header_alias_registry(repository)?;
         let mut templates = BTreeMap::<String, TemplateSource>::new();
         let mut standalone_templates = BTreeSet::new();
         for details in index.targets.iter().flat_map(|target| &target.alternatives) {
@@ -181,9 +189,12 @@ impl FamilyCatalog {
             let assembly_sha256 = sha256::hex(assembly.as_bytes());
             validate_template_hashes(details, &source_sha256, &assembly_sha256)?;
             let mapped = names.owners_for_path(&repository.join(&details.source));
-            if units.unit_for_game_owner("gs1", owner).is_none()
-                && matches!(mapped.as_slice(), [mapped] if *mapped == owner)
-            {
+            let standalone = units.unit_for_game_owner("gs1", owner).is_none()
+                && matches!(mapped.as_slice(), [mapped] if *mapped == owner);
+            let entry_name = standalone
+                .then(|| source_entry_name(&aliases, &source, &details.symbol))
+                .transpose()?;
+            if standalone {
                 standalone_templates.insert(details.owner.clone());
             }
             templates.insert(
@@ -192,6 +203,7 @@ impl FamilyCatalog {
                     owner,
                     source,
                     registered_name: names.registered_name(owner).map(str::to_string),
+                    entry_name,
                     source_sha256,
                     assembly_sha256,
                 },
@@ -691,9 +703,9 @@ fn transplant_command(arguments: &[String]) -> Result<(), String> {
                 &details.owner,
                 &template.source,
                 &details.symbol,
-                template.registered_name.as_deref(),
                 &target.symbol,
                 RetargetMode::Transplant {
+                    registered_name: template.registered_name.as_deref(),
                     alias: alias.as_deref(),
                 },
             )?,
@@ -787,19 +799,9 @@ fn require_family(owner: &str, family: Option<&str>) -> Result<(), String> {
     })
 }
 fn entry_alias(root: &Path, symbol: &str) -> Result<Option<String>, String> {
-    let mut aliases = BTreeSet::new();
-    for entry in WalkDir::new(root.join("games/gs1/include"))
-        .into_iter()
-        .filter_map(Result::ok)
-        .filter(|entry| entry.path().extension().and_then(|value| value.to_str()) == Some("h"))
-    {
-        for line in read(entry.path())?.lines() {
-            let words = line.split_whitespace().collect::<Vec<_>>();
-            if words.len() >= 3 && words[0] == "#define" && words[2] == symbol {
-                aliases.insert(words[1].to_string());
-            }
-        }
-    }
+    let aliases = header_alias_registry(root)?
+        .remove(symbol)
+        .unwrap_or_default();
     if aliases.len() > 1 {
         return Err(format!(
             "{symbol} has multiple source aliases: {}",
@@ -808,23 +810,137 @@ fn entry_alias(root: &Path, symbol: &str) -> Result<Option<String>, String> {
     }
     Ok(aliases.into_iter().next())
 }
+
+fn header_alias_registry(root: &Path) -> Result<BTreeMap<String, BTreeSet<String>>, String> {
+    let mut aliases = BTreeMap::new();
+    for entry in WalkDir::new(root.join("games/gs1/include"))
+        .into_iter()
+        .filter_map(Result::ok)
+        .filter(|entry| entry.path().extension().and_then(|value| value.to_str()) == Some("h"))
+    {
+        collect_aliases(&read(entry.path())?, &mut aliases);
+    }
+    Ok(aliases)
+}
+
+fn collect_aliases(source: &str, aliases: &mut BTreeMap<String, BTreeSet<String>>) {
+    for line in source.lines() {
+        if let Some((alias, symbol)) = alias_definition(line) {
+            aliases
+                .entry(symbol.to_string())
+                .or_default()
+                .insert(alias.to_string());
+        }
+    }
+}
+
+fn alias_definition(line: &str) -> Option<(&str, &str)> {
+    let words = line.split_whitespace().collect::<Vec<_>>();
+    (words.len() >= 3
+        && words[0] == "#define"
+        && words[2].starts_with("Func_")
+        && source_identifier(words[1])
+        && source_identifier(words[2]))
+    .then(|| (words[1], words[2]))
+}
+
+fn source_identifier(value: &str) -> bool {
+    let mut bytes = value.bytes();
+    matches!(bytes.next(), Some(first) if first == b'_' || first.is_ascii_alphabetic())
+        && bytes.all(|byte| byte == b'_' || byte.is_ascii_alphanumeric())
+}
+
+fn source_entry_name(
+    aliases: &BTreeMap<String, BTreeSet<String>>,
+    source: &str,
+    symbol: &str,
+) -> Result<String, String> {
+    let mut candidates = aliases.get(symbol).cloned().unwrap_or_default();
+    let mut local = BTreeMap::new();
+    collect_aliases(source, &mut local);
+    candidates.extend(local.remove(symbol).unwrap_or_default());
+    candidates.insert(symbol.to_string());
+    let code = c_code(source);
+    let entries = candidates
+        .into_iter()
+        .filter(|candidate| source_defines_entry(&code, candidate))
+        .collect::<Vec<_>>();
+    match entries.as_slice() {
+        [entry] => Ok(entry.clone()),
+        [] => Err(format!(
+            "{symbol} has no verified source entry or alias in its exact template"
+        )),
+        _ => Err(format!(
+            "{symbol} has ambiguous source entries: {}",
+            entries.join(", ")
+        )),
+    }
+}
+
+fn source_defines_entry(source: &str, name: &str) -> bool {
+    let pattern = format!(
+        r"(?m)^[ \t]*[A-Za-z_][A-Za-z0-9_]*(?:[ \t\r\n*]+[A-Za-z_][A-Za-z0-9_]*)*[ \t\r\n*]+{}[ \t\r\n]*\([^;{{}}]*\)[ \t\r\n]*\{{",
+        regex::escape(name)
+    );
+    Regex::new(&pattern)
+        .expect("escaped C entry expression")
+        .is_match(source)
+}
+
+fn c_code(source: &str) -> String {
+    Regex::new(
+        r#"(?ms)^[ \t]*\#[^\n]*(?:\\\n[^\n]*)*|/\*.*?\*/|//[^\n]*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'"#,
+    )
+    .expect("static C masking expression")
+    .replace_all(source, " ")
+    .into_owned()
+}
+
+fn retarget_local_entry_definitions(
+    source: &str,
+    entry: &str,
+    template_symbol: &str,
+    target_symbol: &str,
+) -> (String, usize) {
+    let mut count = 0;
+    let mut output = String::with_capacity(source.len());
+    for line in source.split_inclusive('\n') {
+        if alias_definition(line) == Some((entry, template_symbol)) {
+            output.push_str(&line.replacen(template_symbol, target_symbol, 1));
+            count += 1;
+        } else {
+            output.push_str(line);
+        }
+    }
+    (output, count)
+}
+
 pub(crate) fn retarget_source(
     template_owner: &str,
     source: &str,
     template_symbol: &str,
-    registered_name: Option<&str>,
     target_symbol: &str,
     mode: RetargetMode<'_>,
 ) -> Result<String, String> {
-    let entry = registered_name.unwrap_or(template_symbol);
-    if matches!(mode, RetargetMode::EntryMacro)
+    let entry = match mode {
+        RetargetMode::EntryMacro { entry } => entry,
+        RetargetMode::Transplant { .. } => template_symbol,
+    };
+    if matches!(mode, RetargetMode::EntryMacro { .. })
         && (entry == target_symbol || source.contains(&format!(" {target_symbol}(")))
     {
         return Err(format!("{template_owner} already defines {target_symbol}"));
     }
     let (mut output, alias) = match mode {
-        RetargetMode::EntryMacro => (source.into(), Some(entry)),
-        RetargetMode::Transplant { alias } => {
+        RetargetMode::EntryMacro { entry } => {
+            let (output, local_definitions) =
+                retarget_local_entry_definitions(source, entry, template_symbol, target_symbol);
+            (output, (local_definitions == 0).then_some(entry))
+        }
+        RetargetMode::Transplant {
+            registered_name,
+            alias,
+        } => {
             let name = registered_name
                 .ok_or_else(|| format!("{template_owner} has no registered source name"))?;
             (
@@ -1322,7 +1438,66 @@ mod tests {
     }
     #[test]
     fn transplant_retargets_semantic_entry_name() {
-        assert_eq!(retarget_source("main:08001000", "#include \"x.h\"\n\ns32 Shop_Select(void) {}", "Func_08001000", Some("select"), "Func_08002000", RetargetMode::Transplant { alias: Some("Shop_Select") }).unwrap(), "#include \"x.h\"\n#undef Shop_Select\n#define Shop_Select Func_08002000\n\n\ns32 Shop_Select(void) {}");
+        assert_eq!(retarget_source("main:08001000", "#include \"x.h\"\n\ns32 Shop_Select(void) {}", "Func_08001000", "Func_08002000", RetargetMode::Transplant { registered_name: Some("select"), alias: Some("Shop_Select") }).unwrap(), "#include \"x.h\"\n#undef Shop_Select\n#define Shop_Select Func_08002000\n\n\ns32 Shop_Select(void) {}");
+    }
+    #[test]
+    fn entry_macro_uses_the_exact_sources_real_alias() {
+        let repository = compiler_core::routing::root();
+        let source =
+            read(&repository.join("games/gs1/src/resource/table/find_free_slot.c")).unwrap();
+        let aliases = header_alias_registry(repository).unwrap();
+        let entry = source_entry_name(&aliases, &source, "Func_08004080").unwrap();
+        assert_eq!(entry, "Resource_FindFreeSlot");
+        let output = retarget_source(
+            "main:08004080",
+            &source,
+            "Func_08004080",
+            "Func_080b6e7c",
+            RetargetMode::EntryMacro { entry: &entry },
+        )
+        .unwrap();
+        assert!(output.contains("#define Resource_FindFreeSlot Func_080b6e7c"));
+        assert!(!output.contains("#define find_free_slot Func_080b6e7c"));
+    }
+    #[test]
+    fn entry_macro_retargets_a_source_local_alias_definition() {
+        let source = "#include \"types.h\"\n#define LayoutSummonPositions Func_080b7424\n\nvoid LayoutSummonPositions(void) {}\n";
+        let output = retarget_source(
+            "main:080b7424",
+            source,
+            "Func_080b7424",
+            "Func_0800bc70",
+            RetargetMode::EntryMacro {
+                entry: "LayoutSummonPositions",
+            },
+        )
+        .unwrap();
+        assert!(output.contains("#define LayoutSummonPositions Func_0800bc70"));
+        assert!(!output.contains("#define LayoutSummonPositions Func_080b7424"));
+    }
+    #[test]
+    fn entry_macro_accepts_a_verified_raw_symbol_without_an_alias() {
+        let repository = compiler_core::routing::root();
+        let source = "/* void Func_08001234(void) {} */\nvoid Func_08001234(void)\n{\n}\n";
+        let aliases = header_alias_registry(repository).unwrap();
+        let entry = source_entry_name(&aliases, source, "Func_08001234").unwrap();
+        assert_eq!(entry, "Func_08001234");
+        let output = retarget_source(
+            "main:08001234",
+            source,
+            "Func_08001234",
+            "Func_08005678",
+            RetargetMode::EntryMacro { entry: &entry },
+        )
+        .unwrap();
+        assert!(output.contains("#define Func_08001234 Func_08005678"));
+    }
+    #[test]
+    fn source_entry_resolution_fails_closed_on_ambiguity() {
+        let source = "#define First Func_08001234\n#define Second Func_08001234\nvoid First(void) {}\nvoid Second(void) {}\n";
+        let aliases = header_alias_registry(compiler_core::routing::root()).unwrap();
+        let error = source_entry_name(&aliases, source, "Func_08001234").unwrap_err();
+        assert!(error.contains("ambiguous source entries: First, Second"));
     }
     #[test]
     fn reordered_instruction_around_a_match_is_one_group() {

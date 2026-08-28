@@ -244,6 +244,9 @@ edition-builds-check: correspondence-check
 
 coverage: full-rom-check | $(REPORT_DIR)
 	$(CHECK) coverage --write
+ifeq ($(TARGET),gs1-en)
+	$(COMPILER) waves scoreboard
+endif
 
 coverage-check: full-rom-check
 	$(CHECK) coverage --check

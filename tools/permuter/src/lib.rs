@@ -1,3 +1,4 @@
+mod acceptance;
 mod compile;
 mod options;
 mod perm;
@@ -16,6 +17,9 @@ pub fn run(args: Vec<String>) -> Result<(), String> {
     }
     if args.iter().any(|argument| argument == "--self-test") {
         return self_test();
+    }
+    if args.iter().any(|argument| argument == "--acceptance-test") {
+        return acceptance::run();
     }
     runner::run(Options::parse(&args)?)
 }

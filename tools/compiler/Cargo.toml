@@ -10,6 +10,7 @@ candidate-compiler = { path = "../candidate-compiler" }
 candidate-show = { path = "../candidate-show" }
 compiler-core = { path = "../compiler-core" }
 dashboard-server = { path = "../dashboard-server" }
+integrate-matches = { path = "../integrate-matches" }
 no-asm-c = { path = "../no-asm-c" }
 objdiff-core = { version = "3.8.0", default-features = false, features = ["arm", "std"] }
 overlay-disasm = { path = "../overlay-disasm" }

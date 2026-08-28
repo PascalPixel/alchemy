@@ -13,15 +13,103 @@ type Var = (String, Option<u8>, Option<i32>);
 pub struct Report {
     pub text: String,
     pub dimensions: Vec<&'static str>,
-    pub repair: Option<Repair>,
+    pub repair: Option<RepairPlan>,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Repair {
-    SwapDeclarations { left: String, right: String },
-    SplitLifetime { name: String },
+    SwapDeclarations {
+        left: String,
+        right: String,
+    },
+    SplitLifetime {
+        name: String,
+    },
     MergeZeroCarrier,
-    ReciprocalRoleSwap { name: String },
+    ReciprocalRoleSwap {
+        name: String,
+    },
+    PreloadAdjacentHalfwords {
+        first_destination: String,
+        first_source: String,
+        second_destination: String,
+        second_source: String,
+        carrier: String,
+    },
+    MaterializeMessageAndMergeCount {
+        indexed_value: String,
+        message: String,
+        coordinate: String,
+        count: String,
+    },
+    SplitOppositeSideAndScaledOffset {
+        side: String,
+        opposite: String,
+    },
+    MergeCarrierPhases {
+        earlier: String,
+        later: String,
+    },
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct RepairPlan {
+    repairs: Vec<Repair>,
+}
+
+impl RepairPlan {
+    pub fn one(repair: Repair) -> Self {
+        Self {
+            repairs: vec![repair],
+        }
+    }
+
+    pub fn two(first: Repair, second: Repair) -> Self {
+        Self {
+            repairs: vec![first, second],
+        }
+    }
+
+    pub fn try_from_repairs(repairs: Vec<Repair>) -> Result<Self, String> {
+        if !(1..=2).contains(&repairs.len()) {
+            return Err(format!(
+                "allocator repair plan must name one or two repairs, got {}",
+                repairs.len()
+            ));
+        }
+        Ok(Self { repairs })
+    }
+
+    pub fn repairs(&self) -> &[Repair] {
+        &self.repairs
+    }
+
+    pub fn dimensions(&self) -> Vec<&'static str> {
+        let mut dimensions = Vec::new();
+        for repair in &self.repairs {
+            for dimension in repair.dimensions() {
+                if !dimensions.contains(dimension) {
+                    dimensions.push(*dimension);
+                }
+            }
+        }
+        dimensions
+    }
+
+    pub fn label(&self) -> String {
+        if self.repairs.len() == 1 {
+            self.repairs[0].label()
+        } else {
+            format!(
+                "compose({})",
+                self.repairs
+                    .iter()
+                    .map(Repair::label)
+                    .collect::<Vec<_>>()
+                    .join(",")
+            )
+        }
+    }
 }
 
 impl Repair {
@@ -33,6 +121,14 @@ impl Repair {
             Self::ReciprocalRoleSwap { .. } => {
                 &["temporary", "evaluation_order", "commutative_order"]
             }
+            Self::PreloadAdjacentHalfwords { .. } => {
+                &["temporary", "evaluation_order", "type_width"]
+            }
+            Self::MaterializeMessageAndMergeCount { .. } => {
+                &["temporary", "evaluation_order", "block_lifetime"]
+            }
+            Self::SplitOppositeSideAndScaledOffset { .. } => &["temporary", "evaluation_order"],
+            Self::MergeCarrierPhases { .. } => &["temporary", "block_lifetime"],
         }
     }
     pub fn label(&self) -> String {
@@ -41,14 +137,38 @@ impl Repair {
             Self::SplitLifetime { name } => format!("split_lifetime({name})"),
             Self::MergeZeroCarrier => "merge_lifetime(zero_carrier)".into(),
             Self::ReciprocalRoleSwap { name } => format!("reciprocal_register_role_swap({name})"),
+            Self::PreloadAdjacentHalfwords {
+                first_destination,
+                first_source,
+                second_destination,
+                second_source,
+                carrier,
+            } => format!(
+                "preload_adjacent_halfwords({first_destination},{first_source},{second_destination},{second_source},{carrier})"
+            ),
+            Self::MaterializeMessageAndMergeCount {
+                indexed_value,
+                message,
+                coordinate,
+                count,
+            } => format!(
+                "materialize_message_and_merge_count({indexed_value},{message},{coordinate},{count})"
+            ),
+            Self::SplitOppositeSideAndScaledOffset { side, opposite } => {
+                format!("split_opposite_side_and_scaled_offset({side},{opposite})")
+            }
+            Self::MergeCarrierPhases { earlier, later } => {
+                format!("merge_carrier_phases({earlier},{later})")
+            }
         }
     }
 }
 
 fn report(text: impl Into<String>, repair: Option<Repair>) -> Report {
+    let repair = repair.map(RepairPlan::one);
     let dimensions = repair
         .as_ref()
-        .map_or_else(Vec::new, |repair| repair.dimensions().to_vec());
+        .map_or_else(Vec::new, RepairPlan::dimensions);
     Report {
         text: text.into(),
         dimensions,
@@ -69,12 +189,6 @@ pub fn decode(
     source: &str,
     work: &Path,
 ) -> Result<Report, String> {
-    if options.precompiled_object.is_some() {
-        return Ok(report(
-            "allocator_order=undecoded reason=standalone-owner-only\n",
-            None,
-        ));
-    }
     let dir = work.join("allocator-order");
     std::fs::create_dir_all(&dir).map_err(|e| format!("{}: {e}", dir.display()))?;
     let input = root
@@ -95,7 +209,13 @@ pub fn decode(
         &dir,
     )?;
     assemble(&assembly.to_string_lossy(), &object.to_string_lossy())?;
-    if text_section(&work.join(format!("{stem}.o")), &dir.join("normal.text"))?
+    let normal_object = options
+        .precompiled_object
+        .as_deref()
+        .map(Path::new)
+        .map(Path::to_path_buf)
+        .unwrap_or_else(|| work.join(format!("{stem}.o")));
+    if text_section(&normal_object, &dir.join("normal.text"))?
         != text_section(&object, &dir.join("diagnostic.text"))?
     {
         return Ok(report(
@@ -217,6 +337,14 @@ fn analyze(
             "role={name} pseudo={pseudo} creation_rank={rank} actual=r{actual} target=r{target} lifetime={life}\n"
         );
     }
+    if let Some(plan) = paired_phase_plan(source, &vars, &roles) {
+        let label = plan.label();
+        return edit_plan(
+            out,
+            &format!("{label} detail=two-nonoverlapping-register-phases"),
+            Some(plan),
+        );
+    }
     if dwarf.contains("DW_OP_reg13") {
         if let Some((x, y)) = reciprocal(stacks.iter().copied()).and_then(|(a, b)| {
             Some((
@@ -273,6 +401,104 @@ fn analyze(
         return edit(out, "undecoded reason=no-unique-source-shape", repair);
     }
     edit(out, "undecoded reason=no-unique-source-shape", None)
+}
+
+fn word_positions(source: &str, name: &str) -> Vec<usize> {
+    Regex::new(&format!(r"\b{}\b", regex::escape(name)))
+        .unwrap()
+        .find_iter(source)
+        .map(|value| value.start())
+        .collect()
+}
+
+fn first_write(source: &str, name: &str) -> Option<usize> {
+    Regex::new(&format!(r"\b{}\b\s*(?:=|--|\+\+)", regex::escape(name)))
+        .ok()?
+        .find(source)
+        .map(|value| value.start())
+}
+
+fn scalar_names(source: &str) -> Vec<String> {
+    let mut names = Regex::new(r"\bs32\s+([A-Za-z_][A-Za-z0-9_]*)\b")
+        .unwrap()
+        .captures_iter(source)
+        .map(|capture| capture[1].to_string())
+        .collect::<Vec<_>>();
+    names.sort();
+    names.dedup();
+    names
+}
+
+/// A reciprocal allocation floor can expose only the first displaced value,
+/// while the reference register trace shows two complete, non-overlapping
+/// carrier phases. Name both merges only when the debug allocation identifies
+/// the later occupant of the target register and the adjacent callee-saved
+/// register has exactly one nearest later scalar phase. The permuter repeats
+/// the lifetime and source-shape guards before it emits any candidate.
+fn paired_phase_plan(source: &str, vars: &[Var], roles: &[(u32, u8, u8)]) -> Option<RepairPlan> {
+    let (_, actual, target) = *roles.first()?;
+    if roles
+        .iter()
+        .any(|&(_, left, right)| left != actual || right != target)
+        || target < 5
+    {
+        return None;
+    }
+    let earlier = unique(vars, |var| var.1 == Some(actual))?.0.clone();
+    let earlier_end = word_positions(source, &earlier).last().copied()?;
+    let mut later_candidates = vars
+        .iter()
+        .filter(|var| var.1 == Some(target))
+        .filter_map(|var| {
+            first_write(source, &var.0)
+                .filter(|write| *write > earlier_end)
+                .map(|write| (write, var.0.clone()))
+        })
+        .collect::<Vec<_>>();
+    later_candidates.sort();
+    let (later_write, later) = later_candidates.first()?.clone();
+    if later_candidates
+        .get(1)
+        .is_some_and(|next| next.0 == later_write)
+    {
+        return None;
+    }
+
+    let companion_register = target.checked_sub(1)?;
+    let mut companion_candidates = vars
+        .iter()
+        .filter(|var| var.1 == Some(companion_register))
+        .filter_map(|var| {
+            first_write(source, &var.0)
+                .filter(|write| *write < earlier_end)
+                .map(|write| (write, var.0.clone()))
+        })
+        .collect::<Vec<_>>();
+    companion_candidates.sort();
+    let companion = companion_candidates.first()?.1.clone();
+    let companion_end = word_positions(source, &companion).last().copied()?;
+    let excluded = [&earlier, &later, &companion];
+    let mut following = scalar_names(source)
+        .into_iter()
+        .filter(|name| !excluded.contains(&name))
+        .filter_map(|name| {
+            first_write(source, &name)
+                .filter(|write| *write > companion_end)
+                .map(|write| (write, name))
+        })
+        .collect::<Vec<_>>();
+    following.sort();
+    let (write, companion_later) = following.first()?.clone();
+    if following.get(1).is_some_and(|next| next.0 == write) {
+        return None;
+    }
+    Some(RepairPlan::two(
+        Repair::MergeCarrierPhases {
+            earlier: companion,
+            later: companion_later,
+        },
+        Repair::MergeCarrierPhases { earlier, later },
+    ))
 }
 
 fn variables(text: &str) -> Vec<Var> {
@@ -401,4 +627,15 @@ fn reciprocal<T: Ord + Copy>(pairs: impl IntoIterator<Item = (T, T)>) -> Option<
 fn edit(mut out: String, value: &str, repair: Option<Repair>) -> Report {
     out += &format!("edit={value}\n");
     report(out, repair)
+}
+fn edit_plan(mut out: String, value: &str, repair: Option<RepairPlan>) -> Report {
+    out += &format!("edit={value}\n");
+    let dimensions = repair
+        .as_ref()
+        .map_or_else(Vec::new, RepairPlan::dimensions);
+    Report {
+        text: out,
+        dimensions,
+        repair,
+    }
 }

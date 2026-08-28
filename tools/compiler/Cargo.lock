@@ -99,6 +99,7 @@ dependencies = [
  "compiler-core",
  "overlay-disasm",
  "regex",
+ "serde",
  "serde_json",
  "sha2",
 ]
@@ -127,6 +128,7 @@ dependencies = [
  "candidate-show",
  "compiler-core",
  "dashboard-server",
+ "integrate-matches",
  "no-asm-c",
  "objdiff-core",
  "overlay-disasm",
@@ -378,6 +380,15 @@ checksum = "d466e9454f08e4a911e14806c24e16fba1b4c121d1ea474396f396069cf949d9"
 dependencies = [
  "equivalent",
  "hashbrown 0.17.1",
+]
+
+[[package]]
+name = "integrate-matches"
+version = "0.1.0"
+dependencies = [
+ "candidate-compiler",
+ "compiler-core",
+ "no-asm-c",
 ]
 
 [[package]]

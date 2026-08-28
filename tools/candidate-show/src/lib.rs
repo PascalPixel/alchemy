@@ -3,6 +3,8 @@ pub mod cli;
 pub mod diff;
 pub mod disasm;
 pub mod entrypoint;
+pub mod idioms;
 pub mod insns;
 pub mod patch;
 pub mod render;
+pub mod triage;

@@ -51,23 +51,24 @@ s32 InventoryMenu_DrawAbilityListPage(
         item_offset = (s32)(first_entry * 2) + 0x1c8;
         do {
             u8 *ability;
+            s32 message;
             s32 y;
             s32 count;
-            u16 item;
-
-            item = *(u16 *)((u8 *)menu + item_offset);
-            ability = Ability_GetData(0x3fff & item);
+            ability = Ability_GetData(
+                0x3fff & *(u16 *)(item_offset + (s32)menu));
+            message =
+                (*(u16 *)(item_offset + (s32)menu) & 0x3fff) +
+                (s32)&Value_00000333;
             y = row * 16 + 16;
 
-            item = *(u16 *)((u8 *)menu + item_offset);
-            UiText_DrawAt(
-                (item & 0x3fff) + (s32)&Value_00000333, window, 88, y);
+            UiText_DrawAt(message, window, 88, y);
             Func_080150a8(ability[9], 2, window, 176, y);
 
-            if (ability[8] == 0xff) {
+            count = ability[8];
+            if (count == 0xff) {
                 count = 11;
             } else {
-                count = ability[8] - 1;
+                count--;
             }
             Func_080a8cc0(window, 25, row * 2 + 2, count, 0);
 

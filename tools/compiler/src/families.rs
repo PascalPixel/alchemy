@@ -557,9 +557,11 @@ fn transplant_command(arguments: &[String]) -> Result<(), String> {
             "target_symbol": target.symbol,
         },
         "permutation": {
-            "mode": "explicit",
-            "requires_directives": true,
-            "directives": ["PERM_GENERAL", "PERM_INT"],
+            "mode": "allocator_catalog",
+            "source": "ordinary_c",
+            "requires_directives": false,
+            "decoder": "candidate-show --allocator-order",
+            "catalog": "games/gs1/recon/compiler-repair-patterns.json",
             "command": format!("cargo run --offline --quiet --release --manifest-path tools/compiler/Cargo.toml -- permute {} --iterations 20000 --output out/family-search/{stem}", seed_path.display()),
         },
     });

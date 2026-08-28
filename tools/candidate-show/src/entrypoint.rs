@@ -189,6 +189,7 @@ mod tests {
             candidate_length: 4,
             reference_length: 4,
             differing_halfwords: difference,
+            allocator: None,
         };
         assert!(!exact_mismatch(&output(0)));
         assert!(exact_mismatch(&output(1)));

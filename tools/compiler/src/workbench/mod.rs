@@ -1,5 +1,4 @@
 mod ninja;
-mod normalized;
 mod structural;
 mod symbolize;
 use candidate_compiler::verify::{
@@ -162,10 +161,6 @@ pub fn run_step(arguments: &[String]) -> Result<(), String> {
         .map(|_| ()),
         ("structural", [target, candidate, symbol, output]) => {
             let report = structural::compare(Path::new(target), Path::new(candidate), symbol)?;
-            write_json(Path::new(output), &report)
-        }
-        ("normalized", [target, candidate, symbol, output]) => {
-            let report = normalized::compare(Path::new(target), Path::new(candidate), symbol)?;
             write_json(Path::new(output), &report)
         }
         ("probe", [source, routing, work, target, symbol, output]) => probe_m2c(

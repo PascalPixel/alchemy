@@ -57,7 +57,9 @@ s32 Func_08078e28(s32 owner, s32 value);
 
 extern struct Global0240 Data_02000240;
 
-void Func_08077f70(void)
+#define Party_ApplyFixedProgressionSetup Func_08077f70
+
+void Party_ApplyFixedProgressionSetup(void)
 {
     s32 owner_no;
 
@@ -76,10 +78,15 @@ void Func_08077f70(void)
         s32 output;
         s32 slot;
 
-        st->inputX = st->limitX;
-        st->inputY = st->limitY;
+        do {
+            *(u16 *)((u8 *)st + 0x38) = *(u16 *)((u8 *)st + 0x34);
+            *(u16 *)((u8 *)st + 0x3a) = *(u16 *)((u8 *)st + 0x36);
+        } while (0);
+        {
+            s16 limit_x = *(s16 *)((u8 *)st + 0x34);
 
-        value = FixedPoint_Ratio(st->inputX << 14, st->inputX);
+            value = FixedPoint_Ratio(limit_x << 14, limit_x);
+        }
         output = 0x4000;
         if (value <= output) {
             output = 0;

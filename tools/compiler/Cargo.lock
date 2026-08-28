@@ -543,8 +543,10 @@ name = "permuter"
 version = "0.1.0"
 dependencies = [
  "candidate-compiler",
+ "candidate-show",
  "compiler-core",
  "overlay-disasm",
+ "regex",
  "serde_json",
  "tempfile",
 ]

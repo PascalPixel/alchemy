@@ -1,4 +1,4 @@
-use std::collections::{BTreeSet, HashSet};
+use std::collections::HashSet;
 use std::fs;
 use std::path::{Component, Path, PathBuf};
 use std::sync::atomic::{AtomicUsize, Ordering};
@@ -20,48 +20,13 @@ struct Candidate {
     choice: usize,
     source: String,
     fingerprint: String,
+    mutations: Vec<String>,
 }
 
 #[derive(Debug)]
 struct Evaluation {
     candidate: usize,
     score: Result<Score, String>,
-}
-
-fn expand_c_includes(
-    path: &Path,
-    source: &str,
-    active: &mut BTreeSet<PathBuf>,
-) -> Result<String, String> {
-    let canonical =
-        fs::canonicalize(path).map_err(|error| format!("{}: {error}", path.display()))?;
-    if !active.insert(canonical.clone()) {
-        return Err(format!(
-            "recursive C include through {}",
-            canonical.display()
-        ));
-    }
-    let mut expanded = String::new();
-    for line in source.lines() {
-        let include = line
-            .trim()
-            .strip_prefix("#include")
-            .map(str::trim)
-            .and_then(|value| value.strip_prefix('"'))
-            .and_then(|value| value.split_once('"').map(|(name, _)| name))
-            .filter(|name| name.ends_with(".c"));
-        if let Some(include) = include {
-            let included = canonical.parent().unwrap_or(Path::new("")).join(include);
-            let body = fs::read_to_string(&included)
-                .map_err(|error| format!("{}: {error}", included.display()))?;
-            expanded.push_str(&expand_c_includes(&included, &body, active)?);
-        } else {
-            expanded.push_str(line);
-            expanded.push('\n');
-        }
-    }
-    active.remove(&canonical);
-    Ok(expanded)
 }
 
 fn load(path: &Path) -> Result<(PathBuf, String), String> {
@@ -84,14 +49,35 @@ fn load(path: &Path) -> Result<(PathBuf, String), String> {
             path.display()
         ));
     }
-    let source = expand_c_includes(&path, &source, &mut BTreeSet::new())?;
-    if source.len() > MAX_SOURCE_BYTES {
+    Ok((path, source))
+}
+
+fn allocator_report(path: &Path) -> Result<candidate_show::allocator::Report, String> {
+    let work = tempfile::tempdir().map_err(|error| error.to_string())?;
+    let arguments = [
+        path.to_string_lossy().into_owned(),
+        "--allocator-order".into(),
+        "--work".into(),
+        work.path().to_string_lossy().into_owned(),
+    ];
+    let candidate_show::cli::ParseOutcome::Options(options) =
+        candidate_show::cli::options_of(root(), &arguments)?
+    else {
+        return Err("allocator decoder options unexpectedly requested help".into());
+    };
+    let report = candidate_show::render::render(root(), &options)?
+        .allocator
+        .ok_or("allocator decoder produced no report")?;
+    if report.dimensions.is_empty() {
         return Err(format!(
-            "expanded {} exceeds the {MAX_SOURCE_BYTES}-byte source limit",
-            path.display()
+            "allocator decoder found no actionable dimension\n{}",
+            report.text
         ));
     }
-    Ok((path, source))
+    if report.repair.is_none() {
+        return Err("allocator decoder named dimensions without a structured repair".into());
+    }
+    Ok(report)
 }
 
 fn mix(mut value: u64) -> u64 {
@@ -144,6 +130,10 @@ fn plan(permutation: &Permutation, iterations: usize, seed: u64) -> Result<Vec<C
             choice,
             source,
             fingerprint,
+            mutations: permutation
+                .mutations(choice)
+                .ok_or_else(|| format!("choice {choice} has no mutation record"))?
+                .to_vec(),
         });
     }
     if candidates.is_empty() {
@@ -288,6 +278,8 @@ fn save(
     candidates: &[Candidate],
     evaluations: &[Evaluation],
     options: &Options,
+    permutation: &Permutation,
+    decoder: &candidate_show::allocator::Report,
 ) -> Result<(usize, bool), String> {
     let failures = evaluations
         .iter()
@@ -329,6 +321,7 @@ fn save(
                 "rank": rank,
                 "candidate": candidate.index,
                 "choice": candidate.choice,
+                "mutations": candidate.mutations,
                 "source_fingerprint": candidate.fingerprint,
                 "exact": score.exact,
                 "differing_halfwords": score.differing_halfwords,
@@ -350,9 +343,20 @@ fn save(
         .and_then(|evaluation| evaluation.score.as_ref().ok())
         .ok_or("baseline result is missing")?;
     let report = serde_json::to_string_pretty(&json!({
-        "format": 1,
-        "mode": "explicit",
+        "format": 2,
+        "mode": "allocator_catalog",
         "status": "complete",
+        "catalog_version": crate::perm::CATALOG_VERSION,
+        "dimensions": permutation.dimensions(),
+        "decoder": {
+            "repair": decoder.repair.as_ref().map(|repair| repair.label()),
+            "evidence": decoder.text,
+            "evidence_sha256": compiler_core::sha256::hex(decoder.text.as_bytes()),
+        },
+        "raw_choices": permutation.raw_count(),
+        "unique_choices": permutation.count(),
+        "catalog_choices": (0..permutation.count()).filter_map(|choice| permutation.mutations(choice)).collect::<Vec<_>>(),
+        "max_edits_per_candidate": 1,
         "seed": options.seed,
         "attempted": evaluations.len(),
         "compile_failures": failures,
@@ -368,7 +372,8 @@ fn save(
 
 fn run_one(options: &Options, input: &Path, multiple: bool) -> Result<(), String> {
     let (path, source) = load(input)?;
-    let permutation = crate::perm::parse(&source)?;
+    let decoder = allocator_report(&path)?;
+    let permutation = crate::perm::parse(&source, decoder.repair.as_ref().unwrap())?;
     let candidates = plan(&permutation, options.iterations, options.seed)?;
     let output = validate_output(&output_path(options, &path, &source, multiple))?;
     let target = Arc::new(Target::prepare(&path, &candidates[0].source)?);
@@ -381,14 +386,22 @@ fn run_one(options: &Options, input: &Path, multiple: bool) -> Result<(), String
             }
         }
     }
-    let (best, exact) = save(&output, &candidates, &evaluations, options)?;
+    let (best, exact) = save(
+        &output,
+        &candidates,
+        &evaluations,
+        options,
+        &permutation,
+        &decoder,
+    )?;
     let failures = evaluations
         .iter()
         .filter(|evaluation| evaluation.score.is_err())
         .count();
     println!(
-        "done={} choices={} attempted={} failures={} best={} exact={} output={}",
+        "done={} raw_choices={} unique_choices={} attempted={} failures={} best={} exact={} output={}",
         path.display(),
+        permutation.raw_count(),
         permutation.count(),
         evaluations.len(),
         failures,
@@ -429,9 +442,15 @@ pub fn self_test() -> Result<(), String> {
     {
         return Err("seeded choice order is not deterministic and complete".into());
     }
-    let permutation = crate::perm::parse("PERM_GENERAL(a,b,a)")?;
-    if plan(&permutation, 3, 1)?.len() != 2 {
-        return Err("candidate plan did not deduplicate identical sources".into());
+    let permutation = crate::perm::parse(
+        "void f(void)\n{\n    u32 a;\n    u32 b;\n}\n",
+        &candidate_show::allocator::Repair::SwapDeclarations {
+            left: "a".into(),
+            right: "b".into(),
+        },
+    )?;
+    if plan(&permutation, permutation.count(), 1)?.len() != permutation.count() {
+        return Err("candidate plan did not preserve the finite unique space".into());
     }
     Ok(())
 }

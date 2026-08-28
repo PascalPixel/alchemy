@@ -11,8 +11,14 @@ s32 BattlePresentation_WaitForLinkedState(void)
     s32 attempt;
 
     if (battle[0x44] != 0) {
-        u8 side = battle[0x50];
-        remote = (u16 *)(0x02002024 + ((1 ^ side) * 24));
+        u32 side = battle[0x50];
+        u32 opposite_side = 1;
+
+        opposite_side ^= side;
+        side = opposite_side << 1;
+        side += opposite_side;
+        side <<= 3;
+        remote = (u16 *)(0x02002024 + side);
         local = (u16 *)0x02002224;
         if (battle[0x52] == 0) {
             local[0] = 0x45;

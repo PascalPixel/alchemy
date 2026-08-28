@@ -32,7 +32,8 @@ PORTABLE_TOOLS := alignment-tail asset-paths cache-entry canonical-json \
 # beside the decompilation. Contributors pare machinery; they do not raise it.
 # Only Pascal moves this number; a diff touching it without his recorded
 # decision is invalid regardless of how good the new machinery is.
-TOOLING_LINE_LIMIT := 33000
+# 40,000 set by Pascal's decision, 2026-08-28.
+TOOLING_LINE_LIMIT := 40000
 TARGET ?= gs1-en
 FULL_REPORT = out/$(TARGET)/full/rebuilt.json
 FULL_ROM = out/$(TARGET)/full/rebuilt.gba

@@ -17,10 +17,9 @@ u32 Random16(void);
 
 #define COUNT_PARTIAL_CURES(unit, count)                                      \
     {                                                                         \
-        (count) = 0;                                                          \
         if ((unit)->delusion != 0)                                            \
             (count)++;                                                        \
-        if ((unit)->confusion != 0)                                           \
+        if ((u8)(unit)->confusion != 0)                                       \
             (count)++;                                                        \
         if ((unit)->charm != 0)                                               \
             (count)++;                                                        \
@@ -43,7 +42,6 @@ u32 Random16(void);
 
 #define COUNT_POSITIVE_MODIFIERS(unit, count)                                 \
     {                                                                         \
-        (count) = 0;                                                          \
         if ((unit)->attack_modifier > 0)                                      \
             (count)++;                                                        \
         if ((unit)->defense_modifier > 0)                                     \
@@ -124,6 +122,10 @@ u32 Random16(void);
         case EFX_CURE_ALL:                                                    \
             COUNT_ALL_CURES((unit), (applies));                               \
             break;                                                            \
+        case EFX_DEATH_CURSE:                                                 \
+            if ((unit)->death_count == 0)                                     \
+                (applies) = 1;                                                \
+            break;                                                            \
         case EFX_POISON:                                                      \
             if ((unit)->poison == 0)                                          \
                 (applies) = 1;                                                \
@@ -142,10 +144,6 @@ u32 Random16(void);
             break;                                                            \
         case EFX_EVIL_SPIRIT:                                                 \
             if ((unit)->evil_spirit == 0)                                     \
-                (applies) = 1;                                                \
-            break;                                                            \
-        case EFX_DEATH_CURSE:                                                 \
-            if ((unit)->death_count == 0)                                     \
                 (applies) = 1;                                                \
             break;                                                            \
         case EFX_REVIVE_FULL:                                                 \
@@ -217,6 +215,7 @@ s32 BattleTarget_SelectForAction(
     s32 applies;
     s32 damage_class;
     u32 roll;
+    s16 *slot;
 
     turn_order = BATTLE_TURN_ORDER;
     target_count = 0;
@@ -235,8 +234,9 @@ s32 BattleTarget_SelectForAction(
         }
 
         target_index = 0;
-        while (turn_order->normal[target_index] != 255) {
-            unit_id = turn_order->normal[target_index];
+        slot = turn_order->normal;
+        while (slot[target_index] != 255) {
+            unit_id = slot[target_index];
             if (unit_id != 254) {
                 if (action->target_mode != 4 || unit_id == actor_id) {
                     unit_ids[candidate_count] = unit_id;
@@ -356,6 +356,5 @@ scan_complete:
             return target_positions[selected];
     }
 
-    selected = (u32)(target_count * Random16()) >> 16;
-    return target_positions[selected];
+    return target_positions[(u32)(target_count * Random16()) >> 16];
 }

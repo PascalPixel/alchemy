@@ -24,7 +24,9 @@ void name(u32 address, u32 value) \
         u32 saved; \
         \
         saved = *ime; \
-        *ime = (u16)ime; \
+        do { \
+            *ime = (u16)ime; \
+        } while (0); \
         do { \
             s32 cnt; \
             \

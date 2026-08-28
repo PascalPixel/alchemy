@@ -1,16 +1,16 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "format": "alchemy-compiler-repair-patterns",
-  "catalog_version": "register-wall-v2",
+  "catalog_version": "register-wall-v3",
   "compiler_family": "gcc296",
   "annotation_free": true,
   "search": {
     "baseline_first": true,
     "discovery_order": "structured-decoder-repair-then-catalog",
     "seed_rotation": true,
-    "enumeration": "baseline plus the finite alternatives for the single named repair",
+    "enumeration": "baseline plus finite alternatives for one named repair, or complete two-repair combinations only",
     "max_choices": 16,
-    "max_edits_per_candidate": 1,
+    "max_edits_per_candidate": 2,
     "report": [
       "enabled_dimensions",
       "decoder_repair",
@@ -27,7 +27,8 @@
     "block_lifetime",
     "evaluation_order",
     "commutative_order",
-    "loop_spelling"
+    "loop_spelling",
+    "type_width"
   ],
   "signals": {
     "swap_declarations": ["declaration_order"],
@@ -37,7 +38,15 @@
       "temporary",
       "evaluation_order",
       "commutative_order"
-    ]
+    ],
+    "preload-adjacent-halfwords": ["temporary", "evaluation_order", "type_width"],
+    "materialize-message-and-merge-count": [
+      "temporary",
+      "evaluation_order",
+      "block_lifetime"
+    ],
+    "split-opposite-side-and-scaled-offset": ["temporary", "evaluation_order"],
+    "merge-carrier-phases": ["temporary", "block_lifetime"]
   },
   "operations": {
     "declaration_order": ["swap_decoder_named_uninitialized_declarations"],
@@ -45,18 +54,33 @@
       "merge_decoder_named_xor_temporary",
       "introduce_xor_result_temporary",
       "introduce_shared_zero_carrier",
-      "inline_xor_helper"
+      "inline_xor_helper",
+      "preload_adjacent_halfwords_before_signed_carrier",
+      "materialize_indexed_message_and_merge_sentinel_carrier",
+      "split_opposite_side_and_scaled_offset_carriers",
+      "merge_nonoverlapping_carrier_phases"
     ],
-    "block_lifetime": ["inline_decoder_named_pointer_at_its_two_dereferences"],
-    "evaluation_order": ["materialize_pure_xor_lvalue_before_decoder_named_rhs"],
+    "block_lifetime": [
+      "inline_decoder_named_pointer_at_its_two_dereferences",
+      "materialize_indexed_message_and_merge_sentinel_carrier",
+      "merge_nonoverlapping_carrier_phases"
+    ],
+    "evaluation_order": [
+      "materialize_pure_xor_lvalue_before_decoder_named_rhs",
+      "preload_adjacent_halfwords_before_signed_carrier",
+      "materialize_indexed_message_and_merge_sentinel_carrier",
+      "split_opposite_side_and_scaled_offset_carriers"
+    ],
     "commutative_order": ["swap_pure_xor_operands"],
-    "loop_spelling": ["recreate_decoder_named_value_at_guard_and_backedge"]
+    "loop_spelling": ["recreate_decoder_named_value_at_guard_and_backedge"],
+    "type_width": ["preload_adjacent_halfwords_before_signed_carrier"]
   },
   "safety": {
     "global": [
       "mask comments, literals, and preprocessor directives before site matching",
       "refuse preprocessor conditionals",
-      "require_one_decoder-named repair and one matching source site",
+      "require one or two decoder-named repairs and one matching source site per repair",
+      "two-repair plans emit no one-sided candidate",
       "deduplicate_before_seed rotation",
       "generate_collision-free temporary names"
     ],
@@ -79,6 +103,30 @@
     "loop_spelling": [
       "does not rewrite loop control",
       "only inlines the decoder-named pointer expression at its two proven uses"
+    ],
+    "preload_adjacent_halfwords": [
+      "four decoder-named simple lvalues",
+      "two consecutive assignments in one lexical block",
+      "one dependent two-argument signed-carrier call",
+      "fresh decoder-named carrier"
+    ],
+    "materialize_message_and_merge_count": [
+      "exactly two identical side-effect-free indexed loads",
+      "each load feeds exactly one following statement",
+      "coordinate assignment lies between the loads",
+      "sentinel branches read one expression and update one named carrier"
+    ],
+    "split_opposite_side_and_scaled_offset": [
+      "one unsigned integral side declaration",
+      "one use in the literal (1 xor side) times 24 address shape",
+      "fresh opposite-side carrier"
+    ],
+    "merge_carrier_phases": [
+      "both initialized declarations are decoder-named",
+      "later carrier is s32",
+      "earlier carrier is in an ancestor lexical scope",
+      "lifetimes do not overlap",
+      "pointer uses before the merge are member, null-test, or explicit-address uses"
     ]
   },
   "evidence": [
@@ -146,7 +194,10 @@
       "after_differing_halfwords": 0,
       "source_shape": "Copy HP and PP from their adjacent u16 maxima before loading max_hp through a named s16 carrier for its dependent ratio expression.",
       "supporting_exact_owner": "main:0807808c",
-      "catalog_status": "recorded-not-generalized",
+      "decoder_edit": "preload_adjacent_halfwords(hp,max_hp,pp,max_pp,max_hp_carrier)",
+      "operation": "preload_adjacent_halfwords_before_signed_carrier",
+      "regression_fixture": "permuter::perm::tests::preloads_adjacent_halfwords_before_signed_carrier",
+      "catalog_status": "generalized",
       "result": "pass-adopted"
     },
     {
@@ -158,7 +209,10 @@
       "after_differing_halfwords": 0,
       "source_shape": "Inline offset-first indexed loads, materialize msg before its coordinate, and update one range carrier in place across the sentinel branch.",
       "intermediate_differing_halfwords": [15, 6],
-      "catalog_status": "recorded-not-generalized",
+      "decoder_edit": "materialize_message_and_merge_count(item,msg,y,range)",
+      "operation": "materialize_indexed_message_and_merge_sentinel_carrier",
+      "regression_fixture": "permuter::perm::tests::materializes_message_and_merges_count_carrier",
+      "catalog_status": "generalized",
       "result": "pass-adopted"
     },
     {
@@ -170,7 +224,10 @@
       "after_differing_halfwords": 0,
       "source_shape": "Keep side and other distinct, reuse side for scaling, then shift side in place before adding the address base.",
       "intermediate_differing_halfwords": [8, 3],
-      "catalog_status": "recorded-not-generalized",
+      "decoder_edit": "split_opposite_side_and_scaled_offset(side,other)",
+      "operation": "split_opposite_side_and_scaled_offset_carriers",
+      "regression_fixture": "permuter::perm::tests::splits_opposite_side_and_scaled_offset_carriers",
+      "catalog_status": "generalized",
       "result": "pass-adopted"
     },
     {
@@ -182,10 +239,20 @@
       "after_differing_halfwords": 0,
       "source_shape": "Use work for the state-base/pool-count phases and src_z for the source-pointer/spawn-Z phases; neither one-sided merge nor an adjacent typed copy survives with the required allocation priority.",
       "negative_control_differing_halfwords": 16,
-      "catalog_status": "recorded-not-generalized",
+      "decoder_repairs": [
+        "merge_carrier_phases(state,count)",
+        "merge_carrier_phases(resource,spawn_z)"
+      ],
+      "operations": [
+        "merge_nonoverlapping_carrier_phases",
+        "merge_nonoverlapping_carrier_phases"
+      ],
+      "regression_fixture": "permuter::perm::tests::composes_only_the_two_named_phase_merges",
+      "catalog_status": "generalized",
       "result": "pass-adopted"
     }
   ],
+  "generalization_backlog": [],
   "semantic_guards": [
     {
       "id": "call-via-is-indirect",

@@ -15,6 +15,7 @@ pub const USAGE: &str = "usage: permuter <candidate.c>... [options]\n\
   --output DIR         fresh run directory, or parent for multiple inputs\n\
   --show-errors        print failed candidate diagnostics\n\
   --continue-on-error  process every input before returning failure\n\
+  --acceptance-test    perturb, decode, and recover exact owners\n\
   --self-test          run parser, ordering, and byte-score checks";
 
 #[derive(Clone, Debug, Eq, PartialEq)]

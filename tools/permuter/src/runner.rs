@@ -356,7 +356,7 @@ fn save(
         "raw_choices": permutation.raw_count(),
         "unique_choices": permutation.count(),
         "catalog_choices": (0..permutation.count()).filter_map(|choice| permutation.mutations(choice)).collect::<Vec<_>>(),
-        "max_edits_per_candidate": 1,
+        "max_edits_per_candidate": decoder.repair.as_ref().map_or(0, |plan| plan.repairs().len()),
         "seed": options.seed,
         "attempted": evaluations.len(),
         "compile_failures": failures,
@@ -444,10 +444,12 @@ pub fn self_test() -> Result<(), String> {
     }
     let permutation = crate::perm::parse(
         "void f(void)\n{\n    u32 a;\n    u32 b;\n}\n",
-        &candidate_show::allocator::Repair::SwapDeclarations {
-            left: "a".into(),
-            right: "b".into(),
-        },
+        &candidate_show::allocator::RepairPlan::one(
+            candidate_show::allocator::Repair::SwapDeclarations {
+                left: "a".into(),
+                right: "b".into(),
+            },
+        ),
     )?;
     if plan(&permutation, permutation.count(), 1)?.len() != permutation.count() {
         return Err("candidate plan did not preserve the finite unique space".into());

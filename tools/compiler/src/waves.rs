@@ -37,12 +37,14 @@ const DEBT: [&str; 5] = [
 ];
 // The drafting cohort is frozen so unintended drift fails loudly; intended
 // drift — an adoption or a draft tracked into the corpus — updates these
-// numbers as its acknowledgment. Last acknowledged: two wave adoptions
-// (080b5c08, 080f4028) and four tier-trial candidates tracked.
-const DRAFT_OWNERS: usize = 256;
-const INDEPENDENT_OWNERS: usize = 171;
-const OWNER_GROUP_OWNERS: usize = 63;
-const SPLIT_REGION_OWNERS: usize = 22;
+// numbers as its acknowledgment. Last acknowledged: the split-function
+// campaign — fragment stubs retired into whole-span drafts (0800ebec,
+// 080be378, 080d4ce8, 080dd9c0, 080ddde0, 080d0ee0) and the 080a46b4
+// adoption.
+const DRAFT_OWNERS: usize = 248;
+const INDEPENDENT_OWNERS: usize = 170;
+const OWNER_GROUP_OWNERS: usize = 59;
+const SPLIT_REGION_OWNERS: usize = 19;
 
 #[derive(Deserialize)]
 struct Manifest {
@@ -2251,7 +2253,10 @@ mod tests {
     fn prepared_templates_define_their_retargeted_object_symbols() {
         assert_retargeted_template_defines_target("main:08004080", "main:080b6e7c");
         assert_retargeted_template_defines_target("main:08003538", "main:08017e88");
-        assert_retargeted_template_defines_target("main:080b7424", "main:0800bc70");
+        // 080b7424 joined the battle-summon unit, which rightly disables
+        // macro-entry retargeting for its template; a standalone pair from
+        // the same catalog stands in.
+        assert_retargeted_template_defines_target("main:0809b0b0", "main:0800383c");
         assert_retargeted_template_defines_target("main:080ae7fc", "main:080a2324");
     }
     #[test]

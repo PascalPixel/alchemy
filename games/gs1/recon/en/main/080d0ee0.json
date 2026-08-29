@@ -33,5 +33,150 @@
  "notes": [
   "Map only, per task scope -- no C source drafted, no translation-units.json edited.",
   "Head file uses the 'call-graph reconstructed, code+data mixed' comment style rather than an explicit FunctionHead_/Fragment_ label; classified as the true head from its genuine push/high-reg-save/sub-sp prologue and the absence of any external branch into it."
- ]
+ ],
+ "reconstruction_dossier": {
+  "measured": "2026-08-29",
+  "status": "C source drafted at games/gs1/recon/en/main/080d0ee0.c, structurally incomplete -- this block preserves every ground-truthed detail found before/while drafting so it survives a session boundary.",
+  "cross_file_branch_resolution": {
+   "method": "arm-none-eabi-objdump -D -b binary -m arm --adjust-vma=0x08000000 -M force-thumb roms/gs1-en.gba --start-address=<region-start> --stop-address=<region-end>, run separately over 0x080d0ee0..0x080d1350 and cross-referenced by absolute address.",
+   "finding": "b sub_080d1016 / b sub_080d105c / b sub_080d12d2 / b sub_080d12c8 are NOT external calls or a re-entrant/coroutine state machine -- every target address lands on an ordinary mid-block instruction already present in the *other* file's byte stream (no distinct .L_ label was ever emitted for them because, within their own file, they are reached only by fallthrough, and only the opposite file needed a global-looking branch target for its cross-region jump). Confirmed exact matches:",
+   "targets": [
+    {"addr": "0x080d1016", "instr": "ldr r0, [sp, #68]", "location": "games/gs1/asm/080d0ee0.s, immediately after the 3-member init loop stores str r3,[sp,#68] (r3=0 leftover) -- this is the top of the outer 60-frame loop's frame<=47 gate."},
+    {"addr": "0x080d105c", "instr": "ldr r4, [sp, #68]", "location": "games/gs1/asm/080d0ee0.s, immediately after the .L_080d104a camera-shake block's sp56/sp24/sp20/sp16 zero-init -- this is the phase do-while's frame>=idx_b gate re-check."},
+    {"addr": "0x080d12c8", "instr": "ldr r3, [sp, #76]", "location": "games/gs1/asm/080d12a8.s (fragment), right after the Func_080d6888 call -- entry point skipped over when the frame==60 flush path takes the extra Func_080b50e8(134) branch."},
+    {"addr": "0x080d12d2", "instr": "ldr r0, [sp, #24]", "location": "games/gs1/asm/080d12a8.s (fragment), the phase-index increment block (sp24+=10, sp20+=28, sp16+=12, sp56+=1) shared by both the frame<idx_b skip path and the normal post-draw fallthrough."}
+   ],
+   "conclusion": "The whole 1136-byte span is one straight-line function (no prologue-less re-entry, no saved-PC continuation) with ordinary nested loops whose back/forward edges happen to cross the two-file split boundary -- exactly the inter-region veneer case CONTRIBUTING.md's Split functions section describes."
+  },
+  "frame_ledger": {
+   "sub_sp": 116,
+   "high_reg_save_layout_above_frame": "After `add sp,#116` in the epilogue, `pop {r3,r5,r6,r7}` reads sp+116..131 as (r8,r9,r10,r11) in that order -- word0 (sp+116..119) is the lone `push {r7}` (orig r8), words1-3 (sp+120..131) are the `push {r5,r6,r7}` (orig r9,r10,r11) pushed one instruction earlier (i.e. at a LOWER address than the r8 word, since it was pushed first / stack grows down). Then `pop {r5,r6,r7}` reads sp+132..143 (caller r5/r6/r7), then `pop {r0}` reads sp+144 (LR) for the final `bx r0`. Total extra above the 116-byte local frame = 4+12+16 = 32 bytes, matching push{r5,r6,r7,lr}(16)+push{r5,r6,r7}(12)+push{r7}(4).",
+   "correction": "An earlier pass in this session mis-read the r6-relative struct (`add r6, sp, #104`) as touching r6+12/r6+16 (sp+116/120), which would have overlapped the r8/r9 save words -- re-reading the .s literally shows r6 is only ever accessed at +0 and +4 (sp+104, sp+108), an 8-byte struct entirely inside the declared 116-byte frame. No overlap; the frame is internally consistent.",
+   "resolved_slot_map": [
+    {"off": 0, "role": "5th/6th stacked-arg scratch (Func_080ed408 arg5=2; later Func_080072f4 arg5=w)"},
+    {"off": 4, "role": "6th stacked-arg scratch (Func_080072f4 arg6=h)"},
+    {"off": 8, "role": "outer 'm' loop counter in the 10x16 draw block (sp8 in candidate-show diff terms)"},
+    {"off": 12, "role": "inner 'j' 0..9 loop counter, read back after each of several calls that clobber r4"},
+    {"off": 16, "role": "phase-loop base index (idx_b family): zeroed in the sp56=0 reset, +=12 each phase in the fragment"},
+    {"off": 20, "role": "phase-loop trail-struct pointer base (idx_c family): set to work+0x7080, +=28 each phase"},
+    {"off": 24, "role": "phase-loop particle-index base (idx_a family): zeroed in the sp56=0 reset, +=10 each phase"},
+    {"off": 28, "role": "computed (r8/2 rounded) half-count used as the y/h subtrahend in the second (0x080d116a) draw loop"},
+    {"off": 32, "role": "saved copy of sp24 taken before the r8-derived clamp is computed"},
+    {"off": 36, "role": "clamp target passed into sub_08004cf0's triple (128<<5 or sp24*4096, whichever is smaller)"},
+    {"off": 40, "role": "saved copy of r5 (the 0x02010000-based trail pointer) used to reload Func_080049e8's frame arg each inner-j pass"},
+    {"off": 44, "role": "running max of Func_080e3944's blended magnitude across the 10 j-iterations; compared against 0x00061a7f to gate the second draw loop"},
+    {"off": 48, "role": "facing (loaded once from *(u32*)(0x03001eec-108) at entry, reused as Func_080051d8(facing, facing+12))"},
+    {"off": 52, "role": "extra_target = heap_cache[2] (0x03001eec+8), reused as Func_08005340's 2nd arg and as the Func_080072f4 src-table base"},
+    {"off": 56, "role": "phase counter (0,1,2) -- reset in the shake block, incremented in the fragment, ==3 breaks the phase do-while"},
+    {"off": 60, "role": "draw_rectangle_fn saved copy: heap_cache[7] (0x03001eec+28), reloaded into r4 immediately before every sub_080072f4 (_call_via_r4) call"},
+    {"off": 68, "role": "outer frame counter (0..59), the '60-frame animation loop' induction variable, incremented in the fragment"},
+    {"off": 72, "role": "draw_destination = *(cursor after work) = heap_cache[1] (0x03001eec+4)"},
+    {"off": 76, "role": "work = heap_cache[0] (*0x03001eec) -- the caller's per-effect struct base, indexed throughout via M2C_FIELD(work,...,0x7828/0x7780/0x7784/0x7824/0x7080)"},
+    {"off": "80-91 (r7)", "role": "3-word scratch triple (clamp/mirror values) passed by address to Func_08004cf0; r7 = sp+80"},
+    {"off": "92-99 (r9)", "role": "2-word blended output of Func_080e3944 (dest arg); r9 = sp+92, only +0/+4 read"},
+    {"off": "104-111 (r6)", "role": "8-byte scratch (matches r9's blended pair, re-derived per phase); r6 = sp+104, only +0/+4 touched -- see correction above"}
+   ]
+  },
+  "outer_loop_60_frame": {
+   "shape": "frame = 0; for(;;) { if (frame<=47) camera_shake(frame); <phase do-while>; Func_08009140()-family finalize gate; frame++; if(frame==60) break; }",
+   "camera_shake_frame_le_47": {
+    "target": "*(s16*)(0x03001e80 + 54)  (facing-relative shake cell, base = *(u32*)(0x03001eec-108) per the frame ledger's sp48 slot -- NOT the literal 0x03001e80 I hard-coded in the current draft; the base is *(s32*)(0x03001eec-108), read fresh each pass through the pointer stored at sp48, then a fixed +54 halfword field on it)",
+    "magnitude": "128 if frame<=39, else (192<<2) - (frame<<4) i.e. 768 - frame*16",
+    "sign": "if M2C_FIELD(work-pointed target, s32*, 4) != 0 then += magnitude else -= magnitude -- the branch reads target from work+0x7828 dereferenced fresh (mov r8 cached &work[0x7828], reloaded via `mov r2,r8; ldr r3,[r2,#0]`), not from a stale local."
+   },
+   "finalize_gate": {
+    "condition": "frame == idx_b(sp16) + phase(sp56) + 10, checked once per phase iteration right after the accumulate step (member_ptr->0 += member_ptr->12; ->4 += ->16; ->8 += ->20)",
+    "on_true": [
+     "member_size->52 = 128<<10; ->48 = 128<<12; ->40 = 160<<11; ->72 = 0x0000ab85 (ground-truthed pool word at 0x080d12a0); *(u8*)(member_size+90) = 0",
+     "call Func_08009140()",
+     "if member_size->8 >= 0: Func_08009150(member_size, member_size->8 + (160<<14), member_size->16, 0)",
+     "else: Func_08009150(member_size, member_size->8 + 0xffd80000 /* == -(160<<14), ground-truthed pool word at 0x080d12a4 as raw s32 */, member_size->16, 0)",
+     "if phase(sp56)==2: Func_080b50e8(134); goto fragment@0x080d12c8 (skips the fragment's Func_080f9010(134)+Func_080d6888 block, lands straight on the phase-increment code)",
+     "else: fall through into fragment@0x080d12a8 normally (Func_080f9010(134); Func_080d6888(member_id,7,5,0,8); work[0x77a8]=4; then phase-increment)"
+    ],
+    "on_false": "branch to fragment@0x080d12d2 (the shared phase-increment block) directly, skipping the whole finalize dance."
+   }
+  },
+  "phase_do_while": {
+   "shape": "phase(sp56)=0; idx_a(sp24)=0; idx_b(sp16)=0; idx_c(sp20)=work+0x7080; do { if (frame(sp68) >= idx_b) { <10x16 draw block>; <accumulate+finalize-gate, see above> } idx_a+=10; idx_c+=28; idx_b+=12; phase+=1; } while (phase != 3);",
+   "gate_false_path": "still executes the idx_a/idx_c/idx_b/phase increment (fragment@0x080d12d2) and the phase!=3 re-test, purely skipping the heavy draw+finalize work for this pass."
+  },
+  "ten_by_sixteen_draw_block": {
+   "outer_j_0_to_9": [
+    "Func_080049ac(); Func_080051d8(facing, facing+12); Func_08004cb4(idx_c)  -- idx_c is sp20's current trail-struct pointer, reloaded from sp40 each pass",
+    "sp36(clamp target) = min(idx_a<<12, 128<<5); r7-triple (sp80/84/88) = {sp36,sp36,sp36}; Func_08004cf0(&r7-triple)",
+    "Func_08004c6c(j * 0x0000199a)  -- pool word ground-truthed at 0x080d1290",
+    "Func_08004c1c(128<<7)",
+    "Func_08004c6c(((j&1)*3) << 2 ... ) applied as an index into Data table base 0x080ee140 (pool word at 0x080d1294), i.e. table = 0x080ee140 + ((j&1)*3)*4, passed as src to Func_080e3944(table_entry, &r9-pair)",
+    "sp44(max_val) = max(sp44, Func_080e3944's returned/blended value) -- tracked via cmp+bge, NOT clamped to >=0 as the current draft wrongly does; it is a plain running max across all 10 j and both phases-so-far",
+    "r9-pair[0] >>= 1; particle = (0x02010000 base)+idx_a*28; particle->12 = r9pair[0]+r6pair[0]; particle->16 = r9pair[1]+r6pair[1]; then immediately OVERWRITTEN again: particle->12 = r6pair[0]; particle->16 = r6pair[1] (both stores are literal in the reference -- transcribe both, do not collapse; this looks like the reference keeps a dead sum computation, likely the true source recomputes rather than folds)",
+    "Func_08004a5c(); idx_a++ (mapped from candidate's `particle_index++` -- the running index used both for the trail pointer above and the second 0x080d116a loop below share this same idx_a counter, it is NOT reset between them)"
+   ],
+   "second_loop_gate": "only entered if sp44(max_val) <= 0x00061a7f (pool word ground-truthed at 0x080d1298); otherwise skip straight to the accumulate+finalize-gate step.",
+   "second_loop_0x080d116a_outer_m_0_to_9": [
+    "sp32 = idx_a (saved BEFORE this loop, i.e. the value idx_a reached after the 10x j-loop above, held constant for all m)",
+    "sp28 = (idx_b_reg + (idx_b_reg>>31)) >> 1  -- idx_b_reg here is r8, the clamped particle-count register computed earlier from (sp16 diff)>>2 + 2, clamped to <=10 (see 0x080d1074..0x080d1082 in games/gs1/asm/080d0ee0.s) -- i.e. sp28 = round-toward-zero-half of r8",
+    "r9(persistent reg, reused) = r8<<1",
+    "for m in 0..9: idx = sp32+m; r7 = 0x02010000-base particle ptr at (idx*7)*4 = idx*28; k_source = Func_080022fc(m,10) result + sp32, r6 = 0x02010000-base particle ptr at (that)*28",
+    "for k in 0..15 (register-only counter, no stack slot): interp12 = r7->12 + round_to_zero_div16((r6->12-r7->12)*k); interp16 = r7->16 + round_to_zero_div16((r6->16-r7->16)*k); src = extra_target + Data_080ede48[(r9-2)>>1 halfword index]; x = interp12 - sp28; y = interp16 - r8; draw_rectangle_fn(draw_destination, src, x, y, /*w=*/r8, /*h=*/r9) via the sub_080072f4 (_call_via_r4) trampoline, draw_rectangle_fn reloaded from sp60 immediately before every call"
+   ]
+  },
+  "fragment_per_phase_and_flush": {
+   "file": "games/gs1/asm/080d12a8.s",
+   "normal_entry_0x080d12a8": [
+    "Func_080f9010(134)",
+    "Func_080d6888((s16)M2C_FIELD(work,...,36), 7, 5, 0, 8)  -- arg order confirmed id,b,c,d,e = member_id,7,5,0,8 from the stacked arg5=8 store before the call",
+    "work[0x77a8] = 4"
+   ],
+   "shared_tail_0x080d12d2_phase_increment": [
+    "sp24(idx_a family for the OUTER frame's next phase, distinct slot reuse from the inner idx_a discussed above -- same stack slot #24, reused across the do-while's own scope) += 10",
+    "sp20(idx_c) += 28",
+    "sp16(idx_b) += 12",
+    "sp56(phase) += 1",
+    "if phase==3: goto flush (0x080d12f0); else: goto games/gs1/asm/080d0ee0.s @0x080d105c (phase do-while gate re-check)"
+   ],
+   "flush_0x080d12f0_on_phase_eq_3": [
+    "Func_080e155c(8,8)",
+    "Func_080cd52c()",
+    "work[0x7824] = 1",
+    "Func_080030f8(1)",
+    "sp68(frame) += 1; if frame==60: goto epilogue setup (0x080d1318); else: goto games/gs1/asm/080d0ee0.s @0x080d1016 (outer frame<=47 gate re-check)"
+   ],
+   "epilogue_setup_0x080d1318": [
+    "Func_08004278((void*)0x080CD261)",
+    "Func_08002dd8(47)",
+    "Func_08002dd8(46)",
+    "return Func_080cdbc0()"
+   ]
+  },
+  "pool_table_ground_truth": {
+   "method": "objdump -s -j .data -b binary --adjust-vma=0x08000000 roms/gs1-en.gba over 0x080d126c..0x080d1350, values read little-endian directly from ROM bytes, cross-checked against each pc-relative ldr's own '@ (0x...)' objdump annotation.",
+   "entries": [
+    {"addr": "0x080d126c", "value": "0x03001eec", "use": "heap_cache base (r6, loaded once at entry)"},
+    {"addr": "0x080d1270", "value": "0x00007828", "use": "work-struct offset for the object-pointer field"},
+    {"addr": "0x080d1274", "value": "0x00000079", "use": "arg to first Func_08002f40 call (121 decimal)"},
+    {"addr": "0x080d1278", "value": "0x03001388", "use": "WordCopyFn copier passed to Func_080072f0"},
+    {"addr": "0x080d127c", "value": "0x00000073", "use": "arg to second Func_08002f40 call (115 decimal)"},
+    {"addr": "0x080d1280", "value": "0x00007784", "use": "work-struct offset (0x7784 field, set to 75)"},
+    {"addr": "0x080d1284", "value": "0x080cd261", "use": "callback function pointer passed to Func_080041d8/Func_08004278"},
+    {"addr": "0x080d1288", "value": "0x03001e80", "use": "RESOLVED (objdump re-check at 0x080d101c..0x080d1048): r3 = 0x03001e80 (this pool word IS the address, loaded once per frame<=47 pass); r1 = *(u32*)0x03001e80 (one dereference, a fixed global cell holding the real shake-struct pointer, unrelated to sp48/facing); the +54 halfword field is then read/written on r1, not on 0x03001e80 directly. Independent of the sp48 (0x03001eec-108) facing value -- two separate globals, both real."},
+    {"addr": "0x080d128c", "value": "0x02010000", "use": "fixed EWRAM particle-array base (both draw loops)"},
+    {"addr": "0x080d1290", "value": "0x0000199a", "use": "multiplier constant in Func_08004c6c(j*0x199a)"},
+    {"addr": "0x080d1294", "value": "0x080ee140", "use": "2x3-word(?) table base indexed by (j&1)*3, src arg to Func_080e3944"},
+    {"addr": "0x080d1298", "value": "0x00061a7f", "use": "max_val gate threshold (400767 decimal) before the second (0x080d116a) draw loop runs"},
+    {"addr": "0x080d129c", "value": "0x080ede48", "use": "Data_080ede48[] halfword table, same symbol already extern'd in 080d82b0.c/080e7404.c"},
+    {"addr": "0x080d12a0", "value": "0x0000ab85", "use": "member_size->72 constant in the finalize block"},
+    {"addr": "0x080d12a4", "value": "0xffd80000", "use": "negative branch's offset added to member_size->8 in Func_08009150's arg1 (== -(160<<14) exactly)"},
+    {"addr": "0x080d1340", "value": "0x00007828", "use": "fragment's own copy of the work-offset constant (duplicate pool entry, same as 0x080d1270)"},
+    {"addr": "0x080d1344", "value": "0x000077a8", "use": "work-struct offset set to 4 in the fragment's normal-entry block"},
+    {"addr": "0x080d1348", "value": "0x00007824", "use": "work-struct offset set to 1 in the flush block"},
+    {"addr": "0x080d134c", "value": "0x080cd261", "use": "fragment's own copy of the callback pointer (duplicate of 0x080d1284)"}
+   ]
+  },
+  "open_items": [
+   "the double-store 'particle->12/->16 computed sum then immediately overwritten by the plain r6-pair value' in the 10x j-loop is transcribed literally above from the .s; worth one targeted objdump re-check in case it is actually two DIFFERENT destination registers (typo risk) before spending permute cycles on it.",
+   "member_ptr vs member_size two-call pattern (Func_080b5098 called once on object->8 for member_ptr/draw-related regs r10/r6, once on (s16)work[0x7828]->36 for member_size/r11) should be double-checked against the 080d82b0.c sibling's identical two-call shape for exact arg order before locking field names.",
+   "current games/gs1/recon/en/main/080d0ee0.c is a partial skeleton only (outer/phase loop shape + 3-member init + header idiom); it is missing the 10x16 draw block, the finalize block, and the fragment's per-phase/flush logic captured above -- next session should fill directly from this dossier rather than re-deriving from the .s files."
+  ]
+ }
 }

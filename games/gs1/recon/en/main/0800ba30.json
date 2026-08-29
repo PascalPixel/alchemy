@@ -30,5 +30,10 @@
     "Struct field names (field20, field02, field34, field35, field36, table) are placeholder offsets, not evidence-backed names; only draw_kind, id, marker-position, and the adjust_x/adjust_y copy are corroborated against the template's AnimationMetadata layout.",
     "Sibling 0800bbc0 (also assigned) shares the same 0800b7c0 template family and the same AnimationObject/AnimationMetadata table but implements a different operation (allocating a new object into a free table slot rather than updating an existing one's animation selection); its dossier documents that owner separately, including the same struct-uncertainty caveat.",
     "Recovered only from retained owner assembly, the already-adopted initialize_objects.c template, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used. Zero DONE bytes are claimed."
-  ]
+  ],
+  "sr_route_evidence": {
+    "verdict": "COINCIDENTAL",
+    "measured": "2026-08-29",
+    "note": "asm/0800ba30.s loop bodies (.L0-.L4) show no register-only empty countdown shape; heaviest loop (.L4, 16 mem ops) was not traced for induction-addressing differences under -fno-strength-reduce. No dual-compile performed. Provisional COINCIDENTAL pending compiler diff."
+  }
 }

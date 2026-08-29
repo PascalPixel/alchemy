@@ -1,6 +1,6 @@
 #include "types.h"
 
-void UiWork_Finalize(struct Work *work, s32 release);
+void UiWork_Finalize(void *work, s32 release);
 void WaitFrames(u32);
 
 extern u8 *Data_03001e8c;

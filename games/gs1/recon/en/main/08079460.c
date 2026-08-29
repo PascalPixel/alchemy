@@ -16,10 +16,10 @@ struct BattleUnitRecord {
 };
 
 void Func_08004970(s32);
-struct BattleUnitRecord *Func_08077394(s32);
+void *Func_08077394(s32);
 void Func_080072f0(void *, s32, s32, s32);
 void Func_08015028(s32, u16 *, s32);
-void Func_080798e0(s32, void *);
+u32 Func_080798e0(s32, s16 (*)[2]);
 void Func_08077428(s32);
 
 #define BattleUnit_Assign Func_08079460
@@ -38,7 +38,7 @@ s32 BattleUnit_Assign(s32 unitId, s32 definitionId, s32 nameSuffix)
     if (unitId < 128 || unitId > 134 || definitionIndex > 242)
         return 0;
     Func_08004970(96);
-    unit = Func_08077394(unitId);
+    unit = (struct BattleUnitRecord *)Func_08077394(unitId);
     Func_080072f0(unit, 332, 0, 0x03000164);
     if (definitionIndex > 164)
         definitionIndex = 0;
@@ -80,7 +80,7 @@ s32 BattleUnit_Assign(s32 unitId, s32 definitionId, s32 nameSuffix)
     unit->rewards = definition->rewards;
     unit->status = 0;
     unit->definition_id = (u8)definitionId;
-    Func_080798e0(unitId, unit->equipment_and_stats);
+    Func_080798e0(unitId, (s16 (*)[2])unit->equipment_and_stats);
     Func_08077428(unitId);
     unit->side = 1;
     if (unit->definition_id >= 158 && unit->definition_id <= 171)

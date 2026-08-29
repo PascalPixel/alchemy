@@ -1,12 +1,10 @@
 #include "effect_runtime.h"
 #include "object_lookup.h"
+#include "battle_effect_runtime.h"
 
-struct GlobalData {
-    u8 filler[0x1F4];
-    s32 selected_object;
-};
-
-extern struct GlobalData Data_02000240;
+/* Data_02000240 is struct BattleWork (battle_effect_runtime.h); its
+ * object_id field sits at the same 0x1f4 offset this owner reads as
+ * selected_object, matching main:0808e23c's use of the same shared symbol. */
 
 u8 *Ability_GetData(s32);
 s32 Func_0808e4b4(s32, u16, void *);
@@ -29,11 +27,11 @@ s32 Func_0808e5d8(s32 packedEffect)
     index = packedEffect & 0x3FF;
     mode = ((u32)packedEffect >> 10) & 0xF;
     object = Ability_GetData(index)[0xC];
-    ObjectTable_Get(Data_02000240.selected_object);
+    ObjectTable_Get(Data_02000240.object_id);
     first = (void *)Func_0808e4b4(0x30000005, object, &output);
     second = (void *)Func_0808e4b4(0x20000005, object, &output);
     Func_08096fb0(index, 0);
-    BattleEffect_SetupObjectPair(Data_02000240.selected_object, output);
+    BattleEffect_SetupObjectPair(Data_02000240.object_id, output);
     Func_08096b28(first, mode, output);
     FieldEvent_RunTypeHandler();
     EffectRuntime_StopCurrentObject();

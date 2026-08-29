@@ -11,12 +11,7 @@ struct OwnerElementRecord {
     u8 value;
 };
 
-struct OwnerElementEntry {
-    s32 first;
-    u8 padding[0x14];
-};
-
-extern struct OwnerElementEntry Data_08088e38[];
+#include "preset_table.h"
 
 s32 Owner_GetDefaultElement(struct OwnerElementState *state)
 {

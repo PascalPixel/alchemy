@@ -5,13 +5,13 @@ struct State_080792fc {
     u8 count;
 };
 
-struct State_080792fc *Owner_GetState(s32);
-s32 Func_0807905c(s32, u8 *);
+void *Owner_GetState(s32);
+s32 Func_0807905c();
 void Func_08077428(s32);
 
 void Func_080792fc(s32 owner, s32 target) {
     u8 temporary[16];
-    s32 count = Owner_GetState(owner)->count;
+    s32 count = ((struct State_080792fc *)Owner_GetState(owner))->count;
 
     while (count < target) {
         Func_0807905c(owner, temporary);

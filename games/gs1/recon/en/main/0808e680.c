@@ -1,4 +1,5 @@
 #include "types.h"
+#include "battle_effect_runtime.h"
 
 struct BattleActionDefinition { u8 pad00[9]; u8 pp_cost; u8 pad0a[2]; u8 target_mode; };
 struct BattleUnitRecord { u8 pad00[58]; s16 pp; };
@@ -8,23 +9,41 @@ struct BattleCommandRuntime {
     u8 pad1a0[0xb26]; u8 resolving_action;
 };
 
-extern struct BattleCommandRuntime *Data_03001ebc;
-struct BattleActionDefinition *Func_08077080(s32);
-struct BattleUnitRecord *Func_08077008(s32);
+/* Declared struct BattleRuntime * to match the canonical extern in
+ * battle_effect_runtime.h / main:0808e23c; this owner's own local view is
+ * obtained with a cast below. */
+extern struct BattleRuntime *Data_03001ebc;
+/* u8 *-returning to match the prototype the exact owner battle_owner_23.c
+ * uses under its Ability_GetData alias; this owner casts the raw pointer to
+ * its own local view below. */
+u8 *Func_08077080(s32);
+/* Declared void *-returning: main:0808e23c shares this symbol through a
+ * different local view (struct BattleUnitObject, for the abilities table);
+ * both callers cast the shared pointer to their own struct locally. */
+void *Func_08077008(s32);
 void *Func_0808ba1c(s32);
 void Func_08091660(void); void Func_080770d0(s32); s32 Func_080770c0(s32);
 void Func_08015120(s32, s32); void Func_08015040(s32, s32);
-s32 Func_08091d84(s32); void Func_08015140(void); s32 Func_0808e5d8(u32);
-void Func_08077120(s32, s32); struct BattleTargetCandidate *Func_0808e4b4(u32, s32, s32 *);
+s32 Func_08091d84(s32); void Func_08015140(void);
+/* s32 parameter to match the exact owner's definition (battle_owner_23.c
+ * defines Func_0808e5d8(s32 packedEffect)). */
+s32 Func_0808e5d8(s32);
+void Func_08077120(s32, s32);
+/* Matches the prototype agreed by the exact owners (battle_owner_23.c,
+ * runtime_owner_207.c): s32-returning, u16 second parameter, void * out
+ * parameter. Results here are cast back to struct BattleTargetCandidate *. */
+s32 Func_0808e4b4(s32, u16, void *);
 void Func_080770c8(s32); s32 Func_0808df1c(s32, s32); void Func_0808b8e8(void);
 void Func_08096fb0(s32, s32); void Func_080970f8(s32, s32); void Func_0809728c(void);
-void Func_08096b28(void *, s32, s32); void Func_08096960(void); void Func_08096810(void);
+/* s32-returning to match the prototype in the exact owner battle_owner_23.c
+ * (the return value is discarded at every call site, here and there). */
+s32 Func_08096b28(void *, s32, s32); void Func_08096960(void); void Func_08096810(void);
 void Func_08097174(void); void Func_08096ab0(void); void Func_08097194(void); void Func_0808b98c(void);
 
 #define BattleCommand_ExecuteSelectedAction Func_0808e680
 s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
 {
-    struct BattleCommandRuntime *runtime = Data_03001ebc;
+    struct BattleCommandRuntime *runtime = (struct BattleCommandRuntime *)Data_03001ebc;
     struct BattleActionDefinition *action;
     struct BattleTargetCandidate *primary;
     struct BattleTargetCandidate *secondary;
@@ -35,7 +54,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
     s32 specialResult = 0;
     s32 targetMode;
 
-    action = Func_08077080(actionId);
+    action = (struct BattleActionDefinition *)(void *)Func_08077080(actionId);
     targetMode = action->target_mode;
     Func_0808ba1c(*(s32 *)0x02000434);
     Func_08091660();
@@ -65,16 +84,16 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
     }
     if (encodedAction & 0x2000) return Func_0808e5d8(encodedAction);
 
-    if (actor <= 7 && Func_08077008(actor)->pp < action->pp_cost) {
+    if (actor <= 7 && ((struct BattleUnitRecord *)Func_08077008(actor))->pp < action->pp_cost) {
         Func_08015120(actor, 1); Func_08015120(actionId, 4); Func_08015040(0x91e, 1);
         if (specialResult) runtime->result_code = 0;
         return 0;
     }
     if (actor <= 7) Func_08077120(actor, -action->pp_cost);
 
-    primary = Func_0808e4b4(0x10000005, targetMode, &targetId);
-    secondary = Func_0808e4b4(5, targetMode, &targetId);
-    tertiary = Func_0808e4b4(0x50000005, targetMode, &targetId);
+    primary = (struct BattleTargetCandidate *)Func_0808e4b4(0x10000005, targetMode, &targetId);
+    secondary = (struct BattleTargetCandidate *)Func_0808e4b4(5, targetMode, &targetId);
+    tertiary = (struct BattleTargetCandidate *)Func_0808e4b4(0x50000005, targetMode, &targetId);
     targetId = -1;
     Func_080770c8(0x140); Func_080770c8(0x141);
     if (primary || secondary || tertiary) {

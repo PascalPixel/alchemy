@@ -1,7 +1,7 @@
 #include "game_flags.h"
 #include "party_state.h"
 
-s32 Party_CountActiveOwners(void)
+s32 Party_CountActiveOwners()
 {
     s32 owner;
     s32 count;

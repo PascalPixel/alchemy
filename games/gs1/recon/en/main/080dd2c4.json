@@ -1,40 +1,56 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x080dd2c4",
-  "status": "measured-draft",
-  "owner_bytes": 1208,
-  "score": {
-    "measured": "2026-08-27",
-    "candidate_bytes": 1196,
-    "reference_bytes": 1208,
-    "differing_halfwords": 505,
-    "wrong_instructions": 442,
-    "class": "wrong",
-    "note": "First structural draft, not a permutation search. Full read of games/gs1/asm/080dd2c4.s plus out/family-transplants/main-080dd2c4/m2c/target.canonical.s / 080dd2c4.c (m2c's raw decompile of the actual retained bytes), cross-checked instruction-by-instruction against the family template (member_orbit/run.c, owner 080ce85c) and against 080e7404.c's documented idioms. Textually the candidate is very close: --asm reports candidate_insns=497 vs reference_insns=503 (only 6 net), and the generated .s (read in full from --work output) is structurally sound throughout -- correct field offsets, correct trampoline-indirect-call modeling, correct table types -- with no unresolved M2C_ERROR/M2C_FIELD placeholders. The large differing_halfwords count is dominated by a single register-allocation choice diverging at the very first opportunity (the reference keeps the persistent work-block pointer in fp for the whole function; this candidate's allocator puts the innermost loop counter -- reused across the spC-inner loop and the final 0x200-entry particle loop -- in fp instead, and work in r9, an exact role-swap of the two), which cascades into every subsequent pc-relative literal-pool offset and several stack-slot assignments for the rest of the function. This is the same fp/r9 (and sl/r9) 'known open, not-source-shape-controllable' residual already documented at length in this family's sibling dossiers (see games/gs1/recon/en/main/080dc1ec.json score.note, prior_note_2026_08_27c/d: ~8 targeted reshapes tried there to flip an analogous swap, all either no-op or regressed). Given that precedent this pass did not run an open-ended register-forcing search; two cheap, legitimate fixes were applied and kept (see rejected_experiments/notes) but the fp/r9 swap itself was not chased further.",
-    "fixes_applied": "(1) The two Data_03001e50[46]/[47] reads that seed rectangle[0]/rectangle[1] must go through the plain Data_03001e50 global directly, not through the heap_cache local established at function entry -- heap_cache's register is dead again by the time these reads happen (several intervening calls), so the reference re-loads the 0x03001e50 base fresh via its own literal-pool entry; routing through heap_cache[7]/heap_cache[8] instead produced an extra redundant address computation. (2) mode (arg1, spilled to sp+44 in the retained assembly's very first instruction) must be declared textually BEFORE draw_destination among the locals, not after, to land mode/draw_destination on the reference's sp+44/sp+40 slots respectively -- this alone raised matched_prefix from 8 to 14 and dropped differing_halfwords from 589 to 505."
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x080dd2c4",
+ "status": "measured-draft",
+ "owner_bytes": 1208,
+ "score": {
+  "measured": "2026-08-27",
+  "candidate_bytes": 1196,
+  "reference_bytes": 1208,
+  "differing_halfwords": 505,
+  "wrong_instructions": 442,
+  "class": "wrong",
+  "note": "First structural draft, not a permutation search. Full read of games/gs1/asm/080dd2c4.s plus out/family-transplants/main-080dd2c4/m2c/target.canonical.s / 080dd2c4.c (m2c's raw decompile of the actual retained bytes), cross-checked instruction-by-instruction against the family template (member_orbit/run.c, owner 080ce85c) and against 080e7404.c's documented idioms. Textually the candidate is very close: --asm reports candidate_insns=497 vs reference_insns=503 (only 6 net), and the generated .s (read in full from --work output) is structurally sound throughout -- correct field offsets, correct trampoline-indirect-call modeling, correct table types -- with no unresolved M2C_ERROR/M2C_FIELD placeholders. The large differing_halfwords count is dominated by a single register-allocation choice diverging at the very first opportunity (the reference keeps the persistent work-block pointer in fp for the whole function; this candidate's allocator puts the innermost loop counter -- reused across the spC-inner loop and the final 0x200-entry particle loop -- in fp instead, and work in r9, an exact role-swap of the two), which cascades into every subsequent pc-relative literal-pool offset and several stack-slot assignments for the rest of the function. This is the same fp/r9 (and sl/r9) 'known open, not-source-shape-controllable' residual already documented at length in this family's sibling dossiers (see games/gs1/recon/en/main/080dc1ec.json score.note, prior_note_2026_08_27c/d: ~8 targeted reshapes tried there to flip an analogous swap, all either no-op or regressed). Given that precedent this pass did not run an open-ended register-forcing search; two cheap, legitimate fixes were applied and kept (see rejected_experiments/notes) but the fp/r9 swap itself was not chased further.",
+  "fixes_applied": "(1) The two Data_03001e50[46]/[47] reads that seed rectangle[0]/rectangle[1] must go through the plain Data_03001e50 global directly, not through the heap_cache local established at function entry -- heap_cache's register is dead again by the time these reads happen (several intervening calls), so the reference re-loads the 0x03001e50 base fresh via its own literal-pool entry; routing through heap_cache[7]/heap_cache[8] instead produced an extra redundant address computation. (2) mode (arg1, spilled to sp+44 in the retained assembly's very first instruction) must be declared textually BEFORE draw_destination among the locals, not after, to land mode/draw_destination on the reference's sp+44/sp+40 slots respectively -- this alone raised matched_prefix from 8 to 14 and dropped differing_halfwords from 589 to 505."
+ },
+ "family": {
+  "assigned_template_owner": "main:080ce85c",
+  "assigned_template_source": "games/gs1/src/battle/effects/member_orbit/run.c",
+  "template_note": "Family-matcher score 7688/10000 on call-target/n-gram similarity, not structural identity -- confirmed real per the task brief: owner is 1208 bytes vs template's smaller size, and the naive symbol-renamed transplant at out/family-transplants/main-080dd2c4/080dd2c4.c is NOT what this owner does. Shares the template's 0x03001eec heap_cache/cursor top-of-function idiom, the M2C_FIELD field-offset convention, the same 'object' argument struct (field 4 mode flag, field 0x14 member count, field 0x24 per-member id array stride 2), and the identical DrawRectangleFn rectangle_slot[2] pair sourced from Func_080ed408(46,...)/Func_080ed408(47,...) with the SAME CSE-avoidance shape (rectangle[0] assigned between the two Func_080ed408 calls, rectangle[1] assigned via a separate second_rectangle local after both, exactly matching the template's own documented reason for that shape). Diverges structurally: takes a second argument (mode) that selects between two Value_ ID constants passed to Func_080e0524 and between two parallel draw-table sets; owns a much larger body (a 1024-slot particle-pool init, a 16-entry per-index table init, a per-frame animation loop bounded by a byte-table lookup on a NEW object field (0x18) not used by the template, a nested spC-inner loop doing two conditional draws through rectangle_slot[1&idx], a member-dispatch Func_080d6888 loop, a 512-slot particle-claim search, and an unconditional-every-frame 0x200-entry particle draw loop using rectangle[0]/rectangle[1] directly rather than by parity) -- a genuinely different, larger sub-effect from the template's single 60-frame orbit animation, exactly as the task brief warned."
+ },
+ "rejected_experiments": [
+  {
+   "experiment": "Model every `bl Func_080072f4` as a direct 4-6 argument call to a real function named Func_080072f4 (as m2c's raw output and as some open, not-yet-exact family siblings' drafts do).",
+   "result": "0x080072f4 is 0x080072e4 + 4*4, exactly the r4 slot of the 14-entry _call_via_rN trampoline bundle in games/gs1/asm/080072e4.s. All four call sites in this owner load a genuine traced function-pointer value into r4 immediately before the bl (rectangle_slot[1 & idx] for the two spC-loop sites, rectangle[0] and rectangle[1] directly for the two final-loop sites) -- modeled as ((DrawRectangleFn)pointer)(...) instead, per the task brief's CRITICAL instruction and matching the already-adopted member_orbit/run.c's identical idiom.",
+   "class": "accepted"
   },
-  "family": {
-    "assigned_template_owner": "main:080ce85c",
-    "assigned_template_source": "games/gs1/src/battle/effects/member_orbit/run.c",
-    "template_note": "Family-matcher score 7688/10000 on call-target/n-gram similarity, not structural identity -- confirmed real per the task brief: owner is 1208 bytes vs template's smaller size, and the naive symbol-renamed transplant at out/family-transplants/main-080dd2c4/080dd2c4.c is NOT what this owner does. Shares the template's 0x03001eec heap_cache/cursor top-of-function idiom, the M2C_FIELD field-offset convention, the same 'object' argument struct (field 4 mode flag, field 0x14 member count, field 0x24 per-member id array stride 2), and the identical DrawRectangleFn rectangle_slot[2] pair sourced from Func_080ed408(46,...)/Func_080ed408(47,...) with the SAME CSE-avoidance shape (rectangle[0] assigned between the two Func_080ed408 calls, rectangle[1] assigned via a separate second_rectangle local after both, exactly matching the template's own documented reason for that shape). Diverges structurally: takes a second argument (mode) that selects between two Value_ ID constants passed to Func_080e0524 and between two parallel draw-table sets; owns a much larger body (a 1024-slot particle-pool init, a 16-entry per-index table init, a per-frame animation loop bounded by a byte-table lookup on a NEW object field (0x18) not used by the template, a nested spC-inner loop doing two conditional draws through rectangle_slot[1&idx], a member-dispatch Func_080d6888 loop, a 512-slot particle-claim search, and an unconditional-every-frame 0x200-entry particle draw loop using rectangle[0]/rectangle[1] directly rather than by parity) -- a genuinely different, larger sub-effect from the template's single 60-frame orbit animation, exactly as the task brief warned."
+  {
+   "experiment": "Chase the fp/r9 (work vs. innermost-loop-counter) register swap further with additional source reshapes (declaration order, block scoping, splitting the two loop-counter roles into distinct never-reused locals).",
+   "result": "Not attempted beyond the two fixes recorded in score.fixes_applied, given this exact swap pattern is already documented as resistant to ~8 independent targeted reshapes in the closely related sibling 080dc1ec (see its score.note prior_note_2026_08_27c/d) -- treated as the same known, not-source-shape-controllable residual rather than re-running that search here.",
+   "class": "rejected"
+  }
+ ],
+ "notes": [
+  "Recovered only from the retained owner assembly (games/gs1/asm/080dd2c4.s), the approved local EN ROM, the generated m2c-assisted context in out/family-transplants/main-080dd2c4/m2c/ (target.canonical.s, target.lst, 080dd2c4.c), the already-adopted games/gs1/src/battle/effects/member_orbit/run.c, games/gs1/asm/080072e4.s, and the measured-draft siblings named in this session's task brief (080e7404.c, 080d59b0.c, 080d82b0.c, 080dc1ec.c, 080e01e4.c, 080dc454.c, 080dc6bc.c, 080ccc38.c, 080cb4ec.c, 080d5c48.c) and their dossiers, plus the approved compiler.",
+  "This candidate claims zero DONE bytes.",
+  "Semantic summary: a battle-presentation sub-effect on the same 0x03001eec work-block subsystem as member_orbit, taking (object, mode). Seeds a 1024-slot particle pool at 0x02010018 (stride 28, field 0x18=-1 marks a slot free) and a 16-entry per-index table at work+0x7080 (positions/heights seeded from Func_08004458() and clamped against Data_080eeb4b[Func_080022fc(i,3)]), then runs a byte-table-bounded (Data_080eeb5e[object->0x18]) sequence of frames. Each frame conditionally shows a HUD countdown near the end, and -- while more than 4 frames remain -- runs a nested spC-inner loop (bounded by the same Data_080eeb5e byte) that: sometimes toggles work->0x77A8, draws a rectangle through rectangle_slot[1 & idx] using one of two parallel Data_080eeb4[48/4E]/[54/58] table pairs selected by mode (with an extra Data_080eeb71 clamp in the mode!=0 case), dispatches Func_080d6888 once per listed member (object field 0x24, stride 2, object field 0x14 count) at a specific milestone frame, and at two other milestones claims one free slot from a SEPARATE 512-slot pool at 0x02010000. Every frame, unconditionally, also walks that whole 512-slot pool drawing any active slot's particle twice (via rectangle[0] then rectangle[1] directly, not by parity) with a decaying lifetime field, before flagging work->0x7824 and yielding a frame via Func_080030f8(1).",
+  "No GS2 or external source was used; no other Golden Sun decompilation project was consulted."
+ ],
+ "rejected": [
+  {
+   "hypothesis": "move var_sl_273 = work + 0x7080 inside the do-loop after sp0C so its pseudo is created second and GCC rehoists it",
+   "measured": "2026-08-29",
+   "differing_halfwords": 199,
+   "baseline": 73,
+   "verdict": "regressed; owner also shrank to 1204 bytes"
   },
-  "rejected_experiments": [
-    {
-      "experiment": "Model every `bl Func_080072f4` as a direct 4-6 argument call to a real function named Func_080072f4 (as m2c's raw output and as some open, not-yet-exact family siblings' drafts do).",
-      "result": "0x080072f4 is 0x080072e4 + 4*4, exactly the r4 slot of the 14-entry _call_via_rN trampoline bundle in games/gs1/asm/080072e4.s. All four call sites in this owner load a genuine traced function-pointer value into r4 immediately before the bl (rectangle_slot[1 & idx] for the two spC-loop sites, rectangle[0] and rectangle[1] directly for the two final-loop sites) -- modeled as ((DrawRectangleFn)pointer)(...) instead, per the task brief's CRITICAL instruction and matching the already-adopted member_orbit/run.c's identical idiom.",
-      "class": "accepted"
-    },
-    {
-      "experiment": "Chase the fp/r9 (work vs. innermost-loop-counter) register swap further with additional source reshapes (declaration order, block scoping, splitting the two loop-counter roles into distinct never-reused locals).",
-      "result": "Not attempted beyond the two fixes recorded in score.fixes_applied, given this exact swap pattern is already documented as resistant to ~8 independent targeted reshapes in the closely related sibling 080dc1ec (see its score.note prior_note_2026_08_27c/d) -- treated as the same known, not-source-shape-controllable residual rather than re-running that search here.",
-      "class": "rejected"
-    }
-  ],
-  "notes": [
-    "Recovered only from the retained owner assembly (games/gs1/asm/080dd2c4.s), the approved local EN ROM, the generated m2c-assisted context in out/family-transplants/main-080dd2c4/m2c/ (target.canonical.s, target.lst, 080dd2c4.c), the already-adopted games/gs1/src/battle/effects/member_orbit/run.c, games/gs1/asm/080072e4.s, and the measured-draft siblings named in this session's task brief (080e7404.c, 080d59b0.c, 080d82b0.c, 080dc1ec.c, 080e01e4.c, 080dc454.c, 080dc6bc.c, 080ccc38.c, 080cb4ec.c, 080d5c48.c) and their dossiers, plus the approved compiler.",
-    "This candidate claims zero DONE bytes.",
-    "Semantic summary: a battle-presentation sub-effect on the same 0x03001eec work-block subsystem as member_orbit, taking (object, mode). Seeds a 1024-slot particle pool at 0x02010018 (stride 28, field 0x18=-1 marks a slot free) and a 16-entry per-index table at work+0x7080 (positions/heights seeded from Func_08004458() and clamped against Data_080eeb4b[Func_080022fc(i,3)]), then runs a byte-table-bounded (Data_080eeb5e[object->0x18]) sequence of frames. Each frame conditionally shows a HUD countdown near the end, and -- while more than 4 frames remain -- runs a nested spC-inner loop (bounded by the same Data_080eeb5e byte) that: sometimes toggles work->0x77A8, draws a rectangle through rectangle_slot[1 & idx] using one of two parallel Data_080eeb4[48/4E]/[54/58] table pairs selected by mode (with an extra Data_080eeb71 clamp in the mode!=0 case), dispatches Func_080d6888 once per listed member (object field 0x24, stride 2, object field 0x14 count) at a specific milestone frame, and at two other milestones claims one free slot from a SEPARATE 512-slot pool at 0x02010000. Every frame, unconditionally, also walks that whole 512-slot pool drawing any active slot's particle twice (via rectangle[0] then rectangle[1] directly, not by parity) with a decaying lifetime field, before flagging work->0x7824 and yielding a frame via Func_080030f8(1).",
-    "No GS2 or external source was used; no other Golden Sun decompilation project was consulted."
-  ]
+  {
+   "hypothesis": "assign sp0C = 8 before the guard so the small-constant pseudo is created ahead of the pointer, matching the reference r1/r2 roles",
+   "measured": "2026-08-29",
+   "differing_halfwords": 560,
+   "baseline": 73,
+   "verdict": "regressed; owner grew to 1232 bytes"
+  }
+ ]
 }

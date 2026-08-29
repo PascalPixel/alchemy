@@ -139,6 +139,10 @@ s32 Func_0800ebec(struct ScriptObjectEntry *actor)
 
     if (Data_03001f54 != 0) {
         if (Data_03001ae8 & 0x200) {
+            s32 dead_signed_facing;
+
+            dead_signed_facing = (s16)(angle_q16 >> 16);
+            (void)dead_signed_facing;
             goto tail_merge;
         }
     }

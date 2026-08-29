@@ -99,6 +99,38 @@ Promote declarations into a header only for a real shared interface, table
 family, or stable ABI layout. Owner-specific compiler shaping stays with its
 owner.
 
+## Read the compiler first
+
+The compiler is not a black box. GCC 2.96 is a small, 26-year-old program
+whose complete source sits in `alchemy-gcc/agscc`, and the staged `cc1`
+ships GCC's own dump machinery: `-da` writes every pass — RTL generation,
+cse, combine, local and global allocation, reload, scheduling — for any
+function you compile. Every codegen decision this project fights is either
+written down in those dumps or readable in that source.
+
+So when a candidate diverges, the order of work is:
+
+1. **Read the decision.** Run `bun tools/allocator-lens/lens.ts <owner>` for
+   the per-pseudo record (creation order, class costs, preferences, global
+   ordering, conflicts, assignments, spills, reloads), or read the pass
+   dumps directly.
+2. **Read the code that made it.** The deciding function is small and
+   findable: costs in `config/arm/arm.c` and `arm.h`, allocation in
+   `local-alloc.c` and `global.c`, substitution in `reload1.c`, merging in
+   `cse.c` and `combine.c`. Find the comparison, read the numbers, and you
+   know exactly which property of the source is decisive.
+3. **Change that property in ordinary C** — or, where the shipped ROM
+   demonstrably implies the original compiler decided differently (a cost,
+   a tie-break, an emission heuristic), propose a target switch. Compiler
+   changes land only as a flag uniform across every file of a family,
+   measured across the whole corpus with zero exact regressions, and only
+   by Pascal's decision.
+
+Spelling search and the permuter are the last resort, not the first move,
+and for allocation-class residuals they are measured to regress. A week of
+refuted-hypothesis dossiers was spent probing decisions the compiler
+prints when asked. Do not repeat that: look at the compiler.
+
 ## Translation units with holes
 
 The standard shape for main-image work is the declared translation unit: an
@@ -182,7 +214,8 @@ cannot be reproduced from a clean checkout.
 
 The triage router runs as part of `compiler candidate-show` and prints a
 `next=` line: the literal command to run for that owner's residual class.
-Follow it. Do not improvise a different route from the raw diff, and do not
+Follow it — and for any allocation, scheduling, or pool-placement residual,
+start from **Read the compiler first** above before touching the source. Do not improvise a different route from the raw diff, and do not
 hand-probe an owner whose `next=` line already names a mechanical route —
 `allocation-covered` goes through `compiler permute`, `unclassified` and
 `allocation-uncovered` go to the smart queue, and uncovered allocation is

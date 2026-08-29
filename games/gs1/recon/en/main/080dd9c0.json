@@ -31,7 +31,66 @@
   "Note this is a distinct, smaller cluster from the immediately adjacent 080ddde0/080de0d4 pair (see companion dossier 080ddde0.json) -- the two clusters sit back-to-back in the file listing but do not share any cross-references; 080dd9c0's cluster ends cleanly at the 080ddde0 boundary."
  ],
  "scoring_command": "out/cargo-target/release/compiler candidate-show games/gs1/recon/en/main/080dd9c0.c --owner 080dd9c0 --size 1056",
- "notes": [
-  "Map only, per task scope -- no C source drafted, no translation-units.json edited."
- ]
+ "status_update": {
+  "measured": "2026-08-29",
+  "state": "measured-draft, not exact",
+  "score": {
+   "candidate_bytes": 556,
+   "reference_bytes": 1056,
+   "differing_halfwords": 498,
+   "wrong_instructions": 453,
+   "matched_prefix": 7
+  },
+  "compiles": true,
+  "family": "Confirmed as a fuller sibling of the 0x03001eec 'battle work' / heap_cache subsystem (games/gs1/recon/en/main/080d82b0.c, 080d85d0.c, games/gs1/src/battle/effects/member_orbit/run.c). heap_cache=(void**)0x03001EEC prologue idiom, work+0x7828 state pointer, Func_080cd594/Func_080ed408/Func_080041d8/Func_08004278/Func_08002dd8/Func_080cdbc0 calling shapes all confirmed by hand pool resolution and cross-checked against these siblings.",
+  "resolved_literal_pools": {
+   "LiteralPool_080dda18 (in 080dd9c0.s, base 0x080dda18, matches given label)": {
+    "0x080dda18": "0x00000100 -- REG_BG2PA value (identity affine scale)",
+    "0x080dda1c": "0x00000000 -- REG_BLDCNT clear",
+    "0x080dda20": "0x00001010 -- REG_BLDALPHA value",
+    "0x080dda24": "0x03001eec -- address of the Data_03001eec heap_cache pointer variable",
+    "0x080dda28": "0x00007828 -- work+0x7828 field offset (state/table pointer)",
+    "0x080dda2c": "0x04000020 -- REG_BG2PA address",
+    "0x080dda30": "0x0000007e -- Func_080e0524 resource_id argument",
+    "0x080dda34": "0x04000028 -- REG_BG2X address",
+    "0x080dda38": "0xffff9000 -- REG_BG2X value written when table->4==1"
+   },
+   "LiteralPool_080ddb0c (in 080dda3c.s, base 0x080ddb0c, matches given label)": {
+    "0x080ddb0c": "0x00003f44 -- REG_BLDCNT fade value",
+    "0x080ddb10": "0x00001000 -- blend-alpha OR mask",
+    "0x080ddb14": "0x00007784 -- work+0x7784 field offset",
+    "0x080ddb18": "0x080cd261 -- scheduler callback address for Func_080041d8",
+    "0x080ddb1c": "0x080eebb6 -- ROM byte table indexed by table->24 (frame-bound multiplier AND per-frame gate)",
+    "0x080ddb20": "0x02010018 -- particle pool base (1024 slots, stride 28 bytes, reset to -1)",
+    "0x080ddb24": "0x04000050 -- REG_BLDCNT address (fade path)",
+    "0x080ddb28": "0x04000052 -- REG_BLDALPHA address (fade path)",
+    "0x080ddb2c": "0x00007828 -- work+0x7828 field offset (re-read each frame)",
+    "0x080ddb30": "0x080eebae -- second ROM byte table (0x080eebb6 - 8), used inside the per-frame region3 body"
+   },
+   "resolution_method": "Hand pc-relative arithmetic against each .s file's own instruction stream, cross-checked with `arm-none-eabi-as -mthumb` + `arm-none-eabi-ld -Ttext=<addr>` + `objdump -d --adjust-vma=<addr>` standalone reassembly of each region. Caveat: the reassembly widened the two 080dd9c0.s branches to .set absolute symbols (bne/b to sub_080dda3c) into 4-byte bne.w/b.w forms, which shifts the tool's own computed addresses for the final BG2X pool pair by 4 bytes versus the ROM's real narrow encoding; the given LiteralPool_080dda18 label position (consistent with narrow branches, i.e. the real ROM encoding) was used as ground truth for that pair instead of the widened reassembly's arithmetic. 080dda3c.s and 080ddb34.s branch only to near local labels (no cross-file .set targets before the pool), so their reassembly address arithmetic is trusted directly."
+  },
+  "frame_ledger": {
+   "frame_size_bytes": 52,
+   "high_reg_saves": "r8/r9/r10/r11 saved via mov-to-r5..r7 + push in the prologue (080dd9c0.s), restored via pop{r3,r5,r6,r7}+mov-back in the true epilogue (080ddb34.s); confirms full r8-r11 save/restore around the whole split function.",
+   "slots": {
+    "sp+0": "5th stack arg to both Func_080ed408 calls (constant 1)",
+    "sp+4": "unresolved -- not yet traced to a definite use in this pass",
+    "sp+8": "unresolved",
+    "sp+12": "region3 setup value (movs r0,#8 at continuation tail, becomes r8-relative loop bound)",
+    "sp+16": "region3 setup pointer (0x080eebae table base, loaded at continuation tail)",
+    "sp+20": "region3 setup constant 12",
+    "sp+24": "frame_bound - 16 (end_wait), computed once before the per-frame loop",
+    "sp+28": "frame_bound - 64 (fade_start), computed once before the per-frame loop",
+    "sp+32": "frame_bound (member/table-scaled frame count), computed once",
+    "sp+36": "draw_cb_46 (heap_cache+28 rectangle-blit function pointer, kind 46)",
+    "sp+40": "draw_cb_47 (heap_cache+32 rectangle-blit function pointer, kind 47)",
+    "sp+44": "frame (the per-frame loop counter, read/written every iteration)",
+    "sp+48": "draw_destination (heap_cache[1], second heap_cache word, read once at entry)"
+   },
+   "note": "sp+4/sp+8 were not pinned down in this pass -- region3's inner draw-call argument staging (str r1,[sp,#0]/str r0,[sp,#4] pairs before both sub_080072fc and sub_080072f4 call sites) needs a dedicated read of games/gs1/asm/080ddb34.s's argument setup before every bl to place these exactly; not completed."
+  },
+  "structure": "Region 1 (head) and the continuation's setup half (two Func_080ed408 allocations, scheduler registration, particle-pool reset, frame_bound computation) are faithfully modeled and call-order-correct against the sibling family. Region 3 (Region_080ddb34, the per-frame particle release/draw/retire body) is only a coarse structural placeholder in the current .c -- the real per-slot release-scan loop (indexed by a per-particle-count decrementing frame/slot bound, `bgt`/`bhi` branches into two symmetric argument-sign variants feeding a fixed-point sub_080072fc/sub_080072f4 rectangle draw trampoline selected by odd/even bit tests on a ROM flag byte, and a second 64-iteration inner loop doing signed-byte-table-driven interpolated draw+retire with a sine/cosine-like paired sub_080072f4 call per particle) was traced structurally during this session (see member_index/slot loop-shape notes above) but not yet transcribed faithfully into C -- the candidate's do/for loops in that section are known-wrong stand-ins, not a claimed match.",
+  "trajectory": "One compiling draft, one scored baseline (dh=498/1056 halfwords, wrong_instructions=453, matched_prefix=7). The 40-iteration convergence loop specified in the task was not run in this pass: region1's own literal/constants are exact but the candidate already diverges by instruction 7 on register-allocation shape (candidate never lands `work` in r9 the way the reference does, matching the same open r9-vs-spill residual documented in 080d85d0.json and 080e7404.json for this exact family), and region3 is an admitted placeholder, not a faithful port, so further scoring iterations before fixing region3's control flow would not be meaningful. Next session should: (1) finish region3's dual sub_080072fc/sub_080072f4 branch-and-draw shape using games/gs1/asm/080ddb34.s directly (each `bl` site's sp+0/sp+4 argument staging pins sp+4/sp+8 in the frame ledger above), (2) re-check whether keeping `work` in a single local (not re-deriving `table` via M2C_FIELD repeatedly) reproduces the reference's r9 retention the way 080d82b0.c's own source shape does, before assuming the r9 residual is compiler-internal here too.",
+  "differing_halfwords_zero": false
+ }
 }

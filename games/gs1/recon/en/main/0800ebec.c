@@ -43,10 +43,10 @@ s32 Func_0800ebec(struct ScriptObjectEntry *actor)
     s32 angle_q16;
     s32 dir;
     s32 final_dir;
-    s16 deltas[6];
+    s32 posA[3];
     s32 posB[3];
     s32 posC[3];
-    s32 posA[3];
+    s16 deltas[6];
     s32 extra[7];
     s32 i;
     struct ScriptObjectEntry *entry;

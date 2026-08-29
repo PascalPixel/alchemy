@@ -60,7 +60,10 @@ extern void Func_080030f8(s32 frames);           /* WaitFrames */
 extern s32 Func_080be18c(s16 abilityId);
 extern void *Func_08077018(u16 itemId);          /* Item_GetData */
 extern s32 Func_08077128(s16 id);
-extern void Func_08077160(s16 id);
+extern s16 Func_08077160(void *actor);   /* was declared (s16 id)->void; ground
+                                           * truth (this pass) shows it takes
+                                           * actor and its r0 return value is
+                                           * used directly as abilityId */
 extern void Func_08077078(void *actor, s32 flag);
 extern void Func_080bb8d8(void);
 extern s32 Func_080770c0(s32 flagId);            /* GameFlag_IsSet */
@@ -113,7 +116,13 @@ extern s32 Func_08077178(s16 id, u8 a, u8 b, u8 c, s32 mode);
 #define TEXT_TIER1_MSG         ((void *)0x83e)  /* 2110 */
 
 /* Region_080be76c: tier==2 (address 0x080be888). */
-#define REQ_FLAG_OFF            299  /* 0x12b; req+299, not an actor field */
+#define ACTOR_ITEM_USED_FLAG_OFF 299 /* 0x12b; confirmed actor-relative this
+                                       * pass (standalone objdump: `ldr
+                                       * r4,[sp,#12]` = actor, not r10/req --
+                                       * corrects a prior misattribution that
+                                       * had called this REQ_FLAG_OFF and
+                                       * used it, and the "+216+slotIdx*2"
+                                       * item-flags array, as req-relative). */
 #define TEXT_TIER2_NOSLOT_MSG  ((void *)0x81b)  /* 2075 */
 #define TEXT_TIER2_NOABILITY_MSG ((void *)0x816) /* 2070 */
 #define TEXT_TIER2_KIND_MSG    ((void *)0x818)  /* 2072 */
@@ -129,13 +138,18 @@ extern s32 Func_08077178(s16 id, u8 a, u8 b, u8 c, s32 mode);
 #define K4_ABILITY_ID           503  /* 0x1f7 */
 
 /*
- * Region_080beb08's own TEXT_TBD text-pointer placeholders are unresolved
- * as of this pass (out of this round's scope, which targeted
- * Region_080be76c and the shared head pre-checks per the dossier's
- * recommendation); left as an inert placeholder pending the next pass's
- * standalone-assemble-and-objdump of games/gs1/asm/080beb08.s.
+ * Region_080beb08's four text-pointer placeholders, resolved from ground
+ * truth: assembled games/gs1/asm/080beb08.s standalone (already 4-byte
+ * aligned at its real load address 0x080beb08 mod 4 == 0, no parity padding
+ * needed), objdumped the result with --adjust-vma=0x080beb08, and for each
+ * `ldr rN, [pc, #imm]` whose resolved target lands in the region's own
+ * literal pool (0x080bef58/5c/60/7c, all past this region's 608 bytes of
+ * code) read the word straight out of roms/gs1-en.gba at (target-0x08000000).
  */
-#define TEXT_TBD          NULL
+#define TEXT_TIER5_CUE_MSG      ((void *)0x897)  /* 2199; L_080beb48 Func_080bbabc(4, ...) arg */
+#define TEXT_TIER5_BUSY_MSG     ((void *)0x85b)  /* 2139; L_080bec62 tail */
+#define TEXT_TIER6_MSG          ((void *)0x83f)  /* 2111; L_080bec90/tier==6 tail */
+#define TEXT_TIER5_STATUS_MSG   ((void *)0x814)  /* 2068; L_080beea8 status message */
 
 void Func_080be378(u8 *req, u8 *tgt)
 {
@@ -188,7 +202,7 @@ void Func_080be378(u8 *req, u8 *tgt)
         goto L_080bec8a;
     }
     if (((u8 *)actor)[ACTOR_STATUSFLAG_OFF] & 1) {
-        if (*(s16 *)((u8 *)actor + 6) != 3) {
+        if (*(s16 *)(req + 6) != 3) {
             if ((Func_080771a0() & 3) == 0) {
                 Func_08015120(*(s16 *)(req + 0), 1);
                 Func_080151c8(ACTOR_STATUSFLAG_MSG);
@@ -197,7 +211,7 @@ void Func_080be378(u8 *req, u8 *tgt)
         }
     }
 
-    tier = *(s16 *)((u8 *)actor + 6);
+    tier = *(s16 *)(req + 6);
     if (tier == 8) {
         goto L_080bec5c;
     }
@@ -205,10 +219,10 @@ void Func_080be378(u8 *req, u8 *tgt)
     {
         s32 i;
         for (i = 0; i < 13; i++) {
-            *((u8 *)actor + 44 + i) = 0;
+            tgt[44 + i] = 0;
         }
         for (i = 0; i < 13; i++) {
-            *((u8 *)actor + 58 + i) = (u8)-1;
+            tgt[58 + i] = (u8)-1;
         }
     }
 
@@ -286,8 +300,15 @@ L_080be700:
 
     /* ---- Region_080be76c: case tier==0 ---- */
 L_080be76c:
-    Func_08077160(*(s16 *)(req + 0));
-    abilityId = *(s16 *)(req + 0);
+    /*
+     * Ground-truth fix (this pass): standalone objdump of
+     * games/gs1/asm/080be76c.s shows `ldr r4,[sp,#12]` (actor) feeding
+     * Func_08077160's argument, and its r0 return value moved straight into
+     * fp and used as the Func_080be18c argument -- the prior draft had
+     * mislabeled the call argument as req+0 and separately recomputed
+     * abilityId from req+0 (a value never actually reloaded on this path).
+     */
+    abilityId = Func_08077160(actor);
     lookupResult = Func_080be18c(abilityId);
     if (lookupResult == -1) {
         goto L_080bf1d6_shared;
@@ -352,12 +373,20 @@ L_080be888:
             goto L_080bec8a;
         }
         {
-            u16 itemId = *(u16 *)(req + 216 + slotIdx * 2);
+            /*
+             * Ground-truth fix (this pass): standalone-assembling
+             * games/gs1/asm/080be76c.s and objdumping it shows this array
+             * read is `ldr r4,[sp,#12]` (the actor stack-slot pointer,
+             * dereferenced) not `mov rX,sl`/r10 (req) -- the prior draft
+             * had all three occurrences of this "+216+slotIdx*2" array
+             * mislabeled as req-relative when they are actor-relative.
+             */
+            u16 itemId = *(u16 *)((u8 *)actor + 216 + slotIdx * 2);
             abilityData = Func_08077018(itemId);
         }
         abilityId = (s16)*(u16 *)((u8 *)abilityData + 40);
         if (abilityId != 0) {
-            u16 flagsField = *(u16 *)(req + 216 + (*(s16 *)(req + 8)) * 2);
+            u16 flagsField = *(u16 *)((u8 *)actor + 216 + (*(s16 *)(req + 8)) * 2);
             if (flagsField & (0x400)) {
                 goto L_080be908;
             }
@@ -370,8 +399,13 @@ L_080be8dc:
 L_080be8e0:
         Func_08015120(*(s16 *)(req + 0), 1);
         Func_080151c8(TEXT_TIER2_NOABILITY_MSG);
-        if (((u8 *)req)[REQ_FLAG_OFF] == 0) {
-            ((u8 *)req)[REQ_FLAG_OFF] = 1;
+        /*
+         * Ground-truth fix (this pass): `ldr r4,[sp,#12]` (actor), not
+         * r10 (req) -- ACTOR_ITEM_USED_FLAG_OFF, formerly misnamed
+         * REQ_FLAG_OFF and misattributed to req.
+         */
+        if (((u8 *)actor)[ACTOR_ITEM_USED_FLAG_OFF] == 0) {
+            ((u8 *)actor)[ACTOR_ITEM_USED_FLAG_OFF] = 1;
         }
         goto L_080bec8a;
 L_080be908:
@@ -380,7 +414,7 @@ L_080be908:
             goto L_080bf1d6_shared;
         }
         Func_08015120(*(s16 *)(req + 0), 1);
-        Func_08015120(*(u16 *)(req + 216 + (*(s16 *)(req + 8)) * 2), 2);
+        Func_08015120(*(u16 *)((u8 *)actor + 216 + (*(s16 *)(req + 8)) * 2), 2);
         {
             u8 kind12 = *((u8 *)abilityData + 12);
             u8 kind2 = *((u8 *)abilityData + 2);
@@ -511,7 +545,7 @@ L_080beb48:
     Func_080bbabc(3, 0 /* packed sub-kind table index, TBD */);
     Func_080bbabc(14, 175);
     Func_080bbabc(10, 0);
-    Func_080bbabc(4, (s32)TEXT_TBD);
+    Func_080bbabc(4, (s32)TEXT_TIER5_CUE_MSG);
     Func_080bbabc(11, *(s16 *)(req + 0));
     Func_080f9010(212);
     Func_08009080(Func_080b7dd0(*(s16 *)(req + 0)), 3);
@@ -524,7 +558,7 @@ L_080bec62:
     Func_08015120(*(s16 *)(req + 0), 1);
     Func_08015120(abilityId, 4);
     Func_080f9010(114);
-    Func_080151c8(TEXT_TBD);
+    Func_080151c8(TEXT_TIER5_BUSY_MSG);
     Func_080030f8(60);
     goto L_080bf1d6_shared;
 
@@ -538,7 +572,7 @@ L_080bec90:
     abilityData = Func_08077080(abilityId);
     Func_08015120(*(s16 *)(req + 0), 1);
     Func_08015120(abilityId, 4);
-    Func_080151c8(TEXT_TBD);
+    Func_080151c8(TEXT_TIER6_MSG);
     *(u32 *)(tgt + 80) = *((u8 *)abilityData + 2);
     goto L_080bee00;
 
@@ -591,7 +625,7 @@ L_080beea6:
      * modeled directly above via the shared L_080beea6 assignment point. */
 L_080beea8:
     Func_08015120(*(s16 *)(req + 0), 1);
-    Func_080151c8(TEXT_TBD);
+    Func_080151c8(TEXT_TIER5_STATUS_MSG);
 
     /*
      * ---- L_080beef4 / L_080beebe / L_080beee0 / L_080bef28: status-cure
@@ -730,17 +764,19 @@ L_080bf044:
             /*
              * ---- per-target power-accumulation loop, address 0x080bf0ca --
              * iterates `(s8)tgt[1]` times over the per-target slot bytes at
-             * tgt+2.., calling Func_08077178(actor->0, slotByte,
+             * tgt+2.., calling Func_08077178(req->0, slotByte,
              * abilityData->2, abilityData->3, 100) and writing the
              * (byte-truncated) result to tgt+2+i+56. First arg confirmed as
-             * `actor` (not `req`) from the standalone objdump: this file's
-             * r10 holds `&actor`, dereferenced right before the ldrsh.
+             * `req` (not `actor`) from the standalone objdump: this file's
+             * r10 holds `&req` throughout (same dedication as the head
+             * function's r10 -- never reassigned in this region), and is
+             * dereferenced right before the ldrsh at .L_080bf0ca.
              */
             s8 count = (s8)tgt[1];
             s32 i;
             for (i = 0; i < count; i++) {
                 u8 slotByte = tgt[2 + i];
-                s32 result = Func_08077178(*(s16 *)((u8 *)actor + 0), slotByte,
+                s32 result = Func_08077178(*(s16 *)(req + 0), slotByte,
                                             *((u8 *)abilityData + 2),
                                             *((u8 *)abilityData + 3), 100);
                 tgt[2 + i + 56] = (u8)result;
@@ -795,13 +831,13 @@ L_080bf0f8:
     }
 
 L_080bf1a8:
-    if (*(s16 *)((u8 *)actor + 6) == 2) {
+    if (*(s16 *)(req + 6) == 2) {
         s32 statusKind = *(s32 *)(tgt + 84);
         if (statusKind != 5 && statusKind != 9) {
             *(s32 *)(tgt + 84) = 4;
         }
     }
-    *(u16 *)(tgt + 72) = *(u16 *)((u8 *)actor + 6);
+    *(u16 *)(tgt + 72) = *(u16 *)(req + 6);
     return;
 
     /*

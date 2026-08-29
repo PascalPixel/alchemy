@@ -80,7 +80,7 @@ s32 Func_0800ebec(struct ScriptObjectEntry *actor)
         if (Data_03001ae8 & 0x200) {
             s32 count;
 
-            count = 0x200;
+            count = Data_03001ae8;
             do {
                 count--;
             } while (count != 0);

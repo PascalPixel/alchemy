@@ -1,118 +1,134 @@
 {
-  "span_bytes": 64,
-  "edition": {
-    "role": "derived-edition-candidate",
-    "edition": "en",
-    "rebase_status": "ja-owner-not-yet-recovered"
-  },
-  "score": {
-    "measured": "2026-08-25",
-    "candidate_bytes": 64,
-    "reference_bytes": 64,
-    "differing_halfwords": 4,
-    "wrong_instructions": 0,
-    "class": "ordering",
-    "note": "The coherent video/DMA translation unit preserves the 64-byte extent and aligned instruction stream. The residual is two adjacent instruction-order swaps in the owner head. This candidate claims zero DONE bytes."
-  },
-  "family": {
-    "owners": [
-      "0800383c",
-      "0800387c",
-      "080038bc",
-      "080038fc",
-      "0800393c",
-      "0800397c",
-      "080039bc",
-      "080039fc",
-      "08003a3c"
-    ],
-    "owner_bytes": 576,
-    "delay_values": [
-      "0x10000",
-      "0x20000",
-      "0x30000",
-      "0x50000",
-      "0x60000",
-      "0x70000",
-      "0x90000",
-      "0xa0000",
-      "0xb0000"
-    ],
-    "difference": "Direct ROM comparison finds no body difference outside the delay materialization at owner offsets 0x28 and 0x2a; the 0x20000 sibling changes only one of those halfwords. Every other instruction and both pool words agree.",
-    "shared_candidate_score": {
-      "candidate_bytes": 64,
-      "reference_bytes": 64,
-      "differing_halfwords": 4,
-      "wrong_instructions": 0,
-      "owners_measured": 9
-    }
-  },
-  "cross_edition": {
-    "owner_bytes": 64,
-    "relocation_bytes": 8,
-    "core_bytes": 56,
-    "core_identical_for_all_nine": true,
-    "edition_starts": {
-      "ja": "en + 0x00",
-      "en": "listed owner",
-      "de": "en + 0x30",
-      "es": "en + 0x60",
-      "fr": "en + 0x10",
-      "it": "en + 0x40"
-    },
-    "note": "Each of the nine relocation-bearing candidates uniquely locates one 64-byte owner in every edition; all 54 comparisons have zero core differences."
-  },
-  "domain": "Queues one memory-mapped write and its destination for delayed execution while preserving interrupt-master state.",
-  "expressed": [
-    "the 32-entry queue bound",
-    "the 12-byte value/address/delay record layout",
-    "interrupt-master save, disable spelling, and restore",
-    "the first owner's 0x10000 delay"
+ "span_bytes": 64,
+ "edition": {
+  "role": "derived-edition-candidate",
+  "edition": "en",
+  "rebase_status": "ja-owner-not-yet-recovered"
+ },
+ "score": {
+  "measured": "2026-08-25",
+  "candidate_bytes": 64,
+  "reference_bytes": 64,
+  "differing_halfwords": 4,
+  "wrong_instructions": 0,
+  "class": "ordering",
+  "note": "The coherent video/DMA translation unit preserves the 64-byte extent and aligned instruction stream. The residual is two adjacent instruction-order swaps in the owner head. This candidate claims zero DONE bytes."
+ },
+ "family": {
+  "owners": [
+   "0800383c",
+   "0800387c",
+   "080038bc",
+   "080038fc",
+   "0800393c",
+   "0800397c",
+   "080039bc",
+   "080039fc",
+   "08003a3c"
   ],
-  "remaining": [
-    {
-      "op": "instruction ordering",
-      "count": 2,
-      "where": "the coherent unit emits the argument save before the queue-base load and the interrupt-master save after its disable store; the reference uses the opposite order at both sites"
-    }
+  "owner_bytes": 576,
+  "delay_values": [
+   "0x10000",
+   "0x20000",
+   "0x30000",
+   "0x50000",
+   "0x60000",
+   "0x70000",
+   "0x90000",
+   "0xa0000",
+   "0xb0000"
   ],
-  "rejected_experiments": [
-    {
-      "experiment": "20,000 heat-guided classic ordinary-C permutations",
-      "result": "no candidate improved the allocation residual or reached zero"
-    },
-    {
-      "experiment": "volatile queue access, raw integer bases, nested pointer lifetimes, post-increment and structured record spellings, and old-agbcc",
-      "result": "all either retained the pointer swap or introduced extra loads, spills, or prologue registers"
-    },
-    {
-      "experiment": "the nine existing GCC 2.96 owner-route flag families",
-      "result": "against the earlier isolated-owner source, none reached zero; seven preserved its 13-halfword allocation residual, -fno-cse-skip-blocks regressed to 29, and -fno-schedule-insns2 still differed in 10 halfwords"
-    },
-    {
-      "experiment": "joint family transfer through one shared body and nine constant-only wrappers",
-      "result": "the earlier wrapper-only reconstruction left all nine at 13 differing halfwords. Reconstructing the complete surrounding translation unit later reduced every sibling to the current four-halfword ordering residual under canonical flags"
-    },
-    {
-      "experiment": "joint declaration, integer-width, queue-view, raw-pointer, IME-pointer, early-destination, compiler-family, optimization, CSE, GCSE, scheduler, strength-reduction, regmove, and expensive-optimization matrix",
-      "result": "no isolated source/compiler pairing reached zero. This result predates the complete translation-unit reconstruction and is retained only as evidence that per-owner flag searches did not explain the reference."
-    },
-    {
-      "experiment": "complete-unit follow-up over the shared nine-owner macro: canonical scheduling, both scheduler toggles, regmove, CSE-follow, CSE-skip, expensive-optimization, declaration/scope order, register hints, direct-global access, and a shared inline helper",
-      "result": "the representative 0800383c owner remained at the canonical four-halfword ordering residual for every neutral flag and register-hint variant; -fno-schedule-insns2 regressed to eight, declaration/scope variants regressed to thirteen, the inline helper to twenty-three, and direct-global access to twenty-five. The shared source shape therefore remains the best bounded whole-unit result."
-    },
-    {
-      "experiment": "complete-unit GCC scheduler-priority audit of the shared macro",
-      "result": "all nine owners have the same two source-ordering residuals: the queue literal load and destination preservation tie at priority 9, so canonical GCC selects the preservation first; after the interrupt-master load, the saved value copy has priority 4 while the disable store has priority 5, so GCC selects the store first. Neutral ordinary-C declaration, width, pointer, initializer, and control-flow variants did not change that graph or regressed."
-    },
-    {
-      "experiment": "exact-sibling shape transfer (complete-unit inversion pass over the proven Scheduler_FindCallback combination: direct-global interrupt-master access, queue pointer bound before the critical region, saved at function scope)",
-      "result": "Scheduler_FindCallback (0x08004198, byte-exact, same 64-byte class, same save/disable/restore idiom) emits no saved-value copy at all -- its context keeps the loaded value in the load register -- so the proven sibling never faces either scheduling choice and its spelling transfers no ordering evidence. Measured in the complete unit under canonical flags: the full scheduler-shape transfer regressed the representative to 11 differing halfwords; binding the queue pointer before the interrupt-master pointer (site A's literal-first ask) regressed to 13, pinning the recorded declaration/scope family cell; hoisting saved to function scope alone tied the live macro exactly at the same 4-halfword residual with the same two swaps. The dependence graph is unchanged by every binding, scope, and sibling-shape axis; the residual remains the two recorded scheduler decisions and stays open per next -- it is not relabeled a compiler limitation."
-    }
-  ],
-  "next": "Keep the coherent translation unit as measured reconstruction evidence. A future family candidate must preserve the 64-byte extent, literal pools, and all-nine agreement while producing queue-literal-before-destination preservation and saved-IME-copy-before-disable-store under canonical GCC; do not relabel this bounded scheduler tie as a compiler limitation.",
-  "notes": [
-    "Recovered only from the retained owner assembly, approved local ROM, in-repository callers, and the approved compiler.",
-    "No external game source, copied instruction bytes, inline assembly, fixed-register variable, or compiler barrier was used."
-  ]
+  "difference": "Direct ROM comparison finds no body difference outside the delay materialization at owner offsets 0x28 and 0x2a; the 0x20000 sibling changes only one of those halfwords. Every other instruction and both pool words agree.",
+  "shared_candidate_score": {
+   "candidate_bytes": 64,
+   "reference_bytes": 64,
+   "differing_halfwords": 4,
+   "wrong_instructions": 0,
+   "owners_measured": 9
+  }
+ },
+ "cross_edition": {
+  "owner_bytes": 64,
+  "relocation_bytes": 8,
+  "core_bytes": 56,
+  "core_identical_for_all_nine": true,
+  "edition_starts": {
+   "ja": "en + 0x00",
+   "en": "listed owner",
+   "de": "en + 0x30",
+   "es": "en + 0x60",
+   "fr": "en + 0x10",
+   "it": "en + 0x40"
+  },
+  "note": "Each of the nine relocation-bearing candidates uniquely locates one 64-byte owner in every edition; all 54 comparisons have zero core differences."
+ },
+ "domain": "Queues one memory-mapped write and its destination for delayed execution while preserving interrupt-master state.",
+ "expressed": [
+  "the 32-entry queue bound",
+  "the 12-byte value/address/delay record layout",
+  "interrupt-master save, disable spelling, and restore",
+  "the first owner's 0x10000 delay"
+ ],
+ "remaining": [
+  {
+   "op": "instruction ordering",
+   "count": 2,
+   "where": "the coherent unit emits the argument save before the queue-base load and the interrupt-master save after its disable store; the reference uses the opposite order at both sites"
+  }
+ ],
+ "rejected_experiments": [
+  {
+   "experiment": "20,000 heat-guided classic ordinary-C permutations",
+   "result": "no candidate improved the allocation residual or reached zero"
+  },
+  {
+   "experiment": "volatile queue access, raw integer bases, nested pointer lifetimes, post-increment and structured record spellings, and old-agbcc",
+   "result": "all either retained the pointer swap or introduced extra loads, spills, or prologue registers"
+  },
+  {
+   "experiment": "the nine existing GCC 2.96 owner-route flag families",
+   "result": "against the earlier isolated-owner source, none reached zero; seven preserved its 13-halfword allocation residual, -fno-cse-skip-blocks regressed to 29, and -fno-schedule-insns2 still differed in 10 halfwords"
+  },
+  {
+   "experiment": "joint family transfer through one shared body and nine constant-only wrappers",
+   "result": "the earlier wrapper-only reconstruction left all nine at 13 differing halfwords. Reconstructing the complete surrounding translation unit later reduced every sibling to the current four-halfword ordering residual under canonical flags"
+  },
+  {
+   "experiment": "joint declaration, integer-width, queue-view, raw-pointer, IME-pointer, early-destination, compiler-family, optimization, CSE, GCSE, scheduler, strength-reduction, regmove, and expensive-optimization matrix",
+   "result": "no isolated source/compiler pairing reached zero. This result predates the complete translation-unit reconstruction and is retained only as evidence that per-owner flag searches did not explain the reference."
+  },
+  {
+   "experiment": "complete-unit follow-up over the shared nine-owner macro: canonical scheduling, both scheduler toggles, regmove, CSE-follow, CSE-skip, expensive-optimization, declaration/scope order, register hints, direct-global access, and a shared inline helper",
+   "result": "the representative 0800383c owner remained at the canonical four-halfword ordering residual for every neutral flag and register-hint variant; -fno-schedule-insns2 regressed to eight, declaration/scope variants regressed to thirteen, the inline helper to twenty-three, and direct-global access to twenty-five. The shared source shape therefore remains the best bounded whole-unit result."
+  },
+  {
+   "experiment": "complete-unit GCC scheduler-priority audit of the shared macro",
+   "result": "all nine owners have the same two source-ordering residuals: the queue literal load and destination preservation tie at priority 9, so canonical GCC selects the preservation first; after the interrupt-master load, the saved value copy has priority 4 while the disable store has priority 5, so GCC selects the store first. Neutral ordinary-C declaration, width, pointer, initializer, and control-flow variants did not change that graph or regressed."
+  },
+  {
+   "experiment": "exact-sibling shape transfer (complete-unit inversion pass over the proven Scheduler_FindCallback combination: direct-global interrupt-master access, queue pointer bound before the critical region, saved at function scope)",
+   "result": "Scheduler_FindCallback (0x08004198, byte-exact, same 64-byte class, same save/disable/restore idiom) emits no saved-value copy at all -- its context keeps the loaded value in the load register -- so the proven sibling never faces either scheduling choice and its spelling transfers no ordering evidence. Measured in the complete unit under canonical flags: the full scheduler-shape transfer regressed the representative to 11 differing halfwords; binding the queue pointer before the interrupt-master pointer (site A's literal-first ask) regressed to 13, pinning the recorded declaration/scope family cell; hoisting saved to function scope alone tied the live macro exactly at the same 4-halfword residual with the same two swaps. The dependence graph is unchanged by every binding, scope, and sibling-shape axis; the residual remains the two recorded scheduler decisions and stays open per next -- it is not relabeled a compiler limitation."
+  }
+ ],
+ "next": "Keep the coherent translation unit as measured reconstruction evidence. A future family candidate must preserve the 64-byte extent, literal pools, and all-nine agreement while producing queue-literal-before-destination preservation and saved-IME-copy-before-disable-store under canonical GCC; do not relabel this bounded scheduler tie as a compiler limitation.",
+ "notes": [
+  "Recovered only from the retained owner assembly, approved local ROM, in-repository callers, and the approved compiler.",
+  "No external game source, copied instruction bytes, inline assembly, fixed-register variable, or compiler barrier was used."
+ ],
+ "rejected": [
+  {
+   "hypothesis": "declare q before ime in DEFINE_QUEUE_IO_WRITE so the ime pool load is scheduled ahead of the parameter copies",
+   "measured": "2026-08-29",
+   "differing_halfwords": 12,
+   "baseline": 2,
+   "verdict": "regressed"
+  },
+  {
+   "hypothesis": "read saved = *ime at the ime declaration and declare q afterwards",
+   "measured": "2026-08-29",
+   "differing_halfwords": 9,
+   "baseline": 2,
+   "verdict": "regressed"
+  }
+ ]
 }

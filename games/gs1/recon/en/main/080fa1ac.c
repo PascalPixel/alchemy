@@ -6,10 +6,13 @@ void MusicTrack_ClearModulationState(
     struct MusicPlayerState *unused,
     struct MusicTrackState *track)
 {
+    s32 bits;
+
     track->unknown01[0x15] = 0;
     track->unknown01[0x19] = 0;
     if (track->unknown01[0x17] == 0)
-        track->flags |= 12;
+        bits = 12;
     else
-        track->flags |= 3;
+        bits = 3;
+    track->flags |= bits;
 }

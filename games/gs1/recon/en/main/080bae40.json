@@ -1,58 +1,57 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x080bae40",
-  "name": "BattleTarget_SelectForAction",
-  "status": "measured-draft",
-  "owner_bytes": 1864,
-  "candidate_bytes": 1888,
-  "differing_halfwords": 689,
-  "wrong_instructions": 612,
-  "classification": "battle-action-target-selection",
-  "cross_edition": {
-    "object_bytes": 1864,
-    "relocation_normalized_core_bytes": 1456,
-    "core_diff_bytes": 0,
-    "core_identical": true,
-    "starts": {
-      "ja": "0x080b1e40",
-      "en": "0x080bae40",
-      "de": "0x080bd458",
-      "es": "0x080bee58",
-      "fr": "0x080bee58",
-      "it": "0x080bae58"
-    }
-  },
-  "domain": "Selects an eligible battle target for an action, including effect applicability, target-list compaction, strategy-dependent ordering, and weighted or uniform random choice.",
-  "expressed": [
-    "the complete normal-versus-mirrored turn-order scan and encoded target positions",
-    "all effect and target-flag applicability cases through the 65-entry effect dispatch",
-    "dead-unit, healing, cure, modifier, and status eligibility rules",
-    "the compacted eligible target list and -2/-1 empty-list results",
-    "strategy-dependent current-HP or maximum-HP descending ordering",
-    "the one-, two-, three-, and four-target weighted random selections and the uniform fallback"
-  ],
-  "recovered_layout": {
-    "frame_bytes": 92,
-    "eligible_positions_offset": 32,
-    "unit_ids_offset": 56,
-    "turn_order_positions_offset": 80
-  },
-  "remaining": [
-    "entry register allocation and the first turn-order literal-pool placement",
-    "source texture around the effect jump-table tails and shared branches",
-    "bubble-sort pointer allocation and weighted-selection result allocation"
-  ],
-  "rejected_experiments": [
-    "seven-element local arrays produced a 96-byte frame; six-element arrays plus declaration ordering recover the exact 92-byte frame and all three reference array bases",
-    "a shared normal/mirrored order pointer reduced readability and retained broad allocation disagreement",
-    "raw s16 turn-order indexing restored major block boundaries but scored 1892/1864 bytes and 618 wrong instructions, slightly worse than the typed BattleTurnOrder form",
-    "routed and explicit GCC 2.96 routes preserve the 612-instruction residual; old-agbcc changes the prologue and broad owner shape"
-  ],
-  "notes": [
-    "This is a complete semantic candidate, not a partial m2c transcription. Retained assembly remains authoritative and the draft claims zero DONE bytes.",
-    "The normalized reference core is identical in all six GS1 editions and uses the same JA-to-EN battle-owner shift as the exact 080bbb0c family.",
-    "No broad permanent classification or bounded permutation search is justified at this residual.",
-    "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, repository battle types and callers, and the approved compiler. No external source, history, copied instruction bytes, inline assembly, fixed-register variable, compiler barrier, or compiler modification was used."
-  ]
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x080bae40",
+ "status": "measured-draft",
+ "owner_bytes": 1864,
+ "candidate_bytes": 1888,
+ "differing_halfwords": 689,
+ "wrong_instructions": 612,
+ "classification": "battle-action-target-selection",
+ "cross_edition": {
+  "object_bytes": 1864,
+  "relocation_normalized_core_bytes": 1456,
+  "core_diff_bytes": 0,
+  "core_identical": true,
+  "starts": {
+   "ja": "0x080b1e40",
+   "en": "0x080bae40",
+   "de": "0x080bd458",
+   "es": "0x080bee58",
+   "fr": "0x080bee58",
+   "it": "0x080bae58"
+  }
+ },
+ "domain": "Selects an eligible battle target for an action, including effect applicability, target-list compaction, strategy-dependent ordering, and weighted or uniform random choice.",
+ "expressed": [
+  "the complete normal-versus-mirrored turn-order scan and encoded target positions",
+  "all effect and target-flag applicability cases through the 65-entry effect dispatch",
+  "dead-unit, healing, cure, modifier, and status eligibility rules",
+  "the compacted eligible target list and -2/-1 empty-list results",
+  "strategy-dependent current-HP or maximum-HP descending ordering",
+  "the one-, two-, three-, and four-target weighted random selections and the uniform fallback"
+ ],
+ "recovered_layout": {
+  "frame_bytes": 92,
+  "eligible_positions_offset": 32,
+  "unit_ids_offset": 56,
+  "turn_order_positions_offset": 80
+ },
+ "remaining": [
+  "entry register allocation and the first turn-order literal-pool placement",
+  "source texture around the effect jump-table tails and shared branches",
+  "bubble-sort pointer allocation and weighted-selection result allocation"
+ ],
+ "rejected_experiments": [
+  "seven-element local arrays produced a 96-byte frame; six-element arrays plus declaration ordering recover the exact 92-byte frame and all three reference array bases",
+  "a shared normal/mirrored order pointer reduced readability and retained broad allocation disagreement",
+  "raw s16 turn-order indexing restored major block boundaries but scored 1892/1864 bytes and 618 wrong instructions, slightly worse than the typed BattleTurnOrder form",
+  "routed and explicit GCC 2.96 routes preserve the 612-instruction residual; old-agbcc changes the prologue and broad owner shape"
+ ],
+ "notes": [
+  "This is a complete semantic candidate, not a partial m2c transcription. Retained assembly remains authoritative and the draft claims zero DONE bytes.",
+  "The normalized reference core is identical in all six GS1 editions and uses the same JA-to-EN battle-owner shift as the exact 080bbb0c family.",
+  "No broad permanent classification or bounded permutation search is justified at this residual.",
+  "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, repository battle types and callers, and the approved compiler. No external source, history, copied instruction bytes, inline assembly, fixed-register variable, compiler barrier, or compiler modification was used."
+ ]
 }

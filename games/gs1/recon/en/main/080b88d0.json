@@ -1,54 +1,53 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x080b88d0",
-  "name": "BattlePresentation_RunPairedUnitTransition",
-  "status": "measured-draft",
-  "owner_bytes": 632,
-  "executable_owner_bytes": 632,
-  "candidate_bytes": 614,
-  "differing_halfwords": 306,
-  "wrong_instructions": 221,
-  "cross_edition": {
-    "object_bytes": 632,
-    "relocation_bytes": 100,
-    "literal_bytes": 44,
-    "relocation_normalized_core_bytes": 488,
-    "core_diff_bytes": 0,
-    "core_identical": true,
-    "starts": {
-      "ja": "0x080af8d0",
-      "en": "0x080b88d0",
-      "de": "0x080baee8",
-      "es": "0x080bc8e8",
-      "fr": "0x080bc8e8",
-      "it": "0x080b88e8"
-    }
-  },
-  "domain": "Runs the paired-unit action presentation selected by BattlePresentation_RunAction, including side visibility, living-unit compaction, transition context construction, blend ramps, and sprite restoration.",
-  "expressed": [
-    "validates both actor and target unit identifiers and returns -1 on either invalid record",
-    "selects transition direction from the actor side and waits for the initial presentation setup",
-    "temporarily hides every sprite on the target side while preserving the actor presentation",
-    "compacts the living units on the target side and builds the 0x54-byte presentation context",
-    "runs the context transition and symmetric sixteen-frame blend ramps",
-    "restores the target-side sprites and returns zero after the presentation delay"
-  ],
-  "bounded_search": {
-    "mode": "classic-exact-only",
-    "attempted": 10000,
-    "compile_failures": 232,
-    "exact": false,
-    "baseline_structural_rows": 114,
-    "best_structural_rows": 88,
-    "best_generated_candidate_bytes": 616,
-    "best_generated_differing_halfwords": 306
-  },
-  "notes": [
-    "Independent object analysis bounds the owner at 632 executable bytes; the larger address gap before the next retained assembly file is not an owner extent.",
-    "The complete readable candidate recovers the exact 128-byte stack frame but is 18 bytes short and retains broad entry scheduling, register allocation, loop shaping, and literal-pool differences.",
-    "The 10,000-candidate search reduced structural rows from 114 to 88 but never improved the 306-halfword byte delta; its generated best remained 16 bytes short and required accumulated synthetic mutations, so it was rejected.",
-    "No exact C or narrow compiler residual was found. Retained assembly remains ordinary unresolved compiler output and this draft claims zero DONE bytes.",
-    "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, the exact BattlePresentation_RunAction caller, local battle types, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used."
-  ]
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x080b88d0",
+ "status": "measured-draft",
+ "owner_bytes": 632,
+ "executable_owner_bytes": 632,
+ "candidate_bytes": 614,
+ "differing_halfwords": 306,
+ "wrong_instructions": 221,
+ "cross_edition": {
+  "object_bytes": 632,
+  "relocation_bytes": 100,
+  "literal_bytes": 44,
+  "relocation_normalized_core_bytes": 488,
+  "core_diff_bytes": 0,
+  "core_identical": true,
+  "starts": {
+   "ja": "0x080af8d0",
+   "en": "0x080b88d0",
+   "de": "0x080baee8",
+   "es": "0x080bc8e8",
+   "fr": "0x080bc8e8",
+   "it": "0x080b88e8"
+  }
+ },
+ "domain": "Runs the paired-unit action presentation selected by BattlePresentation_RunAction, including side visibility, living-unit compaction, transition context construction, blend ramps, and sprite restoration.",
+ "expressed": [
+  "validates both actor and target unit identifiers and returns -1 on either invalid record",
+  "selects transition direction from the actor side and waits for the initial presentation setup",
+  "temporarily hides every sprite on the target side while preserving the actor presentation",
+  "compacts the living units on the target side and builds the 0x54-byte presentation context",
+  "runs the context transition and symmetric sixteen-frame blend ramps",
+  "restores the target-side sprites and returns zero after the presentation delay"
+ ],
+ "bounded_search": {
+  "mode": "classic-exact-only",
+  "attempted": 10000,
+  "compile_failures": 232,
+  "exact": false,
+  "baseline_structural_rows": 114,
+  "best_structural_rows": 88,
+  "best_generated_candidate_bytes": 616,
+  "best_generated_differing_halfwords": 306
+ },
+ "notes": [
+  "Independent object analysis bounds the owner at 632 executable bytes; the larger address gap before the next retained assembly file is not an owner extent.",
+  "The complete readable candidate recovers the exact 128-byte stack frame but is 18 bytes short and retains broad entry scheduling, register allocation, loop shaping, and literal-pool differences.",
+  "The 10,000-candidate search reduced structural rows from 114 to 88 but never improved the 306-halfword byte delta; its generated best remained 16 bytes short and required accumulated synthetic mutations, so it was rejected.",
+  "No exact C or narrow compiler residual was found. Retained assembly remains ordinary unresolved compiler output and this draft claims zero DONE bytes.",
+  "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, the exact BattlePresentation_RunAction caller, local battle types, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used."
+ ]
 }

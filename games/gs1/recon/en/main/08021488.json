@@ -1,26 +1,25 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x08021488",
-  "name": "Func_08021488",
-  "status": "measured-draft",
-  "owner_bytes": 344,
-  "candidate_bytes": 304,
-  "differing_halfwords": 164,
-  "wrong_instructions": 80,
-  "classification": "unemittable-draft",
-  "evidence": {
-    "reference": "games/gs1/asm/08021488.s",
-    "method": "families transplant (template main:080b1a14 / select_party_member.c, score 7538bp) seeded an m2c control-flow recovery over the complete symbolized owner, then hand-verified against every literal pool word and branch",
-    "family_template": "main:080b1a14",
-    "pc_relative_references": 9,
-    "jump_tables": 0
-  },
-  "notes": [
-    "The raw m2c draft treated both incoming registers (r0, r1) as unread inputs (`M2C_ERROR`); the disassembly shows the real signature is `s32 Func_08021488(s32 msg0, s32 msg1)` -- r1 is saved to sp+8 as literally the first instruction and r0 is moved into `fp`. The body opens two message-box windows (Func_08021360 + Func_0801a4fc build a two-word tile header at object+0xEA3/0x12F4/0x12F6), plays cue 0x51, then polls Func_080f9048/ADDR_03001C94 in a loop before closing and returning Func_08003f3c(spC). This is the family template's for(;;)-poll idiom over a different (message-box) payload, not the template's party-roster semantics.",
-    "First draft called Func_080162d4 and Func_0801e41c with the 4 register args m2c inferred and read &sp18/&sp24 fresh on every loop iteration: 288 vs 344 bytes, 118 wrong instructions. Reading the raw instruction stream showed a `str r3,[sp,#0]` immediately before each of those two calls carrying a value the register args don't already cover, i.e. both calls take a 5th argument passed on the stack (0 and 4 respectively); adding that 5th parameter, and hoisting `void *box1 = &sp18;` to where the reference's `add r3,sp,#24; mov sl,r3` actually sits (before the window is even created) and a second `box2 = &sp24` where the reference sets up `r7`, cut the gap to 304 vs 344 bytes and wrong_instructions to 80 -- the two largest, most concrete improvements found.",
-    "Remaining disagreement is again register/stack-slot allocation rather than control flow: the reference keeps `box1`'s address resident in `sl` for the whole function and spills the `msg1` parameter to sp+8 instead, while every candidate tried keeps both `msg0` and `msg1` in registers (r9/fp) and spills `box1` to sp+8 in their place. `msg1` is used only twice, both before the loop; `box1` is read on every loop iteration, so by usual usage-weight heuristics `box1` should win a register over `msg1` on this compiler too, but it did not in any respelling tried (including switching the poll loop from `for(;;){continue;}` back to a literal labelled `goto`, which changed nothing).",
-    "This reads as a genuine compiler-internals residual on the last-mile register allocation, not a remaining source-shape gap in control flow, call signatures, or types -- a candidate for permuter-style bounded search rather than further manual respelling.",
-    "No external source, copied instruction bytes, inline assembly, fixed-register variable, compiler barrier, or compiler modification was used."
-  ]
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x08021488",
+ "status": "measured-draft",
+ "owner_bytes": 344,
+ "candidate_bytes": 304,
+ "differing_halfwords": 164,
+ "wrong_instructions": 80,
+ "classification": "unemittable-draft",
+ "evidence": {
+  "reference": "games/gs1/asm/08021488.s",
+  "method": "families transplant (template main:080b1a14 / select_party_member.c, score 7538bp) seeded an m2c control-flow recovery over the complete symbolized owner, then hand-verified against every literal pool word and branch",
+  "family_template": "main:080b1a14",
+  "pc_relative_references": 9,
+  "jump_tables": 0
+ },
+ "notes": [
+  "The raw m2c draft treated both incoming registers (r0, r1) as unread inputs (`M2C_ERROR`); the disassembly shows the real signature is `s32 Func_08021488(s32 msg0, s32 msg1)` -- r1 is saved to sp+8 as literally the first instruction and r0 is moved into `fp`. The body opens two message-box windows (Func_08021360 + Func_0801a4fc build a two-word tile header at object+0xEA3/0x12F4/0x12F6), plays cue 0x51, then polls Func_080f9048/ADDR_03001C94 in a loop before closing and returning Func_08003f3c(spC). This is the family template's for(;;)-poll idiom over a different (message-box) payload, not the template's party-roster semantics.",
+  "First draft called Func_080162d4 and Func_0801e41c with the 4 register args m2c inferred and read &sp18/&sp24 fresh on every loop iteration: 288 vs 344 bytes, 118 wrong instructions. Reading the raw instruction stream showed a `str r3,[sp,#0]` immediately before each of those two calls carrying a value the register args don't already cover, i.e. both calls take a 5th argument passed on the stack (0 and 4 respectively); adding that 5th parameter, and hoisting `void *box1 = &sp18;` to where the reference's `add r3,sp,#24; mov sl,r3` actually sits (before the window is even created) and a second `box2 = &sp24` where the reference sets up `r7`, cut the gap to 304 vs 344 bytes and wrong_instructions to 80 -- the two largest, most concrete improvements found.",
+  "Remaining disagreement is again register/stack-slot allocation rather than control flow: the reference keeps `box1`'s address resident in `sl` for the whole function and spills the `msg1` parameter to sp+8 instead, while every candidate tried keeps both `msg0` and `msg1` in registers (r9/fp) and spills `box1` to sp+8 in their place. `msg1` is used only twice, both before the loop; `box1` is read on every loop iteration, so by usual usage-weight heuristics `box1` should win a register over `msg1` on this compiler too, but it did not in any respelling tried (including switching the poll loop from `for(;;){continue;}` back to a literal labelled `goto`, which changed nothing).",
+  "This reads as a genuine compiler-internals residual on the last-mile register allocation, not a remaining source-shape gap in control flow, call signatures, or types -- a candidate for permuter-style bounded search rather than further manual respelling.",
+  "No external source, copied instruction bytes, inline assembly, fixed-register variable, compiler barrier, or compiler modification was used."
+ ]
 }

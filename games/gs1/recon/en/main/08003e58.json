@@ -1,76 +1,75 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x08003e58",
-  "name": "ResourceTable_AllocateBlocks",
-  "status": "measured-draft",
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x08003e58",
+ "status": "measured-draft",
+ "owner_bytes": 124,
+ "executable_owner_bytes": 124,
+ "candidate": {
+  "coherent_translation_unit": {
+   "candidate_bytes": 120,
+   "reference_bytes": 124,
+   "differing_halfwords": 56,
+   "wrong_instructions": 54
+  },
+  "best_bounded_axis": {
+   "scope": "complete-unit diagnostic after recovering the selected-position result carrier",
+   "flags": [
+    "-fno-gcse"
+   ],
+   "candidate_bytes": 124,
+   "reference_bytes": 124,
+   "differing_halfwords": 40,
+   "wrong_instructions": 52
+  }
+ },
+ "cross_edition": {
   "owner_bytes": 124,
-  "executable_owner_bytes": 124,
-  "candidate": {
-    "coherent_translation_unit": {
-      "candidate_bytes": 120,
-      "reference_bytes": 124,
-      "differing_halfwords": 56,
-      "wrong_instructions": 54
-    },
-    "best_bounded_axis": {
-      "scope": "complete-unit diagnostic after recovering the selected-position result carrier",
-      "flags": [
-        "-fno-gcse"
-      ],
-      "candidate_bytes": 124,
-      "reference_bytes": 124,
-      "differing_halfwords": 40,
-      "wrong_instructions": 52
-    }
-  },
-  "cross_edition": {
-    "owner_bytes": 124,
-    "relocation_bytes": 8,
-    "core_bytes": 116,
-    "core_identical": true,
-    "editions": {
-      "ja": "0x08003e58",
-      "en": "0x08003e58",
-      "de": "0x08003e88",
-      "es": "0x08003eb8",
-      "fr": "0x08003e68",
-      "it": "0x08003e98"
-    }
-  },
-  "behavior": [
-    "rejects resource-table identifiers above 95",
-    "converts the requested byte size to 64-byte blocks",
-    "searches a 512-byte ownership map for a contiguous free run marked 0xff",
-    "skips occupied runs by reading their resource-table entry size",
-    "marks an accepted run with the identifier and returns its byte offset"
+  "relocation_bytes": 8,
+  "core_bytes": 116,
+  "core_identical": true,
+  "editions": {
+   "ja": "0x08003e58",
+   "en": "0x08003e58",
+   "de": "0x08003e88",
+   "es": "0x08003eb8",
+   "fr": "0x08003e68",
+   "it": "0x08003e98"
+  }
+ },
+ "behavior": [
+  "rejects resource-table identifiers above 95",
+  "converts the requested byte size to 64-byte blocks",
+  "searches a 512-byte ownership map for a contiguous free run marked 0xff",
+  "skips occupied runs by reading their resource-table entry size",
+  "marks an accepted run with the identifier and returns its byte offset"
+ ],
+ "bounded_search": {
+  "exact": false,
+  "canonical_best_differing_halfwords": 56,
+  "canonical_best_candidate_bytes": 120,
+  "tested": [
+   "sixteen finite canonical full-unit variants across function- and block-scope pointer declarations, initialization orders, const and ordinary register qualifiers, pointee volatility, pointer/integer views, and a zero-offset map aggregate",
+   "direct-global, local-pointer, mixed-alias, and raw-address diagnostics for the ownership map and resource table",
+   "while and guarded do-while free-run scans, separate and shared start/result temporaries, success-label layouts, and indexed versus pointer-induction mark loops",
+   "a canonical shared-result source shape that materializes the selected position before computing the requested run end",
+   "canonical complete-translation-unit compilation throughout, plus a diagnostic -fno-gcse compile of the strongest all-local pointer ancestry",
+   "a bounded contiguous resource-table reconstruction-composition probe in ROM order, retaining 08003fa4 as assembly: 08003ed4, 08003f04, 08003f3c, 08003f78, 0800403c, 08004080, 080040b4, and 080040d0 all remained 0-difference while this owner stayed 116/124 bytes with 56 differing halfwords"
   ],
-  "bounded_search": {
-    "exact": false,
-    "canonical_best_differing_halfwords": 56,
-    "canonical_best_candidate_bytes": 120,
-    "tested": [
-      "sixteen finite canonical full-unit variants across function- and block-scope pointer declarations, initialization orders, const and ordinary register qualifiers, pointee volatility, pointer/integer views, and a zero-offset map aggregate",
-      "direct-global, local-pointer, mixed-alias, and raw-address diagnostics for the ownership map and resource table",
-      "while and guarded do-while free-run scans, separate and shared start/result temporaries, success-label layouts, and indexed versus pointer-induction mark loops",
-      "a canonical shared-result source shape that materializes the selected position before computing the requested run end",
-      "canonical complete-translation-unit compilation throughout, plus a diagnostic -fno-gcse compile of the strongest all-local pointer ancestry",
-      "a bounded contiguous resource-table reconstruction-composition probe in ROM order, retaining 08003fa4 as assembly: 08003ed4, 08003f04, 08003f3c, 08003f78, 0800403c, 08004080, 080040b4, and 080040d0 all remained 0-difference while this owner stayed 116/124 bytes with 56 differing halfwords"
-    ],
-    "result": "No ordinary-C canonical shape reached exactness or simultaneously recovered the reference's id, block-count, scan-map, store-map, and table register roles. The retained indexed global mark loop reproduces the reference's six-instruction store loop; coupling the selected position to the result carrier preserves 120 bytes and 56 differing halfwords while reducing wrong instructions to 54. The contiguous resource-table probe preserved every exact neighbor but did not improve this owner, so its semantic and physical family alone is not evidence for a production-composition move."
-  },
-  "remaining": "The complete algorithm and owner boundary are established, but the coherent canonical translation-unit build remains four bytes short. GCC's GCSE pass copy-propagates the scan-map assignment from the store map, removing the reference's long-lived scan-map/store-map distinction and shifting the id/block-count allocation. A bounded resource-table composition retaining 08003fa4 as assembly preserved all eight exact neighbors but left this owner at 116/124 and 56 differing halfwords, so it does not justify moving the production composition. A noncanonical -fno-gcse diagnostic restores the 124-byte extent but still leaves 40 differing halfwords and 52 wrong instructions; neither exact adoption nor a permanent compiler classification is justified.",
-  "notes": [
-    "Recovered only from retained assembly, approved local GS1 ROMs, neighboring exact resource-table owners, and the approved compiler.",
-    "The contiguous resource-table run is recorded as a semantic/physical reconstruction-composition probe only; the manifest continues to assert that original translation-unit boundaries are unknown.",
-    "The raw-address diagnostic reached 124 bytes and 51 differing halfwords only by adding a duplicate ownership-map pool entry; it was rejected in favor of the named linker-resolved symbol and coherent source.",
-    "No inline assembly, fixed-register variable, compiler barrier, ABI trick, compiler modification, or per-owner flag override was used.",
-    "This candidate claims zero DONE bytes."
-  ],
-  "rejected_experiments": [
-    {
-      "experiment": "independent symbol re-reference for the scan base (u8 *scan_map = Data_03001810; instead of = map;), complete-unit canonical",
-      "result": "Identical 120/124 bytes and 56 differing halfwords: GCSE still unifies the second symbol reference with the first and collapses the scan/store base distinction, so the PRE-inserted copy does not survive as hoped. Unlike the rejected raw-address diagnostic this adds no duplicate pool entry, but it changes nothing under canonical flags."
-    }
-  ]
+  "result": "No ordinary-C canonical shape reached exactness or simultaneously recovered the reference's id, block-count, scan-map, store-map, and table register roles. The retained indexed global mark loop reproduces the reference's six-instruction store loop; coupling the selected position to the result carrier preserves 120 bytes and 56 differing halfwords while reducing wrong instructions to 54. The contiguous resource-table probe preserved every exact neighbor but did not improve this owner, so its semantic and physical family alone is not evidence for a production-composition move."
+ },
+ "remaining": "The complete algorithm and owner boundary are established, but the coherent canonical translation-unit build remains four bytes short. GCC's GCSE pass copy-propagates the scan-map assignment from the store map, removing the reference's long-lived scan-map/store-map distinction and shifting the id/block-count allocation. A bounded resource-table composition retaining 08003fa4 as assembly preserved all eight exact neighbors but left this owner at 116/124 and 56 differing halfwords, so it does not justify moving the production composition. A noncanonical -fno-gcse diagnostic restores the 124-byte extent but still leaves 40 differing halfwords and 52 wrong instructions; neither exact adoption nor a permanent compiler classification is justified.",
+ "notes": [
+  "Recovered only from retained assembly, approved local GS1 ROMs, neighboring exact resource-table owners, and the approved compiler.",
+  "The contiguous resource-table run is recorded as a semantic/physical reconstruction-composition probe only; the manifest continues to assert that original translation-unit boundaries are unknown.",
+  "The raw-address diagnostic reached 124 bytes and 51 differing halfwords only by adding a duplicate ownership-map pool entry; it was rejected in favor of the named linker-resolved symbol and coherent source.",
+  "No inline assembly, fixed-register variable, compiler barrier, ABI trick, compiler modification, or per-owner flag override was used.",
+  "This candidate claims zero DONE bytes."
+ ],
+ "rejected_experiments": [
+  {
+   "experiment": "independent symbol re-reference for the scan base (u8 *scan_map = Data_03001810; instead of = map;), complete-unit canonical",
+   "result": "Identical 120/124 bytes and 56 differing halfwords: GCSE still unifies the second symbol reference with the first and collapses the scan/store base distinction, so the PRE-inserted copy does not survive as hoped. Unlike the rejected raw-address diagnostic this adds no duplicate pool entry, but it changes nothing under canonical flags."
+  }
+ ]
 }

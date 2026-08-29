@@ -1,47 +1,46 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x0808df1c",
-  "name": "BattleEffect_SelectNearbyTargetObject",
-  "status": "measured-draft",
-  "owner_bytes": 348,
-  "executable_owner_bytes": 348,
-  "candidate_bytes": 344,
-  "differing_halfwords": 107,
-  "wrong_instructions": 82,
-  "structural_score": {
-    "match_percent": 94.885544,
-    "instructions": 167,
-    "unchanged": 132,
-    "argument_mismatches": 26,
-    "opcode_mismatches": 0,
-    "replacements": 5,
-    "deletions": 3,
-    "insertions": 1
-  },
-  "family": {
-    "exact_c_dispatcher": "main:08096810",
-    "exact_c_dispatcher_bytes": 336,
-    "aggregate_reusable_bytes": 684
-  },
-  "cross_edition": {
-    "core_bytes": 316,
-    "core_diff_bytes": 0,
-    "core_identical": true,
-    "starts": {
-      "ja": "0x08084f1c",
-      "en": "0x0808df1c",
-      "de": "0x08091524",
-      "es": "0x08092f24",
-      "fr": "0x08092f24",
-      "it": "0x0808df24"
-    }
-  },
-  "notes": [
-    "Complete typed nearby-target selector used by the exact-C battle-effect dispatcher for battle mode 9. It scans object IDs 0 through 66, rejects hidden or vertically distant objects, measures wrapped fixed-point X/Z distance, applies the flagged-object distance adjustment, and retains the closest object within the mode-dependent facing cone.",
-    "The readable model compiles to 344 bytes against the exact 348-byte owner. Relocation-aware structural comparison is 94.89 percent with no opcode mismatches; the remaining register-allocation and four-byte scheduling deficit is broad enough that this draft claims zero bytes.",
-    "Independent all-six matching proves a unique 316-byte normalized core in JA, EN, DE, ES, FR, and IT. Six call relocations and two literal fields account for the excluded fields; every edition has zero core differences.",
-    "Together with the exact 336-byte RunBattleEffect dispatcher, the recovered producer/consumer family covers 684 executable bytes and establishes reusable object layout, filtering, fixed-point distance, and angle-cone semantics.",
-    "Recovered only from retained GS1 assembly, local exact-C dispatcher and fixed-point motion analogues, the approved compiler, and the six local GS1 editions. No GS2 or external source was used."
-  ]
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x0808df1c",
+ "status": "measured-draft",
+ "owner_bytes": 348,
+ "executable_owner_bytes": 348,
+ "candidate_bytes": 344,
+ "differing_halfwords": 107,
+ "wrong_instructions": 82,
+ "structural_score": {
+  "match_percent": 94.885544,
+  "instructions": 167,
+  "unchanged": 132,
+  "argument_mismatches": 26,
+  "opcode_mismatches": 0,
+  "replacements": 5,
+  "deletions": 3,
+  "insertions": 1
+ },
+ "family": {
+  "exact_c_dispatcher": "main:08096810",
+  "exact_c_dispatcher_bytes": 336,
+  "aggregate_reusable_bytes": 684
+ },
+ "cross_edition": {
+  "core_bytes": 316,
+  "core_diff_bytes": 0,
+  "core_identical": true,
+  "starts": {
+   "ja": "0x08084f1c",
+   "en": "0x0808df1c",
+   "de": "0x08091524",
+   "es": "0x08092f24",
+   "fr": "0x08092f24",
+   "it": "0x0808df24"
+  }
+ },
+ "notes": [
+  "Complete typed nearby-target selector used by the exact-C battle-effect dispatcher for battle mode 9. It scans object IDs 0 through 66, rejects hidden or vertically distant objects, measures wrapped fixed-point X/Z distance, applies the flagged-object distance adjustment, and retains the closest object within the mode-dependent facing cone.",
+  "The readable model compiles to 344 bytes against the exact 348-byte owner. Relocation-aware structural comparison is 94.89 percent with no opcode mismatches; the remaining register-allocation and four-byte scheduling deficit is broad enough that this draft claims zero bytes.",
+  "Independent all-six matching proves a unique 316-byte normalized core in JA, EN, DE, ES, FR, and IT. Six call relocations and two literal fields account for the excluded fields; every edition has zero core differences.",
+  "Together with the exact 336-byte RunBattleEffect dispatcher, the recovered producer/consumer family covers 684 executable bytes and establishes reusable object layout, filtering, fixed-point distance, and angle-cone semantics.",
+  "Recovered only from retained GS1 assembly, local exact-C dispatcher and fixed-point motion analogues, the approved compiler, and the six local GS1 editions. No GS2 or external source was used."
+ ]
 }

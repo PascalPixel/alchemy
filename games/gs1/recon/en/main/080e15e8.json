@@ -1,0 +1,42 @@
+{
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x080e15e8",
+ "status": "mapped",
+ "measured": "2026-08-29",
+ "map": {
+  "head": "0x080e15e8",
+  "head_symbol": "FunctionHead_080e15e8",
+  "head_file": "games/gs1/asm/080e15e8.s",
+  "head_prologue": "push {r5,r6,r7,lr}; mov r7,r11; mov r6,r10; mov r5,r9; push {r5,r6,r7}; mov r7,r8; push {r7}; (sub sp, then setup) -- full r8-r11 save.",
+  "true_epilogue": {
+   "file": "games/gs1/asm/080e21e8.s",
+   "note": "Ends `... bl sub_08009038 (loop) / bl sub_080cdbc0 / add sp, #336 / pop {r3,r5,r6,r7} / mov r8,r3 / mov r9,r5 / mov r10,r6 / mov r11,r7 / pop {r5,r6,r7} / pop {r0} / bx r0`. 336-byte frame, four-high-register restore, sub_080cdbc0 cleanup call matching the shared idiom seen in 080be378/080d765c/080ec100/080e47b8/080f4168. This is the sole real epilogue."
+  },
+  "span": {
+   "start": "0x080e15e8",
+   "end_exclusive": "0x080e2538",
+   "size_bytes": 3920,
+   "derivation": "end = start of next asm file games/gs1/asm/080e2538.s, immediately following 080e21e8.s which owns the epilogue. size = 0x080e2538 - 0x080e15e8 = 0xf50 = 3920."
+  },
+  "member_regions_in_order": [
+   {"addr": "0x080e15e8", "symbol": "FunctionHead_080e15e8", "file": "games/gs1/asm/080e15e8.s", "role": "real prologue + setup, in-file literal pool"},
+   {"addr": "0x080e1724", "symbol": "Fragment_080e1724", "file": "games/gs1/asm/080e1724.s", "role": "middle fragment, header comment: '親関数の中間断片'"},
+   {"addr": "0x080e17c4", "symbol": "Continuation_080e17c4", "file": "games/gs1/asm/080e17c4.s", "role": "continuation through an indirect-call loop tail (header: '間接演算呼出し後のループ末尾までを同一ファイルに保持'); contains an internal `mov r12, pc / bx r7` long-branch veneer mid-body; ends on an internal `bne` that falls straight through into 080e1a48 with no explicit branch"},
+   {"addr": "0x080e1a48", "symbol": "Fragment_080e1a48", "file": "games/gs1/asm/080e1a48.s", "role": "internal fragment carrying the parent's frame/high registers forward, header: '親関数のスタック枠と高位レジスタを引き継ぐ内部断片'"},
+   {"addr": "0x080e1acc", "symbol": "Region_080e1acc", "file": "games/gs1/asm/080e1acc.s", "role": "call-graph-reached prologue-less region"},
+   {"addr": "0x080e1df8", "symbol": "Region_080e1df8", "file": "games/gs1/asm/080e1df8.s", "role": "call-graph-reached prologue-less region"},
+   {"addr": "0x080e21e8", "symbol": "Region_080e21e8", "file": "games/gs1/asm/080e21e8.s", "role": "converging tail ending in the real, shared epilogue"}
+  ]
+ },
+ "domain_evidence": [
+  "080e17c4's mid-body `mov r12, pc / bx r7` is the exact 'inter-region veneer' pattern named by CONTRIBUTING.md's Split functions section as the compiler's own long-branch mechanism -- direct structural confirmation of a single split function rather than several call sites.",
+  "080e1a48's header comment explicitly states the following region shares the parent's stack frame and high registers ('親関数のスタック枠と高位レジスタを引き継ぐ'), and its own body never pushes/pops -- consistent with being mid-function, not a callee.",
+  "sub_080cdbc0 in the epilogue matches the shared per-call finalizer idiom already noted across 080be378/080d765c/080ec100/080e47b8/080f4168, reinforcing that all of these large split dispatch functions in the 080d7xxx-080f6xxx range belong to one subsystem (likely battle/menu related given the earlier-adopted 080be378's confirmed battle-ability-resolution domain)."
+ ],
+ "scoring_command": "out/cargo-target/release/compiler candidate-show games/gs1/recon/en/main/080e15e8.c --owner 080e15e8 --size 3920",
+ "notes": [
+  "Map only, per task scope -- no C source drafted, no translation-units.json edited.",
+  "080e17c4 -> 080e1a48 is a physical fall-through (no branch instruction crosses the boundary); verified by the preceding file's last instruction being a conditional `bne` to an internal label rather than any address touching 080e1a48."
+ ]
+}

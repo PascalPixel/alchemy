@@ -1,21 +1,35 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x0808d5dc",
-  "name": "BattleEffect_RunDescriptorAction",
-  "status": "measured-draft",
-  "owner_bytes": 508,
-  "executable_owner_bytes": 506,
-  "candidate_bytes": 476,
-  "differing_halfwords": 242,
-  "wrong_instructions": 158,
-  "cross_edition": {
-    "relocation_normalized_core_bytes": 382,
-    "core_diff_bytes": 0,
-    "core_identical": true,
-    "starts": {"ja":"0x080845dc","en":"0x0808d5dc","de":"0x08090be4","es":"0x080925e4","fr":"0x080925e4","it":"0x0808d5e4"}
-  },
-  "domain": "Selects an action/effect descriptor, runs its immediate or scripted result, and updates the associated battle-action object and special selected-action state.",
-  "bounded_search": {"mode":"screen-only","attempted":0,"exact":false,"reason":"The complete candidate is 32 bytes short and the 158-instruction residual spans the whole orchestration path."},
-  "notes": ["All 382 normalized core bytes are identical across the six approved GS1 editions.", "The candidate jointly uses the recovered 0808d394 and 0808d48c contracts and the exact 0808d5a4 wrapper constraint. The residual is broad, not permanent-assembly quality, and claims zero DONE bytes."]
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x0808d5dc",
+ "status": "measured-draft",
+ "owner_bytes": 508,
+ "executable_owner_bytes": 506,
+ "candidate_bytes": 476,
+ "differing_halfwords": 242,
+ "wrong_instructions": 158,
+ "cross_edition": {
+  "relocation_normalized_core_bytes": 382,
+  "core_diff_bytes": 0,
+  "core_identical": true,
+  "starts": {
+   "ja": "0x080845dc",
+   "en": "0x0808d5dc",
+   "de": "0x08090be4",
+   "es": "0x080925e4",
+   "fr": "0x080925e4",
+   "it": "0x0808d5e4"
+  }
+ },
+ "domain": "Selects an action/effect descriptor, runs its immediate or scripted result, and updates the associated battle-action object and special selected-action state.",
+ "bounded_search": {
+  "mode": "screen-only",
+  "attempted": 0,
+  "exact": false,
+  "reason": "The complete candidate is 32 bytes short and the 158-instruction residual spans the whole orchestration path."
+ },
+ "notes": [
+  "All 382 normalized core bytes are identical across the six approved GS1 editions.",
+  "The candidate jointly uses the recovered 0808d394 and 0808d48c contracts and the exact 0808d5a4 wrapper constraint. The residual is broad, not permanent-assembly quality, and claims zero DONE bytes."
+ ]
 }

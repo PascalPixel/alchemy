@@ -1,56 +1,55 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x080c00d8",
-  "name": "BattlePresentation_BuildTilemap",
-  "status": "measured-draft",
-  "owner_bytes": 88,
-  "executable_owner_bytes": 88,
-  "candidate_bytes": 84,
-  "differing_halfwords": 42,
-  "wrong_instructions": 32,
-  "cross_edition": {
-    "object_bytes": 88,
-    "relocation_bytes": 12,
-    "literal_bytes": 16,
-    "relocation_normalized_core_bytes": 60,
-    "core_diff_bytes": 0,
-    "core_identical": true,
-    "starts": {
-      "ja": "0x080b70d8",
-      "en": "0x080c00d8",
-      "de": "0x080c26f0",
-      "es": "0x080c40f0",
-      "fr": "0x080c40f0",
-      "it": "0x080c00f0"
-    }
-  },
-  "domain": "Builds the battle-presentation tilemap and clears its surrounding map regions before upload.",
-  "expressed": [
-    "clears the first 256-byte region to the empty tile value",
-    "fills the following 128 bytes with the shared boundary tile pair",
-    "writes 240 sequential paired tile indices",
-    "clears the trailing 640-byte region using the shared fill source"
-  ],
-  "bounded_search": {
-    "mode": "080bbb0c-family-calibration",
-    "safe_attempted": 5000,
-    "classic_attempted": 10000,
-    "exact": false,
-    "best_safe": "84 candidate bytes, 42 differing halfwords, and 32 wrong instructions; structural alignment improved without a linked-byte improvement",
-    "best_classic_unverified": "84 candidate bytes and 40 differing halfwords; a transient candidate reached 39, but no exact candidate appeared and classic nonzero output is not semantic evidence",
-    "reason": "Both bounded axes remained four bytes short and broad; more volume without a new source model is closed."
-  },
-  "notes": [
-    "Independent object analysis bounds this leaf at 88 executable bytes and proves all 60 relocation-normalized core bytes identical across the six approved GS1 editions.",
-    "An integer cursor and assembly-shaped do-while loop reduce structural mismatches while keeping the source readable, but the remaining allocation and literal schedule is not localized.",
-    "No full search or permanent classification was warranted, and zero DONE bytes are claimed.",
-    "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, the recovered palette caller, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used.",
-    "Supplying the exact preprocessed 080bbb0c source as m2c context produced the same 52.62162% structural draft as the candidate's own context; this owner has no declaration or type relationship that the large battle resolver can transfer.",
-    "A 5,000-candidate safe walk and a 10,000-candidate classic exact-only walk biased by 080bbb0c produced no exact or exact-extent candidate. No generated source replaced the readable draft.",
-    "2026-08-27: Both bl targets are veneer slots, not real functions -- 0x080072f8 is 0x080072e4 + 4*5, the __call_via_r5 entry, and 0x080072f0 is 0x080072e4 + 4*3, the __call_via_r3 entry (games/gs1/asm/080072e4.s). Address 0x03000168 is the established relocated-IWRAM-fill routine (destination, size, value), already named in the sibling owners at 0x080c00c4 (games/gs1/src/unidentified/main/battle/battle_owner_47.c, 20 bytes before this one), 0x08016744, and 0x08016728, all of which pass it through the r3 slot as a bare trailing literal per the fixed_sqrt.c precedent -- exactly what the current draft's closing Func_080072f0(cursor, 0x280, 0x03ff03ff, 0x03000168) already does, and that part is not in question.",
-    "The reference's mystery early 'ldr r5, [pc, #64]' (0x03000168 loaded once, kept live across both Func_080072f8 calls with no visible r5 read afterward, per CONTRIBUTING's own catalog item 4) is that same IWRAM-fill address being called through r5 for both calls -- catalog item 4 requires this to be modeled as a genuine indirect call through a function-pointer local, since r5 is beyond r3 and this compiler never assigns an AAPCS argument past r3.",
-    "Tried three source shapes for that r5-slot call: a single named IwramFill local reused for both fill() calls; two bare inline ((IwramFill)0x03000168)(...) casts with no named local; and two independently-declared locals (fill1/fill2) each initialized to the same cast. All three produced byte-identical (worse) output: candidate grows to 96 bytes / 47 differing halfwords / 42 wrong instructions, because the compiler puts the fill-pointer pseudo in r8 rather than r5 or r6, forcing an extra mov r8,r3 / push / pop r8 relay through r3 that the reference never has -- despite only two callee-saved values (destination, fill) actually being live at once, well within r4-r7. Register choice was identical across all three phrasings, which rules out a phrasing-level fix and matches this session's already-documented local-alloc.c qty_compare tie-break dead end (catalog item 2) from a new angle: the register a live-across-a-call value lands in is not steerable by re-wording the C source. Not pursued further -- would require forcing register assignment, which CONTRIBUTING.md prohibits. Reverted to the committed 84-byte / 42-differing-halfword draft; the phantom-direct-call model for Func_080072f8 remains semantically imprecise (no source-level r5 load) but is the better-scoring and non-regressing option on hand.",
-    "This does narrow the search: a working fix, if one exists, needs to make GCC choose r5 (or r6) over r8 for a value that must survive two intervening `bl`s -- e.g. by changing what else is simultaneously live at that point in the function, not by changing how the fill pointer itself is spelled. Left unexplored given this owner's small-leaf effort budget."
-  ]
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x080c00d8",
+ "status": "measured-draft",
+ "owner_bytes": 88,
+ "executable_owner_bytes": 88,
+ "candidate_bytes": 84,
+ "differing_halfwords": 42,
+ "wrong_instructions": 32,
+ "cross_edition": {
+  "object_bytes": 88,
+  "relocation_bytes": 12,
+  "literal_bytes": 16,
+  "relocation_normalized_core_bytes": 60,
+  "core_diff_bytes": 0,
+  "core_identical": true,
+  "starts": {
+   "ja": "0x080b70d8",
+   "en": "0x080c00d8",
+   "de": "0x080c26f0",
+   "es": "0x080c40f0",
+   "fr": "0x080c40f0",
+   "it": "0x080c00f0"
+  }
+ },
+ "domain": "Builds the battle-presentation tilemap and clears its surrounding map regions before upload.",
+ "expressed": [
+  "clears the first 256-byte region to the empty tile value",
+  "fills the following 128 bytes with the shared boundary tile pair",
+  "writes 240 sequential paired tile indices",
+  "clears the trailing 640-byte region using the shared fill source"
+ ],
+ "bounded_search": {
+  "mode": "080bbb0c-family-calibration",
+  "safe_attempted": 5000,
+  "classic_attempted": 10000,
+  "exact": false,
+  "best_safe": "84 candidate bytes, 42 differing halfwords, and 32 wrong instructions; structural alignment improved without a linked-byte improvement",
+  "best_classic_unverified": "84 candidate bytes and 40 differing halfwords; a transient candidate reached 39, but no exact candidate appeared and classic nonzero output is not semantic evidence",
+  "reason": "Both bounded axes remained four bytes short and broad; more volume without a new source model is closed."
+ },
+ "notes": [
+  "Independent object analysis bounds this leaf at 88 executable bytes and proves all 60 relocation-normalized core bytes identical across the six approved GS1 editions.",
+  "An integer cursor and assembly-shaped do-while loop reduce structural mismatches while keeping the source readable, but the remaining allocation and literal schedule is not localized.",
+  "No full search or permanent classification was warranted, and zero DONE bytes are claimed.",
+  "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, the recovered palette caller, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used.",
+  "Supplying the exact preprocessed 080bbb0c source as m2c context produced the same 52.62162% structural draft as the candidate's own context; this owner has no declaration or type relationship that the large battle resolver can transfer.",
+  "A 5,000-candidate safe walk and a 10,000-candidate classic exact-only walk biased by 080bbb0c produced no exact or exact-extent candidate. No generated source replaced the readable draft.",
+  "2026-08-27: Both bl targets are veneer slots, not real functions -- 0x080072f8 is 0x080072e4 + 4*5, the __call_via_r5 entry, and 0x080072f0 is 0x080072e4 + 4*3, the __call_via_r3 entry (games/gs1/asm/080072e4.s). Address 0x03000168 is the established relocated-IWRAM-fill routine (destination, size, value), already named in the sibling owners at 0x080c00c4 (games/gs1/src/unidentified/main/battle/battle_owner_47.c, 20 bytes before this one), 0x08016744, and 0x08016728, all of which pass it through the r3 slot as a bare trailing literal per the fixed_sqrt.c precedent -- exactly what the current draft's closing Func_080072f0(cursor, 0x280, 0x03ff03ff, 0x03000168) already does, and that part is not in question.",
+  "The reference's mystery early 'ldr r5, [pc, #64]' (0x03000168 loaded once, kept live across both Func_080072f8 calls with no visible r5 read afterward, per CONTRIBUTING's own catalog item 4) is that same IWRAM-fill address being called through r5 for both calls -- catalog item 4 requires this to be modeled as a genuine indirect call through a function-pointer local, since r5 is beyond r3 and this compiler never assigns an AAPCS argument past r3.",
+  "Tried three source shapes for that r5-slot call: a single named IwramFill local reused for both fill() calls; two bare inline ((IwramFill)0x03000168)(...) casts with no named local; and two independently-declared locals (fill1/fill2) each initialized to the same cast. All three produced byte-identical (worse) output: candidate grows to 96 bytes / 47 differing halfwords / 42 wrong instructions, because the compiler puts the fill-pointer pseudo in r8 rather than r5 or r6, forcing an extra mov r8,r3 / push / pop r8 relay through r3 that the reference never has -- despite only two callee-saved values (destination, fill) actually being live at once, well within r4-r7. Register choice was identical across all three phrasings, which rules out a phrasing-level fix and matches this session's already-documented local-alloc.c qty_compare tie-break dead end (catalog item 2) from a new angle: the register a live-across-a-call value lands in is not steerable by re-wording the C source. Not pursued further -- would require forcing register assignment, which CONTRIBUTING.md prohibits. Reverted to the committed 84-byte / 42-differing-halfword draft; the phantom-direct-call model for Func_080072f8 remains semantically imprecise (no source-level r5 load) but is the better-scoring and non-regressing option on hand.",
+  "This does narrow the search: a working fix, if one exists, needs to make GCC choose r5 (or r6) over r8 for a value that must survive two intervening `bl`s -- e.g. by changing what else is simultaneously live at that point in the function, not by changing how the fill pointer itself is spelled. Left unexplored given this owner's small-leaf effort budget."
+ ]
 }

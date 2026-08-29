@@ -1,100 +1,106 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x08095c08",
-  "name": "BattleEffect_UpdatePhasedRadialParticle",
-  "status": "proven-retained-assembly",
-  "owner_bytes": 456,
-  "executable_owner_bytes": 456,
-  "candidate_bytes": 456,
-  "differing_halfwords": 11,
-  "wrong_instructions": 0,
-  "classification": "battle_effect_compiler_scheduling_mismatch",
-  "resolved_asm_classification": {
-    "kind": "battle_effect_compiler_scheduling_mismatch",
-    "retention": "keep_structured_asm",
-    "confidence": "proven"
-  },
-  "cross_edition": {
-    "editions": ["ja", "en", "de", "es", "fr", "it"],
-    "relocation_normalized_core_bytes": 396,
-    "core_identical": true,
-    "starts": {
-      "ja": "0x0808cbf0",
-      "en": "0x08095c08",
-      "de": "0x080992a4",
-      "es": "0x0809ac94",
-      "fr": "0x0809ac94",
-      "it": "0x08095c94"
-    }
-  },
-  "domain": "Updates one of the 24 caller-created effect slots through radial movement, a hidden delay, a second radial target, and final cleanup.",
-  "expressed": [
-    "initial radial target selection from the slot origin",
-    "copying the linked source object's two mode bits to the particle object",
-    "target-arrival state transitions and the 40-frame callback delay",
-    "hiding and restoring the particle before targeting the source position",
-    "the state-five cleanup path and both locally evidenced audio cues"
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x08095c08",
+ "status": "proven-retained-assembly",
+ "owner_bytes": 456,
+ "executable_owner_bytes": 456,
+ "candidate_bytes": 456,
+ "differing_halfwords": 11,
+ "wrong_instructions": 0,
+ "classification": "battle_effect_compiler_scheduling_mismatch",
+ "resolved_asm_classification": {
+  "kind": "battle_effect_compiler_scheduling_mismatch",
+  "retention": "keep_structured_asm",
+  "confidence": "proven"
+ },
+ "cross_edition": {
+  "editions": [
+   "ja",
+   "en",
+   "de",
+   "es",
+   "fr",
+   "it"
   ],
-  "bounded_search": {
-    "safe_heat_walks": {
-      "runs": 4,
-      "requested_candidates_per_run": 5000,
-      "attempted_candidates": 20000,
-      "compile_failures": 0,
-      "exact_candidates": 0,
-      "best_differing_halfwords": 11
-    },
-    "classic_exact_only_heat_walk": {
-      "requested_candidates": 10000,
-      "attempted_candidates": 10000,
-      "compile_failures": 142,
-      "exact_candidates": 0,
-      "best_differing_halfwords": 7,
-      "best_wrong_instructions": 0,
-      "best_shape": "a do-while-zero spelling around the origin-X assignment"
-    }
+  "relocation_normalized_core_bytes": 396,
+  "core_identical": true,
+  "starts": {
+   "ja": "0x0808cbf0",
+   "en": "0x08095c08",
+   "de": "0x080992a4",
+   "es": "0x0809ac94",
+   "fr": "0x0809ac94",
+   "it": "0x08095c94"
+  }
+ },
+ "domain": "Updates one of the 24 caller-created effect slots through radial movement, a hidden delay, a second radial target, and final cleanup.",
+ "expressed": [
+  "initial radial target selection from the slot origin",
+  "copying the linked source object's two mode bits to the particle object",
+  "target-arrival state transitions and the 40-frame callback delay",
+  "hiding and restoring the particle before targeting the source position",
+  "the state-five cleanup path and both locally evidenced audio cues"
+ ],
+ "bounded_search": {
+  "safe_heat_walks": {
+   "runs": 4,
+   "requested_candidates_per_run": 5000,
+   "attempted_candidates": 20000,
+   "compile_failures": 0,
+   "exact_candidates": 0,
+   "best_differing_halfwords": 11
   },
-  "compiler_axes": {
-    "tied_at_readable_baseline": [
-      "routed",
-      "gcc296",
-      "-fno-schedule-insns",
-      "-fno-gcse",
-      "-fno-rerun-cse-after-loop",
-      "-fno-cse-follow-jumps",
-      "-fno-cse-skip-blocks",
-      "-fno-strength-reduce",
-      "-O3"
-    ],
-    "regressed": [
-      "-fno-schedule-insns2",
-      "-fno-regmove",
-      "-fno-expensive-optimizations",
-      "old-agbcc"
-    ]
-  },
-  "residual": [
-    {
-      "scope": "state-zero transition into linked-object mode-bit copying",
-      "candidate": "increments and stores the state byte before copying the source pointer from r9 to r1",
-      "reference": "copies the source pointer first, then increments and stores the independent state byte",
-      "equivalence": "the register move neither reads nor writes the state pointer or state byte",
-      "resynchronization": "both streams have identical registers and memory before loading source->linked_object"
-    },
-    {
-      "scope": "state-two origin capture and object mode-bit clearing",
-      "candidate": "loads the object flag before materializing -13 and stores the masked flag before adding 71 to the independent effect pointer",
-      "reference": "materializes -13 before the independent object-flag load and forms effect+71 before storing the masked object flag",
-      "equivalence": "the swaps exchange only independent register work and an object-byte store with an address-only add; all values and memory writes are identical",
-      "resynchronization": "both streams match again before storing 4 to effect->flags"
-    }
+  "classic_exact_only_heat_walk": {
+   "requested_candidates": 10000,
+   "attempted_candidates": 10000,
+   "compile_failures": 142,
+   "exact_candidates": 0,
+   "best_differing_halfwords": 7,
+   "best_wrong_instructions": 0,
+   "best_shape": "a do-while-zero spelling around the origin-X assignment"
+  }
+ },
+ "compiler_axes": {
+  "tied_at_readable_baseline": [
+   "routed",
+   "gcc296",
+   "-fno-schedule-insns",
+   "-fno-gcse",
+   "-fno-rerun-cse-after-loop",
+   "-fno-cse-follow-jumps",
+   "-fno-cse-skip-blocks",
+   "-fno-strength-reduce",
+   "-O3"
   ],
-  "notes": [
-    "The readable reconstruction emits the complete 456-byte owner extent, all calls, branches, registers, memory operations, constants, and literal words. Only the two localized scheduling hunks differ.",
-    "The classic exact-only winner reduces the raw residual to seven halfwords without changing either hunk's semantics, but no searched ordinary-C source emits the retained order exactly.",
-    "Relocation-aware comparison of the independently assembled retained owner proves all 396 unmasked core bytes identical across the six GS1 editions.",
-    "The caller at 0x08095dd0 installs this callback on 24 effect slots and later advances those slots to states two and five; the name and domain do not infer an effect identity beyond that local behavior.",
-    "Recovered only from retained owner assembly, approved local GS1 ROMs, local callers and effect-slot types, and the approved compiler. No GS2 evidence or external game source was used."
+  "regressed": [
+   "-fno-schedule-insns2",
+   "-fno-regmove",
+   "-fno-expensive-optimizations",
+   "old-agbcc"
   ]
+ },
+ "residual": [
+  {
+   "scope": "state-zero transition into linked-object mode-bit copying",
+   "candidate": "increments and stores the state byte before copying the source pointer from r9 to r1",
+   "reference": "copies the source pointer first, then increments and stores the independent state byte",
+   "equivalence": "the register move neither reads nor writes the state pointer or state byte",
+   "resynchronization": "both streams have identical registers and memory before loading source->linked_object"
+  },
+  {
+   "scope": "state-two origin capture and object mode-bit clearing",
+   "candidate": "loads the object flag before materializing -13 and stores the masked flag before adding 71 to the independent effect pointer",
+   "reference": "materializes -13 before the independent object-flag load and forms effect+71 before storing the masked object flag",
+   "equivalence": "the swaps exchange only independent register work and an object-byte store with an address-only add; all values and memory writes are identical",
+   "resynchronization": "both streams match again before storing 4 to effect->flags"
+  }
+ ],
+ "notes": [
+  "The readable reconstruction emits the complete 456-byte owner extent, all calls, branches, registers, memory operations, constants, and literal words. Only the two localized scheduling hunks differ.",
+  "The classic exact-only winner reduces the raw residual to seven halfwords without changing either hunk's semantics, but no searched ordinary-C source emits the retained order exactly.",
+  "Relocation-aware comparison of the independently assembled retained owner proves all 396 unmasked core bytes identical across the six GS1 editions.",
+  "The caller at 0x08095dd0 installs this callback on 24 effect slots and later advances those slots to states two and five; the name and domain do not infer an effect identity beyond that local behavior.",
+  "Recovered only from retained owner assembly, approved local GS1 ROMs, local callers and effect-slot types, and the approved compiler. No GS2 evidence or external game source was used."
+ ]
 }

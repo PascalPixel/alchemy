@@ -582,27 +582,148 @@ L_080befb4_shared:
     }
 
     /*
-     * ---- per-target power-accumulation loop, address 0x080bf0ca in
-     * games/gs1/asm/080bef88.s -- guarded by `abilityId == 178`, iterating
-     * `(s8)tgt[1]` times over the per-target slot bytes at tgt+2.., calling
-     * Func_08077178(reqId, slotByte, abilityData->2, abilityData->3, 100)
-     * and writing the (byte-truncated) result to tgt+2+i+56. This is the
-     * block the domain notes call "per-target power accumulation"; it is
-     * reachable from the 0x080bf0b4 ability-id==178 gate, which in the
-     * retained assembly sits between the still-unmodeled buff/debuff
-     * classification table (0x080bf044) and the elemental-table lookup
-     * (0x080bf0f8) -- both left as the next increment, only this loop and
-     * its direct guard are wired in this pass.
+     * ---- buff/debuff classification (0x080befb4-0x080bf043) and the
+     * elemental-table / status-code / sub_080772b8 flag-bit tail
+     * (0x080bf044-0x080bf1a8), all standalone-assembled and objdumped from
+     * games/gs1/asm/080bef88.s against its real load address 0x080bef88 to
+     * get exact instruction offsets (see games/gs1/recon/en/main/080be378.json
+     * for the full worked-out addresses). This is the domain notes' "clamp/
+     * finalize" continuation reached from every sub_080bee00 convergence
+     * point -- `abilityData`/`abilityId`/`tgt` are each read many more times
+     * here, which is the register-pressure source the dossier named.
+     *
+     * Pool constants resolved directly from roms/gs1-en.gba, computed against
+     * this region's own load address (Region_080bef88 = 0x080bef88, and its
+     * assembled length is exactly its 608 owner_bytes with no room for a
+     * pool, so the pc-relative targets land in the gap right after):
+     *   0x080bf1e8 -> 0x0000ffff  (rand-mask literal, unrelated to this tail)
+     *   0x080bf1f0 -> 0x00000206 (518)  abilityId upper bound, elemental table
+     *   0x080bf1f4 -> 0x080c2da0        elemental power table (u32[], by abilityId)
+     *   0x080bf1f8 -> 0xfffff000        stack-count scaling additive term
+     *   0x080bf1fc -> 0x00000205 (517)  abilityId upper bound, status-code table
+     *   0x080bf200 -> 0x080c2b98        status-code override table (u8[], by abilityId)
+     *   0x080bf204 -> 0x00000129 (297)  req+297 charge-flag byte (same offset
+     *                                   value as the actor+297 flag used in
+     *                                   L_080bee08 above, but this file's own
+     *                                   sp+12 slot holds &req throughout, per
+     *                                   the region head's Func_080772f8(req[0])
+     *                                   usage, so it is modeled as req here)
      */
+L_080befb4_tail:
+    abilityData = Func_08077080(abilityId);
+    *(u32 *)(tgt + 80) = *((u8 *)abilityData + 2);
+    *(u32 *)(tgt + 88) = 0;
+    *(u32 *)(tgt + 76) = (u32)abilityId;
+    {
+        u8 kindByte = *((u8 *)abilityData + 3);
+        {
+            s32 capValue;
+            s32 stepValue;
+            if (kindByte == 65 || kindByte == 68) {
+                capValue = 153;
+            } else if (kindByte == 41 || kindByte == 43) {
+                capValue = 32;
+            } else if (kindByte == 42 || kindByte == 44) {
+                capValue = 64;
+            } else {
+                goto L_080bf044;
+            }
+            stepValue = (kindByte == 65 || kindByte == 41 || kindByte == 42) ? 1 : 2;
+            if ((Func_080771a0() & 0xff) < capValue) {
+                s8 stepCount = (s8)tgt[1];
+                s32 j;
+                for (j = 0; j < stepCount; j++) {
+                    tgt[30 + j] = (u8)(tgt[30 + j] + stepValue);
+                }
+            }
+            goto L_080bf0f8;
+        }
+    }
+
+L_080bf044:
+    {
+        u8 kindByte = *((u8 *)abilityData + 3);
+        if (kindByte >= 36 && kindByte <= 40) {
+            s32 capValue2;
+            switch (kindByte) {
+            case 36: capValue2 = 63; break;
+            case 37: capValue2 = 31; break;
+            case 38: capValue2 = 15; break;
+            case 39: capValue2 = 7; break;
+            default: capValue2 = 3; break;
+            }
+            if ((Func_080771a0() & capValue2) == 0) {
+                s8 stepCount2 = (s8)tgt[1];
+                s32 j;
+                for (j = 0; j < stepCount2; j++) {
+                    tgt[44 + j] = 2;
+                }
+            }
+        } else if (abilityId == 178) {
+            /*
+             * ---- per-target power-accumulation loop, address 0x080bf0ca --
+             * iterates `(s8)tgt[1]` times over the per-target slot bytes at
+             * tgt+2.., calling Func_08077178(actor->0, slotByte,
+             * abilityData->2, abilityData->3, 100) and writing the
+             * (byte-truncated) result to tgt+2+i+56. First arg confirmed as
+             * `actor` (not `req`) from the standalone objdump: this file's
+             * r10 holds `&actor`, dereferenced right before the ldrsh.
+             */
+            s8 count = (s8)tgt[1];
+            s32 i;
+            for (i = 0; i < count; i++) {
+                u8 slotByte = tgt[2 + i];
+                s32 result = Func_08077178(*(s16 *)((u8 *)actor + 0), slotByte,
+                                            *((u8 *)abilityData + 2),
+                                            *((u8 *)abilityData + 3), 100);
+                tgt[2 + i + 56] = (u8)result;
+            }
+        }
+    }
+
+L_080bf0f8:
+    if ((u16)abilityId <= 518) {
+        u32 elemVal = ((u32 *)0x080c2da0)[(u16)abilityId];
+        s8 stackedCount = (s8)tgt[30];
+        *(u32 *)(tgt + 88) = elemVal;
+        if (stackedCount > 1) {
+            *(u32 *)(tgt + 88) = elemVal + ((u32)stackedCount << 12) + 0xfffff000u;
+        }
+    }
+
+    {
+        s32 statusCode;
+        s32 wroteStatus = 0;
+        if ((u16)abilityId <= 517) {
+            u8 flagByte = ((const u8 *)0x080c2b98)[(u16)abilityId];
+            if (flagByte != 0) {
+                statusCode = flagByte;
+                wroteStatus = 1;
+            }
+        }
+        if (!wroteStatus) {
+            if (Func_080bd3c8(abilityId) != 0) {
+                statusCode = 3;
+            } else if (*(u32 *)(tgt + 88) != 0) {
+                if (((u8 *)req)[297] != 0) {
+                    statusCode = 3;
+                } else {
+                    statusCode = 8;
+                }
+            } else {
+                statusCode = 1;
+            }
+        }
+        *(s32 *)(tgt + 84) = statusCode;
+    }
+
+    if (Func_080772b8(*((u8 *)abilityData + 3)) != 0) {
+        *(u32 *)(tgt + 88) |= 0x10000;
+    }
+
     if (abilityId == 178) {
-        s8 count = (s8)tgt[1];
-        s32 i;
-        for (i = 0; i < count; i++) {
-            u8 slotByte = tgt[2 + i];
-            s32 result = Func_08077178(*(s16 *)(req + 0), slotByte,
-                                        *((u8 *)abilityData + 2),
-                                        *((u8 *)abilityData + 3), 100);
-            tgt[2 + i + 56] = (u8)result;
+        if ((s8)tgt[58] != 0) {
+            *(u32 *)(tgt + 88) |= 0x1000;
         }
     }
 
@@ -618,19 +739,22 @@ L_080bf1a8:
 
     /*
      * ---- shared internal veneer targets, addresses 0x080bec5c / 0x080bec8a
-     * / 0x080bee00 (all inside games/gs1/asm/080beb08.s) and 0x080bf1d4 /
-     * 0x080bf1d6 (inside games/gs1/asm/080bef88.s, immediately before the
-     * real epilogue). Their exact bodies are not fully isolated from the
-     * surrounding per-target power-accumulation loop
-     * (Region_080bef88's `.L_080bf0ca` loop, `sub_08077178`) in this pass;
-     * they currently fall straight through to the real epilogue via
-     * L_080bf1a8, which is structurally correct for "this ability
-     * resolution step is done" but does not yet perform the per-target
-     * power write the domain notes describe.
+     * (dead-unit tail-call / early-return, inside games/gs1/asm/080beb08.s)
+     * and 0x080bf1d4 / 0x080bf1d6 (inside games/gs1/asm/080bef88.s,
+     * immediately before the real epilogue -- confirmed by the standalone
+     * objdump to land right at the `movs r0,#0 / add sp,#48` epilogue
+     * entry, i.e. these two skip the L_080bf1a8 status-remap check
+     * entirely). None of these three read the per-target classification/
+     * lookup/status tail, so they fall straight to L_080bf1a8 as before.
+     * sub_080bee00 is different: the domain notes name it the "clamp/
+     * finalize" point that converges before the per-target power write, so
+     * it alone is routed into the newly-translated tail above instead.
      */
 L_080bec5c:
 L_080bec8a:
-L_080bee00:
 L_080bf1d6_shared:
     goto L_080bf1a8;
+
+L_080bee00:
+    goto L_080befb4_tail;
 }

@@ -1,45 +1,44 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x080049ac",
-  "name": "Render_ResetTransformState",
-  "status": "proven-permanent",
-  "owner_bytes": 60,
-  "executable_owner_bytes": 60,
-  "candidate_bytes": 64,
-  "differing_halfwords": 28,
-  "wrong_instructions": 34,
-  "cross_edition": {
-    "object_bytes": 60,
-    "relocation_normalized_core_bytes": 44,
-    "core_diff_bytes": 0,
-    "core_identical": true,
-    "starts": {
-      "ja": "0x080049ac",
-      "en": "0x080049ac",
-      "de": "0x080049dc",
-      "es": "0x08004a0c",
-      "fr": "0x080049bc",
-      "it": "0x080049ec"
-    }
-  },
-  "domain": "Allocates the render transform workspace, clears its active marker, and resets three four-word transform records to their identity scale.",
-  "expressed": [
-    "allocates two 48-byte render work records",
-    "publishes the allocation and clears the associated state word",
-    "initializes three transform records with 16.16 identity scale and zeroed remaining fields"
-  ],
-  "bounded_search": {
-    "mode": "screen-only",
-    "attempted": 0,
-    "exact": false,
-    "reason": "The complete readable candidate is four bytes long with 28 differing halfwords and misses the <=20-halfword admission gate."
-  },
-  "notes": [
-    "Independent object analysis bounds this leaf at 60 executable bytes and proves all 44 relocation-normalized core bytes identical across the six approved GS1 editions.",
-    "The remaining mismatch is dominated by allocation-address lifetime and the compiler's scalar store schedule instead of the original three four-register STMIA writes.",
-    "No full search or permanent classification was warranted, and zero DONE bytes are claimed.",
-    "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, the recovered battle-presentation caller, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used.",
-    "2026-08-27: reclassified measured-draft -> proven-permanent. This owner's retained assembly is already independently proven unreachable from ordinary C at the manifest/classification level: out/gs1-en/full/asm/manifest.json marks it kind=thumb_multiple_transfer_module, retention starting with keep_, confidence=proven, citing arm_md/arm_c line ranges showing GCC 2.96's Thumb backend can only emit a multi-register stmia paired immediately with a matching ldmia (movmem8b/movmem12b), and that ARM's standalone store_multiple/stmsi patterns are TARGET_ARM only -- a lone stmia from independently-computed register values (as this owner's reference has) is architecturally unreachable on this route, not an unexplored search space. This specific pattern was independently rediscovered by multiple dedicated passes this session (08004838, 0800bc48, 08003e10, 0808fecc, 080c0184, and partially 080e7404) before the shared manifest-level proof was found; recording the status correction here so future sessions don't repeat the rediscovery."
-  ]
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x080049ac",
+ "status": "proven-permanent",
+ "owner_bytes": 60,
+ "executable_owner_bytes": 60,
+ "candidate_bytes": 64,
+ "differing_halfwords": 28,
+ "wrong_instructions": 34,
+ "cross_edition": {
+  "object_bytes": 60,
+  "relocation_normalized_core_bytes": 44,
+  "core_diff_bytes": 0,
+  "core_identical": true,
+  "starts": {
+   "ja": "0x080049ac",
+   "en": "0x080049ac",
+   "de": "0x080049dc",
+   "es": "0x08004a0c",
+   "fr": "0x080049bc",
+   "it": "0x080049ec"
+  }
+ },
+ "domain": "Allocates the render transform workspace, clears its active marker, and resets three four-word transform records to their identity scale.",
+ "expressed": [
+  "allocates two 48-byte render work records",
+  "publishes the allocation and clears the associated state word",
+  "initializes three transform records with 16.16 identity scale and zeroed remaining fields"
+ ],
+ "bounded_search": {
+  "mode": "screen-only",
+  "attempted": 0,
+  "exact": false,
+  "reason": "The complete readable candidate is four bytes long with 28 differing halfwords and misses the <=20-halfword admission gate."
+ },
+ "notes": [
+  "Independent object analysis bounds this leaf at 60 executable bytes and proves all 44 relocation-normalized core bytes identical across the six approved GS1 editions.",
+  "The remaining mismatch is dominated by allocation-address lifetime and the compiler's scalar store schedule instead of the original three four-register STMIA writes.",
+  "No full search or permanent classification was warranted, and zero DONE bytes are claimed.",
+  "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, the recovered battle-presentation caller, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used.",
+  "2026-08-27: reclassified measured-draft -> proven-permanent. This owner's retained assembly is already independently proven unreachable from ordinary C at the manifest/classification level: out/gs1-en/full/asm/manifest.json marks it kind=thumb_multiple_transfer_module, retention starting with keep_, confidence=proven, citing arm_md/arm_c line ranges showing GCC 2.96's Thumb backend can only emit a multi-register stmia paired immediately with a matching ldmia (movmem8b/movmem12b), and that ARM's standalone store_multiple/stmsi patterns are TARGET_ARM only -- a lone stmia from independently-computed register values (as this owner's reference has) is architecturally unreachable on this route, not an unexplored search space. This specific pattern was independently rediscovered by multiple dedicated passes this session (08004838, 0800bc48, 08003e10, 0808fecc, 080c0184, and partially 080e7404) before the shared manifest-level proof was found; recording the status correction here so future sessions don't repeat the rediscovery."
+ ]
 }

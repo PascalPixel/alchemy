@@ -1,58 +1,57 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x080bad7c",
-  "name": "BattleTarget_SelectRandomPosition",
-  "status": "measured-draft",
-  "owner_bytes": 194,
-  "candidate_bytes": 194,
-  "differing_halfwords": 67,
-  "wrong_instructions": 60,
-  "classification": "battle-random-target-position",
-  "cross_edition": {
-    "starts": {
-      "ja": "0x080b1d7c",
-      "en": "0x080bad7c",
-      "de": "0x080bd394",
-      "es": "0x080bed94",
-      "fr": "0x080bed94",
-      "it": "0x080bad94"
-    },
-    "core_identical": false,
-    "normalized_core_diff_bytes_from_ja": {
-      "ja": 0,
-      "en": 2,
-      "de": 7,
-      "es": 4,
-      "fr": 4,
-      "it": 4
-    }
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x080bad7c",
+ "status": "measured-draft",
+ "owner_bytes": 194,
+ "candidate_bytes": 194,
+ "differing_halfwords": 67,
+ "wrong_instructions": 60,
+ "classification": "battle-random-target-position",
+ "cross_edition": {
+  "starts": {
+   "ja": "0x080b1d7c",
+   "en": "0x080bad7c",
+   "de": "0x080bd394",
+   "es": "0x080bed94",
+   "fr": "0x080bed94",
+   "it": "0x080bad94"
   },
-  "domain": "Builds an encoded target-position list from one side of the battle turn order and returns a uniformly selected entry, optionally rejecting vacant and defeated units.",
-  "expressed": [
-    "the normal-list path with vacant-unit and zero-HP rejection",
-    "the mirrored-list path with vacant-unit rejection",
-    "the 0x100 and 0x180 encoded turn-order positions",
-    "the empty-list zero result and uniform 16-bit random selection"
-  ],
-  "recovered_layout": {
-    "frame_bytes": 16,
-    "position_array_offset": 4,
-    "position_capacity": 6
-  },
-  "bounded_checks": [
-    "a direct typed-array loop emitted 198 bytes with 116 wrong instructions and unnecessary high-register saves",
-    "pointer-walking both lists recovered the exact 16-byte frame and r4/r5/r6/r7 register family, reducing the aligned residual to 90 wrong instructions",
-    "a hybrid pointer/indexed form regressed to 107 wrong instructions",
-    "2026-08-27: rewriting the normal-list loop from an if-guarded do-while to a plain while loop with the loop-continuation test read ahead into unit_id at the bottom of the body (rather than re-testing *entry) eliminated the compiler's loop-carried value-forwarding artifact (a redundant unsigned ldrh plus manual lsls/asrs sign-extend on every iteration) for that loop, and also shrank candidate_bytes from 198 to exactly 194 (matching owner_bytes) as a side effect of the resulting register allocation; wrong_instructions fell 90 -> 80 from this change alone",
-    "2026-08-27: swapping the final selection multiply from `count * Random16()` to `Random16() * count` matched the reference's operand copy order (count copied into the accumulator register first) and dropped wrong_instructions 80 -> 60, differing_halfwords 69 -> 67",
-    "2026-08-27: the same while-loop-plus-read-ahead rewrite applied to the mirrored-list loop (with or without keeping its outer if-guard) consistently regressed wrong_instructions to 104+ and broke the otherwise-exact match on that loop's positions-pointer address computation (the sp+16-then-subtract-12 idiom); the mirrored loop's original if-guarded do-while, unmodified, remains strictly better and is retained",
-    "2026-08-27: the remaining 60 wrong instructions are almost entirely a single root cause -- the compiler keeps turn_order's dereferenced value in r3 (reusing the address-of-global scratch register) where the reference keeps it in r1 (treating r3 as a free scratch for immediate offsets throughout) -- which cascades into every downstream register choice; declaration-order changes, statement-order changes, and hoisting/duplicating index=0 were all tried and either had no effect or regressed, so this residual is register-allocation-level and no further permutation search is justified"
-  ],
-  "notes": [
-    "All six edition starts are proved, but this owner is not a constant-only all-six core: the normalized reference cores retain two to seven regional bytes of difference.",
-    "Retained assembly remains authoritative and this draft claims zero DONE bytes.",
-    "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, repository battle types and its direct caller, and the approved compiler. No GS2 source or data was inspected or changed.",
-    "2026-08-27: candidate_bytes now matches owner_bytes exactly (194) and wrong_instructions improved from 90 to 60 (differing_halfwords 96 -> 67) via two source-level changes: (1) the normal-list scan loop rewritten from if-guarded do-while to a while loop with the sentinel value read ahead into unit_id at the bottom of the loop body instead of re-testing *entry, and (2) the final random-index multiply reordered to `Random16() * count`. Score verified with: cargo run --offline --quiet --release --manifest-path tools/compiler/Cargo.toml -- candidate-show games/gs1/recon/en/main/080bad7c.c --owner 0x080bad7c --size 194 --align"
-  ]
+  "core_identical": false,
+  "normalized_core_diff_bytes_from_ja": {
+   "ja": 0,
+   "en": 2,
+   "de": 7,
+   "es": 4,
+   "fr": 4,
+   "it": 4
+  }
+ },
+ "domain": "Builds an encoded target-position list from one side of the battle turn order and returns a uniformly selected entry, optionally rejecting vacant and defeated units.",
+ "expressed": [
+  "the normal-list path with vacant-unit and zero-HP rejection",
+  "the mirrored-list path with vacant-unit rejection",
+  "the 0x100 and 0x180 encoded turn-order positions",
+  "the empty-list zero result and uniform 16-bit random selection"
+ ],
+ "recovered_layout": {
+  "frame_bytes": 16,
+  "position_array_offset": 4,
+  "position_capacity": 6
+ },
+ "bounded_checks": [
+  "a direct typed-array loop emitted 198 bytes with 116 wrong instructions and unnecessary high-register saves",
+  "pointer-walking both lists recovered the exact 16-byte frame and r4/r5/r6/r7 register family, reducing the aligned residual to 90 wrong instructions",
+  "a hybrid pointer/indexed form regressed to 107 wrong instructions",
+  "2026-08-27: rewriting the normal-list loop from an if-guarded do-while to a plain while loop with the loop-continuation test read ahead into unit_id at the bottom of the body (rather than re-testing *entry) eliminated the compiler's loop-carried value-forwarding artifact (a redundant unsigned ldrh plus manual lsls/asrs sign-extend on every iteration) for that loop, and also shrank candidate_bytes from 198 to exactly 194 (matching owner_bytes) as a side effect of the resulting register allocation; wrong_instructions fell 90 -> 80 from this change alone",
+  "2026-08-27: swapping the final selection multiply from `count * Random16()` to `Random16() * count` matched the reference's operand copy order (count copied into the accumulator register first) and dropped wrong_instructions 80 -> 60, differing_halfwords 69 -> 67",
+  "2026-08-27: the same while-loop-plus-read-ahead rewrite applied to the mirrored-list loop (with or without keeping its outer if-guard) consistently regressed wrong_instructions to 104+ and broke the otherwise-exact match on that loop's positions-pointer address computation (the sp+16-then-subtract-12 idiom); the mirrored loop's original if-guarded do-while, unmodified, remains strictly better and is retained",
+  "2026-08-27: the remaining 60 wrong instructions are almost entirely a single root cause -- the compiler keeps turn_order's dereferenced value in r3 (reusing the address-of-global scratch register) where the reference keeps it in r1 (treating r3 as a free scratch for immediate offsets throughout) -- which cascades into every downstream register choice; declaration-order changes, statement-order changes, and hoisting/duplicating index=0 were all tried and either had no effect or regressed, so this residual is register-allocation-level and no further permutation search is justified"
+ ],
+ "notes": [
+  "All six edition starts are proved, but this owner is not a constant-only all-six core: the normalized reference cores retain two to seven regional bytes of difference.",
+  "Retained assembly remains authoritative and this draft claims zero DONE bytes.",
+  "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, repository battle types and its direct caller, and the approved compiler. No GS2 source or data was inspected or changed.",
+  "2026-08-27: candidate_bytes now matches owner_bytes exactly (194) and wrong_instructions improved from 90 to 60 (differing_halfwords 96 -> 67) via two source-level changes: (1) the normal-list scan loop rewritten from if-guarded do-while to a while loop with the sentinel value read ahead into unit_id at the bottom of the loop body instead of re-testing *entry, and (2) the final random-index multiply reordered to `Random16() * count`. Score verified with: cargo run --offline --quiet --release --manifest-path tools/compiler/Cargo.toml -- candidate-show games/gs1/recon/en/main/080bad7c.c --owner 0x080bad7c --size 194 --align"
+ ]
 }

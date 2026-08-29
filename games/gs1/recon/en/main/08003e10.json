@@ -1,46 +1,45 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x08003e10",
-  "name": "Runtime_CopyAndCallRoutine",
-  "status": "proven-permanent",
-  "owner_bytes": 72,
-  "candidate_bytes": 72,
-  "differing_halfwords": 13,
-  "wrong_instructions": 16,
-  "translation_unit": "video-dma-queue",
-  "compiler_route": "canonical-gcc296",
-  "algorithm": "Allocates a fixed-size executable buffer, DMA-copies a ROM routine into it, calls the copied routine through the r6 call veneer, then frees the buffer.",
-  "family": {
-    "siblings": [
-      "08002fb0",
-      "08005340",
-      "08005394",
-      "080053e8"
-    ],
-    "evidence": "Each sibling has the same allocator, three-word DMA setup, r6 indirect-call veneer, and free sequence; only its arguments, copy extent, or source vary."
-  },
-  "credible_shapes_tried": [
-    "volatile compound DMA-register aggregate assignment: canonical score unchanged",
-    "word-typed DMA-register aggregate assignment: canonical score unchanged",
-    "local three-word descriptor followed by assignment: emits a related LDMIA/STMIA copy, but adds a 12-byte stack object (80 versus 72 bytes; 36 differing halfwords)",
-    "volatile and ordinary word-pointer post-increment stores: retain the 72-byte extent but emit separate one-register stores rather than the reference grouped store",
-    "static inline three-scalar DMA publisher: retains scalar stores, grows to 76 versus 72 bytes, and scores 30 differing halfwords",
-    "shared StartDmaTransfer() inline helper (video_dma_family.h, same one 08003a7c uses), called both with pre-loaded locals in source/destination/control order and with inline literal arguments: both lower to three separate one-register str instructions, 72 bytes, 16 differing halfwords (worse than the plain field-store baseline, and still no stmia)",
-    "compound-literal aggregate store `*dma = (struct DmaChannel){src, dst, ctl};` through the same non-volatile pointer: byte-identical candidate output to the plain per-field store baseline (72 bytes, 13 differing halfwords) -- confirms the aggregate-assignment shapes above reduce to the same field-by-field lowering",
-    "reordering the three dma-> field assignment statements (destination-first, and other orderings) and moving the dma-pointer computation earlier: no effect on emitted bytes for the reachable orderings (byte-identical to baseline), or strictly worse when the dma pointer is forced to survive the Func_08004938 call (80 bytes, needs an extra callee-saved register)",
-    "2026-08-27: swapping the control expression to `0x84000000 | (size >> 2)` (matching the reference's compute-the-flag-constant-first order): no effect, still 13 differing halfwords",
-    "2026-08-27: re-tried destination-first field order independently (dma->destination before dma->source): confirmed byte-identical to baseline, corroborating the prior reordering finding",
-    "2026-08-27: introducing an explicit `void *savedArgument = argument;` local at function entry (to try to delay the compiler's r8 spill of the parameter until after the size literal load, matching the reference's mov-r8-before-ldr-r5 order): no effect on emitted bytes; the spill/literal-load ordering is not reachable through plausible C-level statement reordering"
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x08003e10",
+ "status": "proven-permanent",
+ "owner_bytes": 72,
+ "candidate_bytes": 72,
+ "differing_halfwords": 13,
+ "wrong_instructions": 16,
+ "translation_unit": "video-dma-queue",
+ "compiler_route": "canonical-gcc296",
+ "algorithm": "Allocates a fixed-size executable buffer, DMA-copies a ROM routine into it, calls the copied routine through the r6 call veneer, then frees the buffer.",
+ "family": {
+  "siblings": [
+   "08002fb0",
+   "08005340",
+   "08005394",
+   "080053e8"
   ],
-  "compiler_backend_evidence": "Read alchemy-gcc/agscc/gcc/config/arm/arm.c and arm.md directly: the STM-combining logic that could explain the reference's single `stmia r3!, {r0,r1,r2}` from three independently sourced words (store_multiple_sequence/emit_stm_seq, patterns *stmsi and *stmsi_postinc) is gated `TARGET_ARM` only (arm.md ~4990-5083); Thumb has no analogous peephole. The only Thumb multi-register store insns are movmem8b/movmem12b (thumb_expand_movstrqi, arm.md ~5111-5155; output routine thumb_output_move_mem_multiple, arm.c ~9425), and their asm template unconditionally emits a paired `ldmia`+`stmia` (a genuine block copy between two memory regions) as a single indivisible multi-set insn -- it can never emit the stmia half alone. This is independent of volatility (the ARM-only peephole additionally excludes MEM_VOLATILE_P operands, but that exclusion never even applies to Thumb, which has no candidate peephole regardless). Given no Thumb-reachable machine pattern in this compiler route folds three independently computed register values into one STM without a paired load, the reference's standalone grouped store looks structurally unemittable from ordinary field-store or aggregate-store C on this compiler; this matches, and mechanically explains, the 'canonical score unchanged' results recorded above.",
-  "remaining": "The reference groups the source, allocated destination, and control word in a writeback three-register store, then restores the DMA base. Canonical ordinary-C shapes instead keep those values in a nonconsecutive allocation or introduce a stack descriptor. GCC 2.96's Thumb block-copy path explains the local-descriptor LDMIA/STMIA result, but does not account for the reference's standalone grouped store. Compiler-source inspection (see compiler_backend_evidence) shows Thumb has no store-multiple peephole outside the always-paired LDMIA/STMIA block-copy pattern, so no ordinary field-store or aggregate-store C shape reaches the reference's lone STM. The shared original DMA-write source shape remains unknown; neither adoption nor a permanent compiler classification is justified from this evidence alone.",
-  "notes": [
-    "Measured only in the complete canonical video-dma-queue translation unit; no per-owner flags were used.",
-    "No inline assembly, fixed-register variable, compiler barrier, forbidden ABI, copied instruction bytes, or compiler modification was used.",
-    "This candidate claims zero DONE bytes.",
-    "2026-08-27: independently re-read alchemy-gcc/agscc/gcc/config/arm/arm.md (the actual source, not just the prior session's citation) and confirmed compiler_backend_evidence firsthand: *stmsi and *stmsi_postinc (arm.md ~5023-5083) are gated `TARGET_ARM`, and the store_multiple define_expand that would canonicalize independently-sourced register stores into one parallel STM set is also `TARGET_ARM`-only (~4999-5020). The only Thumb multi-register block insns, movmem8b/movmem12b (~5111-5155), require a MEM source at each offset (`(mem:SI (plus:SI (match_dup 1) (const_int N)))`), i.e. a genuine memory-to-memory copy -- they cannot fire when the three stored values are independently computed registers (source literal, allocated pointer, computed control word) as in this owner. This confirms the reference's standalone `stmia r3!, {r0,r1,r2}` is unreachable from any register-sourced C shape on this Thumb compiler route, independent of statement order or aggregate-vs-field-store style.",
-    "2026-08-27: tried three additional narrow variants beyond the prior session's list (control-expression operand order, an independent destination-first re-check, and an artificial early-argument-use local to influence the r8-spill/literal-load scheduling order) -- see credible_shapes_tried. None changed the score; candidate-show reproducibly reports candidate=72 reference=72 differing_halfwords=13 wrong_instructions=16 class=unemittable. Left games/gs1/recon/en/main/08003e10.c unchanged (byte-identical to the version already in the tree) since no variant beat the existing baseline.",
-    "2026-08-27: reclassified measured-draft -> proven-permanent. This owner's retained assembly is already independently proven unreachable from ordinary C at the manifest/classification level: out/gs1-en/full/asm/manifest.json marks it kind=thumb_multiple_transfer_module, retention starting with keep_, confidence=proven, citing arm_md/arm_c line ranges showing GCC 2.96's Thumb backend can only emit a multi-register stmia paired immediately with a matching ldmia (movmem8b/movmem12b), and that ARM's standalone store_multiple/stmsi patterns are TARGET_ARM only -- a lone stmia from independently-computed register values (as this owner's reference has) is architecturally unreachable on this route, not an unexplored search space. This specific pattern was independently rediscovered by multiple dedicated passes this session (08004838, 0800bc48, 08003e10, 0808fecc, 080c0184, and partially 080e7404) before the shared manifest-level proof was found; recording the status correction here so future sessions don't repeat the rediscovery."
-  ]
+  "evidence": "Each sibling has the same allocator, three-word DMA setup, r6 indirect-call veneer, and free sequence; only its arguments, copy extent, or source vary."
+ },
+ "credible_shapes_tried": [
+  "volatile compound DMA-register aggregate assignment: canonical score unchanged",
+  "word-typed DMA-register aggregate assignment: canonical score unchanged",
+  "local three-word descriptor followed by assignment: emits a related LDMIA/STMIA copy, but adds a 12-byte stack object (80 versus 72 bytes; 36 differing halfwords)",
+  "volatile and ordinary word-pointer post-increment stores: retain the 72-byte extent but emit separate one-register stores rather than the reference grouped store",
+  "static inline three-scalar DMA publisher: retains scalar stores, grows to 76 versus 72 bytes, and scores 30 differing halfwords",
+  "shared StartDmaTransfer() inline helper (video_dma_family.h, same one 08003a7c uses), called both with pre-loaded locals in source/destination/control order and with inline literal arguments: both lower to three separate one-register str instructions, 72 bytes, 16 differing halfwords (worse than the plain field-store baseline, and still no stmia)",
+  "compound-literal aggregate store `*dma = (struct DmaChannel){src, dst, ctl};` through the same non-volatile pointer: byte-identical candidate output to the plain per-field store baseline (72 bytes, 13 differing halfwords) -- confirms the aggregate-assignment shapes above reduce to the same field-by-field lowering",
+  "reordering the three dma-> field assignment statements (destination-first, and other orderings) and moving the dma-pointer computation earlier: no effect on emitted bytes for the reachable orderings (byte-identical to baseline), or strictly worse when the dma pointer is forced to survive the Func_08004938 call (80 bytes, needs an extra callee-saved register)",
+  "2026-08-27: swapping the control expression to `0x84000000 | (size >> 2)` (matching the reference's compute-the-flag-constant-first order): no effect, still 13 differing halfwords",
+  "2026-08-27: re-tried destination-first field order independently (dma->destination before dma->source): confirmed byte-identical to baseline, corroborating the prior reordering finding",
+  "2026-08-27: introducing an explicit `void *savedArgument = argument;` local at function entry (to try to delay the compiler's r8 spill of the parameter until after the size literal load, matching the reference's mov-r8-before-ldr-r5 order): no effect on emitted bytes; the spill/literal-load ordering is not reachable through plausible C-level statement reordering"
+ ],
+ "compiler_backend_evidence": "Read alchemy-gcc/agscc/gcc/config/arm/arm.c and arm.md directly: the STM-combining logic that could explain the reference's single `stmia r3!, {r0,r1,r2}` from three independently sourced words (store_multiple_sequence/emit_stm_seq, patterns *stmsi and *stmsi_postinc) is gated `TARGET_ARM` only (arm.md ~4990-5083); Thumb has no analogous peephole. The only Thumb multi-register store insns are movmem8b/movmem12b (thumb_expand_movstrqi, arm.md ~5111-5155; output routine thumb_output_move_mem_multiple, arm.c ~9425), and their asm template unconditionally emits a paired `ldmia`+`stmia` (a genuine block copy between two memory regions) as a single indivisible multi-set insn -- it can never emit the stmia half alone. This is independent of volatility (the ARM-only peephole additionally excludes MEM_VOLATILE_P operands, but that exclusion never even applies to Thumb, which has no candidate peephole regardless). Given no Thumb-reachable machine pattern in this compiler route folds three independently computed register values into one STM without a paired load, the reference's standalone grouped store looks structurally unemittable from ordinary field-store or aggregate-store C on this compiler; this matches, and mechanically explains, the 'canonical score unchanged' results recorded above.",
+ "remaining": "The reference groups the source, allocated destination, and control word in a writeback three-register store, then restores the DMA base. Canonical ordinary-C shapes instead keep those values in a nonconsecutive allocation or introduce a stack descriptor. GCC 2.96's Thumb block-copy path explains the local-descriptor LDMIA/STMIA result, but does not account for the reference's standalone grouped store. Compiler-source inspection (see compiler_backend_evidence) shows Thumb has no store-multiple peephole outside the always-paired LDMIA/STMIA block-copy pattern, so no ordinary field-store or aggregate-store C shape reaches the reference's lone STM. The shared original DMA-write source shape remains unknown; neither adoption nor a permanent compiler classification is justified from this evidence alone.",
+ "notes": [
+  "Measured only in the complete canonical video-dma-queue translation unit; no per-owner flags were used.",
+  "No inline assembly, fixed-register variable, compiler barrier, forbidden ABI, copied instruction bytes, or compiler modification was used.",
+  "This candidate claims zero DONE bytes.",
+  "2026-08-27: independently re-read alchemy-gcc/agscc/gcc/config/arm/arm.md (the actual source, not just the prior session's citation) and confirmed compiler_backend_evidence firsthand: *stmsi and *stmsi_postinc (arm.md ~5023-5083) are gated `TARGET_ARM`, and the store_multiple define_expand that would canonicalize independently-sourced register stores into one parallel STM set is also `TARGET_ARM`-only (~4999-5020). The only Thumb multi-register block insns, movmem8b/movmem12b (~5111-5155), require a MEM source at each offset (`(mem:SI (plus:SI (match_dup 1) (const_int N)))`), i.e. a genuine memory-to-memory copy -- they cannot fire when the three stored values are independently computed registers (source literal, allocated pointer, computed control word) as in this owner. This confirms the reference's standalone `stmia r3!, {r0,r1,r2}` is unreachable from any register-sourced C shape on this Thumb compiler route, independent of statement order or aggregate-vs-field-store style.",
+  "2026-08-27: tried three additional narrow variants beyond the prior session's list (control-expression operand order, an independent destination-first re-check, and an artificial early-argument-use local to influence the r8-spill/literal-load scheduling order) -- see credible_shapes_tried. None changed the score; candidate-show reproducibly reports candidate=72 reference=72 differing_halfwords=13 wrong_instructions=16 class=unemittable. Left games/gs1/recon/en/main/08003e10.c unchanged (byte-identical to the version already in the tree) since no variant beat the existing baseline.",
+  "2026-08-27: reclassified measured-draft -> proven-permanent. This owner's retained assembly is already independently proven unreachable from ordinary C at the manifest/classification level: out/gs1-en/full/asm/manifest.json marks it kind=thumb_multiple_transfer_module, retention starting with keep_, confidence=proven, citing arm_md/arm_c line ranges showing GCC 2.96's Thumb backend can only emit a multi-register stmia paired immediately with a matching ldmia (movmem8b/movmem12b), and that ARM's standalone store_multiple/stmsi patterns are TARGET_ARM only -- a lone stmia from independently-computed register values (as this owner's reference has) is architecturally unreachable on this route, not an unexplored search space. This specific pattern was independently rediscovered by multiple dedicated passes this session (08004838, 0800bc48, 08003e10, 0808fecc, 080c0184, and partially 080e7404) before the shared manifest-level proof was found; recording the status correction here so future sessions don't repeat the rediscovery."
+ ]
 }

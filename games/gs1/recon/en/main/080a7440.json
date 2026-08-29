@@ -1,52 +1,53 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x080a7440",
-  "name": "CharacterSelector_Run",
-  "status": "measured-draft",
-  "owner_bytes": 56,
-  "executable_owner_bytes": 54,
-  "alignment_bytes": 2,
-  "candidate": {
-    "routed": {
-      "candidate_bytes": 48,
-      "reference_bytes": 56,
-      "differing_halfwords": 26,
-      "wrong_instructions": 22
-    },
-    "best_bounded_axis": {
-      "family": "old-agbcc",
-      "flags": ["-fcall-used-r4"],
-      "candidate_bytes": 56,
-      "reference_bytes": 56,
-      "differing_halfwords": 14,
-      "wrong_instructions": 28
-    }
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x080a7440",
+ "status": "measured-draft",
+ "owner_bytes": 56,
+ "executable_owner_bytes": 54,
+ "alignment_bytes": 2,
+ "candidate": {
+  "routed": {
+   "candidate_bytes": 48,
+   "reference_bytes": 56,
+   "differing_halfwords": 26,
+   "wrong_instructions": 22
   },
-  "cross_edition": {
-    "code_and_pool_bytes": 54,
-    "relocation_bytes": 4,
-    "literal_bytes": 6,
-    "core_bytes": 44,
-    "core_identical": true,
-    "editions": {
-      "ja": "0x0809e384",
-      "en": "0x080a7440",
-      "de": "0x080aa2bc",
-      "es": "0x080abcb0",
-      "fr": "0x080abccc",
-      "it": "0x080a74bc"
-    }
-  },
-  "behavior": [
-    "clears the shared menu selected-slot field",
-    "runs the first character-selector interaction step",
-    "returns cancellation unchanged or the selected owner index"
-  ],
-  "remaining": "The old-agbcc family restores the full owner extent, but its best bounded route still has a broad 14-halfword register-allocation residual. The owner is neither exact nor eligible for narrow permanent classification.",
-  "notes": [
-    "The name is bounded by the sole local caller OpenCharacterSelector and the selected-slot and item-owner fields in InventoryMenuState.",
-    "All six editions have the same relocation-normalized instruction core; the trailing two bytes are owner alignment rather than executable instructions or pool data.",
-    "Recovered only from retained assembly, approved local GS1 ROMs, local types and callers, and the approved compiler. This candidate claims zero DONE bytes."
-  ]
+  "best_bounded_axis": {
+   "family": "old-agbcc",
+   "flags": [
+    "-fcall-used-r4"
+   ],
+   "candidate_bytes": 56,
+   "reference_bytes": 56,
+   "differing_halfwords": 14,
+   "wrong_instructions": 28
+  }
+ },
+ "cross_edition": {
+  "code_and_pool_bytes": 54,
+  "relocation_bytes": 4,
+  "literal_bytes": 6,
+  "core_bytes": 44,
+  "core_identical": true,
+  "editions": {
+   "ja": "0x0809e384",
+   "en": "0x080a7440",
+   "de": "0x080aa2bc",
+   "es": "0x080abcb0",
+   "fr": "0x080abccc",
+   "it": "0x080a74bc"
+  }
+ },
+ "behavior": [
+  "clears the shared menu selected-slot field",
+  "runs the first character-selector interaction step",
+  "returns cancellation unchanged or the selected owner index"
+ ],
+ "remaining": "The old-agbcc family restores the full owner extent, but its best bounded route still has a broad 14-halfword register-allocation residual. The owner is neither exact nor eligible for narrow permanent classification.",
+ "notes": [
+  "The name is bounded by the sole local caller OpenCharacterSelector and the selected-slot and item-owner fields in InventoryMenuState.",
+  "All six editions have the same relocation-normalized instruction core; the trailing two bytes are owner alignment rather than executable instructions or pool data.",
+  "Recovered only from retained assembly, approved local GS1 ROMs, local types and callers, and the approved compiler. This candidate claims zero DONE bytes."
+ ]
 }

@@ -1,24 +1,23 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x0809a294",
-  "name": "RunBattleEffect11",
-  "status": "measured-draft",
-  "owner_bytes": 304,
-  "candidate_bytes": 296,
-  "differing_halfwords": 132,
-  "wrong_instructions": 94,
-  "family": {
-    "structural_twin": "main:08098954",
-    "shared_tail": "main:08099da4",
-    "aggregate_reusable_bytes": 1872
-  },
-  "notes": [
-    "This is the complete typed twin of RunBattleEffect07. The two retained 304-byte owners have identical control flow and instruction shape, differing only at their two effect-specific constructor calls.",
-    "Compiling the same readable source template with Func_0809a3c4 substituted for Func_08098a84 produces the same 296-byte candidate, 132 differing halfwords, and 94 wrong instructions. The identical residual map proves that every remaining source-shape mismatch is family-invariant rather than effect-specific.",
-    "A joint loop-carrier rewrite using explicit pointer cursors, countdown do-while loops, and shared phase carriers regressed both siblings identically to 316 bytes, 141 differing halfwords, and 118 wrong instructions; it was reverted.",
-    "A bounded earliest-divergence matrix also found the origin declaration-order axis byte-neutral; the first invariant mismatch is register selection while reloading the origin after initialization, not an effect-specific callee or literal difference.",
-    "Relocation-aware six-ROM matching is ambiguous because the two sibling runners have zero-difference normalized cores. That confirms the family relationship but cannot establish a unique per-edition owner correspondence, so no regional or retained claim is made.",
-    "The candidate is broad and claims zero bytes. No GS2 evidence, external source, fixed-register variables, barriers, inline assembly, or compiler modification was used."
-  ]
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x0809a294",
+ "status": "measured-draft",
+ "owner_bytes": 304,
+ "candidate_bytes": 296,
+ "differing_halfwords": 132,
+ "wrong_instructions": 94,
+ "family": {
+  "structural_twin": "main:08098954",
+  "shared_tail": "main:08099da4",
+  "aggregate_reusable_bytes": 1872
+ },
+ "notes": [
+  "This is the complete typed twin of RunBattleEffect07. The two retained 304-byte owners have identical control flow and instruction shape, differing only at their two effect-specific constructor calls.",
+  "Compiling the same readable source template with Func_0809a3c4 substituted for Func_08098a84 produces the same 296-byte candidate, 132 differing halfwords, and 94 wrong instructions. The identical residual map proves that every remaining source-shape mismatch is family-invariant rather than effect-specific.",
+  "A joint loop-carrier rewrite using explicit pointer cursors, countdown do-while loops, and shared phase carriers regressed both siblings identically to 316 bytes, 141 differing halfwords, and 118 wrong instructions; it was reverted.",
+  "A bounded earliest-divergence matrix also found the origin declaration-order axis byte-neutral; the first invariant mismatch is register selection while reloading the origin after initialization, not an effect-specific callee or literal difference.",
+  "Relocation-aware six-ROM matching is ambiguous because the two sibling runners have zero-difference normalized cores. That confirms the family relationship but cannot establish a unique per-edition owner correspondence, so no regional or retained claim is made.",
+  "The candidate is broad and claims zero bytes. No GS2 evidence, external source, fixed-register variables, barriers, inline assembly, or compiler modification was used."
+ ]
 }

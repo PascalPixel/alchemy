@@ -1,32 +1,31 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x0800300c",
-  "name": "Runtime_InitIwramAndInterrupts",
-  "status": "proven-permanent",
-  "owner_bytes": 112,
-  "candidate_bytes": 114,
-  "differing_halfwords": 56,
-  "wrong_instructions": 64,
-  "translation_unit": "unknown",
-  "compiler_route": "canonical-gcc296",
-  "algorithm": "Disables interrupts, DMA-copies the 5120-byte relocated IWRAM payload (ROM 0x08000770 -> RAM 0x03000000), records the IWRAM base pointer at 0x03007ffc, DMA-copies the 56-byte (14-entry) interrupt-dispatch pointer table (ROM 0x08007320 -> RAM 0x030000e0), clears REG_DISPSTAT, arms REG_KEYCNT, enables VBlank+Keypad in REG_IE, then re-enables IME.",
-  "evidence": [
-    "DMA control words 0x84000500 (0x500 words = 5120 bytes) and 0x8400000e (0x0e words = 56 bytes) match, byte-for-byte, the 5120-byte 'relocated_iwram_payload' group and the 56-byte 'iwram_dispatch_pointers_08007320' table both recorded independently in games/gs1/asm/classification.json and games/gs1/asm/executable_gaps/index.json.",
-    "The dispatch table's 14 pointer values are 0x08003009 (Func_08003008 + thumb bit, i.e. runtime/dispatch/reserved_no_op_f.c) repeated, with one override to 0x08003811 (Input_InitKeyIrq + thumb bit) -- consistent with initializing a default-no-op interrupt dispatch table.",
-    "Register addresses 0x04000208/0x04000200/0x04000004/0x04000132 match REG_IME/REG_IE/REG_DISPSTAT/REG_KEYCNT as already named in games/gs1/recon/en/main/serial_runtime_family.h for sibling owners."
-  ],
-  "credible_shapes_tried": [
-    "plain per-field volatile struct stores through a DMA3-style pointer (u32 or pointer-typed fields, with or without an intermediate 'iwram'/'dma' local variable): 114 candidate bytes vs 112 reference, 56 differing halfwords -- closest length match found; kept as the current draft",
-    "compile-time-constant compound-literal struct assignment for one or both DMA setups: for an all-constant compound literal the compiler emits a genuine paired `ldmia r3!, {..}` / `stmia r2!, {..}` (movmem12b), confirming empirically this is the only Thumb pathway that emits a multi-register stmia at all; 106-118 candidate bytes, 52-58 differing halfwords, and an extra callee-saved register (r7) not present in the reference",
-    "raw u32* pointer with sequential post-increment stores (*p++ = a; *p++ = b; *p = c;): each store lowers to its own single-register `stmia rX!, {rY}` (Thumb's only way to get a post-incrementing SImode store), never merging into one three-register stmia; 122 candidate bytes, 60 differing halfwords"
-  ],
-  "compiler_backend_evidence": "Independently confirmed by reading alchemy-gcc/agscc/gcc/config/arm/arm.md and arm.c (same files cited in 08003e10.json): the only Thumb machine pattern that ever emits literal multi-register 'stmia' text is movmem12b/movmem8b (thumb_expand_movstrqi, arm.md ~5111-5155; thumb_output_move_mem_multiple, arm.c ~9425-9469), and both cases in thumb_output_move_mem_multiple emit ldmia immediately before stmia as one indivisible RTL insn -- it can only represent a genuine memory-to-memory block copy, never a lone grouped store of independently-computed register values. The generic 'store_multiple' expander and *stmsi/*stmsi_postinc patterns (arm.md ~4997-5075) are gated 'TARGET_ARM' with no Thumb counterpart. The reference's two `stmia r3!, {r0, r1, r2}` stores are each fed by three independently loaded registers (three separate pc-relative ldr's / a register move, no preceding ldmia), which is the same structural shape 08003e10.json already documented as unemittable from ordinary C on this compiler route.",
-  "remaining": "The 56 differing halfwords are concentrated around the two DMA descriptor writes: the reference's standalone, unpaired three-register stmia appears unreachable from any ordinary field-store, aggregate-store, or pointer-store C shape on this Thumb/GCC 2.96 route (see compiler_backend_evidence). The draft also does not reproduce the reference's r5/r6 callee-saved register allocation (push {r5,r6,lr} / pop {r5,r6}; pop {r0}; bx r0) for the REG_IME address and the shared IWRAM-base value -- every local-variable shape tried caused the compiler to either drop the callee-saved registers entirely or synthesize 0x03000000 via shift instead of a literal-pool load, rather than matching the reference's register-reuse pattern. Candidate length remains 114 vs 112 target bytes.",
-  "notes": [
-    "Cold-start owner: games/gs1/recon/en/main/0800300c.c did not exist before this pass; games/gs1/asm/0800300c.s (the proven byte-exact retained assembly) was reconstructed by hand from its literal pool and cross-checked against a direct hex dump of roms/gs1-en.gba at 0x0800300c.",
-    "No inline assembly, fixed-register variable, compiler barrier, forbidden ABI, copied instruction bytes, or compiler modification was used.",
-    "This candidate claims zero DONE bytes.",
-    "2026-08-27: reclassified measured-draft -> proven-permanent. This owner's retained assembly is already independently proven unreachable from ordinary C at the manifest/classification level: out/gs1-en/full/asm/manifest.json marks it kind=thumb_multiple_transfer_module, retention starting with keep_, confidence=proven, citing arm_md/arm_c line ranges showing GCC 2.96's Thumb backend can only emit a multi-register stmia paired immediately with a matching ldmia (movmem8b/movmem12b), and that ARM's standalone store_multiple/stmsi patterns are TARGET_ARM only -- a lone stmia from independently-computed register values (as this owner's reference has) is architecturally unreachable on this route, not an unexplored search space. This specific pattern was independently rediscovered by multiple dedicated passes this session (08004838, 0800bc48, 08003e10, 0808fecc, 080c0184, and partially 080e7404) before the shared manifest-level proof was found; recording the status correction here so future sessions don't repeat the rediscovery."
-  ]
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x0800300c",
+ "status": "proven-permanent",
+ "owner_bytes": 112,
+ "candidate_bytes": 114,
+ "differing_halfwords": 56,
+ "wrong_instructions": 64,
+ "translation_unit": "unknown",
+ "compiler_route": "canonical-gcc296",
+ "algorithm": "Disables interrupts, DMA-copies the 5120-byte relocated IWRAM payload (ROM 0x08000770 -> RAM 0x03000000), records the IWRAM base pointer at 0x03007ffc, DMA-copies the 56-byte (14-entry) interrupt-dispatch pointer table (ROM 0x08007320 -> RAM 0x030000e0), clears REG_DISPSTAT, arms REG_KEYCNT, enables VBlank+Keypad in REG_IE, then re-enables IME.",
+ "evidence": [
+  "DMA control words 0x84000500 (0x500 words = 5120 bytes) and 0x8400000e (0x0e words = 56 bytes) match, byte-for-byte, the 5120-byte 'relocated_iwram_payload' group and the 56-byte 'iwram_dispatch_pointers_08007320' table both recorded independently in games/gs1/asm/classification.json and games/gs1/asm/executable_gaps/index.json.",
+  "The dispatch table's 14 pointer values are 0x08003009 (Func_08003008 + thumb bit, i.e. runtime/dispatch/reserved_no_op_f.c) repeated, with one override to 0x08003811 (Input_InitKeyIrq + thumb bit) -- consistent with initializing a default-no-op interrupt dispatch table.",
+  "Register addresses 0x04000208/0x04000200/0x04000004/0x04000132 match REG_IME/REG_IE/REG_DISPSTAT/REG_KEYCNT as already named in games/gs1/recon/en/main/serial_runtime_family.h for sibling owners."
+ ],
+ "credible_shapes_tried": [
+  "plain per-field volatile struct stores through a DMA3-style pointer (u32 or pointer-typed fields, with or without an intermediate 'iwram'/'dma' local variable): 114 candidate bytes vs 112 reference, 56 differing halfwords -- closest length match found; kept as the current draft",
+  "compile-time-constant compound-literal struct assignment for one or both DMA setups: for an all-constant compound literal the compiler emits a genuine paired `ldmia r3!, {..}` / `stmia r2!, {..}` (movmem12b), confirming empirically this is the only Thumb pathway that emits a multi-register stmia at all; 106-118 candidate bytes, 52-58 differing halfwords, and an extra callee-saved register (r7) not present in the reference",
+  "raw u32* pointer with sequential post-increment stores (*p++ = a; *p++ = b; *p = c;): each store lowers to its own single-register `stmia rX!, {rY}` (Thumb's only way to get a post-incrementing SImode store), never merging into one three-register stmia; 122 candidate bytes, 60 differing halfwords"
+ ],
+ "compiler_backend_evidence": "Independently confirmed by reading alchemy-gcc/agscc/gcc/config/arm/arm.md and arm.c (same files cited in 08003e10.json): the only Thumb machine pattern that ever emits literal multi-register 'stmia' text is movmem12b/movmem8b (thumb_expand_movstrqi, arm.md ~5111-5155; thumb_output_move_mem_multiple, arm.c ~9425-9469), and both cases in thumb_output_move_mem_multiple emit ldmia immediately before stmia as one indivisible RTL insn -- it can only represent a genuine memory-to-memory block copy, never a lone grouped store of independently-computed register values. The generic 'store_multiple' expander and *stmsi/*stmsi_postinc patterns (arm.md ~4997-5075) are gated 'TARGET_ARM' with no Thumb counterpart. The reference's two `stmia r3!, {r0, r1, r2}` stores are each fed by three independently loaded registers (three separate pc-relative ldr's / a register move, no preceding ldmia), which is the same structural shape 08003e10.json already documented as unemittable from ordinary C on this compiler route.",
+ "remaining": "The 56 differing halfwords are concentrated around the two DMA descriptor writes: the reference's standalone, unpaired three-register stmia appears unreachable from any ordinary field-store, aggregate-store, or pointer-store C shape on this Thumb/GCC 2.96 route (see compiler_backend_evidence). The draft also does not reproduce the reference's r5/r6 callee-saved register allocation (push {r5,r6,lr} / pop {r5,r6}; pop {r0}; bx r0) for the REG_IME address and the shared IWRAM-base value -- every local-variable shape tried caused the compiler to either drop the callee-saved registers entirely or synthesize 0x03000000 via shift instead of a literal-pool load, rather than matching the reference's register-reuse pattern. Candidate length remains 114 vs 112 target bytes.",
+ "notes": [
+  "Cold-start owner: games/gs1/recon/en/main/0800300c.c did not exist before this pass; games/gs1/asm/0800300c.s (the proven byte-exact retained assembly) was reconstructed by hand from its literal pool and cross-checked against a direct hex dump of roms/gs1-en.gba at 0x0800300c.",
+  "No inline assembly, fixed-register variable, compiler barrier, forbidden ABI, copied instruction bytes, or compiler modification was used.",
+  "This candidate claims zero DONE bytes.",
+  "2026-08-27: reclassified measured-draft -> proven-permanent. This owner's retained assembly is already independently proven unreachable from ordinary C at the manifest/classification level: out/gs1-en/full/asm/manifest.json marks it kind=thumb_multiple_transfer_module, retention starting with keep_, confidence=proven, citing arm_md/arm_c line ranges showing GCC 2.96's Thumb backend can only emit a multi-register stmia paired immediately with a matching ldmia (movmem8b/movmem12b), and that ARM's standalone store_multiple/stmsi patterns are TARGET_ARM only -- a lone stmia from independently-computed register values (as this owner's reference has) is architecturally unreachable on this route, not an unexplored search space. This specific pattern was independently rediscovered by multiple dedicated passes this session (08004838, 0800bc48, 08003e10, 0808fecc, 080c0184, and partially 080e7404) before the shared manifest-level proof was found; recording the status correction here so future sessions don't repeat the rediscovery."
+ ]
 }

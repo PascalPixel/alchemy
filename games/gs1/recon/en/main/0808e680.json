@@ -1,49 +1,48 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x0808e680",
-  "name": "BattleCommand_ExecuteSelectedAction",
-  "status": "measured-draft",
-  "owner_bytes": 748,
-  "executable_owner_bytes": 746,
-  "candidate_bytes": 724,
-  "differing_halfwords": 308,
-  "wrong_instructions": 199,
-  "structural_score": {
-    "match_percent": 84.517685,
-    "instructions": 325,
-    "unchanged": 196,
-    "argument_mismatches": 82,
-    "opcode_mismatches": 1,
-    "replacements": 7,
-    "deletions": 26,
-    "insertions": 14
-  },
-  "family": {
-    "exact_effect_dispatcher": "main:08096810",
-    "exact_effect_dispatcher_bytes": 336,
-    "typed_target_selector": "main:0808df1c",
-    "typed_target_selector_bytes": 348,
-    "aggregate_reusable_bytes": 1432
-  },
-  "cross_edition": {
-    "core_bytes": 498,
-    "core_diff_bytes": 0,
-    "core_identical": true,
-    "starts": {
-      "ja": "0x08085680",
-      "en": "0x0808e680",
-      "de": "0x08091c88",
-      "es": "0x08093688",
-      "fr": "0x08093688",
-      "it": "0x0808e688"
-    }
-  },
-  "notes": [
-    "Complete typed high-level battle-command executor. It decodes the action and actor, handles special story and summon gates, checks and spends PP, derives three target classes, selects the nearby object, drives the primary and secondary effect phases, and clears the temporary resolution state.",
-    "The readable candidate compiles to 724 bytes against 746 executable reference bytes (748 including alignment). Its 84.52 percent structural score is a useful convergence baseline but the 199 wrong instructions are broad, so this record claims zero bytes.",
-    "Independent all-six matching proves one unique 498-byte relocation-normalized core at the JA, EN, DE, ES, FR, and IT anchors with zero core differences. Forty-nine call relocations and thirteen literal fields account for the regional raw differences.",
-    "This owner directly joins the exact 336-byte RunBattleEffect dispatcher and the complete typed 348-byte nearby-target selector, forming a reusable 1,432-byte command/selection/effect family before counting the downstream exact battle-action resolver.",
-    "Recovered only from retained GS1 assembly, exact local battle-action/effect helpers, the approved compiler, and all six local GS1 editions. No GS2 or external source was used."
-  ]
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x0808e680",
+ "status": "measured-draft",
+ "owner_bytes": 748,
+ "executable_owner_bytes": 746,
+ "candidate_bytes": 724,
+ "differing_halfwords": 308,
+ "wrong_instructions": 199,
+ "structural_score": {
+  "match_percent": 84.517685,
+  "instructions": 325,
+  "unchanged": 196,
+  "argument_mismatches": 82,
+  "opcode_mismatches": 1,
+  "replacements": 7,
+  "deletions": 26,
+  "insertions": 14
+ },
+ "family": {
+  "exact_effect_dispatcher": "main:08096810",
+  "exact_effect_dispatcher_bytes": 336,
+  "typed_target_selector": "main:0808df1c",
+  "typed_target_selector_bytes": 348,
+  "aggregate_reusable_bytes": 1432
+ },
+ "cross_edition": {
+  "core_bytes": 498,
+  "core_diff_bytes": 0,
+  "core_identical": true,
+  "starts": {
+   "ja": "0x08085680",
+   "en": "0x0808e680",
+   "de": "0x08091c88",
+   "es": "0x08093688",
+   "fr": "0x08093688",
+   "it": "0x0808e688"
+  }
+ },
+ "notes": [
+  "Complete typed high-level battle-command executor. It decodes the action and actor, handles special story and summon gates, checks and spends PP, derives three target classes, selects the nearby object, drives the primary and secondary effect phases, and clears the temporary resolution state.",
+  "The readable candidate compiles to 724 bytes against 746 executable reference bytes (748 including alignment). Its 84.52 percent structural score is a useful convergence baseline but the 199 wrong instructions are broad, so this record claims zero bytes.",
+  "Independent all-six matching proves one unique 498-byte relocation-normalized core at the JA, EN, DE, ES, FR, and IT anchors with zero core differences. Forty-nine call relocations and thirteen literal fields account for the regional raw differences.",
+  "This owner directly joins the exact 336-byte RunBattleEffect dispatcher and the complete typed 348-byte nearby-target selector, forming a reusable 1,432-byte command/selection/effect family before counting the downstream exact battle-action resolver.",
+  "Recovered only from retained GS1 assembly, exact local battle-action/effect helpers, the approved compiler, and all six local GS1 editions. No GS2 or external source was used."
+ ]
 }

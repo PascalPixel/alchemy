@@ -3,6 +3,27 @@
  "namespace": "main",
  "address": "0x0808b674",
  "status": "compiler-unemittable",
+ "map": {
+  "head": "0x0808b674",
+  "head_symbol": "FunctionHead_0808b674",
+  "head_file": "games/gs1/asm/0808b674.s",
+  "head_prologue": "push {r5,r6,r7,lr}; mov r7,r10; mov r6,r8; push {r6,r7} -- two-high-register save (r8, r10 only), no `sub sp` (no local frame beyond the pushed registers).",
+  "true_epilogue": {
+   "file": "games/gs1/asm/0808b7b8.s",
+   "note": "Ends `... pop {r3,r5} / mov r8,r3 / mov r10,r5 / pop {r5,r6,r7} / pop {r0} / bx r0`. Exact mirror of the head's two-high-register (r8,r10) save shape with no matching `add sp` (consistent with the head's no-`sub sp` prologue -- this function uses no stack-frame locals beyond its saved registers). This is the sole real epilogue, completing the map that this dossier's original 2026-08-29 session left partial (it had registered the split-function shape and the fall-through into Fragment_0808b7b8 as a hypothesis but had not yet confirmed the epilogue mirror or computed the whole-function span)."
+  },
+  "span": {
+   "start": "0x0808b674",
+   "end_exclusive": "0x0808b868",
+   "size_bytes": 500,
+   "derivation": "end = start of next asm file games/gs1/asm/0808b868.s, immediately following 0808b7b8.s which owns the epilogue. size = 0x0808b868 - 0x0808b674 = 0x1f4 = 500."
+  },
+  "member_regions_in_order": [
+   {"addr": "0x0808b674", "symbol": "FunctionHead_0808b674", "file": "games/gs1/asm/0808b674.s", "role": "real prologue + object-table slot setup body, tail branches `b sub_0808b7c4` -- NOTE: this tail branch target (0808b7c4) is an internal label inside 0808b7b8.s, not a separate owner; it is not main:0808b7c4 as a registered file boundary"},
+   {"addr": "0x0808b7b8", "symbol": "Fragment_0808b7b8", "file": "games/gs1/asm/0808b7b8.s", "role": "shared terminal fragment (header: '親関数の共有終端断片'), reached by the head's tail branch at its internal .L_0808b7c4-equivalent entry point, ending in the real, shared epilogue"}
+  ],
+  "scoring_command": "out/cargo-target/release/compiler candidate-show games/gs1/recon/en/main/0808b674.c --owner 0808b674 --size 500"
+ },
  "owner_bytes": 324,
  "candidate_bytes": 36,
  "differing_halfwords": 162,

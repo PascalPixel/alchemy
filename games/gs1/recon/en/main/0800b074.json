@@ -1,24 +1,23 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x0800b074",
-  "name": null,
-  "status": "measured-draft",
-  "owner_bytes": 242,
-  "candidate_bytes": 148,
-  "differing_halfwords": 119,
-  "wrong_instructions": 150,
-  "classification": "window-scroll-clamp (low confidence)",
-  "domain": "Takes a window/config pointer (a0, with byte fields read at +32, +33, +35, and a pair of 8-byte sub-records written at +4..+9 and +16..+21), three or four Q16.16 fixed-point values (a1, x1/a2, a3, a4), and a pointer to a 2-field 'limit' struct (6th, stack-passed argument, compared field-by-field against 0x10000/65536). When either limit field exceeds 65536 it doubles two byte-derived half-extent values and switches a set of default margins (8,4) to (16,8) and a stored flag byte from 1 to 3; it then computes two clamped 16.16-to-integer scroll/position values (one per sub-record) and writes each into its sub-record's byte-4 position value, byte-5 flag-merged byte, and byte-6 halfword mask-merged field.",
-  "notes": [
-    "The generated family report clustered this owner with template-main-0801e260 (clear_tile_attributes_in_rect.c) at 7885 bp -- the assembly has no relation to that template's tile-clearing bit logic at all (no & 0x3FF, no RENDER_TILE_ATTR_OFS/RENDER_ALT_OFS access, no simple width/height loop); this is a family-clustering false positive and the template gave no usable starting point.",
-    "This is a LOW-CONFIDENCE, exploratory dossier, the weakest of this assignment batch. The reference uses a straight-line body (no loops) with all four extended registers (r8/r9/sl/fp) live simultaneously and reads a byte at +32 with an UNSIGNED shift (lsrs, i.e. the byte is treated as unsigned, not the signed s8 this draft's first attempt assumed and had to correct); the second half-extent read at +33 and the sign-extended byte at +35 feed a multiply-by-limit->field1 and a >>16 downshift whose exact rounding-constant pool value this draft could not resolve from a single manual read and instead guessed as 0x8000 (a plausible round-to-nearest constant, not confirmed). The candidate compiled to only 148 bytes against a 242-byte reference and the tool reports class=unemittable for the alignment view, both signs that the overall structural shape (not just constant values) likely still differs from the real source.",
-    "This is a clear source-shape gap that needs a fresh, careful re-derivation (ideally cross-checked against the reference's exact pool constant at pc+88, which this pass did not resolve) rather than further respelling of the current draft. No further iteration was attempted given the low confidence in the base shape; further tuning of a structurally-uncertain draft would not be a good use of bounded effort. Flagging honestly for dedicated future reconstruction rather than claiming false progress."
-  ],
-  "rejected_experiments": [
-    {
-      "experiment": "read window[32]/window[33] as signed bytes (s8) with an arithmetic shift, matching an initial mis-read of the reference's shift instruction",
-      "result": "corrected before scoring: the reference uses lsrs (logical/unsigned shift) on an ldrb-loaded byte, so both half-extent reads were changed to unsigned in the retained draft. Documented here so a future attempt does not repeat the same misreading."
-    }
-  ]
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x0800b074",
+ "status": "measured-draft",
+ "owner_bytes": 242,
+ "candidate_bytes": 148,
+ "differing_halfwords": 119,
+ "wrong_instructions": 150,
+ "classification": "window-scroll-clamp (low confidence)",
+ "domain": "Takes a window/config pointer (a0, with byte fields read at +32, +33, +35, and a pair of 8-byte sub-records written at +4..+9 and +16..+21), three or four Q16.16 fixed-point values (a1, x1/a2, a3, a4), and a pointer to a 2-field 'limit' struct (6th, stack-passed argument, compared field-by-field against 0x10000/65536). When either limit field exceeds 65536 it doubles two byte-derived half-extent values and switches a set of default margins (8,4) to (16,8) and a stored flag byte from 1 to 3; it then computes two clamped 16.16-to-integer scroll/position values (one per sub-record) and writes each into its sub-record's byte-4 position value, byte-5 flag-merged byte, and byte-6 halfword mask-merged field.",
+ "notes": [
+  "The generated family report clustered this owner with template-main-0801e260 (clear_tile_attributes_in_rect.c) at 7885 bp -- the assembly has no relation to that template's tile-clearing bit logic at all (no & 0x3FF, no RENDER_TILE_ATTR_OFS/RENDER_ALT_OFS access, no simple width/height loop); this is a family-clustering false positive and the template gave no usable starting point.",
+  "This is a LOW-CONFIDENCE, exploratory dossier, the weakest of this assignment batch. The reference uses a straight-line body (no loops) with all four extended registers (r8/r9/sl/fp) live simultaneously and reads a byte at +32 with an UNSIGNED shift (lsrs, i.e. the byte is treated as unsigned, not the signed s8 this draft's first attempt assumed and had to correct); the second half-extent read at +33 and the sign-extended byte at +35 feed a multiply-by-limit->field1 and a >>16 downshift whose exact rounding-constant pool value this draft could not resolve from a single manual read and instead guessed as 0x8000 (a plausible round-to-nearest constant, not confirmed). The candidate compiled to only 148 bytes against a 242-byte reference and the tool reports class=unemittable for the alignment view, both signs that the overall structural shape (not just constant values) likely still differs from the real source.",
+  "This is a clear source-shape gap that needs a fresh, careful re-derivation (ideally cross-checked against the reference's exact pool constant at pc+88, which this pass did not resolve) rather than further respelling of the current draft. No further iteration was attempted given the low confidence in the base shape; further tuning of a structurally-uncertain draft would not be a good use of bounded effort. Flagging honestly for dedicated future reconstruction rather than claiming false progress."
+ ],
+ "rejected_experiments": [
+  {
+   "experiment": "read window[32]/window[33] as signed bytes (s8) with an arithmetic shift, matching an initial mis-read of the reference's shift instruction",
+   "result": "corrected before scoring: the reference uses lsrs (logical/unsigned shift) on an ldrb-loaded byte, so both half-extent reads were changed to unsigned in the retained draft. Documented here so a future attempt does not repeat the same misreading."
+  }
+ ]
 }

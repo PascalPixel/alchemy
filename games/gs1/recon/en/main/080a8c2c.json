@@ -1,295 +1,403 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x080a8c2c",
-  "name": "Menu_BuildPatternTiles",
-  "status": "exact",
-  "owner_bytes": 148,
-  "executable_owner_bytes": 148,
-  "candidate_bytes": 148,
-  "differing_halfwords": 0,
-  "wrong_instructions": 0,
-  "classification": "exact-c",
-  "resolved_asm_classification": {
-    "kind": "compiler_output",
-    "retention": "c_candidate",
-    "confidence": "likely"
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x080a8c2c",
+ "status": "exact",
+ "owner_bytes": 148,
+ "executable_owner_bytes": 148,
+ "candidate_bytes": 148,
+ "differing_halfwords": 0,
+ "wrong_instructions": 0,
+ "classification": "exact-c",
+ "resolved_asm_classification": {
+  "kind": "compiler_output",
+  "retention": "c_candidate",
+  "confidence": "likely"
+ },
+ "cross_edition": {
+  "editions": [
+   "ja",
+   "en",
+   "de",
+   "es",
+   "fr",
+   "it"
+  ],
+  "relocation_normalized_core_bytes": 128,
+  "core_diff_bytes": 0,
+  "core_identical": true
+ },
+ "register_gate_step1": {
+  "date": "2026-08-28",
+  "verdict": "miss",
+  "hypothesis": "One shipped GCC 2.96 per-translation-unit flag state explains the repeated local-alloc register-coloring floor across several independent owners.",
+  "cluster_basis": "080ae99c and 080ae9f0 are the adjacent same-algorithm nucleus; 080a8c2c and 080b60a0 are independent controls with the same documented qty_compare/RTL-discovery-order residual. These four sources are separate probes, not a claimed historical translation unit.",
+  "owners": [
+   {
+    "address": "0x080a8c2c",
+    "candidate_bytes": 148,
+    "reference_bytes": 148,
+    "baseline_differing_halfwords": 4
+   },
+   {
+    "address": "0x080ae99c",
+    "candidate_bytes": 84,
+    "reference_bytes": 84,
+    "baseline_differing_halfwords": 10
+   },
+   {
+    "address": "0x080ae9f0",
+    "candidate_bytes": 92,
+    "reference_bytes": 92,
+    "baseline_differing_halfwords": 13
+   },
+   {
+    "address": "0x080b60a0",
+    "candidate_bytes": 166,
+    "reference_bytes": 166,
+    "baseline_differing_halfwords": 6
+   }
+  ],
+  "reproduction": {
+   "git_head": "e77862791d35548bec4705d7b23aaaa5bc4fe9ac",
+   "tracked_state_before_probe": "clean",
+   "compiler_family": "gcc296",
+   "compiler_version": "2.96",
+   "xgcc_sha256": "bf6161b89ca5832dff2784d92d2a39c857123e26fa4654ecc8ee46d3937b0b3a",
+   "cc1_sha256": "4525e2477f4d903580155e8d79cbb965b5af89e0d9ac903287713736238d37eb",
+   "gs1_en_rom_sha256": "c14f1151897e8d73f25ffdd67e21eebb6dc57973ff2458872ee89fa9060aaca1",
+   "canonical_flags": "-O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi -fno-builtin -nostdinc -ffreestanding -fcall-used-r4 -Igames/gs1/include",
+   "command": "tools/compiler/target/release/compiler candidate-show games/gs1/recon/en/main/<owner>.c --owner <owner> --family gcc296 --first --work <isolated-config-owner-dir> [--remove-flags <csv>] [--flags <csv>]"
   },
-  "cross_edition": {
-    "editions": ["ja", "en", "de", "es", "fr", "it"],
-    "relocation_normalized_core_bytes": 128,
-    "core_diff_bytes": 0,
-    "core_identical": true
+  "matrix": {
+   "states_including_baseline": 64,
+   "mutations": 63,
+   "register_and_abi_28": [
+    "baseline",
+    "remove -fcall-used-r4",
+    "add one of -fcall-used-r5,-fcall-used-r6,-fcall-used-r8,-fcall-used-r9,-fcall-used-r10,-fcall-used-r11",
+    "remove -fcall-used-r4 and add one of -fcall-used-r5,-fcall-used-r6,-fcall-used-r8,-fcall-used-r9,-fcall-used-r10,-fcall-used-r11",
+    "add exactly one of -ffixed-r0 through -ffixed-r12, or -ffixed-r14"
+   ],
+   "allocation_pass_6": [
+    "-fno-caller-saves",
+    "-fno-omit-frame-pointer",
+    "-frename-registers",
+    "-fno-regmove",
+    "-fno-expensive-optimizations",
+    "-fno-regmove,-fno-expensive-optimizations"
+   ],
+   "post_allocation_4": [
+    "-fno-schedule-insns2",
+    "-mno-sched-prolog",
+    "-fno-peephole2",
+    "-fno-peephole"
+   ],
+   "cse_and_lifetime_18": [
+    "-fno-gcse",
+    "-fno-cse-follow-jumps",
+    "-fno-cse-skip-blocks",
+    "-fno-rerun-cse-after-loop",
+    "-fno-rerun-loop-opt",
+    "-fno-function-cse",
+    "-fno-force-mem",
+    "-fforce-addr",
+    "-fno-strength-reduce",
+    "-fno-thread-jumps",
+    "-fno-delete-null-pointer-checks",
+    "-fno-optimize-sibling-calls",
+    "-fno-strict-aliasing",
+    "-fargument-noalias",
+    "-fargument-noalias-global",
+    "-fno-defer-pop",
+    "-fmove-all-movables",
+    "-freduce-all-givs"
+   ],
+   "broad_shipped_controls_8": [
+    "-O1",
+    "-O3",
+    "-Os",
+    "-O0",
+    "-mno-thumb-interwork",
+    "-freorder-blocks",
+    "-funroll-loops",
+    "-funroll-all-loops"
+   ],
+   "excluded_dead_or_invalid_axes": "Thumb forcibly disables sched1, so -fschedule-insns, -fno-schedule-insns and its sub-options are dead. r0-r3/r12/r14 are already call-used; r7 is Thumb's hard-frame register and rejects call-used; r13/sp and r15/pc are not allocator candidates. No generic -fno-cse exists. Arbitrary flag powersets were not searched; the only paired state was the compiler-proven full regmove disable above."
   },
-  "register_gate_step1": {
-    "date": "2026-08-28",
-    "verdict": "miss",
-    "hypothesis": "One shipped GCC 2.96 per-translation-unit flag state explains the repeated local-alloc register-coloring floor across several independent owners.",
-    "cluster_basis": "080ae99c and 080ae9f0 are the adjacent same-algorithm nucleus; 080a8c2c and 080b60a0 are independent controls with the same documented qty_compare/RTL-discovery-order residual. These four sources are separate probes, not a claimed historical translation unit.",
-    "owners": [
-      {"address": "0x080a8c2c", "candidate_bytes": 148, "reference_bytes": 148, "baseline_differing_halfwords": 4},
-      {"address": "0x080ae99c", "candidate_bytes": 84, "reference_bytes": 84, "baseline_differing_halfwords": 10},
-      {"address": "0x080ae9f0", "candidate_bytes": 92, "reference_bytes": 92, "baseline_differing_halfwords": 13},
-      {"address": "0x080b60a0", "candidate_bytes": 166, "reference_bytes": 166, "baseline_differing_halfwords": 6}
-    ],
-    "reproduction": {
-      "git_head": "e77862791d35548bec4705d7b23aaaa5bc4fe9ac",
-      "tracked_state_before_probe": "clean",
-      "compiler_family": "gcc296",
-      "compiler_version": "2.96",
-      "xgcc_sha256": "bf6161b89ca5832dff2784d92d2a39c857123e26fa4654ecc8ee46d3937b0b3a",
-      "cc1_sha256": "4525e2477f4d903580155e8d79cbb965b5af89e0d9ac903287713736238d37eb",
-      "gs1_en_rom_sha256": "c14f1151897e8d73f25ffdd67e21eebb6dc57973ff2458872ee89fa9060aaca1",
-      "canonical_flags": "-O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi -fno-builtin -nostdinc -ffreestanding -fcall-used-r4 -Igames/gs1/include",
-      "command": "tools/compiler/target/release/compiler candidate-show games/gs1/recon/en/main/<owner>.c --owner <owner> --family gcc296 --first --work <isolated-config-owner-dir> [--remove-flags <csv>] [--flags <csv>]"
-    },
-    "matrix": {
-      "states_including_baseline": 64,
-      "mutations": 63,
-      "register_and_abi_28": [
-        "baseline",
-        "remove -fcall-used-r4",
-        "add one of -fcall-used-r5,-fcall-used-r6,-fcall-used-r8,-fcall-used-r9,-fcall-used-r10,-fcall-used-r11",
-        "remove -fcall-used-r4 and add one of -fcall-used-r5,-fcall-used-r6,-fcall-used-r8,-fcall-used-r9,-fcall-used-r10,-fcall-used-r11",
-        "add exactly one of -ffixed-r0 through -ffixed-r12, or -ffixed-r14"
-      ],
-      "allocation_pass_6": [
-        "-fno-caller-saves",
-        "-fno-omit-frame-pointer",
-        "-frename-registers",
-        "-fno-regmove",
-        "-fno-expensive-optimizations",
-        "-fno-regmove,-fno-expensive-optimizations"
-      ],
-      "post_allocation_4": [
-        "-fno-schedule-insns2",
-        "-mno-sched-prolog",
-        "-fno-peephole2",
-        "-fno-peephole"
-      ],
-      "cse_and_lifetime_18": [
-        "-fno-gcse",
-        "-fno-cse-follow-jumps",
-        "-fno-cse-skip-blocks",
-        "-fno-rerun-cse-after-loop",
-        "-fno-rerun-loop-opt",
-        "-fno-function-cse",
-        "-fno-force-mem",
-        "-fforce-addr",
-        "-fno-strength-reduce",
-        "-fno-thread-jumps",
-        "-fno-delete-null-pointer-checks",
-        "-fno-optimize-sibling-calls",
-        "-fno-strict-aliasing",
-        "-fargument-noalias",
-        "-fargument-noalias-global",
-        "-fno-defer-pop",
-        "-fmove-all-movables",
-        "-freduce-all-givs"
-      ],
-      "broad_shipped_controls_8": [
-        "-O1",
-        "-O3",
-        "-Os",
-        "-O0",
-        "-mno-thumb-interwork",
-        "-freorder-blocks",
-        "-funroll-loops",
-        "-funroll-all-loops"
-      ],
-      "excluded_dead_or_invalid_axes": "Thumb forcibly disables sched1, so -fschedule-insns, -fno-schedule-insns and its sub-options are dead. r0-r3/r12/r14 are already call-used; r7 is Thumb's hard-frame register and rejects call-used; r13/sp and r15/pc are not allocator candidates. No generic -fno-cse exists. Arbitrary flag powersets were not searched; the only paired state was the compiler-proven full regmove disable above."
-    },
-    "result": {
-      "compile_failures": 0,
-      "owners_made_exact": 0,
-      "owner_rows_strictly_closer": 0,
-      "owner_rows_score_neutral": 128,
-      "owner_rows_regressive": 124,
-      "fully_score_neutral_mutations": 20,
-      "mutations_regressing_at_least_one_owner": 43,
-      "mutations_with_any_extent_mismatch": 32,
-      "score_neutral_mutations": [
-        "-fargument-noalias",
-        "-fargument-noalias-global",
-        "-fcall-used-r9",
-        "-fcall-used-r11",
-        "-ffixed-r9",
-        "-ffixed-r11",
-        "-ffixed-r12",
-        "-ffixed-r14",
-        "-fno-cse-follow-jumps",
-        "-fno-cse-skip-blocks",
-        "-fno-defer-pop",
-        "-fno-delete-null-pointer-checks",
-        "-fno-function-cse",
-        "-fno-optimize-sibling-calls",
-        "-fno-peephole",
-        "-fno-peephole2",
-        "-fno-rerun-cse-after-loop",
-        "-fno-strict-aliasing",
-        "-fno-thread-jumps",
-        "-O3"
-      ]
-    },
-    "decision": "Hypothesis dead for this cluster: no shipped one-axis flag state moved even one owner strictly closer, so no compiler route is registered and the gate proceeds to the allocator-order decoder."
+  "result": {
+   "compile_failures": 0,
+   "owners_made_exact": 0,
+   "owner_rows_strictly_closer": 0,
+   "owner_rows_score_neutral": 128,
+   "owner_rows_regressive": 124,
+   "fully_score_neutral_mutations": 20,
+   "mutations_regressing_at_least_one_owner": 43,
+   "mutations_with_any_extent_mismatch": 32,
+   "score_neutral_mutations": [
+    "-fargument-noalias",
+    "-fargument-noalias-global",
+    "-fcall-used-r9",
+    "-fcall-used-r11",
+    "-ffixed-r9",
+    "-ffixed-r11",
+    "-ffixed-r12",
+    "-ffixed-r14",
+    "-fno-cse-follow-jumps",
+    "-fno-cse-skip-blocks",
+    "-fno-defer-pop",
+    "-fno-delete-null-pointer-checks",
+    "-fno-function-cse",
+    "-fno-optimize-sibling-calls",
+    "-fno-peephole",
+    "-fno-peephole2",
+    "-fno-rerun-cse-after-loop",
+    "-fno-strict-aliasing",
+    "-fno-thread-jumps",
+    "-O3"
+   ]
   },
-  "register_gate_step2": {
-    "date": "2026-08-28",
-    "verdict": "decoder-validated-real-floor-not-closed",
-    "diagnostic_route": {
-      "compiler": "canonical gcc296 route plus -g -dp -dr -dl -dg",
-      "safety": "The diagnostic and ordinary object .text sections must be byte-identical. Evidence is scoped to the selected owner: assembly instruction UID to .17.lreg pseudo, .00.rtl first-set creation rank, and .18.greg hard-register disposition. Literal-pool disassembly is excluded using the selected owner's emitted instruction count.",
-      "normal_text_equals_diagnostic_text": true
-    },
-    "controlled_acceptance": [
-      {
-        "owner": "0x080b362c",
-        "exact_source_bytes": 576,
-        "perturbation": "Move object ahead of win2 in the local declaration order.",
-        "perturbed_differing_halfwords": 5,
-        "expected_edit": "swap declarations of win2 and object",
-        "decoder_edit": "swap_declarations(win2,object)",
-        "result": "pass"
-      },
-      {
-        "owner": "0x0807a550",
-        "exact_source_bytes": 94,
-        "perturbation": "Cache limit across the do/while loop rather than recreate it at the guard and backedge.",
-        "perturbed_differing_halfwords": 7,
-        "expected_edit": "split limit's loop-spanning lifetime",
-        "decoder_edit": "split_lifetime(limit) detail=recreate-at-guard-and-backedge",
-        "result": "pass"
-      },
-      {
-        "owner": "0x0808f1c0",
-        "exact_source_bytes": 204,
-        "perturbation": "Remove the shared zero carrier used by the clears and mask operation.",
-        "perturbed_differing_halfwords": 1,
-        "expected_edit": "merge the clear values into one live zero carrier",
-        "decoder_edit": "merge_lifetime(zero_carrier) detail=keep-zero-live-through-clears-and-mask",
-        "result": "pass"
-      }
-    ],
-    "real_floor": {
-      "owner": "0x080a8c2c",
-      "candidate_bytes": 148,
-      "reference_bytes": 148,
-      "baseline_differing_halfwords": 4,
-      "decoder_evidence": [
-        "left: pseudo 48, creation rank 19, allocated r2, reference role r3; used 8 times across 6 instructions in block 9 and set once",
-        "expression: pseudo 58, creation rank 26, allocated r3, reference role r2; used 16 times across 4 instructions in block 9 and set twice",
-        "constraint=reciprocal-register-role-swap",
-        "edit=undecoded reason=no-unique-source-shape"
-      ],
-      "bounded_hand_repairs": [
-        {"shape": "value-temp", "differing_halfwords": 6, "effect": "correct register roles, wrong scheduler-2 load order"},
-        {"shape": "two-values", "differing_halfwords": 6, "effect": "correct register roles, wrong scheduler-2 load order"},
-        {"shape": "cell-pointer", "differing_halfwords": 6, "effect": "correct register roles, wrong scheduler-2 load order"},
-        {"shape": "right-index", "differing_halfwords": 6, "effect": "correct register roles, wrong scheduler-2 load order"},
-        {"shape": "left-first-xor", "differing_halfwords": 8, "effect": "regression"},
-        {"shape": "anonymous-left-first", "differing_halfwords": 8, "effect": "regression"},
-        {"shape": "right-temp", "differing_halfwords": 8, "effect": "regression"},
-        {"shape": "const-left", "differing_halfwords": 4, "effect": "baseline-equivalent"},
-        {"shape": "volatile-access", "candidate_bytes": 168, "differing_halfwords": 82, "effect": "invalid direction and major regression"},
-        {"shape": "volatile-tiles", "candidate_bytes": 168, "differing_halfwords": 82, "effect": "invalid direction and major regression"}
-      ],
-      "failure_reason": "Every ordinary-C shape tested either preserved the four-halfword allocation floor, obtained the desired r3/r2 roles while moving the loads into a six-halfword scheduler floor, or regressed. Volatile forms were both semantically inappropriate and much worse. There is no unique decoder-supported source edit that satisfies allocation and scheduling simultaneously, and forced register assignment or compiler scheduling is forbidden by the gate.",
-      "adopted": false
-    },
-    "secondary_confirmation": {
-      "owner": "0x080b9dc4",
-      "baseline_differing_halfwords": 1,
-      "attempts": ["defer completed initialization", "introduce completed pointer alias"],
-      "result": "Both remained at one differing halfword: the candidate rematerializes zero while the reference copies the already-live zero carrier. No source was adopted and no further owner was selected."
-    },
-    "decision": "The decoder passed all three controlled perturbation tests but did not meet the real-floor hand-closure acceptance. The bounded failure is recorded as required; step 2 ends without an adoption and the gate proceeds to the annotation-free bounded permuter."
+  "decision": "Hypothesis dead for this cluster: no shipped one-axis flag state moved even one owner strictly closer, so no compiler route is registered and the gate proceeds to the allocator-order decoder."
+ },
+ "register_gate_step2": {
+  "date": "2026-08-28",
+  "verdict": "decoder-validated-real-floor-not-closed",
+  "diagnostic_route": {
+   "compiler": "canonical gcc296 route plus -g -dp -dr -dl -dg",
+   "safety": "The diagnostic and ordinary object .text sections must be byte-identical. Evidence is scoped to the selected owner: assembly instruction UID to .17.lreg pseudo, .00.rtl first-set creation rank, and .18.greg hard-register disposition. Literal-pool disassembly is excluded using the selected owner's emitted instruction count.",
+   "normal_text_equals_diagnostic_text": true
   },
-  "register_gate_step3": {
-    "date": "2026-08-28",
-    "verdict": "accepted-annotation-free-finite-search",
-    "catalog": {
-      "version": "register-wall-v1",
-      "path": "games/gs1/recon/compiler-repair-patterns.json",
-      "enumeration": "baseline plus the finite alternatives for one structured decoder-named repair",
-      "maximum_raw_choices": 16,
-      "maximum_edits_per_candidate": 1
+  "controlled_acceptance": [
+   {
+    "owner": "0x080b362c",
+    "exact_source_bytes": 576,
+    "perturbation": "Move object ahead of win2 in the local declaration order.",
+    "perturbed_differing_halfwords": 5,
+    "expected_edit": "swap declarations of win2 and object",
+    "decoder_edit": "swap_declarations(win2,object)",
+    "result": "pass"
+   },
+   {
+    "owner": "0x0807a550",
+    "exact_source_bytes": 94,
+    "perturbation": "Cache limit across the do/while loop rather than recreate it at the guard and backedge.",
+    "perturbed_differing_halfwords": 7,
+    "expected_edit": "split limit's loop-spanning lifetime",
+    "decoder_edit": "split_lifetime(limit) detail=recreate-at-guard-and-backedge",
+    "result": "pass"
+   },
+   {
+    "owner": "0x0808f1c0",
+    "exact_source_bytes": 204,
+    "perturbation": "Remove the shared zero carrier used by the clears and mask operation.",
+    "perturbed_differing_halfwords": 1,
+    "expected_edit": "merge the clear values into one live zero carrier",
+    "decoder_edit": "merge_lifetime(zero_carrier) detail=keep-zero-live-through-clears-and-mask",
+    "result": "pass"
+   }
+  ],
+  "real_floor": {
+   "owner": "0x080a8c2c",
+   "candidate_bytes": 148,
+   "reference_bytes": 148,
+   "baseline_differing_halfwords": 4,
+   "decoder_evidence": [
+    "left: pseudo 48, creation rank 19, allocated r2, reference role r3; used 8 times across 6 instructions in block 9 and set once",
+    "expression: pseudo 58, creation rank 26, allocated r3, reference role r2; used 16 times across 4 instructions in block 9 and set twice",
+    "constraint=reciprocal-register-role-swap",
+    "edit=undecoded reason=no-unique-source-shape"
+   ],
+   "bounded_hand_repairs": [
+    {
+     "shape": "value-temp",
+     "differing_halfwords": 6,
+     "effect": "correct register roles, wrong scheduler-2 load order"
     },
-    "entry": {
-      "owner": "0x080a8c2c",
-      "source_annotations": 0,
-      "decoder_dimensions": ["temporary", "evaluation_order", "commutative_order"],
-      "decoder_constraint": "reciprocal-register-role-swap"
+    {
+     "shape": "two-values",
+     "differing_halfwords": 6,
+     "effect": "correct register roles, wrong scheduler-2 load order"
     },
-    "run": {
-      "seed": 1,
-      "raw_choices": 5,
-      "unique_choices": 5,
-      "attempted": 5,
-      "compile_failures": 0,
-      "baseline_differing_halfwords": 4,
-      "best_differing_halfwords": 4,
-      "exact": false,
-      "decoder_repair": "reciprocal_register_role_swap(left)",
-      "decoder_evidence_sha256": "861af3c34fa5f87b1680b04dc9313b564b0827e12a6d85e5ee9d4c2472814266",
-      "result_path": "out/register-wall/step3/080a8c2c-structured-seed-1/report.json"
+    {
+     "shape": "cell-pointer",
+     "differing_halfwords": 6,
+     "effect": "correct register roles, wrong scheduler-2 load order"
     },
-    "bounded_results": [
-      {"mutation": "baseline", "differing_halfwords": 4},
-      {"mutation": "temporary:introduce", "differing_halfwords": 4},
-      {"mutation": "evaluation_order:left_before_right", "differing_halfwords": 6},
-      {"mutation": "temporary:merge", "differing_halfwords": 6},
-      {"mutation": "commutative_order:swap_operands", "differing_halfwords": 8}
-    ],
-    "catalog_fixture_acceptance": [
-      {"owner": "0x080b362c", "repair": "swap_declarations(win2,object)", "raw_choices": 2, "best_differing_halfwords": 0, "exact": true},
-      {"owner": "0x0807a550", "repair": "split_lifetime(limit)", "raw_choices": 2, "best_differing_halfwords": 0, "exact": true},
-      {"owner": "0x0808f1c0", "repair": "merge_lifetime(zero_carrier)", "raw_choices": 2, "best_differing_halfwords": 0, "exact": true}
-    ],
-    "safety": "The permuter rejects retired PERM_GENERAL/PERM_INT annotations, requires a structured decoder repair with its named payload, masks comments and literals during site matching, refuses conditional/macro source, rejects direct main-image r0-r13 call-via models, deduplicates before deterministic seed rotation, and records decoder evidence plus the complete raw and unique finite spaces and mutation IDs.",
-    "adopted": false,
-    "decision": "Step 3 acceptance is met: an existing floored owner entered the bounded search as ordinary C with zero hand annotations, every decoder-selected safe catalog choice was compiled, and the complete finite space was reported. The unchanged four-halfword best score is evidence, not an adoption; step 4 may now begin."
-  },
-  "register_gate_step4": {
-    "date": "2026-08-28",
-    "closure_ordinal": 1,
-    "required_closures": 5,
-    "result": "adopted-byte-exact",
-    "baseline_differing_halfwords": 4,
-    "final_differing_halfwords": 0,
-    "repair_pattern": "inline-two-operand-xor-boundary",
-    "source_edit": "Replace the named first XOR temporary and the following compound XOR with two calls to one ordinary static inline binary-XOR helper.",
-    "allocator_effect": "Inlining preserves the anonymous mask=r3 and tile=r2 allocation while the helper parameter boundaries remove MEM_UNCHANGING from the two mask loads. The first store then feeds both later loads, raising its sched2 critical path above the independent right-side address setup.",
-    "bounded_confirmation": {
-      "both_helper_calls_required": true,
-      "canonical_no_dump_equals_diagnostic_dump": true,
-      "candidate_bytes": 148,
-      "reference_bytes": 148,
-      "linked_byte_differences": 0
+    {
+     "shape": "right-index",
+     "differing_halfwords": 6,
+     "effect": "correct register roles, wrong scheduler-2 load order"
     },
-    "annotation_free_search": {
-      "catalog_version": "register-wall-v2",
-      "source_annotations": 0,
-      "raw_choices": 6,
-      "unique_choices": 6,
-      "attempted": 6,
-      "winning_mutation": "temporary+evaluation_order:inline_xor_helper",
-      "exact": true,
-      "result_path": "out/register-wall/step4/080a8c2c-catalog-v2/report.json"
+    {
+     "shape": "left-first-xor",
+     "differing_halfwords": 8,
+     "effect": "regression"
     },
-    "production": {
-      "source": "games/gs1/src/menu/build_pattern_tiles.c",
-      "compiler_route": "canonical-gcc296",
-      "compiler_overrides": [],
-      "retained_assembly_removed": true,
-      "integration_gate": "tools/check integrate accepted 148/148 linked bytes"
+    {
+     "shape": "anonymous-left-first",
+     "differing_halfwords": 8,
+     "effect": "regression"
+    },
+    {
+     "shape": "right-temp",
+     "differing_halfwords": 8,
+     "effect": "regression"
+    },
+    {
+     "shape": "const-left",
+     "differing_halfwords": 4,
+     "effect": "baseline-equivalent"
+    },
+    {
+     "shape": "volatile-access",
+     "candidate_bytes": 168,
+     "differing_halfwords": 82,
+     "effect": "invalid direction and major regression"
+    },
+    {
+     "shape": "volatile-tiles",
+     "candidate_bytes": 168,
+     "differing_halfwords": 82,
+     "effect": "invalid direction and major regression"
     }
+   ],
+   "failure_reason": "Every ordinary-C shape tested either preserved the four-halfword allocation floor, obtained the desired r3/r2 roles while moving the loads into a six-halfword scheduler floor, or regressed. Volatile forms were both semantically inappropriate and much worse. There is no unique decoder-supported source edit that satisfies allocation and scheduling simultaneously, and forced register assignment or compiler scheduling is forbidden by the gate.",
+   "adopted": false
   },
-  "notes": [
-    "Builds two groups of six menu pattern tiles by filling each 64-byte tile and applying paired XOR masks across seven columns.",
-    "2026-08-27: Root cause of the prior draft's 73-differing-halfword score was a mismodeled call. `Func_0800730c` is not a real function: 0x0800730c is the sl (r10) slot of the fourteen-entry `_call_via_rN` trampoline bundle at games/gs1/asm/080072e4.s (`bx rN; mov r8,r8`, 4 bytes/slot, r0..sp). Unlike the r0-r3 slots (where a fictional trailing argument lands in the right register purely because it's within the 4-register AAPCS/APCS argument window -- see games/gs1/src/unidentified/main/battle/battle_owner_4.c's byte-exact `Func_080072f0(dest,size,value,0x03000168)` precedent for the r3 slot), r10/sl is never an argument-passing register, so no N-argument direct call can ever place a value there; arm_function_arg in alchemy-gcc/agscc/gcc/config/arm/arm.c confirms arguments stop at r3. Rewrote the call as a genuine indirect call through a function-pointer local, `((FillWordsFn)0x03000168)(tile, 64, 0x44444444)` (FillWordsFn = void(*)(void*,s32,u32)), matching the already-adopted indirect-call idiom in games/gs1/src/battle/effects/member_orbit/run.c. This alone let the compiler naturally allocate both sl (the fill-routine pointer, loop-invariant) and r8 (the Data_080af23c base, loop-invariant) exactly as the reference does, dropping differing_halfwords from 73 to 6 (wrong_instructions 22->0) with zero remaining structural/semantic mismatches -- the rest of the function's control flow, mask-index clamp, and loop nesting were already correct in the prior draft.",
-    "2026-08-27 (same pass): the residual 6 differing halfwords were pure instruction-scheduling reordering (class=ordering, wrong_instructions=0): the reference finishes `tile[column] ^= Data_080af23c[mask_index].left;` completely (load, xor, store) before starting any part of the second statement's address advance, while the naive two-statement candidate let the compiler hoist the independent `adds r1,#4`/`mov r3,r8` (address setup for `.right`) forward into the middle of the first statement's dependency chain. Tried and rejected (each scored worse or unchanged, all still available in this dossier via the permuter's report.json runs during this session): swapping statement order; explicit non-compound `a = a ^ b` forms; wrapping just one statement in an empty block (no effect -- proves the fix isn't about lexical block boundaries per se); an unused/dead local declared in the block (no effect -- proves it isn't about the block merely containing a declaration); a named local `struct TileMaskPair *mask`/`masks[]` pointer alias for the whole Data_080af23c[mask_index] pair (regressed hard, 39-47 diff, evidently disturbs the loop-invariant hoisting of the array base entirely); flat `(const u8*)Data_080af23c + mask_index*8` byte-offset addressing (regressed to candidate=156, 75 diff). The fix that worked: materializing only the `.left` value into a named local (`u32 left = Data_080af23c[mask_index].left;`) as its own full statement, immediately before `tile[column] ^= left;`, inside a fresh nested block. This is a real, minimal, plausible source shape (a natural place to name the first mask half) and it fixed the scheduling exactly: differing_halfwords 6->4.",
-    "2026-08-27 (same pass, residual documented, not fully closed): the remaining 4 differing halfwords (wrong_instructions=8, class=allocation, matched_prefix=37 of 74) are a register-role swap confined to the single `eors`/`str` pair for the `.left` xor: reference computes `mov r3,r8; ldr r3,[r3,r1]` (mask value REUSES r3, the now-dead address-base register) then `ldr r2,[r0,#0]` (tile value gets a fresh r2), `eors r2,r3`, `str r2,[r0,#0]`; the candidate instead gives the mask value a fresh r2 and lets the tile value reuse r3, i.e. `eors r3,r2; str r3,[r0,#0]` -- functionally identical, byte-different. Root cause, confirmed by direct A/B compiles: naming `left` as a real local (required to fix the scheduling above) makes GCC give it its OWN fresh pseudo/register rather than letting it merge into the about-to-be-dead address-base register the way an anonymous temporary can; reversing which value is named first (naming a `tile[column]` temp `t0` ahead of `left`) restores the correct r2/r3 roles for this pair but reintroduces the exact scheduling bug fixed above (verified: byte-identical output to the pre-fix 6-diff candidate). Every combination tried this pass of naming order, naming only one side, pointer-vs-value naming, `s32`-cast naming, comma-expression forced evaluation order, and prefetching `.right` first instead of `.left` either reproduced one of these two mutually exclusive outcomes exactly or regressed further (see the permuter runs from this pass, not retained on disk but reproducible via the PERM_GENERAL alternatives documented here). This looks like a genuine tension in this compiler's local-alloc between named-variable register independence and anonymous-temporary register reuse for this exact code shape, not yet resolved -- kept the scheduling-correct, semantically-clean variant (4 diff) rather than the roles-correct-but-misordered variant (6 diff) since it is closer to exact and the residual is a stable, well-characterized 2-instruction-pair swap, not a semantic error. Did not force register assignment via `register`-qualified locals, named-register variables, or inline asm, per project rules. Worth a future pass with a different local-alloc lever now that the swap is precisely characterized.",
-    "Adoption gate not met: differing_halfwords=4, not 0. Candidate is otherwise structurally and semantically complete -- no remaining algorithm, control-flow, or type mismatches, only the documented register-role swap above.",
-    "2026-08-27, mechanism-level follow-up: this owner's register-role-swap residual, and the structurally identical residuals independently found and left open this session on 080ae99c, 080ae9f0, and 080b60a0, are almost certainly the same GCC 2.96 local-alloc tie-break, now traced directly in alchemy-gcc/agscc/gcc/local-alloc.c. block_alloc() sorts competing quantities by qty_compare()'s QTY_CMP_PRI macro (floor_log2(n_refs) * n_refs * size / (death - birth)); the quantity that sorts first gets first pick of a hardware register in REG_ALLOC_ORDER order (arm.h: r3,r2,r1,r0,ip,lr,r4,...). When two quantities tie EXACTLY on that formula (identical ref count, size, and life-length -- exactly the case for two same-size values each loaded once and consumed once, as in this owner's left/tile[column] pair), qty_compare() has NO further tie-break for the small (<=3-quantity) case that this function's block uses (the inline EXCHANGE-based switch at local-alloc.c:1312-1336 and :1361-1385 simply leaves qty_order in its default 0..n identity order when qty_compare returns 0); only the qsort path (qty_compare_1, used for >3 quantities) explicitly breaks such ties by raw quantity number. Either way, the deciding factor is each quantity's internal number, which is assigned during block_alloc's single forward scan of the basic block's insns (local-alloc.c around line 1284) -- i.e. by REGISTER-RTL discovery order within that block, not by C source statement order once earlier passes (combine, cse, jump, loop) have already run. This is why every agent's declaration-order and statement-order experiments on this exact residual class, across four independent owners this session, measured zero effect: they were reordering the wrong thing. A real fix would need either (a) a way to change which of the two tied values' RTL is discovered first within the block -- something not controllable by plain reordering once combine/cse have restructured the block, or (b) tracing the actual .rtl dump for one of these tied pairs (GCC 2.96's -da/-dp dump flags) to find what upstream C-level change would shift RTL discovery order, which no agent attempted this session. Recorded here as the clearest write-up of the mechanism for whichever owner a future pass tackles first."
-  ]
+  "secondary_confirmation": {
+   "owner": "0x080b9dc4",
+   "baseline_differing_halfwords": 1,
+   "attempts": [
+    "defer completed initialization",
+    "introduce completed pointer alias"
+   ],
+   "result": "Both remained at one differing halfword: the candidate rematerializes zero while the reference copies the already-live zero carrier. No source was adopted and no further owner was selected."
+  },
+  "decision": "The decoder passed all three controlled perturbation tests but did not meet the real-floor hand-closure acceptance. The bounded failure is recorded as required; step 2 ends without an adoption and the gate proceeds to the annotation-free bounded permuter."
+ },
+ "register_gate_step3": {
+  "date": "2026-08-28",
+  "verdict": "accepted-annotation-free-finite-search",
+  "catalog": {
+   "version": "register-wall-v1",
+   "path": "games/gs1/recon/compiler-repair-patterns.json",
+   "enumeration": "baseline plus the finite alternatives for one structured decoder-named repair",
+   "maximum_raw_choices": 16,
+   "maximum_edits_per_candidate": 1
+  },
+  "entry": {
+   "owner": "0x080a8c2c",
+   "source_annotations": 0,
+   "decoder_dimensions": [
+    "temporary",
+    "evaluation_order",
+    "commutative_order"
+   ],
+   "decoder_constraint": "reciprocal-register-role-swap"
+  },
+  "run": {
+   "seed": 1,
+   "raw_choices": 5,
+   "unique_choices": 5,
+   "attempted": 5,
+   "compile_failures": 0,
+   "baseline_differing_halfwords": 4,
+   "best_differing_halfwords": 4,
+   "exact": false,
+   "decoder_repair": "reciprocal_register_role_swap(left)",
+   "decoder_evidence_sha256": "861af3c34fa5f87b1680b04dc9313b564b0827e12a6d85e5ee9d4c2472814266",
+   "result_path": "out/register-wall/step3/080a8c2c-structured-seed-1/report.json"
+  },
+  "bounded_results": [
+   {
+    "mutation": "baseline",
+    "differing_halfwords": 4
+   },
+   {
+    "mutation": "temporary:introduce",
+    "differing_halfwords": 4
+   },
+   {
+    "mutation": "evaluation_order:left_before_right",
+    "differing_halfwords": 6
+   },
+   {
+    "mutation": "temporary:merge",
+    "differing_halfwords": 6
+   },
+   {
+    "mutation": "commutative_order:swap_operands",
+    "differing_halfwords": 8
+   }
+  ],
+  "catalog_fixture_acceptance": [
+   {
+    "owner": "0x080b362c",
+    "repair": "swap_declarations(win2,object)",
+    "raw_choices": 2,
+    "best_differing_halfwords": 0,
+    "exact": true
+   },
+   {
+    "owner": "0x0807a550",
+    "repair": "split_lifetime(limit)",
+    "raw_choices": 2,
+    "best_differing_halfwords": 0,
+    "exact": true
+   },
+   {
+    "owner": "0x0808f1c0",
+    "repair": "merge_lifetime(zero_carrier)",
+    "raw_choices": 2,
+    "best_differing_halfwords": 0,
+    "exact": true
+   }
+  ],
+  "safety": "The permuter rejects retired PERM_GENERAL/PERM_INT annotations, requires a structured decoder repair with its named payload, masks comments and literals during site matching, refuses conditional/macro source, rejects direct main-image r0-r13 call-via models, deduplicates before deterministic seed rotation, and records decoder evidence plus the complete raw and unique finite spaces and mutation IDs.",
+  "adopted": false,
+  "decision": "Step 3 acceptance is met: an existing floored owner entered the bounded search as ordinary C with zero hand annotations, every decoder-selected safe catalog choice was compiled, and the complete finite space was reported. The unchanged four-halfword best score is evidence, not an adoption; step 4 may now begin."
+ },
+ "register_gate_step4": {
+  "date": "2026-08-28",
+  "closure_ordinal": 1,
+  "required_closures": 5,
+  "result": "adopted-byte-exact",
+  "baseline_differing_halfwords": 4,
+  "final_differing_halfwords": 0,
+  "repair_pattern": "inline-two-operand-xor-boundary",
+  "source_edit": "Replace the named first XOR temporary and the following compound XOR with two calls to one ordinary static inline binary-XOR helper.",
+  "allocator_effect": "Inlining preserves the anonymous mask=r3 and tile=r2 allocation while the helper parameter boundaries remove MEM_UNCHANGING from the two mask loads. The first store then feeds both later loads, raising its sched2 critical path above the independent right-side address setup.",
+  "bounded_confirmation": {
+   "both_helper_calls_required": true,
+   "canonical_no_dump_equals_diagnostic_dump": true,
+   "candidate_bytes": 148,
+   "reference_bytes": 148,
+   "linked_byte_differences": 0
+  },
+  "annotation_free_search": {
+   "catalog_version": "register-wall-v2",
+   "source_annotations": 0,
+   "raw_choices": 6,
+   "unique_choices": 6,
+   "attempted": 6,
+   "winning_mutation": "temporary+evaluation_order:inline_xor_helper",
+   "exact": true,
+   "result_path": "out/register-wall/step4/080a8c2c-catalog-v2/report.json"
+  },
+  "production": {
+   "source": "games/gs1/src/menu/build_pattern_tiles.c",
+   "compiler_route": "canonical-gcc296",
+   "compiler_overrides": [],
+   "retained_assembly_removed": true,
+   "integration_gate": "tools/check integrate accepted 148/148 linked bytes"
+  }
+ },
+ "notes": [
+  "Builds two groups of six menu pattern tiles by filling each 64-byte tile and applying paired XOR masks across seven columns.",
+  "2026-08-27: Root cause of the prior draft's 73-differing-halfword score was a mismodeled call. `Func_0800730c` is not a real function: 0x0800730c is the sl (r10) slot of the fourteen-entry `_call_via_rN` trampoline bundle at games/gs1/asm/080072e4.s (`bx rN; mov r8,r8`, 4 bytes/slot, r0..sp). Unlike the r0-r3 slots (where a fictional trailing argument lands in the right register purely because it's within the 4-register AAPCS/APCS argument window -- see games/gs1/src/unidentified/main/battle/battle_owner_4.c's byte-exact `Func_080072f0(dest,size,value,0x03000168)` precedent for the r3 slot), r10/sl is never an argument-passing register, so no N-argument direct call can ever place a value there; arm_function_arg in alchemy-gcc/agscc/gcc/config/arm/arm.c confirms arguments stop at r3. Rewrote the call as a genuine indirect call through a function-pointer local, `((FillWordsFn)0x03000168)(tile, 64, 0x44444444)` (FillWordsFn = void(*)(void*,s32,u32)), matching the already-adopted indirect-call idiom in games/gs1/src/battle/effects/member_orbit/run.c. This alone let the compiler naturally allocate both sl (the fill-routine pointer, loop-invariant) and r8 (the Data_080af23c base, loop-invariant) exactly as the reference does, dropping differing_halfwords from 73 to 6 (wrong_instructions 22->0) with zero remaining structural/semantic mismatches -- the rest of the function's control flow, mask-index clamp, and loop nesting were already correct in the prior draft.",
+  "2026-08-27 (same pass): the residual 6 differing halfwords were pure instruction-scheduling reordering (class=ordering, wrong_instructions=0): the reference finishes `tile[column] ^= Data_080af23c[mask_index].left;` completely (load, xor, store) before starting any part of the second statement's address advance, while the naive two-statement candidate let the compiler hoist the independent `adds r1,#4`/`mov r3,r8` (address setup for `.right`) forward into the middle of the first statement's dependency chain. Tried and rejected (each scored worse or unchanged, all still available in this dossier via the permuter's report.json runs during this session): swapping statement order; explicit non-compound `a = a ^ b` forms; wrapping just one statement in an empty block (no effect -- proves the fix isn't about lexical block boundaries per se); an unused/dead local declared in the block (no effect -- proves it isn't about the block merely containing a declaration); a named local `struct TileMaskPair *mask`/`masks[]` pointer alias for the whole Data_080af23c[mask_index] pair (regressed hard, 39-47 diff, evidently disturbs the loop-invariant hoisting of the array base entirely); flat `(const u8*)Data_080af23c + mask_index*8` byte-offset addressing (regressed to candidate=156, 75 diff). The fix that worked: materializing only the `.left` value into a named local (`u32 left = Data_080af23c[mask_index].left;`) as its own full statement, immediately before `tile[column] ^= left;`, inside a fresh nested block. This is a real, minimal, plausible source shape (a natural place to name the first mask half) and it fixed the scheduling exactly: differing_halfwords 6->4.",
+  "2026-08-27 (same pass, residual documented, not fully closed): the remaining 4 differing halfwords (wrong_instructions=8, class=allocation, matched_prefix=37 of 74) are a register-role swap confined to the single `eors`/`str` pair for the `.left` xor: reference computes `mov r3,r8; ldr r3,[r3,r1]` (mask value REUSES r3, the now-dead address-base register) then `ldr r2,[r0,#0]` (tile value gets a fresh r2), `eors r2,r3`, `str r2,[r0,#0]`; the candidate instead gives the mask value a fresh r2 and lets the tile value reuse r3, i.e. `eors r3,r2; str r3,[r0,#0]` -- functionally identical, byte-different. Root cause, confirmed by direct A/B compiles: naming `left` as a real local (required to fix the scheduling above) makes GCC give it its OWN fresh pseudo/register rather than letting it merge into the about-to-be-dead address-base register the way an anonymous temporary can; reversing which value is named first (naming a `tile[column]` temp `t0` ahead of `left`) restores the correct r2/r3 roles for this pair but reintroduces the exact scheduling bug fixed above (verified: byte-identical output to the pre-fix 6-diff candidate). Every combination tried this pass of naming order, naming only one side, pointer-vs-value naming, `s32`-cast naming, comma-expression forced evaluation order, and prefetching `.right` first instead of `.left` either reproduced one of these two mutually exclusive outcomes exactly or regressed further (see the permuter runs from this pass, not retained on disk but reproducible via the PERM_GENERAL alternatives documented here). This looks like a genuine tension in this compiler's local-alloc between named-variable register independence and anonymous-temporary register reuse for this exact code shape, not yet resolved -- kept the scheduling-correct, semantically-clean variant (4 diff) rather than the roles-correct-but-misordered variant (6 diff) since it is closer to exact and the residual is a stable, well-characterized 2-instruction-pair swap, not a semantic error. Did not force register assignment via `register`-qualified locals, named-register variables, or inline asm, per project rules. Worth a future pass with a different local-alloc lever now that the swap is precisely characterized.",
+  "Adoption gate not met: differing_halfwords=4, not 0. Candidate is otherwise structurally and semantically complete -- no remaining algorithm, control-flow, or type mismatches, only the documented register-role swap above.",
+  "2026-08-27, mechanism-level follow-up: this owner's register-role-swap residual, and the structurally identical residuals independently found and left open this session on 080ae99c, 080ae9f0, and 080b60a0, are almost certainly the same GCC 2.96 local-alloc tie-break, now traced directly in alchemy-gcc/agscc/gcc/local-alloc.c. block_alloc() sorts competing quantities by qty_compare()'s QTY_CMP_PRI macro (floor_log2(n_refs) * n_refs * size / (death - birth)); the quantity that sorts first gets first pick of a hardware register in REG_ALLOC_ORDER order (arm.h: r3,r2,r1,r0,ip,lr,r4,...). When two quantities tie EXACTLY on that formula (identical ref count, size, and life-length -- exactly the case for two same-size values each loaded once and consumed once, as in this owner's left/tile[column] pair), qty_compare() has NO further tie-break for the small (<=3-quantity) case that this function's block uses (the inline EXCHANGE-based switch at local-alloc.c:1312-1336 and :1361-1385 simply leaves qty_order in its default 0..n identity order when qty_compare returns 0); only the qsort path (qty_compare_1, used for >3 quantities) explicitly breaks such ties by raw quantity number. Either way, the deciding factor is each quantity's internal number, which is assigned during block_alloc's single forward scan of the basic block's insns (local-alloc.c around line 1284) -- i.e. by REGISTER-RTL discovery order within that block, not by C source statement order once earlier passes (combine, cse, jump, loop) have already run. This is why every agent's declaration-order and statement-order experiments on this exact residual class, across four independent owners this session, measured zero effect: they were reordering the wrong thing. A real fix would need either (a) a way to change which of the two tied values' RTL is discovered first within the block -- something not controllable by plain reordering once combine/cse have restructured the block, or (b) tracing the actual .rtl dump for one of these tied pairs (GCC 2.96's -da/-dp dump flags) to find what upstream C-level change would shift RTL discovery order, which no agent attempted this session. Recorded here as the clearest write-up of the mechanism for whichever owner a future pass tackles first."
+ ]
 }

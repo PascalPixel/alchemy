@@ -1,24 +1,23 @@
 {
-  "schema_version": 1,
-  "namespace": "gs1-en-main",
-  "address": "0x080a38d0",
-  "name": "Func_080a38d0",
-  "status": "measured-draft",
-  "owner_bytes": 824,
-  "score": {
-    "measured": "2026-08-27",
-    "candidate_bytes": 300,
-    "reference_bytes": 824,
-    "differing_halfwords": 405,
-    "wrong_instructions": 345,
-    "class": "wrong",
-    "note": "Assigned to the shop/select_party_member.c family by clustering; the operand at struct offset +0x20 (item_window) matches games/gs1/include/inventory_menu.h's InventoryMenuState.item_window exactly, and it sits between the already-named inventory_menu owners open_category_items (080a38a8) and equipment_menu/update_compatibility_indicators (080a3c08), and directly calls EquipmentMenu_StartCompatibilityIndicators (Func_080a3c98) via a ScheduleCallbackAfterFrames((s32)&Data_080a3c09, 0xc80) registration -- this is real inventory/equip-menu code, most likely the item-category selection loop the player uses when choosing which item to equip/use, not a party-member picker. This is the largest and most register-heavy owner in the batch (7 registers live across calls, matching the sibling owners' shared prologue shape) and, given six owners assigned in this batch, it received the least remaining time: the candidate captures the overall for(;;)/redraw/A-B-L-R shape, the item-window bounds setup, the Modulo-driven selection wraparound, and calls into the real siblings InventoryMenu_CountItems (Func_080a3d6c), InventoryMenu_GetItemQuantity (Func_080a3d9c), and Func_080a3ef0, but the exact quantity/availability-icon drawing logic, the equipment-compatibility-indicator dispatch (the Func_080a3d9c-guarded branch that plays sounds 111-114 and draws one of two icon variants depending on compatibility), and most struct-field offsets beyond item_window (+0x20) and target/item owner (+0x21a/+0x21b) are reconstructed only approximately from the raw instruction stream, not independently confirmed. The 524-byte shortfall (300 vs 824) reflects that gap directly."
-  },
-  "rejected_experiments": [],
-  "notes": [
-    "Recovered from games/gs1/asm/080a38d0.s. games/gs1/include/inventory_menu.h supplied item_window (+0x20), and the real callee names InventoryMenu_CountItems/GetItemQuantity/IsSpecialItemRange -- the strongest, best-corroborated evidence in this whole batch that a target owner's assembly can genuinely belong to a different module than its clustered template while still sharing the template's control-flow idiom.",
-    "The ScheduleCallbackAfterFrames(&EquipmentMenu_CompatibilityUpdateEntry, 0xc80) call near the top (register callback + 3200-tick/order value, read directly off the literal pool as `.4byte 0x080a3c09`) was not modeled in the candidate at all -- it is a real, verified call this draft is missing entirely, left out because the exact registration semantics (order/priority argument) were not chased down in the time available.",
-    "This candidate claims zero DONE bytes; it is a rough structural skeleton (300 of 824 bytes), not a close attempt. A proper reconstruction of this owner needs a dedicated pass: the equip-compatibility branch (calls Func_080a3d9c, then dispatches to one of two Func_08015080 icon draws based on its result, then a further Func_080a3d6c/count check with a third icon variant) is the single largest unmodeled chunk and should be traced from the retained assembly before any more respelling is attempted.",
-    "No sibling draft existed for this owner before this session."
-  ]
+ "schema_version": 1,
+ "namespace": "gs1-en-main",
+ "address": "0x080a38d0",
+ "status": "measured-draft",
+ "owner_bytes": 824,
+ "score": {
+  "measured": "2026-08-27",
+  "candidate_bytes": 300,
+  "reference_bytes": 824,
+  "differing_halfwords": 405,
+  "wrong_instructions": 345,
+  "class": "wrong",
+  "note": "Assigned to the shop/select_party_member.c family by clustering; the operand at struct offset +0x20 (item_window) matches games/gs1/include/inventory_menu.h's InventoryMenuState.item_window exactly, and it sits between the already-named inventory_menu owners open_category_items (080a38a8) and equipment_menu/update_compatibility_indicators (080a3c08), and directly calls EquipmentMenu_StartCompatibilityIndicators (Func_080a3c98) via a ScheduleCallbackAfterFrames((s32)&Data_080a3c09, 0xc80) registration -- this is real inventory/equip-menu code, most likely the item-category selection loop the player uses when choosing which item to equip/use, not a party-member picker. This is the largest and most register-heavy owner in the batch (7 registers live across calls, matching the sibling owners' shared prologue shape) and, given six owners assigned in this batch, it received the least remaining time: the candidate captures the overall for(;;)/redraw/A-B-L-R shape, the item-window bounds setup, the Modulo-driven selection wraparound, and calls into the real siblings InventoryMenu_CountItems (Func_080a3d6c), InventoryMenu_GetItemQuantity (Func_080a3d9c), and Func_080a3ef0, but the exact quantity/availability-icon drawing logic, the equipment-compatibility-indicator dispatch (the Func_080a3d9c-guarded branch that plays sounds 111-114 and draws one of two icon variants depending on compatibility), and most struct-field offsets beyond item_window (+0x20) and target/item owner (+0x21a/+0x21b) are reconstructed only approximately from the raw instruction stream, not independently confirmed. The 524-byte shortfall (300 vs 824) reflects that gap directly."
+ },
+ "rejected_experiments": [],
+ "notes": [
+  "Recovered from games/gs1/asm/080a38d0.s. games/gs1/include/inventory_menu.h supplied item_window (+0x20), and the real callee names InventoryMenu_CountItems/GetItemQuantity/IsSpecialItemRange -- the strongest, best-corroborated evidence in this whole batch that a target owner's assembly can genuinely belong to a different module than its clustered template while still sharing the template's control-flow idiom.",
+  "The ScheduleCallbackAfterFrames(&EquipmentMenu_CompatibilityUpdateEntry, 0xc80) call near the top (register callback + 3200-tick/order value, read directly off the literal pool as `.4byte 0x080a3c09`) was not modeled in the candidate at all -- it is a real, verified call this draft is missing entirely, left out because the exact registration semantics (order/priority argument) were not chased down in the time available.",
+  "This candidate claims zero DONE bytes; it is a rough structural skeleton (300 of 824 bytes), not a close attempt. A proper reconstruction of this owner needs a dedicated pass: the equip-compatibility branch (calls Func_080a3d9c, then dispatches to one of two Func_08015080 icon draws based on its result, then a further Func_080a3d6c/count check with a third icon variant) is the single largest unmodeled chunk and should be traced from the retained assembly before any more respelling is attempted.",
+  "No sibling draft existed for this owner before this session."
+ ]
 }

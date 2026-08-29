@@ -1,72 +1,91 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x0800651c",
-  "name": "BattleLink_ResetTransferState",
-  "status": "measured-draft",
-  "owner_bytes": 64,
-  "executable_owner_bytes": 64,
-  "candidate_bytes": 64,
-  "differing_halfwords": 7,
-  "wrong_instructions": 4,
-  "cross_edition": {
-    "object_bytes": 64,
-    "relocation_normalized_core_bytes": 40,
-    "core_diff_bytes": 0,
-    "core_identical": true,
-    "starts": {
-      "ja": "0x0800651c",
-      "en": "0x0800651c",
-      "de": "0x0800654c",
-      "es": "0x0800657c",
-      "fr": "0x0800652c",
-      "it": "0x0800655c"
-    }
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x0800651c",
+ "status": "measured-draft",
+ "owner_bytes": 64,
+ "executable_owner_bytes": 64,
+ "candidate_bytes": 64,
+ "differing_halfwords": 7,
+ "wrong_instructions": 4,
+ "cross_edition": {
+  "object_bytes": 64,
+  "relocation_normalized_core_bytes": 40,
+  "core_diff_bytes": 0,
+  "core_identical": true,
+  "starts": {
+   "ja": "0x0800651c",
+   "en": "0x0800651c",
+   "de": "0x0800654c",
+   "es": "0x0800657c",
+   "fr": "0x0800652c",
+   "it": "0x0800655c"
+  }
+ },
+ "domain": "Resets the shared battle-link transfer state while preserving and restoring the interrupt-enable register.",
+ "expressed": [
+  "saves the interrupt-enable register and applies the original temporary write",
+  "marks the local link-transfer state as resetting",
+  "clears the transfer counters, shared pointer, status bytes, and synchronization halfword",
+  "restores the saved interrupt-enable value"
+ ],
+ "bounded_search": {
+  "mode": "source-shape",
+  "attempted": 1000,
+  "exact": false,
+  "reason": "Two bounded 500-candidate searches were flat at nine differing halfwords after named absolute symbols restored the exact extent and literal values."
+ },
+ "register_gate_step4_probe": {
+  "date": "2026-08-28",
+  "result": "exhausted-not-a-closure",
+  "baseline": {
+   "candidate_bytes": 64,
+   "reference_bytes": 64,
+   "differing_halfwords": 7,
+   "wrong_instructions": 4
   },
-  "domain": "Resets the shared battle-link transfer state while preserving and restoring the interrupt-enable register.",
-  "expressed": [
-    "saves the interrupt-enable register and applies the original temporary write",
-    "marks the local link-transfer state as resetting",
-    "clears the transfer counters, shared pointer, status bytes, and synchronization halfword",
-    "restores the saved interrupt-enable value"
+  "decoder_cause": "The interrupt-master pointer already owns r0 and the later state pointer owns r1, but the state literal is not created until after the volatile interrupt read/self-write. Those volatile dependencies prevent sched2 from hoisting it ahead of the interrupt literal; zero is independently created early in r2.",
+  "annotation_free_catalog": {
+   "admitted": false,
+   "attempted": 0,
+   "reason": "The existing catalog has no absolute-address-materialization operation and correctly refused to reinterpret the two distinct literal loads as a reciprocal register swap."
+  },
+  "bounded_variants": [
+   {
+    "source_shape": "explicit eager state pointer with canonical register roles",
+    "candidate_bytes": 64,
+    "differing_halfwords": 9
+   },
+   {
+    "source_shape": "state accessor inline boundary",
+    "candidate_bytes": 64,
+    "differing_halfwords": 7
+   },
+   {
+    "source_shape": "create zero after the volatile self-write",
+    "candidate_bytes": 76,
+    "differing_halfwords": 35
+   },
+   {
+    "source_shape": "direct REG_IME accesses with eager state",
+    "candidate_bytes": 80,
+    "differing_halfwords": 39
+   },
+   {
+    "source_shape": "two-parameter inline reset boundary",
+    "candidate_bytes": 76,
+    "differing_halfwords": 36
+   }
   ],
-  "bounded_search": {
-    "mode": "source-shape",
-    "attempted": 1000,
-    "exact": false,
-    "reason": "Two bounded 500-candidate searches were flat at nine differing halfwords after named absolute symbols restored the exact extent and literal values."
-  },
-  "register_gate_step4_probe": {
-    "date": "2026-08-28",
-    "result": "exhausted-not-a-closure",
-    "baseline": {
-      "candidate_bytes": 64,
-      "reference_bytes": 64,
-      "differing_halfwords": 7,
-      "wrong_instructions": 4
-    },
-    "decoder_cause": "The interrupt-master pointer already owns r0 and the later state pointer owns r1, but the state literal is not created until after the volatile interrupt read/self-write. Those volatile dependencies prevent sched2 from hoisting it ahead of the interrupt literal; zero is independently created early in r2.",
-    "annotation_free_catalog": {
-      "admitted": false,
-      "attempted": 0,
-      "reason": "The existing catalog has no absolute-address-materialization operation and correctly refused to reinterpret the two distinct literal loads as a reciprocal register swap."
-    },
-    "bounded_variants": [
-      {"source_shape": "explicit eager state pointer with canonical register roles", "candidate_bytes": 64, "differing_halfwords": 9},
-      {"source_shape": "state accessor inline boundary", "candidate_bytes": 64, "differing_halfwords": 7},
-      {"source_shape": "create zero after the volatile self-write", "candidate_bytes": 76, "differing_halfwords": 35},
-      {"source_shape": "direct REG_IME accesses with eager state", "candidate_bytes": 80, "differing_halfwords": 39},
-      {"source_shape": "two-parameter inline reset boundary", "candidate_bytes": 76, "differing_halfwords": 36}
-    ],
-    "decision": "No tested ordinary-C boundary independently changed literal materialization order while retaining the established r0/r1 roles and 64-byte extent. Restore the 7-halfword baseline, retain assembly, record the missing catalog dimension, and proceed to the next single cluster."
-  },
-  "notes": [
-    "2026-08-27: Traced the residual to a single root cause: the compiler ties a pc-relative literal's pool position to the register-allocation order of whichever local pointer variables are assigned eagerly in the same block (first-assigned pointer always lands in the first pool slot and the lowest register; verified by directly swapping the interrupt_master/state assignment order, which flips both together and worsens wrong_instructions from 4 to 16 -- reproduces and confirms the prior session's reverted attempt). Broke that coupling by dropping the local `state` pointer variable entirely and instead referencing the struct through the existing extern `Data_02002220` symbol directly at each use site (Data_02002220.status / .peer_flags / .flags, equivalent to the header's SERIAL_TRANSFER macro -- both produce byte-identical output; kept the plain extern-symbol form for consistency with the rest of the file's Data_ globals). With only `interrupt_master` assigned eagerly in the preamble block, it deterministically takes r0 and its literal takes pool slot 0, while the now-lazily-referenced state struct address is loaded on first use and lands in r1 -- exactly the reference's r0=interrupt_master/r1=state register split. This dropped differing_halfwords from 9 to 7 (wrong_instructions unchanged at 4; class=allocation). The remaining 7 halfwords are all one issue: the reference's first two instructions eagerly load the state and interrupt_master literals BOTH up front, in [state, interrupt_master] pool order, while still keeping interrupt_master in r0 and state in r1 -- an order/register combination that could not be reproduced with any tested source-level restatement (assignment-order swaps, declaration-order swaps, splitting/merging the zero=0 statement's do-while block, or flattening the nested do-while(0) structure). Moving `zero = 0` out of the first preamble block and into the second (to match the reference's exact scheduling position, right after the interrupt-master save/store) was tried in two positions; both caused the compiler to spill (r5 plus push/pop, growing the candidate to 76 bytes), so the nested do-while(0) grouping was kept as-is since it is load-bearing for staying within the 64-byte budget. This matches the .s file's own header comment that the original ROM compiler is not reproducible with the approved free toolchain; treated as a compiler-fidelity ceiling for this instruction pair, not unexplored search space. No full/bounded search was rerun this session; the remaining 4 wrong_instructions and 7 differing_halfwords are believed to be at or near that ceiling.",
-    "Independent object analysis bounds this leaf at 64 executable bytes and proves all 40 relocation-normalized core bytes identical across the six approved GS1 editions.",
-    "Third attempt (this session): swapping the state/interrupt_master assignment order flips the literal-pool word order to match the reference exactly (0x2220 then 0x0208 vs the current 0x0208 then 0x2220), but the register numbers it then produces for those two pointers are the wrong way round relative to reference, worsening wrong_instructions from 4 to 16. Reverted; the original order remains the best-known candidate.",
-    "The coherent translation-unit build and first-class absolute symbols fix the former ten-byte extent excess and preserve the real 0x02002008, 0x02002080, 0x02002220, 0x02002238, 0x020023ac, and 0x04000208 bindings.",
-    "All instructions after the first five match. The remaining nine-halfword residual is the entry load, interrupt save, zero-value scheduling, and consequent literal-pool order; two bounded source-shape searches found no improvement.",
-    "No full search or permanent classification was warranted, and zero DONE bytes are claimed.",
-    "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, the recovered linked-action caller, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used."
-  ]
+  "decision": "No tested ordinary-C boundary independently changed literal materialization order while retaining the established r0/r1 roles and 64-byte extent. Restore the 7-halfword baseline, retain assembly, record the missing catalog dimension, and proceed to the next single cluster."
+ },
+ "notes": [
+  "2026-08-27: Traced the residual to a single root cause: the compiler ties a pc-relative literal's pool position to the register-allocation order of whichever local pointer variables are assigned eagerly in the same block (first-assigned pointer always lands in the first pool slot and the lowest register; verified by directly swapping the interrupt_master/state assignment order, which flips both together and worsens wrong_instructions from 4 to 16 -- reproduces and confirms the prior session's reverted attempt). Broke that coupling by dropping the local `state` pointer variable entirely and instead referencing the struct through the existing extern `Data_02002220` symbol directly at each use site (Data_02002220.status / .peer_flags / .flags, equivalent to the header's SERIAL_TRANSFER macro -- both produce byte-identical output; kept the plain extern-symbol form for consistency with the rest of the file's Data_ globals). With only `interrupt_master` assigned eagerly in the preamble block, it deterministically takes r0 and its literal takes pool slot 0, while the now-lazily-referenced state struct address is loaded on first use and lands in r1 -- exactly the reference's r0=interrupt_master/r1=state register split. This dropped differing_halfwords from 9 to 7 (wrong_instructions unchanged at 4; class=allocation). The remaining 7 halfwords are all one issue: the reference's first two instructions eagerly load the state and interrupt_master literals BOTH up front, in [state, interrupt_master] pool order, while still keeping interrupt_master in r0 and state in r1 -- an order/register combination that could not be reproduced with any tested source-level restatement (assignment-order swaps, declaration-order swaps, splitting/merging the zero=0 statement's do-while block, or flattening the nested do-while(0) structure). Moving `zero = 0` out of the first preamble block and into the second (to match the reference's exact scheduling position, right after the interrupt-master save/store) was tried in two positions; both caused the compiler to spill (r5 plus push/pop, growing the candidate to 76 bytes), so the nested do-while(0) grouping was kept as-is since it is load-bearing for staying within the 64-byte budget. This matches the .s file's own header comment that the original ROM compiler is not reproducible with the approved free toolchain; treated as a compiler-fidelity ceiling for this instruction pair, not unexplored search space. No full/bounded search was rerun this session; the remaining 4 wrong_instructions and 7 differing_halfwords are believed to be at or near that ceiling.",
+  "Independent object analysis bounds this leaf at 64 executable bytes and proves all 40 relocation-normalized core bytes identical across the six approved GS1 editions.",
+  "Third attempt (this session): swapping the state/interrupt_master assignment order flips the literal-pool word order to match the reference exactly (0x2220 then 0x0208 vs the current 0x0208 then 0x2220), but the register numbers it then produces for those two pointers are the wrong way round relative to reference, worsening wrong_instructions from 4 to 16. Reverted; the original order remains the best-known candidate.",
+  "The coherent translation-unit build and first-class absolute symbols fix the former ten-byte extent excess and preserve the real 0x02002008, 0x02002080, 0x02002220, 0x02002238, 0x020023ac, and 0x04000208 bindings.",
+  "All instructions after the first five match. The remaining nine-halfword residual is the entry load, interrupt save, zero-value scheduling, and consequent literal-pool order; two bounded source-shape searches found no improvement.",
+  "No full search or permanent classification was warranted, and zero DONE bytes are claimed.",
+  "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, the recovered linked-action caller, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used."
+ ]
 }

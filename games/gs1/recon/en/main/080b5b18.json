@@ -1,43 +1,42 @@
 {
-  "schema_version": 1,
-  "namespace": "gs1-en-main",
-  "address": "0x080b5b18",
-  "name": "BattleParty_ResetActiveRuntimeFields",
-  "status": "measured-draft",
-  "owner_bytes": 240,
-  "score": {
-    "measured": "2026-08-26",
-    "candidate_bytes": 240,
-    "reference_bytes": 240,
-    "differing_halfwords": 109,
-    "wrong_instructions": 32,
-    "class": "wrong",
-    "command": "cargo run --offline --quiet --release --manifest-path tools/compiler/Cargo.toml -- candidate-show games/gs1/recon/en/main/080b5b18.c",
-    "note": "Loops over each active party member (Func_080b6a60) and for each one zeros state+0x131..state+0x148 via a 3-byte countdown loop plus 22 individual byte stores, then calls Func_08077010. The reference's two interleaved even/odd store-pointer chains prove the zeroed range skips exactly one offset: 0x140 (not 0x142, an earlier hand-guess this session that measured byte-identically to 0x140's omission on raw counts alone -- the +2/+3 stride-jump position in the aligned disassembly is what actually distinguishes them, and 0x140 is the position that resolves every previously-marked instruction in the store-chain region). The u8 zero=0 local is hoisted to function scope (not per-iteration), matching the reference's r9-resident constant kept live across the whole loop."
+ "schema_version": 1,
+ "namespace": "gs1-en-main",
+ "address": "0x080b5b18",
+ "status": "measured-draft",
+ "owner_bytes": 240,
+ "score": {
+  "measured": "2026-08-26",
+  "candidate_bytes": 240,
+  "reference_bytes": 240,
+  "differing_halfwords": 109,
+  "wrong_instructions": 32,
+  "class": "wrong",
+  "command": "cargo run --offline --quiet --release --manifest-path tools/compiler/Cargo.toml -- candidate-show games/gs1/recon/en/main/080b5b18.c",
+  "note": "Loops over each active party member (Func_080b6a60) and for each one zeros state+0x131..state+0x148 via a 3-byte countdown loop plus 22 individual byte stores, then calls Func_08077010. The reference's two interleaved even/odd store-pointer chains prove the zeroed range skips exactly one offset: 0x140 (not 0x142, an earlier hand-guess this session that measured byte-identically to 0x140's omission on raw counts alone -- the +2/+3 stride-jump position in the aligned disassembly is what actually distinguishes them, and 0x140 is the position that resolves every previously-marked instruction in the store-chain region). The u8 zero=0 local is hoisted to function scope (not per-iteration), matching the reference's r9-resident constant kept live across the whole loop."
+ },
+ "remaining": [
+  {
+   "op": "register allocation",
+   "count": 109,
+   "where": "prologue/loop register-allocation mismatch: candidate keeps the owners-pointer/count in r5/r9 with an extra movs/adds pair and issues the bge trip-check after loading the pointer, vs reference's r8/sl allocation with an early single-register move and cmp/bge issued before the mov sl step; plus an ldrsh-vs-ldrh signedness difference on the owners[i] load and a differing final pop/bx register pair. None of these are affected by the field-list choice -- raw differing_halfwords stays pinned near 109 across nearly all field-list variants because the extra prologue instructions phase-shift almost the entire body's byte offsets against the fixed-position reference comparison."
+  }
+ ],
+ "rejected_experiments": [
+  {
+   "experiment": "23-way sweep: each of state[0x132..0x148] omitted singly",
+   "result": "0x140 is the unique minimum (10 mismatched rows in the aligned diff) versus 12-14 for every other mid-range single omission and worse wrong_instructions (34-42) for boundary omissions (0x132, 0x148)"
   },
-  "remaining": [
-    {
-      "op": "register allocation",
-      "count": 109,
-      "where": "prologue/loop register-allocation mismatch: candidate keeps the owners-pointer/count in r5/r9 with an extra movs/adds pair and issues the bge trip-check after loading the pointer, vs reference's r8/sl allocation with an early single-register move and cmp/bge issued before the mov sl step; plus an ldrsh-vs-ldrh signedness difference on the owners[i] load and a differing final pop/bx register pair. None of these are affected by the field-list choice -- raw differing_halfwords stays pinned near 109 across nearly all field-list variants because the extra prologue instructions phase-shift almost the entire body's byte offsets against the fixed-position reference comparison."
-    }
-  ],
-  "rejected_experiments": [
-    {
-      "experiment": "23-way sweep: each of state[0x132..0x148] omitted singly",
-      "result": "0x140 is the unique minimum (10 mismatched rows in the aligned diff) versus 12-14 for every other mid-range single omission and worse wrong_instructions (34-42) for boundary omissions (0x132, 0x148)"
-    },
-    {
-      "experiment": "3 shifted-range variants (e.g. 0x131-0x147 skip 0x13f; 0x133-0x149 skip 0x141; 0x132-0x149 skip two offsets)",
-      "result": "all worse than the fixed 0x132-0x148 range with 0x140 omitted -- one produced the wrong total length (236 vs 240)"
-    },
-    {
-      "experiment": "u8 zero declared per-iteration inside the for loop instead of hoisted to function scope",
-      "result": "regresses wrong_instructions from 32 to 118 -- this hoist is load-bearing, matching the reference's r9-resident constant kept live across the whole function"
-    }
-  ],
-  "notes": [
-    "Recovered only from the retained owner assembly, approved local ROM, sibling owner 080b6a60 (BattleParty_PrepareActiveOwners, this session's own reconstruction) and its established Func_08077008/Func_08077010 vocabulary, in-repository headers, and the approved compiler.",
-    "This candidate claims zero DONE bytes."
-  ]
+  {
+   "experiment": "3 shifted-range variants (e.g. 0x131-0x147 skip 0x13f; 0x133-0x149 skip 0x141; 0x132-0x149 skip two offsets)",
+   "result": "all worse than the fixed 0x132-0x148 range with 0x140 omitted -- one produced the wrong total length (236 vs 240)"
+  },
+  {
+   "experiment": "u8 zero declared per-iteration inside the for loop instead of hoisted to function scope",
+   "result": "regresses wrong_instructions from 32 to 118 -- this hoist is load-bearing, matching the reference's r9-resident constant kept live across the whole function"
+  }
+ ],
+ "notes": [
+  "Recovered only from the retained owner assembly, approved local ROM, sibling owner 080b6a60 (BattleParty_PrepareActiveOwners, this session's own reconstruction) and its established Func_08077008/Func_08077010 vocabulary, in-repository headers, and the approved compiler.",
+  "This candidate claims zero DONE bytes."
+ ]
 }

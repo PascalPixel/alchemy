@@ -1,61 +1,60 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x080b9b30",
-  "name": "BattlePresentation_DispatchAction",
-  "status": "measured-draft",
-  "owner_bytes": 516,
-  "executable_owner_bytes": 516,
-  "candidate_bytes": 512,
-  "differing_halfwords": 150,
-  "wrong_instructions": 124,
-  "cross_edition": {
-    "object_bytes": 516,
-    "relocation_bytes": 104,
-    "literal_bytes": 68,
-    "relocation_normalized_core_bytes": 344,
-    "core_diff_bytes": 0,
-    "core_identical": true,
-    "starts": {
-      "ja": "0x080b0b30",
-      "en": "0x080b9b30",
-      "de": "0x080bc148",
-      "es": "0x080bdb48",
-      "fr": "0x080bdb48",
-      "it": "0x080b9b48"
-    }
-  },
-  "domain": "Validates and prepares a queued battle action, dispatches its presentation mode, restores visible units, and reports whether the action must remain active.",
-  "expressed": [
-    "invalid and inactive actor rejection",
-    "battle presentation transition and render-state setup",
-    "temporary selected-unit visibility mode",
-    "nine-way presentation dispatch from battle action state",
-    "visible-unit restoration and action completion",
-    "special transition result that preserves the queued action"
-  ],
-  "bounded_search": {
-    "mode": "classic-exact-only",
-    "attempted": 10000,
-    "compile_failures": 962,
-    "exact": false,
-    "baseline_structural_rows": 30,
-    "best_structural_rows": 19,
-    "best_generated_candidate_bytes": 508,
-    "best_generated_differing_halfwords": 132
-  },
-  "notes": [
-    "Auditing the jump-table targets corrected the inherited draft's semantic case mapping: cases 3/4 run the paired-unit transition, cases 5/6/7 select presentation variants 0/1/2, case 8 runs the action-aware presentation, and case 9 is the action-preserving presentation. This reduces the readable residual from 177 halfwords / 140 wrong instructions to 153 / 126.",
-    "The readable candidate reproduces the exact 32-byte frame and complete control-flow semantics but retains broad register-allocation, literal-pool, and switch-layout differences, so it claims zero DONE bytes.",
-    "A bounded 10,000-candidate search reduced structural rows from 30 to 19, but its best source was eight bytes short, still differed by 132 halfwords, and accumulated a type-changing cast plus synthetic temporary and one-shot-block mutations. It was rejected rather than weakening the readable semantics.",
-    "Declaration-order and split palette-result carriers were byte-neutral. A pointer/decrement cleanup loop shortened the owner and regressed wrong-instruction count, so the clearer indexed cleanup loop remains.",
-    "The six approved GS1 editions share all 344 relocation- and literal-normalized core bytes; edition differences are confined to expected relocated calls and literals.",
-    "Recovered only from retained owner assembly, the six local GS1 ROMs, exact local callers, nearby presentation drafts, and the approved compiler. No external source, copied instruction bytes, inline assembly, fixed-register variable, compiler barrier, or compiler modification was used.",
-    "measured=2026-08-29: sequencing 'render_state = *(transition_slot - 32)' after the 'battle+0x644 = 0x10000' store (instead of before it, matching the struct's field order) realigned the render_state load/shift/store triplet with the reference and dropped the residual from 153/126 to 150/124. Kept.",
-    "measured=2026-08-29 refuted: hoisting the shared 0x01fe0000 literal out of 'Func_08005258(0x01fe0000, Func_080072f0(0x01fe0000, 0xc000), 0x7fff0000)' via an explicit temporary (assigning through 'result') matched the owner's 516-byte size but regressed to 198 differing halfwords / 156 wrong instructions -- the compiler still re-hoists the shared constant across the call boundary in a different, worse shape. Reverted.",
-    "measured=2026-08-29 refuted: reordering 'battle = *(transition_slot - 35)' ahead of the 'transition = ...' load (so battle's live range is established first) did not flip the transition/battle r6<->r7 register-allocator swap that accounts for the bulk of the remaining wrong_instructions in the switch body; it also undid the render_state fix's ordering and regressed to 153/124. Reverted. The r6/r7 swap looks driven by something other than statement or declaration order (already independently confirmed byte-neutral above); local-alloc internals, not source order, decide it here.",
-    "measured=2026-08-29 refuted: replacing the 'if (preserve_action) goto finish;' early-exit with an equivalent 'if (preserve_action == 0) { ...cleanup... }' guard (removing the goto/label) regressed to 154/140 -- the goto's unconditional branch is load-bearing for where arm_reorg's minipool barrier lands, which is the root cause of the remaining branch-target mismatch (b.n 0x1f0 vs reference's b.n 0x1d2) and the mid-function literal-pool bytes disassembling as garbage instructions after it. Reverted.",
-    "measured=2026-08-29 refuted: changing the visible-unit restoration loop's sentinel from 'index < visible_count' to 'index != visible_count' regressed sharply (500 candidate bytes, 188 differing halfwords) -- the loop already uses the correct bounded form. Reverted.",
-    "2026-08-29: mid-session, alchemy-gcc's agscc/gcc/config/arm/{arm.c,arm.h} were found modified on disk by a concurrent process (an experimental TARGET_MINIPOOL_FIRST_BARRIER flag, uncommitted) and gs1/cc1 started failing its approved-digest check for every candidate-show call, including on this owner's unmodified baseline. The source was reverted with 'git checkout' (undoing that external, unauthorized compiler change, not making one) and alchemy-gcc was rebuilt with the committed 'make'/'make clean && make'. The resulting cc1 is source-identical to the pinned darwin-arm64 build but hashes differently (7e1cb107...), most likely from non-reproducible linker metadata (e.g. Mach-O build UUID), and is not yet in the bundle_data.rs allow-list, so candidate-show is currently blocked by 'alchemy-gcc gs1/cc1 has an unapproved digest'. Admitting a new digest requires a clean-tree 'make verify'/'make full-rom-check' pin, which needs staging the whole repo including unrelated concurrent in-flight changes (games/gs1/recon/en/main/080b2b10.c was independently dirty throughout), so that admission was left undone as out of scope for a single-owner task. All differing_halfwords/wrong_instructions figures in this record were measured before that outage began and are trustworthy (the pre-outage build's baseline reading exactly reproduced this record's prior 153/126 figures)."
-  ]
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x080b9b30",
+ "status": "measured-draft",
+ "owner_bytes": 516,
+ "executable_owner_bytes": 516,
+ "candidate_bytes": 512,
+ "differing_halfwords": 150,
+ "wrong_instructions": 124,
+ "cross_edition": {
+  "object_bytes": 516,
+  "relocation_bytes": 104,
+  "literal_bytes": 68,
+  "relocation_normalized_core_bytes": 344,
+  "core_diff_bytes": 0,
+  "core_identical": true,
+  "starts": {
+   "ja": "0x080b0b30",
+   "en": "0x080b9b30",
+   "de": "0x080bc148",
+   "es": "0x080bdb48",
+   "fr": "0x080bdb48",
+   "it": "0x080b9b48"
+  }
+ },
+ "domain": "Validates and prepares a queued battle action, dispatches its presentation mode, restores visible units, and reports whether the action must remain active.",
+ "expressed": [
+  "invalid and inactive actor rejection",
+  "battle presentation transition and render-state setup",
+  "temporary selected-unit visibility mode",
+  "nine-way presentation dispatch from battle action state",
+  "visible-unit restoration and action completion",
+  "special transition result that preserves the queued action"
+ ],
+ "bounded_search": {
+  "mode": "classic-exact-only",
+  "attempted": 10000,
+  "compile_failures": 962,
+  "exact": false,
+  "baseline_structural_rows": 30,
+  "best_structural_rows": 19,
+  "best_generated_candidate_bytes": 508,
+  "best_generated_differing_halfwords": 132
+ },
+ "notes": [
+  "Auditing the jump-table targets corrected the inherited draft's semantic case mapping: cases 3/4 run the paired-unit transition, cases 5/6/7 select presentation variants 0/1/2, case 8 runs the action-aware presentation, and case 9 is the action-preserving presentation. This reduces the readable residual from 177 halfwords / 140 wrong instructions to 153 / 126.",
+  "The readable candidate reproduces the exact 32-byte frame and complete control-flow semantics but retains broad register-allocation, literal-pool, and switch-layout differences, so it claims zero DONE bytes.",
+  "A bounded 10,000-candidate search reduced structural rows from 30 to 19, but its best source was eight bytes short, still differed by 132 halfwords, and accumulated a type-changing cast plus synthetic temporary and one-shot-block mutations. It was rejected rather than weakening the readable semantics.",
+  "Declaration-order and split palette-result carriers were byte-neutral. A pointer/decrement cleanup loop shortened the owner and regressed wrong-instruction count, so the clearer indexed cleanup loop remains.",
+  "The six approved GS1 editions share all 344 relocation- and literal-normalized core bytes; edition differences are confined to expected relocated calls and literals.",
+  "Recovered only from retained owner assembly, the six local GS1 ROMs, exact local callers, nearby presentation drafts, and the approved compiler. No external source, copied instruction bytes, inline assembly, fixed-register variable, compiler barrier, or compiler modification was used.",
+  "measured=2026-08-29: sequencing 'render_state = *(transition_slot - 32)' after the 'battle+0x644 = 0x10000' store (instead of before it, matching the struct's field order) realigned the render_state load/shift/store triplet with the reference and dropped the residual from 153/126 to 150/124. Kept.",
+  "measured=2026-08-29 refuted: hoisting the shared 0x01fe0000 literal out of 'Func_08005258(0x01fe0000, Func_080072f0(0x01fe0000, 0xc000), 0x7fff0000)' via an explicit temporary (assigning through 'result') matched the owner's 516-byte size but regressed to 198 differing halfwords / 156 wrong instructions -- the compiler still re-hoists the shared constant across the call boundary in a different, worse shape. Reverted.",
+  "measured=2026-08-29 refuted: reordering 'battle = *(transition_slot - 35)' ahead of the 'transition = ...' load (so battle's live range is established first) did not flip the transition/battle r6<->r7 register-allocator swap that accounts for the bulk of the remaining wrong_instructions in the switch body; it also undid the render_state fix's ordering and regressed to 153/124. Reverted. The r6/r7 swap looks driven by something other than statement or declaration order (already independently confirmed byte-neutral above); local-alloc internals, not source order, decide it here.",
+  "measured=2026-08-29 refuted: replacing the 'if (preserve_action) goto finish;' early-exit with an equivalent 'if (preserve_action == 0) { ...cleanup... }' guard (removing the goto/label) regressed to 154/140 -- the goto's unconditional branch is load-bearing for where arm_reorg's minipool barrier lands, which is the root cause of the remaining branch-target mismatch (b.n 0x1f0 vs reference's b.n 0x1d2) and the mid-function literal-pool bytes disassembling as garbage instructions after it. Reverted.",
+  "measured=2026-08-29 refuted: changing the visible-unit restoration loop's sentinel from 'index < visible_count' to 'index != visible_count' regressed sharply (500 candidate bytes, 188 differing halfwords) -- the loop already uses the correct bounded form. Reverted.",
+  "2026-08-29: mid-session, alchemy-gcc's agscc/gcc/config/arm/{arm.c,arm.h} were found modified on disk by a concurrent process (an experimental TARGET_MINIPOOL_FIRST_BARRIER flag, uncommitted) and gs1/cc1 started failing its approved-digest check for every candidate-show call, including on this owner's unmodified baseline. The source was reverted with 'git checkout' (undoing that external, unauthorized compiler change, not making one) and alchemy-gcc was rebuilt with the committed 'make'/'make clean && make'. The resulting cc1 is source-identical to the pinned darwin-arm64 build but hashes differently (7e1cb107...), most likely from non-reproducible linker metadata (e.g. Mach-O build UUID), and is not yet in the bundle_data.rs allow-list, so candidate-show is currently blocked by 'alchemy-gcc gs1/cc1 has an unapproved digest'. Admitting a new digest requires a clean-tree 'make verify'/'make full-rom-check' pin, which needs staging the whole repo including unrelated concurrent in-flight changes (games/gs1/recon/en/main/080b2b10.c was independently dirty throughout), so that admission was left undone as out of scope for a single-owner task. All differing_halfwords/wrong_instructions figures in this record were measured before that outage began and are trustworthy (the pre-outage build's baseline reading exactly reproduced this record's prior 153/126 figures)."
+ ]
 }

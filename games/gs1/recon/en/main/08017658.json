@@ -1,47 +1,46 @@
 {
-  "schema_version": 1,
-  "namespace": "gs1-en-main",
-  "address": "0x08017658",
-  "name": null,
-  "status": "measured-draft",
-  "owner_bytes": 276,
-  "score": {
-    "measured": "2026-08-27",
-    "candidate_bytes": 276,
-    "reference_bytes": 276,
-    "differing_halfwords": 131,
-    "wrong_instructions": 122,
-    "class": "wrong",
-    "command": "tools/compiler/target/release/compiler candidate-show games/gs1/recon/en/main/08017658.c --owner 0x08017658 --size 276",
-    "note": "Candidate reaches the reference's exact 276-byte length with the same 121 instructions in the same order (same calls, same branch structure, same literal-pool constants). The whole residual is a register-allocation/promotion-count mismatch: the reference keeps 3 long-lived values resident in r8/r9/sl (base scene pointer, the &local28 out-pointer, and the render-entry index) across both inner calls, while this compiler's allocator only promotes 2 of those (index, &local28) and keeps the base pointer resident in r7 instead. That single letter/count difference shifts the frame's 4-byte alignment pad (sub sp,#36 vs #32) and cascades a register-letter difference into nearly every subsequent instruction, even though the underlying operation sequence is identical."
+ "schema_version": 1,
+ "namespace": "gs1-en-main",
+ "address": "0x08017658",
+ "status": "measured-draft",
+ "owner_bytes": 276,
+ "score": {
+  "measured": "2026-08-27",
+  "candidate_bytes": 276,
+  "reference_bytes": 276,
+  "differing_halfwords": 131,
+  "wrong_instructions": 122,
+  "class": "wrong",
+  "command": "tools/compiler/target/release/compiler candidate-show games/gs1/recon/en/main/08017658.c --owner 0x08017658 --size 276",
+  "note": "Candidate reaches the reference's exact 276-byte length with the same 121 instructions in the same order (same calls, same branch structure, same literal-pool constants). The whole residual is a register-allocation/promotion-count mismatch: the reference keeps 3 long-lived values resident in r8/r9/sl (base scene pointer, the &local28 out-pointer, and the render-entry index) across both inner calls, while this compiler's allocator only promotes 2 of those (index, &local28) and keeps the base pointer resident in r7 instead. That single letter/count difference shifts the frame's 4-byte alignment pad (sub sp,#36 vs #32) and cascades a register-letter difference into nearly every subsequent instruction, even though the underlying operation sequence is identical."
+ },
+ "family_transplant": {
+  "best_template": "games/gs1/src/ui/text/prepare_message_work.c",
+  "template_score": "7382/10000 (below 7500 adoption threshold)",
+  "assessment": "Genuine partial sibling, not a shape-only false positive: this owner and the template share the exact 'index = BuildRenderEntries-shaped-call(key, 1); if (RENDER_ENTRY_TBL_OFS[index] == 0) bail' idiom, and both call the real, already-adopted UiWork_Finalize (main:08016418, ui/render/finalize.c) the same way -- Finalize(work, 1) on an activation failure. The template's own body (UiText_BuildRenderEntries/UiWindow_Create/UiWork_ActivateChannel with 3-5 args each) does not match this owner's actual call targets or argument counts (Func_0801868c takes 7 args, Func_080165d8 takes 6), so no source was transplanted -- the template only supplied vocabulary (RENDER_* field names, the FIELD macro convention) confirmed independently against field_owner_91.c (RENDER_RESULT_OFS/+2 as a shared 's16 result; s16 value' pair) and field_owner_20.c (RENDER_BUSY_OFS+1/+2, the exact busy-flag pair this owner's success path clears -- field_owner_20/main:08017620 is this owner's immediate predecessor in the retained assembly and is byte-exact adopted as the flag *setter* counterpart)."
+ },
+ "rejected_experiments": [
+  {
+   "experiment": "4th argument as a real C bitfield struct (u32 flags:16; u32 id:12;) instead of a plain u32 with explicit (packed<<4)>>20 / packed&0xFFFF",
+   "result": "worse: 304 bytes vs the reference's 276 -- this compiler emits a shift-pair for a bitfield-typed low-16 read instead of the reference's ands-with-0xFFFF-literal, so the bitfield spelling doesn't match; the plain-u32-with-explicit-mask spelling (retained) reaches the exact reference byte length instead"
   },
-  "family_transplant": {
-    "best_template": "games/gs1/src/ui/text/prepare_message_work.c",
-    "template_score": "7382/10000 (below 7500 adoption threshold)",
-    "assessment": "Genuine partial sibling, not a shape-only false positive: this owner and the template share the exact 'index = BuildRenderEntries-shaped-call(key, 1); if (RENDER_ENTRY_TBL_OFS[index] == 0) bail' idiom, and both call the real, already-adopted UiWork_Finalize (main:08016418, ui/render/finalize.c) the same way -- Finalize(work, 1) on an activation failure. The template's own body (UiText_BuildRenderEntries/UiWindow_Create/UiWork_ActivateChannel with 3-5 args each) does not match this owner's actual call targets or argument counts (Func_0801868c takes 7 args, Func_080165d8 takes 6), so no source was transplanted -- the template only supplied vocabulary (RENDER_* field names, the FIELD macro convention) confirmed independently against field_owner_91.c (RENDER_RESULT_OFS/+2 as a shared 's16 result; s16 value' pair) and field_owner_20.c (RENDER_BUSY_OFS+1/+2, the exact busy-flag pair this owner's success path clears -- field_owner_20/main:08017620 is this owner's immediate predecessor in the retained assembly and is byte-exact adopted as the flag *setter* counterpart)."
+  {
+   "experiment": "named s32* out1/out2 locals aliasing &arg1/&arg2 (mirroring the &local28 out-pointer lever that did help)",
+   "result": "worse: 304 bytes, 147 differing halfwords -- unlike &local28, arg1/arg2 are read back by value right after the call, so caching their addresses in named locals adds a live range instead of removing one"
   },
-  "rejected_experiments": [
-    {
-      "experiment": "4th argument as a real C bitfield struct (u32 flags:16; u32 id:12;) instead of a plain u32 with explicit (packed<<4)>>20 / packed&0xFFFF",
-      "result": "worse: 304 bytes vs the reference's 276 -- this compiler emits a shift-pair for a bitfield-typed low-16 read instead of the reference's ands-with-0xFFFF-literal, so the bitfield spelling doesn't match; the plain-u32-with-explicit-mask spelling (retained) reaches the exact reference byte length instead"
-    },
-    {
-      "experiment": "named s32* out1/out2 locals aliasing &arg1/&arg2 (mirroring the &local28 out-pointer lever that did help)",
-      "result": "worse: 304 bytes, 147 differing halfwords -- unlike &local28, arg1/arg2 are read back by value right after the call, so caching their addresses in named locals adds a live range instead of removing one"
-    },
-    {
-      "experiment": "shared 's32 zero = 0' local reused for both the RENDER_RESULT_OFS+2 store and Func_0801868c's 7th (zero) argument, mirroring the reference's apparent single r6 register reused for both",
-      "result": "worse: 264 bytes -- this compiler constant-folds a simple zero-initialized local back to a fresh immediate at each use site rather than keeping one register resident, so it does not reproduce the reference's live-range reuse"
-    },
-    {
-      "experiment": "moving the flags accumulator's zero-initialization earlier (right after the RENDER_ENTRY_TBL_OFS guard, before the Func_0801868c call, matching the reference's early 'movs r7,#0' position) and/or reordering local declarations to mirror the reference's apparent pseudo-definition order",
-      "result": "small, inconsistent shifts in wrong_instructions (139-149) but never closed the base-pointer promotion gap"
-    }
-  ],
-  "notes": [
-    "Owner sits immediately after main:08017620 (field_owner_20.c, byte-exact adopted) in the retained assembly; that function sets RENDER_BUSY_OFS+1/+2 to 1 per flag bit, and this owner's success path clears the same two byte fields to 0 -- a set/clear pair on the same struct.",
-    "The packed 4th argument's low 16 bits are tested for individual flag bits (1, 8, 16, 32) and remapped into a differently-coded flags value (2, 8, 128, 256) passed as Func_080162d4's 5th argument; bits 16-27 are extracted as a 12-bit id stored into the scene struct's RENDER_RESULT_OFS field.",
-    "Recovered only from the retained owner assembly (games/gs1/asm/08017658.s), already-adopted exact sources under games/gs1/src/ (ui/render/finalize.c, ui/text/prepare_message_work.c, ui/text/draw_resource.c, ui/text/draw_character.c, ui/render/lookup_named_value.c, and the unidentified/main/field/field_owner_20.c and field_owner_91.c byte-exact drafts), in-repo headers (gs1_edition.h, global_cells.h), and the approved compiler. No other decompilation project or external symbol map was consulted.",
-    "This candidate claims zero DONE bytes; not registered in source-paths.json since it is not byte-exact."
-  ]
+  {
+   "experiment": "shared 's32 zero = 0' local reused for both the RENDER_RESULT_OFS+2 store and Func_0801868c's 7th (zero) argument, mirroring the reference's apparent single r6 register reused for both",
+   "result": "worse: 264 bytes -- this compiler constant-folds a simple zero-initialized local back to a fresh immediate at each use site rather than keeping one register resident, so it does not reproduce the reference's live-range reuse"
+  },
+  {
+   "experiment": "moving the flags accumulator's zero-initialization earlier (right after the RENDER_ENTRY_TBL_OFS guard, before the Func_0801868c call, matching the reference's early 'movs r7,#0' position) and/or reordering local declarations to mirror the reference's apparent pseudo-definition order",
+   "result": "small, inconsistent shifts in wrong_instructions (139-149) but never closed the base-pointer promotion gap"
+  }
+ ],
+ "notes": [
+  "Owner sits immediately after main:08017620 (field_owner_20.c, byte-exact adopted) in the retained assembly; that function sets RENDER_BUSY_OFS+1/+2 to 1 per flag bit, and this owner's success path clears the same two byte fields to 0 -- a set/clear pair on the same struct.",
+  "The packed 4th argument's low 16 bits are tested for individual flag bits (1, 8, 16, 32) and remapped into a differently-coded flags value (2, 8, 128, 256) passed as Func_080162d4's 5th argument; bits 16-27 are extracted as a 12-bit id stored into the scene struct's RENDER_RESULT_OFS field.",
+  "Recovered only from the retained owner assembly (games/gs1/asm/08017658.s), already-adopted exact sources under games/gs1/src/ (ui/render/finalize.c, ui/text/prepare_message_work.c, ui/text/draw_resource.c, ui/text/draw_character.c, ui/render/lookup_named_value.c, and the unidentified/main/field/field_owner_20.c and field_owner_91.c byte-exact drafts), in-repo headers (gs1_edition.h, global_cells.h), and the approved compiler. No other decompilation project or external symbol map was consulted.",
+  "This candidate claims zero DONE bytes; not registered in source-paths.json since it is not byte-exact."
+ ]
 }

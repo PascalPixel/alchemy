@@ -7,6 +7,7 @@
 
 void *Owner_GetState(u32 owner)
 {
+    void *result = 0;
     u8 *remote_states;
 
     if (owner < MAIN_OWNER_COUNT) {
@@ -15,9 +16,9 @@ void *Owner_GetState(u32 owner)
     if (owner - REMOTE_OWNER_FIRST < REMOTE_OWNER_COUNT) {
         remote_states = *(u8 **)0x03001f28;
         if (remote_states != 0) {
-            return remote_states + OWNER_STATE_SIZE * owner -
+            result = remote_states + OWNER_STATE_SIZE * owner -
                 OWNER_STATE_SIZE * REMOTE_OWNER_FIRST;
         }
     }
-    return 0;
+    return result;
 }

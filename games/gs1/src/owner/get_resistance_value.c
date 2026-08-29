@@ -6,13 +6,13 @@ struct State_0807987c {
     u8 record;
 };
 
-struct State_0807987c *Owner_GetState(s32);
-s32 Owner_GetDigitValues(s32 record, u8 *source, s32 *output);
+void *Owner_GetState(s32);
+s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 *output);
 s32 FixedPoint_Ratio(s32, s32);
 
 s32 Owner_GetResistanceValue(s32 owner, s32 index)
 {
-    struct State_0807987c *state = Owner_GetState(owner);
+    struct State_0807987c *state = (struct State_0807987c *)Owner_GetState(owner);
     s32 values[4];
     s32 result = 0;
 

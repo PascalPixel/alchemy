@@ -8,21 +8,21 @@ struct Work {
     s32 pending_value;
 };
 
-struct WorkSlot {
+struct FinalizeWorkSlot {
     struct Work *work;
     u8 padding04[0x24];
 };
 
-void UiWork_Finalize(struct Work *work, s32 release);
+void UiWork_Finalize(void *work, s32 release);
 void WaitFrames(u32);
 
 void UiWork_FinalizePendingCore(void)
 {
     s32 slot_index;
-    struct WorkSlot *slot;
+    struct FinalizeWorkSlot *slot;
     struct Work *work;
 
-    slot = (struct WorkSlot *)(*(u8 **)ADDR_03001E8C + 0x620);
+    slot = (struct FinalizeWorkSlot *)(*(u8 **)ADDR_03001E8C + 0x620);
     slot_index = 0;
     do {
         work = slot->work;

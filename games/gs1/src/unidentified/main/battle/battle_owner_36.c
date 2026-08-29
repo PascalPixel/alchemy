@@ -10,8 +10,8 @@ struct GlobalData_0808d8f0 {
     s32 selected_object;
 };
 
-extern struct RuntimeState_0808d8f0 *Data_03001ebc;
-extern struct GlobalData_0808d8f0 Data_02000240;
+extern void *Data_03001ebc;
+extern u8 Data_02000240;
 extern volatile u32 Data_03001ae8;
 
 void BattleEffect_RunRisingObjectSequence(s32, s32, s32);
@@ -21,8 +21,8 @@ void Func_08093fa0(void);
 
 s32 Func_0808d8f0(s32 event)
 {
-    struct RuntimeState_0808d8f0 *state = Data_03001ebc;
-    s32 selected_object = Data_02000240.selected_object;
+    struct RuntimeState_0808d8f0 *state = (struct RuntimeState_0808d8f0 *)Data_03001ebc;
+    s32 selected_object = ((struct GlobalData_0808d8f0 *)&Data_02000240)->selected_object;
 
     switch (event) {
     case 0xFC:

@@ -5,10 +5,10 @@ s32 Func_080063bc(s32 value, s32 transfer_value)
     struct SerialTransferState *state;
     u32 saved_interrupt_master;
     s32 result;
-
-    state = SERIAL_TRANSFER;
     if (SERIAL_ACTIVE_A != 0)
         return -1;
+
+    state = SERIAL_TRANSFER;
     do {
         saved_interrupt_master = Data_04000208;
         Data_04000208 = (u16)&Data_04000208;

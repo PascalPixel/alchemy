@@ -45,6 +45,7 @@ typedef void (*DrawRectangleFn)(
 
 void Func_080cd594(s32 mode);
 void Func_080e0524(s32 resource_id, void *destination, s32 destination_offset, s32 copy_palette);
+extern u8 Value_0000007e;
 s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 void Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
@@ -61,8 +62,28 @@ void Func_080cd52c(void);
 void Func_080030f8(s32 frames);
 void Func_080e155c(s32 a, s32 b);
 
-extern const u8 Data_080eebae[];
-extern const u8 Data_080eebb6[];
+extern const u8 Data_080eeba6[];  /* per-release-index draw-shape selector byte */
+extern const u8 Data_080eebae[];  /* per-release-slot flag byte (region3 gate) */
+extern const u8 Data_080eebb6[];  /* frame-bound multiplier / release-gate-count table */
+extern const u8 Data_080eebc0[];  /* interpolation table A: signed per-step amplitude */
+extern const u16 Data_080eebc8[]; /* interpolation table B: per-step src offset (u16) */
+extern const u8 Data_080eebb9[];  /* interpolation table C: signed per-step amplitude 2 */
+
+/*
+ * Func_080072fc/Func_080072f4 are not real callees: they are the r6 and
+ * r4 entries of the _call_via_rN trampoline bundle at
+ * games/gs1/asm/080072e4.s (see games/gs1/recon/en/main/080e08c0.c's
+ * header and its cited dossiers for the established shape). Every site
+ * that the disassembly shows branching through one of those trampolines
+ * is really an indirect call through the currently-selected
+ * draw_cb_46/draw_cb_47 callback -- ground truth (games/gs1/asm/
+ * 080ddb34.s) loads the pointer from the same stack slots the
+ * continuation region (games/gs1/asm/080dda3c.s) spills them to right
+ * after the Func_080ed408(46, ...) / Func_080ed408(47, ...) calls:
+ * [sp,#36] is draw_cb_46, [sp,#40] is draw_cb_47. Each call site below is
+ * rewritten as an indirect call through whichever of the two the ground
+ * truth loads at that point.
+ */
 
 void Func_080dd9c0(void *table_param)
 {
@@ -81,10 +102,12 @@ void Func_080dd9c0(void *table_param)
     s32 frame;
     s32 member_bound;
     s32 member_index;
-    s32 member_id_offset;
-    s32 member_offset;
-    s32 slot_index;
-    s32 slot_id_offset;
+    s32 gate_count;
+    s32 release_count;
+    s32 release_threshold;
+    s32 release_window;
+    s32 announce_frame;
+    const u8 *release_flag_ptr;
 
     heap_cache = (void **)0x03001EEC;
     cursor = heap_cache;
@@ -98,7 +121,7 @@ void Func_080dd9c0(void *table_param)
     REG_BLDCNT = 0x0000;
     REG_BLDALPHA = 0x1010;
 
-    Func_080e0524(0x7e, work, 1, 1);
+    Func_080e0524((s32) &Value_0000007e, work, 1, 1);
 
     table = M2C_FIELD(work, void **, 0x7828);
     if (M2C_FIELD(table, s32 *, 4) == 1) {
@@ -144,70 +167,162 @@ void Func_080dd9c0(void *table_param)
             if (frame == fade_start) {
                 Func_080b50e8(132);
             }
-            if (frame < end_wait) {
+            if (frame >= end_wait) {
                 REG_BLDCNT = 0x3f44;
                 REG_BLDALPHA = ((frame_bound - frame - 1) | 0x1000);
             }
 
             table = M2C_FIELD(work, void **, 0x7828);
-            if (Data_080eebb6[M2C_FIELD(table, u8 *, 24)] != 0) {
-                /* ---- Region_080ddb34: per-member release scan ---- */
-                slot_index = 8;
-                slot_id_offset = 12;
-                member_id_offset = 0x080eebae; /* base of the per-slot byte table used below */
+            gate_count = Data_080eebb6[M2C_FIELD(table, u8 *, 24)];
 
-                while (frame > slot_index) {
-                    const u8 *slot_flags = (const u8 *)member_id_offset;
-                    s32 flag;
+            if (gate_count != 0) {
+                /*
+                 * ---- Region_080ddb34, release/retire portion ----
+                 * Runs the release-scan + announce/retire scan repeatedly
+                 * (the retire scan always executes at least once per frame,
+                 * whether or not a release happened this pass) until
+                 * release_count catches up with gate_count.
+                 */
+                release_window = frame - 8;
+                release_flag_ptr = Data_080eebae;
+                announce_frame = 12;
+                release_threshold = 8;
+                release_count = 0;
 
-                    flag = slot_flags[slot_index - 8]; /* placeholder index math, see notes */
+                for (;;) {
+                    if (frame > release_threshold) {
+                        s32 gate = Data_080eeba6[release_count];
 
-                    if (flag <= 1) {
-                        /* two-rectangle draw path selecting geometry from
-                         * the current member's projected size */
-                        DrawRectangleFn cb;
-                        s32 w, h, x, y;
+                        if (gate <= 1) {
+                            s32 h0, w0, x, y;
 
-                        w = 0;
-                        h = 0;
-                        x = 0;
-                        y = 0;
-                        cb = (flag & 1) ? draw_cb_47 : draw_cb_46;
-                        cb(draw_destination, table, x, y, w, h);
-                    }
+                            h0 = release_window * 6;
+                            if (h0 > 30) h0 = 30;
+                            w0 = release_window * 16;
+                            if (w0 > 80) w0 = 80;
+                            y = 108 - w0;
 
-                    slot_index += 1;
-                    slot_id_offset += 1;
-                }
+                            if (gate & 1) {
+                                x = *release_flag_ptr - h0;
+                                draw_cb_47(draw_destination, work, x, y, 48, w0);
+                            } else {
+                                x = *release_flag_ptr + h0;
+                                draw_cb_46(draw_destination, work, x, y, 48, w0);
+                            }
+                        } else {
+                            s32 h0, w0, x, y;
+                            void *src;
 
-                table = M2C_FIELD(work, void **, 0x7828);
-                member_bound = M2C_FIELD(table, s32 *, 20);
-                if (member_bound != 0) {
-                    member_index = 0;
-                    do {
-                        s32 base;
-                        s32 *particle;
-                        s32 k;
+                            w0 = release_window * 8;
+                            if (w0 > 64) w0 = 64;
+                            h0 = release_window;
+                            if (h0 > 8) h0 = 8;
+                            y = 108 - w0;
 
-                        base = member_index * 36;
-                        for (k = 0; k != 64; k++) {
-                            particle = (s32 *)((u8 *)0x02010000 + base + k * 28);
-                            if (*(s32 *)((u8 *)particle + 24) >= 0) {
-                                Func_080f9010(132);
-                                Func_080d6888(
-                                    *(s16 *)((u8 *)particle + 36), 7, 5,
-                                    k, 3);
+                            if (gate & 1) {
+                                x = *release_flag_ptr - h0;
+                                src = (u8 *)work + 3840;
+                                draw_cb_47(draw_destination, src, x, y, 32, w0);
+                            } else {
+                                x = *release_flag_ptr + h0;
+                                src = (u8 *)work + 1728;
+                                draw_cb_46(draw_destination, src, x, y, 32, w0);
                             }
                         }
-                        member_index++;
-                    } while (member_index != member_bound);
-                }
 
-                Func_080cd52c();
-                table = M2C_FIELD(work, void **, 0x7828);
-                Func_080030f8(1);
-                (void)table;
+                        if (frame == release_threshold + 1) {
+                            M2C_FIELD(work, s32 *, 0x77a8) = 3;
+                        }
+
+                        if (frame < release_threshold + 3) {
+                            /* find a free particle slot and spawn one */
+                            s32 life;
+                            s32 *particle;
+                            s32 i;
+
+                            life = (Func_08004458() & 31) + 72;
+
+                            particle = (s32 *)0x02010000;
+                            for (i = 0; i != 64; i++, particle += 7) {
+                                if (particle[6] == -1) {
+                                    break;
+                                }
+                            }
+                            if (i != 64) {
+                                s32 v;
+
+                                v = *release_flag_ptr + (s32)(Func_08004458() & 31) + 32;
+                                if (v > 96) v = 96;
+                                particle[0] = v;
+                                particle[1] = life;
+                                particle[6] = 0;
+                            }
+                        }
+                    }
+
+                    /* ---- retire / announce scan (always runs) ---- */
+                    table = M2C_FIELD(work, void **, 0x7828);
+                    member_bound = M2C_FIELD(table, s32 *, 20);
+                    if (member_bound != 0) {
+                        for (member_index = 0; member_index != member_bound; member_index++) {
+                            if (frame == announce_frame) {
+                                Func_080f9010(132);
+                                table = M2C_FIELD(work, void **, 0x7828);
+                                Func_080d6888(
+                                    M2C_FIELD(table, s16 *, 36 + member_index * 2),
+                                    7, 5, member_index, 3);
+                            }
+                        }
+                    }
+
+                    release_flag_ptr += 1;
+                    announce_frame += 8;
+                    release_threshold += 8;
+                    release_window -= 8;
+                    table = M2C_FIELD(work, void **, 0x7828);
+                    gate_count = Data_080eebb6[M2C_FIELD(table, u8 *, 24)];
+                    release_count += 1;
+                    if (release_count == gate_count) {
+                        break;
+                    }
+                }
             }
+
+            /* ---- Region_080ddb34, interpolation portion (always runs) --- */
+            {
+                s32 *particle;
+                s32 i;
+
+                particle = (s32 *)0x02010000;
+                for (i = 0; i != 64; i++, particle += 7) {
+                    s32 state = particle[6];
+
+                    if (state >= 0) {
+                        s32 half = state / 2;
+                        u16 src_off = Data_080eebc8[half];
+                        s32 rawA = (s8)Data_080eebc0[half];
+                        s32 halfA = rawA / 2;
+                        s32 valC = (s8)Data_080eebb9[half];
+                        s32 x1, y;
+
+                        x1 = particle[0] - valC;
+                        y = particle[1] - halfA;
+                        draw_cb_46(draw_destination, (u8 *)work + src_off, x1, y, valC, rawA);
+                        draw_cb_47(draw_destination, (u8 *)work + src_off, particle[0], y, valC, rawA);
+
+                        state += 1;
+                        particle[6] = state;
+                        if (state == 14) {
+                            particle[6] = -1;
+                        }
+                    }
+                }
+            }
+
+            Func_080e155c(8, 8);
+            Func_080cd52c();
+            M2C_FIELD(work, s32 *, 0x7824) = 1;
+            Func_080030f8(1);
         }
     }
 

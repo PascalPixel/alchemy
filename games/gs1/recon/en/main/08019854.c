@@ -1,6 +1,6 @@
 #include "types.h"
 
-struct Work {
+struct ChannelWork {
     u8 padding00[8];
     u16 width;
     u16 height;
@@ -11,7 +11,7 @@ struct Work {
 };
 
 struct Slot {
-    struct Work *work;
+    struct ChannelWork *work;
     u16 field04;
     u16 field06;
     u16 values[4];
@@ -25,7 +25,7 @@ void Func_08016178(s32 x, s32 y, s32 width, s32 height);
 
 void Func_08019854(struct Slot *channel)
 {
-    struct Work *work = channel->work;
+    struct ChannelWork *work = channel->work;
     s32 x = work->x;
     s32 y = work->y;
     s32 width = work->width;

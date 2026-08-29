@@ -27,12 +27,12 @@
 
 #define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-s32 Func_080072f0(s32);
-void *Func_0808d48c(s32, s32);
-s32 BattleRuntime_Reset();
-s32 Func_08091750();
-s32 Func_08092b94(s32);
-s32 Func_08092f84(s32, s32);
+void Func_080072f0();
+struct EffectDescriptor *Func_0808d48c(s32, s32);
+void BattleRuntime_Reset(void);
+void Func_08091750(void);
+void Func_08092b94(s32);
+void Func_08092f84(s32, s32);
 
 s32 Func_0808d7d8(s32 arg0) {
     s32 temp_r3;

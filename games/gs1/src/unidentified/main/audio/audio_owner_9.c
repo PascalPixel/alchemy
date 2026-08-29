@@ -35,7 +35,7 @@ typedef struct {
     s16 h19c;
 } Obj;
 
-s32 Func_0808d48c(s32, s32);
+struct EffectDescriptor *Func_0808d48c(s32, s32);
 void BattleRuntime_Reset(void);
 void Func_08092b94(s32);
 void Func_08092f84(s32, s32);
@@ -44,7 +44,6 @@ void Func_080072e8(s32);
 void Audio_PlayCue(s32);
 void Func_08094354(void);
 void Func_08094368(void);
-extern Obj *Data_03001ebc;
 
 s32 Func_0808d828(s32 arg0) {
     Obj *temp_r0;
@@ -55,7 +54,7 @@ s32 Func_0808d828(s32 arg0) {
 
     temp_r0 = (Obj *) Func_0808d48c(2, arg0);
     var_r7 = -1;
-    temp_r3 = Data_03001ebc;
+    temp_r3 = *(Obj **)0x03001ebc;
     if ((temp_r0 != 0) && (temp_r0->val8 != 0)) {
         if (temp_r0->flags & 0x200) {
             temp_r3->h19c = 0;

@@ -2,14 +2,14 @@
 
 #define BattleEffect_RunDescriptorAction Func_0808d5dc
 
-struct ActionDescriptor {
+struct ActionDescriptor_0808d5dc {
     s16 id;
     u8 unused_02[20];
     s8 mode;
     u8 unused_17;
 };
 
-struct EffectDescriptor {
+struct EffectDescriptor_0808d5dc {
     s32 flags;
     u8 unused_04[4];
     s32 result;
@@ -48,7 +48,7 @@ extern void Func_08009088(struct BattleActionObject *, s32);
 extern void Func_08092848(s32, s32, s32);
 extern void Func_08015058(s32);
 extern void Func_08091660(void);
-extern void Func_080072f0(s32, s32);
+extern void Func_080072f0();
 extern void Func_08093a6c(struct BattleActionObject *, void *);
 extern void Func_08009098(struct BattleActionObject *, void *);
 extern void Func_0809ade8(s32);
@@ -56,9 +56,10 @@ extern void Func_0809ade8(s32);
 s32 BattleEffect_RunDescriptorAction(s32 id)
 {
     struct BattleEffectState *state = (struct BattleEffectState *)0x02000240;
-    struct ActionDescriptor *action = Func_0808d394(id);
+    struct ActionDescriptor_0808d5dc *action =
+        (struct ActionDescriptor_0808d5dc *)Func_0808d394(id);
     struct BattleActionObject *object = Func_08092054(id);
-    struct EffectDescriptor *descriptor;
+    struct EffectDescriptor_0808d5dc *descriptor;
     s32 special = 0;
     s32 used_fallback = 0;
     s32 result = -1;
@@ -66,9 +67,9 @@ s32 BattleEffect_RunDescriptorAction(s32 id)
 
     if (state->selected_id == id) {
         special = 1;
-        descriptor = Func_0808d48c(7, id);
+        descriptor = (struct EffectDescriptor_0808d5dc *)Func_0808d48c(7, id);
         if (descriptor == 0) {
-            descriptor = Func_0808d48c(0, id);
+            descriptor = (struct EffectDescriptor_0808d5dc *)Func_0808d48c(0, id);
             used_fallback = 1;
             if (descriptor == 0) {
                 return -1;
@@ -84,7 +85,7 @@ s32 BattleEffect_RunDescriptorAction(s32 id)
             }
         }
     } else {
-        descriptor = Func_0808d48c(0, id);
+        descriptor = (struct EffectDescriptor_0808d5dc *)Func_0808d48c(0, id);
         if (descriptor == 0) {
             goto finish;
         }

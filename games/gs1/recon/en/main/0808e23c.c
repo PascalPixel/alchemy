@@ -54,9 +54,16 @@ struct BattleItemEventRecord {
                    reference compares this signed: bge, not bcs). */
 };
 
-struct BattleUnitObject *Runtime_GetObject(s32 actor);
+/* Declared void *-returning: main:0808e680 (BattleCommand_ExecuteSelectedAction)
+ * shares this symbol through a different local view (struct BattleUnitRecord,
+ * for the pp field); both callers cast the shared pointer to their own
+ * struct locally. */
+void *Runtime_GetObject(s32 actor);
 s32 Func_08077148(s32 actor);
-struct BattleItemEventRecord *Func_0808e14c(s32 item_id);
+/* Declared s32-returning with a u16 parameter to match the prototype in the
+ * exact owner runtime_owner_135.c, which calls this symbol without defining
+ * it; the result is cast back to struct BattleItemEventRecord * here. */
+s32 Func_0808e14c(u16 item_id);
 void GameFlag_Clear(s32 flag);
 void GameFlag_Set(s32 flag);
 s32 GameFlag_IsSet(s32 flag);
@@ -117,7 +124,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
             s32 i = 0;
             actor = 0;
             do {
-                obj = Runtime_GetObject(ids[i]);
+                obj = (struct BattleUnitObject *)Runtime_GetObject(ids[i]);
                 matches = 0;
                 p = obj->abilities;
                 j = 14;
@@ -135,7 +142,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
             } while (i < count);
         }
     } else {
-        obj = Runtime_GetObject(actor);
+        obj = (struct BattleUnitObject *)Runtime_GetObject(actor);
         p = obj->abilities;
         j = 14;
         do {
@@ -150,7 +157,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
         return -1;
     }
 
-    event = Func_0808e14c(item_id);
+    event = (struct BattleItemEventRecord *)Func_0808e14c(item_id);
     if (event != 0 && event->effect != 0) {
         GameFlag_Clear(0x143);
         GameFlag_Clear(0x142);

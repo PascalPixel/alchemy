@@ -39,11 +39,19 @@ type Row = {
 };
 const rows: Row[] = [];
 const skipped: string[] = [];
+// Owners already claimed by a declared unit are excluded: overlapping
+// declarations can never coexist, and the fix is extending that unit.
+const declared = new Set<number>();
+for (const u of JSON.parse(
+  fs.readFileSync(`games/${game}/recon/translation-units.json`, "utf8"),
+).units)
+  for (const o of u.owners) declared.add(parseInt(o.address, 16));
 
 for (const owner of inventory.owners) {
   if (owner.container.kind !== "main-rom") continue;
   const address = parseInt(owner.address, 16);
   if (address < start || address >= end) continue;
+  if (declared.has(address)) continue;
   const hex = address.toString(16).padStart(8, "0");
   const production = owner.production;
   const registered = owner.registration.source_path !== null;

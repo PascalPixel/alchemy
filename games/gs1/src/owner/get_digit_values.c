@@ -1,19 +1,13 @@
 #include "types.h"
 #include "runtime_interfaces.h"
 
-struct Table_080797fc {
-    u8 padding[4];
-    u8 values[4];
-    u8 rest[16];
-};
-
 struct Record_080797fc {
     u8 padding[2];
     u8 values[148];
 };
 
 struct Record_080797fc *Func_08078ed8(s32);
-extern struct Table_080797fc Data_08088e38[];
+#include "preset_table.h"
 
 s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4]) {
     s32 i;
@@ -29,7 +23,7 @@ s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4]) {
         i = 0;
         cursor = output;
         for (; i <= 3; i++)
-            *cursor++ = Data_08088e38[index].values[i] * 10;
+            *cursor++ = Data_08088e38[index].digits[i] * 10;
     } else {
         cursor = output;
         source += 36;

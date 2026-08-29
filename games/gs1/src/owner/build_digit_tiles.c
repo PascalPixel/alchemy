@@ -7,10 +7,7 @@ struct OwnerState {
     u8 use_source_129;
 };
 
-struct PresetValues {
-    u8 unknown_00[8];
-    s32 values[4];
-};
+#include "preset_table.h"
 
 struct DigitOffsets {
     u16 first;
@@ -18,17 +15,16 @@ struct DigitOffsets {
 };
 
 extern const struct DigitOffsets Data_08088df8[16];
-extern const struct PresetValues Data_08088e38[44];
 
-struct OwnerState *Owner_GetState(s32 owner);
-u8 *Owner_GetRecord(s32 record);
+void *Owner_GetState(s32 owner);
+const u8 *Owner_GetRecord(s32 record);
 s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4]);
 s32 Modulo(s32 value, s32 divisor);
 s32 FixedPoint_Ratio(s32 value, s32 divisor);
 
 u32 Owner_BuildDigitTiles(s32 owner, s16 destination[4][2])
 {
-    struct OwnerState *state = Owner_GetState(owner);
+    struct OwnerState *state = (struct OwnerState *)Owner_GetState(owner);
     u32 index;
     u32 result;
     s32 values[4];

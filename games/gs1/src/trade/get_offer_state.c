@@ -1,6 +1,6 @@
 #include "types.h"
 
-s32 Owner_GetState(s32);
+void *Owner_GetState();
 
 s32 Trade_GetOfferState(s32 arg0) {
     if (arg0 != 0) {

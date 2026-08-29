@@ -35,8 +35,10 @@ s32 Shop_ConfirmPartyAction(s32 unit_id)
     shop = SHOP_RUNTIME;
     shop->party_action = party_action;
 
-    *(u16 *)((u8 *)shop + 0x3a4) =
-        *(u16 *)(*(u32 *)(*(u32 *)((u8 *)Func_0808a080(unit_id) + 80) + 40));
+    {
+        u16 *dst = (u16 *)((u8 *)shop + 0x3a4);
+        *dst = *(u16 *)(*(u32 *)(*(u32 *)((u8 *)Func_0808a080(unit_id) + 80) + 40));
+    }
 
     list_window = Func_080150f8(*(u16 *)((u8 *)shop + 0x3a4), 0, 0, 0);
     if (list_window == 0) {
@@ -80,8 +82,8 @@ s32 Shop_ConfirmPartyAction(s32 unit_id)
     }
 
     Func_080b28d4(0xd23);
-    UiWindow_Close(shop->money_window, 2);
     UiWindow_Close(list_window, 2);
+    UiWindow_Close(shop->money_window, 2);
     Func_080b0204();
     return 0;
 }

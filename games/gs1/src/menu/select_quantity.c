@@ -2,7 +2,8 @@
 
 #define MENU_SUBOBJECT(menu, offset) (*(u8 **)((u8 *)(menu) + (offset)))
 
-extern u8 *Data_03001f2c;
+struct InventoryMenuState;
+extern struct InventoryMenuState *Data_03001f2c;
 extern volatile s32 Data_03001b04;
 extern volatile u32 Data_03001c94;
 void Func_080a19a0(void);
@@ -23,7 +24,7 @@ void Func_08015408(s32, s32, s32, s32);
 s32 Func_080a4800(s32 value)
 {
     s32 changed = 1;
-    u8 *menu = Data_03001f2c;
+    u8 *menu = (u8 *)Data_03001f2c;
     u8 *confirmState = MENU_SUBOBJECT(menu, 540);
     s32 window;
     s32 quantity = 0;

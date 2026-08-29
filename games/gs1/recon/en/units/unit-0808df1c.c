@@ -4,6 +4,6 @@
  * hand: resolve declaration collisions here or in shared headers. */
 
 #include "../main/0808df1c.c"
-#include "../../../../src/unidentified/main/audio/audio_owner_4.c"
-#include "../../../../src/unidentified/main/field/field_owner_39.c"
-#include "../../../../src/unidentified/main/runtime/runtime_owner_241.c"
+#include "../../../src/unidentified/main/audio/audio_owner_4.c"
+#include "../../../src/unidentified/main/field/field_owner_39.c"
+#include "../../../src/unidentified/main/runtime/runtime_owner_241.c"

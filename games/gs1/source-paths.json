@@ -2,7 +2,10 @@
   "format": 3,
   "owners": {
     "main:0808f1c0": "battle/effects/objects/start_effect_22.c",
-    "main:080a4800": "menu/select_quantity.c",
+    "main:080a4800": {
+      "name": "Menu_SelectQuantity",
+      "source": "menu/select_quantity.c"
+    },
     "main:080a5b94": "menu/open_confirm_prompt.c",
     "main:080d9fc8": "battle/effects/puff_arc/run.c",
     "main:080ce85c": "battle/effects/member_orbit/run.c",
@@ -1030,10 +1033,22 @@
     "main:080a3e88": "inventory_menu/refresh_owner_items.c",
     "main:080a4110": "inventory_menu/get_command_cursor_x.c",
     "main:080a413c": "inventory_menu/get_command_cursor_y.c",
-    "main:080a448c": "inventory_menu/build_command_states.c",
-    "main:080a45cc": "inventory_menu/draw_command_labels.c",
-    "main:080a4754": "inventory_menu/maybe_break_selected_item.c",
-    "main:080a47b4": "inventory_menu/open_item_details.c",
+    "main:080a448c": {
+      "name": "InventoryMenu_BuildCommandStates",
+      "source": "inventory_menu/build_command_states.c"
+    },
+    "main:080a45cc": {
+      "name": "InventoryMenu_DrawCommandLabels",
+      "source": "inventory_menu/draw_command_labels.c"
+    },
+    "main:080a4754": {
+      "name": "InventoryMenu_MaybeBreakSelectedItem",
+      "source": "inventory_menu/maybe_break_selected_item.c"
+    },
+    "main:080a47b4": {
+      "name": "InventoryMenu_OpenItemDetails",
+      "source": "inventory_menu/open_item_details.c"
+    },
     "main:080a4db4": "inventory_menu/draw_stat_delta.c",
     "main:080a4e20": "inventory_menu/set_item_window_five_row_bounds.c",
     "main:080a4e44": "inventory_menu/set_item_window_three_row_bounds.c",
@@ -5252,6 +5267,9 @@
     "main:08091a58": {
       "name": "PartyInventory_GiveItem"
     },
-    "main:080a46b4": "items/classify_use_mode.c"
+    "main:080a46b4": {
+      "name": "Item_ClassifyUseMode",
+      "source": "items/classify_use_mode.c"
+    }
   }
 }

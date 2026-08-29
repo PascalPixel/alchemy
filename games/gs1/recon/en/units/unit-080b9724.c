@@ -4,11 +4,11 @@
  * hand: resolve declaration collisions here or in shared headers. */
 
 #include "../main/080b9724.c"
-#include "../../../../src/unidentified/main/runtime/runtime_owner_16.c"
+#include "../../../src/unidentified/main/runtime/runtime_owner_16.c"
 #include "../main/080b9934.c"
-#include "../../../../src/unidentified/main/runtime/runtime_owner_194.c"
-#include "../../../../src/unidentified/main/runtime/runtime_owner_152.c"
-#include "../../../../src/unidentified/main/field/field_owner_45.c"
-#include "../../../../src/battle/runtime/reserved_no_op_b.c"
+#include "../../../src/unidentified/main/runtime/runtime_owner_194.c"
+#include "../../../src/unidentified/main/runtime/runtime_owner_152.c"
+#include "../../../src/unidentified/main/field/field_owner_45.c"
+#include "../../../src/battle/runtime/reserved_no_op_b.c"
 #include "../main/080b9b30.c"
-#include "../../../../src/unidentified/main/field/field_owner_13.c"
+#include "../../../src/unidentified/main/field/field_owner_13.c"

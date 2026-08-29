@@ -44,6 +44,17 @@
   "measured": "2026-08-29",
   "finding": "The shipped compiler retains constant-trip empty countdown loops (movs #95 / subs / cmp / bge) that the staged gcc 2.96 deletes at -O2. Opaque-trip loops (count = flags) survive in both — proven by minimal reproducers compiled through dist/cc1: flags-derived count emits the reference mov r3,r2 / sub / cmp / bne shape; constant counts 95/63/63 are deleted in every spelling tried (single or distinct variables, do/while and for). No external jumps enter the loop labels, so recognition-blocking is ruled out.",
   "consequence": "The busy-wait block can only reach byte parity via a uniform compiler flag preserving constant-trip empty loops (f014f8c-class, maintainer decision). The first loop IS source-reachable: count = flags. Estimated residual if flag lands: ~15 halfwords of the current 863.",
-  "correction": "struct_and_signature_evidence_gathered.busy_wait_idiom is stale: the idiom is NOT reproduced in this function; treat as open."
+  "correction": "struct_and_signature_evidence_gathered.busy_wait_idiom is stale: the idiom is NOT reproduced in this function; treat as open.",
+  "flag_candidate": {
+   "measured": "2026-08-29",
+   "flag": "-fno-strength-reduce (bone-stock gcc option; no compiler change)",
+   "evidence": [
+    "All four busy-wait countdown loops survive and emit the reference shapes exactly, including movs #95 / #63 materializations (minimal reproducer dce3.c).",
+    "The deletion happens in the loop pass (jump count 8 -> 4 at dump 08.loop), which strength reduction enables; with the flag the pass leaves them.",
+    "Corpus blast radius: 99 of 3,958 exact production files change output under the flag — a bounded re-proving migration, not a rewrite.",
+    "Scored fresh on the giants: 0800ebec 860 -> 814; 080d4ce8 668 -> 666; others neutral."
+   ],
+   "status": "awaiting maintainer ruling; uniform for all files per doctrine"
+  }
  }
 }

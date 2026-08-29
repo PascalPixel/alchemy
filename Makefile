@@ -27,7 +27,7 @@ PORTABLE_TOOLS := alignment-tail asset-paths cache-entry canonical-json \
 	dashboard-server overlay overlay-disasm overlay-show \
 	overlay-adopt overlay-call-targets check check-commit-progress \
 	check-publication check-unmatchable core-retained-audit coverage-map \
-	full-c-progress integrate-matches decomp-targets weyard-font
+	full-c-progress integrate-matches decomp-targets weyard-font shape-search
 # The maintainer-owned ceiling covers the portable Rust, TypeScript,
 # JavaScript, and CSS beside the decompilation. Contributors pare
 # machinery; they do not raise it.

@@ -16,9 +16,9 @@ s32 Func_08011f54(s32 index, s32 x, s32 y)
     u32 entry;
     u8 config;
     s32 target;
+    y >>= 16;
 
     x >>= 16;
-    y >>= 16;
     map = (u8 *)0x02010000;
     if (table != 0) {
         offset = (index & 3) * 48 + 304;

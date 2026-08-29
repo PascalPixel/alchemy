@@ -2,7 +2,7 @@
 
 #define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-s32 Object_Destroy();
+void Object_Destroy();
 
 void Func_08095f9c(void *arg0) {
     s32 position;

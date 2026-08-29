@@ -701,6 +701,130 @@
    ]
   },
   {
+   "id": "unit-0801e260",
+   "game": "gs1",
+   "source": "games/gs1/recon/en/units/unit-0801e260.c",
+   "compiler_route": "canonical-gcc296",
+   "overlay": null,
+   "absolute_symbols": {},
+   "local_symbols": [],
+   "owners": [
+    {
+     "address": "0x0801e260",
+     "extent": 184,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x0801e318",
+     "extent": 176,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x0801e3c8",
+     "extent": 80,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x0801e418",
+     "extent": 2,
+     "state": "exact-c"
+    }
+   ]
+  },
+  {
+   "id": "unit-0808b02c",
+   "game": "gs1",
+   "source": "games/gs1/recon/en/units/unit-0808b02c.c",
+   "compiler_route": "canonical-gcc296",
+   "overlay": null,
+   "absolute_symbols": {},
+   "local_symbols": [],
+   "owners": [
+    {
+     "address": "0x0808b02c",
+     "extent": 28,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x0808b048",
+     "extent": 20,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x0808b05c",
+     "extent": 24,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x0808b074",
+     "extent": 28,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x0808b090",
+     "extent": 200,
+     "state": "retained-assembly"
+    }
+   ]
+  },
+  {
+   "id": "unit-0808df1c",
+   "game": "gs1",
+   "source": "games/gs1/recon/en/units/unit-0808df1c.c",
+   "compiler_route": "canonical-gcc296",
+   "overlay": null,
+   "absolute_symbols": {},
+   "local_symbols": [],
+   "owners": [
+    {
+     "address": "0x0808df1c",
+     "extent": 348,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x0808e078",
+     "extent": 54,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x0808e0b0",
+     "extent": 104,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x0808e118",
+     "extent": 52,
+     "state": "exact-c"
+    }
+   ]
+  },
+  {
+   "id": "unit-0808fe38",
+   "game": "gs1",
+   "source": "games/gs1/recon/en/units/unit-0808fe38.c",
+   "compiler_route": "canonical-gcc296",
+   "overlay": null,
+   "absolute_symbols": {},
+   "local_symbols": [],
+   "owners": [
+    {
+     "address": "0x0808fe38",
+     "extent": 120,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x0808feb0",
+     "extent": 28,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x0808fecc",
+     "extent": 48,
+     "state": "retained-assembly"
+    }
+   ]
+  },
+  {
    "id": "unit-08093fa0",
    "game": "gs1",
    "source": "games/gs1/recon/en/units/unit-08093fa0.c",
@@ -713,6 +837,53 @@
      "address": "0x08093fa0",
      "extent": 436,
      "state": "retained-assembly"
+    }
+   ]
+  },
+  {
+   "id": "unit-080a847c",
+   "game": "gs1",
+   "source": "games/gs1/recon/en/units/unit-080a847c.c",
+   "compiler_route": "canonical-gcc296",
+   "overlay": null,
+   "absolute_symbols": {},
+   "local_symbols": [],
+   "owners": [
+    {
+     "address": "0x080a847c",
+     "extent": 140,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x080a8508",
+     "extent": 112,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x080a8578",
+     "extent": 140,
+     "state": "retained-assembly"
+    }
+   ]
+  },
+  {
+   "id": "unit-080aae14",
+   "game": "gs1",
+   "source": "games/gs1/recon/en/units/unit-080aae14.c",
+   "compiler_route": "canonical-gcc296",
+   "overlay": null,
+   "absolute_symbols": {},
+   "local_symbols": [],
+   "owners": [
+    {
+     "address": "0x080aae14",
+     "extent": 324,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x080aaf58",
+     "extent": 96,
+     "state": "exact-c"
     }
    ]
   },
@@ -733,6 +904,99 @@
    ]
   },
   {
+   "id": "unit-080bffb8",
+   "game": "gs1",
+   "source": "games/gs1/recon/en/units/unit-080bffb8.c",
+   "compiler_route": "canonical-gcc296",
+   "overlay": null,
+   "absolute_symbols": {},
+   "local_symbols": [],
+   "owners": [
+    {
+     "address": "0x080bffb8",
+     "extent": 224,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x080c0098",
+     "extent": 64,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x080c00d8",
+     "extent": 88,
+     "state": "retained-assembly"
+    }
+   ]
+  },
+  {
+   "id": "unit-080c0774",
+   "game": "gs1",
+   "source": "games/gs1/recon/en/units/unit-080c0774.c",
+   "compiler_route": "canonical-gcc296",
+   "overlay": null,
+   "absolute_symbols": {},
+   "local_symbols": [],
+   "owners": [
+    {
+     "address": "0x080c0774",
+     "extent": 308,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x080c08e0",
+     "extent": 12,
+     "state": "exact-c"
+    }
+   ]
+  },
+  {
+   "id": "unit-080d9ab8",
+   "game": "gs1",
+   "source": "games/gs1/recon/en/units/unit-080d9ab8.c",
+   "compiler_route": "canonical-gcc296",
+   "overlay": null,
+   "absolute_symbols": {},
+   "local_symbols": [],
+   "owners": [
+    {
+     "address": "0x080d9ab8",
+     "extent": 12,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x080d9ac4",
+     "extent": 12,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x080d9ad0",
+     "extent": 12,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x080d9adc",
+     "extent": 12,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x080d9ae8",
+     "extent": 1248,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x080d9fc8",
+     "extent": 644,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x080da24c",
+     "extent": 96,
+     "state": "exact-c"
+    }
+   ]
+  },
+  {
    "id": "unit-080f9ef8",
    "game": "gs1",
    "source": "games/gs1/recon/en/units/unit-080f9ef8.c",
@@ -745,6 +1009,129 @@
      "address": "0x080f9ef8",
      "extent": 68,
      "state": "retained-assembly"
+    }
+   ]
+  },
+  {
+   "id": "unit-08095a44",
+   "game": "gs1",
+   "source": "games/gs1/recon/en/units/unit-08095a44.c",
+   "compiler_route": "canonical-gcc296",
+   "overlay": null,
+   "absolute_symbols": {},
+   "local_symbols": [],
+   "owners": [
+    {
+     "address": "0x08095a44",
+     "extent": 328,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08095b8c",
+     "extent": 32,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08095bac",
+     "extent": 42,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08095bd8",
+     "extent": 48,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08095c08",
+     "extent": 456,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x08095dd0",
+     "extent": 460,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x08095f9c",
+     "extent": 48,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08095fcc",
+     "extent": 124,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08096048",
+     "extent": 248,
+     "state": "exact-c"
+    }
+   ]
+  },
+  {
+   "id": "unit-08078e28",
+   "game": "gs1",
+   "source": "games/gs1/recon/en/units/unit-08078e28.c",
+   "compiler_route": "canonical-gcc296",
+   "overlay": null,
+   "absolute_symbols": {},
+   "local_symbols": [],
+   "owners": [
+    {
+     "address": "0x08078e28",
+     "extent": 164,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08078ecc",
+     "extent": 10,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08078ed8",
+     "extent": 16,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08078ee8",
+     "extent": 284,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x08079004",
+     "extent": 2,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08079008",
+     "extent": 84,
+     "state": "exact-c"
+    }
+   ]
+  },
+  {
+   "id": "unit-080b6a60",
+   "game": "gs1",
+   "source": "games/gs1/recon/en/units/unit-080b6a60.c",
+   "compiler_route": "canonical-gcc296",
+   "overlay": null,
+   "absolute_symbols": {},
+   "local_symbols": [],
+   "owners": [
+    {
+     "address": "0x080b6a60",
+     "extent": 128,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x080b6ae0",
+     "extent": 96,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x080b6b40",
+     "extent": 200,
+     "state": "exact-c"
     }
    ]
   }

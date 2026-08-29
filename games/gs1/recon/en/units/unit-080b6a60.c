@@ -4,5 +4,6 @@
  * hand: resolve declaration collisions here or in shared headers. */
 
 #include "../main/080b6a60.c"
-#include "../../../../src/battle/party/list_present_enemies.c"
-#include "../../../../src/battle/party/list_living_units.c"
+#include "../../../src/battle/party/list_present_enemies.c"
+#undef M2C_FIELD
+#include "../../../src/battle/party/list_living_units.c"

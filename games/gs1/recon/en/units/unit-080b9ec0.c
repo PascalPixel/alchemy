@@ -4,6 +4,6 @@
  * hand: resolve declaration collisions here or in shared headers. */
 
 #include "../main/080b9ec0.c"
-#include "../../../../src/unidentified/main/field/field_owner_77.c"
+#include "../../../src/unidentified/main/field/field_owner_77.c"
 #include "../main/080ba2c0.c"
-#include "../../../../src/battle/run_simple_presentation.c"
+#include "../../../src/battle/run_simple_presentation.c"

@@ -55,7 +55,7 @@ for (const owner of inventory.owners) {
   }
   let include: string | null = null;
   if (exact && production.source && production.source.endsWith(".c")) {
-    include = `../../../../${production.source.replace(`games/${game}/`, "")}`;
+    include = `../../../${production.source.replace(`games/${game}/`, "")}`;
   } else if (fs.existsSync(`games/${game}/recon/en/main/${hex}.c`)) {
     include = `../main/${hex}.c`;
   }
@@ -98,11 +98,15 @@ const entry = {
   overlay: null,
   absolute_symbols: {},
   local_symbols: [],
-  owners: rows.map((r) => ({
-    address: `0x${r.hex}`,
-    extent: r.extent,
-    state: r.state,
-  })),
+  // True holes (no C anywhere) stay out of the manifest: a listed
+  // retained member must have its draft included from ../main/.
+  owners: rows
+    .filter((r) => r.include)
+    .map((r) => ({
+      address: `0x${r.hex}`,
+      extent: r.extent,
+      state: r.state,
+    })),
 };
 console.log(
   `wrote ${out}: ${rows.length} owners (` +

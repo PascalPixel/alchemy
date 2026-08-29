@@ -51,16 +51,14 @@ struct PhasedParticleSlot {
 extern s32 Data_02000240[];
 extern u32 Data_03001800;
 
-struct EffectPositionSource *Object_GetById(s32 id);
+s32 Object_GetById(u32 id);
 u32 Random16(void);
 void RotateVectorByMagnitude(
     s32 magnitude,
     s32 angle,
-    struct EffectVector *position);
-void NormalizeVector(struct EffectVector *position);
+    void *position);
+void NormalizeVector(void *position);
 void Audio_PlayCue(s32 cue);
-u32 EffectSlot_HasReachedTarget(struct PhasedParticleSlot *effect);
-void Func_0809bb34(struct PhasedParticleSlot *effect);
 
 #define BattleEffect_UpdatePhasedRadialParticle Func_08095c08
 
@@ -73,7 +71,7 @@ void BattleEffect_UpdatePhasedRadialParticle(struct PhasedParticleSlot *effect)
     u8 linked_flags;
     u8 object_flags;
 
-    source = Object_GetById(Data_02000240[125]);
+    source = (struct EffectPositionSource *)Object_GetById(Data_02000240[125]);
     state_pointer = &effect->state;
     state = *state_pointer;
 

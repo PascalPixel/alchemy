@@ -65,6 +65,20 @@
     {
       "experiment": "force a real shared negate (result = N; goto negate; ... negate: result = -result, or negate: result = 0 - result, applied symmetrically to both sites)",
       "result": "regressed sharply -- wrong candidate length, wrong_instructions >=36; this compiler resists un-folding the subs once r7's zero-liveness is provable"
+    },
+    {
+      "experiment": "declare `result` as `volatile s16` to defeat the zero-liveness proof that lets the compiler fold `result = 0 - 9` into `subs r7, #9`",
+      "measured": "2026-08-29",
+      "differing_halfwords": 93,
+      "baseline": 2,
+      "verdict": "refuted -- volatile forces spurious stack-backed load/store traffic throughout the whole function (candidate grew 160->194 bytes, wrong_instructions 4->66); far worse than baseline, reverted"
+    },
+    {
+      "experiment": "spell the first assignment as `result = -9;` (unary negate) instead of `result = 0 - 9;`, hoping a different constant-folding path avoids the subs fold",
+      "measured": "2026-08-29",
+      "differing_halfwords": 2,
+      "baseline": 2,
+      "verdict": "no effect -- identical codegen to `result = 0 - 9;`, still folds to `subs r7, #9`; reverted to `0 - 9` for consistency with the sibling site"
     }
   ],
   "notes": [

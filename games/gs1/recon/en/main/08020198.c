@@ -18,8 +18,8 @@ void Func_08020198(s32 surface, u8 *st)
         Func_08016478();
         Func_0801e41c(surface, 0, 4, 13, 4);
         Func_0801e8b0(st + 16, surface, 0, 0);
-        Func_0801e940(0x080371e0, surface, 72, 0);
         extra = 0;
+        Func_0801e940(0x080371e0, surface, 72, 0);
         Func_0801e9d4(st[28], 2, surface, 80, extra);
         Func_0801e7c0(st[29] + 0x741, surface, 0, 16);
         Func_0801e7c0(9, surface, 0, 32);

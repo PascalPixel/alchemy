@@ -47,7 +47,7 @@ impl ResidualClass {
     /// {source} is the candidate path, {owner} the address-qualified owner.
     pub fn next_command(&self) -> &'static str {
         match self {
-            Self::Exact => "compiler integrate {source}",
+            Self::Exact => "check integrate --apply games/gs1/recon/en/main (registers in source-paths.json first)",
             Self::LayoutOnly => "compiler candidate-show {source} --align (layout drift: inspect pools and padding, not code)",
             Self::AllocationCovered => "compiler permute {source} (the decoder names a catalogued repair; do not hand-edit first)",
             Self::AllocationUncovered => {

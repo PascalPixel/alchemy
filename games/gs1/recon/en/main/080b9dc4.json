@@ -44,6 +44,36 @@
     ],
     "decision": "No bounded ordinary-C edit preserved the copy across first CSE. The source and retained assembly remain unchanged; this probe does not count toward the five required closures."
   },
+  "rejected": [
+    {
+      "hypothesis": "volatile s32 completed = 0; (force memory load instead of constant propagation so the reference's adds r2,r7,#0 register-copy shape emerges)",
+      "measured": "2026-08-29",
+      "differing_halfwords": 135,
+      "baseline": 1,
+      "verdict": "regressed heavily: candidate_bytes=272, wrong_instructions=68; volatile forces reloads throughout the function, not just at the one seed site"
+    },
+    {
+      "hypothesis": "static s32 completed = 0; (BSS/data storage instead of stack, to discourage constant folding of the initial value)",
+      "measured": "2026-08-29",
+      "differing_halfwords": 64,
+      "baseline": 1,
+      "verdict": "regressed: candidate_bytes=264, wrong_instructions=32; static storage changes addressing mode for every use of completed"
+    },
+    {
+      "hypothesis": "route completed's zero through a single-element local array (completed_store[0] = 0; completed = completed_store[0];) to break the compile-time-constant chain before the party_mode copy",
+      "measured": "2026-08-29",
+      "differing_halfwords": 1,
+      "baseline": 1,
+      "verdict": "baseline-equivalent, no change: candidate_bytes=252, wrong_instructions=2; compiler still constant-propagates through the array read"
+    },
+    {
+      "hypothesis": "declare party_mode before completed (reverse local declaration order) to perturb pseudo-register numbering ahead of first CSE",
+      "measured": "2026-08-29",
+      "differing_halfwords": 1,
+      "baseline": 1,
+      "verdict": "baseline-equivalent, no change: candidate_bytes=252, wrong_instructions=2"
+    }
+  ],
   "notes": [
     "Resolves a battle presentation trigger: either announces the encounter, visits unstunned living party units, or activates and tears down a selected battle object based on a bounded random test.",
     "Correct party and unit layouts raise structural similarity to 85.58 percent, but stack layout, branch shaping, loop allocation, and call scheduling remain broad. It did not meet the bounded-search or permanent-residual gate.",

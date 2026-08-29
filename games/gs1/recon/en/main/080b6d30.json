@@ -43,6 +43,50 @@
     "the single remaining diff is one instruction immediately after the sprite_value call: reference emits `mov r4, sl` (reusing the zero already resident in the callee-saved result register) where the candidate emits `movs r4, #0` (a fresh literal) for the pass-loop counter's initial value; both are 2-byte thumb encodings so the candidate stays at the exact 256-byte extent",
     "tried `pass = result`, `pass = zero` via a named `s32 zero = 0` shared source, separate assignment statements instead of declaration-initializers, and a do-while restructuring of the outer loop (matching the family template's do-while shape) in place of the for-loop -- all five variants reproduce the identical single-instruction residual, which points to a late RTL reload/regmove register-reuse decision rather than a source-level statement-order or loop-shape choice"
   ],
+  "rejected": [
+    {
+      "hypothesis": "Swap declaration order of `pass` and `result` (declare `s32 pass;` before `s32 result = 0;`, keeping `for (pass = result; ...)`).",
+      "measured": "2026-08-29",
+      "differing_halfwords": 1,
+      "baseline": 1,
+      "verdict": "no change; identical single-instruction residual (movs r4,#0 vs mov r4,sl)"
+    },
+    {
+      "hypothesis": "Change loop bound spelling from `pass <= 1` to `pass < 2`.",
+      "measured": "2026-08-29",
+      "differing_halfwords": 1,
+      "baseline": 1,
+      "verdict": "no change; identical residual"
+    },
+    {
+      "hypothesis": "Change increment spelling from `pass++` to `++pass`.",
+      "measured": "2026-08-29",
+      "differing_halfwords": 1,
+      "baseline": 1,
+      "verdict": "no change; identical residual"
+    },
+    {
+      "hypothesis": "Fold `pass = result` and `result = 0` into a single chained assignment `for (pass = result = 0; pass <= 1; pass++)` with `result` declared uninitialized.",
+      "measured": "2026-08-29",
+      "differing_halfwords": 8,
+      "baseline": 1,
+      "verdict": "regresses to 8 differing halfwords; rejected"
+    },
+    {
+      "hypothesis": "Move `result = 0` initialization earlier, before the `single_slot` call (reordering result ahead of both class-derived calls).",
+      "measured": "2026-08-29",
+      "differing_halfwords": 14,
+      "baseline": 1,
+      "verdict": "regresses to 14 differing halfwords; rejected"
+    },
+    {
+      "hypothesis": "Reverse the derivation direction: initialize `pass = 0` directly and derive `result = pass` via a comma expression in the for-init (`for (pass = 0, result = pass; ...)`), with `result` declared uninitialized.",
+      "measured": "2026-08-29",
+      "differing_halfwords": 109,
+      "baseline": 1,
+      "verdict": "regresses drastically (also candidate_bytes dropped to 252, missing code); rejected"
+    }
+  ],
   "notes": [
     "Owner byte size (256) matches the family/target-list entry; the candidate reaches the reference's exact 256-byte extent, full control flow, every branch target, every constant (0x129, 0x02018000, 476, 483), and every call target.",
     "The residual is a single 2-byte instruction-selection difference (register-copy vs fresh-immediate for a compile-time-known zero) in a spot where the value is already provably resident in a callee-saved register across an intervening call. This looks like a compiler-internals scheduling/reload residual rather than a source-shape gap: five structurally distinct source respellings that all match the reference's full control flow converged on the identical single-instruction diff, but no compiler evidence yet proves the approved compiler literally cannot emit the reference form, so this is not classified as permanent assembly.",

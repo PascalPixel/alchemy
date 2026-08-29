@@ -53,5 +53,11 @@
   "Retained assembly remains authoritative and this draft claims zero DONE bytes.",
   "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, repository battle types and its direct caller, and the approved compiler. No GS2 source or data was inspected or changed.",
   "2026-08-27: candidate_bytes now matches owner_bytes exactly (194) and wrong_instructions improved from 90 to 60 (differing_halfwords 96 -> 67) via two source-level changes: (1) the normal-list scan loop rewritten from if-guarded do-while to a while loop with the sentinel value read ahead into unit_id at the bottom of the loop body instead of re-testing *entry, and (2) the final random-index multiply reordered to `Random16() * count`. Score verified with: cargo run --offline --quiet --release --manifest-path tools/compiler/Cargo.toml -- candidate-show games/gs1/recon/en/main/080bad7c.c --owner 0x080bad7c --size 194 --align"
- ]
+ ],
+ "pool_classification_evidence": {
+  "measured": "2026-08-29",
+  "verdict": "REFUTED",
+  "evidence": "same-size body with 60 wrong instructions — real opcode divergence, not pool residue",
+  "note": "Not pool-class: genuine instruction differences present. The 08090488 dossier note claiming this owner shares its grounds is corrected by this verdict."
+ }
 }

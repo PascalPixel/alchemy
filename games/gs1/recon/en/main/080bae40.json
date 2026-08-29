@@ -53,5 +53,11 @@
   "The normalized reference core is identical in all six GS1 editions and uses the same JA-to-EN battle-owner shift as the exact 080bbb0c family.",
   "No broad permanent classification or bounded permutation search is justified at this residual.",
   "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, repository battle types and callers, and the approved compiler. No external source, history, copied instruction bytes, inline assembly, fixed-register variable, compiler barrier, or compiler modification was used."
- ]
+ ],
+ "pool_classification_evidence": {
+  "measured": "2026-08-29",
+  "verdict": "REFUTED",
+  "evidence": "lines 214-216: beq.n where the reference has bne.n plus b.n — genuine branch-topology divergence; class structural-topology, wrong_instructions=290",
+  "note": "Not pool-class: genuine instruction differences present. The 08090488 dossier note claiming this owner shares its grounds is corrected by this verdict."
+ }
 }

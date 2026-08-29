@@ -37,5 +37,9 @@
  "notes": [
   "Recovered only from the retained owner assembly, approved local ROM, the byte-exact template source, in-repository headers, and the approved compiler.",
   "This candidate claims zero DONE bytes."
- ]
+ ],
+ "pool_class_membership_correction": {
+  "measured": "2026-08-29",
+  "note": "The five owners once claimed as sharing this pool-placement class (080983a0, 080bae40, 080bad7c, 080bd898, 080d1350) are all REFUTED by strict verification — each has genuine instruction differences. This owner remains the class sole verified member (250 bytes)."
+ }
 }

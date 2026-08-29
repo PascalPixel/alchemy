@@ -68,6 +68,7 @@ s32 Func_080b2b10(void)
     for (;;) {
         if (retry != 0) {
             retry = 0;
+            redraw = 1;
             Func_080b28d4(0xd26);
             selection = 0;
             while (selection < shop->party_member_count) {
@@ -76,7 +77,6 @@ s32 Func_080b2b10(void)
                     break;
                 selection++;
             }
-            redraw = 1;
         }
 
         if (redraw != 0) {
@@ -109,25 +109,29 @@ s32 Func_080b2b10(void)
             retry = 0xd27;
             Func_080b28d4(retry);
             if (Func_080b0664(0) != 0) {
-                Func_080b2928(retry + 2);
+                retry += 2;
+                Func_080b2928(retry);
                 retry = 1;
                 continue;
             }
             if ((u32)price > (u32)SHOP_PARTY_STATE.money) {
                 Audio_PlayCue(SOUND_MENU_CANCEL);
-                Func_080b2928(retry + 1);
+                retry += 1;
+                Func_080b2928(retry);
                 retry = 1;
                 continue;
             }
             UiText_DrawQuantity(unit_id, 1);
-            Func_080b28d4(retry + 3);
+            retry += 3;
+            Func_080b28d4(retry);
             UiWork_FinalizePending();
             Func_080b2da8(unit_id, kind);
             Func_080b3050(selection);
             Func_08077230(-price);
             Shop_DrawMoney();
             UiText_DrawQuantity(unit_id, 1);
-            Func_080b28d4(retry + 4);
+            retry += 1;
+            Func_080b28d4(retry);
             if (Func_080b280c() != 0) {
                 retry = 1;
                 continue;

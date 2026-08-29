@@ -302,9 +302,10 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
     if let Some(report) = allocator {
         rendered.stdout.push_str(&report.text);
         rendered.stdout.push_str(&format!(
-            "triage_final={} playbook={}\n",
+            "triage_final={} playbook={}\nnext={}\n",
             rendered.residual.class.label(),
-            rendered.residual.class.playbook().unwrap_or("smart-queue")
+            rendered.residual.class.playbook().unwrap_or("smart-queue"),
+            rendered.residual.class.next_command()
         ));
         rendered.allocator = Some(report);
     }
@@ -407,7 +408,8 @@ fn render_bytes(
     let wrong = residual.wrong_instructions;
     let class = residual.class.label();
     let playbook = residual.class.playbook().unwrap_or("smart-queue");
-    let mut out = format!("candidate={} reference={} differing_halfwords={}\ncompile={compile}\ntopology={}\nclass={class} wrong_instructions={wrong}\ntriage={class} playbook={playbook}\n", actual.len(), expected.len(), differing.len(), topology.summary());
+    let next = residual.class.next_command();
+    let mut out = format!("candidate={} reference={} differing_halfwords={}\ncompile={compile}\ntopology={}\nclass={class} wrong_instructions={wrong}\ntriage={class} playbook={playbook}\nnext={next}\n", actual.len(), expected.len(), differing.len(), topology.summary());
     if options.align {
         let pairs = align_streams(&candidate, &reference);
         let matched = pairs

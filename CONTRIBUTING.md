@@ -146,12 +146,13 @@ cannot be reproduced from a clean checkout.
 
 ## Route residual work
 
-The triage router runs as part of `compiler candidate-show` and assigns each
-scored candidate a mechanical residual class and named playbook. Route an owner
-only from that result: allocation, scheduling, structure, type/width, extent,
-layout, and compiler-classification work stay distinct, while `unclassified`
-and uncovered allocation results go to the smart queue rather than a raw-diff
-guess.
+The triage router runs as part of `compiler candidate-show` and prints a
+`next=` line: the literal command to run for that owner's residual class.
+Follow it. Do not improvise a different route from the raw diff, and do not
+hand-probe an owner whose `next=` line already names a mechanical route —
+`allocation-covered` goes through `compiler permute`, `unclassified` and
+`allocation-uncovered` go to the smart queue, and uncovered allocation is
+measured to regress under source respelling, not merely suspected to.
 
 The executable repair catalog is
 `games/gs1/recon/compiler-repair-patterns.json`. Add a repair only with a named

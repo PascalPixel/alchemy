@@ -70,9 +70,9 @@ struct AnimationObject *Func_0800bbc0(s32 id)
             object->frames = frames;
             object->frame_codec = metadata->frame_codec;
             object->marker = 0xff;
+            object->draw_kind = metadata->draw_kind;
             object->current = *(u32 *)animation;
             object->state = zero;
-            object->draw_kind = metadata->draw_kind;
             object->unknown05 = zero;
         }
     }

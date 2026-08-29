@@ -1,0 +1,43 @@
+{
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x080bef88",
+ "status": "blocked",
+ "owner_bytes": 608,
+ "executable_owner_bytes": 608,
+ "candidate_bytes": 170,
+ "differing_halfwords": 304,
+ "wrong_instructions": 308,
+ "measured": "2026-08-29",
+ "domain": "Battle action/ability resolution tail: elemental-power roll, ability-kind classification (attack/unleash/psynergy family codes), success-rate gating, per-target power step accumulation, jump-table power-tier lookup, djinn-summon power table application, and per-target hit-power writing for one battle action.",
+ "blocking_finding": "Region_080bef88 is not a standalone function. Its retained assembly begins directly with `ldr r3, [sp, #12]` -- no push, no stack allocation -- yet its epilogue restores four callee-saved registers (r8-r11) plus lr via a pop/mov-shuffle sequence that was never pushed anywhere in this owner's 608 bytes. The matching prologue does not exist at this address. Tracing the call graph shows why: the immediately preceding owner, games/gs1/asm/080beb08.s, also begins with no push (`mov r2, r10` as its first instruction) and reaches this owner only via a plain conditional branch (`bne sub_080bef88`, the literal final instruction of 080beb08.s) -- not `bl`. 080beb08.s itself is reached the same way from games/gs1/asm/080be76c.s, which also opens with no push (`ldr r4, [sp, #12]`) and already treats r9, r10, r11 as live incoming state. All three owners (080be76c, 080beb08, 080bef88), plus their forward siblings 080bf678 and 080bfba4 (both referenced by absolute-address branches from this owner and from 080beb08), are internal branch targets of one very large enclosing function whose real entry (push of r4-r11 equivalent plus lr, and its stack-frame allocation) lies at an address earlier than 080be76c that was not in scope for this task. None of the five sibling owners in this call-graph-reachable region currently has any candidate C or json, and none is registered in games/gs1/recon/translation-units.json.",
+ "why_this_caps_the_score": "GCC 2.96 cannot emit a function whose body performs multiple `bl` calls and uses four callee-saved high registers (r8-r11) with zero prologue -- `bl` clobbers lr, so any non-leaf function must save it before the first call, and any use of r8-r11 across a call requires them to be pushed (via the low-register mov-shuffle idiom, which is exactly what this owner's own epilogue performs on the way out). Every ordinary top-level C function compiles to a real prologue at its entry point. The 608-byte reference has no prologue at 0x080bef88, so no top-level C function reconstruction of this owner in isolation can ever reach differing_halfwords=0; the mismatch is present in the very first emitted instruction regardless of body content.",
+ "attempts": [
+  {
+   "candidate": "empty stub `void Func_080bef88(void) {}`",
+   "candidate_bytes": 2,
+   "differing_halfwords": 304,
+   "wrong_instructions": 291,
+   "topology": "different",
+   "note": "Baseline: confirms reference content is 608 bytes of real logic starting immediately, with no room for any prologue."
+  },
+  {
+   "candidate": "full best-effort translation of the observed logic (elemental roll, ability-kind switch/dispatch, per-target power accumulation loop) as a 3-argument standalone function",
+   "candidate_bytes": 170,
+   "differing_halfwords": 304,
+   "wrong_instructions": 308,
+   "topology": "different",
+   "note": "GCC emits the expected `push {r5,r6,r7,lr}; mov r7,r8; push {r7}` prologue as instruction 1-3, which the reference does not have at any point. Confirms the mismatch is structural (missing shared frame), not a body/logic/type problem -- register-allocator and body changes cannot remove a prologue the reference never had."
+  }
+ ],
+ "refuted_hypotheses": [
+  "That Region_080bef88 is a normal, independently callable function reached via `bl` -- refuted: every real cross-reference to this address and to its immediate predecessor/successor owners in games/gs1/asm/*.s uses a bare conditional or unconditional branch (`b`/`bne`), never `bl`, and the only owner in this cluster with a real prologue was not located within the searched call graph.",
+  "That a leaf-style or reduced-register-pressure rewrite of the body could remove the prologue -- refuted by the second attempt: the body genuinely calls into 7 external functions and needs 2+ values (an elemental-power actor id and a target-power sign/kind) live across those calls, which GCC 2.96 can only keep in callee-saved registers, forcing the same class of prologue regardless of phrasing.",
+  "That forcing a `naked`/prologue-less function via project-approved means could resolve this -- not attempted: CONTRIBUTING.md and Cleanroom's ordinary-C89 rule prohibit fixed-register variables, empty barriers, and other escape hatches used to fake a shape the compiler would not otherwise emit; a naked function is exactly such an escape hatch."
+ ],
+ "recommendation": "This owner cannot be adopted independently. It must be reconstructed together with its full enclosing function, which spans at minimum games/gs1/asm/080be76c.s, games/gs1/asm/080beb08.s, games/gs1/asm/080bef88.s, and (via absolute-address branches observed in this owner and 080beb08) games/gs1/asm/080bf678.s and games/gs1/asm/080bfba4.s, plus whatever earlier owner holds the real prologue reached only by `bl` from outside this cluster (not identified in this session). The correct route per CONTRIBUTING.md's 'Translation units with holes' section is to scaffold a translation unit over that whole address range with `bun tools/unit-scaffold/scaffold.ts`, then reconstruct the enclosing function as one candidate and score every member owner from the same compiled object with `candidate-show --unit`. That scaffolding step was out of scope for this task (games/gs1/recon/translation-units.json is explicitly off-limits here) and is left for a follow-up with the correct scope.",
+ "notes": [
+  "Recovered only from retained owner assembly in games/gs1/asm/{080be76c,080beb08,080bef88,080bf678}.s, the approved compiler's candidate-show/allocator-lens tooling, and mined neighbor conventions (struct/BattleUnit field-offset naming style from games/gs1/recon/en/main/0808e23c.c, 0808e680.c, 08079460.c). No leaked source, other decompilation project, or GS2 evidence was used.",
+  "The candidate C left in games/gs1/recon/en/main/080bef88.c is the second (170-byte) attempt above: a readable, non-adopted draft reflecting the recovered algorithm shape for the benefit of whoever scaffolds the real translation unit. It is not claimed as any fraction of DONE bytes and must not be built into production output as-is."
+ ]
+}

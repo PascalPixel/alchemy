@@ -1,0 +1,19 @@
+{
+ "status": "blocked",
+ "measured": "2026-08-29",
+ "best_score": {
+  "candidate_bytes": 2,
+  "reference_bytes": 452,
+  "differing_halfwords": 226,
+  "wrong_instructions": 216,
+  "class": "missing-extra-code"
+ },
+ "attempts": 2,
+ "finding": "Fragment_080d5094 is not an independent function boundary. Region_080d4ce8 (games/gs1/asm/080d4ce8.s) opens with `push {r5,r6,r7,lr}; mov r7,r11; mov r6,r10; mov r5,r9; push {r5,r6,r7}; mov r7,r8; push {r7}; ...; sub sp, #64`, and Fragment_080d5094 closes with the exact mirror `add sp, #64; pop {r3,r5,r6,r7}; mov r8,r3; mov r9,r5; mov r10,r6; mov r11,r7; pop {r5,r6,r7}; pop {r0}; bx r0` and no prologue of its own. Fragment_080d5094 begins mid-stream with a plain `bl` and reads r7/r8/r10/r11 as already-live values with no corresponding formal parameters an ordinary ABI-compliant C function could receive them through. Internal edges labelled `sub_080d4e4c`, `sub_080d4ece`, `sub_080d4fe0` (conditional/unconditional branches, not `bl`) land inside Region_080d4ce8's own byte range with the same live register state, which only type-checks if both owners are one physical C function; a standalone `void Func_080d5094(void)` cannot reproduce that entry state or exit through a shared caller frame it never allocated.",
+ "template_evidence": "games/gs1/src/battle/effects/member_orbit/run.c (Func_080ce85c) implements the same algorithm shape at a different call site: two heap-kind rectangle-blit routines built via Func_080ed408, a per-frame loop rewriting a work+0x6980 scanline table from a sine sweep, and orbiting sprites drawn for listed party members via Func_080e3944/Func_08002322/Func_0800231c, ending with Func_08004278/Func_08002dd8/Func_080cdbc0 teardown. Region_080d4ce8 + Fragment_080d5094 are a second instance of this same template (rectangle kinds 46/47 with sizes 7,7,3,2 and 7,7,15,2 match exactly; the frame-exit count here is a fixed 96 rather than member_count*16+48, and this instance adds a 1024-iteration particle sub-loop with independent fixed-point decay of position/velocity fields at struct offsets 0, 4, 8, 16 with a life counter at offset 24, drawn through Func_080072f4).",
+ "refuted_hypotheses": [
+  "Treating Fragment_080d5094 as a self-contained void function with plausible locals for r7/r8/r10/r11: compiles to a 2-byte `bx lr` stub, 226 differing halfwords against reference, because GCC has no source-level way to seed those registers with caller-supplied live values without formal parameters, and the required epilogue frame (sp-64, r8-r11) was never allocated by this owner.",
+  "Chaining internal branches (sub_080d4e4c/ece/4fe0) as ordinary tail-call extern functions: rejected because those addresses are conditional/unconditional branches (not `bl`) into the middle of Region_080d4ce8's own instruction stream with unmodified register state -- i.e. they are goto targets inside the same function, not callees."
+ ],
+ "recommendation": "Recover Region_080d4ce8 and Fragment_080d5094 jointly as one C function (likely under a new translation unit spanning 0x080d4ce8-0x080d5238) before either owner can reach differing_halfwords=0 in isolation. Out of scope for this task, which is restricted to games/gs1/recon/en/main/080d5094.c alone and forbidden from touching games/gs1/recon/translation-units.json."
+}

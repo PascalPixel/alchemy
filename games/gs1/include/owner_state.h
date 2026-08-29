@@ -95,5 +95,6 @@ struct OwnerInventoryState *Func_08077008(s32 owner);
 
 #define OwnerState_Get Func_08077394
 #define OwnerState_GetFar Func_08077008
+#define Owner_RecalculateStats Func_08077428
 
 #endif

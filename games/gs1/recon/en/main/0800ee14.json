@@ -1,0 +1,27 @@
+{
+ "status": "blocked",
+ "measured": "2026-08-29",
+ "best_score": {
+  "candidate_bytes": 176,
+  "reference_bytes": 936,
+  "differing_halfwords": 468,
+  "note": "Score for a standalone-function candidate; see finding below for why this cannot converge."
+ },
+ "finding": "0800ee14 is not an independently callable function. games/gs1/asm/0800ebec.s (FunctionHead_0800ebec, header comment: '複数領域に分割された呼出可能関数の先頭部') establishes the prologue (push r5-r7,lr / mov from r8-r11 / sub sp,#104), copies r0 (the actor pointer) into r7, and reaches sub_0800ee14 via a plain conditional branch ('bne sub_0800ee14'), not a bl. Region_0800ee14 in turn falls through/branches into sub_0800ef44, sub_0800f092, sub_0800f0c6, and finally tail-jumps to sub_0800f1fa (Fragment_0800f1fa) with a computed 'mov r12, pc / bx r4' veneer hop. All of these pieces share one live register set (r7 = actor pointer, r8/r9/r10/r11 = loop indices and scratch position pointers assigned once in the FunctionHead prologue) and one contiguous stack frame (sp-relative offsets 0-104 allocated by FunctionHead_0800ebec) and one literal pool (LiteralPool_0800edf0, plus the pool embedded inside 0800ee14.s itself before the fallthrough into 0800f1fa).",
+ "why_standalone_candidate_fails": "A GCC-2.96-compiled C function necessarily emits its own prologue, its own register/parameter setup, and its own stack allocation at the address that source is anchored to. The reference bytes at 0800ee14 have none of that: execution arrives with r7/r8/r9/r10/r11 and the sp frame already live from FunctionHead_0800ebec. No ordinary C function boundary can reproduce a mid-function branch target with a live caller-established register file; candidate-show confirms this directly (class=missing-extra-code, topology=uncovered:reference-indirect-dispatch-0x3a6, matched_prefix=0) since the compiler always inserts a prologue/parameter move sequence the reference does not have.",
+ "correct_owner_shape": "The only C source that can byte-match this region is one function spanning the whole call-graph-derived block (at least FunctionHead_0800ebec through Fragment_0800f1fa, and likely further through the trailing 'bx r4' veneer target), compiled once and matched across that whole address range as a single owner. That owner does not exist yet: FunctionHead_0800ebec (games/gs1/asm/0800ebec.s) and Fragment_0800f1fa (games/gs1/asm/0800f1fa.s) are both still retained assembly with no recon'd C, and neither appears in games/gs1/recon/translation-units.json.",
+ "struct_evidence_gathered": {
+  "actor_param": "r7 is the same object-shape Func_080120dc (games/gs1/recon/en/main/080120dc.c) already proved: x/pad/y triple (WorldPosition, games/gs1/include/map.h) at offset 8, s32 height at offset 20, u8 map_layer at offset 34.",
+  "step_candidate": "The 12-byte {x, unused, y} stack triples built repeatedly before each sub_0800447c/sub_080120dc pair match struct WorldPosition (games/gs1/include/map.h): s32 x @0, u8[4] pad @4, s32 y @8.",
+  "sub_0800447c_signature": "Confirmed elsewhere (games/gs1/recon/en/main/08098698.c, 080999f0.c, 08098cd8.c) as void Func_0800447c(s32 angle_q16, u32 distance, struct WorldPosition *out) - projects a point at the given angle/distance from an implicit current-position global.",
+  "sub_080120dc_signature": "Already recon'd (games/gs1/recon/en/main/080120dc.c): s32 Func_080120dc(struct MapObject *object, struct MapPosition *position), returns 0 for a walkable/valid position."
+ },
+ "refuted_hypotheses": [
+  "Treating 0800ee14 as a standalone C function with its own prologue and an (actor*, y) parameter pair: rejected. The reference has zero prologue bytes and the compiler cannot omit one for an ordinary function, so candidate topology diverges from instruction 0 (matched_prefix=0, differing_halfwords=468 of 468 scored halfwords)."
+ ],
+ "next_steps": [
+  "Reconstruct FunctionHead_0800ebec (games/gs1/asm/0800ebec.s) and Fragment_0800f1fa (games/gs1/asm/0800f1fa.s) as C first, as one function whose single C source spans the full 0800ebec-0800f1fa+ range.",
+  "Only once that whole-function source exists and scores exact end-to-end should games/gs1/source-paths.json gain a production path for main:0800ee14 (and the sibling Head/Fragment owners) pointing at that same source, per the existing convention for multi-label single-source owners.",
+  "Do not attempt a second isolated candidate at 0800ee14 alone; every isolated attempt will fail on topology before any statement-level scoring is meaningful."
+ ]
+}

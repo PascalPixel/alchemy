@@ -1,0 +1,30 @@
+{
+ "status": "in_progress",
+ "measured": "2026-08-29",
+ "best_score": {
+  "candidate_bytes": 2024,
+  "reference_bytes": 2024,
+  "differing_halfwords": 919,
+  "topology": "different",
+  "class": "structural-topology",
+  "wrong_instructions": 777,
+  "matched_prefix_halfwords": 12
+ },
+ "summary": "First-ever draft for this owner (2024 bytes, previously retained assembly). Recovered the full algorithm from the retained .s plus a resolved literal pool (assembled with arm-none-eabi-as/objdump to decode every pc-relative constant): a 96-byte scratch accumulator (hp/pp/attack/defense/agility/luck/class/four growth pairs) built from an OwnerCombatState-shaped owner blob, an HP/PP growth-rate drift guard, a 27-case per-equipped-item effect-kind switch (additive), a djinn stat-bonus bit-scan loop over 4x20 bits, a class-percentage scaling pass via a class table pointer, a second 8-case per-equipped-item effect-kind switch (multiplicative, kind-7 indexed), class_pct_attack/defense/agility Q3 rounding, two curve-based growth adjustments (quadratic from a luck curve table, linear from an agility curve table), a class_id-driven GameFlag_Test bonus, full clamp block, and the closing HP/PP pool finalize with a 1999/9999 cap chosen by an equip_active flag. Candidate size is byte-exact (2024=2024) and overall control-flow shape matches, but many individual instructions differ purely in which physical register holds a given temporary (r0 vs r1 vs r4/r5 etc. cascading from the first local constant load), which the tool classifies as structural-topology/wrong_instructions rather than a pure allocator-order residual.",
+ "hypotheses_tried": [
+  "Ascending for-loop for the 4x(s16,s16)->4x(s32,s32) growth copy: wrong: reference uses a descending do-while(cnt>=0) with pointer increments (r1 src +=4, r2 dst +=8), not an ascending indexed for.",
+  "abs()-style single-diff comparison for the HP/PP growth-rate drift guard: wrong: reference recomputes the negated difference via a second subtraction on the original operands (subs r3,r1,r0) inside the blt branch rather than negating the already-computed value.",
+  "Boolean need_reset flag materialized and checked once at the end: produces extra mov/cmp instructions versus reference's direct goto-style branch-to-reset-label control flow (no boolean value is ever materialized in the reference).",
+  "st->hp_growth_q14 * st->hp_pool operand order: wrong: reference loads hp_pool first (r2) then hp_growth_q14 (r3) and multiplies in place (muls r3,r2); the reversed source order removes one 'adds r0,r3,#0' copy but not all of it.",
+  "classdef[8..13] scaling applied to attack/defense/agility/luck/unk_1c/class_form: wrong (refuted via objdump-resolved call targets): classdef[8..13] actually scale hp_accum/pp_accum/attack/defense/agility/luck, in that order, as unsigned bytes.",
+  "third small switch dispatching on luck_curve[0]: wrong (refuted via objdump): it dispatches on st->class_id (byte 0x128) with 6 cases mapping to GameFlag_Test(272/274/275/273/no-op/274), and the bonus target is unk_36 (offset 0x24 in the work buffer), not unk_1c.",
+  "agility_curve growth-adjustment loop as a cubic (x^3)*4: wrong (refuted via objdump): it is linear, slot += 20*x.",
+  "luck_curve growth-adjustment loop as (x*x+x)*4: wrong: reference multiplies by 5 total (result*4 + result), i.e. slot += 5*(x*x+x).",
+  "Func_08079ad8 class parameter taken from st->class_id (0x128): wrong (refuted via objdump): the call site actually loads st->equip_active (0x129), one byte later."
+ ],
+ "notes": [
+  "Resolved every pc-relative literal in the retained .s by assembling it standalone with arm-none-eabi-as and reading the linked constants back with arm-none-eabi-objdump -d; this was necessary because several 'ldr rX,[pc,#N]' instructions share the same textual displacement but point at different pool words once PC advances, and a naive read of the .s text alone mis-attributes them (this is how the classdef-field and class_id/equip_active/GameFlag-switch mixups above were caught and fixed).",
+  "Remaining residual is register-role assignment (temporary numbering), not recovered algorithm shape; `--allocator-order` and `bun tools/allocator-lens/lens.ts 08077428` are the documented next steps but were not exhausted in this session due to the size of the function (2024 bytes, 3 jump tables) relative to remaining budget.",
+  "Did not reach the 50-scored-attempt floor suggested for a fresh target of this size; stopped at a byte-exact-size, structurally-mostly-correct checkpoint to report honestly rather than iterate further blind allocator guesses."
+ ]
+}

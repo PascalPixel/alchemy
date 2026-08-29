@@ -164,6 +164,29 @@ every previously exact owner is exact again. Unit boundaries are provisional
 working divisions, not recovered history — the original boundaries remain
 unknown; merge or split units freely as evidence accumulates.
 
+## Split functions
+
+Several large owners are fragments of one C function split across asm
+regions by literal-pool and branch-range boundaries. The asm headers say
+so — `FunctionHead_`, `Fragment_`, 分割 / 断片 markers — and the shape is
+unmistakable: a region with no prologue reached by a plain branch, live
+r8–r11 it never saved, an epilogue restoring a frame it never pushed, or a
+`mov r12, pc / bx r4` veneer between regions. Never reconstruct a fragment
+in isolation: no standalone C function can match a reference with no
+prologue, and the score pins at a fixed value regardless of content.
+
+Reconstruct the whole function as one C source at the head address and
+score the complete span explicitly:
+
+```sh
+out/cargo-target/release/compiler candidate-show   games/gs1/recon/en/main/<head>.c --owner <head> --size <span-bytes>
+```
+
+where span-bytes runs from the head to the end of the terminal fragment.
+The inter-region veneers are the compiler's own long-branch mechanism and
+fall out of compiling the function whole. The `topology=uncovered` banner
+is expected on such spans; the byte diff underneath is live.
+
 ## Recover and adopt
 
 1. Confirm a complete function owner, and place the work inside its declared

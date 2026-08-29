@@ -36,8 +36,8 @@ s32 BattlePresentation_DispatchAction(s16 *action, s32 delay)
     transition->timer = 60;
     battle = *(transition_slot - 35);
     transition->active = 0;
-    render_state = *(transition_slot - 32);
     *(s32 *)(battle + 0x644) = 0x10000;
+    render_state = *(transition_slot - 32);
     Func_080049ac();
     Func_080051d8(render_state, render_state + 12);
     Func_08005258(0x01fe0000, Func_080072f0(0x01fe0000, 0xc000), 0x7fff0000);

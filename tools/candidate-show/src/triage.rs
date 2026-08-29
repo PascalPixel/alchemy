@@ -42,6 +42,35 @@ impl ResidualClass {
     pub fn playbook(&self) -> Option<&'static str> {
         self.route().1
     }
+    /// The literal command to run next. Agents act on printed commands far
+    /// more reliably than on documentation, so the router speaks in commands:
+    /// {source} is the candidate path, {owner} the address-qualified owner.
+    pub fn next_command(&self) -> &'static str {
+        match self {
+            Self::Exact => "compiler integrate {source}",
+            Self::LayoutOnly => "compiler candidate-show {source} --align (layout drift: inspect pools and padding, not code)",
+            Self::AllocationCovered => "compiler permute {source} (the decoder names a catalogued repair; do not hand-edit first)",
+            Self::AllocationUncovered => {
+                "route to the smart queue; do not probe register roles by respelling source (measured: such probes regress)"
+            }
+            Self::SchedulingFloor => {
+                "compiler candidate-show {source} --allocator-order (tie-break evidence first; catalogued statement-order edits only)"
+            }
+            Self::TypeWidthMismatch => {
+                "compiler candidate-show {source} --align (recover widths and signedness from the access-width evidence)"
+            }
+            Self::StructuralTopology => {
+                "compiler candidate-show {source} --allocator-order (repair the named branch divergences before anything else)"
+            }
+            Self::MissingExtraCode => {
+                "compiler candidate-show {source} --align --first (reconstruct the absent or surplus statements the diff names)"
+            }
+            Self::CompilerUnemittable => {
+                "record a classification proof; do not search spellings for a shape the compiler cannot emit"
+            }
+            Self::Unclassified => "route to the smart queue with the full --align diff attached",
+        }
+    }
 }
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct TypeWidthFingerprint {

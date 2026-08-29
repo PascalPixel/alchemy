@@ -75,17 +75,67 @@ extern s32 Func_080772b8(u8 value);
 extern s32 Func_080bd3c8(s16 id);
 extern s32 Func_08077178(s16 id, u8 a, u8 b, u8 c, s32 mode);
 
-/* Pending halfword-stage: exact literal-pool constants not yet decoded. */
-#define SUBKIND_MASK      0x0f  /* TBD: mask applied to req->8 high byte */
-#define TEXT_TBD          NULL  /* TBD: literal-pool UI text pointers */
-#define ACTOR_FLAG_A_OFF  0     /* TBD: LiteralPool_080be738-relative offset */
-#define ACTOR_FLAG_B_OFF  0     /* TBD */
-#define ACTOR_FLAG_C_OFF  0     /* TBD */
-#define REQ_FLAG_OFF      0     /* TBD: req+K byte used in case2/case888 */
-#define K1_ABILITY_ID     0     /* TBD: upper-range compare constant */
-#define K2_ABILITY_ID     0     /* TBD */
-#define K3_ABILITY_ID     0     /* TBD */
-#define K4_ABILITY_ID     0     /* TBD */
+/*
+ * Literal-pool constants, resolved from ground truth per CONTRIBUTING.md's
+ * "Split functions" note: assembled games/gs1/asm/080be378.s and
+ * games/gs1/asm/080be76c.s standalone (both already 4-byte aligned at their
+ * real load address, no parity padding needed), objdumped the result, and
+ * for every `ldr rN, [pc, #imm]` whose target lands past the file's own
+ * .text (i.e. in the gap before the next region) read the word straight out
+ * of roms/gs1-en.gba at (target_address - 0x08000000). The head function's
+ * four actor-status flag offsets and their four message ids came from
+ * LiteralPool_080be738 (games/gs1/asm/080be378.s, right after the head's own
+ * code); Region_080be76c has its own separate, later literal pool holding
+ * its own message ids and the tier==1/tier==4 compare/offset constants.
+ */
+#define SUBKIND_MASK           0x0f  /* mask applied to req->8 high byte */
+
+/* Head-function pre-check flags/messages (LiteralPool_080be738). */
+#define ACTOR_FAINT_FLAG_OFF    325  /* 0x145; read-then-cleared */
+#define ACTOR_FAINT_MSG        ((void *)0x880)  /* 2176 */
+#define ACTOR_SILENCE_FLAG_OFF  316  /* 158*2, immediate in the reference */
+#define ACTOR_SILENCE_MSG      ((void *)0x858)  /* 2136 */
+#define ACTOR_SEAL_FLAG_OFF     315  /* 0x13b */
+#define ACTOR_SEAL_MSG         ((void *)0x857)  /* 2135 */
+#define ACTOR_STATUSFLAG_OFF    304  /* 152*2, immediate; &1 gate */
+#define ACTOR_STATUSFLAG_MSG   ((void *)0x859)  /* 2137 */
+
+/* tier==99 (address 0x080be700, inside the head file's own tail). */
+#define TEXT_REQID_HIGH        ((void *)0x843)  /* 2115; reqId > 7 */
+#define TEXT_REQID_LOW         ((void *)0x846)  /* 2118; reqId <= 7 */
+
+/* Region_080be76c: tier==0 (address 0x080be76c). */
+#define TEXT_TIER0_MSG1        ((void *)0x819)  /* 2073 */
+#define TEXT_TIER0_MSG2        ((void *)0x81a)  /* 2074 */
+
+/* Region_080be76c: tier==1 (address 0x080be7d0). */
+#define ACTOR_COST_FLAG_OFF     317  /* 0x13d; distinct from the head's flags */
+#define TEXT_TIER1_MSG         ((void *)0x83e)  /* 2110 */
+
+/* Region_080be76c: tier==2 (address 0x080be888). */
+#define REQ_FLAG_OFF            299  /* 0x12b; req+299, not an actor field */
+#define TEXT_TIER2_NOSLOT_MSG  ((void *)0x81b)  /* 2075 */
+#define TEXT_TIER2_NOABILITY_MSG ((void *)0x816) /* 2070 */
+#define TEXT_TIER2_KIND_MSG    ((void *)0x818)  /* 2072 */
+#define TEXT_TIER2_DEFAULT_MSG ((void *)0x817)  /* 2071 */
+
+/* Region_080be76c: tier==3/7 (address 0x080be96e). */
+#define TEXT_TIER3_MSG         ((void *)0x816)  /* 2070; same id as tier2's */
+
+/* Region_080be76c: tier==4 (address 0x080be984) classification tree. */
+#define K1_ABILITY_ID           441  /* 0x1b9 */
+#define K2_ABILITY_ID           495  /* 0x1ef */
+#define K3_ABILITY_ID           499  /* 0x1f3 */
+#define K4_ABILITY_ID           503  /* 0x1f7 */
+
+/*
+ * Region_080beb08's own TEXT_TBD text-pointer placeholders are unresolved
+ * as of this pass (out of this round's scope, which targeted
+ * Region_080be76c and the shared head pre-checks per the dossier's
+ * recommendation); left as an inert placeholder pending the next pass's
+ * standalone-assemble-and-objdump of games/gs1/asm/080beb08.s.
+ */
+#define TEXT_TBD          NULL
 
 void Func_080be378(u8 *req, u8 *tgt)
 {
@@ -121,27 +171,27 @@ void Func_080be378(u8 *req, u8 *tgt)
 
     Func_08015118();
 
-    if (((u8 *)actor)[ACTOR_FLAG_A_OFF]) {
-        ((u8 *)actor)[ACTOR_FLAG_A_OFF] = 0;
+    if (((u8 *)actor)[ACTOR_FAINT_FLAG_OFF]) {
+        ((u8 *)actor)[ACTOR_FAINT_FLAG_OFF] = 0;
         Func_08015120(*(s16 *)(req + 0), 1);
-        Func_080151c8(TEXT_TBD);
+        Func_080151c8(ACTOR_FAINT_MSG);
         goto L_080bec8a;
     }
-    if (((u8 *)actor)[ACTOR_FLAG_B_OFF]) {
+    if (((u8 *)actor)[ACTOR_SILENCE_FLAG_OFF]) {
         Func_08015120(*(s16 *)(req + 0), 1);
-        Func_080151c8(TEXT_TBD);
+        Func_080151c8(ACTOR_SILENCE_MSG);
         goto L_080bec8a;
     }
-    if (((u8 *)actor)[ACTOR_FLAG_C_OFF]) {
+    if (((u8 *)actor)[ACTOR_SEAL_FLAG_OFF]) {
         Func_08015120(*(s16 *)(req + 0), 1);
-        Func_080151c8(TEXT_TBD);
+        Func_080151c8(ACTOR_SEAL_MSG);
         goto L_080bec8a;
     }
-    if (((u8 *)actor)[REQ_FLAG_OFF] & 1) {
+    if (((u8 *)actor)[ACTOR_STATUSFLAG_OFF] & 1) {
         if (*(s16 *)((u8 *)actor + 6) != 3) {
             if ((Func_080771a0() & 3) == 0) {
                 Func_08015120(*(s16 *)(req + 0), 1);
-                Func_080151c8(TEXT_TBD);
+                Func_080151c8(ACTOR_STATUSFLAG_MSG);
                 goto L_080bec8a;
             }
         }
@@ -224,10 +274,10 @@ L_080be700:
     {
         u16 reqId = *(u16 *)(req + 0);
         if (reqId > 7) {
-            Func_080151c8(TEXT_TBD);
+            Func_080151c8(TEXT_REQID_HIGH);
         } else {
             Func_08015120((s16)reqId, 1);
-            Func_080151c8(TEXT_TBD);
+            Func_080151c8(TEXT_REQID_LOW);
         }
         Func_080bb65c();
         *(s32 *)(tgt + 84) = 7;
@@ -247,11 +297,11 @@ L_080be76c:
     }
     Func_08077078(actor, 1);
     Func_08015120(*(s16 *)(req + 0), 2);
-    textPtr = TEXT_TBD;
+    textPtr = TEXT_TIER0_MSG1;
     Func_080151c8(textPtr);
     Func_080bb8d8();
     Func_08015120(abilityId, 4);
-    textPtr = TEXT_TBD;
+    textPtr = TEXT_TIER0_MSG2;
     goto L_080be7ca;
 
     /* ---- case tier==1, address 0x080be7d0 ---- */
@@ -264,14 +314,14 @@ L_080be7d0:
     }
     Func_08015120(*(s16 *)(req + 0), 1);
     Func_08015120(abilityId, 4);
-    Func_080151c8(TEXT_TBD);
+    Func_080151c8(TEXT_TIER1_MSG);
     {
         s32 costOk = 1;
         if (*(s16 *)((u8 *)actor + 58) < *(u8 *)((u8 *)abilityData + 9)) {
             *(s32 *)(tgt + 92) = 2;
             costOk = 0;
         }
-        if (((u8 *)actor)[ACTOR_FLAG_A_OFF]) {
+        if (((u8 *)actor)[ACTOR_COST_FLAG_OFF]) {
             *(s32 *)(tgt + 92) = 1;
             costOk = 0;
         }
@@ -298,7 +348,7 @@ L_080be888:
         s16 slotIdx = *(s16 *)(req + 8);
         if (slotIdx < 0) {
             Func_08015120(*(s16 *)(req + 0), 1);
-            Func_080151c8(TEXT_TBD);
+            Func_080151c8(TEXT_TIER2_NOSLOT_MSG);
             goto L_080bec8a;
         }
         {
@@ -319,7 +369,7 @@ L_080be8dc:
         req = req; /* r1 = req (already held) */
 L_080be8e0:
         Func_08015120(*(s16 *)(req + 0), 1);
-        Func_080151c8(TEXT_TBD);
+        Func_080151c8(TEXT_TIER2_NOABILITY_MSG);
         if (((u8 *)req)[REQ_FLAG_OFF] == 0) {
             ((u8 *)req)[REQ_FLAG_OFF] = 1;
         }
@@ -336,11 +386,11 @@ L_080be908:
             u8 kind2 = *((u8 *)abilityData + 2);
             if (kind12 == 2 || kind12 == 0) {
                 if (kind2 == 3 || kind2 == 1 || (kind2 >= 6 && kind2 <= 8)) {
-                    textPtr = TEXT_TBD;
+                    textPtr = TEXT_TIER2_KIND_MSG;
                     goto L_080be7ca;
                 }
             }
-            textPtr = TEXT_TBD;
+            textPtr = TEXT_TIER2_DEFAULT_MSG;
             goto L_080be7ca;
         }
     }
@@ -348,7 +398,7 @@ L_080be908:
     /* ---- case tier==3 and tier==7 (shared), address 0x080be96e ---- */
 L_080be96e:
     Func_08015120(*(s16 *)(req + 0), 1);
-    Func_080151c8(TEXT_TBD);
+    Func_080151c8(TEXT_TIER3_MSG);
     goto L_080bec8a;
 
     /* ---- case tier==4, address 0x080be984 ---- */
@@ -362,50 +412,67 @@ L_080be984:
     Func_08015120(abilityId, 4);
     abilityData = Func_08077080(abilityId);
     if ((*((u8 *)abilityData + 1) & 0x0f) == 6) {
-        textPtr = TEXT_TBD;
+        textPtr = (void *)0x8f1;  /* 2289 */
     } else {
-        textPtr = TEXT_TBD;
+        textPtr = (void *)0x8f0;  /* 2288 */
     }
     /*
-     * ~15-way exact/range classification of `abilityId` selecting one of
-     * many distinct UI text pointers, all converging on L_080be7ca. The
-     * exact-match constants below are the ones directly computable from the
-     * retained assembly's immediate operands; the four that come from
-     * unread `ldr rN, [pc, #imm]` literal-pool words are left as the
-     * K1..K4 placeholders (all currently 0, i.e. inert) pending halfword-
-     * stage literal-pool decoding.
+     * Exact/range classification of `abilityId` selecting one of many
+     * distinct UI text-resource ids, all converging on L_080be7ca.
+     * Reconstructed instruction-for-instruction from
+     * games/gs1/asm/080be76c.s (0x080be9ce-0x080bea9a) with every
+     * literal-pool constant resolved from that region's own pool (see
+     * games/gs1/recon/en/main/080be378.json's attempt log for the
+     * standalone-assemble-and-objdump derivation). K1..K4_ABILITY_ID are
+     * the four comparisons that come from the pool rather than an
+     * immediate operand.
      */
-    switch (abilityId) {
-    case 488: textPtr = TEXT_TBD; goto L_080be7ca;  /* 244*2 */
-    case 224: textPtr = TEXT_TBD; goto L_080be7ca;
-    case 500: textPtr = TEXT_TBD; goto L_080be7ca;  /* 250*2 */
-    case 494: textPtr = TEXT_TBD; goto L_080be7ca;  /* 500-6 */
-    case 492: textPtr = TEXT_TBD; goto L_080be7ca;  /* 246*2 */
-    case 504: textPtr = TEXT_TBD; goto L_080be7ca;  /* 252*2 */
-    case 508: textPtr = TEXT_TBD; goto L_080be7ca;  /* 254*2 */
-    case 472: textPtr = TEXT_TBD; goto L_080be7ca;  /* 236*2 */
-    default:
-        /*
-         * TODO: three more exact-match cases (K2_ABILITY_ID, K3_ABILITY_ID,
-         * K4_ABILITY_ID) belong here once their literal-pool values are
-         * decoded; folded into default for now since they are all
-         * currently the same placeholder value and would collide as
-         * duplicate case labels.
-         */
-        if (abilityId > K1_ABILITY_ID) {
-            if (abilityId <= 444) { /* 222*2 */
-                textPtr = TEXT_TBD;
+    if (abilityId == 488) {                      /* 244*2 */
+        textPtr = (void *)0x8fd;                 /* 2301 */
+    } else if (abilityId > 488) {
+        if (abilityId == 500) {                  /* 250*2 */
+            textPtr = (void *)0x8f7;             /* 2295 */
+        } else if (abilityId > 500) {
+            if (abilityId == K4_ABILITY_ID) {    /* 503 */
+                textPtr = (void *)0x900;         /* 2304 */
+            } else if (abilityId > K4_ABILITY_ID) {
+                if (abilityId == 504) {          /* 252*2 */
+                    textPtr = (void *)0x901;     /* 2305 */
+                } else if (abilityId == 508) {   /* 254*2 */
+                    textPtr = (void *)0x902;     /* 2306 */
+                }
+            } else if (abilityId == 501) {       /* 503-2 */
+                textPtr = (void *)0x8f8;         /* 2296 */
             }
-            goto L_080be7ca;
+        } else if (abilityId == 494) {           /* 500-6 */
+            textPtr = (void *)0x8fa;             /* 2298 */
+        } else if (abilityId > 494) {
+            if (abilityId == K2_ABILITY_ID) {    /* 495 */
+                textPtr = (void *)0x8fe;         /* 2302 */
+            } else if (abilityId == K3_ABILITY_ID) { /* 499 */
+                textPtr = (void *)0x8f9;         /* 2297 */
+            }
+        } else if (abilityId == 492) {           /* 246*2 */
+            textPtr = (void *)0x8ff;             /* 2303 */
         }
-        if (abilityId > 436) { /* 488-52 */
-            goto L_080be7ca;
+    } else if (abilityId <= K1_ABILITY_ID) {     /* 441 */
+        if (abilityId > 436) {                   /* 488-52 */
+            textPtr = (void *)0x8fb;             /* 2299 */
+        } else if (abilityId == 224) {
+            textPtr = (void *)0x83e;             /* 2110 */
+        } else if (abilityId >= 224) {
+            if (abilityId > 434) {               /* 217*2 */
+                textPtr = (void *)0x8f2;         /* 2290 */
+            }
         }
-        if (abilityId > 434) { /* 217*2 */
-            textPtr = TEXT_TBD;
+    } else {
+        if (abilityId <= 444) {                  /* 222*2 */
+            textPtr = (void *)0x8f0;             /* 2288, same id as the kind!=6 default */
+        } else if (abilityId == 472) {           /* 236*2 */
+            textPtr = (void *)0x8fc;             /* 2300 */
         }
-        goto L_080be7ca;
     }
+    goto L_080be7ca;
 
     /* ---- shared exit: address 0x080be7ca, reached from cases 0/2/4 ---- */
 L_080be7ca:

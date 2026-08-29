@@ -1,15 +1,21 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x080983a0",
-  "status": "measured-draft",
-  "owner_bytes": 288,
-  "candidate_bytes": 312,
-  "differing_halfwords": 124,
-  "classification": "allocation-and-scheduling",
-  "notes": [
-    "This complete semantic draft reconstructs the battle-effect setup, scene-coordinate transfer, display setup, optional helper dispatch, state publication, nineteen-frame update loop, and delayed callback.",
-    "The candidate is 24 bytes long and diverges in long-lived register allocation and literal-pool placement; retained assembly remains authoritative and this draft claims zero bytes.",
-    "No external source, copied instruction bytes, inline assembly, fixed-register variable, compiler barrier, or compiler modification was used."
-  ]
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x080983a0",
+ "status": "measured-draft",
+ "owner_bytes": 288,
+ "candidate_bytes": 312,
+ "differing_halfwords": 124,
+ "classification": "allocation-and-scheduling",
+ "notes": [
+  "This complete semantic draft reconstructs the battle-effect setup, scene-coordinate transfer, display setup, optional helper dispatch, state publication, nineteen-frame update loop, and delayed callback.",
+  "The candidate is 24 bytes long and diverges in long-lived register allocation and literal-pool placement; retained assembly remains authoritative and this draft claims zero bytes.",
+  "No external source, copied instruction bytes, inline assembly, fixed-register variable, compiler barrier, or compiler modification was used."
+ ],
+ "pool_classification_evidence": {
+  "measured": "2026-08-29",
+  "verdict": "REFUTED",
+  "evidence": "line 12: mov r6,r9 vs mov r6,r8 plus differing push set and dozens of real operand mismatches; class missing-extra-code, wrong_instructions=120",
+  "note": "Not pool-class: genuine instruction differences present. The 08090488 dossier note claiming this owner shares its grounds is corrected by this verdict."
+ }
 }

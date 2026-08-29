@@ -27,9 +27,10 @@ PORTABLE_TOOLS := alignment-tail asset-paths cache-entry canonical-json \
 	dashboard-server overlay overlay-disasm overlay-show \
 	overlay-adopt overlay-call-targets check check-commit-progress \
 	check-publication check-unmatchable core-retained-audit coverage-map \
-	full-c-progress integrate-matches decomp-targets
-# The maintainer-owned ceiling covers the portable Rust, JavaScript, and CSS
-# beside the decompilation. Contributors pare machinery; they do not raise it.
+	full-c-progress integrate-matches decomp-targets weyard-font
+# The maintainer-owned ceiling covers the portable Rust, TypeScript,
+# JavaScript, and CSS beside the decompilation. Contributors pare
+# machinery; they do not raise it.
 # Only Pascal moves this number; a diff touching it without his recorded
 # decision is invalid regardless of how good the new machinery is.
 # 40,000 set by Pascal's decision, 2026-08-28.
@@ -321,7 +322,7 @@ tool-tests:
 
 tooling-size:
 	@lines=$$(find $(addprefix $(TOOLS)/,$(PORTABLE_TOOLS)) -type f \
-		\( -name '*.rs' -o -name '*.js' -o -name '*.css' \) \
+		\( -name '*.rs' -o -name '*.js' -o -name '*.ts' -o -name '*.css' \) \
 		-not -path '*/target/*' -print0 | xargs -0 cat | wc -l | tr -d ' '); \
 	if [ "$$lines" -gt $(TOOLING_LINE_LIMIT) ]; then \
 		printf 'portable tooling is %s lines; limit is %s\n' "$$lines" '$(TOOLING_LINE_LIMIT)'; \

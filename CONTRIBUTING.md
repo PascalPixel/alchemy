@@ -183,7 +183,8 @@ output and do not affect this tracked-source scoreboard.
 
 ## Validate and commit
 
-Portable tooling is capped at 50,000 Rust, JavaScript, and CSS source lines.
+Portable tooling is capped at 40,000 Rust, TypeScript, JavaScript, and CSS
+source lines.
 This is a maintainer-owned ceiling: consolidate or remove machinery when the
 gate fails; do not raise the limit to accommodate a change.
 

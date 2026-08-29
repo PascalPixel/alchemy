@@ -7,7 +7,9 @@ s32 Func_0808a490(s32);
 void *Func_08077080(s32);
 s32 Func_08077218(s32, s32);
 
-s32 Func_080a46b4(s32 owner, s32 itemId)
+#define Item_ClassifyUseMode Func_080a46b4
+
+s32 Item_ClassifyUseMode(s32 owner, s32 itemId)
 {
     s32 masked = itemId;
     void *itemData;
@@ -35,13 +37,14 @@ s32 Func_080a46b4(s32 owner, s32 itemId)
             }
 
             if (result == 1) {
+                s32 mask = 0x80;
                 u8 field1 = M2C_FIELD(abilityData, u8, 1);
 
                 if ((field1 & 0x40) != 0) {
                     u8 field8 = M2C_FIELD(abilityData, u8, 8);
                     result = (field8 == 0xff) ? 2 : 1;
                 } else {
-                    result = (field1 & 0x80) ? -1 : 0;
+                    result = (field1 & mask) ? -1 : 0;
                 }
             }
         }

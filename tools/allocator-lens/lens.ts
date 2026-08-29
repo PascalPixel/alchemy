@@ -15,7 +15,9 @@ const fs = require("fs");
 
 const REPO = "/Users/pixel/Developer/PascalPixel/alchemy";
 const owner = process.argv[2];
-const source = process.argv[3] ?? `games/gs1/recon/en/main/${owner}.c`;
+const extraFlags = process.argv.filter((a) => a.startsWith("-"));
+const positional = process.argv.slice(3).filter((a) => !a.startsWith("-"));
+const source = positional[0] ?? `games/gs1/recon/en/main/${owner}.c`;
 const work = `${process.env.TMPDIR ?? "/tmp"}/lens-${owner}`;
 fs.rmSync(work, { recursive: true, force: true });
 fs.mkdirSync(work, { recursive: true });
@@ -46,6 +48,7 @@ run(
     "-mcpu=arm7tdmi",
     "-fno-builtin",
     "-fcall-used-r4",
+    ...extraFlags,
     "-quiet",
     "-da",
     "-o",

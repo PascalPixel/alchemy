@@ -125,7 +125,7 @@ s32 Func_0800ebec(struct ScriptObjectEntry *actor)
 
     dir = Data_08013254[(Data_03001ae8 >> 4) & 15];
     angle_q16 = dir << 16;
-    if ((angle_q16 >> 16) == (s16)0xffff) {
+    if (((u32)angle_q16 >> 16) == 0xffffu) {
         blocked_flags |= 4;
         goto tail_merge;
     }

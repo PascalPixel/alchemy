@@ -33,6 +33,7 @@ void *Func_08077008(s32 id);
 void Func_0800eaf8(void);
 
 extern s16 Data_08013274_a[];
+extern void *Data_03000118;
 
 s32 Func_0800ebec(struct ScriptObjectEntry *actor)
 {
@@ -40,16 +41,16 @@ s32 Func_0800ebec(struct ScriptObjectEntry *actor)
     s32 handled_flags;
     s32 mode;
     s32 angle_q16;
-    s32 facing;
-    s32 sp8_mode;
+    s32 dir;
+    s32 final_dir;
     s16 deltas[6];
-    struct WorldPosition posA;
-    struct WorldPosition posB;
-    struct WorldPosition posC;
+    s32 posA[3];
+    s32 posB[3];
+    s32 posC[3];
     s32 i;
     struct ScriptObjectEntry *entry;
-    s32 speed;
-    s32 accel;
+    u8 *base;
+    u16 *p100;
 
     blocked_flags = 0;
     handled_flags = 0;
@@ -97,113 +98,252 @@ s32 Func_0800ebec(struct ScriptObjectEntry *actor)
         }
     }
 
-    if (Data_03001ae8 & (Data_02000240[135])) {
-        speed = 0x180000;
-        accel = 0x80000;
-        sp8_mode = 5;
+    if (Data_03001ae8 & Data_02000240[270]) {
+        *(s32 *)((u8 *)actor + 48) = 0x18000;
+        *(s32 *)((u8 *)actor + 52) = 0x4000;
+        mode = 5;
     } else {
-        speed = 0x100000;
-        accel = 0x80000;
-        sp8_mode = 2;
+        *(s32 *)((u8 *)actor + 48) = 0x10000;
+        *(s32 *)((u8 *)actor + 52) = 0x4000;
+        mode = 2;
     }
-    actor->values_08[4] = speed;
-    actor->values_08[5] = accel;
 
-    if (Func_080770c0(0x2c0 /* 704 */) != 0) {
+    if (Func_080770c0(0x17f /* 383 */) != 0) {
         if (Data_03001ae8 & 2) {
-            actor->values_08[4] = 0x400000;
-            actor->values_08[5] = 0x200000;
-            sp8_mode = 5;
+            *(s32 *)((u8 *)actor + 48) = 0x40000;
+            *(s32 *)((u8 *)actor + 52) = 0x10000;
+            mode = 5;
         }
     }
 
-    facing = Data_08013254[(Data_03001ae8 >> 4) & 15];
-    angle_q16 = facing << 16;
+    dir = Data_08013254[(Data_03001ae8 >> 4) & 15];
+    angle_q16 = dir << 16;
     if ((angle_q16 >> 16) == (s16)0xffff) {
         blocked_flags |= 4;
-        goto after_direction_checks;
+        goto tail_merge;
     }
 
-    {
-        s32 dir;
+    dir = (u16)angle_q16;
 
-        dir = (u16)angle_q16;
+    posA[0] = actor->values_08[0];
+    posA[1] = actor->values_08[1];
+    posA[2] = actor->values_08[2];
+    Func_0800447c(0x80000, dir, (struct WorldPosition *)posA);
 
-        for (i = 0; i < 4; i++) {
-            s32 sample_angle;
+    if (Data_03001f54 != 0) {
+        if (Data_03001ae8 & 0x200) {
+            s32 dead_signed_facing;
 
-            switch (i) {
-            case 0: sample_angle = dir; break;
-            case 1: sample_angle = dir + 0x2000; break;
-            case 2: sample_angle = dir + 0x3000; break;
-            default: sample_angle = dir - 0x1000; break;
-            }
-
-            posB.x = actor->values_08[0];
-            posB.y = actor->values_08[1];
-            /* placeholder for third field, overwritten below */
-            Func_0800447c(0x80000, sample_angle, &posB);
-            if (Func_080120dc(actor, &posB) != 0) {
-                blocked_flags |= 1;
-                break;
-            }
+            dead_signed_facing = (s16)(angle_q16 >> 16);
+            (void)dead_signed_facing;
+            goto tail_merge;
         }
     }
 
-after_direction_checks:
-    /* TODO(unfinished): Region_0800ee14's real control flow here is a nested
-       search, not the single 4-direction scan above: for each of 6 broad
-       angle candidates (facing +-0x1000, +-0x2000, +-0x3000, built into a
-       stack s16[6] "deltas" array), it re-checks a 5-point fan around that
-       candidate angle (deltas[i], deltas[i]+0x1000, -0x1000, +0x2000, and a
-       fifth pc-relative constant) with Func_080120dc before accepting it;
-       only a fully-clear 5-point fan breaks out to the success label
-       (.L_0800ef44), otherwise it advances to the next of the 6 candidates.
-       All 6 failing sets blocked_flags|=1 and copies actor->values_08[0..2]
-       into a third WorldPosition scratch (posC, corresponds to reference
-       sp+68) before falling into the shared .L_0800ef44 continuation, which
-       this draft does not yet reconstruct. See the dossier
-       (games/gs1/recon/en/main/0800ebec.json) for the traced instruction
-       sequence and the remaining Fragment_0800f1fa tail (Func_0800c150
-       spawn / Func_0800c2d8 / Func_0800ba30 / Func_0800d14c dispatch)
-       neither of which is represented below yet. */
-    posC.x = actor->values_08[0];
-    posC.y = actor->values_08[1];
+    if (Func_080120dc(actor, (struct WorldPosition *)posA) != 0)
+        goto region_search;
+
+    posB[0] = actor->values_08[0];
+    posB[1] = actor->values_08[1];
+    posB[2] = actor->values_08[2];
+    Func_0800447c(0x80000, dir + 0x1000, (struct WorldPosition *)posB);
+    if (Func_080120dc(actor, (struct WorldPosition *)posB) != 0)
+        goto region_search;
+
+    posB[0] = actor->values_08[0];
+    posB[1] = actor->values_08[1];
+    posB[2] = actor->values_08[2];
+    Func_0800447c(0x80000, dir - 0x1000, (struct WorldPosition *)posB);
+    if (Func_080120dc(actor, (struct WorldPosition *)posB) != 0)
+        goto region_search;
+
+    posB[0] = actor->values_08[0];
+    posB[1] = actor->values_08[1];
+    posB[2] = actor->values_08[2];
+    Func_0800447c(0x80000, dir + 0x2000, (struct WorldPosition *)posB);
+    if (Func_080120dc(actor, (struct WorldPosition *)posB) != 0)
+        goto region_search;
+
+    posB[0] = actor->values_08[0];
+    posB[1] = actor->values_08[1];
+    posB[2] = actor->values_08[2];
+    Func_0800447c(0x80000, dir - 0x2000, (struct WorldPosition *)posB);
+    if (Func_080120dc(actor, (struct WorldPosition *)posB) != 0)
+        goto region_search;
+
+    final_dir = dir;
+    goto success_tail;
+
+region_search:
+    dir = (u16)angle_q16;
+    deltas[0] = dir + 0x1000;
+    deltas[1] = dir - 0x1000;
+    deltas[2] = dir + 0x2000;
+    deltas[3] = dir - 0x2000;
+    deltas[4] = dir + 0x3000;
+    deltas[5] = dir - 0x3000;
+
+    for (i = 0; i < 6; i++) {
+        s32 cand;
+        s32 cand_u16;
+
+        cand = deltas[i];
+        final_dir = cand;
+        cand_u16 = (u16)cand;
+
+        posB[0] = actor->values_08[0];
+        posB[1] = actor->values_08[1];
+        posB[2] = actor->values_08[2];
+        Func_0800447c(0x80000, cand_u16, (struct WorldPosition *)posB);
+        if (Func_080120dc(actor, (struct WorldPosition *)posB) != 0)
+            continue;
+
+        posB[0] = actor->values_08[0];
+        posB[1] = actor->values_08[1];
+        posB[2] = actor->values_08[2];
+        Func_0800447c(0x80000, cand_u16 + 0x1000, (struct WorldPosition *)posB);
+        if (Func_080120dc(actor, (struct WorldPosition *)posB) != 0)
+            continue;
+
+        posB[0] = actor->values_08[0];
+        posB[1] = actor->values_08[1];
+        posB[2] = actor->values_08[2];
+        Func_0800447c(0x80000, cand_u16 - 0x1000, (struct WorldPosition *)posB);
+        if (Func_080120dc(actor, (struct WorldPosition *)posB) != 0)
+            continue;
+
+        posB[0] = actor->values_08[0];
+        posB[1] = actor->values_08[1];
+        posB[2] = actor->values_08[2];
+        Func_0800447c(0x80000, cand_u16 + 0x2000, (struct WorldPosition *)posB);
+        if (Func_080120dc(actor, (struct WorldPosition *)posB) != 0)
+            continue;
+
+        posB[0] = actor->values_08[0];
+        posB[1] = actor->values_08[1];
+        posB[2] = actor->values_08[2];
+        Func_0800447c(0x80000, cand_u16 - 0x2000, (struct WorldPosition *)posB);
+        if (Func_080120dc(actor, (struct WorldPosition *)posB) == 0)
+            goto success_tail;
+    }
+
+    posA[0] = actor->values_08[0];
+    posA[1] = actor->values_08[1];
+    posA[2] = actor->values_08[2];
+    blocked_flags |= 1;
+
+success_tail:
+    posC[0] = actor->values_08[0];
+    posC[1] = actor->values_08[1];
+    posC[2] = actor->values_08[2];
+    Func_0800447c(0x40000, (u16)final_dir, (struct WorldPosition *)posC);
 
     entry = (struct ScriptObjectEntry *)(*(u8 **)ADDR_03001E64);
     for (i = 63; i >= 0; i--) {
-        if (entry->data == NULL)
-            continue;
-        if (!(entry->flags_59 & 1))
-            continue;
-        if (entry == actor)
-            continue;
-        if (Func_0800eba0(entry->values_08, entry->value_20 - 2,
-                actor->values_08, actor->value_20 - 2) < 0)
-            continue;
+        s32 dist;
 
-        if ((entry->unknown_22[80 - 34] & 0x200) == 0x200) {
+        if (entry->data == NULL)
+            goto scan_next;
+        if (!(entry->flags_59 & 1))
+            goto scan_next;
+        if (entry == actor)
+            goto scan_next;
+
+        dist = Func_0800eba0(entry->values_08, actor->value_20 - 2,
+                posC, entry->value_20 - 2);
+        if (dist < 0)
+            goto scan_next;
+
+        base = (u8 *)entry;
+        if ((*(u32 *)(base + 88) & 0xff000200) != 0x200) {
             blocked_flags |= 2;
-            continue;
+            goto scan_next;
         }
 
-        handled_flags |= 1;
-        break;
+        {
+            s32 dy;
+            s32 dx;
+            s32 angle_raw;
+            s16 angle_signed;
+            s32 angle_u16;
+
+            dy = entry->values_08[2] - actor->values_08[2];
+            dx = entry->values_08[0] - actor->values_08[0];
+            angle_raw = Func_080044d0(dy, dx);
+            angle_signed = (s16)angle_raw;
+            (void)angle_signed;
+            angle_u16 = (u16)angle_raw;
+
+            posB[0] = entry->values_08[0];
+            posB[1] = entry->values_08[1];
+            posB[2] = entry->values_08[2];
+            Func_0800447c(0x4000, angle_u16, (struct WorldPosition *)posB);
+            if (Func_0800d924(entry, posB) != 0) {
+                blocked_flags |= 2;
+                goto scan_next;
+            }
+
+            posB[0] = entry->values_08[0];
+            posB[1] = entry->values_08[1];
+            posB[2] = entry->values_08[2];
+            Func_0800447c(0xa0000, angle_u16, (struct WorldPosition *)posB);
+            if (Func_080120dc(entry, (struct WorldPosition *)posB) != 0) {
+                blocked_flags |= 2;
+                goto scan_next;
+            }
+
+            posB[0] = entry->values_08[0];
+            posB[1] = entry->values_08[1];
+            posB[2] = entry->values_08[2];
+            Func_0800447c(0xa0000, angle_u16 + 0x1000, (struct WorldPosition *)posB);
+            if (Func_080120dc(entry, (struct WorldPosition *)posB) != 0) {
+                blocked_flags |= 2;
+                goto scan_next;
+            }
+
+            if (Func_080120dc(entry, (struct WorldPosition *)posB) != 0) {
+                blocked_flags |= 2;
+                goto scan_next;
+            }
+
+            posB[0] = entry->values_08[0];
+            posB[1] = entry->values_08[1];
+            posB[2] = entry->values_08[2];
+            Func_0800447c(0xa0000, angle_u16 - 0x1000, (struct WorldPosition *)posB);
+            if (Func_080120dc(entry, (struct WorldPosition *)posB) != 0) {
+                blocked_flags |= 2;
+                goto scan_next;
+            }
+
+            Func_0800447c(0x4000, angle_u16, (struct WorldPosition *)entry->values_08);
+            *(s32 *)(base + 56) = 0x80000000;
+            *(s32 *)(base + 60) = 0x80000000;
+            *(s32 *)(base + 64) = 0x80000000;
+            handled_flags |= 1;
+        }
+
+scan_next:
+        entry++;
     }
 
     if (blocked_flags == 0 && handled_flags != 0) {
-        actor->values_08[4] = 0x100000;
-        actor->values_08[5] = 0x80000;
+        *(s32 *)((u8 *)actor + 48) = 0x4000;
+        *(s32 *)((u8 *)actor + 52) = 0x2000;
     }
 
-    if (Data_03001e70_a[0] != 0) {
-        if (blocked_flags & 3) {
-            Data_02000240[270]++;
-        } else {
-            Data_02000240[270] = 0;
+tail_merge:
+    {
+        u16 *table_ptr;
+
+        table_ptr = *(u16 **)Data_03001ebc_a;
+        if (table_ptr != 0) {
+            if (blocked_flags & 3) {
+                table_ptr[206]++;
+            } else {
+                table_ptr[206] = 0;
+            }
         }
     }
-
     if (handled_flags != 0) {
         Func_0800c300(actor, 8);
     } else if (blocked_flags != 0) {
@@ -214,8 +354,94 @@ after_direction_checks:
         kind = *(s16 *)((u8 *)record + 56);
         Func_0800c300(actor, kind != 0 ? 9 : 22);
     } else {
-        Func_0800c300(actor, sp8_mode);
+        Func_0800c300(actor, mode);
     }
 
-    return 0;
+    if (blocked_flags != 0) {
+        *(s32 *)((u8 *)actor + 56) = 0x80000000;
+        *(s32 *)((u8 *)actor + 60) = 0x80000000;
+        *(s32 *)((u8 *)actor + 64) = 0x80000000;
+        *(s32 *)((u8 *)actor + 36) = 0;
+        *(s32 *)((u8 *)actor + 44) = 0;
+
+        if (blocked_flags & 3) {
+            s32 diff;
+            u16 *field6;
+
+            field6 = (u16 *)((u8 *)actor + 6);
+            diff = (s16)((u16)(angle_q16 >> 16) - *field6);
+            if (diff > 0x1000)
+                diff = 0x1000;
+            if (diff < -0x1000)
+                diff = -0x1000;
+            *field6 = *field6 + diff;
+        }
+
+        p100 = (u16 *)((u8 *)actor + 100);
+        *p100 = 0;
+        *(u16 *)((u8 *)actor + 102) = 2;
+
+        goto fragment_tail;
+    } else {
+        Func_0800d14c(actor, posA[0], posA[1], posA[2]);
+        goto fragment_tail;
+    }
+
+fragment_tail:
+    {
+        void *global_table;
+        s32 spawned_flag;
+        s32 facing_final;
+        struct ScriptObjectEntry *spawned;
+        void *r5;
+
+        global_table = Data_03000118;
+        spawned_flag = ((u8 *)global_table)[23];
+        facing_final = (u16)(angle_q16 >> 16);
+
+        if (spawned_flag != 0 && *(s16 *)p100 == 0 && blocked_flags == 0) {
+            spawned = Func_0800c150(actor->values_08[0], actor->values_08[1],
+                    actor->values_08[2], 25);
+            if (spawned != NULL) {
+                spawned->values_08[3] = actor->values_08[3];
+                r5 = *(void **)((u8 *)spawned + 80);
+                Func_0800c2d8(spawned, Data_08013274_a);
+                *(u8 *)((u8 *)spawned + 35) = 2;
+                *(u8 *)((u8 *)spawned + 85) = (u8)blocked_flags;
+
+                if (r5 != NULL) {
+                    Func_0800ba30(r5, 1);
+                    *(u8 *)((u8 *)r5 + 38) = (u8)blocked_flags;
+                    *(u16 *)((u8 *)r5 + 30) = 0x4000 + facing_final;
+                    *(u8 *)((u8 *)r5 + 9) |= 0xc;
+                }
+
+                {
+                    u16 v;
+
+                    v = *(u16 *)((u8 *)actor + 102);
+                    if (v == 2) {
+                        Func_0800ba30(r5, 2);
+                        *(u16 *)((u8 *)actor + 102) = (u16)blocked_flags;
+                        v = 0;
+                    }
+
+                    if (v != 0) {
+                        *(u16 *)((u8 *)spawned + 6) = 0x8000;
+                    }
+                }
+            }
+        }
+
+        if (mode == 5) {
+            *p100 = 12;
+        } else {
+            *p100 = 18;
+        }
+        *(u16 *)((u8 *)actor + 102) ^= 1;
+    }
+
+    Func_0800eaf8();
+    *(u16 *)((u8 *)actor + 4) += 1;
+    return 1;
 }

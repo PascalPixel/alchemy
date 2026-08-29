@@ -200,6 +200,8 @@ void Owner_RecalculateStats(s32 owner)
                     work->effect_amount = item->effects[j].amount;
 
                     switch (kind) {
+                    case 0:
+                        break;
                     case 1:
                         work->hp_accum += work->effect_amount;
                         break;

@@ -4,8 +4,8 @@
  * hand: resolve declaration collisions here or in shared headers. */
 
 #include "../main/0809a294.c"
-#include "../../../../src/battle/effects/item_break/spawn_mode_1.c"
-#include "../../../../src/battle/effects/update_object_motion_scale_and_linked_angle.c"
+#include "../../../src/battle/effects/item_break/spawn_mode_1.c"
+#include "../../../src/battle/effects/update_object_motion_scale_and_linked_angle.c"
 #include "../main/0809a484.c"
-#include "../../../../src/battle/effects/particles/update_motion_and_scale.c"
-#include "../../../../src/battle/effects/particles/spawn_radial_particle_ring.c"
+#include "../../../src/battle/effects/particles/update_motion_and_scale.c"
+#include "../../../src/battle/effects/particles/spawn_radial_particle_ring.c"

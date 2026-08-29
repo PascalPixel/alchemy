@@ -19,8 +19,8 @@ struct Object08095fcc {
 extern s32 Data_02000240[];
 
 s32 Object_GetById(u32);
-void RotateVectorByMagnitude(s32, s32, struct Triple08095fcc *);
-void Object_Destroy(void *);
+void RotateVectorByMagnitude(s32, s32, void *);
+void Object_Destroy();
 
 void Func_08095fcc(struct Object08095fcc *arg)
 {

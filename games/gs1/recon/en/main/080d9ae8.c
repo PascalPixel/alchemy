@@ -63,8 +63,8 @@ extern const u8 Data_080eea2c[];
 void Func_080cd594(s32 mode);
 void Func_080e0524(s32 effect_id, void *target, s32 flag_a, s32 flag_b);
 void *Func_08002f40(s32 id);
-void Func_080041d8(void *callback, s32 interval);
-void Func_08004278(void *callback);
+void Func_080041d8(s32 callback, s32 interval);
+void Func_08004278(s32 callback);
 void Func_080049ac(void);
 void Func_080051d8(s32 a, s32 b);
 void **Func_080b5098(s32 member_id);
@@ -82,7 +82,7 @@ void Func_080030f8(s32 frames);
 void Func_08002dd8(s32 id);
 s32 Func_080cdbc0(void);
 
-void RunPaletteRampEffect(s32 effect, s32 mode)
+s32 RunPaletteRampEffect(s32 effect, s32 mode)
 {
     void **heap_cache;
     void **cursor;
@@ -213,7 +213,7 @@ void RunPaletteRampEffect(s32 effect, s32 mode)
 
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 50;
-    Func_080041d8((void *) 0x080CD261, 0x480);
+    Func_080041d8(0x080CD261, 0x480);
 
     frame = 0;
     if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20) * 4 != -64) {
@@ -352,7 +352,7 @@ void RunPaletteRampEffect(s32 effect, s32 mode)
                 + 64);
     }
 
-    Func_08004278((void *) 0x080CD261);
+    Func_08004278(0x080CD261);
     Func_08002dd8(47);
     Func_08002dd8(46);
     Func_080cdbc0();

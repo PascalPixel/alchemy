@@ -4,7 +4,7 @@
  * hand: resolve declaration collisions here or in shared headers. */
 
 #include "../main/080983a0.c"
-#include "../../../../src/battle/effects/scene_transition/reset.c"
-#include "../../../../src/battle/effects/burst_particles/run_main_object.c"
-#include "../../../../src/battle/effects/burst_particles/run.c"
+#include "../../../src/battle/effects/scene_transition/reset.c"
+#include "../../../src/battle/effects/burst_particles/run_main_object.c"
+#include "../../../src/battle/effects/burst_particles/run.c"
 #include "../main/08098698.c"

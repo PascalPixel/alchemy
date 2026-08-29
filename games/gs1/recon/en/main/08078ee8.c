@@ -32,7 +32,6 @@ struct OwnerEquipTemplate {
 extern s32 Data_0807b690[];
 
 void Func_08015020(s32, u16 *);
-struct OwnerEquipTemplate *Func_08078ed8(s32);
 void Func_080792fc(s32, u8);
 void Func_08077428(s32);
 void Owner_RefreshDerivedData(s32);
@@ -69,7 +68,7 @@ void Owner_InitRecords(void)
             state = (struct OwnerRecordState *)OwnerState_Get(*remote);
             if (state != 0) {
                 state->class_id = (u8)*remote;
-                tmpl = Func_08078ed8(state->class_id);
+                tmpl = (struct OwnerEquipTemplate *)Func_08078ed8(state->class_id);
 
                 for (i = 14; i != -1; i--)
                     state->inventory[i] = 0;

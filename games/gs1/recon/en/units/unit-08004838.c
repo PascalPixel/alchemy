@@ -4,10 +4,10 @@
  * hand: resolve declaration collisions here or in shared headers. */
 
 #include "../main/08004838.c"
-#include "../../../../src/unidentified/main/runtime/runtime_owner_275.c"
-#include "../../../../src/unidentified/main/runtime/runtime_owner_227.c"
-#include "../../../../src/runtime/memory/allocate_heap_block.c"
-#include "../../../../src/runtime/memory/allocate_block.c"
-#include "../../../../src/runtime/memory/bump_allocate.c"
-#include "../../../../src/runtime/memory/bump_allocate_alternate_pool.c"
+#include "../../../src/unidentified/main/runtime/runtime_owner_275.c"
+#include "../../../src/unidentified/main/runtime/runtime_owner_227.c"
+#include "../../../src/runtime/memory/allocate_heap_block.c"
+#include "../../../src/runtime/memory/allocate_block.c"
+#include "../../../src/runtime/memory/bump_allocate.c"
+#include "../../../src/runtime/memory/bump_allocate_alternate_pool.c"
 #include "../main/080049ac.c"

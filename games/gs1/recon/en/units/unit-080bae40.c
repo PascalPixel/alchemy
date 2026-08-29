@@ -4,5 +4,5 @@
  * hand: resolve declaration collisions here or in shared headers. */
 
 #include "../main/080bae40.c"
-#include "../../../../src/battle/actor/reset_runtime_fields.c"
+#include "../../../src/battle/actor/reset_runtime_fields.c"
 #include "../main/080bb65c.c"

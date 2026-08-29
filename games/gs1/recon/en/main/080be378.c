@@ -592,8 +592,24 @@ L_080becea:
      * bytes at the pc-relative target addresses were read instead, pinned
      * against Region_080beb08's known load address 0x080beb08):
      *   0x080bef6c -> 0x00000129 (297)   actor+297 status/charge flag byte
-     *   0x080bef74 -> 0x00004001         tgt->88 flag combo A (subclass 1/5)
-     *   0x080bef70 -> 0x00004004         tgt->88 flag combo B (subclass 2/3)
+     *   0x080bef74 -> 0x00004001         tgt->88 flag combo A (subclass 0/1/5)
+     *   0x080bef78 -> 0x00004004         tgt->88 flag combo B (subclass 2/3)
+     *
+     * The secondary (subclass 0..5) jump table was re-decoded ROM-direct
+     * (raw little-endian words, not objdump's misdecoded inline-table
+     * reading, which renders it as bogus `cdp` coprocessor instructions):
+     * the pool word at 0x080bef70 gives the table's own base address,
+     * 0x080bee70, and the six words there are:
+     *   table[0] = 0x080beea0   table[1] = 0x080bee88
+     *   table[2] = 0x080bee90   table[3] = 0x080bee98
+     *   table[4] = 0x080beea8   table[5] = 0x080beea0
+     * Bodies at 0x080bee88/90/98/a0 each set tgt->88 (0x4001 for
+     * subclass 0/1/5, 0x4004 for subclass 2/3) and converge on the shared
+     * `str r3,[r2,#88]` at 0x080beea6, then fall into the 0x080beea8 tail.
+     * Only subclass 4's table entry points directly at 0x080beea8, past
+     * the shared store -- it is the one case that truly skips the
+     * assignment. (A prior draft had this backwards, treating subclass 0
+     * as the skip case instead of subclass 4.)
      */
 L_080bee08:
     targetUnit = Func_08077008(tgt[2]);
@@ -609,20 +625,20 @@ L_080bee08:
         u8 subclass = *((u8 *)actor + 296);
         if (subclass <= 5) {
             switch (subclass) {
-            case 0: goto L_080beea8;           /* -> 0x080beea0, no assignment path merges below */
-            case 1: *(s32 *)(tgt + 88) = 0x4001; goto L_080beea6;
-            case 2: *(s32 *)(tgt + 88) = 0x4004; goto L_080beea6;
-            case 3: *(s32 *)(tgt + 88) = 0x4004; goto L_080beea6;
-            case 4: goto L_080beea8;            /* no assignment */
-            case 5: *(s32 *)(tgt + 88) = 0x4001; goto L_080beea6;
+            case 0: *(s32 *)(tgt + 88) = 0x4001; goto L_080beea6; /* table[0] -> 0x080beea0 */
+            case 1: *(s32 *)(tgt + 88) = 0x4001; goto L_080beea6; /* table[1] -> 0x080bee88 */
+            case 2: *(s32 *)(tgt + 88) = 0x4004; goto L_080beea6; /* table[2] -> 0x080bee90 */
+            case 3: *(s32 *)(tgt + 88) = 0x4004; goto L_080beea6; /* table[3] -> 0x080bee98 */
+            case 4: goto L_080beea8;                              /* table[4] -> 0x080beea8, no assignment */
+            case 5: *(s32 *)(tgt + 88) = 0x4001; goto L_080beea6; /* table[5] -> 0x080beea0 */
             }
         }
         goto L_080beea8;
     }
 L_080beea6:
-    /* both `case 0` and `case 5` land on the *same* 0x080beea0 body in the
-     * reference's secondary jump table, which just falls into str->88;
-     * modeled directly above via the shared L_080beea6 assignment point. */
+    /* `str r3,[r2,#88]` at 0x080beea6, the point every case except
+     * subclass 4 converges on; modeled directly above via the
+     * per-case assignment before falling into this shared label. */
 L_080beea8:
     Func_08015120(*(s16 *)(req + 0), 1);
     Func_080151c8(TEXT_TIER5_STATUS_MSG);

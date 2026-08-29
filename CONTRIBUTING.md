@@ -187,6 +187,14 @@ The inter-region veneers are the compiler's own long-branch mechanism and
 fall out of compiling the function whole. The `topology=uncovered` banner
 is expected on such spans; the byte diff underneath is live.
 
+Resolve literal-pool constants from ground truth, never from displacement
+arithmetic by eye. Assemble the region's `.s` standalone and objdump the
+result — padding the file first so its start matches the real load
+address mod 4, or an odd-parity fragment misaligns its pool and reads
+garbage. When a pool physically lives in the gap between two fragment
+files, compute the pc-relative target against the region's load address
+and read the bytes straight out of the reference ROM.
+
 ## Recover and adopt
 
 1. Confirm a complete function owner, and place the work inside its declared

@@ -80,6 +80,11 @@ pub static AGBCC_EXPECTED: &[HostDigests] = &[
             // Source-unchanged bcfb458 rebuild; two stage runs reproduced it,
             // then `make full-rom-check` proved it before pinning.
             "0c4cd3bbbb475245ec9ab5c9bada68f99ff4f2f6dec751c5c287731e9dbeaea8",
+            // Source-unchanged bcfb458 rebuild after an accidental make clean
+            // wiped dist; agscc reproduced its approved digest exactly, this
+            // one reproduced across two stage runs, then `make full-rom-check`
+            // proved it before pinning.
+            "52f71341c3a221baef0d8777cd833da9fcc24dfd1203b9fc861ec5b37eadcf9c",
         ],
     ),
     ("darwin-x64", &[]),

@@ -1494,6 +1494,70 @@
      "state": "exact-c"
     }
    ]
+  },
+  {
+   "id": "unit-giant-dispatcher",
+   "game": "gs1",
+   "source": "games/gs1/recon/en/units/unit-giant-dispatcher.c",
+   "compiler_route": "canonical-gcc296",
+   "overlay": null,
+   "absolute_symbols": {},
+   "local_symbols": [],
+   "owners": [
+    {
+     "address": "0x080be378",
+     "extent": 1012,
+     "state": "retained-assembly"
+    }
+   ]
+  },
+  {
+   "id": "unit-giant-walker",
+   "game": "gs1",
+   "source": "games/gs1/recon/en/units/unit-giant-walker.c",
+   "compiler_route": "canonical-gcc296",
+   "overlay": null,
+   "absolute_symbols": {},
+   "local_symbols": [],
+   "owners": [
+    {
+     "address": "0x0800ebec",
+     "extent": 552,
+     "state": "retained-assembly"
+    }
+   ]
+  },
+  {
+   "id": "unit-giant-orbitfx",
+   "game": "gs1",
+   "source": "games/gs1/recon/en/units/unit-giant-orbitfx.c",
+   "compiler_route": "canonical-gcc296",
+   "overlay": null,
+   "absolute_symbols": {},
+   "local_symbols": [],
+   "owners": [
+    {
+     "address": "0x080d4ce8",
+     "extent": 874,
+     "state": "retained-assembly"
+    }
+   ]
+  },
+  {
+   "id": "unit-giant-affinefx",
+   "game": "gs1",
+   "source": "games/gs1/recon/en/units/unit-giant-affinefx.c",
+   "compiler_route": "canonical-gcc296",
+   "overlay": null,
+   "absolute_symbols": {},
+   "local_symbols": [],
+   "owners": [
+    {
+     "address": "0x080dd9c0",
+     "extent": 124,
+     "state": "retained-assembly"
+    }
+   ]
   }
  ]
 }

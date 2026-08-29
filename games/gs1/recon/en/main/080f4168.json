@@ -1,0 +1,40 @@
+{
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x080f4168",
+ "status": "mapped",
+ "measured": "2026-08-29",
+ "map": {
+  "head": "0x080f4168",
+  "head_symbol": "FunctionHead_080f4168",
+  "head_file": "games/gs1/asm/080f4168.s",
+  "head_prologue": "push {r5,r6,r7,lr}; mov r7,r11; mov r6,r10; mov r5,r9; push {r5,r6,r7}; mov r7,r8; push {r7}; ldr r5,[pc,#336]; ldr r1,[pc,#336]; movs r0,#41; add sp, r5 -- frame is 768 bytes, too large for the 7-bit `sub sp,#imm` encoding, so the compiler loaded a negative literal (-768) into r5 and used `add sp, r5` instead. Full r8-r11 save.",
+  "true_epilogue": {
+   "file": "games/gs1/asm/080f4f04.s",
+   "note": "Ends `... movs r3,#192 / lsls r3,r3,#2 / add sp, r3 / pop {r3,r5,r6,r7} / mov r8,r3 / mov r9,r5 / mov r10,r6 / mov r11,r7 / pop {r5,r6,r7} / pop {r0} / bx r0`. r3 = 192<<2 = 768, the exact positive mirror of the head's -768 frame adjustment via the same large-immediate workaround. Same four-high-register restore. This is the sole real epilogue."
+  },
+  "span": {
+   "start": "0x080f4168",
+   "end_exclusive": "0x080f6000",
+   "size_bytes": 7832,
+   "derivation": "end = start of next asm file games/gs1/asm/080f6000.s, immediately following 080f4f04.s which owns the epilogue. size = 0x080f6000 - 0x080f4168 = 0x1e98 = 7832."
+  },
+  "member_regions_in_order": [
+   {"addr": "0x080f4168", "symbol": "FunctionHead_080f4168", "file": "games/gs1/asm/080f4168.s", "role": "real prologue + large-frame setup (768 bytes) + calls sub_08002f40/sub_08005340/sub_080f4100 (twice) + tail branch into continuation, literal pool in-file"},
+   {"addr": "0x080f4318", "symbol": "Region_080f4318", "file": "games/gs1/asm/080f4318.s", "role": "call-graph-reached prologue-less region, code+data mixed"},
+   {"addr": "0x080f47bc", "symbol": "Region_080f47bc", "file": "games/gs1/asm/080f47bc.s", "role": "call-graph-reached prologue-less region"},
+   {"addr": "0x080f4af0", "symbol": "Region_080f4af0", "file": "games/gs1/asm/080f4af0.s", "role": "call-graph-reached prologue-less region"},
+   {"addr": "0x080f4f04", "symbol": "Region_080f4f04", "file": "games/gs1/asm/080f4f04.s", "role": "converging tail ending in the real, shared, single epilogue"}
+  ]
+ },
+ "domain_evidence": [
+  "080f4168's own header comment marks it 'FunctionHead' for a split function carrying a following '定数兼リテラルプール' (constant-and-literal pool) in the same file -- same authored classification style as the already-adopted 080be378/080d765c/080e15e8 heads.",
+  "sub_08002dd8 and sub_080cdbc0 appear repeatedly in the tail cleanup sequence of this epilogue, identical to the cleanup idiom seen in 080d765c/080ec100/080e47b8's epilogues (`bl sub_08002dd8` x2 with small constant args, then `bl sub_080cdbc0`, then frame teardown) -- strong evidence this and the other large dispatch functions in this address range share a common per-call finalizer/cleanup helper, worth checking against already-adopted owners before drafting C.",
+  "This is the second observed instance (after 080e47b8) of the compiler spilling to a >508-byte frame via a negative-literal `add sp, r5`/positive `add sp, r3` pair rather than an immediate `sub sp`/`add sp` -- both share the exact same instruction shape, suggesting both functions were compiled from unusually large local-variable-heavy source (likely deep, wide switch-driven state machines given the request's split-function context)."
+ ],
+ "scoring_command": "out/cargo-target/release/compiler candidate-show games/gs1/recon/en/main/080f4168.c --owner 080f4168 --size 7832",
+ "notes": [
+  "Map only, per task scope -- no C source drafted, no translation-units.json or games/gs1/recon/translation-units.json edited.",
+  "Recovered only from retained assembly headers/prologue/epilogue text in the listed .s files."
+ ]
+}

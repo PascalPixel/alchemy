@@ -1,36 +1,35 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x0809a484",
-  "name": "BattleEffect_CreateRadialParticle",
-  "status": "measured-draft",
-  "owner_bytes": 472,
-  "candidate_bytes": 460,
-  "differing_halfwords": 226,
-  "wrong_instructions": 142,
-  "family": {
-    "exact_c_caller": "main:0809a6b8",
-    "exact_c_caller_bytes": 128,
-    "aggregate_reusable_bytes": 600
-  },
-  "cross_edition": {
-    "core_bytes": 420,
-    "core_diff_bytes": 0,
-    "core_identical": true,
-    "starts": {
-      "ja": "0x08091478",
-      "en": "0x0809a484",
-      "de": "0x0809db2c",
-      "es": "0x0809f51c",
-      "fr": "0x0809f51c",
-      "it": "0x0809a51c"
-    }
-  },
-  "notes": [
-    "Complete typed producer for the exact-C BattleEffect_SpawnRadialParticleRing caller. It creates a particle object, selects its variant and animation, inherits visual flags, records the initial vector, and applies each optional parent, position, interpolation, animation, attribute, angle, and callback override encoded in the flags word.",
-    "The exact caller contributes the established stack configuration layout, trigonometric position convention, flags value, and sole call-site prototype; together the producer/consumer family covers 600 executable bytes.",
-    "The first readable model compiles to 460 bytes against the 472-byte owner, with 226 differing halfwords and 142 wrong instructions. This is a complete broad semantic baseline, not an exact or narrow candidate, and claims zero bytes.",
-    "Independent relocation-aware matching proves all 420 normalized core bytes identical at unique JA, EN, DE, ES, FR, and IT anchors. Ten call relocations and three literal fields account for all regional raw differences.",
-    "Recovered only from retained GS1 assembly, the local exact-C caller and object-update analogues, the approved compiler, and the six local GS1 editions. No GS2 or external source was used."
-  ]
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x0809a484",
+ "status": "measured-draft",
+ "owner_bytes": 472,
+ "candidate_bytes": 460,
+ "differing_halfwords": 226,
+ "wrong_instructions": 142,
+ "family": {
+  "exact_c_caller": "main:0809a6b8",
+  "exact_c_caller_bytes": 128,
+  "aggregate_reusable_bytes": 600
+ },
+ "cross_edition": {
+  "core_bytes": 420,
+  "core_diff_bytes": 0,
+  "core_identical": true,
+  "starts": {
+   "ja": "0x08091478",
+   "en": "0x0809a484",
+   "de": "0x0809db2c",
+   "es": "0x0809f51c",
+   "fr": "0x0809f51c",
+   "it": "0x0809a51c"
+  }
+ },
+ "notes": [
+  "Complete typed producer for the exact-C BattleEffect_SpawnRadialParticleRing caller. It creates a particle object, selects its variant and animation, inherits visual flags, records the initial vector, and applies each optional parent, position, interpolation, animation, attribute, angle, and callback override encoded in the flags word.",
+  "The exact caller contributes the established stack configuration layout, trigonometric position convention, flags value, and sole call-site prototype; together the producer/consumer family covers 600 executable bytes.",
+  "The first readable model compiles to 460 bytes against the 472-byte owner, with 226 differing halfwords and 142 wrong instructions. This is a complete broad semantic baseline, not an exact or narrow candidate, and claims zero bytes.",
+  "Independent relocation-aware matching proves all 420 normalized core bytes identical at unique JA, EN, DE, ES, FR, and IT anchors. Ten call relocations and three literal fields account for all regional raw differences.",
+  "Recovered only from retained GS1 assembly, the local exact-C caller and object-update analogues, the approved compiler, and the six local GS1 editions. No GS2 or external source was used."
+ ]
 }

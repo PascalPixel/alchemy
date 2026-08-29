@@ -1,52 +1,51 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x080b6a60",
-  "name": "BattleParty_PrepareActiveOwners",
-  "status": "proven-retained-assembly",
-  "owner_bytes": 128,
-  "candidate_bytes": 128,
-  "differing_halfwords": 2,
-  "wrong_instructions": 0,
-  "classification": "compiler_local_scheduling_mismatch",
-  "cross_edition": {
-    "core_bytes": 108,
-    "core_identical": true,
-    "starts": {
-      "ja": "0x080ada60",
-      "en": "0x080b6a60",
-      "de": "0x080b9078",
-      "es": "0x080baa78",
-      "fr": "0x080baa78",
-      "it": "0x080b6a78"
-    }
-  },
-  "domain": "Caps the active battle party for the current mode, optionally writes its owner identifiers, and marks every selected battle unit for the formation setup path.",
-  "expressed": [
-    "the four-owner normal cap and three-owner alternate-mode cap",
-    "the active-owner table traversal and optional 0xff-terminated output",
-    "the selected-unit status update through the battle-unit lookup",
-    "the selected count return value"
-  ],
-  "bounded_search": {
-    "mode": "two classic heat-guided walks",
-    "candidates": 50000,
-    "exact_candidates": 0,
-    "best_differing_halfwords": 2,
-    "best_wrong_instructions": 0,
-    "improved": false
-  },
-  "residual": {
-    "scope": "the loop preheader after the active-owner table address is formed",
-    "candidate": "copies the selected count into r6 before moving the constant status value from r3 into r8",
-    "reference": "moves the constant status value into r8 before copying the selected count into r6",
-    "resynchronization": "the following active-owner load begins an instruction-exact tail"
-  },
-  "notes": [
-    "The complete readable C emits the exact 128-byte owner extent. Calls, branches, registers, memory accesses, constants, literal pool, and every instruction outside one independent two-instruction ordering pair are exact.",
-    "The direct Func_08077148 veneer declaration is evidence-driven: using Party_CountActiveOwners bypasses the retained far-call route and changes the call field.",
-    "Approved scheduling and compiler-family axes preserve the two-halfword order residual or regress; 50,000 bounded ordinary-C candidates produced no exact output or improvement.",
-    "Relocation-aware comparison proves all 108 unmasked core bytes identical across the six GS1 editions.",
-    "Recovered only from retained owner assembly, approved local GS1 ROMs, local callers and battle types, and the approved compiler. No GS2 evidence or external game source was used."
-  ]
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x080b6a60",
+ "status": "proven-retained-assembly",
+ "owner_bytes": 128,
+ "candidate_bytes": 128,
+ "differing_halfwords": 2,
+ "wrong_instructions": 0,
+ "classification": "compiler_local_scheduling_mismatch",
+ "cross_edition": {
+  "core_bytes": 108,
+  "core_identical": true,
+  "starts": {
+   "ja": "0x080ada60",
+   "en": "0x080b6a60",
+   "de": "0x080b9078",
+   "es": "0x080baa78",
+   "fr": "0x080baa78",
+   "it": "0x080b6a78"
+  }
+ },
+ "domain": "Caps the active battle party for the current mode, optionally writes its owner identifiers, and marks every selected battle unit for the formation setup path.",
+ "expressed": [
+  "the four-owner normal cap and three-owner alternate-mode cap",
+  "the active-owner table traversal and optional 0xff-terminated output",
+  "the selected-unit status update through the battle-unit lookup",
+  "the selected count return value"
+ ],
+ "bounded_search": {
+  "mode": "two classic heat-guided walks",
+  "candidates": 50000,
+  "exact_candidates": 0,
+  "best_differing_halfwords": 2,
+  "best_wrong_instructions": 0,
+  "improved": false
+ },
+ "residual": {
+  "scope": "the loop preheader after the active-owner table address is formed",
+  "candidate": "copies the selected count into r6 before moving the constant status value from r3 into r8",
+  "reference": "moves the constant status value into r8 before copying the selected count into r6",
+  "resynchronization": "the following active-owner load begins an instruction-exact tail"
+ },
+ "notes": [
+  "The complete readable C emits the exact 128-byte owner extent. Calls, branches, registers, memory accesses, constants, literal pool, and every instruction outside one independent two-instruction ordering pair are exact.",
+  "The direct Func_08077148 veneer declaration is evidence-driven: using Party_CountActiveOwners bypasses the retained far-call route and changes the call field.",
+  "Approved scheduling and compiler-family axes preserve the two-halfword order residual or regress; 50,000 bounded ordinary-C candidates produced no exact output or improvement.",
+  "Relocation-aware comparison proves all 108 unmasked core bytes identical across the six GS1 editions.",
+  "Recovered only from retained owner assembly, approved local GS1 ROMs, local callers and battle types, and the approved compiler. No GS2 evidence or external game source was used."
+ ]
 }

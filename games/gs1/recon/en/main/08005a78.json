@@ -1,35 +1,34 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x08005a78",
-  "name": "SaveState_ReadRecordPayload",
-  "status": "retained-assembly",
-  "owner_bytes": 72,
-  "translation_unit": "save-state",
-  "compiler_route": "canonical-gcc296",
-  "canonical_complete_unit": {
-    "candidate_bytes": 72,
-    "reference_bytes": 72,
-    "differing_halfwords": 8,
-    "wrong_instructions": 12,
-    "matched_prefix": 10
-  },
-  "resolved_asm_classification": {
-    "kind": "thumb_multiple_transfer_module",
-    "retention": "keep_structured_asm",
-    "confidence": "proven"
-  },
-  "bounded_source_shapes": [
-    "Direct aggregate assignment, scalar fields, local nonvolatile pointer, and nonvolatile DMA-view forms all remain 72/72 bytes with 8 differing halfwords: GCC emits three scalar stores.",
-    "A post-incremented volatile DMA-word view remains 72/72 bytes with 8 differing halfwords. It emits two one-register STMIA stores and one scalar store, not the reference three-register transfer.",
-    "A static inline aggregate-by-value writer emits the requested LDMIA/STMIA pair, but constructs the compound descriptor on the stack: 84/72 bytes, 41 differing halfwords, and 30 wrong instructions.",
-    "Static inline scalar and four-argument writers remain 72/72 bytes but regress to 19 differing halfwords and 28 wrong instructions; the inlined stores remain scalar.",
-    "A register aggregate plus an inline writer introduces two stack copies: 92/72 bytes, 45 differing halfwords, and 34 wrong instructions."
-  ],
-  "remaining": "The reference publishes the three-word DMA command through a standalone three-register STMIA with base restoration. Canonical GCC 2.96 Thumb lowering emits single-register moves or, for a 12-byte memory copy, an immediately paired LDMIA/STMIA block copy. No tested ordinary-C lifetime or aggregate shape emits the standalone transfer.",
-  "notes": [
-    "All measurements compiled the complete declared save-state reconstruction composition once; existing exact owners remained exact under the canonical route.",
-    "The assembly classifier confirms this owner as thumb_multiple_transfer_module (1 owner, 72 bytes).",
-    "No inline assembly, fixed-register variable, compiler barrier, ABI escape, copied instruction bytes, compiler modification, or per-owner production flag override was used."
-  ]
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x08005a78",
+ "status": "retained-assembly",
+ "owner_bytes": 72,
+ "translation_unit": "save-state",
+ "compiler_route": "canonical-gcc296",
+ "canonical_complete_unit": {
+  "candidate_bytes": 72,
+  "reference_bytes": 72,
+  "differing_halfwords": 8,
+  "wrong_instructions": 12,
+  "matched_prefix": 10
+ },
+ "resolved_asm_classification": {
+  "kind": "thumb_multiple_transfer_module",
+  "retention": "keep_structured_asm",
+  "confidence": "proven"
+ },
+ "bounded_source_shapes": [
+  "Direct aggregate assignment, scalar fields, local nonvolatile pointer, and nonvolatile DMA-view forms all remain 72/72 bytes with 8 differing halfwords: GCC emits three scalar stores.",
+  "A post-incremented volatile DMA-word view remains 72/72 bytes with 8 differing halfwords. It emits two one-register STMIA stores and one scalar store, not the reference three-register transfer.",
+  "A static inline aggregate-by-value writer emits the requested LDMIA/STMIA pair, but constructs the compound descriptor on the stack: 84/72 bytes, 41 differing halfwords, and 30 wrong instructions.",
+  "Static inline scalar and four-argument writers remain 72/72 bytes but regress to 19 differing halfwords and 28 wrong instructions; the inlined stores remain scalar.",
+  "A register aggregate plus an inline writer introduces two stack copies: 92/72 bytes, 45 differing halfwords, and 34 wrong instructions."
+ ],
+ "remaining": "The reference publishes the three-word DMA command through a standalone three-register STMIA with base restoration. Canonical GCC 2.96 Thumb lowering emits single-register moves or, for a 12-byte memory copy, an immediately paired LDMIA/STMIA block copy. No tested ordinary-C lifetime or aggregate shape emits the standalone transfer.",
+ "notes": [
+  "All measurements compiled the complete declared save-state reconstruction composition once; existing exact owners remained exact under the canonical route.",
+  "The assembly classifier confirms this owner as thumb_multiple_transfer_module (1 owner, 72 bytes).",
+  "No inline assembly, fixed-register variable, compiler barrier, ABI escape, copied instruction bytes, compiler modification, or per-owner production flag override was used."
+ ]
 }

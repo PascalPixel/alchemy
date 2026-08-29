@@ -1,0 +1,37 @@
+{
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x080dd9c0",
+ "status": "mapped",
+ "measured": "2026-08-29",
+ "map": {
+  "head": "0x080dd9c0",
+  "head_symbol": "FunctionHead_080dd9c0",
+  "head_file": "games/gs1/asm/080dd9c0.s",
+  "head_prologue": "push {r5,r6,r7,lr}; mov r7,r11; mov r6,r10; mov r5,r9; push {r5,r6,r7}; mov r7,r8 -- full r8-r11 save (frame size set further in-body).",
+  "true_epilogue": {
+   "file": "games/gs1/asm/080ddb34.s",
+   "note": "Ends `... bl sub_08004278 / movs r0,#47 / bl sub_08002dd8 / movs r0,#46 / bl sub_08002dd8 / bl sub_080cdbc0 / add sp, #52 / pop {r3,r5,r6,r7} / mov r8,r3 / mov r9,r5 / mov r10,r6 / mov r11,r7 / pop {r5,r6,r7} / pop {r0} / bx r0`. 52-byte frame, four-high-register restore, same sub_08002dd8/sub_080cdbc0 cleanup idiom seen across the sibling functions in this batch. This is the sole real epilogue -- it does not branch further."
+  },
+  "span": {
+   "start": "0x080dd9c0",
+   "end_exclusive": "0x080ddde0",
+   "size_bytes": 1056,
+   "derivation": "end = start of next asm file games/gs1/asm/080ddde0.s, immediately following 080ddb34.s which owns the epilogue. size = 0x080ddde0 - 0x080dd9c0 = 0x420 = 1056."
+  },
+  "member_regions_in_order": [
+   {"addr": "0x080dd9c0", "symbol": "FunctionHead_080dd9c0", "file": "games/gs1/asm/080dd9c0.s", "role": "real prologue + setup, in-file literal pool, tail branches to Continuation_080dda3c"},
+   {"addr": "0x080dda3c", "symbol": "Continuation_080dda3c", "file": "games/gs1/asm/080dda3c.s", "role": "branch continuation, in-file literal pool, tail branches to sub_080ddb34"},
+   {"addr": "0x080ddb34", "symbol": "Region_080ddb34", "file": "games/gs1/asm/080ddb34.s", "role": "call-graph-reached prologue-less region that contains the real, shared epilogue"}
+  ]
+ },
+ "domain_evidence": [
+  "080dd9c0/080dda3c both self-describe as head/continuation of a multi-region function ('複数領域に分割された呼出し可能関数の先頭部' / '複数領域関数の継続部').",
+  "080ddb34 is tagged with the call-graph-reconstructed comment and opens with a bare `mov r8, r6` (no push), i.e. it is prologue-less and reached only by the preceding region's plain `b` -- yet it contains the complete matching epilogue, confirming it is the terminal member rather than an independent callee.",
+  "Note this is a distinct, smaller cluster from the immediately adjacent 080ddde0/080de0d4 pair (see companion dossier 080ddde0.json) -- the two clusters sit back-to-back in the file listing but do not share any cross-references; 080dd9c0's cluster ends cleanly at the 080ddde0 boundary."
+ ],
+ "scoring_command": "out/cargo-target/release/compiler candidate-show games/gs1/recon/en/main/080dd9c0.c --owner 080dd9c0 --size 1056",
+ "notes": [
+  "Map only, per task scope -- no C source drafted, no translation-units.json edited."
+ ]
+}

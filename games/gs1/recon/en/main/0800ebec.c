@@ -44,9 +44,10 @@ s32 Func_0800ebec(struct ScriptObjectEntry *actor)
     s32 dir;
     s32 final_dir;
     s16 deltas[6];
-    s32 posA[3];
     s32 posB[3];
     s32 posC[3];
+    s32 posA[3];
+    s32 extra[7];
     s32 i;
     struct ScriptObjectEntry *entry;
     u8 *base;
@@ -191,11 +192,11 @@ region_search:
         final_dir = cand;
         cand_u16 = (u16)cand;
 
-        posB[0] = actor->values_08[0];
-        posB[1] = actor->values_08[1];
-        posB[2] = actor->values_08[2];
-        Func_0800447c(0x80000, cand_u16, (struct WorldPosition *)posB);
-        if (Func_080120dc(actor, (struct WorldPosition *)posB) != 0)
+        posA[0] = actor->values_08[0];
+        posA[1] = actor->values_08[1];
+        posA[2] = actor->values_08[2];
+        Func_0800447c(0x80000, cand_u16, (struct WorldPosition *)posA);
+        if (Func_080120dc(actor, (struct WorldPosition *)posA) != 0)
             continue;
 
         posB[0] = actor->values_08[0];

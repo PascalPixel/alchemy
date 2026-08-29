@@ -1,24 +1,23 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x08097194",
-  "name": "BattleEffect_CleanupSceneObjects",
-  "status": "measured-draft",
-  "owner_bytes": 248,
-  "candidate_bytes": 248,
-  "differing_halfwords": 109,
-  "wrong_instructions": 88,
-  "classification": "battle-effect-scene-cleanup",
-  "domain": "Removes active scene-effect objects, waits briefly for two effect callbacks to drain, restores the saved scene position, and releases the effect asset.",
-  "bounded_checks": [
-    "re-examined this session (verification pass, no source change): the 109-halfword residual is not localized -- it is a pervasive register-role permutation across the whole function (e.g. the candidate maps position/scene/runtime pointers to r9/sl/r8 where the reference maps the same roles to fp/r9/sl, etc.), with every branch target, constant, and call sequence otherwise already matching. This looks like gcc296 register-allocator sensitivity to the local-variable declaration/first-use order across the whole function rather than a single fixable statement; consistent with the existing dossier's conclusion that the 5,000-candidate family-template walk found no improvement."
-  ],
-  "notes": [
-    "Recovered from retained owner assembly, all local callers, adjacent battle-effect state, and the approved compiler through the exact-family workbench.",
-    "Every caller invokes this owner without arguments; the generated two-argument signature was inherited from the unrelated exact template and has been corrected.",
-    "Generated register, stack-slot, and control-flow labels were replaced with role-based names before retaining the candidate.",
-    "Typed global-state layouts and a signed activity byte produce the exact owner extent and improve the raw m2c draft from 119 to 109 differing halfwords.",
-    "A 5,000-candidate safe family-template walk produced no improvement and no exact object.",
-    "Exact-C adoption remains gated on an independently compiled zero-difference object."
-  ]
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x08097194",
+ "status": "measured-draft",
+ "owner_bytes": 248,
+ "candidate_bytes": 248,
+ "differing_halfwords": 109,
+ "wrong_instructions": 88,
+ "classification": "battle-effect-scene-cleanup",
+ "domain": "Removes active scene-effect objects, waits briefly for two effect callbacks to drain, restores the saved scene position, and releases the effect asset.",
+ "bounded_checks": [
+  "re-examined this session (verification pass, no source change): the 109-halfword residual is not localized -- it is a pervasive register-role permutation across the whole function (e.g. the candidate maps position/scene/runtime pointers to r9/sl/r8 where the reference maps the same roles to fp/r9/sl, etc.), with every branch target, constant, and call sequence otherwise already matching. This looks like gcc296 register-allocator sensitivity to the local-variable declaration/first-use order across the whole function rather than a single fixable statement; consistent with the existing dossier's conclusion that the 5,000-candidate family-template walk found no improvement."
+ ],
+ "notes": [
+  "Recovered from retained owner assembly, all local callers, adjacent battle-effect state, and the approved compiler through the exact-family workbench.",
+  "Every caller invokes this owner without arguments; the generated two-argument signature was inherited from the unrelated exact template and has been corrected.",
+  "Generated register, stack-slot, and control-flow labels were replaced with role-based names before retaining the candidate.",
+  "Typed global-state layouts and a signed activity byte produce the exact owner extent and improve the raw m2c draft from 119 to 109 differing halfwords.",
+  "A 5,000-candidate safe family-template walk produced no improvement and no exact object.",
+  "Exact-C adoption remains gated on an independently compiled zero-difference object."
+ ]
 }

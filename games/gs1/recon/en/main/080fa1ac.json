@@ -1,67 +1,66 @@
 {
-  "schema_version": 1,
-  "namespace": "gs1-en-main",
-  "address": "0x080fa1ac",
-  "name": "MusicTrack_ClearModulationState",
-  "status": "measured-draft",
-  "owner_bytes": 26,
-  "score": {
-    "measured": "2026-08-27",
-    "candidate_bytes": 26,
-    "reference_bytes": 26,
-    "differing_halfwords": 10,
-    "wrong_instructions": 20,
-    "class": "allocation",
-    "command": "compiler candidate-show games/gs1/recon/en/main/080fa1ac.c --owner 080fa1ac --family old-agbcc --flags -O1",
-    "note": "Re-measured 2026-08-27, unchanged from the prior baseline: structurally identical to the reference at old-agbcc -O1 (all thirteen instructions match one-for-one in mnemonic, operand shape, and branch structure); the only residual is one uniform register rotation -- the candidate's serial scratch register is r0 where the reference uses r2 (and consequently r2/r3 where the reference uses r3). Root-caused this session by invoking alchemy-gcc/dist/agbcc/old_agbcc directly on the preprocessed source with -dlgr and reading the .lreg/.greg dumps (see rejected_experiments below for the full derivation): this build's local-alloc find_free_reg does NOT honor arm.h's REG_ALLOC_ORDER {r3,r2,r1,r0,...} bias for this owner's qtys -- it hands out the first ascending free register instead (r0, else r1, else r2, ...). track (r1) is always excluded since it lives the whole function; the dead first parameter (r0) is genuinely dead by the time the flow graph reaches the scratch pseudo's block, so r0 is free and wins every time in this build, then the reload-forced load of the pre-OR flags byte takes the next free ascending register (r2). For the reference's r2/r3 pair to appear, r0 would have to still read as live at that point -- and no legitimate source construct achieves that: a probe with `asm volatile(\"\" :: \"r\"(unused))` right at entry (tested this session, not adopted -- forcing register liveness through inline asm is exactly the kind of register-assignment forcing CONTRIBUTING.md prohibits, and this was a diagnostic probe only) still let r0 free by the time the first store's scratch register is chosen, since GCC's liveness naturally recomputes the dead range after the trivial touch. Genuinely keeping r0 live (a real use, or a non-void return) requires emitting real code that breaks the verified 13-instruction match (already established by the return-value and -ffixed-r0 experiments below). This is the class-2 known-dead-end register-letter residual from this session's catalog, now with a first-principles compiler-internals confirmation rather than only cross-owner pattern-matching."
+ "schema_version": 1,
+ "namespace": "gs1-en-main",
+ "address": "0x080fa1ac",
+ "status": "measured-draft",
+ "owner_bytes": 26,
+ "score": {
+  "measured": "2026-08-27",
+  "candidate_bytes": 26,
+  "reference_bytes": 26,
+  "differing_halfwords": 10,
+  "wrong_instructions": 20,
+  "class": "allocation",
+  "command": "compiler candidate-show games/gs1/recon/en/main/080fa1ac.c --owner 080fa1ac --family old-agbcc --flags -O1",
+  "note": "Re-measured 2026-08-27, unchanged from the prior baseline: structurally identical to the reference at old-agbcc -O1 (all thirteen instructions match one-for-one in mnemonic, operand shape, and branch structure); the only residual is one uniform register rotation -- the candidate's serial scratch register is r0 where the reference uses r2 (and consequently r2/r3 where the reference uses r3). Root-caused this session by invoking alchemy-gcc/dist/agbcc/old_agbcc directly on the preprocessed source with -dlgr and reading the .lreg/.greg dumps (see rejected_experiments below for the full derivation): this build's local-alloc find_free_reg does NOT honor arm.h's REG_ALLOC_ORDER {r3,r2,r1,r0,...} bias for this owner's qtys -- it hands out the first ascending free register instead (r0, else r1, else r2, ...). track (r1) is always excluded since it lives the whole function; the dead first parameter (r0) is genuinely dead by the time the flow graph reaches the scratch pseudo's block, so r0 is free and wins every time in this build, then the reload-forced load of the pre-OR flags byte takes the next free ascending register (r2). For the reference's r2/r3 pair to appear, r0 would have to still read as live at that point -- and no legitimate source construct achieves that: a probe with `asm volatile(\"\" :: \"r\"(unused))` right at entry (tested this session, not adopted -- forcing register liveness through inline asm is exactly the kind of register-assignment forcing CONTRIBUTING.md prohibits, and this was a diagnostic probe only) still let r0 free by the time the first store's scratch register is chosen, since GCC's liveness naturally recomputes the dead range after the trivial touch. Genuinely keeping r0 live (a real use, or a non-void return) requires emitting real code that breaks the verified 13-instruction match (already established by the return-value and -ffixed-r0 experiments below). This is the class-2 known-dead-end register-letter residual from this session's catalog, now with a first-principles compiler-internals confirmation rather than only cross-owner pattern-matching."
+ },
+ "remaining": [
+  {
+   "op": "register allocation",
+   "count": 10,
+   "where": "one uniform rotation: candidate r0->reference r2 for the serial scratch pseudo and r2->r3 for the loaded flags byte. r0 is never touched by the reference despite the dead first parameter."
+  }
+ ],
+ "rejected_experiments": [
+  {
+   "experiment": "canonical gcc296 route (original candidate and template-text spellings)",
+   "result": "if-converts the diamond (hoisted 12 with conditional 3 overwrite) and emits a push/pop frame; 24-32 bytes, never the reference's 13-instruction frameless diamond"
   },
-  "remaining": [
-    {
-      "op": "register allocation",
-      "count": 10,
-      "where": "one uniform rotation: candidate r0->reference r2 for the serial scratch pseudo and r2->r3 for the loaded flags byte. r0 is never touched by the reference despite the dead first parameter."
-    }
-  ],
-  "rejected_experiments": [
-    {
-      "experiment": "canonical gcc296 route (original candidate and template-text spellings)",
-      "result": "if-converts the diamond (hoisted 12 with conditional 3 overwrite) and emits a push/pop frame; 24-32 bytes, never the reference's 13-instruction frameless diamond"
-    },
-    {
-      "experiment": "template-text |= arms under old-agbcc -O2",
-      "result": "correct diamond and crossjumped or-tail but 28 bytes (extra zero materialization) and r0 scratch"
-    },
-    {
-      "experiment": "non-void declaration (implicit-int style) to reserve r0",
-      "result": "no change; the dead parameter's register is still reused"
-    },
-    {
-      "experiment": "returning the first parameter to keep r0 live",
-      "result": "30 bytes; generates return moves the reference does not have"
-    },
-    {
-      "experiment": "-ffixed-r0 with -O1",
-      "result": "28 bytes; forces an extra parameter move"
-    },
-    {
-      "experiment": "sibling counter-evidence",
-      "result": "byte-exact set_tone_type (main:080fb6ec), same dead-first-parameter signature, freely uses r0 as scratch from its first instruction -- the r2 preference here is owner-specific, not a family or flag property"
-    },
-    {
-      "experiment": "2026-08-27: direct old_agbcc invocation with -dlgr (bypassing candidate-show) to read the .lreg/.greg RTL dumps for this exact source/flags",
-      "result": "confirmed the whole owner reduces to ONE local qty (the zero/compare/12-or-3 value, coalesced across all three basic blocks since the live ranges never overlap) plus ONE reload-forced register for the pre-OR flags-byte load. Reducing the source to a single statement (just the two zero-stores, no if/else) still yields r0 for the lone scratch qty -- proving the register choice has nothing to do with competing against the other local pseudos in this owner"
-    },
-    {
-      "experiment": "2026-08-27: minimal-function probes to characterize find_free_reg's actual search order under old-agbcc -O1/-O2 (independent of this owner's field layout)",
-      "result": "with the dead-parameter-first, track-second signature (matches this owner), the lone scratch pseudo takes r0. With track as the SOLE parameter (arriving in r0), the lone scratch pseudo takes r1, not r3. Both results are the first ascending free register, not arm.h's REG_ALLOC_ORDER {r3,r2,r1,r0,...} -- this old_agbcc build does not honor that macro's preference order for this owner's qtys, it fills registers 0,1,2,3,... in order, skipping whichever is already alive"
-    },
-    {
-      "experiment": "2026-08-27: asm volatile(\"\" :: \"r\"(unused)) at function entry, as a diagnostic probe only -- NOT adopted, this is exactly the kind of register-assignment forcing CONTRIBUTING.md prohibits, tested only to confirm the mechanism",
-      "result": "no change (still r0/r2). The empty-asm touch dies immediately at that single insn under GCC's own liveness recomputation, so it does not extend r0's live range into the block where the scratch pseudo is later born -- confirms no side-effect-free source construct can keep r0 marked live at the point that matters without adding real, match-breaking instructions"
-    }
-  ],
-  "notes": [
-    "Recovered only from the retained owner bytes in the approved local ROM, the adopted audio family sources and headers, and the approved compilers.",
-    "This candidate claims zero DONE bytes."
-  ]
+  {
+   "experiment": "template-text |= arms under old-agbcc -O2",
+   "result": "correct diamond and crossjumped or-tail but 28 bytes (extra zero materialization) and r0 scratch"
+  },
+  {
+   "experiment": "non-void declaration (implicit-int style) to reserve r0",
+   "result": "no change; the dead parameter's register is still reused"
+  },
+  {
+   "experiment": "returning the first parameter to keep r0 live",
+   "result": "30 bytes; generates return moves the reference does not have"
+  },
+  {
+   "experiment": "-ffixed-r0 with -O1",
+   "result": "28 bytes; forces an extra parameter move"
+  },
+  {
+   "experiment": "sibling counter-evidence",
+   "result": "byte-exact set_tone_type (main:080fb6ec), same dead-first-parameter signature, freely uses r0 as scratch from its first instruction -- the r2 preference here is owner-specific, not a family or flag property"
+  },
+  {
+   "experiment": "2026-08-27: direct old_agbcc invocation with -dlgr (bypassing candidate-show) to read the .lreg/.greg RTL dumps for this exact source/flags",
+   "result": "confirmed the whole owner reduces to ONE local qty (the zero/compare/12-or-3 value, coalesced across all three basic blocks since the live ranges never overlap) plus ONE reload-forced register for the pre-OR flags-byte load. Reducing the source to a single statement (just the two zero-stores, no if/else) still yields r0 for the lone scratch qty -- proving the register choice has nothing to do with competing against the other local pseudos in this owner"
+  },
+  {
+   "experiment": "2026-08-27: minimal-function probes to characterize find_free_reg's actual search order under old-agbcc -O1/-O2 (independent of this owner's field layout)",
+   "result": "with the dead-parameter-first, track-second signature (matches this owner), the lone scratch pseudo takes r0. With track as the SOLE parameter (arriving in r0), the lone scratch pseudo takes r1, not r3. Both results are the first ascending free register, not arm.h's REG_ALLOC_ORDER {r3,r2,r1,r0,...} -- this old_agbcc build does not honor that macro's preference order for this owner's qtys, it fills registers 0,1,2,3,... in order, skipping whichever is already alive"
+  },
+  {
+   "experiment": "2026-08-27: asm volatile(\"\" :: \"r\"(unused)) at function entry, as a diagnostic probe only -- NOT adopted, this is exactly the kind of register-assignment forcing CONTRIBUTING.md prohibits, tested only to confirm the mechanism",
+   "result": "no change (still r0/r2). The empty-asm touch dies immediately at that single insn under GCC's own liveness recomputation, so it does not extend r0's live range into the block where the scratch pseudo is later born -- confirms no side-effect-free source construct can keep r0 marked live at the point that matters without adding real, match-breaking instructions"
+  }
+ ],
+ "notes": [
+  "Recovered only from the retained owner bytes in the approved local ROM, the adopted audio family sources and headers, and the approved compilers.",
+  "This candidate claims zero DONE bytes."
+ ]
 }

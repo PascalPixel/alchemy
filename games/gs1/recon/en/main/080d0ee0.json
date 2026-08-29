@@ -1,0 +1,37 @@
+{
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x080d0ee0",
+ "status": "mapped",
+ "measured": "2026-08-29",
+ "map": {
+  "head": "0x080d0ee0",
+  "head_symbol": "Region_080d0ee0",
+  "head_file": "games/gs1/asm/080d0ee0.s",
+  "head_prologue": "push {r5,r6,r7,lr}; mov r7,r11; mov r6,r10; mov r5,r9; push {r5,r6,r7}; mov r7,r8; push {r7}; sub sp, #116 -- full r8-r11 save, 116-byte frame. Note: tagged with the call-graph-reconstructed comment rather than an explicit FunctionHead_ label, but its genuine prologue shape is the real entry -- no earlier region branches into this address.",
+  "true_epilogue": {
+   "file": "games/gs1/asm/080d12a8.s",
+   "note": "Ends `... bl sub_08002dd8 (x2) / bl sub_080cdbc0 / add sp, #116 / pop {r3,r5,r6,r7} / mov r8,r3 / mov r9,r5 / mov r10,r6 / mov r11,r7 / pop {r5,r6,r7} / pop {r0} / bx r0`. Exact mirror of the head's 116-byte frame and four-high-register save; same sub_08002dd8/sub_080cdbc0 cleanup idiom seen across the rest of this dossier batch. This is the sole real epilogue."
+  },
+  "span": {
+   "start": "0x080d0ee0",
+   "end_exclusive": "0x080d1350",
+   "size_bytes": 1136,
+   "derivation": "end = start of next asm file games/gs1/asm/080d1350.s, immediately following 080d12a8.s which owns the epilogue. size = 0x080d1350 - 0x080d0ee0 = 0x470 = 1136."
+  },
+  "member_regions_in_order": [
+   {"addr": "0x080d0ee0", "symbol": "Region_080d0ee0", "file": "games/gs1/asm/080d0ee0.s", "role": "real prologue + setup, tail branches to sub_080d12a8 (no intervening fragment files -- the two regions are directly adjacent)"},
+   {"addr": "0x080d12a8", "symbol": "Fragment_080d12a8", "file": "games/gs1/asm/080d12a8.s", "role": "terminal fragment (header: '親関数の終端断片'), in-file literal pool, ending in the real, shared epilogue"}
+  ]
+ },
+ "domain_evidence": [
+  "080d12a8's own header comment explicitly identifies it as the parent function's terminal fragment ('親関数の終端断片') -- direct textual confirmation.",
+  "grep across the corpus for the literal '080d12a8' finds exactly one external reference, the tail branch inside games/gs1/asm/080d0ee0.s -- confirming a private two-member cluster.",
+  "This is a smaller sibling of the sub_08002dd8(x2)/sub_080cdbc0-cleanup family already confirmed in 080d765c, 080ec100, 080e15e8, and 080dd9c0/080ddde0's clusters -- six independent split functions in this ROM region all funnel through the same finalizer pair immediately before frame teardown, strong evidence this is a single shared per-call cleanup routine worth identifying by name before any of these are drafted to C."
+ ],
+ "scoring_command": "out/cargo-target/release/compiler candidate-show games/gs1/recon/en/main/080d0ee0.c --owner 080d0ee0 --size 1136",
+ "notes": [
+  "Map only, per task scope -- no C source drafted, no translation-units.json edited.",
+  "Head file uses the 'call-graph reconstructed, code+data mixed' comment style rather than an explicit FunctionHead_/Fragment_ label; classified as the true head from its genuine push/high-reg-save/sub-sp prologue and the absence of any external branch into it."
+ ]
+}

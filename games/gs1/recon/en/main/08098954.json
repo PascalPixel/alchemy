@@ -1,27 +1,26 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x08098954",
-  "name": "RunBattleEffect07",
-  "status": "measured-draft",
-  "owner_bytes": 304,
-  "candidate_bytes": 304,
-  "differing_halfwords": 108,
-  "wrong_instructions": 80,
-  "family": {
-    "structural_twin": "main:0809a294",
-    "shared_tail": "main:08099da4",
-    "aggregate_reusable_bytes": 1872
-  },
-  "notes": [
-    "This complete typed reconstruction creates two effect-specific anchor objects around the battle origin, configures both, then creates and randomizes twenty-four secondary objects before releasing the anchors.",
-    "RunBattleEffect07 and RunBattleEffect11 are 304-byte instruction/control-flow twins. Their call skeletons differ only at the two effect-specific constructor calls, and the same create/configure/release tail recurs inside the 1,264-byte RunBattleEffect05/11 owner.",
-    "Using the exact Random16 return type from the local exact-C corpus removes three spurious zero extensions and gives the readable model 296 bytes, 132 differing halfwords, and 94 wrong instructions. This is a broad source-shape baseline, not an exact-C or narrow-residual candidate, and it claims zero bytes.",
-    "Instantiating the same typed template for 0809a294 reproduces this score and residual map exactly. A joint explicit-cursor/countdown rewrite regresses both siblings identically, so the readable baseline is retained.",
-    "A bounded earliest-divergence matrix found that moving the origin declaration is byte-neutral, while block-scoped pointer/countdown loops preserve the eight-byte deficit and regress the Effect07 residual to 139 differing halfwords / 96 wrong instructions. The deficit is therefore not a simple stack-array declaration or loop-syntax artifact.",
-    "Relocation-aware six-ROM matching is ambiguous because the two sibling runners have zero-difference normalized cores. The ambiguity independently confirms the family identity but does not establish a unique per-edition owner correspondence, so no regional claim is made.",
-    "Recovered only from retained GS1 assembly, local exact-C object-update analogues, the approved compiler, and the six local GS1 editions. No GS2 evidence was used.",
-    "Closed the eight-byte length gap (296 -> 304, matching the reference exactly) by (1) aliasing the second loop's position[] writes through an explicit local pointer (`s32 *pos = position;`) instead of the bare array, and (2) reordering the three origin-field assignment statements in both position-fill sites (top-level: z,y,x; loop body: y,x,z). An exhaustive PERM_GENERAL search over all 6x6x2 = 72 combinations of {top field order} x {loop field order} x {velocity/phase statement order}, on top of the pointer-alias change, confirms 108 differing halfwords / 80 wrong instructions is the floor of this axis space (out/permute/08098954/report.json). The pointer alias is the load-bearing change: without it the candidate stays 8 bytes short regardless of statement order, because gcc only splits the stack array's address into two live ranges (r5 at the top, a fresh r7 copy for the second loop, freeing r5 as loop-body scratch) when a named pointer variable gives it a second, loop-scoped reference point; a bare `position[i]` array access lets gcc keep one dedicated low register for the whole function instead, which is byte-cheaper but not what the reference does.",
-    "Remaining 108-halfword residual is concentrated in exactly the register-class swap this pointer alias does not reach: in both loops the reference keeps the walked pointer/position-array-copy in a low register (r7) and pushes the trip counter into a high register (r8, needing the expensive movs/negs/add/mov/cmp five-instruction decrement-and-test idiom), while the candidate's allocator keeps the loop-1 counter in the cheap low register (r7) and the loop-1 anchor pointer in r6/r0 directly, and needs no r8 spill there at all. Tried and empirically ruled out (all re-measured with candidate-show, none beat 108): renaming/duplicating the loop counter (dedicated variable per loop, both directions), an explicit pointer-cursor rewrite of loop 1 mirroring the exact `ObjectDispatch_ApplyValueToChildren` (games/gs1/src/object/dispatch/apply_value_to_children.c) countdown-pointer-walk idiom, a matching named-pointer alias for `anchors` (mirroring the `pos` fix), a temp for `anchor->parameter` before the call, and reassociating the y-field addend operand order. None of these change gcc's choice of which of the two live values gets the low register in loop 1, or fully separate the top-of-function position address from the loop-2 alias's live range (top-level still lands in r7 rather than the reference's r5). This looks like a genuine GCC-2.96 local-alloc register-class heuristic (spill-cost/priority ordering across the whole function) rather than a source-shape defect reachable through the C-level knobs tried so far; a fresh angle (a different family template, or a wider permuter search combining more axes at once) is the next lead, not further hand permutation of this same axis set."
-  ]
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x08098954",
+ "status": "measured-draft",
+ "owner_bytes": 304,
+ "candidate_bytes": 304,
+ "differing_halfwords": 108,
+ "wrong_instructions": 80,
+ "family": {
+  "structural_twin": "main:0809a294",
+  "shared_tail": "main:08099da4",
+  "aggregate_reusable_bytes": 1872
+ },
+ "notes": [
+  "This complete typed reconstruction creates two effect-specific anchor objects around the battle origin, configures both, then creates and randomizes twenty-four secondary objects before releasing the anchors.",
+  "RunBattleEffect07 and RunBattleEffect11 are 304-byte instruction/control-flow twins. Their call skeletons differ only at the two effect-specific constructor calls, and the same create/configure/release tail recurs inside the 1,264-byte RunBattleEffect05/11 owner.",
+  "Using the exact Random16 return type from the local exact-C corpus removes three spurious zero extensions and gives the readable model 296 bytes, 132 differing halfwords, and 94 wrong instructions. This is a broad source-shape baseline, not an exact-C or narrow-residual candidate, and it claims zero bytes.",
+  "Instantiating the same typed template for 0809a294 reproduces this score and residual map exactly. A joint explicit-cursor/countdown rewrite regresses both siblings identically, so the readable baseline is retained.",
+  "A bounded earliest-divergence matrix found that moving the origin declaration is byte-neutral, while block-scoped pointer/countdown loops preserve the eight-byte deficit and regress the Effect07 residual to 139 differing halfwords / 96 wrong instructions. The deficit is therefore not a simple stack-array declaration or loop-syntax artifact.",
+  "Relocation-aware six-ROM matching is ambiguous because the two sibling runners have zero-difference normalized cores. The ambiguity independently confirms the family identity but does not establish a unique per-edition owner correspondence, so no regional claim is made.",
+  "Recovered only from retained GS1 assembly, local exact-C object-update analogues, the approved compiler, and the six local GS1 editions. No GS2 evidence was used.",
+  "Closed the eight-byte length gap (296 -> 304, matching the reference exactly) by (1) aliasing the second loop's position[] writes through an explicit local pointer (`s32 *pos = position;`) instead of the bare array, and (2) reordering the three origin-field assignment statements in both position-fill sites (top-level: z,y,x; loop body: y,x,z). An exhaustive PERM_GENERAL search over all 6x6x2 = 72 combinations of {top field order} x {loop field order} x {velocity/phase statement order}, on top of the pointer-alias change, confirms 108 differing halfwords / 80 wrong instructions is the floor of this axis space (out/permute/08098954/report.json). The pointer alias is the load-bearing change: without it the candidate stays 8 bytes short regardless of statement order, because gcc only splits the stack array's address into two live ranges (r5 at the top, a fresh r7 copy for the second loop, freeing r5 as loop-body scratch) when a named pointer variable gives it a second, loop-scoped reference point; a bare `position[i]` array access lets gcc keep one dedicated low register for the whole function instead, which is byte-cheaper but not what the reference does.",
+  "Remaining 108-halfword residual is concentrated in exactly the register-class swap this pointer alias does not reach: in both loops the reference keeps the walked pointer/position-array-copy in a low register (r7) and pushes the trip counter into a high register (r8, needing the expensive movs/negs/add/mov/cmp five-instruction decrement-and-test idiom), while the candidate's allocator keeps the loop-1 counter in the cheap low register (r7) and the loop-1 anchor pointer in r6/r0 directly, and needs no r8 spill there at all. Tried and empirically ruled out (all re-measured with candidate-show, none beat 108): renaming/duplicating the loop counter (dedicated variable per loop, both directions), an explicit pointer-cursor rewrite of loop 1 mirroring the exact `ObjectDispatch_ApplyValueToChildren` (games/gs1/src/object/dispatch/apply_value_to_children.c) countdown-pointer-walk idiom, a matching named-pointer alias for `anchors` (mirroring the `pos` fix), a temp for `anchor->parameter` before the call, and reassociating the y-field addend operand order. None of these change gcc's choice of which of the two live values gets the low register in loop 1, or fully separate the top-of-function position address from the loop-2 alias's live range (top-level still lands in r7 rather than the reference's r5). This looks like a genuine GCC-2.96 local-alloc register-class heuristic (spill-cost/priority ordering across the whole function) rather than a source-shape defect reachable through the C-level knobs tried so far; a fresh angle (a different family template, or a wider permuter search combining more axes at once) is the next lead, not further hand permutation of this same axis set."
+ ]
 }

@@ -1,61 +1,60 @@
 {
-  "schema_version": 1,
-  "namespace": "gs1-en-main",
-  "address": "0x0801776c",
-  "name": "UiText_ShowMessageBox",
-  "status": "measured-draft",
-  "owner_bytes": 304,
-  "score": {
-    "measured": "2026-08-27",
-    "candidate_bytes": 308,
-    "reference_bytes": 304,
-    "differing_halfwords": 113,
-    "wrong_instructions": 59,
-    "class": "wrong",
-    "command": "tools/compiler/target/release/compiler candidate-show games/gs1/recon/en/main/0801776c.c --owner 0x0801776c --size 304 --align",
-    "note": "Not yet registered in the claimed/asm build manifests (below the family-transplant confidence threshold, no automatic workspace), so candidate-show/workbench need --owner/--size and workbench itself refuses (needs a registered symbol name to label the reference asm) -- scored by hand with --owner/--size instead. Control flow, every callee, every field offset and global address are hand-traced from games/gs1/asm/0801776c.s and are believed correct (see shape.derivation). The residual 113 differing halfwords / 59 wrong instructions are register-allocation and stack-slot-timing artifacts of this specific old compiler, not logic errors: (1) the 2-word stack buffer passed by pointer to Func_0808a278 gets its base address materialized eagerly by this compiler under ordinary post-declaration assignment (pos[0]=0;pos[1]=0;), unlike the reference which uses plain immediate sp+4/sp+8 stores and only computes the address fresh at the call site; switching to an aggregate initializer (`s32 pos[2] = {0, 0};`) fixed this for the buffer itself and cascaded to fix essentially all of the x/y/width/height stack-slot addressing for the rest of the function (dropped differing_halfwords 142->113), but left the frame ~4 bytes (2 halfwords) longer than reference, apparently from how this compiler now schedules the stack-frame setup relative to the base-pointer load. (2) the Data_02000240+500 pointer read: reference computes the address at RUNTIME via `movs r2,#250; lsls r2,r2,#1; adds r3,r3,r2—every spelling tried (`+500`, `+250*2`, `+(250<<1)`, `&Data_02000240_as_s16[250]`) gets constant-folded by this compiler into a single pool literal instead, so the true source almost certainly indexes through a name/macro this compiler treats as non-foldable for some reason not yet identified. (3) the pos[1]>>3-derived y value: reference keeps the shifted value in one register end-to-end (asrs r3,r3,#3; cmp r3,#9; ble; subs r3,#5 / adds r3,#4, all in r3); every C shape tried (an explicit intermediate local, the raw expression repeated three times, an explicit goto-labelled sequence writing straight into y) reproduces the branch/store shape correctly but the compiler still spills the intermediate to r1 plus an extra register copy into r3, or (in the goto form) spills the merged value to sp+12 and grows the candidate to 308 bytes. None of the several branch-polarity or declaration-order experiments tried changed this. Given the function is fully understood and every remaining diff is this class of allocator/scheduling artifact rather than an unresolved unknown, further exact convergence would need a lower-level lever (the kind of allocator-order/liveness tooling noted on other owners in this cluster) rather than another manual C respelling."
+ "schema_version": 1,
+ "namespace": "gs1-en-main",
+ "address": "0x0801776c",
+ "status": "measured-draft",
+ "owner_bytes": 304,
+ "score": {
+  "measured": "2026-08-27",
+  "candidate_bytes": 308,
+  "reference_bytes": 304,
+  "differing_halfwords": 113,
+  "wrong_instructions": 59,
+  "class": "wrong",
+  "command": "tools/compiler/target/release/compiler candidate-show games/gs1/recon/en/main/0801776c.c --owner 0x0801776c --size 304 --align",
+  "note": "Not yet registered in the claimed/asm build manifests (below the family-transplant confidence threshold, no automatic workspace), so candidate-show/workbench need --owner/--size and workbench itself refuses (needs a registered symbol name to label the reference asm) -- scored by hand with --owner/--size instead. Control flow, every callee, every field offset and global address are hand-traced from games/gs1/asm/0801776c.s and are believed correct (see shape.derivation). The residual 113 differing halfwords / 59 wrong instructions are register-allocation and stack-slot-timing artifacts of this specific old compiler, not logic errors: (1) the 2-word stack buffer passed by pointer to Func_0808a278 gets its base address materialized eagerly by this compiler under ordinary post-declaration assignment (pos[0]=0;pos[1]=0;), unlike the reference which uses plain immediate sp+4/sp+8 stores and only computes the address fresh at the call site; switching to an aggregate initializer (`s32 pos[2] = {0, 0};`) fixed this for the buffer itself and cascaded to fix essentially all of the x/y/width/height stack-slot addressing for the rest of the function (dropped differing_halfwords 142->113), but left the frame ~4 bytes (2 halfwords) longer than reference, apparently from how this compiler now schedules the stack-frame setup relative to the base-pointer load. (2) the Data_02000240+500 pointer read: reference computes the address at RUNTIME via `movs r2,#250; lsls r2,r2,#1; adds r3,r3,r2—every spelling tried (`+500`, `+250*2`, `+(250<<1)`, `&Data_02000240_as_s16[250]`) gets constant-folded by this compiler into a single pool literal instead, so the true source almost certainly indexes through a name/macro this compiler treats as non-foldable for some reason not yet identified. (3) the pos[1]>>3-derived y value: reference keeps the shifted value in one register end-to-end (asrs r3,r3,#3; cmp r3,#9; ble; subs r3,#5 / adds r3,#4, all in r3); every C shape tried (an explicit intermediate local, the raw expression repeated three times, an explicit goto-labelled sequence writing straight into y) reproduces the branch/store shape correctly but the compiler still spills the intermediate to r1 plus an extra register copy into r3, or (in the goto form) spills the merged value to sp+12 and grows the candidate to 308 bytes. None of the several branch-polarity or declaration-order experiments tried changed this. Given the function is fully understood and every remaining diff is this class of allocator/scheduling artifact rather than an unresolved unknown, further exact convergence would need a lower-level lever (the kind of allocator-order/liveness tooling noted on other owners in this cluster) rather than another manual C respelling."
+ },
+ "shape": {
+  "derivation": "Traced instruction-by-instruction from games/gs1/asm/0801776c.s (no family-transplant template cleared the 7500/10000 threshold; the matcher's best guess, games/gs1/src/battle/presentation/run_action_and_wait.c at 7258/10000, shares only the generic WaitFrames(1) polling idiom and the r8/sl register-shuffle prologue used by dozens of unrelated owners in this project -- no shared field offsets, globals, or real callees, so treated as a false positive per this wave's instructions and not used. Real evidence instead: games/gs1/asm/080187ac.s / games/gs1/asm/08017658.s / games/gs1/asm/08017364.s / games/gs1/asm/08017394.s / games/gs1/asm/08016418.s / games/gs1/asm/0808a278.s / games/gs1/asm/08094154.s for the callees; already-adopted games/gs1/src/ui/text/get_resource_dimensions.c (Func_080187ac = UiText_GetResourceDimensions) fixes that call's 5-argument (no, &out1..&out4) shape exactly; games/gs1/src/ui/render/finalize.c, is_complete.c, and ui/runtime/is_idle.c fix UiWork_Finalize/UiWork_IsComplete/UiWork_IsIdle's signatures; games/gs1/src/ui/timed_notice/create.c is a close sibling that calls UiText_GetResourceDimensions the same way and computes `x=(30-third)>>1; y=(10-fourth)>>1` -- this owner does the same with 12 instead of 10 (a taller box). games/gs1/include/gs1_edition.h's EN-edition offsets nail every field write: RENDER_BUSY_OFS=0x12F9 (the busy byte this owner sets/clears), RENDER_MENU_BUSY_OFS=0xEA6 (set when flags&0x20; games/gs1/src/unidentified/main/ui/ui_owner_10.c and ui_owner_27.c show the same offset used the same way), RENDER_RESULT_OFS=0x12F4 and RENDER_RESULT_OFS+2=0x12F6 (both cleared unconditionally at the end; games/gs1/src/unidentified/main/field/field_owner_91.c shows this exact pair used as two s16 fields). games/gs1/src/overlays/actor_effect_motion/update_actor_proximity.c documents 0x03001e8c as a pointer table whose entry 0 is the 'scene' base this owner caches in r8. The caller-side signature `void Func_0801776c(s32, s32)` is independently confirmed by three already-drafted callers -- games/gs1/src/unidentified/main/runtime/runtime_owner_154.c, runtime_owner_249.c, and 0801faa8.json's own shape note -- all of which call `Func_0801776c((s32)&Value_0000000a, 1)` on an error path, matching a general 'show message box `no` with `flags`' role; games/gs1/asm/0801faa8.s and 080207c4.s show further direct callers passing a pc-relative message-id literal and small flag immediates (1, 9). Bit meanings recovered from the branches: flags&1 -> passed through as Func_08017658's 4th arg and reused verbatim as UiWork_Finalize's release arg; flags&2 -> sets RENDER_BUSY_OFS before layout; flags&4 -> skips the finalize+wait-for-idle block entirely; flags&8 / flags&0x40 -> fixed +4/+12 row offset instead of the character-avoiding auto-position branch; flags&0x20 -> sets RENDER_MENU_BUSY_OFS while the box is up. The auto-position branch (no flags&8/0x40) reads a pointer out of Data_02000240+500 and calls Func_0808a278 (a far-call veneer to Func_08094154, itself already retained in games/gs1/asm/08094154.s), which fills a 2-word screen-position buffer from an object's world position minus a camera offset at 0x03001e70+228; the y half is shifted right 3 and compared to 9 to decide +4 vs -5, matching a 'don't cover the character on screen' box-placement heuristic.",
+  "call_targets": {
+   "Func_080187ac": "UiText_GetResourceDimensions (adopted exact, games/gs1/src/ui/text/get_resource_dimensions.c)",
+   "Func_08017658": "unnamed window/text-box creation call, no exact sibling found; signature (no, x, y, release) recovered from this owner + games/gs1/asm/08017658.s's own body",
+   "Func_0808a278": "far-call veneer (games/gs1/asm/0808a278.s) to Func_08094154 (retained, games/gs1/asm/08094154.s) -- fills a 2-word screen-position buffer for an object pointer",
+   "Func_08017364": "UiWork_IsComplete (adopted exact, games/gs1/src/ui/render/is_complete.c)",
+   "Func_08016418": "UiWork_Finalize (adopted exact, games/gs1/src/ui/render/finalize.c)",
+   "Func_08017394": "UiWork_IsIdle (adopted exact, games/gs1/src/ui/runtime/is_idle.c)",
+   "Func_080030f8": "WaitFrames (types.h shared name; retained code-gap owner, games/gs1/asm/080030f8.s)"
+  }
+ },
+ "rejected_experiments": [
+  {
+   "experiment": "pos[0]=0;pos[1]=0; as two post-declaration array-element assignments (bare array, &pos[0], and a 2-field struct all tried)",
+   "result": "compiler always materializes the buffer's base address (add r5,sp,#N) immediately after the prologue and keeps it live for the whole function, vs reference's plain immediate sp+4/sp+8 stores with a fresh address computed only at the call site -- 142 differing halfwords"
   },
-  "shape": {
-    "derivation": "Traced instruction-by-instruction from games/gs1/asm/0801776c.s (no family-transplant template cleared the 7500/10000 threshold; the matcher's best guess, games/gs1/src/battle/presentation/run_action_and_wait.c at 7258/10000, shares only the generic WaitFrames(1) polling idiom and the r8/sl register-shuffle prologue used by dozens of unrelated owners in this project -- no shared field offsets, globals, or real callees, so treated as a false positive per this wave's instructions and not used. Real evidence instead: games/gs1/asm/080187ac.s / games/gs1/asm/08017658.s / games/gs1/asm/08017364.s / games/gs1/asm/08017394.s / games/gs1/asm/08016418.s / games/gs1/asm/0808a278.s / games/gs1/asm/08094154.s for the callees; already-adopted games/gs1/src/ui/text/get_resource_dimensions.c (Func_080187ac = UiText_GetResourceDimensions) fixes that call's 5-argument (no, &out1..&out4) shape exactly; games/gs1/src/ui/render/finalize.c, is_complete.c, and ui/runtime/is_idle.c fix UiWork_Finalize/UiWork_IsComplete/UiWork_IsIdle's signatures; games/gs1/src/ui/timed_notice/create.c is a close sibling that calls UiText_GetResourceDimensions the same way and computes `x=(30-third)>>1; y=(10-fourth)>>1` -- this owner does the same with 12 instead of 10 (a taller box). games/gs1/include/gs1_edition.h's EN-edition offsets nail every field write: RENDER_BUSY_OFS=0x12F9 (the busy byte this owner sets/clears), RENDER_MENU_BUSY_OFS=0xEA6 (set when flags&0x20; games/gs1/src/unidentified/main/ui/ui_owner_10.c and ui_owner_27.c show the same offset used the same way), RENDER_RESULT_OFS=0x12F4 and RENDER_RESULT_OFS+2=0x12F6 (both cleared unconditionally at the end; games/gs1/src/unidentified/main/field/field_owner_91.c shows this exact pair used as two s16 fields). games/gs1/src/overlays/actor_effect_motion/update_actor_proximity.c documents 0x03001e8c as a pointer table whose entry 0 is the 'scene' base this owner caches in r8. The caller-side signature `void Func_0801776c(s32, s32)` is independently confirmed by three already-drafted callers -- games/gs1/src/unidentified/main/runtime/runtime_owner_154.c, runtime_owner_249.c, and 0801faa8.json's own shape note -- all of which call `Func_0801776c((s32)&Value_0000000a, 1)` on an error path, matching a general 'show message box `no` with `flags`' role; games/gs1/asm/0801faa8.s and 080207c4.s show further direct callers passing a pc-relative message-id literal and small flag immediates (1, 9). Bit meanings recovered from the branches: flags&1 -> passed through as Func_08017658's 4th arg and reused verbatim as UiWork_Finalize's release arg; flags&2 -> sets RENDER_BUSY_OFS before layout; flags&4 -> skips the finalize+wait-for-idle block entirely; flags&8 / flags&0x40 -> fixed +4/+12 row offset instead of the character-avoiding auto-position branch; flags&0x20 -> sets RENDER_MENU_BUSY_OFS while the box is up. The auto-position branch (no flags&8/0x40) reads a pointer out of Data_02000240+500 and calls Func_0808a278 (a far-call veneer to Func_08094154, itself already retained in games/gs1/asm/08094154.s), which fills a 2-word screen-position buffer from an object's world position minus a camera offset at 0x03001e70+228; the y half is shifted right 3 and compared to 9 to decide +4 vs -5, matching a 'don't cover the character on screen' box-placement heuristic.",
-    "call_targets": {
-      "Func_080187ac": "UiText_GetResourceDimensions (adopted exact, games/gs1/src/ui/text/get_resource_dimensions.c)",
-      "Func_08017658": "unnamed window/text-box creation call, no exact sibling found; signature (no, x, y, release) recovered from this owner + games/gs1/asm/08017658.s's own body",
-      "Func_0808a278": "far-call veneer (games/gs1/asm/0808a278.s) to Func_08094154 (retained, games/gs1/asm/08094154.s) -- fills a 2-word screen-position buffer for an object pointer",
-      "Func_08017364": "UiWork_IsComplete (adopted exact, games/gs1/src/ui/render/is_complete.c)",
-      "Func_08016418": "UiWork_Finalize (adopted exact, games/gs1/src/ui/render/finalize.c)",
-      "Func_08017394": "UiWork_IsIdle (adopted exact, games/gs1/src/ui/runtime/is_idle.c)",
-      "Func_080030f8": "WaitFrames (types.h shared name; retained code-gap owner, games/gs1/asm/080030f8.s)"
-    }
+  {
+   "experiment": "two independent scalar locals (pos_x, pos_y) with only &pos_x taken, or pos_y marked volatile",
+   "result": "breaks the guaranteed memory adjacency Func_0808a278 relies on (pos_y stops sharing pos_x+4), and separately destabilizes the whole prologue's register assignment (sl stops being used for `no`, frame shrinks by 4 bytes) -- 150+ differing halfwords, semantically unsound besides"
   },
-  "rejected_experiments": [
-    {
-      "experiment": "pos[0]=0;pos[1]=0; as two post-declaration array-element assignments (bare array, &pos[0], and a 2-field struct all tried)",
-      "result": "compiler always materializes the buffer's base address (add r5,sp,#N) immediately after the prologue and keeps it live for the whole function, vs reference's plain immediate sp+4/sp+8 stores with a fresh address computed only at the call site -- 142 differing halfwords"
-    },
-    {
-      "experiment": "two independent scalar locals (pos_x, pos_y) with only &pos_x taken, or pos_y marked volatile",
-      "result": "breaks the guaranteed memory adjacency Func_0808a278 relies on (pos_y stops sharing pos_x+4), and separately destabilizes the whole prologue's register assignment (sl stops being used for `no`, frame shrinks by 4 bytes) -- 150+ differing halfwords, semantically unsound besides"
-    },
-    {
-      "experiment": "s32 pos[2] = {0, 0}; (aggregate initializer instead of post-declaration assignment)",
-      "result": "fixed the buffer's address timing and cascaded to fix nearly all of the x/y/width/height stack-slot addressing -- differing_halfwords 142->113, but left the candidate 4 bytes longer than reference (308 vs 304)"
-    },
-    {
-      "experiment": "Data_02000240+500 spelled as +500, +250*2, +(250<<1), and &((s16*)Data_02000240)[250]",
-      "result": "every spelling gets constant-folded to a single pool literal; reference computes the address at runtime via a literal 250 shifted left 1 -- no C spelling tried reproduces this"
-    },
-    {
-      "experiment": "pos[1]>>3-derived y: intermediate named local, the raw expression repeated three times, and an explicit goto/label sequence writing straight into y (matching the reference's own .L4/.L2 label shape)",
-      "result": "goto form reproduces the correct branch polarity and store target but spills the merged value to sp+12 and grows the candidate by 4 bytes (308); the other two forms keep the right byte count but always land the shifted value in r1 with an extra register copy into r3, unlike reference's single-register r3 reuse"
-    },
-    {
-      "experiment": "branch polarity swap (dy<=9 vs dy>9) for the y=dy+4/y=dy-5 choice, and reordering the x=0;y=0 zero-init relative to release=flags&1",
-      "result": "no measurable effect on differing_halfwords in either case -- this compiler's stack-slot and branch-shape choices here are not driven by simple source-order or condition-polarity changes"
-    }
-  ],
-  "notes": [
-    "Recovered only from the retained owner assembly, approved local ROM, the byte-exact sibling sources, in-repository headers, and the approved compiler.",
-    "Family-transplant score for games/gs1/src/battle/presentation/run_action_and_wait.c was 7258/10000 (LOW confidence, below the 7500 threshold) and, on inspection, is a shape-only false positive: same r8/sl register-shuffle prologue, unrelated real semantics (battle action dispatch/wait vs. this owner's UI message-box open/position/wait). Not used as a template.",
-    "This candidate claims zero DONE bytes."
-  ]
+  {
+   "experiment": "s32 pos[2] = {0, 0}; (aggregate initializer instead of post-declaration assignment)",
+   "result": "fixed the buffer's address timing and cascaded to fix nearly all of the x/y/width/height stack-slot addressing -- differing_halfwords 142->113, but left the candidate 4 bytes longer than reference (308 vs 304)"
+  },
+  {
+   "experiment": "Data_02000240+500 spelled as +500, +250*2, +(250<<1), and &((s16*)Data_02000240)[250]",
+   "result": "every spelling gets constant-folded to a single pool literal; reference computes the address at runtime via a literal 250 shifted left 1 -- no C spelling tried reproduces this"
+  },
+  {
+   "experiment": "pos[1]>>3-derived y: intermediate named local, the raw expression repeated three times, and an explicit goto/label sequence writing straight into y (matching the reference's own .L4/.L2 label shape)",
+   "result": "goto form reproduces the correct branch polarity and store target but spills the merged value to sp+12 and grows the candidate by 4 bytes (308); the other two forms keep the right byte count but always land the shifted value in r1 with an extra register copy into r3, unlike reference's single-register r3 reuse"
+  },
+  {
+   "experiment": "branch polarity swap (dy<=9 vs dy>9) for the y=dy+4/y=dy-5 choice, and reordering the x=0;y=0 zero-init relative to release=flags&1",
+   "result": "no measurable effect on differing_halfwords in either case -- this compiler's stack-slot and branch-shape choices here are not driven by simple source-order or condition-polarity changes"
+  }
+ ],
+ "notes": [
+  "Recovered only from the retained owner assembly, approved local ROM, the byte-exact sibling sources, in-repository headers, and the approved compiler.",
+  "Family-transplant score for games/gs1/src/battle/presentation/run_action_and_wait.c was 7258/10000 (LOW confidence, below the 7500 threshold) and, on inspection, is a shape-only false positive: same r8/sl register-shuffle prologue, unrelated real semantics (battle action dispatch/wait vs. this owner's UI message-box open/position/wait). Not used as a template.",
+  "This candidate claims zero DONE bytes."
+ ]
 }

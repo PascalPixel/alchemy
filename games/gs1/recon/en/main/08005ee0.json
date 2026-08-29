@@ -1,42 +1,107 @@
 {
-  "schema_version": 1,
-  "namespace": "gs1-en-main",
-  "address": "0x08005ee0",
-  "name": "Func_08005ee0",
-  "status": "measured-draft",
-  "owner_bytes": 234,
-  "score": {
-    "measured": "2026-08-29",
-    "candidate_bytes": 234,
-    "reference_bytes": 234,
-    "differing_halfwords": 38,
-    "wrong_instructions": 40,
-    "matched_prefix_instructions": 13,
-    "class": "missing-extra-code",
-    "note": "Two independent divergence clusters, both scheduling/register-allocation shaped rather than missing statements. (1) In the case-0 interrupt-setup block (REG_IME=serial_error; ie=REG_IE; ie&=~0x80; ie|=0x40; REG_IE=ie; REG_IME=1; *(sio+1)&=~0x40;), the reference loads the &REG_IE address lazily right before the ldrh (after the REG_IME store), computes the movs r3,#129/negs mask AFTER that load, stores REG_IME=1 via a plain `movs r3,#1` immediate, and then derives the ~0x40 byte-mask for the *(sio+1) store via `subs r3,#66` reusing the still-live r3==1 from the REG_IME=1 store rather than loading a fresh immediate. This build's GCC 296 instead loads both the &REG_IME and &REG_IE pool addresses together up front, computes the #129 mask before the ldrh, and loads both the REG_IME=1 constant and the ~0x40 byte mask from fresh pool/immediate sources instead of reusing r3. (2) In the tail (sequence++, packed = current_mask | received_mask<<8, mode==8 check, result=packed, is_parent check), the reference performs the `if (mode==8) packed|=0x80` check immediately after computing packed (using a persistent r7 = SERIAL_RUNTIME pointer kept live across the two calls to Func_0800615c/Func_080060e8), then copies packed into the result register, then checks is_parent. This build's codegen defers/merges the mode==8 check together with the is_parent check right before it, and re-fetches the SERIAL_RUNTIME pointer into a different register (r2) instead of reusing the r7 already live from before the calls. Neither cluster responded to any statement-order, type, or expression-shape rewrite tried (see rejected_experiments) -- the divergence looks like a GCC 296 register-allocation/scheduling choice tied to some source shape not yet identified, not an absent or surplus statement."
+ "schema_version": 1,
+ "namespace": "gs1-en-main",
+ "address": "0x08005ee0",
+ "status": "measured-draft",
+ "owner_bytes": 234,
+ "score": {
+  "measured": "2026-08-29",
+  "candidate_bytes": 234,
+  "reference_bytes": 234,
+  "differing_halfwords": 38,
+  "wrong_instructions": 40,
+  "matched_prefix_instructions": 13,
+  "class": "missing-extra-code",
+  "note": "Two independent divergence clusters, both scheduling/register-allocation shaped rather than missing statements. (1) In the case-0 interrupt-setup block (REG_IME=serial_error; ie=REG_IE; ie&=~0x80; ie|=0x40; REG_IE=ie; REG_IME=1; *(sio+1)&=~0x40;), the reference loads the &REG_IE address lazily right before the ldrh (after the REG_IME store), computes the movs r3,#129/negs mask AFTER that load, stores REG_IME=1 via a plain `movs r3,#1` immediate, and then derives the ~0x40 byte-mask for the *(sio+1) store via `subs r3,#66` reusing the still-live r3==1 from the REG_IME=1 store rather than loading a fresh immediate. This build's GCC 296 instead loads both the &REG_IME and &REG_IE pool addresses together up front, computes the #129 mask before the ldrh, and loads both the REG_IME=1 constant and the ~0x40 byte mask from fresh pool/immediate sources instead of reusing r3. (2) In the tail (sequence++, packed = current_mask | received_mask<<8, mode==8 check, result=packed, is_parent check), the reference performs the `if (mode==8) packed|=0x80` check immediately after computing packed (using a persistent r7 = SERIAL_RUNTIME pointer kept live across the two calls to Func_0800615c/Func_080060e8), then copies packed into the result register, then checks is_parent. This build's codegen defers/merges the mode==8 check together with the is_parent check right before it, and re-fetches the SERIAL_RUNTIME pointer into a different register (r2) instead of reusing the r7 already live from before the calls. Neither cluster responded to any statement-order, type, or expression-shape rewrite tried (see rejected_experiments) -- the divergence looks like a GCC 296 register-allocation/scheduling choice tied to some source shape not yet identified, not an absent or surplus statement."
+ },
+ "rejected_experiments": [
+  {
+   "experiment": "fuse ie=REG_IE;ie&=~0x80;ie|=0x40;REG_IE=ie; into REG_IE=(REG_IE&~0x80)|0x40; (drop local ie)",
+   "result": "worse: candidate grew to 242 bytes, differing_halfwords 85"
   },
-  "rejected_experiments": [
-    { "experiment": "fuse ie=REG_IE;ie&=~0x80;ie|=0x40;REG_IE=ie; into REG_IE=(REG_IE&~0x80)|0x40; (drop local ie)", "result": "worse: candidate grew to 242 bytes, differing_halfwords 85" },
-    { "experiment": "fuse only ie&=~0x80;ie|=0x40; into ie=(ie&~0x80)|0x40; keeping ie=REG_IE and REG_IE=ie separate", "result": "byte-identical to baseline (234/38) -- no effect" },
-    { "experiment": "drop local ie entirely, use REG_IE&=~0x80; REG_IE|=0x40; as two compound-assignment statements", "result": "worse: 246 bytes, differing_halfwords 84" },
-    { "experiment": "declare ie as u16 / s32 / int instead of u32", "result": "u16: much worse (256 bytes, dh 124). s32/int: byte-identical to baseline -- no effect" },
-    { "experiment": "reorder *((volatile u8*)sio+1)&=~0x40; to occur before REG_IME=1; instead of after", "result": "worse: 236 bytes, differing_halfwords 58" },
-    { "experiment": "move state->mode=mode; to the top of the if-block (right after declarations) instead of at the end", "result": "worse: 236 bytes, differing_halfwords 80" },
-    { "experiment": "swap order of REG_IF=0xc0; and REG_TM3CNT=0xc963;", "result": "worse: differing_halfwords 41 (same size)" },
-    { "experiment": "write REG_IME=serial_error; as REG_IME=0; (literal instead of the variable known to be 0 there)", "result": "byte-identical to baseline -- no effect" },
-    { "experiment": "write *(sio+1)&=~0x40; as &=0xBF (direct hex instead of bitwise-not expression)", "result": "byte-identical to baseline -- no effect" },
-    { "experiment": "cast state->mode=mode; target/source as (u8)mode", "result": "byte-identical to baseline -- no effect" },
-    { "experiment": "widen mask30/mode/serial_error locals from u8 to u32", "result": "each individually worse (mask30: dh 81, mode: dh 77, serial_error: dh 91 and also shrank candidate to 230 bytes)" },
-    { "experiment": "swap condition order in `if (serial_error==0 && state->send_index==-1)` to `if (state->send_index==-1 && serial_error==0)`", "result": "worse: differing_halfwords 49" },
-    { "experiment": "cast state->send_index==-1 comparand as (s16)-1 or state->send_index as (s32)", "result": "byte-identical to baseline -- no effect" },
-    { "experiment": "cast sio as volatile u16* instead of volatile u32*", "result": "worse: 238 bytes, differing_halfwords 111" },
-    { "experiment": "cast control=*sio as (u32)*sio, or add a no-op (void)sio; statement, or switch(state->phase) -> switch((int)state->phase)", "result": "byte-identical to baseline in each case -- no effect" },
-    { "experiment": "tail: replace `packed = a | (b<<8);` with two statements `packed=a; packed|=b<<8;`", "result": "byte-identical to baseline -- no effect" },
-    { "experiment": "tail: replace `if(mode==8) packed|=0x80;` (and similarly the shift>1 check) with a ternary `packed |= cond ? X : 0;`", "result": "byte-identical to baseline in each case -- no effect" },
-    { "experiment": "tail: move `result=packed;` after all the |= checks instead of between the mode check and the is_parent check (operate on packed directly, assign result once at the end)", "result": "byte-identical to baseline -- no effect" },
-    { "experiment": "tail: reload `state = SERIAL_RUNTIME;` again right after the switch, then use state-> for all of sequence/current_mask/received_mask/mode/is_parent (instead of the SERIAL_RUNTIME-> macro)", "result": "worse: differing_halfwords 51" },
-    { "experiment": "tail: use state-> only for sequence/current_mask/received_mask (mode/is_parent still via SERIAL_RUNTIME->)", "result": "much worse: candidate shrank to 228 bytes, differing_halfwords 70 -- GCC hoisted the whole tail block past the two calls, past an unrelated ldmia sequence" },
-    { "experiment": "tail: use state-> only for mode/is_parent (sequence/current_mask/received_mask still via SERIAL_RUNTIME->)", "result": "byte-identical to baseline -- no effect (still same r2-vs-r7 register split as baseline)" },
-    { "experiment": "swap declaration order of s32 packed; / s32 result; or their types (u32 vs s32)", "result": "byte-identical to baseline in each case -- no effect" }
-  ]
+  {
+   "experiment": "fuse only ie&=~0x80;ie|=0x40; into ie=(ie&~0x80)|0x40; keeping ie=REG_IE and REG_IE=ie separate",
+   "result": "byte-identical to baseline (234/38) -- no effect"
+  },
+  {
+   "experiment": "drop local ie entirely, use REG_IE&=~0x80; REG_IE|=0x40; as two compound-assignment statements",
+   "result": "worse: 246 bytes, differing_halfwords 84"
+  },
+  {
+   "experiment": "declare ie as u16 / s32 / int instead of u32",
+   "result": "u16: much worse (256 bytes, dh 124). s32/int: byte-identical to baseline -- no effect"
+  },
+  {
+   "experiment": "reorder *((volatile u8*)sio+1)&=~0x40; to occur before REG_IME=1; instead of after",
+   "result": "worse: 236 bytes, differing_halfwords 58"
+  },
+  {
+   "experiment": "move state->mode=mode; to the top of the if-block (right after declarations) instead of at the end",
+   "result": "worse: 236 bytes, differing_halfwords 80"
+  },
+  {
+   "experiment": "swap order of REG_IF=0xc0; and REG_TM3CNT=0xc963;",
+   "result": "worse: differing_halfwords 41 (same size)"
+  },
+  {
+   "experiment": "write REG_IME=serial_error; as REG_IME=0; (literal instead of the variable known to be 0 there)",
+   "result": "byte-identical to baseline -- no effect"
+  },
+  {
+   "experiment": "write *(sio+1)&=~0x40; as &=0xBF (direct hex instead of bitwise-not expression)",
+   "result": "byte-identical to baseline -- no effect"
+  },
+  {
+   "experiment": "cast state->mode=mode; target/source as (u8)mode",
+   "result": "byte-identical to baseline -- no effect"
+  },
+  {
+   "experiment": "widen mask30/mode/serial_error locals from u8 to u32",
+   "result": "each individually worse (mask30: dh 81, mode: dh 77, serial_error: dh 91 and also shrank candidate to 230 bytes)"
+  },
+  {
+   "experiment": "swap condition order in `if (serial_error==0 && state->send_index==-1)` to `if (state->send_index==-1 && serial_error==0)`",
+   "result": "worse: differing_halfwords 49"
+  },
+  {
+   "experiment": "cast state->send_index==-1 comparand as (s16)-1 or state->send_index as (s32)",
+   "result": "byte-identical to baseline -- no effect"
+  },
+  {
+   "experiment": "cast sio as volatile u16* instead of volatile u32*",
+   "result": "worse: 238 bytes, differing_halfwords 111"
+  },
+  {
+   "experiment": "cast control=*sio as (u32)*sio, or add a no-op (void)sio; statement, or switch(state->phase) -> switch((int)state->phase)",
+   "result": "byte-identical to baseline in each case -- no effect"
+  },
+  {
+   "experiment": "tail: replace `packed = a | (b<<8);` with two statements `packed=a; packed|=b<<8;`",
+   "result": "byte-identical to baseline -- no effect"
+  },
+  {
+   "experiment": "tail: replace `if(mode==8) packed|=0x80;` (and similarly the shift>1 check) with a ternary `packed |= cond ? X : 0;`",
+   "result": "byte-identical to baseline in each case -- no effect"
+  },
+  {
+   "experiment": "tail: move `result=packed;` after all the |= checks instead of between the mode check and the is_parent check (operate on packed directly, assign result once at the end)",
+   "result": "byte-identical to baseline -- no effect"
+  },
+  {
+   "experiment": "tail: reload `state = SERIAL_RUNTIME;` again right after the switch, then use state-> for all of sequence/current_mask/received_mask/mode/is_parent (instead of the SERIAL_RUNTIME-> macro)",
+   "result": "worse: differing_halfwords 51"
+  },
+  {
+   "experiment": "tail: use state-> only for sequence/current_mask/received_mask (mode/is_parent still via SERIAL_RUNTIME->)",
+   "result": "much worse: candidate shrank to 228 bytes, differing_halfwords 70 -- GCC hoisted the whole tail block past the two calls, past an unrelated ldmia sequence"
+  },
+  {
+   "experiment": "tail: use state-> only for mode/is_parent (sequence/current_mask/received_mask still via SERIAL_RUNTIME->)",
+   "result": "byte-identical to baseline -- no effect (still same r2-vs-r7 register split as baseline)"
+  },
+  {
+   "experiment": "swap declaration order of s32 packed; / s32 result; or their types (u32 vs s32)",
+   "result": "byte-identical to baseline in each case -- no effect"
+  }
+ ]
 }

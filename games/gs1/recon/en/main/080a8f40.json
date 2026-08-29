@@ -1,68 +1,67 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x080a8f40",
-  "name": "PsynergyMenu_DrawListPage",
-  "status": "exact",
-  "owner_bytes": 380,
-  "executable_owner_bytes": 380,
-  "candidate_bytes": 380,
-  "differing_halfwords": 0,
-  "wrong_instructions": 0,
-  "classification": "exact-c",
-  "resolved_asm_classification": {
-    "kind": "compiler_output",
-    "retention": "c_candidate",
-    "confidence": "likely"
-  },
-  "domain": "Draws one page of the Psynergy list, including PP cost, range, and the selected owner's name, class, and level.",
-  "expressed": [
-    "dereferences the mode-owned PsynergyMenuState at Data_03001f2c and resolves menu->owner_ids[0] through Runtime_GetObject",
-    "commits the window and computes first = result->page*5 and rows = min(result->entry_count-first, 5)",
-    "positions the page icons, draws the page indicator, and draws message 0xAED, which the local message archive identifies as 'PP'",
-    "loops over up to five entries of menu->psynergies[], masks each action id with 0x3fff, and draws its action-name message and BattleAction.pp_cost",
-    "converts BattleAction.range to the three-tile range marker index, preserving the 0xff sentinel-to-11 behavior",
-    "draws message 0xAEF, 'You have no Psynergy.', when menu->psynergy_count is zero",
-    "draws the owner's name string, class-name message, the ROM string 'Lv', and the owner's level byte",
-    "always returns 1, matching the menu page callback convention"
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x080a8f40",
+ "status": "exact",
+ "owner_bytes": 380,
+ "executable_owner_bytes": 380,
+ "candidate_bytes": 380,
+ "differing_halfwords": 0,
+ "wrong_instructions": 0,
+ "classification": "exact-c",
+ "resolved_asm_classification": {
+  "kind": "compiler_output",
+  "retention": "c_candidate",
+  "confidence": "likely"
+ },
+ "domain": "Draws one page of the Psynergy list, including PP cost, range, and the selected owner's name, class, and level.",
+ "expressed": [
+  "dereferences the mode-owned PsynergyMenuState at Data_03001f2c and resolves menu->owner_ids[0] through Runtime_GetObject",
+  "commits the window and computes first = result->page*5 and rows = min(result->entry_count-first, 5)",
+  "positions the page icons, draws the page indicator, and draws message 0xAED, which the local message archive identifies as 'PP'",
+  "loops over up to five entries of menu->psynergies[], masks each action id with 0x3fff, and draws its action-name message and BattleAction.pp_cost",
+  "converts BattleAction.range to the three-tile range marker index, preserving the 0xff sentinel-to-11 behavior",
+  "draws message 0xAEF, 'You have no Psynergy.', when menu->psynergy_count is zero",
+  "draws the owner's name string, class-name message, the ROM string 'Lv', and the owner's level byte",
+  "always returns 1, matching the menu page callback convention"
+ ],
+ "register_gate_step4": {
+  "date": "2026-08-28",
+  "closure_ordinal": 3,
+  "required_closures": 5,
+  "result": "adopted-byte-exact",
+  "baseline_differing_halfwords": 28,
+  "final_differing_halfwords": 0,
+  "repair_pattern": "materialize-message-and-merge-count-carrier",
+  "decoder_signals": [
+   "reciprocal mask/item register roles at the indexed halfword load",
+   "conditional value and result occupied different lifetimes",
+   "row-coordinate setup outranked the masked-message argument"
   ],
-  "register_gate_step4": {
-    "date": "2026-08-28",
-    "closure_ordinal": 3,
-    "required_closures": 5,
-    "result": "adopted-byte-exact",
-    "baseline_differing_halfwords": 28,
-    "final_differing_halfwords": 0,
-    "repair_pattern": "materialize-message-and-merge-count-carrier",
-    "decoder_signals": [
-      "reciprocal mask/item register roles at the indexed halfword load",
-      "conditional value and result occupied different lifetimes",
-      "row-coordinate setup outranked the masked-message argument"
-    ],
-    "source_edit": "Inline the two indexed halfword loads with the offset-first address spelling, materialize msg before calculating y, and load act->range into range before mutating it in place.",
-    "compiler_effect": "The mask remains the r0 result carrier, range remains one r4 carrier through compare and decrement, and msg makes GCC schedule the indexed load/mask before the row-coordinate shift.",
-    "bounded_confirmation": {
-      "baseline_differing_halfwords": 28,
-      "inline_indexed_loads_differing_halfwords": 15,
-      "merged_count_carrier_differing_halfwords": 6,
-      "materialized_message_differing_halfwords": 0,
-      "candidate_bytes": 380,
-      "reference_bytes": 380,
-      "linked_byte_differences": 0
-    },
-    "production": {
-      "source": "games/gs1/src/psynergy_menu/draw_list_page.c",
-      "compiler_route": "canonical-gcc296",
-      "compiler_overrides": [],
-      "retained_assembly_removed": true,
-      "integration_gate": "tools/check integrate accepted 380/380 linked bytes"
-    }
+  "source_edit": "Inline the two indexed halfword loads with the offset-first address spelling, materialize msg before calculating y, and load act->range into range before mutating it in place.",
+  "compiler_effect": "The mask remains the r0 result carrier, range remains one r4 carrier through compare and decrement, and msg makes GCC schedule the indexed load/mask before the row-coordinate shift.",
+  "bounded_confirmation": {
+   "baseline_differing_halfwords": 28,
+   "inline_indexed_loads_differing_halfwords": 15,
+   "merged_count_carrier_differing_halfwords": 6,
+   "materialized_message_differing_halfwords": 0,
+   "candidate_bytes": 380,
+   "reference_bytes": 380,
+   "linked_byte_differences": 0
   },
-  "notes": [
-    "The inventory-menu page family supplied the compiler shape only: page math and the paging helpers are shared. The mode-owned Data_03001f2c view, message text, action fields, and surrounding PsynergyMenu callers establish that this owner belongs to psynergy_menu.",
-    "PsynergyMenuState independently fixes psynergies at 0x1c8, psynergy_count at 0x218, and owner_ids[0] at 0x21a. The local message archive identifies 0xAED as 'PP', 0xAEF as 'You have no Psynergy.', 0x333 as the action-name table base, and 0x741 as the class-name table base.",
-    "BattleAction establishes range at +8 and pp_cost at +9. The local ROM bytes at 0x080AF22C are the NUL-terminated ASCII string 'Lv'. The three 0x08015xxx veneer targets are the exact adopted string/number drawing owners, not portrait or icon routines.",
-    "The byte-exact repair keeps the menu-relative offset loads, materializes msg before y, and mutates one range carrier in place. Those ordinary C choices close the former allocation/scheduling floor without annotations, register hints, or compiler overrides.",
-    "Recovered only from the retained owner assembly, approved local ROM and message archive, already-adopted Psynergy/menu/text sources, in-repo headers, and the approved compiler. No external decompilation or symbol map was consulted."
-  ]
+  "production": {
+   "source": "games/gs1/src/psynergy_menu/draw_list_page.c",
+   "compiler_route": "canonical-gcc296",
+   "compiler_overrides": [],
+   "retained_assembly_removed": true,
+   "integration_gate": "tools/check integrate accepted 380/380 linked bytes"
+  }
+ },
+ "notes": [
+  "The inventory-menu page family supplied the compiler shape only: page math and the paging helpers are shared. The mode-owned Data_03001f2c view, message text, action fields, and surrounding PsynergyMenu callers establish that this owner belongs to psynergy_menu.",
+  "PsynergyMenuState independently fixes psynergies at 0x1c8, psynergy_count at 0x218, and owner_ids[0] at 0x21a. The local message archive identifies 0xAED as 'PP', 0xAEF as 'You have no Psynergy.', 0x333 as the action-name table base, and 0x741 as the class-name table base.",
+  "BattleAction establishes range at +8 and pp_cost at +9. The local ROM bytes at 0x080AF22C are the NUL-terminated ASCII string 'Lv'. The three 0x08015xxx veneer targets are the exact adopted string/number drawing owners, not portrait or icon routines.",
+  "The byte-exact repair keeps the menu-relative offset loads, materializes msg before y, and mutates one range carrier in place. Those ordinary C choices close the former allocation/scheduling floor without annotations, register hints, or compiler overrides.",
+  "Recovered only from the retained owner assembly, approved local ROM and message archive, already-adopted Psynergy/menu/text sources, in-repo headers, and the approved compiler. No external decompilation or symbol map was consulted."
+ ]
 }

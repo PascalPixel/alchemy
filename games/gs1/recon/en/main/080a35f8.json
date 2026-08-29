@@ -1,26 +1,25 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x080a35f8",
-  "name": "Func_080a35f8",
-  "status": "measured-draft",
-  "owner_bytes": 688,
-  "candidate_bytes": 692,
-  "differing_halfwords": 317,
-  "wrong_instructions": 244,
-  "classification": "unemittable-draft",
-  "evidence": {
-    "reference": "games/gs1/asm/080a35f8.s",
-    "method": "families transplant (template main:080b1a14 / select_party_member.c, score 8143bp) seeded an m2c control-flow recovery over the complete symbolized owner, cross-checked callee signatures against already-exact siblings (ui/menu/create_cursor.c and inventory_menu/open_item_details.c for Func_080a10d0, unidentified/main/runtime/runtime_owner_37.c and field_owner_107.c for Func_080a33d4/Func_080150d0)",
-    "family_template": "main:080b1a14",
-    "pc_relative_references": 5,
-    "jump_tables": 0
-  },
-  "notes": [
-    "This owner takes a `u16 *positions` array parameter (the raw m2c draft's second 'unset register $r0' read inside the very first Func_08077008 call is the same incoming r0 argument, still live in the register at that point, not a second parameter) and runs a menu-style for(;;) input-poll loop over it (matching the family template's idiom closely, including the same ADDR_03001B04/ADDR_03001C94/ADDR_03001AE8 volatile reads), with an unusual A-button branch that further distinguishes a 'held-select' sub-mode (ADDR_03001AE8 bit 0x200) driving its own modulo-4 cursor-color animation before falling into the shared confirm/cancel tail. Every non-trivial callee signature (Func_080a10d0 6-arg, Func_080a33d4 2-arg, Func_080150d0 5-arg) is independently confirmed by four already-adopted exact siblings, so the call shapes are solid.",
-    "The raw m2c draft scored 752 vs 688 bytes, 264 wrong instructions. Two fixes were applied under a tight time budget: widening the persisted selection index from `s8` to `s32` (the same widening lesson as 0801db70 -- the field is read with a genuinely sign-extending `ldrsb` register-offset load either way, but a narrow persisted local caused the compiler to emit a plain immediate-offset `ldrb` instead, which cannot be used for a byte the code later needs sign-extended for arithmetic like `selection * 0x18`), and removing a matching narrowing cast on the modulo-reassignment of that same value. This closed most of the byte gap (752 -> 692, within 4 bytes of the 688-byte reference) and cut wrong_instructions to 244.",
-    "Given this owner's size and the time remaining in this batch, only one iteration was run past the initial draft rather than the multi-round narrowing done on the other five owners in this batch; the remaining 244-instruction gap is visibly dominated by register-allocation swaps (r5/r6/r7/sl/r8 assigned to the same logical values in a different arrangement, the same class of residual seen throughout this batch) and at least one instruction-scheduling reorder (the two adjacent state-field reads at 0x1C/0x1E are emitted in the opposite order from the source's textual order), not by any remaining wrong call, wrong constant, or wrong control-flow edge found by inspection.",
-    "This is the least-verified draft in the batch -- closest in raw byte count but least iterated -- and is a strong candidate for either a fresh close read against the reference disassembly or permuter-style bounded search, not further blind respelling.",
-    "No external source, copied instruction bytes, inline assembly, fixed-register variable, compiler barrier, or compiler modification was used."
-  ]
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x080a35f8",
+ "status": "measured-draft",
+ "owner_bytes": 688,
+ "candidate_bytes": 692,
+ "differing_halfwords": 317,
+ "wrong_instructions": 244,
+ "classification": "unemittable-draft",
+ "evidence": {
+  "reference": "games/gs1/asm/080a35f8.s",
+  "method": "families transplant (template main:080b1a14 / select_party_member.c, score 8143bp) seeded an m2c control-flow recovery over the complete symbolized owner, cross-checked callee signatures against already-exact siblings (ui/menu/create_cursor.c and inventory_menu/open_item_details.c for Func_080a10d0, unidentified/main/runtime/runtime_owner_37.c and field_owner_107.c for Func_080a33d4/Func_080150d0)",
+  "family_template": "main:080b1a14",
+  "pc_relative_references": 5,
+  "jump_tables": 0
+ },
+ "notes": [
+  "This owner takes a `u16 *positions` array parameter (the raw m2c draft's second 'unset register $r0' read inside the very first Func_08077008 call is the same incoming r0 argument, still live in the register at that point, not a second parameter) and runs a menu-style for(;;) input-poll loop over it (matching the family template's idiom closely, including the same ADDR_03001B04/ADDR_03001C94/ADDR_03001AE8 volatile reads), with an unusual A-button branch that further distinguishes a 'held-select' sub-mode (ADDR_03001AE8 bit 0x200) driving its own modulo-4 cursor-color animation before falling into the shared confirm/cancel tail. Every non-trivial callee signature (Func_080a10d0 6-arg, Func_080a33d4 2-arg, Func_080150d0 5-arg) is independently confirmed by four already-adopted exact siblings, so the call shapes are solid.",
+  "The raw m2c draft scored 752 vs 688 bytes, 264 wrong instructions. Two fixes were applied under a tight time budget: widening the persisted selection index from `s8` to `s32` (the same widening lesson as 0801db70 -- the field is read with a genuinely sign-extending `ldrsb` register-offset load either way, but a narrow persisted local caused the compiler to emit a plain immediate-offset `ldrb` instead, which cannot be used for a byte the code later needs sign-extended for arithmetic like `selection * 0x18`), and removing a matching narrowing cast on the modulo-reassignment of that same value. This closed most of the byte gap (752 -> 692, within 4 bytes of the 688-byte reference) and cut wrong_instructions to 244.",
+  "Given this owner's size and the time remaining in this batch, only one iteration was run past the initial draft rather than the multi-round narrowing done on the other five owners in this batch; the remaining 244-instruction gap is visibly dominated by register-allocation swaps (r5/r6/r7/sl/r8 assigned to the same logical values in a different arrangement, the same class of residual seen throughout this batch) and at least one instruction-scheduling reorder (the two adjacent state-field reads at 0x1C/0x1E are emitted in the opposite order from the source's textual order), not by any remaining wrong call, wrong constant, or wrong control-flow edge found by inspection.",
+  "This is the least-verified draft in the batch -- closest in raw byte count but least iterated -- and is a strong candidate for either a fresh close read against the reference disassembly or permuter-style bounded search, not further blind respelling.",
+  "No external source, copied instruction bytes, inline assembly, fixed-register variable, compiler barrier, or compiler modification was used."
+ ]
 }

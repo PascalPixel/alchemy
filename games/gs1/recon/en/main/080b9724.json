@@ -1,49 +1,48 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x080b9724",
-  "name": "BattlePresentation_AppendLinkedActions",
-  "status": "measured-draft",
-  "owner_bytes": 400,
-  "executable_owner_bytes": 400,
-  "candidate_bytes": 292,
-  "differing_halfwords": 199,
-  "wrong_instructions": 174,
-  "cross_edition": {
-    "object_bytes": 400,
-    "relocation_bytes": 48,
-    "literal_bytes": 20,
-    "relocation_normalized_core_bytes": 332,
-    "core_diff_bytes": 0,
-    "core_identical": true,
-    "starts": {
-      "ja": "0x080b0724",
-      "en": "0x080b9724",
-      "de": "0x080bbd3c",
-      "es": "0x080bd73c",
-      "fr": "0x080bd73c",
-      "it": "0x080b973c"
-    }
-  },
-  "domain": "Coordinates the linked-action builders and appends their transformed battle-presentation records after the caller's existing actions.",
-  "expressed": [
-    "normalizes source ids and side flags on the caller's existing action records",
-    "allocates and initializes the shared linked-action builder state",
-    "orders the two linked-action builders according to the active battle side",
-    "validates the runtime marker before restoring the shared display table",
-    "copies generated source ids into unit ids, toggles the linked-action kind bit, and returns the appended count",
-    "runs the established cleanup path and returns -1 when either builder or marker validation fails"
-  ],
-  "bounded_search": {
-    "mode": "screen-only",
-    "attempted": 0,
-    "exact": false,
-    "reason": "The complete readable candidate is 108 bytes short with 199 differing halfwords and 174 wrong instructions, outside the exact-extent and <=20-halfword screening gate."
-  },
-  "notes": [
-    "Independent object analysis bounds this owner at 400 executable bytes and proves all 332 relocation-normalized core bytes identical across the six approved GS1 editions.",
-    "The retained owner passes a stack-adjacent builder context through an implicit callee-saved register to 080b9554 and 080b9604. Ordinary readable C expresses the complete orchestration but cannot yet express that hidden compiler allocation, accounting for much of the 108-byte size deficit.",
-    "No full search was run because the initial complete screen did not produce exact extent or a localized residual. No exact or permanent bytes are claimed.",
-    "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, local presentation callers and records, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used."
-  ]
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x080b9724",
+ "status": "measured-draft",
+ "owner_bytes": 400,
+ "executable_owner_bytes": 400,
+ "candidate_bytes": 292,
+ "differing_halfwords": 199,
+ "wrong_instructions": 174,
+ "cross_edition": {
+  "object_bytes": 400,
+  "relocation_bytes": 48,
+  "literal_bytes": 20,
+  "relocation_normalized_core_bytes": 332,
+  "core_diff_bytes": 0,
+  "core_identical": true,
+  "starts": {
+   "ja": "0x080b0724",
+   "en": "0x080b9724",
+   "de": "0x080bbd3c",
+   "es": "0x080bd73c",
+   "fr": "0x080bd73c",
+   "it": "0x080b973c"
+  }
+ },
+ "domain": "Coordinates the linked-action builders and appends their transformed battle-presentation records after the caller's existing actions.",
+ "expressed": [
+  "normalizes source ids and side flags on the caller's existing action records",
+  "allocates and initializes the shared linked-action builder state",
+  "orders the two linked-action builders according to the active battle side",
+  "validates the runtime marker before restoring the shared display table",
+  "copies generated source ids into unit ids, toggles the linked-action kind bit, and returns the appended count",
+  "runs the established cleanup path and returns -1 when either builder or marker validation fails"
+ ],
+ "bounded_search": {
+  "mode": "screen-only",
+  "attempted": 0,
+  "exact": false,
+  "reason": "The complete readable candidate is 108 bytes short with 199 differing halfwords and 174 wrong instructions, outside the exact-extent and <=20-halfword screening gate."
+ },
+ "notes": [
+  "Independent object analysis bounds this owner at 400 executable bytes and proves all 332 relocation-normalized core bytes identical across the six approved GS1 editions.",
+  "The retained owner passes a stack-adjacent builder context through an implicit callee-saved register to 080b9554 and 080b9604. Ordinary readable C expresses the complete orchestration but cannot yet express that hidden compiler allocation, accounting for much of the 108-byte size deficit.",
+  "No full search was run because the initial complete screen did not produce exact extent or a localized residual. No exact or permanent bytes are claimed.",
+  "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, local presentation callers and records, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used."
+ ]
 }

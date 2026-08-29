@@ -1,63 +1,62 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x080b8c1c",
-  "name": "BattlePresentation_RunUnitAction",
-  "status": "measured-draft",
-  "owner_bytes": 412,
-  "candidate_bytes": 400,
-  "differing_halfwords": 199,
-  "wrong_instructions": 154,
-  "classification": "battle-presentation-unit-action",
-  "cross_edition": {
-    "starts": {
-      "ja": "0x080afc1c",
-      "en": "0x080b8c1c",
-      "de": "0x080bb234",
-      "es": "0x080bcc34",
-      "fr": "0x080bcc34",
-      "it": "0x080b8c34"
-    },
-    "measured_candidate_core_bytes": 312,
-    "normalized_core_diff_bytes_from_ja": {
-      "ja": 0,
-      "en": 6,
-      "de": 19,
-      "es": 19,
-      "fr": 19,
-      "it": 10
-    },
-    "core_identical": false
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x080b8c1c",
+ "status": "measured-draft",
+ "owner_bytes": 412,
+ "candidate_bytes": 400,
+ "differing_halfwords": 199,
+ "wrong_instructions": 154,
+ "classification": "battle-presentation-unit-action",
+ "cross_edition": {
+  "starts": {
+   "ja": "0x080afc1c",
+   "en": "0x080b8c1c",
+   "de": "0x080bb234",
+   "es": "0x080bcc34",
+   "fr": "0x080bcc34",
+   "it": "0x080b8c34"
   },
-  "domain": "Builds an 84-byte battle-presentation work record, stages the selected unit and its motion children, runs four presentation stages, then restores the participating actors.",
-  "expressed": [
-    "the caller-proved action fields and signed versus unsigned target-side tests",
-    "the transition-facing update and 40-frame wait",
-    "the invalid-primary early return",
-    "living-unit selection for both sides and the single selected-unit presentation",
-    "motion-child value collection into the work record",
-    "the four stage callbacks, final presentation callback, and actor restoration"
-  ],
-  "bounded_search": {
-    "mode": "classic-heat-walk",
-    "candidates": 20000,
-    "exact_candidates": 0,
-    "best_unverified_candidate_bytes": 400,
-    "best_unverified_differing_halfwords": 149,
-    "best_unverified_structural_rows": 32,
-    "disposition": "rejected: generated source contains an uninitialized branch carrier and obscures the presentation lifetimes"
+  "measured_candidate_core_bytes": 312,
+  "normalized_core_diff_bytes_from_ja": {
+   "ja": 0,
+   "en": 6,
+   "de": 19,
+   "es": 19,
+   "fr": 19,
+   "it": 10
   },
-  "bounded_checks": [
-    "typed work fields recover every observed access width and the complete call order",
-    "duplicating the transition wait in the equal and changed-facing branches recovers the reference branch body",
-    "explicit value-offset and unit-count loops recover the reference do-while semantics but allocate one extra high register",
-    "register hints, pointer/count loop forms, and declaration-lifetime variants remain broad",
-    "the exact 92-byte frame, r5/r6/r7 reuse, and r8/sl allocation have not yet been recovered together"
-  ],
-  "notes": [
-    "This owner is a direct callee of the exact BattlePresentation_RunAction path and shares the 84-byte work layout used by the adjacent recovered presentation family.",
-    "Regional correspondence is proved in all six GS1 editions, but this is not a constant-only family: the measured normalized code has six to nineteen regional bytes relative to JA.",
-    "The residual is broad frame, high-register allocation, and loop scheduling. It does not meet exact-C or permanent-assembly promotion gates and claims zero DONE bytes.",
-    "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, local callers and callees, neighboring GS1 presentation candidates, and the approved compiler. No GS2 source or data was inspected or changed."
-  ]
+  "core_identical": false
+ },
+ "domain": "Builds an 84-byte battle-presentation work record, stages the selected unit and its motion children, runs four presentation stages, then restores the participating actors.",
+ "expressed": [
+  "the caller-proved action fields and signed versus unsigned target-side tests",
+  "the transition-facing update and 40-frame wait",
+  "the invalid-primary early return",
+  "living-unit selection for both sides and the single selected-unit presentation",
+  "motion-child value collection into the work record",
+  "the four stage callbacks, final presentation callback, and actor restoration"
+ ],
+ "bounded_search": {
+  "mode": "classic-heat-walk",
+  "candidates": 20000,
+  "exact_candidates": 0,
+  "best_unverified_candidate_bytes": 400,
+  "best_unverified_differing_halfwords": 149,
+  "best_unverified_structural_rows": 32,
+  "disposition": "rejected: generated source contains an uninitialized branch carrier and obscures the presentation lifetimes"
+ },
+ "bounded_checks": [
+  "typed work fields recover every observed access width and the complete call order",
+  "duplicating the transition wait in the equal and changed-facing branches recovers the reference branch body",
+  "explicit value-offset and unit-count loops recover the reference do-while semantics but allocate one extra high register",
+  "register hints, pointer/count loop forms, and declaration-lifetime variants remain broad",
+  "the exact 92-byte frame, r5/r6/r7 reuse, and r8/sl allocation have not yet been recovered together"
+ ],
+ "notes": [
+  "This owner is a direct callee of the exact BattlePresentation_RunAction path and shares the 84-byte work layout used by the adjacent recovered presentation family.",
+  "Regional correspondence is proved in all six GS1 editions, but this is not a constant-only family: the measured normalized code has six to nineteen regional bytes relative to JA.",
+  "The residual is broad frame, high-register allocation, and loop scheduling. It does not meet exact-C or permanent-assembly promotion gates and claims zero DONE bytes.",
+  "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, local callers and callees, neighboring GS1 presentation candidates, and the approved compiler. No GS2 source or data was inspected or changed."
+ ]
 }

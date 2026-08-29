@@ -1,50 +1,49 @@
 {
-  "schema_version": 1,
-  "namespace": "gs1-en-main",
-  "address": "0x080a3ef0",
-  "name": "Item_TransferToActor",
-  "status": "measured-draft",
-  "owner_bytes": 444,
-  "score": {
-    "measured": "2026-08-27",
-    "candidate_bytes": 424,
-    "reference_bytes": 444,
-    "differing_halfwords": 160,
-    "wrong_instructions": 114,
-    "class": "wrong",
-    "note": "Independently re-measured this session from a fresh worktree/compiler build (prior wave's score was UNVERIFIED after an infrastructure incident; this run reproduces the identical 424/444, 160, 114 figures from scratch). Control flow, the ten-way switch/jump-table over an item type byte, both duplicated equip-check bodies (holder==actor short circuit vs alloc/copy/restore-window path via the 08004938/080072f0(via080072e4 r3-trampoline)/08002df0 alloc-copy-free idiom), and the case-6-only difference (raw item_id vs item_id&~0x200 passed to Func_08077028) all match the retained assembly instruction-for-instruction. The residual is pure register allocation, and this session traced its exact mechanism: item_id's live range spans from the initial mask+lookup through to its one masked read deep inside the case1-9 else-branch. The reference spills item_id to a single stack word (str/ldr [sp,#0]) and keeps fp free for the rest of the function, so fp gets reused by BOTH case1-9's and case6's otherwise-identical other_window locals (their live ranges never overlap each other, only fp's global 'is it free' bookkeeping matters to this allocator). The candidate instead colors item_id into fp for its whole life, which forces each branch's other_window to take its OWN separate stack word instead (str [sp,#4] in case1-9, str [sp,#0] in case6) -- net one word worse (sub sp,#8 vs sub sp,#4, 424 vs 444 body bytes) and it also flips which of holder/flags lands in r8 vs sl from the prologue onward. This looks like a genuine graph-coloring tie the source no longer controls directly."
+ "schema_version": 1,
+ "namespace": "gs1-en-main",
+ "address": "0x080a3ef0",
+ "status": "measured-draft",
+ "owner_bytes": 444,
+ "score": {
+  "measured": "2026-08-27",
+  "candidate_bytes": 424,
+  "reference_bytes": 444,
+  "differing_halfwords": 160,
+  "wrong_instructions": 114,
+  "class": "wrong",
+  "note": "Independently re-measured this session from a fresh worktree/compiler build (prior wave's score was UNVERIFIED after an infrastructure incident; this run reproduces the identical 424/444, 160, 114 figures from scratch). Control flow, the ten-way switch/jump-table over an item type byte, both duplicated equip-check bodies (holder==actor short circuit vs alloc/copy/restore-window path via the 08004938/080072f0(via080072e4 r3-trampoline)/08002df0 alloc-copy-free idiom), and the case-6-only difference (raw item_id vs item_id&~0x200 passed to Func_08077028) all match the retained assembly instruction-for-instruction. The residual is pure register allocation, and this session traced its exact mechanism: item_id's live range spans from the initial mask+lookup through to its one masked read deep inside the case1-9 else-branch. The reference spills item_id to a single stack word (str/ldr [sp,#0]) and keeps fp free for the rest of the function, so fp gets reused by BOTH case1-9's and case6's otherwise-identical other_window locals (their live ranges never overlap each other, only fp's global 'is it free' bookkeeping matters to this allocator). The candidate instead colors item_id into fp for its whole life, which forces each branch's other_window to take its OWN separate stack word instead (str [sp,#4] in case1-9, str [sp,#0] in case6) -- net one word worse (sub sp,#8 vs sub sp,#4, 424 vs 444 body bytes) and it also flips which of holder/flags lands in r8 vs sl from the prologue onward. This looks like a genuine graph-coloring tie the source no longer controls directly."
+ },
+ "rejected_experiments": [
+  {
+   "experiment": "u16 item_id spilled to its own local plus a separate masked_id local for the case1-9 Func_08077028 call (first-pass m2c-shaped draft)",
+   "result": "candidate=424 reference=444 differing_halfwords=197 wrong_instructions=171 -- extra locals cost a second stack word (sub sp,#8 vs the reference's sub sp,#4) and never converge on the reference's single-slot reuse"
   },
-  "rejected_experiments": [
-    {
-      "experiment": "u16 item_id spilled to its own local plus a separate masked_id local for the case1-9 Func_08077028 call (first-pass m2c-shaped draft)",
-      "result": "candidate=424 reference=444 differing_halfwords=197 wrong_instructions=171 -- extra locals cost a second stack word (sub sp,#8 vs the reference's sub sp,#4) and never converge on the reference's single-slot reuse"
-    },
-    {
-      "experiment": "s32 item_id (not u16), single local reused in place with item_id &= 0xfffffdff for the case1-9 branch instead of a separate masked_id",
-      "result": "candidate=424 reference=444 differing_halfwords=160 wrong_instructions=114 -- current committed draft; matches the reference's AND-mask instruction and its case-6-vs-case1-9 masking asymmetry, but register roles (r8/sl for holder/flags) are still swapped versus the reference"
-    },
-    {
-      "experiment": "move `flags = 0;` from before the Func_08077008(holder) call to just after the item_id extraction (right before the mode==1 check)",
-      "result": "re-verified this session (the prior wave's ROM-symlink corruption is fixed): differing_halfwords=165, wrong_instructions=120 -- strictly worse than baseline, rejected"
-    },
-    {
-      "experiment": "s32 flags = 0 as a declaration initializer instead of a separate first statement",
-      "result": "byte-identical to baseline (160/114) -- no effect on generated code"
-    },
-    {
-      "experiment": "reparenthesize the item_id load as (u8*)window + (216 + slot*2), and separately as ((u16*)((u8*)window+216))[slot]",
-      "result": "byte-identical to baseline (160/114) both times -- the front end folds all three groupings identically"
-    },
-    {
-      "experiment": "drop the named `window` and `item` locals and inline both calls directly into the item_id/type expressions",
-      "result": "byte-identical to baseline (160/114) -- confirms the fp-vs-stack choice for item_id is not driven by whether window/item are named locals"
-    }
-  ],
-  "notes": [
-    "Recovered only from games/gs1/asm/080a3ef0.s traced instruction-by-instruction (hand-computed PC-relative literal-pool addresses and jump-table offsets, cross-checked against the function's own trailing 5-word literal pool) plus the approved local ROM and compiler.",
-    "The family-matcher's best guess, games/gs1/src/unidentified/main/field/field_owner_82.c (score 7165/10000, below the 7500 adoption threshold), is a 10-parameter dual-object UiWork/WaitFrames animation-trigger routine with no shared callees, field offsets, or constants with this owner -- confirmed a shape-only false positive per this wave's guidance and not used as evidence.",
-    "Behavior: Func_080a3ef0(holder, slot, mode, actor) reads holder's inventory window (Func_08077008), extracts the u16 item id at byte offset 216+slot*2, looks the item up (Func_08077018 on item_id&0x1ff) and reads its type byte at offset 2, then dispatches on a 10-entry (0..9) jump table matching the retained assembly's embedded switch table (0x080a4000 for type 0, 0x080a3ff4 for type 6, 0x080a3f6c shared for types 1-5/7-9). Type 0 calls Func_080a112c(*(state+36), actor, slot, flags) directly with flags left as set by the mode==1 check (flags|=0x100). Types 1-5/7-9 and type 6 share near-identical bodies (differing only in the OR'd flag bit -- 2 vs 4 -- and in whether item_id is masked with ~0x200 before the retry lookup): when holder==actor they call Func_080a112c directly with the extra flag bit set; otherwise they snapshot actor's own window into a bump-allocated 0x14c-byte buffer via the 0x080072f0 r3-indirect-call trampoline slot (target 0x03001388, a fixed IWRAM word-copy routine, called (dest,src,words) per the r0-r3 trampoline-slot idiom), probe actor's eligibility (Func_080a40ac), try Func_08077028(actor,item_id) for an alternate slot, fall back to the original slot on -1, call Func_080a112c, restore actor's window from the snapshot, and free the buffer (Func_08002df0).",
-    "Func_08004938 is the already-adopted Runtime_BumpAllocate (games/gs1/src/runtime/memory/bump_allocate.c); Func_08002df0 and 0x080072f0 have no games/gs1/asm/<addr>.s file and no source-paths.json entry -- 0x080072f0 resolves to the project's documented 0x080072e4 call_via_rN trampoline (N=r3 slot, offset 0xC), so it is not a fictional named function; 08002df0 is a genuine unregistered callee left as an opaque extern. Func_08077008, Func_08077018, Func_08077028, Func_080a40ac, and Func_080a112c are all still raw owners (their own games/gs1/asm/<addr>.s files exist, unadopted).",
-    "Not adopted: differing_halfwords=160 (of ~222 halfwords), so exact-byte adoption gates are not met. No name was registered in games/gs1/source-paths.json and no .global alias was added to the retained assembly, consistent with the measured-draft convention used by other unregistered dossiers in this directory (e.g. 080b6c08.json)."
-  ]
+  {
+   "experiment": "s32 item_id (not u16), single local reused in place with item_id &= 0xfffffdff for the case1-9 branch instead of a separate masked_id",
+   "result": "candidate=424 reference=444 differing_halfwords=160 wrong_instructions=114 -- current committed draft; matches the reference's AND-mask instruction and its case-6-vs-case1-9 masking asymmetry, but register roles (r8/sl for holder/flags) are still swapped versus the reference"
+  },
+  {
+   "experiment": "move `flags = 0;` from before the Func_08077008(holder) call to just after the item_id extraction (right before the mode==1 check)",
+   "result": "re-verified this session (the prior wave's ROM-symlink corruption is fixed): differing_halfwords=165, wrong_instructions=120 -- strictly worse than baseline, rejected"
+  },
+  {
+   "experiment": "s32 flags = 0 as a declaration initializer instead of a separate first statement",
+   "result": "byte-identical to baseline (160/114) -- no effect on generated code"
+  },
+  {
+   "experiment": "reparenthesize the item_id load as (u8*)window + (216 + slot*2), and separately as ((u16*)((u8*)window+216))[slot]",
+   "result": "byte-identical to baseline (160/114) both times -- the front end folds all three groupings identically"
+  },
+  {
+   "experiment": "drop the named `window` and `item` locals and inline both calls directly into the item_id/type expressions",
+   "result": "byte-identical to baseline (160/114) -- confirms the fp-vs-stack choice for item_id is not driven by whether window/item are named locals"
+  }
+ ],
+ "notes": [
+  "Recovered only from games/gs1/asm/080a3ef0.s traced instruction-by-instruction (hand-computed PC-relative literal-pool addresses and jump-table offsets, cross-checked against the function's own trailing 5-word literal pool) plus the approved local ROM and compiler.",
+  "The family-matcher's best guess, games/gs1/src/unidentified/main/field/field_owner_82.c (score 7165/10000, below the 7500 adoption threshold), is a 10-parameter dual-object UiWork/WaitFrames animation-trigger routine with no shared callees, field offsets, or constants with this owner -- confirmed a shape-only false positive per this wave's guidance and not used as evidence.",
+  "Behavior: Func_080a3ef0(holder, slot, mode, actor) reads holder's inventory window (Func_08077008), extracts the u16 item id at byte offset 216+slot*2, looks the item up (Func_08077018 on item_id&0x1ff) and reads its type byte at offset 2, then dispatches on a 10-entry (0..9) jump table matching the retained assembly's embedded switch table (0x080a4000 for type 0, 0x080a3ff4 for type 6, 0x080a3f6c shared for types 1-5/7-9). Type 0 calls Func_080a112c(*(state+36), actor, slot, flags) directly with flags left as set by the mode==1 check (flags|=0x100). Types 1-5/7-9 and type 6 share near-identical bodies (differing only in the OR'd flag bit -- 2 vs 4 -- and in whether item_id is masked with ~0x200 before the retry lookup): when holder==actor they call Func_080a112c directly with the extra flag bit set; otherwise they snapshot actor's own window into a bump-allocated 0x14c-byte buffer via the 0x080072f0 r3-indirect-call trampoline slot (target 0x03001388, a fixed IWRAM word-copy routine, called (dest,src,words) per the r0-r3 trampoline-slot idiom), probe actor's eligibility (Func_080a40ac), try Func_08077028(actor,item_id) for an alternate slot, fall back to the original slot on -1, call Func_080a112c, restore actor's window from the snapshot, and free the buffer (Func_08002df0).",
+  "Func_08004938 is the already-adopted Runtime_BumpAllocate (games/gs1/src/runtime/memory/bump_allocate.c); Func_08002df0 and 0x080072f0 have no games/gs1/asm/<addr>.s file and no source-paths.json entry -- 0x080072f0 resolves to the project's documented 0x080072e4 call_via_rN trampoline (N=r3 slot, offset 0xC), so it is not a fictional named function; 08002df0 is a genuine unregistered callee left as an opaque extern. Func_08077008, Func_08077018, Func_08077028, Func_080a40ac, and Func_080a112c are all still raw owners (their own games/gs1/asm/<addr>.s files exist, unadopted).",
+  "Not adopted: differing_halfwords=160 (of ~222 halfwords), so exact-byte adoption gates are not met. No name was registered in games/gs1/source-paths.json and no .global alias was added to the retained assembly, consistent with the measured-draft convention used by other unregistered dossiers in this directory (e.g. 080b6c08.json)."
+ ]
 }

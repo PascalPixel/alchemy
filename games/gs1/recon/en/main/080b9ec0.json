@@ -1,55 +1,54 @@
 {
-  "schema_version": 1,
-  "namespace": "main",
-  "address": "0x080b9ec0",
-  "name": "BattlePresentation_RunUnitTransition",
-  "status": "measured-draft",
-  "owner_bytes": 954,
-  "executable_owner_bytes": 954,
-  "candidate_bytes": 960,
-  "differing_halfwords": 467,
-  "wrong_instructions": 363,
-  "cross_edition": {
-    "object_bytes": 954,
-    "relocation_bytes": 124,
-    "literal_bytes": 68,
-    "relocation_normalized_core_bytes": 762,
-    "core_diff_bytes": 0,
-    "core_identical": true,
-    "starts": {
-      "ja": "0x080b0ec0",
-      "en": "0x080b9ec0",
-      "de": "0x080bc4d8",
-      "es": "0x080bded8",
-      "fr": "0x080bded8",
-      "it": "0x080b9ed8"
-    }
-  },
-  "domain": "Runs the selected-unit battle presentation transition, temporarily hiding incompatible unit sprites, preparing presentation context and ability data, executing the selected transition, and restoring the visible-unit set.",
-  "expressed": [
-    "transition direction and palette/blend setup from the selected unit side",
-    "initial and refreshed visible-unit enumeration with ally/enemy filtering",
-    "selected-unit sprite handling and sixteen-frame blend ramps",
-    "message-driven and context-driven presentation branches",
-    "presentation-context unit and ability preparation",
-    "flag-selected transition callback and final sprite restoration"
-  ],
-  "bounded_search": {
-    "mode": "classic-exact-only",
-    "attempted": 10000,
-    "compile_failures": 261,
-    "exact": false,
-    "baseline_structural_rows": 230,
-    "best_structural_rows": 162,
-    "best_generated_candidate_bytes": 948,
-    "best_generated_differing_halfwords": 446
-  },
-  "notes": [
-    "The address gap to 080ba2c0 is 1024 bytes, but independent executable-owner analysis proves this function is 954 bytes; the trailing 70 bytes are not part of the owner.",
-    "The complete readable candidate is six bytes longer than the owner and retains a broad register-allocation, frame-layout, literal-pool, and loop-shape residual, so it claims zero DONE bytes.",
-    "The 10,000-candidate search reduced the structural row count only through a long chain of synthetic temporaries, declaration reorderings, one-shot blocks, and expression rewrites. Its best remained shorter than the reference and 446 halfwords different, so the generated artifact was rejected.",
-    "No exact C or narrow compiler residual was found; retained assembly remains ordinary unresolved compiler output and was not promoted permanently.",
-    "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, local battle callers and types, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used.",
-    "2026-08-27: This owner scored below the family-transplant threshold (7453/10000, LOW confidence) with games/gs1/src/shop/select_use_item.c as the best guess. Read that source in full: it is a shop item-selection input loop (UiWindow-based menu, Modulo-based cursor wrap, no presentation/context/ability handling) with no shared callees, field offsets, or constants against this owner -- the family-matcher's match was shape-only (same register-shuffle prologue), confirming the session-wide warning about this cluster's false positives. No adopted exact sibling exists yet for any of the other BattlePresentation_* owners in this address range (080b60a0, 080b8574, 080b88d0, 080b920c, 080b9324, 080b9724, 080b9934, 080b9b30, 080ba2c0) to borrow vocabulary from; all remain measured-draft. Re-verified the committed draft against current assembly: differing_halfwords=467, wrong_instructions=363, matched_prefix=7 -- divergence starts at instruction 8 (the `sub sp` frame size and everything downstream), so this is a broad structural mismatch, not a last-mile residual. Tested one structural hypothesis: materializing `context` and `visible_units` as genuine pointer locals (`u8 *ctx = context;` / `u16 *vis = visible_units;`, assigned as their own statements per this codebase's documented idiom) so their addresses are computed once and held in registers throughout, mirroring the reference's permanent r7/sl role assignment. This reproduced the reference's exact `sub sp, #124` frame size (previously #128) but did not reach a clean win overall: differing_halfwords improved marginally to 464 while wrong_instructions rose to 383 and candidate size dropped to 936 (18 bytes under reference, versus 6 over previously); `context`'s base register still lands at sp+40 instead of the reference's sp+12, and `selection` still allocates to sl instead of r9. Given this was a mixed, non-monotonic result well short of the 446-halfword floor this owner's own prior 10,000-candidate bounded search already reached (and rejected as still not exact), it was not adopted over the existing committed draft. No exact C or narrower residual was found this session; the owner's register/frame allocation remains an unresolved broad structural disagreement, consistent with the prior session's conclusion."
-  ]
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x080b9ec0",
+ "status": "measured-draft",
+ "owner_bytes": 954,
+ "executable_owner_bytes": 954,
+ "candidate_bytes": 960,
+ "differing_halfwords": 467,
+ "wrong_instructions": 363,
+ "cross_edition": {
+  "object_bytes": 954,
+  "relocation_bytes": 124,
+  "literal_bytes": 68,
+  "relocation_normalized_core_bytes": 762,
+  "core_diff_bytes": 0,
+  "core_identical": true,
+  "starts": {
+   "ja": "0x080b0ec0",
+   "en": "0x080b9ec0",
+   "de": "0x080bc4d8",
+   "es": "0x080bded8",
+   "fr": "0x080bded8",
+   "it": "0x080b9ed8"
+  }
+ },
+ "domain": "Runs the selected-unit battle presentation transition, temporarily hiding incompatible unit sprites, preparing presentation context and ability data, executing the selected transition, and restoring the visible-unit set.",
+ "expressed": [
+  "transition direction and palette/blend setup from the selected unit side",
+  "initial and refreshed visible-unit enumeration with ally/enemy filtering",
+  "selected-unit sprite handling and sixteen-frame blend ramps",
+  "message-driven and context-driven presentation branches",
+  "presentation-context unit and ability preparation",
+  "flag-selected transition callback and final sprite restoration"
+ ],
+ "bounded_search": {
+  "mode": "classic-exact-only",
+  "attempted": 10000,
+  "compile_failures": 261,
+  "exact": false,
+  "baseline_structural_rows": 230,
+  "best_structural_rows": 162,
+  "best_generated_candidate_bytes": 948,
+  "best_generated_differing_halfwords": 446
+ },
+ "notes": [
+  "The address gap to 080ba2c0 is 1024 bytes, but independent executable-owner analysis proves this function is 954 bytes; the trailing 70 bytes are not part of the owner.",
+  "The complete readable candidate is six bytes longer than the owner and retains a broad register-allocation, frame-layout, literal-pool, and loop-shape residual, so it claims zero DONE bytes.",
+  "The 10,000-candidate search reduced the structural row count only through a long chain of synthetic temporaries, declaration reorderings, one-shot blocks, and expression rewrites. Its best remained shorter than the reference and 446 halfwords different, so the generated artifact was rejected.",
+  "No exact C or narrow compiler residual was found; retained assembly remains ordinary unresolved compiler output and was not promoted permanently.",
+  "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, local battle callers and types, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used.",
+  "2026-08-27: This owner scored below the family-transplant threshold (7453/10000, LOW confidence) with games/gs1/src/shop/select_use_item.c as the best guess. Read that source in full: it is a shop item-selection input loop (UiWindow-based menu, Modulo-based cursor wrap, no presentation/context/ability handling) with no shared callees, field offsets, or constants against this owner -- the family-matcher's match was shape-only (same register-shuffle prologue), confirming the session-wide warning about this cluster's false positives. No adopted exact sibling exists yet for any of the other BattlePresentation_* owners in this address range (080b60a0, 080b8574, 080b88d0, 080b920c, 080b9324, 080b9724, 080b9934, 080b9b30, 080ba2c0) to borrow vocabulary from; all remain measured-draft. Re-verified the committed draft against current assembly: differing_halfwords=467, wrong_instructions=363, matched_prefix=7 -- divergence starts at instruction 8 (the `sub sp` frame size and everything downstream), so this is a broad structural mismatch, not a last-mile residual. Tested one structural hypothesis: materializing `context` and `visible_units` as genuine pointer locals (`u8 *ctx = context;` / `u16 *vis = visible_units;`, assigned as their own statements per this codebase's documented idiom) so their addresses are computed once and held in registers throughout, mirroring the reference's permanent r7/sl role assignment. This reproduced the reference's exact `sub sp, #124` frame size (previously #128) but did not reach a clean win overall: differing_halfwords improved marginally to 464 while wrong_instructions rose to 383 and candidate size dropped to 936 (18 bytes under reference, versus 6 over previously); `context`'s base register still lands at sp+40 instead of the reference's sp+12, and `selection` still allocates to sl instead of r9. Given this was a mixed, non-monotonic result well short of the 446-halfword floor this owner's own prior 10,000-candidate bounded search already reached (and rejected as still not exact), it was not adopted over the existing committed draft. No exact C or narrower residual was found this session; the owner's register/frame allocation remains an unresolved broad structural disagreement, consistent with the prior session's conclusion."
+ ]
 }

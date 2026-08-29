@@ -1,0 +1,40 @@
+{
+ "schema_version": 1,
+ "namespace": "main",
+ "address": "0x080ec100",
+ "status": "mapped",
+ "measured": "2026-08-29",
+ "map": {
+  "head": "0x080ec100",
+  "head_symbol": "FunctionHead_080ec100",
+  "head_file": "games/gs1/asm/080ec100.s",
+  "head_prologue": "push {r5,r6,r7,lr}; mov r7,r11; mov r6,r10; mov r5,r9; push {r5,r6,r7}; mov r7,r8; push {r7}; sub sp, #116 -- full r8-r11 save, 116-byte frame.",
+  "true_epilogue": {
+   "file": "games/gs1/asm/080ecae8.s",
+   "note": "Ends `... bl sub_08002dd8 (x2) / bl sub_080cdbc0 / add sp, #116 / pop {r3,r5,r6,r7} / mov r8,r3 / mov r9,r5 / mov r10,r6 / mov r11,r7 / pop {r5,r6,r7} / pop {r0} / bx r0`. Exact mirror of the head's 116-byte frame and four-high-register save, same sub_08002dd8/sub_080cdbc0 cleanup idiom seen across the other mapped functions in this dossier batch. This is the sole real epilogue."
+  },
+  "span": {
+   "start": "0x080ec100",
+   "end_exclusive": "0x080ecef4",
+   "size_bytes": 3572,
+   "derivation": "end = start of next asm file games/gs1/asm/080ecef4.s, immediately following 080ecae8.s which owns the epilogue. size = 0x080ecef4 - 0x080ec100 = 0xdf4 = 3572."
+  },
+  "member_regions_in_order": [
+   {"addr": "0x080ec100", "symbol": "FunctionHead_080ec100", "file": "games/gs1/asm/080ec100.s", "role": "real prologue + setup, in-file literal pool"},
+   {"addr": "0x080ec190", "symbol": "Continuation_080ec190", "file": "games/gs1/asm/080ec190.s", "role": "branch continuation, in-file literal pool"},
+   {"addr": "0x080ec264", "symbol": "Continuation_080ec264", "file": "games/gs1/asm/080ec264.s", "role": "continuation ending on two branches, one to a shared exit (sub_080ec596, internal to the next file) and one tail branch to sub_080ec474 (the immediately following region)"},
+   {"addr": "0x080ec474", "symbol": "Region_080ec474", "file": "games/gs1/asm/080ec474.s", "role": "call-graph-reached prologue-less region"},
+   {"addr": "0x080ec728", "symbol": "Region_080ec728", "file": "games/gs1/asm/080ec728.s", "role": "call-graph-reached prologue-less region"},
+   {"addr": "0x080ecae8", "symbol": "Region_080ecae8", "file": "games/gs1/asm/080ecae8.s", "role": "converging tail ending in the real, shared epilogue"}
+  ]
+ },
+ "domain_evidence": [
+  "080ec100's own header comment marks it 'FunctionHead' with 'following literal pool retained in the same file' -- same authored classification as the other confirmed heads in this batch.",
+  "080ec264 ends with two branches: one to `sub_080ec596` (a label inside 080ec474.s reached only by this internal jump, i.e. a shared exit rather than a call) and one direct tail branch `b sub_080ec474` into the physically-next file -- the classic prologue-less fall-through/branch chain named in CONTRIBUTING.md.",
+  "The sub_08002dd8 (x2, small constant args) + sub_080cdbc0 cleanup sequence immediately preceding frame teardown is now confirmed identical across 080d765c, 080d0ee0(via 080d12a8), 080e15e8, 080e21e8, and this function -- a strong signal these are all instances of one shared per-battle-action or per-menu-frame finalizer routine, useful context for whoever reconstructs the C bodies."
+ ],
+ "scoring_command": "out/cargo-target/release/compiler candidate-show games/gs1/recon/en/main/080ec100.c --owner 080ec100 --size 3572",
+ "notes": [
+  "Map only, per task scope -- no C source drafted, no translation-units.json edited."
+ ]
+}

@@ -99,9 +99,43 @@ Promote declarations into a header only for a real shared interface, table
 family, or stable ABI layout. Owner-specific compiler shaping stays with its
 owner.
 
+## Translation units with holes
+
+The standard shape for main-image work is the declared translation unit: an
+address-ordered include composite under `games/<game>/recon/en/units/`,
+declared in `games/<game>/recon/translation-units.json`, holding every owner
+in its range. Exact owners are included as their production sources; owners
+still being recovered are included as their candidate drafts; owners with no
+C anywhere stay retained assembly and appear in the manifest as holes. This
+is the pret discipline at function granularity — the hole is always a whole
+function, never `asm()` inside a C body, and DONE never counts a hole.
+
+The point is authentic compile context. GCC 2.96 codegen depends on the
+translation unit around a function — symbol names, shared declarations,
+neighbors — so owners scored in isolation can shift when they later join
+their real unit. Scoring inside the unit removes that cliff, and the unit
+forces the true shared interface into the open: two members calling one
+function through different prototypes cannot coexist, and resolving the
+conflict recovers the original declaration. The first scaffolded unit proved
+this immediately — unifying `Func_08077008` on an `s32` argument kept both
+exact members exact, refuting one member's earlier `u16` guess.
+
+Scaffold a new unit with:
+
+```sh
+bun tools/unit-scaffold/scaffold.ts gs1 <unit-id> <start-hex> <end-hex>
+```
+
+then add the printed manifest entry, resolve declaration collisions in the
+composite or in shared headers, and score with `candidate-show --unit` until
+every previously exact owner is exact again. Unit boundaries are provisional
+working divisions, not recovered history — the original boundaries remain
+unknown; merge or split units freely as evidence accumulates.
+
 ## Recover and adopt
 
-1. Confirm a complete function owner. Main owners begin in retained assembly;
+1. Confirm a complete function owner, and place the work inside its declared
+   translation unit — scaffold one over the region first if none exists. Main owners begin in retained assembly;
    overlay owners use their audited overlay extent. Metrics account for bytes
    but do not prove function boundaries.
 2. Recover the algorithm, control flow, types, access widths, constants,

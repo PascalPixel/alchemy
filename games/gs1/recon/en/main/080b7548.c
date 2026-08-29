@@ -16,7 +16,8 @@ struct BattlePlacementState {
     struct BattlePlacementPayload placement;
 } __attribute__((packed));
 
-extern struct BattlePlacementState *Data_03001e74;
+#include "battle_work.h"
+#define BattlePlacement ((struct BattlePlacementState *)BattleWorkPtr)
 
 void Func_080b7424(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_positions);
 struct BattleMotionObject *Func_080b7dd0(s32 actor_id);
@@ -26,7 +27,7 @@ struct BattleMotionObject *Func_080b7dd0(s32 actor_id);
 void Summon_Refresh(void)
 {
     s32 slot;
-    struct BattlePlacementPayload *placement = &Data_03001e74->placement;
+    struct BattlePlacementPayload *placement = &BattlePlacement->placement;
     u16 actor_ids[14];
     s32 x_positions[6];
     s32 z_positions[6];

@@ -1,192 +1,635 @@
 {
-  "format": 4,
-  "kind": "reconstruction-composition-contracts",
-  "original_translation_units": "unknown",
-  "units": [
-    {
-      "id": "scheduler",
-      "game": "gs1",
-      "source": "games/gs1/src/runtime/scheduler/callback_scheduler.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": null,
-      "absolute_symbols": {
-        "Data_03001a10": {"address":"0x03001a10","kind":"data"},
-        "Data_03001a20": {"address":"0x03001a20","kind":"data"},
-        "Data_03001d34": {"address":"0x03001d34","kind":"data"},
-        "Data_04000208": {"address":"0x04000208","kind":"data"}
-      },
-      "local_symbols": [
-        {"address":"0x08004270","extent":2},
-        {"address":"0x08004274","extent":2}
-      ],
-      "owners": [
-        {"address":"0x080040e8","extent":68,"state":"exact-c"},
-        {"address":"0x0800412c","extent":24,"state":"exact-c"},
-        {"address":"0x08004144","extent":84,"state":"exact-c"},
-        {"address":"0x08004198","extent":64,"state":"exact-c"},
-        {"address":"0x080041d8","extent":150,"state":"exact-c"},
-        {"address":"0x08004278","extent":80,"state":"exact-c"},
-        {"address":"0x080042c8","extent":68,"state":"exact-c"},
-        {"address":"0x0800430c","extent":76,"state":"exact-c"},
-        {"address":"0x08004358","extent":68,"state":"exact-c"},
-        {"address":"0x0800439c","extent":68,"state":"exact-c"},
-        {"address":"0x080043e0","extent":64,"state":"exact-c"}
-      ]
+ "format": 4,
+ "kind": "reconstruction-composition-contracts",
+ "original_translation_units": "unknown",
+ "units": [
+  {
+   "id": "scheduler",
+   "game": "gs1",
+   "source": "games/gs1/src/runtime/scheduler/callback_scheduler.c",
+   "compiler_route": "canonical-gcc296",
+   "overlay": null,
+   "absolute_symbols": {
+    "Data_03001a10": {
+     "address": "0x03001a10",
+     "kind": "data"
     },
-    {
-      "id": "video-dma-queue",
-      "game": "gs1",
-      "source": "games/gs1/recon/en/units/video_dma_queue.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": null,
-      "absolute_symbols": {
-        "TransferCommandExecutor_Size": {"address":"0x00000068","kind":"data"},
-        "LoadedRuntime_Size": {"address":"0x000000e0","kind":"data"},
-        "Data_02002090": {"address":"0x02002090","kind":"data"},
-        "Data_03001400_a": {"address":"0x03001400","kind":"data"},
-        "Data_03001810": {"address":"0x03001810","kind":"data"},
-        "Data_03001ac0": {"address":"0x03001ac0","kind":"data"},
-        "Data_03001aec": {"address":"0x03001aec","kind":"data"},
-        "Data_03001b10": {"address":"0x03001b10","kind":"data"},
-        "Data_03001c98": {"address":"0x03001c98","kind":"data"},
-        "Data_03001c98_a": {"address":"0x03001c98","kind":"data"},
-        "Data_03001ca8": {"address":"0x03001ca8","kind":"data"},
-        "Data_03001cb8_a": {"address":"0x03001cb8","kind":"data"},
-        "Data_03001cd4": {"address":"0x03001cd4","kind":"data"},
-        "Data_03001cf8": {"address":"0x03001cf8","kind":"data"},
-        "Data_03001d00": {"address":"0x03001d00","kind":"data"},
-        "Data_03001d00_a": {"address":"0x03001d00","kind":"data"},
-        "Data_03001d40": {"address":"0x03001d40","kind":"data"},
-        "Data_04000208": {"address":"0x04000208","kind":"data"}
-      },
-      "local_symbols": [],
-      "owners": [
-        {"address":"0x08003810","extent":44,"state":"exact-c"},
-        {"address":"0x0800383c","extent":64,"state":"retained-assembly"},
-        {"address":"0x0800387c","extent":64,"state":"retained-assembly"},
-        {"address":"0x080038bc","extent":64,"state":"retained-assembly"},
-        {"address":"0x080038fc","extent":64,"state":"retained-assembly"},
-        {"address":"0x0800393c","extent":64,"state":"retained-assembly"},
-        {"address":"0x0800397c","extent":64,"state":"retained-assembly"},
-        {"address":"0x080039bc","extent":64,"state":"retained-assembly"},
-        {"address":"0x080039fc","extent":64,"state":"retained-assembly"},
-        {"address":"0x08003a3c","extent":64,"state":"retained-assembly"},
-        {"address":"0x08003a7c","extent":96,"state":"retained-assembly"},
-        {"address":"0x08003adc","extent":146,"state":"exact-c"},
-        {"address":"0x08003b70","extent":66,"state":"exact-c"},
-        {"address":"0x08003bb4","extent":66,"state":"exact-c"},
-        {"address":"0x08003bf8","extent":66,"state":"exact-c"},
-        {"address":"0x08003c3c","extent":66,"state":"exact-c"},
-        {"address":"0x08003c80","extent":96,"state":"exact-c"},
-        {"address":"0x08003ce0","extent":36,"state":"exact-c"},
-        {"address":"0x08003d04","extent":36,"state":"exact-c"},
-        {"address":"0x08003d28","extent":196,"state":"exact-c"},
-        {"address":"0x08003dec","extent":36,"state":"exact-c"},
-        {"address":"0x08003e10","extent":72,"state":"retained-assembly"},
-        {"address":"0x08003e58","extent":124,"state":"retained-assembly"}
-      ]
+    "Data_03001a20": {
+     "address": "0x03001a20",
+     "kind": "data"
     },
-    {
-      "id": "save-flash-read-routines",
-      "game": "gs1",
-      "source": "games/gs1/src/save/flash_read_routines.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": null,
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {"address":"0x08006a78","extent":68,"state":"exact-c"},
-        {"address":"0x08006abc","extent":4,"state":"exact-c"},
-        {"address":"0x08006ac0","extent":56,"state":"exact-c"}
-      ]
+    "Data_03001d34": {
+     "address": "0x03001d34",
+     "kind": "data"
     },
-    {
-      "id": "save-state",
-      "game": "gs1",
-      "source": "games/gs1/recon/en/units/save_state.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": null,
-      "absolute_symbols": {
-        "Data_02004c14": {"address":"0x02004c14","kind":"data"},
-        "Data_03001f1c_a": {"address":"0x03001f1c","kind":"data"}
-      },
-      "local_symbols": [],
-      "owners": [
-        {"address":"0x080056cc","extent":322,"state":"retained-assembly"},
-        {"address":"0x08005810","extent":88,"state":"exact-c"},
-        {"address":"0x08005868","extent":68,"state":"exact-c"},
-        {"address":"0x080058ac","extent":88,"state":"retained-assembly"},
-        {"address":"0x08005904","extent":28,"state":"exact-c"},
-        {"address":"0x08005920","extent":344,"state":"retained-assembly"},
-        {"address":"0x08005a78","extent":72,"state":"retained-assembly"},
-        {"address":"0x08005ac0","extent":30,"state":"exact-c"},
-        {"address":"0x08005ae0","extent":68,"state":"exact-c"},
-        {"address":"0x08005b24","extent":64,"state":"exact-c"},
-        {"address":"0x08005b64","extent":164,"state":"retained-assembly"},
-        {"address":"0x08005c08","extent":34,"state":"exact-c"},
-        {"address":"0x08005c2c","extent":60,"state":"exact-c"},
-        {"address":"0x08005c68","extent":144,"state":"retained-assembly"}
-      ]
-    },
-    {
-      "id": "serial-runtime",
-      "game": "gs1",
-      "source": "games/gs1/recon/en/units/serial_runtime.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": null,
-      "absolute_symbols": {
-        "Data_00000000": {"address":"0x00000000","kind":"data"},
-        "Data_000000c0": {"address":"0x000000c0","kind":"data"},
-        "Data_02002008": {"address":"0x02002008","kind":"data"},
-        "Data_02002080": {"address":"0x02002080","kind":"data"},
-        "Data_02002220": {"address":"0x02002220","kind":"data"},
-        "Data_02002238": {"address":"0x02002238","kind":"data"},
-        "Data_020023ac": {"address":"0x020023ac","kind":"data"},
-        "Data_03001cb0_a": {"address":"0x03001cb0","kind":"data"},
-        "Data_03001f64": {"address":"0x03001f64","kind":"data"},
-        "Data_04000208": {"address":"0x04000208","kind":"data"}
-      },
-      "local_symbols": [],
-      "owners": [
-        {"address":"0x08005d10","extent":350,"state":"retained-assembly"},
-        {"address":"0x08005e70","extent":24,"state":"exact-c"},
-        {"address":"0x08005e88","extent":86,"state":"exact-c"},
-        {"address":"0x08005ee0","extent":234,"state":"retained-assembly"},
-        {"address":"0x08005fcc","extent":186,"state":"retained-assembly"},
-        {"address":"0x080060e8","extent":116,"state":"retained-assembly"},
-        {"address":"0x0800615c","extent":228,"state":"retained-assembly"},
-        {"address":"0x08006240","extent":280,"state":"exact-c"},
-        {"address":"0x08006358","extent":44,"state":"exact-c"},
-        {"address":"0x08006384","extent":56,"state":"exact-c"},
-        {"address":"0x080063bc","extent":76,"state":"retained-assembly"},
-        {"address":"0x08006408","extent":80,"state":"retained-assembly"},
-        {"address":"0x08006458","extent":48,"state":"exact-c"},
-        {"address":"0x08006488","extent":48,"state":"exact-c"},
-        {"address":"0x080064b8","extent":60,"state":"exact-c"},
-        {"address":"0x080064f4","extent":40,"state":"exact-c"},
-        {"address":"0x0800651c","extent":64,"state":"retained-assembly"}
-      ]
-    },
-    {
-      "id": "scene-event-runtime",
-      "game": "gs1",
-      "source": "games/gs1/src/overlays/scene_event_runtime/accessors.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": "resource_37b",
-      "absolute_symbols": {
-        "SceneEventRuntime_ScriptData": {"address":"0x0200a5c0","kind":"data"},
-        "SceneEventRuntime_MessageData": {"address":"0x0200a698","kind":"data"},
-        "SceneEventRuntime_ActorData": {"address":"0x0200a6bc","kind":"data"},
-        "SceneEventRuntime_EffectData": {"address":"0x0200a80c","kind":"data"}
-      },
-      "local_symbols": [],
-      "owners": [
-        {"address":"0x02000030","extent":8,"state":"exact-c"},
-        {"address":"0x02000038","extent":4,"state":"exact-c"},
-        {"address":"0x0200003c","extent":8,"state":"exact-c"},
-        {"address":"0x02000044","extent":8,"state":"exact-c"},
-        {"address":"0x0200004c","extent":8,"state":"exact-c"}
-      ]
+    "Data_04000208": {
+     "address": "0x04000208",
+     "kind": "data"
     }
-  ]
+   },
+   "local_symbols": [
+    {
+     "address": "0x08004270",
+     "extent": 2
+    },
+    {
+     "address": "0x08004274",
+     "extent": 2
+    }
+   ],
+   "owners": [
+    {
+     "address": "0x080040e8",
+     "extent": 68,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x0800412c",
+     "extent": 24,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08004144",
+     "extent": 84,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08004198",
+     "extent": 64,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x080041d8",
+     "extent": 150,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08004278",
+     "extent": 80,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x080042c8",
+     "extent": 68,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x0800430c",
+     "extent": 76,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08004358",
+     "extent": 68,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x0800439c",
+     "extent": 68,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x080043e0",
+     "extent": 64,
+     "state": "exact-c"
+    }
+   ]
+  },
+  {
+   "id": "video-dma-queue",
+   "game": "gs1",
+   "source": "games/gs1/recon/en/units/video_dma_queue.c",
+   "compiler_route": "canonical-gcc296",
+   "overlay": null,
+   "absolute_symbols": {
+    "TransferCommandExecutor_Size": {
+     "address": "0x00000068",
+     "kind": "data"
+    },
+    "LoadedRuntime_Size": {
+     "address": "0x000000e0",
+     "kind": "data"
+    },
+    "Data_02002090": {
+     "address": "0x02002090",
+     "kind": "data"
+    },
+    "Data_03001400_a": {
+     "address": "0x03001400",
+     "kind": "data"
+    },
+    "Data_03001810": {
+     "address": "0x03001810",
+     "kind": "data"
+    },
+    "Data_03001ac0": {
+     "address": "0x03001ac0",
+     "kind": "data"
+    },
+    "Data_03001aec": {
+     "address": "0x03001aec",
+     "kind": "data"
+    },
+    "Data_03001b10": {
+     "address": "0x03001b10",
+     "kind": "data"
+    },
+    "Data_03001c98": {
+     "address": "0x03001c98",
+     "kind": "data"
+    },
+    "Data_03001c98_a": {
+     "address": "0x03001c98",
+     "kind": "data"
+    },
+    "Data_03001ca8": {
+     "address": "0x03001ca8",
+     "kind": "data"
+    },
+    "Data_03001cb8_a": {
+     "address": "0x03001cb8",
+     "kind": "data"
+    },
+    "Data_03001cd4": {
+     "address": "0x03001cd4",
+     "kind": "data"
+    },
+    "Data_03001cf8": {
+     "address": "0x03001cf8",
+     "kind": "data"
+    },
+    "Data_03001d00": {
+     "address": "0x03001d00",
+     "kind": "data"
+    },
+    "Data_03001d00_a": {
+     "address": "0x03001d00",
+     "kind": "data"
+    },
+    "Data_03001d40": {
+     "address": "0x03001d40",
+     "kind": "data"
+    },
+    "Data_04000208": {
+     "address": "0x04000208",
+     "kind": "data"
+    }
+   },
+   "local_symbols": [],
+   "owners": [
+    {
+     "address": "0x08003810",
+     "extent": 44,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x0800383c",
+     "extent": 64,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x0800387c",
+     "extent": 64,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x080038bc",
+     "extent": 64,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x080038fc",
+     "extent": 64,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x0800393c",
+     "extent": 64,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x0800397c",
+     "extent": 64,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x080039bc",
+     "extent": 64,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x080039fc",
+     "extent": 64,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x08003a3c",
+     "extent": 64,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x08003a7c",
+     "extent": 96,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x08003adc",
+     "extent": 146,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08003b70",
+     "extent": 66,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08003bb4",
+     "extent": 66,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08003bf8",
+     "extent": 66,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08003c3c",
+     "extent": 66,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08003c80",
+     "extent": 96,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08003ce0",
+     "extent": 36,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08003d04",
+     "extent": 36,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08003d28",
+     "extent": 196,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08003dec",
+     "extent": 36,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08003e10",
+     "extent": 72,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x08003e58",
+     "extent": 124,
+     "state": "retained-assembly"
+    }
+   ]
+  },
+  {
+   "id": "save-flash-read-routines",
+   "game": "gs1",
+   "source": "games/gs1/src/save/flash_read_routines.c",
+   "compiler_route": "canonical-gcc296",
+   "overlay": null,
+   "absolute_symbols": {},
+   "local_symbols": [],
+   "owners": [
+    {
+     "address": "0x08006a78",
+     "extent": 68,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08006abc",
+     "extent": 4,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08006ac0",
+     "extent": 56,
+     "state": "exact-c"
+    }
+   ]
+  },
+  {
+   "id": "save-state",
+   "game": "gs1",
+   "source": "games/gs1/recon/en/units/save_state.c",
+   "compiler_route": "canonical-gcc296",
+   "overlay": null,
+   "absolute_symbols": {
+    "Data_02004c14": {
+     "address": "0x02004c14",
+     "kind": "data"
+    },
+    "Data_03001f1c_a": {
+     "address": "0x03001f1c",
+     "kind": "data"
+    }
+   },
+   "local_symbols": [],
+   "owners": [
+    {
+     "address": "0x080056cc",
+     "extent": 322,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x08005810",
+     "extent": 88,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08005868",
+     "extent": 68,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x080058ac",
+     "extent": 88,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x08005904",
+     "extent": 28,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08005920",
+     "extent": 344,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x08005a78",
+     "extent": 72,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x08005ac0",
+     "extent": 30,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08005ae0",
+     "extent": 68,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08005b24",
+     "extent": 64,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08005b64",
+     "extent": 164,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x08005c08",
+     "extent": 34,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08005c2c",
+     "extent": 60,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08005c68",
+     "extent": 144,
+     "state": "retained-assembly"
+    }
+   ]
+  },
+  {
+   "id": "serial-runtime",
+   "game": "gs1",
+   "source": "games/gs1/recon/en/units/serial_runtime.c",
+   "compiler_route": "canonical-gcc296",
+   "overlay": null,
+   "absolute_symbols": {
+    "Data_00000000": {
+     "address": "0x00000000",
+     "kind": "data"
+    },
+    "Data_000000c0": {
+     "address": "0x000000c0",
+     "kind": "data"
+    },
+    "Data_02002008": {
+     "address": "0x02002008",
+     "kind": "data"
+    },
+    "Data_02002080": {
+     "address": "0x02002080",
+     "kind": "data"
+    },
+    "Data_02002220": {
+     "address": "0x02002220",
+     "kind": "data"
+    },
+    "Data_02002238": {
+     "address": "0x02002238",
+     "kind": "data"
+    },
+    "Data_020023ac": {
+     "address": "0x020023ac",
+     "kind": "data"
+    },
+    "Data_03001cb0_a": {
+     "address": "0x03001cb0",
+     "kind": "data"
+    },
+    "Data_03001f64": {
+     "address": "0x03001f64",
+     "kind": "data"
+    },
+    "Data_04000208": {
+     "address": "0x04000208",
+     "kind": "data"
+    }
+   },
+   "local_symbols": [],
+   "owners": [
+    {
+     "address": "0x08005d10",
+     "extent": 350,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x08005e70",
+     "extent": 24,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08005e88",
+     "extent": 86,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08005ee0",
+     "extent": 234,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x08005fcc",
+     "extent": 186,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x080060e8",
+     "extent": 116,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x0800615c",
+     "extent": 228,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x08006240",
+     "extent": 280,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08006358",
+     "extent": 44,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08006384",
+     "extent": 56,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x080063bc",
+     "extent": 76,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x08006408",
+     "extent": 80,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x08006458",
+     "extent": 48,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x08006488",
+     "extent": 48,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x080064b8",
+     "extent": 60,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x080064f4",
+     "extent": 40,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x0800651c",
+     "extent": 64,
+     "state": "retained-assembly"
+    }
+   ]
+  },
+  {
+   "id": "scene-event-runtime",
+   "game": "gs1",
+   "source": "games/gs1/src/overlays/scene_event_runtime/accessors.c",
+   "compiler_route": "canonical-gcc296",
+   "overlay": "resource_37b",
+   "absolute_symbols": {
+    "SceneEventRuntime_ScriptData": {
+     "address": "0x0200a5c0",
+     "kind": "data"
+    },
+    "SceneEventRuntime_MessageData": {
+     "address": "0x0200a698",
+     "kind": "data"
+    },
+    "SceneEventRuntime_ActorData": {
+     "address": "0x0200a6bc",
+     "kind": "data"
+    },
+    "SceneEventRuntime_EffectData": {
+     "address": "0x0200a80c",
+     "kind": "data"
+    }
+   },
+   "local_symbols": [],
+   "owners": [
+    {
+     "address": "0x02000030",
+     "extent": 8,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x02000038",
+     "extent": 4,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x0200003c",
+     "extent": 8,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x02000044",
+     "extent": 8,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x0200004c",
+     "extent": 8,
+     "state": "exact-c"
+    }
+   ]
+  },
+  {
+   "id": "battle-summon",
+   "game": "gs1",
+   "source": "games/gs1/recon/en/units/battle-summon.c",
+   "compiler_route": "canonical-gcc296",
+   "overlay": null,
+   "absolute_symbols": {},
+   "local_symbols": [],
+   "owners": [
+    {
+     "address": "0x080b7424",
+     "extent": 240,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x080b7514",
+     "extent": 52,
+     "state": "exact-c"
+    },
+    {
+     "address": "0x080b7548",
+     "extent": 148,
+     "state": "retained-assembly"
+    },
+    {
+     "address": "0x080b75dc",
+     "extent": 304,
+     "state": "retained-assembly"
+    }
+   ]
+  }
+ ]
 }

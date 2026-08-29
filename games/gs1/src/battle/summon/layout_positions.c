@@ -5,7 +5,7 @@ struct BattleActorDefinition {
     u8 class_id;
 };
 
-struct BattleActorDefinition *Func_08077008(u16 actor_id);
+struct BattleActorDefinition *Func_08077008(s32 actor_id);
 s32 Func_080c23c0(u8 class_id);
 
 #define LayoutSummonPositions Func_080b7424

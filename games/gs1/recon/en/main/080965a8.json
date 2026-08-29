@@ -42,6 +42,27 @@
     {
       "experiment": "-fno-expensive-optimizations flag",
       "result": "89 differing halfwords but wrong_instructions rises to 41 -- no net improvement"
+    },
+    {
+      "measured": "2026-08-29",
+      "experiment": "Replace slot/children_ptr split with a single children_ptr pointer reused (post-increment) in both the spawn loop and the destroy loop, removing the separate slot variable",
+      "result": "regresses to 203 differing halfwords / 113 wrong instructions -- disturbs the array-address recomputation shape entirely; rejected"
+    },
+    {
+      "measured": "2026-08-29",
+      "experiment": "Convert the base+0x58/base+152 pointer-chase read at the top of the function into an alternate but semantically identical parenthesization/spacing (single combined cast chain)",
+      "result": "regresses to 197 differing halfwords -- sed-applied reformat altered operator grouping enough to change codegen; rejected"
+    },
+    {
+      "measured": "2026-08-29",
+      "experiment": "Convert the spawn do-while(count=7) loop into an equivalent for(count=7; count>=0; count--) loop",
+      "result": "identical 89 halfwords -- do-while and for produce identical codegen here, no effect on the base/children_ptr register-vs-stack allocation",
+      "kept": false
+    },
+    {
+      "measured": "2026-08-29",
+      "experiment": "Type-width/style sweep on base, ctx, prev, acc, type, child, work, state (s32 vs void* vs s8*, cast placement variants, hex vs decimal literal spellings, arithmetic-equivalent expression rewrites for count/last/state/work stepping, hoisting Data_02000240[125] into a temp, wrapping counters in identity arithmetic like count=24-1) -- roughly 30 distinct variants",
+      "result": "all identical 89 halfwords (a few malformed sed rewrites regressed and were discarded, not counted as real hypotheses) -- confirms the residual is the compiler's own register allocator/scheduler decision (base kept in fp vs reference's stack spill at sp+4/sp+8, and a second live copy of the children array base pointer in fp for the destroy loop) and is not reachable through any C89 source-level restructuring tried; consistent with and reinforces rejected experiments #1-4 above"
     }
   ],
   "notes": [

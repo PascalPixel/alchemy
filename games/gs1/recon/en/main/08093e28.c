@@ -47,10 +47,10 @@ void Func_08091750(void);
 s32 Func_08093e28(void)
 {
     struct GridEffectObject_08093e28 *object = Func_08092054(Data_02000240[125]);
-    s32 tile_x = TILE_HI(object, 8) & 0xfff0;
-    s32 tile_z = TILE_HI(object, 16) & 0xfff0;
-    s32 grid_x = 8 + tile_x;
-    s32 grid_z = 8 + tile_z;
+    s32 grid_x = 8 + (TILE_HI(object, 8) & 0xfff0);
+    s32 grid_z = 8 + (TILE_HI(object, 16) & 0xfff0);
+    s32 tile_x = grid_x - 8;
+    s32 tile_z = grid_z - 8;
     s32 result;
 
     Func_080916b0();
@@ -71,10 +71,7 @@ s32 Func_08093e28(void)
 
         index = index_x + (index_z << 7);
 
-        if (Data_02010000[index].kind != Data_02010200[index].kind) {
-            Func_08091750();
-            return -1;
-        } else {
+        if (Data_02010000[index].kind == Data_02010200[index].kind) {
             s32 position[6];
 
             position[0] = object->x;
@@ -98,6 +95,9 @@ s32 Func_08093e28(void)
                 object->y + (s32)0xfff00000, (grid_z << 16) + 0x100000);
             Func_080923c4(Data_02000240[125]);
             ACTIVE_FLAG = 1;
+        } else {
+            Func_08091750();
+            return -1;
         }
     } else {
         Func_08009080(object, 10);

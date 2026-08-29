@@ -71,10 +71,10 @@ void Owner_InitRecords(void)
                 state->class_id = (u8)*remote;
                 tmpl = Func_08078ed8(state->class_id);
 
-                for (i = 14; i >= 0; i--)
+                for (i = 14; i != -1; i--)
                     state->inventory[i] = 0;
 
-                for (i = 0; i <= 12; i++) {
+                for (i = 0; i != 13; i++) {
                     slot = Inventory_Add(*remote, tmpl->items[i] & 0x1ff);
                     Inventory_Equip(*remote, slot);
                 }

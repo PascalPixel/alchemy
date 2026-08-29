@@ -164,7 +164,7 @@ fn declaration<'a>(
     name: &str,
 ) -> Result<(Range<usize>, &'a str), String> {
     let pattern = regex(&format!(
-        r"(?m)^[ \t]+(?:struct[ \t]+[A-Za-z_][A-Za-z0-9_]*|(?:u|s)(?:8|16|32)|void)[ \t*]+{}[ \t]*;[ \t]*(?:\n|$)",
+        r"(?m)^[ \t]+(?:struct[ \t]+[A-Za-z_][A-Za-z0-9_]*|(?:u|s)(?:8|16|32)|void)[ \t*]+{}[ \t]*(?:\[[0-9]+\])?[ \t]*;[ \t]*(?:\n|$)",
         regex::escape(name)
     ));
     let found = only(

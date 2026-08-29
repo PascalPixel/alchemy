@@ -1,81 +1,73 @@
 // Scaffold a declared translation unit over a contiguous main-image range.
 //
-//   bun tools/unit-scaffold/scaffold.ts gs1 <unit-id> <start-hex> <end-hex>
+//   bun tools/unit-scaffold/scaffold.ts <game> <unit-id> <start-hex> <end-hex> [--apply]
 //
-// Emits games/<game>/recon/en/units/<unit-id>.c — an address-ordered include
-// composite of the range's production sources and candidate drafts — and
-// prints the manifest entry to add to games/<game>/recon/translation-units.json.
-// Owners with no C anywhere become holes: they stay retained assembly and are
-// listed in the manifest only. The tool never edits the manifest itself, and
-// the composite is a starting point: resolving declaration collisions between
-// the included files is the recovering agent's work, scored with
-// candidate-show --unit until every previously exact owner is exact again.
+// Reads the owner inventory for the range and emits
+// games/<game>/recon/en/units/<unit-id>.c — an address-ordered include
+// composite of the range's production sources and candidate drafts. Owners
+// with no C anywhere are holes: retained assembly, listed in the manifest
+// only. Owners whose name is registered while production stays assembly fit
+// neither manifest state and are skipped entirely. With --apply the manifest
+// entry is appended to games/<game>/recon/translation-units.json; without it
+// the entry is printed. The composite is a starting point: resolving
+// declaration collisions between the included files is the recovering
+// agent's work, scored with candidate-show --unit until every previously
+// exact owner is exact again.
 const fs = require("fs");
 
-const [, , game, unitId, startHex, endHex] = process.argv;
+const argv = process.argv.filter((a: string) => a !== "--apply");
+const apply = process.argv.includes("--apply");
+const [, , game, unitId, startHex, endHex] = argv;
 if (!endHex) {
   console.error(
-    "usage: bun tools/unit-scaffold/scaffold.ts <game> <unit-id> <start-hex> <end-hex>",
+    "usage: bun tools/unit-scaffold/scaffold.ts <game> <unit-id> <start-hex> <end-hex> [--apply]",
   );
   process.exit(2);
 }
 const start = parseInt(startHex, 16);
 const end = parseInt(endHex, 16);
 
-const sourcePaths = JSON.parse(
-  fs.readFileSync(`games/${game}/source-paths.json`, "utf8"),
+const inventory = JSON.parse(
+  fs.readFileSync(`out/${game}-en/full/rebuilt.owner-inventory.json`, "utf8"),
 );
 type Row = {
   address: number;
   hex: string;
   include: string | null;
   state: string;
-  name?: string;
+  extent: number;
 };
 const rows: Row[] = [];
+const skipped: string[] = [];
 
-for (const [owner, value] of Object.entries(sourcePaths.owners) as [
-  string,
-  any,
-][]) {
-  const [image, hex] = owner.split(":");
-  if (image !== "main") continue;
-  const address = parseInt(hex, 16);
+for (const owner of inventory.owners) {
+  if (owner.container.kind !== "main-rom") continue;
+  const address = parseInt(owner.address, 16);
   if (address < start || address >= end) continue;
-  const source = typeof value === "string" ? value : value.source;
-  const name = typeof value === "string" ? undefined : value.name;
-  const include = source
-    ? source.startsWith("unidentified/")
-      ? `../../../src/${source.replace("unidentified/main/", "unidentified/")}`
-      : `../../../src/${source}`
-    : fs.existsSync(`games/${game}/recon/en/main/${hex}.c`)
-      ? `../main/${hex}.c`
-      : null;
+  const hex = address.toString(16).padStart(8, "0");
+  const production = owner.production;
+  const registered = owner.registration.source_path !== null;
+  const exact = production.state === "exact-c";
+  if (registered && !exact) {
+    // Named while still assembly: fits neither manifest state.
+    skipped.push(hex);
+    continue;
+  }
+  let include: string | null = null;
+  if (exact && production.source && production.source.endsWith(".c")) {
+    include = `../../../../${production.source.replace(`games/${game}/`, "")}`;
+  } else if (fs.existsSync(`games/${game}/recon/en/main/${hex}.c`)) {
+    include = `../main/${hex}.c`;
+  }
   rows.push({
     address,
     hex,
     include,
-    state: source ? "exact-c" : "retained-assembly",
-    name,
-  });
-}
-
-// candidates in range that have no register entry at all
-for (const file of fs.readdirSync(`games/${game}/recon/en/main`)) {
-  const m = file.match(/^(08[0-9a-f]{6})\.c$/);
-  if (!m) continue;
-  const address = parseInt(m[1], 16);
-  if (address < start || address >= end) continue;
-  if (rows.some((r) => r.address === address)) continue;
-  rows.push({
-    address,
-    hex: m[1],
-    include: `../main/${m[1]}.c`,
-    state: "retained-assembly",
+    state: exact ? "exact-c" : "retained-assembly",
+    extent: production.extent_bytes,
   });
 }
 rows.sort((a, b) => a.address - b.address);
-
 if (!rows.length) {
   console.error("no owners in range");
   process.exit(1);
@@ -98,20 +90,38 @@ for (const r of rows) {
 const out = `games/${game}/recon/en/units/${unitId}.c`;
 fs.writeFileSync(out, lines.join("\n") + "\n");
 
-const manifest = {
+const entry = {
   id: unitId,
   game,
   source: out,
   compiler_route: "canonical-gcc296",
   overlay: null,
   absolute_symbols: {},
-  local_symbols: {},
+  local_symbols: [],
   owners: rows.map((r) => ({
     address: `0x${r.hex}`,
-    extent: 0,
+    extent: r.extent,
     state: r.state,
   })),
 };
-console.log(`wrote ${out} (${rows.length} owners)`);
-console.log("manifest entry (fill extents from the owner inventory):");
-console.log(JSON.stringify(manifest, null, 1));
+console.log(
+  `wrote ${out}: ${rows.length} owners (` +
+    `${rows.filter((r) => r.state === "exact-c").length} exact, ` +
+    `${rows.filter((r) => r.include && r.state !== "exact-c").length} candidates, ` +
+    `${rows.filter((r) => !r.include).length} holes` +
+    (skipped.length ? `; skipped named-assembly: ${skipped.join(" ")}` : "") +
+    `)`,
+);
+if (apply) {
+  const manifestPath = `games/${game}/recon/translation-units.json`;
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+  if (manifest.units.some((u: any) => u.id === unitId)) {
+    console.error(`unit ${unitId} already declared`);
+    process.exit(1);
+  }
+  manifest.units.push(entry);
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 1) + "\n");
+  console.log(`declared ${unitId} in ${manifestPath}`);
+} else {
+  console.log(JSON.stringify(entry, null, 1));
+}

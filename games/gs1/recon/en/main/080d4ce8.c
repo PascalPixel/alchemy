@@ -155,7 +155,9 @@ void Func_080d4ce8(void *object)
     u8 *cell;
     void *cursor;
     void *cursor2;
+    void *cursor3;
     s32 screen[3];
+    s32 *screen_ptr;
     s32 flag;
     s32 member_index;
     s32 scan_index;
@@ -242,14 +244,31 @@ void Func_080d4ce8(void *object)
             if (Data_080ee29a[efx->layers] != 0) {
                 flag = frame & 1;
                 cursor = work + 0x7080;
-                cursor2 = work + 0x6e80;
+                /* Real value read straight off the asm immediates at
+                   games/gs1/asm/080d4ce8.s lines 245-259: movs r2,#221;
+                   lsls r2,r2,#4 (221*16 = 0xdd0); add r2,r11 -- work+0xdd0,
+                   not the previous guessed work+0x6e80.  Spilled to
+                   sp+16 and reloaded at lines 336/349 as the *second*
+                   Func_080072f4 call's `work` argument in the flag!=0
+                   path only; the flag==0 path (asm .L_080d4f90, lines
+                   352-377) loads a *different* work-relative offset from
+                   this region's own gap literal pool: confirmed by
+                   objdump'ing out/gs1-en/asm/080d4ce8.o
+                   (--disassemble-zeroes -Mforce-thumb) -- the `ldr
+                   r5,[pc,#236]` at local offset 0x2a8 targets local
+                   offset 0x398, which lands in the ROM gap pool word
+                   list from attempt_7 at index (0x398-0x36c)/4 = 11,
+                   i.e. word value 0x000010b4 (4276). */
+                cursor2 = work + 0xdd0;
+                cursor3 = work + 0x10b4;
                 cell = &Data_080ee2a9[0];
                 slot = 0;
 
                 do {
-                    Func_080e3944(cursor, screen);
-                    screen[0] = screen[0] / 2;
-                    screen[1] -= 8;
+                    screen_ptr = screen;
+                    Func_080e3944(cursor, screen_ptr);
+                    screen_ptr[0] = screen_ptr[0] / 2;
+                    screen_ptr[1] -= 8;
 
                     if (frame == cell[0]) {
                         Func_080f9010(145);
@@ -264,21 +283,21 @@ void Func_080d4ce8(void *object)
                         wide = spin;
                         (void)wide;
 
-                        Func_080072f4(canvas, work, screen[0] - 17,
-                            screen[1] - 104, 34, 0, 34, 0, 0);
-                        Func_080072f4(canvas, work, screen[0] - 17,
-                            screen[1] - 104 + wide, 34, 0, 34, 0, 0);
+                        Func_080072f4(canvas, work, screen_ptr[0] - 17,
+                            screen_ptr[1] - 104, 34, 0, 34, 0, 0);
+                        Func_080072f4(canvas, work, screen_ptr[0] - 17,
+                            screen_ptr[1] - 104 + wide, 34, 0, 34, 0, 0);
 
                         if (flag != 0) {
-                            Func_080072f4(canvas, work, screen[0] - 20,
-                                screen[1] - 24, 20, 37, 20, 37, 0);
-                            Func_080072f4(canvas, work, screen[0] - 20,
-                                screen[1] - 24, 20, 37, 20, 37, 0);
+                            Func_080072f4(canvas, cursor2, screen_ptr[0] - 20,
+                                screen_ptr[1] - 24, 20, 37, 20, 37, 0);
+                            Func_080072f4(canvas, cursor2, screen_ptr[0] - 20,
+                                screen_ptr[1] - 24, 20, 37, 20, 37, 0);
                         } else {
-                            Func_080072f4(canvas, work, screen[0] - 20,
-                                screen[1] - 24, 20, 37, 20, 37, 0);
-                            Func_080072f4(canvas, work, screen[0] - 20,
-                                screen[1] - 24, 20, 37, 20, 37, 0);
+                            Func_080072f4(canvas, cursor3, screen_ptr[0] - 20,
+                                screen_ptr[1] - 24, 20, 37, 20, 37, 0);
+                            Func_080072f4(canvas, cursor3, screen_ptr[0] - 20,
+                                screen_ptr[1] - 24, 20, 37, 20, 37, 0);
                         }
                     }
 
@@ -324,9 +343,9 @@ void Func_080d4ce8(void *object)
                         rng = Func_08004458();
                         spawn_mask = rng & 0x3ff;
                         rng = Func_08004458();
-                        free_slot->x = screen[0] << 8;
+                        free_slot->x = screen_ptr[0] << 8;
                         magnitude = spawn_mask;
-                        free_slot->y = (screen[1] << 8) + 4096;
+                        free_slot->y = (screen_ptr[1] << 8) + 4096;
                         spawn_angle = (rng & 0x7fff) + (s32)0xffffc000;
                         svx = Func_08002322(spawn_angle);
                         magnitude += 32;

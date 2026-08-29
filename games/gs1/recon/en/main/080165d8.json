@@ -28,5 +28,10 @@
   "notes": [
     "The base pointer *(0x03001e8c) matches the 'runtime globals table' also referenced (at different fixed offsets, e.g. entry 12 = 0x03001ebc) by several already-recovered overlay owners, so this slot array is very likely part of the same global runtime-workspace table; not otherwise cross-checked here.",
     "Recovered only from retained owner assembly, cross-references to the 0x03001e8c/0x03001ebc runtime-table idiom used by other already-recovered owners, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used. Zero DONE bytes are claimed."
-  ]
+  ],
+  "sr_route_evidence": {
+    "verdict": "COINCIDENTAL",
+    "measured": "2026-08-29",
+    "note": "asm/080165d8.s loop bodies (.L0-.L7) are all short and mixed with calls/loads; no retained empty countdown loop or clear non-strength-reduced addressing shape found by static inspection. No dual-compile performed. Provisional COINCIDENTAL pending compiler diff."
+  }
 }

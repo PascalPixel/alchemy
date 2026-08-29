@@ -19,5 +19,10 @@
     "Reordering the Func_08015068 call to precede the page/entry_count field reads (matching the reference's call-right-after-Func_08077008-return sequencing) and adding the (u8) truncation on `visible` both measurably improved the score (wrong_instructions 92->102 was a regression from an earlier ordering attempt, corrected back down to 98 with the truncation fix); the algorithm, all constants, and all seven call sites already match. Remaining divergence is concentrated in which physical register holds `state` vs `first` vs `unit` across the function body (reference keeps state in r5/r7 in a different split than the candidate) -- a register-allocation/scheduling gap, not a missing behavior.",
     "The message-id and icon-address placeholders (0xad7, 0x182, 0xaf7) come directly from the pool dump in first-reference order and follow this project's Value_XXXXXXXX convention; not independently cross-checked against message text.",
     "Adoption requires 0 differing_halfwords."
-  ]
+  ],
+  "sr_route_evidence": {
+    "verdict": "COINCIDENTAL",
+    "measured": "2026-08-29",
+    "note": "No retained register-only empty countdown loop (class a) found in asm/080a9598.s; its 4 loop bodies (.L0/.L1/.L2/.L3) all contain multiple memory ops and calls, none showing a stripped-down delay-loop or an obviously non-strength-reduced addressing shape on visual inspection. No dual-compile (-fno-strength-reduce vs default) was run to check induction-variable addressing (class b) inside the larger loops, so this is a provisional COINCIDENTAL pending that check, not a confirmed disproof."
+  }
 }

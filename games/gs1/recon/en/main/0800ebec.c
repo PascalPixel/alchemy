@@ -66,9 +66,12 @@ s32 Func_0800ebec(struct ScriptObjectEntry *actor)
             p = Data_03001810_a;
             n = 512;
             do {
-                if (*p == 0xff)
-                    count++;
+                u8 v;
+
+                v = *p;
                 p++;
+                if (v == 0xff)
+                    count++;
                 n--;
             } while (n != 0);
             if (count - 136 < 0)
@@ -77,10 +80,13 @@ s32 Func_0800ebec(struct ScriptObjectEntry *actor)
     }
 
     if (Data_03001f54 != 0) {
-        if (Data_03001ae8 & 0x200) {
+        s32 mask;
+
+        mask = 0x200;
+        if (Data_03001ae8 & mask) {
             s32 count;
 
-            count = Data_03001ae8;
+            count = mask;
             do {
                 count--;
             } while (count != 0);

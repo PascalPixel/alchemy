@@ -1,165 +1,179 @@
 {
-  "span_bytes": 1336,
-  "edition": {
-    "role": "derived-candidate",
-    "edition": "en",
-    "base_owner": "080a0e0c",
-    "base_edition": "ja",
-    "rebase_status": "proved-shared-core"
+ "span_bytes": 1336,
+ "edition": {
+  "role": "derived-candidate",
+  "edition": "en",
+  "base_owner": "080a0e0c",
+  "base_edition": "ja",
+  "rebase_status": "proved-shared-core"
+ },
+ "cross_edition": {
+  "measured": "2026-08-23",
+  "object_bytes": 1334,
+  "retained_span_bytes": 1336,
+  "relocations": 15,
+  "relocation_bytes": 60,
+  "literal_fields": 83,
+  "literal_bytes": 332,
+  "core_bytes": 942,
+  "core_diff_bytes": {
+   "ja": 0,
+   "en": 0,
+   "de": 0,
+   "es": 0,
+   "fr": 0,
+   "it": 0
   },
-  "cross_edition": {
-    "measured": "2026-08-23",
-    "object_bytes": 1334,
-    "retained_span_bytes": 1336,
-    "relocations": 15,
-    "relocation_bytes": 60,
-    "literal_fields": 83,
-    "literal_bytes": 332,
-    "core_bytes": 942,
-    "core_diff_bytes": {
-      "ja": 0,
-      "en": 0,
-      "de": 0,
-      "es": 0,
-      "fr": 0,
-      "it": 0
-    },
-    "starts": {
-      "ja": "080a0e0c",
-      "en": "080a9f10",
-      "de": "080acd8c",
-      "es": "080ae798",
-      "fr": "080ae79c",
-      "it": "080a9fa4"
-    },
-    "callee_correspondences": 8,
-    "core_identical": true
+  "starts": {
+   "ja": "080a0e0c",
+   "en": "080a9f10",
+   "de": "080acd8c",
+   "es": "080ae798",
+   "fr": "080ae79c",
+   "it": "080a9fa4"
   },
-  "score": {
-    "measured": "2026-08-25",
-    "candidate_bytes": 1336,
-    "reference_bytes": 1336,
-    "differing_halfwords": 437,
-    "wrong_instructions": 412,
-    "class": "wrong",
-    "candidate_instructions": 481,
-    "reference_instructions": 484,
-    "objdiff_structural_percent": 88.47452,
-    "note": "The second 080bbb0c transfer pass corrected the result carrier to its promoted register width, made target-id 9 an explicit exceptional remap, and removed the cached range carrier so both multi-target tests independently reload the byte field. A phase audit then caught the inverse width on the runtime destination: the local carrier is promoted s32, but the runtime field is a halfword. Restoring that evidence-backed pairing preserves exact owner length and lowers the residual to 437 differing halfwords and 412 wrong instructions."
+  "callee_correspondences": 8,
+  "core_identical": true
+ },
+ "score": {
+  "measured": "2026-08-25",
+  "candidate_bytes": 1336,
+  "reference_bytes": 1336,
+  "differing_halfwords": 437,
+  "wrong_instructions": 412,
+  "class": "wrong",
+  "candidate_instructions": 481,
+  "reference_instructions": 484,
+  "objdiff_structural_percent": 88.47452,
+  "note": "The second 080bbb0c transfer pass corrected the result carrier to its promoted register width, made target-id 9 an explicit exceptional remap, and removed the cached range carrier so both multi-target tests independently reload the byte field. A phase audit then caught the inverse width on the runtime destination: the local carrier is promoted s32, but the runtime field is a halfword. Restoring that evidence-backed pairing preserves exact owner length and lowers the residual to 437 differing halfwords and 412 wrong instructions."
+ },
+ "shape": {
+  "calls": 15,
+  "branches": 101,
+  "memory_ops": 105,
+  "loops": 2,
+  "jump_tables": 3,
+  "jump_table_entries": 74,
+  "symbolized_references": 89
+ },
+ "domain": "Applies the current effect record to one target or the runtime target list, updates capped signed values or six persistent stats, handles follow-up recovery/status operations, refreshes changed targets, and stores a result code.",
+ "expressed": [
+  "complete four-argument entry, target-id 9 remapping, 0xff multi-target selection, runtime target-list walk, and changed-target cleanup walk",
+  "complete primary kind switch including scaled capped value_38 updates, randomized 0x104-0x109 stat updates, and capped value_3a updates",
+  "complete 57-way follow-up switch with active cases 1, 2, 3, 5, 56, and 57, including shared observable result-code behavior",
+  "all three reference jump tables, all literal-pool-backed runtime offsets, every call site, both return paths, and the complete owner epilogue",
+  "evidence-backed aggregate widths and offsets for the effect record, target record, runtime target list/count, and runtime result code"
+ ],
+ "unexpressed": [
+  {
+   "op": "source-shape and allocation repair",
+   "count": 412,
+   "where": "the remaining residual is still dominated by the initial distinct-zero/target-selection ancestry, register coloring across the three switch phases, primary PP load ordering, and the random-adjustment branch"
   },
-  "shape": {
-    "calls": 15,
-    "branches": 101,
-    "memory_ops": 105,
-    "loops": 2,
-    "jump_tables": 3,
-    "jump_table_entries": 74,
-    "symbolized_references": 89
+  {
+   "op": "semantic field naming",
+   "count": null,
+   "where": "offset-backed value/stat names remain deliberately neutral because local evidence establishes behavior and layout but not original identifiers"
+  }
+ ],
+ "verified_against_reference": [
+  "true owner extent 0x080a9f10-0x080aa448 is 1336 bytes; 0x080aa448-0x080aa56c consists of already-exact neighboring owners",
+  "workbench symbolization found 3 jump tables, 74 entries, and 89 pool/table references",
+  "relocation-aware comparison locates the JA owner at 0x080a0e0c; all 942 non-relocation, non-literal core bytes agree in every edition",
+  "the candidate is now exactly 1336 linked bytes against the 1336-byte reference",
+  "candidate-show improved from 487 to 437 differing halfwords and from 448 to 412 wrong instructions",
+  "independent ARMv4T objdiff structural match is 88.47452%; linked byte/instruction scoring is preferred because the deliberate range reload restores owner length while changing alignment across jump-table rows"
+ ],
+ "blocked_by": "The remaining 437-halfword residual is still broad. The measured phase partition ranks the primary switch first and the follow-up switch second; continue phase-local register ancestry and load scheduling there. The owner is not eligible for permanent classification or whole-function permutation.",
+ "rejected": [
+  {
+   "shape": "halfword unions plus a u16 working amount",
+   "result": "ARM structure-size rounding shifted later fields and repeated amount truncation grew the candidate to 1372 bytes with 610 differing halfwords"
   },
-  "domain": "Applies the current effect record to one target or the runtime target list, updates capped signed values or six persistent stats, handles follow-up recovery/status operations, refreshes changed targets, and stores a result code.",
-  "expressed": [
-    "complete four-argument entry, target-id 9 remapping, 0xff multi-target selection, runtime target-list walk, and changed-target cleanup walk",
-    "complete primary kind switch including scaled capped value_38 updates, randomized 0x104-0x109 stat updates, and capped value_3a updates",
-    "complete 57-way follow-up switch with active cases 1, 2, 3, 5, 56, and 57, including shared observable result-code behavior",
-    "all three reference jump tables, all literal-pool-backed runtime offsets, every call site, both return paths, and the complete owner epilogue",
-    "evidence-backed aggregate widths and offsets for the effect record, target record, runtime target list/count, and runtime result code"
-  ],
-  "unexpressed": [
-    {
-      "op": "source-shape and allocation repair",
-      "count": 412,
-      "where": "the remaining residual is still dominated by the initial distinct-zero/target-selection ancestry, register coloring across the three switch phases, primary PP load ordering, and the random-adjustment branch"
-    },
-    {
-      "op": "semantic field naming",
-      "count": null,
-      "where": "offset-backed value/stat names remain deliberately neutral because local evidence establishes behavior and layout but not original identifiers"
-    }
-  ],
-  "verified_against_reference": [
-    "true owner extent 0x080a9f10-0x080aa448 is 1336 bytes; 0x080aa448-0x080aa56c consists of already-exact neighboring owners",
-    "workbench symbolization found 3 jump tables, 74 entries, and 89 pool/table references",
-    "relocation-aware comparison locates the JA owner at 0x080a0e0c; all 942 non-relocation, non-literal core bytes agree in every edition",
-    "the candidate is now exactly 1336 linked bytes against the 1336-byte reference",
-    "candidate-show improved from 487 to 437 differing halfwords and from 448 to 412 wrong instructions",
-    "independent ARMv4T objdiff structural match is 88.47452%; linked byte/instruction scoring is preferred because the deliberate range reload restores owner length while changing alignment across jump-table rows"
-  ],
-  "blocked_by": "The remaining 437-halfword residual is still broad. The measured phase partition ranks the primary switch first and the follow-up switch second; continue phase-local register ancestry and load scheduling there. The owner is not eligible for permanent classification or whole-function permutation.",
-  "rejected": [
-    {
-      "shape": "halfword unions plus a u16 working amount",
-      "result": "ARM structure-size rounding shifted later fields and repeated amount truncation grew the candidate to 1372 bytes with 610 differing halfwords"
-    },
-    {
-      "shape": "move the target-id assignment before the first call",
-      "result": "reduced normalized output to 483 instructions and worsened the linked score to 575 differing halfwords at 1340 bytes"
-    },
-    {
-      "shape": "fold follow-up kind 1 into one short-circuit cannot-apply guard",
-      "result": "after the access-form repair it still regressed to 1320 bytes, 581 differing halfwords, and 590 wrong instructions"
-    },
-    {
-      "shape": "declare the long-lived amount carrier as u16 because the decompiler names its register value u16",
-      "result": "regressed to 1404 bytes, 614 differing halfwords, and 71.61863% structural match; the source value must remain promoted even though its table load is halfword-wide"
-    },
-    {
-      "shape": "inherit 080bbb0c's -fno-cse-follow-jumps route",
-      "result": "controlled builds were byte-identical; the route is owner-specific and is not a lever for this candidate"
-    },
-    {
-      "shape": "put the initial target lookup call in both arms to force the reference branch tail",
-      "result": "restored 484 candidate instructions but regressed to 1340 bytes, 566 differing halfwords, and 594 wrong instructions"
-    },
-    {
-      "shape": "permute all six orders of the independent later-target, changed, and result-code zero assignments",
-      "result": "the retained later-target/changed/result-code order scored 539 differing halfwords at that stage; alternatives scored 540, 541, 549, or 551"
-    },
-    {
-      "shape": "replace the remaining primary PP raw carriers with repeated field accesses",
-      "result": "removed the last two carriers but collapsed the useful allocation family to 1320 bytes, 581 differing halfwords, and 590 wrong instructions"
-    },
-    {
-      "shape": "use isolated signed/raw halfword unions after the access-form repair",
-      "result": "regressed to 1328 bytes, 579 differing halfwords, and 614 wrong instructions"
-    },
-    {
-      "shape": "invert the random-bucket branch to reproduce the reference fallthrough order",
-      "result": "regressed to 1336 bytes, 529 differing halfwords, and 580 wrong instructions"
-    },
-    {
-      "shape": "introduce an explicit primary-kind carrier so the flag load precedes the power load",
-      "result": "regressed to 1336 bytes, 528 differing halfwords, and 578 wrong instructions for both signed and unsigned carrier types"
-    },
-    {
-      "shape": "narrow individual raw-new carriers to s16 as suggested by the decompiler temporaries",
-      "result": "primary HP, follow-up HP, and follow-up PP variants respectively scored 586, 510, and 579 differing halfwords; all were rejected despite isolated wrong-instruction reductions"
-    },
-    {
-      "shape": "block-scope lookup, scale, random, healing, and explicit tail carriers or change the HP fields to unsigned with signed access casts",
-      "result": "each controlled build was byte-identical to the retained candidate; the redundant source-only forms were removed"
-    },
-    {
-      "shape": "retest all six initial later-target, changed, and result assignment orders after the second transfer pass",
-      "result": "the retained order remains the best linked candidate; the structurally closest alternative grows to 1336 bytes but regresses to 522 differing halfwords and 576 wrong instructions"
-    },
-    {
-      "shape": "narrow later-target, changed, or result carriers independently",
-      "result": "later-target and changed widths are byte-neutral, while correcting result_code from s16 to its promoted s32 register lifetime reduces the linked residual from 487 to 474 halfwords"
-    },
-    {
-      "shape": "change the two target-loop increments to ordinary increment or an explicit 0xff mask",
-      "result": "ordinary u32 increment regresses to 1324 bytes and 486 halfwords; the mask reaches 463 halfwords but regresses to 1332 bytes and 444 wrong instructions, so the byte-width cast remains the best balanced exact-length form"
-    }
-  ],
-  "notes": [
-    "The complete retained assembly and assembled listing were read; pools resolve Data_03001f2c and runtime offsets 0x219/0x25a, while the target list begins at 0x208.",
-    "BattleAction field names and the max_hp/max_pp/hp/pp/poison vocabulary are inherited only where exact local layouts coincide; the unresolved early BattleUnit fields remain in an owner-local view.",
-    "The retained lookup branch reduced the 564-halfword baseline to 557; the damage-class branch and indexed stat access reduced it to 539; direct raw-field access in the two follow-up cases then reduced it to 487.",
-    "Removing the primary HP raw carriers was linked-score neutral at 539 but removed two wrong instructions and enabled the later follow-up lifetime improvements; primary PP deliberately retains its carriers because removing them re-enters the 581-halfword allocation family.",
-    "Changing result_code to its promoted s32 lifetime reduced the linked residual by 13 halfwords without altering behavior; the runtime store remains halfword-wide.",
-    "Expressing target-id 9 as a zero-default exceptional remap reduced wrong instructions by eight, and independently reloading effect->range at both multi-target decisions removed another twelve wrong instructions while restoring the exact 1336-byte owner length.",
-    "The second-pass target-sequence partition measured 189 nonexact target instructions in the primary switch, 156 in the follow-up switch, 30 in the tail, and 22 in entry/selection. Correcting the runtime result destination back to its evidenced halfword width while retaining the promoted local carrier reduced the linked residual by another 35 halfwords and 12 wrong instructions.",
-    "No inline assembly, fixed-register variables, compiler barriers, copied instruction bytes, compiler changes, or nonlocal evidence were used.",
-    "This is a measured draft only; retained reference assembly remains authoritative."
-  ]
+  {
+   "shape": "move the target-id assignment before the first call",
+   "result": "reduced normalized output to 483 instructions and worsened the linked score to 575 differing halfwords at 1340 bytes"
+  },
+  {
+   "shape": "fold follow-up kind 1 into one short-circuit cannot-apply guard",
+   "result": "after the access-form repair it still regressed to 1320 bytes, 581 differing halfwords, and 590 wrong instructions"
+  },
+  {
+   "shape": "declare the long-lived amount carrier as u16 because the decompiler names its register value u16",
+   "result": "regressed to 1404 bytes, 614 differing halfwords, and 71.61863% structural match; the source value must remain promoted even though its table load is halfword-wide"
+  },
+  {
+   "shape": "inherit 080bbb0c's -fno-cse-follow-jumps route",
+   "result": "controlled builds were byte-identical; the route is owner-specific and is not a lever for this candidate"
+  },
+  {
+   "shape": "put the initial target lookup call in both arms to force the reference branch tail",
+   "result": "restored 484 candidate instructions but regressed to 1340 bytes, 566 differing halfwords, and 594 wrong instructions"
+  },
+  {
+   "shape": "permute all six orders of the independent later-target, changed, and result-code zero assignments",
+   "result": "the retained later-target/changed/result-code order scored 539 differing halfwords at that stage; alternatives scored 540, 541, 549, or 551"
+  },
+  {
+   "shape": "replace the remaining primary PP raw carriers with repeated field accesses",
+   "result": "removed the last two carriers but collapsed the useful allocation family to 1320 bytes, 581 differing halfwords, and 590 wrong instructions"
+  },
+  {
+   "shape": "use isolated signed/raw halfword unions after the access-form repair",
+   "result": "regressed to 1328 bytes, 579 differing halfwords, and 614 wrong instructions"
+  },
+  {
+   "shape": "invert the random-bucket branch to reproduce the reference fallthrough order",
+   "result": "regressed to 1336 bytes, 529 differing halfwords, and 580 wrong instructions"
+  },
+  {
+   "shape": "introduce an explicit primary-kind carrier so the flag load precedes the power load",
+   "result": "regressed to 1336 bytes, 528 differing halfwords, and 578 wrong instructions for both signed and unsigned carrier types"
+  },
+  {
+   "shape": "narrow individual raw-new carriers to s16 as suggested by the decompiler temporaries",
+   "result": "primary HP, follow-up HP, and follow-up PP variants respectively scored 586, 510, and 579 differing halfwords; all were rejected despite isolated wrong-instruction reductions"
+  },
+  {
+   "shape": "block-scope lookup, scale, random, healing, and explicit tail carriers or change the HP fields to unsigned with signed access casts",
+   "result": "each controlled build was byte-identical to the retained candidate; the redundant source-only forms were removed"
+  },
+  {
+   "shape": "retest all six initial later-target, changed, and result assignment orders after the second transfer pass",
+   "result": "the retained order remains the best linked candidate; the structurally closest alternative grows to 1336 bytes but regresses to 522 differing halfwords and 576 wrong instructions"
+  },
+  {
+   "shape": "narrow later-target, changed, or result carriers independently",
+   "result": "later-target and changed widths are byte-neutral, while correcting result_code from s16 to its promoted s32 register lifetime reduces the linked residual from 487 to 474 halfwords"
+  },
+  {
+   "shape": "change the two target-loop increments to ordinary increment or an explicit 0xff mask",
+   "result": "ordinary u32 increment regresses to 1324 bytes and 486 halfwords; the mask reaches 463 halfwords but regresses to 1332 bytes and 444 wrong instructions, so the byte-width cast remains the best balanced exact-length form"
+  },
+  {
+   "hypothesis": "spell the first loop guard as index < runtime->target_count, matching the reference bcc and the second loop at line 300",
+   "measured": "2026-08-29",
+   "differing_halfwords": 43,
+   "baseline": 11,
+   "verdict": "regressed"
+  },
+  {
+   "hypothesis": "hoist effect->range into a local before the guard and use it at every site, matching the reference ldrb [r3,#8] above the guard",
+   "measured": "2026-08-29",
+   "differing_halfwords": 525,
+   "baseline": 11,
+   "verdict": "regressed; hoisting removes the in-loop reloads and shrinks the owner to 1316 bytes"
+  }
+ ],
+ "notes": [
+  "The complete retained assembly and assembled listing were read; pools resolve Data_03001f2c and runtime offsets 0x219/0x25a, while the target list begins at 0x208.",
+  "BattleAction field names and the max_hp/max_pp/hp/pp/poison vocabulary are inherited only where exact local layouts coincide; the unresolved early BattleUnit fields remain in an owner-local view.",
+  "The retained lookup branch reduced the 564-halfword baseline to 557; the damage-class branch and indexed stat access reduced it to 539; direct raw-field access in the two follow-up cases then reduced it to 487.",
+  "Removing the primary HP raw carriers was linked-score neutral at 539 but removed two wrong instructions and enabled the later follow-up lifetime improvements; primary PP deliberately retains its carriers because removing them re-enters the 581-halfword allocation family.",
+  "Changing result_code to its promoted s32 lifetime reduced the linked residual by 13 halfwords without altering behavior; the runtime store remains halfword-wide.",
+  "Expressing target-id 9 as a zero-default exceptional remap reduced wrong instructions by eight, and independently reloading effect->range at both multi-target decisions removed another twelve wrong instructions while restoring the exact 1336-byte owner length.",
+  "The second-pass target-sequence partition measured 189 nonexact target instructions in the primary switch, 156 in the follow-up switch, 30 in the tail, and 22 in entry/selection. Correcting the runtime result destination back to its evidenced halfword width while retaining the promoted local carrier reduced the linked residual by another 35 halfwords and 12 wrong instructions.",
+  "No inline assembly, fixed-register variables, compiler barriers, copied instruction bytes, compiler changes, or nonlocal evidence were used.",
+  "This is a measured draft only; retained reference assembly remains authoritative."
+ ]
 }

@@ -54,7 +54,13 @@
     "Corpus blast radius: 99 of 3,958 exact production files change output under the flag — a bounded re-proving migration, not a rewrite.",
     "Scored fresh on the giants: 0800ebec 860 -> 814; 080d4ce8 668 -> 666; others neutral."
    ],
-   "status": "awaiting maintainer ruling; uniform for all files per doctrine"
+   "status": "awaiting maintainer ruling; uniform for all files per doctrine",
+   "resolution": {
+    "measured": "2026-08-29",
+    "finding": "Global adoption is refuted by the ROM itself: 110 of 114 flag-affected exact owners lose byte identity under -fno-strength-reduce — their shipped bytes contain strength-reduced shapes no no-SR compile can emit — while this function's busy-wait loops survive no legal spelling with SR on. The original build therefore varied optimization flags per translation unit: at least SR-on for the 110, SR-off for this one. Uniform flags cannot reproduce both; this is measured, not assumed.",
+    "candidate_sweep": "276 candidates under the flag: 24 improve (loop-heavy, incl. this owner 860->814 and 080b75dc 141->123), 59 worsen, 199 neutral, none close outright.",
+    "decision_required": "maintainer: either route flags per translation unit (the agbcc precedent) or accept permanent documented floors on the no-SR files"
+   }
   }
  }
 }

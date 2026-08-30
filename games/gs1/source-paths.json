@@ -660,6 +660,9 @@
     "main:08095dd0": {
       "name": "BattleEffect_RunPhasedRadialParticleSequence"
     },
+    "main:080cd260": {
+      "name": "BattlePresentation_ProcessPendingGraphicsTransfer"
+    },
     "main:08096048": "battle/effects/particles/update_radial_spread.c",
     "main:0809641c": "battle/effects/particles/update_random_target_particle.c",
     "main:0808ee0c": "battle/effects/particles/emit_random.c",

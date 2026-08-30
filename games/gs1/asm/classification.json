@@ -1715,18 +1715,20 @@
    "evidence": [
     "complete_ordinary_c_semantics_and_exact_owner_extent",
     "six_edition_relocation_normalized_core_is_identical",
-    "only_residual_is_one_independent_instruction_ordering_pair",
+    "only_residual_is_one_localized_independent_instruction_scheduling_permutation",
     "all_other_instructions_registers_literals_and_control_flow_match",
-    "fifty_thousand_bounded_ordinary_c_candidates_produced_no_exact_candidate",
+    "owner_specific_bounded_ordinary_c_searches_exhaust_named_source_dimensions_without_an_exact_candidate",
     "approved_compiler_scheduling_and_optimization_sweep_preserves_defect_or_regresses",
+    "gcc_scheduler_dump_and_rank_for_schedule_source_identify_original_instruction_order_as_the_deciding_tie_break",
     "inline_assembly_fixed_registers_and_compiler_barriers_are_disallowed",
     "byte_exact_reconstruction"
    ],
-   "expected_files": 2,
-   "expected_bytes": 232,
+   "expected_files": 3,
+   "expected_bytes": 480,
    "files": [
     "080b6a60",
-    "080974d8"
+    "080974d8",
+    "080cd260"
    ]
   },
   {

@@ -1544,6 +1544,27 @@
    ]
   },
   {
+   "id": "menu-pattern-tiles-en",
+   "game": "gs1",
+   "source": "games/gs1/src/menu/build_localized_pattern_tiles.c",
+   "compiler_route": "canonical-gcc296",
+   "overlay": null,
+   "absolute_symbols": {
+    "Data_08037250": {
+     "address": "0x08037250",
+     "kind": "data"
+    }
+   },
+   "local_symbols": [],
+   "owners": [
+    {
+     "address": "0x08021848",
+     "extent": 148,
+     "state": "exact-c"
+    }
+   ]
+  },
+  {
    "id": "unit-giant-affinefx",
    "game": "gs1",
    "source": "games/gs1/recon/en/units/unit-giant-affinefx.c",

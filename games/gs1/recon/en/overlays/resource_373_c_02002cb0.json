@@ -1,0 +1,11 @@
+{
+  "span_bytes": 576,
+  "score": {"measured":"2026-08-30","candidate_bytes":640,"reference_bytes":576,"wrong_instructions":113,"differing_halfwords":313,"class":"generated-call-script-retention"},
+  "shape": {"calls":60,"loops":0,"memory_operations":7},
+  "verified_against_reference": [
+    "candidate and ROM contain the same 60 calls in machine order with every decoded argument represented",
+    "direct assembly audit restored two returned-actor coordinate handoffs, the conditional event-counter increment, and all literal-backed arguments omitted by the bounded mechanical draft",
+    "remaining differences are approved GCC allocation and out-of-extent literal-pool placement after complete decoded control flow and side effects are represented"
+  ],
+  "retention": "keep_structured_asm"
+}

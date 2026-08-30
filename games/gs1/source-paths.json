@@ -5407,6 +5407,9 @@
     "resource_373:02002f14": {
       "name": "FieldScene_RunPrimaryActorSequence"
     },
+    "resource_373:02002cb0": {
+      "name": "FieldScene_RunSecondaryActorSequence"
+    },
     "resource_373:020031b4": {
       "name": "FieldScene_RunCompanionActorSequence"
     },

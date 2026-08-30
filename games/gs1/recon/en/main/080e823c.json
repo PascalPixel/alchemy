@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080e823c",
+  "status": "measured-draft",
+  "owner_bytes": 1968,
+  "candidate_bytes": 1728,
+  "differing_halfwords": 954,
+  "wrong_instructions": 823,
+  "classification": "structural-reconstruction",
+  "resolved_asm_classification": {
+    "kind": "compiler_output",
+    "retention": "c_candidate",
+    "confidence": "likely"
+  },
+  "notes": [
+    "2026-08-30: promoted this battle-presentation owner from the aggregate-aware drafting wave. Mechanical type recovery makes the candidate compile to 1728 bytes for the 1968-byte reference; topology differs and 954 halfwords differ, so it remains a measured draft and claims zero DONE bytes.",
+    "The repairs type the battle work pointer, actor pointer slots, display-register halfword store, presentation lookup tables, signed actor identifiers, and the frame-control word at 0x03001b04. No instruction bytes, inline assembly, fixed-register variables, compiler barriers, or external decompilation sources were introduced.",
+    "The function initializes six battle objects and display state, advances a 320-frame presentation, updates particle banks, dispatches party-linked effects, and tears the scene down. Its permanent name remains unresolved until its battle-effect dispatch entry is proven.",
+    "The next reconstruction pass must recover the reference 84-byte frame and shared battle-work aggregate before source-order or allocator work; the current 36-byte frame shows that this is not a register-floor candidate."
+  ]
+}

@@ -1,0 +1,177 @@
+#include "types.h"
+
+/* AUDITED GENERATED CALL SCRIPT for FieldScene_RunFormationAndEffectPresentation:
+ * 80 calls, no loops, a conditional workspace counter, and the terminal
+ * workspace-state update across the complete callable owner. */
+
+#define FieldScene_RunFormationAndEffectPresentation Func_020052f4
+
+void Func_02009ba2();
+void Func_02009bb2();
+void Func_02009bc0();
+void Func_02009bd2();
+void Func_02009be2();
+void Func_02009bf6();
+void Func_02009c2e();
+void Func_02009c42();
+void Func_02009cb2();
+void Func_02009cce();
+void Func_02009cde();
+void Func_02009cfe();
+void Func_02009d64();
+void Func_02009d6e();
+void Func_02009d84();
+void Func_02009d90();
+void Func_02009dc8();
+void Func_02009dd6();
+void Func_02009df2();
+void Func_02009df6();
+void Func_02009e16();
+void Func_02009e7c();
+void Func_02009e9c();
+void Func_02009f16();
+void Func_0200b850();
+void Func_0200b8c0();
+void Func_0200b8fe();
+void Func_0200b942();
+void Func_0200b94e();
+void Func_0200b95a();
+void Func_0200b96c();
+void Func_0200b978();
+void Func_0200b97c();
+void Func_0200b984();
+void Func_0200b98a();
+void Func_0200b990();
+void Func_0200b9b6();
+void Func_0200b9ca();
+void Func_0200b9d8();
+void Func_0200b9e4();
+void Func_0200b9e6();
+void Func_0200b9ec();
+void Func_0200b9ee();
+void Func_0200b9f0();
+void Func_0200b9fc();
+void Func_0200b9fe();
+void Func_0200ba0c();
+void Func_0200ba12();
+void Func_0200ba2a();
+void Func_0200ba34();
+s32 Func_0200ba38();
+void Func_0200ba3a();
+void Func_0200ba40();
+void Func_0200ba6e();
+void Func_0200ba72();
+void Func_0200ba82();
+void Func_0200ba98();
+void Func_0200baaa();
+void Func_0200babe();
+void Func_0200bac0();
+void Func_0200bac4();
+void Func_0200bac6();
+void Func_0200bad4();
+void Func_0200bad6();
+void Func_0200bade();
+void Func_0200bae2();
+void Func_0200bae4();
+void Func_0200baea();
+void Func_0200baee();
+void Func_0200baf4();
+void Func_0200bb00();
+void Func_0200bb1c();
+void Func_0200bb34();
+void Func_0200bb38();
+void Func_0200bbce();
+void Func_0200bbe8();
+void Func_0200bc58();
+
+void Func_020052f4(void)
+{
+    u8 *workspace;
+
+    Func_02009ba2(0, 444, 300, 0);
+    Func_02009bb2(1, 458, 310, 0);
+    Func_02009bc0(2, 444, 330, 0);
+    Func_02009bd2(3, 432, 310, 0);
+    Func_02009be2(27, 440, 134, 32768);
+    Func_02009bf6(10, 454, 248, 12288);
+    Func_0200b8c0(10, 6);
+    Func_02009c2e(28835840, -1, 20185088, 16777217);
+    Func_0200b9b6();
+    Func_0200b9ca();
+    Func_0200b850(20);
+    Func_0200b96c(0, 8192, 0);
+    Func_0200b978(1, 40960, 0);
+    Func_0200b984(2, 40960, 0);
+    Func_0200b990(3, 8192, 40);
+    Func_02009cb2(2, 1, 20);
+    Func_0200b978(7790);
+    Func_02009c42(27);
+    Func_02009cce(1, 49152, 0);
+    Func_0200b9e6(157286, 19660);
+    Func_0200b9fc(28835840, -1, 11534336, 1);
+    Func_0200b8fe(27, 104857, 52428);
+    Func_0200b942(27, 408, 134);
+    Func_0200b94e(27, 408, 152);
+    Func_0200b95a(27, 424, 164);
+    Func_0200ba2a(104857, 13107);
+    Func_0200ba40(28835840, -1, 19660800, 1);
+    Func_0200b97c(27, 424, 222);
+    Func_0200b98a(27, 424, 262);
+    Func_0200ba34(27, 12288, 20);
+    Func_0200b9ec(27, 1);
+    Func_02009cde(27);
+    Func_02009d64(2, 1, 20);
+    Func_0200b9e4(27, 3);
+    Func_0200ba0c(27, 1);
+    Func_02009cfe(27);
+    Func_02009d84(3, 2, 60);
+    Func_02009d90(1, 57344, 60);
+    Func_0200ba82(27, 0, 40);
+    Func_0200ba3a(27, 1);
+    Func_0200ba12(27, 2);
+    Func_0200b9ee(27, 432, 268);
+    Func_0200b9fc(27, 452, 268);
+    Func_0200ba34(27, 1);
+    Func_02009d6e(27, 53248);
+    Func_0200ba6e(27, 2);
+    Func_0200bac0(27, 0, 20);
+    Func_02009df2(1, 49152, 20);
+    Func_0200ba72(27, 4);
+    Func_0200b9d8(40);
+    Func_0200bae2(27, 0, 80);
+    Func_0200baaa(27, 1);
+    Func_0200b9f0(20);
+    Func_0200ba98(27, 3);
+    Func_0200b9fe(10);
+    Func_02009dc8(27, 20480);
+    Func_0200bb00(27, 0);
+    if (Func_0200ba38(0, 0) == 0) {
+        Func_0200bac4(27, 3);
+        Func_02009dd6(27);
+    } else {
+        Func_0200bad4(27, 4);
+        workspace = *(u8 **)0x03001ebc;
+        (*(u16 *)(workspace + 472))++;
+        Func_02009df6(27);
+        Func_02009e7c(3, 2, 40);
+        Func_0200bb1c(27, 1);
+        Func_0200baf4(27, 3);
+        Func_02009e16(27);
+    }
+    Func_02009e9c(2, 1, 20);
+    Func_0200babe(1, 33613808);
+    Func_0200bac6(2, 33613808);
+    Func_0200bade(3, 33613808);
+    Func_0200bbce(39321, 4915);
+    Func_0200bbe8(28835840, -1, 11534336, 1);
+    Func_0200baee(0, 65536, 32768);
+    Func_0200bb34(0, 424, 272);
+    Func_0200bb38(0, 424, 164);
+    Func_0200bad6(60);
+    workspace = *(u8 **)0x03001ebc;
+    *(u32 *)(workspace + 448) = 521;
+    Func_02009f16(9, 0, 0, 50339964);
+    Func_0200bae4(769);
+    Func_0200baea(0x927);
+    Func_0200bc58(4);
+}

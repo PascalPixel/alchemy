@@ -5485,6 +5485,9 @@
     "resource_3af:02000ca0": {
       "name": "FieldScene_RunActorAndEffectPresentationSetup"
     },
+    "resource_3b1:020052f4": {
+      "name": "FieldScene_RunFormationAndEffectPresentation"
+    },
     "main:080a46b4": {
       "name": "Item_ClassifyUseMode",
       "source": "items/classify_use_mode.c"

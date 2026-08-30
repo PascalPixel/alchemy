@@ -1,32 +1,6 @@
 #include "types.h"
 
-/*
- * Dialogue-layout group at 0x02001050.
- *
- * Complete owner: `push {r5, lr}` and `sub sp, #8` at 0x02001050, and the
- * matching `add sp, #8 / pop {r5} / pop {r0} / bx r0` at 0x0200113e, so
- * nothing is returned.  Three pool words follow the return and are data.
- *
- * The eight bytes of frame are the outgoing stack arguments of the four
- * six-argument import calls; r5 holds the constant 8 across the first pair.
- * All sixteen branches of the row are accounted for.
- *
- * Call convention used throughout this overlay: every `bl` computes an
- * address in the band above the last code row.  The reconstruction's code ends
- * at file offset 0x2258 and the whole image is 0x3328 bytes, yet this overlay's
- * branch targets run from 0x2260 up to 0x5124 - far past the image - so an
- * encoded `bl` address is an import identity, not a place to disassemble.
- * That is the convention the byte-exact sources in this overlay already use
- * (`games/gs1/assets/code/resource_39a_c_02000030.c` declares `Func_02002442`), so
- * imports are named by the address their call site computes and their
- * interfaces are left open.  Declarations are old-style because one name is
- * reached with different argument counts.
- */
-
 /* Imports; the three queried ones are typed for their return value. */
-
-
-
 
 extern void Func_02003356();
 extern s32 Func_02003384();

@@ -59,5 +59,12 @@
   "verdict": "REFUTED",
   "evidence": "lines 214-216: beq.n where the reference has bne.n plus b.n — genuine branch-topology divergence; class structural-topology, wrong_instructions=290",
   "note": "Not pool-class: genuine instruction differences present. The 08090488 dossier note claiming this owner shares its grounds is corrected by this verdict."
+ },
+ "entry_pool_diagnosis": {
+  "measured": "2026-08-31",
+  "verdict": "SOURCE-GATE-REFUTED; COMPILER-BARRIER-PLACEMENT-CONFIRMED",
+  "score": "candidate_bytes=1884, reference_bytes=1864, differing_halfwords=268, wrong_instructions=290",
+  "evidence": "The first divergence is the entry target-mode guard: the reference emits bne to the scan body followed by an unconditional branch over a natural 4-byte minipool at local offset 0x40, while GCC emits the equivalent single inverted beq and therefore moves the same early literal to local offset 0xa4. Rewriting the C as two explicit gotos and a named scan_target_order label compiled byte-identically; GCC jump folding removes that source distinction before arm_reorg. In GCC 2.96 arm_reorg, only BARRIER RTL nodes are eligible natural minipool dump points, directly explaining why the folded branch changes every early pool-relative load. -fno-thread-jumps preserved the folded entry and regressed the score to 270 differing halfwords / 294 wrong instructions; -fno-expensive-optimizations and -fno-rerun-cse-after-loop regressed broadly; -fno-optimize-sibling-calls was byte-identical. The custom thumb-pool switches present in the separate agbcc research harness are not shipped agscc options and are rejected by cc1. Do not repeat entry-goto respellings or generic optimization-axis probes; the remaining structural work must identify the source construct that survives into a natural RTL barrier or explain the original per-TU compiler route.",
+  "reference_compiler_path": "alchemy-gcc/agscc/gcc/config/arm/arm.c: arm_reorg scans BARRIER nodes, then chooses last_barrier before dump_minipool"
  }
 }

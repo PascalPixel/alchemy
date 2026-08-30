@@ -5,14 +5,14 @@
  "status": "measured-draft",
  "owner_bytes": 1208,
  "score": {
-  "measured": "2026-08-27",
-  "candidate_bytes": 1196,
+    "measured": "2026-08-30",
+    "candidate_bytes": 1208,
   "reference_bytes": 1208,
-  "differing_halfwords": 505,
-  "wrong_instructions": 442,
-  "class": "wrong",
-  "note": "First structural draft, not a permutation search. Full read of games/gs1/asm/080dd2c4.s plus out/family-transplants/main-080dd2c4/m2c/target.canonical.s / 080dd2c4.c (m2c's raw decompile of the actual retained bytes), cross-checked instruction-by-instruction against the family template (member_orbit/run.c, owner 080ce85c) and against 080e7404.c's documented idioms. Textually the candidate is very close: --asm reports candidate_insns=497 vs reference_insns=503 (only 6 net), and the generated .s (read in full from --work output) is structurally sound throughout -- correct field offsets, correct trampoline-indirect-call modeling, correct table types -- with no unresolved M2C_ERROR/M2C_FIELD placeholders. The large differing_halfwords count is dominated by a single register-allocation choice diverging at the very first opportunity (the reference keeps the persistent work-block pointer in fp for the whole function; this candidate's allocator puts the innermost loop counter -- reused across the spC-inner loop and the final 0x200-entry particle loop -- in fp instead, and work in r9, an exact role-swap of the two), which cascades into every subsequent pc-relative literal-pool offset and several stack-slot assignments for the rest of the function. This is the same fp/r9 (and sl/r9) 'known open, not-source-shape-controllable' residual already documented at length in this family's sibling dossiers (see games/gs1/recon/en/main/080dc1ec.json score.note, prior_note_2026_08_27c/d: ~8 targeted reshapes tried there to flip an analogous swap, all either no-op or regressed). Given that precedent this pass did not run an open-ended register-forcing search; two cheap, legitimate fixes were applied and kept (see rejected_experiments/notes) but the fp/r9 swap itself was not chased further.",
-  "fixes_applied": "(1) The two Data_03001e50[46]/[47] reads that seed rectangle[0]/rectangle[1] must go through the plain Data_03001e50 global directly, not through the heap_cache local established at function entry -- heap_cache's register is dead again by the time these reads happen (several intervening calls), so the reference re-loads the 0x03001e50 base fresh via its own literal-pool entry; routing through heap_cache[7]/heap_cache[8] instead produced an extra redundant address computation. (2) mode (arg1, spilled to sp+44 in the retained assembly's very first instruction) must be declared textually BEFORE draw_destination among the locals, not after, to land mode/draw_destination on the reference's sp+44/sp+40 slots respectively -- this alone raised matched_prefix from 8 to 14 and dropped differing_halfwords from 589 to 505."
+    "differing_halfwords": 73,
+    "wrong_instructions": 60,
+    "class": "allocation-covered",
+  "note": "Current exact-extent draft has equal branch topology and 73 differing halfwords / 60 wrong instructions. The residual begins in the member-blit block with one temp allocated to r1 instead of the reference's r4, then propagates through table-load ordering and later loop-carrier choices. It remains Draft C and claims zero DONE bytes.",
+  "fixes_applied": "Earlier structural recovery brought the owner from 1196 to the exact 1208-byte extent, fixed work in fp, preserved the reference's 56-byte frame, modeled all four r4-trampoline calls as genuine indirect DrawRectangleFn calls, and reduced the score from 505 to 73 differing halfwords."
  },
  "family": {
   "assigned_template_owner": "main:080ce85c",
@@ -51,6 +51,20 @@
    "differing_halfwords": 560,
    "baseline": 73,
    "verdict": "regressed; owner grew to 1232 bytes"
+  },
+    {
+      "hypothesis": "apply the wave decoder's named swap_declarations(draw_destination,rectangle) repair literally",
+   "measured": "2026-08-30",
+   "differing_halfwords": 73,
+   "baseline": 73,
+      "verdict": "no improvement; exact extent and wrong-instruction count stayed fixed, while the router weakened from allocation_covered to allocation_uncovered; reverted"
+    },
+    {
+      "hypothesis": "spell the four pool-loaded numeric constants as linker-resolved Value_ absolute symbols so GCC selects word rather than halfword PC loads",
+      "measured": "2026-08-30",
+      "differing_halfwords": 132,
+      "baseline": 73,
+      "verdict": "the local load widths matched, but literal-pool ordering moved globally and regressed the byte score from 73 to 132; reverted"
   }
  ]
 }

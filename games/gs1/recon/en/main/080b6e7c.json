@@ -2,7 +2,7 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x080b6e7c",
-  "status": "proven-retained-assembly",
+  "status": "proven-retained",
   "classification": "compiler_commutative_address_mismatch",
   "resolved_asm_classification": {
     "kind": "compiler_commutative_address_mismatch",

@@ -1,4 +1,6 @@
 {
+  "status": "proven-retained",
+  "classification": "compiler_entry_scheduling_module",
   "span_bytes": 708,
   "edition": {
     "role": "shared-candidate-wrapper",

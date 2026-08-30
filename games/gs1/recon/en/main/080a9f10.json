@@ -44,7 +44,7 @@
   "class": "structural-topology",
   "note": "The wave-1 source-shape reduction preserves the complete 1336-byte owner and leaves one localized loop-entry residual: the reference spells the zero index guard as index < target_count and schedules the first range load before it, while canonical GCC can reproduce either the guard form or the favorable allocation/scheduling, but not both together. Every later instruction, all three jump tables, calls, literals, memory operations, and both return paths agree."
  },
- "status": "proven_permanent",
+ "status": "proven-retained",
  "shape": {
   "calls": 15,
   "branches": 101,

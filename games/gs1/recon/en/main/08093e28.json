@@ -2,12 +2,12 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x08093e28",
-  "status": "proven-permanent",
+  "status": "proven-retained",
   "owner_bytes": 376,
   "candidate_bytes": 376,
   "differing_halfwords": 11,
   "wrong_instructions": 18,
-  "classification": "field-effect-compiler-allocation",
+  "classification": "field_effect_compiler_allocation",
   "family": {
     "template": "main:08092708",
     "template_source": "games/gs1/src/battle/effects/objects/run_rising_sequence.c"

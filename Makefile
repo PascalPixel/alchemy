@@ -33,8 +33,8 @@ PORTABLE_TOOLS := alignment-tail asset-paths cache-entry canonical-json \
 # machinery; they do not raise it.
 # Only Pascal moves this number; a diff touching it without his recorded
 # decision is invalid regardless of how good the new machinery is.
-# 40,000 set by Pascal's decision, 2026-08-28.
-TOOLING_LINE_LIMIT := 40000
+# 50,000 set by Pascal's decision, 2026-08-30.
+TOOLING_LINE_LIMIT := 50000
 TARGET ?= gs1-en
 FULL_REPORT = out/$(TARGET)/full/rebuilt.json
 FULL_ROM = out/$(TARGET)/full/rebuilt.gba
@@ -85,7 +85,7 @@ help:
 		'make strict-tu-check  prove strict production TU composition and owner coverage' \
 		'make classification-check prove retained-assembly classifications' \
 		'make candidate-corpus-check rescore retained reconstruction C' \
-		'make source-tracking-check reject ignored or untracked exact C' \
+		'make source-tracking-check reject ignored or untracked Proven C' \
 		'make build-assets     rebuild source assets' \
 		'make test             focused Rust tests and policy checks' \
 		'make tooling-size     enforce the portable-toolkit budget' \
@@ -239,7 +239,7 @@ candidate-corpus-check:
 	done; \
 	printf 'translation-unit corpus retained=%s exact_retained=0\n' "$$total"
 	$(OVERLAY) audit --corpus
-	@printf 'candidate corpus ok: exact C is installed; retained C is nonexact; nonowners are classified\n'
+	@printf 'candidate corpus ok: Proven C is installed; retained C is nonexact; nonowners are classified\n'
 
 edition-builds: correspondence
 	@printf 'edition build report: %s\n' '$(REPORT_DIR)/exact-main-builds.json'

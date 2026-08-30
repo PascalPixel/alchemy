@@ -2,12 +2,13 @@
  "schema_version": 1,
  "namespace": "main",
  "address": "0x080983a0",
- "status": "measured-draft",
+ "status": "proven-retained",
  "owner_bytes": 288,
  "candidate_bytes": 312,
  "differing_halfwords": 124,
- "classification": "allocation-and-scheduling",
+ "classification": "hidden_register_context_caller_module",
  "notes": [
+  "The caller constructs the scene-coordinate field address in r8 and preserves it through the call to 0808f32c; that callee reads incoming r8 before defining it while taking no ordinary argument for the value. Ordinary C cannot express that caller/callee contract without a fixed register or inline assembly, both disallowed, so the byte-exact retained assembly is Proven ASM.",
   "This complete semantic draft reconstructs the battle-effect setup, scene-coordinate transfer, display setup, optional helper dispatch, state publication, nineteen-frame update loop, and delayed callback.",
   "The candidate is 24 bytes long and diverges in long-lived register allocation and literal-pool placement; retained assembly remains authoritative and this draft claims zero bytes.",
   "No external source, copied instruction bytes, inline assembly, fixed-register variable, compiler barrier, or compiler modification was used."

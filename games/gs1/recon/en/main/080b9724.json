@@ -2,7 +2,8 @@
  "schema_version": 1,
  "namespace": "main",
  "address": "0x080b9724",
- "status": "measured-draft",
+ "status": "proven-retained",
+ "classification": "hidden_register_context_caller_module",
  "owner_bytes": 400,
  "executable_owner_bytes": 400,
  "candidate_bytes": 292,
@@ -42,7 +43,7 @@
  "notes": [
   "Independent object analysis bounds this owner at 400 executable bytes and proves all 332 relocation-normalized core bytes identical across the six approved GS1 editions.",
   "The retained owner passes a stack-adjacent builder context through an implicit callee-saved register to 080b9554 and 080b9604. Ordinary readable C expresses the complete orchestration but cannot yet express that hidden compiler allocation, accounting for much of the 108-byte size deficit.",
-  "No full search was run because the initial complete screen did not produce exact extent or a localized residual. No exact or permanent bytes are claimed.",
+  "The caller explicitly materializes sp+20 in r9 before every call to 080b9554 and 080b9604; both callees consume incoming r9 before defining it while their ordinary arguments remain in r0-r3. The approved ordinary-C route has no parameter or call primitive for this hidden context channel, so the byte-exact retained assembly is Proven ASM.",
   "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, local presentation callers and records, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used."
  ]
 }

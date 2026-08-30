@@ -2,7 +2,8 @@
  "schema_version": 1,
  "namespace": "gs1-en-main",
  "address": "0x080b1bd0",
- "status": "measured-draft",
+ "status": "proven-retained",
+ "classification": "compiler_literal_pool_placement_module",
  "owner_bytes": 540,
  "score": {
   "measured": "2026-08-27",
@@ -21,7 +22,7 @@
  ],
  "notes": [
   "Recovered only from the retained owner assembly, approved local ROM, the byte-exact template/sibling sources, in-repository headers, and the approved compiler.",
-  "This candidate claims zero DONE bytes.",
+  "The complete C remains the semantic reconstruction; the byte-exact retained assembly is Proven ASM because ordinary C cannot request the reference's two-cluster literal-pool layout.",
   "Twin of 0x080b211c (shop/select_party_member.c family): diffing games/gs1/asm/080b1bd0.s against games/gs1/asm/080b211c.s shows the two are near line-identical raw disassembly, differing only in which price/name callee they invoke (Func_080b19cc Shop_ComputeSalePrice vs Func_080b20e8 Shop_ComputeRepairPrice), literal-pool offsets, and one extra block at the end of 080b1bd0 (a call to Shop_SelectSaleQuantity + Func_080b1f4c that 080b211c's flow replaces with a single call to Func_080b2328) -- confirming 080b1bd0 is the 'sell an item from this party member' flow reached when shop->party_action == 1 in shop/select_party_member.c, and 080b211c is the parallel 'repair' flow.",
   "2026-08-27: this owner's Shop_DrawItemPrice call had a real bug (fixed this session, see score note) where the once-created outer window (here, list_window) rather than the per-redraw window (price_window) was the correct first argument -- found by decompiling games/gs1/asm/080b1bd0.s's own reference bytes with m2c via `tools/compiler families transplant`. Given how closely 080b211c mirrors this file's raw disassembly, its analogous price/repair-drawing call very likely has the same once-created-vs-per-redraw window mix-up; whoever works 080b211c next should check its own m2c/target.lst before trusting its current argument order (not edited here, per the task's file-isolation rule).",
   "Ability_GetAvailability(unit_id) is reused here as an item-availability *count* (its return value minus one clamps the selection index), not just the boolean sense used in draw_party_member_item_grid.c/select_party_member.c -- both usages are consistent with a single s32-returning function.",

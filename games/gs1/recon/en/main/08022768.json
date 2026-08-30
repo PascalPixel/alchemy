@@ -7,7 +7,7 @@
  "best_candidate_bytes": 176,
  "best_differing_halfwords": 84,
  "best_wrong_instructions": 62,
- "status": "measured_draft",
+ "status": "measured-draft",
  "notes": [
   "The clustered template (graphics_owner_13.c, nibble palette decode) does not match this owner's actual behavior -- weak cluster match. Read games/gs1/asm/08022768.s directly instead: a tilemap-rect clip-and-fill over the global Data_03001e8c render-work base pointer (declared elsewhere as `extern u8 *Data_03001e8c;`, same global used by games/gs1/src/ui/window/clear_tile_attributes_in_rect.c). Params (x, y, width, height, alt): clamp x/width and y/height into the 30x20 tile grid (x<0 -> width+=x, x=0; x+width>29 -> width=30-x; same pattern for y/height against 20 rows), then for each row/col in the clamped rect, OR bit 12 with ((alt&1)<<12) into the 16-bit tilemap entry (clearing bit12 first via &0xefff), and after each row OR `2 << (row>>2)` into base[RENDER_DIRTY_OFS] (0xEA3, from games/gs1/include/gs1_edition.h) to mark the touched row-group dirty.",
   "This is a near-twin of main:080ab21c (same family/target array, same clip logic, same dirty-mark tail) with two behavioral differences confirmed from the raw assembly: 08022768 clears+sets bit 12 unconditionally on every tile in the rect (mask 0xffffefff / low16 0xefff), while 080ab21c additionally SKIPS a tile whose low byte equals 0xf (tile>>12 & 0xf == 0xf guard) before touching it, and uses mask 0xffff0fff (clearing the top nibble bits 12-15, a 4-bit field) instead of a single bit. These are genuinely different owners, not the same source respelled twice.",

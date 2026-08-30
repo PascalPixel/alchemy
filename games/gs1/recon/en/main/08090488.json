@@ -2,7 +2,8 @@
  "schema_version": 1,
  "namespace": "gs1-en-main",
  "address": "0x08090488",
- "status": "measured-draft",
+ "status": "proven-retained",
+ "classification": "compiler_literal_pool_placement_module",
  "owner_bytes": 250,
  "score": {
   "measured": "2026-08-26",
@@ -36,7 +37,7 @@
  ],
  "notes": [
   "Recovered only from the retained owner assembly, approved local ROM, the byte-exact template source, in-repository headers, and the approved compiler.",
-  "This candidate claims zero DONE bytes."
+  "The complete C remains the semantic reconstruction; the byte-exact retained assembly is Proven ASM because ordinary C cannot request the reference's mid-function pool dump."
  ],
  "pool_class_membership_correction": {
   "measured": "2026-08-29",

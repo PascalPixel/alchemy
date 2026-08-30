@@ -2,7 +2,7 @@
  "schema_version": 1,
  "namespace": "main",
  "address": "0x080b6a60",
- "status": "proven-retained-assembly",
+ "status": "proven-retained",
  "owner_bytes": 128,
  "candidate_bytes": 128,
  "differing_halfwords": 2,

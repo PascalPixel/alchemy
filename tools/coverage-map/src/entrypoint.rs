@@ -174,14 +174,14 @@ fn update_readme(
         if let Some(end) = out[start..].find('\n') {
             out.replace_range(
                 start..start + end,
-                &format!("## Status: {}% DONE", number(percent.round())),
+                &format!("## Status: {percent:.2}% DONE"),
             );
         }
     }
     if let Some(end) = out.find("\n\nDONE measures") {
         if let Some(start) = out[..end].rfind("\n## DONE:") {
             let head_end = start + 1;
-            let replacement = format!("## DONE: Currently {}%", number(percent.round()));
+            let replacement = format!("## DONE: Currently {percent:.2}%");
             out.replace_range(head_end..end, &replacement);
         }
     }
@@ -255,7 +255,7 @@ mod tests {
             &map,
             &[],
         );
-        assert!(updated.contains("## Status: 59% DONE"));
+        assert!(updated.contains("## Status: 59.00% DONE"));
         assert!(!updated.contains("52% DONE"));
     }
 }

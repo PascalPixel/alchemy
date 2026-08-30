@@ -1,0 +1,21 @@
+{
+ "schema_version": 1,
+ "namespace": "gs1-en-main",
+ "address": "0x080175c0",
+ "status": "measured-draft",
+ "owner_bytes": 96,
+ "score": {
+  "measured": "2026-08-30",
+  "candidate_bytes": 96,
+  "reference_bytes": 96,
+  "differing_halfwords": 11,
+  "wrong_instructions": 12,
+  "class": "structural_topology",
+  "note": "The complete semantic reconstruction has equal branch topology and matches through the first call. The remaining residual is one 8-byte versus 16-byte outgoing stack area and the compiler's equivalent address-materialization schedule for the table lookup; it remains Draft C and claims zero DONE bytes."
+ },
+ "notes": [
+  "Recovered from the retained owner, the aggregate-aware m2c seed, the prepared template pack, and the approved compiler.",
+  "Replaced the stale template draft with the owner's actual clear-two-fields, lookup, conditional-call, and result-return behavior; the canonical score improved from 47 to 11 differing halfwords.",
+  "No inline assembly, register forcing, compiler barriers, copied instruction bytes, or external decompilation source was used."
+ ]
+}

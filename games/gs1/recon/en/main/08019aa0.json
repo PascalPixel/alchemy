@@ -7,7 +7,7 @@
  "best_candidate_bytes": 252,
  "best_differing_halfwords": 82,
  "best_wrong_instructions": 68,
- "status": "measured_draft",
+ "status": "measured-draft",
  "notes": [
   "Template (Menu_RunSelection, a window-create-then-poll-loop menu) is thematically related but this owner's actual logic (from games/gs1/asm/08019aa0.s) is a different dialog-creation routine: looks up a table entry via Func_08018038(p1) to gate whether to proceed at all; if gated in, calls Func_080187ac(p1, &x, &y, &w, &h) to get placement/size (x,y pre-seeded to 8 as in/out defaults), centers the dialog via (30-w)/2 and (15-h)/2+baseY, creates the object via Func_080162d4 with a branch on the `flag` param (full size vs a fixed 0/0 size plus writing `flag` into two output fields), then runs Func_080165d8 and, depending on its result, either finalizes immediately or spins two Func_080030f8/Func_08017364 and Func_08016418/Func_08017394 wait-loops before zeroing two fields at Data_03001e8c+0x12f4/0x12f6.",
   "One respelling attempt beyond the direct translation: tried replacing the two `/2` divisions with `>>1` (since the reference's centering math uses a plain `asrs` with no rounding-toward-zero correction, while the direct `/2` translation compiled to an extra `lsrs+adds` sign-correction pair before the shift) -- this reproduced the reference's plain-shift instruction locally but made the OVERALL match worse (wrong_instructions 68->72), suggesting the rounding-correction sequence is entangled with other register allocation elsewhere in the function rather than being a clean local fix. Reverted to `/2`.",

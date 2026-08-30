@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x0808b98c",
+  "status": "measured-draft",
+  "owner_bytes": 108,
+  "retention": "c_candidate",
+  "domain": "Clear all battle-effect object slots and release the saved event object.",
+  "provenance": "Reconstructed from the retained owner assembly and the adjacent 0808b8e8 cleanup sibling; no external source was used.",
+  "score": {
+    "measured": "2026-08-30",
+    "candidate_bytes": 116,
+    "reference_bytes": 108,
+    "differing_halfwords": 53,
+    "wrong_instructions": 48,
+    "branch_topology": "equal",
+    "class": "missing-extra-code",
+    "note": "Complete ordinary-C semantics with equal branch topology. GCC keeps the loop's zero carrier in r4 and spills it around the cleanup call while the reference keeps zero in sl and the -2 mask in r8; the resulting frame adds eight bytes."
+  },
+  "notes": [
+    "The retained assembly proves a complete 58-slot cleanup loop followed by three runtime-field clears and an optional event-object release.",
+    "A bounded source-shape pass tested named and implicit zero/mask carriers, declaration order, pointer-vs-integer zero, register hints, and the relevant optimization toggles. None reproduced the reference allocation; no fixed register or compiler barrier was used.",
+    "This candidate claims zero DONE bytes until a byte-exact build passes."
+  ]
+}

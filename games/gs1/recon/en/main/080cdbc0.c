@@ -47,14 +47,20 @@ void Func_080b5048(u16, s32);
    Data_03001e50, not Data_02002090) -- useful as a lead, not proof. */
 static inline void QueueDisplayRequest(u32 control)
 {
+    struct DisplayQueue *queue = &Data_02002090;
     volatile u16 *ime = &Data_04000208;
-    u16 saved = *ime;
+    u32 saved = *ime;
+    s32 count;
     *ime = (u16)(u32)ime;
-    if (Data_02002090.count <= 31) {
-        struct DisplayQueueEntry *entry = &Data_02002090.entries[Data_02002090.count++];
-        entry->control = control;
-        entry->address = 0x04000000;
-        entry->flags = 0x00020000;
+    count = queue->count;
+    if (count <= 31) {
+        struct DisplayQueueEntry *entry = &queue->entries[count];
+        u32 *destination = &entry->control;
+
+        queue->count = count + 1;
+        *destination++ = control;
+        *destination++ = 0x04000000;
+        *destination = 0x00020000;
     }
     *ime = saved;
 }
@@ -78,6 +84,7 @@ void Func_080cdbc0(void)
 
     Func_08004278((u32)Func_080cd4b4);
 
+    pos->y = 32;
     QueueDisplayRequest(0x7341);
 
     *(volatile u16 *)0x04000050 = 0;

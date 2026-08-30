@@ -5434,6 +5434,9 @@
     "resource_3af:02003c88": {
       "name": "FieldScene_RunThreeActorEncounter"
     },
+    "resource_3af:02003f30": {
+      "name": "FieldScene_RunEncounterClosingSequence"
+    },
     "main:080a46b4": {
       "name": "Item_ClassifyUseMode",
       "source": "items/classify_use_mode.c"

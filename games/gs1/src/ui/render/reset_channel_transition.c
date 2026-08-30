@@ -1,12 +1,12 @@
 #include "types.h"
 
-void UiWork_ResetChannelTransition(void *arg0)
+void UiWork_ResetChannelTransition(void *work)
 {
-  int new_var3;
-  int new_var;
-  u8 *new_var2;
-  new_var2 = ((u8 *) arg0) + 0x1C;
-  new_var = 2;
-  new_var3 = new_var;
-  *((s16 *) new_var2) = new_var3;
+  int transition_mode;
+  int reset_mode;
+  u8 *channel_transition;
+  channel_transition = ((u8 *) work) + 0x1C;
+  reset_mode = 2;
+  transition_mode = reset_mode;
+  *((s16 *) channel_transition) = transition_mode;
 }

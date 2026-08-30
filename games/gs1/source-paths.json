@@ -5398,6 +5398,12 @@
     "main:08091a58": {
       "name": "PartyInventory_GiveItem"
     },
+    "resource_3ca:02000430": {
+      "name": "FieldScene_RunExtendedPresentationSequence"
+    },
+    "resource_3ca:02000b34": {
+      "name": "FieldScene_ClosePresentationSequence"
+    },
     "main:080a46b4": {
       "name": "Item_ClassifyUseMode",
       "source": "items/classify_use_mode.c"

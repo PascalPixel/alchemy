@@ -2,6 +2,8 @@
 #include "runtime_interfaces.h"
 #include "runtime_mem.h"
 
+#define SaveState_ProcessSelectedSlot Func_0801faa8
+
 s32 Func_080056cc(void);
 u32 Func_08005a78(s32, void *);
 s32 Func_08005920(s32, void *);
@@ -12,7 +14,7 @@ extern char Value_0000000b;
 extern char Value_020004e4;
 extern char Value_03001388;
 
-s16 Func_0801faa8(void)
+s16 SaveState_ProcessSelectedSlot(void)
 {
     void *buffer;
     s16 value;

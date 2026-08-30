@@ -4,21 +4,19 @@
 
 void *RenderOutput_AcquireFree(void)
 {
-  void **temp_r0;
-  void **temp_r2;
-  void *temp_r3;
-  /* 空きリストの先頭を1個取り外して返す。 */
-  temp_r3 = *((void **) ADDR_03001E8C);
-  temp_r0 = *((void ***) (((u8 *) temp_r3) + RENDER_FREE_HEAD_OFS));
-  if (temp_r0 != ((void *) 0))
+  void **free_output;
+  void *render_state;
+  /* Detach and return the head of the free list. */
+  render_state = *((void **) ADDR_03001E8C);
+  free_output = *((void ***) (((u8 *) render_state) + RENDER_FREE_HEAD_OFS));
+  if (free_output != ((void *) 0))
   {
-    ;
-    if ((*temp_r0) == ((void *) 0))
+    if ((*free_output) == ((void *) 0))
     {
-      *((s32 *) (((u8 *) temp_r3) + RENDER_FREE_TAIL_OFS)) = (s32) (temp_r3 + RENDER_FREE_HEAD_OFS);
+      *((s32 *) (((u8 *) render_state) + RENDER_FREE_TAIL_OFS)) = (s32) (render_state + RENDER_FREE_HEAD_OFS);
     }
-    *((void ***) (((u8 *) temp_r3) + RENDER_FREE_HEAD_OFS)) = *temp_r0;
-    *temp_r0 = (void *) 0;
+    *((void ***) (((u8 *) render_state) + RENDER_FREE_HEAD_OFS)) = *free_output;
+    *free_output = (void *) 0;
   }
-  return temp_r0;
+  return free_output;
 }

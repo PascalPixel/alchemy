@@ -1,16 +1,5 @@
 #include "types.h"
 
-/*
- * resource_3b2 owner at 0x020012b4, 192 bytes: code 0x020012b4-0x02001365,
- * a two-byte alignment `movs r0, r0` at 0x02001366, and the three-word literal
- * pool 0x02001368-0x02001373.
- *
- * Callee names are the RAW per-site names of HANDOVER §5b3a
- * (`name = insn_address + 2 + true_target_offset`), read straight off
- * `overlay_show resource_3b2 0x12b4`.  They are arithmetic operands, not
- * labels: two sites calling the same routine carry different names, and the
- * veneer-resolved names the semantic draft used do not emit these bytes.
- */
 
 extern s16 Data_02000240[];             /* the overlay's scene table */
 extern u8 Value_0000007e;

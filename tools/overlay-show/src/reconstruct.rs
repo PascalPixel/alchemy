@@ -470,6 +470,23 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
             }
         }
         match op.as_str() {
+            "mov" if args.len() == 2 => {
+                if let Some(v) = reg.get(&args[1]).cloned() {
+                    set_value(&mut reg, &mut fresh, &args[0], v);
+                } else {
+                    forget_value(&mut reg, &mut fresh, &args[0]);
+                }
+                if let Some(base) = ptr.get(&args[1]).cloned() {
+                    ptr.insert(args[0].clone(), base);
+                } else {
+                    ptr.remove(&args[0]);
+                }
+                if let Some(place) = loaded.get(&args[1]).cloned() {
+                    loaded.insert(args[0].clone(), place);
+                } else {
+                    loaded.remove(&args[0]);
+                }
+            }
             "movs" if args.len() == 2 => {
                 let v = value(&args[1], &reg);
                 match v {
@@ -751,4 +768,29 @@ fn write_draft(output: &str, draft: &Draft) -> Result<(), String> {
     }
     std::fs::write(output, format!("{}\n", draft.lines.join("\n")))
         .map_err(|error| error.to_string())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::draft;
+
+    #[test]
+    fn carries_known_values_through_high_register_moves() {
+        let listing = [
+            " 2000000:\t2280      \tmovs\tr2, #128\t@ 0x80",
+            " 2000002:\t0212      \tlsls\tr2, r2, #8",
+            " 2000004:\t4690      \tmov\tr8, r2",
+            " 2000006:\t4641      \tmov\tr1, r8",
+            " 2000008:\t2001      \tmovs\tr0, #1",
+            " 200000a:\tf000 fff9 \tbl\t0x2001000",
+            " 200000e:\t4770      \tbx\tlr",
+        ]
+        .map(str::to_string);
+
+        let source = draft(&listing, "Func_02000000").lines.join("\n");
+        assert!(
+            source.contains("Func_02001000(1, 32768, 32768);"),
+            "{source}"
+        );
+    }
 }

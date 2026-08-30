@@ -3148,6 +3148,18 @@
         "complete reconstruction accounts for all 66 calls, the signed actor-coordinate gate, nested dialogue conditions, repeated dialogue phase, and signed actor-coordinate handoff",
         "games/gs1/recon/en/overlays/resource_39c_c_02004a08.json"
       ]
+    },
+    {
+      "overlay": "resource_378",
+      "start": "0x0200290c",
+      "end": "0x02003098",
+      "kind": "generated_call_script_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "complete reconstruction accounts for all 221 calls, actor flag lifecycle, callback publications, returned actor handles, and sixteen decoded actor/workspace memory operations",
+        "games/gs1/recon/en/overlays/resource_378_c_0200290c.json"
+      ]
     }
   ]
 }

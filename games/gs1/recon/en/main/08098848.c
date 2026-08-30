@@ -1,5 +1,7 @@
 #include "types.h"
 
+#define BattleEffect_RunTargetedItemBreak Func_08098848
+
 /*
  * Companion to RunBattleEffect07 (0x08098954) and Func_08099da4 (the
  * mode-11 twin): this is the mode-7 case handler inside the second,
@@ -46,7 +48,7 @@ void ObjectGroup_ApplyRandomChildValues(void);
 void UpdateRisingParticleBurst(void *effect);
 void BattleEffect_PrepareBufferInterpolation(void);
 
-void Func_08098848(void)
+void BattleEffect_RunTargetedItemBreak(void)
 {
     struct BattleEffectScene *scene;
     void *main_object;

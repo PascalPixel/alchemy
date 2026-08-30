@@ -660,6 +660,9 @@
     "main:08095dd0": {
       "name": "BattleEffect_RunPhasedRadialParticleSequence"
     },
+    "main:08098848": {
+      "name": "BattleEffect_RunTargetedItemBreak"
+    },
     "main:080cd260": {
       "name": "BattlePresentation_ProcessPendingGraphicsTransfer"
     },

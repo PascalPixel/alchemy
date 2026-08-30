@@ -1723,12 +1723,13 @@
     "inline_assembly_fixed_registers_and_compiler_barriers_are_disallowed",
     "byte_exact_reconstruction"
    ],
-   "expected_files": 3,
-   "expected_bytes": 480,
+   "expected_files": 4,
+   "expected_bytes": 748,
    "files": [
     "080b6a60",
     "080974d8",
-    "080cd260"
+    "080cd260",
+    "08098848"
    ]
   },
   {

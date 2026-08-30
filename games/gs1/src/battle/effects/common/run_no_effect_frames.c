@@ -2,14 +2,14 @@
 
 void Func_080dbb98(void);
 
-void BattleEffect_RunNoEffectFrames(s32 arg0) {
-    s32 var_r6;
+void BattleEffect_RunNoEffectFrames(s32 frame_count) {
+    s32 frame;
 
-    var_r6 = 0;
-    if (arg0 != 0) {
+    frame = 0;
+    if (frame_count != 0) {
         do {
-            var_r6 += 1;
+            frame += 1;
             Func_080dbb98();
-        } while (var_r6 != arg0);
+        } while (frame != frame_count);
     }
 }

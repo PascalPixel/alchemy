@@ -1,12 +1,12 @@
 #include "types.h"
 #include "global_cells.h"
 
-void BattleEffect_SetPrimaryBufferValue(unsigned int arg0)
+void BattleEffect_SetPrimaryBufferValue(unsigned int value)
 {
-  s16 *temp_r3;
-  temp_r3 = *((s16 **) ADDR_03001ED0);
-  if (0 != temp_r3)
+  s16 *primary_buffer;
+  primary_buffer = *((s16 **) ADDR_03001ED0);
+  if (0 != primary_buffer)
   {
-    *temp_r3 = arg0;
+    *primary_buffer = value;
   }
 }

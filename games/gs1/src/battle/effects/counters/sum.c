@@ -1,19 +1,12 @@
-#include "types.h"
-
-struct State_0808bc9c {
-    unsigned char padding[0x16c];
-    s16 values[12];
-};
-
-extern struct State_0808bc9c *Data_03001ebc;
+#include "battle_effect_counters.h"
 
 s32 BattleEffect_SumCounters(void)
 {
-    struct State_0808bc9c *state = Data_03001ebc;
+    struct BattleEffectCounterState *state = Data_03001ebc;
 
-    return state->values[0] + state->values[1] + state->values[2]
-         + state->values[3] + state->values[4] + state->values[5]
-         + state->values[6] + state->values[7] + state->values[6]
-         + state->values[8] + state->values[9] + state->values[10]
-         + state->values[11];
+    return state->counters[0] + state->counters[1] + state->counters[2]
+         + state->counters[3] + state->counters[4] + state->counters[5]
+         + state->counters[6] + state->counters[7] + state->counters[6]
+         + state->counters[8] + state->counters[9] + state->counters[10]
+         + state->counters[11];
 }

@@ -1,4 +1,7 @@
-use crate::{find_forbidden, find_preprocessed, self_test, source_files, Finding};
+use crate::{
+    find_forbidden, find_named_source_tool_leaks, find_preprocessed, self_test, source_files,
+    Finding,
+};
 use compiler_core::bundle::compiler_command_for_target;
 use compiler_core::routing::{
     cflags_for_target_source, root as compiler_root, uses_agbcc_compiler, CompilerTarget,
@@ -195,6 +198,7 @@ fn scan_repository(target_ids: &[DecompTargetId]) -> ExitCode {
         };
         let name = path.strip_prefix(root).unwrap_or(path).to_string_lossy();
         findings.extend(find_forbidden(&name, &text));
+        findings.extend(find_named_source_tool_leaks(&name, &text));
     }
     let (expanded, jobs, mut more) = match scan_preprocessed(root, target_ids) {
         Ok(result) => result,

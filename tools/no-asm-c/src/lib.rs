@@ -14,6 +14,20 @@ pub struct Finding {
 fn regex(slot: &'static OnceLock<Regex>, pattern: &str) -> &'static Regex {
     slot.get_or_init(|| Regex::new(pattern).unwrap())
 }
+fn code_only(text: &str) -> String {
+    static LITERALS: OnceLock<Regex> = OnceLock::new();
+    regex(
+        &LITERALS,
+        r#"(?ms)//[^\n]*|/\*.*?\*/|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'"#,
+    )
+    .replace_all(text, |capture: &Captures| {
+        capture[0]
+            .chars()
+            .map(|character| if character == '\n' { '\n' } else { ' ' })
+            .collect::<String>()
+    })
+    .into_owned()
+}
 fn forbidden(word: &str, attribute: bool) -> Option<String> {
     let assembly = word == "asm"
         || word
@@ -30,18 +44,8 @@ fn forbidden(word: &str, attribute: bool) -> Option<String> {
         .then(|| format!("ABI attribute {word}"))
 }
 pub fn find_forbidden(file: &str, text: &str) -> Vec<Finding> {
-    static LITERALS: OnceLock<Regex> = OnceLock::new();
     static TOKENS: OnceLock<Regex> = OnceLock::new();
-    let code = regex(
-        &LITERALS,
-        r#"(?ms)//[^\n]*|/\*.*?\*/|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'"#,
-    )
-    .replace_all(text, |capture: &Captures| {
-        capture[0]
-            .chars()
-            .map(|character| if character == '\n' { '\n' } else { ' ' })
-            .collect::<String>()
-    });
+    let code = code_only(text);
     let mut findings = Vec::new();
     let (mut depth, mut pending, mut line, mut end) = (0usize, false, 1usize, 0usize);
     for matched in regex(&TOKENS, r"[A-Za-z_][A-Za-z0-9_]*|[()]").find_iter(&code) {
@@ -70,6 +74,26 @@ pub fn find_forbidden(file: &str, text: &str) -> Vec<Finding> {
         end = matched.end();
     }
     findings
+}
+pub fn find_named_source_tool_leaks(file: &str, text: &str) -> Vec<Finding> {
+    static TOOL_NAMES: OnceLock<Regex> = OnceLock::new();
+    let path = file.replace('\\', "/");
+    if !path.starts_with("games/gs1/src/") || path.starts_with("games/gs1/src/unidentified/") {
+        return Vec::new();
+    }
+    let code = code_only(text);
+    regex(&TOOL_NAMES, r"\bM2C_[A-Za-z0-9_]*\b")
+        .find_iter(&code)
+        .map(|matched| Finding {
+            file: file.into(),
+            line: code[..matched.start()]
+                .bytes()
+                .filter(|byte| *byte == b'\n')
+                .count()
+                + 1,
+            token: format!("tool identifier {}", matched.as_str()),
+        })
+        .collect()
 }
 pub fn find_preprocessed(label: &str, text: &str) -> Vec<Finding> {
     let mut findings = find_forbidden(label, text);
@@ -164,6 +188,16 @@ pub fn self_test() -> Result<(), String> {
         .collect::<Vec<_>>();
     if locations != [("one.c", 8), ("two.c", 12)] {
         return Err("preprocessed findings lost source identity".into());
+    }
+    let source = "/* M2C_FIELD */\n#define M2C_FIELD(x) (x)\n";
+    let found = find_named_source_tool_leaks("games/gs1/src/ui/example.c", source);
+    if found.len() != 1 || found[0].line != 2 || !found[0].token.contains("M2C_FIELD") {
+        return Err("named-source gate missed a tool-branded identifier".into());
+    }
+    if !find_named_source_tool_leaks("games/gs1/src/unidentified/example.c", source).is_empty()
+        || !find_named_source_tool_leaks("games/gs2/src/example.c", source).is_empty()
+    {
+        return Err("named-source gate crossed its owned boundary".into());
     }
     Ok(())
 }

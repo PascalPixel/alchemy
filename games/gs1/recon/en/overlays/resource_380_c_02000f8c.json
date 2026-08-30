@@ -1,0 +1,11 @@
+{
+  "span_bytes": 1220,
+  "score": {"measured":"2026-08-30","candidate_bytes":1224,"reference_bytes":1220,"wrong_instructions":173,"differing_halfwords":570,"class":"generated-call-script-retention"},
+  "shape": {"calls":118,"loops":2,"memory_operations":28},
+  "verified_against_reference": [
+    "candidate and ROM contain the same 118 calls in machine order with every argument represented",
+    "direct assembly audit restored both motion-loop deltas, six actor-state writes, four initial coordinate fields, and the conditional scene-counter increment",
+    "candidate and reference differ by four bytes after all decoded control flow and memory effects are represented; the residual is approved GCC allocation and literal scheduling"
+  ],
+  "retention": "keep_structured_asm"
+}

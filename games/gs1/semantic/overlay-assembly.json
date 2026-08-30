@@ -1729,6 +1729,19 @@
     },
     {
       "overlay": "resource_380",
+      "start": "0x02000f8c",
+      "end": "0x02001392",
+      "kind": "generated_call_script_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "complete owner reconstruction accounts for all 118 calls, both motion loops, actor state writes, coordinate deltas, and the conditional scene-counter increment",
+        "candidate and reference extents differ by four bytes after every decoded side effect is represented; residual is approved GCC allocation and literal scheduling",
+        "games/gs1/recon/en/overlays/resource_380_c_02000f8c.json"
+      ]
+    },
+    {
+      "overlay": "resource_380",
       "start": "0x020027f8",
       "end": "0x02003f24",
       "kind": "generated_call_script_module",

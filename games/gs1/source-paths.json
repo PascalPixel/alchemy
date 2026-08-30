@@ -2711,6 +2711,9 @@
     "resource_380:02000d5c": {
       "name": "FieldScene_StagePairedActors"
     },
+    "resource_380:02000f8c": {
+      "name": "FieldScene_RunActorFormationSequence"
+    },
     "resource_373:020015dc": {
       "name": "FieldScene_RunScriptedActorSequence"
     },

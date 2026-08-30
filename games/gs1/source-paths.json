@@ -5404,6 +5404,12 @@
     "resource_371:02002cb4": {
       "name": "FieldScene_RunActorPresentationSequence"
     },
+    "resource_3a5:020004e4": {
+      "name": "FieldScene_ConfigureActorLayout"
+    },
+    "resource_3a5:0200088c": {
+      "name": "FieldScene_ConfigureAlternateActorLayout"
+    },
     "resource_373:02002f14": {
       "name": "FieldScene_RunPrimaryActorSequence"
     },

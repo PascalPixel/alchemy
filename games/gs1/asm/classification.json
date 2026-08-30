@@ -1870,6 +1870,27 @@
    ]
   },
   {
+   "kind": "compiler_commutative_address_mismatch",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_owner_extent",
+    "six_edition_relocation_normalized_core_is_identical",
+    "only_residual_is_one_commutative_thumb_register_offset_address_operand_order",
+    "all_other_instructions_control_flow_literals_and_memory_operations_match",
+    "ordinary_pointer_addition_and_commuted_integer_address_spellings_emit_the_same_operand_order",
+    "approved_compiler_regmove_scheduling_cse_abi_and_fixed_register_axes_preserve_the_residual_or_regress",
+    "inline_assembly_fixed_registers_and_compiler_barriers_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 56,
+   "files": [
+    "080b6e7c"
+   ]
+  },
+  {
    "kind": "thumb_multiple_transfer_module",
    "origin": "program_or_library_assembly",
    "retention": "keep_structured_asm",

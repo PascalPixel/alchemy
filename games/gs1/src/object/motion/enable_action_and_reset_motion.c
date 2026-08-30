@@ -4,13 +4,13 @@
 s32 Object_ResetMotion();
 void ObjectMotion_EnableActionAndResetMotion(void)
 {
-  void *temp_r0;
-  unsigned char new_var;
-  temp_r0 = ObjectTable_Get();
-  if (temp_r0 != ((void *) 0))
+  void *object;
+  unsigned char action_enabled;
+  object = ObjectTable_Get();
+  if (object != ((void *) 0))
   {
-    new_var = 1;
-    *((u8 *) (((u8 *) temp_r0) + 0x5A)) = (u8) (new_var | (*((u8 *) (((u8 *) temp_r0) + 0x5A))));
+    action_enabled = 1;
+    *((u8 *) (((u8 *) object) + 0x5A)) = (u8) (action_enabled | (*((u8 *) (((u8 *) object) + 0x5A))));
     Object_ResetMotion();
   }
 }

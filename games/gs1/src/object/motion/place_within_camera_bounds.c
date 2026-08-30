@@ -9,65 +9,65 @@ void WaitFrames(u32);
 void Func_08009128(void);
 void Object_SetPosition(void *, s32, s32, s32);
 
-void ObjectMotion_PlaceWithinCameraBounds(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+void ObjectMotion_PlaceWithinCameraBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use_setter)
 {
-    s32 spC;
-    void *sp8;
-    s32 sp4;
-    s32 sp0;
-    s32 temp_fp;
-    s32 temp_r2;
-    s32 temp_r9;
-    s32 var_r6;
-    s32 var_r7;
-    s32 var_sl;
-    void *temp_r1;
-    void *temp_r5;
+    s32 should_use_setter;
+    void *runtime_block;
+    s32 minimum_x;
+    s32 minimum_z;
+    s32 maximum_x;
+    s32 object_z_offset;
+    s32 maximum_z;
+    s32 position_x;
+    s32 position_z;
+    s32 position_y;
+    void *camera_state;
+    void *object;
 
-    var_r6 = arg0;
-    var_sl = arg1;
-    spC = arg3;
-    var_r7 = arg2;
-    sp8 = Runtime_AllocateBlock(0x1B, 0xCCC);
-    temp_r5 = FIELD_AT_OFFSET(sp8, void **, 0x1E0);
-    temp_r1 = *(void **)ADDR_03001E70;
-    sp4 = FIELD_AT_OFFSET(temp_r1, s32, 0xEC) + 0x780000;
-    temp_r2 = FIELD_AT_OFFSET(temp_r5, s32, 0xC);
-    sp0 = FIELD_AT_OFFSET(temp_r1, s32, 0xF0) + temp_r2 + 0x600000;
-    temp_fp = FIELD_AT_OFFSET(temp_r1, s32, 0xF4) + 0xFF880000;
-    temp_r9 = FIELD_AT_OFFSET(temp_r1, s32, 0xF8) + temp_r2 + 0xFFC00000;
-    FIELD_AT_OFFSET(temp_r1, void **, 0) = (void *) (temp_r5 + 8);
-    Object_ResetMotion(temp_r5);
-    if (var_r6 == -1) {
-        var_r6 = FIELD_AT_OFFSET(temp_r5, s32, 8);
+    position_x = requested_x;
+    position_y = requested_y;
+    should_use_setter = use_setter;
+    position_z = requested_z;
+    runtime_block = Runtime_AllocateBlock(0x1B, 0xCCC);
+    object = FIELD_AT_OFFSET(runtime_block, void **, 0x1E0);
+    camera_state = *(void **)ADDR_03001E70;
+    minimum_x = FIELD_AT_OFFSET(camera_state, s32, 0xEC) + 0x780000;
+    object_z_offset = FIELD_AT_OFFSET(object, s32, 0xC);
+    minimum_z = FIELD_AT_OFFSET(camera_state, s32, 0xF0) + object_z_offset + 0x600000;
+    maximum_x = FIELD_AT_OFFSET(camera_state, s32, 0xF4) + 0xFF880000;
+    maximum_z = FIELD_AT_OFFSET(camera_state, s32, 0xF8) + object_z_offset + 0xFFC00000;
+    FIELD_AT_OFFSET(camera_state, void **, 0) = (void *) (object + 8);
+    Object_ResetMotion(object);
+    if (position_x == -1) {
+        position_x = FIELD_AT_OFFSET(object, s32, 8);
     }
-    if (var_sl == -1) {
-        var_sl = FIELD_AT_OFFSET(temp_r5, s32, 0xC);
+    if (position_y == -1) {
+        position_y = FIELD_AT_OFFSET(object, s32, 0xC);
     }
-    if (var_r7 == -1) {
-        var_r7 = FIELD_AT_OFFSET(temp_r5, s32, 0x10);
+    if (position_z == -1) {
+        position_z = FIELD_AT_OFFSET(object, s32, 0x10);
     }
-    if (var_r6 < sp4) {
-        var_r6 = sp4;
+    if (position_x < minimum_x) {
+        position_x = minimum_x;
     }
-    if (var_r7 < sp0) {
-        var_r7 = sp0;
+    if (position_z < minimum_z) {
+        position_z = minimum_z;
     }
-    if (var_r6 > temp_fp) {
-        var_r6 = temp_fp;
+    if (position_x > maximum_x) {
+        position_x = maximum_x;
     }
-    if (var_r7 > temp_r9) {
-        var_r7 = temp_r9;
+    if (position_z > maximum_z) {
+        position_z = maximum_z;
     }
-    if (spC == 0) {
-        FIELD_AT_OFFSET(temp_r5, s32, 8) = var_r6;
-        FIELD_AT_OFFSET(temp_r5, s32, 0xC) = var_sl;
-        FIELD_AT_OFFSET(temp_r5, s32, 0x10) = var_r7;
+    if (should_use_setter == 0) {
+        FIELD_AT_OFFSET(object, s32, 8) = position_x;
+        FIELD_AT_OFFSET(object, s32, 0xC) = position_y;
+        FIELD_AT_OFFSET(object, s32, 0x10) = position_z;
         WaitFrames(1U);
-        if (FIELD_AT_OFFSET(sp8, s16, 0x19E) != 3) {
+        if (FIELD_AT_OFFSET(runtime_block, s16, 0x19E) != 3) {
             Func_08009128();
         }
     } else {
-        Object_SetPosition(temp_r5, var_r6, var_sl, var_r7);
+        Object_SetPosition(object, position_x, position_y, position_z);
     }
 }

@@ -5467,6 +5467,12 @@
     "resource_3bb:02001424": {
       "name": "FieldScene_RunSecondActorInteraction"
     },
+    "resource_3b9:020011c4": {
+      "name": "FieldScene_RunConditionalSceneSetup"
+    },
+    "resource_3b9:02001298": {
+      "name": "FieldScene_BuildActorPresentationGroup"
+    },
     "main:080a46b4": {
       "name": "Item_ClassifyUseMode",
       "source": "items/classify_use_mode.c"

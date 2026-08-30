@@ -2993,6 +2993,30 @@
         "complete reconstruction accounts for all 27 calls, the progress gate, both result branches, and common cleanup",
         "games/gs1/recon/en/overlays/resource_3bb_c_02001424.json"
       ]
+    },
+    {
+      "overlay": "resource_3b9",
+      "start": "0x020011c4",
+      "end": "0x0200127c",
+      "kind": "generated_call_script_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "complete reconstruction accounts for all 20 calls, both resource-dependent paths, actor state, and workspace updates",
+        "games/gs1/recon/en/overlays/resource_3b9_c_020011c4.json"
+      ]
+    },
+    {
+      "overlay": "resource_3b9",
+      "start": "0x02001298",
+      "end": "0x020015ec",
+      "kind": "generated_call_script_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "complete reconstruction accounts for all 92 calls, actor configuration, literal-backed presentation arguments, and workspace phases",
+        "games/gs1/recon/en/overlays/resource_3b9_c_02001298.json"
+      ]
     }
   ]
 }

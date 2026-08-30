@@ -95,6 +95,7 @@ void Func_080cc5d8(void *object)
     s32 screen[3];
     WordCopyFn copy;
     s32 callback_interval;
+    void *display_base;
 
     work = Func_080048b0(39, 0x782c);
     canvas = Func_080048b0(40, 0x4000);
@@ -155,9 +156,10 @@ void Func_080cc5d8(void *object)
 
     for (frame = 0; frame != 56; frame++) {
         Func_080e396c(M2C_FIELD(object, s32 *, 8), screen);
-        M2C_FIELD((void *)0x04000028, s32 *, 0) = (64 - screen[0]) << 8;
+        display_base = (void *)0x04000028;
+        M2C_FIELD(display_base, s32 *, 0) = (64 - screen[0]) << 8;
         if (frame > 49) {
-            M2C_FIELD((void *)0x04000028, u16 *, 42) =
+            M2C_FIELD(display_base, u16 *, 42) =
                 (112 - frame * 2) | 0x1000;
         }
 

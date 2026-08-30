@@ -1,5 +1,7 @@
 #include "shared-aggregates.h"
 
+#define BattleEffect_RunScreenShatter Func_080cbc0c
+
 /*
  * This header contains macros emitted by m2c in "valid syntax" mode,
  * which can be enabled by passing `--valid-syntax` on the command line.
@@ -69,7 +71,7 @@ typedef s64 M2C_UNK64;
 
 #endif
 
-void Func_080cbc0c(void *arg0) {
+void BattleEffect_RunScreenShatter(void *arg0) {
     s32 sp8;
     s32 spC;
     s32 sp10;
@@ -181,7 +183,7 @@ void Func_080cbc0c(void *arg0) {
     void *temp_r3_205;
     void *temp_r3_354;
     void *temp_r3_357;
-    s32 var_r6_129;
+    void *var_r6_129;
 
     sp28 = Func_080048b0(0x27, 0x782C);
     sp24 = Func_080048b0(0x28, 0x4000);
@@ -210,7 +212,7 @@ void Func_080cbc0c(void *arg0) {
     M2C_FIELD(temp_r3_116, s16 *, 4) = 0x1088;
     absolute_04000048.field_0000 = 0x3537;
     absolute_04000048.field_0002 = 0x3F21;
-    var_r6_129 = 0;
+    var_r6_129 = NULL;
     var_ip_132 = 0;
     var_r7_136 = 0;
     do {
@@ -219,8 +221,7 @@ void Func_080cbc0c(void *arg0) {
         var_r1_155 = var_r5_63 * 2;
 loop_4:
         var_r4_154 += 1;
-        *(s16 *)(0x06003800 + var_r6_129) =
-            (s16)(var_r0_153 | var_r1_155);
+        *(s16 *)(0x06003800 + (s32) var_r6_129) = (s16) (var_r0_153 | var_r1_155);
         var_r0_153 += 0x200;
         var_r1_155 += 2;
         var_r6_129 += 2;
@@ -278,7 +279,7 @@ loop_4:
     M2C_FIELD(sp28, s32 *, 0x77A4) = (s32) absolute_03001ad0.field_0006;
     absolute_03001ad0.field_0004 = 0;
     temp_r4_345 = *(u16 *)0x04000208;
-    *(u16 *)0x04000208 = 1;
+    *(u16 *)0x04000208 = 0;
     if ((s32) absolute_02002090.field_0000 <= 0x1F) {
         temp_r3_354 = (absolute_02002090.field_0000 * 0xC) + &absolute_02002090;
         absolute_02002090.field_0000 += 1;
@@ -313,7 +314,7 @@ loop_14:
     if (sp20 > 7) {
         var_lr_453 = (u16 *)0x050000C0;
         var_r6_454 = 0;
-        var_r9_457 = sp14 + 0x544;
+        var_r9_457 = (u16 *)((u8 *)sp14 + 0x544);
         do {
             temp_r3_506 = *var_lr_453;
             var_r5_509 = 0x1F & temp_r3_506;
@@ -522,13 +523,7 @@ loop_48:
         var_r6_953 = 0;
         var_r5_954 = sp28 + 0x7080;
         do {
-            Func_080072f4(sp24,
-                &sp28->unknown_0000[
-                    *(u16 *)(0x080EDFD2 + (var_r6_953 * 2))],
-                M2C_FIELD(var_r5_954, s16 *, 2),
-                M2C_FIELD(var_r5_954, s16 *, 6),
-                *(u8 *)(0x080EDF90 + var_r6_953),
-                *(u8 *)(0x080EDFB1 + var_r6_953));
+            Func_080072f4(sp24, &sp28->unknown_0000[*(u16 *)(0x080EDFD2 + (var_r6_953 * 2))], M2C_FIELD(var_r5_954, s16 *, 2), M2C_FIELD(var_r5_954, s16 *, 6), (s32) *(u8 *)(0x080EDF90 + var_r6_953), (s32) *(u8 *)(0x080EDFB1 + var_r6_953));
             if (sp20 > 3) {
                 Func_080e3908(var_r5_954, 0x40, 0x4000);
             }
@@ -617,7 +612,7 @@ loop_48:
     Func_080b5038(2, M2C_FIELD(sp14, u16 *, 0x648), 0);
     Func_080030f8(1);
     temp_r4_1228 = *(u16 *)0x04000208;
-    *(u16 *)0x04000208 = 1;
+    *(u16 *)0x04000208 = 0;
     if ((s32) absolute_02002090.field_0000 <= 0x1F) {
         temp_r3_1237 = (absolute_02002090.field_0000 * 0xC) + &absolute_02002090;
         absolute_02002090.field_0000 += 1;

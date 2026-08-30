@@ -1,0 +1,171 @@
+#include "types.h"
+
+/* AUDITED GENERATED CALL SCRIPT for FieldScene_RunActorDialogueMovementSequence:
+ * all 70 calls, two completion waits, and fifteen actor/effect memory
+ * operations across the complete actor-0/8/9 presentation owner. */
+
+#define FieldScene_RunActorDialogueMovementSequence Func_0200131c
+
+void Func_02002cfe();
+void Func_02002d00();
+void Func_02002d58();
+void *Func_02002d6e();
+void *Func_02002d7c();
+void *Func_02002d8a();
+void Func_02002d92();
+void Func_02002d9c();
+void Func_02002da6();
+void Func_02002db4();
+void Func_02002dc0();
+void Func_02002dca();
+void Func_02002dd6();
+void Func_02002ddc();
+void Func_02002de0();
+void Func_02002de2();
+void *Func_02002de6();
+void Func_02002df2();
+void Func_02002dfe();
+void Func_02002e06();
+void *Func_02002e0a();
+void *Func_02002e1a();
+void Func_02002e26();
+void Func_02002e32();
+void Func_02002e42();
+void Func_02002e4e();
+void *Func_02002e52();
+void Func_02002e56();
+void *Func_02002e62();
+void *Func_02002e6e();
+void Func_02002e72();
+void *Func_02002e84();
+void Func_02002e86();
+void Func_02002e88();
+void Func_02002e8e();
+void Func_02002e90();
+void Func_02002e96();
+void Func_02002ea8();
+void Func_02002eb0();
+void *Func_02002ec4();
+void Func_02002ecc();
+void *Func_02002ede();
+void Func_02002ee0();
+void Func_02002ee6();
+void Func_02002f12();
+void *Func_02002f1c();
+void Func_02002f26();
+void *Func_02002f2c();
+void Func_02002f2e();
+void Func_02002f44();
+void Func_02002f4a();
+void Func_02002f56();
+void Func_02002f58();
+void Func_02002f5e();
+void Func_02002f60();
+void Func_02002f7a();
+void Func_02002f7e();
+void Func_02002f84();
+void Func_02002f8a();
+void Func_02002f96();
+void Func_02002fa2();
+void Func_02002fa8();
+void Func_02002fc0();
+void Func_02002fc8();
+void Func_02002fd4();
+void Func_02003022();
+void Func_0200302e();
+
+void Func_0200131c(void)
+{
+    void *p2;
+    void *p26;
+    void *p27;
+    void *p3;
+    void *p34;
+    void *p35;
+    void *p36;
+    void *p4;
+    void *p46;
+    void *p5;
+    void *p57;
+    void *p58;
+    Func_02002d00();
+    p2 = Func_02002d6e(0, 10485760, 8388608);
+    p3 = Func_02002d7c(8, 9961472, 7340032);
+    p4 = Func_02002d8a(9, 11010048, 7340032);
+    p5 = Func_02002de6(0, 16384, 0);
+    Func_02002df2(17, 12288, 0);
+    Func_02002dfe(18, 20480, 0);
+    Func_02002e26(0, 0);
+    Func_02002e42();
+    Func_02002d58(30);
+    Func_02002d92(0, 117964, 58982);
+    Func_02002d9c(8, 117964, 58982);
+    Func_02002da6(9, 117964, 58982);
+    Func_02002dca(8, 152, 288);
+    Func_02002dd6(9, 168, 288);
+    Func_02002e06(0, 4);
+    Func_02002de2(0, 160, 296);
+    Func_02002cfe(33591973, 3200);
+    Func_02002db4(1);
+    Func_02002f12(121);
+    Func_02002dc0(20);
+    Func_02002e88(8, 3);
+    Func_02002e90(9, 3);
+    Func_02002f2e(121);
+    Func_02002ddc(30);
+    p26 = Func_02002e0a(8);
+    *(u8 *)((u8 *)(p26) + 35) |= 0x1;
+    p27 = Func_02002e1a(9);
+    *(u8 *)((u8 *)(p27) + 35) |= 0x1;
+    Func_02002e72(0, 4);
+    Func_02002f60(121);
+    Func_02002e6e(0);
+    Func_02002e86(8, 1);
+    Func_02002e8e(9, 1);
+    Func_02002d7c(33591973);
+    p34 = Func_02002e52(0);
+    *(u8 *)((u8 *)(p34) + 85) |= 0x2;
+    p35 = Func_02002e62(0);
+    *(s32 *)(p35 + 40) = 393216;
+    p36 = Func_02002e6e(0);
+    *(s32 *)(p36 + 44) = 393216;
+    Func_02002e4e(1);
+    while (*(s32 *)((u8 *)Func_02002e84(0) + 12) != 0) {
+        Func_02002e56(1);
+    }
+    Func_02002f26(0, 49152, 0);
+    Func_02002ee6(0, 19);
+    Func_02002fd4(127);
+    Func_02002f56(0, 258);
+    Func_02002de0(33591973, 3200);
+    Func_02002e96(2);
+    p46 = Func_02002ec4(0);
+    *(s32 *)(p46 + 40) = 196608;
+    Func_02002ea8(1);
+    while (*(s32 *)((u8 *)Func_02002ede(0) + 12) != 0) {
+        Func_02002eb0(1);
+    }
+    Func_02002f96(0, 258);
+    Func_02002ecc(10);
+    Func_02002f44(0, 1);
+    Func_02002e32(33591973);
+    Func_02002ee0(50);
+    Func_02002f7e();
+    Func_02002f96(8, 0);
+    p57 = Func_02002f1c(8);
+    *(u8 *)((u8 *)(p57) + 35) |= 0x1;
+    p58 = Func_02002f2c(9);
+    *(u8 *)((u8 *)(p58) + 35) |= 0x1;
+    Func_02002f4a(8, 65536, 32768);
+    Func_02002f58(9, 65536, 32768);
+    Func_02002f7a(8, 144, 200);
+    Func_02002f84(9, 176, 200);
+    Func_02002fa2(8);
+    Func_02002fa8(9);
+    Func_02002fc0(8, 1);
+    Func_02002fc8(9, 1);
+    Func_02002f5e(30);
+    Func_02003022(8, 12288, 0);
+    Func_0200302e(9, 20480, 0);
+    Func_02002f8a();
+}

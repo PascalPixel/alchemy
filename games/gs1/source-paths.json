@@ -34,6 +34,9 @@
     "main:080941dc": "object/effects/reserved_no_op.c",
     "main:080a1bc8": "psynergy_menu/reserved_no_op.c",
     "main:080b5b14": "party/reserved_no_op.c",
+    "main:080b6e7c": {
+      "name": "Resource_FindFreeSlot"
+    },
     "main:080b83b0": "battle/motion/reserved_no_op.c",
     "main:080b9b2c": "battle/runtime/reserved_no_op_b.c",
     "main:080bf674": "battle/runtime/reserved_no_op_c.c",

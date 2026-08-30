@@ -3729,7 +3729,10 @@
     "resource_396:020005bc": "unidentified/overlays/leaf/leaf_0490.c",
     "resource_399:020018c4": "unidentified/overlays/state_update/state_update_0551.c",
     "resource_3a7:02000368": "unidentified/overlays/leaf/leaf_0491.c",
-    "resource_393:02000bf8": "unidentified/overlays/state_update/state_update_0552.c",
+    "resource_393:02000bf8": {
+      "name": "RunScenePhase516",
+      "source": "overlays/scene/run_phase_516.c"
+    },
     "resource_39a:02000920": "unidentified/overlays/state_update/state_update_0553.c",
     "resource_3c8:020004f4": "unidentified/overlays/state_update/state_update_0554.c",
     "resource_3c8:02002ee4": "unidentified/overlays/state_update/state_update_0555.c",
@@ -3845,7 +3848,10 @@
     "resource_3c9:020038c0": "unidentified/overlays/state_update/state_update_0609.c",
     "resource_39f:020000c4": "unidentified/overlays/state_update/state_update_0610.c",
     "resource_39e:02004128": {"name":"FieldScene_FinishSequence","source":"map/xian/finish_scene_sequence.c"},
-    "resource_39d:02000030": "unidentified/overlays/state_update/state_update_0612.c",
+    "resource_39d:02000030": {
+      "name": "SetOverlayObjectRecordField1",
+      "source": "overlays/overlay_object/set_record_field_1.c"
+    },
     "resource_3af:02000514": "unidentified/overlays/state_update/state_update_0613.c",
     "resource_372:02000434": "unidentified/overlays/state_update/state_update_0614.c",
     "resource_39e:02000bd4": {"name":"FieldScene_ShowDialogue182D","source":"map/xian/show_dialogue_182d.c"},

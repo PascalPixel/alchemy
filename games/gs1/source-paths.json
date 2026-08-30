@@ -2684,6 +2684,9 @@
     "resource_3c8:02000594": "unidentified/overlays/leaf/leaf_0096.c",
     "resource_37b:02001000": "unidentified/overlays/state_update/state_update_0095.c",
     "resource_380:02000314": "unidentified/overlays/state_update/state_update_0096.c",
+    "resource_380:020027f8": {
+      "name": "MapScene_RunLargeObjectSequence"
+    },
     "resource_3af:020039ec": "unidentified/overlays/leaf/leaf_0097.c",
     "resource_3b1:02001420": "unidentified/overlays/leaf/leaf_0098.c",
     "resource_377:0200036c": "unidentified/overlays/leaf/leaf_0099.c",

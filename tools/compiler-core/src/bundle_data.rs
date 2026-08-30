@@ -32,6 +32,8 @@ const GS1: &[ExecutableDigests] = &[
         &[
             "f7d1aeb098815f9b98c5df25bb47bab89aa14b1ab184b63c1472986f515fa3dd",
             "4525e2477f4d903580155e8d79cbb965b5af89e0d9ac903287713736238d37eb",
+            // Clean local rebuild of pinned alchemy-gcc bcfb458.
+            "3f8a272981eba0b383b1b8d573feedbf6ba1715deb67213523c46b3ba35256b2",
         ],
     ),
 ];

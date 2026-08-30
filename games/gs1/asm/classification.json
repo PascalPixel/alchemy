@@ -1781,6 +1781,28 @@
    ]
   },
   {
+   "kind": "compiler_status_panel_load_scheduling",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_owner_extent",
+    "only_residual_is_one_localized_independent_literal_load_scheduling_permutation",
+    "zero_wrong_instructions_and_equal_control_flow_topology",
+    "all_calls_arguments_registers_stack_layout_literals_and_memory_operations_match",
+    "named_absolute_constants_restore_reference_pool_materialization_and_load_order",
+    "bounded_source_shape_search_exhausts_named_hoist_declaration_and_evaluation_order_axes",
+    "approved_scheduler_regmove_cse_gcse_strength_reduction_and_optimization_sweep_preserves_the_residual_or_regresses",
+    "inline_assembly_fixed_registers_compiler_barriers_and_forced_scheduling_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 172,
+   "files": [
+    "08020198"
+   ]
+  },
+  {
    "kind": "regional_compiler_scheduling",
    "origin": "regional_compiler_output",
    "retention": "keep_structured_asm",

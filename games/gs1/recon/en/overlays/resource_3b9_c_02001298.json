@@ -1,0 +1,11 @@
+{
+  "span_bytes": 852,
+  "score": {"measured":"2026-08-30","candidate_bytes":880,"reference_bytes":852,"wrong_instructions":119,"differing_halfwords":407,"class":"generated-call-script-retention"},
+  "shape": {"calls":92,"loops":0,"memory_operations":12},
+  "verified_against_reference": [
+    "all 92 calls and their arguments are represented in ROM order across the complete callable owner",
+    "direct assembly and literal-pool audit restored every literal-backed call, actor-state write, and all three workspace-state phases",
+    "approved GCC allocates repeated constants and the long-lived workspace base differently after all decoded effects are represented"
+  ],
+  "retention": "keep_structured_asm"
+}

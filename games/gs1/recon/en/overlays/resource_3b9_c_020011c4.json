@@ -1,0 +1,11 @@
+{
+  "span_bytes": 184,
+  "score": {"measured":"2026-08-30","candidate_bytes":216,"reference_bytes":184,"wrong_instructions":63,"differing_halfwords":101,"class":"generated-call-script-retention"},
+  "shape": {"calls":20,"loops":0,"memory_operations":5},
+  "verified_against_reference": [
+    "all 20 calls and their arguments are represented in ROM order across the complete callable owner",
+    "direct assembly and literal-pool audit restored the resource-dependent branch, actor flag write, workspace state, and terminal result branch",
+    "the residual is approved-compiler allocation and repeated-global scheduling after complete semantics are represented"
+  ],
+  "retention": "keep_structured_asm"
+}

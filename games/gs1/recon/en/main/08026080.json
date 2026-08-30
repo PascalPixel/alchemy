@@ -15,12 +15,13 @@
   },
   "span": {
    "start": "0x08026080",
-   "end_exclusive": "0x08027114",
-   "size_bytes": 4244,
-   "derivation": "end = start of next asm file games/gs1/asm/08027114.s, immediately following 08026b44.s which owns the epilogue (its trailing data is annotated '08026e72断片を所有者へ併合。プール尾部の資料語。' -- a merged fragment's pool tail retained in the same file). size = 0x08027114 - 0x08026080 = 0x1094 = 4244."
+   "end_exclusive": "0x08026e80",
+   "size_bytes": 3584,
+   "derivation": "The sole matching epilogue ends at 0x08026e72 in games/gs1/asm/08026b44.s; its alignment halfword and three-word literal tail occupy 0x08026e72-0x08026e7f. Therefore the complete function is 0x08026e80 - 0x08026080 = 0xe00 = 3584 bytes. The former 0x08027114 bound incorrectly absorbed later independent owners."
   },
   "member_regions_in_order": [
    {"addr": "0x08026080", "symbol": "Region_08026080", "file": "games/gs1/asm/08026080.s", "role": "real prologue + setup, call-graph-reconstructed region tag despite being the true head"},
+   {"addr": "0x080268da", "symbol": "Continuation_080268da", "file": "games/gs1/asm/executable_gaps/080268da.s", "role": "66-byte branch-connected continuation with live parent frame and high-register state"},
    {"addr": "0x0802691c", "symbol": "Continuation_0802691c", "file": "games/gs1/asm/0802691c.s", "role": "branch continuation, header comment: '複数領域関数の分岐継続部' (multi-region function's branch-continuation part), in-file literal pool"},
    {"addr": "0x08026b44", "symbol": "Region_08026b44", "file": "games/gs1/asm/08026b44.s", "role": "converging tail ending in the real, shared epilogue; trailing bytes are an explicitly annotated merged-in fragment pool tail"}
   ]
@@ -30,8 +31,9 @@
   "08026b44.s carries an internal comment '08026e72断片を所有者へ併合。プール尾部の資料語。' (fragment at 08026e72 merged into the owner; pool-tail reference words) noting the project has already partially merged a sub-fragment's literal pool into this file -- consistent with this being the terminal region of a multi-part function rather than a standalone owner.",
   "sub_08017a64 and sub_080030f8 calls inside 08026b44's body/tail are plain forward calls to already-registered owners elsewhere in the corpus, not further fragment veneers -- no evidence of additional cluster members beyond the three listed."
  ],
- "scoring_command": "out/cargo-target/release/compiler candidate-show games/gs1/recon/en/main/08026080.c --owner 08026080 --size 4244",
+ "scoring_command": "out/cargo-target/release/compiler candidate-show games/gs1/recon/en/main/08026080.c --owner 08026080 --size 3584",
  "notes": [
+  "2026-08-30 extent re-audit: corrected the stale 4244-byte bound to the epilogue-proven 3584-byte function and added the omitted 0x080268da branch continuation. No C source drafted and no translation-units.json entry exists yet.",
   "Map only, per task scope -- no C source drafted, no translation-units.json edited.",
   "Head file uses the 'call-graph reconstructed, code+data mixed' comment style rather than an explicit FunctionHead_ label; classified as the true head purely from its genuine push/high-reg-save/sub-sp prologue shape and the absence of any earlier candidate branching into it (grep across the corpus for '08026080' finds no external references)."
  ]

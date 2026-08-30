@@ -2570,6 +2570,9 @@
     },
     "resource_3bd:020002a8": "unidentified/overlays/state_update/state_update_0038.c",
     "resource_383:02002f98": "unidentified/overlays/wrapper/wrapper_0002.c",
+    "resource_383:02003c6c": {
+      "name": "FieldScene_RunExtendedActorSequence"
+    },
     "resource_3ab:02000738": "unidentified/overlays/leaf/leaf_0030.c",
     "resource_3b1:02001720": "unidentified/overlays/leaf/leaf_0031.c",
     "resource_38e:020000f8": "unidentified/overlays/leaf/leaf_0032.c",

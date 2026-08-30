@@ -1,0 +1,207 @@
+#include "types.h"
+
+/* AUDITED GENERATED CALL SCRIPT for FieldScene_ConfigureActorGroup:
+ * 86 calls, 0 loops, and all explicit object, workspace, and scene-data effects.
+ * Recovered from the complete decoded owner and checked against the original assembly. */
+
+#define FieldScene_ConfigureActorGroup Func_02002618
+
+void Func_02003238();
+void Func_020060ba();
+void Func_020061c8();
+void *Func_02006884();
+void Func_02006892();
+void Func_020068ee();
+void *Func_02006908();
+void Func_0200691e();
+void *Func_02006950();
+void Func_02006960();
+void *Func_02006966();
+void Func_0200696a();
+void Func_02006994();
+void Func_0200699c();
+void Func_020069b0();
+void Func_020069b2();
+void Func_020069bc();
+void Func_020069c0();
+void Func_020069da();
+void Func_020069ea();
+void Func_020069ee();
+void Func_020069fe();
+void Func_02006a06();
+void *Func_02006a28();
+void Func_02006a34();
+void Func_02006a36();
+void Func_02006a48();
+void Func_02006a4c();
+void Func_02006a62();
+void *Func_02006a64();
+void Func_02006a80();
+void Func_02006aae();
+void Func_02006ac2();
+void Func_02006ac4();
+void Func_02006ac6();
+void Func_02006aea();
+void Func_02006afe();
+void *Func_02006b0e();
+void *Func_02006b22();
+void Func_02006b2e();
+void *Func_02006b36();
+void Func_02006b3c();
+void Func_02006b44();
+void Func_02006b4e();
+void Func_02006b56();
+void Func_02006b58();
+void Func_02006b60();
+void Func_02006b6c();
+void Func_02006b78();
+void Func_02006b7c();
+void Func_02006b90();
+void Func_02006b9e();
+void Func_02006ba4();
+void Func_02006bbc();
+void Func_02006bc4();
+void Func_02006bc8();
+void Func_02006bd4();
+void Func_02006be8();
+void Func_02006bf2();
+void Func_02006c08();
+void Func_02006c10();
+void Func_02006c18();
+void Func_02006c34();
+void Func_02006c38();
+void Func_02006c3e();
+void Func_02006c48();
+void Func_02006c52();
+void Func_02006c56();
+void Func_02006c84();
+void Func_02006c90();
+void Func_02006c96();
+void Func_02006c98();
+void Func_02006c9c();
+void Func_02006ca2();
+void Func_02006ca8();
+void Func_02006cb4();
+void Func_02006cc0();
+void Func_02006cde();
+void Func_02006ce8();
+void Func_02006cf2();
+void Func_02006cfc();
+void Func_02006d36();
+void Func_02006dcc();
+
+void Func_02002618(void)
+{
+    void *p1;
+    void *p10;
+    void *p3;
+    void *p30;
+    void *p36;
+    void *target;
+    u8 *workspace;
+
+    p1 = Func_02006908();
+    Func_0200691e(33608728);
+    p3 = Func_02006884(1);
+    Func_02006a34(25, 1);
+    Func_02006892(1);
+    Func_020069b2(21, 5);
+    Func_020068ee(Func_02006950(21), 0);
+    Func_020069c0(0, 0, 0);
+    p10 = Func_02006966(0);
+    *(u16 *)(p10 + 6) = 16384;
+    workspace = *(u8 **)0x03001ebc;
+    *(u32 *)(workspace + 448) = 514;
+    Func_02006aae(448);
+    Func_02006ac2();
+    Func_02006960(20);
+    Func_02003238();
+    Func_0200696a(10);
+    Func_020069fe(0, 14155776, 38404096);
+    Func_020069bc(0, 65536, 32768);
+    Func_02006a06(0, 216, 598);
+    Func_02006994(20);
+    Func_020060ba(0, 24576);
+    Func_02006a48(0, 2, 10);
+    Func_020069ea(0, 104857, 52428);
+    Func_02006a36(0, 194, 624);
+    Func_02006b3c(181);
+    Func_0200699c(262144, 262144, 65536);
+    Func_020069da(20);
+    Func_020069b0(-1, -1, 58982);
+    Func_020069ee(10);
+    Func_02006aea(0, 49152, 20);
+    p30 = Func_02006a28(25);
+    *(u8 *)((u8 *)(p30) + 85) = 0;
+    Func_02006a4c(25, 131072, 65536);
+    Func_02006a80(25, 216, 612);
+    Func_02006b9e(149);
+    Func_02006b2e(22, 2);
+    Func_02006ac6(22, 5);
+    p36 = Func_02006a64(22);
+    *(s32 *)(p36 + 40) = 524288;
+    *(s32 *)(p36 + 72) = 45875;
+    *(s32 *)(p36 + 24) = 106496;
+    *(s32 *)(p36 + 28) = 106496;
+    *(s32 *)(p36 + 108) = 33589441;
+    *(s32 *)(p36 + 68) = 32768;
+    Func_02006ac4(22, 393216, 196608, 33589441);
+    Func_02006afe(22, 182, 618);
+    Func_02006ac4(22);
+    Func_02006a62();
+    Func_020061c8(0, 40960);
+    Func_02006b56(0, 6, 80);
+    Func_02006b22(25, 232, 564);
+    Func_02006b44(0, 204, 610);
+    Func_02006b4e(0, 208, 598);
+    Func_02006b58(0, 248, 598);
+    target = Func_02006b0e(0);
+    if (target != 0) {
+        Func_02006b7c(1, *(u32 *)((u8 *)target + 8), *(u32 *)((u8 *)target + 16));
+    }
+    target = Func_02006b22(0);
+    if (target != 0) {
+        Func_02006b90(2, *(u32 *)((u8 *)target + 8), *(u32 *)((u8 *)target + 16));
+    }
+    target = Func_02006b36(0);
+    if (target != 0) {
+        Func_02006ba4(3, *(u32 *)((u8 *)target + 8), *(u32 *)((u8 *)target + 16));
+    }
+    Func_02006b60(1, 65536, 32768);
+    Func_02006b6c(2, 65536, 32768);
+    Func_02006b78(3, 65536, 32768);
+    Func_02006bbc(0, 250, 584);
+    Func_02006bc8(1, 240, 600);
+    Func_02006bd4(2, 254, 600);
+    Func_02006be8(3, 248, 616);
+    Func_02006c08(0, 1);
+    Func_02006c10(1, 1);
+    Func_02006c18(2, 1);
+    Func_02006c84(0, 49152, 0);
+    Func_02006c90(1, 49152, 0);
+    Func_02006c9c(2, 49152, 0);
+    Func_02006ca8(3, 49152, 20);
+    Func_02006d36(149);
+    Func_02006bc4(40);
+    Func_02006cde(0, 258);
+    Func_02006ce8(1, 258);
+    Func_02006cf2(2, 258);
+    Func_02006cfc(3, 258);
+    Func_02006bf2(60);
+    Func_02006c34(0, 52428, 26214);
+    Func_02006c3e(1, 52428, 26214);
+    Func_02006c48(2, 52428, 26214);
+    Func_02006c52(3, 52428, 26214);
+    Func_02006c96(0, 248, 564);
+    Func_02006ca2(1, 248, 564);
+    Func_02006c38(20);
+    Func_02006cb4(2, 248, 564);
+    Func_02006cc0(3, 248, 564);
+    Func_02006c56(20);
+    *(u16 *)0x02000404 = 111;
+    *(u16 *)0x02000406 = 30;
+    *(u8 *)0x0200046b = 3;
+    Func_02006dcc(109, 16);
+    Func_02006dcc(62, 3);
+    Func_02006c98();
+}

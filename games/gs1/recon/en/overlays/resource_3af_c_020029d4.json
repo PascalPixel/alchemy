@@ -1,0 +1,11 @@
+{
+  "span_bytes": 424,
+  "score": {"measured":"2026-08-30","candidate_bytes":432,"reference_bytes":424,"wrong_instructions":64,"differing_halfwords":182,"class":"generated-call-script-retention"},
+  "shape": {"calls":40,"loops":0,"memory_operations":5},
+  "verified_against_reference": [
+    "all 40 calls and their arguments are represented in ROM order",
+    "direct assembly audit restored both workspace state-448 writes and the terminal literal argument",
+    "approved GCC allocation and literal scheduling does not emit the complete owner exactly"
+  ],
+  "retention": "keep_structured_asm"
+}

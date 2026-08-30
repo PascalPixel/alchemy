@@ -36,17 +36,15 @@
   "core_identical": true
  },
  "score": {
-  "measured": "2026-08-25",
+  "measured": "2026-08-30",
   "candidate_bytes": 1336,
   "reference_bytes": 1336,
-  "differing_halfwords": 437,
-  "wrong_instructions": 412,
-  "class": "wrong",
-  "candidate_instructions": 481,
-  "reference_instructions": 484,
-  "objdiff_structural_percent": 88.47452,
-  "note": "The second 080bbb0c transfer pass corrected the result carrier to its promoted register width, made target-id 9 an explicit exceptional remap, and removed the cached range carrier so both multi-target tests independently reload the byte field. A phase audit then caught the inverse width on the runtime destination: the local carrier is promoted s32, but the runtime field is a halfword. Restoring that evidence-backed pairing preserves exact owner length and lowers the residual to 437 differing halfwords and 412 wrong instructions."
+  "differing_halfwords": 11,
+  "wrong_instructions": 18,
+  "class": "structural-topology",
+  "note": "The wave-1 source-shape reduction preserves the complete 1336-byte owner and leaves one localized loop-entry residual: the reference spells the zero index guard as index < target_count and schedules the first range load before it, while canonical GCC can reproduce either the guard form or the favorable allocation/scheduling, but not both together. Every later instruction, all three jump tables, calls, literals, memory operations, and both return paths agree."
  },
+ "status": "proven_permanent",
  "shape": {
   "calls": 15,
   "branches": 101,
@@ -66,9 +64,9 @@
  ],
  "unexpressed": [
   {
-   "op": "source-shape and allocation repair",
-   "count": 412,
-   "where": "the remaining residual is still dominated by the initial distinct-zero/target-selection ancestry, register coloring across the three switch phases, primary PP load ordering, and the random-adjustment branch"
+   "op": "loop-entry scheduling repair",
+   "count": 18,
+   "where": "the only residual is the first target-loop guard and the independent range load scheduled across it"
   },
   {
    "op": "semantic field naming",
@@ -81,10 +79,10 @@
   "workbench symbolization found 3 jump tables, 74 entries, and 89 pool/table references",
   "relocation-aware comparison locates the JA owner at 0x080a0e0c; all 942 non-relocation, non-literal core bytes agree in every edition",
   "the candidate is now exactly 1336 linked bytes against the 1336-byte reference",
-  "candidate-show improved from 487 to 437 differing halfwords and from 448 to 412 wrong instructions",
-  "independent ARMv4T objdiff structural match is 88.47452%; linked byte/instruction scoring is preferred because the deliberate range reload restores owner length while changing alignment across jump-table rows"
+  "candidate-show measures 11 differing halfwords and 18 aligned wrong instructions, localized entirely to the first loop entrance",
+  "all instructions after the first loop entrance align, including three jump tables, 74 table entries, both loops, and both return paths"
  ],
- "blocked_by": "The remaining 437-halfword residual is still broad. The measured phase partition ranks the primary switch first and the follow-up switch second; continue phase-local register ancestry and load scheduling there. The owner is not eligible for permanent classification or whole-function permutation.",
+ "blocked_by": null,
  "rejected": [
   {
    "shape": "halfword unions plus a u16 working amount",
@@ -166,6 +164,7 @@
   }
  ],
  "notes": [
+  "2026-08-30 retained verdict: candidate-show measures exact 1336-byte extent, 11 differing halfwords, and 18 aligned wrong instructions, all localized to the first loop entrance. The ordinary-C `target_count != 0` guard is semantically identical because index is freshly zero; spelling the reference's `index < target_count` comparison fixes the branch class but regresses the allocation/scheduling residual to 43 halfwords. Combining that spelling with a named preloaded range carrier regresses to 571 halfwords; a loop-scoped refreshed carrier reaches 105; a for-loop form reaches 43. Canonical scheduler toggles, regmove, CSE, GCSE, expensive optimization, strength reduction, and rerun-CSE routes preserve or regress. With six-edition normalized cores identical and no missing behavior, this is retained as a proven compiler loop-entry floor rather than forcing allocation or scheduling.",
   "The complete retained assembly and assembled listing were read; pools resolve Data_03001f2c and runtime offsets 0x219/0x25a, while the target list begins at 0x208.",
   "BattleAction field names and the max_hp/max_pp/hp/pp/poison vocabulary are inherited only where exact local layouts coincide; the unresolved early BattleUnit fields remain in an owner-local view.",
   "The retained lookup branch reduced the 564-halfword baseline to 557; the damage-class branch and indexed stat access reduced it to 539; direct raw-field access in the two follow-up cases then reduced it to 487.",

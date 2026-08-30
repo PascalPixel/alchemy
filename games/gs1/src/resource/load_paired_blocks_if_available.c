@@ -9,19 +9,19 @@ extern u8 Data_080aed4c[];
 extern u8 Data_080aedcc[];
 
 void Resource_LoadPairedBlocksIfAvailable(void) {
-    s32 temp_r0;
-    s32 temp_r0_2;
-    void *temp_r5;
+    s32 first_slot;
+    s32 second_slot;
+    void *active_state;
 
-    temp_r5 = *(void **)ADDR_03001F2C;
-    temp_r0 = Resource_FindFreeSlot();
-    FIELD_AT_OFFSET(temp_r5, s16, 0x392) = (s16) temp_r0;
-    if (temp_r0 != -1) {
-        Resource_CopyData(temp_r0, 0x80, Data_080aed4c);
+    active_state = *(void **)ADDR_03001F2C;
+    first_slot = Resource_FindFreeSlot();
+    FIELD_AT_OFFSET(active_state, s16, 0x392) = (s16) first_slot;
+    if (first_slot != -1) {
+        Resource_CopyData(first_slot, 0x80, Data_080aed4c);
     }
-    temp_r0_2 = Resource_FindFreeSlot();
-    FIELD_AT_OFFSET(temp_r5, s16, 0x394) = (s16) temp_r0_2;
-    if (temp_r0_2 != -1) {
-        Resource_CopyData(temp_r0_2, 0x80, Data_080aedcc);
+    second_slot = Resource_FindFreeSlot();
+    FIELD_AT_OFFSET(active_state, s16, 0x394) = (s16) second_slot;
+    if (second_slot != -1) {
+        Resource_CopyData(second_slot, 0x80, Data_080aedcc);
     }
 }

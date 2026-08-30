@@ -428,6 +428,9 @@ typedef int bool;
 #define BattleEffect_PauseObject Func_0809ad90
 #define BattleEffect_ResumeObject Func_0809ade8
 #define BattleEffect_UpdateObjectVisibilityBounds Func_0809c314
+#define BattleEffect_UpdateOrbitingParticleFade Func_08099040
+#define BattleEffect_UpdateOrbitingParticleLeft Func_08099070
+#define BattleEffect_UpdateOrbitingParticleRight Func_080990cc
 #define BattleEffect_RunVisibilityTransition Func_0809c3a4
 #define BattleEffect_InterpolateBuffers Func_0809088c
 #define BattleEffect_PrepareBufferInterpolation Func_0809748c

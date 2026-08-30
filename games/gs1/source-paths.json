@@ -672,6 +672,9 @@
     "main:080e0c84": {
       "name": "BattleEffect_RunParticleReveal"
     },
+    "main:080cfef4": {
+      "name": "BattleEffect_RunCounterReveal"
+    },
     "main:08098848": {
       "name": "BattleEffect_RunTargetedItemBreak"
     },

@@ -1839,11 +1839,12 @@
     "inline_assembly_fixed_registers_and_compiler_barriers_are_disallowed",
     "byte_exact_reconstruction"
    ],
-   "expected_files": 2,
-   "expected_bytes": 1424,
+   "expected_files": 3,
+   "expected_bytes": 2820,
    "files": [
     "0809a8c4",
-    "080e0c84"
+    "080e0c84",
+    "080cfef4"
    ]
   },
   {

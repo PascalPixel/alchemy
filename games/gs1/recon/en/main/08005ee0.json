@@ -6,13 +6,13 @@
  "owner_bytes": 234,
  "score": {
   "measured": "2026-08-29",
-  "candidate_bytes": 234,
+  "candidate_bytes": 232,
   "reference_bytes": 234,
-  "differing_halfwords": 38,
-  "wrong_instructions": 40,
+  "differing_halfwords": 34,
+  "wrong_instructions": 29,
   "matched_prefix_instructions": 13,
   "class": "missing-extra-code",
-  "note": "Two independent divergence clusters, both scheduling/register-allocation shaped rather than missing statements. (1) In the case-0 interrupt-setup block (REG_IME=serial_error; ie=REG_IE; ie&=~0x80; ie|=0x40; REG_IE=ie; REG_IME=1; *(sio+1)&=~0x40;), the reference loads the &REG_IE address lazily right before the ldrh (after the REG_IME store), computes the movs r3,#129/negs mask AFTER that load, stores REG_IME=1 via a plain `movs r3,#1` immediate, and then derives the ~0x40 byte-mask for the *(sio+1) store via `subs r3,#66` reusing the still-live r3==1 from the REG_IME=1 store rather than loading a fresh immediate. This build's GCC 296 instead loads both the &REG_IME and &REG_IE pool addresses together up front, computes the #129 mask before the ldrh, and loads both the REG_IME=1 constant and the ~0x40 byte mask from fresh pool/immediate sources instead of reusing r3. (2) In the tail (sequence++, packed = current_mask | received_mask<<8, mode==8 check, result=packed, is_parent check), the reference performs the `if (mode==8) packed|=0x80` check immediately after computing packed (using a persistent r7 = SERIAL_RUNTIME pointer kept live across the two calls to Func_0800615c/Func_080060e8), then copies packed into the result register, then checks is_parent. This build's codegen defers/merges the mode==8 check together with the is_parent check right before it, and re-fetches the SERIAL_RUNTIME pointer into a different register (r2) instead of reusing the r7 already live from before the calls. Neither cluster responded to any statement-order, type, or expression-shape rewrite tried (see rejected_experiments) -- the divergence looks like a GCC 296 register-allocation/scheduling choice tied to some source shape not yet identified, not an absent or surplus statement."
+  "note": "Two independent divergence clusters remain, both scheduling/register-allocation shaped rather than missing statements. Reusing the already-proved serial_error carrier for REG_IME=1 removes the spurious literal and improves the canonical result from 234/38/40 to 232/34/29. The reference still loads the REG_IE address later and derives the byte mask from the live one carrier. In the tail, the reference reloads SERIAL_RUNTIME after the two calls and keeps that new pointer in r7; caching the earlier pointer is semantically invalid because the calls may replace the global. The residual remains Draft C and claims zero DONE bytes."
  },
  "rejected_experiments": [
   {

@@ -8,14 +8,15 @@
   "measured": "2026-08-30",
   "candidate_bytes": 96,
   "reference_bytes": 96,
-  "differing_halfwords": 11,
-  "wrong_instructions": 12,
-  "class": "structural_topology",
-  "note": "The complete semantic reconstruction has equal branch topology and matches through the first call. The remaining residual is one 8-byte versus 16-byte outgoing stack area and the compiler's equivalent address-materialization schedule for the table lookup; it remains Draft C and claims zero DONE bytes."
+  "differing_halfwords": 2,
+  "wrong_instructions": 4,
+  "class": "frame-context",
+  "note": "The ordinary-C source now emits every reference instruction except the prologue and epilogue stack adjustment: GCC reserves 8 outgoing bytes while the reference reserves 16. The two used outgoing argument slots and all control flow are exact. The remaining unused eight-byte frame context must be explained from source or translation-unit evidence; it remains Draft C and claims zero DONE bytes."
  },
  "notes": [
   "Recovered from the retained owner, the aggregate-aware m2c seed, the prepared template pack, and the approved compiler.",
-  "Replaced the stale template draft with the owner's actual clear-two-fields, lookup, conditional-call, and result-return behavior; the canonical score improved from 47 to 11 differing halfwords.",
+  "Explicit byte-offset construction and two proven early-return guards reproduce the reference address schedule and return-zero carrier; the canonical score improved from 47 to 2 differing halfwords.",
+  "The owner uses only its first two incoming arguments, so the unsupported three unused parameters were removed from the provisional signature.",
   "No inline assembly, register forcing, compiler barriers, copied instruction bytes, or external decompilation source was used."
  ]
 }

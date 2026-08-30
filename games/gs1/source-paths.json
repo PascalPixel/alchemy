@@ -38,6 +38,9 @@
     "main:08078228": "owner/reserved_no_op_a.c",
     "main:08079004": "owner/reserved_no_op_b.c",
     "main:080941dc": "object/effects/reserved_no_op.c",
+    "main:08093e28": {
+      "name": "FieldEffect_UpdateGridPlacement"
+    },
     "main:080a1bc8": "psynergy_menu/reserved_no_op.c",
     "main:080b5b14": "party/reserved_no_op.c",
     "main:080b6e7c": {

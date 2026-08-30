@@ -44,7 +44,9 @@ void Func_080923c4(s32);
 void Func_0809163c(s32);
 void Func_08091750(void);
 
-s32 Func_08093e28(void)
+#define FieldEffect_UpdateGridPlacement Func_08093e28
+
+s32 FieldEffect_UpdateGridPlacement(void)
 {
     struct GridEffectObject_08093e28 *object = Func_08092054(Data_02000240[125]);
     s32 grid_x = 8 + (TILE_HI(object, 8) & 0xfff0);
@@ -78,10 +80,8 @@ s32 Func_08093e28(void)
             position[1] = object->y + (s32)0xfff00000;
             position[2] = object->z;
             result = Func_08009220(position);
-            if (result != 0) {
-                Func_08091750();
-                return -1;
-            }
+            if (result != 0)
+                goto failure;
 
             Func_08092158(Data_02000240[125], grid_x, grid_z);
             object->field_30 = 0x10000;
@@ -96,8 +96,7 @@ s32 Func_08093e28(void)
             Func_080923c4(Data_02000240[125]);
             ACTIVE_FLAG = 1;
         } else {
-            Func_08091750();
-            return -1;
+            goto failure;
         }
     } else {
         Func_08009080(object, 10);
@@ -113,4 +112,8 @@ s32 Func_08093e28(void)
 
     Func_08091750();
     return 0;
+
+failure:
+    Func_08091750();
+    return -1;
 }

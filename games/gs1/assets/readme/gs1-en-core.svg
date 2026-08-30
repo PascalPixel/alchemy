@@ -1634,7 +1634,7 @@
 <g aria-label="0x08078ed8–0x08079006: 302 bytes">
 <title>0x08078ed8–0x08079006: 302 bytes</title>
 <rect x="167.84086527464328" y="112.92693183557864" width="3.1524074585112327" height="1.0294893561018554" style="fill:hsl(275 6% 91%);fill:oklch(0.907 0.010 295)"/>
-<rect x="167.84086527464328" y="96.68387755041604" width="3.1524074585112327" height="16.243054285162607" style="fill:#7dd3fc"/>
+<rect x="167.84086527464328" y="96.68387755041604" width="3.1524074585112327" height="16.243054285162607" style="fill:hsl(275 89% 57%);fill:oklch(0.573 0.160 295)"/>
 </g>
 <g aria-label="0x08079006–0x08079008: 2 bytes">
 <title>0x08079006–0x08079008: 2 bytes</title>
@@ -3729,8 +3729,8 @@
 <text class="weyard" x="20" y="293" dominant-baseline="middle">Exact C 21.8%</text>
 <rect x="126" y="288" width="10" height="10" style="fill:#f4c95d"/>
 <text class="weyard" x="140" y="293" dominant-baseline="middle">WIP 0.9%</text>
-<rect x="206" y="288" width="10" height="10" style="fill:hsl(275 42% 76%);fill:oklch(0.763 0.075 295)"/>
-<text class="weyard" x="220" y="293" dominant-baseline="middle">ASM 44.0%</text>
+<rect x="206" y="288" width="10" height="10" style="fill:hsl(275 42% 76%);fill:oklch(0.762 0.075 295)"/>
+<text class="weyard" x="220" y="293" dominant-baseline="middle">ASM 44.1%</text>
 <rect x="294" y="288" width="10" height="10" style="fill:#7dd3fc"/>
 <text class="weyard" x="308" y="293" dominant-baseline="middle">Permanent ASM 33.2%</text>
 </svg>

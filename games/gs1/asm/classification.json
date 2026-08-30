@@ -1803,6 +1803,28 @@
    ]
   },
   {
+   "kind": "regional_owner_initialization_codegen",
+   "origin": "regional_compiler_output",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_english_owner_extent",
+    "same_compiled_c_object_is_byte_exact_for_the_japanese_owner",
+    "japanese_raw_diff_bytes_raw_diff_halfwords_and_core_diff_bytes_are_zero",
+    "english_has_only_one_nonrelocation_core_byte_difference_after_normalization",
+    "linked_english_surface_is_a_message_base_materialization_pool_layout_and_branch_offset_cascade",
+    "all_loops_calls_fields_and_observable_behavior_match",
+    "named_absolute_message_base_reproduces_the_reference_idiom_but_regresses_owner_extent_and_allocation",
+    "inline_assembly_fixed_registers_compiler_barriers_and_forced_scheduling_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 284,
+   "files": [
+    "08078ee8"
+   ]
+  },
+  {
    "kind": "regional_field_effect_allocation",
    "origin": "regional_compiler_output",
    "retention": "keep_structured_asm",

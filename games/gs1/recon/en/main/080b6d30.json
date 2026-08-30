@@ -2,12 +2,38 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x080b6d30",
-  "status": "measured-draft",
+  "status": "proven-retained",
+  "classification": "compiler_zero_rematerialization_mismatch",
   "owner_bytes": 256,
   "executable_owner_bytes": 256,
   "candidate_bytes": 256,
   "differing_halfwords": 1,
   "wrong_instructions": 2,
+  "cross_edition": {
+    "measured": "2026-08-30",
+    "object_bytes": 254,
+    "retained_span_bytes": 256,
+    "relocations": 5,
+    "relocation_bytes": 20,
+    "literal_fields": 3,
+    "literal_bytes": 12,
+    "core_bytes": 222,
+    "core_diff_bytes": {
+      "ja": 0,
+      "en": 0,
+      "de": 0,
+      "es": 0,
+      "fr": 0,
+      "it": 0
+    },
+    "core_identical": true
+  },
+  "compiler_proof": {
+    "measured": "2026-08-30",
+    "source": "alchemy-gcc/agbcc/gcc_arm/reload1.c:9012",
+    "finding": "reload_cse_simplify_set returns before considering an equivalent live register when the constant's SET cost is below two; zero therefore remains a fresh immediate after first CSE instead of becoming the reference register copy",
+    "application": "the only residual is candidate movs r4,#0 versus reference mov r4,sl, with sl already holding the same zero across the call"
+  },
   "family": {
     "template_owner": "main:080b7424",
     "template_source": "games/gs1/src/battle/summon/layout_positions.c",

@@ -2,23 +2,33 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x080b9dc4",
-  "status": "measured-draft",
+  "status": "proven-retained",
   "owner_bytes": 252,
   "executable_owner_bytes": 250,
   "candidate_bytes": 252,
   "differing_halfwords": 1,
   "wrong_instructions": 2,
-  "classification": "resolve-battle-presentation-trigger",
+  "classification": "compiler_zero_rematerialization_mismatch",
   "resolved_asm_classification": {
     "kind": "compiler_output",
     "retention": "c_candidate",
     "confidence": "likely"
   },
   "cross_edition": {
+    "measured": "2026-08-30",
     "editions": ["ja", "en", "de", "es", "fr", "it"],
     "relocation_normalized_core_bytes": 182,
     "core_diff_bytes": 0,
     "core_identical": true
+  },
+  "compiler_proof": {
+    "measured": "2026-08-30",
+    "sources": [
+      "the recorded first-CSE RTL trace in register_gate_step4_probe",
+      "alchemy-gcc/agbcc/gcc_arm/reload1.c:9012"
+    ],
+    "finding": "first CSE turns the source completed-to-party_mode copy into literal zero; reload_cse_simplify_set then explicitly refuses to replace a cheap zero constant with the equivalent live completed register",
+    "application": "the only residual is candidate movs r2,#0 versus reference adds r2,r7,#0, while r7 contains the same zero"
   },
   "register_gate_step4_probe": {
     "date": "2026-08-28",

@@ -1103,6 +1103,9 @@
     "main:080b6a60": {
       "name": "BattleParty_PrepareActiveOwners"
     },
+    "main:080b6d30": {
+      "name": "SummonSlot_RegisterActorSprites"
+    },
     "main:080b8db8": {
       "name": "BattlePresentation_ApplyUnitDamage"
     },
@@ -4770,6 +4773,9 @@
     },
     "main:080b9b30": {
       "name": "BattlePresentation_DispatchAction"
+    },
+    "main:080b9dc4": {
+      "name": "BattlePresentation_RunEncounterOrUnitTrigger"
     },
     "main:080b9ec0": {
       "name": "BattlePresentation_RunUnitTransition"

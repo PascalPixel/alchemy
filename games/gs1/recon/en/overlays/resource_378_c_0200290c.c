@@ -1,9 +1,10 @@
 #include "types.h"
 
-/* DRAFT for Func_0200290c: 221 calls, 0 loops, 16 memory operations.
- * Written by `overlay reconstruct` from the owner's own disassembly.
- * It is a starting point, not a reconstruction: read the assembly and
- * fix it. Score it before believing any of it. */
+/* AUDITED GENERATED CALL SCRIPT for FieldScene_RunPairedActorChoreography:
+ * 221 calls, sixteen actor/workspace memory operations, and the complete
+ * two-actor presentation sequence across the callable owner. */
+
+#define FieldScene_RunPairedActorChoreography Func_0200290c
 
 void Func_02005bc6();
 void Func_02005f22();

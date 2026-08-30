@@ -8,25 +8,25 @@ void WaitFrames(s32);
 extern u8 Data_08095885;
 
 void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void) {
-    u8 *var_r5 = *(u8 **)ADDR_03001F30;
-    u8 *var_r6;
-    s32 var_r7;
+    u8 *slot = *(u8 **)ADDR_03001F30;
+    u8 *active_flag;
+    s32 slot_index;
 
     ScheduleCallback(&Data_08095885);
-    var_r6 = var_r5 + 157;
-    var_r5 += 88;
-    for (var_r7 = 23; var_r7 >= 0; var_r7--) {
-        u32 temp_r3 = *(volatile u8 *)var_r6;
-        var_r6 += 72;
-        if ((temp_r3 << 24) != 0) {
-            Func_0809bb34(var_r5);
+    active_flag = slot + 157;
+    slot += 88;
+    for (slot_index = 23; slot_index >= 0; slot_index--) {
+        u32 is_active = *(volatile u8 *)active_flag;
+        active_flag += 72;
+        if ((is_active << 24) != 0) {
+            Func_0809bb34(slot);
         }
-        var_r5 += 72;
+        slot += 72;
     }
     Func_08002dd8(56);
     WaitFrames(1);
 }
 
-void Func_0809592c(void *arg0) {
-    *(u16 *)((u8 *)arg0 + 6) += 0x2000;
+void BattleEffect_AdvanceSpinAngle(void *object) {
+    *(u16 *)((u8 *)object + 6) += 0x2000;
 }

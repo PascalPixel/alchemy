@@ -3,11 +3,11 @@
 
 s32 Graphics_TransformPaletteBuffer(s32, s32, s32, s32);
 
-void Graphics_TransformSmallPalette(s32 arg0, s32 arg1) {
-    s32 temp_r1;
+void Graphics_TransformSmallPalette(s32 palette_index, s32 transform) {
+    s32 palette_buffer;
 
-    temp_r1 = *(s32 *)ADDR_03001ED0;
-    if (temp_r1 != 0) {
-        Graphics_TransformPaletteBuffer(arg0, temp_r1, temp_r1 + 0x400, arg1);
+    palette_buffer = *(s32 *)ADDR_03001ED0;
+    if (palette_buffer != 0) {
+        Graphics_TransformPaletteBuffer(palette_index, palette_buffer, palette_buffer + 0x400, transform);
     }
 }

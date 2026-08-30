@@ -16,16 +16,26 @@ void Func_080090d0(void *object);
 void BattleEffect_ClearOutOfBoundsObjects(void)
 {
     struct BattleRuntime *runtime = Data_03001ebc;
-    u8 *anchor = *(u8 **)((u8 *)runtime + 0x1e0);
-    s32 x = *(s32 *)(anchor + 8);
-    s32 z = *(s32 *)(anchor + 16);
-    s32 left = x + 0xff600000;
-    s32 right = x + 0x00a00000;
-    s32 top = z + 0xff380000;
-    s32 bottom = z + 0x00640000;
-    void **slots = (void **)((u8 *)runtime + 0x34);
-    s32 mask = -2;
+    u8 *anchor;
+    s32 x;
+    s32 z;
+    s32 left;
+    s32 right;
+    s32 top;
+    s32 bottom;
+    void **slots;
+    s32 mask;
     s32 i;
+
+    anchor = *(u8 **)((u8 *)runtime + 0x1e0);
+    x = *(s32 *)(anchor + 8);
+    left = x + 0xff600000;
+    right = x + 0x00a00000;
+    z = *(s32 *)(anchor + 16);
+    top = z + 0xff380000;
+    bottom = z + 0x00640000;
+    slots = (void **)((u8 *)runtime + 0x34);
+    mask = -2;
 
     for (i = 57; i >= 0; i--) {
         void *object = *slots;
@@ -42,7 +52,8 @@ void BattleEffect_ClearOutOfBoundsObjects(void)
                     visual = *(u8 **)((u8 *)object + 80);
                     visual[29] &= mask;
                     Func_080090d0(object);
-                    *slots = 0;
+                    visual = 0;
+                    *slots = (void *)visual;
                 }
             }
         }

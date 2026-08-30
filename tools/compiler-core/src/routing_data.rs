@@ -79,7 +79,10 @@ pub static NO_EXPENSIVE_SOURCES: &[&str] = &["08092878"];
 // 0800ebec: its four register-only delay loops survive only without strength
 // reduction; -O1 scores worse (843) than -O2 -fno-strength-reduce (814).
 pub static NO_STRENGTH_REDUCE_SOURCES: &[&str] = &["080a9d3c", "02004058", "02005d68", "0800ebec"];
-pub static NO_REGMOVE_SOURCES: &[&str] = &["08006088", "080a3d9c", "080ba918"];
+// 0808b8e8 keeps the camera anchor live through both X bounds and reuses the
+// dead visual pointer for its null slot store.  Stock regmove undoes those two
+// source lifetimes; the shipped per-file disable preserves the exact schedule.
+pub static NO_REGMOVE_SOURCES: &[&str] = &["08006088", "0808b8e8", "080a3d9c", "080ba918"];
 pub static NO_OPTIMIZE_SIBLING_CALLS_SOURCES: &[&str] = &["080b110c"];
 pub static OPTIMIZE_O1_OVERLAY_SOURCES: &[&str] = &["games/gs1/src/resource_3ab_c_020007f4.c"];
 pub static NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES: &[&str] =

@@ -279,6 +279,7 @@ fn symbolize(
     let mov_pc = Regex::new(r"\bmov\s+pc,\s*r\d+").unwrap();
     let word = Regex::new(r"\.4byte\s+(0x[0-9A-Fa-f]+)").unwrap();
     let pc_load = Regex::new(r"\[pc,\s*#([0-9]+)\]").unwrap();
+    let cmp_immediate = Regex::new(r"\bcmp\s+(?:r\d+|ip|sp|lr|fp|sl),\s*#([0-9]+)").unwrap();
     let absolute =
         Regex::new(r"^(\s*)\.set\s+((?:sub|Func)_[0-9A-Fa-f]{8}),\s*0x[0-9A-Fa-f]+\s*$").unwrap();
     let mut lines = original
@@ -288,6 +289,8 @@ fn symbolize(
     let mut labels = vec![Vec::<String>::new(); lines.len()];
     let mut changed = vec![false; lines.len()];
     let mut external_targets = BTreeMap::new();
+    let mut external_table_pools = BTreeMap::new();
+    let image = fs::read(root().join("roms/gs1-en.gba")).map_err(|error| error.to_string())?;
     let mut table = 0;
     let mut at = 0;
     while at < original.len() {
@@ -295,16 +298,53 @@ fn symbolize(
             at += 1;
             continue;
         }
-        let start = (at + 1..original.len())
-            .find(|line| word.is_match(original[*line]))
-            .ok_or_else(|| format!("no jump table after source line {}", at + 1))?;
-        let end = (start..original.len())
-            .find(|line| !word.is_match(original[*line]))
-            .unwrap_or(original.len());
         let loader = (at.saturating_sub(24)..at)
             .rev()
             .find(|line| pc_load.is_match(original[*line]))
             .ok_or_else(|| format!("no PC-relative jump-table load before line {}", at + 1))?;
+        let instruction = offsets[loader]
+            .ok_or_else(|| format!("listing omits PC load on source line {}", loader + 1))?;
+        let displacement = pc_load
+            .captures(original[loader])
+            .and_then(|capture| capture[1].parse::<u64>().ok())
+            .ok_or_else(|| format!("invalid PC load on source line {}", loader + 1))?;
+        let pool = ((instruction + 4) & !3) + displacement;
+        let pool_address = base + pool;
+        let source_table_address = offset_lines
+            .get(&pool)
+            .and_then(|line| word.captures(original[*line]))
+            .and_then(|capture| u64::from_str_radix(capture[1].trim_start_matches("0x"), 16).ok());
+        let table_address = if let Some(address) = source_table_address {
+            address
+        } else {
+            let rom_offset = pool_address
+                .checked_sub(0x0800_0000)
+                .and_then(|value| usize::try_from(value).ok())
+                .ok_or_else(|| {
+                    format!("literal pool address 0x{pool_address:08x} is outside ROM")
+                })?;
+            u32::from_le_bytes(
+                image
+                    .get(rom_offset..rom_offset + 4)
+                    .ok_or_else(|| {
+                        format!("literal pool address 0x{pool_address:08x} is outside ROM")
+                    })?
+                    .try_into()
+                    .unwrap(),
+            ) as u64
+        };
+        let table_offset = table_address
+            .checked_sub(base)
+            .ok_or_else(|| format!("jump table 0x{table_address:08x} precedes owner"))?;
+        let start = offset_lines.get(&table_offset).copied().ok_or_else(|| {
+            format!("jump table 0x{table_address:08x} is outside the source fragment")
+        })?;
+        let entries = (at.saturating_sub(12)..at)
+            .rev()
+            .find_map(|line| cmp_immediate.captures(original[line]))
+            .and_then(|capture| capture[1].parse::<usize>().ok())
+            .map(|maximum| maximum + 1)
+            .ok_or_else(|| format!("no jump-table bound before source line {}", at + 1))?;
         table += 1;
         let table_label = format!(".Lm2c_jtbl_{table}");
         let pointer_label = format!(".Lm2c_jtbl_ptr_{table}");
@@ -313,39 +353,77 @@ fn symbolize(
             .replace(original[loader], pointer_label.as_str())
             .into_owned();
         changed[loader] = true;
-        for line in start..end {
-            let capture = word.captures(original[line]).unwrap();
-            let target = u64::from_str_radix(capture[1].trim_start_matches("0x"), 16)
-                .map_err(|error| error.to_string())?;
+        for entry in 0..entries {
+            let entry_offset = table_offset + entry as u64 * 4;
+            let line = offset_lines.get(&entry_offset).copied().ok_or_else(|| {
+                format!(
+                    "listing omits jump-table entry 0x{:08x}",
+                    base + entry_offset
+                )
+            })?;
+            let source_target = word.captures(original[line]).and_then(|capture| {
+                u64::from_str_radix(capture[1].trim_start_matches("0x"), 16).ok()
+            });
+            let target = if let Some(target) = source_target {
+                target
+            } else {
+                let rom_offset = table_address
+                    .checked_sub(0x0800_0000)
+                    .and_then(|value| usize::try_from(value).ok())
+                    .ok_or_else(|| format!("jump table 0x{table_address:08x} is outside ROM"))?
+                    + entry * 4;
+                u32::from_le_bytes(
+                    image
+                        .get(rom_offset..rom_offset + 4)
+                        .ok_or_else(|| format!("jump-table entry {entry} is outside ROM"))?
+                        .try_into()
+                        .unwrap(),
+                ) as u64
+            };
             let target_line = offset_lines.get(&target.saturating_sub(base)).copied();
             let target_label = target_line.map_or_else(
                 || format!("sub_{target:08x}"),
                 |_| format!(".Lm2c_{target:08x}"),
             );
-            lines[line] = word
-                .replace(original[line], format!(".4byte {target_label}"))
-                .into_owned();
+            lines[line] = format!("\t.4byte {target_label}");
             changed[line] = true;
+            for covered in line + 1..original.len() {
+                let Some(offset) = offsets[covered] else {
+                    continue;
+                };
+                if offset >= entry_offset + 4 {
+                    break;
+                }
+                if offset > entry_offset {
+                    lines[covered].clear();
+                    changed[covered] = true;
+                }
+            }
             if let Some(target_line) = target_line {
                 labels[target_line].push(format!("{target_label}:"));
             } else {
                 external_targets.insert(target_label, ());
             }
         }
-        let address = base
-            + offsets[start].ok_or_else(|| format!("listing omits source line {}", start + 1))?;
-        let pointer = format!("0x{address:08x}");
+        let pointer = format!("0x{table_address:08x}");
+        let mut found_pointer = false;
         for line in 0..original.len() {
-            if !(start..end).contains(&line) && original[line].contains(&pointer) {
+            let in_table = offsets[line].is_some_and(|offset| {
+                offset >= table_offset && offset < table_offset + entries as u64 * 4
+            });
+            if !in_table && original[line].contains(&pointer) {
                 lines[line] = original[line].replace(&pointer, &table_label);
                 changed[line] = true;
                 labels[line].push(format!("{pointer_label}:"));
+                found_pointer = true;
             }
         }
-        at = end;
+        if !found_pointer {
+            external_table_pools.insert(pool, (pointer_label, table_label));
+        }
+        at += 1;
     }
 
-    let image = fs::read(root().join("roms/gs1-en.gba")).map_err(|error| error.to_string())?;
     let mut external_pools = BTreeMap::new();
     for line in 0..original.len() {
         let Some(capture) = (!changed[line])
@@ -415,6 +493,9 @@ fn symbolize(
             .unwrap_or_else(|| format!("0x{value:08x}"));
         output.push_str(&format!(".Lm2c_pool_{address:04x}:\n.4byte {value}\n"));
     }
+    for (_, (pointer_label, table_label)) in external_table_pools {
+        output.push_str(&format!("{pointer_label}:\n.4byte {table_label}\n"));
+    }
     Ok(output)
 }
 
@@ -456,11 +537,11 @@ mod tests {
         fs::create_dir_all(&directory).unwrap();
         let source = directory.join("08000000.s");
         let listing = directory.join("target.lst");
-        write(&source, b".thumb\nldr r2, [pc, #8]\nmov pc, r2\n.4byte 0x08000008\nnop\n.align 2\n.4byte 0x08000004\n").unwrap();
-        write(&listing, b"1 0000 asm\n2 0000 0000 asm\n3 0002 0000 asm\n4 0004 00000000 asm\n5 0008 0000 asm\n6 000a 00 asm\n7 000c 00000000 asm\n").unwrap();
+        write(&source, b".thumb\ncmp r0, #0\nldr r2, [pc, #12]\nmov pc, r2\n.align 2\n.4byte 0x0800000c\nnop\n.align 2\n.4byte 0x08000008\n").unwrap();
+        write(&listing, b"1 0000 asm\n2 0000 0000 asm\n3 0002 0000 asm\n4 0004 0000 asm\n5 0006 00 asm\n6 0008 00000000 asm\n7 000c 0000 asm\n8 000e 00 asm\n9 0010 00000000 asm\n").unwrap();
         let output = symbolize(&source, &listing, "Func_08000000", &BTreeMap::new()).unwrap();
         assert!(output.contains("ldr r2, .Lm2c_jtbl_ptr_1"));
-        assert!(output.contains(".4byte .Lm2c_08000008"));
+        assert!(output.contains(".4byte .Lm2c_0800000c"));
         assert!(output.contains(".Lm2c_jtbl_ptr_1:"));
         write(&source, b".thumb\n.set sub_08000100, 0x08000100\nHumanOwner:\nRegion_08000000:\nldr r0, [pc, #4]\nbx lr\n").unwrap();
         write(

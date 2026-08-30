@@ -5458,6 +5458,15 @@
     "resource_375:02001760": {
       "name": "FieldScene_RunProgressDependentActorSequence"
     },
+    "resource_3bb:020010dc": {
+      "name": "FieldScene_ConfigureActorFormation"
+    },
+    "resource_3bb:020012f0": {
+      "name": "FieldScene_RunFirstActorInteraction"
+    },
+    "resource_3bb:02001424": {
+      "name": "FieldScene_RunSecondActorInteraction"
+    },
     "main:080a46b4": {
       "name": "Item_ClassifyUseMode",
       "source": "items/classify_use_mode.c"

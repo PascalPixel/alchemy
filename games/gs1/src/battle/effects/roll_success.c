@@ -2,7 +2,7 @@
 #include "battle_random.h"
 #include "battle_effect_chance.h"
 
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 s32 FixedPoint_Ratio(s32, s32);
 u8 *Owner_GetState(s32);
@@ -27,11 +27,11 @@ s32 BattleEffect_RollSuccess(
     u8 *flag13C;
 
     if (BattleEffect_IsRevive(effect_id) != 0 &&
-        M2C_FIELD(state, s16 *, 0x38) != 0) {
+        FIELD_AT_OFFSET(state, s16 *, 0x38) != 0) {
         return 0;
     }
 
-    if (effect_id == 3 && M2C_FIELD(state, s8 *, 0x131) == 0) {
+    if (effect_id == 3 && FIELD_AT_OFFSET(state, s8 *, 0x131) == 0) {
         goto fail;
     }
 
@@ -63,13 +63,13 @@ action4_done:
         *flag13A == 0 &&
         *flag13B == 0 &&
         *flag13C == 0 &&
-        M2C_FIELD(state, u8 *, 0x13D) == 0 &&
-        M2C_FIELD(state, u8 *, 0x141) == 0 &&
-        M2C_FIELD(state, u8 *, 0x140) == 0) {
+        FIELD_AT_OFFSET(state, u8 *, 0x13D) == 0 &&
+        FIELD_AT_OFFSET(state, u8 *, 0x141) == 0 &&
+        FIELD_AT_OFFSET(state, u8 *, 0x140) == 0) {
         return 0;
     }
 
-    if (effect_id == 0x1C && M2C_FIELD(state, u8 *, 0x141) == 1) {
+    if (effect_id == 0x1C && FIELD_AT_OFFSET(state, u8 *, 0x141) == 1) {
         return 0;
     }
 
@@ -77,7 +77,7 @@ action4_done:
     if (score > 0) {
         s32 difference = Owner_GetResistanceValue(caster, resistance_category) -
             Owner_GetResistanceValue(target, resistance_category) -
-            (M2C_FIELD(state, u8 *, 0x42) >> 1);
+            (FIELD_AT_OFFSET(state, u8 *, 0x42) >> 1);
         score += difference * 3;
         if (BattleTarget_IsWeakToEffect(state, effect_id) != 0) {
             score += 25;

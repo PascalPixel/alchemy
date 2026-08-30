@@ -1,7 +1,7 @@
 #include "b5_context.h"
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 s32 Object_SetMode(s32, s32);
 s32 Object_SetAction(s32, s32);
@@ -11,7 +11,7 @@ void BattleEffect_RunMode9WithAction(void *arg0) {
     s32 temp_r5;
 
     temp_r5 =
-        (s32)Func_080b5098(M2C_FIELD(arg0, s32 *, 8))->object;
+        (s32)Func_080b5098(FIELD_AT_OFFSET(arg0, s32 *, 8))->object;
     Object_SetMode(temp_r5, 2);
     Object_SetAction(temp_r5, 0x30);
     Func_080dea70(arg0, 9);

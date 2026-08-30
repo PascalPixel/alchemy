@@ -1,44 +1,7 @@
 #include "types.h"
 
-/*
- * resource_3b2 owner at 0x02002848, 314 bytes: code 0x02002848-0x02002981 and
- * a two-byte alignment `movs r0, r0` at 0x02002982.  No literal pool.
- *
- * Complete owner: `push {r5, r6, r7, lr}` + `push {r7}` (saving r8), an 8-byte
- * outgoing-argument frame, and the single epilogue at 0x02002976 ending
- * `pop {r0} / bx r0` — so the owner is **void**.  Five arms `b.n` to it.
- *
- * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3b2
- * 2848 --json` (18 sites, 4 distinct targets):
- *   0x02002852, 0x0200285e, 0x02002868, 0x02002872, 0x0200287c, 0x0200294a
- *                              -> veneer 0x02003088 -> Scene_GetRecord
- *   0x020028a4, 0x020028ae, 0x020028ce, 0x020028da, 0x020028fa, 0x02002906,
- *   0x0200291e, 0x0200292e, 0x0200293e
- *                              -> prologue 0x02001774 -> Func_02001774
- *   0x02002944                 -> veneer 0x02002fb8 -> Func_080000c0
- *   0x02002962, 0x02002972     -> veneer 0x02003028 -> Func_080091c0
- *
- * The Z-axis FORWARD leg for slot 9 — the mirror of 0x02002700, with the same
- * three companions (slots 19, 14, 16, all tested by tile column against the
- * 9..11 band) and the same transposed 3 x 1 repaints, but the row table runs
- * upward 8, 11, 12, 14, 15, 18 and the ids are passed unnegated.
- *
- * World coordinates become tile units with an arithmetic `>> 20` (>> 16 to
- * integers, >> 4 for the 16-pixel tile grid).
- *
- * NOTE on register lifetime: r5 holds slot 14's tile column through the
- * decision tree and is then REASSIGNED to `slot9Column - 1` for the repaints.
- *
- * NOTE on call sites: unlike its siblings this owner writes each arm's id at
- * its own `bl`, so there are nine distinct sites — but two of them are entered
- * from more than one arm.  The id-48 site at 0x020028ce serves both row 8's
- * companion-14 arm and row 11's companion-19 arm, and the id-96 site at
- * 0x020028ae is both row 8's companion-19 arm and the fall-through after its
- * id-80 call.  The C reproduces the first with a `goto` into the row-11 arm and
- * the second as a plain fall-through, so exactly nine call expressions appear.
- *
- * UNCERTAINTY: the third argument of Func_02001774 is an opaque transition id.
- */
+/* Advance actor 9 and its companions along the Z-axis escape route.
+   Shared branches preserve the transition call sites used by multiple rows. */
 
 /* Old-style declarations: overlay imports vary in arity between call sites.
    One import name per call site: bl displacements are per-site. */

@@ -1,47 +1,7 @@
 #include "types.h"
 
-/*
- * resource_3b2 owner at 0x020025f0, 272 bytes: code 0x020025f0-0x020026ff,
- * no literal pool.
- *
- * Complete owner: `push {r5, r6, r7, lr}` prologue, an 8-byte outgoing-argument
- * frame, and the single epilogue at 0x020026f8 ending `pop {r0} / bx r0` — so
- * the owner is **void**.  Three arms `b.n` straight to that epilogue.
- *
- * Call targets resolved with `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3b2
- * 25f0 --json` (17 sites, 4 distinct targets):
- *   0x020025f6, 0x02002600, 0x0200260a, 0x02002614, 0x020026ce
- *                              -> veneer 0x02003088 -> Scene_GetRecord
- *   0x02002632, 0x0200263c, 0x02002658, 0x02002664, 0x0200267a, 0x02002686,
- *   0x0200269c, 0x020026ac, 0x020026bc
- *                              -> prologue 0x02001774 -> Func_02001774
- *   0x020026c8                 -> veneer 0x02002fb8 -> Func_080000c0
- *   0x020026e4, 0x020026f4     -> veneer 0x02003028 -> Func_080091c0
- *
- * This is the Z-AXIS member of the transition family (0x02002a98, 0x02002b80,
- * 0x02002c4c, 0x02002d0c, 0x02002dd0).  Where those switch on the actor's tile
- * COLUMN and pass the id as Func_02001774's dx, this one switches on slot 18's
- * tile ROW and passes it as dz (dx is always 0), and its two collision
- * repaints are the transposed rectangle (3 x 1 instead of 1 x 3, anchored at
- * `x - 1`).  The two companions consulted are slots 19 and 14, both by tile
- * column, both against the 6..8 band.
- *
- * World coordinates become tile units with an arithmetic `>> 20` (>> 16 to
- * integers, >> 4 for the 16-pixel tile grid).
- *
- * NOTE on register lifetime: r5 holds slot 19's tile column through the whole
- * decision tree and is then REASSIGNED to `slot18Column - 1` for the two
- * repaints; the two values are tracked separately here.
- *
- * NOTE on call sites: two of the nine Func_02001774 sites are each reached from
- * TWO arms of the decision tree — the id-32 site at 0x0200267a (rows 9 and 12)
- * and the id-80 site at 0x0200269c (rows 9 and 14).  Writing a call per arm
- * would inject two phantom calls into the multiset, so those two arms `goto`
- * the shared site exactly as the assembly branches to it.
- *
- * UNCERTAINTY: the third argument of Func_02001774 is an opaque transition id,
- * as in the rest of the family.
- */
+/* Advance actor 18 and its companions along the Z-axis escape route.
+   Shared branches preserve the transition call sites used by multiple rows. */
 
 /* Old-style declarations: overlay imports vary in arity between call sites.
    One import name per call site: bl displacements are per-site. */

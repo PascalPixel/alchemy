@@ -1,36 +1,5 @@
 #include "types.h"
 
-/*
- * resource_39f owner at 0x02000ae8, 472 bytes: code 0x02000ae8-0x02000cb3 and
- * the three pool words 0x0200b058, 0x02008ab1 and 0xffff0000 at
- * 0x02000cb4-0x02000cbf.
- *
- * The overlay's effect spawner, and the one routine every cutscene beat in this
- * overlay funnels through: 0x02000e18, 0x02001150, 0x02001244, 0x02001328,
- * 0x020015d0, 0x020016f0, 0x02001880, 0x02001d04, 0x02001de0, 0x02001ef0,
- * 0x02002078 and 0x020021b0 all call it with four register arguments and four
- * stack words.
- *
- * It creates an effect record at (x, y, z), gives it the constant velocity
- * (vx, vy, vz) that the per-frame handler at 0x02000ab0 integrates, and then
- * applies whichever of the optional fields `flags` selects from `options`.
- *
- * See resource_39f_c_02000030.c for the link base and the `bl` encoding rule.
- * Two further witnesses for the 0x02008000 base appear here: the installed
- * handler pool word 0x02008ab1 is 0x02000ab0 plus the Thumb bit, and 0x2ab0
- * really is the start of a leaf routine that adds the +68/+72/+76 velocity into
- * the +8/+12/+16 position; and Data_0200b2d4 (file offset 0x3058) is a table
- * whose first three words, 0x0200afb0, 0x0200afe8 and 0x0200b020, are the
- * in-image descriptors at offsets 0x2fb0, 0x2fe8 and 0x3020.
- *
- * Func_03000380 is an ARM-mode helper relocated into IWRAM, reached through the
- * veneer at 0x02002ce4 - the same family as the 0x030001d8 square root used by
- * 0x02000030.  It is called with a distance and the descriptor's word at +12,
- * and its result becomes a per-frame step, so it is the division helper.
- *
- * The epilogue is `add sp, #8 / pop {r3, r5, r6, r7} / ... / pop {r0} / bx r0`,
- * so the owner is void.
- */
 
 struct Sprite {
     u8 pad00[9];

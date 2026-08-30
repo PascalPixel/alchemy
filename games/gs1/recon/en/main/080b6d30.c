@@ -1,6 +1,8 @@
 #include "types.h"
 #include "global_cells.h"
 
+#define SummonSlot_RegisterActorSprites Func_080b6d30
+
 struct BattleActorDefinition {
     u8 reserved_000[296];
     u8 class_id;
@@ -20,7 +22,7 @@ s32 Func_08009270(s32 slot, s32 buffer_addr, s32 value, s32 flag);
 
 #define SLOT_BUFFER_BASE 0x02018000
 
-s32 Func_080b6d30(s32 unit)
+s32 SummonSlot_RegisterActorSprites(s32 unit)
 {
     struct Layout *table = *(struct Layout **)ADDR_03001E74;
     struct BattleActorDefinition *actor = Func_08077008(unit);

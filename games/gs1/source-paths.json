@@ -2705,6 +2705,9 @@
     "resource_383:02001348": {
       "name": "FieldScene_RunClosingSequence"
     },
+    "resource_381:02000054": {
+      "name": "FieldScene_RunTwoPhaseActorSequence"
+    },
     "resource_3af:020039ec": "unidentified/overlays/leaf/leaf_0097.c",
     "resource_3b1:02001420": "unidentified/overlays/leaf/leaf_0098.c",
     "resource_377:0200036c": "unidentified/overlays/leaf/leaf_0099.c",

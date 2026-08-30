@@ -203,6 +203,9 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
     let mut loop_top: BTreeMap<i64, (i64, i64, String)> = BTreeMap::new();
     let mut loop_end: BTreeSet<i64> = BTreeSet::new();
     for (i, r) in rows.iter().enumerate() {
+        if pool_words.contains(&r.addr) {
+            continue;
+        }
         let (op, args) = operands(&r.text);
         if !op.starts_with('b') || op == "bx" || op == "bl" || args.len() != 1 {
             continue;
@@ -215,15 +218,37 @@ pub fn draft(listing: &[String], func: &str) -> Draft {
         }
         let mut counter = String::new();
         let mut bound = 0;
-        for back in rows[..i].iter().rev().take(6) {
+        for (back_index, back) in rows[..i].iter().enumerate().rev().take(6) {
             let (cop, cargs) = operands(&back.text);
             if cop == "cmp" && cargs.len() == 2 {
                 if let Some(v) = immediate(&cargs[1]) {
+                    if cargs[0] == "r0"
+                        && rows[..back_index]
+                            .iter()
+                            .rev()
+                            .take(2)
+                            .any(|row| operands(&row.text).0 == "bl")
+                    {
+                        break;
+                    }
                     counter = cargs[0].clone();
                     bound = v;
+                    if let Some(shift) = rows[..back_index].iter().rev().take(3).find(|row| {
+                        let (op, args) = operands(&row.text);
+                        op == "lsrs"
+                            && args.len() == 3
+                            && args[0] == counter
+                            && immediate(&args[2]) == Some(16)
+                    }) {
+                        let (_, args) = operands(&shift.text);
+                        counter = args[1].clone();
+                    }
                 }
                 break;
             }
+        }
+        if counter.is_empty() {
+            continue;
         }
         let mut start = 0;
         if !counter.is_empty() {
@@ -792,5 +817,43 @@ mod tests {
             source.contains("Func_02001000(1, 32768, 32768);"),
             "{source}"
         );
+    }
+
+    #[test]
+    fn recognizes_fixed_point_loop_counters() {
+        let listing = [
+            " 2000000:\t2500      \tmovs\tr5, #0",
+            " 2000002:\t2001      \tmovs\tr0, #1",
+            " 2000004:\tf000 fff9 \tbl\t0x2001000",
+            " 2000008:\t2380      \tmovs\tr3, #128",
+            " 200000a:\t025b      \tlsls\tr3, r3, #9",
+            " 200000c:\t18ed      \tadds\tr5, r5, r3",
+            " 200000e:\t0c2b      \tlsrs\tr3, r5, #16",
+            " 2000010:\t2b3c      \tcmp\tr3, #60",
+            " 2000012:\td1f6      \tbne.n\t0x2000002",
+            " 2000014:\t4770      \tbx\tlr",
+        ]
+        .map(str::to_string);
+
+        let source = draft(&listing, "Func_02000000").lines.join("\n");
+        assert!(source.contains("for (i1 = 0; i1 != 60; i1++)"), "{source}");
+    }
+
+    #[test]
+    fn does_not_turn_called_predicates_into_zero_trip_loops() {
+        let listing = [
+            " 2000000:\t2001      \tmovs\tr0, #1",
+            " 2000002:\tf000 fff9 \tbl\t0x2001000",
+            " 2000006:\t2000      \tmovs\tr0, #0",
+            " 2000008:\tf000 fff9 \tbl\t0x2001004",
+            " 200000c:\t2800      \tcmp\tr0, #0",
+            " 200000e:\td1f7      \tbne.n\t0x2000000",
+            " 2000010:\t4770      \tbx\tlr",
+        ]
+        .map(str::to_string);
+
+        let source = draft(&listing, "Func_02000000").lines.join("\n");
+        assert!(!source.contains("for ("), "{source}");
+        assert!(source.contains("Func_02001000(1);"), "{source}");
     }
 }

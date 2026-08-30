@@ -5518,6 +5518,9 @@
     "resource_3ab:0200131c": {
       "name": "FieldScene_RunActorDialogueMovementSequence"
     },
+    "resource_39b:02001730": {
+      "name": "FieldScene_RunActorExchangeChoreography"
+    },
     "main:080a46b4": {
       "name": "Item_ClassifyUseMode",
       "source": "items/classify_use_mode.c"

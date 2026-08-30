@@ -78,10 +78,10 @@ pub enum Category {
     AssetData,
 }
 pub const CATEGORIES: [(Category, &str, &str); 5] = [
-    (Category::ExactC, "exact_c", "Exact C"),
-    (Category::TrackedC, "tracked_c", "WIP"),
-    (Category::Assembly, "assembly", "ASM"),
+    (Category::Assembly, "assembly", "Raw assembly"),
+    (Category::TrackedC, "tracked_c", "Semantic C"),
     (Category::RetainedAsm, "retained_asm", "Permanent ASM"),
+    (Category::ExactC, "exact_c", "Exact C"),
     (Category::AssetData, "asset_data", "Data"),
 ];
 #[derive(Clone, Debug, Default)]

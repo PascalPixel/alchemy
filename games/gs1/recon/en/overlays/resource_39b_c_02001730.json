@@ -1,0 +1,12 @@
+{
+  "span_bytes": 572,
+  "score": {"measured":"2026-08-30","candidate_bytes":572,"reference_bytes":572,"wrong_instructions":62,"differing_halfwords":194,"class":"generated-call-script-retention"},
+  "shape": {"calls":53,"loops":1,"memory_operations":14},
+  "verified_against_reference": [
+    "all 53 resolver-confirmed calls and their arguments are represented in ROM order across the complete callable owner",
+    "the bounded two-pass actor exchange and all fourteen decoded actor/effect memory operations are represented in ordinary C",
+    "the owner includes its sole interworking return and eight-word trailing pool before the next prologue at 0x0200196c",
+    "the candidate reproduces the complete 572-byte extent; remaining instruction differences are approved GCC carrier allocation and scheduling"
+  ],
+  "retention": "keep_structured_asm"
+}

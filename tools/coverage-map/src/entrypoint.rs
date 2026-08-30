@@ -170,6 +170,14 @@ fn update_readme(
         done * 100.0 / executable
     };
     let mut out = text.to_string();
+    if let Some(start) = out.find("## Status:") {
+        if let Some(end) = out[start..].find('\n') {
+            out.replace_range(
+                start..start + end,
+                &format!("## Status: {}% DONE", number(percent.round())),
+            );
+        }
+    }
     if let Some(end) = out.find("\n\nDONE measures") {
         if let Some(start) = out[..end].rfind("\n## DONE:") {
             let head_end = start + 1;
@@ -213,7 +221,9 @@ fn update_readme(
 }
 #[cfg(test)]
 mod tests {
-    use super::readme_metrics;
+    use super::{readme_metrics, update_readme};
+    use crate::pipeline::CoverageMap;
+    use serde_json::json;
     #[test]
     fn readme_metrics_reports_all_done_categories() {
         assert_eq!(
@@ -224,6 +234,29 @@ mod tests {
              | Permanent assembly |     343,206 |     25.5% of executable |\n\
              | **DONE**           | **625,642** | **46.4% of executable** |"
         );
+    }
+
+    #[test]
+    fn readme_status_uses_exact_plus_permanent_bytes() {
+        let map = CoverageMap {
+            document: json!({
+                "executable_bytes": 1000,
+                "categories": {
+                    "exact_c": {"bytes": 250},
+                    "retained_asm": {"bytes": 340}
+                }
+            }),
+            rom_areas: Vec::new(),
+            executable_areas: Vec::new(),
+        };
+        let updated = update_readme(
+            "# Alchemy\n\n## Status: 52% DONE\n\nDetails\n",
+            "gs1-en",
+            &map,
+            &[],
+        );
+        assert!(updated.contains("## Status: 59% DONE"));
+        assert!(!updated.contains("52% DONE"));
     }
 }
 fn run(argv: &[String]) -> Result<String, String> {

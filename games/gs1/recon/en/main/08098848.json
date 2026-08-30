@@ -2,11 +2,17 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x08098848",
-  "status": "measured-draft",
+  "status": "proven-retained-assembly",
   "owner_bytes": 268,
   "candidate_bytes": 268,
   "differing_halfwords": 2,
   "wrong_instructions": 0,
+  "classification": "compiler_local_scheduling_mismatch",
+  "resolved_asm_classification": {
+    "kind": "compiler_local_scheduling_mismatch",
+    "retention": "keep_structured_asm",
+    "confidence": "proven"
+  },
   "objdiff_class": "ordering",
   "family": {
     "family_matcher_top_guess": "main:08092708 (battle/effects/objects/run_rising_sequence.c), score 7485/10000, LOW confidence",
@@ -29,5 +35,31 @@
     "Recovered from a from-scratch hand-trace of the retained assembly (no m2c workbench run was needed once the field/constant cross-references above locked the structure), verified instruction-by-instruction against games/gs1/asm/08098848.s and iterated with candidate-show --align down from an initial 54 differing halfwords to 2. The two fixes that mattered: (1) computing x/y/z into named scalars used directly by the first SpawnItemBreakEffectMode3 call, while re-reading the same values from the on-stack position[] array for the second call -- mirroring exactly what 08099da4's independent m2c draft already does for its own twin call pair; (2) writing the post-loop overflow guard as the literal inline comparison 'start_y <= start_y + 0x200000' (evaluated twice, once in the guard and once in the loop condition) instead of hoisting it into a named target_y local, so GCC-2.96 -O2 resynthesizes the 128<<14 immediate at each use site the way the reference does instead of caching it.",
     "Remaining 2-halfword / 0-wrong-instruction residual is a pure GCC-2.96 -O2 scheduler ordering swap: the reference issues the reload of anchors[0] (needed two instructions later for the null-check guard) ahead of the unconditional store to child->0x55, while every source statement ordering tried here (store-before-load, load-before-store, an explicit named temporary for anchors[0], hoisting the byte-flag address into its own pointer variable) either reproduces the same swap in the other direction or regresses the surrounding codegen by 8 bytes. objdiff reports class=ordering with wrong_instructions=0, i.e. the same instructions, adjacent, swapped -- the same flavor of irreducible local-scheduler residual already documented on the sibling RunBattleEffect07 (0x08098954, 08098954.json), which never got fully to zero either. Not adopted: CONTRIBUTING's gate is differing_halfwords == 0.",
     "Recovered only from retained GS1 assembly, already-registered names in games/gs1/source-paths.json and games/gs1/include/types.h, already-adopted exact sibling C (item_break/{start,spawn_mode_3,update_fragment}.c, rising_particle_burst/update.c, run_item_break_sequence.c, burst_particles/run_main_object.c, orbiting_particles/start.c), the two in-repo unresolved drafts referenced above, and the approved compiler. No other decompilation project or external disassembly was consulted."
-  ]
+  ],
+  "bounded_source_probe": {
+    "tool": "tools/shape-search/search.ts",
+    "depth": 6,
+    "legal_variants": 10,
+    "best_differing_halfwords": 2,
+    "verdict": "miss"
+  },
+  "compiler_decision": {
+    "dump": "GCC -da pass 23 sched2",
+    "source": "alchemy-gcc/agbcc/gcc_arm/sched.c:rank_for_schedule",
+    "finding": "The unconditional byte store and independent stack reload are both ready before the following guards. The scheduler's equal-priority tie falls through to original INSN_LUID order; ordinary statement, temporary, and address-hoisting variants preserve that order or change surrounding code generation."
+  },
+  "cross_edition": {
+    "editions": ["ja", "en", "de", "es", "fr", "it"],
+    "relocation_normalized_core_bytes": 202,
+    "core_identical": true,
+    "starts": {
+      "ja": "0x0808f83c",
+      "en": "0x08098848",
+      "de": "0x0809bef0",
+      "es": "0x0809d8e0",
+      "fr": "0x0809d8e0",
+      "it": "0x080988e0"
+    }
+  },
+  "decision": "Retain the byte-exact structured assembly as a proven local compiler-scheduling mismatch. The complete ordinary-C reconstruction remains the semantic source artifact and all 268 owner bytes count as DONE."
 }

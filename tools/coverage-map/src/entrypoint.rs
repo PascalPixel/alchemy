@@ -109,30 +109,30 @@ fn tracked(map: &Value) -> Value {
 }
 fn summary(doc: &Value) -> Result<String, String> {
     let executable = field(doc, &["executable_bytes"]);
-    let exact = field(doc, &["categories", "exact_c", "bytes"]);
-    let semantic = field(doc, &["categories", "tracked_c", "bytes"]);
-    let retained = field(doc, &["categories", "retained_asm", "bytes"]);
-    if !executable.is_finite() || !retained.is_finite() {
+    let proven_c = field(doc, &["categories", "proven_c", "bytes"]);
+    let draft_c = field(doc, &["categories", "draft_c", "bytes"]);
+    let proven_asm = field(doc, &["categories", "proven_asm", "bytes"]);
+    if !executable.is_finite() || !proven_asm.is_finite() {
         return Err("coverage map lacks executable totals".into());
     }
-    let ceiling = executable - retained;
-    let percent = crate::jsnum::round_half_up(exact as i64, ceiling as i64);
+    let ceiling = executable - proven_asm;
+    let percent = crate::jsnum::round_half_up(proven_c as i64, ceiling as i64);
     Ok(format!(
-        "target={} rom={} executable={} exact={} ({}%) tracked={} ({}%) c_able={} exact_of_c_able={}% tracked_source={}",
+        "target={} rom={} executable={} proven_c={} ({}%) draft_c={} ({}%) c_target={} proven_c_of_target={}% draft_source={}",
         get(doc, "target").and_then(Value::as_str).unwrap_or("undefined"),
         commas(field(doc, &["rom_bytes"]) as i64),
         commas(executable as i64),
-        commas(exact as i64),
-        number(field(doc, &["categories", "exact_c", "percent_of_executable"])),
-        commas(semantic as i64),
-        number(field(doc, &["categories", "tracked_c", "percent_of_executable"])),
+        commas(proven_c as i64),
+        number(field(doc, &["categories", "proven_c", "percent_of_executable"])),
+        commas(draft_c as i64),
+        number(field(doc, &["categories", "draft_c", "percent_of_executable"])),
         commas(ceiling as i64),
         number(percent),
         get(get(doc, "provenance").unwrap_or(&Value::Null), "tracked_source").and_then(Value::as_str).unwrap_or("undefined")
     ))
 }
-fn readme_metrics(exact: f64, retained: f64, executable: f64) -> String {
-    let done = exact + retained;
+fn readme_metrics(proven_c: f64, proven_asm: f64, executable: f64) -> String {
+    let done = proven_c + proven_asm;
     let share = |bytes: f64| {
         if executable == 0.0 {
             0.0
@@ -143,13 +143,13 @@ fn readme_metrics(exact: f64, retained: f64, executable: f64) -> String {
     format!(
         "|                    |       bytes |                   share |\n\
          | ------------------ | ----------: | ----------------------: |\n\
-         | Exact C            | {:>11} | {:>8.1}% of executable |\n\
-         | Permanent assembly | {:>11} | {:>8.1}% of executable |\n\
+         | Proven C           | {:>11} | {:>8.1}% of executable |\n\
+         | Proven ASM         | {:>11} | {:>8.1}% of executable |\n\
          | **DONE**           | **{:>7}** | **{:.1}% of executable** |",
-        commas(exact as i64),
-        share(exact),
-        commas(retained as i64),
-        share(retained),
+        commas(proven_c as i64),
+        share(proven_c),
+        commas(proven_asm as i64),
+        share(proven_asm),
         commas(done as i64),
         share(done)
     )
@@ -160,10 +160,10 @@ fn update_readme(
     map: &CoverageMap,
     trees: &[(&'static str, String)],
 ) -> String {
-    let exact = field(&map.document, &["categories", "exact_c", "bytes"]);
-    let retained = field(&map.document, &["categories", "retained_asm", "bytes"]);
+    let proven_c = field(&map.document, &["categories", "proven_c", "bytes"]);
+    let proven_asm = field(&map.document, &["categories", "proven_asm", "bytes"]);
     let executable = field(&map.document, &["executable_bytes"]);
-    let done = exact + retained;
+    let done = proven_c + proven_asm;
     let percent = if executable == 0.0 {
         0.0
     } else {
@@ -187,21 +187,21 @@ fn update_readme(
     }
     if let Some(start) = out.find("|                    |       bytes |                   share |")
     {
-        if let Some(end) = out[start..].find("\n\nPermanent assembly") {
+        if let Some(end) = out[start..].find("\n\nProven ASM") {
             out.replace_range(
                 start..start + end,
-                &readme_metrics(exact, retained, executable),
+                &readme_metrics(proven_c, proven_asm, executable),
             );
         }
     }
-    if let Some(start) = out.find("**exact C stands at ") {
-        let value_start = start + "**exact C stands at ".len();
+    if let Some(start) = out.find("**Proven C stands at ") {
+        let value_start = start + "**Proven C stands at ".len();
         if let Some(end) = out[value_start..].find("%**") {
-            let c_able = executable - retained;
+            let c_able = executable - proven_asm;
             let c_share = if c_able == 0.0 {
                 0.0
             } else {
-                exact * 100.0 / c_able
+                proven_c * 100.0 / c_able
             };
             out.replace_range(value_start..value_start + end, &format!("{c_share:.1}"));
         }
@@ -230,20 +230,20 @@ mod tests {
             readme_metrics(282_436.0, 343_206.0, 1_347_122.0),
             "|                    |       bytes |                   share |\n\
              | ------------------ | ----------: | ----------------------: |\n\
-             | Exact C            |     282,436 |     21.0% of executable |\n\
-             | Permanent assembly |     343,206 |     25.5% of executable |\n\
+             | Proven C           |     282,436 |     21.0% of executable |\n\
+             | Proven ASM         |     343,206 |     25.5% of executable |\n\
              | **DONE**           | **625,642** | **46.4% of executable** |"
         );
     }
 
     #[test]
-    fn readme_status_uses_exact_plus_permanent_bytes() {
+    fn readme_status_uses_proven_c_plus_proven_assembly_bytes() {
         let map = CoverageMap {
             document: json!({
                 "executable_bytes": 1000,
                 "categories": {
-                    "exact_c": {"bytes": 250},
-                    "retained_asm": {"bytes": 340}
+                    "proven_c": {"bytes": 250},
+                    "proven_asm": {"bytes": 340}
                 }
             }),
             rom_areas: Vec::new(),

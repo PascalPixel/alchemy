@@ -1,7 +1,7 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void Func_08098698(void);
 void Object_SetMode(s32, s32);
@@ -16,7 +16,7 @@ void RunBurstParticleMainObject(void) {
     u8 *flags;
     u8 battle_value;
 
-    object = M2C_FIELD(*(void **)ADDR_03001F30, u8 **, 0x14);
+    object = FIELD_AT_OFFSET(*(void **)ADDR_03001F30, u8 **, 0x14);
     if (object != 0) {
         Func_08098698();
         Object_SetMode((s32)object, 2);

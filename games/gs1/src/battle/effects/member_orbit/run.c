@@ -30,7 +30,7 @@
  * puts the reference's `mov r0, #46` and `mov r0, #47` last in their
  * argument groups.  Dropping them costs seven differing halfwords.
  */
-#define M2C_FIELD(expr, type_ptr, offset) \
+#define FIELD_AT_OFFSET(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))
 
 typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
@@ -78,9 +78,9 @@ void Func_080ce85c(void *object)
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
-    M2C_FIELD(work, void **, 0x7828) = object;
+    FIELD_AT_OFFSET(work, void **, 0x7828) = object;
     Func_080cd594(0);
-    M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x100;
+    FIELD_AT_OFFSET((void *)0x04000020, s16 *, 0) = 0x100;
     palette = Func_08002f40((s32)&Value_000000af);
     status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
     status = Func_08005340((u8 *)palette + 128, work);
@@ -91,17 +91,17 @@ void Func_080ce85c(void *object)
     rectangle_slot = rectangle;
     rectangle_slot[1] = second_rectangle;
     Func_080041d8((void *)0x080DBB9D, 0x480);
-    M2C_FIELD(work, s32 *, 0x7780) = 2;
-    M2C_FIELD(work, s32 *, 0x7784) = 50;
+    FIELD_AT_OFFSET(work, s32 *, 0x7780) = 2;
+    FIELD_AT_OFFSET(work, s32 *, 0x7784) = 50;
     Func_080041d8((void *)0x080CD261, 0x480);
-    if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4) == 1) {
-        M2C_FIELD((void *)0x04000028, s32 *, 0) = -0x6800;
+    if (FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s32 *, 4) == 1) {
+        FIELD_AT_OFFSET((void *)0x04000028, s32 *, 0) = -0x6800;
         y_offset = -112;
     } else {
         y_offset = 0;
     }
     for (frame = 0;
-            frame != (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20)
+            frame != (FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s32 *, 20)
                 * 16) + 48;
             frame++) {
         s32 facing;
@@ -111,7 +111,7 @@ void Func_080ce85c(void *object)
 
         facing = *(s32 *)0x03001E80;
         scanline = (s32 *)((u8 *)work + 0x6980);
-        if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4) == 0) {
+        if (FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s32 *, 4) == 0) {
             s32 angle;
             s32 ceiling;
 
@@ -131,28 +131,28 @@ void Func_080ce85c(void *object)
         Func_080049ac();
         Func_080051d8(facing, facing + 12);
         member = 0;
-        if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20) != 0) {
+        if (FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s32 *, 20) != 0) {
             record_slot = record;
             member_id_offset = 36;
             while (member
-                != M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20)) {
+                != FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s32 *, 20)) {
                 void *member_object;
 
                 member_object = *Func_080b5098(
-                    M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *,
+                    FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s16 *,
                         member_id_offset));
                 if (frame > member * 16 && frame < (member * 16) + 60) {
                     s32 spin;
 
                     if (frame == (member * 16) + 32) {
                         Func_080d6888(
-                            M2C_FIELD(M2C_FIELD(work, void **, 0x7828),
+                            FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828),
                                 s16 *, member_id_offset),
                             0, 5, -1, 0);
                     }
-                    record_slot[0] = M2C_FIELD(member_object, s32 *, 8);
+                    record_slot[0] = FIELD_AT_OFFSET(member_object, s32 *, 8);
                     record_slot[1] = 0x280000;
-                    record_slot[2] = M2C_FIELD(member_object, s32 *, 16);
+                    record_slot[2] = FIELD_AT_OFFSET(member_object, s32 *, 16);
                     Func_080e3944(record_slot, screen);
                     for (i = 0; i != 4; i++) {
                         s32 x;
@@ -174,7 +174,7 @@ void Func_080ce85c(void *object)
                 member++;
             }
         }
-        M2C_FIELD(work, s32 *, 0x7824) = 1;
+        FIELD_AT_OFFSET(work, s32 *, 0x7824) = 1;
         Func_080030f8(1);
     }
     Func_08004278((void *)0x080CD261);

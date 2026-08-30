@@ -1,0 +1,24 @@
+{
+  "span_bytes": 2672,
+  "score": {
+    "measured": "2026-08-30",
+    "candidate_bytes": 4052,
+    "reference_bytes": 4092,
+    "wrong_instructions": 620,
+    "differing_halfwords": 1856,
+    "class": "generated-call-script-retention"
+  },
+  "shape": {
+    "calls": 402,
+    "loops": 4,
+    "memory_operations": 22
+  },
+  "verified_against_reference": [
+    "candidate and ROM contain the same 402 calls in machine order and all argument values are represented",
+    "all 22 explicit memory operations are represented, including workspace state 364, object state 90 and 100, and result fields at offset 6",
+    "direct assembly audit restored the two state-dependent branch arms and all four object-state wait loops omitted by the mechanical draft",
+    "approved GCC allocation and literal-pool scheduling emits 4052 bytes for the complete 4092-byte semantic source without an exact ordinary-C emission"
+  ],
+  "retention": "keep_structured_asm",
+  "note": "The complete 4092-byte owner is reconstructed here; this record covers its 2672-byte assembly-retained band at 0x02000aac–0x0200151c. Approved GCC cannot preserve the owner's long-range allocation and literal-pool schedule."
+}

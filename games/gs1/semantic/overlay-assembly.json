@@ -1819,6 +1819,19 @@
       ]
     },
     {
+      "overlay": "resource_3c9",
+      "start": "0x0200423c",
+      "end": "0x02004736",
+      "kind": "generated_call_script_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "complete owner reconstruction accounts for all 141 calls, actor-coordinate stages, presentation-object fields, polling, palette write, and terminal workspace state",
+        "candidate and complete-owner reference differ by 48 bytes after all decoded side effects are represented; residual is approved GCC allocation and literal scheduling",
+        "games/gs1/recon/en/overlays/resource_3c9_c_0200423c.json"
+      ]
+    },
+    {
       "overlay": "resource_380",
       "start": "0x020027f8",
       "end": "0x02003f24",

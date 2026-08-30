@@ -2732,6 +2732,9 @@
     "resource_3c9:02003e9c": {
       "name": "FieldScene_RunMultiActorPresentation"
     },
+    "resource_3c9:0200423c": {
+      "name": "FieldScene_RunExtendedPresentation"
+    },
     "resource_373:020015dc": {
       "name": "FieldScene_RunScriptedActorSequence"
     },

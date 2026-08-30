@@ -5,9 +5,9 @@
   "name": "BattleEffect_RunScreenShatter",
   "status": "measured-draft",
   "owner_bytes": 2508,
-  "candidate_bytes": 2408,
-  "differing_halfwords": 1201,
-  "wrong_instructions": 1243,
+  "candidate_bytes": 2432,
+  "differing_halfwords": 1199,
+  "wrong_instructions": 1237,
   "classification": "structural-reconstruction",
   "resolved_asm_classification": {
     "kind": "compiler_output",
@@ -15,8 +15,8 @@
     "confidence": "likely"
   },
   "notes": [
-    "2026-08-31: re-audited the wave repair and improved the measured draft from 2396/2508 bytes, 1202 differing halfwords, and 1257 wrong instructions to 2408/2508, 1201, and 1243. The correction preserves REG_IME's real saved value while using typed halfword access, uses byte-addressed arithmetic for the actor-data pointer, and types the three ROM tables as u16/u8/u8. The owner remains Draft C and claims zero DONE bytes.",
-    "The first structural divergence is now explicit: GCC allocates a 40-byte local frame while the reference allocates 56 bytes. Recover the missing stack-resident locals and their lifetimes before doing any allocation work.",
+    "2026-08-31: re-audited the wave repair and improved the measured draft from 2396/2508 bytes, 1202 differing halfwords, and 1257 wrong instructions to 2432/2508, 1199, and 1237. The correction preserves REG_IME's real saved value while using typed halfword access, uses byte-addressed arithmetic for the actor-data pointer, and types the three ROM tables as u16/u8/u8. The owner remains Draft C and claims zero DONE bytes.",
+    "Two values loaded from the established heap callback cache at +0xb8/+0xbc were dead in the m2c draft because the later `_call_via_r4` and `_call_via_r7` trampoline sites were misrepresented as direct Func_080072f4/Func_08007300 calls. Reconstructing them as the family-standard two-entry DrawRectangleFn array restores the reference's stack-backed callback lifetime, grows the frame from 40 to 48 bytes, and adds 24 candidate bytes. Declaration order now reproduces the reference's relative local ordering; the remaining 8-byte total-frame difference is compiler stack-slot/padding evidence, not permission to add fake padding.",
     "The repaired errors were mechanical recovery issues: typed halfword stores to VRAM, typed IME halfword save/restore, byte-addressed aggregate-pointer arithmetic, and typed ROM table reads. No instruction bytes, inline assembly, fixed-register variables, compiler barriers, or external decompilation sources were introduced.",
     "The generated shared-aggregates.h context is evidence scaffolding shared by the corpus-wide aggregate miner, not a semantic naming authority. Its M2cAggregate names must be replaced with evidence-backed subsystem types as this owner is reconstructed.",
     "The provisional semantic name describes the visible behavior rather than asserting a lost Camelot identifier: a large battle-presentation routine using the 0x03001e74 and 0x03001eec work families, DMA queueing, palette interpolation, a 33-entry particle group, tile fragments, and a 128-frame presentation loop."

@@ -24,6 +24,9 @@
     "main:0801faa8": {
       "name": "SaveState_ProcessSelectedSlot"
     },
+    "main:08020198": {
+      "name": "StatusMenu_DrawCharacterSummary"
+    },
     "main:080f92fc": {
       "name": "AudioTest_RunParameterController"
     },

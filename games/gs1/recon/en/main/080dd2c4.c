@@ -140,7 +140,6 @@ void Func_080dd2c4(void *object, s32 arg1)
     s32 temp_r3_145;
 
     u8 *var_sl_273;
-    s32 temp_r4_299;
     s32 var_r5_297;
     s32 temp_r3_298;
     u8 temp_r4_315;
@@ -246,18 +245,19 @@ void Func_080dd2c4(void *object, s32 arg1)
                             M2C_FIELD(work, s32 *, 0x77A8) = 2;
                         }
                         if (sp24 > sp0C) {
-                            temp_r4_299 = Func_080022fc(i, 3);
+                            s32 texture_index = Func_080022fc(i, 3);
+
                             var_r5_297 = (sp24 - sp0C) * 8;
                             temp_r3_298 = M2C_FIELD(var_sl_273, s32 *, 0x10);
                             if (var_r5_297 > temp_r3_298) {
                                 var_r5_297 = temp_r3_298;
                             }
                             if (mode == 0) {
-                                temp_r4_315 = Data_080eeb48[temp_r4_299];
+                                temp_r4_315 = Data_080eeb48[texture_index];
                                 ((DrawRectangleFn)
                                     slot_pair[1 & i])(
                                     draw_destination,
-                                    (u8 *)work + Data_080eeb4e[temp_r4_299],
+                                    (u8 *)work + Data_080eeb4e[texture_index],
                                     M2C_FIELD(var_sl_273, s32 *, 0)
                                         - (temp_r4_315 >> 1),
                                     M2C_FIELD(var_sl_273, s32 *, 4)
@@ -268,11 +268,11 @@ void Func_080dd2c4(void *object, s32 arg1)
                                 if (var_r5_297 > temp_r3_335) {
                                     var_r5_297 = temp_r3_335;
                                 }
-                                temp_r4_348 = Data_080eeb54[temp_r4_299];
+                                temp_r4_348 = Data_080eeb54[texture_index];
                                 ((DrawRectangleFn)
                                     slot_pair[1 & i])(
                                     draw_destination,
-                                    (u8 *)work + Data_080eeb58[temp_r4_299],
+                                    (u8 *)work + Data_080eeb58[texture_index],
                                     M2C_FIELD(var_sl_273, s32 *, 0)
                                         - (temp_r4_348 >> 1),
                                     M2C_FIELD(var_sl_273, s32 *, 4)

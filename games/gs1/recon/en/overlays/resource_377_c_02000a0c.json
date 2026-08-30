@@ -1,0 +1,11 @@
+{
+  "span_bytes": 1064,
+  "score": {"measured":"2026-08-30","candidate_bytes":1104,"reference_bytes":1064,"wrong_instructions":234,"differing_halfwords":538,"class":"generated-call-script-retention"},
+  "shape": {"calls":86,"loops":2,"memory_operations":20},
+  "verified_against_reference": [
+    "candidate and ROM contain the same 86 calls in machine order with every decoded argument represented",
+    "direct assembly audit restored actor flags, two palette halfwords, four-step and sixteen-step display-register ramps, event flag, and both workspace-state pairs",
+    "candidate is 40 bytes longer after complete decoded control flow and side effects are represented; residual is approved GCC allocation and literal scheduling"
+  ],
+  "retention": "keep_structured_asm"
+}

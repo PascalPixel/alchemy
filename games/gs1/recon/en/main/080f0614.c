@@ -13,16 +13,10 @@ void Func_080f0614(void)
         return;
 
     current = *(s16 *)0x02004c00;
-    current_group = current;
-    if (current_group < 0)
-        current_group += 7;
-    current_group >>= 3;
+    current_group = current / 8;
 
     previous = *(s16 *)0x02004c08;
-    previous_group = previous;
-    if (previous_group < 0)
-        previous_group += 7;
-    previous_group >>= 3;
+    previous_group = previous / 8;
 
     if (current_group != previous_group) {
         *(s16 *)0x02004c08 = current;

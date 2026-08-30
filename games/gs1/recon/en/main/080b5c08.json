@@ -5,14 +5,14 @@
  "status": "exact",
  "owner_bytes": 306,
  "score": {
-  "measured": "2026-08-27",
+  "measured": "2026-08-30",
   "candidate_bytes": 306,
   "reference_bytes": 306,
-  "differing_halfwords": 6,
-  "wrong_instructions": 4,
-  "class": "allocation",
+  "differing_halfwords": 0,
+  "wrong_instructions": 0,
+  "class": "exact",
   "command": "cargo run --offline --quiet --release --manifest-path tools/compiler/Cargo.toml -- candidate-show games/gs1/recon/en/main/080b5c08.c --owner 0x080b5c08 --size 306",
-  "note": "For every active battle owner (BattleParty_PrepareActiveOwners/Func_080b6a60) and every (x in 0..3, y in 0..19) cell, if Func_08077210(owner,x,y) accepts the cell, look up the owner's PlacementTable (owner>7 selects table 1, else table 0 -- identical struct layout to the already-adopted BattlePlacement_UpdateTimedEntries/BattlePlacement_CountValidEntries: PlacementEntry{x,y,id,timer} at PlacementTable+8, count at PlacementTable+264) and, if no existing entry already has that (x,y), register one via Func_080771c8. Then, gated by Func_080770c0(364)==0, walk table 0's entries and clear every permanent entry (timer==-1) whose id has no live battle-object slot (Func_080b7dd0, registered as battle/motion/get_battle_object_slot.c's GetBattleObjectSlot) using the exact same Func_080771b0/Func_080771c0 clear pair BattlePlacement_UpdateTimedEntries uses for expired entries. Byte length matches exactly (306/306); the residual is three independent-instruction-order swaps: the do-while preheader emits the -1 sentinel and the entries-pointer copy in the opposite order from the reference (both instructions present, positions swapped -- the same 'compiler local scheduling mismatch' class already accepted for Func_080b6a60/BattleParty_PrepareActiveOwners), the first Func_080771b0 call's r0/r1 argument-marshalling adds are swapped (values correct, order differs), and the trailing pop{r0}/bx r0 vs pop{r1}/bx r1 epilogue register choice differs. All three are class=allocation, not wrong-instruction; no opcode, operand-value, branch-target, or struct-offset differs anywhere in the function."
+  "note": "Byte-exact at 306/306. Naming the permanent-entry sentinel before the entry cursor reproduces the preheader lifetime order. The two cleanup helpers have ordinary s32 argument and return types, and this owner is itself an era-typical s32 routine that falls through with the final helper result; those recovered signatures naturally reproduce the first call's argument schedule and the pop{r1}/bx r1 epilogue. No allocator forcing, barrier, or compiler modification is used."
  },
  "rejected_experiments": [
   {

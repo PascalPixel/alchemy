@@ -25,8 +25,8 @@ struct PlacementTable *Func_08077000(s32 owner);
 void Func_080771c8(s32 id, s32 x, s32 y);
 s32 Func_080770c0(s32 message);
 struct BattleObjectSlot *Func_080b7dd0(s32 object_id);
-s32 Func_080771b0(u8 id, u8 x, u8 y);
-void Func_080771c0(u8 id, u8 x, u8 y);
+s32 Func_080771b0(s32 id, s32 x, s32 y);
+s32 Func_080771c0(s32 id, s32 x, s32 y);
 
 s32 Func_080b5c08(void)
 {
@@ -63,13 +63,15 @@ s32 Func_080b5c08(void)
 
     {
         struct PlacementList *list = &Func_08077000(0)->list;
+        struct PlacementEntry *entry;
 
         i = 0;
         if (i < list->count) {
-            do {
-                struct PlacementEntry *entry = &list->entries[i];
+            s32 permanent_timer = -1;
 
-                if (entry->timer == -1 && Func_080b7dd0(entry->id) == 0) {
+            entry = list->entries;
+            do {
+                if (entry->timer == permanent_timer && Func_080b7dd0(entry->id) == 0) {
                     u8 id = entry->id;
                     u8 ex = entry->x;
                     u8 ey = entry->y;
@@ -78,6 +80,7 @@ s32 Func_080b5c08(void)
                     Func_080771c0(id, ex, ey);
                 }
                 i++;
+                entry++;
             } while (i < list->count);
         }
     }

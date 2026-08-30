@@ -1708,6 +1708,29 @@
    ]
   },
   {
+   "kind": "compiler_zero_rematerialization_mismatch",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_owner_extents",
+    "six_edition_relocation_normalized_cores_are_identical",
+    "only_residual_is_one_equivalent_zero_materialization_instruction_per_owner",
+    "all_other_instructions_registers_literals_control_flow_and_memory_operations_match",
+    "owner_specific_bounded_ordinary_c_searches_exhaust_named_source_dimensions_without_an_exact_candidate",
+    "gcc_first_cse_replaces_the_source_register_copy_with_a_literal_zero",
+    "gcc_reload_cse_simplify_set_explicitly_refuses_to_replace_a_cheap_zero_constant_with_an_equivalent_live_register",
+    "inline_assembly_fixed_registers_and_compiler_barriers_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 2,
+   "expected_bytes": 508,
+   "files": [
+    "080b6d30",
+    "080b9dc4"
+   ]
+  },
+  {
    "kind": "compiler_local_scheduling_mismatch",
    "origin": "compiler",
    "retention": "keep_structured_asm",

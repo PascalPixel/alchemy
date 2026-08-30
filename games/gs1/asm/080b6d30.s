@@ -1,9 +1,11 @@
 @ コード間隙関数の再構築サム逆アセンブル。範囲は
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
-.syntax unified
+	.syntax unified
 	.thumb
+	.global SummonSlot_RegisterActorSprites
 	.global Func_080b6d30
 	.thumb_func
+SummonSlot_RegisterActorSprites:
 Func_080b6d30:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

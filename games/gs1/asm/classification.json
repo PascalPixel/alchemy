@@ -1723,13 +1723,14 @@
     "inline_assembly_fixed_registers_and_compiler_barriers_are_disallowed",
     "byte_exact_reconstruction"
    ],
-   "expected_files": 4,
-   "expected_bytes": 748,
+   "expected_files": 5,
+   "expected_bytes": 862,
    "files": [
     "080b6a60",
     "080974d8",
     "080cd260",
-    "08098848"
+    "08098848",
+    "08021d88"
    ]
   },
   {
@@ -1782,19 +1783,20 @@
    "retention": "keep_structured_asm",
    "confidence": "proven",
    "evidence": [
-    "complete_ordinary_c_semantics_and_exact_468_byte_owner_extent",
+    "complete_ordinary_c_semantics_and_exact_owner_extents",
     "six_edition_relocation_normalized_core_is_identical",
-    "all_residual_rows_are_equivalent_low_register_choices_or_one_equivalent_loop_comparison",
+    "all_residual_rows_are_equivalent_register_role_choices_independent_instruction_orderings_or_one_equivalent_loop_comparison",
     "all_other_instructions_literals_control_flow_and_memory_operations_match",
-    "fifty_thousand_bounded_ordinary_c_candidates_produced_no_improvement",
+    "owner_specific_bounded_ordinary_c_searches_and_family_shape_transfers_produced_no_exact_candidate",
     "approved_compiler_family_allocation_scheduling_and_optimization_sweeps_preserve_the_residual_or_regress",
     "inline_assembly_fixed_registers_and_compiler_barriers_are_disallowed",
     "byte_exact_reconstruction"
    ],
-   "expected_files": 1,
-   "expected_bytes": 468,
+   "expected_files": 2,
+   "expected_bytes": 1424,
    "files": [
-    "0809a8c4"
+    "0809a8c4",
+    "080e0c84"
    ]
   },
   {

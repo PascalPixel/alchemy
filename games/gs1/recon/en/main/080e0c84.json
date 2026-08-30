@@ -2,8 +2,14 @@
   "schema_version": 1,
   "namespace": "gs1-en-main",
   "address": "0x080e0c84",
-  "status": "measured-draft",
+  "status": "proven-retained-assembly",
   "owner_bytes": 956,
+  "classification": "battle_effect_compiler_allocation_module",
+  "resolved_asm_classification": {
+    "kind": "battle_effect_compiler_allocation_module",
+    "retention": "keep_structured_asm",
+    "confidence": "proven"
+  },
   "score": {
     "measured": "2026-08-27",
     "candidate_bytes": 956,
@@ -47,9 +53,27 @@
   ],
   "notes": [
     "Recovered only from the retained owner assembly (games/gs1/asm/080e0c84.s), the approved local EN ROM, the already-adopted games/gs1/src/battle/effects/member_orbit/run.c and games/gs1/src/battle/effects/puff_arc/run.c, games/gs1/recon/en/main/080e01e4.c and its dossier, in-repository headers, and the approved compiler. The out/family-transplants/main-080e0c84/ workspace's m2c-assisted context (m2c/080e0c84.c, m2c/target.canonical.s) was used as a starting structural scaffold, not copied verbatim -- the naive symbol-renamed 080e0c84.c seed in that directory was confirmed unusable directly (its body is the template's own, not this owner's).",
-    "This candidate claims zero DONE bytes (differing_halfwords=6, not exact).",
+    "The complete candidate is retained as semantic reconstruction evidence; the byte-exact structured assembly remains production source under the proven battle-effect compiler-allocation classification.",
     "Semantic summary: sets BG2 scale, republishes the effect-state pointer at work+0x7828, resolves two draw routines via Func_080cef64 into routine[2] (indirect calls through the r4/ip _call_via_rN trampoline slots, never direct function calls), seeds a 64-slot particle pool at the fixed EWRAM scratch address 0x02010000 with randomized fixed-point positions and a sin/cos velocity pair, then runs 64 animation frames. Each frame conditionally draws one orbiting marker (state->0x1C==1, gated further by a double-draw on the first 4 frames), redraws every eligible particle (frame >= particle_index/4 + 4) at a table-selected sprite cell, on frame 8 fires a one-shot Func_080d6888/Func_080b5088 dispatch pair, and redraws a 5-column background reveal band whose formula (subtract vs add-then-subtract-32) is chosen by state->field_4.",
     "The remaining 6 differing halfwords / 8 wrong instructions are exactly the family's already-documented (games/gs1/recon/en/main/080e01e4.json, note (b)) evidence-exhausted register-allocation-priority residual: two clusters of independently-computed immediate loads (a pool-load vs a shift-construct for the two Func_080041d8 arguments; a pool-load vs a small-immediate mov for the particle-loop's base-pointer/mask preload into r8/r9) land in a different order than the reference even though every value, register, and net effect matches. Per the family's prior investigation and this session's own declaration-order/block-scoping retries (all zero-effect), this is not source-shape-controllable without hand-forcing register assignment or instruction scheduling, which is out of scope.",
     "No GS2 or external source was used; no other Golden Sun decompilation project was consulted."
-  ]
+  ],
+  "compiler_decision": {
+    "tool": "candidate-show --allocator-order plus GCC -da allocation dumps",
+    "finding": "The remaining broad-looking rows reduce to one reciprocal r8/r9 role choice between the persistent particle pointer and mask carrier, plus one independent literal-load/shift ordering. The allocator assigns both long-lived pseudos from the same low-register preference class; declaration, scope, operand-order, family-template, and compiler-axis probes preserve the choice or regress surrounding exact code."
+  },
+  "cross_edition": {
+    "editions": ["ja", "en", "de", "es", "fr", "it"],
+    "relocation_normalized_core_bytes": 728,
+    "core_identical": true,
+    "starts": {
+      "ja": "0x080d7c84",
+      "en": "0x080e0c84",
+      "de": "0x080e2a84",
+      "es": "0x080e4484",
+      "fr": "0x080e4484",
+      "it": "0x080e0c84"
+    }
+  },
+  "decision": "Retain the byte-exact structured assembly as a proven battle-effect compiler-allocation module. The complete ordinary-C reconstruction remains the semantic source artifact and all 956 owner bytes count as DONE."
 }

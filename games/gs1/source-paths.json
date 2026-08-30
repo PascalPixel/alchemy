@@ -18,6 +18,9 @@
     "main:0801c9c0": "graphics/palette/reserved_no_op_b.c",
     "main:0801c9c4": "graphics/palette/reserved_no_op_c.c",
     "main:0801cee0": "graphics/palette/adjust_selection_counter.c",
+    "main:08021d88": {
+      "name": "UiText_DrawCharacter"
+    },
     "main:0801e418": "ui/render/reserved_no_op.c",
     "main:080294d0": "menu/reserved_no_op.c",
     "main:08078228": "owner/reserved_no_op_a.c",
@@ -659,6 +662,9 @@
     },
     "main:08095dd0": {
       "name": "BattleEffect_RunPhasedRadialParticleSequence"
+    },
+    "main:080e0c84": {
+      "name": "BattleEffect_RunParticleReveal"
     },
     "main:08098848": {
       "name": "BattleEffect_RunTargetedItemBreak"

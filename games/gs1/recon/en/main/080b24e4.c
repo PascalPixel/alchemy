@@ -22,14 +22,16 @@ void Func_080030f8(s32 frames);
 void Shop_ConfirmItemPurchase(s32 list_window, s32 item_window)
 {
     struct ShopRuntime *shop = SHOP_RUNTIME;
-    u16 saved_field = *(u16 *)((u8 *)shop + 0x39e);
+    s32 price;
+    s32 saved_field = *(u16 *)((u8 *)shop + 0x39e);
     s32 redraw = 1;
     u8 *party_state = (u8 *)0x02000240;
     s32 party_index = *(s8 *)(party_state + 0x11c);
-    s32 price = *(s16 *)(0x080b4146 + party_index * 2);
     s32 money = *(s32 *)(party_state + 0x118);
     s32 unit_id = 0;
     s32 selection = 0;
+
+    price = *(s16 *)(0x080b4146 + party_index * 2);
 
     if (price > money)
         return;
@@ -52,7 +54,7 @@ void Shop_ConfirmItemPurchase(s32 list_window, s32 item_window)
             Shop_UpdatePartyMemberList(
                 list_window, selection, *(u16 *)((u8 *)shop + 0xca6));
             Func_080b1470(
-                item_window, *(u16 *)((u8 *)shop + 0xca6), unit_id);
+                item_window, unit_id, *(u16 *)((u8 *)shop + 0xca6));
         }
 
         if ((INPUT_NEW_KEYS & 1) != 0) {
@@ -61,17 +63,16 @@ void Shop_ConfirmItemPurchase(s32 list_window, s32 item_window)
                 Func_08015120(unit_id, 1);
                 Func_08015120(*(u16 *)((u8 *)shop + 0xc9e), 2);
                 if (Func_08077248(unit_id) == 15) {
-                    Func_080b04dc(0);
+                    Func_080b04dc(0xc9e);
                 } else {
-                    Func_080b04dc(0);
+                    Func_080b04dc(0xca6);
                 }
                 continue;
             }
             Func_08077058(unit_id);
             Func_080f9010(101);
             Func_080b0574(0xca1);
-            Func_08077298(
-                -Func_08077028(unit_id, *(u16 *)((u8 *)shop + 0xc9e)));
+            Func_08077298(-price);
             Func_080772a0(1);
             break;
         }

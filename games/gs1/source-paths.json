@@ -2687,6 +2687,9 @@
     "resource_380:020027f8": {
       "name": "MapScene_RunLargeObjectSequence"
     },
+    "resource_373:020015dc": {
+      "name": "FieldScene_RunScriptedActorSequence"
+    },
     "resource_3af:020039ec": "unidentified/overlays/leaf/leaf_0097.c",
     "resource_3b1:02001420": "unidentified/overlays/leaf/leaf_0098.c",
     "resource_377:0200036c": "unidentified/overlays/leaf/leaf_0099.c",

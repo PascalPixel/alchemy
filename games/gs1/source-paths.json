@@ -5521,6 +5521,9 @@
     "resource_39b:02001730": {
       "name": "FieldScene_RunActorExchangeChoreography"
     },
+    "resource_3ab:02000ff0": {
+      "name": "FieldScene_RunFlagGatedActorDialogue"
+    },
     "main:080a46b4": {
       "name": "Item_ClassifyUseMode",
       "source": "items/classify_use_mode.c"

@@ -83,10 +83,9 @@ s32 Func_080cdbc0(void);
 void Func_080cc5d8(void *object)
 {
     void *work;
-    void *trail_source;
-    DrawRectangleFn rectangle0;
-    DrawRectangleFn rectangle1;
     void *canvas;
+    DrawRectangleFn rectangle[2];
+    void *trail_source;
     void *palette;
     s32 status;
     s32 palette_id;
@@ -94,6 +93,8 @@ void Func_080cc5d8(void *object)
     s32 i;
     s32 frame;
     s32 screen[3];
+    WordCopyFn copy;
+    s32 callback_interval;
 
     work = Func_080048b0(39, 0x782c);
     canvas = Func_080048b0(40, 0x4000);
@@ -124,7 +125,8 @@ void Func_080cc5d8(void *object)
         break;
     }
     palette = Func_08002f40(palette_id);
-    status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
+    copy = (WordCopyFn)0x03001388;
+    status = copy((void *)0x05000000, palette, 128);
 
     star = (u8 *)0x02010000;
     for (i = 0; i != 128; i++) {
@@ -144,10 +146,11 @@ void Func_080cc5d8(void *object)
 
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 75;
-    Func_080041d8((void *)0x080CD261, 0x480);
+    callback_interval = 0x480;
+    Func_080041d8((void *)0x080CD261, callback_interval);
 
     status = Func_080ed408(46, 7, 7, 7, 3);
-    rectangle0 = (DrawRectangleFn)Data_03001e50[46];
+    rectangle[0] = (DrawRectangleFn)Data_03001e50[46];
     Func_080f9010(140);
 
     for (frame = 0; frame != 56; frame++) {
@@ -168,7 +171,7 @@ void Func_080cc5d8(void *object)
         if ((u32)(frame - 28) <= 20) {
             s32 sprite_frame = Func_080022ec(frame - 28, 3);
 
-            rectangle0(
+            rectangle[0](
                 canvas, (u8 *)work + 0x1400 + sprite_frame * 0x900,
                 40, screen[1] - 24, 48, 48);
         }
@@ -183,8 +186,8 @@ void Func_080cc5d8(void *object)
                 status = Func_080ed408(47, 7, 7, Data_080ee060[i] | 3, 2);
                 x = (s8)Data_080ee058[i] + 32;
                 y = (screen[1] + (s8)Data_080ee05c[i]) - 32;
-                rectangle1 = (DrawRectangleFn)Data_03001e50[47];
-                rectangle1(canvas, (u8 *)work + offset, x, y, 32, 32);
+                rectangle[1] = (DrawRectangleFn)Data_03001e50[47];
+                rectangle[1](canvas, (u8 *)work + offset, x, y, 32, 32);
                 Func_08002dd8(47);
             }
         }
@@ -211,7 +214,7 @@ void Func_080cc5d8(void *object)
                         half = 1;
                     }
                     full = half << 1;
-                    rectangle0(
+                    rectangle[0](
                         canvas, trail_source + Data_080ede5c[half - 1],
                         radius_x - half, radius_y - half, full, full);
                     M2C_FIELD(slot, s32 *, 4) -= 2;

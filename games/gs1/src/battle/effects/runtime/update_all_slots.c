@@ -2,14 +2,14 @@
 #include "global_cells.h"
 
 void BattleEffect_UpdateAllSlots(void) {
-    s32 var_r5;
-    s32 var_r6;
+    s32 slot;
+    s32 remaining_slots;
 
-    var_r5 = *(s32 *)ADDR_03001F30 + 0x58;
-    var_r6 = 0x17;
+    slot = *(s32 *)ADDR_03001F30 + 0x58;
+    remaining_slots = 0x17;
     do {
-        var_r6 -= 1;
-        EffectSlot_Update((struct EffectSlot *)var_r5);
-        var_r5 += 0x48;
-    } while (var_r6 >= 0);
+        remaining_slots -= 1;
+        EffectSlot_Update((struct EffectSlot *)slot);
+        slot += 0x48;
+    } while (remaining_slots >= 0);
 }

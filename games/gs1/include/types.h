@@ -250,6 +250,10 @@ typedef int bool;
 #define BattleActor_DestroyTemporaryObject Func_080bb8e8
 #define UiWork_Finalize Func_08016418
 #define Actor_ResetMotionAtAnchor Func_080b8000
+#define Actor_GetObject Func_080b7dd0
+#define Actor_Place Func_080b6f44
+#define Actor_Commit Func_080b6c90
+#define Actor_ListSlots Func_080b6ae0
 #define BattleObject_IsValidId Func_080b8808
 #define Summon_FindSlot Func_080b7514
 #define Summon_ClassValid Func_080b6cdc

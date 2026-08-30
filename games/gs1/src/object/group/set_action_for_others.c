@@ -6,19 +6,19 @@
 void Object_SetAction(s32, s32);
 extern u8 Data_0200048a[];
 
-void ObjectGroup_SetActionForOthers(s32 arg0, s32 arg1, s32 arg2) {
-    s16 *var_sl;
-    s32 temp_r0;
-    s32 var_r5;
+void ObjectGroup_SetActionForOthers(s32 excluded_object, s32 group_mode, s32 action) {
+    s16 *active_object_id;
+    s32 object;
+    s32 object_id;
 
-    var_r5 = 0;
-    var_sl = (s16 *)Data_0200048a;
+    object_id = 0;
+    active_object_id = (s16 *)Data_0200048a;
     do {
-        temp_r0 = ObjectTable_Get(var_r5);
-        if ((var_r5 != *var_sl) && (temp_r0 != 0) && (temp_r0 != arg0)) {
-            FIELD_AT_OFFSET(temp_r0, s8, 0x5B) = arg1;
-            Object_SetAction(temp_r0, arg2);
+        object = ObjectTable_Get(object_id);
+        if ((object_id != *active_object_id) && (object != 0) && (object != excluded_object)) {
+            FIELD_AT_OFFSET(object, s8, 0x5B) = group_mode;
+            Object_SetAction(object, action);
         }
-        var_r5 += 1;
-    } while (var_r5 <= 0x42);
+        object_id += 1;
+    } while (object_id <= 0x42);
 }

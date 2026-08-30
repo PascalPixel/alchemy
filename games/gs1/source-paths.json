@@ -5536,6 +5536,10 @@
     "resource_372:020040f0": {
       "name": "FieldScene_BuildPlacementGrid"
     },
+    "resource_371:020032f0": {"name": "FieldScene_RunActorEightApproach"},
+    "resource_372:02003fb0": {"name": "FieldScene_ConfigureActorTwentyTwoScene"},
+    "resource_39d:0200056c": {"name": "FieldScene_RunFourActorPresentation"},
+    "resource_3a0:02000f30": {"name": "FieldScene_RunActorNineteenScript"},
     "main:080a46b4": {
       "name": "Item_ClassifyUseMode",
       "source": "items/classify_use_mode.c"

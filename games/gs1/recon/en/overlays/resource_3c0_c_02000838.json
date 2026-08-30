@@ -1,0 +1,12 @@
+{
+  "span_bytes": 404,
+  "score": {"measured":"2026-08-30","candidate_bytes":404,"reference_bytes":404,"wrong_instructions":80,"differing_halfwords":189,"class":"generated-call-script-retention"},
+  "shape": {"calls":39,"branches":5,"loops":0,"memory_operations":0},
+  "verified_against_reference": [
+    "the three story-flag probes and all 37 scene calls are represented with their arguments in ROM order across the complete callable owner",
+    "the nested flag gates, two optional actor-13 branches, dialogue, movement, and map-restoration tail preserve the decoded control flow",
+    "the owner includes its sole return and six-word trailing pool before the next prologue at 0x020009cc",
+    "the candidate reproduces the complete 404-byte extent; remaining instruction differences are approved GCC carrier allocation and scheduling"
+  ],
+  "retention": "keep_structured_asm"
+}

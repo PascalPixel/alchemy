@@ -1,0 +1,12 @@
+{
+  "span_bytes": 384,
+  "score": {"measured":"2026-08-30","candidate_bytes":376,"reference_bytes":384,"wrong_instructions":12,"differing_halfwords":182,"class":"generated-call-script-retention"},
+  "shape": {"calls":26,"branches":2,"loops":0,"memory_operations":0},
+  "verified_against_reference": [
+    "both story-flag probes and all 26 map-construction calls are represented with their arguments in ROM order",
+    "the fifteen-tile staged layout and both gated paths preserve the complete decoded control flow",
+    "the owner includes its sole return and two-word trailing pool before 0x02000eb0",
+    "the candidate is eight bytes shorter after complete decoded semantics are represented; only twelve instructions remain different under approved GCC scheduling"
+  ],
+  "retention": "keep_structured_asm"
+}

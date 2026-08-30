@@ -5524,6 +5524,18 @@
     "resource_3ab:02000ff0": {
       "name": "FieldScene_RunFlagGatedActorDialogue"
     },
+    "resource_3c0:02000838": {
+      "name": "FieldScene_RunActorThirteenRestoration"
+    },
+    "resource_3b3:0200175c": {
+      "name": "FieldScene_RunFlaggedDisplayScene"
+    },
+    "resource_3ab:02000d30": {
+      "name": "FieldScene_BuildFlaggedMapLayout"
+    },
+    "resource_372:020040f0": {
+      "name": "FieldScene_BuildPlacementGrid"
+    },
     "main:080a46b4": {
       "name": "Item_ClassifyUseMode",
       "source": "items/classify_use_mode.c"

@@ -1,0 +1,12 @@
+{
+  "span_bytes": 324,
+  "score": {"measured":"2026-08-30","candidate_bytes":318,"reference_bytes":324,"wrong_instructions":39,"differing_halfwords":118,"class":"generated-call-script-retention"},
+  "shape": {"calls":16,"loops":0,"memory_operations":0},
+  "verified_against_reference": [
+    "all sixteen calls and their arguments are represented in ROM order across the complete callable owner",
+    "the eight placements, seven rectangles, and final grid publication form one linear decoded path",
+    "the owner includes its sole high-register unwind and trailing alignment before 0x02004234",
+    "the candidate is six bytes shorter after complete decoded semantics are represented; remaining differences are approved GCC carrier allocation and scheduling"
+  ],
+  "retention": "keep_structured_asm"
+}

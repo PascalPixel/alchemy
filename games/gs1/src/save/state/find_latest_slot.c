@@ -7,31 +7,31 @@
 
 u32 SaveState_FindLatestSlot(s32 record_id)
 {
-    u16 *var_r1;
-    u16 temp_r3_2;
-    u32 var_r0;
-    u32 var_r4;
-    u32 var_r5;
-    void *temp_r3;
-    void *var_r2;
+    u16 *sequence_cursor;
+    u16 sequence;
+    u32 latest_sequence;
+    u32 slot_index;
+    u32 latest_slot;
+    void *save_state;
+    void *slot_cursor;
 
-    temp_r3 = *(void **)ADDR_03001F1C;
-    var_r5 = 0x10;
-    var_r0 = 0;
-    var_r4 = 0;
-    var_r1 = temp_r3 + 0x20;
-    var_r2 = temp_r3;
+    save_state = *(void **)ADDR_03001F1C;
+    latest_slot = 0x10;
+    latest_sequence = 0;
+    slot_index = 0;
+    sequence_cursor = save_state + 0x20;
+    slot_cursor = save_state;
     do {
-        if ((FIELD_AT_OFFSET(var_r2, u8 *, 0) != 0) && (record_id == FIELD_AT_OFFSET(var_r2, u8 *, 0x10))) {
-            temp_r3_2 = *var_r1;
-            if (var_r0 < (u32) temp_r3_2) {
-                var_r0 = (u32) temp_r3_2;
-                var_r5 = var_r4;
+        if ((FIELD_AT_OFFSET(slot_cursor, u8 *, 0) != 0) && (record_id == FIELD_AT_OFFSET(slot_cursor, u8 *, 0x10))) {
+            sequence = *sequence_cursor;
+            if (latest_sequence < (u32) sequence) {
+                latest_sequence = (u32) sequence;
+                latest_slot = slot_index;
             }
         }
-        var_r4 += 1;
-        var_r1 += 1;
-        var_r2 += 1;
-    } while (var_r4 <= 0xFU);
-    return var_r5;
+        slot_index += 1;
+        sequence_cursor += 1;
+        slot_cursor += 1;
+    } while (slot_index <= 0xFU);
+    return latest_slot;
 }

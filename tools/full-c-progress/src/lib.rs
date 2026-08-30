@@ -31,7 +31,7 @@ fn report_json(report: &ProgressTally, target: &str) -> Value {
     })
 }
 
-fn permanent_bytes(root: &Path, target: &str) -> Result<i64, String> {
+fn proven_assembly_bytes(root: &Path, target: &str) -> Result<i64, String> {
     let tree = work_tree_at(root.to_path_buf());
     let map = build_coverage_map(&BuildOptions {
         target: target.into(),
@@ -40,9 +40,9 @@ fn permanent_bytes(root: &Path, target: &str) -> Result<i64, String> {
         prefer_verified_assets: true,
     })?;
     map.document
-        .pointer("/categories/retained_asm/bytes")
+        .pointer("/categories/proven_asm/bytes")
         .and_then(Value::as_i64)
-        .ok_or_else(|| "coverage map has no categories.retained_asm.bytes".into())
+        .ok_or_else(|| "coverage map has no categories.proven_asm.bytes".into())
 }
 
 fn check_build(root: &Path, target: &str) -> Result<(), String> {
@@ -62,9 +62,9 @@ fn check_build(root: &Path, target: &str) -> Result<(), String> {
     Ok(())
 }
 
-fn subject(report: &ProgressTally, retained: i64) -> Result<String, String> {
+fn subject(report: &ProgressTally, proven_assembly: i64) -> Result<String, String> {
     let (exact, executable) = totals(report);
-    let done = exact + retained;
+    let done = exact + proven_assembly;
     if done < 0 || done > executable {
         return Err("DONE numerator exceeds executable denominator".into());
     }
@@ -143,7 +143,7 @@ fn run(argv: &[String]) -> Result<String, String> {
             check_build(&root, &target)?;
             Ok(display(&report))
         }
-        "--subject" => subject(&report, permanent_bytes(&root, &target)?),
+        "--subject" => subject(&report, proven_assembly_bytes(&root, &target)?),
         "--json" => {
             serde_json::to_string(&report_json(&report, &target)).map_err(|error| error.to_string())
         }
@@ -156,7 +156,7 @@ fn run(argv: &[String]) -> Result<String, String> {
             Ok(format!(
                 "report={} {}",
                 path.strip_prefix(&root).unwrap_or(&path).display(),
-                subject(&report, permanent_bytes(&root, &target)?)?
+                subject(&report, proven_assembly_bytes(&root, &target)?)?
             ))
         }
         "" => Ok(display(&report)),

@@ -118,18 +118,19 @@ function render(snapshot) {
     ? metric("GS1 corpus ×6", `${bytes(summary.correspondenceMatched)} / ${bytes(summary.correspondenceTotal)}`, `${bytes(summary.correspondenceShared)} shared-core · ${bytes(summary.correspondenceRegional)} regional candidates · ${bytes(summary.correspondenceUnresolved)} unresolved`, "cross")
     : metric("GS1 corpus ×6", "Unavailable", "Run make reports to refresh cross-edition reports", "cross");
   const metrics = h("section", { className: "metrics", "aria-label": "Project metrics" },
-    metric("EN DONE", percent(summary.donePercent), `${bytes(summary.doneBytes)} exact or permanent bytes`, "done"),
-    metric("EN exact C", percent(summary.exactPercent), `${bytes(summary.exactBytes)} linked bytes`, "exact"),
-    metric("Tracked C", percent(summary.trackedPercent), `${bytes(summary.trackedBytes)} visible bytes · never counted as DONE`, "tracked"),
+    metric("EN DONE", percent(summary.donePercent), `${bytes(summary.doneBytes)} proven bytes`, "done"),
+    metric("EN Proven C", percent(summary.provenCPercent), `${bytes(summary.provenCBytes)} linked bytes`, "proven-c"),
+    metric("Draft C", percent(summary.draftCPercent), `${bytes(summary.draftCBytes)} visible bytes · never counted as DONE`, "draft-c"),
     correspondenceMetric,
     metric("Canonical JA", bytes(summary.gs1JaSources + summary.gs2JaSources), `GS1 ${bytes(summary.gs1JaSources)} · GS2 ${bytes(summary.gs2JaSources)} tracked source owners`, "base"),
     metric("Historical targets", bytes(summary.historicalTargets), `${bytes(summary.fullTargets)} full · ${bytes(summary.compileOnlyTargets)} compile-only · Alchemy separate`, "derived"),
   );
   const legend = h("div", { className: "legend" },
-    h("span", {}, h("i", { className: "swatch open" }), "Raw assembly"),
-    h("span", {}, h("i", { className: "swatch tracked" }), "Semantic C"),
-    h("span", {}, h("i", { className: "swatch retained" }), "Permanent ASM"),
-    h("span", {}, h("i", { className: "swatch exact" }), "Exact C"),
+    h("span", {}, h("i", { className: "swatch unknown" }), "Unknown"),
+    h("span", {}, h("i", { className: "swatch draft-asm" }), "Draft ASM"),
+    h("span", {}, h("i", { className: "swatch draft-c" }), "Draft C"),
+    h("span", {}, h("i", { className: "swatch proven-asm" }), "Proven ASM"),
+    h("span", {}, h("i", { className: "swatch proven-c" }), "Proven C"),
     h("span", { id: "scan-state", className: "scan-state" }, snapshot.scanning ? "Scanning…" : "Live"),
   );
   const trees = Object.entries(snapshot.trees).map(([tree, title]) => panel(tree, title, snapshot.revision));

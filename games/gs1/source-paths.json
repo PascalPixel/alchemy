@@ -512,6 +512,10 @@
     "main:0808b05c": "battle/effects/data/get_weighted_result.c",
     "main:0808b074": "battle/effects/data/get_phase_result.c",
     "main:0808b2b0": "battle/effects/data/select_result_pointer.c",
+    "main:0808b8e8": {
+      "name": "BattleEffect_ClearOutOfBoundsObjects",
+      "source": "battle/effects/objects/clear_out_of_bounds_objects.c"
+    },
     "main:0808d428": "game_flags/is_condition_active.c",
     "main:0808c2dc": "battle/party/apply_drain.c",
     "main:0808c30c": "battle/party/apply_health_delta.c",

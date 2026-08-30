@@ -1,0 +1,11 @@
+{
+  "span_bytes": 1208,
+  "score": {"measured":"2026-08-30","candidate_bytes":1176,"reference_bytes":1208,"wrong_instructions":256,"differing_halfwords":581,"class":"generated-call-script-retention"},
+  "shape": {"calls":107,"loops":0,"memory_operations":25},
+  "verified_against_reference": [
+    "all 107 calls and their arguments are represented in ROM order across the complete callable owner",
+    "direct assembly audit restored three object-state halfwords, literal-backed phase arguments, the terminal actor lookup, coordinate forwarding, and closing presentation arguments",
+    "the reference has a 32-byte larger compiler layout after all decoded effects are represented; approved GCC allocation and literal scheduling does not emit it exactly"
+  ],
+  "retention": "keep_structured_asm"
+}

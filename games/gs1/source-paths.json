@@ -5443,6 +5443,12 @@
     "resource_383:020021c8": {
       "name": "FieldScene_RunConditionalActorSequence"
     },
+    "resource_3a4:02001838": {
+      "name": "FieldScene_BuildMultiPhasePresentation"
+    },
+    "resource_3a4:02001d14": {
+      "name": "FieldScene_RunMultiPhasePresentation"
+    },
     "main:080a46b4": {
       "name": "Item_ClassifyUseMode",
       "source": "items/classify_use_mode.c"

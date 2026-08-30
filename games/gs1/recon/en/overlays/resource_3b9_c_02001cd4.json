@@ -1,0 +1,11 @@
+{
+  "span_bytes": 1778,
+  "score": {"measured":"2026-08-30","candidate_bytes":1784,"reference_bytes":1778,"wrong_instructions":270,"differing_halfwords":774,"class":"generated-call-script-retention"},
+  "shape": {"calls":180,"loops":0,"memory_operations":8},
+  "verified_against_reference": [
+    "all 180 calls and their arguments are represented in ROM order across the complete callable owner",
+    "direct assembly audit restored the event-result branch, both scene-progress increments, four workspace writes, and all literal-backed call arguments",
+    "the six-byte compiler-layout difference remains after all decoded effects are represented; approved GCC allocation and literal scheduling does not emit the reference ordering"
+  ],
+  "retention": "keep_structured_asm"
+}

@@ -937,6 +937,7 @@
     "main:0808f140": "effect_runtime/run_rising_object_sequence.c",
     "main:080aac84": "graphics/palette/adjust_bank.c",
     "main:080a7380": "menu/open_character_selector.c",
+    "main:080a7f44": "menu/character_selector/move_entry.c",
     "main:080aa448": "item/play_use_animation.c",
     "main:080aa460": "ability/play_use_animation.c",
     "main:080ae778": "djinn/check_turn_balance.c",

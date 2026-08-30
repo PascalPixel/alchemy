@@ -5437,6 +5437,12 @@
     "resource_3af:02003f30": {
       "name": "FieldScene_RunEncounterClosingSequence"
     },
+    "resource_383:02001f50": {
+      "name": "FieldScene_SelectAndConfigureActorPair"
+    },
+    "resource_383:020021c8": {
+      "name": "FieldScene_RunConditionalActorSequence"
+    },
     "main:080a46b4": {
       "name": "Item_ClassifyUseMode",
       "source": "items/classify_use_mode.c"

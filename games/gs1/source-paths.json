@@ -5021,6 +5021,9 @@
     "resource_374:02000b8c": {
       "name": "RunEventScript01"
     },
+    "resource_374:020017c8": {
+      "name": "FieldScene_RunExtendedSequence"
+    },
     "resource_375:020000dc": {
       "name": "RunEventScript01"
     },

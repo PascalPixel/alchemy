@@ -1904,6 +1904,20 @@
       ]
     },
     {
+      "overlay": "resource_374",
+      "start": "0x020017c8",
+      "end": "0x020022c8",
+      "kind": "generated_call_script_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "complete deterministic reconstruction accounts for all 293 calls, their arguments, the returned-object field forwarding, and all 13 explicit memory operations",
+        "aligned reference comparison restored six zero-valued second arguments, actor fields at offsets 8 and 16, and final scene-state words at workspace offsets 448 and 456",
+        "approved GCC allocation and literal scheduling changes the owner extent and instruction order without an exact ordinary-C emission",
+        "games/gs1/recon/en/overlays/resource_374_c_020017c8.json"
+      ]
+    },
+    {
       "overlay": "resource_37b",
       "start": "0x02000554",
       "end": "0x02000a16",

@@ -2,7 +2,7 @@
 #include "battle_runtime.h"
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids) {
     u16 active_members[8];
@@ -33,7 +33,7 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids) {
             do {
                 unit_id = *member;
                 member += 1;
-                hp = M2C_FIELD(BattleUnit_Get(unit_id), s16, 0x38);
+                hp = FIELD_AT_OFFSET(BattleUnit_Get(unit_id), s16, 0x38);
                 if (hp > 0) {
                     if (output != NULL) {
                         *output = unit_id;
@@ -51,7 +51,7 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids) {
         if (remaining < enemy_limit) {
             do {
                 unit = BattleUnit_Get(remaining);
-                if ((M2C_FIELD(unit, u8, 0x12A) != 0) && ((s32) M2C_FIELD(unit, s16, 0x38) > 0)) {
+                if ((FIELD_AT_OFFSET(unit, u8, 0x12A) != 0) && ((s32) FIELD_AT_OFFSET(unit, s16, 0x38) > 0)) {
                     if (output != NULL) {
                         *output = (u16) remaining;
                         output += 1;

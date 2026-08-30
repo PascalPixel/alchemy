@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 extern u8 Data_02000240[];
 
@@ -9,7 +9,7 @@ void GraphicsPalette_AdjustSelectionCounter(s32 arg0) {
     u16 sel;
     s32 off;
 
-    sel = M2C_FIELD(arg0, u16, 0x574);
+    sel = FIELD_AT_OFFSET(arg0, u16, 0x574);
     switch (sel) {
     case 0:
         off = 0x20C;

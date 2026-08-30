@@ -1,6 +1,6 @@
 #include "m7_interfaces.h"
 
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 s32 FixedPoint_Ratio(s32, s32);
 s32 Modulo(s32, s32);

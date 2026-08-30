@@ -1,7 +1,7 @@
 #include "types.h"
 #include "gs1_edition.h"
 
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 void ObjectGroup_SetActionForOthers(void *object, s32 mode, s32 value);
 
@@ -53,20 +53,20 @@ void InitializeEventObject(void)
     event_value = (s32)(*(s16 *)((u8 *)(event_state) + 0x1C));
     event_index = event_value;
     Object_SetMode(event_object, 0x14);
-    M2C_FIELD(event_object, u32 *, 0x38) = (s32)*(s32 *)((u8 *)(event_object) + 8);
-    M2C_FIELD(event_object, s32 *, 0x3C) = (s32)M2C_FIELD(event_object, s32 *, 0xC);
-    M2C_FIELD(event_object, s32 *, 0x40) = (s32)M2C_FIELD(event_object, s32 *, 0x10);
-    M2C_FIELD(event_object, u32 *, 0x24) = 0;
-    M2C_FIELD(event_object, u32 *, 0x28) = 0;
+    FIELD_AT_OFFSET(event_object, u32 *, 0x38) = (s32)*(s32 *)((u8 *)(event_object) + 8);
+    FIELD_AT_OFFSET(event_object, s32 *, 0x3C) = (s32)FIELD_AT_OFFSET(event_object, s32 *, 0xC);
+    FIELD_AT_OFFSET(event_object, s32 *, 0x40) = (s32)FIELD_AT_OFFSET(event_object, s32 *, 0x10);
+    FIELD_AT_OFFSET(event_object, u32 *, 0x24) = 0;
+    FIELD_AT_OFFSET(event_object, u32 *, 0x28) = 0;
     *(s32 *)((u8 *)(event_object) + 0x2C) = 0;
-    if ((s8)M2C_FIELD(event_state, s8 *, 0x22) != 0) {
+    if ((s8)FIELD_AT_OFFSET(event_state, s8 *, 0x22) != 0) {
         Audio_PlayCue(212);
-        M2C_FIELD(event_object, s32 *, 0x6C) = CALLBACK_1;
+        FIELD_AT_OFFSET(event_object, s32 *, 0x6C) = CALLBACK_1;
     }
-    if ((s8)M2C_FIELD(event_state, s8 *, 0x23) != 0) {
+    if ((s8)FIELD_AT_OFFSET(event_state, s8 *, 0x23) != 0) {
         ObjectGroup_SetActionForOthers(event_object, 1, 0);
         UiText_DrawQuantity((s32)event_index, 4);
-        if ((s8)M2C_FIELD(event_state, s8 *, 0x21) != 0) {
+        if ((s8)FIELD_AT_OFFSET(event_state, s8 *, 0x21) != 0) {
             UiText_DrawMessage((void *)MESSAGE_NO, (s32)*(s8 *)((u8 *)(event_state) + 0x71C));
         } else {
             UiText_DrawMessage((void *)MESSAGE_NO, (s32)*(s8 *)((u8 *)(event_state) + 0x71C));
@@ -74,12 +74,12 @@ void InitializeEventObject(void)
         ObjectGroup_SetActionForOthers(event_object, 0, 0x10);
     }
     if (GameFlag_IsSet(0x140) != 0) {
-        if ((s8)M2C_FIELD(event_state, s8 *, 0x22) != 0) {
-            M2C_FIELD(event_object, s32 *, 0x6C) = CALLBACK_2;
+        if ((s8)FIELD_AT_OFFSET(event_state, s8 *, 0x22) != 0) {
+            FIELD_AT_OFFSET(event_object, s32 *, 0x6C) = CALLBACK_2;
         }
         Object_SetMode(event_object, 0x15);
     } else {
         EffectRuntime_StopCurrentObject();
     }
-    M2C_FIELD(render_state, s8 *, 0xCC7) = 1;
+    FIELD_AT_OFFSET(render_state, s8 *, 0xCC7) = 1;
 }

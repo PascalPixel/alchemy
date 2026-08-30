@@ -1,6 +1,6 @@
 #include "palette_scene.h"
 #define NULL ((void *)0)
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void Func_020019f0();
 void Func_02001a14();
@@ -13,6 +13,6 @@ void PaletteScene_Initialize(void) {
     scene = *(void **)0x03001EBC;
     Func_020019f0();
     Func_02001b0a(0, 0, 0);
-    Func_02001ae0(M2C_FIELD(scene, s16 *, 0x16C));
+    Func_02001ae0(FIELD_AT_OFFSET(scene, s16 *, 0x16C));
     Func_02001a14();
 }

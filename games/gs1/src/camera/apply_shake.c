@@ -2,7 +2,7 @@
 #include "fixed_math.h"
 #include "global_cells.h"
 
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 u32 Random16(void);
 
@@ -29,20 +29,20 @@ void Camera_ApplyShake(s32 arg0, u32 arg1) {
         temp_r1_2 = (void *)ADDR_03001AD0;
         temp_r6_2 = temp_r6 - temp_r5;
         temp_r3 = temp_r2 + 0x20;
-        M2C_FIELD(temp_r1_2, s16 *, 4) = temp_r6_2;
-        M2C_FIELD(temp_r1_2, s16 *, 6) = temp_r3;
+        FIELD_AT_OFFSET(temp_r1_2, s16 *, 4) = temp_r6_2;
+        FIELD_AT_OFFSET(temp_r1_2, s16 *, 6) = temp_r3;
         temp_r1_3 = (void *)ADDR_03001CE0;
-        M2C_FIELD(temp_r1_3, s32 *, 0xC) = 0x78 - temp_r6_2;
-        M2C_FIELD(temp_r1_3, s32 *, 0x10) = 0x78 - temp_r2;
+        FIELD_AT_OFFSET(temp_r1_3, s32 *, 0xC) = 0x78 - temp_r6_2;
+        FIELD_AT_OFFSET(temp_r1_3, s32 *, 0x10) = 0x78 - temp_r2;
         *temp_r0 -= 1;
         return;
     }
-    temp_r0_2 = M2C_FIELD(temp_r1, s32 *, 0x77A0);
+    temp_r0_2 = FIELD_AT_OFFSET(temp_r1, s32 *, 0x77A0);
     temp_r2_2 = (void *)ADDR_03001AD0;
-    M2C_FIELD(temp_r2_2, s16 *, 4) = temp_r0_2;
-    temp_r0_2 = M2C_FIELD(temp_r1, s32 *, 0x77A4);
-    M2C_FIELD(temp_r2_2, s16 *, 6) = temp_r0_2;
+    FIELD_AT_OFFSET(temp_r2_2, s16 *, 4) = temp_r0_2;
+    temp_r0_2 = FIELD_AT_OFFSET(temp_r1, s32 *, 0x77A4);
+    FIELD_AT_OFFSET(temp_r2_2, s16 *, 6) = temp_r0_2;
     temp_r2_3 = (void *)ADDR_03001CE0;
-    M2C_FIELD(temp_r2_3, s32 *, 0xC) = 0x78;
-    M2C_FIELD(temp_r2_3, s32 *, 0x10) = 0x78;
+    FIELD_AT_OFFSET(temp_r2_3, s32 *, 0xC) = 0x78;
+    FIELD_AT_OFFSET(temp_r2_3, s32 *, 0x10) = 0x78;
 }

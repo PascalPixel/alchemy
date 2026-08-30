@@ -5503,6 +5503,9 @@
     "resource_3b1:020038ac": {
       "name": "FieldScene_RunActorAvailabilityPresentation"
     },
+    "resource_39c:02004a08": {
+      "name": "FieldScene_RunActorCoordinateDialogueSequence"
+    },
     "main:080a46b4": {
       "name": "Item_ClassifyUseMode",
       "source": "items/classify_use_mode.c"

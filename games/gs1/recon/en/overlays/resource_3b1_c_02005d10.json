@@ -1,0 +1,12 @@
+{
+  "span_bytes": 1024,
+  "score": {"measured":"2026-08-30","candidate_bytes":1008,"reference_bytes":1024,"wrong_instructions":222,"differing_halfwords":487,"class":"generated-call-script-retention"},
+  "shape": {"calls":87,"loops":0,"memory_operations":6},
+  "verified_against_reference": [
+    "all 87 calls and their arguments are represented in ROM order across the complete callable owner",
+    "direct retained-assembly audit restored four returned actor handles and every downstream use, both progress-state decisions, and both conditional workspace-counter updates",
+    "the generated draft's 63 calls from the following owner were removed; this owner ends at the independently inventoried function at 0x02006110",
+    "the remaining sixteen-byte extent residual and instruction differences are approved-compiler carrier allocation, literal reuse, and scheduling after complete semantics are represented"
+  ],
+  "retention": "keep_structured_asm"
+}

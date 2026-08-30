@@ -416,6 +416,7 @@ typedef int bool;
 #define EffectSlot_Update Func_0809b804
 #define BattleEffect_UpdateAllSlots Func_08095884
 #define BattleEffect_ClearActiveSlotsAndScheduleUpdates Func_080958e4
+#define BattleEffect_AdvanceSpinAngle Func_0809592c
 #define BattleEffect_UpdateSpinAngle Func_0809b0b0
 #define BattleEffect_UpdateDescendingObject Func_0809b0dc
 #define BattleEffect_UpdateDescendingParticlePositiveArc Func_0809b364

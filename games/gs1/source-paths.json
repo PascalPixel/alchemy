@@ -2738,6 +2738,9 @@
     "resource_38e:0200012c": "unidentified/overlays/leaf/leaf_0103.c",
     "resource_372:02000328": "unidentified/overlays/leaf/leaf_0104.c",
     "resource_38d:02000494": "unidentified/overlays/leaf/leaf_0105.c",
+    "resource_38d:02000894": {
+      "name": "FieldScene_RunMultiStageActorSequence"
+    },
     "resource_384:02000170": "unidentified/overlays/leaf/leaf_0106.c",
     "resource_374:020022f8": "unidentified/overlays/leaf/leaf_0107.c",
     "resource_3b9:0200050c": "unidentified/overlays/leaf/leaf_0108.c",

@@ -118,11 +118,12 @@ void Func_080cb1a4(void *object_param)
     object->speed_limit = 0x80000;
 
     Func_080030f8(20);
+    frame = 0;
 
     record_ptr = record;
     screen_ptr = screen;
 
-    for (frame = 0, cel_phase = -56, radius = -46; frame != 96;
+    for (cel_phase = -56, radius = -46; frame != 96;
             frame++, cel_phase++, radius++) {
         s32 facing;
 

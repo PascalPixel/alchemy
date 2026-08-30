@@ -5,12 +5,12 @@
   "status": "measured-draft",
   "owner_bytes": 664,
   "score": {
-    "measured": "2026-08-29",
-    "candidate_bytes": 676,
+    "measured": "2026-08-30",
+    "candidate_bytes": 664,
     "reference_bytes": 664,
-    "differing_halfwords": 100,
-    "wrong_instructions": 64,
-    "class": "structural-topology",
+    "differing_halfwords": 45,
+    "wrong_instructions": 38,
+    "class": "allocation-uncovered",
     "note": "Baseline at start of this pass (measured 2026-08-27, before this session's edits) was differing_halfwords=192, class=structural-topology, topology=different: candidate-show --allocator-order showed genuine +/- (not just '!' register-bank) blocks around the second party-member eligibility scan (the one inside `if (retry != 0) { ...; while (...) {...break...} redraw = 1; }`), meaning the branch/block topology itself, not just register assignment, diverged from the reference there. Two source-shape fixes converged most of that: (1) moving `redraw = 1;` from after the second scan while-loop to immediately after `retry = 0;`/before the loop (mirroring nothing in the first scan loop, which already matched) took topology=different -> topology=equal and differing_halfwords 192 -> 176 (class briefly read missing-extra-code). (2) The remaining gap was the four `retry + N` message-id expressions (`Func_080b2928(retry + 2)`, `retry + 1`, `Func_080b28d4(retry + 3)`, `retry + 4`): with `retry = 0xd27;` freshly assigned just above, this candidate's GCC constant-folds each `retry + N` into a fresh pool-constant load (`ldr r0, [pc, #...]`), whereas the reference keeps 0xd27 live in a register and computes each use as `mov r0, r8; adds r0, #N`. Rewriting each use as an in-place `retry += N; f(retry);` (mutating the shared register instead of computing an offset expression) broke the constant-fold and dropped differing_halfwords 176 -> 100, wrong_instructions 90 -> 64 -- but topology flipped back to 'different' (candidate grew from 672 to 676 bytes) and class reports structural-topology again, so per the task's own ordering (realign topology before instructions) this local optimum trades a topology regression for a large raw byte-diff win. Kept as the best verified state pending further topology-first work, since differing_halfwords is lower than at any point in this owner's history and no correctness/behavior changed (retry += N read-modify-write is equivalent to retry + N followed by retry=1 in every call path, since each branch that mutates retry also immediately continues or breaks before any other read of the old value). NOT reduced to zero: an environment failure (see notes) prevented further iteration after this measurement.",
     "prior_score_2026_08_27": {
       "candidate_bytes": 672,

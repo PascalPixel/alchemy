@@ -2,6 +2,10 @@
 
 #define BattleEffect_RunScreenShatter Func_080cbc0c
 
+typedef void (*DrawRectangleFn)(
+    void *destination, const void *source, s32 x, s32 y,
+    s32 width, s32 height);
+
 /*
  * This header contains macros emitted by m2c in "valid syntax" mode,
  * which can be enabled by passing `--valid-syntax` on the command line.
@@ -72,15 +76,14 @@ typedef s64 M2C_UNK64;
 #endif
 
 void BattleEffect_RunScreenShatter(void *arg0) {
-    s32 sp8;
-    s32 spC;
-    s32 sp10;
-    struct M2cAggregate_deref_absolute_03001e74_0 *sp14;
-    u32 sp18;
-    u32 sp1C;
-    s32 sp20;
-    struct M2cAggregate_absolute_02010000 *sp24;
     struct M2cAggregate_absolute_02010000 *sp28;
+    struct M2cAggregate_absolute_02010000 *sp24;
+    s32 sp20;
+    DrawRectangleFn routines[2];
+    struct M2cAggregate_deref_absolute_03001e74_0 *sp14;
+    s32 sp10;
+    s32 spC;
+    s32 sp8;
     s16 *var_r0_1012;
     s32 temp_lr_618;
     s32 temp_r1_518;
@@ -252,9 +255,9 @@ loop_4:
     M2C_FIELD(sp28, s32 *, 0x7784) = 0;
     Func_080041d8(0x080CD261, 0x480);
     Func_080ed408(0x2E, 7, 7, 3, 1);
-    sp18 = absolute_03001e50.field_00b8;
+    routines[0] = (DrawRectangleFn)absolute_03001e50.field_00b8;
     Func_080ed408(0x2F, 7, 7, 3, 2);
-    sp1C = absolute_03001e50.field_00bc;
+    routines[1] = (DrawRectangleFn)absolute_03001e50.field_00bc;
     spC = 0;
     var_r4_290 = (u8 *)0x080EE037;
     var_r1_291 = sp28 + 0x7080;
@@ -523,7 +526,7 @@ loop_48:
         var_r6_953 = 0;
         var_r5_954 = sp28 + 0x7080;
         do {
-            Func_080072f4(sp24, &sp28->unknown_0000[*(u16 *)(0x080EDFD2 + (var_r6_953 * 2))], M2C_FIELD(var_r5_954, s16 *, 2), M2C_FIELD(var_r5_954, s16 *, 6), (s32) *(u8 *)(0x080EDF90 + var_r6_953), (s32) *(u8 *)(0x080EDFB1 + var_r6_953));
+            routines[0](sp24, &sp28->unknown_0000[*(u16 *)(0x080EDFD2 + (var_r6_953 * 2))], M2C_FIELD(var_r5_954, s16 *, 2), M2C_FIELD(var_r5_954, s16 *, 6), (s32) *(u8 *)(0x080EDF90 + var_r6_953), (s32) *(u8 *)(0x080EDFB1 + var_r6_953));
             if (sp20 > 3) {
                 Func_080e3908(var_r5_954, 0x40, 0x4000);
             }
@@ -586,7 +589,7 @@ loop_48:
                     if (var_r1_1139 > 5) {
                         var_r1_1139 = 5;
                     }
-                    Func_08007300(sp24, sp28 + (var_r1_1139 << 0xB), M2C_FIELD(var_r5_1119, s16 *, 2) - 0x10, M2C_FIELD(var_r5_1119, s16 *, 6) - 0x20, 0x20, 0x40);
+                    routines[1](sp24, sp28 + (var_r1_1139 << 0xB), M2C_FIELD(var_r5_1119, s16 *, 2) - 0x10, M2C_FIELD(var_r5_1119, s16 *, 6) - 0x20, 0x20, 0x40);
                     Func_080e3908(var_r5_1119, 0x3C, 0xFFFFF000);
                     var_r5_1119->field_0018 += 1;
                 }

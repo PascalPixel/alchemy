@@ -1,0 +1,11 @@
+{
+  "span_bytes": 532,
+  "score": {"measured":"2026-08-30","candidate_bytes":526,"reference_bytes":532,"wrong_instructions":62,"differing_halfwords":236,"class":"generated-call-script-retention"},
+  "shape": {"calls":47,"loops":0,"memory_operations":11},
+  "verified_against_reference": [
+    "candidate and ROM contain the same 47 calls in machine order with every argument represented",
+    "direct assembly audit restored source-relative placement for four actors, three conditional signed-coordinate handoffs, and all final scene coordinates",
+    "candidate is six bytes shorter after complete decoded control flow and side effects are represented; residual is approved GCC allocation and literal scheduling"
+  ],
+  "retention": "keep_structured_asm"
+}

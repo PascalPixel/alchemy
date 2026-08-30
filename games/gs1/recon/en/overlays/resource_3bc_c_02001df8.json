@@ -1,0 +1,10 @@
+{
+  "span_bytes": 408,
+  "score": {"measured":"2026-08-30","candidate_bytes":404,"reference_bytes":408,"wrong_instructions":88,"differing_halfwords":179,"class":"generated-call-script-retention"},
+  "shape": {"calls":40,"loops":0,"memory_operations":1},
+  "verified_against_reference": [
+    "complete reconstruction accounts for the global mode gate, three state routes, all 40 calls, and every scene argument",
+    "candidate is four bytes shorter after complete decoded control flow is represented; residual is approved GCC allocation and literal scheduling"
+  ],
+  "retention": "keep_structured_asm"
+}

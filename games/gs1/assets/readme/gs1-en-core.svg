@@ -4,7 +4,7 @@
 <rect x="0" y="0" width="540" height="304" fill="#6d4fc2" rx="8"/>
 <rect x="1" y="1" width="538" height="302" fill="none" stroke="#6d4fc2" stroke-width="2" rx="7"/>
 <text class="weyard" x="6" y="15">Main game</text>
-<text class="weyard" x="534" y="15" text-anchor="end">56.32% DONE</text>
+<text class="weyard" x="534" y="15" text-anchor="end">56.35% DONE</text>
 <rect x="3" y="22" width="534" height="258" fill="#fff"/>
 <g aria-label="0x080000c0–0x080003c0: 768 bytes">
 <title>0x080000c0–0x080003c0: 768 bytes</title>
@@ -1770,9 +1770,9 @@
 </g>
 <g aria-label="0x0808b824–0x0808bec0: 1,692 bytes">
 <title>0x0808b824–0x0808bec0: 1,692 bytes</title>
-<rect x="202.31677456833523" y="54.0353572956765" width="12.410373552979772" height="7.257549454000076" style="fill:#d8d9df"/>
-<rect x="202.31677456833523" y="44.5279675109364" width="12.410373552979772" height="9.507389784740099" style="fill:hsl(275 58% 66%)"/>
-<rect x="202.31677456833523" y="30.593472559256256" width="12.410373552979772" height="13.934494951680145" style="fill:#6d4fc2"/>
+<rect x="202.31677456833523" y="57.01095257181653" width="12.410373552979772" height="4.281954177860045" style="fill:#d8d9df"/>
+<rect x="202.31677456833523" y="47.50356278707643" width="12.410373552979772" height="9.507389784740099" style="fill:hsl(275 58% 66%)"/>
+<rect x="202.31677456833523" y="30.593472559256256" width="12.410373552979772" height="16.910090227820177" style="fill:#6d4fc2"/>
 </g>
 <g aria-label="0x0808bec0–0x0808c2dc: 1,052 bytes">
 <title>0x0808bec0–0x0808c2dc: 1,052 bytes</title>

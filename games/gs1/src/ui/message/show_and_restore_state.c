@@ -12,37 +12,37 @@ extern u8 Data_00000cc6[];
 extern u8 Data_00000cf1[];
 extern u8 Data_00000d4c[];
 
-void UiMessage_ShowAndRestoreState(s32 arg0) {
-    s32 temp_r8;
-    s32 var_r5;
-    s8 temp_r1;
-    s8 temp_r3;
-    u8 temp_sl;
-    void *temp_r6;
-    u8 **var_r7;
+void UiMessage_ShowAndRestoreState(s32 message_id) {
+    s32 message_variant;
+    s32 resolved_message_id;
+    s8 message_mode;
+    s8 has_modifier;
+    u8 saved_window_mode;
+    void *active_state;
+    u8 **window_slot;
 
-    temp_r6 = *(void **)ADDR_03001F2C;
-    var_r7 = (u8 **)((u8 *)temp_r6 + 0x380);
-    temp_sl = (*var_r7)[5];
-    var_r5 = arg0;
-    temp_r8 = Func_0808a540(FIELD_AT_OFFSET(temp_r6, u16 *, 0x3A4));
-    temp_r1 = FIELD_AT_OFFSET(temp_r6, s8 *, 0x3A9);
-    if (temp_r1 == 2) {
-        var_r5 += (s32)Data_00000cc6 - (s32)Data_00000c9b;
+    active_state = *(void **)ADDR_03001F2C;
+    window_slot = (u8 **)((u8 *)active_state + 0x380);
+    saved_window_mode = (*window_slot)[5];
+    resolved_message_id = message_id;
+    message_variant = Func_0808a540(FIELD_AT_OFFSET(active_state, u16 *, 0x3A4));
+    message_mode = FIELD_AT_OFFSET(active_state, s8 *, 0x3A9);
+    if (message_mode == 2) {
+        resolved_message_id += (s32)Data_00000cc6 - (s32)Data_00000c9b;
     }
-    if (temp_r1 == 0) {
-        var_r5 += (s32)Data_00000cf1 - (s32)Data_00000c9b;
+    if (message_mode == 0) {
+        resolved_message_id += (s32)Data_00000cf1 - (s32)Data_00000c9b;
     }
-    temp_r3 = FIELD_AT_OFFSET(temp_r6, u8 *, 0x3AC);
-    if (temp_r3 != 0) {
-        var_r5 += (s32)Data_00000d4c - (s32)Data_00000c9b;
+    has_modifier = FIELD_AT_OFFSET(active_state, u8 *, 0x3AC);
+    if (has_modifier != 0) {
+        resolved_message_id += (s32)Data_00000d4c - (s32)Data_00000c9b;
     }
-    (*var_r7)[5] = 0xDU;
+    (*window_slot)[5] = 0xDU;
     UiWork_FinalizePending();
-    UiWork_Create(var_r5, 5, 0, (temp_r8 << 0x10) | 0x22);
+    UiWork_Create(resolved_message_id, 5, 0, (message_variant << 0x10) | 0x22);
     while (UiWork_IsCompleteFar() == 0) {
         WaitFrames(1U);
     }
     WaitFrames(1U);
-    FIELD_AT_OFFSET(FIELD_AT_OFFSET(temp_r6, void **, 0x380), u8 *, 5) = temp_sl;
+    FIELD_AT_OFFSET(FIELD_AT_OFFSET(active_state, void **, 0x380), u8 *, 5) = saved_window_mode;
 }

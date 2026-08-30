@@ -368,6 +368,7 @@ typedef int bool;
 #define ObjectGroup_UpdateMembers Func_080d6888
 #define Menu_RunActionFlow Func_080a76d0
 #define Menu_DrawPageIndicator Func_080a21b0
+#define Menu_OpenConfirmPrompt Func_080a5b94
 #define CharacterMenu_DrawSelectionCursor Func_080a847c
 #define CharacterMenu_DrawSelectionLabels Func_080a8508
 #define CharacterMenu_BuildAvailability Func_080a8b10

@@ -1,9 +1,11 @@
 @ Byte-exact retained Thumb owner. The canonical behavioral reconstruction is
-@ games/gs1/semantic/main/080b6e7c.c; C/H assembly escape constructs are forbidden.
-.syntax unified
+@ games/gs1/recon/en/main/080b6e7c.c; C/H assembly escape constructs are forbidden.
+	.syntax unified
 	.thumb
+	.global Resource_FindFreeSlot
 	.global Func_080b6e7c
 	.thumb_func
+Resource_FindFreeSlot:
 Func_080b6e7c:
 	push	{r5, lr}
 	adds	r5, r0, #0

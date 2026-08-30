@@ -1,7 +1,7 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 void WaitFrames(u32);
 void ScheduleCallback(void *);
@@ -13,15 +13,15 @@ s32 BattleEventRuntime_WaitForReady(void) {
     void *runtime;
 
     runtime = *(void **)ADDR_03001E74;
-    state = M2C_FIELD(runtime, s32 *, 0x800);
+    state = FIELD_AT_OFFSET(runtime, s32 *, 0x800);
     if (state == 0) {
-        M2C_FIELD(runtime, s32 *, 0x800) = 1;
+        FIELD_AT_OFFSET(runtime, s32 *, 0x800) = 1;
         state = 1;
     }
     if (state != 4) {
         do {
             WaitFrames(1U);
-        } while (M2C_FIELD(runtime, s32 *, 0x800) != 4);
+        } while (FIELD_AT_OFFSET(runtime, s32 *, 0x800) != 4);
     }
     ScheduleCallback((void *)Func_080bd898);
     return BattleEventRuntime_Reset();

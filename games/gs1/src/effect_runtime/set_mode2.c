@@ -1,7 +1,7 @@
 #include "effect_runtime.h"
 #include "global_cells.h"
 
-#define M2C_FIELD(base, type, offset) \
+#define FIELD_AT_OFFSET(base, type, offset) \
     (*(type)((u8 *)(base) + (offset)))
 
 s32 Object_SetMode(s32, s32);

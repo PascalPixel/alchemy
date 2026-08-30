@@ -4,7 +4,7 @@
 #include "battle_party.h"
 #include "battle_escape.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 struct BattleEscapeState {
     u8 reserved_00[0x45];

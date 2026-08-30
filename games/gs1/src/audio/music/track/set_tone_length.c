@@ -1,15 +1,15 @@
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 u8 *MusicTrack_SetToneLength(s32 arg0, void *arg1) {
     u32 cursor;
 
-    cursor = (u32)M2C_FIELD(arg1, u8 **, 0x40);
+    cursor = (u32)FIELD_AT_OFFSET(arg1, u8 **, 0x40);
     cursor = *(u8 *)cursor;
-    M2C_FIELD(arg1, u8 *, 0x26) = cursor;
-    cursor = (u32)M2C_FIELD(arg1, u8 **, 0x40);
+    FIELD_AT_OFFSET(arg1, u8 *, 0x26) = cursor;
+    cursor = (u32)FIELD_AT_OFFSET(arg1, u8 **, 0x40);
     cursor++;
-    M2C_FIELD(arg1, u8 **, 0x40) = (u8 *)cursor;
+    FIELD_AT_OFFSET(arg1, u8 **, 0x40) = (u8 *)cursor;
     return (u8 *)cursor;
 }

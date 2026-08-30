@@ -1,7 +1,7 @@
 #include "battle_party.h"
 #include "battle_runtime.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 BattleParty_ListPresentEnemies(s16 *unit_ids) {
     s16 *output;
@@ -21,7 +21,7 @@ s32 BattleParty_ListPresentEnemies(s16 *unit_ids) {
         id = 0x80;
         entry_limit += 0x80;
         for (; id < entry_limit; id += 1) {
-            if (M2C_FIELD(BattleUnit_Get(id), u8 *, 0x12A) != 0) {
+            if (FIELD_AT_OFFSET(BattleUnit_Get(id), u8 *, 0x12A) != 0) {
                 *output = (s16) id;
                 entry_count += 1;
                 output += 1;

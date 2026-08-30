@@ -1,7 +1,7 @@
 #include "effect_runtime.h"
 #include "global_cells.h"
 
-#define M2C_FIELD(base, type, offset) \
+#define FIELD_AT_OFFSET(base, type, offset) \
     (*(type)((u8 *)(base) + (offset)))
 
 s32 WaitFrames(s32);
@@ -23,7 +23,7 @@ void EffectRuntime_SetMode7AndLaunch(void) {
         }
         Audio_PlayCue(0x92);
         if (object != NULL) {
-            M2C_FIELD(object, s32 *, 0x28) = 0x80000;
+            FIELD_AT_OFFSET(object, s32 *, 0x28) = 0x80000;
             Func_080091e0(object, 1);
         }
     }

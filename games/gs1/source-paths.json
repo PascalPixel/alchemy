@@ -818,6 +818,10 @@
       "name": "Menu_BuildPatternTiles",
       "source": "menu/build_pattern_tiles.c"
     },
+    "main:08021848": {
+      "name": "Menu_BuildLocalizedPatternTiles",
+      "source": "menu/build_localized_pattern_tiles.c"
+    },
     "main:080a9dc4": "character_menu/update_selection_icons.c",
     "main:080b7424": "battle/summon/layout_positions.c",
     "main:080b7514": "battle/summon/find_available_slot.c",

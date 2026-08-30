@@ -6,14 +6,14 @@ void Func_08002dd8(s32);
 u32 Func_080053e8(const void *, void *);
 extern s32 Data_08031864[];
 
-void RenderResource_LoadPair(s32 arg0, s32 arg1) {
-    register s32 value;
-    void *temp_r6;
+void RenderResource_LoadPair(s32 group_index, s32 resource_index) {
+    register s32 resource_address;
+    void *staging_buffer;
 
-    temp_r6 = (void *)Runtime_AllocateBlock(14, 0x400);
-    if ((value = Data_08031864[arg0], arg1 <= 0x5F)) {
-        Func_080053e8((const void *)value, temp_r6);
-        Resource_CopyData(arg1, 0x200, temp_r6);
+    staging_buffer = (void *)Runtime_AllocateBlock(14, 0x400);
+    if ((resource_address = Data_08031864[group_index], resource_index <= 0x5F)) {
+        Func_080053e8((const void *)resource_address, staging_buffer);
+        Resource_CopyData(resource_index, 0x200, staging_buffer);
         Func_08002dd8(14);
     }
 }

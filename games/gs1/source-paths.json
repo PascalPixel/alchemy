@@ -5425,6 +5425,12 @@
     "resource_3ca:02000b34": {
       "name": "FieldScene_ClosePresentationSequence"
     },
+    "resource_3af:02003a0c": {
+      "name": "FieldScene_ConfigureFourActorPresentation"
+    },
+    "resource_383:02001e80": {
+      "name": "FieldScene_ConfigurePairedActors"
+    },
     "main:080a46b4": {
       "name": "Item_ClassifyUseMode",
       "source": "items/classify_use_mode.c"

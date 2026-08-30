@@ -1,0 +1,11 @@
+{
+  "span_bytes": 636,
+  "score": {"measured":"2026-08-30","candidate_bytes":676,"reference_bytes":636,"wrong_instructions":102,"differing_halfwords":327,"class":"generated-call-script-retention"},
+  "shape": {"calls":60,"loops":0,"memory_operations":7},
+  "verified_against_reference": [
+    "all 60 calls and their arguments are represented in ROM order across the complete owner",
+    "direct assembly audit restored both scene-global initializers, the forwarded zero argument, and workspace state 448",
+    "approved GCC allocation and literal-pool scheduling does not emit the complete owner exactly"
+  ],
+  "retention": "keep_structured_asm"
+}

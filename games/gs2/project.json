@@ -27,7 +27,7 @@
   },
   "policy": {
     "source_direction": "ja-to-derived-editions",
-    "tracked_source_claims_bytes": false,
+    "draft_source_claims_done_bytes": false,
     "exactness_is_per_edition": true,
     "rom_fallback_is_build_progress": false
   }

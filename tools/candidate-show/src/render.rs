@@ -482,12 +482,6 @@ fn render_asm(
         .join(options.target.as_str())
         .join("asm")
         .join(format!("{stem}.s"));
-    if !reference.is_file() {
-        return Err(format!(
-            "--asm expects a main-image owner with {}",
-            reference.display()
-        ));
-    }
     let patch = read_patch(options.patch.as_deref())?;
     let source = staged_source(root, options, work, patch.as_deref())?;
     let assembly = compile_to_assembly(
@@ -498,9 +492,25 @@ fn render_asm(
         options.target,
         &options.configuration,
     )?;
-    let symbol = format!("Func_{stem}");
     let candidate_gas =
         std::fs::read_to_string(&assembly).map_err(|error| format!("{assembly}: {error}"))?;
+    if !reference.is_file() && !identity.owner.is_main() {
+        return Ok(RenderOutput {
+            stdout: candidate_gas,
+            candidate_length: 0,
+            reference_length: 0,
+            differing_halfwords: 0,
+            allocator: None,
+            residual: classify(&[], &[], 0, 0, 0),
+        });
+    }
+    if !reference.is_file() {
+        return Err(format!(
+            "--asm expects a main-image owner with {}",
+            reference.display()
+        ));
+    }
+    let symbol = format!("Func_{stem}");
     let reference_gas = std::fs::read_to_string(&reference)
         .map_err(|error| format!("{}: {error}", reference.display()))?;
     let topology = topology::compare(&candidate_gas, &reference_gas, &symbol);

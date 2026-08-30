@@ -57,7 +57,8 @@ fn source_for(root: &Path, owner: SourceOwner) -> Result<PathBuf, String> {
         .ok_or_else(|| format!("no source for {}", owner.id()))
 }
 pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
-    let (mut align, mut target, mut override_span) = (false, None, None);
+    let (mut align, mut asm, mut target, mut owner_target, mut override_span) =
+        (false, false, None, None, None);
     let mut extra = Vec::new();
     let mut args = argv.iter();
     while let Some(argument) = args.next() {
@@ -75,10 +76,18 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
                         .ok_or("--span wants a decimal byte count")?,
                 )
             }
+            "--owner" => {
+                owner_target = Some(
+                    args.next()
+                        .ok_or("--owner needs <overlay>:<addressHex>")?
+                        .to_string(),
+                )
+            }
             "--align" => align = true,
+            "--asm" => asm = true,
             "-h" | "--help" => {
                 println!(
-                    "usage: overlay score <overlay>:<addressHex> | <source.c> [--align]\n\n\
+                    "usage: overlay score <overlay>:<addressHex> | <source.c> [--owner <overlay>:<addressHex>] [--align] [--asm]\n\n\
                      Compare candidate and reference bytes. A mapped owner supplies the span;\n\
                      --span BYTES is an explicit read-only diagnostic override."
                 );
@@ -89,7 +98,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
         }
     }
     let target = target.ok_or("a <overlay>:<addressHex> or source path is required")?;
-    let resolved = resolve(root, &target)?;
+    let resolved = resolve(root, owner_target.as_deref().unwrap_or(&target))?;
     let overlay = resolved.overlay_id().expect("resolved overlay owner");
     let address = i64::from(resolved.address());
     let explicit = Path::new(&target);
@@ -158,7 +167,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
             align,
             first: false,
             allocator_order: false,
-            asm: false,
+            asm,
             patch: None,
         },
     )?;

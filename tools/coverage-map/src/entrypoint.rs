@@ -5,7 +5,7 @@ use crate::tree::{ref_tree, root, work_tree};
 use canonical_json::canonical_json;
 use serde_json::Value;
 use std::path::{Path, PathBuf};
-const USAGE: &str = "usage: coverage-map [--target gs1-en|gs2-en] [--exact-ref <ref>|worktree] [--recon-ref <ref>|worktree|none] [--write|--check|--self-test]";
+const USAGE: &str = "usage: coverage-map [--target gs1-en|gs2-en] [--exact-ref <ref>|worktree] [--recon-ref <ref>|worktree|none] [--write|--check|--assembly-spans|--self-test]";
 fn get<'a>(v: &'a Value, key: &str) -> Option<&'a Value> {
     v.as_object()?.get(key)
 }
@@ -39,6 +39,7 @@ struct Options {
     recon: Option<String>,
     write: bool,
     check: bool,
+    assembly_spans: bool,
     self_test: bool,
     help: bool,
 }
@@ -78,6 +79,7 @@ fn parse(argv: &[String]) -> Result<Options, String> {
             }
             "--write" => o.write = true,
             "--check" => o.check = true,
+            "--assembly-spans" => o.assembly_spans = true,
             "--self-test" => o.self_test = true,
             "-h" | "--help" => {
                 o.help = true;
@@ -252,6 +254,20 @@ fn run(argv: &[String]) -> Result<String, String> {
         recon: semantic.as_ref(),
         prefer_verified_assets: true,
     })?;
+    if o.assembly_spans {
+        let mut rows = map
+            .executable_areas
+            .iter()
+            .flat_map(|area| &area.tiles)
+            .filter(|tile| tile.categories[2] > 0)
+            .collect::<Vec<_>>();
+        rows.sort_by_key(|tile| std::cmp::Reverse(tile.categories[2]));
+        return Ok(rows
+            .into_iter()
+            .map(|tile| format!("{}\t{}", tile.categories[2], tile.label))
+            .collect::<Vec<_>>()
+            .join("\n"));
+    }
     let rendered = render_box_trees(&map, Some(&exact), true)?;
     let map_json = canonical_json(&tracked(&map.document));
     if o.check {

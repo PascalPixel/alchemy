@@ -58,6 +58,150 @@ cargo build --offline --release --manifest-path tools/compiler/Cargo.toml
 Worktrees may symlink `roms/` and `alchemy-gcc/dist/` from the main checkout.
 Do not run submodule commands from a worktree.
 
+## Tooling index
+
+This is the authoritative index of the machinery beside the decompilation.
+Every immediate tool directory with a Cargo manifest or executable script
+appears exactly once. `make tooling-index-check` proves that this index and the
+filesystem agree.
+
+Contributor-facing work goes through six hosts. Run one with `cargo run
+--offline --quiet --release --manifest-path tools/<host>/Cargo.toml --
+<command>`; the Makefile supplies the usual routes. Libraries remain separate
+for testing and provenance, not as public commands.
+
+### Public hosts
+
+| Tool | Responsibility |
+| --- | --- |
+| [assets](tools/assets/) | Archival extractors and game-specific asset/data codecs; `assets --list` names the commands. |
+| [build-assets](tools/build-assets/) | Rebuild tracked assets and data packages from source. |
+| [build-stage](tools/build-stage/) | Assemble retained regions, compile claimed C, and compose or verify the ROM. |
+| [check](tools/check/) | Publication, ownership, retained-code, coverage, integration, routing, and progress checks. |
+| [compiler](tools/compiler/) | Candidate scoring, families, cross-edition work, waves, permutation, and the dashboard. |
+| [overlay](tools/overlay/) | Overlay scoring, reconstruction, adoption, parking, audit, twins, and disassembly. |
+
+### Direct workflows
+
+| Tool | Responsibility |
+| --- | --- |
+| [allocator-lens](tools/allocator-lens/) | Read GCC 2.96 pseudos, costs, conflicts, assignments, spills, and reloads. |
+| [shape-search](tools/shape-search/) | Run bounded source-shape searches through the real scorer. |
+| [unit-scaffold](tools/unit-scaffold/) | Scaffold declared translation units and owner composition. |
+| [weyard-font](tools/weyard-font/) | Extract and verify the shared text font across historical ROMs. |
+
+### Build and repository foundations
+
+| Tool | Responsibility |
+| --- | --- |
+| [alignment-tail](tools/alignment-tail/) | Model and verify alignment tails. |
+| [asset-paths](tools/asset-paths/) | Own canonical tracked asset paths. |
+| [build-asm](tools/build-asm/) | Assemble retained regions and emit their classified manifest. |
+| [build-claimed](tools/build-claimed/) | Compile, verify, cache, and manifest exact-C owners. |
+| [build-full](tools/build-full/) | Compose claimed C, retained assembly, and assets into the ROM. |
+| [cache-entry](tools/cache-entry/) | Provide deterministic SQLite-backed cache entries and receipts. |
+| [canonical-json](tools/canonical-json/) | Serialize stable JSON for reproducible reports and hashes. |
+| [decomp-targets](tools/decomp-targets/) | Define the twelve historical ROM targets and build paths. |
+| [gba-header](tools/gba-header/) | Encode and verify the GBA cartridge header. |
+| [generated-files](tools/generated-files/) | Track generated-file identity and freshness. |
+
+### Reconstruction and compiler analysis
+
+| Tool | Responsibility |
+| --- | --- |
+| [candidate-compiler](tools/candidate-compiler/) | Compile candidate C and expose verification primitives. |
+| [candidate-show](tools/candidate-show/) | Score and explain structural, allocator, type, and code residuals. |
+| [compiler-core](tools/compiler-core/) | Own compiler bundles, routes, symbols, paths, targets, and translation units. |
+| [integrate-matches](tools/integrate-matches/) | Adopt byte-exact main-image C through the integration gate. |
+| [permuter](tools/permuter/) | Execute finite, decoder-named source repairs. |
+
+### Overlay support
+
+| Tool | Responsibility |
+| --- | --- |
+| [overlay-adopt](tools/overlay-adopt/) | Score, adopt, park, audit, and compare overlay candidates. |
+| [overlay-call-targets](tools/overlay-call-targets/) | Decode overlay-specific call-target words. |
+| [overlay-disasm](tools/overlay-disasm/) | Disassemble and compile overlay-qualified owners. |
+| [overlay-show](tools/overlay-show/) | Render and reconstruct overlay owners and resources. |
+
+### Verification and reporting
+
+| Tool | Responsibility |
+| --- | --- |
+| [check-commit-progress](tools/check-commit-progress/) | Enforce progress-bearing commit subjects. |
+| [check-publication](tools/check-publication/) | Fail closed on invalid staged changes and outgoing history. |
+| [check-unmatchable](tools/check-unmatchable/) | Audit owner registers and unmatchable classifications. |
+| [core-retained-audit](tools/core-retained-audit/) | Verify retained main-image assembly classifications and extents. |
+| [coverage-map](tools/coverage-map/) | Build coverage metrics, SVGs, and dashboard data. |
+| [dashboard-server](tools/dashboard-server/) | Serve the local reconstruction dashboard. |
+| [full-c-progress](tools/full-c-progress/) | Report exact-C progress over audited executable intervals. |
+| [no-asm-c](tools/no-asm-c/) | Enforce source boundaries between C and retained assembly. |
+
+### Asset primitives
+
+| Tool | Responsibility |
+| --- | --- |
+| [archive-asset](tools/archive-asset/) | Encode and decode archive-backed assets. |
+| [export-asset](tools/export-asset/) | Export GBA graphics into editable assets. |
+| [extract-resource](tools/extract-resource/) | Extract resource payloads from approved ROMs. |
+| [import-asset](tools/import-asset/) | Import editable assets into GBA formats. |
+| [map-load-table](tools/map-load-table/) | Encode and verify map-loading tables. |
+| [pairtable](tools/pairtable/) | Decode paired table records. |
+| [tilemap](tools/tilemap/) | Encode and decode GBA tilemaps. |
+| [wordstream](tools/wordstream/) | Decode word-oriented ROM streams. |
+
+### Game data and resource packages
+
+These preserve the typed transform for committed game data. Most are commands
+behind `assets` or libraries used by `build-assets`.
+
+| Tool | Responsibility |
+| --- | --- |
+| [audio-engine-data](tools/audio-engine-data/) | Encode tracked audio-engine tables and runtime data. |
+| [audio-wave](tools/audio-wave/) | Extract and verify waveform resources. |
+| [battle-effect-data](tools/battle-effect-data/) | Build the battle-effect data package. |
+| [byte-henkan](tools/byte-henkan/) | Build byte-conversion tables. |
+| [byte-value-regions](tools/byte-value-regions/) | Build typed byte-value regions. |
+| [character-catalog](tools/character-catalog/) | Extract and verify character catalog data. |
+| [early-runtime-data](tools/early-runtime-data/) | Build the early-runtime data package. |
+| [encounter-data](tools/encounter-data/) | Extract and rebuild encounter data. |
+| [executable-gap-sources](tools/executable-gap-sources/) | Decode typed source packages in executable gaps. |
+| [f0-archive](tools/f0-archive/) | Extract and rebuild the F0 archive. |
+| [indexed-still](tools/indexed-still/) | Extract indexed still-image packages. |
+| [kind1-map-grid](tools/kind1-map-grid/) | Export and verify kind-1 map grids. |
+| [kind2-resources](tools/kind2-resources/) | Build and verify kind-2 resources. |
+| [late-runtime-data](tools/late-runtime-data/) | Define typed layouts for late-runtime encoding. |
+| [late-runtime-residual](tools/late-runtime-residual/) | Build late-runtime residual regions. |
+| [localization-font](tools/localization-font/) | Extract and rebuild localized font data. |
+| [localization-tables](tools/localization-tables/) | Build localization lookup tables. |
+| [map-container-components](tools/map-container-components/) | Extract map-container component series. |
+| [map-resources](tools/map-resources/) | Build and verify map-container resource series. |
+| [message-archive](tools/message-archive/) | Extract and rebuild message archives. |
+| [music](tools/music/) | Extract and verify music data. |
+| [music-residuals](tools/music-residuals/) | Build and verify audio residual packages. |
+| [namae-nyuuryoku](tools/namae-nyuuryoku/) | Build the fixed name-entry screen package. |
+| [resource-01c](tools/resource-01c/) | Decode and rebuild resource 01C. |
+| [resource-3ce](tools/resource-3ce/) | Decode and rebuild resource 3CE. |
+| [resource-5](tools/resource-5/) | Decode and rebuild resource 5. |
+| [resource-byte-canvases](tools/resource-byte-canvases/) | Encode byte-canvas resources. |
+| [resource-d1-d3](tools/resource-d1-d3/) | Decode and rebuild resources D1 through D3. |
+| [resource-directory](tools/resource-directory/) | Extract and verify the resource directory. |
+| [runtime-support-data](tools/runtime-support-data/) | Build runtime-support data. |
+| [sentou-gamen-data](tools/sentou-gamen-data/) | Build battle-screen data. |
+| [sentou-hyouji](tools/sentou-hyouji/) | Build battle-display data. |
+| [sentou-kouka-runtime](tools/sentou-kouka-runtime/) | Build and verify the battle-effect runtime. |
+| [sentou-menu-data](tools/sentou-menu-data/) | Build battle-menu data. |
+| [sentou-resources](tools/sentou-resources/) | Build and verify battle resource series. |
+| [simple-resources](tools/simple-resources/) | Extract and rebuild simple resource records. |
+| [skip-sprite-archive](tools/skip-sprite-archive/) | Extract the skip-sprite archive. |
+| [staff-roll](tools/staff-roll/) | Build the staff-roll package. |
+| [static-sprite-series](tools/static-sprite-series/) | Export, build, and verify static sprite series. |
+| [title-resources](tools/title-resources/) | Build title-screen resources. |
+
+`tools/target/` is ignored compiler output, not a tool. Empty working
+directories are excluded. A new immediate directory enters the index when it
+gains a `Cargo.toml` or a direct `.ts`, `.js`, `.py`, or `.sh` executable.
+
 ## Owners and names
 
 `games/<game>/source-paths.json` is the one authored project-wide register

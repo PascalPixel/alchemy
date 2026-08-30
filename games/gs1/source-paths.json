@@ -2714,6 +2714,15 @@
     "resource_380:02000f8c": {
       "name": "FieldScene_RunActorFormationSequence"
     },
+    "resource_3bc:02001a0c": {
+      "name": "FieldScene_ArrangeFourActors"
+    },
+    "resource_3bc:02001c20": {
+      "name": "FieldScene_RunDualArrivalSequence"
+    },
+    "resource_3bc:02001df8": {
+      "name": "FieldScene_RunSecondArrivalSequence"
+    },
     "resource_373:020015dc": {
       "name": "FieldScene_RunScriptedActorSequence"
     },

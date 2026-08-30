@@ -1,0 +1,11 @@
+{
+  "span_bytes": 472,
+  "score": {"measured":"2026-08-30","candidate_bytes":484,"reference_bytes":472,"wrong_instructions":82,"differing_halfwords":163,"class":"generated-call-script-retention"},
+  "shape": {"calls":44,"loops":0,"memory_operations":32},
+  "verified_against_reference": [
+    "complete reconstruction accounts for the global mode gate, three state routes, all 44 calls, and four actor field groups",
+    "direct assembly audit restored scene/state arguments and coordinate fields omitted by the mechanical draft",
+    "candidate is twelve bytes longer after complete decoded control flow and side effects are represented; residual is approved GCC allocation and scheduling"
+  ],
+  "retention": "keep_structured_asm"
+}

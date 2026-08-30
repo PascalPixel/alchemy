@@ -1741,6 +1741,45 @@
       ]
     },
     {
+      "overlay": "resource_3bc",
+      "start": "0x02001a0c",
+      "end": "0x02001c20",
+      "kind": "generated_call_script_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "complete owner reconstruction accounts for all 47 calls, source-relative four-actor placement, three conditional coordinate handoffs, and final scene positioning",
+        "candidate and reference differ by six bytes after all decoded side effects are represented; residual is approved GCC allocation and literal scheduling",
+        "games/gs1/recon/en/overlays/resource_3bc_c_02001a0c.json"
+      ]
+    },
+    {
+      "overlay": "resource_3bc",
+      "start": "0x02001c20",
+      "end": "0x02001df8",
+      "kind": "generated_call_script_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "complete reconstruction accounts for the global mode gate, all three state routes, 44 calls, and four actor field groups",
+        "candidate and reference differ by twelve bytes after all decoded side effects are represented; residual is approved GCC allocation and scheduling",
+        "games/gs1/recon/en/overlays/resource_3bc_c_02001c20.json"
+      ]
+    },
+    {
+      "overlay": "resource_3bc",
+      "start": "0x02001df8",
+      "end": "0x02001f90",
+      "kind": "generated_call_script_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "complete reconstruction accounts for the global mode gate, all three state routes, 40 calls, and every scene argument",
+        "candidate and reference differ by four bytes after all decoded control flow is represented; residual is approved GCC allocation and literal scheduling",
+        "games/gs1/recon/en/overlays/resource_3bc_c_02001df8.json"
+      ]
+    },
+    {
       "overlay": "resource_380",
       "start": "0x020027f8",
       "end": "0x02003f24",

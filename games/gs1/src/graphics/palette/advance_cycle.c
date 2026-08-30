@@ -1,7 +1,7 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
+#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 struct State080c1084 {
     u8 padding_000[0x64e];
@@ -20,8 +20,8 @@ void Graphics_AdvancePaletteCycle(void) {
 
     state = *(struct State080c1084 **)_c0;
     if ((state != NULL) && (state->field_650 != 0)) {
-        M2C_FIELD((void *)0x04000050, s16 *, 0) = 0x3F90;
-        M2C_FIELD((void *)0x04000050, s16 *, 2) = 0x10;
+        FIELD_AT_OFFSET((void *)0x04000050, s16 *, 0) = 0x3F90;
+        FIELD_AT_OFFSET((void *)0x04000050, s16 *, 2) = 0x10;
         table = Data_080c5c10;
         *(s16 *)0x04000054 = table[state->index];
         index = state->index;

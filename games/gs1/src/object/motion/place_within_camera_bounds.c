@@ -1,7 +1,7 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void Object_ResetMotion(void *);
@@ -29,23 +29,23 @@ void ObjectMotion_PlaceWithinCameraBounds(s32 arg0, s32 arg1, s32 arg2, s32 arg3
     spC = arg3;
     var_r7 = arg2;
     sp8 = Runtime_AllocateBlock(0x1B, 0xCCC);
-    temp_r5 = M2C_FIELD(sp8, void **, 0x1E0);
+    temp_r5 = FIELD_AT_OFFSET(sp8, void **, 0x1E0);
     temp_r1 = *(void **)ADDR_03001E70;
-    sp4 = M2C_FIELD(temp_r1, s32, 0xEC) + 0x780000;
-    temp_r2 = M2C_FIELD(temp_r5, s32, 0xC);
-    sp0 = M2C_FIELD(temp_r1, s32, 0xF0) + temp_r2 + 0x600000;
-    temp_fp = M2C_FIELD(temp_r1, s32, 0xF4) + 0xFF880000;
-    temp_r9 = M2C_FIELD(temp_r1, s32, 0xF8) + temp_r2 + 0xFFC00000;
-    M2C_FIELD(temp_r1, void **, 0) = (void *) (temp_r5 + 8);
+    sp4 = FIELD_AT_OFFSET(temp_r1, s32, 0xEC) + 0x780000;
+    temp_r2 = FIELD_AT_OFFSET(temp_r5, s32, 0xC);
+    sp0 = FIELD_AT_OFFSET(temp_r1, s32, 0xF0) + temp_r2 + 0x600000;
+    temp_fp = FIELD_AT_OFFSET(temp_r1, s32, 0xF4) + 0xFF880000;
+    temp_r9 = FIELD_AT_OFFSET(temp_r1, s32, 0xF8) + temp_r2 + 0xFFC00000;
+    FIELD_AT_OFFSET(temp_r1, void **, 0) = (void *) (temp_r5 + 8);
     Object_ResetMotion(temp_r5);
     if (var_r6 == -1) {
-        var_r6 = M2C_FIELD(temp_r5, s32, 8);
+        var_r6 = FIELD_AT_OFFSET(temp_r5, s32, 8);
     }
     if (var_sl == -1) {
-        var_sl = M2C_FIELD(temp_r5, s32, 0xC);
+        var_sl = FIELD_AT_OFFSET(temp_r5, s32, 0xC);
     }
     if (var_r7 == -1) {
-        var_r7 = M2C_FIELD(temp_r5, s32, 0x10);
+        var_r7 = FIELD_AT_OFFSET(temp_r5, s32, 0x10);
     }
     if (var_r6 < sp4) {
         var_r6 = sp4;
@@ -60,11 +60,11 @@ void ObjectMotion_PlaceWithinCameraBounds(s32 arg0, s32 arg1, s32 arg2, s32 arg3
         var_r7 = temp_r9;
     }
     if (spC == 0) {
-        M2C_FIELD(temp_r5, s32, 8) = var_r6;
-        M2C_FIELD(temp_r5, s32, 0xC) = var_sl;
-        M2C_FIELD(temp_r5, s32, 0x10) = var_r7;
+        FIELD_AT_OFFSET(temp_r5, s32, 8) = var_r6;
+        FIELD_AT_OFFSET(temp_r5, s32, 0xC) = var_sl;
+        FIELD_AT_OFFSET(temp_r5, s32, 0x10) = var_r7;
         WaitFrames(1U);
-        if (M2C_FIELD(sp8, s16, 0x19E) != 3) {
+        if (FIELD_AT_OFFSET(sp8, s16, 0x19E) != 3) {
             Func_08009128();
         }
     } else {

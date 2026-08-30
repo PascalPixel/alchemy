@@ -1,7 +1,7 @@
 #include "object_lookup.h"
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 void Object_SetAction(s32, s32);
 extern u8 Data_0200048a[];
@@ -16,7 +16,7 @@ void ObjectGroup_SetActionForOthers(s32 arg0, s32 arg1, s32 arg2) {
     do {
         temp_r0 = ObjectTable_Get(var_r5);
         if ((var_r5 != *var_sl) && (temp_r0 != 0) && (temp_r0 != arg0)) {
-            M2C_FIELD(temp_r0, s8, 0x5B) = arg1;
+            FIELD_AT_OFFSET(temp_r0, s8, 0x5B) = arg1;
             Object_SetAction(temp_r0, arg2);
         }
         var_r5 += 1;

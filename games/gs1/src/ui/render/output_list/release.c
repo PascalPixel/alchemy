@@ -1,7 +1,7 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 void RenderOutput_ReleaseFree(u32 arg0);
 s32 Resource_ResetEntry(u32 index);

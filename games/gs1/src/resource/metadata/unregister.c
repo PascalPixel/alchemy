@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define M2C_FIELD(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 void Func_0800bc48(void *destination);
 
@@ -17,7 +17,7 @@ void ResourceMetadata_Unregister(void *arg0, s32 arg1)
     if ((arg0 != 0) && (arg1 != 0)) {
         Func_0800bc48(arg1);
         var_r0 = 0;
-        if (arg1 != M2C_FIELD(arg0, s32, 0x28)) {
+        if (arg1 != FIELD_AT_OFFSET(arg0, s32, 0x28)) {
             var_r2 = (s32 *)((u8 *)arg0 + 0x28);
 loop_4:
             var_r0 += 1;
@@ -30,7 +30,7 @@ loop_4:
         }
         if (var_r0 != 4) {
             off = (var_r0 * 4) + 0x28;
-            M2C_FIELD(arg0, s32, off) = 0;
+            FIELD_AT_OFFSET(arg0, s32, off) = 0;
             var_r2_2 = var_r0 + 1;
             var_r4 = 0;
             if (var_r2_2 <= 3U) {
@@ -44,7 +44,7 @@ loop_4:
                 } while (var_r2_2 <= 3U);
             }
             if (var_r4 == 0) {
-                M2C_FIELD(arg0, s8, 0x27) = (s8) var_r0;
+                FIELD_AT_OFFSET(arg0, s8, 0x27) = (s8) var_r0;
             }
         }
     }

@@ -74,6 +74,7 @@ fn json(tree: &SourceTree, path: &str) -> Option<Value> {
 struct Region {
     span: Span,
     kind: String,
+    evidence: String,
 }
 fn regions(value: &Value) -> Vec<Region> {
     array(value, "intervals")
@@ -82,6 +83,7 @@ fn regions(value: &Value) -> Vec<Region> {
             Some(Region {
                 span: Span::new(integer(item, "start")?, integer(item, "end")?),
                 kind: text(item, "kind"),
+                evidence: text(item, "evidence"),
             })
         })
         .filter(|r| r.span.end > r.span.start)
@@ -415,16 +417,16 @@ fn exact_overlay(
     }
     Ok((owners, spans))
 }
-fn permanent_main(tree: &SourceTree) -> Vec<Span> {
-    let mut spans = Vec::new();
+fn main_assembly_classification(tree: &SourceTree) -> (Vec<Span>, Vec<Span>) {
+    let mut proven = Vec::new();
+    let mut draft = Vec::new();
     if let Some(value) = json(tree, "out/gs1-en/full/asm/manifest.json") {
         for region in array(&value, "regions") {
             let retention = text(region, "retention");
             let kind = text(region, "kind");
             let evidence = text(region, "evidence");
-            let proven = text(region, "confidence") == "proven" && !evidence.trim().is_empty();
-            let permanent = retention == "keep_asm"
-                || (retention == "keep_structured_asm" && proven)
+            let classified = retention == "keep_asm"
+                || retention == "keep_structured_asm"
                 || matches!(
                     retention.as_str(),
                     "merge_with_owner"
@@ -438,101 +440,120 @@ fn permanent_main(tree: &SourceTree) -> Vec<Span> {
                     "literal_pool" | "alignment_padding" | "lookup_table"
                 )
                 || evidence.contains("approved_compiler_cannot_express");
-            if permanent {
-                if let (Some(a), Some(s)) = (integer(region, "address"), integer(region, "size")) {
-                    spans.push(Span::new(a, a + s));
+            if classified && !evidence.trim().is_empty() {
+                if let (Some(address), Some(size)) =
+                    (integer(region, "address"), integer(region, "size"))
+                {
+                    let span = Span::new(address, address + size);
+                    if text(region, "confidence") == "proven" {
+                        proven.push(span);
+                    } else {
+                        draft.push(span);
+                    }
                 }
             }
         }
     }
     if let Some(value) = json(tree, "games/gs1/semantic/main-regions.json") {
         for region in array(&value, "non_c_ranges") {
-            let kind = text(region, "kind");
             if matches!(
-                kind.as_str(),
+                text(region, "kind").as_str(),
                 "literal_pool" | "alignment_padding" | "lookup_table"
             ) && !text(region, "evidence").trim().is_empty()
             {
-                if let (Some(a), Some(s)) = (address(region, "address"), integer(region, "size")) {
-                    spans.push(Span::new(a, a + s));
+                if let (Some(address), Some(size)) =
+                    (address(region, "address"), integer(region, "size"))
+                {
+                    proven.push(Span::new(address, address + size));
                 }
             }
         }
     }
-    normalize(&spans)
+    (normalize(&proven), normalize(&draft))
 }
-fn permanent_overlay(inventory: &[Region]) -> Vec<Span> {
-    normalize(
-        &inventory
-            .iter()
-            .filter(|r| {
-                matches!(
-                    r.kind.as_str(),
-                    "veneer" | "executable_alignment" | "hand_written_thumb"
-                )
-            })
-            .map(|r| r.span)
-            .collect::<Vec<_>>(),
-    )
-}
-fn permanent_overlay_evidence(tree: &SourceTree, executable: &SpanMap) -> Result<SpanMap, String> {
-    let Some(source) = tree.read("games/gs1/semantic/overlay-assembly.json") else {
-        return Ok(SpanMap::new());
-    };
+fn overlay_assembly_classification(
+    tree: &SourceTree,
+    inventory: &BTreeMap<String, Vec<Region>>,
+    executable: &SpanMap,
+) -> Result<(SpanMap, SpanMap), String> {
+    let source = tree
+        .read("games/gs1/semantic/overlay-assembly.json")
+        .ok_or_else(|| "overlay assembly classification is missing".to_string())?;
     let document: Value = serde_json::from_str(&source)
         .map_err(|error| format!("games/gs1/semantic/overlay-assembly.json: {error}"))?;
-    permanent_overlay_evidence_document(&document, executable)
+    overlay_assembly_classification_document(&document, inventory, executable)
 }
-fn permanent_overlay_evidence_document(
+fn overlay_assembly_classification_document(
     document: &Value,
+    inventory: &BTreeMap<String, Vec<Region>>,
     executable: &SpanMap,
-) -> Result<SpanMap, String> {
+) -> Result<(SpanMap, SpanMap), String> {
+    let mut proven: SpanMap = inventory
+        .iter()
+        .map(|(id, regions)| {
+            (
+                id.clone(),
+                normalize(
+                    &regions
+                        .iter()
+                        .filter(|region| {
+                            !region.evidence.trim().is_empty()
+                                && matches!(
+                                    region.kind.as_str(),
+                                    "veneer" | "executable_alignment" | "hand_written_thumb"
+                                )
+                        })
+                        .map(|region| region.span)
+                        .collect::<Vec<_>>(),
+                ),
+            )
+        })
+        .collect();
+    let mut draft = SpanMap::new();
     if integer(document, "format") != Some(1) {
-        return Err("overlay assembly evidence has unsupported format".into());
+        return Err("overlay assembly classification has unsupported format".into());
     }
-    let mut out = SpanMap::new();
-    for (index, row) in array(&document, "regions").iter().enumerate() {
+    for (index, row) in array(document, "regions").iter().enumerate() {
         let overlay = text(row, "overlay");
         let start = address(row, "start")
-            .ok_or_else(|| format!("overlay assembly region {index} has no start"))?;
+            .ok_or_else(|| format!("assembly classification {index} has no start"))?;
         let end = address(row, "end")
-            .ok_or_else(|| format!("overlay assembly region {index} has no end"))?;
+            .ok_or_else(|| format!("assembly classification {index} has no end"))?;
         let span = Span::new(start, end);
         let evidence = array(row, "evidence");
-        if overlay.is_empty()
-            || text(row, "kind").is_empty()
-            || text(row, "retention") != "keep_structured_asm"
-            || text(row, "confidence") != "proven"
+        if text(row, "retention") != "keep_structured_asm"
             || evidence.is_empty()
             || evidence
                 .iter()
                 .any(|item| !matches!(item.as_str(), Some(text) if !text.trim().is_empty()))
-            || span.end <= span.start
         {
             return Err(format!(
-                "overlay assembly region {index} lacks proven retention evidence"
+                "assembly classification {index} lacks retention reasoning"
             ));
         }
         let Some(exec) = executable.get(&overlay) else {
             return Err(format!(
-                "overlay assembly region {index} names unknown overlay {overlay}"
+                "assembly classification {index} names unknown overlay {overlay}"
             ));
         };
-        if bytes(&intersect(&[span], exec)) != span.bytes() {
+        if span.end <= span.start || bytes(&intersect(&[span], exec)) != span.bytes() {
             return Err(format!(
-                "overlay assembly region {index} lies outside audited executable bytes"
+                "assembly classification {index} lies outside audited executable bytes"
             ));
         }
-        out.entry(overlay).or_default().push(span);
-    }
-    for spans in out.values_mut() {
-        let raw = bytes(spans);
-        *spans = normalize(spans);
-        if bytes(spans) != raw {
-            return Err("overlay assembly evidence contains overlapping regions".into());
+        if text(row, "confidence") == "proven" {
+            proven.entry(overlay).or_default().push(span);
+        } else {
+            draft.entry(overlay).or_default().push(span);
         }
     }
-    Ok(out)
+    for spans in proven.values_mut() {
+        *spans = normalize(spans);
+    }
+    for spans in draft.values_mut() {
+        *spans = normalize(spans);
+    }
+    Ok((proven, draft))
 }
 fn partition(executable: &[Span], cuts: &[i64]) -> Vec<Span> {
     let mut out = Vec::new();
@@ -554,6 +575,7 @@ fn code_tile(
     spans: &[Span],
     exact: &[Span],
     semantic: &[Span],
+    draft_assembly: &[Span],
     retained: &[Span],
     group: Option<String>,
     address: Option<i64>,
@@ -565,10 +587,17 @@ fn code_tile(
         &subtract(spans, &[exact.to_vec(), semantic.to_vec()].concat()),
         retained,
     ));
+    let d = bytes(&intersect(
+        &subtract(
+            spans,
+            &[exact.to_vec(), semantic.to_vec(), retained.to_vec()].concat(),
+        ),
+        draft_assembly,
+    ));
     Tile {
         label,
         bytes: n,
-        categories: [e, s, (n - e - s - r).max(0), r, 0],
+        categories: [e, s, (n - e - s - d - r).max(0), d, r, 0],
         group,
         address,
         ..Tile::default()
@@ -578,6 +607,7 @@ fn main_tiles(
     executable: &[Span],
     exact: &[Span],
     semantic: &[Span],
+    draft_assembly: &[Span],
     retained: &[Span],
     boundaries: &[i64],
 ) -> Vec<Tile> {
@@ -598,6 +628,7 @@ fn main_tiles(
                 &[span],
                 exact,
                 semantic,
+                draft_assembly,
                 retained,
                 Some(bank),
                 Some(span.start),
@@ -610,6 +641,7 @@ fn overlay_tiles(
     executable: &[Span],
     owners: &[Owner],
     semantic: &[Span],
+    draft_assembly: &[Span],
     retained: &[Span],
 ) -> Vec<Tile> {
     let short = overlay_short(id);
@@ -625,9 +657,10 @@ fn overlay_tiles(
             continue;
         }
         out.push(code_tile(
-            format!("{short} · {} · byte-exact C", owner.label),
+            format!("{short} · {} · Proven C", owner.label),
             &span,
             &span,
+            &[],
             &[],
             &[],
             Some(short.into()),
@@ -636,20 +669,34 @@ fn overlay_tiles(
     }
     let residuals = [
         (
-            "tracked C",
+            "Draft C",
             intersect(&subtract(executable, &exact), semantic),
             semantic,
         ),
         (
-            "byte-exact assembly",
+            "Unknown",
             subtract(
                 executable,
-                &[exact.clone(), semantic.to_vec(), retained.to_vec()].concat(),
+                &[
+                    exact.clone(),
+                    semantic.to_vec(),
+                    draft_assembly.to_vec(),
+                    retained.to_vec(),
+                ]
+                .concat(),
             ),
             semantic,
         ),
         (
-            "Permanent ASM",
+            "Draft ASM",
+            subtract(
+                &intersect(executable, draft_assembly),
+                &[exact.clone(), semantic.to_vec(), retained.to_vec()].concat(),
+            ),
+            &[] as &[Span],
+        ),
+        (
+            "Proven ASM",
             subtract(&intersect(executable, retained), &exact),
             &[] as &[Span],
         ),
@@ -661,6 +708,7 @@ fn overlay_tiles(
                 &[span],
                 &exact,
                 tracked,
+                draft_assembly,
                 retained,
                 Some(short.into()),
                 Some(span.start),
@@ -673,6 +721,7 @@ fn bands(
     executable: &[Span],
     exact: &[Span],
     semantic: &[Span],
+    draft_assembly: &[Span],
     retained: &[Span],
     target: i64,
 ) -> Vec<Tile> {
@@ -695,6 +744,7 @@ fn bands(
                     &current,
                     exact,
                     semantic,
+                    draft_assembly,
                     retained,
                     None,
                     None,
@@ -709,6 +759,7 @@ fn bands(
             &current,
             exact,
             semantic,
+            draft_assembly,
             retained,
             None,
             None,
@@ -763,7 +814,7 @@ fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
         return vec![Tile {
             label: "Assets & data".into(),
             bytes: bytes(data),
-            categories: [0, 0, 0, 0, bytes(data)],
+            categories: [0, 0, 0, 0, 0, bytes(data)],
             ..Tile::default()
         }];
     };
@@ -793,7 +844,7 @@ fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
                 start
             ),
             bytes: actual,
-            categories: [0, 0, 0, 0, actual],
+            categories: [0, 0, 0, 0, 0, actual],
             group: Some(kind.clone()),
             address: Some(start),
             ..Tile::default()
@@ -808,7 +859,7 @@ fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
     }
     out
 }
-fn categories_json(values: &[i64; 5]) -> Value {
+fn categories_json(values: &[i64; 6]) -> Value {
     Value::Object(
         CATEGORIES
             .iter()
@@ -886,21 +937,9 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
     let exact_main = exact_main(options.exact, &options.target, &main_exec)?;
     let pairs = overlay_ids(options.exact);
     let (owners, exact_overlay) = exact_overlay(options.exact, &pairs, &overlay_exec)?;
-    let retained_main = permanent_main(options.exact);
-    let explicit_retained_overlay = permanent_overlay_evidence(options.exact, &overlay_exec)?;
-    let retained_overlay: SpanMap = overlay_regions
-        .iter()
-        .map(|(id, regions)| {
-            let mut spans = permanent_overlay(regions);
-            spans.extend(
-                explicit_retained_overlay
-                    .get(id)
-                    .cloned()
-                    .unwrap_or_default(),
-            );
-            (id.clone(), normalize(&spans))
-        })
-        .collect();
+    let (retained_main, draft_main) = main_assembly_classification(options.exact);
+    let (retained_overlay, draft_overlay) =
+        overlay_assembly_classification(options.exact, &overlay_regions, &overlay_exec)?;
     let (candidate_main, candidate_main_sources) = options
         .recon
         .map(|tree| candidate_main(tree, &main_exec))
@@ -935,6 +974,7 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
             &main_exec,
             &exact_main,
             &semantic_main,
+            &draft_main,
             &retained_main,
             &main.iter().map(|r| r.span.start).collect::<Vec<_>>(),
         ),
@@ -946,6 +986,7 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
             exec,
             mapped(&owners, id),
             mapped(&semantic_overlay, id),
+            mapped(&draft_overlay, id),
             mapped(&retained_overlay, id),
         ));
     }
@@ -963,6 +1004,7 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
             &main_exec,
             &exact_main,
             &semantic_main,
+            &draft_main,
             &retained_main,
             65536,
         ),
@@ -973,14 +1015,30 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
         let exact_part = scaled_bytes(stream.rom, decoded, mapped(&exact_overlay, &stream.id));
         let semantic_part =
             scaled_bytes(stream.rom, decoded, mapped(&semantic_overlay, &stream.id));
+        let retained_part =
+            scaled_bytes(stream.rom, decoded, mapped(&retained_overlay, &stream.id));
+        let draft_part = scaled_bytes(
+            stream.rom,
+            decoded,
+            &subtract(
+                mapped(&draft_overlay, &stream.id),
+                &[
+                    mapped(&exact_overlay, &stream.id).to_vec(),
+                    mapped(&semantic_overlay, &stream.id).to_vec(),
+                    mapped(&retained_overlay, &stream.id).to_vec(),
+                ]
+                .concat(),
+            ),
+        );
         stream_tiles.push(Tile {
             label: overlay_short(&stream.id).into(),
             bytes: stream.rom,
             categories: [
                 exact_part,
                 semantic_part,
-                stream.rom - exact_part - semantic_part,
-                0,
+                stream.rom - exact_part - semantic_part - draft_part - retained_part,
+                draft_part,
+                retained_part,
                 0,
             ],
             ..Tile::default()
@@ -1034,9 +1092,13 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
     let executable = bytes(&main_exec) + mapped_bytes(&overlay_exec);
     let retained = executable_areas
         .iter()
-        .map(|a| a.categories[Category::RetainedAsm as usize])
+        .map(|a| a.categories[Category::ProvenAsm as usize])
         .sum::<i64>();
-    let assembly = executable - exact_bytes - semantic_bytes - retained;
+    let draft_assembly = executable_areas
+        .iter()
+        .map(|area| area.categories[Category::DraftAsm as usize])
+        .sum::<i64>();
+    let assembly = executable - exact_bytes - semantic_bytes - draft_assembly - retained;
     let document = obj(vec![
         ("format", num(1)),
         ("kind", Value::String("golden-sun-rom-coverage-map".into())),
@@ -1047,10 +1109,11 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
         (
             "categories",
             obj(vec![
-                ("exact_c", entry(exact_bytes, executable)),
-                ("tracked_c", entry(semantic_bytes, executable)),
-                ("assembly", entry(assembly, executable)),
-                ("retained_asm", entry(retained, executable)),
+                ("proven_c", entry(exact_bytes, executable)),
+                ("draft_c", entry(semantic_bytes, executable)),
+                ("draft_asm", entry(draft_assembly, executable)),
+                ("unknown", entry(assembly, executable)),
+                ("proven_asm", entry(retained, executable)),
                 (
                     "asset_data",
                     obj(vec![
@@ -1064,16 +1127,16 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
             "main",
             obj(vec![
                 ("executable_bytes", num(bytes(&main_exec))),
-                ("exact_c_bytes", num(bytes(&exact_main))),
-                ("tracked_c_bytes", num(bytes(&semantic_main))),
+                ("proven_c_bytes", num(bytes(&exact_main))),
+                ("draft_c_bytes", num(bytes(&semantic_main))),
             ]),
         ),
         (
             "overlays",
             obj(vec![
                 ("executable_bytes", num(executable - bytes(&main_exec))),
-                ("exact_c_bytes", num(exact_overlay_bytes)),
-                ("tracked_c_bytes", num(semantic_overlay_bytes)),
+                ("proven_c_bytes", num(exact_overlay_bytes)),
+                ("draft_c_bytes", num(semantic_overlay_bytes)),
             ]),
         ),
         (
@@ -1093,8 +1156,20 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
                     num((candidate_main_sources + candidate_overlay_sources) as i64),
                 ),
                 (
-                    "main_tracked_census",
+                    "main_draft_census",
                     Value::String("games/gs1/recon/en/main/*.json".into()),
+                ),
+                (
+                    "proven_assembly_standard",
+                    Value::String("approved-compiler-non-emittable-with-reasoning".into()),
+                ),
+                (
+                    "main_assembly_classification",
+                    Value::String("out/gs1-en/full/asm/manifest.json".into()),
+                ),
+                (
+                    "overlay_assembly_classification",
+                    Value::String("games/gs1/semantic/overlay-assembly.json".into()),
                 ),
                 ("tracked_superseded_bytes", num(0)),
                 ("tracked_outside_extent_bytes", num(0)),
@@ -1121,18 +1196,19 @@ mod tests {
     use super::*;
     use serde_json::json;
     use std::collections::BTreeMap;
-    fn evidence(regions: Value) -> Value {
+
+    fn classification(regions: Value) -> Value {
         json!({"format": 1, "regions": regions})
     }
-    fn region(start: &str, end: &str) -> Value {
+    fn region(start: &str, end: &str, confidence: &str, evidence: Value) -> Value {
         json!({
             "overlay": "resource_test",
             "start": start,
             "end": end,
-            "kind": "compiler_ordering_module",
+            "kind": "thumb_multi_register_module",
             "retention": "keep_structured_asm",
-            "confidence": "proven",
-            "evidence": ["approved compiler probe"]
+            "confidence": confidence,
+            "evidence": evidence
         })
     }
     fn executable() -> BTreeMap<String, Vec<Span>> {
@@ -1140,6 +1216,9 @@ mod tests {
             "resource_test".into(),
             vec![Span::new(0x0200_0100, 0x0200_0200)],
         )])
+    }
+    fn no_inventory() -> BTreeMap<String, Vec<Region>> {
+        BTreeMap::new()
     }
     #[test]
     fn exact_ownership_fails_closed() {
@@ -1154,36 +1233,71 @@ mod tests {
         assert!(exact_main(&missing, "gs1-en", &executable).is_err());
     }
     #[test]
-    fn accepts_proven_overlay_assembly_inside_inventory() {
-        let found = permanent_overlay_evidence_document(
-            &evidence(json!([region("0x02000120", "0x02000140")])),
+    fn evidence_backed_proven_assembly_is_counted() {
+        let (found, draft) = overlay_assembly_classification_document(
+            &classification(json!([region(
+                "0x02000120",
+                "0x02000140",
+                "proven",
+                json!(["approved compiler cannot emit multi-register Thumb transfer"])
+            )])),
+            &no_inventory(),
             &executable(),
         )
         .unwrap();
+        assert!(draft.is_empty());
         assert_eq!(
             found["resource_test"],
             vec![Span::new(0x0200_0120, 0x0200_0140)]
         );
     }
     #[test]
-    fn rejects_overlay_assembly_outside_inventory() {
-        let error = permanent_overlay_evidence_document(
-            &evidence(json!([region("0x020000f0", "0x02000120")])),
+    fn strong_assembly_reasoning_remains_draft() {
+        let (proven, draft) = overlay_assembly_classification_document(
+            &classification(json!([region(
+                "0x02000120",
+                "0x02000140",
+                "strong",
+                json!(["instruction shape strongly suggests assembly"])
+            )])),
+            &no_inventory(),
+            &executable(),
+        )
+        .unwrap();
+        assert!(proven.values().all(Vec::is_empty));
+        assert_eq!(
+            draft["resource_test"],
+            vec![Span::new(0x0200_0120, 0x0200_0140)]
+        );
+    }
+    #[test]
+    fn rejects_assembly_classification_outside_inventory() {
+        let error = overlay_assembly_classification_document(
+            &classification(json!([region(
+                "0x020000f0",
+                "0x02000120",
+                "proven",
+                json!(["approved compiler cannot emit instruction form"])
+            )])),
+            &no_inventory(),
             &executable(),
         )
         .unwrap_err();
         assert!(error.contains("outside audited executable bytes"));
     }
     #[test]
-    fn rejects_overlapping_overlay_assembly_evidence() {
-        let error = permanent_overlay_evidence_document(
-            &evidence(json!([
-                region("0x02000120", "0x02000160"),
-                region("0x02000140", "0x02000180")
-            ])),
+    fn rejects_proven_assembly_without_reasoning() {
+        let error = overlay_assembly_classification_document(
+            &classification(json!([region(
+                "0x02000120",
+                "0x02000140",
+                "proven",
+                json!([])
+            )])),
+            &no_inventory(),
             &executable(),
         )
         .unwrap_err();
-        assert!(error.contains("overlapping regions"));
+        assert!(error.contains("lacks retention reasoning"));
     }
 }

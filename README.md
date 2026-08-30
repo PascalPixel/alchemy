@@ -15,11 +15,11 @@ Japanese and European-language editions of each game from the original
 cartridges, with Japanese as the canonical source base and the English
 _Golden Sun_ release as the first complete derived build target.
 
-## Status: 60% DONE
+## Status: 59% DONE
 
-![Main-game reconstruction coverage](games/gs1/assets/readme/gs1-en-core.svg?v=3cea8708aba759fd)
+![Main-game reconstruction coverage](games/gs1/assets/readme/gs1-en-core.svg?v=e95df74be3a8e612)
 
-![Code-overlay reconstruction coverage](games/gs1/assets/readme/gs1-en-overlays.svg?v=d87ba52369ba360b)
+![Code-overlay reconstruction coverage](games/gs1/assets/readme/gs1-en-overlays.svg?v=cc655c8a2c5ce8aa)
 
 ![Images and data naming coverage](games/gs1/assets/readme/gs1-en-images.svg?v=99ee1ca1feb9291e)
 
@@ -36,8 +36,10 @@ evidence.
 The repository contains one shared source tree per game rather than a copy for
 every language. `make targets` checks all twelve edition routes; `make verify`
 is the authoritative full-ROM gate for the current `gs1-en` target. Progress
-is measured by reconstructed bytes, and retained assembly counts as finished
-only when its permanent need is documented and its output is byte-identical.
+is measured by reconstructed bytes. Proven C compiles through the approved
+route to byte-identical output. Proven ASM requires clear, recorded evidence
+that the approved C compiler cannot produce the required form, together with a
+byte-exact assembly round trip. Draft classifications never count as DONE.
 
 This is a preservation and decompilation project—not a remake, ROM hack,
 emulator, or game distribution. No ROM is included. To build locally or help

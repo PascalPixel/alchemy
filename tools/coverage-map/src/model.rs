@@ -71,24 +71,26 @@ pub fn subtract(input: &[Span], cuts: &[Span]) -> Vec<Span> {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[repr(usize)]
 pub enum Category {
-    ExactC,
-    TrackedC,
-    Assembly,
-    RetainedAsm,
+    ProvenC,
+    DraftC,
+    Unknown,
+    DraftAsm,
+    ProvenAsm,
     AssetData,
 }
-pub const CATEGORIES: [(Category, &str, &str); 5] = [
-    (Category::Assembly, "assembly", "Raw assembly"),
-    (Category::TrackedC, "tracked_c", "Semantic C"),
-    (Category::RetainedAsm, "retained_asm", "Permanent ASM"),
-    (Category::ExactC, "exact_c", "Exact C"),
+pub const CATEGORIES: [(Category, &str, &str); 6] = [
+    (Category::Unknown, "unknown", "Unknown"),
+    (Category::DraftAsm, "draft_asm", "Draft ASM"),
+    (Category::DraftC, "draft_c", "Draft C"),
+    (Category::ProvenAsm, "proven_asm", "Proven ASM"),
+    (Category::ProvenC, "proven_c", "Proven C"),
     (Category::AssetData, "asset_data", "Data"),
 ];
 #[derive(Clone, Debug, Default)]
 pub struct Tile {
     pub label: String,
     pub bytes: i64,
-    pub categories: [i64; 5],
+    pub categories: [i64; 6],
     pub group: Option<String>,
     pub subgroup: Option<String>,
     pub address: Option<i64>,
@@ -98,11 +100,11 @@ pub struct Area {
     pub id: String,
     pub label: String,
     pub bytes: i64,
-    pub categories: [i64; 5],
+    pub categories: [i64; 6],
     pub tiles: Vec<Tile>,
 }
 pub fn area(id: &str, label: &str, tiles: Vec<Tile>) -> Area {
-    let mut categories = [0; 5];
+    let mut categories = [0; 6];
     let bytes = tiles.iter().map(|tile| tile.bytes).sum();
     for tile in &tiles {
         for (slot, value) in categories.iter_mut().zip(tile.categories) {

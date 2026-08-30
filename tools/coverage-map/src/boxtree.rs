@@ -5,7 +5,7 @@ use crate::sha1::sha1_hex;
 use crate::tree::root;
 
 pub const BOX_TREES: [&str; 4] = ["core", "overlays", "images", "music"];
-const RAW_ASSEMBLY: &str = "#d8d9df";
+const UNKNOWN: &str = "#d8d9df";
 
 fn base64(data: &[u8]) -> String {
     const TABLE: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -61,12 +61,13 @@ fn esc(value: &str) -> String {
 fn fill(tree: &str, category: Category) -> String {
     let (h, _, edge, _, _) = style(tree);
     match category {
-        Category::Assembly => format!("fill:{RAW_ASSEMBLY}"),
-        Category::TrackedC => format!("fill:hsl({} 52% 82%)", js_number_string(h)),
-        Category::RetainedAsm => {
+        Category::Unknown => format!("fill:{UNKNOWN}"),
+        Category::DraftAsm => format!("fill:hsl({} 34% 74%)", js_number_string(h)),
+        Category::DraftC => format!("fill:hsl({} 52% 82%)", js_number_string(h)),
+        Category::ProvenAsm => {
             format!("fill:hsl({} 58% 66%)", js_number_string(h))
         }
-        Category::ExactC | Category::AssetData => format!("fill:{edge}"),
+        Category::ProvenC | Category::AssetData => format!("fill:{edge}"),
     }
 }
 fn tree_tiles<'a>(map: &'a CoverageMap, tree: &str) -> (&'a Area, Vec<&'a Tile>) {
@@ -127,8 +128,8 @@ fn svg(tree: &str, map: &CoverageMap) -> String {
     let done_bytes: i64 = tiles
         .iter()
         .map(|tile| {
-            tile.categories[Category::ExactC as usize]
-                + tile.categories[Category::RetainedAsm as usize]
+            tile.categories[Category::ProvenC as usize]
+                + tile.categories[Category::ProvenAsm as usize]
         })
         .sum();
     let corner = if matches!(tree, "core" | "overlays") {
@@ -248,12 +249,13 @@ mod tests {
     use serde_json::Value;
 
     #[test]
-    fn code_tree_uses_four_ordered_progress_states_and_done_corner() {
-        let mut categories = [0; 5];
-        categories[Category::Assembly as usize] = 40;
-        categories[Category::TrackedC as usize] = 10;
-        categories[Category::RetainedAsm as usize] = 25;
-        categories[Category::ExactC as usize] = 25;
+    fn code_tree_uses_five_ordered_progress_states_and_done_corner() {
+        let mut categories = [0; 6];
+        categories[Category::Unknown as usize] = 25;
+        categories[Category::DraftAsm as usize] = 15;
+        categories[Category::DraftC as usize] = 10;
+        categories[Category::ProvenAsm as usize] = 25;
+        categories[Category::ProvenC as usize] = 25;
         let area = Area {
             id: "main-code".into(),
             label: "Main game".into(),
@@ -273,11 +275,15 @@ mod tests {
         };
         let rendered = svg("core", &map);
         assert!(rendered.contains("50.0% DONE"));
-        let raw = rendered.find("Raw assembly 40.0%").unwrap();
-        let semantic = rendered.find("Semantic C 10.0%").unwrap();
-        let permanent = rendered.find("Permanent ASM 25.0%").unwrap();
-        let exact = rendered.find("Exact C 25.0%").unwrap();
-        assert!(raw < semantic && semantic < permanent && permanent < exact);
+        let unknown = rendered.find("Unknown 25.0%").unwrap();
+        let draft_asm = rendered.find("Draft ASM 15.0%").unwrap();
+        let draft_c = rendered.find("Draft C 10.0%").unwrap();
+        let proven_asm = rendered.find("Proven ASM 25.0%").unwrap();
+        let proven_c = rendered.find("Proven C 25.0%").unwrap();
+        assert!(unknown < draft_asm);
+        assert!(draft_asm < draft_c);
+        assert!(draft_c < proven_asm);
+        assert!(proven_asm < proven_c);
         assert!(rendered.contains("legend-label"));
     }
 }

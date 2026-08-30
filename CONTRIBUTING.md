@@ -7,7 +7,8 @@ currently the only complete byte-identical build.
 
 The goal is readable, ordinary C that reproduces the shipped bytes. A plausible
 draft, a close compiler match, or a useful name is progress, but it is not DONE.
-Only byte-exact C and assembly proved permanent count.
+Only byte-exact C and assembly proved necessary by clear, recorded compiler or
+machine-code evidence count.
 
 ## Rules
 
@@ -36,10 +37,9 @@ Production C must compile through the recorded GCC 2.96 route. Do not use inline
 assembly, fixed-register variables, empty barriers, copied instructions, forced
 scheduling, or compiler patches to disguise an incorrect source model.
 
-Permanent assembly needs evidence that the approved compiler cannot emit the
-required instruction shape, or that the bytes are genuinely structural
-assembly such as a veneer, alignment, or runtime primitive. Record that reason
-in the appropriate main-image or overlay classification.
+Proven ASM requires clear reasoning that the approved C compiler cannot produce
+the required form, plus a byte-exact assembly round trip over the complete
+audited extent. A plausible instruction shape without that proof is Draft ASM.
 
 Never fill an unfinished build from the reference ROM.
 
@@ -134,7 +134,7 @@ for testing and provenance, not as public commands.
 | [core-retained-audit](tools/core-retained-audit/) | Verify retained main-image assembly classifications and extents. |
 | [coverage-map](tools/coverage-map/) | Build coverage metrics, SVGs, and dashboard data. |
 | [dashboard-server](tools/dashboard-server/) | Serve the local reconstruction dashboard. |
-| [full-c-progress](tools/full-c-progress/) | Report exact-C progress over audited executable intervals. |
+| [full-c-progress](tools/full-c-progress/) | Report Proven C and DONE progress over audited executable intervals. |
 | [no-asm-c](tools/no-asm-c/) | Enforce source boundaries between C and retained assembly. |
 
 ### Asset primitives
@@ -286,6 +286,15 @@ C anywhere stay retained assembly and appear in the manifest as holes. This
 is the pret discipline at function granularity — the hole is always a whole
 function, never `asm()` inside a C body, and DONE never counts a hole.
 
+“Proven” describes the reconstruction result, not access to Camelot's source.
+Proven C compiles through the approved route to byte-identical output. Proven
+ASM has a recorded non-emittability or structural-machine-code argument and a
+byte-exact assembly round trip. Main-image proof lives in the generated assembly
+manifest; overlay proof lives in `games/gs1/semantic/overlay-assembly.json`.
+Entries marked `strong` remain Draft ASM, and unclassified bytes remain
+Unknown. Missing reasoning, invalid extents, or stale generated evidence stops
+coverage generation rather than promoting the bytes.
+
 The point is authentic compile context. GCC 2.96 codegen depends on the
 translation unit around a function — symbol names, shared declarations,
 neighbors — so owners scored in isolation can shift when they later join
@@ -423,6 +432,14 @@ re-triages ordinary tracked candidate source with the current router, keeps
 absent candidates explicit, and records deterministic source, reference, and
 scoring-environment receipts. Aggregate-aware generated drafts remain wave
 output and do not affect this tracked-source scoreboard.
+
+Only `out/gs1-en/waves/bucket.json`, its `bucket/` owner receipts, and the
+current `draft/` cohort are live wave state. `inventory.json` is a diagnostic
+snapshot. Directories produced through an explicit `--output` path are
+disposable experiment records: no build, coverage, or later wave discovers or
+consumes them automatically. Keep a named record only while its verdict is
+still being reviewed; otherwise remove it and regenerate from repository
+source when needed.
 
 ## Validate and commit
 

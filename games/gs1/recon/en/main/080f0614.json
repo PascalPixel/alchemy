@@ -8,10 +8,10 @@
   "measured": "2026-08-30",
   "candidate_bytes": 100,
   "reference_bytes": 100,
-  "differing_halfwords": 26,
-  "wrong_instructions": 36,
+    "differing_halfwords": 21,
+    "wrong_instructions": 22,
   "class": "missing-extra-code",
-  "note": "The repaired aggregate-aware m2c reconstruction reaches the exact owner extent with equal branch topology. The residual is a register/lifetime allocation cascade around the two signed division-by-eight sequences and table lookup; it remains Draft C and claims zero DONE bytes."
+    "note": "The exact-extent reconstruction retains equal branch topology. Spelling both signed group calculations as ordinary division by eight reproduces GCC 2.96's rounding sequence directly and improves the residual from 26/36 to 21 differing halfwords / 22 wrong instructions. The remaining mismatch is the reference's separately retained raw current halfword plus downstream allocation; it remains Draft C and claims zero DONE bytes."
  },
  "notes": [
   "Recovered from the retained owner, the aggregate-aware m2c seed, and the approved compiler; the unrelated template winner was discarded.",

@@ -2,11 +2,12 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x080cbc0c",
+  "name": "BattleEffect_RunScreenShatter",
   "status": "measured-draft",
   "owner_bytes": 2508,
-  "candidate_bytes": 2396,
-  "differing_halfwords": 1202,
-  "wrong_instructions": 1257,
+  "candidate_bytes": 2408,
+  "differing_halfwords": 1201,
+  "wrong_instructions": 1243,
   "classification": "structural-reconstruction",
   "resolved_asm_classification": {
     "kind": "compiler_output",
@@ -14,9 +15,10 @@
     "confidence": "likely"
   },
   "notes": [
-    "2026-08-30: promoted the largest no-candidate main-ROM owner into the authored corpus after repairing the aggregate-aware m2c draft's seven concrete C type errors. The fresh canonical compiler route now produces 2396 bytes for the 2508-byte reference; topology differs and 1202 halfwords differ, so this claims zero DONE bytes and remains a measured draft.",
-    "The repaired errors were mechanical recovery issues: typed halfword stores to VRAM, typed IME halfword save/restore, and typed u16/u8 table reads. No instruction bytes, inline assembly, fixed-register variables, compiler barriers, or external decompilation sources were introduced.",
+    "2026-08-31: re-audited the wave repair and improved the measured draft from 2396/2508 bytes, 1202 differing halfwords, and 1257 wrong instructions to 2408/2508, 1201, and 1243. The correction preserves REG_IME's real saved value while using typed halfword access, uses byte-addressed arithmetic for the actor-data pointer, and types the three ROM tables as u16/u8/u8. The owner remains Draft C and claims zero DONE bytes.",
+    "The first structural divergence is now explicit: GCC allocates a 40-byte local frame while the reference allocates 56 bytes. Recover the missing stack-resident locals and their lifetimes before doing any allocation work.",
+    "The repaired errors were mechanical recovery issues: typed halfword stores to VRAM, typed IME halfword save/restore, byte-addressed aggregate-pointer arithmetic, and typed ROM table reads. No instruction bytes, inline assembly, fixed-register variables, compiler barriers, or external decompilation sources were introduced.",
     "The generated shared-aggregates.h context is evidence scaffolding shared by the corpus-wide aggregate miner, not a semantic naming authority. Its M2cAggregate names must be replaced with evidence-backed subsystem types as this owner is reconstructed.",
-    "The owner is a large battle-presentation routine using the 0x03001e74 and 0x03001eec work families, DMA queueing, palette interpolation, a 33-entry particle group, and a 128-frame presentation loop. A permanent semantic name is deferred until its caller/dispatch role is proved."
+    "The provisional semantic name describes the visible behavior rather than asserting a lost Camelot identifier: a large battle-presentation routine using the 0x03001e74 and 0x03001eec work families, DMA queueing, palette interpolation, a 33-entry particle group, tile fragments, and a 128-frame presentation loop."
   ]
 }

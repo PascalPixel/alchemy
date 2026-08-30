@@ -1429,6 +1429,9 @@
     "resource_3a8:02000aac": {
       "name": "FieldScene_RunStagedGroupSequence"
     },
+    "resource_3a8:020026c0": {
+      "name": "FieldScene_RunSecondaryGroupSequence"
+    },
     "resource_3a8:02003a3c": "overlays/orbiting_effect/initialize_orbiting_render_effect.c",
     "resource_3ab:02000030": "overlays/shared/set_effect_record_mode.c",
     "resource_3ab:02000104": "overlays/shared/integrate_effect_motion.c",

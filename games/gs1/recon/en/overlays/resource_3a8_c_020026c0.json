@@ -1,0 +1,24 @@
+{
+  "span_bytes": 2710,
+  "score": {
+    "measured": "2026-08-30",
+    "candidate_bytes": 2688,
+    "reference_bytes": 2756,
+    "wrong_instructions": 396,
+    "differing_halfwords": 1283,
+    "class": "generated-call-script-retention"
+  },
+  "shape": {
+    "calls": 248,
+    "loops": 0,
+    "memory_operations": 13
+  },
+  "verified_against_reference": [
+    "candidate and ROM contain the same 248 calls in machine order and all argument values are represented",
+    "direct assembly audit restored three returned-object field forwards and four fixed-point object-field initializers",
+    "the state-dependent branch now preserves its exclusive arms, workspace counter increment, and final words at offsets 448 and 456",
+    "approved GCC allocation and literal-pool scheduling changes the complete owner extent without an exact ordinary-C emission"
+  ],
+  "retention": "keep_structured_asm",
+  "note": "The complete 2756-byte owner is reconstructed here; this record covers its 2710-byte assembly-retained band at 0x020026c0–0x02003156."
+}

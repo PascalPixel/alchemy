@@ -1,9 +1,11 @@
 @ コード間隙関数の再構築サム逆アセンブル。範囲は
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
-.syntax unified
+	.syntax unified
 	.thumb
+	.global UiText_DrawCharacter
 	.global Func_08021d88
 	.thumb_func
+UiText_DrawCharacter:
 Func_08021d88:
 	push	{r5, r6, lr}
 	mov	r6, r8

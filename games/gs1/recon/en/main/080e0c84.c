@@ -1,5 +1,7 @@
 #include "types.h"
 
+#define BattleEffect_RunParticleReveal Func_080e0c84
+
 /*
  * Battle-presentation sub-effect at 0x080e0c84.
  *
@@ -77,7 +79,7 @@ void Func_08004278(void *callback);
 void Func_08002dd8(s32 id);
 void Func_080cdbc0(void);
 
-void Func_080e0c84(void *object)
+void BattleEffect_RunParticleReveal(void *object)
 {
     void **heap_cache;
     void **cursor;

@@ -5,7 +5,7 @@ use crate::sha1::sha1_hex;
 use crate::tree::root;
 
 pub const BOX_TREES: [&str; 4] = ["core", "overlays", "images", "music"];
-const ASM: &str = "#7dd3fc";
+const RAW_ASSEMBLY: &str = "#d8d9df";
 
 fn base64(data: &[u8]) -> String {
     const TABLE: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -58,26 +58,16 @@ fn esc(value: &str) -> String {
         .replace('>', "&gt;")
         .replace('"', "&quot;")
 }
-fn fill(tree: &str, category: Category, fraction: f64) -> String {
-    if category == Category::RetainedAsm {
-        return format!("fill:{ASM}");
+fn fill(tree: &str, category: Category) -> String {
+    let (h, _, edge, _, _) = style(tree);
+    match category {
+        Category::Assembly => format!("fill:{RAW_ASSEMBLY}"),
+        Category::TrackedC => format!("fill:hsl({} 52% 82%)", js_number_string(h)),
+        Category::RetainedAsm => {
+            format!("fill:hsl({} 58% 66%)", js_number_string(h))
+        }
+        Category::ExactC | Category::AssetData => format!("fill:{edge}"),
     }
-    if category == Category::TrackedC {
-        return "fill:#f4c95d".into();
-    }
-    let (h, okh, _, _, _) = style(tree);
-    let f = fraction.clamp(0.0, 1.0);
-    let light = 93.0 - 38.0 * f;
-    let sat = (f * 95.0).round();
-    format!(
-        "fill:hsl({} {}% {}%);fill:oklch({:.3} {:.3} {})",
-        js_number_string(h),
-        js_number_string(sat),
-        js_number_string(light.round()),
-        0.93 - 0.38 * f,
-        0.17 * f,
-        js_number_string(okh)
-    )
 }
 fn tree_tiles<'a>(map: &'a CoverageMap, tree: &str) -> (&'a Area, Vec<&'a Tile>) {
     let area = match tree {
@@ -109,7 +99,7 @@ fn tree_tiles<'a>(map: &'a CoverageMap, tree: &str) -> (&'a Area, Vec<&'a Tile>)
     (area, tiles)
 }
 fn svg(tree: &str, map: &CoverageMap) -> String {
-    let (area, tiles) = tree_tiles(map, tree);
+    let (_area, tiles) = tree_tiles(map, tree);
     let (h, _, edge, description, title) = style(tree);
     let frame = Rect {
         x: 3.0,
@@ -120,9 +110,9 @@ fn svg(tree: &str, map: &CoverageMap) -> String {
     let mut out = vec![format!("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 540 304\" width=\"540\" height=\"304\" shape-rendering=\"crispEdges\" role=\"img\" aria-label=\"{} box tree, {} band\">", description, edge)];
     out.push(format!("<title>{}</title>", esc(title)));
     if let Ok(bytes) = std::fs::read(root().join("games/gs1/assets/fonts/weyard.otf")) {
-        out.push(format!("<defs><style>@font-face{{font-family:Weyard;src:url(data:font/otf;base64,{}) format('opentype');font-style:italic;}}.weyard{{font-family:Weyard;font-size:16px;font-style:italic;fill:#fff;}}.rectangle-label{{font-size:8px;}}</style></defs>", base64(&bytes)));
+        out.push(format!("<defs><style>@font-face{{font-family:Weyard;src:url(data:font/otf;base64,{}) format('opentype');font-style:italic;}}.weyard{{font-family:Weyard;font-size:16px;font-style:italic;fill:#fff;}}.legend-label{{font-size:12px;}}.rectangle-label{{font-size:8px;}}</style></defs>", base64(&bytes)));
     } else {
-        out.push("<style>.weyard{font-family:monospace;font-size:16px;fill:#fff}.rectangle-label{font-size:8px}</style>".into());
+        out.push("<style>.weyard{font-family:monospace;font-size:16px;fill:#fff}.legend-label{font-size:12px}.rectangle-label{font-size:8px}</style>".into());
     }
     out.push(format!(
         "<rect x=\"0\" y=\"0\" width=\"540\" height=\"304\" fill=\"{}\" rx=\"8\"/>",
@@ -133,9 +123,25 @@ fn svg(tree: &str, map: &CoverageMap) -> String {
         "<text class=\"weyard\" x=\"6\" y=\"15\">{}</text>",
         esc(title)
     ));
+    let displayed_bytes: i64 = tiles.iter().map(|tile| tile.bytes).sum();
+    let done_bytes: i64 = tiles
+        .iter()
+        .map(|tile| {
+            tile.categories[Category::ExactC as usize]
+                + tile.categories[Category::RetainedAsm as usize]
+        })
+        .sum();
+    let corner = if matches!(tree, "core" | "overlays") {
+        format!(
+            "{:.1}% DONE",
+            100.0 * done_bytes as f64 / displayed_bytes.max(1) as f64
+        )
+    } else {
+        commas(displayed_bytes)
+    };
     out.push(format!(
         "<text class=\"weyard\" x=\"534\" y=\"15\" text-anchor=\"end\">{}</text>",
-        commas(area.bytes)
+        corner
     ));
     out.push(format!(
         "<rect x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\" fill=\"#fff\"/>",
@@ -174,7 +180,7 @@ fn svg(tree: &str, map: &CoverageMap) -> String {
                 y,
                 body.width,
                 height,
-                fill(tree, category, n as f64 / tile.bytes as f64)
+                fill(tree, category)
             ));
         }
         let name = (body.width - 6.0 >= 90.0 && body.height >= 12.0)
@@ -191,7 +197,6 @@ fn svg(tree: &str, map: &CoverageMap) -> String {
         }
         out.push("</g>".into());
     }
-    let displayed_bytes: i64 = tiles.iter().map(|tile| tile.bytes).sum();
     let mut legend_x = 6.0;
     for (category, _, name) in CATEGORIES {
         let category_bytes: i64 = tiles.iter().map(|t| t.categories[category as usize]).sum();
@@ -200,18 +205,17 @@ fn svg(tree: &str, map: &CoverageMap) -> String {
         }
         let percentage = 100.0 * category_bytes as f64 / displayed_bytes as f64;
         let display = format!("{name} {percentage:.1}%");
-        let fraction = category_bytes as f64 / displayed_bytes as f64;
         out.push(format!(
             "<rect x=\"{}\" y=\"288\" width=\"10\" height=\"10\" style=\"{}\"/>",
             legend_x,
-            fill(tree, category, fraction)
+            fill(tree, category)
         ));
         out.push(format!(
-            "<text class=\"weyard\" x=\"{}\" y=\"293\" dominant-baseline=\"middle\">{}</text>",
+            "<text class=\"weyard legend-label\" x=\"{}\" y=\"293\" dominant-baseline=\"middle\">{}</text>",
             legend_x + 14.0,
             esc(&display)
         ));
-        legend_x += 16.0 + display.chars().count() as f64 * 8.0;
+        legend_x += 16.0 + display.chars().count() as f64 * 6.0;
     }
     out.push("</svg>".into());
     out.join("\n") + "\n"
@@ -234,4 +238,46 @@ pub fn box_tree_path(target: &str, tree: &str) -> std::path::PathBuf {
     root()
         .join("games/gs1/assets/readme")
         .join(format!("{target}-{tree}.svg"))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::svg;
+    use crate::model::{Area, Category, Tile};
+    use crate::pipeline::CoverageMap;
+    use serde_json::Value;
+
+    #[test]
+    fn code_tree_uses_four_ordered_progress_states_and_done_corner() {
+        let mut categories = [0; 5];
+        categories[Category::Assembly as usize] = 40;
+        categories[Category::TrackedC as usize] = 10;
+        categories[Category::RetainedAsm as usize] = 25;
+        categories[Category::ExactC as usize] = 25;
+        let area = Area {
+            id: "main-code".into(),
+            label: "Main game".into(),
+            bytes: 100,
+            categories,
+            tiles: vec![Tile {
+                label: "owner".into(),
+                bytes: 100,
+                categories,
+                ..Tile::default()
+            }],
+        };
+        let map = CoverageMap {
+            document: Value::Null,
+            rom_areas: Vec::new(),
+            executable_areas: vec![area.clone(), area],
+        };
+        let rendered = svg("core", &map);
+        assert!(rendered.contains("50.0% DONE"));
+        let raw = rendered.find("Raw assembly 40.0%").unwrap();
+        let semantic = rendered.find("Semantic C 10.0%").unwrap();
+        let permanent = rendered.find("Permanent ASM 25.0%").unwrap();
+        let exact = rendered.find("Exact C 25.0%").unwrap();
+        assert!(raw < semantic && semantic < permanent && permanent < exact);
+        assert!(rendered.contains("legend-label"));
+    }
 }

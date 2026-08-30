@@ -60,7 +60,7 @@ CANDIDATE_SINGLE_OWNERS := \
 	080c0eb8=initialize_battle_transition_entries.c \
 	080f377c=initialize_title_palette_buffers.c
 
-.PHONY: help verify audit reports test lint lint-production lint-all-targets build-tools tool-tests tooling-size \
+.PHONY: help verify audit reports test lint lint-production lint-all-targets build-tools tool-tests tooling-size tooling-index-check \
 	build-claimed build-asm build-assets build-full build-rom \
 	standard-check pristine-options-check corpus-check core-retained-check \
 	full-rom-check overlay-check declared-tu-check owner-inventory-check strict-tu-check classification-check \
@@ -89,6 +89,7 @@ help:
 		'make build-assets     rebuild source assets' \
 		'make test             focused Rust tests and policy checks' \
 		'make tooling-size     enforce the portable-toolkit budget' \
+		'make tooling-index-check prove every tool is indexed exactly once' \
 		'make progress         print byte-exact progress' \
 		'make progress-subject print the required commit prefix' \
 		'make correspondence   match exact EN owners across GS1 editions' \
@@ -330,6 +331,21 @@ tooling-size:
 	fi; \
 	printf 'portable tooling ok: %s / %s lines\n' "$$lines" '$(TOOLING_LINE_LIMIT)'
 
+tooling-index-check:
+	@set -eu; \
+	actual=$$(mktemp /tmp/alchemy-tool-index.actual.XXXXXX); \
+	indexed=$$(mktemp /tmp/alchemy-tool-index.indexed.XXXXXX); \
+	duplicates=$$(mktemp /tmp/alchemy-tool-index.duplicates.XXXXXX); \
+	trap 'rm -f "$$actual" "$$indexed" "$$duplicates"' EXIT; \
+	{ find tools -mindepth 2 -maxdepth 2 -name Cargo.toml -print | sed 's#tools/##;s#/Cargo.toml##'; \
+	  find tools -mindepth 2 -maxdepth 2 -type f \( -name '*.ts' -o -name '*.js' -o -name '*.py' -o -name '*.sh' \) -print | sed 's#tools/##;s#/[^/]*$$##'; \
+	} | sort -u > "$$actual"; \
+	awk -F '[()]' '/^## Tooling index/ { inside=1; next } /^## Owners and names/ { inside=0 } inside && /^\| \[/ { sub(/^tools\//, "", $$2); sub(/\/$$/, "", $$2); print $$2 }' CONTRIBUTING.md | sort > "$$indexed"; \
+	uniq -d "$$indexed" > "$$duplicates"; \
+	test ! -s "$$duplicates" || { printf 'tooling index duplicates:\n'; cat "$$duplicates"; exit 1; }; \
+	diff -u "$$actual" "$$indexed"; \
+	printf 'tooling index ok: %s tools\n' "$$(wc -l < "$$actual" | tr -d ' ')"
+
 lint: lint-all-targets
 
 lint-production: standard-check
@@ -344,13 +360,13 @@ lint-all-targets: standard-check pristine-options-check
 	done
 	$(CHECK) no-asm
 
-test: lint tooling-size tool-tests
+test: lint tooling-size tooling-index-check tool-tests
 	$(CHECK) publication --self-test
 	$(CHECK) commit-progress --self-test
 	$(CHECK) progress --self-test
 	$(CHECK) no-asm --self-test
 
-verify: index-sync-check source-tracking-check corpus-check lint-production tooling-size \
+verify: index-sync-check source-tracking-check corpus-check lint-production tooling-size tooling-index-check \
 	strict-tu-check check-owners core-retained-check coverage-check | $(REPORT_DIR)
 	@tree=$$(git write-tree) || exit; \
 	printf '%s\n' "$$tree" > $(VERIFIED_TREE).tmp; \

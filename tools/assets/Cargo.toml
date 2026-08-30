@@ -9,7 +9,7 @@ edition = "2021"
 [dependencies]
 # Archival extractors, now linked as libraries. They are the provenance record
 # for committed assets, so they must survive; they simply do not need to be
-# separate executables. See docs/ENTRY-POINTS.md.
+# separate executables. See ../../CONTRIBUTING.md#tooling-index.
 wordstream = { path = "../wordstream" }
 pairtable = { path = "../pairtable" }
 indexed-still = { path = "../indexed-still" }

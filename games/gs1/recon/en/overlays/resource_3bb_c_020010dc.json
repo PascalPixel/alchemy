@@ -1,0 +1,11 @@
+{
+  "span_bytes": 508,
+  "score": {"measured":"2026-08-30","candidate_bytes":526,"reference_bytes":508,"wrong_instructions":128,"differing_halfwords":242,"class":"generated-call-script-retention"},
+  "shape": {"calls":47,"loops":0,"memory_operations":9},
+  "verified_against_reference": [
+    "all 47 calls and their arguments are represented in ROM order across the complete callable owner",
+    "direct assembly and literal-pool audit restored input-actor handling, coordinate-relative placement, three actor-coordinate lookups, and all closing position updates",
+    "approved GCC allocates the long-lived actor coordinates differently after all decoded effects are represented"
+  ],
+  "retention": "keep_structured_asm"
+}

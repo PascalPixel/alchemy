@@ -1,0 +1,11 @@
+{
+  "span_bytes": 262,
+  "score": {"measured":"2026-08-30","candidate_bytes":276,"reference_bytes":262,"wrong_instructions":56,"differing_halfwords":134,"class":"generated-call-script-retention"},
+  "shape": {"calls":27,"loops":0,"memory_operations":1},
+  "verified_against_reference": [
+    "all 27 calls and their arguments are represented in ROM order across the complete callable owner",
+    "direct audit restored the scene-progress early return, actor operation result branches, literal-backed presentation calls, and common cleanup dispatch",
+    "the residual is compiler allocation and literal scheduling after the complete control-flow shape is restored"
+  ],
+  "retention": "keep_structured_asm"
+}

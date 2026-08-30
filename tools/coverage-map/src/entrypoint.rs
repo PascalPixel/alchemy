@@ -128,7 +128,7 @@ fn summary(doc: &Value) -> Result<String, String> {
         number(field(doc, &["categories", "draft_c", "percent_of_executable"])),
         commas(ceiling as i64),
         number(percent),
-        get(get(doc, "provenance").unwrap_or(&Value::Null), "tracked_source").and_then(Value::as_str).unwrap_or("undefined")
+        get(get(doc, "provenance").unwrap_or(&Value::Null), "draft_source").and_then(Value::as_str).unwrap_or("undefined")
     ))
 }
 fn readme_metrics(proven_c: f64, proven_asm: f64, executable: f64) -> String {

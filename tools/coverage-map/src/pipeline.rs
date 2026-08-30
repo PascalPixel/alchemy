@@ -1142,9 +1142,9 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
         (
             "provenance",
             obj(vec![
-                ("exact_source", Value::String(options.exact.id().into())),
+                ("proven_source", Value::String(options.exact.id().into())),
                 (
-                    "tracked_source",
+                    "draft_source",
                     Value::String(
                         options
                             .recon
@@ -1152,7 +1152,7 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
                     ),
                 ),
                 (
-                    "tracked_sources",
+                    "draft_sources",
                     num((candidate_main_sources + candidate_overlay_sources) as i64),
                 ),
                 (
@@ -1171,9 +1171,9 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
                     "overlay_assembly_classification",
                     Value::String("games/gs1/semantic/overlay-assembly.json".into()),
                 ),
-                ("tracked_superseded_bytes", num(0)),
-                ("tracked_outside_extent_bytes", num(0)),
-                ("tracked_unresolved", Value::Array(Vec::new())),
+                ("draft_superseded_bytes", num(0)),
+                ("draft_outside_extent_bytes", num(0)),
+                ("draft_unresolved", Value::Array(Vec::new())),
             ]),
         ),
         (

@@ -6,18 +6,18 @@ s32 UiIcon_DrawWithFlags(s32 entry_no, s32 flags, s32 first, s32 second, s32 thi
 extern u8 Data_080aea4c[];
 s32 UiIcon_CreateWithResourceVariant(s32 first, s32 second, s32 third)
 {
-  s32 temp_r0;
-  unsigned char new_var;
-  int new_var2;
-  s32 var_r6;
-  var_r6 = 0;
-  var_r6 = 0;
-  temp_r0 = Resource_FindFreeSlot();
-  new_var2 = 0x80;
-  if (temp_r0 != 0)
+  s32 slot;
+  unsigned char copy_mode;
+  int resource_mode;
+  s32 icon;
+  icon = 0;
+  icon = 0;
+  slot = Resource_FindFreeSlot();
+  resource_mode = 0x80;
+  if (slot != 0)
   {
-    Resource_CopyData(temp_r0, new_var = new_var2, Data_080aea4c);
-    var_r6 = UiIcon_DrawWithFlags(temp_r0, 0x40000000, first, second, third);
+    Resource_CopyData(slot, copy_mode = resource_mode, Data_080aea4c);
+    icon = UiIcon_DrawWithFlags(slot, 0x40000000, first, second, third);
   }
-  return var_r6;
+  return icon;
 }

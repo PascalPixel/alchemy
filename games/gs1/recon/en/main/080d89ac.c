@@ -70,12 +70,17 @@ typedef s64 M2C_UNK64;
 #endif
 
 void **Func_080b5098(s32 actor_id);
+void Func_080de2f8(void *, s32, s32, s32, s32 *, s32 *);
+typedef void (*DrawRectangleFn)(
+    void *, const void *, s32, s32, s32, s32);
 
 #define BattleEffectA Func_080d89ac
 
 void BattleEffectA(s32 arg0, u32 arg1) {
-    u32 *sp0;                                       /* compiler-managed */
-    s32 *sp4;                                       /* compiler-managed */
+    void **heap_base;
+    void **heap_cursor;
+    u32 *sp0;
+    s32 *sp4;
     s32 sp8;
     s32 spC;
     s32 sp10;
@@ -84,7 +89,7 @@ void BattleEffectA(s32 arg0, u32 arg1) {
     u32 **sp1C;
     u8 *sp20;
     struct M2cAggregate_deref_absolute_03001e80_0 *sp24;
-    u32 **sp28;
+    DrawRectangleFn callbacks[2];
     s32 sp2C;
     s32 sp30;
     s32 sp34;
@@ -154,25 +159,25 @@ void BattleEffectA(s32 arg0, u32 arg1) {
     void *temp_r6_599;
     void *temp_r7_508;
 
-    sp48 = M2C_FIELD(&absolute_03001eec, void **, 0);
-    sp44 = absolute_03001eec.field_0004;
-    sp38 = absolute_03001eec.field_0008;
+    heap_base = (void **)0x03001EEC;
+    heap_cursor = heap_base;
+    sp48 = *heap_cursor++;
+    sp44 = *heap_cursor;
+    sp38 = heap_base[2];
     temp_r5_27 = M2C_FIELD(&absolute_03001eec, void **, 0) + 0x7828;
     sp30 = 0;
-    M2C_FIELD(M2C_FIELD(&absolute_03001eec, void **, 0), s32 *, 0x7828) = arg0;
+    *temp_r5_27 = (void *)arg0;
     Func_080cd594(0);
     temp_r5_33 = *temp_r5_27;
     if (M2C_FIELD(temp_r5_33, s32 *, 0x1C) == 1) {
         temp_r3_39 = 6 ^ arg1;
         temp_r1_44 = 2 - ((u32) ((0 - temp_r3_39) | temp_r3_39) >> 0x1F);
         if ((arg1 == 6) || (arg1 == 0)) {
-            sp0 = &sp58;
-            sp4 = &sp54;
-            Func_080de2f8(arg0, temp_r1_44, M2C_FIELD(temp_r5_33, s32 *, 4), 0);
+            Func_080de2f8(arg0, temp_r1_44,
+                M2C_FIELD(temp_r5_33, s32 *, 4), 0, &sp58, &sp54);
         } else {
-            sp0 = &sp58;
-            sp4 = &sp54;
-            Func_080de2f8(arg0, temp_r1_44, M2C_FIELD(temp_r5_33, s32 *, 4), 1);
+            Func_080de2f8(arg0, temp_r1_44,
+                M2C_FIELD(temp_r5_33, s32 *, 4), 1, &sp58, &sp54);
         }
         M2C_FIELD(M2C_FIELD(sp48, void **, 0x7828), s32 *, 0x18) = 0;
     }
@@ -212,9 +217,8 @@ void BattleEffectA(s32 arg0, u32 arg1) {
         var_r0_169 = 0x92;
     }
     Func_08005340(Func_08002f40(var_r0_169) + 0x80, sp48 + 0x1000);
-    temp_r3_198 = &sp0 + 0x4C;
-    sp28 = temp_r3_198;
-    Func_080cef64(M2C_FIELD(M2C_FIELD(sp48, void **, 0x7828), s32 *, 4), temp_r3_198);
+    Func_080cef64(M2C_FIELD(M2C_FIELD(sp48, void **, 0x7828), s32 *, 4),
+        callbacks);
     switch (arg1) {                                 /* switch 1; irregular */
     case 0:                                         /* switch 1 */
     case 6:                                         /* switch 1 */
@@ -322,11 +326,13 @@ loop_55:
             temp_r7_508 = sp48 + 0x1000;
             sp0 = (u32 *)0x28;
             sp4 = (s32 *)0x28;
-            Func_080072f4(sp44, temp_r7_508, temp_r8_489, var_r5_497);
+            callbacks[0](sp44, temp_r7_508, temp_r8_489, var_r5_497,
+                0x28, 0x28);
             if (var_fp_449 <= 3) {
                 sp0 = (u32 *)0x28;
                 sp4 = (s32 *)0x28;
-                Func_080072f4(sp44, temp_r7_508, temp_r8_489, var_r5_497);
+                callbacks[1](sp44, temp_r7_508, temp_r8_489, var_r5_497,
+                    0x28, 0x28);
             }
         } else {
             temp_r9_580 = (((s32) (Func_08002322((u16) spC) * 0xA) >> 0x10) + ((s32) (sp58 + (sp58 >> 0x1F)) >> 1)) - 0xA;
@@ -337,11 +343,13 @@ loop_55:
             temp_r6_599 = sp48 + 0x1000;
             sp0 = (u32 *)0x14;
             sp4 = (s32 *)0x28;
-            Func_080072f4(sp44, temp_r6_599, temp_r9_580, var_r5_588);
+            callbacks[0](sp44, temp_r6_599, temp_r9_580, var_r5_588,
+                0x14, 0x28);
             if (var_fp_449 <= 3) {
                 sp0 = (u32 *)0x14;
                 sp4 = (s32 *)0x28;
-                Func_080072f4(sp44, temp_r6_599, temp_r9_580, var_r5_588);
+                callbacks[1](sp44, temp_r6_599, temp_r9_580, var_r5_588,
+                    0x14, 0x28);
             }
         }
         sp3C = 0;
@@ -367,7 +375,7 @@ loop_72:
             }
             if (var_fp_449 == (temp_r3_656 + 0x24)) {
                 sp0 = (u32 *)0x1C;
-                Func_080d6888(*(s16 *)((u8 *)M2C_FIELD(sp48, void **, 0x7828) + sp10), 7, -1, sp3C);
+                Func_080d6888(*(s16 *)((u8 *)M2C_FIELD(sp48, void **, 0x7828) + sp10), 7, -1, sp3C, 0x1C);
             }
             if (var_fp_449 <= temp_r3_656) {
 
@@ -452,13 +460,13 @@ loop_90:
                                 temp_r4_875 = temp_r0_873 >> 1;
                                 sp0 = (u32 *) temp_r0_873;
                                 sp4 = (s32 *) temp_r0_873;
-                                Func_080072f4(sp44, sp48 + *(u16 *)(0x080EDE84 + (var_r4_848 * 2)), M2C_FIELD(&sp68, s32 *, 0) - temp_r4_875, M2C_FIELD(&sp68, s32 *, 4) - temp_r4_875);
+                                callbacks[1](sp44, sp48 + *(u16 *)(0x080EDE84 + (var_r4_848 * 2)), M2C_FIELD(&sp68, s32 *, 0) - temp_r4_875, M2C_FIELD(&sp68, s32 *, 4) - temp_r4_875, temp_r0_873, temp_r0_873);
                                 break;
                             default:                /* switch 3 */
                                 temp_r0_887 = var_r4_848 * 2;
                                 sp4 = (s32 *)temp_r0_887;
                                 sp0 = (u32 *)var_r4_848;
-                                Func_080072f4(sp44, sp38 + *(u16 *)(0x080EDE48 + (s32) (temp_r0_887 - 2)), M2C_FIELD(&sp68, s32 *, 0) - ((s32) (var_r4_848 + (var_r4_848 >> 0x1F)) >> 1), M2C_FIELD(&sp68, s32 *, 4) - var_r4_848);
+                                callbacks[1](sp44, sp38 + *(u16 *)(0x080EDE48 + (s32) (temp_r0_887 - 2)), M2C_FIELD(&sp68, s32 *, 0) - ((s32) (var_r4_848 + (var_r4_848 >> 0x1F)) >> 1), M2C_FIELD(&sp68, s32 *, 4) - var_r4_848, var_r4_848, temp_r0_887);
                                 break;
                             }
                             if ((arg1 <= 2U) || (arg1 == 6)) {

@@ -4,9 +4,9 @@
   "address": "0x080d91dc",
   "status": "measured-draft",
   "owner_bytes": 2268,
-  "candidate_bytes": 2100,
-  "differing_halfwords": 1119,
-  "wrong_instructions": 1056,
+  "candidate_bytes": 2188,
+  "differing_halfwords": 1093,
+  "wrong_instructions": 970,
   "classification": "structural-reconstruction",
   "resolved_asm_classification": {
     "kind": "compiler_output",
@@ -14,6 +14,7 @@
     "confidence": "likely"
   },
   "notes": [
+    "2026-08-30: removed the same m2c calling-convention artifacts found in the sibling. The shared-work cursor now emits the reference ldmia load; the opening irregular switch is expressed as the reference's 3 / (2 or 4) / default if-chain; Func_080de2f8 receives both output pointers; and every recovered five- or six-argument presentation call now passes its former fake sp0/sp4 values as real arguments. The candidate grew from 2100 to 2188 of 2268 bytes, differing halfwords fell 1119 to 1093, and wrong instructions fell 1056 to 970.",
     "2026-08-30: promoted the next-largest remaining no-candidate main-ROM owner after repairing its aggregate-aware m2c draft. A fresh canonical compile produces 2100 bytes for the 2268-byte reference; topology differs and 1119 halfwords differ, so this remains a measured draft and claims zero DONE bytes.",
     "Mechanical repairs recovered the signed-halfword party-member table reads, the direct battle-context return from Func_080b5098, the u16 sprite-offset table at 0x080ede5c, and the paired stack coordinates written by Func_080e3944. No instruction bytes, inline assembly, fixed-register variables, barriers, or external decompilation sources were used.",
     "The existing BattleEffectB registration identifies a shared six-mode battle presentation entry. Its large frame loop updates a 512-element motion field and draws party-linked objects through several phase windows; a more specific permanent name remains deferred until the effect dispatch table is semantically identified."

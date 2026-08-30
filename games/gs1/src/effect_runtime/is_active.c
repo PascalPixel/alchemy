@@ -3,16 +3,16 @@
 
 u32 EffectRuntime_IsActive(void)
 {
-  s16 temp_r3_2;
-  u32 var_r0;
-  void *temp_r3;
-  temp_r3 = *((void **) ADDR_03001EBC);
-  var_r0 = 0;
-  if (temp_r3 != ((void *) 0))
+  s16 active_count;
+  u32 is_active;
+  void *runtime;
+  runtime = *((void **) ADDR_03001EBC);
+  is_active = 0;
+  if (runtime != ((void *) 0))
   {
-    temp_r3_2 = *((s16 *) (((u8 *) temp_r3) + 0xCB8));
-    var_r0 = (u32) ((0 - temp_r3_2) | temp_r3_2);
-    var_r0 = var_r0 >> 0x1F;
+    active_count = *((s16 *) (((u8 *) runtime) + 0xCB8));
+    is_active = (u32) ((0 - active_count) | active_count);
+    is_active = is_active >> 0x1F;
   }
-  return var_r0;
+  return is_active;
 }

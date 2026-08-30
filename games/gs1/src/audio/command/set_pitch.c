@@ -1,11 +1,17 @@
 #include "types.h"
 
 void MusicPlayer_SetPitch(u8 *state, u32 maskArg, u32 valueArg);
-void MusicCommand_SetPitch(s16 arg0)
+void MusicCommand_SetPitch(s16 pitch)
 {
-  int new_var;
-  int new_var3;
-  s16 new_var2;
-  new_var = 0x02004290;
- do { new_var2 = arg0; new_var3 = 0xFF; MusicPlayer_SetPitch(new_var, new_var3, new_var2); } while (0);
+  int player_address;
+  int channel_mask;
+  s16 pitch_value;
+  player_address = 0x02004290;
+  do
+  {
+    pitch_value = pitch;
+    channel_mask = 0xFF;
+    MusicPlayer_SetPitch(player_address, channel_mask, pitch_value);
+  }
+  while (0);
 }

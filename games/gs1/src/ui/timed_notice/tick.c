@@ -5,18 +5,18 @@ s32 ScheduleCallback(s32);
 void UiWork_Finalize(struct Work *work, s32 release);
 void UiTimedNotice_Tick(void)
 {
-  void *new_var2;
-  s32 *new_var;
-  u16 temp_r3;
-  void *temp_r1;
-  int new_var3;
-  temp_r1 = *((void **) ADDR_03001EBC);
-  new_var2 = temp_r1;
-  *((u16 *) (((u8 *) new_var2) + 0x234)) = (temp_r3 = (*((u16 *) (((u8 *) new_var2) + 0x234))) + 0xFFFF);
-  new_var3 = 0;
-  if ((temp_r3 << 0x10) == new_var3)
+  void *notice_state;
+  s32 *work_slot;
+  u16 remaining_ticks;
+  void *state;
+  int zero;
+  state = *((void **) ADDR_03001EBC);
+  notice_state = state;
+  *((u16 *) (((u8 *) notice_state) + 0x234)) = (remaining_ticks = (*((u16 *) (((u8 *) notice_state) + 0x234))) + 0xFFFF);
+  zero = 0;
+  if ((remaining_ticks << 0x10) == zero)
   {
-    UiWork_Finalize(*(new_var = (s32 *) (((u8 *) new_var2) + 0x230)), 2);
+    UiWork_Finalize(*(work_slot = (s32 *) (((u8 *) notice_state) + 0x230)), 2);
     ScheduleCallback((s32)UiTimedNotice_Tick);
   }
 }

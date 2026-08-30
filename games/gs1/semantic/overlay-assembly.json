@@ -3029,6 +3029,18 @@
         "complete reconstruction accounts for all 95 calls, four actor-coordinate lookups, both conditional presentation paths, and every literal-backed sequence identifier",
         "games/gs1/recon/en/overlays/resource_3ad_c_020004a8.json"
       ]
+    },
+    {
+      "overlay": "resource_3b1",
+      "start": "0x02001b34",
+      "end": "0x02001f3c",
+      "kind": "generated_call_script_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "complete reconstruction accounts for all 107 calls, the guarded entry, three actor presentation phases, and both actor flag updates",
+        "games/gs1/recon/en/overlays/resource_3b1_c_02001b34.json"
+      ]
     }
   ]
 }

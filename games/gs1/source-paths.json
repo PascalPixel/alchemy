@@ -5476,6 +5476,9 @@
     "resource_3ad:020004a8": {
       "name": "FieldScene_RunMultiActorPresentation"
     },
+    "resource_3b1:02001b34": {
+      "name": "FieldScene_RunThreeActorPresentation"
+    },
     "main:080a46b4": {
       "name": "Item_ClassifyUseMode",
       "source": "items/classify_use_mode.c"

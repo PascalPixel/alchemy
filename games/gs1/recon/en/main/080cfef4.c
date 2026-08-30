@@ -57,7 +57,9 @@ void Func_080f9010(s32 cue);
 void Func_08009150(void *object, s32 a, s32 b, s32 c);
 void Func_080b5040(s32 a, s32 b, s32 c);
 
-void Func_080cfef4(void *object)
+#define BattleEffect_RunCounterReveal Func_080cfef4
+
+void BattleEffect_RunCounterReveal(void *object)
 {
     void **heap_cache;
     void **cursor;

@@ -1,5 +1,6 @@
 #include "types.h"
 #include "gs1_edition.h"
+#include "inn_runtime.h"
 #include "shop.h"
 
 #if defined(GS1_EDITION_JA)
@@ -14,17 +15,6 @@ enum InnMessageId {
     INN_MESSAGE_NOT_ENOUGH_COINS,
     INN_MESSAGE_GOODBYE,
     INN_MESSAGE_REST_COMPLETE,
-};
-
-struct InnRuntimeState {
-    u8 padding_000[0x0c];
-    s32 window;
-    u8 padding_010[0x394];
-    u16 resource_id;
-    u8 padding_3a6[3];
-    u8 active;
-    u8 padding_3aa[2];
-    u8 special_active;
 };
 
 struct InnGlobalState {
@@ -42,7 +32,6 @@ struct InnObject {
     struct InnObjectComponent *component;
 };
 
-extern struct InnRuntimeState *Data_03001f2c;
 extern struct InnGlobalState Data_02000240;
 extern char Value_00000d1c;
 

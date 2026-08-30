@@ -7,7 +7,6 @@ s16 *Runtime_BumpAllocateAlternatePool(s32 arg0)
 {
     s32 allocator_state_address = ADDR_03001E50;
     u32 alternate_next_address;
-    u32 temp_r0;
     u32 primary_next_address;
     u32 allocation_address;
     u32 aligned_words = ((u32)arg0 + 3) >> 2;

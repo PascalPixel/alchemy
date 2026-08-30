@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080eb754",
+  "status": "measured-draft",
+  "owner_bytes": 2444,
+  "candidate_bytes": 2264,
+  "differing_halfwords": 1194,
+  "wrong_instructions": 1067,
+  "classification": "structural-topology",
+  "resolved_asm_classification": {
+    "kind": "compiler_output",
+    "retention": "c_candidate",
+    "confidence": "likely"
+  },
+  "notes": [
+    "2026-08-30: promoted the second-largest no-candidate main-ROM owner after repairing the aggregate-aware m2c draft's concrete invalid type expressions. A fresh canonical compile produces 2264 bytes for the 2444-byte reference; topology differs and 1194 halfwords differ, so this remains a measured draft and claims zero DONE bytes.",
+    "Repairs were mechanical: resolve the work pointer at 0x03001eec, use typed GBA register halfword stores, add typed u8/u16 ROM-table loads, and model member-id reads as signed halfwords at dynamic offsets. No instruction bytes, inline assembly, fixed-register variables, barriers, or external decompilation sources were used.",
+    "The function is a large battle-presentation routine with a 0x03001eec work block, 64-entry and 320-entry particle pools, palette and window effects, member-triggered emissions, and a 96-frame main loop. A permanent name is deferred until caller and dispatch evidence identifies the presentation."
+  ]
+}

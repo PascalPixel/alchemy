@@ -1,0 +1,11 @@
+{
+  "span_bytes": 632,
+  "score": {"measured":"2026-08-30","candidate_bytes":638,"reference_bytes":632,"wrong_instructions":70,"differing_halfwords":225,"class":"generated-call-script-retention"},
+  "shape": {"calls":61,"loops":0,"branches":4,"memory_operations":15},
+  "verified_against_reference": [
+    "all 61 calls and their arguments are represented in ROM order across the complete owner",
+    "direct assembly audit restored the signed scene-selector branch, selected-actor forwarding, three shared-object flag updates, and workspace states 513 and 521",
+    "the candidate is six bytes longer after complete decoded control flow and effects are represented; the residual is approved GCC allocation and literal scheduling"
+  ],
+  "retention": "keep_structured_asm"
+}

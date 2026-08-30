@@ -1803,6 +1803,29 @@
    ]
   },
   {
+   "kind": "regional_field_effect_allocation",
+   "origin": "regional_compiler_output",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_english_owner_extent",
+    "same_compiled_c_object_is_byte_exact_for_the_japanese_owner",
+    "japanese_raw_diff_bytes_and_core_diff_bytes_are_zero",
+    "english_residual_is_six_nonrelocation_core_bytes_in_one_localized_reciprocal_register_role_family",
+    "shared_failure_tail_reconstructs_both_reference_branches_and_equal_control_flow_topology",
+    "all_calls_literals_memory_operations_and_observable_behavior_match",
+    "allocator_decoder_identifies_the_role_swap_but_no_unique_safe_source_edit",
+    "finite_catalog_permuter_reports_no_applicable_single_reciprocal_site",
+    "inline_assembly_fixed_registers_and_forced_allocation_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 376,
+   "files": [
+    "08093e28"
+   ]
+  },
+  {
    "kind": "regional_compiler_scheduling",
    "origin": "regional_compiler_output",
    "retention": "keep_structured_asm",

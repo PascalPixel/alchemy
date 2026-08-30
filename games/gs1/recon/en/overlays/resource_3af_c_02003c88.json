@@ -1,0 +1,11 @@
+{
+  "span_bytes": 680,
+  "score": {"measured":"2026-08-30","candidate_bytes":692,"reference_bytes":680,"wrong_instructions":102,"differing_halfwords":323,"class":"generated-call-script-retention"},
+  "shape": {"calls":68,"loops":1,"branches":5,"memory_operations":14},
+  "verified_against_reference": [
+    "all 68 calls and their arguments are represented in ROM order across the complete owner",
+    "direct assembly audit restored three pointer-derived actor-coordinate forwards, the guarded presentation sequence, and its inner wait loop",
+    "all four actor presentation-flag writes are represented; approved GCC allocation and literal-pool scheduling leaves a twelve-byte extent residual"
+  ],
+  "retention": "keep_structured_asm"
+}

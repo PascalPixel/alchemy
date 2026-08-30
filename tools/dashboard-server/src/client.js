@@ -126,10 +126,10 @@ function render(snapshot) {
     metric("Historical targets", bytes(summary.historicalTargets), `${bytes(summary.fullTargets)} full · ${bytes(summary.compileOnlyTargets)} compile-only · Alchemy separate`, "derived"),
   );
   const legend = h("div", { className: "legend" },
-    h("span", {}, h("i", { className: "swatch exact" }), "Exact C"),
-    h("span", {}, h("i", { className: "swatch tracked" }), "Tracked C"),
+    h("span", {}, h("i", { className: "swatch open" }), "Raw assembly"),
+    h("span", {}, h("i", { className: "swatch tracked" }), "Semantic C"),
     h("span", {}, h("i", { className: "swatch retained" }), "Permanent ASM"),
-    h("span", {}, h("i", { className: "swatch open" }), "Open"),
+    h("span", {}, h("i", { className: "swatch exact" }), "Exact C"),
     h("span", { id: "scan-state", className: "scan-state" }, snapshot.scanning ? "Scanning…" : "Live"),
   );
   const trees = Object.entries(snapshot.trees).map(([tree, title]) => panel(tree, title, snapshot.revision));

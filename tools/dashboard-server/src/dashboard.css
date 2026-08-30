@@ -55,9 +55,10 @@ h1 { margin: 0; font: var(--weyard-font); font-size: clamp(32px, 5vw, 64px); lin
 .legend { display: flex; align-items: center; gap: 18px; min-height: 45px; color: var(--muted); font-size: 10px; }
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
 .swatch { width: 10px; height: 10px; border-radius: 2px; background: #f8f8f8; }
+.swatch.open { background: #d8d9df; }
+.swatch.tracked { background: #cfc5ee; }
+.swatch.retained { background: #9b87d3; }
 .swatch.exact { background: var(--violet); }
-.swatch.tracked { background: var(--gold); }
-.swatch.retained { background: var(--cyan); }
 .scan-state { margin-left: auto; color: var(--green); text-transform: uppercase; letter-spacing: .1em; }
 .trees { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 .panel { min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 10px; background: var(--raised); }

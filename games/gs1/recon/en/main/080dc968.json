@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080dc968",
+  "status": "measured-draft",
+  "owner_bytes": 2372,
+  "candidate_bytes": 2260,
+  "differing_halfwords": 1164,
+  "wrong_instructions": 1066,
+  "classification": "structural-topology",
+  "resolved_asm_classification": {
+    "kind": "compiler_output",
+    "retention": "c_candidate",
+    "confidence": "likely"
+  },
+  "notes": [
+    "2026-08-30: promoted the next-largest no-candidate main-ROM owner after repairing the aggregate-aware m2c draft's invalid pointer and table expressions. A fresh canonical compile produces 2260 bytes for the 2372-byte reference; topology differs and 1164 halfwords differ, so this remains a measured draft and claims zero DONE bytes.",
+    "Mechanical repairs resolved the four neighboring work cells at 0x03001eec-0x03001f00, typed GBA register writes, typed u8/u16/s8 ROM-table loads, and signed-halfword member-id access. No instruction bytes, inline assembly, fixed-register variables, barriers, or external decompilation sources were used.",
+    "The function is a large battle presentation with two particle systems, nine render objects, staged sprite-cell drawing, 220-frame and later particle phases, and member-triggered audio/action calls. A permanent name is deferred until caller and dispatch evidence identifies its role."
+  ]
+}

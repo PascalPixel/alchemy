@@ -23,6 +23,7 @@ pub struct Divergence {
 #[derive(Clone, Debug, Eq, PartialEq)]
 struct Branch {
     offset: u32,
+    target: u32,
     op: String,
     backward: bool,
 }
@@ -146,6 +147,7 @@ fn branches(rows: &[(u32, u32, String)]) -> Vec<Branch> {
             }
             Some(Branch {
                 offset: *offset,
+                target,
                 op: op.to_string(),
                 backward: target <= *offset,
             })
@@ -174,14 +176,26 @@ fn rows_of(binary: &Path) -> Result<Vec<(u32, u32, String)>, String> {
 fn compare(candidate: &[Branch], reference: &[Branch]) -> Vec<Divergence> {
     let mut findings = Vec::new();
     if candidate.len() != reference.len() {
+        let (kind, advice) = if candidate.len() < reference.len() {
+            (
+                "guards-merged-or-missing",
+                "the candidate has fewer guards; split a merged condition or recover the missing guard",
+            )
+        } else {
+            (
+                "guards-split-or-invented",
+                "the candidate has extra guards; merge the split condition or remove the invented guard",
+            )
+        };
         findings.push(Divergence {
-            kind: "conditional-count",
+            kind,
             detail: format!(
-                "candidate={} reference={}",
+                "candidate={} reference={} delta={}",
                 candidate.len(),
-                reference.len()
+                reference.len(),
+                candidate.len().abs_diff(reference.len())
             ),
-            advice: "a guard is missing, invented, or merged; recover the branch structure before spelling experiments",
+            advice,
         });
         return findings;
     }
@@ -195,6 +209,35 @@ fn compare(candidate: &[Branch], reference: &[Branch]) -> Vec<Divergence> {
                 backward(reference)
             ),
             advice: "loop count or loop form differs; recover the loop structure before spelling experiments",
+        });
+        return findings;
+    }
+    let candidate_loop_ordinals: Vec<usize> = candidate
+        .iter()
+        .enumerate()
+        .filter_map(|(ordinal, branch)| branch.backward.then_some(ordinal))
+        .collect();
+    let reference_loop_ordinals: Vec<usize> = reference
+        .iter()
+        .enumerate()
+        .filter_map(|(ordinal, branch)| branch.backward.then_some(ordinal))
+        .collect();
+    if candidate_loop_ordinals != reference_loop_ordinals {
+        let spans = |branches: &[Branch]| {
+            branches
+                .iter()
+                .filter(|branch| branch.backward)
+                .map(|branch| format!("{:#x}->{:#x}", branch.offset, branch.target))
+                .collect::<Vec<_>>()
+        };
+        let candidate_spans = spans(candidate);
+        let reference_spans = spans(reference);
+        findings.push(Divergence {
+            kind: "loop-rotation",
+            detail: format!(
+                "backward_ordinals_candidate={candidate_loop_ordinals:?} backward_ordinals_reference={reference_loop_ordinals:?} spans_candidate={candidate_spans:?} spans_reference={reference_spans:?}"
+            ),
+            advice: "the same loop count appears at different branch ordinals; rotate the loop or move its condition between head and tail",
         });
         return findings;
     }
@@ -319,9 +362,15 @@ fn plan(findings: &[Divergence]) -> Option<RepairPlan> {
 /// Weaker per-branch findings stay evidence-only, because literal-pool words
 /// can decode as stray conditionals and must not veto a valid repair.
 fn structural(findings: &[Divergence]) -> bool {
-    findings
-        .iter()
-        .any(|finding| matches!(finding.kind, "conditional-count" | "loop-shape"))
+    findings.iter().any(|finding| {
+        matches!(
+            finding.kind,
+            "guards-merged-or-missing"
+                | "guards-split-or-invented"
+                | "loop-shape"
+                | "loop-rotation"
+        )
+    })
 }
 
 /// Append structural evidence to an allocator report. The candidate and
@@ -387,6 +436,11 @@ mod tests {
     fn branch(offset: u32, op: &str, backward: bool) -> Branch {
         Branch {
             offset,
+            target: if backward {
+                offset.saturating_sub(2)
+            } else {
+                offset + 2
+            },
             op: op.into(),
             backward,
         }
@@ -408,7 +462,25 @@ mod tests {
         let candidate = [branch(4, "beq", false), branch(20, "bne", true)];
         let reference = [branch(4, "beq", false)];
         let findings = compare(&candidate, &reference);
-        assert_eq!(findings[0].kind, "conditional-count");
+        assert_eq!(findings[0].kind, "guards-split-or-invented");
+        assert!(plan(&findings).is_none());
+    }
+
+    #[test]
+    fn names_a_merged_or_missing_guard() {
+        let candidate = [branch(20, "bne", true)];
+        let reference = [branch(4, "beq", false), branch(20, "bne", true)];
+        let findings = compare(&candidate, &reference);
+        assert_eq!(findings[0].kind, "guards-merged-or-missing");
+        assert!(findings[0].detail.contains("delta=1"));
+    }
+
+    #[test]
+    fn names_loop_rotation_when_the_loop_moves_between_guard_ordinals() {
+        let candidate = [branch(4, "beq", false), branch(20, "bne", true)];
+        let reference = [branch(4, "bne", true), branch(20, "beq", false)];
+        let findings = compare(&candidate, &reference);
+        assert_eq!(findings[0].kind, "loop-rotation");
         assert!(plan(&findings).is_none());
     }
 

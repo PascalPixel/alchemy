@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080acab8",
+  "status": "measured-draft",
+  "owner_bytes": 1980,
+  "candidate_bytes": 1968,
+  "differing_halfwords": 947,
+  "wrong_instructions": 716,
+  "classification": "structural-reconstruction",
+  "resolved_asm_classification": {
+    "kind": "compiler_output",
+    "retention": "c_candidate",
+    "confidence": "likely"
+  },
+  "notes": [
+    "2026-08-30: promoted the next-largest unnamed clean compiler-output owner from the prepared aggregate-aware wave. After repairing typed runtime-table reads and the 96-byte halfword scratch region, the canonical compiler produces 1968 bytes for the 1980-byte reference; topology differs and 947 halfwords differ, so this remains a measured draft and claims zero DONE bytes.",
+    "The candidate is a large menu presentation helper taking two compared party entries and several display parameters. It allocates presentation work, draws paired stat and status fields, computes per-field changes, and animates the resulting comparison. A permanent name is deferred until caller evidence establishes the owning menu.",
+    "The reference uses a 172-byte frame. The honest 48-halfword scratch region plus independently allocated C locals currently yields 184 bytes; a temporary 42-entry array matched the frame but was rejected because it reduced evidence-backed scratch capacity merely to influence allocation.",
+    "No instruction bytes, inline assembly, fixed-register variables, compiler barriers, or external decompilation sources were used."
+  ]
+}

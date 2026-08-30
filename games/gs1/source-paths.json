@@ -2729,6 +2729,9 @@
     "resource_3bc:020020f0": {
       "name": "FieldScene_RunFourStepActorMotion"
     },
+    "resource_3c9:02003e9c": {
+      "name": "FieldScene_RunMultiActorPresentation"
+    },
     "resource_373:020015dc": {
       "name": "FieldScene_RunScriptedActorSequence"
     },

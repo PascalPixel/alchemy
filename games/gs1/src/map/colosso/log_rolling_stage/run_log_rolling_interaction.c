@@ -1,16 +1,5 @@
 #include "colosso_log_rolling_stage.h"
 
-/* resource_3bc state-machine slot 6, complete 248-byte owner and pool.
- *
- * Every helper here is reached through a per-call-site veneer, including
- * repeat calls to the "same" helper (Func_0808a010/Func_0808a180/
- * Func_0808a170 each recur with a DIFFERENT veneer address per occurrence)
- * and even the sibling-overlay call at 0x20024e4 (Func_0200288c is itself
- * reached via a veneer, not directly). Symbol names below are the literal
- * per-site call targets read from the raw (non-annotated) disassembly, per
- * the "call symbols are per-site" rule -- do not collapse repeats to one
- * shared declaration.
- */
 
 extern s16 Data_02000240[];
 

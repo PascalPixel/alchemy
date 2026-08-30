@@ -1,28 +1,5 @@
 #include "colosso_log_rolling_stage.h"
 
-/*
- * resource_3bc owner at 0x020022f4, 60 bytes: a sibling of
- * position_stage_actor.c -- the same "if the entity exists, run the
- * unestablished no-arg helper, set presentation mode 5, teleport
- * horizontally keeping height" sequence, plus two extra trailing calls.
- *
- * Complete owner: `push {r5, r6, r7, lr}` at 0x020022f4 through the matching
- * interworking return `pop {r5, r6, r7} / pop {r0} / bx r0` at
- * 0x200232a-0x200232e. No literal pool. Three arguments (r0-r2), void.
- *
- * Not found by the structural inventory walk (unindexed); two incoming call
- * sites per overlay_unindexed.ts. This owner makes five outgoing calls, all
- * resolved with the `+2` rule against the raw image (this owner starts
- * outside a recorded row, so overlay_call_targets.ts's own table does not
- * cover it -- resolved with `bun tools/overlay-show resource_3bc 22f4 |
- * cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3bc 22f4 232e --annotate`):
- *   0x20022fa -> veneer -> Func_0808a400(selector)   entity by selector, established
- *   0x2002304 -> veneer -> Object_ResetMotion()           unestablished, same call as reset_actor_motion.c and siblings
- *   0x200230c -> veneer -> Object_SetMode(entity, 5)  established (record, mode)
- *   0x2002318 -> veneer -> Object_SetPosition(entity, x, y, z)   established, "move a record to a position"; z argument is the entity's own +12 field unchanged, same horizontal-only-move idiom as 020022c4.c
- *   0x200231e -> veneer -> Object_CommitPosition(entity)     unestablished single-argument call, immediately followed by Object_SetMode(entity, 1)
- *   0x2002326 -> veneer -> Object_SetMode(entity, 1)  mode changed to 1 after the move settles
- */
 
 s32 *Func_02006e64();          /* entity by selector, established */
 void Func_02006c06();          /* unestablished */

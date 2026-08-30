@@ -2741,6 +2741,9 @@
     "resource_377:02000a0c": {
       "name": "FieldScene_RunPaletteRampSequence"
     },
+    "resource_376:02000658": {
+      "name": "FieldScene_RunLongPresentationSequence"
+    },
     "resource_373:020015dc": {
       "name": "FieldScene_RunScriptedActorSequence"
     },

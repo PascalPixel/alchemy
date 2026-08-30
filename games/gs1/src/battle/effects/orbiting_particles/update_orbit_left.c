@@ -9,11 +9,9 @@ struct OrbitingParticleVector {
 struct OrbitingParticle;
 
 void RotateVectorByMagnitude(s32, s32, struct OrbitingParticleVector *);
-#define UpdateOrbitingParticleFade Func_08099040
-void UpdateOrbitingParticleFade(void *object);
+void BattleEffect_UpdateOrbitingParticleFade(void *object);
 
-#define UpdateOrbitingParticleLeft Func_08099070
-void UpdateOrbitingParticleLeft(struct OrbitingParticle *particle)
+void BattleEffect_UpdateOrbitingParticleLeft(struct OrbitingParticle *particle)
 {
     u8 *arg = (u8 *)particle;
     struct OrbitingParticleVector local;
@@ -35,7 +33,7 @@ void UpdateOrbitingParticleLeft(struct OrbitingParticle *particle)
             *(s32 *)(arg + 12) = local.y;
             *(s32 *)(arg + 16) = local.z;
         } else {
-            *(s32 *)(arg + 108) = (s32)UpdateOrbitingParticleFade;
+            *(s32 *)(arg + 108) = (s32)BattleEffect_UpdateOrbitingParticleFade;
         }
     }
 }

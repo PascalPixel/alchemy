@@ -2723,6 +2723,9 @@
     "resource_3bc:02001df8": {
       "name": "FieldScene_RunSecondArrivalSequence"
     },
+    "resource_3bc:02001f90": {
+      "name": "FieldScene_RunTimedArrivalSequence"
+    },
     "resource_373:020015dc": {
       "name": "FieldScene_RunScriptedActorSequence"
     },

@@ -27,7 +27,8 @@ s32 Func_08005ee0(void *send, void *receive)
                 ie &= ~0x80;
                 ie |= 0x40;
                 REG_IE = ie;
-                REG_IME = 1;
+                serial_error = 1;
+                REG_IME = serial_error;
                 *((volatile u8 *)sio + 1) &= ~0x40;
                 REG_IF = 0xc0;
                 REG_TM3CNT = 0xc963;

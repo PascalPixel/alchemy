@@ -1,0 +1,11 @@
+{
+  "span_bytes": 1172,
+  "score": {"measured":"2026-08-30","candidate_bytes":1176,"reference_bytes":1172,"wrong_instructions":242,"differing_halfwords":551,"class":"generated-call-script-retention"},
+  "shape": {"calls":111,"loops":0,"memory_operations":31},
+  "verified_against_reference": [
+    "candidate and ROM contain the same 111 calls in machine order with every decoded argument represented",
+    "direct assembly audit restored four motion coordinates, three scene-object fields, two workspace-state pairs, an event flag, conditional event-counter increment, and terminal workspace reset",
+    "candidate is four bytes longer after complete decoded control flow and side effects are represented; residual is approved GCC allocation and literal scheduling"
+  ],
+  "retention": "keep_structured_asm"
+}

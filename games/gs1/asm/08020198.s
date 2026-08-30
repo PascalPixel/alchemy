@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global StatusMenu_DrawCharacterSummary
 	.global Func_08020198
 	.thumb_func
+StatusMenu_DrawCharacterSummary:
 Func_08020198:
 	push	{r5, r6, r7, lr}
 	adds	r5, r0, #0

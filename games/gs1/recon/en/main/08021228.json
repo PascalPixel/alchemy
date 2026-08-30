@@ -7,7 +7,7 @@
  "best_candidate_bytes": 312,
  "best_differing_halfwords": 139,
  "best_wrong_instructions": 96,
- "status": "measured_draft",
+ "status": "measured-draft",
  "notes": [
   "Template (Menu_RunSelection) is only thematically related (both build a UI object and poll-loop); the actual logic at 08021228, read directly from games/gs1/asm/08021228.s, is a much larger dialog-setup routine: creates an object via Func_080162d4(2,1,26,5,0), then on success configures it via Func_0801e41c, marks Data_03001e8c[0xEA3] (RENDER_DIRTY_OFS) dirty, calls Func_08019d2c on a table value looked up from a literal table at 0x080371fe indexed by (p2&3), calls Func_0801a4fc for two more out-values, builds a 16-byte parameter block (constants 0, 0x8014000c, an out-value ORed with 0xe000, and 0x303), zeroes two more Data_03001e8c fields, calls Func_08019908 twice with computed offsets involving p1/p2/p3, calls Func_08019ba0(p2+0x980), starts audio/animation via Func_080165d8 and Func_080f9010(81), then runs a poll loop (Func_08003dec/Func_080030f8/Func_080f9048, exiting on either Func_080f9048()==0 or (Data_03001c94 & 0x303)!=0) before finalizing via Func_08016418/Func_080030f8/Func_08003f3c.",
   "This is a large, dense owner (312 bytes, 7 saved registers, 8 distinct literal-pool constants, ~14 calls) worked as one direct-translation pass against the effort budget for this batch rather than iterated to convergence. Achieved exact byte-length match (312/312) on the first attempt with wrong_instructions=96 (about 62% of instructions already agree), but did not attempt further respellings.",

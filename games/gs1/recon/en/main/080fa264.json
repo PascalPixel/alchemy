@@ -1,4 +1,6 @@
 {
+  "status": "proven-retained",
+  "classification": "compiler_allocation_mismatch",
   "span_bytes": 28,
   "score": {
     "measured": "2026-08-23",

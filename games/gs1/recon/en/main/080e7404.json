@@ -1,4 +1,6 @@
 {
+  "status": "proven-retained",
+  "classification": "thumb_multiple_transfer_module",
   "span_bytes": 3640,
   "edition": {
     "role": "derived-candidate",

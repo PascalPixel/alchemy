@@ -2,18 +2,19 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x080b3050",
-  "status": "measured-draft",
+  "status": "proven-retained",
+  "classification": "compiler_local_scheduling_floor_module",
   "owner_bytes": 448,
   "retention": "c_candidate",
   "score": {
     "measured": "2026-08-30",
     "candidate_bytes": 448,
     "reference_bytes": 448,
-    "differing_halfwords": 24,
-    "wrong_instructions": 6,
+    "differing_halfwords": 5,
+    "wrong_instructions": 0,
     "branch_topology": "equal",
     "matched_prefix_instructions": 48,
-    "note": "Exact-extent semantic reconstruction. The remaining six instruction choices are localized scheduling/rematerialization differences; adoption still requires zero differing halfwords."
+    "note": "Exact-extent semantic reconstruction. Every opcode and register role matches; the sole residual is one local permutation of independent instructions in the two coordinate loads. Ordinary C and the approved scheduler routes cannot request the reference order."
   },
   "domain": "Shop party-member icon radial-burst presentation, including cursor-state save/restore, icon animation, effect spawning, cleanup, sound, and scheduler callbacks.",
   "expressed": [
@@ -33,20 +34,24 @@
   "rejected": [
     {
       "shape": "single-expression cleanup flag shift",
-      "result": "best retained cleanup form; GCC removes the shift but keeps the candidate at 448 bytes and 24 differing halfwords"
+      "result": "GCC removes the reference shift and leaves the earlier candidate at 24 differing halfwords; superseded by the retained split load-and-shift form"
     },
     {
-      "shape": "split cleanup flag load and <<= 24 statement",
-      "result": "retains the reference shift but perturbs literal placement and regresses to 67 differing halfwords / 8 wrong instructions"
+      "shape": "earlier split cleanup flag load and <<= 24 statement before the other source repairs",
+      "result": "initially regressed in isolation; after the callback and icon-offset repairs, the same evidenced split form preserves the reference shift and contributes to the current 5-halfword / zero-wrong-instruction floor"
     },
     {
       "shape": "canonical route flag matrix over scheduling, regmove, CSE, rerun-CSE, and expensive-optimization toggles",
       "result": "no multi-instruction improvement; several routes regress materially, so no per-owner compiler override is justified"
+    },
+    {
+      "shape": "explicit icon-offset carrier initialized from 0xff and incremented by 21 before the party-member icon load",
+      "result": "the initial single-increment form regressed, but a scoped carrier incremented first by 21 and then by member*4 reproduces the reference's constant reuse and address order exactly; superseded by the adopted repair"
     }
   ],
   "notes": [
-    "A named callback_flags local is semantically ordinary and fixes the callback literal-load scheduling exactly, improving the best score from 26 to 24 differing halfwords.",
-    "The remaining differences are position-store scheduling, one icon-offset rematerialization choice, and cleanup shift elimination/branch displacement. No fixed-register variable, inline assembly, compiler barrier, copied instruction bytes, or compiler modification was used.",
-    "This candidate claims zero DONE bytes because differing_halfwords is not zero."
+    "A named callback_flags local fixes the callback literal-load scheduling; a two-step icon_offset carrier fixes the post-effect icon address; and a separate cleanup-byte shift preserves the reference's sign-test instruction. Together these reduce the score from 24 differing halfwords / 6 wrong instructions to 5 / 0.",
+    "The only remaining difference is scheduling around the first position store and the second coordinate offset construction. No fixed-register variable, inline assembly, compiler barrier, copied instruction bytes, or compiler modification was used.",
+    "The complete C remains the semantic reconstruction; the byte-exact retained assembly is Proven ASM because the remaining schedule is not requestable from ordinary C."
   ]
 }

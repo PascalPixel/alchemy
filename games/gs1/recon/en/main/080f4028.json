@@ -2,7 +2,7 @@
  "schema_version": 1,
  "namespace": "gs1-en-main",
  "address": "0x080f4028",
- "status": "measured-draft",
+ "status": "exact",
  "owner_bytes": 140,
  "score": {
   "measured": "2026-08-27",
@@ -41,6 +41,6 @@
  ],
  "notes": [
   "Recovered only from the retained owner assembly, approved local ROM, the byte-exact template/sibling sources, in-repository headers, and the approved compiler.",
-  "This candidate claims zero DONE bytes."
+  "The reconstruction is adopted as Proven C at games/gs1/src/camera/scene/reset_defaults.c."
  ]
 }

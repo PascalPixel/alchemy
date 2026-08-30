@@ -2,7 +2,8 @@
  "schema_version": 1,
  "namespace": "gs1-en-main",
  "address": "0x080fa1ac",
- "status": "measured-draft",
+ "status": "proven-retained",
+ "classification": "compiler_dead_parameter_register_reuse",
  "owner_bytes": 26,
  "score": {
   "measured": "2026-08-27",
@@ -61,6 +62,6 @@
  ],
  "notes": [
   "Recovered only from the retained owner bytes in the approved local ROM, the adopted audio family sources and headers, and the approved compilers.",
-  "This candidate claims zero DONE bytes."
+    "The complete C remains the semantic reconstruction; the byte-exact retained assembly is Proven ASM under compiler_dead_parameter_register_reuse."
  ]
 }

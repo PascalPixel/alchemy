@@ -1,0 +1,21 @@
+{
+ "schema_version": 1,
+ "namespace": "gs1-en-main",
+ "address": "0x080f0614",
+ "status": "measured-draft",
+ "owner_bytes": 100,
+ "score": {
+  "measured": "2026-08-30",
+  "candidate_bytes": 100,
+  "reference_bytes": 100,
+  "differing_halfwords": 26,
+  "wrong_instructions": 36,
+  "class": "missing-extra-code",
+  "note": "The repaired aggregate-aware m2c reconstruction reaches the exact owner extent with equal branch topology. The residual is a register/lifetime allocation cascade around the two signed division-by-eight sequences and table lookup; it remains Draft C and claims zero DONE bytes."
+ },
+ "notes": [
+  "Recovered from the retained owner, the aggregate-aware m2c seed, and the approved compiler; the unrelated template winner was discarded.",
+  "The source models the three shared EWRAM halfwords, signed round-toward-zero grouping, group-change test, resource-table lookup, and update call without generated register names.",
+  "No inline assembly, register forcing, compiler barriers, copied instruction bytes, or external decompilation source was used."
+ ]
+}

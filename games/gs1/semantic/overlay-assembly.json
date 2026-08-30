@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "comment": "Audited overlay modules retained as assembly because the approved compiler cannot emit their proved instruction ordering or allocation. Confidence proven requires clear non-emittability reasoning plus a byte-exact assembly round trip and counts as Proven ASM; weaker classifications remain Draft ASM.",
+  "comment": "Proven ASM describes a reproducible implementation form, not Camelot source provenance: the approved compiler model cannot emit the required form as ordinary C, the reason is recorded, and assembly reproduces the audited extent byte-exactly. Weaker classifications remain Draft ASM.",
   "regions": [
     {"overlay":"resource_36f","start":"0x020001c0","end":"0x02000238","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},
     {"overlay":"resource_36f","start":"0x02000454","end":"0x02000538","kind":"thumb_multi_register_module","retention":"keep_structured_asm","confidence":"proven","evidence":["complete audited owner; reference uses a multi-register Thumb transfer that approved GCC 2.96 cannot emit; byte-exact assembly round trip"]},

@@ -134,7 +134,7 @@ fn svg(tree: &str, map: &CoverageMap) -> String {
         .sum();
     let corner = if matches!(tree, "core" | "overlays") {
         format!(
-            "{:.1}% DONE",
+            "{:.2}% DONE",
             100.0 * done_bytes as f64 / displayed_bytes.max(1) as f64
         )
     } else {
@@ -274,7 +274,7 @@ mod tests {
             executable_areas: vec![area.clone(), area],
         };
         let rendered = svg("core", &map);
-        assert!(rendered.contains("50.0% DONE"));
+        assert!(rendered.contains("50.00% DONE"));
         let unknown = rendered.find("Unknown 25.0%").unwrap();
         let draft_asm = rendered.find("Draft ASM 15.0%").unwrap();
         let draft_c = rendered.find("Draft C 10.0%").unwrap();

@@ -7,7 +7,7 @@
  "best_candidate_bytes": 204,
  "best_differing_halfwords": 36,
  "best_wrong_instructions": 18,
- "status": "measured_draft",
+ "status": "measured-draft",
  "notes": [
   "Template (UiText_ShowLocalizedMessageAndWait) is thematically related (UI + wait) but the actual behavior at 080a6a98 is completely different work read straight from games/gs1/asm/080a6a98.s: a menu-row refresh function taking effectively one live struct-pointer param (r0/r1 are unused), storing computed length (ctx->field8*5 + ctx->field16) into ctx->field24, conditionally playing a sound-effect/message via a table lookup at Data_03001f2c-relative state, then drawing 5 rows via 6-arg calls to Func_080a2268 with a highlighted-row special case (arg 14 vs 15) based on ctx->field16.",
   "Iterated 5 respellings. Landed on: masking the sound-table lookup as one combined pointer-arithmetic expression `*(u16*)((u8*)state + ctx->field24*2 + 456)` (not split into a separate `offset` local, which measurably hurt the match in combination with either if/else ordering tried); the outer `if (Func_080770c0(0x151) != 0) { short-branch } else { long-branch }` ordering (matching which physical block the compiler places as the branch target vs the fallthrough); and introducing a separately-named `selected = 1;` local (distinct from the loop's `spacing = 1` counter) so the compiler materializes two independent `movs #1` instead of coalescing them into one shared register, matching the reference's two distinct movs into r2/r5.",

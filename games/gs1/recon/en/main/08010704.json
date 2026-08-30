@@ -7,7 +7,7 @@
  "best_candidate_bytes": 116,
  "best_differing_halfwords": 48,
  "best_wrong_instructions": 48,
- "status": "measured_draft",
+ "status": "measured-draft",
  "notes": [
   "The clustered template (graphics_owner_13.c, a 4-nibble palette-decode unpack) does not match this owner's actual behavior at all -- it was a weak n-gram/cosine cluster match, not a real shape match. Read games/gs1/asm/08010704.s directly instead: this is a 2D rectangular word-merge/blit over a fixed EWRAM buffer at 0x02010000 (row stride 512 bytes = 128 u32 columns), taking 6 params (srcX, srcY, width, height, dstX, dstY): dst = 0x02010000 + (((dstY<<7)+dstX)<<2), src = 0x02010000 + (((srcY<<7)+srcX)<<2); for each row/col in [0,height)x[0,width): *dstWord = (*dstWord & 0xfff) | (*srcWord++ & 0xfffff000), advancing both pointers by row*512 bytes per row.",
   "The overall shape (pointer setup, mask-merge body, register layout for the two base-pointer computations) matches closely once the shared 0x02010000 base constant is hoisted into one named local (base) reused for both dst/src instead of writing the literal twice -- that alone dropped one duplicated literal-pool load. Using the codebase's common guard-then-do-while idiom (if (height>0) { row=0; do {...} while(++row<height); }, nested identically for width) also improved the match (wrong_instructions 58 -> 48).",

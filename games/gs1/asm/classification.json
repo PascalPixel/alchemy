@@ -205,11 +205,14 @@
    "kind": "deliberate_performance",
    "origin": "program_or_library_assembly",
    "retention": "keep_asm",
-   "confidence": "strong",
+   "confidence": "proven",
    "evidence": [
     "iwram_copy_payload",
     "mixed_thumb_arm_audio_mixer",
-    "unrolled_64_byte_clear"
+    "unrolled_64_byte_clear",
+    "single_function_switches_thumb_to_arm_and_back",
+    "approved_ordinary_c_route_has_one_instruction_set_per_function",
+    "byte_exact_reconstruction"
    ],
    "expected_files": 2,
    "expected_bytes": 954,
@@ -281,6 +284,30 @@
     "080c0be4",
     "080e7338",
     "080e73a0"
+   ]
+  },
+  {
+   "kind": "hidden_register_context_caller_module",
+   "origin": "program_or_library_runtime",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "caller_materializes_or_preserves_context_in_callee_saved_register",
+    "callee_consumes_incoming_context_before_defining_that_register",
+    "ordinary_arguments_remain_in_standard_abi_registers",
+    "no_c_parameter_carries_the_hidden_context",
+    "approved_compiler_cannot_express_hidden_register_call_contract",
+    "register_pins_inline_assembly_and_compiler_modification_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 5,
+   "expected_bytes": 4540,
+   "files": [
+    "08022b44",
+    "080983a0",
+    "080b56e0",
+    "080b9724",
+    "080bd898"
    ]
   },
   {
@@ -1187,12 +1214,17 @@
    "kind": "deliberate_math_primitive",
    "origin": "program_or_library_assembly",
    "retention": "keep_structured_asm",
-   "confidence": "strong",
+   "confidence": "proven",
    "evidence": [
     "carry_driven_branching",
     "shared_helper_entry",
     "pc_relative_lookup_table",
-    "quarter_sine_values_match_rounded_formula"
+    "quarter_sine_values_match_rounded_formula",
+    "reference_materializes_the_inline_table_with_thumb_add_register_pc_immediate",
+    "approved_non_pic_thumb_route_has_no_local_label_address_materialization_pattern",
+    "gcc_2_96_movaddr_is_target_arm_only_and_thumb_pc_add_address_pattern_requires_pic",
+    "generic_thumb_addsi3_cannot_allocate_pc_as_an_ordinary_c_operand",
+    "byte_exact_reconstruction"
    ],
    "expected_files": 2,
    "expected_bytes": 568,
@@ -1406,13 +1438,15 @@
    "kind": "deliberate_dma_kick_macro",
    "origin": "program_assembly",
    "retention": "keep_asm",
-   "confidence": "strong",
+   "confidence": "proven",
    "evidence": [
     "grouped_store_requires_three_wide_register_staging",
     "volatile_program_order_forbids_staging",
     "nonvolatile_first_kick_dead_store_eliminated",
     "three_backend_stmia_negative",
-    "family_argument_evacuation_fixed_register_signature"
+    "family_argument_evacuation_fixed_register_signature",
+    "approved_compiler_cannot_emit_reference_store_group_without_forbidden_register_constraints",
+    "byte_exact_reconstruction"
    ],
    "expected_files": 1,
    "expected_bytes": 48,
@@ -1671,12 +1705,13 @@
    "kind": "compiler_allocation_mismatch",
    "origin": "compiler",
    "retention": "keep_structured_asm",
-   "confidence": "strong",
+   "confidence": "proven",
    "evidence": [
     "complete_ordinary_c_semantics_and_owner_extent",
     "only_residual_is_r1_instead_of_r3_for_signature_load_and_compare",
     "approved_compiler_family_and_optimization_sweep_preserves_defect_or_changes_extent",
     "9786_compiled_semantics_preserving_permutations_produced_zero_exact_candidates",
+    "approved_ordinary_c_routes_cannot_emit_the_required_r3_allocation",
     "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
     "byte_exact_reconstruction"
    ],
@@ -1687,10 +1722,32 @@
    ]
   },
   {
+   "kind": "compiler_dead_parameter_register_reuse",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_owner_extent",
+    "old_agbcc_o1_reproduces_all_thirteen_instruction_roles_and_control_flow",
+    "only_residual_is_the_r0_r2_r3_scratch_register_rotation",
+    "direct_lreg_greg_dumps_reduce_the_owner_to_one_local_quantity_and_one_reload_register",
+    "minimal_function_probes_confirm_the_backend_allocates_the_first_ascending_free_register",
+    "dead_first_parameter_makes_r0_free_before_the_scratch_quantity_is_created",
+    "keeping_r0_live_requires_real_extra_code_and_breaks_the_exact_extent",
+    "inline_assembly_fixed_registers_and_forced_liveness_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 26,
+   "files": [
+    "080fa1ac"
+   ]
+  },
+  {
    "kind": "compiler_local_materialization_mismatch",
    "origin": "compiler",
    "retention": "keep_structured_asm",
-   "confidence": "strong",
+   "confidence": "proven",
    "evidence": [
     "complete_ordinary_c_semantics_and_exact_owner_extents",
     "six_edition_relocation_normalized_cores_are_identical",
@@ -1699,14 +1756,16 @@
     "owner_specific_bounded_source_shape_searches_exhaust_the_named_lifetime_order_and_loop_dimensions",
     "approved_compiler_family_and_optimization_sweeps_preserve_the_residuals_or_regress",
     "gcc_combine_lreg_and_scheduler_evidence_explains_the_observed_copy_folding_allocation_priority_and_volatile_load_order",
+    "approved_ordinary_c_routes_cannot_emit_the_required_local_materializations",
     "inline_assembly_fixed_registers_and_compiler_barriers_are_disallowed",
     "byte_exact_reconstruction"
    ],
-   "expected_files": 3,
-   "expected_bytes": 540,
+   "expected_files": 4,
+   "expected_bytes": 772,
    "files": [
     "0800651c",
     "0801faa8",
+    "08099838",
     "080f92fc"
    ]
   },
@@ -1950,6 +2009,81 @@
    "expected_files": 169,
    "expected_bytes": 65476,
    "matcher": "thumb_standalone_wide_transfer"
+  },
+  {
+   "kind": "io_write_queue_scheduler_module",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_owner_extents",
+    "all_nine_owners_share_one_constant_parameterized_body",
+    "only_residuals_are_two_independent_instruction_ordering_pairs_per_owner",
+    "all_other_instructions_registers_literals_control_flow_and_memory_operations_match",
+    "twenty_thousand_bounded_semantics_preserving_candidates_produced_no_exact_candidate",
+    "whole_translation_unit_declaration_scope_helper_and_shipped_flag_sweeps_preserve_the_residual_or_regress",
+    "gcc_scheduler_priority_dump_identifies_deterministic_tie_breaks_that_ordinary_c_cannot_reverse",
+    "inline_assembly_fixed_registers_compiler_barriers_and_forced_scheduling_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 9,
+   "expected_bytes": 576,
+   "files": [
+    "0800383c",
+    "0800387c",
+    "080038bc",
+    "080038fc",
+    "0800393c",
+    "0800397c",
+    "080039bc",
+    "080039fc",
+    "08003a3c"
+   ]
+  },
+  {
+   "kind": "compiler_literal_pool_placement_module",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_owner_extents",
+    "equal_control_flow_topology_and_matching_executable_instruction_streams",
+    "only_residual_is_machine_dependent_literal_pool_placement",
+    "reference_requires_an_early_branch_over_pool_and_a_later_pool",
+    "approved_gcc_2_96_route_emits_one_trailing_pool_for_the_same_complete_source",
+    "bounded_declaration_statement_control_flow_and_compiler_flag_searches_do_not_request_the_reference_pool_split",
+    "ordinary_c_has_no_literal_pool_placement_or_pool_dump_primitive",
+    "inline_assembly_compiler_barriers_and_copied_instruction_bytes_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 2,
+   "expected_bytes": 790,
+   "files": [
+    "08090488",
+    "080b1bd0"
+   ]
+  },
+  {
+   "kind": "compiler_local_scheduling_floor_module",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_owner_extents",
+    "equal_control_flow_topology_and_zero_wrong_instructions",
+    "only_residuals_are_local_permutations_of_independent_instructions",
+    "all_register_roles_literals_calls_memory_operations_and_branches_match",
+    "bounded_statement_declaration_evaluation_order_and_shipped_flag_searches_preserve_the_residual_or_regress",
+    "approved_scheduler_routes_choose_deterministic_orders_that_ordinary_c_cannot_reverse",
+    "inline_assembly_fixed_registers_compiler_barriers_and_forced_scheduling_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 2,
+   "expected_bytes": 528,
+   "files": [
+    "0801fd34",
+    "080b3050"
+   ]
   }
  ]
 }

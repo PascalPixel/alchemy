@@ -4,7 +4,7 @@
 <rect x="0" y="0" width="540" height="304" fill="#6d4fc2" rx="8"/>
 <rect x="1" y="1" width="538" height="302" fill="none" stroke="#6d4fc2" stroke-width="2" rx="7"/>
 <text class="weyard" x="6" y="15">Main game</text>
-<text class="weyard" x="534" y="15" text-anchor="end">54.8% DONE</text>
+<text class="weyard" x="534" y="15" text-anchor="end">56.32% DONE</text>
 <rect x="3" y="22" width="534" height="258" fill="#fff"/>
 <g aria-label="0x080000c0–0x080003c0: 768 bytes">
 <title>0x080000c0–0x080003c0: 768 bytes</title>
@@ -28,8 +28,7 @@
 </g>
 <g aria-label="0x0800230c–0x08002544: 568 bytes">
 <title>0x0800230c–0x08002544: 568 bytes</title>
-<rect x="4.927840613083441" y="83.54420582914898" width="24.34417088223107" height="0.4565477413955226" style="fill:hsl(275 34% 74%)"/>
-<rect x="4.927840613083441" y="79.37005505067563" width="24.34417088223107" height="4.17415077847335" style="fill:hsl(275 58% 66%)"/>
+<rect x="4.927840613083441" y="79.37005505067563" width="24.34417088223107" height="4.630698519868872" style="fill:hsl(275 58% 66%)"/>
 </g>
 <g aria-label="0x08002544–0x08002dd8: 2,196 bytes">
 <title>0x08002544–0x08002dd8: 2,196 bytes</title>
@@ -106,10 +105,8 @@
 </g>
 <g aria-label="0x08003810–0x08003b6e: 862 bytes">
 <title>0x08003810–0x08003b6e: 862 bytes</title>
-<rect x="55.002539816678684" y="46.52707015398286" width="12.73112422926183" height="8.774226832849333" style="fill:#d8d9df"/>
-<rect x="55.002539816678684" y="45.4302917998767" width="12.73112422926183" height="1.0967783541061666" style="fill:hsl(275 52% 82%)"/>
-<rect x="55.002539816678684" y="43.785124268717446" width="12.73112422926183" height="1.6451675311592497" style="fill:hsl(275 58% 66%)"/>
-<rect x="55.002539816678684" y="40.529063529964766" width="12.73112422926183" height="3.2560607387526823" style="fill:#6d4fc2"/>
+<rect x="55.002539816678684" y="43.78512426871744" width="12.73112422926183" height="11.516172718114749" style="fill:hsl(275 58% 66%)"/>
+<rect x="55.002539816678684" y="40.52906352996476" width="12.73112422926183" height="3.2560607387526823" style="fill:#6d4fc2"/>
 </g>
 <g aria-label="0x08003b6e–0x08003b70: 2 bytes">
 <title>0x08003b6e–0x08003b70: 2 bytes</title>
@@ -280,8 +277,7 @@
 <g aria-label="0x08006088–0x0800679a: 1,810 bytes">
 <title>0x08006088–0x0800679a: 1,810 bytes</title>
 <rect x="3.5" y="146.56297469028152" width="24.28823013933341" height="1.4636925699802643" style="fill:#d8d9df"/>
-<rect x="3.5" y="145.96248543080245" width="24.28823013933341" height="0.6004892594790828" style="fill:hsl(275 34% 74%)"/>
-<rect x="3.5" y="137.36798290450807" width="24.28823013933341" height="8.594502526294374" style="fill:hsl(275 58% 66%)"/>
+<rect x="3.5" y="137.36798290450807" width="24.28823013933341" height="9.194991785773457" style="fill:hsl(275 58% 66%)"/>
 <rect x="3.5" y="131.04408039061897" width="24.28823013933341" height="6.323902513889092" style="fill:#6d4fc2"/>
 </g>
 <g aria-label="0x0800679a–0x0800679c: 2 bytes">
@@ -1325,10 +1321,9 @@
 </g>
 <g aria-label="0x0801edec–0x0801fe2a: 4,158 bytes">
 <title>0x0801edec–0x0801fe2a: 4,158 bytes</title>
-<rect x="3.5" y="260.3481189609671" width="27.621443771441523" height="15.02617436311929" style="fill:#d8d9df"/>
-<rect x="3.5" y="258.9821031097744" width="27.621443771441523" height="1.3660158511926628" style="fill:hsl(275 34% 74%)"/>
-<rect x="3.5" y="254.71330357479735" width="27.621443771441523" height="4.268799534977072" style="fill:hsl(275 58% 66%)"/>
-<rect x="3.5" y="239.87495639121704" width="27.621443771441523" height="14.838347183580302" style="fill:#6d4fc2"/>
+<rect x="3.5" y="261.03112688656347" width="27.621443771441523" height="14.34316643752296" style="fill:#d8d9df"/>
+<rect x="3.5" y="254.7133035747974" width="27.621443771441523" height="6.317823311766065" style="fill:hsl(275 58% 66%)"/>
+<rect x="3.5" y="239.8749563912171" width="27.621443771441523" height="14.838347183580302" style="fill:#6d4fc2"/>
 </g>
 <g aria-label="0x0801fe2a–0x0801fe2c: 2 bytes">
 <title>0x0801fe2a–0x0801fe2c: 2 bytes</title>
@@ -1422,8 +1417,8 @@
 </g>
 <g aria-label="0x08022b44–0x080251d2: 9,870 bytes">
 <title>0x08022b44–0x080251d2: 9,870 bytes</title>
-<rect x="68.04048988737333" y="260.5705931613964" width="47.30799701853846" height="18.92940683860362" style="fill:#d8d9df"/>
-<rect x="68.04048988737333" y="229.5859283038114" width="47.30799701853846" height="30.984664857585017" style="fill:hsl(275 58% 66%)"/>
+<rect x="68.04048988737333" y="268.6686260438594" width="47.30799701853846" height="10.831373956140649" style="fill:#d8d9df"/>
+<rect x="68.04048988737333" y="229.5859283038114" width="47.30799701853846" height="39.08269774004799" style="fill:hsl(275 58% 66%)"/>
 <rect x="68.04048988737333" y="229.16776791567412" width="47.30799701853846" height="0.41816038813725664" style="fill:#6d4fc2"/>
 </g>
 <g aria-label="0x080251d2–0x080251d4: 2 bytes">
@@ -1840,7 +1835,8 @@
 </g>
 <g aria-label="0x08090000–0x08090582: 1,410 bytes">
 <title>0x08090000–0x08090582: 1,410 bytes</title>
-<rect x="223.38438556660986" y="87.34582699662806" width="11.342640786867971" height="22.357582171884808" style="fill:#d8d9df"/>
+<rect x="223.38438556660986" y="92.25742237709485" width="11.342640786867971" height="17.445986791418022" style="fill:#d8d9df"/>
+<rect x="223.38438556660986" y="87.34582699662806" width="11.342640786867971" height="4.911595380466785" style="fill:hsl(275 58% 66%)"/>
 <rect x="223.38438556660986" y="82.0020112226802" width="11.342640786867971" height="5.3438157739478624" style="fill:#6d4fc2"/>
 </g>
 <g aria-label="0x08090582–0x08090584: 2 bytes">
@@ -2188,8 +2184,8 @@
 </g>
 <g aria-label="0x080983a0–0x08098b0e: 1,902 bytes">
 <title>0x080983a0–0x08098b0e: 1,902 bytes</title>
-<rect x="152.86637603888556" y="220.48893367585768" width="19.13847944914822" height="12.23674874667492" style="fill:#d8d9df"/>
-<rect x="152.86637603888556" y="217.28634708981386" width="19.13847944914822" height="3.2025865860438265" style="fill:hsl(275 58% 66%)"/>
+<rect x="152.86637603888556" y="223.93051926086" width="19.13847944914822" height="8.795163161672598" style="fill:#d8d9df"/>
+<rect x="152.86637603888556" y="217.28634708981386" width="19.13847944914822" height="6.644172171046147" style="fill:hsl(275 58% 66%)"/>
 <rect x="152.86637603888556" y="209.99687762157978" width="19.13847944914822" height="7.289469468234083" style="fill:#6d4fc2"/>
 </g>
 <g aria-label="0x08098b0e–0x08098b10: 2 bytes">
@@ -2231,7 +2227,8 @@
 </g>
 <g aria-label="0x080994d0–0x080999ee: 1,310 bytes">
 <title>0x080994d0–0x080999ee: 1,310 bytes</title>
-<rect x="179.68790862377995" y="231.4100676218426" width="20.886999019568687" height="7.029491035619779" style="fill:#d8d9df"/>
+<rect x="179.68790862377995" y="233.89610713443983" width="20.886999019568687" height="4.54345152302254" style="fill:#d8d9df"/>
+<rect x="179.68790862377995" y="231.4100676218426" width="20.886999019568687" height="2.4860395125972388" style="fill:hsl(275 58% 66%)"/>
 <rect x="179.68790862377995" y="224.4020079613314" width="20.886999019568687" height="7.008059660511183" style="fill:#6d4fc2"/>
 </g>
 <g aria-label="0x080999ee–0x080999f0: 2 bytes">
@@ -2436,7 +2433,7 @@
 </g>
 <g aria-label="0x080a22f4–0x080a2324: 48 bytes">
 <title>0x080a22f4–0x080a2324: 48 bytes</title>
-<rect x="214.60672359190752" y="196.00469181550955" width="12.109498124614161" height="0.5" style="fill:hsl(275 34% 74%)"/>
+<rect x="214.60672359190752" y="196.00469181550955" width="12.109498124614161" height="0.5" style="fill:hsl(275 58% 66%)"/>
 </g>
 <g aria-label="0x080a2324–0x080a345a: 4,406 bytes">
 <title>0x080a2324–0x080a345a: 4,406 bytes</title>
@@ -2657,8 +2654,8 @@
 </g>
 <g aria-label="0x080b0a6c–0x080b210e: 5,794 bytes">
 <title>0x080b0a6c–0x080b210e: 5,794 bytes</title>
-<rect x="346.08625660929397" y="65.24675604259366" width="44.21821047360399" height="16.21545657569272" style="fill:#d8d9df"/>
-<rect x="346.08625660929397" y="62.74875742004339" width="44.21821047360399" height="2.497998622550273" style="fill:hsl(275 58% 66%)"/>
+<rect x="346.08625660929397" y="68.15390961194096" width="44.21821047360399" height="13.30830300634542" style="fill:#d8d9df"/>
+<rect x="346.08625660929397" y="62.74875742004339" width="44.21821047360399" height="5.405152191897573" style="fill:hsl(275 58% 66%)"/>
 <rect x="346.08625660929397" y="50.26953154273406" width="44.21821047360399" height="12.479225877309336" style="fill:#6d4fc2"/>
 </g>
 <g aria-label="0x080b210e–0x080b2110: 2 bytes">
@@ -2667,7 +2664,8 @@
 </g>
 <g aria-label="0x080b2110–0x080b3940: 6,192 bytes">
 <title>0x080b2110–0x080b3940: 6,192 bytes</title>
-<rect x="270.0948968203602" y="97.5500762395502" width="48.83826483325301" height="15.126900784578837" style="fill:#d8d9df"/>
+<rect x="270.0948968203602" y="99.73615738519256" width="48.83826483325301" height="12.940819638936476" style="fill:#d8d9df"/>
+<rect x="270.0948968203602" y="97.5500762395502" width="48.83826483325301" height="2.186081145642361" style="fill:hsl(275 58% 66%)"/>
 <rect x="270.0948968203602" y="82.4622126182864" width="48.83826483325301" height="15.087863621263795" style="fill:#6d4fc2"/>
 </g>
 <g aria-label="0x080b5000–0x080b5138: 312 bytes">
@@ -2692,9 +2690,9 @@
 </g>
 <g aria-label="0x080b5534–0x080b5b16: 1,506 bytes">
 <title>0x080b5534–0x080b5b16: 1,506 bytes</title>
-<rect x="270.0948968203602" y="128.03979505619336" width="14.894410117086137" height="16.11206941049367" style="fill:#d8d9df"/>
-<rect x="270.0948968203602" y="127.07064802398321" width="14.894410117086137" height="0.9691470322101456" style="fill:hsl(275 58% 66%)"/>
-<rect x="270.0948968203602" y="121.34662336499204" width="14.894410117086137" height="5.724024658991173" style="fill:#6d4fc2"/>
+<rect x="270.0948968203602" y="133.91524893896735" width="14.894410117086137" height="10.236615527719662" style="fill:#d8d9df"/>
+<rect x="270.0948968203602" y="127.0706480239832" width="14.894410117086137" height="6.844600914984153" style="fill:hsl(275 58% 66%)"/>
+<rect x="270.0948968203602" y="121.34662336499203" width="14.894410117086137" height="5.724024658991173" style="fill:#6d4fc2"/>
 </g>
 <g aria-label="0x080b5b16–0x080b5b18: 2 bytes">
 <title>0x080b5b16–0x080b5b18: 2 bytes</title>
@@ -2867,9 +2865,9 @@
 </g>
 <g aria-label="0x080b9724–0x080b9b2e: 1,034 bytes">
 <title>0x080b9724–0x080b9b2e: 1,034 bytes</title>
-<rect x="349.4635639339488" y="113.95208107135154" width="19.506534005481523" height="7.357610207662971" style="fill:#d8d9df"/>
-<rect x="349.4635639339488" y="113.72638750669931" width="19.506534005481523" height="0.22569356465223836" style="fill:hsl(275 58% 66%)"/>
-<rect x="349.4635639339488" y="109.64133398649379" width="19.506534005481523" height="4.0850535202055145" style="fill:#6d4fc2"/>
+<rect x="349.4635639339488" y="118.24025879974407" width="19.506534005481523" height="3.0694324792704415" style="fill:#d8d9df"/>
+<rect x="349.4635639339488" y="113.7263875066993" width="19.506534005481523" height="4.513871293044767" style="fill:hsl(275 58% 66%)"/>
+<rect x="349.4635639339488" y="109.64133398649378" width="19.506534005481523" height="4.0850535202055145" style="fill:#6d4fc2"/>
 </g>
 <g aria-label="0x080b9b2e–0x080b9b30: 2 bytes">
 <title>0x080b9b2e–0x080b9b30: 2 bytes</title>
@@ -2949,7 +2947,7 @@
 </g>
 <g aria-label="0x080bd898–0x080be18a: 2,290 bytes">
 <title>0x080bd898–0x080be18a: 2,290 bytes</title>
-<rect x="287.15784818154566" y="197.08852323799755" width="31.399799848353894" height="13.728090678426772" style="fill:hsl(275 52% 82%)"/>
+<rect x="287.15784818154566" y="197.08852323799755" width="31.399799848353894" height="13.728090678426772" style="fill:hsl(275 58% 66%)"/>
 <rect x="287.15784818154566" y="194.05897657442148" width="31.399799848353894" height="3.0295466635760575" style="fill:#6d4fc2"/>
 </g>
 <g aria-label="0x080be18a–0x080be18c: 2 bytes">
@@ -3462,7 +3460,7 @@
 <g aria-label="0x080f91e8–0x080f94c6: 734 bytes">
 <title>0x080f91e8–0x080f94c6: 734 bytes</title>
 <rect x="499.9874636738251" y="232.45772840696188" width="10.514051966238178" height="5.646424333856229" style="fill:#d8d9df"/>
-<rect x="499.9874636738251" y="225.9929817058801" width="10.514051966238178" height="6.464746701081769" style="fill:hsl(275 34% 74%)"/>
+<rect x="499.9874636738251" y="225.9929817058801" width="10.514051966238178" height="6.464746701081769" style="fill:hsl(275 58% 66%)"/>
 <rect x="499.9874636738251" y="223.08793730222945" width="10.514051966238178" height="2.905044403650668" style="fill:#6d4fc2"/>
 </g>
 <g aria-label="0x080f94c6–0x080f94c8: 2 bytes">
@@ -3491,8 +3489,7 @@
 </g>
 <g aria-label="0x080f95e0–0x080f9a2e: 1,102 bytes">
 <title>0x080f95e0–0x080f9a2e: 1,102 bytes</title>
-<rect x="511.5015156400633" y="214.34028001694398" width="17.271893982557575" height="12.251975320777285" style="fill:hsl(275 34% 74%)"/>
-<rect x="511.5015156400633" y="212.43955428583806" width="17.271893982557575" height="1.90072573110591" style="fill:hsl(275 58% 66%)"/>
+<rect x="511.5015156400633" y="212.43955428583808" width="17.271893982557575" height="14.152701051883195" style="fill:hsl(275 58% 66%)"/>
 </g>
 <g aria-label="0x080f9a2e–0x080f9a30: 2 bytes">
 <title>0x080f9a2e–0x080f9a30: 2 bytes</title>
@@ -3577,7 +3574,7 @@
 </g>
 <g aria-label="0x080fa1ac–0x080fa1c6: 26 bytes">
 <title>0x080fa1ac–0x080fa1c6: 26 bytes</title>
-<rect x="523.960307926335" y="240.72162224411633" width="1.8802617683978444" height="1.267949685463972" style="fill:#d8d9df"/>
+<rect x="523.960307926335" y="240.72162224411633" width="1.8802617683978444" height="1.267949685463972" style="fill:hsl(275 58% 66%)"/>
 </g>
 <g aria-label="0x080fa1c6–0x080fa1c8: 2 bytes">
 <title>0x080fa1c6–0x080fa1c8: 2 bytes</title>
@@ -3617,7 +3614,7 @@
 </g>
 <g aria-label="0x080fa264–0x080fa322: 190 bytes">
 <title>0x080fa264–0x080fa322: 190 bytes</title>
-<rect x="531.5917707314917" y="243.12916833802345" width="4.908229268508398" height="1.0433051638159538" style="fill:hsl(275 52% 82%)"/>
+<rect x="531.5917707314917" y="243.12916833802345" width="4.908229268508398" height="1.0433051638159538" style="fill:hsl(275 58% 66%)"/>
 <rect x="531.5917707314917" y="237.092902747374" width="4.908229268508398" height="6.036265590649447" style="fill:#6d4fc2"/>
 </g>
 <g aria-label="0x080fa322–0x080fa324: 2 bytes">
@@ -3731,13 +3728,11 @@
 <rect x="534.7355617592607" y="277.9552614633638" width="1.7644382407393877" height="1.5447385366362336" style="fill:#6d4fc2"/>
 </g>
 <rect x="6" y="288" width="10" height="10" style="fill:#d8d9df"/>
-<text class="weyard legend-label" x="20" y="293" dominant-baseline="middle">Unknown 44.0%</text>
-<rect x="100" y="288" width="10" height="10" style="fill:hsl(275 34% 74%)"/>
-<text class="weyard legend-label" x="114" y="293" dominant-baseline="middle">Draft ASM 0.3%</text>
-<rect x="200" y="288" width="10" height="10" style="fill:hsl(275 52% 82%)"/>
-<text class="weyard legend-label" x="214" y="293" dominant-baseline="middle">Draft C 0.9%</text>
-<rect x="288" y="288" width="10" height="10" style="fill:hsl(275 58% 66%)"/>
-<text class="weyard legend-label" x="302" y="293" dominant-baseline="middle">Proven ASM 33.0%</text>
-<rect x="400" y="288" width="10" height="10" style="fill:#6d4fc2"/>
-<text class="weyard legend-label" x="414" y="293" dominant-baseline="middle">Proven C 21.8%</text>
+<text class="weyard legend-label" x="20" y="293" dominant-baseline="middle">Unknown 43.1%</text>
+<rect x="100" y="288" width="10" height="10" style="fill:hsl(275 52% 82%)"/>
+<text class="weyard legend-label" x="114" y="293" dominant-baseline="middle">Draft C 0.6%</text>
+<rect x="188" y="288" width="10" height="10" style="fill:hsl(275 58% 66%)"/>
+<text class="weyard legend-label" x="202" y="293" dominant-baseline="middle">Proven ASM 34.5%</text>
+<rect x="300" y="288" width="10" height="10" style="fill:#6d4fc2"/>
+<text class="weyard legend-label" x="314" y="293" dominant-baseline="middle">Proven C 21.8%</text>
 </svg>

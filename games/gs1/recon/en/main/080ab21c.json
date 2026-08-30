@@ -7,7 +7,7 @@
  "best_candidate_bytes": 204,
  "best_differing_halfwords": 95,
  "best_wrong_instructions": 56,
- "status": "measured_draft",
+ "status": "measured-draft",
  "notes": [
   "Clustered template (graphics_owner_13.c) does not match; this is a near-twin of main:08022768 (same Data_03001e8c tilemap base, same 30x20 clamp logic, same base[RENDER_DIRTY_OFS] |= 2<<(y>>2) row-dirty mark), read directly from games/gs1/asm/080ab21c.s. Two confirmed behavioral differences from 08022768: (1) flag = alt<<12 here (a full nibble value placed at bit 12, not `(alt&1)<<12`), with mask 0xffff0fff (clears a 4-bit field, not 1 bit); (2) each tile is only touched if its existing top nibble (bits12-15) is exactly 0xf (`if (((tile>>12)&0xf)==15)`) -- 08022768 has no such guard and touches every tile in the rect unconditionally.",
   "Params (x,y,width,height,alt) and the clamp logic are structurally identical to 08022768's clamp code and matched close to exactly on first try (matched_prefix=9 immediately). Iterated 3 respellings on the tile-update body: splitting `tile = (tile & 0xffff0fff) | flag;` into two separate statements (`tile &= 0xffff0fff; tile |= flag;`) fixed an AND-destination-register swap (mask-accumulates-into-tile vs tile-accumulates-into-mask) and dropped wrong_instructions 68->58; casting the row-dirty shift to `(u32)y >> 2` (logical shift) instead of a bare signed `y >> 2` (which compiled to an arithmetic shift, asrs, vs the reference's logical lsrs) dropped it further to 56.",

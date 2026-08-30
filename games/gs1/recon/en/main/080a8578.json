@@ -2,7 +2,7 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x080a8578",
-  "status": "proven-permanent",
+  "status": "proven-retained",
   "owner_bytes": 140,
   "executable_owner_bytes": 140,
   "candidate_bytes": 140,

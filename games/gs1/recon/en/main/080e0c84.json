@@ -2,7 +2,7 @@
   "schema_version": 1,
   "namespace": "gs1-en-main",
   "address": "0x080e0c84",
-  "status": "proven-retained-assembly",
+  "status": "proven-retained",
   "owner_bytes": 956,
   "classification": "battle_effect_compiler_allocation_module",
   "resolved_asm_classification": {

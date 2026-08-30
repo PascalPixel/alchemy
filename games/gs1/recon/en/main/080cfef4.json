@@ -2,7 +2,7 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x080cfef4",
-  "status": "proven-retained-assembly",
+  "status": "proven-retained",
   "classification": "battle_effect_compiler_allocation_module",
   "resolved_asm_classification": {
     "kind": "battle_effect_compiler_allocation_module",

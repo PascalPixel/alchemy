@@ -1,4 +1,6 @@
 {
+ "status": "proven-retained",
+ "classification": "hidden_register_context_caller_module",
  "span_bytes": 1876,
  "edition": {
   "role": "shared-candidate-wrapper",

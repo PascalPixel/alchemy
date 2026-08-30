@@ -1,4 +1,6 @@
 {
+ "status": "proven-retained",
+ "classification": "io_write_queue_scheduler_module",
  "span_bytes": 64,
  "edition": {
   "role": "derived-edition-candidate",

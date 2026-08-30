@@ -37,9 +37,13 @@ Production C must compile through the recorded GCC 2.96 route. Do not use inline
 assembly, fixed-register variables, empty barriers, copied instructions, forced
 scheduling, or compiler patches to disguise an incorrect source model.
 
-Proven ASM requires clear reasoning that the approved C compiler cannot produce
-the required form, plus a byte-exact assembly round trip over the complete
-audited extent. A plausible instruction shape without that proof is Draft ASM.
+Proven C proves an implementation route: ordinary C emitted by the approved
+compiler route reproduces the complete audited extent byte-exactly. Proven ASM
+likewise proves an implementation route: clear recorded reasoning shows that
+the approved compiler model cannot emit the required form as ordinary C, and
+assembly reproduces the complete audited extent byte-exactly. Neither category
+claims knowledge of Camelot's original source language. A plausible instruction
+shape without the relevant proof remains Draft C or Draft ASM.
 
 Never fill an unfinished build from the reference ROM.
 
@@ -286,14 +290,12 @@ C anywhere stay retained assembly and appear in the manifest as holes. This
 is the pret discipline at function granularity — the hole is always a whole
 function, never `asm()` inside a C body, and DONE never counts a hole.
 
-“Proven” describes the reconstruction result, not access to Camelot's source.
-Proven C compiles through the approved route to byte-identical output. Proven
-ASM has a recorded non-emittability or structural-machine-code argument and a
-byte-exact assembly round trip. Main-image proof lives in the generated assembly
-manifest; overlay proof lives in `games/gs1/semantic/overlay-assembly.json`.
-Entries marked `strong` remain Draft ASM, and unclassified bytes remain
-Unknown. Missing reasoning, invalid extents, or stale generated evidence stops
-coverage generation rather than promoting the bytes.
+The proof categories are defined once under **Keep exactness literal** above.
+Main-image Proven ASM evidence lives in the generated assembly manifest;
+overlay evidence lives in `games/gs1/semantic/overlay-assembly.json`. Entries
+marked `strong` remain Draft ASM, and unclassified bytes remain Unknown.
+Missing reasoning, invalid extents, or stale generated evidence stops coverage
+generation rather than promoting the bytes.
 
 The point is authentic compile context. GCC 2.96 codegen depends on the
 translation unit around a function — symbol names, shared declarations,

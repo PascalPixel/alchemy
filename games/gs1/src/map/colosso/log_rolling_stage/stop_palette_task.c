@@ -1,10 +1,5 @@
 #include "colosso_log_rolling_stage.h"
 
-/*
- * Complete palette-task teardown owner.  It removes the per-frame palette
- * callback, releases the currently held graphics slot, then marks the slot as
- * vacant for the next scene.
- */
 extern s16 Data_0200dace;
 extern void Func_0200b91c(void);
 extern void Func_0200836e(void (*callback)(void));

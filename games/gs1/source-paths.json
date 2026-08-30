@@ -5410,6 +5410,9 @@
     "resource_3a5:0200088c": {
       "name": "FieldScene_ConfigureAlternateActorLayout"
     },
+    "resource_3c9:020008b4": {
+      "name": "FieldScene_RunScriptedActorPresentation"
+    },
     "resource_373:02002f14": {
       "name": "FieldScene_RunPrimaryActorSequence"
     },

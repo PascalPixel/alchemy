@@ -2,8 +2,19 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x080f92fc",
-  "status": "measured-draft",
+  "status": "proven-retained",
+  "classification": "compiler_local_materialization_mismatch",
   "owner_bytes": 316,
+  "cross_edition": {
+    "measured": "2026-08-30",
+    "object_bytes": 314,
+    "retained_span_bytes": 316,
+    "relocation_bytes": 28,
+    "literal_bytes": 16,
+    "core_bytes": 270,
+    "core_diff_bytes": {"ja": 0, "en": 0, "de": 0, "es": 0, "fr": 0, "it": 0},
+    "core_identical": true
+  },
   "score": {
     "measured": "2026-08-27",
     "candidate_bytes": 316,
@@ -11,7 +22,7 @@
     "differing_halfwords": 8,
     "wrong_instructions": 4,
     "class": "allocation",
-    "note": "Salvaged from a worktree left uncommitted by an interrupted session; no completed dossier narrative was recovered alongside the source. Independently re-verified fresh (non-cached) against the confirmed-restored roms/gs1-en.gba before committing: candidate-show --owner 0x080f92fc --size 316 reports candidate=316 reference=316 differing_halfwords=8 wrong_instructions=4, class=allocation. Not adopted (gate requires differing_halfwords=0); retained assembly (games/gs1/asm/080f92fc.s) stays authoritative. The residual's class (allocation, very low wrong_instructions relative to differing_halfwords) is consistent with the register-allocation-tie residual class documented extensively elsewhere this session, but this was not independently confirmed by re-deriving the source structure -- a future pass should read games/gs1/asm/080f92fc.s directly to verify the draft's semantics before spending further effort on the residual."
+    "note": "The complete ordinary-C controller and retained owner were re-read on 2026-08-30. Candidate and reference are both 316 bytes; only four instructions in the independent entry initialization schedule differ, and the streams are identical from the timer loop onward. Swapping row/repeat initialization and moving the shared-state clear after pointer setup preserved or regressed the floor. The shipped scheduling, regmove, CSE, strength-reduction, and expensive-optimization axes likewise preserved eight differing halfwords or regressed. Retained as strong compiler-local materialization output after the six-edition 270-byte normalized core also proved identical."
   },
   "notes": [
     "Source recovered by a prior agent in this session whose full working notes were lost to an interrupted session; only the .c file survived in its worktree.",

@@ -21,6 +21,12 @@
     "main:08021d88": {
       "name": "UiText_DrawCharacter"
     },
+    "main:0801faa8": {
+      "name": "SaveState_ProcessSelectedSlot"
+    },
+    "main:080f92fc": {
+      "name": "AudioTest_RunParameterController"
+    },
     "main:0801e418": "ui/render/reserved_no_op.c",
     "main:080294d0": "menu/reserved_no_op.c",
     "main:08078228": "owner/reserved_no_op_a.c",

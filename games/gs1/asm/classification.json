@@ -1687,6 +1687,30 @@
    ]
   },
   {
+   "kind": "compiler_local_materialization_mismatch",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "strong",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_owner_extents",
+    "six_edition_relocation_normalized_cores_are_identical",
+    "all_residuals_are_local_equivalent_constant_pointer_or_register_materialization_choices",
+    "instruction_streams_resynchronize_immediately_after_each_local_residual",
+    "owner_specific_bounded_source_shape_searches_exhaust_the_named_lifetime_order_and_loop_dimensions",
+    "approved_compiler_family_and_optimization_sweeps_preserve_the_residuals_or_regress",
+    "gcc_combine_lreg_and_scheduler_evidence_explains_the_observed_copy_folding_allocation_priority_and_volatile_load_order",
+    "inline_assembly_fixed_registers_and_compiler_barriers_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 3,
+   "expected_bytes": 540,
+   "files": [
+    "0800651c",
+    "0801faa8",
+    "080f92fc"
+   ]
+  },
+  {
    "kind": "compiler_entry_scheduling_module",
    "origin": "compiler",
    "retention": "keep_structured_asm",

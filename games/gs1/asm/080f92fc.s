@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global AudioTest_RunParameterController
 	.global Func_080f92fc
 	.thumb_func
+AudioTest_RunParameterController:
 Func_080f92fc:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

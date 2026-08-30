@@ -2,8 +2,18 @@
  "schema_version": 1,
  "namespace": "gs1-en-main",
  "address": "0x0801faa8",
- "status": "measured-draft",
+ "status": "proven-retained",
+ "classification": "compiler_local_materialization_mismatch",
  "owner_bytes": 160,
+ "cross_edition": {
+  "measured": "2026-08-30",
+  "object_bytes": 160,
+  "relocation_bytes": 40,
+  "literal_bytes": 24,
+  "core_bytes": 96,
+  "core_diff_bytes": {"ja": 0, "en": 0, "de": 0, "es": 0, "fr": 0, "it": 0},
+  "core_identical": true
+ },
  "score": {
   "measured": "2026-08-27",
   "candidate_bytes": 160,
@@ -104,6 +114,6 @@
  ],
  "notes": [
   "Recovered only from the retained owner assembly, approved local ROM, the byte-exact sibling sources, in-repository headers, and the approved compiler.",
-  "This candidate claims zero DONE bytes."
+  "Promoted to strong permanent compiler retention on 2026-08-30 after the shared-negate, separate-magnitude, lifetime, type, and declaration probes all converged on the recorded combine/lreg allocation conflict; the six-edition normalized core is identical."
  ]
 }

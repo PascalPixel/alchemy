@@ -1,34 +1,5 @@
 #include "types.h"
 
-/*
- * Dialogue-layout group at 0x02001154.
- *
- * Complete owner: `push {r5, r6, r7, lr}` and `sub sp, #8` at 0x02001154,
- * and the matching `add sp, #8 / pop {r5, r6, r7} / pop {r0} / bx r0` at
- * 0x020012b6, so nothing is returned.  Three pool words follow the return and
- * are data.  All 24 distinct branch targets in the row are placed.
- *
- * The eight bytes of frame are the fifth and sixth arguments of the
- * six-argument layout calls; r5, r6 and r7 hold the repeated constants 19, 13
- * and 12 across the second group.
- *
- * Call convention used throughout this overlay: every `bl` computes an
- * address in the band above the last code row.  The reconstruction's code ends
- * at file offset 0x2258 and the whole image is 0x3328 bytes, yet this overlay's
- * branch targets run from 0x2260 up to 0x5124 - far past the image - so an
- * encoded `bl` address is an import identity, not a place to disassemble.
- * That is the convention the byte-exact sources in this overlay already use
- * (`games/gs1/assets/code/resource_39a_c_02000030.c` declares `Func_02002442`), so
- * imports are named by the address their call site computes and their
- * interfaces are left open.  Declarations are old-style because one name is
- * reached with different argument counts.
- */
-
-/* Imports; the queried ones are typed for their return value. */
-
-
-
-
 extern void Func_0200345a();
 extern s32 Func_0200348a();
 extern void Func_02002184();
@@ -58,7 +29,6 @@ void DialogueLayout_ConfigureGroupTwo(void)
 {
     { s32 f1 = 12; s32 g1 = 8; Func_0200345a(0, 28, 10, 18,  f1, g1); }
 
-    /* movs r0,#0xc1 / lsls r0,#2 builds 0x304. */
     if (Func_0200348a((s32)0x304) != 0) {
         Func_02002184(8, 21, 20);
         { s32 f2 = 13; s32 g2 = 19; Func_02003484(20, 19, 1, 3,  f2, g2); }

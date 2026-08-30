@@ -5401,6 +5401,9 @@
     "resource_3ca:02000430": {
       "name": "FieldScene_RunExtendedPresentationSequence"
     },
+    "resource_371:02002cb4": {
+      "name": "FieldScene_RunActorPresentationSequence"
+    },
     "resource_3ca:02000b34": {
       "name": "FieldScene_ClosePresentationSequence"
     },

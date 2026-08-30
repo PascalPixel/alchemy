@@ -1,0 +1,11 @@
+{
+  "span_bytes": 1146,
+  "score": {"measured":"2026-08-30","candidate_bytes":1142,"reference_bytes":1146,"wrong_instructions":184,"differing_halfwords":494,"class":"generated-call-script-retention"},
+  "shape": {"calls":106,"loops":1,"memory_operations":5},
+  "verified_against_reference": [
+    "candidate and ROM contain the same 106 calls in machine order with every decoded scalar argument represented",
+    "direct assembly audit restored the two initial scene-key arguments, both runtime workspace writes, and the actor-state polling loop omitted or mistranslated by the mechanical draft",
+    "candidate is four bytes shorter after complete decoded control flow and side effects are represented; residual is approved GCC allocation and literal scheduling"
+  ],
+  "retention": "keep_structured_asm"
+}

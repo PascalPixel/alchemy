@@ -16,6 +16,7 @@ void Func_080b3050(s32 member);
 s32 Func_08077230(s32 amount);
 void Func_080a1028(s32, s32, s32, s32, s32);
 void Func_080a1030(void);
+extern char Value_00000d27;
 
 /*
  * Reached from Shop_ConfirmPartyAction (main:080b29a8) once the caller's
@@ -106,32 +107,28 @@ s32 Func_080b2b10(void)
              * being reused for its usual 0/1 retry-loop meaning below;
              * the reference keeps both roles in the same register since
              * their live ranges never overlap. */
-            retry = 0xd27;
+            retry = (s32)&Value_00000d27;
             Func_080b28d4(retry);
             if (Func_080b0664(0) != 0) {
-                retry += 2;
-                Func_080b2928(retry);
+                Func_080b2928(retry + 2);
                 retry = 1;
                 continue;
             }
             if ((u32)price > (u32)SHOP_PARTY_STATE.money) {
                 Audio_PlayCue(SOUND_MENU_CANCEL);
-                retry += 1;
-                Func_080b2928(retry);
+                Func_080b2928(retry + 1);
                 retry = 1;
                 continue;
             }
             UiText_DrawQuantity(unit_id, 1);
-            retry += 3;
-            Func_080b28d4(retry);
+            Func_080b28d4(retry + 3);
             UiWork_FinalizePending();
             Func_080b2da8(unit_id, kind);
             Func_080b3050(selection);
             Func_08077230(-price);
             Shop_DrawMoney();
             UiText_DrawQuantity(unit_id, 1);
-            retry += 1;
-            Func_080b28d4(retry);
+            Func_080b28d4(retry + 4);
             if (Func_080b280c() != 0) {
                 retry = 1;
                 continue;

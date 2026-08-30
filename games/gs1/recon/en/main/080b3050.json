@@ -4,55 +4,49 @@
   "address": "0x080b3050",
   "status": "measured-draft",
   "owner_bytes": 448,
+  "retention": "c_candidate",
   "score": {
-    "measured": "2026-08-27",
-    "candidate_bytes": 452,
+    "measured": "2026-08-30",
+    "candidate_bytes": 448,
     "reference_bytes": 448,
-    "differing_halfwords": 153,
-    "wrong_instructions": 108,
-    "note": "One-parameter void function (party member index). This is the largest and least-certain owner in this batch: a shop-screen sequence that hides one party member's icon, plays a repair sound looked up from a small ROM table indexed by shop->party_action, schedules a deferred callback, walks an 18/24-element 0x48-byte-stride effect-slot array (shared with the already-adopted games/gs1/src/battle/effects/radial/update_motion.c, whose struct is literally named Effect_080b2f4c after this same base address region), and finally restores the shop cursor's saved anchor kind byte."
+    "differing_halfwords": 24,
+    "wrong_instructions": 6,
+    "branch_topology": "equal",
+    "matched_prefix_instructions": 48,
+    "note": "Exact-extent semantic reconstruction. The remaining six instruction choices are localized scheduling/rematerialization differences; adoption still requires zero differing halfwords."
   },
-  "domain": "Shop-screen effect: spawn a burst of BattleEffect_UpdateRadialMotion-driven particles around a repaired/selected party member's icon, with sound, scheduling, and cursor-state save/restore bracketing it.",
+  "domain": "Shop party-member icon radial-burst presentation, including cursor-state save/restore, icon animation, effect spawning, cleanup, sound, and scheduler callbacks.",
   "expressed": [
-    "save/restore of shop->cursor.anchor->kind (temporarily forced to 13) around the whole sequence, matching the same field (ShopCursorAnchor.kind, shop.h offset 5) used elsewhere in shop.h",
-    "Audio_PlayCue looked up via a signed-byte table at ROM address 0x080b4ab2, indexed by the signed byte at shop+0x3aa (shop.h's documented `party_action` field)",
-    "the deferred-callback registration Func_080041d8(&Func_080b2ffc, 0xc80) -- 0x080b2ffd is exactly the thumb pointer (address+1) of the already-adopted sibling Func_080b2ffc (games/gs1/src/unidentified/main/runtime/runtime_owner_102.c), confirmed via source-paths.json",
-    "an 18-iteration loop spawning/configuring effect-slot entries at shop+0x3b0 (stride 0x48) via Func_0808a528/Func_0808a520/Func_0808a518, where the second Func_0808a520 argument 0x080b2f4d is exactly the thumb pointer of BattleEffect_UpdateRadialMotion (main:080b2f4c, already adopted) -- i.e. this loop is spawning radial-burst particle effects around the party member's icon and registering that update routine as their callback",
-    "a 24-iteration flag-scan loop over a second shop+0x3f0 array before the spawn loop's cleanup, and a matching 24-iteration Func_0808a530(effect) teardown loop after it",
-    "the final icon-restore / ScheduleCallback(0x080b2ffd... reused) / Func_08009280(icon,16) / Func_080b0894() tail, then the cursor-kind restore"
+    "dereference the 0x03001f2c ShopRuntime pointer cell before accessing runtime fields",
+    "save and restore shop->cursor.anchor->kind while temporarily selecting kind 13",
+    "use shop->party_action and shop->party_member_icons[member] through the established ShopRuntime layout",
+    "read two eight-member signed-halfword coordinate arrays at runtime offsets 0x134 and 0x144",
+    "register Func_080b2ffc with flags 0xc80 and remove the same callback during teardown",
+    "spawn eighteen 0x48-byte radial-motion effects, expose the selected member after the sixth spawn, then update and clean twenty-four effect slots",
+    "use the independently resolved cleanup flag byte at runtime offset 0x3f5 rather than the prior guessed 0x3f0 base"
   ],
-  "unexpressed": [
-    {
-      "op": "two u16 per-member offset reads at shop+0x134/shop+0x144 used to build a 16.16 fixed-point (x, ?, z) source position",
-      "count": "unresolved field identity",
-      "where": "these offsets fall inside/adjacent to shop.h's documented party_member_icons[9] array (0x114..0x138) but do not match any currently-named field; whether they are a genuinely separate per-member anchor-position table or an undocumented reinterpretation of part of the icons array is not established here"
-    },
-    {
-      "op": "the base pointer walked by the second (flag-scan) loop at shop+0x3f0",
-      "count": "unresolved",
-      "where": "guessed by proximity/stride matching (0x48 stride, same iteration count as the teardown loop) rather than confirmed against another owner; not independently cross-checked the way the 0x3b0 effect array and the 0x114 icon array were"
-    },
-    {
-      "op": "general register/scheduling residual",
-      "count": "remainder of the 108 wrong instructions",
-      "where": "spread throughout; the candidate is 4 bytes longer than the reference, so most of the tail is phase-shifted noise on top of the genuine structural gaps above"
-    }
-  ],
-  "retention": "needs_further_research",
   "verified_against_reference": [
-    "fresh candidate-show build: 452 candidate bytes vs 448 reference bytes, 153 differing halfwords, 108 wrong instructions (improved from an initial 456/216/126 draft)",
-    "Func_080b2ffc (0x080b2ffd - 1) and BattleEffect_UpdateRadialMotion / Effect_080b2f4c (0x080b2f4d - 1) identities confirmed via games/gs1/source-paths.json and the already-adopted games/gs1/src/unidentified/main/runtime/runtime_owner_102.c / games/gs1/src/battle/effects/radial/update_motion.c source, not guessed from this owner alone"
+    "fresh canonical candidate-show: 448 candidate bytes, 448 reference bytes, equal branch topology, 24 differing halfwords, 6 wrong instructions",
+    "Func_080b2ffc and BattleEffect_UpdateRadialMotion identities resolve through already-adopted source owners",
+    "aggregate-aware m2c independently confirms the 0x134/0x144 coordinate arrays, 0x3b0 effect base, 0x3f5 cleanup flag base, loop bounds, and pointer advances"
   ],
   "rejected": [
     {
-      "shape": "cache `shop->cursor.anchor` in a local pointer variable and reuse it for both the initial kind read and the temporary kind=13 write",
-      "result": "worse (216 differing halfwords, 126 wrong instructions): the reference reloads shop->cursor.anchor a second time for the write, consistent with conservative aliasing across the intervening `*(shop+0x3ab)=0xff` store. Rewriting the two accesses as separate raw expressions (no cached pointer) instead of a shared local was the adopted improvement, matching this aliasing behavior and bringing the score to 153/108."
+      "shape": "single-expression cleanup flag shift",
+      "result": "best retained cleanup form; GCC removes the shift but keeps the candidate at 448 bytes and 24 differing halfwords"
+    },
+    {
+      "shape": "split cleanup flag load and <<= 24 statement",
+      "result": "retains the reference shift but perturbs literal placement and regresses to 67 differing halfwords / 8 wrong instructions"
+    },
+    {
+      "shape": "canonical route flag matrix over scheduling, regmove, CSE, rerun-CSE, and expensive-optimization toggles",
+      "result": "no multi-instruction improvement; several routes regress materially, so no per-owner compiler override is justified"
     }
   ],
   "notes": [
-    "This owner required substantially more independent field-identity work than the other four in this batch and was not brought close to exact in the bounded effort available. The overall control flow (validate/spawn/teardown/restore shape, the two cross-referenced callback addresses, and the shared 0x48-stride effect array with the already-adopted radial-motion effect family) is recovered with reasonable confidence; several individual field offsets (0x134/0x144 per-member position table, the 0x3f0 flag array) are recovered only as raw offsets without an established name, per the project's evidence-based naming rule.",
-    "Declared Func_08004970-family placeholders were not needed here; all called helpers without an established prototype (Func_080b0840, Func_080041d8, Func_0808a528, Func_0808a520, Func_0808a518, Func_080b04c4, Func_08009280 with this two-argument shape) were declared locally from call-site argument shapes only, matching project convention for unnamed owners.",
-    "This is a source-shape gap, not a residual last-mile mismatch: the byte/instruction counts here reflect genuine remaining uncertainty about at least two field identities, not a single stubborn scheduling hunk. Worth a dedicated follow-up pass (ideally one that also resolves the shop+0x134/0x144/0x3f0 fields against other owners that touch the same region) rather than further blind respelling.",
-    "This candidate claims zero DONE bytes. No external source, git history, compiler modification, copied instruction bytes, fixed-register variables, barriers, or inline assembly was used."
+    "A named callback_flags local is semantically ordinary and fixes the callback literal-load scheduling exactly, improving the best score from 26 to 24 differing halfwords.",
+    "The remaining differences are position-store scheduling, one icon-offset rematerialization choice, and cleanup shift elimination/branch displacement. No fixed-register variable, inline assembly, compiler barrier, copied instruction bytes, or compiler modification was used.",
+    "This candidate claims zero DONE bytes because differing_halfwords is not zero."
   ]
 }

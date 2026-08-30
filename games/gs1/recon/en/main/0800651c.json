@@ -2,7 +2,8 @@
  "schema_version": 1,
  "namespace": "main",
  "address": "0x0800651c",
- "status": "measured-draft",
+ "status": "proven-retained",
+ "classification": "compiler_local_materialization_mismatch",
  "owner_bytes": 64,
  "executable_owner_bytes": 64,
  "candidate_bytes": 64,
@@ -85,7 +86,7 @@
   "Third attempt (this session): swapping the state/interrupt_master assignment order flips the literal-pool word order to match the reference exactly (0x2220 then 0x0208 vs the current 0x0208 then 0x2220), but the register numbers it then produces for those two pointers are the wrong way round relative to reference, worsening wrong_instructions from 4 to 16. Reverted; the original order remains the best-known candidate.",
   "The coherent translation-unit build and first-class absolute symbols fix the former ten-byte extent excess and preserve the real 0x02002008, 0x02002080, 0x02002220, 0x02002238, 0x020023ac, and 0x04000208 bindings.",
   "All instructions after the first five match. The remaining nine-halfword residual is the entry load, interrupt save, zero-value scheduling, and consequent literal-pool order; two bounded source-shape searches found no improvement.",
-  "No full search or permanent classification was warranted, and zero DONE bytes are claimed.",
+  "Promoted to strong permanent compiler retention on 2026-08-30: the exact extent, six-edition core, 1,000-candidate bounded search, register-gate probe, and volatile-dependency scheduler analysis jointly bound the residual to the entry literal/register materialization order.",
   "Recovered only from retained owner assembly, approved local GS1 ROM correspondence, the recovered linked-action caller, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used."
  ]
 }

@@ -1,5 +1,7 @@
 #include "types.h"
 
+#define AudioTest_RunParameterController Func_080f92fc
+
 extern volatile u32 Data_03001b04;
 extern s32 Data_03000b5c;
 extern s32 Data_03007804;
@@ -15,7 +17,7 @@ s32 Modulo(s32, s32);
 void Func_080037d4(void);
 void Func_080f9080(s32);
 
-void Func_080f92fc(void)
+void AudioTest_RunParameterController(void)
 {
     s32 buf[3];
     s32 repeat;

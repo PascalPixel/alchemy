@@ -2,8 +2,10 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
+	.global SaveState_ProcessSelectedSlot
 	.global Func_0801faa8
 	.thumb_func
+SaveState_ProcessSelectedSlot:
 Func_0801faa8:
 	push	{r5, r6, r7, lr}
 	movs	r0, #128

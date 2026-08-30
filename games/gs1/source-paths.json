@@ -2705,6 +2705,12 @@
     "resource_380:020027f8": {
       "name": "MapScene_RunLargeObjectSequence"
     },
+    "resource_380:02000a98": {
+      "name": "FieldScene_RunPartyIntroduction"
+    },
+    "resource_380:02000d5c": {
+      "name": "FieldScene_StagePairedActors"
+    },
     "resource_373:020015dc": {
       "name": "FieldScene_RunScriptedActorSequence"
     },

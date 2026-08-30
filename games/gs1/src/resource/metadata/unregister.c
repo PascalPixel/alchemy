@@ -4,47 +4,47 @@
 
 void Func_0800bc48(void *destination);
 
-void ResourceMetadata_Unregister(void *arg0, s32 arg1)
+void ResourceMetadata_Unregister(void *state, s32 handle)
 {
-    s32 *var_r1;
-    s32 *var_r2;
-    s32 temp_r3;
-    s32 var_r4;
-    u32 var_r0;
-    u32 var_r2_2;
-    u32 off;
+    s32 *remaining_slot;
+    s32 *slot_cursor;
+    s32 slot_value;
+    s32 later_slot_count;
+    u32 slot_index;
+    u32 later_index;
+    u32 slot_offset;
 
-    if ((arg0 != 0) && (arg1 != 0)) {
-        Func_0800bc48(arg1);
-        var_r0 = 0;
-        if (arg1 != FIELD_AT_OFFSET(arg0, s32, 0x28)) {
-            var_r2 = (s32 *)((u8 *)arg0 + 0x28);
+    if ((state != 0) && (handle != 0)) {
+        Func_0800bc48(handle);
+        slot_index = 0;
+        if (handle != FIELD_AT_OFFSET(state, s32, 0x28)) {
+            slot_cursor = (s32 *)((u8 *)state + 0x28);
 loop_4:
-            var_r0 += 1;
-            if (var_r0 <= 3U) {
-                var_r2 += 1;
-                if (arg1 != *var_r2) {
+            slot_index += 1;
+            if (slot_index <= 3U) {
+                slot_cursor += 1;
+                if (handle != *slot_cursor) {
                     goto loop_4;
                 }
             }
         }
-        if (var_r0 != 4) {
-            off = (var_r0 * 4) + 0x28;
-            FIELD_AT_OFFSET(arg0, s32, off) = 0;
-            var_r2_2 = var_r0 + 1;
-            var_r4 = 0;
-            if (var_r2_2 <= 3U) {
-                var_r1 = (s32 *)((var_r2_2 * 4) + (u32)arg0 + 0x28);
+        if (slot_index != 4) {
+            slot_offset = (slot_index * 4) + 0x28;
+            FIELD_AT_OFFSET(state, s32, slot_offset) = 0;
+            later_index = slot_index + 1;
+            later_slot_count = 0;
+            if (later_index <= 3U) {
+                remaining_slot = (s32 *)((later_index * 4) + (u32)state + 0x28);
                 do {
-                    temp_r3 = *var_r1++;
-                    if (temp_r3 != 0) {
-                        var_r4 += 1;
+                    slot_value = *remaining_slot++;
+                    if (slot_value != 0) {
+                        later_slot_count += 1;
                     }
-                    var_r2_2 += 1;
-                } while (var_r2_2 <= 3U);
+                    later_index += 1;
+                } while (later_index <= 3U);
             }
-            if (var_r4 == 0) {
-                FIELD_AT_OFFSET(arg0, s8, 0x27) = (s8) var_r0;
+            if (later_slot_count == 0) {
+                FIELD_AT_OFFSET(state, s8, 0x27) = (s8) slot_index;
             }
         }
     }

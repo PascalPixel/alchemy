@@ -5512,6 +5512,9 @@
     "resource_3b1:02001f3c": {
       "name": "FieldScene_RunExtendedActorChoreography"
     },
+    "resource_3bc:02001474": {
+      "name": "FieldScene_RunMultiPhaseActorSequence"
+    },
     "main:080a46b4": {
       "name": "Item_ClassifyUseMode",
       "source": "items/classify_use_mode.c"

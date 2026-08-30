@@ -1,0 +1,10 @@
+{
+  "span_bytes": 352,
+  "score": {"measured":"2026-08-30","candidate_bytes":352,"reference_bytes":352,"wrong_instructions":90,"differing_halfwords":170,"class":"generated-call-script-retention"},
+  "shape": {"calls":30,"loops":1,"memory_operations":5},
+  "verified_against_reference": [
+    "complete reconstruction accounts for the global mode gate, all three state routes, bounded event-polling loop, 30 calls, and terminal event-counter reset",
+    "candidate and reference have identical extents; residual is approved GCC allocation and scheduling after complete control flow is represented"
+  ],
+  "retention": "keep_structured_asm"
+}

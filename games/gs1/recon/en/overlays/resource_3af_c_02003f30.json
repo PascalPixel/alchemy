@@ -1,0 +1,11 @@
+{
+  "span_bytes": 686,
+  "score": {"measured":"2026-08-30","candidate_bytes":756,"reference_bytes":686,"wrong_instructions":147,"differing_halfwords":361,"class":"generated-call-script-retention"},
+  "shape": {"calls":72,"loops":0,"branches":1,"memory_operations":4},
+  "verified_against_reference": [
+    "all 72 calls and their arguments are represented in ROM order across the complete owner",
+    "direct assembly audit restored the early event-result exit, story-progress increment, literal-backed arguments, and terminal workspace state 513",
+    "approved GCC allocation and literal-pool scheduling does not emit the complete owner exactly"
+  ],
+  "retention": "keep_structured_asm"
+}

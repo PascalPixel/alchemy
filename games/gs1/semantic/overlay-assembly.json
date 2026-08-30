@@ -2853,6 +2853,19 @@
         "direct assembly audit restored the guarded presentation sequence and inner wait loop omitted by the mechanical draft",
         "games/gs1/recon/en/overlays/resource_3af_c_02003c88.json"
       ]
+    },
+    {
+      "overlay": "resource_3af",
+      "start": "0x02003f30",
+      "end": "0x020041de",
+      "kind": "generated_call_script_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "complete reconstruction accounts for all 72 calls, arguments, early event-result exit, story-progress increment, and terminal workspace state",
+        "direct assembly audit restored literal-backed arguments and both state transitions omitted by the mechanical draft",
+        "games/gs1/recon/en/overlays/resource_3af_c_02003f30.json"
+      ]
     }
   ]
 }

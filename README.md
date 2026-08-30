@@ -41,7 +41,8 @@ only when its permanent need is documented and its output is byte-identical.
 
 This is a preservation and decompilation project—not a remake, ROM hack,
 emulator, or game distribution. No ROM is included. To build locally or help
-with the reconstruction, see [CONTRIBUTING.md](CONTRIBUTING.md).
+with the reconstruction, see [CONTRIBUTING.md](CONTRIBUTING.md), including its
+[complete tooling index](CONTRIBUTING.md#tooling-index).
 
 ## Acknowledgements
 

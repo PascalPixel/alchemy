@@ -7,7 +7,7 @@
 //! and have not been needed since. They are NOT deletable: in a clean-room
 //! decompilation the extractor is the provenance record proving an asset was
 //! derived from the ROM by a documented transform. They simply do not each need
-//! an entry point. See docs/ENTRY-POINTS.md.
+//! an entry point. See `CONTRIBUTING.md`'s tooling index.
 
 use std::process::ExitCode;
 

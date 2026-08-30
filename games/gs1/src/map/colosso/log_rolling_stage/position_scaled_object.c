@@ -1,16 +1,5 @@
 #include "colosso_log_rolling_stage.h"
 
-/*
- * resource_3bc owner at 0x02003b40, 64 bytes.
- *
- * Fetches a record and, when it exists, resets its scale pair, clears the busy
- * byte at +91 and hands the record on with the caller's two 16.16 arguments.
- *
- * The second scale is written as `scale / 2` of the first, not as its own
- * literal: the reference derives it with `asrs r3, r3, #1` from the value
- * already in the register, and both `0x10000` and `scale >> 1` build it afresh
- * with `movs / lsls` instead.
- */
 
 typedef struct ScaledStageObject {
     u8 pad00[12];

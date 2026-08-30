@@ -24,63 +24,6 @@ typedef struct Position3 {
     s32 z;
 } Position3;
 
-/*
- * This 360-byte owner spans 0x02004628-0x0200478f:
- * 344 bytes of code plus the four-word literal pool at 0x02003a50, which ends
- * exactly where the next owner (0x02003a60) begins.  Nothing live crosses the
- * row boundary.
- *
- * Prologue `push {r5, r6, r7, lr}` plus the high-register saves
- * `mov r7, fp / mov r6, sl / mov r5, r9 / push {r5, r6, r7}` and
- * `mov r7, r8 / push {r7}`, then `sub sp, #12` for a three-word position
- * block. Every early exit branches to the shared epilogue, and no incoming
- * argument register is consumed.
- *
- * CALL ACCOUNTING.  Thirteen `bl` sites, all resolved with
- * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3bc --annotate`: Func_020038b0
- * x3, Object_SetMode x2, Object_SetPosition x2, Audio_PlayCue x2, and one each of
- * Scene_GetRecord, Object_CheckMovementCollision, Func_080000c0 and Object_CommitPosition.  The C below
- * reproduces that multiset exactly; the inventory's `calls=13` agrees.
- *
- * LINK BASE 0x02008000 is proven by a byte-exact sibling (pool word 0x0200804d =
- * Func_0200004c + the Thumb bit).  Applying the parity rule to the pool:
- *   0x0200cfc0  even -> in-image DATA at file offset 0x4154, the direction
- *                table indexed below;
- *   0x02000240  below the base -> a RAM global, the shared `s16[]` table that
- *                the byte-exact resource_36f/resource_371 sources declare.
- *                The index is built as 250 << 1 = 500, the same pointer word
- *                `*(void **)&Data_02000240[250]` that resource_36f reads and
- *                that this overlay's 0x02003a60 also uses.
- *
- * SHAPE — the push interaction.  Take the active subject, turn its facing
- * halfword into a 0..15 direction index (`>> 12`), and read one packed delta
- * word from Data_0200cfc0: the high half is the x step and the low half,
- * shifted up 16, is the z step, both 16.16.  Probe the cell one step ahead of
- * the subject; if something occupies it, that is the pushable target.  Then
- * three refusals, in order: the cell one step beyond the target is occupied by
- * something whose flag bit 0 at +0x59 is set; the cell directly above the
- * target (y + 0x100000) is likewise occupied; or the terrain probe
- * Object_CheckMovementCollision reports a positive code for the destination.  Otherwise mark
- * the target state 2, take control of the subject, wait 15 frames, move both
- * the target and the subject onto the destination with the same 0x3333 motion
- * rate, play two cues around re-attaching the camera to the target, commit the
- * target's x/z and clear its two motion words, and hand the subject back.
- *
- * UNCERTAINTIES.
- *  - Record fields asserted: the facing halfword at +6, the position words at
- *    +8/+12/+16, the state byte at +0x22, the occupancy flag bit 0 of the byte
- *    at +0x59, the motion-rate pair at +0x30/+0x34, and the two words cleared
- *    at +0x24/+0x2c.
- *  - Object_CheckMovementCollision's result is tested with `bgt`, i.e. signed and strictly
- *    greater than zero, so a negative code does not abort.  Elsewhere in the
- *    tree the value 2 means blocked.
- *  - Func_020038b0 is this overlay's own byte-exact lookup
- *    is byte-exact and takes a single argument;
- *    all three sites also load r1 with a record pointer, which is not
- *    asserted as an argument.
- *  - The two Object_SetPosition calls reuse the same position block; the second is
- *    reached with r0 reloaded from r8, so it moves the subject, not the target.
- */
 
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */

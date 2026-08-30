@@ -1,47 +1,5 @@
 #include "colosso_log_rolling_stage.h"
 
-/*
- * This 160-byte owner spans 0x02004790-0x0200482f, including its alignment
- * and two-word literal pool.
- *
- * Prologue `push {r5, r6, r7, lr} / mov r7, r8 / push {r7} / sub sp, #12` at
- * 0x02004790; the epilogue uses `pop {r1} / bx r1`. The interworking return
- * pops into r1, not r0, so r0 survives and IS the result: this owner returns
- * the value of its last Func_020038b0 call.  No argument register is read
- * before being written, so it takes no arguments.
- *
- * It is an instruction-for-instruction twin of the equivalent Colosso stage
- * owner, with this overlay's local lookup veneer. Both lookups are the same routine: one argument,
- * a three-word position; scan slots 8..65 of the workspace at
- * `Data_03001ebc + 0x14` and return the occupant whose x/y/z agree to whole
- * units, or 0.  The cross-check is free and it is what settles the interface.
- *
- * CALL ACCOUNTING.  Five `bl` sites, all resolved with
- * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3bc --annotate`: Scene_GetRecord
- * once, Func_08000128 twice, Func_020038b0 twice.  The inventory's `calls=5`
- * agrees.  The disassembler's own `bl` annotations are unusable, as always on
- * an overlay, because an overlay `bl` stores `target_offset - 2`.
- *
- * The pool word 0x02000240 is below this overlay's 0x02008000 link base (base
- * witnessed by 0x0200804d = Func_0200004c + 1 in a byte-exact sibling), so it is a RAM global — the shared
- * `s16 Data_02000240[]` table that the byte-exact sources in resource_36f and
- * resource_371 already declare.  The index is built as 250 << 1 = 500, i.e.
- * the pointer-sized word `*(void **)&Data_02000240[250]`, exactly as
- * other byte-exact overlay owners read it.
- *
- * Shape: take the active subject's record, derive its facing as
- * `(record halfword at +6 + 0x2000) & 0xc000` — the biased quadrant, with no
- * sign extension here — then probe one step ahead at 0x100000 and, if nothing
- * occupies that cell, one step further at 0x200000.  Each probe rounds the
- * record's x and z words down to whole units (`& 0xfff00000`) and re-centres
- * them by half a unit (0x80000) while carrying y through unrounded.
- *
- * Uncertainties: only the record fields at +6 (halfword), +8, +12 and +16 are
- * asserted.  Both Func_020038b0 sites also load r1 with the record pointer;
- * the callee's byte-exact source takes a single parameter, so the extra
- * register is not asserted as an argument.  r8 merely caches the 0xfff00000
- * mask across the first call and carries no other value.
- */
 
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */

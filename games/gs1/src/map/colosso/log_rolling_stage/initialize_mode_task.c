@@ -1,33 +1,5 @@
 #include "colosso_log_rolling_stage.h"
 
-/*
- * resource_3bc owner at 0x020033d8, 142 bytes: seed a second per-instance
- * task's state and pick which of five mode-table addresses it dispatches
- * through.
- *
- * Complete owner: `push {r5, r6, lr}` at 0x020033d8 through `pop {r5, r6} /
- * pop {r0} / bx r0` at 0x02003460-0x02003464, followed by the 15-word literal
- * pool through 0x02003465. The halfword before the next owner at 0x02003468
- * is alignment, not part of this function. Two arguments (r0, r1), void.
- *
- * Not found by the structural inventory walk (unindexed): the one call site,
- * 0x020033ee, resolves with the `+2` rule to veneer 0x02004848 ->
- * Func_080000d0, the same task installer as the sibling
- * start_palette_task_from_state.c. The installed callback, 0x0200aee9 under this
- * overlay's proven 0x02008000 link base, is this overlay's own
- * 0x02002ee8 -- outside this mandate's called-function list (never reached by
- * `bl`, only installed) and not drafted here.
- *
- * The branch chain 0x020033f4-0x0200340a picks one of five addresses by
- * `mode` (and, only when `mode == 3`, by whether `parameter` is zero) and stores
- * the selected one as a 32-bit value into Data_0200dbe0 -- a mode-table /
- * handler-select pattern.  Whether the five addresses are code (dispatch
- * targets) or data (per-mode records) is not resolved here; they are typed as
- * plain addresses.  The four sibling stores that follow
- * (Data_0200dbdc/dc38/dbac cleared as halfwords, Data_0200dbb0 cleared as a
- * word) reset the rest of the task's state block alongside the handler
- * selection.
- */
 
 extern u16 Data_0200dbd0;
 extern u16 Data_0200dba4;

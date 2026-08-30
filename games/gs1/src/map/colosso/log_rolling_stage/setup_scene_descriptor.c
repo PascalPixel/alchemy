@@ -1,52 +1,5 @@
 #include "colosso_log_rolling_stage.h"
 
-/*
- * This 232-byte owner ends immediately before InitializeSceneControl at
- * 0x0200457c. Its high-register save and four-byte local frame are required
- * by the seven-argument call shape; the literal pool is part of this owner.
- *
- * SIGNATURE.  Seven arguments: r0-r3, then three incoming stack words.  With
- * 32 bytes pushed and a 4-byte frame the caller's stack arguments sit at
- * [sp,#36], [sp,#40] and [sp,#44], which is exactly what the prologue reads
- * (`ldr r5,[sp,#40]`, `ldr r6,[sp,#44]`, and later `ldr r2,[sp,#36]`).  r3 is
- * spilled to the local slot at [sp,#0] immediately and re-read twice.
- *
- * CALL ACCOUNTING.  Ten `bl` sites, all resolved with
- * `cargo run --release --manifest-path tools/overlay-call-targets/Cargo.toml -- resource_3bc --annotate`: Scene_GetRecord
- * twice, and one each of Func_08000148, Func_08000170, GameFlag_IsSet,
- * Func_080001a8, Func_080001d0, Func_080001c8, Func_080000d0 and
- * Func_08000178.  The C below reproduces that multiset exactly; the
- * inventory's `calls=10` agrees.
- *
- * LINK BASE 0x02008000, proven for this overlay by a byte-exact sibling
- * (pool word 0x0200804d =
- * Func_0200004c + the Thumb bit).  Two of this owner's pool words fall in the
- * in-image band, and the parity test classifies them:
- *   0x0200cd80  even -> in-image DATA at file offset 0x3f14, passed as the
- *               source of the graphics upload Func_080001a8;
- *   0x0200c0d1  odd  -> Func_020033a0 + the Thumb bit, i.e. a task callback,
- *               installed here with Func_080000d0(callback, 0xc76).
- * That install has the same callback-plus-budget shape as sibling tasks.
- *
- * SHAPE.  Build a scene descriptor: allocate its record (Func_08000148),
- * reserve a 512-entry graphics handle (Func_08000170), stamp the seven
- * arguments into the record's parameter block at +218..+239, optionally patch
- * the second actor's position from the first when story flag 0x109 is clear,
- * upload the descriptor's image and palette, install the per-frame task
- * Func_020033a0, and release the handle.
- *
- * UNCERTAINTIES.
- *  - Record layout is asserted only for the fields written here: u16 at +222,
- *    +224, +226, +228 and +230, s32 at +232 and +236, and the two cleared u16
- *    at +218 and +220 (the pool word 0x00000000 is stored to both) and the
- *    u16 at +216 that receives Func_080001d0's result.
- *  - Func_080001d0 is called with no argument register set; the tree's other
- *    users call it the same way, for a palette slot index.  Its result is
- *    stored as a halfword and then sign-extended (`lsls #16 / asrs #16`)
- *    before being passed on, so the narrowing is deliberate.
- *  - Actor records: only the words at +8 and +16 are touched, and only on the
- *    flag-clear path.
- */
 
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */

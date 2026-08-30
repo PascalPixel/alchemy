@@ -2388,14 +2388,13 @@
     {
       "overlay": "resource_399",
       "start": "0x020019bc",
-      "end": "0x02001df2",
+      "end": "0x020019e8",
       "kind": "generated_call_script_module",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "complete deterministic reconstruction accounts for all 109 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
+        "the corrected 44-byte owner accounts for all five calls and ends at the directly referenced trailing pool word before the independent 0x020019e8 prologue",
+        "approved GCC schedules the zero first argument after the shifted second argument in the otherwise exact candidate",
         "games/gs1/recon/en/overlays/resource_399_c_020019bc.json"
       ]
     },
@@ -3112,6 +3111,18 @@
       "evidence": [
         "complete reconstruction accounts for all 83 calls, the incoming and returned actor handles, optional record coordinate transfer, the 0x300 gate, and all nested event-dependent presentation branches",
         "games/gs1/recon/en/overlays/resource_3b1_c_02004254.json"
+      ]
+    },
+    {
+      "overlay": "resource_399",
+      "start": "0x020019e8",
+      "end": "0x02001f24",
+      "kind": "generated_call_script_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "complete reconstruction accounts for all 127 calls, the null-gated actor-coordinate transfer, four actor-state flag updates, three workspace stores, and the complete three-actor choreography",
+        "games/gs1/recon/en/overlays/resource_399_c_020019e8.json"
       ]
     }
   ]

@@ -1,0 +1,12 @@
+{
+  "span_bytes": 2382,
+  "score": {"measured":"2026-08-30","candidate_bytes":3720,"reference_bytes":3796,"wrong_instructions":416,"differing_halfwords":1778,"class":"generated-call-script-retention"},
+  "shape": {"calls":387,"loops":0,"memory_operations":16},
+  "verified_against_reference": [
+    "candidate and ROM contain the same 387 calls in machine order with all arguments represented",
+    "direct assembly audit restored two event-step increments, save and restore across the nested event, signed actor-coordinate forwarding, and terminal workspace state",
+    "approved GCC allocation and literal-pool scheduling changes the complete owner extent without an exact ordinary-C emission"
+  ],
+  "retention": "keep_structured_asm",
+  "note": "The complete 3796-byte owner is reconstructed here; this record covers its 2382-byte assembly-retained band at 0x02003c6c–0x020045ba."
+}

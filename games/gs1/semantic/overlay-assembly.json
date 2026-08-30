@@ -229,6 +229,32 @@
       ]
     },
     {
+      "overlay": "resource_3a5",
+      "start": "0x020004e4",
+      "end": "0x02000874",
+      "kind": "actor_layout_dispatch_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "complete local-function reconstruction accounts for all scene-state layout branches, 46 calls, the shared actor loop, and terminal transition guard",
+        "candidate and reference differ by sixteen bytes after all decoded control flow and arguments are represented; residual is approved GCC allocation and literal scheduling",
+        "games/gs1/recon/en/overlays/resource_3a5_c_020004e4.json"
+      ]
+    },
+    {
+      "overlay": "resource_3a5",
+      "start": "0x0200088c",
+      "end": "0x02000c1a",
+      "kind": "actor_layout_dispatch_module",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "complete local-function reconstruction accounts for all scene-state layout branches, conditional helper, shared actor loop, and terminal transition guard",
+        "candidate and reference differ by two bytes after all decoded control flow and arguments are represented; residual is approved GCC allocation and literal scheduling",
+        "games/gs1/recon/en/overlays/resource_3a5_c_0200088c.json"
+      ]
+    },
+    {
       "overlay": "resource_3c8",
       "start": "0x0200348a",
       "end": "0x020035d8",

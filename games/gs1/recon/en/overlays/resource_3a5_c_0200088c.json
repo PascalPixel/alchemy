@@ -1,0 +1,11 @@
+{
+  "span_bytes": 910,
+  "score": {"measured":"2026-08-30","candidate_bytes":912,"reference_bytes":910,"wrong_instructions":171,"differing_halfwords":420,"class":"generated-actor-layout-retention"},
+  "shape": {"calls":49,"loops":1,"branches":5,"memory_operations":1},
+  "verified_against_reference": [
+    "complete function reconstruction accounts for the three mutually exclusive scene-state layouts, all calls, the conditional layout helper, shared eight-actor initialization loop, and state-gated terminal transition",
+    "direct assembly audit restored the 89/90/91 dispatch, state 92 terminal guard, setup and predicate literals, branch-one terminal actor, and loop actor index flattened or omitted by the mechanical draft",
+    "candidate is two bytes longer after complete decoded control flow and arguments are represented; residual is approved GCC allocation and literal scheduling"
+  ],
+  "retention": "keep_structured_asm"
+}

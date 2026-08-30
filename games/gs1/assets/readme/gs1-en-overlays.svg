@@ -2412,135 +2412,123 @@
 </g>
 <g aria-label="378 · tracked C 0x02001874–0x020025c4: 3,408 bytes">
 <title>378 · tracked C 0x02001874–0x020025c4: 3,408 bytes</title>
-<rect x="3.5" y="170.3703678849264" width="32.27440335615988" height="16.636372320371557" style="fill:#f4c95d"/>
-</g>
-<g aria-label="378 · tracked C 0x0200290c–0x0200307e: 1,906 bytes">
-<title>378 · tracked C 0x0200290c–0x0200307e: 1,906 bytes</title>
-<rect x="3.5" y="188.00674020529794" width="15.340613193156614" height="19.085123014745925" style="fill:#f4c95d"/>
-</g>
-<g aria-label="378 · tracked C 0x02003080–0x02003096: 22 bytes">
-<title>378 · tracked C 0x02003080–0x02003096: 22 bytes</title>
-<rect x="3.5" y="208.09186322004388" width="0.5" height="3.299438714594089" style="fill:#f4c95d"/>
+<rect x="3.5" y="170.3703678849264" width="27.20874791984897" height="19.803467349734053" style="fill:#f4c95d"/>
 </g>
 <g aria-label="378 · byte-exact assembly 0x02000360–0x020004e2: 386 bytes">
 <title>378 · byte-exact assembly 0x02000360–0x020004e2: 386 bytes</title>
-<rect x="4.381111495709425" y="208.09186322004388" width="14.459501697447187" height="3.299438714594089" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
+<rect x="31.70874791984897" y="170.3703678849264" width="4.065655436310909" height="12.121141171564288" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="378 · byte-exact assembly 0x020004e4–0x02000574: 144 bytes">
 <title>378 · byte-exact assembly 0x020004e4–0x02000574: 144 bytes</title>
-<rect x="19.840613193156614" y="188.00674020529794" width="4.3460579035626825" height="3.6381926480848654" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
+<rect x="31.70874791984897" y="183.49150905649068" width="4.065655436310909" height="3.894933494055072" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="378 · byte-exact assembly 0x020005cc–0x0200060c: 64 bytes">
 <title>378 · byte-exact assembly 0x020005cc–0x0200060c: 64 bytes</title>
-<rect x="25.186671096719294" y="188.00674020529794" width="2.0442829728620833" height="2.6200527985052604" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
+<rect x="31.70874791984897" y="188.38644255054575" width="2.953682291754856" height="1.7873926841146934" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="378 · byte-exact assembly 0x020006c6–0x020006d8: 18 bytes">
 <title>378 · byte-exact assembly 0x020006c6–0x020006d8: 18 bytes</title>
-<rect x="25.186671096719294" y="191.62679300380321" width="2.0442829728620833" height="0.5" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
+<rect x="35.66243021160383" y="188.38644255054575" width="0.5" height="1.7873926841146934" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="378 · byte-exact assembly 0x0200074c–0x0200088a: 318 bytes">
 <title>378 · byte-exact assembly 0x0200074c–0x0200088a: 318 bytes</title>
-<rect x="19.840613193156614" y="192.6449328533828" width="7.2861130394505444" height="5.608398374704984" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
+<rect x="3.5" y="191.17383523466046" width="6.088099457627875" height="6.725334029222582" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="378 · byte-exact assembly 0x0200265c–0x02002660: 4 bytes">
 <title>378 · byte-exact assembly 0x0200265c–0x02002660: 4 bytes</title>
-<rect x="28.126726232607158" y="192.6449328533828" width="0.5" height="5.608398374704984" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
+<rect x="10.588099457627875" y="191.17383523466046" width="0.5" height="2.7081603340268394" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="378 · byte-exact assembly 0x0200267c–0x020026f0: 116 bytes">
 <title>378 · byte-exact assembly 0x0200267c–0x020026f0: 116 bytes</title>
-<rect x="28.23095406958138" y="188.00674020529794" width="3.0286183627768537" height="3.958174536928858" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
+<rect x="10.773846298760681" y="191.17383523466046" width="4.386658392851372" height="2.7081603340268394" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="378 · byte-exact assembly 0x02002750–0x020027d2: 130 bytes">
 <title>378 · byte-exact assembly 0x02002750–0x020027d2: 130 bytes</title>
-<rect x="32.25957243235823" y="188.00674020529794" width="3.5148309238016466" height="3.958174536928859" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
+<rect x="10.588099457627875" y="194.8819955686873" width="4.572405233984178" height="3.0171736951957433" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="378 · byte-exact assembly 0x020027d4–0x0200290c: 312 bytes">
 <title>378 · byte-exact assembly 0x020027d4–0x0200290c: 312 bytes</title>
-<rect x="28.23095406958138" y="192.9649147422268" width="7.5434492865785" height="5.28841648586099" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
+<rect x="3.5" y="198.89916926388304" width="11.660504691612052" height="3.2434933399955037" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="378 · byte-exact assembly 0x02003098–0x020031aa: 274 bytes">
 <title>378 · byte-exact assembly 0x02003098–0x020031aa: 274 bytes</title>
-<rect x="19.840613193156614" y="199.2533312280878" width="5.867883936078725" height="5.869854911440354" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
+<rect x="3.5" y="203.14266260387853" width="4.101438655149562" height="8.248639330759431" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="378 · byte-exact assembly 0x020031ac–0x0200326e: 194 bytes">
 <title>378 · byte-exact assembly 0x020031ac–0x0200326e: 194 bytes</title>
-<rect x="19.840613193156614" y="206.12318613952814" width="4.32947793439709" height="5.268115795109811" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
+<rect x="8.601438655149561" y="203.14266260387853" width="6.55906603646249" height="3.4193005669146057" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="378 · Permanent ASM 0x02000000–0x02000030: 48 bytes">
 <title>378 · Permanent ASM 0x02000000–0x02000030: 48 bytes</title>
-<rect x="25.170091127553704" y="206.12318613952814" width="0.5384060016816345" height="4.372670681522695" style="fill:#7dd3fc"/>
+<rect x="8.601438655149561" y="207.56196317079315" width="0.9967344247259409" height="3.1394332261527076" style="fill:#7dd3fc"/>
 </g>
 <g aria-label="378 · Permanent ASM 0x020004e2–0x020004e4: 2 bytes">
 <title>378 · Permanent ASM 0x020004e2–0x020004e4: 2 bytes</title>
-<rect x="25.170091127553704" y="211.49585682105084" width="0.5" height="0.5" style="fill:#7dd3fc"/>
+<rect x="8.601438655149561" y="211.70139639694585" width="0.5" height="0.5" style="fill:#7dd3fc"/>
 </g>
 <g aria-label="378 · Permanent ASM 0x0200088a–0x0200088c: 2 bytes">
 <title>378 · Permanent ASM 0x0200088a–0x0200088c: 2 bytes</title>
-<rect x="25.170091127553704" y="211.9435793778444" width="0.5" height="0.5" style="fill:#7dd3fc"/>
+<rect x="9.100622261331047" y="211.70139639694585" width="0.5" height="0.5" style="fill:#7dd3fc"/>
 </g>
 <g aria-label="378 · Permanent ASM 0x020015fe–0x02001600: 2 bytes">
 <title>378 · Permanent ASM 0x020015fe–0x02001600: 2 bytes</title>
-<rect x="25.939294128394522" y="211.49585682105084" width="0.5" height="0.5" style="fill:#7dd3fc"/>
+<rect x="9.599805867512531" y="211.70139639694585" width="0.5" height="0.5" style="fill:#7dd3fc"/>
 </g>
 <g aria-label="378 · Permanent ASM 0x02001872–0x02001874: 2 bytes">
 <title>378 · Permanent ASM 0x02001872–0x02001874: 2 bytes</title>
-<rect x="25.939294128394522" y="211.9435793778444" width="0.5" height="0.5" style="fill:#7dd3fc"/>
+<rect x="10.098989473694017" y="211.70139639694585" width="0.5" height="0.5" style="fill:#7dd3fc"/>
 </g>
 <g aria-label="378 · Permanent ASM 0x020025c4–0x0200265c: 152 bytes">
 <title>378 · Permanent ASM 0x020025c4–0x0200265c: 152 bytes</title>
-<rect x="26.70849712923534" y="199.2533312280878" width="8.329376503003234" height="1.8055041612945666" style="fill:#7dd3fc"/>
+<rect x="10.598173079875503" y="207.56196317079315" width="4.419707724256125" height="3.8293387638448255" style="fill:#7dd3fc"/>
 </g>
 <g aria-label="378 · Permanent ASM 0x0200274e–0x02002750: 2 bytes">
 <title>378 · Permanent ASM 0x0200274e–0x02002750: 2 bytes</title>
-<rect x="36.03787363223857" y="199.2533312280878" width="0.5" height="0.5" style="fill:#7dd3fc"/>
+<rect x="16.01788080413163" y="207.56196317079315" width="0.5" height="1.4146693819224128" style="fill:#7dd3fc"/>
 </g>
 <g aria-label="378 · Permanent ASM 0x020027d2–0x020027d4: 2 bytes">
 <title>378 · Permanent ASM 0x020027d2–0x020027d4: 2 bytes</title>
-<rect x="36.03787363223857" y="199.72091525497024" width="0.5" height="0.5" style="fill:#7dd3fc"/>
+<rect x="16.01788080413163" y="209.97663255271556" width="0.5" height="1.4146693819224128" style="fill:#7dd3fc"/>
 </g>
-<g aria-label="378 · Permanent ASM 0x0200307e–0x02003080: 2 bytes">
-<title>378 · Permanent ASM 0x0200307e–0x02003080: 2 bytes</title>
-<rect x="36.03787363223857" y="200.18849928185267" width="0.5" height="0.5" style="fill:#7dd3fc"/>
-</g>
-<g aria-label="378 · Permanent ASM 0x02003096–0x02003098: 2 bytes">
-<title>378 · Permanent ASM 0x02003096–0x02003098: 2 bytes</title>
-<rect x="36.03787363223857" y="200.65608330873508" width="0.5" height="0.5" style="fill:#7dd3fc"/>
+<g aria-label="378 · Permanent ASM 0x0200290c–0x02003098: 1,932 bytes">
+<title>378 · Permanent ASM 0x0200290c–0x02003098: 1,932 bytes</title>
+<rect x="16.160504691612054" y="191.17383523466046" width="19.613898664547825" height="15.138640025337232" style="fill:#7dd3fc"/>
 </g>
 <g aria-label="378 · Permanent ASM 0x020031aa–0x020031ac: 2 bytes">
 <title>378 · Permanent ASM 0x020031aa–0x020031ac: 2 bytes</title>
-<rect x="36.03787363223857" y="201.1236673356175" width="0.5" height="0.5" style="fill:#7dd3fc"/>
+<rect x="16.160504691612054" y="207.31247525999768" width="0.5" height="1.539413337320143" style="fill:#7dd3fc"/>
 </g>
 <g aria-label="378 · Permanent ASM 0x0200326e–0x02003270: 2 bytes">
 <title>378 · Permanent ASM 0x0200326e–0x02003270: 2 bytes</title>
-<rect x="36.03787363223857" y="201.59125136249995" width="0.5" height="0.5" style="fill:#7dd3fc"/>
+<rect x="16.160504691612054" y="209.85188859731784" width="0.5" height="1.539413337320143" style="fill:#7dd3fc"/>
 </g>
 <g aria-label="378 · Permanent ASM 0x02003528–0x02003740: 536 bytes">
 <title>378 · Permanent ASM 0x02003528–0x02003740: 536 bytes</title>
-<rect x="26.70849712923534" y="202.05883538938238" width="9.065906226924541" height="8.169208722279803" style="fill:#7dd3fc"/>
+<rect x="16.29612244598408" y="207.31247525999768" width="17.172779085851374" height="4.078826674640286" style="fill:#7dd3fc"/>
 </g>
 <g aria-label="379 · get_script_data · byte-exact C: 8 bytes">
 <title>379 · get_script_data · byte-exact C: 8 bytes</title>
-<rect x="26.70849712923534" y="211.22804411166217" width="0.5" height="0.5" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
+<rect x="34.468901531835456" y="207.31247525999768" width="0.5" height="0.5" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="379 · state_update_0433 · byte-exact C: 4 bytes">
 <title>379 · state_update_0433 · byte-exact C: 4 bytes</title>
-<rect x="27.892721391226463" y="211.22804411166217" width="0.5" height="0.5" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
+<rect x="34.468901531835456" y="208.70666297460482" width="0.5" height="0.5" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="379 · leaf_0529 · byte-exact C: 8 bytes">
 <title>379 · leaf_0529 · byte-exact C: 8 bytes</title>
-<rect x="28.484833522222026" y="211.22804411166217" width="0.5" height="0.5" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
+<rect x="35.45697374226021" y="207.31247525999768" width="0.5" height="0.5" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="379 · leaf_0053 · byte-exact C: 8 bytes">
 <title>379 · leaf_0053 · byte-exact C: 8 bytes</title>
-<rect x="29.669057784213148" y="211.22804411166217" width="0.5" height="0.5" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
+<rect x="35.45697374226021" y="208.35811604595304" width="0.5" height="0.5" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="379 · leaf_0374 · byte-exact C: 8 bytes">
 <title>379 · leaf_0374 · byte-exact C: 8 bytes</title>
-<rect x="30.85328204620427" y="211.22804411166217" width="0.5" height="0.5" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
+<rect x="34.468901531835456" y="209.4037568319084" width="1.305501824324427" height="0.5" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="379 · leaf_0238 · byte-exact C: 32 bytes">
 <title>379 · leaf_0238 · byte-exact C: 32 bytes</title>
-<rect x="32.03750630819539" y="211.22804411166217" width="3.73689704796449" height="0.5" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
+<rect x="34.468901531835456" y="210.0012658524543" width="1.305501824324427" height="1.3900360821836641" style="fill:hsl(190 95% 55%);fill:oklch(0.550 0.170 200)"/>
 </g>
 <g aria-label="379 · byte-exact assembly 0x02000a94–0x02000ab8: 36 bytes">
 <title>379 · byte-exact assembly 0x02000a94–0x02000ab8: 36 bytes</title>
@@ -21473,9 +21461,9 @@
 <rect x="6" y="288" width="10" height="10" style="fill:hsl(190 25% 83%);fill:oklch(0.829 0.045 200)"/>
 <text class="weyard" x="20" y="293" dominant-baseline="middle">Exact C 26.6%</text>
 <rect x="126" y="288" width="10" height="10" style="fill:#f4c95d"/>
-<text class="weyard" x="140" y="293" dominant-baseline="middle">WIP 4.8%</text>
+<text class="weyard" x="140" y="293" dominant-baseline="middle">WIP 4.6%</text>
 <rect x="206" y="288" width="10" height="10" style="fill:hsl(190 32% 80%);fill:oklch(0.801 0.058 200)"/>
 <text class="weyard" x="220" y="293" dominant-baseline="middle">ASM 33.9%</text>
 <rect x="294" y="288" width="10" height="10" style="fill:#7dd3fc"/>
-<text class="weyard" x="308" y="293" dominant-baseline="middle">Permanent ASM 34.7%</text>
+<text class="weyard" x="308" y="293" dominant-baseline="middle">Permanent ASM 34.9%</text>
 </svg>

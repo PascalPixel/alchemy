@@ -1,0 +1,11 @@
+{
+  "span_bytes": 544,
+  "score": {"measured":"2026-08-30","candidate_bytes":588,"reference_bytes":544,"wrong_instructions":117,"differing_halfwords":268,"class":"generated-call-script-retention"},
+  "shape": {"calls":46,"loops":0,"memory_operations":5},
+  "verified_against_reference": [
+    "all 46 calls and their arguments are represented in ROM order across the complete callable owner",
+    "direct assembly and literal-pool audit restored the progress range gate, three resource predicates, actor-state writes, and progress-dependent actor branches omitted by the mechanical draft",
+    "approved GCC folds the long-lived progress pointer into a relocation and schedules repeated constants differently from the reference after all decoded effects are represented"
+  ],
+  "retention": "keep_structured_asm"
+}

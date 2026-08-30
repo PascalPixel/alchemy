@@ -5452,6 +5452,12 @@
     "resource_3b9:02001cd4": {
       "name": "FieldScene_BuildActorPresentationSequence"
     },
+    "resource_375:0200150c": {
+      "name": "FieldScene_ConfigureProgressDependentActors"
+    },
+    "resource_375:02001760": {
+      "name": "FieldScene_RunProgressDependentActorSequence"
+    },
     "main:080a46b4": {
       "name": "Item_ClassifyUseMode",
       "source": "items/classify_use_mode.c"

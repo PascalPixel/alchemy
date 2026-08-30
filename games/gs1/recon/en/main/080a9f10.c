@@ -40,7 +40,9 @@ s32 Func_08004458(void);
 void Func_08015120(s32, s32);
 s32 Func_080022ec(s32, s32);
 
-s32 Func_080a9f10(
+#define BattleEffect_ApplyToTargets Func_080a9f10
+
+s32 BattleEffect_ApplyToTargets(
     s32 effect_id,
     s32 source_id,
     s32 target_id,

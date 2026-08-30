@@ -94,8 +94,14 @@ void Shop_RunPartyMemberIconBurst(s32 member)
 
     WaitFrames(20);
     Audio_PlayCue(126);
-    *(u8 *)((u8 *)shop + 0x3ab) = 0xff;
-    Func_08009248((s32)shop->party_member_icons[member], 0);
+    {
+        s32 icon_offset = 0xff;
+
+        *(u8 *)((u8 *)shop + 0x3ab) = icon_offset;
+        icon_offset += 21;
+        icon_offset += member * 4;
+        Func_08009248(*(s32 *)((u8 *)shop + icon_offset), 0);
+    }
     WaitFrames(20);
 
     {
@@ -103,7 +109,9 @@ void Shop_RunPartyMemberIconBurst(s32 member)
         struct Effect_080b2f4c *entry2 =
             (struct Effect_080b2f4c *)((u8 *)shop + 0x3b0);
         for (i = 23; i >= 0; i--) {
-            s32 flag = *flag_entry << 24;
+            s32 flag = *flag_entry;
+
+            flag <<= 24;
 
             flag_entry += 0x48;
             if (flag != 0) {

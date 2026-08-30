@@ -70,6 +70,7 @@ void Func_080965a8(s32 arg)
             (*((void **)(((s8 *)child) + 108))) = (void *)0x08096575;
             (*((u16 *)(((s8 *)child) + 6))) = (*((u16 *)(((s8 *)ctx) + 6)));
             Func_08009240(child, 9);
+            Object_SetMode(child, 0);
             Func_080091e0(child, 0);
             acc = (s32)Func_08096c48((void *)(*((s32 *)(((s8 *)child) + 80))), (void *)acc);
             (*((s32 *)(((s8 *)child) + 104))) = prev;

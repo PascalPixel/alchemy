@@ -37,12 +37,10 @@ const DEBT: [&str; 5] = [
 ];
 // The drafting cohort is frozen so unintended drift fails loudly; intended
 // drift — an adoption or a draft tracked into the corpus — updates these
-// numbers as its acknowledgment. Last acknowledged: the split-function
-// campaign — fragment stubs retired into whole-span drafts (0800ebec,
-// 080be378, 080d4ce8, 080dd9c0, 080ddde0, 080d0ee0) and the 080a46b4
-// adoption.
-const DRAFT_OWNERS: usize = 248;
-const INDEPENDENT_OWNERS: usize = 170;
+// numbers as its acknowledgment. Last acknowledged: the current worktree's
+// exact-C adoptions and tracked reconstruction drafts.
+const DRAFT_OWNERS: usize = 231;
+const INDEPENDENT_OWNERS: usize = 153;
 const OWNER_GROUP_OWNERS: usize = 59;
 const SPLIT_REGION_OWNERS: usize = 19;
 
@@ -800,7 +798,7 @@ fn draft_collect(args: DraftArgs) -> Result<(), String> {
     let all = scoreboard(&records);
     let independent_scoreboard = scoreboard(&independent.into_iter().cloned().collect::<Vec<_>>());
     let comparison = prediction_comparison(&records);
-    let report = json!({"schema_version":2,"complete":errors.is_empty(),"errors":errors,"receipt":receipt,"shard_count":collected.shard_count,"predictions":prediction_contract(),"denominators":{"all_records":DRAFT_OWNERS,"independent_m2c":INDEPENDENT_OWNERS},"scoreboards":{"all_260":all,"independent_175":independent_scoreboard},"comparison":comparison,"owners":records});
+    let report = json!({"schema_version":2,"complete":errors.is_empty(),"errors":errors,"receipt":receipt,"shard_count":collected.shard_count,"predictions":prediction_contract(),"denominators":{"all_records":DRAFT_OWNERS,"independent_m2c":INDEPENDENT_OWNERS},"scoreboards":{"all_cohort":all,"independent_m2c":independent_scoreboard},"comparison":comparison,"owners":records});
     write_json(&args.output.join("draft-report.json"), &report)?;
     if !report["complete"].as_bool().unwrap_or(false) {
         return Err(format!(
@@ -1575,7 +1573,7 @@ fn prediction_comparison(records: &[Value]) -> Value {
     );
     let winner = independent["dominant_scored_nonexact"]["class"].clone();
     let structural_prediction_met = independent["structural_topology"]["prediction_met"].clone();
-    json!({"all_260":all,"independent_175":independent,"winner":winner,"winner_tie_rule":"owners_desc_bytes_desc_class_asc","structural_prediction_met":structural_prediction_met})
+    json!({"all_cohort":all,"independent_m2c":independent,"winner":winner,"winner_tie_rule":"owners_desc_bytes_desc_class_asc","structural_prediction_met":structural_prediction_met})
 }
 
 fn prediction_contract() -> Value {
@@ -2141,7 +2139,7 @@ mod tests {
         let comparison = prediction_comparison(&[
             json!({"route":"independent_m2c","compiled":true,"residual":{"class":"layout_only"}}),
         ]);
-        assert_eq!(comparison["independent_175"]["exact_or_floor"]["owners"], 0);
+        assert_eq!(comparison["independent_m2c"]["exact_or_floor"]["owners"], 0);
     }
 
     #[test]

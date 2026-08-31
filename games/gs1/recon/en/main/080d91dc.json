@@ -4,16 +4,17 @@
   "address": "0x080d91dc",
   "status": "measured-draft",
   "owner_bytes": 2268,
-  "candidate_bytes": 2188,
-  "differing_halfwords": 1093,
-  "wrong_instructions": 970,
-  "classification": "structural-reconstruction",
+  "candidate_bytes": 2288,
+  "differing_halfwords": 1089,
+  "wrong_instructions": 1034,
+  "classification": "structural-topology",
   "resolved_asm_classification": {
     "kind": "compiler_output",
     "retention": "c_candidate",
     "confidence": "likely"
   },
   "notes": [
+    "2026-08-31: replaced nine fictional direct calls to register-call veneers with one typed six-argument BattleEffectDrawFn. The two renderer words loaded from 0x03001f08 and 0x03001f0c now flow through their evidenced channels: the first through r8/Func_08007304 or r4/Func_080072f4, and the second through r4/Func_080072f4 or r10/Func_0800730c. The corrected candidate grows from 2188 to 2288 of 2268 bytes and differing halfwords fall 1093 to 1089. Wrong instructions rise 970 to 1034 because the real callback lifetimes alter the frame and downstream allocation; the direct calls were nevertheless semantically false and could not satisfy the reference call-register requirements.",
     "2026-08-30: removed the same m2c calling-convention artifacts found in the sibling. The shared-work cursor now emits the reference ldmia load; the opening irregular switch is expressed as the reference's 3 / (2 or 4) / default if-chain; Func_080de2f8 receives both output pointers; and every recovered five- or six-argument presentation call now passes its former fake sp0/sp4 values as real arguments. The candidate grew from 2100 to 2188 of 2268 bytes, differing halfwords fell 1119 to 1093, and wrong instructions fell 1056 to 970.",
     "2026-08-30: promoted the next-largest remaining no-candidate main-ROM owner after repairing its aggregate-aware m2c draft. A fresh canonical compile produces 2100 bytes for the 2268-byte reference; topology differs and 1119 halfwords differ, so this remains a measured draft and claims zero DONE bytes.",
     "Mechanical repairs recovered the signed-halfword party-member table reads, the direct battle-context return from Func_080b5098, the u16 sprite-offset table at 0x080ede5c, and the paired stack coordinates written by Func_080e3944. No instruction bytes, inline assembly, fixed-register variables, barriers, or external decompilation sources were used.",

@@ -712,6 +712,10 @@
     "main:08099678": "map/events/check_object_tile.c",
     "main:08099738": "map/events/run_tile_trigger_sequence.c",
     "main:0800b7c0": "animation/initialize_objects.c",
+    "main:0800ba30": {
+      "name": "AnimationObjects_SelectAnimation",
+      "source": "animation/select_object_animation.c"
+    },
     "main:080a1870": "psynergy_menu/initialize_entry_objects.c",
     "main:0801ec6c": "object/side/create.c",
     "main:08019d2c": "localization/lookup_entry_id.c",

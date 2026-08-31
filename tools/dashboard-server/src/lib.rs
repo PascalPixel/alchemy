@@ -822,7 +822,10 @@ pub fn self_test() -> Result<String, String> {
     let js = client::bundled_client().map_err(|e| e.to_string())?;
     if !assets::STYLES.contains(".hover-tooltip")
         || !assets::STYLES.contains(".cards")
+        || !assets::STYLES.contains(".music-card text { font-family: Weyard")
         || !js.contains("EventSource")
+        || !js.contains("createElementNS")
+        || !js.contains("viewBox: \"0 0 540 304\"")
         || !js.contains("closest(\"g[aria-label]\")")
         || !js.contains("...trees, musicPlayer()")
         || !js.contains("AudioContext")

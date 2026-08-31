@@ -1,8 +1,10 @@
-use crate::{build_sound_table, Result, SoundTableEntry, SoundTableSource, SymbolValue};
+use crate::{
+    build_sound_table, parse_music_catalog, Result, SoundTableEntry, SoundTableSource, SymbolValue,
+};
 use std::io::Write;
 use std::process::ExitCode;
 
-const USAGE: &str = "usage: music build-stdout SOURCE";
+const USAGE: &str = "usage: music {build-stdout SOURCE|catalog SOURCE}";
 
 fn source(path: &str) -> Result<SoundTableSource> {
     let value: serde_json::Value =
@@ -76,6 +78,36 @@ fn source(path: &str) -> Result<SoundTableSource> {
 }
 
 fn run(args: &[String]) -> Result<()> {
+    if args.first().map(String::as_str) == Some("catalog") {
+        let path = args.get(1).ok_or_else(|| USAGE.to_string())?;
+        if args.len() != 2 {
+            return Err(USAGE.into());
+        }
+        let source = std::fs::read_to_string(path).map_err(|error| format!("{path}: {error}"))?;
+        let catalog = parse_music_catalog(&source)?;
+        println!("game\tsound_id\tname\ten\tde\tes\tfr\tit\tja\tsource");
+        for track in &catalog.tracks {
+            println!(
+                "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}",
+                track.game,
+                track.sound_id,
+                track.name,
+                track.titles[0],
+                track.titles[1],
+                track.titles[2],
+                track.titles[3],
+                track.titles[4],
+                track.titles[5],
+                track.source
+            );
+        }
+        eprintln!(
+            "tracks={} shared={}",
+            catalog.tracks.len(),
+            catalog.shared.len()
+        );
+        return Ok(());
+    }
     if args.first().map(String::as_str) != Some("build-stdout") {
         return Err(USAGE.into());
     }

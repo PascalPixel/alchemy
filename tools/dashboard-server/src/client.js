@@ -18,6 +18,15 @@ function h(tag, attributes = {}, ...children) {
   for (const child of children) append(node, child);
   return node;
 }
+function s(tag, attributes = {}, ...children) {
+  const node = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (const [key, value] of Object.entries(attributes)) {
+    if (value !== undefined && value !== null && value !== false)
+      node.setAttribute(key, value === true ? "" : String(value));
+  }
+  for (const child of children) append(node, child);
+  return node;
+}
 const root = h("div", { id: "root" }, h("div", { className: "loading", role: "status" }, "Reading the stones…"));
 document.body.replaceChildren(root);
 const tooltip = h("div", { className: "hover-tooltip", role: "tooltip", hidden: true });
@@ -30,7 +39,7 @@ function percent(value) { return `${Number(value ?? 0).toFixed(2)}%`; }
 const music = {
   context: null, master: null, analyser: null, tracks: [], notes: [], duration: 0,
   index: 0, cursor: 0, position: 0, startedAt: 0, playing: false, timer: 0,
-  voices: new Set(), ui: null, soundfont: null, sampleBuffers: new Map(), generatorBuffers: new Map(), ready: false,
+  voices: new Set(), ui: null, soundfont: null, sampleBuffers: new Map(), generatorBuffers: new Map(), ready: false, volume: .32,
 };
 function midiVlq(view, state) {
   let value = 0;
@@ -133,38 +142,38 @@ function stopVoices() {
 function updateMusicUi() {
   if (!music.ui) return;
   const position = currentMusicPosition();
-  music.ui.seek.value = String(position);
   music.ui.elapsed.textContent = musicTime(position);
   music.ui.duration.textContent = musicTime(music.duration);
-  music.ui.play.textContent = music.playing ? "Ⅱ" : "▶";
+  music.ui.play.textContent = music.playing ? "II" : "PLAY";
   music.ui.play.setAttribute("aria-label", music.playing ? "Pause" : "Play");
-  const canvas = music.ui.canvas;
-  const scale = window.devicePixelRatio || 1;
-  const width = Math.max(1, canvas.clientWidth);
-  const height = Math.max(1, canvas.clientHeight);
-  if (canvas.width !== width * scale || canvas.height !== height * scale) { canvas.width = width * scale; canvas.height = height * scale; }
-  const context = canvas.getContext("2d");
-  context.setTransform(scale, 0, 0, scale, 0, 0);
-  context.clearRect(0, 0, width, height);
-  context.fillStyle = "#343238";
-  const bins = Math.max(24, Math.floor(width / 5));
+  const width = 492;
+  const height = 66;
+  const bins = 82;
   const energy = Array(bins).fill(0);
   for (const note of music.notes) {
     const bin = Math.min(bins - 1, Math.floor(note.start / Math.max(music.duration, 1) * bins));
     energy[bin] = Math.max(energy[bin], note.velocity / 127);
   }
+  const bars = [];
   for (let i = 0; i < bins; i += 1) {
     const bar = 3 + energy[i] * (height - 7);
-    context.fillStyle = i / bins <= position / Math.max(music.duration, 1) ? "#f4c95d" : "#4a4652";
-    context.fillRect(i * width / bins, (height - bar) / 2, Math.max(1, width / bins - 2), bar);
+    bars.push(s("rect", {
+      x: 24 + i * width / bins, y: 94 + (height - bar) / 2,
+      width: Math.max(2, width / bins - 2), height: bar,
+      fill: i / bins <= position / Math.max(music.duration, 1) ? "#f7d35c" : "#245a63",
+    }));
   }
+  music.ui.wave.replaceChildren(...bars);
+  music.ui.playhead.setAttribute("x1", String(24 + position / Math.max(music.duration, 1) * width));
+  music.ui.playhead.setAttribute("x2", String(24 + position / Math.max(music.duration, 1) * width));
+  music.ui.volume.textContent = `VOL ${Math.round(music.volume * 10).toString().padStart(2, "0")}`;
   if (music.playing && position >= music.duration) pauseMusic(true);
 }
 function ensureAudio() {
   if (!music.context) {
     music.context = new AudioContext();
     music.master = music.context.createGain();
-    music.master.gain.value = Number(music.ui.volume.value);
+    music.master.gain.value = music.volume;
     music.master.connect(music.context.destination);
   }
   return music.context;
@@ -352,9 +361,9 @@ async function loadMusic(index, autoplay = false) {
   const track = music.tracks[music.index];
   music.ui.title.textContent = track.title;
   music.ui.source.textContent = `${track.source} · extracted MIDI`;
-  music.ui.select.value = String(music.index);
+  music.ui.track.textContent = `${String(track.id).padStart(3, "0")} / ${String(music.tracks.length).padStart(3, "0")}`;
   music.ui.card.setAttribute("aria-busy", "true");
-  music.ui.play.disabled = true;
+  music.ui.play.setAttribute("aria-disabled", "true");
   try {
     const response = await fetch(`/music/${track.file}`);
     if (!response.ok) throw new Error(`track returned ${response.status}`);
@@ -362,7 +371,6 @@ async function loadMusic(index, autoplay = false) {
     music.notes = parsed.notes;
     music.duration = parsed.duration;
     music.position = 0;
-    music.ui.seek.max = String(music.duration);
     music.ui.source.textContent = `${track.source} · loading recovered instrument bank`;
     await prepareTrackSamples();
     music.ready = true;
@@ -373,43 +381,67 @@ async function loadMusic(index, autoplay = false) {
     music.ui.source.textContent = `Could not read track · ${error instanceof Error ? error.message : error}`;
   } finally {
     music.ui.card.setAttribute("aria-busy", "false");
-    music.ui.play.disabled = !music.ready;
+    music.ui.play.setAttribute("aria-disabled", String(!music.ready));
   }
 }
 function musicPlayer() {
   if (music.ui?.card) return music.ui.card;
   pauseMusic(true);
-  const title = h("strong", { className: "music-title" }, "Reading recovered sequences…");
-  const source = h("span", { className: "music-source" }, "Golden Sun sound archive");
-  const canvas = h("canvas", { className: "music-wave", width: 640, height: 54, "aria-hidden": "true" });
-  const play = h("button", { className: "transport-play", type: "button", "aria-label": "Play" }, "▶");
-  const previous = h("button", { type: "button", "aria-label": "Previous track" }, "←");
-  const next = h("button", { type: "button", "aria-label": "Next track" }, "→");
-  const seek = h("input", { className: "music-seek", type: "range", min: 0, max: 0, step: .01, value: 0, "aria-label": "Track position" });
-  const elapsed = h("span", {}, "0:00");
-  const duration = h("span", {}, "0:00");
-  const volume = h("input", { type: "range", min: 0, max: .8, step: .01, value: .32, "aria-label": "Volume" });
-  const select = h("select", { className: "music-select", "aria-label": "Choose a recovered sequence" }, h("option", {}, "Loading tracks…"));
-  const card = h("section", { className: "music-player" },
-    h("div", { className: "music-label" }, "CARTRIDGE AUDIO · GS1 EN"),
-    h("div", { className: "music-heading" }, h("div", {}, title, source), select),
-    canvas,
-    h("div", { className: "music-controls" }, previous, play, next, elapsed, seek, duration, h("span", { className: "volume-mark", "aria-hidden": "true" }, "VOL"), volume),
-    h("p", { className: "music-note" }, "Golden Sun's recovered music bank: ROM sequences, PCM samples, loop points, tone dispatch, envelopes, pitch and pan, played through Web Audio."),
+  const title = s("text", { class: "sound-title", x: 24, y: 66 }, "READING RECOVERED SEQUENCES…");
+  const source = s("text", { class: "sound-source", x: 24, y: 82 }, "GOLDEN SUN SOUND ARCHIVE");
+  const track = s("text", { class: "sound-track", x: 516, y: 66, "text-anchor": "end" }, "--- / ---");
+  const wave = s("g", { "aria-hidden": "true" });
+  const playhead = s("line", { class: "sound-playhead", x1: 24, y1: 91, x2: 24, y2: 163 });
+  const elapsed = s("text", { class: "sound-time", x: 24, y: 181 }, "0:00");
+  const duration = s("text", { class: "sound-time", x: 516, y: 181, "text-anchor": "end" }, "0:00");
+  const volume = s("text", { class: "sound-volume", x: 516, y: 251, "text-anchor": "end" }, "VOL 03");
+  const control = (label, x, glyph, emphasis = false) => s("g", { class: `sound-button${emphasis ? " sound-primary" : ""}`, role: "button", tabindex: 0, "aria-label": label },
+    s("rect", { x, y: 201, width: emphasis ? 72 : 58, height: 52 }),
+    s("text", { x: x + (emphasis ? 36 : 29), y: 233, "text-anchor": "middle" }, glyph),
   );
-  music.ui = { card, title, source, canvas, play, previous, next, seek, elapsed, duration, volume, select };
-  play.addEventListener("click", () => music.playing ? pauseMusic() : playMusic());
-  previous.addEventListener("click", () => loadMusic(music.index - 1, music.playing));
-  next.addEventListener("click", () => loadMusic(music.index + 1, music.playing));
-  seek.addEventListener("input", () => { const wasPlaying = music.playing; pauseMusic(); music.position = Number(seek.value); updateMusicUi(); if (wasPlaying) playMusic(); });
-  volume.addEventListener("input", () => { if (music.master) music.master.gain.value = Number(volume.value); });
-  select.addEventListener("change", () => loadMusic(Number(select.value), music.playing));
+  const previous = control("Previous track", 24, "<");
+  const play = control("Play", 92, "PLAY", true);
+  const next = control("Next track", 174, ">");
+  const quieter = control("Lower volume", 390, "−");
+  const louder = control("Raise volume", 458, "+");
+  const seek = s("rect", { class: "sound-seek", x: 24, y: 91, width: 492, height: 74, role: "slider", tabindex: 0, "aria-label": "Track position" });
+  const svg = s("svg", { class: "music-card", viewBox: "0 0 540 304", role: "group", "aria-label": "Golden Sun cartridge music player" },
+    s("rect", { class: "sound-shell", x: 1, y: 1, width: 538, height: 302 }),
+    s("rect", { class: "sound-head", x: 1, y: 1, width: 538, height: 36 }),
+    s("text", { class: "sound-label", x: 16, y: 24 }, "SOUND TEST"),
+    s("text", { class: "sound-label", x: 524, y: 24, "text-anchor": "end" }, "GS1 · EN"),
+    title, source, track,
+    s("rect", { class: "sound-screen", x: 18, y: 88, width: 504, height: 80 }), wave, playhead, seek,
+    elapsed, duration,
+    previous, play, next, quieter, louder, volume,
+    s("text", { class: "sound-foot", x: 24, y: 282 }, "ROM SEQUENCE · ORIGINAL TONE BANK · PCM8"),
+  );
+  const card = h("section", { className: "panel music-panel" }, svg);
+  music.ui = { card, title, source, track, wave, playhead, play, previous, next, elapsed, duration, volume };
+  const activate = (node, action) => {
+    node.addEventListener("click", action);
+    node.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); action(); } });
+  };
+  activate(play, () => music.playing ? pauseMusic() : playMusic());
+  activate(previous, () => loadMusic(music.index - 1, music.playing));
+  activate(next, () => loadMusic(music.index + 1, music.playing));
+  activate(quieter, () => { music.volume = Math.max(0, music.volume - .08); if (music.master) music.master.gain.value = music.volume; updateMusicUi(); });
+  activate(louder, () => { music.volume = Math.min(.8, music.volume + .08); if (music.master) music.master.gain.value = music.volume; updateMusicUi(); });
+  const seekTo = (event) => {
+    const box = svg.getBoundingClientRect();
+    const x = (event.clientX - box.left) / box.width * 540;
+    const wasPlaying = music.playing;
+    pauseMusic();
+    music.position = Math.max(0, Math.min(music.duration, (x - 24) / 492 * music.duration));
+    updateMusicUi();
+    if (wasPlaying) playMusic();
+  };
+  seek.addEventListener("pointerdown", seekTo);
   fetch("/music/catalog").then((response) => {
     if (!response.ok) throw new Error(`catalog returned ${response.status}`);
     return response.json();
   }).then((tracks) => {
     music.tracks = tracks;
-    select.replaceChildren(...tracks.map((track, index) => h("option", { value: index }, `${String(track.id).padStart(3, "0")} · ${track.title}`)));
     return loadMusic(0);
   }).catch((error) => { source.textContent = `Music catalog unavailable · ${error.message}`; });
   return card;

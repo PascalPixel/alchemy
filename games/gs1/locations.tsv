@@ -1,0 +1,8 @@
+# Human-reviewed location identity for GS1 map-code resources. This is the join between location source and music-usage evidence; it does not rename owners.
+resource_id	location	area	usage	evidence
+resource_37a	sol_shinden	inner_sanctum	map_and_story	games/gs1/src/map/locations/sol_shinden
+resource_39d	heidia	village_story	story	RunScene59ValeSequence and the resource-local scene 58/59 owners
+resource_39e	xian	school_and_rooftops	map_and_story	GetXianScriptData, StartSchoolDoorEvent, and roof-scene owners
+resource_3b2	heidia	prologue	story	games/gs1/src/map/locations/heidia/prologue
+resource_3bc	colosso	log_rolling_stage	minigame	games/gs1/src/map/locations/colosso/log_rolling_stage
+resource_3bf	heidia	village	map_and_story	games/gs1/src/map/locations/heidia/village

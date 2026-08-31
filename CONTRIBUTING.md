@@ -235,6 +235,13 @@ address in the register and ABI alias; keep overlay membership in the owner key.
 If the role is not known, use the narrowest honest classification instead of a
 confident guess.
 
+Map code lives under `map/locations/<location>/` only when the resource or a
+specific call site proves the place. Reusable collision, rendering, event, and
+scene machinery belongs under `map/shared/`; unresolved code stays outside the
+location tree. `games/gs1/locations.tsv` records the reviewed resource-to-place
+join used by music-usage work. Do not infer a track title from its sequence
+number or attach a location without a cited resource or call site.
+
 The neutral naming voice is a Japanese commercial C codebase from 2000–2001:
 
 - Use a stable project label such as `Subsystem_VerbObject` for a proved owner

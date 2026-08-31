@@ -2,7 +2,8 @@
  "schema_version": 1,
  "namespace": "gs1-en-main",
  "address": "0x0808b158",
- "status": "measured-draft",
+ "status": "proven-retained",
+ "classification": "battle_resource_lookup_compiler_allocation_module",
  "owner_bytes": 128,
  "score": {
   "measured": "2026-08-31",
@@ -11,7 +12,7 @@
   "differing_halfwords": 21,
   "wrong_instructions": 18,
   "class": "structural-topology",
-  "note": "The best ordinary-C draft has exact owner extent and models the complete table search. A bounded closure pass confirmed the 21-halfword residual is coupled: the reference creates the null return carrier before the helper call in r8 and assigns effect_id/condition/resource_group to r7/r6/ip, while the best legitimate source assigns those roles to r6/r8/r7 and keeps the null carrier in lr. Moving the null initialization before the call worsens the result to 132 bytes and 63 differing halfwords by introducing r10; introducing an explicit signed entry-id carrier worsens it to 116 bytes and 61 differing halfwords by selecting ldrsh; unsigned and 32-bit carrier variants score 128/51 and 124/54. The decoder still reports no unique source-shape repair plus one guard inversion. It remains Draft C and claims zero DONE bytes."
+  "note": "The best ordinary-C draft has exact owner extent and models the complete table search. A bounded closure pass confirmed the 21-halfword residual is coupled: the reference creates the null return carrier before the helper call in r8 and assigns effect_id/condition/resource_group to r7/r6/ip, while the best legitimate source assigns those roles to r6/r8/r7 and keeps the null carrier in lr. Moving the null initialization before the call worsens the result to 132 bytes and 63 differing halfwords by introducing r10; introducing an explicit signed entry-id carrier worsens it to 116 bytes and 61 differing halfwords by selecting ldrsh; unsigned and 32-bit carrier variants score 128/51 and 124/54. The decoder reports no unique source-shape repair plus one guard inversion; spelling that inversion explicitly recompiles byte-identically. Six-edition verification proves the 118-byte relocation-normalized core identical. Structured assembly therefore remains authoritative under battle_resource_lookup_compiler_allocation_module; the candidate does not claim exact C."
  },
  "behavior": [
   "calls Func_0808a8d0(effect_id) once to obtain the alternate resource-group key",

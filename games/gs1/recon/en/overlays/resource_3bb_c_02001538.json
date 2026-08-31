@@ -1,0 +1,12 @@
+{
+  "span_bytes": 412,
+  "score": {"measured":"2026-08-31","candidate_bytes":428,"reference_bytes":412,"wrong_instructions":66,"differing_halfwords":211,"class":"generated-call-script-retention"},
+  "shape": {"calls":37,"loops":0,"memory_operations":1},
+  "verified_against_reference": [
+    "all 37 calls and their arguments are represented in ROM order across the complete callable owner",
+    "direct audit restored the signed phase-two fast path, full scene-three path, short-revisit path, and common coordinator tail omitted by the generated draft",
+    "the scene argument and selected path are forwarded at every call site that consumes them",
+    "the remaining sixteen-byte extent residual is approved-compiler high-register carrier allocation, literal reuse, immediate materialization, and scheduling after complete semantics are represented"
+  ],
+  "retention": "keep_structured_asm"
+}

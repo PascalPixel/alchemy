@@ -2472,6 +2472,28 @@
    "files": [
     "0808b158"
    ]
+  },
+  {
+   "kind": "owner_initialization_compiler_materialization_module",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_audited_owner_extent",
+    "six_edition_relocation_normalized_core_is_identical",
+    "matching_owner_name_remote_inventory_equipment_and_derived_state_operations",
+    "only_residual_is_equivalent_message_base_materialization_commutative_indexed_load_roles_and_loop_sentinel_codegen",
+    "allocator_order_decoder_names_only_a_nonvolatile_pointer_split_lifetime_outside_its_safe_operation",
+    "approximately_forty_five_bounded_message_id_loop_pointer_statement_order_and_type_variants_preserve_the_residual_or_regress",
+    "approved_gcc_2_96_regmove_scheduling_cse_gcse_strength_reduction_and_optimization_routes_preserve_the_residual_or_regress",
+    "inline_assembly_fixed_registers_compiler_barriers_and_forced_materialization_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 284,
+   "files": [
+    "08078ee8"
+   ]
   }
  ]
 }

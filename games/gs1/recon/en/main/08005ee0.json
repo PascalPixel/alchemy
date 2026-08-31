@@ -14,7 +14,12 @@
   "class": "missing-extra-code",
   "note": "Two independent divergence clusters remain, both scheduling/register-allocation shaped rather than missing statements. Reusing the already-proved serial_error carrier for REG_IME=1 removes the spurious literal and improves the canonical result from 234/38/40 to 232/34/29. The reference still loads the REG_IE address later and derives the byte mask from the live one carrier. In the tail, the reference reloads SERIAL_RUNTIME after the two calls and keeps that new pointer in r7; caching the earlier pointer is semantically invalid because the calls may replace the global. The residual remains Draft C and claims zero DONE bytes."
  },
+ "exact_closure_revalidation": "2026-08-31: complete serial-runtime TU scoring reproduces 232/234 bytes, differing_halfwords=34, wrong_instructions=29, and equal branch topology. The decoder reports no unique source shape and all eight literal-pool words are exact. The named live-carrier repair is either byte-neutral under u8 folding or sharply regressive under s8; canonical source was restored. Together with the recorded condition, statement, width, tail-pointer, and canonical-pass matrix, this is an honestly bounded blocker; no adoption or DONE bytes are claimed.",
  "rejected_experiments": [
+  {
+   "experiment": "decoder/aligned-diff named carrier repair: after REG_IME=1, spell the reference's live-one mask as `serial_error -= 66; byte &= serial_error` instead of `byte &= ~0x40`",
+   "result": "byte-identical to the 232/34/29 baseline: GCC constant-folds the u8 carrier back to movs #191. Changing only serial_error to signed s8 prevents that fold but regresses to 236 bytes, differing_halfwords 87, wrong_instructions 55. Both forms were rejected and canonical source restored."
+  },
   {
    "experiment": "fuse ie=REG_IE;ie&=~0x80;ie|=0x40;REG_IE=ie; into REG_IE=(REG_IE&~0x80)|0x40; (drop local ie)",
    "result": "worse: candidate grew to 242 bytes, differing_halfwords 85"

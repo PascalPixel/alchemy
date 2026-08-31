@@ -75,7 +75,7 @@ void Func_080ed104(void *object)
     DrawRectangleFn rect_fns[2];
     u8 *star;
     s32 flag;
-    s32 scale_metric;
+    s32 screen[3];
     s32 star_index;
     s32 frame;
     s32 bar_progress;
@@ -101,8 +101,8 @@ void Func_080ed104(void *object)
 
     Func_080e3980(
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 0x24),
-        &scale_metric);
-    *(s32 *)0x04000028 = (0x40 - scale_metric) << 8;
+        screen);
+    *(s32 *)0x04000028 = (0x40 - screen[0]) << 8;
 
     star = (u8 *)work + 0x7080;
     for (star_index = 0; star_index != 16; star_index++) {

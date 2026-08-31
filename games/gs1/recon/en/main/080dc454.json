@@ -25,6 +25,56 @@
     "Introducing a named `state` local reassigned via `state = M2C_FIELD(work, void **, 0x7828);` immediately before every dereference (matching the 080d82b0.c sibling's own `target = M2C_FIELD(...)` re-assignment style, instead of nesting the field read inline at each use site): regressed slightly to 612/616/230/258 -- reverted to the inline nested form.",
     "These four experiments independently reproduce the same conclusion 080d59b0.json and 080dc1ec.json already recorded for two other members of this family: this compiler's choice of fp over r9 for a whole-function loop-invariant work-block pointer is not controllable from declaration order, block scope, buffer sizing, or inline-vs-named field-read spelling. Per the project's standing guidance for this documented residual class, no register-hint hack or open-ended permutation search was attempted to force r9."
   ],
+  "bounded_flag_probe_2026_08_31": {
+    "baseline": {
+      "candidate_bytes": 612,
+      "reference_bytes": 616,
+      "differing_halfwords": 229,
+      "wrong_instructions": 244,
+      "work_register": "fp",
+      "stack_frame_bytes": 80
+    },
+    "best_shipped_route": {
+      "flags": ["-fno-rerun-cse-after-loop"],
+      "candidate_bytes": 616,
+      "reference_bytes": 616,
+      "differing_halfwords": 208,
+      "wrong_instructions": 224,
+      "work_register": "r9",
+      "stack_frame_bytes": 80,
+      "topology": "equal"
+    },
+    "neutral": [
+      "-fno-regmove",
+      "-fno-schedule-insns",
+      "-fno-cse-follow-jumps",
+      "-fno-thread-jumps"
+    ],
+    "strictly_closer_but_not_best": {
+      "-fno-gcse": 226,
+      "-fforce-addr": 227
+    },
+    "regressed": [
+      "-fno-schedule-insns2",
+      "-fno-expensive-optimizations",
+      "-ffixed-r8",
+      "-ffixed-r9",
+      "-ffixed-r10",
+      "-ffixed-r11",
+      "-fcall-used-r8",
+      "-fcall-used-r9",
+      "-fcall-used-r10",
+      "-fcall-used-r11"
+    ],
+    "compositions": "Adding -fno-gcse, -fno-regmove, -fno-schedule-insns, -fno-cse-follow-jumps, or -fno-thread-jumps to the best route did not improve 208 halfwords; adding -fforce-addr regressed to 226.",
+    "verdict": "The shipped flag changes the exact family-wide fp/r9 allocation decision and restores exact owner extent, but does not make the owner byte-exact. This is evidence for parent classification review, not an adopted per-owner route."
+  },
+  "compiler_backend_evidence_2026_08_31": [
+    "The allocator decoder identifies pseudo 34 as the source variable work: 18 uses across 175 instructions, one definition, no deaths, and 15 crossed calls. Canonical allocation maps it to r11/fp while the retained owner maps the same lifetime to r9.",
+    "With the single shipped optimization change -fno-rerun-cse-after-loop, the generated instruction stream changes mov fp,r1 to mov r9,r1 exactly as the reference does, and every subsequent palette-copy use also changes from mov r1,fp to the reference's mov r1,r9. The candidate simultaneously becomes exact-extent and equal-topology.",
+    "The remaining 208 halfwords retain the 80-byte candidate frame versus the reference's 88-byte frame and different promotion/spill choices for member-loop arrays and counters. No ABI allocation flag improves them; every -ffixed-rN and -fcall-used-rN probe for r8-r11 regresses to 291-294 halfwords and changes extent to 620 bytes.",
+    "The decoder's only structural suggestion was a member-count guard inversion. Rewriting the C as an explicit empty zero-count arm plus else compiled byte-identically, confirming GCC folds that spelling before allocation. The edit was reverted."
+  ],
   "notes": [
     "Recovered only from games/gs1/asm/080dc454.s, the m2c-assisted disassembly and context under out/family-transplants/main-080dc454/m2c/, the adopted template games/gs1/src/battle/effects/member_orbit/run.c, sibling drafts games/gs1/recon/en/main/080d82b0.c and 080e7404.c (and their .json dossiers) for the shared 0x03001eec work-block field/callee vocabulary, games/gs1/asm/080072e4.s for the call-via trampoline layout, and the approved local EN ROM/compiler. No other Golden Sun decompilation project, symbol map, or pseudocode dump was consulted.",
     "This candidate claims zero DONE bytes; it is a measured-draft, not adopted.",

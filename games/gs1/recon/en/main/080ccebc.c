@@ -5,6 +5,8 @@
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 volatile int Func_080cd594(s32);
+typedef void (*DrawRectangleFn)(
+    void *destination, const void *source, s32 x, s32 y, s32 width, s32 height);
 s32 Func_080cdbc0(void);
 void Func_080e0524(s32, s32, s32, s32);
 void Func_080041d8(s32, s32);
@@ -14,7 +16,6 @@ void Func_080f9010(s32);
 void Func_080030f8(s32);
 void Func_08002dd8(s32);
 void Func_080b50e8(s32);
-void Func_080072f4(s32, s32, s32, s32, s32);
 void Func_080d6888(s32, s32, s32, s32, s32);
 void Func_080cd52c(void);
 void EffectPosition_ApplyStepAndYOffset(s32, struct EffectPosition *);
@@ -63,19 +64,23 @@ void Func_080ccebc(void *arg0)
             *(u16 *)0x04000028 |= (0x7c - (frame << 1)) | 0x1000;
 
         Func_080ed408(0x2e, 7, 7, 3, flash);
-        Func_080072f4(second, shade, shade, 33, 41);
+        (*(DrawRectangleFn *)0x03001F08)(
+            second, (void *)base, 33, 41, shade, shade);
         Func_08002dd8(0x2e);
 
         Func_080ed408(0x2e, 7, 7, 7, flash);
-        Func_080072f4(second, shade, shade, 64, 41);
+        (*(DrawRectangleFn *)0x03001F08)(
+            second, (void *)base, 64, 41, shade, shade);
         Func_08002dd8(0x2e);
 
         Func_080ed408(0x2e, 7, 7, 11, flash);
-        Func_080072f4(second, shade, shade, 33, 72);
+        (*(DrawRectangleFn *)0x03001F08)(
+            second, (void *)base, 33, 72, shade, shade);
         Func_08002dd8(0x2e);
 
         Func_080ed408(0x2e, 7, 7, 15, flash);
-        Func_080072f4(second, shade, shade, 64, 72);
+        (*(DrawRectangleFn *)0x03001F08)(
+            second, (void *)base, 64, 72, shade, shade);
         Func_08002dd8(0x2e);
 
         if (frame == 32)
@@ -87,7 +92,8 @@ void Func_080ccebc(void *arg0)
             for (i = 0; i < count; i++) {
                 if (frame == 10) {
                     void *p = M2C_FIELD(base, void **, 0x7828);
-                    Func_080d6888(i, 7, -1, 8, *(s16 *)((u8 *)p + 36 + i * 2));
+                    Func_080d6888(
+                        *(s16 *)((u8 *)p + 36 + i * 2), 7, -1, i, 8);
                 }
             }
         }

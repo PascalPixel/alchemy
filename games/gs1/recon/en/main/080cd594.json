@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080cd594",
+  "status": "measured-draft",
+  "owner_bytes": 728,
+  "score": {
+    "measured": "2026-08-31",
+    "candidate_bytes": 756,
+    "reference_bytes": 728,
+    "differing_halfwords": 360,
+    "wrong_instructions": 322,
+    "class": "structural-topology",
+    "note": "Fresh candidate-show result: 756/728 bytes, differing_halfwords=360, wrong_instructions=322, topology different. This materially advances the prior only-compiling template fallback (344/728, differing_halfwords=361, wrong_instructions=452, topology different), while the aggregate-m2c candidate itself failed compilation. All observed side effects and loops are represented; the remaining 28-byte/topology residual claims zero DONE bytes."
+  },
+  "notes": [
+    "Repaired aggregate incompatibilities with explicit battle-work/cache pointers, 16-bit hardware registers, DMA queue entry widths, VRAM tilemap halfwords, and display-state fields. Four repeated interrupt-guarded DMA queue operations are represented by a source macro, not a helper call.",
+    "No inline assembly, fixed registers, scheduling barriers, compiler overrides, or external sources were used."
+  ]
+}

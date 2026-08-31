@@ -5,13 +5,13 @@
   "status": "measured-draft",
   "owner_bytes": 584,
   "score": {
-    "measured": "2026-08-27",
-    "candidate_bytes": 544,
+    "measured": "2026-08-31",
+    "candidate_bytes": 588,
     "reference_bytes": 584,
     "differing_halfwords": 271,
-    "wrong_instructions": 244,
-    "class": "wrong",
-    "note": "Sibling of 0x080dd77c and 0x080ecef4, not select_party_member.c's poll-loop shape; the family clustering is call-target/n-gram, not structural. One void* argument is stashed into the shared 'effects struct' at +0x7828 (the same struct apply_shake.c reaches through ADDR_03001EEC), two EffectPosition_ApplyStepAndYOffset calls average two step positions via the classic signed-divide-by-2 rounding idiom (b-a, add sign bit, shift), then a fixed 63-iteration frame-counter loop draws four repeated Func_080ed408/Func_080072f4/Func_08002dd8 tile groups per frame at rows (33,41)/(64,41)/(33,72)/(64,72), plus a one-shot Func_080d6888 dispatch to each of arg0's field_20 sub-entries on frame 10, and a Scheduler_AddOrUpdateCallback/RemoveCallback pair bracketing the whole routine (callback pointer 0x080cd261, matching the pointer used for the same teardown in the other two siblings)."
+    "wrong_instructions": 216,
+    "class": "structural-topology",
+    "note": "Fresh late-battle playbook pass. The four apparent Func_080072f4 calls are now modeled as ordinary six-argument calls through *(DrawRectangleFn *)0x03001F08: the retained bytes load r4 from that cell immediately before entering 0x080072f4, the r4 slot of the _call_via_rN trampoline, and pass width and height in the two stack argument slots. The calls are therefore draw_rectangle(second, base, x, y, shade, shade), matching the exact member_orbit family idiom. The frame-10 Func_080d6888 call was also corrected from the old draft's reversed convention to (member_id, 7, -1, member_index, 8), directly matching the retained r0-r3 and stack argument setup. These semantic repairs reduced wrong instructions 244->216 and made the byte extent nearly exact (544->588 versus 584), while differing halfwords stayed 271. The remaining residual is honestly structural-topology: the candidate uses a 24-byte frame versus the reference's 32 and diverges in the initial work/canvas/local-position allocation before the first effect-position call. No exact sibling shape names that missing lifetime, so this pass stops rather than inventing padding or forcing allocation."
   },
   "rejected_experiments": [
     {
@@ -27,6 +27,6 @@
   "notes": [
     "Recovered only from the retained owner assembly, approved local ROM, and the approved compiler.",
     "This is a single-pass structural draft, not iteratively tuned: the loop count/shape, the four draw-call rows, the averaging idiom, and the scheduler bracket are read directly off the assembly and are reasonably solid. The `count`/`Func_080d6888` inner block, the exact Scheduler_AddOrUpdateCallback second argument (written here as a bare 0x480 magic number, `144<<3`), and the +0x59 message id passed to Func_080e0524 are transcribed from the instruction operands without independent confirmation of their semantic meaning.",
-    "This looks like a source-shape gap (the shared 'effects struct' layout and the Func_080072f4/Func_080d6888 argument conventions are not yet established anywhere in the tracked corpus) rather than a compiler-internals residual; a dedicated pass working out that struct across all three siblings (and apply_step_and_y_offset.c / apply_shake.c, which already touch the same struct family) would likely make faster progress than more respelling here. This candidate claims zero DONE bytes."
+    "The rectangle-callback and Func_080d6888 argument conventions are now established from retained register provenance and the exact member_orbit family. The remaining gap begins earlier, in stack-local lifetime and prologue structure; this candidate still claims zero DONE bytes."
   ]
 }

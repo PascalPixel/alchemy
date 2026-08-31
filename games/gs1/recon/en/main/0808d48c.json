@@ -6,8 +6,8 @@
  "owner_bytes": 260,
  "executable_owner_bytes": 258,
  "candidate_bytes": 256,
- "differing_halfwords": 107,
- "wrong_instructions": 102,
+ "differing_halfwords": 94,
+ "wrong_instructions": 92,
  "cross_edition": {
   "relocation_normalized_core_bytes": 234,
   "core_diff_bytes": 0,
@@ -29,6 +29,7 @@
   "reason": "Although the candidate is only four bytes short, its 102 wrong instructions span register allocation and the complete range-dispatch chain."
  },
  "notes": [
+  "2026-08-31: replaced the folded absolute Data_02000240+500 access with the exact local-index idiom already proven by object/motion/set_action_callback.c, and widened the loaded object reference carrier to u32. The complete opening address calculation and ldrh/mov high-register sequence now match the reference. Differing halfwords fell from 107 to 94 and wrong instructions from 102 to 92; the remaining mismatch begins at the four-way range dispatch and claims zero DONE bytes.",
   "All 234 normalized core bytes are identical across the six approved GS1 editions.",
   "Exact siblings 0808d428 and 0808d458 constrain the condition and descriptor/value predicates; exact wrapper 0808d5a4 constrains modes zero and seven. The broad residual is not retention quality and claims zero DONE bytes."
  ]

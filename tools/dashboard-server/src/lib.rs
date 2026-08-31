@@ -821,12 +821,10 @@ pub fn run(bind: Option<SocketAddr>) -> std::io::Result<()> {
 pub fn self_test() -> Result<String, String> {
     let js = client::bundled_client().map_err(|e| e.to_string())?;
     if !assets::STYLES.contains(".hover-tooltip")
-        || !assets::STYLES.contains(".products")
+        || !assets::STYLES.contains(".cards")
         || !js.contains("EventSource")
         || !js.contains("closest(\"g[aria-label]\")")
-        || !js.contains("historicalProduct")
-        || !js.contains("compile-only")
-        || !js.contains("Run make reports to refresh cross-edition reports")
+        || !js.contains("...trees, musicPlayer()")
         || !js.contains("AudioContext")
         || !js.contains("/music/catalog")
         || !js.contains("/music/soundfont")

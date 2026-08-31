@@ -5604,6 +5604,13 @@
     "resource_378:0200187c": {"name": "FieldScene_RunActorUpdateSequence"},
     "resource_39e:02001494": {"name": "FieldScene_RunSecondEnsembleBeat"},
     "resource_39e:02001dbc": {"name": "FieldScene_RunEnsembleStoryBeat"},
+    "resource_39d:02001af0": {"name": "RunScene59ValeSequence"},
+    "resource_39d:02000b24": {"name": "RunScene58Sequence"},
+    "resource_383:020036f8": {"name": "RunDialoguePromptScene"},
+    "resource_38d:020008c0": {"name": "FieldScene_RunLongBranchingChoreography"},
+    "resource_3ad:02000828": {"name": "FieldScene_RunDialogueCameraChoreography"},
+    "resource_37f:02000f8c": {"name": "FieldScene_RunFourEntitySequence"},
+    "resource_396:02000918": {"name": "FieldScene_RunFourActorEncounter"},
     "main:080a46b4": {
       "name": "Item_ClassifyUseMode",
       "source": "items/classify_use_mode.c"

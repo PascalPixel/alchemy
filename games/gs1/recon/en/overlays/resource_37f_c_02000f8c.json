@@ -1,0 +1,11 @@
+{
+  "span_bytes": 1680,
+  "score": {"measured":"2026-08-31","candidate_bytes":1668,"reference_bytes":1680,"wrong_instructions":558,"differing_halfwords":797,"class":"structured-scene-retention"},
+  "shape": {"calls":174,"targets":30,"loops":0},
+  "verified_against_reference": [
+    "the complete owner is bounded from 0x02000f8c through its interior pool and six-word trailing pool before 0x0200161c",
+    "all 174 calls across 30 import targets and the complete four-entity scene sequence are represented in machine order",
+    "the remaining twelve-byte extent delta is approved-compiler argument materialization, scheduling, and literal placement after complete semantics are represented"
+  ],
+  "retention": "keep_structured_asm"
+}

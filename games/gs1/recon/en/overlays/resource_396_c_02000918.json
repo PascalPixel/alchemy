@@ -1,0 +1,11 @@
+{
+  "span_bytes": 1600,
+  "score": {"measured":"2026-08-31","candidate_bytes":1640,"reference_bytes":1600,"wrong_instructions":598,"differing_halfwords":800,"class":"structured-scene-retention"},
+  "shape": {"calls":"complete static call stream","optional_actor_branch":true,"literal_islands":2},
+  "verified_against_reference": [
+    "the complete four-actor encounter is bounded through its sole interworking return and two control-flow-separated literal islands before 0x02000f58",
+    "all static calls across the optional actor-three branch, staging, dialogue, palette transitions, callback registration, and terminal story flag are represented",
+    "the remaining forty-byte surplus is approved-compiler argument materialization, scheduling, and literal placement after complete semantics are represented"
+  ],
+  "retention": "keep_structured_asm"
+}

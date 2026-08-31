@@ -1,0 +1,12 @@
+{
+  "span_bytes": 528,
+  "score": {"measured":"2026-08-31","candidate_bytes":552,"reference_bytes":528,"wrong_instructions":100,"differing_halfwords":266,"class":"generated-call-script-retention"},
+  "shape": {"calls":48,"loops":0,"memory_operations":6},
+  "verified_against_reference": [
+    "all 48 calls and their arguments are represented in ROM order across the complete callable owner",
+    "direct audit against the retained assembly restored all three nullable actor lookups and their coordinate transfers from actor offsets 8 and 16",
+    "the ten-word trailing pool ends immediately before the independently inventoried owner at 0x020052f4",
+    "the remaining twenty-four-byte extent residual is approved-compiler carrier allocation, literal reuse, immediate materialization, and interworking-save scheduling after complete semantics are represented"
+  ],
+  "retention": "keep_structured_asm"
+}

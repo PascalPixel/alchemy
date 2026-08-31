@@ -302,6 +302,15 @@ function scheduleTone(note, position) {
     const sample = music.soundfont.sampleByAddress.get(tone.sample);
     source.buffer = music.sampleBuffers.get(`${track.game}:${tone.sample}`);
     if (!source.buffer || !sample) throw new Error(`PCM sample ${tone.sample} was not prepared`);
+    // Five GS1 voices are tiny, ROM-resident periodic waves rather than
+    // ordinary recordings. Playing their four or eight samples at the raw
+    // mixer rate puts them several octaves above the voice's root key and
+    // turns instruments such as sequence 007's flute into a loud beep.
+    if (sample.embedded) {
+      const rootFrequency = 440 * 2 ** ((tone.key - 69) / 12);
+      const rawCycleFrequency = source.buffer.sampleRate / source.buffer.length;
+      baseRate = rootFrequency / rawCycleFrequency;
+    }
     if (sample.loop_start !== null) {
       source.loop = true;
       source.loopStart = sample.loop_start / Math.max(3000, sample.frequency / 1024);

@@ -1343,4 +1343,12 @@ mod tests {
         assert!(client.contains("Repeat this track"));
         assert!(!client.contains("function pcmPlaybackBuffer"));
     }
+
+    #[test]
+    fn music_player_tunes_compact_rom_waves_to_the_voice_root() {
+        let client = client::bundled_client().unwrap();
+        assert!(client.contains("if (sample.embedded)"));
+        assert!(client.contains("source.buffer.sampleRate / source.buffer.length"));
+        assert!(client.contains("baseRate = rootFrequency / rawCycleFrequency"));
+    }
 }

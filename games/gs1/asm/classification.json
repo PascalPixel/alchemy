@@ -2149,6 +2149,29 @@
     "0801fd34",
     "080b3050"
    ]
+  },
+  {
+   "kind": "compiler_frame_context_module",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_owner_extent",
+    "equal_control_flow_topology_and_matching_instruction_stream_outside_frame_adjustment",
+    "only_residual_is_an_extra_eight_bytes_of_unobserved_stack_frame_context",
+    "all_calls_arguments_register_roles_literals_memory_operations_and_branches_match",
+    "approved_gcc_2_96_backend_sources_prove_the_candidate_eight_byte_frame_is_the_two_required_outgoing_arguments",
+    "approved_gcc_2_96_backend_sources_prove_the_reference_sixteen_byte_frame_requires_eight_additional_source_or_translation_unit_context_bytes",
+    "bounded_source_and_shipped_flag_probes_cannot_recover_an_observable_object_for_the_unreferenced_bytes",
+    "volatile_padding_can_force_exact_output_but_is_disallowed_without_source_evidence",
+    "inline_assembly_fixed_registers_compiler_barriers_and_padding_objects_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 96,
+   "files": [
+    "080175c0"
+   ]
   }
  ]
 }

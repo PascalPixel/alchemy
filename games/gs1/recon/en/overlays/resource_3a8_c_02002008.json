@@ -1,0 +1,13 @@
+{
+  "span_bytes": 1720,
+  "score": {"measured":"2026-08-31","candidate_bytes":1640,"reference_bytes":1720,"wrong_instructions":277,"differing_halfwords":798,"class":"generated-call-script-retention"},
+  "shape": {"calls":160,"loops":0,"memory_operations":20},
+  "verified_against_reference": [
+    "all 160 reachable calls across thirty import veneers match the ROM in multiset and machine order",
+    "the two conditional presentation paths and all call arguments are represented across the complete callable owner",
+    "all twenty decoded memory operations are represented by four halfword state writes and eight byte read-modify-write flag updates",
+    "the boundary includes the sole interworking return, branch-skipped interior pool, and trailing pool before 0x020026c0",
+    "remaining differences are approved GCC carrier allocation and literal-pool scheduling after complete decoded semantics are represented"
+  ],
+  "retention": "keep_structured_asm"
+}

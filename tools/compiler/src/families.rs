@@ -26,9 +26,10 @@ use walkdir::WalkDir;
 const USAGE: &str = "usage: compiler families <cluster (--write|--check) FILE | transplant main:ADDRESS [--index FILE] [--output DIR] | prove [FILE]>";
 const DEFAULT_INDEX: &str = "out/gs1-en/reports/compiler-families.json";
 const DEFAULT_PROOFS: &str = "games/gs1/recon/family-retention.json";
-const INDEX_SCHEMA_VERSION: u32 = 4;
+const INDEX_SCHEMA_VERSION: u32 = 5;
 const MIN_SCORE: u16 = 7500;
 const MIN_CALL_TARGET_SCORE: u16 = 2500;
+const MIN_NO_CALL_NGRAM_SCORE: u16 = 8500;
 #[derive(Debug, Deserialize)]
 struct BuildManifest {
     regions: Vec<BuildRegion>,
@@ -67,6 +68,7 @@ struct FamilyIndex {
     derivation: String,
     minimum_score_basis_points: u16,
     minimum_call_target_score_basis_points: u16,
+    minimum_no_call_ngram_score_basis_points: u16,
     exact_templates: usize,
     unresolved_targets: usize,
     clustered_targets: usize,
@@ -105,6 +107,7 @@ pub(crate) struct TemplateMatch {
     pub(crate) score_basis_points: u16,
     ngram_similarity_basis_points: u16,
     length_similarity_basis_points: u16,
+    has_call_target_evidence: bool,
     call_target_similarity_basis_points: u16,
     call_count_similarity_basis_points: u16,
     branch_similarity_basis_points: u16,
@@ -491,9 +494,10 @@ fn build_index() -> Result<FamilyIndex, String> {
     Ok(FamilyIndex {
         schema_version: INDEX_SCHEMA_VERSION,
         target: "gs1-en".into(),
-        derivation: "canonical-instruction-ngram-and-call-target-cosine-v4-call-bound".into(),
+        derivation: "canonical-instruction-ngram-and-call-target-cosine-v5-no-call-bound".into(),
         minimum_score_basis_points: MIN_SCORE,
         minimum_call_target_score_basis_points: MIN_CALL_TARGET_SCORE,
+        minimum_no_call_ngram_score_basis_points: MIN_NO_CALL_NGRAM_SCORE,
         exact_templates: exact.len(),
         unresolved_targets: targets.len(),
         clustered_targets,
@@ -601,10 +605,11 @@ fn compatible(left: &Owner, right: &Owner) -> bool {
 fn similarity(target: &Owner, template: &Owner) -> TemplateMatch {
     let ngram = cosine(&target.features, &template.features);
     let length = ratio(target.instructions.len(), template.instructions.len());
-    let call_targets = if target.calls == 0 && template.calls == 0 {
-        10_000
-    } else {
+    let has_call_target_evidence = target.calls != 0 || template.calls != 0;
+    let call_targets = if has_call_target_evidence {
         cosine(&target.call_features, &template.call_features)
+    } else {
+        0
     };
     let call_count = ratio(target.calls + 1, template.calls + 1);
     let branches = ratio(target.branches + 1, template.branches + 1);
@@ -626,6 +631,7 @@ fn similarity(target: &Owner, template: &Owner) -> TemplateMatch {
         score_basis_points: score,
         ngram_similarity_basis_points: ngram,
         length_similarity_basis_points: length,
+        has_call_target_evidence,
         call_target_similarity_basis_points: call_targets,
         call_count_similarity_basis_points: call_count,
         branch_similarity_basis_points: branches,
@@ -633,7 +639,11 @@ fn similarity(target: &Owner, template: &Owner) -> TemplateMatch {
 }
 fn qualifies_family(candidate: &TemplateMatch) -> bool {
     candidate.score_basis_points >= MIN_SCORE
-        && candidate.call_target_similarity_basis_points >= MIN_CALL_TARGET_SCORE
+        && if candidate.has_call_target_evidence {
+            candidate.call_target_similarity_basis_points >= MIN_CALL_TARGET_SCORE
+        } else {
+            candidate.ngram_similarity_basis_points >= MIN_NO_CALL_NGRAM_SCORE
+        }
 }
 fn cosine(left: &BTreeMap<String, u32>, right: &BTreeMap<String, u32>) -> u16 {
     let dot = left
@@ -1373,6 +1383,7 @@ mod tests {
             score_basis_points: 10_000,
             ngram_similarity_basis_points: 10_000,
             length_similarity_basis_points: 10_000,
+            has_call_target_evidence: true,
             call_target_similarity_basis_points: 10_000,
             call_count_similarity_basis_points: 10_000,
             branch_similarity_basis_points: 10_000,
@@ -1419,6 +1430,16 @@ mod tests {
         candidate.call_count_similarity_basis_points = 9000;
         assert!(!qualifies_family(&candidate));
         candidate.call_target_similarity_basis_points = MIN_CALL_TARGET_SCORE;
+        assert!(qualifies_family(&candidate));
+    }
+    #[test]
+    fn call_free_family_requires_strong_instruction_identity() {
+        let mut candidate = template_match();
+        candidate.has_call_target_evidence = false;
+        candidate.call_target_similarity_basis_points = 0;
+        candidate.ngram_similarity_basis_points = MIN_NO_CALL_NGRAM_SCORE - 1;
+        assert!(!qualifies_family(&candidate));
+        candidate.ngram_similarity_basis_points = MIN_NO_CALL_NGRAM_SCORE;
         assert!(qualifies_family(&candidate));
     }
     #[test]

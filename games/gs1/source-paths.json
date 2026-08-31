@@ -5600,6 +5600,10 @@
     "resource_3bb:02002450": {"name": "CommandInterpolationRenderer_Update"},
     "resource_3bc:02002ee8": {"name": "CommandInterpolationRenderer_Update"},
     "resource_39e:02002ad0": {"name": "FieldScene_RunRoofEnsembleSequence"},
+    "resource_378:0200088c": {"name": "FieldScene_RunScriptedSceneSequence"},
+    "resource_378:0200187c": {"name": "FieldScene_RunActorUpdateSequence"},
+    "resource_39e:02001494": {"name": "FieldScene_RunSecondEnsembleBeat"},
+    "resource_39e:02001dbc": {"name": "FieldScene_RunEnsembleStoryBeat"},
     "main:080a46b4": {
       "name": "Item_ClassifyUseMode",
       "source": "items/classify_use_mode.c"

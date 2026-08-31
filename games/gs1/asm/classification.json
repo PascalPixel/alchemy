@@ -2405,6 +2405,28 @@
    "files": [
     "0808b868"
    ]
+  },
+  {
+   "kind": "field_dispatch_compiler_allocation_module",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_audited_owner_extent",
+    "six_edition_relocation_normalized_core_is_identical",
+    "equal_branch_topology_exact_literal_pool_and_matching_operations_calls_arguments_and_memory_accesses",
+    "only_residual_is_the_equivalent_saved_register_coloring_for_coordinates_tables_and_indirect_call_arguments",
+    "allocator_order_decoder_reports_conflicting_targets_without_a_unique_source_shape",
+    "all_valid_statement_orders_pointer_table_call_argument_and_exact_sibling_source_shapes_preserve_the_residual_or_regress",
+    "approved_gcc_2_96_regmove_scheduling_cse_gcse_and_optimization_routes_preserve_the_residual_or_regress",
+    "inline_assembly_fixed_registers_compiler_barriers_and_forced_register_assignment_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 132,
+   "files": [
+    "08011f54"
+   ]
   }
  ]
 }

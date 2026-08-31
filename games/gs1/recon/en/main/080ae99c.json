@@ -29,6 +29,7 @@
     "decision": "Neither the proven inline boundary nor the one exact-C entry-coloring analogue moved the data chain to r3. The source and retained assembly remain unchanged; this probe does not count toward the five required closures."
   },
   "notes": [
+    "2026-08-31 ABI-order probe: GCC creates the four incoming argument pseudos in ABI order (r0 through r3). Preserving `variant` and then reassigning the fourth parameter as either an integer-cast or pointer-typed Data_03001f2c carrier is optimized back to identical RTL/output (10 differing halfwords); a K&R definition with reordered parameter declarations also retains ABI-order pseudo creation. Semantic-neutral parameter reuse therefore cannot move the data chain's hard affinity from incoming tile r2 to variant r3.",
     "This owner and 080ae9f0 share the same resource-selection, object-creation, failure, and initialization tail.",
     "The complete ordinary-C candidate emits the exact reference length. Sharing 080ae9f0's data-base/resource-selection shape improves this owner from 35 differing halfwords / 22 wrong instructions to 10 / 16 while keeping its post-call tail exact.",
     "The earlier 30,000-candidate search plus a joint sibling matrix over raw pointer versus selected pointer, direct versus split variant lifetime, branch statement order, addend order, carrier widths, declaration order, approved GCC pass flags, -O1/-O3/-Os, and old-agbcc produced no exact candidate. The fixed-route shared-data shape is the unique readable improvement.",

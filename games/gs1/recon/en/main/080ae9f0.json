@@ -22,6 +22,7 @@
     "status": "exhausted"
   },
   "notes": [
+    "2026-08-31 ABI-order probe: preserving `variant` and reusing the fourth parameter as the Data_03001f2c carrier, in both integer-cast and pointer-typed forms, is optimized to the same pre-allocation RTL and remains at 13 differing halfwords. Reordering a K&R definition's parameter declarations likewise leaves argument pseudos in ABI order. Neither semantic-neutral form changes the r2 data-chain affinity, so this axis is closed for both marker-object siblings.",
     "This owner and 080ae99c share the same resource-selection, object-creation, failure, and initialization tail; this sibling additionally adjusts the tile argument by variant.",
     "The post-call failure and initialization tail is instruction-exact. The residual is an entry allocation family: the reference retains variant in r5, x in r4, y in r6, and tile in r2.",
     "A bounded 40,000-candidate classic search improved one diagnostic byte but produced no exact candidate. Retained assembly remains authoritative and this draft claims zero bytes.",

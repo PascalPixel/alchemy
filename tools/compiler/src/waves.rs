@@ -28,6 +28,7 @@ const BUCKET: &str = "out/gs1-en/waves/bucket.json";
 const RESIDUAL_SCOREBOARD: &str = "out/gs1-en/reports/residual-scoreboard.json";
 const DRAFT: &str = "out/gs1-en/waves/draft";
 const CATALOG: &str = "games/gs1/recon/compiler-repair-patterns.json";
+const MAIN_REGIONS: &str = "games/gs1/semantic/main-regions.json";
 const DEBT: [&str; 5] = [
     "c_candidate",
     "merge_with_continuations",
@@ -39,9 +40,9 @@ const DEBT: [&str; 5] = [
 // drift — an adoption or a draft tracked into the corpus — updates these
 // numbers as its acknowledgment. Last acknowledged: the current worktree's
 // exact-C adoptions and tracked reconstruction drafts.
-const DRAFT_OWNERS: usize = 231;
-const INDEPENDENT_OWNERS: usize = 153;
-const OWNER_GROUP_OWNERS: usize = 59;
+const DRAFT_OWNERS: usize = 217;
+const INDEPENDENT_OWNERS: usize = 146;
+const OWNER_GROUP_OWNERS: usize = 52;
 const SPLIT_REGION_OWNERS: usize = 19;
 
 #[derive(Deserialize)]
@@ -58,6 +59,16 @@ struct Region {
     #[serde(default)]
     symbol: String,
     retention: Option<String>,
+}
+#[derive(Deserialize)]
+struct MainRegions {
+    non_c_ranges: Vec<NonCRange>,
+}
+#[derive(Deserialize)]
+struct NonCRange {
+    address: String,
+    size: usize,
+    kind: String,
 }
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "snake_case")]
@@ -1748,6 +1759,8 @@ fn inventory(repository: &Path) -> Result<Inventory, String> {
     let manifest_text = read(repository.join(MANIFEST))?;
     let manifest: Manifest =
         serde_json::from_str(&manifest_text).map_err(|e| format!("{MANIFEST}: {e}"))?;
+    let excluded = non_c_candidate_ranges(repository)?;
+    reject_non_c_candidate_intersections(&manifest.regions, &excluded)?;
     let names = SourcePaths::load(repository)?;
     let units = TranslationUnits::load(repository)?;
     let mut owners = Vec::new();
@@ -1809,6 +1822,60 @@ fn inventory(repository: &Path) -> Result<Inventory, String> {
         manifest_sha256: sha256::hex(manifest_text.as_bytes()),
         owners,
     })
+}
+
+fn reject_non_c_candidate_intersections(
+    regions: &[Region],
+    excluded: &[(u64, u64)],
+) -> Result<(), String> {
+    for region in regions.iter().filter(|region| {
+        region.source.starts_with("games/gs1/asm/executable_gaps/")
+            && region
+                .retention
+                .as_deref()
+                .is_some_and(|value| DEBT.contains(&value))
+    }) {
+        let end = region
+            .address
+            .checked_add(region.size as u64)
+            .ok_or_else(|| format!("debt manifest range overflow at {:08x}", region.address))?;
+        if let Some(&(excluded_start, excluded_end)) =
+            excluded.iter().find(|&&(excluded_start, excluded_end)| {
+                region.address < excluded_end && excluded_start < end
+            })
+        {
+            return Err(format!(
+                "debt manifest region {:08x}..{:08x} intersects registered non-C range {:08x}..{:08x}",
+                region.address, end, excluded_start, excluded_end
+            ));
+        }
+    }
+    Ok(())
+}
+
+fn non_c_candidate_ranges(repository: &Path) -> Result<Vec<(u64, u64)>, String> {
+    let document: MainRegions = json_file(&repository.join(MAIN_REGIONS))?;
+    document
+        .non_c_ranges
+        .into_iter()
+        .filter(|range| {
+            matches!(
+                range.kind.as_str(),
+                "literal_pool" | "alignment_padding" | "lookup_table"
+            )
+        })
+        .map(|range| {
+            let address = range
+                .address
+                .strip_prefix("0x")
+                .and_then(|value| u64::from_str_radix(value, 16).ok())
+                .ok_or_else(|| format!("{MAIN_REGIONS}: bad address {}", range.address))?;
+            let end = address
+                .checked_add(range.size as u64)
+                .ok_or_else(|| format!("{MAIN_REGIONS}: range overflow at {}", range.address))?;
+            Ok((address, end))
+        })
+        .collect()
 }
 
 fn assembly_symbol(path: &Path) -> Option<String> {
@@ -2105,6 +2172,43 @@ mod tests {
         assert_eq!(cohort.ordering, "reference_size_ascending_then_address");
         assert!(cohort.owners.iter().all(|owner| owner.symbol
             == assembly_symbol(&repository.join(&owner.reference)).unwrap_or_default()));
+    }
+
+    #[test]
+    fn inventory_rejects_registered_non_c_intersections() {
+        let region = |address, size| Region {
+            address,
+            size,
+            source: "games/gs1/asm/executable_gaps/fixture.s".into(),
+            kind: "executable_gap_continuation".into(),
+            symbol: "Fixture".into(),
+            retention: Some("merge_with_owner".into()),
+        };
+        let excluded = [(0x080b_f1e8, 0x080b_f208)];
+
+        assert!(
+            reject_non_c_candidate_intersections(&[region(0x080b_f1e8, 32)], &excluded)
+                .unwrap_err()
+                .contains("intersects registered non-C range")
+        );
+        assert!(
+            reject_non_c_candidate_intersections(&[region(0x080b_f1e0, 16)], &excluded).is_err()
+        );
+        assert!(reject_non_c_candidate_intersections(&[region(0x080b_f208, 4)], &excluded).is_ok());
+
+        let ordinary_owner = Region {
+            address: 0x0802_6b44,
+            size: 0x33c,
+            source: "games/gs1/asm/08026b44.s".into(),
+            kind: "compiler_output".into(),
+            symbol: "Func_08026b44".into(),
+            retention: Some("c_candidate".into()),
+        };
+        assert!(reject_non_c_candidate_intersections(
+            &[ordinary_owner],
+            &[(0x0802_6e72, 0x0802_6e80)]
+        )
+        .is_ok());
     }
 
     #[test]

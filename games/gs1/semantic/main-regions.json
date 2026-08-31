@@ -481,6 +481,12 @@
    "evidence": "Code-unreachable pool words inside the registered owner games/gs1/asm/080e3994.s, source lines 61-63: the assembler listing encodes this range as directive data, not instructions, so no C claims it and none can."
   },
   {
+   "address": "0x080e5790",
+   "size": 36,
+   "kind": "literal_pool",
+   "evidence": "Nine-word shared literal pool between the 0x080e5504 and 0x080e57b4 fragments. Every word is consumed by a PC-relative load from the preceding fragment: targets 0x080e5790, 0x080e5794, 0x080e5798, 0x080e579c, 0x080e57a0, 0x080e57a4, 0x080e57a8, 0x080e57ac, and 0x080e57b0 are referenced at 0x080e5504 through 0x080e576a."
+  },
+  {
    "address": "0x080ecbb8",
    "size": 32,
    "kind": "literal_pool",

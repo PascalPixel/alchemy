@@ -1,0 +1,28 @@
+{
+ "schema_version": 1,
+ "namespace": "gs1-en-main",
+ "address": "0x0808b868",
+ "status": "measured-draft",
+ "owner_bytes": 128,
+ "score": {
+  "measured": "2026-08-31",
+  "candidate_bytes": 128,
+  "reference_bytes": 128,
+  "differing_halfwords": 17,
+  "wrong_instructions": 10,
+  "class": "missing-extra-code",
+  "note": "The complete ordinary-C reconstruction has exact extent and equal branch topology. A named coordinate-carrier correction reduced the residual from 23 differing halfwords / 14 wrong instructions to 17 / 10. The remaining difference is concentrated in when GCC materializes runtime+236/runtime+244 and their register roles; this draft claims zero DONE bytes."
+ },
+ "behavior": [
+  "reads the current runtime pointer from 0x03001e70 before calling Func_080770d0(356) and Func_080770c8(357)",
+  "walks 24-byte boundary records until the signed id field is -1",
+  "leaves records whose flag field is already nonzero unchanged",
+  "assigns flag 356 when x lies inclusively between runtime fields +236/+244 and z lies inclusively between +240/+248",
+  "assigns flag 357 when any of those four bounds checks fails"
+ ],
+ "notes": [
+  "The address-adjacent exact BattleEffect_ClearOutOfBoundsObjects owner corroborates the same runtime family and the compiler-sensitive practice of loading coordinate carriers in their use order before a bounds chain.",
+  "The one permitted targeted correction introduced named x and z carriers before the four comparisons, matching the reference's early `entry+8` then `entry+16` loads. It preserved the 128-byte extent and equal topology while improving differing halfwords 23->17 and wrong instructions 14->10, so it was retained.",
+  "Recovered only from games/gs1/asm/0808b868.s, adjacent in-repository battle-runtime sources and dossiers, and the approved compiler's candidate-show output. No external decompilation source, copied instruction bytes, inline assembly, fixed-register variable, compiler barrier, or compiler modification was used."
+ ]
+}

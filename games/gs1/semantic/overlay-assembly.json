@@ -3340,6 +3340,11 @@
       "overlay": "resource_3ba", "start": "0x020016ec", "end": "0x02001898",
       "kind": "generated_call_script_module", "retention": "keep_structured_asm", "confidence": "proven",
       "evidence": ["complete reconstruction accounts for all 42 calls and the phase-selected full, revisit, and active-scene paths", "games/gs1/recon/en/overlays/resource_3ba_c_020016ec.json"]
+    },
+    {
+      "overlay": "resource_3b0", "start": "0x02000e78", "end": "0x020010a0",
+      "kind": "generated_call_script_module", "retention": "keep_structured_asm", "confidence": "proven",
+      "evidence": ["complete reconstruction accounts for all 56 calls, seven-actor staging, both workspace-state updates, and the final actor selector branch", "games/gs1/recon/en/overlays/resource_3b0_c_02000e78.json"]
     }
   ]
 }

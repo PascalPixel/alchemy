@@ -1,0 +1,12 @@
+{
+  "span_bytes": 552,
+  "score": {"measured":"2026-08-31","candidate_bytes":548,"reference_bytes":552,"wrong_instructions":93,"differing_halfwords":221,"class":"generated-call-script-retention"},
+  "shape": {"calls":56,"loops":0,"memory_operations":6},
+  "verified_against_reference": [
+    "all 56 static calls and their arguments are represented in ROM order across the complete callable owner",
+    "direct audit restored the carried ensemble handle, scene-workspace state values 515 and 514 at offset 448, and both closing halfword map-state writes omitted by the generated draft",
+    "direct audit restored the final selector branch choosing actor 15 only for selector value 11 and actor 14 otherwise",
+    "the remaining four-byte extent residual is approved-compiler high-register carrier allocation, shared literal reuse, immediate materialization, and scheduling after complete semantics are represented"
+  ],
+  "retention": "keep_structured_asm"
+}

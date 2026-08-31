@@ -69,35 +69,39 @@ typedef s64 M2C_UNK64;
 
 #endif
 
+struct BattleEffectPositionPair {
+    s32 x;
+    s32 y;
+};
+
 void Func_080eb754(s32 arg0) {
-    u32 sp0;                                        /* compiler-managed */
-    s32 sp4;
-    s32 sp8;
-    s32 spC;
-    s32 sp10;
-    u32 *sp14;
-    u32 *sp18;
-    s32 sp1C;
-    s32 sp20;
-    s32 sp24;
-    s32 sp28;
-    s32 sp2C;
-    s32 sp30;
-    void *sp34;
-    s32 sp38;
-    s32 sp3C;
-    s32 sp40;
-    u32 sp44;
-    u32 sp48;
-    void *sp4C;
-    s32 sp50;
-    s32 sp54;
+    u8 spA0[0x10];
+    u8 sp94[0x0C];
+    u8 sp64[0x30];
+    struct BattleEffectPositionPair sp5C;
     s32 sp58;
-    s32 sp5C;
-    s32 sp60;
-    M2C_UNK sp64;
-    M2C_UNK sp94;
-    M2C_UNK spA0;
+    s32 sp54;
+    s32 sp50;
+    void *sp4C;
+    u32 sp48;
+    u32 sp44;
+    s32 sp40;
+    s32 sp3C;
+    s32 sp38;
+    void *sp34;
+    s32 sp30;
+    s32 sp2C;
+    s32 sp28;
+    s32 sp24;
+    s32 sp20;
+    s32 sp1C;
+    u32 *sp18;
+    u32 *sp14;
+    s32 sp10;
+    s32 spC;
+    s32 sp8;
+    s32 sp4;
+    u32 sp0;                                        /* compiler-managed */
     s32 *var_r3_770;
     s32 *var_r5_324;
     s32 *var_r5_875;
@@ -157,17 +161,15 @@ void Func_080eb754(s32 arg0) {
     void *temp_r1_1106;
     void *temp_r2_124;
     void *temp_r2_718;
-    void *temp_r3_20;
     void *var_r5_168;
     void *var_r5_466;
     void *var_r8_322;
     void *var_r8_872;
 
     sp50 = M2C_FIELD(&absolute_03001ef0, s32 *, 0);
-    temp_r3_20 = *(void **)0x03001EEC;
-    sp4C = temp_r3_20;
+    sp4C = *(void **)0x03001EEC;
     sp44 = absolute_03001ef0.field_0004;
-    M2C_FIELD(temp_r3_20, s32 *, 0x7828) = arg0;
+    M2C_FIELD(sp4C, s32 *, 0x7828) = arg0;
     Func_080cd594(0);
     Func_080c9048();
     absolute_0400000c.field_0000 = 0x784;
@@ -178,7 +180,7 @@ void Func_080eb754(s32 arg0) {
     Func_080cd104(1, 0);
     Func_080dbb24(9, 0x175, 1);
     absolute_03001ce0.field_0010 = 0xF0;
-    Func_080d6750(M2C_FIELD(temp_r3_20, s32 *, 0x7828));
+    Func_080d6750(M2C_FIELD(sp4C, s32 *, 0x7828));
     absolute_04000048.field_0000 = 0x2737;
     *(u16 *)0x04000038 = 0xCA;
     Func_080030f8(1);
@@ -248,8 +250,7 @@ block_8:
                 sp3C += sp30;
             }
             if (var_fp_208 <= 0x95) {
-                sp5C = M2C_FIELD((void *)0x080EDAD8, s32 *, 0);
-                sp60 = M2C_FIELD((void *)0x080EDAD8, s32 *, 4);
+                sp5C = *(const struct BattleEffectPositionPair *)0x080EDAD8;
                 var_sl_257 = 0;
                 if (var_fp_208 > 0x67) {
                     var_sl_257 = (var_fp_208 * 0x10) + 0xFFFFF980;
@@ -276,8 +277,8 @@ block_8:
                 var_r8_322 = NULL;
                 var_r5_324 = sp4C + 0x77D8;
                 do {
-                    M2C_FIELD(&spA0, s32 *, 0) = (s32) ((((sp40 + *(u8 *)(0x080EEF56 + (s32) var_r8_322)) - var_sl_257) << 0x10) + 0xE00000);
-                    M2C_FIELD(&spA0, s32 *, 8) = (s32) (((*(u8 *)(0x080EEF5F + (s32) var_r8_322) - sp2C) << 0x10) + 0x480000);
+                    M2C_FIELD(&spA0, s32 *, 0) = (s32) ((((sp40 + *(s8 *)(0x080EEF56 + (s32) var_r8_322)) - var_sl_257) << 0x10) + 0xE00000);
+                    M2C_FIELD(&spA0, s32 *, 8) = (s32) (((*(s8 *)(0x080EEF5F + (s32) var_r8_322) - sp2C) << 0x10) + 0x480000);
                     temp_r0_349 = *var_r5_324;
                     var_r5_324 += 4;
                     Func_08009008(temp_r0_349, &spA0, &sp5C, 0);
@@ -403,7 +404,7 @@ block_8:
     do {
         *var_r5_758 = (s8) (Func_08004458() & 0x1F);
         var_r5_758 += 1;
-    } while (var_r5_758 != &sp94);
+    } while (var_r5_758 != (u32 *)&sp94);
     var_r3_770 = (s32 *)0x02010018;
     var_r8_771 = 0;
     do {
@@ -443,8 +444,8 @@ loop_88:
         var_r8_872 = NULL;
         var_r5_875 = sp4C + 0x77D8;
         do {
-            M2C_FIELD(&sp64, s32 *, 0) = (s32) ((sp1C + *(u8 *)(0x080EEF56 + (s32) var_r8_872)) << 0x10);
-            M2C_FIELD(&sp64, s32 *, 8) = (s32) (((*(u8 *)(0x080EEF5F + (s32) var_r8_872) - var_r4_862) << 0x10) + 0x480000);
+            M2C_FIELD(&sp64, s32 *, 0) = (s32) ((sp1C + *(s8 *)(0x080EEF56 + (s32) var_r8_872)) << 0x10);
+            M2C_FIELD(&sp64, s32 *, 8) = (s32) (((*(s8 *)(0x080EEF5F + (s32) var_r8_872) - var_r4_862) << 0x10) + 0x480000);
             temp_r0_894 = *var_r5_875;
             var_r5_875 += 4;
             sp8 = var_r4_862;

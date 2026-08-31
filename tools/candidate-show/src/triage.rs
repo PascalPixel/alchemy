@@ -13,6 +13,7 @@ pub enum ResidualClass {
     TypeWidthMismatch,
     StructuralTopology,
     MissingExtraCode,
+    FrameContext,
     CompilerUnemittable,
     Unclassified,
 }
@@ -32,6 +33,7 @@ impl ResidualClass {
                 "missing-extra-code",
                 Some("reconstruct-missing-or-extra-code"),
             ),
+            Self::FrameContext => ("frame-context", Some("recover-stack-local-context")),
             Self::CompilerUnemittable => ("compiler-unemittable", Some("classification-proof")),
             Self::Unclassified => ("unclassified", None),
         }
@@ -64,6 +66,9 @@ impl ResidualClass {
             }
             Self::MissingExtraCode => {
                 "compiler candidate-show {source} --align --first (reconstruct the absent or surplus statements the diff names)"
+            }
+            Self::FrameContext => {
+                "compiler candidate-show {source} --asm (build a stack-slot ledger and recover the missing local or translation-unit context)"
             }
             Self::CompilerUnemittable => {
                 "record a classification proof; do not search spellings for a shape the compiler cannot emit"
@@ -174,6 +179,25 @@ fn direct_branch(op: &str) -> bool {
         "bls", "bge", "blt", "bgt", "ble",
     ];
     BRANCHES.contains(&op)
+}
+fn stack_adjustment(line: &str) -> bool {
+    let mut fields = line.split_ascii_whitespace();
+    matches!(fields.next(), Some("sub" | "add"))
+        && fields.next().is_some_and(|field| field == "sp,")
+        && fields.next().is_some_and(|field| field.starts_with('#'))
+}
+fn frame_context_only(left: &[String], right: &[String]) -> bool {
+    left.len() == right.len()
+        && left.iter().zip(right).all(|(left, right)| {
+            normalized(left) == normalized(right)
+                || (stack_adjustment(left)
+                    && stack_adjustment(right)
+                    && mnemonic(left) == mnemonic(right))
+        })
+        && left
+            .iter()
+            .zip(right)
+            .any(|(left, right)| normalized(left) != normalized(right))
 }
 pub(crate) fn alignment_indices(
     left: &[String],
@@ -425,6 +449,8 @@ pub fn classify_with_topology(
         ResidualClass::Exact
     } else if ordered_pc_normalized_equal {
         ResidualClass::LayoutOnly
+    } else if frame_context_only(left, right) {
+        ResidualClass::FrameContext
     } else if right.iter().any(|line| multiple(line)) && !left.iter().any(|line| multiple(line)) {
         ResidualClass::CompilerUnemittable
     } else if register_erased_ordered_equal {
@@ -488,6 +514,12 @@ mod tests {
             &["movs r0, #1", "str r0, [r1]"],
             1,
             MissingExtraCode,
+        );
+        assert_route(
+            &["sub sp, #8", "str r0, [sp, #0]", "add sp, #8"],
+            &["sub sp, #16", "str r0, [sp, #0]", "add sp, #16"],
+            2,
+            FrameContext,
         );
     }
     #[test]

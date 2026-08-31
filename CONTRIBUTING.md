@@ -45,6 +45,11 @@ assembly reproduces the complete audited extent byte-exactly. Neither category
 claims knowledge of Camelot's original source language. A plausible instruction
 shape without the relevant proof remains Draft C or Draft ASM.
 
+A complete scene reconstruction is still Draft ASM unless it separately proves
+why the approved compiler cannot emit the retained form. Call counts, matching
+owner bounds, compiled extent, and plausible control flow establish useful
+coverage evidence, but none of them is compiler-impossibility proof.
+
 Never fill an unfinished build from the reference ROM.
 
 ## Setup

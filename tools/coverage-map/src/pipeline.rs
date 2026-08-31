@@ -541,6 +541,11 @@ fn overlay_assembly_classification_document(
                 "assembly classification {index} lies outside audited executable bytes"
             ));
         }
+        if text(row, "confidence") == "proven" && text(row, "kind") == "structured_scene_module" {
+            return Err(format!(
+                "assembly classification {index} promotes a scene reconstruction without compiler-impossibility proof"
+            ));
+        }
         if text(row, "confidence") == "proven" {
             proven.entry(overlay).or_default().push(span);
         } else {
@@ -1299,5 +1304,22 @@ mod tests {
         )
         .unwrap_err();
         assert!(error.contains("lacks retention reasoning"));
+    }
+    #[test]
+    fn scene_reconstruction_cannot_claim_proven_assembly() {
+        let mut row = region(
+            "0x02000120",
+            "0x02000140",
+            "proven",
+            json!(["complete reconstructed scene body"]),
+        );
+        row["kind"] = json!("structured_scene_module");
+        let error = overlay_assembly_classification_document(
+            &classification(json!([row])),
+            &no_inventory(),
+            &executable(),
+        )
+        .unwrap_err();
+        assert!(error.contains("without compiler-impossibility proof"));
     }
 }

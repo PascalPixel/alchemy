@@ -2240,11 +2240,15 @@
     "inline_assembly_fixed_registers_compiler_barriers_and_padding_objects_are_disallowed",
     "byte_exact_reconstruction"
    ],
-   "expected_files": 2,
-   "expected_bytes": 1404,
+   "expected_files": 6,
+   "expected_bytes": 4868,
    "files": [
     "080965a8",
-    "080e01e4"
+    "080ca1fc",
+    "080d3854",
+    "080d5c48",
+    "080e01e4",
+    "080e6eac"
    ]
   },
   {

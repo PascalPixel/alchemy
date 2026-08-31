@@ -5,14 +5,14 @@
  "status": "measured-draft",
  "owner_bytes": 344,
  "score": {
-  "measured": "2026-08-27",
-  "candidate_bytes": 374,
+  "measured": "2026-09-01",
+  "candidate_bytes": 344,
   "reference_bytes": 344,
-  "differing_halfwords": 132,
-  "wrong_instructions": 111,
-  "class": "wrong",
+  "differing_halfwords": 48,
+  "wrong_instructions": 36,
+  "class": "missing-extra-code",
   "command": "compiler candidate-show games/gs1/recon/en/main/08090658.c --owner 0x08090658 --size 344",
-  "note": "Family-clustered against games/gs1/src/display/transition/update.c (template main:080903bc, 86% ngram score) via the same transition_duration/transition_step/transition_start/transition_end state-machine opening (offsets 0x53a-0x53d off Data at 0x03001ECC, identical to the template and to the already-drafted sibling 08090488), but the clustering signal only covers that opening third of the function: the remaining two-thirds (roughly 200 of the 344 owner bytes) do something the template and its sibling 08090488 never do at all, and had to be reverse-engineered independently from the raw disassembly and its literal pool rather than adapted from any existing source. This owner is the display-transition tick that ALSO drives Golden Sun's palette-fade dither and queues a VRAM DMA: on the terminal tick (step>=duration) it self-reschedules via Func_08004278((void*)Func_08090658) then inline-clears DMA0's enable bits (REG_DMA0CNT_H &= 0xc5ff; &= 0x7fff, read back once more unused) instead of the template's Func_0800307c(1,0,0) call, and returns; otherwise it advances transition_value via the template's own Func_080072f0 ratio call. Past that shared opening -- absent from the template entirely -- it unconditionally (no >79 threshold, no primary_value/secondary_value writes at all) toggles a one-byte flag at offset 0x539, derives a 6-bit dither phase from (transition_value-1), and for two consecutive table entries in a ROM lookup table at 0x0809e8ee (entry = table[phase & 63]; palette byte = state+0x508+(entry>>1); entry's low bit selects which nibble) writes a 0-or-15 nibble into a small palette-index buffer at state+0x508 -- a classic 2-frame dither ramp. It then disables IME, and if a pending-DMA-request ring buffer at 0x02002090 (u16 count, followed by 12-byte {u32 src, u32 dst, u32 ctrl} entries) has room (count<=31), appends one entry (src=state+0x508, dst=0x06000000/VRAM base, ctrl=0x84000008) and increments the count, before restoring IME. All of this shape, every literal pool constant (0x03001ecc, 0x53a-0x53d, 0x08090659 self-address, 0x040000b0 DMA0, 0xc5ff/0x7fff masks, 0x03000380, 0x52a/0x539 state offsets, 0x0809e8ee table, 0x02002090 queue, 0x04000208 REG_IME, 0x84000008 DMA control) and every call target is confirmed against the retained disassembly's own pc-relative address annotations, cross-checked by hand against the literal pool's 16 words in file order. The candidate expresses every one of these behaviors and reduced from an initial rough first draft (368/344, 136 wrong) through six concrete, verified respellings (below) to the current 111 wrong / 132 differing halfwords; the remaining residual is concentrated in register-allocation/scheduling differences the compiler makes for this owner's specific surrounding context, not missing or incorrect behavior -- every field offset, constant, call target, and branch condition in the candidate matches the disassembly."
+  "note": "Family-clustered against the exact display-transition template at main:080903bc and its sibling main:08090488. The shared typed transition state, linker-resolved display-transfer queue, address-valued IME disable, unsigned two-entry dither loop, and incrementing queue destination pointer now reproduce the reference's 344-byte extent, 16-word literal pool, branch topology, and paired STMIA writes. The candidate improved from 374/344 bytes with 132 differing halfwords and 111 wrong instructions to 344/344 with 48 differing halfwords and 36 wrong instructions. The remaining same-length residual is a reciprocal register-role and scheduling floor; the allocator decoder reports no unique source repair, so this remains a measured draft and claims no DONE bytes."
  },
  "shape": {
   "confirmed_fields": "offset 0x52a = transition_value (u16, matches template), 0x539 = a 1-byte toggle flag (previously undifferentiated template padding), 0x53a/0x53b/0x53c/0x53d = transition_start/end/duration/step (matches template exactly), 0x508 = an up-to-32-byte palette-index nibble buffer (written by the dither loop, read by the queued DMA as its source)",
@@ -46,16 +46,16 @@
  ],
  "remaining": [
   {
-   "op": "unexplained self-store for the IME disable",
-   "where": "the reference compiles `*ime = 0;`-equivalent (after `savedIme = *ime;`, with r0 already holding the IME address 0x04000208 from the preceding read) as `strh r0, [r0, #0]` -- storing the address register's own low 16 bits (0x0208, which has bit0 clear, so the hardware effect is still \"disable interrupts\") into the register it addresses, instead of materializing a fresh 0. Every literal C spelling tried (`*ime = 0;`, `*ime = (u16)(u32)ime;` was considered but not worth testing given how it reads) produces an ordinary `movs r_,#0; strh r_,[r0,#0]` in this candidate's context. This is very likely a genuine GCC 2.96 (experimental) code-generation quirk specific to the original compilation's exact register/liveness state at that instruction, not a source-shape choice -- reproducing it manually would require guessing the exact surrounding register pressure that triggered it, which is permuter-search territory, not respelling"
+   "op": "reciprocal register-role swap around the dither and queue tails",
+   "where": "The IME write is now explained and reproduced by the ordinary hardware idiom `*ime = (u16)(u32)ime;`; it was not a compiler quirk. After all pool words and instruction counts were aligned, the allocator decoder identified reciprocal r0/r1 and r4/r7 role swaps but could not name a unique guarded source repair."
   },
   {
-   "op": "offset-derivation peephole (0x539 from 0x52a+15)",
-   "where": "this compiler's own optimizer chooses to derive the 0x539 toggle-byte offset from the already-loaded 0x52a constant via `adds r2,#15` (saving a 4-byte literal pool entry) wherever the two constants are used near each other, regardless of statement order; the reference instead loads both 0x52a and 0x539 as two independent literal pool constants. This held even after reordering the two pointer computations to textually match the reference and is a GCC size-optimization peephole triggered by constant proximity, not a source-order issue"
+   "op": "independent absolute toggle offset",
+   "where": "Using the linker-resolved absolute symbol Data_00000539 preserves the reference's independent 0x539 pool word. Expressing the same address only as a typed field lets GCC derive it from 0x52a and shortens the owner by four bytes, so the absolute symbol is source-shape evidence rather than an unexplained optimizer limitation."
   },
   {
-   "op": "register allocation / scheduling drift downstream of the above two residuals",
-   "where": "because the candidate is 30 bytes longer than the reference (374 vs 344) purely from the two residuals above, the tool's own instruction-alignment view desynchronizes for the palette-loop tail and the DMA-queue-append tail (visible as the tool literally disassembling the reference's own literal-pool words as garbage instructions in the misaligned view) -- every field offset, call target, and branch condition in that tail was independently confirmed against the raw retained .s listing by hand (see shape.confirmed_fields/confirmed_globals above), so the remaining diff there is believed to be more of the same class of register-coloring/peephole drift rather than a missing behavior, but could not be verified instruction-by-instruction the way the rest of the function was"
+   "op": "same-length scheduling residual",
+   "where": "Candidate and reference are both 344 bytes with identical normalized branch topology and identical literal values. The remaining 36 wrong instructions are directly alignable; no phase-shift or disassembled-pool artifact remains. The bounded annotation-free permuter stopped honestly because its decoder found no unique source repair."
   }
  ],
  "notes": [

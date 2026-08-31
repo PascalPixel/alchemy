@@ -1,0 +1,12 @@
+{
+  "span_bytes": 724,
+  "score": {"measured":"2026-08-31","candidate_bytes":724,"reference_bytes":724,"wrong_instructions":96,"differing_halfwords":325,"class":"generated-call-script-retention"},
+  "shape": {"calls":73,"loops":0,"memory_operations":15},
+  "verified_against_reference": [
+    "all 73 calls and their arguments are represented in ROM order across the complete callable owner",
+    "direct audit restored the carried scene handle, workspace state value 515 at offset 448, and all eleven actor-record arguments omitted by the generated draft",
+    "both actor-nine presentation cycles preserve their complete seven-field resets and ordered motion records",
+    "the candidate and reference extents are both 724 bytes; remaining differences are approved-compiler high-register carrier allocation, shared literal reuse, immediate materialization, and scheduling after complete semantics are represented"
+  ],
+  "retention": "keep_structured_asm"
+}

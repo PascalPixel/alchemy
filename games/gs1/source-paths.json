@@ -5585,6 +5585,7 @@
     "resource_3a0:02000f30": {"name": "FieldScene_RunActorNineteenScript"},
     "resource_3b1:020027d8": {"name": "FieldScene_RunBranchingActorPresentation"},
     "resource_3a8:02002008": {"name": "FieldScene_RunTwoActorCutsceneSequence"},
+    "resource_380:020006f4": {"name": "FieldScene_RunMultiStageEffectPresentation"},
     "main:080a46b4": {
       "name": "Item_ClassifyUseMode",
       "source": "items/classify_use_mode.c"

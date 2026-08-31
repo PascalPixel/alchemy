@@ -17,11 +17,6 @@ struct EffectDescriptorRuntime {
     s16 limit;
 };
 
-struct SelectedEffectState {
-    u8 unused_00[0x1f4];
-    s32 object;
-};
-
 struct EffectObject {
     u8 unused_00[6];
     u16 reference;
@@ -30,14 +25,16 @@ struct EffectObject {
 extern u32 Func_0808d458(s32 descriptor, s32 value);
 extern s32 Func_0808d428(s32 condition);
 extern struct EffectObject *Func_0808ba1c(s32 object);
+extern u8 Data_02000240;
 
 struct EffectDescriptor *BattleEffect_FindDescriptor(s32 kind, s32 value)
 {
     struct EffectDescriptorRuntime *runtime =
         *(struct EffectDescriptorRuntime **)0x03001ebc;
-    struct SelectedEffectState *state = (struct SelectedEffectState *)0x02000240;
     struct EffectDescriptor *descriptor = runtime->descriptors;
-    u16 reference = Func_0808ba1c(state->object)->reference;
+    s32 state_index = 250;
+    u32 reference =
+        Func_0808ba1c(*(u32 *)((s16 *)&Data_02000240 + state_index))->reference;
 
     while (descriptor->flags != -1) {
         s32 flags = descriptor->flags;

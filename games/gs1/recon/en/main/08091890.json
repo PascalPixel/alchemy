@@ -23,6 +23,14 @@
  ],
  "rejected_experiments": [
   {
+   "experiment": "complete shipped-toggle route probe, followed by a field-cluster check across 08090658, 080912b8, 08091890, 08091a58, 08093874, 08093fa0, 08094154, and 080941e0",
+   "result": "-fno-regmove, both scheduling toggles, both CSE toggles, and -fno-gcse are flat at 324/108; -fno-strength-reduce regresses to 336/166. -fno-expensive-optimizations alone improves this owner to exact extent 328/328 and 104 differing halfwords, but every combination with the other flat toggles stays 328/104. Across the eight-owner field cluster, the flag improves only 08091890; all seven siblings are flat or regress. This is an owner-specific coincidence rather than a multi-owner translation-unit route, so no override was registered and canonical flags remain authoritative."
+  },
+  {
+   "experiment": "split the reused obj pointer into a block-scoped member pointer at the active-owner loop, following the decoder's split-lifetime hint",
+   "result": "strong regression to 308 candidate bytes, 162 differing halfwords, and 96 wrong instructions; reverted. The annotation-free permuter cannot apply this repair automatically because obj has multiple assignments."
+  },
+  {
    "experiment": "obj->0x38 = 1; then v38 = *(s16*)(obj+0x38); (read-back through memory) for the current_owner block's forced-full ratio",
    "result": "regresses to 70 wrong instructions -- the compiler proves the just-stored literal 1 is a compile-time constant and CSEs the resulting 1<<14 with the unrelated 0x4000 clamp-ceiling constant used elsewhere in the function, producing a 128<<7 encoding instead of the reference's 1<<14 register-forwarding encoding"
   },
@@ -48,6 +56,7 @@
   }
  ],
  "notes": [
+  "2026-08-31: changed v34 from s32 to s16 to match the retained ldrsh access and the already-exact Owner_RefreshActiveRatios sibling. This is byte-neutral at 324/108/60 and therefore improves semantic typing without being presented as a score gain. v38=s16 was also tested and was byte-neutral, but reverted because it is a computed carrier rather than a stored-field declaration.",
   "Recovered only from the retained owner assembly (games/gs1/asm/08091890.s), the approved local ROM, the assigned template games/gs1/src/owner/refresh_ratios_on_flag.c, the closer-matching already-adopted sibling games/gs1/src/owner/refresh_active_ratios.c and its compiled object out/gs1-en/claimed/obj/0807808c.s (used to confirm the double-copy idiom's proven register behavior in isolation), games/gs1/include/owner_state.h and party_state.h (OwnerState_GetFar=Func_08077008, Data_02000240.active_owners at 0x1F8, Data_02000240.current_owner at 0x1F4), games/gs1/include/types.h (FixedPoint_Ratio=Func_080022ec, Event_ClearInvalidPackedValues=Func_08091858), the sibling dossier games/gs1/recon/en/main/080b6a60.json (which documents the Func_08077148 far-call-veneer-vs-Party_CountActiveOwners distinction reused here), and the approved compiler via tools/compiler candidate-show.",
   "Func_08077168's return value and Event_ClearInvalidPackedValues's argument are both unobserved in the retained assembly (no register setup between the two `bl`s, and r0 is explicitly reloaded with id before the next call), so both are called as bare statements with their real signatures left undetermined beyond the existing s32 Func_08077168(s32) declaration used elsewhere in the tree.",
   "This looks like a source-shape gap only in the narrow sense that the *content* is fully understood and expressed; the residual is a compiler-internals register-coloring quirk (proven by the same idiom compiling differently in this function's context vs. refresh_active_ratios.c's), which needs permuter-style search across GCC scheduling/allocation flags rather than further manual respelling.",

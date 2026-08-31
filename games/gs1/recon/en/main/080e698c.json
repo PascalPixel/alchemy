@@ -2,8 +2,9 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x080e698c",
-  "status": "measured-draft",
+  "status": "proven-retained",
   "owner_bytes": 944,
+  "classification": "battle_effect_compiler_allocation_module",
   "score": {
     "measured": "2026-08-27",
     "candidate_bytes": 944,
@@ -33,6 +34,8 @@
     "Func_080e3980 is EffectPosition_ApplyAlternateStepAndYOffset per games/gs1/include/types.h (sibling of Func_080e3944 EffectPosition_ApplyBaseAndYOffset, used by the template and by 080dc1ec.c). Its first argument here is read from target+8 as a plain s32 -- the exact same field used directly as Func_080b5098's member-id argument earlier in this same owner -- so it is modeled as taking a member id, not a position-record pointer, unlike Func_080e3944's (src,dest) shape.",
     "Field offsets on `member_a` (0x28/0x2C-unused/0x30/0x34/0x44/0x48/0x58/0x5A) are read directly from the retained assembly and are not otherwise documented in this family; they are consumed exclusively by the generic Object_ResetMotion/SetPosition/SetMode trio immediately afterward, so no more specific struct/field names are claimed than the raw offsets.",
     "Semantic summary: a camera-tracking / wipe-in battle intro effect. Loads a palette and sets BG2 scale, registers three effect callbacks (0x73 against extra_target, 0x61 against work, 0x6D against work+0x3E80), resolves one draw-callback pair via Func_080cef64, clears a 1024-slot particle pool, then computes the on-screen distance between two specific tracked party members (ids at target+8 and (s16)target+36) and uses it to set the first member's velocity/position via the generic object-motion API. Runs a fixed 70-frame loop: every frame re-projects the tracked member (Func_080e3980) to drive a BG affine register and, during frames 8-23, draws a wipe-in decorative rectangle from a small 7-entry table family (selected by a facing/variant flag at target+4); at frame 18 exactly it spawns 16 fresh randomized-velocity particles into the pool; every frame it also ages and draws all 128 active particles in that pool's first slice.",
-    "This candidate claims zero DONE bytes; owner_bytes and reference_bytes both 944, so no assembly-displacement change either."
+    "Cross-edition relocation-aware verification on 2026-08-31 locates this owner in all six releases and proves all 706 non-relocation core bytes identical. The object symbol covers 942 bytes; the classified 944-byte retained extent includes its two-byte trailing alignment.",
+    "A shipped compiler-route and pass sweep tested routed GCC 2.96, explicit GCC 2.96, old-agbcc, regmove, both schedulers, CSE follow/skip blocks, GCSE, expensive optimizations, thread jumps, strength reduction, and rerun-CSE-after-loop. Canonical and most pass toggles remain at the exact 944-byte extent and 294 differing halfwords; all alternatives either tie or regress.",
+    "The complete semantic audit, exact retained extent, equal branch topology, six-edition core identity, and bounded source/route probes satisfy the battle_effect_compiler_allocation_module gate. The remaining differences are the already-recorded reciprocal register roles and independent scheduling choices; the retained assembly is Proven ASM while this C remains its evidence-bearing reconstruction."
   ]
 }

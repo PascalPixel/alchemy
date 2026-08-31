@@ -1461,7 +1461,7 @@
     {
      "address": "0x0808d48c",
      "extent": 260,
-     "state": "retained-assembly"
+     "state": "exact-c"
     },
     {
      "address": "0x0808d590",

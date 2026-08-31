@@ -6,7 +6,7 @@
 #include "../main/0808d394.c"
 #include "../../../src/game_flags/is_condition_active.c"
 #include "../../../src/unidentified/main/script/script_owner_17.c"
-#include "../main/0808d48c.c"
+#include "../../../src/battle/effects/descriptors/find_matching.c"
 #include "../../../src/unidentified/main/battle/battle_owner_68.c"
 #include "../../../src/unidentified/main/runtime/runtime_owner_151.c"
 #include "../main/0808d5dc.c"

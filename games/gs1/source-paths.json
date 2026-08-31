@@ -4870,7 +4870,8 @@
       "name": "BattleAction_FindDescriptor"
     },
     "main:0808d48c": {
-      "name": "BattleEffect_FindDescriptor"
+      "name": "BattleEffect_FindDescriptor",
+      "source": "battle/effects/descriptors/find_matching.c"
     },
     "main:0808d5dc": {
       "name": "BattleEffect_RunDescriptorAction"

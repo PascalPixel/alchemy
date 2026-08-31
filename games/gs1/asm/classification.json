@@ -2272,6 +2272,27 @@
    "files": [
     "080e08c0"
    ]
+  },
+  {
+   "kind": "ui_selector_compiler_allocation_module",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_audited_owner_extent",
+    "six_edition_relocation_normalized_core_is_identical",
+    "equal_branch_topology_and_matching_opcodes_immediates_calls_literals_fields_and_memory_operations",
+    "only_residual_is_the_list_selection_and_late_global_address_register_role_assignment_plus_resulting_four_byte_pool_extent",
+    "decoder_named_split_lifetime_operation_is_inapplicable_because_the_named_owner_variable_is_a_scalar_not_a_pointer",
+    "two_dozen_declaration_scope_loop_pointer_identity_expression_and_initialization_probes_preserve_the_residual_or_regress",
+    "inline_assembly_fixed_registers_compiler_barriers_and_forced_register_assignment_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 720,
+   "files": [
+    "080ab314"
+   ]
   }
  ]
 }

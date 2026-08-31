@@ -17,7 +17,7 @@ _Golden Sun_ release as the first complete derived build target.
 
 ## Status: 62.90% DONE
 
-![Main-game reconstruction coverage](games/gs1/assets/readme/gs1-en-core.svg?v=0b4e24531fb0eda6)
+![Main-game reconstruction coverage](games/gs1/assets/readme/gs1-en-core.svg?v=ab7b281c4fcf3bd4)
 
 ![Code-overlay reconstruction coverage](games/gs1/assets/readme/gs1-en-overlays.svg?v=1cd117d564df5655)
 

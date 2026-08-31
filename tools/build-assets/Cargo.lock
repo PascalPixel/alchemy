@@ -97,6 +97,7 @@ dependencies = [
  "generated-files",
  "import-asset",
  "map-load-table",
+ "music",
  "overlay-disasm",
  "pairtable",
  "serde_json",
@@ -393,6 +394,13 @@ checksum = "1fa76a2c86f704bdb222d66965fb3d63269ce38518b83cb0575fca855ebb6316"
 dependencies = [
  "adler2",
  "simd-adler32",
+]
+
+[[package]]
+name = "music"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
 ]
 
 [[package]]

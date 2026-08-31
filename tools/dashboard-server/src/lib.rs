@@ -10,6 +10,7 @@ use coverage_map::{
 };
 use serde_json::{json, Map, Value};
 use std::{
+    collections::BTreeSet,
     io::{BufRead, BufReader, Write},
     net::{IpAddr, Ipv4Addr, SocketAddr, TcpListener, TcpStream},
     path::{Path, PathBuf},
@@ -94,6 +95,9 @@ fn font() -> PathBuf {
 }
 fn music_dir() -> PathBuf {
     root().join("games/gs1/assets/audio/sequences")
+}
+fn audio_dir() -> PathBuf {
+    root().join("games/gs1/assets/audio")
 }
 fn page_version() -> String {
     let client = client::bundled_client().unwrap_or_default();
@@ -419,12 +423,156 @@ fn music_catalog() -> Result<Vec<u8>, String> {
     )
     .map_err(|error| error.to_string())
 }
+fn read_audio_json(name: &str) -> Result<Value, String> {
+    let path = audio_dir().join(name);
+    serde_json::from_slice(
+        &std::fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?,
+    )
+    .map_err(|error| format!("{}: {error}", path.display()))
+}
+fn soundfont() -> Result<Vec<u8>, String> {
+    let tones = read_audio_json("engine_onshoku.json")?;
+    let samples = read_audio_json("waves/index.json")?;
+    let waveforms = read_audio_json("engine_hakei.json")?;
+    let residuals = read_audio_json("../data/final_byte_regions_index.json")?;
+    let bank = tones
+        .pointer("/banks/0/records")
+        .and_then(Value::as_array)
+        .filter(|records| records.len() == 144)
+        .ok_or("music tone bank is incomplete")?;
+    let samples = samples
+        .get("waves")
+        .and_then(Value::as_array)
+        .filter(|waves| waves.len() == 32)
+        .ok_or("PCM wave catalog is incomplete")?;
+    let waveforms = waveforms
+        .get("waveforms")
+        .and_then(Value::as_array)
+        .filter(|waves| waves.len() == 18)
+        .ok_or("CGB waveform catalog is incomplete")?;
+    let mut sample_addresses = samples
+        .iter()
+        .filter_map(|sample| sample.get("address").and_then(Value::as_str))
+        .map(str::to_string)
+        .collect::<BTreeSet<_>>();
+    let embedded_region = residuals
+        .get("regions")
+        .or_else(|| residuals.get("entries"))
+        .and_then(Value::as_array)
+        .and_then(|regions| {
+            regions
+                .iter()
+                .find(|region| region.get("address").and_then(Value::as_str) == Some("0x0811dac8"))
+        })
+        .or_else(|| {
+            residuals.as_array().and_then(|regions| {
+                regions.iter().find(|region| {
+                    region.get("address").and_then(Value::as_str) == Some("0x0811dac8")
+                })
+            })
+        })
+        .ok_or("embedded PCM region is absent")?;
+    let values = embedded_region
+        .get("values")
+        .and_then(Value::as_array)
+        .ok_or("embedded PCM bytes are absent")?;
+    let byte = |offset: usize| {
+        values
+            .get(offset)
+            .and_then(Value::as_u64)
+            .map(|value| value as u8)
+            .ok_or("embedded PCM byte is absent")
+    };
+    let mut embedded_addresses = bank
+        .iter()
+        .filter(|tone| tone.get("kind").and_then(Value::as_str) == Some("pcm"))
+        .filter_map(|tone| tone.get("sample").and_then(Value::as_str))
+        .filter_map(|address| u32::from_str_radix(address.trim_start_matches("0x"), 16).ok())
+        .filter(|address| (0x0811_dac8..0x0811_db38).contains(address))
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect::<Vec<_>>();
+    embedded_addresses.push(0x0811_db38);
+    let mut embedded_samples = Vec::new();
+    for pair in embedded_addresses.windows(2) {
+        let address = pair[0];
+        let offset = (address - 0x0811_dac8) as usize;
+        let extent = (pair[1] - address) as usize;
+        if extent <= 16 {
+            return Err("embedded PCM record is truncated".into());
+        }
+        let word = |at: usize| -> Result<u32, String> {
+            Ok(u32::from_le_bytes([
+                byte(offset + at)?,
+                byte(offset + at + 1)?,
+                byte(offset + at + 2)?,
+                byte(offset + at + 3)?,
+            ]))
+        };
+        let address_text = format!("0x{address:08x}");
+        sample_addresses.insert(address_text.clone());
+        embedded_samples.push(json!({
+            "address": address_text,
+            "control": word(0)?,
+            "frequency": word(4)?,
+            "loop_start": word(8)?,
+            "samples": (16..extent).map(|at| byte(offset + at).map(Value::from)).collect::<Result<Vec<_>, _>>()?
+        }));
+    }
+    let waveform_names = waveforms
+        .iter()
+        .filter_map(|waveform| waveform.get("name").and_then(Value::as_str))
+        .collect::<BTreeSet<_>>();
+    for (program, tone) in bank.iter().enumerate() {
+        match tone.get("kind").and_then(Value::as_str) {
+            Some("pcm") if !sample_addresses.contains(tone["sample"].as_str().unwrap_or("")) => {
+                return Err(format!(
+                    "music program {program} names an unknown PCM sample"
+                ));
+            }
+            Some("wave") if !waveform_names.contains(tone["waveform"].as_str().unwrap_or("")) => {
+                return Err(format!(
+                    "music program {program} names an unknown CGB waveform"
+                ));
+            }
+            Some("pcm" | "pulse_1" | "pulse_2" | "wave" | "noise" | "rhythm") => {}
+            _ => return Err(format!("music program {program} has an unknown tone kind")),
+        }
+    }
+    for program in [
+        8, 24, 33, 45, 46, 47, 48, 52, 56, 61, 68, 72, 73, 75, 80, 81, 82, 83, 84, 89, 90, 91, 93,
+    ] {
+        if bank.get(program).is_none() {
+            return Err(format!("recovered BGM program {program} is absent"));
+        }
+    }
+    if bank[127].get("tones").and_then(Value::as_str) != Some("bank_0_092")
+        || (128..=143).any(|record| bank.get(record).is_none())
+    {
+        return Err("recovered BGM percussion subtable is incomplete".into());
+    }
+    serde_json::to_vec(&json!({
+        "format": 1,
+        "engine": "golden-sun-rom-audio-bank",
+        "bank": bank,
+        "samples": samples,
+        "embedded_samples": embedded_samples,
+        "waveforms": waveforms
+    }))
+    .map_err(|error| error.to_string())
+}
 
 fn music_file(path: &str) -> Option<PathBuf> {
     let name = path.strip_prefix("/music/")?;
     let number = name.strip_prefix("bgm_")?.strip_suffix(".mid")?;
     (number.len() == 3 && number.bytes().all(|byte| byte.is_ascii_digit()))
         .then(|| music_dir().join(name))
+}
+fn sample_file(path: &str) -> Option<PathBuf> {
+    let name = path.strip_prefix("/music/samples/")?;
+    let number = name.strip_prefix("wave_")?.strip_suffix(".pcm8.wav")?;
+    (number.len() == 2 && number.bytes().all(|byte| byte.is_ascii_digit()))
+        .then(|| audio_dir().join("waves").join(name))
 }
 fn rebuild() -> bool {
     state(|state| state.scanning = true);
@@ -531,7 +679,13 @@ fn response(path: &str) -> Response {
         "/music/catalog" => music_catalog()
             .map(|body| Response::new(200, "OK", Some("application/json; charset=utf-8"), "no-store", body))
             .unwrap_or_else(|error| Response::new(503, "Service Unavailable", Some("text/plain; charset=utf-8"), "no-store", error.into_bytes())),
+        "/music/soundfont" => soundfont()
+            .map(|body| Response::new(200, "OK", Some("application/json; charset=utf-8"), "public, max-age=300", body))
+            .unwrap_or_else(|error| Response::new(503, "Service Unavailable", Some("text/plain; charset=utf-8"), "no-store", error.into_bytes())),
         "/weyard.otf" => Response::new(200, "OK", Some("font/otf"), "public, max-age=300", std::fs::read(font()).unwrap_or_default()),
+        path if sample_file(path).is_some() => std::fs::read(sample_file(path).unwrap())
+            .map(|body| Response::new(200, "OK", Some("audio/wav"), "public, max-age=300", body))
+            .unwrap_or_else(|_| Response::new(404, "Not Found", Some("text/plain; charset=utf-8"), "no-store", b"Sample not found".to_vec())),
         path if music_file(path).is_some() => std::fs::read(music_file(path).unwrap())
             .map(|body| Response::new(200, "OK", Some("audio/midi"), "public, max-age=300", body))
             .unwrap_or_else(|_| Response::new(404, "Not Found", Some("text/plain; charset=utf-8"), "no-store", b"Track not found".to_vec())),
@@ -675,6 +829,8 @@ pub fn self_test() -> Result<String, String> {
         || !js.contains("Run make reports to refresh cross-edition reports")
         || !js.contains("AudioContext")
         || !js.contains("/music/catalog")
+        || !js.contains("/music/soundfont")
+        || !js.contains("createBufferSource")
         || !js.contains("if (music.ui?.card) return music.ui.card")
     {
         return Err("dashboard assets are incomplete".into());
@@ -694,6 +850,17 @@ pub fn self_test() -> Result<String, String> {
     let catalog = response("/music/catalog");
     if catalog.status != 200 || !catalog.body.starts_with(b"[") {
         return Err("music catalog route failed".into());
+    }
+    let soundfont = response("/music/soundfont");
+    if soundfont.status != 200
+        || !String::from_utf8_lossy(&soundfont.body).contains("golden-sun-rom-audio-bank")
+    {
+        return Err("music soundfont route failed".into());
+    }
+    if response("/music/samples/wave_00.pcm8.wav").status != 200
+        || response("/music/samples/wave_32.pcm8.wav").status != 404
+    {
+        return Err("music sample route failed".into());
     }
     let events = response("/events");
     if events.status != 200

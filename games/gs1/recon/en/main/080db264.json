@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080db264",
+  "status": "measured-draft",
+  "owner_bytes": 1124,
+  "score": {
+    "measured": "2026-08-31",
+    "candidate_bytes": 1088,
+    "reference_bytes": 1124,
+    "differing_halfwords": 523,
+    "wrong_instructions": 425,
+    "class": "structural-topology",
+    "note": "Fresh candidate-show score after reconstructing the complete retained-assembly algorithm: 1088/1124 bytes, differing_halfwords=523, wrong_instructions=425, topology=different. This materially improves the failed aggregate-m2c route's only compiling fallback (576/1124, differing_halfwords=555, wrong_instructions=656). The remaining 36-byte extent and topology residual is retained honestly; this candidate claims zero DONE bytes."
+  },
+  "notes": [
+    "The aggregate-m2c draft supplied the recovered topology but did not compile; invalid aggregate dereferences and raw pointer arithmetic were replaced with explicit particle records, signed fields, cache/cursor types, and trampoline function-pointer calls supported by the retained assembly. The full initializer, four-pass emitter, 1024-particle update/draw scan, party-member cue loop, frame pacing, and teardown now compile as ordinary C.",
+    "No external source, inline assembly, fixed-register variable, compiler flag override, or forced scheduling was used."
+  ]
+}

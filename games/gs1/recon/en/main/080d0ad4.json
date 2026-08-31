@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "namespace": "gs1-en-main",
+  "address": "0x080d0ad4",
+  "status": "measured-draft",
+  "owner_bytes": 1036,
+  "score": {
+    "measured": "2026-08-31",
+    "candidate_bytes": 1020,
+    "reference_bytes": 1036,
+    "differing_halfwords": 500,
+    "wrong_instructions": 500,
+    "class": "missing-extra-code",
+    "topology": "equal",
+    "note": "First owner-specific compiling draft. The drafting wave never measured this reconstruction: aggregate m2c stopped on four concrete type/context errors and substituted an unrelated 576-byte shop template, producing the stale compiler_unemittable label. Repairing those errors yields an equal-topology candidate within 16 bytes of the complete 1036-byte owner."
+  },
+  "repairs": [
+    "Recovered the three stack records at sp+0x48, sp+0x54, and sp+0x60 as three-word arrays. This resolves m2c's nonexistent sp64 name and preserves the two projected-coordinate words used by the particle seed.",
+    "Typed Func_080b5098 as returning void ** and recovered the member id as a signed halfword at state+0x24+2*member rather than dereferencing arithmetic on void *.",
+    "Recovered the sprite-cel lookup at 0x080ede5c as a u16 table indexed by the doubled cel value.",
+    "Replaced evidence-mined absolute aggregate placeholders with the actual shared battle-work cells at 0x03001eec/ef0/ef4, facing at 0x03001e80, callback cache at 0x03001f08, and the two hardware register writes. This improved the compiling draft from 996 bytes and 510 differing halfwords to 1020 bytes and 500 differing halfwords."
+  ],
+  "family": {
+    "template": "games/gs1/src/battle/effects/member_orbit/run.c",
+    "evidence": "The owner uses the same heap-cache cursor, work+0x7780/0x7784/0x7824/0x7828 fields, kind-46/kind-47 rectangle callbacks, scheduler bracket, member-id array, screen projection records, and call-via-register draw convention. Its body is distinct: a member-staggered three-point interpolation effect with a 24-step inner interpolation and a member_count*20+72 frame bound."
+  },
+  "bounded_verdict": {
+    "result": "materially_advanced_not_exact",
+    "remaining": "The fresh candidate has equal conditional-branch topology but remains 16 bytes short. The aligned residual begins in the 120-byte reference frame versus the candidate's 104-byte frame and includes spill allocation plus several literal-pool materializations. It is not eligible for adoption or compiler classification; the next pass must reconstruct the missing stack-local context before allocation work.",
+    "done_bytes": 0
+  },
+  "provenance": [
+    "games/gs1/asm/080d0ad4.s",
+    "out/gs1-en/waves/draft/packs/080d0ad4/m2c/080d0ad4.c",
+    "out/gs1-en/waves/draft/packs/080d0ad4/m2c/target.canonical.s",
+    "games/gs1/src/battle/effects/member_orbit/run.c",
+    "approved local compiler and ROM only"
+  ]
+}

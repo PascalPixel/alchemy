@@ -96,9 +96,9 @@ void Func_080e6eac(void *object, s32 x_arg, s32 y_arg)
     void *work;
     s32 raw_x;
     void *canvas;
-    void *aux;
-    void *rect0;
     void *rect1;
+    void *rect0;
+    void *aux;
     s32 half_x;
     s32 i;
     s32 frame;

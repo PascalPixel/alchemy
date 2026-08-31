@@ -61,8 +61,8 @@ void Func_080e0564(void *object)
     void *work;
     void *draw_destination;
     void *extra_target;
-    void *rectangle_a;
     void *rectangle_b;
+    void *rectangle_a;
     u8 *ring;
     s32 i;
     s32 accumulator;

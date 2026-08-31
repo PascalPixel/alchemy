@@ -6,7 +6,7 @@
   "owner_bytes": 132,
   "executable_owner_bytes": 110,
   "candidate_bytes": 132,
-  "differing_halfwords": 27,
+  "differing_halfwords": 26,
   "wrong_instructions": 48,
   "classification": "map-cell-attribute-handler-dispatch",
   "resolved_asm_classification": {
@@ -23,6 +23,7 @@
     "evidence": "read_flash_from_sector.c (ReadFlash) shares only the shape-only register-shuffle prologue and the project-wide `_call_via_r3` indirect-call trampoline idiom (used by dozens of unrelated owners across the project) with this owner. It has no shared callees, field offsets, or constants: it copies its own body into IWRAM and reads flash memory at 0x0e000000 through Data_08007abc, none of which appear in 08011f54. Not used as a source of any evidence below."
   },
   "notes": [
+    "2026-08-31 exact-closure revalidation: fresh score is 132/132, differing_halfwords=26, wrong_instructions=48, with branch topology and all five literal-pool words exact. The allocator decoder again reports `conflicting-targets`, reflecting the already-documented r4/r5 versus r5/r6/r7 coloring split rather than missing semantics. A finite shipped-pass probe found no improvement: -fno-schedule-insns, -fno-cse-follow-jumps, -fno-cse-skip-blocks, -fno-rerun-cse-after-loop, and -fno-gcse all tie at 26; -fno-schedule-insns2 and -fno-expensive-optimizations regress to 31; -fno-regmove shrinks to 128 bytes and regresses to 65. Together with the recorded 12 statement orders, pointer/table-expression variants, call-argument variants, exact adjacent field siblings, and owner-specific m2c corroboration, this is an honestly bounded allocation blocker. Source remains unchanged; no adoption or DONE bytes are claimed.",
     "Real owner, established entirely from the retained assembly plus two exact/near-exact already-adopted siblings found by grepping this owner's literal-pool constants across games/gs1/src and games/gs1/asm -- not from the low-confidence family-transplant guess above.",
     "games/gs1/src/unidentified/main/field/field_owner_33.c (Func_08011fd8, byte-exact adopted, address 0x08011fd8 -- the very next owner, 132 bytes after this one starts) shares this owner's entire first two-thirds verbatim in algorithm: table = *(u8 **)ADDR_03001E70; x >>= 16; y >>= 16; map defaults to (u8 *)0x02010000 unless table != 0, in which case map = *(u8 **)(table + (index & 3) * 48 + 304); column = x / 16; row = y / 16; map += (column + (row << 7)) * 4; entry = map[3]. games/gs1/include/map.h's `struct MapCell { u16 metatile_and_flags; u8 collision_code; u8 attribute_b; }` confirms map[3] reads MapCell.attribute_b -- Func_08011fd8 stops at `return *(u8 *)(0x0202c000 + entry * 4) & 15;` (the low nibble of a per-attribute_b config byte); this owner continues past that point.",
     "games/gs1/src/map/get_cell_collision.c (GetMapCellCollision, byte-exact, 0x08012038, 228 bytes after this owner) and games/gs1/src/map/set_cell_collision.c (SetMapCellCollision) independently confirm the same ADDR_03001E70/(layer & 3) * sizeof(struct MapLayer) + 0x130/struct MapCell vocabulary for the map/collision subsystem this owner belongs to.",

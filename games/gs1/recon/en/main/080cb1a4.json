@@ -33,6 +33,69 @@
     "measured=2026-08-29: Tried swapping the `rx`/`ry` statement order inside the ring-loop: regressed (differing_halfwords 112->122, wrong_instructions 138->160) -- reverted.",
     "Baseline reconfirmed at differing_halfwords=112 (measured=2026-08-29) after all of the above: every remaining mismatch traces to the same documented register-allocation residual (r8/sl vs r9/sl swapped, and the reference's compiler spilling `x`/`z`/`angle`/the `&work+0x7828` pointer and the `draw` value to specific stack slots at points this candidate's allocator keeps them live in registers instead) -- no further C-source reshaping found in this pass moved the needle without regressing other parts of the function."
   ],
+  "bounded_closure_pass_2026_08_31": {
+    "fresh_baseline": {
+      "candidate_bytes": 840,
+      "reference_bytes": 840,
+      "differing_halfwords": 108,
+      "wrong_instructions": 134,
+      "topology": "equal"
+    },
+    "decoder": [
+      "target pseudo 42 is created at rank 37, used 27 times across 227 instructions, crosses 25 calls, and is allocated to sl where the reference uses r9",
+      "frame pseudo 49 is created at rank 90, used 26 times across 350 instructions, crosses 17 calls, and is allocated to r9 where the reference uses sl",
+      "the decoder classifies this as a reciprocal register-role swap and names no unique source edit; every conditional branch matches"
+    ],
+    "shipped_flag_verdict": {
+      "neutral_at_108": [
+        "-fno-rerun-cse-after-loop",
+        "-fno-regmove",
+        "-fno-schedule-insns",
+        "-fno-cse-follow-jumps"
+      ],
+      "regressed": [
+        "-fno-gcse",
+        "-fno-schedule-insns2",
+        "-fforce-addr",
+        "-ffixed-r9",
+        "-ffixed-r10",
+        "-ffixed-r11",
+        "-fcall-used-r8",
+        "-fcall-used-r9",
+        "-fcall-used-r10",
+        "-fcall-used-r11"
+      ],
+      "note": "No shipped route improved the canonical exact-extent source. ABI register forcing was diagnostic only and regressed by hundreds of halfwords; none was retained."
+    },
+    "source_shape_verdict": [
+      "Moving frame initialization before the 20-frame delay lengthened its lifetime across one call and regressed 108->119 differing halfwords; moving it before object/target setup regressed to 159. Both were reverted.",
+      "Swapping the adjacent object and target extraction statements compiled byte-identically at 108 and was reverted to the semantic order.",
+      "Re-reading target from second_context immediately before the loop, a bounded split-lifetime probe, regressed to 844 bytes and 366 differing halfwords and was reverted."
+    ],
+    "verdict": "No exact closure. The best legitimate source remains the incoming 840-byte candidate at 108 differing halfwords. The retained mismatch is the already-measured target/frame reciprocal allocation plus the consequent 72-byte versus 84-byte spill frame; no register or scheduler assignment was forced."
+  },
+  "proven_asm_eligibility_audit_2026_08_31": {
+    "verdict": "not_eligible",
+    "cross_edition": {
+      "editions": ["ja", "en", "de", "es", "fr", "it"],
+      "relocation_normalized_core_bytes": 662,
+      "core_identical": true,
+      "note": "compiler cross-edition --json --object out/gs1-en/full/asm/080cb1a4.o 080cb1a4 locates the owner in all six releases; all 662 bytes outside 34 call relocations and ten literal fields are identical."
+    },
+    "passed": [
+      "candidate and reference extents are both 840 bytes",
+      "all conditional branches and call sites align",
+      "all literal values occur in both streams",
+      "the allocator decoder proves the central target/frame sl/r9 reciprocal role swap"
+    ],
+    "blocking_evidence": [
+      "The complete 108-halfword residual is not a pure sl/r9 renaming. The aligned stream also changes the heap-cache carrier r6/r7, several low-register multiplication carriers, record and screen addresses, and many stack offsets.",
+      "The candidate frame is 72 bytes while the reference frame is 84 bytes. Those twelve bytes represent different spill-slot allocation, so a simple reciprocal-role normalization cannot pair every memory address row.",
+      "The 0xAB85 and 0x91EB literal fields occur in opposite pool order. Their use sites appear semantically paired, but the strict comparator requires row-complete proof rather than inference from the final values.",
+      "Existing RTL evidence identifies target pseudo 42 and frame pseudo 49, but does not yet trace every secondary register, spill slot, and reordered pool field back to those two allocnos. The established battle allocation gate requires that complete row accounting."
+    ],
+    "decision": "Do not add 080cb1a4 to battle_effect_compiler_allocation_module and do not count its retained assembly as Proven ASM. A future audit would need a machine-checked role-and-spill equivalence table or backend dumps accounting for every residual row."
+  },
   "notes": [
     "Recovered only from the retained owner assembly (games/gs1/asm/080cb1a4.s), the approved local EN ROM, the already-adopted games/gs1/src/battle/effects/member_orbit/run.c and games/gs1/src/battle/effects/puff_arc/run.c, the already-adopted games/gs1/src/battle/motion/set_approach_motion.c (and its motion_object.h/b5_context.h headers), games/gs1/recon/en/main/080e01e4.c and its dossier, in-repository headers (types.h's Object_ResetMotion/Object_SetPosition/Object_SetMode/FixedPoint_Ratio #define table), and the approved compiler. No other Golden Sun decompilation project or external source was consulted.",
     "This candidate claims zero DONE bytes (measured-draft, not exact).",

@@ -9,11 +9,11 @@
     "measured": "2026-08-26",
     "candidate_bytes": 8276,
     "reference_bytes": 8300,
-    "differing_halfwords": 3914,
-    "wrong_instructions": 2574,
+    "differing_halfwords": 3912,
+    "wrong_instructions": 2570,
     "class": "wrong",
-    "command": "compiler candidate-show games/gs2/recon/en/main/08120454.c --owner 08120454 --size 8300 --rom roms/gs2-en.gba",
-    "note": "Raw halfwords are phase-dominated: the entry region differs only by a register-allocation shuffle (r1/r2/r5 permutation, one mov sl placement), long runs align between clusters, and the large +/- runs are literal-pool words placed at different sites. The 20-byte length gap is pool-word count, not missing logic. After the heal-prep respell, wrong_instructions 2608 -> 2574."
+    "command": "compiler candidate-show --target gs1 --flags -mthumb-inline-register-call --owner 08120454 --size 8300 --rom roms/gs2-en.gba games/gs2/recon/en/main/08120454.c",
+    "note": "Raw halfwords are phase-dominated: the entry region differs only by a register-allocation shuffle (r1/r2/r5 permutation, one mov sl placement), long runs align between clusters, and the large +/- runs are literal-pool words placed at different sites. The 20-byte length gap is pool-word count, not missing logic. The evidenced GS2 inline-register-call route improves differing_halfwords 3914 -> 3912 and wrong_instructions 2574 -> 2570."
   },
   "shape": {
     "architecture": "Twelve-ROM master: games/gs1/recon/ja/main/080b2b0c.c is the shared body, written against ~60 BATTLE_* hook macros (362 uses). GS1 editions bind the hooks to GS1 semantics; games/gs2/recon/ja/main/battle_delta.h rebinds them with the sequel's grown logic (extra effect/heal/KO/guard cases) plus per-edition literal headers and ~200 per-edition callee retargets. BATTLE_SECOND_ACTOR reshapes struct BattlePlan in games/gs1/include/battle_types.h.",
@@ -22,10 +22,6 @@
     "gs2_editions": "All six GS2 editions are core-identical for this owner (games/gs2/recon/cross-edition.json): one exact edition source closes all six through the existing literal/retarget headers."
   },
   "unexpressed": [
-    {
-      "op": "compiler indirect-call lowering",
-      "where": "the first structural phase break is the runtime unit copy at owner +0x98: the ROM loads 0x03000730 into r3 and emits the historical ARMv4T Thumb register-call sequence `mov lr, r3; .hword 0xf800`, while the approved GCC 2.96 route emits `bl _call_via_r3`. This accounts for the first four-byte displacement and changes the first literal-pool reach. The behavior must be recovered as an evidenced compiler route, not imitated with inline assembly."
-    },
     {
       "op": "register allocation",
       "where": "entry region: candidate permutes r1/r2/r5 against the reference and parks sl one instruction late; the added GS2 hook bodies shift pressure and LUIDs across the whole owner"
@@ -36,11 +32,16 @@
     }
   ],
   "notes": [
+    "Accepted compiler route: `-mthumb-inline-register-call` restores GCC's historical `mov lr, rN; .hword 0xf800` Thumb indirect-call lowering. The GS2 EN ROM contains 1,828 instances of that signature while GS1 EN contains none, so the route is GS2-only and default-off in agscc. At this owner's single site it reproduces the four reference bytes exactly.",
     "The JA-native GS1 candidate (games/gs1/recon/ja/main/080b2b0c.c wrapped as Func_080b2b0c) measures 6332/6332 at 272 differing halfwords against roms/gs1-ja.gba; since the production EN object relinks byte-exact at the JA address, those 272 halfwords are JA-side binding/literal gaps in the wrapper, not core differences.",
     "Recovered only from retained/located owner bytes in the approved local ROMs, the adopted GS1 EN source, in-repository headers, and the approved compiler.",
     "This candidate claims zero DONE bytes."
   ],
   "rejected_experiments": [
+    {
+      "experiment": "combine -mthumb-inline-register-call with the experimental -mminipool-first-barrier route",
+      "result": "The compiler segfaults while compiling this owner. This is a recorded miss, not evidence for the reference's literal-pool route; the pool option is not adopted for this translation unit."
+    },
     {
       "experiment": "remove the canonical -mthumb-interwork flag",
       "result": "Neutral on the call model: GCC still emits `_call_via_r3`; 8272/8300 bytes, 3914 differing halfwords, 2570 wrong instructions. This is not the missing route."

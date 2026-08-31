@@ -263,11 +263,34 @@ fn build_bucket_report(
                 }
             }
             Scope::NoCandidate => {
-                entry.verdict = "no_candidate".into();
-                entry.error = Some(
-                    "manifest debt has no semantic C candidate; it is not an allocation floor"
-                        .into(),
-                );
+                (entry.verdict, entry.error) = match owner.retention.as_str() {
+                    "c_candidate" => (
+                        "no_candidate".into(),
+                        Some(
+                            "independent compiler-output owner has no semantic C candidate".into(),
+                        ),
+                    ),
+                    "merge_with_owner"
+                    | "merge_with_function_owner"
+                    | "merge_with_continuations" => (
+                        "owner_group".into(),
+                        Some(
+                            "audited non-independent region requires its complete owner group"
+                                .into(),
+                        ),
+                    ),
+                    "split_first" => (
+                        "split_region".into(),
+                        Some(
+                            "audited split region requires reconstruction from its entry owner"
+                                .into(),
+                        ),
+                    ),
+                    retention => (
+                        "no_candidate".into(),
+                        Some(format!("unsupported no-candidate retention {retention}")),
+                    ),
+                };
             }
         }
         write_json(
@@ -384,7 +407,12 @@ fn bucket_class(entry: &BucketEntry) -> Result<&str, String> {
     if entry.residual.is_none()
         && !matches!(
             entry.verdict.as_str(),
-            "no_candidate" | "idiom_lint_parked" | "score_failed" | "decoder_failed"
+            "no_candidate"
+                | "owner_group"
+                | "split_region"
+                | "idiom_lint_parked"
+                | "score_failed"
+                | "decoder_failed"
         )
     {
         return Err(format!(
@@ -2253,6 +2281,17 @@ mod tests {
         assert!(terminal_record(&json!({"verdict": "owner_group_parked"})));
         assert!(!terminal_record(&json!({"verdict": "unclassified"})));
         assert!(!terminal_record(&json!({})));
+    }
+
+    #[test]
+    fn audited_owner_groups_are_not_reported_as_independent_no_candidates() {
+        let owner = fixture_inventory_owner(0, 42, Scope::NoCandidate);
+        let mut entry = fixture_bucket_entry(&owner, None);
+        entry.verdict = "owner_group".into();
+        entry.error =
+            Some("audited non-independent region requires its complete owner group".into());
+
+        assert_eq!(bucket_class(&entry).unwrap(), "owner_group");
     }
 
     #[test]

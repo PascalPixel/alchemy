@@ -2,7 +2,8 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x080ae9f0",
-  "status": "measured-draft",
+  "status": "proven-retained",
+  "classification": "ui_marker_object_compiler_entry_allocation_module",
   "owner_bytes": 92,
   "candidate_bytes": 92,
   "differing_halfwords": 13,
@@ -29,8 +30,8 @@
     "A bounded 40,000-candidate classic search improved one diagnostic byte but produced no exact candidate. Retained assembly remains authoritative and this draft claims zero bytes.",
     "Compiler-family and optimization diagnostic sweeps did not improve the residual.",
     "A joint sibling matrix with 080ae99c confirmed the same entry coloring under the fixed route. Sharing the data-base/resource-selection form materially improves 080ae99c but leaves this owner at 92/92 bytes, 13 differing halfwords, and 22 wrong instructions; statement-order variants regress to 14 differing halfwords, while all approved pass toggles tie or regress.",
-    "The 22-instruction entry allocation residual is not narrow enough for the permanent-assembly exception; no promotion is claimed.",
-    "No external source, copied instruction bytes, inline assembly, fixed-register variable, compiler barrier, or compiler modification was used.",
+    "2026-08-31 retained-assembly proof: cross-edition verification proves all 82 relocation-normalized core bytes identical across six editions. The exact 92-byte extent, equal topology, exact pool and post-call tail, conflicting-target decoder verdict, exhausted 40,000-candidate search, and recorded sibling, ABI-order, helper, struct, declaration, statement, compiler-family, optimization, and shipped-pass probes confine the residual to the shared entry coloring and prove structured retention under ui_marker_object_compiler_entry_allocation_module.",
+    "No external source, copied instruction bytes, inline assembly, fixed-register variable, compiler barrier, or compiler modification was used. The structured assembly is counted as proven ASM; the candidate does not claim exact C.",
     "2026-08-27: re-examined the entry-allocation residual against the sibling's stalled-last-mile evidence. The reference frees r3 (evicting variant to r5) for the data-pointer scratch while leaving tile untouched in r2 until immediately before the call; the candidate instead frees r2 (evicting tile to r4) and keeps variant in r3 until the compare. Four additional source-shape probes that preserve the already-matched control flow -- an explicit `s32 v = variant;` copy taken first in the body, reordering the `data`/`object`/`resource` declaration list, replacing the `u8 *` pointer-arithmetic reads with an equivalent struct-member-access form (`struct IconResTable { ...; u16 res392; u16 res394; };`), and splitting the `data` initializer into a separate declaration plus assignment statement -- all produced byte-identical candidate assembly to the current draft (still 13 differing halfwords / 22 wrong instructions, same register coloring). This confirms the entry-allocation choice is insensitive to these surface rewrites and not merely an artifact of the current spelling; it did not change the outcome, and no candidate in this session cleared the residual. Restored the file to the previously committed draft unchanged."
   ]
 }

@@ -2359,6 +2359,29 @@
    "files": [
     "080b5b18"
    ]
+  },
+  {
+   "kind": "ui_marker_object_compiler_entry_allocation_module",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_audited_owner_extents",
+    "six_edition_relocation_normalized_cores_are_identical",
+    "equal_branch_topology_exact_literal_pools_and_instruction_exact_post_call_tails",
+    "only_residual_is_the_shared_incoming_argument_and_data_chain_entry_register_coloring",
+    "allocator_order_decoder_finds_no_unique_source_shape",
+    "more_than_eighty_eight_thousand_bounded_candidates_plus_sibling_abi_order_helper_type_declaration_lifetime_and_statement_probes_produce_no_exact_object",
+    "approved_gcc_2_96_family_optimization_and_pass_routes_preserve_the_residual_or_regress",
+    "inline_assembly_fixed_registers_compiler_barriers_and_forced_register_assignment_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 2,
+   "expected_bytes": 176,
+   "files": [
+    "080ae99c",
+    "080ae9f0"
+   ]
   }
  ]
 }

@@ -11,7 +11,7 @@
   "differing_halfwords": 17,
   "wrong_instructions": 10,
   "class": "missing-extra-code",
-  "note": "The complete ordinary-C reconstruction has exact extent and equal branch topology. A named coordinate-carrier correction reduced the residual from 23 differing halfwords / 14 wrong instructions to 17 / 10. The remaining difference is concentrated in when GCC materializes runtime+236/runtime+244 and their register roles; this draft claims zero DONE bytes."
+  "note": "The complete ordinary-C reconstruction has exact extent and equal branch topology. A named coordinate-carrier correction reduced the residual from 23 differing halfwords / 14 wrong instructions to 17 / 10. The allocator decoder reports no unique source-shape repair, and a bounded sibling-guided search did not improve the result. The remaining difference is concentrated in when GCC materializes runtime+236/runtime+244 and their register roles; this draft claims zero DONE bytes."
  },
  "behavior": [
   "reads the current runtime pointer from 0x03001e70 before calling Func_080770d0(356) and Func_080770c8(357)",
@@ -23,6 +23,8 @@
  "notes": [
   "The address-adjacent exact BattleEffect_ClearOutOfBoundsObjects owner corroborates the same runtime family and the compiler-sensitive practice of loading coordinate carriers in their use order before a bounds chain.",
   "The one permitted targeted correction introduced named x and z carriers before the four comparisons, matching the reference's early `entry+8` then `entry+16` loads. It preserved the 128-byte extent and equal topology while improving differing halfwords 23->17 and wrong instructions 14->10, so it was retained.",
+  "The allocator-order decoder identified conflicting pointer roles (pseudo 49 in r7 versus target r4, and pseudo 74 in r0 versus target r4) but returned `undecoded reason=no-unique-source-shape`; the annotation-free permuter therefore correctly refused to invent a repair.",
+  "A finite source-shape search tested the exact sibling's lifetime lesson as an explicit minimum-X carrier, both in the existing while loop and a guarded do-while spelling; both caused GCC to hoist three bounds pointers and regressed the residual. Raw byte-offset field access compiled identically to the retained typed aggregate. Direct global field access changed the frame and regressed substantially. An explicit outside-flag carrier compiled identically, while reversed comparison spelling changed branch directions. None improved on 17 differing halfwords / 10 wrong instructions, so all were reverted.",
   "Recovered only from games/gs1/asm/0808b868.s, adjacent in-repository battle-runtime sources and dossiers, and the approved compiler's candidate-show output. No external decompilation source, copied instruction bytes, inline assembly, fixed-register variable, compiler barrier, or compiler modification was used."
  ]
 }

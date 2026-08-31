@@ -3483,8 +3483,14 @@
     },
     {
       "overlay": "resource_3b7", "start": "0x020001d8", "end": "0x02000d70",
-      "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "strong",
-      "evidence": ["complete retained body accounts for 243 calls, five loops, nine memory operations, and its production owner boundary", "games/gs1/recon/en/overlays/resource_3b7_c_020001d8.json"]
+      "kind": "intra_function_call_module", "retention": "keep_structured_asm", "confidence": "proven",
+      "evidence": [
+        "complete audited 2968-byte retained module accounts for 243 calls, five loops, nine memory operations, and its production boundary",
+        "direct bl at 0x020003c0 targets intra-owner 0x02000cba, which is also reached by ordinary fallthrough from 0x02000cb8 with live owner state",
+        "approved GCC 2.96 Thumb direct-call patterns at alchemy-gcc/agscc/gcc/config/arm/arm.md:5992-6034 accept SYMBOL_REF operands, not intra-function LABEL_REF blocks, and the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip",
+        "games/gs1/recon/en/overlays/resource_3b7_c_020001d8.json"
+      ]
     },
     {
       "overlay": "resource_3c7", "start": "0x02000508", "end": "0x02000eec",
@@ -3519,8 +3525,14 @@
 ,
     {
       "overlay": "resource_37a", "start": "0x02001510", "end": "0x02001a58",
-      "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "strong",
-      "evidence": ["complete retained body accounts for 137 calls, 10 loop(s), 0 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_37a_c_02001510.json"]
+      "kind": "intra_function_call_module", "retention": "keep_structured_asm", "confidence": "proven",
+      "evidence": [
+        "complete audited 1352-byte retained module accounts for 137 calls, ten loops, and its production boundary",
+        "six direct bl sites at 0x02001642 0x0200166a 0x0200167c 0x02001692 0x020016a4 and 0x020016ba target intra-owner blocks 0x0200187c 0x020018a4 0x020019de 0x020018cc 0x02001a06 and 0x020018f4 that are also reached by ordinary fallthrough with live owner state",
+        "approved GCC 2.96 Thumb direct-call patterns at alchemy-gcc/agscc/gcc/config/arm/arm.md:5992-6034 accept SYMBOL_REF operands, not intra-function LABEL_REF blocks, and the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip",
+        "games/gs1/recon/en/overlays/resource_37a_c_02001510.json"
+      ]
     },
     {
       "overlay": "resource_3a8", "start": "0x020031b8", "end": "0x020036f8",
@@ -3554,8 +3566,14 @@
     },
     {
       "overlay": "resource_39e", "start": "0x02000e94", "end": "0x020012e0",
-      "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "strong",
-      "evidence": ["complete retained body accounts for 85 calls, 1 loop(s), 31 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_39e_c_02000e94.json"]
+      "kind": "intra_function_call_module", "retention": "keep_structured_asm", "confidence": "proven",
+      "evidence": [
+        "complete audited 1100-byte retained module accounts for 85 calls, one loop, 31 memory operations, and its production boundary",
+        "direct bl sites at 0x02000f02 0x02000f1a 0x02000f3c and 0x02000f58 target intra-owner blocks 0x02001040 0x02001058 0x0200107a and 0x02001096 that are also reached by ordinary fallthrough with live owner state",
+        "approved GCC 2.96 Thumb direct-call patterns at alchemy-gcc/agscc/gcc/config/arm/arm.md:5992-6034 accept SYMBOL_REF operands, not intra-function LABEL_REF blocks, and the backend has no outlining pass",
+        "byte-exact decoded-overlay assembly round trip",
+        "games/gs1/recon/en/overlays/resource_39e_c_02000e94.json"
+      ]
     },
     {
       "overlay": "resource_3c3", "start": "0x02000334", "end": "0x02000730",

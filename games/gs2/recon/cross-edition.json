@@ -51,11 +51,11 @@
       "core_identical": true,
       "candidate_validation": {
         "measured": "2026-08-31",
-        "source_shape": "shared state/command lifetime with GS2 inline-register-call route",
-        "candidate_bytes": 8168,
+        "source_shape": "target-first plan load order with shared state/command lifetime and GS2 inline-register-call route",
+        "candidate_bytes": 8164,
         "reference_bytes": 8300,
-        "differing_halfwords": 4018,
-        "wrong_instructions": 2483,
+        "differing_halfwords": 3969,
+        "wrong_instructions": 2493,
         "editions_scored": ["ja", "en", "de", "es", "fr", "it"],
         "edition_scores_identical": true
       }

@@ -48,7 +48,7 @@ pub(crate) fn include_flag(target: CompilerTarget) -> String {
     )
 }
 fn base_cflags(target: CompilerTarget) -> Vec<String> {
-    [
+    let mut flags: Vec<String> = [
         "-O2",
         "-mthumb",
         "-mthumb-interwork",
@@ -60,8 +60,12 @@ fn base_cflags(target: CompilerTarget) -> Vec<String> {
     ]
     .iter()
     .map(|s| (*s).to_string())
-    .chain(std::iter::once(include_flag(target)))
-    .collect()
+    .collect();
+    if target == CompilerTarget::Gs2 {
+        flags.push("-mthumb-inline-register-call".into());
+    }
+    flags.push(include_flag(target));
+    flags
 }
 pub fn cflags() -> Vec<String> {
     base_cflags(CompilerTarget::Gs1)
@@ -85,6 +89,12 @@ mod target_tests {
         assert!(gs1.iter().any(|flag| flag.ends_with("/games/gs1/include")));
         assert!(gs2.iter().any(|flag| flag.ends_with("/games/gs2/include")));
         assert!(!gs2.iter().any(|flag| flag.ends_with("/games/gs1/include")));
+        assert!(!gs1
+            .iter()
+            .any(|flag| flag == "-mthumb-inline-register-call"));
+        assert!(gs2
+            .iter()
+            .any(|flag| flag == "-mthumb-inline-register-call"));
     }
     #[test]
     fn grouped_runtime_candidates_use_canonical_flags() {

@@ -34,6 +34,10 @@ const GS1: &[ExecutableDigests] = &[
             "4525e2477f4d903580155e8d79cbb965b5af89e0d9ac903287713736238d37eb",
             // Clean local rebuild of pinned alchemy-gcc bcfb458.
             "3f8a272981eba0b383b1b8d573feedbf6ba1715deb67213523c46b3ba35256b2",
+            // alchemy-gcc a10308d: opt-in GS2 inline register-call route plus
+            // the preceding default-off minipool route. The defaults remain
+            // byte-identical; admitted after full-ROM verification.
+            "95dc6357181813c5295591fa0008a263530b91ff5a9b9570254cf8ab25499f1e",
         ],
     ),
 ];
@@ -87,6 +91,9 @@ pub static AGBCC_EXPECTED: &[HostDigests] = &[
             // one reproduced across two stage runs, then `make full-rom-check`
             // proved it before pinning.
             "52f71341c3a221baef0d8777cd833da9fcc24dfd1203b9fc861ec5b37eadcf9c",
+            // Source-unchanged rebuild after the GS2-only agscc route was
+            // staged; old_agbcc is independent of that route.
+            "e96081ac46e9b800659cbcc677fc389afaedc2851215d91e05a2d8158453e3b2",
         ],
     ),
     ("darwin-x64", &[]),

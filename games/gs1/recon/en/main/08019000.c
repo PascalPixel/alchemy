@@ -34,12 +34,18 @@ void UiWindow_SetTilemapEntry(
         }
     }
 
-    if (mode == 1)
+    switch (mode) {
+    case 0:
+        goto plain;
+    case 1:
         return;
-    if (1 > mode)
+    case 2:
+    case 3:
+    case 4:
+        break;
+    default:
         goto plain;
-    if (mode > 4)
-        goto plain;
+    }
 
     index = ((*(u16 *)(window + 14) + y) << 5)
         + (*(u16 *)(window + 12) + x);

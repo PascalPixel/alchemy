@@ -144,7 +144,7 @@ $(HISTORICAL_TARGETS):
 	$(BUILD) claimed --target $@ --compile-only --output out/$@/compile
 
 dashboard:
-	$(COMPILER) dashboard-server --bind 0.0.0.0:4649
+	$(COMPILER) dashboard-server --bind 127.0.0.1:4649
 
 progress:
 	$(CHECK) progress

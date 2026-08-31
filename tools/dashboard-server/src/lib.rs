@@ -92,6 +92,9 @@ fn root() -> PathBuf {
 fn font() -> PathBuf {
     root().join("games/gs1/assets/fonts/weyard.otf")
 }
+fn music_dir() -> PathBuf {
+    root().join("games/gs1/assets/audio/sequences")
+}
 fn page_version() -> String {
     let client = client::bundled_client().unwrap_or_default();
     coverage_map::sha1::sha1_hex(format!("{}\0{client}", assets::STYLES).as_bytes())[..16].into()
@@ -370,6 +373,39 @@ fn event_stream() -> Response {
         format!("event: update\ndata: {}\nretry: 1000\n\n", snapshot_text()),
     )
 }
+fn music_catalog() -> Result<Vec<u8>, String> {
+    let mut tracks = std::fs::read_dir(music_dir())
+        .map_err(|error| format!("music catalog: {error}"))?
+        .filter_map(Result::ok)
+        .filter_map(|entry| {
+            let name = entry.file_name().into_string().ok()?;
+            let number = name.strip_prefix("bgm_")?.strip_suffix(".mid")?;
+            number.parse::<u16>().ok().map(|id| (id, name))
+        })
+        .collect::<Vec<_>>();
+    tracks.sort_unstable();
+    serde_json::to_vec(
+        &tracks
+            .into_iter()
+            .map(|(id, file)| {
+                json!({
+                    "id": id,
+                    "file": file,
+                    "title": format!("Recovered sequence {id:03}"),
+                    "source": format!("sound_{id:03}")
+                })
+            })
+            .collect::<Vec<_>>(),
+    )
+    .map_err(|error| error.to_string())
+}
+
+fn music_file(path: &str) -> Option<PathBuf> {
+    let name = path.strip_prefix("/music/")?;
+    let number = name.strip_prefix("bgm_")?.strip_suffix(".mid")?;
+    (number.len() == 3 && number.bytes().all(|byte| byte.is_ascii_digit()))
+        .then(|| music_dir().join(name))
+}
 fn rebuild() {
     state(|state| state.scanning = true);
     let result = compute();
@@ -467,7 +503,13 @@ fn response(path: &str) -> Response {
         "/client.js" => Response::new(200, "OK", Some("text/javascript; charset=utf-8"), "no-store", client::bundled_client().unwrap().into_bytes()),
         "/snapshot" => Response { status: 200, reason: "OK", headers: vec![("Cache-Control", "no-store".into()), ("Content-Type", "application/json;charset=utf-8".into())], body: snapshot_text().into_bytes() },
         "/events" => event_stream(),
+        "/music/catalog" => music_catalog()
+            .map(|body| Response::new(200, "OK", Some("application/json; charset=utf-8"), "no-store", body))
+            .unwrap_or_else(|error| Response::new(503, "Service Unavailable", Some("text/plain; charset=utf-8"), "no-store", error.into_bytes())),
         "/weyard.otf" => Response::new(200, "OK", Some("font/otf"), "public, max-age=300", std::fs::read(font()).unwrap_or_default()),
+        path if music_file(path).is_some() => std::fs::read(music_file(path).unwrap())
+            .map(|body| Response::new(200, "OK", Some("audio/midi"), "public, max-age=300", body))
+            .unwrap_or_else(|_| Response::new(404, "Not Found", Some("text/plain; charset=utf-8"), "no-store", b"Track not found".to_vec())),
         path if path.starts_with("/svg/") && TREES.iter().any(|(id, _)| path == format!("/svg/{id}")) => {
             let id = &path[5..];
             state(|s| {
@@ -588,6 +630,8 @@ pub fn self_test() -> Result<String, String> {
         || !js.contains("historicalProduct")
         || !js.contains("compile-only")
         || !js.contains("Run make reports to refresh cross-edition reports")
+        || !js.contains("AudioContext")
+        || !js.contains("/music/catalog")
     {
         return Err("dashboard assets are incomplete".into());
     }
@@ -596,6 +640,10 @@ pub fn self_test() -> Result<String, String> {
     }
     if response("/nope").status != 404 {
         return Err("404 route failed".into());
+    }
+    let catalog = response("/music/catalog");
+    if catalog.status != 200 || !catalog.body.starts_with(b"[") {
+        return Err("music catalog route failed".into());
     }
     let events = response("/events");
     if events.status != 200

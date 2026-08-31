@@ -451,7 +451,11 @@ pub fn classify_with_topology(
         ResidualClass::LayoutOnly
     } else if frame_context_only(left, right) {
         ResidualClass::FrameContext
-    } else if right.iter().any(|line| multiple(line)) && !left.iter().any(|line| multiple(line)) {
+    } else if actual_bytes == reference_bytes
+        && branch_topology_equal
+        && right.iter().any(|line| multiple(line))
+        && !left.iter().any(|line| multiple(line))
+    {
         ResidualClass::CompilerUnemittable
     } else if register_erased_ordered_equal {
         ResidualClass::AllocationUncovered
@@ -568,5 +572,15 @@ mod tests {
         let value = serde_json::to_value(&report).unwrap();
         assert_eq!(value["facts"]["topology"]["status"], "uncovered");
         assert_eq!(value["facts"]["topology"]["reason"], "fixture");
+    }
+
+    #[test]
+    fn multiple_transfer_does_not_hide_a_structural_draft() {
+        assert_route(
+            &["movs r0, #0", "bne 0x6", "bx lr"],
+            &["ldmia r0!, {r1}", "beq 0x6", "bx lr"],
+            2,
+            ResidualClass::StructuralTopology,
+        );
     }
 }

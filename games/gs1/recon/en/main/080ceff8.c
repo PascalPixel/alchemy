@@ -23,7 +23,7 @@
  *
  * Value_0000007b, Value_0000008d, and Value_00000068 follow the
  * Value_<addr> convention already established for Func_08002f40's
- * resource-id argument (see games/gs1/src/map/heidia/prologue and
+ * resource-id argument (see games/gs1/src/map/locations/heidia/prologue and
  * games/gs1/src/unidentified/overlays/state_update): every retained call
  * site loads the id through the literal pool rather than a movs
  * immediate, which an 8-bit integer constant cannot force but the

@@ -11,7 +11,7 @@
   "family": {
     "id": "template-main-08099738",
     "template_owner": "main:08099738",
-    "template_source": "games/gs1/src/map/events/run_tile_trigger_sequence.c",
+    "template_source": "games/gs1/src/map/shared/events/run_tile_trigger_sequence.c",
     "note": "Clustered by prologue similarity only (both this owner and its sibling main:08099838 share the compiler's generic push-r5/r6/r7/lr-then-fp/sl/r9/r8 prologue with the template, nothing behavioral). This owner is a debug/test screen: 16 rows x 16 columns of boolean flags (256 total, base = arg1<<8), each row drawing a 3-digit row-number label via Func_08029274, a fixed separator string at 0x08037428, and a 16-character '0'/'1' string built by calling Func_080770c0 per flag and converting the boolean result to ASCII."
   },
   "notes": [

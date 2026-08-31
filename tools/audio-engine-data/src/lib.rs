@@ -2,7 +2,7 @@ use canonical_json::is_canonical_json_text;
 use serde_json::{Map, Value};
 use std::collections::BTreeSet;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::{Component, Path, PathBuf};
 pub type Result<T> = std::result::Result<T, String>;
 pub const AUDIO_ENGINE_ADDRESS: usize = 0x080f_b792;
 pub const AUDIO_ENGINE_END: usize = 0x080f_c684;
@@ -12,8 +12,28 @@ const BANK_0_ADDRESS: usize = 0x080f_ba78;
 const BANK_1_ADDRESS: usize = 0x080f_c138;
 const WAVEFORM_ADDRESS: usize = 0x080f_c504;
 const PLAYER_ADDRESS: usize = 0x080f_c624;
-const SOURCE_NAMES: [&str; 4] = ["seigyo.json", "onshoku.json", "hakei.json", "saisei.json"];
-const USAGE: &str = "usage: audio-engine-data build-stdout INDEX";
+const SOURCE_NAMES: [&str; 4] = [
+    "control.tsv",
+    "voicegroups/index.tsv",
+    "waveforms.tsv",
+    "players.tsv",
+];
+const USAGE: &str = "usage: audio-engine-data {build-stdout INDEX|extract-control JSON TSV|extract-waveforms JSON TSV|extract-voicegroups JSON SAMPLE_INDEX TSV|extract-players JSON TSV}";
+const CONTROL_SECTIONS: [(&str, usize); 13] = [
+    ("leading_alignment", 2),
+    ("diagnostic_sounds", 3),
+    ("command_dispatch", 36),
+    ("direct_pitch_codes", 180),
+    ("direct_frequency_ratios", 12),
+    ("pcm_samples_per_vblank", 12),
+    ("cgb_pitch_codes", 132),
+    ("cgb_frequency_steps", 12),
+    ("noise_pitch_codes", 60),
+    ("cgb_volume_registers", 16),
+    ("wait_durations", 49),
+    ("wait_alignment", 3),
+    ("cgb_command_dispatch", 12),
+];
 fn error<T>(message: impl Into<String>) -> Result<T> {
     Err(message.into())
 }
@@ -190,69 +210,60 @@ fn concat(parts: impl IntoIterator<Item = Result<Vec<u8>>>) -> Result<Vec<u8>> {
     }
     Ok(output)
 }
-fn read_index(path: &Path) -> Result<Map<String, Value>> {
-    let value = canonical_document(path, "audio-engine index")?;
-    let index_object = object(&value, "audio-engine index")?;
-    exact_keys(
-        index_object,
-        &["format", "kind", "address", "end", "size", "sources"],
-        "audio-engine index",
-    )?;
-    if integer(
-        field(index_object, "format")?,
-        0,
-        i64::MAX,
-        "audio-engine format",
-    )? != 1
-        || field(index_object, "kind")?.as_str() != Some("golden-sun-audio-engine-data")
-        || field(index_object, "address")?.as_str() != Some(&hex(AUDIO_ENGINE_ADDRESS))
-        || field(index_object, "end")?.as_str() != Some(&hex(AUDIO_ENGINE_END))
-        || integer(
-            field(index_object, "size")?,
-            0,
-            i64::MAX,
-            "audio-engine size",
-        )? != AUDIO_ENGINE_SIZE as i64
-    {
-        return error("audio-engine index extent differs");
+fn engine_paths(path: &Path) -> Result<[PathBuf; 4]> {
+    let text = fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
+    let mut lines = text.lines().filter(|line| !line.starts_with('#'));
+    if lines.next() != Some("section\taddress\tend\tsource") {
+        return error("audio-engine package header differs");
     }
-    let sources = object(field(index_object, "sources")?, "audio-engine sources")?;
-    exact_keys(
-        sources,
-        &["control", "tones", "waveforms", "players"],
-        "audio-engine sources",
-    )?;
-    for (role, expected) in [
-        ("control", SOURCE_NAMES[0]),
-        ("tones", SOURCE_NAMES[1]),
-        ("waveforms", SOURCE_NAMES[2]),
-        ("players", SOURCE_NAMES[3]),
-    ] {
-        if field(sources, role)?.as_str() != Some(expected) {
-            return error("audio-engine source catalog differs");
+    let sections = [
+        ("control", AUDIO_ENGINE_ADDRESS, CONTROL_END),
+        ("voicegroups", BANK_0_ADDRESS, WAVEFORM_ADDRESS),
+        ("waveforms", WAVEFORM_ADDRESS, PLAYER_ADDRESS),
+        ("players", PLAYER_ADDRESS, AUDIO_ENGINE_END),
+    ];
+    let mut paths = Vec::with_capacity(4);
+    for (index, (section, address, end)) in sections.iter().enumerate() {
+        let fields = lines
+            .next()
+            .ok_or_else(|| format!("audio-engine {section} section is absent"))?
+            .split('\t')
+            .collect::<Vec<_>>();
+        if fields.len() != 4
+            || fields[0] != *section
+            || fields[1] != hex(*address)
+            || fields[2] != hex(*end)
+            || fields[3] != SOURCE_NAMES[index]
+        {
+            return error(format!("audio-engine {section} section differs"));
         }
+        paths.push(child(path, fields[3])?);
     }
-    Ok(index_object.clone())
+    if lines.next().is_some() {
+        return error("audio-engine package has extra rows");
+    }
+    paths
+        .try_into()
+        .map_err(|_| "audio-engine package section count differs".to_string())
 }
 fn canonical_path(path: &Path) -> Result<PathBuf> {
     fs::canonicalize(path).map_err(|e| format!("{}: {e}", path.display()))
 }
 fn child(index_path: &Path, name: &str) -> Result<PathBuf> {
-    if !SOURCE_NAMES.contains(&name) {
-        return error("audio-engine source name differs");
+    let relative = Path::new(name);
+    if relative.is_absolute()
+        || relative
+            .components()
+            .any(|component| !matches!(component, Component::Normal(_)))
+    {
+        return error("audio-engine source escaped its directory");
     }
-    let prefix = index_path
-        .file_name()
-        .and_then(|n| n.to_str())
-        .unwrap_or_default()
-        .strip_suffix("index.json")
-        .unwrap_or_default();
     let root = canonical_path(index_path.parent().unwrap_or_else(|| Path::new(".")))?;
-    let path = canonical_path(&root.join(format!("{prefix}{name}")))?;
-    let relative = path
+    let path = canonical_path(&root.join(relative))?;
+    let actual = path
         .strip_prefix(&root)
         .map_err(|_| "audio-engine source escaped its directory".to_string())?;
-    if relative != Path::new(&format!("{prefix}{name}")) || !path.is_file() {
+    if actual != relative || !path.is_file() {
         return error("audio-engine source escaped its directory");
     }
     Ok(path)
@@ -406,6 +417,103 @@ fn build_control(source: &Map<String, Value>) -> Result<Vec<u8>> {
         return error("audio-engine control size differs");
     }
     Ok(output)
+}
+
+fn control_value(text: &str, section: &str, index: usize) -> Result<Value> {
+    if text.starts_with("0x") || text.starts_with("Func_") {
+        return Ok(Value::String(text.into()));
+    }
+    text.parse::<i64>()
+        .map(Value::from)
+        .map_err(|_| format!("audio control {section} row {index} value differs"))
+}
+
+fn build_control_file(path: &Path) -> Result<(Vec<u8>, PathBuf)> {
+    let text = fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
+    let mut lines = text.lines().filter(|line| !line.starts_with('#'));
+    if lines.next() != Some("section\tindex\tvalue") {
+        return error("audio-control table header differs");
+    }
+    let mut source = Map::new();
+    source.insert("format".into(), Value::from(1));
+    source.insert(
+        "kind".into(),
+        Value::String("golden-sun-audio-engine-control".into()),
+    );
+    source.insert("address".into(), Value::String(hex(AUDIO_ENGINE_ADDRESS)));
+    source.insert("end".into(), Value::String(hex(CONTROL_END)));
+    for (section, count) in CONTROL_SECTIONS {
+        let mut values = Vec::with_capacity(count);
+        for index in 0..count {
+            let fields = lines
+                .next()
+                .ok_or_else(|| format!("audio control {section} row {index} is absent"))?
+                .split('\t')
+                .collect::<Vec<_>>();
+            if fields.len() != 3 || fields[0] != section || fields[1] != index.to_string() {
+                return error(format!(
+                    "audio control {section} row {index} identity differs"
+                ));
+            }
+            values.push(control_value(fields[2], section, index)?);
+        }
+        if matches!(section, "leading_alignment" | "wait_alignment") {
+            let fill = values
+                .first()
+                .and_then(Value::as_i64)
+                .ok_or_else(|| format!("audio control {section} fill differs"))?;
+            if values.iter().any(|value| value.as_i64() != Some(fill)) {
+                return error(format!("audio control {section} fill is inconsistent"));
+            }
+            let address = if section == "leading_alignment" {
+                AUDIO_ENGINE_ADDRESS
+            } else {
+                0x080f_ba45
+            };
+            source.insert(
+                section.into(),
+                serde_json::json!({"address":hex(address),"size":count,"fill":fill}),
+            );
+        } else {
+            source.insert(section.into(), Value::Array(values));
+        }
+    }
+    if lines.next().is_some() {
+        return error("audio-control table has extra rows");
+    }
+    Ok((build_control(&source)?, canonical_path(path)?))
+}
+
+fn extract_control(source: &Path, table: &Path) -> Result<()> {
+    let control = read_control(source)?;
+    let _ = build_control(&control)?;
+    let mut output =
+        String::from("# Ordered GS1 audio-engine control tables.\nsection\tindex\tvalue\n");
+    for (section, count) in CONTROL_SECTIONS {
+        let values = if matches!(section, "leading_alignment" | "wait_alignment") {
+            let alignment = field(&control, section)?
+                .as_object()
+                .ok_or("audio-control alignment differs")?;
+            let fill = field(alignment, "fill")?
+                .as_i64()
+                .ok_or("audio-control alignment fill differs")?;
+            vec![Value::from(fill); count]
+        } else {
+            field(&control, section)?
+                .as_array()
+                .filter(|values| values.len() == count)
+                .cloned()
+                .ok_or_else(|| format!("audio control {section} differs"))?
+        };
+        for (index, value) in values.iter().enumerate() {
+            let value = value
+                .as_str()
+                .map(str::to_string)
+                .unwrap_or_else(|| value.to_string());
+            output.push_str(&format!("{section}\t{index}\t{value}\n"));
+        }
+    }
+    fs::write(table, output).map_err(|error| format!("{}: {error}", table.display()))
 }
 fn tone_address(value: &Value) -> Result<usize> {
     let Some(symbol) = value.as_str() else {
@@ -607,6 +715,266 @@ fn build_tones(source: &Map<String, Value>) -> Result<Vec<u8>> {
     }
     Ok(output)
 }
+
+fn sample_source_addresses(path: &Path) -> Result<std::collections::BTreeMap<String, String>> {
+    let text = fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
+    let mut rows = text.lines().filter(|line| !line.starts_with('#'));
+    if rows.next() != Some("sample\taddress\tfrequency\tloop_start\tsample_count\tsource") {
+        return error("direct-sound sample table header differs");
+    }
+    let mut addresses = std::collections::BTreeMap::new();
+    for (sample, row) in rows.enumerate() {
+        let fields = row.split('\t').collect::<Vec<_>>();
+        if fields.len() != 6 || fields[0] != sample.to_string() {
+            return error(format!("direct-sound sample {sample} identity differs"));
+        }
+        if addresses
+            .insert(fields[5].into(), fields[1].into())
+            .is_some()
+        {
+            return error("direct-sound sample source is duplicated");
+        }
+    }
+    Ok(addresses)
+}
+
+fn build_tone_files(index: &Path) -> Result<(Vec<u8>, Vec<PathBuf>)> {
+    let text =
+        fs::read_to_string(index).map_err(|error| format!("{}: {error}", index.display()))?;
+    let mut lines = text.lines().filter(|line| !line.starts_with('#'));
+    if lines.next() != Some("bank\taddress\tsource") {
+        return error("voice-group index header differs");
+    }
+    let sound = index
+        .parent()
+        .and_then(Path::parent)
+        .ok_or("voice-group index location differs")?;
+    let sample_index = sound.join("samples.tsv");
+    let sample_addresses = sample_source_addresses(&sample_index)?;
+    let mut output = Vec::with_capacity(WAVEFORM_ADDRESS - BANK_0_ADDRESS);
+    let mut sources = vec![canonical_path(index)?, canonical_path(&sample_index)?];
+    for bank in 0..2 {
+        let base = if bank == 0 {
+            BANK_0_ADDRESS
+        } else {
+            BANK_1_ADDRESS
+        };
+        let count = if bank == 0 { 144 } else { 81 };
+        let relative = format!("voicegroups/voicegroup_{bank:03}.tsv");
+        let fields = lines
+            .next()
+            .ok_or_else(|| format!("voice group {bank} is absent"))?
+            .split('\t')
+            .collect::<Vec<_>>();
+        if fields.len() != 3
+            || fields[0] != bank.to_string()
+            || fields[1] != hex(base)
+            || fields[2] != relative
+        {
+            return error(format!("voice group {bank} identity differs"));
+        }
+        let path = canonical_path(&sound.join(&relative))?;
+        let text =
+            fs::read_to_string(&path).map_err(|error| format!("{}: {error}", path.display()))?;
+        let mut records = text.lines().filter(|line| !line.starts_with('#'));
+        if records.next()
+            != Some("program\tkind\tfixed_pitch\tkey\tlength\tpan_sweep\tsource\tattack\tdecay\tsustain\trelease")
+        {
+            return error(format!("voice group {bank} header differs"));
+        }
+        for program in 0..count {
+            let fields = records
+                .next()
+                .ok_or_else(|| format!("voice group {bank} program {program} is absent"))?
+                .split('\t')
+                .collect::<Vec<_>>();
+            if fields.len() != 11 || fields[0] != program.to_string() {
+                return error(format!(
+                    "voice group {bank} program {program} identity differs"
+                ));
+            }
+            let number = |field: usize, label: &str| {
+                fields[field]
+                    .parse::<u8>()
+                    .map_err(|_| format!("voice group {bank} program {program} {label} differs"))
+            };
+            let key = number(3, "key")?;
+            let length = number(4, "length")?;
+            let pan_sweep = number(5, "pan/sweep")?;
+            let envelope = [
+                number(7, "attack")?,
+                number(8, "decay")?,
+                number(9, "sustain")?,
+                number(10, "release")?,
+            ];
+            let fixed_pitch = match fields[2] {
+                "true" => true,
+                "false" => false,
+                _ => {
+                    return error(format!(
+                        "voice group {bank} program {program} fixed pitch differs"
+                    ))
+                }
+            };
+            let record = match fields[1] {
+                "pcm" => {
+                    let address = sample_addresses
+                        .get(fields[6])
+                        .cloned()
+                        .or_else(|| fields[6].strip_prefix("embedded_pcm_").map(str::to_string))
+                        .ok_or_else(|| {
+                            format!("voice group {bank} program {program} sample differs")
+                        })?;
+                    serde_json::json!({"kind":"pcm","fixed_pitch":fixed_pitch,"key":key,"length":length,"pan_sweep":pan_sweep,"sample":address,"envelope":envelope})
+                }
+                "wave" => {
+                    let waveform = Path::new(fields[6])
+                        .file_stem()
+                        .and_then(|name| name.to_str())
+                        .ok_or_else(|| {
+                            format!("voice group {bank} program {program} waveform differs")
+                        })?;
+                    serde_json::json!({"kind":"wave","fixed_pitch":fixed_pitch,"key":key,"length":length,"pan_sweep":pan_sweep,"waveform":waveform,"envelope":envelope})
+                }
+                "rhythm" => {
+                    let (target_bank, target_program) = fields[6]
+                        .strip_prefix("voicegroup_")
+                        .and_then(|value| value.split_once(':'))
+                        .ok_or_else(|| {
+                            format!("voice group {bank} program {program} rhythm table differs")
+                        })?;
+                    let target_bank = target_bank.parse::<u8>().map_err(|_| {
+                        format!("voice group {bank} program {program} rhythm bank differs")
+                    })?;
+                    let target_program = target_program.parse::<u8>().map_err(|_| {
+                        format!("voice group {bank} program {program} rhythm program differs")
+                    })?;
+                    let tones = format!("bank_{target_bank}_{target_program:03}");
+                    serde_json::json!({"kind":"rhythm","key":key,"length":length,"pan_sweep":pan_sweep,"tones":tones,"key_map":null})
+                }
+                "pulse_1" | "pulse_2" | "noise" => {
+                    let generator = number(6, "generator")?;
+                    serde_json::json!({"kind":fields[1],"fixed_pitch":fixed_pitch,"key":key,"length":length,"pan_sweep":pan_sweep,"generator":generator,"envelope":envelope})
+                }
+                _ => return error(format!("voice group {bank} program {program} kind differs")),
+            };
+            output.extend(build_tone_record(
+                &record,
+                &format!("voice group {bank} program {program}"),
+            )?);
+        }
+        if records.next().is_some() {
+            return error(format!("voice group {bank} has extra rows"));
+        }
+        sources.push(path);
+    }
+    if lines.next().is_some() || output.len() != WAVEFORM_ADDRESS - BANK_0_ADDRESS {
+        return error("voice-group index extent differs");
+    }
+    Ok((output, sources))
+}
+
+fn extract_voicegroups(source: &Path, sample_index: &Path, table: &Path) -> Result<()> {
+    let tones = read_tones(source)?;
+    let _ = build_tones(&tones)?;
+    let samples = sample_source_addresses(sample_index)?
+        .into_iter()
+        .map(|(source, address)| (address, source))
+        .collect::<std::collections::BTreeMap<_, _>>();
+    let sound = table
+        .parent()
+        .and_then(Path::parent)
+        .ok_or("voice-group output location differs")?;
+    fs::create_dir_all(table.parent().unwrap()).map_err(|error| error.to_string())?;
+    let banks = field(&tones, "banks")?
+        .as_array()
+        .ok_or("tone banks differ")?;
+    let mut catalog = String::from(
+        "# Ordered GS1 voice groups used by the SMSH sequence headers.\nbank\taddress\tsource\n",
+    );
+    for (bank, value) in banks.iter().enumerate() {
+        let records = value
+            .get("records")
+            .and_then(Value::as_array)
+            .ok_or("tone-bank records differ")?;
+        let base = if bank == 0 {
+            BANK_0_ADDRESS
+        } else {
+            BANK_1_ADDRESS
+        };
+        let relative = format!("voicegroups/voicegroup_{bank:03}.tsv");
+        catalog.push_str(&format!("{bank}\t{}\t{relative}\n", hex(base)));
+        let mut text = String::from(
+            "# SMSH 12-byte voice records.\nprogram\tkind\tfixed_pitch\tkey\tlength\tpan_sweep\tsource\tattack\tdecay\tsustain\trelease\n",
+        );
+        for (program, record) in records.iter().enumerate() {
+            let object = record.as_object().ok_or("tone record differs")?;
+            let kind = field(object, "kind")?.as_str().ok_or("tone kind differs")?;
+            let fixed = object
+                .get("fixed_pitch")
+                .and_then(Value::as_bool)
+                .unwrap_or(false);
+            let key = field(object, "key")?.as_u64().ok_or("tone key differs")?;
+            let length = field(object, "length")?
+                .as_u64()
+                .ok_or("tone length differs")?;
+            let pan = field(object, "pan_sweep")?
+                .as_u64()
+                .ok_or("tone pan differs")?;
+            let source = match kind {
+                "pcm" => {
+                    let address = field(object, "sample")?
+                        .as_str()
+                        .ok_or("tone sample differs")?;
+                    samples
+                        .get(address)
+                        .cloned()
+                        .unwrap_or_else(|| format!("embedded_pcm_{address}"))
+                }
+                "wave" => format!(
+                    "programmable_wave_samples/{}.pcm4",
+                    field(object, "waveform")?
+                        .as_str()
+                        .ok_or("tone waveform differs")?
+                ),
+                "rhythm" => {
+                    let tones = field(object, "tones")?
+                        .as_str()
+                        .ok_or("rhythm table differs")?;
+                    let suffix = tones.strip_prefix("bank_").ok_or("rhythm table differs")?;
+                    let (target_bank, target_program) =
+                        suffix.split_once('_').ok_or("rhythm table differs")?;
+                    format!(
+                        "voicegroup_{target_bank}:{}",
+                        target_program
+                            .parse::<u8>()
+                            .map_err(|_| "rhythm table differs")?
+                    )
+                }
+                _ => field(object, "generator")?
+                    .as_u64()
+                    .ok_or("tone generator differs")?
+                    .to_string(),
+            };
+            let envelope = object
+                .get("envelope")
+                .and_then(Value::as_array)
+                .map(|values| {
+                    values
+                        .iter()
+                        .map(|value| value.as_u64().unwrap_or(0))
+                        .collect::<Vec<_>>()
+                })
+                .unwrap_or_else(|| vec![0; 4]);
+            text.push_str(&format!(
+                "{program}\t{kind}\t{fixed}\t{key}\t{length}\t{pan}\t{source}\t{}\t{}\t{}\t{}\n",
+                envelope[0], envelope[1], envelope[2], envelope[3]
+            ));
+        }
+        fs::write(sound.join(&relative), text).map_err(|error| error.to_string())?;
+    }
+    fs::write(table, catalog).map_err(|error| error.to_string())
+}
 fn read_waveforms(path: &Path) -> Result<Map<String, Value>> {
     let object = read_source(
         path,
@@ -659,6 +1027,63 @@ fn build_waveforms(source: &Map<String, Value>) -> Result<Vec<u8>> {
         }
     }
     Ok(output)
+}
+
+fn build_waveform_files(index: &Path) -> Result<(Vec<u8>, Vec<PathBuf>)> {
+    let text =
+        fs::read_to_string(index).map_err(|error| format!("{}: {error}", index.display()))?;
+    let mut lines = text.lines().filter(|line| !line.starts_with('#'));
+    if lines.next() != Some("wave\taddress\tsource") {
+        return error("CGB waveform table header differs");
+    }
+    let root = index.parent().unwrap_or_else(|| Path::new("."));
+    let mut data = Vec::with_capacity(18 * 16);
+    let mut sources = vec![canonical_path(index)?];
+    for wave in 0..18 {
+        let line = lines
+            .next()
+            .ok_or_else(|| format!("CGB waveform {wave} is absent"))?;
+        let fields = line.split('\t').collect::<Vec<_>>();
+        let expected_source = format!("programmable_wave_samples/wave_{wave:02}.pcm4");
+        if fields.len() != 3
+            || fields[0] != wave.to_string()
+            || fields[1] != hex(WAVEFORM_ADDRESS + wave * 16)
+            || fields[2] != expected_source
+        {
+            return error(format!("CGB waveform {wave} identity differs"));
+        }
+        let source = canonical_path(&root.join(&expected_source))?;
+        let bytes = fs::read(&source).map_err(|error| format!("{}: {error}", source.display()))?;
+        if bytes.len() != 16 {
+            return error(format!("CGB waveform {wave} extent differs"));
+        }
+        data.extend(bytes);
+        sources.push(source);
+    }
+    if lines.next().is_some() {
+        return error("CGB waveform table has extra rows");
+    }
+    Ok((data, sources))
+}
+
+fn extract_waveforms(source: &Path, table: &Path) -> Result<()> {
+    let packed = build_waveforms(&read_waveforms(source)?)?;
+    let root = table.parent().unwrap_or_else(|| Path::new("."));
+    let directory = root.join("programmable_wave_samples");
+    fs::create_dir_all(&directory).map_err(|error| format!("{}: {error}", directory.display()))?;
+    let mut text =
+        String::from("# Eighteen packed 4-bit CGB waveforms used by GS1.\nwave\taddress\tsource\n");
+    for wave in 0..18 {
+        let relative = format!("programmable_wave_samples/wave_{wave:02}.pcm4");
+        let path = root.join(&relative);
+        fs::write(&path, &packed[wave * 16..wave * 16 + 16])
+            .map_err(|error| format!("{}: {error}", path.display()))?;
+        text.push_str(&format!(
+            "{wave}\t{}\t{relative}\n",
+            hex(WAVEFORM_ADDRESS + wave * 16)
+        ));
+    }
+    fs::write(table, text).map_err(|error| format!("{}: {error}", table.display()))
 }
 fn read_players(path: &Path) -> Result<Map<String, Value>> {
     let object = read_source(
@@ -717,6 +1142,71 @@ fn build_players(source: &Map<String, Value>) -> Result<Vec<u8>> {
     }
     Ok(output)
 }
+
+fn build_player_file(path: &Path) -> Result<(Vec<u8>, PathBuf)> {
+    let text = fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
+    let mut lines = text.lines().filter(|line| !line.starts_with('#'));
+    if lines.next() != Some("player\tstate\ttrack_storage\tmax_tracks") {
+        return error("music-player table header differs");
+    }
+    let mut players = Vec::with_capacity(8);
+    for player in 0..8 {
+        let fields = lines
+            .next()
+            .ok_or_else(|| format!("music player {player} is absent"))?
+            .split('\t')
+            .collect::<Vec<_>>();
+        if fields.len() != 4 || fields[0] != player.to_string() {
+            return error(format!("music player {player} identity differs"));
+        }
+        players.push(serde_json::json!({
+            "name":format!("player_{player}"),
+            "state":fields[1],
+            "track_storage":fields[2],
+            "max_tracks":fields[3].parse::<u8>().map_err(|_| format!("music player {player} track count differs"))?,
+        }));
+    }
+    if lines.next().is_some() {
+        return error("music-player table has extra rows");
+    }
+    let source = serde_json::json!({
+        "format":1,
+        "kind":"golden-sun-music-players",
+        "address":hex(PLAYER_ADDRESS),
+        "end":hex(AUDIO_ENGINE_END),
+        "players":players,
+    });
+    Ok((
+        build_players(source.as_object().unwrap())?,
+        canonical_path(path)?,
+    ))
+}
+
+fn extract_players(source: &Path, table: &Path) -> Result<()> {
+    let players = read_players(source)?;
+    let _ = build_players(&players)?;
+    let rows = field(&players, "players")?
+        .as_array()
+        .ok_or("music players differ")?;
+    let mut output = String::from(
+        "# GS1 music-player state and track-storage assignments.\nplayer\tstate\ttrack_storage\tmax_tracks\n",
+    );
+    for (player, row) in rows.iter().enumerate() {
+        output.push_str(&format!(
+            "{player}\t{}\t{}\t{}\n",
+            row.get("state")
+                .and_then(Value::as_str)
+                .ok_or("music-player state differs")?,
+            row.get("track_storage")
+                .and_then(Value::as_str)
+                .ok_or("music-player storage differs")?,
+            row.get("max_tracks")
+                .and_then(Value::as_u64)
+                .ok_or("music-player track count differs")?,
+        ));
+    }
+    fs::write(table, output).map_err(|error| format!("{}: {error}", table.display()))
+}
 #[derive(Debug, Clone)]
 pub struct BuiltAudioEngineData {
     pub address: usize,
@@ -724,37 +1214,19 @@ pub struct BuiltAudioEngineData {
     pub sources: Vec<PathBuf>,
 }
 pub fn build_audio_engine_data(index_path: &Path) -> Result<BuiltAudioEngineData> {
-    let index = read_index(index_path)?;
-    let sources = object(field(&index, "sources")?, "audio-engine sources")?;
-    let paths = [
-        child(
-            index_path,
-            field(sources, "control")?.as_str().unwrap_or_default(),
-        )?,
-        child(
-            index_path,
-            field(sources, "tones")?.as_str().unwrap_or_default(),
-        )?,
-        child(
-            index_path,
-            field(sources, "waveforms")?.as_str().unwrap_or_default(),
-        )?,
-        child(
-            index_path,
-            field(sources, "players")?.as_str().unwrap_or_default(),
-        )?,
-    ];
-    let data = concat([
-        build_control(&read_control(&paths[0])?),
-        build_tones(&read_tones(&paths[1])?),
-        build_waveforms(&read_waveforms(&paths[2])?),
-        build_players(&read_players(&paths[3])?),
-    ])?;
+    let paths = engine_paths(index_path)?;
+    let (control, control_source) = build_control_file(&paths[0])?;
+    let (tones, tone_sources) = build_tone_files(&paths[1])?;
+    let (waveforms, waveform_sources) = build_waveform_files(&paths[2])?;
+    let (players, player_source) = build_player_file(&paths[3])?;
+    let data = concat([Ok(control), Ok(tones), Ok(waveforms), Ok(players)])?;
     if data.len() != AUDIO_ENGINE_SIZE {
         return error("audio-engine package size differs");
     }
     let mut all = vec![canonical_path(index_path)?];
-    all.extend(paths);
+    all.extend([control_source, player_source]);
+    all.extend(tone_sources);
+    all.extend(waveform_sources);
     Ok(BuiltAudioEngineData {
         address: AUDIO_ENGINE_ADDRESS,
         data,
@@ -770,6 +1242,26 @@ pub fn run(args: Vec<String>) -> Result<Option<String>> {
         std::io::Write::write_all(&mut std::io::stdout(), &built.data)
             .map_err(|error| error.to_string())?;
         return Ok(None);
+    }
+    if args.len() == 3 && args[0] == "extract-waveforms" {
+        extract_waveforms(Path::new(&args[1]), Path::new(&args[2]))?;
+        return Ok(Some("waveforms=18 format=pcm4".into()));
+    }
+    if args.len() == 3 && args[0] == "extract-control" {
+        extract_control(Path::new(&args[1]), Path::new(&args[2]))?;
+        return Ok(Some("control-sections=13".into()));
+    }
+    if args.len() == 4 && args[0] == "extract-voicegroups" {
+        extract_voicegroups(
+            Path::new(&args[1]),
+            Path::new(&args[2]),
+            Path::new(&args[3]),
+        )?;
+        return Ok(Some("voicegroups=2 records=225".into()));
+    }
+    if args.len() == 3 && args[0] == "extract-players" {
+        extract_players(Path::new(&args[1]), Path::new(&args[2]))?;
+        return Ok(Some("players=8".into()));
     }
     error(USAGE)
 }

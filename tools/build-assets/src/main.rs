@@ -17,7 +17,7 @@ use import_asset::{
     gba_graphics, gba_palette_rgba, indexed_png, midi_events, rgba_png, EventBody, MidiEvent,
 };
 use map_load_table::build_table as build_map_load_table;
-use music::MIDI_BUILD_DIRECTIVE;
+use music::{add_midi_build_directive, add_midi_conductor_text, MIDI_BUILD_DIRECTIVE};
 use overlay_disasm::{assemble_overlay, OverlaySource};
 use serde_json::Value;
 use sha1::{Digest, Sha1};
@@ -29,7 +29,7 @@ use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode, Stdio};
 use std::sync::{Arc, Mutex, OnceLock};
 use tilemap::import_tilemap;
-const USAGE: &str = "usage: build-assets [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --self-test";
+const USAGE: &str = "usage: build-assets [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
 const ROM_SIZE: usize = 0x0080_0000;
 const SENTOU_GAMEN_ADDRESS: usize = 0x080a_ea4c;
@@ -1174,17 +1174,17 @@ fn closure_self_test() -> Result<String, String> {
     if missing.exists() {
         return Err("closure package self-test path exists".to_string());
     }
-    let index = root.join("games/gs1/assets/audio/waves/index.json");
-    let document: Value = serde_json::from_slice(
-        &fs::read(index).map_err(|error| format!("PCM self-test index: {error}"))?,
-    )
-    .map_err(|error| format!("PCM self-test index: {error}"))?;
-    let present_regions = document
-        .get("waves")
-        .and_then(Value::as_array)
-        .filter(|waves| !waves.is_empty())
-        .ok_or_else(|| "PCM self-test index differs".to_string())?
-        .len();
+    let index = root.join("games/gs1/sound/samples.tsv");
+    let text =
+        fs::read_to_string(index).map_err(|error| format!("PCM self-test index: {error}"))?;
+    let mut rows = text.lines().filter(|line| !line.starts_with('#'));
+    if rows.next() != Some("sample\taddress\tfrequency\tloop_start\tsample_count\tsource") {
+        return Err("PCM self-test index differs".to_string());
+    }
+    let present_regions = rows.count();
+    if present_regions == 0 {
+        return Err("PCM self-test index is empty".to_string());
+    }
     // The closure self-test deliberately retains the overlap invariant instead
     // of merely checking that the fixture exists.
     let left = (0x0800_1000usize, 0x0800_1010usize);
@@ -1367,33 +1367,26 @@ impl Context {
         if let Some(cached) = self.music.get(index_name) {
             return Ok(cached.clone());
         }
-        let index = json(&self.source(index_name)?)?;
-        if index.get("kind").and_then(Value::as_str) != Some("golden-sun-music-residuals") {
-            return Err("unsupported music residual index".to_string());
+        let index_path = self.source(index_name)?;
+        let text = fs::read_to_string(&index_path).map_err(|error| error.to_string())?;
+        let mut rows = text.lines().filter(|line| !line.starts_with('#'));
+        if rows.next() != Some("kind\tname\taddress\tend\tpriority\treverb\ttone_bank\tfill") {
+            return Err("unsupported music residual table".to_string());
         }
-        let mut addresses = vec![json_number(
-            &index["shared_empty_header"]["address"],
-            "music residual address",
-        )?];
-        if let Some(headers) = index.get("empty_headers").and_then(Value::as_array) {
-            for header in headers {
-                addresses.push(json_number(&header["address"], "music residual address")?);
+        let mut addresses = Vec::new();
+        for row in rows {
+            let fields = row.split('\t').collect::<Vec<_>>();
+            if !(4..=8).contains(&fields.len())
+                || !matches!(fields[0], "empty_header" | "reserve_stream" | "alignment")
+            {
+                return Err("music residual table row differs".to_string());
             }
+            addresses.push(
+                usize::from_str_radix(fields[2].trim_start_matches("0x"), 16)
+                    .map_err(|_| "music residual address differs".to_string())?,
+            );
         }
-        let orphan = json_number(&index["orphan_stream"]["address"], "music residual address")?;
-        addresses.push(orphan);
-        addresses.push(json_number(
-            &index["tail_alignment"]["address"],
-            "music residual address",
-        )?);
         addresses.sort_unstable();
-        let orphan_source = Path::new(index_name)
-            .parent()
-            .unwrap_or(Path::new("."))
-            .join(json_string(
-                &index["orphan_stream"]["source"],
-                "orphan source",
-            )?);
         let mut built = Vec::new();
         for address in addresses {
             let args = vec![
@@ -1402,17 +1395,10 @@ impl Context {
                 hex_address(address),
             ];
             let data = native_command(&self.root, "music_residuals", &args)?;
-            let mut sources = vec![index_name.to_string()];
-            if address == orphan {
-                sources.push(root_relative(
-                    &self.root,
-                    &self.source(&orphan_source.to_string_lossy())?,
-                )?);
-            }
             built.push(MusicResidual {
                 address,
                 data,
-                sources,
+                sources: vec![index_name.to_string()],
             });
         }
         self.music.insert(index_name.to_string(), built.clone());
@@ -1881,8 +1867,54 @@ fn expand_series(
                     series.get("index").ok_or("sequence index missing")?,
                     "sequence index",
                 )?;
+                if index_name.ends_with(".tsv") {
+                    let index_path = ctx.source(index_name)?;
+                    let text =
+                        fs::read_to_string(&index_path).map_err(|error| error.to_string())?;
+                    let mut rows = text.lines().filter(|line| !line.starts_with('#'));
+                    if rows.next() != Some("sound_id\tclass\taddress\tsize\tsource") {
+                        return Err("sequence table header differs".to_string());
+                    }
+                    let directory = Path::new(index_name).parent().unwrap_or(Path::new("."));
+                    let mut previous = None;
+                    for row in rows {
+                        let fields = row.split('\t').collect::<Vec<_>>();
+                        if fields.len() != 5 {
+                            return Err("sequence table row width differs".to_string());
+                        }
+                        let id = fields[0]
+                            .parse::<usize>()
+                            .map_err(|_| "sequence table sound ID differs".to_string())?;
+                        if previous.is_some_and(|value| id <= value)
+                            || !matches!(fields[1], "music" | "sfx")
+                        {
+                            return Err(format!("sequence table row {id} identity differs"));
+                        }
+                        previous = Some(id);
+                        let source = directory
+                            .join(fields[4])
+                            .to_string_lossy()
+                            .replace('\\', "/");
+                        ctx.source(&source)?;
+                        entries.push(serde_json::json!({
+                            "address":fields[2],
+                            "size":fields[3],
+                            "kind":"golden-sun-sound-sequence",
+                            "source":source,
+                        }));
+                    }
+                    if previous.is_none() {
+                        return Err("sequence table is empty".to_string());
+                    }
+                    continue;
+                }
                 let index = json(&ctx.source(index_name)?)?;
                 let directory = Path::new(index_name).parent().unwrap_or(Path::new("."));
+                let midi_directory = index
+                    .get("directory")
+                    .and_then(Value::as_str)
+                    .map(Path::new)
+                    .unwrap_or(Path::new("."));
                 for sequence in series_values(&index, "sequences")? {
                     let tuple = sequence.as_array().ok_or("sequence tuple malformed")?;
                     let id = json_number(&tuple[0], "song id")?;
@@ -1905,7 +1937,7 @@ fn expand_series(
                         .and_then(Value::as_str)
                         .map(str::to_string)
                         .unwrap_or_else(|| format!("{class}_{id:03}"));
-                    let midi = directory.join(format!("{base}.mid"));
+                    let midi = directory.join(midi_directory).join(format!("{base}.mid"));
                     let object = serde_json::json!({"address":tuple[2],"size":tuple[3],"kind":"golden-sun-sound-sequence","source":root_relative(&ctx.root, &ctx.source(&midi.to_string_lossy())?)?});
                     entries.push(object);
                 }
@@ -1913,6 +1945,53 @@ fn expand_series(
             "golden-sun-pcm-wave-series" => {
                 let index_name =
                     json_string(series.get("index").ok_or("PCM index missing")?, "PCM index")?;
+                if index_name.ends_with(".tsv") {
+                    let index_path = ctx.source(index_name)?;
+                    let text =
+                        fs::read_to_string(&index_path).map_err(|error| error.to_string())?;
+                    let mut rows = text.lines().filter(|line| !line.starts_with('#'));
+                    if rows.next()
+                        != Some("sample\taddress\tfrequency\tloop_start\tsample_count\tsource")
+                    {
+                        return Err("PCM table header differs".to_string());
+                    }
+                    let directory = Path::new(index_name).parent().unwrap_or(Path::new("."));
+                    for (sample, row) in rows.enumerate() {
+                        let fields = row.split('\t').collect::<Vec<_>>();
+                        if fields.len() != 6 || fields[0] != sample.to_string() {
+                            return Err(format!("PCM table row {sample} identity differs"));
+                        }
+                        let frequency = fields[2]
+                            .parse::<u32>()
+                            .map_err(|_| format!("PCM table row {sample} frequency differs"))?;
+                        let loop_start = if fields[3].is_empty() {
+                            Value::Null
+                        } else {
+                            Value::from(fields[3].parse::<u32>().map_err(|_| {
+                                format!("PCM table row {sample} loop point differs")
+                            })?)
+                        };
+                        let sample_count = fields[4]
+                            .parse::<usize>()
+                            .map_err(|_| format!("PCM table row {sample} extent differs"))?;
+                        let size = (16usize + sample_count + 3) & !3;
+                        let source = directory
+                            .join(fields[5])
+                            .to_string_lossy()
+                            .replace('\\', "/");
+                        ctx.source(&source)?;
+                        entries.push(serde_json::json!({
+                            "address":fields[1],
+                            "size":size,
+                            "frequency":frequency,
+                            "loop_start":loop_start,
+                            "kind":"golden-sun-pcm-wave",
+                            "source":source,
+                            "index":index_name,
+                        }));
+                    }
+                    continue;
+                }
                 let index = json(&ctx.source(index_name)?)?;
                 let directory = Path::new(index_name).parent().unwrap_or(Path::new("."));
                 let prefix = Path::new(index_name)
@@ -2417,6 +2496,9 @@ fn sequence_control_opcode(name: &str) -> Option<u8> {
         _ => return None,
     })
 }
+fn sequence_sets_running_status(opcode: u8) -> bool {
+    opcode != 0xbb
+}
 fn sequence_duration_index(value: &Json, label: &str) -> Result<u8, String> {
     let ticks = json_number(value, label)?;
     SEQUENCE_DURATIONS
@@ -2600,8 +2682,8 @@ fn encode_sequence_stream(
                     "running control name",
                 )?;
                 let opcode = sequence_control_opcode(name).ok_or("unknown running control")?;
-                if opcode < 0xbd {
-                    return Err("control cannot use running status".to_string());
+                if !sequence_sets_running_status(opcode) {
+                    return Err(format!("{name} cannot use running status"));
                 }
                 let value = sequence_parameter(
                     event.get(2).ok_or("running control value is missing")?,
@@ -2650,7 +2732,7 @@ fn encode_sequence_stream(
                     event.get(1).ok_or("control value is missing")?,
                     kind,
                 )?);
-                if opcode >= 0xbd {
+                if sequence_sets_running_status(opcode) {
                     running = Some(opcode);
                 }
             }
@@ -3068,7 +3150,10 @@ fn greedy_sequence(events: &[Json]) -> Result<Vec<Json>, String> {
                 values.get(3).ok_or("note velocity is missing")?,
                 "note velocity",
             )?;
-            let opcode = 0xcf + sequence_duration_index(values.get(1).unwrap(), "note duration")?;
+            let opcode = SEQUENCE_DURATIONS
+                .iter()
+                .position(|candidate| *candidate == duration)
+                .map(|index| 0xcf + index as u8);
             let params = if effective_velocity != velocity {
                 vec![effective_key, effective_velocity]
             } else if effective_key != key {
@@ -3078,7 +3163,7 @@ fn greedy_sequence(events: &[Json]) -> Result<Vec<Json>, String> {
             };
             let mut rebuilt = vec![
                 Value::String(
-                    if running == Some(opcode) && !params.is_empty() {
+                    if opcode.is_some_and(|opcode| running == Some(opcode)) && !params.is_empty() {
                         "note_running"
                     } else {
                         "note"
@@ -3089,12 +3174,12 @@ fn greedy_sequence(events: &[Json]) -> Result<Vec<Json>, String> {
             ];
             rebuilt.extend(params.into_iter().map(Value::from));
             output.push(Value::Array(rebuilt));
-            running = Some(opcode);
+            running = opcode;
             key = effective_key;
             velocity = effective_velocity;
         } else if let Some(opcode) = sequence_control_opcode(kind) {
             output.push(event.clone());
-            if opcode >= 0xbd {
+            if sequence_sets_running_status(opcode) {
                 running = Some(opcode);
             }
         } else if kind == "control_running" {
@@ -3114,6 +3199,36 @@ fn greedy_sequence(events: &[Json]) -> Result<Vec<Json>, String> {
         }
     }
     Ok(output)
+}
+fn native_sequence_self_test() -> Result<(), String> {
+    let events = serde_json::json!([
+        ["priority", 5],
+        ["control_running", "priority", 6],
+        ["key_shift", 0],
+        ["control_running", "key_shift", 1],
+        ["tempo", 30]
+    ]);
+    let encoded = encode_sequence_stream(
+        events
+            .as_array()
+            .ok_or("sequence self-test events are malformed")?,
+        None,
+    )?;
+    if encoded.data != [0xba, 5, 6, 0xbc, 0, 1, 0xbb, 30] {
+        return Err("sequence running-status self-test differs".to_string());
+    }
+    let invalid = serde_json::json!([["tempo", 30], ["control_running", "tempo", 31]]);
+    if encode_sequence_stream(
+        invalid
+            .as_array()
+            .ok_or("sequence self-test invalid events are malformed")?,
+        None,
+    )
+    .is_ok()
+    {
+        return Err("tempo incorrectly accepts running status".to_string());
+    }
+    Ok(())
 }
 fn apply_sequence_deviations(
     default: &[Json],
@@ -3167,6 +3282,128 @@ fn apply_sequence_deviations(
         previous_end = cursor;
     }
     output.extend_from_slice(&default[cursor..]);
+    Ok(output)
+}
+fn midi_variable(mut value: usize) -> Vec<u8> {
+    let mut bytes = vec![(value & 0x7f) as u8];
+    while {
+        value >>= 7;
+        value != 0
+    } {
+        bytes.push(((value & 0x7f) as u8) | 0x80);
+    }
+    bytes.reverse();
+    bytes
+}
+fn encode_midi_track(events: &[MidiEvent]) -> Result<Vec<u8>, String> {
+    let mut output = Vec::new();
+    let mut tick = 0i64;
+    for event in events {
+        if matches!(event.body, EventBody::Meta { meta: 0x2f, .. }) {
+            continue;
+        }
+        let delta = event
+            .tick
+            .checked_sub(tick)
+            .filter(|delta| *delta >= 0)
+            .ok_or("MIDI event order moves backwards")? as usize;
+        output.extend(midi_variable(delta));
+        tick = event.tick;
+        match &event.body {
+            EventBody::Meta { meta, data } => {
+                let data = midi_hex(data)?;
+                output.extend([0xff, *meta]);
+                output.extend(midi_variable(data.len()));
+                output.extend(data);
+            }
+            EventBody::Sysex { status, data } => {
+                let data = midi_hex(data)?;
+                output.push(*status);
+                output.extend(midi_variable(data.len()));
+                output.extend(data);
+            }
+            EventBody::Channel { status, data } => {
+                output.push(*status);
+                output.extend(data);
+            }
+        }
+    }
+    output.extend([0, 0xff, 0x2f, 0]);
+    Ok(output)
+}
+fn repack_midi_tracks(midi: &[u8], native_tracks: usize) -> Result<Vec<u8>, String> {
+    let report = midi_events(midi).map_err(|error| error.to_string())?;
+    if report.format == 1 && usize::from(report.tracks) == native_tracks + 1 {
+        return Ok(midi.to_vec());
+    }
+    if report.format != 0 || report.tracks != 1 {
+        return Err("playback MIDI is neither canonical format 1 nor convertible format 0".into());
+    }
+    let mut tracks = vec![Vec::<MidiEvent>::new(); native_tracks + 1];
+    for event in report.events {
+        let destination = match &event.body {
+            EventBody::Channel { status, .. } => usize::from(status & 0x0f) + 1,
+            _ => 0,
+        };
+        if destination >= tracks.len() {
+            return Err(format!(
+                "playback MIDI channel {} exceeds native track count",
+                destination
+            ));
+        }
+        tracks[destination].push(event);
+    }
+    let count = u16::try_from(tracks.len()).map_err(|_| "too many MIDI tracks")?;
+    let mut output = Vec::new();
+    output.extend_from_slice(b"MThd");
+    output.extend_from_slice(&6u32.to_be_bytes());
+    output.extend_from_slice(&1u16.to_be_bytes());
+    output.extend_from_slice(&count.to_be_bytes());
+    output.extend_from_slice(&report.ticks_per_quarter.to_be_bytes());
+    for (track_index, mut events) in tracks.into_iter().enumerate() {
+        if track_index != 0 {
+            let mut active = HashMap::<u8, usize>::new();
+            let mut last_tick = 0i64;
+            for event in &events {
+                last_tick = last_tick.max(event.tick);
+                if let EventBody::Channel { status, data } = &event.body {
+                    let note = data.first().copied().unwrap_or(0);
+                    if status & 0xf0 == 0x90 && data.get(1).copied().unwrap_or(0) != 0 {
+                        *active.entry(note).or_default() += 1;
+                    } else if status & 0xf0 == 0x80
+                        || (status & 0xf0 == 0x90 && data.get(1) == Some(&0))
+                    {
+                        if let Some(count) = active.get_mut(&note).filter(|count| **count != 0) {
+                            *count -= 1;
+                        }
+                    }
+                }
+            }
+            let channel = u8::try_from(track_index - 1).map_err(|_| "too many MIDI channels")?;
+            for (note, count) in active {
+                for order in 0..count {
+                    events.push(MidiEvent {
+                        tick: last_tick,
+                        track: track_index,
+                        order: usize::MAX - order,
+                        body: EventBody::Channel {
+                            status: 0x80 | channel,
+                            data: vec![note, 0],
+                        },
+                    });
+                }
+            }
+        }
+        events.sort_by_key(|event| (event.tick, event.order));
+        let data = encode_midi_track(&events)?;
+        output.extend_from_slice(b"MTrk");
+        output.extend_from_slice(
+            &u32::try_from(data.len())
+                .map_err(|_| "MIDI track is too large")?
+                .to_be_bytes(),
+        );
+        output.extend(data);
+    }
     Ok(output)
 }
 fn build_midi_sequence(_root: &Path, source: &Path) -> Result<(Vec<u8>, Json), String> {
@@ -3276,6 +3513,82 @@ fn build_midi_sequence(_root: &Path, source: &Path) -> Result<(Vec<u8>, Json), S
         "layout": layout
     });
     build_sequence_source(&source)
+}
+
+fn adopt_smsh_midi(source: &Json, midi: &[u8]) -> Result<Vec<u8>, String> {
+    let native_tracks = source
+        .get("layout")
+        .and_then(Value::as_array)
+        .ok_or("sequence source layout is missing")?
+        .iter()
+        .filter(|segment| segment.get("kind").and_then(Value::as_str) == Some("stream"))
+        .count();
+    let midi = repack_midi_tracks(midi, native_tracks)?;
+    let report = midi_events(&midi).map_err(|error| error.to_string())?;
+    let mut by_track = HashMap::<usize, Vec<MidiEvent>>::new();
+    for event in report.events {
+        by_track.entry(event.track).or_default().push(event);
+    }
+    let source_layout = source
+        .get("layout")
+        .and_then(Value::as_array)
+        .ok_or("sequence source layout is missing")?;
+    let mut skeleton_layout = Vec::new();
+    let mut sidecar_tracks = serde_json::Map::new();
+    let mut stream_index = 0usize;
+    for segment in source_layout {
+        if segment.get("kind").and_then(Value::as_str) != Some("stream") {
+            skeleton_layout.push(segment.clone());
+            continue;
+        }
+        stream_index += 1;
+        let label = json_string(
+            segment
+                .get("label")
+                .ok_or("sequence stream label missing")?,
+            "stream label",
+        )?;
+        let native = segment
+            .get("events")
+            .and_then(Value::as_array)
+            .ok_or("sequence stream events missing")?;
+        let defaults = greedy_sequence(&reconstruct_midi_stream(
+            by_track
+                .get(&stream_index)
+                .map(Vec::as_slice)
+                .unwrap_or(&[]),
+        )?)?;
+        if defaults.is_empty() {
+            return Err(format!(
+                "MIDI track {stream_index} has no reconstructible events"
+            ));
+        }
+        let encoded = serde_json::to_vec(&defaults).map_err(|error| error.to_string())?;
+        let mut replacement = vec![Value::from(0), Value::from(defaults.len())];
+        replacement.extend(native.iter().cloned());
+        sidecar_tracks.insert(
+            label.to_string(),
+            serde_json::json!({
+                "events":defaults.len(),
+                "hash":&sha1_hex(&encoded)[..16],
+                "deviations":[replacement]
+            }),
+        );
+        skeleton_layout.push(serde_json::json!({"kind":"stream", "label":label}));
+    }
+    if by_track.keys().copied().max().unwrap_or(0) != stream_index {
+        return Err("MIDI and native sequence track counts differ".to_string());
+    }
+    let mut skeleton = source.clone();
+    skeleton["layout"] = Value::Array(skeleton_layout);
+    let skeleton = serde_json::to_vec(&skeleton).map_err(|error| error.to_string())?;
+    let sidecar = serde_json::to_vec(&serde_json::json!({
+        "format":1,
+        "engine":"smsh-sequence-sidecar",
+        "tracks":sidecar_tracks
+    }))
+    .map_err(|error| error.to_string())?;
+    add_midi_build_directive(&add_midi_conductor_text(&midi, &skeleton)?, &sidecar)
 }
 fn build_entry_native_tail(
     ctx: &mut Context,
@@ -4718,8 +5031,67 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
     Ok(())
 }
 fn run(arguments: Vec<String>) -> Result<ExitCode, String> {
+    if arguments.first().map(String::as_str) == Some("--verify-smsh-midi") {
+        if arguments.len() != 3 {
+            return Err(USAGE.to_string());
+        }
+        let rom = fs::read(&arguments[1]).map_err(|error| format!("{}: {error}", arguments[1]))?;
+        let (built, report) = build_midi_sequence(&repository_root(), Path::new(&arguments[2]))?;
+        let base = json_number(
+            report.get("base").ok_or("sequence report base missing")?,
+            "base",
+        )?;
+        let end = base
+            .checked_add(built.len())
+            .ok_or("sequence extent overflows")?;
+        let start = base.checked_sub(ROM_BASE).ok_or("sequence precedes ROM")?;
+        if rom.get(start..start + built.len()) != Some(built.as_slice()) {
+            return Err(format!("sequence MIDI differs at 0x{base:08x}"));
+        }
+        println!(
+            "identical=true base=0x{base:08x} end=0x{end:08x} bytes={}",
+            built.len()
+        );
+        return Ok(ExitCode::SUCCESS);
+    }
+    if arguments.first().map(String::as_str) == Some("--adopt-smsh-midi") {
+        if arguments.len() != 4 {
+            return Err(USAGE.to_string());
+        }
+        let source = json(Path::new(&arguments[1]))?;
+        let midi = fs::read(&arguments[2]).map_err(|error| format!("{}: {error}", arguments[2]))?;
+        let adopted = adopt_smsh_midi(&source, &midi)?;
+        fs::write(&arguments[3], adopted).map_err(|error| format!("{}: {error}", arguments[3]))?;
+        println!("adopted=true output={}", arguments[3]);
+        return Ok(ExitCode::SUCCESS);
+    }
+    if arguments.first().map(String::as_str) == Some("--verify-smsh-source") {
+        if arguments.len() != 3 {
+            return Err(USAGE.to_string());
+        }
+        let rom = fs::read(&arguments[1]).map_err(|error| format!("{}: {error}", arguments[1]))?;
+        let source = json(Path::new(&arguments[2]))?;
+        let (built, report) = build_sequence_source(&source)?;
+        let base = json_number(
+            report.get("base").ok_or("sequence report base missing")?,
+            "base",
+        )?;
+        let end = base
+            .checked_add(built.len())
+            .ok_or("sequence extent overflows")?;
+        let start = base.checked_sub(ROM_BASE).ok_or("sequence precedes ROM")?;
+        if rom.get(start..start + built.len()) != Some(built.as_slice()) {
+            return Err(format!("sequence source differs at 0x{base:08x}"));
+        }
+        println!(
+            "identical=true base=0x{base:08x} end=0x{end:08x} bytes={}",
+            built.len()
+        );
+        return Ok(ExitCode::SUCCESS);
+    }
     if arguments.as_slice() == ["--self-test"] {
         archive_self_test().map_err(|error| error.to_string())?;
+        native_sequence_self_test()?;
         println!("{}", closure_self_test()?);
         return Ok(ExitCode::SUCCESS);
     }

@@ -3,13 +3,6 @@
 version = 4
 
 [[package]]
-name = "canonical-json"
-version = "0.1.0"
-dependencies = [
- "serde_json",
-]
-
-[[package]]
 name = "equivalent"
 version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -54,7 +47,6 @@ dependencies = [
 name = "music-residuals"
 version = "0.1.0"
 dependencies = [
- "canonical-json",
  "music",
  "serde_json",
 ]

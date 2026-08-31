@@ -11,5 +11,6 @@ path = "src/lib.rs"
 
 [dependencies]
 coverage-map = { path = "../coverage-map" }
+music = { path = "../music" }
 serde_json = "1"
 walkdir = "2"

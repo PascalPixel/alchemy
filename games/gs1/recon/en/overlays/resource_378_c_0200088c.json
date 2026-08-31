@@ -1,0 +1,12 @@
+{
+  "span_bytes": 4080,
+  "score": {"measured":"2026-08-31","candidate_bytes":3964,"reference_bytes":4080,"wrong_instructions":1268,"differing_halfwords":2007,"class":"generated-call-script-retention"},
+  "shape": {"calls":489,"loops":0,"state_branches":3,"inline_literal_pools":3},
+  "verified_against_reference": [
+    "the complete owner and its three branch-skipped inline pools are bounded from 0x0200088c through the trailing pool before 0x0200187c",
+    "all 489 resolver-confirmed calls are represented in machine order; the apparent call at 0x020017ca is correctly treated as an intra-owner branch target",
+    "all three scene-state branch arms and the workspace request, setup, and skip-beat effects are represented",
+    "the remaining score delta is approved-compiler call argument materialization, carrier allocation, scheduling, and literal-pool placement after complete semantics are represented"
+  ],
+  "retention": "keep_structured_asm"
+}

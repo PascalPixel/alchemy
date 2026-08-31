@@ -1,0 +1,13 @@
+{
+  "span_bytes": 1264,
+  "score": {"measured":"2026-08-31","candidate_bytes":1300,"reference_bytes":1264,"wrong_instructions":798,"differing_halfwords":626,"class":"structured-topology-retention"},
+  "shape": {"calls":10,"loops":4,"memory_operations":"command queue, three signed interpolation channels, four output modes, two deferred-MMIO queue appends"},
+  "verified_against_reference": [
+    "the complete callable owner is bounded from 0x02002450 through the alignment and ten-word trailing pool before 0x02002940",
+    "the command-drain loop represents the -1, 0x1000, 0x2000, 0x3000, 0x4000, and 0x7fff arms with their state-cell effects",
+    "all three signed fixed-point interpolation channels and their duration completion writes are represented",
+    "all four output modes and both interrupt-masked deferred-MMIO queue appends are represented in machine order",
+    "all ten resolver-confirmed calls are preserved; the remaining score delta is GCC 2.96 topology, carrier allocation, literal placement, and expression spelling"
+  ],
+  "retention": "keep_structured_asm"
+}

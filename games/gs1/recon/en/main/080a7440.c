@@ -8,14 +8,13 @@ extern s32 Func_080a77a4(s32 mode);
 s32 CharacterSelector_Run(void)
 {
     struct InventoryMenuState *menu;
-    s16 result;
+    s32 result;
 
     menu = Data_03001f2c;
-    result = 0;
-    menu->selected_slot = result;
+    menu->selected_slot = 0;
     result = Func_080a77a4(0);
-    return result;
     if (result != -1) {
         result = menu->item_owner;
     }
+    return result;
 }

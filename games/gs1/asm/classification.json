@@ -2337,6 +2337,28 @@
    "files": [
     "080b7548"
    ]
+  },
+  {
+   "kind": "battle_party_reset_compiler_allocation_module",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_audited_owner_extent",
+    "six_edition_relocation_normalized_core_is_identical",
+    "equal_branch_topology_and_matching_calls_arguments_field_stores_literals_and_memory_operations",
+    "only_residual_is_six_equivalent_zero_carrier_and_owner_index_register_allocation_and_scheduling_choices",
+    "allocator_order_decoder_finds_no_unique_source_shape",
+    "owner_type_loop_topology_zero_lifetime_field_range_and_store_order_probes_preserve_the_residual_or_regress",
+    "approved_gcc_2_96_pass_matrix_preserves_the_residual_or_regresses",
+    "inline_assembly_fixed_registers_compiler_barriers_and_forced_scheduling_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 240,
+   "files": [
+    "080b5b18"
+   ]
   }
  ]
 }

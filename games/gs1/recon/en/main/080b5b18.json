@@ -2,10 +2,11 @@
  "schema_version": 1,
  "namespace": "gs1-en-main",
  "address": "0x080b5b18",
- "status": "measured-draft",
+ "status": "proven-retained",
+ "classification": "battle_party_reset_compiler_allocation_module",
  "owner_bytes": 240,
  "score": {
-  "measured": "2026-08-26",
+  "measured": "2026-08-31",
   "candidate_bytes": 240,
   "reference_bytes": 240,
     "differing_halfwords": 9,
@@ -17,8 +18,8 @@
  "remaining": [
   {
    "op": "register allocation",
-   "count": 109,
-   "where": "prologue/loop register-allocation mismatch: candidate keeps the owners-pointer/count in r5/r9 with an extra movs/adds pair and issues the bge trip-check after loading the pointer, vs reference's r8/sl allocation with an early single-register move and cmp/bge issued before the mov sl step; plus an ldrsh-vs-ldrh signedness difference on the owners[i] load and a differing final pop/bx register pair. None of these are affected by the field-list choice -- raw differing_halfwords stays pinned near 109 across nearly all field-list variants because the extra prologue instructions phase-shift almost the entire body's byte offsets against the fixed-position reference comparison."
+   "count": 6,
+   "where": "The exact-size, equal-topology candidate differs only in whether the r9 zero carrier is assigned before or after the r5/r6 zero and owner-index carriers. Every subsequent load, call, field store, branch, and literal matches."
   }
  ],
  "rejected_experiments": [
@@ -36,9 +37,10 @@
   }
  ],
   "notes": [
-    "2026-08-31 type and topology closure: changing the enumerated owner buffer from s16 to u16 reproduces the reference's ldrh and collapses the residual from 109 differing halfwords / 32 wrong instructions to 18 / 6. Reconstructing the reference's guarded do-while owner traversal then places the zero-carrier materialization after the empty-list guard and improves the exact-size candidate further to 9 / 6 with equal topology. The remaining six instructions differ only in the scheduling of the r9 zero carrier versus the r5/r6 loop carriers; the allocator decoder reports no unique source repair, so this is parked as allocation-uncovered rather than forced.",
+    "2026-08-31 type and topology closure: changing the enumerated owner buffer from s16 to u16 reproduces the reference's ldrh and collapses the residual from 109 differing halfwords / 32 wrong instructions to 18 / 6. Reconstructing the reference's guarded do-while owner traversal then places the zero-carrier materialization after the empty-list guard and improves the exact-size candidate further to 9 / 6 with equal topology. The remaining six instructions differ only in the scheduling of the r9 zero carrier versus the r5/r6 loop carriers; the allocator decoder reports no unique source repair.",
+    "2026-08-31 retained-assembly proof: the complete candidate accounts for the exact 240-byte audited extent, every call and argument, the unsigned owner list, the guarded traversal, the four-byte countdown clear, all 22 later byte stores with the proved 0x140 omission, and the final owner update. Relocation-normalized cross-edition verification proves all 222 core bytes identical across all six GS1 editions. The canonical route, -fno-regmove, -fno-schedule-insns, -fno-cse-follow-jumps, -fno-cse-skip-blocks, -fno-expensive-optimizations, and -fno-rerun-cse-after-loop all preserve the 9/6 floor; -fno-schedule-insns2, -fno-gcse, and -fno-strength-reduce regress. Structured assembly therefore remains authoritative under battle_party_reset_compiler_allocation_module.",
     "Recovered only from the retained owner assembly, approved local ROM, sibling owner 080b6a60 (BattleParty_PrepareActiveOwners, this session's own reconstruction) and its established Func_08077008/Func_08077010 vocabulary, in-repository headers, and the approved compiler.",
-  "This candidate claims zero DONE bytes."
+  "The retained structured assembly is counted as proven ASM; the C candidate remains a non-adopted semantic proof and does not claim exact C."
  ],
  "sr_route_evidence": {
   "verdict": "COINCIDENTAL (downgraded from SUGGESTIVE)",

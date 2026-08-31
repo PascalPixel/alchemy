@@ -7,13 +7,13 @@
   "owner_bytes": 8300,
   "score": {
     "measured": "2026-08-31",
-    "candidate_bytes": 8180,
+    "candidate_bytes": 8168,
     "reference_bytes": 8300,
-    "differing_halfwords": 4023,
-    "wrong_instructions": 2439,
+    "differing_halfwords": 4018,
+    "wrong_instructions": 2483,
     "class": "missing-extra-code",
     "command": "compiler candidate-show --target gs1 --flags -mthumb-inline-register-call --owner 08120454 --size 8300 --rom roms/gs2-en.gba games/gs2/recon/en/main/08120454.c",
-    "note": "Raw halfwords remain phase-dominated by displaced pools. The evidenced inline-call route first improved 3914 -> 3912 halfwords. Reconstructing the state/command lifetime then made the complete post-copy call, state load, and command-pointer store instruction-identical and reduced the normalized wrong-instruction debt 2570 -> 2439. That honest shape exposes a 120-byte structural deficit which the earlier duplicated path setup masked; raw halfwords consequently rise to 4023 and are not the selection metric."
+    "note": "Raw halfwords remain phase-dominated by displaced pools. The evidenced inline-call route first improved 3914 -> 3912 halfwords. Reconstructing the state/command lifetime made the complete post-copy call, state load, and command-pointer store instruction-identical. The PP-restoration call audit then removed a duplicated Math_Div block: effect 0x4d retains its own call while 0x4e and the default arm now share the one tail present in the ROM. This exposes a 132-byte structural deficit rather than masking twelve bytes with surplus code; raw/global alignment metrics are not a safe selection metric for this local repair."
   },
   "shape": {
     "architecture": "Twelve-ROM master: games/gs1/recon/ja/main/080b2b0c.c is the shared body, written against ~60 BATTLE_* hook macros (362 uses). GS1 editions bind the hooks to GS1 semantics; games/gs2/recon/ja/main/battle_delta.h rebinds them with the sequel's grown logic (extra effect/heal/KO/guard cases) plus per-edition literal headers and ~200 per-edition callee retargets. BATTLE_SECOND_ACTOR reshapes struct BattlePlan in games/gs1/include/battle_types.h.",
@@ -76,6 +76,7 @@
     }
   ],
   "expressed": [
+    "The PP-restoration cluster now has the reference's two-call topology: effect 0x4d keeps its separately sign-extended Math_Div result, while effect 0x4e and the default arm stage numerator/divisor values and branch to one shared Math_Div tail. The external-call sequence no longer contains the candidate-only fourth divide; this removes 12 bytes of surplus code and exposes the true remaining deficit.",
     "BATTLE_PLAN_LOADS now creates range before target_id. This reproduces the reference range->r1 reload and extends the exact entry prefix by one instruction; the remaining target-id r5 carrier is an uncovered local-reload decision.",
     "The active GS2 state block now establishes cmd after the state load, letting GCC schedule the inline call, state address/load, and command-pointer store exactly as the ROM. It cuts wrong_instructions 2570 -> 2439 and exposes rather than masks the remaining 120-byte control-flow deficit.",
     "BATTLE_HEAL_PREP direct-access respell: the 0x4c/0x47/0x46 arms now read max_hp through direct casts, emitting the reference's movs #52 / ldrsh reg-offset + ldrh immediate forms instead of pre-adding 52 into the base; the else arm keeps the GS1 pointer walk to preserve its unfolded double-width load. Cluster verified locally against the reference; wrong_instructions 2608 -> 2574.",

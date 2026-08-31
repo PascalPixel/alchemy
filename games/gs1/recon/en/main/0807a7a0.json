@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x0807a7a0",
+  "status": "measured-draft",
+  "owner_bytes": 136,
+  "score": {
+    "measured": "2026-08-31",
+    "candidate_bytes": 136,
+    "reference_bytes": 136,
+    "differing_halfwords": 55,
+    "wrong_instructions": 14,
+    "class": "structural-topology",
+    "command": "compiler candidate-show games/gs1/recon/en/main/0807a7a0.c --owner 0x0807a7a0 --size 136 --align",
+    "note": "The drafting-wave m2c source advanced both u16 pointers by two elements per copy. Restoring ordinary post-increment copies, the shared snapshot/party layouts, and the input parameter reused as the sentinel carrier recovers the complete algorithm and exact owner size. Initializing the owner induction value before the guard selects the reference's source=r5/owner=r6 allocation and reduces wrong instructions from 76 to 14."
+  },
+  "remaining": [
+    {
+      "op": "recover sentinel and induction scheduling",
+      "count": 14,
+      "where": "The reference loads the sentinel, moves it to ip, advances source, compares through ip, and only then materializes owner=0. The closest candidate schedules the literal and owner zero before the load and compares r3 directly. The loop body is otherwise instruction-for-instruction equal; the tail differs only in ordering the final active-owner-pair store and snapshot-sentinel clear."
+    }
+  ],
+  "rejected_experiments": [
+    {
+      "experiment": "Initialize owner only inside the sentinel branch, including do/while, for-loop, and comma-condition spellings.",
+      "result": "Preserved equal topology but swapped source and owner between r6/r5, regressing to 48 wrong instructions."
+    },
+    {
+      "experiment": "Run the annotation-free allocator permuter for the decoded floor.",
+      "result": "The decoder reported no unique source repair for the remaining sentinel carrier and refused to open an unbounded search."
+    },
+    {
+      "experiment": "Probe canonical scheduling/CSE/regmove/loop/peephole/force-address flags and the alternate compiler routes.",
+      "result": "No route closed the owner. -fno-schedule-insns2 reached 45 differing halfwords but kept the same 14 wrong instructions with worse scheduling elsewhere; canonical flags remain the honest route."
+    },
+    {
+      "experiment": "Use the companion translation unit's raw Data_02000240 byte-array declaration instead of the established mode struct.",
+      "result": "GCC folded the four party offsets into independent absolute addresses, shrinking to 120 bytes and regressing to 46 wrong instructions."
+    }
+  ],
+  "notes": [
+    "Recovered from games/gs1/asm/0807a7a0.s, the approved local ROM, the drafting-wave candidate, the adjacent inventory snapshot builder at 0807a664, and established Owner/Psynergy/game-flag interfaces.",
+    "The function restores 15 inventory halfwords for each of four owners, refreshes derived owner state, restores two Psynergy shortcuts and two packed active-owner pairs, clears the snapshot sentinel, and clears game flag 0x952.",
+    "This candidate claims zero DONE bytes until the linked object reaches zero differing halfwords."
+  ]
+}

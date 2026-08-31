@@ -5,6 +5,7 @@
 typedef void (*DrawRectangleFn)(
     void *destination, const void *source, s32 x, s32 y,
     s32 width, s32 height);
+typedef void (*MemoryTransferFn)();
 
 /*
  * This header contains macros emitted by m2c in "valid syntax" mode,
@@ -80,6 +81,7 @@ void BattleEffect_RunScreenShatter(void *arg0) {
     struct M2cAggregate_absolute_02010000 *sp24;
     s32 sp20;
     DrawRectangleFn routines[2];
+    MemoryTransferFn transfer;
     struct M2cAggregate_deref_absolute_03001e74_0 *sp14;
     s32 sp10;
     s32 spC;
@@ -235,8 +237,9 @@ loop_4:
         var_r7_136 += 0x1000;
         var_r5_63 += 8;
     } while (var_ip_132 != 0x10);
-    Func_080072f8(sp24, 0x4000);
-    Func_080072f8((struct M2cAggregate_absolute_02010000 *)0x06004000, 0x4000);
+    transfer = (MemoryTransferFn)0x03000164;
+    transfer(sp24, 0x4000);
+    transfer((struct M2cAggregate_absolute_02010000 *)0x06004000, 0x4000);
     temp_r4_193 = *(u16 *)0x04000208;
     *(u16 *)0x04000208 = 0x04000208;
     if ((s32) absolute_02002090.field_0000 <= 0x1F) {
@@ -276,7 +279,8 @@ loop_4:
         var_r1_291 += 0x1C;
     } while (var_r6_295 != 0x21);
     Func_080072f0(&absolute_02010000, (struct M2cAggregate_absolute_02010000 *)0x06008000, 0x7800, 0x03001388);
-    Func_080072f8(&absolute_02010000, 0x7800, 0x01010101);
+    transfer = (MemoryTransferFn)0x03000164;
+    transfer(&absolute_02010000, 0x7800, 0x01010101);
     temp_r9_36->field_0010 = 1;
     M2C_FIELD(sp28, s32 *, 0x77A0) = (s32) absolute_03001ad0.field_0004;
     M2C_FIELD(sp28, s32 *, 0x77A4) = (s32) absolute_03001ad0.field_0006;
@@ -292,7 +296,7 @@ loop_4:
         M2C_FIELD((temp_r3_357 + 4), s32 *, 4) = 0x20000;
     }
     *(u16 *)0x04000208 = temp_r4_345;
-    Func_080072f8((struct M2cAggregate_absolute_02010000 *)0x050000C0, 0x100, 0x7FFF7FFF);
+    transfer((struct M2cAggregate_absolute_02010000 *)0x050000C0, 0x100, 0x7FFF7FFF);
     Func_080f9010(0xD4);
     Func_080d6888(M2C_FIELD(M2C_FIELD(sp28, void **, 0x7828), s16 *, 0x24), 7, 3, 0, 0x1E);
     sp20 = 0;

@@ -5,16 +5,17 @@
   "name": "BattleEffect_RunScreenShatter",
   "status": "measured-draft",
   "owner_bytes": 2508,
-  "candidate_bytes": 2432,
+  "candidate_bytes": 2448,
   "differing_halfwords": 1199,
-  "wrong_instructions": 1237,
-  "classification": "structural-reconstruction",
+  "wrong_instructions": 1253,
+  "classification": "structural-topology",
   "resolved_asm_classification": {
     "kind": "compiler_output",
     "retention": "c_candidate",
     "confidence": "likely"
   },
   "notes": [
+    "2026-09-01: replaced four fictional direct Func_080072f8 calls with the typed IWRAM transfer routine at 0x03000164. The reference loads that target into r5 once for each two-call pair and preserves it across the second pair's intervening work; the C now expresses the same two callback lifetimes. Candidate size grows from 2432 to 2448 of 2508 bytes while differing halfwords remain 1199 and wrong instructions move 1237 to 1253 from downstream allocation. This semantic correction removes the call-via-r5 lint rather than optimizing the raw score.",
     "2026-08-31: re-audited the wave repair and improved the measured draft from 2396/2508 bytes, 1202 differing halfwords, and 1257 wrong instructions to 2432/2508, 1199, and 1237. The correction preserves REG_IME's real saved value while using typed halfword access, uses byte-addressed arithmetic for the actor-data pointer, and types the three ROM tables as u16/u8/u8. The owner remains Draft C and claims zero DONE bytes.",
     "Two values loaded from the established heap callback cache at +0xb8/+0xbc were dead in the m2c draft because the later `_call_via_r4` and `_call_via_r7` trampoline sites were misrepresented as direct Func_080072f4/Func_08007300 calls. Reconstructing them as the family-standard two-entry DrawRectangleFn array restores the reference's stack-backed callback lifetime, grows the frame from 40 to 48 bytes, and adds 24 candidate bytes. Declaration order now reproduces the reference's relative local ordering; the remaining 8-byte total-frame difference is compiler stack-slot/padding evidence, not permission to add fake padding.",
     "The repaired errors were mechanical recovery issues: typed halfword stores to VRAM, typed IME halfword save/restore, byte-addressed aggregate-pointer arithmetic, and typed ROM table reads. No instruction bytes, inline assembly, fixed-register variables, compiler barriers, or external decompilation sources were introduced.",

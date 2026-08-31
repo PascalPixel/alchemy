@@ -5,9 +5,9 @@
   "status": "measured-draft",
   "owner_bytes": 68,
   "executable_owner_bytes": 68,
-  "candidate_bytes": 72,
-  "differing_halfwords": 36,
-  "wrong_instructions": 50,
+  "candidate_bytes": 68,
+  "differing_halfwords": 31,
+  "wrong_instructions": 42,
   "classification": "stop-music-track",
   "resolved_asm_classification": {
     "kind": "compiler_output",
@@ -21,6 +21,7 @@
     "core_identical": true
   },
   "notes": [
+    "2026-08-31: retaining the entry `track->flags` read in a named `u8 flags` carrier improves the candidate from 72/36/50 to the exact 68-byte extent with 31 differing halfwords and 42 wrong instructions. GCC changes the flag test from `ands`/`cmp` to an equivalent bit-extract `lsrs`/`cmp`; using an `s32` carrier emits the same result. An explicit outer early return is byte-identical to the original nested conditional and was reverted. The remaining residual is still broad register allocation plus the reference's `movs #128; tst` test shape, so this is retained as a measured Draft C improvement only.",
     "Stops every CGB channel owned by an active music track, invokes the configured oscillator-disable callback for hardware channel types, and clears both sides of the ownership link.",
     "The six editions retain an identical 60-byte relocation-normalized executable core inside the same 68-byte owner boundary.",
     "A fresh fixed-route rebuild after the shared audio-channel declarations changed reports 72 candidate bytes, 36 differing halfwords, and 50 wrong instructions; the earlier stored 24-row score was stale.",

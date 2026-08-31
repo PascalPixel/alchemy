@@ -17,6 +17,8 @@
   "Recovered from the retained owner, the aggregate-aware m2c seed, the prepared template pack, and the approved compiler.",
   "Explicit byte-offset construction and two proven early-return guards reproduce the reference address schedule and return-zero carrier; the canonical score improved from 47 to 2 differing halfwords.",
   "The owner uses only its first two incoming arguments, so the unsupported three unused parameters were removed from the provisional signature.",
+  "2026-08-31 bounded closure, compiler axis: -O3, -Os, -fno-defer-pop, -fno-function-cse, -fno-regmove, and -fno-schedule-insns all preserve the exact 96-byte candidate and the same two-halfword 8-versus-16-byte frame residual. -O1 shortens the candidate to 92 bytes with 41 differing halfwords, -fno-omit-frame-pointer emits 108 bytes with 52 differing halfwords, and -fno-schedule-insns2 preserves 96 bytes but regresses to 23 differing halfwords. No tested shipped route explains the frame while preserving the otherwise exact body.",
+  "2026-08-31 bounded closure, source-context axis: a plain unused u32[2] local is eliminated and leaves the residual unchanged. Marking that array volatile makes the owner mechanically byte-exact by forcing eight otherwise unreferenced stack bytes, but no reference instruction reads, writes, or takes the address of those bytes and no caller evidence identifies such an object. The volatile padding probe was therefore rejected as an evidence-free frame-forcing device and removed. This owner remains Draft C pending authentic translation-unit or source evidence for the extra eight bytes.",
   "No inline assembly, register forcing, compiler barriers, copied instruction bytes, or external decompilation source was used."
  ]
 }

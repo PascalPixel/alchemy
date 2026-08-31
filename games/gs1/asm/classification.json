@@ -675,6 +675,26 @@
    ]
   },
   {
+   "kind": "registered_gap_alignment",
+   "origin": "assembler",
+   "retention": "adjacent_section_alignment",
+   "confidence": "proven",
+   "evidence": [
+    "registered_main_region_alignment_padding",
+    "byte_exact_directive_data"
+   ],
+   "expected_files": 6,
+   "expected_bytes": 12,
+   "files": [
+    "0801c9be",
+    "0801c9c2",
+    "0801c9c6",
+    "0801ca16",
+    "08021dfa",
+    "080c0ea6"
+   ]
+  },
+  {
    "kind": "executable_gap_continuation",
    "origin": "compiler",
    "retention": "merge_with_owner",
@@ -686,21 +706,16 @@
     "tracked_owner_edge",
     "byte_exact_reconstruction"
    ],
-   "expected_files": 38,
-   "expected_bytes": 2486,
+   "expected_files": 31,
+   "expected_bytes": 2362,
    "files": [
     "0800f1bc",
     "0800fd5c",
-    "0801c9be",
-    "0801c9c2",
-    "0801c9c6",
-    "08021dfa",
+    "0801c9c8",
     "080268da",
     "0808f498",
     "080bea9c",
     "080bef58",
-    "080bf1e8",
-    "080c0ea6",
     "080c91a4",
     "080d126c",
     "080d5052",
@@ -708,14 +723,12 @@
     "080d7e5c",
     "080d821a",
     "080dbb9a",
-    "080dddb8",
     "080de08c",
     "080e1daa",
     "080e21ae",
     "080e24fa",
     "080e4ddc",
     "080e53f4",
-    "080e5790",
     "080e5acc",
     "080e5dee",
     "080e6252",
@@ -1426,12 +1439,18 @@
    "retention": "keep_asm",
    "confidence": "proven",
    "evidence": [
-    "pc_relative_references_from_0809b698"
+    "registered_main_region_literal_pool",
+    "pc_relative_reference_consumers",
+    "byte_exact_directive_data"
    ],
-   "expected_files": 1,
-   "expected_bytes": 32,
+   "expected_files": 5,
+   "expected_bytes": 144,
    "files": [
-    "0809b7e4"
+    "0801ca18",
+    "0809b7e4",
+    "080bf1e8",
+    "080dddb8",
+    "080e5790"
    ]
   },
   {

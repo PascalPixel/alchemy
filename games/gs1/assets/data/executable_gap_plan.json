@@ -340,19 +340,14 @@
   ],
   "fragments": [
     {
-      "address": "0x0801c9be",
-      "size": 94,
+      "address": "0x0801c9c8",
+      "size": 78,
       "evidence": "games/gs1/asm/0801c954.s -> games/gs1/asm/0801ca1c.s"
     },
     {
       "address": "0x0801e738",
       "size": 20,
       "evidence": "src/0801e71c.c -> games/gs1/asm/0801e74c.s"
-    },
-    {
-      "address": "0x08021dfa",
-      "size": 46,
-      "evidence": "games/gs1/asm/08021d88.s -> games/gs1/asm/08021e28.s"
     },
     {
       "address": "0x080268da",
@@ -440,16 +435,6 @@
       "evidence": "games/gs1/asm/080beb08.s -> games/gs1/asm/080bef88.s"
     },
     {
-      "address": "0x080bf1e8",
-      "size": 32,
-      "evidence": "games/gs1/asm/080bef88.s -> src/080bf208.c"
-    },
-    {
-      "address": "0x080c0ea6",
-      "size": 18,
-      "evidence": "src/080c0e70.c -> games/gs1/asm/080c0eb8.s"
-    },
-    {
       "address": "0x080c91a4",
       "size": 56,
       "evidence": "src/080c9138.c -> games/gs1/asm/080c91dc.s"
@@ -490,11 +475,6 @@
       "evidence": "src/080dbb98.c -> src/080dbbdc.c"
     },
     {
-      "address": "0x080dddb8",
-      "size": 40,
-      "evidence": "games/gs1/asm/080ddb34.s -> games/gs1/asm/080ddde0.s"
-    },
-    {
       "address": "0x080de08c",
       "size": 72,
       "evidence": "games/gs1/asm/080ddde0.s -> games/gs1/asm/080de0d4.s"
@@ -523,11 +503,6 @@
       "address": "0x080e53f4",
       "size": 136,
       "evidence": "games/gs1/asm/080e4e0c.s -> games/gs1/asm/080e547c.s"
-    },
-    {
-      "address": "0x080e5790",
-      "size": 36,
-      "evidence": "games/gs1/asm/080e5504.s -> games/gs1/asm/080e57b4.s"
     },
     {
       "address": "0x080e5acc",

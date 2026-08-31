@@ -1,0 +1,28 @@
+{
+ "schema_version": 1,
+ "namespace": "gs1-en-main",
+ "address": "0x0808b158",
+ "status": "measured-draft",
+ "owner_bytes": 128,
+ "score": {
+  "measured": "2026-08-31",
+  "candidate_bytes": 128,
+  "reference_bytes": 128,
+  "differing_halfwords": 21,
+  "wrong_instructions": 18,
+  "class": "structural-topology",
+  "note": "The first ordinary-C draft has exact owner extent and models the complete table search. The residual begins with lifetime/allocation differences around the two arguments, the resource-group result, the null return carrier, and the table base; candidate-show also reports one guard inversion even though the source's mismatch paths follow the reference semantics. It remains Draft C and claims zero DONE bytes."
+ },
+ "behavior": [
+  "calls Func_0808a8d0(effect_id) once to obtain the alternate resource-group key",
+  "walks the 8-byte entries at 0x0809ddd8 until the signed id field is -1",
+  "uses entry bit 15 to choose whether the id must match effect_id or the derived resource group",
+  "treats the signed 15-bit condition value -1 as a wildcard and otherwise requires it to equal the second argument",
+  "returns the first matching entry's pointer, or null when the terminator is reached"
+ ],
+ "notes": [
+  "The adjacent measured 0808b090 dossier identifies this owner as its parameterized twin and the exact in-repository Func_0808b1d8 as the simpler terminated-table family member. Those sources corroborate the entry stepping, -1 terminator, first-match behavior, source-selector flag, signed 15-bit condition, and wildcard semantics independently of this draft.",
+  "One targeted correction was permitted after the initial score: the selector branch was rewritten with an explicit shared match label to follow candidate-show's guard-inversion advice. GCC emitted byte-identical output (128 bytes, 21 differing halfwords, 18 wrong instructions), so the rewrite was reverted and the clearer structured form retained. Do not retry that spelling without new compiler evidence.",
+  "Recovered only from games/gs1/asm/0808b158.s, adjacent in-repository family sources and dossiers, and the approved compiler's candidate-show output. No external decompilation source, raw instruction-byte copying, inline assembly, fixed-register variable, compiler barrier, or compiler modification was used."
+ ]
+}

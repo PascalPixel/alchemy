@@ -1261,15 +1261,15 @@
       ]
     },
     {
-      "address": "0x0801c9be",
-      "size": 94,
+      "address": "0x0801c9c8",
+      "size": 78,
       "sections": [
         {
-          "address": "0x0801c9be",
-          "size": 94,
+          "address": "0x0801c9c8",
+          "size": 78,
           "kind": "thumb",
-          "source": "0801c9be.s",
-          "instruction_bytes": 94,
+          "source": "0801c9c8.s",
+          "instruction_bytes": 78,
           "literal_words": 0,
           "undefined_words": 0
         }
@@ -1286,21 +1286,6 @@
           "source": "0801e738.s",
           "instruction_bytes": 12,
           "literal_words": 2,
-          "undefined_words": 0
-        }
-      ]
-    },
-    {
-      "address": "0x08021dfa",
-      "size": 46,
-      "sections": [
-        {
-          "address": "0x08021dfa",
-          "size": 46,
-          "kind": "thumb",
-          "source": "08021dfa.s",
-          "instruction_bytes": 42,
-          "literal_words": 1,
           "undefined_words": 0
         }
       ]
@@ -1546,36 +1531,6 @@
       ]
     },
     {
-      "address": "0x080bf1e8",
-      "size": 32,
-      "sections": [
-        {
-          "address": "0x080bf1e8",
-          "size": 32,
-          "kind": "thumb",
-          "source": "080bf1e8.s",
-          "instruction_bytes": 32,
-          "literal_words": 0,
-          "undefined_words": 0
-        }
-      ]
-    },
-    {
-      "address": "0x080c0ea6",
-      "size": 18,
-      "sections": [
-        {
-          "address": "0x080c0ea6",
-          "size": 18,
-          "kind": "thumb",
-          "source": "080c0ea6.s",
-          "instruction_bytes": 10,
-          "literal_words": 2,
-          "undefined_words": 0
-        }
-      ]
-    },
-    {
       "address": "0x080c91a4",
       "size": 56,
       "sections": [
@@ -1696,21 +1651,6 @@
       ]
     },
     {
-      "address": "0x080dddb8",
-      "size": 40,
-      "sections": [
-        {
-          "address": "0x080dddb8",
-          "size": 40,
-          "kind": "thumb",
-          "source": "080dddb8.s",
-          "instruction_bytes": 40,
-          "literal_words": 0,
-          "undefined_words": 0
-        }
-      ]
-    },
-    {
       "address": "0x080de08c",
       "size": 72,
       "sections": [
@@ -1795,21 +1735,6 @@
           "kind": "thumb",
           "source": "080e53f4.s",
           "instruction_bytes": 136,
-          "literal_words": 0,
-          "undefined_words": 0
-        }
-      ]
-    },
-    {
-      "address": "0x080e5790",
-      "size": 36,
-      "sections": [
-        {
-          "address": "0x080e5790",
-          "size": 36,
-          "kind": "thumb",
-          "source": "080e5790.s",
-          "instruction_bytes": 36,
           "literal_words": 0,
           "undefined_words": 0
         }

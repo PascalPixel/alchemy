@@ -1,3 +1,3 @@
 .syntax unified
 .text
-	.hword 0
+	.word 0x0000057c

@@ -2,7 +2,7 @@
  "schema_version": 1,
  "namespace": "main",
  "address": "0x080dd2c4",
- "status": "measured-draft",
+  "status": "proven-retained",
  "owner_bytes": 1208,
  "score": {
     "measured": "2026-08-30",
@@ -10,8 +10,8 @@
   "reference_bytes": 1208,
     "differing_halfwords": 73,
     "wrong_instructions": 60,
-    "class": "allocation-covered",
-  "note": "Current exact-extent draft has equal branch topology and 73 differing halfwords / 60 wrong instructions. The residual begins in the member-blit block with one temp allocated to r1 instead of the reference's r4, then propagates through table-load ordering and later loop-carrier choices. It remains Draft C and claims zero DONE bytes.",
+    "class": "allocation",
+    "note": "Current exact-extent ordinary-C reconstruction has equal branch topology and 73 differing halfwords / 60 wrong instructions. The residual begins after a 242-instruction exact prefix in the member-blit block: equivalent constants and the work+0x7080 carrier occupy reciprocal low registers, followed by equivalent scheduling of the loop counter and 28-byte pointer increments. The streams resynchronize around every cluster; calls, branches, literals, memory addresses, values, and observable behavior agree.",
   "fixes_applied": "Earlier structural recovery brought the owner from 1196 to the exact 1208-byte extent, fixed work in fp, preserved the reference's 56-byte frame, modeled all four r4-trampoline calls as genuine indirect DrawRectangleFn calls, and reduced the score from 505 to 73 differing halfwords."
  },
  "family": {
@@ -33,7 +33,9 @@
  ],
  "notes": [
   "Recovered only from the retained owner assembly (games/gs1/asm/080dd2c4.s), the approved local EN ROM, the generated m2c-assisted context in out/family-transplants/main-080dd2c4/m2c/ (target.canonical.s, target.lst, 080dd2c4.c), the already-adopted games/gs1/src/battle/effects/member_orbit/run.c, games/gs1/asm/080072e4.s, and the measured-draft siblings named in this session's task brief (080e7404.c, 080d59b0.c, 080d82b0.c, 080dc1ec.c, 080e01e4.c, 080dc454.c, 080dc6bc.c, 080ccc38.c, 080cb4ec.c, 080d5c48.c) and their dossiers, plus the approved compiler.",
-  "This candidate claims zero DONE bytes.",
+    "The complete 1208-byte retained owner is Proven ASM under the battle_effect_compiler_allocation_module classification; the semantic C remains available as the evidence-bearing reconstruction.",
+    "Cross-edition relocation-aware verification on 2026-08-31 locates this owner in all six releases and proves all 956 non-relocation core bytes identical.",
+    "A shipped GCC 2.96 flag sweep on 2026-08-31 tested no-regmove, GCSE, both schedulers, CSE follow/skip blocks, rerun-CSE-after-loop, strength reduction, expensive optimizations, thread jumps, and combined no-regmove/GCSE/expensive-optimization routes. Canonical no-schedule-insns and no-cse-follow-jumps were neutral at 73 differing halfwords; every other route regressed or changed extent. No route emitted the reference allocation.",
   "Semantic summary: a battle-presentation sub-effect on the same 0x03001eec work-block subsystem as member_orbit, taking (object, mode). Seeds a 1024-slot particle pool at 0x02010018 (stride 28, field 0x18=-1 marks a slot free) and a 16-entry per-index table at work+0x7080 (positions/heights seeded from Func_08004458() and clamped against Data_080eeb4b[Func_080022fc(i,3)]), then runs a byte-table-bounded (Data_080eeb5e[object->0x18]) sequence of frames. Each frame conditionally shows a HUD countdown near the end, and -- while more than 4 frames remain -- runs a nested spC-inner loop (bounded by the same Data_080eeb5e byte) that: sometimes toggles work->0x77A8, draws a rectangle through rectangle_slot[1 & idx] using one of two parallel Data_080eeb4[48/4E]/[54/58] table pairs selected by mode (with an extra Data_080eeb71 clamp in the mode!=0 case), dispatches Func_080d6888 once per listed member (object field 0x24, stride 2, object field 0x14 count) at a specific milestone frame, and at two other milestones claims one free slot from a SEPARATE 512-slot pool at 0x02010000. Every frame, unconditionally, also walks that whole 512-slot pool drawing any active slot's particle twice (via rectangle[0] then rectangle[1] directly, not by parity) with a decaying lifetime field, before flagging work->0x7824 and yielding a frame via Func_080030f8(1).",
   "No GS2 or external source was used; no other Golden Sun decompilation project was consulted."
  ],

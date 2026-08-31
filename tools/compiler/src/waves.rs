@@ -393,6 +393,7 @@ fn bucket_class(entry: &BucketEntry) -> Result<&str, String> {
             ResidualClass::TypeWidthMismatch => "type_width_mismatch",
             ResidualClass::StructuralTopology => "structural_topology",
             ResidualClass::MissingExtraCode => "missing_extra_code",
+            ResidualClass::FrameContext => "frame_context",
             ResidualClass::CompilerUnemittable => "compiler_unemittable",
             ResidualClass::Unclassified => "unclassified",
         })

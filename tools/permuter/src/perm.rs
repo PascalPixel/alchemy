@@ -164,7 +164,7 @@ fn declaration<'a>(
     name: &str,
 ) -> Result<(Range<usize>, &'a str), String> {
     let pattern = regex(&format!(
-        r"(?m)^[ \t]+(?:struct[ \t]+[A-Za-z_][A-Za-z0-9_]*|(?:u|s)(?:8|16|32)|void)[ \t*]+{}[ \t]*(?:\[[0-9]+\])?[ \t]*;[ \t]*(?:\n|$)",
+        r"(?m)^[ \t]+(?:(?:const|volatile)[ \t]+)*(?:struct[ \t]+[A-Za-z_][A-Za-z0-9_]*|(?:u|s)(?:8|16|32)|void)[ \t*]+{}[ \t]*(?:\[[0-9]+\])?[ \t]*;[ \t]*(?:\n|$)",
         regex::escape(name)
     ));
     let found = only(
@@ -216,7 +216,7 @@ fn swap(source: &str, code: &str, left: &str, right: &str) -> Mutations {
 }
 fn split(source: &str, code: &str, name: &str) -> Mutations {
     let (declaration, line) = declaration(source, code, name)?;
-    if source.contains("volatile") || !line.contains('*') {
+    if regex(r"\*[ \t]*volatile\b").is_match(line) || !line.contains('*') {
         return Err(format!(
             "split-lifetime repair requires nonvolatile pointer {name}"
         ));
@@ -1009,6 +1009,18 @@ mod tests {
             .contains("u32 b;\n    u32 a;"));
         assert!(parse("void f(void) { PERM_GENERAL(a,b); }", &plan).is_err());
         assert!(parse("void f(void) { Func_080072e4(); }", &plan).is_err());
+    }
+    #[test]
+    fn splits_pointer_to_volatile_object() {
+        let source = "void f(void)\n{\n    volatile s32 *active;\n\n    active = (volatile s32 *)0x02002080;\n    busy = *active;\n    *active = value;\n}\n";
+        let output = candidate(
+            source,
+            Repair::SplitLifetime {
+                name: "active".into(),
+            },
+        );
+        assert!(!output.contains("*active"));
+        assert_eq!(output.matches("*((volatile s32 *)0x02002080)").count(), 2);
     }
     #[test]
     fn inline_xor_operation_remains_bounded() {

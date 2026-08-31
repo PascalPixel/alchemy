@@ -4,7 +4,7 @@
 <rect x="0" y="0" width="540" height="304" fill="#6d4fc2" rx="8"/>
 <rect x="1" y="1" width="538" height="302" fill="none" stroke="#6d4fc2" stroke-width="2" rx="7"/>
 <text class="weyard" x="6" y="15">Main game</text>
-<text class="weyard" x="534" y="15" text-anchor="end">59.33% DONE</text>
+<text class="weyard" x="534" y="15" text-anchor="end">59.36% DONE</text>
 <rect x="3" y="22" width="534" height="258" fill="#fff"/>
 <g aria-label="0x080000c0–0x080003c0: 768 bytes">
 <title>0x080000c0–0x080003c0: 768 bytes</title>
@@ -2620,7 +2620,7 @@
 </g>
 <g aria-label="0x080ae99c–0x080aea4c: 176 bytes">
 <title>0x080ae99c–0x080aea4c: 176 bytes</title>
-<rect x="380.47533424391355" y="22.5" width="5.627342010799055" height="5.672142478052882" style="fill:#d8d9df"/>
+<rect x="380.47533424391355" y="22.5" width="5.627342010799055" height="5.672142478052882" style="fill:hsl(275 58% 66%)"/>
 </g>
 <g aria-label="0x080b0000–0x080b0070: 112 bytes">
 <title>0x080b0000–0x080b0070: 112 bytes</title>
@@ -3733,11 +3733,11 @@
 <rect x="534.7355617592607" y="277.9552614633638" width="1.7644382407393877" height="1.5447385366362336" style="fill:#6d4fc2"/>
 </g>
 <rect x="6" y="288" width="10" height="10" style="fill:#d8d9df"/>
-<text class="weyard legend-label" x="20" y="293" dominant-baseline="middle">Unknown 39.3%</text>
+<text class="weyard legend-label" x="20" y="293" dominant-baseline="middle">Unknown 39.2%</text>
 <rect x="100" y="288" width="10" height="10" style="fill:hsl(275 52% 82%)"/>
 <text class="weyard legend-label" x="114" y="293" dominant-baseline="middle">Draft C 1.4%</text>
 <rect x="188" y="288" width="10" height="10" style="fill:hsl(275 58% 66%)"/>
-<text class="weyard legend-label" x="202" y="293" dominant-baseline="middle">Proven ASM 37.3%</text>
+<text class="weyard legend-label" x="202" y="293" dominant-baseline="middle">Proven ASM 37.4%</text>
 <rect x="300" y="288" width="10" height="10" style="fill:#6d4fc2"/>
 <text class="weyard legend-label" x="314" y="293" dominant-baseline="middle">Proven C 22.0%</text>
 </svg>

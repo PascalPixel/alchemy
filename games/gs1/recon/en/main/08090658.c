@@ -1,16 +1,45 @@
 #include "types.h"
 
+extern u8 Data_00000539[];
+
 extern s32 Func_08004278(void *);
 extern s32 Func_080072f0(s32, s32, s32, s32);
 
+struct DisplayTransitionState {
+    u8 pad_000[0x508];
+    u8 palette_nibbles[0x22];
+    u16 transition_value;
+    u8 pad_52c[13];
+    u8 dither_toggle;
+    s8 transition_start;
+    s8 transition_end;
+    s8 transition_duration;
+    s8 transition_step;
+};
+
+struct DisplayTransfer {
+    u32 source;
+    u32 destination;
+    u32 control;
+};
+
+struct DisplayTransferQueue {
+    u16 count;
+    u16 pad;
+    struct DisplayTransfer entries[32];
+};
+
+extern struct DisplayTransferQueue Data_02002090;
+
 void Func_08090658(void)
 {
-    u8 *state = *(u8 **)0x03001ECC;
-    s8 *duration = (s8 *)(state + 0x53c);
+    struct DisplayTransitionState *state =
+        *(struct DisplayTransitionState **)0x03001ECC;
+    s8 *duration = &state->transition_duration;
     u16 value;
 
     if (*duration != 0) {
-        s8 *step = (s8 *)(state + 0x53d);
+        s8 *step = &state->transition_step;
 
         if (*step >= *duration) {
             volatile u16 *dma0;
@@ -23,25 +52,24 @@ void Func_08090658(void)
             (void)dma0[5];
             return;
         } else {
-            s8 *endPtr = (s8 *)(state + 0x53b);
-            s32 delta = *endPtr - *(s8 *)(state + 0x53a);
+            s32 delta = state->transition_end - state->transition_start;
             s32 v;
 
             (*step)++;
             v = Func_080072f0(delta * *step, *duration, delta, 0x03000380);
-            *(u16 *)(state + 0x52a) = *(s8 *)(state + 0x53a) + v;
+            state->transition_value = state->transition_start + v;
         }
     }
 
     {
-        u16 *valuePtr = (u16 *)(state + 0x52a);
-        u8 *toggle = state + 0x539;
+        u16 *valuePtr = &state->transition_value;
+        u8 *toggle = (u8 *)state + (u32)Data_00000539;
         s32 v2;
         s32 blend;
         s32 masked;
         s32 idx;
         const u8 *table = (const u8 *)0x0809e8ee;
-        s32 i;
+        u32 i;
 
         value = *valuePtr;
         v2 = value - 1;
@@ -57,7 +85,7 @@ void Func_08090658(void)
         i = 0;
         do {
             u8 entry = table[idx & 63];
-            u8 *p = state + 0x508 + (entry >> 1);
+            u8 *p = &state->palette_nibbles[entry >> 1];
 
             if (entry & 1) {
                 *p = (*p & 0x0f) | (blend << 4);
@@ -70,25 +98,22 @@ void Func_08090658(void)
     }
 
     {
+        struct DisplayTransferQueue *queue = &Data_02002090;
         volatile u16 *ime = (volatile u16 *)0x04000208;
-        u16 *count = (u16 *)0x02002090;
         s32 savedIme;
         s32 counter;
 
         savedIme = *ime;
-        *ime = 0;
-        counter = *count;
+        *ime = (u16)(u32)ime;
+        counter = queue->count;
         if (counter <= 31) {
-            s32 offset12 = counter * 12;
-            u8 *entry = (u8 *)count + offset12;
+            struct DisplayTransfer *entry = &queue->entries[counter];
+            u32 *destination = &entry->source;
 
-            *count = counter + 1;
-            {
-                u32 *slot = (u32 *)(entry + 4);
-                *slot++ = (u32)(state + 0x508);
-                *slot++ = 0x06000000;
-                *slot = 0x84000008;
-            }
+            queue->count = counter + 1;
+            *destination++ = (u32)state->palette_nibbles;
+            *destination++ = 0x06000000;
+            *destination = 0x84000008;
         }
         *ime = savedIme;
     }

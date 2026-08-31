@@ -1,0 +1,12 @@
+{
+  "span_bytes": 588,
+  "score": {"measured":"2026-08-31","candidate_bytes":580,"reference_bytes":588,"wrong_instructions":74,"differing_halfwords":238,"class":"generated-call-script-retention"},
+  "shape": {"calls":52,"loops":0,"memory_operations":16},
+  "verified_against_reference": [
+    "all 52 calls and their arguments are represented in ROM order across the complete callable owner",
+    "direct audit restored the carried scene handle, both workspace state transitions, the two-word placement publication, and the two-word actor coordinate publication omitted by the generated draft",
+    "the actor 9/10/11/12 staging, camera motion, and terminal scene close preserve machine order",
+    "the remaining eight-byte extent residual is approved-compiler high-register carrier allocation, postincrement spelling, literal reuse, immediate materialization, and scheduling after complete semantics are represented"
+  ],
+  "retention": "keep_structured_asm"
+}

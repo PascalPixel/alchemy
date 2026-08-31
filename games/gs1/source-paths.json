@@ -5587,6 +5587,7 @@
     "resource_3b1:020050e4": {"name": "FieldScene_RunPositionTransferPresentation"},
     "resource_3a8:02002008": {"name": "FieldScene_RunTwoActorCutsceneSequence"},
     "resource_380:020006f4": {"name": "FieldScene_RunMultiStageEffectPresentation"},
+    "resource_380:02002400": {"name": "FieldScene_RunSixPassEffectSequence"},
     "main:080a46b4": {
       "name": "Item_ClassifyUseMode",
       "source": "items/classify_use_mode.c"

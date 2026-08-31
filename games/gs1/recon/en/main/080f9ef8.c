@@ -4,7 +4,9 @@ void MusicTrack_Stop(
     struct MusicPlayerState *unused,
     struct MusicTrackState *track)
 {
-    if (track->flags & 0x80) {
+    u8 flags = track->flags;
+
+    if (flags & 0x80) {
         struct CgbChannel *channel = track->channel;
 
         if (channel != 0) {

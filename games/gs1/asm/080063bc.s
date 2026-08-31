@@ -1,5 +1,5 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
+@ Byte-exact retained Thumb owner. The canonical behavioral reconstruction is
+@ games/gs1/recon/en/main/080063bc.c; C/H assembly escape constructs are forbidden.
 .syntax unified
 	.thumb
 	.global SerialRuntime_BeginTransferA

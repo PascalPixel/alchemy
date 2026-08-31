@@ -2,8 +2,9 @@
  "schema_version": 1,
  "namespace": "gs1-en-main",
  "address": "0x080175c0",
- "status": "measured-draft",
+ "status": "proven-retained",
  "owner_bytes": 96,
+ "classification": "compiler_frame_context_module",
  "score": {
   "measured": "2026-08-30",
   "candidate_bytes": 96,
@@ -20,6 +21,7 @@
   "2026-08-31 bounded closure, compiler axis: -O3, -Os, -fno-defer-pop, -fno-function-cse, -fno-regmove, and -fno-schedule-insns all preserve the exact 96-byte candidate and the same two-halfword 8-versus-16-byte frame residual. -O1 shortens the candidate to 92 bytes with 41 differing halfwords, -fno-omit-frame-pointer emits 108 bytes with 52 differing halfwords, and -fno-schedule-insns2 preserves 96 bytes but regresses to 23 differing halfwords. No tested shipped route explains the frame while preserving the otherwise exact body.",
   "2026-08-31 bounded closure, source-context axis: a plain unused u32[2] local is eliminated and leaves the residual unchanged. Marking that array volatile makes the owner mechanically byte-exact by forcing eight otherwise unreferenced stack bytes, but no reference instruction reads, writes, or takes the address of those bytes and no caller evidence identifies such an object. The volatile padding probe was therefore rejected as an evidence-free frame-forcing device and removed. This owner remains Draft C pending authentic translation-unit or source evidence for the extra eight bytes.",
   "2026-08-31 frame-context backend proof: the shipped ARM target defines STACK_BOUNDARY as 32 bits and ACCUMULATE_OUTGOING_ARGS. Its epilogue restores exactly get_frame_size() plus current_function_outgoing_args_size (alchemy-gcc/agscc/gcc/config/arm/arm.h:694,1335; arm.c:6892-6896), while calls.c derives the preferred boundary from that four-byte target boundary and records only the maximum required outgoing area. This owner's sole six-argument call requires two stack words, so the ordinary source has an eight-byte outgoing area and zero live local-frame bytes. The reference's sixteen-byte adjustment therefore proves eight additional bytes of source or translation-unit frame context, not an allocator or scheduling choice. Because no reference instruction observes those bytes, their object type and semantics are not recoverable from this owner. The only DH0 probe, a volatile u32[2], manufactures that unknown context and remains inadmissible padding. Bounded verdict: exact ordinary C is blocked until authentic shared-TU/source evidence identifies the extra local object; retain the legitimate DH2 draft.",
+  "The complete source semantics, exact extent, equal topology, exact instruction stream outside the frame adjustment, and shipped-backend proof satisfy the repository's compiler-limitation contract. The owner remains structured assembly, now proven retained rather than unresolved C debt.",
   "No inline assembly, register forcing, compiler barriers, copied instruction bytes, or external decompilation source was used."
  ]
 }

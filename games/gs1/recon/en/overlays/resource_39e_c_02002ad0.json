@@ -1,0 +1,13 @@
+{
+  "span_bytes": 5000,
+  "score": {"measured":"2026-08-31","candidate_bytes":4900,"reference_bytes":5000,"wrong_instructions":468,"differing_halfwords":2336,"class":"generated-call-script-retention"},
+  "shape": {"calls":525,"branches":8,"loops":0,"direct_memory_operations":4},
+  "verified_against_reference": [
+    "all 525 resolver-confirmed calls are represented in call-site order with independently witnessed linked relocation targets",
+    "the three record null guards, the symmetric skip-beat branch, all four direct stores, three inline literal pools, and the terminal flag write are represented",
+    "a bounded mechanical read was checked against an independent hand transcription of the first 104 calls and asserted against the complete 525-site listing",
+    "the complete owner is bounded from the bare push at 0x02002ad0 through the six-word trailing pool before 0x02003e58",
+    "the remaining score delta is approved-compiler argument materialization, literal-pool placement, scheduling, and call-site relocation spelling after complete semantics are represented"
+  ],
+  "retention": "keep_structured_asm"
+}

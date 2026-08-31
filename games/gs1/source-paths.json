@@ -5599,6 +5599,7 @@
     "resource_3ba:020021b8": {"name": "CommandInterpolationRenderer_Update"},
     "resource_3bb:02002450": {"name": "CommandInterpolationRenderer_Update"},
     "resource_3bc:02002ee8": {"name": "CommandInterpolationRenderer_Update"},
+    "resource_39e:02002ad0": {"name": "FieldScene_RunRoofEnsembleSequence"},
     "main:080a46b4": {
       "name": "Item_ClassifyUseMode",
       "source": "items/classify_use_mode.c"

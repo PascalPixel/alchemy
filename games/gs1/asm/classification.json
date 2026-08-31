@@ -2517,6 +2517,28 @@
    "files": [
     "08005ee0"
    ]
+  },
+  {
+   "kind": "encoded_index_lookup_compiler_allocation_module",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_audited_owner_extent",
+    "six_edition_core_is_byte_identical",
+    "equal_branch_topology_and_all_four_literal_pool_words_exact",
+    "matching_two_pass_448_entry_lookup_global_reads_masks_shifts_outputs_and_termination",
+    "only_residual_is_equivalent_output_pointer_entry_pointer_index_mask_and_halfword_carrier_allocation",
+    "ten_thousand_candidate_annotation_free_permutation_finds_no_decoded_repair",
+    "canonical_and_seven_bounded_shipped_compiler_routes_find_no_exact_or_closer_result",
+    "inline_assembly_fixed_registers_compiler_barriers_and_forced_allocation_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 132,
+   "files": [
+    "0801c8a0"
+   ]
   }
  ]
 }

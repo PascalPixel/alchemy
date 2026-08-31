@@ -76,9 +76,10 @@ pub static NO_GCSE_SOURCES: &[&str] = &[
     "080981b0", "08098c08", "080a45cc", "080b2720", "080b3284", "080d40ec",
 ];
 pub static NO_EXPENSIVE_SOURCES: &[&str] = &["08092878"];
-// 0800ebec: its four register-only delay loops survive only without strength
-// reduction; -O1 scores worse (843) than -O2 -fno-strength-reduce (814).
-pub static NO_STRENGTH_REDUCE_SOURCES: &[&str] = &["080a9d3c", "02004058", "02005d68", "0800ebec"];
+// 0800ebec's register-only delay loops and 0800ba30's post-tested animation
+// table walk retain their indexed source shapes only without strength reduction.
+pub static NO_STRENGTH_REDUCE_SOURCES: &[&str] =
+    &["0800ba30", "080a9d3c", "02004058", "02005d68", "0800ebec"];
 // 0808b8e8 keeps the camera anchor live through both X bounds and reuses the
 // dead visual pointer for its null slot store.  Stock regmove undoes those two
 // source lifetimes; the shipped per-file disable preserves the exact schedule.

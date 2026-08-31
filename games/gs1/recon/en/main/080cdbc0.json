@@ -2,7 +2,8 @@
  "schema_version": 1,
  "namespace": "gs1-en-main",
  "address": "0x080cdbc0",
- "status": "measured-draft",
+ "status": "proven-retained",
+ "classification": "battle_scene_queue_compiler_instruction_selection_module",
  "owner_bytes": 340,
  "family_matcher": {
   "best_alternative": "main:0801b4ec (menu/selection/move_forward.c)",
@@ -53,6 +54,7 @@
  ],
  "notes": [
   "Recovered by hand-tracing games/gs1/asm/080cdbc0.s instruction-by-instruction (all PC-relative literal-pool targets resolved programmatically, not by hand, per CONTRIBUTING's caution against hand-counting offsets across alignment), then cross-checking every resolved call target, field offset, and pool constant against already-adopted exact sources under games/gs1/src/.",
+  "2026-08-31 retained-assembly proof: the complete candidate has equal branch topology and accounts for every call, argument, queue entry, field offset, control value, literal, and memory operation. The remaining stream is confined to GCC choosing an unsigned guard and individual stores where the reference uses the equivalent signed guard and stmia sequence at both bounded queue insertions, plus CSE-folding two battle+0x648 computations and the resulting 12-byte instruction/pool extent. Inline versus duplicated helper bodies, parameter types, bound spellings, pointer/index forms, and address-lifetime probes preserve these choices or regress; the allocator decoder finds no unique source repair. Relocation-normalized cross-edition verification proves all 230 core bytes identical across all six GS1 editions (nine relocations and 18 literal fields normalized). Structured assembly therefore remains authoritative under battle_scene_queue_compiler_instruction_selection_module.",
   "This owner sits in the same battle-scene-transition subsystem as battle_owner_61/battle_owner_12/battle_owner_54/system_owner_8 (the immediate successor at 0x080cdd14) and camera/scene/configure.c -- not the family-matcher's move_forward.c guess.",
   "Semantically this looks like a battle-scene-transition SETUP routine (BG2CNT configuration, a VRAM tile transfer via the shared IWRAM routine at 0x03000164, position/camera-anchor field writes, removing the Func_080cd4b4 per-frame callback, two guarded display-request-queue inserts differing only in a DISPCNT-shaped control word (0x7341 then 0x7541, differing by the BG1-enable bit), and an 8-iteration countdown call to Func_080b5048) -- a plausible counterpart to the already-drafted ResetSceneTransitionEffect (games/gs1/src/battle/effects/scene_transition/reset.c, address 0x080984c0, itself only a 7137-scored weak family-matcher alternative here) but not renamed to that effect pending stronger confirmation.",
   "This candidate claims zero DONE bytes."

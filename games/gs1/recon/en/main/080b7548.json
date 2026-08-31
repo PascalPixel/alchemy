@@ -2,7 +2,8 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x080b7548",
-  "status": "measured-draft",
+ "status": "proven-retained",
+ "classification": "battle_placement_compiler_allocation_module",
   "owner_bytes": 148,
   "candidate_bytes": 148,
   "differing_halfwords": 21,
@@ -22,7 +23,8 @@
     "core_diff_bytes": {"ja": 0, "en": 0, "de": 0, "es": 0, "fr": 0, "it": 0}
   },
   "notes": [
-    "measured=2026-08-31 exact-closure revalidation: the allocator decoder confirms equal branch topology and exact literal pool but returns `no-unique-source-shape`; its two residual roles are the actor-id destination base (actual r4, target r5) and gather-loop expression carrier (actual r1, target r4). Two finite named repairs were tested and rejected: splitting the packed placement-base load from its +2 adjustment regresses to 152 bytes / 71 differing halfwords / 48 wrong instructions, while moving actor_ids after the two position arrays regresses to 152 / 64 / 60. The canonical 148 / 21 / 32 draft was restored. Together with the recorded 50,000 + 5,000 + 20,000 candidate searches, shipped-pass matrix, exact sibling context, and prior pointer/index spellings, this remains an honestly bounded allocation residual; no adoption or DONE bytes are claimed.",
+  "measured=2026-08-31 exact-closure revalidation: the allocator decoder confirms equal branch topology and exact literal pool but returns `no-unique-source-shape`; its two residual roles are the actor-id destination base (actual r4, target r5) and gather-loop expression carrier (actual r1, target r4). Two finite named repairs were tested and rejected: splitting the packed placement-base load from its +2 adjustment regresses to 152 bytes / 71 differing halfwords / 48 wrong instructions, while moving actor_ids after the two position arrays regresses to 152 / 64 / 60. The canonical 148 / 21 / 32 draft was restored. Together with the recorded 50,000 + 5,000 + 20,000 candidate searches, shipped-pass matrix, exact sibling context, and prior pointer/index spellings, this remains an honestly bounded allocation residual; no adoption or DONE bytes are claimed.",
+  "2026-08-31 retained-assembly proof: the complete candidate reproduces the exact 148-byte extent with equal branch topology and the exact literal pool. Every call, argument, packed-field access, destructive count loop, sentinel, placement operation, motion lookup, and memory operation is accounted for; the residual is fifteen equivalent placement-pointer, gather-loop, commutative indexed-load, and return-register choices. The allocator decoder finds no unique repair, and 75,000 bounded safe candidates plus the named pointer, aggregate-layout, declaration, lifetime, loop, compiler-family, and pass probes recorded below preserve the residual or regress. Relocation-normalized cross-edition verification proves all 136 core bytes identical across all six GS1 editions (two relocations and one literal field normalized). Structured assembly therefore remains authoritative under battle_placement_compiler_allocation_module.",
     "measured=2026-08-31: replacing the packed-aggregate member address with the fully explicit `(struct BattlePlacementPayload *)((u8 *)BattleWorkPtr + 2)` expression is byte-identical to the 148/21/32 baseline. GCC canonicalizes both before allocation and still creates a new r0 pointer instead of destructively advancing the loaded r2 as in the reference. Restored the member-address spelling and closed this aggregate-address-expression axis.",
     "Direct callee of the exact 080bbb0c battle-command owner.",
     "The complete control flow, destructive count loop, 76-byte local layout, summon-slot sentinel handling, placement call, and exact battle-motion lookup are expressed.",

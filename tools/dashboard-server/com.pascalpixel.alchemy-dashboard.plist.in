@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.pascalpixel.alchemy-dashboard</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>@CARGO@</string>
+    <string>run</string>
+    <string>--offline</string>
+    <string>--quiet</string>
+    <string>--release</string>
+    <string>--manifest-path</string>
+    <string>@ALCHEMY_ROOT@/tools/compiler/Cargo.toml</string>
+    <string>--</string>
+    <string>dashboard-server</string>
+    <string>--bind</string>
+    <string>127.0.0.1:4649</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>@ALCHEMY_ROOT@</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>CARGO_TARGET_DIR</key>
+    <string>@ALCHEMY_ROOT@/out/cargo-target</string>
+    <key>PATH</key>
+    <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+  </dict>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>ThrottleInterval</key>
+  <integer>10</integer>
+  <key>StandardOutPath</key>
+  <string>@ALCHEMY_ROOT@/out/dashboard.log</string>
+  <key>StandardErrorPath</key>
+  <string>@ALCHEMY_ROOT@/out/dashboard.err</string>
+</dict>
+</plist>

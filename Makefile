@@ -66,7 +66,7 @@ CANDIDATE_SINGLE_OWNERS := \
 	full-rom-check overlay-check declared-tu-check owner-inventory-check strict-tu-check classification-check \
 	candidate-corpus-check source-tracking-check index-sync-check check-owners progress progress-report progress-check progress-subject \
 	correspondence correspondence-check edition-builds edition-builds-check \
-	families family-check coverage coverage-check dashboard clean clean-preview
+	families family-check coverage coverage-check dashboard dashboard-service-install clean clean-preview
 .PHONY: targets $(HISTORICAL_TARGETS)
 
 help:
@@ -97,7 +97,8 @@ help:
 		'make family-check     prove the family index and retained-family evidence' \
 		'make edition-builds   relink exact EN C across GS1 editions' \
 		'make coverage         refresh dashboard data and figures' \
-		'make dashboard        serve the dashboard on localhost:4649'
+		'make dashboard        serve the dashboard on localhost:4649' \
+		'make dashboard-service-install install and start the macOS dashboard LaunchAgent'
 
 build-claimed:
 	$(BUILD) claimed --target $(TARGET)
@@ -145,6 +146,16 @@ $(HISTORICAL_TARGETS):
 
 dashboard:
 	$(COMPILER) dashboard-server --bind 127.0.0.1:4649
+
+dashboard-service-install:
+	@mkdir -p '$(HOME)/Library/LaunchAgents' '$(CURDIR)/out'
+	@sed -e 's|@ALCHEMY_ROOT@|$(CURDIR)|g' \
+		-e 's|@CARGO@|$(shell command -v $(CARGO))|g' \
+		tools/dashboard-server/com.pascalpixel.alchemy-dashboard.plist.in \
+		> '$(HOME)/Library/LaunchAgents/com.pascalpixel.alchemy-dashboard.plist'
+	@launchctl bootout 'gui/$(shell id -u)/com.pascalpixel.alchemy-dashboard' 2>/dev/null || true
+	@launchctl bootstrap 'gui/$(shell id -u)' '$(HOME)/Library/LaunchAgents/com.pascalpixel.alchemy-dashboard.plist'
+	@printf 'Alchemy dashboard service installed: http://localhost:4649/\n'
 
 progress:
 	$(CHECK) progress

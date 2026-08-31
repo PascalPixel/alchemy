@@ -832,14 +832,20 @@ struct BattleWorkPage {
             maxv = *(s16 *)((u8 *)target + 54);                           \
             maxu = *(u16 *)((u8 *)target + 54);                           \
             inc = (s16)Math_Div(maxv, 10);                                \
-        } else if (effect == 0x4e) {                                      \
-            maxv = *(s16 *)((u8 *)target + 54);                           \
-            maxu = *(u16 *)((u8 *)target + 54);                           \
-            inc = Math_Div(maxv * 3, 10);                                 \
         } else {                                                          \
+            s32 numerator;                                                \
+            s32 denominator;                                              \
+                                                                           \
             maxv = *(s16 *)((u8 *)target + 54);                           \
             maxu = *(u16 *)((u8 *)target + 54);                           \
-            inc = Math_Div(maxv * 7, 100);                                \
+            if (effect == 0x4e) {                                         \
+                numerator = maxv * 3;                                     \
+                denominator = 10;                                         \
+            } else {                                                       \
+                numerator = maxv * 7;                                     \
+                denominator = 100;                                        \
+            }                                                              \
+            inc = Math_Div(numerator, denominator);                        \
         }                                                                 \
         heal += inc;                                                      \
         if (heal > (s16)maxu)                                             \

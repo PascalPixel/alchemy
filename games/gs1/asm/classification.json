@@ -2427,6 +2427,28 @@
    "files": [
     "08011f54"
    ]
+  },
+  {
+   "kind": "inventory_snapshot_compiler_entry_exit_scheduling_module",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_audited_owner_extent",
+    "six_edition_relocation_normalized_core_is_identical",
+    "equal_branch_structure_exact_literal_pool_and_instruction_exact_restore_loop_body",
+    "only_residual_is_sentinel_and_owner_zero_entry_scheduling_plus_two_independent_final_store_orders",
+    "allocator_order_decoder_finds_no_unique_source_shape",
+    "guard_do_while_for_comma_condition_translation_unit_declaration_and_side_effect_order_probes_preserve_the_residual_or_regress",
+    "approved_gcc_2_96_scheduling_cse_regmove_loop_peephole_force_address_and_alternate_routes_preserve_the_residual_or_regress",
+    "inline_assembly_fixed_registers_compiler_barriers_and_forced_scheduling_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 136,
+   "files": [
+    "0807a7a0"
+   ]
   }
  ]
 }

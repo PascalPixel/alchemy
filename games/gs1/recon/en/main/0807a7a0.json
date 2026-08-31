@@ -2,7 +2,8 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x0807a7a0",
-  "status": "measured-draft",
+  "status": "proven-retained",
+  "classification": "inventory_snapshot_compiler_entry_exit_scheduling_module",
   "owner_bytes": 136,
   "score": {
     "measured": "2026-08-31",
@@ -42,6 +43,6 @@
   "notes": [
     "Recovered from games/gs1/asm/0807a7a0.s, the approved local ROM, the drafting-wave candidate, the adjacent inventory snapshot builder at 0807a664, and established Owner/Psynergy/game-flag interfaces.",
     "The function restores 15 inventory halfwords for each of four owners, refreshes derived owner state, restores two Psynergy shortcuts and two packed active-owner pairs, clears the snapshot sentinel, and clears game flag 0x952.",
-    "This candidate claims zero DONE bytes until the linked object reaches zero differing halfwords."
+    "2026-08-31 retained-assembly proof: cross-edition verification proves all 106 relocation-normalized core bytes identical across six editions. The complete candidate has the exact 136-byte audited extent and exact pool, and accounts for the sentinel guard, four-owner 15-halfword restore loops, both derived-state refreshes, four global halfword restores, sentinel clear and game-flag clear. The restore body is instruction-exact. Only the sentinel/owner-zero entry schedule and ordering of the final active-owner-pair store versus sentinel clear differ. The decoder finds no unique repair; guarded do-while, for, comma-condition, translation-unit declaration, side-effect-order, scheduling, CSE, regmove, loop, peephole, force-address and alternate compiler routes preserve the 55/14 floor or regress. Structured assembly therefore remains authoritative under inventory_snapshot_compiler_entry_exit_scheduling_module; the candidate does not claim exact C."
   ]
 }

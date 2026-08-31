@@ -1,0 +1,11 @@
+{
+  "span_bytes": 1400,
+  "score": {"measured":"2026-08-31","candidate_bytes":1400,"reference_bytes":1400,"wrong_instructions":408,"differing_halfwords":564,"class":"structured-scene-retention"},
+  "shape": {"calls":144,"loops":2,"inline_literal_pools":1,"story_flags":3},
+  "verified_against_reference": [
+    "the complete actor-fourteen scene is bounded from 0x02001d04 through its inline pool and trailing pool before 0x0200227c",
+    "all 144 calls, guest spawn and rise loop, re-prompt loop, dialogue blocks, record field effects, and flags 220, 221, and 223 are represented",
+    "the identical extent with a non-exact score reflects approved-compiler scheduling, carrier allocation, and literal placement after complete semantics are represented"
+  ],
+  "retention": "keep_structured_asm"
+}

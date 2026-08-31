@@ -1,0 +1,11 @@
+{
+  "span_bytes": 1240,
+  "score": {"measured":"2026-08-31","candidate_bytes":1220,"reference_bytes":1240,"wrong_instructions":477,"differing_halfwords":572,"class":"structured-scene-retention"},
+  "shape": {"calls":93,"targets":28,"published_callers":2,"wait_loops":2},
+  "verified_against_reference": [
+    "the complete shared set-piece is bounded from 0x02000ec0 across its thirty-two-word pool to the shared unwind before 0x02001398",
+    "all 93 calls across 28 targets, both published-callback entry contexts, the frame-count parameter use, flag wiring, callback lifecycle, and two completion waits are represented",
+    "the remaining twenty-byte extent delta is approved-compiler scheduling, carrier allocation, and literal placement after complete semantics are represented"
+  ],
+  "retention": "keep_structured_asm"
+}

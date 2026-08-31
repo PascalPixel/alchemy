@@ -1,9 +1,45 @@
 #include "types.h"
 
-/* DRAFT for Func_02002014: 869 calls, 0 loops, 4 memory operations.
- * Written by `overlay reconstruct` from the owner's own disassembly.
- * It is a starting point, not a reconstruction: read the assembly and
- * fix it. Score it before believing any of it. */
+#define FieldScene_RunMainCutsceneSequence Func_02002014
+
+/*
+ * Resource 3b8 cutscene at 0x02002014 - the overlay's main sequence.
+ *
+ * Complete owner: `push {r5, lr}` at 0x02002014 and the matching
+ * `pop {r5} / pop {r0} / bx r0` interworking return at 0x02003d3a.  869 `bl`
+ * sites reach 798 distinct imports.  Eight literal pools sit inside the span
+ * and are all branched over or placed after the return: 0x020023dc-0x020023ef,
+ * 0x020026ce-0x020026df, 0x02002a82-0x02002a8b, 0x02002f10-0x02002f1f,
+ * 0x0200338a-0x0200339b, 0x020036d4-0x020036db, 0x02003920-0x02003927 and
+ * 0x02003d06-0x02003d1b.  All are data.
+ *
+ * Control flow is a long straight-line call carpet punctuated by eight
+ * two-way choices (one of them nested) and three optional-record tails.  Every
+ * choice tests an import result against zero and, on each arm, advances the
+ * halfword step counter at +0x1d8 of the scene record reached through the
+ * IWRAM pointer at 0x03001ebc - the same workspace the other owners in this
+ * overlay drive.  The advance amounts differ per arm (2/5, then 1/1 for the
+ * rest, with 3 on the first arm of the nested pair) and are reproduced
+ * exactly.
+ *
+ * Two sites read back an object pointer and edit a byte flag at +90 of it:
+ * 0x02002254 clears bit 0 and 0x02002270 sets it.
+ *
+ * As elsewhere in this overlay, every `bl` reaches the import band above the
+ * code and each import is named by the address its call site computes, the
+ * convention the byte-exact sources in `assets/code/resource_3b8_c_*.c`
+ * already use; the numeric name carries no further meaning and the interfaces
+ * stay open.  Old-style declarations are therefore used throughout: several of
+ * these addresses are reached with two different argument counts from this one
+ * owner.
+ *
+ * `carry` records the places where r0 is not reloaded between two adjacent
+ * branches, so the first callee's return value is the second callee's first
+ * argument.  Whether those callees really consume it is unverified; the
+ * register dataflow is what is preserved.
+ *
+ * Shifted immediates are written as their computed values.
+ */
 
 void Func_020063fe();
 void Func_02006420();
@@ -15,17 +51,17 @@ void Func_0200646a();
 void Func_0200646e();
 void Func_02006484();
 void Func_020064a4();
-void Func_020064bc();
+s32 Func_020064bc();
 void Func_020064c2();
-void Func_020064d8();
+s32 Func_020064d8();
 void Func_020064e6();
 void Func_020064ee();
 void Func_020064f4();
 void Func_020064fe();
 void Func_02006502();
-void Func_0200650e();
-void Func_02006518();
-void *Func_0200651a();
+s32 Func_0200650e();
+s32 Func_02006518();
+void Func_0200651a();
 void Func_0200651c();
 void Func_02006524();
 void Func_0200652a();
@@ -35,9 +71,9 @@ void Func_02006542();
 void Func_0200654a();
 void Func_02006558();
 void Func_02006560();
-void Func_02006562();
+s32 Func_02006562();
 void Func_02006566();
-void Func_0200656a();
+s32 Func_0200656a();
 void Func_02006574();
 void Func_0200657e();
 void Func_0200658c();
@@ -63,17 +99,17 @@ void Func_02006630();
 void Func_02006634();
 void Func_02006646();
 void Func_0200664c();
-void *Func_02006652();
+u8 *Func_02006652();
 void Func_02006654();
 void Func_02006660();
 void Func_02006662();
-void *Func_0200666e();
+u8 *Func_0200666e();
 void Func_0200667c();
 void Func_02006692();
 void Func_0200669c();
 void Func_020066a0();
 void Func_020066b0();
-void Func_020066b6();
+s32 Func_020066b6();
 void Func_020066bc();
 void Func_020066cc();
 void Func_020066ce();
@@ -93,7 +129,7 @@ void Func_0200677e();
 void Func_02006782();
 void Func_0200678a();
 void Func_02006798();
-void Func_020067a0();
+s32 Func_020067a0();
 void Func_020067a4();
 void Func_020067ac();
 void Func_020067be();
@@ -172,7 +208,7 @@ void Func_02006a7c();
 void Func_02006a7e();
 void Func_02006a80();
 void Func_02006a8a();
-void Func_02006a92();
+s32 Func_02006a92();
 void Func_02006a9c();
 void Func_02006aac();
 void Func_02006ab8();
@@ -189,7 +225,7 @@ void Func_02006b14();
 void Func_02006b1e();
 void Func_02006b26();
 void Func_02006b28();
-void Func_02006b32();
+s32 Func_02006b32();
 void Func_02006b44();
 void Func_02006b52();
 void Func_02006b54();
@@ -264,13 +300,14 @@ void Func_02006df6();
 void Func_02006dfa();
 void Func_02006e02();
 void Func_02006e0a();
-void Func_02006e0c();
-void Func_02006e16();
+s32 Func_02006e0c();
+s32 Func_02006e16();
 void Func_02006e20();
 void Func_02006e28();
 void Func_02006e2a();
 void Func_02006e40();
-void Func_02006e56();
+s32 Func_02006e56();
+void Func_02006e56_v();
 void Func_02006e58();
 void Func_02006e62();
 void Func_02006e6e();
@@ -280,14 +317,14 @@ void Func_02006e86();
 void Func_02006e8c();
 void Func_02006e8e();
 void Func_02006e9a();
-void Func_02006eac();
+s32 Func_02006eac();
 void Func_02006eb8();
 void Func_02006ec6();
 void Func_02006ecc();
 void Func_02006ece();
 void Func_02006eda();
 void Func_02006ee8();
-void Func_02006ef6();
+s32 Func_02006ef6();
 void Func_02006f00();
 void Func_02006f0e();
 void Func_02006f16();
@@ -565,7 +602,7 @@ void Func_0200786c();
 void Func_02007874();
 void Func_02007890();
 void Func_0200789c();
-void Func_020078a6();
+s32 Func_020078a6();
 void Func_020078b0();
 void Func_020078b6();
 void Func_020078ce();
@@ -582,7 +619,7 @@ void Func_02007924();
 void Func_02007928();
 void Func_02007932();
 void Func_02007934();
-void Func_02007946();
+s32 Func_02007946();
 void Func_0200794a();
 void Func_02007956();
 void Func_02007958();
@@ -618,7 +655,7 @@ void Func_02007a7a();
 void Func_02007a82();
 void Func_02007a84();
 void Func_02007a86();
-void Func_02007a9a();
+s32 Func_02007a9a();
 void Func_02007aa2();
 void Func_02007aae();
 void Func_02007ab4();
@@ -636,7 +673,7 @@ void Func_02007b12();
 void Func_02007b26();
 void Func_02007b32();
 void Func_02007b38();
-void Func_02007b3a();
+s32 Func_02007b3a();
 void Func_02007b52();
 void Func_02007b62();
 void Func_02007b68();
@@ -682,7 +719,7 @@ void Func_02007cda();
 void Func_02007cdc();
 void Func_02007ce2();
 void Func_02007ce4();
-void Func_02007ce6();
+s32 Func_02007ce6();
 void Func_02007d04();
 void Func_02007d10();
 void Func_02007d1a();
@@ -697,7 +734,7 @@ void Func_02007d54();
 void Func_02007d62();
 void Func_02007d70();
 void Func_02007d74();
-void Func_02007d86();
+s32 Func_02007d86();
 void Func_02007d88();
 void Func_02007d96();
 void Func_02007da6();
@@ -772,7 +809,7 @@ void Func_02008070();
 void Func_02008076();
 void Func_02008080();
 void Func_0200808a();
-void Func_02008090();
+s16 *Func_02008090();
 void Func_02008096();
 void Func_0200809e();
 void Func_020080a0();
@@ -781,16 +818,16 @@ void Func_020080a8();
 void Func_020080ae();
 void Func_020080b0();
 void Func_020080b8();
-void Func_020080c0();
+s16 *Func_020080c0();
 void Func_020080c2();
 void Func_020080ca();
 void Func_020080ce();
 void Func_020080da();
 void Func_020080ea();
-void Func_020080f0();
+s16 *Func_020080f0();
 void Func_020080f8();
 void Func_020080fa();
-void Func_02008108();
+s32 Func_02008108();
 void Func_0200810a();
 void Func_0200811a();
 void Func_02008120();
@@ -802,26 +839,49 @@ void Func_0200814a();
 void Func_02008170();
 void Func_02008182();
 void Func_020081ac();
-void Func_0200824c();
+s32 Func_0200824c();
+
+/* The scene step counter, advanced on every arm of every choice below. */
+static __inline__ __attribute__((always_inline)) void bump_step(s32 amount)
+{
+    u8 *scene = *(u8 **)0x03001ebc;
+
+    *(u16 *)(scene + 0x1d8) = (u16)(*(u16 *)(scene + 0x1d8) + amount);
+}
+static __inline__ __attribute__((always_inline)) void bump_step_at(
+    u8 **scene_address, s32 amount)
+{
+    u8 *scene = *scene_address;
+
+    *(u16 *)(scene + 0x1d8) = (u16)(*(u16 *)(scene + 0x1d8) + amount);
+}
+
+/* Three identical tails: an optional record whose signed halfwords at +10 and
+ * +18 are forwarded to a per-channel import. */
+static __inline__ __attribute__((always_inline)) void follow_record(
+    s16 *record, s32 channel, void (*apply)())
+{
+    if (record != 0)
+        apply(channel, record[5], record[9]);
+}
 
 void Func_02002014(void)
 {
-    void *p7;
-    void *p70;
-    void *p72;
+    s32 carry;
+    s16 *position;
 
-    Func_02006562(30);
-    Func_020063fe();
-    Func_020064bc(8900);
-    Func_02006518();
-    Func_02006524();
-    Func_0200650e(14155776, -1, 48234496, 1);
-    p7 = Func_0200651a();;
+    carry = Func_02006562(30);
+    Func_020063fe(carry);
+    carry = Func_020064bc(0x22c4);
+    carry = Func_02006518(carry);
+    Func_02006524(carry);
+    carry = Func_0200650e(0xd80000, -1, 0x2e00000, 1);
+    Func_0200651a(carry);
     Func_02006420(20);
     Func_02006426(10);
     Func_020064fe(20, 0);
     Func_02006434(10);
-    Func_0200646e(14, 52428, 26214);
+    Func_0200646e(14, 0xcccc, 0x6666);
     Func_020065a0(14, 0, 16);
     Func_0200644e(10);
     Func_020064e6(14, 3);
@@ -829,104 +889,118 @@ void Func_02002014(void)
     Func_02006534(14, 0);
     Func_0200646a(20);
     Func_02006542(20, 0);
-    Func_0200656a(0, 1);
-    Func_0200657e();
+    carry = Func_0200656a(0, 1);
+    Func_0200657e(carry);
     Func_02006484(40);
-    Func_020064c2(0, 65536, 32768);
-    Func_020064fe(0, 208, 760);
+    Func_020064c2(0, 0x10000, 0x8000);
+    Func_020064fe(0, 208, 0x2f8);
     Func_020064a4(10);
-    Func_020065ae(14155776, -1, 48234496, 1);
-    Func_0200660e(1, -16, 16, 49152);
-    Func_0200661c(3, 0, 24, 49152);
-    Func_0200662a(2, 16, 16, 49152);
+    Func_020065ae(0xd80000, -1, 0x2e00000, 1);
+    Func_0200660e(1, -16, 16, 0xc000);
+    Func_0200661c(3, 0, 24, 0xc000);
+    Func_0200662a(2, 16, 16, 0xc000);
     Func_02006560(1);
     Func_020064ee(30);
     Func_020064f4(10);
     Func_0200658c(14, 3);
     Func_02006502(30);
     Func_020065da(14, 0);
-    Func_020064d8(2385);
-    Func_0200651c(10);
-    Func_020065b4(20, 3);
-    Func_0200652a(20);
-    Func_02006602(20, 0);
-    Func_02006538(10);
-    Func_0200661c(14, 40960, 0);
-    Func_0200654a(30);
-    Func_020065e2(14, 3);
-    Func_02006558(20);
-    Func_02006630(14, 0);
-    Func_02006566(10);
-    Func_020065fe(20, 3);
-    Func_02006574(20);
-    Func_0200664c(20, 0);
-    Func_02006660(20, 49152, 0);
-    Func_0200658e(20);
-    Func_020065cc(20, 65536, 32768);
-    Func_02006700(20, 0, -16);
-    Func_020065ae(40);
-    Func_02006646(20, 3);
-    Func_020065bc(40);
-    Func_020066a0(20, 16384, 0);
-    Func_020065ce(20);
-    Func_02006730(20, 0, 32);
-    Func_020066bc(14, 32768, 0);
-    Func_020065ea(10);
-    Func_020066cc(20, 0, 0);
-    Func_020065fa(30);
-    Func_02006692(20, 3);
-    Func_02006608(30);
-    Func_020066ec(20, 16384, 0);
-    Func_0200661a(20);
-    Func_02006654(20, 52428, 26214);
-    p70 = Func_02006652(20);;
-    *(u8 *)((u8 *)(p70) + 90) &= 0xfe;
-    Func_02006798(20, 0, -16);
-    p72 = Func_0200666e(20);;
-    *(u8 *)((u8 *)(p72) + 90) |= 0x1;
-    Func_02006734(14, 16384, 0);
-    Func_02006662(40);
-    Func_0200669c(14, 52428, 26214);
-    Func_020067ce(14, 0, 16);
-    Func_0200667c(40);
-    Func_02006634(164, 2);
-    Func_0200675e(-1, 0);
-    Func_020067be(164, 3);
-    Func_020066b6(164, 0);
-    Func_02006782(0, 49152, 0);
-    Func_020066b0(30);
-    Func_02006814(14, 0, -16);
-    Func_020067a0(14, 16384, 0);
-    Func_020066ce(30);
-    Func_0200677e(14, 2);
-    Func_020066dc(20);
-    Func_020067ac(14, 0);
-    Func_0200670c(10);
-    Func_020067a4(20, 3);
-    Func_0200671a(20);
-    Func_020067f2(20, 0);
-    Func_02006806(14, 40960, 0);
-    Func_02006734(40);
-    Func_020067cc(14, 3);
-    Func_02006742(20);
-    Func_020067da(20, 3);
-    Func_02006750(30);
-    Func_02006834(14, 16384, 0);
-    Func_02006762(30);
-    Func_02006812(14, 2);
-    Func_02006770(20);
-    Func_02006840(14, 0);
-    Func_020067a0(0, 0);
-    Func_0200678a(20);
-    Func_02006822(20, 3);
-    Func_02006798(20);
-    Func_02006870(20, 0);
-    Func_020067cc(10);
-    Func_02006864(20, 3);
-    Func_020067da(20);
-    Func_020068c2(20, 0);
+
+    if (Func_020064d8(0x951) != 0) {
+        Func_0200651c(10);
+        Func_020065b4(20, 3);
+        Func_0200652a(20);
+        Func_02006602(20, 0);
+        Func_02006538(10);
+        Func_0200661c(14, 0xa000, 0);
+        Func_0200654a(30);
+        Func_020065e2(14, 3);
+        Func_02006558(20);
+        Func_02006630(14, 0);
+        Func_02006566(10);
+        Func_020065fe(20, 3);
+        Func_02006574(20);
+        Func_0200664c(20, 0);
+        Func_02006660(20, 0xc000, 0);
+        Func_0200658e(20);
+        Func_020065cc(20, 0x10000, 0x8000);
+        Func_02006700(20, 0, -16);
+        Func_020065ae(40);
+        Func_02006646(20, 3);
+        Func_020065bc(40);
+        Func_020066a0(20, 0x4000, 0);
+        Func_020065ce(20);
+        Func_02006730(20, 0, 32);
+        Func_020066bc(14, 0x8000, 0);
+        Func_020065ea(10);
+        Func_020066cc(20, 0, 0);
+        Func_020065fa(30);
+        Func_02006692(20, 3);
+        Func_02006608(30);
+        Func_020066ec(20, 0x4000, 0);
+        Func_0200661a(20);
+        Func_02006654(20, 0xcccc, 0x6666);
+        Func_02006652(20)[90] &= 0xfe;
+        Func_02006798(20, 0, -16);
+        {
+            volatile u8 *record = Func_0200666e(20);
+            u8 value = record[90];
+
+            record[90] = (u8)(value | 1);
+        }
+        Func_02006734(14, 0x4000, 0);
+        Func_02006662(40);
+        Func_0200669c(14, 0xcccc, 0x6666);
+        Func_020067ce(14, 0, 16);
+        Func_0200667c(40);
+        Func_02006634(164, 2);
+        Func_0200675e(-1, 0);
+        Func_020067be(164, 3);
+        Func_020066b6(164, 0);
+        Func_02006782(0, 0xc000, 0);
+        Func_020066b0(30);
+        Func_02006814(14, 0, -16);
+        Func_020067a0(14, 0x4000, 0);
+        Func_020066ce(30);
+        Func_0200677e(14, 2);
+        Func_020066dc(20);
+        Func_020067ac(14, 0);
+        bump_step(2);
+    } else {
+        bump_step(5);
+        Func_0200670c(10);
+        Func_020067a4(20, 3);
+        Func_0200671a(20);
+        Func_020067f2(20, 0);
+        Func_02006806(14, 0xa000, 0);
+        Func_02006734(40);
+        Func_020067cc(14, 3);
+        Func_02006742(20);
+        Func_020067da(20, 3);
+        Func_02006750(30);
+        Func_02006834(14, 0x4000, 0);
+        Func_02006762(30);
+        Func_02006812(14, 2);
+        Func_02006770(20);
+        Func_02006840(14, 0);
+    }
+
+    if (Func_020067a0(0, 0) == 0) {
+        Func_0200678a(20);
+        Func_02006822(20, 3);
+        Func_02006798(20);
+        Func_02006870(20, 0);
+        bump_step(1);
+    } else {
+        Func_020067cc(10);
+        Func_02006864(20, 3);
+        Func_020067da(20);
+        bump_step(1);
+        Func_020068c2(20, 0);
+    }
+
     Func_020067f8(10);
-    Func_020068dc(14, 40960, 0);
+    Func_020068dc(14, 0xa000, 0);
     Func_0200680a(20);
     Func_020068a2(14, 3);
     Func_02006818(30);
@@ -939,13 +1013,13 @@ void Func_02002014(void)
     Func_020068e6(1, 4, 30);
     Func_02006926(1, 0);
     Func_0200685c(10);
-    Func_02006940(14, 16384, 0);
+    Func_02006940(14, 0x4000, 0);
     Func_02006918(20, 2);
     Func_02006876(20);
-    Func_020068b0(14, 104857, 52428);
+    Func_020068b0(14, 0x19999, 0xcccc);
     Func_020069e2(20, 0, 16);
     Func_020067f8(2);
-    Func_02006974(20, 8192, 0);
+    Func_02006974(20, 0x2000, 0);
     Func_020068a2(10);
     Func_0200697a(20, 0);
     Func_020068b0(10);
@@ -969,14 +1043,14 @@ void Func_02002014(void)
     Func_020069e8(2, 1, 30);
     Func_02006a10(2, 0);
     Func_02006946(10);
-    Func_02006a32(1, 262, 50);
+    Func_02006a32(1, 0x106, 50);
     Func_02006958(10);
     Func_020069f0(14, 3);
     Func_02006966(30);
     Func_02006a3e(14, 0);
     Func_02006974(10);
-    Func_02006a58(1, 49152, 0);
-    Func_02006a64(2, 49152, 0);
+    Func_02006a58(1, 0xc000, 0);
+    Func_02006a64(2, 0xc000, 0);
     Func_02006992(30);
     Func_02006998(10);
     Func_02006a48(20, 2);
@@ -985,10 +1059,10 @@ void Func_02002014(void)
     Func_020069b4(10);
     Func_02006a76(1, 0, 0);
     Func_02006a80(3, 2, 50);
-    Func_02006aac(0, 49152, 0);
-    Func_02006ab8(1, 49152, 0);
-    Func_02006ac4(3, 49152, 0);
-    Func_02006ad0(2, 49152, 0);
+    Func_02006aac(0, 0xc000, 0);
+    Func_02006ab8(1, 0xc000, 0);
+    Func_02006ac4(3, 0xc000, 0);
+    Func_02006ad0(2, 0xc000, 0);
     Func_020069fe(30);
     Func_02006a04(10);
     Func_02006a9c(20, 4);
@@ -999,23 +1073,28 @@ void Func_02002014(void)
     Func_02006a2e(20);
     Func_02006b06(14, 0);
     Func_02006a3c(10);
-    Func_02006b26(2, 257, 40);
+    Func_02006b26(2, 0x101, 40);
     Func_02006b1e(2, 0);
     Func_02006a54(10);
     Func_02006b04(14, 2);
     Func_02006a62(20);
     Func_02006b32(14, 0);
-    Func_02006a92(0, 0);
-    Func_02006a7c(20);
-    Func_02006b14(14, 3);
-    Func_02006a8a(30);
-    Func_02006b62(14, 0);
-    Func_02006abc(10);
-    Func_02006b54(14, 4);
-    Func_02006aca(20);
-    Func_02006bb2(14, 0);
+    if (Func_02006a92(0, 0) == 0) {
+        Func_02006a7c(20);
+        Func_02006b14(14, 3);
+        Func_02006a8a(30);
+        Func_02006b62(14, 0);
+        bump_step(1);
+    } else {
+        Func_02006abc(10);
+        Func_02006b54(14, 4);
+        Func_02006aca(20);
+        bump_step(1);
+        Func_02006bb2(14, 0);
+    }
+
     Func_02006ae8(10);
-    Func_02006bd4(20, 258, 40);
+    Func_02006bd4(20, 0x102, 40);
     Func_02006bcc(20, 0);
     Func_02006b02(20);
     Func_02006b92(0, 3);
@@ -1024,26 +1103,26 @@ void Func_02002014(void)
     Func_02006bb2(2, 3);
     Func_02006b28(50);
     Func_02006be2(14, 20, 60);
-    Func_02006c16(14, 16384, 0);
+    Func_02006c16(14, 0x4000, 0);
     Func_02006b44(20);
     Func_02006c1c(14, 0);
     Func_02006b52(10);
-    Func_02006c3e(20, 258, 40);
+    Func_02006c3e(20, 0x102, 40);
     Func_02006c36(20, 0);
     Func_02006b6c(10);
     Func_02006c04(20, 4);
     Func_02006b7a(20);
     Func_02006c52(20, 0);
     Func_02006b88(10);
-    Func_02006c74(0, 258, 40);
+    Func_02006c74(0, 0x102, 40);
     Func_02006b9a(10);
     Func_02006c32(14, 4);
     Func_02006ba8(20);
     Func_02006c80(14, 0);
     Func_02006bb6(10);
     Func_02006c78(1, 0, 50);
-    Func_02006ca4(0, 49152, 0);
-    Func_02006cb0(1, 49152, 0);
+    Func_02006ca4(0, 0xc000, 0);
+    Func_02006cb0(1, 0xc000, 0);
     Func_02006bde(30);
     Func_02006be4(10);
     Func_02006c74(0, 3);
@@ -1054,10 +1133,10 @@ void Func_02002014(void)
     Func_02006c0e(30);
     Func_02006ce6(14, 0);
     Func_02006c1c(10);
-    Func_02006d08(3, 256, 40);
+    Func_02006d08(3, 0x100, 40);
     Func_02006d00(3, 0);
     Func_02006c36(10);
-    Func_02006d22(14, 258, 50);
+    Func_02006d22(14, 0x102, 50);
     Func_02006cfc(20, 14, 50);
     Func_02006c52(10);
     Func_02006d02(14, 2);
@@ -1066,12 +1145,12 @@ void Func_02002014(void)
     Func_02006c6e(20);
     Func_02006d30(1, 0, 0);
     Func_02006d3a(3, 2, 50);
-    Func_02006d66(0, 49152, 0);
-    Func_02006d72(1, 49152, 0);
-    Func_02006d7e(3, 49152, 0);
-    Func_02006d8a(2, 49152, 0);
+    Func_02006d66(0, 0xc000, 0);
+    Func_02006d72(1, 0xc000, 0);
+    Func_02006d7e(3, 0xc000, 0);
+    Func_02006d8a(2, 0xc000, 0);
     Func_02006cb8(50);
-    Func_02006d9c(20, 8192, 0);
+    Func_02006d9c(20, 0x2000, 0);
     Func_02006cca(20);
     Func_02006da2(20, 0);
     Func_02006cd8(10);
@@ -1079,12 +1158,12 @@ void Func_02002014(void)
     Func_02006ce6(20);
     Func_02006dbe(1, 0);
     Func_02006cf4(20);
-    Func_02006dd8(14, 32768, 0);
+    Func_02006dd8(14, 0x8000, 0);
     Func_02006d06(40);
-    Func_02006df0(14, 261, 60);
+    Func_02006df0(14, 0x105, 60);
     Func_02006de8(14, 0);
     Func_02006d1e(10);
-    Func_02006e0a(2, 256, 40);
+    Func_02006e0a(2, 0x100, 40);
     Func_02006e02(2, 0);
     Func_02006d38(10);
     Func_02006dfa(14, 2, 40);
@@ -1094,10 +1173,10 @@ void Func_02002014(void)
     Func_02006d5e(10);
     Func_02006e20(1, 0, 0);
     Func_02006e2a(3, 2, 60);
-    Func_02006e56(0, 49152, 0);
-    Func_02006e62(1, 49152, 0);
-    Func_02006e6e(3, 49152, 0);
-    Func_02006e7a(2, 49152, 0);
+    Func_02006e56_v(0, 0xc000, 0);
+    Func_02006e62(1, 0xc000, 0);
+    Func_02006e6e(3, 0xc000, 0);
+    Func_02006e7a(2, 0xc000, 0);
     Func_02006da8(50);
     Func_02006e58(20, 2);
     Func_02006db6(20);
@@ -1107,22 +1186,37 @@ void Func_02002014(void)
     Func_02006e7e(1, 2);
     Func_02006ddc(20);
     Func_02006eac(1, 0);
-    Func_02006e0c(0, 0);
-    Func_02006df6(20);
-    Func_02006ece(1, 0);
-    Func_02006e16(10);
-    Func_02006ef6(1, 0, 473);
-    Func_02006e56(0, 0);
-    Func_02006e40(20);
-    Func_02006f18(1, 0);
-    Func_02006f48(1, 0);
+    if (Func_02006e0c(0, 0) == 0) {
+        Func_02006df6(20);
+        Func_02006ece(1, 0);
+        bump_step(3);
+    } else {
+        do {
+            Func_02006e16(10);
+        } while (0);
+        {
+            u8 **scene_address = (u8 **)0x03001ebc;
+
+            bump_step_at(scene_address, 1);
+            Func_02006ef6(1, 0);
+            if (Func_02006e56(0, 0) == 0) {
+                Func_02006e40(20);
+                Func_02006f18(1, 0);
+                bump_step_at(scene_address, 1);
+            } else {
+                bump_step_at(scene_address, 1);
+                Func_02006f48(1, 0);
+            }
+        }
+    }
+
     Func_02006e7e(10);
     Func_02006f16(14, 4);
     Func_02006e8c(20);
     Func_02006f64(14, 0);
     Func_02006e9a(10);
-    Func_02006f7e(0, 49152, 0);
-    Func_02006f8a(1, 49152, 0);
+    Func_02006f7e(0, 0xc000, 0);
+    Func_02006f8a(1, 0xc000, 0);
     Func_02006eb8(40);
     Func_02006f68(1, 2);
     Func_02006ec6(20);
@@ -1131,7 +1225,7 @@ void Func_02002014(void)
     Func_02006eda(30);
     Func_02006fb2(14, 0);
     Func_02006ee8(10);
-    Func_02006fd2(3, 257, 40);
+    Func_02006fd2(3, 0x101, 40);
     Func_02006fca(3, 0);
     Func_02006f00(10);
     Func_02006fb0(14, 2);
@@ -1147,13 +1241,13 @@ void Func_02002014(void)
     Func_02006f50(20);
     Func_02007028(20, 0);
     Func_02006f5e(20);
-    Func_02007048(14, 261, 70);
+    Func_02007048(14, 0x105, 70);
     Func_02007040(14, 0);
     Func_02006f76(10);
-    Func_02007060(0, 257, 0);
-    Func_0200706a(1, 257, 0);
-    Func_02007074(3, 257, 0);
-    Func_0200707e(2, 257, 40);
+    Func_02007060(0, 0x101, 0);
+    Func_0200706a(1, 0x101, 0);
+    Func_02007074(3, 0x101, 0);
+    Func_0200707e(2, 0x101, 40);
     Func_02006fa4(10);
     Func_0200703c(14, 4);
     Func_02006fb2(20);
@@ -1170,7 +1264,7 @@ void Func_02002014(void)
     Func_02007090(14, 3);
     Func_02007006(30);
     Func_0200700c(10);
-    Func_020070f6(2, 257, 40);
+    Func_020070f6(2, 0x101, 40);
     Func_020070ee(2, 0);
     Func_02007024(10);
     Func_020070bc(14, 3);
@@ -1185,7 +1279,7 @@ void Func_02002014(void)
     Func_02007074(20);
     Func_0200714c(2, 0);
     Func_02007082(10);
-    Func_0200716c(14, 257, 40);
+    Func_0200716c(14, 0x101, 40);
     Func_02007164(14, 0);
     Func_0200709a(10);
     Func_0200712a(0, 3);
@@ -1200,9 +1294,9 @@ void Func_02002014(void)
     Func_02007172(20, 3);
     Func_020070e8(30);
     Func_020071a2(20, 14, 30);
-    Func_020071d6(0, 49152, 0);
-    Func_020071e2(1, 49152, 0);
-    Func_020071ee(3, 49152, 0);
+    Func_020071d6(0, 0xc000, 0);
+    Func_020071e2(1, 0xc000, 0);
+    Func_020071ee(3, 0xc000, 0);
     Func_0200711c(20);
     Func_020071f4(20, 0);
     Func_0200712a(10);
@@ -1220,7 +1314,7 @@ void Func_02002014(void)
     Func_02007180(20);
     Func_02007258(20, 0);
     Func_0200718e(10);
-    Func_02007272(14, 32768, 0);
+    Func_02007272(14, 0x8000, 0);
     Func_020071a0(20);
     Func_02007238(14, 4);
     Func_020071ae(20);
@@ -1228,17 +1322,17 @@ void Func_02002014(void)
     Func_020071bc(10);
     Func_0200727e(1, 0, 0);
     Func_02007288(3, 2, 50);
-    Func_020072b4(0, 49152, 0);
-    Func_020072c0(1, 49152, 0);
-    Func_020072cc(3, 49152, 0);
-    Func_020072d8(2, 49152, 0);
+    Func_020072b4(0, 0xc000, 0);
+    Func_020072c0(1, 0xc000, 0);
+    Func_020072cc(3, 0xc000, 0);
+    Func_020072d8(2, 0xc000, 0);
     Func_02007206(40);
-    Func_020072ea(14, 16384, 0);
+    Func_020072ea(14, 0x4000, 0);
     Func_02007218(30);
-    Func_02007304(14, 258, 40);
+    Func_02007304(14, 0x102, 40);
     Func_020072fc(14, 0);
     Func_02007232(10);
-    Func_0200731e(20, 258, 40);
+    Func_0200731e(20, 0x102, 40);
     Func_02007316(20, 0);
     Func_0200724c(20);
     Func_0200730e(14, 20, 40);
@@ -1246,41 +1340,41 @@ void Func_02002014(void)
     Func_02007264(20);
     Func_0200733c(14, 0);
     Func_02007272(10);
-    Func_02007364(20, 258);
+    Func_02007364(20, 0x102);
     Func_0200732c(20, 2);
     Func_0200728a(20);
     Func_02007362(20, 0);
-    Func_020072cc(20, 104857, 52428);
+    Func_020072cc(20, 0x19999, 0xcccc);
     Func_020073fe(20, 0, 24);
     Func_02007360(0, 20, 0);
     Func_0200736a(1, 20, 0);
     Func_02007374(3, 20, 0);
     Func_0200737e(2, 20, 0);
-    Func_020073b2(14, 16384, 0);
+    Func_020073b2(14, 0x4000, 0);
     Func_020073b2(14, 0);
     Func_020072fa(10);
-    Func_020073e6(20, 256, 60);
+    Func_020073e6(20, 0x100, 60);
     Func_020073c0(20, 14, 0);
-    Func_020073f4(0, 49152, 0);
-    Func_02007400(1, 49152, 0);
-    Func_0200740c(3, 49152, 0);
-    Func_02007418(2, 49152, 0);
+    Func_020073f4(0, 0xc000, 0);
+    Func_02007400(1, 0xc000, 0);
+    Func_0200740c(3, 0xc000, 0);
+    Func_02007418(2, 0xc000, 0);
     Func_02007346(10);
     Func_020073f6(20, 2);
     Func_02007354(20);
     Func_0200742c(20, 0);
     Func_02007362(30);
-    Func_0200744c(14, 261, 40);
+    Func_0200744c(14, 0x105, 40);
     Func_02007444(14, 0);
     Func_0200737a(10);
-    Func_02007464(20, 257, 60);
-    Func_020073be(20, 78643, 39321);
+    Func_02007464(20, 0x101, 60);
+    Func_020073be(20, 0x13333, 0x9999);
     Func_020074f2(20, 0, -24);
     Func_0200747c(20, 0, 0);
     Func_020073aa(20);
     Func_02007482(20, 0);
     Func_020073b8(10);
-    Func_0200749c(14, 32768, 0);
+    Func_0200749c(14, 0x8000, 0);
     Func_020073ca(20);
     Func_02007462(14, 3);
     Func_020073d8(30);
@@ -1293,7 +1387,7 @@ void Func_02002014(void)
     Func_02007408(20);
     Func_020074e0(14, 0);
     Func_02007416(10);
-    Func_02007502(20, 258, 40);
+    Func_02007502(20, 0x102, 40);
     Func_020074fa(20, 0);
     Func_02007430(10);
     Func_020074c8(14, 3);
@@ -1304,13 +1398,13 @@ void Func_02002014(void)
     Func_0200745a(20);
     Func_02007532(1, 0);
     Func_02007468(10);
-    Func_0200754c(14, 16384, 0);
+    Func_0200754c(14, 0x4000, 0);
     Func_0200747a(30);
     Func_02007512(14, 3);
     Func_02007488(30);
     Func_02007560(14, 0);
     Func_02007496(10);
-    Func_02007582(3, 258, 40);
+    Func_02007582(3, 0x102, 40);
     Func_0200757a(3, 0);
     Func_020074b0(10);
     Func_02007548(14, 3);
@@ -1327,26 +1421,26 @@ void Func_02002014(void)
     Func_02007504(10);
     Func_020075c6(1, 0, 0);
     Func_020075d0(3, 2, 50);
-    Func_020075fc(0, 49152, 0);
-    Func_02007608(1, 49152, 0);
-    Func_02007614(3, 49152, 0);
-    Func_02007620(2, 49152, 0);
+    Func_020075fc(0, 0xc000, 0);
+    Func_02007608(1, 0xc000, 0);
+    Func_02007614(3, 0xc000, 0);
+    Func_02007620(2, 0xc000, 0);
     Func_0200754e(30);
     Func_02007554(10);
     Func_02007604(14, 2);
     Func_02007562(20);
     Func_0200763a(14, 0);
     Func_02007570(20);
-    Func_0200765a(0, 257, 0);
-    Func_02007664(1, 257, 0);
-    Func_0200766e(3, 257, 0);
-    Func_02007678(2, 257, 50);
+    Func_0200765a(0, 0x101, 0);
+    Func_02007664(1, 0x101, 0);
+    Func_0200766e(3, 0x101, 0);
+    Func_02007678(2, 0x101, 50);
     Func_0200759e(10);
     Func_02007636(14, 3);
     Func_020075ac(30);
     Func_02007684(14, 0);
     Func_020075ba(10);
-    Func_020076a6(20, 258, 40);
+    Func_020076a6(20, 0x102, 40);
     Func_0200769e(20, 0);
     Func_020075d4(10);
     Func_02007696(14, 20, 30);
@@ -1362,24 +1456,24 @@ void Func_02002014(void)
     Func_02007624(10);
     Func_020076d4(14, 2);
     Func_02007632(20);
-    Func_02007716(14, 16384, 0);
+    Func_02007716(14, 0x4000, 0);
     Func_02007644(20);
     Func_0200771c(14, 0);
     Func_02007652(10);
-    Func_0200773c(20, 257, 40);
+    Func_0200773c(20, 0x101, 40);
     Func_02007734(20, 0);
     Func_0200766a(10);
     Func_02007702(14, 3);
     Func_02007678(30);
-    Func_0200775c(14, 32768, 0);
+    Func_0200775c(14, 0x8000, 0);
     Func_0200768a(20);
     Func_02007762(14, 0);
     Func_02007698(10);
-    Func_02007782(2, 257, 40);
+    Func_02007782(2, 0x101, 40);
     Func_0200777a(2, 0);
     Func_020076b0(10);
-    Func_02007794(14, 16384, 0);
-    Func_020077a0(20, 8192, 0);
+    Func_02007794(14, 0x4000, 0);
+    Func_020077a0(20, 0x2000, 0);
     Func_020076ce(30);
     Func_02007766(14, 3);
     Func_020076dc(30);
@@ -1388,7 +1482,7 @@ void Func_02002014(void)
     Func_020076f0(20);
     Func_020077c8(3, 0);
     Func_020076fe(10);
-    Func_020077ea(14, 258, 40);
+    Func_020077ea(14, 0x102, 40);
     Func_020077e2(14, 0);
     Func_02007718(20);
     Func_020077a8(0, 3);
@@ -1397,47 +1491,52 @@ void Func_02002014(void)
     Func_020077c8(2, 3);
     Func_0200773e(30);
     Func_02007744(20);
-    Func_0200782e(14, 261, 60);
+    Func_0200782e(14, 0x105, 60);
     Func_02007826(14, 0);
     Func_0200775c(10);
-    Func_0200785a(1, 257, 40);
+    Func_0200785a(1, 0x101, 40);
     Func_02007852(1, 0);
     Func_02007788(10);
-    Func_02007874(14, 256, 40);
+    Func_02007874(14, 0x100, 40);
     Func_0200786c(14, 0);
     Func_020077a2(10);
     Func_02007864(1, 0, 50);
-    Func_02007890(0, 49152, 0);
-    Func_0200789c(1, 49152, 0);
+    Func_02007890(0, 0xc000, 0);
+    Func_0200789c(1, 0xc000, 0);
     Func_020077ca(30);
     Func_020077d0(10);
     Func_02007868(14, 3);
     Func_020077de(30);
     Func_020078b6(14, 0);
     Func_020077ec(10);
-    Func_020078d6(3, 257, 40);
+    Func_020078d6(3, 0x101, 40);
     Func_020078ce(3, 0);
     Func_02007804(10);
     Func_0200789c(14, 4);
     Func_02007812(20);
     Func_020078ea(14, 0);
     Func_02007820(10);
-    Func_0200790a(0, 257, 0);
-    Func_02007914(1, 257, 0);
-    Func_0200791e(2, 257, 0);
-    Func_02007928(3, 257, 40);
+    Func_0200790a(0, 0x101, 0);
+    Func_02007914(1, 0x101, 0);
+    Func_0200791e(2, 0x101, 0);
+    Func_02007928(3, 0x101, 40);
     Func_0200784e(10);
     Func_020078e6(14, 4);
     Func_0200785c(20);
     Func_02007934(14, 0);
     Func_0200786a(10);
-    Func_02007956(2, 256, 40);
+    Func_02007956(2, 0x100, 40);
     Func_02007946(2, 0);
-    Func_020078a6(14, 0);
-    Func_02007890(10);
-    Func_02007968(2, 0);
-    Func_020078b0(10);
-    Func_02007998(2, 0);
+    if (Func_020078a6(14, 0) == 0) {
+        Func_02007890(10);
+        Func_02007968(2, 0);
+        bump_step(1);
+    } else {
+        Func_020078b0(10);
+        bump_step(1);
+        Func_02007998(2, 0);
+    }
+
     Func_020078ce(10);
     Func_0200797e(14, 2);
     Func_020078dc(20);
@@ -1460,17 +1559,17 @@ void Func_02002014(void)
     Func_02007958(10);
     Func_02007a1a(1, 0, 40);
     Func_02007a3a(1, 0);
-    Func_02007a4e(14, 16384, 0);
-    Func_02007a5a(20, 8192, 0);
+    Func_02007a4e(14, 0x4000, 0);
+    Func_02007a5a(20, 0x2000, 0);
     Func_02007988(30);
     Func_02007a60(14, 0);
     Func_02007996(10);
-    Func_02007a7a(0, 49152, 0);
-    Func_02007a86(1, 49152, 0);
+    Func_02007a7a(0, 0xc000, 0);
+    Func_02007a86(1, 0xc000, 0);
     Func_020079b4(30);
     Func_02007a76(3, 2, 60);
-    Func_02007aa2(3, 49152, 0);
-    Func_02007aae(2, 49152, 0);
+    Func_02007aa2(3, 0xc000, 0);
+    Func_02007aae(2, 0xc000, 0);
     Func_020079dc(30);
     Func_02007ab4(3, 0);
     Func_020079ea(10);
@@ -1479,10 +1578,10 @@ void Func_02002014(void)
     Func_02007ad0(2, 0);
     Func_02007a06(10);
     Func_02007ac8(20, 14, 60);
-    Func_02007af4(20, 8192, 0);
-    Func_02007b00(14, 16384, 0);
+    Func_02007af4(20, 0x2000, 0);
+    Func_02007b00(14, 0x4000, 0);
     Func_02007a2e(30);
-    Func_02007b12(14, 16384, 0);
+    Func_02007b12(14, 0x4000, 0);
     Func_02007a40(10);
     Func_02007ad8(14, 3);
     Func_02007a4e(30);
@@ -1491,18 +1590,23 @@ void Func_02002014(void)
     Func_02007b0c(20, 2);
     Func_02007a6a(20);
     Func_02007b3a(20, 0);
-    Func_02007a9a(0, 0);
-    Func_02007a84(20);
-    Func_02007b70(1, 258, 40);
-    Func_02007b68(1, 0);
-    Func_02007ab8(10);
-    Func_02007ba0(1, 0);
+    if (Func_02007a9a(0, 0) == 0) {
+        Func_02007a84(20);
+        Func_02007b70(1, 0x102, 40);
+        Func_02007b68(1, 0);
+        bump_step(1);
+    } else {
+        Func_02007ab8(10);
+        bump_step(1);
+        Func_02007ba0(1, 0);
+    }
+
     Func_02007ad6(10);
     Func_02007b86(20, 2);
     Func_02007ae4(20);
     Func_02007bbc(20, 0);
     Func_02007af2(10);
-    Func_02007bde(20, 256, 40);
+    Func_02007bde(20, 0x100, 40);
     Func_02007bd6(20, 0);
     Func_02007b0c(20);
     Func_02007b9c(0, 3);
@@ -1511,12 +1615,12 @@ void Func_02002014(void)
     Func_02007bbc(2, 3);
     Func_02007b32(30);
     Func_02007b38(10);
-    Func_02007c24(14, 256, 40);
+    Func_02007c24(14, 0x100, 40);
     Func_02007c1c(14, 0);
     Func_02007b52(10);
     Func_02007c0c(20, 14, 40);
     Func_02007b62(10);
-    Func_02007c4e(20, 258, 40);
+    Func_02007c4e(20, 0x102, 40);
     Func_02007c46(20, 0);
     Func_02007b7c(10);
     Func_02007c36(14, 20, 40);
@@ -1527,43 +1631,48 @@ void Func_02002014(void)
     Func_02007c52(20, 2);
     Func_02007bb0(20);
     Func_02007c88(20, 0);
-    Func_02007c9c(14, 16384, 0);
+    Func_02007c9c(14, 0x4000, 0);
     Func_02007bca(20);
     Func_02007c7a(14, 2);
     Func_02007bd8(20);
     Func_02007cb0(14, 0);
     Func_02007be6(10);
-    Func_02007cd0(0, 257, 80);
-    Func_02007cdc(20, 258, 70);
+    Func_02007cd0(0, 0x101, 80);
+    Func_02007cdc(20, 0x102, 70);
     Func_02007c94(14, 4);
     Func_02007c0a(20);
     Func_02007ce2(14, 0);
     Func_02007c18(10);
     Func_02007cda(1, 0, 0);
     Func_02007ce4(3, 2, 50);
-    Func_02007d10(0, 49152, 0);
-    Func_02007d1c(1, 49152, 0);
-    Func_02007d28(3, 49152, 0);
-    Func_02007d34(2, 49152, 0);
+    Func_02007d10(0, 0xc000, 0);
+    Func_02007d1c(1, 0xc000, 0);
+    Func_02007d28(3, 0xc000, 0);
+    Func_02007d34(2, 0xc000, 0);
     Func_02007c62(30);
     Func_02007c68(10);
-    Func_02007d54(20, 262, 50);
+    Func_02007d54(20, 0x106, 50);
     Func_02007d4c(20, 0);
     Func_02007c82(10);
     Func_02007d1a(14, 3);
     Func_02007c90(30);
-    Func_02007d74(20, 8192, 0);
+    Func_02007d74(20, 0x2000, 0);
     Func_02007d74(20, 0);
     Func_02007caa(10);
-    Func_02007d96(14, 264, 40);
+    Func_02007d96(14, 0x108, 40);
     Func_02007d86(14, 0);
-    Func_02007ce6(0, 0);
-    Func_02007cd0(20);
-    Func_02007dbc(14, 256, 40);
-    Func_02007db4(14, 0);
-    Func_02007d04(10);
-    Func_02007df0(14, 256, 40);
-    Func_02007df8(14, 0, 512, 473);
+    if (Func_02007ce6(0, 0) == 0) {
+        Func_02007cd0(20);
+        Func_02007dbc(14, 0x100, 40);
+        Func_02007db4(14, 0);
+        bump_step(1);
+    } else {
+        Func_02007d04(10);
+        Func_02007df0(14, 0x100, 40);
+        bump_step(1);
+        Func_02007df8(14, 0);
+    }
+
     Func_02007d2e(10);
     Func_02007dde(20, 2);
     Func_02007d3c(20);
@@ -1577,12 +1686,12 @@ void Func_02002014(void)
     Func_02007e2a(20, 14, 40);
     Func_02007e52(20, 0);
     Func_02007d88(10);
-    Func_02007e74(14, 256, 40);
-    Func_02007e78(14, 32768, 0);
+    Func_02007e74(14, 0x100, 40);
+    Func_02007e78(14, 0x8000, 0);
     Func_02007da6(20);
     Func_02007e7e(14, 0);
     Func_02007db4(10);
-    Func_02007ea0(20, 256, 40);
+    Func_02007ea0(20, 0x100, 40);
     Func_02007e98(20, 0);
     Func_02007dce(10);
     Func_02007e7e(14, 2);
@@ -1597,16 +1706,16 @@ void Func_02002014(void)
     Func_02007e14(30);
     Func_02007eac(14, 3);
     Func_02007e22(30);
-    Func_02007f06(20, 8192, 0);
+    Func_02007f06(20, 0x2000, 0);
     Func_02007e34(20);
     Func_02007f9c(0, 20);
     Func_02007fa4(1, 20);
     Func_02007fac(3, 20);
     Func_02007fb4(2, 20);
-    Func_02007e92(20, 65536, 32768);
+    Func_02007e92(20, 0x10000, 0x8000);
     Func_02007fc4(20, 0, 32);
     Func_02007f4e(20, 0, 0);
-    Func_02007f5a(14, 16384, 0);
+    Func_02007f5a(14, 0x4000, 0);
     Func_02007e88(20);
     Func_02007f60(20, 0);
     Func_02007e96(10);
@@ -1616,15 +1725,15 @@ void Func_02002014(void)
     Func_02008008(20, 0, 80);
     Func_02007ebe(40);
     Func_02008022(1, -16, 0);
-    Func_02007fae(1, 16384, 0);
-    Func_02007fba(3, 16384, 0);
+    Func_02007fae(1, 0x4000, 0);
+    Func_02007fba(3, 0x4000, 0);
     Func_02007f60(20);
     Func_02007eee(80);
     Func_02007f78(20, 0, 0);
-    Func_02007fdc(0, 49152, 0);
-    Func_02007fe8(1, 49152, 0);
-    Func_02007ff4(3, 49152, 0);
-    Func_02008000(2, 49152, 0);
+    Func_02007fdc(0, 0xc000, 0);
+    Func_02007fe8(1, 0xc000, 0);
+    Func_02007ff4(3, 0xc000, 0);
+    Func_02008000(2, 0xc000, 0);
     Func_02007f2e(30);
     Func_02008096(0, 14);
     Func_0200809e(1, 14);
@@ -1633,7 +1742,7 @@ void Func_02002014(void)
     Func_02007f54(30);
     Func_02007fec(14, 3);
     Func_02007f62(30);
-    Func_02007f9c(14, 52428, 26214);
+    Func_02007f9c(14, 0xcccc, 0x6666);
     Func_020080ce(14, 0, 24);
     Func_020080da(14, -80, 0);
     Func_02007f88(10);
@@ -1641,7 +1750,7 @@ void Func_02002014(void)
     Func_02007f98(20);
     Func_02008070(14, 0);
     Func_02007fa6(20);
-    Func_0200808a(14, 16384, 0);
+    Func_0200808a(14, 0x4000, 0);
     Func_02007fb8(20);
     Func_0200811a(14, 0, 48);
     Func_02008126(14, -64, 0);
@@ -1660,25 +1769,28 @@ void Func_02002014(void)
     Func_020080c0(2, 3);
     Func_02008036(30);
     Func_020081ac(17);
-    Func_02008076(1, 78643, 39321);
-    Func_02008080(2, 78643, 39321);
-    Func_0200808a(3, 78643, 39321);
+    Func_02008076(1, 0x13333, 0x9999);
+    Func_02008080(2, 0x13333, 0x9999);
+    Func_0200808a(3, 0x13333, 0x9999);
     Func_020080ea(1, 2);
-    Func_02008090(0);
-    Func_020080ca(1);
+    position = Func_02008090(0);
+    if (position != 0)
+        Func_020080ca(1, position[5], position[9]);
     Func_020080f8(1);
     Func_0200810a(1, 0, 0);
     Func_0200811a(2, 2);
-    Func_020080c0(0);
-    Func_020080fa(2);
+    position = Func_020080c0(0);
+    if (position != 0)
+        Func_020080fa(2, position[5], position[9]);
     Func_02008128(2);
     Func_0200813a(2, 0, 0);
     Func_0200814a(3, 2);
-    Func_020080f0(0);
-    Func_0200812a(3);
+    position = Func_020080f0(0);
+    if (position != 0)
+        Func_0200812a(3, position[5], position[9]);
     Func_02008170(3);
     Func_02008182(3, 0, 0);
-    Func_02008108(10);
-    Func_0200824c();
-    Func_02008120();
+    carry = Func_02008108(10);
+    carry = Func_0200824c(carry);
+    Func_02008120(carry);
 }

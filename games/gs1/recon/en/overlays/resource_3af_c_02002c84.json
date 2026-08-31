@@ -1,0 +1,11 @@
+{
+  "span_bytes": 1228,
+  "score": {"measured":"2026-08-31","candidate_bytes":1236,"reference_bytes":1228,"wrong_instructions":550,"differing_halfwords":503,"class":"structured-scene-retention"},
+  "shape": {"roster_slots":4,"candidate_members":9,"jump_table_entries":21,"member_loop_iterations":4},
+  "verified_against_reference": [
+    "the complete party-roster scene is bounded from 0x02002c84 through its 21-entry jump table, four-member loop, unwind, and seventeen-word tail before 0x02003150",
+    "all roster discovery phases, member-category mapping, generic and member-specific dialogue arms, actor staging, reward call, and terminal story-flag clear are represented",
+    "the remaining eight-byte surplus is approved-compiler switch lowering, scheduling, carrier allocation, and literal placement after complete semantics are represented"
+  ],
+  "retention": "keep_structured_asm"
+}

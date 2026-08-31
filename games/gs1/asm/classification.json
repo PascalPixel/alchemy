@@ -2172,6 +2172,29 @@
    "files": [
     "080175c0"
    ]
+  },
+  {
+   "kind": "compiler_minipool_store_scheduling_module",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_owner_extent",
+    "equal_control_flow_topology_and_exact_thirty_one_instruction_prefix",
+    "only_residual_is_the_coupled_minipool_dump_point_and_order_of_independent_final_field_stores",
+    "reference_store_order_emits_a_larger_earlier_minipool_while_best_exact_extent_order_emits_the_reference_pool_size_at_the_wrong_point",
+    "all_calls_arguments_literals_memory_values_branches_and_return_behavior_match",
+    "thirty_bounded_field_order_lifetime_fallback_control_flow_carrier_loop_and_pool_load_shapes_emit_neither_combined_reference_decision",
+    "approved_scheduling_regmove_cse_gcse_expensive_optimization_and_threading_routes_preserve_the_residual_or_regress",
+    "ordinary_c_has_no_minipool_dump_or_independent_store_schedule_primitive",
+    "inline_assembly_fixed_registers_compiler_barriers_and_forced_scheduling_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 134,
+   "files": [
+    "0800bbc0"
+   ]
   }
  ]
 }

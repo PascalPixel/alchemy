@@ -1905,6 +1905,28 @@
    ]
   },
   {
+   "kind": "serial_transfer_compiler_allocation",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_owner_extent",
+    "all_six_editions_have_identical_relocation_normalized_cores",
+    "equal_control_flow_topology_and_identical_calls_literals_memory_accesses_and_pool_words",
+    "only_residual_is_the_active_pointer_and_transfer_value_r5_r6_allocation_order",
+    "gcc_296_lreg_and_greg_dumps_identify_the_two_conflicting_allocnos_and_priority_order",
+    "allocator_decoder_finite_split_lifetime_repair_space_produced_no_exact_candidate",
+    "complete_shipped_non_forcing_optimization_flag_sweep_preserves_the_residual_or_regresses",
+    "inline_assembly_fixed_registers_compiler_barriers_and_forced_allocation_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 76,
+   "files": [
+    "080063bc"
+   ]
+  },
+  {
    "kind": "regional_compiler_allocation",
    "origin": "regional_compiler_output",
    "retention": "keep_structured_asm",

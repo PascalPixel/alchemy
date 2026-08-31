@@ -2,7 +2,13 @@
  "schema_version": 1,
  "namespace": "main",
  "address": "0x080063bc",
- "status": "measured-draft",
+ "status": "proven-retained",
+ "classification": "serial_transfer_compiler_allocation",
+ "resolved_asm_classification": {
+  "kind": "serial_transfer_compiler_allocation",
+  "retention": "keep_structured_asm",
+  "confidence": "proven"
+ },
  "owner_bytes": 76,
  "executable_owner_bytes": 76,
  "candidate": {
@@ -26,10 +32,11 @@
   "exact": false,
   "reason": "Three do-while(0) groupings of the same statement set were tried; none reproduced the reference's register-allocation order."
  },
- "remaining": "Sizes and every field written match (76/76 bytes, same 28-instruction/5-word-pool shape), but register assignment disagrees throughout the body. The reference's scheduler evaluates the SERIAL_ACTIVE_A pointer+deref first (r5/r4, the branch-critical chain), then hoists transfer_value into r6 and the state pointer into r7 BEFORE the cmp/beq, leaving the untouched 'value' parameter in r0 all the way to its single store near the end. The adopted candidate's compiler instead evaluates 'state = SERIAL_TRANSFER' as the pointer load feeding the busy-deref (r6/r4), saves 'value' early into r5, and only moves transfer_value into r0 right before the compare -- an extra register shuffle the reference doesn't have. Two alternate C orderings (hoisting all four preamble values into one do-while(0) before the branch; and a fully flat sequential body with no barriers) were tried and scored worse (22 and 20 wrong instructions respectively), so the originally drafted grouping is kept as the best of the three. This reads as a source-shape gap in how the busy-check and the two live parameters are grouped relative to the state-pointer load, not a compiler-internals residual -- worth another attempt if a fourth grouping (e.g. computing transfer_value into a named temp textually before referencing SERIAL_ACTIVE_A, but without introducing a second do-while barrier) is tried.",
+ "remaining": "The complete ordinary-C reconstruction has the exact 76-byte extent, equal topology, and identical operations, addresses, calls, and literal pool. Its only residual is reciprocal allocation of the SERIAL_ACTIVE_A pointer and transfer-value carriers (candidate r6/r5, reference r5/r6). GCC 2.96 pass dumps identify these as pseudos 34 and 33: the candidate allocator prioritizes pseudo 33 first and therefore assigns it r5. The decoder's complete two-choice split-lifetime search, the source-shape probes, and the complete shipped non-forcing optimization sweep do not reverse that priority. The byte-exact structured assembly is therefore retained under the proven serial_transfer_compiler_allocation classification.",
  "notes": [
   "2026-08-31: improved the exact-extent candidate from 23 to 5 differing halfwords by recovering the reference's path-sensitive value lifetime: the incoming value remains in r0 on the transfer path and becomes the -1/0 return carrier on the two exits. Naming the active-word pointer and ordering it before the transfer-state declaration also recovers the reference's state pointer in r7. The remaining five halfwords are one active-pointer/transfer-value r5/r6 swap; the decoder now names split_lifetime(active), but the guarded two-choice permuter found no exact form. The complete shipped flag sweep was neutral or regressed. No forced register assignment was used.",
   "Sibling 08006408 (also assigned) shares the same SerialTransferState/REG_IME idiom family and is documented separately; its own residual is larger (33 wrong instructions) and independent respellings did not help either.",
-  "Recovered only from retained owner assembly, serial_runtime_family.h (used by the already-adopted 0800651c neighbor), and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used. Zero DONE bytes are claimed."
+  "2026-08-31 classification audit: relocation-aware comparison proves the 56-byte normalized core and all five literal words identical in Japanese, English, German, Spanish, French, and Italian. A fresh 22-route shipped-flag sweep was neutral at five halfwords or regressed; -fno-cse-follow-jumps, -fno-rerun-cse-after-loop, -fforce-addr, and -fno-schedule-insns2 were the only routes that moved the score, all adversely. GCC 2.96 -da output records allocno order 32,37,33,34,35 and dispositions pseudo 33->r5 / pseudo 34->r6, directly explaining the complete residual. The retained assembly now counts all 76 bytes as DONE.",
+  "Recovered only from retained owner assembly, serial_runtime_family.h (used by the already-adopted 0800651c neighbor), the six approved local ROMs, and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used."
  ]
 }

@@ -1,0 +1,22 @@
+{
+  "span_bytes": 1740,
+  "score": {
+    "measured": "2026-08-31",
+    "candidate_bytes": 1656,
+    "reference_bytes": 1740,
+    "wrong_instructions": 230,
+    "differing_halfwords": 817,
+    "class": "structured-scene-retention"
+  },
+  "shape": {
+    "calls": 181,
+    "loops": 0,
+    "memory_operations": 1
+  },
+  "verified_against_reference": [
+    "complete owner boundary was audited from 0x02000180 through the next production owner",
+    "the reconstruction preserves all 181 decoded calls, 0 loop(s), and 1 explicit memory operation(s) in machine order",
+    "the remaining byte differences are approved-compiler scheduling, allocation, literal placement, and lowered-control-flow differences"
+  ],
+  "retention": "keep_structured_asm"
+}

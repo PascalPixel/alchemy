@@ -25,10 +25,7 @@ document.body.append(tooltip);
 let pageVersion = "";
 let lastRevision = "";
 let lastError = "";
-const number = new Intl.NumberFormat("en");
-function bytes(value) { return number.format(Math.round(value ?? 0)); }
 function percent(value) { return `${Number(value ?? 0).toFixed(2)}%`; }
-function upper(value) { return String(value ?? "").toUpperCase(); }
 
 const music = {
   context: null, master: null, analyser: null, tracks: [], notes: [], duration: 0,
@@ -458,71 +455,11 @@ function panel(tree, title, revision) {
   loadTree(section, tree, title, revision).catch((error) => showError(error instanceof Error ? error.message : String(error)));
   return section;
 }
-function metric(label, value, detail, tone = "") {
-  return h("article", { className: `metric ${tone}` },
-    h("div", { className: "metric-label" }, label),
-    h("div", { className: "metric-value" }, value),
-    h("div", { className: "metric-detail" }, detail),
-  );
-}
-function edition(code, role, tone = "") {
-  return h("div", { className: `edition ${tone}` },
-    h("strong", {}, upper(code)), h("span", {}, role));
-}
-function historicalProduct(name, editions, fullTarget) {
-  const game = name.toLowerCase();
-  return h("section", { className: "product" },
-    h("div", { className: "product-name" }, name),
-    h("div", { className: "edition-row" },
-      ...editions.split(" · ").map((code) => {
-        const target = `${game}-${code}`;
-        if (target === fullTarget) return edition(code, "full build", "full");
-        if (code === "ja") return edition(code, "canonical", "base");
-        return edition(code, "compile-only");
-      }),
-    ),
-  );
-}
 function render(snapshot) {
   hideTooltip();
   const summary = snapshot.summary;
-  const project = snapshot.project;
-  const header = h("header", { className: "masthead" },
-    h("div", { className: "identity" },
-      h("div", { className: "kicker" }, "ALCHEMY · RECONSTRUCTION LEDGER"),
-      h("h1", {}, project.title),
-      h("p", {}, "Two shared historical source trees, twelve edition targets, and one separate reintegration product. Japanese is canonical within each game; every derived ROM must still be proved independently."),
-    ),
-    h("div", { className: "products", "aria-label": "Historical and integration products" },
-      historicalProduct("GS1", project.gs1, project.fullTarget),
-      historicalProduct("GS2", project.gs2, project.fullTarget),
-      h("section", { className: "product integration" },
-        h("div", { className: "product-name" }, project.integration),
-        h("div", { className: "integration-copy" }, "GS1 + GS2 reintegration · no reference ROM"),
-      ),
-    ),
-  );
-  const correspondenceMetric = summary.correspondenceAvailable
-    ? metric("GS1 corpus ×6", `${bytes(summary.correspondenceMatched)} / ${bytes(summary.correspondenceTotal)}`, `${bytes(summary.correspondenceShared)} shared-core · ${bytes(summary.correspondenceRegional)} regional candidates · ${bytes(summary.correspondenceUnresolved)} unresolved`, "cross")
-    : metric("GS1 corpus ×6", "Unavailable", "Run make reports to refresh cross-edition reports", "cross");
-  const metrics = h("section", { className: "metrics", "aria-label": "Project metrics" },
-    metric("EN DONE", percent(summary.donePercent), `${bytes(summary.doneBytes)} proven bytes`, "done"),
-    metric("EN Proven C", percent(summary.provenCPercent), `${bytes(summary.provenCBytes)} linked bytes`, "proven-c"),
-    metric("Draft C", percent(summary.draftCPercent), `${bytes(summary.draftCBytes)} visible bytes · never counted as DONE`, "draft-c"),
-    correspondenceMetric,
-    metric("Canonical JA", bytes(summary.gs1JaSources + summary.gs2JaSources), `GS1 ${bytes(summary.gs1JaSources)} · GS2 ${bytes(summary.gs2JaSources)} tracked source owners`, "base"),
-    metric("Historical targets", bytes(summary.historicalTargets), `${bytes(summary.fullTargets)} full · ${bytes(summary.compileOnlyTargets)} compile-only · Alchemy separate`, "derived"),
-  );
-  const legend = h("div", { className: "legend" },
-    h("span", {}, h("i", { className: "swatch unknown" }), "Unknown"),
-    h("span", {}, h("i", { className: "swatch draft-asm" }), "Draft ASM"),
-    h("span", {}, h("i", { className: "swatch draft-c" }), "Draft C"),
-    h("span", {}, h("i", { className: "swatch proven-asm" }), "Proven ASM"),
-    h("span", {}, h("i", { className: "swatch proven-c" }), "Proven C"),
-    h("span", { id: "scan-state", className: "scan-state" }, snapshot.scanning ? "Scanning…" : "Live"),
-  );
   const trees = Object.entries(snapshot.trees).map(([tree, title]) => panel(tree, title, snapshot.revision));
-  root.replaceChildren(h("div", { className: "shell" }, header, metrics, musicPlayer(), legend, h("main", { className: "trees" }, trees)));
+  root.replaceChildren(h("main", { className: "cards" }, ...trees, musicPlayer()));
   lastRevision = snapshot.revision;
   lastError = "";
   document.title = `Alchemy — 12 targets · ${percent(summary.donePercent)} GS1 EN done`;
@@ -542,10 +479,6 @@ function accept(snapshot) {
   else {
     clearError();
     if (snapshot.revision !== lastRevision) render(snapshot);
-    else {
-      const state = root.querySelector("#scan-state");
-      if (state) state.textContent = snapshot.scanning ? "Scanning…" : "Live";
-    }
   }
 }
 async function refresh() {

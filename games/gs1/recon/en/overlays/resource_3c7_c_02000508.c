@@ -1,9 +1,10 @@
 #include "types.h"
 
-/* DRAFT for Func_02000508: 306 calls, 0 loops, 0 memory operations.
- * Written by `overlay reconstruct` from the owner's own disassembly.
- * It is a starting point, not a reconstruction: read the assembly and
- * fix it. Score it before believing any of it. */
+#define FieldScene_RunPrimaryScript Func_02000508
+
+/* Audited retained scene body: all 306 calls through the next owner boundary
+ * are represented in machine order. The approved compiler changes scheduling
+ * and literal placement, so production retains the reviewed assembly. */
 
 void Func_02001590();
 void Func_020016fe();

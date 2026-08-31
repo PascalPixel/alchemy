@@ -5616,6 +5616,13 @@
     "resource_380:02001d04": {"name": "FieldScene_RunActorFourteenGuestScene"},
     "resource_3a4:02000ec0": {"name": "FieldScene_RunSharedSetPiece"},
     "resource_3af:02002c84": {"name": "FieldScene_RunPartyRosterScene"},
+    "resource_3b7:020001d8": {"name": "FieldScene_RunPrimaryScript"},
+    "resource_3c7:02000508": {"name": "FieldScene_RunPrimaryScript"},
+    "resource_3b7:02000e5c": {"name": "FieldScene_RunSecondaryScript"},
+    "resource_3c2:02000240": {"name": "FieldScene_RunPrimaryScript"},
+    "resource_3a2:02000180": {"name": "FieldScene_RunPrimaryScript"},
+    "resource_3ad:02001448": {"name": "FieldScene_RunLateScript"},
+    "resource_372:02001b18": {"name": "FieldScene_RunReturnScript"},
     "main:080a46b4": {
       "name": "Item_ClassifyUseMode",
       "source": "items/classify_use_mode.c"

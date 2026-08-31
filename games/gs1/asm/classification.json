@@ -2196,10 +2196,11 @@
     "inline_assembly_fixed_registers_compiler_barriers_and_forced_scheduling_are_disallowed",
     "byte_exact_reconstruction"
    ],
-   "expected_files": 1,
-   "expected_bytes": 134,
+   "expected_files": 2,
+   "expected_bytes": 208,
    "files": [
-    "0800bbc0"
+    "0800bbc0",
+    "080b0a20"
    ]
   },
   {
@@ -2381,6 +2382,28 @@
    "files": [
     "080ae99c",
     "080ae9f0"
+   ]
+  },
+  {
+   "kind": "field_region_bounds_compiler_address_materialization_module",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_audited_owner_extent",
+    "six_edition_relocation_normalized_core_is_identical",
+    "equal_branch_topology_exact_literal_pool_and_matching_calls_fields_constants_and_memory_operations",
+    "only_residual_is_equivalent_early_versus_late_materialization_of_runtime_bounds_field_addresses_and_register_roles",
+    "allocator_order_decoder_finds_no_unique_source_shape",
+    "coordinate_carrier_pointer_scalar_loop_global_access_comparison_and_sibling_guided_probes_preserve_the_residual_or_regress",
+    "approved_gcc_2_96_scheduling_cse_gcse_regmove_strength_reduction_and_optimization_routes_preserve_the_residual_or_regress",
+    "inline_assembly_fixed_registers_compiler_barriers_and_forced_address_materialization_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 128,
+   "files": [
+    "0808b868"
    ]
   }
  ]

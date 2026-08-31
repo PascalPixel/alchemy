@@ -2539,6 +2539,29 @@
    "files": [
     "0801c8a0"
    ]
+  },
+  {
+   "kind": "owner_state_lookup_compiler_scheduling_allocation_module",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_audited_owner_extent",
+    "six_edition_core_is_byte_identical",
+    "equal_branch_topology_and_all_three_literal_pool_words_exact",
+    "matching_resident_and_optional_remote_owner_state_lookup_ranges_offsets_and_null_behavior",
+    "only_residual_is_equivalent_base_literal_hoisting_multiply_operand_and_return_carrier_allocation",
+    "approximately_twenty_seven_bounded_control_flow_declaration_type_lifetime_and_expression_variants_preserve_the_residual_or_regress",
+    "seven_shipped_compiler_toggles_are_flat_and_no_expensive_optimizations_regresses",
+    "annotation_free_permuter_finds_no_unique_decoder_repair",
+    "inline_assembly_fixed_registers_compiler_barriers_and_forced_scheduling_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 68,
+   "files": [
+    "08077394"
+   ]
   }
  ]
 }

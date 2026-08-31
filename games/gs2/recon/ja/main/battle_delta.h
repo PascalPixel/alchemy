@@ -403,12 +403,12 @@ struct BattleWorkPage {
 /* GS2 reserves element zero of each target array for its second actor. */
 #define BATTLE_PLAN_LOADS()                                                  \
     {                                                                        \
-        /* Exhaustive sweep of all 720 assignment orders (2026-08-25): this \
-         * is the unique lowest-residual order for the complete owner. */     \
+        /* Range precedes the target arrays in the reference's first reload   \
+         * group; the remaining target carrier is tracked separately. */     \
         actor_id = BATTLE_PLAN_ACTOR_ID(plan, action_id);                    \
         action_id = plan->action_id;                                         \
-        target_id = BATTLE_PLAN_TARGET_ID(plan, slot);                       \
         range = plan->range_index;                                           \
+        target_id = BATTLE_PLAN_TARGET_ID(plan, slot);                       \
         adjust = BATTLE_PLAN_ADJUST(plan, slot);                             \
         modifier = BATTLE_PLAN_MODIFIER(plan, slot);                         \
     }
@@ -494,6 +494,7 @@ struct BattleWorkPage {
         s32 state;                                                            \
                                                                               \
         state = *(u16 *)((u8 *)target + 0x14a);                               \
+        cmd = &BATTLE_PLAN_COMMAND(plan);                                     \
         switch (state) {                                                      \
         case 0xdd:                                                            \
             cmd = &BATTLE_PLAN_COMMAND(plan);                                 \

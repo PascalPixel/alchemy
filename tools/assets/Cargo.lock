@@ -41,6 +41,7 @@ dependencies = [
 name = "assets"
 version = "0.1.0"
 dependencies = [
+ "audio-engine-data",
  "audio-wave",
  "battle-effect-data",
  "byte-henkan",
@@ -81,6 +82,14 @@ dependencies = [
  "static-sprite-series",
  "title-resources",
  "wordstream",
+]
+
+[[package]]
+name = "audio-engine-data"
+version = "0.1.0"
+dependencies = [
+ "canonical-json",
+ "serde_json",
 ]
 
 [[package]]
@@ -548,7 +557,6 @@ dependencies = [
 name = "music-residuals"
 version = "0.1.0"
 dependencies = [
- "canonical-json",
  "music",
  "serde_json",
 ]

@@ -17,6 +17,7 @@ encounter-data = { path = "../encounter-data" }
 character-catalog = { path = "../character-catalog" }
 staff-roll = { path = "../staff-roll" }
 audio-wave = { path = "../audio-wave" }
+audio-engine-data = { path = "../audio-engine-data" }
 localization-tables = { path = "../localization-tables" }
 byte-value-regions = { path = "../byte-value-regions" }
 executable-gap-sources = { path = "../executable-gap-sources" }

@@ -145,7 +145,7 @@ $(HISTORICAL_TARGETS):
 	$(BUILD) claimed --target $@ --compile-only --output out/$@/compile
 
 dashboard:
-	$(COMPILER) dashboard-server --bind 127.0.0.1:4649
+	$(COMPILER) dashboard-server --bind 127.0.0.1:4650
 
 dashboard-service-install:
 	@mkdir -p '$(HOME)/Library/LaunchAgents' '$(CURDIR)/out'
@@ -163,7 +163,7 @@ dashboard-service-install:
 			fi; \
 			sleep 1; \
 		done
-	@printf 'Alchemy dashboard service installed: http://localhost:4649/\n'
+	@printf 'Alchemy dashboard service installed: http://localhost:4650/\n'
 
 progress:
 	$(CHECK) progress

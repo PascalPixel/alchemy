@@ -1,4 +1,4 @@
-//! Native build and verification for `games/gs1/assets/audio/residuals_index.json`.
+//! Native build and verification for `games/gs1/sound/residuals.tsv`.
 //!
 //! The residual package is deliberately small: four empty sound headers, the
 //! audited reserve stream, and the zero-filled tail alignment. Sequence byte
@@ -6,11 +6,9 @@
 
 pub mod cli;
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
-use canonical_json::is_canonical_json_text;
 use music::build_reserve_sequence;
-use serde_json::{json, Value};
 
 pub type Error = String;
 pub type Result<T> = std::result::Result<T, Error>;
@@ -29,81 +27,15 @@ pub struct BuiltMusicResidual {
     pub data: Vec<u8>,
 }
 
-fn read_json(path: &Path, label: &str) -> Result<(String, Value)> {
-    let text =
-        std::fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
-    let value = serde_json::from_str(&text).map_err(|error| format!("{label}: {error}"))?;
-    if !is_canonical_json_text(&text, &value) {
-        return Err(format!("{label} is not canonical JSON"));
-    }
-    Ok((text, value))
-}
+const RESIDUALS_TSV: &str = "# Audited GS1 music bytes outside ordinary MIDI sources.\nkind\tname\taddress\tend\tpriority\treverb\ttone_bank\tfill\nempty_header\tsound_empty\t0x080fd044\t0x080fd048\t0\t0\nempty_header\tsound_019\t0x081652d8\t0x081652e0\t0\t178\t0x080fba78\nempty_header\tsound_095\t0x081810b8\t0x081810c0\t0\t178\t0x080fba78\nreserve_stream\torphan_stream_after_item_break\t0x081819b0\t0x081819c2\nempty_header\tsound_288\t0x081841f8\t0x08184200\t120\t0\t0x080fc138\nempty_header\tsound_298\t0x08184358\t0x08184360\t120\t0\t0x080fc138\nalignment\ttail_alignment\t0x08184698\t0x08185000\t\t\t\t0\n";
 
-fn fixed_index() -> Value {
-    json!({
-        "format": 1,
-        "kind": "golden-sun-music-residuals",
-        "shared_empty_header": {
-            "name": "sound_empty",
-            "address": "0x080fd044",
-            "track_count": 0,
-            "block_count": 0,
-            "priority": 0,
-            "reverb": 0
-        },
-        "empty_headers": [
-            {"name":"sound_019","address":"0x081652d8","track_count":0,"block_count":0,"priority":0,"reverb":178,"tone_bank":"0x080fba78"},
-            {"name":"sound_095","address":"0x081810b8","track_count":0,"block_count":0,"priority":0,"reverb":178,"tone_bank":"0x080fba78"},
-            {"name":"sound_288","address":"0x081841f8","track_count":0,"block_count":0,"priority":120,"reverb":0,"tone_bank":"0x080fc138"},
-            {"name":"sound_298","address":"0x08184358","track_count":0,"block_count":0,"priority":120,"reverb":0,"tone_bank":"0x080fc138"}
-        ],
-        "orphan_stream": {
-            "address":"0x081819b0", "size":18,
-            "source":"orphan_stream_after_item_break.json", "between":["sound_item_break","sound_139"]
-        },
-        "tail_alignment": {
-            "address":"0x08184698", "end":"0x08185000", "boundary":4096, "fill":0
-        }
-    })
-}
-
-fn fixed_orphan_stream() -> Value {
-    json!({
-        "format": 1,
-        "engine": "smsh-sequence",
-        "base": "0x081819b0",
-        "externals": {},
-        "layout": [{
-            "kind": "stream",
-            "label": "orphan_stream_after_item_break",
-            "events": [
-                ["volume",120], ["key_shift",0], ["tempo",30], ["voice",21],
-                ["note",1,61,127], ["wait",1], ["note_running",1,66], ["wait",1],
-                ["note",44,69], ["wait",48], ["fine"]
-            ]
-        }]
-    })
-}
-
-fn validate_index(index_path: &Path) -> Result<PathBuf> {
-    let (_, value) = read_json(index_path, "music residual index")?;
-    if value != fixed_index() {
+fn validate_index(index_path: &Path) -> Result<()> {
+    let text = std::fs::read_to_string(index_path)
+        .map_err(|error| format!("{}: {error}", index_path.display()))?;
+    if text != RESIDUALS_TSV {
         return Err("music residual index differs from the audited catalog".into());
     }
-    let prefix = index_path
-        .file_name()
-        .and_then(|name| name.to_str())
-        .and_then(|name| name.strip_suffix("index.json"))
-        .ok_or_else(|| "music residual index name is invalid".to_string())?;
-    let source = index_path
-        .parent()
-        .unwrap_or_else(|| Path::new("."))
-        .join(format!("{prefix}orphan_stream_after_item_break.json"));
-    let (_, orphan_stream) = read_json(&source, "reserve sound stream")?;
-    if orphan_stream != fixed_orphan_stream() {
-        return Err("reserve sound stream differs from the audited events".into());
-    }
-    Ok(source)
+    Ok(())
 }
 
 fn header(address: u32, priority: u8, reverb: u8, tone_bank: u32) -> BuiltMusicResidual {

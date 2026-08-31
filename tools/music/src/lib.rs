@@ -1,10 +1,12 @@
 pub mod cli;
+pub mod smsh;
 
 use std::collections::{HashMap, HashSet};
 
 pub type Error = String;
 pub type Result<T> = std::result::Result<T, Error>;
 pub const MIDI_BUILD_DIRECTIVE: &[u8] = b"alchemy-mid2agb\0";
+const SMSH_TEMPO_CLOCK: u64 = 120_547_500;
 
 fn midi_variable(mut value: usize) -> Vec<u8> {
     let mut bytes = vec![(value & 0x7f) as u8];
@@ -16,6 +18,247 @@ fn midi_variable(mut value: usize) -> Vec<u8> {
     }
     bytes.reverse();
     bytes
+}
+
+fn read_midi_variable(bytes: &[u8], cursor: &mut usize) -> Result<usize> {
+    let mut value = 0usize;
+    for _ in 0..4 {
+        let byte = *bytes
+            .get(*cursor)
+            .ok_or_else(|| "MIDI variable-length number is truncated".to_string())?;
+        *cursor += 1;
+        value = (value << 7) | usize::from(byte & 0x7f);
+        if byte & 0x80 == 0 {
+            return Ok(value);
+        }
+    }
+    Err("MIDI variable-length number is too long".into())
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct MidiNoteEvent {
+    pub track: usize,
+    pub tick: usize,
+    pub note: u8,
+    pub velocity: u8,
+    pub on: bool,
+}
+
+pub fn normalized_midi_notes(midi: &[u8]) -> Result<Vec<MidiNoteEvent>> {
+    if midi.len() < 14 || &midi[..4] != b"MThd" {
+        return Err("MIDI header is missing".into());
+    }
+    let header = u32::from_be_bytes(midi[4..8].try_into().unwrap()) as usize;
+    let mut cursor = 8usize
+        .checked_add(header)
+        .filter(|end| *end <= midi.len())
+        .ok_or_else(|| "MIDI header is truncated".to_string())?;
+    let mut notes = Vec::new();
+    let mut track = 0usize;
+    while cursor < midi.len() {
+        if midi.get(cursor..cursor + 4) != Some(b"MTrk") {
+            return Err("MIDI track header is missing".into());
+        }
+        let length = u32::from_be_bytes(
+            midi.get(cursor + 4..cursor + 8)
+                .ok_or_else(|| "MIDI track length is truncated".to_string())?
+                .try_into()
+                .unwrap(),
+        ) as usize;
+        let end = cursor
+            .checked_add(8 + length)
+            .filter(|end| *end <= midi.len())
+            .ok_or_else(|| "MIDI track is truncated".to_string())?;
+        let bytes = &midi[cursor + 8..end];
+        let mut at = 0usize;
+        let mut tick = 0usize;
+        let mut running = 0u8;
+        while at < bytes.len() {
+            tick = tick
+                .checked_add(read_midi_variable(bytes, &mut at)?)
+                .ok_or_else(|| "MIDI tick overflows".to_string())?;
+            let raw = *bytes
+                .get(at)
+                .ok_or_else(|| "MIDI event is truncated".to_string())?;
+            let status = if raw & 0x80 != 0 {
+                at += 1;
+                if raw < 0xf0 {
+                    running = raw;
+                }
+                raw
+            } else if (0x80..0xf0).contains(&running) {
+                running
+            } else {
+                return Err("MIDI running status has no channel event".into());
+            };
+            if status == 0xff {
+                at += 1;
+                let size = read_midi_variable(bytes, &mut at)?;
+                at = at
+                    .checked_add(size)
+                    .filter(|end| *end <= bytes.len())
+                    .ok_or_else(|| "MIDI meta event is truncated".to_string())?;
+                continue;
+            }
+            if matches!(status, 0xf0 | 0xf7) {
+                let size = read_midi_variable(bytes, &mut at)?;
+                at = at
+                    .checked_add(size)
+                    .filter(|end| *end <= bytes.len())
+                    .ok_or_else(|| "MIDI system event is truncated".to_string())?;
+                continue;
+            }
+            let size = if matches!(status >> 4, 0xc | 0xd) {
+                1
+            } else {
+                2
+            };
+            let data = bytes
+                .get(at..at + size)
+                .ok_or_else(|| "MIDI channel event is truncated".to_string())?;
+            at += size;
+            if matches!(status >> 4, 0x8 | 0x9) {
+                let on = status >> 4 == 0x9 && data[1] != 0;
+                notes.push(MidiNoteEvent {
+                    track,
+                    tick,
+                    note: data[0],
+                    velocity: if on { data[1] } else { 0 },
+                    on,
+                });
+            }
+        }
+        cursor = end;
+        track += 1;
+    }
+    Ok(notes)
+}
+
+fn rewrite_track_tempos(track: &[u8]) -> Result<(Vec<u8>, usize)> {
+    let mut output = Vec::with_capacity(track.len());
+    let mut cursor = 0usize;
+    let mut running = 0u8;
+    let mut inserted = 0usize;
+    while cursor < track.len() {
+        let event_start = cursor;
+        read_midi_variable(track, &mut cursor)?;
+        let body_start = cursor;
+        let raw_status = *track
+            .get(cursor)
+            .ok_or_else(|| "MIDI event is truncated".to_string())?;
+        let explicit = raw_status & 0x80 != 0;
+        let status = if explicit {
+            cursor += 1;
+            if raw_status < 0xf0 {
+                running = raw_status;
+            }
+            raw_status
+        } else if (0x80..0xf0).contains(&running) {
+            running
+        } else {
+            return Err("MIDI running status has no channel event".into());
+        };
+        let mut native_tempo = None;
+        if status == 0xff {
+            let kind = *track
+                .get(cursor)
+                .ok_or_else(|| "MIDI meta event is truncated".to_string())?;
+            cursor += 1;
+            let length = read_midi_variable(track, &mut cursor)?;
+            let end = cursor
+                .checked_add(length)
+                .filter(|end| *end <= track.len())
+                .ok_or_else(|| "MIDI meta payload is truncated".to_string())?;
+            if kind == 0x06 {
+                if let Ok(serde_json::Value::Array(marker)) =
+                    serde_json::from_slice::<serde_json::Value>(&track[cursor..end])
+                {
+                    if marker.first().and_then(serde_json::Value::as_str) == Some("tempo") {
+                        native_tempo = marker.get(1).and_then(serde_json::Value::as_u64);
+                    }
+                }
+            }
+            cursor = end;
+        } else if status == 0xf0 || status == 0xf7 {
+            let length = read_midi_variable(track, &mut cursor)?;
+            cursor = cursor
+                .checked_add(length)
+                .filter(|end| *end <= track.len())
+                .ok_or_else(|| "MIDI system-exclusive payload is truncated".to_string())?;
+        } else {
+            let data = match status >> 4 {
+                0x8 | 0x9 | 0xa | 0xb | 0xe => 2,
+                0xc | 0xd => 1,
+                _ => return Err("unsupported MIDI event".into()),
+            };
+            let consumed = usize::from(explicit);
+            cursor = body_start
+                .checked_add(consumed + data)
+                .filter(|end| *end <= track.len())
+                .ok_or_else(|| "MIDI channel event is truncated".to_string())?;
+        }
+        if let Some(native) = native_tempo.filter(|value| *value != 0) {
+            output.extend_from_slice(&track[event_start..body_start]);
+            output.extend_from_slice(&[0xff, 0x51, 0x03]);
+            let tempo = u32::try_from((SMSH_TEMPO_CLOCK + native / 2) / native)
+                .map_err(|_| "SMSH tempo is outside MIDI range".to_string())?;
+            if tempo > 0x00ff_ffff {
+                return Err("SMSH tempo is outside MIDI range".into());
+            }
+            output.extend_from_slice(&tempo.to_be_bytes()[1..]);
+            output.push(0);
+            output.extend_from_slice(&track[body_start..cursor]);
+            inserted += 1;
+        } else {
+            output.extend_from_slice(&track[event_start..cursor]);
+        }
+    }
+    Ok((output, inserted))
+}
+
+pub fn add_smsh_midi_tempos(midi: &[u8]) -> Result<Vec<u8>> {
+    if midi.len() < 14 || &midi[..4] != b"MThd" {
+        return Err("MIDI header is missing".into());
+    }
+    if midi.windows(3).any(|bytes| bytes == [0xff, 0x51, 0x03]) {
+        return Ok(midi.to_vec());
+    }
+    let header = u32::from_be_bytes(midi[4..8].try_into().unwrap()) as usize;
+    let mut cursor = 8usize
+        .checked_add(header)
+        .filter(|end| *end <= midi.len())
+        .ok_or_else(|| "MIDI header is truncated".to_string())?;
+    let mut output = midi[..cursor].to_vec();
+    let mut inserted = 0usize;
+    while cursor < midi.len() {
+        if midi.get(cursor..cursor + 4) != Some(b"MTrk") {
+            return Err("MIDI track header is missing".into());
+        }
+        let length = u32::from_be_bytes(
+            midi.get(cursor + 4..cursor + 8)
+                .ok_or_else(|| "MIDI track length is truncated".to_string())?
+                .try_into()
+                .unwrap(),
+        ) as usize;
+        let end = cursor
+            .checked_add(8 + length)
+            .filter(|end| *end <= midi.len())
+            .ok_or_else(|| "MIDI track is truncated".to_string())?;
+        let (track, count) = rewrite_track_tempos(&midi[cursor + 8..end])?;
+        output.extend_from_slice(b"MTrk");
+        output.extend_from_slice(
+            &u32::try_from(track.len())
+                .map_err(|_| "MIDI track is too large".to_string())?
+                .to_be_bytes(),
+        );
+        output.extend_from_slice(&track);
+        inserted += count;
+        cursor = end;
+    }
+    if inserted == 0 {
+        return Err("MIDI has no native SMSH tempo markers".into());
+    }
+    Ok(output)
 }
 
 pub fn add_midi_build_directive(midi: &[u8], directive: &[u8]) -> Result<Vec<u8>> {
@@ -52,6 +295,34 @@ pub fn add_midi_build_directive(midi: &[u8], directive: &[u8]) -> Result<Vec<u8>
     output.extend_from_slice(&midi[end - 4..]);
     Ok(output)
 }
+
+pub fn add_midi_conductor_text(midi: &[u8], text: &[u8]) -> Result<Vec<u8>> {
+    if midi.len() < 26 || &midi[..4] != b"MThd" {
+        return Err("MIDI header is missing".into());
+    }
+    let header = u32::from_be_bytes(midi[4..8].try_into().unwrap()) as usize;
+    let track = 8 + header;
+    if midi.get(track..track + 4) != Some(b"MTrk") {
+        return Err("MIDI conductor track is missing".into());
+    }
+    let length = u32::from_be_bytes(midi[track + 4..track + 8].try_into().unwrap()) as usize;
+    let end = track + 8 + length;
+    if end > midi.len() || midi.get(end - 4..end) != Some(&[0, 0xff, 0x2f, 0]) {
+        return Err("MIDI conductor end is not canonical".into());
+    }
+    let mut event = vec![0, 0xff, 0x01];
+    event.extend(midi_variable(text.len()));
+    event.extend_from_slice(text);
+    let new_length =
+        u32::try_from(length + event.len()).map_err(|_| "MIDI conductor is too large")?;
+    let mut output = Vec::with_capacity(midi.len() + event.len());
+    output.extend_from_slice(&midi[..track + 4]);
+    output.extend_from_slice(&new_length.to_be_bytes());
+    output.extend_from_slice(&midi[track + 8..end - 4]);
+    output.extend_from_slice(&event);
+    output.extend_from_slice(&midi[end - 4..]);
+    Ok(output)
+}
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct NamedTrack {
     pub game: String,
@@ -75,6 +346,30 @@ pub struct MusicCatalog {
     pub shared: Vec<SharedSequence>,
 }
 
+impl MusicCatalog {
+    pub fn english_title(&self, game: &str, sound_id: u16) -> Option<&str> {
+        let direct = |game: &str, sound_id: u16| {
+            self.tracks
+                .iter()
+                .find(|track| track.game == game && track.sound_id == sound_id)
+                .map(|track| track.titles[0].as_str())
+                .filter(|title| !title.is_empty())
+        };
+        direct(game, sound_id).or_else(|| {
+            let shared = self.shared.iter().find(|shared| match game {
+                "gs1" => shared.gs1 == sound_id,
+                "gs2" => shared.gs2 == sound_id,
+                _ => false,
+            })?;
+            match game {
+                "gs1" => direct("gs2", shared.gs2),
+                "gs2" => direct("gs1", shared.gs1),
+                _ => None,
+            }
+        })
+    }
+}
+
 pub fn parse_music_catalog(text: &str) -> Result<MusicCatalog> {
     let mut catalog = MusicCatalog {
         tracks: Vec::new(),
@@ -87,7 +382,10 @@ pub fn parse_music_catalog(text: &str) -> Result<MusicCatalog> {
         return Err("music catalog header differs".into());
     }
     for (index, line) in rows.enumerate() {
-        let fields = line.split('\t').collect::<Vec<_>>();
+        let mut fields = line.split('\t').collect::<Vec<_>>();
+        if fields.first() == Some(&"track") && fields.len() == 11 {
+            fields.resize(14, "");
+        }
         if fields.len() != 14 {
             return Err(format!(
                 "music catalog row {} has the wrong width",
@@ -117,9 +415,12 @@ pub fn parse_music_catalog(text: &str) -> Result<MusicCatalog> {
                 };
                 if !matches!(track.game.as_str(), "gs1" | "gs2")
                     || track.name.is_empty()
+                    || track.source.is_empty()
+                    || track.titles.iter().all(String::is_empty)
                     || !track.name.bytes().all(|byte| {
                         byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'-'
                     })
+                    || fields[11..].iter().any(|field| !field.is_empty())
                 {
                     return Err(format!(
                         "music catalog row {} has an invalid track identity",
@@ -138,12 +439,34 @@ pub fn parse_music_catalog(text: &str) -> Result<MusicCatalog> {
                 }
                 catalog.tracks.push(track);
             }
-            "shared" => catalog.shared.push(SharedSequence {
-                sound_id: number(2)?,
-                gs1: number(11)?,
-                gs2: number(12)?,
-                evidence: fields[13].into(),
-            }),
+            "shared" => {
+                if !fields[1].is_empty()
+                    || fields[3..11].iter().any(|field| !field.is_empty())
+                    || fields[13].is_empty()
+                {
+                    return Err(format!(
+                        "music catalog row {} has invalid shared-sequence evidence",
+                        index + 2
+                    ));
+                }
+                let shared = SharedSequence {
+                    sound_id: number(2)?,
+                    gs1: number(11)?,
+                    gs2: number(12)?,
+                    evidence: fields[13].into(),
+                };
+                if catalog.shared.iter().any(|item| {
+                    item.sound_id == shared.sound_id
+                        || item.gs1 == shared.gs1
+                        || item.gs2 == shared.gs2
+                }) {
+                    return Err(format!(
+                        "music catalog row {} duplicates a shared sequence",
+                        index + 2
+                    ));
+                }
+                catalog.shared.push(shared);
+            }
             _ => {
                 return Err(format!(
                     "music catalog row {} has an unknown kind",
@@ -151,9 +474,6 @@ pub fn parse_music_catalog(text: &str) -> Result<MusicCatalog> {
                 ))
             }
         }
-    }
-    if catalog.tracks.is_empty() {
-        return Err("music catalog has no named tracks".into());
     }
     Ok(catalog)
 }
@@ -371,7 +691,49 @@ pub fn build_sound_table(source: &SoundTableSource) -> Result<(Vec<u8>, SoundTab
 
 #[cfg(test)]
 mod catalog_tests {
-    use super::parse_music_catalog;
+    use super::{add_smsh_midi_tempos, normalized_midi_notes, parse_music_catalog};
+
+    fn midi_with_marker(marker: &[u8]) -> Vec<u8> {
+        let mut track = vec![0, 0xff, 0x06, marker.len() as u8];
+        track.extend_from_slice(marker);
+        track.extend_from_slice(&[0, 0xff, 0x2f, 0]);
+        let mut midi = b"MThd\0\0\0\x06\0\0\0\x01\0\x18MTrk".to_vec();
+        midi.extend_from_slice(&(track.len() as u32).to_be_bytes());
+        midi.extend_from_slice(&track);
+        midi
+    }
+
+    #[test]
+    fn adds_standard_tempo_without_removing_native_marker() {
+        let midi = midi_with_marker(br#"["tempo",51]"#);
+        let normalized = add_smsh_midi_tempos(&midi).unwrap();
+        assert!(normalized
+            .windows(6)
+            .any(|part| part == [0xff, 0x51, 3, 0x24, 0x11, 0x1c]));
+        assert!(normalized
+            .windows(12)
+            .any(|part| part == br#"["tempo",51]"#));
+        assert_eq!(add_smsh_midi_tempos(&normalized).unwrap(), normalized);
+    }
+
+    #[test]
+    fn normalizes_timed_notes_with_running_status() {
+        let track = [
+            0, 0x90, 60, 100, 1, 62, 80, 1, 0x80, 60, 64, 0, 62, 32, 0, 0xff, 0x2f, 0,
+        ];
+        let mut midi = b"MThd\0\0\0\x06\0\0\0\x01\0\x18MTrk".to_vec();
+        midi.extend_from_slice(&(track.len() as u32).to_be_bytes());
+        midi.extend_from_slice(&track);
+        let notes = normalized_midi_notes(&midi).unwrap();
+        assert_eq!(notes.len(), 4);
+        assert_eq!(
+            notes.iter().map(|event| event.tick).collect::<Vec<_>>(),
+            [0, 1, 2, 2]
+        );
+        assert!(notes[0].on && notes[1].on);
+        assert!(!notes[2].on && !notes[3].on);
+        assert_eq!(notes[2].velocity, 0);
+    }
 
     #[test]
     fn reads_named_and_shared_tracks_without_sidecars() {
@@ -383,6 +745,23 @@ mod catalog_tests {
     }
 
     #[test]
+    fn permits_an_evidence_only_catalog_before_titles_are_supplied() {
+        let source = "kind\tgame\tsound_id\tname\ten\tde\tes\tfr\tit\tja\tsource\tgs1\tgs2\tevidence\nshared\t\t80\t\t\t\t\t\t\t\t\t80\t80\tidentical-normalized-note-events\n";
+        let catalog = parse_music_catalog(source).unwrap();
+        assert!(catalog.tracks.is_empty());
+        assert_eq!(catalog.shared.len(), 1);
+    }
+
+    #[test]
+    fn shares_a_title_only_through_recorded_identity_evidence() {
+        let source = "kind\tgame\tsound_id\tname\ten\tde\tes\tfr\tit\tja\tsource\tgs1\tgs2\tevidence\ntrack\tgs1\t80\ttrial-road\tTrial Road\t\t\t\t\t\tnintendo-music\t\t\t\nshared\t\t80\t\t\t\t\t\t\t\t\t80\t80\tcompare-midi-notes:64\n";
+        let catalog = parse_music_catalog(source).unwrap();
+        assert_eq!(catalog.english_title("gs1", 80), Some("Trial Road"));
+        assert_eq!(catalog.english_title("gs2", 80), Some("Trial Road"));
+        assert_eq!(catalog.english_title("gs2", 81), None);
+    }
+
+    #[test]
     fn rejects_duplicate_sound_identity() {
         let header =
             "kind\tgame\tsound_id\tname\ten\tde\tes\tfr\tit\tja\tsource\tgs1\tgs2\tevidence\n";
@@ -390,5 +769,35 @@ mod catalog_tests {
         assert!(parse_music_catalog(&format!("{header}{record}{record}"))
             .unwrap_err()
             .contains("duplicates a track identity"));
+    }
+
+    #[test]
+    fn requires_sources_for_titles_and_evidence_for_shared_sequences() {
+        let header =
+            "kind\tgame\tsound_id\tname\ten\tde\tes\tfr\tit\tja\tsource\tgs1\tgs2\tevidence\n";
+        let title_without_source =
+            "track\tgs2\t0\tcoolin-casino\tCoolin' Casino\t\t\t\t\t\t\t\t\t\n";
+        let shared_without_evidence = "shared\t\t80\t\t\t\t\t\t\t\t\t80\t80\t\n";
+        assert!(
+            parse_music_catalog(&format!("{header}{title_without_source}"))
+                .unwrap_err()
+                .contains("invalid track identity")
+        );
+        assert!(
+            parse_music_catalog(&format!("{header}{shared_without_evidence}"))
+                .unwrap_err()
+                .contains("shared-sequence evidence")
+        );
+    }
+
+    #[test]
+    fn rejects_ambiguous_shared_sequence_mappings() {
+        let header =
+            "kind\tgame\tsound_id\tname\ten\tde\tes\tfr\tit\tja\tsource\tgs1\tgs2\tevidence\n";
+        let first = "shared\t\t80\t\t\t\t\t\t\t\t\t80\t80\tidentical-normalized-note-events\n";
+        let second = "shared\t\t82\t\t\t\t\t\t\t\t\t80\t82\tidentical-normalized-note-events\n";
+        assert!(parse_music_catalog(&format!("{header}{first}{second}"))
+            .unwrap_err()
+            .contains("duplicates a shared sequence"));
     }
 }

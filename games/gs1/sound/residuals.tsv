@@ -1,0 +1,9 @@
+# Audited GS1 music bytes outside ordinary MIDI sources.
+kind	name	address	end	priority	reverb	tone_bank	fill
+empty_header	sound_empty	0x080fd044	0x080fd048	0	0
+empty_header	sound_019	0x081652d8	0x081652e0	0	178	0x080fba78
+empty_header	sound_095	0x081810b8	0x081810c0	0	178	0x080fba78
+reserve_stream	orphan_stream_after_item_break	0x081819b0	0x081819c2
+empty_header	sound_288	0x081841f8	0x08184200	120	0	0x080fc138
+empty_header	sound_298	0x08184358	0x08184360	120	0	0x080fc138
+alignment	tail_alignment	0x08184698	0x08185000				0

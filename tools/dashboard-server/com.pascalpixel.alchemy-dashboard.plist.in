@@ -16,7 +16,7 @@
     <string>--</string>
     <string>dashboard-server</string>
     <string>--bind</string>
-    <string>127.0.0.1:4649</string>
+    <string>127.0.0.1:4650</string>
   </array>
   <key>WorkingDirectory</key>
   <string>@ALCHEMY_ROOT@</string>

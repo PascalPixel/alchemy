@@ -39,7 +39,8 @@ function percent(value) { return `${Number(value ?? 0).toFixed(2)}%`; }
 const music = {
   context: null, master: null, analyser: null, tracks: [], notes: [], duration: 0,
   index: 0, cursor: 0, position: 0, startedAt: 0, playing: false, timer: 0,
-  voices: new Set(), ui: null, soundfont: null, sampleBuffers: new Map(), generatorBuffers: new Map(), ready: false, volume: .32,
+  voices: new Set(), ui: null, soundfont: null, soundfonts: new Map(), sampleBuffers: new Map(), generatorBuffers: new Map(), ready: false, volume: 1,
+  repeatOne: localStorage.getItem("alchemy.music.repeatOne") === "true",
 };
 function midiVlq(view, state) {
   let value = 0;
@@ -49,6 +50,11 @@ function midiVlq(view, state) {
     if (!(byte & 0x80)) return value;
   }
   throw new Error("Invalid MIDI variable-length number");
+}
+// SMSH advances tempo against the GBA display clock, not MIDI's nominal
+// 120-BPM default. Proven by the native/meta pairs embedded in GS1 sources.
+function smshTempo(value) {
+  return value > 0 ? Math.round(120547500 / value) : 500000;
 }
 function parseMidi(buffer) {
   const view = new DataView(buffer);
@@ -68,13 +74,23 @@ function parseMidi(buffer) {
     while (state.at < end) {
       tick += midiVlq(view, state);
       let status = view.getUint8(state.at);
-      if (status & 0x80) { state.at += 1; running = status; }
-      else status = running;
+      if (status & 0x80) {
+        state.at += 1;
+        if (status < 0xf0) running = status;
+      } else {
+        if (running < 0x80 || running >= 0xf0) throw new Error("MIDI running status has no channel event");
+        status = running;
+      }
       if (status === 0xff) {
         const type = view.getUint8(state.at++);
         const length = midiVlq(view, state);
         if (type === 0x51 && length === 3) {
-          events.push({ tick, kind: "tempo", value: (view.getUint8(state.at) << 16) | (view.getUint8(state.at + 1) << 8) | view.getUint8(state.at + 2) });
+          events.push({ tick, track, kind: "tempo", value: (view.getUint8(state.at) << 16) | (view.getUint8(state.at + 1) << 8) | view.getUint8(state.at + 2) });
+        } else if (type === 0x06) {
+          try {
+            const marker = JSON.parse(new TextDecoder().decode(new Uint8Array(buffer, state.at, length)));
+            if (Array.isArray(marker)) events.push({ tick, track, kind: "engine", marker });
+          } catch {}
         }
         state.at += length;
       } else if (status === 0xf0 || status === 0xf7) {
@@ -84,11 +100,11 @@ function parseMidi(buffer) {
         const channel = status & 15;
         const a = view.getUint8(state.at++);
         const b = kind === 0xc || kind === 0xd ? 0 : view.getUint8(state.at++);
-        if (kind === 0x9 && b) events.push({ tick, kind: "on", channel, note: a, velocity: b });
-        else if (kind === 0x8 || (kind === 0x9 && !b)) events.push({ tick, kind: "off", channel, note: a });
-        else if (kind === 0xc) events.push({ tick, kind: "program", channel, value: a });
-        else if (kind === 0xb) events.push({ tick, kind: "control", channel, control: a, value: b });
-        else if (kind === 0xe) events.push({ tick, kind: "bend", channel, value: ((b << 7) | a) - 8192 });
+        if (kind === 0x9 && b) events.push({ tick, track, kind: "on", channel, note: a, velocity: b });
+        else if (kind === 0x8 || (kind === 0x9 && !b)) events.push({ tick, track, kind: "off", channel, note: a });
+        else if (kind === 0xc) events.push({ tick, track, kind: "program", channel, value: a });
+        else if (kind === 0xb) events.push({ tick, track, kind: "control", channel, control: a, value: b });
+        else if (kind === 0xe) events.push({ tick, track, kind: "bend", channel, value: ((b << 7) | a) - 8192 });
       }
     }
     at = end;
@@ -99,6 +115,8 @@ function parseMidi(buffer) {
   const expressions = Array(16).fill(127);
   const pans = Array(16).fill(64);
   const bends = Array(16).fill(0);
+  const keyShifts = Array(16).fill(0);
+  const tunings = Array(16).fill(64);
   const active = new Map();
   const notes = [];
   let tick = 0;
@@ -107,20 +125,31 @@ function parseMidi(buffer) {
   for (const event of events) {
     seconds += (event.tick - tick) * tempo / division / 1000000;
     tick = event.tick;
+    const voice = event.track;
     if (event.kind === "tempo") tempo = event.value;
-    else if (event.kind === "program") programs[event.channel] = event.value;
+    else if (event.kind === "engine") {
+      const [command, value] = event.marker;
+      if (command === "voice") programs[voice] = value;
+      else if (command === "tempo") tempo = smshTempo(value);
+      else if (command === "volume") volumes[voice] = value;
+      else if (command === "pan") pans[voice] = value;
+      else if (command === "pitch_bend") bends[voice] = value * 128;
+      else if (command === "key_shift") keyShifts[voice] = value;
+      else if (command === "tuning") tunings[voice] = value;
+    }
+    else if (event.kind === "program") programs[voice] = event.value;
     else if (event.kind === "control") {
-      if (event.control === 7) volumes[event.channel] = event.value;
-      else if (event.control === 10) pans[event.channel] = event.value;
-      else if (event.control === 11) expressions[event.channel] = event.value;
-    } else if (event.kind === "bend") bends[event.channel] = event.value;
+      if (event.control === 7) volumes[voice] = event.value;
+      else if (event.control === 10) pans[voice] = event.value;
+      else if (event.control === 11) expressions[voice] = event.value;
+    } else if (event.kind === "bend") bends[voice] = event.value;
     else if (event.kind === "on") {
-      const key = `${event.channel}:${event.note}`;
+      const key = `${voice}:${event.note}`;
       const queue = active.get(key) ?? [];
-      queue.push({ start: seconds, note: event.note, velocity: event.velocity, channel: event.channel, program: programs[event.channel], volume: volumes[event.channel], expression: expressions[event.channel], pan: pans[event.channel], bend: bends[event.channel] });
+      queue.push({ start: seconds, note: event.note + (keyShifts[voice] ?? 0), velocity: event.velocity, channel: voice, program: programs[voice] ?? 0, volume: volumes[voice] ?? 100, expression: expressions[voice] ?? 127, pan: pans[voice] ?? 64, bend: (bends[voice] ?? 0) + ((tunings[voice] ?? 64) - 64) * 64 });
       active.set(key, queue);
     } else if (event.kind === "off") {
-      const key = `${event.channel}:${event.note}`;
+      const key = `${voice}:${event.note}`;
       const start = active.get(key)?.shift();
       if (start) notes.push({ ...start, end: Math.max(seconds, start.start + 0.03) });
     }
@@ -128,12 +157,12 @@ function parseMidi(buffer) {
   notes.sort((a, b) => a.start - b.start);
   return { notes, duration: Math.max(seconds, ...notes.map((note) => note.end), 0) };
 }
+function currentMusicPosition() {
+  return music.playing && music.context ? Math.min(music.duration, music.context.currentTime - music.startedAt) : music.position;
+}
 function musicTime(value) {
   const seconds = Math.max(0, Math.floor(value || 0));
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
-}
-function currentMusicPosition() {
-  return music.playing && music.context ? Math.min(music.duration, music.context.currentTime - music.startedAt) : music.position;
 }
 function stopVoices() {
   for (const voice of music.voices) { try { voice.stop(); } catch {} }
@@ -142,32 +171,19 @@ function stopVoices() {
 function updateMusicUi() {
   if (!music.ui) return;
   const position = currentMusicPosition();
+  music.ui.play.replaceChildren(musicIcon(music.playing ? "pause" : "play"));
+  music.ui.play.setAttribute("aria-label", music.playing ? "Pause" : "Play track (A)");
+  if (music.playing && position >= music.duration) {
+    pauseMusic(true);
+    if (music.repeatOne) void playMusic();
+    return;
+  }
   music.ui.elapsed.textContent = musicTime(position);
   music.ui.duration.textContent = musicTime(music.duration);
-  music.ui.playLabel.textContent = music.playing ? "II" : "PLAY";
-  music.ui.play.setAttribute("aria-label", music.playing ? "Pause" : "Play");
-  const width = 492;
-  const height = 66;
-  const bins = 82;
-  const energy = Array(bins).fill(0);
-  for (const note of music.notes) {
-    const bin = Math.min(bins - 1, Math.floor(note.start / Math.max(music.duration, 1) * bins));
-    energy[bin] = Math.max(energy[bin], note.velocity / 127);
-  }
-  const bars = [];
-  for (let i = 0; i < bins; i += 1) {
-    const bar = 3 + energy[i] * (height - 7);
-    bars.push(s("rect", {
-      x: 24 + i * width / bins, y: 94 + (height - bar) / 2,
-      width: Math.max(2, width / bins - 2), height: bar,
-      fill: i / bins <= position / Math.max(music.duration, 1) ? "#f7d35c" : "#245a63",
-    }));
-  }
-  music.ui.wave.replaceChildren(...bars);
-  music.ui.playhead.setAttribute("x1", String(24 + position / Math.max(music.duration, 1) * width));
-  music.ui.playhead.setAttribute("x2", String(24 + position / Math.max(music.duration, 1) * width));
-  music.ui.volume.textContent = `VOL ${Math.round(music.volume * 10).toString().padStart(2, "0")}`;
-  if (music.playing && position >= music.duration) pauseMusic(true);
+  music.ui.scrubber.max = String(Math.max(music.duration, 0.01));
+  music.ui.scrubber.value = String(position);
+  const progress = position / Math.max(music.duration, 0.01);
+  music.ui.waveBars.forEach((bar, index) => bar.classList.toggle("passed", index / music.ui.waveBars.length <= progress));
 }
 function ensureAudio() {
   if (!music.context) {
@@ -178,18 +194,24 @@ function ensureAudio() {
   }
   return music.context;
 }
-async function loadSoundfont() {
-  if (music.soundfont) return music.soundfont;
-  const response = await fetch("/music/soundfont");
+async function loadSoundfont(game) {
+  if (music.soundfonts.has(game)) {
+    music.soundfont = music.soundfonts.get(game);
+    return music.soundfont;
+  }
+  const response = await fetch(game === "gs1" ? "/music/soundfont" : "/music/gs2/soundfont");
   if (!response.ok) throw new Error(`soundfont returned ${response.status}`);
   const soundfont = await response.json();
-  if (soundfont.engine !== "golden-sun-rom-audio-bank" || soundfont.bank.length !== 144) throw new Error("recovered music bank is incomplete");
+  const expectedVoices = game === "gs1" ? 144 : 145;
+  if (soundfont.engine !== "golden-sun-rom-audio-bank" || soundfont.bank.length !== expectedVoices) throw new Error(`recovered ${game.toUpperCase()} music bank is incomplete`);
+  soundfont.game = game;
   soundfont.sampleByAddress = new Map(soundfont.samples.map((sample) => [sample.address, sample]));
   soundfont.embeddedByAddress = new Map(soundfont.embedded_samples.map((sample) => [sample.address, sample]));
   for (const sample of soundfont.embedded_samples) {
     soundfont.sampleByAddress.set(sample.address, { ...sample, loop_start: sample.control & 0xc0000000 ? sample.loop_start : null, embedded: true });
   }
   soundfont.waveformByName = new Map(soundfont.waveforms.map((waveform) => [waveform.name, waveform]));
+  music.soundfonts.set(game, soundfont);
   music.soundfont = soundfont;
   return soundfont;
 }
@@ -204,34 +226,35 @@ function resolveTone(note) {
   if (!tone) throw new Error(`program ${note.program} / key ${note.note} is absent from the recovered bank`);
   return { tone, rhythm };
 }
-async function loadSample(address) {
-  if (music.sampleBuffers.has(address)) return music.sampleBuffers.get(address);
+async function loadSample(game, address) {
+  const cacheKey = `${game}:${address}`;
+  if (music.sampleBuffers.has(cacheKey)) return music.sampleBuffers.get(cacheKey);
   const sample = music.soundfont.sampleByAddress.get(address);
   if (!sample) throw new Error(`PCM sample ${address} is absent from the recovered wave catalog`);
   if (sample.embedded) {
     const rate = Math.max(3000, sample.frequency / 1024);
     const buffer = ensureAudio().createBuffer(1, sample.samples.length, rate);
     buffer.copyToChannel(Float32Array.from(sample.samples, (value) => (value > 127 ? value - 256 : value) / 128), 0);
-    music.sampleBuffers.set(address, buffer);
+    music.sampleBuffers.set(cacheKey, buffer);
     return buffer;
   }
-  const response = await fetch(`/music/samples/${sample.source}`);
+  const response = await fetch(`/music/${game === "gs1" ? "" : "gs2/"}samples/${sample.source}`);
   if (!response.ok) throw new Error(`${sample.source} returned ${response.status}`);
   const buffer = await ensureAudio().decodeAudioData(await response.arrayBuffer());
-  music.sampleBuffers.set(address, buffer);
+  music.sampleBuffers.set(cacheKey, buffer);
   return buffer;
 }
-async function prepareTrackSamples() {
-  await loadSoundfont();
+async function prepareTrackSamples(game) {
+  await loadSoundfont(game);
   const addresses = new Set();
   for (const note of music.notes) {
     const { tone } = resolveTone(note);
     if (tone.kind === "pcm") addresses.add(tone.sample);
   }
-  await Promise.all([...addresses].map(loadSample));
+  await Promise.all([...addresses].map((address) => loadSample(game, address)));
 }
 function generatorBuffer(tone) {
-  const key = `${tone.kind}:${tone.generator ?? tone.waveform}`;
+  const key = `${music.soundfont.game ?? "gs1"}:${tone.kind}:${tone.generator ?? tone.waveform}`;
   if (music.generatorBuffers.has(key)) return music.generatorBuffers.get(key);
   const context = ensureAudio();
   let samples;
@@ -273,13 +296,15 @@ function scheduleTone(note, position) {
   const { tone, rhythm } = resolveTone(note);
   const source = context.createBufferSource();
   let baseRate = 1;
+  const playedKey = tone.fixed_pitch || rhythm ? tone.key : note.note + note.bend / 8192 * 2;
   if (tone.kind === "pcm") {
+    const track = music.tracks[music.index];
     const sample = music.soundfont.sampleByAddress.get(tone.sample);
-    source.buffer = music.sampleBuffers.get(tone.sample);
-    if (!source.buffer) throw new Error(`PCM sample ${tone.sample} was not prepared`);
+    source.buffer = music.sampleBuffers.get(`${track.game}:${tone.sample}`);
+    if (!source.buffer || !sample) throw new Error(`PCM sample ${tone.sample} was not prepared`);
     if (sample.loop_start !== null) {
       source.loop = true;
-      source.loopStart = sample.loop_start / source.buffer.sampleRate;
+      source.loopStart = sample.loop_start / Math.max(3000, sample.frequency / 1024);
       source.loopEnd = source.buffer.duration;
     }
   } else {
@@ -287,7 +312,6 @@ function scheduleTone(note, position) {
     source.loop = true;
     baseRate = 440 * 2 ** ((tone.key - 69) / 12) / (context.sampleRate / source.buffer.length);
   }
-  const playedKey = tone.fixed_pitch || rhythm ? tone.key : note.note + note.bend / 8192 * 2;
   source.playbackRate.value = baseRate * 2 ** ((playedKey - tone.key) / 12);
   const start = music.startedAt + Math.max(note.start, position);
   const noteEnd = music.startedAt + note.end;
@@ -336,6 +360,31 @@ function cursorAt(position) {
   while (low < high) { const middle = (low + high) >> 1; if (music.notes[middle].start < position) low = middle + 1; else high = middle; }
   return low;
 }
+function drawMusicWave() {
+  const count = 96;
+  const energy = Array(count).fill(0.08);
+  for (const note of music.notes) {
+    const index = Math.min(count - 1, Math.floor(note.start / Math.max(music.duration, 0.01) * count));
+    energy[index] = Math.max(energy[index], note.velocity / 127);
+  }
+  music.ui.waveBars = energy.map((level) => h("span", { className: "music-wave-bar", style: `--bar:${Math.round(14 + level * 82)}%` }));
+  music.ui.wave.replaceChildren(...music.ui.waveBars, music.ui.scrubber);
+}
+function seekMusic(position) {
+  const next = Math.max(0, Math.min(music.duration, Number(position) || 0));
+  const wasPlaying = music.playing;
+  clearInterval(music.timer);
+  stopVoices();
+  music.position = next;
+  music.cursor = cursorAt(next);
+  if (wasPlaying && music.context) {
+    music.startedAt = music.context.currentTime - next;
+    music.timer = setInterval(scheduleMusic, 100);
+    scheduleMusic();
+  } else {
+    updateMusicUi();
+  }
+}
 async function playMusic() {
   if (!music.notes.length || !music.ready) return;
   ensureAudio();
@@ -360,21 +409,36 @@ async function loadMusic(index, autoplay = false) {
   music.index = (index + music.tracks.length) % music.tracks.length;
   const track = music.tracks[music.index];
   music.ui.title.textContent = track.title;
-  music.ui.source.textContent = `${track.source} · extracted MIDI`;
-  music.ui.track.textContent = `${String(track.id).padStart(3, "0")} / ${String(music.tracks.length).padStart(3, "0")}`;
+  music.ui.source.textContent = track.source;
+  music.ui.rows.forEach((row, rowIndex) => row.setAttribute("aria-current", String(rowIndex === music.index)));
+  music.ui.rows[music.index]?.scrollIntoView({ block: "nearest" });
   music.ui.card.setAttribute("aria-busy", "true");
   music.ui.play.setAttribute("aria-disabled", "true");
+  music.notes = [];
+  music.duration = 0;
+  drawMusicWave();
+  updateMusicUi();
   try {
-    const response = await fetch(`/music/${track.file}`);
+    if (!track.available || !track.file) {
+      music.notes = [];
+      music.duration = 0;
+      music.position = 0;
+      music.ui.source.textContent = `${track.source} · not yet recovered (${track.status})`;
+      updateMusicUi();
+      return;
+    }
+    await loadSoundfont(track.game);
+    const response = await fetch(track.path);
     if (!response.ok) throw new Error(`track returned ${response.status}`);
     const parsed = parseMidi(await response.arrayBuffer());
     music.notes = parsed.notes;
     music.duration = parsed.duration;
     music.position = 0;
+    drawMusicWave();
     music.ui.source.textContent = `${track.source} · loading recovered instrument bank`;
-    await prepareTrackSamples();
+    await prepareTrackSamples(track.game);
     music.ready = true;
-    music.ui.source.textContent = `${track.source} · Golden Sun ROM tone bank`;
+    music.ui.source.textContent = `${track.source} · ${track.gameTitle} ROM tone bank`;
     updateMusicUi();
     if (autoplay) await playMusic();
   } catch (error) {
@@ -384,73 +448,84 @@ async function loadMusic(index, autoplay = false) {
     music.ui.play.setAttribute("aria-disabled", String(!music.ready));
   }
 }
+function musicIcon(kind) {
+  const svg = s("svg", { viewBox: "0 0 24 24", "aria-hidden": "true" });
+  const paths = {
+    previous: "M5 5h2v14H5zM19 5v14L8 12z",
+    play: "M7 4v16l13-8z",
+    pause: "M6 4h4v16H6zM14 4h4v16h-4z",
+    next: "M17 5h2v14h-2zM5 5v14l11-7z",
+    repeat: "M7 7h9l-2.5-2.5L15 3l5 5-5 5-1.5-1.5L16 9H7a3 3 0 00-3 3H2a5 5 0 015-5zm10 8H8l2.5 2.5L9 19l-5-5 5-5 1.5 1.5L8 13h9a3 3 0 003-3h2a5 5 0 01-5 5z",
+  };
+  svg.append(s("path", { d: paths[kind] }));
+  return svg;
+}
 function musicPlayer() {
   if (music.ui?.card) return music.ui.card;
   pauseMusic(true);
-  const title = s("text", { class: "sound-title", x: 24, y: 66 }, "READING RECOVERED SEQUENCES…");
-  const source = s("text", { class: "sound-source", x: 24, y: 82 }, "GOLDEN SUN SOUND ARCHIVE");
-  const track = s("text", { class: "sound-track", x: 516, y: 66, "text-anchor": "end" }, "--- / ---");
-  const wave = s("g", { "aria-hidden": "true" });
-  const playhead = s("line", { class: "sound-playhead", x1: 24, y1: 91, x2: 24, y2: 163 });
-  const elapsed = s("text", { class: "sound-time", x: 24, y: 181 }, "0:00");
-  const duration = s("text", { class: "sound-time", x: 516, y: 181, "text-anchor": "end" }, "0:00");
-  const volume = s("text", { class: "sound-volume", x: 516, y: 251, "text-anchor": "end" }, "VOL 03");
-  const control = (label, x, glyph, emphasis = false) => {
-    const text = s("text", { x: x + (emphasis ? 36 : 29), y: 233, "text-anchor": "middle" }, glyph);
-    return { group: s("g", { class: `sound-button${emphasis ? " sound-primary" : ""}`, role: "button", tabindex: 0, "aria-label": label },
-      s("rect", { x, y: 201, width: emphasis ? 72 : 58, height: 52 }), text,
-    ), text };
-  };
-  const previousControl = control("Previous track", 24, "<");
-  const playControl = control("Play", 92, "PLAY", true);
-  const nextControl = control("Next track", 174, ">");
-  const quieterControl = control("Lower volume", 390, "−");
-  const louderControl = control("Raise volume", 458, "+");
-  const previous = previousControl.group;
-  const play = playControl.group;
-  const next = nextControl.group;
-  const quieter = quieterControl.group;
-  const louder = louderControl.group;
-  const seek = s("rect", { class: "sound-seek", x: 24, y: 91, width: 492, height: 74, role: "slider", tabindex: 0, "aria-label": "Track position" });
-  const svg = s("svg", { class: "music-card", viewBox: "0 0 540 304", role: "group", "aria-label": "Golden Sun cartridge music player" },
-    s("rect", { class: "sound-shell", x: 1, y: 1, width: 538, height: 302 }),
-    s("rect", { class: "sound-head", x: 1, y: 1, width: 538, height: 36 }),
-    s("text", { class: "sound-label", x: 16, y: 24 }, "SOUND TEST"),
-    s("text", { class: "sound-label", x: 524, y: 24, "text-anchor": "end" }, "GS1 · EN"),
-    title, source, track,
-    s("rect", { class: "sound-screen", x: 18, y: 88, width: 504, height: 80 }), wave, playhead, seek,
-    elapsed, duration,
-    previous, play, next, quieter, louder, volume,
-    s("text", { class: "sound-foot", x: 24, y: 282 }, "ROM SEQUENCE · ORIGINAL TONE BANK · PCM8"),
+  const count = h("span", {}, "Reading tracks…");
+  const list = h("div", { className: "music-list", role: "listbox", "aria-label": "Golden Sun music" });
+  const title = h("div", { className: "music-now-title" }, "Reading recovered sequences…");
+  const source = h("div", { className: "music-now-source" }, "Golden Sun sound archive");
+  const control = (label, icon, primary = false) => h("button", {
+    className: `music-control${primary ? " music-control-primary" : ""}`,
+    type: "button", "aria-label": label,
+  }, musicIcon(icon));
+  const previous = control("Previous track", "previous");
+  const play = control("Play track (A)", "play", true);
+  const next = control("Next track", "next");
+  const repeat = control("Repeat this track", "repeat");
+  repeat.setAttribute("aria-pressed", String(music.repeatOne));
+  const elapsed = h("span", {}, "0:00");
+  const duration = h("span", {}, "0:00");
+  const scrubber = h("input", { className: "music-range", type: "range", min: 0, max: 0.01, step: 0.01, value: 0, "aria-label": "Track position" });
+  const wave = h("div", { className: "music-wave" }, scrubber);
+  const card = h("section", { className: "music-player", "aria-label": "Music", "aria-busy": "true" },
+    h("header", { className: "music-titlebar" }, h("span", {}, "Music"), count),
+    list,
+    h("footer", { className: "music-chin" },
+      h("div", { className: "music-now" }, title, source),
+      h("div", { className: "music-controls" }, previous, play, next, repeat),
+      h("div", { className: "music-scrubber-shell" }, elapsed, wave, duration),
+    ),
   );
-  const card = h("section", { className: "panel music-panel" }, svg);
-  music.ui = { card, title, source, track, wave, playhead, play, playLabel: playControl.text, previous, next, elapsed, duration, volume };
-  const activate = (node, action) => {
-    node.addEventListener("click", action);
-    node.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); action(); } });
-  };
-  activate(play, () => music.playing ? pauseMusic() : playMusic());
-  activate(previous, () => loadMusic(music.index - 1, music.playing));
-  activate(next, () => loadMusic(music.index + 1, music.playing));
-  activate(quieter, () => { music.volume = Math.max(0, music.volume - .08); if (music.master) music.master.gain.value = music.volume; updateMusicUi(); });
-  activate(louder, () => { music.volume = Math.min(.8, music.volume + .08); if (music.master) music.master.gain.value = music.volume; updateMusicUi(); });
-  const seekTo = (event) => {
-    const box = svg.getBoundingClientRect();
-    const x = (event.clientX - box.left) / box.width * 540;
-    const wasPlaying = music.playing;
-    pauseMusic();
-    music.position = Math.max(0, Math.min(music.duration, (x - 24) / 492 * music.duration));
-    updateMusicUi();
-    if (wasPlaying) playMusic();
-  };
-  seek.addEventListener("pointerdown", seekTo);
+  music.ui = { card, count, list, rows: [], title, source, play, previous, next, repeat, elapsed, duration, scrubber, wave, waveBars: [] };
+  play.addEventListener("click", () => music.playing ? pauseMusic() : playMusic());
+  previous.addEventListener("click", () => loadMusic(music.index - 1, music.playing));
+  next.addEventListener("click", () => loadMusic(music.index + 1, music.playing));
+  repeat.addEventListener("click", () => {
+    music.repeatOne = !music.repeatOne;
+    localStorage.setItem("alchemy.music.repeatOne", String(music.repeatOne));
+    repeat.setAttribute("aria-pressed", String(music.repeatOne));
+  });
+  scrubber.addEventListener("input", () => seekMusic(scrubber.value));
   fetch("/music/catalog").then((response) => {
     if (!response.ok) throw new Error(`catalog returned ${response.status}`);
     return response.json();
   }).then((tracks) => {
     music.tracks = tracks;
+    count.textContent = `${tracks.length} tracks`;
+    music.ui.rows = tracks.map((track, index) => {
+      const row = h("button", {
+        className: "music-row", type: "button", role: "option", "aria-current": "false",
+        "aria-label": `${track.gameTitle}, ${track.title}, ROM sequence ${track.soundId}`,
+      },
+      h("span", { className: "music-row-request" }, track.game.toUpperCase()),
+      h("span", { className: "music-row-title" }, track.title),
+      h("span", { className: "music-row-source" }, track.gameTitle),
+      );
+      row.addEventListener("click", () => {
+        if (index === music.index && music.ready) music.playing ? pauseMusic() : playMusic();
+        else loadMusic(index, true);
+      });
+      return row;
+    });
+    list.replaceChildren(...music.ui.rows);
     return loadMusic(0);
-  }).catch((error) => { source.textContent = `Music catalog unavailable · ${error.message}`; });
+  }).catch((error) => {
+    source.textContent = `Music catalog unavailable · ${error.message}`;
+    card.setAttribute("aria-busy", "false");
+  });
   return card;
 }
 
@@ -488,7 +563,6 @@ async function loadTree(section, tree, title, revision) {
 function panel(tree, title, revision) {
   const chart = h("div", { className: "chart" }, h("div", { className: "chart-loading" }, "Reading…"));
   const section = h("section", { className: `panel p-${tree}` },
-    h("header", { className: "panel-title" }, h("span", {}, title), h("span", {}, tree === "core" || tree === "overlays" ? "EN build" : "shared assets")),
     chart,
   );
   loadTree(section, tree, title, revision).catch((error) => showError(error instanceof Error ? error.message : String(error)));
@@ -532,3 +606,4 @@ events.addEventListener("update", (event) => {
 });
 root.addEventListener("pointermove", showTooltip);
 root.addEventListener("pointerleave", hideTooltip);
+window.addEventListener("scroll", hideTooltip, { capture: true, passive: true });

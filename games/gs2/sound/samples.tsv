@@ -1,0 +1,78 @@
+# ROM-derived direct-sound samples; provisional names preserve tone-bank order.
+sample	address	frequency	loop_start	sample_count	source
+0	0x081c5e34	22579200	645	667	direct_sound_samples/sample_000.pcm8.wav
+1	0x081c60e0	22579200	12544	13051	direct_sound_samples/sample_001.pcm8.wav
+2	0x081c93ec	22579200	9392	11078	direct_sound_samples/sample_002.pcm8.wav
+3	0x081cbf44	22579200		7534	direct_sound_samples/sample_003.pcm8.wav
+4	0x081cdcc4	22579200	1804	1826	direct_sound_samples/sample_004.pcm8.wav
+5	0x081ce3f8	22579200		19527	direct_sound_samples/sample_005.pcm8.wav
+6	0x081d3050	16146432	7820	16831	direct_sound_samples/sample_006.pcm8.wav
+7	0x081d7220	22579200	5616	16028	direct_sound_samples/sample_007.pcm8.wav
+8	0x081db0cc	22579200	2500	2543	direct_sound_samples/sample_008.pcm8.wav
+9	0x081dbacc	22579200	7020	13286	direct_sound_samples/sample_009.pcm8.wav
+10	0x081deec4	22579200	8037	8080	direct_sound_samples/sample_010.pcm8.wav
+11	0x081e0e64	22579200	2010	2053	direct_sound_samples/sample_011.pcm8.wav
+12	0x081e167c	22579200	8064	12247	direct_sound_samples/sample_012.pcm8.wav
+13	0x081e4664	22579200	3625	8767	direct_sound_samples/sample_013.pcm8.wav
+14	0x081e68b4	17140000	0	1	direct_sound_samples/sample_014.pcm8.wav
+15	0x081e68cc	17140000	0	1	direct_sound_samples/sample_015.pcm8.wav
+16	0x081e68e4	17140000	0	1	direct_sound_samples/sample_016.pcm8.wav
+17	0x081e68fc	17140000	0	1	direct_sound_samples/sample_017.pcm8.wav
+18	0x081e6910	17140000	0	1	direct_sound_samples/sample_018.pcm8.wav
+19	0x081e6924	6712836	6826	11358	direct_sound_samples/sample_019.pcm8.wav
+20	0x081e9594	6088740	10930	13866	direct_sound_samples/sample_020.pcm8.wav
+21	0x081ecbd0	22579200		4524	direct_sound_samples/sample_021.pcm8.wav
+22	0x081edd8c	19353600		9098	direct_sound_samples/sample_022.pcm8.wav
+23	0x081f0128	13425673	12566	16934	direct_sound_samples/sample_023.pcm8.wav
+24	0x081f4360	13425673	6758	13763	direct_sound_samples/sample_024.pcm8.wav
+25	0x081f7934	13425673	15090	21591	direct_sound_samples/sample_025.pcm8.wav
+26	0x081fcd9c	10240000	0	12485	direct_sound_samples/sample_026.pcm8.wav
+27	0x081ffe74	10240000	0	19815	direct_sound_samples/sample_027.pcm8.wav
+28	0x08204bec	22579200	6742	10748	direct_sound_samples/sample_028.pcm8.wav
+29	0x082075f8	10240000		4519	direct_sound_samples/sample_029.pcm8.wav
+30	0x082087b0	10240000		4514	direct_sound_samples/sample_030.pcm8.wav
+31	0x08209964	32292864		5638	direct_sound_samples/sample_031.pcm8.wav
+32	0x0820af7c	22579200		2659	direct_sound_samples/sample_032.pcm8.wav
+33	0x0820b9f0	32292864		11155	direct_sound_samples/sample_033.pcm8.wav
+34	0x0820e594	32292864		5972	direct_sound_samples/sample_034.pcm8.wav
+35	0x0820fcf8	32292864		12104	direct_sound_samples/sample_035.pcm8.wav
+36	0x08212c50	32292864		14761	direct_sound_samples/sample_036.pcm8.wav
+37	0x0821660c	32292864		3579	direct_sound_samples/sample_037.pcm8.wav
+38	0x08217418	32292864		14977	direct_sound_samples/sample_038.pcm8.wav
+39	0x0821aeac	32292864	19733	27688	direct_sound_samples/sample_039.pcm8.wav
+40	0x08221ae4	32292864	13980	20947	direct_sound_samples/sample_040.pcm8.wav
+41	0x08226cc8	21528576	5306	12407	direct_sound_samples/sample_041.pcm8.wav
+42	0x08229d50	21528576	631	25510	direct_sound_samples/sample_042.pcm8.wav
+43	0x08230108	21528576		32863	direct_sound_samples/sample_043.pcm8.wav
+44	0x08238178	21528576	2446	9830	direct_sound_samples/sample_044.pcm8.wav
+45	0x0823a7f0	22542336		21166	direct_sound_samples/sample_045.pcm8.wav
+46	0x0823fab0	22542336		33187	direct_sound_samples/sample_046.pcm8.wav
+47	0x08247c64	21528576	1	3197	direct_sound_samples/sample_047.pcm8.wav
+48	0x082488f4	21528576	0	2181	direct_sound_samples/sample_048.pcm8.wav
+49	0x0824918c	21528576		10825	direct_sound_samples/sample_049.pcm8.wav
+50	0x0824bbe8	21528576		3987	direct_sound_samples/sample_050.pcm8.wav
+51	0x0824cb8c	21528576		2935	direct_sound_samples/sample_051.pcm8.wav
+52	0x0824d714	21528576	7860	16399	direct_sound_samples/sample_052.pcm8.wav
+53	0x08251734	10764288	500	18363	direct_sound_samples/sample_053.pcm8.wav
+54	0x08255f00	22579200		30297	direct_sound_samples/sample_054.pcm8.wav
+55	0x0825d56c	22579200	33	2073	direct_sound_samples/sample_055.pcm8.wav
+56	0x0825dd98	22579200	57	2456	direct_sound_samples/sample_056.pcm8.wav
+57	0x0825e740	22579200	71	1978	direct_sound_samples/sample_057.pcm8.wav
+58	0x0825ef0c	22579200	85	3589	direct_sound_samples/sample_058.pcm8.wav
+59	0x0825fd24	22579200		2254	direct_sound_samples/sample_059.pcm8.wav
+60	0x08260604	22579200		21461	direct_sound_samples/sample_060.pcm8.wav
+61	0x082659ec	22579200	309	19441	direct_sound_samples/sample_061.pcm8.wav
+62	0x0826a5f0	22579200	258	30153	direct_sound_samples/sample_062.pcm8.wav
+63	0x08271bcc	22579200		32966	direct_sound_samples/sample_063.pcm8.wav
+64	0x08279ca4	22579200	119	23266	direct_sound_samples/sample_064.pcm8.wav
+65	0x0827f798	11289600	154	9720	direct_sound_samples/sample_065.pcm8.wav
+66	0x08281da0	22579200		20113	direct_sound_samples/sample_066.pcm8.wav
+67	0x08286c44	22579200		14209	direct_sound_samples/sample_067.pcm8.wav
+68	0x0828a3d8	22579200	31904	53043	direct_sound_samples/sample_068.pcm8.wav
+69	0x0829731c	22579200		39653	direct_sound_samples/sample_069.pcm8.wav
+70	0x082a0e14	22579200		41283	direct_sound_samples/sample_070.pcm8.wav
+71	0x082aaf68	22579200		16542	direct_sound_samples/sample_071.pcm8.wav
+72	0x082af018	22579200		6705	direct_sound_samples/sample_072.pcm8.wav
+73	0x082b0a5c	22579200		19556	direct_sound_samples/sample_073.pcm8.wav
+74	0x082b56d0	22579200		8791	direct_sound_samples/sample_074.pcm8.wav
+75	0x082b7938	22579200		11854	direct_sound_samples/sample_075.pcm8.wav

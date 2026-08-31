@@ -1,0 +1,34 @@
+# ROM-derived GS1 direct-sound samples.
+sample	address	frequency	loop_start	sample_count	source
+0	0x080fd048	22579200	645	667	direct_sound_samples/wave_00.pcm8.wav
+1	0x080fd2f4	22579200	12544	13051	direct_sound_samples/wave_01.pcm8.wav
+2	0x08100600	22579200	9392	11078	direct_sound_samples/wave_02.pcm8.wav
+3	0x08103158	22579200		7534	direct_sound_samples/wave_03.pcm8.wav
+4	0x08104ed8	22579200	1804	1826	direct_sound_samples/wave_04.pcm8.wav
+5	0x0810560c	22579200		19527	direct_sound_samples/wave_05.pcm8.wav
+6	0x0810a264	16146432	7820	16831	direct_sound_samples/wave_06.pcm8.wav
+7	0x0810e434	22579200	5616	16028	direct_sound_samples/wave_07.pcm8.wav
+8	0x081122e0	22579200	2500	2543	direct_sound_samples/wave_08.pcm8.wav
+9	0x08112ce0	22579200	7020	13286	direct_sound_samples/wave_09.pcm8.wav
+10	0x081160d8	22579200	8037	8080	direct_sound_samples/wave_10.pcm8.wav
+11	0x08118078	22579200	2010	2053	direct_sound_samples/wave_11.pcm8.wav
+12	0x08118890	22579200	8064	12247	direct_sound_samples/wave_12.pcm8.wav
+13	0x0811b878	22579200	3625	8767	direct_sound_samples/wave_13.pcm8.wav
+14	0x0811db38	22579200		4065	direct_sound_samples/wave_14.pcm8.wav
+15	0x0811eb2c	22579200		7000	direct_sound_samples/wave_15.pcm8.wav
+16	0x08120694	22579200		10865	direct_sound_samples/wave_16.pcm8.wav
+17	0x08123118	22579200		2169	direct_sound_samples/wave_17.pcm8.wav
+18	0x081239a4	45158400		49183	direct_sound_samples/wave_18.pcm8.wav
+19	0x0812f9d4	22579200	5454	7145	direct_sound_samples/wave_19.pcm8.wav
+20	0x081315d0	21528576	5306	12407	direct_sound_samples/wave_20.pcm8.wav
+21	0x08134658	21528576	631	25510	direct_sound_samples/wave_21.pcm8.wav
+22	0x0813aa10	21528576		32863	direct_sound_samples/wave_22.pcm8.wav
+23	0x08142a80	21528576	2446	9830	direct_sound_samples/wave_23.pcm8.wav
+24	0x081450f8	22542336		21166	direct_sound_samples/wave_24.pcm8.wav
+25	0x0814a3b8	22542336		33187	direct_sound_samples/wave_25.pcm8.wav
+26	0x0815256c	21528576	0	2181	direct_sound_samples/wave_26.pcm8.wav
+27	0x08152e04	21528576		10825	direct_sound_samples/wave_27.pcm8.wav
+28	0x08155860	21528576		3987	direct_sound_samples/wave_28.pcm8.wav
+29	0x08156804	21528576		2935	direct_sound_samples/wave_29.pcm8.wav
+30	0x0815738c	21528576	7860	16399	direct_sound_samples/wave_30.pcm8.wav
+31	0x0815b3ac	10764288	500	18363	direct_sound_samples/wave_31.pcm8.wav

@@ -1,0 +1,11 @@
+# Nine packed 4-bit CGB waveforms used by GS2.
+wave	address	source
+0	0x81c4440	programmable_wave_samples/wave_000.pcm4
+1	0x81c4450	programmable_wave_samples/wave_001.pcm4
+2	0x81c4460	programmable_wave_samples/wave_002.pcm4
+3	0x81c4470	programmable_wave_samples/wave_003.pcm4
+4	0x81c4480	programmable_wave_samples/wave_004.pcm4
+5	0x81c4490	programmable_wave_samples/wave_005.pcm4
+6	0x81c44a0	programmable_wave_samples/wave_006.pcm4
+7	0x81c44b0	programmable_wave_samples/wave_007.pcm4
+8	0x81c44c0	programmable_wave_samples/wave_008.pcm4

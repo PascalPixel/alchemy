@@ -1,0 +1,6 @@
+# Ordered byte-exact GS1 audio-engine data families.
+section	address	end	source
+control	0x080fb792	0x080fba78	control.tsv
+voicegroups	0x080fba78	0x080fc504	voicegroups/index.tsv
+waveforms	0x080fc504	0x080fc624	waveforms.tsv
+players	0x080fc624	0x080fc684	players.tsv

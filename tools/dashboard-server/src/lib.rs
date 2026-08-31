@@ -10,7 +10,7 @@ use coverage_map::{
 };
 use serde_json::{json, Map, Value};
 use std::{
-    collections::BTreeSet,
+    collections::{BTreeMap, BTreeSet},
     io::{BufRead, BufReader, Write},
     net::{IpAddr, Ipv4Addr, SocketAddr, TcpListener, TcpStream},
     path::{Path, PathBuf},
@@ -94,10 +94,16 @@ fn font() -> PathBuf {
     root().join("games/gs1/assets/fonts/weyard.otf")
 }
 fn music_dir() -> PathBuf {
-    root().join("games/gs1/assets/audio/sequences")
+    root().join("games/gs1/sound/songs/midi")
 }
 fn audio_dir() -> PathBuf {
-    root().join("games/gs1/assets/audio")
+    root().join("games/gs1/sound")
+}
+fn gs2_sound_dir() -> PathBuf {
+    root().join("games/gs2/sound")
+}
+fn music_register() -> PathBuf {
+    root().join("games/music.tsv")
 }
 fn page_version() -> String {
     let client = client::bundled_client().unwrap_or_default();
@@ -398,58 +404,285 @@ fn event_stream() -> Response {
     )
 }
 fn music_catalog() -> Result<Vec<u8>, String> {
-    let mut tracks = std::fs::read_dir(music_dir())
-        .map_err(|error| format!("music catalog: {error}"))?
-        .filter_map(Result::ok)
-        .filter_map(|entry| {
-            let name = entry.file_name().into_string().ok()?;
-            let number = name.strip_prefix("bgm_")?.strip_suffix(".mid")?;
-            number.parse::<u16>().ok().map(|id| (id, name))
+    let register = std::fs::read_to_string(music_register())
+        .map_err(|error| format!("music register: {error}"))?;
+    let catalog = music::parse_music_catalog(&register)?;
+    let sequences = std::fs::read_to_string(audio_dir().join("sequences.tsv"))
+        .map_err(|error| format!("GS1 music sequences: {error}"))?;
+    let mut tracks = sequences
+        .lines()
+        .filter(|line| !line.starts_with('#'))
+        .skip(1)
+        .filter_map(|line| {
+            let fields = line.split('\t').collect::<Vec<_>>();
+            (fields.get(1) == Some(&"music")).then_some(fields)
         })
-        .collect::<Vec<_>>();
-    tracks.sort_unstable();
-    serde_json::to_vec(
-        &tracks
-            .into_iter()
-            .map(|(id, file)| {
-                json!({
-                    "id": id,
-                    "file": file,
-                    "title": format!("Recovered sequence {id:03}"),
-                    "source": format!("sound_{id:03}")
+        .map(|fields| {
+            if fields.len() != 5 {
+                return Err("GS1 music sequence row width differs".to_string());
+            }
+            let sound_id = fields[0]
+                .parse::<u16>()
+                .map_err(|_| "GS1 music sequence ID differs".to_string())?;
+            let file = Path::new(fields[4])
+                .file_name()
+                .and_then(|name| name.to_str())
+                .ok_or("GS1 music sequence filename differs")?
+                .to_string();
+            let title = catalog.english_title("gs1", sound_id);
+            Ok(json!({
+                "key": format!("gs1:{sound_id}"),
+                "game": "gs1",
+                "gameTitle": "Golden Sun",
+                "soundId": sound_id,
+                "file": file,
+                "path": format!("/music/{file}"),
+                "available": true,
+                "status": "byte-exact",
+                "title": title.map(str::to_owned).unwrap_or_else(|| "Untitled".to_string()),
+                "source": format!("Golden Sun · ROM sequence {sound_id:03}")
+            }))
+        })
+        .collect::<Result<Vec<_>, _>>()?;
+    if tracks.len() != 58 {
+        return Err("GS1 music catalog does not expose all 58 music sequences".into());
+    }
+    let requests = std::fs::read_to_string(gs2_sound_dir().join("music_requests.tsv"))
+        .map_err(|error| format!("GS2 music requests: {error}"))?;
+    let requests = requests
+        .lines()
+        .filter(|line| !line.starts_with('#'))
+        .skip(1)
+        .map(|line| {
+            let fields = line.split('\t').collect::<Vec<_>>();
+            if fields.len() != 5 {
+                return Err("GS2 music request row width differs".to_string());
+            }
+            let request = fields[0]
+                .parse::<u16>()
+                .map_err(|_| "GS2 music request number differs".to_string())?;
+            let sound_id = fields[1]
+                .parse::<u16>()
+                .map_err(|_| "GS2 music request sound ID differs".to_string())?;
+            let status = fields[4].to_string();
+            let file = (status == "byte-exact")
+                .then(|| {
+                    Path::new(fields[3])
+                        .file_name()?
+                        .to_str()
+                        .map(str::to_string)
                 })
-            })
-            .collect::<Vec<_>>(),
-    )
-    .map_err(|error| error.to_string())
+                .flatten();
+            Ok((request, sound_id, fields[2].to_string(), file, status))
+        })
+        .collect::<Result<Vec<_>, _>>()?;
+    if requests.len() != 97
+        || requests
+            .iter()
+            .enumerate()
+            .any(|(index, row)| usize::from(row.0) != index)
+    {
+        return Err("GS2 music request register is not the complete ordered 0-96 set".into());
+    }
+    tracks.extend(
+        requests
+            .into_iter()
+            .map(|(request, sound_id, header, file, status)| {
+                let title = catalog.english_title("gs2", sound_id);
+                json!({
+                    "key": format!("gs2:{request}"),
+                    "game": "gs2",
+                    "gameTitle": "Golden Sun: The Lost Age",
+                    "request": request,
+                    "soundId": sound_id,
+                    "header": header,
+                    "file": file,
+                    "path": file.as_ref().map(|file| format!("/music/gs2/{file}")),
+                    "available": file.is_some(),
+                    "status": status,
+                    "title": title.map(str::to_owned).unwrap_or_else(|| "Untitled".to_string()),
+                    "source": format!("Golden Sun: The Lost Age · ROM sequence {sound_id}")
+                })
+            }),
+    );
+    serde_json::to_vec(&tracks).map_err(|error| error.to_string())
 }
-fn read_audio_json(name: &str) -> Result<Value, String> {
-    let path = audio_dir().join(name);
-    serde_json::from_slice(
-        &std::fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?,
-    )
-    .map_err(|error| format!("{}: {error}", path.display()))
+fn read_programmable_waveforms(
+    sound: &Path,
+    count: usize,
+    digits: usize,
+    base: u32,
+) -> Result<Vec<Value>, String> {
+    let path = sound.join("waveforms.tsv");
+    let text =
+        std::fs::read_to_string(&path).map_err(|error| format!("{}: {error}", path.display()))?;
+    let mut lines = text.lines().filter(|line| !line.starts_with('#'));
+    if lines.next() != Some("wave\taddress\tsource") {
+        return Err(format!("{}: waveform table header differs", path.display()));
+    }
+    let mut waveforms = Vec::with_capacity(count);
+    for index in 0..count {
+        let fields = lines
+            .next()
+            .ok_or_else(|| format!("waveform {index} is absent"))?
+            .split('\t')
+            .collect::<Vec<_>>();
+        let name = format!("wave_{index:0digits$}");
+        let source = format!("programmable_wave_samples/{name}.pcm4");
+        let address = fields
+            .get(1)
+            .and_then(|value| u32::from_str_radix(value.trim_start_matches("0x"), 16).ok());
+        if fields.len() != 3
+            || fields[0] != index.to_string()
+            || address != Some(base + index as u32 * 16)
+            || fields[2] != source
+        {
+            return Err(format!("waveform {index} identity differs"));
+        }
+        let data = std::fs::read(sound.join(&source))
+            .map_err(|error| format!("waveform {index}: {error}"))?;
+        if data.len() != 16 {
+            return Err(format!("waveform {index} extent differs"));
+        }
+        waveforms.push(json!({
+            "name": name,
+            "samples": data.into_iter().flat_map(|byte| [byte >> 4, byte & 15]).collect::<Vec<_>>()
+        }));
+    }
+    if lines.next().is_some() {
+        return Err("waveform table has extra rows".into());
+    }
+    Ok(waveforms)
 }
+
+fn read_gs1_samples(sound: &Path) -> Result<Vec<Value>, String> {
+    let path = sound.join("samples.tsv");
+    let text =
+        std::fs::read_to_string(&path).map_err(|error| format!("{}: {error}", path.display()))?;
+    let mut lines = text.lines().filter(|line| !line.starts_with('#'));
+    if lines.next() != Some("sample\taddress\tfrequency\tloop_start\tsample_count\tsource") {
+        return Err("GS1 sample table header differs".into());
+    }
+    let mut samples = Vec::with_capacity(32);
+    for sample in 0..32 {
+        let fields = lines
+            .next()
+            .ok_or_else(|| format!("GS1 sample {sample} is absent"))?
+            .split('\t')
+            .collect::<Vec<_>>();
+        if fields.len() != 6 || fields[0] != sample.to_string() {
+            return Err(format!("GS1 sample {sample} identity differs"));
+        }
+        let count = fields[4]
+            .parse::<usize>()
+            .map_err(|_| format!("GS1 sample {sample} extent differs"))?;
+        samples.push(json!({
+            "name": format!("wave_{sample:02}"),
+            "address": fields[1],
+            "size": (16 + count + 3) & !3,
+            "frequency": fields[2].parse::<u32>().map_err(|_| format!("GS1 sample {sample} frequency differs"))?,
+            "loop_start": if fields[3].is_empty() { Value::Null } else { json!(fields[3].parse::<u32>().map_err(|_| format!("GS1 sample {sample} loop differs"))?) },
+            "source": Path::new(fields[5]).file_name().and_then(|name| name.to_str()).ok_or_else(|| format!("GS1 sample {sample} source differs"))?
+        }));
+    }
+    if lines.next().is_some() {
+        return Err("GS1 sample table has extra rows".into());
+    }
+    Ok(samples)
+}
+
+fn read_gs1_voicegroup(sound: &Path, samples: &[Value]) -> Result<Vec<Value>, String> {
+    let sample_by_source = samples
+        .iter()
+        .filter_map(|sample| {
+            Some((
+                format!("direct_sound_samples/{}", sample.get("source")?.as_str()?),
+                sample.get("address")?.as_str()?,
+            ))
+        })
+        .collect::<BTreeMap<_, _>>();
+    let path = sound.join("voicegroups/voicegroup_000.tsv");
+    let text =
+        std::fs::read_to_string(&path).map_err(|error| format!("{}: {error}", path.display()))?;
+    let mut lines = text.lines().filter(|line| !line.starts_with('#'));
+    if lines.next()
+        != Some("program\tkind\tfixed_pitch\tkey\tlength\tpan_sweep\tsource\tattack\tdecay\tsustain\trelease")
+    {
+        return Err("GS1 voice-group header differs".into());
+    }
+    let mut bank = Vec::with_capacity(144);
+    for program in 0..144 {
+        let fields = lines
+            .next()
+            .ok_or_else(|| format!("GS1 voice {program} is absent"))?
+            .split('\t')
+            .collect::<Vec<_>>();
+        if fields.len() != 11 || fields[0] != program.to_string() {
+            return Err(format!("GS1 voice {program} identity differs"));
+        }
+        let number = |field: usize, label: &str| {
+            fields[field]
+                .parse::<u8>()
+                .map_err(|_| format!("GS1 voice {program} {label} differs"))
+        };
+        let mut tone = json!({
+            "kind": fields[1],
+            "fixed_pitch": fields[2] == "true",
+            "key": number(3, "key")?,
+            "length": number(4, "length")?,
+            "pan_sweep": number(5, "pan")?,
+            "envelope": [number(7, "attack")?, number(8, "decay")?, number(9, "sustain")?, number(10, "release")?]
+        });
+        match fields[1] {
+            "pcm" => {
+                tone["sample"] = json!(sample_by_source
+                    .get(fields[6])
+                    .copied()
+                    .or_else(|| fields[6].strip_prefix("embedded_pcm_"))
+                    .ok_or_else(|| format!("GS1 voice {program} sample differs"))?)
+            }
+            "wave" => {
+                tone["waveform"] = json!(Path::new(fields[6])
+                    .file_stem()
+                    .and_then(|name| name.to_str())
+                    .ok_or_else(|| format!("GS1 voice {program} waveform differs"))?)
+            }
+            "rhythm" => {
+                let (bank_number, program_number) = fields[6]
+                    .strip_prefix("voicegroup_")
+                    .and_then(|value| value.split_once(':'))
+                    .ok_or_else(|| format!("GS1 voice {program} rhythm table differs"))?;
+                tone["tones"] = json!(format!(
+                    "bank_{}_{:03}",
+                    bank_number
+                        .parse::<u8>()
+                        .map_err(|_| format!("GS1 voice {program} rhythm bank differs"))?,
+                    program_number
+                        .parse::<u8>()
+                        .map_err(|_| format!("GS1 voice {program} rhythm program differs"))?
+                ));
+            }
+            "pulse_1" | "pulse_2" | "noise" => tone["generator"] = json!(number(6, "generator")?),
+            _ => return Err(format!("GS1 voice {program} kind differs")),
+        }
+        bank.push(tone);
+    }
+    if lines.next().is_some() {
+        return Err("GS1 voice group has extra rows".into());
+    }
+    Ok(bank)
+}
+
 fn soundfont() -> Result<Vec<u8>, String> {
-    let tones = read_audio_json("engine_onshoku.json")?;
-    let samples = read_audio_json("waves/index.json")?;
-    let waveforms = read_audio_json("engine_hakei.json")?;
-    let residuals = read_audio_json("../data/final_byte_regions_index.json")?;
-    let bank = tones
-        .pointer("/banks/0/records")
-        .and_then(Value::as_array)
-        .filter(|records| records.len() == 144)
-        .ok_or("music tone bank is incomplete")?;
-    let samples = samples
-        .get("waves")
-        .and_then(Value::as_array)
-        .filter(|waves| waves.len() == 32)
-        .ok_or("PCM wave catalog is incomplete")?;
-    let waveforms = waveforms
-        .get("waveforms")
-        .and_then(Value::as_array)
-        .filter(|waves| waves.len() == 18)
-        .ok_or("CGB waveform catalog is incomplete")?;
+    let samples = read_gs1_samples(&audio_dir())?;
+    let waveforms = read_programmable_waveforms(&audio_dir(), 18, 2, 0x080f_c504)?;
+    let residuals_path = root().join("games/gs1/assets/data/final_byte_regions_index.json");
+    let residuals: Value = serde_json::from_slice(
+        &std::fs::read(&residuals_path)
+            .map_err(|error| format!("{}: {error}", residuals_path.display()))?,
+    )
+    .map_err(|error| format!("{}: {error}", residuals_path.display()))?;
+    let bank = read_gs1_voicegroup(&audio_dir(), &samples)?;
     let mut sample_addresses = samples
         .iter()
         .filter_map(|sample| sample.get("address").and_then(Value::as_str))
@@ -562,6 +795,85 @@ fn soundfont() -> Result<Vec<u8>, String> {
     .map_err(|error| error.to_string())
 }
 
+fn gs2_soundfont() -> Result<Vec<u8>, String> {
+    let sound = gs2_sound_dir();
+    let samples_text = std::fs::read_to_string(sound.join("samples.tsv"))
+        .map_err(|error| format!("GS2 samples: {error}"))?;
+    let mut samples = Vec::new();
+    let mut sample_by_source = BTreeMap::new();
+    for line in samples_text
+        .lines()
+        .filter(|line| !line.starts_with('#'))
+        .skip(1)
+    {
+        let fields = line.split('\t').collect::<Vec<_>>();
+        if fields.len() != 6 {
+            return Err("GS2 sample row width differs".into());
+        }
+        let source = Path::new(fields[5])
+            .file_name()
+            .and_then(|name| name.to_str())
+            .ok_or("GS2 sample filename differs")?;
+        sample_by_source.insert(fields[5], fields[1]);
+        samples.push(json!({
+            "address": fields[1],
+            "frequency": fields[2].parse::<u32>().map_err(|_| "GS2 sample frequency differs")?,
+            "loop_start": if fields[3].is_empty() { Value::Null } else { json!(fields[3].parse::<u32>().map_err(|_| "GS2 sample loop differs")?) },
+            "source": source
+        }));
+    }
+    let waveforms = read_programmable_waveforms(&sound, 9, 3, 0x081c_4440)?;
+    let tones_text = std::fs::read_to_string(sound.join("voicegroups/voicegroup_000.tsv"))
+        .map_err(|error| format!("GS2 voice group: {error}"))?;
+    let mut bank = Vec::new();
+    for line in tones_text
+        .lines()
+        .filter(|line| !line.starts_with('#'))
+        .skip(1)
+    {
+        let fields = line.split('\t').collect::<Vec<_>>();
+        if fields.len() != 11 {
+            return Err("GS2 voice row width differs".into());
+        }
+        let mut tone = json!({
+            "kind": fields[1], "fixed_pitch": fields[2] == "true",
+            "key": fields[3].parse::<u8>().map_err(|_| "GS2 voice key differs")?,
+            "length": fields[4].parse::<u8>().map_err(|_| "GS2 voice length differs")?,
+            "pan_sweep": fields[5].parse::<u8>().map_err(|_| "GS2 voice pan differs")?,
+            "envelope": fields[7..11].iter().map(|value| value.parse::<u8>()).collect::<Result<Vec<_>, _>>().map_err(|_| "GS2 voice envelope differs")?
+        });
+        match fields[1] {
+            "pcm" => {
+                tone["sample"] = json!(sample_by_source
+                    .get(fields[6])
+                    .ok_or("GS2 voice names an unknown sample")?)
+            }
+            "wave" => {
+                tone["waveform"] = json!(Path::new(fields[6])
+                    .file_stem()
+                    .and_then(|name| name.to_str())
+                    .ok_or("GS2 waveform name differs")?)
+            }
+            "rhythm" => tone["tones"] = json!("bank_0_092"),
+            "pulse_1" | "pulse_2" | "noise" => {
+                tone["generator"] = json!(fields[6]
+                    .parse::<u8>()
+                    .map_err(|_| "GS2 generator differs")?)
+            }
+            _ => return Err("GS2 voice kind differs".into()),
+        }
+        bank.push(tone);
+    }
+    if bank.len() != 145 || samples.len() != 76 || waveforms.len() != 9 {
+        return Err("GS2 soundfont inventory differs".into());
+    }
+    serde_json::to_vec(&json!({
+        "format": 1, "engine": "golden-sun-rom-audio-bank", "game": "gs2",
+        "bank": bank, "samples": samples, "embedded_samples": [], "waveforms": waveforms
+    }))
+    .map_err(|error| error.to_string())
+}
+
 fn music_file(path: &str) -> Option<PathBuf> {
     let name = path.strip_prefix("/music/")?;
     let number = name.strip_prefix("bgm_")?.strip_suffix(".mid")?;
@@ -572,7 +884,19 @@ fn sample_file(path: &str) -> Option<PathBuf> {
     let name = path.strip_prefix("/music/samples/")?;
     let number = name.strip_prefix("wave_")?.strip_suffix(".pcm8.wav")?;
     (number.len() == 2 && number.bytes().all(|byte| byte.is_ascii_digit()))
-        .then(|| audio_dir().join("waves").join(name))
+        .then(|| audio_dir().join("direct_sound_samples").join(name))
+}
+fn gs2_music_file(path: &str) -> Option<PathBuf> {
+    let name = path.strip_prefix("/music/gs2/")?;
+    let number = name.strip_prefix("sound_")?.strip_suffix(".mid")?;
+    (number.len() == 3 && number.bytes().all(|byte| byte.is_ascii_digit()))
+        .then(|| gs2_sound_dir().join("songs/midi").join(name))
+}
+fn gs2_sample_file(path: &str) -> Option<PathBuf> {
+    let name = path.strip_prefix("/music/gs2/samples/")?;
+    let number = name.strip_prefix("sample_")?.strip_suffix(".pcm8.wav")?;
+    (number.len() == 3 && number.bytes().all(|byte| byte.is_ascii_digit()))
+        .then(|| gs2_sound_dir().join("direct_sound_samples").join(name))
 }
 fn rebuild() -> bool {
     state(|state| state.scanning = true);
@@ -682,10 +1006,19 @@ fn response(path: &str) -> Response {
         "/music/soundfont" => soundfont()
             .map(|body| Response::new(200, "OK", Some("application/json; charset=utf-8"), "public, max-age=300", body))
             .unwrap_or_else(|error| Response::new(503, "Service Unavailable", Some("text/plain; charset=utf-8"), "no-store", error.into_bytes())),
+        "/music/gs2/soundfont" => gs2_soundfont()
+            .map(|body| Response::new(200, "OK", Some("application/json; charset=utf-8"), "public, max-age=300", body))
+            .unwrap_or_else(|error| Response::new(503, "Service Unavailable", Some("text/plain; charset=utf-8"), "no-store", error.into_bytes())),
         "/weyard.otf" => Response::new(200, "OK", Some("font/otf"), "public, max-age=300", std::fs::read(font()).unwrap_or_default()),
         path if sample_file(path).is_some() => std::fs::read(sample_file(path).unwrap())
             .map(|body| Response::new(200, "OK", Some("audio/wav"), "public, max-age=300", body))
             .unwrap_or_else(|_| Response::new(404, "Not Found", Some("text/plain; charset=utf-8"), "no-store", b"Sample not found".to_vec())),
+        path if gs2_sample_file(path).is_some() => std::fs::read(gs2_sample_file(path).unwrap())
+            .map(|body| Response::new(200, "OK", Some("audio/wav"), "public, max-age=300", body))
+            .unwrap_or_else(|_| Response::new(404, "Not Found", Some("text/plain; charset=utf-8"), "no-store", b"Sample not found".to_vec())),
+        path if gs2_music_file(path).is_some() => std::fs::read(gs2_music_file(path).unwrap())
+            .map(|body| Response::new(200, "OK", Some("audio/midi"), "public, max-age=300", body))
+            .unwrap_or_else(|_| Response::new(404, "Not Found", Some("text/plain; charset=utf-8"), "no-store", b"Track not found".to_vec())),
         path if music_file(path).is_some() => std::fs::read(music_file(path).unwrap())
             .map(|body| Response::new(200, "OK", Some("audio/midi"), "public, max-age=300", body))
             .unwrap_or_else(|_| Response::new(404, "Not Found", Some("text/plain; charset=utf-8"), "no-store", b"Track not found".to_vec())),
@@ -822,17 +1155,27 @@ pub fn self_test() -> Result<String, String> {
     let js = client::bundled_client().map_err(|e| e.to_string())?;
     if !assets::STYLES.contains(".hover-tooltip")
         || !assets::STYLES.contains(".cards")
-        || !assets::STYLES.contains(".music-card text { font-family: Weyard")
+        || !assets::STYLES.contains(".music-player, .music-player button, .music-player output { font: var(--weyard-font); }")
         || !js.contains("EventSource")
         || !js.contains("createElementNS")
-        || !js.contains("viewBox: \"0 0 540 304\"")
+        || !js.contains("viewBox: \"0 0 24 24\"")
         || !js.contains("closest(\"g[aria-label]\")")
         || !js.contains("...trees, musicPlayer()")
         || !js.contains("AudioContext")
         || !js.contains("/music/catalog")
-        || !js.contains("/music/soundfont")
+        || !js.contains("/music/gs2/soundfont")
         || !js.contains("createBufferSource")
         || !js.contains("if (music.ui?.card) return music.ui.card")
+        || !js.contains("className: \"music-list\"")
+        || !js.contains("className: \"music-chin\"")
+        || !js.contains("className: \"music-wave\"")
+        || !js.contains("Repeat this track")
+        || !js.contains("if (status < 0xf0) running = status")
+        || !js.contains("command === \"voice\"")
+        || !js.contains("120547500 / value")
+        || !js.contains("command === \"pitch_bend\"")
+        || js.contains("function pcmPlaybackBuffer")
+        || !js.contains("sample.loop_start / Math.max(3000, sample.frequency / 1024)")
     {
         return Err("dashboard assets are incomplete".into());
     }
@@ -852,14 +1195,55 @@ pub fn self_test() -> Result<String, String> {
     if catalog.status != 200 || !catalog.body.starts_with(b"[") {
         return Err("music catalog route failed".into());
     }
-    let soundfont = response("/music/soundfont");
-    if soundfont.status != 200
-        || !String::from_utf8_lossy(&soundfont.body).contains("golden-sun-rom-audio-bank")
+    let catalog_json: Value = serde_json::from_slice(&catalog.body)
+        .map_err(|error| format!("music catalog JSON: {error}"))?;
+    let tracks = catalog_json
+        .as_array()
+        .filter(|tracks| tracks.len() == 155)
+        .ok_or("music catalog does not expose both games")?;
+    if tracks[0].get("game").and_then(Value::as_str) != Some("gs1")
+        || tracks[0].get("soundId").and_then(Value::as_u64) != Some(0)
+        || tracks[0].get("file").and_then(Value::as_str) != Some("bgm_000.mid")
+        || tracks[57].get("game").and_then(Value::as_str) != Some("gs1")
+        || tracks[57].get("soundId").and_then(Value::as_u64) != Some(93)
+        || tracks[58].get("game").and_then(Value::as_str) != Some("gs2")
+        || tracks[58].get("soundId").and_then(Value::as_u64) != Some(709)
+        || tracks[59].get("soundId").and_then(Value::as_u64) != Some(68)
+        || tracks[154].get("soundId").and_then(Value::as_u64) != Some(754)
+        || tracks[62].get("file").and_then(Value::as_str) != Some("sound_001.mid")
     {
-        return Err("music soundfont route failed".into());
+        return Err("music catalog does not preserve both ROM sequence inventories".into());
     }
-    if response("/music/samples/wave_00.pcm8.wav").status != 200
-        || response("/music/samples/wave_32.pcm8.wav").status != 404
+    if tracks[58].get("title").and_then(Value::as_str) != Some("Try Your Luck!")
+        || tracks[65].get("title").and_then(Value::as_str) != Some("Daila")
+        || tracks[79].get("title").and_then(Value::as_str) != Some("Untitled")
+        || tracks[154].get("title").and_then(Value::as_str) != Some("Battle with Dullahan")
+        || tracks[..58]
+            .iter()
+            .filter(|track| track.get("title").and_then(Value::as_str) != Some("Untitled"))
+            .count()
+            != 15
+        || tracks[58..]
+            .iter()
+            .filter(|track| track.get("title").and_then(Value::as_str) != Some("Untitled"))
+            .count()
+            != 96
+        || tracks
+            .iter()
+            .any(|track| track.get("path").and_then(Value::as_str).is_none())
+    {
+        return Err("music catalog title evidence or recovered audio inventory differs".into());
+    }
+    for path in ["/music/soundfont", "/music/gs2/soundfont"] {
+        let soundfont = response(path);
+        if soundfont.status != 200
+            || !String::from_utf8_lossy(&soundfont.body).contains("golden-sun-rom-audio-bank")
+        {
+            return Err(format!("music soundfont route failed: {path}"));
+        }
+    }
+    if response("/music/gs2/samples/sample_000.pcm8.wav").status != 200
+        || response("/music/gs2/samples/sample_076.pcm8.wav").status != 404
     {
         return Err("music sample route failed".into());
     }
@@ -937,5 +1321,26 @@ mod tests {
         assert!(String::from_utf8(response.body)
             .unwrap()
             .starts_with("event: update\ndata: {"));
+    }
+
+    #[test]
+    fn music_player_keeps_one_native_pixel_font_size() {
+        assert!(assets::STYLES.contains(
+            ".music-player, .music-player button, .music-player output { font: var(--weyard-font); }"
+        ));
+        for rule in assets::STYLES
+            .lines()
+            .filter(|line| line.trim_start().starts_with(".music"))
+        {
+            assert!(
+                !rule.contains("font-size:"),
+                "music player must inherit the one native Weyard size: {rule}"
+            );
+        }
+        let client = client::bundled_client().unwrap();
+        assert!(client.contains("volume: 1,"));
+        assert!(!client.contains("music-volume"));
+        assert!(client.contains("Repeat this track"));
+        assert!(!client.contains("function pcmPlaybackBuffer"));
     }
 }

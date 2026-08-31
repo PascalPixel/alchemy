@@ -1,0 +1,20 @@
+# Eighteen packed 4-bit CGB waveforms used by GS1.
+wave	address	source
+0	0x080fc504	programmable_wave_samples/wave_00.pcm4
+1	0x080fc514	programmable_wave_samples/wave_01.pcm4
+2	0x080fc524	programmable_wave_samples/wave_02.pcm4
+3	0x080fc534	programmable_wave_samples/wave_03.pcm4
+4	0x080fc544	programmable_wave_samples/wave_04.pcm4
+5	0x080fc554	programmable_wave_samples/wave_05.pcm4
+6	0x080fc564	programmable_wave_samples/wave_06.pcm4
+7	0x080fc574	programmable_wave_samples/wave_07.pcm4
+8	0x080fc584	programmable_wave_samples/wave_08.pcm4
+9	0x080fc594	programmable_wave_samples/wave_09.pcm4
+10	0x080fc5a4	programmable_wave_samples/wave_10.pcm4
+11	0x080fc5b4	programmable_wave_samples/wave_11.pcm4
+12	0x080fc5c4	programmable_wave_samples/wave_12.pcm4
+13	0x080fc5d4	programmable_wave_samples/wave_13.pcm4
+14	0x080fc5e4	programmable_wave_samples/wave_14.pcm4
+15	0x080fc5f4	programmable_wave_samples/wave_15.pcm4
+16	0x080fc604	programmable_wave_samples/wave_16.pcm4
+17	0x080fc614	programmable_wave_samples/wave_17.pcm4

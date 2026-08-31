@@ -1,0 +1,314 @@
+# ROM-derived GS2 sound-selection table. Human titles live only in games/music.tsv.
+slot	header	player	source	status
+0	0x082ba798	1		empty
+1	0x082bae04	1	songs/midi/sound_001.mid	byte-exact
+2	0x082bb394	1	songs/midi/sound_002.mid	byte-exact
+3	0x082bb850	1	songs/midi/sound_003.mid	byte-exact
+4	0x082bbd20	1	songs/midi/sound_004.mid	byte-exact
+5	0x082bc108	1	songs/midi/sound_005.mid	byte-exact
+6	0x082bc5ac	1	songs/midi/sound_006.mid	byte-exact
+7	0x082bcb68	1	songs/midi/sound_007.mid	byte-exact
+8	0x082bcdb8	1	songs/midi/sound_008.mid	byte-exact
+9	0x082bd3d4	1	songs/midi/sound_009.mid	byte-exact
+10	0x082bda44	1	songs/midi/sound_010.mid	byte-exact
+11	0x082bdc98	1	songs/midi/sound_011.mid	byte-exact
+12	0x082be0d8	1	songs/midi/sound_012.mid	byte-exact
+13	0x082be398	1	songs/midi/sound_013.mid	byte-exact
+14	0x082be7b4	1	songs/midi/sound_014.mid	byte-exact
+15	0x082bebb0	1	songs/midi/sound_015.mid	byte-exact
+16	0x082bef24	1	songs/midi/sound_016.mid	byte-exact
+17	0x082bf0c8	1	songs/midi/sound_017.mid	byte-exact
+18	0x082bf1bc	1	songs/midi/sound_018.mid	byte-exact
+19	0x081c5e30	0		empty
+20	0x082bfa34	1	songs/midi/sound_020.mid	byte-exact
+21	0x082c03f8	1	songs/midi/sound_021.mid	byte-exact
+22	0x082c09b0	1	songs/midi/sound_022.mid	byte-exact
+23	0x082c0f84	1	songs/midi/sound_023.mid	byte-exact
+24	0x082c16e8	1	songs/midi/sound_024.mid	byte-exact
+25	0x082c1dd0	1	songs/midi/sound_025.mid	byte-exact
+26	0x082c22a4	1	songs/midi/sound_026.mid	byte-exact
+27	0x082c2904	1	songs/midi/sound_027.mid	byte-exact
+28	0x082c3694	1	songs/midi/sound_028.mid	byte-exact
+29	0x082c4174	1	songs/midi/sound_029.mid	byte-exact
+30	0x082c495c	1	songs/midi/sound_030.mid	byte-exact
+31	0x082c4db4	1	songs/midi/sound_031.mid	byte-exact
+32	0x081c5e30	0		empty
+33	0x081c5e30	0		empty
+34	0x082c53a4	1	songs/midi/sound_034.mid	byte-exact
+35	0x082c597c	1	songs/midi/sound_035.mid	byte-exact
+36	0x082c5e38	1	songs/midi/sound_036.mid	byte-exact
+37	0x082c60c0	1	songs/midi/sound_037.mid	byte-exact
+38	0x082c6b54	1	songs/midi/sound_038.mid	byte-exact
+39	0x082c74a8	1	songs/midi/sound_039.mid	byte-exact
+40	0x082c80a8	1	songs/midi/sound_040.mid	byte-exact
+41	0x082c87c4	1	songs/midi/sound_041.mid	byte-exact
+42	0x082c8efc	1	songs/midi/sound_042.mid	byte-exact
+43	0x082c9864	1	songs/midi/sound_043.mid	byte-exact
+44	0x082ca1f0	1	songs/midi/sound_044.mid	byte-exact
+45	0x081c5e30	0		empty
+46	0x081c5e30	0		empty
+47	0x081c5e30	0		empty
+48	0x081c5e30	0		empty
+49	0x082ca8d4	1	songs/midi/sound_049.mid	byte-exact
+50	0x082cb414	1	songs/midi/sound_050.mid	byte-exact
+51	0x082cc064	1	songs/midi/sound_051.mid	byte-exact
+52	0x082cca08	1	songs/midi/sound_052.mid	byte-exact
+53	0x082cd074	1	songs/midi/sound_053.mid	byte-exact
+54	0x082cf778	1	songs/midi/sound_054.mid	byte-exact
+55	0x082d0298	1	songs/midi/sound_055.mid	byte-exact
+56	0x082d0b44	1	songs/midi/sound_056.mid	byte-exact
+57	0x082d12cc	1	songs/midi/sound_057.mid	byte-exact
+58	0x082d1670	1	songs/midi/sound_058.mid	byte-exact
+59	0x082d1990	1	songs/midi/sound_059.mid	byte-exact
+60	0x082d1fd4	1	songs/midi/sound_060.mid	byte-exact
+61	0x082d2774	1	songs/midi/sound_061.mid	byte-exact
+62	0x082d2ad4	1	songs/midi/sound_062.mid	byte-exact
+63	0x082d38ac	1	songs/midi/sound_063.mid	byte-exact
+64	0x082d3b4c	1	songs/midi/sound_064.mid	byte-exact
+65	0x082d40cc	1	songs/midi/sound_065.mid	byte-exact
+66	0x081c5e30	0		empty
+67	0x082d4910	1	songs/midi/sound_067.mid	byte-exact
+68	0x082d6704	1	songs/midi/sound_068.mid	byte-exact
+69	0x081c5e30	0		empty
+70	0x082d71c0	1	songs/midi/sound_070.mid	byte-exact
+71	0x082d7e00	1	songs/midi/sound_071.mid	byte-exact
+72	0x082d85e4	1	songs/midi/sound_072.mid	byte-exact
+73	0x082d8db8	1	songs/midi/sound_073.mid	byte-exact
+74	0x082d98bc	1	songs/midi/sound_074.mid	byte-exact
+75	0x082d9b30	1	songs/midi/sound_075.mid	byte-exact
+76	0x082da2a8	1	songs/midi/sound_076.mid	byte-exact
+77	0x081c5e30	0		empty
+78	0x081c5e30	0		empty
+79	0x081c5e30	0		empty
+80	0x082da374	0	songs/midi/sound_080.mid	byte-exact
+81	0x082da468	0	songs/midi/sound_081.mid	byte-exact
+82	0x082da524	0	songs/midi/sound_082.mid	byte-exact
+83	0x082da620	0	songs/midi/sound_083.mid	byte-exact
+84	0x082da6ec	0	songs/midi/sound_084.mid	byte-exact
+85	0x082da750	0	songs/midi/sound_085.mid	byte-exact
+86	0x082da8d0	0	songs/midi/sound_086.mid	byte-exact
+87	0x082da95c	0	songs/midi/sound_087.mid	byte-exact
+88	0x082daa1c	0	songs/midi/sound_088.mid	byte-exact
+89	0x082daafc	0	songs/midi/sound_089.mid	byte-exact
+90	0x081c5e30	0		empty
+91	0x082dab68	0	songs/midi/sound_091.mid	byte-exact
+92	0x082dac24	0	songs/midi/sound_092.mid	byte-exact
+93	0x082dad94	0	songs/midi/sound_093.mid	byte-exact
+94	0x081c5e30	0		empty
+95	0x082dadb0	0		empty
+96	0x081c5e30	0		empty
+97	0x081c5e30	0		empty
+98	0x081c5e30	0		empty
+99	0x081c5e30	0		empty
+100	0x082dadd8	7	songs/midi/sound_100.mid	byte-exact
+101	0x082dae10	2	songs/midi/sound_101.mid	byte-exact
+102	0x082dae4c	2	songs/midi/sound_102.mid	byte-exact
+103	0x082dae9c	7	songs/midi/sound_103.mid	byte-exact
+104	0x082daee4	5	songs/midi/sound_104.mid	byte-exact
+105	0x082daf48	7	songs/midi/sound_105.mid	byte-exact
+106	0x082daf68	7	songs/midi/sound_106.mid	byte-exact
+107	0x082dafdc	3	songs/midi/sound_107.mid	byte-exact
+108	0x082db000	2	songs/midi/sound_108.mid	byte-exact
+109	0x082db024	2	songs/midi/sound_109.mid	byte-exact
+110	0x082db044	2	songs/midi/sound_110.mid	byte-exact
+111	0x082db074	4	songs/midi/sound_111.mid	byte-exact
+112	0x082db0c8	2	songs/midi/sound_112.mid	byte-exact
+113	0x082db120	2	songs/midi/sound_113.mid	byte-exact
+114	0x082db180	2	songs/midi/sound_114.mid	byte-exact
+115	0x082db1c4	5	songs/midi/sound_115.mid	byte-exact
+116	0x082db1ec	2	songs/midi/sound_116.mid	byte-exact
+117	0x082db210	2	songs/midi/sound_117.mid	byte-exact
+118	0x082db22c	5	songs/midi/sound_118.mid	byte-exact
+119	0x082db248	5	songs/midi/sound_119.mid	byte-exact
+120	0x082db270	5	songs/midi/sound_120.mid	byte-exact
+121	0x082db2b8	5	songs/midi/sound_121.mid	byte-exact
+122	0x082db2f4	5	songs/midi/sound_122.mid	byte-exact
+123	0x082db358	5	songs/midi/sound_123.mid	byte-exact
+124	0x082db378	5	songs/midi/sound_124.mid	byte-exact
+125	0x082db398	5	songs/midi/sound_125.mid	byte-exact
+126	0x082db408	2	songs/midi/sound_126.mid	byte-exact
+127	0x082db430	5	songs/midi/sound_127.mid	byte-exact
+128	0x082db468	5	songs/midi/sound_128.mid	byte-exact
+129	0x082db4a0	5	songs/midi/sound_129.mid	byte-exact
+130	0x082db4c8	7	songs/midi/sound_130.mid	byte-exact
+131	0x082db508	7	songs/midi/sound_131.mid	byte-exact
+132	0x082db534	5	songs/midi/sound_132.mid	byte-exact
+133	0x082db568	5	songs/midi/sound_133.mid	byte-exact
+134	0x082db5bc	5	songs/midi/sound_134.mid	byte-exact
+135	0x082db60c	2	songs/midi/sound_135.mid	byte-exact
+136	0x082db638	5	songs/midi/sound_136.mid	byte-exact
+137	0x082db680	3	songs/midi/sound_137.mid	byte-exact
+138	0x082db6a8	5	songs/midi/sound_138.mid	byte-exact
+139	0x082db6d8	5	songs/midi/sound_139.mid	byte-exact
+140	0x082db770	5	songs/midi/sound_140.mid	byte-exact
+141	0x082db7cc	3	songs/midi/sound_141.mid	byte-exact
+142	0x082db848	5	songs/midi/sound_142.mid	byte-exact
+143	0x082db870	5	songs/midi/sound_143.mid	byte-exact
+144	0x082db8d8	5	songs/midi/sound_144.mid	byte-exact
+145	0x082db944	5	songs/midi/sound_145.mid	byte-exact
+146	0x082db964	7	songs/midi/sound_146.mid	byte-exact
+147	0x082db984	7	songs/midi/sound_147.mid	byte-exact
+148	0x082db9a4	7	songs/midi/sound_148.mid	byte-exact
+149	0x082db9d4	7	songs/midi/sound_149.mid	byte-exact
+150	0x082db9f8	7	songs/midi/sound_150.mid	byte-exact
+151	0x082dba34	5	songs/midi/sound_151.mid	byte-exact
+152	0x082dba74	7	songs/midi/sound_152.mid	byte-exact
+153	0x082dbab4	7	songs/midi/sound_153.mid	byte-exact
+154	0x082dbb00	5	songs/midi/sound_154.mid	byte-exact
+155	0x082dbb28	7	songs/midi/sound_155.mid	byte-exact
+156	0x082dbb44	3	songs/midi/sound_156.mid	byte-exact
+157	0x082dbb64	3	songs/midi/sound_157.mid	byte-exact
+158	0x082dbb9c	5	songs/midi/sound_158.mid	byte-exact
+159	0x082dbbc0	5	songs/midi/sound_159.mid	byte-exact
+160	0x082dbbe8	5	songs/midi/sound_160.mid	byte-exact
+161	0x082dbc0c	5	songs/midi/sound_161.mid	byte-exact
+162	0x082dbc3c	3	songs/midi/sound_162.mid	byte-exact
+163	0x082dbc6c	3	songs/midi/sound_163.mid	byte-exact
+164	0x082dbc8c	5	songs/midi/sound_164.mid	byte-exact
+165	0x082dbd04	5	songs/midi/sound_165.mid	byte-exact
+166	0x082dbd2c	5	songs/midi/sound_166.mid	byte-exact
+167	0x082dbd54	7	songs/midi/sound_167.mid	byte-exact
+168	0x082dbd88	5	songs/midi/sound_168.mid	byte-exact
+169	0x082dbdb0	3	songs/midi/sound_169.mid	byte-exact
+170	0x082dbdd8	3	songs/midi/sound_170.mid	byte-exact
+171	0x082dbdfc	7	songs/midi/sound_171.mid	byte-exact
+172	0x082dbe20	7	songs/midi/sound_172.mid	byte-exact
+173	0x082dbe74	2	songs/midi/sound_173.mid	byte-exact
+174	0x082dbec8	2	songs/midi/sound_174.mid	byte-exact
+175	0x082dbf1c	2	songs/midi/sound_175.mid	byte-exact
+176	0x082dbf48	5	songs/midi/sound_176.mid	byte-exact
+177	0x082dbf74	5	songs/midi/sound_177.mid	byte-exact
+178	0x082dbfd8	5	songs/midi/sound_178.mid	byte-exact
+179	0x082dc020	5	songs/midi/sound_179.mid	byte-exact
+180	0x082dc084	5	songs/midi/sound_180.mid	byte-exact
+181	0x082dc0c0	5	songs/midi/sound_181.mid	byte-exact
+182	0x082dc11c	5	songs/midi/sound_182.mid	byte-exact
+183	0x082dc158	5	songs/midi/sound_183.mid	byte-exact
+184	0x082dc264	5	songs/midi/sound_184.mid	byte-exact
+185	0x082dc28c	5	songs/midi/sound_185.mid	byte-exact
+186	0x082dc2b4	5	songs/midi/sound_186.mid	byte-exact
+187	0x082dc2dc	5	songs/midi/sound_187.mid	byte-exact
+188	0x082dc304	5	songs/midi/sound_188.mid	byte-exact
+189	0x082dc360	5	songs/midi/sound_189.mid	byte-exact
+190	0x082dc3e8	5	songs/midi/sound_190.mid	byte-exact
+191	0x082dc404	5	songs/midi/sound_191.mid	byte-exact
+192	0x082dc434	5	songs/midi/sound_192.mid	byte-exact
+193	0x082dc4a4	5	songs/midi/sound_193.mid	byte-exact
+194	0x082dc4e0	5	songs/midi/sound_194.mid	byte-exact
+195	0x082dc510	7	songs/midi/sound_195.mid	byte-exact
+196	0x082dc568	5	songs/midi/sound_196.mid	byte-exact
+197	0x082dc79c	5	songs/midi/sound_197.mid	byte-exact
+198	0x082dc938	5	songs/midi/sound_198.mid	byte-exact
+199	0x082dcb10	3	songs/midi/sound_199.mid	byte-exact
+200	0x082dcc50	5	songs/midi/sound_200.mid	byte-exact
+201	0x082dcca0	7	songs/midi/sound_201.mid	byte-exact
+202	0x082dccd0	5	songs/midi/sound_202.mid	byte-exact
+203	0x082dccf8	5	songs/midi/sound_203.mid	byte-exact
+204	0x082dcd80	2	songs/midi/sound_204.mid	byte-exact
+205	0x082dcdb4	5	songs/midi/sound_205.mid	byte-exact
+206	0x082dcde8	5	songs/midi/sound_206.mid	byte-exact
+207	0x082dce14	5	songs/midi/sound_207.mid	byte-exact
+208	0x082dce60	5	songs/midi/sound_208.mid	byte-exact
+209	0x082dcf00	5	songs/midi/sound_209.mid	byte-exact
+210	0x082dcf40	5	songs/midi/sound_210.mid	byte-exact
+211	0x082dcf78	5	songs/midi/sound_211.mid	byte-exact
+212	0x082dcfa8	5	songs/midi/sound_212.mid	byte-exact
+213	0x082dcff8	3	songs/midi/sound_213.mid	byte-exact
+214	0x082dd040	7	songs/midi/sound_214.mid	byte-exact
+215	0x082dd07c	5	songs/midi/sound_215.mid	byte-exact
+216	0x082dd0b4	5	songs/midi/sound_216.mid	byte-exact
+217	0x082dd0e4	5	songs/midi/sound_217.mid	byte-exact
+218	0x082dd100	5	songs/midi/sound_218.mid	byte-exact
+219	0x082dd128	3	songs/midi/sound_219.mid	byte-exact
+220	0x082dd1bc	7	songs/midi/sound_220.mid	byte-exact
+221	0x082dd1ec	5	songs/midi/sound_221.mid	byte-exact
+222	0x082dd228	5	songs/midi/sound_222.mid	byte-exact
+223	0x082dd250	5	songs/midi/sound_223.mid	byte-exact
+224	0x082dd280	2	songs/midi/sound_224.mid	byte-exact
+225	0x082dd2a4	5	songs/midi/sound_225.mid	byte-exact
+226	0x082dd2dc	5	songs/midi/sound_226.mid	byte-exact
+227	0x082dd30c	5	songs/midi/sound_227.mid	byte-exact
+228	0x082dd334	5	songs/midi/sound_228.mid	byte-exact
+229	0x082dd358	5	songs/midi/sound_229.mid	byte-exact
+230	0x082dd380	5	songs/midi/sound_230.mid	byte-exact
+231	0x082dd3c0	5	songs/midi/sound_231.mid	byte-exact
+232	0x082dd3f8	5	songs/midi/sound_232.mid	byte-exact
+233	0x082dd498	5	songs/midi/sound_233.mid	byte-exact
+234	0x082dd4b4	5	songs/midi/sound_234.mid	byte-exact
+235	0x082dd550	5	songs/midi/sound_235.mid	byte-exact
+236	0x082dd578	7	songs/midi/sound_236.mid	byte-exact
+237	0x082dd5a4	7	songs/midi/sound_237.mid	byte-exact
+238	0x082dd618	3	songs/midi/sound_238.mid	byte-exact
+239	0x082dd6a4	3	songs/midi/sound_239.mid	byte-exact
+240	0x082dd6d4	3	songs/midi/sound_240.mid	byte-exact
+241	0x082dd79c	3	songs/midi/sound_241.mid	byte-exact
+242	0x082dd7f4	3	songs/midi/sound_242.mid	byte-exact
+243	0x082dd82c	3	songs/midi/sound_243.mid	byte-exact
+244	0x082dd8a4	3	songs/midi/sound_244.mid	byte-exact
+245	0x082dd8e0	3	songs/midi/sound_245.mid	byte-exact
+246	0x082dd958	7	songs/midi/sound_246.mid	byte-exact
+247	0x082dd980	3	songs/midi/sound_247.mid	byte-exact
+248	0x082dd9c0	3	songs/midi/sound_248.mid	byte-exact
+249	0x082dd9f8	3	songs/midi/sound_249.mid	byte-exact
+250	0x082dda28	7	songs/midi/sound_250.mid	byte-exact
+251	0x082dda58	7	songs/midi/sound_251.mid	byte-exact
+252	0x082dda88	7	songs/midi/sound_252.mid	byte-exact
+253	0x082ddadc	5	songs/midi/sound_253.mid	byte-exact
+254	0x081c5e30	0		empty
+255	0x081c5e30	0		empty
+256	0x082ddb00	4	songs/midi/sound_256.mid	byte-exact
+257	0x082ddb20	4	songs/midi/sound_257.mid	byte-exact
+258	0x082ddb40	4	songs/midi/sound_258.mid	byte-exact
+259	0x082ddb60	4	songs/midi/sound_259.mid	byte-exact
+260	0x082ddb80	4	songs/midi/sound_260.mid	byte-exact
+261	0x082ddba0	4	songs/midi/sound_261.mid	byte-exact
+262	0x082ddbc0	4	songs/midi/sound_262.mid	byte-exact
+263	0x082ddbe4	4	songs/midi/sound_263.mid	byte-exact
+264	0x082ddc08	4	songs/midi/sound_264.mid	byte-exact
+265	0x082ddc2c	4	songs/midi/sound_265.mid	byte-exact
+266	0x082ddc50	4	songs/midi/sound_266.mid	byte-exact
+267	0x082ddc74	4	songs/midi/sound_267.mid	byte-exact
+268	0x082ddc98	4	songs/midi/sound_268.mid	byte-exact
+269	0x082ddcbc	4	songs/midi/sound_269.mid	byte-exact
+270	0x082ddce0	4	songs/midi/sound_270.mid	byte-exact
+271	0x082ddd04	4	songs/midi/sound_271.mid	byte-exact
+272	0x082ddd28	4	songs/midi/sound_272.mid	byte-exact
+273	0x082ddd4c	4	songs/midi/sound_273.mid	byte-exact
+274	0x082ddd70	4	songs/midi/sound_274.mid	byte-exact
+275	0x082ddd94	4	songs/midi/sound_275.mid	byte-exact
+276	0x082dddb8	4	songs/midi/sound_276.mid	byte-exact
+277	0x082ddddc	4	songs/midi/sound_277.mid	byte-exact
+278	0x082dde00	4	songs/midi/sound_278.mid	byte-exact
+279	0x082dde24	4	songs/midi/sound_279.mid	byte-exact
+280	0x082dde4c	4	songs/midi/sound_280.mid	byte-exact
+281	0x082dde74	4	songs/midi/sound_281.mid	byte-exact
+282	0x082dde9c	4	songs/midi/sound_282.mid	byte-exact
+283	0x082ddec4	4	songs/midi/sound_283.mid	byte-exact
+284	0x082ddee8	4	songs/midi/sound_284.mid	byte-exact
+285	0x082ddf0c	4	songs/midi/sound_285.mid	byte-exact
+286	0x082ddf34	4	songs/midi/sound_286.mid	byte-exact
+287	0x082ddf5c	4	songs/midi/sound_287.mid	byte-exact
+288	0x082ddf68	3		empty
+289	0x081c5e30	0		empty
+290	0x082ddfb8	3	songs/midi/sound_290.mid	byte-exact
+291	0x082de014	3	songs/midi/sound_291.mid	byte-exact
+292	0x082de050	7	songs/midi/sound_292.mid	byte-exact
+293	0x082de088	7	songs/midi/sound_293.mid	byte-exact
+294	0x081c5e30	0		empty
+295	0x081c5e30	0		empty
+296	0x081c5e30	0		empty
+297	0x081c5e30	0		empty
+298	0x082de094	5		empty
+299	0x081c5e30	0		empty
+300	0x082de0b8	5	songs/midi/sound_300.mid	byte-exact
+301	0x082de0dc	7	songs/midi/sound_301.mid	byte-exact
+302	0x082de0f8	7	songs/midi/sound_302.mid	byte-exact
+303	0x082de11c	2	songs/midi/sound_303.mid	byte-exact
+304	0x082de154	5	songs/midi/sound_304.mid	byte-exact
+305	0x082de180	2	songs/midi/sound_305.mid	byte-exact
+306	0x082de1ac	5	songs/midi/sound_306.mid	byte-exact
+307	0x082de1dc	5	songs/midi/sound_307.mid	byte-exact
+308	0x082de264	5	songs/midi/sound_308.mid	byte-exact
+309	0x082de2a8	7	songs/midi/sound_309.mid	byte-exact
+310	0x082de300	2	songs/midi/sound_310.mid	byte-exact
+311	0x082de3bc	3	songs/midi/sound_311.mid	byte-exact

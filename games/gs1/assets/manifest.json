@@ -50,7 +50,7 @@
       "id": "residual_pcm_waves",
       "kind": "golden-sun-pcm-wave-series",
       "availability": "pending",
-      "index": "games/gs1/assets/audio/waves/residual/index.json",
+      "index": "games/gs1/sound/direct_sound_samples/residual/index.json",
       "expected_ranges": [{"address": "0x0811dac8",  "size": "0x70"}]
     }
   ],
@@ -377,13 +377,13 @@
       "address": "0x080fb792",
       "size": "0xef2",
       "kind": "golden-sun-audio-engine-data",
-      "source": "games/gs1/assets/audio/engine_index.json"
+      "source": "games/gs1/sound/engine.tsv"
     },
     {
       "address": "0x080fc684",
       "size": "0x9c0",
       "kind": "golden-sun-sound-table",
-      "source": "games/gs1/assets/audio/song_table.json"
+      "source": "games/gs1/sound/song_table.tsv"
     },
     {
       "address": "0x08185024",
@@ -822,15 +822,15 @@
   "series": [
     {
       "kind": "golden-sun-sound-sequence-series",
-      "index": "games/gs1/assets/audio/sequences/index.json"
+      "index": "games/gs1/sound/sequences.tsv"
     },
     {
       "kind": "golden-sun-music-residuals",
-      "index": "games/gs1/assets/audio/residuals_index.json"
+      "index": "games/gs1/sound/residuals.tsv"
     },
     {
       "kind": "golden-sun-pcm-wave-series",
-      "index": "games/gs1/assets/audio/waves/index.json"
+      "index": "games/gs1/sound/samples.tsv"
     },
     {
       "kind": "golden-sun-delta7-still-series",

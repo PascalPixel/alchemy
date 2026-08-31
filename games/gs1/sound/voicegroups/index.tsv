@@ -1,0 +1,4 @@
+# Ordered GS1 voice groups used by the SMSH sequence headers.
+bank	address	source
+0	0x080fba78	voicegroups/voicegroup_000.tsv
+1	0x080fc138	voicegroups/voicegroup_001.tsv

@@ -286,148 +286,148 @@
 <title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x080fa674: 4 bytes</title>
 <rect x="58.07762757736865" y="96.58912962441309" width="3.718262199012405" height="0.5" style="fill:#bb2f77"/>
 </g>
-<g aria-label="engine_index.json · golden-sun-audio-engine-data · 0x080fb792: 3,826 bytes">
-<title>engine_index.json · golden-sun-audio-engine-data · 0x080fb792: 3,826 bytes</title>
+<g aria-label="engine.tsv · golden-sun-audio-engine-data · 0x080fb792: 3,826 bytes">
+<title>engine.tsv · golden-sun-audio-engine-data · 0x080fb792: 3,826 bytes</title>
 <rect x="43.301415567951544" y="96.6051279575883" width="5.806268761883201" height="9.607979909350252" style="fill:#bb2f77"/>
 </g>
-<g aria-label="song_table.json · golden-sun-sound-table · 0x080fc684: 2,496 bytes">
-<title>song_table.json · golden-sun-sound-table · 0x080fc684: 2,496 bytes</title>
+<g aria-label="song_table.tsv · golden-sun-sound-table · 0x080fc684: 2,496 bytes">
+<title>song_table.tsv · golden-sun-sound-table · 0x080fc684: 2,496 bytes</title>
 <rect x="43.301415567951544" y="107.21310786693854" width="5.806268761883201" height="5.920417630354999" style="fill:#bb2f77"/>
 </g>
-<g aria-label="residuals_index.json · golden-sun-music-residual · 0x080fd044: 4 bytes">
-<title>residuals_index.json · golden-sun-music-residual · 0x080fd044: 4 bytes</title>
+<g aria-label="residuals.tsv · golden-sun-music-residual · 0x080fd044: 4 bytes">
+<title>residuals.tsv · golden-sun-music-residual · 0x080fd044: 4 bytes</title>
 <rect x="43.301415567951544" y="114.13352549729355" width="0.5" height="0.9075510134952882" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x080fd048: 684 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x080fd048: 684 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x080fd048: 684 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x080fd048: 684 bytes</title>
 <rect x="43.340986897962495" y="114.13352549729355" width="5.766697431872252" height="0.9075510134952882" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x080fd2f4: 13,068 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x080fd2f4: 13,068 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x080fd2f4: 13,068 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x080fd2f4: 13,068 bytes</title>
 <rect x="50.10768432983475" y="96.60512795758828" width="11.688205446546315" height="18.43594855320054" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x08100600: 11,096 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x08100600: 11,096 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x08100600: 11,096 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x08100600: 11,096 bytes</title>
 <rect x="3.5" y="116.04107651078883" width="11.700211361943277" height="15.487405390730181" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x08103158: 7,552 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x08103158: 7,552 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x08103158: 7,552 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x08103158: 7,552 bytes</title>
 <rect x="16.200211361943275" y="116.04107651078883" width="7.643835274458871" height="15.487405390730181" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x08104ed8: 1,844 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x08104ed8: 1,844 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x08104ed8: 1,844 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x08104ed8: 1,844 bytes</title>
 <rect x="3.5" y="132.528481901519" width="0.8402104917489039" height="17.90994350584176" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x0810560c: 19,544 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x0810560c: 19,544 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x0810560c: 19,544 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x0810560c: 19,544 bytes</title>
 <rect x="5.340210491748904" y="132.528481901519" width="18.503836144653242" height="17.90994350584176" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x0810a264: 16,848 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x0810a264: 16,848 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x0810a264: 16,848 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x0810a264: 16,848 bytes</title>
 <rect x="24.844046636402147" y="116.04107651078881" width="17.900218337339616" height="15.82202793098962" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x0810e434: 16,044 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x0810e434: 16,044 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x0810e434: 16,044 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x0810e434: 16,044 bytes</title>
 <rect x="24.844046636402147" y="132.86310444177843" width="15.29945726748424" height="17.57532096558232" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x081122e0: 2,560 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x081122e0: 2,560 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x081122e0: 2,560 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x081122e0: 2,560 bytes</title>
 <rect x="41.14350390388638" y="132.86310444177843" width="1.600761069855377" height="17.57532096558232" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x08112ce0: 13,304 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x08112ce0: 13,304 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x08112ce0: 13,304 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x08112ce0: 13,304 bytes</title>
 <rect x="43.744264973741764" y="116.04107651078883" width="18.051624802639303" height="12.17792505372714" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x081160d8: 8,096 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x081160d8: 8,096 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x081160d8: 8,096 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x081160d8: 8,096 bytes</title>
 <rect x="43.744264973741764" y="129.21900156451596" width="14.169350354265127" height="9.071643261146841" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x08118078: 2,072 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x08118078: 2,072 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x08118078: 2,072 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x08118078: 2,072 bytes</title>
 <rect x="58.91361532800689" y="129.21900156451596" width="2.882274448374176" height="9.071643261146841" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x08118890: 12,264 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x08118890: 12,264 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x08118890: 12,264 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x08118890: 12,264 bytes</title>
 <rect x="43.744264973741764" y="139.2906448256628" width="18.051624802639303" height="11.147780581697958" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x0811b878: 8,784 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x0811b878: 8,784 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x0811b878: 8,784 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x0811b878: 8,784 bytes</title>
 <rect x="62.79588977638107" y="84.17378761889911" width="12.973348028296138" height="10.862839872784166" style="fill:#bb2f77"/>
 </g>
 <g aria-label="final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0811dac8: 112 bytes">
 <title>final_byte_regions_index.json · golden-sun-byte-value-regions · 0x0811dac8: 112 bytes</title>
 <rect x="76.7692378046772" y="84.17378761889911" width="5.674882550857307" height="0.5" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x0811db38: 4,084 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x0811db38: 4,084 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x0811db38: 4,084 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x0811db38: 4,084 bytes</title>
 <rect x="76.7692378046772" y="84.49043158118505" width="5.674882550857307" height="10.54619591049822" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x0811eb2c: 7,016 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x0811eb2c: 7,016 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x0811eb2c: 7,016 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x0811eb2c: 7,016 bytes</title>
 <rect x="62.79588977638107" y="96.03662749168328" width="6.211667948194971" height="17.359069904814206" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x08120694: 10,884 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x08120694: 10,884 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x08120694: 10,884 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x08120694: 10,884 bytes</title>
 <rect x="70.00755772457603" y="96.03662749168328" width="12.436562630958473" height="14.286116649632637" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x08123118: 2,188 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x08123118: 2,188 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x08123118: 2,188 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x08123118: 2,188 bytes</title>
 <rect x="70.00755772457603" y="111.32274414131591" width="12.436562630958473" height="2.07295325518157" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x081239a4: 49,200 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x081239a4: 49,200 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x081239a4: 49,200 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x081239a4: 49,200 bytes</title>
 <rect x="83.44412035553451" y="84.17378761889911" width="29.721330122606435" height="29.221909777598366" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x0812f9d4: 7,164 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x0812f9d4: 7,164 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x0812f9d4: 7,164 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x0812f9d4: 7,164 bytes</title>
 <rect x="114.16545047814094" y="84.1737876188991" width="11.231085659382412" height="10.053183665852295" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x081315d0: 12,424 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x081315d0: 12,424 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x081315d0: 12,424 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x081315d0: 12,424 bytes</title>
 <rect x="114.16545047814094" y="95.22697128475139" width="11.231085659382412" height="18.168726111746075" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x08134658: 25,528 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x08134658: 25,528 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x08134658: 25,528 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x08134658: 25,528 bytes</title>
 <rect x="62.79588977638107" y="114.3956973964975" width="28.75542719443144" height="15.190021241290886" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x0813aa10: 32,880 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x0813aa10: 32,880 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x0813aa10: 32,880 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x0813aa10: 32,880 bytes</title>
 <rect x="62.79588977638107" y="130.58571863778837" width="28.75542719443144" height="19.8527067695724" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x08142a80: 9,848 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x08142a80: 9,848 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x08142a80: 9,848 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x08142a80: 9,848 bytes</title>
 <rect x="92.55131697081251" y="114.3956973964975" width="9.740774631147474" height="16.30251573895342" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x081450f8: 21,184 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x081450f8: 21,184 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x081450f8: 21,184 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x081450f8: 21,184 bytes</title>
 <rect x="103.29209160195998" y="114.3956973964975" width="22.104444535563374" height="16.30251573895342" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x0814a3b8: 33,204 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x0814a3b8: 33,204 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x0814a3b8: 33,204 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x0814a3b8: 33,204 bytes</title>
 <rect x="92.55131697081251" y="131.6982131354509" width="30.742081606922014" height="18.740212271909865" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x0815256c: 2,200 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x0815256c: 2,200 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x0815256c: 2,200 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x0815256c: 2,200 bytes</title>
 <rect x="124.29339857773452" y="131.6982131354509" width="1.1031375597888342" height="18.740212271909865" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x08152e04: 10,844 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x08152e04: 10,844 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x08152e04: 10,844 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x08152e04: 10,844 bytes</title>
 <rect x="3.5" y="151.43842540736077" width="11.310258359559944" height="15.623373325169087" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x08155860: 4,004 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x08155860: 4,004 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x08155860: 4,004 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x08155860: 4,004 bytes</title>
 <rect x="3.5" y="168.06179873252987" width="11.310258359559944" height="5.137955255807547" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x08156804: 2,952 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x08156804: 2,952 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x08156804: 2,952 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x08156804: 2,952 bytes</title>
 <rect x="15.810258359559944" y="151.43842540736077" width="15.057723862335465" height="2.469198780000156" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x0815738c: 16,416 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x0815738c: 16,416 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x0815738c: 16,416 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x0815738c: 16,416 bytes</title>
 <rect x="15.810258359559944" y="154.90762418736094" width="15.057723862335465" height="18.29212980097648" style="fill:#bb2f77"/>
 </g>
-<g aria-label="index.json · golden-sun-pcm-wave · 0x0815b3ac: 18,380 bytes">
-<title>index.json · golden-sun-pcm-wave · 0x0815b3ac: 18,380 bytes</title>
+<g aria-label="samples.tsv · golden-sun-pcm-wave · 0x0815b3ac: 18,380 bytes">
+<title>samples.tsv · golden-sun-pcm-wave · 0x0815b3ac: 18,380 bytes</title>
 <rect x="3.5" y="174.1997539883374" width="24.096434021873204" height="12.820708516435895" style="fill:#bb2f77"/>
 </g>
 <g aria-label="bgm_000.mid · golden-sun-sound-sequence · 0x0815fb78: 2,396 bytes">
@@ -474,8 +474,8 @@
 <title>bgm_010.mid · golden-sun-sound-sequence · 0x08164bfc: 1,756 bytes</title>
 <rect x="17.20317785294948" y="199.3798251550787" width="5.670330998033086" height="3.9679125627963865" style="fill:#bb2f77"/>
 </g>
-<g aria-label="residuals_index.json · golden-sun-music-residual · 0x081652d8: 8 bytes">
-<title>residuals_index.json · golden-sun-music-residual · 0x081652d8: 8 bytes</title>
+<g aria-label="residuals.tsv · golden-sun-music-residual · 0x081652d8: 8 bytes">
+<title>residuals.tsv · golden-sun-music-residual · 0x081652d8: 8 bytes</title>
 <rect x="23.873508850982567" y="199.3798251550787" width="0.5" height="3.9679125627963865" style="fill:#bb2f77"/>
 </g>
 <g aria-label="bgm_020.mid · golden-sun-sound-sequence · 0x081652e0: 2,712 bytes">
@@ -666,8 +666,8 @@
 <title>bgm_093.mid · golden-sun-sound-sequence · 0x08180f48: 368 bytes</title>
 <rect x="63.662834957620674" y="169.68695529574" width="1.8690783038525316" height="1.4204841018480647" style="fill:#bb2f77"/>
 </g>
-<g aria-label="residuals_index.json · golden-sun-music-residual · 0x081810b8: 8 bytes">
-<title>residuals_index.json · golden-sun-music-residual · 0x081810b8: 8 bytes</title>
+<g aria-label="residuals.tsv · golden-sun-music-residual · 0x081810b8: 8 bytes">
+<title>residuals.tsv · golden-sun-music-residual · 0x081810b8: 8 bytes</title>
 <rect x="63.662834957620674" y="172.10743939758808" width="0.5" height="0.5" style="fill:#bb2f77"/>
 </g>
 <g aria-label="se_100.mid · golden-sun-sound-sequence · 0x081810c0: 44 bytes">
@@ -826,8 +826,8 @@
 <title>se_item_break.mid · golden-sun-sound-sequence · 0x08181988: 40 bytes</title>
 <rect x="71.29768286402329" y="170.53273374849368" width="0.5" height="0.5" style="fill:#bb2f77"/>
 </g>
-<g aria-label="residuals_index.json · golden-sun-music-residual · 0x081819b0: 18 bytes">
-<title>residuals_index.json · golden-sun-music-residual · 0x081819b0: 18 bytes</title>
+<g aria-label="residuals.tsv · golden-sun-music-residual · 0x081819b0: 18 bytes">
+<title>residuals.tsv · golden-sun-music-residual · 0x081819b0: 18 bytes</title>
 <rect x="72.22094164849064" y="170.53273374849368" width="0.5" height="0.5" style="fill:#bb2f77"/>
 </g>
 <g aria-label="se_139.mid · golden-sun-sound-sequence · 0x081819c2: 30 bytes">
@@ -1414,8 +1414,8 @@
 <title>se_287.mid · golden-sun-sound-sequence · 0x081841d0: 40 bytes</title>
 <rect x="82.33649532906067" y="173.51302846271525" width="0.5" height="0.5" style="fill:#bb2f77"/>
 </g>
-<g aria-label="residuals_index.json · golden-sun-music-residual · 0x081841f8: 8 bytes">
-<title>residuals_index.json · golden-sun-music-residual · 0x081841f8: 8 bytes</title>
+<g aria-label="residuals.tsv · golden-sun-music-residual · 0x081841f8: 8 bytes">
+<title>residuals.tsv · golden-sun-music-residual · 0x081841f8: 8 bytes</title>
 <rect x="83.2859123016833" y="173.51302846271525" width="0.5" height="0.5" style="fill:#bb2f77"/>
 </g>
 <g aria-label="se_289.mid · golden-sun-sound-sequence · 0x08184200: 52 bytes">
@@ -1438,8 +1438,8 @@
 <title>se_293.mid · golden-sun-sound-sequence · 0x08184320: 56 bytes</title>
 <rect x="82.33649532906067" y="176.04176045493452" width="0.5" height="0.5" style="fill:#bb2f77"/>
 </g>
-<g aria-label="residuals_index.json · golden-sun-music-residual · 0x08184358: 8 bytes">
-<title>residuals_index.json · golden-sun-music-residual · 0x08184358: 8 bytes</title>
+<g aria-label="residuals.tsv · golden-sun-music-residual · 0x08184358: 8 bytes">
+<title>residuals.tsv · golden-sun-music-residual · 0x08184358: 8 bytes</title>
 <rect x="83.39647731621658" y="176.04176045493452" width="0.5" height="0.5" style="fill:#bb2f77"/>
 </g>
 <g aria-label="se_300.mid · golden-sun-sound-sequence · 0x08184360: 40 bytes">
@@ -1490,8 +1490,8 @@
 <title>se_311.mid · golden-sun-sound-sequence · 0x081845d0: 200 bytes</title>
 <rect x="86.93359987278397" y="175.10745863617709" width="0.954254882932305" height="0.9312816185593933" style="fill:#bb2f77"/>
 </g>
-<g aria-label="residuals_index.json · golden-sun-music-residual · 0x08184698: 2,408 bytes">
-<title>residuals_index.json · golden-sun-music-residual · 0x08184698: 2,408 bytes</title>
+<g aria-label="residuals.tsv · golden-sun-music-residual · 0x08184698: 2,408 bytes">
+<title>residuals.tsv · golden-sun-music-residual · 0x08184698: 2,408 bytes</title>
 <rect x="63.662834957620674" y="177.03874025473647" width="24.22501979809559" height="0.8014482218726098" style="fill:#bb2f77"/>
 </g>
 <g aria-label="chr_catalog.json · golden-sun-character-catalog · 0x08185024: 34,096 bytes">

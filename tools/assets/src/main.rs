@@ -23,6 +23,10 @@ const COMMANDS: &[(&str, &str)] = &[
     ),
     ("staff-roll", "extract staff roll data from the ROM"),
     ("audio-wave", "extract audio wave data from the ROM"),
+    (
+        "audio-engine-data",
+        "build or extract Golden Sun audio-engine data",
+    ),
     ("localization-tables", "build the localization tables"),
     ("byte-value-regions", "build byte-value regions"),
     ("executable-gap-sources", "build executable-gap sources"),
@@ -108,6 +112,20 @@ fn report<E: std::fmt::Display>(result: Result<(), E>) -> ExitCode {
     }
 }
 
+fn report_message<E: std::fmt::Display>(result: Result<Option<String>, E>) -> ExitCode {
+    match result {
+        Ok(Some(message)) => {
+            println!("{message}");
+            ExitCode::SUCCESS
+        }
+        Ok(None) => ExitCode::SUCCESS,
+        Err(error) => {
+            eprintln!("error: {error}");
+            ExitCode::FAILURE
+        }
+    }
+}
+
 fn main() -> ExitCode {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let Some(command) = args.first().map(String::as_str) else {
@@ -173,6 +191,7 @@ fn main() -> ExitCode {
         "character-catalog" => character_catalog::cli::entry(&rest),
         "staff-roll" => staff_roll::cli::entry(&rest),
         "audio-wave" => audio_wave::cli::entry(&rest),
+        "audio-engine-data" => report_message(audio_engine_data::run(rest)),
         "localization-tables" => {
             localization_tables::cli::entry(&rest);
             ExitCode::SUCCESS

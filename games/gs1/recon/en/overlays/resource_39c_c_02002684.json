@@ -1,0 +1,12 @@
+{
+  "span_bytes": 400,
+  "score": {"measured":"2026-08-31","candidate_bytes":396,"reference_bytes":400,"wrong_instructions":28,"differing_halfwords":195,"class":"generated-call-script-retention"},
+  "shape": {"calls":38,"loops":0,"memory_operations":8},
+  "verified_against_reference": [
+    "all 38 calls and their arguments are represented in ROM order across the complete callable owner",
+    "direct audit restored the branch-specific halfword counter increment at scene-workspace offset 472 in both runtime-probe arms",
+    "the actor staging stores, timed pose and scale sequence, camera transition, and closing story-flag call are represented",
+    "the remaining four-byte extent residual is approved-compiler callee-save allocation, shared literal reuse, immediate materialization, and scheduling after complete semantics are represented"
+  ],
+  "retention": "keep_structured_asm"
+}

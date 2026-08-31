@@ -6,14 +6,14 @@
   "status": "measured-draft",
   "owner_bytes": 8300,
   "score": {
-    "measured": "2026-08-26",
-    "candidate_bytes": 8276,
+    "measured": "2026-08-31",
+    "candidate_bytes": 8180,
     "reference_bytes": 8300,
-    "differing_halfwords": 3912,
-    "wrong_instructions": 2570,
-    "class": "wrong",
+    "differing_halfwords": 4023,
+    "wrong_instructions": 2439,
+    "class": "missing-extra-code",
     "command": "compiler candidate-show --target gs1 --flags -mthumb-inline-register-call --owner 08120454 --size 8300 --rom roms/gs2-en.gba games/gs2/recon/en/main/08120454.c",
-    "note": "Raw halfwords are phase-dominated: the entry region differs only by a register-allocation shuffle (r1/r2/r5 permutation, one mov sl placement), long runs align between clusters, and the large +/- runs are literal-pool words placed at different sites. The 20-byte length gap is pool-word count, not missing logic. The evidenced GS2 inline-register-call route improves differing_halfwords 3914 -> 3912 and wrong_instructions 2574 -> 2570."
+    "note": "Raw halfwords remain phase-dominated by displaced pools. The evidenced inline-call route first improved 3914 -> 3912 halfwords. Reconstructing the state/command lifetime then made the complete post-copy call, state load, and command-pointer store instruction-identical and reduced the normalized wrong-instruction debt 2570 -> 2439. That honest shape exposes a 120-byte structural deficit which the earlier duplicated path setup masked; raw halfwords consequently rise to 4023 and are not the selection metric."
   },
   "shape": {
     "architecture": "Twelve-ROM master: games/gs1/recon/ja/main/080b2b0c.c is the shared body, written against ~60 BATTLE_* hook macros (362 uses). GS1 editions bind the hooks to GS1 semantics; games/gs2/recon/ja/main/battle_delta.h rebinds them with the sequel's grown logic (extra effect/heal/KO/guard cases) plus per-edition literal headers and ~200 per-edition callee retargets. BATTLE_SECOND_ACTOR reshapes struct BattlePlan in games/gs1/include/battle_types.h.",
@@ -28,7 +28,11 @@
     },
     {
       "op": "literal pool placement",
-      "where": "pools sit at different sites (first large divergence around the 0x780 branch cluster); the reference's pool anchors imply different branch-range tensions than the candidate's grown blocks produce; the 20-byte extent gap is five pool words"
+      "where": "pools sit at different sites (first large divergence around the 0x780 branch cluster); the reference's pool anchors imply different branch-range tensions than the candidate's still-missing state/effect blocks produce"
+    },
+    {
+      "op": "state and effect control-flow extent",
+      "where": "the corrected command-pointer lifetime reveals a real 120-byte deficit. The first state block still lacks the reference's distinct command-pointer refresh tails, and later deficits must be localized by aligned call and branch sequences rather than compensated with redundant setup"
     }
   ],
   "notes": [
@@ -38,6 +42,14 @@
     "This candidate claims zero DONE bytes."
   ],
   "rejected_experiments": [
+    {
+      "experiment": "shipped reload/allocation flag probe: -fno-regmove, -fno-schedule-insns, -fno-schedule-insns2, -fno-cse-follow-jumps, -fcaller-saves, -fno-caller-saves, and call-used r5/r6 variants",
+      "result": "No flag improved the whole owner. Most were byte-neutral at 3912 halfwords, -fno-schedule-insns2 and -fno-cse-follow-jumps regressed, and the call-used r5/r6 routes trigger GCC 2.96 internal errors. No per-TU flag route is adopted."
+    },
+    {
+      "experiment": "split the first state command pointer from the later cmd variable",
+      "result": "It restores some tail stores but keeps the early pointer in r5 instead of the reference stack slot, measuring 8224 bytes / 3973 halfwords / 2615 wrong instructions. The shared lifetime is closer and retained."
+    },
     {
       "experiment": "combine -mthumb-inline-register-call with the experimental -mminipool-first-barrier route",
       "result": "The compiler segfaults while compiling this owner. This is a recorded miss, not evidence for the reference's literal-pool route; the pool option is not adopted for this translation unit."
@@ -64,6 +76,8 @@
     }
   ],
   "expressed": [
+    "BATTLE_PLAN_LOADS now creates range before target_id. This reproduces the reference range->r1 reload and extends the exact entry prefix by one instruction; the remaining target-id r5 carrier is an uncovered local-reload decision.",
+    "The active GS2 state block now establishes cmd after the state load, letting GCC schedule the inline call, state address/load, and command-pointer store exactly as the ROM. It cuts wrong_instructions 2570 -> 2439 and exposes rather than masks the remaining 120-byte control-flow deficit.",
     "BATTLE_HEAL_PREP direct-access respell: the 0x4c/0x47/0x46 arms now read max_hp through direct casts, emitting the reference's movs #52 / ldrsh reg-offset + ldrh immediate forms instead of pre-adding 52 into the base; the else arm keeps the GS1 pointer walk to preserve its unfolded double-width load. Cluster verified locally against the reference; wrong_instructions 2608 -> 2574.",
     "Remaining in this cluster: the reference shares one Math_Div call site across the calling arms (arms branch to a common 0x1458 tail with the divisor staged per arm) while the candidate duplicates the call; the exact sharing boundary excludes the maxu sign-extend, so a plain goto over-merges."
   ]

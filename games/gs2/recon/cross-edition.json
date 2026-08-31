@@ -48,7 +48,17 @@
         "fr": 0,
         "it": 0
       },
-      "core_identical": true
+      "core_identical": true,
+      "candidate_validation": {
+        "measured": "2026-08-31",
+        "source_shape": "shared state/command lifetime with GS2 inline-register-call route",
+        "candidate_bytes": 8180,
+        "reference_bytes": 8300,
+        "differing_halfwords": 4023,
+        "wrong_instructions": 2439,
+        "editions_scored": ["ja", "en", "de", "es", "fr", "it"],
+        "edition_scores_identical": true
+      }
     }
   ],
   "twelve_rom_transfer_scan": {

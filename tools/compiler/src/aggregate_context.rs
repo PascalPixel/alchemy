@@ -9,7 +9,7 @@ use std::{
     sync::OnceLock,
 };
 
-const DERIVATION: &str = "literal-anchored-reference-load-store-width-v6";
+const DERIVATION: &str = "literal-anchored-reference-load-store-width-v7";
 const DEBT: [&str; 5] = [
     "c_candidate",
     "split_first",
@@ -237,7 +237,7 @@ fn mine(
         .into_iter()
         .filter_map(|(anchor, mut accesses)| {
             let owners = unique(accesses.iter().map(|access| access.owner.clone()));
-            if owners.len() < 2 {
+            if owners.len() < 2 && !rom_anchor(&anchor) {
                 return None;
             }
             accesses.sort();
@@ -556,11 +556,17 @@ fn header(proposals: &[Proposal]) -> String {
          #define ALCHEMY_M2C_SHARED_AGGREGATES_H\n\
          #include \"types.h\"\n\n",
     );
-    for proposal in &emitted {
+    for proposal in emitted
+        .iter()
+        .filter(|proposal| scalar_rom_root(proposal).is_none())
+    {
         text.push_str(&format!("struct M2cAggregate_{};\n", proposal.anchor));
     }
     text.push('\n');
-    for proposal in &emitted {
+    for proposal in emitted
+        .iter()
+        .filter(|proposal| scalar_rom_root(proposal).is_none())
+    {
         text.push_str(&format!(
             "/* {} observed in {} unresolved owners. */\nstruct M2cAggregate_{} {{\n",
             proposal.anchor,
@@ -601,30 +607,71 @@ fn header(proposals: &[Proposal]) -> String {
     }
     text.push_str("#ifdef ALCHEMY_M2C_CONTEXT\n");
     for proposal in &roots {
-        text.push_str(&format!(
-            "extern struct M2cAggregate_{0} {0};\n",
-            proposal.anchor
-        ));
+        if let Some(kind) = scalar_rom_root(proposal) {
+            text.push_str(&format!("extern const {kind} {}[];\n", proposal.anchor));
+        } else {
+            text.push_str(&format!(
+                "extern struct M2cAggregate_{0} {0};\n",
+                proposal.anchor
+            ));
+        }
     }
     text.push_str("#else\n");
     for proposal in roots {
-        text.push_str(&format!(
-            "#define {0} (*(struct M2cAggregate_{0} *)0x{1}u)\n",
-            proposal.anchor,
-            proposal.anchor.trim_start_matches("absolute_")
-        ));
+        if let Some(kind) = scalar_rom_root(proposal) {
+            text.push_str(&format!(
+                "#define {0} ((const {kind} *)0x{1}u)\n",
+                proposal.anchor,
+                proposal.anchor.trim_start_matches("absolute_")
+            ));
+        } else {
+            text.push_str(&format!(
+                "#define {0} (*(struct M2cAggregate_{0} *)0x{1}u)\n",
+                proposal.anchor,
+                proposal.anchor.trim_start_matches("absolute_")
+            ));
+        }
     }
     text.push_str("#endif\n#endif\n");
     text
 }
 
 fn emittable(proposal: &Proposal) -> bool {
+    if scalar_rom_root(proposal).is_some() {
+        return true;
+    }
     proposal
         .fields
         .iter()
         .filter(|field| field.status.emitted() && c_type(field).is_some())
         .count()
         >= 2
+}
+
+fn rom_anchor(anchor: &str) -> bool {
+    anchor
+        .strip_prefix("absolute_")
+        .and_then(|value| u32::from_str_radix(value, 16).ok())
+        .is_some_and(|address| matches!(address >> 24, 0x08 | 0x09))
+}
+
+fn scalar_rom_root(proposal: &Proposal) -> Option<&'static str> {
+    if !rom_anchor(&proposal.anchor) || proposal.accesses.iter().any(|access| access.write) {
+        return None;
+    }
+    let widths = unique(proposal.accesses.iter().map(|access| access.width));
+    let signed = unique(proposal.accesses.iter().filter_map(|access| access.signed));
+    if widths.len() != 1 || signed.len() > 1 {
+        return None;
+    }
+    Some(match (widths[0], signed.first().copied()) {
+        (1, Some(true)) => "s8",
+        (1, _) => "u8",
+        (2, Some(true)) => "s16",
+        (2, _) => "u16",
+        (4, _) => "u32",
+        _ => return None,
+    })
 }
 
 fn c_type(field: &Field) -> Option<&'static str> {
@@ -710,7 +757,7 @@ fn word(bytes: &[u8], at: usize) -> Option<u32> {
     Some(u32::from_le_bytes(bytes.get(at..at + 4)?.try_into().ok()?))
 }
 fn absolute_anchor(value: u32) -> Option<String> {
-    (matches!(value >> 24, 0x02..=0x07)).then(|| format!("absolute_{value:08x}"))
+    (matches!(value >> 24, 0x02..=0x09)).then(|| format!("absolute_{value:08x}"))
 }
 fn read(path: &Path) -> Result<Vec<u8>, String> {
     fs::read(path).map_err(|error| format!("{}: {error}", path.display()))
@@ -771,6 +818,28 @@ mod tests {
         assert!(output.contains(
             "#define absolute_03001000 (*(struct M2cAggregate_absolute_03001000 *)0x03001000u)"
         ));
+    }
+
+    #[test]
+    fn header_types_read_only_rom_roots_as_arrays() {
+        let access = Access {
+            anchor: "absolute_080eea88".into(),
+            offset: 0,
+            width: 1,
+            signed: Some(false),
+            write: false,
+            owner: "main:080dab74".into(),
+        };
+        let proposal = Proposal {
+            anchor: access.anchor.clone(),
+            owners: vec![access.owner.clone()],
+            fields: fields(std::slice::from_ref(&access)),
+            accesses: vec![access],
+        };
+        let output = header(&[proposal]);
+        assert!(output.contains("extern const u8 absolute_080eea88[];"));
+        assert!(output.contains("#define absolute_080eea88 ((const u8 *)0x080eea88u)"));
+        assert!(!output.contains("struct M2cAggregate_absolute_080eea88"));
     }
 
     #[test]

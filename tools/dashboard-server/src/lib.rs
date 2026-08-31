@@ -5,7 +5,7 @@ pub mod client;
 
 use coverage_map::{
     boxtree::{render_box_trees, svg_cache_version, BOX_TREES},
-    pipeline::{build_coverage_map, BuildOptions, CoverageMap},
+    pipeline::{build_coverage_map, BuildOptions},
     tree::work_tree_at,
 };
 use serde_json::{json, Map, Value};
@@ -160,8 +160,8 @@ fn state<R>(f: impl FnOnce(&mut State) -> R) -> R {
         .unwrap_or_else(|e| e.into_inner())
         .get_or_insert_with(State::default))
 }
-fn map_number(map: &CoverageMap, path: &[&str]) -> Option<f64> {
-    let mut v = &map.document;
+fn document_number(document: &Value, path: &[&str]) -> Option<f64> {
+    let mut v = document;
     for key in path {
         v = v.get(key)?;
     }
@@ -208,6 +208,26 @@ fn compute() -> Result<Live, String> {
         prefer_verified_assets: true,
     })?;
     let trees = render_box_trees(&map, Some(&tree), true)?;
+    live_from(map.document, trees)
+}
+fn cached() -> Result<Live, String> {
+    let report = root().join("out/gs1-en/reports/coverage-map.json");
+    let document = serde_json::from_slice(
+        &std::fs::read(&report).map_err(|error| format!("{}: {error}", report.display()))?,
+    )
+    .map_err(|error| format!("{}: {error}", report.display()))?;
+    let trees = BOX_TREES
+        .iter()
+        .map(|name| {
+            let path = root().join(format!("games/gs1/assets/readme/gs1-en-{name}.svg"));
+            std::fs::read_to_string(&path)
+                .map(|svg| (*name, svg))
+                .map_err(|error| format!("{}: {error}", path.display()))
+        })
+        .collect::<Result<Vec<_>, _>>()?;
+    live_from(document, trees)
+}
+fn live_from(document: Value, trees: Vec<(&'static str, String)>) -> Result<Live, String> {
     let gs1_ja_sources = count_c(&root().join("games/gs1/recon/ja"));
     let gs1_en_sources = count_c(&root().join("games/gs1/recon/en"));
     let gs2_ja_sources = count_c(&root().join("games/gs2/recon/ja"));
@@ -253,7 +273,7 @@ fn compute() -> Result<Live, String> {
         ])
         .collect::<Vec<_>>()
         .join("-");
-    let n = |key| map_number(&map, key).unwrap_or(0.0);
+    let n = |key| document_number(&document, key).unwrap_or(0.0);
     Ok(Live {
         revision,
         generated: iso_now(),
@@ -406,18 +426,24 @@ fn music_file(path: &str) -> Option<PathBuf> {
     (number.len() == 3 && number.bytes().all(|byte| byte.is_ascii_digit()))
         .then(|| music_dir().join(name))
 }
-fn rebuild() {
+fn rebuild() -> bool {
     state(|state| state.scanning = true);
     let result = compute();
     state(|state| {
+        let succeeded = result.is_ok();
         match result {
             Ok(coverage) => {
                 state.coverage = Some(coverage);
                 state.error = None;
             }
-            Err(error) => state.error = Some(error),
+            Err(error) => {
+                if state.coverage.is_none() {
+                    state.error = Some(error);
+                }
+            }
         }
         state.scanning = false;
+        succeeded
     })
 }
 
@@ -496,10 +522,9 @@ fn response(path: &str) -> Response {
             "OK",
             Some("text/html; charset=utf-8"),
             "no-store",
-            format!("<!doctype html><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Alchemy</title><link rel=\"stylesheet\" href=\"/styles.css?v={}\"><script type=\"module\" src=\"/client.js?v={}\"></script>", page_version(), page_version())
+            format!("<!doctype html><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Alchemy</title><style>{}</style><script type=\"module\" src=\"/client.js?v={}\"></script>", assets::STYLES, page_version())
                 .into_bytes(),
         ),
-        "/styles.css" => Response::new(200, "OK", Some("text/css; charset=utf-8"), "no-store", assets::STYLES.as_bytes()),
         "/client.js" => Response::new(200, "OK", Some("text/javascript; charset=utf-8"), "no-store", client::bundled_client().unwrap().into_bytes()),
         "/snapshot" => Response { status: 200, reason: "OK", headers: vec![("Cache-Control", "no-store".into()), ("Content-Type", "application/json;charset=utf-8".into())], body: snapshot_text().into_bytes() },
         "/events" => event_stream(),
@@ -552,9 +577,11 @@ fn fingerprint(path: &Path) -> Fingerprint {
 }
 struct Watcher {
     coverage: Vec<(PathBuf, Fingerprint)>,
+    dirty: bool,
+    stable_ticks: u8,
 }
 impl Watcher {
-    fn new() -> Self {
+    fn new(retry_initial_scan: bool) -> Self {
         let r = root();
         let mut coverage = COVERAGE_DIRS
             .iter()
@@ -571,7 +598,11 @@ impl Watcher {
         {
             coverage.push((p.clone(), fingerprint(&p)))
         }
-        Self { coverage }
+        Self {
+            coverage,
+            dirty: retry_initial_scan,
+            stable_ticks: 0,
+        }
     }
     fn tick(&mut self) {
         let mut changed = false;
@@ -581,7 +612,16 @@ impl Watcher {
             *old = now
         }
         if changed {
-            rebuild()
+            self.dirty = true;
+            self.stable_ticks = 0;
+        } else if self.dirty {
+            self.stable_ticks = self.stable_ticks.saturating_add(1);
+            if self.stable_ticks >= 2 {
+                if rebuild() {
+                    self.dirty = false;
+                }
+                self.stable_ticks = 0;
+            }
         }
     }
 }
@@ -605,11 +645,14 @@ fn serve(mut stream: TcpStream) {
     let _ = response(&path).write(&mut stream, include);
 }
 pub fn run(bind: Option<SocketAddr>) -> std::io::Result<()> {
-    rebuild();
+    if let Ok(coverage) = cached() {
+        state(|state| state.coverage = Some(coverage));
+    }
+    let retry_initial_scan = !rebuild();
     let listener = TcpListener::bind(bind.unwrap_or_else(|| SocketAddr::new(host(), port())))?;
     println!("Alchemy dashboard on http://{}/", listener.local_addr()?);
-    std::thread::spawn(|| {
-        let mut w = Watcher::new();
+    std::thread::spawn(move || {
+        let mut w = Watcher::new(retry_initial_scan);
         loop {
             std::thread::sleep(Duration::from_secs(1));
             w.tick();
@@ -632,11 +675,18 @@ pub fn self_test() -> Result<String, String> {
         || !js.contains("Run make reports to refresh cross-edition reports")
         || !js.contains("AudioContext")
         || !js.contains("/music/catalog")
+        || !js.contains("if (music.ui?.card) return music.ui.card")
     {
         return Err("dashboard assets are incomplete".into());
     }
-    if !response("/").body.starts_with(b"<!doctype html>") {
+    let shell = response("/");
+    if !shell.body.starts_with(b"<!doctype html>")
+        || !shell.body.windows(7).any(|window| window == b"<style>")
+    {
         return Err("dashboard shell failed".into());
+    }
+    if response("/styles.css").status != 404 {
+        return Err("standalone stylesheet route still exists".into());
     }
     if response("/nope").status != 404 {
         return Err("404 route failed".into());

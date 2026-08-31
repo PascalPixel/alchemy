@@ -37,8 +37,8 @@ void Func_080105d4(s32 srcX, s32 srcY, s32 dstX, s32 dstY, s32 height, s32 width
             dst++;
 
             for (i = 0; i < 3; i++) {
-                if (x >= tile[i].x && x < tile[i].x + 16 &&
-                    y >= tile[i].y && y < tile[i].y + 12) {
+                if (tile[i].x <= x && tile[i].x + 16 > x &&
+                    tile[i].y <= y && tile[i].y + 12 > y) {
                     u32 tileOffset = ((y & 15) << 5) + (x & 15);
                     u8 *overlayDst = (u8 *)(0x06002800 + tileOffset * 4 + i * 2048);
                     u8 *overlaySrc = (u8 *)(0x02020000 + cell * 8);

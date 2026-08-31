@@ -8,9 +8,9 @@
   "measured": "2026-08-26",
   "candidate_bytes": 240,
   "reference_bytes": 240,
-  "differing_halfwords": 109,
-  "wrong_instructions": 32,
-  "class": "wrong",
+    "differing_halfwords": 9,
+    "wrong_instructions": 6,
+    "class": "allocation_uncovered",
   "command": "cargo run --offline --quiet --release --manifest-path tools/compiler/Cargo.toml -- candidate-show games/gs1/recon/en/main/080b5b18.c",
   "note": "Loops over each active party member (Func_080b6a60) and for each one zeros state+0x131..state+0x148 via a 3-byte countdown loop plus 22 individual byte stores, then calls Func_08077010. The reference's two interleaved even/odd store-pointer chains prove the zeroed range skips exactly one offset: 0x140 (not 0x142, an earlier hand-guess this session that measured byte-identically to 0x140's omission on raw counts alone -- the +2/+3 stride-jump position in the aligned disassembly is what actually distinguishes them, and 0x140 is the position that resolves every previously-marked instruction in the store-chain region). The u8 zero=0 local is hoisted to function scope (not per-iteration), matching the reference's r9-resident constant kept live across the whole loop."
  },
@@ -35,8 +35,9 @@
    "result": "regresses wrong_instructions from 32 to 118 -- this hoist is load-bearing, matching the reference's r9-resident constant kept live across the whole function"
   }
  ],
- "notes": [
-  "Recovered only from the retained owner assembly, approved local ROM, sibling owner 080b6a60 (BattleParty_PrepareActiveOwners, this session's own reconstruction) and its established Func_08077008/Func_08077010 vocabulary, in-repository headers, and the approved compiler.",
+  "notes": [
+    "2026-08-31 type and topology closure: changing the enumerated owner buffer from s16 to u16 reproduces the reference's ldrh and collapses the residual from 109 differing halfwords / 32 wrong instructions to 18 / 6. Reconstructing the reference's guarded do-while owner traversal then places the zero-carrier materialization after the empty-list guard and improves the exact-size candidate further to 9 / 6 with equal topology. The remaining six instructions differ only in the scheduling of the r9 zero carrier versus the r5/r6 loop carriers; the allocator decoder reports no unique source repair, so this is parked as allocation-uncovered rather than forced.",
+    "Recovered only from the retained owner assembly, approved local ROM, sibling owner 080b6a60 (BattleParty_PrepareActiveOwners, this session's own reconstruction) and its established Func_08077008/Func_08077010 vocabulary, in-repository headers, and the approved compiler.",
   "This candidate claims zero DONE bytes."
  ],
  "sr_route_evidence": {

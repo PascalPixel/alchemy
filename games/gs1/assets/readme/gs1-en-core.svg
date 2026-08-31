@@ -4,7 +4,7 @@
 <rect x="0" y="0" width="540" height="304" fill="#6d4fc2" rx="8"/>
 <rect x="1" y="1" width="538" height="302" fill="none" stroke="#6d4fc2" stroke-width="2" rx="7"/>
 <text class="weyard" x="6" y="15">Main game</text>
-<text class="weyard" x="534" y="15" text-anchor="end">57.71% DONE</text>
+<text class="weyard" x="534" y="15" text-anchor="end">58.29% DONE</text>
 <rect x="3" y="22" width="534" height="258" fill="#fff"/>
 <g aria-label="0x080000c0–0x080003c0: 768 bytes">
 <title>0x080000c0–0x080003c0: 768 bytes</title>
@@ -2140,8 +2140,8 @@
 </g>
 <g aria-label="0x08095bd8–0x08096c22: 4,170 bytes">
 <title>0x08095bd8–0x08096c22: 4,170 bytes</title>
-<rect x="167.19295753881892" y="169.01960297109014" width="33.41536537020844" height="11.579177275023468" style="fill:#d8d9df"/>
-<rect x="167.19295753881892" y="162.55220883455263" width="33.41536537020844" height="6.467394136537498" style="fill:hsl(275 58% 66%)"/>
+<rect x="167.19295753881892" y="173.05819406945196" width="33.41536537020844" height="7.540586176661624" style="fill:#d8d9df"/>
+<rect x="167.19295753881892" y="162.55220883455263" width="33.41536537020844" height="10.505985234899342" style="fill:hsl(275 58% 66%)"/>
 <rect x="167.19295753881892" y="151.15660388218197" width="33.41536537020844" height="11.395604952370658" style="fill:#6d4fc2"/>
 </g>
 <g aria-label="0x08096c22–0x08096c24: 2 bytes">
@@ -3274,8 +3274,8 @@
 </g>
 <g aria-label="0x080e0000–0x080e15e8: 5,608 bytes">
 <title>0x080e0000–0x080e15e8: 5,608 bytes</title>
-<rect x="489.1725767408891" y="95.53413271490182" width="47.327423259110915" height="22.33085829191756" style="fill:#d8d9df"/>
-<rect x="489.1725767408891" y="90.7346047187073" width="47.327423259110915" height="4.799527996194511" style="fill:hsl(275 58% 66%)"/>
+<rect x="489.1725767408891" y="104.55081920147644" width="47.327423259110915" height="13.314171805342934" style="fill:#d8d9df"/>
+<rect x="489.1725767408891" y="90.7346047187073" width="47.327423259110915" height="13.81621448276914" style="fill:hsl(275 58% 66%)"/>
 <rect x="489.1725767408891" y="89.71043765675785" width="47.327423259110915" height="1.0241670619494565" style="fill:#6d4fc2"/>
 </g>
 <g aria-label="0x080e15e8–0x080e2538: 3,920 bytes">
@@ -3370,8 +3370,8 @@
 </g>
 <g aria-label="0x080ece7c–0x080eda78: 3,068 bytes">
 <title>0x080ece7c–0x080eda78: 3,068 bytes</title>
-<rect x="463.1910690566915" y="185.234460776551" width="31.041124462393455" height="9.769872193419562" style="fill:#d8d9df"/>
-<rect x="463.1910690566915" y="172.84926894981604" width="31.041124462393455" height="12.385191826734955" style="fill:hsl(275 58% 66%)"/>
+<rect x="463.1910690566915" y="191.03626180218168" width="31.041124462393455" height="3.9680711677888687" style="fill:#d8d9df"/>
+<rect x="463.1910690566915" y="172.84926894981604" width="31.041124462393455" height="18.18699285236565" style="fill:hsl(275 58% 66%)"/>
 <rect x="463.1910690566915" y="171.9474345935004" width="31.041124462393455" height="0.901834356315652" style="fill:#6d4fc2"/>
 </g>
 <g aria-label="0x080f0254–0x080f0a5c: 2,056 bytes">
@@ -3732,11 +3732,11 @@
 <rect x="534.7355617592607" y="277.9552614633638" width="1.7644382407393877" height="1.5447385366362336" style="fill:#6d4fc2"/>
 </g>
 <rect x="6" y="288" width="10" height="10" style="fill:#d8d9df"/>
-<text class="weyard legend-label" x="20" y="293" dominant-baseline="middle">Unknown 40.9%</text>
+<text class="weyard legend-label" x="20" y="293" dominant-baseline="middle">Unknown 40.3%</text>
 <rect x="100" y="288" width="10" height="10" style="fill:hsl(275 52% 82%)"/>
 <text class="weyard legend-label" x="114" y="293" dominant-baseline="middle">Draft C 1.4%</text>
 <rect x="188" y="288" width="10" height="10" style="fill:hsl(275 58% 66%)"/>
-<text class="weyard legend-label" x="202" y="293" dominant-baseline="middle">Proven ASM 35.7%</text>
+<text class="weyard legend-label" x="202" y="293" dominant-baseline="middle">Proven ASM 36.3%</text>
 <rect x="300" y="288" width="10" height="10" style="fill:#6d4fc2"/>
 <text class="weyard legend-label" x="314" y="293" dominant-baseline="middle">Proven C 22.0%</text>
 </svg>

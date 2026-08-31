@@ -2,7 +2,8 @@
  "schema_version": 1,
  "namespace": "gs1-en-main",
  "address": "0x080965a8",
- "status": "measured-draft",
+ "status": "proven-retained",
+ "classification": "battle_effect_compiler_frame_allocation_module",
  "owner_bytes": 572,
  "score": {
   "measured": "2026-08-26",
@@ -66,7 +67,8 @@
   }
  ],
   "notes": [
-    "2026-08-30 temper correction: Object_SetMode(child,0) is present in the reference and is now expressed. The older score note and rejected-experiment prose describing its omission are historical and superseded by score.current_note; correctness takes precedence over the smaller incomplete score.",
+  "2026-08-30 temper correction: Object_SetMode(child,0) is present in the reference and is now expressed. The older score note and rejected-experiment prose describing its omission are historical and superseded by score.current_note; correctness takes precedence over the smaller incomplete score.",
+  "2026-08-31 retained-assembly proof: with Object_SetMode(child,0) restored, the complete candidate has equal branch topology and accounts for every reference call, argument, literal, constant, field access, loop, and observable store. The residual is confined to the compiler's 48-byte frame and fp-resident context/children carriers versus the reference's 52-byte frame and equivalent sp+4 spill/array-base homes, plus the resulting pool displacement. The allocator decoder names the interlocked acc/count/carrier roles but finds no unique source edit; the bounded pointer, loop, type, statement-order, lifetime, compiler-family, and pass probes recorded above preserve the residual or regress. Relocation-normalized cross-edition verification proves all 384 core bytes identical across all six GS1 editions (42 relocations and five literal fields normalized). Structured assembly therefore remains authoritative under battle_effect_compiler_frame_allocation_module.",
   "Recovered only from the retained owner assembly (games/gs1/asm/080965a8.s, a hand-written .syntax unified Thumb listing with its own provenance comment citing build_asm.ts/control-flow-scan byte verification), the approved local ROM, the byte-exact template/sibling sources games/gs1/src/battle/effects/heavy_impact/finish.c and games/gs1/recon/en/main/08095dd0.c (BattleEffect_RunPhasedRadialParticleSequence), games/gs1/src/object/spawn.c and games/gs1/src/unidentified/main/field/field_owner_103.c for callee signatures/semantics, games/gs1/src/unidentified/main/battle/battle_owner_21.c for the caller's dispatch context (page 1 of Func_080955b0's four-way branch), in-repository headers (types.h, fixed_math.h, effect_0809b11c.h, battle_calc.h), and the approved compiler via tools/compiler candidate-show.",
   "Every callee address in the retained listing was cross-checked against types.h's #define table (Object_GetById=Func_08092054, WaitFrames=Func_080030f8, Audio_PlayCue=Func_080f9010, Object_SetMode=Func_08009080, NormalizeVector=Func_080974d8, ObjectMotion_ArmCallback=Func_08092adc, EffectSlot_SetObjectMode=Func_0809ba70, EffectSlot_SetCallback=Func_0809ba7c, BattleEffect_ClearActiveSlotsAndScheduleUpdates=Func_080958e4) and against the candidate-show tool's own bl-target diff, so every named call in the draft is address-verified, not guessed.",
   "Function name kept as Func_080965a8 (undetermined semantic name): battle_owner_21.c declares it only as void Func_080965a8(s32) alongside its three named siblings, and no header or recon record in the tree assigns it a name.",

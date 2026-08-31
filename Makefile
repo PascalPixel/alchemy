@@ -153,8 +153,16 @@ dashboard-service-install:
 		-e 's|@CARGO@|$(shell command -v $(CARGO))|g' \
 		tools/dashboard-server/com.pascalpixel.alchemy-dashboard.plist.in \
 		> '$(HOME)/Library/LaunchAgents/com.pascalpixel.alchemy-dashboard.plist'
-	@launchctl bootout 'gui/$(shell id -u)/com.pascalpixel.alchemy-dashboard' 2>/dev/null || true
-	@launchctl bootstrap 'gui/$(shell id -u)' '$(HOME)/Library/LaunchAgents/com.pascalpixel.alchemy-dashboard.plist'
+	@domain='gui/$(shell id -u)'; service="$$domain/com.pascalpixel.alchemy-dashboard"; \
+		plist='$(HOME)/Library/LaunchAgents/com.pascalpixel.alchemy-dashboard.plist'; \
+		launchctl bootout "$$service" 2>/dev/null || true; \
+		attempt=0; until launchctl bootstrap "$$domain" "$$plist" 2>/dev/null; do \
+			attempt=$$((attempt + 1)); \
+			if test "$$attempt" -ge 10; then \
+				printf 'dashboard service did not reload after %s attempts\n' "$$attempt"; exit 1; \
+			fi; \
+			sleep 1; \
+		done
 	@printf 'Alchemy dashboard service installed: http://localhost:4649/\n'
 
 progress:

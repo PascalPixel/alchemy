@@ -233,6 +233,7 @@ async function loadMusic(index, autoplay = false) {
   } finally { music.ui.card.setAttribute("aria-busy", "false"); }
 }
 function musicPlayer() {
+  if (music.ui?.card) return music.ui.card;
   pauseMusic(true);
   const title = h("strong", { className: "music-title" }, "Reading recovered sequences…");
   const source = h("span", { className: "music-source" }, "Golden Sun sound archive");

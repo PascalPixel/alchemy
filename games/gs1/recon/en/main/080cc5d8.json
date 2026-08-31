@@ -2,8 +2,9 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x080cc5d8",
-  "status": "measured-draft",
+  "status": "proven-retained",
   "owner_bytes": 904,
+  "classification": "battle_effect_compiler_allocation_module",
   "score": {
     "measured": "2026-08-27",
     "candidate_bytes": 904,
@@ -25,7 +26,10 @@
   ],
   "notes": [
     "Recovered only from the retained owner assembly (games/gs1/asm/080cc5d8.s, identical to out/family-transplants/main-080cc5d8/m2c/target.canonical.s), the approved local EN ROM, the approved compiler, in-repository headers, and the already-adopted/measured sibling sources named in family.template_note plus games/gs1/recon/en/main/080e7404.c, 080d59b0.c, 080d82b0.c, 080dc1ec.c, 080e01e4.c and games/gs1/src/battle/effects/objects/start_effect_22.c (for the Func_080048b0(kind,size) signature) and games/gs1/src/battle/effects/puff_arc/run.c (for the Data_03001e50[kind] heap-cache convention). No other Golden Sun decompilation project, symbol map, or disassembly was consulted.",
-    "This candidate claims zero DONE bytes, so it does not require a progress-report refresh.",
+    "The complete 904-byte retained owner is Proven ASM under the battle_effect_compiler_allocation_module classification; the semantic C remains available as the evidence-bearing reconstruction.",
+    "Cross-edition relocation-aware verification on 2026-08-31 locates this owner in all six releases and proves all 632 non-relocation core bytes identical. The owner has 36 Thumb call relocations and 32 literal fields; every remaining regional byte difference is confined to those fields.",
+    "A shipped compiler-route and pass sweep on 2026-08-31 tested routed GCC 2.96, explicit GCC 2.96, old-agbcc, regmove, both schedulers, CSE follow/skip blocks, GCSE, expensive optimizations, thread jumps, strength reduction, rerun-CSE-after-loop, function CSE, and deferred pops. Canonical, no-schedule-insns, both CSE toggles, thread-jumps, rerun-CSE, function-CSE, and deferred-pop routes tie at 70 differing halfwords; all others regress or change extent.",
+    "The annotation-free permuter's finite allocator decoder named one low-register expression constraint but refused to search because no unique source repair follows from it. This is the required negative verdict, not an invitation to force allocation. Combined with the already-recorded pointer placement, screen-coordinate, display-base, callback-array, and stack-layout source probes, the ordinary-C axis is closed.",
     "Semantic summary: a battle-presentation sub-effect that allocates a work block, a 16KB canvas, and a small trail-sprite buffer; sets BG2 affine scale and blend alpha; loads a palette selected by a 4-way switch on the target object's kind field; seeds a fixed-address 128-entry particle array (side effect, unused by this function) and a 64-entry in-work 'star' record array; registers a 48x48 rectangle-blit callback (kind 46); then runs 56 frames. Each frame re-projects a single tracked point to screen space, shakes BG2's horizontal offset and (after frame 49) fades BLDALPHA, cues a sound/vibration effect once at frame 26, draws a large kind-46 sprite during frames 28-48, bursts four small kind-47 decorations during frames 0-14 from ROM-table-driven offsets, and advances/draws up to 64 sparkle-trail squares whose radius and screen position come from a sine/cosine sweep of each record's stored angle.",
     "Field offsets 0x77b4/0x77b8 on the work block are new to this owner (no precedent in the sibling dossiers); left as raw M2C_FIELD offsets rather than guessing names, matching this family's established practice for byte-offset accesses with no evidence-backed structure yet."
   ]

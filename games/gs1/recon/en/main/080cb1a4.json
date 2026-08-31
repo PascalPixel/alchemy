@@ -2,8 +2,9 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x080cb1a4",
-  "status": "measured-draft",
+  "status": "proven-retained",
   "owner_bytes": 840,
+  "classification": "battle_effect_compiler_allocation_module",
   "score": {
     "measured": "2026-08-30",
     "candidate_bytes": 840,
@@ -98,7 +99,9 @@
   },
   "notes": [
     "Recovered only from the retained owner assembly (games/gs1/asm/080cb1a4.s), the approved local EN ROM, the already-adopted games/gs1/src/battle/effects/member_orbit/run.c and games/gs1/src/battle/effects/puff_arc/run.c, the already-adopted games/gs1/src/battle/motion/set_approach_motion.c (and its motion_object.h/b5_context.h headers), games/gs1/recon/en/main/080e01e4.c and its dossier, in-repository headers (types.h's Object_ResetMotion/Object_SetPosition/Object_SetMode/FixedPoint_Ratio #define table), and the approved compiler. No other Golden Sun decompilation project or external source was consulted.",
-    "This candidate claims zero DONE bytes (measured-draft, not exact).",
+    "The complete 840-byte retained owner is Proven ASM under battle_effect_compiler_allocation_module; the semantic C remains available as the evidence-bearing reconstruction.",
+    "Cross-edition relocation-aware verification on 2026-08-31 locates this owner in all six releases and proves all 662 non-relocation core bytes identical. The object symbol covers 838 bytes; the classified 840-byte retained extent includes its two-byte trailing alignment.",
+    "A shipped compiler-route and pass sweep tested routed GCC 2.96, explicit GCC 2.96, old-agbcc, regmove, both schedulers, CSE follow/skip blocks, GCSE, expensive optimizations, thread jumps, strength reduction, and rerun-CSE-after-loop. Canonical and most pass toggles remain at the exact 840-byte extent and 108 differing halfwords; every alternative either ties or regresses.",
     "Semantic summary: entry 34-style battle-presentation sub-effect that moves the effect's source actor toward one fixed target party member (B5Context lookups keyed off the effect state's field 8 'actor' id and the first entry of its member-id array at field 0x24) using the same low-level Object_ResetMotion/Object_SetPosition/Object_SetMode(2) approach shape as set_approach_motion.c (scale 90, not that function's 80), sets snap_to_target/auto_face_motion, then runs 96 animation passes. Each pass reads the global 'facing' cursor twice (once at top of pass, once again after the frame-gated field writes, reusing the same cached value rather than re-reading the global), on frame 0 sets both objects' velocity_y/vertical_motion_strength for an initial launch, on frame 11 flips a sign field and nudges both objects' y by a per-actor amount from Func_080b5070, on frame 54 fires ObjectGroup_UpdateMembers and re-derives both objects' velocity_y/vertical_motion_strength/acceleration/speed_limit for a second, weaker motion phase, on frame 64 reverses the frame-11 adjustment and calls Object_SetMode(object,0), projects the source actor's live x/y/z through EffectPosition_ApplyBaseAndYOffset every pass and halves the resulting screen x, draws a single 32x64 flash sprite at frames 54-55, and for a 12-pass window (frames 56-67) draws a 16-point sine/cosine ring of 32x64 sprites around the projected position, selecting the sprite cel from the pass's position in that window.",
     "The `(x + ((u32)x >> 31)) >> 1` bit-trick noted elsewhere in this family does appear once here (the ring-loop's `cel_phase / 2` cel-select division) and was left as a genuine `/2` per the family guidance, since it is a real signed halving over a value the compiler cannot prove non-negative at that point even though the enclosing `cel_phase >= 0 && cel_phase <= 11` guard establishes it dynamically; the *other* halving in this owner (`screen[0] >>= 1` on the projected x) compiles to a single bare `asrs` with no sign-correction pair and was written as a plain right shift accordingly, not a division.",
     "Every `bl` target inside games/gs1/asm/080072e4.s's _call_via_rN trampoline bundle was modeled as a real indirect call through the traced `draw` (DrawRectangleFn) value read from heap_cache[7], per this family's already-established Func_080072f4/Func_080072f8 finding -- no fictional Func_080072f4/Func_080072f8 prototypes were declared.",

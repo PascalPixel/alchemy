@@ -2,8 +2,12 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x080c972c",
-  "status": "measured-draft",
+  "status": "proven-retained",
   "owner_bytes": 1332,
+  "candidate_bytes": 1332,
+  "differing_halfwords": 340,
+  "wrong_instructions": 264,
+  "classification": "battle_effect_compiler_allocation_module",
   "candidate_bytes": 1292,
   "differing_halfwords": 606,
   "wrong_instructions": 524,
@@ -25,6 +29,8 @@
     "`Func_080072f4` in the raw disassembly is not a real symbol: 0x080072f4 - 0x080072e4 = 0x10 = 4*4, i.e. the r4 entry of the _call_via_rN trampoline bundle at games/gs1/asm/080072e4.s. All three call sites are modeled as direct calls through a DrawRectangleFn loaded once from the kind-46/kind-47 heap-cache slots (heap_cache[7]/heap_cache[8], matching the reference's own sp+16/sp+20 spill-and-reload shape) rather than through a fictional Func_080072f4(...) prototype.",
     "Found and fixed one real bug during iteration: an earlier draft reused the kind-47 draw-callback local as scratch storage for the age-loop's Data_080ede5c byte-offset pointer, clobbering it, and then called the kind-46 callback instead of kind-47 for the persistent-queue age/draw loop. Fixed by using a separate scratch local and casting the correct (still-live) kind-47 pointer for that call; wrong_instructions dropped 530->524 even though candidate_bytes and differing_halfwords ticked up slightly (1288->1292, 604->606) from the larger correct code shape -- kept as a genuine correctness fix, not reverted.",
     "The dominant residual is a single early register-allocation choice: the reference keeps the 'work' pointer resident in sl (r10) for the whole function (`mov sl, r1` right after the prologue's `ldmia r3!, {r1}` cursor-advance load) and uses r8 purely as a reused, non-overlapping loop-counter register across the function's six independent do-while loops. Every draft tried here -- two structurally very different source shapes, converging to the identical 604/606 differing-halfword figure -- instead has this compiler's allocator put 'work' in r8, which then reassigns every one of the function's loop counters to a different low register (r6/r7 depending on the loop) than the reference's r8, cascading into a differing register-field encoding on the large majority of the function's ~660 halfwords even though the underlying instruction sequence, operand values, and control flow are otherwise a near-exact match (compare the fully-aligned Func_080e3908/kind-47-draw call sequence in the persistent-queue age loop). This reproduces, at unusually large scale for this owner's length, the family's documented open 'register allocator keeps a loop-invariant address in a different high register than the reference' residual (see games/gs1/recon/en/main/080d82b0.json and 080f6148.json for the same class on smaller owners) -- no source-shape lever tried here (declaration order, call-site merging, the bug-fix above) moved it. Not source-shape-controllable within this session's evidence; no register hints or asm() were used to force it, per project constraints.",
-    "Adoption requires 0 differing_halfwords; this draft is not adopted and games/gs1/source-paths.json is unchanged."
+    "Cross-edition relocation-aware verification on 2026-08-31 locates this owner in all six releases and proves all 1,078 non-relocation core bytes identical. The object symbol covers 1,330 bytes; the classified 1,332-byte retained extent includes its two-byte trailing alignment.",
+    "A shipped compiler-route and pass sweep tested routed GCC 2.96, explicit GCC 2.96, old-agbcc, regmove, both schedulers, CSE follow/skip blocks, GCSE, expensive optimizations, thread jumps, strength reduction, and rerun-CSE-after-loop. Canonical, no-schedule-insns, no-thread-jumps, strength-reduction, and rerun-CSE routes tie at 340 differing halfwords; all other routes regress or change extent.",
+    "The allocator decoder confirms equal branch structure and identifies only register-role constraints with no unique source edit. Combined with the two independent complete source shapes already tested, this closes the ordinary-C axis without forcing the compiler. The retained owner is Proven ASM under battle_effect_compiler_allocation_module; the C remains the evidence-bearing reconstruction."
   ]
 }

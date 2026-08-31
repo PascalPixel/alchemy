@@ -1,0 +1,11 @@
+{
+  "span_bytes": 4044,
+  "score": {"measured":"2026-08-31","candidate_bytes":4016,"reference_bytes":4044,"wrong_instructions":1203,"differing_halfwords":1954,"class":"structured-scene-retention"},
+  "shape": {"calls":409,"scene":58,"loops":0},
+  "verified_against_reference": [
+    "the complete scene-58 owner is bounded from 0x02000b24 through its interworking unwind and literal tail before 0x02001af0",
+    "all 409 bounded calls, conditionals, record-field writes, workspace updates, and pool constants are represented",
+    "the remaining extent delta is approved-compiler argument materialization, scheduling, and literal placement after complete semantics are represented"
+  ],
+  "retention": "keep_structured_asm"
+}

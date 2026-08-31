@@ -4,9 +4,9 @@
   "address": "0x080d2464",
   "status": "measured-draft",
   "owner_bytes": 2356,
-  "candidate_bytes": 2296,
-  "differing_halfwords": 1141,
-  "wrong_instructions": 888,
+  "candidate_bytes": 2328,
+  "differing_halfwords": 1113,
+  "wrong_instructions": 870,
   "classification": "structural-reconstruction",
   "resolved_asm_classification": {
     "kind": "compiler_output",
@@ -14,6 +14,8 @@
     "confidence": "likely"
   },
   "notes": [
+    "2026-08-31: cleared both call-via idiom lints by reconstructing the retained callback channels. The palette-copy target 0x03001388 is loaded once as a typed three-argument BattleEffectCopyFn and used for the two r6/Func_080072fc copy calls. The six-argument draw calls now use the work-cache function words already held in sp28/sp2C: the retained assembly selects sp2C once through r4 and sp28 four times through r4/r6. The existing Func_080072f0(..., 0x03001388) site was already correctly modeled because its fourth argument supplies the r3 target and remains unchanged. The corrected draft grows 2296 to 2328 of 2356 bytes, reducing the missing-code gap from 60 to 28 bytes; differing halfwords improve 1141 to 1113 and wrong instructions improve 888 to 870. GCC now exposes a 60-byte candidate frame versus the reference's 72-byte frame as downstream structural debt, not a reason to restore false direct veneer calls. Fresh wave routing reports verdict=scored, class=structural_topology, and zero lint findings for all r3/r4/r6 requirements.",
+    "2026-08-31: corrected the 0x080ee19a sprite-offset table from s8 to u8 after the fresh router identified candidate ldrsb versus reference ldrb. The source correction is emission-neutral at 2328/1113/870 because later arithmetic currently absorbs the extension difference, but candidate-show no longer contains an ldrsb fingerprint.",
     "2026-08-30: promoted the fourth-largest remaining no-candidate main-ROM owner after repairing its aggregate-aware m2c draft. A fresh canonical compile produces 2296 bytes for the 2356-byte reference; topology differs and 1141 halfwords differ, so this remains a measured draft and claims zero DONE bytes.",
     "Mechanical repairs resolved the neighboring 0x03001e80/0x03001eec work cells, dynamic signed-halfword member IDs, and typed u8/u16/s8 sprite tables. No instruction bytes, inline assembly, fixed-register variables, barriers, or external decompilation sources were used.",
     "The function is a large battle presentation with 512-slot and 24-slot particle groups, two draw channels, palette loading, multiple actor action phases, and a long frame-driven sprite sequence. A permanent name is deferred until caller and dispatch evidence identifies its role."

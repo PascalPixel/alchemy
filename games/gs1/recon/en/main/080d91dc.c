@@ -72,6 +72,7 @@ typedef s64 M2C_UNK64;
 #define BattleEffectB Func_080d91dc
 
 void Func_080de2f8(void *, s32, s32, s32, s32 *, s32 *);
+typedef void (*BattleEffectDrawFn)(u32, void *, s32, s32, s32, s32);
 
 void BattleEffectB(s32 arg0, s32 arg1) {
     void **heap_cursor;
@@ -296,12 +297,12 @@ loop_49:
             sp8 = temp_r4_412;
             sp0 = (s32 *)0x28;
             sp4 = (s32 *)0x28;
-            Func_08007304(sp40, temp_r6_426, temp_sl_382, var_r7_414,
+            ((BattleEffectDrawFn)sp38)(sp40, temp_r6_426, temp_sl_382, var_r7_414,
                 0x28, 0x28);
             if (var_fp_344 <= 3) {
                 sp0 = (s32 *)0x28;
                 sp4 = (s32 *)0x28;
-                Func_080072f4(sp40, temp_r6_426, temp_sl_382, var_r7_414,
+                ((BattleEffectDrawFn)sp3C)(sp40, temp_r6_426, temp_sl_382, var_r7_414,
                     0x28, 0x28);
             }
             Func_08002dd8(0x2F);
@@ -392,7 +393,7 @@ loop_60:
                             temp_r4_689 = temp_r0_688 * 2;
                             sp0 = temp_r4_689;
                             sp4 = temp_r4_689;
-                            Func_080072f4(sp40, sp44 + *(const u16 *)(0x080EDE5C + temp_r4_689 - 2), M2C_FIELD(sp18, s32 **, 0) - temp_r0_688, M2C_FIELD(sp18, s32 *, 4) - temp_r0_688, temp_r4_689, temp_r4_689);
+                            ((BattleEffectDrawFn)sp3C)(sp40, sp44 + *(const u16 *)(0x080EDE5C + temp_r4_689 - 2), M2C_FIELD(sp18, s32 **, 0) - temp_r0_688, M2C_FIELD(sp18, s32 *, 4) - temp_r0_688, temp_r4_689, temp_r4_689);
                             temp_r5_705 = M2C_FIELD(var_r6_626, s32 **, 0);
                             M2C_FIELD(var_r6_626, s32 **, 0) = temp_r5_705 - Func_080022ec((s32) temp_r5_705, temp_r7_649);
                             temp_r5_711 = M2C_FIELD(var_r6_626, s32 *, 4);
@@ -425,7 +426,7 @@ loop_60:
                 sp0 = (s32 *)0x28;
                 sp4 = (s32 *)0x28;
                 sp38 = *(s32 *)0x03001F08;
-                Func_080072f4(sp40, sp44 + (temp_r5_769 * 0x640) + 0x60E, M2C_FIELD(sp18, s32 **, 0) - 0x14, M2C_FIELD(sp18, s32 *, 4) - 0x14, 0x28, 0x28);
+                ((BattleEffectDrawFn)sp38)(sp40, sp44 + (temp_r5_769 * 0x640) + 0x60E, M2C_FIELD(sp18, s32 **, 0) - 0x14, M2C_FIELD(sp18, s32 *, 4) - 0x14, 0x28, 0x28);
                 Func_08002dd8(0x2E);
             }
             switch (sp48) {                         /* switch 6; irregular */
@@ -445,7 +446,7 @@ loop_60:
                     sp0 = (s32 *)0x18;
                     sp4 = (s32 *)0x28;
                     sp38 = *(s32 *)0x03001F08;
-                    Func_080072f4(sp40, sp44 + (temp_r5_826 * 0x3C0) + 0x2B8E, sp60 - 0xC, sp64 - 0x14, 0x18, 0x28);
+                    ((BattleEffectDrawFn)sp38)(sp40, sp44 + (temp_r5_826 * 0x3C0) + 0x2B8E, sp60 - 0xC, sp64 - 0x14, 0x18, 0x28);
 block_112:
                     Func_08002dd8(0x2E);
                 }
@@ -467,7 +468,7 @@ block_112:
                     sp0 = (s32 *)0x20;
                     sp4 = (s32 *)0x40;
                     sp38 = *(s32 *)0x03001F08;
-                    Func_080072f4(sp40, sp44 + (temp_r0_881 << 0xB) + 0x2B8E, sp60 - 0x10, sp64 - 0x20, 0x20, 0x40);
+                    ((BattleEffectDrawFn)sp38)(sp40, sp44 + (temp_r0_881 << 0xB) + 0x2B8E, sp60 - 0x10, sp64 - 0x20, 0x20, 0x40);
                     goto block_112;
                 }
                 break;
@@ -489,11 +490,11 @@ block_112:
                     sp0 = (s32 *)0x40;
                     sp8 = 0x40;
                     sp4 = (s32 *)0x20;
-                    Func_08007304(sp40, temp_r5_961, sp60 - 0x20, sp64 - 0x18,
+                    ((BattleEffectDrawFn)sp38)(sp40, temp_r5_961, sp60 - 0x20, sp64 - 0x18,
                         0x40, 0x20);
                     sp0 = (s32 *)0x40;
                     sp4 = (s32 *)0x20;
-                    Func_0800730c(sp40, temp_r5_961, sp60 - 0x20, sp64 + 8,
+                    ((BattleEffectDrawFn)sp3C)(sp40, temp_r5_961, sp60 - 0x20, sp64 + 8,
                         0x40, 0x20);
                     Func_08002dd8(0x2F);
                     goto block_112;
@@ -511,7 +512,7 @@ block_112:
                     sp0 = (s32 *)0x28;
                     sp4 = (s32 *)0x28;
                     sp38 = *(s32 *)0x03001F08;
-                    Func_080072f4(sp40, sp44 + (temp_r5_1031 * 0x640) + 0x2B8E, sp60 - 0x14, sp64 - 0x14, 0x28, 0x28);
+                    ((BattleEffectDrawFn)sp38)(sp40, sp44 + (temp_r5_1031 * 0x640) + 0x2B8E, sp60 - 0x14, sp64 - 0x14, 0x28, 0x28);
                     Func_08002dd8(0x2E);
                 }
                 break;

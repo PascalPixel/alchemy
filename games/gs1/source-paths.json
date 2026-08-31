@@ -4874,7 +4874,8 @@
       "source": "battle/effects/descriptors/find_matching.c"
     },
     "main:0808d5dc": {
-      "name": "BattleEffect_RunDescriptorAction"
+      "name": "BattleEffect_RunDescriptorAction",
+      "source": "battle/effects/descriptors/run_action.c"
     },
     "main:08004bd4": {
       "name": "SceneTransform_ApplyPitch"

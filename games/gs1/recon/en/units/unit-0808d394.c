@@ -9,7 +9,7 @@
 #include "../../../src/battle/effects/descriptors/find_matching.c"
 #include "../../../src/unidentified/main/battle/battle_owner_68.c"
 #include "../../../src/unidentified/main/runtime/runtime_owner_151.c"
-#include "../main/0808d5dc.c"
+#include "../../../src/battle/effects/descriptors/run_action.c"
 #include "../../../src/unidentified/main/battle/battle_owner_43.c"
 #include "../../../src/unidentified/main/audio/audio_owner_9.c"
 #include "../../../src/unidentified/main/battle/battle_owner_36.c"

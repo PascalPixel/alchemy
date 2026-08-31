@@ -23,6 +23,10 @@
   },
   "unexpressed": [
     {
+      "op": "compiler indirect-call lowering",
+      "where": "the first structural phase break is the runtime unit copy at owner +0x98: the ROM loads 0x03000730 into r3 and emits the historical ARMv4T Thumb register-call sequence `mov lr, r3; .hword 0xf800`, while the approved GCC 2.96 route emits `bl _call_via_r3`. This accounts for the first four-byte displacement and changes the first literal-pool reach. The behavior must be recovered as an evidenced compiler route, not imitated with inline assembly."
+    },
+    {
       "op": "register allocation",
       "where": "entry region: candidate permutes r1/r2/r5 against the reference and parks sl one instruction late; the added GS2 hook bodies shift pressure and LUIDs across the whole owner"
     },
@@ -37,6 +41,18 @@
     "This candidate claims zero DONE bytes."
   ],
   "rejected_experiments": [
+    {
+      "experiment": "remove the canonical -mthumb-interwork flag",
+      "result": "Neutral on the call model: GCC still emits `_call_via_r3`; 8272/8300 bytes, 3914 differing halfwords, 2570 wrong instructions. This is not the missing route."
+    },
+    {
+      "experiment": "enable shipped -mcaller-super-interworking",
+      "result": "GCC changes the call to `_interwork_call_via_r3`, confirming the site is controlled by the Thumb indirect-call backend, but that is not the ROM's inline register-call sequence and the verifier correctly has no canonical address for the absent veneer. Not adopted."
+    },
+    {
+      "experiment": "declare 0x03000730 as a direct absolute function instead of a function pointer",
+      "result": "Regressed to 8252/8300 bytes, 3961 differing halfwords, and 2597 wrong instructions; GCC emits a direct branch rather than the ROM's register call. Reverted."
+    },
     {
       "experiment": "BATTLE_HEAL_PREP with all arms sharing one Math_Div through a goto tail (num/den computed per arm)",
       "result": "Over-merges: the candidate falls to 8272 bytes as the sign-extend epilogue is shared too; the reference shares the divide call site but keeps per-arm preparation. 3917 halfwords, 2618 wrong instructions. Reverted."

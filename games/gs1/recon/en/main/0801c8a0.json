@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x0801c8a0",
+  "status": "measured-draft",
+  "owner_bytes": 132,
+  "score": {
+    "measured": "2026-08-31",
+    "candidate_bytes": 132,
+    "reference_bytes": 132,
+    "differing_halfwords": 33,
+    "wrong_instructions": 60,
+    "class": "missing-extra-code",
+    "note": "Both lookup passes and the complete owner extent are recovered with equal branch topology. The remaining residual is register-role allocation plus the reference's per-iteration halfword carrier spelling; it claims zero DONE bytes."
+  },
+  "notes": [
+    "Replaced an unrelated display-script family transplant with the reference's actual two-pass encoded-entry lookup and recovered its three-argument signature.",
+    "The reference's first global access is Data_02000240 + 0x220 expressed as element 136 of a four-byte runtime view; the second is the adjacent 0x02000462 halfword re-read for each comparison pass.",
+    "A 10,000-candidate annotation-free permutation request stopped safely because the allocator decoder found no unique repair. Canonical and seven bounded shipped-flag routes produced no exact result; -fno-regmove, -fno-schedule-insns2, and -fno-expensive-optimizations regressed."
+  ]
+}

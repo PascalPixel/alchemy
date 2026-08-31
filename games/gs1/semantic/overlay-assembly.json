@@ -3582,10 +3582,126 @@
       "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "proven",
       "evidence": ["complete retained body accounts for 87 calls, 0 loop(s), 3 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_383_c_02002bf0.json"]
     },
+   {
+     "overlay": "resource_3b9", "start": "0x02001688", "end": "0x02001a14",
+     "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "proven",
+     "evidence": ["complete retained body accounts for 95 calls, 1 loop(s), 11 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_3b9_c_02001688.json"]
+   }
+,
     {
-      "overlay": "resource_3b9", "start": "0x02001688", "end": "0x02001a14",
+      "overlay": "resource_3bb", "start": "0x02002adc", "end": "0x02002e44",
       "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "proven",
-      "evidence": ["complete retained body accounts for 95 calls, 1 loop(s), 11 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_3b9_c_02001688.json"]
+      "evidence": ["complete retained body accounts for 43 calls, 1 loop(s), 37 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_3bb_c_02002adc.json"]
+    },
+    {
+      "overlay": "resource_3ba", "start": "0x02002844", "end": "0x02002bac",
+      "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "proven",
+      "evidence": ["complete retained body accounts for 43 calls, 1 loop(s), 37 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_3ba_c_02002844.json"]
+    },
+    {
+      "overlay": "resource_39a", "start": "0x02001750", "end": "0x02001ab0",
+      "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "proven",
+      "evidence": ["complete retained body accounts for 43 calls, 0 loop(s), 3 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_39a_c_02001750.json"]
+    },
+    {
+      "overlay": "resource_3a0", "start": "0x020005f4", "end": "0x0200094c",
+      "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "proven",
+      "evidence": ["complete retained body accounts for 77 calls, 0 loop(s), 40 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_3a0_c_020005f4.json"]
+    },
+    {
+      "overlay": "resource_3b2", "start": "0x02000f70", "end": "0x020012b4",
+      "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "proven",
+      "evidence": ["complete retained body accounts for 50 calls, 0 loop(s), 10 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_3b2_c_02000f70.json"]
+    },
+    {
+      "overlay": "resource_3b5", "start": "0x02000980", "end": "0x02000ca8",
+      "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "proven",
+      "evidence": ["complete retained body accounts for 85 calls, 0 loop(s), 0 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_3b5_c_02000980.json"]
+    },
+    {
+      "overlay": "resource_3a3", "start": "0x02000524", "end": "0x0200084c",
+      "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "proven",
+      "evidence": ["complete retained body accounts for 49 calls, 1 loop(s), 26 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_3a3_c_02000524.json"]
+    },
+    {
+      "overlay": "resource_3c4", "start": "0x02001fda", "end": "0x02002300",
+      "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "proven",
+      "evidence": ["complete retained body accounts for 63 calls, 0 loop(s), 20 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_3c4_c_02001fda.json"]
+    },
+    {
+      "overlay": "resource_3a4", "start": "0x020006dc", "end": "0x020009ec",
+      "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "proven",
+      "evidence": ["complete retained body accounts for 50 calls, 3 loop(s), 2 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_3a4_c_020006dc.json"]
+    },
+    {
+      "overlay": "resource_3a3", "start": "0x02000904", "end": "0x02000c0c",
+      "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "proven",
+      "evidence": ["complete retained body accounts for 62 calls, 0 loop(s), 20 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_3a3_c_02000904.json"]
+    },
+    {
+      "overlay": "resource_373", "start": "0x02000f5c", "end": "0x02001244",
+      "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "proven",
+      "evidence": ["complete retained body accounts for 60 calls, 2 loop(s), 23 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_373_c_02000f5c.json"]
+    },
+    {
+      "overlay": "resource_3b4", "start": "0x020015f0", "end": "0x020018c0",
+      "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "proven",
+      "evidence": ["complete retained body accounts for 58 calls, 0 loop(s), 5 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_3b4_c_020015f0.json"]
+    },
+    {
+      "overlay": "resource_3bc", "start": "0x0200076c", "end": "0x02000a20",
+      "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "proven",
+      "evidence": ["complete retained body accounts for 47 calls, 0 loop(s), 13 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_3bc_c_0200076c.json"]
+    },
+    {
+      "overlay": "resource_3a6", "start": "0x020010de", "end": "0x02001378",
+      "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "proven",
+      "evidence": ["complete retained body accounts for 54 calls, 0 loop(s), 16 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_3a6_c_020010de.json"]
+    },
+    {
+      "overlay": "resource_39c", "start": "0x02001db4", "end": "0x02002030",
+      "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "proven",
+      "evidence": ["complete retained body accounts for 23 calls, 2 loop(s), 0 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_39c_c_02001db4.json"]
+    },
+    {
+      "overlay": "resource_3bc", "start": "0x02002bac", "end": "0x02002e18",
+      "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "proven",
+      "evidence": ["complete retained body accounts for 45 calls, 5 loop(s), 4 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_3bc_c_02002bac.json"]
+    },
+    {
+      "overlay": "resource_3bb", "start": "0x02002114", "end": "0x02002380",
+      "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "proven",
+      "evidence": ["complete retained body accounts for 45 calls, 5 loop(s), 4 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_3bb_c_02002114.json"]
+    },
+    {
+      "overlay": "resource_3ba", "start": "0x02001e7c", "end": "0x020020e8",
+      "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "proven",
+      "evidence": ["complete retained body accounts for 45 calls, 5 loop(s), 4 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_3ba_c_02001e7c.json"]
+    },
+    {
+      "overlay": "resource_3b6", "start": "0x020000c0", "end": "0x02000328",
+      "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "proven",
+      "evidence": ["complete retained body accounts for 61 calls, 1 loop(s), 3 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_3b6_c_020000c0.json"]
+    },
+    {
+      "overlay": "resource_3b3", "start": "0x020011c4", "end": "0x02001428",
+      "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "proven",
+      "evidence": ["complete retained body accounts for 26 calls, 0 loop(s), 13 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_3b3_c_020011c4.json"]
+    },
+    {
+      "overlay": "resource_3b1", "start": "0x02001804", "end": "0x02001a60",
+      "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "proven",
+      "evidence": ["complete retained body accounts for 56 calls, 0 loop(s), 1 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_3b1_c_02001804.json"]
+    },
+    {
+      "overlay": "resource_3c4", "start": "0x02001d04", "end": "0x02001f5c",
+      "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "proven",
+      "evidence": ["complete retained body accounts for 48 calls, 1 loop(s), 37 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_3c4_c_02001d04.json"]
+    },
+    {
+      "overlay": "resource_38b", "start": "0x02000328", "end": "0x02000578",
+      "kind": "structured_scene_module", "retention": "keep_structured_asm", "confidence": "proven",
+      "evidence": ["complete retained body accounts for 50 calls, 1 loop(s), 13 memory operation(s), and its production owner boundary", "games/gs1/recon/en/overlays/resource_38b_c_02000328.json"]
     }
   ]
 }

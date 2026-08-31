@@ -6,6 +6,112 @@ pub type Error = String;
 pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub struct NamedTrack {
+    pub game: String,
+    pub sound_id: u16,
+    pub name: String,
+    pub titles: [String; 6],
+    pub source: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SharedSequence {
+    pub sound_id: u16,
+    pub gs1: u16,
+    pub gs2: u16,
+    pub evidence: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct MusicCatalog {
+    pub tracks: Vec<NamedTrack>,
+    pub shared: Vec<SharedSequence>,
+}
+
+pub fn parse_music_catalog(text: &str) -> Result<MusicCatalog> {
+    let mut catalog = MusicCatalog {
+        tracks: Vec::new(),
+        shared: Vec::new(),
+    };
+    let mut rows = text.lines().filter(|line| !line.starts_with('#'));
+    if rows.next()
+        != Some("kind\tgame\tsound_id\tname\ten\tde\tes\tfr\tit\tja\tsource\tgs1\tgs2\tevidence")
+    {
+        return Err("music catalog header differs".into());
+    }
+    for (index, line) in rows.enumerate() {
+        let fields = line.split('\t').collect::<Vec<_>>();
+        if fields.len() != 14 {
+            return Err(format!(
+                "music catalog row {} has the wrong width",
+                index + 2
+            ));
+        }
+        let number = |field: usize| {
+            fields[field]
+                .parse::<u16>()
+                .map_err(|_| format!("music catalog row {} has an invalid number", index + 2))
+        };
+        match fields[0] {
+            "track" => {
+                let track = NamedTrack {
+                    game: fields[1].into(),
+                    sound_id: number(2)?,
+                    name: fields[3].into(),
+                    titles: [
+                        fields[4].into(),
+                        fields[5].into(),
+                        fields[6].into(),
+                        fields[7].into(),
+                        fields[8].into(),
+                        fields[9].into(),
+                    ],
+                    source: fields[10].into(),
+                };
+                if !matches!(track.game.as_str(), "gs1" | "gs2")
+                    || track.name.is_empty()
+                    || !track.name.bytes().all(|byte| {
+                        byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'-'
+                    })
+                {
+                    return Err(format!(
+                        "music catalog row {} has an invalid track identity",
+                        index + 2
+                    ));
+                }
+                if catalog
+                    .tracks
+                    .iter()
+                    .any(|item| item.game == track.game && item.sound_id == track.sound_id)
+                {
+                    return Err(format!(
+                        "music catalog row {} duplicates a track identity",
+                        index + 2
+                    ));
+                }
+                catalog.tracks.push(track);
+            }
+            "shared" => catalog.shared.push(SharedSequence {
+                sound_id: number(2)?,
+                gs1: number(11)?,
+                gs2: number(12)?,
+                evidence: fields[13].into(),
+            }),
+            _ => {
+                return Err(format!(
+                    "music catalog row {} has an unknown kind",
+                    index + 2
+                ))
+            }
+        }
+    }
+    if catalog.tracks.is_empty() {
+        return Err("music catalog has no named tracks".into());
+    }
+    Ok(catalog)
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SoundTableEntry {
     pub header: String,
     pub player: i64,
@@ -214,4 +320,28 @@ pub fn build_sound_table(source: &SoundTableSource) -> Result<(Vec<u8>, SoundTab
         mirrored_auxiliary: true,
     };
     Ok((built, report))
+}
+
+#[cfg(test)]
+mod catalog_tests {
+    use super::parse_music_catalog;
+
+    #[test]
+    fn reads_named_and_shared_tracks_without_sidecars() {
+        let source = "kind\tgame\tsound_id\tname\ten\tde\tes\tfr\tit\tja\tsource\tgs1\tgs2\tevidence\ntrack\tgs2\t0\tcoolin-casino\tCoolin' Casino\tCool Cat Casino\tCoolin' Casino\tCoolin' Casino\tShow Casinò\t\tbattle-mode-music-requester\t\t\t\nshared\t\t80\t\t\t\t\t\t\t\t\t80\t80\tidentical-normalized-note-events";
+        let catalog = parse_music_catalog(source).unwrap();
+        assert_eq!(catalog.tracks[0].name, "coolin-casino");
+        assert_eq!(catalog.tracks[0].titles[4], "Show Casinò");
+        assert_eq!(catalog.shared[0].gs1, 80);
+    }
+
+    #[test]
+    fn rejects_duplicate_sound_identity() {
+        let header =
+            "kind\tgame\tsound_id\tname\ten\tde\tes\tfr\tit\tja\tsource\tgs1\tgs2\tevidence\n";
+        let record = "track\tgs2\t0\tcoolin-casino\tCoolin' Casino\tCool Cat Casino\tCoolin' Casino\tCoolin' Casino\tShow Casinò\t\tbattle-mode-music-requester\t\t\t\n";
+        assert!(parse_music_catalog(&format!("{header}{record}{record}"))
+            .unwrap_err()
+            .contains("duplicates a track identity"));
+    }
 }

@@ -1,0 +1,22 @@
+{
+  "span_bytes": 692,
+  "score": {
+    "measured": "2026-08-31",
+    "candidate_bytes": 420,
+    "reference_bytes": 692,
+    "wrong_instructions": 222,
+    "differing_halfwords": 342,
+    "class": "structured-scene-retention"
+  },
+  "shape": {
+    "calls": 47,
+    "loops": 0,
+    "memory_operations": 13
+  },
+  "verified_against_reference": [
+    "complete retained body from 0x0200076c through the next production owner boundary",
+    "all 47 decoded calls, 0 loop(s), and 13 explicit memory operation(s) are represented in machine order",
+    "approved GCC changes scheduling, allocation, control-flow lowering, and literal placement"
+  ],
+  "retention": "keep_structured_asm"
+}

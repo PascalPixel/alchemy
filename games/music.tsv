@@ -1,0 +1,11 @@
+# One human-authored register for music identity. MIDI, WAV, PCM and SF2 indexes are generated under out/.
+kind	game	sound_id	name	en	de	es	fr	it	ja	source	gs1	gs2	evidence
+track	gs2	0	coolin-casino	Coolin' Casino	Cool Cat Casino	Coolin' Casino	Coolin' Casino	Show Casinò		battle-mode-music-requester			
+track	gs2	1	chillin-like-a-villain	Chillin Like a Villain	Bösewicht ohne Gicht	Chillin Like a Villain	Chillin Like a Villain	Cattivo come un mostro		battle-mode-music-requester			
+track	gs2	2	village-vibes	Village Vibes	Rurale Rumba	Village Vibes	Village Vibes	Ritmo villico		battle-mode-music-requester			
+track	gs2	3	bad-time-in-the-old-town	Bad Time in the Old Town	Altstadt in Aufruhr	Bad Time in the Old Town	Bad Time in the Old Town	Guai al villaggio		battle-mode-music-requester			
+track	gs2	4	palace	Palace	Palast	Palace	Palace	A palazzo		battle-mode-music-requester			
+# Western requester slots 5–99 are decimal placeholders, not names. Japanese awaits its distinct two-model codec.
+shared		80									80	80	identical-normalized-note-events
+shared		82									82	82	identical-normalized-note-events
+shared		85									85	85	identical-normalized-note-events

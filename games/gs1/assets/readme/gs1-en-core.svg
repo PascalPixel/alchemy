@@ -4,7 +4,7 @@
 <rect x="0" y="0" width="540" height="304" fill="#6d4fc2" rx="8"/>
 <rect x="1" y="1" width="538" height="302" fill="none" stroke="#6d4fc2" stroke-width="2" rx="7"/>
 <text class="weyard" x="6" y="15">Main game</text>
-<text class="weyard" x="534" y="15" text-anchor="end">56.57% DONE</text>
+<text class="weyard" x="534" y="15" text-anchor="end">56.61% DONE</text>
 <rect x="3" y="22" width="534" height="258" fill="#fff"/>
 <g aria-label="0x080000c0–0x080003c0: 768 bytes">
 <title>0x080000c0–0x080003c0: 768 bytes</title>
@@ -2502,8 +2502,9 @@
 </g>
 <g aria-label="0x080a6a00–0x080a737e: 2,430 bytes">
 <title>0x080a6a00–0x080a737e: 2,430 bytes</title>
-<rect x="201.60832290902738" y="237.07915519847222" width="21.96542510785841" height="23.6259154389693" style="fill:#d8d9df"/>
-<rect x="201.60832290902738" y="235.1208573947074" width="21.96542510785841" height="1.9582978037648353" style="fill:#6d4fc2"/>
+<rect x="201.60832290902738" y="239.22696569292395" width="21.96542510785841" height="21.478104944517547" style="fill:#d8d9df"/>
+<rect x="201.60832290902738" y="237.0791551984722" width="21.96542510785841" height="2.147810494451755" style="fill:hsl(275 58% 66%)"/>
+<rect x="201.60832290902738" y="235.12085739470737" width="21.96542510785841" height="1.9582978037648353" style="fill:#6d4fc2"/>
 </g>
 <g aria-label="0x080a737e–0x080a7380: 2 bytes">
 <title>0x080a737e–0x080a7380: 2 bytes</title>
@@ -3733,7 +3734,7 @@
 <rect x="100" y="288" width="10" height="10" style="fill:hsl(275 52% 82%)"/>
 <text class="weyard legend-label" x="114" y="293" dominant-baseline="middle">Draft C 0.6%</text>
 <rect x="188" y="288" width="10" height="10" style="fill:hsl(275 58% 66%)"/>
-<text class="weyard legend-label" x="202" y="293" dominant-baseline="middle">Proven ASM 34.7%</text>
+<text class="weyard legend-label" x="202" y="293" dominant-baseline="middle">Proven ASM 34.8%</text>
 <rect x="300" y="288" width="10" height="10" style="fill:#6d4fc2"/>
 <text class="weyard legend-label" x="314" y="293" dominant-baseline="middle">Proven C 21.8%</text>
 </svg>

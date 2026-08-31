@@ -1905,6 +1905,29 @@
    ]
   },
   {
+   "kind": "regional_compiler_allocation",
+   "origin": "regional_compiler_output",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_english_owner_extent",
+    "english_german_spanish_french_and_italian_share_the_localized_source_variant_core",
+    "japanese_source_variant_differs_in_twenty_nine_normalized_core_bytes",
+    "equal_english_control_flow_topology",
+    "only_english_residual_is_one_localized_reciprocal_r0_r2_r3_materialization_cycle_and_the_coupled_constant_one_carrier",
+    "all_calls_literals_memory_addresses_loop_code_and_observable_behavior_match",
+    "allocator_decoder_identifies_the_role_swap_but_no_unique_safe_source_edit",
+    "thirty_bounded_source_shapes_and_the_approved_scheduler_regmove_cse_gcse_and_optimization_axes_preserve_the_residual_or_regress",
+    "inline_assembly_fixed_registers_compiler_barriers_and_forced_allocation_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 204,
+   "files": [
+    "080a6a98"
+   ]
+  },
+  {
    "kind": "battle_effect_compiler_scheduling_mismatch",
    "origin": "compiler",
    "retention": "keep_structured_asm",

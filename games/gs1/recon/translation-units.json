@@ -1002,7 +1002,12 @@
    "source": "games/gs1/recon/en/units/unit-080f9ef8.c",
    "compiler_route": "canonical-gcc296",
    "overlay": null,
-   "absolute_symbols": {},
+   "absolute_symbols": {
+    "_call_via_r3": {
+     "address": "0x080f9ee8",
+     "kind": "thumb"
+    }
+   },
    "local_symbols": [],
    "owners": [
     {

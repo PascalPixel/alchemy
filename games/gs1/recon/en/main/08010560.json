@@ -4,16 +4,17 @@
   "address": "0x08010560",
   "status": "measured-draft",
   "owner_bytes": 116,
-  "candidate_bytes": 92,
-  "differing_halfwords": 56,
-  "wrong_instructions": 60,
+  "candidate_bytes": 120,
+  "differing_halfwords": 44,
+  "wrong_instructions": 41,
   "classification": "execute-map-copy-command-list",
   "notes": [
     "Complete ordinary-C reconstruction of a 0xffff-terminated list of five-halfword commands. Each record supplies the leading source value, three signed geometry values converted to u16 for Func_08010424, and a signed delay converted to u16 for Func_080030f8.",
     "The retained assembly establishes the 10-byte stride, signed payload loads, conversion order, six-argument Func_08010424 call, delay call, and terminator. The packed two-byte-aligned record expresses that observed wire layout without inventing padding.",
     "The exact SpawnBattleEffectObjects sibling was used only as a source-shape example for a compact command-record loop; it is not evidence for this owner's field meanings or types.",
     "The first complete draft compiled to 88 bytes and exposed two linked discrepancies: an ABI-padded 12-byte record stride and premature optimization of the signed payload conversions. One targeted correction fixed the record layout and materialized all four signed payload loads before their u16 call-boundary conversions.",
-    "After that one correction, canonical GCC 2.96 emits 92 bytes against 116 reference bytes, with equal control-flow topology, 56 differing halfwords, and 60 wrong instructions. The remaining difference is chiefly register allocation and load materialization: the reference preserves all four signed loads and advances separate record/head pointers, while the compiler folds two loads to ldrh and uses one pointer.",
+    "A bounded follow-up replaced the aggregate walk with the two independently advanced pointers proved by the reference: a u16 command-head pointer and an s16 payload pointer. That repair moves canonical GCC 2.96 to 120 bytes against 116 reference bytes, with equal control-flow topology, 44 differing halfwords, and 41 wrong instructions.",
+    "The allocator-order decoder named split_lifetime(command), specifically recreating the command value at the guard and backedge. The separate-pointer repair supplies that lifetime without annotations. Remaining width evidence is unresolved: the reference sign-loads all four payloads before zero-extending them, while canonical GCC folds the two call-only conversions into ldrh; sequential-pointer, explicit-u16-local, low-half-mask, and explicit low-half-expression spellings did not improve the 44-halfword floor.",
     "This measured draft claims zero DONE bytes. Retained assembly remains authoritative; no fixed-register variable, inline assembly, frame forcing, or assembly classification is used."
   ]
 }

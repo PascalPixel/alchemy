@@ -58,8 +58,9 @@ pub static CALLEE_SAVED_R4_OVERLAY_SOURCES: &[&str] = &[
 ];
 // Rejected r4 lookalikes: 3ad:11b8, 3ae:02dc, 3ca:004c/00b0, 3cb:0128; the flag
 // closes none and worsens 3ad:11b8 from two differing halfwords to fifteen.
-// 08006b84 is the corresponding main-image soft-library ABI case.
-pub static CALLEE_SAVED_R4_SOURCES: &[&str] = &["08006b84"];
+// 08006b84 is the corresponding main-image soft-library ABI case. 080f9ef8
+// keeps its channel owner live in r4 across a TU-local call-via-r3 veneer.
+pub static CALLEE_SAVED_R4_SOURCES: &[&str] = &["08006b84", "080f9ef8"];
 // 0801c34c reloads through a differently-typed pointer that strict aliasing
 // lets the compiler keep live.
 pub static NO_STRICT_ALIASING_SOURCES: &[&str] = &["0801c34c"];

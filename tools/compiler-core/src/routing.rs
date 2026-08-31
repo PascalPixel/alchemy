@@ -119,6 +119,11 @@ mod target_tests {
             );
         }
     }
+    #[test]
+    fn stop_music_track_keeps_r4_callee_saved() {
+        let flags = cflags_for_source("080f9ef8.c");
+        assert!(!flags.iter().any(|flag| flag == "-fcall-used-r4"));
+    }
 }
 /// `basename(source, extname(source))` for POSIX paths.
 fn source_stem_ref(source: &str) -> &str {

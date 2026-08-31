@@ -6,8 +6,8 @@
   "owner_bytes": 68,
   "executable_owner_bytes": 68,
   "candidate_bytes": 68,
-  "differing_halfwords": 31,
-  "wrong_instructions": 42,
+  "differing_halfwords": 26,
+  "wrong_instructions": 18,
   "classification": "stop-music-track",
   "resolved_asm_classification": {
     "kind": "compiler_output",
@@ -21,6 +21,7 @@
     "core_identical": true
   },
   "notes": [
+    "2026-08-31: reconstructing the original translation-unit context exposed its local `_call_via_r3` veneer at 0x080f9ee8, rather than the global veneer bank, and re-auditing the shipped per-file ABI route showed that r4 remains callee-saved for this source. Registering both facts improves the exact-extent candidate from 31 differing halfwords / 42 wrong instructions to 26 / 18. The remaining residual is still a broad flag-test and allocation mismatch, so this remains Draft C and claims zero DONE bytes.",
     "2026-08-31: retaining the entry `track->flags` read in a named `u8 flags` carrier improves the candidate from 72/36/50 to the exact 68-byte extent with 31 differing halfwords and 42 wrong instructions. GCC changes the flag test from `ands`/`cmp` to an equivalent bit-extract `lsrs`/`cmp`; using an `s32` carrier emits the same result. An explicit outer early return is byte-identical to the original nested conditional and was reverted. The remaining residual is still broad register allocation plus the reference's `movs #128; tst` test shape, so this is retained as a measured Draft C improvement only.",
     "Stops every CGB channel owned by an active music track, invokes the configured oscillator-disable callback for hardware channel types, and clears both sides of the ownership link.",
     "The six editions retain an identical 60-byte relocation-normalized executable core inside the same 68-byte owner boundary.",

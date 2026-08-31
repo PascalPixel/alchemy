@@ -26,8 +26,9 @@ use walkdir::WalkDir;
 const USAGE: &str = "usage: compiler families <cluster (--write|--check) FILE | transplant main:ADDRESS [--index FILE] [--output DIR] | prove [FILE]>";
 const DEFAULT_INDEX: &str = "out/gs1-en/reports/compiler-families.json";
 const DEFAULT_PROOFS: &str = "games/gs1/recon/family-retention.json";
-const INDEX_SCHEMA_VERSION: u32 = 3;
+const INDEX_SCHEMA_VERSION: u32 = 4;
 const MIN_SCORE: u16 = 7500;
+const MIN_CALL_TARGET_SCORE: u16 = 2500;
 #[derive(Debug, Deserialize)]
 struct BuildManifest {
     regions: Vec<BuildRegion>,
@@ -65,6 +66,7 @@ struct FamilyIndex {
     target: String,
     derivation: String,
     minimum_score_basis_points: u16,
+    minimum_call_target_score_basis_points: u16,
     exact_templates: usize,
     unresolved_targets: usize,
     clustered_targets: usize,
@@ -446,7 +448,7 @@ fn build_index() -> Result<FamilyIndex, String> {
         alternatives.truncate(3);
         let family = alternatives
             .first()
-            .filter(|value| value.score_basis_points >= MIN_SCORE)
+            .filter(|value| qualifies_family(value))
             .map(|value| format!("template-{}", value.owner.replace(':', "-")));
         matches.push(TargetMatch {
             owner: target.id.clone(),
@@ -489,8 +491,9 @@ fn build_index() -> Result<FamilyIndex, String> {
     Ok(FamilyIndex {
         schema_version: INDEX_SCHEMA_VERSION,
         target: "gs1-en".into(),
-        derivation: "canonical-instruction-ngram-and-call-target-cosine-v3-hash-bound".into(),
+        derivation: "canonical-instruction-ngram-and-call-target-cosine-v4-call-bound".into(),
         minimum_score_basis_points: MIN_SCORE,
+        minimum_call_target_score_basis_points: MIN_CALL_TARGET_SCORE,
         exact_templates: exact.len(),
         unresolved_targets: targets.len(),
         clustered_targets,
@@ -627,6 +630,10 @@ fn similarity(target: &Owner, template: &Owner) -> TemplateMatch {
         call_count_similarity_basis_points: call_count,
         branch_similarity_basis_points: branches,
     }
+}
+fn qualifies_family(candidate: &TemplateMatch) -> bool {
+    candidate.score_basis_points >= MIN_SCORE
+        && candidate.call_target_similarity_basis_points >= MIN_CALL_TARGET_SCORE
 }
 fn cosine(left: &BTreeMap<String, u32>, right: &BTreeMap<String, u32>) -> u16 {
     let dot = left
@@ -1404,6 +1411,15 @@ mod tests {
     fn transplant_rejects_unqualified_similarity() {
         assert!(require_family("main:08000000", None).is_err());
         assert!(require_family("main:08000000", Some("family")).is_ok());
+    }
+    #[test]
+    fn family_requires_shared_call_identity_when_calls_are_present() {
+        let mut candidate = template_match();
+        candidate.call_target_similarity_basis_points = 0;
+        candidate.call_count_similarity_basis_points = 9000;
+        assert!(!qualifies_family(&candidate));
+        candidate.call_target_similarity_basis_points = MIN_CALL_TARGET_SCORE;
+        assert!(qualifies_family(&candidate));
     }
     #[test]
     fn wave_policy_excludes_translation_units_without_blocking_transplants() {

@@ -4,7 +4,54 @@ use std::collections::{HashMap, HashSet};
 
 pub type Error = String;
 pub type Result<T> = std::result::Result<T, Error>;
+pub const MIDI_BUILD_DIRECTIVE: &[u8] = b"alchemy-mid2agb\0";
 
+fn midi_variable(mut value: usize) -> Vec<u8> {
+    let mut bytes = vec![(value & 0x7f) as u8];
+    while {
+        value >>= 7;
+        value != 0
+    } {
+        bytes.push(((value & 0x7f) as u8) | 0x80);
+    }
+    bytes.reverse();
+    bytes
+}
+
+pub fn add_midi_build_directive(midi: &[u8], directive: &[u8]) -> Result<Vec<u8>> {
+    if midi.len() < 26 || &midi[..4] != b"MThd" {
+        return Err("MIDI header is missing".into());
+    }
+    let header = u32::from_be_bytes(midi[4..8].try_into().unwrap()) as usize;
+    let track = 8 + header;
+    if midi.get(track..track + 4) != Some(b"MTrk") {
+        return Err("MIDI conductor track is missing".into());
+    }
+    let length = u32::from_be_bytes(midi[track + 4..track + 8].try_into().unwrap()) as usize;
+    let end = track + 8 + length;
+    if end > midi.len() || midi.get(end - 4..end) != Some(&[0, 0xff, 0x2f, 0]) {
+        return Err("MIDI conductor end is not canonical".into());
+    }
+    if midi
+        .windows(MIDI_BUILD_DIRECTIVE.len())
+        .any(|part| part == MIDI_BUILD_DIRECTIVE)
+    {
+        return Err("MIDI already has build directives".into());
+    }
+    let mut event = vec![0, 0xff, 0x7f];
+    event.extend(midi_variable(MIDI_BUILD_DIRECTIVE.len() + directive.len()));
+    event.extend_from_slice(MIDI_BUILD_DIRECTIVE);
+    event.extend_from_slice(directive);
+    let new_length =
+        u32::try_from(length + event.len()).map_err(|_| "MIDI conductor is too large")?;
+    let mut output = Vec::with_capacity(midi.len() + event.len());
+    output.extend_from_slice(&midi[..track + 4]);
+    output.extend_from_slice(&new_length.to_be_bytes());
+    output.extend_from_slice(&midi[track + 8..end - 4]);
+    output.extend_from_slice(&event);
+    output.extend_from_slice(&midi[end - 4..]);
+    Ok(output)
+}
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct NamedTrack {
     pub game: String,

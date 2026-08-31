@@ -1,10 +1,12 @@
 use crate::{
-    build_sound_table, parse_music_catalog, Result, SoundTableEntry, SoundTableSource, SymbolValue,
+    add_midi_build_directive, build_sound_table, parse_music_catalog, Result, SoundTableEntry,
+    SoundTableSource, SymbolValue,
 };
 use std::io::Write;
 use std::process::ExitCode;
 
-const USAGE: &str = "usage: music {build-stdout SOURCE|catalog SOURCE}";
+const USAGE: &str =
+    "usage: music {build-stdout SOURCE|catalog SOURCE|add-midi-directive MIDI SOURCE}";
 
 fn source(path: &str) -> Result<SoundTableSource> {
     let value: serde_json::Value =
@@ -78,6 +80,24 @@ fn source(path: &str) -> Result<SoundTableSource> {
 }
 
 fn run(args: &[String]) -> Result<()> {
+    if args.first().map(String::as_str) == Some("add-midi-directive") {
+        if args.len() != 3 {
+            return Err(USAGE.into());
+        }
+        let midi = std::fs::read(&args[1]).map_err(|error| format!("{}: {error}", args[1]))?;
+        let source: serde_json::Value = serde_json::from_slice(
+            &std::fs::read(&args[2]).map_err(|error| format!("{}: {error}", args[2]))?,
+        )
+        .map_err(|error| error.to_string())?;
+        if source.get("engine").and_then(serde_json::Value::as_str) != Some("smsh-sequence-sidecar")
+        {
+            return Err("source is not a sequence build directive".into());
+        }
+        let directive = serde_json::to_vec(&source).map_err(|error| error.to_string())?;
+        std::fs::write(&args[1], add_midi_build_directive(&midi, &directive)?)
+            .map_err(|error| format!("{}: {error}", args[1]))?;
+        return Ok(());
+    }
     if args.first().map(String::as_str) == Some("catalog") {
         let path = args.get(1).ok_or_else(|| USAGE.to_string())?;
         if args.len() != 2 {

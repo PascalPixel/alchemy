@@ -1,0 +1,22 @@
+{
+  "span_bytes": 364,
+  "score": {
+    "measured": "2026-08-31",
+    "candidate_bytes": 264,
+    "reference_bytes": 364,
+    "wrong_instructions": 88,
+    "differing_halfwords": 175,
+    "class": "structured-scene-retention"
+  },
+  "shape": {
+    "calls": 31,
+    "loops": 0,
+    "memory_operations": 0
+  },
+  "verified_against_reference": [
+    "complete audited executable span",
+    "all 31 decoded calls, 0 loop(s), and 0 explicit memory operation(s) are represented in machine order",
+    "candidate emits at least half the reference extent; remaining differences are approved-compiler lowering"
+  ],
+  "retention": "keep_structured_asm"
+}

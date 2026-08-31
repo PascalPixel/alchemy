@@ -144,7 +144,7 @@ function updateMusicUi() {
   const position = currentMusicPosition();
   music.ui.elapsed.textContent = musicTime(position);
   music.ui.duration.textContent = musicTime(music.duration);
-  music.ui.play.textContent = music.playing ? "II" : "PLAY";
+  music.ui.playLabel.textContent = music.playing ? "II" : "PLAY";
   music.ui.play.setAttribute("aria-label", music.playing ? "Pause" : "Play");
   const width = 492;
   const height = 66;
@@ -395,15 +395,22 @@ function musicPlayer() {
   const elapsed = s("text", { class: "sound-time", x: 24, y: 181 }, "0:00");
   const duration = s("text", { class: "sound-time", x: 516, y: 181, "text-anchor": "end" }, "0:00");
   const volume = s("text", { class: "sound-volume", x: 516, y: 251, "text-anchor": "end" }, "VOL 03");
-  const control = (label, x, glyph, emphasis = false) => s("g", { class: `sound-button${emphasis ? " sound-primary" : ""}`, role: "button", tabindex: 0, "aria-label": label },
-    s("rect", { x, y: 201, width: emphasis ? 72 : 58, height: 52 }),
-    s("text", { x: x + (emphasis ? 36 : 29), y: 233, "text-anchor": "middle" }, glyph),
-  );
-  const previous = control("Previous track", 24, "<");
-  const play = control("Play", 92, "PLAY", true);
-  const next = control("Next track", 174, ">");
-  const quieter = control("Lower volume", 390, "−");
-  const louder = control("Raise volume", 458, "+");
+  const control = (label, x, glyph, emphasis = false) => {
+    const text = s("text", { x: x + (emphasis ? 36 : 29), y: 233, "text-anchor": "middle" }, glyph);
+    return { group: s("g", { class: `sound-button${emphasis ? " sound-primary" : ""}`, role: "button", tabindex: 0, "aria-label": label },
+      s("rect", { x, y: 201, width: emphasis ? 72 : 58, height: 52 }), text,
+    ), text };
+  };
+  const previousControl = control("Previous track", 24, "<");
+  const playControl = control("Play", 92, "PLAY", true);
+  const nextControl = control("Next track", 174, ">");
+  const quieterControl = control("Lower volume", 390, "−");
+  const louderControl = control("Raise volume", 458, "+");
+  const previous = previousControl.group;
+  const play = playControl.group;
+  const next = nextControl.group;
+  const quieter = quieterControl.group;
+  const louder = louderControl.group;
   const seek = s("rect", { class: "sound-seek", x: 24, y: 91, width: 492, height: 74, role: "slider", tabindex: 0, "aria-label": "Track position" });
   const svg = s("svg", { class: "music-card", viewBox: "0 0 540 304", role: "group", "aria-label": "Golden Sun cartridge music player" },
     s("rect", { class: "sound-shell", x: 1, y: 1, width: 538, height: 302 }),
@@ -417,7 +424,7 @@ function musicPlayer() {
     s("text", { class: "sound-foot", x: 24, y: 282 }, "ROM SEQUENCE · ORIGINAL TONE BANK · PCM8"),
   );
   const card = h("section", { className: "panel music-panel" }, svg);
-  music.ui = { card, title, source, track, wave, playhead, play, previous, next, elapsed, duration, volume };
+  music.ui = { card, title, source, track, wave, playhead, play, playLabel: playControl.text, previous, next, elapsed, duration, volume };
   const activate = (node, action) => {
     node.addEventListener("click", action);
     node.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); action(); } });

@@ -17,6 +17,7 @@ extract-resource = { path = "../extract-resource" }
 generated-files = { path = "../generated-files" }
 import-asset = { path = "../import-asset" }
 map-load-table = { path = "../map-load-table" }
+music = { path = "../music" }
 overlay-disasm = { path = "../overlay-disasm" }
 pairtable = { path = "../pairtable" }
 tilemap = { path = "../tilemap" }

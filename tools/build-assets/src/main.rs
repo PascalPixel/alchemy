@@ -17,6 +17,7 @@ use import_asset::{
     gba_graphics, gba_palette_rgba, indexed_png, midi_events, rgba_png, EventBody, MidiEvent,
 };
 use map_load_table::build_table as build_map_load_table;
+use music::MIDI_BUILD_DIRECTIVE;
 use overlay_disasm::{assemble_overlay, OverlaySource};
 use serde_json::Value;
 use sha1::{Digest, Sha1};
@@ -1905,14 +1906,7 @@ fn expand_series(
                         .map(str::to_string)
                         .unwrap_or_else(|| format!("{class}_{id:03}"));
                     let midi = directory.join(format!("{base}.mid"));
-                    let sidecar = directory.join(format!("{base}.json"));
-                    let mut object = serde_json::json!({"address":tuple[2],"size":tuple[3],"kind":"golden-sun-sound-sequence","source":root_relative(&ctx.root, &ctx.source(&midi.to_string_lossy())?)?});
-                    if ctx.source(&sidecar.to_string_lossy())?.exists() {
-                        object["sidecar"] = Value::String(root_relative(
-                            &ctx.root,
-                            &ctx.source(&sidecar.to_string_lossy())?,
-                        )?);
-                    }
+                    let object = serde_json::json!({"address":tuple[2],"size":tuple[3],"kind":"golden-sun-sound-sequence","source":root_relative(&ctx.root, &ctx.source(&midi.to_string_lossy())?)?});
                     entries.push(object);
                 }
             }
@@ -3175,11 +3169,7 @@ fn apply_sequence_deviations(
     output.extend_from_slice(&default[cursor..]);
     Ok(output)
 }
-fn build_midi_sequence(
-    _root: &Path,
-    source: &Path,
-    sidecar_path: Option<&Path>,
-) -> Result<(Vec<u8>, Json), String> {
+fn build_midi_sequence(_root: &Path, source: &Path) -> Result<(Vec<u8>, Json), String> {
     let report = midi_events(&fs::read(source).map_err(|e| format!("{}: {e}", source.display()))?)
         .map_err(|e| e.to_string())?;
     let mut by_track = HashMap::<usize, Vec<MidiEvent>>::new();
@@ -3187,6 +3177,21 @@ fn build_midi_sequence(
         by_track.entry(event.track).or_default().push(event);
     }
     let conductor = by_track.get(&0).cloned().unwrap_or_default();
+    let midi_directive_data = conductor
+        .iter()
+        .find_map(|event| match &event.body {
+            EventBody::Meta { meta: 0x7f, data } => Some(midi_hex(data)),
+            _ => None,
+        })
+        .transpose()?;
+    let midi_directive = midi_directive_data
+        .as_deref()
+        .and_then(|data| data.strip_prefix(MIDI_BUILD_DIRECTIVE))
+        .map(|source| {
+            serde_json::from_slice::<Json>(source)
+                .map_err(|error| format!("MIDI build directive: {error}"))
+        })
+        .transpose()?;
     let marker = conductor
         .iter()
         .find_map(|event| match &event.body {
@@ -3228,8 +3233,7 @@ fn build_midi_sequence(
             "events": canonical
         }));
     }
-    if let Some(sidecar_path) = sidecar_path {
-        let sidecar = json(sidecar_path)?;
+    if let Some(sidecar) = midi_directive {
         if json_number(
             sidecar.get("format").ok_or("sidecar format is missing")?,
             "sidecar format",
@@ -3284,20 +3288,11 @@ fn build_entry_native_tail(
     match kind {
         "golden-sun-sound-sequence" => {
             let source = source_path(entry_source)?;
-            let sidecar = entry
-                .get("sidecar")
-                .and_then(Value::as_str)
-                .map(|name| ctx.source(name))
-                .transpose()?;
-            let (built, report) = build_midi_sequence(&ctx.root, &source, sidecar.as_deref())?;
+            let (built, report) = build_midi_sequence(&ctx.root, &source)?;
             if report["base"].as_u64() != Some(address as u64) {
                 return Err("sound-sequence base differs from manifest".to_string());
             }
-            let mut sources = vec![entry_source.to_string()];
-            if let Some(sidecar) = entry.get("sidecar").and_then(Value::as_str) {
-                sources.push(sidecar.to_string());
-            }
-            Ok((built, sources, report))
+            Ok((built, vec![entry_source.to_string()], report))
         }
         "golden-sun-pcm-wave" => {
             let args = vec![

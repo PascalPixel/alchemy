@@ -1,0 +1,22 @@
+{
+  "span_bytes": 972,
+  "score": {
+    "measured": "2026-08-31",
+    "candidate_bytes": 608,
+    "reference_bytes": 972,
+    "wrong_instructions": 255,
+    "differing_halfwords": 472,
+    "class": "structured-scene-retention"
+  },
+  "shape": {
+    "calls": 90,
+    "loops": 0,
+    "memory_operations": 46
+  },
+  "verified_against_reference": [
+    "complete callable owner at 0x020028e8, including its interworking return and literal tail",
+    "all 90 decoded calls, 0 loop(s), and 46 explicit memory operation(s) are represented in machine order",
+    "approved GCC changes scheduling, allocation, control-flow lowering, and literal placement"
+  ],
+  "retention": "keep_structured_asm"
+}

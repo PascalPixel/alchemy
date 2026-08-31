@@ -33,7 +33,7 @@ function upper(value) { return String(value ?? "").toUpperCase(); }
 const music = {
   context: null, master: null, analyser: null, tracks: [], notes: [], duration: 0,
   index: 0, cursor: 0, position: 0, startedAt: 0, playing: false, timer: 0,
-  voices: new Set(), ui: null,
+  voices: new Set(), ui: null, soundfont: null, sampleBuffers: new Map(), generatorBuffers: new Map(), ready: false,
 };
 function midiVlq(view, state) {
   let value = 0;
@@ -81,12 +81,18 @@ function parseMidi(buffer) {
         if (kind === 0x9 && b) events.push({ tick, kind: "on", channel, note: a, velocity: b });
         else if (kind === 0x8 || (kind === 0x9 && !b)) events.push({ tick, kind: "off", channel, note: a });
         else if (kind === 0xc) events.push({ tick, kind: "program", channel, value: a });
+        else if (kind === 0xb) events.push({ tick, kind: "control", channel, control: a, value: b });
+        else if (kind === 0xe) events.push({ tick, kind: "bend", channel, value: ((b << 7) | a) - 8192 });
       }
     }
     at = end;
   }
   events.sort((a, b) => a.tick - b.tick || (a.kind === "tempo" ? -1 : 0));
   const programs = Array(16).fill(0);
+  const volumes = Array(16).fill(100);
+  const expressions = Array(16).fill(127);
+  const pans = Array(16).fill(64);
+  const bends = Array(16).fill(0);
   const active = new Map();
   const notes = [];
   let tick = 0;
@@ -97,10 +103,15 @@ function parseMidi(buffer) {
     tick = event.tick;
     if (event.kind === "tempo") tempo = event.value;
     else if (event.kind === "program") programs[event.channel] = event.value;
+    else if (event.kind === "control") {
+      if (event.control === 7) volumes[event.channel] = event.value;
+      else if (event.control === 10) pans[event.channel] = event.value;
+      else if (event.control === 11) expressions[event.channel] = event.value;
+    } else if (event.kind === "bend") bends[event.channel] = event.value;
     else if (event.kind === "on") {
       const key = `${event.channel}:${event.note}`;
       const queue = active.get(key) ?? [];
-      queue.push({ start: seconds, note: event.note, velocity: event.velocity, channel: event.channel, program: programs[event.channel] });
+      queue.push({ start: seconds, note: event.note, velocity: event.velocity, channel: event.channel, program: programs[event.channel], volume: volumes[event.channel], expression: expressions[event.channel], pan: pans[event.channel], bend: bends[event.channel] });
       active.set(key, queue);
     } else if (event.kind === "off") {
       const key = `${event.channel}:${event.note}`;
@@ -152,9 +163,156 @@ function updateMusicUi() {
   }
   if (music.playing && position >= music.duration) pauseMusic(true);
 }
-function voiceType(note) {
-  if (note.channel === 9) return "square";
-  return ["triangle", "square", "sawtooth", "sine"][Math.floor(note.program / 16) % 4];
+function ensureAudio() {
+  if (!music.context) {
+    music.context = new AudioContext();
+    music.master = music.context.createGain();
+    music.master.gain.value = Number(music.ui.volume.value);
+    music.master.connect(music.context.destination);
+  }
+  return music.context;
+}
+async function loadSoundfont() {
+  if (music.soundfont) return music.soundfont;
+  const response = await fetch("/music/soundfont");
+  if (!response.ok) throw new Error(`soundfont returned ${response.status}`);
+  const soundfont = await response.json();
+  if (soundfont.engine !== "golden-sun-rom-audio-bank" || soundfont.bank.length !== 144) throw new Error("recovered music bank is incomplete");
+  soundfont.sampleByAddress = new Map(soundfont.samples.map((sample) => [sample.address, sample]));
+  soundfont.embeddedByAddress = new Map(soundfont.embedded_samples.map((sample) => [sample.address, sample]));
+  for (const sample of soundfont.embedded_samples) {
+    soundfont.sampleByAddress.set(sample.address, { ...sample, loop_start: sample.control & 0xc0000000 ? sample.loop_start : null, embedded: true });
+  }
+  soundfont.waveformByName = new Map(soundfont.waveforms.map((waveform) => [waveform.name, waveform]));
+  music.soundfont = soundfont;
+  return soundfont;
+}
+function resolveTone(note) {
+  let tone = music.soundfont.bank[note.program];
+  let rhythm = false;
+  if (tone?.kind === "rhythm") {
+    const base = Number(tone.tones.slice(-3));
+    tone = music.soundfont.bank[base + note.note];
+    rhythm = true;
+  }
+  if (!tone) throw new Error(`program ${note.program} / key ${note.note} is absent from the recovered bank`);
+  return { tone, rhythm };
+}
+async function loadSample(address) {
+  if (music.sampleBuffers.has(address)) return music.sampleBuffers.get(address);
+  const sample = music.soundfont.sampleByAddress.get(address);
+  if (!sample) throw new Error(`PCM sample ${address} is absent from the recovered wave catalog`);
+  if (sample.embedded) {
+    const rate = Math.max(3000, sample.frequency / 1024);
+    const buffer = ensureAudio().createBuffer(1, sample.samples.length, rate);
+    buffer.copyToChannel(Float32Array.from(sample.samples, (value) => (value > 127 ? value - 256 : value) / 128), 0);
+    music.sampleBuffers.set(address, buffer);
+    return buffer;
+  }
+  const response = await fetch(`/music/samples/${sample.source}`);
+  if (!response.ok) throw new Error(`${sample.source} returned ${response.status}`);
+  const buffer = await ensureAudio().decodeAudioData(await response.arrayBuffer());
+  music.sampleBuffers.set(address, buffer);
+  return buffer;
+}
+async function prepareTrackSamples() {
+  await loadSoundfont();
+  const addresses = new Set();
+  for (const note of music.notes) {
+    const { tone } = resolveTone(note);
+    if (tone.kind === "pcm") addresses.add(tone.sample);
+  }
+  await Promise.all([...addresses].map(loadSample));
+}
+function generatorBuffer(tone) {
+  const key = `${tone.kind}:${tone.generator ?? tone.waveform}`;
+  if (music.generatorBuffers.has(key)) return music.generatorBuffers.get(key);
+  const context = ensureAudio();
+  let samples;
+  if (tone.kind === "wave") {
+    const waveform = music.soundfont.waveformByName.get(tone.waveform);
+    if (!waveform) throw new Error(`CGB waveform ${tone.waveform} is absent`);
+    samples = Float32Array.from(waveform.samples, (sample) => (sample - 7.5) / 7.5);
+  } else if (tone.kind === "noise") {
+    samples = new Float32Array(32767);
+    let state = 0x7fff;
+    for (let i = 0; i < samples.length; i += 1) {
+      const feedback = (state ^ (state >> 1)) & 1;
+      state = (state >> 1) | (feedback << 14);
+      samples[i] = state & 1 ? .7 : -.7;
+    }
+  } else {
+    const duty = [.125, .25, .5, .75][tone.generator ?? 2];
+    samples = Float32Array.from({ length: 256 }, (_, index) => index / 256 < duty ? .72 : -.72);
+  }
+  const buffer = context.createBuffer(1, samples.length, context.sampleRate);
+  buffer.copyToChannel(samples, 0);
+  music.generatorBuffers.set(key, buffer);
+  return buffer;
+}
+function envelopeShape(tone) {
+  const [attack, decay, sustain, release] = tone.envelope;
+  if (tone.kind === "pcm") {
+    return {
+      attack: attack >= 250 ? .005 : Math.max(.01, (256 - attack) / 90),
+      decay: decay === 0 ? .01 : Math.max(.02, (256 - decay) / 90),
+      sustain: sustain / 255,
+      release: release === 0 ? .03 : Math.max(.04, (256 - release) / 90),
+    };
+  }
+  return { attack: .004, decay: .02, sustain: Math.min(1, sustain / 15), release: release ? Math.max(.03, release / 30) : .03 };
+}
+function scheduleTone(note, position) {
+  const context = music.context;
+  const { tone, rhythm } = resolveTone(note);
+  const source = context.createBufferSource();
+  let baseRate = 1;
+  if (tone.kind === "pcm") {
+    const sample = music.soundfont.sampleByAddress.get(tone.sample);
+    source.buffer = music.sampleBuffers.get(tone.sample);
+    if (!source.buffer) throw new Error(`PCM sample ${tone.sample} was not prepared`);
+    if (sample.loop_start !== null) {
+      source.loop = true;
+      source.loopStart = sample.loop_start / source.buffer.sampleRate;
+      source.loopEnd = source.buffer.duration;
+    }
+  } else {
+    source.buffer = generatorBuffer(tone);
+    source.loop = true;
+    baseRate = 440 * 2 ** ((tone.key - 69) / 12) / (context.sampleRate / source.buffer.length);
+  }
+  const playedKey = tone.fixed_pitch || rhythm ? tone.key : note.note + note.bend / 8192 * 2;
+  source.playbackRate.value = baseRate * 2 ** ((playedKey - tone.key) / 12);
+  const start = music.startedAt + Math.max(note.start, position);
+  const noteEnd = music.startedAt + note.end;
+  const envelope = envelopeShape(tone);
+  const stop = noteEnd + envelope.release;
+  const gain = context.createGain();
+  const velocity = note.velocity / 127;
+  const channelLevel = note.volume / 127 * note.expression / 127;
+  const level = Math.max(.0002, velocity * channelLevel * .22);
+  const sustain = Math.max(.0001, level * envelope.sustain);
+  const attackEnd = Math.min(noteEnd, start + envelope.attack);
+  const decayEnd = Math.min(noteEnd, attackEnd + envelope.decay);
+  gain.gain.setValueAtTime(.0001, start);
+  gain.gain.exponentialRampToValueAtTime(level, attackEnd);
+  gain.gain.exponentialRampToValueAtTime(sustain, decayEnd);
+  gain.gain.setValueAtTime(sustain, noteEnd);
+  gain.gain.exponentialRampToValueAtTime(.0001, stop);
+  let output = gain;
+  if (typeof context.createStereoPanner === "function") {
+    const panner = context.createStereoPanner();
+    const rhythmPan = rhythm ? (tone.pan_sweep > 127 ? tone.pan_sweep - 256 : tone.pan_sweep) / 128 : 0;
+    panner.pan.value = Math.max(-1, Math.min(1, (note.pan - 64) / 64 + rhythmPan));
+    gain.connect(panner);
+    output = panner;
+  }
+  source.connect(gain);
+  output.connect(music.master);
+  source.start(start);
+  source.stop(stop + .01);
+  music.voices.add(source);
+  source.addEventListener("ended", () => music.voices.delete(source));
 }
 function scheduleMusic() {
   if (!music.playing || !music.context) return;
@@ -163,22 +321,7 @@ function scheduleMusic() {
   while (music.cursor < music.notes.length && music.notes[music.cursor].start < horizon) {
     const note = music.notes[music.cursor++];
     if (note.end <= position) continue;
-    const start = music.startedAt + Math.max(note.start, position);
-    const end = music.startedAt + note.end;
-    const oscillator = music.context.createOscillator();
-    const gain = music.context.createGain();
-    oscillator.type = voiceType(note);
-    oscillator.frequency.value = 440 * 2 ** ((note.note - 69) / 12);
-    const level = (note.velocity / 127) * (note.channel === 9 ? 0.025 : 0.045);
-    gain.gain.setValueAtTime(0.0001, start);
-    gain.gain.exponentialRampToValueAtTime(Math.max(level, 0.0002), start + 0.008);
-    gain.gain.setValueAtTime(Math.max(level, 0.0002), Math.max(start + 0.009, end - 0.04));
-    gain.gain.exponentialRampToValueAtTime(0.0001, end);
-    oscillator.connect(gain).connect(music.master);
-    oscillator.start(start);
-    oscillator.stop(end + 0.01);
-    music.voices.add(oscillator);
-    oscillator.addEventListener("ended", () => music.voices.delete(oscillator));
+    scheduleTone(note, position);
   }
   updateMusicUi();
 }
@@ -188,13 +331,8 @@ function cursorAt(position) {
   return low;
 }
 async function playMusic() {
-  if (!music.notes.length) return;
-  if (!music.context) {
-    music.context = new AudioContext();
-    music.master = music.context.createGain();
-    music.master.gain.value = Number(music.ui.volume.value);
-    music.master.connect(music.context.destination);
-  }
+  if (!music.notes.length || !music.ready) return;
+  ensureAudio();
   await music.context.resume();
   music.startedAt = music.context.currentTime - music.position;
   music.cursor = cursorAt(music.position);
@@ -212,12 +350,14 @@ function pauseMusic(rewind = false) {
 }
 async function loadMusic(index, autoplay = false) {
   pauseMusic(true);
+  music.ready = false;
   music.index = (index + music.tracks.length) % music.tracks.length;
   const track = music.tracks[music.index];
   music.ui.title.textContent = track.title;
   music.ui.source.textContent = `${track.source} · extracted MIDI`;
   music.ui.select.value = String(music.index);
   music.ui.card.setAttribute("aria-busy", "true");
+  music.ui.play.disabled = true;
   try {
     const response = await fetch(`/music/${track.file}`);
     if (!response.ok) throw new Error(`track returned ${response.status}`);
@@ -226,11 +366,18 @@ async function loadMusic(index, autoplay = false) {
     music.duration = parsed.duration;
     music.position = 0;
     music.ui.seek.max = String(music.duration);
+    music.ui.source.textContent = `${track.source} · loading recovered instrument bank`;
+    await prepareTrackSamples();
+    music.ready = true;
+    music.ui.source.textContent = `${track.source} · Golden Sun ROM tone bank`;
     updateMusicUi();
     if (autoplay) await playMusic();
   } catch (error) {
     music.ui.source.textContent = `Could not read track · ${error instanceof Error ? error.message : error}`;
-  } finally { music.ui.card.setAttribute("aria-busy", "false"); }
+  } finally {
+    music.ui.card.setAttribute("aria-busy", "false");
+    music.ui.play.disabled = !music.ready;
+  }
 }
 function musicPlayer() {
   if (music.ui?.card) return music.ui.card;
@@ -251,7 +398,7 @@ function musicPlayer() {
     h("div", { className: "music-heading" }, h("div", {}, title, source), select),
     canvas,
     h("div", { className: "music-controls" }, previous, play, next, elapsed, seek, duration, h("span", { className: "volume-mark", "aria-hidden": "true" }, "VOL"), volume),
-    h("p", { className: "music-note" }, "Browser synthesis of the recovered sequence data. Timing and notes come from the ROM; instrument timbres are a lightweight preview."),
+    h("p", { className: "music-note" }, "Golden Sun's recovered music bank: ROM sequences, PCM samples, loop points, tone dispatch, envelopes, pitch and pan, played through Web Audio."),
   );
   music.ui = { card, title, source, canvas, play, previous, next, seek, elapsed, duration, volume, select };
   play.addEventListener("click", () => music.playing ? pauseMusic() : playMusic());

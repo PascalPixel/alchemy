@@ -57,8 +57,8 @@ void *Func_0808e14c(u32 arg0)
 
     for (; trigger->flags != (u32)-1; trigger++) {
         s32 dirNibble = trigger->facing & 0xf000;
-        u16 facingWord = trigger->facing;
-        s32 dirCheckEnabled = facingWord & 0x800;
+        s16 facingWord = trigger->facing;
+        s16 dirCheckEnabled = facingWord & 0x800;
         u32 type = trigger->flags & 0xf;
         u32 matchId = facingWord & 0xff;
 

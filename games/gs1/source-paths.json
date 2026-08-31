@@ -5594,6 +5594,7 @@
     "resource_3ba:020016ec": {"name": "FieldScene_RunSceneFourCoordinator"},
     "resource_3b0:02000e78": {"name": "FieldScene_RunSevenActorEnsemble"},
     "resource_3bb:020016d4": {"name": "FieldScene_RunLiftedActorCoordinator"},
+    "resource_3b0:020007b0": {"name": "FieldScene_RunActorNinePresentationCycles"},
     "main:080a46b4": {
       "name": "Item_ClassifyUseMode",
       "source": "items/classify_use_mode.c"

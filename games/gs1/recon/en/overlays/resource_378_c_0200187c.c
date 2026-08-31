@@ -1,787 +1,816 @@
 #include "types.h"
 
-/* DRAFT for Func_0200187c: 400 calls, 1 loops, 4 memory operations.
- * Written by `overlay reconstruct` from the owner's own disassembly.
- * It is a starting point, not a reconstruction: read the assembly and
- * fix it. Score it before believing any of it. */
+#define FieldScene_RunActorUpdateSequence Func_0200187c
 
-void Func_020040c0();
-void Func_020042a8();
-void Func_02004d8c();
-void Func_02004e7c();
-void Func_02004eb6();
-void Func_02004ec0();
-void Func_02004eca();
-void Func_02004ed4();
-void Func_02004ede();
-void Func_02004ee8();
-void *Func_02004ef2();
-void Func_02004f10();
-void Func_02004f16();
-void Func_02004f26();
-void Func_02004f4c();
-void *Func_02004f5e();
-void Func_02004f84();
-void Func_02004f8a();
-void Func_02004f90();
-void Func_02004f92();
-void Func_02004f94();
-void Func_02004f9e();
-void Func_02004fa0();
-void Func_02004fa6();
-void Func_02004fa8();
-void Func_02004fae();
-void Func_02004fb6();
-void Func_02004fba();
-void Func_02004fc6();
-void Func_02004fc8();
-void Func_02004fd4();
-void Func_02004fd6();
-void Func_02004fe0();
-void Func_02004fe4();
-void Func_02004ff4();
-void Func_02004ffe();
-void Func_02005002();
-void Func_02005008();
-void Func_0200500c();
-void Func_02005012();
-void Func_0200501c();
-void Func_02005026();
-void Func_0200502a();
-void Func_0200503c();
-void Func_0200504a();
-void Func_02005050();
-void Func_02005058();
-void Func_02005070();
-void Func_02005072();
-void Func_0200507c();
-void Func_0200507e();
-void Func_02005092();
-void Func_02005096();
-void Func_020050a0();
-void Func_020050a4();
-void Func_020050aa();
-void Func_020050b4();
-void Func_020050be();
-void Func_020050c4();
-void Func_020050d0();
-void Func_020050e8();
-void Func_0200510e();
-void Func_02005112();
-void Func_0200511e();
-void Func_02005122();
-void Func_02005156();
-void Func_02005158();
-void Func_02005164();
-void Func_0200516a();
-void Func_02005172();
-void Func_02005178();
-void Func_02005186();
-void Func_0200518c();
-void Func_02005194();
-void Func_02005196();
-void Func_020051a0();
-void Func_020051a6();
-void Func_020051aa();
-void Func_020051b4();
-void Func_020051be();
-void Func_020051c0();
-void Func_020051c2();
-void Func_020051c8();
-void Func_020051d0();
-void Func_020051d8();
-void Func_020051e0();
-void Func_020051e8();
-void *Func_020051f0();
-void *Func_020051fc();
-void Func_02005200();
-void Func_02005212();
-void Func_0200522c();
-void Func_0200522e();
-void Func_0200523a();
-void Func_02005242();
-void Func_02005244();
-void Func_02005252();
-void Func_0200526a();
-void Func_02005288();
-void Func_02005296();
-void Func_020052a6();
-void Func_020052a8();
-void Func_020052b0();
-void Func_020052b6();
-void Func_020052d0();
-void Func_020052d8();
-void Func_020052ec();
-void Func_020052ee();
-void Func_020052f2();
-void Func_020052fa();
-void Func_020052fc();
-void Func_02005302();
-void Func_0200530a();
-void Func_0200530c();
-void Func_02005312();
-void Func_0200531a();
-void Func_0200531e();
-void Func_02005322();
-void Func_02005330();
-void Func_02005340();
-void Func_02005348();
-void Func_0200534e();
-void Func_02005358();
-void Func_0200535c();
-void Func_02005360();
-void Func_02005368();
-void Func_02005372();
-void Func_0200537c();
-void Func_02005386();
-void Func_02005390();
-void Func_02005394();
-void Func_0200539a();
-void Func_020053aa();
-void Func_020053ae();
-void Func_020053bc();
-void Func_020053c6();
-void Func_020053c8();
-void Func_020053ca();
-void Func_020053e2();
-void Func_02005400();
-void Func_0200540e();
-void Func_0200541e();
-void Func_02005426();
-void Func_02005438();
-void Func_0200544a();
-void Func_02005450();
-void Func_02005452();
-void Func_0200545a();
-void Func_0200545c();
-void Func_02005462();
-void Func_02005466();
-void Func_02005468();
-void Func_0200546a();
-void Func_02005474();
-void Func_0200547a();
-void Func_02005480();
-void Func_02005482();
-void Func_02005488();
-void Func_0200548c();
-void Func_02005492();
-void Func_02005494();
-void Func_0200549e();
-void Func_020054c8();
-void Func_020054d6();
-void Func_020054d8();
-void Func_020054e2();
-void Func_020054e6();
-void Func_020054ea();
-void Func_020054f4();
-void Func_020054f8();
-void Func_020054fe();
-void Func_02005500();
-void Func_02005506();
-void Func_02005508();
-void Func_0200550e();
-void Func_02005516();
-void Func_02005530();
-void Func_02005532();
-void Func_0200553a();
-void Func_02005542();
-void Func_0200554a();
-void Func_0200554c();
-void Func_02005552();
-void Func_02005562();
-void Func_02005566();
-void Func_02005574();
-void Func_020055a0();
-void Func_020055aa();
-void Func_020055b8();
-void Func_020055be();
-void Func_020055c8();
-void Func_020055d0();
-void Func_020055d8();
-void Func_020055da();
-void Func_020055e0();
-void Func_020055e8();
-void Func_020055ee();
-void Func_020055f0();
-void Func_020055f4();
-void Func_020055f8();
-void Func_020055fc();
-void Func_02005600();
-void Func_02005604();
-void Func_0200560a();
-void Func_0200560c();
-void Func_02005612();
-void Func_02005614();
-void Func_02005618();
-void Func_02005624();
-void Func_02005626();
-void Func_02005638();
-void Func_0200563e();
-void Func_02005640();
-void Func_02005648();
-void Func_02005650();
-void Func_02005658();
-void Func_02005668();
-void Func_0200566a();
-void Func_02005680();
-void Func_02005682();
-void Func_02005690();
-void Func_02005692();
-void Func_02005696();
-void Func_0200569e();
-void Func_020056ac();
-void Func_020056d4();
-void Func_020056f0();
-void Func_020056fa();
-void Func_0200570a();
-void Func_02005712();
-void Func_02005718();
-void Func_02005720();
-void Func_02005722();
-void Func_0200572c();
-void Func_02005732();
-void Func_02005738();
-void Func_02005742();
-void Func_0200574a();
-void Func_0200574c();
-void Func_02005776();
-void Func_0200578a();
-void Func_02005792();
-void Func_020057a0();
-void Func_020057ac();
-void Func_020057b8();
-void Func_020057c2();
-void Func_020057c4();
-void Func_020057d0();
-void Func_020057dc();
-void Func_020057e6();
-void Func_020057ea();
-void Func_020057f0();
-void Func_020057fa();
-void Func_020057fc();
-void Func_02005804();
-void Func_0200580e();
-void Func_02005814();
-void Func_02005822();
-void Func_0200582c();
-void Func_02005836();
-void Func_02005854();
-void Func_0200585a();
-void Func_02005866();
-void Func_02005870();
-void Func_0200587c();
-void Func_02005888();
-void Func_02005898();
-void Func_020058a6();
-void Func_020058a8();
-void Func_020058b2();
-void Func_020058b6();
-void Func_020058be();
-void Func_020058c8();
-void Func_020058da();
-void Func_020058f0();
-void Func_020058f2();
-void Func_02005900();
-void Func_02005906();
-void Func_0200590c();
-void Func_02005912();
-void Func_02005916();
-void Func_0200591e();
-void Func_02005920();
-void Func_02005922();
-void Func_0200592a();
-void Func_02005930();
-void Func_02005936();
-void Func_02005940();
-void Func_0200594a();
-void Func_0200594e();
-void Func_02005950();
-void Func_02005960();
-void Func_0200596e();
-void Func_0200597a();
-void Func_02005984();
-void Func_0200598c();
-void Func_0200599a();
-void Func_020059bc();
-void Func_020059c0();
-void Func_020059ca();
-void Func_020059e2();
-void Func_020059e4();
-void Func_020059e8();
-void Func_020059ee();
-void Func_020059fc();
-void Func_020059fe();
-void Func_02005a04();
-void Func_02005a0a();
-void Func_02005a16();
-void Func_02005a20();
-void Func_02005a2a();
-void Func_02005a2e();
-void Func_02005a32();
-void Func_02005a38();
-void Func_02005a48();
-void Func_02005a62();
-void Func_02005a70();
-void Func_02005a76();
-void Func_02005a7e();
-void Func_02005a84();
-void Func_02005a86();
-void Func_02005a8a();
-void Func_02005a90();
-void Func_02005a98();
-void Func_02005a9a();
-void Func_02005a9c();
-void Func_02005aa2();
-void Func_02005aaa();
-void Func_02005ac4();
-void Func_02005ad2();
-void Func_02005ad4();
-void Func_02005ae0();
-void Func_02005aea();
-void Func_02005aee();
-void Func_02005af8();
-void Func_02005afa();
-void Func_02005b04();
-void Func_02005b0c();
-void Func_02005b1e();
-void Func_02005b24();
-void Func_02005b2c();
-void Func_02005b48();
-void Func_02005b5a();
-void Func_02005b5c();
-void Func_02005b66();
-void Func_02005b68();
-void Func_02005b72();
-void Func_02005b76();
-void Func_02005b7a();
-void Func_02005b7e();
-void Func_02005b86();
-void Func_02005b94();
-void Func_02005b9c();
-void Func_02005bb8();
-void Func_02005bcc();
-void Func_02005bd4();
-void Func_02005be2();
-void Func_02005bee();
-void Func_02005bf6();
-void Func_02005c00();
-void Func_02005c06();
-void Func_02005c14();
-void Func_02005c28();
-void Func_02005c30();
-void Func_02005c3c();
-void Func_02005c40();
+/*
+ * resource_378 scripted scene owner at 0x0200187c (3,400 bytes).
+ *
+ * Boundary evidence: `push {r5,r6,lr}` at 0x0200187c; the owner has a
+ * single epilogue `pop {r5,r6} / pop {r0} / bx r0` at
+ * 0x020025b6-0x020025ba.  The two trailing pool words at
+ * 0x020025bc-0x020025c3 belong to this owner, and the next prologue is
+ * 0x020025c4.  The control-flow walk also accounts for the branch-skipped
+ * pools at 0x02001bb0-0x02001bcf and 0x02002224-0x0200222b.
+ *
+ * This is one coherent straight-line cutscene script.  Calls retain the
+ * observed literal/register arguments where the byte sequence establishes
+ * them.  Old-style declarations are intentional: these shared scene
+ * helpers have several historical signatures across the overlays.  The
+ * only back-edge is the 32-iteration actor-record update loop.
+ * The exact resource_378 witnesses identify the scene phases as the actor
+ * aggregate setup, scene-8 presentation, the upper/lower dialogue
+ * panels, the actor-13 fixed-point walk, and object reset.  They do not
+ * establish character names, so actor IDs remain numeric here.
+ * Per-site Func_020xxxxx declarations preserve the raw veneer identities
+ * witnessed in the overlay rather than collapsing distinct call sites.
+ *
+ * Call accounting: 400 resolved BL sites, 29 distinct targets.  The loop
+ * is represented once per machine BL site, as required by the ordered and
+ * per-target multiset checks.
+ */
 
-void Func_0200187c(void)
+extern u8 *Data_03001ebc;
+
+void Func_02004f5e(); /* Func_0808a1f0 veneer */
+void Func_02004f16(); /* Func_0808a138 veneer */
+void Func_02004e7c(); /* Func_0808a010 veneer */
+void Func_02004eb6(); /* Func_0808a090 veneer */
+void Func_02004ec0(); /* Func_0808a090 veneer */
+void Func_02004eca(); /* Func_0808a090 veneer */
+void Func_02004ed4(); /* Func_0808a090 veneer */
+void Func_02004ede(); /* Func_0808a090 veneer */
+void Func_02004ee8(); /* Func_0808a090 veneer */
+void Func_02004ef2(); /* Func_0808a090 veneer */
+void Func_02004fd4(); /* Func_0808a210 veneer */
+void Func_02004fe0(); /* Func_0808a218 veneer */
+void Func_02004f8a(); /* Func_0808a148 veneer */
+void Func_02004f94(); /* Func_0808a148 veneer */
+void Func_02004f9e(); /* Func_0808a148 veneer */
+void Func_02004fa8(); /* Func_0808a148 veneer */
+void Func_02004fba(); /* Func_0808a150 veneer */
+void Func_02004f10(); /* Func_0808a010 veneer */
+void Func_02004f90(); /* Func_0808a100 veneer */
+void Func_02004fa0(); /* Func_0808a110 veneer */
+void Func_02004f26(); /* Func_0808a010 veneer */
+void Func_02004fa6(); /* Func_0808a100 veneer */
+void Func_02004fae(); /* Func_0808a100 veneer */
+void Func_02004fb6(); /* Func_0808a100 veneer */
+void Func_02004fc6(); /* Func_0808a110 veneer */
+void Func_02004f4c(); /* Func_0808a010 veneer */
+void Func_02004ffe(); /* Func_0808a148 veneer */
+void Func_02005008(); /* Func_0808a148 veneer */
+void Func_02005012(); /* Func_0808a148 veneer */
+void Func_0200501c(); /* Func_0808a148 veneer */
+void Func_02005026(); /* Func_0808a148 veneer */
+void Func_02004f84(); /* Func_0808a010 veneer */
+void Func_0200500c(); /* Func_0808a110 veneer */
+void Func_02004f92(); /* Func_0808a010 veneer */
+void Func_02005058(); /* Func_0808a170 veneer */
+void Func_02005070(); /* Func_0808a180 veneer */
+void Func_02005050(); /* Func_0808a130 veneer */
+void Func_020050aa(); /* Func_0808a1e8 veneer */
+void Func_02004fc8(); /* Func_0808a010 veneer */
+void Func_020050a0(); /* Func_0808a180 veneer */
+void Func_02004fd6(); /* Func_0808a010 veneer */
+void Func_0200507e(); /* Func_0808a138 veneer */
+void Func_02004fe4(); /* Func_0808a010 veneer */
+void Func_02005096(); /* Func_0808a148 veneer */
+void Func_02004ff4(); /* Func_0808a010 veneer */
+void Func_0200507c(); /* Func_0808a110 veneer */
+void Func_02005002(); /* Func_0808a010 veneer */
+void Func_020050b4(); /* Func_0808a148 veneer */
+void Func_020050be(); /* Func_0808a148 veneer */
+void Func_020050a4(); /* Func_0808a110 veneer */
+void Func_0200502a(); /* Func_0808a010 veneer */
+void Func_0200510e(); /* Func_0808a1b8 veneer */
+void Func_0200503c(); /* Func_0808a010 veneer */
+void Func_020050c4(); /* Func_0808a110 veneer */
+void Func_0200504a(); /* Func_0808a010 veneer */
+void Func_02005122(); /* Func_0808a180 veneer */
+void Func_020051a6(); /* Func_080f9010 veneer */
+void Func_02005186(); /* Func_0808a330 veneer */
+void Func_02005194(); /* Func_0808a348 veneer */
+void Func_02005072(); /* Func_0808a010 veneer */
+void Func_02005172(); /* Func_0808a208 veneer */
+void Func_0200518c(); /* Func_0808a210 veneer */
+void Func_02005092(); /* Func_0808a010 veneer */
+void Func_020051e0(); /* Func_080f9010 veneer */
+void Func_020051e8(); /* Func_080f9010 veneer */
+void Func_0200511e(); /* Func_0808a0f0 veneer */
+void Func_020050e8(); /* Func_0808a090 veneer */
+void Func_02005112(); /* Func_0808a0c0 veneer */
+void Func_02005212(); /* Func_080f9010 veneer */
+void Func_020050d0(); /* Func_0808a010 veneer */
+void Func_02005178(); /* Func_0808a138 veneer */
+void Func_02005158(); /* Func_0808a100 veneer */
+void Func_020040c0(); /* Func_020025c4 veneer */
+void Func_02005196(); /* Func_0808a148 veneer */
+void Func_020051a0(); /* Func_0808a148 veneer */
+void Func_020051aa(); /* Func_0808a148 veneer */
+void Func_020051b4(); /* Func_0808a148 veneer */
+void Func_020051be(); /* Func_0808a148 veneer */
+void Func_020051c8(); /* Func_0808a148 veneer */
+void Func_020051c0(); /* Func_0808a130 veneer */
+void Func_020051d0(); /* Func_0808a130 veneer */
+void Func_020051d8(); /* Func_0808a130 veneer */
+void Func_02005156(); /* Func_0808a010 veneer */
+void Func_0200522e(); /* Func_0808a180 veneer */
+void Func_02005164(); /* Func_0808a010 veneer */
+void Func_0200516a(); /* Func_0808a010 veneer */
+void Func_02005242(); /* Func_0808a180 veneer */
+void Func_0200523a(); /* Func_0808a158 veneer */
+void Func_020052d0(); /* Func_080f9010 veneer */
+void Func_020052d8(); /* Func_080f9010 veneer */
+void Func_02004d8c(); /* Func_020031b8 veneer */
+void Func_020051c2(); /* Func_0808a010 veneer */
+u8 * Func_020051f0(); /* Func_0808a080 veneer */
+u8 * Func_020051fc(); /* Func_0808a080 veneer */
+void Func_02005330(); /* Func_080f9010 veneer */
+void Func_020052a8(); /* Func_0808a158 veneer */
+void Func_0200526a(); /* Func_0808a0f0 veneer */
+void Func_02005200(); /* Func_0808a010 veneer */
+void Func_02005312(); /* Func_0808a210 veneer */
+void Func_0200531e(); /* Func_0808a218 veneer */
+void Func_02005340(); /* Func_0808a330 veneer */
+void Func_0200534e(); /* Func_0808a348 veneer */
+void Func_0200522c(); /* Func_0808a010 veneer */
+void Func_020042a8(); /* Func_02002660 veneer */
+void Func_020052b0(); /* Func_0808a100 veneer */
+void Func_02005386(); /* Func_080f9010 veneer */
+void Func_02005244(); /* Func_0808a010 veneer */
+void Func_020052ec(); /* Func_0808a138 veneer */
+void Func_02005252(); /* Func_0808a010 veneer */
+void Func_020052f2(); /* Func_0808a130 veneer */
+void Func_020052fa(); /* Func_0808a130 veneer */
+void Func_02005302(); /* Func_0808a130 veneer */
+void Func_0200530a(); /* Func_0808a130 veneer */
+void Func_02005322(); /* Func_0808a138 veneer */
+void Func_02005288(); /* Func_0808a010 veneer */
+void Func_02005360(); /* Func_0808a180 veneer */
+void Func_02005296(); /* Func_0808a010 veneer */
+void Func_02005348(); /* Func_0808a148 veneer */
+void Func_020052a6(); /* Func_0808a010 veneer */
+void Func_02005358(); /* Func_0808a148 veneer */
+void Func_020052b6(); /* Func_0808a010 veneer */
+void Func_02005368(); /* Func_0808a148 veneer */
+void Func_02005372(); /* Func_0808a148 veneer */
+void Func_0200537c(); /* Func_0808a148 veneer */
+void Func_02005390(); /* Func_0808a148 veneer */
+void Func_020052ee(); /* Func_0808a010 veneer */
+void Func_020053c6(); /* Func_0808a180 veneer */
+void Func_020052fc(); /* Func_0808a010 veneer */
+void Func_020053ae(); /* Func_0808a148 veneer */
+void Func_0200530c(); /* Func_0808a010 veneer */
+void Func_02005394(); /* Func_0808a110 veneer */
+void Func_0200531a(); /* Func_0808a010 veneer */
+void Func_0200539a(); /* Func_0808a100 veneer */
+void Func_020053aa(); /* Func_0808a110 veneer */
+void Func_020053e2(); /* Func_0808a148 veneer */
+void Func_020053c8(); /* Func_0808a110 veneer */
+void Func_02005426(); /* Func_0808a180 veneer */
+void Func_0200535c(); /* Func_0808a010 veneer */
+void Func_02005450(); /* Func_0808a1e8 veneer */
+void Func_0200545c(); /* Func_0808a1e8 veneer */
+void Func_02005468(); /* Func_0808a1e8 veneer */
+void Func_02005474(); /* Func_0808a1e8 veneer */
+void Func_02005480(); /* Func_0808a1e8 veneer */
+void Func_0200548c(); /* Func_0808a1e8 veneer */
+void Func_0200549e(); /* Func_0808a1e8 veneer */
+void Func_020053bc(); /* Func_0808a010 veneer */
+void Func_02005494(); /* Func_0808a180 veneer */
+void Func_020053ca(); /* Func_0808a010 veneer */
+void Func_0200544a(); /* Func_0808a100 veneer */
+void Func_02005452(); /* Func_0808a100 veneer */
+void Func_0200545a(); /* Func_0808a100 veneer */
+void Func_02005462(); /* Func_0808a100 veneer */
+void Func_0200546a(); /* Func_0808a100 veneer */
+void Func_0200547a(); /* Func_0808a110 veneer */
+void Func_02005400(); /* Func_0808a010 veneer */
+void Func_02005488(); /* Func_0808a110 veneer */
+void Func_0200540e(); /* Func_0808a010 veneer */
+void Func_02005500(); /* Func_0808a1e8 veneer */
+void Func_0200541e(); /* Func_0808a010 veneer */
+void Func_020054d8(); /* Func_0808a150 veneer */
+void Func_020054e2(); /* Func_0808a150 veneer */
+void Func_02005438(); /* Func_0808a010 veneer */
+void Func_020054ea(); /* Func_0808a148 veneer */
+void Func_020054f4(); /* Func_0808a148 veneer */
+void Func_020054fe(); /* Func_0808a148 veneer */
+void Func_02005508(); /* Func_0808a148 veneer */
+void Func_02005466(); /* Func_0808a010 veneer */
+void Func_0200550e(); /* Func_0808a138 veneer */
+void Func_0200554c(); /* Func_0808a180 veneer */
+void Func_02005482(); /* Func_0808a010 veneer */
+void Func_02005574(); /* Func_0808a1e8 veneer */
+void Func_02005492(); /* Func_0808a010 veneer */
+void Func_02005532(); /* Func_0808a130 veneer */
+void Func_0200553a(); /* Func_0808a130 veneer */
+void Func_02005542(); /* Func_0808a130 veneer */
+void Func_0200554a(); /* Func_0808a130 veneer */
+void Func_02005552(); /* Func_0808a130 veneer */
+void Func_02005562(); /* Func_0808a138 veneer */
+void Func_020054c8(); /* Func_0808a010 veneer */
+void Func_020055a0(); /* Func_0808a180 veneer */
+void Func_020054d6(); /* Func_0808a010 veneer */
+void Func_020055c8(); /* Func_0808a1e8 veneer */
+void Func_020054e6(); /* Func_0808a010 veneer */
+void Func_020055da(); /* Func_0808a1e8 veneer */
+void Func_020054f8(); /* Func_0808a010 veneer */
+void Func_020055d0(); /* Func_0808a180 veneer */
+void Func_02005506(); /* Func_0808a010 veneer */
+void Func_020055f8(); /* Func_0808a1e8 veneer */
+void Func_02005516(); /* Func_0808a010 veneer */
+void Func_020055be(); /* Func_0808a138 veneer */
+void Func_02005612(); /* Func_0808a1e8 veneer */
+void Func_02005530(); /* Func_0808a010 veneer */
+void Func_020055d8(); /* Func_0808a130 veneer */
+void Func_020055e0(); /* Func_0808a130 veneer */
+void Func_020055e8(); /* Func_0808a130 veneer */
+void Func_020055f0(); /* Func_0808a130 veneer */
+void Func_02005600(); /* Func_0808a138 veneer */
+void Func_02005566(); /* Func_0808a010 veneer */
+void Func_0200563e(); /* Func_0808a180 veneer */
+void Func_020055f4(); /* Func_0808a100 veneer */
+void Func_020055fc(); /* Func_0808a100 veneer */
+void Func_02005604(); /* Func_0808a100 veneer */
+void Func_0200560c(); /* Func_0808a100 veneer */
+void Func_02005614(); /* Func_0808a100 veneer */
+void Func_02005624(); /* Func_0808a110 veneer */
+void Func_020055aa(); /* Func_0808a010 veneer */
+void Func_02005682(); /* Func_0808a180 veneer */
+void Func_020055b8(); /* Func_0808a010 veneer */
+void Func_02005638(); /* Func_0808a100 veneer */
+void Func_02005640(); /* Func_0808a100 veneer */
+void Func_02005648(); /* Func_0808a100 veneer */
+void Func_02005650(); /* Func_0808a100 veneer */
+void Func_02005658(); /* Func_0808a100 veneer */
+void Func_02005668(); /* Func_0808a110 veneer */
+void Func_020055ee(); /* Func_0808a010 veneer */
+void Func_02005696(); /* Func_0808a138 veneer */
+void Func_020056d4(); /* Func_0808a180 veneer */
+void Func_0200560a(); /* Func_0808a010 veneer */
+void Func_02005692(); /* Func_0808a110 veneer */
+void Func_02005618(); /* Func_0808a010 veneer */
+void Func_020056f0(); /* Func_0808a180 veneer */
+void Func_02005626(); /* Func_0808a010 veneer */
+void Func_02005718(); /* Func_0808a1e8 veneer */
+void Func_02005722(); /* Func_0808a1e8 veneer */
+void Func_0200572c(); /* Func_0808a1e8 veneer */
+void Func_02005738(); /* Func_0808a1e8 veneer */
+void Func_02005742(); /* Func_0808a1e8 veneer */
+void Func_0200574c(); /* Func_0808a1e8 veneer */
+void Func_0200566a(); /* Func_0808a010 veneer */
+void Func_02005712(); /* Func_0808a138 veneer */
+void Func_0200574a(); /* Func_0808a180 veneer */
+void Func_02005680(); /* Func_0808a010 veneer */
+void Func_02005732(); /* Func_0808a148 veneer */
+void Func_02005690(); /* Func_0808a010 veneer */
+void Func_0200569e(); /* Func_0808a010 veneer */
+void Func_02005776(); /* Func_0808a180 veneer */
+void Func_020056ac(); /* Func_0808a010 veneer */
+void Func_020057a0(); /* Func_0808a1e8 veneer */
+void Func_020057ac(); /* Func_0808a1e8 veneer */
+void Func_020057b8(); /* Func_0808a1e8 veneer */
+void Func_020057c4(); /* Func_0808a1e8 veneer */
+void Func_020057d0(); /* Func_0808a1e8 veneer */
+void Func_020057dc(); /* Func_0808a1e8 veneer */
+void Func_020056fa(); /* Func_0808a010 veneer */
+void Func_0200570a(); /* Func_0808a010 veneer */
+void Func_02005792(); /* Func_0808a110 veneer */
+void Func_020057ea(); /* Func_0808a180 veneer */
+void Func_02005720(); /* Func_0808a010 veneer */
+void Func_0200578a(); /* Func_0808a0d0 veneer */
+void Func_020057e6(); /* Func_0808a148 veneer */
+void Func_020057f0(); /* Func_0808a148 veneer */
+void Func_020057fa(); /* Func_0808a148 veneer */
+void Func_02005804(); /* Func_0808a148 veneer */
+void Func_0200580e(); /* Func_0808a148 veneer */
+void Func_02005822(); /* Func_0808a148 veneer */
+void Func_0200582c(); /* Func_0808a148 veneer */
+void Func_02005836(); /* Func_0808a148 veneer */
+void Func_02005870(); /* Func_0808a1b8 veneer */
+void Func_0200587c(); /* Func_0808a1b8 veneer */
+void Func_02005888(); /* Func_0808a1b8 veneer */
+void Func_02005814(); /* Func_0808a0c8 veneer */
+void Func_020057c2(); /* Func_0808a010 veneer */
+void Func_020058a6(); /* Func_0808a1b8 veneer */
+void Func_020058b2(); /* Func_0808a1b8 veneer */
+void Func_020058be(); /* Func_0808a1b8 veneer */
+void Func_02005854(); /* Func_0808a0e8 veneer */
+void Func_02005866(); /* Func_0808a0f0 veneer */
+void Func_020057fc(); /* Func_0808a010 veneer */
+void Func_020058f0(); /* Func_0808a1e8 veneer */
+void Func_02005906(); /* Func_0808a1e8 veneer */
+void Func_02005912(); /* Func_0808a1e8 veneer */
+void Func_0200591e(); /* Func_0808a1e8 veneer */
+void Func_0200592a(); /* Func_0808a1e8 veneer */
+void Func_02005936(); /* Func_0808a1e8 veneer */
+void Func_0200585a(); /* Func_0808a010 veneer */
+void Func_0200590c(); /* Func_0808a148 veneer */
+void Func_02005916(); /* Func_0808a148 veneer */
+void Func_02005920(); /* Func_0808a148 veneer */
+void Func_0200597a(); /* Func_0808a1e8 veneer */
+void Func_02005898(); /* Func_0808a010 veneer */
+void Func_0200594a(); /* Func_0808a148 veneer */
+void Func_020058a8(); /* Func_0808a010 veneer */
+void Func_02005950(); /* Func_0808a138 veneer */
+void Func_020058b6(); /* Func_0808a010 veneer */
+void Func_0200599a(); /* Func_0808a1b8 veneer */
+void Func_020058c8(); /* Func_0808a010 veneer */
+void Func_020059bc(); /* Func_0808a1e8 veneer */
+void Func_020058da(); /* Func_0808a010 veneer */
+void Func_0200598c(); /* Func_0808a148 veneer */
+void Func_020058f2(); /* Func_0808a010 veneer */
+void Func_020059ca(); /* Func_0808a180 veneer */
+void Func_02005900(); /* Func_0808a010 veneer */
+void Func_020059e4(); /* Func_0808a1b8 veneer */
+void Func_02005a04(); /* Func_0808a1e8 veneer */
+void Func_02005922(); /* Func_0808a010 veneer */
+void Func_02005930(); /* Func_0808a010 veneer */
+void Func_020059e2(); /* Func_0808a148 veneer */
+void Func_02005940(); /* Func_0808a010 veneer */
+void Func_020059e8(); /* Func_0808a138 veneer */
+void Func_0200594e(); /* Func_0808a010 veneer */
+void Func_02005a32(); /* Func_0808a1b8 veneer */
+void Func_02005960(); /* Func_0808a010 veneer */
+void Func_02005a38(); /* Func_0808a180 veneer */
+void Func_0200596e(); /* Func_0808a010 veneer */
+void Func_020059ee(); /* Func_0808a100 veneer */
+void Func_020059fe(); /* Func_0808a110 veneer */
+void Func_02005984(); /* Func_0808a010 veneer */
+void Func_020059fc(); /* Func_0808a0d0 veneer */
+void Func_02005a16(); /* Func_0808a0f0 veneer */
+void Func_02005a20(); /* Func_0808a0f0 veneer */
+void Func_02005aa2(); /* Func_0808a1e8 veneer */
+void Func_020059c0(); /* Func_0808a010 veneer */
+void Func_02005a2a(); /* Func_0808a0d0 veneer */
+void Func_02005a84(); /* Func_0808a150 veneer */
+void Func_02005a86(); /* Func_0808a148 veneer */
+void Func_02005a90(); /* Func_0808a148 veneer */
+void Func_02005a76(); /* Func_0808a110 veneer */
+void Func_02005ad4(); /* Func_0808a180 veneer */
+void Func_02005a0a(); /* Func_0808a010 veneer */
+void Func_02005a8a(); /* Func_0808a100 veneer */
+void Func_02005a9a(); /* Func_0808a110 veneer */
+void Func_02005af8(); /* Func_0808a180 veneer */
+void Func_02005a2e(); /* Func_0808a010 veneer */
+void Func_02005a98(); /* Func_0808a0d0 veneer */
+void Func_02005aea(); /* Func_0808a148 veneer */
+void Func_02005a48(); /* Func_0808a010 veneer */
+void Func_02005afa(); /* Func_0808a148 veneer */
+void Func_02005b04(); /* Func_0808a148 veneer */
+void Func_02005a62(); /* Func_0808a010 veneer */
+void Func_02005a70(); /* Func_0808a010 veneer */
+void Func_02005b48(); /* Func_0808a180 veneer */
+void Func_02005a7e(); /* Func_0808a010 veneer */
+void Func_02005b72(); /* Func_0808a1e8 veneer */
+void Func_02005b7e(); /* Func_0808a1e8 veneer */
+void Func_02005a9c(); /* Func_0808a010 veneer */
+void Func_02005b24(); /* Func_0808a110 veneer */
+void Func_02005aaa(); /* Func_0808a010 veneer */
+void Func_02005b5c(); /* Func_0808a148 veneer */
+void Func_02005b66(); /* Func_0808a148 veneer */
+void Func_02005ac4(); /* Func_0808a010 veneer */
+void Func_02005b9c(); /* Func_0808a180 veneer */
+void Func_02005ad2(); /* Func_0808a010 veneer */
+void Func_02005b7a(); /* Func_0808a138 veneer */
+void Func_02005ae0(); /* Func_0808a010 veneer */
+void Func_02005bb8(); /* Func_0808a180 veneer */
+void Func_02005aee(); /* Func_0808a010 veneer */
+void Func_02005be2(); /* Func_0808a1e8 veneer */
+void Func_02005bee(); /* Func_0808a1e8 veneer */
+void Func_02005b0c(); /* Func_0808a010 veneer */
+void Func_02005c00(); /* Func_0808a1e8 veneer */
+void Func_02005b1e(); /* Func_0808a010 veneer */
+void Func_02005bf6(); /* Func_0808a180 veneer */
+void Func_02005b2c(); /* Func_0808a010 veneer */
+void Func_02005bcc(); /* Func_0808a130 veneer */
+void Func_02005bd4(); /* Func_0808a130 veneer */
+void Func_02005c30(); /* Func_0808a1e8 veneer */
+void Func_02005c3c(); /* Func_0808a1e8 veneer */
+void Func_02005b5a(); /* Func_0808a010 veneer */
+void Func_02005b68(); /* Func_0808a010 veneer */
+void Func_02005c40(); /* Func_0808a180 veneer */
+void Func_02005b76(); /* Func_0808a010 veneer */
+void Func_02005c28(); /* Func_0808a148 veneer */
+void Func_02005b86(); /* Func_0808a010 veneer */
+void Func_02005c06(); /* Func_0808a100 veneer */
+void Func_02005b94(); /* Func_0808a010 veneer */
+void Func_02005c14(); /* Func_0808a100 veneer */
+
+#define RunSceneEightEnsembleSequence Func_0200187c
+
+void RunSceneEightEnsembleSequence(void)
 {
-    void *p1;
-    void *p10;
-    void *p101;
-    void *p102;
-    s32 i1;
+    u8 *actor;
+    s32 delta = -36355;
+    s32 i;
 
-    p1 = Func_02004f5e(1, 258);;
-    Func_02004f16(1, 2);
-    Func_02004e7c(20);
-    Func_02004eb6(0, 52428, 26214);
-    Func_02004ec0(1, 52428, 26214);
-    Func_02004eca(11, 52428, 26214);
-    Func_02004ed4(12, 52428, 26214);
-    Func_02004ede(9, 52428, 26214);
-    Func_02004ee8(10, 52428, 26214);
-    p10 = Func_02004ef2(8, 52428, 26214);;
-    Func_02004fd4(12582912, -1, 10485760, 1);
-    Func_02004fe0();
-    Func_02004f8a(1, 0, 0);
-    Func_02004f94(12, 0, 0);
-    Func_02004f9e(9, 0, 0);
-    Func_02004fa8(10, 0, 0);
-    Func_02004fba(0, 11, 0);
-    Func_02004f10(10);
-    Func_02004f90(0, 3);
-    Func_02004fa0(11, 3);
-    Func_02004f26(60);
-    Func_02004fa6(8, 3);
-    Func_02004fae(12, 3);
-    Func_02004fb6(9, 3);
-    Func_02004fc6(10, 3);
-    Func_02004f4c(50);
-    Func_02004ffe(0, 8, 0);
-    Func_02005008(11, 8, 0);
-    Func_02005012(12, 8, 0);
-    Func_0200501c(9, 8, 0);
-    Func_02005026(10, 8, 0);
-    Func_02004f84(30);
-    Func_0200500c(1, 4);
-    Func_02004f92(20);
-    Func_02005058(4465);
-    Func_02005070(1, 0);
-    Func_02004fa6(20);
-    Func_02005058(12, 1, 0);
-    Func_02005050(12, 2);
-    Func_020050aa(12, 259, 0);
-    Func_02004fc8(60);
-    Func_020050a0(12, 0);
-    Func_02004fd6(20);
-    Func_0200507e(1, 2);
-    Func_02004fe4(20);
-    Func_02005096(1, 12, 0);
-    Func_02004ff4(20);
-    Func_0200507c(1, 3);
-    Func_02005002(40);
-    Func_020050b4(1, 8, 0);
-    Func_020050be(12, 8, 0);
-    Func_0200501c(20);
-    Func_020050a4(8, 3);
-    Func_0200502a(20);
-    Func_0200510e(8, 53248, 0);
-    Func_0200503c(30);
-    Func_020050c4(8, 3);
-    Func_0200504a(30);
-    Func_02005122(8, 0);
-    Func_02005058(80);
-    Func_020051a6(17);
-    Func_02005186(65541, 1);
-    Func_02005194(60);
-    Func_02005072(40);
-    Func_02005172(26214, 3276);
-    Func_0200518c(12582912, -1, 6815744, 1);
-    Func_02005092(120);
-    Func_020051e0(21);
-    Func_020051e8(308);
-    Func_0200511e(13, 13107200, 524288);
-    Func_020050e8(13, 26214, 13107);
-    Func_02005112(13, 200, 72);
-    Func_02005212(288);
-    Func_020050d0(30);
-    Func_02005178(8, 2);
-    Func_02005158(8, 0);
-    Func_020040c0();
-    Func_02005196(0, 13, 0);
-    Func_020051a0(1, 13, 0);
-    Func_020051aa(11, 13, 0);
-    Func_020051b4(12, 13, 0);
-    Func_020051be(9, 13, 0);
-    Func_020051c8(10, 13, 0);
-    Func_020051c0(0, 2);
-    Func_020051c8(1, 2);
-    Func_020051d0(11, 2);
-    Func_020051d8(12, 2);
-    Func_020051e0(9, 2);
-    Func_020051e8(10, 2);
-    Func_02005156(40);
-    Func_0200522e(13, 0);
-    Func_02005164(20);
-    Func_0200516a(40);
-    Func_02005242(13, 0);
-    Func_02005178(60);
-    Func_0200523a(13, 256);
-    Func_020052d0(17);
-    Func_020052d8(308);
-    for (i1 = 0; i1 < 31; i1++) {
-        Func_02004d8c(13);
-        Func_020051c2(4);
-        p101 = Func_020051f0(13);;
-        *(s32 *)(p101 + 24) = *(s32 *)(p101 + 24);
-        p102 = Func_020051fc(13);;
-        *(s32 *)(p102 + 28) = *(s32 *)(p102 + 28);
+    Func_02004f5e(1, 0x102); /* 0x1884 */
+    Func_02004f16(1, 2); /* 0x188c */
+    Func_02004e7c(0x14); /* 0x1892 */
+    Func_02004eb6(0, 0xcccc, 0x6666); /* 0x189c */
+    Func_02004ec0(1, 0xcccc, 0x6666); /* 0x18a6 */
+    Func_02004eca(0xb, 0xcccc, 0x6666); /* 0x18b0 */
+    Func_02004ed4(0xc, 0xcccc, 0x6666); /* 0x18ba */
+    Func_02004ede(9, 0xcccc, 0x6666); /* 0x18c4 */
+    Func_02004ee8(0xa, 0xcccc, 0x6666); /* 0x18ce */
+    Func_02004ef2(8, 0xcccc, 0x6666); /* 0x18d8 */
+    Func_02004fd4(0xc00000, -1, 0xa00000, 1); /* 0x18ea */
+    Func_02004fe0(); /* 0x18ee */
+    Func_02004f8a(1, 0, 0); /* 0x18f8 */
+    Func_02004f94(0xc, 0, 0); /* 0x1902 */
+    Func_02004f9e(9, 0, 0); /* 0x190c */
+    Func_02004fa8(0xa, 0, 0); /* 0x1916 */
+    Func_02004fba(0, 0xb, 0); /* 0x1920 */
+    Func_02004f10(0xa); /* 0x1926 */
+    Func_02004f90(0, 3); /* 0x192e */
+    Func_02004fa0(0xb, 3); /* 0x1936 */
+    Func_02004f26(0x3c); /* 0x193c */
+    Func_02004fa6(8, 3); /* 0x1944 */
+    Func_02004fae(0xc, 3); /* 0x194c */
+    Func_02004fb6(9, 3); /* 0x1954 */
+    Func_02004fc6(0xa, 3); /* 0x195c */
+    Func_02004f4c(0x32); /* 0x1962 */
+    Func_02004ffe(0, 8, 0); /* 0x196c */
+    Func_02005008(0xb, 8, 0); /* 0x1976 */
+    Func_02005012(0xc, 8, 0); /* 0x1980 */
+    Func_0200501c(9, 8, 0); /* 0x198a */
+    Func_02005026(0xa, 8, 0); /* 0x1994 */
+    Func_02004f84(0x1e); /* 0x199a */
+    Func_0200500c(1, 4); /* 0x19a2 */
+    Func_02004f92(0x14); /* 0x19a8 */
+    Func_02005058(0x1171); /* 0x19ae */
+    Func_02005070(1, 0); /* 0x19b6 */
+    Func_02004fa6(0x14); /* 0x19bc */
+    Func_02005058(0xc, 1, 0); /* 0x19c6 */
+    Func_02005050(0xc, 2); /* 0x19ce */
+    Func_020050aa(0xc, 0x103, 0); /* 0x19d8 */
+    Func_02004fc8(0x3c); /* 0x19de */
+    Func_020050a0(0xc, 0); /* 0x19e6 */
+    Func_02004fd6(0x14); /* 0x19ec */
+    Func_0200507e(1, 2); /* 0x19f4 */
+    Func_02004fe4(0x14); /* 0x19fa */
+    Func_02005096(1, 0xc, 0); /* 0x1a04 */
+    Func_02004ff4(0x14); /* 0x1a0a */
+    Func_0200507c(1, 3); /* 0x1a12 */
+    Func_02005002(0x28); /* 0x1a18 */
+    Func_020050b4(1, 8, 0); /* 0x1a22 */
+    Func_020050be(0xc, 8, 0); /* 0x1a2c */
+    Func_0200501c(0x14); /* 0x1a32 */
+    Func_020050a4(8, 3); /* 0x1a3a */
+    Func_0200502a(0x14); /* 0x1a40 */
+    Func_0200510e(8, 0xd000, 0); /* 0x1a4c */
+    Func_0200503c(0x1e); /* 0x1a52 */
+    Func_020050c4(8, 3); /* 0x1a5a */
+    Func_0200504a(0x1e); /* 0x1a60 */
+    Func_02005122(8, 0); /* 0x1a68 */
+    Func_02005058(0x50); /* 0x1a6e */
+    Func_020051a6(0x11); /* 0x1a74 */
+    Func_02005186(0x10005, 1); /* 0x1a7c */
+    Func_02005194(0x3c); /* 0x1a82 */
+    Func_02005072(0x28); /* 0x1a88 */
+    Func_02005172(0x6666, 0xccc); /* 0x1a90 */
+    Func_0200518c(0xc00000, -1, 0x680000, 1); /* 0x1aa2 */
+    Func_02005092(0x78); /* 0x1aa8 */
+    Func_020051e0(0x15); /* 0x1aae */
+    Func_020051e8(0x134); /* 0x1ab6 */
+    Func_0200511e(0xd, 0xc80000, 0x80000); /* 0x1ac4 */
+    Func_020050e8(0xd, 0x6666, 0x3333); /* 0x1ace */
+    Func_02005112(0xd, 0xc8, 0x48); /* 0x1ad8 */
+    Func_02005212(0x120); /* 0x1ae0 */
+    Func_020050d0(0x1e); /* 0x1ae6 */
+    Func_02005178(8, 2); /* 0x1aee */
+    Func_02005158(8, 0); /* 0x1af6 */
+    Func_020040c0(); /* 0x1afa */
+    Func_02005196(0, 0xd, 0); /* 0x1b04 */
+    Func_020051a0(1, 0xd, 0); /* 0x1b0e */
+    Func_020051aa(0xb, 0xd, 0); /* 0x1b18 */
+    Func_020051b4(0xc, 0xd, 0); /* 0x1b22 */
+    Func_020051be(9, 0xd, 0); /* 0x1b2c */
+    Func_020051c8(0xa, 0xd, 0); /* 0x1b36 */
+    Func_020051c0(0, 2); /* 0x1b3e */
+    Func_020051c8(1, 2); /* 0x1b46 */
+    Func_020051d0(0xb, 2); /* 0x1b4e */
+    Func_020051d8(0xc, 2); /* 0x1b56 */
+    Func_020051e0(9, 2); /* 0x1b5e */
+    Func_020051e8(0xa, 2); /* 0x1b66 */
+    Func_02005156(0x28); /* 0x1b6c */
+    Func_0200522e(0xd, 0); /* 0x1b74 */
+    Func_02005164(0x14); /* 0x1b7a */
+    Func_0200516a(0x28); /* 0x1b80 */
+    Func_02005242(0xd, 0); /* 0x1b88 */
+    Func_02005178(0x3c); /* 0x1b8e */
+    Func_0200523a(0xd, 0x100); /* 0x1b98 */
+    Func_020052d0(0x11); /* 0x1b9e */
+    Func_020052d8(0x134); /* 0x1ba6 */
+
+    /* The four call sites in this loop update actor 13 by one fixed-point delta. */
+    for (i = 0; i < 32; i++) {
+        Func_02004d8c(0xd); /* 0x1bd2 */
+        Func_020051c2(4); /* 0x1bd8 */
+        actor = Func_020051f0(13); /* 0x1bde */
+        *(s32 *)(actor + 0x18) += delta;
+        actor = Func_020051fc(13); /* 0x1bea */
+        *(s32 *)(actor + 0x1c) += delta;
     }
-    Func_02005330(288);
-    Func_020052a8(13, 0);
-    Func_0200526a(13, 0, 0);
-    Func_02005200(40);
-    Func_02005312(12582912, -1, 10485760, 1);
-    Func_0200531e();
-    Func_02005340(65536, 0);
-    Func_0200534e(60);
-    Func_0200522c(120);
-    Func_020042a8();
-    Func_020052b0(8, 1);
-    Func_02005386(2);
-    Func_02005244(60);
-    Func_020052ec(8, 2);
-    Func_02005252(20);
-    Func_020052f2(0, 1);
-    Func_020052fa(1, 1);
-    Func_02005302(11, 1);
-    Func_0200530a(12, 1);
-    Func_02005312(9, 1);
-    Func_02005322(10, 1);
-    Func_02005288(30);
-    Func_02005360(11, 0);
-    Func_02005296(30);
-    Func_02005348(8, 0, 0);
-    Func_020052a6(30);
-    Func_02005358(12, 8, 0);
-    Func_020052b6(20);
-    Func_02005368(0, 8, 0);
-    Func_02005372(1, 8, 0);
-    Func_0200537c(11, 8, 0);
-    Func_02005386(9, 8, 0);
-    Func_02005390(10, 8, 0);
-    Func_020052ee(20);
-    Func_020053c6(12, 0);
-    Func_020052fc(20);
-    Func_020053ae(8, 12, 0);
-    Func_0200530c(20);
-    Func_02005394(8, 3);
-    Func_0200531a(20);
-    Func_0200539a(0, 3);
-    Func_020053aa(1, 3);
-    Func_02005330(20);
-    Func_020053e2(8, 0, 0);
-    Func_02005340(20);
-    Func_020053c8(8, 3);
-    Func_0200534e(30);
-    Func_02005426(8, 0);
-    Func_0200535c(20);
-    Func_02005450(0, 258, 0);
-    Func_0200545c(1, 258, 0);
-    Func_02005468(11, 258, 0);
-    Func_02005474(12, 258, 0);
-    Func_02005480(9, 258, 0);
-    Func_0200548c(10, 258, 0);
-    Func_020053aa(30);
-    Func_0200549e(8, 258, 0);
-    Func_020053bc(30);
-    Func_02005494(8, 0);
-    Func_020053ca(20);
-    Func_0200544a(0, 3);
-    Func_02005452(1, 3);
-    Func_0200545a(11, 3);
-    Func_02005462(12, 3);
-    Func_0200546a(9, 3);
-    Func_0200547a(10, 3);
-    Func_02005400(20);
-    Func_02005488(8, 3);
-    Func_0200540e(180);
-    Func_02005500(12, 261, 0);
-    Func_0200541e(60);
-    Func_020054d8(0, 1, 0);
-    Func_020054e2(9, 10, 0);
-    Func_02005438(40);
-    Func_020054ea(0, 8, 0);
-    Func_020054f4(1, 8, 0);
-    Func_020054fe(9, 8, 0);
-    Func_02005508(10, 8, 0);
-    Func_02005466(40);
-    Func_0200550e(1, 2);
-    Func_02005474(20);
-    Func_0200554c(1, 0);
-    Func_02005482(30);
-    Func_02005574(8, 257, 0);
-    Func_02005492(60);
-    Func_02005532(0, 1);
-    Func_0200553a(1, 1);
-    Func_02005542(11, 1);
-    Func_0200554a(12, 1);
-    Func_02005552(9, 1);
-    Func_02005562(10, 1);
-    Func_020054c8(30);
-    Func_020055a0(11, 0);
-    Func_020054d6(20);
-    Func_020055c8(8, 257, 0);
-    Func_020054e6(80);
-    Func_020055da(12, 258, 0);
-    Func_020054f8(60);
-    Func_020055d0(12, 0);
-    Func_02005506(30);
-    Func_020055f8(8, 261, 0);
-    Func_02005516(60);
-    Func_020055be(8, 1);
-    Func_02005612(8, 262, 0);
-    Func_02005530(20);
-    Func_020055d0(0, 1);
-    Func_020055d8(1, 1);
-    Func_020055e0(11, 1);
-    Func_020055e8(12, 1);
-    Func_020055f0(9, 1);
-    Func_02005600(10, 1);
-    Func_02005566(40);
-    Func_0200563e(8, 0);
-    Func_02005574(20);
-    Func_020055f4(0, 3);
-    Func_020055fc(1, 3);
-    Func_02005604(11, 3);
-    Func_0200560c(12, 3);
-    Func_02005614(9, 3);
-    Func_02005624(10, 3);
-    Func_020055aa(30);
-    Func_02005682(8, 0);
-    Func_020055b8(30);
-    Func_02005638(0, 3);
-    Func_02005640(1, 3);
-    Func_02005648(11, 3);
-    Func_02005650(12, 3);
-    Func_02005658(9, 3);
-    Func_02005668(10, 3);
-    Func_020055ee(120);
-    Func_02005696(1, 1);
-    Func_020055fc(20);
-    Func_020056d4(1, 0);
-    Func_0200560a(30);
-    Func_02005692(8, 3);
-    Func_02005618(20);
-    Func_020056f0(8, 0);
-    Func_02005626(20);
-    Func_02005718(0, 261, 0);
-    Func_02005722(1, 261, 0);
-    Func_0200572c(11, 261, 0);
-    Func_02005738(12, 256, 0);
-    Func_02005742(9, 261, 0);
-    Func_0200574c(10, 261, 0);
-    Func_0200566a(60);
-    Func_02005712(12, 1);
-    Func_0200574a(12, 0);
-    Func_02005680(20);
-    Func_02005732(8, 12, 0);
-    Func_02005690(20);
-    Func_02005718(8, 4);
-    Func_0200569e(20);
-    Func_02005776(8, 0);
-    Func_020056ac(20);
-    Func_020057a0(0, 256, 0);
-    Func_020057ac(1, 256, 0);
-    Func_020057b8(11, 256, 0);
-    Func_020057c4(12, 256, 0);
-    Func_020057d0(9, 256, 0);
-    Func_020057dc(10, 256, 0);
-    Func_020056fa(60);
-    Func_020057ac(8, 0, 0);
-    Func_0200570a(20);
-    Func_02005792(8, 3);
-    Func_020057ea(8, 0);
-    Func_02005720(40);
-    Func_0200578a(8, 168, 176);
-    Func_020057dc(0, 8, 0);
-    Func_020057e6(1, 8, 0);
-    Func_020057f0(11, 8, 0);
-    Func_020057fa(12, 8, 0);
-    Func_02005804(9, 8, 0);
-    Func_0200580e(10, 8, 0);
-    Func_020057d0(8, 200, 200);
-    Func_02005822(0, 8, 0);
-    Func_0200582c(1, 8, 0);
-    Func_02005836(12, 8, 0);
-    Func_02005870(11, 0, 0);
-    Func_0200587c(9, 32768, 0);
-    Func_02005888(10, 32768, 0);
-    Func_02005814(8, 200, 272);
-    Func_020057c2(40);
-    Func_020058a6(11, 12288, 0);
-    Func_020058b2(9, 20480, 0);
-    Func_020058be(10, 20480, 0);
-    Func_02005854(8);
-    Func_02005866(8, 0, 0);
-    Func_020057fc(60);
-    Func_020058f0(0, 258, 0);
-    Func_02005906(1, 258, 0);
-    Func_02005912(11, 258, 0);
-    Func_0200591e(12, 258, 0);
-    Func_0200592a(9, 258, 0);
-    Func_02005936(10, 258, 0);
-    Func_02005854(60);
-    Func_0200585a(120);
-    Func_0200590c(0, 9, 0);
-    Func_02005916(1, 10, 0);
-    Func_02005920(11, 9, 0);
-    Func_0200592a(12, 9, 0);
-    Func_02005888(120);
-    Func_0200597a(9, 261, 0);
-    Func_02005898(60);
-    Func_0200594a(9, 0, 0);
-    Func_020058a8(10);
-    Func_02005950(9, 2);
-    Func_020058b6(10);
-    Func_0200599a(9, 20480, 0);
-    Func_020058c8(20);
-    Func_020059bc(9, 258, 0);
-    Func_020058da(80);
-    Func_0200598c(9, 10, 0);
-    Func_0200598c(9, 1);
-    Func_020058f2(20);
-    Func_020059ca(9, 0);
-    Func_02005900(20);
-    Func_020059e4(10, 20480, 0);
-    Func_02005912(20);
-    Func_02005a04(10);
-    Func_02005922(60);
-    Func_020059ca(9, 2);
-    Func_02005930(20);
-    Func_020059e2(10, 0, 0);
-    Func_02005940(30);
-    Func_020059e8(10, 2);
-    Func_0200594e(30);
-    Func_02005a32(10, 20480, 0);
-    Func_02005960(20);
-    Func_02005a38(10, 0);
-    Func_0200596e(20);
-    Func_020059ee(9, 3);
-    Func_020059fe(10, 3);
-    Func_02005984(20);
-    Func_020059e8(9, 200, 272);
-    Func_020059fc(10, 200, 272);
-    Func_02005a16(9, 0, 0);
-    Func_02005a20(10, 0, 0);
-    Func_02005aa2(12, 261, 0);
-    Func_020059c0(60);
-    Func_02005a2a(12, 200, 136);
-    Func_02005a84(0, 12, 0);
-    Func_02005a86(1, 12, 0);
-    Func_02005a90(11, 12, 0);
-    Func_020059ee(30);
-    Func_02005a76(12, 4);
-    Func_020059fc(20);
-    Func_02005ad4(12, 0);
-    Func_02005a0a(30);
-    Func_02005a8a(0, 3);
-    Func_02005a9a(1, 3);
-    Func_02005a20(20);
-    Func_02005af8(11, 0);
-    Func_02005a2e(20);
-    Func_02005a98(11, 168, 168);
-    Func_02005aea(11, 12, 0);
-    Func_02005a48(20);
-    Func_02005afa(0, 11, 0);
-    Func_02005b04(1, 11, 0);
-    Func_02005a62(20);
-    Func_02005aea(11, 4);
-    Func_02005a70(20);
-    Func_02005b48(11, 0);
-    Func_02005a7e(20);
-    Func_02005b72(0, 258, 0);
-    Func_02005b7e(1, 258, 0);
-    Func_02005a9c(60);
-    Func_02005b24(12, 4);
-    Func_02005aaa(20);
-    Func_02005b5c(0, 12, 0);
-    Func_02005b66(1, 12, 0);
-    Func_02005ac4(20);
-    Func_02005b9c(12, 0);
-    Func_02005ad2(20);
-    Func_02005b7a(11, 2);
-    Func_02005ae0(20);
-    Func_02005bb8(11, 0);
-    Func_02005aee(20);
-    Func_02005be2(0, 258, 0);
-    Func_02005bee(1, 258, 0);
-    Func_02005b0c(60);
-    Func_02005c00(12, 258, 0);
-    Func_02005b1e(60);
-    Func_02005bf6(12, 0);
-    Func_02005b2c(20);
-    Func_02005bcc(0, 2);
-    Func_02005bd4(1, 2);
-    Func_02005c30(0, 256, 0);
-    Func_02005c3c(1, 256, 0);
-    Func_02005b5a(60);
-    Func_02005be2(11, 3);
-    Func_02005b68(20);
-    Func_02005c40(11, 0);
-    Func_02005b76(20);
-    Func_02005c28(0, 11, 0);
-    Func_02005b86(30);
-    Func_02005c06(11, 3);
-    Func_02005b94(30);
-    Func_02005c14(12, 3);
+
+    Func_02005330(0x120); /* 0x1bfe */
+    Func_020052a8(0xd, 0); /* 0x1c06 */
+    Func_0200526a(0xd, 0, 0); /* 0x1c10 */
+    Func_02005200(0x28); /* 0x1c16 */
+    Func_02005312(0xc00000, -1, 0xa00000, 1); /* 0x1c28 */
+    Func_0200531e(); /* 0x1c2c */
+    Func_02005340(0x10000, 0); /* 0x1c36 */
+    Func_0200534e(0x3c); /* 0x1c3c */
+    Func_0200522c(0x78); /* 0x1c42 */
+    Func_020042a8(); /* 0x1c46 */
+    Func_020052b0(8, 1); /* 0x1c4e */
+    Func_02005386(2); /* 0x1c54 */
+    Func_02005244(0x3c); /* 0x1c5a */
+    Func_020052ec(8, 2); /* 0x1c62 */
+    Func_02005252(0x14); /* 0x1c68 */
+    Func_020052f2(0, 1); /* 0x1c70 */
+    Func_020052fa(1, 1); /* 0x1c78 */
+    Func_02005302(0xb, 1); /* 0x1c80 */
+    Func_0200530a(0xc, 1); /* 0x1c88 */
+    Func_02005312(9, 1); /* 0x1c90 */
+    Func_02005322(0xa, 1); /* 0x1c98 */
+    Func_02005288(0x1e); /* 0x1c9e */
+    Func_02005360(0xb, 0); /* 0x1ca6 */
+    Func_02005296(0x1e); /* 0x1cac */
+    Func_02005348(8, 0, 0); /* 0x1cb6 */
+    Func_020052a6(0x1e); /* 0x1cbc */
+    Func_02005358(0xc, 8, 0); /* 0x1cc6 */
+    Func_020052b6(0x14); /* 0x1ccc */
+    Func_02005368(0, 8, 0); /* 0x1cd6 */
+    Func_02005372(1, 8, 0); /* 0x1ce0 */
+    Func_0200537c(0xb, 8, 0); /* 0x1cea */
+    Func_02005386(9, 8, 0); /* 0x1cf4 */
+    Func_02005390(0xa, 8, 0); /* 0x1cfe */
+    Func_020052ee(0x14); /* 0x1d04 */
+    Func_020053c6(0xc, 0); /* 0x1d0c */
+    Func_020052fc(0x14); /* 0x1d12 */
+    Func_020053ae(8, 0xc, 0); /* 0x1d1c */
+    Func_0200530c(0x14); /* 0x1d22 */
+    Func_02005394(8, 3); /* 0x1d2a */
+    Func_0200531a(0x14); /* 0x1d30 */
+    Func_0200539a(0, 3); /* 0x1d38 */
+    Func_020053aa(1, 3); /* 0x1d40 */
+    Func_02005330(0x14); /* 0x1d46 */
+    Func_020053e2(8, 0, 0); /* 0x1d50 */
+    Func_02005340(0x14); /* 0x1d56 */
+    Func_020053c8(8, 3); /* 0x1d5e */
+    Func_0200534e(0x1e); /* 0x1d64 */
+    Func_02005426(8, 0); /* 0x1d6c */
+    Func_0200535c(0x14); /* 0x1d72 */
+    Func_02005450(0, 0x102, 0); /* 0x1d7e */
+    Func_0200545c(1, 0x102, 0); /* 0x1d8a */
+    Func_02005468(0xb, 0x102, 0); /* 0x1d96 */
+    Func_02005474(0xc, 0x102, 0); /* 0x1da2 */
+    Func_02005480(9, 0x102, 0); /* 0x1dae */
+    Func_0200548c(0xa, 0x102, 0); /* 0x1dba */
+    Func_020053aa(0x1e); /* 0x1dc0 */
+    Func_0200549e(8, 0x102, 0); /* 0x1dcc */
+    Func_020053bc(0x1e); /* 0x1dd2 */
+    Func_02005494(8, 0); /* 0x1dda */
+    Func_020053ca(0x14); /* 0x1de0 */
+    Func_0200544a(0, 3); /* 0x1de8 */
+    Func_02005452(1, 3); /* 0x1df0 */
+    Func_0200545a(0xb, 3); /* 0x1df8 */
+    Func_02005462(0xc, 3); /* 0x1e00 */
+    Func_0200546a(9, 3); /* 0x1e08 */
+    Func_0200547a(0xa, 3); /* 0x1e10 */
+    Func_02005400(0x14); /* 0x1e16 */
+    Func_02005488(8, 3); /* 0x1e1e */
+    Func_0200540e(0xb4); /* 0x1e24 */
+    Func_02005500(0xc, 0x105, 0); /* 0x1e2e */
+    Func_0200541e(0x3c); /* 0x1e34 */
+    Func_020054d8(0, 1, 0); /* 0x1e3e */
+    Func_020054e2(9, 0xa, 0); /* 0x1e48 */
+    Func_02005438(0x28); /* 0x1e4e */
+    Func_020054ea(0, 8, 0); /* 0x1e58 */
+    Func_020054f4(1, 8, 0); /* 0x1e62 */
+    Func_020054fe(9, 8, 0); /* 0x1e6c */
+    Func_02005508(0xa, 8, 0); /* 0x1e76 */
+    Func_02005466(0x28); /* 0x1e7c */
+    Func_0200550e(1, 2); /* 0x1e84 */
+    Func_02005474(0x14); /* 0x1e8a */
+    Func_0200554c(1, 0); /* 0x1e92 */
+    Func_02005482(0x1e); /* 0x1e98 */
+    Func_02005574(8, 0x101, 0); /* 0x1ea2 */
+    Func_02005492(0x3c); /* 0x1ea8 */
+    Func_02005532(0, 1); /* 0x1eb0 */
+    Func_0200553a(1, 1); /* 0x1eb8 */
+    Func_02005542(0xb, 1); /* 0x1ec0 */
+    Func_0200554a(0xc, 1); /* 0x1ec8 */
+    Func_02005552(9, 1); /* 0x1ed0 */
+    Func_02005562(0xa, 1); /* 0x1ed8 */
+    Func_020054c8(0x1e); /* 0x1ede */
+    Func_020055a0(0xb, 0); /* 0x1ee6 */
+    Func_020054d6(0x14); /* 0x1eec */
+    Func_020055c8(8, 0x101, 0); /* 0x1ef6 */
+    Func_020054e6(0x50); /* 0x1efc */
+    Func_020055da(0xc, 0x102, 0); /* 0x1f08 */
+    Func_020054f8(0x3c); /* 0x1f0e */
+    Func_020055d0(0xc, 0); /* 0x1f16 */
+    Func_02005506(0x1e); /* 0x1f1c */
+    Func_020055f8(8, 0x105, 0); /* 0x1f26 */
+    Func_02005516(0x3c); /* 0x1f2c */
+    Func_020055be(8, 1); /* 0x1f34 */
+    Func_02005612(8, 0x106, 0); /* 0x1f40 */
+    Func_02005530(0x14); /* 0x1f46 */
+    Func_020055d0(0, 1); /* 0x1f4e */
+    Func_020055d8(1, 1); /* 0x1f56 */
+    Func_020055e0(0xb, 1); /* 0x1f5e */
+    Func_020055e8(0xc, 1); /* 0x1f66 */
+    Func_020055f0(9, 1); /* 0x1f6e */
+    Func_02005600(0xa, 1); /* 0x1f76 */
+    Func_02005566(0x28); /* 0x1f7c */
+    Func_0200563e(8, 0); /* 0x1f84 */
+    Func_02005574(0x14); /* 0x1f8a */
+    Func_020055f4(0, 3); /* 0x1f92 */
+    Func_020055fc(1, 3); /* 0x1f9a */
+    Func_02005604(0xb, 3); /* 0x1fa2 */
+    Func_0200560c(0xc, 3); /* 0x1faa */
+    Func_02005614(9, 3); /* 0x1fb2 */
+    Func_02005624(0xa, 3); /* 0x1fba */
+    Func_020055aa(0x1e); /* 0x1fc0 */
+    Func_02005682(8, 0); /* 0x1fc8 */
+    Func_020055b8(0x1e); /* 0x1fce */
+    Func_02005638(0, 3); /* 0x1fd6 */
+    Func_02005640(1, 3); /* 0x1fde */
+    Func_02005648(0xb, 3); /* 0x1fe6 */
+    Func_02005650(0xc, 3); /* 0x1fee */
+    Func_02005658(9, 3); /* 0x1ff6 */
+    Func_02005668(0xa, 3); /* 0x1ffe */
+    Func_020055ee(0x78); /* 0x2004 */
+    Func_02005696(1, 1); /* 0x200c */
+    Func_020055fc(0x14); /* 0x2012 */
+    Func_020056d4(1, 0); /* 0x201a */
+    Func_0200560a(0x1e); /* 0x2020 */
+    Func_02005692(8, 3); /* 0x2028 */
+    Func_02005618(0x14); /* 0x202e */
+    Func_020056f0(8, 0); /* 0x2036 */
+    Func_02005626(0x14); /* 0x203c */
+    Func_02005718(0, 0x105, 0); /* 0x2046 */
+    Func_02005722(1, 0x105, 0); /* 0x2050 */
+    Func_0200572c(0xb, 0x105, 0); /* 0x205a */
+    Func_02005738(0xc, 0x100, 0); /* 0x2066 */
+    Func_02005742(9, 0x105, 0); /* 0x2070 */
+    Func_0200574c(0xa, 0x105, 0); /* 0x207a */
+    Func_0200566a(0x3c); /* 0x2080 */
+    Func_02005712(0xc, 1); /* 0x2088 */
+    Func_0200574a(0xc, 0); /* 0x2090 */
+    Func_02005680(0x14); /* 0x2096 */
+    Func_02005732(8, 0xc, 0); /* 0x20a0 */
+    Func_02005690(0x14); /* 0x20a6 */
+    Func_02005718(8, 4); /* 0x20ae */
+    Func_0200569e(0x14); /* 0x20b4 */
+    Func_02005776(8, 0); /* 0x20bc */
+    Func_020056ac(0x14); /* 0x20c2 */
+    Func_020057a0(0, 0x100, 0); /* 0x20ce */
+    Func_020057ac(1, 0x100, 0); /* 0x20da */
+    Func_020057b8(0xb, 0x100, 0); /* 0x20e6 */
+    Func_020057c4(0xc, 0x100, 0); /* 0x20f2 */
+    Func_020057d0(9, 0x100, 0); /* 0x20fe */
+    Func_020057dc(0xa, 0x100, 0); /* 0x210a */
+    Func_020056fa(0x3c); /* 0x2110 */
+    Func_020057ac(8, 0, 0); /* 0x211a */
+    Func_0200570a(0x14); /* 0x2120 */
+    Func_02005792(8, 3); /* 0x2128 */
+    Func_020057ea(8, 0); /* 0x2130 */
+    Func_02005720(0x28); /* 0x2136 */
+    Func_0200578a(8, 0xa8, 0xb0); /* 0x2140 */
+    Func_020057dc(0, 8, 0); /* 0x214a */
+    Func_020057e6(1, 8, 0); /* 0x2154 */
+    Func_020057f0(0xb, 8, 0); /* 0x215e */
+    Func_020057fa(0xc, 8, 0); /* 0x2168 */
+    Func_02005804(9, 8, 0); /* 0x2172 */
+    Func_0200580e(0xa, 8, 0); /* 0x217c */
+    Func_020057d0(8, 0xc8, 0xc8); /* 0x2186 */
+    Func_02005822(0, 8, 0); /* 0x2190 */
+    Func_0200582c(1, 8, 0); /* 0x219a */
+    Func_02005836(0xc, 8, 0); /* 0x21a4 */
+    Func_02005870(0xb, 0, 0); /* 0x21ae */
+    Func_0200587c(9, 0x8000, 0); /* 0x21ba */
+    Func_02005888(0xa, 0x8000, 0); /* 0x21c6 */
+    Func_02005814(8, 0xc8, 0x110); /* 0x21d2 */
+    Func_020057c2(0x28); /* 0x21d8 */
+    Func_020058a6(0xb, 0x3000, 0); /* 0x21e4 */
+    Func_020058b2(9, 0x5000, 0); /* 0x21f0 */
+    Func_020058be(0xa, 0x5000, 0); /* 0x21fc */
+    Func_02005854(8); /* 0x2202 */
+    Func_02005866(8, 0, 0); /* 0x220c */
+    Func_020057fc(0x3c); /* 0x2212 */
+    Func_020058f0(0, 0x102, 0); /* 0x221e */
+    Func_02005906(1, 0x102, 0); /* 0x2234 */
+    Func_02005912(0xb, 0x102, 0); /* 0x2240 */
+    Func_0200591e(0xc, 0x102, 0); /* 0x224c */
+    Func_0200592a(9, 0x102, 0); /* 0x2258 */
+    Func_02005936(0xa, 0x102, 0); /* 0x2264 */
+    Func_02005854(0x3c); /* 0x226a */
+    Func_0200585a(0x78); /* 0x2270 */
+    Func_0200590c(0, 9, 0); /* 0x227a */
+    Func_02005916(1, 0xa, 0); /* 0x2284 */
+    Func_02005920(0xb, 9, 0); /* 0x228e */
+    Func_0200592a(0xc, 9, 0); /* 0x2298 */
+    Func_02005888(0x78); /* 0x229e */
+    Func_0200597a(9, 0x105, 0); /* 0x22a8 */
+    Func_02005898(0x3c); /* 0x22ae */
+    Func_0200594a(9, 0, 0); /* 0x22b8 */
+    Func_020058a8(0xa); /* 0x22be */
+    Func_02005950(9, 2); /* 0x22c6 */
+    Func_020058b6(0xa); /* 0x22cc */
+    Func_0200599a(9, 0x5000, 0); /* 0x22d8 */
+    Func_020058c8(0x14); /* 0x22de */
+    Func_020059bc(9, 0x102, 0); /* 0x22ea */
+    Func_020058da(0x50); /* 0x22f0 */
+    Func_0200598c(9, 0xa, 0); /* 0x22fa */
+    Func_0200598c(9, 1); /* 0x2302 */
+    Func_020058f2(0x14); /* 0x2308 */
+    Func_020059ca(9, 0); /* 0x2310 */
+    Func_02005900(0x14); /* 0x2316 */
+    Func_020059e4(0xa, 0x5000, 0); /* 0x2322 */
+    Func_02005912(0x14); /* 0x2328 */
+    Func_02005a04(0xa, 0x101, 0); /* 0x2332 */
+    Func_02005922(0x3c); /* 0x2338 */
+    Func_020059ca(9, 2); /* 0x2340 */
+    Func_02005930(0x14); /* 0x2346 */
+    Func_020059e2(0xa, 0, 0); /* 0x2350 */
+    Func_02005940(0x1e); /* 0x2356 */
+    Func_020059e8(0xa, 2); /* 0x235e */
+    Func_0200594e(0x1e); /* 0x2364 */
+    Func_02005a32(0xa, 0x5000, 0); /* 0x2370 */
+    Func_02005960(0x14); /* 0x2376 */
+    Func_02005a38(0xa, 0); /* 0x237e */
+    Func_0200596e(0x14); /* 0x2384 */
+    Func_020059ee(9, 3); /* 0x238c */
+    Func_020059fe(0xa, 3); /* 0x2394 */
+    Func_02005984(0x14); /* 0x239a */
+    Func_020059e8(9, 0xc8, 0x110); /* 0x23a6 */
+    Func_020059fc(0xa, 0xc8, 0x110); /* 0x23b2 */
+    Func_02005a16(9, 0, 0); /* 0x23bc */
+    Func_02005a20(0xa, 0, 0); /* 0x23c6 */
+    Func_02005aa2(0xc, 0x105, 0); /* 0x23d0 */
+    Func_020059c0(0x3c); /* 0x23d6 */
+    Func_02005a2a(0xc, 0xc8, 0x88); /* 0x23e0 */
+    Func_02005a84(0, 0xc, 0); /* 0x23ea */
+    Func_02005a86(1, 0xc, 0); /* 0x23f4 */
+    Func_02005a90(0xb, 0xc, 0); /* 0x23fe */
+    Func_020059ee(0x1e); /* 0x2404 */
+    Func_02005a76(0xc, 4); /* 0x240c */
+    Func_020059fc(0x14); /* 0x2412 */
+    Func_02005ad4(0xc, 0); /* 0x241a */
+    Func_02005a0a(0x1e); /* 0x2420 */
+    Func_02005a8a(0, 3); /* 0x2428 */
+    Func_02005a9a(1, 3); /* 0x2430 */
+    Func_02005a20(0x14); /* 0x2436 */
+    Func_02005af8(0xb, 0); /* 0x243e */
+    Func_02005a2e(0x14); /* 0x2444 */
+    Func_02005a98(0xb, 0xa8, 0xa8); /* 0x244e */
+    Func_02005aea(0xb, 0xc, 0); /* 0x2458 */
+    Func_02005a48(0x14); /* 0x245e */
+    Func_02005afa(0, 0xb, 0); /* 0x2468 */
+    Func_02005b04(1, 0xb, 0); /* 0x2472 */
+    Func_02005a62(0x14); /* 0x2478 */
+    Func_02005aea(0xb, 4); /* 0x2480 */
+    Func_02005a70(0x14); /* 0x2486 */
+    Func_02005b48(0xb, 0); /* 0x248e */
+    Func_02005a7e(0x14); /* 0x2494 */
+    Func_02005b72(0, 0x102, 0); /* 0x24a0 */
+    Func_02005b7e(1, 0x102, 0); /* 0x24ac */
+    Func_02005a9c(0x3c); /* 0x24b2 */
+    Func_02005b24(0xc, 4); /* 0x24ba */
+    Func_02005aaa(0x14); /* 0x24c0 */
+    Func_02005b5c(0, 0xc, 0); /* 0x24ca */
+    Func_02005b66(1, 0xc, 0); /* 0x24d4 */
+    Func_02005ac4(0x14); /* 0x24da */
+    Func_02005b9c(0xc, 0); /* 0x24e2 */
+    Func_02005ad2(0x14); /* 0x24e8 */
+    Func_02005b7a(0xb, 2); /* 0x24f0 */
+    Func_02005ae0(0x14); /* 0x24f6 */
+    Func_02005bb8(0xb, 0); /* 0x24fe */
+    Func_02005aee(0x14); /* 0x2504 */
+    Func_02005be2(0, 0x102, 0); /* 0x2510 */
+    Func_02005bee(1, 0x102, 0); /* 0x251c */
+    Func_02005b0c(0x3c); /* 0x2522 */
+    Func_02005c00(0xc, 0x102, 0); /* 0x252e */
+    Func_02005b1e(0x3c); /* 0x2534 */
+    Func_02005bf6(0xc, 0); /* 0x253c */
+    Func_02005b2c(0x14); /* 0x2542 */
+    Func_02005bcc(0, 2); /* 0x254a */
+    Func_02005bd4(1, 2); /* 0x2552 */
+    Func_02005c30(0, 0x100, 0); /* 0x255e */
+    Func_02005c3c(1, 0x100, 0); /* 0x256a */
+    Func_02005b5a(0x3c); /* 0x2570 */
+    Func_02005be2(0xb, 3); /* 0x2578 */
+    Func_02005b68(0x14); /* 0x257e */
+    Func_02005c40(0xb, 0); /* 0x2586 */
+    Func_02005b76(0x14); /* 0x258c */
+    Func_02005c28(0, 0xb, 0); /* 0x2596 */
+    Func_02005b86(0x1e); /* 0x259c */
+    Func_02005c06(0xb, 3); /* 0x25a4 */
+    Func_02005b94(0x1e); /* 0x25aa */
+    Func_02005c14(0xc, 3); /* 0x25b2 */
 }

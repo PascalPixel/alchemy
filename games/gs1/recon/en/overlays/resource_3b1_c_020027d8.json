@@ -1,0 +1,13 @@
+{
+  "span_bytes": 2072,
+  "score": {"measured":"2026-08-31","candidate_bytes":2028,"reference_bytes":2072,"wrong_instructions":237,"differing_halfwords":998,"class":"generated-call-script-retention"},
+  "shape": {"calls":203,"loops":0,"memory_operations":30},
+  "verified_against_reference": [
+    "all 203 resolver-confirmed calls and their arguments are represented in ROM order across the complete callable owner",
+    "direct ROM disassembly restored all three mutually exclusive scene-counter updates at workspace offset 472",
+    "direct ROM disassembly restored six nullable actor-coordinate transfers: three word-coordinate copies and three signed-halfword copies",
+    "the boundary includes the sole interworking return, alignment, and fifteen-word trailing pool before 0x02002ff0",
+    "restoring the omitted structure reduced the extent gap from 188 bytes to 44; remaining differences are approved GCC carrier allocation and literal scheduling"
+  ],
+  "retention": "keep_structured_asm"
+}

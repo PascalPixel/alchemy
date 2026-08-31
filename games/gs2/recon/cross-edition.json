@@ -52,10 +52,10 @@
       "candidate_validation": {
         "measured": "2026-08-31",
         "source_shape": "shared state/command lifetime with GS2 inline-register-call route",
-        "candidate_bytes": 8180,
+        "candidate_bytes": 8168,
         "reference_bytes": 8300,
-        "differing_halfwords": 4023,
-        "wrong_instructions": 2439,
+        "differing_halfwords": 4018,
+        "wrong_instructions": 2483,
         "editions_scored": ["ja", "en", "de", "es", "fr", "it"],
         "edition_scores_identical": true
       }

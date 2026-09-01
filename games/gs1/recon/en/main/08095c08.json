@@ -6,7 +6,7 @@
  "owner_bytes": 456,
  "executable_owner_bytes": 456,
  "candidate_bytes": 456,
- "differing_halfwords": 11,
+ "differing_halfwords": 7,
  "wrong_instructions": 0,
  "classification": "battle_effect_compiler_scheduling_mismatch",
  "resolved_asm_classification": {
@@ -59,6 +59,16 @@
    "best_differing_halfwords": 7,
    "best_wrong_instructions": 0,
    "best_shape": "a do-while-zero spelling around the origin-X assignment"
+  },
+  "current_approved_compiler_classic_heat_walks": {
+   "runs": 2,
+   "seeds": [101, 907],
+   "requested_candidates_per_run": 20000,
+   "attempted_candidates": 40000,
+   "compile_failures": 587,
+   "exact_candidates": 0,
+   "best_differing_halfwords": 7,
+   "verdict": "generic AST mutation axis closed after two independent runs without improvement"
   }
  },
  "compiler_axes": {
@@ -96,9 +106,19 @@
    "resynchronization": "both streams match again before storing 4 to effect->flags"
   }
  ],
+ "rejected_experiments": [
+  {
+   "experiment": "name an alias of source before incrementing the state byte",
+   "result": "the alias is eliminated and the seven-halfword schedule is unchanged"
+  },
+  {
+   "experiment": "preload source->linked_object through a named carrier before incrementing the state byte",
+   "result": "moves both the high-register copy and dependent load ahead of the increment, disturbs the low-register roles, and regresses to 11 differing halfwords / 12 wrong instructions"
+  }
+ ],
  "notes": [
-  "The readable reconstruction emits the complete 456-byte owner extent, all calls, branches, registers, memory operations, constants, and literal words. Only the two localized scheduling hunks differ.",
-  "The classic exact-only winner reduces the raw residual to seven halfwords without changing either hunk's semantics, but no searched ordinary-C source emits the retained order exactly.",
+  "The retained ordinary-C reconstruction emits the complete 456-byte owner extent, all calls, branches, registers, memory operations, constants, and literal words. A do-while-zero lifetime around the state-two origin-X capture reproduces the best known seven-halfword schedule; only the two localized scheduling hunks differ.",
+  "The seven-halfword shape was independently rediscovered from the recorded classic-search verdict and is now the canonical candidate. No searched ordinary-C source emits the retained order exactly.",
   "Relocation-aware comparison of the independently assembled retained owner proves all 396 unmasked core bytes identical across the six GS1 editions.",
   "The caller at 0x08095dd0 installs this callback on 24 effect slots and later advances those slots to states two and five; the name and domain do not infer an effect identity beyond that local behavior.",
   "Recovered only from retained owner assembly, approved local GS1 ROMs, local callers and effect-slot types, and the approved compiler. No GS2 evidence or external game source was used."

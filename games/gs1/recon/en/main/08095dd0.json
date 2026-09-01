@@ -6,7 +6,7 @@
  "owner_bytes": 460,
  "executable_owner_bytes": 460,
  "candidate_bytes": 460,
- "differing_halfwords": 10,
+ "differing_halfwords": 8,
  "wrong_instructions": 0,
  "classification": "battle_effect_compiler_scheduling_mismatch",
  "resolved_asm_classification": {
@@ -60,6 +60,16 @@
    "best_differing_halfwords": 9,
    "best_wrong_instructions": 0,
    "best_shape": "a do-while-zero spelling around EffectSlot_SetObjectMode"
+  },
+  "current_approved_compiler_classic_heat_walks": {
+   "runs": 2,
+   "seeds": [211, 811],
+   "requested_candidates_per_run": 20000,
+   "attempted_candidates": 40000,
+   "compile_failures": 908,
+   "exact_candidates": 0,
+   "best_differing_halfwords": 8,
+   "verdict": "generic AST mutation axis closed; lower structural-row variants regressed to nine differing halfwords and were rejected"
   }
  },
  "compiler_axes": {
@@ -86,13 +96,6 @@
    "resynchronization": "both streams have identical r0, r1, and r2 at the following call"
   },
   {
-   "scope": "setting each slot object's action",
-   "candidate": "materializes action 10 before loading the slot object pointer",
-   "reference": "loads the slot object pointer before materializing the independent action constant",
-   "equivalence": "the load writes r0 and the constant materialization writes r1, with no intervening memory write",
-   "resynchronization": "both streams match at the following call"
-  },
-  {
    "scope": "initializing the active-slot state-two loop",
    "candidate": "adds 152 to the slot base and initializes the loop counter before materializing state two",
    "reference": "materializes state two before the independent address add and counter initialization",
@@ -108,13 +111,21 @@
   }
  ],
  "notes": [
-  "The readable reconstruction emits the complete 460-byte owner extent with identical calls, branches, registers, memory operations, constants, literal words, and control flow outside four localized instruction-ordering hunks.",
-  "The classic exact-only winner reduces the raw residual to nine halfwords without changing semantics, but the readable 11-halfword source is retained as the evidence artifact.",
+  "The retained ordinary-C reconstruction emits the complete 460-byte owner extent with identical calls, branches, registers, memory operations, constants, literal words, and control flow outside three localized instruction-ordering hunks.",
+  "A do-while-zero lifetime around the slot-object load and action call reproduces the reference ordering at that site and improves the family candidate from ten to eight differing halfwords, surpassing the prior classic-search winner without changing semantics.",
   "Relocation-aware comparison of the independently assembled retained owner proves all 284 unmasked core bytes identical across the six GS1 editions.",
   "The exact caller at 0x080955b0 selects this runner for page two, and this owner installs the locally named callback at 0x08095c08 on each of 24 slots before later advancing those slots to states two and five.",
   "Recovered only from retained owner assembly, approved local GS1 ROMs, local callers and exact battle-effect sources, and the approved compiler. No GS2 evidence or external game source was used."
  ],
  "rejected_experiments": [
+  {
+   "experiment": "extract the two active-slot loops into a static inline helper taking the state value",
+   "result": "changes the surrounding allocation and regresses to 48 differing halfwords / 52 wrong instructions"
+  },
+  {
+   "experiment": "add the independently corroborated three-s32 prototype for ObjectMotion_ArmCallback",
+   "result": "no change from the eight-halfword candidate"
+  },
   {
    "experiment": "explicit s32 mark = N local (2, 5) replacing the inline constant in each block",
    "result": "regresses to 13 differing halfwords / 4 wrong instructions -- adds an allocation, not a scheduling fix"
@@ -125,7 +136,7 @@
   }
  ],
  "score": {
-  "differing_halfwords": 10,
-  "note": " Reordering remaining=23 before the slot_state setup inside each block (matching the reference's constant-before-pointer scheduling) fully resolves the first block's 3-halfword tie; the structurally identical second block still ties by 3 halfwords despite the same source shape -- the two blocks' surrounding context (WaitFrames placement, live ranges) differs enough that GCC schedules them differently even from identical source. 11 -> 10 differing halfwords, still 0 wrong instructions."
+  "differing_halfwords": 8,
+  "note": "Reordering remaining=23 before the slot_state setup and scoping the slot-object load/action call independently reduce the candidate from eleven to eight differing halfwords. Three independent scheduling ties remain and wrong_instructions stays zero."
  }
 }

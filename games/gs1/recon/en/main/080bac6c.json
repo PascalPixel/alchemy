@@ -4,9 +4,9 @@
   "address": "0x080bac6c",
   "status": "measured-draft",
   "owner_bytes": 124,
-  "candidate_bytes": 122,
+  "candidate_bytes": 112,
   "differing_halfwords": 57,
-  "wrong_instructions": 49,
+  "wrong_instructions": 47,
   "classification": "battle-actor-list-removal",
   "cross_edition": {
     "core_bytes": 104,
@@ -62,6 +62,7 @@
   "adoption": "none; retained assembly remains authoritative and this draft claims zero DONE bytes",
   "notes": [
     "Recovered only from retained owner assembly, approved local ROMs, in-repository callers/callees, and the approved compiler.",
-    "No GS2 source or data was inspected or changed for this reconstruction."
+    "No GS2 source or data was inspected or changed for this reconstruction.",
+    "2026-09-01 absolute-symbol tempering: the source now names the linker-resolved 0xFE value BattleActorList_VacantMarker through an ordinary-C compatibility macro over Data_000000fe. Fresh scoring is output-neutral and corrects the stale dossier measurement to 112/124 bytes, 57 differing halfwords, and 47 wrong instructions."
   ]
 }

@@ -76,6 +76,10 @@
   "tied_at_readable_baseline": [
    "routed",
    "-fno-schedule-insns",
+   "-fno-sched-interblock",
+   "-fno-sched-spec",
+   "-fno-sched-spec-load",
+   "-fno-sched-spec-load-dangerous",
    "-fno-strength-reduce",
    "-fno-expensive-optimizations",
    "-fregmove",
@@ -111,6 +115,26 @@
   "Recovered only from retained owner assembly, approved local GS1 ROMs, local callers and exact battle-effect sources, and the approved compiler. No GS2 evidence or external game source was used."
  ],
  "rejected_experiments": [
+  {
+   "experiment": "materialize the callback zero argument in a fresh narrow block local",
+   "result": "unlike reusing the long-lived value carrier, the fresh local is byte-neutral: GCC folds it to the same late r2 materialization and the candidate remains at five differing halfwords"
+  },
+  {
+   "experiment": "give the state-five loop a fresh narrow active-slot pointer instead of reusing the function-scope slot_state carrier",
+   "result": "the pointer receives the same r2 allocation and GCC still schedules the independent constant-five materialization first; the complete candidate remains byte-for-byte unchanged"
+  },
+  {
+   "experiment": "regenerate the owner with aggregate-plus-exact-family m2c context from the seven exact siblings in unit-08095a44",
+   "result": "m2c independently reconstructs the same direct callback call and separate state-loop carriers; after applying the known shared types, these are the same source dimensions already tested and expose no missing structural or type repair"
+  },
+  {
+   "experiment": "sequence the state-five slot-base assignment before producing constant five in one comma expression",
+   "result": "GCC correctly proves the assignments independent and emits the same five-halfword schedule; the expression adds no real data dependency"
+  },
+  {
+   "experiment": "sweep GCC 2.96's shipped post-reload scheduler sub-options across both retained family members",
+   "result": "enabling and disabling interblock scheduling, speculative scheduling, speculative loads, and dangerous speculative loads is byte-neutral for both owners (7 and 5 differing halfwords); the family mismatch is not controlled by those route flags"
+  },
   {
    "experiment": "extract the two active-slot loops into a static inline helper taking the state value",
    "result": "changes the surrounding allocation and regresses to 48 differing halfwords / 52 wrong instructions"

@@ -2,8 +2,31 @@
  "schema_version": 1,
  "namespace": "main",
  "address": "0x08090658",
- "status": "measured-draft",
- "owner_bytes": 344,
+  "status": "proven-retained",
+  "owner_bytes": 344,
+  "executable_owner_bytes": 344,
+  "candidate_bytes": 344,
+  "differing_halfwords": 48,
+  "wrong_instructions": 36,
+  "classification": "display_transition_queue_compiler_allocation_module",
+  "resolved_asm_classification": {
+    "kind": "display_transition_queue_compiler_allocation_module",
+    "retention": "keep_structured_asm",
+    "confidence": "proven"
+  },
+  "cross_edition": {
+    "editions": ["ja", "en", "de", "es", "fr", "it"],
+    "relocation_normalized_core_bytes": 272,
+    "core_identical": true,
+    "starts": {
+      "ja": "0x08087658",
+      "en": "0x08090658",
+      "de": "0x08093cc4",
+      "es": "0x080956c4",
+      "fr": "0x080956c4",
+      "it": "0x080906c4"
+    }
+  },
  "score": {
   "measured": "2026-09-01",
   "candidate_bytes": 344,
@@ -58,7 +81,8 @@
    "where": "Candidate and reference are both 344 bytes with identical normalized branch topology and identical literal values. The remaining 36 wrong instructions are directly alignable; no phase-shift or disassembled-pool artifact remains. The bounded annotation-free permuter stopped honestly because its decoder found no unique source repair."
   }
  ],
- "notes": [
+  "notes": [
+    "2026-09-01 retained-assembly proof: the candidate reproduces the complete 344-byte owner with equal branch topology and all sixteen literal values exact. Every transition tick, callback removal, DMA0 disable, dither-table access, nibble update, queue insertion, interrupt save/restore, constant, field access, and observable memory operation is accounted for. The remaining 36 wrong instructions are equivalent pointer, counter, table, and saved-IME register roles plus independent scheduling. The allocator decoder finds no unique safe source repair. Canonical, no-schedule-insns, GCSE, both CSE toggles, rerun-CSE, strength-reduction, and O3 routes preserve the 48-halfword floor; regmove, sched2, and no-expensive-optimizations regress. Relocation-aware verification proves all 272 normalized core bytes identical across all six editions. Structured assembly is therefore authoritative under display_transition_queue_compiler_allocation_module.",
   "Recovered only from the retained owner assembly (games/gs1/asm/08090658.s), its own pc-relative literal-pool annotations (computed by hand: the pool begins at file offset 0x118 and its 16 words were matched to every `ldr rX,[pc,#N] @ (addr)` site by address), the approved local ROM, the assigned template games/gs1/src/display/transition/update.c, the already-drafted sibling games/gs1/recon/en/main/08090488.c and its dossier (confirming the Func_08004278=Scheduler_RemoveCallback naming and the shared transition-state field layout), in-repository headers (types.h), and the approved compiler via tools/compiler candidate-show.",
   "The family clustering (86% ngram similarity) captured only the transition_duration/step opening; the palette-dither-and-DMA-queue tail (roughly 60% of this owner's bytes) has no counterpart in the template or in 08090488 and was reconstructed independently from the disassembly and literal pool alone -- this is a much larger reverse-engineering task than the 'quick win' framing anticipated for this family.",
   "0x0809e8ee (the 64-entry dither table) and 0x02002090 (the DMA-queue ring buffer) are read-only in this owner; their contents/producers were not investigated beyond what this owner's own access pattern reveals.",

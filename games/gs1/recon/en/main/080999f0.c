@@ -6,7 +6,6 @@ struct EffectObject {
     u8 reserved_00[8];
     s32 x, y, z;
     s32 altitude;
-    u8 reserved_18[4];
     s32 scale_x, scale_y;
     u8 reserved_20[0x30];
     u8 *child;

@@ -2022,17 +2022,18 @@
    "evidence": [
     "complete_ordinary_c_semantics_and_exact_owner_extents",
     "six_edition_relocation_normalized_core_is_identical",
-    "all_residual_rows_are_equivalent_register_role_choices_independent_instruction_orderings_or_one_equivalent_loop_comparison",
+    "all_residual_rows_are_equivalent_register_role_choices_independent_instruction_orderings_or_equivalent_loop_comparisons",
     "all_other_instructions_literals_control_flow_and_memory_operations_match",
     "owner_specific_bounded_ordinary_c_searches_and_family_shape_transfers_produced_no_exact_candidate",
     "approved_compiler_family_allocation_scheduling_and_optimization_sweeps_preserve_the_residual_or_regress",
     "inline_assembly_fixed_registers_and_compiler_barriers_are_disallowed",
     "byte_exact_reconstruction"
    ],
-   "expected_files": 15,
-   "expected_bytes": 12288,
+   "expected_files": 16,
+   "expected_bytes": 13096,
    "files": [
     "080994d0",
+    "080999f0",
     "0809a8c4",
     "0809abb4",
     "0809b698",

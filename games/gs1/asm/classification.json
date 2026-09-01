@@ -2029,9 +2029,10 @@
     "inline_assembly_fixed_registers_and_compiler_barriers_are_disallowed",
     "byte_exact_reconstruction"
    ],
-   "expected_files": 12,
-   "expected_bytes": 11088,
+   "expected_files": 13,
+   "expected_bytes": 11512,
    "files": [
+    "080994d0",
     "0809a8c4",
     "08097194",
     "080a9f10",

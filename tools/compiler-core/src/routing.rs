@@ -124,6 +124,25 @@ mod target_tests {
         let flags = cflags_for_source("080f9ef8.c");
         assert!(!flags.iter().any(|flag| flag == "-fcall-used-r4"));
     }
+    #[test]
+    fn battle_effect_gcse_route_is_owner_scoped() {
+        for owner in ["080994d0.c", "0809abb4.c"] {
+            assert!(
+                cflags_for_source(owner)
+                    .iter()
+                    .any(|flag| flag == "-fno-gcse"),
+                "missing evidenced GCSE route for {owner}"
+            );
+        }
+        for owner in ["08098cd8.c", "080999f0.c", "0809ae64.c", "0809b698.c"] {
+            assert!(
+                !cflags_for_source(owner)
+                    .iter()
+                    .any(|flag| flag == "-fno-gcse"),
+                "battle-effect GCSE route leaked to {owner}"
+            );
+        }
+    }
 }
 /// `basename(source, extname(source))` for POSIX paths.
 fn source_stem_ref(source: &str) -> &str {

@@ -45,13 +45,19 @@ void Func_0801868c(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 fla
     if (right > limit) {
         over = right - limit;
         pos = x - over;
-        x = (pos < 0) ? 0 : pos;
+        if (pos >= 0)
+            x = pos;
+        else
+            x = 0;
     }
     bottom = y + *ph;
     if (bottom > 20) {
         over = bottom - 20;
         pos = y - over;
-        y = (pos < 0) ? 0 : pos;
+        if (pos >= 0)
+            y = pos;
+        else
+            y = 0;
     }
     if (x < 0)
         x = 0;

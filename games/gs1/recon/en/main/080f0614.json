@@ -2,8 +2,27 @@
  "schema_version": 1,
  "namespace": "gs1-en-main",
  "address": "0x080f0614",
- "status": "measured-draft",
+ "status": "proven-retained",
  "owner_bytes": 100,
+ "classification": "compiler_local_materialization_mismatch",
+ "resolved_asm_classification": {
+  "kind": "compiler_local_materialization_mismatch",
+  "retention": "keep_structured_asm",
+  "confidence": "proven"
+ },
+ "cross_edition": {
+  "editions": ["ja", "en", "de", "es", "fr", "it"],
+  "relocation_normalized_core_bytes": 80,
+  "core_identical": true,
+  "starts": {
+   "ja": "0x080e7614",
+   "en": "0x080f0614",
+   "de": "0x080f1c14",
+   "es": "0x080f3614",
+   "fr": "0x080f3614",
+   "it": "0x080f0614"
+  }
+ },
  "score": {
   "measured": "2026-08-30",
   "candidate_bytes": 100,
@@ -14,6 +33,7 @@
     "note": "The exact-extent reconstruction retains equal branch topology. Spelling both signed group calculations as ordinary division by eight reproduces GCC 2.96's rounding sequence directly and improves the residual from 26/36 to 21 differing halfwords / 22 wrong instructions. The remaining mismatch is the reference's separately retained raw current halfword plus downstream allocation; it remains Draft C and claims zero DONE bytes."
  },
  "notes": [
+  "2026-09-01 retained-assembly proof: the ordinary-C reconstruction has the exact 100-byte owner extent, equal branch topology, exact constants and pool, and complete behavior. Cross-edition verification uniquely locates it in all six releases and proves all 80 relocation/literal-normalized core bytes identical. The residual is one local materialization choice: the ROM preserves adjacent signed and raw reads of the same current-index halfword, while GCC common-loads ordinary typed views; volatile views retain separate traffic but add sign-extension code or reverse the load order. The recorded union, aggregate, pointer, signed/raw, volatile, statement-order and division-shape probes exhaust the evidenced source dimensions. Canonical regmove, scheduling, CSE-follow, strength-reduction, expensive-optimization, force-memory/address and O3 routes remain at 100/21; scheduler2, GCSE, CSE-skip and rerun-CSE regress or change extent. Structured assembly therefore remains authoritative under compiler_local_materialization_mismatch; the semantic C remains the evidence artifact and does not claim exact C.",
   "2026-08-31 bounded raw-carrier probe: tested two new structural models for the reference's adjacent signed and unsigned loads from 0x02004c00. First, an explicit u16 current_raw load retained for the later store alongside the s16 current used for division compiled byte-identically to the 100-byte baseline: GCC 2.96 commoned the two typed reads and still stored the signed-load carrier, leaving 21 differing halfwords / 22 wrong instructions. Second, making only the raw u16 read volatile did preserve a distinct ldrh, but scheduled it before the ldrsh, inserted an lsl/asr sign-extension pair, grew the owner to 104 bytes, and regressed to 47 differing halfwords / 54 wrong instructions. Both were reverted. Transferable negative fact: ordinary signed/unsigned alias loads at one address are commoned on this route, while volatile separation produces the wrong load order and extra sign extension; do not retry either raw-carrier axis without evidence for a different aggregate or access boundary.",
   "2026-08-31 exact-closure verdict: the retained reference requires adjacent ldrsh and ldrh accesses to 0x02004c00, preserving the raw halfword in r4 across both signed divide-by-eight sequences and storing that raw carrier only on group change. The legitimate baseline reproduces all 100 bytes of extent and equal branch topology but GCC common-loads the signed/raw expressions, removes the ldrh, and consequently never saves r6. Distinct signed/unsigned one-field aggregate views are byte-identical to baseline. Making both views volatile grows to 108 bytes and adds two lsl/asr sign-extension pairs; declaring a volatile signed absolute cell plus a nonvolatile raw view grows to 104 bytes and orders ldrh before ldrsh. Finite shipped toggles -fno-cse-follow-jumps, -fno-gcse, -fno-expensive-optimizations, -fno-force-mem, -fno-force-addr, -fno-schedule-insns, and -fno-regmove do not improve the ordinary duplicate-load model; -fno-rerun-cse-after-loop and peephole/strength-reduction probes regress the volatile model. Exactness therefore needs authentic source evidence for an access boundary that preserves two differently typed reads in this exact order. Compiler barriers, artificial calls, and forced volatile traffic would manufacture that boundary and are rejected. Retain the DH21 ordinary-C draft.",
   "Recovered from the retained owner, the aggregate-aware m2c seed, and the approved compiler; the unrelated template winner was discarded.",

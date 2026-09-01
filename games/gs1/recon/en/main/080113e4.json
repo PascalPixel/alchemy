@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080113e4",
+  "status": "measured-draft",
+  "owner_bytes": 188,
+  "candidate_bytes": 184,
+  "differing_halfwords": 75,
+  "wrong_instructions": 84,
+  "classification": "map-tile-block-update",
+  "domain": "Reads the current map position, converts it to tile coordinates, and refreshes a two-by-two block on each of two tile layers.",
+  "expressed": [
+    "the nullable current-position source and its x/z field widths",
+    "the two fixed-point world-to-tile origin conversions",
+    "the two layers and nested two-row by two-column traversal",
+    "the wrapped sixteen-by-ten tile lookup and five-argument update call"
+  ],
+  "notes": [
+    "Recovered from the complete retained owner, the local m2c output, aggregate evidence for Data_03001e70, and the approved compiler. No external source or GS2 evidence was used.",
+    "The initial typed C compiles to 184/188 bytes with equal branch topology. This converts a previously unscored no-candidate owner into a bounded structural draft; it claims zero DONE bytes.",
+    "Unsigned do-while loop counters reproduce all three reference BLS backedges. Signed for-loops emitted BLE and were rejected.",
+    "The reference spills both converted origins at sp+8/sp+4 and retains the layer byte offset in fp. The candidate instead retains one origin and spills a loop carrier. A local aggregate, a local array, a volatile local array, an explicit layer-offset carrier, and m2c declaration ordering all preserve the semantic shape but regress size or residual; they were reverted.",
+    "No fixed-register variable, compiler barrier, inline assembly, volatile forcing, or fabricated operation is retained. The remaining missing/extra-code residual is not yet narrow enough for permanent-assembly classification."
+  ]
+}

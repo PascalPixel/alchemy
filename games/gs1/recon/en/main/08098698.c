@@ -58,17 +58,23 @@ void Func_080030f8(s32);
 
 void BattleEffect_SpawnBurstParticleField(void)
 {
-    struct BurstParticleState *state = Data_03001f30;
-    struct BurstParticleObject *target = state->target;
+    struct BurstParticleState *state;
+    struct BurstParticleObject *target;
     s32 position[3];
-    s32 remaining = 23;
+    s32 remaining;
 
+    state = Data_03001f30;
+    target = state->target;
     Func_08097384();
+    remaining = 23;
     do {
         struct BurstParticleObject *object;
         struct BurstParticleVisual *visual;
         struct BurstParticleVisual *child;
         s32 random_distance;
+        u32 shape;
+        u32 destination_attributes;
+        u32 merged_attributes;
 
         position[0] = target->x;
         position[2] = target->z;
@@ -91,10 +97,17 @@ void BattleEffect_SpawnBurstParticleField(void)
             (visual->flags_a & 0xc0);
         child->flags_b = (child->flags_b & 0x3f) |
             (visual->flags_b & 0xc0);
-        child->attributes = (child->attributes & 0xfc00) |
-            (visual->attributes & 0x03ff);
-        child->reserved_0a[0] = (child->reserved_0a[0] & 0x0f) |
-            (visual->reserved_0a[0] & 0xf0);
+        shape = visual->attributes;
+        destination_attributes = child->attributes;
+        shape <<= 22;
+        shape >>= 22;
+        merged_attributes = 0xfffffc00;
+        merged_attributes &= destination_attributes;
+        merged_attributes |= shape;
+        child->attributes = merged_attributes;
+        ((u8 *)&child->attributes)[1] =
+            (((u8 *)&child->attributes)[1] & 0x0f) |
+            (((u8 *)&visual->attributes)[1] & 0xf0);
 
         if (object != 0) {
             object->scale_x = 0xb333;

@@ -23,6 +23,9 @@ void Func_0809b698(void)
     u8 *entry;
     u32 saved;
     u16 value;
+    s32 index;
+    s32 active;
+    s32 entry_mode;
     s32 count;
 
     scene = Data_03001f30;
@@ -31,21 +34,28 @@ void Func_0809b698(void)
     saved = *(u16 *)(object + 6);
     entry = *(u8 **)(group + 40);
     value = Func_08004080();
-    *(s16 *)(scene + 0x71a) = value;
-    Func_08003fa4((s16)value, 0x100, (const void *)0x0809c510);
-    *(s32 *)(Data_02000240 + 0x244) = 0x09600000;
-    *(s8 *)(Data_02000240 + 0x248) = Func_080770c0(0x145);
-    Func_08009240(object, 0);
-    *(void **)(object + 108) = (void *)0x0809b5dd;
-    *(s16 *)(object + 100) = 0;
-    *(s16 *)(object + 102) = 0;
+    {
+        s32 zero = 0;
+        *(s16 *)(scene + 0x71a) = value;
+        Func_08003fa4((s16)value, 0x100, (const void *)0x0809c510);
+        index = 145;
+        ((s32 *)Data_02000240)[index] = 0x09600000;
+        index = 146;
+        *(s8 *)&((s32 *)Data_02000240)[index] = Func_080770c0(0x145);
+        Func_08009240(object, zero);
+        *(void **)(object + 108) = (void *)0x0809b5dd;
+        *(s16 *)(object + 100) = zero;
+        *(s16 *)(object + 102) = zero;
+    }
     Func_080f9010(0x8c);
     Func_080030f8(15);
-    *(s16 *)(object + 100) = 1;
+    active = 1;
+    *(s16 *)(object + 100) = active;
     Func_080030f8(10);
+    entry_mode = 7;
     count = 19;
     do {
-        *(s8 *)(entry + 5) = 7;
+        *(s8 *)(entry + 5) = entry_mode;
         *(s8 *)(group + 37) = 1;
         Func_080030f8(2);
         *(s8 *)(group + 37) = 1;
@@ -61,7 +71,8 @@ void Func_0809b698(void)
     Func_080f9010(0xae);
     Func_080030f8(55);
     Func_08004278((const void *)0x0809b589);
-    if (*(s16 *)(Data_02000240 + 0x24c) != 0) {
+    index = 147;
+    if (((s16 *)Data_02000240)[index * 2] != 0) {
         Func_080091e0(object, 2);
     } else {
         Func_080091e0(object, 1);

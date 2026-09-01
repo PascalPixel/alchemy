@@ -2,12 +2,15 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x0809b698",
-  "status": "measured-draft",
+  "status": "proven-retained",
+  "retention": "keep_structured_asm",
   "owner_bytes": 332,
-  "candidate_bytes": 360,
-  "differing_halfwords": 166,
-  "wrong_instructions": 143,
-  "classification": "battle-effect-runner",
+  "literal_pool_bytes": 32,
+  "combined_reference_bytes": 364,
+  "candidate_bytes": 364,
+  "differing_halfwords": 48,
+  "wrong_instructions": 47,
+  "classification": "battle_effect_compiler_allocation_module",
   "cross_edition": {
     "editions": ["ja", "en", "de", "es", "fr", "it"],
     "relocation_normalized_core_bytes": 256,
@@ -17,7 +20,9 @@
   "notes": [
     "Complete first-pass semantic reconstruction of RunBattleEffect16, a direct sibling in the exact battle-effect dispatcher.",
     "The canonical workbench now handles its same-address human/Region symbol alias and its literal pool outside the owner assembly without editing retained assembly.",
-    "The initial ordinary-C baseline is broad and is not eligible for exact-C adoption or permanent-assembly classification.",
-    "Family pass, 2026-09-01: recovered the reference load order for the scene object, group, saved unsigned object parameter, and group entry; kept the helper result unsigned until its explicitly signed use; and replaced three unexplained absolute EWRAM addresses with Data_02000240-relative battle-work fields. This improves the candidate from 368/168/149 to 360 bytes, 166 differing halfwords, and 143 wrong instructions while preserving equal branch topology. A named battle-work base was also tested because the reference retains one base across the three fields, but GCC assigned it an extra stack/high-register carrier and regressed to 372 bytes, so that experiment was reverted. The next concrete blocker is the object carrier: the reference promotes it to sl before the first call, while the candidate keeps it in r7, causing the remaining allocation and literal-pool cascade."
+    "Family pass, 2026-09-01: recovered the reference load order for the scene object, group, saved unsigned object parameter, and group entry; kept the helper result unsigned until its explicitly signed use; and replaced three unexplained absolute EWRAM addresses with Data_02000240-relative battle-work fields. This improved the initial broad candidate from 368/168/149 to 360 bytes, 166 differing halfwords, and 143 wrong instructions while preserving equal branch topology.",
+    "Closure pass, 2026-09-01: modeling the three battle-work accesses through runtime indices 145, 146, and 147 reproduces the reference's shift-and-add address formation instead of folding symbol-plus-offset constants. Giving the post-delay active value and loop entry mode honest named lifetimes eliminates the spurious zero/one literal words and merges GCC's split literal islands. The resulting C emits exactly 364 bytes for the coherent function-plus-pool unit: a 332-byte instruction body followed by the same eight 32-bit literal words as retained LiteralPool_0809b7e4, in the same order.",
+    "The remaining 48-halfword residual has equal branch topology and equal instruction count. It consists of equivalent saved-value load ordering, sign-extension scheduling around Func_08003fa4, and register-role choices for the object, loop counter, constants, and group field pointers; calls, constants, widths, offsets, branches, body extent, and literal pool all agree.",
+    "The shipped flag matrix (-fno-regmove, both scheduling toggles, GCSE, CSE follow/skip, rerun CSE, strength reduction, expensive optimizations, and thread jumps) preserves the 48-halfword floor or regresses it. The bounded annotation-free permuter stopped with an honest ambiguous split-lifetime verdict rather than inventing a repair. Fixed-register variables, compiler barriers, inline assembly, and scheduler forcing are disallowed, so the byte-exact structured assembly remains authoritative."
   ]
 }

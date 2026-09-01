@@ -5,6 +5,11 @@
   "status": "proven-retained",
   "owner_bytes": 840,
   "classification": "battle_effect_compiler_allocation_module",
+  "resolved_asm_classification": {
+    "kind": "battle_effect_compiler_allocation_module",
+    "retention": "keep_structured_asm",
+    "confidence": "proven"
+  },
   "score": {
     "measured": "2026-08-30",
     "candidate_bytes": 840,

@@ -4,6 +4,11 @@
   "address": "0x080ed104",
  "status": "proven-retained",
  "classification": "battle_effect_compiler_allocation_module",
+ "resolved_asm_classification": {
+  "kind": "battle_effect_compiler_allocation_module",
+  "retention": "keep_structured_asm",
+  "confidence": "proven"
+ },
   "owner_bytes": 772,
   "score": {
     "measured": "2026-08-31",

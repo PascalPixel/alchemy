@@ -2,13 +2,18 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x0809a8c4",
-  "status": "complete-structured-asm",
+  "status": "proven-retained",
   "retention": "keep_structured_asm",
   "owner_bytes": 468,
   "candidate_bytes": 468,
   "differing_halfwords": 12,
   "wrong_instructions": 24,
-  "classification": "battle-effect-runner",
+  "classification": "battle_effect_compiler_allocation_module",
+  "resolved_asm_classification": {
+    "kind": "battle_effect_compiler_allocation_module",
+    "retention": "keep_structured_asm",
+    "confidence": "proven"
+  },
   "cross_edition": {
     "core_bytes": 340,
     "core_identical": true,

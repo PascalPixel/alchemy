@@ -8,10 +8,11 @@
   "differing_halfwords": 340,
   "wrong_instructions": 264,
   "classification": "battle_effect_compiler_allocation_module",
-  "candidate_bytes": 1292,
-  "differing_halfwords": 606,
-  "wrong_instructions": 524,
-  "classification": "ring-wave-debris-effect",
+  "resolved_asm_classification": {
+    "kind": "battle_effect_compiler_allocation_module",
+    "retention": "keep_structured_asm",
+    "confidence": "proven"
+  },
   "family": {
     "id": "template-main-080ce85c",
     "template_owner": "main:080ce85c",

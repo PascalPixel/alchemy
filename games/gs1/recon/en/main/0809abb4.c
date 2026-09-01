@@ -50,9 +50,9 @@ void BattleEffect_RunFallbackObjectTransition(void)
     struct BattleEffectMotionObject *target = state->target;
     struct BattleEffectMotionObject *object;
     struct BattleEffectMotionRecord *record;
+    s32 position[3];
     s32 origin[3];
     s32 destination[3];
-    s32 position[3];
     s32 step;
     s32 index;
 

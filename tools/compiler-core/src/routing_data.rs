@@ -74,7 +74,11 @@ pub static UNSCHEDULED_OVERLAY_SOURCES: &[&str] = &[
 ];
 pub static NO_CSE_FOLLOW_SOURCES: &[&str] = &["0800f9f4", "08019d2c", "080b2b0c", "080bbb0c"];
 pub static NO_GCSE_SOURCES: &[&str] = &[
-    "080981b0", "08098c08", "080a45cc", "080b2720", "080b3284", "080d40ec",
+    // Two independent battle-effect modules recover their reference extents
+    // and allocation shapes when GCC's shipped GCSE pass is disabled. The
+    // same probe regresses the other dispatcher runners, so this is a
+    // per-file route rather than a subsystem-wide override.
+    "080994d0", "0809abb4", "080981b0", "08098c08", "080a45cc", "080b2720", "080b3284", "080d40ec",
 ];
 pub static NO_EXPENSIVE_SOURCES: &[&str] = &["08092878"];
 // 0800ebec's register-only delay loops and 0800ba30's post-tested animation

@@ -123,6 +123,7 @@ void Func_08098cd8(void) {
     M2C_UNK *temp_r5_263;
     s32 temp_r0_363;
     s32 temp_r3_142;
+    s32 zero;
     s32 index;
     u8 temp_fp_212;
     void *temp_r2_216;
@@ -169,7 +170,8 @@ void Func_08098cd8(void) {
     M2C_FIELD(temp_r0_95, s16 *, 6) = (s16) M2C_FIELD(temp_r3_16, s32 *, 0);
     M2C_FIELD(temp_r0_95, s32 *, 0x30) = 0x40000;
     M2C_FIELD(temp_r0_95, s32 *, 0x34) = 0x40000;
-    M2C_FIELD(temp_r0_95, s8 *, 0x55) = 0;
+    zero = 0;
+    M2C_FIELD(temp_r0_95, s8 *, 0x55) = zero;
     Func_08009080(temp_r0_95, 5);
     Func_08009240(temp_r0_95, 3);
     if ((s32) M2C_FIELD(temp_r0_95, s32 *, 0x18) < 0x10000) {
@@ -198,7 +200,8 @@ void Func_08098cd8(void) {
             M2C_FIELD(temp_r0_167, s16 *, 6) = (s16) M2C_FIELD(temp_r3_16, s32 *, 0);
             M2C_FIELD(temp_r0_167, s32 *, 0x30) = 0x40000;
             M2C_FIELD(temp_r0_167, s32 *, 0x34) = 0x40000;
-            M2C_FIELD(temp_r0_167, s8 *, 0x55) = 0;
+            zero = 0;
+            M2C_FIELD(temp_r0_167, s8 *, 0x55) = zero;
             Func_08009080(temp_r0_167, 5);
             Func_08009240(temp_r0_167, 2);
             var_fp_159 = Func_08096c48(M2C_FIELD(temp_r0_167, s32 *, 0x50), var_fp_159);

@@ -2700,6 +2700,28 @@
    "files": [
     "080a5cc0"
    ]
+  },
+  {
+   "kind": "map_tile_block_compiler_allocation_module",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_audited_owner_extent",
+    "equal_ninety_five_instruction_count_branch_topology_and_two_literal_words",
+    "matching_two_layer_two_by_two_tile_lookup_update_and_early_exit_behavior",
+    "six_edition_relocation_normalized_core_is_identical",
+    "only_residual_is_reciprocal_origin_layer_offset_counter_and_tile_carrier_allocation",
+    "bounded_stack_aggregate_array_declaration_loop_and_lifetime_repairs_preserve_the_floor_or_regress",
+    "approved_gcc_2_96_route_matrix_and_compositions_preserve_the_floor_or_regress",
+    "inline_assembly_fixed_registers_compiler_barriers_volatile_forcing_and_forced_allocation_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 200,
+   "files": [
+    "080114a0"
+   ]
   }
  ]
 }

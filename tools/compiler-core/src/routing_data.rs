@@ -80,7 +80,11 @@ pub static NO_GCSE_SOURCES: &[&str] = &[
     // per-file route rather than a subsystem-wide override.
     "080994d0", "0809abb4", "080981b0", "08098c08", "080a45cc", "080b2720", "080b3284", "080d40ec",
 ];
-pub static NO_EXPENSIVE_SOURCES: &[&str] = &["08092878"];
+// 080114a0's complete map-tile update loop keeps exact extent while moving
+// eight halfwords closer when the shipped expensive-optimization pass is off.
+// Every other tested pass is flat or regresses, and its adjacent sibling stays
+// on canonical flags.
+pub static NO_EXPENSIVE_SOURCES: &[&str] = &["080114a0", "08092878"];
 // 0800ebec's register-only delay loops and 0800ba30's post-tested animation
 // table walk retain their indexed source shapes only without strength reduction.
 pub static NO_STRENGTH_REDUCE_SOURCES: &[&str] =

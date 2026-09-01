@@ -4,7 +4,7 @@
 <rect x="0" y="0" width="540" height="304" fill="#6d4fc2" rx="8"/>
 <rect x="1" y="1" width="538" height="302" fill="none" stroke="#6d4fc2" stroke-width="2" rx="7"/>
 <text class="weyard" x="6" y="15">Main game</text>
-<text class="weyard" x="534" y="15" text-anchor="end">60.52% DONE</text>
+<text class="weyard" x="534" y="15" text-anchor="end">60.56% DONE</text>
 <rect x="3" y="22" width="534" height="258" fill="#fff"/>
 <g aria-label="0x080000c0–0x080003c0: 768 bytes">
 <title>0x080000c0–0x080003c0: 768 bytes</title>
@@ -852,8 +852,8 @@
 </g>
 <g aria-label="0x080113e4–0x08011cea: 2,310 bytes">
 <title>0x080113e4–0x08011cea: 2,310 bytes</title>
-<rect x="90.77279790901483" y="120.35403463006679" width="25.64435118185263" height="3.4906655800497166" style="fill:#d8d9df"/>
-<rect x="90.77279790901483" y="108.19068446453272" width="25.64435118185263" height="12.163350165534064" style="fill:hsl(275 58% 66%)"/>
+<rect x="90.77279790901483" y="122.1533467847316" width="25.64435118185263" height="1.691353425384914" style="fill:#d8d9df"/>
+<rect x="90.77279790901483" y="108.19068446453272" width="25.64435118185263" height="13.962662320198866" style="fill:hsl(275 58% 66%)"/>
 <rect x="90.77279790901483" y="103.06264482373804" width="25.64435118185263" height="5.128039640794686" style="fill:#6d4fc2"/>
 </g>
 <g aria-label="0x08011cea–0x08011cec: 2 bytes">
@@ -3737,7 +3737,7 @@
 <rect x="534.7355617592607" y="277.9552614633638" width="1.7644382407393877" height="1.5447385366362336" style="fill:#6d4fc2"/>
 </g>
 <rect x="6" y="288" width="10" height="10" style="fill:#d8d9df"/>
-<text class="weyard legend-label" x="20" y="293" dominant-baseline="middle">Unknown 38.1%</text>
+<text class="weyard legend-label" x="20" y="293" dominant-baseline="middle">Unknown 38.0%</text>
 <rect x="100" y="288" width="10" height="10" style="fill:hsl(275 52% 82%)"/>
 <text class="weyard legend-label" x="114" y="293" dominant-baseline="middle">Draft C 1.4%</text>
 <rect x="188" y="288" width="10" height="10" style="fill:hsl(275 58% 66%)"/>

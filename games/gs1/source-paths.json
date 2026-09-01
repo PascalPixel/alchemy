@@ -6161,6 +6161,30 @@
     "main:080a46b4": {
       "name": "Item_ClassifyUseMode",
       "source": "items/classify_use_mode.c"
+    },
+    "main:080ccaec": {
+      "name": "BattlePresentation_PrepareScene",
+      "source": "battle/presentation/prepare_scene.c"
+    },
+    "main:0801bd98": {
+      "name": "MenuSelection_SetupEntry",
+      "source": "menu/selection/setup_entry.c"
+    },
+    "main:0808a5f8": {
+      "name": "MapGroupTable_SelectEntry",
+      "source": "map/shared/select_group_entry.c"
+    },
+    "main:08010d48": {
+      "name": "Map_SetWindowCellTile",
+      "source": "map/shared/set_window_cell_tile.c"
+    },
+    "main:08016f2c": {
+      "name": "UiWork_ProcessDirectWork",
+      "source": "ui/runtime/process_direct_work.c"
+    },
+    "main:080b5864": {
+      "name": "BattlePresentation_UpdateCamera",
+      "source": "battle/presentation/update_camera.c"
     }
   }
 }

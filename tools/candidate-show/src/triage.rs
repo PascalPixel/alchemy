@@ -83,6 +83,12 @@ pub struct TypeWidthFingerprint {
     pub reference: String,
 }
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct RepairHint {
+    pub signal: String,
+    pub playbook: String,
+    pub detail: String,
+}
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum TopologyStatus {
     Equal,
@@ -130,6 +136,8 @@ pub struct ResidualFacts {
     #[serde(default)]
     pub topology: TopologyEvidence,
     pub type_width_fingerprints: Vec<TypeWidthFingerprint>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub repair_hints: Vec<RepairHint>,
 }
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct ResidualReport {
@@ -376,6 +384,123 @@ fn type_width_fingerprints(left: &[String], right: &[String]) -> Vec<TypeWidthFi
     })
     .collect()
 }
+fn opposite_condition(left: &str, right: &str) -> bool {
+    matches!(
+        (left, right),
+        ("beq", "bne")
+            | ("bne", "beq")
+            | ("bcs", "bcc")
+            | ("bcc", "bcs")
+            | ("bhs", "blo")
+            | ("blo", "bhs")
+            | ("bmi", "bpl")
+            | ("bpl", "bmi")
+            | ("bvs", "bvc")
+            | ("bvc", "bvs")
+            | ("bhi", "bls")
+            | ("bls", "bhi")
+            | ("bge", "blt")
+            | ("blt", "bge")
+            | ("bgt", "ble")
+            | ("ble", "bgt")
+    )
+}
+fn branch_polarity_hints(left: &[String], right: &[String]) -> Vec<RepairHint> {
+    let branches = |lines: &[String]| {
+        lines
+            .iter()
+            .filter_map(|line| {
+                let op = mnemonic(line);
+                direct_branch(op).then(|| (op.to_string(), branch_target(line)))
+            })
+            .collect::<Vec<_>>()
+    };
+    let left = branches(left);
+    let right = branches(right);
+    if left.len() != right.len() {
+        return Vec::new();
+    }
+    left.iter()
+        .zip(right)
+        .enumerate()
+        .filter(|(_, ((left_op, left_target), (right_op, right_target)))| {
+            left_target.is_some()
+                && left_target == right_target
+                && opposite_condition(left_op, right_op)
+        })
+        .map(|(index, ((left_op, _), (right_op, _)))| RepairHint {
+            signal: "opposite-condition-same-target".into(),
+            playbook: "invert-source-condition".into(),
+            detail: format!(
+                "branch {} is {left_op} in the candidate and {right_op} in the reference with the same destination",
+                index + 1
+            ),
+        })
+        .collect()
+}
+fn load_without_destination(line: &str) -> Option<String> {
+    let op = mnemonic(line);
+    if !matches!(op, "ldr" | "ldrb" | "ldrh" | "ldrsb" | "ldrsh") {
+        return None;
+    }
+    let compact = line.replace(' ', "");
+    if compact.contains("[pc,") || compact.contains("[sp,") {
+        return None;
+    }
+    Some(register_erased(line))
+}
+fn reload_after_call_hints(left: &[String], right: &[String]) -> Vec<RepairHint> {
+    let mut hints = Vec::new();
+    for (index, line) in right.iter().enumerate() {
+        let Some(load) = load_without_destination(line) else {
+            continue;
+        };
+        let repeated_before_call = right[..index].iter().enumerate().any(|(earlier, line)| {
+            load_without_destination(line).as_deref() == Some(load.as_str())
+                && right[earlier + 1..index]
+                    .iter()
+                    .any(|middle| mnemonic(middle) == "bl")
+        });
+        if !repeated_before_call {
+            continue;
+        }
+        let reference_count = right
+            .iter()
+            .filter(|line| load_without_destination(line).as_deref() == Some(load.as_str()))
+            .count();
+        let candidate_count = left
+            .iter()
+            .filter(|line| load_without_destination(line).as_deref() == Some(load.as_str()))
+            .count();
+        if candidate_count + 1 == reference_count
+            && !hints
+                .iter()
+                .any(|hint: &RepairHint| hint.detail.contains(&load))
+        {
+            hints.push(RepairHint {
+                signal: "reference-reloads-memory-after-call".into(),
+                playbook: "reload-memory-derived-value-across-call".into(),
+                detail: format!(
+                    "reference emits {reference_count} `{load}` loads around a call; candidate emits {candidate_count}"
+                ),
+            });
+        }
+    }
+    hints
+}
+fn repair_hints(
+    left: &[String],
+    right: &[String],
+    actual_bytes: usize,
+    reference_bytes: usize,
+    topology: &Comparison,
+) -> Vec<RepairHint> {
+    let mut hints = branch_polarity_hints(left, right);
+    if actual_bytes == reference_bytes && matches!(topology, Comparison::Equal) {
+        hints.extend(reload_after_call_hints(left, right));
+    }
+    hints
+}
 fn normalized(line: &str) -> String {
     without_pc_offset(line)
 }
@@ -444,6 +569,7 @@ pub fn classify_with_topology(
         branch_topology_equal,
         topology: TopologyEvidence::from(topology),
         type_width_fingerprints: width,
+        repair_hints: repair_hints(left, right, actual_bytes, reference_bytes, topology),
     };
     let class = if differing_halfwords == 0 && actual_bytes == reference_bytes {
         ResidualClass::Exact
@@ -553,6 +679,52 @@ mod tests {
         assert_eq!(report.facts.type_width_fingerprints[0].candidate, "ldrb");
         assert_eq!(report.facts.type_width_fingerprints[0].reference, "ldrsb");
         assert_eq!(report.class, ResidualClass::TypeWidthMismatch);
+    }
+
+    #[test]
+    fn names_an_inverted_source_condition_with_the_same_destination() {
+        let report = triage(
+            &["cmp r0, #0", "bne 0x6", "movs r0, #1"],
+            &["cmp r0, #0", "beq 0x6", "movs r0, #1"],
+            1,
+        );
+        assert_eq!(report.facts.repair_hints.len(), 1);
+        assert_eq!(
+            report.facts.repair_hints[0].signal,
+            "opposite-condition-same-target"
+        );
+        assert_eq!(
+            report.facts.repair_hints[0].playbook,
+            "invert-source-condition"
+        );
+    }
+
+    #[test]
+    fn names_a_reference_reload_separated_by_a_call() {
+        let report = triage(
+            &["ldrh r0, [r4, #2]", "bl 0x20", "adds r1, r0, #0", "bx lr"],
+            &["ldrh r0, [r4, #2]", "bl 0x20", "ldrh r1, [r4, #2]", "bx lr"],
+            2,
+        );
+        assert_eq!(report.facts.repair_hints.len(), 1);
+        assert_eq!(
+            report.facts.repair_hints[0].signal,
+            "reference-reloads-memory-after-call"
+        );
+        assert_eq!(
+            report.facts.repair_hints[0].playbook,
+            "reload-memory-derived-value-across-call"
+        );
+    }
+
+    #[test]
+    fn does_not_call_allocated_address_registers_a_missing_reload() {
+        let report = triage(
+            &["ldrh r3, [r0, r5]", "bl 0x20", "ldrh r5, [r3, r5]", "bx lr"],
+            &["ldrh r3, [r0, r6]", "bl 0x20", "ldrh r0, [r3, r6]", "bx lr"],
+            2,
+        );
+        assert!(report.facts.repair_hints.is_empty());
     }
 
     #[test]

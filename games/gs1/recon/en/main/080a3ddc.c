@@ -3,40 +3,29 @@
 
 #define InventoryMenu_CollectItems Func_080a3ddc
 
-s32 InventoryMenu_CollectItems(
-    struct OwnerInventoryState *owner,
-    u16 *items,
-    s32 unused)
+s32 InventoryMenu_CollectItems(struct OwnerInventoryState *owner, u16 *items)
 {
-    u16 *base;
-    u16 *p;
-    u16 *dst;
     u16 *src;
+    u16 *dst;
     s32 count;
-    s32 offset;
     s32 i;
-    u32 item;
+    s32 offset;
 
-    base = items;
-    p = base + 31;
-    do {
-        *p-- = 0;
-    } while ((s32)p >= (s32)base);
-
+    for (i = 0; i < 32; i++) {
+        items[i] = 0;
+    }
     count = 0;
-    dst = base;
+    dst = items;
     src = owner->inventory;
     offset = 0;
-    i = 14;
-    do {
-        *(u16 *)((u8 *)base + offset) = 0;
-        item = *src++;
-        if (item != 0) {
-            *dst++ = item;
+    for (i = 0; i < 15; i++) {
+        *(u16 *)(offset + (u32)items) = 0;
+        offset += 2;
+        if (*src != 0) {
+            *dst++ = *src;
             count++;
         }
-        offset += 2;
-        i--;
-    } while (i >= 0);
+        src++;
+    }
     return count;
 }

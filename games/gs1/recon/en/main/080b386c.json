@@ -2,11 +2,11 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x080b386c",
-  "status": "measured-draft",
+  "status": "exact",
   "owner_bytes": 212,
   "candidate_bytes": 212,
-  "differing_halfwords": 49,
-  "wrong_instructions": 36,
+  "differing_halfwords": 0,
+  "wrong_instructions": 0,
   "classification": "shop-party-item-slot-detail",
   "family": {
     "id": "template-main-080b1470",
@@ -17,8 +17,7 @@
   "notes": [
     "Read the raw assembly directly: unit=Func_08077008(unit_id); slot_offset=item_id*2+216; masked=*(u16*)(unit+slot_offset)&0x1ff; mult=(*(u16*)(unit+slot_offset)>>11)+1 -- confirmed the reference genuinely re-loads the halfword with a second ldrh rather than reusing one cached value, which is why caching into a single `u16 value` local scored worse (wrong_instructions 50) than re-dereferencing at each use site (wrong_instructions 36, kept as the draft). If (window!=0): Func_08015270(window); Func_08015080(masked+(s32)&Value_00000182, window, 0, 0); result=Func_080772a8(unit_id,item_id); if(result==-4) draw Value_00000c94; else if(result==-3) draw Value_00000c95; else { qty=Func_080b19cc(*(u16*)(unit+slot_offset)); total=mult*qty; draw Value_00000c8d at (8,8), Func_080150b0(total,5,window,40,style=8), draw (Value_00000c8d-5) at (80,8) }.",
     "The two message-id externs for the -4/-3 branches and the two related to the quantity line (Value_00000c94, Value_00000c95, Value_00000c8d) were assigned in pool-appearance order from the raw .4byte dump (0x1ff, 0x182, 0xc94, 0xc95, 0xc8d); their names are placeholders for 'the constant at that ROM address' per this project's Value_XXXXXXXX convention, not independently verified message text.",
-    "Same byte length as the reference (212=212) with the algorithm, all four call sites, and all three branches already reproduced correctly. Remaining gap is register-role noise in the negated-comparison constants for the -4/-3 checks (reference keeps the negated literal in r3, candidate in r2) and a few call-argument evaluation-order swaps (e.g. movs r2,#0/movs r3,#8 ordering around the Func_08015080 message call) -- classic small scheduling differences on an otherwise-matching body.",
-    "This is the closest-scoring owner in this batch and reads as very likely fixable with one more targeted respelling pass on operand order in the two `result == -N` comparisons; did not chase further only due to time budget across the full batch.",
-    "Adoption requires 0 differing_halfwords."
+    "The former allocation/scheduling diagnosis was false. Although the source spelled two reads, GCC common-subexpression elimination merged them; the reference's two ldrh instructions prove that the original source treated those accesses as independently observable. Giving the two reads volatile semantics restores the reference's pseudo lifetimes and register allocation without compiler overrides or forced registers.",
+    "Exact under canonical flags: 212 candidate bytes, 212 reference bytes, 0 differing halfwords, and 0 wrong instructions. Adopted as Shop_DrawUseItemDetails."
   ]
 }

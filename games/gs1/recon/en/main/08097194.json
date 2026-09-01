@@ -2,12 +2,17 @@
  "schema_version": 1,
  "namespace": "main",
  "address": "0x08097194",
- "status": "measured-draft",
+ "status": "proven-retained",
  "owner_bytes": 248,
  "candidate_bytes": 248,
  "differing_halfwords": 7,
  "wrong_instructions": 8,
- "classification": "battle-effect-scene-cleanup",
+ "classification": "battle_effect_compiler_allocation_module",
+ "resolved_asm_classification": {
+  "kind": "battle_effect_compiler_allocation_module",
+  "retention": "keep_structured_asm",
+  "confidence": "proven"
+ },
  "domain": "Removes active scene-effect objects, waits briefly for two effect callbacks to drain, restores the saved scene position, and releases the effect asset.",
  "bounded_checks": [
   "Recovered the battle global cells as one registry walk rooted at 0x03001f30: the runtime and position pointers are loaded from root-116 and root-192, exactly matching the reference's single literal and two base-relative loads. Reusing the exhausted 24-object loop counter for the later 64-slot scan recovers the reference's r5 lifetime, full four-high-register save set, and exact 248-byte extent. Naming both active update callbacks and ordering the waited/active/scan initializers from their reference lifetimes closes the remaining independent scheduling rows. Fresh score: 7 differing halfwords and 8 wrong instructions, all confined to the reciprocal r6/r7 scene-object/active-field cursors in the first loop.",
@@ -19,6 +24,41 @@
   "Generated register, stack-slot, and control-flow labels were replaced with role-based names before retaining the candidate.",
   "Typed global-state layouts, the shared pointer-registry walk, and a signed activity byte produce the exact owner extent and improve the raw m2c draft from 119 to 7 differing halfwords.",
   "The earlier 5,000-candidate safe family-template walk produced no improvement because it did not cover registry-base recovery or counter-identity reuse; those two evidence-named repairs account for the subsequent reduction.",
-  "Exact-C adoption remains gated on an independently compiled zero-difference object."
- ]
+  "2026-09-01 permanent classification audit: canonical GCC 2.96, gcc296-family routing, no-regmove, no-schedule-insns, no-GCSE, no-CSE-follow-jumps, rerun-CSE-after-loop, and no-expensive-optimizations all preserve the exact 248-byte candidate and seven-halfword/eight-instruction reciprocal r6/r7 cursor floor. No-schedule-insns2 regresses to 27 differing halfwords, no-strength-reduce to 74, and old-agbcc to 119. The annotation-free permuter rejects the residual because it cannot identify one unique safe source repair for the paired cursor/waited roles; prior explicit duplicate cursor, byte-pointer, signed-byte-pointer, declaration-order, and assignment-order probes preserve or regress it.",
+  "Cross-edition verification using the exact retained object locates the owner in JA 0x0808e17c, EN 0x08097194, DE 0x0809a830, ES/FR 0x0809c220, and IT 0x08097220. All 196 bytes outside six call relocations and seven literal fields are identical across all editions.",
+  "The complete ordinary-C semantics, exact extent, branch topology, calls, literals, accesses, and all behavior outside the reciprocal first-loop cursor allocation are proved. Forced registers, compiler barriers, inline assembly, and forced scheduling are prohibited, so the byte-exact structured assembly is retained under the existing battle-effect allocation-module class."
+ ],
+ "compiler_probe": {
+  "baseline_differing_halfwords": 7,
+  "neutral": [
+   "gcc296-family",
+   "-fno-regmove",
+   "-fno-schedule-insns",
+   "-fno-gcse",
+   "-fno-cse-follow-jumps",
+   "-frerun-cse-after-loop",
+   "-fno-expensive-optimizations"
+  ],
+  "regressed": {
+   "-fno-schedule-insns2": 27,
+   "-fno-strength-reduce": 74,
+   "old-agbcc": 119
+  }
+ },
+ "cross_edition": {
+  "size": 248,
+  "relocation_bytes": 24,
+  "literal_bytes": 28,
+  "core_bytes": 196,
+  "core_identical": true,
+  "starts": {
+   "ja": "0x0808e17c",
+   "en": "0x08097194",
+   "de": "0x0809a830",
+   "es": "0x0809c220",
+   "fr": "0x0809c220",
+   "it": "0x08097220"
+  }
+ },
+ "decision": "Retain the byte-exact structured assembly as a proven battle-effect compiler-allocation module. The complete ordinary-C reconstruction remains the semantic source artifact; all 248 owner bytes count as DONE."
 }

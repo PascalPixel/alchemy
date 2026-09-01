@@ -58,7 +58,6 @@ void Func_08009158(struct BattleEffect03Object *);
 void Func_080090d0(struct BattleEffect03Object *);
 void Func_08003f3c(u8);
 void Func_0809748c(void);
-void Func_080072f0(void);
 
 void RunBattleEffect03(void)
 {
@@ -68,11 +67,12 @@ void RunBattleEffect03(void)
     struct BattleEffect03Object *particle;
     struct BattleEffect03Link *last;
     u8 link_marker;
-    s32 index;
+    s32 spawn_index;
+    s32 flash_index;
 
     Func_08097384();
     last = 0;
-    index = 0;
+    spawn_index = 0;
     do {
         object = Func_08096c80(
             0xe9, target->x, target->y + 0x200000, target->z);
@@ -81,13 +81,13 @@ void RunBattleEffect03(void)
             object->scale_x = 0xb333;
             object->callback = &Data_08099341;
             object->angle = 0x78;
-            object->phase = index << 13;
+            object->phase = spawn_index << 13;
             object->mode = 4;
             last = Func_08096c48(object->visual, last);
         }
-        index++;
+        spawn_index++;
         Func_080030f8(1);
-    } while (index <= 7);
+    } while (spawn_index <= 7);
 
     link_marker = last->marker;
     Func_080f9010(0x82);
@@ -107,15 +107,15 @@ void RunBattleEffect03(void)
     Func_080f9010(0x83);
     Func_080030f8(12);
     if (object != 0) {
-        index = 0;
+        flash_index = 0;
         do {
-            if (index & 3)
+            if (flash_index & 3)
                 Func_08009240(particle, 9);
             else
                 Func_08009240(particle, 10);
-            index++;
+            flash_index++;
             Func_080030f8(2);
-        } while (index <= 29);
+        } while (flash_index <= 29);
     }
 
     Func_08009240(particle, 0);
@@ -140,6 +140,6 @@ void RunBattleEffect03(void)
     if (link_marker != 0x60)
         Func_08003f3c(link_marker);
     if (state->finish_callback != 0)
-        Func_080072f0();
+        state->finish_callback();
     Func_0809748c();
 }

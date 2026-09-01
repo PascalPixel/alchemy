@@ -2136,6 +2136,7 @@ mod tests {
                     branch_topology_equal: false,
                     topology: candidate_show::triage::TopologyEvidence::default(),
                     type_width_fingerprints: Vec::new(),
+                    repair_hints: Vec::new(),
                 },
             }),
             allocator_repair: None,
@@ -2393,13 +2394,25 @@ mod tests {
     }
     #[test]
     fn prepared_templates_define_their_retargeted_object_symbols() {
-        assert_retargeted_template_defines_target("main:08004080", "main:080b6e7c");
-        assert_retargeted_template_defines_target("main:08003538", "main:08017e88");
-        // 080b7424 joined the battle-summon unit, which rightly disables
-        // macro-entry retargeting for its template; a standalone pair from
-        // the same catalog stands in.
-        assert_retargeted_template_defines_target("main:0809b0b0", "main:0800383c");
-        assert_retargeted_template_defines_target("main:080ae7fc", "main:080a2324");
+        let repository = root();
+        let catalog = FamilyCatalog::load(repository, Path::new(FAMILIES)).unwrap();
+        let pairs = catalog
+            .targets()
+            .iter()
+            .filter_map(|target| {
+                target.alternatives.iter().find_map(|details| {
+                    catalog
+                        .template(details)
+                        .filter(|template| template.entry_name.is_some())
+                        .map(|_| (details.owner.clone(), target.owner.clone()))
+                })
+            })
+            .take(4)
+            .collect::<Vec<_>>();
+        assert_eq!(pairs.len(), 4);
+        for (template, target) in pairs {
+            assert_retargeted_template_defines_target(&template, &target);
+        }
     }
     #[test]
     fn draft_has_no_adoption_or_freeform_switch() {

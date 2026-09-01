@@ -54,12 +54,12 @@ s32 Func_080a93a4(s32 arg0, s32 arg1, void *ctx)
         } else {
             u16 flagv = *slot;
             s32 type = *(s32 *)(Func_08077018(flagv & 0x1ff) + 20);
-            if (type == 4) {
-                Func_080a2268(arg0, 14, y, 14, height, 15);
-            } else {
+            s32 width = 14;
+            if (type != 4) {
                 Func_08015280(arg0, type + 1, 27, y, 4);
-                Func_080a2268(arg0, 14, y, 13, height, 15);
+                width = 13;
             }
+            Func_080a2268(arg0, 14, y, width, height, 15);
         }
     }
 

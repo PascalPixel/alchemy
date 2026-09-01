@@ -2,6 +2,9 @@
   "format": 3,
   "owners": {
     "main:0808f1c0": "battle/effects/objects/start_effect_22.c",
+    "main:080113e4": {
+      "name": "Map_UpdateCurrentTileBlock"
+    },
     "main:080a4800": {
       "name": "Menu_SelectQuantity",
       "source": "menu/select_quantity.c"

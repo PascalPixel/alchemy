@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080a9c18",
+  "status": "measured-draft",
+  "owner_bytes": 162,
+  "candidate_bytes": 164,
+  "differing_halfwords": 64,
+  "wrong_instructions": 70,
+  "classification": "structural_topology",
+  "domain": "Arranges the fifteen visible inventory-category item icons by item type and prepares each existing active icon object.",
+  "expressed": [
+    "the fifteen-entry encoded-item and icon-pointer walk",
+    "the nonzero and 0x200-active-bit guards",
+    "the 0x1ff item identifier mask and ItemDefinition type lookup",
+    "the type-one through type-four Y positions and common X position",
+    "preparing every existing active icon, including unknown item types"
+  ],
+  "residual": [
+    "The candidate is a complete typed reconstruction but remains two bytes longer than the 162-byte owner and has a different switch branch shape.",
+    "The reference keeps the loop-invariant X coordinate in call-clobbered r1 with a four-byte spill and loads the encoded item with ldrh; canonical GCC gives the named C shapes tested here either a callee-saved carrier or a signed-load-plus-zero-extension sequence.",
+    "Direct pre-call stores, function- and block-scope coordinate locals, duplicated case stores, an explicit shared-tail goto, and a structured type-range guard preserve the behavior but regress size, topology, or allocation."
+  ],
+  "evidence": [
+    "games/gs1/asm/080a9c18.s",
+    "games/gs1/src/inventory_menu/draw_category_items.c",
+    "games/gs1/src/inventory_menu/position_category_items.c",
+    "games/gs1/include/item.h",
+    "out/gs1-en/waves/alias-review-canonical-final/packs/080a9c18/m2c/080a9c18.c"
+  ],
+  "notes": [
+    "Recovered only from retained GS1 assembly, local callers and exact inventory-menu siblings, in-repository types, repository-generated m2c structural output, and the approved compiler.",
+    "No GS2 source, external decompilation, fixed-register variable, inline assembly, compiler barrier, or forced scheduling was used.",
+    "The retained assembly remains authoritative and this draft claims no exact-C bytes."
+  ]
+}

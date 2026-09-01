@@ -79,9 +79,11 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
         Func_0809ba90(slot, 284, position.x, position.z);
         EffectSlot_SetCallback(slot, (void *)0x08095c09);
         EffectSlot_SetObjectMode(slot, 7);
-        object_pointer = slot;
-        value = *(s32 *)object_pointer;
-        Func_08009248(value, 10);
+        do {
+            object_pointer = slot;
+            value = *(s32 *)object_pointer;
+            Func_08009248(value, 10);
+        } while (0);
         value = Func_080022f4(Random16(), 3) + 0x10000;
         *(s32 *)((u8 *)slot + 44) = value;
         *(s32 *)((u8 *)slot + 40) = value;

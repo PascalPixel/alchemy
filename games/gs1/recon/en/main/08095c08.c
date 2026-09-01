@@ -111,7 +111,9 @@ void BattleEffect_UpdatePhasedRadialParticle(struct PhasedParticleSlot *effect)
             (*state_pointer)--;
     } else if (state == 2) {
         if (EffectSlot_HasReachedTarget(effect) == 0) {
-            effect->origin_x = effect->x;
+            do {
+                effect->origin_x = effect->x;
+            } while (0);
             effect->origin_z = effect->z;
             effect->object->flags &= -13;
             effect->flags = 4;

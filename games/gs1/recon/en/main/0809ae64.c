@@ -30,6 +30,7 @@ void RunBattleEffect13(void)
     struct EffectVector *target_cursor;
     u8 *object;
     s32 step;
+    s32 zero;
 
     origin.x = *(s32 *)(main_object + 8);
     origin.y = *(s32 *)(main_object + 12) + 0x100000;
@@ -52,7 +53,8 @@ void RunBattleEffect13(void)
     scene_target.y = *(s32 *)(scene + 8) + 0x200000;
     scene_target.z = *(s32 *)(scene + 12);
 
-    object = Func_08096c80(0xd7, 0, 0, 0);
+    object = Func_08096c80(
+        0xd7, scene_target.x, scene_target.y, scene_target.z);
     if (object == 0)
         return;
 
@@ -60,7 +62,8 @@ void RunBattleEffect13(void)
     Func_080f9010(0x8a);
     *(u16 *)(object + 6) = *(u16 *)(main_object + 6);
     *(s32 *)(object + 48) = 0x14ccc;
-    *(u8 *)(object + 85) = 0;
+    zero = 0;
+    *(u8 *)(object + 85) = zero;
     Func_08009080(object, 5);
     Func_08009240(object, 1);
 

@@ -21,9 +21,9 @@ struct Effect05State {
     struct EffectTarget *target;
     s32 initialized;
     u8 reserved_18[8];
-    s8 variant;
-    u8 reserved_21[0x13];
     s8 high_arc;
+    u8 reserved_21[0x13];
+    s8 variant;
     u8 reserved_35[0x10];
     s8 alternate;
 };
@@ -75,7 +75,7 @@ void Func_080999f0(void)
     start.y = target->position.y + 0x100000;
     start.z = target->position.z;
     end.x = state->x;
-    end.y = state->y + (state->variant ? 0x500000 : 0x200000);
+    end.y = state->y + (state->variant == 0 ? 0x200000 : 0x500000);
     end.z = state->z;
 
     for (i = 0; i < 11; i++) {

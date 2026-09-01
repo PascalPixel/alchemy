@@ -1993,6 +1993,28 @@
    ]
   },
   {
+   "kind": "battle_effect_twin_compiler_allocation_module",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_owner_extents",
+    "two_reference_owners_are_instruction_identical_except_constructor_relocations",
+    "one_shared_source_shape_reproduces_one_shared_residual_map",
+    "equal_branch_topology_and_identical_allocator_order_constraints",
+    "exhaustive_seventy_two_shape_source_matrix_and_named_family_repairs_produced_no_exact_candidate",
+    "approved_compiler_allocation_scheduling_cse_gcse_strength_and_optimization_routes_preserve_the_floor_or_regress",
+    "inline_assembly_fixed_registers_compiler_barriers_and_forced_allocation_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 2,
+   "expected_bytes": 608,
+   "files": [
+    "08098954",
+    "0809a294"
+   ]
+  },
+  {
    "kind": "battle_effect_compiler_allocation_module",
    "origin": "compiler",
    "retention": "keep_structured_asm",

@@ -4,9 +4,9 @@
   "address": "0x0809b698",
   "status": "measured-draft",
   "owner_bytes": 332,
-  "candidate_bytes": 368,
-  "differing_halfwords": 168,
-  "wrong_instructions": 149,
+  "candidate_bytes": 360,
+  "differing_halfwords": 166,
+  "wrong_instructions": 143,
   "classification": "battle-effect-runner",
   "cross_edition": {
     "editions": ["ja", "en", "de", "es", "fr", "it"],
@@ -17,6 +17,7 @@
   "notes": [
     "Complete first-pass semantic reconstruction of RunBattleEffect16, a direct sibling in the exact battle-effect dispatcher.",
     "The canonical workbench now handles its same-address human/Region symbol alias and its literal pool outside the owner assembly without editing retained assembly.",
-    "The initial ordinary-C baseline is broad and is not eligible for exact-C adoption or permanent-assembly classification."
+    "The initial ordinary-C baseline is broad and is not eligible for exact-C adoption or permanent-assembly classification.",
+    "Family pass, 2026-09-01: recovered the reference load order for the scene object, group, saved unsigned object parameter, and group entry; kept the helper result unsigned until its explicitly signed use; and replaced three unexplained absolute EWRAM addresses with Data_02000240-relative battle-work fields. This improves the candidate from 368/168/149 to 360 bytes, 166 differing halfwords, and 143 wrong instructions while preserving equal branch topology. A named battle-work base was also tested because the reference retains one base across the three fields, but GCC assigned it an extra stack/high-register carrier and regressed to 372 bytes, so that experiment was reverted. The next concrete blocker is the object carrier: the reference promotes it to sl before the first call, while the candidate keeps it in r7, causing the remaining allocation and literal-pool cascade."
   ]
 }

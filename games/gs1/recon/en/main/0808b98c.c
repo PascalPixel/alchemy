@@ -9,15 +9,14 @@ void Func_0808b3ec(s32 event_id, s32 state);
 
 void BattleEffect_ClearAllObjects(void)
 {
-    struct BattleRuntime *runtime = Data_03001ebc;
-    s32 offset = 0x34;
-    s32 remaining = 57;
+    u8 *runtime = (u8 *)Data_03001ebc;
     s32 mask = -2;
     s32 cleared = 0;
     s32 event_id;
+    s32 i;
 
-    do {
-        void *object = *(void **)((u8 *)runtime + offset);
+    for (i = 0; i < 58; i++) {
+        void *object = *(void **)(runtime + (i * 4 + 0x34));
 
         if (object != 0) {
             u8 *visual;
@@ -26,16 +25,14 @@ void BattleEffect_ClearAllObjects(void)
             visual = *(u8 **)((u8 *)object + 80);
             visual[29] &= mask;
             Func_080090d0(object);
-            *(s32 *)((u8 *)runtime + offset) = cleared;
+            *(void **)(runtime + (i * 4 + 0x34)) = cleared;
         }
-        remaining--;
-        offset += 4;
-    } while (remaining >= 0);
+    }
 
-    event_id = *(s32 *)((u8 *)runtime + 4);
-    *(s32 *)((u8 *)runtime + 4) = cleared;
-    *(s32 *)((u8 *)runtime + 8) = cleared;
-    *(s32 *)((u8 *)runtime + 12) = cleared;
+    event_id = *(s32 *)(runtime + 4);
+    *(s32 *)(runtime + 4) = 0;
+    *(s32 *)(runtime + 8) = 0;
+    *(s32 *)(runtime + 12) = 0;
     if (event_id != 0) {
         Func_0808b3ec(event_id, ObjectTable_FindLastActiveId());
     }

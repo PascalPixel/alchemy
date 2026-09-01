@@ -3,17 +3,16 @@
   "namespace": "main",
   "address": "0x08011f54",
   "status": "proven-retained",
-  "classification": "field_dispatch_compiler_allocation_module",
   "owner_bytes": 132,
   "executable_owner_bytes": 110,
   "candidate_bytes": 132,
   "differing_halfwords": 26,
   "wrong_instructions": 48,
-  "classification": "map-cell-attribute-handler-dispatch",
+  "classification": "field_dispatch_compiler_allocation_module",
   "resolved_asm_classification": {
-    "kind": "compiler_output",
-    "retention": "c_candidate",
-    "confidence": "likely"
+    "kind": "field_dispatch_compiler_allocation_module",
+    "retention": "keep_structured_asm",
+    "confidence": "proven"
   },
   "family_transplant": {
     "template": "save/read_flash_from_sector.c",

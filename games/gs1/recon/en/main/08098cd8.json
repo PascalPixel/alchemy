@@ -4,9 +4,9 @@
   "address": "0x08098cd8",
   "status": "measured-draft",
   "owner_bytes": 832,
-  "candidate_bytes": 780,
-  "differing_halfwords": 399,
-  "wrong_instructions": 276,
+  "candidate_bytes": 784,
+  "differing_halfwords": 398,
+  "wrong_instructions": 230,
   "classification": "battle-effect-runner",
   "cross_edition": {
     "editions": ["ja", "en", "de", "es", "fr", "it"],
@@ -26,6 +26,7 @@
   "notes": [
     "Complete first-pass semantic reconstruction of RunBattleEffect04, a direct sibling in the exact battle-effect dispatcher.",
     "All six GS1 editions have an identical relocation-normalized 652-byte core.",
-    "The bounded search improved structural alignment but not the byte residual; this remains a broad draft and is not eligible for exact-C adoption or permanent-assembly classification."
+    "The bounded search improved structural alignment but not the byte residual; this remains a broad draft and is not eligible for exact-C adoption or permanent-assembly classification.",
+    "2026-09-01 battle-effect family pass: replaced m2c's false pointer arithmetic across unrelated sp0/sp4/sp24 pseudo-locals with the evidenced three-entry spawned-object array, the shared three-component position vector, saved child pointer, and event context. The real array direction is proven by the retained stack accesses (write sp+36 down through sp+28, then read sp+28 upward). Fresh canonical scoring improves candidate extent 780 to 784 bytes and wrong instructions 276 to 230; differing halfwords move 399 to 398. The remaining 48-byte deficit and 36-byte versus 44-byte frame are still structural debt, so this does not claim DONE bytes."
   ]
 }

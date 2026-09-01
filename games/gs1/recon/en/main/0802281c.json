@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x0802281c",
+  "status": "measured-draft",
+  "owner_bytes": 160,
+  "candidate_bytes": 176,
+  "differing_halfwords": 86,
+  "wrong_instructions": 68,
+  "classification": "battle-layout-draw-party-panels",
+  "domain": "Draws the party-layout panel and highlights each requested unit whose placement slot is present in the four-entry battle formation.",
+  "notes": [
+    "The complete ordinary-C draft accounts for the initial party-size query, base panel draw, 0xff-terminated four-unit input scan, four-slot signed placement lookup, per-slot panel draw, and zero return.",
+    "Promoting the repeatedly loaded unit id to u32 removes redundant halfword re-truncation and reduces the first typed draft from 200 to 176 bytes. The remaining residual is structural/register allocation rather than an unknown operation: the current router reports structural_topology with 86 differing halfwords and 68 wrong instructions.",
+    "The permanent name is intentionally limited to the locally observed battle-layout behavior; no story, country, era, or effect identity is inferred.",
+    "Recovered only from games/gs1/asm/0802281c.s, the approved local GS1 ROM/compiler, the adjacent Func_08022768 draft and retained assembly, exact local battle-layout callees, and the repository-generated m2c workbench for this owner's own bytes. No external decompilation or target-specific source was used.",
+    "This measured draft claims zero DONE bytes. Retained assembly remains authoritative; no fixed-register variable, inline assembly, compiler barrier, forced scheduling, or copied instruction bytes is used."
+  ]
+}

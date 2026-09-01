@@ -3,6 +3,8 @@
 extern u8 *Data_03001e74;
 extern u8 Data_000000fe[];
 
+#define BattleActorList_VacantMarker Data_000000fe
+
 u8 *Runtime_GetObject(s32 actor_id);
 void Func_080c1ebc(s32 actor_id);
 
@@ -21,7 +23,7 @@ void BattleActor_RemoveFromLists(s32 actor_id)
 
     work = (s32)Data_03001e74;
     actor = Runtime_GetObject(actor_id);
-    mark = (s32)Data_000000fe;
+    mark = (s32)BattleActorList_VacantMarker;
     actor[0x12a] = 0;
 
     offset = 0x58;

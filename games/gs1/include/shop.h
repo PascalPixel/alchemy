@@ -168,6 +168,7 @@ void Func_080b11c4(s32 window, s32 selected, s32 requirement);
 void Func_080b1470(s32 window, s32 unit_id, s32 item_id);
 s32 Func_080b153c(s32 unit_id, s32 item_id);
 void Func_080b17e4(s32 unit_id, s32 item_id, s32 quantity);
+s32 Func_080b1868(s32 unit_id, s32 slot);
 s32 Func_080b196c(s32 unit_id, s32 slot);
 s32 Func_080b19cc(s32 item_id);
 s32 Func_080b1a14(void);
@@ -187,6 +188,7 @@ void Func_080b386c(s32 window, s32 unit_id, s32 item_slot);
 #define Shop_DrawPartyMemberItems     Func_080b1470
 #define Shop_SelectPurchaseQuantity   Func_080b153c
 #define Shop_CompletePurchase         Func_080b17e4
+#define Shop_ConfirmEquipItem         Func_080b1868
 #define Shop_SellReplacedItem         Func_080b196c
 #define Shop_ComputeSalePrice         Func_080b19cc
 #define Shop_SelectPartyMember        Func_080b1a14

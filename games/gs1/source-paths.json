@@ -1154,6 +1154,10 @@
     "main:080b1470": "shop/draw_party_member_items.c",
     "main:080b153c": "shop/select_purchase_quantity.c",
     "main:080b17e4": "shop/complete_purchase.c",
+    "main:080b1868": {
+      "name": "Shop_ConfirmEquipItem",
+      "source": "shop/confirm_equip_item.c"
+    },
     "main:080b196c": "shop/sell_replaced_item.c",
     "main:080b19cc": "shop/compute_sale_price.c",
     "main:080b1a14": "shop/select_party_member.c",

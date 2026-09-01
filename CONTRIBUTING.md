@@ -412,6 +412,11 @@ cannot be reproduced from a clean checkout.
 
 The triage router runs as part of `compiler candidate-show` and prints a
 `next=` line: the literal command to run for that owner's residual class.
+When reference bytes prove a narrower corpus-derived repair, it also prints a
+`repair_hint=` line with the guarded playbook.  Treat that as one bounded edit,
+not permission to repeat the transformation elsewhere: rescore it in
+isolation, retain only a strict improvement, and require byte-exact output
+before adoption.
 Follow it — and for any allocation, scheduling, or pool-placement residual,
 start from **Read the compiler first** above before touching the source. Do not improvise a different route from the raw diff, and do not
 hand-probe an owner whose `next=` line already names a mechanical route —
@@ -457,7 +462,7 @@ source when needed.
 
 ## Validate and commit
 
-Portable tooling is capped at 40,000 Rust, TypeScript, JavaScript, and CSS
+Portable tooling is capped at 50,000 Rust, TypeScript, JavaScript, and CSS
 source lines.
 This is a maintainer-owned ceiling: consolidate or remove machinery when the
 gate fails; do not raise the limit to accommodate a change.

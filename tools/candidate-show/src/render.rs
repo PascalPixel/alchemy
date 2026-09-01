@@ -410,6 +410,12 @@ fn render_bytes(
     let playbook = residual.class.playbook().unwrap_or("smart-queue");
     let next = residual.class.next_command();
     let mut out = format!("candidate={} reference={} differing_halfwords={}\ncompile={compile}\ntopology={}\nclass={class} wrong_instructions={wrong}\ntriage={class} playbook={playbook}\nnext={next}\n", actual.len(), expected.len(), differing.len(), topology.summary());
+    for hint in &residual.facts.repair_hints {
+        out.push_str(&format!(
+            "repair_hint={} playbook={} detail={}\n",
+            hint.signal, hint.playbook, hint.detail
+        ));
+    }
     if options.align {
         let pairs = align_streams(&candidate, &reference);
         let matched = pairs

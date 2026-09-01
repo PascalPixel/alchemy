@@ -15,34 +15,30 @@ s32 BattleLayout_DrawPartyPanels(u16 *argument)
     s32 slot;
     s32 unit_index;
     u8 *battle;
-    u32 unit_id;
-    u16 *unit_ids;
 
-    unit_ids = argument;
     battle = Data_03001e74;
     party_size = Func_080b5090(1, 0);
     Func_08022768(29 - party_size * 6, 0, 25, 5, 15);
 
     unit_index = 0;
-    if (*unit_ids != 0xff) {
+    if (*argument != 0xff) {
         unit_offset = 0;
 loop_unit:
         placed_unit = *(s16 *)(battle + 88);
-        unit_id = *(u16 *)((u8 *)unit_ids + unit_offset);
         slot = 0;
 loop_slot:
-        if (placed_unit != unit_id) {
-            if (placed_unit == 0xff) {
-                slot = 4;
-            } else {
-                slot++;
-                if (slot <= 3) {
-                    placed_unit = *(s16 *)(battle + 88 + slot * 2);
-                    unit_id = *(u16 *)((u8 *)unit_ids + unit_offset);
-                    goto loop_slot;
-                }
-            }
+        if (placed_unit == *(volatile u16 *)((u8 *)argument + unit_offset))
+            goto slot_done;
+        if (placed_unit == 0xff) {
+            slot = 4;
+            goto slot_done;
         }
+        slot++;
+        if (slot <= 3) {
+            placed_unit = *(s16 *)(battle + slot * 2 + 88);
+            goto loop_slot;
+        }
+slot_done:
         if (slot != 4) {
             Func_08022768(
                 29 - (party_size - slot) * 6,
@@ -54,7 +50,7 @@ loop_slot:
         unit_index++;
         if (unit_index <= 3) {
             unit_offset = unit_index * 2;
-            if (*(u16 *)((u8 *)unit_ids + unit_offset) != 0xff)
+            if (*(u16 *)((u8 *)argument + unit_offset) != 0xff)
                 goto loop_unit;
         }
     }

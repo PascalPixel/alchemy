@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define VRAM_TILEMAP ((u16 *)0x06006000)
+#define VRAM_TILEMAP ((volatile u16 *)0x06006000)
 
 extern s32 *Data_03001ef8;
 
@@ -11,7 +11,7 @@ void Func_080c0228(void)
     s32 row;
     s32 div;
     s32 i;
-    u16 *dst;
+    volatile u16 *dst;
 
     value = *Data_03001ef8;
     if ((u32)value > 79)

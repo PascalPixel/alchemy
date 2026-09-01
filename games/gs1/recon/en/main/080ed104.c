@@ -22,7 +22,7 @@
  * the ip (r12) slot (N=12) and 0x080072f4 is exactly the r4 slot (N=4). Both
  * are therefore indirect calls through a genuinely traced function-pointer
  * value, not calls to real functions named "Func_08007314"/"Func_080072f4" --
- * see games/gs1/recon/en/main/080dc1ec.json's score.note for the full
+ * see games/gs1/recon/en/dossiers.json#main:080dc1ec's score.note for the full
  * cross-family derivation (arm_function_arg proof, r4-value provenance
  * trace, and the already-adopted member_orbit/run.c's identical
  * `((DrawRectangleFn)rectangle_slot[slot & 1])(...)` idiom). The ip-slot call

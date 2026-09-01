@@ -268,25 +268,20 @@ fn validate_drafts(root: &Path, exact: &HashSet<String>) -> Result<usize, String
 }
 
 fn validate_reconstruction_records(root: &Path) -> Result<(), String> {
-    for relative in ["games/gs1/recon/en/main", "games/gs1/recon/en/overlays"] {
-        for entry in std::fs::read_dir(root.join(relative))
-            .map_err(|error| format!("{relative}: {error}"))?
-        {
-            let path = entry.map_err(|error| error.to_string())?.path();
-            if path.extension().and_then(|value| value.to_str()) != Some("json") {
-                continue;
-            }
-            let stem = path
-                .file_stem()
-                .and_then(|value| value.to_str())
-                .ok_or_else(|| format!("{} has no UTF-8 owner stem", path.display()))?;
-            SourceOwner::from_legacy_stem(stem)
-                .ok_or_else(|| format!("{} has no owner-qualified filename", path.display()))?;
-            let record = json(&path)?;
-            for duplicate in ["owner", "semantic_name"] {
-                if record.get(duplicate).is_some() {
-                    return Err(format!("{} repeats {duplicate}; owner identity comes from the filename and names from games/gs1/source-paths.json", path.display()));
-                }
+    let path = root.join("games/gs1/recon/en/dossiers.json");
+    let registry = json(&path)?;
+    if registry.get("format").and_then(Value::as_u64) != Some(1) {
+        return Err(format!("{} has an unsupported format", path.display()));
+    }
+    let records = registry
+        .get("records")
+        .and_then(Value::as_object)
+        .ok_or_else(|| format!("{} has no records", path.display()))?;
+    for (owner, record) in records {
+        SourceOwner::parse(owner).map_err(|error| format!("{owner}: {error}"))?;
+        for duplicate in ["owner", "semantic_name"] {
+            if record.get(duplicate).is_some() {
+                return Err(format!("{owner} repeats {duplicate}; owner identity comes from the registry key and names from games/gs1/source-paths.json"));
             }
         }
     }

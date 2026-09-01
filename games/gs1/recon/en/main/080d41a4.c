@@ -8,7 +8,7 @@
  * M2C_FIELD(expr,type_ptr,offset) macro, the DrawRectangleFn typedef, the
  * heap_cache cursor-advance-then-index-N idiom) and the r4-slot
  * `_call_via_rN` trampoline finding recorded in
- * games/gs1/recon/en/main/080dc1ec.json: a `bl` into
+ * games/gs1/recon/en/dossiers.json#main:080dc1ec: a `bl` into
  * games/gs1/asm/080072e4.s's r4 veneer is an indirect call through a
  * DrawRectangleFn value carried in r4, not a call to a real function named
  * "Func_080072f4".

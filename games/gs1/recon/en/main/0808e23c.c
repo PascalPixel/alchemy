@@ -3,7 +3,7 @@
 #include "battle_effect_runtime.h"
 
 /*
- * Evidence summary (see games/gs1/recon/en/main/0808e23c.json for the full
+ * Evidence summary (see games/gs1/recon/en/dossiers.json#main:0808e23c for the full
  * account):
  *
  * - The packed-argument decode (item_id = arg & 0x3ff, actor = (arg>>10)&0xf)

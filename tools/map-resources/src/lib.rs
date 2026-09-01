@@ -287,34 +287,14 @@ fn component_end(offsets: &[usize; 6], slot: usize, size: usize) -> Result<usize
 
 fn component_sources(directory: &Path, slot: usize) -> Result<Vec<PathBuf>> {
     let stem = directory.display().to_string();
+    let package = PathBuf::from(format!("{stem}.json"));
     Ok(match slot {
-        0 => {
-            vec![
-                PathBuf::from(format!("{stem}_metatiles.tilemap")),
-                PathBuf::from(format!("{stem}_metatiles.lz.json")),
-            ]
-        }
-        1 => vec![
-            PathBuf::from(format!("{stem}_descriptors.json")),
-            PathBuf::from(format!("{stem}_descriptors.lz.json")),
-        ],
+        0 | 1 | 3 | 4 => vec![package],
         2 => vec![
             PathBuf::from(format!("{stem}_grid_grid.kind1.json")),
-            PathBuf::from(format!("{stem}_grid_value_low.png")),
-            PathBuf::from(format!("{stem}_grid_value_high.png")),
-            PathBuf::from(format!("{stem}_grid_attribute_a.png")),
-            PathBuf::from(format!("{stem}_grid_attribute_b.png")),
-            PathBuf::from(format!("{stem}_grid_sentinels.png")),
+            PathBuf::from(format!("{stem}_grid_layers.png")),
         ],
-        3 => vec![
-            PathBuf::from(format!("{stem}_animation_queues.json")),
-            PathBuf::from(format!("{stem}_animation_queues.lz.json")),
-        ],
-        4 => vec![
-            PathBuf::from(format!("{stem}_blend_animation.json")),
-            PathBuf::from(format!("{stem}_blend_animation.lz.json")),
-        ],
-        5 => vec![PathBuf::from(format!("{stem}_sparse_cells.json"))],
+        5 => vec![package],
         _ => return Err("unsupported map component slot".into()),
     })
 }
@@ -322,11 +302,11 @@ fn component_sources(directory: &Path, slot: usize) -> Result<Vec<PathBuf>> {
 fn build_component(directory: &Path, slot: usize, expected: usize) -> Result<Vec<u8>> {
     let sources = component_sources(directory, slot)?;
     let built = match slot {
-        0 => build_metatiles(&sources[0], &sources[1]),
-        1 => build_descriptors(&sources[0], &sources[1]),
+        0 => build_metatiles(&sources[0], &sources[0]),
+        1 => build_descriptors(&sources[0], &sources[0]),
         2 => build_grid(&json(&sources[0], "map grid plan")?, directory),
-        3 => build_queues(&sources[0], &sources[1]),
-        4 => build_blend_animation(&sources[0], &sources[1]),
+        3 => build_queues(&sources[0], &sources[0]),
+        4 => build_blend_animation(&sources[0], &sources[0]),
         5 => build_sparse(&sources[0]),
         _ => return Err("unsupported map component slot".into()),
     }
@@ -347,7 +327,7 @@ fn build_resource(
         .parent()
         .ok_or_else(|| "map index has no parent".to_string())?;
     let directory = root.join(format!("{}{}", kind.prefix(), entry.directory));
-    let header_path = PathBuf::from(format!("{}_header.json", directory.display()));
+    let header_path = PathBuf::from(format!("{}.json", directory.display()));
     let header = build_header(&header_path, None).map_err(|error| error.to_string())?;
     let offsets = component_offsets(&header, spec.size, kind)?;
     let mut data = header;

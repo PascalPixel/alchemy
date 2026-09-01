@@ -20,7 +20,7 @@
  * scores an identical differing_halfwords=162 against the 324-byte
  * reference and reports topology=uncovered:reference-multiple-owner-entries
  * / class=compiler-unemittable, regardless of candidate content or size.
- * See games/gs1/recon/en/main/0808b674.json for the recorded classification
+ * See games/gs1/recon/en/dossiers.json#main:0808b674 for the recorded classification
  * proof and the full list of refuted shapes.
  *
  * The block below is a best-effort semantic reading of the retained

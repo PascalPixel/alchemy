@@ -107,6 +107,56 @@ fn read_image(path: &Path, width: usize, height: usize, palette: &[Rgb]) -> Resu
     Ok(image.pixels.into_iter().map(|value| value as u8).collect())
 }
 
+fn read_atlas(
+    path: &Path,
+    width: usize,
+    height: usize,
+    count: usize,
+    columns: usize,
+    palette: &[Rgb],
+) -> Result<Vec<Vec<u8>>> {
+    if columns == 0 || columns > count {
+        return fail("sprite atlas has an invalid column count");
+    }
+    let image = indexed_png(&fs::read(path).map_err(|error| Error(error.to_string()))?)
+        .map_err(|error| Error(error.0))?;
+    let rows = count.div_ceil(columns);
+    if image.width as usize != columns * width
+        || image.height as usize != rows * height
+        || image.palette != palette
+    {
+        return fail(format!(
+            "{}: atlas dimensions or palette differ from its plan",
+            path.display()
+        ));
+    }
+    let pixels = image
+        .pixels
+        .into_iter()
+        .map(|value| value as u8)
+        .collect::<Vec<_>>();
+    let atlas_width = columns * width;
+    let mut frames = Vec::with_capacity(count);
+    for index in 0..count {
+        let left = index % columns * width;
+        let top = index / columns * height;
+        let mut frame = Vec::with_capacity(width * height);
+        for y in 0..height {
+            frame.extend_from_slice(
+                &pixels[(top + y) * atlas_width + left..(top + y) * atlas_width + left + width],
+            );
+        }
+        if frame.iter().any(|value| *value > 0xdf) {
+            return fail(format!(
+                "{}: pixel exceeds the archive literal range",
+                path.display()
+            ));
+        }
+        frames.push(frame);
+    }
+    Ok(frames)
+}
+
 fn parse_plan(value: &Value) -> Result<(usize, usize, usize, usize, usize, Vec<usize>)> {
     let plan = value
         .as_object()
@@ -145,14 +195,30 @@ fn parse_plan(value: &Value) -> Result<(usize, usize, usize, usize, usize, Vec<u
 pub fn build_archive(plan_value: &Value, directory: &Path, palette_path: &Path) -> Result<Vec<u8>> {
     let (width, height, count, palette_offset, palette_entries, order) = parse_plan(plan_value)?;
     let palette = read_palette(palette_path, palette_offset, palette_entries)?;
-    let mut streams = Vec::with_capacity(count);
-    for index in 0..count {
-        let path = PathBuf::from(format!(
-            "{}_images_frame_{index:02}.png",
-            directory.display()
-        ));
-        streams.push(encode_stream(&read_image(&path, width, height, &palette)?)?);
-    }
+    let frames = if let Some(columns) = plan_value.get("atlas_columns") {
+        read_atlas(
+            &PathBuf::from(format!("{}_images.8bpp.png", directory.display())),
+            width,
+            height,
+            count,
+            integer(Some(columns), "atlas_columns")?,
+            &palette,
+        )?
+    } else {
+        (0..count)
+            .map(|index| {
+                let path = PathBuf::from(format!(
+                    "{}_images_frame_{index:02}.png",
+                    directory.display()
+                ));
+                read_image(&path, width, height, &palette)
+            })
+            .collect::<Result<Vec<_>>>()?
+    };
+    let streams = frames
+        .iter()
+        .map(|frame| encode_stream(frame))
+        .collect::<Result<Vec<_>>>()?;
     let header_size = (count + 1) * 4;
     let mut offsets = vec![0usize; count];
     let mut cursor = header_size;

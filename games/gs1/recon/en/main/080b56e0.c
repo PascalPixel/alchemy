@@ -4,7 +4,7 @@
 /*
  * Draft reconstruction, not yet verified byte-exact against
  * games/gs1/asm/080b56e0.s. Traced directly from the retained assembly;
- * see games/gs1/recon/en/main/080b56e0.json for the evidence log.
+ * see games/gs1/recon/en/dossiers.json#main:080b56e0 for the evidence log.
  *
  * Structurally: an outer loop polls ADDR_03001AE8 (held-key level bits)
  * for bit 0x80 (Down) each pass. While Down is not held it calls two

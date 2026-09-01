@@ -10,7 +10,7 @@
  * regions are a private two-member cluster with one true prologue and
  * one true epilogue. Full instruction-level control-flow map, frame
  * ledger, and pool-constant ground truth are recorded in
- * games/gs1/recon/en/main/080d0ee0.json under "reconstruction_dossier".
+ * games/gs1/recon/en/dossiers.json#main:080d0ee0 under "reconstruction_dossier".
  *
  * This owner shares the 0x03001eec heap-cache / work-pointer idiom, the
  * Func_080cd594 / Func_080041d8+Func_08004278 (0x080CD261 callback,

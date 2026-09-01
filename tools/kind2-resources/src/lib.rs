@@ -256,8 +256,14 @@ fn parse_tokens(value: &Value) -> Result<Vec<Token>> {
         .collect()
 }
 
-fn parse_encoding_plan(path: &Path) -> Result<(usize, Vec<Token>, Vec<u8>, Option<usize>)> {
-    let value = json(path)?;
+fn parse_encoding_plan(
+    path: &Path,
+    section: Option<&str>,
+) -> Result<(usize, Vec<Token>, Vec<u8>, Option<usize>)> {
+    let document = json(path)?;
+    let value = section
+        .and_then(|name| document.get(name))
+        .unwrap_or(&document);
     let plan = object(&value, "kind-2 encoding plan")?;
     if number(field(plan, "format")?, "format")? != 1
         || string(field(plan, "codec")?, "codec")? != "golden-sun-kind2-lz"
@@ -277,8 +283,12 @@ fn parse_encoding_plan(path: &Path) -> Result<(usize, Vec<Token>, Vec<u8>, Optio
     Ok((decoded_size, tokens, lookahead, encoded_size))
 }
 
-pub fn encode_kind2_plan(decoded: &[u8], plan_path: &Path) -> Result<Vec<u8>> {
-    let (decoded_size, tokens, lookahead, encoded_size) = parse_encoding_plan(plan_path)?;
+pub fn encode_kind2_plan(
+    decoded: &[u8],
+    plan_path: &Path,
+    section: Option<&str>,
+) -> Result<Vec<u8>> {
+    let (decoded_size, tokens, lookahead, encoded_size) = parse_encoding_plan(plan_path, section)?;
     if decoded.len() != decoded_size {
         return Err("tag-2 decoded data has the wrong size".into());
     }
@@ -515,12 +525,12 @@ pub fn write_build_stdout(plan: &Path) -> Result<()> {
         .map_err(|e| e.to_string())
 }
 
-pub fn write_encode_stdout(plan: &Path) -> Result<()> {
+pub fn write_encode_stdout(plan: &Path, section: Option<&str>) -> Result<()> {
     let mut decoded = Vec::new();
     std::io::stdin()
         .read_to_end(&mut decoded)
         .map_err(|e| e.to_string())?;
-    let encoded = encode_kind2_plan(&decoded, plan)?;
+    let encoded = encode_kind2_plan(&decoded, plan, section)?;
     std::io::stdout()
         .write_all(&encoded)
         .map_err(|e| e.to_string())

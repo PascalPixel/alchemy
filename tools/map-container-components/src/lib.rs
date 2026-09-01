@@ -20,6 +20,10 @@ fn json_file(path: &Path) -> Result<Value> {
         String::from_utf8(read(path)?).map_err(|error| format!("{}: {error}", path.display()))?;
     serde_json::from_str(&text).map_err(|error| format!("{}: {error}", path.display()))
 }
+fn json_section(path: &Path, section: &str) -> Result<Value> {
+    let document = json_file(path)?;
+    Ok(document.get(section).cloned().unwrap_or(document))
+}
 fn object<'a>(value: &'a Value, label: &str) -> Result<&'a Map<String, Value>> {
     value
         .as_object()
@@ -201,7 +205,7 @@ pub fn encode_plan(decoded: &[u8], plan: &Value) -> Result<Vec<u8>> {
     Ok(encoded)
 }
 pub fn build_header(source: &Path, offsets_check: Option<&OffsetChecks>) -> Result<Vec<u8>> {
-    let document = json_file(source)?;
+    let document = json_section(source, "header")?;
     let object = object(&document, "map container header")?;
     if number(field(object, "format")?, "format")? != 1 {
         return err("unsupported map container header source");
@@ -308,9 +312,20 @@ pub fn encode_metatiles(entries: &[u16], mode: u8) -> Result<Vec<u8>> {
     Ok(output)
 }
 pub fn build_metatiles(source: &Path, plan_path: &Path) -> Result<Vec<u8>> {
-    let raw = import_tilemap(&String::from_utf8(read(source)?).map_err(|error| error.to_string())?)
-        .map_err(|error| error.to_string())?;
-    let plan = json_file(plan_path)?;
+    let plan = if source == plan_path {
+        json_section(source, "metatiles")?
+    } else {
+        json_file(plan_path)?
+    };
+    let tilemap = if source == plan_path {
+        plan.get("tilemap")
+            .and_then(Value::as_str)
+            .ok_or_else(|| "embedded metatile source has no tilemap".to_string())?
+            .to_string()
+    } else {
+        String::from_utf8(read(source)?).map_err(|error| error.to_string())?
+    };
+    let raw = import_tilemap(&tilemap).map_err(|error| error.to_string())?;
     let object = object(&plan, "metatile plan")?;
     let mode = byte(field(object, "transform_mode")?, "transform mode")?;
     let entries = u16s(&raw)?;
@@ -318,7 +333,7 @@ pub fn build_metatiles(source: &Path, plan_path: &Path) -> Result<Vec<u8>> {
     encode_plan(&decoded, &plan)
 }
 pub fn build_descriptors(source: &Path, plan_path: &Path) -> Result<Vec<u8>> {
-    let document = json_file(source)?;
+    let document = json_section(source, "descriptors")?;
     let object = object(&document, "map descriptor source")?;
     if number(field(object, "format")?, "format")? != 1
         || number(field(object, "record_size")?, "record size")? != 4
@@ -340,7 +355,12 @@ pub fn build_descriptors(source: &Path, plan_path: &Path) -> Result<Vec<u8>> {
             decoded.push(byte(value, "map descriptor byte")?);
         }
     }
-    encode_plan(&decoded, &json_file(plan_path)?)
+    let plan = document
+        .get("compression")
+        .cloned()
+        .map(Ok)
+        .unwrap_or_else(|| json_file(plan_path))?;
+    encode_plan(&decoded, &plan)
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AnimationQueue {
@@ -390,7 +410,7 @@ fn encode_word_list(document: &Value) -> Result<Vec<u8>> {
         .map(|words| pack_u16(&words))
 }
 pub fn build_queues(source: &Path, plan_path: &Path) -> Result<Vec<u8>> {
-    let document = json_file(source)?;
+    let document = json_section(source, "animation_queues")?;
     let source_object = object(&document, "animation queue source")?;
     if number(field(source_object, "format")?, "format")? != 1 {
         return err("unsupported animation queue source");
@@ -433,7 +453,12 @@ pub fn build_queues(source: &Path, plan_path: &Path) -> Result<Vec<u8>> {
     } else {
         encode_word_list(&document)?
     };
-    encode_plan(&decoded, &json_file(plan_path)?)
+    let plan = document
+        .get("compression")
+        .cloned()
+        .map(Ok)
+        .unwrap_or_else(|| json_file(plan_path))?;
+    encode_plan(&decoded, &plan)
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum BlendCommand {
@@ -504,7 +529,7 @@ fn parse_blend_commands(value: &Value) -> Result<Vec<BlendCommand>> {
         .collect()
 }
 pub fn build_blend_animation(source: &Path, plan_path: &Path) -> Result<Vec<u8>> {
-    let document = json_file(source)?;
+    let document = json_section(source, "blend_animation")?;
     let object = object(&document, "blend animation source")?;
     if number(field(object, "format")?, "format")? != 1
         || number(field(object, "word_size")?, "word size")? != 2
@@ -518,7 +543,12 @@ pub fn build_blend_animation(source: &Path, plan_path: &Path) -> Result<Vec<u8>>
     } else {
         encode_word_list(&document)?
     };
-    encode_plan(&decoded, &json_file(plan_path)?)
+    let plan = document
+        .get("compression")
+        .cloned()
+        .map(Ok)
+        .unwrap_or_else(|| json_file(plan_path))?;
+    encode_plan(&decoded, &plan)
 }
 fn decode_blend_commands_from_json(value: &Value) -> Result<Vec<u16>> {
     let commands = parse_blend_commands(value)?;
@@ -526,7 +556,7 @@ fn decode_blend_commands_from_json(value: &Value) -> Result<Vec<u16>> {
     u16s(&encoded)
 }
 pub fn build_sparse(source: &Path) -> Result<Vec<u8>> {
-    let document = json_file(source)?;
+    let document = json_section(source, "sparse_cells")?;
     let object = object(&document, "sparse-cell source")?;
     if number(field(object, "format")?, "format")? != 1
         || number(field(object, "record_size")?, "record size")? != 3

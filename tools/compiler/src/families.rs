@@ -1023,6 +1023,10 @@ fn prove_command(arguments: &[String]) -> Result<(), String> {
         ));
     }
     let classification: Value = json("games/gs1/asm/classification.json")?;
+    let dossiers: Value = json("games/gs1/recon/en/dossiers.json")?;
+    let dossier_records = dossiers["records"]
+        .as_object()
+        .ok_or("reconstruction dossier registry has no records")?;
     let exact: BuildManifest = json("out/gs1-en/claimed/manifest.json")?;
     let exact = exact
         .regions
@@ -1080,7 +1084,7 @@ fn prove_command(arguments: &[String]) -> Result<(), String> {
         }
         let mut family_bytes = 0;
         for owner in &family.members {
-            family_bytes += prove_member(owner, family)?;
+            family_bytes += prove_member(owner, family, dossier_records)?;
         }
         if group["expected_files"].as_u64() != Some(family.members.len() as u64)
             || group["expected_bytes"].as_u64() != Some(family_bytes as u64)
@@ -1103,13 +1107,18 @@ fn prove_command(arguments: &[String]) -> Result<(), String> {
     );
     Ok(())
 }
-fn prove_member(owner: &str, family: &ProofFamily) -> Result<usize, String> {
+fn prove_member(
+    owner: &str,
+    family: &ProofFamily,
+    dossiers: &serde_json::Map<String, Value>,
+) -> Result<usize, String> {
     let stem = owner
         .strip_prefix("main:")
         .filter(|stem| stem.len() == 8 && stem.bytes().all(|byte| byte.is_ascii_hexdigit()))
         .ok_or_else(|| format!("{}: invalid owner {owner}", family.id))?;
-    let evidence_path = PathBuf::from(format!("games/gs1/recon/en/main/{stem}.json"));
-    let evidence: Value = json(&evidence_path)?;
+    let evidence = dossiers
+        .get(owner)
+        .ok_or_else(|| format!("{owner}: reconstruction dossier missing"))?;
     let owner_bytes = evidence["owner_bytes"]
         .as_u64()
         .ok_or_else(|| format!("{owner}: missing owner_bytes"))? as usize;

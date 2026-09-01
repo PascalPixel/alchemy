@@ -11,7 +11,7 @@
  * match the same subsystem already recovered across games/gs1/recon/en/
  * main/080e7404.c, 080d59b0.c, 080d82b0.c, 080dc1ec.c and 080e01e4.c: a
  * single Func_080041d8(0x080CD261,0x480) callback, Func_08004458() as the
- * RNG, and (per games/gs1/recon/en/main/080e01e4.json's already-resolved
+ * RNG, and (per games/gs1/recon/en/dossiers.json#main:080e01e4's already-resolved
  * derivation) Func_080072f4 is not a real callee -- it is the r4 slot of
  * the _call_via_rN trampoline at games/gs1/asm/080072e4.s, so every call
  * through it below is modeled as a genuine indirect call through a

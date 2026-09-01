@@ -5,6 +5,15 @@
 
 void **Func_080b5098(s32 member_id);
 void Func_080e396c(s32 member_id, struct EffectPosition *result);
+s32 Func_080ed408(s32 id, s32 width, s32 height, s32 mode, s32 variant);
+
+typedef void (*BattleEffectDrawFn)(
+    void *destination,
+    const void *source,
+    s32 x,
+    s32 y,
+    s32 width,
+    s32 height);
 
 struct BattleEffectWorkGlobals {
     void *work;
@@ -12,9 +21,14 @@ struct BattleEffectWorkGlobals {
     u32 resource_context;
 };
 
+struct BattleEffectVectorWork {
+    s32 modulation[3];
+    s32 projected[3];
+    s32 position[3];
+    s32 output[3];
+};
+
 s32 Func_080d0ad4(s32 actor) {
-    s32 sp0;
-    s32 sp4;
     s32 sp8;
     s32 spC;
     s32 sp10;
@@ -26,15 +40,12 @@ s32 Func_080d0ad4(s32 actor) {
     s32 sp28;
     s32 sp2C;
     s32 sp30;
-    u32 sp34;
-    s32 sp38;
+    BattleEffectDrawFn sp34;
+    BattleEffectDrawFn sp38;
     s32 sp3C;
     u32 sp40;
     void *sp44;
-    s32 sp48[3];
-    s32 sp54[3];
-    s32 sp60[3];
-    struct EffectPosition sp6C;
+    struct BattleEffectVectorWork vector_work;
     s32 temp_r0_37;
     s32 temp_r1_252;
     s32 temp_r3_103;
@@ -79,8 +90,10 @@ s32 Func_080d0ad4(s32 actor) {
     M2C_FIELD(sp44, s32 *, 0x7780) = 3;
     M2C_FIELD(sp44, s32 *, 0x7784) = 0x04040404;
     Func_080041d8(0x080CD261, 0x480);
-    sp24 = &sp6C.x;
-    Func_080e396c(M2C_FIELD(*temp_r5_28, s16 *, 0x24), &sp6C);
+    sp24 = vector_work.output;
+    Func_080e396c(
+        M2C_FIELD(*temp_r5_28, s16 *, 0x24),
+        (struct EffectPosition *)vector_work.output);
     temp_r3_103 = 0x40 - *sp24;
     sp28 = temp_r3_103;
     *(s32 *)0x04000028 = temp_r3_103 << 8;
@@ -98,12 +111,10 @@ loop_3:
             Func_080b5078(M2C_FIELD(temp_r3_135, s32 *, 8), M2C_FIELD(temp_r3_135, s16 *, 0x24), 0x10, 0);
         }
         Func_080d40ec(sp3C, 0xAAAB, 0x5555, 0);
-        sp0 = 2;
-        Func_080ed408(0x2E, 7, 7, 3);
-        sp34 = *(u32 *)0x03001F08;
-        sp0 = 2;
-        Func_080ed408(0x2F, 7, 7, 7);
-        sp38 = *(s32 *)0x03001F0C;
+        Func_080ed408(0x2E, 7, 7, 3, 2);
+        sp34 = *(BattleEffectDrawFn *)0x03001F08;
+        Func_080ed408(0x2F, 7, 7, 7, 2);
+        sp38 = *(BattleEffectDrawFn *)0x03001F0C;
         if ((sp3C > 0x10) && !(0xF & sp3C)) {
             M2C_FIELD(sp44, s32 *, 0x7784) = (s32) (M2C_FIELD(sp44, s32 *, 0x7784) + 0x01010101);
         }
@@ -120,12 +131,12 @@ loop_11:
         } else {
             Func_080049ac();
             Func_080051d8(sp2C, sp2C + 0xC);
-            M2C_FIELD(&sp60, s32 *, 0) = M2C_FIELD(temp_r6_203, s32 *, 8);
-            M2C_FIELD(&sp60, s32 *, 4) = (s32) M2C_FIELD(temp_r6_203, s32 *, 0xC);
-            M2C_FIELD(&sp60, s32 *, 8) = (s32) M2C_FIELD(temp_r6_203, s32 *, 0x10);
-            Func_080e3944(&sp60, &sp54);
-            M2C_FIELD(&sp54, s32 *, 0) = *sp24 + sp28;
-            M2C_FIELD(&sp54, s32 *, 4) = (s32) (M2C_FIELD(&sp54, s32 *, 4) - 0x18);
+            vector_work.position[0] = M2C_FIELD(temp_r6_203, s32 *, 8);
+            vector_work.position[1] = M2C_FIELD(temp_r6_203, s32 *, 0xC);
+            vector_work.position[2] = M2C_FIELD(temp_r6_203, s32 *, 0x10);
+            Func_080e3944(vector_work.position, vector_work.projected);
+            vector_work.projected[0] = *sp24 + sp28;
+            vector_work.projected[1] -= 0x18;
             if (var_fp_191 > 0x43) {
 
             } else {
@@ -137,19 +148,19 @@ loop_11:
                 do {
                     Func_080049ac();
                     if (var_fp_191 <= 0x3F) {
-                        M2C_FIELD(&sp48, s32 *, 0) = temp_r1_252;
-                        M2C_FIELD(&sp48, s32 *, 4) = temp_r1_252;
-                        M2C_FIELD(&sp48, s32 *, 8) = temp_r1_252;
-                        Func_08004cf0(&sp48);
+                        vector_work.modulation[0] = temp_r1_252;
+                        vector_work.modulation[1] = temp_r1_252;
+                        vector_work.modulation[2] = temp_r1_252;
+                        Func_08004cf0(vector_work.modulation);
                         Func_08004c6c(temp_r3_257);
                         Func_08004c1c(temp_r3_257);
                     }
                     Func_08004c6c(sp14);
-                    Func_080e3944((s32 *)0x080EE134, &sp60);
+                    Func_080e3944((s32 *)0x080EE134, vector_work.position);
                     M2C_FIELD(var_r5_253, s32 *, 0xC) =
-                        sp60[0] + sp54[0];
+                        vector_work.position[0] + vector_work.projected[0];
                     M2C_FIELD(var_r5_253, s32 *, 0x10) =
-                        sp60[1] + sp54[1] + 0x10;
+                        vector_work.position[1] + vector_work.projected[1] + 0x10;
                     var_r7_258 += 1;
                     sp14 += 0x5555;
                     var_r5_253 += 0x1C;
@@ -174,13 +185,14 @@ loop_23:
                     temp_r5_357 = M2C_FIELD(sp20, s32 *, 0x10);
                     temp_r6_359 = temp_r6_346 + Func_080022ec(var_r8_341 * (M2C_FIELD(temp_r9_332, s32 *, 0xC) - temp_r6_346), 0x18);
                     temp_r3_376 = (temp_r5_357 + Func_080022ec(var_r8_341 * (M2C_FIELD(temp_r9_332, s32 *, 0x10) - temp_r5_357), 0x18)) - var_r4_339;
-                    sp0 = temp_r7_342;
-                    sp4 = temp_r7_342;
-                    Func_080072f8(sp40,
+                    sp34((void *)sp40,
                         (u8 *)sp44
                             + *(u16 *)(0x080EDE5C + temp_r7_342 - 2)
                             + 0x1000,
-                        temp_r6_359 - var_r4_339, temp_r3_376);
+                        temp_r6_359 - var_r4_339,
+                        temp_r3_376,
+                        temp_r7_342,
+                        temp_r7_342);
                     var_r8_341 += 1;
                     if (var_r8_341 != 0x18) {
                         goto loop_23;
@@ -189,12 +201,14 @@ loop_23:
                 } while (var_r7_304 != 3);
             }
             if (var_fp_191 > 0x3F) {
-                sp0 = 0x18;
-                sp4 = 0x30;
-                Func_080072f4(sp40, sp44, M2C_FIELD(&sp54, s32 *, 0) - 0x18, M2C_FIELD(&sp54, s32 *, 4) - 0x18);
-                sp4 = 0x30;
-                sp0 = 0x18;
-                Func_080072f8(sp40, sp44, M2C_FIELD(&sp54, s32 *, 0), M2C_FIELD(&sp54, s32 *, 4) - 0x18);
+                sp34((void *)sp40, sp44,
+                    vector_work.projected[0] - 0x18,
+                    vector_work.projected[1] - 0x18,
+                    0x18, 0x30);
+                sp38((void *)sp40, sp44,
+                    vector_work.projected[0],
+                    vector_work.projected[1] - 0x18,
+                    0x18, 0x30);
             }
         }
         temp_r5_429 = sp30 + 1;

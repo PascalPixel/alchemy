@@ -5,7 +5,6 @@
 s32 Func_08077228(s32 unit_id, u8 type);
 s32 Func_08077068(s32 unit_id, s32 slot);
 s32 Func_08077230(s32 amount);
-s32 Func_080b1868(s32 unit_id, s32 slot);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 sound_id);
 void UiText_DrawQuantity(u32 value, u32 mode);
@@ -94,7 +93,7 @@ void Shop_RepairItem(s32 unit_id, s32 slot)
     Shop_DrawPartyMemberItemGrid(shop->item_window, unit_id);
     UiText_DrawQuantity(item_id, 2);
     UiMessage_ShowAndRestoreState(message + 3);
-    if (Func_080b1868(unit_id, slot) != 0) {
+    if (Shop_ConfirmEquipItem(unit_id, slot) != 0) {
         Shop_SellReplacedItem(unit_id, replaced_slot);
     }
 }

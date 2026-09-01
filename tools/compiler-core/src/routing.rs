@@ -143,6 +143,18 @@ mod target_tests {
             );
         }
     }
+    #[test]
+    fn map_tile_block_expensive_route_is_owner_scoped() {
+        assert!(cflags_for_source("080114a0.c")
+            .iter()
+            .any(|flag| flag == "-fno-expensive-optimizations"));
+        assert!(
+            !cflags_for_source("080113e4.c")
+                .iter()
+                .any(|flag| flag == "-fno-expensive-optimizations"),
+            "map-tile route leaked to its canonical-flags sibling"
+        );
+    }
 }
 /// `basename(source, extname(source))` for POSIX paths.
 fn source_stem_ref(source: &str) -> &str {

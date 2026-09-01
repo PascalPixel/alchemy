@@ -17,9 +17,10 @@ void Func_080c0228(void)
     if ((u32)value > 79)
         return;
 
+    div = value;
     tile = (value & 7) + 0xf081;
-
-    div = (value >= 0) ? value : value + 7;
+    if (div < 0)
+        div += 7;
     div >>= 3;
     row = 13 - div;
     dst = VRAM_TILEMAP + row * 32;

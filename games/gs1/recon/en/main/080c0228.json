@@ -6,8 +6,8 @@
   "owner_bytes": 112,
   "executable_owner_bytes": 112,
   "candidate_bytes": 112,
-  "differing_halfwords": 40,
-  "wrong_instructions": 72,
+  "differing_halfwords": 38,
+  "wrong_instructions": 70,
   "template_family": "template-main-0801a910",
   "template_source": "games/gs1/src/unidentified/main/field/field_owner_7.c",
   "domain": "Not related to the m2c-pseudocode template beyond superficial n-gram shape: paints one 32-tile-wide VRAM tilemap row (0x06006000) with a computed tile id derived from a runtime counter, then paints a second, vertically mirrored row 13 tiles further down with the same tile id plus a 0x800 attribute bit set (a horizontal-flip or alternate-palette bit), guarded by a row-range check the first write doesn't need.",
@@ -22,9 +22,10 @@
     "exact": false,
     "reason": "First candidate used 'for (i=0;i<32;i++) dst[i]=tile;' fill loops, which compiled to a pointer-limit-compare loop (116 bytes, 78 wrong instructions) instead of reference's counter-compare loop. Rewriting both fills as an explicit 'i=0; do { i++; *dst=tile; dst++; } while (i != 32);' idiom (matching the counter-based loop shape used elsewhere in this corpus) brought candidate to the exact reference size (112/112 bytes) with the full control-flow shape now matching instruction-for-instruction."
   },
-  "remaining": "Same size, same control flow, same field/offset math -- the residual 40 differing halfwords are essentially all register-number swaps (candidate keeps the tile id in r0 and the two VRAM row pointers/loop bounds in r1-r3 with no callee-saved register needed, so it only pushes {lr}; reference keeps the tile id in the callee-saved r4 and caches the VRAM base pointer in r5, so it pushes {r5, lr}). This looks like exactly the same class of pure register-allocation gap seen on the serial-runtime family (080063bc/08006408/0800651c) elsewhere in this batch, not a source-shape or behavioral gap -- the C above is a faithful, size-exact reconstruction and a fresh register-allocation angle (rather than further structural changes) is the most promising next step.",
+  "remaining": "Same size, same control flow, same field/offset math -- the residual 38 differing halfwords are essentially all register-number swaps. Creating the signed division carrier before the tile expression now retains the runtime value in the reference's r0 and removes two mismatches, while the candidate still keeps the tile id in r1 and uses only caller-saved registers. The reference keeps the tile id in r4 and the first VRAM base in r5, so it pushes {r5, lr}. This is an allocation-order gap rather than a source-shape or behavioral gap; further work needs evidence for the tile/base lifetimes, not broad structural mutation.",
   "notes": [
     "The Data_03001ef8 double-indirection and the 0x06006000 VRAM tilemap base are read directly from the retained assembly; no cross-owner corroboration was available for this specific cell within this pass's time budget.",
-    "Recovered only from retained owner assembly and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used. Zero DONE bytes are claimed."
+    "Recovered only from retained owner assembly and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used. Zero DONE bytes are claimed.",
+    "2026-09-01: the allocator-order decoder identified the runtime value as candidate r1 versus reference r0. Initializing the division carrier from the value before expressing the independent tile calculation moves that value to r0 while GCC schedules the same arithmetic and preserves the exact 112-byte topology. The measured residual improves from 40 differing halfwords / 72 wrong instructions to 38 / 70. The tile and literal carriers remain r1/r4 instead of reference r4/r2; this edit is retained because it names and removes one allocation-role error without forcing a register."
   ]
 }

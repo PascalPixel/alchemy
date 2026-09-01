@@ -1,6 +1,6 @@
 pub mod cli;
 
-use import_asset::indexed_png;
+use import_asset::{indexed_png, rgba_png};
 use serde_json::Value;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -121,6 +121,9 @@ fn package_source(directory: &Path, index: usize) -> PathBuf {
 struct Plan {
     images: usize,
     entries: Vec<Option<usize>>,
+    atlas_columns: Option<usize>,
+    frame_palettes: Vec<Vec<u16>>,
+    used_palette_indices: Vec<Vec<u8>>,
 }
 
 fn parse_plan(value: &Value) -> Result<Plan> {
@@ -148,15 +151,135 @@ fn parse_plan(value: &Value) -> Result<Plan> {
                 .transpose()
         })
         .collect::<Result<Vec<_>>>()?;
-    Ok(Plan { images, entries })
+    let atlas_columns = value
+        .get("atlas_columns")
+        .and_then(Value::as_u64)
+        .and_then(|n| usize::try_from(n).ok());
+    let frame_palettes = value
+        .get("frame_palettes")
+        .and_then(Value::as_array)
+        .map(|frames| {
+            frames
+                .iter()
+                .map(|frame| {
+                    frame
+                        .as_array()
+                        .ok_or_else(|| Error("F0 frame palette must be an array".into()))?
+                        .iter()
+                        .map(|color| {
+                            color
+                                .as_u64()
+                                .and_then(|n| u16::try_from(n).ok())
+                                .ok_or_else(|| Error("F0 palette color must fit u16".into()))
+                        })
+                        .collect()
+                })
+                .collect::<Result<Vec<_>>>()
+        })
+        .transpose()?
+        .unwrap_or_default();
+    let used_palette_indices = value
+        .get("used_palette_indices")
+        .and_then(Value::as_array)
+        .map(|frames| {
+            frames
+                .iter()
+                .map(|frame| {
+                    frame
+                        .as_array()
+                        .ok_or_else(|| Error("F0 used palette indices must be an array".into()))?
+                        .iter()
+                        .map(|index| {
+                            index
+                                .as_u64()
+                                .and_then(|n| u8::try_from(n).ok())
+                                .filter(|n| *n < 16)
+                                .ok_or_else(|| Error("F0 palette index must fit 4 bits".into()))
+                        })
+                        .collect()
+                })
+                .collect::<Result<Vec<_>>>()
+        })
+        .transpose()?
+        .unwrap_or_default();
+    if atlas_columns.is_some()
+        && (frame_palettes.len() != images || used_palette_indices.len() != images)
+    {
+        return err("F0 atlas metadata must describe every frame");
+    }
+    Ok(Plan {
+        images,
+        entries,
+        atlas_columns,
+        frame_palettes,
+        used_palette_indices,
+    })
+}
+
+fn atlas_packages(plan: &Plan, directory: &Path, columns: usize) -> Result<Vec<Vec<u8>>> {
+    if columns == 0 || columns > plan.images {
+        return err("F0 atlas has an invalid column count");
+    }
+    let path = PathBuf::from(format!("{}_images.rgba.png", directory.display()));
+    let image =
+        rgba_png(&fs::read(&path).map_err(|e| Error(e.to_string()))?).map_err(|e| Error(e.0))?;
+    let rows = plan.images.div_ceil(columns);
+    if image.width as usize != columns * 32 || image.height as usize != rows * 32 {
+        return err("F0 atlas dimensions differ from its plan");
+    }
+    let atlas_width = image.width as usize;
+    let mut packages = Vec::with_capacity(plan.images);
+    for index in 0..plan.images {
+        let palette = &plan.frame_palettes[index];
+        if palette.len() != 16 {
+            return err("F0 frame palette must contain 16 colors");
+        }
+        let used = &plan.used_palette_indices[index];
+        let left = index % columns * 32;
+        let top = index / columns * 32;
+        let mut pixels = Vec::with_capacity(32 * 32);
+        for y in 0..32 {
+            for x in 0..32 {
+                let offset = ((top + y) * atlas_width + left + x) * 4;
+                let rgba = &image.pixels[offset..offset + 4];
+                if rgba[3] != 255 || rgba[..3].iter().any(|channel| channel & 7 != 0) {
+                    return err("F0 atlas contains a non-GBA color");
+                }
+                let color = u16::from(rgba[0] >> 3)
+                    | (u16::from(rgba[1] >> 3) << 5)
+                    | (u16::from(rgba[2] >> 3) << 10);
+                let palette_index = used
+                    .iter()
+                    .copied()
+                    .find(|entry| palette.get(*entry as usize) == Some(&color))
+                    .ok_or_else(|| {
+                        Error("F0 atlas color is absent from its frame palette".into())
+                    })?;
+                pixels.push(palette_index);
+            }
+        }
+        let mut package = palette
+            .iter()
+            .flat_map(|color| color.to_le_bytes())
+            .collect::<Vec<_>>();
+        package.extend(encode_pixels(&pixels)?);
+        package.resize((package.len() + 3) & !3, 0);
+        packages.push(package);
+    }
+    Ok(packages)
 }
 
 pub fn build_archive(plan_value: &Value, directory: &Path) -> Result<Vec<u8>> {
     let plan = parse_plan(plan_value)?;
-    let mut packages = Vec::with_capacity(plan.images);
-    for index in 0..plan.images {
-        packages.push(package_image(&package_source(directory, index))?);
-    }
+    let packages = if let Some(columns) = plan.atlas_columns {
+        atlas_packages(&plan, directory, columns)?
+    } else {
+        let mut packages = Vec::with_capacity(plan.images);
+        for index in 0..plan.images {
+            packages.push(package_image(&package_source(directory, index))?);
+        }
+        packages
+    };
     let mut offset = plan.entries.len() * 2;
     let mut offsets = Vec::with_capacity(packages.len());
     for package in &packages {

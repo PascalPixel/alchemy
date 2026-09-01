@@ -958,17 +958,21 @@ fn build_component(root: &Path, entry: &Json) -> Result<ComponentResult, String>
                 plan.to_string_lossy().into_owned(),
                 palette.to_string_lossy().into_owned(),
             ];
-            let built = native_command(
-                root,
-                "skip_sprite_archive",
-                &[
-                    "build-stdout".to_string(),
-                    args[0].clone(),
-                    args[1].clone(),
-                    args[2].clone(),
-                ],
-            )?;
-            let document = json(&plan)?;
+            let plan_section = entry.get("plan_section").and_then(Value::as_str);
+            let mut command = vec![
+                "build-stdout".to_string(),
+                args[0].clone(),
+                args[1].clone(),
+                args[2].clone(),
+            ];
+            if let Some(section) = plan_section {
+                command.extend(["--section".to_string(), section.to_string()]);
+            }
+            let built = native_command(root, "skip_sprite_archive", &command)?;
+            let plan_document = json(&plan)?;
+            let document = plan_section
+                .and_then(|section| plan_document.get(section))
+                .unwrap_or(&plan_document);
             (
                 built,
                 serde_json::json!({"images": json_number(document.get("images").ok_or("archive image count is missing")?, "images")?, "width": json_number(document.get("width").ok_or("archive width is missing")?, "width")?, "height": json_number(document.get("height").ok_or("archive height is missing")?, "height")?}),
@@ -1068,7 +1072,12 @@ fn build_general_lz(root: &Path, entry: &Json) -> Result<(Vec<u8>, Vec<String>, 
                 "archive plan",
             )?;
             let plan_path = root_path(root, plan_name)?;
-            let plan = json(&plan_path)?;
+            let plan_document = json(&plan_path)?;
+            let plan = component
+                .get("plan_section")
+                .and_then(Value::as_str)
+                .and_then(|section| plan_document.get(section))
+                .unwrap_or(&plan_document);
             let image_count = json_number(
                 plan.get("images").ok_or("archive image count is missing")?,
                 "images",
@@ -1077,8 +1086,12 @@ fn build_general_lz(root: &Path, entry: &Json) -> Result<(Vec<u8>, Vec<String>, 
                 component.get("source").ok_or("archive source is missing")?,
                 "archive source",
             )?;
-            for index in 0..image_count {
-                sources.push(format!("{source_name}_images_frame_{index:02}.png"));
+            if plan.get("atlas_columns").is_some() {
+                sources.push(format!("{source_name}_images.8bpp.png"));
+            } else {
+                for index in 0..image_count {
+                    sources.push(format!("{source_name}_images_frame_{index:02}.png"));
+                }
             }
             sources.push(plan_name.to_string());
             sources.push(
@@ -1110,7 +1123,12 @@ fn build_general_lz(root: &Path, entry: &Json) -> Result<(Vec<u8>, Vec<String>, 
         "general-LZ plan",
     )?;
     let plan_path = root_path(root, plan_name)?;
-    let plan = json(&plan_path)?;
+    let plan_document = json(&plan_path)?;
+    let plan = entry
+        .get("plan_section")
+        .and_then(Value::as_str)
+        .and_then(|section| plan_document.get(section))
+        .unwrap_or(&plan_document);
     let codec = json_string(
         plan.get("codec").ok_or("general-LZ codec is missing")?,
         "codec",
@@ -1232,6 +1250,9 @@ impl Context {
     fn source(&self, name: &str) -> Result<PathBuf, String> {
         root_path(&self.root, name)
     }
+    fn map_sparse_source(&self, map_dir: &str) -> String {
+        format!("{map_dir}.json")
+    }
     fn map_sources(
         &self,
         index_name: &str,
@@ -1252,38 +1273,24 @@ impl Context {
                 "directory",
             )?
         );
-        let header_name = format!("{map_dir}_header.json");
+        let header_name = format!("{map_dir}.json");
         let header = json(&self.source(&header_name)?)?;
         let offsets = header
+            .get("header")
+            .unwrap_or(&header)
             .get("component_offsets")
             .and_then(Value::as_array)
             .ok_or("map header component_offsets is missing")?;
         let names: Vec<Vec<String>> = vec![
-            vec![
-                format!("{map_dir}_metatiles.tilemap"),
-                format!("{map_dir}_metatiles.lz.json"),
-            ],
-            vec![
-                format!("{map_dir}_descriptors.json"),
-                format!("{map_dir}_descriptors.lz.json"),
-            ],
+            vec![header_name.clone()],
+            vec![header_name.clone()],
             vec![
                 format!("{map_dir}_grid_grid.kind1.json"),
-                format!("{map_dir}_grid_value_low.png"),
-                format!("{map_dir}_grid_value_high.png"),
-                format!("{map_dir}_grid_attribute_a.png"),
-                format!("{map_dir}_grid_attribute_b.png"),
-                format!("{map_dir}_grid_sentinels.png"),
+                format!("{map_dir}_grid_layers.png"),
             ],
-            vec![
-                format!("{map_dir}_animation_queues.json"),
-                format!("{map_dir}_animation_queues.lz.json"),
-            ],
-            vec![
-                format!("{map_dir}_blend_animation.json"),
-                format!("{map_dir}_blend_animation.lz.json"),
-            ],
-            vec![format!("{map_dir}_sparse_cells.json")],
+            vec![header_name.clone()],
+            vec![header_name.clone()],
+            vec![self.map_sparse_source(&map_dir)],
         ];
         let mut sources = vec![index_name.to_string(), header_name];
         for (slot, offset) in offsets.iter().enumerate() {
@@ -1510,12 +1517,14 @@ fn expand_series(
                         "address": resource.get("address"),
                         "size": resource.get("size"),
                         "kind": "golden-sun-general-lz",
-                        "plan": format!("{directory}_stream.lz.json"),
+                        "plan": format!("{directory}.json"),
+                        "plan_section": "compression",
                         "components": [{
                             "kind": "zero-skip-sprite-archive",
                             "size": resource.get("decoded_size"),
                             "source": directory,
-                            "plan": format!("{directory}_archive.json"),
+                            "plan": format!("{directory}.json"),
+                            "plan_section": "archive",
                             "palette": palette
                         }]
                     }));
@@ -1538,7 +1547,8 @@ fn expand_series(
                         "address": tuple[1],
                         "size": tuple[2],
                         "kind": "golden-sun-general-lz",
-                        "plan": format!("{directory}_palette.lz.json"),
+                        "plan": format!("{directory}.json"),
+                        "plan_section": "palette",
                         "components": [{"kind":"gba-palette","size":"0x1c0","source":format!("{directory}_palette.224.png")}]
                     }));
                     for (index, raw) in tuple[5..].iter().enumerate() {
@@ -1557,7 +1567,8 @@ fn expand_series(
                             "address": item[0],
                             "size": item[1],
                             "kind": "golden-sun-kind2-lz",
-                            "plan": format!("{directory}_charblock{bank}.kind2.json"),
+                            "plan": format!("{directory}.json"),
+                            "plan_section": format!("charblock{bank}"),
                             "layout": char_layout,
                             "components": [{"kind":component_kind,"size":"0x4000","source":source}]
                         }));
@@ -1567,7 +1578,8 @@ fn expand_series(
                             "address": tuple[3],
                             "size": tuple[4],
                             "kind": "golden-sun-kind2-lz",
-                            "plan": format!("{directory}_animation_source.kind2.json"),
+                            "plan": format!("{directory}.json"),
+                            "plan_section": "animation_source",
                             "layout": animation_layout,
                             "components": [{"kind":"gba-4bpp-tiles","size":"0x4000","source":format!("{directory}_animation_source.4bpp.png")}]
                         }));
@@ -1582,7 +1594,7 @@ fn expand_series(
                     let directory = ctx.paths.resource_graphics_dir(&name);
                     entries.push(serde_json::json!({
                         "address":palette.get("address"),"size":palette.get("size"),
-                        "kind":"golden-sun-general-lz","plan":format!("{directory}_palette.lz.json"),
+                        "kind":"golden-sun-general-lz","plan":format!("{directory}.json"),"plan_section":"palette",
                         "components":[{"kind":"gba-palette","size":"0x1c0","source":format!("{directory}_palette.224.png")}]
                     }));
                 }
@@ -1659,46 +1671,46 @@ fn expand_series(
                                 - container,
                         ),
                     );
-                    entries.push(serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"golden-sun-map-container-header","source":format!("{directory}_header.json"),"offsets_check":Value::Object(offsets)}));
+                    entries.push(serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"golden-sun-map-container-header","source":format!("{directory}.json"),"offsets_check":Value::Object(offsets)}));
                     let component_sources: BTreeMap<usize, (&str, String, Option<String>)> =
                         BTreeMap::from([
                             (
                                 0,
                                 (
                                     "golden-sun-map-metatiles",
-                                    format!("{directory}_metatiles.tilemap"),
-                                    Some(format!("{directory}_metatiles.lz.json")),
+                                    format!("{directory}.json"),
+                                    None,
                                 ),
                             ),
                             (
                                 1,
                                 (
                                     "golden-sun-map-descriptors",
-                                    format!("{directory}_descriptors.json"),
-                                    Some(format!("{directory}_descriptors.lz.json")),
+                                    format!("{directory}.json"),
+                                    None,
                                 ),
                             ),
                             (
                                 3,
                                 (
                                     "golden-sun-map-animation-queues",
-                                    format!("{directory}_animation_queues.json"),
-                                    Some(format!("{directory}_animation_queues.lz.json")),
+                                    format!("{directory}.json"),
+                                    None,
                                 ),
                             ),
                             (
                                 4,
                                 (
                                     "golden-sun-map-blend-animation",
-                                    format!("{directory}_blend_animation.json"),
-                                    Some(format!("{directory}_blend_animation.lz.json")),
+                                    format!("{directory}.json"),
+                                    None,
                                 ),
                             ),
                             (
                                 5,
                                 (
                                     "golden-sun-map-sparse-cells",
-                                    format!("{directory}_sparse_cells.json"),
+                                    ctx.map_sparse_source(&directory),
                                     None,
                                 ),
                             ),
@@ -2308,7 +2320,11 @@ fn build_entry(ctx: &mut Context, entry: &Json) -> Result<(Vec<u8>, Vec<String>,
                 "kind-2 plan",
             )?;
             let plan_path = source_path(plan_name)?;
-            let plan = json(&plan_path)?;
+            let plan_document = json(&plan_path)?;
+            let plan_section = entry.get("plan_section").and_then(Value::as_str);
+            let plan = plan_section
+                .and_then(|section| plan_document.get(section))
+                .unwrap_or(&plan_document);
             if let Some(layout) = entry.get("layout") {
                 if layout != &Value::Null && plan.get("layout") != Some(layout) {
                     return Err("tag-2 plan layout differs from manifest".to_string());
@@ -2323,10 +2339,13 @@ fn build_entry(ctx: &mut Context, entry: &Json) -> Result<(Vec<u8>, Vec<String>,
             {
                 return Err("decoded tag-2 components do not match plan".to_string());
             }
-            let args = vec![
+            let mut args = vec![
                 "encode-stdout".to_string(),
                 plan_path.to_string_lossy().into_owned(),
             ];
+            if let Some(section) = plan_section {
+                args.extend(["--section".to_string(), section.to_string()]);
+            }
             let built = run_tool(&ctx.root, "kind2-resources", &args, Some(&decoded))?.stdout;
             sources.push(plan_name.to_string());
             Ok((
@@ -2350,16 +2369,7 @@ fn build_entry(ctx: &mut Context, entry: &Json) -> Result<(Vec<u8>, Vec<String>,
                 ],
             )?;
             let plan = json(&source_path(plan_name)?)?;
-            let nested = [
-                "grid_value_low.png",
-                "grid_value_high.png",
-                "grid_attribute_a.png",
-                "grid_attribute_b.png",
-                "grid_sentinels.png",
-            ]
-            .iter()
-            .map(|name| format!("{entry_source}_{name}"))
-            .collect::<Vec<_>>();
+            let nested = vec![format!("{entry_source}_grid_layers.png")];
             Ok((
                 built,
                 std::iter::once(plan_name.to_string())
@@ -2378,10 +2388,11 @@ fn build_entry(ctx: &mut Context, entry: &Json) -> Result<(Vec<u8>, Vec<String>,
                 "golden-sun-map-animation-queues" => "queues",
                 _ => "blend",
             };
-            let plan_name = json_string(
-                entry.get("plan").ok_or("map component plan missing")?,
-                "map component plan",
-            )?;
+            let plan_name = entry
+                .get("plan")
+                .map(|plan| json_string(plan, "map component plan"))
+                .transpose()?
+                .unwrap_or(entry_source);
             let args = vec![
                 "build-stdout".to_string(),
                 component.to_string(),
@@ -2391,10 +2402,17 @@ fn build_entry(ctx: &mut Context, entry: &Json) -> Result<(Vec<u8>, Vec<String>,
                 source_path(plan_name)?.to_string_lossy().into_owned(),
             ];
             let built = native_command(&ctx.root, "map_container_components", &args)?;
-            let plan = json(&source_path(plan_name)?)?;
+            let document = json(&source_path(plan_name)?)?;
+            let section = match component {
+                "queues" => "animation_queues",
+                "blend" => "blend_animation",
+                other => other,
+            };
+            let document = document.get(section).unwrap_or(&document);
+            let plan = document.get("compression").unwrap_or(&document);
             Ok((
                 built,
-                vec![entry_source.to_string(), plan_name.to_string()],
+                vec![entry_source.to_string()],
                 serde_json::json!({"decoded_size":json_number(plan.get("decoded_size").ok_or("component decoded_size missing")?,"decoded_size")?,"tokens":plan["tokens"].as_array().map_or(0,Vec::len),"component":plan.get("component")}),
             ))
         }
@@ -2410,6 +2428,7 @@ fn build_entry(ctx: &mut Context, entry: &Json) -> Result<(Vec<u8>, Vec<String>,
                 ],
             )?;
             let document = json(&source_path(entry_source)?)?;
+            let document = document.get("header").unwrap_or(&document);
             Ok((
                 built,
                 vec![entry_source.to_string()],
@@ -2428,6 +2447,7 @@ fn build_entry(ctx: &mut Context, entry: &Json) -> Result<(Vec<u8>, Vec<String>,
                 ],
             )?;
             let document = json(&source_path(entry_source)?)?;
+            let document = document.get("sparse_cells").unwrap_or(&document);
             Ok((
                 built,
                 vec![entry_source.to_string()],
@@ -4496,11 +4516,19 @@ fn build_entry_native_tail(
                 &[source_path(entry_source)?.to_string_lossy().into_owned()],
             )?;
             let images = json_number(&plan["images"], "F0 images")?;
-            let sources = std::iter::once(plan_name.to_string())
-                .chain(
-                    (0..images).map(|index| format!("{entry_source}_images_image_{index:02}.png")),
-                )
-                .collect();
+            let sources = if plan.get("atlas_columns").is_some() {
+                vec![
+                    plan_name.to_string(),
+                    format!("{entry_source}_images.rgba.png"),
+                ]
+            } else {
+                std::iter::once(plan_name.to_string())
+                    .chain(
+                        (0..images)
+                            .map(|index| format!("{entry_source}_images_image_{index:02}.png")),
+                    )
+                    .collect()
+            };
             Ok((
                 built,
                 sources,

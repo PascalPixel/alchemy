@@ -35,7 +35,7 @@
  * populated by `Func_080ed408(46, ...)` into heap_cache[7], already
  * established as `DrawRectangleFn` by games/gs1/recon/en/main/080e01e4.c and
  * games/gs1/src/battle/effects/member_orbit/run.c.
- * games/gs1/recon/en/main/080dc1ec.json's score.note has the full
+ * games/gs1/recon/en/dossiers.json#main:080dc1ec's score.note has the full
  * derivation of the trampoline read.
  *
  * The one-time BG2X pan blend near the top is a genuine signed halving: the

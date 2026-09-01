@@ -13,9 +13,16 @@ fn run(args: &[String]) -> Result<(), Error> {
     let directory = args.get(1).ok_or_else(|| Error(USAGE.into()))?;
     let plan = args.get(2).ok_or_else(|| Error(USAGE.into()))?;
     let palette = args.get(3).ok_or_else(|| Error(USAGE.into()))?;
-    let value = serde_json::from_slice(&fs::read(plan).map_err(|e| Error(e.to_string()))?)
-        .map_err(|e| Error(e.to_string()))?;
-    let bytes = build_archive(&value, Path::new(directory), Path::new(palette))?;
+    let document: serde_json::Value =
+        serde_json::from_slice(&fs::read(plan).map_err(|e| Error(e.to_string()))?)
+            .map_err(|e| Error(e.to_string()))?;
+    let value = args
+        .iter()
+        .position(|arg| arg == "--section")
+        .and_then(|index| args.get(index + 1))
+        .and_then(|section| document.get(section))
+        .unwrap_or(&document);
+    let bytes = build_archive(value, Path::new(directory), Path::new(palette))?;
     io::stdout()
         .write_all(&bytes)
         .map_err(|e| Error(e.to_string()))?;

@@ -36,10 +36,16 @@ fn run(mut args: Vec<String>) -> Result<()> {
             args.get(1)
                 .ok_or_else(|| "build-stdout requires a plan".to_string())?,
         )),
-        Some("encode-stdout") => write_encode_stdout(Path::new(
-            args.get(1)
-                .ok_or_else(|| "encode-stdout requires a plan".to_string())?,
-        )),
+        Some("encode-stdout") => write_encode_stdout(
+            Path::new(
+                args.get(1)
+                    .ok_or_else(|| "encode-stdout requires a plan".to_string())?,
+            ),
+            args.iter()
+                .position(|arg| arg == "--section")
+                .and_then(|index| args.get(index + 1))
+                .map(String::as_str),
+        ),
         Some("verify") => {
             let rom = args.get(1).ok_or_else(|| USAGE.to_string())?;
             println!(

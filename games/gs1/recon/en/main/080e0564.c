@@ -13,7 +13,7 @@
  * "rectangle" readback (rather than 080e01e4's Func_080cef64 helper) with
  * 080e01e4's 96-pass outer loop / 512-slot shared particle pool shape.
  *
- * Per games/gs1/recon/en/main/080e01e4.json's fully-derived evidence,
+ * Per games/gs1/recon/en/dossiers.json#main:080e01e4's fully-derived evidence,
  * "Func_080072f4" and "Func_08007300" are NOT real callees: 0x080072f4 and
  * 0x08007300 are the r4 and r7 slots of the `_call_via_rN` trampoline at
  * games/gs1/asm/080072e4.s (base 0x080072e4 + 4*4 and + 4*7).  Every `bl` to

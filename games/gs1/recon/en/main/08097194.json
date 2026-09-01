@@ -5,19 +5,20 @@
  "status": "measured-draft",
  "owner_bytes": 248,
  "candidate_bytes": 248,
- "differing_halfwords": 109,
- "wrong_instructions": 88,
+ "differing_halfwords": 7,
+ "wrong_instructions": 8,
  "classification": "battle-effect-scene-cleanup",
  "domain": "Removes active scene-effect objects, waits briefly for two effect callbacks to drain, restores the saved scene position, and releases the effect asset.",
  "bounded_checks": [
-  "re-examined this session (verification pass, no source change): the 109-halfword residual is not localized -- it is a pervasive register-role permutation across the whole function (e.g. the candidate maps position/scene/runtime pointers to r9/sl/r8 where the reference maps the same roles to fp/r9/sl, etc.), with every branch target, constant, and call sequence otherwise already matching. This looks like gcc296 register-allocator sensitivity to the local-variable declaration/first-use order across the whole function rather than a single fixable statement; consistent with the existing dossier's conclusion that the 5,000-candidate family-template walk found no improvement."
+  "Recovered the battle global cells as one registry walk rooted at 0x03001f30: the runtime and position pointers are loaded from root-116 and root-192, exactly matching the reference's single literal and two base-relative loads. Reusing the exhausted 24-object loop counter for the later 64-slot scan recovers the reference's r5 lifetime, full four-high-register save set, and exact 248-byte extent. Naming both active update callbacks and ordering the waited/active/scan initializers from their reference lifetimes closes the remaining independent scheduling rows. Fresh score: 7 differing halfwords and 8 wrong instructions, all confined to the reciprocal r6/r7 scene-object/active-field cursors in the first loop.",
+  "The old 109-halfword whole-function register permutation was not an irreducible allocator floor: it was caused by two missing source identities—the shared pointer-registry base and the reused loop counter. After those repairs, only one localized reciprocal r6/r7 cursor choice remains. Explicit duplicate object cursors, byte/signed-byte cursors, declaration order, and assignment order preserve that swap or regress the signed-byte load, so no register forcing was retained."
  ],
  "notes": [
   "Recovered from retained owner assembly, all local callers, adjacent battle-effect state, and the approved compiler through the exact-family workbench.",
   "Every caller invokes this owner without arguments; the generated two-argument signature was inherited from the unrelated exact template and has been corrected.",
   "Generated register, stack-slot, and control-flow labels were replaced with role-based names before retaining the candidate.",
-  "Typed global-state layouts and a signed activity byte produce the exact owner extent and improve the raw m2c draft from 119 to 109 differing halfwords.",
-  "A 5,000-candidate safe family-template walk produced no improvement and no exact object.",
+  "Typed global-state layouts, the shared pointer-registry walk, and a signed activity byte produce the exact owner extent and improve the raw m2c draft from 119 to 7 differing halfwords.",
+  "The earlier 5,000-candidate safe family-template walk produced no improvement because it did not cover registry-base recovery or counter-identity reuse; those two evidence-named repairs account for the subsequent reduction.",
   "Exact-C adoption remains gated on an independently compiled zero-difference object."
  ]
 }

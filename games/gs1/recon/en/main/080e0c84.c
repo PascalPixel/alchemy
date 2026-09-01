@@ -108,7 +108,14 @@ void BattleEffect_RunParticleReveal(void *object)
     Func_080e0524((s32)&Value_0000006e, work, 1, 1);
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 75;
-    Func_080041d8((void *)0x080CD261, 0x480);
+    {
+        s32 interval;
+        void *callback;
+
+        interval = 0x480;
+        callback = (void *)0x080CD261;
+        Func_080041d8(callback, interval);
+    }
     Func_080e3980(
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 0x24), spawn);
 

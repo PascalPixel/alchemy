@@ -731,6 +731,10 @@
       "name": "ObjectGroup_TickMemberTimers",
       "source": "object/group/tick_member_timers.c"
     },
+    "main:080cd358": {
+      "name": "BattleEffect_FlushPendingGraphicsTransfer",
+      "source": "battle/effects/runtime/flush_pending_graphics_transfer.c"
+    },
     "main:080d6888": "object/group/update_members.c",
     "main:080d40ec": "graphics/palette/update_phase_palette.c",
     "main:080c0e38": "graphics/blend/fade_alpha_out.c",

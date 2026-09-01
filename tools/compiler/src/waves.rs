@@ -40,8 +40,8 @@ const DEBT: [&str; 5] = [
 // drift — an adoption or a draft tracked into the corpus — updates these
 // numbers as its acknowledgment. Last acknowledged: the current worktree's
 // exact-C adoptions and tracked reconstruction drafts.
-const DRAFT_OWNERS: usize = 204;
-const INDEPENDENT_OWNERS: usize = 133;
+const DRAFT_OWNERS: usize = 198;
+const INDEPENDENT_OWNERS: usize = 127;
 const OWNER_GROUP_OWNERS: usize = 52;
 const SPLIT_REGION_OWNERS: usize = 19;
 

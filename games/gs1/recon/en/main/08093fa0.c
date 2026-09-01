@@ -9,6 +9,7 @@ struct GridTileCell_08093fa0 {
 
 extern struct GridTileCell_08093fa0 Data_0200fe00[];
 extern struct GridTileCell_08093fa0 Data_02010000[];
+extern u8 Value_00000001;
 
 struct ObjectRuntime *Object_GetById(u32 object_id);
 void Func_080916b0(void);
@@ -24,13 +25,20 @@ void Func_08091750(void);
 
 s32 Func_08093fa0(void)
 {
-    struct ObjectRuntime *object = Object_GetById(Data_02000240.object_id);
-    s32 tile_x = *(s16 *)((u8 *)object + 10) & 0xfff0;
-    s32 tile_z = *(s16 *)((u8 *)object + 18) & 0xfff0;
+    struct BattleWork *work = &Data_02000240;
+    struct ObjectRuntime *object = Object_GetById(work->object_id);
     s32 variant = 1;
-    s32 grid_x = 8 + tile_x;
-    s32 grid_z = 8 + tile_z;
+    s32 tile_x = *(s16 *)((u8 *)object + 10);
+    s32 tile_z = *(s16 *)((u8 *)object + 18);
+    s32 tile_mask = 0xfff0;
+    s32 grid_x;
+    s32 grid_z;
     s32 result;
+
+    tile_x &= tile_mask;
+    tile_z &= tile_mask;
+    grid_x = 8 + tile_x;
+    grid_z = 8 + tile_z;
 
     Func_080916b0();
 
@@ -38,7 +46,7 @@ s32 Func_08093fa0(void)
         variant = *((u8 *)object->animation + 0x26);
     }
 
-    if (Data_02000240.mode_1f2 == 0) {
+    if (work->mode_1f2 == 0) {
         s32 index_x = grid_x;
         s32 index_z;
         s32 index;
@@ -54,9 +62,7 @@ s32 Func_08093fa0(void)
 
         index = index_x + (index_z << 7);
 
-        if (Data_02010000[index].kind != Data_0200fe00[index].kind) {
-            goto fail;
-        } else {
+        if (Data_02010000[index].kind == Data_0200fe00[index].kind) {
             s32 position[6];
 
             position[0] = object->x;
@@ -68,7 +74,7 @@ s32 Func_08093fa0(void)
             }
 
             object->action_flags = 0;
-            Func_08092158(Data_02000240.object_id, grid_x, grid_z);
+            Func_08092158(work->object_id, grid_x, grid_z);
             Func_08009080(object, 6);
             WaitFrames(4);
             Func_08009080(object, 7);
@@ -81,23 +87,29 @@ s32 Func_08093fa0(void)
             object->velocity_y = 0;
             Func_08009080(object, 12);
             WaitFrames(4);
-            Data_02000240.mode_1f2 = 1;
+            work->mode_1f2 = 1;
             object->action_flags = 1;
             WaitFrames(8);
+        } else {
+            goto fail;
         }
     } else {
         object->flags = 0;
         Func_08009080(object, 11);
         Func_08009150(object, grid_x << 16, object->y + 0x80000,
             (grid_z << 16) + (s32)0xfff00000);
-        Func_080923c4(Data_02000240.object_id);
+        Func_080923c4(work->object_id);
         object->flags = 3;
-        variant |= 1;
-        object->terrain_height = object->y;
-        Func_080091e0(object, variant);
-        Func_0809163c(4);
-        Data_02000240.mode_1f2 = 0;
-        object->action_flags = 1;
+        {
+            s32 active = (s32)&Value_00000001;
+
+            variant |= active;
+            object->terrain_height = object->y;
+            Func_080091e0(object, variant);
+            Func_0809163c(4);
+            work->mode_1f2 = 0;
+            object->action_flags = active;
+        }
     }
 
     Func_08091750();

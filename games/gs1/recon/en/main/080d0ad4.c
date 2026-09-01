@@ -15,10 +15,16 @@ typedef void (*BattleEffectDrawFn)(
     s32 width,
     s32 height);
 
+extern u8 Value_00000073;
+extern u8 Value_00000076;
+extern u8 Value_00000079;
+extern void *Data_03001e50[];
+extern const u16 Data_080ede5c[];
+
 struct BattleEffectWorkGlobals {
     void *work;
-    u32 render_context;
-    u32 resource_context;
+    void *render_context;
+    void *resource_context;
 };
 
 struct BattleEffectVectorWork {
@@ -43,7 +49,7 @@ s32 Func_080d0ad4(s32 actor) {
     BattleEffectDrawFn sp34;
     BattleEffectDrawFn sp38;
     s32 sp3C;
-    u32 sp40;
+    void *sp40;
     void *sp44;
     struct BattleEffectVectorWork vector_work;
     s32 temp_r0_37;
@@ -63,7 +69,7 @@ s32 Func_080d0ad4(s32 actor) {
     s32 var_r7_258;
     s32 var_r7_304;
     s32 var_r8_341;
-    u32 temp_r6_25;
+    void *temp_r6_25;
     void **temp_r5_28;
     void *temp_r2_18;
     void *temp_r3_135;
@@ -82,11 +88,15 @@ s32 Func_080d0ad4(s32 actor) {
     M2C_FIELD(temp_r2_18, s32 *, 0x7828) = actor;
     Func_080cd594(0);
     *(u16 *)0x04000020 = 0x100;
-    temp_r0_37 = Func_08002f40(0x79);
+    temp_r0_37 = Func_08002f40((s32)&Value_00000079);
     Func_080072f0(0x05000000, temp_r0_37, 0x80, 0x03001388);
     Func_08005340(temp_r0_37 + 0x80, sp44);
-    Func_08005340(Func_08002f40(0x73), (void *) temp_r6_25);
-    Func_08005340(Func_08002f40(0x76), temp_r2_18 + 0x1000);
+    Func_08005340(
+        Func_08002f40((s32)&Value_00000073),
+        temp_r6_25);
+    Func_08005340(
+        Func_08002f40((s32)&Value_00000076),
+        temp_r2_18 + 0x1000);
     M2C_FIELD(sp44, s32 *, 0x7780) = 3;
     M2C_FIELD(sp44, s32 *, 0x7784) = 0x04040404;
     Func_080041d8(0x080CD261, 0x480);
@@ -112,9 +122,9 @@ loop_3:
         }
         Func_080d40ec(sp3C, 0xAAAB, 0x5555, 0);
         Func_080ed408(0x2E, 7, 7, 3, 2);
-        sp34 = *(BattleEffectDrawFn *)0x03001F08;
+        sp34 = (BattleEffectDrawFn)Data_03001e50[46];
         Func_080ed408(0x2F, 7, 7, 7, 2);
-        sp38 = *(BattleEffectDrawFn *)0x03001F0C;
+        sp38 = (BattleEffectDrawFn)Data_03001e50[47];
         if ((sp3C > 0x10) && !(0xF & sp3C)) {
             M2C_FIELD(sp44, s32 *, 0x7784) = (s32) (M2C_FIELD(sp44, s32 *, 0x7784) + 0x01010101);
         }
@@ -185,9 +195,9 @@ loop_23:
                     temp_r5_357 = M2C_FIELD(sp20, s32 *, 0x10);
                     temp_r6_359 = temp_r6_346 + Func_080022ec(var_r8_341 * (M2C_FIELD(temp_r9_332, s32 *, 0xC) - temp_r6_346), 0x18);
                     temp_r3_376 = (temp_r5_357 + Func_080022ec(var_r8_341 * (M2C_FIELD(temp_r9_332, s32 *, 0x10) - temp_r5_357), 0x18)) - var_r4_339;
-                    sp34((void *)sp40,
+                    sp34(sp40,
                         (u8 *)sp44
-                            + *(u16 *)(0x080EDE5C + temp_r7_342 - 2)
+                            + Data_080ede5c[var_r4_339 - 1]
                             + 0x1000,
                         temp_r6_359 - var_r4_339,
                         temp_r3_376,
@@ -201,11 +211,11 @@ loop_23:
                 } while (var_r7_304 != 3);
             }
             if (var_fp_191 > 0x3F) {
-                sp34((void *)sp40, sp44,
+                sp34(sp40, sp44,
                     vector_work.projected[0] - 0x18,
                     vector_work.projected[1] - 0x18,
                     0x18, 0x30);
-                sp38((void *)sp40, sp44,
+                sp38(sp40, sp44,
                     vector_work.projected[0],
                     vector_work.projected[1] - 0x18,
                     0x18, 0x30);

@@ -6,7 +6,7 @@
  "owner_bytes": 460,
  "executable_owner_bytes": 460,
  "candidate_bytes": 460,
- "differing_halfwords": 5,
+ "differing_halfwords": 2,
  "wrong_instructions": 0,
  "classification": "battle_effect_compiler_scheduling_mismatch",
  "resolved_asm_classification": {
@@ -94,27 +94,24 @@
  "residual": [
   {
    "scope": "arming the source-object callback",
-   "candidate": "forms the 0x4000 argument, copies the object id, then materializes the zero argument",
-   "reference": "materializes zero before forming 0x4000 and copying the independent object id",
-   "equivalence": "the three instructions write distinct argument registers and neither reads another argument register",
+   "candidate": "shifts the already materialized 0x80 argument into 0x4000 before materializing the zero argument",
+   "reference": "materializes the independent zero argument between the 0x80 materialization and its shift",
+   "equivalence": "the shift writes r1 and the zero materialization writes r2; neither reads the other register",
    "resynchronization": "both streams have identical r0, r1, and r2 at the following call"
-  },
-  {
-   "scope": "initializing the active-slot state-five loop",
-   "candidate": "materializes state five before copying the slot base from sl",
-   "reference": "copies the slot base from sl before materializing state five",
-   "equivalence": "the reordered instructions write distinct r1 and r2 values and perform no memory access",
-   "resynchronization": "both streams match before the first active-byte load"
   }
  ],
  "notes": [
-  "The retained ordinary-C reconstruction emits the complete 460-byte owner extent with identical calls, branches, registers, memory operations, constants, literal words, and control flow outside two localized instruction-ordering hunks.",
-  "A do-while-zero lifetime around the slot-object load and action call first improved the family candidate from ten to eight differing halfwords. Narrow C89 block locals for the two state constants then made the entire state-two loop exact and reduced the candidate to five differing halfwords without changing semantics.",
+  "The retained ordinary-C reconstruction emits the complete 460-byte owner extent with identical calls, branches, registers, memory operations, constants, literal words, and control flow outside one two-halfword instruction-ordering tie.",
+  "Removing synthetic do-while-zero wrappers around the callback call and the two state-loop scopes preserves ordinary C89 block lifetimes, makes the entire state-five loop exact, and reduces the candidate from five to two differing halfwords. Using the function parameter directly also removes an unnecessary alias without changing the emitted register roles.",
   "Relocation-aware comparison of the independently assembled retained owner proves all 284 unmasked core bytes identical across the six GS1 editions.",
   "The exact caller at 0x080955b0 selects this runner for page two, and this owner installs the locally named callback at 0x08095c08 on each of 24 slots before later advancing those slots to states two and five.",
   "Recovered only from retained owner assembly, approved local GS1 ROMs, local callers and exact battle-effect sources, and the approved compiler. No GS2 evidence or external game source was used."
  ],
  "rejected_experiments": [
+  {
+   "experiment": "compile the owner under its era-appropriate semantic identifier instead of the Func_08095dd0 ABI identifier",
+   "result": "GCC emits the same callback-argument order and the same two-halfword residual; compiler symbol hashing does not control this scheduling tie"
+  },
   {
    "experiment": "materialize the callback zero argument in a fresh narrow block local",
    "result": "unlike reusing the long-lived value carrier, the fresh local is byte-neutral: GCC folds it to the same late r2 materialization and the candidate remains at five differing halfwords"
@@ -161,7 +158,7 @@
   }
  ],
  "score": {
-  "differing_halfwords": 5,
-  "note": "Narrow block-local state carriers and source ordering make the state-two loop exact and reduce the candidate from eight to five differing halfwords. Two independent scheduling ties remain and wrong_instructions stays zero."
+  "differing_halfwords": 2,
+  "note": "Ordinary block scopes make both state loops exact. One independent callback-argument scheduling tie remains and wrong_instructions stays zero."
  }
 }

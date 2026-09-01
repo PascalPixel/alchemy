@@ -7,6 +7,9 @@
       "source": "menu/select_quantity.c"
     },
     "main:080a5b94": "menu/open_confirm_prompt.c",
+    "main:080a5cc0": {
+      "name": "Menu_ResolveSelectedAction"
+    },
     "main:080a9f10": {
       "name": "BattleEffect_ApplyToTargets"
     },

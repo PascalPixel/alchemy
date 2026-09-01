@@ -2679,6 +2679,27 @@
    "files": [
     "08077394"
    ]
+  },
+  {
+   "kind": "menu_action_state_compiler_allocation_module",
+   "origin": "compiler",
+   "retention": "keep_structured_asm",
+   "confidence": "proven",
+   "evidence": [
+    "complete_ordinary_c_semantics_and_exact_audited_owner_extent",
+    "equal_three_hundred_sixteen_instruction_count_and_branch_structure",
+    "matching_five_state_inventory_and_psynergy_action_resolution_calls_fields_widths_constants_and_outputs",
+    "only_residual_is_equivalent_whole_function_result_register_allocation_two_instruction_order_pairs_and_one_constant_rematerialization",
+    "bounded_loop_case_declaration_initialization_and_lifetime_source_repairs_preserve_the_floor_or_regress",
+    "approved_gcc_2_96_regmove_scheduling_cse_gcse_strength_reduction_and_optimization_routes_preserve_the_floor_or_regress",
+    "inline_assembly_fixed_registers_compiler_barriers_and_forced_allocation_are_disallowed",
+    "byte_exact_reconstruction"
+   ],
+   "expected_files": 1,
+   "expected_bytes": 798,
+   "files": [
+    "080a5cc0"
+   ]
   }
  ]
 }

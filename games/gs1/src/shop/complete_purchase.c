@@ -6,7 +6,6 @@ s32 Func_08077228(s32, u8);
 s32 Func_08077230(s32);
 s32 Func_08077298(s16);
 void Func_080b0574(s32 message);
-s32 Func_080b1868(s32, s32);
 s32 Audio_PlayCue(s32);
 extern char Value_00000ca1;
 
@@ -31,7 +30,7 @@ void Shop_CompletePurchase(s32 unit_id, s32 item_id, s32 quantity) {
         } while (remaining != 0);
     }
     Func_080b0574((s32)&Value_00000ca1);
-    if (Func_080b1868(unit_id, added_slot) != 0) {
+    if (Shop_ConfirmEquipItem(unit_id, added_slot) != 0) {
         Shop_SellReplacedItem(unit_id, replaced_slot);
     }
 }

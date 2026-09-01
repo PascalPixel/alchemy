@@ -89,11 +89,33 @@ typedef s64 M2C_UNK64;
 
 #endif
 
+struct BattleEffect04Scene {
+    s32 angle;
+    s32 x;
+    s32 y;
+    s32 z;
+    void *main_object;
+    void *child;
+    u8 reserved_18[8];
+    s8 use_main_object_origin;
+    u8 reserved_21[19];
+    s8 enlarge_child;
+    s8 preserve_child_motion;
+};
+
+struct BattleEffect04Globals {
+    u8 reserved_000[0x1F4];
+    s32 selected_object;
+};
+
+extern struct BattleEffect04Globals Data_02000240;
+
 void Func_08098cd8(void) {
     void *child;
     s32 event_context;
+    void *spawned[4];
     s32 position[3];
-    void *spawned[3];
+    void **spawn_start;
     void **spawn_cursor;
     void **spawn_read_cursor;
     M2C_UNK *temp_r0_167;
@@ -101,15 +123,12 @@ void Func_08098cd8(void) {
     M2C_UNK *temp_r5_263;
     s32 temp_r0_363;
     s32 temp_r3_142;
-    s32 var_r8_160;
-    s32 var_r8_260;
-    s32 var_r8_287;
-    s32 var_r8_30;
+    s32 index;
     u8 temp_fp_212;
     void *temp_r2_216;
     void *temp_r2_33;
     void *temp_r2_73;
-    void *temp_r3_16;
+    struct BattleEffect04Scene *temp_r3_16;
     void *var_fp_159;
     void *var_r5_28;
 
@@ -117,8 +136,8 @@ void Func_08098cd8(void) {
     child = M2C_FIELD(temp_r3_16, void **, 0x14);
     Func_08097384();
     Func_080f9010(0x82);
-    var_r5_28 = temp_r3_16 + 0x58;
-    var_r8_30 = 0xB;
+    var_r5_28 = (u8 *)temp_r3_16 + 0x58;
+    index = 0xB;
     do {
         temp_r2_33 = M2C_FIELD(temp_r3_16, void **, 0x10);
         position[0] = M2C_FIELD(temp_r2_33, s32 *, 8);
@@ -132,9 +151,9 @@ void Func_08098cd8(void) {
         M2C_FIELD(var_r5_28, s32 *, 0x2C) = 0xB333;
         M2C_FIELD(var_r5_28, s32 *, 0x28) = 0xB333;
         Func_080030f8(2);
-        var_r8_30 -= 1;
+        index -= 1;
         var_r5_28 += 0x48;
-    } while (var_r8_30 >= 0);
+    } while (index >= 0);
     temp_r2_73 = M2C_FIELD(temp_r3_16, void **, 0x10);
     position[0] = M2C_FIELD(temp_r2_73, s32 *, 8);
     position[1] = M2C_FIELD(temp_r2_73, s32 *, 0xC) + 0x100000;
@@ -162,12 +181,16 @@ void Func_08098cd8(void) {
         } while ((s32) M2C_FIELD(temp_r0_95, s32 *, 0x18) <= 0xFFFF);
     }
     Func_080030f8(3);
+    spawn_start = spawned;
     var_fp_159 = NULL;
-    var_r8_160 = 2;
+    index = 2;
     spawn_cursor = &spawned[2];
     do {
-        temp_r0_167 = Func_08096c80(0xD7, M2C_FIELD(temp_r0_95, s32 *, 8), M2C_FIELD(temp_r0_95, s32 *, 0xC), M2C_FIELD(temp_r0_95, s32 *, 0x10));
-        *spawn_cursor = temp_r0_167;
+        *spawn_cursor = temp_r0_167 = Func_08096c80(
+            0xD7,
+            M2C_FIELD(temp_r0_95, s32 *, 8),
+            M2C_FIELD(temp_r0_95, s32 *, 0xC),
+            M2C_FIELD(temp_r0_95, s32 *, 0x10));
         spawn_cursor--;
         if (temp_r0_167 != NULL) {
             M2C_FIELD(temp_r0_167, s32 *, 0x1C) = 0xF000;
@@ -180,10 +203,10 @@ void Func_08098cd8(void) {
             Func_08009240(temp_r0_167, 2);
             var_fp_159 = Func_08096c48(M2C_FIELD(temp_r0_167, s32 *, 0x50), var_fp_159);
         }
-        var_r8_160 -= 1;
-    } while (var_r8_160 >= 0);
+        index -= 1;
+    } while (index >= 0);
     temp_fp_212 = M2C_FIELD(var_fp_159, u8 *, 0x1C);
-    if ((s8) M2C_FIELD(temp_r3_16, u8 *, 0x20) != 0) {
+    if (temp_r3_16->use_main_object_origin != 0) {
         temp_r2_216 = M2C_FIELD(temp_r3_16, void **, 0x10);
         position[0] = M2C_FIELD(temp_r2_216, s32 *, 8);
         position[1] = M2C_FIELD(temp_r2_216, s32 *, 0xC) + 0x100000;
@@ -196,8 +219,8 @@ void Func_08098cd8(void) {
     }
     Func_08009150(temp_r0_95, position[0], position[1], position[2]);
     Func_08009098(temp_r0_95, 0x0809F12C);
-    spawn_read_cursor = spawned;
-    var_r8_260 = 2;
+    spawn_read_cursor = spawn_start;
+    index = 2;
     do {
         temp_r5_263 = *spawn_read_cursor;
         spawn_read_cursor++;
@@ -206,21 +229,21 @@ void Func_08098cd8(void) {
             Func_08009150(temp_r5_263, position[0], position[1], position[2]);
             Func_08009098(temp_r5_263, 0x0809F0B4);
         }
-        var_r8_260 -= 1;
-    } while (var_r8_260 >= 0);
-    var_r8_287 = 0;
+        index -= 1;
+    } while (index >= 0);
+    index = 0;
     if (M2C_FIELD(temp_r0_95, M2C_UNK **, 0) != NULL) {
 loop_21:
         Func_080030f8(1);
-        var_r8_287 += 1;
-        if (var_r8_287 <= 0x3B) {
+        index += 1;
+        if (index <= 0x3B) {
             if (M2C_FIELD(temp_r0_95, M2C_UNK **, 0) != NULL) {
                 goto loop_21;
             }
         }
     }
-    if ((child != NULL) && ((s8) M2C_FIELD(temp_r3_16, u8 *, 0x35) == 0)) {
-        if ((s8) M2C_FIELD(temp_r3_16, u8 *, 0x34) != 0) {
+    if ((child != NULL) && (temp_r3_16->preserve_child_motion == 0)) {
+        if (temp_r3_16->enlarge_child != 0) {
             M2C_FIELD(child, s32 *, 0x28) = 0x80000;
         }
         position[0] = M2C_FIELD(child, s32 *, 8);
@@ -235,7 +258,10 @@ loop_21:
     }
     temp_r0_363 = Func_0808e4b4(0x50000005, 4, &event_context);
     if (temp_r0_363 != 0) {
-        Func_08096b28(temp_r0_363, *(s32 *)0x02000434, event_context);
+        Func_08096b28(
+            temp_r0_363,
+            Data_02000240.selected_object,
+            event_context);
     }
     Func_080030f8(0xA);
     Func_0809748c();

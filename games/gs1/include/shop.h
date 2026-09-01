@@ -175,6 +175,7 @@ void Func_080b1dec(s32 window, s32 unit_id);
 s32 Func_080b1e80(s32 unit_id, s32 slot);
 s32 Func_080b20e8(s32 item_id);
 s32 Func_080b2110(void);
+void Func_080b386c(s32 window, s32 unit_id, s32 item_slot);
 
 #define Shop_SetCursorPosition        Func_080b09fc
 #define Shop_PlaceCursor              Func_080b0a6c
@@ -193,5 +194,6 @@ s32 Func_080b2110(void);
 #define Shop_SelectSaleQuantity       Func_080b1e80
 #define Shop_ComputeRepairPrice       Func_080b20e8
 #define Shop_RunPartyMemberSelection  Func_080b2110
+#define Shop_DrawUseItemDetails       Func_080b386c
 
 #endif

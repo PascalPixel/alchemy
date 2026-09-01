@@ -5,7 +5,6 @@
 
 s32 Ability_GetAvailability(s32);
 s32 Func_080772a8(s32, s32);
-void Func_080b386c(s32, s32, s32);
 s32 UiWork_Create(s32, s32, s32, s32);
 s32 UiWork_IsCompleteFar(void);
 void UiWork_FinalizePending(void);
@@ -69,7 +68,7 @@ s32 Func_080b362c(s32 actor)
             y = (Math_Div(selection, 5) << 4) + 8;
             Shop_PlaceCursor(window, x, y);
             shop->mode = 3;
-            Func_080b386c(win1, actor, selection);
+            Shop_DrawUseItemDetails(win1, actor, selection);
             Shop_DrawMessage(win2, flags + (s32)&Value_00000075);
         }
 

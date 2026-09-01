@@ -2,7 +2,8 @@
  "schema_version": 1,
  "namespace": "gs1-en-main",
  "address": "0x080a5cc0",
- "status": "measured-draft",
+ "status": "proven-retained",
+ "retention": "keep_structured_asm",
  "owner_bytes": 798,
  "score": {
   "measured": "2026-08-27",
@@ -17,6 +18,7 @@
   "template_considered": "shop/select_use_item.c (family-matcher score 7287/10000, LOW confidence, below the 7500 adoption-lead threshold)",
   "verdict": "false-positive template, confirmed by reading it: shares only generic callees (Audio_PlayCue, WaitFrames) and the register-shuffle prologue shape. No shared field offsets, no shared real callees, no shared constants with this owner. The actual identity was recovered entirely from this owner's own retained assembly plus already-adopted callees it shares real evidence with (games/gs1/src/item/use.c, games/gs1/src/inventory_menu/{use_selected_item.c,draw_message.c,position_category_items.c}, games/gs1/src/ability/play_use_animation.c, and games/gs1/include/{inventory_menu.h,psynergy_menu.h,battle_runtime.h,battle_types.h,battle_calc.h})."
  },
+ "classification": "menu_action_state_compiler_allocation_module",
  "domain": "A do-while-shaped, five-state confirm/execute loop for the currently selected Inventory item or Psynergy ability against the polymorphic Data_03001f2c menu-runtime cell. State 0 clears the selection and primes the info window; state 1 waits a frame, checks the entry count, and (via a byte field at cell offset 0x268 that this draft calls `mode`) either assigns a shortcut and restarts or advances; state 2 classifies the selection through PsynergyMenu_ClassifySelectedPsynergy and either asks for confirmation (state 3), forces a self-target and executes (state 4), or finishes and writes the acting owner id plus the selection (masked 0x3fff) back through the caller's two out-parameters; state 3 re-confirms; state 4 actually calls the low-level ability-apply routine (Func_080a9f10, the same one games/gs1/src/item/use.c's Item_Use calls), pays the ability's PP cost from BattleAction.pp_cost via BattleUnit_Drain, recalculates the unit, plays the use animation or an error cue, and reports success/failure. The loop itself exits on a GameFlag_Test(0x150) check that is re-tested once more after the loop to force a -1 result.",
  "expressed": [
   "the exact 5-state switch shape and its physical case layout (source order 0, 1, 3, 2, 4 -- confirmed by matching the reference's case-3-before-case-2 byte layout, not just its behavior)",
@@ -70,6 +72,8 @@
   "Recovered only from the retained owner assembly (games/gs1/asm/080a5cc0.s), the approved local ROM, already-adopted in-repository callers and headers, and the approved compiler.",
   "The family-matcher's shop/select_use_item.c lead was read and rejected as an unrelated shape-only match per the task's warning; no code, names, or structure were carried over from it.",
   "No external game source, copied instruction bytes, inline assembly, fixed-register variable, or compiler barrier was used.",
-  "Not registered in games/gs1/source-paths.json: the field at cell offset 0x268 (`mode`) and the exact role of this state machine relative to InventoryMenu_UseSelectedItem are still hypotheses, and the owner is not byte-exact, so no descriptive name or .global alias was added."
+  "The structured assembly remains the byte-exact implementation. The complete C has exact 798-byte extent, exact 316-instruction count, and branch-structure equality; the remaining residual is equivalent register allocation, two independent instruction-order pairs, and one equivalent constant rematerialization.",
+  "A canonical shipped-route matrix covering regmove, both schedulers, GCSE, CSE follow/skip, rerun CSE, strength reduction, expensive optimizations, and thread jumps preserves the floor or regresses it. The bounded declaration, initialization, case-local lifetime, loop-rotation, and case-layout experiments recorded above found no ordinary-C route to the reference's fp result carrier.",
+  "Registered as Menu_ResolveSelectedAction: this name states the directly observed shared Inventory/Psynergy menu behavior without guessing an in-world name or claiming that either menu owns the polymorphic routine exclusively."
  ]
 }

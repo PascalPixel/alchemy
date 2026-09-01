@@ -4,9 +4,9 @@
   "address": "0x08098cd8",
   "status": "measured-draft",
   "owner_bytes": 832,
-  "candidate_bytes": 784,
-  "differing_halfwords": 398,
-  "wrong_instructions": 230,
+  "candidate_bytes": 820,
+  "differing_halfwords": 322,
+  "wrong_instructions": 112,
   "classification": "battle-effect-runner",
   "cross_edition": {
     "editions": ["ja", "en", "de", "es", "fr", "it"],
@@ -27,6 +27,7 @@
     "Complete first-pass semantic reconstruction of RunBattleEffect04, a direct sibling in the exact battle-effect dispatcher.",
     "All six GS1 editions have an identical relocation-normalized 652-byte core.",
     "The bounded search improved structural alignment but not the byte residual; this remains a broad draft and is not eligible for exact-C adoption or permanent-assembly classification.",
-    "2026-09-01 battle-effect family pass: replaced m2c's false pointer arithmetic across unrelated sp0/sp4/sp24 pseudo-locals with the evidenced three-entry spawned-object array, the shared three-component position vector, saved child pointer, and event context. The real array direction is proven by the retained stack accesses (write sp+36 down through sp+28, then read sp+28 upward). Fresh canonical scoring improves candidate extent 780 to 784 bytes and wrong instructions 276 to 230; differing halfwords move 399 to 398. The remaining 48-byte deficit and 36-byte versus 44-byte frame are still structural debt, so this does not claim DONE bytes."
+    "2026-09-01 battle-effect family pass: replaced m2c's false pointer arithmetic across unrelated sp0/sp4/sp24 pseudo-locals with the evidenced four-slot spawned-object array, shared three-component position vector, saved child pointer, event context, and persistent array-start cursor. The runner writes three entries from sp+36 down through sp+28 and reads them upward; the unused fourth slot at sp+40 is what naturally restores the exact 44-byte frame without artificial padding. Reversing the two aggregate declarations restores the exact position/object-array slot order.",
+    "The reference reuses one source-level loop index across all four phases; m2c had invented four independent counters. Merging those artificial lifetimes makes GCC retain the index in r8 throughout, simultaneously restoring the reference's r9 scene carrier and sl position carrier. Typed signed scene flags recover the three explicit byte sign extensions, and a real Data_02000240 aggregate recovers the base-plus-0x1f4 access instead of a folded absolute address. Fresh canonical scoring improves the original 780/832-byte, 399-halfword, 276-wrong-instruction draft to 820/832 bytes, 322 differing halfwords, and 112 wrong instructions. Conditional branch structure now agrees; the remaining twelve-byte deficit is concentrated in object-initialization materialization and literal-pool placement. This remains a measured draft and claims no DONE bytes."
   ]
 }

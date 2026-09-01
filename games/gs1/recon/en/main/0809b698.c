@@ -13,22 +13,28 @@ extern s32 Func_080770c0(s32);
 extern void Func_080f9010(s32);
 
 extern u8 *Data_03001f30;
+extern u8 Data_02000240[];
 
 void Func_0809b698(void)
 {
-    u8 *scene = Data_03001f30;
-    u8 *object = *(u8 **)(scene + 16);
-    u8 *group = *(u8 **)(object + 80);
-    u8 *entry = *(u8 **)(group + 40);
-    s16 saved = *(u16 *)(object + 6);
-    s16 value;
+    u8 *scene;
+    u8 *object;
+    u8 *group;
+    u8 *entry;
+    u32 saved;
+    u16 value;
     s32 count;
 
+    scene = Data_03001f30;
+    object = *(u8 **)(scene + 16);
+    group = *(u8 **)(object + 80);
+    saved = *(u16 *)(object + 6);
+    entry = *(u8 **)(group + 40);
     value = Func_08004080();
     *(s16 *)(scene + 0x71a) = value;
-    Func_08003fa4(value, 0x100, (const void *)0x0809c510);
-    *(s32 *)0x02000484 = 0x09600000;
-    *(s8 *)0x02000488 = Func_080770c0(0x145);
+    Func_08003fa4((s16)value, 0x100, (const void *)0x0809c510);
+    *(s32 *)(Data_02000240 + 0x244) = 0x09600000;
+    *(s8 *)(Data_02000240 + 0x248) = Func_080770c0(0x145);
     Func_08009240(object, 0);
     *(void **)(object + 108) = (void *)0x0809b5dd;
     *(s16 *)(object + 100) = 0;
@@ -55,7 +61,7 @@ void Func_0809b698(void)
     Func_080f9010(0xae);
     Func_080030f8(55);
     Func_08004278((const void *)0x0809b589);
-    if (*(s16 *)0x0200048c != 0) {
+    if (*(s16 *)(Data_02000240 + 0x24c) != 0) {
         Func_080091e0(object, 2);
     } else {
         Func_080091e0(object, 1);

@@ -2,11 +2,12 @@
  "schema_version": 1,
  "namespace": "main",
  "address": "0x0809a294",
- "status": "measured-draft",
+  "status": "proven-retained",
  "owner_bytes": 304,
- "candidate_bytes": 296,
- "differing_halfwords": 132,
- "wrong_instructions": 94,
+  "candidate_bytes": 304,
+  "differing_halfwords": 108,
+  "wrong_instructions": 80,
+  "classification": "battle_effect_twin_compiler_allocation_module",
  "family": {
   "structural_twin": "main:08098954",
   "shared_tail": "main:08099da4",
@@ -18,6 +19,7 @@
   "A joint loop-carrier rewrite using explicit pointer cursors, countdown do-while loops, and shared phase carriers regressed both siblings identically to 316 bytes, 141 differing halfwords, and 118 wrong instructions; it was reverted.",
   "A bounded earliest-divergence matrix also found the origin declaration-order axis byte-neutral; the first invariant mismatch is register selection while reloading the origin after initialization, not an effect-specific callee or literal difference.",
   "Relocation-aware six-ROM matching is ambiguous because the two sibling runners have zero-difference normalized cores. That confirms the family relationship but cannot establish a unique per-edition owner correspondence, so no regional or retained claim is made.",
-  "The candidate is broad and claims zero bytes. No GS2 evidence, external source, fixed-register variables, barriers, inline assembly, or compiler modification was used."
- ]
+    "The exact Effect07 source shape was transferred without semantic invention, substituting only this twin's effect-specific constructor. It closes the eight-byte extent gap and produces the same 304-byte candidate, 108 differing halfwords, 80 wrong instructions, equal branch topology, allocator-order constraints, and residual map as Effect07.",
+    "Family proof, 2026-09-01: the two reference owners are instruction-for-instruction twins apart from their constructor relocation. An exhaustive 72-shape statement-order matrix plus named pointer/countdown/declaration/lifetime repairs found no better ordinary-C form; approved GCC 2.96 regmove, scheduler, CSE, GCSE, strength-reduction, and expensive-optimization route probes preserve the shared floor or regress. Fixed-register variables, barriers, inline assembly, and compiler forcing are disallowed, so retained structured assembly is the byte-exact implementation."
+  ]
 }

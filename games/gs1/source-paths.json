@@ -2022,6 +2022,7 @@
     "main:08012d70": "unidentified/main/runtime/runtime_owner_217.c",
     "main:08012de8": "unidentified/main/runtime/runtime_owner_222.c",
     "main:08015ef4": "unidentified/main/runtime/runtime_owner_149.c",
+    "main:08016178": {"name": "UiWindow_EraseBorderRect"},
     "main:08016230": "unidentified/main/battle/battle_owner_4.c",
     "main:080163ec": "unidentified/main/field/field_owner_142.c",
     "main:0801656c": "unidentified/main/field/field_owner_105.c",

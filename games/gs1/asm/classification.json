@@ -2379,16 +2379,17 @@
     "complete_ordinary_c_semantics_and_audited_owner_extent",
     "six_edition_relocation_normalized_core_is_identical",
     "equal_branch_topology_and_matching_calls_literals_constants_loops_and_memory_operations",
-    "only_residuals_are_equivalent_register_roles_duplicate_versus_reused_constant_materialization_independent_immediate_scheduling_and_the_resulting_four_byte_pool_extent",
+    "only_residuals_are_equivalent_register_roles_duplicate_versus_reused_constant_materialization_independent_immediate_scheduling_and_the_resulting_four_or_eight_byte_pool_extent",
     "allocator_order_decoder_finds_no_unique_source_shape",
     "family_transfer_declaration_identity_type_width_evaluation_order_and_literal_carrier_probes_preserve_the_residual_or_regress",
     "approved_compiler_family_scheduling_and_optimization_routes_preserve_the_residual_or_regress",
     "inline_assembly_fixed_registers_compiler_barriers_and_forced_literal_loads_are_disallowed",
     "byte_exact_reconstruction"
    ],
-   "expected_files": 1,
-   "expected_bytes": 964,
+   "expected_files": 2,
+   "expected_bytes": 1796,
    "files": [
+    "08098cd8",
     "080e08c0"
    ]
   },

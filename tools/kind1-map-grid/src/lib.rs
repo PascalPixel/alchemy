@@ -320,9 +320,30 @@ fn plan_parts(plan: &Value) -> Result<(Vec<PaletteGroup>, String)> {
 
 pub fn build_grid(plan: &Value, directory: &Path) -> Result<Vec<u8>> {
     let (tokens, lookahead) = plan_parts(plan)?;
-    let planes = FILES.map(|name| read_plane(&grid_path(directory, name)));
-    let planes = planes.into_iter().collect::<Result<Vec<_>>>()?;
-    let mask = read_mask(&grid_path(directory, "sentinels.png"))?;
+    let (planes, mask) = if plan.get("atlas_layers").and_then(Value::as_u64) == Some(5) {
+        let image =
+            indexed_png(&read(&grid_path(directory, "layers.png"))?).map_err(|error| error.0)?;
+        if image.width != WIDTH as u32
+            || image.height != (HEIGHT * 5) as u32
+            || image.pixels.len() != PLANE * 5
+        {
+            return Err(err(
+                "map grid atlas must contain five stacked 128x128 layers",
+            ));
+        }
+        let layers = image
+            .pixels
+            .chunks(PLANE)
+            .map(|layer| layer.iter().map(|value| *value as u8).collect::<Vec<_>>())
+            .collect::<Vec<_>>();
+        (layers[..4].to_vec(), layers[4].clone())
+    } else {
+        let planes = FILES.map(|name| read_plane(&grid_path(directory, name)));
+        (
+            planes.into_iter().collect::<Result<Vec<_>>>()?,
+            read_mask(&grid_path(directory, "sentinels.png"))?,
+        )
+    };
     let decoded = inverse(&planes, &mask)?;
     let mut encoded = vec![1u8];
     encoded.extend_from_slice(&encode_palette(&decoded, &tokens).map_err(|error| error.0)?);
@@ -340,15 +361,17 @@ pub fn export_grid(data: &[u8], directory: &Path) -> Result<ExportStats> {
         decode_palette_trace(data, 1, data.len(), 0x10000).map_err(|error| error.0)?;
     let (planes, mask) = transform(&decoded)?;
     fs::create_dir_all(directory).map_err(|error| format!("{}: {error}", directory.display()))?;
-    for (index, name) in FILES.iter().enumerate() {
-        let image = byte_png(&planes[index], WIDTH as f64)
-            .map_err(|error| error.0)?
-            .0;
-        write(&grid_path(directory, name), &image)?;
-    }
-    write(&grid_path(directory, "sentinels.png"), &mask_png(&mask)?)?;
+    let layers = planes
+        .iter()
+        .chain(std::iter::once(&mask))
+        .flatten()
+        .copied()
+        .collect::<Vec<_>>();
+    let image = byte_png(&layers, WIDTH as f64).map_err(|error| error.0)?.0;
+    write(&grid_path(directory, "layers.png"), &image)?;
     let lookahead = import_asset::hex(&data[used..]);
-    let plan = plan_value(decoded.len(), data.len(), &tokens, &lookahead);
+    let mut plan = plan_value(decoded.len(), data.len(), &tokens, &lookahead);
+    plan["atlas_layers"] = json!(5);
     let plan_text = serde_json::to_string(&plan).map_err(|error| error.to_string())?;
     write(&plan_path(directory), format!("{plan_text}\n").as_bytes())?;
     let rebuilt = build_grid(&plan, directory)?;

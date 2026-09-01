@@ -16,7 +16,7 @@
  * reset idiom are the same evidence already recorded for the sibling owners
  * above; see those files for the supporting citations.
  *
- * Per games/gs1/recon/en/main/080d82b0.json's evidence, the work+0x7828
+ * Per games/gs1/recon/en/dossiers.json#main:080d82b0's evidence, the work+0x7828
  * state pointer must never be materialized into its own named local (even
  * reused verbatim at every site): this compiler's CSE hoists the address
  * across the whole enclosing block and produces a spurious spill/reload the

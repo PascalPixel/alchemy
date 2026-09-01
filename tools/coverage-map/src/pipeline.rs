@@ -301,10 +301,12 @@ pub fn progress_tally(options: &BuildOptions) -> Result<ProgressTally, String> {
 }
 fn candidate_main(tree: &SourceTree, executable: &[Span]) -> (Vec<Span>, usize) {
     let directory = "games/gs1/recon/en/main";
+    let dossiers = json(tree, "games/gs1/recon/en/dossiers.json").unwrap_or(Value::Null);
+    let records = dossiers.get("records").and_then(Value::as_object);
     let mut spans = Vec::new();
     let mut sources = 0;
     for name in tree.list(directory) {
-        let Some(stem) = name.strip_suffix(".json") else {
+        let Some(stem) = name.strip_suffix(".c") else {
             continue;
         };
         if !tree
@@ -313,7 +315,7 @@ fn candidate_main(tree: &SourceTree, executable: &[Span]) -> (Vec<Span>, usize) 
         {
             continue;
         }
-        let Some(record) = json(tree, &format!("{directory}/{name}")) else {
+        let Some(record) = records.and_then(|records| records.get(&format!("main:{stem}"))) else {
             continue;
         };
         let Some(start) = hex(stem) else {
@@ -329,6 +331,8 @@ fn candidate_main(tree: &SourceTree, executable: &[Span]) -> (Vec<Span>, usize) 
 }
 fn candidate_overlay(tree: &SourceTree, executable: &SpanMap) -> (SpanMap, usize) {
     let directory = "games/gs1/recon/en/overlays";
+    let dossiers = json(tree, "games/gs1/recon/en/dossiers.json").unwrap_or(Value::Null);
+    let records = dossiers.get("records").and_then(Value::as_object);
     let reviewed = json(tree, "games/gs1/semantic/regions.json").unwrap_or(Value::Null);
     let mut extents = BTreeMap::new();
     for region in array(&reviewed, "manual_regions") {
@@ -356,8 +360,9 @@ fn candidate_overlay(tree: &SourceTree, executable: &SpanMap) -> (SpanMap, usize
         {
             continue;
         }
-        let record_size = json(tree, &format!("{directory}/{stem}.json"))
-            .and_then(|record| integer(&record, "span_bytes"));
+        let record_size = records
+            .and_then(|records| records.get(&format!("{id}:{address}")))
+            .and_then(|record| integer(record, "span_bytes"));
         let Some(size) = record_size.or_else(|| extents.get(&(id.into(), entry)).copied()) else {
             continue;
         };
@@ -1162,7 +1167,7 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
                 ),
                 (
                     "main_draft_census",
-                    Value::String("games/gs1/recon/en/main/*.json".into()),
+                    Value::String("games/gs1/recon/en/dossiers.json".into()),
                 ),
                 (
                     "proven_assembly_standard",

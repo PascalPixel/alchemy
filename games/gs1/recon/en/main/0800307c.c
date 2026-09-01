@@ -17,7 +17,7 @@
  *     and games/gs1/recon/en/main/0800300c.c.
  *   - 0x030000e0 is the 14-entry interrupt-dispatch table that
  *     Func_0800300c (games/gs1/recon/en/main/0800300c.c) DMAs into IWRAM
- *     from ROM 0x08007320, per games/gs1/recon/en/main/0800300c.json.
+ *     from ROM 0x08007320, per games/gs1/recon/en/dossiers.json#main:0800300c.
  *   - 0x08003009 is Func_08003008 (RuntimeDispatch_ReservedNoOp03008,
  *     games/gs1/src/runtime/dispatch/reserved_no_op_f.c) plus the thumb
  *     bit -- the reserved no-op dispatch table already installs as its

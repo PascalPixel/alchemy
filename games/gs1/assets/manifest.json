@@ -792,13 +792,15 @@
       "address": "0x0843f868",
       "size": "0x21b2",
       "kind": "golden-sun-general-lz",
-      "plan": "games/gs1/assets/graphics/resource_f2_stream.lz.json",
+      "plan": "games/gs1/assets/graphics/resource_f2.json",
+      "plan_section": "compression",
       "components": [
         {
           "kind": "zero-skip-sprite-archive",
           "size": "0x35ac",
           "source": "games/gs1/assets/graphics/resource_f2",
-          "plan": "games/gs1/assets/graphics/resource_f2_archive.json",
+          "plan": "games/gs1/assets/graphics/resource_f2.json",
+          "plan_section": "archive",
           "palette": "games/gs1/assets/graphics/0800777c.gbapal.png"
         }
       ]
@@ -807,13 +809,15 @@
       "address": "0x08441a1c",
       "size": "0x18f4",
       "kind": "golden-sun-general-lz",
-      "plan": "games/gs1/assets/graphics/resource_f3_stream.lz.json",
+      "plan": "games/gs1/assets/graphics/resource_f3.json",
+      "plan_section": "compression",
       "components": [
         {
           "kind": "zero-skip-sprite-archive",
           "size": "0x2844",
           "source": "games/gs1/assets/graphics/resource_f3",
-          "plan": "games/gs1/assets/graphics/resource_f3_archive.json",
+          "plan": "games/gs1/assets/graphics/resource_f3.json",
+          "plan_section": "archive",
           "palette": "games/gs1/assets/graphics/0800777c.gbapal.png"
         }
       ]

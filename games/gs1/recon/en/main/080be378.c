@@ -6,7 +6,7 @@
  * "Split functions" section. Real entry/prologue at 0x080be378, real
  * epilogue at the tail of games/gs1/asm/080bef88.s (0x080bf1e8), spanning
  * 3696 bytes across games/gs1/asm/{080be378,080be76c,080beb08,080bef88}.s.
- * See games/gs1/recon/en/main/080be378.json for the full map.
+ * See games/gs1/recon/en/dossiers.json#main:080be378 for the full map.
  *
  * All `bl sub_080bec5c` / `bl sub_080bec8a` / `bl sub_080bee00` / `bl
  * sub_080bf1d6` / `bl sub_080bf1d4` cross-region transfers in the retained
@@ -456,7 +456,7 @@ L_080be984:
      * Reconstructed instruction-for-instruction from
      * games/gs1/asm/080be76c.s (0x080be9ce-0x080bea9a) with every
      * literal-pool constant resolved from that region's own pool (see
-     * games/gs1/recon/en/main/080be378.json's attempt log for the
+     * games/gs1/recon/en/dossiers.json#main:080be378's attempt log for the
      * standalone-assemble-and-objdump derivation). K1..K4_ABILITY_ID are
      * the four comparisons that come from the pool rather than an
      * immediate operand.
@@ -703,7 +703,7 @@ L_080befb4_shared:
      * elemental-table / status-code / sub_080772b8 flag-bit tail
      * (0x080bf044-0x080bf1a8), all standalone-assembled and objdumped from
      * games/gs1/asm/080bef88.s against its real load address 0x080bef88 to
-     * get exact instruction offsets (see games/gs1/recon/en/main/080be378.json
+     * get exact instruction offsets (see games/gs1/recon/en/dossiers.json#main:080be378
      * for the full worked-out addresses). This is the domain notes' "clamp/
      * finalize" continuation reached from every sub_080bee00 convergence
      * point -- `abilityData`/`abilityId`/`tgt` are each read many more times

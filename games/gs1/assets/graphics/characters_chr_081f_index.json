@@ -16,7 +16,8 @@
       "address": "0x081f60c8",
       "size": "0x0000071c",
       "directory": "0x081f67cc",
-      "plan": "chr_038_bank.json"
+      "plan": "chr_038_bank.json",
+      "source": "battle_characters_chr_038_koma.8bpp.png"
     },
     {
       "id": "039",
@@ -24,7 +25,8 @@
       "address": "0x081f67e4",
       "size": "0x00002710",
       "directory": "0x081f8e6c",
-      "plan": "chr_039_bank.json"
+      "plan": "chr_039_bank.json",
+      "source": "battle_characters_chr_039_koma.8bpp.png"
     },
     {
       "id": "03a",
@@ -32,7 +34,8 @@
       "address": "0x081f8ef4",
       "size": "0x000026dc",
       "directory": "0x081fb548",
-      "plan": "chr_03a_bank.json"
+      "plan": "chr_03a_bank.json",
+      "source": "battle_characters_chr_03a_koma.8bpp.png"
     },
     {
       "id": "03b",
@@ -40,7 +43,8 @@
       "address": "0x081fb5d0",
       "size": "0x000021e0",
       "directory": "0x081fd720",
-      "plan": "chr_03b_bank.json"
+      "plan": "chr_03b_bank.json",
+      "source": "battle_characters_chr_03b_koma.8bpp.png"
     },
     {
       "id": "03c",
@@ -48,7 +52,8 @@
       "address": "0x081fd7b0",
       "size": "0x00002574",
       "directory": "0x081ffc94",
-      "plan": "chr_03c_bank.json"
+      "plan": "chr_03c_bank.json",
+      "source": "battle_characters_chr_03c_koma.8bpp.png"
     },
     {
       "id": "03d",
@@ -56,7 +61,8 @@
       "address": "0x081ffd24",
       "size": "0x0000267c",
       "directory": "0x08202310",
-      "plan": "chr_03d_bank.json"
+      "plan": "chr_03d_bank.json",
+      "source": "battle_characters_chr_03d_koma.8bpp.png"
     },
     {
       "id": "03e",
@@ -64,7 +70,8 @@
       "address": "0x082023a0",
       "size": "0x0000312c",
       "directory": "0x0820542c",
-      "plan": "chr_03e_bank.json"
+      "plan": "chr_03e_bank.json",
+      "source": "battle_characters_chr_03e_koma.8bpp.png"
     },
     {
       "id": "03f",
@@ -72,7 +79,8 @@
       "address": "0x082054cc",
       "size": "0x000047c4",
       "directory": "0x08209b80",
-      "plan": "chr_03f_bank.json"
+      "plan": "chr_03f_bank.json",
+      "source": "battle_characters_chr_03f_koma.8bpp.png"
     },
     {
       "id": "040",
@@ -80,7 +88,8 @@
       "address": "0x08209c90",
       "size": "0x00004780",
       "directory": "0x0820e300",
-      "plan": "grand-golem/bank.json"
+      "plan": "grand-golem/bank.json",
+      "source": "battle_characters_grand-golem_koma.8bpp.png"
     },
     {
       "id": "041",
@@ -88,7 +97,8 @@
       "address": "0x0820e410",
       "size": "0x0000228c",
       "directory": "0x08210614",
-      "plan": "chr_041_bank.json"
+      "plan": "chr_041_bank.json",
+      "source": "battle_characters_chr_041_koma.8bpp.png"
     },
     {
       "id": "042",
@@ -96,7 +106,8 @@
       "address": "0x0821069c",
       "size": "0x000028fc",
       "directory": "0x08212f0c",
-      "plan": "chr_042_bank.json"
+      "plan": "chr_042_bank.json",
+      "source": "battle_characters_chr_042_koma.8bpp.png"
     },
     {
       "id": "043",
@@ -104,7 +115,8 @@
       "address": "0x08212f98",
       "size": "0x000025e0",
       "directory": "0x082154ec",
-      "plan": "chr_043_bank.json"
+      "plan": "chr_043_bank.json",
+      "source": "battle_characters_chr_043_koma.8bpp.png"
     },
     {
       "id": "044",
@@ -112,7 +124,8 @@
       "address": "0x08215578",
       "size": "0x0000265c",
       "directory": "0x08217b34",
-      "plan": "chr_044_bank.json"
+      "plan": "chr_044_bank.json",
+      "source": "battle_characters_chr_044_koma.8bpp.png"
     },
     {
       "id": "045",
@@ -120,7 +133,8 @@
       "address": "0x08217bd4",
       "size": "0x00002678",
       "directory": "0x0821a1c4",
-      "plan": "chr_045_bank.json"
+      "plan": "chr_045_bank.json",
+      "source": "battle_characters_chr_045_koma.8bpp.png"
     },
     {
       "id": "046",
@@ -128,7 +142,8 @@
       "address": "0x0821a24c",
       "size": "0x000023a4",
       "directory": "0x0821c568",
-      "plan": "chr_046_bank.json"
+      "plan": "chr_046_bank.json",
+      "source": "battle_characters_chr_046_koma.8bpp.png"
     },
     {
       "id": "065",
@@ -136,7 +151,8 @@
       "address": "0x0821c5f0",
       "size": "0x00001d9c",
       "directory": "0x0821e300",
-      "plan": "chr_065_bank.json"
+      "plan": "chr_065_bank.json",
+      "source": "battle_characters_chr_065_koma.8bpp.png"
     },
     {
       "id": "066",
@@ -144,7 +160,8 @@
       "address": "0x0821e38c",
       "size": "0x00001dd4",
       "directory": "0x082200d8",
-      "plan": "chr_066_bank.json"
+      "plan": "chr_066_bank.json",
+      "source": "battle_characters_chr_066_koma.8bpp.png"
     }
   ]
 }

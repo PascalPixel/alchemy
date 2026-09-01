@@ -56,7 +56,7 @@
  * gcc drops the *cursor dereference (and the `ldmia`/`mov sl,r0`
  * sequence with it) entirely, which does not match the reference's
  * retained prologue either. Not attempted further: this is exactly the
- * shape of residual games/gs1/recon/en/main/080a24d0.json documents as
+ * shape of residual games/gs1/recon/en/dossiers.json#main:080a24d0 documents as
  * "insensitive to source-level respelling" for a whole-function
  * register-coloring tie-break, and per this repo's hard constraint
  * against hand-tuning register assignment, forcing canvas off r9 via an

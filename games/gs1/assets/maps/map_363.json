@@ -1,0 +1,110 @@
+{
+  "format": 1,
+  "kind": "golden-sun-map-container",
+  "header": {
+    "format": 1,
+    "parameters": [
+      0,
+      0,
+      64,
+      64,
+      3,
+      0,
+      0,
+      0,
+      2,
+      2,
+      0,
+      0
+    ],
+    "records": [
+      [
+        0,
+        4112,
+        0,
+        65535
+      ],
+      [
+        0,
+        4112,
+        0,
+        65535
+      ],
+      [
+        0,
+        4112,
+        0,
+        65535
+      ]
+    ],
+    "component_offsets": [
+      "0x3c",
+      "0x44",
+      "0x4c",
+      "0x0",
+      "0x0",
+      "0x348"
+    ]
+  },
+  "metatiles": {
+    "format": 1,
+    "codec": "golden-sun-general-lz",
+    "decoded_size": 9,
+    "encoded_size": 8,
+    "tokens": [
+      [
+        "l",
+        3
+      ],
+      [
+        "c",
+        6,
+        2
+      ]
+    ],
+    "lookahead": "",
+    "component": "map-metatiles-2x2",
+    "transform_mode": 0,
+    "metatiles": 1,
+    "tilemap": "0200 0200 0200 0200"
+  },
+  "descriptors": {
+    "format": 1,
+    "record_size": 4,
+    "records": [
+      [
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "compression": {
+      "format": 1,
+      "codec": "golden-sun-general-lz",
+      "decoded_size": 4,
+      "encoded_size": 8,
+      "tokens": [
+        [
+          "l",
+          1
+        ],
+        [
+          "c",
+          3,
+          1
+        ]
+      ],
+      "lookahead": "0000",
+      "component": "map-descriptors-4byte",
+      "records": 1
+    }
+  },
+  "sparse_cells": {
+    "format": 1,
+    "record_size": 3,
+    "terminator": "ffffff",
+    "alignment_zeros": 1,
+    "records": []
+  }
+}

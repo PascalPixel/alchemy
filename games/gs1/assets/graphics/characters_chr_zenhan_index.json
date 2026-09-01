@@ -15,7 +15,8 @@
       "address": "0x08220160",
       "size": "0x000020f0",
       "directory": "0x082221a8",
-      "plan": "chr_067_bank.json"
+      "plan": "chr_067_bank.json",
+      "source": "battle_characters_chr_067_koma.8bpp.png"
     },
     {
       "id": "068",
@@ -23,7 +24,8 @@
       "address": "0x08222250",
       "size": "0x00000f70",
       "directory": "0x08223138",
-      "plan": "chr_068_bank.json"
+      "plan": "chr_068_bank.json",
+      "source": "battle_characters_chr_068_koma.8bpp.png"
     },
     {
       "id": "06a",
@@ -31,7 +33,8 @@
       "address": "0x082231c0",
       "size": "0x00002404",
       "directory": "0x0822552c",
-      "plan": "chr_06a_bank.json"
+      "plan": "chr_06a_bank.json",
+      "source": "battle_characters_chr_06a_koma.8bpp.png"
     },
     {
       "id": "06b",
@@ -39,7 +42,8 @@
       "address": "0x082255c4",
       "size": "0x00001c34",
       "directory": "0x08227158",
-      "plan": "chr_06b_bank.json"
+      "plan": "chr_06b_bank.json",
+      "source": "battle_characters_chr_06b_koma.8bpp.png"
     },
     {
       "id": "06c",
@@ -47,7 +51,8 @@
       "address": "0x082271f8",
       "size": "0x00002794",
       "directory": "0x082298d8",
-      "plan": "chr_06c_bank.json"
+      "plan": "chr_06c_bank.json",
+      "source": "battle_characters_chr_06c_koma.8bpp.png"
     },
     {
       "id": "06d",
@@ -55,7 +60,8 @@
       "address": "0x0822998c",
       "size": "0x00001c9c",
       "directory": "0x0822b5a0",
-      "plan": "chr_06d_bank.json"
+      "plan": "chr_06d_bank.json",
+      "source": "battle_characters_chr_06d_koma.8bpp.png"
     },
     {
       "id": "06f",
@@ -63,7 +69,8 @@
       "address": "0x0822b628",
       "size": "0x00001b48",
       "directory": "0x0822d0e4",
-      "plan": "chr_06f_bank.json"
+      "plan": "chr_06f_bank.json",
+      "source": "battle_characters_chr_06f_koma.8bpp.png"
     },
     {
       "id": "072",
@@ -71,7 +78,8 @@
       "address": "0x0822d170",
       "size": "0x00002168",
       "directory": "0x0822f23c",
-      "plan": "chr_072_bank.json"
+      "plan": "chr_072_bank.json",
+      "source": "battle_characters_chr_072_koma.8bpp.png"
     },
     {
       "id": "073",
@@ -79,7 +87,8 @@
       "address": "0x0822f2d8",
       "size": "0x00002070",
       "directory": "0x082312b8",
-      "plan": "chr_073_bank.json"
+      "plan": "chr_073_bank.json",
+      "source": "battle_characters_chr_073_koma.8bpp.png"
     },
     {
       "id": "074",
@@ -87,7 +96,8 @@
       "address": "0x08231348",
       "size": "0x00002324",
       "directory": "0x082335d4",
-      "plan": "chr_074_bank.json"
+      "plan": "chr_074_bank.json",
+      "source": "battle_characters_chr_074_koma.8bpp.png"
     },
     {
       "id": "075",
@@ -95,7 +105,8 @@
       "address": "0x0823366c",
       "size": "0x00001d18",
       "directory": "0x082352fc",
-      "plan": "chr_075_bank.json"
+      "plan": "chr_075_bank.json",
+      "source": "battle_characters_chr_075_koma.8bpp.png"
     },
     {
       "id": "076",
@@ -103,7 +114,8 @@
       "address": "0x08235384",
       "size": "0x000026e4",
       "directory": "0x082379c8",
-      "plan": "chr_076_bank.json"
+      "plan": "chr_076_bank.json",
+      "source": "battle_characters_chr_076_koma.8bpp.png"
     },
     {
       "id": "077",
@@ -111,7 +123,8 @@
       "address": "0x08237a68",
       "size": "0x00001cf0",
       "directory": "0x082396d0",
-      "plan": "chr_077_bank.json"
+      "plan": "chr_077_bank.json",
+      "source": "battle_characters_chr_077_koma.8bpp.png"
     },
     {
       "id": "078",
@@ -119,7 +132,8 @@
       "address": "0x08239758",
       "size": "0x0000207c",
       "directory": "0x0823b74c",
-      "plan": "chr_078_bank.json"
+      "plan": "chr_078_bank.json",
+      "source": "battle_characters_chr_078_koma.8bpp.png"
     },
     {
       "id": "079",
@@ -127,7 +141,8 @@
       "address": "0x0823b7d4",
       "size": "0x00002860",
       "directory": "0x0823dfb8",
-      "plan": "chr_079_bank.json"
+      "plan": "chr_079_bank.json",
+      "source": "battle_characters_chr_079_koma.8bpp.png"
     },
     {
       "id": "07a",
@@ -135,23 +150,30 @@
       "address": "0x0823e034",
       "size": "0x00002ee4",
       "directory": "0x08240e8c",
-      "plan": "chr_07a_bank.json"
+      "plan": "chr_07a_bank.json",
+      "source": "battle_characters_chr_07a_koma.8bpp.png"
     },
     {
       "id": "07c",
-      "aliases": ["7e"],
+      "aliases": [
+        "7e"
+      ],
       "address": "0x08240f18",
       "size": "0x00001bbc",
       "directory": "0x08242a4c",
-      "plan": "chr_07c_bank.json"
+      "plan": "chr_07c_bank.json",
+      "source": "battle_characters_chr_07c_koma.8bpp.png"
     },
     {
       "id": "07d",
-      "aliases": ["7f"],
+      "aliases": [
+        "7f"
+      ],
       "address": "0x08242ad4",
       "size": "0x000024ec",
       "directory": "0x08244f38",
-      "plan": "chr_07d_bank.json"
+      "plan": "chr_07d_bank.json",
+      "source": "battle_characters_chr_07d_koma.8bpp.png"
     }
   ]
 }

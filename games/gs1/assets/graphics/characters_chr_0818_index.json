@@ -15,7 +15,8 @@
       "address": "0x0818d554",
       "size": "0x0000e8f0",
       "directory": "0x0819baf8",
-      "plan": "chr_000_bank.json"
+      "plan": "chr_000_bank.json",
+      "source": "battle_characters_chr_000_koma.8bpp.png"
     },
     {
       "id": "001",
@@ -23,7 +24,8 @@
       "address": "0x0819be44",
       "size": "0x00005e9c",
       "directory": "0x081a1b68",
-      "plan": "chr_001_bank.json"
+      "plan": "chr_001_bank.json",
+      "source": "battle_characters_chr_001_koma.8bpp.png"
     },
     {
       "id": "002",
@@ -31,7 +33,8 @@
       "address": "0x081a1ce0",
       "size": "0x00005340",
       "directory": "0x081a6eec",
-      "plan": "chr_002_bank.json"
+      "plan": "chr_002_bank.json",
+      "source": "battle_characters_chr_002_koma.8bpp.png"
     }
   ]
 }

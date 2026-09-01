@@ -6,7 +6,7 @@
  * this owner's r8-r11 prologue exactly, and its internal branches
  * (sub_080d4e4c, sub_080d4ece, sub_080d4fe0) land inside this owner's own
  * byte range with live register state that only a single physical frame
- * explains.  See games/gs1/recon/en/main/080d5094.json for the full
+ * explains.  See games/gs1/recon/en/dossiers.json#main:080d5094 for the full
  * boundary evidence.
  *
  * Literal-pool constants for the Fragment_080d5094 half were resolved by

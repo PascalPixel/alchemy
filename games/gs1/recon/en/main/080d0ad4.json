@@ -6,15 +6,17 @@
   "owner_bytes": 1036,
   "score": {
     "measured": "2026-08-31",
-    "candidate_bytes": 1020,
+    "candidate_bytes": 1004,
     "reference_bytes": 1036,
-    "differing_halfwords": 500,
-    "wrong_instructions": 500,
+    "differing_halfwords": 493,
+    "wrong_instructions": 492,
     "class": "missing-extra-code",
     "topology": "equal",
     "note": "First owner-specific compiling draft. The drafting wave never measured this reconstruction: aggregate m2c stopped on four concrete type/context errors and substituted an unrelated 576-byte shop template, producing the stale compiler_unemittable label. Repairing those errors yields an equal-topology candidate within 16 bytes of the complete 1036-byte owner."
   },
   "repairs": [
+    "Recovered 0x03001eec as one three-word BattleEffectWorkGlobals aggregate and the facing word as aggregate-minus-108. The reference performs exactly this base-relative walk; replacing four unrelated absolute-global expressions improves differing halfwords 500 to 493 and wrong instructions 500 to 492 while preserving equal topology. The candidate shrinks because GCC now folds duplicate literal loads, exposing stack-object identity as the next residual rather than justifying restoration of the false global model.",
+    "Removed the unused generic m2c compatibility preamble from this owner. Only the field-access helper remains; the deletion is compile-neutral and keeps the semantic draft reviewable.",
     "Recovered the three stack records at sp+0x48, sp+0x54, and sp+0x60 as three-word arrays. This resolves m2c's nonexistent sp64 name and preserves the two projected-coordinate words used by the particle seed.",
     "Typed Func_080b5098 as returning void ** and recovered the member id as a signed halfword at state+0x24+2*member rather than dereferencing arithmetic on void *.",
     "Recovered the sprite-cel lookup at 0x080ede5c as a u16 table indexed by the doubled cel value.",
@@ -26,7 +28,7 @@
   },
   "bounded_verdict": {
     "result": "materially_advanced_not_exact",
-    "remaining": "The fresh candidate has equal conditional-branch topology but remains 16 bytes short. The aligned residual begins in the 120-byte reference frame versus the candidate's 104-byte frame and includes spill allocation plus several literal-pool materializations. It is not eligible for adoption or compiler classification; the next pass must reconstruct the missing stack-local context before allocation work.",
+    "remaining": "The fresh candidate has equal conditional-branch topology but remains 32 bytes short after consolidating the falsely independent globals. The aligned residual still begins in the 120-byte reference frame versus the candidate's 104-byte frame and includes stack-object identity, spill allocation, and literal materialization. It is not eligible for adoption or compiler classification; the next pass must reconstruct the overlapping stack-local context before allocation work.",
     "done_bytes": 0
   },
   "provenance": [

@@ -97,13 +97,16 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     WaitFrames(20);
     Object_SetMode(Object_GetById(Data_02000240[125]), 28);
     do {
+        s32 next_state;
+
         WaitFrames(20);
-        remaining = 23;
+        next_state = 2;
         slot_state = effect_slots;
         slot_state += 152;
+        remaining = 23;
         do {
             if (slot_state[5] != 0)
-                slot_state[0] = 2;
+                slot_state[0] = next_state;
             remaining--;
             slot_state += 72;
         } while (remaining >= 0);
@@ -114,12 +117,15 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     WaitFrames(100);
 
     do {
-        remaining = 23;
+        s32 next_state;
+
         slot_state = effect_slots;
+        next_state = 5;
         slot_state += 152;
+        remaining = 23;
         do {
             if (slot_state[5] != 0)
-                slot_state[0] = 5;
+                slot_state[0] = next_state;
             remaining--;
             slot_state += 72;
         } while (remaining >= 0);

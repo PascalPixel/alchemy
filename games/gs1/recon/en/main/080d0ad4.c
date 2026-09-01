@@ -1,8 +1,10 @@
 #include "types.h"
+#include "effect_step.h"
 
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
 void **Func_080b5098(s32 member_id);
+void Func_080e396c(s32 member_id, struct EffectPosition *result);
 
 struct BattleEffectWorkGlobals {
     void *work;
@@ -32,6 +34,7 @@ s32 Func_080d0ad4(s32 actor) {
     s32 sp48[3];
     s32 sp54[3];
     s32 sp60[3];
+    struct EffectPosition sp6C;
     s32 temp_r0_37;
     s32 temp_r1_252;
     s32 temp_r3_103;
@@ -76,8 +79,8 @@ s32 Func_080d0ad4(s32 actor) {
     M2C_FIELD(sp44, s32 *, 0x7780) = 3;
     M2C_FIELD(sp44, s32 *, 0x7784) = 0x04040404;
     Func_080041d8(0x080CD261, 0x480);
-    sp24 = (s32 *)((u8 *)&sp0 + 0x6C);
-    Func_080e396c(M2C_FIELD(*temp_r5_28, s16 *, 0x24));
+    sp24 = &sp6C.x;
+    Func_080e396c(M2C_FIELD(*temp_r5_28, s16 *, 0x24), &sp6C);
     temp_r3_103 = 0x40 - *sp24;
     sp28 = temp_r3_103;
     *(s32 *)0x04000028 = temp_r3_103 << 8;

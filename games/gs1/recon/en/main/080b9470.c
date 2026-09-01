@@ -15,6 +15,12 @@ s32 Func_080771e8(s32 group, s32 index);
 
 typedef void (*WordCopy)(void *destination, const void *source, s32 size);
 
+static __inline__ void CopyWords(
+    void *destination, const void *source, s32 size)
+{
+    ((WordCopy)0x03001388)(destination, source, size);
+}
+
 extern u8 Value_0000000f;
 
 void Func_080b9470(struct BattleQueueEntry *entries, s32 count)
@@ -48,9 +54,9 @@ void Func_080b9470(struct BattleQueueEntry *entries, s32 count)
             if (entries[j].priority > entries[j - 1].priority) {
                 struct BattleQueueEntry temporary;
 
-                ((WordCopy)0x03001388)(&temporary, &entries[j], 16);
-                ((WordCopy)0x03001388)(&entries[j], &entries[j - 1], 16);
-                ((WordCopy)0x03001388)(&entries[j - 1], &temporary, 16);
+                CopyWords(&temporary, &entries[j], 16);
+                CopyWords(&entries[j], &entries[j - 1], 16);
+                CopyWords(&entries[j - 1], &temporary, 16);
                 swapped++;
             }
         }

@@ -28,7 +28,6 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
         s32 z;
     } position;
     s32 value;
-    s32 object_id;
     s32 remaining;
     struct PhasedRadialSequenceObject *source_object;
     void *effect_slots;
@@ -36,8 +35,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     void *slot;
     s8 *slot_state;
 
-    object_id = arg;
-    source_object = Object_GetById(object_id);
+    source_object = Object_GetById(arg);
     target_object = Object_GetById(Data_02000240[125]);
     if (source_object == NULL)
         return;
@@ -46,20 +44,18 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     effect_slots = *(void **)0x03001F30;
     Func_080b0048(0x201090);
     WaitFrames(30);
-    do {
-        ObjectMotion_ArmCallback(object_id, 0x4000, 0);
-    } while (0);
+    ObjectMotion_ArmCallback(arg, 0x4000, 0);
     WaitFrames(20);
     do {
         Audio_PlayCue(173);
-        Func_080925cc(object_id, 1);
+        Func_080925cc(arg, 1);
     } while (0);
     do {
         Audio_PlayCue(174);
-        Func_080925cc(object_id, 1);
+        Func_080925cc(arg, 1);
     } while (0);
     Audio_PlayCue(175);
-    Func_080925cc(object_id, 1);
+    Func_080925cc(arg, 1);
     WaitFrames(20);
     Audio_PlayCue(140);
     source_object->callback = (void *)0x08095bad;
@@ -96,7 +92,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     ObjectMotion_ArmCallback(Data_02000240[125], 0x4000, 0);
     WaitFrames(20);
     Object_SetMode(Object_GetById(Data_02000240[125]), 28);
-    do {
+    {
         s32 next_state;
 
         WaitFrames(20);
@@ -110,13 +106,13 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
             remaining--;
             slot_state += 72;
         } while (remaining >= 0);
-    } while (0);
+    }
 
     WaitFrames(60);
     target_object->callback = (void *)0x08095b8d;
     WaitFrames(100);
 
-    do {
+    {
         s32 next_state;
 
         slot_state = effect_slots;
@@ -129,7 +125,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
             remaining--;
             slot_state += 72;
         } while (remaining >= 0);
-    } while (0);
+    }
 
     WaitFrames(10);
     slot = NULL;

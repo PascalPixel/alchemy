@@ -70,8 +70,9 @@ struct FacingEntry *Func_08093af8(struct FacingEntry *self, s32 id)
         found = entry;
         best = dist;
     }
-    result = NULL;
-    if (found != NULL && *found->record->id == id)
-        result = found;
-    return result;
+    if (found == NULL)
+        return NULL;
+    if (*found->record->id != id)
+        return NULL;
+    return found;
 }

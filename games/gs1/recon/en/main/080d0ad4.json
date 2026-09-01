@@ -6,15 +6,16 @@
   "owner_bytes": 1036,
   "score": {
     "measured": "2026-09-01",
-    "candidate_bytes": 1020,
+    "candidate_bytes": 1032,
     "reference_bytes": 1036,
-    "differing_halfwords": 510,
-    "wrong_instructions": 434,
+    "differing_halfwords": 424,
+    "wrong_instructions": 404,
     "class": "missing-extra-code",
     "topology": "equal",
-    "note": "The drafting wave never measured this reconstruction: aggregate m2c stopped on concrete type/context errors and substituted an unrelated 576-byte shop template, producing the stale compiler_unemittable label. Repairing the false calls and reconstructing the shared global and local-work aggregates yields an equal-topology 1020-byte candidate with the reference's exact 120-byte frame for the complete 1036-byte owner."
+    "note": "The drafting wave never measured this reconstruction: aggregate m2c stopped on concrete type/context errors and substituted an unrelated 576-byte shop template, producing the stale compiler_unemittable label. Repairing the false calls, reconstructing the shared global and local-work aggregates, and applying the established battle-effect cache/table conventions yields an equal-topology 1032-byte candidate with the reference's exact 120-byte frame for the complete 1036-byte owner."
   },
   "repairs": [
+    "Recovered the three resource identifiers as linker-resolved Value_00000079/73/76 symbols, the kind-46/kind-47 draw routines as Data_03001e50 cache entries, and the cel offsets as the named Data_080ede5c u16 table. These are the same conventions already proved across exact battle-effect siblings. Together they restore twelve of the sixteen missing bytes and reduce the fresh score from 510 to 424 differing halfwords and from 434 to 404 wrong instructions without changing topology or the exact 120-byte frame.",
     "Recovered Func_080ed408 as a five-argument setup call and the 0x03001f08/0x03001f0c words as six-argument BattleEffectDrawFn callbacks. The former sp0 assignments were outgoing fifth arguments; the sp0/sp4 pairs before Func_080072f4/Func_080072f8 were outgoing width/height arguments to register-call veneers, not locals or direct functions. Modeling the real calls restores the outgoing stack area, grows the candidate from 980 to 1032 bytes, and reduces wrong instructions from 510 to 452.",
     "Recovered the four contiguous stack records at sp+72, +84, +96, and +108 as one BattleEffectVectorWork aggregate. Declaration-order probes alone merely shifted independent arrays; the complete aggregate places all records exactly. Its final member is three words, matching the reference's 120-byte frame, while Func_080e396c receives the exact EffectPosition view of its first two words. The resulting candidate is 1020/1036 bytes with equal topology and 434 wrong instructions.",
     "Recovered the missing second argument to Func_080e396c from the retained r1=sp+108 call setup and corroborated it against the adopted EffectPosition interface. The prior one-argument call plus a pointer fabricated beyond sp0 was semantically false. The owner now passes a real 8-byte EffectPosition and reads its x result. GCC overlays this short-lived output with later locals, so the candidate remains a 104-byte frame and the byte score moves to 980/1036, 499 differing halfwords, and 510 wrong instructions; the correction is retained because call truth outranks incidental score.",
@@ -31,7 +32,7 @@
   },
   "bounded_verdict": {
     "result": "materially_advanced_not_exact",
-    "remaining": "The fresh candidate has equal conditional-branch topology, an exact 120-byte frame, and exact offsets for all four addressed vector records, but remains 16 bytes short. The remaining residual begins in the shared-global carrier and early literal materialization, then cascades through register allocation. It is not eligible for adoption or compiler classification; the next pass should align the heap-cache cursor and callback-cache loads before allocator work.",
+    "remaining": "The fresh candidate has equal conditional-branch topology, an exact 120-byte frame, exact offsets for all four addressed vector records, and the complete reference literal set, but remains four bytes short. The remaining extent gap is the reference heap-cache carrier's two extra prologue moves; spelling the proven cursor idiom directly regresses the wider allocation, so the next pass must decode that carrier choice rather than force a register or retain a locally worse spelling.",
     "done_bytes": 0
   },
   "provenance": [

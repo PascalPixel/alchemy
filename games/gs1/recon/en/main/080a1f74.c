@@ -11,16 +11,16 @@ void Func_080a1f74(s32 arg0, s8 *dst)
     s32 i;
     s8 c;
 
-    src = (s8 *)Data_080af2b1;
+    src = (s8 *)Data_080af2a6;
     switch (arg0) {
     case 0:
-        src = (s8 *)Data_080af2a6;
-        break;
-    case 1:
         src = (s8 *)Data_080af2d0;
         break;
-    case 2:
+    case 1:
         src = (s8 *)Data_080af2bc;
+        break;
+    case 2:
+        src = (s8 *)Data_080af2b1;
         break;
     }
 

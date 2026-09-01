@@ -38,9 +38,6 @@ struct BattleObjectSlot {
     void (*update)(void);
 };
 
-#define BATTLE_EFFECT_SCENE (*(struct BattleEffectScene **)0x03001f30)
-#define BATTLE_EFFECT_RUNTIME (*(struct BattleEffectRuntime **)0x03001ebc)
-#define BATTLE_EFFECT_POSITION (*(struct BattleEffectPosition **)0x03001e70)
 #define BATTLE_OBJECT_SLOTS (*(struct BattleObjectSlot **)0x03001e64)
 
 void Func_0809bb34(struct BattleEffectSceneObject *object);
@@ -55,11 +52,19 @@ void Func_08002dd8(s32 asset_id);
 /* Drain effect objects, restore the scene position, and release effect data. */
 void BattleEffect_CleanupSceneObjects(void)
 {
-    struct BattleEffectScene *scene = BATTLE_EFFECT_SCENE;
-    struct BattleEffectRuntime *runtime = BATTLE_EFFECT_RUNTIME;
-    struct BattleEffectPosition *position = BATTLE_EFFECT_POSITION;
-    struct BattleEffectSceneObject *scene_object = scene->objects;
-    s32 remaining = 23;
+    struct BattleEffectScene **scene_cell;
+    struct BattleEffectScene *scene;
+    struct BattleEffectRuntime *runtime;
+    struct BattleEffectPosition *position;
+    struct BattleEffectSceneObject *scene_object;
+    s32 remaining;
+
+    scene_cell = (struct BattleEffectScene **)0x03001f30;
+    scene = *scene_cell;
+    runtime = *(struct BattleEffectRuntime **)((u8 *)scene_cell - 116);
+    position = *(struct BattleEffectPosition **)((u8 *)scene_cell - 192);
+    scene_object = scene->objects;
+    remaining = 23;
 
     do {
         if (scene_object->active != 0)
@@ -70,22 +75,26 @@ void BattleEffect_CleanupSceneObjects(void)
 
     if (runtime->teardown_blocked == 0) {
         s32 waited = 0;
+        void (*first_active_update)(void) =
+            (void (*)(void))0x08096d85;
+        void (*second_active_update)(void) =
+            (void (*)(void))0x08096d2d;
         s32 active;
 
         do {
             struct BattleObjectSlot *slot = BATTLE_OBJECT_SLOTS;
-            s32 index = 0;
 
             active = 0;
-            while (index <= 63) {
+            remaining = 0;
+            while (remaining <= 63) {
                 void (*update)(void) = slot->update;
 
-                if (update == (void (*)(void))0x08096d85 ||
-                    update == (void (*)(void))0x08096d2d) {
+                if (update == first_active_update ||
+                    update == second_active_update) {
                     active = 1;
                     break;
                 }
-                index++;
+                remaining++;
                 slot++;
             }
 

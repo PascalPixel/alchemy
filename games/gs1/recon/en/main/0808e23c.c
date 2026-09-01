@@ -104,8 +104,6 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
     s32 result;
     s32 item_id;
     s32 actor;
-    s32 count;
-    s32 best;
     struct BattleUnitObject *obj;
     struct BattleItemEventRecord *event;
     u16 *p;
@@ -115,46 +113,52 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
     result = -1;
     item_id = arg & 0x3ff;
     actor = (arg >> 10) & 0xf;
-    count = Func_08077148(actor);
-    best = 0;
+    {
+        s32 count;
+        s32 best = 0;
 
-    if (actor == 15) {
-        if (count > 0) {
-            u8 *ids = (u8 *)&Data_02000240 + 0x1f8;
-            s32 i = 0;
+        count = Func_08077148(actor);
+
+        if (actor == 15) {
+            s32 i;
+
             actor = 0;
-            do {
-                obj = (struct BattleUnitObject *)Runtime_GetObject(ids[i]);
-                matches = 0;
-                p = obj->abilities;
-                j = 14;
+            i = 0;
+            if (actor < count) {
+                u8 *ids = (u8 *)&Data_02000240 + 0x1f8;
                 do {
-                    if ((*p++ & 0x1ff) == item_id)
-                        matches++;
-                    j--;
-                } while (j >= 0);
+                    obj = (struct BattleUnitObject *)Runtime_GetObject(ids[i]);
+                    matches = 0;
+                    p = obj->abilities;
+                    j = 14;
+                    do {
+                        if ((*p++ & 0x1ff) == item_id)
+                            matches++;
+                        j--;
+                    } while (j >= 0);
 
-                if (best < matches) {
-                    best = matches;
-                    actor = ids[i];
-                }
-                i++;
-            } while (i < count);
+                    if (best < matches) {
+                        best = matches;
+                        actor = ids[i];
+                    }
+                    i++;
+                } while (i < count);
+            }
+        } else {
+            obj = (struct BattleUnitObject *)Runtime_GetObject(actor);
+            p = obj->abilities;
+            j = 14;
+            do {
+                if ((*p++ & 0x1ff) == item_id)
+                    best++;
+                j--;
+            } while (j >= 0);
         }
-    } else {
-        obj = (struct BattleUnitObject *)Runtime_GetObject(actor);
-        p = obj->abilities;
-        j = 14;
-        do {
-            if ((*p++ & 0x1ff) == item_id)
-                best++;
-            j--;
-        } while (j >= 0);
-    }
 
-    if (best == 0) {
-        UiText_DrawMessage(0x927, 1);
-        return -1;
+        if (best == 0) {
+            UiText_DrawMessage(0x927, 1);
+            return -1;
+        }
     }
 
     event = (struct BattleItemEventRecord *)Func_0808e14c(item_id);

@@ -67,7 +67,12 @@ s32 Curve_LookupScaledValue(s32 input, s32 halve)
         value += current_value;
     }
 
-    if (mode == 1)
+    switch (mode) {
+    case 0:
+        break;
+    case 1:
         value /= 2;
+        break;
+    }
     return value + 0x100;
 }

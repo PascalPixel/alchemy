@@ -4,15 +4,16 @@
   "address": "0x08079b24",
   "status": "measured-draft",
   "owner_bytes": 160,
-  "candidate_bytes": 156,
-  "differing_halfwords": 74,
+  "candidate_bytes": 160,
+  "differing_halfwords": 71,
   "wrong_instructions": 106,
   "classification": "lookup-descending-curve-value",
   "domain": "Clamps an input to a five-point descending table, linearly interpolates the corresponding value, optionally halves it with signed rounding toward zero, and adds 0x100.",
   "notes": [
     "This complete ordinary-C reconstruction accounts for the two signed clamp bounds, five-point search, terminal-point case, signed linear interpolation through FixedPoint_Ratio, optional halving, and final 0x100 bias.",
     "Keeping separate scan_offset and offset carriers is evidence-bearing rather than score decoration: the retained owner advances one carrier and copies it into the selected-knot carrier before testing the next point. Restoring that distinction recovers the reference's table/mode prologue and raises the candidate from the first 144-byte merged-carrier draft to 156 bytes.",
-    "The current router reports structural_topology with 74 differing halfwords and 106 wrong instructions. The remaining disagreement begins with the reciprocal clamped-input/count allocation and one missing guard; this candidate is not byte exact, claims zero DONE bytes, and leaves retained assembly authoritative.",
+    "Recovering the tail as a two-case switch restores the reference's distinct mode-zero and mode-one guards, exact 160-byte extent, literal-pool position, and six-instruction matching prefix. This strictly improves the candidate from 156 bytes / 74 differing halfwords to 160 bytes / 71 differing halfwords without changing its behavior.",
+    "The current router reports structural_topology with 71 differing halfwords and 106 wrong instructions. GCC's allocation dump shows the remaining leading cascade begins when clamped is coalesced with incoming r0 and the constant-five carrier takes r6, opposite the reference. Reusing the parameter as the count, a natural for/while loop, and an explicit one-backedge label layout all regress or preserve the residual and were removed. This candidate is not byte exact, claims zero DONE bytes, and leaves retained assembly authoritative.",
     "The semantic name is limited to the locally proved descending-table interpolation behavior. The callers remain unidentified, so no battle, field, character, or story role is inferred.",
     "Recovered only from games/gs1/asm/08079b24.s, its approved local ROM bytes, the approved GCC route, in-repository FixedPoint_Ratio declarations, local callers, and the repository-generated m2c workbench for this owner's own bytes. No external decompilation or target-specific source was used."
   ]

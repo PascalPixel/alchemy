@@ -6189,6 +6189,10 @@
     "main:08093af8": {
       "name": "Object_FindNearestFacingTarget",
       "source": "object/facing/find_nearest_target.c"
+    },
+    "main:0801868c": {
+      "name": "UiWindow_FitOnScreen",
+      "source": "ui/window/fit_on_screen.c"
     }
   }
 }

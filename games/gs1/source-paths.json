@@ -5,6 +5,9 @@
     "main:080113e4": {
       "name": "Map_UpdateCurrentTileBlock"
     },
+    "main:080114a0": {
+      "name": "Map_UpdateCurrentTileBlockUntilBlocked"
+    },
     "main:080a4800": {
       "name": "Menu_SelectQuantity",
       "source": "menu/select_quantity.c"

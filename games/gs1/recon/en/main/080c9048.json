@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "namespace": "main",
+  "address": "0x080c9048",
+  "status": "proven-retained",
+  "owner_bytes": 156,
+  "executable_owner_bytes": 154,
+  "candidate_bytes": 156,
+  "differing_halfwords": 13,
+  "wrong_instructions": 4,
+  "classification": "battle_effect_display_queue_compiler_allocation_module",
+  "resolved_asm_classification": {
+    "kind": "battle_effect_display_queue_compiler_allocation_module",
+    "retention": "keep_structured_asm",
+    "confidence": "proven"
+  },
+  "cross_edition": {
+    "editions": ["ja", "en", "de", "es", "fr", "it"],
+    "relocation_normalized_core_bytes": 106,
+    "core_identical": true,
+    "owner_alignment_bytes": 2,
+    "starts": {
+      "ja": "0x080c0048",
+      "en": "0x080c9048",
+      "de": "0x080cae48",
+      "es": "0x080cc848",
+      "fr": "0x080cc848",
+      "it": "0x080c9048"
+    }
+  },
+  "domain": "Configures the battle-effect display windows and blend registers, then publishes one display transfer request through the interrupt-guarded 32-entry request queue.",
+  "expressed": [
+    "the eight observed 16-bit display-register writes",
+    "saving, disabling, and restoring interrupt-master state",
+    "the signed queue-capacity guard for 32 entries",
+    "the 12-byte request stride and count update",
+    "the 0x7741, 0x04000000, and 0x00020000 request words",
+    "the one-frame completion wait"
+  ],
+  "residual": [
+    "The linker-resolved Data_02002090 symbol is essential: a numeric pointer lets GCC fold the three request fields into separate absolute addresses, growing the candidate to 176 bytes. The symbol produces the exact 156-byte extent, exact literal set, and both reference single-register writeback stores.",
+    "The four wrong instructions are confined to the queue-base and interrupt-master pointer role order plus the independent saved-IME copy schedule. The queue body, control flow, constants, access widths, and final call are otherwise exact.",
+    "The allocator decoder reports no unique safe source repair; structured assembly remains authoritative for the four-instruction floor."
+  ],
+  "rejected_experiments": [
+    {
+      "experiment": "make the queue count and entry cursors volatile",
+      "result": "regresses to 180 bytes and 48 differing halfwords by rematerializing three absolute request-field addresses"
+    },
+    {
+      "experiment": "model the queue as a typed count-plus-request-array aggregate",
+      "result": "preserves the 176-byte constant-folded form and adds callee-saved register pressure"
+    },
+    {
+      "experiment": "express interrupt master as a second absolute linker symbol",
+      "result": "preserves extent but regresses saved-state allocation and branch placement; the numeric hardware-register pointer remains the stronger four-wrong-instruction candidate"
+    }
+  ],
+  "notes": [
+    "2026-09-01 retained-assembly proof: the linker-resolved queue symbol produces the exact 156-byte owner extent (154 executable bytes plus two bytes alignment), exact literal set, exact display-register sequence, exact queue body including both single-register writeback stores, and exact final call. The remaining four wrong instructions are equivalent queue/IME/saved-state register roles and independent load/copy scheduling. Canonical, no-regmove, no-schedule-insns, no-GCSE, no-CSE-follow, rerun-CSE, strength, expensive, and O3 routes preserve the floor; sched2 and no-CSE-skip regress. Relocation-aware verification proves all 106 normalized core bytes identical across six editions. Structured assembly is therefore authoritative under battle_effect_display_queue_compiler_allocation_module.",
+    "Recovered only from the retained owner assembly, its local callers, the repository's established display-request queue idiom, linker-symbol infrastructure, and the approved compiler.",
+    "No GS2 or external source, fixed-register variable, inline assembly, compiler barrier, forced scheduling, or compiler modification was used."
+  ]
+}

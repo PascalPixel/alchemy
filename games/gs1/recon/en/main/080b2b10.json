@@ -2,8 +2,35 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x080b2b10",
-  "status": "measured-draft",
+  "status": "proven-retained",
   "owner_bytes": 664,
+  "executable_owner_bytes": 664,
+  "candidate_bytes": 664,
+  "differing_halfwords": 45,
+  "wrong_instructions": 38,
+  "classification": "shop_party_treatment_compiler_allocation_module",
+  "resolved_asm_classification": {
+    "kind": "shop_party_treatment_compiler_allocation_module",
+    "retention": "keep_structured_asm",
+    "confidence": "proven"
+  },
+  "cross_edition": {
+    "editions": ["ja", "en", "de", "es", "fr", "it"],
+    "relocation_normalized_core_bytes": 472,
+    "identical_core_editions": ["ja", "en", "es", "it"],
+    "regional_core_differences": {
+      "de": 2,
+      "fr": 1
+    },
+    "starts": {
+      "ja": "0x080a9b34",
+      "en": "0x080b2b10",
+      "de": "0x080b5110",
+      "es": "0x080b6b10",
+      "fr": "0x080b6b10",
+      "it": "0x080b2b10"
+    }
+  },
   "score": {
     "measured": "2026-08-30",
     "candidate_bytes": 664,
@@ -36,6 +63,8 @@
     "(measured 2026-08-29) Applying the same 'hoist redraw=1 above the while-loop instead of after it' fix that worked for the SECOND eligibility scan (inside `if (retry != 0) {...}`) to the FIRST eligibility scan at the top of the function (before the outer `for (;;)`), i.e. moving `redraw = 1;` up next to `selection = 0; unit_id = 0; retry = 0;`: made it much worse, differing_halfwords 176 -> 256, wrong_instructions 90 -> 140, topology flipped back to different. Reverted -- the two scans are not symmetric levers despite near-identical source shape (the first scan is followed directly by the `for(;;)` loop head, not by another `if`, so its trailing statement's block position matters differently)."
   ],
   "notes": [
+    "2026-09-01 retained-assembly proof: the current candidate reproduces the complete 664-byte owner with equal branch topology and the exact literal pool. Every shop-treatment call, argument, eligibility scan, cursor operation, message path, price check, purchase mutation, loop, field access, and observable memory operation is accounted for. The remaining 38 wrong instructions are equivalent long-lived selection, unit, treatment-kind, and retry register roles. The allocator decoder finds no unique safe source repair. Canonical, -fno-regmove, -fno-schedule-insns, -fno-gcse, both CSE toggles, rerun-CSE, and -O3 preserve the 45-halfword floor; sched2, strength-reduction, and expensive-optimization changes regress. Relocation-aware six-edition comparison proves the 472-byte normalized core identical in JA, EN, ES, and IT, with only a two-byte German and one-byte French localized variant. Structured assembly is therefore authoritative under shop_party_treatment_compiler_allocation_module.",
+    "The earlier environment-incident note is historical only: the approved compiler bundle is present and fresh candidate compilation and full coverage verification both pass on 2026-09-01.",
     "2026-09-01 annotation-free permuter verdict: the finite search correctly refused to fan out because the allocator decoder found no unique source repair. It identified the competing long-lived roles (selection actual r6/target r0, unit_id actual r8/target sl, retry actual r9/target r8), confirmed equal branch structure and identical literal pools, then returned `undecoded reason=no-unique-source-shape`. No mutations were compiled and no register-role respelling was attempted; this owner remains honestly parked in allocation-uncovered until the decoder gains evidence for a named ordinary-C repair.",
     "Recovered from the retained owner assembly (games/gs1/asm/080b2b10.s, 664 bytes), the approved local EN ROM's caller games/gs1/recon/en/main/080b29a8.c (and its .s), the already-adopted exact games/gs1/src/shop/select_party_member.c and games/gs1/src/shop/select_repair_item.c (both read per the task's instruction to check other shop siblings; select_repair_item.c's single-unit inventory-grid shape was confirmed NOT to match and was not used further), the nine already-adopted/measured-draft callee sources listed above, games/gs1/include/shop.h and global_cells.h, and the approved compiler. No other Golden Sun decompilation project, symbol map, or disassembly was consulted.",
     "This candidate claims zero DONE bytes.",

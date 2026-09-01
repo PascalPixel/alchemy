@@ -80,6 +80,10 @@
    "-fno-rerun-cse-after-loop",
    "-fno-cse-follow-jumps",
    "-fno-cse-skip-blocks",
+   "-fno-sched-interblock",
+   "-fno-sched-spec",
+   "-fno-sched-spec-load",
+   "-fno-sched-spec-load-dangerous",
    "-fno-strength-reduce",
    "-O3"
   ],
@@ -106,7 +110,15 @@
    "resynchronization": "both streams match again before storing 4 to effect->flags"
   }
  ],
- "rejected_experiments": [
+  "rejected_experiments": [
+  {
+   "experiment": "spell the state-two object-flag clear through the already-live object_flags carrier used by the exact state-zero and state-one blocks",
+   "result": "GCC emits the same 456-byte candidate and the same seven differing halfwords; the explicit temporary is coalesced before scheduling and does not change either residual hunk"
+  },
+  {
+   "experiment": "sweep GCC 2.96's shipped post-reload scheduler sub-options across both retained family members",
+   "result": "enabling and disabling interblock scheduling, speculative scheduling, speculative loads, and dangerous speculative loads is byte-neutral for both owners (7 and 5 differing halfwords); the family mismatch is not controlled by those route flags"
+  },
   {
    "experiment": "name an alias of source before incrementing the state byte",
    "result": "the alias is eliminated and the seven-halfword schedule is unchanged"

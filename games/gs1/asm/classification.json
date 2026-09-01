@@ -1779,12 +1779,13 @@
     "inline_assembly_fixed_registers_and_compiler_barriers_are_disallowed",
     "byte_exact_reconstruction"
    ],
-   "expected_files": 4,
-   "expected_bytes": 772,
+   "expected_files": 5,
+   "expected_bytes": 868,
    "files": [
     "0800651c",
     "0801faa8",
     "08099838",
+    "080a1f74",
     "080f92fc"
    ]
   },

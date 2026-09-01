@@ -2,12 +2,31 @@
   "schema_version": 1,
   "namespace": "main",
   "address": "0x080a1f74",
-  "status": "measured-draft",
+  "status": "proven-retained",
   "owner_bytes": 96,
   "executable_owner_bytes": 96,
   "candidate_bytes": 96,
   "differing_halfwords": 20,
   "wrong_instructions": 26,
+  "classification": "compiler_local_materialization_mismatch",
+  "resolved_asm_classification": {
+    "kind": "compiler_local_materialization_mismatch",
+    "retention": "keep_structured_asm",
+    "confidence": "proven"
+  },
+  "cross_edition": {
+    "editions": ["ja", "en", "de", "es", "fr", "it"],
+    "relocation_normalized_core_bytes": 80,
+    "core_identical": true,
+    "starts": {
+      "ja": "0x08098ee8",
+      "en": "0x080a1f74",
+      "de": "0x080a4d74",
+      "es": "0x080a6768",
+      "fr": "0x080a6774",
+      "it": "0x080a1f74"
+    }
+  },
   "template_family": "template-main-0801ce90",
   "template_source": "games/gs1/src/unidentified/main/field/field_owner_89.c",
   "domain": "Copies a 0xff-terminated byte string (up to 32 bytes) selected by a small switch(arg0) -- one of four fixed ROM string addresses (arg0==0,1,2 pick three specific strings; every other value, including negatives and >2, falls back to a fourth default string) -- into the caller's destination buffer.",
@@ -24,6 +43,7 @@
   },
   "remaining": "Same size as reference (96/96), and the switch dispatch (13 comparison/branch instructions) matches exactly. The residual is entirely in how the 0xff terminator test compiles: reference computes it as 'lsls r4,r4,#24 / lsls r3,r3,#24 / cmp r3,r4' (both operands merely shifted into top-byte position, no sign-normalization afterward), while this signed-char candidate adds an extra 'movs r0,#1 / negs r0,r0' to materialize -1 and an extra 'asrs r3,r3,#24' to fully sign-extend c before an ordinary int compare. Compiler evidence (see bounded_search.compiler_evidence) shows reference's shape requires the comparand to reach the comparison via the SAME QImode-to-SImode extendqisi2 RTL as 'c' itself (so the combine pass can cancel both trailing ashiftrt ops); a bare constant -1, however spelled at the C level, never takes that path and always yields the standing candidate's shape instead. The one respelling that forced the comparand through extendqisi2 (a separate 's8 term' local) reproduced the exact target shape on the first occurrence but cost a stack slot and a saved register, growing the function past 96 bytes and only fixing one of the two occurrences (the loop's second comparison got a differently-cached, still-fully-extended copy instead). This is a narrow, well-isolated residual (one comparison idiom, repeated twice) with a size-neutral fix not found by manual respelling -- a good candidate for a small bounded permuter search over just that comparison (e.g. varying operand order, intermediate temporaries, or expression form under a fixed 96-byte budget) rather than further manual respelling.",
   "notes": [
+    "2026-09-01 retained-assembly proof: the complete 96-byte ordinary-C reconstruction has the exact owner extent, exact four-word literal pool, exact switch dispatch, and complete bounded copy semantics. Cross-edition verification uniquely locates it in all six releases and proves all 80 non-literal bytes identical. The residual is confined to two equivalent 0xff byte-comparison materializations. GCC's Thumb QImode extend/combine path explains why a literal -1 fully sign-extends the byte while a genuine byte lvalue can cancel the paired extensions; the byte-lvalue forms either fold, change topology, or add a saved register/frame. Routed GCC 2.96 and the canonical scheduling, CSE, GCSE, regmove, strength-reduction and O3 axes remain at the 20-halfword floor; disabling rerun-CSE or expensive optimizations improves it only to 16 halfwords/10 wrong instructions, old-agbcc regresses to 100 bytes/47 halfwords, and no route is exact. Structured assembly therefore remains authoritative under compiler_local_materialization_mismatch; the semantic C remains the evidence artifact and does not claim exact C.",
     "2026-09-01 pool-address audit corrected a stale semantic mapping: resolving each PC-relative load directly against the retained owner proves default=0x080af2a6, case0=0x080af2d0, case1=0x080af2bc, and case2=0x080af2b1. The former source rotated those four meanings. Correcting the mapping makes all four pool words exact and improves the current candidate from 24 to 20 differing halfwords without changing its 96-byte extent. Explicit-default and signed/unsigned terminator-lvalue probes were measured and reverted because they grew or tied the residual.",
     "The four string addresses (0x080af2a6, 0x080af2d0, 0x080af2bc, 0x080af2b1) are read directly from the retained assembly's literal pool; their contents were not decoded (no message-archive cross-reference attempted in this pass).",
     "Recovered only from retained owner assembly and the approved compiler. No GS2 evidence, external source, copied instruction bytes, fixed-register variable, inline assembly, compiler barrier, or compiler modification was used. Zero DONE bytes are claimed.",

@@ -2,7 +2,7 @@
 
 static __inline__ void CopyBlock(u32 *map, u8 *destination, u32 parity)
 {
-    volatile u16 *colors = (volatile u16 *)0x02010000;
+    volatile u16 *colors = (volatile u16 *)0x02020000;
     u32 index = (*map & 0xFFF) * 4 + parity;
 
     colors += index;
@@ -22,7 +22,7 @@ void Func_0800ff54(u32 a0, s32 a1, s32 a2)
     u32 counter;
 
     for (counter = 0; counter <= 10; counter++) {
-        u32 *map = (u32 *)(0x02020000 + (row + col) * 4);
+        u32 *map = (u32 *)(0x02010000 + (row + col) * 4);
         u32 offset = (rowmod + colmod + parity) * 2;
 
         CopyBlock(map, destination + offset, parity);

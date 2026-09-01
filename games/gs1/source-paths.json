@@ -6185,6 +6185,10 @@
     "main:080b5864": {
       "name": "BattlePresentation_UpdateCamera",
       "source": "battle/presentation/update_camera.c"
+    },
+    "main:08093af8": {
+      "name": "Object_FindNearestFacingTarget",
+      "source": "object/facing/find_nearest_target.c"
     }
   }
 }

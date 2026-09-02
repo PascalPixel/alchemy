@@ -5817,7 +5817,8 @@
       "name": "FieldScene_RunSecondaryScript"
     },
     "resource_3c2:02000240": {
-      "name": "FieldScene_RunPrimaryScript"
+      "name": "FieldScene_RunPrimaryScript",
+      "source": "overlays/scene_primary_script/run_scene_3c2_primary_script.c"
     },
     "resource_3a2:02000180": {
       "name": "FieldScene_RunPrimaryScript"

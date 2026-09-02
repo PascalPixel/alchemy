@@ -5391,9 +5391,6 @@
     "resource_3b9:02000708": {
       "name": "RunEventScript01"
     },
-    "resource_3bf:0200298c": {
-      "name": "RunEventScript01"
-    },
     "resource_3c5:02001238": {
       "name": "RunEventScript01"
     },
@@ -6245,6 +6242,10 @@
     "resource_3ab:020005f0": {
       "name": "FieldScene_RunOpeningSequence",
       "source": "overlays/scene_primary_script/run_3ab_020005f0_LRun_LOpening_LSequence.c"
+    },
+    "resource_3bf:020027b0": {
+      "name": "PlayStoryScene",
+      "source": "overlays/scene_primary_script/run_scene_3bf_story_scene.c"
     }
   }
 }

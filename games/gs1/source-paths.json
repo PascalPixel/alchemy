@@ -5326,12 +5326,6 @@
     "resource_39d:02001608": {
       "name": "RunEventScript03"
     },
-    "resource_39d:02001adc": {
-      "name": "RunEventScript04"
-    },
-    "resource_39d:020026c4": {
-      "name": "RunEventScript05"
-    },
     "resource_39e:0200064c": {
       "name": "RunEventScript01"
     },
@@ -5784,7 +5778,8 @@
       "name": "FieldScene_RunEnsembleStoryBeat"
     },
     "resource_39d:02001af0": {
-      "name": "RunScene59ValeSequence"
+      "name": "RunScene59Sequence",
+      "source": "overlays/scene_effect_sequence/run_scene_59_sequence.c"
     },
     "resource_39d:02000b24": {
       "name": "RunScene58Sequence"

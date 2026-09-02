@@ -5850,7 +5850,8 @@
       "name": "FieldScene_RunPrimarySequence"
     },
     "resource_3c3:02000334": {
-      "name": "FieldScene_RunPrimarySequence"
+      "name": "FieldScene_RunPrimarySequence",
+      "source": "overlays/scene_primary_script/run_scene_3c3_primary_sequence.c"
     },
     "resource_37b:02001624": {
       "name": "FieldScene_RunClosingSequence"

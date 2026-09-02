@@ -6246,6 +6246,18 @@
     "resource_3bf:020027b0": {
       "name": "PlayStoryScene",
       "source": "overlays/scene_primary_script/run_scene_3bf_story_scene.c"
+    },
+    "resource_383:020019a4": {
+      "name": "FieldScene_RunOpeningSequenceHead",
+      "source": "overlays/scene_primary_script/run_383_020019a4_LRun_LOpening_LSequence_LHead.c"
+    },
+    "resource_383:020019e4": {
+      "name": "FieldScene_RunOpeningSequenceSecond",
+      "source": "overlays/scene_primary_script/run_383_020019e4_LRun_LOpening_LSequence_LSecond.c"
+    },
+    "resource_383:02001a4c": {
+      "name": "FieldScene_RunOpeningSequenceThird",
+      "source": "overlays/scene_primary_script/run_383_02001a4c_LRun_LOpening_LSequence_LThird.c"
     }
   }
 }

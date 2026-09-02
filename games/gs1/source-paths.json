@@ -5795,7 +5795,8 @@
       "name": "FieldScene_RunMainCutsceneSequence"
     },
     "resource_3bd:02002c44": {
-      "name": "FieldScene_RunBranchingCutsceneSequence"
+      "name": "FieldScene_RunBranchingCutsceneSequence",
+      "source": "overlays/scene_primary_script/run_scene_3bd_primary_script.c"
     },
     "resource_380:02001d04": {
       "name": "FieldScene_RunActorFourteenGuestScene"

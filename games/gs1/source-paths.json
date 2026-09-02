@@ -6080,7 +6080,8 @@
       "name": "FieldScene_RunSupplementalSequenceOne"
     },
     "resource_3bf:020049a0": {
-      "name": "FieldScene_RunSupplementalSequenceTwo"
+      "name": "FieldScene_RunSupplementalSequenceTwo",
+      "source": "overlays/scene_primary_script/run_scene_3bf_sequence.c"
     },
     "resource_3b5:020002f0": {
       "name": "FieldScene_RunSupplementalSequenceTwo"

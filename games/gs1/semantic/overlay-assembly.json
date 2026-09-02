@@ -4013,18 +4013,6 @@
       ]
     },
     {
-      "overlay": "resource_3bd",
-      "start": "0x02002c44",
-      "end": "0x020034bc",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete cutscene accounts for all 251 calls, the sole scene choice, three data ranges, and coordinate publications",
-        "games/gs1/recon/en/dossiers.json#resource_3bd:02002c44"
-      ]
-    },
-    {
       "overlay": "resource_380",
       "start": "0x02001d04",
       "end": "0x0200227c",

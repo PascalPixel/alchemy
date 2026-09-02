@@ -1,0 +1,670 @@
+#include "types.h"
+
+#define FieldScene_RunPrimaryScript Func_02000508
+
+/* Audited retained scene body: all 306 calls through the next owner boundary
+ * are represented in machine order. The approved compiler changes scheduling
+ * and literal placement, so production retains the reviewed assembly. */
+
+void Func_02001590();
+void Func_020016fe();
+void Func_02001708();
+void Func_0200174a();
+void Func_02001764();
+void Func_02001774();
+void Func_02001780();
+void Func_020017ac();
+void Func_020017ae();
+void Func_020017b2();
+void Func_020017c0();
+void Func_020017c4();
+void Func_020017ca();
+void Func_020017ce();
+void Func_020017d6();
+void Func_020017ec();
+void Func_020017ee();
+void Func_02001804();
+void Func_02001810();
+void Func_02001812();
+void Func_0200181c();
+void Func_02001820();
+void Func_0200182a();
+void Func_0200182e();
+void Func_0200183c();
+void Func_02001854();
+void Func_02001856();
+void Func_02001860();
+void Func_02001864();
+void Func_0200186c();
+void Func_02001872();
+s32 Func_02001878(s32);
+s32 Func_0200187a();
+void Func_02001886();
+void Func_02001888();
+void Func_02001896();
+void Func_02001898();
+void Func_0200189e();
+void Func_020018a0();
+void Func_020018ae();
+void Func_020018b2();
+void Func_020018bc();
+void Func_020018be();
+void Func_020018ce();
+void Func_020018d6();
+void Func_020018e8();
+void Func_020018f0();
+void Func_020018f6();
+void Func_02001904();
+void Func_02001912();
+void Func_02001918();
+void Func_02001920();
+void Func_02001922();
+void Func_0200192a();
+void Func_0200192e();
+void Func_0200193e();
+void Func_0200194e();
+void Func_0200195c();
+void Func_0200195e();
+void Func_02001960();
+void Func_0200196a();
+void Func_02001978();
+void Func_0200197e();
+void Func_02001982();
+void Func_02001988();
+void Func_0200198a();
+void Func_0200198c();
+void Func_0200199a();
+void Func_020019a4();
+void Func_020019a8();
+void Func_020019b6();
+void Func_020019c0();
+void Func_020019c4();
+void Func_020019c6();
+void Func_020019d0();
+void Func_020019d2();
+void Func_020019e0();
+void Func_020019f0();
+void Func_020019f6();
+void Func_020019fc();
+void Func_02001a02();
+void Func_02001a18();
+void Func_02001a1e();
+s32 Func_02001a26(s32, s32);
+void Func_02001a2c();
+void Func_02001a42();
+void Func_02001a48();
+void Func_02001a54();
+void Func_02001a56();
+void Func_02001a64();
+void Func_02001a72();
+void Func_02001a74();
+void Func_02001a7e();
+void Func_02001a94();
+void Func_02001a9c();
+void Func_02001ab0();
+void Func_02001abe();
+void Func_02001ac4();
+void Func_02001ad0();
+void Func_02001ad2();
+void Func_02001adc();
+void Func_02001af0();
+void Func_02001af6();
+void Func_02001afe();
+void Func_02001b0c();
+void Func_02001b26();
+void Func_02001b2c();
+void Func_02001b40();
+void Func_02001b46();
+void Func_02001b4c();
+void Func_02001b58();
+void Func_02001b68();
+void Func_02001b7c();
+void Func_02001b82();
+void Func_02001b90();
+void Func_02001b96();
+void Func_02001b9e();
+void Func_02001ba0();
+void Func_02001bac();
+void Func_02001bba();
+void Func_02001bd4();
+void Func_02001bd8();
+void Func_02001be0();
+void Func_02001be4();
+void Func_02001bea();
+void Func_02001bf2();
+void Func_02001bfe();
+void Func_02001c00();
+void Func_02001c0a();
+void Func_02001c12();
+void Func_02001c16();
+void Func_02001c20();
+void Func_02001c2e();
+void Func_02001c30();
+void Func_02001c3c();
+void Func_02001c4a();
+void Func_02001c4c();
+void Func_02001c58();
+void Func_02001c66();
+void Func_02001c6a();
+void Func_02001c6e();
+void Func_02001c78();
+void Func_02001c7e();
+void Func_02001c84();
+void Func_02001c88();
+void Func_02001c92();
+void Func_02001cac();
+void Func_02001cb2();
+void Func_02001cb4();
+void Func_02001cba();
+void Func_02001cce();
+void Func_02001cd4();
+void Func_02001ce6();
+void Func_02001cea();
+void Func_02001cf4();
+void Func_02001d04();
+void Func_02001d06();
+void Func_02001d0a();
+void Func_02001d20();
+void Func_02001d24();
+void Func_02001d2c();
+void Func_02001d2e();
+void Func_02001d3c();
+void Func_02001d44();
+void Func_02001d46();
+void Func_02001d4c();
+void Func_02001d62();
+void Func_02001d66();
+void Func_02001d68();
+void Func_02001d6e();
+void Func_02001d78();
+void Func_02001d80();
+void Func_02001d86();
+void Func_02001d88();
+void Func_02001d94();
+void Func_02001da0();
+void Func_02001da6();
+void Func_02001dac();
+void Func_02001db2();
+void Func_02001db4();
+void Func_02001dba();
+void Func_02001dbc();
+void Func_02001dc4();
+void Func_02001dcc();
+void Func_02001dce();
+void Func_02001dd6();
+void Func_02001de4();
+void Func_02001df2();
+void Func_02001dfe();
+void Func_02001e04();
+void Func_02001e12();
+void Func_02001e18();
+void Func_02001e1c();
+void Func_02001e2a();
+void Func_02001e38();
+void Func_02001e3e();
+void Func_02001e40();
+void Func_02001e46();
+void Func_02001e4a();
+void Func_02001e64();
+void Func_02001e66();
+void Func_02001e70();
+void Func_02001e76();
+void Func_02001e84();
+void Func_02001e92();
+void Func_02001e94();
+void Func_02001e9e();
+void Func_02001ea0();
+void Func_02001eae();
+void Func_02001eb6();
+void Func_02001ebc();
+void Func_02001eca();
+void Func_02001ee4();
+void Func_02001ef6();
+void Func_02001efa();
+void Func_02001efe();
+void Func_02001f04();
+void Func_02001f0a();
+void Func_02001f10();
+void Func_02001f16();
+void Func_02001f18();
+void Func_02001f26();
+void Func_02001f28();
+void Func_02001f2c();
+void Func_02001f40();
+void Func_02001f4c();
+void Func_02001f4e();
+void Func_02001f52();
+void Func_02001f56();
+void Func_02001f5c();
+void Func_02001f5e();
+void Func_02001f60();
+void Func_02001f6e();
+void Func_02001f72();
+void Func_02001f7c();
+void Func_02001f86();
+void Func_02001f8a();
+void Func_02001f8e();
+void Func_02001f96();
+void Func_02001f98();
+void Func_02001fa6();
+void Func_02001fb4();
+void Func_02001fb8();
+void Func_02001fc2();
+void Func_02001fca();
+void Func_02001fe6();
+void Func_02001fec();
+void Func_02001ff2();
+void Func_02001ffa();
+void Func_02002000();
+void Func_0200200e();
+void Func_02002018();
+void Func_0200201c();
+void Func_02002038();
+void Func_0200204a();
+void Func_02002054();
+void Func_0200205a();
+void Func_0200205e();
+void Func_02002062();
+u8 *Func_02002064(s32);
+void Func_0200206e();
+void Func_02002072();
+void Func_0200207a();
+void Func_02002086();
+void Func_0200208e(s32, s32, s32);
+u8 *Func_02002094(s32);
+void Func_02002096();
+void Func_020020a4();
+void Func_020020b6();
+void Func_020020be(s32, s32, s32);
+u8 *Func_020020c4(s32);
+void Func_020020c6();
+void Func_020020cc();
+void Func_020020d4();
+void Func_020020e0();
+void Func_020020e6();
+void Func_020020ee(s32, s32, s32);
+void Func_020020f6();
+void Func_02002104();
+void Func_02002116();
+
+/* Loader-relocated ROM calls: each site names the pre-relocation call word the image holds. */
+
+
+static __inline__ void Call1(void (*f)(), s32 a0)
+{
+    f(a0);
+}
+
+static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
+{
+    f(a0, a1);
+}
+
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    f(a0, a1, a2);
+}
+
+static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    f(a0, a1, a2, a3);
+}
+
+static __inline__ s32 Value0(s32 (*f)())
+{
+    return f();
+}
+
+static __inline__ s32 Value1(s32 (*f)(), s32 a0)
+{
+    return f(a0);
+}
+
+static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
+{
+    return f(a0, a1);
+}
+
+static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    return f(a0, a1, a2);
+}
+
+static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    return f(a0, a1, a2, a3);
+}
+
+void Func_02000508(void)
+{
+    Value0(Func_02001708);
+    Value1(Func_020016fe, 1);
+    Call3(Func_02001764, 0, 6291456, 12058624);
+    Call3(Func_020017c0, 0, 49152, 0);
+    Call3(Func_020017ca, 11, 0, 0);
+    Value3(Func_020017d6, 12, 32768, 0);
+    Call1(Func_020017c4, 10320);
+    Value0(Func_02001810);
+    Value0(Func_0200181c);
+    Value1(Func_0200174a, 10);
+    Call3(Func_02001780, 0, 65536, 32768);
+    Call3(Func_02001854, 0, 0, -16);
+    Value3(Func_020017ae, 0, 104, 136);
+    Value1(Func_02001774, 10);
+    Call4(Func_0200186c, 1, -16, 16, 49152);
+    Call4(Func_0200187a, 3, 0, 24, 49152);
+    Value4(Func_02001888, 2, 16, 16, 49152);
+    Value1(Func_020017ee, 1);
+    Value1(Func_020017ac, 20);
+    Value1(Func_020017b2, 10);
+    Value2(Func_0200182a, 2, 2);
+    Value1(Func_020017c0, 20);
+    Value2(Func_02001860, 2, 0);
+    Value1(Func_020017ce, 10);
+    Call3(Func_0200187a, 11, 16384, 0);
+    Value3(Func_02001886, 12, 16384, 0);
+    Value1(Func_020017ec, 30);
+    Call3(Func_0200189e, 11, 261, 70);
+    Value2(Func_02001896, 11, 0);
+    Value1(Func_02001804, 10);
+    Value2(Func_0200186c, 11, 4);
+    Value1(Func_02001812, 20);
+    Value2(Func_020018b2, 11, 0);
+    Value1(Func_02001820, 20);
+    Value2(Func_02001898, 11, 2);
+    Value1(Func_0200182e, 20);
+    Value2(Func_020018ce, 11, 0);
+    Value1(Func_0200183c, 20);
+    Call3(Func_020018f0, 12, 258, 40);
+    Value2(Func_020018e8, 12, 0);
+    Value1(Func_02001856, 10);
+    Value2(Func_020018be, 12, 4);
+    Value1(Func_02001864, 20);
+    Value2(Func_02001904, 12, 0);
+    Value1(Func_02001872, 20);
+    Call1(Func_02001878, 10);
+    Call3(Func_0200192a, 11, 261, 50);
+    Value2(Func_02001922, 11, 0);
+    if (Value1(Func_02001878, 2495) == 0) {
+        Value0(Func_02001590);
+    } else {
+    Call1(Func_020018a0, 20);
+    Value2(Func_02001918, 11, 2);
+    Value1(Func_020018ae, 20);
+    Value2(Func_0200194e, 11, 0);
+    Value1(Func_020018bc, 10);
+    Call3(Func_0200193e, 1, 0, 50);
+    Call3(Func_02001978, 0, 261, 60);
+    Value1(Func_020018d6, 10);
+    Value3(Func_02001982, 1, 49152, 0);
+    Value1(Func_020018e8, 20);
+    Value2(Func_02001988, 1, 0);
+    Value1(Func_020018f6, 10);
+    Value2(Func_0200195e, 3, 4);
+    Value1(Func_02001904, 20);
+    Value2(Func_020019a4, 3, 0);
+    Value1(Func_02001912, 10);
+    Value2(Func_0200198a, 2, 2);
+    Value1(Func_02001920, 20);
+    Value2(Func_020019c0, 2, 0);
+    Value1(Func_0200192e, 20);
+    Call3(Func_020019e0, 12, 257, 40);
+    Value2(Func_020019d0, 12, 0);
+    Value2(Func_02001960, 0, 0);
+    Value1(Func_0200194e, 20);
+    Value2(Func_020019c6, 12, 2);
+    Value1(Func_0200195c, 20);
+    Value2(Func_020019fc, 12, 0);
+    Value1(Func_0200196a, 20);
+    Value2(Func_020019d2, 0, 3);
+    Value1(Func_02001978, 30);
+    Value1(Func_0200197e, 10);
+    Value2(Func_020019f6, 1, 2);
+    Value1(Func_0200198c, 20);
+    Value2(Func_02001a2c, 1, 0);
+    Value1(Func_0200199a, 10);
+    Value2(Func_02001a02, 3, 4);
+    Value1(Func_020019a8, 20);
+    Value2(Func_02001a48, 3, 0);
+    Value1(Func_020019b6, 10);
+    Value2(Func_02001a1e, 2, 3);
+    Value1(Func_020019c4, 30);
+    Value2(Func_02001a64, 2, 0);
+    Value1(Func_020019d2, 10);
+    Call3(Func_02001a54, 2, 0, 30);
+    Call2(Func_02001a74, 8194, 0);
+    }
+    Call1(Func_02001a72, 10337);
+    Value1(Func_020019f0, 10);
+    Call3(Func_02001a9c, 0, 16384, 0);
+    Call3(Func_02001a7e, 1, 0, 20);
+    if (Value2(Func_02001a26, 0, 0) == 0) {
+    Value1(Func_02001a18, 20);
+    Call3(Func_02001ac4, 0, 49152, 0);
+    Call3(Func_02001ad0, 1, 49152, 0);
+    Value3(Func_02001adc, 2, 49152, 0);
+    Value1(Func_02001a42, 30);
+    Value1(Func_02001a48, 10);
+    Value2(Func_02001ab0, 11, 3);
+    Value1(Func_02001a56, 30);
+    Value2(Func_02001af6, 11, 0);
+    (*(u16 *)(*(u8 **)0x03001ebc + 0x1d8))++;
+    } else {
+    Call1(Func_02001a94, 20);
+    Call3(Func_02001b40, 0, 49152, 0);
+    Call3(Func_02001b4c, 1, 49152, 0);
+    Value3(Func_02001b58, 2, 49152, 0);
+    Value1(Func_02001abe, 30);
+    Value1(Func_02001ac4, 10);
+    Value2(Func_02001b2c, 11, 4);
+    Value1(Func_02001ad2, 20);
+    (*(u16 *)(*(u8 **)0x03001ebc + 0x1d8))++;
+    Call2(Func_02001b82, 11, 0);
+    }
+    Value1(Func_02001af0, 10);
+    Value2(Func_02001b68, 11, 2);
+    Value1(Func_02001afe, 20);
+    Value2(Func_02001b9e, 11, 0);
+    Value1(Func_02001b0c, 10);
+    Call3(Func_02001b96, 1, 0, 0);
+    Value3(Func_02001ba0, 3, 2, 0);
+    Value1(Func_02001b26, 40);
+    Value1(Func_02001b2c, 10);
+    Call3(Func_02001be0, 11, 258, 40);
+    Value2(Func_02001bd8, 11, 0);
+    Value1(Func_02001b46, 10);
+    Call3(Func_02001bf2, 0, 49152, 0);
+    Call3(Func_02001bfe, 1, 49152, 0);
+    Call3(Func_02001c0a, 2, 49152, 0);
+    Value3(Func_02001c16, 3, 49152, 0);
+    Value1(Func_02001b7c, 50);
+    Value1(Func_02001b82, 10);
+    Value2(Func_02001bea, 11, 3);
+    Value1(Func_02001b90, 30);
+    Value2(Func_02001c30, 11, 0);
+    Value1(Func_02001b9e, 10);
+    Value2(Func_02001c16, 11, 2);
+    Value1(Func_02001bac, 20);
+    Value2(Func_02001c4c, 11, 0);
+    Value1(Func_02001bba, 10);
+    Call3(Func_02001c6e, 3, 256, 40);
+    Value2(Func_02001c66, 3, 0);
+    Value1(Func_02001bd4, 20);
+    Value3(Func_02001c7e, 11, 0, 0);
+    Value1(Func_02001be4, 20);
+    Value2(Func_02001c84, 11, 0);
+    Value1(Func_02001bf2, 10);
+    Value2(Func_02001c6a, 12, 2);
+    Value1(Func_02001c00, 20);
+    Value3(Func_02001cac, 12, 32768, 0);
+    Value1(Func_02001c12, 20);
+    Value2(Func_02001cb2, 12, 0);
+    Value1(Func_02001c20, 10);
+    Value2(Func_02001c88, 11, 4);
+    Value1(Func_02001c2e, 20);
+    Value2(Func_02001cce, 11, 0);
+    Value1(Func_02001c3c, 10);
+    Value2(Func_02001cb4, 2, 2);
+    Value1(Func_02001c4a, 20);
+    Value2(Func_02001cea, 2, 0);
+    Value1(Func_02001c58, 10);
+    Value3(Func_02001d04, 11, 16384, 0);
+    Value1(Func_02001c6a, 30);
+    Value2(Func_02001d0a, 11, 0);
+    Value1(Func_02001c78, 10);
+    Call3(Func_02001d2c, 12, 258, 50);
+    Value2(Func_02001d24, 12, 0);
+    Value1(Func_02001c92, 20);
+    Call3(Func_02001d44, 11, 257, 65);
+    Value3(Func_02001d46, 11, 0, 0);
+    Value1(Func_02001cac, 20);
+    Value2(Func_02001d4c, 11, 0);
+    Value1(Func_02001cba, 20);
+    Call3(Func_02001d6e, 12, 256, 40);
+    Value2(Func_02001d66, 12, 0);
+    Value1(Func_02001cd4, 20);
+    Value3(Func_02001d80, 12, 16384, 0);
+    Call1(Func_02001ce6, 40);
+    Value2(Func_02001d86, 12, 0);
+    Value1(Func_02001cf4, 10);
+    Value3(Func_02001da0, 11, 16384, 0);
+    Value1(Func_02001d06, 50);
+    Call3(Func_02001dba, 11, 262, 60);
+    Value2(Func_02001db2, 11, 0);
+    Value1(Func_02001d20, 10);
+    Value2(Func_02001d88, 11, 3);
+    Value1(Func_02001d2e, 30);
+    Value2(Func_02001dce, 11, 0);
+    Value1(Func_02001d3c, 10);
+    Call2(Func_02001dac, 0, 2);
+    Call2(Func_02001db4, 1, 2);
+    Call2(Func_02001dbc, 3, 2);
+    Value2(Func_02001dcc, 2, 2);
+    Value1(Func_02001d62, 30);
+    Value1(Func_02001d68, 10);
+    Value3(Func_02001e12, 11, 0, 0);
+    Value1(Func_02001d78, 20);
+    Value2(Func_02001e18, 11, 0);
+    Value1(Func_02001d86, 10);
+    Value2(Func_02001dfe, 12, 2);
+    Value1(Func_02001d94, 30);
+    Value3(Func_02001e40, 12, 32768, 0);
+    Value1(Func_02001da6, 20);
+    Value2(Func_02001e46, 12, 0);
+    Value1(Func_02001db4, 10);
+    Call3(Func_02001e66, 11, 257, 0);
+    Value1(Func_02001dc4, 10);
+    Value3(Func_02001e70, 1, 57344, 0);
+    Value1(Func_02001dd6, 30);
+    Value2(Func_02001e3e, 1, 4);
+    Value1(Func_02001de4, 20);
+    Value2(Func_02001e84, 1, 0);
+    Value1(Func_02001df2, 10);
+    Value3(Func_02001e9e, 12, 16384, 0);
+    Value1(Func_02001e04, 30);
+    Call3(Func_02001eb6, 12, 261, 60);
+    Value2(Func_02001eae, 12, 0);
+    Value1(Func_02001e1c, 10);
+    Value2(Func_02001e94, 1, 2);
+    Value1(Func_02001e2a, 20);
+    Value2(Func_02001eca, 1, 0);
+    Value1(Func_02001e38, 10);
+    Value3(Func_02001ee4, 11, 16384, 0);
+    Value1(Func_02001e4a, 40);
+    Call3(Func_02001efe, 11, 258, 40);
+    Value2(Func_02001ef6, 11, 0);
+    Value1(Func_02001e64, 10);
+    Value3(Func_02001f10, 2, 32768, 0);
+    Value1(Func_02001e76, 30);
+    Call3(Func_02001f28, 2, 263, 60);
+    Value3(Func_02001f2c, 2, 49152, 0);
+    Value1(Func_02001e92, 30);
+    Value2(Func_02001efa, 2, 4);
+    Value1(Func_02001ea0, 20);
+    Value2(Func_02001f40, 2, 0);
+    Value1(Func_02001eae, 10);
+    Value2(Func_02001f16, 11, 4);
+    Value1(Func_02001ebc, 20);
+    Value2(Func_02001f5c, 11, 0);
+    Value1(Func_02001eca, 10);
+    Call2(Func_02001f4e, 0, 2);
+    Call2(Func_02001f56, 1, 2);
+    Call2(Func_02001f5e, 3, 2);
+    Value2(Func_02001f6e, 2, 2);
+    Value1(Func_02001f04, 30);
+    Value1(Func_02001f0a, 10);
+    Value2(Func_02001f72, 11, 3);
+    Value1(Func_02001f18, 30);
+    Value2(Func_02001fb8, 11, 0);
+    Value1(Func_02001f26, 20);
+    Call2(Func_02001f86, 0, 3);
+    Call2(Func_02001f8e, 1, 3);
+    Call2(Func_02001f96, 3, 3);
+    Value2(Func_02001fa6, 2, 3);
+    Value1(Func_02001f4c, 30);
+    Value1(Func_02001f52, 10);
+    Value2(Func_02001fca, 11, 2);
+    Value1(Func_02001f60, 20);
+    Value2(Func_02002000, 11, 0);
+    Value1(Func_02001f6e, 10);
+    Value2(Func_02001fe6, 1, 2);
+    Value1(Func_02001f7c, 20);
+    Value2(Func_0200201c, 1, 0);
+    Value1(Func_02001f8a, 10);
+    Value2(Func_02001ff2, 11, 3);
+    Value1(Func_02001f98, 30);
+    Value2(Func_02002038, 11, 0);
+    Value1(Func_02001fa6, 20);
+    Value2(Func_0200200e, 3, 3);
+    Value1(Func_02001fb4, 30);
+    Value2(Func_02002054, 3, 0);
+    Value1(Func_02001fc2, 20);
+    Call3(Func_0200206e, 0, 16384, 0);
+    Call3(Func_0200207a, 1, 57344, 0);
+    Value3(Func_02002086, 2, 40960, 0);
+    Value1(Func_02001fec, 30);
+    Value2(Func_02002054, 0, 3);
+    Value1(Func_02001ffa, 10);
+    Call2(Func_0200205a, 1, 3);
+    Call2(Func_02002062, 2, 3);
+    Value2(Func_02002072, 3, 3);
+    Value1(Func_02002018, 30);
+    Call3(Func_0200204a, 1, 78643, 39321);
+    Call3(Func_02002054, 3, 78643, 39321);
+    Call3(Func_0200205e, 2, 78643, 39321);
+    Value2(Func_02002096, 1, 2);
+    {
+        u8 *entry = Value1(Func_02002064, 0);
+        if (entry != 0) {
+            s16 y = *(s16 *)(entry + 10);
+            s16 x = *(s16 *)(entry + 18);
+            Value3(Func_0200208e, 1, y, x);
+        }
+    }
+    Value1(Func_020020a4, 1);
+    Call3(Func_020020b6, 1, 0, 0);
+    Value2(Func_020020c6, 3, 2);
+    {
+        u8 *entry = Value1(Func_02002094, 0);
+        if (entry != 0) {
+            s16 y = *(s16 *)(entry + 10);
+            s16 x = *(s16 *)(entry + 18);
+            Value3(Func_020020be, 3, y, x);
+        }
+    }
+    Value1(Func_020020d4, 3);
+    Call3(Func_020020e6, 3, 0, 0);
+    Value2(Func_020020f6, 2, 2);
+    {
+        u8 *entry = Value1(Func_020020c4, 0);
+        if (entry != 0) {
+            s16 y = *(s16 *)(entry + 10);
+            s16 x = *(s16 *)(entry + 18);
+            Value3(Func_020020ee, 2, y, x);
+        }
+    }
+    Value1(Func_02002104, 2);
+    Value3(Func_02002116, 2, 0, 0);
+    Value1(Func_020020cc, 10);
+    Value0(Func_020020e0);
+}

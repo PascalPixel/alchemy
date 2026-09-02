@@ -5032,13 +5032,14 @@
     {
       "overlay": "resource_3ab",
       "start": "0x0200049a",
-      "end": "0x020006bc",
+      "end": "0x020005f0",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
         "complete production body accounts for 35 calls, 0 loop(s), 3 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3ab:0200049a"
+        "games/gs1/recon/en/dossiers.json#resource_3ab:0200049a",
+        "resource_3ab:020005f0 (204 bytes) is now exact C"
       ]
     },
     {
@@ -5235,14 +5236,17 @@
     },
     {
       "overlay": "resource_374",
-      "start": "0x02000750",
-      "end": "0x020008dc",
+      "start": "0x020007ea",
+      "end": "0x020007ec",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
         "complete production body accounts for 33 calls, 0 loop(s), 0 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_374:02000750"
+        "games/gs1/recon/en/dossiers.json#resource_374:02000750",
+        "resource_374:02000750 (48 bytes) is now exact C",
+        "resource_374:02000780 (106 bytes) is now exact C",
+        "resource_374:020007ec (48 bytes) is now exact C"
       ]
     },
     {

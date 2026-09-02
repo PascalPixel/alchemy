@@ -5281,12 +5281,6 @@
     "resource_37b:02000554": {
       "name": "RunEventScript02"
     },
-    "resource_37f:02000f6c": {
-      "name": "RunEventScript01"
-    },
-    "resource_37f:02001604": {
-      "name": "RunEventScript02"
-    },
     "resource_380:02001780": {
       "name": "RunEventScript01"
     },
@@ -5786,7 +5780,8 @@
       "name": "FieldScene_RunDialogueCameraChoreography"
     },
     "resource_37f:02000f8c": {
-      "name": "FieldScene_RunFourEntitySequence"
+      "name": "FieldScene_RunFourEntitySequence",
+      "source": "overlays/scene_primary_script/run_scene_37f_late_sequence.c"
     },
     "resource_396:02000918": {
       "name": "FieldScene_RunFourActorEncounter"
@@ -6023,7 +6018,8 @@
       "name": "FieldScene_RunMiddleAuxiliarySequence"
     },
     "resource_3a4:02002f10": {
-      "name": "FieldScene_RunLateAuxiliarySequence"
+      "name": "FieldScene_RunLateAuxiliarySequence",
+      "source": "overlays/scene_primary_script/run_scene_3a4_late_auxiliary_sequence.c"
     },
     "resource_3ba:0200004c": {
       "name": "FieldScene_RunOpeningAuxiliarySequence"
@@ -6144,7 +6140,8 @@
       "name": "FieldScene_RunSupplementalSequenceThree"
     },
     "resource_37f:02000420": {
-      "name": "FieldScene_RunSupplementalSequenceTwo"
+      "name": "FieldScene_RunSupplementalSequenceTwo",
+      "source": "overlays/scene_primary_script/run_scene_37f_early_sequence.c"
     },
     "resource_3b8:02003e40": {
       "name": "RunSupplementalSequenceOne",
@@ -6192,6 +6189,9 @@
     "resource_3b8:02000ff8": {
       "name": "RunPrimaryEffectSequence",
       "source": "overlays/scene_effect_sequence/run_primary_effect_sequence.c"
+    },
+    "resource_37f:0200161c": {
+      "name": "RunEventScript02"
     }
   }
 }

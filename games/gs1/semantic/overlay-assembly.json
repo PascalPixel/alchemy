@@ -2703,7 +2703,7 @@
     },
     {
       "overlay": "resource_37f",
-      "start": "0x02001604",
+      "start": "0x0200161c",
       "end": "0x02001a86",
       "kind": "generated_call_script_module",
       "retention": "keep_structured_asm",
@@ -2712,7 +2712,8 @@
         "complete deterministic reconstruction accounts for all 82 calls, arguments, branches, loops, and explicit memory operations",
         "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
         "a six-mode optimization and CSE cohort produced zero exact emissions",
-        "games/gs1/recon/en/dossiers.json#resource_37f:02001604"
+        "games/gs1/recon/en/dossiers.json#resource_37f:02001604",
+        "start corrected from 0x02001604 to 0x0200161c: the first 24 bytes are the literal pool of the preceding owner resource_37f:02000f8c, now exact C"
       ]
     },
     {
@@ -2727,20 +2728,6 @@
         "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
         "a six-mode optimization and CSE cohort produced zero exact emissions",
         "games/gs1/recon/en/dossiers.json#resource_373:02004ffc"
-      ]
-    },
-    {
-      "overlay": "resource_37f",
-      "start": "0x02000f6c",
-      "end": "0x020013d2",
-      "kind": "generated_call_script_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete deterministic reconstruction accounts for all 117 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
-        "games/gs1/recon/en/dossiers.json#resource_37f:02000f6c"
       ]
     },
     {
@@ -3977,18 +3964,6 @@
       ]
     },
     {
-      "overlay": "resource_37f",
-      "start": "0x02000f8c",
-      "end": "0x0200161c",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete four-entity sequence accounts for all 174 calls, the interior pool, and terminal scene effects",
-        "games/gs1/recon/en/dossiers.json#resource_37f:02000f8c"
-      ]
-    },
-    {
       "overlay": "resource_396",
       "start": "0x02000918",
       "end": "0x02000f58",
@@ -4874,18 +4849,6 @@
       ]
     },
     {
-      "overlay": "resource_3a4",
-      "start": "0x02002f10",
-      "end": "0x02002ffc",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete executable body accounts for 19 calls, 0 loop(s), 0 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3a4:02002f10"
-      ]
-    },
-    {
       "overlay": "resource_3ba",
       "start": "0x0200004c",
       "end": "0x02000134",
@@ -5339,18 +5302,6 @@
       "evidence": [
         "complete production body accounts for 17 calls, 0 loop(s), 0 memory operation(s), and its audited boundary",
         "games/gs1/recon/en/dossiers.json#resource_3bf:02000ce0"
-      ]
-    },
-    {
-      "overlay": "resource_37f",
-      "start": "0x02000420",
-      "end": "0x0200056c",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete production body accounts for 31 calls, 0 loop(s), 0 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_37f:02000420"
       ]
     },
     {

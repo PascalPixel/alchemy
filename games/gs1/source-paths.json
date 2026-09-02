@@ -5899,7 +5899,8 @@
       "name": "FieldScene_RunMiddleSequence"
     },
     "resource_373:02000f5c": {
-      "name": "FieldScene_RunPrimarySequence"
+      "name": "FieldScene_RunPrimarySequence",
+      "source": "overlays/scene_primary_script/run_373_02000f5c_LRun_LPrimary_LSequence.c"
     },
     "resource_3b4:020015f0": {
       "name": "FieldScene_RunPrimarySequence"
@@ -6195,6 +6196,26 @@
     },
     "resource_37f:0200161c": {
       "name": "RunEventScript02"
+    },
+    "resource_3c4:02001fdc": {
+      "name": "FieldScene_RunLateSequenceHead",
+      "source": "overlays/scene_primary_script/run_3c4_02001fdc_LRun_LLate_LSequence_LHead.c"
+    },
+    "resource_3c4:02002040": {
+      "name": "FieldScene_RunLateSequenceSecond",
+      "source": "overlays/scene_primary_script/run_3c4_02002040_LRun_LLate_LSequence_LSecond.c"
+    },
+    "resource_37b:0200101c": {
+      "name": "FieldScene_RunPrimarySequenceHead",
+      "source": "overlays/scene_primary_script/run_37b_0200101c_LRun_LPrimary_LSequence_LHead.c"
+    },
+    "resource_373:02000fbc": {
+      "name": "FieldScene_RunPrimarySequenceSecond",
+      "source": "overlays/scene_primary_script/run_373_02000fbc_LRun_LPrimary_LSequence_LSecond.c"
+    },
+    "resource_3bf:0200206c": {
+      "name": "FieldScene_RunSequenceTail",
+      "source": "overlays/scene_primary_script/run_3bf_0200206c_LRun_LSequence_LTail.c"
     }
   }
 }

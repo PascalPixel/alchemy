@@ -4112,18 +4112,6 @@
       ]
     },
     {
-      "overlay": "resource_3c7",
-      "start": "0x02000508",
-      "end": "0x02000eec",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete retained body accounts for all 306 calls and its production owner boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3c7:02000508"
-      ]
-    },
-    {
       "overlay": "resource_3b7",
       "start": "0x02000e5c",
       "end": "0x020016a8",

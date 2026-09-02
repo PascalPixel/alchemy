@@ -5784,7 +5784,8 @@
       "name": "FieldScene_RunFourActorEncounter"
     },
     "resource_3b8:02002014": {
-      "name": "FieldScene_RunMainCutsceneSequence"
+      "name": "FieldScene_RunMainCutsceneSequence",
+      "source": "overlays/scene_effect_sequence/run_main_cutscene_sequence.c"
     },
     "resource_3bd:02002c44": {
       "name": "FieldScene_RunBranchingCutsceneSequence",

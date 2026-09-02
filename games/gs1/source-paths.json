@@ -5317,15 +5317,6 @@
     "resource_399:020019bc": {
       "name": "RunEventScript02"
     },
-    "resource_39d:02000ddc": {
-      "name": "RunEventScript01"
-    },
-    "resource_39d:020011e8": {
-      "name": "RunEventScript02"
-    },
-    "resource_39d:02001608": {
-      "name": "RunEventScript03"
-    },
     "resource_39e:0200064c": {
       "name": "RunEventScript01"
     },
@@ -5782,7 +5773,8 @@
       "source": "overlays/scene_effect_sequence/run_scene_59_sequence.c"
     },
     "resource_39d:02000b24": {
-      "name": "RunScene58Sequence"
+      "name": "RunScene58Sequence",
+      "source": "overlays/scene_effect_sequence/run_scene_58_sequence.c"
     },
     "resource_383:020036f8": {
       "name": "RunDialoguePromptScene"

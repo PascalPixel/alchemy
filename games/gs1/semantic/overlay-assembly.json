@@ -4789,18 +4789,6 @@
       ]
     },
     {
-      "overlay": "resource_3ad",
-      "start": "0x02000210",
-      "end": "0x0200033c",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete executable body accounts for 19 calls, 0 loop(s), 0 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3ad:02000210"
-      ]
-    },
-    {
       "overlay": "resource_3bb",
       "start": "0x02000a1c",
       "end": "0x02000b30",
@@ -5182,18 +5170,6 @@
       "evidence": [
         "complete production body accounts for 37 calls, 0 loop(s), 5 memory operation(s), and its audited boundary",
         "games/gs1/recon/en/dossiers.json#resource_373:020012ba"
-      ]
-    },
-    {
-      "overlay": "resource_399",
-      "start": "0x02000384",
-      "end": "0x02000510",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete production body accounts for 41 calls, 0 loop(s), 3 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_399:02000384"
       ]
     },
     {

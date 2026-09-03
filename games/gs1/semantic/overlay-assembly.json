@@ -1243,45 +1243,6 @@
       ]
     },
     {
-      "overlay": "resource_373",
-      "start": "0x02002f14",
-      "end": "0x02003190",
-      "kind": "generated_call_script_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete local-function reconstruction accounts for all 64 calls, both returned-actor coordinate handoffs, and conditional event progress",
-        "all decoded control flow and side effects are represented; residual is approved GCC allocation and literal-pool placement",
-        "games/gs1/recon/en/dossiers.json#resource_373:02002f14"
-      ]
-    },
-    {
-      "overlay": "resource_373",
-      "start": "0x02002cb0",
-      "end": "0x02002ef0",
-      "kind": "generated_call_script_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete local-function reconstruction accounts for all 60 calls, both returned-actor coordinate handoffs, and conditional event progress",
-        "all decoded control flow and side effects are represented; residual is approved GCC allocation and out-of-extent literal-pool placement",
-        "games/gs1/recon/en/dossiers.json#resource_373:02002cb0"
-      ]
-    },
-    {
-      "overlay": "resource_373",
-      "start": "0x020031b4",
-      "end": "0x0200329e",
-      "kind": "generated_call_script_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete local-function reconstruction accounts for all 28 calls and all three returned-handle handoffs",
-        "all decoded data flow is represented; residual is approved GCC allocation and literal-pool placement",
-        "games/gs1/recon/en/dossiers.json#resource_373:020031b4"
-      ]
-    },
-    {
       "overlay": "resource_3ca",
       "start": "0x02000194",
       "end": "0x020001c4",
@@ -2024,34 +1985,6 @@
       ]
     },
     {
-      "overlay": "resource_3ad",
-      "start": "0x02000808",
-      "end": "0x02000828",
-      "kind": "generated_call_script_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete deterministic reconstruction accounts for all 222 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
-        "games/gs1/recon/en/dossiers.json#resource_3ad:02000808"
-      ]
-    },
-    {
-      "overlay": "resource_383",
-      "start": "0x02002fd4",
-      "end": "0x020036e6",
-      "kind": "generated_call_script_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete deterministic reconstruction accounts for all 189 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
-        "games/gs1/recon/en/dossiers.json#resource_383:02002fd4"
-      ]
-    },
-    {
       "overlay": "resource_3a2",
       "start": "0x02000924",
       "end": "0x02000fcc",
@@ -2524,32 +2457,6 @@
       ]
     },
     {
-      "overlay": "resource_3af",
-      "start": "0x020029d4",
-      "end": "0x02002b7c",
-      "kind": "generated_call_script_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "all 40 calls, arguments, actor fields, and both workspace state writes are represented",
-        "approved GCC allocation and literal scheduling does not emit the complete owner exactly",
-        "games/gs1/recon/en/dossiers.json#resource_3af:020029d4"
-      ]
-    },
-    {
-      "overlay": "resource_3af",
-      "start": "0x02002b7c",
-      "end": "0x02002c84",
-      "kind": "generated_call_script_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "all 27 calls, arguments, actor fields, forwarded return value, and workspace state are represented",
-        "approved GCC allocation and literal scheduling does not emit the complete owner exactly",
-        "games/gs1/recon/en/dossiers.json#resource_3af:02002b7c"
-      ]
-    },
-    {
       "overlay": "resource_383",
       "start": "0x02003c6c",
       "end": "0x020045ba",
@@ -2633,20 +2540,6 @@
         "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
         "a six-mode optimization and CSE cohort produced zero exact emissions",
         "games/gs1/recon/en/dossiers.json#resource_39e:0200064c"
-      ]
-    },
-    {
-      "overlay": "resource_372",
-      "start": "0x020028a4",
-      "end": "0x02002cbe",
-      "kind": "generated_call_script_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete deterministic reconstruction accounts for all 120 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
-        "games/gs1/recon/en/dossiers.json#resource_372:020028a4"
       ]
     },
     {
@@ -2759,20 +2652,6 @@
         "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
         "a six-mode optimization and CSE cohort produced zero exact emissions",
         "games/gs1/recon/en/dossiers.json#resource_3b9:02000708"
-      ]
-    },
-    {
-      "overlay": "resource_3a4",
-      "start": "0x02003028",
-      "end": "0x020033d2",
-      "kind": "generated_call_script_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete deterministic reconstruction accounts for all 96 calls, arguments, branches, loops, and explicit memory operations",
-        "the reference contains zero high-register moves while approved GCC CSE/allocation changes repeated-immediate construction and owner extent",
-        "a six-mode optimization and CSE cohort produced zero exact emissions",
-        "games/gs1/recon/en/dossiers.json#resource_3a4:02003028"
       ]
     },
     {
@@ -2954,19 +2833,6 @@
       ]
     },
     {
-      "overlay": "resource_3ae",
-      "start": "0x02000ba0",
-      "end": "0x02000e28",
-      "kind": "generated_call_script_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete reconstruction accounts for all 69 calls, every argument, actor state write, pointer-derived coordinates, and final fixed-point correction stores",
-        "reference has zero high-register saves while approved compiler CSE retains repeated constants in five saved registers and expands the owner from 672 to 696 bytes",
-        "games/gs1/recon/en/dossiers.json#resource_3ae:02000ba0"
-      ]
-    },
-    {
       "overlay": "resource_3c8",
       "start": "0x02001780",
       "end": "0x020017f8",
@@ -3006,19 +2872,6 @@
         "direct assembly audit restored two scene-global initializers, the forwarded zero argument, and workspace state 448 omitted by the mechanical draft",
         "approved GCC allocation and literal-pool scheduling does not emit the complete owner exactly",
         "games/gs1/recon/en/dossiers.json#resource_3af:02003a0c"
-      ]
-    },
-    {
-      "overlay": "resource_3af",
-      "start": "0x02003f30",
-      "end": "0x020041de",
-      "kind": "generated_call_script_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete reconstruction accounts for all 72 calls, arguments, early event-result exit, story-progress increment, and terminal workspace state",
-        "direct assembly audit restored literal-backed arguments and both state transitions omitted by the mechanical draft",
-        "games/gs1/recon/en/dossiers.json#resource_3af:02003f30"
       ]
     },
     {
@@ -3150,18 +3003,6 @@
     },
     {
       "overlay": "resource_3b9",
-      "start": "0x020011c4",
-      "end": "0x0200127c",
-      "kind": "generated_call_script_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete reconstruction accounts for all 20 calls, both resource-dependent paths, actor state, and workspace updates",
-        "games/gs1/recon/en/dossiers.json#resource_3b9:020011c4"
-      ]
-    },
-    {
-      "overlay": "resource_3b9",
       "start": "0x02001298",
       "end": "0x020015ec",
       "kind": "generated_call_script_module",
@@ -3170,18 +3011,6 @@
       "evidence": [
         "complete reconstruction accounts for all 92 calls, actor configuration, literal-backed presentation arguments, and workspace phases",
         "games/gs1/recon/en/dossiers.json#resource_3b9:02001298"
-      ]
-    },
-    {
-      "overlay": "resource_3ad",
-      "start": "0x020004a8",
-      "end": "0x02000806",
-      "kind": "generated_call_script_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete reconstruction accounts for all 95 calls, four actor-coordinate lookups, both conditional presentation paths, and every literal-backed sequence identifier",
-        "games/gs1/recon/en/dossiers.json#resource_3ad:020004a8"
       ]
     },
     {
@@ -3257,18 +3086,6 @@
       ]
     },
     {
-      "overlay": "resource_399",
-      "start": "0x020019e8",
-      "end": "0x02001f24",
-      "kind": "generated_call_script_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete reconstruction accounts for all 127 calls, the null-gated actor-coordinate transfer, four actor-state flag updates, three workspace stores, and the complete three-actor choreography",
-        "games/gs1/recon/en/dossiers.json#resource_399:020019e8"
-      ]
-    },
-    {
       "overlay": "resource_3b1",
       "start": "0x020038ac",
       "end": "0x02003d10",
@@ -3290,18 +3107,6 @@
       "evidence": [
         "complete reconstruction accounts for all 66 calls, the signed actor-coordinate gate, nested dialogue conditions, repeated dialogue phase, and signed actor-coordinate handoff",
         "games/gs1/recon/en/dossiers.json#resource_39c:02004a08"
-      ]
-    },
-    {
-      "overlay": "resource_378",
-      "start": "0x0200290c",
-      "end": "0x02003098",
-      "kind": "generated_call_script_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete reconstruction accounts for all 221 calls, actor flag lifecycle, callback publications, returned actor handles, and sixteen decoded actor/workspace memory operations",
-        "games/gs1/recon/en/dossiers.json#resource_378:0200290c"
       ]
     },
     {
@@ -3518,18 +3323,6 @@
       "evidence": [
         "complete reconstruction accounts for all 233 calls, both skip-beat gates, workspace updates, and story-flag effects",
         "games/gs1/recon/en/dossiers.json#resource_39e:02001494"
-      ]
-    },
-    {
-      "overlay": "resource_39e",
-      "start": "0x02001dbc",
-      "end": "0x02002464",
-      "kind": "generated_call_script_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete reconstruction accounts for all 187 calls, ensemble staging, actor-record writes, and terminal story flags",
-        "games/gs1/recon/en/dossiers.json#resource_39e:02001dbc"
       ]
     },
     {
@@ -3878,18 +3671,6 @@
       ]
     },
     {
-      "overlay": "resource_3b9",
-      "start": "0x02001688",
-      "end": "0x02001a14",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete retained body accounts for 95 calls, 1 loop(s), 11 memory operation(s), and its production owner boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3b9:02001688"
-      ]
-    },
-    {
       "overlay": "resource_3bb",
       "start": "0x02002adc",
       "end": "0x02002e44",
@@ -3947,18 +3728,6 @@
       "evidence": [
         "complete retained body accounts for 50 calls, 0 loop(s), 10 memory operation(s), and its production owner boundary",
         "games/gs1/recon/en/dossiers.json#resource_3b2:02000f70"
-      ]
-    },
-    {
-      "overlay": "resource_3b5",
-      "start": "0x02000980",
-      "end": "0x02000ca8",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete retained body accounts for 85 calls, 0 loop(s), 0 memory operation(s), and its production owner boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3b5:02000980"
       ]
     },
     {
@@ -4441,18 +4210,6 @@
       "evidence": [
         "complete executable body accounts for 17 calls, 0 loop(s), 6 memory operation(s), and its audited boundary",
         "games/gs1/recon/en/dossiers.json#resource_3c0:02000464"
-      ]
-    },
-    {
-      "overlay": "resource_3ba",
-      "start": "0x0200004c",
-      "end": "0x02000134",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete executable body accounts for 11 calls, 0 loop(s), 0 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3ba:0200004c"
       ]
     },
     {

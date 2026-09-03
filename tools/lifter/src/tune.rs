@@ -72,6 +72,21 @@ pub fn tune(
     let mut best = write_and_score(unit)?;
     let mut lines: Vec<String> = unit.lines().map(str::to_string).collect();
     report(&format!("base {}", best.differing));
+    // Record accesses are volatile by default; a record whose stores the
+    // reference schedules freely is plain, so each base is tried plain.
+    for base in volatile_bases(&lines) {
+        let stripped = strip_volatile(&lines, &base);
+        let trial = write_and_score(&format!("{}\n", stripped.join("\n")));
+        if trial.as_ref().is_ok_and(|t| t.differing < best.differing) {
+            let trial = trial.unwrap();
+            report(&format!(
+                "{} -> {}  plain {base}",
+                best.differing, trial.differing
+            ));
+            best = trial;
+            lines = stripped;
+        }
+    }
     let mut index = 0;
     while index < lines.len() && best.differing > 0 {
         for alternative in alternatives(&lines[index]) {
@@ -251,6 +266,24 @@ pub fn tune_targeted(
     let mut best = write_and_score(unit)?;
     let mut lines: Vec<String> = unit.lines().map(str::to_string).collect();
     report(&format!("base {}", best.differing));
+    // Record accesses are volatile by default; a record whose stores the
+    // reference schedules freely is plain, so each base is tried plain.
+    for base in volatile_bases(&lines) {
+        let stripped = strip_volatile(&lines, &base);
+        if stripped == lines {
+            continue;
+        }
+        let trial = write_and_score(&format!("{}\n", stripped.join("\n")));
+        if trial.as_ref().is_ok_and(|t| t.differing < best.differing) {
+            let trial = trial.unwrap();
+            report(&format!(
+                "{} -> {}  plain {base}",
+                best.differing, trial.differing
+            ));
+            best = trial;
+            lines = stripped;
+        }
+    }
     let mut tried: std::collections::BTreeSet<(u32, usize)> = std::collections::BTreeSet::new();
     let mut rounds = 0;
     while best.differing > 0 && rounds < 12 {
@@ -343,4 +376,61 @@ pub fn tune_targeted(
     let text = format!("{}\n", lines.join("\n"));
     std::fs::write(scratch, &text).map_err(|error| format!("{}: {error}", scratch.display()))?;
     Ok((text, best))
+}
+
+/// The base names of volatile accesses, `record` and `rec7` and `p5`, in
+/// order of first appearance; `all` stands for every access at once.
+pub fn volatile_bases(lines: &[String]) -> Vec<String> {
+    let mut bases = vec!["all".to_string()];
+    for line in lines {
+        let mut rest = line.as_str();
+        while let Some(at) = rest.find("*(volatile ") {
+            let tail = &rest[at..];
+            let Some(close) = tail.find(" *)") else { break };
+            let after = &tail[close + 3..];
+            let base: String = after
+                .trim_start_matches('(')
+                .chars()
+                .take_while(|c| c.is_ascii_alphanumeric() || *c == '_')
+                .collect();
+            if !base.is_empty() && !base.starts_with('0') && !bases.contains(&base) {
+                bases.push(base);
+            }
+            rest = &rest[at + 11..];
+        }
+    }
+    bases
+}
+
+/// The lines with volatile removed from every access through `base`.
+pub fn strip_volatile(lines: &[String], base: &str) -> Vec<String> {
+    lines
+        .iter()
+        .map(|line| {
+            if base == "all" {
+                return line.replace("*(volatile ", "*(");
+            }
+            let mut out = String::new();
+            let mut rest = line.as_str();
+            while let Some(at) = rest.find("*(volatile ") {
+                let tail = &rest[at..];
+                let Some(close) = tail.find(" *)") else { break };
+                let after = &tail[close + 3..];
+                let found: String = after
+                    .trim_start_matches('(')
+                    .chars()
+                    .take_while(|c| c.is_ascii_alphanumeric() || *c == '_')
+                    .collect();
+                out.push_str(&rest[..at]);
+                if found == base {
+                    out.push_str("*(");
+                } else {
+                    out.push_str("*(volatile ");
+                }
+                rest = &rest[at + 11..];
+            }
+            out.push_str(rest);
+            out
+        })
+        .collect()
 }

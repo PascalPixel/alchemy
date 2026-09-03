@@ -95,6 +95,7 @@ for testing and provenance, not as public commands.
 | Tool | Responsibility |
 | --- | --- |
 | [allocator-lens](tools/allocator-lens/) | Read GCC 2.96 pseudos, costs, conflicts, assignments, spills, and reloads. |
+| [lifter](tools/lifter/) | Lift retained Thumb overlay modules to candidate C and tune them against the ROM. |
 | [shape-search](tools/shape-search/) | Run bounded source-shape searches through the real scorer. |
 | [unit-scaffold](tools/unit-scaffold/) | Scaffold declared translation units and owner composition. |
 | [weyard-font](tools/weyard-font/) | Extract and verify the shared text font across historical ROMs. |

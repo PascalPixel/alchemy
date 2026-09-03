@@ -264,6 +264,14 @@ struct Lifter<'a> {
     last_cmp_reg: Option<u8>,
     /// Instructions an idiom already consumed; the run skips them.
     consumed: BTreeSet<usize>,
+    /// The exits of the switch statements being emitted, innermost last: a
+    /// jump to one is a `break`.
+    switch_exits: Vec<usize>,
+    /// The states the innermost switch's explicit breaks leave, with the
+    /// lines of the body they broke out of, for the join at its exit.
+    switch_breaks: Vec<Vec<(Vec<Option<Val>>, usize, usize, String)>>,
+    /// Where the switch body being emitted began in the output.
+    switch_body_start: usize,
     cursor_max: usize,
     /// Enclosing loops as (tail start, back-branch index).
     loops: Vec<(usize, usize)>,
@@ -318,6 +326,9 @@ impl<'a> Lifter<'a> {
             last_cmp: None,
             last_cmp_reg: None,
             consumed: BTreeSet::new(),
+            switch_exits: Vec::new(),
+            switch_breaks: Vec::new(),
+            switch_body_start: 0,
             cursor_max: 0,
             loops: Vec::new(),
         };
@@ -349,6 +360,23 @@ impl<'a> Lifter<'a> {
         self.parked_loads.clear();
         self.emitted_labels.clear();
         self.last_cmp = None;
+    }
+
+    /// Inserts a line, keeping every recorded output index past it valid.
+    fn insert_line(&mut self, at: usize, line: String) {
+        self.out.insert(at, line);
+        for index in self.call_stmt.values_mut() {
+            if *index >= at {
+                *index += 1;
+            }
+        }
+        for value in self.regs.iter_mut().flatten() {
+            if let Some(def) = value.def_out.as_mut() {
+                if *def >= at {
+                    *def += 1;
+                }
+            }
+        }
     }
 
     fn emit(&mut self, s: impl AsRef<str>) {
@@ -555,7 +583,7 @@ impl<'a> Lifter<'a> {
         }
         let line = format!("{}{decl}", self.indent);
         match first {
-            Some(k) => self.out.insert(k, line),
+            Some(k) => self.insert_line(k, line),
             None => self.out.push(line),
         }
         self.parked.insert(name.to_string(), (base, off));
@@ -581,7 +609,7 @@ impl<'a> Lifter<'a> {
         };
         let line = format!("{}{name} = {lit};", self.indent);
         match v.def_out {
-            Some(at) if at <= self.out.len() => self.out.insert(at, line),
+            Some(at) if at <= self.out.len() => self.insert_line(at, line),
             _ => self.out.push(line),
         }
         for slot in self.regs.iter_mut().flatten() {
@@ -614,6 +642,21 @@ impl<'a> Lifter<'a> {
                 .iter()
                 .any(|p| p.split(':').next() == Some(text.as_str()));
         if parked {
+            return format!("(s32){text}");
+        }
+        // A compound expression over a parked pointer, `(p5b + 1)`, is an
+        // integer operand too.
+        let mentions = self
+            .parked
+            .keys()
+            .cloned()
+            .chain(
+                self.parked_loads
+                    .iter()
+                    .filter_map(|p| p.split(':').next().map(str::to_string)),
+            )
+            .any(|name| text.starts_with('(') && contains_word(&text, &name));
+        if mentions {
             format!("(s32){text}")
         } else {
             text
@@ -634,6 +677,11 @@ impl<'a> Lifter<'a> {
             v.shared = true;
             v.def_out = Some(self.out.len());
             v.reg = Some(r);
+        }
+        // Every value remembers where it was defined: a join assigns a
+        // variable there, not at the end of the path.
+        if v.def_out.is_none() {
+            v.def_out = Some(self.out.len());
         }
         self.regs[r as usize] = Some(v);
         if r <= 3 {
@@ -656,8 +704,24 @@ impl<'a> Lifter<'a> {
             })
     }
 
+    /// Whether r0 is read on either path out of the branch at `i` before it
+    /// is written: the fall-through path and the taken path both count, so a
+    /// call result an else branch stores is named rather than folded into
+    /// the condition.
     fn r0_read_after(&self, i: usize) -> bool {
-        for x in &self.ins[i + 1..] {
+        if self.r0_read_from(i + 1) {
+            return true;
+        }
+        match self.ins[i].kind {
+            Kind::Bcond { target, .. } => self
+                .index_of(target)
+                .is_some_and(|t| t > i && self.r0_read_from(t)),
+            _ => false,
+        }
+    }
+
+    fn r0_read_from(&self, start: usize) -> bool {
+        for x in &self.ins[start.min(self.ins.len())..] {
             let (sources, dest) = operands(&x.kind);
             if matches!(x.kind, Kind::Bl { .. }) {
                 return false;
@@ -711,7 +775,7 @@ impl<'a> Lifter<'a> {
                 }
             }
             if let Some(tree) = self.switch_at(i, end) {
-                i = self.emit_switch(tree);
+                i = self.emit_switch(tree, end);
                 continue;
             }
             i = self.step(i, end);
@@ -818,6 +882,23 @@ impl<'a> Lifter<'a> {
     /// A `switch` the compiler lowered to a comparison tree: compares of one
     /// register against constants, `beq` to case bodies, and one shared exit
     /// every body branches to. Bodies follow the tree in source order.
+    /// The `lo..=hi` a range node at branch `j` covers: `cmp rn, #lo; blt
+    /// exit; cmp rn, #hi; bgt exit`, both branches to the same exit, and a
+    /// range small enough to spell as adjacent cases.
+    fn range_node(&self, j: usize, rn: u8, lo: Option<u32>, exit: usize) -> Option<(u32, u32)> {
+        let lo = lo?;
+        let Kind::CmpImm { rn: r, imm: hi } = self.ins.get(j + 1)?.kind else {
+            return None;
+        };
+        let Kind::Bcond { cond, target } = self.ins.get(j + 2)?.kind else {
+            return None;
+        };
+        if r != rn || !matches!(cond, Cond::Gt | Cond::Hi) || self.index_of(target)? != exit {
+            return None;
+        }
+        (hi >= lo && hi - lo <= 8).then_some((lo, hi))
+    }
+
     fn switch_at(&self, i: usize, end: usize) -> Option<SwitchTree> {
         let Kind::CmpImm { rn, .. } = self.ins[i].kind else {
             return None;
@@ -838,6 +919,19 @@ impl<'a> Lifter<'a> {
                         Cond::Ne => {
                             cases.push((last_value?, j + 1));
                             exits.push(t);
+                        }
+                        // `cmp lo; blt exit; cmp hi; bgt exit` is a range node:
+                        // adjacent cases sharing the body that follows it.
+                        Cond::Lt | Cond::Cc if self.range_node(j, rn, last_value, t).is_some() => {
+                            let (lo, hi) = self.range_node(j, rn, last_value, t)?;
+                            for value in lo..=hi {
+                                if !cases.iter().any(|(v, _)| *v == value) {
+                                    cases.push((value, j + 3));
+                                }
+                            }
+                            exits.push(t);
+                            unsigned |= cond == Cond::Cc;
+                            j += 2;
                         }
                         Cond::Hi | Cond::Ls | Cond::Gt | Cond::Le | Cond::Ge | Cond::Lt => {
                             if t <= j || t >= end {
@@ -900,7 +994,7 @@ impl<'a> Lifter<'a> {
         })
     }
 
-    fn emit_switch(&mut self, tree: SwitchTree) -> usize {
+    fn emit_switch(&mut self, tree: SwitchTree, end: usize) -> usize {
         let value = self.val_of(tree.subject, None);
         let subject = self.fmt(&value);
         let subject = if tree.unsigned {
@@ -908,8 +1002,15 @@ impl<'a> Lifter<'a> {
         } else {
             subject
         };
+        let switch_at = self.out.len();
         self.emit(format!("switch ({subject}) {{"));
         let saved = self.indent.clone();
+        // Every case starts from the state at the switch; the states the
+        // cases leave, and the default path, meet at the exit.
+        let before = self.regs.clone();
+        let mut paths: Vec<(Vec<Option<Val>>, usize, usize, String)> = Vec::new();
+        self.switch_exits.push(tree.exit);
+        self.switch_breaks.push(Vec::new());
         // Cross-jumped cases come first: their stub sits inside the tree.
         for (value, body) in tree.aliases.clone() {
             self.indent = saved.clone();
@@ -931,11 +1032,21 @@ impl<'a> Lifter<'a> {
             }
             let mark = self.cursor_max;
             self.cursor_max = 0;
+            self.regs = before.clone();
+            let start = self.out.len();
+            self.switch_body_start = start;
             self.run(body, stop);
             self.cursor_max = mark;
+            paths.push((
+                self.regs.clone(),
+                start,
+                self.out.len(),
+                format!("{saved}    "),
+            ));
             self.emit("break;");
             self.clear_scratch();
         }
+        let mut fresh = true;
         for (n, body) in tree.bodies.iter().enumerate() {
             let body_end = tree.bodies.get(n + 1).copied().unwrap_or(tree.exit);
             let mut labels: Vec<u32> = tree
@@ -951,22 +1062,52 @@ impl<'a> Lifter<'a> {
                 self.emit(format!("case {label}:"));
             }
             self.indent = format!("{saved}    ");
-            // The closing jump to the exit is the `break`.
+            // The closing jump to the exit is the `break`; a body that ends
+            // without one falls through into the next case's labels.
             let mut stop = body_end;
+            let mut breaks = body_end == tree.exit;
             if stop > *body {
                 if let Kind::B { target } = self.ins[stop - 1].kind {
                     if self.index_of(target) == Some(tree.exit) {
                         stop -= 1;
+                        breaks = true;
                     }
                 }
             }
             self.cursor_max = self.cursor_max.max(*body);
+            // A body entered by fall-through continues the previous state.
+            if fresh {
+                self.regs = before.clone();
+            }
+            let start = self.out.len();
+            self.switch_body_start = start;
             self.run(*body, stop);
-            self.emit("break;");
+            if breaks {
+                paths.push((
+                    self.regs.clone(),
+                    start,
+                    self.out.len(),
+                    format!("{saved}    "),
+                ));
+                self.emit("break;");
+            } else {
+                self.emit("/* fall through */");
+            }
+            fresh = breaks;
             self.clear_scratch();
         }
-        self.indent = saved;
+        self.switch_exits.pop();
+        if let Some(breaks) = self.switch_breaks.pop() {
+            paths.extend(breaks);
+        }
+        self.indent = saved.clone();
         self.emit("}");
+        paths.push((before, 0, switch_at, saved.clone()));
+        let borrowed: Vec<(&[Option<Val>], usize, usize, &str)> = paths
+            .iter()
+            .map(|(state, start, stop, indent)| (state.as_slice(), *start, *stop, indent.as_str()))
+            .collect();
+        self.join_many(tree.exit, end, &borrowed);
         self.cursor_max = self.cursor_max.max(tree.exit);
         tree.exit
     }
@@ -1342,8 +1483,22 @@ impl<'a> Lifter<'a> {
         if let Offset::Reg(rm) = offset {
             let index = self.val_of(rm, None);
             let base = self.val_of(rn, None);
-            let off = index.c.map(i64::from).unwrap_or(0);
-            let e = self.addr_expr(&base, off, width);
+            let c_type = width.c_type();
+            let e = match index.c {
+                Some(c) => self.addr_expr(&base, i64::from(c), width),
+                // A register index that is not a constant stays in the address.
+                None => {
+                    let b = match base.c {
+                        Some(c) => format!("0x{:08x}", c as u32),
+                        None => self.arith(&base),
+                    };
+                    let ix = self.arith(&index);
+                    format!("*({c_type} *)({b} + {ix})")
+                }
+            };
+            if index.c.is_none() && self.park_load(rd, &e, c_type) {
+                return;
+            }
             self.set_reg(rd, Val::memory(e));
             return;
         }
@@ -1364,7 +1519,10 @@ impl<'a> Lifter<'a> {
                 Some(name) => deref_named(c_type, &name, off),
                 None => format!("*({c_type} *)0x{:08x}", (c as u32).wrapping_add(off)),
             };
-            if base.shared && self.park_load(rd, &e, c_type) {
+            // A load into a callee-saved register is a value kept across calls,
+            // a local in the original: the scene work pointer read once at entry
+            // and used from r5 is the common case.
+            if self.park_load(rd, &e, c_type) {
                 return;
             }
             self.set_reg(rd, Val::memory(e));
@@ -1718,6 +1876,20 @@ impl<'a> Lifter<'a> {
     /// `continue` into the enclosing loop's tail, `break` past it, else a goto.
     fn jump(&mut self, target: u32) {
         let index = self.index_of(target);
+        if index.is_some() && index == self.switch_exits.last().copied() {
+            // The state at an explicit break reaches the switch's exit.
+            let path = (
+                self.regs.clone(),
+                self.switch_body_start,
+                self.out.len(),
+                self.indent.clone(),
+            );
+            if let Some(breaks) = self.switch_breaks.last_mut() {
+                breaks.push(path);
+            }
+            self.emit("break;");
+            return;
+        }
         if let (Some(index), Some(&(tail_start, from))) = (index, self.loops.last()) {
             if index >= tail_start && index <= from {
                 self.emit("continue;");
@@ -1816,7 +1988,10 @@ impl<'a> Lifter<'a> {
         if let Some(next) = self.signed_division(i, cond, t, &a, &b) {
             return next;
         }
-        if let Some(t) = t.filter(|t| *t > i) {
+        // A branch past the region's end leaves it: that is a break, continue
+        // or goto under the condition, never a body that swallows what
+        // follows the region.
+        if let Some(t) = t.filter(|t| *t > i && *t <= end) {
             let a = if a.starts_with("@call:") {
                 let guard = !self.r0_read_after(i);
                 self.pop_call_condition(&a, guard)
@@ -1824,9 +1999,11 @@ impl<'a> Lifter<'a> {
                 a
             };
             let text = cond_text(negate(cond), &a, &b);
+            let if_at = self.out.len();
             self.emit(format!("if ({text}) {{"));
             let saved = self.indent.clone();
             self.indent.push_str("    ");
+            let body_indent = self.indent.clone();
             let last = &self.ins[t - 1];
             // An else block ends inside the current region; a jump beyond it
             // is a break, continue, or goto handled when the body is lifted.
@@ -1834,18 +2011,37 @@ impl<'a> Lifter<'a> {
                 Kind::B { target } => self.index_of(target).filter(|e| *e > t && *e <= end),
                 _ => None,
             };
+            let before = self.regs.clone();
             self.run(i + 1, if else_end.is_some() { t - 1 } else { t });
+            let then_state = self.regs.clone();
+            let then_at = self.out.len();
             if let Some(else_end) = else_end {
                 self.indent = saved.clone();
                 self.emit("} else {");
+                let else_start = self.out.len();
                 self.indent.push_str("    ");
+                self.regs = before;
                 self.run(t, else_end);
+                let else_state = self.regs.clone();
+                let else_at = self.out.len();
                 self.indent = saved;
                 self.emit("}");
+                self.join(
+                    else_end,
+                    end,
+                    (&then_state, if_at + 1, then_at, &body_indent),
+                    (&else_state, else_start, else_at, &body_indent),
+                );
                 return else_end;
             }
-            self.indent = saved;
+            self.indent = saved.clone();
             self.emit("}");
+            self.join(
+                t,
+                end,
+                (&then_state, if_at + 1, then_at, &body_indent),
+                (&before, 0, if_at, &saved),
+            );
             return t;
         }
         let a = if a.starts_with("@call:") {
@@ -1862,6 +2058,176 @@ impl<'a> Lifter<'a> {
         self.indent = saved;
         self.emit("}");
         i + 1
+    }
+
+    /// Merges the register states of two paths meeting at instruction `at`.
+    /// A register the paths leave with different values, and that is read
+    /// again before it is written, is a variable the original assigned on
+    /// each path: the assignments land at the end of each path (for the
+    /// fall-through path, before the `if`), and the merged state reads the
+    /// variable. A register nothing reads again is simply unknown.
+    fn join(
+        &mut self,
+        at: usize,
+        end: usize,
+        then: (&[Option<Val>], usize, usize, &str),
+        other: (&[Option<Val>], usize, usize, &str),
+    ) {
+        self.join_many(at, end, &[then, other]);
+    }
+
+    /// The N-path form of `join`: every path that reaches `at` contributes
+    /// its state, the lines it emitted (`start..stop`), and its indent.
+    fn join_many(&mut self, at: usize, end: usize, paths: &[(&[Option<Val>], usize, usize, &str)]) {
+        // The assignment lands where the path defined the value when that
+        // lies inside the path at its own block level; otherwise at the
+        // path's end.
+        let place = |out: &[String], v: &Val, start: usize, stop: usize, indent: &str| {
+            let at_level =
+                |line: &String| line.starts_with(indent) && !line[indent.len()..].starts_with(' ');
+            match v.def_out {
+                Some(def) if def > start && def <= stop && out.get(def).is_some_and(at_level) => {
+                    def
+                }
+                _ => stop,
+            }
+        };
+        let unnamed_call = |v: &Option<Val>| {
+            v.as_ref()
+                .is_some_and(|v| v.e.as_deref().is_some_and(|e| e.starts_with("@call:")))
+        };
+        let mut inserts: Vec<(usize, String)> = Vec::new();
+        for r in 0..13u8 {
+            let values: Vec<&Option<Val>> = paths.iter().map(|p| &p.0[r as usize]).collect();
+            let first = values[0];
+            if values.iter().all(|v| same_val(v, first)) {
+                self.regs[r as usize] = first.clone();
+                continue;
+            }
+            // A register one path leaves undefined cannot be read after the
+            // join in a correct original; keep a defined value. A call result
+            // is named where it is consumed, not here.
+            let defined = values
+                .iter()
+                .find(|v| v.is_some())
+                .copied()
+                .cloned()
+                .flatten();
+            // An unnamed call result on one path has a statement the other
+            // paths may already have consumed: the merged register is unknown.
+            if values.iter().any(|v| unnamed_call(v)) {
+                self.regs[r as usize] = None;
+                continue;
+            }
+            if values.iter().any(|v| v.is_none()) || !self.live_after(at, end, r) {
+                self.regs[r as usize] = defined;
+                continue;
+            }
+            let name = format!("v{r}");
+            push_unique(&mut self.consts, &name);
+            let texts: Vec<String> = values
+                .iter()
+                .map(|v| self.fmt_raw(v.as_ref().expect("defined on every path")))
+                .collect();
+            // A path value that contains another path's value derives from
+            // it, `-x` from `x`: it reads the variable rather than repeating
+            // the expression, which a volatile access could not.
+            for (k, path) in paths.iter().enumerate() {
+                let mut text = texts[k].clone();
+                for (j, from) in texts.iter().enumerate() {
+                    if j != k && from.len() > 2 && text != *from && text.contains(from.as_str()) {
+                        text = text.replace(from.as_str(), &name);
+                        break;
+                    }
+                }
+                let v = values[k].as_ref().expect("defined on every path");
+                let position = place(&self.out, v, path.1, path.2, path.3);
+                inserts.push((position, format!("{}{name} = {text};", path.3)));
+            }
+            self.regs[r as usize] = Some(Val::expr(name));
+        }
+        // Later positions first, so earlier insertions do not shift them;
+        // equal positions keep their discovery order.
+        inserts.sort_by(|x, y| y.0.cmp(&x.0));
+        let mut k = 0;
+        while k < inserts.len() {
+            let position = inserts[k].0;
+            let group_end = inserts[k..]
+                .iter()
+                .position(|(p, _)| *p != position)
+                .map(|n| k + n)
+                .unwrap_or(inserts.len());
+            for (_, line) in inserts[k..group_end].iter().rev() {
+                self.insert_line(position, line.clone());
+            }
+            k = group_end;
+        }
+    }
+
+    /// Whether register `r` is read at or after instruction `at` before it
+    /// is written, scanning the straight line until the region ends. A call
+    /// may read an argument register; a jump leaves the answer unknown, so
+    /// both count as live.
+    fn live_after(&self, at: usize, end: usize, r: u8) -> bool {
+        let mut j = at;
+        let mut visited = BTreeSet::new();
+        while j < end.min(self.ins.len()) && visited.insert(j) {
+            let kind = &self.ins[j].kind;
+            if crate::sched::reads(kind).contains(&r) {
+                return true;
+            }
+            match kind {
+                Kind::Pop { pc: true } | Kind::Bx(_) => return false,
+                // An argument register a call reads is set on the way to it;
+                // the call itself clobbers the rest.
+                Kind::B { target } => match self.index_of(*target) {
+                    Some(next) => {
+                        j = next;
+                        continue;
+                    }
+                    None => return true,
+                },
+                _ => {}
+            }
+            if writes(kind).contains(&r) {
+                return false;
+            }
+            j += 1;
+        }
+        true
+    }
+}
+
+/// Whether two register states hold the same value.
+fn same_val(a: &Option<Val>, b: &Option<Val>) -> bool {
+    match (a, b) {
+        (None, None) => true,
+        (Some(x), Some(y)) => x.c == y.c && x.e == y.e && x.name == y.name && x.mem == y.mem,
+        _ => false,
+    }
+}
+
+/// Registers an instruction writes.
+fn writes(kind: &Kind) -> Vec<u8> {
+    match *kind {
+        Kind::MovImm { rd, .. }
+        | Kind::MovHi { rd, .. }
+        | Kind::Movs { rd, .. }
+        | Kind::LdrPool { rd, .. }
+        | Kind::LdrSp { rd, .. }
+        | Kind::Load { rd, .. }
+        | Kind::AddImm3 { rd, .. }
+        | Kind::AddImm8 { rd, .. }
+        | Kind::AddReg { rd, .. }
+        | Kind::AddHi { rd, .. }
+        | Kind::SubImm3 { rd, .. }
+        | Kind::SubImm8 { rd, .. }
+        | Kind::SubReg { rd, .. }
+        | Kind::ShiftImm { rd, .. }
+        | Kind::Alu { rd, .. } => vec![rd],
+        Kind::Bl { .. } => vec![0, 1, 2, 3, 12, 14],
+        Kind::Ldmia { list, .. } => (0..8u8).filter(|b| list & (1 << b) != 0).collect(),
+        _ => vec![],
     }
 }
 
@@ -1932,6 +2298,21 @@ fn deref_named(c_type: &str, name: &str, off: u32) -> String {
     } else {
         format!("*({c_type} *)({name} + {off})")
     }
+}
+
+/// Whether `name` occurs in `text` as a whole identifier.
+fn contains_word(text: &str, name: &str) -> bool {
+    let boundary = |c: Option<char>| !c.is_some_and(|c| c.is_ascii_alphanumeric() || c == '_');
+    let mut rest = text;
+    while let Some(at) = rest.find(name) {
+        let before = rest[..at].chars().last();
+        let after = rest[at + name.len()..].chars().next();
+        if boundary(before) && boundary(after) {
+            return true;
+        }
+        rest = &rest[at + name.len()..];
+    }
+    false
 }
 
 /// `name[index]` split into its parts.

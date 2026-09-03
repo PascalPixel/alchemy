@@ -9,7 +9,7 @@ void Func_02008656();
 void Func_02008676();
 void Func_020086b0();
 void Func_02008720();
-u8 *Func_02008728();
+u8 *Scene_GetRecord_1();
 void Func_02008752();
 void Func_0200875c();
 void Func_02008776();
@@ -32,6 +32,40 @@ void Func_02008878();
 void Func_0200887a();
 void Func_02008884();
 void Func_02008896();
+
+/* Resolved engine calls: each pseudo symbol is the per-site call word the
+ * overlay image holds (a word can serve two sites with different targets),
+ * and the macro names the engine function the site reaches through the
+ * overlay veneer and the main-image veneer island, keeping the site's own
+ * calling form. Names without a repository binding are provisional.
+ */
+#define BattleRuntime_Reset_1(args...) Func_020086b0(args)
+#define ObjectMotion_PlaceWithinCameraBounds_1(a0, a1, a2, a3) Call4(Func_020087ea, a0, a1, a2, a3)
+#define ObjectMotion_EnableActionAndResetMotion_1(args...) Func_02008720(args)
+#define ObjectMotion_SetPositionAndReset_1(a0, a1, a2) Call3(Func_0200875c, a0, a1, a2)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_1(args...) Func_02008776(args)
+#define ObjectMotion_ArmCallback_1(a0, a1, a2) Call3(Func_020087f2, a0, a1, a2)
+#define Scene_GetRecord_1(args...) Func_02008728(args)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_2(a0, a1, a2) Call3(Func_020087a0, a0, a1, a2)
+#define SceneWork_SetStepValue_1(a0) Call1(Func_020087f4, a0)
+#define BattleEvent_RunActionAndWait_1(a0, a1) Call2(Func_0200880c, a0, a1)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_3(a0, a1, a2) Call3(Func_020087c0, a0, a1, a2)
+#define ObjectMotion_SetSpeedLimitAndAcceleration_1(a0, a1) Call2(Func_02008862, a0, a1)
+#define ObjectMotion_PlaceWithinCameraBounds_2(a0, a1, a2, a3) Call4(Func_02008878, a0, a1, a2, a3)
+#define Object_CommitPositionThenWaitIfModeZero_1(args...) Func_02008884(args)
+#define BattleRuntime_WaitIfModeZero_1(args...) Func_02008752(args)
+#define ObjectMotion_CallThenWaitForAnimationChange_1(args...) Func_02008802(args)
+#define BattleRuntime_RunThenWaitIfModeZero_1(a0, a1, a2) Call3(Func_0200885c, a0, a1, a2)
+#define ObjectMotion_ArmCallback_2(a0, a1, a2) Call3(Func_02008878, a0, a1, a2)
+#define ObjectMotion_SetVariantCallbackAndInvokeObject_1(args...) Func_02008838(args)
+#define BattleRuntime_RunThenWaitIfModeZero_2(a0, a1, a2) Call3(Func_0200887a, a0, a1, a2)
+#define ObjectMotion_ArmCallback_3(a0, a1, a2) Call3(Func_02008896, a0, a1, a2)
+#define ObjectMotion_CallThenWaitForAnimationChange_2(args...) Func_0200883e(args)
+#define ObjectMotion_SetSpeedParameters_1(a0, a1, a2) Call3(Func_020087ec, a0, a1, a2)
+#define ObjectMotion_SetPositionAndReset_2(a0, a1, a2) Call3(Func_02008836, a0, a1, a2)
+#define ObjectMotion_SetPositionAndReset_3(a0, a1, a2) Call3(Func_02008842, a0, a1, a2)
+#define GameFlag_Set_1(a0) Call1(Func_020087b0, a0)
+u8 *Func_02008728();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -66,43 +100,48 @@ static __inline__ void bump_step(s32 amount)
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
+/* Configures actor 22 (position, pose, and movement/sprite flags) for the
+ * scene. */
+#define ACTOR_ID 22
+
 void FieldScene_ConfigureActorTwentyTwoScene(void)
 {
     u32 i;
     u8 *record;
 
-    Func_020086b0();
-    Call4(Func_020087ea, -1, -1, -1, 0);
-    Func_02008720(22);
+    BattleRuntime_Reset_1();
+    ObjectMotion_PlaceWithinCameraBounds_1(-1, -1, -1, 0);
+    ObjectMotion_EnableActionAndResetMotion_1(ACTOR_ID);
     Call1(Func_0200861e, 0x200c5b9);
-    Call3(Func_0200875c, 0, 0x1e0, 0x570);
-    Func_02008776(0, 0, 0);
-    Call3(Func_020087f2, 22, 0x3000, 20);
+    ObjectMotion_SetPositionAndReset_1(0, 0x1e0, 0x570);
+    ObjectMotion_SetHorizontalPositionWithTerrain_1(0, 0, 0);
+    ObjectMotion_ArmCallback_1(ACTOR_ID, 0x3000, 20);
     {
-        u8 *record = Func_02008728(22);
-        u8 value = *(volatile u8 *)&record[35];
+        /* Set bit 0 of the flag byte at +35. */
+        u8 *record = Scene_GetRecord_1(ACTOR_ID);
+        u8 flags = *(volatile u8 *)&record[35];
 
-        record[35] = (u8)(value | 1);
+        record[35] = (u8)(flags | 1);
     }
-    Call3(Func_020087a0, 22, 0xf90000, 0x4d80000);
+    ObjectMotion_SetHorizontalPositionWithTerrain_2(ACTOR_ID, 0xf90000, 0x4d80000);
     Func_02008656(1);
-    Call1(Func_020087f4, 0xed3);
-    Call2(Func_0200880c, 0x1016, 0);
-    Call3(Func_020087c0, 22, 0xac0000, 0x4fe0000);
+    SceneWork_SetStepValue_1(0xed3);
+    BattleEvent_RunActionAndWait_1(0x1016, 0);
+    ObjectMotion_SetHorizontalPositionWithTerrain_3(ACTOR_ID, 0xac0000, 0x4fe0000);
     Func_02008676(1);
-    Call2(Func_02008862, 0x40000, 0x8000);
-    Call4(Func_02008878, 0xa20000, 0, 0x5050000, 1);
-    Func_02008884();
-    Func_02008752(40);
-    Func_02008802(22, 4);
-    Call3(Func_0200885c, 0x1016, 0, 10);
-    Call3(Func_02008878, 22, 0xc000, 20);
-    Func_02008838(22, 2);
-    Call3(Func_0200887a, 0x1016, 0, 10);
-    Call3(Func_02008896, 22, 0x1000, 20);
-    Func_0200883e(22, 3);
-    Call3(Func_020087ec, 22, 0x20000, 0x10000);
-    Call3(Func_02008836, 22, 165, 0x514);
-    Call3(Func_02008842, 22, 195, 0x598);
-    Call1(Func_020087b0, 0x842);
+    ObjectMotion_SetSpeedLimitAndAcceleration_1(0x40000, 0x8000);
+    ObjectMotion_PlaceWithinCameraBounds_2(0xa20000, 0, 0x5050000, 1);
+    Object_CommitPositionThenWaitIfModeZero_1();
+    BattleRuntime_WaitIfModeZero_1(40);
+    ObjectMotion_CallThenWaitForAnimationChange_1(ACTOR_ID, 4);
+    BattleRuntime_RunThenWaitIfModeZero_1(0x1016, 0, 10);
+    ObjectMotion_ArmCallback_2(ACTOR_ID, 0xc000, 20);
+    ObjectMotion_SetVariantCallbackAndInvokeObject_1(ACTOR_ID, 2);
+    BattleRuntime_RunThenWaitIfModeZero_2(0x1016, 0, 10);
+    ObjectMotion_ArmCallback_3(ACTOR_ID, 0x1000, 20);
+    ObjectMotion_CallThenWaitForAnimationChange_2(ACTOR_ID, 3);
+    ObjectMotion_SetSpeedParameters_1(ACTOR_ID, 0x20000, 0x10000);
+    ObjectMotion_SetPositionAndReset_2(ACTOR_ID, 165, 0x514);
+    ObjectMotion_SetPositionAndReset_3(ACTOR_ID, 195, 0x598);
+    GameFlag_Set_1(0x842);
 }

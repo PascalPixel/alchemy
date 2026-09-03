@@ -19,7 +19,7 @@ OVERLAY := $(CARGO_RUN) $(TOOLS)/overlay/Cargo.toml --
 
 HOSTS := build-assets build-stage assets compiler overlay check
 CORE_TESTS := compiler-core candidate-compiler candidate-show permuter \
-		overlay-disasm overlay-adopt build-full \
+		overlay-disasm overlay-adopt build-full lifter \
               extract-resource coverage-map check-publication
 PORTABLE_TOOLS := alignment-tail asset-paths cache-entry canonical-json \
 	generated-files no-asm-c build-stage build-claimed build-asm build-full \
@@ -27,7 +27,7 @@ PORTABLE_TOOLS := alignment-tail asset-paths cache-entry canonical-json \
 	dashboard-server overlay overlay-disasm overlay-show \
 	overlay-adopt overlay-call-targets check check-commit-progress \
 	check-publication check-unmatchable core-retained-audit coverage-map \
-	full-c-progress integrate-matches decomp-targets weyard-font shape-search unit-scaffold allocator-lens
+	full-c-progress integrate-matches decomp-targets weyard-font shape-search unit-scaffold allocator-lens lifter
 # The maintainer-owned ceiling covers the portable Rust, TypeScript,
 # JavaScript, and CSS beside the decompilation. Contributors pare
 # machinery; they do not raise it.

@@ -1,0 +1,25 @@
+[workspace]
+
+[package]
+name = "lifter"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "lifter"
+path = "src/lib.rs"
+
+[[bin]]
+name = "lifter"
+path = "src/main.rs"
+
+[dependencies]
+# Sibling crates: the canonical ROM reader and the owner register.
+compiler-core = { path = "../compiler-core" }
+overlay-disasm = { path = "../overlay-disasm" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.release]
+opt-level = 3
+lto = true

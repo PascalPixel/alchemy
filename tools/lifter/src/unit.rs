@@ -36,9 +36,7 @@ fn is_local_assignment(line: &str) -> Option<&str> {
         || name
             .strip_prefix("rec")
             .is_some_and(|rest| rest.bytes().all(|b| b.is_ascii_digit()))
-        || name
-            .strip_prefix('p')
-            .is_some_and(|rest| !rest.is_empty() && rest.bytes().all(|b| b.is_ascii_digit()));
+        || is_park_name(name);
     plain.then_some(name)
 }
 
@@ -163,6 +161,17 @@ fn unknown_registers(lines: &mut [String]) -> Vec<String> {
     found
 }
 
+/// `pN` with an optional disambiguating letter.
+fn is_park_name(name: &str) -> bool {
+    let Some(rest) = name.strip_prefix('p') else {
+        return false;
+    };
+    let digits = rest.trim_end_matches(|c: char| c.is_ascii_lowercase());
+    !digits.is_empty()
+        && digits.bytes().all(|b| b.is_ascii_digit())
+        && rest.len() - digits.len() <= 1
+}
+
 /// `name[digits]`.
 fn indexed_store(lhs: &str) -> bool {
     let Some((name, rest)) = lhs.split_once('[') else {
@@ -259,7 +268,13 @@ pub fn function_source(entry: u32, draft: &Draft) -> String {
     } else {
         params
             .iter()
-            .map(|p| format!("s32 {p}"))
+            .map(|p| {
+                if indexed_anywhere(&lines, p) {
+                    format!("u8 *{p}")
+                } else {
+                    format!("s32 {p}")
+                }
+            })
             .collect::<Vec<_>>()
             .join(", ")
     };
@@ -275,9 +290,7 @@ pub fn function_source(entry: u32, draft: &Draft) -> String {
         text.push_str(&format!("    s32 {r};\n"));
     }
     for c in &consts {
-        let pointer = c
-            .strip_prefix('p')
-            .is_some_and(|rest| !rest.is_empty() && rest.bytes().all(|b| b.is_ascii_digit()));
+        let pointer = is_park_name(c) || (c.starts_with("slot") && indexed_anywhere(&lines, c));
         if pointer {
             text.push_str(&format!("    u8 *{c};\n"));
         } else {

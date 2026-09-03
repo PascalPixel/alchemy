@@ -2,6 +2,7 @@
 //! candidate translation unit tuned to recompile byte-exactly through the
 //! GCC 2.96 overlay route rather than to read well.
 
+pub mod adopt;
 pub mod decode;
 pub mod lift;
 pub mod owners;

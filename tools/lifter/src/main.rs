@@ -25,6 +25,10 @@ struct Options {
     kind: Option<String>,
     limit: Option<usize>,
     all: bool,
+    path: Option<String>,
+    source: Option<PathBuf>,
+    only: Option<PathBuf>,
+    jobs: Option<usize>,
 }
 
 fn parse(arguments: &[String]) -> Result<Options, String> {
@@ -37,6 +41,10 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
         kind: None,
         limit: None,
         all: false,
+        path: None,
+        source: None,
+        only: None,
+        jobs: None,
     };
     let mut iter = arguments.iter();
     while let Some(argument) = iter.next() {
@@ -69,6 +77,16 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
                 )
             }
             "--all" => options.all = true,
+            "--path" => options.path = Some(value("--path")?),
+            "--source" => options.source = Some(PathBuf::from(value("--source")?)),
+            "--only" => options.only = Some(PathBuf::from(value("--only")?)),
+            "--jobs" => {
+                options.jobs = Some(
+                    value("--jobs")?
+                        .parse()
+                        .map_err(|_| "--jobs wants a count")?,
+                )
+            }
             other if other.starts_with("--") => return Err(format!("unknown flag {other}")),
             other => options.positional.push(other.to_string()),
         }
@@ -185,6 +203,15 @@ fn selected(root: &Path, options: &Options) -> Result<Vec<Module>, String> {
         })
         .filter(|m| options.all || !m.registered)
         .collect();
+    if let Some(only) = &options.only {
+        let keys = std::fs::read_to_string(only).map_err(|e| format!("{}: {e}", only.display()))?;
+        let wanted: Vec<String> = keys
+            .lines()
+            .filter_map(|l| l.split_whitespace().next())
+            .map(str::to_string)
+            .collect();
+        modules.retain(|m| wanted.contains(&m.key()));
+    }
     modules.sort_by(|a, b| b.span.cmp(&a.span).then(a.key().cmp(&b.key())));
     if let Some(limit) = options.limit {
         modules.truncate(limit);
@@ -199,48 +226,100 @@ fn list(root: &Path, options: &Options) -> Result<(), String> {
     Ok(())
 }
 
+/// One module's batch result: the distance after any tuning, or the failure.
+enum Outcome {
+    Scored { differing: u32 },
+    Failed,
+}
+
+/// Runs `work` over `items` on `jobs` threads. Results keep item order; the
+/// work itself prints each line as it lands, so progress shows during the run.
+fn parallel<T: Sync, R: Send>(items: &[T], jobs: usize, work: impl Fn(&T) -> R + Sync) -> Vec<R> {
+    let next = std::sync::atomic::AtomicUsize::new(0);
+    let results: std::sync::Mutex<Vec<Option<R>>> =
+        std::sync::Mutex::new((0..items.len()).map(|_| None).collect());
+    std::thread::scope(|scope| {
+        for _ in 0..jobs.max(1) {
+            scope.spawn(|| loop {
+                let index = next.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+                if index >= items.len() {
+                    break;
+                }
+                let result = work(&items[index]);
+                results.lock().unwrap()[index] = Some(result);
+            });
+        }
+    });
+    results
+        .into_inner()
+        .unwrap()
+        .into_iter()
+        .map(|r| r.expect("every item was worked"))
+        .collect()
+}
+
+fn jobs(options: &Options) -> usize {
+    options.jobs.unwrap_or_else(|| {
+        std::thread::available_parallelism()
+            .map(|n| n.get())
+            .unwrap_or(4)
+    })
+}
+
+fn batch_one(root: &Path, options: &Options, m: &Module) -> Outcome {
+    let owner = m.key();
+    let path = match scratch_path(root, &owner) {
+        Ok(path) => path,
+        Err(error) => {
+            println!("{owner} {} failed {error}", m.span);
+            return Outcome::Failed;
+        }
+    };
+    let outcome = lift_owner(root, &owner, Some(m.span), None).and_then(|(unit, _)| {
+        std::fs::write(&path, &unit).map_err(|error| format!("{}: {error}", path.display()))?;
+        score(root, &path, &owner, m.span)
+    });
+    match outcome {
+        Ok(result) => {
+            let mut differing = result.differing;
+            if options.all && differing > 0 && differing <= 60 {
+                let unit = std::fs::read_to_string(&path).unwrap_or_default();
+                if let Ok((_, tuned)) =
+                    tune::tune_targeted(root, &path, &owner, m.span, &unit, |_| {})
+                {
+                    differing = tuned.differing;
+                }
+            }
+            match (differing, result.differing) {
+                (0, 0) => println!("{owner} {} EXACT", m.span),
+                (0, base) => println!("{owner} {} EXACT tuned from {base}", m.span),
+                (d, _) => println!("{owner} {} diff {d}", m.span),
+            }
+            Outcome::Scored { differing }
+        }
+        Err(error) => {
+            let detail = first_error(&error).unwrap_or(error);
+            println!("{owner} {} failed {}", m.span, detail.trim());
+            Outcome::Failed
+        }
+    }
+}
+
 fn batch(root: &Path, options: &Options) -> Result<(), String> {
     let modules = selected(root, options)?;
+    let outcomes = parallel(&modules, jobs(options), |m| batch_one(root, options, m));
     let (mut exact, mut differing, mut failed) = (0, 0, 0);
     let mut near: Vec<(u32, String)> = Vec::new();
-    for m in &modules {
-        let owner = m.key();
-        let path = scratch_path(root, &owner)?;
-        let outcome = lift_owner(root, &owner, Some(m.span), None).and_then(|(unit, _)| {
-            std::fs::write(&path, &unit).map_err(|error| format!("{}: {error}", path.display()))?;
-            score(root, &path, &owner, m.span)
-        });
+    for (m, outcome) in modules.iter().zip(&outcomes) {
         match outcome {
-            Ok(result) if result.differing == 0 => {
-                exact += 1;
-                println!("{owner} {} EXACT", m.span);
-            }
-            Ok(result) => {
-                let mut differing_halfwords = result.differing;
-                if options.all && differing_halfwords <= 60 {
-                    let unit = std::fs::read_to_string(&path).unwrap_or_default();
-                    if let Ok((_, tuned)) =
-                        tune::tune_targeted(root, &path, &owner, m.span, &unit, |_| {})
-                    {
-                        differing_halfwords = tuned.differing;
-                    }
-                }
-                if differing_halfwords == 0 {
-                    exact += 1;
-                    println!("{owner} {} EXACT tuned from {}", m.span, result.differing);
-                    continue;
-                }
+            Outcome::Scored { differing: 0 } => exact += 1,
+            Outcome::Scored { differing: d } => {
                 differing += 1;
-                if differing_halfwords <= 40 {
-                    near.push((differing_halfwords, owner.clone()));
+                if *d <= 40 {
+                    near.push((*d, m.key()));
                 }
-                println!("{owner} {} diff {differing_halfwords}", m.span);
             }
-            Err(error) => {
-                failed += 1;
-                let detail = first_error(&error).unwrap_or(error);
-                println!("{owner} {} failed {}", m.span, detail.trim());
-            }
+            Outcome::Failed => failed += 1,
         }
     }
     near.sort();
@@ -270,6 +349,7 @@ fn main() -> ExitCode {
     let result = parse(&arguments[1..]).and_then(|options| match command {
         "draft" => draft(&root, &options).map(|_| 0),
         "score" => score_owner(&root, &options),
+        "adopt" => adopt_owner(&root, &options).map(|_| 0),
         "tune" => tune_owner(&root, &options),
         "batch" => batch(&root, &options).map(|_| 0),
         "list" => list(&root, &options).map(|_| 0),
@@ -494,10 +574,9 @@ fn bench(root: &Path, options: &Options) -> Result<(), String> {
     }
     owners.sort_by_key(|owner| std::cmp::Reverse(owner.1));
     owners.truncate(options.limit.unwrap_or(100));
-    let (mut exact, mut total_base, mut total_final) = (0, 0u64, 0u64);
-    for (owner, span, name) in &owners {
-        let path = scratch_path(root, owner)?;
-        let outcome = lift_owner(root, owner, Some(*span), Some(name)).and_then(|(unit, _)| {
+    let outcomes = parallel(&owners, jobs(options), |(owner, span, name)| {
+        let outcome = scratch_path(root, owner).and_then(|path| {
+            let (unit, _) = lift_owner(root, owner, Some(*span), Some(name))?;
             std::fs::write(&path, &unit).map_err(|error| format!("{}: {error}", path.display()))?;
             let base = score(root, &path, owner, *span)?;
             if !options.all || base.differing == 0 {
@@ -506,19 +585,24 @@ fn bench(root: &Path, options: &Options) -> Result<(), String> {
             let (_, tuned) = tune::tune_targeted(root, &path, owner, *span, &unit, |_| {})?;
             Ok((base.differing, tuned.differing))
         });
-        match outcome {
-            Ok((base, final_)) => {
-                total_base += u64::from(base);
-                total_final += u64::from(final_);
-                if final_ == 0 {
-                    exact += 1;
-                }
-                println!("{owner} {span} {base} -> {final_}");
-            }
+        match &outcome {
+            Ok((base, final_)) => println!("{owner} {span} {base} -> {final_}"),
             Err(error) => println!(
                 "{owner} {span} failed {}",
-                first_error(&error).unwrap_or(error).trim()
+                first_error(error)
+                    .clone()
+                    .unwrap_or_else(|| error.clone())
+                    .trim()
             ),
+        }
+        outcome
+    });
+    let (mut exact, mut total_base, mut total_final) = (0, 0u64, 0u64);
+    for (base, final_) in outcomes.iter().flatten() {
+        total_base += u64::from(*base);
+        total_final += u64::from(*final_);
+        if *final_ == 0 {
+            exact += 1;
         }
     }
     println!(
@@ -547,6 +631,21 @@ fn disasm(root: &Path, options: &Options) -> Result<(), String> {
             ""
         };
         println!("{index:5} {:08x} {}{mark}", x.addr, x.text);
+    }
+    Ok(())
+}
+
+fn adopt_owner(root: &Path, options: &Options) -> Result<(), String> {
+    let owner = owner_argument(options)?;
+    let request = lifter::adopt::Request {
+        owner,
+        span: options.span,
+        name: options.name.as_deref(),
+        path: options.path.as_deref(),
+        source: options.source.as_deref(),
+    };
+    for line in lifter::adopt::adopt(root, &request)? {
+        println!("{line}");
     }
     Ok(())
 }

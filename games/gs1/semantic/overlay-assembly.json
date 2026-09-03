@@ -3793,21 +3793,6 @@
       ]
     },
     {
-      "overlay": "resource_383",
-      "start": "0x02001ba0",
-      "end": "0x02001e64",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete retained body accounts for 109 calls, 0 loop(s), 4 memory operation(s), and its production owner boundary",
-        "games/gs1/recon/en/dossiers.json#resource_383:020019a2",
-        "resource_383:020019a4 (64 bytes) is now exact C",
-        "resource_383:020019e4 (104 bytes) is now exact C",
-        "resource_383:02001a4c (340 bytes) is now exact C"
-      ]
-    },
-    {
       "overlay": "resource_389",
       "start": "0x02000bd0",
       "end": "0x02001088",

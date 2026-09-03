@@ -102,8 +102,9 @@ pub struct Score {
     pub report: String,
 }
 
-fn overlay_command(root: &Path) -> Command {
-    let built = root.join("out/cargo-target/release/overlay");
+/// A sibling host tool: the built binary when present, else `cargo run`.
+pub fn tool_command(root: &Path, tool: &str) -> Command {
+    let built = root.join(format!("out/cargo-target/release/{tool}"));
     if built.is_file() {
         return Command::new(built);
     }
@@ -114,9 +115,9 @@ fn overlay_command(root: &Path) -> Command {
         "--quiet",
         "--release",
         "--manifest-path",
-        root.join("tools/overlay/Cargo.toml")
-            .to_str()
-            .unwrap_or("tools/overlay/Cargo.toml"),
+        &root
+            .join(format!("tools/{tool}/Cargo.toml"))
+            .to_string_lossy(),
         "--",
     ]);
     command
@@ -124,7 +125,7 @@ fn overlay_command(root: &Path) -> Command {
 
 /// Scores a candidate source against an owner through the overlay scorer.
 pub fn score(root: &Path, source: &Path, owner: &str, span: u32) -> Result<Score, String> {
-    let output = overlay_command(root)
+    let output = tool_command(root, "overlay")
         .current_dir(root)
         .arg("score")
         .arg(source)

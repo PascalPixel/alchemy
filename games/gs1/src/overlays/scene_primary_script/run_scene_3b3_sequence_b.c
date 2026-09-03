@@ -27,7 +27,7 @@ void Func_0200428c();
 void Func_02004296();
 void Func_020042b2();
 s32 Func_020042de();
-u8 *Func_020042e8();
+u8 *Scene_GetRecord_2();
 void Func_020042ea();
 void Func_02004302();
 void Func_02004306();
@@ -43,7 +43,7 @@ void Func_0200435c();
 void Func_02004368();
 void Func_02004374();
 s32 Func_02004398();
-u8 *Func_020043a4();
+u8 *Scene_GetRecord_4();
 void Func_020043c6();
 void Func_020043e6();
 void Func_020043f6();
@@ -51,6 +51,39 @@ void Func_02004406();
 void Func_02004414();
 void Func_02004422();
 void Func_0200442a();
+
+/* Resolved engine calls: each pseudo symbol is the per-site call word the
+ * overlay image holds (a word can serve two sites with different targets),
+ * and the macro names the engine function the site reaches through the
+ * overlay veneer and the main-image veneer island, keeping the site's own
+ * calling form. Names without a repository binding are provisional.
+ */
+#define BattleRuntime_Reset_1(args...) Func_0200426e(args)
+#define ObjectMotion_SetSpeedLimitAndAcceleration_1(a0, a1) Call2(Func_020042ea, a0, a1)
+#define ObjectMotion_PlaceWithinCameraBounds_1(a0, a1, a2, a3) Call4(Func_02004302, a0, a1, a2, a3)
+#define Object_CommitPositionThenWaitIfModeZero_1(args...) Func_0200430e(args)
+#define UiText_DrawMessage_1(a0, a1) Call2(Func_0200426e, a0, a1)
+#define GameFlag_IsSet_1(a0) Value1(Func_0200427e, a0)
+#define Audio_PlayCue_1(args...) Func_02004352(args)
+#define BattleRuntime_WaitIfModeZero_1(args...) Func_020042b2(args)
+#define Audio_PlayCue_2(args...) Func_02004368(args)
+#define ObjectMotion_SetActionVariant_1(args...) Func_02004330(args)
+#define Scene_GetRecord_1(args...) Func_020042de(args)
+#define Scene_GetRecord_2(args...) Func_020042e8(args)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_1(a0, a1, a2) Call3(Func_0200432a, a0, a1, a2)
+#define Object_SetModeById_1(args...) Func_0200433a(args)
+#define GameFlag_Set_1(a0) Call1(Func_0200434c, a0)
+#define Audio_PlayCue_3(args...) Func_02004414(args)
+#define BattleRuntime_WaitIfModeZero_2(args...) Func_02004374(args)
+#define Audio_PlayCue_4(args...) Func_0200442a(args)
+#define Scene_GetRecord_3(args...) Func_02004398(args)
+#define Scene_GetRecord_4(args...) Func_020043a4(args)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_2(a0, a1, a2) Call3(Func_020043e6, a0, a1, a2)
+#define Object_SetModeById_2(args...) Func_020043f6(args)
+#define GameFlag_Clear_1(a0) Call1(Func_02004406, a0)
+#define BattleRuntime_ScheduleShoulderButtonModeUpdate_1(args...) Func_02004422(args)
+u8 *Func_020042e8();
+u8 *Func_020043a4();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -95,29 +128,40 @@ static __inline__ void bump_step(s32 amount)
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
+/* Record id used for the single record configured below in either branch. */
+#define REC_ID 16
+
+/* Flag/id value passed to the query call and to the two closing calls, and
+ * written into the flag byte at +85 when the query call returned zero. */
+#define QUERY_FLAG 0x200
+
+/* Runs one of two near-identical setup sequences for record REC_ID and
+ * records 9-15, chosen by the query call's return value; each sequence ends
+ * with its own closing call carrying QUERY_FLAG. */
 void FieldScene_RunFlaggedDisplayScene(void)
 {
     u32 i;
-    u8 *rec7;
+    u8 *queried;
     u8 *record;
 
-    Func_0200426e();
-    Call2(Func_020042ea, 0x10000, 0x2000);
-    Call4(Func_02004302, 0x1190000, -1, 0x1b00000, 1);
-    Func_0200430e();
-    Call2(Func_0200426e, 0x1528, 1);
-    rec7 = Value1(Func_0200427e, 0x200);
-    if (rec7 == 0) {
-        Func_02004352(232);
+    BattleRuntime_Reset_1();
+    ObjectMotion_SetSpeedLimitAndAcceleration_1(0x10000, 0x2000);
+    ObjectMotion_PlaceWithinCameraBounds_1(0x1190000, -1, 0x1b00000, 1);
+    Object_CommitPositionThenWaitIfModeZero_1();
+    UiText_DrawMessage_1(0x1528, 1);
+    queried = GameFlag_IsSet_1(QUERY_FLAG);
+    if (queried == 0) {
+        Audio_PlayCue_1(232);
         Call3(Func_02004244, 0x200ada8, 84, 24);
-        Func_020042b2(30);
-        Func_02004368(240);
-        Func_02004330(16, 1);
-        *(u8 *)(Func_020042de(16) + 85) = rec7;
-        record = Func_020042e8(16);
+        BattleRuntime_WaitIfModeZero_1(30);
+        Audio_PlayCue_2(240);
+        ObjectMotion_SetActionVariant_1(REC_ID, 1);
+        /* Flag byte at +85: cleared, since queried is zero here. */
+        *(u8 *)(Scene_GetRecord_1(REC_ID) + 85) = queried;
+        record = Scene_GetRecord_2(REC_ID);
         *(s32 *)(record + 12) = -0x200000;
-        Call3(Func_0200432a, 16, 0x1100000, 0x1a00000);
-        Func_0200433a(16, 1);
+        ObjectMotion_SetHorizontalPositionWithTerrain_1(REC_ID, 0x1100000, 0x1a00000);
+        Object_SetModeById_1(REC_ID, 1);
         Call3(Func_0200428c, 0x200adfc, 80, 24);
         Call3(Func_02004296, 0x200ae50, 80, 28);
         Call6(Func_020042b2, 65, 40, 16, 27, 2, 4);
@@ -130,17 +174,18 @@ void FieldScene_RunFlaggedDisplayScene(void)
         Func_020026fe(14);
         Func_02002704(15);
         Call6(Func_02004314, 24, 3, 1, 1, 24, 8);
-        Call1(Func_0200434c, 0x200);
+        GameFlag_Set_1(QUERY_FLAG);
     } else {
-        Func_02004414(232);
+        Audio_PlayCue_3(232);
         Call3(Func_02004306, 0x200add2, 84, 24);
-        Func_02004374(30);
-        Func_0200442a(230);
-        *(u8 *)(Func_02004398(16) + 85) = 0;
-        record = Func_020043a4(16);
+        BattleRuntime_WaitIfModeZero_2(30);
+        Audio_PlayCue_4(230);
+        /* Flag byte at +85: cleared unconditionally in this branch. */
+        *(u8 *)(Scene_GetRecord_3(REC_ID) + 85) = 0;
+        record = Scene_GetRecord_4(REC_ID);
         *(s32 *)(record + 12) = -0x200000;
-        Call3(Func_020043e6, 16, 0x1100000, 0x1b40000);
-        Func_020043f6(16, 2);
+        ObjectMotion_SetHorizontalPositionWithTerrain_2(REC_ID, 0x1100000, 0x1b40000);
+        Object_SetModeById_2(REC_ID, 2);
         Call6(Func_0200435a, 65, 45, 16, 27, 2, 4);
         Call3(Func_0200435c, 0x200ae26, 80, 24);
         Func_02002ec0();
@@ -152,7 +197,7 @@ void FieldScene_RunFlaggedDisplayScene(void)
         Func_02002840(14);
         Func_02002846(15);
         Call6(Func_020043c6, 24, 4, 1, 1, 24, 8);
-        Call1(Func_02004406, 0x200);
+        GameFlag_Clear_1(QUERY_FLAG);
     }
-    Func_02004422();
+    BattleRuntime_ScheduleShoulderButtonModeUpdate_1();
 }

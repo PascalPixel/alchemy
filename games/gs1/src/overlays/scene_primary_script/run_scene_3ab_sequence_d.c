@@ -30,6 +30,18 @@ void Func_02002812();
 void Func_0200285e();
 void Func_02002890();
 
+/* Resolved engine calls: each pseudo symbol is the per-site call word the
+ * overlay image holds (a word can serve two sites with different targets),
+ * and the macro names the engine function the site reaches through the
+ * overlay veneer and the main-image veneer island, keeping the site's own
+ * calling form. Names without a repository binding are provisional.
+ */
+#define GameFlag_IsSet_1(a0) Value1(Func_020026fe, a0)
+#define GameFlag_IsSet_2(a0) Value1(Func_0200270a, a0)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_1(args...) Func_0200279a(args)
+#define Audio_PlayCue_1(args...) Func_02002890(args)
+#define GameFlag_Set_1(a0) Call1(Func_0200285e, a0)
+
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
@@ -58,39 +70,51 @@ static __inline__ void bump_step(s32 amount)
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
+/* Flag ids checked as guard conditions before the layout runs; neither
+ * unused local below is read anywhere in the body. */
+#define GUARD_FLAG_1 0x201
+#define GUARD_FLAG_2 0x202
+
+/* Fixed cell size used by every placement call below (args 3 and 4). */
+#define CELL_W 3
+#define CELL_H 4
+
+/* Lays out two rows of tile cells (three cells per row-segment, five
+ * row-segments total) and commits each row-segment with a trailing
+ * call taking the constant 10, then marks GUARD_FLAG_2. */
 void FieldScene_BuildFlaggedMapLayout(void)
 {
     u32 i;
     u8 *record;
 
-    if (Value1(Func_020026fe, 0x201) != 0) {
+    if (GameFlag_IsSet_1(GUARD_FLAG_1) != 0) {
     } else {
-        if (Value1(Func_0200270a, 0x202) != 0) {
+        if (GameFlag_IsSet_2(GUARD_FLAG_2) != 0) {
         } else {
-            Func_0200279a(19, 0, 0);
-            Func_02002890(210);
+            ObjectMotion_SetHorizontalPositionWithTerrain_1(19, 0, 0);
+            Audio_PlayCue_1(210);
             Func_02002686(1);
-            Call6(Func_02002702, 32, 45, 3, 4, 1, 14);
-            Call6(Func_02002716, 35, 45, 3, 4, 33, 14);
-            Call6(Func_0200272a, 38, 45, 3, 4, 1, 46);
+            Call6(Func_02002702, 32, 45, CELL_W, CELL_H, 1, 14);
+            Call6(Func_02002716, 35, 45, CELL_W, CELL_H, 33, 14);
+            Call6(Func_0200272a, 38, 45, CELL_W, CELL_H, 1, 46);
             Func_020026c8(10);
-            Call6(Func_02002740, 41, 45, 3, 4, 1, 14);
-            Call6(Func_02002752, 44, 45, 3, 4, 33, 14);
-            Call6(Func_02002764, 47, 45, 3, 4, 1, 46);
+            Call6(Func_02002740, 41, 45, CELL_W, CELL_H, 1, 14);
+            Call6(Func_02002752, 44, 45, CELL_W, CELL_H, 33, 14);
+            Call6(Func_02002764, 47, 45, CELL_W, CELL_H, 1, 46);
             Func_02002702(10);
-            Call6(Func_0200277a, 50, 45, 3, 4, 1, 14);
-            Call6(Func_0200278c, 53, 45, 3, 4, 33, 14);
-            Call6(Func_0200279e, 56, 45, 3, 4, 1, 46);
+            Call6(Func_0200277a, 50, 45, CELL_W, CELL_H, 1, 14);
+            Call6(Func_0200278c, 53, 45, CELL_W, CELL_H, 33, 14);
+            Call6(Func_0200279e, 56, 45, CELL_W, CELL_H, 1, 46);
             Func_0200273c(10);
-            Call6(Func_020027b4, 32, 49, 3, 4, 1, 14);
-            Call6(Func_020027c6, 35, 49, 3, 4, 33, 14);
-            Call6(Func_020027d8, 38, 49, 3, 4, 1, 46);
+            Call6(Func_020027b4, 32, 49, CELL_W, CELL_H, 1, 14);
+            Call6(Func_020027c6, 35, 49, CELL_W, CELL_H, 33, 14);
+            Call6(Func_020027d8, 38, 49, CELL_W, CELL_H, 1, 46);
             Func_02002776(10);
-            Call6(Func_020027ee, 41, 49, 3, 4, 1, 14);
-            Call6(Func_02002800, 44, 49, 3, 4, 33, 14);
-            Call6(Func_02002812, 47, 49, 3, 4, 1, 46);
+            Call6(Func_020027ee, 41, 49, CELL_W, CELL_H, 1, 14);
+            Call6(Func_02002800, 44, 49, CELL_W, CELL_H, 33, 14);
+            Call6(Func_02002812, 47, 49, CELL_W, CELL_H, 1, 46);
             Func_020027b0(10);
-            Call1(Func_0200285e, 0x202);
+            GameFlag_Set_1(GUARD_FLAG_2);
         }
     }
 }

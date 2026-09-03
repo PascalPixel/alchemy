@@ -625,10 +625,14 @@ fn disasm(root: &Path, options: &Options) -> Result<(), String> {
     let ins = lifter::decode::decode_window(&image, entry, span);
     let values = lifter::sched::value_calls(&ins);
     for (index, x) in ins.iter().enumerate() {
-        let mark = if values.contains(&index) {
-            " ; value"
-        } else {
-            ""
+        let mark = match (
+            values.value.contains(&index),
+            values.direct.contains(&index),
+        ) {
+            (true, true) => " ; value direct",
+            (true, false) => " ; value",
+            (false, true) => " ; direct",
+            (false, false) => "",
         };
         println!("{index:5} {:08x} {}{mark}", x.addr, x.text);
     }

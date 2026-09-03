@@ -381,6 +381,13 @@ pub fn compose(entry: u32, name: &str, body: &str) -> String {
         if before.ends_with("(s32)") {
             add(&mut categories, symbol, "void");
         }
+        if before.ends_with("(void)") {
+            add(&mut categories, symbol, "s32");
+        }
+        if before.ends_with("((void (*)())") {
+            add(&mut categories, symbol, "s32");
+            continue;
+        }
         let at_statement_start =
             before.trim_end_matches(' ').ends_with('\n') || before.trim().is_empty();
         if at_statement_start && after.starts_with('(') {

@@ -20,6 +20,9 @@ struct Load {
     link: usize,
     /// Chain length.
     chain: usize,
+    /// A constant the compiler precomputes into a pseudo for a direct call:
+    /// anything beyond a single `movs`.
+    costly: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -181,11 +184,15 @@ fn sites_in(ins: &[Ins], start: usize, end: usize, targets: &BTreeSet<u32>) -> V
                 for load in pending.iter_mut().filter(|l| l.reg == rd && l.at >= head) {
                     load.chain = chain;
                 }
+                for load in pending.iter_mut().filter(|l| l.reg == rd && l.at >= head) {
+                    load.costly = true;
+                }
                 pending.push(Load {
                     reg: rd,
                     at: i,
                     link,
                     chain,
+                    costly: true,
                 });
                 continue;
             }
@@ -196,6 +203,7 @@ fn sites_in(ins: &[Ins], start: usize, end: usize, targets: &BTreeSet<u32>) -> V
             at: i,
             link: 0,
             chain: 1,
+            costly: matches!(kind, Kind::LdrPool { .. }),
         });
     }
     sites
@@ -222,7 +230,7 @@ fn dependents(sites: &[Site], k: usize, reg: u8, value: &[bool]) -> usize {
 
 /// Simulates the scheduler over one call site and returns the instruction
 /// indices in emitted order.
-fn schedule(sites: &[Site], k: usize, value: &[bool]) -> Vec<usize> {
+fn schedule(sites: &[Site], k: usize, value: &[bool], direct: &[bool]) -> Vec<usize> {
     let site = &sites[k];
     let mut ready: Vec<usize> = (0..site.loads.len())
         .filter(|l| site.loads[*l].link == 0)
@@ -238,7 +246,16 @@ fn schedule(sites: &[Site], k: usize, value: &[bool]) -> Vec<usize> {
             } else {
                 1
             };
-            (priority, deps, u8::MAX - load.reg, usize::MAX - load.link)
+            // Original order breaks the remaining ties: a direct call's costly
+            // arguments were precomputed ahead of its cheap ones.
+            let early = u8::from(direct[k] && load.costly);
+            (
+                priority,
+                deps,
+                early,
+                u8::MAX - load.reg,
+                usize::MAX - load.link,
+            )
         };
         ready.sort_by_key(rank);
         let chosen = ready.pop().unwrap();
@@ -265,7 +282,12 @@ fn observed(site: &Site) -> Vec<usize> {
 /// Infers which calls return a value: the set of `bl` instruction indices
 /// whose r0 set, rather than clobber, makes the predicted load order of
 /// every call in its block match the reference.
-pub fn value_calls(ins: &[Ins]) -> BTreeSet<usize> {
+pub struct Sites {
+    pub value: BTreeSet<usize>,
+    pub direct: BTreeSet<usize>,
+}
+
+pub fn value_calls(ins: &[Ins]) -> Sites {
     // A branch over a literal pool is not a block boundary: the scheduler
     // ran before the pool was placed.
     let pool_jump = |k: usize| match ins[k].kind {
@@ -281,7 +303,10 @@ pub fn value_calls(ins: &[Ins]) -> BTreeSet<usize> {
             _ => None,
         })
         .collect();
-    let mut result = BTreeSet::new();
+    let mut result = Sites {
+        value: BTreeSet::new(),
+        direct: BTreeSet::new(),
+    };
     let mut start = 0;
     while start < ins.len() {
         let mut end = start;
@@ -309,42 +334,70 @@ pub fn value_calls(ins: &[Ins]) -> BTreeSet<usize> {
                     })
             })
             .collect();
+        // Wrapper spelling by default; a direct call is inferred from its order.
+        let mut direct = vec![false; sites.len()];
         let mut matched = vec![false; sites.len()];
         for k in 0..sites.len() {
-            if schedule(&sites, k, &value) == observed(&sites[k]) {
+            if schedule(&sites, k, &value, &direct) == observed(&sites[k]) {
                 matched[k] = true;
                 continue;
             }
-            // Flip the value bit of this or a later call until the order
-            // matches, without breaking a call already matched.
+            // Flip the direct bit of this call, then the value bit of this or a
+            // later call, with or without the direct bit, until the order
+            // matches without breaking a call already matched.
+            // The value bit is the cheaper explanation: a direct call also changes
+            // how its constants are shared, so it is tried after.
+            let mut choices: Vec<(usize, bool, bool)> = Vec::new();
             for j in k..sites.len() {
-                value[j] = !value[j];
-                let fixed = schedule(&sites, k, &value) == observed(&sites[k])
-                    && (0..k)
-                        .all(|m| !matched[m] || schedule(&sites, m, &value) == observed(&sites[m]));
+                choices.push((j, true, false));
+            }
+            choices.push((k, false, true));
+            for j in k..sites.len() {
+                choices.push((j, true, true));
+            }
+            for (j, flip_value, flip_direct) in choices {
+                if flip_value {
+                    value[j] = !value[j];
+                }
+                if flip_direct {
+                    direct[k] = !direct[k];
+                }
+                let fixed = schedule(&sites, k, &value, &direct) == observed(&sites[k])
+                    && (0..k).all(|m| {
+                        !matched[m] || schedule(&sites, m, &value, &direct) == observed(&sites[m])
+                    });
                 if fixed {
                     matched[k] = true;
                     break;
                 }
-                value[j] = !value[j];
+                if flip_value {
+                    value[j] = !value[j];
+                }
+                if flip_direct {
+                    direct[k] = !direct[k];
+                }
             }
         }
         if std::env::var_os("LIFTER_DEBUG").is_some() {
             for (k, site) in sites.iter().enumerate() {
-                let predicted = schedule(&sites, k, &value);
+                let predicted = schedule(&sites, k, &value, &direct);
                 let seen = observed(site);
                 eprintln!(
-                    "site {} {:08x} value={} {} predicted={predicted:?} observed={seen:?}",
+                    "site {} {:08x} value={} direct={} {} predicted={predicted:?} observed={seen:?}",
                     site.at,
                     ins[site.at].addr,
                     value[k],
+                    direct[k],
                     if predicted == seen { "ok" } else { "MISMATCH" }
                 );
             }
         }
-        for (site, is_value) in sites.iter().zip(&value) {
-            if *is_value {
-                result.insert(site.at);
+        for (k, site) in sites.iter().enumerate() {
+            if value[k] {
+                result.value.insert(site.at);
+            }
+            if direct[k] {
+                result.direct.insert(site.at);
             }
         }
         start = end.max(start + 1);
@@ -370,11 +423,41 @@ mod tests {
             0x2100, 0x200c, 0xf000, 0xf810, 0x2007, 0xf000, 0xf810, 0x4770,
         ]);
         let ins = decode_window(&block, OVERLAY_BASE, block.len() as u32);
-        assert_eq!(value_calls(&ins), BTreeSet::from([2]));
+        assert_eq!(value_calls(&ins).value, BTreeSet::from([2]));
         let mismatch = image(&[
             0x200c, 0x2100, 0xf000, 0xf810, 0x2007, 0xf000, 0xf810, 0x4770,
         ]);
         let ins = decode_window(&mismatch, OVERLAY_BASE, mismatch.len() as u32);
-        assert!(value_calls(&ins).is_empty());
+        assert!(value_calls(&ins).value.is_empty());
+    }
+}
+
+#[cfg(test)]
+mod direct_tests {
+    use super::*;
+    use crate::decode::{decode_window, OVERLAY_BASE};
+
+    fn image(halves: &[u16]) -> Vec<u8> {
+        halves.iter().flat_map(|h| h.to_le_bytes()).collect()
+    }
+
+    /// `movs r2, #128; lsls r2, r2, #8; movs r0, #1; movs r1, #0; bl A;
+    /// movs r0, #1; movs r1, #2; movs r2, #3; bl B; bx lr`: the costly
+    /// argument came first, so A was a direct call; with the chain split
+    /// around the cheap loads it was a wrapper.
+    #[test]
+    fn costly_first_means_direct() {
+        let direct = image(&[
+            0x2280, 0x0212, 0x2001, 0x2100, 0xf000, 0xf80a, 0x2001, 0x2102, 0x2203, 0xf000, 0xf80a,
+            0x4770,
+        ]);
+        let ins = decode_window(&direct, OVERLAY_BASE, direct.len() as u32);
+        assert_eq!(value_calls(&ins).direct, BTreeSet::from([4]));
+        let wrapper = image(&[
+            0x2280, 0x2001, 0x2100, 0x0212, 0xf000, 0xf80a, 0x2001, 0x2102, 0x2203, 0xf000, 0xf80a,
+            0x4770,
+        ]);
+        let ins = decode_window(&wrapper, OVERLAY_BASE, wrapper.len() as u32);
+        assert!(value_calls(&ins).direct.is_empty());
     }
 }

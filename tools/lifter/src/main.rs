@@ -1,4 +1,4 @@
-use lifter::owners::{self, first_error, score, Module};
+use lifter::owners::{self, first_error, score, score_extending, Module};
 use lifter::{lift_owner, tune};
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
@@ -161,13 +161,17 @@ fn score_owner(root: &Path, options: &Options) -> Result<i32, String> {
         None => scratch_path(root, owner)?,
     };
     std::fs::write(&path, &unit).map_err(|error| format!("{}: {error}", path.display()))?;
-    let result = score(root, &path, owner, span)?;
+    let result = score_extending(root, &path, owner, span)?;
     println!(
-        "candidate={} reference={} differing_halfwords={} source={}",
+        "candidate={} reference={} differing_halfwords={} source={}{}",
         result.candidate,
         result.reference,
         result.differing,
-        path.display()
+        path.display(),
+        match result.extended {
+            Some(extended) => format!(" span={extended} (extended past the registered {span})"),
+            None => String::new(),
+        }
     );
     if result.differing > 0 {
         print_diff(&result.report, options.diff);
@@ -277,7 +281,7 @@ fn batch_one(root: &Path, options: &Options, m: &Module) -> Outcome {
     };
     let outcome = lift_owner(root, &owner, Some(m.span), None).and_then(|(unit, _)| {
         std::fs::write(&path, &unit).map_err(|error| format!("{}: {error}", path.display()))?;
-        score(root, &path, &owner, m.span)
+        score_extending(root, &path, &owner, m.span)
     });
     match outcome {
         Ok(result) => {
@@ -291,6 +295,11 @@ fn batch_one(root: &Path, options: &Options, m: &Module) -> Outcome {
                 }
             }
             match (differing, result.differing) {
+                (0, 0) if result.extended.is_some() => println!(
+                    "{owner} {} EXACT span={}",
+                    m.span,
+                    result.extended.unwrap_or(m.span)
+                ),
                 (0, 0) => println!("{owner} {} EXACT", m.span),
                 (0, base) => println!("{owner} {} EXACT tuned from {base}", m.span),
                 (d, _) => println!("{owner} {} diff {d}", m.span),

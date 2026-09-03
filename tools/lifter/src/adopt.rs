@@ -4,7 +4,7 @@
 //! through `overlay adopt`. Every step refuses before it mutates when the
 //! candidate is not exact or the span overlaps another registered region.
 
-use crate::owners::{self, modules, parse_owner, score, tool_command};
+use crate::owners::{self, modules, parse_owner, score_extending, tool_command};
 use compiler_core::source_paths::{SourceOwner, SourcePaths};
 use serde_json::Value;
 use std::path::{Path, PathBuf};
@@ -114,10 +114,14 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
         None => owners::span_for(root, &overlay, entry)?,
     };
     let end = entry + span;
+    // A retained region that lies wholly inside the span and has no source
+    // is this function's own bytes, a literal pool or a tail the register
+    // split off; an exact candidate absorbs it. Anything else refuses.
     let overlapping: Vec<String> = modules(root)?
         .into_iter()
         .filter(|m| m.overlay == overlay && m.entry != entry)
         .filter(|m| m.entry < end && m.entry + m.span > entry)
+        .filter(|m| m.registered || m.entry < entry || m.entry + m.span > end)
         .map(|m| format!("{} ({} bytes, {})", m.key(), m.span, m.kind))
         .collect();
     if !overlapping.is_empty() {
@@ -158,9 +162,13 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
         std::fs::create_dir_all(parent).map_err(|e| format!("{}: {e}", parent.display()))?;
     }
     std::fs::write(&destination, &unit).map_err(|e| format!("{}: {e}", destination.display()))?;
-    let result = score(root, &destination, request.owner, span)?;
+    let result = score_extending(root, &destination, request.owner, span)?;
+    // A pool past the registered end extends the span; the gap it fills was
+    // checked to be unregistered when the extended score was taken.
+    let span = result.extended.unwrap_or(span);
+    let end = entry + span;
     let mut report = vec![format!(
-        "candidate={} reference={} differing_halfwords={}",
+        "candidate={} reference={} differing_halfwords={} span={span}",
         result.candidate, result.reference, result.differing
     )];
     if result.differing != 0 {
@@ -208,16 +216,42 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
     }
     write_json(&assembly, &regions, true, true)?;
 
+    // The owner and every absorbed region lose their records.
+    let mut retired: Vec<SourceOwner> = vec![owner];
+    for m in modules(root)? {
+        if m.overlay == overlay && m.entry != entry && m.entry >= entry && m.entry + m.span <= end {
+            retired.push(SourceOwner::parse(&m.key())?);
+            report.push(format!("absorbed {}", m.key()));
+        }
+    }
+    // An absorbed region's name leaves the source register: its bytes are
+    // this function's, and an owner with a name but no source would be
+    // asked for assembly evidence it no longer has.
+    if retired.len() > 1 {
+        let (mut register, _) = read_json(&manifest)?;
+        if let Some(map) = register.get_mut("owners").and_then(Value::as_object_mut) {
+            for gone in retired.iter().skip(1) {
+                map.shift_remove(&gone.id());
+            }
+        }
+        write_json(&manifest, &register, true, true)?;
+    }
     let dossiers = root.join("games/gs1/recon/en/dossiers.json");
     let (mut records, newline) = read_json(&dossiers)?;
     if let Some(map) = records.get_mut("records").and_then(Value::as_object_mut) {
-        if map.shift_remove(&owner.id()).is_some() {
-            report.push("dossier removed".to_string());
+        let mut removed = 0;
+        for gone in &retired {
+            if map.shift_remove(&gone.id()).is_some() {
+                removed += 1;
+            }
+        }
+        if removed > 0 {
+            report.push(format!("dossiers removed: {removed}"));
             write_json(&dossiers, &records, false, newline)?;
         }
     }
 
-    let stem = owner.legacy_stem();
+    let stems: Vec<String> = retired.iter().map(|o| o.legacy_stem()).collect();
     let unmatchable = root.join("games/gs1/semantic/unmatchable.json");
     let (mut withdrawn, _) = read_json(&unmatchable)?;
     if let Some(list) = withdrawn
@@ -225,17 +259,23 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
         .and_then(Value::as_array_mut)
     {
         let before = list.len();
-        list.retain(|entry| entry["owner"].as_str() != Some(stem.as_str()));
+        list.retain(|entry| {
+            !entry["owner"]
+                .as_str()
+                .is_some_and(|o| stems.iter().any(|s| s == o))
+        });
         if list.len() != before {
             report.push("unmatchable entry removed".to_string());
             write_json(&unmatchable, &withdrawn, true, true)?;
         }
     }
 
-    let draft = root.join(format!("games/gs1/recon/en/overlays/{stem}.c"));
-    if draft.exists() {
-        git(root, &["rm", "-q", &draft.to_string_lossy()])?;
-        report.push("draft removed".to_string());
+    for stem in &stems {
+        let draft = root.join(format!("games/gs1/recon/en/overlays/{stem}.c"));
+        if draft.exists() {
+            git(root, &["rm", "-q", &draft.to_string_lossy()])?;
+            report.push(format!("draft removed: {stem}"));
+        }
     }
 
     let applied = run_tool(

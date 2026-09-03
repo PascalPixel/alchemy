@@ -33,6 +33,7 @@ fn is_local_assignment(line: &str) -> Option<&str> {
     let (name, _) = trimmed.split_once(" = ")?;
     let plain = name == "record"
         || name == "value"
+        || name == "work"
         || name
             .strip_prefix("rec")
             .is_some_and(|rest| rest.bytes().all(|b| b.is_ascii_digit()))
@@ -280,7 +281,7 @@ pub fn function_source(entry: u32, draft: &Draft) -> String {
     };
     let mut text = format!("void Func_{entry:08x}({signature})\n{{\n    u32 i;\n");
     for v in vars.iter().filter(|v| !consts.contains(v)) {
-        if indexed_anywhere(&lines, v) {
+        if v == "work" || indexed_anywhere(&lines, v) {
             text.push_str(&format!("    u8 *{v};\n"));
         } else {
             text.push_str(&format!("    s32 {v};\n"));
@@ -299,11 +300,39 @@ pub fn function_source(entry: u32, draft: &Draft) -> String {
     }
     text.push('\n');
     for line in &lines {
-        text.push_str(line);
+        text.push_str(&volatile_spelling(line));
         text.push('\n');
     }
     text.push_str("}\n");
     text
+}
+
+/// Word and halfword accesses through record and work pointers are volatile
+/// in the original: the scheduler orders a volatile store before a later
+/// volatile load or store, which the reference schedules show. Byte
+/// accesses already alias everything and stay as they are.
+pub fn volatile_spelling(line: &str) -> String {
+    let spelled = line
+        .replace("*(u16 *)", "*(volatile u16 *)")
+        .replace("*(s32 *)", "*(volatile s32 *)")
+        .replace("*(u32 *)", "*(volatile u32 *)")
+        .replace("*(u8 **)", "*(u8 *volatile *)");
+    // The scene work pointer is a volatile global, but the record it points
+    // at is plain: its field stores fold their offsets into the address.
+    let mut plain = spelled;
+    for width in ["u16", "s32", "u32"] {
+        for base in [
+            "(work + ",
+            "(*(u8 *volatile *)0x03001ebc + ",
+            "((*(u8 *volatile *)0x03001ebc + ",
+        ] {
+            plain = plain.replace(
+                &format!("*(volatile {width} *){base}"),
+                &format!("*({width} *){base}"),
+            );
+        }
+    }
+    plain
 }
 
 /// Lifts every function of a decoded window into C bodies.
@@ -442,12 +471,19 @@ pub fn compose(entry: u32, name: &str, body: &str) -> String {
             categories.remove(symbol);
         }
     }
-    let mut body = body.replacen(&format!("void {this}("), &format!("void {name}("), 1);
+    let mut body = body
+        .replacen(&format!("void {this}("), &format!("void {name}("), 1)
+        // The scene work pointer lives at a symbol: a symbol address is a
+        // constant-pool load the scheduler keeps after the preceding call,
+        // where a literal is a free constant it would hoist.
+        .replace("0x03001ebc", "Data_03001ebc");
     let mut declarations = String::new();
     let mut data: Vec<&str> = symbols(&body, "Data_")
         .into_iter()
         .map(|(_, s)| s)
         .collect();
+    // The step helper reads the scene work pointer in every unit.
+    data.push("Data_03001ebc");
     data.sort();
     data.dedup();
     for symbol in data {
@@ -523,7 +559,7 @@ pub fn compose(entry: u32, name: &str, body: &str) -> String {
 \x20* into a pseudo that the compiler then shares with later uses in the block.\n\
 \x20* A value-returning call also sets r0 last of its arguments. */\n{wrappers}\n\
 /* The scene step counter at 0x1d8 of the shared scene work record. */\n\
-static __inline__ void bump_step(s32 amount)\n{{\n    u8 *work = *(u8 **)0x03001ebc;\n\n    \
+static __inline__ void bump_step(s32 amount)\n{{\n    u8 *work = *(u8 **)Data_03001ebc;\n\n    \
 *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);\n}}\n\n{body}"
     )
 }

@@ -66,6 +66,81 @@ void Func_020023aa();
 void Func_020023b0();
 void Func_020023b2();
 
+/* Resolved engine calls: each pseudo symbol is the per-site call word the
+ * overlay image holds (a word can serve two sites with different targets),
+ * and the macro names the engine function the site reaches through the
+ * overlay veneer and the main-image veneer island, keeping the site's own
+ * calling form. Names without a repository binding are provisional.
+ */
+#define BattleRuntime_Reset_1(args...) Func_02002124(args)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_1(a0, a1, a2) Call3(Func_0200218e, a0, a1, a2)
+#define Scene_GetRecord_1(args...) Func_0200215c(args)
+#define BattleRuntime_WaitIfModeZero_1(args...) Func_0200223e(args)
+#define ObjectMotion_SetSpeedParameters_1(args...) Func_0200224a(args)
+#define BattleRuntime_WaitIfModeZero_2(args...) Func_02002148(args)
+#define ObjectMotion_RealignToTrackedObjectAndArmCallback_1(a0, a1, a2, a3) Call4(Func_02002278, a0, a1, a2, a3)
+#define ObjectMotion_CommitCurrentPositionAndActivate_1(args...) Func_020021b6(args)
+#define ObjectMotion_ArmCallback_1(a0, a1, a2) Call3(Func_02002232, a0, a1, a2)
+#define BattleRuntime_WaitIfModeZero_3(args...) Func_02002170(args)
+#define SceneWork_SetStepValue_1(a0) Call1(Func_02002216, a0)
+#define ObjectMotion_ArmCallback_2(a0, a1, a2) Call3(Func_0200224a, a0, a1, a2)
+#define ObjectMotion_SetSpeedParameters_2(a0, a1, a2) Call3(Func_020021bc, a0, a1, a2)
+#define ObjectMotion_SetPositionAndReset_1(a0, a1, a2) Call3(Func_020021e8, a0, a1, a2)
+#define ObjectMotion_ArmCallback_3(a0, a1, a2) Call3(Func_0200226c, a0, a1, a2)
+#define ObjectMotion_PlaceWithinCameraBounds_1(a0, a1, a2, a3) Call4(Func_0200229e, a0, a1, a2, a3)
+#define Object_CommitPositionThenWaitIfModeZero_1(args...) Func_020022aa(args)
+#define BattleRuntime_WaitIfModeZero_4(args...) Func_020021c0(args)
+#define ObjectMotion_Launch_1(args...) Func_02002242(args)
+#define ObjectMotion_Launch_2(args...) Func_0200224c(args)
+#define BattleEvent_RunActionAndWait_1(args...) Func_0200228c(args)
+#define BattleRuntime_WaitIfModeZero_5(args...) Func_020021e2(args)
+#define ObjectMotion_PlaceWithinCameraBounds_2(a0, a1, a2, a3) Call4(Func_020022dc, a0, a1, a2, a3)
+#define Object_CommitPositionThenWaitIfModeZero_2(args...) Func_020022e8(args)
+#define BattleRuntime_WaitIfModeZero_6(args...) Func_020021fe(args)
+#define BattleEffect_SpawnLinkedResourceObject_1(a0, a1, a2) Call3(Func_020022e2, a0, a1, a2)
+#define ObjectMotion_SetSpeedParameters_3(a0, a1, a2) Call3(Func_02002244, a0, a1, a2)
+#define ObjectMotion_SetPositionAndReset_2(a0, a1, a2) Call3(Func_02002272, a0, a1, a2)
+#define ObjectMotion_ArmCallback_4(a0, a1, a2) Call3(Func_020022f6, a0, a1, a2)
+#define BattleRuntime_WaitIfModeZero_7(args...) Func_02002234(args)
+#define ObjectMotion_ArmCallback_5(args...) Func_02002306(args)
+#define BattleRuntime_WaitIfModeZero_8(args...) Func_02002244(args)
+#define BattleRuntime_WaitIfModeZero_9(args...) Func_0200224a(args)
+#define ObjectMotion_CallThenWaitForAnimationChange_1(args...) Func_020022c2(args)
+#define BattleRuntime_WaitIfModeZero_10(args...) Func_02002258(args)
+#define BattleEvent_RunActionAndWait_2(args...) Func_02002310(args)
+#define BattleRuntime_WaitIfModeZero_11(args...) Func_02002266(args)
+#define BattleEffect_SpawnLinkedResourceObject_2(a0, a1, a2) Call3(Func_0200234a, a0, a1, a2)
+#define BattleRuntime_WaitIfModeZero_12(args...) Func_02002278(args)
+#define ObjectMotion_ArmCallback_6(a0, a1, a2) Call3(Func_0200234c, a0, a1, a2)
+#define BattleRuntime_WaitIfModeZero_13(args...) Func_0200228a(args)
+#define BattleEvent_RunActionAndWait_3(args...) Func_02002342(args)
+#define BattleRuntime_WaitIfModeZero_14(args...) Func_02002298(args)
+#define ObjectMotion_ArmCallback_7(a0, a1, a2) Call3(Func_0200236c, a0, a1, a2)
+#define BattleRuntime_WaitIfModeZero_15(args...) Func_020022aa(args)
+#define ObjectMotion_SetSpeedParameters_4(a0, a1, a2) Call3(Func_020022e8, a0, a1, a2)
+#define ObjectMotion_SetPositionAndReset_3(a0, a1, a2) Call3(Func_02002316, a0, a1, a2)
+#define ObjectMotion_ArmCallback_8(args...) Func_02002398(args)
+#define ObjectMotion_ArmCallback_9(a0, a1, a2) Call3(Func_020023a4, a0, a1, a2)
+#define ObjectMotion_ArmCallback_10(a0, a1, a2) Call3(Func_020023b0, a0, a1, a2)
+#define BattleRuntime_WaitIfModeZero_16(args...) Func_020022ee(args)
+#define BattleEvent_RunActionAndWait_4(args...) Func_020023a6(args)
+#define BattleRuntime_WaitIfModeZero_17(args...) Func_020022fc(args)
+#define ObjectMotion_CallThenWaitForAnimationChange_2(args...) Func_02002374(args)
+#define BattleRuntime_WaitIfModeZero_18(args...) Func_0200230a(args)
+#define ObjectMotion_CallThenWaitForAnimationChange_3(args...) Func_02002382(args)
+#define BattleRuntime_WaitIfModeZero_19(args...) Func_02002318(args)
+#define ObjectMotion_SetSpeedParameters_5(a0, a1, a2) Call3(Func_02002352, a0, a1, a2)
+#define Object_SetModeById_1(args...) Func_02002392(args)
+#define Scene_GetRecord_2(a0) Value1(Func_02002358, a0)
+#define ObjectMotion_ResetAndSetPosition_1(args...) Func_02002382(args)
+#define ObjectMotion_CommitCurrentPositionAndActivate_2(args...) Func_020023a0(args)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_2(args...) Func_020023b2(args)
+#define BattleRuntime_WaitIfModeZero_20(args...) ((void (*)())Func_02002358)(args)
+#define Scene_GetRecord_3(args...) Func_02002386(args)
+#define ObjectMotion_EnableActionAndSetCallback_1(a0, a1) Value2(Func_020023a4, a0, a1)
+#define Scene_GetRecord_4(a0) Value1(Func_0200239a, a0)
+#define BattleRuntime_ScheduleShoulderButtonModeUpdate_1(args...) Func_020023aa(args)
+
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
@@ -104,81 +179,91 @@ static __inline__ void bump_step(s32 amount)
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
+/* Runs a fixed sequence of scene calls (positioning, timing, and animation
+ * triggers) for scene 3ae, sequence A. */
 void FieldScene_RunScene3aeSequenceA(void)
 {
     u32 i;
     s32 record;
 
-    Func_02002124();
+    BattleRuntime_Reset_1();
     Func_02002230();
-    Call3(Func_0200218e, 8, 0x1480000, 0x5900000);
-    *(u8 *)(Func_0200215c(8) + 91) = 1;
-    Func_0200223e();
-    Func_0200224a();
-    Func_02002148(20);
-    Call4(Func_02002278, 1, -16, 0, 0x8000);
-    Func_020021b6(1);
-    Call3(Func_02002232, 0, 0xa000, 0);
-    Func_02002170(20);
-    Call1(Func_02002216, 0x1f89);
-    Call3(Func_0200224a, 0, 0xa000, 0);
-    Call3(Func_020021bc, 1, 0x19999, 0xcccc);
-    Call3(Func_020021e8, 1, 232, 0x590);
-    Call3(Func_0200226c, 1, 0x8000, 0);
-    Call4(Func_0200229e, 0xb80000, -1, 0x5a00000, 1);
-    Func_020022aa();
-    Func_020021c0(10);
-    Func_02002242(1, 6, 15);
-    Func_0200224c(1, 6, 40);
-    Func_0200228c(1, 0);
-    Func_020021e2(20);
-    Call4(Func_020022dc, 0x1080000, -1, 0x5a80000, 1);
-    Func_020022e8();
-    Func_020021fe(20);
-    Call3(Func_020022e2, 8, 0x100, 50);
-    Call3(Func_02002244, 8, 0x13333, 0x9999);
-    Call3(Func_02002272, 8, 0x108, 0x590);
-    Call3(Func_020022f6, 8, 0x8000, 0);
-    Func_02002234(10);
-    Func_02002306(1, 0, 0);
-    Func_02002244(20);
-    Func_0200224a(10);
-    Func_020022c2(8, 4);
-    Func_02002258(10);
-    Func_02002310(8, 0);
-    Func_02002266(20);
-    Call3(Func_0200234a, 1, 0x102, 40);
-    Func_02002278(30);
-    Call3(Func_0200234c, 1, 0x8000, 0);
-    Func_0200228a(50);
-    Func_02002342(1, 0);
-    Func_02002298(20);
-    Call3(Func_0200236c, 1, 0x2000, 0);
-    Func_020022aa(30);
-    Call3(Func_020022e8, 1, 0x10000, 0x8000);
-    Call3(Func_02002316, 1, 0x108, 0x5b8);
-    Func_02002398(1, 0, 0);
-    Call3(Func_020023a4, 0, 0x8000, 0);
-    Call3(Func_020023b0, 8, 0x4000, 0);
-    Func_020022ee(30);
-    Func_020023a6(1, 0);
-    Func_020022fc(10);
-    Func_02002374(0, 3);
-    Func_0200230a(30);
-    Func_02002382(1, 3);
-    Func_02002318(30);
-    Call3(Func_02002352, 1, 0x13333, 0x9999);
-    Func_02002392(1, 2);
-    record = Value1(Func_02002358, 0);
+    ObjectMotion_SetHorizontalPositionWithTerrain_1(8, 0x1480000, 0x5900000);
+    /* Set the flag byte at +91 of record 8. */
+    *(u8 *)(Scene_GetRecord_1(8) + 91) = 1;
+    BattleRuntime_WaitIfModeZero_1();
+    ObjectMotion_SetSpeedParameters_1();
+    BattleRuntime_WaitIfModeZero_2(20);
+    ObjectMotion_RealignToTrackedObjectAndArmCallback_1(1, -16, 0, 0x8000);
+    ObjectMotion_CommitCurrentPositionAndActivate_1(1);
+    ObjectMotion_ArmCallback_1(0, 0xa000, 0);
+    BattleRuntime_WaitIfModeZero_3(20);
+    SceneWork_SetStepValue_1(0x1f89);
+    ObjectMotion_ArmCallback_2(0, 0xa000, 0);
+    ObjectMotion_SetSpeedParameters_2(1, 0x19999, 0xcccc);
+    ObjectMotion_SetPositionAndReset_1(1, 232, 0x590);
+    ObjectMotion_ArmCallback_3(1, 0x8000, 0);
+    ObjectMotion_PlaceWithinCameraBounds_1(0xb80000, -1, 0x5a00000, 1);
+    Object_CommitPositionThenWaitIfModeZero_1();
+    BattleRuntime_WaitIfModeZero_4(10);
+    ObjectMotion_Launch_1(1, 6, 15);
+    ObjectMotion_Launch_2(1, 6, 40);
+    BattleEvent_RunActionAndWait_1(1, 0);
+    BattleRuntime_WaitIfModeZero_5(20);
+    ObjectMotion_PlaceWithinCameraBounds_2(0x1080000, -1, 0x5a80000, 1);
+    Object_CommitPositionThenWaitIfModeZero_2();
+    BattleRuntime_WaitIfModeZero_6(20);
+    BattleEffect_SpawnLinkedResourceObject_1(8, 0x100, 50);
+    ObjectMotion_SetSpeedParameters_3(8, 0x13333, 0x9999);
+    ObjectMotion_SetPositionAndReset_2(8, 0x108, 0x590);
+    ObjectMotion_ArmCallback_4(8, 0x8000, 0);
+    BattleRuntime_WaitIfModeZero_7(10);
+    ObjectMotion_ArmCallback_5(1, 0, 0);
+    BattleRuntime_WaitIfModeZero_8(20);
+    BattleRuntime_WaitIfModeZero_9(10);
+    ObjectMotion_CallThenWaitForAnimationChange_1(8, 4);
+    BattleRuntime_WaitIfModeZero_10(10);
+    BattleEvent_RunActionAndWait_2(8, 0);
+    BattleRuntime_WaitIfModeZero_11(20);
+    BattleEffect_SpawnLinkedResourceObject_2(1, 0x102, 40);
+    BattleRuntime_WaitIfModeZero_12(30);
+    ObjectMotion_ArmCallback_6(1, 0x8000, 0);
+    BattleRuntime_WaitIfModeZero_13(50);
+    BattleEvent_RunActionAndWait_3(1, 0);
+    BattleRuntime_WaitIfModeZero_14(20);
+    ObjectMotion_ArmCallback_7(1, 0x2000, 0);
+    BattleRuntime_WaitIfModeZero_15(30);
+    ObjectMotion_SetSpeedParameters_4(1, 0x10000, 0x8000);
+    ObjectMotion_SetPositionAndReset_3(1, 0x108, 0x5b8);
+    ObjectMotion_ArmCallback_8(1, 0, 0);
+    ObjectMotion_ArmCallback_9(0, 0x8000, 0);
+    ObjectMotion_ArmCallback_10(8, 0x4000, 0);
+    BattleRuntime_WaitIfModeZero_16(30);
+    BattleEvent_RunActionAndWait_4(1, 0);
+    BattleRuntime_WaitIfModeZero_17(10);
+    ObjectMotion_CallThenWaitForAnimationChange_2(0, 3);
+    BattleRuntime_WaitIfModeZero_18(30);
+    ObjectMotion_CallThenWaitForAnimationChange_3(1, 3);
+    BattleRuntime_WaitIfModeZero_19(30);
+    ObjectMotion_SetSpeedParameters_5(1, 0x13333, 0x9999);
+    Object_SetModeById_1(1, 2);
+    /* If a record is returned, pass its s16 fields at +10 and +18 back in as
+     * arguments. */
+    record = Scene_GetRecord_2(0);
     if (record != 0) {
-        Func_02002382(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        ObjectMotion_ResetAndSetPosition_1(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Func_020023a0(1);
-    Func_020023b2(1, 0, 0);
-    ((void (*)())Func_02002358)(20);
-    *(u8 *)(Func_02002386(8) + 91) = 0;
-    Value2(Func_020023a4, 8, 2);
-    record = Value1(Func_0200239a, 8);
+    ObjectMotion_CommitCurrentPositionAndActivate_2(1);
+    ObjectMotion_SetHorizontalPositionWithTerrain_2(1, 0, 0);
+    /* Same routine as above, called directly instead of through the Value
+     * wrapper. */
+    BattleRuntime_WaitIfModeZero_20(20);
+    /* Clear the flag byte at +91 of record 8. */
+    *(u8 *)(Scene_GetRecord_3(8) + 91) = 0;
+    ObjectMotion_EnableActionAndSetCallback_1(8, 2);
+    record = Scene_GetRecord_4(8);
+    /* Store the integer part of the 16.16 fixed-point fields at +8 and +16
+     * into the halfwords at +100 and +102. */
     {
         s32 shown = *(s32 *)(record + 8) / 0x10000;
 
@@ -189,5 +274,5 @@ void FieldScene_RunScene3aeSequenceA(void)
 
         *(u16 *)(record + 102) = shown;
     }
-    Func_020023aa();
+    BattleRuntime_ScheduleShoulderButtonModeUpdate_1();
 }

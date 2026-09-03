@@ -360,6 +360,7 @@ fn main() -> ExitCode {
         "score" => score_owner(&root, &options),
         "adopt" => adopt_owner(&root, &options).map(|_| 0),
         "tune" => tune_owner(&root, &options),
+        "imports" => imports_owner(&root, &options),
         "batch" => batch(&root, &options).map(|_| 0),
         "list" => list(&root, &options).map(|_| 0),
         "study" => study(&root, &options).map(|_| 0),
@@ -661,4 +662,17 @@ fn adopt_owner(root: &Path, options: &Options) -> Result<(), String> {
         println!("{line}");
     }
     Ok(())
+}
+
+/// Prints every call site of an owner resolved to its real target, one JSON
+/// object per line, for the humanizing passes that annotate the units.
+fn imports_owner(root: &Path, options: &Options) -> Result<i32, String> {
+    let owner = owner_argument(options)?;
+    for import in lifter::imports::imports(root, owner, options.span)? {
+        println!(
+            "{}",
+            serde_json::to_string(&import).map_err(|error| error.to_string())?
+        );
+    }
+    Ok(0)
 }

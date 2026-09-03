@@ -70,7 +70,7 @@ fn reads_only_self(kind: &Kind, rd: u8) -> bool {
 }
 
 /// Registers an instruction reads.
-fn reads(kind: &Kind) -> Vec<u8> {
+pub(crate) fn reads(kind: &Kind) -> Vec<u8> {
     match *kind {
         Kind::Store { rd, rn, offset, .. } => {
             let mut r = vec![rd, rn];

@@ -241,6 +241,7 @@ fn params_in(lines: &[String]) -> Vec<String> {
 pub fn function_source(entry: u32, draft: &Draft) -> String {
     let mut lines = draft.lines.clone();
     shown_pass(&mut lines);
+    let by_value = by_value_struct(&mut lines);
     let unknown = unknown_registers(&mut lines);
     let mut vars: Vec<String> = vec!["record".to_string()];
     for line in &lines {
@@ -264,7 +265,9 @@ pub fn function_source(entry: u32, draft: &Draft) -> String {
         }
     }
     params.sort();
-    let signature = if params.is_empty() {
+    let signature = if by_value.is_some() {
+        "struct Args args".to_string()
+    } else if params.is_empty() {
         "void".to_string()
     } else {
         params
@@ -279,7 +282,16 @@ pub fn function_source(entry: u32, draft: &Draft) -> String {
             .collect::<Vec<_>>()
             .join(", ")
     };
-    let mut text = format!("void Func_{entry:08x}({signature})\n{{\n    u32 i;\n");
+    let mut text = String::new();
+    if by_value.is_some() {
+        // A struct wider than the four argument registers arrives in them
+        // and on the stack; the callee stores the registers above its frame
+        // to complete it and reads every field from memory.
+        text.push_str("struct Args {\n    s32 a0;\n    s32 a1;\n    s32 a2;\n    s32 a3;\n    s32 a4;\n};\n\n");
+    }
+    text.push_str(&format!(
+        "void Func_{entry:08x}({signature})\n{{\n    u32 i;\n"
+    ));
     for v in vars.iter().filter(|v| !consts.contains(v)) {
         if v == "work" || indexed_anywhere(&lines, v) {
             text.push_str(&format!("    u8 *{v};\n"));
@@ -290,7 +302,8 @@ pub fn function_source(entry: u32, draft: &Draft) -> String {
     for r in &unknown {
         text.push_str(&format!("    s32 {r};\n"));
     }
-    for c in &consts {
+    let replaced = by_value.clone().unwrap_or_default();
+    for c in consts.iter().filter(|c| !replaced.contains(c)) {
         let pointer = is_park_name(c) || (c.starts_with("slot") && indexed_anywhere(&lines, c));
         if pointer {
             text.push_str(&format!("    u8 *{c};\n"));
@@ -610,4 +623,71 @@ fn cast_direct_void_calls(body: &str, symbol: &str) -> String {
         .collect::<Vec<_>>()
         .join("\n")
         + "\n"
+}
+
+/// The four leading `slotN = aK;` lines that store the argument registers
+/// above the frame mark a struct passed by value: the stores go, and every
+/// read of those slots reads the struct's field. Returns the slot names.
+fn by_value_struct(lines: &mut Vec<String>) -> Option<Vec<String>> {
+    let mut slots: Vec<(usize, String)> = Vec::new();
+    let mut expected = 0;
+    let mut base: Option<u32> = None;
+    for (index, line) in lines.iter().enumerate() {
+        let trimmed = line.trim();
+        if trimmed.is_empty() {
+            continue;
+        }
+        let Some(rest) = trimmed.strip_prefix("slot") else {
+            break;
+        };
+        let Some((offset, value)) = rest.strip_suffix(';').and_then(|r| r.split_once(" = ")) else {
+            break;
+        };
+        let Ok(offset) = offset.parse::<u32>() else {
+            break;
+        };
+        if value != format!("a{expected}")
+            || base.is_some_and(|b| offset != b + 4 * expected as u32)
+        {
+            break;
+        }
+        base.get_or_insert(offset);
+        slots.push((index, format!("slot{offset}")));
+        expected += 1;
+        if expected == 4 {
+            break;
+        }
+    }
+    if slots.len() != 4 {
+        return None;
+    }
+    for (index, _) in slots.iter().rev() {
+        lines.remove(*index);
+    }
+    for (k, (_, name)) in slots.iter().enumerate() {
+        for line in lines.iter_mut() {
+            *line = replace_word(line, name, &format!("args.a{k}"));
+        }
+    }
+    Some(slots.into_iter().map(|(_, name)| name).collect())
+}
+
+/// `word` replaced by `with` wherever it stands as a whole identifier.
+fn replace_word(line: &str, word: &str, with: &str) -> String {
+    let mut out = String::new();
+    let mut rest = line;
+    while let Some(at) = rest.find(word) {
+        let before = rest[..at].chars().last();
+        let after = rest[at + word.len()..].chars().next();
+        let boundary = |c: Option<char>| !c.is_some_and(|c| c.is_ascii_alphanumeric() || c == '_');
+        out.push_str(&rest[..at]);
+        if boundary(before) && boundary(after) {
+            out.push_str(with);
+        } else {
+            out.push_str(word);
+        }
+        rest = &rest[at + word.len()..];
+    }
+    out.push_str(rest);
+    out
 }

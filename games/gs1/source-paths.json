@@ -6293,6 +6293,10 @@
     "resource_3c6:02001090": {
       "name": "FieldScene_RunScene3c6SequenceA",
       "source": "overlays/scene_primary_script/run_scene_3c6_sequence_a.c"
+    },
+    "resource_383:02001ba0": {
+      "name": "FieldScene_RunScene383SequenceB",
+      "source": "overlays/scene_primary_script/run_scene_383_sequence_b.c"
     }
   }
 }

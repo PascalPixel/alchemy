@@ -243,6 +243,8 @@ struct Lifter<'a> {
     params: BTreeSet<String>,
     last_cmp: Option<(String, String)>,
     cursor_max: usize,
+    /// Enclosing loops as (tail start, back-branch index).
+    loops: Vec<(usize, usize)>,
 }
 
 fn push_unique(list: &mut Vec<String>, name: &str) {
@@ -290,6 +292,7 @@ impl<'a> Lifter<'a> {
             params: BTreeSet::new(),
             last_cmp: None,
             cursor_max: 0,
+            loops: Vec::new(),
         };
         lifter.reset();
         lifter
@@ -354,7 +357,10 @@ impl<'a> Lifter<'a> {
         };
         if self.inline_calls.contains(&call) {
             if let Some(&oi) = self.call_stmt.get(&call) {
-                if oi == self.out.len() - 1 && assigned_prefix(&self.out[oi]).is_none() {
+                if oi + 1 == self.out.len()
+                    && assigned_prefix(&self.out[oi]).is_none()
+                    && !self.call_aliased(call)
+                {
                     let text = self.out.pop().unwrap();
                     let text = text.trim().trim_end_matches(';').to_string();
                     self.call_stmt.remove(&call);
@@ -651,7 +657,9 @@ impl<'a> Lifter<'a> {
                     self.emit(format!("while ({text}) {{"));
                     let saved = self.indent.clone();
                     self.indent.push_str("    ");
+                    self.loops.push((tail_start, from));
                     self.run(i, tail_start);
+                    self.loops.pop();
                     self.indent = saved;
                     self.emit("}");
                     self.clear_scratch();
@@ -681,7 +689,9 @@ impl<'a> Lifter<'a> {
         let saved = self.indent.clone();
         self.indent.push_str("    ");
         self.regs[counter as usize] = Some(Val::expr("i"));
+        self.loops.push((tail_start, from));
         self.run_filtered(i, tail_start, counter);
+        self.loops.pop();
         self.indent = saved;
         self.emit("}");
         self.clear_scratch();
@@ -742,6 +752,7 @@ impl<'a> Lifter<'a> {
         self.maybe_label(i);
         let x = &self.ins[i];
         let addr = x.addr;
+        let flags = flag_register(&x.kind);
         match x.kind.clone() {
             Kind::Push { .. }
             | Kind::Pop { .. }
@@ -807,7 +818,7 @@ impl<'a> Lifter<'a> {
                             let mut v2 = v.clone();
                             self.ensure_result_var(&mut v2);
                         } else if !is_plain_local(&e) && !e.ends_with('?') {
-                            let name = format!("p{rd}");
+                            let name = self.fresh_park_name(rd, "u8 *");
                             self.park(&name, &e);
                             self.regs[rm as usize] = Some(Val::expr(name.clone()));
                             self.set_reg(rd, Val::expr(name));
@@ -849,6 +860,14 @@ impl<'a> Lifter<'a> {
                     let v = self.val_of(rm, Some(rd));
                     let text = self.fmt(&v);
                     self.set_reg(rd, Val::expr(format!("~{text}")));
+                }
+                Alu::Tst | Alu::Cmn => {
+                    let v = self.val_of(rd, None);
+                    let w = self.val_of(rm, None);
+                    let a = self.arith(&v);
+                    let b = self.arith(&w);
+                    let op = if op == Alu::Tst { "&" } else { "+" };
+                    self.last_cmp = Some((format!("({a} {op} {b})"), "0".to_string()));
                 }
                 _ => self.emit(format!("/* {} */", x.text.clone())),
             },
@@ -1008,20 +1027,27 @@ impl<'a> Lifter<'a> {
             } => self.store(rd, rn, offset, width),
             Kind::Ldmia { .. } | Kind::Stmia { .. } => self.emit(format!("/* {} */", x.text)),
             Kind::CmpImm { rn, imm } => {
-                let v = self.val_of(rn, Some(rn));
+                // A compared register is consumed: it is not a call argument.
+                let v = self.val_of(rn, None);
                 let a = self.fmt_raw(&v);
                 self.last_cmp = Some((a, imm.to_string()));
             }
             Kind::CmpReg { rn, rm } => {
-                let v = self.val_of(rn, Some(rn));
-                let w = self.val_of(rm, Some(rn));
+                let v = self.val_of(rn, None);
+                let w = self.val_of(rm, None);
                 let a = self.fmt_raw(&v);
                 let b = self.fmt(&w);
                 self.last_cmp = Some((a, b));
             }
             Kind::Bl { target } => self.call(i, target),
             Kind::B { target } => return self.branch(i, target, end),
-            Kind::Bcond { cond, target } => return self.conditional(i, cond, target),
+            Kind::Bcond { cond, target } => return self.conditional(i, cond, target, end),
+        }
+        if let Some(r) = flags {
+            if let Some(v) = self.regs[r as usize].clone() {
+                let a = self.fmt_raw(&v);
+                self.last_cmp = Some((a, "0".to_string()));
+            }
         }
         i + 1
     }
@@ -1070,11 +1096,28 @@ impl<'a> Lifter<'a> {
         self.set_reg(rd, Val::memory(e));
     }
 
+    /// `pN`, or `pNb`, `pNc`, when the register was already parked with
+    /// another type: one local cannot be both a pointer and an integer.
+    fn fresh_park_name(&self, rd: u8, c_type: &str) -> String {
+        for suffix in ["", "b", "c", "d", "e"] {
+            let candidate = format!("p{rd}{suffix}");
+            let conflict = self.parked.contains_key(&candidate)
+                || self.parked_loads.iter().any(|p| {
+                    p.split(':').next() == Some(candidate.as_str())
+                        && p.split(':').nth(1) != Some(c_type)
+                });
+            if !conflict {
+                return candidate;
+            }
+        }
+        format!("p{rd}")
+    }
+
     fn park_load(&mut self, rd: u8, e: &str, c_type: &str) -> bool {
         if !(4..=11).contains(&rd) {
             return false;
         }
-        let name = format!("p{rd}");
+        let name = self.fresh_park_name(rd, c_type);
         self.emit(format!("{name} = {e};"));
         push_unique(&mut self.parked_loads, &format!("{name}:{c_type}"));
         self.set_reg(rd, Val::memory(name));
@@ -1164,7 +1207,7 @@ impl<'a> Lifter<'a> {
             }
         }
         if let Some(rest) = rhs.strip_prefix(&format!("({lhs} + ")) {
-            let amount = rest.trim_end_matches(')');
+            let amount = rest.strip_suffix(')').unwrap_or(rest);
             self.emit(format!("{lhs} += {amount};"));
             return;
         }
@@ -1282,6 +1325,10 @@ impl<'a> Lifter<'a> {
             .enumerate()
             .skip(1)
             .any(|(_, v)| v.as_ref().and_then(Val::call_index) == Some(call))
+            || self
+                .stack_args
+                .values()
+                .any(|v| v.call_index() == Some(call))
     }
 
     fn pop_call_condition(&mut self, a: &str, extra_guard: bool) -> String {
@@ -1311,8 +1358,7 @@ impl<'a> Lifter<'a> {
 
     fn branch(&mut self, i: usize, target: u32, end: usize) -> usize {
         let Some(t) = self.index_of(target) else {
-            self.emit(format!("goto {};", label_name(target)));
-            self.goto_targets.insert(target);
+            self.jump(target);
             return i + 1;
         };
         if t == i + 1 {
@@ -1346,7 +1392,9 @@ impl<'a> Lifter<'a> {
                 self.emit(format!("while ({text}) {{"));
                 let saved = self.indent.clone();
                 self.indent.push_str("    ");
+                self.loops.push((t, from));
                 self.run(l, t);
+                self.loops.pop();
                 self.indent = saved;
                 self.emit("}");
                 self.clear_scratch();
@@ -1354,9 +1402,25 @@ impl<'a> Lifter<'a> {
             }
             return t;
         }
+        self.jump(target);
+        i + 1
+    }
+
+    /// `continue` into the enclosing loop's tail, `break` past it, else a goto.
+    fn jump(&mut self, target: u32) {
+        let index = self.index_of(target);
+        if let (Some(index), Some(&(tail_start, from))) = (index, self.loops.last()) {
+            if index >= tail_start && index <= from {
+                self.emit("continue;");
+                return;
+            }
+            if index == from + 1 {
+                self.emit("break;");
+                return;
+            }
+        }
         self.emit(format!("goto {};", label_name(target)));
         self.goto_targets.insert(target);
-        i + 1
     }
 
     /// Formats a value without resolving a call result, so the caller can
@@ -1368,12 +1432,12 @@ impl<'a> Lifter<'a> {
         self.fmt(v)
     }
 
-    fn conditional(&mut self, i: usize, cond: Cond, target: u32) -> usize {
+    fn conditional(&mut self, i: usize, cond: Cond, target: u32, end: usize) -> usize {
         let t = self.index_of(target);
         let (a, b) = self
             .last_cmp
             .clone()
-            .unwrap_or_else(|| ("?".to_string(), "?".to_string()));
+            .unwrap_or_else(|| ("0".to_string(), "0".to_string()));
         if let Some(t) = t.filter(|t| *t > i) {
             let a = if a.starts_with("@call:") {
                 let guard = !self.r0_read_after(i);
@@ -1386,8 +1450,10 @@ impl<'a> Lifter<'a> {
             let saved = self.indent.clone();
             self.indent.push_str("    ");
             let last = &self.ins[t - 1];
+            // An else block ends inside the current region; a jump beyond it
+            // is a break, continue, or goto handled when the body is lifted.
             let else_end = match last.kind {
-                Kind::B { target } => self.index_of(target).filter(|e| *e > t),
+                Kind::B { target } => self.index_of(target).filter(|e| *e > t && *e <= end),
                 _ => None,
             };
             self.run(i + 1, if else_end.is_some() { t - 1 } else { t });
@@ -1412,9 +1478,11 @@ impl<'a> Lifter<'a> {
         };
         let text = cond_text(cond, &a, &b);
         self.emit(format!("if ({text}) {{"));
-        self.emit(format!("    goto {};", label_name(target)));
+        let saved = self.indent.clone();
+        self.indent.push_str("    ");
+        self.jump(target);
+        self.indent = saved;
         self.emit("}");
-        self.goto_targets.insert(target);
         i + 1
     }
 }
@@ -1432,7 +1500,10 @@ fn is_plain_local(e: &str) -> bool {
         return rest.bytes().all(|b| b.is_ascii_digit());
     }
     if let Some(rest) = e.strip_prefix('p') {
-        return !rest.is_empty() && rest.bytes().all(|b| b.is_ascii_digit());
+        let digits = rest.trim_end_matches(|c: char| c.is_ascii_lowercase());
+        return !digits.is_empty()
+            && digits.bytes().all(|b| b.is_ascii_digit())
+            && rest.len() - digits.len() <= 1;
     }
     false
 }
@@ -1465,6 +1536,23 @@ fn call_indexed(lhs: &str) -> Option<(String, u32)> {
         return None;
     }
     Some((call.to_string(), index.parse().ok()?))
+}
+
+/// The register whose new value sets the flags a following branch tests.
+fn flag_register(kind: &Kind) -> Option<u8> {
+    match *kind {
+        Kind::MovImm { rd, .. }
+        | Kind::Movs { rd, .. }
+        | Kind::AddImm3 { rd, .. }
+        | Kind::AddImm8 { rd, .. }
+        | Kind::AddReg { rd, .. }
+        | Kind::SubImm3 { rd, .. }
+        | Kind::SubImm8 { rd, .. }
+        | Kind::SubReg { rd, .. }
+        | Kind::ShiftImm { rd, .. } => Some(rd),
+        Kind::Alu { op, rd, .. } if !matches!(op, Alu::Tst | Alu::Cmp | Alu::Cmn) => Some(rd),
+        _ => None,
+    }
 }
 
 /// Registers an instruction reads, and the register it writes.
@@ -1530,15 +1618,17 @@ pub fn lift(ins: &[Ins]) -> Draft {
     lifter.reset();
     lifter.run(0, ins.len());
     let mut lines = lifter.out.clone();
+    for target in lifter.goto_targets.difference(&lifter.emitted_labels) {
+        lines.push(format!("    {}:;", label_name(*target)));
+    }
     rewrite_scene_work(&mut lines);
     let mut consts = lifter.consts.clone();
-    consts.extend(lifter.slots.iter().cloned());
-    consts.extend(
-        lifter
-            .parked_loads
-            .iter()
-            .map(|entry| entry.split(':').next().unwrap().to_string()),
-    );
+    for slot in &lifter.slots {
+        push_unique(&mut consts, slot);
+    }
+    for entry in &lifter.parked_loads {
+        push_unique(&mut consts, entry.split(':').next().unwrap());
+    }
     Draft {
         lines,
         params: lifter.params.iter().cloned().collect(),
@@ -1576,5 +1666,47 @@ fn rewrite_scene_work(lines: &mut [String]) {
             }
         }
         *line = line.replace("(*(s32 *)0x03001ebc + 0x", "(*(u8 **)0x03001ebc + 0x");
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::decode::{decode_window, OVERLAY_BASE};
+
+    fn lifted(halves: &[u16]) -> String {
+        let image: Vec<u8> = halves.iter().flat_map(|h| h.to_le_bytes()).collect();
+        let ins = decode_window(&image, OVERLAY_BASE, image.len() as u32);
+        lift(&ins).lines.join("\n")
+    }
+
+    /// `ldr r0, [r1]; ldr r2, [r1, #4]; adds r0, r0, r2; str r0, [r1]; bx lr`
+    #[test]
+    fn compound_assignment_keeps_inner_parentheses() {
+        let text = lifted(&[0x6808, 0x684a, 0x1880, 0x6008, 0x4770]);
+        assert!(text.contains("*(s32 *)(a1) += *(s32 *)(a1 + 4);"), "{text}");
+    }
+
+    /// `subs r0, #1; bne +0; movs r0, #0; bx lr`: the branch tests the
+    /// subtraction's flags, not a compare.
+    #[test]
+    fn arithmetic_flags_feed_the_branch() {
+        let text = lifted(&[0x3801, 0xd100, 0x2000, 0x4770]);
+        assert!(text.contains("if ((a0 - 1) == 0) {"), "{text}");
+    }
+
+    /// `L: bl X; cmp r0, #0; bne cont; bl Y; b exit; cont: bl Z; adds r5, #1;
+    /// cmp r5, #4; bne L; exit: bx lr`: the jump past the loop is `break`,
+    /// and the `b exit` is not mistaken for an else block.
+    #[test]
+    fn jump_past_the_loop_is_break() {
+        let text = lifted(&[
+            0xf000, 0xf80a, 0x2800, 0xd102, 0xf000, 0xf80a, 0xe004, 0xf000, 0xf80a, 0x3501, 0x2d04,
+            0xd1f3, 0x4770,
+        ]);
+        assert!(text.contains("for (i = 0; i != 4; i++) {"), "{text}");
+        assert!(text.contains("break;"), "{text}");
+        assert!(!text.contains("goto"), "{text}");
+        assert!(!text.contains("else"), "{text}");
     }
 }

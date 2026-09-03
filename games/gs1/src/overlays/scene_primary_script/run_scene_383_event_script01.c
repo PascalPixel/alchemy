@@ -2,10 +2,10 @@
 
 #define RunEventScript01 Func_02002fd4
 
-/* AUDITED GENERATED CALL SCRIPT for RunEventScript01: 189 calls, 0 loops, 5 memory operations.
- * Recovered from the complete decoded owner. Calls, arguments, control flow,
- * loops, and memory operations are accounted for against the ROM. */
-
+/* Loader-relocated overlay calls: each symbol names the pre-relocation call
+ * word the image holds. */
+extern u8 Data_0200d17c[];
+extern u8 Data_03001ebc[];
 void Func_020076ba();
 void Func_0200770c();
 void Func_02007726();
@@ -69,13 +69,13 @@ void Func_02007d02();
 void Func_02007d0e();
 void Func_02007d1a();
 void Func_02007d24();
-void *Func_02007d56();
-void Func_02007d8c();
-void Func_02007d98();
-void Func_02007da4();
+s32 Func_02007d56();
+s32 Func_02007d8c();
+s32 Func_02007d98();
+s32 Func_02007da4();
 void Func_02007dae();
 void Func_02007dba();
-void *Func_02007dc8();
+s32 Func_02007dc8();
 void Func_02007dd6();
 void Func_02007df4();
 void Func_02007e0a();
@@ -135,7 +135,7 @@ void Func_02008140();
 void Func_02008150();
 void Func_02008174();
 void Func_02008186();
-void Func_02008198();
+s32 Func_02008198();
 void Func_0200819c();
 void Func_020081a2();
 void Func_020081a8();
@@ -185,62 +185,105 @@ void Func_0200847e();
 void Func_02008574();
 void Func_02008580();
 
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+
+static __inline__ void Call1(void (*f)(), s32 a0)
+{
+    f(a0);
+}
+
+static __inline__ s32 Value1(s32 (*f)(), s32 a0)
+{
+    return f(a0);
+}
+
+static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
+{
+    f(a0, a1);
+}
+
+static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
+{
+    return f(a0, a1);
+}
+
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    f(a0, a1, a2);
+}
+
+/* The scene step counter at 0x1d8 of the shared scene work record. */
+static __inline__ void bump_step(s32 amount)
+{
+    u8 *work = *(u8 **)Data_03001ebc;
+
+    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+}
+
 void RunEventScript01(void)
 {
-    void *p1;
-    void *p15;
+    u32 i;
+    s32 record;
+    u8 *work;
+    s32 base5_200d17c;
+    u8 *p5;
 
-    p1 = Func_02007d56(12);
+    record = Value1(Func_02007d56, 12);
+    p5 = *(volatile s32 *)(record + 80);
     Func_02007d24();
-    Func_02007dba(10, 51904512, 27262976);
-    Func_02007dc8(11, 52428800, 26214400);
-    Func_02007dd6(12, 50855936, 25690112);
-    Func_02007d8c(10);
-    Func_02007d02();
-    Func_02007d98(11);
-    Func_02007d0e();
-    Func_02007da4(12);
-    Func_02007d1a();
+    Call3(Func_02007dba, 10, 0x3180000, 0x1a00000);
+    Call3(Func_02007dc8, 11, 0x3200000, 0x1900000);
+    Call3(Func_02007dd6, 12, 0x3080000, 0x1880000);
+    record = Func_02007d8c(10);
+    Func_02007d02(record, 0);
+    record = Func_02007d98(11);
+    Func_02007d0e(record, 0);
+    record = Func_02007da4(12);
+    Func_02007d1a(record, 0);
     Func_02007e0a(10, 9);
     Func_02007e12(11, 9);
     Func_02007e1a(12, 9);
-    p15 = Func_02007dc8(12);
-    *(u8 *)((u8 *)(p15) + 35) &= 0xfe;
-    *(u8 *)((*(void **)(p1 + 80)) + 9) = *(u8 *)((*(void **)(p1 + 80)) + 9);
-    Func_02007df4(10);
-    Func_02007e42(0, 51904512, 28835840);
-    Func_02007e50(1, 52953088, 28311552);
-    Func_02007e5e(2, 50855936, 28835840);
-    Func_02007eca(0, 49152, 0);
-    Func_02007ed6(1, 45056, 0);
-    Func_02007ee2(2, 45056, 0);
-    Func_02007e44(8, 52428, 26214);
-    Func_02007ef8(8, 45056, 0);
-    Func_02007f2e(0, 0, 521);
+    *(u8 *)(Func_02007dc8(12) + 35) &= 254;
+    p5[9] |= 12;
+    base5_200d17c = (s32)Data_0200d17c;
+    Func_02007df4(10, base5_200d17c);
+    Call3(Func_02007e42, 0, 0x3180000, 0x1b80000);
+    Call3(Func_02007e50, 1, 0x3280000, 0x1b00000);
+    Call3(Func_02007e5e, 2, 0x3080000, 0x1b80000);
+    Call3(Func_02007eca, 0, 0xc000, 0);
+    Call3(Func_02007ed6, 1, 0xb000, 0);
+    Call3(Func_02007ee2, 2, 0xb000, 0);
+    Call3(Func_02007e44, 8, 0xcccc, 0x6666);
+    Call3(Func_02007ef8, 8, 0xb000, 0);
+    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x209;
+    Func_02007f2e(0, 0);
     Func_02007f42();
     Func_02007dae();
     Func_020076ba();
-    Func_02007e82(11);
+    Func_02007e82(11, base5_200d17c);
     Func_02007e38(30);
-    Func_02007e90(12);
+    Func_02007e90(12, base5_200d17c);
     Func_02007e46(30);
-    Func_02007f24(4836);
+    Call1(Func_02007f24, 0x12e4);
     Func_0200770c(10, 20);
-    Func_02007f60(8, 258, 0);
+    Call3(Func_02007f60, 8, 0x102, 0);
     Func_02007e66(60);
     Func_02007726(8, 20);
-    Func_02007ef4(8, 808, 456);
-    Func_02007ece(1, 52428, 26214);
-    Func_02007f0c(1, 792, 432);
+    Call3(Func_02007ef4, 8, 0x328, 0x1c8);
+    Call3(Func_02007ece, 1, 0xcccc, 0x6666);
+    Call3(Func_02007f0c, 1, 0x318, 0x1b0);
     Func_02007f8e(1, 0, 0);
-    Func_02007f24(8, 808, 408);
-    Func_02007fa8(8, 32768, 0);
-    Func_02007f3e(1, 808, 432);
-    Func_02007fc2(1, 49152, 0);
+    Call3(Func_02007f24, 8, 0x328, 0x198);
+    Call3(Func_02007fa8, 8, 0x8000, 0);
+    Call3(Func_02007f3e, 1, 0x328, 0x1b0);
+    Call3(Func_02007fc2, 1, 0xc000, 0);
     Func_02007ed8(20);
     Func_020077e2(8, 3, 20);
     Func_020077a2(8, 20);
-    Func_02007f70(8, 768, 408);
+    Call3(Func_02007f70, 8, 0x300, 0x198);
     Func_02007efe(20);
     Func_02007fd0(8, 0, 0);
     Func_02007fda(0, 8, 0);
@@ -250,11 +293,11 @@ void RunEventScript01(void)
     Func_02007fce(0, 3);
     Func_02007fd6(1, 3);
     Func_02007848(2, 3, 20);
-    Func_02007fce(8, 744, 408);
+    Call3(Func_02007fce, 8, 0x2e8, 0x198);
     Func_02007f5c(50);
     Func_02008024(11, 2);
     Func_02007824(11, 20);
-    Func_02007fc4(11);
+    Func_02007fc4(11, base5_200d17c);
     Func_0200803c(1, 1);
     Func_02007f82(20);
     Func_02008054(0, 11, 0);
@@ -263,8 +306,8 @@ void RunEventScript01(void)
     Func_02007860(1, 20);
     Func_02008070(12, 2);
     Func_02007870(12, 30);
-    Func_02008010(12);
-    Func_020080ca(1, 259, 0);
+    Func_02008010(12, base5_200d17c);
+    Call3(Func_020080ca, 1, 0x103, 0);
     Func_02007fd0(60);
     Func_02007890(1, 30);
     Func_020078b2(2, 0, 30);
@@ -274,10 +317,10 @@ void RunEventScript01(void)
     Func_020078d8(1, 2, 30);
     Func_02007912(0, 3, 30);
     Func_020078d2(2, 20);
-    Func_02008126(1, 256, 0);
+    Call3(Func_02008126, 1, 0x100, 0);
     Func_0200802c(60);
     Func_020078ec(1, 30);
-    Func_0200813e(2, 257, 0);
+    Call3(Func_0200813e, 2, 0x101, 0);
     Func_02008044(60);
     Func_02007936(0, 1, 20);
     Func_020080ee(0, 3);
@@ -289,38 +332,40 @@ void RunEventScript01(void)
     Func_02008140(0, 1);
     Func_02008150(1, 1);
     Func_02008096(20);
-    Func_020081a8(1, 258);
+    Call2(Func_020081a8, 1, 0x102);
     Func_020080a6(60);
     Func_02007980(0, 1, 10);
-    Func_02008198(1, 0);
-    if (Func_020080f8(0, 0) == 0) {
+    Value2(Func_02008198, 1, 0);
+    if (Value2(Func_020080f8, 0, 0) == 0) {
         Func_020080ca(20);
         Func_0200819c(0, 2, 0);
         Func_020079ae(1, 2, 20);
         Func_02007a2a();
         Func_020081a2(0, 1);
         Func_020081b2(1, 1);
-        Func_020080f8(20);
+        ((void (*)())Func_020080f8)(20);
         Func_020079b8(1, 20);
+    } else {
+        bump_step(1);
+        Call3(Func_02008238, 1, 0x102, 0);
+        Func_0200813e(60);
+        Func_020079fe(1, 20);
+        Func_02008218(0, 2, 0);
+        Func_02007a2a(1, 2, 20);
+        Func_02007aa6();
+        Func_0200821e(0, 1);
+        Func_0200822e(1, 1);
+        Func_02008174(20);
     }
-    Func_02008238(1, 258, 0, 473);
-    Func_0200813e(60);
-    Func_020079fe(1, 20);
-    Func_02008218(0, 2, 0);
-    Func_02007a2a(1, 2, 20);
-    Func_02007aa6();
-    Func_0200821e(0, 1);
-    Func_0200822e(1, 1);
-    Func_02008174(20);
-    Func_02008280(2, 258, 0);
+    Call3(Func_02008280, 2, 0x102, 0);
     Func_02008186(60);
     Func_02007a90(2, 4, 20);
-    Func_0200826e();
+    Call1(Func_0200826e, 0x12f2);
     Func_02007a56(2, 20);
     Func_0200823e(0, 3);
     Func_02007ab0(1, 3, 40);
-    Func_02008236(8, 808, 408);
-    Func_020082ba(8, 32768, 0);
+    Call3(Func_02008236, 8, 0x328, 0x198);
+    Call3(Func_020082ba, 8, 0x8000, 0);
     Func_020081d0(30);
     Func_020082a2(0, 8, 0);
     Func_020082ac(1, 8, 0);
@@ -328,17 +373,17 @@ void RunEventScript01(void)
     Func_020082b6(8, 1);
     Func_020081fc(20);
     Func_02007abc(8, 20);
-    Func_02008256(9);
-    Func_02008260(13);
-    Func_0200826a(14);
-    Func_020082c0(9, 48758784, 26738688);
-    Func_020082b6(9, 768, 408);
+    Call3(Func_02008256, 9, 0xcccc, 0x6666);
+    Call3(Func_02008260, 13, 0xcccc, 0x6666);
+    Call3(Func_0200826a, 14, 0xcccc, 0x6666);
+    Call3(Func_020082c0, 9, 0x2e80000, 0x1980000);
+    Call3(Func_020082b6, 9, 0x300, 0x198);
     Func_02007b18(9, 10, 30);
-    Func_020082e6(13, 48758784, 26738688);
-    Func_020082dc(13, 768, 408);
-    Func_02008302(14, 48758784, 26738688);
-    Func_020082f0(14, 784, 400);
-    Func_02008306(13, 776, 424);
+    Call3(Func_020082e6, 13, 0x2e80000, 0x1980000);
+    Call3(Func_020082dc, 13, 0x300, 0x198);
+    Call3(Func_02008302, 14, 0x2e80000, 0x1980000);
+    Call3(Func_020082f0, 14, 0x310, 0x190);
+    Call3(Func_02008306, 13, 0x308, 0x1a8);
     Func_0200831c(14);
     Func_02008366(13, 10, 0);
     Func_02007b78(14, 10, 20);
@@ -363,8 +408,8 @@ void RunEventScript01(void)
     Func_02007c3c(13, 14, 20);
     Func_020083f4(13, 3);
     Func_02007c66(14, 3, 20);
-    Func_020083e4(14, 792, 392);
-    Func_020083fa(13, 784, 400);
+    Call3(Func_020083e4, 14, 0x318, 0x188);
+    Call3(Func_020083fa, 13, 0x310, 0x190);
     Func_02008454(13, 12, 0);
     Func_0200841a(14);
     Func_02007c6c(14, 11, 20);
@@ -378,9 +423,11 @@ void RunEventScript01(void)
     Func_02008476(0, 3);
     Func_0200847e(1, 3);
     Func_02007cf0(2, 3, 50);
+    work = *(u8 *volatile *)Data_03001ebc;
+    *(volatile s32 *)((work + 0x1c8)) = 30;
+    *(volatile s32 *)((work + 0x1c0)) = 0x201;
     Func_02008574();
     Func_02008580();
     Func_02008416(60);
     Func_0200842a();
 }
-

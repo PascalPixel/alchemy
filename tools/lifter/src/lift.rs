@@ -245,6 +245,9 @@ struct Lifter<'a> {
     out: Vec<String>,
     indent: String,
     pending_name: Option<String>,
+    /// A definition that fell inside a read-modify-write statement: it lands
+    /// after that statement, where the original defines it.
+    deferred: Option<String>,
     stack_args: BTreeMap<u32, Val>,
     written: BTreeSet<u8>,
     call_stmt: HashMap<usize, usize>,
@@ -257,6 +260,10 @@ struct Lifter<'a> {
     emitted_labels: BTreeSet<u32>,
     params: BTreeSet<String>,
     last_cmp: Option<(String, String)>,
+    /// The register the last `cmp rN, #imm` compared.
+    last_cmp_reg: Option<u8>,
+    /// Instructions an idiom already consumed; the run skips them.
+    consumed: BTreeSet<usize>,
     cursor_max: usize,
     /// Enclosing loops as (tail start, back-branch index).
     loops: Vec<(usize, usize)>,
@@ -296,6 +303,7 @@ impl<'a> Lifter<'a> {
             out: Vec::new(),
             indent: "    ".to_string(),
             pending_name: None,
+            deferred: None,
             stack_args: BTreeMap::new(),
             written: BTreeSet::new(),
             call_stmt: HashMap::new(),
@@ -308,6 +316,8 @@ impl<'a> Lifter<'a> {
             emitted_labels: BTreeSet::new(),
             params: BTreeSet::new(),
             last_cmp: None,
+            last_cmp_reg: None,
+            consumed: BTreeSet::new(),
             cursor_max: 0,
             loops: Vec::new(),
         };
@@ -342,7 +352,60 @@ impl<'a> Lifter<'a> {
     }
 
     fn emit(&mut self, s: impl AsRef<str>) {
-        self.out.push(format!("{}{}", self.indent, s.as_ref()));
+        let line = s.as_ref();
+        if let Some(deferred) = self.deferred.take() {
+            // The definition fell between the load and the store of a byte
+            // mask: the statement opens up so it lands there, where the
+            // compiler picks the temporary the loaded byte no longer needs.
+            if let Some((lhs, mask)) = line.strip_suffix(';').and_then(|l| l.split_once(" &= ")) {
+                let (record_line, name, index) = match call_indexed(lhs) {
+                    Some((call, index)) => (
+                        Some(format!("u8 *record = {call};")),
+                        "record".to_string(),
+                        index,
+                    ),
+                    None => match indexed(lhs) {
+                        Some((name, index)) => (None, name, index),
+                        None => {
+                            self.out.push(format!("{}{line}", self.indent));
+                            self.out.push(format!("{}{deferred}", self.indent));
+                            return;
+                        }
+                    },
+                };
+                let indent = self.indent.clone();
+                self.out.push(format!("{indent}{{"));
+                if let Some(record_line) = record_line {
+                    self.out.push(format!("{indent}    {record_line}"));
+                }
+                self.out.push(format!(
+                    "{indent}    u8 value = *(volatile u8 *)&{name}[{index}];"
+                ));
+                self.out
+                    .push(format!("{indent}    s32 masked = value & {mask};"));
+                self.out.push(String::new());
+                self.out.push(format!("{indent}    {deferred}"));
+                self.out
+                    .push(format!("{indent}    {name}[{index}] = (u8)masked;"));
+                self.out.push(format!("{indent}}}"));
+                return;
+            }
+            self.out.push(format!("{}{line}", self.indent));
+            self.out.push(format!("{}{deferred}", self.indent));
+            return;
+        }
+        self.out.push(format!("{}{line}", self.indent));
+    }
+
+    /// Whether a low register holds a memory read that no statement has
+    /// consumed yet: a read-modify-write is in flight.
+    fn read_in_flight(&self, except: u8) -> bool {
+        (0..4u8).filter(|&r| r != except).any(|r| {
+            self.regs[r as usize]
+                .as_ref()
+                .and_then(|v| v.e.as_deref())
+                .is_some_and(|e| e.contains("*("))
+        })
     }
 
     fn index_of(&self, target: u32) -> Option<usize> {
@@ -529,6 +592,19 @@ impl<'a> Lifter<'a> {
         name
     }
 
+    /// The name of a constant address a callee-saved register keeps across
+    /// its uses: the original holds such an address in one pointer local, so
+    /// every access goes through the same pseudo. The scene work pointer
+    /// keeps its literal spelling, which the step helper recognises.
+    fn shared_base(&mut self, base: &Val) -> Option<String> {
+        let c = base.c? as u32;
+        let callee_saved = base.reg.is_some_and(|r| (4..=7).contains(&r));
+        if !base.shared || !callee_saved || c == 0x0300_1ebc {
+            return None;
+        }
+        Some(self.name_shared(base))
+    }
+
     /// A pointer-typed local read as an integer operand.
     fn arith(&mut self, v: &Val) -> String {
         let text = self.fmt(v);
@@ -621,6 +697,10 @@ impl<'a> Lifter<'a> {
         while i < end {
             if i < self.cursor_max {
                 i = self.cursor_max;
+                continue;
+            }
+            if self.consumed.contains(&i) {
+                i += 1;
                 continue;
             }
             self.maybe_label(i);
@@ -986,7 +1066,11 @@ impl<'a> Lifter<'a> {
                 }
                 let v = self.val_of(rm, Some(rd));
                 if (8..=11).contains(&rd) && v.c == Some(0) {
-                    self.emit("none = 0;");
+                    if self.read_in_flight(rm) {
+                        self.deferred = Some("none = 0;".to_string());
+                    } else {
+                        self.emit("none = 0;");
+                    }
                     push_unique(&mut self.consts, "none");
                     self.regs[rm as usize] = Some(Val::expr("none"));
                     self.set_reg(rd, Val::expr("none"));
@@ -1224,6 +1308,7 @@ impl<'a> Lifter<'a> {
                 let v = self.val_of(rn, None);
                 let a = self.fmt_raw(&v);
                 self.last_cmp = Some((a, imm.to_string()));
+                self.last_cmp_reg = Some(rn);
             }
             Kind::CmpReg { rn, rm } => {
                 let v = self.val_of(rn, None);
@@ -1275,7 +1360,10 @@ impl<'a> Lifter<'a> {
         let base = self.val_of(rn, None);
         let c_type = width.c_type();
         if let Some(c) = base.c {
-            let e = format!("*({c_type} *)0x{:08x}", (c as u32).wrapping_add(off));
+            let e = match self.shared_base(&base) {
+                Some(name) => deref_named(c_type, &name, off),
+                None => format!("*({c_type} *)0x{:08x}", (c as u32).wrapping_add(off)),
+            };
             if base.shared && self.park_load(rd, &e, c_type) {
                 return;
             }
@@ -1332,7 +1420,10 @@ impl<'a> Lifter<'a> {
         };
         let base = self.val_of(rn, None);
         let lhs = match base.c {
-            Some(c) => format!("*({c_type} *)0x{:08x}", (c as u32).wrapping_add(off)),
+            Some(c) => match self.shared_base(&base) {
+                Some(name) => deref_named(c_type, &name, off),
+                None => format!("*({c_type} *)0x{:08x}", (c as u32).wrapping_add(off)),
+            },
             None => self.addr_expr(&base, i64::from(off), width),
         };
         let rhs = self.fmt(&v);
@@ -1359,7 +1450,12 @@ impl<'a> Lifter<'a> {
             };
             if let Some(other) = other {
                 let other = other.to_string();
-                if op == "|" {
+                // A single-bit set is a compound OR: the loaded byte stays the first
+                // operand, so the result lands in its register, not the constant's.
+                // The constant in the destination register means the original
+                // spelled the constant first, the byte-mode form; the loaded byte
+                // in the destination is a compound OR.
+                if op == "|" && right == lhs {
                     if let Some((record, index)) = indexed(&lhs) {
                         let previous = self.out.last().cloned();
                         let call = previous.as_deref().and_then(|line| {
@@ -1404,17 +1500,24 @@ impl<'a> Lifter<'a> {
             self.emit(format!("{lhs} += {amount};"));
             return;
         }
-        if width == Width::Half && v.is_const() && !v.pool {
+        // A quotient stored as a halfword goes through an int local too: the
+        // store address is then computed after the division, as the original
+        // orders it.
+        let quotient = rhs.contains(" / ");
+        if width == Width::Half && ((v.is_const() && !v.pool) || quotient) {
             // A halfword store of a literal is a HImode constant, which this
             // compiler loads from the pool; through an int local it is SImode
             // and a `movs`.
-            let (record, target) = match hoisted_call(&lhs) {
-                Some((call, rest)) => (Some(call), rest),
-                None => (None, lhs.clone()),
+            let (hoist, target) = match hoisted_call(&lhs) {
+                Some((call, rest)) => (Some(format!("u8 *record = {call};")), rest),
+                None => match hoisted_load(&lhs) {
+                    Some((load, rest)) => (Some(format!("s32 target = {load};")), rest),
+                    None => (None, lhs.clone()),
+                },
             };
             self.emit("{");
-            if let Some(call) = record {
-                self.emit(format!("    u8 *record = {call};"));
+            if let Some(hoist) = hoist {
+                self.emit(format!("    {hoist}"));
             }
             self.emit(format!("    s32 shown = {rhs};"));
             self.emit("");
@@ -1638,12 +1741,81 @@ impl<'a> Lifter<'a> {
         self.fmt(v)
     }
 
+    /// `cmp rX, #0; bge L; adds rX, (1 << k) - 1; L: asrs rX, rX, #k` is the
+    /// compiler's signed division by a power of two: the quotient replaces
+    /// the register and nothing is emitted.
+    fn signed_division(
+        &mut self,
+        i: usize,
+        cond: Cond,
+        t: Option<usize>,
+        a: &str,
+        b: &str,
+    ) -> Option<usize> {
+        let t = t?;
+        let rx = self.last_cmp_reg?;
+        if cond != Cond::Ge || b != "0" || t <= i + 1 || t >= self.ins.len() {
+            return None;
+        }
+        // The shift may sit a few independent instructions past the join.
+        let mention = format!("r{rx}");
+        let mut shift_at = None;
+        for j in t..(t + 4).min(self.ins.len()) {
+            if let Kind::ShiftImm {
+                shift: Shift::Asr,
+                rd,
+                rm,
+                imm,
+            } = &self.ins[j].kind
+            {
+                if *rd == rx && *rm == rx && *imm != 0 {
+                    shift_at = Some((j, *imm));
+                    break;
+                }
+            }
+            if self.ins[j].text.contains(&mention) {
+                return None;
+            }
+        }
+        let (shift_at, k) = shift_at?;
+        let rounding = (1u64 << k) - 1;
+        let body = &self.ins[i + 1..t];
+        let added = match body {
+            [one] => match &one.kind {
+                Kind::AddImm8 { rd, imm } if *rd == rx => u64::from(*imm),
+                _ => return None,
+            },
+            [pool, add] => match (&pool.kind, &add.kind) {
+                (Kind::LdrPool { rd: rc, word }, Kind::AddReg { rd, rn, rm })
+                    if *rd == rx && *rn == rx && rm == rc =>
+                {
+                    u64::from(*word)
+                }
+                _ => return None,
+            },
+            _ => return None,
+        };
+        if added != rounding {
+            return None;
+        }
+        let dividend = self.arith(&Val::expr(a.to_string()));
+        self.set_reg(
+            rx,
+            Val::expr(format!("({dividend} / {})", format_const(1i32 << k))),
+        );
+        self.consumed.insert(shift_at);
+        Some(t)
+    }
+
     fn conditional(&mut self, i: usize, cond: Cond, target: u32, end: usize) -> usize {
         let t = self.index_of(target);
         let (a, b) = self
             .last_cmp
             .clone()
             .unwrap_or_else(|| ("0".to_string(), "0".to_string()));
+        if let Some(next) = self.signed_division(i, cond, t, &a, &b) {
+            return next;
+        }
         if let Some(t) = t.filter(|t| *t > i) {
             let a = if a.starts_with("@call:") {
                 let guard = !self.r0_read_after(i);
@@ -1737,6 +1909,29 @@ fn hoisted_call(lhs: &str) -> Option<(String, String)> {
         return None;
     }
     Some((call.to_string(), format!("{prefix}*)(record + {offset})")))
+}
+
+/// `*(u16 *)(*(s32 *)(record + 80) + 30)` split into the loaded base and
+/// `*(u16 *)(target + 30)`. The base loads before the constant is born, so
+/// the constant has the shorter life and takes the first allocation
+/// register, as the compiler orders them.
+fn hoisted_load(lhs: &str) -> Option<(String, String)> {
+    let (prefix, inner) = lhs.split_once("*)(")?;
+    let inner = inner.strip_suffix(')')?;
+    let (base, offset) = inner.rsplit_once(" + ")?;
+    if !base.starts_with("*(") || !balanced(base) {
+        return None;
+    }
+    Some((base.to_string(), format!("{prefix}*)(target + {offset})")))
+}
+
+/// `*(s32 *)(base7_200c41c + 4)`, or without the offset.
+fn deref_named(c_type: &str, name: &str, off: u32) -> String {
+    if off == 0 {
+        format!("*({c_type} *){name}")
+    } else {
+        format!("*({c_type} *)({name} + {off})")
+    }
 }
 
 /// `name[index]` split into its parts.
@@ -1856,7 +2051,7 @@ pub fn lift(ins: &[Ins]) -> Draft {
 
 /// The scene work record at 0x03001ebc: its step counter bump becomes the
 /// `bump_step` helper and its other fields read through a byte pointer.
-fn rewrite_scene_work(lines: &mut [String]) {
+fn rewrite_scene_work(lines: &mut Vec<String>) {
     const STEP: &str = "*(u16 *)((*(s32 *)0x03001ebc + 0x1d8))";
     for line in lines.iter_mut() {
         let trimmed = line.trim_start();
@@ -1884,6 +2079,43 @@ fn rewrite_scene_work(lines: &mut [String]) {
             }
         }
         *line = line.replace("(*(s32 *)0x03001ebc + 0x", "(*(u8 **)0x03001ebc + 0x");
+    }
+    share_scene_work(lines);
+}
+
+/// Consecutive statements through the scene work pointer read it once: the
+/// reference loads it into one register for the run, and a volatile read
+/// cannot be merged by the compiler, so the run names it.
+fn share_scene_work(lines: &mut Vec<String>) {
+    const WORK: &str = "(*(u8 **)0x03001ebc + 0x";
+    let uses_work = |line: &str| {
+        line.contains(WORK) && !contains_call(line) && !line.trim_start().starts_with("bump_step")
+    };
+    let mut at = 0;
+    while at < lines.len() {
+        if !uses_work(&lines[at]) {
+            at += 1;
+            continue;
+        }
+        let lead = lines[at].len() - lines[at].trim_start().len();
+        let mut end = at + 1;
+        while end < lines.len()
+            && uses_work(&lines[end])
+            && lines[end].len() - lines[end].trim_start().len() == lead
+        {
+            end += 1;
+        }
+        if end - at >= 2 {
+            for line in &mut lines[at..end] {
+                *line = line.replace(WORK, "(work + 0x");
+            }
+            lines.insert(
+                at,
+                format!("{}work = *(u8 **)0x03001ebc;", " ".repeat(lead)),
+            );
+            end += 1;
+        }
+        at = end;
     }
 }
 

@@ -100,6 +100,9 @@ pub struct Score {
     pub reference: u32,
     pub differing: u32,
     pub report: String,
+    /// The longer span the candidate is exact at, when its pool outgrows the
+    /// registered span into an unregistered gap.
+    pub extended: Option<u32>,
 }
 
 /// A sibling host tool: the built binary when present, else `cargo run`.
@@ -163,7 +166,45 @@ pub fn score(root: &Path, source: &Path, owner: &str, span: u32) -> Result<Score
         reference,
         differing,
         report,
+        extended: None,
     })
+}
+
+/// A module whose literal pool sits past its registered end is exact at its
+/// own size. When the candidate outgrows the span and the bytes beyond the
+/// span are an unregistered gap, this scores again over the candidate's size
+/// and reports that span through `extended`.
+pub fn score_extending(
+    root: &Path,
+    source: &Path,
+    owner: &str,
+    span: u32,
+) -> Result<Score, String> {
+    let result = score(root, source, owner, span)?;
+    if result.differing == 0 || result.candidate <= result.reference {
+        return Ok(result);
+    }
+    let (overlay, entry) = parse_owner(owner)?;
+    let end = entry + result.candidate;
+    // An unregistered region wholly inside the extension is absorbed; a
+    // registered one, or one straddling the end, keeps the span as it is.
+    let taken = modules(root)?.into_iter().any(|m| {
+        m.overlay == overlay
+            && m.entry != entry
+            && m.entry < end
+            && m.entry + m.span > entry + span
+            && (m.registered || m.entry + m.span > end)
+    });
+    if taken {
+        return Ok(result);
+    }
+    match score(root, source, owner, result.candidate) {
+        Ok(mut extended) if extended.differing == 0 => {
+            extended.extended = Some(result.candidate);
+            Ok(extended)
+        }
+        _ => Ok(result),
+    }
 }
 
 /// The compiler's first complaint in a failed score report.

@@ -220,9 +220,24 @@ fn format_const(c: i32) -> String {
     }
 }
 
+/// A lowered `switch`: the compared register, the (value, body index) pairs, the distinct bodies in address
+/// order, and the shared exit index.
+struct SwitchTree {
+    subject: u8,
+    /// The tree compared with `bhi`/`bls`: the subject is unsigned.
+    unsigned: bool,
+    cases: Vec<(u32, usize)>,
+    /// Case values whose own body was a jump to another body: the source
+    /// repeated that body and the compiler cross-jumped it.
+    aliases: Vec<(u32, usize)>,
+    bodies: Vec<usize>,
+    exit: usize,
+}
+
 struct Lifter<'a> {
     ins: &'a [Ins],
     value_sites: BTreeSet<usize>,
+    direct_sites: BTreeSet<usize>,
     by_addr: HashMap<u32, usize>,
     targets: BTreeSet<u32>,
     spill_slots: BTreeSet<u32>,
@@ -255,6 +270,7 @@ fn push_unique(list: &mut Vec<String>, name: &str) {
 
 impl<'a> Lifter<'a> {
     fn new(ins: &'a [Ins]) -> Self {
+        let sites = crate::sched::value_calls(ins);
         let by_addr = ins.iter().enumerate().map(|(i, x)| (x.addr, i)).collect();
         let mut targets = BTreeSet::new();
         let mut spill_slots = BTreeSet::new();
@@ -271,7 +287,8 @@ impl<'a> Lifter<'a> {
         }
         let mut lifter = Lifter {
             ins,
-            value_sites: crate::sched::value_calls(ins),
+            value_sites: sites.value,
+            direct_sites: sites.direct,
             by_addr,
             targets,
             spill_slots,
@@ -355,6 +372,14 @@ impl<'a> Lifter<'a> {
         let Some(call) = v.call_index() else {
             return self.fmt(v);
         };
+        if let Some(&oi) = self.call_stmt.get(&call) {
+            // A result that gets used makes the call value-returning after all:
+            // the void cast comes off.
+            let line = &self.out[oi];
+            if line.trim_start().starts_with("((void (*)())") {
+                self.out[oi] = strip_void_cast(line);
+            }
+        }
         if self.inline_calls.contains(&call) {
             if let Some(&oi) = self.call_stmt.get(&call) {
                 if oi + 1 == self.out.len()
@@ -376,6 +401,11 @@ impl<'a> Lifter<'a> {
             );
             return "MISSING".to_string();
         };
+        if self.out[oi].trim_start().starts_with("(void)") {
+            let line = &self.out[oi];
+            let lead = line.len() - line.trim_start().len();
+            self.out[oi] = format!("{}{}", &line[..lead], &line[lead + 6..]);
+        }
         let existing = assigned_prefix(&self.out[oi]).map(str::to_string);
         let name = existing.clone().unwrap_or_else(|| {
             self.pending_name
@@ -476,9 +506,12 @@ impl<'a> Lifter<'a> {
         let unsigned = c as u32;
         let name = format!("base{}_{:x}", v.reg.unwrap_or(0), unsigned);
         push_unique(&mut self.consts, &name);
+        // Overlay addresses are relocated symbols: odd ones name code, even ones
+        // data; a literal would be a plain pool word the scheduler treats
+        // differently.
         let lit = if (0x0200_0000..0x0201_0000).contains(&unsigned) && unsigned % 2 == 1 {
             format!("(s32){}", func_name(unsigned))
-        } else if unsigned < 0x0200_0000 {
+        } else if unsigned < 0x0201_0000 {
             format!("(s32)Data_{unsigned:08x}")
         } else {
             format_const(c)
@@ -597,6 +630,10 @@ impl<'a> Lifter<'a> {
                     continue;
                 }
             }
+            if let Some(tree) = self.switch_at(i, end) {
+                i = self.emit_switch(tree);
+                continue;
+            }
             i = self.step(i, end);
         }
     }
@@ -696,6 +733,162 @@ impl<'a> Lifter<'a> {
         self.emit("}");
         self.clear_scratch();
         from + 1
+    }
+
+    /// A `switch` the compiler lowered to a comparison tree: compares of one
+    /// register against constants, `beq` to case bodies, and one shared exit
+    /// every body branches to. Bodies follow the tree in source order.
+    fn switch_at(&self, i: usize, end: usize) -> Option<SwitchTree> {
+        let Kind::CmpImm { rn, .. } = self.ins[i].kind else {
+            return None;
+        };
+        let mut j = i;
+        let mut cases: Vec<(u32, usize)> = Vec::new();
+        let mut aliases: Vec<(u32, usize)> = Vec::new();
+        let mut exits: Vec<usize> = Vec::new();
+        let mut last_value = None;
+        let mut unsigned = false;
+        while j < end {
+            match self.ins[j].kind {
+                Kind::CmpImm { rn: r, imm } if r == rn => last_value = Some(imm),
+                Kind::Bcond { cond, target } => {
+                    let t = self.index_of(target)?;
+                    match cond {
+                        Cond::Eq => cases.push((last_value?, t)),
+                        Cond::Ne => {
+                            cases.push((last_value?, j + 1));
+                            exits.push(t);
+                        }
+                        Cond::Hi | Cond::Ls | Cond::Gt | Cond::Le | Cond::Ge | Cond::Lt => {
+                            if t <= j || t >= end {
+                                return None;
+                            }
+                            unsigned |= matches!(cond, Cond::Hi | Cond::Ls);
+                        }
+                        _ => return None,
+                    }
+                }
+                Kind::B { target } => {
+                    let t = self.index_of(target)?;
+                    if self.is_pool_jump(j) {
+                        return None;
+                    }
+                    // A jump to another case's body shares that body; any other
+                    // jump is the exit.
+                    if cases.iter().any(|(_, b)| *b == t) {
+                        for (value, _) in cases.iter().filter(|(_, b)| *b == j) {
+                            aliases.push((*value, t));
+                        }
+                        cases.retain(|(_, b)| *b != j);
+                    } else {
+                        exits.push(t);
+                    }
+                }
+                _ => break,
+            }
+            j += 1;
+        }
+        let tree_end = j;
+        // Three or more compares with a shared exit is a switch; fewer is an if.
+        let compares = (i..tree_end)
+            .filter(|k| matches!(self.ins[*k].kind, Kind::CmpImm { .. }))
+            .count();
+        if compares < 3 || cases.len() < 2 || exits.is_empty() {
+            return None;
+        }
+        let exit = *exits.iter().max()?;
+        if cases
+            .iter()
+            .any(|(_, body)| *body < tree_end || *body > exit)
+            || exit > end
+        {
+            return None;
+        }
+        // A case body reached through the tree's fall-through (`bne exit`)
+        // starts right at the tree end; every other body must lie between
+        // the tree and the exit.
+        let mut bodies: Vec<usize> = cases.iter().map(|(_, b)| *b).collect();
+        bodies.sort_unstable();
+        bodies.dedup();
+        Some(SwitchTree {
+            subject: rn,
+            unsigned,
+            cases,
+            aliases,
+            bodies,
+            exit,
+        })
+    }
+
+    fn emit_switch(&mut self, tree: SwitchTree) -> usize {
+        let value = self.val_of(tree.subject, None);
+        let subject = self.fmt(&value);
+        let subject = if tree.unsigned {
+            format!("(u32){subject}")
+        } else {
+            subject
+        };
+        self.emit(format!("switch ({subject}) {{"));
+        let saved = self.indent.clone();
+        // Cross-jumped cases come first: their stub sits inside the tree.
+        for (value, body) in tree.aliases.clone() {
+            self.indent = saved.clone();
+            self.emit(format!("case {value}:"));
+            self.indent = format!("{saved}    ");
+            let body_end = tree
+                .bodies
+                .iter()
+                .find(|b| **b > body)
+                .copied()
+                .unwrap_or(tree.exit);
+            let mut stop = body_end;
+            if stop > body {
+                if let Kind::B { target } = self.ins[stop - 1].kind {
+                    if self.index_of(target) == Some(tree.exit) {
+                        stop -= 1;
+                    }
+                }
+            }
+            let mark = self.cursor_max;
+            self.cursor_max = 0;
+            self.run(body, stop);
+            self.cursor_max = mark;
+            self.emit("break;");
+            self.clear_scratch();
+        }
+        for (n, body) in tree.bodies.iter().enumerate() {
+            let body_end = tree.bodies.get(n + 1).copied().unwrap_or(tree.exit);
+            let mut labels: Vec<u32> = tree
+                .cases
+                .iter()
+                .filter(|(_, b)| b == body)
+                .map(|(v, _)| *v)
+                .collect();
+            labels.sort_unstable();
+            labels.dedup();
+            self.indent = saved.clone();
+            for label in labels {
+                self.emit(format!("case {label}:"));
+            }
+            self.indent = format!("{saved}    ");
+            // The closing jump to the exit is the `break`.
+            let mut stop = body_end;
+            if stop > *body {
+                if let Kind::B { target } = self.ins[stop - 1].kind {
+                    if self.index_of(target) == Some(tree.exit) {
+                        stop -= 1;
+                    }
+                }
+            }
+            self.cursor_max = self.cursor_max.max(*body);
+            self.run(*body, stop);
+            self.emit("break;");
+            self.clear_scratch();
+        }
+        self.indent = saved;
+        self.emit("}");
+        self.cursor_max = self.cursor_max.max(tree.exit);
+        tree.exit
     }
 
     fn run_filtered(&mut self, mut i: usize, end: usize, counter: u8) {
@@ -1295,14 +1488,27 @@ impl<'a> Lifter<'a> {
             a.bytes().all(|b| b.is_ascii_digit()) && a.parse::<i64>().is_ok_and(|v| v >= 256)
         });
         let count = args.len();
-        let wrap = (costly || count >= 5) && count > 0 && count != 5;
+        let direct = self.direct_sites.contains(&i);
+        let wrap = (costly || count >= 5) && count > 0 && count != 5 && !direct;
         let callee = func_name(target);
-        let call = if self.value_sites.contains(&i) && count != 5 {
+        let value = self.value_sites.contains(&i);
+        let callee_returns_value = self
+            .value_sites
+            .iter()
+            .any(|s| matches!(self.ins[*s].kind, Kind::Bl { target: t } if t == target));
+        let call = if value && direct && count != 5 {
+            // A direct call whose result the reference discarded still sets r0.
+            format!("(void){callee}({})", args.join(", "))
+        } else if value && count != 5 {
             if count == 0 {
                 format!("Value0({callee})")
             } else {
                 format!("Value{count}({callee}, {})", args.join(", "))
             }
+        } else if !wrap && callee_returns_value {
+            // A void site of a callee declared as returning a value keeps the
+            // direct call shape through a cast.
+            format!("((void (*)()){callee})({})", args.join(", "))
         } else if wrap {
             format!("Call{count}({callee}, {})", args.join(", "))
         } else {
@@ -1345,7 +1551,7 @@ impl<'a> Lifter<'a> {
             && !self.call_aliased(call)
         {
             let text = self.out.pop().unwrap();
-            let mut text = text.trim().trim_end_matches(';').to_string();
+            let mut text = strip_void_cast(text.trim().trim_end_matches(';'));
             if text.starts_with("Call") {
                 text.replace_range(0..4, "Value");
             }
@@ -1490,6 +1696,18 @@ impl<'a> Lifter<'a> {
 /// Whether `movs` plus at most one `lsls` builds the word.
 fn cheap(word: u32) -> bool {
     (0..32).any(|shift| (word >> shift) < 256 && (word >> shift) << shift == word)
+}
+
+/// `((void (*)())Func_x)(args)` back to `Func_x(args)`.
+fn strip_void_cast(line: &str) -> String {
+    let Some(at) = line.find("((void (*)())") else {
+        return line.to_string();
+    };
+    let rest = &line[at + 13..];
+    let Some(close) = rest.find(')') else {
+        return line.to_string();
+    };
+    format!("{}{}{}", &line[..at], &rest[..close], &rest[close + 1..])
 }
 
 fn is_plain_local(e: &str) -> bool {

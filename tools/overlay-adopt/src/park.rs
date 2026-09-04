@@ -292,7 +292,10 @@ pub(crate) fn reference_bytes(
     span: i64,
 ) -> Result<Vec<u8>, String> {
     let text = define_dangling_labels(&pre_adoption_text(root, target)?);
-    let image = assemble_overlay(&OverlaySource::Str(text), OVERLAY_BASE)?;
+    let image = assemble_overlay(
+        &OverlaySource::named(target.overlay_id().expect("overlay owner"), text),
+        OVERLAY_BASE,
+    )?;
     let start = overlay_offset(target);
     let end = start + span as usize;
     if end > image.len() {
@@ -541,7 +544,10 @@ pub(crate) fn park_one(root: &Path, target: SourceOwner, apply: bool) -> Result<
             }
         }
     }
-    let image = assemble_overlay(&OverlaySource::Str(text.clone()), OVERLAY_BASE)?;
+    let image = overlay_disasm::compile::assemble_overlay_raw(
+        &OverlaySource::named(overlay.clone(), text.clone()),
+        OVERLAY_BASE,
+    )?;
     let at = (address - OVERLAY_BASE) as usize;
     let window = image
         .get(at..at + span as usize)

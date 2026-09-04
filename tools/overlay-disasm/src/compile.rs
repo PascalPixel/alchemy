@@ -920,7 +920,9 @@ pub struct Span {
 }
 pub fn overlay_c_spans(source: &OverlaySource, base: i64) -> Result<Vec<Span>, String> {
     let display = source.to_display_string();
-    let overlay = Regex::new(r"_overlay\.s$", "").replace_first(basename(&display), "");
+    let overlay = source
+        .overlay_id()
+        .unwrap_or_else(|| Regex::new(r"_overlay\.s$", "").replace_first(basename(&display), ""));
     let work = tempdir().map_err(|error| error.to_string())?;
     compile_production_overlay(source, work.path(), &overlay).map(|members| {
         members
@@ -931,6 +933,53 @@ pub fn overlay_c_spans(source: &OverlaySource, base: i64) -> Result<Vec<Span>, S
             })
             .collect()
     })
+}
+/// The listing assembled on its own: every `AlchemyC_` placeholder stays
+/// zero, no production C is composed in. A parked owner's window can be
+/// checked here without depending on every other owner still compiling.
+pub fn assemble_overlay_raw(source: &OverlaySource, base: i64) -> Result<Vec<u8>, String> {
+    let work = tempdir().map_err(|error| error.to_string())?;
+    let at = |name: &str| work.path().join(name).to_string_lossy().to_string();
+    let assembly = at("o.s");
+    let object = at("o.o");
+    let elf = at("o.elf");
+    let binary = at("o.bin");
+    let text = source.read_text().map_err(|error| error.to_string())?;
+    fs::write(&assembly, text).map_err(|error| error.to_string())?;
+    spawn_raw(
+        &strings(&[
+            "arm-none-eabi-as",
+            "-mcpu=arm7tdmi",
+            "-mthumb-interwork",
+            "-o",
+            &object,
+            &assembly,
+        ]),
+        work.path(),
+    )?;
+    spawn_raw(
+        &strings(&[
+            "arm-none-eabi-ld",
+            &format!("-Ttext=0x{}", hex(base, 8)),
+            "-o",
+            &elf,
+            &object,
+        ]),
+        work.path(),
+    )?;
+    spawn_raw(
+        &strings(&[
+            "arm-none-eabi-objcopy",
+            "-O",
+            "binary",
+            "-j",
+            ".text",
+            &elf,
+            &binary,
+        ]),
+        work.path(),
+    )?;
+    fs::read(&binary).map_err(|error| error.to_string())
 }
 pub fn assemble_overlay(source: &OverlaySource, base: i64) -> Result<Vec<u8>, String> {
     let work = tempdir().map_err(|error| error.to_string())?;
@@ -976,7 +1025,9 @@ pub fn assemble_overlay(source: &OverlaySource, base: i64) -> Result<Vec<u8>, St
     )?;
     let mut result = fs::read(&binary).map_err(|error| error.to_string())?;
     let display = source.to_display_string();
-    let overlay = Regex::new(r"_overlay\.s$", "").replace_first(basename(&display), "");
+    let overlay = source
+        .overlay_id()
+        .unwrap_or_else(|| Regex::new(r"_overlay\.s$", "").replace_first(basename(&display), ""));
     let mut occupied: std::collections::BTreeSet<usize> = std::collections::BTreeSet::new();
     for compiled in compile_production_overlay(source, work.path(), &overlay)? {
         let offset = compiled.address - base;

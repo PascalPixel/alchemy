@@ -45,7 +45,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
  * call, a 3-argument call whose first argument is the address of
  * Value_0200beb4, another 3-argument call, and a closing single-argument
  * call. */
-void Func_0200087c(void)
+void FieldScene_RunSupplementalSequenceSix(void)
 {
     Audio_PlayCue_1(158);
     Call3(Func_02002ec8, (s32)&Value_0200beb4, 35, 36); /* main:08009178 */

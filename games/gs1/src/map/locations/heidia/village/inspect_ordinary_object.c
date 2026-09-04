@@ -13,7 +13,6 @@ void Func_0200744a(void);
 void Func_02007430(s32);
 
 #define InspectOrdinaryObject Func_02001dc4
-
 void InspectOrdinaryObject(void)
 {
     Func_02007474(0, 1);

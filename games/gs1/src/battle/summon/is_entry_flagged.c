@@ -1,0 +1,24 @@
+#include "types.h"
+
+#define Summon_IsEntryFlagged Func_080c23c0
+
+struct Entry {
+    u16 value;
+    u8 flags0;
+    u8 flags1;
+    u8 rest[4];
+};
+
+extern struct Entry Data_080c7420[];
+
+s32 Summon_IsEntryFlagged(s32 index)
+{
+    s32 result;
+
+    if ((u32)index > 171)
+        return 0;
+    result = 0;
+    if ((u32)Data_080c7420[index].flags0 << 31)
+        result = 1;
+    return result;
+}

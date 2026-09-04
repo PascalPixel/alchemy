@@ -15,8 +15,6 @@ struct PeriodicEffectConfig {
     u8 pad_20[8];
 };
 
-
-
 extern u32 Data_03001e40;
 extern u8 Data_02009740[];
 

@@ -41,10 +41,9 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-
 /* Runs four scripted scene calls in sequence, passing a byte's address and a
  * handful of small immediate constants to each. */
-void Func_020008ac(void)
+void FieldScene_RunSupplementalSequenceSeven(void)
 {
     Audio_PlayCue_1(158);
     Call3(Func_02002ef8, (s32)&Value_0200beb4, 51, 39); /* main:08009178 */

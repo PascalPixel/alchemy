@@ -1,6 +1,5 @@
 #include "staged_actor_pair_scene.h"
 
-
 struct EffectSprite {
     u8 pad00[9];
     u8 flags;

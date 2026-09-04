@@ -24,7 +24,6 @@ u32 Func_0200b784(SoftFloatRecord *record);
 u64 Func_0200b7ce(u64 fraction, u32 count);
 
 #define SoftDoubleToSignedInt Func_02005b6c
-
 s32 SoftDoubleToSignedInt(u32 high, u32 low)
 {
     SoftFloatRecord record;

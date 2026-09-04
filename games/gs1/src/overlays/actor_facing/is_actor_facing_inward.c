@@ -5,9 +5,8 @@ typedef struct {
     u16 angle;
 } ActorState;
 
-#define GetActorState Func_020068be
 #define IsActorFacingInward Func_020032a8
-
+#define GetActorState Func_020068be
 extern ActorState *GetActorState(s32 actor_id);
 
 s32 IsActorFacingInward(void)

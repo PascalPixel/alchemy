@@ -7,7 +7,6 @@ s32 Func_02003006(s32);
 void Func_02006cd4(s32);
 
 #define TriggerSceneStage95FromActor12 Func_02001718
-
 void TriggerSceneStage95FromActor12(void)
 {
     u8 *scene_state = Data_03001ebc;

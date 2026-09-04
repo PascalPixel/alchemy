@@ -49,11 +49,10 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-
 /* Runs a fixed sequence of setup calls, mostly in mirrored pairs for
  * entities 8 and 9, followed by two six-argument calls whose second and
  * last arguments match (entity 6/27 and entity 9/26). */
-void Func_02000334(void)
+void FieldScene_RunPrimarySequence(void)
 {
     BattleRuntime_Reset_1();
     ObjectMotion_SetSpeedParameters_1(8, 65536, 32768);

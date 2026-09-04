@@ -5,5 +5,5 @@
 
 #include "../../../src/ui/window/clear_tile_attributes_in_rect.c"
 #include "../main/0801e318.c"
-#include "../../../src/unidentified/main/field/field_owner_36.c"
+#include "../../../src/ui/runtime/set_alt_flag_and_clear_table.c"
 #include "../../../src/ui/render/reserved_no_op.c"

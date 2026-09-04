@@ -7,7 +7,6 @@ void Func_020025f0();
 void Func_02002608();
 
 #define ActorPresentation_SelectActorNineScript Func_02001040
-
 void ActorPresentation_SelectActorNineScript(void)
 {
     if (Func_02002544(2384) != 0 && Func_0200254e(2415) == 0)

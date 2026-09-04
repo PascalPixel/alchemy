@@ -10,7 +10,6 @@ extern s32 Func_02002e0a(s32);
 extern void Func_02002e02(s32, s32, s32, s32, s32, s32);
 
 #define SetStatueLightGroup4 Func_020003f4
-
 void SetStatueLightGroup4(void)
 {
     if (Func_02002db0(0x826) != 0) {

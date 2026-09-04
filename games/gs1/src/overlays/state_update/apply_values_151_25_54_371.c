@@ -1,0 +1,10 @@
+#include "types.h"
+
+#define SceneState_ApplyValues151And25And54 Func_02000570
+
+extern void Func_02000a6a(s32, s32, s32);
+
+void SceneState_ApplyValues151And25And54(void)
+{
+    Func_02000a6a(0x97, 0x19, 0x36);
+}

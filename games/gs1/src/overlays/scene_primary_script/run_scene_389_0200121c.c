@@ -79,7 +79,7 @@ s32 FieldScene_RunScene389_0200121c(void)
     {
         u8 *record = Func_0200268a(9);
         u8 value = *(volatile u8 *)&record[89];
-    
+
         record[89] = (u8)(value | 16);
     }
     if (Value1(Func_0200266a, 0x302) != 0) {

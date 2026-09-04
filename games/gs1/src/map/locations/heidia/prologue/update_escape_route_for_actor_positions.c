@@ -22,7 +22,6 @@ extern void Func_02004c90(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 extern void Func_02004ca0(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 
 #define UpdateEscapeRouteForActorPositions Func_02001bbc
-
 void UpdateEscapeRouteForActorPositions(void) {
     s32 actor_x = Func_02004c4c(8)->f08 >> 20;
     s32 actor_z = Func_02004c56(8)->f10 >> 20;

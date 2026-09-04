@@ -1,0 +1,76 @@
+#include "types.h"
+#include "global_cells.h"
+
+#define Input_UpdateKeyRepeatAndDirection Func_08003538
+
+#define REG32(address) (*(volatile u32 *)(address))
+
+void Input_UpdateKeyRepeatAndDirection(void)
+{
+    s32 cnt = REG32(ADDR_03001B00);
+    u32 flags;
+    u32 sel = 0;
+    u32 n;
+    u32 mask;
+    volatile u32 *active;
+
+    if (cnt <= 0) {
+        REG32(ADDR_03001B04) = REG32(ADDR_03001AE8);
+        flags = REG32(ADDR_03001B04);
+        if (cnt == 0)
+            REG32(ADDR_03001B00) = 6;
+        else
+            REG32(ADDR_03001B00) = 19;
+    } else {
+        REG32(ADDR_03001B04) = 0;
+        flags = REG32(ADDR_03001B04);
+    }
+
+    if (flags != 0) {
+        n = 0;
+        if ((flags & 0x40) != 0)
+            n = 1;
+        if ((flags & 0x80) != 0)
+            n++;
+        if ((flags & 0x20) != 0)
+            n++;
+        if ((flags & 0x10) != 0)
+            n++;
+
+        active = (volatile u32 *)ADDR_03001AFC;
+        *active = flags;
+        switch (n) {
+        default:
+            REG32(ADDR_03001D04) = 0x30;
+            mask = 0xff0f;
+            *active &= mask;
+            break;
+        case 0:
+            REG32(ADDR_03001D04) = 0x30;
+            break;
+        case 1:
+            REG32(ADDR_03001D04) = flags & 0xf0;
+            break;
+        case 2:
+            if ((REG32(ADDR_03001D04) & *active) == 0)
+                REG32(ADDR_03001D04) = 0x30;
+            *active &= REG32(ADDR_03001D04) ^ 0xffff;
+            break;
+        case 3:
+            if ((REG32(ADDR_03001D04) & 0x30) != 0)
+                sel = 0x30;
+            if ((REG32(ADDR_03001D04) & 0xc0) != 0)
+                sel = 0xc0;
+            mask = 0xffff ^ sel;
+            REG32(ADDR_03001D04) = flags & mask;
+            *active &= mask;
+            break;
+        }
+    } else {
+        REG32(ADDR_03001AFC) = flags;
+    }
+
+    REG32(ADDR_03001C94) =
+        (REG32(ADDR_03001AE8) ^ REG32(ADDR_03001CF4)) & REG32(ADDR_03001AE8);
+    REG32(ADDR_03001CF4) = REG32(ADDR_03001AE8);
+}

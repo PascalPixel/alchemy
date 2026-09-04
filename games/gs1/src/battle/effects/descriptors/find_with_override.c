@@ -1,0 +1,26 @@
+#include "types.h"
+
+#define BattleEffect_FindDescriptorWithOverride Func_0808d5a4
+
+struct State_0808d5a4 {
+    u8 padding[0x24a];
+    s16 value;
+};
+
+extern u8 Data_02000240;
+struct EffectDescriptor *Func_0808d48c(s32, s32);
+
+s32 BattleEffect_FindDescriptorWithOverride(s32 arg0)
+{
+    s32 result = Func_0808d48c(0, arg0);
+    s32 value = ((struct State_0808d5a4 *)&Data_02000240)->value;
+
+    if (value == arg0) {
+        s32 next = Func_0808d48c(7, value);
+
+        if (next != 0) {
+            return next;
+        }
+    }
+    return result;
+}

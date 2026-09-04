@@ -1,0 +1,16 @@
+#include "types.h"
+
+#define ActorPresentation_SetFlag200AndSceneCell23 Func_02000d4c
+
+extern void Func_02001e26(s32 flag);
+extern void Func_02001e02(s32 kind, s32 x, s32 enabled, s32 mode,
+                          s32 first_value, s32 second_value);
+void ActorPresentation_SetFlag200AndSceneCell23(void)
+{
+    Func_02001e26(0x200);
+    {
+        s32 first_value = 23;
+        s32 second_value = 26;
+        Func_02001e02(23, 23, 4, 2, first_value, second_value);
+    }
+}

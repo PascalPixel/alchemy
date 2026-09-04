@@ -27,7 +27,6 @@ void Func_020040a4();
 void Func_020040b4();
 
 #define AdvanceActor9AlongEscapeRoute Func_02002848
-
 void AdvanceActor9AlongEscapeRoute(void)
 {
     s32 column;

@@ -1,0 +1,28 @@
+#include "types.h"
+
+#define SceneEffect_AdvancePositionByAxisMode Func_02000a00
+
+void SceneEffect_AdvancePositionByAxisMode(u8 *o) {
+    s16 v = *(s16 *)(o + 102);
+
+    switch (v) {
+    case 0:
+        *(s32 *)(o + 8) += *(s32 *)(o + 48);
+        *(s32 *)(o + 56) = *(s32 *)(o + 8);
+        *(s32 *)(o + 12) += *(s32 *)(o + 52);
+        *(s32 *)(o + 60) = *(s32 *)(o + 12);
+        break;
+    case 1:
+        *(s32 *)(o + 8) += *(s32 *)(o + 48);
+        *(s32 *)(o + 56) = *(s32 *)(o + 8);
+        *(s32 *)(o + 16) += *(s32 *)(o + 52);
+        *(s32 *)(o + 64) = *(s32 *)(o + 16);
+        break;
+    case 2:
+        *(s32 *)(o + 12) += *(s32 *)(o + 48);
+        *(s32 *)(o + 60) = *(s32 *)(o + 12);
+        *(s32 *)(o + 16) += *(s32 *)(o + 52);
+        *(s32 *)(o + 64) = *(s32 *)(o + 16);
+        break;
+    }
+}

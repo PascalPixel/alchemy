@@ -10,7 +10,6 @@ extern u8 Data_0200f528[];
 extern u8 Data_0200f63c[];
 
 #define SelectQuaternarySceneData Func_02000af8
-
 s32 SelectQuaternarySceneData(void) {
     s16 scene_variant = Data_02000240[224];
 

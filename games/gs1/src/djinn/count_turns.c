@@ -5,7 +5,6 @@ u8 *Runtime_GetObject(s32);
 extern u8 *Data_03001f2c;
 
 #define CountDjinnTurns Func_080ae7fc
-
 void CountDjinnTurns(u8 *counts)
 {
     u8 *work;

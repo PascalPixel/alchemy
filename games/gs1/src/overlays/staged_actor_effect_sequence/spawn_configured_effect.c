@@ -1,4 +1,5 @@
 #define EffectDescriptorTable Data_0200a814
+#define SpawnConfiguredEffect Func_0200013c
 #define GetPartyEffect Func_0200264a
 #define SpawnEffect Func_020025d0
 #define SetEffectVariant Func_020025da
@@ -9,7 +10,6 @@
 #define ScaleEffectVerticalDelta Func_0200267e
 #define SetEffectCallbackMode Func_020026f4
 #define SetEffectCallbackArgument Func_02002704
-#define SpawnConfiguredEffect Func_0200013c
 #include "configured_effect_spawn.h"
 
 void SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,

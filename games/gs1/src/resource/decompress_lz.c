@@ -1,7 +1,6 @@
 #include "types.h"
 
 #define Resource_DecompressLz Func_0800a97c
-
 u8 *Func_0800a97c(const u8 *source, u8 *destination)
 {
     s32 token;

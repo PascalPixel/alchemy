@@ -49,7 +49,6 @@ void Func_02006c72();
 
 /* Loader-relocated ROM calls: each site names the pre-relocation call word the image holds. */
 
-
 static __inline__ void Call0(void (*f)())
 {
     f();
@@ -100,7 +99,7 @@ static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 
 /* Runs a fixed chain of 19 calls with literal arguments, sets byte 0x22B of
  * the shared work buffer to 3, then issues two more calls. */
-void Func_02002f10(void)
+void FieldScene_RunLateAuxiliarySequence(void)
 {
     BattleRuntime_Reset_1();
     ObjectMotion_SetSpeedLimitAndAcceleration_1(39321, 4915);

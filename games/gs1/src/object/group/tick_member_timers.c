@@ -2,7 +2,6 @@
 #undef ObjectGroup_TickMemberTimers
 #define ObjectGroup_TickMemberTimers Func_080cd52c
 
-
 extern u8 *Data_03001eec;
 
 s32 Func_080d6888(s32 value, s32 a, s32 b, s32 c, s32 d);

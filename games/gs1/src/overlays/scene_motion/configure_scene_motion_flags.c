@@ -6,7 +6,6 @@ void Func_0200aeb6(s32 x, s32 y, s32 z, u32 enabled);
 void Func_0200aed0(void);
 
 #define ConfigureSceneMotionFlags Func_020048ac
-
 void ConfigureSceneMotionFlags(s32 x, s32 y, s32 z, u32 flags)
 {
     u32 selected;

@@ -35,8 +35,8 @@ typedef union {
         u32 hi;
     } parts;
 } SplitU64;
-#define LogicalShiftRight64 Func_02005c08
 
+#define LogicalShiftRight64 Func_02005c08
 u64 LogicalShiftRight64(u64 value, u32 count)
 {
     SplitU64 in;

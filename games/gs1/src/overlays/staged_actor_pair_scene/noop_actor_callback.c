@@ -1,3 +1,3 @@
-#define StagedActorPairScene_NoopActorCallback Func_020011c4
 
+#define StagedActorPairScene_NoopActorCallback Func_020011c4
 void StagedActorPairScene_NoopActorCallback(void){}

@@ -10,7 +10,6 @@ struct Actor {
 struct Actor *Func_0200854a(s32);
 
 #define ActorPresentation_SelectActorTwentySevenState Func_02003e18
-
 void ActorPresentation_SelectActorTwentySevenState(void)
 {
     struct Actor *actor = Func_0200854a(27);

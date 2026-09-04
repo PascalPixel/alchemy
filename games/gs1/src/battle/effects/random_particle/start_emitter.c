@@ -45,7 +45,6 @@ struct EfxObj {
 extern u8 *Data_03001ebc;
 extern const u8 Data_0809e6c0[];
 extern const u8 Data_0809e87c[];
-
 #define Object_CreateFar Func_080090c8
 #define ItemIcon_LoadTilesFar Func_08015250
 #define VramBlock_LoadCached Func_08003fa4

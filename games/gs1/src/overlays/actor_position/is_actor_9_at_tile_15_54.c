@@ -2,9 +2,8 @@
 
 extern s32 *Func_0200146a(s32 actor);
 
-#define GetActorPosition Func_0200146a
 #define IsActor9AtTile15x54 Func_02000334
-
+#define GetActorPosition Func_0200146a
 s32 IsActor9AtTile15x54(void)
 {
     s32 *actor = GetActorPosition(9);

@@ -17,6 +17,7 @@ extern void Func_020052a8();
 extern void Func_02005494(void);
 
 #define StagedActorDirectionSteps Data_0200d0e8
+#define RunStagedActorTransition Func_02000374
 #define GetStagedActor Func_02005230
 #define FindActorAtPosition Func_020006e6
 #define FindActorAtForwardPosition Func_02000712
@@ -29,7 +30,6 @@ extern void Func_02005494(void);
 #define SetLeadActorMoveTarget Func_0200529a
 #define UpdateStagedActorState Func_020052a8
 #define FinalizeStagedActorUpdate Func_02005494
-#define RunStagedActorTransition Func_02000374
 
 void RunStagedActorTransition(void) {
     s32 target_position[3];

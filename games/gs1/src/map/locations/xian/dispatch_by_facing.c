@@ -17,6 +17,7 @@ extern void Func_02002062(void);
 extern void Func_020021f6(void);
 extern void Func_020023c8(s32 variant);
 
+#define FieldScene_DispatchByFacing Func_02001334
 #define AdvanceSceneStep       Func_02005722
 #define OpenSceneSection        Func_0200571c
 #define CloseSceneSection       Func_02005784
@@ -28,7 +29,6 @@ extern void Func_020023c8(s32 variant);
 #define RunFacingVariantC       Func_0200213c
 #define RunFacingVariantD       Func_02002062
 #define RunSceneVariant         Func_020023c8
-#define FieldScene_DispatchByFacing Func_02001334
 
 void FieldScene_DispatchByFacing(void)
 {

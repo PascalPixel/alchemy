@@ -77,11 +77,10 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-
 /* Sets up a handful of numbered records with position/pose-shaped argument
  * groups, then clears the s32 field at +108 of record 8 and feeds record 8's
  * id back into two more calls before two final single-argument calls. */
-void Func_020005f0(void)
+void FieldScene_RunOpeningSequence(void)
 {
     void *unused;
     void *record8;

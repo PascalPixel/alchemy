@@ -88,13 +88,13 @@ void FieldScene_RunScene3b9_020024d8(void)
     {
         u16 *target = (u16 *)(rec7 + 100);
         s32 shown = 0x2d0;
-    
+
         *target = shown;
     }
     {
         u16 *target = (u16 *)(rec7 + 102);
         s32 shown = 112;
-    
+
         *target = shown;
     }
     Func_020051b4(13, 2);

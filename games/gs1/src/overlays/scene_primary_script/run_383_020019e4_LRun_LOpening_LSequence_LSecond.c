@@ -53,7 +53,6 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-
 /* Field at +456 of the shared scene work record, addressed through the
  * loader-fixed pointer at 0x03001ebc. */
 #define SCENE_WORK_FIELD_456 (*(u32 *)(*(u8 **)0x03001ebc + 456))

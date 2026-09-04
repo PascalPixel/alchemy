@@ -5,9 +5,9 @@
 s16 Func_02003588(s32, s32);
 #define CalculateFacingAngle Func_02003588
 struct FacingObject *Func_0200364e(s16);
-#define ResolveFacingObject Func_0200364e
 
 #define UpdateFacingFromResolvedObject Func_02000030
+#define ResolveFacingObject Func_0200364e
 s32 UpdateFacingFromResolvedObject(struct FacingObject *object) {
     struct FacingObject *target;
 

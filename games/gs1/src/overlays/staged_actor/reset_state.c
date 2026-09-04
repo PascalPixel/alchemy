@@ -1,7 +1,7 @@
 #include "staged_actor.h"
 
-#define InitializeStagedActorState Func_02006488
 #define ResetStagedActorState Func_02000030
+#define InitializeStagedActorState Func_02006488
 
 void InitializeStagedActorState(struct StagedActor *actor, s32 state);
 

@@ -14,7 +14,6 @@ struct EffectWork {
 };
 
 #define SetEffectRecordMode Func_02000030
-
 void SetEffectRecordMode(struct EffectWork *work, s32 mode)
 {
     work->record->mode = mode;

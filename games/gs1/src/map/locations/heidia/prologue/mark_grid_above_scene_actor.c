@@ -15,7 +15,6 @@ extern void Func_0200499e(s32 arg0, s32 arg1);
 extern void Func_0200491c(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
 
 #define MarkGridAboveSceneActor Func_020018b0
-
 void MarkGridAboveSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute) {
     struct S *p = Func_02004948();
 

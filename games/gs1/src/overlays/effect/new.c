@@ -7,12 +7,11 @@ void Func_02004424(void *, s32);
 void Func_0200443c(void *, s32);
 void Func_0200451c(void *, s32);
 
+#define NewEffectObject           Func_02000048
 #define AcquireOverlayObject      Func_020043e6
 #define RunOverlayObjectCommand0  Func_02004424
 #define RunOverlayObjectCommand1  Func_0200443c
 #define RunOverlayObjectCommand14 Func_0200451c
-#define NewEffectObject           Func_02000048
-
 void *NewEffectObject(s32 first, s32 second, s32 third, s32 fourth) {
     void *overlay_object;
     void *object_record;

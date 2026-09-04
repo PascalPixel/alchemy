@@ -1,0 +1,47 @@
+#include "types.h"
+
+#define SceneEffect_UpdateOrbitingEffect Func_020039d4
+
+typedef struct RenderData {
+    unsigned char pad00[0x1E];
+    s16 rotation;
+} RenderData;
+
+typedef struct Effect {
+    unsigned char pad00[8];
+    s32 x;
+    s32 y;
+    unsigned char pad10[0x20];
+    s32 angle;
+    unsigned char pad34[4];
+    s32 base_x;
+    s32 base_y;
+    unsigned char pad40[0x10];
+    RenderData *render;
+} Effect;
+
+s32 Func_02007512(s32);
+s32 Func_02007528(s32);
+s32 Func_02007540(void);
+s32 Func_02007542(s32);
+s32 Func_02007546(void);
+
+s32 SceneEffect_UpdateOrbitingEffect(Effect *effect)
+{
+    RenderData *render = effect->render;
+    s32 ofs = Func_02007512(effect->angle) * 2;
+    s32 first;
+
+    if (ofs > 0) {
+        ofs = -ofs;
+    }
+    effect->x = effect->base_x + Func_02007528(effect->angle) * 2;
+    effect->y = effect->base_y + ofs;
+    render->rotation = Func_02007542(effect->angle + 0x8000) / 8;
+    first = Func_02007540();
+    effect->angle +=
+        ((u32)(first << 9) >> 16)
+        + ((u32)(Func_02007546() << 9) >> 16)
+        + 0x400;
+    return 0;
+}

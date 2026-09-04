@@ -14,8 +14,8 @@ extern u8 Data_0200a39c[];
 #define SceneDataA234 Data_0200a234
 #define SceneDataA2C4 Data_0200a2c4
 #define SceneDataA39C Data_0200a39c
-#define SelectSceneDataByState Func_02000d80
 
+#define SelectSceneDataByState Func_02000d80
 s32 SelectSceneDataByState(void)
 {
     s16 state = Data_02000240[224];

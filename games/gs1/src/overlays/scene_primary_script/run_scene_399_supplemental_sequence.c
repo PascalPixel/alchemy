@@ -147,7 +147,7 @@ static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 
 /* Picks one of three scripted call sequences depending on two condition
  * checks (codes 2177 and 2091), each acting on actor 9 and/or actor 8. */
-void Func_02000384(void)
+void FieldScene_RunSupplementalSequenceOne(void)
 {
     void *actor9_record;
     void *unused_actor9_record;

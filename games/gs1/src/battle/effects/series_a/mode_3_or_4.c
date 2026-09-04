@@ -1,8 +1,7 @@
 #include "types.h"
 
-#define BattleEffectA Func_080d89ac
 #define BattleEffectA3Or4 Func_080d896c
-
+#define BattleEffectA Func_080d89ac
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 s32 BattleEffectA(void *, s32);

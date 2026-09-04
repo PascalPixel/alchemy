@@ -49,7 +49,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
  * passing the address of Value_0200f570 plus two small constants, one call
  * with a byte-flag-sized first argument (0) and two larger constants, and a
  * final single-argument call. */
-void Func_02000f5c(void)
+void FieldScene_RunPrimarySequence(void)
 {
     Audio_PlayCue_1(158);
     Call3(Func_02006e98, (s32)&Value_0200f570, 49, 69); /* main:08009178 */

@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define RunEventScript01 Func_02001780
+#define RunEventScript01 Func_0200178c
 
 /* AUDITED GENERATED CALL SCRIPT for RunEventScript01: 147 calls, 1 loops, 14 memory operations.
  * Recovered from the complete decoded owner. Calls, arguments, control flow,

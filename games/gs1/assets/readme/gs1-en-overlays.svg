@@ -2878,8 +2878,8 @@
 <title>37c · unnamed_run_097 · Proven C: 8 bytes</title>
 <rect x="68.37360550185748" y="235.99105843471744" width="0.5" height="0.6272526823841198" style="fill:#1f7f93"/>
 </g>
-<g aria-label="37c · state_update_0256 · Proven C: 76 bytes">
-<title>37c · state_update_0256 · Proven C: 76 bytes</title>
+<g aria-label="37c · Resource37c_Run · Proven C: 76 bytes">
+<title>37c · Resource37c_Run · Proven C: 76 bytes</title>
 <rect x="58.16792028135321" y="237.61831111710157" width="3.283813858497667" height="2.054941865592451" style="fill:#1f7f93"/>
 </g>
 <g aria-label="37c · Proven ASM 0x02000000–0x02000030: 48 bytes">
@@ -2910,8 +2910,8 @@
 <title>37d · unnamed_run_106 · Proven C: 8 bytes</title>
 <rect x="61.4371466470488" y="244.29987987576573" width="0.5" height="0.5" style="fill:#1f7f93"/>
 </g>
-<g aria-label="37d · state_update_0271 · Proven C: 76 bytes">
-<title>37d · state_update_0271 · Proven C: 76 bytes</title>
+<g aria-label="37d · Resource37d_Run · Proven C: 76 bytes">
+<title>37d · Resource37d_Run · Proven C: 76 bytes</title>
 <rect x="62.45173413985088" y="237.61831111710157" width="2.2974382572333325" height="2.9687785728882607" style="fill:#1f7f93"/>
 </g>
 <g aria-label="37d · Proven ASM 0x02000000–0x02000030: 48 bytes">
@@ -2942,8 +2942,8 @@
 <title>37e · unnamed_run_143 · Proven C: 8 bytes</title>
 <rect x="62.45173413985088" y="244.75306689913145" width="0.5228958266959207" height="0.5" style="fill:#1f7f93"/>
 </g>
-<g aria-label="37e · state_update_0088 · Proven C: 76 bytes">
-<title>37e · state_update_0088 · Proven C: 76 bytes</title>
+<g aria-label="37e · Resource37e_Run · Proven C: 76 bytes">
+<title>37e · Resource37e_Run · Proven C: 76 bytes</title>
 <rect x="63.9746299665468" y="241.58708968998982" width="2.2150023008024995" height="3.070542126039242" style="fill:#1f7f93"/>
 </g>
 <g aria-label="37e · Proven ASM 0x02000000–0x02000030: 48 bytes">
@@ -3542,28 +3542,28 @@
 <title>381 · Proven ASM 0x020033e4–0x0200362c: 584 bytes</title>
 <rect x="69.22016003627719" y="213.642100484589" width="12.558555601079018" height="6.416847852663424" style="fill:hsl(190 58% 66%)"/>
 </g>
-<g aria-label="382 · set_effect_record_mode · Proven C: 22 bytes">
-<title>382 · set_effect_record_mode · Proven C: 22 bytes</title>
+<g aria-label="382 · SetEffectRecordMode · Proven C: 22 bytes">
+<title>382 · SetEffectRecordMode · Proven C: 22 bytes</title>
 <rect x="82.77871563735621" y="213.642100484589" width="0.5" height="6.416847852663424" style="fill:#1f7f93"/>
 </g>
-<g aria-label="382 · prepare_scene_object · Proven C: 86 bytes">
-<title>382 · prepare_scene_object · Proven C: 86 bytes</title>
+<g aria-label="382 · PrepareSceneObject · Proven C: 86 bytes">
+<title>382 · PrepareSceneObject · Proven C: 86 bytes</title>
 <rect x="69.22016003627719" y="221.05894833725245" width="2.9462735542899967" height="2.752590834910494" style="fill:#1f7f93"/>
 </g>
-<g aria-label="382 · create_configured_overlay_object · Proven C: 98 bytes">
-<title>382 · create_configured_overlay_object · Proven C: 98 bytes</title>
+<g aria-label="382 · CreateConfiguredOverlayObject · Proven C: 98 bytes">
+<title>382 · CreateConfiguredOverlayObject · Proven C: 98 bytes</title>
 <rect x="69.22016003627719" y="224.81153917216295" width="2.9462735542899967" height="3.2762081607119575" style="fill:#1f7f93"/>
 </g>
-<g aria-label="382 · spawn_configured_effect · Proven C: 472 bytes">
-<title>382 · spawn_configured_effect · Proven C: 472 bytes</title>
+<g aria-label="382 · SpawnConfiguredEffect · Proven C: 472 bytes">
+<title>382 · SpawnConfiguredEffect · Proven C: 472 bytes</title>
 <rect x="73.1664335905672" y="221.05894833725245" width="9.123049552309121" height="7.028798995622453" style="fill:#1f7f93"/>
 </g>
 <g aria-label="382 · update_actor_proximity · Proven C: 152 bytes">
 <title>382 · update_actor_proximity · Proven C: 152 bytes</title>
 <rect x="83.2894831428763" y="213.642100484589" width="2.742157519372771" height="5.994255176582284" style="fill:#1f7f93"/>
 </g>
-<g aria-label="382 · update_entity_from_leader · Proven C: 108 bytes">
-<title>382 · update_entity_from_leader · Proven C: 108 bytes</title>
+<g aria-label="382 · ActorPresentation_UpdateEntityFromLeader · Proven C: 108 bytes">
+<title>382 · ActorPresentation_UpdateEntityFromLeader · Proven C: 108 bytes</title>
 <rect x="87.03164066224907" y="213.64210048458904" width="3.529980155030197" height="3.1053236906026456" style="fill:#1f7f93"/>
 </g>
 <g aria-label="382 · leaf_0273 · Proven C: 8 bytes">
@@ -3602,16 +3602,16 @@
 <title>382 · FieldScene_RunScene382_02000614 · Proven C: 96 bytes</title>
 <rect x="83.2894831428763" y="223.42573123754636" width="1.9195780027304594" height="4.662016095328516" style="fill:#1f7f93"/>
 </g>
-<g aria-label="382 · run_actor_thirteen_scene_setup · Proven C: 92 bytes">
-<title>382 · run_actor_thirteen_scene_setup · Proven C: 92 bytes</title>
+<g aria-label="382 · ActorPresentation_RunActorThirteenSceneSetup · Proven C: 92 bytes">
+<title>382 · ActorPresentation_RunActorThirteenSceneSetup · Proven C: 92 bytes</title>
 <rect x="86.20906114560677" y="223.42573123754636" width="4.352559671672509" height="1.959690231648997" style="fill:#1f7f93"/>
 </g>
-<g aria-label="382 · run_actor_seventeen_scene_setup · Proven C: 84 bytes">
-<title>382 · run_actor_seventeen_scene_setup · Proven C: 84 bytes</title>
+<g aria-label="382 · ActorPresentation_RunActorSeventeenSceneSetup · Proven C: 84 bytes">
+<title>382 · ActorPresentation_RunActorSeventeenSceneSetup · Proven C: 84 bytes</title>
 <rect x="86.20906114560677" y="226.38542146919536" width="4.352559671672509" height="1.702325863679519" style="fill:#1f7f93"/>
 </g>
-<g aria-label="382 · run_actor_eighteen_scene_setup · Proven C: 84 bytes">
-<title>382 · run_actor_eighteen_scene_setup · Proven C: 84 bytes</title>
+<g aria-label="382 · ActorPresentation_RunActorEighteenSceneSetup · Proven C: 84 bytes">
+<title>382 · ActorPresentation_RunActorEighteenSceneSetup · Proven C: 84 bytes</title>
 <rect x="91.56162081727928" y="213.642100484589" width="3.2729944694510866" height="2.385064160756257" style="fill:#1f7f93"/>
 </g>
 <g aria-label="382 · leaf_0577 · Proven C: 32 bytes">
@@ -3626,12 +3626,12 @@
 <title>382 · leaf_0254 · Proven C: 52 bytes</title>
 <rect x="95.83461528673037" y="213.642100484589" width="3.7349398174998534" height="0.8910753325479208" style="fill:#1f7f93"/>
 </g>
-<g aria-label="382 · run_actor_fourteen_dialogue · Proven C: 112 bytes">
-<title>382 · run_actor_fourteen_dialogue · Proven C: 112 bytes</title>
+<g aria-label="382 · ActorPresentation_RunActorFourteenDialogue · Proven C: 112 bytes">
+<title>382 · ActorPresentation_RunActorFourteenDialogue · Proven C: 112 bytes</title>
 <rect x="95.83461528673037" y="215.53317581713694" width="3.7349398174998534" height="3.0730853316416757" style="fill:#1f7f93"/>
 </g>
-<g aria-label="382 · run_actor_fifteen_dialogue · Proven C: 112 bytes">
-<title>382 · run_actor_fifteen_dialogue · Proven C: 112 bytes</title>
+<g aria-label="382 · ActorPresentation_RunActorFifteenDialogue · Proven C: 112 bytes">
+<title>382 · ActorPresentation_RunActorFifteenDialogue · Proven C: 112 bytes</title>
 <rect x="91.56162081727928" y="219.60626114877857" width="3.5858574551750237" height="3.2054979042362532" style="fill:#1f7f93"/>
 </g>
 <g aria-label="382 · FieldScene_RunScene382_020008cc · Proven C: 64 bytes">
@@ -3646,8 +3646,8 @@
 <title>382 · run_actor_command · Proven C: 68 bytes</title>
 <rect x="91.56162081727928" y="223.81175905301484" width="1.219346128669072" height="4.275988279860027" style="fill:#1f7f93"/>
 </g>
-<g aria-label="382 · run_actor_eight_scene_setup · Proven C: 84 bytes">
-<title>382 · run_actor_eight_scene_setup · Proven C: 84 bytes</title>
+<g aria-label="382 · ActorPresentation_RunActorEightSceneSetup · Proven C: 84 bytes">
+<title>382 · ActorPresentation_RunActorEightSceneSetup · Proven C: 84 bytes</title>
 <rect x="93.78096694594835" y="223.81175905301484" width="1.7415452177676776" height="4.275988279860027" style="fill:#1f7f93"/>
 </g>
 <g aria-label="382 · leaf_0829 · Proven C: 32 bytes">
@@ -3662,24 +3662,24 @@
 <title>382 · leaf_0249 · Proven C: 32 bytes</title>
 <rect x="99.16188799448615" y="225.17330441555936" width="0.5" height="2.9144429173155038" style="fill:#1f7f93"/>
 </g>
-<g aria-label="382 · run_actor_fourteen_dialogue_and_advance_story · Proven C: 128 bytes">
-<title>382 · run_actor_fourteen_dialogue_and_advance_story · Proven C: 128 bytes</title>
+<g aria-label="382 · ActorPresentation_RunActorFourteenDialogueAndAdvanceStory · Proven C: 128 bytes">
+<title>382 · ActorPresentation_RunActorFourteenDialogueAndAdvanceStory · Proven C: 128 bytes</title>
 <rect x="69.22016003627719" y="229.0877473328749" width="6.291511878859271" height="2.0228203089961654" style="fill:#1f7f93"/>
 </g>
-<g aria-label="382 · run_actor_fifteen_followup_dialogue · Proven C: 112 bytes">
-<title>382 · run_actor_fifteen_followup_dialogue · Proven C: 112 bytes</title>
+<g aria-label="382 · ActorPresentation_RunActorFifteenFollowupDialogue · Proven C: 112 bytes">
+<title>382 · ActorPresentation_RunActorFifteenFollowupDialogue · Proven C: 112 bytes</title>
 <rect x="69.22016003627719" y="232.11056764187106" width="3.003182992314894" height="3.817619867462639" style="fill:#1f7f93"/>
 </g>
-<g aria-label="382 · run_actor_sixteen_scene_setup · Proven C: 92 bytes">
-<title>382 · run_actor_sixteen_scene_setup · Proven C: 92 bytes</title>
+<g aria-label="382 · ActorPresentation_RunActorSixteenSceneSetup · Proven C: 92 bytes">
+<title>382 · ActorPresentation_RunActorSixteenSceneSetup · Proven C: 92 bytes</title>
 <rect x="73.22334302859208" y="232.11056764187106" width="2.2883288865443774" height="3.817619867462639" style="fill:#1f7f93"/>
 </g>
-<g aria-label="382 · run_actor_eighteen_followup_scene_setup · Proven C: 84 bytes">
-<title>382 · run_actor_eighteen_followup_scene_setup · Proven C: 84 bytes</title>
+<g aria-label="382 · ActorPresentation_RunActorEighteenFollowupSceneSetup · Proven C: 84 bytes">
+<title>382 · ActorPresentation_RunActorEighteenFollowupSceneSetup · Proven C: 84 bytes</title>
 <rect x="76.51167191513646" y="229.0877473328749" width="6.8186091231141575" height="0.8499915023105041" style="fill:#1f7f93"/>
 </g>
-<g aria-label="382 · run_actor_nineteen_dialogue_and_set_scene_state · Proven C: 104 bytes">
-<title>382 · run_actor_nineteen_dialogue_and_set_scene_state · Proven C: 104 bytes</title>
+<g aria-label="382 · ActorPresentation_RunActorNineteenDialogueAndSetSceneState · Proven C: 104 bytes">
+<title>382 · ActorPresentation_RunActorNineteenDialogueAndSetSceneState · Proven C: 104 bytes</title>
 <rect x="76.51167191513646" y="230.9377388351854" width="1.9894681941318835" height="4.990448674148299" style="fill:#1f7f93"/>
 </g>
 <g aria-label="382 · leaf_0713 · Proven C: 56 bytes">
@@ -3694,20 +3694,20 @@
 <title>382 · RunSceneStep · Proven C: 56 bytes</title>
 <rect x="81.91571057375948" y="232.9345550599015" width="1.414570464491137" height="2.9936324494322" style="fill:#1f7f93"/>
 </g>
-<g aria-label="382 · run_actor_fourteen_flagged_dialogue · Proven C: 124 bytes">
-<title>382 · run_actor_fourteen_flagged_dialogue · Proven C: 124 bytes</title>
+<g aria-label="382 · ActorPresentation_RunActorFourteenFlaggedDialogue · Proven C: 124 bytes">
+<title>382 · ActorPresentation_RunActorFourteenFlaggedDialogue · Proven C: 124 bytes</title>
 <rect x="69.22016003627719" y="236.9281875093337" width="6.5550605009867144" height="1.8262051798863128" style="fill:#1f7f93"/>
 </g>
-<g aria-label="382 · run_actor_fifteen_script_branch · Proven C: 92 bytes">
-<title>382 · run_actor_fifteen_script_branch · Proven C: 92 bytes</title>
+<g aria-label="382 · ActorPresentation_RunActorFifteenScriptBranch · Proven C: 92 bytes">
+<title>382 · ActorPresentation_RunActorFifteenScriptBranch · Proven C: 92 bytes</title>
 <rect x="69.22016003627719" y="239.75439268922" width="1.5935282316820065" height="5.108249904915579" style="fill:#1f7f93"/>
 </g>
-<g aria-label="382 · run_actor_sixteen_script_branch · Proven C: 56 bytes">
-<title>382 · run_actor_sixteen_script_branch · Proven C: 56 bytes</title>
+<g aria-label="382 · ActorPresentation_RunActorSixteenScriptBranch · Proven C: 56 bytes">
+<title>382 · ActorPresentation_RunActorSixteenScriptBranch · Proven C: 56 bytes</title>
 <rect x="71.8136882679592" y="239.75439268922" width="3.9615322693047084" height="0.9435340606549569" style="fill:#1f7f93"/>
 </g>
-<g aria-label="382 · run_actor_nineteen_script_branch · Proven C: 120 bytes">
-<title>382 · run_actor_nineteen_script_branch · Proven C: 120 bytes</title>
+<g aria-label="382 · ActorPresentation_RunActorNineteenScriptBranch · Proven C: 120 bytes">
+<title>382 · ActorPresentation_RunActorNineteenScriptBranch · Proven C: 120 bytes</title>
 <rect x="71.8136882679592" y="241.69792674987497" width="3.9615322693047084" height="3.1647158442606216" style="fill:#1f7f93"/>
 </g>
 <g aria-label="382 · leaf_0323 · Proven C: 32 bytes">
@@ -3738,28 +3738,28 @@
 <title>382 · leaf_0172 · Proven C: 40 bytes</title>
 <rect x="79.62618676405134" y="241.0307434156203" width="3.7040942741992744" height="0.5" style="fill:#1f7f93"/>
 </g>
-<g aria-label="382 · setup_actor_zero_for_scene_eight_at_376_224 · Proven C: 92 bytes">
-<title>382 · setup_actor_zero_for_scene_eight_at_376_224 · Proven C: 92 bytes</title>
+<g aria-label="382 · ActorPresentation_SetupActorZeroForSceneEightAt376_224 · Proven C: 92 bytes">
+<title>382 · ActorPresentation_SetupActorZeroForSceneEightAt376_224 · Proven C: 92 bytes</title>
 <rect x="79.62618676405134" y="242.49495528789765" width="3.7040942741992744" height="2.3676873062379418" style="fill:#1f7f93"/>
 </g>
-<g aria-label="382 · setup_actor_zero_for_scene_nine_at_296_176 · Proven C: 92 bytes">
-<title>382 · setup_actor_zero_for_scene_nine_at_296_176 · Proven C: 92 bytes</title>
+<g aria-label="382 · ActorPresentation_SetupActorZeroForSceneNineAt296_176 · Proven C: 92 bytes">
+<title>382 · ActorPresentation_SetupActorZeroForSceneNineAt296_176 · Proven C: 92 bytes</title>
 <rect x="84.33028103825062" y="229.0877473328749" width="4.7452742607133125" height="1.7573824774381808" style="fill:#1f7f93"/>
 </g>
 <g aria-label="382 · leaf_0257 · Proven C: 36 bytes">
 <title>382 · leaf_0257 · Proven C: 36 bytes</title>
 <rect x="90.07555529896393" y="229.0877473328749" width="1.2481507976704265" height="1.7573824774381808" style="fill:#1f7f93"/>
 </g>
-<g aria-label="382 · setup_actor_zero_for_scene_twelve_at_72_160 · Proven C: 92 bytes">
-<title>382 · setup_actor_zero_for_scene_twelve_at_72_160 · Proven C: 92 bytes</title>
+<g aria-label="382 · ActorPresentation_SetupActorZeroForSceneTwelveAt72_160 · Proven C: 92 bytes">
+<title>382 · ActorPresentation_SetupActorZeroForSceneTwelveAt72_160 · Proven C: 92 bytes</title>
 <rect x="84.33028103825062" y="231.84512981031307" width="2.6795131221131494" height="3.3054388036723314" style="fill:#1f7f93"/>
 </g>
 <g aria-label="382 · leaf_0768 · Proven C: 24 bytes">
 <title>382 · leaf_0768 · Proven C: 24 bytes</title>
 <rect x="84.33028103825062" y="236.1505686139854" width="2.6795131221131494" height="0.5" style="fill:#1f7f93"/>
 </g>
-<g aria-label="382 · move_actor_to_position_and_wait · Proven C: 136 bytes">
-<title>382 · move_actor_to_position_and_wait · Proven C: 136 bytes</title>
+<g aria-label="382 · ActorPresentation_MoveActorToPositionAndWait · Proven C: 136 bytes">
+<title>382 · ActorPresentation_MoveActorToPositionAndWait · Proven C: 136 bytes</title>
 <rect x="88.00979416036377" y="231.84512981031307" width="3.313911936270589" height="4.428596752456418" style="fill:#1f7f93"/>
 </g>
 <g aria-label="382 · FieldScene_RunScene382_02001238 · Proven C: 136 bytes">
@@ -3782,8 +3782,8 @@
 <title>382 · leaf_0296 · Proven C: 24 bytes</title>
 <rect x="84.33028103825062" y="237.2737265627695" width="2.3681457322031756" height="0.5" style="fill:#1f7f93"/>
 </g>
-<g aria-label="382 · update_effect_motion_with_damping · Proven C: 88 bytes">
-<title>382 · update_effect_motion_with_damping · Proven C: 88 bytes</title>
+<g aria-label="382 · Overlay382_UpdateEffectMotionWithDamping · Proven C: 88 bytes">
+<title>382 · Overlay382_UpdateEffectMotionWithDamping · Proven C: 88 bytes</title>
 <rect x="84.33028103825062" y="238.50071456725036" width="2.3681457322031756" height="3.4989560164298608" style="fill:#1f7f93"/>
 </g>
 <g aria-label="382 · Draft C 0x02000104–0x0200013c: 56 bytes">
@@ -4546,8 +4546,8 @@
 <title>385 · Proven ASM 0x020011c4–0x020011f2: 46 bytes</title>
 <rect x="166.32583785151863" y="37.31939809495906" width="2.7259278079392146" height="1.1259025122295037" style="fill:hsl(190 58% 66%)"/>
 </g>
-<g aria-label="386 · state_update_0922 · Proven C: 60 bytes">
-<title>386 · state_update_0922 · Proven C: 60 bytes</title>
+<g aria-label="386 · Resource386_CheckWindow · Proven C: 60 bytes">
+<title>386 · Resource386_CheckWindow · Proven C: 60 bytes</title>
 <rect x="166.32583785151863" y="39.445300607188564" width="2.2875833599463657" height="2.142638496339267" style="fill:#1f7f93"/>
 </g>
 <g aria-label="386 · leaf_0654 · Proven C: 8 bytes">
@@ -4830,8 +4830,8 @@
 <title>388 · unnamed_run_146 · Proven C: 8 bytes</title>
 <rect x="168.42219859189353" y="71.47260126815026" width="0.6295670675643128" height="0.5" style="fill:#1f7f93"/>
 </g>
-<g aria-label="388 · state_update_0572 · Proven C: 132 bytes">
-<title>388 · state_update_0572 · Proven C: 132 bytes</title>
+<g aria-label="388 · Resource388_Run · Proven C: 132 bytes">
+<title>388 · Resource388_Run · Proven C: 132 bytes</title>
 <rect x="166.38523975743814" y="72.31795348736141" width="2.6665259020197034" height="5.199249607548499" style="fill:#1f7f93"/>
 </g>
 <g aria-label="388 · Proven ASM 0x02000000–0x02000030: 48 bytes">
@@ -4998,24 +4998,24 @@
 <title>389 · Proven ASM 0x02001524–0x02001552: 46 bytes</title>
 <rect x="183.92801172129225" y="49.19906166894958" width="1.4289967780926136" height="2.261000326852526" style="fill:hsl(190 58% 66%)"/>
 </g>
-<g aria-label="38a · set_effect_record_mode · Proven C: 22 bytes">
-<title>38a · set_effect_record_mode · Proven C: 22 bytes</title>
+<g aria-label="38a · SetEffectRecordMode · Proven C: 22 bytes">
+<title>38a · SetEffectRecordMode · Proven C: 22 bytes</title>
 <rect x="183.92801172129225" y="52.46006199580211" width="1.4289967780926136" height="0.5596088519729467" style="fill:#1f7f93"/>
 </g>
-<g aria-label="38a · state_update_0921 · Proven C: 86 bytes">
-<title>38a · state_update_0921 · Proven C: 86 bytes</title>
+<g aria-label="38a · PrepareOverlayObject · Proven C: 86 bytes">
+<title>38a · PrepareOverlayObject · Proven C: 86 bytes</title>
 <rect x="186.35700849938488" y="49.19906166894958" width="2.0719665134700707" height="3.8206091788254724" style="fill:#1f7f93"/>
 </g>
-<g aria-label="38a · create_configured_overlay_object · Proven C: 98 bytes">
-<title>38a · create_configured_overlay_object · Proven C: 98 bytes</title>
+<g aria-label="38a · CreateConfiguredOverlayObject · Proven C: 98 bytes">
+<title>38a · CreateConfiguredOverlayObject · Proven C: 98 bytes</title>
 <rect x="189.42897501285495" y="49.19906166894958" width="2.500613003721708" height="3.820609178825473" style="fill:#1f7f93"/>
 </g>
-<g aria-label="38a · spawn_configured_effect · Proven C: 472 bytes">
-<title>38a · spawn_configured_effect · Proven C: 472 bytes</title>
+<g aria-label="38a · SpawnConfiguredEffect · Proven C: 472 bytes">
+<title>38a · SpawnConfiguredEffect · Proven C: 472 bytes</title>
 <rect x="192.92958801657664" y="37.64490316097107" width="9.599987039306855" height="6.667549948582818" style="fill:#1f7f93"/>
 </g>
-<g aria-label="38a · unnamed_run_166 · Proven C: 48 bytes">
-<title>38a · unnamed_run_166 · Proven C: 48 bytes</title>
+<g aria-label="38a · SceneEffect_RequestFixedEffect · Proven C: 48 bytes">
+<title>38a · SceneEffect_RequestFixedEffect · Proven C: 48 bytes</title>
 <rect x="192.92958801657664" y="45.312453109553886" width="1.4375868481767005" height="2.3907915230572816" style="fill:#1f7f93"/>
 </g>
 <g aria-label="38a · unnamed_run_166 · Proven C: 4 bytes">
@@ -5026,8 +5026,8 @@
 <title>38a · unnamed_run_166 · Proven C: 8 bytes</title>
 <rect x="195.36717486475334" y="45.312453109553886" width="1.6250935288056776" height="0.5" style="fill:#1f7f93"/>
 </g>
-<g aria-label="38a · unnamed_run_166 · Proven C: 48 bytes">
-<title>38a · unnamed_run_166 · Proven C: 48 bytes</title>
+<g aria-label="38a · StoryActor_ClearActiveFlag · Proven C: 48 bytes">
+<title>38a · StoryActor_ClearActiveFlag · Proven C: 48 bytes</title>
 <rect x="195.36717486475334" y="45.83721846431275" width="1.6250935288056776" height="2.14859212855319" style="fill:#1f7f93"/>
 </g>
 <g aria-label="38a · FieldScene_RunScene38a_02000380 · Proven C: 100 bytes">
@@ -5038,12 +5038,12 @@
 <title>38a · leaf_0640 · Proven C: 48 bytes</title>
 <rect x="196.3503180010242" y="48.98581059286594" width="0.6419503925348256" height="4.033860254909113" style="fill:#1f7f93"/>
 </g>
-<g aria-label="38a · FieldScene_RunScene38a_02000414 · Proven C: 176 bytes">
-<title>38a · FieldScene_RunScene38a_02000414 · Proven C: 176 bytes</title>
+<g aria-label="38a · EntryDriver_02000414 · Proven C: 176 bytes">
+<title>38a · EntryDriver_02000414 · Proven C: 176 bytes</title>
 <rect x="197.99226839355902" y="45.312453109553886" width="4.537306662324477" height="4.473108292596162" style="fill:#1f7f93"/>
 </g>
-<g aria-label="38a · rotate_effect_record · Proven C: 16 bytes">
-<title>38a · rotate_effect_record · Proven C: 16 bytes</title>
+<g aria-label="38a · RotateEffectRecord · Proven C: 16 bytes">
+<title>38a · RotateEffectRecord · Proven C: 16 bytes</title>
 <rect x="197.99226839355902" y="50.78556140215005" width="1.5556799979959126" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="38a · state_update_0741 · Proven C: 32 bytes">
@@ -5762,8 +5762,8 @@
 <title>38f · Proven ASM 0x0200299c–0x02002bd4: 568 bytes</title>
 <rect x="167.99209035266426" y="144.1840485471027" width="12.385471691928725" height="6.306924251329818" style="fill:hsl(190 58% 66%)"/>
 </g>
-<g aria-label="390 · state_update_0147 · Proven C: 42 bytes">
-<title>390 · state_update_0147 · Proven C: 42 bytes</title>
+<g aria-label="390 · Resource390_InitRecords · Proven C: 42 bytes">
+<title>390 · Resource390_InitRecords · Proven C: 42 bytes</title>
 <rect x="181.377562044593" y="144.1840485471027" width="1.8416000218326651" height="1.5451084470924088" style="fill:#1f7f93"/>
 </g>
 <g aria-label="390 · leaf_0549 · Proven C: 8 bytes">
@@ -5970,28 +5970,28 @@
 <title>391 · Proven ASM 0x02002d38–0x02002d66: 46 bytes</title>
 <rect x="214.67998957135367" y="79.68572555387331" width="4.054159850470143" height="0.5672158225361499" style="fill:hsl(190 58% 66%)"/>
 </g>
-<g aria-label="392 · measure_fixed_point_position_distance · Proven C: 60 bytes">
-<title>392 · measure_fixed_point_position_distance · Proven C: 60 bytes</title>
+<g aria-label="392 · CalculateFixedPointPositionDistance · Proven C: 60 bytes">
+<title>392 · CalculateFixedPointPositionDistance · Proven C: 60 bytes</title>
 <rect x="214.67998957135367" y="81.25294137640947" width="1.0489837231635715" height="4.042346559464134" style="fill:#1f7f93"/>
 </g>
 <g aria-label="392 · find_actor_at_fixed_point_position · Proven C: 88 bytes">
 <title>392 · find_actor_at_fixed_point_position · Proven C: 88 bytes</title>
 <rect x="216.72897329451723" y="81.25294137640947" width="2.005176127306571" height="4.042346559464134" style="fill:#1f7f93"/>
 </g>
-<g aria-label="392 · state_update_0145 · Proven C: 384 bytes">
-<title>392 · state_update_0145 · Proven C: 384 bytes</title>
+<g aria-label="392 · AdvanceStagedActorPair · Proven C: 384 bytes">
+<title>392 · AdvanceStagedActorPair · Proven C: 384 bytes</title>
 <rect x="219.73414942182382" y="79.68572555387331" width="9.00411021948729" height="5.609562382000284" style="fill:#1f7f93"/>
 </g>
 <g aria-label="392 · fill_grid_attribute_rectangle · Proven C: 100 bytes">
 <title>392 · fill_grid_attribute_rectangle · Proven C: 100 bytes</title>
 <rect x="229.73825964131112" y="79.68572555387331" width="1.605237036324815" height="5.609562382000284" style="fill:#1f7f93"/>
 </g>
-<g aria-label="392 · state_update_0514 · Proven C: 164 bytes">
-<title>392 · state_update_0514 · Proven C: 164 bytes</title>
+<g aria-label="392 · CheckStagedActorProbe · Proven C: 164 bytes">
+<title>392 · CheckStagedActorProbe · Proven C: 164 bytes</title>
 <rect x="232.34349667763593" y="79.68572555387331" width="3.2725887395726962" height="5.609562382000284" style="fill:#1f7f93"/>
 </g>
-<g aria-label="392 · find_clear_actor_position · Proven C: 404 bytes">
-<title>392 · find_clear_actor_position · Proven C: 404 bytes</title>
+<g aria-label="392 · FindClearActorPosition · Proven C: 404 bytes">
+<title>392 · FindClearActorPosition · Proven C: 404 bytes</title>
 <rect x="236.61608541720864" y="22.5" width="6.320420899527074" height="8.503099189132596" style="fill:#1f7f93"/>
 </g>
 <g aria-label="392 · leaf_0450 · Proven C: 8 bytes">
@@ -6038,8 +6038,8 @@
 <title>392 · state_update_0476 · Proven C: 102 bytes</title>
 <rect x="250.36560167176728" y="22.5" width="2.1527294529481606" height="4.571003318820114" style="fill:#1f7f93"/>
 </g>
-<g aria-label="392 · initialize_orbiting_particle · Proven C: 216 bytes">
-<title>392 · initialize_orbiting_particle · Proven C: 216 bytes</title>
+<g aria-label="392 · InitializeOrbitingParticle · Proven C: 216 bytes">
+<title>392 · InitializeOrbitingParticle · Proven C: 216 bytes</title>
 <rect x="243.93650631673572" y="28.071003318820118" width="3.0423323408664382" height="8.20114096527709" style="fill:#1f7f93"/>
 </g>
 <g aria-label="392 · Draft C 0x0200034c–0x02000474: 296 bytes">
@@ -6086,56 +6086,56 @@
 <title>392 · Proven ASM 0x02000e98–0x02000ec6: 46 bytes</title>
 <rect x="246.38015120455947" y="50.77089224260001" width="2.0977007200676754" height="1.557044725453883" style="fill:hsl(190 58% 66%)"/>
 </g>
-<g aria-label="393 · measure_fixed_point_position_distance · Proven C: 60 bytes">
-<title>393 · measure_fixed_point_position_distance · Proven C: 60 bytes</title>
+<g aria-label="393 · CalculateFixedPointPositionDistance · Proven C: 60 bytes">
+<title>393 · CalculateFixedPointPositionDistance · Proven C: 60 bytes</title>
 <rect x="249.47785192462715" y="50.77089224260001" width="3.0404792000882717" height="1.5570447254538828" style="fill:#1f7f93"/>
 </g>
-<g aria-label="393 · find_actor_at_fixed_point_position · Proven C: 88 bytes">
-<title>393 · find_actor_at_fixed_point_position · Proven C: 88 bytes</title>
+<g aria-label="393 · Resource384_SelectSceneScript · Proven C: 88 bytes">
+<title>393 · Resource384_SelectSceneScript · Proven C: 88 bytes</title>
 <rect x="253.51833112471542" y="22.5" width="6.172169543541452" height="1.1127692832852025" style="fill:#1f7f93"/>
 </g>
-<g aria-label="393 · state_update_0070 · Proven C: 384 bytes">
-<title>393 · state_update_0070 · Proven C: 384 bytes</title>
+<g aria-label="393 · AdvanceStagedActorPair · Proven C: 384 bytes">
+<title>393 · AdvanceStagedActorPair · Proven C: 384 bytes</title>
 <rect x="253.51833112471542" y="24.612769283285207" width="6.172169543541452" height="8.219356872517249" style="fill:#1f7f93"/>
 </g>
 <g aria-label="393 · fill_grid_attribute_rectangle · Proven C: 100 bytes">
 <title>393 · fill_grid_attribute_rectangle · Proven C: 100 bytes</title>
 <rect x="253.51833112471542" y="33.832126155802456" width="6.172169543541452" height="1.4008741855513662" style="fill:#1f7f93"/>
 </g>
-<g aria-label="393 · state_update_0372 · Proven C: 164 bytes">
-<title>393 · state_update_0372 · Proven C: 164 bytes</title>
+<g aria-label="393 · CheckStagedActorProbe · Proven C: 164 bytes">
+<title>393 · CheckStagedActorProbe · Proven C: 164 bytes</title>
 <rect x="260.69050066825685" y="22.5" width="8.730076163965327" height="1.9023351236881778" style="fill:#1f7f93"/>
 </g>
-<g aria-label="393 · find_clear_actor_position · Proven C: 404 bytes">
-<title>393 · find_clear_actor_position · Proven C: 404 bytes</title>
+<g aria-label="393 · FindClearActorPosition · Proven C: 404 bytes">
+<title>393 · FindClearActorPosition · Proven C: 404 bytes</title>
 <rect x="260.69050066825685" y="25.40233512368818" width="8.730076163965327" height="6.14965481689039" style="fill:#1f7f93"/>
 </g>
-<g aria-label="393 · leaf_0307 · Proven C: 8 bytes">
-<title>393 · leaf_0307 · Proven C: 8 bytes</title>
+<g aria-label="393 · MapStagedScene_SelectPrimaryData · Proven C: 8 bytes">
+<title>393 · MapStagedScene_SelectPrimaryData · Proven C: 8 bytes</title>
 <rect x="260.69050066825685" y="32.551989940578565" width="0.5" height="0.5" style="fill:#1f7f93"/>
 </g>
-<g aria-label="393 · get_inactive_result · Proven C: 4 bytes">
-<title>393 · get_inactive_result · Proven C: 4 bytes</title>
+<g aria-label="393 · MapStagedScene_GetEmptyData · Proven C: 4 bytes">
+<title>393 · MapStagedScene_GetEmptyData · Proven C: 4 bytes</title>
 <rect x="260.69050066825685" y="33.603707197942924" width="0.5" height="0.5" style="fill:#1f7f93"/>
 </g>
-<g aria-label="393 · unnamed_run_109 · Proven C: 8 bytes">
-<title>393 · unnamed_run_109 · Proven C: 8 bytes</title>
+<g aria-label="393 · MapStagedScene_SelectSecondaryData · Proven C: 8 bytes">
+<title>393 · MapStagedScene_SelectSecondaryData · Proven C: 8 bytes</title>
 <rect x="260.69050066825685" y="34.129565826625104" width="0.5" height="0.5" style="fill:#1f7f93"/>
 </g>
-<g aria-label="393 · unnamed_run_109 · Proven C: 8 bytes">
-<title>393 · unnamed_run_109 · Proven C: 8 bytes</title>
+<g aria-label="393 · MapStagedScene_SelectTertiaryData · Proven C: 8 bytes">
+<title>393 · MapStagedScene_SelectTertiaryData · Proven C: 8 bytes</title>
 <rect x="260.69050066825685" y="35.18128308398946" width="0.5" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="393 · state_update_0508 · Proven C: 180 bytes">
 <title>393 · state_update_0508 · Proven C: 180 bytes</title>
 <rect x="262.000318613406" y="32.551989940578565" width="7.420258218816148" height="2.68101040077525" style="fill:#1f7f93"/>
 </g>
-<g aria-label="393 · state_update_0671 · Proven C: 248 bytes">
-<title>393 · state_update_0671 · Proven C: 248 bytes</title>
+<g aria-label="393 · RunStagedActorStepEffect · Proven C: 248 bytes">
+<title>393 · RunStagedActorStepEffect · Proven C: 248 bytes</title>
 <rect x="253.51833112471542" y="36.233000341353815" width="5.0926699643338385" height="6.009127770661295" style="fill:#1f7f93"/>
 </g>
-<g aria-label="393 · state_update_0914 · Proven C: 76 bytes">
-<title>393 · state_update_0914 · Proven C: 76 bytes</title>
+<g aria-label="393 · SubmitResource393ObjectPosition · Proven C: 76 bytes">
+<title>393 · SubmitResource393ObjectPosition · Proven C: 76 bytes</title>
 <rect x="259.61100108904924" y="36.233000341353815" width="1.063646278242107" height="5.341591792503076" style="fill:#1f7f93"/>
 </g>
 <g aria-label="393 · leaf_0067 · Proven C: 8 bytes">
@@ -6750,8 +6750,8 @@
 <title>397 · leaf_0527 · Proven C: 14 bytes</title>
 <rect x="222.97710443929856" y="145.16524998543204" width="0.5" height="0.8395277022968661" style="fill:#1f7f93"/>
 </g>
-<g aria-label="397 · empty_hook_a · Proven C: 2 bytes">
-<title>397 · empty_hook_a · Proven C: 2 bytes</title>
+<g aria-label="397 · Resource397_EmptyHook · Proven C: 2 bytes">
+<title>397 · Resource397_EmptyHook · Proven C: 2 bytes</title>
 <rect x="222.97710443929856" y="147.0047776877289" width="0.5" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="397 · state_update_0257 · Proven C: 44 bytes">
@@ -9546,8 +9546,8 @@
 <title>3a1 · state_update_0448 · Proven C: 86 bytes</title>
 <rect x="230.97013426659922" y="272.410732714802" width="4.0662628799926654" height="1.9230125484328888" style="fill:#1f7f93"/>
 </g>
-<g aria-label="3a1 · create_configured_overlay_object · Proven C: 98 bytes">
-<title>3a1 · create_configured_overlay_object · Proven C: 98 bytes</title>
+<g aria-label="3a1 · CreateConfiguredOverlayObject · Proven C: 98 bytes">
+<title>3a1 · CreateConfiguredOverlayObject · Proven C: 98 bytes</title>
 <rect x="230.97013426659922" y="275.3337452632349" width="4.0662628799926654" height="2.3308747644932923" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3a1 · state_update_0942 · Proven C: 54 bytes">
@@ -19266,8 +19266,8 @@
 <title>3c6 · Proven ASM 0x020014d8–0x02001638: 352 bytes</title>
 <rect x="424.4092014807474" y="267.07944669947875" width="8.29565482678824" height="5.520525896654286" style="fill:hsl(190 58% 66%)"/>
 </g>
-<g aria-label="3c7 · set_actor_fourteen_pose · Proven C: 18 bytes">
-<title>3c7 · set_actor_fourteen_pose · Proven C: 18 bytes</title>
+<g aria-label="3c7 · SetActorFourteenPose · Proven C: 18 bytes">
+<title>3c7 · SetActorFourteenPose · Proven C: 18 bytes</title>
 <rect x="433.70485630753564" y="267.07944669947875" width="0.5" height="3.514210236145275" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c7 · unnamed_run_101 · Proven C: 8 bytes">
@@ -20746,8 +20746,8 @@
 <title>3ce · leaf_0902 · Proven C: 48 bytes</title>
 <rect x="535.2306385195568" y="245.72190117689718" width="1.269361480443064" height="2.6421473144506575" style="fill:#1f7f93"/>
 </g>
-<g aria-label="3ce · run_directional_input · Proven C: 180 bytes">
-<title>3ce · run_directional_input · Proven C: 180 bytes</title>
+<g aria-label="3ce · CommandTable_RunDirectionalInput · Proven C: 180 bytes">
+<title>3ce · CommandTable_RunDirectionalInput · Proven C: 180 bytes</title>
 <rect x="528.2433939613505" y="249.36404849134783" width="5.408419565218774" height="3.8366149820930766" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3ce · leaf_0428 · Proven C: 24 bytes">
@@ -20794,8 +20794,8 @@
 <title>3ce · leaf_0704 · Proven C: 12 bytes</title>
 <rect x="534.246393355377" y="254.2006634734409" width="0.5" height="0.723819185925481" style="fill:#1f7f93"/>
 </g>
-<g aria-label="3ce · no_op_callback · Proven C: 2 bytes">
-<title>3ce · no_op_callback · Proven C: 2 bytes</title>
+<g aria-label="3ce · CommandTable_NoOpCallback · Proven C: 2 bytes">
+<title>3ce · CommandTable_NoOpCallback · Proven C: 2 bytes</title>
 <rect x="534.246393355377" y="255.9244826593664" width="0.5" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3ce · state_update_0134 · Proven C: 16 bytes">
@@ -20814,8 +20814,8 @@
 <title>3ce · RunCallScript · Proven C: 1,574 bytes</title>
 <rect x="503.5954972216452" y="259.3721210312174" width="11.82829023392558" height="20.12787896878264" style="fill:#1f7f93"/>
 </g>
-<g aria-label="3ce · configure_command_groups · Proven C: 588 bytes">
-<title>3ce · configure_command_groups · Proven C: 588 bytes</title>
+<g aria-label="3ce · CommandTable_ConfigureCommandGroups · Proven C: 588 bytes">
+<title>3ce · CommandTable_ConfigureCommandGroups · Proven C: 588 bytes</title>
 <rect x="516.4237874555707" y="259.3721210312174" width="10.453616428950433" height="7.840048354301166" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3ce · FieldScene_RunScene3ce_02000b10 · Proven C: 168 bytes">
@@ -20834,8 +20834,8 @@
 <title>3ce · call_sequence_0017 · Proven C: 404 bytes</title>
 <rect x="516.4237874555707" y="268.21216938551856" width="8.529138650406818" height="6.300417012133111" style="fill:#1f7f93"/>
 </g>
-<g aria-label="3ce · configure_command_list · Proven C: 200 bytes">
-<title>3ce · configure_command_list · Proven C: 200 bytes</title>
+<g aria-label="3ce · CommandTable_ConfigureCommandList · Proven C: 200 bytes">
+<title>3ce · CommandTable_ConfigureCommandList · Proven C: 200 bytes</title>
 <rect x="516.4237874555707" y="275.51258639765166" width="5.905172935077404" height="3.9874136023483624" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3ce · wrapper_0013 · Proven C: 10 bytes">

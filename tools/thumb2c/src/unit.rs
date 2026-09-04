@@ -392,6 +392,21 @@ pub fn function_source(entry: u32, draft: &Draft) -> String {
             params.push(param);
         }
     }
+    // Parameters are positional: a function that reads r1 but never r0
+    // still takes two arguments. Every register up to the highest one read
+    // is declared, so `a1` stays in r1 instead of sliding into r0.
+    let highest = params
+        .iter()
+        .filter_map(|p| p.strip_prefix('a').and_then(|n| n.parse::<usize>().ok()))
+        .max();
+    if let Some(highest) = highest {
+        for index in 0..=highest {
+            let name = format!("a{index}");
+            if !params.contains(&name) {
+                params.push(name);
+            }
+        }
+    }
     params.sort();
     // Every local the unit types as a byte pointer: its arithmetic uses are
     // cast back to an integer, since one name cannot be both.

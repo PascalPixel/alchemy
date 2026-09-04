@@ -83,11 +83,40 @@ pub fn parse_owner(owner: &str) -> Result<(String, u32), String> {
 
 /// The registered span of an owner, from the retained module register.
 pub fn span_for(root: &Path, overlay: &str, entry: u32) -> Result<u32, String> {
-    modules(root)?
+    if let Some(module) = modules(root)?
         .into_iter()
         .find(|m| m.overlay == overlay && m.entry == entry)
-        .map(|m| m.span)
-        .ok_or_else(|| format!("{overlay}:{entry:08x} is not a retained module; pass --span"))
+    {
+        return Ok(module.span);
+    }
+    // An unregistered owner whose extent a reviewer already recorded: the
+    // reviewed span, not a guess carved from the surrounding stretch.
+    if let Some(span) = reviewed_span(root, overlay, entry)? {
+        return Ok(span);
+    }
+    Err(format!(
+        "{overlay}:{entry:08x} is not a retained module and has no reviewed span; pass --span"
+    ))
+}
+
+/// The reviewed extent in `games/gs1/semantic/regions.json`, when one
+/// exists for this owner.
+pub fn reviewed_span(root: &Path, overlay: &str, entry: u32) -> Result<Option<u32>, String> {
+    let path = root.join("games/gs1/semantic/regions.json");
+    let text =
+        std::fs::read_to_string(&path).map_err(|error| format!("{}: {error}", path.display()))?;
+    let value: serde_json::Value =
+        serde_json::from_str(&text).map_err(|error| format!("{}: {error}", path.display()))?;
+    let wanted = format!("0x{entry:08x}");
+    Ok(value["manual_regions"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .find(|region| {
+            region["overlay"].as_str() == Some(overlay) && region["entry"].as_str() == Some(&wanted)
+        })
+        .and_then(|region| region["span_bytes"].as_u64())
+        .map(|span| span as u32))
 }
 
 pub fn overlay_image(root: &Path, overlay: &str) -> Result<Vec<u8>, String> {

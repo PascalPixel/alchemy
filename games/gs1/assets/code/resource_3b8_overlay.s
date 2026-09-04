@@ -3593,32 +3593,8 @@ AlchemyC_02003df8:
 	.space 0x48
 AlchemyC_02003e40:
 	.space 0x144
-	push	{lr}
-	ldr	r0, [pc, #48]
-	bl	sub_0200832a
-	cmp	r0, #0
-	bne.n	.L_02003fa6
-	ldr	r0, [pc, #36]
-	bl	sub_0200833c
-	ldr	r0, [pc, #36]
-	bl	sub_02008432
-	movs	r0, #9
-	movs	r1, #0
-	bl	sub_0200844a
-	b.n	.L_02003fb4
-.L_02003fa6:
-	ldr	r0, [pc, #24]
-	bl	sub_02008442
-	movs	r0, #9
-	movs	r1, #0
-	bl	sub_0200845a
-.L_02003fb4:
-	pop	{r0}
-	bx	r0
-	.4byte 0x0000096d
-	.4byte 0x00002239
-	.2byte 0x223a
-	.2byte 0x0000
+AlchemyC_02003f84:
+	.space 0x40
 AlchemyC_02003fc4:
 	.space 0x48
 AlchemyC_0200400c:

@@ -1530,7 +1530,31 @@ impl<'a> Lifter<'a> {
                 };
                 self.set_reg(rd, value);
             }
-            Kind::MovImm { rd, imm } => self.set_reg(rd, Val::constant(imm as i32)),
+            Kind::MovImm { rd, imm } => {
+                // A constant in a callee-saved register is a local the
+                // original defined before the preceding call and used after
+                // it; the scheduler moved the move below the call. The
+                // assignment lands above that call so the local is live
+                // across it and takes the same register.
+                let previous_call = (5..=7).contains(&rd).then(|| {
+                    let indent = self.indent.clone();
+                    self.out.iter().rposition(|line| {
+                        line.starts_with(&indent)
+                            && !line[indent.len()..].starts_with(' ')
+                            && contains_call(line)
+                    })
+                });
+                match previous_call.flatten() {
+                    Some(at) if at + 1 == self.out.len() && self.read_straight(i + 1, rd) => {
+                        let name = format!("v{rd}");
+                        push_unique(&mut self.consts, &name);
+                        let line = format!("{}{name} = {};", self.indent, format_const(imm as i32));
+                        self.insert_line(at, line);
+                        self.set_reg(rd, Val::expr(name));
+                    }
+                    _ => self.set_reg(rd, Val::constant(imm as i32)),
+                }
+            }
             Kind::Movs { rd, rm } => {
                 let v = self.val_of(rm, Some(rd));
                 self.set_reg(rd, v);
@@ -2336,6 +2360,14 @@ impl<'a> Lifter<'a> {
                 self.cursor_max = self.cursor_max.max(from + 1);
                 return from + 1;
             }
+            // Code the jump skips that a goto elsewhere reaches is lifted in
+            // place under its label, entered with no fall-through state.
+            if (i + 1..t).any(|k| self.goto_targets.contains(&self.ins[k].addr)) {
+                self.jump(target);
+                self.regs = vec![None; 16];
+                self.last_cmp = None;
+                return i + 1;
+            }
             return t;
         }
         self.jump(target);
@@ -2851,6 +2883,32 @@ impl<'a> Lifter<'a> {
         self.loop_vars = outer_vars;
         self.cursor_max = self.cursor_max.max(from + 1);
         from + 1
+    }
+
+    /// Whether register `r` is read on the straight line from `at` before
+    /// any write to it, call, or branch.
+    fn read_straight(&self, at: usize, r: u8) -> bool {
+        let mut j = at;
+        while j < self.ins.len() {
+            let kind = &self.ins[j].kind;
+            if crate::sched::reads(kind).contains(&r) {
+                return true;
+            }
+            if writes(kind).contains(&r)
+                || matches!(
+                    kind,
+                    Kind::Bl { .. }
+                        | Kind::B { .. }
+                        | Kind::Bcond { .. }
+                        | Kind::Bx(_)
+                        | Kind::Pop { pc: true, .. }
+                )
+            {
+                return false;
+            }
+            j += 1;
+        }
+        false
     }
 
     /// Whether register `r` is read at or after instruction `at` before it

@@ -625,13 +625,21 @@ fn hoisted_shown_block(lines: &[String], k: usize) -> Option<Vec<String>> {
         .strip_prefix("s32 shown = ")?
         .strip_suffix(';')?;
     let lhs = store.trim().strip_suffix(" = shown;")?;
-    let address = lhs.strip_prefix("*(u16 *)(")?.strip_suffix(')')?;
+    // A record store is spelled volatile in the unit; the hoisted pointer
+    // keeps that qualifier, so the store stays a volatile access.
+    let (address, pointer) = match lhs.strip_prefix("*(u16 *)(") {
+        Some(rest) => (rest.strip_suffix(')')?, "u16 *"),
+        None => (
+            lhs.strip_prefix("*(volatile u16 *)(")?.strip_suffix(')')?,
+            "volatile u16 *",
+        ),
+    };
     if !address.contains(" + ") && !address.contains("*(") {
         return None;
     }
     Some(vec![
         open.clone(),
-        format!("{lead}u16 *target = (u16 *)({address});"),
+        format!("{lead}{pointer}target = ({pointer})({address});"),
         format!("{lead}s32 shown = {constant};"),
         String::new(),
         format!("{lead}*target = shown;"),

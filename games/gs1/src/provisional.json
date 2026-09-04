@@ -1,5 +1,10 @@
 {
   "format": 1,
   "comment": "Owners whose bytes are final but whose source is provisional: it was written to produce the bytes rather than reconstructed from what the original author wrote. The build is correct, because the bytes are. What an entry withdraws is the source's standing as evidence -- games/gs1/src/ is the corpus everything else is pattern-matched against, so a contrived source sitting in it unlabelled teaches the wrong shape. The opposite register to games/gs1/semantic/sealed.json, which holds owners that do not match at all. Empty is the goal.",
-  "provisional": []
+  "provisional": [
+    {
+      "owner": "resource_383_c_020036f8",
+      "reason": "The byte store rec[85] = 0 spells its zero as u16 zero_sym = (u16)(t + t) with s32 t = 0, written to produce the HImode pool constant that heads the second literal pool at 0x574; the natural u16 zero = 0 folds to an SImode constant and moves the pool. The bytes are final; this one statement was written toward them, not reconstructed."
+    }
+  ]
 }

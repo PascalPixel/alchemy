@@ -2611,9 +2611,6 @@
     },
     "resource_3bd:020002a8": "unidentified/overlays/state_update/state_update_0038.c",
     "resource_383:02002f98": "unidentified/overlays/wrapper/wrapper_0002.c",
-    "resource_383:02003c6c": {
-      "name": "FieldScene_RunExtendedActorSequence"
-    },
     "resource_3ab:02000738": "unidentified/overlays/leaf/leaf_0030.c",
     "resource_3b1:02001720": "unidentified/overlays/leaf/leaf_0031.c",
     "resource_38e:020000f8": "unidentified/overlays/leaf_modules/unnamed_run_068.c",
@@ -6739,7 +6736,8 @@
       "source": "overlays/scene_effect_sequence/run_scene_58_sequence.c"
     },
     "resource_383:020036f8": {
-      "name": "RunDialoguePromptScene"
+      "name": "RunDialoguePromptScene",
+      "source": "overlays/scene_primary_script/run_scene_383_dialogue_prompt_scene.c"
     },
     "resource_38d:020008c0": {
       "name": "FieldScene_RunLongBranchingChoreography"
@@ -8538,6 +8536,18 @@
     "resource_3c8:02001218": {
       "name": "FieldScene_RunScene3c8SequenceD",
       "source": "overlays/scene_primary_script/run_scene_3c8_sequence_d.c"
+    },
+    "resource_3bf:0200169c": {
+      "name": "FieldScene_RunScene3bfSequenceA",
+      "source": "overlays/scene_primary_script/run_scene_3bf_sequence_a.c"
+    },
+    "resource_3bf:0200175c": {
+      "name": "FieldScene_RunScene3bfSequenceB",
+      "source": "overlays/scene_primary_script/run_scene_3bf_sequence_b.c"
+    },
+    "resource_3bf:020017bc": {
+      "name": "FieldScene_RunScene3bfSequenceC",
+      "source": "overlays/scene_primary_script/run_scene_3bf_sequence_c.c"
     }
   }
 }

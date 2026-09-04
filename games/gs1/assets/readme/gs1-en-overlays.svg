@@ -4,7 +4,7 @@
 <rect x="0" y="0" width="540" height="304" fill="#1f7f93" rx="8"/>
 <rect x="1" y="1" width="538" height="302" fill="none" stroke="#1f7f93" stroke-width="2" rx="7"/>
 <text class="weyard" x="6" y="15">Code overlays</text>
-<text class="weyard" x="534" y="15" text-anchor="end">76.38% DONE</text>
+<text class="weyard" x="534" y="15" text-anchor="end">76.59% DONE</text>
 <rect x="3" y="22" width="534" height="258" fill="#fff"/>
 <g aria-label="36f · unnamed_variant · Proven C: 8 bytes">
 <title>36f · unnamed_variant · Proven C: 8 bytes</title>
@@ -4032,203 +4032,195 @@
 </g>
 <g aria-label="383 · RunEventScript01 · Proven C: 1,828 bytes">
 <title>383 · RunEventScript01 · Proven C: 1,828 bytes</title>
-<rect x="101.82676547707845" y="214.19074573578865" width="15.469637108885632" height="18.112262899596427" style="fill:#1f7f93"/>
+<rect x="101.82676547707845" y="214.19074573578865" width="8.494060452912112" height="32.15462713210567" style="fill:#1f7f93"/>
+</g>
+<g aria-label="383 · RunDialoguePromptScene · Proven C: 3,796 bytes">
+<title>383 · RunDialoguePromptScene · Proven C: 3,796 bytes</title>
+<rect x="111.32082592999056" y="214.19074573578865" width="24.65681544714762" height="24.476713480460145" style="fill:#1f7f93"/>
 </g>
 <g aria-label="383 · state_update_0129 · Proven C: 40 bytes">
 <title>383 · state_update_0129 · Proven C: 40 bytes</title>
-<rect x="101.82676547707845" y="233.30300863538508" width="2.5614800795380583" height="0.9339686115801442" style="fill:#1f7f93"/>
+<rect x="111.32082592999056" y="239.6674592162488" width="1.1145727016879903" height="2.257296700698102" style="fill:#1f7f93"/>
 </g>
 <g aria-label="383 · leaf_0409 · Proven C: 22 bytes">
 <title>383 · leaf_0409 · Proven C: 22 bytes</title>
-<rect x="101.82676547707845" y="235.23697724696524" width="0.7807400397690292" height="1.127365472738159" style="fill:#1f7f93"/>
+<rect x="113.43539863167855" y="239.6674592162488" width="1.3260299718567898" height="0.628648350349051" style="fill:#1f7f93"/>
 </g>
 <g aria-label="383 · leaf_0173 · Proven C: 22 bytes">
 <title>383 · leaf_0173 · Proven C: 22 bytes</title>
-<rect x="103.60750551684748" y="235.23697724696524" width="0.7807400397690292" height="1.127365472738159" style="fill:#1f7f93"/>
+<rect x="113.43539863167855" y="241.29610756659784" width="1.3260299718567898" height="0.628648350349051" style="fill:#1f7f93"/>
 </g>
 <g aria-label="383 · leaf_0546 · Proven C: 22 bytes">
 <title>383 · leaf_0546 · Proven C: 22 bytes</title>
-<rect x="105.38824555661651" y="233.30300863538508" width="2.9854658032925894" height="0.5" style="fill:#1f7f93"/>
+<rect x="111.32082592999056" y="242.9247559169469" width="0.947632751554728" height="0.9450714584168659" style="fill:#1f7f93"/>
 </g>
 <g aria-label="383 · leaf_0738 · Proven C: 28 bytes">
 <title>383 · leaf_0738 · Proven C: 28 bytes</title>
-<rect x="105.38824555661651" y="234.25353363384255" width="0.5499033679471181" height="2.110809085860828" style="fill:#1f7f93"/>
+<rect x="111.32082592999056" y="244.86982737536377" width="0.947632751554728" height="1.4755454925305571" style="fill:#1f7f93"/>
 </g>
 <g aria-label="383 · leaf_0865 · Proven C: 44 bytes">
 <title>383 · leaf_0865 · Proven C: 44 bytes</title>
-<rect x="106.93814892456363" y="234.25353363384255" width="1.4355624353454712" height="2.110809085860828" style="fill:#1f7f93"/>
+<rect x="113.26845868154528" y="242.9247559169469" width="1.4929699219900519" height="2.0391741537763535" style="fill:#1f7f93"/>
 </g>
 <g aria-label="383 · leaf_0761 · Proven C: 20 bytes">
 <title>383 · leaf_0761 · Proven C: 20 bytes</title>
-<rect x="101.82676547707845" y="237.3643427197034" width="0.5" height="3.7001956256717436" style="fill:#1f7f93"/>
+<rect x="113.26845868154528" y="245.96393007072325" width="1.4929699219900519" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="383 · state_update_0492 · Proven C: 106 bytes">
 <title>383 · state_update_0492 · Proven C: 106 bytes</title>
-<rect x="102.55947866958628" y="237.3643427197034" width="2.8833799202914987" height="3.7001956256717436" style="fill:#1f7f93"/>
+<rect x="115.76142860353534" y="239.6674592162488" width="6.176731593607726" height="1.5433088971075803" style="fill:#1f7f93"/>
 </g>
 <g aria-label="383 · state_update_0320 · Proven C: 80 bytes">
 <title>383 · state_update_0320 · Proven C: 80 bytes</title>
-<rect x="106.44285858987779" y="237.3643427197034" width="1.9308527700313194" height="3.7001956256717436" style="fill:#1f7f93"/>
+<rect x="115.76142860353534" y="242.21076811335638" width="1.682890315367374" height="4.1346047545379445" style="fill:#1f7f93"/>
 </g>
 <g aria-label="383 · state_update_0690 · Proven C: 100 bytes">
 <title>383 · state_update_0690 · Proven C: 100 bytes</title>
-<rect x="109.3737113599091" y="233.30300863538508" width="1.6335696570294447" height="5.5384550074552585" style="fill:#1f7f93"/>
+<rect x="118.44431891890271" y="242.21076811335638" width="3.4938412782403514" height="2.8317945929387647" style="fill:#1f7f93"/>
 </g>
 <g aria-label="383 · leaf_0362 · Proven C: 34 bytes">
 <title>383 · leaf_0362 · Proven C: 34 bytes</title>
-<rect x="109.3737113599091" y="239.84146364284035" width="1.6335696570294447" height="1.2230747025347872" style="fill:#1f7f93"/>
+<rect x="118.44431891890271" y="246.04256270629514" width="3.4938412782403514" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="383 · FieldScene_RunScene383_02004b2c · Proven C: 320 bytes">
 <title>383 · FieldScene_RunScene383_02004b2c · Proven C: 320 bytes</title>
-<rect x="112.00728101693853" y="233.30300863538508" width="5.289121569025538" height="7.761529709990046" style="fill:#1f7f93"/>
-</g>
-<g aria-label="383 · Draft C 0x020036f8–0x02003c6a: 1,394 bytes">
-<title>383 · Draft C 0x020036f8–0x02003c6a: 1,394 bytes</title>
-<rect x="118.29640258596409" y="214.19074573578865" width="16.667331665465873" height="12.586630392371186" style="fill:hsl(190 52% 82%)"/>
-</g>
-<g aria-label="383 · Draft C 0x020045bc–0x020045cc: 16 bytes">
-<title>383 · Draft C 0x020045bc–0x020045cc: 16 bytes</title>
-<rect x="135.96373425142997" y="214.19074573578865" width="0.5" height="1.7173260784742368" style="fill:hsl(190 52% 82%)"/>
+<rect x="122.93816019714306" y="239.6674592162488" width="6.176731593607725" height="6.677913651645525" style="fill:#1f7f93"/>
 </g>
 <g aria-label="383 · Draft C 0x020047bc–0x020047fc: 64 bytes">
 <title>383 · Draft C 0x020047bc–0x020047fc: 64 bytes</title>
-<rect x="135.96373425142997" y="216.90807181426288" width="0.5" height="9.869304313896947" style="fill:hsl(190 52% 82%)"/>
+<rect x="130.1148917907508" y="239.6674592162488" width="2.0083285858136493" height="2.6633182782361007" style="fill:hsl(190 52% 82%)"/>
 </g>
 <g aria-label="383 · Unknown 0x02000690–0x020006e2: 82 bytes">
 <title>383 · Unknown 0x02000690–0x020006e2: 82 bytes</title>
-<rect x="118.29640258596409" y="227.77737612815983" width="2.903833679187902" height="2.6169499173838178" style="fill:#d8d9df"/>
+<rect x="133.12322037656443" y="239.6674592162488" width="2.8544210005737383" height="2.6633182782361007" style="fill:#d8d9df"/>
 </g>
 <g aria-label="383 · Unknown 0x0200078e–0x020007a6: 24 bytes">
 <title>383 · Unknown 0x0200078e–0x020007a6: 24 bytes</title>
-<rect x="118.29640258596409" y="231.39432604554364" width="1.9278752593909267" height="0.5" style="fill:#d8d9df"/>
+<rect x="130.1148917907508" y="243.3307774944849" width="0.5" height="2.010946530057068" style="fill:#d8d9df"/>
 </g>
 <g aria-label="383 · Unknown 0x020007a8–0x020007b0: 8 bytes">
 <title>383 · Unknown 0x020007a8–0x020007b0: 8 bytes</title>
-<rect x="121.22427784535502" y="231.39432604554364" width="0.5" height="0.5" style="fill:#d8d9df"/>
+<rect x="130.1148917907508" y="246.34172402454195" width="0.5" height="0.5" style="fill:#d8d9df"/>
 </g>
 <g aria-label="383 · Unknown 0x02002548–0x02002584: 60 bytes">
 <title>383 · Unknown 0x02002548–0x02002584: 60 bytes</title>
-<rect x="122.20023626515199" y="227.77737612815983" width="3.7256934011221974" height="1.1862793774218199" style="fill:#d8d9df"/>
+<rect x="131.48744170802826" y="243.3307774944849" width="1.5735310948952703" height="3.0145953734094246" style="fill:#d8d9df"/>
 </g>
 <g aria-label="383 · Unknown 0x02002690–0x0200269c: 12 bytes">
 <title>383 · Unknown 0x02002690–0x0200269c: 12 bytes</title>
-<rect x="122.20023626515199" y="229.96365550558164" width="0.5" height="1.8421631906483658" style="fill:#d8d9df"/>
+<rect x="134.06097280292352" y="243.3307774944849" width="1.9166685742146399" height="0.5" style="fill:#d8d9df"/>
 </g>
 <g aria-label="383 · Unknown 0x02002758–0x02002784: 44 bytes">
 <title>383 · Unknown 0x02002758–0x02002784: 44 bytes</title>
-<rect x="122.92726601917079" y="229.96365550558164" width="1.6657757647355984" height="1.842163190648366" style="fill:#d8d9df"/>
+<rect x="134.06097280292352" y="244.03923550155713" width="1.9166685742146399" height="1.597679359264921" style="fill:#d8d9df"/>
 </g>
 <g aria-label="383 · Unknown 0x02002af4–0x02002b00: 12 bytes">
 <title>383 · Unknown 0x02002af4–0x02002b00: 12 bytes</title>
-<rect x="125.59304178390639" y="229.96365550558164" width="0.5" height="0.5502708312627449" style="fill:#d8d9df"/>
+<rect x="134.06097280292352" y="246.63691486082206" width="1.9166685742146399" height="0.5" style="fill:#d8d9df"/>
 </g>
 <g aria-label="383 · Unknown 0x02002b92–0x02002b9c: 10 bytes">
 <title>383 · Unknown 0x02002b92–0x02002b9c: 10 bytes</title>
-<rect x="125.59304178390639" y="231.51392633684438" width="0.5" height="0.5" style="fill:#d8d9df"/>
+<rect x="101.82676547707845" y="247.34537286789433" width="5.793343037422892" height="0.5" style="fill:#d8d9df"/>
 </g>
 <g aria-label="383 · Unknown 0x02002db4–0x02002f84: 464 bytes">
 <title>383 · Unknown 0x02002db4–0x02002f84: 464 bytes</title>
-<rect x="118.29640258596409" y="232.80581869623" width="7.629527080310099" height="8.258719649145103" style="fill:#d8d9df"/>
+<rect x="101.82676547707845" y="247.59884861049449" width="5.793343037422892" height="10.761274456649108" style="fill:#d8d9df"/>
 </g>
 <g aria-label="383 · Unknown 0x02004754–0x020047b6: 98 bytes">
 <title>383 · Unknown 0x02004754–0x020047b6: 98 bytes</title>
-<rect x="126.92592966627419" y="227.77737612815983" width="4.794516162733364" height="1.912251291278896" style="fill:#d8d9df"/>
+<rect x="101.82676547707845" y="259.3601230671436" width="2.9161624568673137" height="3.309087624203336" style="fill:#d8d9df"/>
 </g>
 <g aria-label="383 · Unknown 0x020047b8–0x020047bc: 4 bytes">
 <title>383 · Unknown 0x020047b8–0x020047bc: 4 bytes</title>
-<rect x="132.72044582900756" y="227.77737612815983" width="0.5" height="1.912251291278896" style="fill:#d8d9df"/>
+<rect x="105.74292793394577" y="259.3601230671436" width="1.877180580555578" height="0.5" style="fill:#d8d9df"/>
 </g>
 <g aria-label="383 · Unknown 0x020047fc–0x02004840: 68 bytes">
 <title>383 · Unknown 0x020047fc–0x02004840: 68 bytes</title>
-<rect x="132.9569566927926" y="227.77737612815983" width="3.0206846843456" height="1.9122512912788963" style="fill:#d8d9df"/>
+<rect x="105.74292793394577" y="259.5995168240438" width="1.877180580555578" height="3.069693867303151" style="fill:#d8d9df"/>
 </g>
 <g aria-label="383 · Unknown 0x020048c8–0x02004b2c: 612 bytes">
 <title>383 · Unknown 0x020048c8–0x02004b2c: 612 bytes</title>
-<rect x="126.92592966627419" y="230.68962741943872" width="9.051711710864" height="9.484104648604026" style="fill:#d8d9df"/>
+<rect x="101.82676547707845" y="263.66921069134696" width="5.793343037422892" height="14.512715447132008" style="fill:#d8d9df"/>
 </g>
 <g aria-label="383 · Proven ASM 0x02000000–0x02000030: 48 bytes">
 <title>383 · Proven ASM 0x02000000–0x02000030: 48 bytes</title>
-<rect x="126.92592966627419" y="241.17373206804274" width="8.278503117720616" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="101.82676547707845" y="279.18192613847896" width="5.270778188390362" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="383 · Proven ASM 0x02000376–0x02000378: 2 bytes">
 <title>383 · Proven ASM 0x02000376–0x02000378: 2 bytes</title>
-<rect x="136.2044327839948" y="241.17373206804274" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="108.09754366546882" y="279.18192613847896" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="383 · Proven ASM 0x020007a6–0x020007a8: 2 bytes">
 <title>383 · Proven ASM 0x020007a6–0x020007a8: 2 bytes</title>
-<rect x="136.2044327839948" y="241.61913520670893" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="108.09754366546882" y="279.8409630692395" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="383 · Proven ASM 0x02000de4–0x02001990: 2,988 bytes">
 <title>383 · Proven ASM 0x02000de4–0x02001990: 2,988 bytes</title>
-<rect x="101.82676547707845" y="242.06453834537513" width="34.127363608487784" height="13.647212636671977" style="fill:hsl(190 58% 66%)"/>
+<rect x="108.62010851450134" y="247.34537286789433" width="27.357532862636837" height="17.1439607821853" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="383 · Proven ASM 0x020019a2–0x020019a4: 2 bytes">
 <title>383 · Proven ASM 0x020019a2–0x020019a4: 2 bytes</title>
-<rect x="136.95412908556625" y="242.06453834537513" width="0.5" height="13.647212636671977" style="fill:hsl(190 58% 66%)"/>
+<rect x="108.62010851450134" y="265.48933365007963" width="0.5" height="14.010666349920367" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="383 · Proven ASM 0x02001f50–0x02002548: 1,528 bytes">
 <title>383 · Proven ASM 0x02001f50–0x02002548: 1,528 bytes</title>
-<rect x="101.82676547707845" y="256.7117509820471" width="10.075131821888672" height="22.757153267602618" style="fill:hsl(190 58% 66%)"/>
+<rect x="108.64305150225428" y="265.48933365007963" width="16.528442643248013" height="14.010666349920367" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="383 · Proven ASM 0x02002fd2–0x02002fd4: 2 bytes">
 <title>383 · Proven ASM 0x02002fd2–0x02002fd4: 2 bytes</title>
-<rect x="101.82676547707845" y="280.4689042496497" width="10.075131821888672" height="0.5" style="fill:hsl(190 58% 66%)"/>
-</g>
-<g aria-label="383 · Proven ASM 0x02003c6a–0x020045bc: 2,386 bytes">
-<title>383 · Proven ASM 0x02003c6a–0x020045bc: 2,386 bytes</title>
-<rect x="112.90189729896713" y="256.7117509820471" width="16.27141472354665" height="22.788249017952882" style="fill:hsl(190 58% 66%)"/>
+<rect x="126.1714941455023" y="265.48933365007963" width="0.5437353188051262" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="383 · Proven ASM 0x0200460a–0x0200460c: 2 bytes">
 <title>383 · Proven ASM 0x0200460a–0x0200460c: 2 bytes</title>
-<rect x="130.17331202251378" y="256.7117509820471" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="127.71522946430741" y="265.48933365007963" width="0.5437353188051262" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="383 · Proven ASM 0x02004622–0x02004624: 2 bytes">
 <title>383 · Proven ASM 0x02004622–0x02004624: 2 bytes</title>
-<rect x="131.3073669149512" y="256.7117509820471" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="129.25896478311253" y="265.48933365007963" width="0.5437353188051262" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="383 · Proven ASM 0x0200463a–0x0200463c: 2 bytes">
 <title>383 · Proven ASM 0x0200463a–0x0200463c: 2 bytes</title>
-<rect x="132.4414218073886" y="256.7117509820471" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="130.80270010191768" y="265.48933365007963" width="0.5437353188051262" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="383 · Proven ASM 0x02004702–0x02004704: 2 bytes">
 <title>383 · Proven ASM 0x02004702–0x02004704: 2 bytes</title>
-<rect x="133.575476699826" y="256.7117509820471" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="132.3464354207228" y="265.48933365007963" width="0.5437353188051262" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="383 · Proven ASM 0x020047b6–0x020047b8: 2 bytes">
 <title>383 · Proven ASM 0x020047b6–0x020047b8: 2 bytes</title>
-<rect x="134.7095315922634" y="256.7117509820471" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="133.89017073952795" y="265.48933365007963" width="0.5437353188051262" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="383 · Proven ASM 0x020048c6–0x020048c8: 2 bytes">
 <title>383 · Proven ASM 0x020048c6–0x020048c8: 2 bytes</title>
-<rect x="135.8435864847008" y="256.7117509820471" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="135.43390605833306" y="265.48933365007963" width="0.5437353188051262" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="383 · Proven ASM 0x02004c6c–0x02004f2c: 704 bytes">
 <title>383 · Proven ASM 0x02004c6c–0x02004f2c: 704 bytes</title>
-<rect x="130.17331202251378" y="257.01543075674437" width="5.804329354624411" height="16.815880115573222" style="fill:hsl(190 58% 66%)"/>
+<rect x="126.1714941455023" y="265.7124221096326" width="9.806147231635883" height="10.218162537520104" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="384 · leaf_0017 · Proven C: 8 bytes">
 <title>384 · leaf_0017 · Proven C: 8 bytes</title>
-<rect x="130.17331202251378" y="274.8313108723176" width="0.5" height="0.5" style="fill:#1f7f93"/>
+<rect x="126.1714941455023" y="276.9305846471527" width="0.5" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="384 · leaf_0524 · Proven C: 4 bytes">
 <title>384 · leaf_0524 · Proven C: 4 bytes</title>
-<rect x="131.38837083583957" y="274.8313108723176" width="0.5" height="0.5" style="fill:#1f7f93"/>
+<rect x="126.1714941455023" y="278.35835078829166" width="0.5" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="384 · leaf_0443 · Proven C: 8 bytes">
 <title>384 · leaf_0443 · Proven C: 8 bytes</title>
-<rect x="131.99590024250247" y="274.8313108723176" width="0.5" height="0.5" style="fill:#1f7f93"/>
+<rect x="126.1714941455023" y="279.0722338588611" width="0.5" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="384 · leaf_0848 · Proven C: 40 bytes">
 <title>384 · leaf_0848 · Proven C: 40 bytes</title>
-<rect x="130.17331202251378" y="275.96504869785406" width="2.037647033314469" height="1.2674756510729552" style="fill:#1f7f93"/>
+<rect x="127.1363287197555" y="276.9305846471527" width="0.9296691485064077" height="2.5694153528473063" style="fill:#1f7f93"/>
 </g>
 <g aria-label="384 · leaf_0321 · Proven C: 40 bytes">
 <title>384 · leaf_0321 · Proven C: 40 bytes</title>
-<rect x="130.17331202251378" y="278.23252434892703" width="2.037647033314469" height="1.2674756510729552" style="fill:#1f7f93"/>
+<rect x="129.06599786826192" y="276.9305846471527" width="0.9296691485064077" height="2.5694153528473063" style="fill:#1f7f93"/>
 </g>
 <g aria-label="384 · call_sequence_0013 · Proven C: 124 bytes">
 <title>384 · call_sequence_0013 · Proven C: 124 bytes</title>
-<rect x="133.21095905582825" y="274.8313108723176" width="2.7666823213099416" height="4.668689127682388" style="fill:#1f7f93"/>
+<rect x="130.99566701676832" y="276.9305846471527" width="4.981974360369864" height="2.5694153528473063" style="fill:#1f7f93"/>
 </g>
 <g aria-label="384 · leaf_0789 · Proven C: 48 bytes">
 <title>384 · leaf_0789 · Proven C: 48 bytes</title>
@@ -17292,807 +17284,803 @@
 </g>
 <g aria-label="3bf · select_quaternary_scene_data · Proven C: 84 bytes">
 <title>3bf · select_quaternary_scene_data · Proven C: 84 bytes</title>
-<rect x="469.5644707099823" y="86.73890743720705" width="3.405146970176859" height="2.2835137023970535" style="fill:#1f7f93"/>
+<rect x="469.5644707099823" y="86.73890743720705" width="4.372970171892605" height="1.6920604386220834" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · configure_scene_actor_12 · Proven C: 82 bytes">
 <title>3bf · configure_scene_actor_12 · Proven C: 82 bytes</title>
-<rect x="469.5644707099823" y="90.0224211396041" width="2.9263266473315483" height="2.5962292931015343" style="fill:#1f7f93"/>
+<rect x="469.5644707099823" y="89.43096787582913" width="1.8242535518922667" height="3.9995408145838702" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · run_scene_object_setup · Proven C: 10 bytes">
 <title>3bf · run_scene_object_setup · Proven C: 10 bytes</title>
-<rect x="473.49079735731385" y="90.0224211396041" width="0.5" height="2.5962292931015343" style="fill:#1f7f93"/>
+<rect x="472.38872426187453" y="89.43096787582913" width="1.548716620000338" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · FieldScene_RunScene3bf_02000bac · Proven C: 64 bytes">
 <title>3bf · FieldScene_RunScene3bf_02000bac · Proven C: 64 bytes</title>
-<rect x="473.96961768015916" y="86.73890743720705" width="4.70666766591093" height="0.9311559285610069" style="fill:#1f7f93"/>
+<rect x="472.38872426187453" y="90.10658149942154" width="1.548716620000338" height="3.323927190991455" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · FieldScene_RunScene3bf_02000bec · Proven C: 140 bytes">
 <title>3bf · FieldScene_RunScene3bf_02000bec · Proven C: 140 bytes</title>
-<rect x="473.96961768015916" y="88.67006336576806" width="3.87154556846055" height="3.9485870669375807" style="fill:#1f7f93"/>
+<rect x="474.9374408818749" y="86.73890743720705" width="4.462519674757481" height="3.4132138338066946" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · PlaceActorTwelveAndFinishScene · Proven C: 24 bytes">
 <title>3bf · PlaceActorTwelveAndFinishScene · Proven C: 24 bytes</title>
-<rect x="478.8411632486197" y="88.67006336576806" width="0.5" height="3.9485870669375807" style="fill:#1f7f93"/>
+<rect x="474.9374408818749" y="91.15212127101374" width="0.5" height="2.2783874193992597" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · place_scene_object_pair_from_table_a · Proven C: 80 bytes">
 <title>3bf · place_scene_object_pair_from_table_a · Proven C: 80 bytes</title>
-<rect x="469.5644707099823" y="93.61865043270564" width="3.8151498267084705" height="1.860883225850897" style="fill:#1f7f93"/>
+<rect x="476.1980223452805" y="91.15212127101374" width="3.2019382113519086" height="2.2783874193992597" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · place_scene_object_pair_from_table_b · Proven C: 80 bytes">
 <title>3bf · place_scene_object_pair_from_table_b · Proven C: 80 bytes</title>
-<rect x="469.5644707099823" y="96.47953365855653" width="3.8151498267084705" height="1.8608832258508976" style="fill:#1f7f93"/>
+<rect x="469.5644707099823" y="94.430508690413" width="4.335657879032239" height="1.5817962248523485" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · place_scene_object_pair_from_table_c · Proven C: 80 bytes">
 <title>3bf · place_scene_object_pair_from_table_c · Proven C: 80 bytes</title>
-<rect x="469.5644707099823" y="99.34041688440743" width="3.8151498267084705" height="1.8608832258508976" style="fill:#1f7f93"/>
+<rect x="469.5644707099823" y="97.01230491526536" width="4.335657879032239" height="1.5817962248523476" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · FieldScene_RunScene3bf_02000f30 · Proven C: 100 bytes">
 <title>3bf · FieldScene_RunScene3bf_02000f30 · Proven C: 100 bytes</title>
-<rect x="474.37962053669077" y="93.61865043270564" width="3.012624855590393" height="3.2913248387763456" style="fill:#1f7f93"/>
+<rect x="469.5644707099823" y="99.59410114011771" width="4.335657879032239" height="2.2272452810654353" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · show_locked_door_message_once · Proven C: 32 bytes">
 <title>3bf · show_locked_door_message_once · Proven C: 32 bytes</title>
-<rect x="478.39224539228115" y="93.61865043270564" width="0.5" height="3.2913248387763456" style="fill:#1f7f93"/>
+<rect x="474.9001285890145" y="94.430508690413" width="1.6480672436678518" height="1.0808506886869673" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · show_locked_door_message · Proven C: 20 bytes">
 <title>3bf · show_locked_door_message · Proven C: 20 bytes</title>
-<rect x="474.37962053669077" y="97.90997527148198" width="0.9260599306833888" height="0.7880520161568108" style="fill:#1f7f93"/>
+<rect x="474.9001285890145" y="96.51135937909997" width="1.6480672436678518" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · show_gerald_dont_message · Proven C: 28 bytes">
 <title>3bf · show_gerald_dont_message · Proven C: 28 bytes</title>
-<rect x="474.37962053669077" y="99.6980272876388" width="0.9260599306833888" height="1.5032728226195349" style="fill:#1f7f93"/>
+<rect x="477.5481958326824" y="94.430508690413" width="1.8517647239499948" height="0.6906911845581609" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · show_that_was_exciting_message · Proven C: 28 bytes">
 <title>3bf · show_that_was_exciting_message · Proven C: 28 bytes</title>
-<rect x="476.30568046737415" y="97.90997527148198" width="2.3706048786959304" height="0.5" style="fill:#1f7f93"/>
+<rect x="477.5481958326824" y="96.12119987497117" width="1.8517647239499948" height="0.6906911845581609" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · show_sorry_i_scared_you_message · Proven C: 28 bytes">
 <title>3bf · show_sorry_i_scared_you_message · Proven C: 28 bytes</title>
-<rect x="476.30568046737415" y="99.34041688440743" width="0.6853024393479652" height="1.8608832258508972" style="fill:#1f7f93"/>
+<rect x="474.9001285890145" y="97.81189105952933" width="0.9249411886662462" height="1.504727680826905" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · show_well_message · Proven C: 28 bytes">
 <title>3bf · show_well_message · Proven C: 28 bytes</title>
-<rect x="477.99098290672214" y="99.34041688440743" width="0.6853024393479652" height="1.8608832258508972" style="fill:#1f7f93"/>
+<rect x="474.9001285890145" y="100.31661874035623" width="0.9249411886662462" height="1.504727680826905" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · try_start_actor_interaction · Proven C: 96 bytes">
 <title>3bf · try_start_actor_interaction · Proven C: 96 bytes</title>
-<rect x="479.6762853460701" y="86.73890743720705" width="3.585015947112849" height="2.605374078019555" style="fill:#1f7f93"/>
+<rect x="476.82506977768077" y="97.81189105952933" width="2.5748907789516005" height="3.624112641526594" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · no_op_scene_callback_a · Proven C: 4 bytes">
 <title>3bf · no_op_scene_callback_a · Proven C: 4 bytes</title>
-<rect x="484.2613012931829" y="86.73890743720705" width="0.5" height="2.605374078019555" style="fill:#1f7f93"/>
+<rect x="476.82506977768077" y="102.43600370105592" width="0.7874453894758002" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · no_op_scene_callback_b · Proven C: 4 bytes">
 <title>3bf · no_op_scene_callback_b · Proven C: 4 bytes</title>
-<rect x="479.6762853460701" y="90.3442815152266" width="0.5" height="0.5286786090802915" style="fill:#1f7f93"/>
+<rect x="478.6125151671566" y="102.43600370105592" width="0.7874453894758002" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · no_op_scene_callback_c · Proven C: 4 bytes">
 <title>3bf · no_op_scene_callback_c · Proven C: 4 bytes</title>
-<rect x="479.6762853460701" y="91.87296012430689" width="0.5" height="0.5286786090802913" style="fill:#1f7f93"/>
+<rect x="480.3999605566324" y="86.73890743720705" width="1.6857197055799356" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · no_op_scene_callback_d · Proven C: 2 bytes">
 <title>3bf · no_op_scene_callback_d · Proven C: 2 bytes</title>
-<rect x="479.6762853460701" y="93.40163873338717" width="0.5" height="0.5" style="fill:#1f7f93"/>
+<rect x="483.0856802622123" y="86.73890743720705" width="0.5" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · start_dora_house_accident_scene · Proven C: 96 bytes">
 <title>3bf · start_dora_house_accident_scene · Proven C: 96 bytes</title>
-<rect x="480.1268568817533" y="90.3442815152266" width="3.325486742559291" height="2.8216965227007287" style="fill:#1f7f93"/>
+<rect x="480.3999605566324" y="86.9953672111099" width="3.028579558369904" height="3.103356382445581" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · is_player_in_accident_trigger_area · Proven C: 72 bytes">
 <title>3bf · is_player_in_accident_trigger_area · Proven C: 72 bytes</title>
-<rect x="484.4523436243126" y="86.73890743720705" width="4.981665222264941" height="1.0726708653172885" style="fill:#1f7f93"/>
+<rect x="480.3999605566324" y="91.09872359355548" width="3.028579558369904" height="2.077517286834186" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · configure_scene_actor_9 · Proven C: 66 bytes">
 <title>3bf · configure_scene_actor_9 · Proven C: 66 bytes</title>
-<rect x="484.4523436243126" y="88.81157830252434" width="1.1225263691907856" height="4.354399735402995" style="fill:#1f7f93"/>
+<rect x="484.4285401150023" y="86.73890743720705" width="5.806910288280182" height="0.669605466836914" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · are_scene_actors_in_passing_lane · Proven C: 104 bytes">
 <title>3bf · are_scene_actors_in_passing_lane · Proven C: 104 bytes</title>
-<rect x="486.5748699935034" y="88.81157830252434" width="2.8591388530741555" height="3.640479770682596" style="fill:#1f7f93"/>
+<rect x="484.4285401150023" y="88.40851290404396" width="2.104906447285697" height="4.767727976345703" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · activate_scene_actor_17 · Proven C: 16 bytes">
 <title>3bf · activate_scene_actor_17 · Proven C: 16 bytes</title>
-<rect x="486.5748699935034" y="93.45205807320693" width="2.8591388530741555" height="0.5" style="fill:#1f7f93"/>
+<rect x="487.533446562288" y="88.40851290404396" width="2.702003840994485" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · is_player_in_secondary_trigger_area · Proven C: 92 bytes">
 <title>3bf · is_player_in_secondary_trigger_area · Proven C: 92 bytes</title>
-<rect x="479.6762853460701" y="94.16597803792733" width="2.943069968313503" height="3.017661036165498" style="fill:#1f7f93"/>
+<rect x="487.533446562288" y="89.15273586873373" width="2.702003840994485" height="3.279282046966167" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · activate_scene_actor_18 · Proven C: 16 bytes">
 <title>3bf · activate_scene_actor_18 · Proven C: 16 bytes</title>
-<rect x="479.6762853460701" y="98.18363907409282" width="2.943069968313503" height="0.5" style="fill:#1f7f93"/>
+<rect x="487.533446562288" y="93.4320179156999" width="2.702003840994485" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · is_player_outside_scene_rectangle · Proven C: 60 bytes">
 <title>3bf · is_player_outside_scene_rectangle · Proven C: 60 bytes</title>
-<rect x="479.6762853460701" y="98.88236273255639" width="2.112949974984345" height="2.318937377701933" style="fill:#1f7f93"/>
+<rect x="480.3999605566324" y="94.17624088038966" width="4.0193813260217315" height="1.058358462093683" style="fill:#1f7f93"/>
+</g>
+<g aria-label="3bf · FieldScene_RunScene3bfSequenceA · Proven C: 108 bytes">
+<title>3bf · FieldScene_RunScene3bfSequenceA · Proven C: 108 bytes</title>
+<rect x="480.3999605566324" y="96.23459934248334" width="4.0193813260217315" height="2.70504523176863" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · run_actor_17_scene_step · Proven C: 16 bytes">
 <title>3bf · run_actor_17_scene_step · Proven C: 16 bytes</title>
-<rect x="482.78923532105443" y="98.88236273255639" width="0.5" height="2.318937377701933" style="fill:#1f7f93"/>
+<rect x="480.3999605566324" y="99.93964457425197" width="0.5" height="1.8817018469311568" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · trigger_scene_stage_95_from_actor_12 · Proven C: 68 bytes">
 <title>3bf · trigger_scene_stage_95_from_actor_12 · Proven C: 68 bytes</title>
-<rect x="483.6193553143836" y="94.16597803792733" width="5.814653532193988" height="0.7182449714418482" style="fill:#1f7f93"/>
+<rect x="481.3560331901603" y="99.93964457425197" width="3.0633086924937825" height="1.8817018469311568" style="fill:#1f7f93"/>
+</g>
+<g aria-label="3bf · FieldScene_RunScene3bfSequenceB · Proven C: 96 bytes">
+<title>3bf · FieldScene_RunScene3bfSequenceB · Proven C: 96 bytes</title>
+<rect x="485.4193418826541" y="94.17624088038966" width="4.8161085206283545" height="1.8422264791649763" style="fill:#1f7f93"/>
+</g>
+<g aria-label="3bf · FieldScene_RunScene3bfSequenceC · Proven C: 96 bytes">
+<title>3bf · FieldScene_RunScene3bfSequenceC · Proven C: 96 bytes</title>
+<rect x="485.4193418826541" y="97.01846735955463" width="1.8487062141853166" height="4.802879061628493" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · is_scene_actor_vertically_near_player · Proven C: 100 bytes">
 <title>3bf · is_scene_actor_vertically_near_player · Proven C: 100 bytes</title>
-<rect x="483.6193553143836" y="95.88422300936918" width="1.7258614128775953" height="5.317077100889147" style="fill:#1f7f93"/>
+<rect x="488.26804809683944" y="97.01846735955463" width="1.967402306443038" height="4.802879061628493" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · is_scene_actor_horizontally_near_player · Proven C: 100 bytes">
 <title>3bf · is_scene_actor_horizontally_near_player · Proven C: 100 bytes</title>
-<rect x="486.3452167272612" y="95.88422300936918" width="3.088792119316393" height="3.2113847339260975" style="fill:#1f7f93"/>
+<rect x="469.5644707099823" y="102.82134642118314" width="2.458514363688905" height="3.9788651717842907" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · is_actor_interaction_available · Proven C: 50 bytes">
 <title>3bf · is_actor_interaction_available · Proven C: 50 bytes</title>
-<rect x="486.3452167272612" y="100.09560774329528" width="3.088792119316393" height="1.1056923669630496" style="fill:#1f7f93"/>
+<rect x="469.5644707099823" y="107.80021159296743" width="2.458514363688905" height="1.4894325858921462" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · is_scene_actor_within_four_steps · Proven C: 104 bytes">
 <title>3bf · is_scene_actor_within_four_steps · Proven C: 104 bytes</title>
-<rect x="469.5644707099823" y="102.20130011025833" width="1.6544478765792348" height="5.746508732740337" style="fill:#1f7f93"/>
+<rect x="473.0229850736712" y="102.82134642118314" width="5.917028727377811" height="1.589009889327832" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · is_scene_actor_within_trigger_box · Proven C: 104 bytes">
 <title>3bf · is_scene_actor_within_trigger_box · Proven C: 104 bytes</title>
-<rect x="472.21891858656153" y="102.20130011025833" width="1.6544478765792352" height="5.746508732740337" style="fill:#1f7f93"/>
+<rect x="473.0229850736712" y="105.41035631051096" width="2.670260141057614" height="3.879287868348605" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · trigger_scene_41_at_village_path · Proven C: 92 bytes">
 <title>3bf · trigger_scene_41_at_village_path · Proven C: 92 bytes</title>
-<rect x="474.87336646314077" y="102.20130011025833" width="4.104707454960067" height="2.1033940170605554" style="fill:#1f7f93"/>
+<rect x="476.6932452147288" y="105.41035631051095" width="2.2467685863201967" height="3.8792878683486056" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · trigger_scene_40_at_village_path · Proven C: 108 bytes">
 <title>3bf · trigger_scene_40_at_village_path · Proven C: 108 bytes</title>
-<rect x="474.87336646314077" y="105.30469412731888" width="4.104707454960067" height="2.6431147156797823" style="fill:#1f7f93"/>
+<rect x="469.5644707099823" y="110.28964417885958" width="3.4694647161518164" height="3.1609087507054436" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · run_actor_9_scripted_sequence · Proven C: 116 bytes">
 <title>3bf · run_actor_9_scripted_sequence · Proven C: 116 bytes</title>
-<rect x="469.5644707099823" y="108.94780884299867" width="1.097183979412761" height="8.524482916809887" style="fill:#1f7f93"/>
+<rect x="469.5644707099823" y="114.45055292956502" width="3.4694647161518164" height="3.4691242137206615" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · run_actor_scripted_sequence_a · Proven C: 192 bytes">
 <title>3bf · run_actor_scripted_sequence_a · Proven C: 192 bytes</title>
-<rect x="471.66165468939505" y="108.94780884299867" width="7.316419228705776" height="2.9754363478858656" style="fill:#1f7f93"/>
+<rect x="474.0339354261341" y="110.28964417885958" width="4.906078374914899" height="4.597859220168285" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · turn_actor_to_scene_direction · Proven C: 104 bytes">
 <title>3bf · turn_actor_to_scene_direction · Proven C: 104 bytes</title>
-<rect x="471.66165468939505" y="112.92324519088453" width="2.227267163378361" height="4.549046568924021" style="fill:#1f7f93"/>
+<rect x="474.0339354261341" y="115.88750339902786" width="4.906078374914899" height="2.03217374425782" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · run_actor_scripted_sequence_b · Proven C: 88 bytes">
 <title>3bf · run_actor_scripted_sequence_b · Proven C: 88 bytes</title>
-<rect x="474.8889218527734" y="112.92324519088453" width="4.089152065327415" height="1.977537183325085" style="fill:#1f7f93"/>
+<rect x="479.940013801049" y="102.82134642118314" width="2.8592741724297643" height="2.926422127342084" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · run_actor_scripted_sequence_c · Proven C: 76 bytes">
 <title>3bf · run_actor_scripted_sequence_c · Proven C: 76 bytes</title>
-<rect x="474.8889218527734" y="115.9007823742096" width="4.089152065327415" height="1.5715093855989366" style="fill:#1f7f93"/>
+<rect x="479.940013801049" y="106.74776854852522" width="2.8592741724297643" height="2.391000928159072" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · FieldScene_RunScene3bf_02001cf0 · Proven C: 112 bytes">
 <title>3bf · FieldScene_RunScene3bf_02001cf0 · Proven C: 112 bytes</title>
-<rect x="479.97807391810085" y="102.20130011025833" width="1.7882493142604647" height="5.916818312561837" style="fill:#1f7f93"/>
+<rect x="483.7992879734788" y="102.82134642118314" width="1.6356018738544735" height="6.317423055501156" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · run_actor_scripted_sequence_d · Proven C: 100 bytes">
 <title>3bf · run_actor_scripted_sequence_d · Proven C: 100 bytes</title>
-<rect x="482.7663232323613" y="102.20130011025833" width="1.4895083163039864" height="5.916818312561837" style="fill:#1f7f93"/>
+<rect x="486.43488984733324" y="102.82134642118314" width="3.800560555949219" height="2.586972086029978" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · inspect_ordinary_object · Proven C: 104 bytes">
 <title>3bf · inspect_ordinary_object · Proven C: 104 bytes</title>
-<rect x="485.2558315486653" y="102.20130011025833" width="4.178177297912292" height="2.4584091562809185" style="fill:#1f7f93"/>
+<rect x="486.43488984733324" y="106.40831850721311" width="3.800560555949219" height="2.7304509694711774" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · inspect_empty_chest · Proven C: 104 bytes">
 <title>3bf · inspect_empty_chest · Proven C: 104 bytes</title>
-<rect x="485.2558315486653" y="105.65970926653925" width="4.178177297912292" height="2.4584091562809185" style="fill:#1f7f93"/>
+<rect x="479.940013801049" y="110.13876947668427" width="1.0394538309588186" height="7.780907666601387" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · FieldScene_RunSupplementalSequenceOne · Proven C: 472 bytes">
 <title>3bf · FieldScene_RunSupplementalSequenceOne · Proven C: 472 bytes</title>
-<rect x="479.97807391810085" y="109.11811842282017" width="7.68873465887504" height="8.354173336988389" style="fill:#1f7f93"/>
+<rect x="481.9794676320078" y="110.13876947668427" width="8.255982771274638" height="7.7809076666013866" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · FieldScene_RunSequenceTail · Proven C: 96 bytes">
 <title>3bf · FieldScene_RunSequenceTail · Proven C: 96 bytes</title>
-<rect x="488.6668085769759" y="109.11811842282017" width="0.7672002696017035" height="8.354173336988389" style="fill:#1f7f93"/>
+<rect x="469.5644707099823" y="118.91967714328567" width="1.5956140102798746" height="5.368704120704183" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · inspect_empty_scene_object · Proven C: 104 bytes">
 <title>3bf · inspect_empty_scene_object · Proven C: 104 bytes</title>
-<rect x="469.5644707099823" y="118.47229175980856" width="3.141360144441518" height="3.324244971542041" style="fill:#1f7f93"/>
+<rect x="472.16008472026215" y="118.91967714328567" width="1.8119151778031979" height="5.368704120704182" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · run_actor_12_interaction_sequence · Proven C: 144 bytes">
 <title>3bf · run_actor_12_interaction_sequence · Proven C: 144 bytes</title>
-<rect x="473.7058308544238" y="118.47229175980856" width="4.7341909692267174" height="3.324244971542041" style="fill:#1f7f93"/>
+<rect x="474.97199989806535" y="118.91967714328567" width="2.893421015419812" height="5.368704120704182" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · FieldScene_RunScene3bf_020021c4 · Proven C: 168 bytes">
 <title>3bf · FieldScene_RunScene3bf_020021c4 · Proven C: 168 bytes</title>
-<rect x="469.5644707099823" y="122.79653673135059" width="5.190643981702476" height="3.672974404730916" style="fill:#1f7f93"/>
+<rect x="469.5644707099823" y="125.28838126398985" width="3.5057936541413977" height="5.420338589786059" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · configure_interaction_region_a · Proven C: 50 bytes">
 <title>3bf · configure_interaction_region_a · Proven C: 50 bytes</title>
-<rect x="475.75511469168475" y="122.7965367313506" width="2.684907131965759" height="1.336487202365458" style="fill:#1f7f93"/>
+<rect x="469.5644707099823" y="131.7087198537759" width="3.5057936541413977" height="0.910815056483946" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · configure_interaction_region_b · Proven C: 50 bytes">
 <title>3bf · configure_interaction_region_b · Proven C: 50 bytes</title>
-<rect x="475.75511469168475" y="125.13302393371606" width="2.684907131965759" height="1.336487202365458" style="fill:#1f7f93"/>
+<rect x="474.07026436412366" y="125.28838126398985" width="1.3975782746807432" height="2.5910145027025884" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · configure_interaction_region_c · Proven C: 50 bytes">
 <title>3bf · configure_interaction_region_c · Proven C: 50 bytes</title>
-<rect x="469.5644707099823" y="127.46951113608151" width="0.5725399862529037" height="4.475052101065327" style="fill:#1f7f93"/>
+<rect x="476.4678426388044" y="125.28838126398985" width="1.3975782746807432" height="2.5910145027025884" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · InspectVillageWell · Proven C: 132 bytes">
 <title>3bf · InspectVillageWell · Proven C: 132 bytes</title>
-<rect x="471.13701069623517" y="127.46951113608151" width="3.1515055637076657" height="4.475052101065327" style="fill:#1f7f93"/>
+<rect x="474.07026436412366" y="128.87939576669243" width="3.7951565493614865" height="3.7401391435674167" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · RunSecondaryMapInteraction · Proven C: 132 bytes">
 <title>3bf · RunSecondaryMapInteraction · Proven C: 132 bytes</title>
-<rect x="475.2885162599428" y="127.46951113608151" width="3.1515055637076657" height="4.475052101065327" style="fill:#1f7f93"/>
+<rect x="478.8654209134852" y="118.91967714328567" width="2.944067373558555" height="4.763012420006925" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · configure_primary_interaction_regions · Proven C: 88 bytes">
 <title>3bf · configure_primary_interaction_regions · Proven C: 88 bytes</title>
-<rect x="479.4400218236505" y="118.47229175980856" width="2.4307477234665957" height="3.416862074252592" style="fill:#1f7f93"/>
+<rect x="482.80948828704373" y="118.91967714328567" width="1.6293782490390374" height="4.763012420006925" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · configure_secondary_interaction_regions · Proven C: 88 bytes">
 <title>3bf · configure_secondary_interaction_regions · Proven C: 88 bytes</title>
-<rect x="482.8707695471171" y="118.47229175980856" width="2.430747723466596" height="3.416862074252592" style="fill:#1f7f93"/>
+<rect x="485.4388665360828" y="118.91967714328567" width="1.629378249039037" height="4.763012420006925" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · inspect_wardrobe · Proven C: 36 bytes">
 <title>3bf · inspect_wardrobe · Proven C: 36 bytes</title>
-<rect x="486.3015172705837" y="118.47229175980856" width="3.1324915759938543" height="0.500066364840503" style="fill:#1f7f93"/>
+<rect x="488.06824478512186" y="118.91967714328567" width="2.1672056181606583" height="0.9572495011344273" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · inspect_firewood · Proven C: 32 bytes">
 <title>3bf · inspect_firewood · Proven C: 32 bytes</title>
-<rect x="486.3015172705837" y="119.97235812464906" width="0.8891390061686191" height="1.9167957094120895" style="fill:#1f7f93"/>
+<rect x="488.06824478512186" y="120.8769266444201" width="2.1672056181606583" height="0.7397773343417131" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · inspect_books · Proven C: 36 bytes">
 <title>3bf · inspect_books · Proven C: 36 bytes</title>
-<rect x="488.1906562767523" y="119.97235812464906" width="1.2433525698252352" height="1.7632801457588214" style="fill:#1f7f93"/>
+<rect x="488.06824478512186" y="122.6167039787618" width="2.0005105856258867" height="1.0659855845307846" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · no_op_interaction_callback · Proven C: 2 bytes">
 <title>3bf · no_op_interaction_callback · Proven C: 2 bytes</title>
-<rect x="488.1906562767523" y="122.73563827040789" width="1.2433525698252352" height="0.5" style="fill:#1f7f93"/>
+<rect x="491.06875537074774" y="122.6167039787618" width="0.5" height="1.0659855845307846" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · FieldScene_RunScene3bf_0200252c · Proven C: 204 bytes">
 <title>3bf · FieldScene_RunScene3bf_0200252c · Proven C: 204 bytes</title>
-<rect x="479.4400218236505" y="122.88915383406115" width="2.4934164371917715" height="9.05540940308569" style="fill:#1f7f93"/>
+<rect x="478.8654209134852" y="124.6826895632926" width="2.9306635761972686" height="7.936845346967262" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · FieldScene_RunScene3bf_020025f8 · Proven C: 164 bytes">
 <title>3bf · FieldScene_RunScene3bf_020025f8 · Proven C: 164 bytes</title>
-<rect x="482.9334382608423" y="122.88915383406115" width="6.500570585735274" height="2.7650391372284315" style="fill:#1f7f93"/>
+<rect x="482.79608448968247" y="124.6826895632926" width="7.439365913600019" height="2.3462160659877416" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · FieldScene_RunScene3bf_0200269c · Proven C: 124 bytes">
 <title>3bf · FieldScene_RunScene3bf_0200269c · Proven C: 124 bytes</title>
-<rect x="482.9334382608423" y="126.65419297128958" width="2.3944188052232627" height="5.290370265857259" style="fill:#1f7f93"/>
+<rect x="482.79608448968247" y="128.02890562928036" width="2.81927508498687" height="4.59062928097952" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · FieldScene_RunScene3bf_02002718 · Proven C: 150 bytes">
 <title>3bf · FieldScene_RunScene3bf_02002718 · Proven C: 150 bytes</title>
-<rect x="486.3278570660656" y="126.65419297128958" width="3.106151780512011" height="5.290370265857259" style="fill:#1f7f93"/>
+<rect x="486.61535957466936" y="128.02890562928036" width="3.620090828613149" height="4.59062928097952" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · PlayStoryScene · Proven C: 2,212 bytes">
 <title>3bf · PlayStoryScene · Proven C: 2,212 bytes</title>
-<rect x="469.5644707099823" y="132.94456323714684" width="19.86953813659528" height="17.251234040976215" style="fill:#1f7f93"/>
+<rect x="469.5644707099823" y="133.61953491025986" width="20.670979693300172" height="16.57626236786319" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · FieldScene_RunMainScriptSequence · Proven C: 5,604 bytes">
 <title>3bf · FieldScene_RunMainScriptSequence · Proven C: 5,604 bytes</title>
-<rect x="490.43400884657757" y="86.73890743720705" width="29.421893243803815" height="30.719902084274135" style="fill:#1f7f93"/>
+<rect x="491.23545040328247" y="86.73890743720705" width="29.07034747622418" height="31.09073242917068" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · FieldScene_RunScene3bf_02004704 · Proven C: 144 bytes">
 <title>3bf · FieldScene_RunScene3bf_02004704 · Proven C: 144 bytes</title>
-<rect x="520.8559020903814" y="86.73890743720705" width="6.955669441075544" height="2.1167768656295727" style="fill:#1f7f93"/>
+<rect x="521.3057978795066" y="86.73890743720705" width="6.740624912940205" height="2.203364940611994" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · FieldScene_RunScene3bf_02004794 · Proven C: 404 bytes">
 <title>3bf · FieldScene_RunScene3bf_02004794 · Proven C: 404 bytes</title>
-<rect x="520.8559020903814" y="89.85568430283662" width="6.955669441075544" height="7.744290650794079" style="fill:#1f7f93"/>
+<rect x="521.3057978795066" y="89.94227237781904" width="6.740624912940205" height="7.987218305605873" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · select_actor_25_scene_variant · Proven C: 60 bytes">
 <title>3bf · select_actor_25_scene_variant · Proven C: 60 bytes</title>
-<rect x="520.8559020903814" y="98.5999749536307" width="6.955669441075544" height="0.5" style="fill:#1f7f93"/>
+<rect x="521.3057978795066" y="98.92949068342492" width="6.740624912940205" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · select_actor_24_scene_variant · Proven C: 60 bytes">
 <title>3bf · select_actor_24_scene_variant · Proven C: 60 bytes</title>
-<rect x="528.8115715314569" y="86.73890743720705" width="7.688428468543028" height="0.5" style="fill:#1f7f93"/>
+<rect x="529.0464227924468" y="86.73890743720705" width="7.453577207553117" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · FieldScene_RunSupplementalSequenceTwo · Proven C: 456 bytes">
 <title>3bf · FieldScene_RunSupplementalSequenceTwo · Proven C: 456 bytes</title>
-<rect x="528.8115715314569" y="87.92803917308981" width="7.688428468543028" height="8.037401192709043" style="fill:#1f7f93"/>
+<rect x="529.0464227924468" y="87.96107478402688" width="7.453577207553117" height="8.288471835830762" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · configure_scene_actor_26 · Proven C: 28 bytes">
 <title>3bf · configure_scene_actor_26 · Proven C: 28 bytes</title>
-<rect x="528.8115715314569" y="96.96544036579886" width="0.6437567372919244" height="1.9331916151774973" style="fill:#1f7f93"/>
+<rect x="529.0464227924468" y="97.24954661985764" width="0.5993254176451845" height="2.014679455488931" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · configure_scene_actor_14 · Proven C: 32 bytes">
 <title>3bf · configure_scene_actor_14 · Proven C: 32 bytes</title>
-<rect x="530.4553282687489" y="96.96544036579886" width="0.8785791283336277" height="1.9331916151774973" style="fill:#1f7f93"/>
+<rect x="530.645748210092" y="97.24954661985764" width="0.8278004773087821" height="2.014679455488931" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · configure_scene_actor_13 · Proven C: 32 bytes">
 <title>3bf · configure_scene_actor_13 · Proven C: 32 bytes</title>
-<rect x="532.3339073970825" y="96.96544036579886" width="0.878579128333628" height="1.9331916151774973" style="fill:#1f7f93"/>
+<rect x="532.4735486874008" y="97.24954661985764" width="0.8278004773087819" height="2.014679455488931" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · configure_scene_actor_12_variant · Proven C: 32 bytes">
 <title>3bf · configure_scene_actor_12_variant · Proven C: 32 bytes</title>
-<rect x="534.2124865254161" y="96.96544036579886" width="0.8785791283336277" height="1.9331916151774973" style="fill:#1f7f93"/>
+<rect x="534.3013491647096" y="97.24954661985764" width="0.8278004773087817" height="2.014679455488931" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · configure_scene_actor_18 · Proven C: 24 bytes">
 <title>3bf · configure_scene_actor_18 · Proven C: 24 bytes</title>
-<rect x="536.0910656537498" y="96.96544036579886" width="0.5" height="1.9331916151774973" style="fill:#1f7f93"/>
+<rect x="536.1291496420183" y="97.24954661985764" width="0.5" height="2.014679455488931" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · RunActor20SceneSequence · Proven C: 272 bytes">
 <title>3bf · RunActor20SceneSequence · Proven C: 272 bytes</title>
-<rect x="520.8559020903814" y="99.89863198097635" width="5.485952194006091" height="6.221295386439448" style="fill:#1f7f93"/>
+<rect x="521.3057978795066" y="100.26422607534658" width="5.3106346372122974" height="6.421912271557699" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · finish_actor_20_scene_sequence · Proven C: 64 bytes">
 <title>3bf · finish_actor_20_scene_sequence · Proven C: 64 bytes</title>
-<rect x="527.3418542843875" y="99.89863198097635" width="0.5737972235455961" height="6.002468253517041" style="fill:#1f7f93"/>
+<rect x="527.6164325167189" y="100.26422607534658" width="0.5312569340294546" height="6.197005839086254" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · no_op_actor_callback · Proven C: 2 bytes">
 <title>3bf · no_op_actor_callback · Proven C: 2 bytes</title>
-<rect x="527.3418542843875" y="106.90110023449338" width="0.5737972235455961" height="0.5" style="fill:#1f7f93"/>
+<rect x="527.6164325167189" y="107.46123191443284" width="0.5312569340294546" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · configure_actor_13_interaction · Proven C: 56 bytes">
 <title>3bf · configure_actor_13_interaction · Proven C: 56 bytes</title>
-<rect x="528.915651507933" y="99.89863198097635" width="2.433739396826754" height="1.8082815391708966" style="fill:#1f7f93"/>
+<rect x="529.1476894507483" y="100.26422607534658" width="2.340924219700628" height="1.886299216716883" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · configure_actor_13_scene_resource · Proven C: 24 bytes">
 <title>3bf · configure_actor_13_scene_resource · Proven C: 24 bytes</title>
-<rect x="528.915651507933" y="102.70691352014724" width="2.433739396826754" height="0.5" style="fill:#1f7f93"/>
+<rect x="529.1476894507483" y="103.15052529206346" width="2.340924219700628" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · activate_three_actor_group_from_flags · Proven C: 64 bytes">
 <title>3bf · activate_three_actor_group_from_flags · Proven C: 64 bytes</title>
-<rect x="528.915651507933" y="103.91046275122048" width="2.433739396826754" height="2.2094646161953104" style="fill:#1f7f93"/>
+<rect x="529.1476894507483" y="104.38751067065641" width="2.340924219700628" height="2.2986276762478663" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · activate_two_actor_group_from_flags · Proven C: 44 bytes">
 <title>3bf · activate_two_actor_group_from_flags · Proven C: 44 bytes</title>
-<rect x="532.3493909047598" y="99.89863198097635" width="4.1506090952401316" height="0.5" style="fill:#1f7f93"/>
+<rect x="532.4886136704489" y="100.26422607534658" width="4.011386329550941" height="0.5118710182802719" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · activate_second_three_actor_group_from_flags · Proven C: 68 bytes">
 <title>3bf · activate_second_three_actor_group_from_flags · Proven C: 68 bytes</title>
-<rect x="532.3493909047598" y="101.36963659673253" width="4.1506090952401316" height="1.2733707698050116" style="fill:#1f7f93"/>
+<rect x="532.4886136704489" y="101.77609709362686" width="4.011386329550941" height="1.3365279373422387" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · activate_five_actor_group_from_flags · Proven C: 104 bytes">
 <title>3bf · activate_five_actor_group_from_flags · Proven C: 104 bytes</title>
-<rect x="532.3493909047598" y="103.64300736653755" width="4.1506090952401316" height="2.476920000878253" style="fill:#1f7f93"/>
+<rect x="532.4886136704489" y="104.1126250309691" width="4.011386329550941" height="2.5735133159351884" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · add_parts_copy · Proven C: 596 bytes">
 <title>3bf · add_parts_copy · Proven C: 596 bytes</title>
-<rect x="520.8559020903814" y="107.11992736741581" width="8.05098754939112" height="10.33888215406538" style="fill:#1f7f93"/>
+<rect x="521.3057978795066" y="107.68613834690429" width="8.209679831883607" height="10.14350151947345" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · add_soft_double · Proven C: 54 bytes">
 <title>3bf · add_soft_double · Proven C: 54 bytes</title>
-<rect x="529.9068896397725" y="107.1199273674158" width="1.3838834851876887" height="2.900575460998491" style="fill:#1f7f93"/>
+<rect x="530.5154777113902" y="107.68613834690429" width="1.1928151371216549" height="3.2404474808615777" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · subtract_soft_double · Proven C: 62 bytes">
 <title>3bf · subtract_soft_double · Proven C: 62 bytes</title>
-<rect x="532.2907731249602" y="107.1199273674158" width="1.7370514089191986" height="2.900575460998491" style="fill:#1f7f93"/>
+<rect x="532.7082928485119" y="107.68613834690429" width="1.517676638917456" height="3.2404474808615777" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · get_status_storage · Proven C: 8 bytes">
 <title>3bf · get_status_storage · Proven C: 8 bytes</title>
-<rect x="535.0278245338794" y="107.1199273674158" width="0.5" height="0.6716751975707818" style="fill:#1f7f93"/>
+<rect x="535.2259694874293" y="107.68613834690429" width="0.5" height="0.8173346346549617" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · record_a_is_nan · Proven C: 16 bytes">
 <title>3bf · record_a_is_nan · Proven C: 16 bytes</title>
-<rect x="535.8518830225863" y="107.1199273674158" width="0.6481169774137105" height="0.6716751975707818" style="fill:#1f7f93"/>
+<rect x="535.9839796582862" y="107.68613834690429" width="0.5160203417137366" height="0.8173346346549617" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · record_a_is_infinity · Proven C: 16 bytes">
 <title>3bf · record_a_is_infinity · Proven C: 16 bytes</title>
-<rect x="535.0278245338794" y="108.79160256498658" width="0.5" height="1.2289002634277093" style="fill:#1f7f93"/>
+<rect x="535.2259694874293" y="109.50347298155924" width="1.2740305125706048" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · record_a_is_zero · Proven C: 16 bytes">
 <title>3bf · record_a_is_zero · Proven C: 16 bytes</title>
-<rect x="536.2639122669397" y="108.79160256498658" width="0.5" height="1.2289002634277093" style="fill:#1f7f93"/>
+<rect x="535.2259694874293" y="110.71502940466254" width="1.2740305125706048" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · signed_int_to_soft_double · Proven C: 124 bytes">
 <title>3bf · signed_int_to_soft_double · Proven C: 124 bytes</title>
-<rect x="529.9068896397725" y="111.0205028284143" width="1.8705661117933055" height="6.43830669306689" style="fill:#1f7f93"/>
+<rect x="530.5154777113902" y="111.92658582776586" width="2.093145584955731" height="5.903054038611872" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · soft_double_to_signed_int · Proven C: 108 bytes">
 <title>3bf · soft_double_to_signed_int · Proven C: 108 bytes</title>
-<rect x="532.7774557515659" y="111.0205028284143" width="3.722544248434147" height="2.937927072800118" style="fill:#1f7f93"/>
+<rect x="533.608623296346" y="111.92658582776586" width="2.8913767036539846" height="3.77903741134668" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · record_b_is_nan · Proven C: 16 bytes">
 <title>3bf · record_b_is_nan · Proven C: 16 bytes</title>
-<rect x="532.7774557515659" y="114.95842990121442" width="1.3612721242170736" height="0.5" style="fill:#1f7f93"/>
+<rect x="533.608623296346" y="116.70562323911254" width="0.5" height="1.124016627265192" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · record_b_is_infinity · Proven C: 16 bytes">
 <title>3bf · record_b_is_infinity · Proven C: 16 bytes</title>
-<rect x="532.7774557515659" y="116.12522310797" width="0.5" height="1.3335864135111812" style="fill:#1f7f93"/>
+<rect x="534.9057488642306" y="116.70562323911254" width="0.5" height="1.124016627265192" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · record_b_is_zero · Proven C: 16 bytes">
 <title>3bf · record_b_is_zero · Proven C: 16 bytes</title>
-<rect x="533.9580918136744" y="116.12522310797" width="0.5" height="1.3335864135111812" style="fill:#1f7f93"/>
+<rect x="536.2028744321153" y="116.70562323911254" width="0.5" height="1.124016627265192" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · logical_shift_right_64 · Proven C: 48 bytes">
 <title>3bf · logical_shift_right_64 · Proven C: 48 bytes</title>
-<rect x="535.1387278757829" y="114.95842990121442" width="1.3612721242170736" height="2.500379620266772" style="fill:#1f7f93"/>
+<rect x="491.23545040328247" y="118.82963986637773" width="6.965293822282415" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · pack_soft_double · Proven C: 412 bytes">
 <title>3bf · pack_soft_double · Proven C: 412 bytes</title>
-<rect x="490.43400884657757" y="118.45880952148119" width="6.799702339160941" height="8.09576301330441" style="fill:#1f7f93"/>
+<rect x="491.23545040328247" y="119.86731016529272" width="6.965293822282415" height="7.906670065686952" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · record_c_is_nan · Proven C: 16 bytes">
 <title>3bf · record_c_is_nan · Proven C: 16 bytes</title>
-<rect x="490.43400884657757" y="127.55457253478558" width="0.5" height="0.9133482066821572" style="fill:#1f7f93"/>
+<rect x="491.23545040328247" y="128.77398023097967" width="0.5" height="0.873571373040944" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · record_c_is_infinity · Proven C: 16 bytes">
 <title>3bf · record_c_is_infinity · Proven C: 16 bytes</title>
-<rect x="490.43400884657757" y="129.46792074146774" width="0.5" height="0.9133482066821574" style="fill:#1f7f93"/>
+<rect x="491.23545040328247" y="130.6475516040206" width="0.5" height="0.873571373040944" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · record_c_is_zero · Proven C: 16 bytes">
 <title>3bf · record_c_is_zero · Proven C: 16 bytes</title>
-<rect x="490.43400884657757" y="131.38126894814988" width="0.5" height="0.9133482066821574" style="fill:#1f7f93"/>
+<rect x="491.23545040328247" y="132.52112297706154" width="0.5" height="0.873571373040944" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · unpack_soft_double · Proven C: 212 bytes">
 <title>3bf · unpack_soft_double · Proven C: 212 bytes</title>
-<rect x="491.87395389380725" y="127.55457253478558" width="5.359757291931229" height="4.740044620046472" style="fill:#1f7f93"/>
+<rect x="492.7059661858577" y="128.77398023097967" width="5.4947780397071995" height="4.620714119122832" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3bf · Draft C 0x02000608–0x020008a2: 666 bytes">
 <title>3bf · Draft C 0x02000608–0x020008a2: 666 bytes</title>
-<rect x="498.2337111857385" y="118.45880952148117" width="6.730062139704146" height="13.835807633350882" style="fill:hsl(190 52% 82%)"/>
+<rect x="499.2007442255649" y="118.82963986637773" width="13.603038674184425" height="6.853277489515678" style="fill:hsl(190 52% 82%)"/>
 </g>
 <g aria-label="3bf · Draft C 0x020008a4–0x020008c0: 28 bytes">
 <title>3bf · Draft C 0x020008a4–0x020008c0: 28 bytes</title>
-<rect x="505.9637733254427" y="118.45880952148119" width="0.5" height="4.789583466673515" style="fill:hsl(190 52% 82%)"/>
+<rect x="499.2007442255649" y="126.68291735589341" width="4.716174159925402" height="0.5" style="fill:hsl(190 52% 82%)"/>
 </g>
 <g aria-label="3bf · Draft C 0x02000ce0–0x02000d46: 102 bytes">
 <title>3bf · Draft C 0x02000ce0–0x02000d46: 102 bytes</title>
-<rect x="506.79655404394686" y="118.45880952148119" width="2.0337011888365932" height="4.789583466673515" style="fill:hsl(190 52% 82%)"/>
+<rect x="499.2007442255649" y="127.52639296463501" width="4.716174159925402" height="2.0726611461301845" style="fill:hsl(190 52% 82%)"/>
 </g>
 <g aria-label="3bf · Draft C 0x02000d48–0x02000dc6: 126 bytes">
 <title>3bf · Draft C 0x02000d48–0x02000dc6: 126 bytes</title>
-<rect x="509.83025523278343" y="118.45880952148119" width="2.747513233268733" height="4.789583466673515" style="fill:hsl(190 52% 82%)"/>
+<rect x="499.2007442255649" y="130.5990541107652" width="4.716174159925402" height="2.7956402393372866" style="fill:hsl(190 52% 82%)"/>
 </g>
 <g aria-label="3bf · Draft C 0x02000dc8–0x02000e22: 90 bytes">
 <title>3bf · Draft C 0x02000dc8–0x02000e22: 90 bytes</title>
-<rect x="505.9637733254427" y="124.2483929881547" width="2.4962222584431326" height="3.4326498416719096" style="fill:hsl(190 52% 82%)"/>
+<rect x="504.9169183854903" y="126.68291735589341" width="1.2775381418452776" height="5.804509112537433" style="fill:hsl(190 52% 82%)"/>
 </g>
 <g aria-label="3bf · Draft C 0x02000e24–0x02000e30: 12 bytes">
 <title>3bf · Draft C 0x02000e24–0x02000e30: 12 bytes</title>
-<rect x="509.4599955838858" y="124.2483929881547" width="3.1177728821663564" height="0.5" style="fill:hsl(190 52% 82%)"/>
-</g>
-<g aria-label="3bf · Draft C 0x0200169c–0x020016fa: 94 bytes">
-<title>3bf · Draft C 0x0200169c–0x020016fa: 94 bytes</title>
-<rect x="509.4599955838858" y="124.75020240419303" width="3.1177728821663564" height="2.9308404256335803" style="fill:hsl(190 52% 82%)"/>
-</g>
-<g aria-label="3bf · Draft C 0x020016fc–0x02001708: 12 bytes">
-<title>3bf · Draft C 0x020016fc–0x02001708: 12 bytes</title>
-<rect x="505.9637733254427" y="128.68104282982662" width="0.5" height="3.6135743250054566" style="fill:hsl(190 52% 82%)"/>
-</g>
-<g aria-label="3bf · Draft C 0x0200175c–0x0200181c: 192 bytes">
-<title>3bf · Draft C 0x0200175c–0x0200181c: 192 bytes</title>
-<rect x="506.41165539253734" y="128.68104282982662" width="6.166113073514813" height="3.6135743250054566" style="fill:hsl(190 52% 82%)"/>
+<rect x="504.9169183854903" y="133.48742646843084" width="1.2775381418452776" height="0.5" style="fill:hsl(190 52% 82%)"/>
 </g>
 <g aria-label="3bf · Unknown 0x0200034c–0x02000474: 296 bytes">
 <title>3bf · Unknown 0x0200034c–0x02000474: 296 bytes</title>
-<rect x="490.43400884657757" y="133.29461715483205" width="9.33100491742132" height="3.9336585814656715" style="fill:#d8d9df"/>
+<rect x="507.1944565273356" y="126.68291735589341" width="5.609326372413746" height="6.711776994209091" style="fill:#d8d9df"/>
 </g>
 <g aria-label="3bf · Unknown 0x020008c0–0x020009dc: 284 bytes">
 <title>3bf · Unknown 0x020008c0–0x020009dc: 284 bytes</title>
-<rect x="490.43400884657757" y="138.22827573629772" width="6.761919038485859" height="5.300415350655487" style="fill:#d8d9df"/>
+<rect x="491.23545040328247" y="134.3946943501025" width="7.331744777684429" height="4.86951654971513" style="fill:#d8d9df"/>
 </g>
 <g aria-label="3bf · Unknown 0x02000e80–0x02000ed6: 86 bytes">
 <title>3bf · Unknown 0x02000e80–0x02000ed6: 86 bytes</title>
-<rect x="498.19592788506344" y="138.22827573629772" width="1.5690858789354607" height="4.764209788897573" style="fill:#d8d9df"/>
+<rect x="499.5671951809669" y="134.3946943501025" width="1.7576901728955523" height="4.369983226335119" style="fill:#d8d9df"/>
 </g>
 <g aria-label="3bf · Unknown 0x02000ed8–0x02000ee0: 8 bytes">
 <title>3bf · Unknown 0x02000ed8–0x02000ee0: 8 bytes</title>
-<rect x="498.19592788506344" y="143.9924855251953" width="1.5690858789354607" height="0.5" style="fill:#d8d9df"/>
+<rect x="499.5671951809669" y="139.7646775764376" width="1.7576901728955523" height="0.5" style="fill:#d8d9df"/>
 </g>
 <g aria-label="3bf · Unknown 0x02001150–0x020012e0: 400 bytes">
 <title>3bf · Unknown 0x02001150–0x020012e0: 400 bytes</title>
-<rect x="490.43400884657757" y="144.52869108695322" width="9.33100491742132" height="5.667106191169825" style="fill:#d8d9df"/>
+<rect x="491.23545040328247" y="140.26421089981764" width="5.300815312829536" height="9.931586378305429" style="fill:#d8d9df"/>
 </g>
 <g aria-label="3bf · Unknown 0x0200138c–0x020014bc: 304 bytes">
 <title>3bf · Unknown 0x0200138c–0x020014bc: 304 bytes</title>
-<rect x="500.76501376399887" y="133.29461715483205" width="5.202352594624506" height="7.439895733803857" style="fill:#d8d9df"/>
+<rect x="497.536265716112" y="140.26421089981764" width="3.788619637750446" height="9.931586378305429" style="fill:#d8d9df"/>
 </g>
 <g aria-label="3bf · Unknown 0x02001528–0x0200163a: 274 bytes">
 <title>3bf · Unknown 0x02001528–0x0200163a: 274 bytes</title>
-<rect x="506.9673663586234" y="133.29461715483205" width="5.61040210742875" height="6.137442688463755" style="fill:#d8d9df"/>
+<rect x="502.32488535386244" y="134.3946943501025" width="8.707462739422837" height="3.860319061320234" style="fill:#d8d9df"/>
 </g>
 <g aria-label="3bf · Unknown 0x0200163c–0x02001650: 20 bytes">
 <title>3bf · Unknown 0x0200163c–0x02001650: 20 bytes</title>
-<rect x="506.9673663586234" y="140.4320598432958" width="1.6441608429715" height="0.5" style="fill:#d8d9df"/>
+<rect x="512.0323480932852" y="134.3946943501025" width="0.771434806464022" height="0.9441276245280935" style="fill:#d8d9df"/>
 </g>
 <g aria-label="3bf · Unknown 0x02004638–0x0200464a: 18 bytes">
 <title>3bf · Unknown 0x02004638–0x0200464a: 18 bytes</title>
-<rect x="509.61152720159487" y="140.4320598432958" width="1.37974475867435" height="0.5" style="fill:#d8d9df"/>
+<rect x="512.0323480932852" y="136.3388219746306" width="0.771434806464022" height="0.749714862075284" style="fill:#d8d9df"/>
 </g>
 <g aria-label="3bf · Unknown 0x020046d8–0x020046e4: 12 bytes">
 <title>3bf · Unknown 0x020046d8–0x020046e4: 12 bytes</title>
-<rect x="511.9912719602692" y="140.4320598432958" width="0.5864965057828999" height="0.5" style="fill:#d8d9df"/>
+<rect x="512.0323480932852" y="138.08853683670588" width="0.771434806464022" height="0.5" style="fill:#d8d9df"/>
 </g>
 <g aria-label="3bf · Unknown 0x02004da0–0x02004f3a: 410 bytes">
 <title>3bf · Unknown 0x02004da0–0x02004f3a: 410 bytes</title>
-<rect x="500.76501376399887" y="141.73451288863592" width="6.4619736190935155" height="8.461284389487128" style="fill:#d8d9df"/>
+<rect x="502.32488535386244" y="139.25501341142274" width="10.47889754588686" height="5.150403750436097" style="fill:#d8d9df"/>
 </g>
 <g aria-label="3bf · Unknown 0x02004f3c–0x02004f82: 70 bytes">
 <title>3bf · Unknown 0x02004f3c–0x02004f82: 70 bytes</title>
-<rect x="508.22698738309236" y="141.73451288863592" width="4.350781082959741" height="1.2526867594016968" style="fill:#d8d9df"/>
+<rect x="502.32488535386244" y="145.40541716185882" width="3.639139940824741" height="1.598247488067282" style="fill:#d8d9df"/>
 </g>
 <g aria-label="3bf · Unknown 0x02005076–0x020050cc: 86 bytes">
 <title>3bf · Unknown 0x02005076–0x020050cc: 86 bytes</title>
-<rect x="508.22698738309236" y="143.9871996480376" width="4.350781082959741" height="1.7675865901220855" style="fill:#d8d9df"/>
+<rect x="502.32488535386244" y="148.0036646499261" width="3.639139940824741" height="2.1921326281969464" style="fill:#d8d9df"/>
 </g>
 <g aria-label="3bf · Unknown 0x020050e4–0x0200516e: 138 bytes">
 <title>3bf · Unknown 0x020050e4–0x0200516e: 138 bytes</title>
-<rect x="508.22698738309236" y="146.75478623815968" width="4.350781082959741" height="3.441011039963346" style="fill:#d8d9df"/>
+<rect x="506.9640252946872" y="145.40541716185882" width="3.103854563037271" height="4.790380116264228" style="fill:#d8d9df"/>
 </g>
 <g aria-label="3bf · Unknown 0x020052b8–0x02005314: 92 bytes">
 <title>3bf · Unknown 0x020052b8–0x02005314: 92 bytes</title>
-<rect x="513.5777684660521" y="118.45880952148119" width="1.1384607099096473" height="6.408094290045119" style="fill:#d8d9df"/>
+<rect x="511.06787985772445" y="145.40541716185882" width="1.7359030420248471" height="4.790380116264228" style="fill:#d8d9df"/>
 </g>
 <g aria-label="3bf · Unknown 0x02005324–0x0200544e: 298 bytes">
 <title>3bf · Unknown 0x02005324–0x0200544e: 298 bytes</title>
-<rect x="515.7162291759618" y="118.45880952148119" width="5.926753169055162" height="6.408094290045118" style="fill:#d8d9df"/>
+<rect x="513.8037828997493" y="118.82963986637773" width="7.2110147626449965" height="5.249415216457338" style="fill:#d8d9df"/>
 </g>
 <g aria-label="3bf · Unknown 0x02005450–0x02005470: 32 bytes">
 <title>3bf · Unknown 0x02005450–0x02005470: 32 bytes</title>
-<rect x="522.6429823450169" y="118.45880952148119" width="1.789296578143019" height="0.9754918106786981" style="fill:#d8d9df"/>
+<rect x="522.0147976623944" y="118.82963986637773" width="2.251341416080905" height="0.6947566688697866" style="fill:#d8d9df"/>
 </g>
 <g aria-label="3bf · Proven ASM 0x02000000–0x02000030: 48 bytes">
 <title>3bf · Proven ASM 0x02000000–0x02000030: 48 bytes</title>
-<rect x="522.6429823450169" y="120.43430133215989" width="1.789296578143019" height="1.963237716018047" style="fill:hsl(190 58% 66%)"/>
+<rect x="522.0147976623944" y="120.52439653524752" width="2.251341416080905" height="1.5421350033046801" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3bf · Proven ASM 0x020008a2–0x020008a4: 2 bytes">
 <title>3bf · Proven ASM 0x020008a2–0x020008a4: 2 bytes</title>
-<rect x="522.6429823450169" y="123.39753904817793" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="522.0147976623944" y="123.0665315385522" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3bf · Proven ASM 0x02000b9e–0x02000ba0: 2 bytes">
 <title>3bf · Proven ASM 0x02000b9e–0x02000ba0: 2 bytes</title>
-<rect x="522.6429823450169" y="124.01488023901503" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="522.0147976623944" y="123.51375899283728" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3bf · Proven ASM 0x02000baa–0x02000bac: 2 bytes">
 <title>3bf · Proven ASM 0x02000baa–0x02000bac: 2 bytes</title>
-<rect x="523.2008416606454" y="123.39753904817793" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="522.7848522083083" y="123.0665315385522" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3bf · Proven ASM 0x02000d46–0x02000d48: 2 bytes">
 <title>3bf · Proven ASM 0x02000d46–0x02000d48: 2 bytes</title>
-<rect x="523.2008416606454" y="123.80909984206933" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="522.7848522083083" y="123.51375899283728" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3bf · Proven ASM 0x02000dc6–0x02000dc8: 2 bytes">
 <title>3bf · Proven ASM 0x02000dc6–0x02000dc8: 2 bytes</title>
-<rect x="523.6192361473669" y="123.80909984206933" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="522.0147976623944" y="123.96098644712237" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3bf · Proven ASM 0x02000e22–0x02000e24: 2 bytes">
 <title>3bf · Proven ASM 0x02000e22–0x02000e24: 2 bytes</title>
-<rect x="522.6429823450169" y="124.63222142985212" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="522.0147976623944" y="124.52002076497872" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3bf · Proven ASM 0x02000ed6–0x02000ed8: 2 bytes">
 <title>3bf · Proven ASM 0x02000ed6–0x02000ed8: 2 bytes</title>
-<rect x="522.6429823450169" y="125.24956262068922" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="522.6308412991254" y="123.96098644712237" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3bf · Proven ASM 0x020010a6–0x020010a8: 2 bytes">
 <title>3bf · Proven ASM 0x020010a6–0x020010a8: 2 bytes</title>
-<rect x="523.2008416606454" y="124.63222142985212" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="522.6308412991254" y="124.33367599235993" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3bf · Proven ASM 0x02001322–0x02001324: 2 bytes">
 <title>3bf · Proven ASM 0x02001322–0x02001324: 2 bytes</title>
-<rect x="523.2008416606454" y="125.04378222374352" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="523.0928740266738" y="124.33367599235993" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3bf · Proven ASM 0x0200163a–0x0200163c: 2 bytes">
 <title>3bf · Proven ASM 0x0200163a–0x0200163c: 2 bytes</title>
-<rect x="523.6192361473669" y="125.04378222374352" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
-</g>
-<g aria-label="3bf · Proven ASM 0x020016fa–0x020016fc: 2 bytes">
-<title>3bf · Proven ASM 0x020016fa–0x020016fc: 2 bytes</title>
-<rect x="524.0376306340884" y="123.39753904817793" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="523.5549067542222" y="123.0665315385522" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3bf · Proven ASM 0x02001916–0x02001918: 2 bytes">
 <title>3bf · Proven ASM 0x02001916–0x02001918: 2 bytes</title>
-<rect x="524.0376306340884" y="124.01488023901503" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="523.5549067542222" y="123.56966242462292" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3bf · Proven ASM 0x0200229e–0x020022a0: 2 bytes">
 <title>3bf · Proven ASM 0x0200229e–0x020022a0: 2 bytes</title>
-<rect x="524.5954899497169" y="123.39753904817793" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="524.2393996839235" y="123.0665315385522" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3bf · Proven ASM 0x020022d2–0x020022d4: 2 bytes">
 <title>3bf · Proven ASM 0x020022d2–0x020022d4: 2 bytes</title>
-<rect x="524.5954899497169" y="123.80909984206933" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="524.5816461487741" y="123.0665315385522" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3bf · Proven ASM 0x02002306–0x02002308: 2 bytes">
 <title>3bf · Proven ASM 0x02002306–0x02002308: 2 bytes</title>
-<rect x="525.0138844364384" y="123.80909984206933" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="524.5816461487741" y="123.56966242462292" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3bf · Proven ASM 0x0200252a–0x0200252c: 2 bytes">
 <title>3bf · Proven ASM 0x0200252a–0x0200252c: 2 bytes</title>
-<rect x="524.0376306340884" y="124.63222142985212" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="523.5549067542222" y="124.07279331069364" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3bf · Proven ASM 0x020027ae–0x020027b0: 2 bytes">
 <title>3bf · Proven ASM 0x020027ae–0x020027b0: 2 bytes</title>
-<rect x="524.0376306340884" y="125.24956262068922" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="523.5549067542222" y="124.57592419676436" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3bf · Proven ASM 0x02004d4e–0x02004d50: 2 bytes">
 <title>3bf · Proven ASM 0x02004d4e–0x02004d50: 2 bytes</title>
-<rect x="524.5954899497169" y="124.63222142985212" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="524.2393996839235" y="124.07279331069364" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3bf · Proven ASM 0x02004f3a–0x02004f3c: 2 bytes">
 <title>3bf · Proven ASM 0x02004f3a–0x02004f3c: 2 bytes</title>
-<rect x="524.5954899497169" y="125.04378222374352" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="524.5816461487741" y="124.07279331069364" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3bf · Proven ASM 0x0200544e–0x02005450: 2 bytes">
 <title>3bf · Proven ASM 0x0200544e–0x02005450: 2 bytes</title>
-<rect x="525.0138844364384" y="125.04378222374352" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="524.5816461487741" y="124.57592419676436" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3bf · Proven ASM 0x02005588–0x020057b0: 552 bytes">
 <title>3bf · Proven ASM 0x02005588–0x020057b0: 552 bytes</title>
-<rect x="513.5777684660521" y="125.8669038115263" width="9.869916565321464" height="7.7444563972689435" style="fill:hsl(190 58% 66%)"/>
+<rect x="513.8037828997493" y="125.07905508283507" width="9.139776619642143" height="8.374122824686006" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3bf · Proven ASM 0x020057bc–0x020057ea: 46 bytes">
 <title>3bf · Proven ASM 0x020057bc–0x020057ea: 46 bytes</title>
-<rect x="524.4476850313736" y="125.86690381152631" width="0.5" height="7.04489988548743" style="fill:hsl(190 58% 66%)"/>
+<rect x="523.9435595193914" y="125.07905508283508" width="0.5" height="4.989022915771614" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3bf · Proven ASM 0x02005a76–0x02005a78: 2 bytes">
 <title>3bf · Proven ASM 0x02005a76–0x02005a78: 2 bytes</title>
-<rect x="524.4476850313736" y="133.91180369701374" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="523.9435595193914" y="131.0680779986067" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3bf · Proven ASM 0x02005ab6–0x02005ab8: 2 bytes">
 <title>3bf · Proven ASM 0x02005ab6–0x02005ab8: 2 bytes</title>
-<rect x="524.9399819772667" y="133.91180369701374" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="524.6048492989333" y="131.0680779986067" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3c0 · set_effect_record_mode · Proven C: 22 bytes">
 <title>3c0 · set_effect_record_mode · Proven C: 22 bytes</title>
-<rect x="525.43227892316" y="118.45880952148119" width="0.5" height="1.9394217681861272" style="fill:#1f7f93"/>
+<rect x="523.9435595193914" y="131.58886259997814" width="0.5" height="1.8643153075429473" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · state_update_0657 · Proven C: 86 bytes">
 <title>3c0 · state_update_0657 · Proven C: 86 bytes</title>
-<rect x="526.7210646692303" y="118.45880952148119" width="4.037980643729314" height="1.9394217681861274" style="fill:#1f7f93"/>
+<rect x="525.2661390784752" y="118.82963986637773" width="4.718000213321355" height="1.5898477473606984" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · create_configured_overlay_object · Proven C: 98 bytes">
 <title>3c0 · create_configured_overlay_object · Proven C: 98 bytes</title>
-<rect x="531.7590453129595" y="118.45880952148119" width="4.7409546870403805" height="1.9394217681861274" style="fill:#1f7f93"/>
+<rect x="530.9841392917966" y="118.82963986637773" width="5.5158607082034035" height="1.5898477473606984" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · spawn_configured_effect · Proven C: 472 bytes">
 <title>3c0 · spawn_configured_effect · Proven C: 472 bytes</title>
-<rect x="525.43227892316" y="121.39823128966731" width="11.067721076839984" height="5.734985798950739" style="fill:#1f7f93"/>
+<rect x="525.2661390784752" y="121.41948761373843" width="11.233860921524759" height="5.643522482360053" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · state_update_0263 · Proven C: 14 bytes">
 <title>3c0 · state_update_0263 · Proven C: 14 bytes</title>
-<rect x="525.43227892316" y="128.13321708861804" width="0.5" height="1.33213152326379" style="fill:#1f7f93"/>
+<rect x="525.2661390784752" y="128.06301009609848" width="0.5" height="1.3004604121121335" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · state_update_0903 · Proven C: 24 bytes">
 <title>3c0 · state_update_0903 · Proven C: 24 bytes</title>
-<rect x="526.4659799454053" y="128.13321708861804" width="0.7720588952775307" height="1.33213152326379" style="fill:#1f7f93"/>
+<rect x="526.3140713649494" y="128.06301009609848" width="0.7964553482415211" height="1.3004604121121335" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · state_update_0545 · Proven C: 16 bytes">
 <title>3c0 · state_update_0545 · Proven C: 16 bytes</title>
-<rect x="528.2380388406827" y="128.13321708861804" width="0.5" height="1.33213152326379" style="fill:#1f7f93"/>
+<rect x="528.1105267131909" y="128.06301009609848" width="0.5" height="1.3004604121121335" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · select_overlay_data_by_runtime_selector · Proven C: 84 bytes">
 <title>3c0 · select_overlay_data_by_runtime_selector · Proven C: 84 bytes</title>
-<rect x="525.43227892316" y="130.46534861188184" width="2.9871325143744443" height="2.627760147299229" style="fill:#1f7f93"/>
+<rect x="525.2661390784752" y="130.3634705082106" width="3.0420245335434224" height="2.5784939743966517" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · unnamed_run_138 · Proven C: 4 bytes">
 <title>3c0 · unnamed_run_138 · Proven C: 4 bytes</title>
-<rect x="525.43227892316" y="134.09310875918106" width="0.5" height="0.5" style="fill:#1f7f93"/>
+<rect x="525.2661390784752" y="133.94196448260726" width="0.5" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · unnamed_run_138 · Proven C: 8 bytes">
 <title>3c0 · unnamed_run_138 · Proven C: 8 bytes</title>
-<rect x="526.7613230946181" y="134.09310875918106" width="1.6580883429162965" height="0.5" style="fill:#1f7f93"/>
+<rect x="526.6134805896564" y="133.94196448260726" width="1.6946830223622817" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · select_overlay_data_by_runtime_selector · Proven C: 84 bytes">
 <title>3c0 · select_overlay_data_by_runtime_selector · Proven C: 84 bytes</title>
-<rect x="529.4194114375344" y="128.13321708861804" width="1.2327942080496888" height="5.478143120177195" style="fill:#1f7f93"/>
+<rect x="529.3081636120187" y="128.06301009609848" width="1.2635337387843166" height="5.390167811422593" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · sync_selected_actor_progress · Proven C: 100 bytes">
 <title>3c0 · sync_selected_actor_progress · Proven C: 100 bytes</title>
-<rect x="531.6522056455841" y="128.13321708861804" width="4.847794354415851" height="1.944610509171452" style="fill:#1f7f93"/>
+<rect x="531.571697350803" y="128.06301009609848" width="4.92830264919702" height="1.9046217324648151" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · unnamed_run_139 · Proven C: 12 bytes">
 <title>3c0 · unnamed_run_139 · Proven C: 12 bytes</title>
-<rect x="531.6522056455841" y="131.0778275977895" width="0.5" height="0.5" style="fill:#1f7f93"/>
+<rect x="531.571697350803" y="130.9676318285633" width="0.5" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · unnamed_run_139 · Proven C: 12 bytes">
 <title>3c0 · unnamed_run_139 · Proven C: 12 bytes</title>
-<rect x="533.114154234188" y="131.0778275977895" width="0.5" height="0.5" style="fill:#1f7f93"/>
+<rect x="533.0537730131023" y="130.9676318285633" width="0.5" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · unnamed_run_139 · Proven C: 12 bytes">
 <title>3c0 · unnamed_run_139 · Proven C: 12 bytes</title>
-<rect x="531.6522056455841" y="132.4912406421918" width="0.5" height="1.1201195666034454" style="fill:#1f7f93"/>
+<rect x="531.571697350803" y="132.3618502601464" width="0.5" height="1.0913276473746665" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · unnamed_run_139 · Proven C: 12 bytes">
 <title>3c0 · unnamed_run_139 · Proven C: 12 bytes</title>
-<rect x="532.6268380379868" y="132.4912406421918" width="0.9492647848052838" height="0.5" style="fill:#1f7f93"/>
+<rect x="532.5597477923359" y="132.3618502601464" width="0.9761008830656734" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · unnamed_run_139 · Proven C: 12 bytes">
 <title>3c0 · unnamed_run_139 · Proven C: 12 bytes</title>
-<rect x="532.6268380379868" y="133.5513004254935" width="0.9492647848052838" height="0.5" style="fill:#1f7f93"/>
+<rect x="532.5597477923359" y="133.40751408383375" width="0.9761008830656734" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · unnamed_run_140 · Proven C: 12 bytes">
 <title>3c0 · unnamed_run_140 · Proven C: 12 bytes</title>
-<rect x="534.576102822792" y="131.0778275977895" width="0.5" height="0.5" style="fill:#1f7f93"/>
+<rect x="534.5358486754016" y="130.9676318285633" width="0.5" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · unnamed_run_140 · Proven C: 12 bytes">
 <title>3c0 · unnamed_run_140 · Proven C: 12 bytes</title>
-<rect x="536.0380514113959" y="131.0778275977895" width="0.5" height="0.5" style="fill:#1f7f93"/>
+<rect x="536.0179243377008" y="130.9676318285633" width="0.5" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · unnamed_run_140 · Proven C: 12 bytes">
 <title>3c0 · unnamed_run_140 · Proven C: 12 bytes</title>
-<rect x="534.576102822792" y="132.4912406421918" width="0.5" height="1.1201195666034454" style="fill:#1f7f93"/>
+<rect x="534.5358486754016" y="132.3618502601464" width="0.5" height="1.0913276473746665" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · unnamed_run_140 · Proven C: 12 bytes">
 <title>3c0 · unnamed_run_140 · Proven C: 12 bytes</title>
-<rect x="535.5507352151947" y="132.4912406421918" width="0.9492647848052838" height="0.5" style="fill:#1f7f93"/>
+<rect x="535.5238991169344" y="132.3618502601464" width="0.9761008830656734" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · unnamed_run_140 · Proven C: 12 bytes">
 <title>3c0 · unnamed_run_140 · Proven C: 12 bytes</title>
-<rect x="535.5507352151947" y="133.5513004254935" width="0.9492647848052838" height="0.5" style="fill:#1f7f93"/>
+<rect x="535.5238991169344" y="133.40751408383375" width="0.9761008830656734" height="0.5" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · FieldScene_RunActorThirteenRestoration · Proven C: 404 bytes">
 <title>3c0 · FieldScene_RunActorThirteenRestoration · Proven C: 404 bytes</title>
-<rect x="513.5777684660521" y="134.61136020879525" width="8.129634318051774" height="6.619876491312776" style="fill:#1f7f93"/>
+<rect x="513.8037828997493" y="134.45317790752108" width="8.043378605355057" height="6.692554845952262" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · PlaceActorTwelveWhenFlagClear · Proven C: 56 bytes">
 <title>3c0 · PlaceActorTwelveWhenFlagClear · Proven C: 56 bytes</title>
-<rect x="522.7074027841039" y="134.61136020879525" width="0.62706354183101" height="4.9265706043543815" style="fill:#1f7f93"/>
+<rect x="522.8471615051044" y="134.45317790752108" width="0.611691236597931" height="4.983098213518426" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · state_update_0074 · Proven C: 16 bytes">
 <title>3c0 · state_update_0074 · Proven C: 16 bytes</title>
-<rect x="522.7074027841039" y="140.53793081314961" width="0.62706354183101" height="0.6933058869583943" style="fill:#1f7f93"/>
+<rect x="522.8471615051044" y="140.4362761210395" width="0.611691236597931" height="0.7094566324338363" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · pulse · Proven C: 64 bytes">
 <title>3c0 · pulse · Proven C: 64 bytes</title>
-<rect x="513.5777684660521" y="142.231236700108" width="3.9941811492312933" height="1.2066610653575456" style="fill:#1f7f93"/>
+<rect x="513.8037828997493" y="142.14573275347334" width="3.9469967123353165" height="1.2277081906830083" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · FieldScene_RunScene3c0SequenceA · Proven C: 148 bytes">
 <title>3c0 · FieldScene_RunScene3c0SequenceA · Proven C: 148 bytes</title>
-<rect x="513.5777684660521" y="144.43789776546555" width="3.9941811492312933" height="4.102903713639323" style="fill:#1f7f93"/>
+<rect x="513.8037828997493" y="144.37344094415636" width="3.9469967123353165" height="4.151575190954455" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · leaf_0252 · Proven C: 48 bytes">
 <title>3c0 · leaf_0252 · Proven C: 48 bytes</title>
-<rect x="513.5777684660521" y="149.54080147910489" width="3.9941811492312933" height="0.6549957990181596" style="fill:#1f7f93"/>
+<rect x="513.8037828997493" y="149.5250161351108" width="3.9469967123353165" height="0.6707811430122561" style="fill:#1f7f93"/>
 </g>
 <g aria-label="3c0 · Draft C 0x02000104–0x0200013c: 56 bytes">
 <title>3c0 · Draft C 0x02000104–0x0200013c: 56 bytes</title>
-<rect x="518.5719496152834" y="142.231236700108" width="4.762516710651491" height="0.673384641229472" style="fill:hsl(190 52% 82%)"/>
+<rect x="518.7507796120847" y="142.14573275347334" width="4.708073129617672" height="0.6893453779346144" style="fill:hsl(190 52% 82%)"/>
 </g>
 <g aria-label="3c0 · Draft C 0x02000464–0x02000558: 244 bytes">
 <title>3c0 · Draft C 0x02000464–0x02000558: 244 bytes</title>
-<rect x="518.5719496152834" y="143.90462134133747" width="4.762516710651491" height="6.291175936785557" style="fill:hsl(190 52% 82%)"/>
+<rect x="518.7507796120847" y="143.83507813140795" width="4.708073129617672" height="6.360719146715105" style="fill:hsl(190 52% 82%)"/>
 </g>
 <g aria-label="3c0 · Draft C 0x02000d24–0x02000dc8: 164 bytes">
 <title>3c0 · Draft C 0x02000d24–0x02000dc8: 164 bytes</title>
-<rect x="524.334466325935" y="134.61136020879525" width="4.471390617793259" height="4.16138286946647" style="fill:hsl(190 52% 82%)"/>
+<rect x="524.4588527417023" y="134.45317790752108" width="4.419697561889942" height="4.2106121207601" style="fill:hsl(190 52% 82%)"/>
 </g>
 <g aria-label="3c0 · Unknown 0x020007e0–0x020007fc: 28 bytes">
 <title>3c0 · Unknown 0x020007e0–0x020007fc: 28 bytes</title>
-<rect x="524.334466325935" y="139.77274307826173" width="4.471390617793259" height="0.5" style="fill:#d8d9df"/>
+<rect x="524.4588527417023" y="139.66379002828117" width="4.419697561889942" height="0.5" style="fill:#d8d9df"/>
 </g>
 <g aria-label="3c0 · Unknown 0x020009cc–0x02000ac6: 250 bytes">
 <title>3c0 · Unknown 0x020009cc–0x02000ac6: 250 bytes</title>
-<rect x="529.8058569437283" y="134.61136020879525" width="6.124206533584971" height="5.0425945788875755" style="fill:#d8d9df"/>
+<rect x="529.8785503035923" y="134.45317790752108" width="6.056897867044194" height="5.100228824304508" style="fill:#d8d9df"/>
 </g>
 <g aria-label="3c0 · Unknown 0x02000ac8–0x02000adc: 20 bytes">
 <title>3c0 · Unknown 0x02000ac8–0x02000adc: 20 bytes</title>
-<rect x="536.9300634773132" y="134.61136020879525" width="0.5" height="5.0425945788875755" style="fill:#d8d9df"/>
+<rect x="536.9354481706365" y="134.45317790752108" width="0.5" height="5.100228824304508" style="fill:#d8d9df"/>
 </g>
 <g aria-label="3c0 · Unknown 0x02000b24–0x02000bde: 186 bytes">
 <title>3c0 · Unknown 0x02000b24–0x02000bde: 186 bytes</title>
-<rect x="524.334466325935" y="140.65395478768284" width="2.0382000786303913" height="9.54184249044023" style="fill:#d8d9df"/>
+<rect x="524.4588527417023" y="140.5534067318256" width="2.0094955211456167" height="9.642390546297474" style="fill:#d8d9df"/>
 </g>
 <g aria-label="3c0 · Unknown 0x02000be0–0x02000ce4: 260 bytes">
 <title>3c0 · Unknown 0x02000be0–0x02000ce4: 260 bytes</title>
-<rect x="527.3726664045654" y="140.65395478768284" width="9.127333595434637" height="3.420772657281387" style="fill:#d8d9df"/>
+<rect x="527.4683482628479" y="140.5534067318256" width="9.031651737152055" height="3.462937971027973" style="fill:#d8d9df"/>
 </g>
 <g aria-label="3c0 · Unknown 0x02000e8c–0x02000f50: 196 bytes">
 <title>3c0 · Unknown 0x02000e8c–0x02000f50: 196 bytes</title>
-<rect x="527.3726664045654" y="145.07472744496422" width="4.513770513069969" height="5.121069833158843" style="fill:#d8d9df"/>
+<rect x="527.4683482628479" y="145.01634470285356" width="4.461677056893897" height="5.179452575269501" style="fill:#d8d9df"/>
 </g>
 <g aria-label="3c0 · Unknown 0x0200105c–0x02001094: 56 bytes">
 <title>3c0 · Unknown 0x0200105c–0x02001094: 56 bytes</title>
-<rect x="532.8864369176354" y="145.07472744496422" width="3.613563082364668" height="1.0901214064444829" style="fill:#d8d9df"/>
+<rect x="532.9300253197418" y="145.01634470285356" width="3.5699746802581585" height="1.1100569769212933" style="fill:#d8d9df"/>
 </g>
 <g aria-label="3c0 · Unknown 0x020011b8–0x020011ec: 52 bytes">
 <title>3c0 · Unknown 0x020011b8–0x020011ec: 52 bytes</title>
-<rect x="532.8864369176354" y="147.16484885140872" width="1.2213451878052104" height="3.0309484267143603" style="fill:#d8d9df"/>
+<rect x="532.9300253197418" y="147.12640167977486" width="1.2003581793835578" height="3.0693955983482075" style="fill:#d8d9df"/>
 </g>
 <g aria-label="3c0 · Proven ASM 0x02000000–0x02000030: 48 bytes">
 <title>3c0 · Proven ASM 0x02000000–0x02000030: 48 bytes</title>
-<rect x="535.1077821054406" y="147.16484885140872" width="1.3922178945594577" height="2.4550986514694513" style="fill:hsl(190 58% 66%)"/>
+<rect x="535.1303834991254" y="147.12640167977486" width="1.3696165008746006" height="2.488053370012749" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3c0 · Proven ASM 0x02000046–0x02000048: 2 bytes">
 <title>3c0 · Proven ASM 0x02000046–0x02000048: 2 bytes</title>
-<rect x="535.1077821054406" y="150.61994750287818" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="535.1303834991254" y="150.6144550497876" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3c0 · Proven ASM 0x0200009e–0x020000a0: 2 bytes">
 <title>3c0 · Proven ASM 0x0200009e–0x020000a0: 2 bytes</title>
-<rect x="535.7058365790805" y="150.61994750287818" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="535.722787624344" y="150.6144550497876" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3c0 · Proven ASM 0x02000102–0x02000104: 2 bytes">
 <title>3c0 · Proven ASM 0x02000102–0x02000104: 2 bytes</title>
-<rect x="536.3038910527204" y="150.61994750287818" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="536.3151917495627" y="150.6144550497876" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3c0 · Proven ASM 0x02000322–0x02000324: 2 bytes">
 <title>3c0 · Proven ASM 0x02000322–0x02000324: 2 bytes</title>
-<rect x="536.9019455263602" y="150.61994750287818" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
+<rect x="536.9075958747814" y="150.6144550497876" width="0.5" height="0.5" style="fill:hsl(190 58% 66%)"/>
 </g>
 <g aria-label="3c0 · Proven ASM 0x02000594–0x020007e0: 588 bytes">
 <title>3c0 · Proven ASM 0x02000594–0x020007e0: 588 bytes</title>
@@ -20813,9 +20801,9 @@
 <rect x="6" y="288" width="10" height="10" style="fill:#d8d9df"/>
 <text class="weyard legend-label" x="20" y="293" dominant-baseline="middle">Unknown 15.4%</text>
 <rect x="100" y="288" width="10" height="10" style="fill:hsl(190 52% 82%)"/>
-<text class="weyard legend-label" x="114" y="293" dominant-baseline="middle">Draft C 8.2%</text>
+<text class="weyard legend-label" x="114" y="293" dominant-baseline="middle">Draft C 8.0%</text>
 <rect x="188" y="288" width="10" height="10" style="fill:hsl(190 58% 66%)"/>
-<text class="weyard legend-label" x="202" y="293" dominant-baseline="middle">Proven ASM 31.4%</text>
+<text class="weyard legend-label" x="202" y="293" dominant-baseline="middle">Proven ASM 31.1%</text>
 <rect x="300" y="288" width="10" height="10" style="fill:#1f7f93"/>
-<text class="weyard legend-label" x="314" y="293" dominant-baseline="middle">Proven C 45.0%</text>
+<text class="weyard legend-label" x="314" y="293" dominant-baseline="middle">Proven C 45.5%</text>
 </svg>

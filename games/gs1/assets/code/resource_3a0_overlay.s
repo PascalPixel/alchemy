@@ -902,54 +902,10 @@ AlchemyC_020005d4:
 	.2byte 0x0000
 AlchemyC_0200094c:
 	.space 0x1c
-	push	{r5, lr}
-	sub	sp, #8
-	bl	sub_02001d2e
-	movs	r0, #20
-	bl	sub_02001d44
-	adds	r0, #35
-	ldrb	r2, [r0, #0]
-	movs	r3, #253
-	ands	r3, r2
-	strb	r3, [r0, #0]
-	movs	r0, #20
-	bl	sub_02001d54
-	movs	r5, #0
-	adds	r0, #85
-	strb	r5, [r0, #0]
-	movs	r0, #20
+AlchemyC_02000968:
+	.space 0x26
 .L_0200098e:
-	bl	sub_02001d60
-	ldr	r5, [r0, #8]
-	movs	r0, #20
-	bl	sub_02001d68
-	ldr	r3, [r0, #16]
-	asrs	r3, r3, #20
-	str	r3, [sp, #4]
-	movs	r2, #1
-	movs	r3, #1
-	asrs	r5, r5, #20
-	movs	r0, #3
-	movs	r1, #17
-	str	r5, [sp, #0]
-	bl	sub_02001d2e
-	movs	r1, #200
-	lsls	r1, r1, #4
-	ldr	r0, [pc, #28]
-	bl	sub_02001cf8
-	ldr	r0, [pc, #28]
-	bl	sub_02001d66
-	movs	r0, #20
-	movs	r1, #2
-	bl	sub_02001e4e
-	bl	sub_02001d92
-	add	sp, #8
-	pop	{r5}
-	pop	{r0}
-	bx	r0
-	.4byte 0x02008325
-	.2byte 0x0201
-	.2byte 0x0000
+	.space 0x4e
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

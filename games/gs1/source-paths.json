@@ -8188,6 +8188,14 @@
     "resource_3be:02001394": {
       "name": "FieldScene_RunScene3be_02001394",
       "source": "overlays/scene_primary_script/run_scene_3be_02001394.c"
+    },
+    "resource_3a0:02000968": {
+      "name": "FieldScene_RunScene3a0_02000968",
+      "source": "overlays/scene_primary_script/run_scene_3a0_02000968.c"
+    },
+    "resource_382:020004a0": {
+      "name": "FieldScene_RunScene382_020004a0",
+      "source": "overlays/scene_primary_script/run_scene_382_020004a0.c"
     }
   }
 }

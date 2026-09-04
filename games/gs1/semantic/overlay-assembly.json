@@ -3555,18 +3555,6 @@
       ]
     },
     {
-      "overlay": "resource_38b",
-      "start": "0x02000328",
-      "end": "0x02000578",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete retained body accounts for 50 calls, 1 loop(s), 13 memory operation(s), and its production owner boundary",
-        "games/gs1/recon/en/dossiers.json#resource_38b:02000328"
-      ]
-    },
-    {
       "overlay": "resource_371",
       "start": "0x020028e8",
       "end": "0x02002cb4",
@@ -3600,18 +3588,6 @@
       "evidence": [
         "complete callable owner accounts for 80 calls, 1 loop(s), 23 memory operation(s), interworking return, and literal tail",
         "games/gs1/recon/en/dossiers.json#resource_3af:020022c0"
-      ]
-    },
-    {
-      "overlay": "resource_3be",
-      "start": "0x02000d20",
-      "end": "0x02000f44",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete executable body accounts for 33 calls, 0 loop(s), 0 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3be:02000d20"
       ]
     },
     {

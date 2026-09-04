@@ -52,7 +52,7 @@ const LINUX_X64_GS1: &[ExecutableDigests] = &[
         "xgcc",
         &[
             "cc35e03215be6ec15aea1463c79e9598b754430c0927c2062ea337c46b725abc",
-            // alchemy-gcc a10308d rebuilt on linux-x64 (Ubuntu 24.04, gcc 13.3);
+            // alchemy-gcc bcfb458 rebuilt on linux-x64 (Ubuntu 24.04, gcc 13.3);
             // admitted after a byte-identical `make full-rom-check`.
             "a3c3cfd9de1ccd19bab833e03bae15a46d77cbb988c87157342e21bee072f471",
         ],
@@ -75,7 +75,7 @@ const LINUX_X64_GS1: &[ExecutableDigests] = &[
         "cc1",
         &[
             "d0c3f7857e568272f6d2a0d25f2138daeac2ee0941c4828db3abd10d9204b096",
-            "080a023e23226a4d8fdc971b5b5633d95ab2b392625e83fb1f2db30dcf856b45",
+            "4361771bd1af3fba04dcf1bf3f142404feee0432445f73658c5861e49d6fbcce",
         ],
     ),
 ];

@@ -79,8 +79,23 @@ AlchemyC_02000200:
 	.2byte 0x0000
 AlchemyC_0200026c:
 	.space 0x34
-AlchemyC_020002a0:
-	.space 0x40
+	.4byte 0x21824b0a
+	.4byte 0x0049681a
+	.4byte 0x23061852
+	.4byte 0x48085ed1
+	.4byte 0x1a5b23c0
+	.4byte 0x4b076003
+	.4byte 0x5e522102
+	.4byte 0x4b06801a
+	.4byte 0x4906681b
+	.4byte 0x1ad2089b
+	.4byte 0x4770800a
+	.4byte 0x03001e70
+	.4byte 0x02008610
+	.4byte 0x02008614
+	.4byte 0x03001e40
+	.2byte 0x8616
+	.2byte 0x0200
 AlchemyC_020002e0:
 	.space 0x24
 	.4byte 0x47204c00

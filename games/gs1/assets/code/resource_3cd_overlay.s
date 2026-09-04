@@ -128,10 +128,32 @@ AlchemyC_02000098:
 	.space 0x8
 AlchemyC_020000a0:
 	.space 0x20
-AlchemyC_020000c0:
-	.space 0x2c
+	push	{r5, r6, r7, lr}
+	sub	sp, #32
+	adds	r7, r0, #0
+	mov	r0, sp
+	bl	sub_02000942
+	cmp	r0, #0
+	ble.n	.L_020000e4
+	mov	r6, sp
+	adds	r5, r0, #0
+.L_020000d4:
+	ldrh	r0, [r6, #0]
+	adds	r1, r7, #0
+	subs	r5, #1
+	adds	r6, #2
+	bl	.L_0200017e
+	cmp	r5, #0
+	bne.n	.L_020000d4
+.L_020000e4:
+	add	sp, #32
+	pop	{r5, r6, r7}
+	pop	{r0}
+	bx	r0
 AlchemyC_020000ec:
-	.space 0x128
+	.space 0x92
+.L_0200017e:
+	.space 0x96
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9

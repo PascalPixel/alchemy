@@ -1,7 +1,7 @@
-use lifter::owners::{self, first_error, score, score_extending, Module};
-use lifter::{lift_owner, tune};
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
+use thumb2c::owners::{self, first_error, score, score_extending, Module};
+use thumb2c::{lift_owner, tune};
 
 const USAGE: &str = "usage: lifter <command> [args]\n\
   draft <overlay>:<addressHex> [--span BYTES] [--name NAME] [--out FILE]\n\
@@ -184,8 +184,8 @@ fn veneers(root: &Path, options: &Options) -> Result<i32, String> {
         }
         println!(
             "{overlay}:{:08x} {:08x} {}",
-            lifter::decode::OVERLAY_BASE + start as u32,
-            lifter::decode::OVERLAY_BASE + at as u32,
+            thumb2c::decode::OVERLAY_BASE + start as u32,
+            thumb2c::decode::OVERLAY_BASE + at as u32,
             (at - start) / 8
         );
     }
@@ -207,15 +207,15 @@ fn split_owner(root: &Path, options: &Options) -> Result<i32, String> {
     // function: the first function starts where decoding is clean, that is,
     // every instruction up to the first return decodes and a return exists.
     let clean = |at: u32| {
-        let ins = lifter::decode::decode_window(&image, at, end - at);
+        let ins = thumb2c::decode::decode_window(&image, at, end - at);
         let mut returned = false;
         for x in &ins {
-            if matches!(x.kind, lifter::decode::Kind::Unknown(_)) {
+            if matches!(x.kind, thumb2c::decode::Kind::Unknown(_)) {
                 return false;
             }
             if matches!(
                 x.kind,
-                lifter::decode::Kind::Bx(_) | lifter::decode::Kind::Pop { pc: true }
+                thumb2c::decode::Kind::Bx(_) | thumb2c::decode::Kind::Pop { pc: true }
             ) {
                 returned = true;
                 break;
@@ -226,7 +226,7 @@ fn split_owner(root: &Path, options: &Options) -> Result<i32, String> {
     // Pool words (ROM or RAM addresses) and zero padding decode as harmless
     // shifts and moves: skip them before looking for the first clean start.
     let half = |at: u32| {
-        let k = (at - lifter::decode::OVERLAY_BASE) as usize;
+        let k = (at - thumb2c::decode::OVERLAY_BASE) as usize;
         image
             .get(k..k + 2)
             .map(|b| u16::from_le_bytes([b[0], b[1]]))
@@ -259,17 +259,17 @@ fn split_owner(root: &Path, options: &Options) -> Result<i32, String> {
         return Ok(0);
     };
     let span = end - entry;
-    let ins = lifter::decode::decode_window(&image, entry, span);
+    let ins = thumb2c::decode::decode_window(&image, entry, span);
     let mut starts = vec![entry];
     let mut previous_return = false;
     for x in &ins {
-        let prologue = matches!(x.kind, lifter::decode::Kind::Push { lr: true });
+        let prologue = matches!(x.kind, thumb2c::decode::Kind::Push { lr: true });
         if prologue && previous_return && x.addr != entry {
             starts.push(x.addr);
         }
         previous_return = matches!(
             x.kind,
-            lifter::decode::Kind::Bx(_) | lifter::decode::Kind::Pop { pc: true }
+            thumb2c::decode::Kind::Bx(_) | thumb2c::decode::Kind::Pop { pc: true }
         );
     }
     starts.sort_unstable();
@@ -523,7 +523,7 @@ fn main() -> ExitCode {
 /// Study: for every exact owner, pair each `bl` with the adopted source's
 /// spelling of that call and print the argument-register load order.
 fn study(root: &Path, options: &Options) -> Result<(), String> {
-    use lifter::decode::{decode_window, Kind};
+    use thumb2c::decode::{decode_window, Kind};
     let sources = compiler_core::source_paths::SourcePaths::load(root)?;
     let regions: serde_json::Value = serde_json::from_slice(
         &std::fs::read(root.join("games/gs1/semantic/regions.json")).map_err(|e| e.to_string())?,
@@ -770,8 +770,8 @@ fn disasm(root: &Path, options: &Options) -> Result<(), String> {
         None => owners::span_for(root, &overlay, entry)?,
     };
     let image = owners::overlay_image(root, &overlay)?;
-    let ins = lifter::decode::decode_window(&image, entry, span);
-    let values = lifter::sched::value_calls(&ins);
+    let ins = thumb2c::decode::decode_window(&image, entry, span);
+    let values = thumb2c::sched::value_calls(&ins);
     for (index, x) in ins.iter().enumerate() {
         let mark = match (
             values.value.contains(&index),
@@ -789,14 +789,14 @@ fn disasm(root: &Path, options: &Options) -> Result<(), String> {
 
 fn adopt_owner(root: &Path, options: &Options) -> Result<(), String> {
     let owner = owner_argument(options)?;
-    let request = lifter::adopt::Request {
+    let request = thumb2c::adopt::Request {
         owner,
         span: options.span,
         name: options.name.as_deref(),
         path: options.path.as_deref(),
         source: options.source.as_deref(),
     };
-    for line in lifter::adopt::adopt(root, &request)? {
+    for line in thumb2c::adopt::adopt(root, &request)? {
         println!("{line}");
     }
     Ok(())
@@ -806,7 +806,7 @@ fn adopt_owner(root: &Path, options: &Options) -> Result<(), String> {
 /// object per line, for the humanizing passes that annotate the units.
 fn imports_owner(root: &Path, options: &Options) -> Result<i32, String> {
     let owner = owner_argument(options)?;
-    for import in lifter::imports::imports(root, owner, options.span)? {
+    for import in thumb2c::imports::imports(root, owner, options.span)? {
         println!(
             "{}",
             serde_json::to_string(&import).map_err(|error| error.to_string())?

@@ -95,7 +95,7 @@ for testing and provenance, not as public commands.
 | Tool | Responsibility |
 | --- | --- |
 | [allocator-lens](tools/allocator-lens/) | Read GCC 2.96 pseudos, costs, conflicts, assignments, spills, and reloads. |
-| [lifter](tools/lifter/) | Lift retained Thumb overlay modules to candidate C and tune them against the ROM. |
+| [thumb2c](tools/thumb2c/) | Convert retained Thumb code (overlay modules and main-image owners) to candidate C, tune it against the ROM, and adopt exact results. |
 | [shape-search](tools/shape-search/) | Run bounded source-shape searches through the real scorer. |
 | [unit-flatten](tools/unit-flatten/) | Flatten a wholly exact overlay's owners into one translation unit, reconciling declarations. |
 | [unit-scaffold](tools/unit-scaffold/) | Scaffold declared translation units and owner composition. |
@@ -281,12 +281,18 @@ So when a candidate diverges, the order of work is:
    `local-alloc.c` and `global.c`, substitution in `reload1.c`, merging in
    `cse.c` and `combine.c`. Find the comparison, read the numbers, and you
    know exactly which property of the source is decisive.
-3. **Change that property in ordinary C** — or, where the shipped ROM
-   demonstrably implies the original compiler decided differently (a cost,
-   a tie-break, an emission heuristic), propose a target switch. Compiler
-   changes land only as a flag uniform across every file of a family,
-   measured across the whole corpus with zero exact regressions, and only
-   by Pascal's decision.
+3. **Change that property in ordinary C.** There is no per-file compiler
+   flag, ever. A source belongs to exactly one compiler family (the game
+   code, the prebuilt soft-float library leaves, the agbcc-built library),
+   and every member of a family compiles with that family's single flag set
+   in `tools/compiler-core/src/routing.rs`. A function that is not exact
+   under its family's flags is not exact: it stays retained assembly until
+   an ordinary C spelling reproduces it. Only where the shipped ROM makes it
+   extremely clear that Camelot themselves changed compiler or flags for a
+   whole family may that family's flag set change, measured across the whole
+   corpus, and only by Pascal's decision. Per-function routes were tried
+   repeatedly in this project's history and every time they turned out to be
+   a way of disguising a wrong reconstruction as a right one.
 
 Spelling search and the permuter are the last resort, not the first move,
 and for allocation-class residuals they are measured to regress. A week of

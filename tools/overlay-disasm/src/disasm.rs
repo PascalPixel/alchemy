@@ -51,7 +51,13 @@ fn objdump_rows(data: &[u8], base: i64) -> Result<BTreeMap<i64, Row>, String> {
     }
     Ok(rows)
 }
-fn reachable(input: &[u8], base: i64) -> BTreeMap<i64, i64> {
+/// Instructions reachable from the image's prologues and veneers, plus the
+/// given `seeds`. With `sweep`, every halfword left uncovered that is not a
+/// pool word some reached `ldr rd, [pc, #k]` loads is seeded in turn, so a
+/// region known to be code (a main-image owner's audited extent) is decoded
+/// through leaf functions without `push {lr}` and past computed branches;
+/// the emitter's byte check demotes anything that was really data.
+fn reachable(input: &[u8], base: i64, seeds: &[i64], sweep: bool) -> BTreeMap<i64, i64> {
     let length = input.len() as i64;
     let read_u16 = |offset: i64| -> i64 {
         let at = offset as usize;
@@ -59,7 +65,7 @@ fn reachable(input: &[u8], base: i64) -> BTreeMap<i64, i64> {
     };
     let inside = |address: i64, size: i64| base <= address && address + size <= base + length;
     let sign_extend = |value: i64, bits: u32| (value << (64 - bits)) >> (64 - bits);
-    let mut queue = Vec::new();
+    let mut queue: Vec<i64> = seeds.iter().copied().filter(|s| inside(*s, 2)).collect();
     let mut offset = 0i64;
     while offset < length - 1 {
         if read_u16(offset) & 0xff00 == 0xb500 {
@@ -84,59 +90,157 @@ fn reachable(input: &[u8], base: i64) -> BTreeMap<i64, i64> {
         }
         offset += 2;
     }
+    let read_u32 = |offset: i64| -> i64 {
+        let at = offset as usize;
+        input[at] as i64
+            | ((input[at + 1] as i64) << 8)
+            | ((input[at + 2] as i64) << 16)
+            | ((input[at + 3] as i64) << 24)
+    };
     let mut instructions = BTreeMap::new();
+    // Bytes of switch jump tables and of literal pools: data the emitter
+    // must keep as words, and that no linear walk may run into.
+    let mut tables: BTreeSet<i64> = BTreeSet::new();
+    let mut pool: BTreeSet<i64> = BTreeSet::new();
     let mut head = 0usize;
-    while head < queue.len() {
-        let mut pc = queue[head];
-        head += 1;
-        while inside(pc, 2) && !instructions.contains_key(&pc) {
-            let half = read_u16(pc - base);
-            let mut size = 2;
-            let mut stop = false;
-            if half & 0xf800 == 0xf000 && inside(pc, 4) {
-                let low = read_u16(pc + 2 - base);
-                if low & 0xf800 == 0xf800 {
-                    size = 4;
-                    let displacement =
-                        sign_extend(((half & 0x7ff) << 12) | ((low & 0x7ff) << 1), 23);
-                    let target = pc + 4 + displacement;
+    loop {
+        while head < queue.len() {
+            let mut pc = queue[head];
+            head += 1;
+            // The last few instructions of this run, for the switch idiom:
+            // `cmp rN, #K` ... `ldr rT, [pc, #k]` ... `mov pc, rX`, where the
+            // pool word holds a table of K+1 absolute code addresses.
+            while inside(pc, 2)
+                && !instructions.contains_key(&pc)
+                && !tables.contains(&pc)
+                && !pool.contains(&pc)
+            {
+                let half = read_u16(pc - base);
+                let mut size = 2;
+                let mut stop = false;
+                if half & 0xff87 == 0x4687 && sweep {
+                    // The guard and the table load sit just before the
+                    // dispatch by address, the guard usually in the block
+                    // that falls through an unconditional branch.
+                    let preceding: Vec<(i64, i64)> = (1..=12)
+                        .map(|k| pc - 2 * k)
+                        .filter(|at| inside(*at, 2))
+                        .map(|at| (at, read_u16(at - base)))
+                        .collect();
+                    let limit = preceding
+                        .iter()
+                        .find(|(_, h)| h & 0xf800 == 0x2800)
+                        .map(|(_, h)| (h & 0xff) + 1);
+                    let table = preceding.iter().find_map(|(at, h)| {
+                        if h & 0xf800 != 0x4800 {
+                            return None;
+                        }
+                        let word = ((at + 4) & !3) + ((h & 0xff) << 2);
+                        inside(word, 4).then(|| read_u32(word - base))
+                    });
+                    if let (Some(count), Some(table)) = (limit, table) {
+                        if table % 4 == 0 && inside(table, count * 4) {
+                            for entry in 0..count {
+                                let at = table + entry * 4;
+                                for byte in at..at + 4 {
+                                    tables.insert(byte);
+                                }
+                                let target = read_u32(at - base) & !1;
+                                if inside(target, 2) {
+                                    queue.push(target);
+                                }
+                            }
+                        }
+                    }
+                }
+                if half & 0xf800 == 0xf000 && inside(pc, 4) {
+                    let low = read_u16(pc + 2 - base);
+                    if low & 0xf800 == 0xf800 {
+                        size = 4;
+                        let displacement =
+                            sign_extend(((half & 0x7ff) << 12) | ((low & 0x7ff) << 1), 23);
+                        let target = pc + 4 + displacement;
+                        if inside(target, 2) {
+                            queue.push(target);
+                        }
+                    }
+                } else if half & 0xf800 == 0xe000 {
+                    let target = pc + 4 + (sign_extend(half & 0x7ff, 11) << 1);
                     if inside(target, 2) {
                         queue.push(target);
                     }
+                    stop = true;
+                } else if half & 0xf000 == 0xd000 && ((half >> 8) & 0xf) < 0xe {
+                    let target = pc + 4 + (sign_extend(half & 0xff, 8) << 1);
+                    if inside(target, 2) {
+                        queue.push(target);
+                    }
+                } else if half & 0xff87 == 0x4700
+                    || half & 0xff00 == 0xbd00
+                    || (half & 0xfc00 == 0x4400 && half & 0x0087 == 0x0087)
+                {
+                    stop = true;
                 }
-            } else if half & 0xf800 == 0xe000 {
-                let target = pc + 4 + (sign_extend(half & 0x7ff, 11) << 1);
-                if inside(target, 2) {
-                    queue.push(target);
+                instructions.insert(pc, size);
+                if stop {
+                    break;
                 }
-                stop = true;
-            } else if half & 0xf000 == 0xd000 && ((half >> 8) & 0xf) < 0xe {
-                let target = pc + 4 + (sign_extend(half & 0xff, 8) << 1);
-                if inside(target, 2) {
-                    queue.push(target);
-                }
-            } else if half & 0xff87 == 0x4700
-                || half & 0xff00 == 0xbd00
-                || (half & 0xfc00 == 0x4400 && half & 0x0087 == 0x0087)
-            {
-                stop = true;
+                pc += size;
             }
-            instructions.insert(pc, size);
-            if stop {
+        }
+        if !sweep {
+            break;
+        }
+        // Pool words: the targets of every reached pc-relative load.
+        for (&pc, &size) in &instructions {
+            if size == 2 {
+                let half = read_u16(pc - base);
+                if half & 0xf800 == 0x4800 {
+                    let word = ((pc + 4) & !3) + ((half & 0xff) << 2);
+                    for byte in word..word + 4 {
+                        pool.insert(byte);
+                    }
+                }
+            }
+        }
+        let mut covered: BTreeSet<i64> = BTreeSet::new();
+        for (&pc, &size) in &instructions {
+            for byte in pc..pc + size {
+                covered.insert(byte);
+            }
+        }
+        let mut next = None;
+        let mut cursor = base;
+        while cursor + 2 <= base + length {
+            if !covered.contains(&cursor) && !pool.contains(&cursor) && !tables.contains(&cursor) {
+                next = Some(cursor);
                 break;
             }
-            pc += size;
+            cursor += 2;
+        }
+        match next {
+            Some(seed) => queue.push(seed),
+            None => break,
         }
     }
     instructions
 }
 pub fn build_overlay_source(input: &[u8], base: i64) -> Result<String, String> {
+    build_source(input, base, &[], false)
+}
+/// A main-image owner's audited extent: the entry is code whatever its
+/// prologue looks like, and every byte not proved to be a pool word is
+/// decoded as code before the byte check has its say.
+pub fn build_region_source(input: &[u8], base: i64) -> Result<String, String> {
+    build_source(input, base, &[base], true)
+}
+fn build_source(input: &[u8], base: i64, seeds: &[i64], sweep: bool) -> Result<String, String> {
     let decoded = input;
     if !decoded.len().is_multiple_of(2) {
         return Err("overlay has an odd byte length".to_string());
     }
     let rows = objdump_rows(decoded, base)?;
-    let instructions = reachable(decoded, base);
+    let instructions = reachable(decoded, base, seeds, sweep);
     let mut covered: BTreeSet<i64> = BTreeSet::new();
     for (address, size) in &instructions {
         for byte in *address..*address + *size {

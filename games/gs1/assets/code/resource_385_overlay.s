@@ -261,8 +261,21 @@ AlchemyC_02000048:
 AlchemyC_020000a0:
 	.space 0x62
 	.2byte 0x0000
-AlchemyC_02000104:
-	.space 0x38
+	.4byte 0x6c426883
+	.4byte 0x6083189b
+	.4byte 0x68c36c82
+	.4byte 0x60c3189b
+	.4byte 0x69036cc2
+	.4byte 0x6103189b
+	.4byte 0x69836b02
+	.4byte 0x6183189b
+	.4byte 0x69c36b42
+	.4byte 0x61c3189b
+	.4byte 0x30646d01
+	.4byte 0x88028bcb
+	.4byte 0x83cb189b
+	.2byte 0x4770
+	.2byte 0x0000
 AlchemyC_0200013c:
 	.space 0x1d8
 AlchemyC_02000314:

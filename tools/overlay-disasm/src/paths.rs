@@ -16,6 +16,12 @@ pub fn basename(path: &str) -> &str {
 pub enum OverlaySource {
     Url(PathBuf),
     Str(String),
+    /// In-memory listing that belongs to a known overlay: the overlay id
+    /// cannot be read off a path, so it travels with the text.
+    Named {
+        overlay: String,
+        text: String,
+    },
 }
 impl OverlaySource {
     pub fn path(path: impl Into<PathBuf>) -> Self {
@@ -24,10 +30,24 @@ impl OverlaySource {
     pub fn text(text: impl Into<String>) -> Self {
         OverlaySource::Str(text.into())
     }
+    pub fn named(overlay: impl Into<String>, text: impl Into<String>) -> Self {
+        OverlaySource::Named {
+            overlay: overlay.into(),
+            text: text.into(),
+        }
+    }
+    /// The overlay this listing belongs to, when the source says so.
+    pub fn overlay_id(&self) -> Option<String> {
+        match self {
+            OverlaySource::Named { overlay, .. } => Some(overlay.clone()),
+            _ => None,
+        }
+    }
     pub fn to_display_string(&self) -> String {
         match self {
             OverlaySource::Url(path) => format!("file://{}", path.to_string_lossy()),
             OverlaySource::Str(text) => text.clone(),
+            OverlaySource::Named { overlay, .. } => format!("{overlay}_overlay.s"),
         }
     }
     pub fn read_text(&self) -> std::io::Result<String> {
@@ -40,6 +60,7 @@ impl OverlaySource {
                     Ok(text.clone())
                 }
             }
+            OverlaySource::Named { text, .. } => Ok(text.clone()),
         }
     }
 }

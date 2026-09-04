@@ -997,27 +997,6 @@
    ]
   },
   {
-   "id": "unit-080f9ef8",
-   "game": "gs1",
-   "source": "games/gs1/recon/en/units/unit-080f9ef8.c",
-   "compiler_route": "canonical-gcc296",
-   "overlay": null,
-   "absolute_symbols": {
-    "_call_via_r3": {
-     "address": "0x080f9ee8",
-     "kind": "thumb"
-    }
-   },
-   "local_symbols": [],
-   "owners": [
-    {
-     "address": "0x080f9ef8",
-     "extent": 68,
-     "state": "retained-assembly"
-    }
-   ]
-  },
-  {
    "id": "unit-08095a44",
    "game": "gs1",
    "source": "games/gs1/recon/en/units/unit-08095a44.c",
@@ -1512,22 +1491,6 @@
     {
      "address": "0x080be378",
      "extent": 1012,
-     "state": "retained-assembly"
-    }
-   ]
-  },
-  {
-   "id": "unit-giant-walker",
-   "game": "gs1",
-   "source": "games/gs1/recon/en/units/unit-giant-walker.c",
-   "compiler_route": "canonical-gcc296",
-   "overlay": null,
-   "absolute_symbols": {},
-   "local_symbols": [],
-   "owners": [
-    {
-     "address": "0x0800ebec",
-     "extent": 552,
      "state": "retained-assembly"
     }
    ]
@@ -3070,27 +3033,6 @@
    ]
   },
   {
-   "id": "unnamed-leaf-run-130",
-   "game": "gs1",
-   "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_130.c",
-   "compiler_route": "canonical-gcc296",
-   "overlay": "resource_38d",
-   "absolute_symbols": {},
-   "local_symbols": [],
-   "owners": [
-    {
-     "address": "0x020001b4",
-     "extent": 64,
-     "state": "exact-c"
-    },
-    {
-     "address": "0x020001f4",
-     "extent": 32,
-     "state": "exact-c"
-    }
-   ]
-  },
-  {
    "id": "unnamed-leaf-run-131",
    "game": "gs1",
    "source": "games/gs1/src/unidentified/overlays/leaf_modules/unnamed_run_131.c",
@@ -4260,62 +4202,6 @@
     {
      "address": "0x0200271c",
      "extent": 60,
-     "state": "exact-c"
-    }
-   ]
-  },
-  {
-   "id": "unnamed-state-run-070",
-   "game": "gs1",
-   "source": "games/gs1/src/unidentified/overlays/state_modules/unnamed_run_070.c",
-   "compiler_route": "canonical-gcc296",
-   "overlay": "resource_37f",
-   "absolute_symbols": {},
-   "local_symbols": [],
-   "owners": [
-    {
-     "address": "0x0200056c",
-     "extent": 64,
-     "state": "exact-c"
-    },
-    {
-     "address": "0x020005ac",
-     "extent": 64,
-     "state": "exact-c"
-    },
-    {
-     "address": "0x020005ec",
-     "extent": 72,
-     "state": "exact-c"
-    },
-    {
-     "address": "0x02000634",
-     "extent": 72,
-     "state": "exact-c"
-    },
-    {
-     "address": "0x0200067c",
-     "extent": 72,
-     "state": "exact-c"
-    },
-    {
-     "address": "0x020006c4",
-     "extent": 72,
-     "state": "exact-c"
-    },
-    {
-     "address": "0x0200070c",
-     "extent": 72,
-     "state": "exact-c"
-    },
-    {
-     "address": "0x02000754",
-     "extent": 72,
-     "state": "exact-c"
-    },
-    {
-     "address": "0x0200079c",
-     "extent": 52,
      "state": "exact-c"
     }
    ]

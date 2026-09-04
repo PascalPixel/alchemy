@@ -2873,7 +2873,8 @@
       "name": "FieldScene_RunTimedArrivalSequence"
     },
     "resource_3bc:020020f0": {
-      "name": "FieldScene_RunFourStepActorMotion"
+      "name": "FieldScene_RunFourStepActorMotion",
+      "source": "overlays/scene_primary_script/run_scene_3bc_four_step_actor_motion.c"
     },
     "resource_3c9:02003e9c": {
       "name": "FieldScene_RunMultiActorPresentation"
@@ -2888,7 +2889,8 @@
       "name": "FieldScene_RunPaletteRampSequence"
     },
     "resource_376:02000658": {
-      "name": "FieldScene_RunLongPresentationSequence"
+      "name": "FieldScene_RunLongPresentationSequence",
+      "source": "overlays/scene_primary_script/run_scene_376_long_presentation_sequence.c"
     },
     "resource_373:020015dc": {
       "name": "FieldScene_RunScriptedActorSequence"
@@ -6215,10 +6217,8 @@
       "name": "RunEventScript01"
     },
     "resource_379:02000074": {
-      "name": "RunEventScript01"
-    },
-    "resource_379:02000484": {
-      "name": "RunEventScript02"
+      "name": "RunEventScript01",
+      "source": "overlays/event_script/run_event_script_01_379_02000074.c"
     },
     "resource_37a:02001380": {
       "name": "StartSolShindenTrapEvent",
@@ -6297,13 +6297,8 @@
       "source": "overlays/scene_setup/run_scene_arrival_setup.c"
     },
     "resource_3aa:02000360": {
-      "name": "RunEventScript01"
-    },
-    "resource_3aa:0200077c": {
-      "name": "RunEventScript02"
-    },
-    "resource_3aa:02000cd4": {
-      "name": "RunEventScript03"
+      "name": "RunEventScript01",
+      "source": "overlays/event_script/run_event_script_01_3aa_02000360.c"
     },
     "resource_3aa:02001450": {
       "name": "RunEventScript04"
@@ -6565,7 +6560,8 @@
       "name": "FieldScene_RunFirstActorInteraction"
     },
     "resource_3bb:02001424": {
-      "name": "FieldScene_RunSecondActorInteraction"
+      "name": "FieldScene_RunSecondActorInteraction",
+      "source": "overlays/scene_primary_script/run_scene_3bb_second_actor_interaction.c"
     },
     "resource_3b9:020011c4": {
       "name": "FieldScene_RunConditionalSceneSetup",
@@ -6688,7 +6684,8 @@
       "name": "FieldScene_RunMapEntranceCoordinator"
     },
     "resource_3bb:02001538": {
-      "name": "FieldScene_RunSceneThreeCoordinator"
+      "name": "FieldScene_RunSceneThreeCoordinator",
+      "source": "overlays/scene_primary_script/run_scene_3bb_scene_three_coordinator.c"
     },
     "resource_3ba:020016ec": {
       "name": "FieldScene_RunSceneFourCoordinator"
@@ -8240,6 +8237,38 @@
     "resource_3a8:0200158c": {
       "name": "Func_0200158c",
       "source": "unidentified/overlays/state_update/state_update_0714.c"
+    },
+    "resource_39c:02001568": {
+      "name": "Func_02001568",
+      "source": "overlays/story_effect_sequence/start_story_scene_effect.c"
+    },
+    "resource_3ad:020001b0": {
+      "name": "Func_020001b0",
+      "source": "unidentified/overlays/state_update/state_update_0348.c"
+    },
+    "resource_3ad:02000460": {
+      "name": "Func_02000460",
+      "source": "unidentified/overlays/leaf/leaf_0559.c"
+    },
+    "resource_3a5:02000498": {
+      "name": "Func_02000498",
+      "source": "unidentified/overlays/leaf/leaf_0171.c"
+    },
+    "resource_3a7:0200048c": {
+      "name": "Func_0200048c",
+      "source": "unidentified/overlays/leaf/leaf_0021.c"
+    },
+    "resource_38d:0200028c": {
+      "name": "Func_0200028c",
+      "source": "unidentified/overlays/leaf/leaf_0385.c"
+    },
+    "resource_3a7:020004d0": {
+      "name": "Func_020004d0",
+      "source": "unidentified/overlays/leaf/leaf_0049.c"
+    },
+    "resource_3a7:02000368": {
+      "name": "Func_02000368",
+      "source": "unidentified/overlays/leaf/leaf_0491.c"
     }
   }
 }

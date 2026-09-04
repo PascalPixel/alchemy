@@ -65,7 +65,10 @@
     "main:080c2a08": "battle/runtime/reserved_no_op_a.c",
     "main:080f2eb8": "graphics/color/reserved_no_op.c",
     "resource_387:02000d04": "overlays/actor_depth_effect/configure_actor_eight_at_depth.c",
-    "resource_382:02001754": "overlays/actor_effect_motion/update_effect_motion_with_damping.c",
+    "resource_382:02001754": {
+      "name": "Overlay382_UpdateEffectMotionWithDamping",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_39d:020008cc": "overlays/actor_search/find_nearest_f2_actor.c",
     "resource_378:020032a8": "overlays/actor_facing/is_actor_facing_inward.c",
     "resource_3ca:0200004c": "overlays/scene_audio/play_workspace_cue_and_clear_palette_zero.c",
@@ -95,9 +98,15 @@
       "name": "SceneEventRuntime_GetEffectData",
       "source": "overlays/scene_event_runtime/accessors.c"
     },
-    "resource_38a:020004c4": "overlays/effect_record_configuration/rotate_effect_record.c",
+    "resource_38a:020004c4": {
+      "name": "RotateEffectRecord",
+      "source": "unidentified/overlays/units/overlay_38a.c"
+    },
     "resource_3be:02000d18": "overlays/staged_actor_pair_scene/get_message_data.c",
-    "resource_3ce:02000228": "overlays/command_table/no_op_callback.c",
+    "resource_3ce:02000228": {
+      "name": "CommandTable_NoOpCallback",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
     "main:08002ef8": "runtime/dispatch/reserved_no_op_a.c",
     "main:08002efc": "runtime/dispatch/reserved_no_op_b.c",
     "main:08002f00": "runtime/dispatch/reserved_no_op_c.c",
@@ -1238,20 +1247,62 @@
     "resource_37a:02001140": "map/locations/sol_shinden/update_light_4.c",
     "resource_37a:020025b0": "map/locations/sol_shinden/check_all_lights.c",
     "resource_37a:020025fc": "map/locations/sol_shinden/set_actor_step.c",
-    "resource_382:02000030": "overlays/shared/set_effect_record_mode.c",
-    "resource_382:0200013c": "overlays/actor_effect_motion/spawn_configured_effect.c",
-    "resource_382:02000314": "overlays/actor_effect_motion/update_actor_proximity.c",
-    "resource_382:020007ec": "overlays/actor_presentation/run_actor_fourteen_dialogue.c",
-    "resource_382:0200085c": "overlays/actor_presentation/run_actor_fifteen_dialogue.c",
-    "resource_382:02000a4c": "overlays/actor_presentation/run_actor_fourteen_dialogue_and_advance_story.c",
-    "resource_382:02000acc": "overlays/actor_presentation/run_actor_fifteen_followup_dialogue.c",
-    "resource_382:02000bec": "overlays/actor_presentation/run_actor_nineteen_dialogue_and_set_scene_state.c",
-    "resource_382:02000cfc": "overlays/actor_presentation/run_actor_fourteen_flagged_dialogue.c",
-    "resource_382:02000d78": "overlays/actor_presentation/run_actor_fifteen_script_branch.c",
-    "resource_382:02000938": "overlays/actor_effect_motion/run_actor_command.c",
-    "resource_382:02000fb4": "overlays/actor_presentation/setup_actor_zero_for_scene_eight_at_376_224.c",
-    "resource_382:02001010": "overlays/actor_presentation/setup_actor_zero_for_scene_nine_at_296_176.c",
-    "resource_382:0200113c": "overlays/actor_presentation/setup_actor_zero_for_scene_twelve_at_72_160.c",
+    "resource_382:02000030": {
+      "name": "SetEffectRecordMode",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
+    "resource_382:0200013c": {
+      "name": "SpawnConfiguredEffect",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
+    "resource_382:02000314": {
+      "name": "update_actor_proximity",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
+    "resource_382:020007ec": {
+      "name": "ActorPresentation_RunActorFourteenDialogue",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
+    "resource_382:0200085c": {
+      "name": "ActorPresentation_RunActorFifteenDialogue",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
+    "resource_382:02000a4c": {
+      "name": "ActorPresentation_RunActorFourteenDialogueAndAdvanceStory",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
+    "resource_382:02000acc": {
+      "name": "ActorPresentation_RunActorFifteenFollowupDialogue",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
+    "resource_382:02000bec": {
+      "name": "ActorPresentation_RunActorNineteenDialogueAndSetSceneState",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
+    "resource_382:02000cfc": {
+      "name": "ActorPresentation_RunActorFourteenFlaggedDialogue",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
+    "resource_382:02000d78": {
+      "name": "ActorPresentation_RunActorFifteenScriptBranch",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
+    "resource_382:02000938": {
+      "name": "run_actor_command",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
+    "resource_382:02000fb4": {
+      "name": "ActorPresentation_SetupActorZeroForSceneEightAt376_224",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
+    "resource_382:02001010": {
+      "name": "ActorPresentation_SetupActorZeroForSceneNineAt296_176",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
+    "resource_382:0200113c": {
+      "name": "ActorPresentation_SetupActorZeroForSceneTwelveAt72_160",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_385:02000030": "overlays/shared/set_effect_record_mode.c",
     "resource_385:0200013c": "overlays/actor_movement_effect/spawn_configured_effect.c",
     "resource_385:02000314": "overlays/shared/calculate_fixed_point_position_distance.c",
@@ -1265,19 +1316,46 @@
     "resource_389:02000030": "overlays/shared/measure_fixed_point_position_distance.c",
     "resource_389:0200006c": "overlays/shared/find_actor_at_fixed_point_position.c",
     "resource_389:02000244": "overlays/shared/fill_grid_attribute_rectangle.c",
-    "resource_38a:02000030": "overlays/shared/set_effect_record_mode.c",
-    "resource_38a:0200013c": "overlays/effect_record_configuration/spawn_configured_effect.c",
+    "resource_38a:02000030": {
+      "name": "SetEffectRecordMode",
+      "source": "unidentified/overlays/units/overlay_38a.c"
+    },
+    "resource_38a:0200013c": {
+      "name": "SpawnConfiguredEffect",
+      "source": "unidentified/overlays/units/overlay_38a.c"
+    },
     "resource_38e:02000974": "overlays/orbiting_effect/initialize_orbiting_scene_entity.c",
     "resource_391:02000030": "overlays/shared/measure_fixed_point_position_distance.c",
     "resource_391:0200006c": "overlays/shared/find_actor_at_fixed_point_position.c",
     "resource_391:02000244": "overlays/shared/fill_grid_attribute_rectangle.c",
-    "resource_392:02000030": "overlays/shared/measure_fixed_point_position_distance.c",
-    "resource_392:0200006c": "overlays/shared/find_actor_at_fixed_point_position.c",
-    "resource_392:02000244": "overlays/shared/fill_grid_attribute_rectangle.c",
-    "resource_392:02000cb4": "overlays/orbiting_effect/initialize_orbiting_particle.c",
-    "resource_393:02000030": "overlays/shared/measure_fixed_point_position_distance.c",
-    "resource_393:0200006c": "overlays/shared/find_actor_at_fixed_point_position.c",
-    "resource_393:02000244": "overlays/shared/fill_grid_attribute_rectangle.c",
+    "resource_392:02000030": {
+      "name": "CalculateFixedPointPositionDistance",
+      "source": "unidentified/overlays/units/overlay_392.c"
+    },
+    "resource_392:0200006c": {
+      "name": "find_actor_at_fixed_point_position",
+      "source": "unidentified/overlays/units/overlay_392.c"
+    },
+    "resource_392:02000244": {
+      "name": "fill_grid_attribute_rectangle",
+      "source": "unidentified/overlays/units/overlay_392.c"
+    },
+    "resource_392:02000cb4": {
+      "name": "InitializeOrbitingParticle",
+      "source": "unidentified/overlays/units/overlay_392.c"
+    },
+    "resource_393:02000030": {
+      "name": "CalculateFixedPointPositionDistance",
+      "source": "unidentified/overlays/units/overlay_393.c"
+    },
+    "resource_393:0200006c": {
+      "name": "Resource384_SelectSceneScript",
+      "source": "unidentified/overlays/units/overlay_393.c"
+    },
+    "resource_393:02000244": {
+      "name": "fill_grid_attribute_rectangle",
+      "source": "unidentified/overlays/units/overlay_393.c"
+    },
     "resource_395:02000030": "overlays/palette_scene/get_script_data.c",
     "resource_395:02000038": "overlays/palette_scene/get_message_data.c",
     "resource_395:02000040": "overlays/palette_scene/get_actor_data.c",
@@ -1693,7 +1771,10 @@
     "resource_381:02000f2c": "runtime/callbacks/no_op_callback_b.c",
     "resource_387:020004cc": "runtime/callbacks/no_op_callback_c.c",
     "resource_387:020004d0": "runtime/callbacks/no_op_callback_d.c",
-    "resource_397:020001d0": "runtime/callbacks/empty_hook_a.c",
+    "resource_397:020001d0": {
+      "name": "Resource397_EmptyHook",
+      "source": "unidentified/overlays/units/overlay_397.c"
+    },
     "resource_398:02000904": "runtime/callbacks/import_bank_no_op.c",
     "resource_3a7:020004cc": "runtime/callbacks/no_op_callback_e.c",
     "resource_3b4:020009ec": "runtime/callbacks/empty_hook_b.c",
@@ -2394,15 +2475,24 @@
     "main:080b27b0": "unidentified/main/runtime/runtime_owner_161.c",
     "main:080b2ed8": "unidentified/main/battle/battle_owner_62.c",
     "main:080bf4c4": "unidentified/main/field/field_owner_128.c",
-    "resource_397:020002e0": "unidentified/overlays/leaf/leaf_0001.c",
+    "resource_397:020002e0": {
+      "name": "leaf_0001",
+      "source": "unidentified/overlays/units/overlay_397.c"
+    },
     "resource_3a2:02000ff0": "unidentified/overlays/state_update/state_update_0001.c",
     "resource_383:0200059c": "unidentified/overlays/leaf/leaf_0002.c",
     "resource_3a2:02000030": {
       "name": "prepare_event_actor_render_flags",
       "source": "event/scripts/prepare_actor_render_flags.c"
     },
-    "resource_390:020000e4": "unidentified/overlays/state_update/state_update_0002.c",
-    "resource_394:020003c0": "unidentified/overlays/state_update/state_update_0003.c",
+    "resource_390:020000e4": {
+      "name": "state_update_0002",
+      "source": "unidentified/overlays/units/overlay_390.c"
+    },
+    "resource_394:020003c0": {
+      "name": "state_update_0003",
+      "source": "unidentified/overlays/units/overlay_394.c"
+    },
     "resource_3a8:020017e8": "unidentified/overlays/leaf/leaf_0003.c",
     "resource_3c5:0200119c": "unidentified/overlays/leaf_modules/unnamed_run_013.c",
     "resource_3ad:02000038": "overlays/shared/get_default_result.c",
@@ -2415,15 +2505,27 @@
     "resource_3c4:02001424": "unidentified/overlays/state_update/state_update_0008.c",
     "resource_373:020055d0": "unidentified/overlays/leaf/leaf_0008.c",
     "resource_39a:020015dc": "unidentified/overlays/state_update/state_update_0009.c",
-    "resource_382:02000674": "overlays/actor_presentation/run_actor_thirteen_scene_setup.c",
+    "resource_382:02000674": {
+      "name": "ActorPresentation_RunActorThirteenSceneSetup",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_3c5:020009f4": "unidentified/overlays/state_update/state_update_0011.c",
     "resource_391:02000a60": "unidentified/overlays/leaf_modules/unnamed_run_034.c",
     "resource_3c4:02001910": "unidentified/overlays/leaf/leaf_0010.c",
-    "resource_3ce:02000bb8": "unidentified/overlays/call_sequence/call_sequence_0001.c",
+    "resource_3ce:02000bb8": {
+      "name": "call_sequence_0001",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
     "resource_3b1:02004880": "unidentified/overlays/leaf/leaf_0011.c",
-    "resource_384:020001d0": "unidentified/overlays/leaf/leaf_0012.c",
+    "resource_384:020001d0": {
+      "name": "leaf_0012",
+      "source": "unidentified/overlays/units/overlay_384.c"
+    },
     "resource_3a4:02000040": "unidentified/overlays/state_update/state_update_0012.c",
-    "resource_3ac:02000038": "unidentified/overlays/leaf_modules/unnamed_run_043.c",
+    "resource_3ac:02000038": {
+      "name": "unnamed_run_043",
+      "source": "unidentified/overlays/units/overlay_3ac.c"
+    },
     "resource_3a4:02003724": "unidentified/overlays/state_update/state_update_0013.c",
     "resource_3bd:020009dc": "unidentified/overlays/leaf/leaf_0014.c",
     "resource_3b4:02000a44": "unidentified/overlays/leaf_modules/unnamed_run_047.c",
@@ -2432,20 +2534,29 @@
     "resource_399:0200065c": "unidentified/overlays/leaf/leaf_0016.c",
     "resource_3b7:02000d70": "unidentified/overlays/state_update/state_update_0016.c",
     "resource_3bb:02003cf8": "unidentified/overlays/state_update/state_update_0017.c",
-    "resource_3c1:020000b0": "unidentified/overlays/state_modules/unnamed_run_047.c",
+    "resource_3c1:020000b0": {
+      "name": "unnamed_run_047",
+      "source": "unidentified/overlays/units/overlay_3c1.c"
+    },
     "resource_39c:02002648": "unidentified/overlays/state_update/state_update_0020.c",
     "resource_39e:020025b8": {
       "name": "FieldScene_SpawnRandomizedParticle",
       "source": "map/locations/xian/spawn_randomized_scene_particle.c"
     },
-    "resource_384:02000030": "unidentified/overlays/leaf/leaf_0017.c",
+    "resource_384:02000030": {
+      "name": "leaf_0017",
+      "source": "unidentified/overlays/units/overlay_384.c"
+    },
     "resource_3ab:02000884": "unidentified/overlays/leaf/leaf_0018.c",
     "resource_3b9:02001c5c": "unidentified/overlays/state_update/state_update_0022.c",
     "resource_39e:0200266c": {
       "name": "FieldScene_ApplyOffset0Pos32",
       "source": "map/locations/xian/apply_offset_0_pos32.c"
     },
-    "resource_382:020006d0": "overlays/actor_presentation/run_actor_seventeen_scene_setup.c",
+    "resource_382:020006d0": {
+      "name": "ActorPresentation_RunActorSeventeenSceneSetup",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_3a7:020000e0": {
       "name": "select_overlay_data_by_runtime_selector",
       "source": "unidentified/overlays/state_update/state_update_0024.c"
@@ -2454,13 +2565,25 @@
       "name": "create_configured_overlay_object",
       "source": "unidentified/overlays/state_update/state_update_0025.c"
     },
-    "resource_394:02000044": "unidentified/overlays/leaf/leaf_0020.c",
+    "resource_394:02000044": {
+      "name": "leaf_0020",
+      "source": "unidentified/overlays/units/overlay_394.c"
+    },
     "resource_3a7:020015a4": "unidentified/overlays/state_update/state_update_0026.c",
-    "resource_370:020012c8": "unidentified/overlays/state_update/state_update_0027.c",
+    "resource_370:020012c8": {
+      "name": "state_update_0027",
+      "source": "unidentified/overlays/units/overlay_370.c"
+    },
     "resource_39f:0200112c": "unidentified/overlays/leaf/leaf_0022.c",
-    "resource_3ac:020001d8": "unidentified/overlays/leaf/leaf_0023.c",
+    "resource_3ac:020001d8": {
+      "name": "leaf_0023",
+      "source": "unidentified/overlays/units/overlay_3ac.c"
+    },
     "resource_39a:020005b8": "unidentified/overlays/call_sequence/call_sequence_0002.c",
-    "resource_3c2:02000030": "unidentified/overlays/leaf_modules/unnamed_run_062.c",
+    "resource_3c2:02000030": {
+      "name": "unnamed_run_062",
+      "source": "unidentified/overlays/units/overlay_3c2.c"
+    },
     "resource_378:02002660": "unidentified/overlays/state_update/state_update_0028.c",
     "resource_383:02000030": "unidentified/overlays/state_modules/unnamed_run_064.c",
     "resource_37b:02000098": "unidentified/overlays/state_update/state_update_0030.c",
@@ -2469,16 +2592,22 @@
     "resource_3a6:02000d74": "unidentified/overlays/leaf_modules/unnamed_run_064.c",
     "resource_3a2:02001144": "unidentified/overlays/state_update/state_update_0032.c",
     "resource_3af:020009fc": "unidentified/overlays/leaf/leaf_0027.c",
-    "resource_3ce:02000180": "unidentified/overlays/leaf/leaf_0028.c",
+    "resource_3ce:02000180": {
+      "name": "leaf_0028",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
     "resource_372:02002180": "unidentified/overlays/state_update/state_update_0033.c",
     "resource_3c8:02000558": "unidentified/overlays/state_update/state_update_0034.c",
-    "resource_3cb:02001294": "unidentified/overlays/wrapper/wrapper_0001.c",
+    "resource_3cb:02001294": {
+      "name": "wrapper_0001",
+      "source": "unidentified/overlays/units/overlay_3cb.c"
+    },
     "resource_38e:0200090c": "unidentified/overlays/state_update/state_update_0035.c",
     "resource_36f:02000044": "overlays/scene_event_runtime/unnamed_variant.c",
     "resource_3a2:02000054": "unidentified/overlays/state_update/state_update_0036.c",
     "resource_382:020000a0": {
-      "name": "create_configured_overlay_object",
-      "source": "unidentified/overlays/state_update/state_update_0037.c"
+      "name": "CreateConfiguredOverlayObject",
+      "source": "unidentified/overlays/units/overlay_382.c"
     },
     "resource_3bd:020002a8": "unidentified/overlays/state_update/state_update_0038.c",
     "resource_383:02002f98": "unidentified/overlays/wrapper/wrapper_0002.c",
@@ -2490,19 +2619,37 @@
     "resource_38e:020000f8": "unidentified/overlays/leaf_modules/unnamed_run_068.c",
     "resource_398:0200044c": "unidentified/overlays/state_update/state_update_0039.c",
     "resource_376:02000308": "unidentified/overlays/leaf_modules/unnamed_run_072.c",
-    "resource_38c:02000490": "unidentified/overlays/leaf_modules/unnamed_run_075.c",
+    "resource_38c:02000490": {
+      "name": "unnamed_run_075",
+      "source": "unidentified/overlays/units/overlay_38c.c"
+    },
     "resource_374:0200010c": "unidentified/overlays/leaf/leaf_0035.c",
-    "resource_3ac:0200014c": "unidentified/overlays/leaf_modules/unnamed_run_044.c",
+    "resource_3ac:0200014c": {
+      "name": "unnamed_run_044",
+      "source": "unidentified/overlays/units/overlay_3ac.c"
+    },
     "resource_3ad:0200131c": "unidentified/overlays/leaf/leaf_0037.c",
     "resource_377:020017b8": "unidentified/overlays/leaf/leaf_0038.c",
     "resource_39a:0200042c": "unidentified/overlays/leaf/leaf_0039.c",
     "resource_3ad:02001a0c": "unidentified/overlays/state_update/state_update_0041.c",
-    "resource_3ac:0200004c": "unidentified/overlays/state_update/state_update_0042.c",
-    "resource_3ce:02000208": "unidentified/overlays/leaf/leaf_0041.c",
-    "resource_3a1:02000524": "unidentified/overlays/leaf/leaf_0042.c",
+    "resource_3ac:0200004c": {
+      "name": "state_update_0042",
+      "source": "unidentified/overlays/units/overlay_3ac.c"
+    },
+    "resource_3ce:02000208": {
+      "name": "leaf_0041",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
+    "resource_3a1:02000524": {
+      "name": "leaf_0042",
+      "source": "unidentified/overlays/units/overlay_3a1.c"
+    },
     "resource_39c:020022ec": "unidentified/overlays/state_update/state_update_0043.c",
     "resource_391:0200288c": "unidentified/overlays/state_update/state_update_0044.c",
-    "resource_3cd:020007c8": "unidentified/overlays/wrapper/wrapper_0003.c",
+    "resource_3cd:020007c8": {
+      "name": "wrapper_0003",
+      "source": "unidentified/overlays/units/overlay_3cd.c"
+    },
     "resource_3c8:020045f0": "unidentified/overlays/state_update/state_update_0045.c",
     "resource_37f:02000074": "unidentified/overlays/leaf/leaf_0043.c",
     "resource_371:02000590": "unidentified/overlays/leaf/leaf_0044.c",
@@ -2510,28 +2657,55 @@
     "resource_38d:020004ec": "unidentified/overlays/state_update/state_update_0046.c",
     "resource_3c3:020000e4": "unidentified/overlays/state_modules/unnamed_run_018.c",
     "resource_3b0:020001d0": "unidentified/overlays/leaf/leaf_0046.c",
-    "resource_382:02000ea4": "unidentified/overlays/state_update/state_update_0048.c",
+    "resource_382:02000ea4": {
+      "name": "state_update_0048",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_3bb:020039fc": "unidentified/overlays/state_update/state_update_0049.c",
     "resource_3b4:020018e0": "unidentified/overlays/state_update/state_update_0050.c",
     "resource_37b:02001c14": "unidentified/overlays/state_update/state_update_0051.c",
-    "resource_386:020001c4": "unidentified/overlays/leaf_modules/unnamed_run_095.c",
-    "resource_3ce:02000148": "unidentified/overlays/leaf/leaf_0048.c",
-    "resource_393:020009e4": "overlays/shared/get_inactive_result.c",
+    "resource_386:020001c4": {
+      "name": "unnamed_run_095",
+      "source": "unidentified/overlays/units/overlay_386.c"
+    },
+    "resource_3ce:02000148": {
+      "name": "leaf_0048",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
+    "resource_393:020009e4": {
+      "name": "MapStagedScene_GetEmptyData",
+      "source": "unidentified/overlays/units/overlay_393.c"
+    },
     "resource_372:0200015c": "unidentified/overlays/state_update/state_update_0053.c",
     "resource_3c4:02001374": "unidentified/overlays/state_update/state_update_0054.c",
     "resource_3ad:02001368": "unidentified/overlays/wrapper/wrapper_0004.c",
     "resource_3b1:02005038": "unidentified/overlays/state_update/state_update_0055.c",
     "resource_37f:020008f4": "unidentified/overlays/state_update/state_update_0056.c",
     "resource_38e:02000094": "unidentified/overlays/leaf/leaf_0051.c",
-    "resource_37c:02000044": "unidentified/overlays/leaf_modules/unnamed_run_097.c",
-    "resource_3cb:0200003c": "unidentified/overlays/state_update/state_update_0057.c",
+    "resource_37c:02000044": {
+      "name": "unnamed_run_097",
+      "source": "overlays/state_update/overlay_37c.c"
+    },
+    "resource_3cb:0200003c": {
+      "name": "state_update_0057",
+      "source": "unidentified/overlays/units/overlay_3cb.c"
+    },
     "resource_379:02000044": {
       "name": "ConditionalSceneSetup_GetActorData",
       "source": "overlays/conditional_scene_setup/get_actor_data.c"
     },
-    "resource_3cc:02000094": "unidentified/overlays/leaf/leaf_0054.c",
-    "resource_3cc:020000ac": "unidentified/overlays/leaf/leaf_0055.c",
-    "resource_386:02000410": "unidentified/overlays/state_update/state_update_0058.c",
+    "resource_3cc:02000094": {
+      "name": "leaf_0054",
+      "source": "unidentified/overlays/units/overlay_3cc.c"
+    },
+    "resource_3cc:020000ac": {
+      "name": "leaf_0055",
+      "source": "unidentified/overlays/units/overlay_3cc.c"
+    },
+    "resource_386:02000410": {
+      "name": "state_update_0058",
+      "source": "unidentified/overlays/units/overlay_386.c"
+    },
     "resource_3c4:02002410": "unidentified/overlays/state_update/state_update_0059.c",
     "resource_3a7:02001564": "unidentified/overlays/state_update/state_update_0060.c",
     "resource_3b7:02000030": "unidentified/overlays/leaf/leaf_0056.c",
@@ -2541,27 +2715,60 @@
     "resource_39a:02001bdc": "unidentified/overlays/state_update/state_update_0063.c",
     "resource_39a:02000180": "unidentified/overlays/state_update/state_update_0064.c",
     "resource_398:020001bc": "unidentified/overlays/state_update/state_update_0065.c",
-    "resource_3c7:02000030": "overlays/actor_pose/set_actor_fourteen_pose.c",
-    "resource_3c7:02000044": "unidentified/overlays/leaf_modules/unnamed_run_101.c",
-    "resource_38c:0200003c": "unidentified/overlays/leaf_modules/unnamed_run_073.c",
+    "resource_3c7:02000030": {
+      "name": "SetActorFourteenPose",
+      "source": "unidentified/overlays/units/overlay_3c7.c"
+    },
+    "resource_3c7:02000044": {
+      "name": "unnamed_run_101",
+      "source": "unidentified/overlays/units/overlay_3c7.c"
+    },
+    "resource_38c:0200003c": {
+      "name": "unnamed_run_073",
+      "source": "unidentified/overlays/units/overlay_38c.c"
+    },
     "resource_377:02000094": "unidentified/overlays/leaf/leaf_0060.c",
     "resource_3c8:02000e7c": "unidentified/overlays/leaf_modules/unnamed_run_102.c",
     "resource_3a7:02001760": "unidentified/overlays/state_update/state_update_0066.c",
-    "resource_38f:020008ac": "unidentified/overlays/leaf_modules/unnamed_run_105.c",
+    "resource_38f:020008ac": {
+      "name": "unnamed_run_105",
+      "source": "unidentified/overlays/units/overlay_38f.c"
+    },
     "resource_381:02000044": "unidentified/overlays/state_update/state_update_0067.c",
-    "resource_37d:02000044": "unidentified/overlays/leaf_modules/unnamed_run_106.c",
-    "resource_3ce:0200003c": "unidentified/overlays/state_modules/unnamed_run_110.c",
+    "resource_37d:02000044": {
+      "name": "unnamed_run_106",
+      "source": "unidentified/overlays/units/overlay_37d.c"
+    },
+    "resource_3ce:0200003c": {
+      "name": "unnamed_run_110",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
     "resource_371:02003f4c": "unidentified/overlays/leaf/leaf_0064.c",
-    "resource_3a1:020004e4": "unidentified/overlays/leaf/leaf_0065.c",
+    "resource_3a1:020004e4": {
+      "name": "leaf_0065",
+      "source": "unidentified/overlays/units/overlay_3a1.c"
+    },
     "resource_396:02000660": "unidentified/overlays/leaf_modules/unnamed_run_108.c",
-    "resource_393:02000bf0": "unidentified/overlays/leaf/leaf_0067.c",
+    "resource_393:02000bf0": {
+      "name": "leaf_0067",
+      "source": "unidentified/overlays/units/overlay_393.c"
+    },
     "resource_3a7:02000734": "unidentified/overlays/state_update/state_update_0069.c",
-    "resource_393:020000c4": "unidentified/overlays/state_update/state_update_0070.c",
-    "resource_382:02001724": "unidentified/overlays/leaf/leaf_0068.c",
+    "resource_393:020000c4": {
+      "name": "AdvanceStagedActorPair",
+      "source": "unidentified/overlays/units/overlay_393.c"
+    },
+    "resource_382:02001724": {
+      "name": "leaf_0068",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_3b3:02002230": "unidentified/overlays/state_update/state_update_0071.c",
     "resource_3a7:02001424": "unidentified/overlays/leaf/leaf_0069.c",
     "resource_374:02002580": "unidentified/overlays/leaf/leaf_0070.c",
-    "resource_3ce:0200023c": "unidentified/overlays/leaf/leaf_0071.c",
+    "resource_3ce:0200023c": {
+      "name": "leaf_0071",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
     "resource_3c9:020038dc": "unidentified/overlays/state_update/state_update_0072.c",
     "resource_39a:02000380": "unidentified/overlays/leaf/leaf_0072.c",
     "resource_399:020000d8": "unidentified/overlays/state_update/state_update_0073.c",
@@ -2569,19 +2776,31 @@
     "resource_38e:02000090": "overlays/shared/get_tertiary_default_result.c",
     "resource_39a:02001c08": "unidentified/overlays/leaf/leaf_0073.c",
     "resource_39c:02001bd8": "unidentified/overlays/leaf/leaf_0074.c",
-    "resource_38f:020000cc": "unidentified/overlays/state_update/state_update_0076.c",
+    "resource_38f:020000cc": {
+      "name": "state_update_0076",
+      "source": "unidentified/overlays/units/overlay_38f.c"
+    },
     "resource_3a4:02000650": "unidentified/overlays/state_update/state_update_0077.c",
     "resource_3b8:02004034": "unidentified/overlays/leaf_modules/unnamed_run_085.c",
-    "resource_382:02000f64": "unidentified/overlays/leaf/leaf_0076.c",
+    "resource_382:02000f64": {
+      "name": "leaf_0076",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_39c:020035b8": "unidentified/overlays/leaf/leaf_0077.c",
     "resource_3a2:020000b0": "unidentified/overlays/leaf_modules/unnamed_run_119.c",
     "resource_37b:02000eb0": "unidentified/overlays/state_update/state_update_0078.c",
     "resource_3a4:02000204": "unidentified/overlays/state_update/state_update_0079.c",
     "resource_3ca:020000a8": "unidentified/overlays/leaf/leaf_0079.c",
     "resource_3c4:02002300": "unidentified/overlays/state_update/state_update_0080.c",
-    "resource_390:0200009c": "unidentified/overlays/state_update/state_update_0081.c",
+    "resource_390:0200009c": {
+      "name": "state_update_0081",
+      "source": "unidentified/overlays/units/overlay_390.c"
+    },
     "resource_3b3:02002034": "unidentified/overlays/leaf/leaf_0080.c",
-    "resource_3ac:02000338": "unidentified/overlays/leaf/leaf_0081.c",
+    "resource_3ac:02000338": {
+      "name": "leaf_0081",
+      "source": "unidentified/overlays/units/overlay_3ac.c"
+    },
     "resource_3c5:02000fd4": "unidentified/overlays/leaf_modules/unnamed_run_012.c",
     "resource_3ba:020026a8": "unidentified/overlays/state_update/state_update_0084.c",
     "resource_3b6:0200009c": "unidentified/overlays/state_update/state_update_0085.c",
@@ -2590,20 +2809,35 @@
     "resource_37b:020019e4": "unidentified/overlays/leaf/leaf_0085.c",
     "resource_3ca:02000168": "unidentified/overlays/state_update/state_update_0086.c",
     "resource_385:020007d4": "unidentified/overlays/state_update/state_update_0087.c",
-    "resource_37e:02000054": "unidentified/overlays/state_update/state_update_0088.c",
+    "resource_37e:02000054": {
+      "name": "Resource37e_Run",
+      "source": "unidentified/overlays/units/overlay_37e.c"
+    },
     "resource_3a6:02001770": "unidentified/overlays/leaf/leaf_0086.c",
     "resource_37f:02000070": "overlays/shared/get_secondary_default_result.c",
-    "resource_3a1:02000030": "unidentified/overlays/state_update/state_update_0089.c",
+    "resource_3a1:02000030": {
+      "name": "state_update_0089",
+      "source": "unidentified/overlays/units/overlay_3a1.c"
+    },
     "resource_3bd:02000b0c": "unidentified/overlays/leaf_modules/unnamed_run_046.c",
     "resource_387:02000314": "unidentified/overlays/state_update/state_update_0090.c",
     "resource_3bb:02003080": "unidentified/overlays/state_update/state_update_0091.c",
     "resource_3b1:02001a60": "unidentified/overlays/call_sequence/call_sequence_0003.c",
-    "resource_3c6:02000054": "unidentified/overlays/leaf_modules/unnamed_run_128.c",
+    "resource_3c6:02000054": {
+      "name": "unnamed_run_128",
+      "source": "unidentified/overlays/units/overlay_3c6.c"
+    },
     "resource_377:02000ef8": "unidentified/overlays/leaf/leaf_0091.c",
-    "resource_3c7:020004b0": "unidentified/overlays/leaf/leaf_0092.c",
+    "resource_3c7:020004b0": {
+      "name": "leaf_0092",
+      "source": "unidentified/overlays/units/overlay_3c7.c"
+    },
     "resource_3c4:02000cd0": "unidentified/overlays/state_update/state_update_0092.c",
     "resource_37b:02000054": "unidentified/overlays/state_update/state_update_0093.c",
-    "resource_3ce:02000f08": "unidentified/overlays/leaf/leaf_0093.c",
+    "resource_3ce:02000f08": {
+      "name": "leaf_0093",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
     "resource_3b5:02000964": "unidentified/overlays/state_update/state_update_0094.c",
     "resource_383:02001e64": "unidentified/overlays/leaf/leaf_0094.c",
     "resource_3c8:020005ac": "unidentified/overlays/leaf/leaf_0095.c",
@@ -2661,11 +2895,11 @@
     },
     "resource_3c6:02000218": {
       "name": "FieldScene_RunPrimarySequence",
-      "source": "overlays/scene_primary_script/run_scene_3c6_primary_sequence.c"
+      "source": "unidentified/overlays/units/overlay_3c6.c"
     },
     "resource_3c6:020007c4": {
       "name": "FieldScene_RunSecondarySequence",
-      "source": "overlays/scene_primary_script/run_scene_3c6_secondary_sequence.c"
+      "source": "unidentified/overlays/units/overlay_3c6.c"
     },
     "resource_383:02000b48": {
       "name": "FieldScene_RunSetupSequence",
@@ -2695,7 +2929,10 @@
     "resource_38d:02000894": {
       "name": "FieldScene_RunMultiStageActorSequence"
     },
-    "resource_384:02000170": "unidentified/overlays/leaf/leaf_0106.c",
+    "resource_384:02000170": {
+      "name": "leaf_0106",
+      "source": "unidentified/overlays/units/overlay_384.c"
+    },
     "resource_374:020022f8": "unidentified/overlays/leaf/leaf_0107.c",
     "resource_3b9:0200050c": "unidentified/overlays/leaf/leaf_0108.c",
     "resource_3b5:02000040": "unidentified/overlays/state_update/state_update_0100.c",
@@ -2710,8 +2947,14 @@
       "source": "unidentified/overlays/state_update/state_update_0103.c"
     },
     "resource_3ba:02000158": "unidentified/overlays/state_update/state_update_0104.c",
-    "resource_390:02000064": "unidentified/overlays/state_update/state_update_0105.c",
-    "resource_382:02000c8c": "unidentified/overlays/state_update/state_update_0106.c",
+    "resource_390:02000064": {
+      "name": "state_update_0105",
+      "source": "unidentified/overlays/units/overlay_390.c"
+    },
+    "resource_382:02000c8c": {
+      "name": "state_update_0106",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_3bb:02000038": "overlays/shared/get_default_result.c",
     "resource_3c8:02000e80": "unidentified/overlays/leaf_modules/unnamed_run_102.c",
     "resource_3c8:02000690": "unidentified/overlays/leaf/leaf_0114.c",
@@ -2726,21 +2969,39 @@
       "source": "unidentified/overlays/state_update/state_update_0112.c"
     },
     "resource_3af:020039b8": "unidentified/overlays/leaf/leaf_0117.c",
-    "resource_3c6:020001f0": "unidentified/overlays/state_update/state_update_0113.c",
+    "resource_3c6:020001f0": {
+      "name": "state_update_0113",
+      "source": "unidentified/overlays/units/overlay_3c6.c"
+    },
     "resource_399:0200154c": "unidentified/overlays/state_update/state_update_0114.c",
     "resource_3a4:02003460": "unidentified/overlays/state_update/state_update_0115.c",
     "resource_385:02000d24": "unidentified/overlays/state_update/state_update_0116.c",
     "resource_391:02000c60": "unidentified/overlays/leaf/leaf_0118.c",
-    "resource_3cd:020000ec": "unidentified/overlays/state_update/state_update_0117.c",
+    "resource_3cd:020000ec": {
+      "name": "state_update_0117",
+      "source": "unidentified/overlays/units/overlay_3cd.c"
+    },
     "resource_385:02000e60": "unidentified/overlays/state_modules/unnamed_run_062.c",
     "resource_37b:02001af4": "unidentified/overlays/state_update/state_update_0119.c",
-    "resource_38f:02002608": "unidentified/overlays/state_update/state_update_0120.c",
-    "resource_393:02000cf4": "unidentified/overlays/state_modules/unnamed_run_111.c",
+    "resource_38f:02002608": {
+      "name": "state_update_0120",
+      "source": "unidentified/overlays/units/overlay_38f.c"
+    },
+    "resource_393:02000cf4": {
+      "name": "unnamed_run_111",
+      "source": "unidentified/overlays/units/overlay_393.c"
+    },
     "resource_3c0:02000820": "unidentified/overlays/leaf_modules/unnamed_run_140.c",
-    "resource_3ce:0200007c": "overlays/command_table/run_directional_input.c",
+    "resource_3ce:0200007c": {
+      "name": "CommandTable_RunDirectionalInput",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
     "resource_3b4:02001204": "unidentified/overlays/leaf_modules/unnamed_run_049.c",
     "resource_398:02000168": "unidentified/overlays/state_update/state_update_0123.c",
-    "resource_3c2:020001d4": "unidentified/overlays/state_modules/unnamed_run_155.c",
+    "resource_3c2:020001d4": {
+      "name": "unnamed_run_155",
+      "source": "unidentified/overlays/units/overlay_3c2.c"
+    },
     "resource_377:02000394": "unidentified/overlays/leaf/leaf_0121.c",
     "resource_3c4:02001270": "unidentified/overlays/state_update/state_update_0125.c",
     "resource_39f:02001b84": "unidentified/overlays/state_update/state_update_0126.c",
@@ -2748,7 +3009,10 @@
     "resource_396:02000560": "unidentified/overlays/leaf_modules/unnamed_run_108.c",
     "resource_3a4:02000388": "unidentified/overlays/state_update/state_update_0128.c",
     "resource_383:020045cc": "unidentified/overlays/state_update/state_update_0129.c",
-    "resource_3ce:020001f8": "unidentified/overlays/leaf/leaf_0123.c",
+    "resource_3ce:020001f8": {
+      "name": "leaf_0123",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
     "resource_39f:02002078": "unidentified/overlays/state_update/state_update_0130.c",
     "resource_396:02000534": "unidentified/overlays/leaf_modules/unnamed_run_108.c",
     "resource_374:02002590": "unidentified/overlays/leaf/leaf_0125.c",
@@ -2756,7 +3020,10 @@
     "resource_3a8:020036f8": "unidentified/overlays/state_update/state_update_0131.c",
     "resource_3bb:0200005c": "unidentified/overlays/state_update/state_update_0132.c",
     "resource_3ba:0200042c": "unidentified/overlays/state_update/state_update_0133.c",
-    "resource_3ce:0200022c": "unidentified/overlays/state_update/state_update_0134.c",
+    "resource_3ce:0200022c": {
+      "name": "state_update_0134",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
     "resource_391:02002798": "unidentified/overlays/state_update/state_update_0135.c",
     "resource_3ba:020020e8": "unidentified/overlays/state_update/state_update_0136.c",
     "resource_37b:020023a4": "unidentified/overlays/leaf/leaf_0127.c",
@@ -2766,27 +3033,54 @@
     "resource_3b3:020015cc": "overlays/coordinate_preset/copy_and_offset_coordinates.c",
     "resource_39a:02000e90": "unidentified/overlays/leaf/leaf_0129.c",
     "resource_3a3:02000298": "unidentified/overlays/leaf_modules/unnamed_run_142.c",
-    "resource_382:02000420": "unidentified/overlays/leaf/leaf_0131.c",
+    "resource_382:02000420": {
+      "name": "leaf_0131",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_3c5:020027f4": "unidentified/overlays/state_update/state_update_0139.c",
     "resource_396:02000674": "unidentified/overlays/state_update/state_update_0140.c",
     "resource_3bd:02003518": "unidentified/overlays/call_sequence/call_sequence_0004.c",
     "resource_3a6:020018f4": "unidentified/overlays/leaf/leaf_0132.c",
     "resource_3c4:02001530": "unidentified/overlays/state_update/state_update_0141.c",
     "resource_39d:0200031c": "overlays/shared/get_runtime_default_result.c",
-    "resource_3ac:020000fc": "unidentified/overlays/leaf_modules/unnamed_run_044.c",
+    "resource_3ac:020000fc": {
+      "name": "unnamed_run_044",
+      "source": "unidentified/overlays/units/overlay_3ac.c"
+    },
     "resource_38b:02000208": "unidentified/overlays/leaf/leaf_0135.c",
     "resource_37b:02001a04": "unidentified/overlays/leaf/leaf_0136.c",
-    "resource_3cd:0200003c": "unidentified/overlays/state_update/state_update_0143.c",
-    "resource_37e:02000044": "unidentified/overlays/leaf_modules/unnamed_run_143.c",
-    "resource_3cd:020006f8": "unidentified/overlays/state_update/state_update_0144.c",
-    "resource_3cb:02000f18": "unidentified/overlays/wrapper/wrapper_0005.c",
+    "resource_3cd:0200003c": {
+      "name": "state_update_0143",
+      "source": "unidentified/overlays/units/overlay_3cd.c"
+    },
+    "resource_37e:02000044": {
+      "name": "unnamed_run_143",
+      "source": "unidentified/overlays/units/overlay_37e.c"
+    },
+    "resource_3cd:020006f8": {
+      "name": "state_update_0144",
+      "source": "unidentified/overlays/units/overlay_3cd.c"
+    },
+    "resource_3cb:02000f18": {
+      "name": "wrapper_0005",
+      "source": "unidentified/overlays/units/overlay_3cb.c"
+    },
     "resource_380:02000388": "unidentified/overlays/leaf/leaf_0138.c",
     "resource_3a2:02000140": "unidentified/overlays/leaf_modules/unnamed_run_120.c",
     "resource_3bd:02000ae8": "unidentified/overlays/leaf_modules/unnamed_run_046.c",
-    "resource_392:020000c4": "unidentified/overlays/state_update/state_update_0145.c",
+    "resource_392:020000c4": {
+      "name": "AdvanceStagedActorPair",
+      "source": "unidentified/overlays/units/overlay_392.c"
+    },
     "resource_37b:02001d14": "unidentified/overlays/state_update/state_update_0146.c",
-    "resource_390:02000030": "unidentified/overlays/state_update/state_update_0147.c",
-    "resource_390:02000174": "unidentified/overlays/state_update/state_update_0148.c",
+    "resource_390:02000030": {
+      "name": "Resource390_InitRecords",
+      "source": "unidentified/overlays/units/overlay_390.c"
+    },
+    "resource_390:02000174": {
+      "name": "state_update_0148",
+      "source": "unidentified/overlays/units/overlay_390.c"
+    },
     "resource_38b:02000f3c": "unidentified/overlays/state_update/state_update_0149.c",
     "resource_3b4:020000c4": "unidentified/overlays/state_update/state_update_0150.c",
     "resource_3c4:020011e0": "unidentified/overlays/state_update/state_update_0151.c",
@@ -2796,25 +3090,40 @@
     "resource_3b1:02001324": "unidentified/overlays/leaf/leaf_0144.c",
     "resource_3ad:0200134c": "unidentified/overlays/leaf/leaf_0145.c",
     "resource_39a:020003b8": "unidentified/overlays/leaf/leaf_0146.c",
-    "resource_388:0200003c": "unidentified/overlays/leaf_modules/unnamed_run_146.c",
+    "resource_388:0200003c": {
+      "name": "unnamed_run_146",
+      "source": "unidentified/overlays/units/overlay_388.c"
+    },
     "resource_38d:020003ec": "unidentified/overlays/leaf_modules/unnamed_run_131.c",
     "resource_3ba:02002bcc": "unidentified/overlays/state_update/state_update_0153.c",
     "resource_3c8:02003ffc": "unidentified/overlays/state_update/state_update_0154.c",
     "resource_3b1:02000370": "unidentified/overlays/leaf/leaf_0149.c",
     "resource_398:020002d8": "unidentified/overlays/leaf/leaf_0150.c",
-    "resource_382:02000dd4": "overlays/actor_presentation/run_actor_sixteen_script_branch.c",
+    "resource_382:02000dd4": {
+      "name": "ActorPresentation_RunActorSixteenScriptBranch",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_396:020000a0": {
       "name": "create_configured_overlay_object",
       "source": "unidentified/overlays/state_update/state_update_0156.c"
     },
-    "resource_3cc:0200003c": "unidentified/overlays/leaf/leaf_0151.c",
+    "resource_3cc:0200003c": {
+      "name": "leaf_0151",
+      "source": "unidentified/overlays/units/overlay_3cc.c"
+    },
     "resource_3b1:0200486c": "unidentified/overlays/leaf/leaf_0152.c",
-    "resource_394:02000150": "unidentified/overlays/state_update/state_update_0157.c",
+    "resource_394:02000150": {
+      "name": "state_update_0157",
+      "source": "unidentified/overlays/units/overlay_394.c"
+    },
     "resource_3af:02000938": "unidentified/overlays/leaf_modules/unnamed_run_066.c",
     "resource_3a7:020005a0": "unidentified/overlays/state_update/state_update_0158.c",
     "resource_3ba:02000490": "unidentified/overlays/state_update/state_update_0159.c",
     "resource_39b:020023b8": "unidentified/overlays/state_update/state_update_0160.c",
-    "resource_397:02000030": "unidentified/overlays/leaf/leaf_0154.c",
+    "resource_397:02000030": {
+      "name": "leaf_0154",
+      "source": "unidentified/overlays/units/overlay_397.c"
+    },
     "resource_385:020004a4": "unidentified/overlays/leaf/leaf_0155.c",
     "resource_3b5:02000210": "unidentified/overlays/state_update/state_update_0161.c",
     "resource_39a:02000ff8": "unidentified/overlays/leaf/leaf_0156.c",
@@ -2823,11 +3132,20 @@
       "name": "ResetStagedActorState",
       "source": "overlays/staged_actor/reset_state.c"
     },
-    "resource_392:020009e4": "overlays/shared/get_inactive_result.c",
-    "resource_3c1:02000044": "unidentified/overlays/leaf_modules/unnamed_run_151.c",
+    "resource_392:020009e4": {
+      "name": "get_inactive_result",
+      "source": "unidentified/overlays/units/overlay_392.c"
+    },
+    "resource_3c1:02000044": {
+      "name": "unnamed_run_151",
+      "source": "unidentified/overlays/units/overlay_3c1.c"
+    },
     "resource_3bb:02003b48": "unidentified/overlays/state_update/state_update_0164.c",
     "resource_38d:02000094": "unidentified/overlays/leaf/leaf_0159.c",
-    "resource_370:0200003c": "unidentified/overlays/leaf_modules/unnamed_run_152.c",
+    "resource_370:0200003c": {
+      "name": "unnamed_run_152",
+      "source": "unidentified/overlays/units/overlay_370.c"
+    },
     "resource_39a:020000f8": "unidentified/overlays/state_update/state_update_0165.c",
     "resource_374:0200021c": "unidentified/overlays/leaf/leaf_0161.c",
     "resource_39c:02000efc": "unidentified/overlays/leaf/leaf_0162.c",
@@ -2854,28 +3172,46 @@
     "resource_387:02000340": "unidentified/overlays/leaf_modules/unnamed_run_153.c",
     "resource_3c8:02000118": "unidentified/overlays/state_update/state_update_0174.c",
     "resource_3c8:02000b08": "unidentified/overlays/state_update/state_update_0175.c",
-    "resource_382:02000f8c": "unidentified/overlays/leaf/leaf_0172.c",
+    "resource_382:02000f8c": {
+      "name": "leaf_0172",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_383:0200460c": "unidentified/overlays/leaf/leaf_0173.c",
     "resource_39c:02003c48": "unidentified/overlays/state_update/state_update_0176.c",
     "resource_377:02001580": "unidentified/overlays/leaf/leaf_0174.c",
     "resource_38b:02000308": "unidentified/overlays/leaf/leaf_0175.c",
     "resource_3c0:02000588": "unidentified/overlays/leaf_modules/unnamed_run_139.c",
-    "resource_3a9:020001fc": "unidentified/overlays/state_update/state_update_0177.c",
+    "resource_3a9:020001fc": {
+      "name": "state_update_0177",
+      "source": "unidentified/overlays/units/overlay_3a9.c"
+    },
     "resource_38b:020000dc": "unidentified/overlays/leaf/leaf_0177.c",
     "resource_39e:02000abc": {
       "name": "FieldScene_ShowDialogue17B1",
       "source": "map/locations/xian/show_dialogue_17b1.c"
     },
-    "resource_3c6:020000c4": "unidentified/overlays/state_update/state_update_0179.c",
+    "resource_3c6:020000c4": {
+      "name": "state_update_0179",
+      "source": "unidentified/overlays/units/overlay_3c6.c"
+    },
     "resource_380:0200278c": "unidentified/overlays/leaf/leaf_0179.c",
     "resource_3c4:02002354": "unidentified/overlays/leaf/leaf_0180.c",
     "resource_3c8:0200032c": "unidentified/overlays/state_update/state_update_0180.c",
-    "resource_3ce:0200117c": "unidentified/overlays/wrapper/wrapper_0007.c",
+    "resource_3ce:0200117c": {
+      "name": "wrapper_0007",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
     "resource_3c8:02004014": "unidentified/overlays/state_update/state_update_0181.c",
     "resource_3c9:02000048": "unidentified/overlays/state_update/state_update_0182.c",
     "resource_396:02000630": "unidentified/overlays/leaf_modules/unnamed_run_108.c",
-    "resource_386:02000098": "unidentified/overlays/leaf/leaf_0182.c",
-    "resource_382:02000464": "unidentified/overlays/wrapper/wrapper_0008.c",
+    "resource_386:02000098": {
+      "name": "leaf_0182",
+      "source": "unidentified/overlays/units/overlay_386.c"
+    },
+    "resource_382:02000464": {
+      "name": "wrapper_0008",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_39a:020003ec": "unidentified/overlays/leaf/leaf_0183.c",
     "resource_378:020032d0": "unidentified/overlays/call_sequence/call_sequence_0006.c",
     "resource_3a8:0200020c": "unidentified/overlays/leaf_modules/unnamed_run_011.c",
@@ -2893,7 +3229,10 @@
     },
     "resource_3bd:02000abc": "unidentified/overlays/state_update/state_update_0189.c",
     "resource_3a7:02000134": "unidentified/overlays/state_update/state_update_0190.c",
-    "resource_382:02000724": "overlays/actor_presentation/run_actor_eighteen_scene_setup.c",
+    "resource_382:02000724": {
+      "name": "ActorPresentation_RunActorEighteenSceneSetup",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_3b9:02000238": "unidentified/overlays/state_update/state_update_0192.c",
     "resource_383:020002a4": "unidentified/overlays/leaf/leaf_0188.c",
     "resource_39e:02002508": {
@@ -2901,7 +3240,10 @@
       "source": "map/locations/xian/dispatch_scene_by_range.c"
     },
     "resource_3ba:0200003c": "unidentified/overlays/leaf_modules/unnamed_run_156.c",
-    "resource_384:020001e4": "unidentified/overlays/state_update/state_update_0194.c",
+    "resource_384:020001e4": {
+      "name": "state_update_0194",
+      "source": "unidentified/overlays/units/overlay_384.c"
+    },
     "resource_3c9:020005ec": "unidentified/overlays/state_update/state_update_0195.c",
     "resource_374:020008dc": "unidentified/overlays/leaf/leaf_0190.c",
     "resource_3a6:02000cd0": "unidentified/overlays/state_update/state_update_0196.c",
@@ -2919,7 +3261,10 @@
     "resource_39a:020008cc": "unidentified/overlays/leaf/leaf_0196.c",
     "resource_3bb:020006d8": "unidentified/overlays/leaf_modules/unnamed_run_161.c",
     "resource_3b1:02004890": "unidentified/overlays/state_update/state_update_0203.c",
-    "resource_3ce:020001b8": "unidentified/overlays/leaf/leaf_0198.c",
+    "resource_3ce:020001b8": {
+      "name": "leaf_0198",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
     "resource_38e:02000184": "unidentified/overlays/leaf_modules/unnamed_run_068.c",
     "resource_3b3:02001440": "unidentified/overlays/state_update/state_update_0204.c",
     "resource_3ab:0200034c": "unidentified/overlays/leaf/leaf_0200.c",
@@ -2927,20 +3272,38 @@
     "resource_3bd:020009ec": "unidentified/overlays/leaf_modules/unnamed_run_045.c",
     "resource_38d:0200043c": "unidentified/overlays/leaf_modules/unnamed_run_131.c",
     "resource_3b4:02001e54": "unidentified/overlays/leaf/leaf_0203.c",
-    "resource_38c:020004c8": "unidentified/overlays/state_update/state_update_0206.c",
+    "resource_38c:020004c8": {
+      "name": "state_update_0206",
+      "source": "unidentified/overlays/units/overlay_38c.c"
+    },
     "resource_377:02000380": "unidentified/overlays/leaf/leaf_0204.c",
     "resource_3a8:02003184": "unidentified/overlays/state_update/state_update_0207.c",
     "resource_3a5:02000410": "unidentified/overlays/leaf_modules/unnamed_run_063.c",
-    "resource_3a1:02000320": "unidentified/overlays/leaf/leaf_0206.c",
-    "resource_3cc:0200007c": "unidentified/overlays/leaf/leaf_0207.c",
+    "resource_3a1:02000320": {
+      "name": "leaf_0206",
+      "source": "unidentified/overlays/units/overlay_3a1.c"
+    },
+    "resource_3cc:0200007c": {
+      "name": "leaf_0207",
+      "source": "unidentified/overlays/units/overlay_3cc.c"
+    },
     "resource_39e:0200267c": {
       "name": "FieldScene_ApplyOffsetNeg32_0",
       "source": "map/locations/xian/apply_offset_neg32_0.c"
     },
-    "resource_394:02000054": "unidentified/overlays/leaf/leaf_0209.c",
+    "resource_394:02000054": {
+      "name": "leaf_0209",
+      "source": "unidentified/overlays/units/overlay_394.c"
+    },
     "resource_398:020004e8": "unidentified/overlays/state_update/state_update_0208.c",
-    "resource_382:020009f0": "unidentified/overlays/state_update/state_update_0209.c",
-    "resource_3c7:020003f4": "unidentified/overlays/call_sequence/call_sequence_0007.c",
+    "resource_382:020009f0": {
+      "name": "state_update_0209",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
+    "resource_3c7:020003f4": {
+      "name": "call_sequence_0007",
+      "source": "unidentified/overlays/units/overlay_3c7.c"
+    },
     "resource_3a8:02000178": "unidentified/overlays/leaf_modules/unnamed_run_010.c",
     "resource_3c4:020013a4": "unidentified/overlays/leaf/leaf_0211.c",
     "resource_3c4:020012e0": "unidentified/overlays/state_update/state_update_0210.c",
@@ -2949,12 +3312,21 @@
     "resource_3ab:02000468": "unidentified/overlays/state_update/state_update_0213.c",
     "resource_3c8:02000058": "unidentified/overlays/state_update/state_update_0214.c",
     "resource_37b:02001e10": "unidentified/overlays/state_update/state_update_0215.c",
-    "resource_3cb:02000058": "unidentified/overlays/leaf/leaf_0212.c",
+    "resource_3cb:02000058": {
+      "name": "leaf_0212",
+      "source": "unidentified/overlays/units/overlay_3cb.c"
+    },
     "resource_3a3:020001b0": "unidentified/overlays/leaf/leaf_0213.c",
-    "resource_390:02000070": "unidentified/overlays/state_update/state_update_0216.c",
+    "resource_390:02000070": {
+      "name": "state_update_0216",
+      "source": "unidentified/overlays/units/overlay_390.c"
+    },
     "resource_3a7:020013e4": "unidentified/overlays/wrapper/wrapper_0009.c",
     "resource_37b:02001a44": "unidentified/overlays/leaf/leaf_0214.c",
-    "resource_3a1:02000570": "unidentified/overlays/leaf/leaf_0215.c",
+    "resource_3a1:02000570": {
+      "name": "leaf_0215",
+      "source": "unidentified/overlays/units/overlay_3a1.c"
+    },
     "resource_3b9:0200160c": "unidentified/overlays/state_update/state_update_0217.c",
     "resource_36f:02000054": "overlays/scene_event_runtime/unnamed_variant.c",
     "resource_3a4:020003b4": "unidentified/overlays/state_update/state_update_0219.c",
@@ -2978,12 +3350,18 @@
     "resource_39f:02000d6c": "unidentified/overlays/leaf/leaf_0221.c",
     "resource_381:02002dd0": "unidentified/overlays/state_update/state_update_0229.c",
     "resource_39a:02001f3c": "unidentified/overlays/leaf/leaf_0222.c",
-    "resource_3c6:02000040": "unidentified/overlays/leaf_modules/unnamed_run_127.c",
+    "resource_3c6:02000040": {
+      "name": "unnamed_run_127",
+      "source": "unidentified/overlays/units/overlay_3c6.c"
+    },
     "resource_3b1:02000374": "unidentified/overlays/leaf/leaf_0224.c",
     "resource_3b8:02000068": "unidentified/overlays/leaf_modules/unnamed_run_084.c",
     "resource_3a7:020006e4": "unidentified/overlays/state_update/state_update_0230.c",
     "resource_3c8:02001048": "unidentified/overlays/state_update/state_update_0231.c",
-    "resource_3cd:020007b8": "unidentified/overlays/state_update/state_update_0232.c",
+    "resource_3cd:020007b8": {
+      "name": "state_update_0232",
+      "source": "unidentified/overlays/units/overlay_3cd.c"
+    },
     "resource_3ca:02000038": "overlays/shared/get_default_result.c",
     "resource_3b3:0200209c": "unidentified/overlays/state_update/state_update_0235.c",
     "resource_3a6:02000d20": {
@@ -3030,14 +3408,23 @@
       "name": "create_configured_overlay_object",
       "source": "unidentified/overlays/state_update/state_update_0255.c"
     },
-    "resource_37c:02000054": "unidentified/overlays/state_update/state_update_0256.c",
-    "resource_397:020001d4": "unidentified/overlays/state_update/state_update_0257.c",
+    "resource_37c:02000054": {
+      "name": "Resource37c_Run",
+      "source": "overlays/state_update/overlay_37c.c"
+    },
+    "resource_397:020001d4": {
+      "name": "state_update_0257",
+      "source": "unidentified/overlays/units/overlay_397.c"
+    },
     "resource_3a7:02000030": {
       "name": "select_overlay_data_by_runtime_selector",
       "source": "unidentified/overlays/state_update/state_update_0258.c"
     },
     "resource_3a7:02001574": "unidentified/overlays/state_update/state_update_0259.c",
-    "resource_3cb:0200053c": "unidentified/overlays/state_update/state_update_0260.c",
+    "resource_3cb:0200053c": {
+      "name": "state_update_0260",
+      "source": "unidentified/overlays/units/overlay_3cb.c"
+    },
     "resource_3ba:02002de8": "unidentified/overlays/state_update/state_update_0261.c",
     "resource_39e:02000afc": {
       "name": "FieldScene_RunRoofSceneExit",
@@ -3063,11 +3450,17 @@
       "source": "overlays/staged_actor/find_probe_position.c"
     },
     "resource_3a1:020000a0": {
-      "name": "create_configured_overlay_object",
-      "source": "unidentified/overlays/state_update/state_update_0270.c"
+      "name": "CreateConfiguredOverlayObject",
+      "source": "unidentified/overlays/units/overlay_3a1.c"
     },
-    "resource_37d:02000054": "unidentified/overlays/state_update/state_update_0271.c",
-    "resource_382:02000424": "unidentified/overlays/leaf/leaf_0245.c",
+    "resource_37d:02000054": {
+      "name": "Resource37d_Run",
+      "source": "unidentified/overlays/units/overlay_37d.c"
+    },
+    "resource_382:02000424": {
+      "name": "leaf_0245",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_385:02000d74": "unidentified/overlays/leaf/leaf_0246.c",
     "resource_3a4:02000098": "unidentified/overlays/state_update/state_update_0272.c",
     "resource_3a4:02000c88": "unidentified/overlays/state_update/state_update_0273.c",
@@ -3082,40 +3475,76 @@
     },
     "resource_372:02000104": "unidentified/overlays/leaf/leaf_0247.c",
     "resource_3ba:02002e50": "unidentified/overlays/state_update/state_update_0280.c",
-    "resource_38f:020026a4": "unidentified/overlays/leaf/leaf_0248.c",
-    "resource_37e:02000038": "unidentified/overlays/state_update/state_update_0281.c",
+    "resource_38f:020026a4": {
+      "name": "leaf_0248",
+      "source": "unidentified/overlays/units/overlay_38f.c"
+    },
+    "resource_37e:02000038": {
+      "name": "state_update_0281",
+      "source": "unidentified/overlays/units/overlay_37e.c"
+    },
     "resource_3ca:02000414": "unidentified/overlays/state_update/state_update_0282.c",
-    "resource_382:02000a2c": "unidentified/overlays/leaf/leaf_0249.c",
+    "resource_382:02000a2c": {
+      "name": "leaf_0249",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_383:02000a84": "unidentified/overlays/leaf/leaf_0250.c",
     "resource_3ba:02000954": "unidentified/overlays/leaf_modules/unnamed_run_157.c",
     "resource_3c0:02000e5c": "unidentified/overlays/leaf/leaf_0252.c",
     "resource_3bb:02000970": "unidentified/overlays/state_update/state_update_0283.c",
-    "resource_3c1:02000038": "overlays/shared/get_default_result.c",
+    "resource_3c1:02000038": {
+      "name": "get_default_result",
+      "source": "unidentified/overlays/units/overlay_3c1.c"
+    },
     "resource_39a:02001b9c": "unidentified/overlays/leaf/leaf_0253.c",
     "resource_3b4:0200115c": "unidentified/overlays/state_update/state_update_0285.c",
     "resource_3c4:02000dc8": "unidentified/overlays/state_update/state_update_0286.c",
     "resource_3c5:020026fc": "unidentified/overlays/state_update/state_update_0288.c",
-    "resource_382:020007b8": "unidentified/overlays/leaf/leaf_0254.c",
+    "resource_382:020007b8": {
+      "name": "leaf_0254",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_385:02000bf8": "unidentified/overlays/leaf/leaf_0255.c",
     "resource_3ba:02001e20": "unidentified/overlays/state_update/state_update_0289.c",
     "resource_3ba:02001d64": "unidentified/overlays/wrapper/wrapper_0010.c",
     "resource_373:02005928": "unidentified/overlays/state_update/state_update_0290.c",
     "resource_380:02000378": "unidentified/overlays/leaf/leaf_0256.c",
-    "resource_3a1:02000484": "unidentified/overlays/state_update/state_update_0291.c",
-    "resource_382:0200106c": "unidentified/overlays/leaf/leaf_0257.c",
-    "resource_397:02000108": "unidentified/overlays/leaf/leaf_0258.c",
+    "resource_3a1:02000484": {
+      "name": "state_update_0291",
+      "source": "unidentified/overlays/units/overlay_3a1.c"
+    },
+    "resource_382:0200106c": {
+      "name": "leaf_0257",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
+    "resource_397:02000108": {
+      "name": "leaf_0258",
+      "source": "unidentified/overlays/units/overlay_397.c"
+    },
     "resource_3b4:02001ccc": "unidentified/overlays/state_update/state_update_0292.c",
     "resource_383:0200271c": "unidentified/overlays/state_modules/unnamed_run_066.c",
     "resource_3b4:020015cc": "unidentified/overlays/leaf_modules/unnamed_run_050.c",
     "resource_396:02000f58": "unidentified/overlays/state_update/state_update_0294.c",
-    "resource_3cd:02000070": "unidentified/overlays/leaf_modules/unnamed_run_165.c",
+    "resource_3cd:02000070": {
+      "name": "unnamed_run_165",
+      "source": "unidentified/overlays/units/overlay_3cd.c"
+    },
     "resource_3b1:0200351c": "unidentified/overlays/state_update/state_update_0295.c",
-    "resource_392:02000a68": "unidentified/overlays/state_update/state_update_0296.c",
+    "resource_392:02000a68": {
+      "name": "state_update_0296",
+      "source": "unidentified/overlays/units/overlay_392.c"
+    },
     "resource_39a:02000734": "unidentified/overlays/leaf/leaf_0261.c",
     "resource_3b1:020017c8": "unidentified/overlays/leaf/leaf_0262.c",
     "resource_39f:02001420": "unidentified/overlays/leaf/leaf_0263.c",
-    "resource_38a:02000314": "unidentified/overlays/leaf_modules/unnamed_run_166.c",
-    "resource_38f:02002910": "unidentified/overlays/state_update/state_update_0297.c",
+    "resource_38a:02000314": {
+      "name": "SceneEffect_RequestFixedEffect",
+      "source": "unidentified/overlays/units/overlay_38a.c"
+    },
+    "resource_38f:02002910": {
+      "name": "state_update_0297",
+      "source": "unidentified/overlays/units/overlay_38f.c"
+    },
     "resource_3b3:02000d78": "unidentified/overlays/state_update/state_update_0298.c",
     "resource_391:02002768": "unidentified/overlays/leaf/leaf_0265.c",
     "resource_3c3:02000084": "unidentified/overlays/leaf/leaf_0266.c",
@@ -3134,18 +3563,30 @@
     "resource_39c:02003bd4": "unidentified/overlays/state_update/state_update_0307.c",
     "resource_3c5:020026a8": "unidentified/overlays/state_update/state_update_0308.c",
     "resource_3b1:020008a8": "unidentified/overlays/leaf/leaf_0269.c",
-    "resource_386:020000fc": "unidentified/overlays/leaf_modules/unnamed_run_094.c",
+    "resource_386:020000fc": {
+      "name": "unnamed_run_094",
+      "source": "unidentified/overlays/units/overlay_386.c"
+    },
     "resource_385:020004ac": "unidentified/overlays/leaf/leaf_0271.c",
     "resource_3b4:02001980": "unidentified/overlays/leaf/leaf_0272.c",
     "resource_3a4:020000bc": "unidentified/overlays/state_update/state_update_0309.c",
     "resource_3ba:020038a0": "unidentified/overlays/state_update/state_update_0310.c",
-    "resource_382:02000418": "unidentified/overlays/leaf/leaf_0273.c",
+    "resource_382:02000418": {
+      "name": "leaf_0273",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_373:02001554": "unidentified/overlays/state_update/state_update_0311.c",
     "resource_3ab:020003c0": "unidentified/overlays/leaf/leaf_0274.c",
     "resource_39b:02001c88": "unidentified/overlays/state_update/state_update_0312.c",
-    "resource_3c6:020011e8": "unidentified/overlays/leaf/leaf_0275.c",
+    "resource_3c6:020011e8": {
+      "name": "leaf_0275",
+      "source": "unidentified/overlays/units/overlay_3c6.c"
+    },
     "resource_3c9:02002350": "unidentified/overlays/leaf/leaf_0276.c",
-    "resource_38a:02000350": "unidentified/overlays/leaf_modules/unnamed_run_166.c",
+    "resource_38a:02000350": {
+      "name": "StoryActor_ClearActiveFlag",
+      "source": "unidentified/overlays/units/overlay_38a.c"
+    },
     "resource_373:02000d98": "unidentified/overlays/state_update/state_update_0314.c",
     "resource_381:02002d48": "unidentified/overlays/leaf_modules/unnamed_run_168.c",
     "resource_3a4:02002b58": "unidentified/overlays/state_update/state_update_0315.c",
@@ -3154,7 +3595,10 @@
     "resource_39f:02001520": "unidentified/overlays/state_update/state_update_0318.c",
     "resource_3b3:02002580": "unidentified/overlays/state_update/state_update_0319.c",
     "resource_383:02004704": "unidentified/overlays/state_update/state_update_0320.c",
-    "resource_37e:0200004c": "unidentified/overlays/leaf_modules/unnamed_run_143.c",
+    "resource_37e:0200004c": {
+      "name": "unnamed_run_143",
+      "source": "unidentified/overlays/units/overlay_37e.c"
+    },
     "resource_385:02000b18": "unidentified/overlays/leaf/leaf_0280.c",
     "resource_3a7:020013ac": "unidentified/overlays/wrapper/wrapper_0011.c",
     "resource_372:0200209c": "unidentified/overlays/state_update/state_update_0321.c",
@@ -3174,7 +3618,10 @@
     "resource_38b:02000170": "unidentified/overlays/leaf/leaf_0284.c",
     "resource_3b0:02000a84": "unidentified/overlays/state_update/state_update_0326.c",
     "resource_374:02000444": "unidentified/overlays/call_sequence/call_sequence_0008.c",
-    "resource_3c6:0200004c": "unidentified/overlays/leaf_modules/unnamed_run_128.c",
+    "resource_3c6:0200004c": {
+      "name": "unnamed_run_128",
+      "source": "unidentified/overlays/units/overlay_3c6.c"
+    },
     "resource_3a4:02002d08": "unidentified/overlays/call_sequence/call_sequence_0009.c",
     "resource_3a3:0200015c": "unidentified/overlays/state_modules/unnamed_run_160.c",
     "resource_3a5:02001c78": "unidentified/overlays/state_update/state_update_0328.c",
@@ -3201,10 +3648,16 @@
     "resource_374:020025a0": "unidentified/overlays/leaf/leaf_0293.c",
     "resource_37f:02001aac": "unidentified/overlays/leaf/leaf_0294.c",
     "resource_385:0200056c": "unidentified/overlays/leaf/leaf_0295.c",
-    "resource_382:0200173c": "unidentified/overlays/leaf/leaf_0296.c",
+    "resource_382:0200173c": {
+      "name": "leaf_0296",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_3b3:020020b8": "unidentified/overlays/state_update/state_update_0339.c",
     "resource_3a7:0200143c": "unidentified/overlays/state_update/state_update_0340.c",
-    "resource_384:02000190": "unidentified/overlays/leaf/leaf_0297.c",
+    "resource_384:02000190": {
+      "name": "leaf_0297",
+      "source": "unidentified/overlays/units/overlay_384.c"
+    },
     "resource_3af:02000570": "unidentified/overlays/state_update/state_update_0341.c",
     "resource_3c5:02000f58": {
       "name": "select_overlay_data_by_runtime_selector",
@@ -3218,19 +3671,34 @@
     "resource_377:020003d0": "unidentified/overlays/leaf/leaf_0299.c",
     "resource_3a8:02000240": "unidentified/overlays/state_update/state_update_0347.c",
     "resource_375:02000088": "unidentified/overlays/leaf/leaf_0300.c",
-    "resource_38c:02000470": "unidentified/overlays/leaf_modules/unnamed_run_075.c",
+    "resource_38c:02000470": {
+      "name": "unnamed_run_075",
+      "source": "unidentified/overlays/units/overlay_38c.c"
+    },
     "resource_3a8:02000040": "unidentified/overlays/state_update/state_update_0349.c",
     "resource_373:02005594": "unidentified/overlays/leaf/leaf_0302.c",
-    "resource_392:020009f8": "unidentified/overlays/state_update/state_update_0350.c",
+    "resource_392:020009f8": {
+      "name": "state_update_0350",
+      "source": "unidentified/overlays/units/overlay_392.c"
+    },
     "resource_3aa:02000064": "unidentified/overlays/leaf_modules/unnamed_run_164.c",
     "resource_3bb:02000310": "unidentified/overlays/state_update/state_update_0351.c",
     "resource_3af:02003150": "unidentified/overlays/state_update/state_update_0352.c",
-    "resource_382:0200042c": "unidentified/overlays/leaf/leaf_0304.c",
-    "resource_3ce:02000160": "unidentified/overlays/leaf/leaf_0305.c",
+    "resource_382:0200042c": {
+      "name": "leaf_0304",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
+    "resource_3ce:02000160": {
+      "name": "leaf_0305",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
     "resource_3a2:02000fcc": "unidentified/overlays/leaf/leaf_0306.c",
     "resource_3a3:02000c0c": "unidentified/overlays/state_update/state_update_0353.c",
     "resource_3ba:02002e10": "unidentified/overlays/state_update/state_update_0354.c",
-    "resource_393:020009dc": "unidentified/overlays/leaf/leaf_0307.c",
+    "resource_393:020009dc": {
+      "name": "MapStagedScene_SelectPrimaryData",
+      "source": "unidentified/overlays/units/overlay_393.c"
+    },
     "resource_3ae:02000040": {
       "name": "select_overlay_data_by_runtime_selector",
       "source": "unidentified/overlays/state_update/state_update_0355.c"
@@ -3246,20 +3714,41 @@
     "resource_3bd:02000af4": "unidentified/overlays/leaf_modules/unnamed_run_046.c",
     "resource_3a4:0200050c": "unidentified/overlays/state_update/state_update_0356.c",
     "resource_3b5:0200021c": "unidentified/overlays/leaf_modules/unnamed_run_134.c",
-    "resource_3ce:020008c4": "overlays/command_table/configure_command_groups.c",
+    "resource_3ce:020008c4": {
+      "name": "CommandTable_ConfigureCommandGroups",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
     "resource_373:0200572c": "unidentified/overlays/state_update/state_update_0357.c",
-    "resource_370:02000030": "unidentified/overlays/leaf/leaf_0317.c",
+    "resource_370:02000030": {
+      "name": "leaf_0317",
+      "source": "unidentified/overlays/units/overlay_370.c"
+    },
     "resource_38e:02000030": "unidentified/overlays/state_update/state_update_0359.c",
-    "resource_382:02000048": "overlays/actor_presentation/prepare_scene_object.c",
+    "resource_382:02000048": {
+      "name": "PrepareSceneObject",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_396:02000648": "unidentified/overlays/leaf_modules/unnamed_run_108.c",
     "resource_3c9:02000030": "unidentified/overlays/state_update/state_update_0361.c",
-    "resource_3cc:02000030": "unidentified/overlays/leaf/leaf_0319.c",
-    "resource_392:02000abc": "unidentified/overlays/state_update/state_update_0362.c",
+    "resource_3cc:02000030": {
+      "name": "leaf_0319",
+      "source": "unidentified/overlays/units/overlay_3cc.c"
+    },
+    "resource_392:02000abc": {
+      "name": "state_update_0362",
+      "source": "unidentified/overlays/units/overlay_392.c"
+    },
     "resource_3c9:02000464": "unidentified/overlays/leaf_modules/unnamed_run_163.c",
-    "resource_384:0200006c": "unidentified/overlays/leaf/leaf_0321.c",
+    "resource_384:0200006c": {
+      "name": "leaf_0321",
+      "source": "unidentified/overlays/units/overlay_384.c"
+    },
     "resource_3b4:02001984": "unidentified/overlays/state_update/state_update_0363.c",
     "resource_3a7:02000084": "unidentified/overlays/leaf/leaf_0322.c",
-    "resource_382:02000e84": "unidentified/overlays/leaf/leaf_0323.c",
+    "resource_382:02000e84": {
+      "name": "leaf_0323",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_372:02004618": "unidentified/overlays/leaf/leaf_0324.c",
     "resource_373:02001244": "unidentified/overlays/state_update/state_update_0364.c",
     "resource_3af:020013d4": "unidentified/overlays/state_update/state_update_0365.c",
@@ -3267,13 +3756,25 @@
     "resource_371:0200029c": "unidentified/overlays/leaf/leaf_0326.c",
     "resource_3af:020017a0": "unidentified/overlays/state_update/state_update_0366.c",
     "resource_38b:02000030": "unidentified/overlays/state_update/state_update_0367.c",
-    "resource_388:02000030": "unidentified/overlays/leaf/leaf_0327.c",
+    "resource_388:02000030": {
+      "name": "leaf_0327",
+      "source": "unidentified/overlays/units/overlay_388.c"
+    },
     "resource_377:02000030": "unidentified/overlays/state_update/state_update_0368.c",
-    "resource_386:020002fc": "unidentified/overlays/state_update/state_update_0369.c",
-    "resource_3cd:02000030": "unidentified/overlays/state_update/state_update_0370.c",
+    "resource_386:020002fc": {
+      "name": "state_update_0369",
+      "source": "unidentified/overlays/units/overlay_386.c"
+    },
+    "resource_3cd:02000030": {
+      "name": "state_update_0370",
+      "source": "unidentified/overlays/units/overlay_3cd.c"
+    },
     "resource_385:02000048": "unidentified/overlays/state_update/state_update_0371.c",
     "resource_3bb:020006c4": "unidentified/overlays/leaf_modules/unnamed_run_161.c",
-    "resource_393:020002a8": "unidentified/overlays/state_update/state_update_0372.c",
+    "resource_393:020002a8": {
+      "name": "CheckStagedActorProbe",
+      "source": "unidentified/overlays/units/overlay_393.c"
+    },
     "resource_374:02002370": "unidentified/overlays/state_modules/unnamed_run_169.c",
     "resource_3af:020008c0": "unidentified/overlays/state_update/state_update_0374.c",
     "resource_374:02002334": "unidentified/overlays/state_modules/unnamed_run_169.c",
@@ -3292,7 +3793,10 @@
     "resource_3c4:02001318": "unidentified/overlays/state_update/state_update_0382.c",
     "resource_39c:02000cc0": "unidentified/overlays/leaf/leaf_0332.c",
     "resource_3aa:020000a4": "unidentified/overlays/leaf_modules/unnamed_run_164.c",
-    "resource_386:020000bc": "unidentified/overlays/leaf_modules/unnamed_run_094.c",
+    "resource_386:020000bc": {
+      "name": "unnamed_run_094",
+      "source": "unidentified/overlays/units/overlay_386.c"
+    },
     "resource_374:02000930": "unidentified/overlays/leaf/leaf_0335.c",
     "resource_3c4:020019cc": "unidentified/overlays/leaf/leaf_0336.c",
     "resource_374:02002564": "unidentified/overlays/leaf/leaf_0337.c",
@@ -3302,17 +3806,29 @@
     "resource_378:020006e8": "unidentified/overlays/call_sequence/call_sequence_0012.c",
     "resource_39c:02000ef0": "unidentified/overlays/leaf/leaf_0341.c",
     "resource_383:0200080c": "unidentified/overlays/leaf/leaf_0342.c",
-    "resource_38f:02000114": "unidentified/overlays/state_update/state_update_0383.c",
-    "resource_38f:02000050": "unidentified/overlays/state_update/state_update_0384.c",
+    "resource_38f:02000114": {
+      "name": "state_update_0383",
+      "source": "unidentified/overlays/units/overlay_38f.c"
+    },
+    "resource_38f:02000050": {
+      "name": "state_update_0384",
+      "source": "unidentified/overlays/units/overlay_38f.c"
+    },
     "resource_3c3:02000080": "unidentified/overlays/state_modules/unnamed_run_017.c",
     "resource_3bb:02000150": "unidentified/overlays/state_update/state_update_0386.c",
     "resource_3a4:0200040c": "unidentified/overlays/state_update/state_update_0387.c",
-    "resource_384:02000094": "unidentified/overlays/call_sequence/call_sequence_0013.c",
+    "resource_384:02000094": {
+      "name": "call_sequence_0013",
+      "source": "unidentified/overlays/units/overlay_384.c"
+    },
     "resource_3ca:02000044": "unidentified/overlays/state_update/state_update_0388.c",
     "resource_3ba:02000030": "unidentified/overlays/leaf/leaf_0343.c",
     "resource_39c:02002030": "unidentified/overlays/state_update/state_update_0389.c",
     "resource_3a4:02000b0c": "unidentified/overlays/leaf/leaf_0344.c",
-    "resource_3cb:02000060": "unidentified/overlays/state_update/state_update_0390.c",
+    "resource_3cb:02000060": {
+      "name": "state_update_0390",
+      "source": "unidentified/overlays/units/overlay_3cb.c"
+    },
     "resource_385:0200052c": "unidentified/overlays/leaf/leaf_0345.c",
     "resource_3a2:02001028": "unidentified/overlays/state_update/state_update_0391.c",
     "resource_376:02000320": "unidentified/overlays/leaf_modules/unnamed_run_072.c",
@@ -3321,15 +3837,24 @@
     "resource_374:020003b4": "unidentified/overlays/state_update/state_update_0393.c",
     "resource_371:02000570": "unidentified/overlays/leaf/leaf_0348.c",
     "resource_39a:0200029c": "unidentified/overlays/state_update/state_update_0394.c",
-    "resource_3ce:02001170": "unidentified/overlays/wrapper/wrapper_0013.c",
+    "resource_3ce:02001170": {
+      "name": "wrapper_0013",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
     "resource_371:02003f10": "unidentified/overlays/leaf/leaf_0349.c",
     "resource_3bb:02000700": "unidentified/overlays/leaf_modules/unnamed_run_161.c",
     "resource_3a3:0200011c": "unidentified/overlays/state_modules/unnamed_run_160.c",
-    "resource_397:02000048": "unidentified/overlays/state_update/state_update_0396.c",
+    "resource_397:02000048": {
+      "name": "state_update_0396",
+      "source": "unidentified/overlays/units/overlay_397.c"
+    },
     "resource_396:0200032c": "unidentified/overlays/leaf_modules/unnamed_run_107.c",
     "resource_3af:02000940": "unidentified/overlays/leaf_modules/unnamed_run_066.c",
     "resource_3bd:020000c4": "unidentified/overlays/state_update/state_update_0397.c",
-    "resource_382:02000f3c": "unidentified/overlays/leaf/leaf_0353.c",
+    "resource_382:02000f3c": {
+      "name": "leaf_0353",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_39c:02000f14": "unidentified/overlays/leaf/leaf_0354.c",
     "resource_372:02000240": "unidentified/overlays/leaf/leaf_0355.c",
     "resource_3c5:02001184": "unidentified/overlays/leaf_modules/unnamed_run_013.c",
@@ -3347,27 +3872,42 @@
       "source": "unidentified/overlays/state_update/state_update_0400.c"
     },
     "resource_39b:02000fc4": "unidentified/overlays/leaf_modules/unnamed_run_159.c",
-    "resource_3c1:02000068": "unidentified/overlays/state_modules/unnamed_run_047.c",
+    "resource_3c1:02000068": {
+      "name": "unnamed_run_047",
+      "source": "unidentified/overlays/units/overlay_3c1.c"
+    },
     "resource_39e:020041ec": {
       "name": "FieldScene_RunParticleRain",
       "source": "map/locations/xian/run_particle_rain.c"
     },
     "resource_383:020048a4": "unidentified/overlays/leaf/leaf_0362.c",
-    "resource_3c7:0200004c": "unidentified/overlays/leaf_modules/unnamed_run_101.c",
+    "resource_3c7:0200004c": {
+      "name": "unnamed_run_101",
+      "source": "unidentified/overlays/units/overlay_3c7.c"
+    },
     "resource_3b1:02001558": "unidentified/overlays/leaf/leaf_0364.c",
     "resource_3b5:020005bc": "unidentified/overlays/leaf_modules/unnamed_run_137.c",
     "resource_380:020027ec": "unidentified/overlays/leaf/leaf_0366.c",
     "resource_399:02000550": "unidentified/overlays/leaf/leaf_0367.c",
     "resource_3c4:02001c2c": "unidentified/overlays/state_update/state_update_0403.c",
     "resource_381:0200004c": "unidentified/overlays/state_update/state_update_0404.c",
-    "resource_37d:0200004c": "unidentified/overlays/leaf_modules/unnamed_run_106.c",
+    "resource_37d:0200004c": {
+      "name": "unnamed_run_106",
+      "source": "unidentified/overlays/units/overlay_37d.c"
+    },
     "resource_378:02000068": "unidentified/overlays/leaf/leaf_0369.c",
-    "resource_382:02000b3c": "overlays/actor_presentation/run_actor_sixteen_scene_setup.c",
+    "resource_382:02000b3c": {
+      "name": "ActorPresentation_RunActorSixteenSceneSetup",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_3c8:02000374": {
       "name": "RunStagedActorTransition",
       "source": "overlays/staged_actor/run_transition.c"
     },
-    "resource_394:02000038": "overlays/shared/get_default_result.c",
+    "resource_394:02000038": {
+      "name": "get_default_result",
+      "source": "unidentified/overlays/units/overlay_394.c"
+    },
     "resource_39c:02003660": "unidentified/overlays/leaf/leaf_0370.c",
     "resource_381:0200284c": "unidentified/overlays/state_update/state_update_0408.c",
     "resource_3a6:02001938": "unidentified/overlays/state_update/state_update_0409.c",
@@ -3381,7 +3921,10 @@
       "name": "ConditionalSceneSetup_GetEffectData",
       "source": "overlays/conditional_scene_setup/get_effect_data.c"
     },
-    "resource_37c:0200004c": "unidentified/overlays/leaf_modules/unnamed_run_097.c",
+    "resource_37c:0200004c": {
+      "name": "unnamed_run_097",
+      "source": "overlays/state_update/overlay_37c.c"
+    },
     "resource_383:020007ec": "unidentified/overlays/leaf/leaf_0376.c",
     "resource_3b6:020008cc": "unidentified/overlays/state_update/state_update_0413.c",
     "resource_3af:02003710": "unidentified/overlays/state_update/state_update_0414.c",
@@ -3391,10 +3934,16 @@
     "resource_3ad:02000044": "unidentified/overlays/leaf_modules/unnamed_run_080.c",
     "resource_39a:02001730": "unidentified/overlays/state_update/state_update_0416.c",
     "resource_374:02000088": "unidentified/overlays/leaf/leaf_0380.c",
-    "resource_3a9:02000240": "unidentified/overlays/state_update/state_update_0417.c",
+    "resource_3a9:02000240": {
+      "name": "state_update_0417",
+      "source": "unidentified/overlays/units/overlay_3a9.c"
+    },
     "resource_3a4:02002eec": "unidentified/overlays/state_update/state_update_0419.c",
     "resource_3c4:02001458": "unidentified/overlays/state_update/state_update_0420.c",
-    "resource_38a:02000344": "unidentified/overlays/leaf_modules/unnamed_run_166.c",
+    "resource_38a:02000344": {
+      "name": "unnamed_run_166",
+      "source": "unidentified/overlays/units/overlay_38a.c"
+    },
     "resource_391:020009fc": "unidentified/overlays/state_update/state_update_0421.c",
     "resource_3c9:02002344": "unidentified/overlays/leaf/leaf_0382.c",
     "resource_39e:02002764": {
@@ -3403,19 +3952,34 @@
     },
     "resource_37b:02001f0c": "unidentified/overlays/state_update/state_update_0422.c",
     "resource_3a8:020018a4": "unidentified/overlays/state_update/state_update_0423.c",
-    "resource_382:020003ac": "overlays/actor_presentation/update_entity_from_leader.c",
+    "resource_382:020003ac": {
+      "name": "ActorPresentation_UpdateEntityFromLeader",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_3c0:020007fc": "unidentified/overlays/leaf_modules/unnamed_run_140.c",
-    "resource_3ac:02000044": "unidentified/overlays/leaf_modules/unnamed_run_043.c",
+    "resource_3ac:02000044": {
+      "name": "unnamed_run_043",
+      "source": "unidentified/overlays/units/overlay_3ac.c"
+    },
     "resource_39b:02001144": "unidentified/overlays/leaf_modules/unnamed_run_160.c",
     "resource_39b:02000e98": "unidentified/overlays/leaf_modules/unnamed_run_158.c",
     "resource_3bd:02003a30": "unidentified/overlays/state_update/state_update_0426.c",
     "resource_3a7:02000c08": "unidentified/overlays/state_update/state_update_0428.c",
     "resource_3b9:02001a14": "unidentified/overlays/state_update/state_update_0429.c",
     "resource_3bd:02000b00": "unidentified/overlays/leaf_modules/unnamed_run_046.c",
-    "resource_3a1:0200013c": "unidentified/overlays/state_update/state_update_0430.c",
-    "resource_390:0200012c": "unidentified/overlays/state_update/state_update_0431.c",
+    "resource_3a1:0200013c": {
+      "name": "state_update_0430",
+      "source": "unidentified/overlays/units/overlay_3a1.c"
+    },
+    "resource_390:0200012c": {
+      "name": "state_update_0431",
+      "source": "unidentified/overlays/units/overlay_390.c"
+    },
     "resource_385:02000784": "unidentified/overlays/leaf/leaf_0390.c",
-    "resource_37c:02000038": "unidentified/overlays/state_update/state_update_0432.c",
+    "resource_37c:02000038": {
+      "name": "state_update_0432",
+      "source": "overlays/state_update/overlay_37c.c"
+    },
     "resource_379:02000038": {
       "name": "ConditionalSceneSetup_GetInitialState",
       "source": "overlays/conditional_scene_setup/get_initial_state.c"
@@ -3424,35 +3988,62 @@
     "resource_36f:0200004c": "overlays/scene_event_runtime/unnamed_variant.c",
     "resource_3bd:02000f10": "unidentified/overlays/state_update/state_update_0434.c",
     "resource_3a3:02000338": "unidentified/overlays/state_update/state_update_0435.c",
-    "resource_397:0200026c": "unidentified/overlays/state_update/state_update_0436.c",
+    "resource_397:0200026c": {
+      "name": "state_update_0436",
+      "source": "unidentified/overlays/units/overlay_397.c"
+    },
     "resource_39a:02000c24": "unidentified/overlays/leaf/leaf_0393.c",
-    "resource_3ac:02000454": "unidentified/overlays/state_update/state_update_0437.c",
+    "resource_3ac:02000454": {
+      "name": "state_update_0437",
+      "source": "unidentified/overlays/units/overlay_3ac.c"
+    },
     "resource_376:020000d4": "unidentified/overlays/leaf_modules/unnamed_run_069.c",
     "resource_3b4:02001238": "unidentified/overlays/leaf_modules/unnamed_run_049.c",
     "resource_381:02002d94": "unidentified/overlays/leaf_modules/unnamed_run_168.c",
-    "resource_3a9:02000144": "unidentified/overlays/leaf_modules/unnamed_run_172.c",
+    "resource_3a9:02000144": {
+      "name": "unnamed_run_172",
+      "source": "unidentified/overlays/units/overlay_3a9.c"
+    },
     "resource_377:02000f64": "unidentified/overlays/leaf/leaf_0398.c",
     "resource_37b:02001b1c": "unidentified/overlays/state_update/state_update_0438.c",
     "resource_3c4:020019bc": "unidentified/overlays/leaf/leaf_0399.c",
     "resource_374:02000920": "unidentified/overlays/leaf/leaf_0400.c",
-    "resource_37d:02000038": "unidentified/overlays/state_update/state_update_0439.c",
+    "resource_37d:02000038": {
+      "name": "state_update_0439",
+      "source": "unidentified/overlays/units/overlay_37d.c"
+    },
     "resource_381:02000038": "overlays/shared/get_default_result.c",
     "resource_374:02002574": "unidentified/overlays/leaf/leaf_0401.c",
     "resource_3c8:020005e4": "unidentified/overlays/state_update/state_update_0441.c",
-    "resource_394:0200004c": "unidentified/overlays/leaf/leaf_0402.c",
+    "resource_394:0200004c": {
+      "name": "leaf_0402",
+      "source": "unidentified/overlays/units/overlay_394.c"
+    },
     "resource_396:02000494": "unidentified/overlays/leaf_modules/unnamed_run_108.c",
     "resource_3a4:020005fc": "unidentified/overlays/state_update/state_update_0442.c",
     "resource_3a2:020000e8": "unidentified/overlays/state_update/state_update_0443.c",
-    "resource_3cc:02000064": "unidentified/overlays/leaf/leaf_0404.c",
+    "resource_3cc:02000064": {
+      "name": "leaf_0404",
+      "source": "unidentified/overlays/units/overlay_3cc.c"
+    },
     "resource_3bb:020000c0": "unidentified/overlays/state_update/state_update_0444.c",
     "resource_372:020000f0": "unidentified/overlays/leaf/leaf_0405.c",
     "resource_39f:02000f34": "unidentified/overlays/leaf/leaf_0406.c",
     "resource_3bb:02003ae4": "unidentified/overlays/state_update/state_update_0446.c",
     "resource_3c5:02002738": "unidentified/overlays/state_update/state_update_0447.c",
     "resource_3c8:02001024": "unidentified/overlays/leaf/leaf_0407.c",
-    "resource_3cd:020007d4": "unidentified/overlays/wrapper/wrapper_0014.c",
-    "resource_382:020005c8": "unidentified/overlays/leaf/leaf_0408.c",
-    "resource_3a1:02000048": "unidentified/overlays/state_update/state_update_0448.c",
+    "resource_3cd:020007d4": {
+      "name": "wrapper_0014",
+      "source": "unidentified/overlays/units/overlay_3cd.c"
+    },
+    "resource_382:020005c8": {
+      "name": "leaf_0408",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
+    "resource_3a1:02000048": {
+      "name": "state_update_0448",
+      "source": "unidentified/overlays/units/overlay_3a1.c"
+    },
     "resource_383:020045f4": "unidentified/overlays/leaf/leaf_0409.c",
     "resource_3a8:02001610": "unidentified/overlays/leaf/leaf_0410.c",
     "resource_3af:02000030": "unidentified/overlays/state_update/state_update_0449.c",
@@ -3505,12 +4096,24 @@
     "resource_3b1:02001280": "unidentified/overlays/state_update/state_update_0471.c",
     "resource_383:02000080": "unidentified/overlays/state_modules/unnamed_run_064.c",
     "resource_39f:020009f4": "unidentified/overlays/state_update/state_update_0473.c",
-    "resource_394:02000ecc": "unidentified/overlays/state_update/state_update_0474.c",
-    "resource_3ce:02000130": "unidentified/overlays/leaf/leaf_0428.c",
+    "resource_394:02000ecc": {
+      "name": "state_update_0474",
+      "source": "unidentified/overlays/units/overlay_394.c"
+    },
+    "resource_3ce:02000130": {
+      "name": "leaf_0428",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
     "resource_374:020022e0": "unidentified/overlays/leaf/leaf_0429.c",
-    "resource_397:02000118": "unidentified/overlays/leaf/leaf_0430.c",
+    "resource_397:02000118": {
+      "name": "leaf_0430",
+      "source": "unidentified/overlays/units/overlay_397.c"
+    },
     "resource_39c:02003a64": "unidentified/overlays/state_update/state_update_0475.c",
-    "resource_392:02000c4c": "unidentified/overlays/state_update/state_update_0476.c",
+    "resource_392:02000c4c": {
+      "name": "state_update_0476",
+      "source": "unidentified/overlays/units/overlay_392.c"
+    },
     "resource_3ad:02000200": "unidentified/overlays/leaf/leaf_0431.c",
     "resource_3c4:020014ac": "unidentified/overlays/state_update/state_update_0477.c",
     "resource_39a:02000030": "unidentified/overlays/leaf/leaf_0432.c",
@@ -3522,7 +4125,10 @@
     "resource_389:0200109c": "unidentified/overlays/leaf/leaf_0434.c",
     "resource_396:02000694": "unidentified/overlays/leaf/leaf_0435.c",
     "resource_3c8:020006a0": "unidentified/overlays/state_update/state_update_0482.c",
-    "resource_397:020000f8": "unidentified/overlays/leaf/leaf_0436.c",
+    "resource_397:020000f8": {
+      "name": "leaf_0436",
+      "source": "unidentified/overlays/units/overlay_397.c"
+    },
     "resource_3a6:02000cf8": "unidentified/overlays/state_update/state_update_0483.c",
     "resource_39e:02002464": {
       "name": "FieldScene_ShowDialogue1A58",
@@ -3532,8 +4138,14 @@
     "resource_383:0200052c": "unidentified/overlays/state_update/state_update_0485.c",
     "resource_3a3:020004bc": "unidentified/overlays/state_update/state_update_0486.c",
     "resource_396:02000048": "unidentified/overlays/state_update/state_update_0487.c",
-    "resource_3c7:02000468": "unidentified/overlays/leaf/leaf_0438.c",
-    "resource_38c:020002d4": "unidentified/overlays/leaf_modules/unnamed_run_074.c",
+    "resource_3c7:02000468": {
+      "name": "leaf_0438",
+      "source": "unidentified/overlays/units/overlay_3c7.c"
+    },
+    "resource_38c:020002d4": {
+      "name": "unnamed_run_074",
+      "source": "unidentified/overlays/units/overlay_38c.c"
+    },
     "resource_3b4:02001c28": "unidentified/overlays/state_update/state_update_0488.c",
     "resource_372:020000f4": "unidentified/overlays/leaf/leaf_0440.c",
     "resource_398:02000098": "unidentified/overlays/leaf/leaf_0441.c",
@@ -3543,7 +4155,10 @@
     "resource_383:02004698": "unidentified/overlays/state_update/state_update_0492.c",
     "resource_396:020005ec": "unidentified/overlays/leaf_modules/unnamed_run_108.c",
     "resource_3b3:02002694": "unidentified/overlays/state_update/state_update_0493.c",
-    "resource_384:0200003c": "unidentified/overlays/leaf/leaf_0443.c",
+    "resource_384:0200003c": {
+      "name": "leaf_0443",
+      "source": "unidentified/overlays/units/overlay_384.c"
+    },
     "resource_39a:02002014": "unidentified/overlays/state_update/state_update_0494.c",
     "resource_3bd:02000a00": {
       "name": "select_overlay_data_by_runtime_selector",
@@ -3551,14 +4166,20 @@
     },
     "resource_387:02000da8": "unidentified/overlays/state_modules/unnamed_run_144.c",
     "resource_396:02000618": "unidentified/overlays/leaf_modules/unnamed_run_108.c",
-    "resource_386:02000338": "unidentified/overlays/leaf/leaf_0445.c",
+    "resource_386:02000338": {
+      "name": "leaf_0445",
+      "source": "unidentified/overlays/units/overlay_386.c"
+    },
     "resource_396:02000590": "unidentified/overlays/leaf_modules/unnamed_run_108.c",
     "resource_378:0200005c": "unidentified/overlays/leaf/leaf_0447.c",
     "resource_3b4:020009dc": "unidentified/overlays/leaf/leaf_0448.c",
     "resource_375:020019a4": "unidentified/overlays/state_modules/unnamed_run_170.c",
     "resource_3c9:02000470": "unidentified/overlays/leaf_modules/unnamed_run_163.c",
     "resource_374:02000714": "unidentified/overlays/state_modules/unnamed_run_168.c",
-    "resource_392:020009dc": "unidentified/overlays/leaf/leaf_0450.c",
+    "resource_392:020009dc": {
+      "name": "leaf_0450",
+      "source": "unidentified/overlays/units/overlay_392.c"
+    },
     "resource_3b3:020014bc": "unidentified/overlays/leaf_modules/unnamed_run_121.c",
     "resource_3b6:0200073c": "unidentified/overlays/leaf/leaf_0452.c",
     "resource_39a:02000a60": "unidentified/overlays/leaf/leaf_0453.c",
@@ -3568,23 +4189,38 @@
     "resource_3b3:02002080": "unidentified/overlays/state_update/state_update_0502.c",
     "resource_383:0200013c": "unidentified/overlays/state_modules/unnamed_run_064.c",
     "resource_37b:02001be8": "unidentified/overlays/state_update/state_update_0504.c",
-    "resource_386:02000078": "unidentified/overlays/leaf/leaf_0455.c",
+    "resource_386:02000078": {
+      "name": "leaf_0455",
+      "source": "unidentified/overlays/units/overlay_386.c"
+    },
     "resource_380:0200276c": "unidentified/overlays/leaf/leaf_0456.c",
     "resource_373:02000e40": "unidentified/overlays/leaf/leaf_0457.c",
     "resource_3b1:02005004": "unidentified/overlays/leaf/leaf_0458.c",
     "resource_3b3:02001428": "unidentified/overlays/leaf/leaf_0459.c",
     "resource_3aa:020000d4": "unidentified/overlays/leaf_modules/unnamed_run_164.c",
     "resource_3c8:020019c0": "unidentified/overlays/state_update/state_update_0506.c",
-    "resource_393:020009f8": "unidentified/overlays/state_update/state_update_0508.c",
+    "resource_393:020009f8": {
+      "name": "state_update_0508",
+      "source": "unidentified/overlays/units/overlay_393.c"
+    },
     "resource_3b5:020006e8": "unidentified/overlays/state_update/state_update_0509.c",
     "resource_3b4:02001d78": "unidentified/overlays/state_update/state_update_0510.c",
     "resource_3c4:02001348": "unidentified/overlays/state_update/state_update_0511.c",
     "resource_39a:02001f20": "unidentified/overlays/leaf/leaf_0461.c",
     "resource_377:02000160": "unidentified/overlays/leaf/leaf_0462.c",
-    "resource_3ce:02000030": "unidentified/overlays/state_update/state_update_0512.c",
+    "resource_3ce:02000030": {
+      "name": "state_update_0512",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
     "resource_3bb:02000304": "unidentified/overlays/leaf/leaf_0463.c",
-    "resource_3cd:020000a0": "unidentified/overlays/state_update/state_update_0513.c",
-    "resource_392:020002a8": "unidentified/overlays/state_update/state_update_0514.c",
+    "resource_3cd:020000a0": {
+      "name": "state_update_0513",
+      "source": "unidentified/overlays/units/overlay_3cd.c"
+    },
+    "resource_392:020002a8": {
+      "name": "CheckStagedActorProbe",
+      "source": "unidentified/overlays/units/overlay_392.c"
+    },
     "resource_3ca:02001188": "unidentified/overlays/state_update/state_update_0516.c",
     "resource_3a4:0200020c": "unidentified/overlays/state_update/state_update_0517.c",
     "resource_3c5:02000fdc": {
@@ -3600,15 +4236,24 @@
     "resource_3b1:02001690": "unidentified/overlays/leaf/leaf_0466.c",
     "resource_389:02000b64": "unidentified/overlays/leaf_modules/unnamed_run_092.c",
     "resource_376:02000030": "unidentified/overlays/state_update/state_update_0523.c",
-    "resource_3c2:02000048": "unidentified/overlays/leaf_modules/unnamed_run_062.c",
+    "resource_3c2:02000048": {
+      "name": "unnamed_run_062",
+      "source": "unidentified/overlays/units/overlay_3c2.c"
+    },
     "resource_3b1:020012dc": "unidentified/overlays/wrapper/wrapper_0016.c",
     "resource_3b1:02000a80": "unidentified/overlays/state_update/state_update_0524.c",
     "resource_398:020000f4": {
       "name": "select_overlay_data_by_runtime_selector",
       "source": "unidentified/overlays/state_update/state_update_0525.c"
     },
-    "resource_38c:02000030": "unidentified/overlays/leaf/leaf_0469.c",
-    "resource_3cb:02000030": "unidentified/overlays/state_update/state_update_0526.c",
+    "resource_38c:02000030": {
+      "name": "leaf_0469",
+      "source": "unidentified/overlays/units/overlay_38c.c"
+    },
+    "resource_3cb:02000030": {
+      "name": "state_update_0526",
+      "source": "unidentified/overlays/units/overlay_3cb.c"
+    },
     "resource_381:0200135c": "unidentified/overlays/state_update/state_update_0527.c",
     "resource_3c8:02000030": {
       "name": "ConfigureOverlayObject",
@@ -3623,7 +4268,10 @@
     },
     "resource_3a7:0200142c": "unidentified/overlays/state_update/state_update_0533.c",
     "resource_37b:020015bc": "unidentified/overlays/leaf_modules/unnamed_run_126.c",
-    "resource_382:0200090c": "unidentified/overlays/leaf/leaf_0471.c",
+    "resource_382:0200090c": {
+      "name": "leaf_0471",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_3b1:02000fac": "unidentified/overlays/state_update/state_update_0534.c",
     "resource_399:02001704": "unidentified/overlays/state_update/state_update_0535.c",
     "resource_3b3:02000da8": "unidentified/overlays/state_update/state_update_0536.c",
@@ -3634,9 +4282,15 @@
     "resource_37b:02001aac": "unidentified/overlays/state_update/state_update_0539.c",
     "resource_3b9:020002e4": "unidentified/overlays/leaf_modules/unnamed_run_132.c",
     "resource_383:020004bc": "unidentified/overlays/leaf/leaf_0475.c",
-    "resource_3cb:02000f88": "unidentified/overlays/leaf/leaf_0476.c",
+    "resource_3cb:02000f88": {
+      "name": "leaf_0476",
+      "source": "unidentified/overlays/units/overlay_3cb.c"
+    },
     "resource_3a6:02000dcc": "unidentified/overlays/leaf_modules/unnamed_run_065.c",
-    "resource_3c7:0200007c": "unidentified/overlays/leaf_modules/unnamed_run_101.c",
+    "resource_3c7:0200007c": {
+      "name": "unnamed_run_101",
+      "source": "unidentified/overlays/units/overlay_3c7.c"
+    },
     "resource_389:02000b50": "unidentified/overlays/leaf_modules/unnamed_run_092.c",
     "resource_39f:02001ef0": "unidentified/overlays/state_update/state_update_0540.c",
     "resource_3b1:020013cc": "unidentified/overlays/leaf/leaf_0480.c",
@@ -3648,22 +4302,34 @@
     "resource_399:02001f24": "unidentified/overlays/state_update/state_update_0542.c",
     "resource_38d:02000088": "unidentified/overlays/leaf/leaf_0485.c",
     "resource_3a8:02003970": "unidentified/overlays/state_update/state_update_0543.c",
-    "resource_3a9:0200018c": "unidentified/overlays/state_update/state_update_0544.c",
+    "resource_3a9:0200018c": {
+      "name": "state_update_0544",
+      "source": "unidentified/overlays/units/overlay_3a9.c"
+    },
     "resource_3c0:0200033c": "unidentified/overlays/state_update/state_update_0545.c",
-    "resource_386:020003c8": "unidentified/overlays/state_update/state_update_0546.c",
+    "resource_386:020003c8": {
+      "name": "state_update_0546",
+      "source": "unidentified/overlays/units/overlay_386.c"
+    },
     "resource_3ab:02000844": "unidentified/overlays/leaf/leaf_0486.c",
-    "resource_3cc:020000b4": "unidentified/overlays/state_update/state_update_0547.c",
+    "resource_3cc:020000b4": {
+      "name": "state_update_0547",
+      "source": "unidentified/overlays/units/overlay_3cc.c"
+    },
     "resource_3b8:02000070": "unidentified/overlays/state_update/state_update_0548.c",
     "resource_3c4:02000a4c": "unidentified/overlays/state_update/state_update_0549.c",
     "resource_381:0200300c": "unidentified/overlays/leaf/leaf_0487.c",
-    "resource_38f:020001d4": "unidentified/overlays/leaf_modules/unnamed_run_103.c",
+    "resource_38f:020001d4": {
+      "name": "unnamed_run_103",
+      "source": "unidentified/overlays/units/overlay_38f.c"
+    },
     "resource_376:02000344": "unidentified/overlays/leaf_modules/unnamed_run_072.c",
     "resource_39a:020007f0": "unidentified/overlays/state_update/state_update_0550.c",
     "resource_396:020005bc": "unidentified/overlays/leaf_modules/unnamed_run_108.c",
     "resource_399:020018c4": "unidentified/overlays/state_update/state_update_0551.c",
     "resource_393:02000bf8": {
       "name": "RunScenePhase516",
-      "source": "overlays/scene/run_phase_516.c"
+      "source": "unidentified/overlays/units/overlay_393.c"
     },
     "resource_39a:02000920": "unidentified/overlays/state_update/state_update_0553.c",
     "resource_3c8:020004f4": "unidentified/overlays/state_update/state_update_0554.c",
@@ -3678,18 +4344,33 @@
       "source": "unidentified/overlays/state_update/state_update_0559.c"
     },
     "resource_3bb:0200069c": "unidentified/overlays/leaf_modules/unnamed_run_161.c",
-    "resource_386:02000380": "unidentified/overlays/state_update/state_update_0561.c",
+    "resource_386:02000380": {
+      "name": "state_update_0561",
+      "source": "unidentified/overlays/units/overlay_386.c"
+    },
     "resource_3bd:02000b30": "unidentified/overlays/state_update/state_update_0562.c",
     "resource_3a8:020039d4": "unidentified/overlays/state_update/state_update_0563.c",
     "resource_375:020000a4": "unidentified/overlays/leaf_modules/unnamed_run_155.c",
-    "resource_38f:02000230": "unidentified/overlays/state_update/state_update_0565.c",
+    "resource_38f:02000230": {
+      "name": "state_update_0565",
+      "source": "unidentified/overlays/units/overlay_38f.c"
+    },
     "resource_39a:02000040": "unidentified/overlays/leaf/leaf_0496.c",
     "resource_375:0200009c": "unidentified/overlays/leaf_modules/unnamed_run_155.c",
     "resource_3b8:02003fc4": "unidentified/overlays/state_update/state_update_0567.c",
-    "resource_3a9:02000074": "unidentified/overlays/leaf_modules/unnamed_run_171.c",
+    "resource_3a9:02000074": {
+      "name": "unnamed_run_171",
+      "source": "unidentified/overlays/units/overlay_3a9.c"
+    },
     "resource_39c:020010a0": "unidentified/overlays/leaf/leaf_0499.c",
-    "resource_3a9:02000030": "unidentified/overlays/state_update/state_update_0568.c",
-    "resource_3ac:02000030": "unidentified/overlays/leaf_modules/unnamed_run_043.c",
+    "resource_3a9:02000030": {
+      "name": "state_update_0568",
+      "source": "unidentified/overlays/units/overlay_3a9.c"
+    },
+    "resource_3ac:02000030": {
+      "name": "unnamed_run_043",
+      "source": "unidentified/overlays/units/overlay_3ac.c"
+    },
     "resource_39e:02001334": {
       "name": "FieldScene_DispatchByFacing",
       "source": "map/locations/xian/dispatch_by_facing.c"
@@ -3699,10 +4380,19 @@
     "resource_372:020002e4": "unidentified/overlays/leaf/leaf_0502.c",
     "resource_3ab:02000fa0": "unidentified/overlays/leaf/leaf_0503.c",
     "resource_3b3:02000f58": "unidentified/overlays/state_update/state_update_0571.c",
-    "resource_38f:02000274": "unidentified/overlays/leaf_modules/unnamed_run_104.c",
+    "resource_38f:02000274": {
+      "name": "unnamed_run_104",
+      "source": "unidentified/overlays/units/overlay_38f.c"
+    },
     "resource_3a8:020001e4": "unidentified/overlays/leaf_modules/unnamed_run_011.c",
-    "resource_388:02000054": "unidentified/overlays/state_update/state_update_0572.c",
-    "resource_3c7:02000084": "unidentified/overlays/leaf_modules/unnamed_run_101.c",
+    "resource_388:02000054": {
+      "name": "Resource388_Run",
+      "source": "unidentified/overlays/units/overlay_388.c"
+    },
+    "resource_3c7:02000084": {
+      "name": "unnamed_run_101",
+      "source": "unidentified/overlays/units/overlay_3c7.c"
+    },
     "resource_3ab:020000a0": {
       "name": "create_configured_overlay_object",
       "source": "unidentified/overlays/state_update/state_update_0573.c"
@@ -3711,7 +4401,10 @@
       "name": "find_clear_actor_position",
       "source": "unidentified/overlays/state_update/state_update_0574.c"
     },
-    "resource_3a1:0200041c": "unidentified/overlays/state_update/state_update_0575.c",
+    "resource_3a1:0200041c": {
+      "name": "state_update_0575",
+      "source": "unidentified/overlays/units/overlay_3a1.c"
+    },
     "resource_3bb:0200028c": "unidentified/overlays/state_update/state_update_0576.c",
     "resource_3c5:020025c8": "unidentified/overlays/state_update/state_update_0577.c",
     "resource_3c9:02000314": "unidentified/overlays/state_update/state_update_0578.c",
@@ -3729,7 +4422,10 @@
     "resource_374:02000910": "unidentified/overlays/leaf/leaf_0511.c",
     "resource_380:0200036c": "unidentified/overlays/leaf/leaf_0512.c",
     "resource_3c9:02000400": "unidentified/overlays/state_update/state_update_0587.c",
-    "resource_382:0200097c": "overlays/actor_presentation/run_actor_eight_scene_setup.c",
+    "resource_382:0200097c": {
+      "name": "ActorPresentation_RunActorEightSceneSetup",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_371:02000550": "unidentified/overlays/leaf/leaf_0513.c",
     "resource_39c:02000e74": "unidentified/overlays/leaf/leaf_0514.c",
     "resource_372:02000064": {
@@ -3739,7 +4435,10 @@
     "resource_39a:02000ab4": "unidentified/overlays/leaf/leaf_0515.c",
     "resource_3b1:020000fc": "unidentified/overlays/state_modules/unnamed_run_102.c",
     "resource_3b0:0200115c": "unidentified/overlays/state_update/state_update_0591.c",
-    "resource_390:02000068": "unidentified/overlays/leaf/leaf_0516.c",
+    "resource_390:02000068": {
+      "name": "leaf_0516",
+      "source": "unidentified/overlays/units/overlay_390.c"
+    },
     "resource_3b8:02000524": "unidentified/overlays/state_update/state_update_0592.c",
     "resource_383:02000038": "unidentified/overlays/state_modules/unnamed_run_064.c",
     "resource_374:020008f0": "unidentified/overlays/leaf/leaf_0517.c",
@@ -3748,17 +4447,26 @@
     "resource_39c:02003860": "unidentified/overlays/state_update/state_update_0594.c",
     "resource_3c4:020012d8": "unidentified/overlays/leaf/leaf_0519.c",
     "resource_381:02002e5c": "unidentified/overlays/state_update/state_update_0595.c",
-    "resource_3ac:0200008c": "unidentified/overlays/state_update/state_update_0596.c",
+    "resource_3ac:0200008c": {
+      "name": "state_update_0596",
+      "source": "unidentified/overlays/units/overlay_3ac.c"
+    },
     "resource_3b6:02000328": "unidentified/overlays/call_sequence/call_sequence_0014.c",
     "resource_39a:02000bf4": "unidentified/overlays/leaf/leaf_0520.c",
-    "resource_3c2:02000038": "unidentified/overlays/leaf_modules/unnamed_run_062.c",
+    "resource_3c2:02000038": {
+      "name": "unnamed_run_062",
+      "source": "unidentified/overlays/units/overlay_3c2.c"
+    },
     "resource_39c:02001060": "unidentified/overlays/leaf/leaf_0522.c",
     "resource_3b4:0200152c": "unidentified/overlays/state_update/state_update_0597.c",
     "resource_3c8:02000754": "unidentified/overlays/state_update/state_update_0598.c",
     "resource_3c4:020018f8": "unidentified/overlays/leaf/leaf_0523.c",
     "resource_3a4:020001c8": "unidentified/overlays/state_update/state_update_0599.c",
     "resource_3b1:02003f94": "unidentified/overlays/state_update/state_update_0600.c",
-    "resource_384:02000038": "unidentified/overlays/leaf/leaf_0524.c",
+    "resource_384:02000038": {
+      "name": "leaf_0524",
+      "source": "unidentified/overlays/units/overlay_384.c"
+    },
     "resource_383:02000378": "unidentified/overlays/state_modules/unnamed_run_065.c",
     "resource_3b9:020002a0": "unidentified/overlays/leaf_modules/unnamed_run_132.c",
     "resource_383:020005bc": "unidentified/overlays/state_update/state_update_0602.c",
@@ -3766,8 +4474,14 @@
     "resource_3c8:02001644": "unidentified/overlays/state_update/state_update_0604.c",
     "resource_3c8:02000b98": "unidentified/overlays/state_update/state_update_0605.c",
     "resource_3b4:020019e8": "unidentified/overlays/state_update/state_update_0606.c",
-    "resource_37c:0200003c": "unidentified/overlays/leaf_modules/unnamed_run_097.c",
-    "resource_397:020001bc": "unidentified/overlays/leaf/leaf_0527.c",
+    "resource_37c:0200003c": {
+      "name": "unnamed_run_097",
+      "source": "overlays/state_update/overlay_37c.c"
+    },
+    "resource_397:020001bc": {
+      "name": "leaf_0527",
+      "source": "unidentified/overlays/units/overlay_397.c"
+    },
     "resource_3a6:02000d78": "unidentified/overlays/leaf_modules/unnamed_run_064.c",
     "resource_379:0200003c": {
       "name": "ConditionalSceneSetup_GetMessageData",
@@ -3797,12 +4511,24 @@
     },
     "resource_38d:02000100": "unidentified/overlays/leaf_modules/unnamed_run_129.c",
     "resource_3b1:02001378": "unidentified/overlays/leaf/leaf_0536.c",
-    "resource_390:020001bc": "unidentified/overlays/leaf/leaf_0537.c",
-    "resource_37d:0200003c": "unidentified/overlays/leaf_modules/unnamed_run_106.c",
-    "resource_3ce:02000044": "unidentified/overlays/state_modules/unnamed_run_110.c",
+    "resource_390:020001bc": {
+      "name": "leaf_0537",
+      "source": "unidentified/overlays/units/overlay_390.c"
+    },
+    "resource_37d:0200003c": {
+      "name": "unnamed_run_106",
+      "source": "unidentified/overlays/units/overlay_37d.c"
+    },
+    "resource_3ce:02000044": {
+      "name": "unnamed_run_110",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
     "resource_381:0200003c": "unidentified/overlays/state_update/state_update_0616.c",
     "resource_396:020004a8": "unidentified/overlays/leaf_modules/unnamed_run_108.c",
-    "resource_397:02000128": "unidentified/overlays/leaf/leaf_0540.c",
+    "resource_397:02000128": {
+      "name": "leaf_0540",
+      "source": "unidentified/overlays/units/overlay_397.c"
+    },
     "resource_3a5:020003ac": "unidentified/overlays/state_update/state_update_0617.c",
     "resource_385:020004d8": "unidentified/overlays/leaf/leaf_0541.c",
     "resource_3b3:020022d8": "unidentified/overlays/state_update/state_update_0618.c",
@@ -3814,7 +4540,10 @@
       "name": "create_configured_overlay_object",
       "source": "unidentified/overlays/state_update/state_update_0622.c"
     },
-    "resource_38c:02000044": "unidentified/overlays/leaf_modules/unnamed_run_073.c",
+    "resource_38c:02000044": {
+      "name": "unnamed_run_073",
+      "source": "unidentified/overlays/units/overlay_38c.c"
+    },
     "resource_39a:020004f0": "unidentified/overlays/leaf/leaf_0544.c",
     "resource_3c4:020002a8": "unidentified/overlays/state_update/state_update_0623.c",
     "resource_398:020000a0": {
@@ -3828,14 +4557,26 @@
     },
     "resource_383:02004624": "unidentified/overlays/leaf/leaf_0546.c",
     "resource_3af:0200089c": "unidentified/overlays/state_update/state_update_0627.c",
-    "resource_386:02000458": "unidentified/overlays/state_update/state_update_0628.c",
-    "resource_397:020000e8": "unidentified/overlays/leaf/leaf_0547.c",
+    "resource_386:02000458": {
+      "name": "state_update_0628",
+      "source": "unidentified/overlays/units/overlay_386.c"
+    },
+    "resource_397:020000e8": {
+      "name": "leaf_0547",
+      "source": "unidentified/overlays/units/overlay_397.c"
+    },
     "resource_385:02000f28": "unidentified/overlays/leaf/leaf_0548.c",
-    "resource_390:0200005c": "unidentified/overlays/leaf/leaf_0549.c",
+    "resource_390:0200005c": {
+      "name": "leaf_0549",
+      "source": "unidentified/overlays/units/overlay_390.c"
+    },
     "resource_399:020005a4": "unidentified/overlays/leaf/leaf_0550.c",
     "resource_3a4:02002ffc": "unidentified/overlays/leaf/leaf_0551.c",
     "resource_373:02000d70": "unidentified/overlays/state_update/state_update_0629.c",
-    "resource_3c1:0200022c": "unidentified/overlays/state_update/state_update_0630.c",
+    "resource_3c1:0200022c": {
+      "name": "state_update_0630",
+      "source": "unidentified/overlays/units/overlay_3c1.c"
+    },
     "resource_3ad:02001320": "unidentified/overlays/wrapper/wrapper_0019.c",
     "resource_3b4:02000a48": "unidentified/overlays/leaf_modules/unnamed_run_047.c",
     "resource_3ab:0200118c": "unidentified/overlays/leaf/leaf_0553.c",
@@ -3845,16 +4586,25 @@
     "resource_3a8:020015e0": "unidentified/overlays/state_update/state_update_0632.c",
     "resource_387:02000db8": "unidentified/overlays/state_modules/unnamed_run_144.c",
     "resource_3c4:020009dc": "overlays/shared/copy_mode_to_owner.c",
-    "resource_386:02000080": "unidentified/overlays/state_update/state_update_0635.c",
+    "resource_386:02000080": {
+      "name": "state_update_0635",
+      "source": "unidentified/overlays/units/overlay_386.c"
+    },
     "resource_3b8:020005a4": "unidentified/overlays/state_update/state_update_0636.c",
-    "resource_397:0200005c": "unidentified/overlays/state_update/state_update_0637.c",
+    "resource_397:0200005c": {
+      "name": "state_update_0637",
+      "source": "unidentified/overlays/units/overlay_397.c"
+    },
     "resource_38b:02000198": {
       "name": "select_overlay_data_by_runtime_selector",
       "source": "unidentified/overlays/state_update/state_update_0638.c"
     },
     "resource_3b1:0200145c": "unidentified/overlays/leaf/leaf_0556.c",
     "resource_3b4:02001edc": "unidentified/overlays/state_update/state_update_0639.c",
-    "resource_3ac:02000374": "unidentified/overlays/state_update/state_update_0640.c",
+    "resource_3ac:02000374": {
+      "name": "state_update_0640",
+      "source": "unidentified/overlays/units/overlay_3ac.c"
+    },
     "resource_3a2:0200084c": "unidentified/overlays/leaf/leaf_0557.c",
     "resource_39a:02000e40": "unidentified/overlays/leaf/leaf_0558.c",
     "resource_3c9:02002334": "unidentified/overlays/leaf/leaf_0560.c",
@@ -3865,17 +4615,41 @@
     "resource_3ae:0200019c": "unidentified/overlays/state_update/state_update_0642.c",
     "resource_3c4:02001038": "unidentified/overlays/state_update/state_update_0643.c",
     "resource_3b4:02001e80": "unidentified/overlays/leaf/leaf_0564.c",
-    "resource_38f:02000030": "unidentified/overlays/state_update/state_update_0644.c",
+    "resource_38f:02000030": {
+      "name": "state_update_0644",
+      "source": "unidentified/overlays/units/overlay_38f.c"
+    },
     "resource_3c8:020022a4": "unidentified/overlays/state_update/state_update_0645.c",
-    "resource_386:020000dc": "unidentified/overlays/leaf_modules/unnamed_run_094.c",
-    "resource_397:0200015c": "unidentified/overlays/state_update/state_update_0646.c",
-    "resource_3cd:02000098": "unidentified/overlays/leaf_modules/unnamed_run_165.c",
-    "resource_394:0200003c": "unidentified/overlays/leaf/leaf_0567.c",
-    "resource_3cb:020011b4": "unidentified/overlays/leaf/leaf_0568.c",
+    "resource_386:020000dc": {
+      "name": "unnamed_run_094",
+      "source": "unidentified/overlays/units/overlay_386.c"
+    },
+    "resource_397:0200015c": {
+      "name": "state_update_0646",
+      "source": "unidentified/overlays/units/overlay_397.c"
+    },
+    "resource_3cd:02000098": {
+      "name": "unnamed_run_165",
+      "source": "unidentified/overlays/units/overlay_3cd.c"
+    },
+    "resource_394:0200003c": {
+      "name": "leaf_0567",
+      "source": "unidentified/overlays/units/overlay_394.c"
+    },
+    "resource_3cb:020011b4": {
+      "name": "leaf_0568",
+      "source": "unidentified/overlays/units/overlay_3cb.c"
+    },
     "resource_3a2:020000b8": "unidentified/overlays/leaf_modules/unnamed_run_119.c",
     "resource_3a4:020005ac": "unidentified/overlays/state_update/state_update_0647.c",
-    "resource_3c1:020000f8": "unidentified/overlays/state_modules/unnamed_run_047.c",
-    "resource_393:020009e8": "unidentified/overlays/leaf_modules/unnamed_run_109.c",
+    "resource_3c1:020000f8": {
+      "name": "unnamed_run_047",
+      "source": "unidentified/overlays/units/overlay_3c1.c"
+    },
+    "resource_393:020009e8": {
+      "name": "MapStagedScene_SelectSecondaryData",
+      "source": "unidentified/overlays/units/overlay_393.c"
+    },
     "resource_399:02001fa4": "unidentified/overlays/state_update/state_update_0649.c",
     "resource_3bb:020009b0": "unidentified/overlays/state_update/state_update_0650.c",
     "resource_3ba:020019e0": "unidentified/overlays/state_update/state_update_0651.c",
@@ -3889,13 +4663,19 @@
     "resource_3ae:02000ad4": "unidentified/overlays/state_update/state_update_0654.c",
     "resource_3b1:020015e8": "unidentified/overlays/leaf/leaf_0573.c",
     "resource_39c:02005578": "unidentified/overlays/state_update/state_update_0655.c",
-    "resource_3a9:02000070": "unidentified/overlays/leaf_modules/unnamed_run_171.c",
+    "resource_3a9:02000070": {
+      "name": "unnamed_run_171",
+      "source": "unidentified/overlays/units/overlay_3a9.c"
+    },
     "resource_39a:02001154": "overlays/dialogue_layout/configure_group_two.c",
     "resource_3c0:02000048": "unidentified/overlays/state_update/state_update_0657.c",
     "resource_3c8:020008a0": "unidentified/overlays/state_update/state_update_0658.c",
     "resource_387:0200032c": "unidentified/overlays/leaf_modules/unnamed_run_153.c",
     "resource_3a7:020002bc": "unidentified/overlays/leaf/leaf_0576.c",
-    "resource_382:02000778": "unidentified/overlays/leaf/leaf_0577.c",
+    "resource_382:02000778": {
+      "name": "leaf_0577",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_36f:0200003c": "overlays/scene_event_runtime/unnamed_variant.c",
     "resource_381:020028dc": "unidentified/overlays/state_update/state_update_0659.c",
     "resource_3b5:02000208": "unidentified/overlays/leaf/leaf_0579.c",
@@ -3904,11 +4684,17 @@
     "resource_3b4:02001c6c": "unidentified/overlays/state_update/state_update_0660.c",
     "resource_3c5:020011fc": "unidentified/overlays/leaf_modules/unnamed_run_013.c",
     "resource_372:02001a64": "unidentified/overlays/state_update/state_update_0661.c",
-    "resource_3cb:02000340": "unidentified/overlays/wrapper/wrapper_0020.c",
+    "resource_3cb:02000340": {
+      "name": "wrapper_0020",
+      "source": "unidentified/overlays/units/overlay_3cb.c"
+    },
     "resource_381:0200293c": "unidentified/overlays/leaf_modules/unnamed_run_167.c",
     "resource_3af:02003464": "unidentified/overlays/state_update/state_update_0662.c",
     "resource_3a2:02001180": "unidentified/overlays/leaf/leaf_0584.c",
-    "resource_38f:020025c0": "unidentified/overlays/leaf/leaf_0585.c",
+    "resource_38f:020025c0": {
+      "name": "leaf_0585",
+      "source": "unidentified/overlays/units/overlay_38f.c"
+    },
     "resource_3b8:0200400c": "unidentified/overlays/leaf_modules/unnamed_run_085.c",
     "resource_378:020002ec": "unidentified/overlays/call_sequence/call_sequence_0015.c",
     "resource_39c:02002600": "unidentified/overlays/state_update/state_update_0663.c",
@@ -3919,13 +4705,22 @@
     "resource_3af:02003950": "unidentified/overlays/state_update/state_update_0666.c",
     "resource_3ad:020000d4": "unidentified/overlays/state_update/state_update_0667.c",
     "resource_39a:02000ec0": "unidentified/overlays/leaf/leaf_0589.c",
-    "resource_3ac:020002d0": "unidentified/overlays/state_update/state_update_0668.c",
+    "resource_3ac:020002d0": {
+      "name": "state_update_0668",
+      "source": "unidentified/overlays/units/overlay_3ac.c"
+    },
     "resource_373:02000c9c": "unidentified/overlays/leaf/leaf_0590.c",
     "resource_39a:02001ac0": "unidentified/overlays/leaf/leaf_0591.c",
     "resource_39b:02000e9c": "unidentified/overlays/leaf_modules/unnamed_run_158.c",
-    "resource_3ce:02000204": "unidentified/overlays/leaf/leaf_0593.c",
+    "resource_3ce:02000204": {
+      "name": "leaf_0593",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
     "resource_396:0200051c": "unidentified/overlays/leaf_modules/unnamed_run_108.c",
-    "resource_393:02000aac": "unidentified/overlays/state_update/state_update_0671.c",
+    "resource_393:02000aac": {
+      "name": "RunStagedActorStepEffect",
+      "source": "unidentified/overlays/units/overlay_393.c"
+    },
     "resource_3b8:02000564": "unidentified/overlays/state_update/state_update_0672.c",
     "resource_3a7:0200050c": "unidentified/overlays/state_update/state_update_0673.c",
     "resource_3a5:020004dc": "unidentified/overlays/leaf/leaf_0595.c",
@@ -3944,7 +4739,10 @@
     "resource_377:020017c4": "unidentified/overlays/leaf/leaf_0603.c",
     "resource_3c8:02001a14": "unidentified/overlays/state_update/state_update_0678.c",
     "resource_383:020001fc": "unidentified/overlays/state_modules/unnamed_run_064.c",
-    "resource_397:02000138": "unidentified/overlays/state_update/state_update_0680.c",
+    "resource_397:02000138": {
+      "name": "state_update_0680",
+      "source": "unidentified/overlays/units/overlay_397.c"
+    },
     "resource_3b1:020008ec": "unidentified/overlays/state_update/state_update_0681.c",
     "resource_3a2:02001090": "unidentified/overlays/state_update/state_update_0682.c",
     "resource_3ba:02000a10": "unidentified/overlays/state_update/state_update_0683.c",
@@ -3963,7 +4761,10 @@
     "resource_399:02000530": "unidentified/overlays/leaf/leaf_0609.c",
     "resource_3b4:02000ec8": "unidentified/overlays/leaf/leaf_0610.c",
     "resource_39c:020022c4": "unidentified/overlays/state_update/state_update_0688.c",
-    "resource_397:020000d8": "unidentified/overlays/leaf/leaf_0611.c",
+    "resource_397:020000d8": {
+      "name": "leaf_0611",
+      "source": "unidentified/overlays/units/overlay_397.c"
+    },
     "resource_396:02000578": "unidentified/overlays/leaf_modules/unnamed_run_108.c",
     "resource_3b1:020000d8": "unidentified/overlays/state_modules/unnamed_run_102.c",
     "resource_383:02004840": "unidentified/overlays/state_update/state_update_0690.c",
@@ -3972,24 +4773,42 @@
     "resource_3bb:02002fc0": "unidentified/overlays/state_update/state_update_0691.c",
     "resource_372:02004378": "unidentified/overlays/state_update/state_update_0692.c",
     "resource_3c5:0200110c": "unidentified/overlays/state_update/state_update_0693.c",
-    "resource_3a1:0200031c": "overlays/shared/get_runtime_default_result.c",
-    "resource_394:02000b3c": "unidentified/overlays/state_update/state_update_0695.c",
+    "resource_3a1:0200031c": {
+      "name": "get_runtime_default_result",
+      "source": "unidentified/overlays/units/overlay_3a1.c"
+    },
+    "resource_394:02000b3c": {
+      "name": "state_update_0695",
+      "source": "unidentified/overlays/units/overlay_394.c"
+    },
     "resource_3c8:02000ff0": "unidentified/overlays/state_update/state_update_0696.c",
-    "resource_386:020004dc": "unidentified/overlays/leaf_modules/unnamed_run_096.c",
+    "resource_386:020004dc": {
+      "name": "unnamed_run_096",
+      "source": "unidentified/overlays/units/overlay_386.c"
+    },
     "resource_3a5:0200013c": {
       "name": "spawn_configured_effect",
       "source": "unidentified/overlays/state_update/state_update_0697.c"
     },
     "resource_3c5:0200246c": "unidentified/overlays/state_update/state_update_0698.c",
     "resource_3a2:020010b8": "unidentified/overlays/state_update/state_update_0699.c",
-    "resource_397:0200004c": "unidentified/overlays/leaf/leaf_0617.c",
+    "resource_397:0200004c": {
+      "name": "leaf_0617",
+      "source": "unidentified/overlays/units/overlay_397.c"
+    },
     "resource_378:020034a8": "unidentified/overlays/leaf/leaf_0618.c",
-    "resource_38c:020002f4": "unidentified/overlays/state_update/state_update_0700.c",
+    "resource_38c:020002f4": {
+      "name": "state_update_0700",
+      "source": "unidentified/overlays/units/overlay_38c.c"
+    },
     "resource_3c9:02003660": "unidentified/overlays/state_update/state_update_0701.c",
     "resource_39c:02000ee4": "unidentified/overlays/leaf/leaf_0621.c",
     "resource_3c5:02000a4c": "unidentified/overlays/state_update/state_update_0702.c",
     "resource_39f:02001454": "unidentified/overlays/state_update/state_update_0703.c",
-    "resource_38c:020003f4": "unidentified/overlays/leaf/leaf_0622.c",
+    "resource_38c:020003f4": {
+      "name": "leaf_0622",
+      "source": "unidentified/overlays/units/overlay_38c.c"
+    },
     "resource_3b0:020001fc": "unidentified/overlays/leaf/leaf_0623.c",
     "resource_377:02000344": "unidentified/overlays/leaf/leaf_0624.c",
     "resource_39a:02000314": "unidentified/overlays/leaf/leaf_0625.c",
@@ -4011,7 +4830,10 @@
     "resource_372:02004278": "unidentified/overlays/state_update/state_update_0712.c",
     "resource_3b4:02001a48": "unidentified/overlays/state_update/state_update_0713.c",
     "resource_380:0200274c": "unidentified/overlays/leaf/leaf_0628.c",
-    "resource_3ac:02000124": "unidentified/overlays/leaf_modules/unnamed_run_044.c",
+    "resource_3ac:02000124": {
+      "name": "unnamed_run_044",
+      "source": "unidentified/overlays/units/overlay_3ac.c"
+    },
     "resource_38e:02000088": "unidentified/overlays/leaf/leaf_0630.c",
     "resource_3aa:020000f4": "unidentified/overlays/leaf_modules/unnamed_run_164.c",
     "resource_3a7:020002cc": "unidentified/overlays/leaf/leaf_0632.c",
@@ -4032,20 +4854,32 @@
     "resource_377:020013b4": "unidentified/overlays/state_update/state_update_0724.c",
     "resource_376:02000350": "unidentified/overlays/leaf_modules/unnamed_run_072.c",
     "resource_39a:020006c0": "unidentified/overlays/leaf/leaf_0639.c",
-    "resource_38a:020003e4": "unidentified/overlays/leaf/leaf_0640.c",
+    "resource_38a:020003e4": {
+      "name": "leaf_0640",
+      "source": "unidentified/overlays/units/overlay_38a.c"
+    },
     "resource_39a:02001ab0": "unidentified/overlays/leaf/leaf_0641.c",
-    "resource_382:02000e0c": "overlays/actor_presentation/run_actor_nineteen_script_branch.c",
+    "resource_382:02000e0c": {
+      "name": "ActorPresentation_RunActorNineteenScriptBranch",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_3a4:0200047c": "unidentified/overlays/state_update/state_update_0726.c",
     "resource_380:02000380": "unidentified/overlays/leaf/leaf_0642.c",
     "resource_3bb:02000b30": "unidentified/overlays/leaf/leaf_0643.c",
     "resource_37f:020003bc": "unidentified/overlays/state_update/state_update_0727.c",
-    "resource_392:02000a2c": "unidentified/overlays/leaf_modules/unnamed_run_174.c",
+    "resource_392:02000a2c": {
+      "name": "unnamed_run_174",
+      "source": "unidentified/overlays/units/overlay_392.c"
+    },
     "resource_383:020003bc": "unidentified/overlays/state_modules/unnamed_run_065.c",
     "resource_374:020025b0": "unidentified/overlays/leaf/leaf_0645.c",
     "resource_39c:02002304": "unidentified/overlays/leaf/leaf_0646.c",
     "resource_387:02000048": "unidentified/overlays/state_update/state_update_0729.c",
     "resource_3c8:02000098": "unidentified/overlays/state_update/state_update_0730.c",
-    "resource_3ce:02000f14": "unidentified/overlays/call_sequence/call_sequence_0017.c",
+    "resource_3ce:02000f14": {
+      "name": "call_sequence_0017",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
     "resource_385:02000d4c": "unidentified/overlays/state_update/state_update_0731.c",
     "resource_396:020004d8": "unidentified/overlays/leaf_modules/unnamed_run_108.c",
     "resource_37b:02001a84": "unidentified/overlays/state_update/state_update_0732.c",
@@ -4058,24 +4892,36 @@
     },
     "resource_3b7:020016a8": "unidentified/overlays/state_update/state_update_0736.c",
     "resource_38a:020000a0": {
-      "name": "create_configured_overlay_object",
-      "source": "unidentified/overlays/state_update/state_update_0737.c"
+      "name": "CreateConfiguredOverlayObject",
+      "source": "unidentified/overlays/units/overlay_38a.c"
     },
-    "resource_392:020009e8": "unidentified/overlays/leaf_modules/unnamed_run_173.c",
+    "resource_392:020009e8": {
+      "name": "unnamed_run_173",
+      "source": "unidentified/overlays/units/overlay_392.c"
+    },
     "resource_39b:02000fd0": "unidentified/overlays/leaf_modules/unnamed_run_159.c",
     "resource_375:02000030": "unidentified/overlays/state_update/state_update_0738.c",
     "resource_3b1:020016cc": "unidentified/overlays/leaf/leaf_0651.c",
     "resource_3b4:02001df8": "unidentified/overlays/state_update/state_update_0739.c",
     "resource_3b0:020001e8": "unidentified/overlays/leaf/leaf_0652.c",
     "resource_38b:02000cb4": "unidentified/overlays/state_update/state_update_0740.c",
-    "resource_38a:020004d4": "unidentified/overlays/state_update/state_update_0741.c",
+    "resource_38a:020004d4": {
+      "name": "state_update_0741",
+      "source": "unidentified/overlays/units/overlay_38a.c"
+    },
     "resource_3ca:02000030": "unidentified/overlays/state_update/state_update_0742.c",
     "resource_380:02000048": "unidentified/overlays/state_update/state_update_0743.c",
     "resource_3b8:02000060": "unidentified/overlays/leaf_modules/unnamed_run_084.c",
-    "resource_386:0200006c": "unidentified/overlays/leaf/leaf_0654.c",
+    "resource_386:0200006c": {
+      "name": "leaf_0654",
+      "source": "unidentified/overlays/units/overlay_386.c"
+    },
     "resource_3ba:02000044": "unidentified/overlays/leaf_modules/unnamed_run_156.c",
     "resource_3b4:0200126c": "unidentified/overlays/leaf_modules/unnamed_run_049.c",
-    "resource_38f:020000a0": "unidentified/overlays/state_update/state_update_0744.c",
+    "resource_38f:020000a0": {
+      "name": "state_update_0744",
+      "source": "unidentified/overlays/units/overlay_38f.c"
+    },
     "resource_3b5:02000508": "unidentified/overlays/leaf_modules/unnamed_run_136.c",
     "resource_3c0:0200057c": "unidentified/overlays/leaf_modules/unnamed_run_139.c",
     "resource_39c:02000e20": {
@@ -4084,14 +4930,26 @@
     },
     "resource_372:02000030": "unidentified/overlays/state_update/state_update_0746.c",
     "resource_3ab:02000764": "unidentified/overlays/state_update/state_update_0747.c",
-    "resource_3c6:02000048": "unidentified/overlays/state_update/state_update_0748.c",
+    "resource_3c6:02000048": {
+      "name": "state_update_0748",
+      "source": "unidentified/overlays/units/overlay_3c6.c"
+    },
     "resource_389:02000a00": "unidentified/overlays/state_update/state_update_0749.c",
     "resource_3b9:02000074": "unidentified/overlays/state_update/state_update_0750.c",
-    "resource_3a1:0200035c": "unidentified/overlays/state_update/state_update_0751.c",
+    "resource_3a1:0200035c": {
+      "name": "state_update_0751",
+      "source": "unidentified/overlays/units/overlay_3a1.c"
+    },
     "resource_3b4:020019cc": "unidentified/overlays/state_update/state_update_0752.c",
-    "resource_382:02000ecc": "unidentified/overlays/state_update/state_update_0753.c",
+    "resource_382:02000ecc": {
+      "name": "state_update_0753",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_3a3:02000448": "unidentified/overlays/call_sequence/call_sequence_0018.c",
-    "resource_38c:020002b4": "unidentified/overlays/leaf_modules/unnamed_run_074.c",
+    "resource_38c:020002b4": {
+      "name": "unnamed_run_074",
+      "source": "unidentified/overlays/units/overlay_38c.c"
+    },
     "resource_3c8:020026e4": "unidentified/overlays/leaf/leaf_0660.c",
     "resource_391:020009dc": "unidentified/overlays/state_update/state_update_0754.c",
     "resource_372:020001d0": "unidentified/overlays/leaf/leaf_0661.c",
@@ -4101,7 +4959,10 @@
     "resource_38d:020001f4": "unidentified/overlays/leaf_modules/unnamed_run_130.c",
     "resource_381:02001084": "unidentified/overlays/state_update/state_update_0758.c",
     "resource_378:0200027c": "unidentified/overlays/call_sequence/call_sequence_0019.c",
-    "resource_38f:02000800": "unidentified/overlays/state_update/state_update_0759.c",
+    "resource_38f:02000800": {
+      "name": "state_update_0759",
+      "source": "unidentified/overlays/units/overlay_38f.c"
+    },
     "resource_380:0200013c": "overlays/configurable_effect_spawn/spawn_configured_effect.c",
     "resource_3c9:02000714": "unidentified/overlays/leaf/leaf_0663.c",
     "resource_39a:02001f04": "unidentified/overlays/leaf/leaf_0664.c",
@@ -4122,11 +4983,17 @@
     "resource_3b3:02000048": "unidentified/overlays/state_update/state_update_0769.c",
     "resource_3ba:02002fa0": "unidentified/overlays/state_update/state_update_0770.c",
     "resource_373:02005c5c": "unidentified/overlays/leaf/leaf_0671.c",
-    "resource_3c2:0200021c": "unidentified/overlays/state_modules/unnamed_run_155.c",
+    "resource_3c2:0200021c": {
+      "name": "unnamed_run_155",
+      "source": "unidentified/overlays/units/overlay_3c2.c"
+    },
     "resource_373:02000a74": "unidentified/overlays/leaf/leaf_0672.c",
     "resource_39f:02001244": "unidentified/overlays/state_update/state_update_0772.c",
     "resource_389:020010c0": "unidentified/overlays/leaf/leaf_0673.c",
-    "resource_388:02000044": "unidentified/overlays/leaf_modules/unnamed_run_146.c",
+    "resource_388:02000044": {
+      "name": "unnamed_run_146",
+      "source": "unidentified/overlays/units/overlay_388.c"
+    },
     "resource_3c5:020002a8": "unidentified/overlays/state_update/state_update_0773.c",
     "resource_39c:020000a0": {
       "name": "create_configured_overlay_object",
@@ -4135,22 +5002,46 @@
     "resource_3a2:0200007c": "unidentified/overlays/leaf_modules/unnamed_run_119.c",
     "resource_3c8:020002f0": "unidentified/overlays/state_update/state_update_0775.c",
     "resource_3a3:02000318": "unidentified/overlays/leaf_modules/unnamed_run_142.c",
-    "resource_3cd:02000044": "unidentified/overlays/state_update/state_update_0776.c",
-    "resource_37e:0200003c": "unidentified/overlays/leaf_modules/unnamed_run_143.c",
-    "resource_382:02001638": "unidentified/overlays/state_update/state_update_0777.c",
+    "resource_3cd:02000044": {
+      "name": "state_update_0776",
+      "source": "unidentified/overlays/units/overlay_3cd.c"
+    },
+    "resource_37e:0200003c": {
+      "name": "unnamed_run_143",
+      "source": "unidentified/overlays/units/overlay_37e.c"
+    },
+    "resource_382:02001638": {
+      "name": "state_update_0777",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_3af:020000b4": "unidentified/overlays/leaf/leaf_0678.c",
     "resource_3a8:02001ea4": "unidentified/overlays/state_update/state_update_0778.c",
     "resource_372:020010a4": "unidentified/overlays/state_update/state_update_0779.c",
-    "resource_3c7:02000eec": "unidentified/overlays/call_sequence/call_sequence_0020.c",
+    "resource_3c7:02000eec": {
+      "name": "call_sequence_0020",
+      "source": "unidentified/overlays/units/overlay_3c7.c"
+    },
     "resource_38d:020004c0": "unidentified/overlays/leaf_modules/unnamed_run_131.c",
-    "resource_3ac:02000224": "unidentified/overlays/state_update/state_update_0780.c",
+    "resource_3ac:02000224": {
+      "name": "state_update_0780",
+      "source": "unidentified/overlays/units/overlay_3ac.c"
+    },
     "resource_39d:020000a0": {
       "name": "create_configured_overlay_object",
       "source": "unidentified/overlays/state_update/state_update_0781.c"
     },
-    "resource_3c1:0200003c": "unidentified/overlays/leaf_modules/unnamed_run_151.c",
-    "resource_370:02000044": "unidentified/overlays/leaf_modules/unnamed_run_152.c",
-    "resource_3cc:02000044": "unidentified/overlays/leaf/leaf_0682.c",
+    "resource_3c1:0200003c": {
+      "name": "unnamed_run_151",
+      "source": "unidentified/overlays/units/overlay_3c1.c"
+    },
+    "resource_370:02000044": {
+      "name": "unnamed_run_152",
+      "source": "unidentified/overlays/units/overlay_370.c"
+    },
+    "resource_3cc:02000044": {
+      "name": "leaf_0682",
+      "source": "unidentified/overlays/units/overlay_3cc.c"
+    },
     "resource_3a6:02000de8": "unidentified/overlays/leaf_modules/unnamed_run_065.c",
     "resource_3b9:02000030": "unidentified/overlays/state_update/state_update_0783.c",
     "resource_3c8:020014f4": "unidentified/overlays/state_update/state_update_0784.c",
@@ -4164,24 +5055,39 @@
     "resource_3ba:02003764": "unidentified/overlays/state_update/state_update_0788.c",
     "resource_389:02001088": "unidentified/overlays/leaf/leaf_0688.c",
     "resource_3bd:020009f4": "unidentified/overlays/leaf_modules/unnamed_run_045.c",
-    "resource_3c1:02000208": "unidentified/overlays/leaf/leaf_0690.c",
+    "resource_3c1:02000208": {
+      "name": "leaf_0690",
+      "source": "unidentified/overlays/units/overlay_3c1.c"
+    },
     "resource_3a3:0200084c": "unidentified/overlays/state_modules/unnamed_run_161.c",
     "resource_3a8:02000374": "unidentified/overlays/leaf/leaf_0691.c",
     "resource_383:02001990": "unidentified/overlays/leaf/leaf_0692.c",
     "resource_396:0200054c": "unidentified/overlays/leaf_modules/unnamed_run_108.c",
     "resource_387:020004ec": "unidentified/overlays/leaf_modules/unnamed_run_154.c",
-    "resource_394:02000194": "unidentified/overlays/state_update/state_update_0790.c",
+    "resource_394:02000194": {
+      "name": "state_update_0790",
+      "source": "unidentified/overlays/units/overlay_394.c"
+    },
     "resource_3c5:020009dc": "overlays/shared/copy_mode_to_owner.c",
     "resource_3a6:02001bfc": "unidentified/overlays/leaf/leaf_0695.c",
     "resource_39a:020009d0": "unidentified/overlays/leaf/leaf_0696.c",
-    "resource_3a1:020003bc": "unidentified/overlays/state_update/state_update_0793.c",
+    "resource_3a1:020003bc": {
+      "name": "state_update_0793",
+      "source": "unidentified/overlays/units/overlay_3a1.c"
+    },
     "resource_3a7:0200144c": "unidentified/overlays/state_update/state_update_0794.c",
-    "resource_3ce:02000198": "unidentified/overlays/leaf/leaf_0697.c",
+    "resource_3ce:02000198": {
+      "name": "leaf_0697",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
     "resource_399:02000160": "unidentified/overlays/leaf/leaf_0698.c",
     "resource_396:0200031c": "unidentified/overlays/leaf_modules/unnamed_run_107.c",
     "resource_3a3:020002f8": "unidentified/overlays/leaf_modules/unnamed_run_142.c",
     "resource_3a7:020014d8": "unidentified/overlays/state_update/state_update_0795.c",
-    "resource_3a1:02000328": "unidentified/overlays/leaf/leaf_0701.c",
+    "resource_3a1:02000328": {
+      "name": "leaf_0701",
+      "source": "unidentified/overlays/units/overlay_3a1.c"
+    },
     "resource_3c8:020008c8": "unidentified/overlays/state_update/state_update_0796.c",
     "resource_3a4:02002a10": "unidentified/overlays/state_update/state_update_0797.c",
     "resource_3b4:02001a70": "unidentified/overlays/state_update/state_update_0798.c",
@@ -4191,13 +5097,22 @@
     "resource_3c0:02000570": "unidentified/overlays/leaf_modules/unnamed_run_139.c",
     "resource_3bb:020030a8": "unidentified/overlays/state_update/state_update_0802.c",
     "resource_3a3:02000360": "unidentified/overlays/call_sequence/call_sequence_0021.c",
-    "resource_386:02000570": "unidentified/overlays/state_update/state_update_0803.c",
+    "resource_386:02000570": {
+      "name": "state_update_0803",
+      "source": "unidentified/overlays/units/overlay_386.c"
+    },
     "resource_3ca:0200003c": "unidentified/overlays/state_update/state_update_0804.c",
-    "resource_3ce:0200021c": "unidentified/overlays/leaf/leaf_0704.c",
+    "resource_3ce:0200021c": {
+      "name": "leaf_0704",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
     "resource_3c4:02001970": "unidentified/overlays/leaf/leaf_0705.c",
     "resource_37b:0200158c": "unidentified/overlays/leaf_modules/unnamed_run_126.c",
     "resource_396:02000504": "unidentified/overlays/leaf_modules/unnamed_run_108.c",
-    "resource_384:020001b0": "unidentified/overlays/leaf/leaf_0708.c",
+    "resource_384:020001b0": {
+      "name": "leaf_0708",
+      "source": "unidentified/overlays/units/overlay_384.c"
+    },
     "resource_377:02001638": "unidentified/overlays/state_update/state_update_0806.c",
     "resource_3c9:02000894": "unidentified/overlays/leaf/leaf_0709.c",
     "resource_3b4:02001120": "unidentified/overlays/state_update/state_update_0807.c",
@@ -4205,7 +5120,10 @@
     "resource_374:02000094": "unidentified/overlays/leaf/leaf_0710.c",
     "resource_3c4:02001500": "unidentified/overlays/leaf/leaf_0711.c",
     "resource_373:020055b0": "unidentified/overlays/leaf/leaf_0712.c",
-    "resource_382:02000c54": "unidentified/overlays/leaf/leaf_0713.c",
+    "resource_382:02000c54": {
+      "name": "leaf_0713",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_3b3:02002150": "unidentified/overlays/leaf_modules/unnamed_run_122.c",
     "resource_372:02001684": "unidentified/overlays/leaf/leaf_0715.c",
     "resource_3c0:020003a4": "unidentified/overlays/leaf_modules/unnamed_run_138.c",
@@ -4214,36 +5132,57 @@
     "resource_3bb:020031fc": "unidentified/overlays/state_update/state_update_0809.c",
     "resource_373:02000d2c": "unidentified/overlays/leaf/leaf_0719.c",
     "resource_398:020007f8": "unidentified/overlays/state_update/state_update_0810.c",
-    "resource_38c:020000bc": "unidentified/overlays/state_modules/unnamed_run_162.c",
+    "resource_38c:020000bc": {
+      "name": "unnamed_run_162",
+      "source": "unidentified/overlays/units/overlay_38c.c"
+    },
     "resource_3a2:02001060": "unidentified/overlays/state_update/state_update_0812.c",
     "resource_387:02000334": "unidentified/overlays/leaf_modules/unnamed_run_153.c",
-    "resource_382:020005f0": "unidentified/overlays/leaf/leaf_0721.c",
+    "resource_382:020005f0": {
+      "name": "leaf_0721",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_39e:0200254c": {
       "name": "FieldScene_ShowDialogue17DF",
       "source": "map/locations/xian/show_dialogue_17df.c"
     },
-    "resource_394:02000e64": "unidentified/overlays/state_update/state_update_0814.c",
+    "resource_394:02000e64": {
+      "name": "state_update_0814",
+      "source": "unidentified/overlays/units/overlay_394.c"
+    },
     "resource_39a:02000cd8": "unidentified/overlays/leaf/leaf_0722.c",
     "resource_373:02005c98": "unidentified/overlays/leaf/leaf_0723.c",
     "resource_39f:02000ea8": "unidentified/overlays/state_update/state_update_0815.c",
     "resource_3c4:020012b0": "unidentified/overlays/leaf/leaf_0724.c",
     "resource_39c:02001790": "unidentified/overlays/leaf/leaf_0725.c",
-    "resource_38f:0200016c": "unidentified/overlays/state_update/state_update_0816.c",
+    "resource_38f:0200016c": {
+      "name": "state_update_0816",
+      "source": "unidentified/overlays/units/overlay_38f.c"
+    },
     "resource_3bb:02000258": "unidentified/overlays/state_update/state_update_0817.c",
-    "resource_38f:020025a8": "unidentified/overlays/leaf/leaf_0726.c",
+    "resource_38f:020025a8": {
+      "name": "leaf_0726",
+      "source": "unidentified/overlays/units/overlay_38f.c"
+    },
     "resource_385:020004b4": "unidentified/overlays/leaf/leaf_0727.c",
     "resource_3c8:02000fbc": "unidentified/overlays/leaf/leaf_0728.c",
     "resource_383:02000310": "unidentified/overlays/state_update/state_update_0818.c",
     "resource_37b:02001574": "unidentified/overlays/leaf/leaf_0729.c",
     "resource_383:02000354": "unidentified/overlays/leaf/leaf_0730.c",
-    "resource_3a1:02000314": "unidentified/overlays/leaf/leaf_0731.c",
+    "resource_3a1:02000314": {
+      "name": "leaf_0731",
+      "source": "unidentified/overlays/units/overlay_3a1.c"
+    },
     "resource_378:02000030": {
       "name": "UpdateFacingFromResolvedObject",
       "source": "overlays/overlay_object/update_facing_from_resolved_object.c"
     },
     "resource_3c8:020010cc": "unidentified/overlays/state_update/state_update_0820.c",
     "resource_3ba:02000238": "unidentified/overlays/leaf/leaf_0732.c",
-    "resource_386:020001e4": "unidentified/overlays/leaf_modules/unnamed_run_095.c",
+    "resource_386:020001e4": {
+      "name": "unnamed_run_095",
+      "source": "unidentified/overlays/units/overlay_386.c"
+    },
     "resource_396:020004c0": "unidentified/overlays/leaf_modules/unnamed_run_108.c",
     "resource_39f:020002a8": "unidentified/overlays/state_update/state_update_0821.c",
     "resource_3c0:020000a0": {
@@ -4254,10 +5193,16 @@
     "resource_39b:02001bc8": "unidentified/overlays/state_update/state_update_0824.c",
     "resource_3b4:02001da0": "unidentified/overlays/state_update/state_update_0825.c",
     "resource_3ab:02000a90": "unidentified/overlays/leaf/leaf_0736.c",
-    "resource_3c1:02000030": "unidentified/overlays/leaf/leaf_0737.c",
+    "resource_3c1:02000030": {
+      "name": "leaf_0737",
+      "source": "unidentified/overlays/units/overlay_3c1.c"
+    },
     "resource_380:02000030": "unidentified/overlays/state_update/state_update_0826.c",
     "resource_383:0200463c": "unidentified/overlays/leaf/leaf_0738.c",
-    "resource_37e:02000030": "unidentified/overlays/leaf/leaf_0739.c",
+    "resource_37e:02000030": {
+      "name": "leaf_0739",
+      "source": "unidentified/overlays/units/overlay_37e.c"
+    },
     "resource_3bd:02000c2c": "unidentified/overlays/state_update/state_update_0827.c",
     "resource_3ba:02000178": "unidentified/overlays/state_update/state_update_0828.c",
     "resource_39c:02002dcc": "unidentified/overlays/state_update/state_update_0829.c",
@@ -4267,10 +5212,19 @@
     "resource_3ba:02002f94": "unidentified/overlays/state_update/state_update_0830.c",
     "resource_3c4:020000c4": "unidentified/overlays/state_update/state_update_0831.c",
     "resource_38b:0200010c": "unidentified/overlays/leaf/leaf_0743.c",
-    "resource_3c6:02000030": "unidentified/overlays/leaf_modules/unnamed_run_127.c",
+    "resource_3c6:02000030": {
+      "name": "unnamed_run_127",
+      "source": "unidentified/overlays/units/overlay_3c6.c"
+    },
     "resource_3a4:02002bb0": "unidentified/overlays/state_update/state_update_0832.c",
-    "resource_382:02000798": "unidentified/overlays/leaf/leaf_0745.c",
-    "resource_390:020001c4": "unidentified/overlays/state_update/state_update_0833.c",
+    "resource_382:02000798": {
+      "name": "leaf_0745",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
+    "resource_390:020001c4": {
+      "name": "state_update_0833",
+      "source": "unidentified/overlays/units/overlay_390.c"
+    },
     "resource_39f:020009dc": "overlays/shared/copy_mode_to_owner.c",
     "resource_37b:02001ad4": "unidentified/overlays/leaf/leaf_0746.c",
     "resource_3c5:020027a0": {
@@ -4290,30 +5244,54 @@
     "resource_399:020002b8": "unidentified/overlays/state_update/state_update_0841.c",
     "resource_3c5:02000cc0": "unidentified/overlays/leaf/leaf_0749.c",
     "resource_3a8:020002c8": "unidentified/overlays/leaf/leaf_0750.c",
-    "resource_38c:0200005c": "unidentified/overlays/state_modules/unnamed_run_162.c",
+    "resource_38c:0200005c": {
+      "name": "unnamed_run_162",
+      "source": "unidentified/overlays/units/overlay_38c.c"
+    },
     "resource_3ba:0200096c": "unidentified/overlays/leaf_modules/unnamed_run_157.c",
     "resource_3a4:02000c74": "unidentified/overlays/state_update/state_update_0844.c",
     "resource_385:02000f00": "unidentified/overlays/leaf/leaf_0752.c",
     "resource_3a7:02000c50": "unidentified/overlays/state_update/state_update_0845.c",
     "resource_387:02000f8c": "unidentified/overlays/state_update/state_update_0846.c",
-    "resource_392:02000a60": "unidentified/overlays/leaf_modules/unnamed_run_174.c",
+    "resource_392:02000a60": {
+      "name": "unnamed_run_174",
+      "source": "unidentified/overlays/units/overlay_392.c"
+    },
     "resource_3b4:02001e60": "unidentified/overlays/leaf/leaf_0754.c",
     "resource_3bd:020034bc": "unidentified/overlays/state_update/state_update_0847.c",
     "resource_3b1:02005684": "unidentified/overlays/state_update/state_update_0848.c",
     "resource_398:02000148": "unidentified/overlays/state_update/state_update_0849.c",
-    "resource_38f:020001ac": "unidentified/overlays/leaf_modules/unnamed_run_103.c",
-    "resource_3ac:02000294": "unidentified/overlays/leaf/leaf_0756.c",
+    "resource_38f:020001ac": {
+      "name": "unnamed_run_103",
+      "source": "unidentified/overlays/units/overlay_38f.c"
+    },
+    "resource_3ac:02000294": {
+      "name": "leaf_0756",
+      "source": "unidentified/overlays/units/overlay_3ac.c"
+    },
     "resource_3c5:020011c4": "unidentified/overlays/leaf_modules/unnamed_run_013.c",
     "resource_3c8:0200196c": "unidentified/overlays/state_update/state_update_0850.c",
     "resource_373:020055f0": "unidentified/overlays/leaf/leaf_0758.c",
-    "resource_38c:0200011c": "unidentified/overlays/leaf/leaf_0759.c",
+    "resource_38c:0200011c": {
+      "name": "leaf_0759",
+      "source": "unidentified/overlays/units/overlay_38c.c"
+    },
     "resource_39f:02001078": "unidentified/overlays/state_update/state_update_0851.c",
-    "resource_382:02000450": "unidentified/overlays/wrapper/wrapper_0022.c",
+    "resource_382:02000450": {
+      "name": "wrapper_0022",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_396:02000314": "unidentified/overlays/leaf_modules/unnamed_run_107.c",
     "resource_383:02004684": "unidentified/overlays/leaf/leaf_0761.c",
-    "resource_392:02000b24": "unidentified/overlays/state_update/state_update_0852.c",
+    "resource_392:02000b24": {
+      "name": "state_update_0852",
+      "source": "unidentified/overlays/units/overlay_392.c"
+    },
     "resource_396:02000604": "unidentified/overlays/leaf_modules/unnamed_run_108.c",
-    "resource_3cd:02000768": "unidentified/overlays/state_update/state_update_0853.c",
+    "resource_3cd:02000768": {
+      "name": "state_update_0853",
+      "source": "unidentified/overlays/units/overlay_3cd.c"
+    },
     "resource_381:02002820": "unidentified/overlays/state_update/state_update_0854.c",
     "resource_385:02000710": "unidentified/overlays/leaf/leaf_0763.c",
     "resource_3bb:020030e8": "unidentified/overlays/state_update/state_update_0855.c",
@@ -4325,10 +5303,16 @@
     "resource_3a7:02000410": "unidentified/overlays/state_update/state_update_0859.c",
     "resource_3c9:020004bc": "unidentified/overlays/state_update/state_update_0860.c",
     "resource_3a7:02000554": "unidentified/overlays/state_update/state_update_0861.c",
-    "resource_394:02000b8c": "unidentified/overlays/state_update/state_update_0862.c",
+    "resource_394:02000b8c": {
+      "name": "state_update_0862",
+      "source": "unidentified/overlays/units/overlay_394.c"
+    },
     "resource_3ca:0200007c": "unidentified/overlays/leaf/leaf_0766.c",
     "resource_3b9:020011ac": "unidentified/overlays/leaf/leaf_0767.c",
-    "resource_382:02001198": "unidentified/overlays/leaf/leaf_0768.c",
+    "resource_382:02001198": {
+      "name": "leaf_0768",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_3b1:02001504": "unidentified/overlays/leaf/leaf_0769.c",
     "resource_39e:020013b8": {
       "name": "FieldScene_DispatchByFacingAndFlags",
@@ -4336,35 +5320,65 @@
     },
     "resource_399:020016ac": "unidentified/overlays/leaf/leaf_0770.c",
     "resource_3bb:02003b38": "unidentified/overlays/state_update/state_update_0864.c",
-    "resource_370:0200004c": "unidentified/overlays/leaf_modules/unnamed_run_152.c",
+    "resource_370:0200004c": {
+      "name": "unnamed_run_152",
+      "source": "unidentified/overlays/units/overlay_370.c"
+    },
     "resource_3c4:020013b4": "unidentified/overlays/state_update/state_update_0865.c",
-    "resource_3cc:0200004c": "unidentified/overlays/leaf/leaf_0772.c",
-    "resource_38f:020008d8": "unidentified/overlays/leaf_modules/unnamed_run_105.c",
+    "resource_3cc:0200004c": {
+      "name": "leaf_0772",
+      "source": "unidentified/overlays/units/overlay_3cc.c"
+    },
+    "resource_38f:020008d8": {
+      "name": "unnamed_run_105",
+      "source": "unidentified/overlays/units/overlay_38f.c"
+    },
     "resource_3af:02000948": "unidentified/overlays/leaf_modules/unnamed_run_066.c",
     "resource_39d:02003438": "unidentified/overlays/leaf/leaf_0775.c",
     "resource_3a4:020000e4": "unidentified/overlays/state_update/state_update_0866.c",
-    "resource_397:02000040": "unidentified/overlays/leaf/leaf_0776.c",
+    "resource_397:02000040": {
+      "name": "leaf_0776",
+      "source": "unidentified/overlays/units/overlay_397.c"
+    },
     "resource_380:02000374": "unidentified/overlays/leaf/leaf_0777.c",
-    "resource_3a9:0200016c": "unidentified/overlays/leaf_modules/unnamed_run_172.c",
-    "resource_3ac:0200016c": "unidentified/overlays/state_update/state_update_0867.c",
+    "resource_3a9:0200016c": {
+      "name": "unnamed_run_172",
+      "source": "unidentified/overlays/units/overlay_3a9.c"
+    },
+    "resource_3ac:0200016c": {
+      "name": "state_update_0867",
+      "source": "unidentified/overlays/units/overlay_3ac.c"
+    },
     "resource_3ab:02000d08": "unidentified/overlays/leaf/leaf_0779.c",
     "resource_399:020001ec": "unidentified/overlays/leaf/leaf_0780.c",
-    "resource_388:0200004c": "unidentified/overlays/leaf_modules/unnamed_run_146.c",
+    "resource_388:0200004c": {
+      "name": "unnamed_run_146",
+      "source": "unidentified/overlays/units/overlay_388.c"
+    },
     "resource_398:0200046c": "unidentified/overlays/state_update/state_update_0868.c",
-    "resource_382:020011b0": "overlays/actor_presentation/move_actor_to_position_and_wait.c",
+    "resource_382:020011b0": {
+      "name": "ActorPresentation_MoveActorToPositionAndWait",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_3ba:02000038": "overlays/shared/get_default_result.c",
     "resource_372:020020fc": "unidentified/overlays/call_sequence/call_sequence_0022.c",
     "resource_393:02000474": {
-      "name": "find_clear_actor_position",
-      "source": "unidentified/overlays/state_update/state_update_0870.c"
+      "name": "FindClearActorPosition",
+      "source": "unidentified/overlays/units/overlay_393.c"
     },
     "resource_372:02002d28": "unidentified/overlays/state_update/state_update_0871.c",
     "resource_3ca:020003dc": "unidentified/overlays/state_update/state_update_0872.c",
     "resource_385:02000af0": "unidentified/overlays/leaf/leaf_0783.c",
     "resource_3a4:020003e0": "unidentified/overlays/state_update/state_update_0873.c",
     "resource_3c9:0200071c": "unidentified/overlays/state_update/state_update_0874.c",
-    "resource_3a1:02000504": "unidentified/overlays/leaf/leaf_0784.c",
-    "resource_397:02000200": "unidentified/overlays/state_update/state_update_0875.c",
+    "resource_3a1:02000504": {
+      "name": "leaf_0784",
+      "source": "unidentified/overlays/units/overlay_3a1.c"
+    },
+    "resource_397:02000200": {
+      "name": "state_update_0875",
+      "source": "unidentified/overlays/units/overlay_397.c"
+    },
     "resource_385:020006b4": "unidentified/overlays/state_update/state_update_0876.c",
     "resource_3c4:020023a0": "unidentified/overlays/state_update/state_update_0877.c",
     "resource_383:02000400": "unidentified/overlays/leaf/leaf_0785.c",
@@ -4377,28 +5391,46 @@
     "resource_3c0:020003a0": "unidentified/overlays/leaf_modules/unnamed_run_138.c",
     "resource_3a8:02000180": "unidentified/overlays/state_update/state_update_0879.c",
     "resource_39f:02000a4c": "unidentified/overlays/state_update/state_update_0880.c",
-    "resource_3c7:0200048c": "unidentified/overlays/state_update/state_update_0881.c",
+    "resource_3c7:0200048c": {
+      "name": "state_update_0881",
+      "source": "unidentified/overlays/units/overlay_3c7.c"
+    },
     "resource_380:02000a64": "unidentified/overlays/call_sequence/call_sequence_0023.c",
     "resource_3b4:020009f0": {
       "name": "select_overlay_data_by_runtime_selector",
       "source": "unidentified/overlays/state_update/state_update_0882.c"
     },
-    "resource_384:02000110": "unidentified/overlays/leaf/leaf_0789.c",
-    "resource_3cd:0200071c": "unidentified/overlays/state_update/state_update_0883.c",
+    "resource_384:02000110": {
+      "name": "leaf_0789",
+      "source": "unidentified/overlays/units/overlay_384.c"
+    },
+    "resource_3cd:0200071c": {
+      "name": "state_update_0883",
+      "source": "unidentified/overlays/units/overlay_3cd.c"
+    },
     "resource_378:02000070": "unidentified/overlays/state_update/state_update_0884.c",
     "resource_3c8:02001628": "unidentified/overlays/leaf/leaf_0790.c",
     "resource_3ab:02000048": "unidentified/overlays/state_update/state_update_0885.c",
     "resource_376:020002bc": "unidentified/overlays/state_update/state_update_0886.c",
     "resource_3b0:020001f0": "unidentified/overlays/leaf/leaf_0791.c",
     "resource_374:020000b8": "unidentified/overlays/leaf/leaf_0792.c",
-    "resource_392:020009f0": "unidentified/overlays/leaf_modules/unnamed_run_173.c",
+    "resource_392:020009f0": {
+      "name": "unnamed_run_173",
+      "source": "unidentified/overlays/units/overlay_392.c"
+    },
     "resource_39a:0200025c": "unidentified/overlays/leaf/leaf_0794.c",
     "resource_3a7:02000b54": "unidentified/overlays/state_update/state_update_0887.c",
-    "resource_3cd:02000038": "overlays/shared/get_default_result.c",
+    "resource_3cd:02000038": {
+      "name": "get_default_result",
+      "source": "unidentified/overlays/units/overlay_3cd.c"
+    },
     "resource_3a7:02001544": "unidentified/overlays/state_update/state_update_0889.c",
     "resource_3c8:02000f1c": "unidentified/overlays/leaf/leaf_0795.c",
     "resource_3bd:02000b18": "unidentified/overlays/leaf_modules/unnamed_run_046.c",
-    "resource_382:02000b98": "overlays/actor_presentation/run_actor_eighteen_followup_scene_setup.c",
+    "resource_382:02000b98": {
+      "name": "ActorPresentation_RunActorEighteenFollowupSceneSetup",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_3a6:02000cc0": "unidentified/overlays/leaf/leaf_0797.c",
     "resource_3a8:02001e6c": "unidentified/overlays/leaf/leaf_0798.c",
     "resource_3ae:02000af8": "unidentified/overlays/state_update/state_update_0891.c",
@@ -4409,7 +5441,10 @@
     "resource_3b4:02001d64": "unidentified/overlays/leaf/leaf_0802.c",
     "resource_376:0200035c": "unidentified/overlays/leaf_modules/unnamed_run_072.c",
     "resource_383:02002ba0": "unidentified/overlays/state_update/state_update_0893.c",
-    "resource_388:02000038": "unidentified/overlays/state_update/state_update_0894.c",
+    "resource_388:02000038": {
+      "name": "state_update_0894",
+      "source": "unidentified/overlays/units/overlay_388.c"
+    },
     "resource_39a:020012cc": "overlays/dialogue_layout/configure_group_three.c",
     "resource_3b1:02005780": "unidentified/overlays/state_update/state_update_0896.c",
     "resource_3c3:02000040": "unidentified/overlays/state_modules/unnamed_run_017.c",
@@ -4418,9 +5453,15 @@
       "name": "select_overlay_data_by_runtime_selector",
       "source": "unidentified/overlays/state_update/state_update_0899.c"
     },
-    "resource_3cc:02000038": "unidentified/overlays/state_update/state_update_0900.c",
+    "resource_3cc:02000038": {
+      "name": "state_update_0900",
+      "source": "unidentified/overlays/units/overlay_3cc.c"
+    },
     "resource_385:02000498": "unidentified/overlays/leaf/leaf_0804.c",
-    "resource_393:02000c8c": "unidentified/overlays/state_modules/unnamed_run_111.c",
+    "resource_393:02000c8c": {
+      "name": "unnamed_run_111",
+      "source": "unidentified/overlays/units/overlay_393.c"
+    },
     "resource_3a7:02001740": "unidentified/overlays/state_update/state_update_0902.c",
     "resource_3bd:02000d48": "unidentified/overlays/leaf/leaf_0805.c",
     "resource_378:020034f0": "unidentified/overlays/leaf/leaf_0806.c",
@@ -4431,7 +5472,10 @@
     "resource_3b4:02000f34": "unidentified/overlays/leaf/leaf_0809.c",
     "resource_3b7:02000154": "unidentified/overlays/leaf_modules/unnamed_run_100.c",
     "resource_3af:02001d0c": "unidentified/overlays/state_update/state_update_0904.c",
-    "resource_370:02000038": "overlays/shared/get_default_result.c",
+    "resource_370:02000038": {
+      "name": "get_default_result",
+      "source": "unidentified/overlays/units/overlay_370.c"
+    },
     "resource_374:02000090": "overlays/shared/get_tertiary_default_result.c",
     "resource_39b:02000fac": "unidentified/overlays/leaf_modules/unnamed_run_159.c",
     "resource_377:020015bc": "unidentified/overlays/state_update/state_update_0907.c",
@@ -4439,16 +5483,25 @@
     "resource_39a:02000d38": "unidentified/overlays/leaf/leaf_0812.c",
     "resource_3b7:02000044": "unidentified/overlays/leaf_modules/unnamed_run_099.c",
     "resource_398:02000094": "overlays/shared/get_followup_default_result.c",
-    "resource_38f:02000694": "unidentified/overlays/state_update/state_update_0910.c",
+    "resource_38f:02000694": {
+      "name": "state_update_0910",
+      "source": "unidentified/overlays/units/overlay_38f.c"
+    },
     "resource_3c9:020020dc": "unidentified/overlays/leaf/leaf_0814.c",
     "resource_3c5:020000c4": "unidentified/overlays/state_update/state_update_0911.c",
-    "resource_37d:02000030": "unidentified/overlays/leaf/leaf_0815.c",
+    "resource_37d:02000030": {
+      "name": "leaf_0815",
+      "source": "unidentified/overlays/units/overlay_37d.c"
+    },
     "resource_381:02000030": "unidentified/overlays/state_update/state_update_0912.c",
     "resource_3c0:02000814": "unidentified/overlays/leaf_modules/unnamed_run_140.c",
     "resource_3bd:02000f94": "unidentified/overlays/state_modules/unnamed_run_086.c",
     "resource_3a3:02000070": "overlays/shared/get_secondary_default_result.c",
     "resource_3a4:02000a64": "unidentified/overlays/leaf/leaf_0818.c",
-    "resource_393:02000ba4": "unidentified/overlays/state_update/state_update_0914.c",
+    "resource_393:02000ba4": {
+      "name": "SubmitResource393ObjectPosition",
+      "source": "unidentified/overlays/units/overlay_393.c"
+    },
     "resource_381:02000f30": "unidentified/overlays/leaf/leaf_0819.c",
     "resource_3b8:020000c8": "unidentified/overlays/state_update/state_update_0915.c",
     "resource_3c8:02004030": "unidentified/overlays/state_update/state_update_0916.c",
@@ -4459,16 +5512,31 @@
     "resource_3c4:02002370": "unidentified/overlays/leaf/leaf_0820.c",
     "resource_375:02001a2c": "unidentified/overlays/leaf/leaf_0821.c",
     "resource_39f:02001328": "unidentified/overlays/state_update/state_update_0919.c",
-    "resource_3ac:020003dc": "unidentified/overlays/state_update/state_update_0920.c",
+    "resource_3ac:020003dc": {
+      "name": "state_update_0920",
+      "source": "unidentified/overlays/units/overlay_3ac.c"
+    },
     "resource_3b4:02001e74": "unidentified/overlays/leaf/leaf_0822.c",
-    "resource_38a:02000048": "unidentified/overlays/state_update/state_update_0921.c",
+    "resource_38a:02000048": {
+      "name": "PrepareOverlayObject",
+      "source": "unidentified/overlays/units/overlay_38a.c"
+    },
     "resource_3b5:020002d4": "unidentified/overlays/leaf_modules/unnamed_run_135.c",
-    "resource_386:02000030": "unidentified/overlays/state_update/state_update_0922.c",
-    "resource_37c:02000030": "unidentified/overlays/leaf/leaf_0824.c",
+    "resource_386:02000030": {
+      "name": "Resource386_CheckWindow",
+      "source": "unidentified/overlays/units/overlay_386.c"
+    },
+    "resource_37c:02000030": {
+      "name": "leaf_0824",
+      "source": "overlays/state_update/overlay_37c.c"
+    },
     "resource_387:020004d4": "unidentified/overlays/leaf_modules/unnamed_run_154.c",
     "resource_3ba:0200384c": "unidentified/overlays/state_update/state_update_0923.c",
     "resource_383:020002c0": "unidentified/overlays/leaf/leaf_0826.c",
-    "resource_3ce:020010a8": "overlays/command_table/configure_command_list.c",
+    "resource_3ce:020010a8": {
+      "name": "CommandTable_ConfigureCommandList",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
     "resource_3bd:02000d90": "unidentified/overlays/state_modules/unnamed_run_085.c",
     "resource_3a7:02000398": "unidentified/overlays/state_update/state_update_0925.c",
     "resource_3bb:0200003c": "unidentified/overlays/state_update/state_update_0926.c",
@@ -4481,7 +5549,10 @@
     "resource_39a:0200034c": "unidentified/overlays/leaf/leaf_0827.c",
     "resource_377:0200031c": "unidentified/overlays/leaf/leaf_0828.c",
     "resource_39c:020051f0": "unidentified/overlays/state_update/state_update_0930.c",
-    "resource_382:020009d0": "unidentified/overlays/leaf/leaf_0829.c",
+    "resource_382:020009d0": {
+      "name": "leaf_0829",
+      "source": "unidentified/overlays/units/overlay_382.c"
+    },
     "resource_39a:02000ca8": "unidentified/overlays/leaf/leaf_0830.c",
     "resource_3b4:02001a9c": "unidentified/overlays/state_update/state_update_0932.c",
     "resource_3b9:02001c6c": "unidentified/overlays/state_update/state_update_0933.c",
@@ -4492,8 +5563,14 @@
     "resource_3af:02003558": "unidentified/overlays/state_update/state_update_0934.c",
     "resource_3ab:020008cc": "unidentified/overlays/leaf/leaf_0832.c",
     "resource_383:02000a14": "unidentified/overlays/leaf/leaf_0833.c",
-    "resource_3cb:02001228": "unidentified/overlays/wrapper/wrapper_0024.c",
-    "resource_38f:020025d8": "unidentified/overlays/state_update/state_update_0935.c",
+    "resource_3cb:02001228": {
+      "name": "wrapper_0024",
+      "source": "unidentified/overlays/units/overlay_3cb.c"
+    },
+    "resource_38f:020025d8": {
+      "name": "state_update_0935",
+      "source": "unidentified/overlays/units/overlay_38f.c"
+    },
     "resource_377:020003a8": "unidentified/overlays/leaf/leaf_0834.c",
     "resource_377:020017a8": "unidentified/overlays/leaf/leaf_0835.c",
     "resource_3b4:02001ca0": "unidentified/overlays/state_update/state_update_0936.c",
@@ -4505,7 +5582,10 @@
     "resource_3af:020035ec": "unidentified/overlays/state_update/state_update_0939.c",
     "resource_373:0200345c": "unidentified/overlays/state_update/state_update_0940.c",
     "resource_3a5:02000324": "unidentified/overlays/state_update/state_update_0941.c",
-    "resource_3a1:02000104": "unidentified/overlays/state_update/state_update_0942.c",
+    "resource_3a1:02000104": {
+      "name": "state_update_0942",
+      "source": "unidentified/overlays/units/overlay_3a1.c"
+    },
     "resource_3bd:02000f6c": "unidentified/overlays/state_modules/unnamed_run_086.c",
     "resource_36f:02000030": "overlays/scene_event_runtime/unnamed_variant.c",
     "resource_391:020000c4": "unidentified/overlays/state_update/state_update_0944.c",
@@ -4520,13 +5600,25 @@
     "resource_375:02000094": "unidentified/overlays/leaf_modules/unnamed_run_155.c",
     "resource_38b:020002a8": "unidentified/overlays/leaf/leaf_0846.c",
     "resource_3af:02003284": "unidentified/overlays/state_update/state_update_0947.c",
-    "resource_3a1:02000598": "unidentified/overlays/state_update/state_update_0948.c",
+    "resource_3a1:02000598": {
+      "name": "state_update_0948",
+      "source": "unidentified/overlays/units/overlay_3a1.c"
+    },
     "resource_396:020004f0": "unidentified/overlays/leaf_modules/unnamed_run_108.c",
-    "resource_384:02000044": "unidentified/overlays/leaf/leaf_0848.c",
-    "resource_394:02000030": "unidentified/overlays/leaf/leaf_0849.c",
+    "resource_384:02000044": {
+      "name": "leaf_0848",
+      "source": "unidentified/overlays/units/overlay_384.c"
+    },
+    "resource_394:02000030": {
+      "name": "leaf_0849",
+      "source": "unidentified/overlays/units/overlay_394.c"
+    },
     "resource_39c:02000048": "unidentified/overlays/state_update/state_update_0949.c",
     "resource_3a8:02000394": "unidentified/overlays/state_update/state_update_0950.c",
-    "resource_3a9:0200033c": "unidentified/overlays/state_update/state_update_0951.c",
+    "resource_3a9:0200033c": {
+      "name": "state_update_0951",
+      "source": "unidentified/overlays/units/overlay_3a9.c"
+    },
     "resource_377:020015e8": "unidentified/overlays/state_update/state_update_0952.c",
     "resource_39f:02000ae8": {
       "name": "spawn_configured_effect",
@@ -4545,12 +5637,21 @@
     "resource_3c5:02001214": "unidentified/overlays/leaf_modules/unnamed_run_013.c",
     "resource_383:02000af4": "unidentified/overlays/leaf/leaf_0852.c",
     "resource_3a7:02001554": "unidentified/overlays/state_update/state_update_0957.c",
-    "resource_394:0200008c": "unidentified/overlays/leaf/leaf_0853.c",
+    "resource_394:0200008c": {
+      "name": "leaf_0853",
+      "source": "unidentified/overlays/units/overlay_394.c"
+    },
     "resource_37b:02000fe4": "unidentified/overlays/state_update/state_update_0958.c",
-    "resource_386:02000074": "unidentified/overlays/state_update/state_update_0959.c",
+    "resource_386:02000074": {
+      "name": "state_update_0959",
+      "source": "unidentified/overlays/units/overlay_386.c"
+    },
     "resource_3b1:020014b0": "unidentified/overlays/leaf/leaf_0854.c",
     "resource_39a:02000568": "unidentified/overlays/state_update/state_update_0960.c",
-    "resource_38f:020001dc": "unidentified/overlays/state_update/state_update_0961.c",
+    "resource_38f:020001dc": {
+      "name": "state_update_0961",
+      "source": "unidentified/overlays/units/overlay_38f.c"
+    },
     "resource_39e:02000484": {
       "name": "FieldScene_RunFlag88FBranch",
       "source": "map/locations/xian/run_flag_88f_scene_branch.c"
@@ -4569,7 +5670,10 @@
     "resource_3a7:02000640": "unidentified/overlays/state_update/state_update_0968.c",
     "resource_3a7:02001750": "unidentified/overlays/state_update/state_update_0969.c",
     "resource_3bd:02000d58": "unidentified/overlays/state_modules/unnamed_run_085.c",
-    "resource_38f:02000284": "unidentified/overlays/leaf_modules/unnamed_run_104.c",
+    "resource_38f:02000284": {
+      "name": "unnamed_run_104",
+      "source": "unidentified/overlays/units/overlay_38f.c"
+    },
     "resource_39b:02000d58": "unidentified/overlays/state_update/state_update_0971.c",
     "resource_372:020001f8": "unidentified/overlays/leaf/leaf_0859.c",
     "resource_39e:02000adc": {
@@ -4582,25 +5686,40 @@
     "resource_39b:02000eac": "unidentified/overlays/leaf_modules/unnamed_run_158.c",
     "resource_381:02003000": "unidentified/overlays/leaf/leaf_0863.c",
     "resource_3b7:02000e44": "unidentified/overlays/state_update/state_update_0975.c",
-    "resource_393:020009f0": "unidentified/overlays/leaf_modules/unnamed_run_109.c",
+    "resource_393:020009f0": {
+      "name": "MapStagedScene_SelectTertiaryData",
+      "source": "unidentified/overlays/units/overlay_393.c"
+    },
     "resource_383:02004658": "unidentified/overlays/leaf/leaf_0865.c",
     "resource_3a5:020000a0": {
       "name": "create_configured_overlay_object",
       "source": "unidentified/overlays/state_update/state_update_0976.c"
     },
     "resource_37b:020015a4": "unidentified/overlays/leaf_modules/unnamed_run_126.c",
-    "resource_394:02000be4": "unidentified/overlays/state_update/state_update_0977.c",
+    "resource_394:02000be4": {
+      "name": "state_update_0977",
+      "source": "unidentified/overlays/units/overlay_394.c"
+    },
     "resource_3ca:020003f8": "unidentified/overlays/state_update/state_update_0978.c",
     "resource_3a4:02000030": "unidentified/overlays/leaf/leaf_0867.c",
-    "resource_3ce:020001d8": "unidentified/overlays/leaf/leaf_0868.c",
+    "resource_3ce:020001d8": {
+      "name": "leaf_0868",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
     "resource_3bd:02000eac": "unidentified/overlays/state_update/state_update_0979.c",
     "resource_3ad:020012ac": "unidentified/overlays/wrapper/wrapper_0025.c",
     "resource_389:02000b5c": "unidentified/overlays/leaf_modules/unnamed_run_092.c",
     "resource_39a:020004bc": "unidentified/overlays/leaf/leaf_0870.c",
     "resource_3c4:02001a98": "unidentified/overlays/state_update/state_update_0980.c",
     "resource_39a:02000768": "unidentified/overlays/call_sequence/call_sequence_0028.c",
-    "resource_3a9:02000308": "unidentified/overlays/state_update/state_update_0981.c",
-    "resource_38a:02000348": "unidentified/overlays/leaf_modules/unnamed_run_166.c",
+    "resource_3a9:02000308": {
+      "name": "state_update_0981",
+      "source": "unidentified/overlays/units/overlay_3a9.c"
+    },
+    "resource_38a:02000348": {
+      "name": "unnamed_run_166",
+      "source": "unidentified/overlays/units/overlay_38a.c"
+    },
     "resource_373:020055c0": "unidentified/overlays/leaf/leaf_0872.c",
     "resource_3c4:02001510": "unidentified/overlays/state_update/state_update_0982.c",
     "resource_3b4:02000474": {
@@ -4611,8 +5730,8 @@
     "resource_3c4:02002330": "unidentified/overlays/leaf/leaf_0873.c",
     "resource_391:02000c14": "unidentified/overlays/state_update/state_update_0985.c",
     "resource_392:02000474": {
-      "name": "find_clear_actor_position",
-      "source": "unidentified/overlays/state_update/state_update_0986.c"
+      "name": "FindClearActorPosition",
+      "source": "unidentified/overlays/units/overlay_392.c"
     },
     "resource_39f:02001880": "unidentified/overlays/state_update/state_update_0987.c",
     "resource_3ba:020001a8": "unidentified/overlays/state_update/state_update_0988.c",
@@ -4621,12 +5740,18 @@
     "resource_3c4:02001fc4": "unidentified/overlays/leaf/leaf_0875.c",
     "resource_3ba:02002bac": "unidentified/overlays/state_update/state_update_0990.c",
     "resource_3b5:02000170": "unidentified/overlays/state_update/state_update_0991.c",
-    "resource_3c2:02000a54": "unidentified/overlays/leaf/leaf_0876.c",
+    "resource_3c2:02000a54": {
+      "name": "leaf_0876",
+      "source": "unidentified/overlays/units/overlay_3c2.c"
+    },
     "resource_375:02000090": "overlays/shared/get_tertiary_default_result.c",
     "resource_3ba:020030ac": "unidentified/overlays/state_update/state_update_0993.c",
     "resource_376:020000cc": "unidentified/overlays/leaf_modules/unnamed_run_069.c",
     "resource_3bb:02003238": "unidentified/overlays/state_update/state_update_0994.c",
-    "resource_3cb:02000038": "overlays/shared/get_default_result.c",
+    "resource_3cb:02000038": {
+      "name": "get_default_result",
+      "source": "unidentified/overlays/units/overlay_3cb.c"
+    },
     "resource_383:02000040": "unidentified/overlays/state_modules/unnamed_run_064.c",
     "resource_3c8:02000f38": "unidentified/overlays/state_update/state_update_0997.c",
     "resource_37b:02001a24": "unidentified/overlays/leaf/leaf_0878.c",
@@ -4634,28 +5759,52 @@
     "resource_3c4:02000df4": "unidentified/overlays/state_update/state_update_0998.c",
     "resource_39c:020051b0": "unidentified/overlays/state_update/state_update_0999.c",
     "resource_39a:02000e0c": "unidentified/overlays/leaf/leaf_0880.c",
-    "resource_3c2:02000040": "unidentified/overlays/leaf_modules/unnamed_run_062.c",
+    "resource_3c2:02000040": {
+      "name": "unnamed_run_062",
+      "source": "unidentified/overlays/units/overlay_3c2.c"
+    },
     "resource_3b4:020012d4": "unidentified/overlays/leaf_modules/unnamed_run_049.c",
-    "resource_38c:02000038": "unidentified/overlays/state_update/state_update_1000.c",
+    "resource_38c:02000038": {
+      "name": "state_update_1000",
+      "source": "unidentified/overlays/units/overlay_38c.c"
+    },
     "resource_39c:02000e80": "unidentified/overlays/state_update/state_update_1001.c",
     "resource_381:02002ff0": "unidentified/overlays/leaf/leaf_0883.c",
     "resource_3c4:020016f4": "unidentified/overlays/leaf/leaf_0884.c",
     "resource_39a:0200170c": "unidentified/overlays/state_update/state_update_1002.c",
     "resource_378:02000574": "unidentified/overlays/state_update/state_update_1003.c",
-    "resource_3ce:02000038": "overlays/shared/get_default_result.c",
+    "resource_3ce:02000038": {
+      "name": "get_default_result",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
     "resource_3c4:020019e4": "unidentified/overlays/state_update/state_update_1006.c",
     "resource_3ba:02001a28": "unidentified/overlays/state_update/state_update_1007.c",
-    "resource_3cb:020011bc": "unidentified/overlays/wrapper/wrapper_0026.c",
+    "resource_3cb:020011bc": {
+      "name": "wrapper_0026",
+      "source": "unidentified/overlays/units/overlay_3cb.c"
+    },
     "resource_378:02000064": "unidentified/overlays/leaf/leaf_0885.c",
     "resource_3b5:02000954": "unidentified/overlays/leaf/leaf_0886.c",
     "resource_3a3:020003d4": "unidentified/overlays/call_sequence/call_sequence_0029.c",
-    "resource_386:020004a0": "unidentified/overlays/leaf_modules/unnamed_run_096.c",
-    "resource_386:020004e4": "unidentified/overlays/state_update/state_update_1008.c",
+    "resource_386:020004a0": {
+      "name": "unnamed_run_096",
+      "source": "unidentified/overlays/units/overlay_386.c"
+    },
+    "resource_386:020004e4": {
+      "name": "state_update_1008",
+      "source": "unidentified/overlays/units/overlay_386.c"
+    },
     "resource_37f:02000200": "unidentified/overlays/state_update/state_update_1009.c",
     "resource_3af:02003380": "unidentified/overlays/state_update/state_update_1010.c",
-    "resource_397:02000054": "unidentified/overlays/leaf/leaf_0888.c",
+    "resource_397:02000054": {
+      "name": "leaf_0888",
+      "source": "unidentified/overlays/units/overlay_397.c"
+    },
     "resource_3b8:02000348": "unidentified/overlays/state_update/state_update_1011.c",
-    "resource_384:02000140": "unidentified/overlays/leaf/leaf_0889.c",
+    "resource_384:02000140": {
+      "name": "leaf_0889",
+      "source": "unidentified/overlays/units/overlay_384.c"
+    },
     "resource_3ae:02000094": "overlays/shared/get_followup_default_result.c",
     "resource_373:02005600": "unidentified/overlays/leaf/leaf_0891.c",
     "resource_39c:02000f08": "unidentified/overlays/leaf/leaf_0892.c",
@@ -4665,12 +5814,15 @@
     "resource_39b:02000fb8": "unidentified/overlays/leaf_modules/unnamed_run_159.c",
     "resource_382:02000cc4": {
       "name": "RunSceneStep",
-      "source": "overlays/scene/run_scene_step.c"
+      "source": "unidentified/overlays/units/overlay_382.c"
     },
     "resource_3bb:020006ec": "unidentified/overlays/leaf_modules/unnamed_run_161.c",
     "resource_3a4:020006a0": "unidentified/overlays/state_update/state_update_1013.c",
     "resource_3c8:02001f28": "unidentified/overlays/state_update/state_update_1014.c",
-    "resource_3ac:0200003c": "unidentified/overlays/leaf_modules/unnamed_run_043.c",
+    "resource_3ac:0200003c": {
+      "name": "unnamed_run_043",
+      "source": "unidentified/overlays/units/overlay_3ac.c"
+    },
     "resource_38b:020002e8": "unidentified/overlays/leaf/leaf_0899.c",
     "resource_3b1:02000e14": "unidentified/overlays/state_update/state_update_1015.c",
     "resource_376:02000278": "unidentified/overlays/leaf_modules/unnamed_run_071.c",
@@ -4682,7 +5834,10 @@
     },
     "resource_375:020019e8": "unidentified/overlays/state_modules/unnamed_run_170.c",
     "resource_3a3:02000074": "unidentified/overlays/leaf/leaf_0901.c",
-    "resource_3ce:0200004c": "unidentified/overlays/leaf/leaf_0902.c",
+    "resource_3ce:0200004c": {
+      "name": "leaf_0902",
+      "source": "unidentified/overlays/units/overlay_3ce.c"
+    },
     "resource_383:020004f4": "unidentified/overlays/leaf/leaf_0903.c",
     "resource_385:02000640": "unidentified/overlays/state_update/state_update_1020.c",
     "resource_381:02002970": "unidentified/overlays/leaf_modules/unnamed_run_167.c",
@@ -4697,7 +5852,10 @@
     "resource_39a:02000fcc": "unidentified/overlays/state_update/state_update_1024.c",
     "resource_3c4:02001924": "unidentified/overlays/leaf/leaf_0910.c",
     "resource_391:02000a54": "unidentified/overlays/leaf_modules/unnamed_run_034.c",
-    "resource_397:020001b4": "unidentified/overlays/leaf/leaf_0912.c",
+    "resource_397:020001b4": {
+      "name": "leaf_0912",
+      "source": "unidentified/overlays/units/overlay_397.c"
+    },
     "resource_3c8:02000c5c": "unidentified/overlays/state_update/state_update_1025.c",
     "resource_3b3:02002498": "unidentified/overlays/state_update/state_update_1026.c",
     "resource_380:02004328": "unidentified/overlays/state_update/state_update_1027.c",
@@ -5126,7 +6284,7 @@
     },
     "resource_382:02000ef4": {
       "name": "PlaceActorAndSetSceneDelay",
-      "source": "overlays/actor_presentation/place_actor_and_set_scene_delay.c"
+      "source": "unidentified/overlays/units/overlay_382.c"
     },
     "resource_385:02000a80": {
       "name": "PlaceActorAndSetSceneDelay",
@@ -5180,7 +6338,7 @@
     },
     "resource_3c6:0200010c": {
       "name": "RunActorEighteenEventSetup",
-      "source": "overlays/actor_presentation/run_actor_eighteen_event_setup.c"
+      "source": "unidentified/overlays/units/overlay_3c6.c"
     },
     "resource_3b9:02000708": {
       "name": "RunEventScript01"
@@ -5193,7 +6351,7 @@
     },
     "resource_3ce:0200029c": {
       "name": "RunCallScript",
-      "source": "overlays/scene_primary_script/run_scene_3ce_call_script.c"
+      "source": "unidentified/overlays/units/overlay_3ce.c"
     },
     "resource_3be:02001158": {
       "name": "ActorPresentation_RunActorNineThresholdScene",
@@ -5217,11 +6375,11 @@
     },
     "resource_38c:020001a8": {
       "name": "ConfigureActorTwentyOneScene",
-      "source": "overlays/actor_presentation/configure_actor_twenty_one_scene.c"
+      "source": "unidentified/overlays/units/overlay_38c.c"
     },
     "resource_38c:02000430": {
       "name": "ConfigureActorTwentyThreeScene",
-      "source": "overlays/actor_presentation/configure_actor_twenty_three_scene.c"
+      "source": "unidentified/overlays/units/overlay_38c.c"
     },
     "resource_37b:020015d4": {
       "name": "ConfigureSceneAndCheckActors",
@@ -5249,11 +6407,11 @@
     },
     "resource_3c1:02000120": {
       "name": "ConfigureIndexedSceneEffect",
-      "source": "overlays/scene_effect_sequence/configure_indexed_scene_effect.c"
+      "source": "unidentified/overlays/units/overlay_3c1.c"
     },
     "resource_3c1:02000194": {
       "name": "ConfigureAlternateIndexedSceneEffect",
-      "source": "overlays/scene_effect_sequence/configure_alternate_indexed_scene_effect.c"
+      "source": "unidentified/overlays/units/overlay_3c1.c"
     },
     "resource_3b4:020011d8": {
       "name": "ConfigureAndPlaceActorTwelve",
@@ -5635,14 +6793,14 @@
     },
     "resource_3c7:02000508": {
       "name": "FieldScene_RunPrimaryScript",
-      "source": "overlays/scene_effect_sequence/run_primary_script.c"
+      "source": "unidentified/overlays/units/overlay_3c7.c"
     },
     "resource_3b7:02000e5c": {
       "name": "FieldScene_RunSecondaryScript"
     },
     "resource_3c2:02000240": {
       "name": "FieldScene_RunPrimaryScript",
-      "source": "overlays/scene_primary_script/run_scene_3c2_primary_script.c"
+      "source": "unidentified/overlays/units/overlay_3c2.c"
     },
     "resource_3a2:02000180": {
       "name": "FieldScene_RunPrimaryScript"
@@ -6107,7 +7265,7 @@
     },
     "resource_3c6:02001090": {
       "name": "FieldScene_RunScene3c6SequenceA",
-      "source": "overlays/scene_primary_script/run_scene_3c6_sequence_a.c"
+      "source": "unidentified/overlays/units/overlay_3c6.c"
     },
     "resource_383:02001ba0": {
       "name": "FieldScene_RunScene383SequenceB",
@@ -6205,19 +7363,19 @@
     },
     "resource_382:02000614": {
       "name": "FieldScene_RunScene382_02000614",
-      "source": "overlays/scene_primary_script/run_scene_382_02000614.c"
+      "source": "unidentified/overlays/units/overlay_382.c"
     },
     "resource_382:020008cc": {
       "name": "FieldScene_RunScene382_020008cc",
-      "source": "overlays/scene_primary_script/run_scene_382_020008cc.c"
+      "source": "unidentified/overlays/units/overlay_382.c"
     },
     "resource_382:02001238": {
       "name": "FieldScene_RunScene382_02001238",
-      "source": "overlays/scene_primary_script/run_scene_382_02001238.c"
+      "source": "unidentified/overlays/units/overlay_382.c"
     },
     "resource_382:020012c0": {
       "name": "FieldScene_RunScene382_020012c0",
-      "source": "overlays/scene_primary_script/run_scene_382_020012c0.c"
+      "source": "unidentified/overlays/units/overlay_382.c"
     },
     "resource_383:0200091c": {
       "name": "FieldScene_RunScene383_0200091c",
@@ -6233,11 +7391,11 @@
     },
     "resource_386:0200011c": {
       "name": "FieldScene_RunScene386_0200011c",
-      "source": "overlays/scene_primary_script/run_scene_386_0200011c.c"
+      "source": "unidentified/overlays/units/overlay_386.c"
     },
     "resource_386:02000204": {
       "name": "FieldScene_RunScene386_02000204",
-      "source": "overlays/scene_primary_script/run_scene_386_02000204.c"
+      "source": "unidentified/overlays/units/overlay_386.c"
     },
     "resource_389:0200115c": {
       "name": "FieldScene_RunScene389_0200115c",
@@ -6249,19 +7407,19 @@
     },
     "resource_38c:02000124": {
       "name": "FieldScene_RunScene38c_02000124",
-      "source": "overlays/scene_primary_script/run_scene_38c_02000124.c"
+      "source": "unidentified/overlays/units/overlay_38c.c"
     },
     "resource_38c:020001e0": {
       "name": "FieldScene_RunScene38c_020001e0",
-      "source": "overlays/scene_primary_script/run_scene_38c_020001e0.c"
+      "source": "unidentified/overlays/units/overlay_38c.c"
     },
     "resource_38c:02000250": {
       "name": "FieldScene_RunScene38c_02000250",
-      "source": "overlays/scene_primary_script/run_scene_38c_02000250.c"
+      "source": "unidentified/overlays/units/overlay_38c.c"
     },
     "resource_38c:0200035c": {
       "name": "FieldScene_RunScene38c_0200035c",
-      "source": "overlays/scene_primary_script/run_scene_38c_0200035c.c"
+      "source": "unidentified/overlays/units/overlay_38c.c"
     },
     "resource_38d:02000150": {
       "name": "FieldScene_RunScene38d_02000150",
@@ -6573,7 +7731,7 @@
     },
     "resource_3c6:02000078": {
       "name": "FieldScene_RunScene3c6_02000078",
-      "source": "overlays/scene_primary_script/run_scene_3c6_02000078.c"
+      "source": "unidentified/overlays/units/overlay_3c6.c"
     },
     "resource_3c9:02004b28": {
       "name": "FieldScene_RunScene3c9_02004b28",
@@ -6581,7 +7739,7 @@
     },
     "resource_3ce:02000244": {
       "name": "FieldScene_RunScene3ce_02000244",
-      "source": "overlays/scene_primary_script/run_scene_3ce_02000244.c"
+      "source": "unidentified/overlays/units/overlay_3ce.c"
     },
     "resource_371:020017fc": {
       "name": "FieldScene_RunScene371_020017fc",
@@ -6813,11 +7971,11 @@
     },
     "resource_3c6:020011bc": {
       "name": "FieldScene_RunScene3c6_020011bc",
-      "source": "overlays/scene_primary_script/run_scene_3c6_020011bc.c"
+      "source": "unidentified/overlays/units/overlay_3c6.c"
     },
     "resource_3cd:0200004c": {
       "name": "FieldScene_RunScene3cd_0200004c",
-      "source": "overlays/scene_primary_script/run_scene_3cd_0200004c.c"
+      "source": "unidentified/overlays/units/overlay_3cd.c"
     },
     "resource_371:020017a4": {
       "name": "FieldScene_RunScene371_020017a4",
@@ -6837,7 +7995,7 @@
     },
     "resource_38a:02000380": {
       "name": "FieldScene_RunScene38a_02000380",
-      "source": "overlays/scene_primary_script/run_scene_38a_02000380.c"
+      "source": "unidentified/overlays/units/overlay_38a.c"
     },
     "resource_39d:02002ddc": {
       "name": "FieldScene_RunScene39d_02002ddc",
@@ -6873,7 +8031,7 @@
     },
     "resource_38f:020002b4": {
       "name": "FieldScene_RunScene38f_020002b4",
-      "source": "overlays/scene_primary_script/run_scene_38f_020002b4.c"
+      "source": "unidentified/overlays/units/overlay_38f.c"
     },
     "resource_38b:02000584": {
       "name": "FieldScene_RunScene38b_02000584",
@@ -6884,8 +8042,8 @@
       "source": "overlays/scene_primary_script/run_scene_3b4_02002290.c"
     },
     "resource_38a:02000414": {
-      "name": "FieldScene_RunScene38a_02000414",
-      "source": "overlays/scene_primary_script/run_scene_38a_02000414.c"
+      "name": "EntryDriver_02000414",
+      "source": "unidentified/overlays/units/overlay_38a.c"
     },
     "resource_399:02000abc": {
       "name": "FieldScene_RunScene399_02000abc",
@@ -6933,11 +8091,11 @@
     },
     "resource_394:020008b0": {
       "name": "FieldScene_RunScene394_020008b0",
-      "source": "overlays/scene_primary_script/run_scene_394_020008b0.c"
+      "source": "unidentified/overlays/units/overlay_394.c"
     },
     "resource_3ce:02000b10": {
       "name": "FieldScene_RunScene3ce_02000b10",
-      "source": "overlays/scene_primary_script/run_scene_3ce_02000b10.c"
+      "source": "unidentified/overlays/units/overlay_3ce.c"
     },
     "resource_37f:0200092c": {
       "name": "FieldScene_RunScene37f_0200092c",

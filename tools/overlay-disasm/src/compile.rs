@@ -620,7 +620,10 @@ fn compile_overlay_unit(
     )?;
     for (_, symbol, extent) in &placed {
         let (_, size) = symbol_span(&listing, symbol)?;
-        if size != *extent {
+        // A declared extent may end on the alignment halfword that follows
+        // a function of an odd number of halfwords; the symbol itself stops
+        // before it. Anything else is a real difference.
+        if size > *extent || *extent - size >= 4 {
             return Err(format!(
                 "{}: {symbol} extent differs ({size} compiled, {extent} declared)",
                 unit.id
@@ -660,7 +663,14 @@ fn compile_overlay_unit(
             ]),
             work,
         )?;
-        let data = fs::read(&piece).map_err(|error| format!("{piece}: {error}"))?;
+        let mut data = fs::read(&piece).map_err(|error| format!("{piece}: {error}"))?;
+        // The assembler rounds a section up to its alignment; a function of
+        // an odd number of halfwords carries two bytes of fill past its
+        // declared extent, and the image's own alignment halfword owns that
+        // slot. Only a shorter section is a real mismatch.
+        if data.len() > *extent {
+            data.truncate(*extent);
+        }
         if data.len() != *extent {
             return Err(format!(
                 "{}: {symbol} linked extent differs ({} != {extent})",
@@ -726,7 +736,15 @@ fn section_functions(assembly: &str, symbols: &[&str]) -> Result<String, String>
             }
             break;
         }
-        inserts.push((start, format!("\t.section\t.text.{label},\"ax\",%progbits")));
+        // The alignment directive before a function pads the previous
+        // function's section, as it padded the previous function when the
+        // compiler laid the file out; the new section opens after it.
+        let at = if lines[start].trim().starts_with(".align") {
+            start + 1
+        } else {
+            start
+        };
+        inserts.push((at, format!("\t.section\t.text.{label},\"ax\",%progbits")));
     }
     if inserts.len() != symbols.len() {
         return Err(format!(

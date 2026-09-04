@@ -4863,6 +4863,28 @@
       "evidence": [
         "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
       ]
+    },
+    {
+      "overlay": "resource_3ba",
+      "start": "0x02003e1c",
+      "end": "0x02003e42",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "the audited-executable tail (38 bytes: bx r5 ... bx sp with nop padding, then bx lr) of the same 46-byte register-indexed interworking dispatch table registered 27 times elsewhere; its first two entries (bx r3; nop; bx r4; nop) lie in the 20-byte gap games/gs1/metrics/gs1-en-executable.json leaves unaudited between the preceding veneer block and this stretch, so only the audited bytes are claimed; byte-identical to the other instances from the third entry on (checksummed against the canonical ROM via `lifter score --diff`); no ordinary C construct emits a fixed enumerated dispatch over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_3bc",
+      "start": "0x02004bc4",
+      "end": "0x02004bea",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "the audited-executable tail (38 bytes: bx r5 ... bx sp with nop padding, then bx lr) of the same 46-byte register-indexed interworking dispatch table registered 27 times elsewhere; its first two entries (bx r3; nop; bx r4; nop) lie in the 20-byte gap games/gs1/metrics/gs1-en-executable.json leaves unaudited between the preceding veneer block and this stretch, so only the audited bytes are claimed; byte-identical to the other instances from the third entry on (checksummed against the canonical ROM via `lifter score --diff`); no ordinary C construct emits a fixed enumerated dispatch over every general-purpose register"
+      ]
     }
   ]
 }

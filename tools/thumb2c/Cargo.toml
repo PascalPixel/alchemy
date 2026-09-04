@@ -1,16 +1,16 @@
 [workspace]
 
 [package]
-name = "lifter"
+name = "thumb2c"
 version = "0.1.0"
 edition = "2021"
 
 [lib]
-name = "lifter"
+name = "thumb2c"
 path = "src/lib.rs"
 
 [[bin]]
-name = "lifter"
+name = "thumb2c"
 path = "src/main.rs"
 
 [dependencies]

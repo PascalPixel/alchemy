@@ -1,4 +1,9 @@
 //! Compiler routing; `routing_data` is the sole table source.
+//!
+//! A source routes to exactly one compiler family, and every member of a
+//! family compiles with that family's one flag set. There is no per-file
+//! flag: a function that is not exact under its family's flags is not exact,
+//! and stays retained assembly until an ordinary C spelling reproduces it.
 use crate::routing_data::*;
 use crate::source_paths::lower_hex;
 use std::path::{Path, PathBuf};
@@ -36,6 +41,18 @@ impl CompilerTarget {
             CompilerTarget::Gs2 => "gs2",
         }
     }
+}
+/// The compiler family a source belongs to. Membership is provenance (which
+/// compiler and library built the bytes), never a per-function tuning.
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum CompilerFamily {
+    /// Game code: the staged GCC 2.96 with the canonical flags.
+    Game,
+    /// The soft-float support leaves shipped prebuilt with the toolchain:
+    /// stock ABI (r4 callee-saved) and no interworking.
+    SoftFloatLibrary,
+    /// Library code built with agbcc.
+    Agbcc,
 }
 pub(crate) fn include_flag(target: CompilerTarget) -> String {
     format!(
@@ -76,85 +93,16 @@ pub fn agbcc_cflags() -> Vec<String> {
         .map(|s| (*s).to_string())
         .collect()
 }
+/// The soft-float library family: the canonical flags without interworking
+/// and with the stock r4 callee-saved ABI, uniformly for every member.
+pub fn soft_float_library_cflags() -> Vec<String> {
+    cflags()
+        .into_iter()
+        .filter(|f| f != "-mthumb-interwork" && f != "-fcall-used-r4")
+        .collect()
+}
 pub fn cflags_for_target(target: CompilerTarget) -> Vec<String> {
     base_cflags(target)
-}
-#[cfg(test)]
-mod target_tests {
-    use super::*;
-    #[test]
-    fn each_game_uses_its_own_include_tree() {
-        let gs1 = cflags_for_target(CompilerTarget::Gs1);
-        let gs2 = cflags_for_target(CompilerTarget::Gs2);
-        assert!(gs1.iter().any(|flag| flag.ends_with("/games/gs1/include")));
-        assert!(gs2.iter().any(|flag| flag.ends_with("/games/gs2/include")));
-        assert!(!gs2.iter().any(|flag| flag.ends_with("/games/gs1/include")));
-        assert!(!gs1
-            .iter()
-            .any(|flag| flag == "-mthumb-inline-register-call"));
-        assert!(gs2
-            .iter()
-            .any(|flag| flag == "-mthumb-inline-register-call"));
-    }
-    #[test]
-    fn grouped_runtime_candidates_use_canonical_flags() {
-        for owner in [
-            "080040e8.c",
-            "0800412c.c",
-            "08004144.c",
-            "08004198.c",
-            "080041d8.c",
-            "08004278.c",
-            "080042c8.c",
-            "0800430c.c",
-            "08004358.c",
-            "0800439c.c",
-            "080043e0.c",
-            "080060e8.c",
-        ] {
-            assert_eq!(
-                cflags_for_source(owner),
-                cflags(),
-                "unexpected override for {owner}"
-            );
-        }
-    }
-    #[test]
-    fn stop_music_track_keeps_r4_callee_saved() {
-        let flags = cflags_for_source("080f9ef8.c");
-        assert!(!flags.iter().any(|flag| flag == "-fcall-used-r4"));
-    }
-    #[test]
-    fn battle_effect_gcse_route_is_owner_scoped() {
-        for owner in ["080994d0.c", "0809abb4.c"] {
-            assert!(
-                cflags_for_source(owner)
-                    .iter()
-                    .any(|flag| flag == "-fno-gcse"),
-                "missing evidenced GCSE route for {owner}"
-            );
-        }
-        for owner in ["08098cd8.c", "080999f0.c", "0809ae64.c", "0809b698.c"] {
-            assert!(
-                !cflags_for_source(owner)
-                    .iter()
-                    .any(|flag| flag == "-fno-gcse"),
-                "battle-effect GCSE route leaked to {owner}"
-            );
-        }
-    }
-    #[test]
-    fn map_tile_block_expensive_route_is_owner_scoped() {
-        assert!(cflags_for_source("080114a0.c")
-            .iter()
-            .any(|flag| flag == "-fno-expensive-optimizations"));
-        assert!(
-            !cflags_for_source("080113e4.c")
-                .iter()
-                .any(|flag| flag == "-fno-expensive-optimizations"),
-            "map-tile route leaked to its canonical-flags sibling"
-        );
-    }
 }
 /// `basename(source, extname(source))` for POSIX paths.
 fn source_stem_ref(source: &str) -> &str {
@@ -175,7 +123,7 @@ fn is_hex8(value: &str) -> bool {
 /// verified as `<addr>.c` and the installed `<overlay>_c_<addr>.c` agree.
 fn overlay_stem(source: &str) -> &str {
     let stem = source_stem_ref(source);
-    if is_hex8(&stem) {
+    if is_hex8(stem) {
         return stem;
     }
     if let Some(index) = stem.rfind("_c_") {
@@ -189,143 +137,106 @@ fn overlay_stem(source: &str) -> &str {
 fn has(table: &'static [&'static str], value: &str) -> bool {
     table.contains(&value)
 }
-/// Overlay flags follow an owner across adopt/park path changes. Path-keyed
-/// matching would silently drop sanctioned flags after either move.
+/// Family membership follows an owner across adopt/park path changes.
 fn has_owner(table: &'static [&'static str], source: &str) -> bool {
     let stem = source_stem_ref(source);
     table.iter().any(|entry| source_stem_ref(entry) == stem)
 }
-/// Append order is load-bearing because later driver options win.
-pub fn cflags_for_source(source: &str) -> Vec<String> {
-    let stem = overlay_stem(source);
-    // Overrides must be evidenced stock GCC 2.96 options, never source disguises.
-    let mut out: Vec<String> =
-        if has(NO_INTERWORK_SOURCES, stem) || has_owner(NO_INTERWORK_OVERLAY_SOURCES, source) {
-            cflags()
-                .into_iter()
-                .filter(|f| f != "-mthumb-interwork")
-                .collect()
-        } else {
-            cflags()
-        };
-    // These soft-float leaves require the stock ABI with r4 callee-saved.
-    if has_owner(CALLEE_SAVED_R4_OVERLAY_SOURCES, source) || has(CALLEE_SAVED_R4_SOURCES, stem) {
-        out.retain(|f| f != "-fcall-used-r4");
-    }
-    for (matched, flag) in [
-        (has(FIXED_R3_SOURCES, stem), "-ffixed-r3"),
-        (has(OPTIMIZE_O1_SOURCES, stem), "-O1"),
-        (has(OPTIMIZE_OS_SOURCES, stem), "-Os"),
-        (has_owner(OPTIMIZE_O3_OVERLAY_SOURCES, source), "-O3"),
-        (has(UNSCHEDULED_SOURCES, stem), "-fno-schedule-insns"),
-        (has(UNSCHEDULED_SOURCES, stem), "-fno-schedule-insns2"),
-        (
-            has_owner(UNSCHEDULED_OVERLAY_SOURCES, source),
-            "-fno-schedule-insns2",
-        ),
-        (has(NO_CSE_FOLLOW_SOURCES, stem), "-fno-cse-follow-jumps"),
-        (
-            has(NO_RERUN_CSE_AFTER_LOOP_SOURCES, stem),
-            "-fno-rerun-cse-after-loop",
-        ),
-        (has(NO_GCSE_SOURCES, stem), "-fno-gcse"),
-        (has_owner(NO_GCSE_OVERLAY_SOURCES, source), "-fno-gcse"),
-        (
-            has(NO_EXPENSIVE_SOURCES, stem),
-            "-fno-expensive-optimizations",
-        ),
-        (
-            has(NO_STRENGTH_REDUCE_SOURCES, stem),
-            "-fno-strength-reduce",
-        ),
-        (has(NO_REGMOVE_SOURCES, stem), "-fno-regmove"),
-        (has_owner(OPTIMIZE_O1_OVERLAY_SOURCES, source), "-O1"),
-        (
-            has(NO_OPTIMIZE_SIBLING_CALLS_SOURCES, stem),
-            "-fno-optimize-sibling-calls",
-        ),
-        (has(SCHED2_OFF_THUMB_SOURCES, stem), "-fno-schedule-insns2"),
-        (
-            has_owner(NO_RERUN_CSE_AFTER_LOOP_OVERLAY_SOURCES, source),
-            "-fno-rerun-cse-after-loop",
-        ),
-        (
-            has_owner(NO_THREAD_JUMPS_OVERLAY_SOURCES, source),
-            "-fno-thread-jumps",
-        ),
-        (
-            has_owner(NO_EXPENSIVE_OVERLAY_SOURCES, source),
-            "-fno-expensive-optimizations",
-        ),
-        (
-            has_owner(NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES, source),
-            "-fno-cse-follow-jumps",
-        ),
-        (
-            has_owner(NO_CSE_FOLLOW_SKIP_OVERLAY_SOURCES, source),
-            "-fno-cse-skip-blocks",
-        ),
-        (
-            has_owner(NO_CSE_SKIP_BLOCKS_OVERLAY_SOURCES, source),
-            "-fno-cse-skip-blocks",
-        ),
-        (
-            has(NO_STRICT_ALIASING_SOURCES, stem),
-            "-fno-strict-aliasing",
-        ),
-        (
-            has_owner(NO_STRICT_ALIASING_OVERLAY_SOURCES, source),
-            "-fno-strict-aliasing",
-        ),
-        (has_owner(FIXED_R7_OVERLAY_SOURCES, source), "-ffixed-r7"),
-    ] {
-        if matched {
-            out.push(flag.to_string());
-        }
-    }
-    out
-}
-pub fn uses_agbcc_compiler(target: CompilerTarget, source: &str) -> bool {
+pub fn family_for_source(target: CompilerTarget, source: &str) -> CompilerFamily {
     let stem = source_stem_ref(source);
-    match target {
+    let agbcc = match target {
         CompilerTarget::Gs1 => has(AGBCC_SOURCES, stem),
         CompilerTarget::Gs2 => has(GS2_AGBCC_SOURCES, stem),
+    };
+    if agbcc {
+        return CompilerFamily::Agbcc;
+    }
+    if target == CompilerTarget::Gs1
+        && (has(SOFT_FLOAT_LIBRARY_SOURCES, overlay_stem(source))
+            || has_owner(SOFT_FLOAT_LIBRARY_OVERLAY_SOURCES, source))
+    {
+        return CompilerFamily::SoftFloatLibrary;
+    }
+    CompilerFamily::Game
+}
+pub fn cflags_for_source(source: &str) -> Vec<String> {
+    match family_for_source(CompilerTarget::Gs1, source) {
+        CompilerFamily::SoftFloatLibrary => soft_float_library_cflags(),
+        CompilerFamily::Agbcc => agbcc_cflags(),
+        CompilerFamily::Game => cflags(),
     }
 }
+pub fn uses_agbcc_compiler(target: CompilerTarget, source: &str) -> bool {
+    family_for_source(target, source) == CompilerFamily::Agbcc
+}
 pub fn cflags_for_target_source(target: CompilerTarget, source: &str) -> Vec<String> {
-    let stem = source_stem_ref(source);
-    if uses_agbcc_compiler(target, source) {
-        let mut out = agbcc_cflags();
-        let prologue = match target {
-            CompilerTarget::Gs1 => AGBCC_PROLOGUE_NEXT_HIGH_REG_SOURCES,
-            CompilerTarget::Gs2 => GS2_AGBCC_PROLOGUE_NEXT_HIGH_REG_SOURCES,
-        };
-        let narrow_r1 = match target {
-            CompilerTarget::Gs1 => AGBCC_TRACK_NARROW_VALUE_R1_SOURCES,
-            CompilerTarget::Gs2 => GS2_AGBCC_TRACK_NARROW_VALUE_R1_SOURCES,
-        };
-        for (table, flag) in [
-            (AGBCC_OPTIMIZE_O1_SOURCES, "-O1"),
-            (AGBCC_NO_EXPENSIVE_SOURCES, "-fno-expensive-optimizations"),
-            (AGBCC_NO_GCSE_SOURCES, "-fno-gcse"),
-            (AGBCC_NO_REGMOVE_SOURCES, "-fno-regmove"),
-            (AGBCC_LITERAL_BEFORE_SHIFT_SOURCES, "-mliteral-before-shift"),
-            (
-                AGBCC_COMMUTATIVE_COPY_CONSTANT_SOURCES,
-                "-mcommutative-copy-constant",
-            ),
-            (prologue, "-mprologue-next-high-reg"),
-            (narrow_r1, "-mtrack-narrow-value-r1"),
-            (AGBCC_COMPARE_ONLY_AND_TST_SOURCES, "-mcompare-only-and-tst"),
-        ] {
-            if has(table, stem) {
-                out.push(flag.to_string());
-            }
-        }
-        return out;
+    match (family_for_source(target, source), target) {
+        (CompilerFamily::Agbcc, _) => agbcc_cflags(),
+        (CompilerFamily::SoftFloatLibrary, _) => soft_float_library_cflags(),
+        (CompilerFamily::Game, CompilerTarget::Gs1) => cflags(),
+        (CompilerFamily::Game, CompilerTarget::Gs2) => base_cflags(CompilerTarget::Gs2),
     }
-    match target {
-        CompilerTarget::Gs1 => cflags_for_source(source),
-        CompilerTarget::Gs2 => base_cflags(CompilerTarget::Gs2),
+}
+#[cfg(test)]
+mod target_tests {
+    use super::*;
+    #[test]
+    fn each_game_uses_its_own_include_tree() {
+        let gs1 = cflags_for_target(CompilerTarget::Gs1);
+        let gs2 = cflags_for_target(CompilerTarget::Gs2);
+        assert!(gs1.iter().any(|flag| flag.ends_with("/games/gs1/include")));
+        assert!(gs2.iter().any(|flag| flag.ends_with("/games/gs2/include")));
+        assert!(!gs2.iter().any(|flag| flag.ends_with("/games/gs1/include")));
+        assert!(!gs1
+            .iter()
+            .any(|flag| flag == "-mthumb-inline-register-call"));
+        assert!(gs2
+            .iter()
+            .any(|flag| flag == "-mthumb-inline-register-call"));
+    }
+    #[test]
+    fn game_code_always_compiles_with_the_canonical_flags() {
+        for owner in [
+            "080040e8.c",
+            "080f9ef8.c",
+            "080994d0.c",
+            "080114a0.c",
+            "0800307c.c",
+            "games/gs1/src/resource_3ab_c_020007f4.c",
+            "games/gs1/src/resource_381_c_02002e0c.c",
+        ] {
+            assert_eq!(
+                cflags_for_source(owner),
+                cflags(),
+                "per-file override for {owner}"
+            );
+        }
+    }
+    #[test]
+    fn soft_float_library_family_is_uniform() {
+        for owner in [
+            "0200142c.c",
+            "games/gs1/src/resource_3a7_c_02001544.c",
+            "games/gs1/src/resource_3bf_c_02005ae0.c",
+            "games/gs1/src/resource_3a7_c_0200145c.c",
+        ] {
+            let flags = cflags_for_source(owner);
+            assert!(!flags.iter().any(|flag| flag == "-mthumb-interwork"));
+            assert!(!flags.iter().any(|flag| flag == "-fcall-used-r4"));
+            assert!(flags.iter().any(|flag| flag == "-O2"));
+        }
+    }
+    #[test]
+    fn agbcc_family_has_one_flag_set() {
+        for owner in ["080fb670.c", "08006878.c", "080fa514.c"] {
+            assert_eq!(
+                cflags_for_target_source(CompilerTarget::Gs1, owner),
+                agbcc_cflags()
+            );
+        }
+        assert_eq!(
+            cflags_for_target_source(CompilerTarget::Gs2, "081c2168.c"),
+            agbcc_cflags()
+        );
     }
 }

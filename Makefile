@@ -19,7 +19,7 @@ OVERLAY := $(CARGO_RUN) $(TOOLS)/overlay/Cargo.toml --
 
 HOSTS := build-assets build-stage assets compiler overlay check
 CORE_TESTS := compiler-core candidate-compiler candidate-show permuter \
-		overlay-disasm overlay-adopt build-full lifter \
+		overlay-disasm overlay-adopt build-full thumb2c \
               extract-resource coverage-map check-publication
 PORTABLE_TOOLS := alignment-tail asset-paths cache-entry canonical-json \
 	generated-files no-asm-c build-stage build-claimed build-asm build-full \
@@ -27,7 +27,7 @@ PORTABLE_TOOLS := alignment-tail asset-paths cache-entry canonical-json \
 	dashboard-server overlay overlay-disasm overlay-show \
 	overlay-adopt overlay-call-targets check check-commit-progress \
 	check-publication check-unmatchable core-retained-audit coverage-map \
-	full-c-progress integrate-matches decomp-targets weyard-font shape-search unit-scaffold allocator-lens lifter
+	full-c-progress integrate-matches decomp-targets weyard-font shape-search unit-scaffold allocator-lens thumb2c
 # The maintainer-owned ceiling covers the portable Rust, TypeScript,
 # JavaScript, and CSS beside the decompilation. Contributors pare
 # machinery; they do not raise it.
@@ -36,6 +36,7 @@ PORTABLE_TOOLS := alignment-tail asset-paths cache-entry canonical-json \
 # 50,000 set by Pascal's decision, 2026-08-30.
 TOOLING_LINE_LIMIT := 50000
 TARGET ?= gs1-en
+TARGET_GAME := $(firstword $(subst -, ,$(TARGET)))
 FULL_REPORT = out/$(TARGET)/full/rebuilt.json
 FULL_ROM = out/$(TARGET)/full/rebuilt.gba
 OWNER_INVENTORY = out/$(TARGET)/full/rebuilt.owner-inventory.json
@@ -365,6 +366,29 @@ tooling-index-check:
 	diff -u "$$actual" "$$indexed"; \
 	printf 'tooling index ok: %s tools\n' "$$(wc -l < "$$actual" | tr -d ' ')"
 
+# The registers are session state that a bare `git checkout -- <file>` can
+# silently reset to the last commit, orphaning every source adopted since.
+# `make verified-restore` puts games/<target> back to the last verified tree
+# instead; `register-shrink-check` refuses a verify whose owner register has
+# fewer entries than that tree unless RETIRE=1 says the shrink is deliberate.
+verified-restore:
+	@set -eu; tree=$$(cat $(VERIFIED_TREE)); \
+	git cat-file -e "$$tree" || { printf 'no verified tree object: %s\n' "$$tree"; exit 1; }; \
+	git checkout "$$tree" -- games/$(TARGET_GAME); \
+	git diff --cached --name-status "$$tree" -- games/$(TARGET_GAME) | awk '$$1=="A"{print $$2}' | xargs -r git rm -q -f --cached; \
+	git diff --name-status "$$tree" -- games/$(TARGET_GAME) | awk '$$1=="A"{print $$2}' | xargs -r rm -f; \
+	printf 'games/%s restored to verified tree %s\n' '$(TARGET_GAME)' "$$tree"
+
+register-shrink-check:
+	@set -eu; test -s $(VERIFIED_TREE) || { printf 'register shrink check: no verified tree yet\n'; exit 0; }; \
+	tree=$$(cat $(VERIFIED_TREE)); \
+	git cat-file -e "$$tree:games/$(TARGET_GAME)/source-paths.json" 2>/dev/null || { printf 'register shrink check: previous tree lacks the register\n'; exit 0; }; \
+	before=$$(git cat-file -p "$$tree:games/$(TARGET_GAME)/source-paths.json" | grep -c '^    "'); \
+	after=$$(git show :games/$(TARGET_GAME)/source-paths.json | grep -c '^    "'); \
+	if [ "$$after" -lt "$$before" ] && [ "$${RETIRE:-0}" != "1" ]; then \
+		printf 'owner register shrank from %s to %s entries since verified tree %s; a retirement must say RETIRE=1, anything else is a wipe\n' "$$before" "$$after" "$$tree"; exit 1; fi; \
+	printf 'register shrink check ok: %s -> %s owners\n' "$$before" "$$after"
+
 # Tools are Rust. A TypeScript, JavaScript, Python, or shell implementation
 # file anywhere in the tracked tree fails the gate; the asset and source
 # directories carry no scripts either.
@@ -400,7 +424,7 @@ test: lint tooling-size tooling-index-check tool-tests
 	$(CHECK) progress --self-test
 	$(CHECK) no-asm --self-test
 
-verify: index-sync-check source-tracking-check corpus-check language-check lint-production tooling-size tooling-index-check \
+verify: index-sync-check source-tracking-check corpus-check language-check register-shrink-check lint-production tooling-size tooling-index-check \
 	strict-tu-check check-owners core-retained-check coverage-check | $(REPORT_DIR)
 	@tree=$$(git write-tree) || exit; \
 	printf '%s\n' "$$tree" > $(VERIFIED_TREE).tmp; \

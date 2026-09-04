@@ -1,7 +1,0 @@
-#include "types.h"
-
-s32 Func_080cf2b8(s32, s32);
-
-void Func_080cf2a0(s32 arg0) {
-    Func_080cf2b8(arg0, 0);
-}

@@ -38,7 +38,6 @@ struct Effect {
 s32 Func_02003d76();
 
 #define AdvanceEffectMotion Func_02000da4
-
 void AdvanceEffectMotion(struct Effect *effect)
 {
     s32 velocity_z;

@@ -1,6 +1,5 @@
 #include "types.h"
 
-
 extern u8 * Func_02001a82(int);
 extern void Func_02001a9a(int,int,int);
 extern void Func_02001a48(u8 *,int);

@@ -1,0 +1,11 @@
+#include "types.h"
+
+#define SceneDialogue_ShowLine1BAA Func_02000864
+
+extern void Func_02002248(void);
+extern void Func_020022de(s32);
+/* Returns a value: the reference sets r1 before r0 at this site, which
+   only a value-returning callee does; the result is unused here. */
+extern s32 Func_020022fe(s32, s32);
+extern void Func_02002262(void);
+void SceneDialogue_ShowLine1BAA(void) { Func_02002248(); Func_020022de(0x1baa); Func_020022fe(11, 0); Func_02002262(); }

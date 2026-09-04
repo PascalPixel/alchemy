@@ -28,7 +28,6 @@
  * 0 of 0 callees.
  */
 
-
 u8 *PaletteScene_GetScriptData(void)
 {
     return (u8 *)0x02009ba4;

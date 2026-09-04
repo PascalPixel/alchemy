@@ -11,9 +11,9 @@ struct FixedPointCountdown {
 extern u32 Func_020046fa(u32 value, u32 divisor);
 extern u32 Func_02004714(void);
 
+#define UpdateFixedPointCountdown Func_02000064
 #define UnsignedRemainder Func_020046fa
 #define NextRandomValue Func_02004714
-#define UpdateFixedPointCountdown Func_02000064
 
 s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state) {
     switch (state->countdown) {

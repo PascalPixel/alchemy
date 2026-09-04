@@ -1,6 +1,5 @@
 #include "types.h"
 
-
 struct Sprite {
     u8 pad00[9];
     u8 flags9;
@@ -68,10 +67,7 @@ void Func_02003c5c();
 void Func_02003c6c();
 
 #define SpawnConfiguredSceneEffect Func_02000ae8
-
 /* Creates the effect record and returns it, or 0 on failure. */
-
-                     
 
 /* Relocated IWRAM helper: turns a distance and a descriptor duration into a
  * per-frame step. */

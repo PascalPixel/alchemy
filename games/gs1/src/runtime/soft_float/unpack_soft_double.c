@@ -53,7 +53,6 @@ typedef union PackedDouble {
 } PackedDouble;
 
 #define UnpackSoftDouble Func_02005e04
-
 void UnpackSoftDouble(PackedDouble *source, SoftFloatRecord *record)
 {
     FractionType fraction;

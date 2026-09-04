@@ -169,21 +169,21 @@ void FieldScene_ConfigureFourActorPresentation(void)
     record = Scene_GetRecord_1(21);
     {
         s32 shown = 0xc000;
-    
+
         *(volatile u16 *)(record + 6) = shown;
     }
     ObjectMotion_SetHorizontalPositionWithTerrain_2(20, 0xda0000, 0x2040000);
     record = Scene_GetRecord_2(20);
     {
         s32 shown = 0xb000;
-    
+
         *(volatile u16 *)(record + 6) = shown;
     }
     ObjectMotion_SetHorizontalPositionWithTerrain_3(22, 0xcc0000, 0x20e0000);
     record = Scene_GetRecord_3(22);
     {
         s32 shown = 0xb000;
-    
+
         *(volatile u16 *)(record + 6) = shown;
     }
     ObjectMotion_SetHorizontalPositionWithTerrain_4(23, 0, 0);

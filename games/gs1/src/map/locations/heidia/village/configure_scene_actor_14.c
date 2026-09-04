@@ -5,7 +5,6 @@ void Func_0200a27a(s32);
 void Func_0200a292(s32, s32);
 
 #define ConfigureSceneActor14 Func_02004b84
-
 void ConfigureSceneActor14(void)
 {
     Func_0200a254(14, 2);

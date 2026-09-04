@@ -1,7 +1,6 @@
 #include "types.h"
 
 #define CopyAndOffsetCoordinatePreset Func_020015cc
-
 void CopyAndOffsetCoordinatePreset(void)
 {
     u32 *destination;

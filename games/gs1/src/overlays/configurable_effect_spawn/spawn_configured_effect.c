@@ -1,6 +1,8 @@
 #include "types.h"
 
 #define ConfigurableEffectDescriptors Data_0200cbc4
+
+#define Overlay380_SpawnConfiguredEffect Func_0200013c
 #define GetPrimaryEffectRecord Func_02004b1a
 #define SpawnConfiguredEffectObject Func_02004a48
 #define SetConfiguredEffectVariant Func_02004a52
@@ -11,8 +13,6 @@
 #define ComputeConfiguredEffectSecondRate Func_02004af6
 #define SetConfiguredEffectCallbackMode Func_02004b6c
 #define ApplyConfiguredEffectCallbackArgument Func_02004b7c
-#define Overlay380_SpawnConfiguredEffect Func_0200013c
-
 /*
  * Configurable spawn/copy owner at 0x0200013c.  Its code runs through the
  * unwind at 0x02000306; the following three pool words belong to this owner:

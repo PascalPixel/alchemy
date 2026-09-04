@@ -126,7 +126,7 @@ void RunEventScript01(void)
     {
         u8 *record = Func_02001d92(0);
         u8 value = *(volatile u8 *)&record[90];
-    
+
         record[90] = (u8)(value | 1);
     }
     Func_02001d82(80);
@@ -141,7 +141,7 @@ void RunEventScript01(void)
     Func_02001d3a(40);
     {
         s32 shown = 0xc000;
-    
+
         *(volatile u16 *)(rec8 + 6) = shown;
     }
     *(volatile s32 *)(rec8 + 72) = 0x10000;

@@ -41,7 +41,6 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-
 /* Runs a fixed sequence of four scripted calls: one keyed off Value_0200beb4
  * with two small numeric arguments, one with a 0x222 argument, and two plain
  * single-argument calls. */

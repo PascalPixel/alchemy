@@ -118,7 +118,7 @@ void FieldScene_RunScene3b4_02000b68(void)
             {
                 s32 target = *(volatile s32 *)(rec7 + 80);
                 s32 shown = 0xf800;
-            
+
                 *(volatile u16 *)(target + 30) = shown;
             }
             *(volatile u16 *)(rec7 + 6) = rec8;

@@ -14,7 +14,6 @@
 typedef s32 (*IwramIntegerSquareRoot)(s32);
 
 #define CalculateFixedPointPositionDistance Func_02000030
-
 s32 Func_02000030(s32 *first_position, s32 *second_position)
 {
     s32 delta_x = (*first_position++ - *second_position++) >> 16;

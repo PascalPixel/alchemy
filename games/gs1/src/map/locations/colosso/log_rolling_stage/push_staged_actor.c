@@ -24,7 +24,6 @@ typedef struct Position3 {
     s32 z;
 } Position3;
 
-
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
 SceneRecord *Func_0200905c();

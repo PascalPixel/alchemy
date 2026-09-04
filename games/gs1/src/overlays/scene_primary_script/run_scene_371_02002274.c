@@ -109,7 +109,7 @@ void FieldScene_RunScene371_02002274(void)
     *(volatile s32 *)(rec7 + 28) = 0x18000;
     {
         s32 shown = 0x4000;
-    
+
         *(volatile u16 *)(rec7 + 6) = shown;
     }
     Func_020066f6();

@@ -4,11 +4,11 @@
  * hand: resolve declaration collisions here or in shared headers. */
 
 #include "../../../src/battle/effects/heavy_impact/finish.c"
-#include "../../../src/unidentified/main/runtime/runtime_owner_3.c"
-#include "../../../src/unidentified/main/field/field_owner_141.c"
-#include "../../../src/unidentified/main/field/field_owner_88.c"
+#include "../../../src/battle/effects/objects/set_alternating_words.c"
+#include "../../../src/battle/effects/advance_object_field6_with_ramp.c"
+#include "../../../src/battle/effects/shrink_object_and_destroy_slow.c"
 #include "../main/08095c08.c"
 #include "../main/08095dd0.c"
-#include "../../../src/unidentified/main/field/field_owner_6.c"
-#include "../../../src/unidentified/main/runtime/runtime_owner_107.c"
+#include "../../../src/battle/effects/shrink_object_and_destroy_fast.c"
+#include "../../../src/battle/effects/objects/update_descending_orbit.c"
 #include "../../../src/battle/effects/particles/update_radial_spread.c"

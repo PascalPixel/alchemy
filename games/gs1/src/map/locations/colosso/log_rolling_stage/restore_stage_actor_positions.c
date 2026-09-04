@@ -1,6 +1,5 @@
 #include "colosso_log_rolling_stage.h"
 
-
 /* Call symbols are per-site (the raw disassembly shows a DIFFERENT veneer
  * target at every occurrence) -- declared/named as the literal per-site
  * targets, not the shared ultimate-destination symbol. */

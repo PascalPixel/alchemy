@@ -18,6 +18,8 @@ extern void Func_02003300(void);
 extern void Func_0200321c(struct StagedActor *arg0, s32 arg1);
 
 #define StagedActorStepTable Data_0200b15c
+
+#define AdvanceStagedActorPair Func_020000c4
 #define GetStagedActor Func_0200315c
 #define FindNextStagedActor Func_02000176
 #define FindBlockingStagedActor Func_020001a2
@@ -31,8 +33,6 @@ extern void Func_0200321c(struct StagedActor *arg0, s32 arg1);
 #define FinishStagedActorMove Func_02003204
 #define FinishStagedActorEffect Func_02003300
 #define SetStagedActorTransition Func_0200321c
-#define AdvanceStagedActorPair Func_020000c4
-
 void AdvanceStagedActorPair(void) {
     s32 destination[3];
     struct StagedActor *lead_actor;

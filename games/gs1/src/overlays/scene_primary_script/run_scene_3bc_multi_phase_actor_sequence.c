@@ -378,7 +378,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     {
         /* Clear the visibility/active flag at +6. */
         s32 shown = 0;
-    
+
         *(u16 *)(record + 6) = shown;
     }
     ObjectMotion_EnableActionAndSetCallback_2(0, 0x200d738);
@@ -393,21 +393,21 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     {
         /* Clear the visibility/active flag at +6. */
         s32 shown = 0;
-    
+
         *(u16 *)(record + 6) = shown;
     }
     record = Scene_GetRecord_3(2);
     {
         /* Clear the visibility/active flag at +6. */
         s32 shown = 0;
-    
+
         *(u16 *)(record + 6) = shown;
     }
     record = Scene_GetRecord_4(3);
     {
         /* Clear the visibility/active flag at +6. */
         s32 shown = 0;
-    
+
         *(u16 *)(record + 6) = shown;
     }
     Func_02005d9e(1);

@@ -12,7 +12,6 @@ s32 Func_08077158(const u16 *character_ids);
 s32 Func_08077168(s32 character_id);
 
 #define CharacterSelector_MoveEntry Func_080a7f44
-
 s32 CharacterSelector_MoveEntry(s32 selected_index, s32 direction)
 {
     struct CharacterSelectorOrderState *state =

@@ -4,6 +4,6 @@
  * hand: resolve declaration collisions here or in shared headers. */
 
 #include "../main/0808df1c.c"
-#include "../../../src/unidentified/main/audio/audio_owner_4.c"
-#include "../../../src/unidentified/main/field/field_owner_39.c"
-#include "../../../src/unidentified/main/runtime/runtime_owner_241.c"
+#include "../../../src/battle/effects/random_particle/play_cue_and_start_emitter_on_target.c"
+#include "../../../src/animation/apply_child_palette.c"
+#include "../../../src/battle/runtime/reset_effect_counter.c"

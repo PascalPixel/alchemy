@@ -1,0 +1,19 @@
+#include "types.h"
+
+#define Summon_IsEntrySecondaryFlagged Func_080c2434
+
+struct Entry {
+    u16 value;
+    u8 flags0;
+    u8 flags1;
+    u8 rest[4];
+};
+
+extern struct Entry Data_080c7420[];
+
+s32 Summon_IsEntrySecondaryFlagged(s32 index)
+{
+    if ((u32)index > 171)
+        return 0;
+    return ((u32)Data_080c7420[index].flags1 << 31) >> 31;
+}

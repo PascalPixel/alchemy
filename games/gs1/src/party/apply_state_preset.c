@@ -14,7 +14,6 @@ struct OwnerWork {
     u8 pad2[0xd8 - 60];
     u16 inventory[15];
 };
-
 #define Owner_RecalculateStats Func_08077428
 
 void Owner_RefreshDerivedData(s32 id);

@@ -6,7 +6,6 @@ void Func_02007a24(s32, s32, s32, s32, s32, s32);
 void Func_02007a36(s32, s32, s32, s32, s32, s32);
 
 #define ConfigurePrimaryInteractionRegions Func_02002410
-
 void ConfigurePrimaryInteractionRegions(void)
 {
     Func_020079f6(5, 77, 1, 2, 17, 82);

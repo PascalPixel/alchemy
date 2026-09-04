@@ -1,6 +1,5 @@
 #include "scene_effect_sequence.h"
 
-
 struct Sprite {
     u8 pad00[9];
     u8 flags9;

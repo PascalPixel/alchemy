@@ -1,6 +1,6 @@
 #include "types.h"
-
 #define ObjectTable_Get Func_0808ba1c
+
 /* Object table: 192 pointers at Data_03001ebc + 0x14 (object/table/get.c). */
 void *ObjectTable_Get(u32 object);
 

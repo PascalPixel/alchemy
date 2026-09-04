@@ -19,7 +19,6 @@ struct SceneActor *Func_02001c48(s32);
 void Func_02001d02(s32);
 
 #define ActorPresentation_SetupActorZeroForSceneEight Func_02000b40
-
 void ActorPresentation_SetupActorZeroForSceneEight(void)
 {
     struct SceneActor *actor = Func_02001c48(0);

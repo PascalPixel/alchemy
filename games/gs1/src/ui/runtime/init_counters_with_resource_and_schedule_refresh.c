@@ -1,0 +1,36 @@
+#include "types.h"
+
+#define UiWork_InitCountersWithResourceAndScheduleRefresh Func_080173f4
+
+struct State_080173f4 {
+    u8 filler0[0xEA8];
+    u16 ten;
+    u16 unusedEaa;
+    u16 zero;
+    u16 fifteen;
+    u8 fillerEb0[0x400];
+    u16 nine;
+    u16 secondZero;
+    u8 filler12b4[4];
+    u16 result;
+};
+
+extern struct State_080173f4 *Data_03001e8c;
+
+s32 Resource_CopyData(s32, s32, s32);
+void ScheduleCallbackAfterFrames(void *, s32);
+
+void UiWork_InitCountersWithResourceAndScheduleRefresh(void) {
+    struct State_080173f4 *state = Data_03001e8c;
+    s32 size;
+
+    state->result = Resource_CopyData(95, 128 << 6, 0);
+    state->nine = 9;
+    state->ten = 10;
+    state->zero = 0;
+    state->fifteen = 15;
+    state->secondZero = 0;
+    size = 200;
+    size <<= 4;
+    ScheduleCallbackAfterFrames((void *)0x0801789D, size);
+}

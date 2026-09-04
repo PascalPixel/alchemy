@@ -10,7 +10,6 @@ typedef struct SceneActor {
 SceneActor *Func_02006b22(s32);
 
 #define IsPlayerInSecondaryTriggerArea Func_020014cc
-
 s32 IsPlayerInSecondaryTriggerArea(void)
 {
     SceneActor *player = Func_02006b22(0);

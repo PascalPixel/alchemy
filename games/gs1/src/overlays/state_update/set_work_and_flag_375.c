@@ -1,0 +1,61 @@
+/* Contiguous unnamed state-owner run for resource_375. */
+
+#include "types.h"
+
+extern u8 *Data_03001ebc;
+
+extern void Func_0200342c(void);
+/* The same import at two sites, so two names: the flag set at +0x1e and again
+ * at +0x2e. */
+extern void Func_02003430(s32);
+extern void Func_02003440(s32);
+extern void Func_02003560(s32, s32);
+extern void Func_02003464(void);
+
+#define SceneState_SetWorkAndFlag87d Func_020019a4
+
+void SceneState_SetWorkAndFlag87d(void)
+{
+    u8 *work;
+
+    Func_0200342c();
+
+    work = Data_03001ebc;
+    *(u32 *) (work + 448) = 512;
+    *(u32 *) (work + 456) = 64;
+
+    Func_02003430(0x87D);
+    Func_02003560(12, 0);
+    Func_02003440(0x900);   /* 144 << 4 */
+    Func_02003464();
+}
+
+#include "types.h"
+
+#define SceneState_SetWorkAndFlag87e Func_020019e8
+
+extern u8 *Data_03001ebc;
+
+extern void Func_02003470(void);
+/* The same import at two sites, so two names: the flag set at +0x1e and again
+ * at +0x2e. */
+extern void Func_02003474(s32);
+extern void Func_02003484(s32);
+extern void Func_020035a4(s32, s32);
+extern void Func_020034a8(void);
+
+void SceneState_SetWorkAndFlag87e(void)
+{
+    u8 *work;
+
+    Func_02003470();
+
+    work = Data_03001ebc;
+    *(u32 *) (work + 448) = 512;
+    *(u32 *) (work + 456) = 64;
+
+    Func_02003474(0x87E);
+    Func_020035a4(12, 1);
+    Func_02003484(0x900);   /* 144 << 4 */
+    Func_020034a8();
+}

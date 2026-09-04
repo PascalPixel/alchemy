@@ -69,7 +69,7 @@ void FieldScene_RunScene389_0200115c(void)
     {
         u8 *record = Func_02002646(10);
         u8 value = *(volatile u8 *)&record[35];
-    
+
         record[35] = (u8)(value | 2);
     }
     Call1(Func_0200262e, 0x869);

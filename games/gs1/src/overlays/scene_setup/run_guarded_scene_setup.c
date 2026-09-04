@@ -5,10 +5,9 @@ extern void Func_02000e64();
 
 typedef void (*SceneSetup)(s32, s32, s32, s32, s32, s32);
 
+#define RunGuardedSceneSetup Func_020004b4
 #define RunSceneCommand Func_02000e04
 #define FinishSceneSetup Func_02000e64
-#define RunGuardedSceneSetup Func_020004b4
-
 void RunGuardedSceneSetup(void)
 {
     if (RunSceneCommand(0x305) != 0) {

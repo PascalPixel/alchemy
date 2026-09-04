@@ -14,7 +14,6 @@ extern u16 Data_0200addc;
 extern s32 Data_0200ade8;
 
 #define UpdateStatueLight2 Func_02000ef8
-
 void UpdateStatueLight2(void)
 {
     if ((Func_02003882() & 3) != 0) {

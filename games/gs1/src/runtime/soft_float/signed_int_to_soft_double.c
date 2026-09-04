@@ -51,7 +51,6 @@ typedef struct SoftFloatRecord {
 SoftDouble Func_0200b792(SoftFloatRecord *record);
 
 #define SignedIntToSoftDouble Func_02005af0
-
 SoftDouble SignedIntToSoftDouble(s32 value)
 {
     SoftFloatRecord record;

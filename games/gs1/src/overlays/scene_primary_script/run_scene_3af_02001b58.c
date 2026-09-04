@@ -75,14 +75,14 @@ void FieldScene_RunScene3af_02001b58(void)
     record = Func_02005ee4(20);
     {
         s32 shown = 0x3000;
-    
+
         *(volatile u16 *)(record + 6) = shown;
     }
     Call3(Func_02005f56, 23, 0xe80000, 0x28a0000);
     record = Func_02005efc(23);
     {
         s32 shown = 0xb000;
-    
+
         *(volatile u16 *)(record + 6) = shown;
     }
     Func_02005e58(1);

@@ -41,10 +41,9 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-
 /* Runs four fixed scene-helper calls in sequence, one of them passed the
  * address of Value_0200beb4 as its first argument. */
-void Func_02000750(void)
+void FieldScene_RunSupplementalSequenceOne(void)
 {
     Audio_PlayCue_1(158);
     Call3(Func_02002d9c, (s32)&Value_0200beb4, 44, 7);

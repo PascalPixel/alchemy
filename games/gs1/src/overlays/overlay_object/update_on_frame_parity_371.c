@@ -1,0 +1,19 @@
+#include "types.h"
+
+#define OverlayObject_UpdateOnFrameParity Func_02003f4c
+
+extern volatile u32 Data_03001e40;
+
+extern s32 Func_020080e0(s32, s32);
+extern void Func_020081c8(u8 *, s32);
+extern void Func_02007fd4(u8 *);
+
+void OverlayObject_UpdateOnFrameParity(u8 *obj)
+{
+    if ((Data_03001e40 & 1) != 0) {
+        Func_020081c8(obj, Func_020080e0((s32) (Data_03001e40 >> 1), 6));
+    }
+    if ((Data_03001e40 & 15) == 0) {
+        Func_02007fd4(obj);
+    }
+}

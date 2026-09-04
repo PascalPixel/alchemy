@@ -84,7 +84,7 @@ void FieldScene_RunScene3b1_02000728(void)
                 {
                     u16 *target = (u16 *)((*(u8 *volatile *)Data_03001ebc + 0x172));
                     s32 shown = 1;
-                
+
                     *target = shown;
                 }
             } else {

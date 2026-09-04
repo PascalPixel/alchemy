@@ -123,7 +123,7 @@ static __inline__ s32 Value6(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
     return f(a0, a1, a2, a3, a4, a5);
 }
 
-void Func_02000420(void)
+void FieldScene_RunSupplementalSequenceTwo(void)
 {
     s32 byte_pair_addr;
 

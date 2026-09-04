@@ -1,8 +1,8 @@
 #include "overlay_object.h"
 
 #define NULL ((void *)0)
-#define CalculateAngleFromCoordinateDelta Func_02004bb2
 #define UpdateOverlayObjectAngle Func_02000314
+#define CalculateAngleFromCoordinateDelta Func_02004bb2
 
 u16 CalculateAngleFromCoordinateDelta(s32, s32);
 

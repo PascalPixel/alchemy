@@ -63,10 +63,6 @@ s32 Func_0200b744();
 void Func_0200b19a();
 void Func_0200ba08();
 
-                                            
-
-                    
-
 void Effect_SpawnRisingDustBurst(struct Resource373Emitter *emitter)
 {
     s32 frame_countdown;

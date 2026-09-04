@@ -37,7 +37,6 @@
  */
 
 #define GetSolShindenEffectData Func_0200004c
-
 u8 *GetSolShindenEffectData(void)
 {
     return (u8 *)0x0200ad34;

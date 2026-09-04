@@ -42,7 +42,6 @@ SoftFloatRecord *Func_0200b258(SoftFloatRecord *left, SoftFloatRecord *right, So
 SoftDouble Func_0200b6a8(SoftFloatRecord *record);
 
 #define AddSoftDouble Func_02005a40
-
 SoftDouble AddSoftDouble(u32 a0, u32 a1, u32 b0, u32 b1)
 {
     struct {

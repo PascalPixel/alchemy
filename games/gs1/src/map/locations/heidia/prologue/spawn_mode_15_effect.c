@@ -6,7 +6,6 @@ void Func_02003ac0(u8 *object, s32 mode);
 void Func_02003b58(u8 *object, s32 mode);
 
 #define SpawnMode15Effect Func_02000a4c
-
 u8 *SpawnMode15Effect(s32 x, s32 y, s32 z, s32 kind)
 {
     u8 *object = Func_02003a66(kind, x, y, z);

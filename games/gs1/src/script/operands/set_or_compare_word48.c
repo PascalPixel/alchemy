@@ -1,0 +1,21 @@
+#include "script_operands.h"
+
+#define Script_SetOrCompareWord48 Func_0800e548
+
+void Script_SetOrCompareWord48(struct ScriptOperands *state, s32 operation, s32 value) {
+    s8 result;
+
+    if (operation == 0) {
+        state->word_48 = value;
+        return;
+    }
+    if (operation == 1) {
+        state->word_48 += value;
+        return;
+    }
+    result = 0;
+    if (state->word_48 == value) {
+        result = 1;
+    }
+    state->comparison_result = result;
+}

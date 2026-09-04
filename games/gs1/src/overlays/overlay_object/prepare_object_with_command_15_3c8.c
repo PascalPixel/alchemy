@@ -1,0 +1,28 @@
+#include "types.h"
+
+#define OverlayObject_PrepareObjectWithCommand15 Func_02000098
+
+void Func_020000f6(void *, s32);
+void *Func_02004e8e(s32, s32, s32, s32);
+
+void *OverlayObject_PrepareObjectWithCommand15(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+    void *object;
+    u8 *rec;
+    s32 flags;
+    s32 result;
+
+    object = Func_02004e8e(arg3, arg0, arg1, arg2);
+    if (object != 0) {
+        rec = *(u8 **)((u8 *)object + 0x50);
+        flags = rec[9];
+        flags = (flags & -13) | 4;
+        rec[9] = flags;
+        Func_020000f6(object, 0xF);
+        flags = *((u8 *)object + 0x23);
+        result = 2;
+        result |= flags;
+        *((u8 *)object + 0x23) = result;
+        return object;
+    }
+    return 0;
+}

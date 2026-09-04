@@ -1,6 +1,5 @@
 #include "colosso_log_rolling_stage.h"
 
-
 extern s32 Data_0200d480;
 extern s32 Data_0200d484;
 

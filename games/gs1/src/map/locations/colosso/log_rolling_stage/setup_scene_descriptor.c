@@ -1,6 +1,5 @@
 #include "colosso_log_rolling_stage.h"
 
-
 /* Import veneers, named by the main-image function each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
 u8 *Func_02008d2e();

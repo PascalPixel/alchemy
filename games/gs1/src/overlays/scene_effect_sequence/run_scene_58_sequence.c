@@ -55,7 +55,6 @@ extern void Func_0808a250();
 extern void Func_0808a260();
 extern void Func_080f9010();
 
-
 /* Loader-relocated ROM calls: each site names the pre-relocation call word the image holds. */
 void Func_020041d2();
 void Func_02004200();
@@ -950,4 +949,3 @@ void RunScene58Sequence(void) {
     Call2(Func_0200529e, 0x24, 2);
     Call0(Func_020051b2);
 }
-

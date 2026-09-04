@@ -5,7 +5,6 @@ void Func_02007aec(s32);
 void Func_02007b76(s32, s32, s32);
 
 #define InspectWardrobe Func_020024c0
-
 void InspectWardrobe(void)
 {
     Func_02007ade(2372);

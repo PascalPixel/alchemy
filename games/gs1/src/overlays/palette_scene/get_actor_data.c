@@ -28,7 +28,6 @@
  * 0 of 0 callees.
  */
 
-
 u8 *PaletteScene_GetActorData(void)
 {
     return (u8 *)0x02009c24;

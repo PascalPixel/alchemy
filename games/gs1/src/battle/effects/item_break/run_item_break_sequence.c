@@ -16,7 +16,6 @@ void BattleEffect_PrepareBufferInterpolation(void);
 void UpdateRisingParticleBurst(void *object);
 
 #define BattleEffect_RunItemBreakSequence Func_0809802c
-
 void BattleEffect_RunItemBreakSequence(void)
 {
     s32 work[3];

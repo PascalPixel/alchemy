@@ -17,6 +17,7 @@ extern void Func_02005f6a(s32 cue);
 extern void Func_02005f82(s32 actorId, s32 mode);
 extern void Func_02005ee6(void);
 
+#define RunPartyCountInteractionCopyA Func_02001f14
 #define GetPartyInteractionRecord Func_02005e6a
 #define FinishPartyInteractionRecordRead Func_02005e5e
 #define GetPartyMemberCount Func_02005e3a
@@ -32,8 +33,6 @@ extern void Func_02005ee6(void);
 #define SetLargePartyInteractionCue Func_02005f6a
 #define RunLargePartyInteraction Func_02005f82
 #define FinishPartyCountInteraction Func_02005ee6
-#define RunPartyCountInteractionCopyA Func_02001f14
-
 static inline void InitializeActorZero(void)
 {
     Func_02005eae(0, 0x10000, 0x8000);

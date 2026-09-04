@@ -7,7 +7,6 @@ extern void Func_0200a06c(s32);
 extern void Func_0200a084(s32, s32);
 
 #define SelectActor24SceneVariant Func_02004964
-
 void SelectActor24SceneVariant(void)
 {
     if (Func_02009f7a(0x941)) {

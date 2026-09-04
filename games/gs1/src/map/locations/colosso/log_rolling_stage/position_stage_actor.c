@@ -1,6 +1,5 @@
 #include "colosso_log_rolling_stage.h"
 
-
 s32 *Func_02006e34();          /* entity by selector, established */
 void Func_02006bd6();          /* unestablished */
 void Func_02006bbe();          /* established (record, mode) */

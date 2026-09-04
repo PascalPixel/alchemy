@@ -6,7 +6,6 @@ s32 Func_02002008(s32, s32);
 void Func_020065f2(s32);
 
 #define ShowGeraldDontMessage Func_02000fc8
-
 void ShowGeraldDontMessage(void)
 {
     if (Func_02002008(8, 8) != 0) {

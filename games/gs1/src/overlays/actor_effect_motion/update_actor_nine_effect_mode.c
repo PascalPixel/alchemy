@@ -18,7 +18,6 @@ void Func_0200671c(struct EffectRecord *record, s32 mode);
 struct SceneActor *Func_02006778(s32 actor_id);
 
 #define UpdateActorNineEffectMode Func_02000284
-
 void UpdateActorNineEffectMode(struct EffectRecord *record)
 {
     struct SceneActor *actor;

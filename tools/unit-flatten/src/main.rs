@@ -16,12 +16,14 @@
 //! Declarations that differ between owners are reconciled mechanically where
 //! the reconciliation cannot change a byte: a data symbol becomes one
 //! `extern u8 Name[];` and a file that typed it otherwise reads it through a
-//! cast of that shape; a function keeps the non-void return type and drops
-//! to an unprototyped `()` when parameter lists disagree; a wrapper spelling
-//! the scene work pointer as a literal takes the symbol; two wrappers with
-//! one name and different callees are told apart by the callee address.
-//! Whatever remains is reported and stops the run: it is the shared
-//! interface the unit forces into the open.
+//! cast of that shape; a function two owners declare differently keeps both
+//! declarations at block scope inside the functions of the file that made
+//! each (the prototype decides argument order and the return register, so
+//! nothing weaker would keep the bytes); a wrapper spelling the scene work
+//! pointer as a literal takes the symbol; two wrappers with one name and
+//! different callees are told apart by the callee address. Whatever remains
+//! is reported and stops the run: it is the shared interface the unit forces
+//! into the open.
 
 use serde_json::{json, Map, Value};
 use std::collections::{BTreeMap, BTreeSet};
@@ -227,7 +229,12 @@ fn run() -> Result<(), String> {
             }
         }
     }
-    let mut rewrites: BTreeMap<PathBuf, BTreeMap<String, String>> = BTreeMap::new();
+    // A symbol two files declare with different shapes keeps each file's own
+    // `extern` at block scope inside that file's functions, exactly the
+    // declaration each owner compiled with. Identical declarations rise to
+    // file scope once.
+    let mut block_scoped: BTreeSet<String> = BTreeSet::new();
+    let mut block_decls: BTreeMap<PathBuf, Vec<String>> = BTreeMap::new();
     let mut unified_data: BTreeMap<String, String> = BTreeMap::new();
     for (name, by_file) in &data_decls {
         let distinct: BTreeSet<String> = by_file.values().map(|s| s.text()).collect();
@@ -238,41 +245,102 @@ fn run() -> Result<(), String> {
             );
             continue;
         }
-        unified_data.insert(name.clone(), format!("extern u8 {name}[];"));
+        block_scoped.insert(name.clone());
         for (file, shape) in by_file {
-            if shape.kind == "array" && shape.ty == "u8" && shape.qualifiers.is_empty() {
-                continue;
-            }
-            rewrites
+            block_decls
                 .entry(file.clone())
                 .or_default()
-                .insert(name.clone(), shape.access(name));
+                .push(shape.declaration(name));
         }
     }
+    let rewrites: BTreeMap<PathBuf, BTreeMap<String, String>> = BTreeMap::new();
+    // A function two owners declare differently keeps both declarations,
+    // each at block scope inside the functions of the file that made it:
+    // the prototype decides argument order and the return register, so an
+    // unprototyped `()` would change bytes. Only identical declarations
+    // rise to file scope.
     let mut unified_funcs: BTreeMap<String, String> = BTreeMap::new();
     let mut conflicts: Vec<String> = Vec::new();
-    for (name, by_file) in &func_decls {
-        let rets: BTreeSet<&str> = by_file.values().map(|(r, _)| r.as_str()).collect();
-        let params: BTreeSet<&str> = by_file.values().map(|(_, p)| p.as_str()).collect();
-        let non_void: Vec<&str> = rets.iter().copied().filter(|r| *r != "void").collect();
-        let ret = match non_void.len() {
-            0 => "void",
-            1 => non_void[0],
-            _ => {
-                conflicts.push(format!(
-                    "function {name}: return types {}",
-                    rets.iter().copied().collect::<Vec<_>>().join(" | ")
-                ));
-                non_void[0]
+    // A file that calls a function without declaring it compiled against the
+    // implicit `int f()`; a prototype another file wrote must not reach it.
+    let mut calls: BTreeMap<PathBuf, BTreeSet<String>> = BTreeMap::new();
+    for (file, list) in &parsed {
+        let set = calls.entry(file.clone()).or_default();
+        for it in list
+            .iter()
+            .filter(|it| matches!(it.kind, "function" | "inline" | "other"))
+        {
+            let text = &it.text;
+            let mut from = 0;
+            while let Some(at) = text[from..].find("Func_") {
+                let start = from + at;
+                let end = start
+                    + 5
+                    + text[start + 5..]
+                        .find(|c: char| !c.is_ascii_hexdigit())
+                        .unwrap_or(text.len() - start - 5);
+                if end - start == 13 && text[end..].trim_start().starts_with('(') {
+                    set.insert(text[start..end].to_string());
+                }
+                from = end.max(start + 5);
             }
-        };
-        let list = if params.len() == 1 {
-            params.iter().next().unwrap().to_string()
-        } else {
-            String::new()
-        };
-        let space = if ret.ends_with('*') { "" } else { " " };
-        unified_funcs.insert(name.clone(), format!("{ret}{space}{name}({list});"));
+        }
+    }
+    // A function the unit itself defines: a prototype another owner wrote
+    // with a different signature stays in that owner's functions only.
+    let mut definitions: BTreeMap<String, (String, String)> = BTreeMap::new();
+    for (_, list) in &parsed {
+        for it in list.iter().filter(|it| it.kind == "function") {
+            let head = it.text.lines().next().unwrap_or("");
+            let head = head.trim_end().trim_end_matches('{').trim_end();
+            if let Some((name, ret, params)) = function_decl(&format!("{head};")) {
+                // A definition spelt through its alias define also defines
+                // the registered name the prototypes use.
+                let prefix = format!("#define {name} ");
+                for target in list
+                    .iter()
+                    .filter(|d| d.kind == "define")
+                    .filter_map(|d| d.text.trim().strip_prefix(&prefix))
+                    .map(|rest| rest.trim().to_string())
+                    .filter(|rest| rest.starts_with("Func_"))
+                {
+                    definitions.insert(target, (ret.clone(), params.clone()));
+                }
+                definitions.insert(name, (ret, params));
+            }
+        }
+    }
+    for (name, by_file) in &func_decls {
+        let mut distinct: BTreeSet<(&str, &str)> = by_file
+            .values()
+            .map(|(r, p)| (r.as_str(), p.as_str()))
+            .collect();
+        if let Some((ret, params)) = definitions.get(name) {
+            distinct.insert((ret.as_str(), params.as_str()));
+        }
+        let implicit_user = parsed.iter().any(|(file, _)| {
+            !by_file.contains_key(file) && calls.get(file).is_some_and(|c| c.contains(name))
+        });
+        if distinct.len() == 1 && !implicit_user {
+            let (ret, params) = distinct.iter().next().unwrap();
+            let space = if ret.ends_with('*') { "" } else { " " };
+            unified_funcs.insert(name.clone(), format!("{ret}{space}{name}({params});"));
+            continue;
+        }
+        block_scoped.insert(name.clone());
+        for (file, (ret, params)) in by_file {
+            let space = if ret.ends_with('*') { "" } else { " " };
+            block_decls
+                .entry(file.clone())
+                .or_default()
+                .push(format!("{ret}{space}{name}({params});"));
+        }
+    }
+    if !block_scoped.is_empty() {
+        println!(
+            "  block-scoped prototypes: {}",
+            block_scoped.iter().cloned().collect::<Vec<_>>().join(" ")
+        );
     }
     for (file, list) in parsed.iter_mut() {
         let Some(map) = rewrites.get(file) else {
@@ -284,6 +352,67 @@ fn run() -> Result<(), String> {
             }
             for (name, replacement) in map {
                 it.text = replace_word(&it.text, name, replacement);
+            }
+        }
+    }
+
+    // Two files defining one record layout, typedef, or macro name
+    // differently each keep their own under a name suffixed with the file's
+    // first owner address; that file's every use follows. Identical
+    // definitions still rise to file scope once.
+    {
+        let mut first_text: BTreeMap<(&str, String), (PathBuf, String)> = BTreeMap::new();
+        let mut renames: BTreeMap<PathBuf, Vec<(String, String)>> = BTreeMap::new();
+        for (file, list) in &parsed {
+            let suffix = owners
+                .iter()
+                .find(|o| &o.source == file)
+                .map(|o| format!("{:08x}", o.address))
+                .unwrap_or_else(|| "shared".into());
+            for it in list {
+                if !matches!(it.kind, "define" | "struct" | "typedef") {
+                    continue;
+                }
+                let name = if it.kind == "define" {
+                    it.key.split('(').next().unwrap_or(&it.key).to_string()
+                } else {
+                    it.key.clone()
+                };
+                let slot = (it.kind, name.clone());
+                match first_text.get(&slot) {
+                    None => {
+                        first_text.insert(slot, (file.clone(), norm(&it.text)));
+                    }
+                    Some((origin, text)) if origin != file && *text != norm(&it.text) => {
+                        let fresh = format!("{name}_{suffix}");
+                        let list = renames.entry(file.clone()).or_default();
+                        if !list.iter().any(|(from, _)| *from == name) {
+                            println!(
+                                "  {} {name} -> {fresh} in {}",
+                                it.kind,
+                                rel(file, &source_root)
+                            );
+                            list.push((name.clone(), fresh));
+                        }
+                    }
+                    Some(_) => {}
+                }
+            }
+        }
+        for (file, list) in parsed.iter_mut() {
+            let Some(map) = renames.get(file) else {
+                continue;
+            };
+            for it in list.iter_mut() {
+                if it.kind == "include" {
+                    continue;
+                }
+                for (from, to) in map {
+                    it.text = replace_word(&it.text, from, to);
+                    if it.key == *from || it.key.starts_with(&format!("{from}(")) {
+                        it.key = it.key.replacen(from, to, 1);
+                    }
+                }
             }
         }
     }
@@ -329,7 +458,7 @@ fn run() -> Result<(), String> {
                 }
                 "extern" | "prototype" => {
                     if let Some((name, _)) = data_shape(&it.text) {
-                        if !externs.contains_key(&name) {
+                        if !block_scoped.contains(&name) && !externs.contains_key(&name) {
                             let mut unified = it.clone();
                             unified.text = unified_data
                                 .get(&name)
@@ -339,7 +468,7 @@ fn run() -> Result<(), String> {
                             externs.insert(name, unified);
                         }
                     } else if let Some((name, _, _)) = function_decl(&it.text) {
-                        if !prototypes.contains_key(&name) {
+                        if !block_scoped.contains(&name) && !prototypes.contains_key(&name) {
                             let mut unified = it.clone();
                             unified.text = unified_funcs
                                 .get(&name)
@@ -404,6 +533,14 @@ fn run() -> Result<(), String> {
                                 rel(&have.from, &source_root)
                             ));
                             have.text = symbolic(&have.text);
+                            // The file spelt the literal, so it declared no
+                            // symbol; the wrapper now needs one in scope.
+                            if block_scoped.contains("Data_03001ebc") {
+                                let decls = block_decls.entry(have.from.clone()).or_default();
+                                if !decls.iter().any(|d| d.contains("Data_03001ebc")) {
+                                    decls.push("extern u8 Data_03001ebc[];".into());
+                                }
+                            }
                         }
                         continue;
                     }
@@ -471,6 +608,32 @@ fn run() -> Result<(), String> {
     }
 
     // Owner names: the register's name, else the file's alias for the address.
+    // Alias defines the shared headers carry (`#define Name Func_xxxx` in
+    // games/<game>/include), so a function defined under such a name still
+    // links by its address.
+    let mut header_aliases: BTreeMap<String, Vec<String>> = BTreeMap::new();
+    if let Ok(entries) = fs::read_dir(root.join("games").join(&game).join("include")) {
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if path.extension().is_some_and(|x| x == "h") {
+                if let Ok(text) = fs::read_to_string(&path) {
+                    for line in text.lines() {
+                        let words: Vec<&str> = line.split_whitespace().collect();
+                        if words.len() == 3
+                            && words[0] == "#define"
+                            && words[2].starts_with("Func_")
+                            && !words[1].contains('(')
+                        {
+                            header_aliases
+                                .entry(words[2].to_string())
+                                .or_default()
+                                .push(words[1].to_string());
+                        }
+                    }
+                }
+            }
+        }
+    }
     let alias_for = |o: &Owner| -> String {
         let want = format!("Func_{:08x}", o.address);
         for (name, it) in &defines {
@@ -478,18 +641,51 @@ fn run() -> Result<(), String> {
                 return name.clone();
             }
         }
+        // Several overlays share addresses, so a header may alias one
+        // address under several names: the one this file defines wins.
+        if let Some(names) = header_aliases.get(&want) {
+            if let Some(name) = names
+                .iter()
+                .find(|n| functions.iter().any(|f| f.from == o.source && &f.key == *n))
+            {
+                return name.clone();
+            }
+        }
+        // The registered name is what the file defines when it carries no
+        // alias define of its own.
+        if let Some(name) = register["owners"][&o.key]["name"].as_str() {
+            return name.to_string();
+        }
         o.name.clone()
     };
     let aliases: Vec<String> = owners.iter().map(alias_for).collect();
+    // The unit is linked by `Func_<address>` symbols. A function defined
+    // under its registered name without an alias define gets one, so the
+    // symbol exists; a file whose definition matches neither is reported
+    // with what it does define.
+    let mut alias_defines: Vec<String> = Vec::new();
     for (o, alias) in owners.iter().zip(&aliases) {
         let legacy = format!("Func_{:08x}", o.address);
-        if !functions.iter().any(|f| &f.key == alias || f.key == legacy) {
-            return Err(format!(
-                "{}: no function named {alias} in its source {}",
-                o.key,
-                rel(&o.source, &source_root)
-            ));
+        let defined = functions
+            .iter()
+            .filter(|f| f.from == o.source)
+            .map(|f| f.key.clone())
+            .collect::<Vec<_>>();
+        if defined.iter().any(|k| k == &legacy) {
+            continue;
         }
+        if defined.iter().any(|k| k == alias) {
+            if !defines.contains_key(alias) {
+                alias_defines.push(format!("#define {alias} {legacy}"));
+            }
+            continue;
+        }
+        return Err(format!(
+            "{}: no function named {alias} or {legacy} in its source {} (it defines: {})",
+            o.key,
+            rel(&o.source, &source_root),
+            defined.join(", ")
+        ));
     }
 
     // Order: the shared types, then every alias define (an included header
@@ -499,6 +695,9 @@ fn run() -> Result<(), String> {
     out.push(String::new());
     for name in &define_order {
         out.push(defines[name].text.clone());
+    }
+    for define in &alias_defines {
+        out.push(define.clone());
     }
     if !define_order.is_empty() {
         out.push(String::new());
@@ -532,8 +731,33 @@ fn run() -> Result<(), String> {
         out.push(it.text.clone());
         out.push(String::new());
     }
+    // A body from a file with block-scoped prototypes opens with them.
+    let with_decls = |it: &Item| -> String {
+        let Some(decls) = block_decls.get(&it.from) else {
+            return it.text.clone();
+        };
+        let mut lines: Vec<String> = it.text.lines().map(str::to_string).collect();
+        // The body opens on its own `{` line or at the end of the head line.
+        let open = lines
+            .iter()
+            .position(|l| l.trim() == "{")
+            .or_else(|| lines.iter().position(|l| l.trim_end().ends_with('{')));
+        if let Some(open) = open {
+            for (offset, decl) in decls.iter().enumerate() {
+                lines.insert(open + 1 + offset, format!("    {decl}"));
+            }
+            if decls.len() > 0
+                && lines
+                    .get(open + 1 + decls.len())
+                    .is_some_and(|l| !l.trim().is_empty())
+            {
+                lines.insert(open + 1 + decls.len(), String::new());
+            }
+        }
+        lines.join("\n")
+    };
     for it in &inlines {
-        out.push(it.text.clone());
+        out.push(with_decls(it));
         out.push(String::new());
     }
     for it in &others {
@@ -548,13 +772,13 @@ fn run() -> Result<(), String> {
             .find(|f| (&f.key == alias || f.key == legacy) && !emitted.contains(&f.text))
         {
             emitted.insert(f.text.clone());
-            out.push(f.text.clone());
+            out.push(with_decls(f));
             out.push(String::new());
         }
     }
     for f in &functions {
         if emitted.insert(f.text.clone()) {
-            out.push(f.text.clone());
+            out.push(with_decls(f));
             out.push(String::new());
         }
     }
@@ -670,18 +894,27 @@ fn run() -> Result<(), String> {
     Ok(())
 }
 
+/// The declared shape of a data symbol: element type, qualifiers, pointer
+/// depth on the element, and the array dimensions verbatim (`[]`, `[][64]`).
 #[derive(Clone)]
 struct Shape {
-    kind: &'static str,
     ty: String,
     qualifiers: String,
+    stars: usize,
+    dims: String,
 }
 
 impl Shape {
     fn text(&self) -> String {
-        format!("{} {} {}", self.qualifiers, self.ty, self.kind)
-            .trim()
-            .to_string()
+        format!(
+            "{} {} {}{}",
+            self.qualifiers,
+            self.ty,
+            "*".repeat(self.stars),
+            self.dims
+        )
+        .trim()
+        .to_string()
     }
     fn declaration(&self, name: &str) -> String {
         let q = if self.qualifiers.is_empty() {
@@ -689,36 +922,25 @@ impl Shape {
         } else {
             format!("{} ", self.qualifiers)
         };
-        match self.kind {
-            "array" => format!("extern {q}{} {name}[];", self.ty),
-            "pointer" => format!("extern {q}{} *{name};", self.ty),
-            _ => format!("extern {q}{} {name};", self.ty),
-        }
-    }
-    fn access(&self, name: &str) -> String {
-        let q = if self.qualifiers.is_empty() {
-            String::new()
-        } else {
-            format!("{} ", self.qualifiers)
-        };
-        match self.kind {
-            "array" => format!("(({q}{} *){name})", self.ty),
-            "pointer" => format!("(*({q}{} **){name})", self.ty),
-            _ => format!("(*({q}{} *){name})", self.ty),
-        }
+        format!(
+            "extern {q}{} {}{name}{};",
+            self.ty,
+            "*".repeat(self.stars),
+            self.dims
+        )
     }
 }
 
-/// `extern [qualifiers] type [*]name[[]];` without a parameter list.
+/// `extern [qualifiers] type [*...]name[dims];` without a parameter list.
 fn data_shape(text: &str) -> Option<(String, Shape)> {
     let t = text.trim();
     let body = t.strip_prefix("extern ")?.strip_suffix(';')?.trim();
     if body.contains('(') {
         return None;
     }
-    let (body, kind) = match body.rfind('[') {
-        Some(at) if body.ends_with(']') => (&body[..at], "array"),
-        _ => (body, "scalar"),
+    let (body, dims) = match body.find('[') {
+        Some(at) if body.ends_with(']') => (&body[..at], body[at..].to_string()),
+        _ => (body, String::new()),
     };
     let body = body.trim();
     let name_start = body.rfind(|c: char| !(c.is_ascii_alphanumeric() || c == '_'))? + 1;
@@ -727,16 +949,12 @@ fn data_shape(text: &str) -> Option<(String, Shape)> {
         return None;
     }
     let mut head = body[..name_start].trim().to_string();
-    let kind = if head.ends_with('*') {
+    let mut stars = 0;
+    while head.ends_with('*') {
         head.pop();
-        if kind == "array" {
-            "array"
-        } else {
-            "pointer"
-        }
-    } else {
-        kind
-    };
+        stars += 1;
+        head = head.trim_end().to_string();
+    }
     let mut qualifiers = Vec::new();
     let mut ty = Vec::new();
     for word in head.split_whitespace() {
@@ -752,9 +970,10 @@ fn data_shape(text: &str) -> Option<(String, Shape)> {
     Some((
         name.to_string(),
         Shape {
-            kind,
             ty: ty.join(" "),
             qualifiers: qualifiers.join(" "),
+            stars,
+            dims,
         },
     ))
 }
@@ -947,8 +1166,20 @@ fn items(text: &str, file: &Path) -> Vec<Item> {
         let mut j = i;
         let mut depth = 0i32;
         let mut seen_brace = false;
+        // A trailing `/* comment */` after a declaration does not extend it.
+        let code_of = |line: &str| -> String {
+            let mut code = line.to_string();
+            while let Some(open) = code.rfind("/*") {
+                match code[open..].find("*/") {
+                    Some(close) => code.replace_range(open..open + close + 2, ""),
+                    None => break,
+                }
+            }
+            code
+        };
         while j < lines.len() {
-            for c in lines[j].chars() {
+            let code = code_of(lines[j]);
+            for c in code.chars() {
                 if c == '{' {
                     depth += 1;
                     seen_brace = true;
@@ -959,7 +1190,7 @@ fn items(text: &str, file: &Path) -> Vec<Item> {
             if seen_brace && depth == 0 {
                 break;
             }
-            if !seen_brace && lines[j].trim_end().ends_with(';') {
+            if !seen_brace && code.trim_end().ends_with(';') {
                 break;
             }
             j += 1;
@@ -968,6 +1199,31 @@ fn items(text: &str, file: &Path) -> Vec<Item> {
         let block = &lines[i..=j];
         let head = block[0].trim();
         i = j + 1;
+        // Several declarations on one line are several items.
+        if !seen_brace && block.len() == 1 && code_of(head).matches(';').count() > 1 {
+            let mut depth = 0i32;
+            let mut start = 0usize;
+            let text = code_of(head);
+            for (index, c) in text.char_indices() {
+                match c {
+                    '(' | '[' => depth += 1,
+                    ')' | ']' => depth -= 1,
+                    ';' if depth == 0 => {
+                        let piece = text[start..=index].trim();
+                        if !piece.is_empty() {
+                            let single = [piece];
+                            for item in items(piece, file) {
+                                out.push(item);
+                            }
+                            let _ = single;
+                        }
+                        start = index + 1;
+                    }
+                    _ => {}
+                }
+            }
+            continue;
+        }
         if !seen_brace {
             if head.starts_with("extern ") {
                 let key = data_shape(head)

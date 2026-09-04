@@ -8502,6 +8502,42 @@
     "resource_3c5:02000eac": {
       "name": "FieldScene_RunScene3c5SequenceA",
       "source": "overlays/scene_primary_script/run_scene_3c5_sequence_a.c"
+    },
+    "resource_3ab:020006e4": {
+      "name": "FieldScene_RunScene3abSequenceF",
+      "source": "overlays/scene_primary_script/run_scene_3ab_sequence_f.c"
+    },
+    "resource_3c0:02000dc8": {
+      "name": "FieldScene_RunScene3c0SequenceA",
+      "source": "overlays/scene_primary_script/run_scene_3c0_sequence_a.c"
+    },
+    "resource_3a4:02002be0": {
+      "name": "FieldScene_RunScene3a4SequenceG",
+      "source": "overlays/scene_primary_script/run_scene_3a4_sequence_g.c"
+    },
+    "resource_3b3:020015fc": {
+      "name": "FieldScene_RunScene3b3SequenceA",
+      "source": "overlays/scene_primary_script/run_scene_3b3_sequence_a.c"
+    },
+    "main:080a9598": {
+      "name": "Shop_DrawPartyItemPage",
+      "source": "shop/draw_party_item_page.c"
+    },
+    "resource_3ab:02001240": {
+      "name": "FieldScene_RunScene3abSequenceG",
+      "source": "overlays/scene_primary_script/run_scene_3ab_sequence_g.c"
+    },
+    "resource_3b4:02001070": {
+      "name": "FieldScene_RunScene3b4SequenceC",
+      "source": "overlays/scene_primary_script/run_scene_3b4_sequence_c.c"
+    },
+    "resource_38b:02000ae0": {
+      "name": "FieldScene_RunScene38bSequenceA",
+      "source": "overlays/scene_primary_script/run_scene_38b_sequence_a.c"
+    },
+    "resource_3c8:02001218": {
+      "name": "FieldScene_RunScene3c8SequenceD",
+      "source": "overlays/scene_primary_script/run_scene_3c8_sequence_d.c"
     }
   }
 }

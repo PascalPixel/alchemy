@@ -284,6 +284,70 @@ pub fn tune_targeted(
             lines = stripped;
         }
     }
+    // Two volatile stores in a row are output-dependent whatever their
+    // offsets (alias analysis never separates volatile accesses), which
+    // ranks the second below an independent instruction after the first
+    // is issued. A run of adjacent stores is tried plain as a unit, which
+    // lets the scheduler place them back to back as the reference may.
+    let mut k = 0;
+    while k < lines.len() {
+        let run_end = (k..lines.len())
+            .take_while(|&j| is_volatile_store(&lines[j]))
+            .last()
+            .map(|j| j + 1);
+        let Some(run_end) = run_end else {
+            k += 1;
+            continue;
+        };
+        if run_end - k >= 2 {
+            let saved: Vec<String> = lines[k..run_end].to_vec();
+            for line in &mut lines[k..run_end] {
+                *line = line.replace("*(volatile ", "*(");
+            }
+            let trial = write_and_score(&format!("{}\n", lines.join("\n")));
+            if trial.as_ref().is_ok_and(|t| t.differing < best.differing) {
+                let trial = trial.unwrap();
+                report(&format!(
+                    "{} -> {}  plain run {}",
+                    best.differing,
+                    trial.differing,
+                    lines[k].trim()
+                ));
+                best = trial;
+            } else {
+                lines.splice(k..run_end, saved);
+            }
+        }
+        k = run_end;
+    }
+    // A callee declared as returning a value makes its call set r0 even
+    // where the result is unused: the next write of r0 then depends on the
+    // call rather than on an earlier argument load, whose dependent count
+    // drops, so a store that tied with it issues first. Each void callee
+    // is tried value-returning.
+    let mut k = 0;
+    while k < lines.len() {
+        if let Some(rest) = lines[k].strip_prefix("void Func_") {
+            if rest.len() == 11 && rest.ends_with("();") {
+                let saved = lines[k].clone();
+                lines[k] = format!("s32 Func_{rest}");
+                let trial = write_and_score(&format!("{}\n", lines.join("\n")));
+                if trial.as_ref().is_ok_and(|t| t.differing < best.differing) {
+                    let trial = trial.unwrap();
+                    report(&format!(
+                        "{} -> {}  {}",
+                        best.differing,
+                        trial.differing,
+                        lines[k].trim()
+                    ));
+                    best = trial;
+                } else {
+                    lines[k] = saved;
+                }
+            }
+        }
+        k += 1;
+    }
     // A halfword store through an int local: the store address hoisted into
     // a pointer before the local shortens the local's live range, which
     // changes which pseudo the allocator places first. Each block is tried
@@ -456,6 +520,15 @@ pub fn tune_targeted(
     let text = format!("{}\n", lines.join("\n"));
     std::fs::write(scratch, &text).map_err(|error| format!("{}: {error}", scratch.display()))?;
     Ok((text, best))
+}
+
+/// A statement storing through a volatile access, `*(volatile s32 *)(rec7 + 8) = ...;`.
+fn is_volatile_store(line: &str) -> bool {
+    let trimmed = line.trim_start();
+    trimmed.starts_with("*(volatile ")
+        && trimmed.split_once(" = ").is_some_and(|(lhs, _)| {
+            !lhs.contains("(volatile ") || lhs.matches("*(volatile ").count() == 1
+        })
 }
 
 /// The lines with the statement after the if/else at `k` sunk into both

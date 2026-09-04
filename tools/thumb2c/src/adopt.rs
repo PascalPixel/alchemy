@@ -211,6 +211,18 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
     );
     write_json(&manifest, &register, true, true)?;
 
+    // The owner and every absorbed region lose their records. This reads the
+    // retained regions before the ones inside the span are removed below;
+    // afterwards they are gone and nothing would be reported as absorbed,
+    // leaving their names in the register with no evidence behind them.
+    let mut retired: Vec<SourceOwner> = vec![owner];
+    for m in modules(root)? {
+        if m.overlay == overlay && m.entry != entry && m.entry >= entry && m.entry + m.span <= end {
+            retired.push(SourceOwner::parse(&m.key())?);
+            report.push(format!("absorbed {}", m.key()));
+        }
+    }
+
     // Retained regions inside the span retire.
     let assembly = root.join("games/gs1/semantic/overlay-assembly.json");
     let (mut regions, _) = read_json(&assembly)?;
@@ -227,14 +239,6 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
     }
     write_json(&assembly, &regions, true, true)?;
 
-    // The owner and every absorbed region lose their records.
-    let mut retired: Vec<SourceOwner> = vec![owner];
-    for m in modules(root)? {
-        if m.overlay == overlay && m.entry != entry && m.entry >= entry && m.entry + m.span <= end {
-            retired.push(SourceOwner::parse(&m.key())?);
-            report.push(format!("absorbed {}", m.key()));
-        }
-    }
     // An absorbed region's name leaves the source register: its bytes are
     // this function's, and an owner with a name but no source would be
     // asked for assembly evidence it no longer has.

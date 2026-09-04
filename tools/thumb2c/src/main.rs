@@ -197,17 +197,29 @@ fn veneers(root: &Path, options: &Options) -> Result<i32, String> {
 /// to the next start, pool and padding included. Prints `owner span`.
 fn split_owner(root: &Path, options: &Options) -> Result<i32, String> {
     let owner = owner_argument(options)?;
-    let (overlay, entry) = owners::parse_owner(owner)?;
+    let (label, base, entry, image) = match owners::parse_main_owner(owner) {
+        Some(address) => (
+            "main".to_string(),
+            thumb2c::decode::MAIN_BASE,
+            address,
+            owners::main_image(root)?,
+        ),
+        None => {
+            let (overlay, entry) = owners::parse_owner(owner)?;
+            let image = owners::overlay_image(root, &overlay)?;
+            (overlay, thumb2c::decode::OVERLAY_BASE, entry, image)
+        }
+    };
+    let overlay = label;
     let span = options
         .span
         .ok_or_else(|| "split needs --span <bytes> for the stretch".to_string())?;
-    let image = owners::overlay_image(root, &overlay)?;
     let end = entry + span;
     // A stretch often opens with a table left behind by the previous
     // function: the first function starts where decoding is clean, that is,
     // every instruction up to the first return decodes and a return exists.
     let clean = |at: u32| {
-        let ins = thumb2c::decode::decode_window(&image, at, end - at);
+        let ins = thumb2c::decode::decode_window_at(&image, base, at, end - at);
         let mut returned = false;
         for x in &ins {
             if matches!(x.kind, thumb2c::decode::Kind::Unknown(_)) {
@@ -226,7 +238,7 @@ fn split_owner(root: &Path, options: &Options) -> Result<i32, String> {
     // Pool words (ROM or RAM addresses) and zero padding decode as harmless
     // shifts and moves: skip them before looking for the first clean start.
     let half = |at: u32| {
-        let k = (at - thumb2c::decode::OVERLAY_BASE) as usize;
+        let k = (at - base) as usize;
         image
             .get(k..k + 2)
             .map(|b| u16::from_le_bytes([b[0], b[1]]))
@@ -259,7 +271,7 @@ fn split_owner(root: &Path, options: &Options) -> Result<i32, String> {
         return Ok(0);
     };
     let span = end - entry;
-    let ins = thumb2c::decode::decode_window(&image, entry, span);
+    let ins = thumb2c::decode::decode_window_at(&image, base, entry, span);
     let mut starts = vec![entry];
     let mut previous_return = false;
     for x in &ins {

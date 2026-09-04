@@ -45,9 +45,11 @@ fn is_local_assignment(line: &str) -> Option<&str> {
 /// its byte-mode pseudo with that update; route it through an int local.
 fn shown_pass(lines: &mut Vec<String>) {
     let mut constants = BTreeSet::new();
-    for line in lines.iter() {
+    let mut first_update = None;
+    for (index, line) in lines.iter().enumerate() {
         let mut rest = line.as_str();
         while let Some(at) = rest.find("(u8)(value | ") {
+            first_update.get_or_insert(index);
             let tail = &rest[at + 13..];
             if let Some(end) = tail.find(')') {
                 constants.insert(tail[..end].to_string());
@@ -55,18 +57,21 @@ fn shown_pass(lines: &mut Vec<String>) {
             rest = &rest[at + 13..];
         }
     }
-    if constants.is_empty() {
+    let Some(first_update) = first_update else {
         return;
-    }
+    };
     let mut result = Vec::with_capacity(lines.len());
-    for line in lines.drain(..) {
+    for (index, line) in lines.drain(..).enumerate() {
         let trimmed = line.trim_start();
         let lead = &line[..line.len() - trimmed.len()];
+        // Only a store after the update shares its pseudo; an earlier one
+        // has its own.
         let store = trimmed
             .strip_suffix(';')
             .and_then(|s| s.split_once(" = "))
             .filter(|(lhs, rhs)| {
-                constants.contains(*rhs)
+                index > first_update
+                    && constants.contains(*rhs)
                     && (lhs.starts_with('*')
                         && lhs[1..]
                             .bytes()

@@ -2043,7 +2043,7 @@
     },
     {
       "overlay": "resource_380",
-      "start": "0x02001780",
+      "start": "0x0200178c",
       "end": "0x02001ce2",
       "kind": "generated_call_script_module",
       "retention": "keep_structured_asm",
@@ -2489,7 +2489,7 @@
     },
     {
       "overlay": "resource_371",
-      "start": "0x02000c1c",
+      "start": "0x02000c28",
       "end": "0x02001062",
       "kind": "generated_call_script_module",
       "retention": "keep_structured_asm",

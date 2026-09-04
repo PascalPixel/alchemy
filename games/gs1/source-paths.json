@@ -6192,9 +6192,6 @@
     "main:080fa264": {
       "name": "Audio_ResumePlayer"
     },
-    "resource_371:02000c1c": {
-      "name": "RunEventScript01"
-    },
     "resource_371:02001064": {
       "name": "RunEventScript02"
     },
@@ -6232,9 +6229,6 @@
     },
     "resource_37b:02000554": {
       "name": "RunEventScript02"
-    },
-    "resource_380:02001780": {
-      "name": "RunEventScript01"
     },
     "resource_381:02001798": {
       "name": "RunEventScript02"
@@ -8196,6 +8190,20 @@
     "resource_382:020004a0": {
       "name": "FieldScene_RunScene382_020004a0",
       "source": "overlays/scene_primary_script/run_scene_382_020004a0.c"
+    },
+    "resource_371:02000c28": {
+      "name": "RunEventScript01"
+    },
+    "resource_380:0200178c": {
+      "name": "RunEventScript01"
+    },
+    "resource_371:02000a8c": {
+      "name": "RunEventScript01",
+      "source": "overlays/event_script/run_event_script_01_371_02000a8c.c"
+    },
+    "resource_380:02001450": {
+      "name": "RunEventScript01",
+      "source": "overlays/event_script/run_event_script_01_380_02001450.c"
     }
   }
 }

@@ -69,6 +69,56 @@ pub fn modules(root: &Path) -> Result<Vec<Module>, String> {
     Ok(modules)
 }
 
+#[derive(Deserialize)]
+struct Regions {
+    manual_regions: Vec<ManualRegion>,
+}
+
+#[derive(Deserialize)]
+struct ManualRegion {
+    overlay: String,
+    entry: String,
+    span_bytes: u32,
+}
+
+/// One entry from `regions.json`'s `manual_regions`: a function-sized owner
+/// inside (or coinciding with) a retained module, whether or not it has been
+/// adopted yet.
+#[derive(Debug, Clone)]
+pub struct RegisteredOwner {
+    pub overlay: String,
+    pub entry: u32,
+    pub span: u32,
+}
+
+impl RegisteredOwner {
+    pub fn key(&self) -> String {
+        format!("{}:{:08x}", self.overlay, self.entry)
+    }
+}
+
+/// Every registered owner in `games/gs1/semantic/regions.json`, regardless
+/// of adoption state. Unlike `study`/`bench`, which only look at owners that
+/// already have mapped source, this is for finding owners still sitting
+/// inside a retained module's draft.
+pub fn registered_owners(root: &Path) -> Result<Vec<RegisteredOwner>, String> {
+    let path = root.join("games/gs1/semantic/regions.json");
+    let text = std::fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?;
+    let regions: Regions =
+        serde_json::from_slice(&text).map_err(|error| format!("{}: {error}", path.display()))?;
+    regions
+        .manual_regions
+        .into_iter()
+        .map(|region| {
+            Ok(RegisteredOwner {
+                entry: parse_hex(&region.entry)?,
+                overlay: region.overlay,
+                span: region.span_bytes,
+            })
+        })
+        .collect()
+}
+
 /// Parses `<overlay>:<hex>` into its parts.
 pub fn parse_owner(owner: &str) -> Result<(String, u32), String> {
     let (overlay, address) = owner

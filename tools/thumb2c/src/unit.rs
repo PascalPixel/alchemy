@@ -17,7 +17,7 @@ pub fn split_functions(ins: &[Ins]) -> Vec<(u32, Vec<Ins>)> {
             functions.push((current[0].addr, std::mem::take(&mut current)));
             returned = false;
         }
-        if matches!(x.kind, Kind::Bx(_) | Kind::Pop { pc: true }) {
+        if matches!(x.kind, Kind::Bx(_) | Kind::Pop { pc: true, .. }) {
             returned = true;
         }
         current.push(x.clone());
@@ -460,8 +460,15 @@ pub fn function_source(entry: u32, draft: &Draft) -> String {
         // to complete it and reads every field from memory.
         text.push_str("struct Args {\n    s32 a0;\n    s32 a1;\n    s32 a2;\n    s32 a3;\n    s32 a4;\n};\n\n");
     }
+    // A function that returns a value: its exits pop the return address
+    // into r1 and the lifter wrote the value each returns.
+    let returns = if lines.iter().any(|l| l.trim().starts_with("return ")) {
+        "s32"
+    } else {
+        "void"
+    };
     text.push_str(&format!(
-        "void Func_{entry:08x}({signature})\n{{\n    u32 i;\n"
+        "{returns} Func_{entry:08x}({signature})\n{{\n    u32 i;\n"
     ));
     for v in vars.iter().filter(|v| !consts.contains(v)) {
         if v == "work" || indexed_anywhere(&lines, v) {
@@ -701,6 +708,20 @@ pub fn compose(entry: u32, name: &str, body: &str) -> String {
     data.dedup();
     for symbol in data {
         declarations.push_str(&format!("extern u8 {symbol}[];\n"));
+    }
+    // Typed table views the bodies index at constant positions.
+    for declaration in crate::lift::take_tables() {
+        let name = declaration
+            .split_whitespace()
+            .nth(2)
+            .map(|n| {
+                n.trim_end_matches(|c: char| c == '[' || c == ']' || c == ';' || c.is_ascii_digit())
+            })
+            .unwrap_or("");
+        if !name.is_empty() && body.contains(name) {
+            declarations.push_str(&declaration);
+            declarations.push('\n');
+        }
     }
     for (symbol, kinds) in &categories {
         let return_type = if kinds.contains("ptr") {

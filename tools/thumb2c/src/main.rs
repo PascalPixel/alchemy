@@ -215,7 +215,7 @@ fn split_owner(root: &Path, options: &Options) -> Result<i32, String> {
             }
             if matches!(
                 x.kind,
-                thumb2c::decode::Kind::Bx(_) | thumb2c::decode::Kind::Pop { pc: true }
+                thumb2c::decode::Kind::Bx(_) | thumb2c::decode::Kind::Pop { pc: true, .. }
             ) {
                 returned = true;
                 break;
@@ -269,7 +269,7 @@ fn split_owner(root: &Path, options: &Options) -> Result<i32, String> {
         }
         previous_return = matches!(
             x.kind,
-            thumb2c::decode::Kind::Bx(_) | thumb2c::decode::Kind::Pop { pc: true }
+            thumb2c::decode::Kind::Bx(_) | thumb2c::decode::Kind::Pop { pc: true, .. }
         );
     }
     starts.sort_unstable();

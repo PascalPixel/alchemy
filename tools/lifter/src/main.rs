@@ -153,6 +153,134 @@ fn print_diff(report: &str, rows: usize) {
     }
 }
 
+/// Lists the loader veneer tables of an overlay image: word-aligned runs of
+/// `ldr r4, [pc, #0]; bx r4; .4byte target` (halfwords 4c00 4720 then a
+/// ROM or overlay address). Prints `<overlay>:<start> <end> <count>`.
+fn veneers(root: &Path, options: &Options) -> Result<i32, String> {
+    let overlay = options
+        .positional
+        .first()
+        .ok_or_else(|| "an overlay id such as resource_36f is required".to_string())?;
+    let image = owners::overlay_image(root, overlay)?;
+    let half = |at: usize| u16::from_le_bytes([image[at], image[at + 1]]);
+    let word =
+        |at: usize| u32::from_le_bytes([image[at], image[at + 1], image[at + 2], image[at + 3]]);
+    let is_veneer = |at: usize| {
+        at + 8 <= image.len() && half(at) == 0x4c00 && half(at + 2) == 0x4720 && {
+            let target = word(at + 4);
+            (0x0800_0000..0x0a00_0000).contains(&target)
+                || (0x0200_0000..0x0204_0000).contains(&target)
+        }
+    };
+    let mut at = 0usize;
+    while at + 8 <= image.len() {
+        if !is_veneer(at) {
+            at += 4;
+            continue;
+        }
+        let start = at;
+        while is_veneer(at) {
+            at += 8;
+        }
+        println!(
+            "{overlay}:{:08x} {:08x} {}",
+            lifter::decode::OVERLAY_BASE + start as u32,
+            lifter::decode::OVERLAY_BASE + at as u32,
+            (at - start) / 8
+        );
+    }
+    Ok(0)
+}
+
+/// Carves an unregistered overlay stretch into functions: one starts at the
+/// entry and at every `push {.., lr}` that follows a return; each spans up
+/// to the next start, pool and padding included. Prints `owner span`.
+fn split_owner(root: &Path, options: &Options) -> Result<i32, String> {
+    let owner = owner_argument(options)?;
+    let (overlay, entry) = owners::parse_owner(owner)?;
+    let span = options
+        .span
+        .ok_or_else(|| "split needs --span <bytes> for the stretch".to_string())?;
+    let image = owners::overlay_image(root, &overlay)?;
+    let end = entry + span;
+    // A stretch often opens with a table left behind by the previous
+    // function: the first function starts where decoding is clean, that is,
+    // every instruction up to the first return decodes and a return exists.
+    let clean = |at: u32| {
+        let ins = lifter::decode::decode_window(&image, at, end - at);
+        let mut returned = false;
+        for x in &ins {
+            if matches!(x.kind, lifter::decode::Kind::Unknown(_)) {
+                return false;
+            }
+            if matches!(
+                x.kind,
+                lifter::decode::Kind::Bx(_) | lifter::decode::Kind::Pop { pc: true }
+            ) {
+                returned = true;
+                break;
+            }
+        }
+        returned && ins.first().is_some_and(|x| x.addr == at)
+    };
+    // Pool words (ROM or RAM addresses) and zero padding decode as harmless
+    // shifts and moves: skip them before looking for the first clean start.
+    let half = |at: u32| {
+        let k = (at - lifter::decode::OVERLAY_BASE) as usize;
+        image
+            .get(k..k + 2)
+            .map(|b| u16::from_le_bytes([b[0], b[1]]))
+            .unwrap_or(0)
+    };
+    let word = |at: u32| u32::from(half(at)) | (u32::from(half(at + 2)) << 16);
+    let mut first = entry;
+    while first + 2 <= end {
+        let w = word(first);
+        let pool = first % 4 == 0
+            && first + 4 <= end
+            && ((0x0200_0000..0x0204_0000).contains(&w)
+                || (0x0800_0000..0x0a00_0000).contains(&w)
+                || (0x0300_0000..0x0300_8000).contains(&w)
+                || w == 0);
+        if pool {
+            first += 4;
+        } else if half(first) == 0 {
+            first += 2;
+        } else {
+            break;
+        }
+    }
+    // Table words that happen to decode as shifts still fool the clean rule:
+    // a `push {.., lr}` within the next 64 bytes is the first function.
+    let prologue = (first..end.min(first + 64))
+        .step_by(2)
+        .find(|&at| half(at) & 0xff00 == 0xb500 && clean(at));
+    let Some(entry) = prologue.or_else(|| (first..end).step_by(2).find(|&at| clean(at))) else {
+        return Ok(0);
+    };
+    let span = end - entry;
+    let ins = lifter::decode::decode_window(&image, entry, span);
+    let mut starts = vec![entry];
+    let mut previous_return = false;
+    for x in &ins {
+        let prologue = matches!(x.kind, lifter::decode::Kind::Push { lr: true });
+        if prologue && previous_return && x.addr != entry {
+            starts.push(x.addr);
+        }
+        previous_return = matches!(
+            x.kind,
+            lifter::decode::Kind::Bx(_) | lifter::decode::Kind::Pop { pc: true }
+        );
+    }
+    starts.sort_unstable();
+    starts.dedup();
+    for (k, start) in starts.iter().enumerate() {
+        let end = starts.get(k + 1).copied().unwrap_or(entry + span);
+        println!("{overlay}:{start:08x} {}", end - start);
+    }
+    Ok(0)
+}
+
 fn score_owner(root: &Path, options: &Options) -> Result<i32, String> {
     let owner = owner_argument(options)?;
     let (unit, span) = lift_owner(root, owner, options.span, options.name.as_deref())?;
@@ -161,7 +289,10 @@ fn score_owner(root: &Path, options: &Options) -> Result<i32, String> {
         None => scratch_path(root, owner)?,
     };
     std::fs::write(&path, &unit).map_err(|error| format!("{}: {error}", path.display()))?;
-    let result = score_extending(root, &path, owner, span)?;
+    let result = match owners::parse_main_owner(owner) {
+        Some(address) => owners::score_main(root, &path, address, span)?,
+        None => score_extending(root, &path, owner, span)?,
+    };
     println!(
         "candidate={} reference={} differing_halfwords={} source={}{}",
         result.candidate,
@@ -181,7 +312,12 @@ fn score_owner(root: &Path, options: &Options) -> Result<i32, String> {
 
 fn tune_owner(root: &Path, options: &Options) -> Result<i32, String> {
     let owner = owner_argument(options)?;
-    let (unit, span) = lift_owner(root, owner, options.span, options.name.as_deref())?;
+    let (mut unit, span) = lift_owner(root, owner, options.span, options.name.as_deref())?;
+    // `--source <file>` tunes a hand-finished unit instead of the draft.
+    if let Some(source) = &options.source {
+        unit = std::fs::read_to_string(source)
+            .map_err(|error| format!("{}: {error}", source.display()))?;
+    }
     let path = scratch_path(root, owner)?;
     let (_, best) = if options.all {
         tune::tune(root, &path, owner, span, &unit, |line| println!("{line}"))?
@@ -358,6 +494,8 @@ fn main() -> ExitCode {
     let result = parse(&arguments[1..]).and_then(|options| match command {
         "draft" => draft(&root, &options).map(|_| 0),
         "score" => score_owner(&root, &options),
+        "split" => split_owner(&root, &options),
+        "veneers" => veneers(&root, &options),
         "adopt" => adopt_owner(&root, &options).map(|_| 0),
         "tune" => tune_owner(&root, &options),
         "imports" => imports_owner(&root, &options),

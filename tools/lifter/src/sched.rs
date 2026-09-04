@@ -23,6 +23,9 @@ struct Load {
     /// A constant the compiler precomputes into a pseudo for a direct call:
     /// anything beyond a single `movs`.
     costly: bool,
+    /// An earlier instruction that still reads the register's old value:
+    /// the load cannot pass it, and loses the tie right after it.
+    blocked: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -193,17 +196,26 @@ fn sites_in(ins: &[Ins], start: usize, end: usize, targets: &BTreeSet<u32>) -> V
                     link,
                     chain,
                     costly: true,
+                    blocked: false,
                 });
                 continue;
             }
         }
         pending.retain(|l| l.reg != rd);
+        // A store or compare between the previous call and this load that
+        // reads the old value of the register is an anti-dependence.
+        let site_start = sites.last().map(|s: &Site| s.at + 1).unwrap_or(start);
+        let blocked = (site_start..i)
+            .rev()
+            .take_while(|k| written(&ins[*k].kind) != Some(rd))
+            .any(|k| written(&ins[k].kind).is_none() && reads(&ins[k].kind).contains(&rd));
         pending.push(Load {
             reg: rd,
             at: i,
             link: 0,
             chain: 1,
             costly: matches!(kind, Kind::LdrPool { .. }),
+            blocked,
         });
     }
     sites
@@ -233,14 +245,22 @@ fn dependents(sites: &[Site], k: usize, reg: u8, value: &[bool]) -> usize {
 fn schedule(sites: &[Site], k: usize, value: &[bool], direct: &[bool]) -> Vec<usize> {
     let site = &sites[k];
     let mut ready: Vec<usize> = (0..site.loads.len())
-        .filter(|l| site.loads[*l].link == 0)
+        .filter(|l| site.loads[*l].link == 0 && !site.loads[*l].blocked)
         .collect();
+    let mut waiting: Vec<usize> = (0..site.loads.len())
+        .filter(|l| site.loads[*l].link == 0 && site.loads[*l].blocked)
+        .collect();
+    let mut penalized: Vec<usize> = Vec::new();
     let mut order = Vec::new();
     let mut done = vec![false; site.loads.len()];
+    if ready.is_empty() {
+        ready.append(&mut waiting);
+    }
     while !ready.is_empty() {
         let rank = |l: &usize| {
             let load = &site.loads[*l];
             let priority = load.chain - load.link;
+            let unpenalized = !penalized.contains(l);
             let deps = if load.link + 1 == load.chain {
                 dependents(sites, k, load.reg, value)
             } else {
@@ -251,6 +271,7 @@ fn schedule(sites: &[Site], k: usize, value: &[bool], direct: &[bool]) -> Vec<us
             let early = u8::from(direct[k] && load.costly);
             (
                 priority,
+                unpenalized,
                 deps,
                 early,
                 u8::MAX - load.reg,
@@ -260,6 +281,14 @@ fn schedule(sites: &[Site], k: usize, value: &[bool], direct: &[bool]) -> Vec<us
         ready.sort_by_key(rank);
         let chosen = ready.pop().unwrap();
         done[chosen] = true;
+        // The reader that blocked a load goes right after the first load, so
+        // the blocked load is ready next and loses that one tie as a
+        // dependent of the last scheduled instruction.
+        penalized.clear();
+        if !waiting.is_empty() {
+            penalized.extend(waiting.iter().copied());
+            ready.append(&mut waiting);
+        }
         order.push(site.loads[chosen].at);
         let load = &site.loads[chosen];
         if let Some(next) = site

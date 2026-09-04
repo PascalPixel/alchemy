@@ -27,6 +27,24 @@ pub fn lift_owner(
     span: Option<u32>,
     name: Option<&str>,
 ) -> Result<(String, u32), String> {
+    if let Some(address) = owners::parse_main_owner(owner) {
+        // A main-image owner: the ROM is the image, its retained assembly
+        // gives the extent, and addresses in the pool are symbols.
+        let span = match span {
+            Some(span) => span,
+            None => owners::main_extent(root, address)?,
+        };
+        let image = owners::main_image(root)?;
+        let name = name
+            .map(str::to_string)
+            .unwrap_or_else(|| format!("Func_{address:08x}"));
+        lift::set_main_mode(true);
+        let ins = decode::decode_window_at(&image, decode::MAIN_BASE, address, span);
+        let body = unit::bodies(&ins);
+        let text = unit::compose(address, &name, &body);
+        lift::set_main_mode(false);
+        return Ok((text, span));
+    }
     let (overlay, entry) = owners::parse_owner(owner)?;
     let span = match span {
         Some(span) => span,

@@ -128,6 +128,9 @@ pub fn tool_command(root: &Path, tool: &str) -> Command {
 
 /// Scores a candidate source against an owner through the overlay scorer.
 pub fn score(root: &Path, source: &Path, owner: &str, span: u32) -> Result<Score, String> {
+    if let Some(address) = parse_main_owner(owner) {
+        return score_main(root, source, address, span);
+    }
     let output = tool_command(root, "overlay")
         .current_dir(root)
         .arg("score")
@@ -217,4 +220,106 @@ pub fn first_error(report: &str) -> Option<String> {
                 .map(|(_, rest)| rest.to_string())
                 .unwrap_or_else(|| line.to_string())
         })
+}
+
+/// The canonical main image, read once per call: the ROM as loaded at
+/// `decode::MAIN_BASE`.
+pub fn main_image(root: &Path) -> Result<Vec<u8>, String> {
+    let path = root.join("roms/gs1-en.gba");
+    std::fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))
+}
+
+/// `main:08xxxxxx` parsed to its address.
+pub fn parse_main_owner(owner: &str) -> Option<u32> {
+    let address = owner.strip_prefix("main:")?;
+    u32::from_str_radix(address, 16).ok()
+}
+
+/// The extent of a main owner: its retained assembly under `games/gs1/asm`
+/// assembled and measured, exactly as the integration gate measures it.
+pub fn main_extent(root: &Path, address: u32) -> Result<u32, String> {
+    let source = root.join(format!("games/gs1/asm/{address:08x}.s"));
+    if !source.is_file() {
+        return Err(format!("main:{address:08x} has no retained assembly"));
+    }
+    let scratch = root.join("out/lifter/main/extent");
+    std::fs::create_dir_all(&scratch).map_err(|error| format!("{}: {error}", scratch.display()))?;
+    let object = scratch.join(format!("{address:08x}.o"));
+    let binary = scratch.join(format!("{address:08x}.bin"));
+    let assembled = Command::new("arm-none-eabi-as")
+        .args(["-mcpu=arm7tdmi", "-mthumb-interwork", "-o"])
+        .arg(&object)
+        .arg(&source)
+        .output()
+        .map_err(|error| format!("arm-none-eabi-as: {error}"))?;
+    if !assembled.status.success() {
+        return Err(format!(
+            "as failed for main:{address:08x}: {}",
+            String::from_utf8_lossy(&assembled.stderr).trim()
+        ));
+    }
+    let copied = Command::new("arm-none-eabi-objcopy")
+        .args(["-O", "binary", "-j", ".text"])
+        .arg(&object)
+        .arg(&binary)
+        .output()
+        .map_err(|error| format!("arm-none-eabi-objcopy: {error}"))?;
+    if !copied.status.success() {
+        return Err(format!("objcopy failed for main:{address:08x}"));
+    }
+    let size = std::fs::metadata(&binary)
+        .map_err(|error| format!("{}: {error}", binary.display()))?
+        .len();
+    Ok(size as u32)
+}
+
+/// Scores a main-image candidate through `compiler candidate-show`, which
+/// reports the same `candidate= reference= differing_halfwords=` line.
+pub fn score_main(root: &Path, source: &Path, address: u32, size: u32) -> Result<Score, String> {
+    let output = tool_command(root, "compiler")
+        .current_dir(root)
+        .arg("candidate-show")
+        .arg(source)
+        .args([
+            "--owner",
+            &format!("0x{address:08x}"),
+            "--size",
+            &size.to_string(),
+            "--align",
+        ])
+        .output()
+        .map_err(|error| format!("candidate-show: {error}"))?;
+    let report = format!(
+        "{}{}",
+        String::from_utf8_lossy(&output.stdout),
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let line = report
+        .lines()
+        .find(|line| line.starts_with("candidate="))
+        .ok_or_else(|| {
+            let tail: Vec<&str> = report
+                .lines()
+                .filter(|line| line.contains("error") || line.contains("cand"))
+                .take(4)
+                .collect();
+            format!("no score line; {}", tail.join(" | "))
+        })?;
+    let mut fields = line.split_whitespace().filter_map(|field| {
+        field
+            .split_once('=')
+            .and_then(|(_, value)| value.parse::<u32>().ok())
+    });
+    let candidate = fields.next().ok_or("score line lacks candidate")?;
+    let reference = fields.next().ok_or("score line lacks reference")?;
+    let differing = fields
+        .next()
+        .ok_or("score line lacks differing_halfwords")?;
+    Ok(Score {
+        candidate,
+        reference,
+        differing,
+        report,
+        extended: None,
+    })
 }

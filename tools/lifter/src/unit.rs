@@ -87,6 +87,113 @@ fn shown_pass(lines: &mut Vec<String>) {
     *lines = result;
 }
 
+/// Replaces every whole-word occurrence of `word` in `line`.
+fn replace_token(line: &str, word: &str, with: &str) -> String {
+    let boundary = |c: char| c.is_ascii_alphanumeric() || c == '_';
+    let mut out = String::new();
+    let mut rest = line;
+    while let Some(at) = rest.find(word) {
+        let before = &rest[..at];
+        let after = &rest[at + word.len()..];
+        let whole = !before.chars().last().is_some_and(boundary)
+            && !after.chars().next().is_some_and(boundary);
+        out.push_str(before);
+        out.push_str(if whole { with } else { word });
+        rest = after;
+    }
+    out.push_str(rest);
+    out
+}
+
+/// Stack objects whose address is taken: scalar slots inside one become
+/// word accesses at byte offsets from the array, and `&slotN` decays to the
+/// array itself, so `&slotN + k` counts bytes.
+fn frame_arrays(lines: &mut [String], frames: &[(u32, u32)]) {
+    for &(start, size) in frames {
+        let array = format!("slot{start}");
+        for line in lines.iter_mut() {
+            // Inner scalar slots first, then the object's own scalar use, then
+            // the taken address.
+            let mut k = start + 4;
+            while k < start + size {
+                let scalar = format!("slot{k}");
+                let via = format!("(*(s32 *)({array} + {}))", k - start);
+                *line = replace_token(line, &scalar, &via);
+                k += 4;
+            }
+            let taken = format!("&{array}");
+            let placeholder = "\u{1}ADDR\u{1}";
+            *line = line.replace(&taken, placeholder);
+            *line = replace_token(line, &array, &format!("(*(s32 *){array})"));
+            *line = line.replace(placeholder, &array);
+        }
+    }
+}
+
+/// Casts a byte-pointer local to an integer wherever it is an operand of
+/// integer arithmetic: a shift, a mask, a product, or a quotient.
+fn cast_pointer_arithmetic(lines: &mut [String], pointers: &[String]) {
+    const OPS: [&str; 8] = ["<<", ">>", "*", "&", "|", "^", "/", "%"];
+    let boundary = |c: char| c.is_ascii_alphanumeric() || c == '_';
+    for line in lines.iter_mut() {
+        // A pointer loaded from memory, `*(u8 **)(...)`, used as an operand
+        // of integer arithmetic is cast as a whole.
+        for needle in ["*(u8 **)(", "*(u8 *volatile *)("] {
+            let mut out = String::new();
+            let mut rest = line.as_str();
+            while let Some(at) = rest.find(needle) {
+                let open = at + needle.len() - 1;
+                let Some(close) = matching_paren(&rest[open..]).map(|c| open + c) else {
+                    break;
+                };
+                let after = &rest[close + 1..];
+                let follows = OPS.iter().any(|op| after.starts_with(&format!(" {op} ")));
+                let cast_already = rest[..at].ends_with("(s32)");
+                out.push_str(&rest[..at]);
+                if follows && !cast_already {
+                    out.push_str("(s32)");
+                }
+                out.push_str(&rest[at..=close]);
+                rest = after;
+            }
+            out.push_str(rest);
+            *line = out;
+        }
+        for name in pointers {
+            let mut out = String::new();
+            let mut rest = line.as_str();
+            while let Some(at) = rest.find(name.as_str()) {
+                let before = &rest[..at];
+                let after = &rest[at + name.len()..];
+                let word = !before.chars().last().is_some_and(boundary)
+                    && !after.chars().next().is_some_and(boundary);
+                // The pointer stays a pointer where it is read through,
+                // indexed, assigned, or declared; every other use is integer
+                // arithmetic the compiler treats alike, so the cast only
+                // types the expression.
+                let pointer_use = before.ends_with('*')
+                    || before.ends_with('&')
+                    || before.ends_with("u8 *")
+                    || after.starts_with('[')
+                    || [
+                        " = ", " += ", " -= ", " |= ", " &= ", " ^= ", " <<= ", " >>= ",
+                    ]
+                    .iter()
+                    .any(|op| after.starts_with(op));
+                let _ = OPS;
+                out.push_str(before);
+                if word && !pointer_use && !before.ends_with("(s32)") {
+                    out.push_str("(s32)");
+                }
+                out.push_str(name);
+                rest = after;
+            }
+            out.push_str(rest);
+            *line = out;
+        }
+    }
+}
+
 /// Whether the local is ever indexed, which makes it a byte pointer;
 /// every other local is an integer the address casts accept.
 pub fn indexed_anywhere(lines: &[String], name: &str) -> bool {
@@ -240,8 +347,29 @@ fn params_in(lines: &[String]) -> Vec<String> {
 /// One C function from a lifted draft.
 pub fn function_source(entry: u32, draft: &Draft) -> String {
     let mut lines = draft.lines.clone();
+    // A join or a loop can assign a variable to itself; nothing reads that.
+    lines.retain(|line| {
+        let trimmed = line.trim();
+        match trimmed.strip_suffix(';').and_then(|s| s.split_once(" = ")) {
+            // A memory location written with its own value is a real
+            // volatile read and write; only a local assigned to itself goes.
+            Some((lhs, rhs)) => {
+                lhs != rhs || !lhs.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
+            }
+            None => true,
+        }
+    });
     shown_pass(&mut lines);
     let by_value = by_value_struct(&mut lines);
+    // A stack object whose address is taken is a byte array: its scalar
+    // slots become word accesses at byte offsets and `&slotN` decays.
+    let frames: Vec<(u32, u32)> = draft
+        .frames
+        .iter()
+        .copied()
+        .filter(|(start, _)| !(by_value.is_some() && *start == 0))
+        .collect();
+    frame_arrays(&mut lines, &frames);
     let unknown = unknown_registers(&mut lines);
     let mut vars: Vec<String> = vec!["record".to_string()];
     for line in &lines {
@@ -265,6 +393,32 @@ pub fn function_source(entry: u32, draft: &Draft) -> String {
         }
     }
     params.sort();
+    // Every local the unit types as a byte pointer: its arithmetic uses are
+    // cast back to an integer, since one name cannot be both.
+    let replaced_by_struct = by_value.clone().unwrap_or_default();
+    let mut pointers: Vec<String> = Vec::new();
+    if by_value.is_none() {
+        pointers.extend(
+            params
+                .iter()
+                .filter(|p| indexed_anywhere(&lines, p))
+                .cloned(),
+        );
+    }
+    pointers.extend(
+        vars.iter()
+            .filter(|v| !consts.contains(v))
+            .filter(|v| *v == "work" || indexed_anywhere(&lines, v))
+            .cloned(),
+    );
+    pointers.extend(
+        consts
+            .iter()
+            .filter(|c| !replaced_by_struct.contains(c))
+            .filter(|c| is_park_name(c) || indexed_anywhere(&lines, c))
+            .cloned(),
+    );
+    cast_pointer_arithmetic(&mut lines, &pointers);
     let signature = if by_value.is_some() {
         "struct Args args".to_string()
     } else if params.is_empty() {
@@ -275,6 +429,8 @@ pub fn function_source(entry: u32, draft: &Draft) -> String {
             .map(|p| {
                 if indexed_anywhere(&lines, p) {
                     format!("u8 *{p}")
+                } else if let Some(c_type) = draft.param_types.get(p) {
+                    format!("{c_type} {p}")
                 } else {
                     format!("s32 {p}")
                 }
@@ -304,8 +460,14 @@ pub fn function_source(entry: u32, draft: &Draft) -> String {
     }
     let replaced = by_value.clone().unwrap_or_default();
     for c in consts.iter().filter(|c| !replaced.contains(c)) {
-        let pointer = is_park_name(c) || (c.starts_with("slot") && indexed_anywhere(&lines, c));
-        if pointer {
+        let frame = c
+            .strip_prefix("slot")
+            .and_then(|d| d.parse::<u32>().ok())
+            .and_then(|start| frames.iter().find(|(s, _)| *s == start));
+        let pointer = is_park_name(c) || indexed_anywhere(&lines, c);
+        if let Some((_, size)) = frame {
+            text.push_str(&format!("    u8 {c}[{size}];\n"));
+        } else if pointer {
             text.push_str(&format!("    u8 *{c};\n"));
         } else {
             text.push_str(&format!("    s32 {c};\n"));
@@ -313,7 +475,27 @@ pub fn function_source(entry: u32, draft: &Draft) -> String {
     }
     text.push('\n');
     for line in &lines {
-        text.push_str(&volatile_spelling(line));
+        // Main-image globals are plain; the volatile record spelling belongs
+        // to the overlay scenes.
+        if crate::lift::main_mode() {
+            text.push_str(line);
+        } else {
+            // Stack objects are plain: a volatile access would materialise
+            // the frame address for every field instead of sharing one base.
+            let mut spelled = volatile_spelling(line);
+            for width in ["s32", "u32", "u16", "u8"] {
+                spelled = spelled
+                    .replace(
+                        &format!("*(volatile {width} *)(slot"),
+                        &format!("*({width} *)(slot"),
+                    )
+                    .replace(
+                        &format!("*(volatile {width} *)slot"),
+                        &format!("*({width} *)slot"),
+                    );
+            }
+            text.push_str(&spelled);
+        }
         text.push('\n');
     }
     text.push_str("}\n");
@@ -495,8 +677,11 @@ pub fn compose(entry: u32, name: &str, body: &str) -> String {
         .into_iter()
         .map(|(_, s)| s)
         .collect();
-    // The step helper reads the scene work pointer in every unit.
-    data.push("Data_03001ebc");
+    // The step helper reads the scene work pointer in every overlay unit.
+    let main = crate::lift::main_mode();
+    if !main {
+        data.push("Data_03001ebc");
+    }
     data.sort();
     data.dedup();
     for symbol in data {
@@ -563,17 +748,27 @@ pub fn compose(entry: u32, name: &str, body: &str) -> String {
             ));
         }
     }
+    let helper = if main {
+        String::new()
+    } else {
+        "/* The scene step counter at 0x1d8 of the shared scene work record. */\n\
+static __inline__ void bump_step(s32 amount)\n{\n    u8 *work = *(u8 **)Data_03001ebc;\n\n    \
+*(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);\n}\n\n"
+            .to_string()
+    };
+    let symbols_note = if main {
+        "/* Main-image symbols: every pool word inside the ROM or the work RAM. */\n"
+    } else {
+        "/* Loader-relocated overlay calls: each symbol names the pre-relocation call\n\
+\x20* word the image holds. */\n"
+    };
     format!(
-        "#include \"types.h\"\n\n#define {name} {this}\n\n\
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call\n\
-\x20* word the image holds. */\n{declarations}\n\
+        "#include \"types.h\"\n\n#define {name} {this}\n\n{symbols_note}{declarations}\n\
 /* Call sites spelled through these wrappers pass their constants straight\n\
 \x20* into the argument registers; a direct call precomputes a costly constant\n\
 \x20* into a pseudo that the compiler then shares with later uses in the block.\n\
 \x20* A value-returning call also sets r0 last of its arguments. */\n{wrappers}\n\
-/* The scene step counter at 0x1d8 of the shared scene work record. */\n\
-static __inline__ void bump_step(s32 amount)\n{{\n    u8 *work = *(u8 **)Data_03001ebc;\n\n    \
-*(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);\n}}\n\n{body}"
+{helper}{body}"
     )
 }
 

@@ -8561,6 +8561,30 @@
     "resource_3bb:02002adc": {
       "name": "FieldScene_RunLateSequence",
       "source": "overlays/scene_primary_script/run_scene_3bb_late_sequence.c"
+    },
+    "resource_3bc:02003574": {
+      "name": "FieldScene_RunScene3bcSequenceA",
+      "source": "overlays/scene_primary_script/run_scene_3bc_sequence_a.c"
+    },
+    "resource_39c:02003788": {
+      "name": "FieldScene_RunScene39cSequenceD",
+      "source": "overlays/scene_primary_script/run_scene_39c_sequence_d.c"
+    },
+    "resource_3c9:0200215c": {
+      "name": "Effect_AnimateVerticalPositive",
+      "source": "overlays/actor_effect_motion/animate_vertical_positive_3c9.c"
+    },
+    "resource_3c9:020021ac": {
+      "name": "Effect_AnimateVerticalNegative",
+      "source": "overlays/actor_effect_motion/animate_vertical_negative_3c9.c"
+    },
+    "resource_3bf:02000dcc": {
+      "name": "FieldScene_RunScene3bfSequenceD",
+      "source": "overlays/scene_primary_script/run_scene_3bf_sequence_d.c"
+    },
+    "resource_3c4:020020a4": {
+      "name": "FieldScene_RunScene3c4SequenceA",
+      "source": "overlays/scene_primary_script/run_scene_3c4_sequence_a.c"
     }
   }
 }

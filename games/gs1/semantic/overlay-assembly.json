@@ -3288,30 +3288,6 @@
       ]
     },
     {
-      "overlay": "resource_3a2",
-      "start": "0x02000180",
-      "end": "0x0200084c",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete retained body accounts for 181 calls, one memory operation, and its production owner boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3a2:02000180"
-      ]
-    },
-    {
-      "overlay": "resource_3ad",
-      "start": "0x02001448",
-      "end": "0x02001a0c",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete retained body accounts for all 166 calls and its production owner boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3ad:02001448"
-      ]
-    },
-    {
       "overlay": "resource_372",
       "start": "0x02001b18",
       "end": "0x0200209c",
@@ -3439,62 +3415,25 @@
     {
       "overlay": "resource_3c3",
       "start": "0x020003c2",
-      "end": "0x02000730",
-      "kind": "structured_scene_module",
+      "end": "0x020003c4",
+      "kind": "alignment_padding",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
-        "complete retained body accounts for 94 calls, 0 loop(s), 0 memory operation(s), and its production owner boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3c3:02000334",
-        "resource_3c3:02000334 (142 bytes) is now exact C; the remainder of the scene module stays retained"
+        "2 zero bytes of alignment padding before the exact owner at 0x020003c4; no instructions"
       ]
     },
     {
       "overlay": "resource_37b",
       "start": "0x02001624",
-      "end": "0x020019e4",
+      "end": "0x0200166c",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
         "complete retained body accounts for 74 calls, 0 loop(s), 24 memory operation(s), and its production owner boundary",
-        "games/gs1/recon/en/dossiers.json#resource_37b:02001624"
-      ]
-    },
-    {
-      "overlay": "resource_3c8",
-      "start": "0x02001150",
-      "end": "0x020014f4",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete retained body accounts for 72 calls, 0 loop(s), 11 memory operation(s), and its production owner boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3c8:02001150"
-      ]
-    },
-    {
-      "overlay": "resource_372",
-      "start": "0x020016cc",
-      "end": "0x02001a64",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete retained body accounts for 95 calls, 0 loop(s), 1 memory operation(s), and its production owner boundary",
-        "games/gs1/recon/en/dossiers.json#resource_372:020016cc"
-      ]
-    },
-    {
-      "overlay": "resource_383",
-      "start": "0x02002bf0",
-      "end": "0x02002f84",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete retained body accounts for 87 calls, 0 loop(s), 3 memory operation(s), and its production owner boundary",
-        "games/gs1/recon/en/dossiers.json#resource_383:02002bf0"
+        "games/gs1/recon/en/dossiers.json#resource_37b:02001624",
+        "boundary corrected to the reviewed 72-byte span in games/gs1/semantic/regions.json"
       ]
     },
     {
@@ -3524,13 +3463,14 @@
     {
       "overlay": "resource_39a",
       "start": "0x02001750",
-      "end": "0x02001ab0",
+      "end": "0x020017a8",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
         "complete retained body accounts for 43 calls, 0 loop(s), 3 memory operation(s), and its production owner boundary",
-        "games/gs1/recon/en/dossiers.json#resource_39a:02001750"
+        "games/gs1/recon/en/dossiers.json#resource_39a:02001750",
+        "boundary corrected to the reviewed 88-byte span in games/gs1/semantic/regions.json"
       ]
     },
     {
@@ -3548,25 +3488,27 @@
     {
       "overlay": "resource_3b2",
       "start": "0x02000f70",
-      "end": "0x020012b4",
+      "end": "0x02001214",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
         "complete retained body accounts for 50 calls, 0 loop(s), 10 memory operation(s), and its production owner boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3b2:02000f70"
+        "games/gs1/recon/en/dossiers.json#resource_3b2:02000f70",
+        "boundary corrected to the reviewed 676-byte span in games/gs1/semantic/regions.json"
       ]
     },
     {
       "overlay": "resource_3a3",
       "start": "0x02000524",
-      "end": "0x0200084c",
+      "end": "0x020006a4",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
         "complete retained body accounts for 49 calls, 1 loop(s), 26 memory operation(s), and its production owner boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3a3:02000524"
+        "games/gs1/recon/en/dossiers.json#resource_3a3:02000524",
+        "boundary corrected to the reviewed 384-byte span in games/gs1/semantic/regions.json"
       ]
     },
     {
@@ -3620,39 +3562,14 @@
     {
       "overlay": "resource_3a3",
       "start": "0x02000904",
-      "end": "0x02000c0c",
+      "end": "0x02000b2c",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
         "complete retained body accounts for 62 calls, 0 loop(s), 20 memory operation(s), and its production owner boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3a3:02000904"
-      ]
-    },
-    {
-      "overlay": "resource_373",
-      "start": "0x02000fec",
-      "end": "0x02001244",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete retained body accounts for 60 calls, 2 loop(s), 23 memory operation(s), and its production owner boundary",
-        "games/gs1/recon/en/dossiers.json#resource_373:02000f5c",
-        "resource_373:02000f5c (48 bytes) is now exact C; the remainder of the scene module stays retained",
-        "resource_373:02000fbc (48 bytes) is now exact C; the remainder of the scene module stays retained"
-      ]
-    },
-    {
-      "overlay": "resource_3b4",
-      "start": "0x020015f0",
-      "end": "0x020018c0",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete retained body accounts for 58 calls, 0 loop(s), 5 memory operation(s), and its production owner boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3b4:020015f0"
+        "games/gs1/recon/en/dossiers.json#resource_3a3:02000904",
+        "boundary corrected to the reviewed 552-byte span in games/gs1/semantic/regions.json"
       ]
     },
     {
@@ -3670,13 +3587,39 @@
     {
       "overlay": "resource_3a6",
       "start": "0x020010de",
+      "end": "0x020011a0",
+      "kind": "structured_scene_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "complete retained body accounts for 54 calls, 0 loop(s), 16 memory operation(s), and its production owner boundary",
+        "games/gs1/recon/en/dossiers.json#resource_3a6:020010de",
+        "region split around the exact C owner at 0x020011a0..0x02001256; the retained bytes before it keep their classification"
+      ]
+    },
+    {
+      "overlay": "resource_3a6",
+      "start": "0x02001256",
+      "end": "0x02001258",
+      "kind": "alignment_padding",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "2 zero bytes of alignment padding before the exact owner at 0x02001258; no instructions"
+      ]
+    },
+    {
+      "overlay": "resource_3a6",
+      "start": "0x02001300",
       "end": "0x02001378",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
         "complete retained body accounts for 54 calls, 0 loop(s), 16 memory operation(s), and its production owner boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3a6:020010de"
+        "games/gs1/recon/en/dossiers.json#resource_3a6:020010de",
+        "region split around the exact C owner at 0x020011a0..0x02001256; the retained bytes after it keep their classification",
+        "region split around the exact C owner at 0x02001258..0x02001300; the retained bytes after it keep their classification"
       ]
     },
     {
@@ -3730,13 +3673,14 @@
     {
       "overlay": "resource_3b6",
       "start": "0x020000c0",
-      "end": "0x02000328",
+      "end": "0x0200013c",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
         "complete retained body accounts for 61 calls, 1 loop(s), 3 memory operation(s), and its production owner boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3b6:020000c0"
+        "games/gs1/recon/en/dossiers.json#resource_3b6:020000c0",
+        "boundary corrected to the reviewed 124-byte span in games/gs1/semantic/regions.json"
       ]
     },
     {
@@ -3749,18 +3693,6 @@
       "evidence": [
         "complete retained body accounts for 26 calls, 0 loop(s), 13 memory operation(s), and its production owner boundary",
         "games/gs1/recon/en/dossiers.json#resource_3b3:020011c4"
-      ]
-    },
-    {
-      "overlay": "resource_3b1",
-      "start": "0x02001804",
-      "end": "0x02001a60",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete retained body accounts for 56 calls, 0 loop(s), 1 memory operation(s), and its production owner boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3b1:02001804"
       ]
     },
     {
@@ -3910,13 +3842,14 @@
     {
       "overlay": "resource_3a4",
       "start": "0x02002d58",
-      "end": "0x02002eec",
+      "end": "0x02002e1c",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
         "complete executable body accounts for 41 calls, 0 loop(s), 13 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3a4:02002d58"
+        "games/gs1/recon/en/dossiers.json#resource_3a4:02002d58",
+        "boundary corrected to the reviewed 196-byte span in games/gs1/semantic/regions.json"
       ]
     },
     {
@@ -4064,18 +3997,6 @@
       ]
     },
     {
-      "overlay": "resource_39e",
-      "start": "0x0200268c",
-      "end": "0x02002764",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete executable body accounts for 23 calls, 0 loop(s), 0 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_39e:0200268c"
-      ]
-    },
-    {
       "overlay": "resource_380",
       "start": "0x02004260",
       "end": "0x02004328",
@@ -4090,25 +4011,27 @@
     {
       "overlay": "resource_3bb",
       "start": "0x02000714",
-      "end": "0x02000950",
+      "end": "0x020008ec",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
         "complete production body accounts for 36 calls, 1 loop(s), 11 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3bb:02000714"
+        "games/gs1/recon/en/dossiers.json#resource_3bb:02000714",
+        "boundary corrected to the reviewed 472-byte span in games/gs1/semantic/regions.json"
       ]
     },
     {
       "overlay": "resource_3b5",
       "start": "0x02000726",
-      "end": "0x02000954",
+      "end": "0x02000894",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
         "complete production body accounts for 42 calls, 0 loop(s), 5 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3b5:02000726"
+        "games/gs1/recon/en/dossiers.json#resource_3b5:02000726",
+        "region split around the exact C owner at 0x02000894..0x02000954; the retained bytes before it keep their classification"
       ]
     },
     {
@@ -4151,13 +4074,14 @@
     {
       "overlay": "resource_3c5",
       "start": "0x02000d4a",
-      "end": "0x02000f58",
+      "end": "0x02000eac",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
         "complete production body accounts for 49 calls, 1 loop(s), 20 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3c5:02000d4a"
+        "games/gs1/recon/en/dossiers.json#resource_3c5:02000d4a",
+        "region split around the exact C owner at 0x02000eac..0x02000f58; the retained bytes before it keep their classification"
       ]
     },
     {
@@ -4175,13 +4099,14 @@
     {
       "overlay": "resource_3a7",
       "start": "0x02000754",
-      "end": "0x02000944",
+      "end": "0x020008a8",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
         "complete production body accounts for 34 calls, 2 loop(s), 0 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3a7:02000754"
+        "games/gs1/recon/en/dossiers.json#resource_3a7:02000754",
+        "boundary corrected to the reviewed 340-byte span in games/gs1/semantic/regions.json"
       ]
     },
     {
@@ -4233,18 +4158,6 @@
       ]
     },
     {
-      "overlay": "resource_39c",
-      "start": "0x020036ac",
-      "end": "0x02003860",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete production body accounts for 35 calls, 0 loop(s), 11 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_39c:020036ac"
-      ]
-    },
-    {
       "overlay": "resource_39f",
       "start": "0x02001c34",
       "end": "0x02001de0",
@@ -4282,50 +4195,26 @@
     },
     {
       "overlay": "resource_3ab",
-      "start": "0x020008ec",
-      "end": "0x02000a90",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete production body accounts for 30 calls, 0 loop(s), 0 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3ab:020008ec"
-      ]
-    },
-    {
-      "overlay": "resource_3b4",
-      "start": "0x0200138c",
-      "end": "0x0200152c",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete production body accounts for 35 calls, 0 loop(s), 1 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3b4:0200138c"
-      ]
-    },
-    {
-      "overlay": "resource_3ab",
       "start": "0x02000b6c",
-      "end": "0x02000d08",
+      "end": "0x02000c10",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
         "complete production body accounts for 36 calls, 1 loop(s), 5 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3ab:02000b6c"
+        "games/gs1/recon/en/dossiers.json#resource_3ab:02000b6c",
+        "boundary corrected to the reviewed 164-byte span in games/gs1/semantic/regions.json"
       ]
     },
     {
       "overlay": "resource_373",
       "start": "0x020012ba",
-      "end": "0x02001454",
-      "kind": "structured_scene_module",
+      "end": "0x020012bc",
+      "kind": "alignment_padding",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
-        "complete production body accounts for 37 calls, 0 loop(s), 5 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_373:020012ba"
+        "2 zero bytes of alignment padding before the exact owner at 0x020012bc; no instructions"
       ]
     },
     {
@@ -4342,37 +4231,27 @@
     {
       "overlay": "resource_37f",
       "start": "0x0200007c",
-      "end": "0x02000200",
+      "end": "0x020000ec",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
         "complete production body accounts for 23 calls, 0 loop(s), 0 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_37f:0200007c"
-      ]
-    },
-    {
-      "overlay": "resource_372",
-      "start": "0x0200150c",
-      "end": "0x02001684",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete production body accounts for 37 calls, 0 loop(s), 0 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_372:0200150c"
+        "games/gs1/recon/en/dossiers.json#resource_37f:0200007c",
+        "boundary corrected to the reviewed 112-byte span in games/gs1/semantic/regions.json"
       ]
     },
     {
       "overlay": "resource_399",
       "start": "0x0200174c",
-      "end": "0x020018c4",
+      "end": "0x02001794",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
         "complete production body accounts for 21 calls, 0 loop(s), 10 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_399:0200174c"
+        "games/gs1/recon/en/dossiers.json#resource_399:0200174c",
+        "boundary corrected to the reviewed 72-byte span in games/gs1/semantic/regions.json"
       ]
     },
     {
@@ -4402,13 +4281,14 @@
     {
       "overlay": "resource_385",
       "start": "0x02000804",
-      "end": "0x02000970",
+      "end": "0x02000864",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
         "complete production body accounts for 34 calls, 0 loop(s), 10 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_385:02000804"
+        "games/gs1/recon/en/dossiers.json#resource_385:02000804",
+        "boundary corrected to the reviewed 96-byte span in games/gs1/semantic/regions.json"
       ]
     },
     {

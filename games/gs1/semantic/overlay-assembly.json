@@ -1917,7 +1917,7 @@
     },
     {
       "overlay": "resource_395",
-      "start": "0x02000470",
+      "start": "0x02000488",
       "end": "0x02001056",
       "kind": "generated_call_script_module",
       "retention": "keep_structured_asm",

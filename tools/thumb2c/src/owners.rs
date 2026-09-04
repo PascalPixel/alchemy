@@ -69,6 +69,60 @@ pub fn modules(root: &Path) -> Result<Vec<Module>, String> {
     Ok(modules)
 }
 
+#[derive(Deserialize)]
+struct Regions {
+    manual_regions: Vec<ManualRegion>,
+}
+
+#[derive(Deserialize)]
+struct ManualRegion {
+    overlay: String,
+    entry: String,
+    span_bytes: u32,
+}
+
+/// One entry from `regions.json`'s `manual_regions`: a function-sized owner
+/// inside (or coinciding with) a retained region, not yet mapped to a C
+/// source file.
+#[derive(Debug, Clone)]
+pub struct RegisteredOwner {
+    pub overlay: String,
+    pub entry: u32,
+    pub span: u32,
+}
+
+impl RegisteredOwner {
+    pub fn key(&self) -> String {
+        format!("{}:{:08x}", self.overlay, self.entry)
+    }
+}
+
+/// Every registered owner in `games/gs1/semantic/regions.json` that has no
+/// mapped C source yet. Unlike `study`/`bench`, which only look at owners
+/// that already have mapped source, this is for finding owners still sitting
+/// inside a retained region's draft.
+pub fn registered_owners(root: &Path) -> Result<Vec<RegisteredOwner>, String> {
+    let path = root.join("games/gs1/semantic/regions.json");
+    let text = std::fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?;
+    let regions: Regions =
+        serde_json::from_slice(&text).map_err(|error| format!("{}: {error}", path.display()))?;
+    let sources = SourcePaths::load(root)?;
+    let mut owners = Vec::new();
+    for region in regions.manual_regions {
+        let entry = parse_hex(&region.entry)?;
+        let owner = SourceOwner::parse(&format!("{}:{entry:08x}", region.overlay))?;
+        if sources.mapped_relative_path(owner).is_some() {
+            continue;
+        }
+        owners.push(RegisteredOwner {
+            entry,
+            overlay: region.overlay,
+            span: region.span_bytes,
+        });
+    }
+    Ok(owners)
+}
+
 /// Parses `<overlay>:<hex>` into its parts.
 pub fn parse_owner(owner: &str) -> Result<(String, u32), String> {
     let (overlay, address) = owner

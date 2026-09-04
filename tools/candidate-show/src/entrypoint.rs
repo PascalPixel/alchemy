@@ -44,6 +44,11 @@ fn run(mut options: crate::cli::Options) -> Result<String, String> {
             options.target.as_str()
         ));
     }
+    if let Some(overlay) = unit.overlay.clone() {
+        if options.owner.is_none() {
+            return score_overlay_unit(&unit, &overlay);
+        }
+    }
     options.source = unit.source.to_string_lossy().into_owned();
     options.configuration.absolute_symbols = unit.canonical_symbols()?;
     let default_work = format!("scratch/candidate-show/{id}");
@@ -125,6 +130,55 @@ fn run(mut options: crate::cli::Options) -> Result<String, String> {
     }
     Ok(output)
 }
+/// An overlay unit is proved the way the full build places it: the unit
+/// compiles once, every function is linked at its owner's address, and each
+/// member's bytes are compared with the canonical overlay image.
+fn score_overlay_unit(unit: &TranslationUnit, overlay: &str) -> Result<String, String> {
+    let compiled = overlay_disasm::compile_declared_overlay_unit(unit, "en")?;
+    let reference = canonical_overlay(root(), overlay)?;
+    let base = 0x0200_0000i64;
+    let mut output = String::new();
+    let mut mismatches = Vec::new();
+    for owner in &unit.owners {
+        let address = i64::from(owner.address);
+        let offset = usize::try_from(address - compiled.address)
+            .map_err(|_| format!("{}: owner precedes the compiled unit", unit.id))?;
+        let candidate = compiled
+            .data
+            .get(offset..offset + owner.extent)
+            .ok_or_else(|| format!("{}: compiled unit lacks 0x{address:08x}", unit.id))?;
+        let start = usize::try_from(address - base)
+            .map_err(|_| format!("{}: owner precedes the overlay image", unit.id))?;
+        let expected = reference
+            .get(start..start + owner.extent)
+            .ok_or_else(|| format!("{}: overlay image lacks 0x{address:08x}", unit.id))?;
+        let differing = candidate
+            .chunks(2)
+            .zip(expected.chunks(2))
+            .filter(|(a, b)| a != b)
+            .count();
+        output.push_str(&format!(
+            "scope=translation-unit\nowner=0x{address:08x}\ncandidate={} reference={} differing_halfwords={differing}\n",
+            candidate.len(),
+            expected.len()
+        ));
+        if differing != 0 {
+            if let Some(first) = candidate.iter().zip(expected).position(|(a, b)| a != b) {
+                output.push_str(&format!("first_difference=+0x{first:x}\n"));
+            }
+            mismatches.push(format!("0x{address:08x}"));
+        }
+    }
+    if !mismatches.is_empty() && unit.exact() {
+        return Err(format!(
+            "{output}translation unit {} has byte mismatches in {}",
+            unit.id,
+            mismatches.join(",")
+        ));
+    }
+    Ok(output)
+}
+
 fn exact_mismatch(output: &RenderOutput) -> bool {
     output.differing_halfwords != 0
         || output.candidate_length != output.reference_length

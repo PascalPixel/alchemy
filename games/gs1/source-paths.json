@@ -5549,7 +5549,8 @@
       "name": "FieldScene_RunExtendedPresentationSequence"
     },
     "resource_371:02002cb4": {
-      "name": "FieldScene_RunActorPresentationSequence"
+      "name": "FieldScene_RunActorPresentationSequence",
+      "source": "overlays/scene_primary_script/run_scene_371_actor_presentation_sequence.c"
     },
     "resource_3a5:020004e4": {
       "name": "FieldScene_ConfigureActorLayout"
@@ -5576,7 +5577,8 @@
       "name": "FieldScene_ClosePresentationSequence"
     },
     "resource_3af:02003a0c": {
-      "name": "FieldScene_ConfigureFourActorPresentation"
+      "name": "FieldScene_ConfigureFourActorPresentation",
+      "source": "overlays/scene_primary_script/run_scene_3af_configure_four_actor_presentation.c"
     },
     "resource_383:02001e80": {
       "name": "FieldScene_ConfigurePairedActors",
@@ -5730,7 +5732,8 @@
       "name": "FieldScene_RunMultiStageEffectPresentation"
     },
     "resource_380:02002400": {
-      "name": "FieldScene_RunSixPassEffectSequence"
+      "name": "FieldScene_RunSixPassEffectSequence",
+      "source": "overlays/scene_primary_script/run_scene_380_six_pass_effect_sequence.c"
     },
     "resource_39c:02002684": {
       "name": "FieldScene_RunActorThreeBranchSequence",
@@ -6321,6 +6324,880 @@
     "resource_3ae:02000ba0": {
       "name": "FieldScene_RunScene3aeSequenceA",
       "source": "overlays/scene_primary_script/run_scene_3ae_sequence_a.c"
+    },
+    "main:080a15f0": "unidentified/main/ui/ui_owner_39.c",
+    "main:080c0228": "unidentified/main/field/field_owner_145.c",
+    "resource_371:02001680": {
+      "name": "FieldScene_RunScene371_02001680",
+      "source": "overlays/scene_primary_script/run_scene_371_02001680.c"
+    },
+    "resource_371:02001c08": {
+      "name": "FieldScene_RunScene371_02001c08",
+      "source": "overlays/scene_primary_script/run_scene_371_02001c08.c"
+    },
+    "resource_371:02002274": {
+      "name": "FieldScene_RunScene371_02002274",
+      "source": "overlays/scene_primary_script/run_scene_371_02002274.c"
+    },
+    "resource_372:02000278": {
+      "name": "FieldScene_RunScene372_02000278",
+      "source": "overlays/scene_primary_script/run_scene_372_02000278.c"
+    },
+    "resource_372:02000398": {
+      "name": "FieldScene_RunScene372_02000398",
+      "source": "overlays/scene_primary_script/run_scene_372_02000398.c"
+    },
+    "resource_372:020003cc": {
+      "name": "FieldScene_RunScene372_020003cc",
+      "source": "overlays/scene_primary_script/run_scene_372_020003cc.c"
+    },
+    "resource_372:02000400": {
+      "name": "FieldScene_RunScene372_02000400",
+      "source": "overlays/scene_primary_script/run_scene_372_02000400.c"
+    },
+    "resource_372:02000a10": {
+      "name": "FieldScene_RunScene372_02000a10",
+      "source": "overlays/scene_primary_script/run_scene_372_02000a10.c"
+    },
+    "resource_373:02000cd0": {
+      "name": "FieldScene_RunScene373_02000cd0",
+      "source": "overlays/scene_primary_script/run_scene_373_02000cd0.c"
+    },
+    "resource_373:02000e84": {
+      "name": "FieldScene_RunScene373_02000e84",
+      "source": "overlays/scene_primary_script/run_scene_373_02000e84.c"
+    },
+    "resource_375:02000964": {
+      "name": "FieldScene_RunScene375_02000964",
+      "source": "overlays/scene_primary_script/run_scene_375_02000964.c"
+    },
+    "resource_376:0200055c": {
+      "name": "FieldScene_RunScene376_0200055c",
+      "source": "overlays/scene_primary_script/run_scene_376_0200055c.c"
+    },
+    "resource_376:020005d4": {
+      "name": "FieldScene_RunScene376_020005d4",
+      "source": "overlays/scene_primary_script/run_scene_376_020005d4.c"
+    },
+    "resource_377:020001e0": {
+      "name": "FieldScene_RunScene377_020001e0",
+      "source": "overlays/scene_primary_script/run_scene_377_020001e0.c"
+    },
+    "resource_377:02000e34": {
+      "name": "FieldScene_RunScene377_02000e34",
+      "source": "overlays/scene_primary_script/run_scene_377_02000e34.c"
+    },
+    "resource_37a:02001264": {
+      "name": "FieldScene_RunScene37a_02001264",
+      "source": "overlays/scene_primary_script/run_scene_37a_02001264.c"
+    },
+    "resource_37a:02001be8": {
+      "name": "FieldScene_RunScene37a_02001be8",
+      "source": "overlays/scene_primary_script/run_scene_37a_02001be8.c"
+    },
+    "resource_37b:02002244": {
+      "name": "FieldScene_RunScene37b_02002244",
+      "source": "overlays/scene_primary_script/run_scene_37b_02002244.c"
+    },
+    "resource_37b:020022f4": {
+      "name": "FieldScene_RunScene37b_020022f4",
+      "source": "overlays/scene_primary_script/run_scene_37b_020022f4.c"
+    },
+    "resource_37f:02000d1c": {
+      "name": "FieldScene_RunScene37f_02000d1c",
+      "source": "overlays/scene_primary_script/run_scene_37f_02000d1c.c"
+    },
+    "resource_382:02000614": {
+      "name": "FieldScene_RunScene382_02000614",
+      "source": "overlays/scene_primary_script/run_scene_382_02000614.c"
+    },
+    "resource_382:020008cc": {
+      "name": "FieldScene_RunScene382_020008cc",
+      "source": "overlays/scene_primary_script/run_scene_382_020008cc.c"
+    },
+    "resource_382:02001238": {
+      "name": "FieldScene_RunScene382_02001238",
+      "source": "overlays/scene_primary_script/run_scene_382_02001238.c"
+    },
+    "resource_382:020012c0": {
+      "name": "FieldScene_RunScene382_020012c0",
+      "source": "overlays/scene_primary_script/run_scene_382_020012c0.c"
+    },
+    "resource_383:0200091c": {
+      "name": "FieldScene_RunScene383_0200091c",
+      "source": "overlays/scene_primary_script/run_scene_383_0200091c.c"
+    },
+    "resource_385:020009f8": {
+      "name": "FieldScene_RunScene385_020009f8",
+      "source": "overlays/scene_primary_script/run_scene_385_020009f8.c"
+    },
+    "resource_385:02000d84": {
+      "name": "FieldScene_RunScene385_02000d84",
+      "source": "overlays/scene_primary_script/run_scene_385_02000d84.c"
+    },
+    "resource_386:0200011c": {
+      "name": "FieldScene_RunScene386_0200011c",
+      "source": "overlays/scene_primary_script/run_scene_386_0200011c.c"
+    },
+    "resource_386:02000204": {
+      "name": "FieldScene_RunScene386_02000204",
+      "source": "overlays/scene_primary_script/run_scene_386_02000204.c"
+    },
+    "resource_389:0200115c": {
+      "name": "FieldScene_RunScene389_0200115c",
+      "source": "overlays/scene_primary_script/run_scene_389_0200115c.c"
+    },
+    "resource_38b:02000240": {
+      "name": "FieldScene_RunScene38b_02000240",
+      "source": "overlays/scene_primary_script/run_scene_38b_02000240.c"
+    },
+    "resource_38c:02000124": {
+      "name": "FieldScene_RunScene38c_02000124",
+      "source": "overlays/scene_primary_script/run_scene_38c_02000124.c"
+    },
+    "resource_38c:020001e0": {
+      "name": "FieldScene_RunScene38c_020001e0",
+      "source": "overlays/scene_primary_script/run_scene_38c_020001e0.c"
+    },
+    "resource_38c:02000250": {
+      "name": "FieldScene_RunScene38c_02000250",
+      "source": "overlays/scene_primary_script/run_scene_38c_02000250.c"
+    },
+    "resource_38c:0200035c": {
+      "name": "FieldScene_RunScene38c_0200035c",
+      "source": "overlays/scene_primary_script/run_scene_38c_0200035c.c"
+    },
+    "resource_38d:02000150": {
+      "name": "FieldScene_RunScene38d_02000150",
+      "source": "overlays/scene_primary_script/run_scene_38d_02000150.c"
+    },
+    "resource_38d:02000568": {
+      "name": "FieldScene_RunScene38d_02000568",
+      "source": "overlays/scene_primary_script/run_scene_38d_02000568.c"
+    },
+    "resource_38d:020005f4": {
+      "name": "FieldScene_RunScene38d_020005f4",
+      "source": "overlays/scene_primary_script/run_scene_38d_020005f4.c"
+    },
+    "resource_38e:0200045c": {
+      "name": "FieldScene_RunScene38e_0200045c",
+      "source": "overlays/scene_primary_script/run_scene_38e_0200045c.c"
+    },
+    "resource_399:02000a3c": {
+      "name": "FieldScene_RunScene399_02000a3c",
+      "source": "overlays/scene_primary_script/run_scene_399_02000a3c.c"
+    },
+    "resource_39a:02001ad0": {
+      "name": "FieldScene_RunScene39a_02001ad0",
+      "source": "overlays/scene_primary_script/run_scene_39a_02001ad0.c"
+    },
+    "resource_39b:02000f48": {
+      "name": "FieldScene_RunScene39b_02000f48",
+      "source": "overlays/scene_primary_script/run_scene_39b_02000f48.c"
+    },
+    "resource_39b:0200196c": {
+      "name": "FieldScene_RunScene39b_0200196c",
+      "source": "overlays/scene_primary_script/run_scene_39b_0200196c.c"
+    },
+    "resource_39c:02000ffc": {
+      "name": "FieldScene_RunScene39c_02000ffc",
+      "source": "overlays/scene_primary_script/run_scene_39c_02000ffc.c"
+    },
+    "resource_39c:020010c0": {
+      "name": "FieldScene_RunScene39c_020010c0",
+      "source": "overlays/scene_primary_script/run_scene_39c_020010c0.c"
+    },
+    "resource_39e:02000414": {
+      "name": "FieldScene_RunScene39e_02000414",
+      "source": "overlays/scene_primary_script/run_scene_39e_02000414.c"
+    },
+    "resource_39e:02002778": {
+      "name": "FieldScene_RunScene39e_02002778",
+      "source": "overlays/scene_primary_script/run_scene_39e_02002778.c"
+    },
+    "resource_39e:020027ec": {
+      "name": "FieldScene_RunScene39e_020027ec",
+      "source": "overlays/scene_primary_script/run_scene_39e_020027ec.c"
+    },
+    "resource_39f:02001818": {
+      "name": "FieldScene_RunScene39f_02001818",
+      "source": "overlays/scene_primary_script/run_scene_39f_02001818.c"
+    },
+    "resource_39f:02002004": {
+      "name": "FieldScene_RunScene39f_02002004",
+      "source": "overlays/scene_primary_script/run_scene_39f_02002004.c"
+    },
+    "resource_3a0:02000de8": {
+      "name": "FieldScene_RunScene3a0_02000de8",
+      "source": "overlays/scene_primary_script/run_scene_3a0_02000de8.c"
+    },
+    "resource_3a0:02001060": {
+      "name": "FieldScene_RunScene3a0_02001060",
+      "source": "overlays/scene_primary_script/run_scene_3a0_02001060.c"
+    },
+    "resource_3a4:02001398": {
+      "name": "FieldScene_RunScene3a4_02001398",
+      "source": "overlays/scene_primary_script/run_scene_3a4_02001398.c"
+    },
+    "resource_3aa:02000184": {
+      "name": "FieldScene_RunScene3aa_02000184",
+      "source": "overlays/scene_primary_script/run_scene_3aa_02000184.c"
+    },
+    "resource_3ae:02000144": {
+      "name": "FieldScene_RunScene3ae_02000144",
+      "source": "overlays/scene_primary_script/run_scene_3ae_02000144.c"
+    },
+    "resource_3ae:02000260": {
+      "name": "FieldScene_RunScene3ae_02000260",
+      "source": "overlays/scene_primary_script/run_scene_3ae_02000260.c"
+    },
+    "resource_3ae:020002dc": {
+      "name": "FieldScene_RunScene3ae_020002dc",
+      "source": "overlays/scene_primary_script/run_scene_3ae_020002dc.c"
+    },
+    "resource_3ae:020006c8": {
+      "name": "FieldScene_RunScene3ae_020006c8",
+      "source": "overlays/scene_primary_script/run_scene_3ae_020006c8.c"
+    },
+    "resource_3af:02000bb8": {
+      "name": "FieldScene_RunScene3af_02000bb8",
+      "source": "overlays/scene_primary_script/run_scene_3af_02000bb8.c"
+    },
+    "resource_3af:02000bf0": {
+      "name": "FieldScene_RunScene3af_02000bf0",
+      "source": "overlays/scene_primary_script/run_scene_3af_02000bf0.c"
+    },
+    "resource_3af:020010a0": {
+      "name": "FieldScene_RunScene3af_020010a0",
+      "source": "overlays/scene_primary_script/run_scene_3af_020010a0.c"
+    },
+    "resource_3af:020011c8": {
+      "name": "FieldScene_RunScene3af_020011c8",
+      "source": "overlays/scene_primary_script/run_scene_3af_020011c8.c"
+    },
+    "resource_3af:020012f0": {
+      "name": "FieldScene_RunScene3af_020012f0",
+      "source": "overlays/scene_primary_script/run_scene_3af_020012f0.c"
+    },
+    "resource_3af:0200185c": {
+      "name": "FieldScene_RunScene3af_0200185c",
+      "source": "overlays/scene_primary_script/run_scene_3af_0200185c.c"
+    },
+    "resource_3af:02001920": {
+      "name": "FieldScene_RunScene3af_02001920",
+      "source": "overlays/scene_primary_script/run_scene_3af_02001920.c"
+    },
+    "resource_3af:02001a98": {
+      "name": "FieldScene_RunScene3af_02001a98",
+      "source": "overlays/scene_primary_script/run_scene_3af_02001a98.c"
+    },
+    "resource_3af:02001b58": {
+      "name": "FieldScene_RunScene3af_02001b58",
+      "source": "overlays/scene_primary_script/run_scene_3af_02001b58.c"
+    },
+    "resource_3af:02001c14": {
+      "name": "FieldScene_RunScene3af_02001c14",
+      "source": "overlays/scene_primary_script/run_scene_3af_02001c14.c"
+    },
+    "resource_3b0:0200040c": {
+      "name": "FieldScene_RunScene3b0_0200040c",
+      "source": "overlays/scene_primary_script/run_scene_3b0_0200040c.c"
+    },
+    "resource_3b0:02000468": {
+      "name": "FieldScene_RunScene3b0_02000468",
+      "source": "overlays/scene_primary_script/run_scene_3b0_02000468.c"
+    },
+    "resource_3b0:020004b0": {
+      "name": "FieldScene_RunScene3b0_020004b0",
+      "source": "overlays/scene_primary_script/run_scene_3b0_020004b0.c"
+    },
+    "resource_3b1:02000670": {
+      "name": "FieldScene_RunScene3b1_02000670",
+      "source": "overlays/scene_primary_script/run_scene_3b1_02000670.c"
+    },
+    "resource_3b1:020007f8": {
+      "name": "FieldScene_RunScene3b1_020007f8",
+      "source": "overlays/scene_primary_script/run_scene_3b1_020007f8.c"
+    },
+    "resource_3b1:02003dec": {
+      "name": "FieldScene_RunScene3b1_02003dec",
+      "source": "overlays/scene_primary_script/run_scene_3b1_02003dec.c"
+    },
+    "resource_3b1:02003e34": {
+      "name": "FieldScene_RunScene3b1_02003e34",
+      "source": "overlays/scene_primary_script/run_scene_3b1_02003e34.c"
+    },
+    "resource_3b1:02003eec": {
+      "name": "FieldScene_RunScene3b1_02003eec",
+      "source": "overlays/scene_primary_script/run_scene_3b1_02003eec.c"
+    },
+    "resource_3b1:020040e8": {
+      "name": "FieldScene_RunScene3b1_020040e8",
+      "source": "overlays/scene_primary_script/run_scene_3b1_020040e8.c"
+    },
+    "resource_3b1:0200413c": {
+      "name": "FieldScene_RunScene3b1_0200413c",
+      "source": "overlays/scene_primary_script/run_scene_3b1_0200413c.c"
+    },
+    "resource_3b1:02004198": {
+      "name": "FieldScene_RunScene3b1_02004198",
+      "source": "overlays/scene_primary_script/run_scene_3b1_02004198.c"
+    },
+    "resource_3b1:02005068": {
+      "name": "FieldScene_RunScene3b1_02005068",
+      "source": "overlays/scene_primary_script/run_scene_3b1_02005068.c"
+    },
+    "resource_3b1:020056dc": {
+      "name": "FieldScene_RunScene3b1_020056dc",
+      "source": "overlays/scene_primary_script/run_scene_3b1_020056dc.c"
+    },
+    "resource_3b2:0200167c": {
+      "name": "FieldScene_RunScene3b2_0200167c",
+      "source": "overlays/scene_primary_script/run_scene_3b2_0200167c.c"
+    },
+    "resource_3b4:02000b68": {
+      "name": "FieldScene_RunScene3b4_02000b68",
+      "source": "overlays/scene_primary_script/run_scene_3b4_02000b68.c"
+    },
+    "resource_3b4:02000ccc": {
+      "name": "FieldScene_RunScene3b4_02000ccc",
+      "source": "overlays/scene_primary_script/run_scene_3b4_02000ccc.c"
+    },
+    "resource_3b4:02000fdc": {
+      "name": "FieldScene_RunScene3b4_02000fdc",
+      "source": "overlays/scene_primary_script/run_scene_3b4_02000fdc.c"
+    },
+    "resource_3b4:02001bc4": {
+      "name": "FieldScene_RunScene3b4_02001bc4",
+      "source": "overlays/scene_primary_script/run_scene_3b4_02001bc4.c"
+    },
+    "resource_3b4:02002188": {
+      "name": "FieldScene_RunScene3b4_02002188",
+      "source": "overlays/scene_primary_script/run_scene_3b4_02002188.c"
+    },
+    "resource_3b5:02000528": {
+      "name": "FieldScene_RunScene3b5_02000528",
+      "source": "overlays/scene_primary_script/run_scene_3b5_02000528.c"
+    },
+    "resource_3b5:02000568": {
+      "name": "FieldScene_RunScene3b5_02000568",
+      "source": "overlays/scene_primary_script/run_scene_3b5_02000568.c"
+    },
+    "resource_3b5:020005dc": {
+      "name": "FieldScene_RunScene3b5_020005dc",
+      "source": "overlays/scene_primary_script/run_scene_3b5_020005dc.c"
+    },
+    "resource_3b6:020007b0": {
+      "name": "FieldScene_RunScene3b6_020007b0",
+      "source": "overlays/scene_primary_script/run_scene_3b6_020007b0.c"
+    },
+    "resource_3b8:02000264": {
+      "name": "FieldScene_RunScene3b8_02000264",
+      "source": "overlays/scene_primary_script/run_scene_3b8_02000264.c"
+    },
+    "resource_3b8:02003d40": {
+      "name": "FieldScene_RunScene3b8_02003d40",
+      "source": "overlays/scene_primary_script/run_scene_3b8_02003d40.c"
+    },
+    "resource_3b9:02000334": {
+      "name": "FieldScene_RunScene3b9_02000334",
+      "source": "overlays/scene_primary_script/run_scene_3b9_02000334.c"
+    },
+    "resource_3b9:0200039c": {
+      "name": "FieldScene_RunScene3b9_0200039c",
+      "source": "overlays/scene_primary_script/run_scene_3b9_0200039c.c"
+    },
+    "resource_3b9:020004c8": {
+      "name": "FieldScene_RunScene3b9_020004c8",
+      "source": "overlays/scene_primary_script/run_scene_3b9_020004c8.c"
+    },
+    "resource_3b9:0200055c": {
+      "name": "FieldScene_RunScene3b9_0200055c",
+      "source": "overlays/scene_primary_script/run_scene_3b9_0200055c.c"
+    },
+    "resource_3b9:02000648": {
+      "name": "FieldScene_RunScene3b9_02000648",
+      "source": "overlays/scene_primary_script/run_scene_3b9_02000648.c"
+    },
+    "resource_3b9:020025f0": {
+      "name": "FieldScene_RunScene3b9_020025f0",
+      "source": "overlays/scene_primary_script/run_scene_3b9_020025f0.c"
+    },
+    "resource_3b9:02002668": {
+      "name": "FieldScene_RunScene3b9_02002668",
+      "source": "overlays/scene_primary_script/run_scene_3b9_02002668.c"
+    },
+    "resource_3b9:02002820": {
+      "name": "FieldScene_RunScene3b9_02002820",
+      "source": "overlays/scene_primary_script/run_scene_3b9_02002820.c"
+    },
+    "resource_3b9:02002904": {
+      "name": "FieldScene_RunScene3b9_02002904",
+      "source": "overlays/scene_primary_script/run_scene_3b9_02002904.c"
+    },
+    "resource_3b9:02002964": {
+      "name": "FieldScene_RunScene3b9_02002964",
+      "source": "overlays/scene_primary_script/run_scene_3b9_02002964.c"
+    },
+    "resource_3be:02000fd0": {
+      "name": "FieldScene_RunScene3be_02000fd0",
+      "source": "overlays/scene_primary_script/run_scene_3be_02000fd0.c"
+    },
+    "resource_3be:02001080": {
+      "name": "FieldScene_RunScene3be_02001080",
+      "source": "overlays/scene_primary_script/run_scene_3be_02001080.c"
+    },
+    "resource_3bf:02000bec": {
+      "name": "FieldScene_RunScene3bf_02000bec",
+      "source": "overlays/scene_primary_script/run_scene_3bf_02000bec.c"
+    },
+    "resource_3bf:02001cf0": {
+      "name": "FieldScene_RunScene3bf_02001cf0",
+      "source": "overlays/scene_primary_script/run_scene_3bf_02001cf0.c"
+    },
+    "resource_3bf:020021c4": {
+      "name": "FieldScene_RunScene3bf_020021c4",
+      "source": "overlays/scene_primary_script/run_scene_3bf_020021c4.c"
+    },
+    "resource_3bf:020025f8": {
+      "name": "FieldScene_RunScene3bf_020025f8",
+      "source": "overlays/scene_primary_script/run_scene_3bf_020025f8.c"
+    },
+    "resource_3bf:0200269c": {
+      "name": "FieldScene_RunScene3bf_0200269c",
+      "source": "overlays/scene_primary_script/run_scene_3bf_0200269c.c"
+    },
+    "resource_3bf:02004704": {
+      "name": "FieldScene_RunScene3bf_02004704",
+      "source": "overlays/scene_primary_script/run_scene_3bf_02004704.c"
+    },
+    "resource_3c5:02002548": {
+      "name": "FieldScene_RunScene3c5_02002548",
+      "source": "overlays/scene_primary_script/run_scene_3c5_02002548.c"
+    },
+    "resource_3c6:02000078": {
+      "name": "FieldScene_RunScene3c6_02000078",
+      "source": "overlays/scene_primary_script/run_scene_3c6_02000078.c"
+    },
+    "resource_3c9:02004b28": {
+      "name": "FieldScene_RunScene3c9_02004b28",
+      "source": "overlays/scene_primary_script/run_scene_3c9_02004b28.c"
+    },
+    "resource_3ce:02000244": {
+      "name": "FieldScene_RunScene3ce_02000244",
+      "source": "overlays/scene_primary_script/run_scene_3ce_02000244.c"
+    },
+    "resource_371:020017fc": {
+      "name": "FieldScene_RunScene371_020017fc",
+      "source": "overlays/scene_primary_script/run_scene_371_020017fc.c"
+    },
+    "resource_371:02001888": {
+      "name": "FieldScene_RunScene371_02001888",
+      "source": "overlays/scene_primary_script/run_scene_371_02001888.c"
+    },
+    "resource_371:02001938": {
+      "name": "FieldScene_RunScene371_02001938",
+      "source": "overlays/scene_primary_script/run_scene_371_02001938.c"
+    },
+    "resource_371:020019e8": {
+      "name": "FieldScene_RunScene371_020019e8",
+      "source": "overlays/scene_primary_script/run_scene_371_020019e8.c"
+    },
+    "resource_371:02001a98": {
+      "name": "FieldScene_RunScene371_02001a98",
+      "source": "overlays/scene_primary_script/run_scene_371_02001a98.c"
+    },
+    "resource_371:02001b5c": {
+      "name": "FieldScene_RunScene371_02001b5c",
+      "source": "overlays/scene_primary_script/run_scene_371_02001b5c.c"
+    },
+    "resource_372:02003e48": {
+      "name": "FieldScene_RunScene372_02003e48",
+      "source": "overlays/scene_primary_script/run_scene_372_02003e48.c"
+    },
+    "resource_373:02001490": {
+      "name": "FieldScene_RunScene373_02001490",
+      "source": "overlays/scene_primary_script/run_scene_373_02001490.c"
+    },
+    "resource_39d:020009fc": {
+      "name": "FieldScene_RunScene39d_020009fc",
+      "source": "overlays/scene_primary_script/run_scene_39d_020009fc.c"
+    },
+    "resource_3b1:02003d10": {
+      "name": "FieldScene_RunScene3b1_02003d10",
+      "source": "overlays/scene_primary_script/run_scene_3b1_02003d10.c"
+    },
+    "resource_3b3:0200215c": {
+      "name": "FieldScene_RunScene3b3_0200215c",
+      "source": "overlays/scene_primary_script/run_scene_3b3_0200215c.c"
+    },
+    "resource_3b3:0200263c": {
+      "name": "FieldScene_RunScene3b3_0200263c",
+      "source": "overlays/scene_primary_script/run_scene_3b3_0200263c.c"
+    },
+    "resource_3bf:02004794": {
+      "name": "FieldScene_RunScene3bf_02004794",
+      "source": "overlays/scene_primary_script/run_scene_3bf_02004794.c"
+    },
+    "resource_3c8:02004a2c": {
+      "name": "FieldScene_RunScene3c8_02004a2c",
+      "source": "overlays/scene_primary_script/run_scene_3c8_02004a2c.c"
+    },
+    "resource_3c9:02003924": {
+      "name": "FieldScene_RunScene3c9_02003924",
+      "source": "overlays/scene_primary_script/run_scene_3c9_02003924.c"
+    },
+    "resource_3a5:02001874": {
+      "name": "FieldScene_RunScene3a5_02001874",
+      "source": "overlays/scene_primary_script/run_scene_3a5_02001874.c"
+    },
+    "resource_3b3:02001fd4": {
+      "name": "FieldScene_RunScene3b3_02001fd4",
+      "source": "overlays/scene_primary_script/run_scene_3b3_02001fd4.c"
+    },
+    "resource_39d:02002eb8": {
+      "name": "FieldScene_RunScene39d_02002eb8",
+      "source": "overlays/scene_primary_script/run_scene_39d_02002eb8.c"
+    },
+    "resource_372:02000ec4": {
+      "name": "FieldScene_RunScene372_02000ec4",
+      "source": "overlays/scene_primary_script/run_scene_372_02000ec4.c"
+    },
+    "resource_3ab:020015bc": {
+      "name": "FieldScene_RunScene3ab_020015bc",
+      "source": "overlays/scene_primary_script/run_scene_3ab_020015bc.c"
+    },
+    "resource_3ad:02000384": {
+      "name": "FieldScene_RunScene3ad_02000384",
+      "source": "overlays/scene_primary_script/run_scene_3ad_02000384.c"
+    },
+    "resource_3ba:02000974": {
+      "name": "FieldScene_RunScene3ba_02000974",
+      "source": "overlays/scene_primary_script/run_scene_3ba_02000974.c"
+    },
+    "resource_3bf:02002718": {
+      "name": "FieldScene_RunScene3bf_02002718",
+      "source": "overlays/scene_primary_script/run_scene_3bf_02002718.c"
+    },
+    "resource_371:0200155c": {
+      "name": "FieldScene_RunScene371_0200155c",
+      "source": "overlays/scene_primary_script/run_scene_371_0200155c.c"
+    },
+    "resource_372:02003c48": {
+      "name": "FieldScene_RunScene372_02003c48",
+      "source": "overlays/scene_primary_script/run_scene_372_02003c48.c"
+    },
+    "resource_37a:02002924": {
+      "name": "FieldScene_RunScene37a_02002924",
+      "source": "overlays/scene_primary_script/run_scene_37a_02002924.c"
+    },
+    "resource_39f:02000d90": {
+      "name": "FieldScene_RunScene39f_02000d90",
+      "source": "overlays/scene_primary_script/run_scene_39f_02000d90.c"
+    },
+    "resource_3a3:02000d58": {
+      "name": "FieldScene_RunScene3a3_02000d58",
+      "source": "overlays/scene_primary_script/run_scene_3a3_02000d58.c"
+    },
+    "resource_3a4:02000c9c": {
+      "name": "FieldScene_RunScene3a4_02000c9c",
+      "source": "overlays/scene_primary_script/run_scene_3a4_02000c9c.c"
+    },
+    "resource_3b4:02000ad0": {
+      "name": "FieldScene_RunScene3b4_02000ad0",
+      "source": "overlays/scene_primary_script/run_scene_3b4_02000ad0.c"
+    },
+    "resource_3bb:02000b38": {
+      "name": "FieldScene_RunScene3bb_02000b38",
+      "source": "overlays/scene_primary_script/run_scene_3bb_02000b38.c"
+    },
+    "resource_3bf:02000bac": {
+      "name": "FieldScene_RunScene3bf_02000bac",
+      "source": "overlays/scene_primary_script/run_scene_3bf_02000bac.c"
+    },
+    "resource_3bf:0200252c": {
+      "name": "FieldScene_RunScene3bf_0200252c",
+      "source": "overlays/scene_primary_script/run_scene_3bf_0200252c.c"
+    },
+    "resource_3c5:020024d0": {
+      "name": "FieldScene_RunScene3c5_020024d0",
+      "source": "overlays/scene_primary_script/run_scene_3c5_020024d0.c"
+    },
+    "resource_3b3:020020f0": {
+      "name": "FieldScene_RunScene3b3_020020f0",
+      "source": "overlays/scene_primary_script/run_scene_3b3_020020f0.c"
+    },
+    "resource_371:0200357c": {
+      "name": "FieldScene_RunScene371_0200357c",
+      "source": "overlays/scene_primary_script/run_scene_371_0200357c.c"
+    },
+    "resource_387:0200067c": {
+      "name": "FieldScene_RunScene387SequenceA",
+      "source": "overlays/scene_primary_script/run_scene_387_sequence_a.c"
+    },
+    "resource_371:0200281c": {
+      "name": "FieldScene_RunScene371_0200281c",
+      "source": "overlays/scene_primary_script/run_scene_371_0200281c.c"
+    },
+    "resource_371:02002858": {
+      "name": "FieldScene_RunScene371_02002858",
+      "source": "overlays/scene_primary_script/run_scene_371_02002858.c"
+    },
+    "resource_38d:0200179c": {
+      "name": "FieldScene_RunScene38d_0200179c",
+      "source": "overlays/scene_primary_script/run_scene_38d_0200179c.c"
+    },
+    "resource_3a4:020026c0": {
+      "name": "FieldScene_RunScene3a4_020026c0",
+      "source": "overlays/scene_primary_script/run_scene_3a4_020026c0.c"
+    },
+    "resource_3b4:02002334": {
+      "name": "FieldScene_RunScene3b4_02002334",
+      "source": "overlays/scene_primary_script/run_scene_3b4_02002334.c"
+    },
+    "resource_3b9:020023e0": {
+      "name": "FieldScene_RunScene3b9_020023e0",
+      "source": "overlays/scene_primary_script/run_scene_3b9_020023e0.c"
+    },
+    "resource_3c9:02001280": {
+      "name": "FieldScene_RunScene3c9_02001280",
+      "source": "overlays/scene_primary_script/run_scene_3c9_02001280.c"
+    },
+    "resource_395:02000158": {
+      "name": "FieldScene_RunScene395_02000158",
+      "source": "overlays/scene_primary_script/run_scene_395_02000158.c"
+    },
+    "resource_3b1:02000728": {
+      "name": "FieldScene_RunScene3b1_02000728",
+      "source": "overlays/scene_primary_script/run_scene_3b1_02000728.c"
+    },
+    "resource_3b9:02000468": {
+      "name": "FieldScene_RunScene3b9_02000468",
+      "source": "overlays/scene_primary_script/run_scene_3b9_02000468.c"
+    },
+    "resource_3b9:020024d8": {
+      "name": "FieldScene_RunScene3b9_020024d8",
+      "source": "overlays/scene_primary_script/run_scene_3b9_020024d8.c"
+    },
+    "resource_373:02000dc0": {
+      "name": "FieldScene_RunScene373_02000dc0",
+      "source": "overlays/scene_primary_script/run_scene_373_02000dc0.c"
+    },
+    "resource_373:02000e54": {
+      "name": "FieldScene_RunScene373_02000e54",
+      "source": "overlays/scene_primary_script/run_scene_373_02000e54.c"
+    },
+    "resource_376:02000298": {
+      "name": "FieldScene_RunScene376_02000298",
+      "source": "overlays/scene_primary_script/run_scene_376_02000298.c"
+    },
+    "resource_383:02000428": {
+      "name": "FieldScene_RunScene383_02000428",
+      "source": "overlays/scene_primary_script/run_scene_383_02000428.c"
+    },
+    "resource_399:020005dc": {
+      "name": "FieldScene_RunScene399_020005dc",
+      "source": "overlays/scene_primary_script/run_scene_399_020005dc.c"
+    },
+    "resource_3a2:020008a8": {
+      "name": "FieldScene_RunScene3a2_020008a8",
+      "source": "overlays/scene_primary_script/run_scene_3a2_020008a8.c"
+    },
+    "resource_3af:02004218": {
+      "name": "FieldScene_RunScene3af_02004218",
+      "source": "overlays/scene_primary_script/run_scene_3af_02004218.c"
+    },
+    "resource_3b5:02000224": {
+      "name": "FieldScene_RunScene3b5_02000224",
+      "source": "overlays/scene_primary_script/run_scene_3b5_02000224.c"
+    },
+    "resource_3b6:02000898": {
+      "name": "FieldScene_RunScene3b6_02000898",
+      "source": "overlays/scene_primary_script/run_scene_3b6_02000898.c"
+    },
+    "resource_3c6:020011bc": {
+      "name": "FieldScene_RunScene3c6_020011bc",
+      "source": "overlays/scene_primary_script/run_scene_3c6_020011bc.c"
+    },
+    "resource_3cd:0200004c": {
+      "name": "FieldScene_RunScene3cd_0200004c",
+      "source": "overlays/scene_primary_script/run_scene_3cd_0200004c.c"
+    },
+    "resource_371:020017a4": {
+      "name": "FieldScene_RunScene371_020017a4",
+      "source": "overlays/scene_primary_script/run_scene_371_020017a4.c"
+    },
+    "resource_3b8:0200049c": {
+      "name": "FieldScene_RunScene3b8_0200049c",
+      "source": "overlays/scene_primary_script/run_scene_3b8_0200049c.c"
+    },
+    "resource_39c:02004f44": {
+      "name": "FieldScene_RunScene39c_02004f44",
+      "source": "overlays/scene_primary_script/run_scene_39c_02004f44.c"
+    },
+    "resource_376:020001e8": {
+      "name": "FieldScene_RunScene376_020001e8",
+      "source": "overlays/scene_primary_script/run_scene_376_020001e8.c"
+    },
+    "resource_38a:02000380": {
+      "name": "FieldScene_RunScene38a_02000380",
+      "source": "overlays/scene_primary_script/run_scene_38a_02000380.c"
+    },
+    "resource_39d:02002ddc": {
+      "name": "FieldScene_RunScene39d_02002ddc",
+      "source": "overlays/scene_primary_script/run_scene_39d_02002ddc.c"
+    },
+    "resource_3ad:02001394": {
+      "name": "FieldScene_RunScene3ad_02001394",
+      "source": "overlays/scene_primary_script/run_scene_3ad_02001394.c"
+    },
+    "resource_37a:020009f4": {
+      "name": "FieldScene_RunScene37a_020009f4",
+      "source": "overlays/scene_primary_script/run_scene_37a_020009f4.c"
+    },
+    "resource_3ad:020011b8": {
+      "name": "FieldScene_RunScene3ad_020011b8",
+      "source": "overlays/scene_primary_script/run_scene_3ad_020011b8.c"
+    },
+    "resource_3c4:02002480": {
+      "name": "FieldScene_RunScene3c4_02002480",
+      "source": "overlays/scene_primary_script/run_scene_3c4_02002480.c"
+    },
+    "resource_3a5:020014b0": {
+      "name": "FieldScene_RunScene3a5_020014b0",
+      "source": "overlays/scene_primary_script/run_scene_3a5_020014b0.c"
+    },
+    "resource_3a5:02000c38": {
+      "name": "FieldScene_RunScene3a5_02000c38",
+      "source": "overlays/scene_primary_script/run_scene_3a5_02000c38.c"
+    },
+    "resource_3ba:02000270": {
+      "name": "FieldScene_RunScene3ba_02000270",
+      "source": "overlays/scene_primary_script/run_scene_3ba_02000270.c"
+    },
+    "resource_38f:020002b4": {
+      "name": "FieldScene_RunScene38f_020002b4",
+      "source": "overlays/scene_primary_script/run_scene_38f_020002b4.c"
+    },
+    "resource_38b:02000584": {
+      "name": "FieldScene_RunScene38b_02000584",
+      "source": "overlays/scene_primary_script/run_scene_38b_02000584.c"
+    },
+    "resource_3b4:02002290": {
+      "name": "FieldScene_RunScene3b4_02002290",
+      "source": "overlays/scene_primary_script/run_scene_3b4_02002290.c"
+    },
+    "resource_38a:02000414": {
+      "name": "FieldScene_RunScene38a_02000414",
+      "source": "overlays/scene_primary_script/run_scene_38a_02000414.c"
+    },
+    "resource_399:02000abc": {
+      "name": "FieldScene_RunScene399_02000abc",
+      "source": "overlays/scene_primary_script/run_scene_399_02000abc.c"
+    },
+    "resource_3a4:02002934": {
+      "name": "FieldScene_RunScene3a4_02002934",
+      "source": "overlays/scene_primary_script/run_scene_3a4_02002934.c"
+    },
+    "resource_38b:020008f0": {
+      "name": "FieldScene_RunScene38b_020008f0",
+      "source": "overlays/scene_primary_script/run_scene_38b_020008f0.c"
+    },
+    "resource_3b1:02006110": {
+      "name": "FieldScene_RunScene3b1_02006110",
+      "source": "overlays/scene_primary_script/run_scene_3b1_02006110.c"
+    },
+    "resource_389:0200121c": {
+      "name": "FieldScene_RunScene389_0200121c",
+      "source": "overlays/scene_primary_script/run_scene_389_0200121c.c"
+    },
+    "resource_39b:02001208": {
+      "name": "FieldScene_RunScene39b_02001208",
+      "source": "overlays/scene_primary_script/run_scene_39b_02001208.c"
+    },
+    "resource_39b:0200116c": {
+      "name": "FieldScene_RunScene39b_0200116c",
+      "source": "overlays/scene_primary_script/run_scene_39b_0200116c.c"
+    },
+    "resource_3bf:02000f30": {
+      "name": "FieldScene_RunScene3bf_02000f30",
+      "source": "overlays/scene_primary_script/run_scene_3bf_02000f30.c"
+    },
+    "resource_3a4:02002428": {
+      "name": "FieldScene_RunScene3a4_02002428",
+      "source": "overlays/scene_primary_script/run_scene_3a4_02002428.c"
+    },
+    "resource_3ab:020011d0": {
+      "name": "FieldScene_RunScene3ab_020011d0",
+      "source": "overlays/scene_primary_script/run_scene_3ab_020011d0.c"
+    },
+    "resource_3a5:02000c6c": {
+      "name": "FieldScene_RunScene3a5_02000c6c",
+      "source": "overlays/scene_primary_script/run_scene_3a5_02000c6c.c"
+    },
+    "resource_394:020008b0": {
+      "name": "FieldScene_RunScene394_020008b0",
+      "source": "overlays/scene_primary_script/run_scene_394_020008b0.c"
+    },
+    "resource_3ce:02000b10": {
+      "name": "FieldScene_RunScene3ce_02000b10",
+      "source": "overlays/scene_primary_script/run_scene_3ce_02000b10.c"
+    },
+    "resource_37f:0200092c": {
+      "name": "FieldScene_RunScene37f_0200092c",
+      "source": "overlays/scene_primary_script/run_scene_37f_0200092c.c"
+    },
+    "resource_39c:020014cc": {
+      "name": "FieldScene_RunScene39c_020014cc",
+      "source": "overlays/scene_primary_script/run_scene_39c_020014cc.c"
+    },
+    "resource_383:02004b2c": {
+      "name": "FieldScene_RunScene383_02004b2c",
+      "source": "overlays/scene_primary_script/run_scene_383_02004b2c.c"
+    },
+    "resource_391:02000c68": {
+      "name": "FieldScene_RunScene391_02000c68",
+      "source": "overlays/scene_primary_script/run_scene_391_02000c68.c"
+    },
+    "resource_39c:02001340": {
+      "name": "FieldScene_RunScene39c_02001340",
+      "source": "overlays/scene_primary_script/run_scene_39c_02001340.c"
+    },
+    "resource_3c9:02005b90": {
+      "name": "FieldScene_RunScene3c9_02005b90",
+      "source": "overlays/scene_primary_script/run_scene_3c9_02005b90.c"
+    },
+    "resource_3a6:020014ac": {
+      "name": "FieldScene_RunScene3a6_020014ac",
+      "source": "overlays/scene_primary_script/run_scene_3a6_020014ac.c"
+    },
+    "resource_3a4:020029dc": {
+      "name": "FieldScene_RunScene3a4_020029dc",
+      "source": "overlays/scene_primary_script/run_scene_3a4_020029dc.c"
+    },
+    "resource_3ae:020007dc": {
+      "name": "FieldScene_RunScene3ae_020007dc",
+      "source": "overlays/scene_primary_script/run_scene_3ae_020007dc.c"
+    },
+    "resource_39f:020021b0": {
+      "name": "FieldScene_RunScene39f_020021b0",
+      "source": "overlays/scene_primary_script/run_scene_39f_020021b0.c"
+    },
+    "resource_381:02000e30": {
+      "name": "FieldScene_RunScene381_02000e30",
+      "source": "overlays/scene_primary_script/run_scene_381_02000e30.c"
+    },
+    "resource_39a:02001b1c": {
+      "name": "FieldScene_RunScene39a_02001b1c",
+      "source": "overlays/scene_primary_script/run_scene_39a_02001b1c.c"
+    },
+    "resource_39b:02000cc0": {
+      "name": "FieldScene_RunScene39b_02000cc0",
+      "source": "overlays/scene_primary_script/run_scene_39b_02000cc0.c"
+    },
+    "resource_38b:02000d10": {
+      "name": "FieldScene_RunScene38b_02000d10",
+      "source": "overlays/scene_primary_script/run_scene_38b_02000d10.c"
     }
   }
 }

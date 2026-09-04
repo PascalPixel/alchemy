@@ -132,6 +132,17 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
         ));
     }
     let sources = SourcePaths::load(root)?;
+    // An owner that already has its exact source is not adopted again:
+    // writing the unit would replace reviewed C and re-register its path.
+    if let Some(existing) = sources.mapped_source_path(owner) {
+        if existing.exists() {
+            return Err(format!(
+                "{} is already adopted as C at {}; nothing written",
+                request.owner,
+                existing.display()
+            ));
+        }
+    }
     let name = match request.name {
         Some(name) => name.to_string(),
         None => derive_name(root, &sources, &overlay, owner),

@@ -681,20 +681,6 @@
       ]
     },
     {
-      "overlay": "resource_387",
-      "start": "0x0200067c",
-      "end": "0x02000d04",
-      "kind": "intra_function_call_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "audited 1672-byte whole owner in games/gs1/semantic/regions.json",
-        "bl at 0x0200099a targets 0x02000cb0, which the same entry also reaches by fallthrough from 0x02000cae",
-        "the approved Thumb backend cannot emit a direct call to an intra-function label and has no outlining pass",
-        "byte-exact decoded-overlay assembly round trip"
-      ]
-    },
-    {
       "overlay": "resource_39c",
       "start": "0x02002f68",
       "end": "0x020035b8",
@@ -1254,19 +1240,6 @@
         "two inline calls at 0x020001c0 and 0x020001f8 use mov ip,pc followed by bx r3",
         "the approved Thumb indirect-call patterns emit bl to a call-via-register thunk and cannot select an IP-linked return ABI",
         "byte-exact decoded-overlay assembly round trip"
-      ]
-    },
-    {
-      "overlay": "resource_371",
-      "start": "0x02002cb4",
-      "end": "0x0200312e",
-      "kind": "generated_call_script_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete local-function reconstruction accounts for all 106 calls, both runtime workspace writes, and the actor-state polling loop",
-        "candidate and reference differ by four bytes after all decoded side effects are represented; residual is approved GCC allocation and literal scheduling",
-        "games/gs1/recon/en/dossiers.json#resource_371:02002cb4"
       ]
     },
     {
@@ -2861,20 +2834,6 @@
       ]
     },
     {
-      "overlay": "resource_3af",
-      "start": "0x02003a0c",
-      "end": "0x02003c88",
-      "kind": "generated_call_script_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete reconstruction accounts for all 60 calls, arguments, scene-global setup, actor state, and workspace transition",
-        "direct assembly audit restored two scene-global initializers, the forwarded zero argument, and workspace state 448 omitted by the mechanical draft",
-        "approved GCC allocation and literal-pool scheduling does not emit the complete owner exactly",
-        "games/gs1/recon/en/dossiers.json#resource_3af:02003a0c"
-      ]
-    },
-    {
       "overlay": "resource_383",
       "start": "0x02001f50",
       "end": "0x020021c8",
@@ -3179,18 +3138,6 @@
       "evidence": [
         "complete reconstruction accounts for all 84 calls and the six-pass opening effect loop",
         "games/gs1/recon/en/dossiers.json#resource_380:020006f4"
-      ]
-    },
-    {
-      "overlay": "resource_380",
-      "start": "0x02002400",
-      "end": "0x02002674",
-      "kind": "generated_call_script_module",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete reconstruction accounts for all 57 calls, the six-pass loop, guarded actor-coordinate transfer, and closing scene-state write",
-        "games/gs1/recon/en/dossiers.json#resource_380:02002400"
       ]
     },
     {
@@ -4618,6 +4565,303 @@
       "evidence": [
         "complete production body accounts for 22 calls, 1 loop(s), 14 memory operation(s), and its audited boundary",
         "games/gs1/recon/en/dossiers.json#resource_3c8:020009c6"
+      ]
+    },
+    {
+      "overlay": "resource_373",
+      "start": "0x02006160",
+      "end": "0x0200618e",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_382",
+      "start": "0x02001adc",
+      "end": "0x02001b0a",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_385",
+      "start": "0x020011c4",
+      "end": "0x020011f2",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_389",
+      "start": "0x02001524",
+      "end": "0x02001552",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_391",
+      "start": "0x02002d38",
+      "end": "0x02002d66",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_392",
+      "start": "0x02000e98",
+      "end": "0x02000ec6",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_393",
+      "start": "0x02000ee0",
+      "end": "0x02000f0e",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_39b",
+      "start": "0x02002628",
+      "end": "0x02002656",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_39c",
+      "start": "0x02005c78",
+      "end": "0x02005ca6",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_39d",
+      "start": "0x02003854",
+      "end": "0x02003882",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_39f",
+      "start": "0x02002ec8",
+      "end": "0x02002ef6",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_3a0",
+      "start": "0x020014cc",
+      "end": "0x020014fa",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_3a5",
+      "start": "0x02001e58",
+      "end": "0x02001e86",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_3a6",
+      "start": "0x02001d70",
+      "end": "0x02001d9e",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_3b2",
+      "start": "0x0200312c",
+      "end": "0x0200315a",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_3b3",
+      "start": "0x02002bc8",
+      "end": "0x02002bf6",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_3b4",
+      "start": "0x02002614",
+      "end": "0x02002642",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_3b5",
+      "start": "0x02000e78",
+      "end": "0x02000ea6",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_3b7",
+      "start": "0x020019d8",
+      "end": "0x02001a06",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_3bd",
+      "start": "0x02003e84",
+      "end": "0x02003eb2",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_3be",
+      "start": "0x020015e8",
+      "end": "0x02001616",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_3bf",
+      "start": "0x020057bc",
+      "end": "0x020057ea",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_3c4",
+      "start": "0x020031c0",
+      "end": "0x020031ee",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_3c5",
+      "start": "0x02002fa4",
+      "end": "0x02002fd2",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_3c8",
+      "start": "0x02005010",
+      "end": "0x0200503e",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_3c9",
+      "start": "0x02005ee0",
+      "end": "0x02005f0e",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
+      ]
+    },
+    {
+      "overlay": "resource_3cb",
+      "start": "0x020018f8",
+      "end": "0x02001926",
+      "kind": "register_interworking_dispatch_table",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "46-byte table of ten (bx rN; nop) pairs for rN = r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,sp, followed by a closing bx lr, byte-identical across all 27 verified instances of this owner shape (checksummed against the canonical ROM via `lifter score --diff`); a register-indexed interworking dispatch through an arbitrary hard-register list, which no ordinary C construct emits — GCC 2.96 -O2 -mthumb-interwork produces `bx` only for a function return or an explicit function-pointer call through one chosen register, never a fixed enumerated table over every general-purpose register"
       ]
     }
   ]

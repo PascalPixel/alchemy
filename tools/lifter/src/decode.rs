@@ -3,6 +3,26 @@
 //! `ldr rN, [pc, #k]` carries its constant.
 
 pub const OVERLAY_BASE: u32 = 0x0200_0000;
+/// The main image lives here; decoding rebases through `decode_window_at`.
+pub const MAIN_BASE: u32 = 0x0800_0000;
+
+thread_local! {
+    /// The address of byte zero of the image being decoded.
+    static BASE: std::cell::Cell<u32> = const { std::cell::Cell::new(OVERLAY_BASE) };
+}
+
+/// The address of byte zero of the image being decoded on this thread.
+pub fn base() -> u32 {
+    BASE.with(|b| b.get())
+}
+
+/// Decodes a window of an image whose byte zero sits at `base`.
+pub fn decode_window_at(image: &[u8], base: u32, entry: u32, span: u32) -> Vec<Ins> {
+    let previous = BASE.with(|b| b.replace(base));
+    let ins = decode_window(image, entry, span);
+    BASE.with(|b| b.set(previous));
+    ins
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Cond {
@@ -400,7 +420,7 @@ pub fn word_at(bytes: &[u8], offset: usize) -> Option<u32> {
 /// Decodes one instruction at `pc`. `image` holds the whole overlay so pool
 /// words and branch targets resolve against real addresses.
 pub fn decode_one(image: &[u8], pc: u32) -> Option<Ins> {
-    let offset = pc.checked_sub(OVERLAY_BASE)? as usize;
+    let offset = pc.checked_sub(base())? as usize;
     let half = half_at(image, offset)?;
     let rd = |shift: u32| ((half >> shift) & 7) as u8;
     let kind = match half >> 13 {
@@ -504,7 +524,7 @@ pub fn decode_one(image: &[u8], pc: u32) -> Option<Ins> {
                 }
             } else if half & 0xf800 == 0x4800 {
                 let target = ((pc & !3) + 4 + ((half & 0xff) as u32) * 4) as usize;
-                let word = word_at(image, target - OVERLAY_BASE as usize)?;
+                let word = word_at(image, target - base() as usize)?;
                 Kind::LdrPool { rd: rd(8), word }
             } else {
                 let rm = rd(6);
@@ -718,13 +738,27 @@ pub fn decode_window(image: &[u8], entry: u32, span: u32) -> Vec<Ins> {
     // A function that follows a return without any branch reaching it still
     // belongs to the window: resume decoding at each `push {.., lr}` after a
     // return so multi-function modules decode completely.
+    // Words the decoded loads read from the pool are data, never a prologue.
+    let pool: std::collections::BTreeSet<u32> = seen
+        .iter()
+        .filter(|(_, x)| matches!(x.kind, Kind::LdrPool { .. }))
+        .filter_map(|(pc, _)| {
+            let half = half_at(image, (*pc - base()) as usize)?;
+            Some((*pc & !3) + 4 + u32::from(half & 0xff) * 4)
+        })
+        .flat_map(|word| [word, word + 2])
+        .collect();
     let mut cursor = entry;
     while cursor + 2 <= end {
         if seen.contains_key(&cursor) {
             cursor += seen[&cursor].size;
             continue;
         }
-        let offset = (cursor - OVERLAY_BASE) as usize;
+        if pool.contains(&cursor) {
+            cursor += 2;
+            continue;
+        }
+        let offset = (cursor - base()) as usize;
         let half = half_at(image, offset).unwrap_or(0);
         let after_return = seen
             .range(..cursor)

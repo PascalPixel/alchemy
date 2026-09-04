@@ -58,7 +58,12 @@ impl Val {
 pub struct Draft {
     pub lines: Vec<String>,
     pub params: Vec<String>,
+    /// Declared widths of the parameters the prologue narrows.
+    pub param_types: BTreeMap<String, &'static str>,
     pub consts: Vec<String>,
+    /// Stack objects whose address is taken (`add rN, sp, #start`): each
+    /// spans to the next taken address or the frame end, in bytes.
+    pub frames: Vec<(u32, u32)>,
 }
 
 fn reg_var(n: u8) -> Option<&'static str> {
@@ -178,13 +183,29 @@ fn cond_text(cond: Cond, a: &str, b: &str) -> String {
         Cond::Lt => "<",
         Cond::Ge => ">=",
         Cond::Gt => ">",
-        Cond::Le | Cond::Ls => "<=",
-        Cond::Hi => ">",
-        Cond::Cc => "<",
-        Cond::Cs => ">=",
+        Cond::Le => "<=",
+        // The unsigned conditions compare the left operand as u32; a
+        // signed local needs the cast, a u32 counter already is one.
+        Cond::Ls => return format!("{} <= {b}", unsigned_operand(a)),
+        Cond::Hi => return format!("{} > {b}", unsigned_operand(a)),
+        Cond::Cc => return format!("{} < {b}", unsigned_operand(a)),
+        Cond::Cs => return format!("{} >= {b}", unsigned_operand(a)),
+        // The sign flag of a result compared against nothing: negative or not.
+        Cond::Mi if b == "0" => return format!("{a} < 0"),
+        Cond::Pl if b == "0" => return format!("{a} >= 0"),
         other => return format!("{a} /* {} */ {b}", other.mnemonic()),
     };
     format!("{a} {op} {b}")
+}
+
+/// The left operand of an unsigned comparison: the loop counter `i` is a
+/// u32 already, every other operand is cast.
+fn unsigned_operand(a: &str) -> String {
+    if a == "i" || a.starts_with("(u32)") {
+        a.to_string()
+    } else {
+        format!("(u32){a}")
+    }
 }
 
 fn negate(cond: Cond) -> Cond {
@@ -206,7 +227,44 @@ fn negate(cond: Cond) -> Cond {
     }
 }
 
+thread_local! {
+    /// Whether the unit being lifted belongs to the main image, where every
+    /// pool word that is a ROM or RAM address is a symbol.
+    static MAIN_MODE: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+}
+
+/// Switches the lifter between the overlay and main-image spellings.
+pub fn set_main_mode(on: bool) {
+    MAIN_MODE.with(|m| m.set(on));
+}
+
+pub fn main_mode() -> bool {
+    MAIN_MODE.with(|m| m.get())
+}
+
+/// In the main image, a word inside the ROM or the work RAM is a relocated
+/// symbol: code when odd, data when even.
+fn main_symbol(c: i32) -> Option<String> {
+    let word = c as u32;
+    if !main_mode() {
+        return None;
+    }
+    let rom = (0x0800_0000..0x0a00_0000).contains(&word);
+    let ram =
+        (0x0200_0000..0x0204_0000).contains(&word) || (0x0300_0000..0x0300_8000).contains(&word);
+    if rom && word % 2 == 1 {
+        Some(format!("(s32)Func_{:08x}", word & !1))
+    } else if rom || ram {
+        Some(format!("(s32)Data_{word:08x}"))
+    } else {
+        None
+    }
+}
+
 fn format_const(c: i32) -> String {
+    if let Some(symbol) = main_symbol(c) {
+        return symbol;
+    }
     if c < 0 {
         if c >= -256 {
             format!("{c}")
@@ -241,6 +299,14 @@ struct Lifter<'a> {
     by_addr: HashMap<u32, usize>,
     targets: BTreeSet<u32>,
     spill_slots: BTreeSet<u32>,
+    /// Stack objects whose address is taken, with their byte sizes.
+    frames: Vec<(u32, u32)>,
+    /// Instructions the run stepped through; the rest were dropped.
+    visited: BTreeSet<usize>,
+    /// Register state at every `goto` to a label not yet emitted, with the
+    /// output index of the goto and its indent: the label joins them with
+    /// the fall-through state, as an if/else join does.
+    goto_states: BTreeMap<u32, Vec<(Vec<Option<Val>>, usize, String)>>,
     regs: Vec<Option<Val>>,
     out: Vec<String>,
     indent: String,
@@ -259,11 +325,20 @@ struct Lifter<'a> {
     goto_targets: BTreeSet<u32>,
     emitted_labels: BTreeSet<u32>,
     params: BTreeSet<String>,
+    /// Parameters the prologue narrows in place, `u16` for a `lsls`/`lsrs`
+    /// pair by 16: the original declared them with that width.
+    param_types: BTreeMap<String, &'static str>,
     last_cmp: Option<(String, String)>,
     /// The register the last `cmp rN, #imm` compared.
     last_cmp_reg: Option<u8>,
     /// Instructions an idiom already consumed; the run skips them.
     consumed: BTreeSet<usize>,
+    /// Registers that are variables inside the loop being lifted: a write
+    /// to one assigns the variable at once, so the loop's later reads and
+    /// its test read the variable.
+    loop_vars: BTreeMap<u8, String>,
+    /// Whether such an assignment is being spelled; the hook does not nest.
+    assigning: bool,
     /// The exits of the switch statements being emitted, innermost last: a
     /// jump to one is a `break`.
     switch_exits: Vec<usize>,
@@ -273,6 +348,8 @@ struct Lifter<'a> {
     /// Where the switch body being emitted began in the output.
     switch_body_start: usize,
     cursor_max: usize,
+    /// The instruction being lifted.
+    cursor: usize,
     /// Enclosing loops as (tail start, back-branch index).
     loops: Vec<(usize, usize)>,
 }
@@ -289,17 +366,40 @@ impl<'a> Lifter<'a> {
         let by_addr = ins.iter().enumerate().map(|(i, x)| (x.addr, i)).collect();
         let mut targets = BTreeSet::new();
         let mut spill_slots = BTreeSet::new();
+        let mut taken = BTreeSet::new();
+        let mut frame_size: u32 = 0;
         for x in ins {
             match x.kind {
                 Kind::B { target } | Kind::Bcond { target, .. } => {
                     targets.insert(target);
                 }
-                Kind::LdrSp { imm, .. } | Kind::AddSp { imm, .. } => {
+                Kind::LdrSp { imm, .. } => {
                     spill_slots.insert(imm);
+                }
+                Kind::AddSp { imm, .. } => {
+                    spill_slots.insert(imm);
+                    taken.insert(imm);
+                }
+                Kind::SpAdjust(k) if k < 0 && frame_size == 0 => {
+                    frame_size = k.unsigned_abs();
                 }
                 _ => {}
             }
         }
+        // A taken stack address starts an object that runs to the next
+        // taken address or the frame end.
+        let taken: Vec<u32> = taken.into_iter().collect();
+        let frames: Vec<(u32, u32)> = taken
+            .iter()
+            .enumerate()
+            .filter_map(|(k, &start)| {
+                let end = taken
+                    .get(k + 1)
+                    .copied()
+                    .unwrap_or(frame_size.max(start + 4));
+                (end > start).then_some((start, end - start))
+            })
+            .collect();
         let mut lifter = Lifter {
             ins,
             value_sites: sites.value,
@@ -307,6 +407,9 @@ impl<'a> Lifter<'a> {
             by_addr,
             targets,
             spill_slots,
+            frames,
+            visited: BTreeSet::new(),
+            goto_states: BTreeMap::new(),
             regs: vec![None; 16],
             out: Vec::new(),
             indent: "    ".to_string(),
@@ -323,13 +426,17 @@ impl<'a> Lifter<'a> {
             goto_targets: BTreeSet::new(),
             emitted_labels: BTreeSet::new(),
             params: BTreeSet::new(),
+            param_types: BTreeMap::new(),
             last_cmp: None,
             last_cmp_reg: None,
             consumed: BTreeSet::new(),
+            loop_vars: BTreeMap::new(),
+            assigning: false,
             switch_exits: Vec::new(),
             switch_breaks: Vec::new(),
             switch_body_start: 0,
             cursor_max: 0,
+            cursor: 0,
             loops: Vec::new(),
         };
         lifter.reset();
@@ -338,6 +445,9 @@ impl<'a> Lifter<'a> {
 
     fn reset(&mut self) {
         self.params.clear();
+        self.param_types.clear();
+        self.visited.clear();
+        self.goto_states.clear();
         self.inline_calls.clear();
         self.cursor_max = 0;
         self.regs = vec![None; 16];
@@ -377,11 +487,37 @@ impl<'a> Lifter<'a> {
                 }
             }
         }
+        // States recorded at earlier gotos move with the lines around them.
+        for states in self.goto_states.values_mut() {
+            for (regs, stop, _) in states.iter_mut() {
+                if *stop >= at {
+                    *stop += 1;
+                }
+                for value in regs.iter_mut().flatten() {
+                    if let Some(def) = value.def_out.as_mut() {
+                        if *def >= at {
+                            *def += 1;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     fn emit(&mut self, s: impl AsRef<str>) {
         let line = s.as_ref();
         if let Some(deferred) = self.deferred.take() {
+            // A block opener or a declaration comes first: the deferred
+            // statement lands after them, where a statement may stand.
+            let opener = line.trim_end().ends_with('{');
+            let declaration = ["s32 ", "u8 ", "u16 ", "u32 "]
+                .iter()
+                .any(|t| line.trim_start().starts_with(t));
+            if opener || declaration {
+                self.out.push(format!("{}{line}", self.indent));
+                self.deferred = Some(deferred);
+                return;
+            }
             // The definition fell between the load and the store of a byte
             // mask: the statement opens up so it lands there, where the
             // compiler picks the temporary the loaded byte no longer needs.
@@ -434,6 +570,53 @@ impl<'a> Lifter<'a> {
                 .and_then(|v| v.e.as_deref())
                 .is_some_and(|e| e.contains("*("))
         })
+    }
+
+    /// A parameter register shifted left and back in place by 16 or 24 is
+    /// the callee re-narrowing a `u16`, `s16`, `u8`, or `s8` parameter: the
+    /// declaration carries the width and the body reads the plain name.
+    fn narrow_parameter(&mut self, i: usize, shift: Shift, rd: u8, rm: u8, imm: u32) -> bool {
+        if shift != Shift::Lsl || rd != rm || rd > 3 || !(imm == 16 || imm == 24) {
+            return false;
+        }
+        let Some(v) = self.regs[rd as usize].as_ref() else {
+            return false;
+        };
+        if !v.param || v.name.is_some() {
+            return false;
+        }
+        let Some(name) = v.e.clone() else {
+            return false;
+        };
+        if !name.starts_with('a') || name.len() != 2 {
+            return false;
+        }
+        let Some(next) = self.ins.get(i + 1) else {
+            return false;
+        };
+        let Kind::ShiftImm {
+            shift: back,
+            rd: rd2,
+            rm: rm2,
+            imm: imm2,
+        } = next.kind
+        else {
+            return false;
+        };
+        if rd2 != rd || rm2 != rd || imm2 != imm {
+            return false;
+        }
+        let c_type = match (imm, back) {
+            (16, Shift::Lsr) => "u16",
+            (16, Shift::Asr) => "s16",
+            (24, Shift::Lsr) => "u8",
+            (24, Shift::Asr) => "s8",
+            _ => return false,
+        };
+        self.param_types.insert(name.clone(), c_type);
+        self.params.insert(name);
+        self.consumed.insert(i + 1);
+        true
     }
 
     fn index_of(&self, target: u32) -> Option<usize> {
@@ -600,9 +783,11 @@ impl<'a> Lifter<'a> {
         // Overlay addresses are relocated symbols: odd ones name code, even ones
         // data; a literal would be a plain pool word the scheduler treats
         // differently.
+        // A constant formed by `movs`/`adds` is a literal; only a pool word
+        // is a relocation.
         let lit = if (0x0200_0000..0x0201_0000).contains(&unsigned) && unsigned % 2 == 1 {
             format!("(s32){}", func_name(unsigned))
-        } else if unsigned < 0x0201_0000 {
+        } else if v.pool && unsigned < 0x0201_0000 {
             format!("(s32)Data_{unsigned:08x}")
         } else {
             format_const(c)
@@ -673,6 +858,15 @@ impl<'a> Lifter<'a> {
     }
 
     fn set_reg(&mut self, r: u8, mut v: Val) {
+        if let Some(name) = self.loop_vars.get(&r).cloned() {
+            if !self.assigning && v.e.as_deref() != Some(name.as_str()) {
+                self.assigning = true;
+                let text = self.fmt(&v);
+                self.emit(format!("{name} = {text};"));
+                self.assigning = false;
+                v = Val::expr(name);
+            }
+        }
         if (5..=7).contains(&r) && v.is_const() && !v.shared {
             v.shared = true;
             v.def_out = Some(self.out.len());
@@ -739,8 +933,37 @@ impl<'a> Lifter<'a> {
     fn maybe_label(&mut self, i: usize) {
         let addr = self.ins[i].addr;
         if self.goto_targets.contains(&addr) && !self.emitted_labels.contains(&addr) {
+            // A label a later jump comes back to heads a loop the structure
+            // did not recover: the registers that loop reads before writing
+            // are variables from here on, initialised before the label.
+            let back = self.ins[i + 1..]
+                .iter()
+                .enumerate()
+                .filter(|(_, x)| match x.kind {
+                    Kind::B { target } | Kind::Bcond { target, .. } => target == addr,
+                    _ => false,
+                })
+                .map(|(k, _)| i + 1 + k)
+                .max();
+            if let Some(back) = back {
+                let whole = self.ins.len();
+                self.loop_enter(i, back + 1, back + 1, whole);
+            }
             self.emit(format!("{}:;", label_name(addr)));
             self.emitted_labels.insert(addr);
+            // Every goto that reaches this label brought its own state;
+            // a register that differs between them becomes a variable
+            // assigned on each path, as at an if/else join.
+            if let Some(states) = self.goto_states.remove(&addr) {
+                let mut all = states;
+                all.push((self.regs.clone(), self.out.len(), self.indent.clone()));
+                let borrowed: Vec<(&[Option<Val>], usize, usize, &str)> = all
+                    .iter()
+                    .map(|(regs, stop, indent)| (regs.as_slice(), 0usize, *stop, indent.as_str()))
+                    .collect();
+                let end = self.ins.len();
+                self.join_many(i, end, &borrowed);
+            }
         }
     }
 
@@ -788,6 +1011,9 @@ impl<'a> Lifter<'a> {
             imm: limit,
         } = self.ins[from - 1].kind
         else {
+            if matches!(self.ins[from - 1].kind, Kind::CmpReg { .. }) {
+                return self.do_while(i, from, cond, end);
+            }
             let tail: Vec<&str> = self.ins[i.max(from.saturating_sub(6))..=from]
                 .iter()
                 .map(|z| z.text.as_str())
@@ -860,22 +1086,39 @@ impl<'a> Lifter<'a> {
         } else if counter == 3 && cond == Cond::Ne {
             format!("for (i = 0; (i >> 16) != {limit}; i += 0x10000) {{")
         } else {
-            let tail: Vec<&str> = self.ins[tail_start..=from]
-                .iter()
-                .map(|z| z.text.as_str())
-                .collect();
-            format!("for (i = 0; ; ) {{ /* tail: {} */", tail.join(" ; "))
+            return self.do_while(i, from, cond, end);
         };
+        // The registers the body carries around are loop variables; the
+        // counter is `i`. A tail instruction that is not the counter's
+        // update, `adds r3, #2` walking a pointer, belongs to the body.
+        let outer_vars = std::mem::take(&mut self.loop_vars);
+        let whole = self.ins.len();
+        let pre = self.loop_enter_except(i, from, from + 1, whole, Some(counter));
         self.emit(head);
         let saved = self.indent.clone();
         self.indent.push_str("    ");
+        let inner = self.indent.clone();
         self.regs[counter as usize] = Some(Val::expr("i"));
         self.loops.push((tail_start, from));
+        let body_out = self.out.len();
         self.run_filtered(i, tail_start, counter);
+        for k in tail_ins {
+            let counter_update = match self.ins[k].kind {
+                Kind::AddImm8 { rd, .. } | Kind::SubImm8 { rd, .. } => rd == counter,
+                Kind::CmpImm { rn, .. } => rn == counter,
+                _ => false,
+            };
+            if !counter_update {
+                self.step(k, from);
+            }
+        }
         self.loops.pop();
+        self.loop_exit(&pre, body_out, &inner, from + 1, whole);
+        self.loop_vars = outer_vars;
         self.indent = saved;
         self.emit("}");
-        self.clear_scratch();
+        self.regs[counter as usize] = None;
+        self.cursor_max = self.cursor_max.max(from + 1);
         from + 1
     }
 
@@ -1162,6 +1405,8 @@ impl<'a> Lifter<'a> {
     }
 
     fn step(&mut self, i: usize, end: usize) -> usize {
+        self.cursor = i;
+        self.visited.insert(i);
         self.cursor_max = self.cursor_max.max(i + 1);
         self.maybe_label(i);
         let x = &self.ins[i];
@@ -1247,6 +1492,9 @@ impl<'a> Lifter<'a> {
                 self.set_reg(rd, v);
             }
             Kind::ShiftImm { shift, rd, rm, imm } => {
+                if self.narrow_parameter(i, shift, rd, rm, imm) {
+                    return i + 1;
+                }
                 self.value_name_for_shift(rm);
                 let v = self.val_of(rm, Some(rd));
                 let n = imm;
@@ -1255,7 +1503,12 @@ impl<'a> Lifter<'a> {
                     (Shift::Lsr, Some(c)) => Val::constant(((c as u32) >> n) as i32),
                     (Shift::Asr, Some(c)) => Val::constant(c >> n),
                     (Shift::Lsl, None) => Val::expr(format!("({} << {n})", self.arith(&v))),
-                    (_, None) => Val::expr(format!("({} >> {n})", self.arith(&v))),
+                    // A logical shift right is unsigned in the original.
+                    (Shift::Lsr, None) => {
+                        let text = self.arith(&v);
+                        Val::expr(format!("({} >> {n})", unsigned_operand(&text)))
+                    }
+                    (Shift::Asr, None) => Val::expr(format!("({} >> {n})", self.arith(&v))),
                 };
                 self.set_reg(rd, value);
             }
@@ -1273,7 +1526,25 @@ impl<'a> Lifter<'a> {
                 Alu::And => self.binary_expr(rd, rm, "&"),
                 Alu::Eor => self.binary_expr(rd, rm, "^"),
                 Alu::Lsl => self.binary_expr(rd, rm, "<<"),
-                Alu::Lsr | Alu::Asr => self.binary_expr(rd, rm, ">>"),
+                Alu::Asr => self.binary_expr(rd, rm, ">>"),
+                Alu::Lsr => {
+                    let a = self.val_of(rd, Some(rd));
+                    let b = self.val_of(rm, Some(rd));
+                    let left = self.arith(&a);
+                    let text = format!("({} >> {})", unsigned_operand(&left), self.arith(&b));
+                    self.set_reg(rd, Val::expr(text));
+                }
+                // Bit clear: `a & ~b`, with a constant mask folded.
+                Alu::Bic => {
+                    let a = self.val_of(rd, Some(rd));
+                    let b = self.val_of(rm, Some(rd));
+                    let left = self.arith(&a);
+                    let text = match b.c {
+                        Some(c) => format!("({left} & {})", format_const(!c)),
+                        None => format!("({left} & ~{})", self.arith(&b)),
+                    };
+                    self.set_reg(rd, Val::expr(text));
+                }
                 Alu::Mvn => {
                     let v = self.val_of(rm, Some(rd));
                     let text = self.fmt(&v);
@@ -1443,7 +1714,46 @@ impl<'a> Lifter<'a> {
                 rn,
                 offset,
             } => self.store(rd, rn, offset, width),
-            Kind::Ldmia { .. } | Kind::Stmia { .. } => self.emit(format!("/* {} */", x.text)),
+            // A multiple transfer with writeback is `x = *p; p += 4` (the
+            // compiler's auto-increment pass folds that back into ldmia):
+            // the loaded values are variables at once, since the base moves.
+            Kind::Ldmia { rn, list } => {
+                let mut base = self.val_of(rn, None);
+                let b = self.ensure_result_var(&mut base);
+                let regs: Vec<u8> = (0..8u8).filter(|r| list & (1 << r) != 0).collect();
+                for (k, r) in regs.iter().enumerate() {
+                    let e = if k == 0 {
+                        format!("*(s32 *)({b})")
+                    } else {
+                        format!("*(s32 *)({b} + {})", 4 * k)
+                    };
+                    let name = format!("v{r}");
+                    push_unique(&mut self.consts, &name);
+                    self.emit(format!("{name} = {e};"));
+                    self.set_reg(*r, Val::expr(name));
+                }
+                if !regs.contains(&rn) {
+                    let text = format!("({b} + {})", 4 * regs.len());
+                    self.set_reg(rn, Val::expr(text));
+                }
+            }
+            Kind::Stmia { rn, list } => {
+                let mut base = self.val_of(rn, None);
+                let b = self.ensure_result_var(&mut base);
+                let regs: Vec<u8> = (0..8u8).filter(|r| list & (1 << r) != 0).collect();
+                for (k, r) in regs.iter().enumerate() {
+                    let v = self.val_of(*r, None);
+                    let value = self.fmt(&v);
+                    let lhs = if k == 0 {
+                        format!("*(s32 *)({b})")
+                    } else {
+                        format!("*(s32 *)({b} + {})", 4 * k)
+                    };
+                    self.emit(format!("{lhs} = {value};"));
+                }
+                let text = format!("({b} + {})", 4 * regs.len());
+                self.set_reg(rn, Val::expr(text));
+            }
             Kind::CmpImm { rn, imm } => {
                 // A compared register is consumed: it is not a call argument.
                 let v = self.val_of(rn, None);
@@ -1516,8 +1826,8 @@ impl<'a> Lifter<'a> {
         let c_type = width.c_type();
         if let Some(c) = base.c {
             let e = match self.shared_base(&base) {
-                Some(name) => deref_named(c_type, &name, off),
-                None => format!("*({c_type} *)0x{:08x}", (c as u32).wrapping_add(off)),
+                Some(name) => deref_named_at(c_type, &name, off, c as u32),
+                None => absolute_deref(c_type, (c as u32).wrapping_add(off)),
             };
             // A load into a callee-saved register is a value kept across calls,
             // a local in the original: the scene work pointer read once at entry
@@ -1579,11 +1889,37 @@ impl<'a> Lifter<'a> {
         let base = self.val_of(rn, None);
         let lhs = match base.c {
             Some(c) => match self.shared_base(&base) {
-                Some(name) => deref_named(c_type, &name, off),
-                None => format!("*({c_type} *)0x{:08x}", (c as u32).wrapping_add(off)),
+                Some(name) => deref_named_at(c_type, &name, off, c as u32),
+                None => absolute_deref(c_type, (c as u32).wrapping_add(off)),
             },
             None => self.addr_expr(&base, i64::from(off), width),
         };
+        // A register still holding a lazy read of the location this store
+        // overwrites, and read again later, is captured first: the original
+        // read it before writing.
+        let mut captured: Option<String> = None;
+        for r in 0..13usize {
+            let Some(held) = self.regs[r].clone() else {
+                continue;
+            };
+            if !held.mem || held.name.is_some() || self.fmt_raw(&held) != lhs {
+                continue;
+            }
+            if r as u8 == rd || !self.live_after(self.cursor + 1, self.ins.len(), r as u8) {
+                continue;
+            }
+            let name = match &captured {
+                Some(name) => name.clone(),
+                None => {
+                    let name = format!("v{r}");
+                    push_unique(&mut self.consts, &name);
+                    self.emit(format!("{name} = {lhs};"));
+                    captured = Some(name.clone());
+                    name
+                }
+            };
+            self.regs[r] = Some(Val::expr(name));
+        }
         let rhs = self.fmt(&v);
         let parts = rhs
             .strip_prefix('(')
@@ -1670,7 +2006,17 @@ impl<'a> Lifter<'a> {
                 Some((call, rest)) => (Some(format!("u8 *record = {call};")), rest),
                 None => match hoisted_load(&lhs) {
                     Some((load, rest)) => (Some(format!("s32 target = {load};")), rest),
-                    None => (None, lhs.clone()),
+                    // A computed address goes into a pointer first: the int
+                    // local's pseudo then lives only across the store, so
+                    // the address keeps the register the original gives it
+                    // (395:02000158 went from 4 differing halfwords to exact).
+                    None => match half_store_address(&lhs) {
+                        Some(address) => (
+                            Some(format!("u16 *target = (u16 *)({address});")),
+                            "*target".to_string(),
+                        ),
+                        None => (None, lhs.clone()),
+                    },
                 },
             };
             self.emit("{");
@@ -1839,8 +2185,15 @@ impl<'a> Lifter<'a> {
                 if from < t {
                     continue;
                 }
+                let outer_vars = std::mem::take(&mut self.loop_vars);
+                let whole = self.ins.len();
+                let pre = self.loop_enter(l, from, from + 1, whole);
                 let mark = self.out.len();
+                // The test sits past the body: lifting it first must not
+                // move the cursor beyond the body, which comes next.
+                let cursor = self.cursor_max;
                 self.run(t, from);
+                self.cursor_max = cursor;
                 let (ca, cb) = match self.ins[from - 1].kind {
                     Kind::CmpImm { rn, imm } => {
                         let v = self.val_of(rn, None);
@@ -1859,12 +2212,16 @@ impl<'a> Lifter<'a> {
                 self.emit(format!("while ({text}) {{"));
                 let saved = self.indent.clone();
                 self.indent.push_str("    ");
+                let inner = self.indent.clone();
                 self.loops.push((t, from));
+                let body_out = self.out.len();
                 self.run(l, t);
                 self.loops.pop();
+                self.loop_exit(&pre, body_out, &inner, from + 1, whole);
+                self.loop_vars = outer_vars;
                 self.indent = saved;
                 self.emit("}");
-                self.clear_scratch();
+                self.cursor_max = self.cursor_max.max(from + 1);
                 return from + 1;
             }
             return t;
@@ -1899,6 +2256,14 @@ impl<'a> Lifter<'a> {
                 self.emit("break;");
                 return;
             }
+        }
+        // The label will merge this state with the others reaching it.
+        if !self.emitted_labels.contains(&target) {
+            self.goto_states.entry(target).or_default().push((
+                self.regs.clone(),
+                self.out.len(),
+                self.indent.clone(),
+            ));
         }
         self.emit(format!("goto {};", label_name(target)));
         self.goto_targets.insert(target);
@@ -2135,8 +2500,8 @@ impl<'a> Lifter<'a> {
             for (k, path) in paths.iter().enumerate() {
                 let mut text = texts[k].clone();
                 for (j, from) in texts.iter().enumerate() {
-                    if j != k && from.len() > 2 && text != *from && text.contains(from.as_str()) {
-                        text = text.replace(from.as_str(), &name);
+                    if j != k && from.len() > 2 && text != *from && contains_word(&text, from) {
+                        text = replace_word(&text, from, &name);
                         break;
                     }
                 }
@@ -2164,37 +2529,257 @@ impl<'a> Lifter<'a> {
         }
     }
 
-    /// Whether register `r` is read at or after instruction `at` before it
-    /// is written, scanning the straight line until the region ends. A call
-    /// may read an argument register; a jump leaves the answer unknown, so
-    /// both count as live.
-    fn live_after(&self, at: usize, end: usize, r: u8) -> bool {
-        let mut j = at;
-        let mut visited = BTreeSet::new();
-        while j < end.min(self.ins.len()) && visited.insert(j) {
-            let kind = &self.ins[j].kind;
+    /// Registers a loop body writes; a call inside it writes r0–r3.
+    fn loop_writes(&self, start: usize, stop: usize) -> BTreeSet<u8> {
+        let mut written = BTreeSet::new();
+        for k in start..stop.min(self.ins.len()) {
+            written.extend(writes(&self.ins[k].kind));
+            if matches!(self.ins[k].kind, Kind::Bl { .. }) {
+                written.extend(0..4u8);
+            }
+        }
+        written
+    }
+
+    /// Whether the body reads `r` before it writes it: the value that
+    /// enters the loop is carried around it.
+    fn read_before_write(&self, start: usize, stop: usize, r: u8) -> bool {
+        for k in start..stop.min(self.ins.len()) {
+            let kind = &self.ins[k].kind;
             if crate::sched::reads(kind).contains(&r) {
                 return true;
             }
-            match kind {
-                Kind::Pop { pc: true } | Kind::Bx(_) => return false,
-                // An argument register a call reads is set on the way to it;
-                // the call itself clobbers the rest.
-                Kind::B { target } => match self.index_of(*target) {
-                    Some(next) => {
-                        j = next;
-                        continue;
-                    }
-                    None => return true,
-                },
-                _ => {}
+            // A call's arguments are set inside the body before it; the
+            // call itself reads nothing that entered the loop.
+            if matches!(kind, Kind::Bl { .. }) {
+                if r <= 3 {
+                    return false;
+                }
+                continue;
             }
             if writes(kind).contains(&r) {
                 return false;
             }
-            j += 1;
         }
-        true
+        false
+    }
+
+    /// Before a loop body: a register the body writes and either reads first
+    /// or leaves live past the loop is a variable, `vN`, holding the value
+    /// that enters the loop. A parameter register keeps its own name. The
+    /// state that enters the loop is returned for `loop_exit`.
+    fn loop_enter(
+        &mut self,
+        start: usize,
+        stop: usize,
+        after: usize,
+        end: usize,
+    ) -> Vec<Option<Val>> {
+        self.loop_enter_except(start, stop, after, end, None)
+    }
+
+    /// `loop_enter` with one register left alone: the counter a counted
+    /// loop spells as `i`.
+    fn loop_enter_except(
+        &mut self,
+        start: usize,
+        stop: usize,
+        after: usize,
+        end: usize,
+        skip: Option<u8>,
+    ) -> Vec<Option<Val>> {
+        for r in self.loop_writes(start, stop) {
+            if r > 12 || Some(r) == skip {
+                continue;
+            }
+            let Some(v) = self.regs[r as usize].clone() else {
+                continue;
+            };
+            let variable = format!("v{r}");
+            if v.e.as_deref() == Some(variable.as_str()) {
+                continue;
+            }
+            // Only a value the body reads before it writes is carried
+            // around the loop; a register the body merely leaves live is
+            // assigned where the body defines it, on the way out.
+            let _ = (after, end);
+            if !self.read_before_write(start, stop, r) {
+                continue;
+            }
+            if v.param
+                && v.e
+                    .as_deref()
+                    .is_some_and(|e| e.len() == 2 && e.starts_with('a'))
+            {
+                self.loop_vars.insert(r, v.e.clone().unwrap_or_default());
+                continue;
+            }
+            // A constant a callee-saved register already held is initialised
+            // where the register was set, as the original did (`count = 0;`
+            // before the calls that precede the loop).
+            if v.shared && v.is_const() {
+                let name = self.name_shared(&v);
+                self.loop_vars.insert(r, name.clone());
+                self.regs[r as usize] = Some(Val::expr(name));
+                continue;
+            }
+            let text = self.fmt(&v);
+            push_unique(&mut self.consts, &variable);
+            self.emit(format!("{variable} = {text};"));
+            self.loop_vars.insert(r, variable.clone());
+            self.regs[r as usize] = Some(Val::expr(variable));
+        }
+        self.regs.clone()
+    }
+
+    /// After a loop body: a register the body left holding another value
+    /// than the one that entered is assigned where the body defined it,
+    /// when the loop reads the variable again or the code after it does.
+    fn loop_exit(
+        &mut self,
+        pre: &[Option<Val>],
+        body_out: usize,
+        indent: &str,
+        after: usize,
+        end: usize,
+    ) {
+        let mut inserts: Vec<(usize, String)> = Vec::new();
+        for r in 0..13u8 {
+            let now = self.regs[r as usize].clone();
+            let before = &pre[r as usize];
+            if same_val(&now, before) {
+                continue;
+            }
+            let Some(now) = now else {
+                self.regs[r as usize] = before.clone();
+                continue;
+            };
+            let variable = match before {
+                Some(b) if b.param && b.e.as_deref().is_some_and(|e| e.len() == 2) => {
+                    b.e.clone().unwrap_or_default()
+                }
+                _ => format!("v{r}"),
+            };
+            let entered = before
+                .as_ref()
+                .is_some_and(|b| b.e.as_deref() == Some(variable.as_str()));
+            if !entered && !self.live_after(after, end, r) {
+                continue;
+            }
+            if now.e.as_deref() == Some(variable.as_str()) {
+                continue;
+            }
+            // A call result is named by the formatter, `record`, so the
+            // variable takes it where the call happened.
+            let text = self.fmt(&now);
+            let at_level =
+                |line: &String| line.starts_with(indent) && !line[indent.len()..].starts_with(' ');
+            let position = match now.def_out {
+                Some(def)
+                    if def > body_out
+                        && def <= self.out.len()
+                        && self.out.get(def).is_some_and(at_level) =>
+                {
+                    def
+                }
+                _ => self.out.len(),
+            };
+            inserts.push((position, format!("{indent}{variable} = {text};")));
+            push_unique(&mut self.consts, &variable);
+            self.regs[r as usize] = Some(Val::expr(variable));
+        }
+        inserts.sort_by(|x, y| y.0.cmp(&x.0));
+        let mut k = 0;
+        while k < inserts.len() {
+            let position = inserts[k].0;
+            let group_end = inserts[k..]
+                .iter()
+                .position(|(p, _)| *p != position)
+                .map(|n| k + n)
+                .unwrap_or(inserts.len());
+            for (_, line) in inserts[k..group_end].iter().rev() {
+                self.insert_line(position, line.clone());
+            }
+            k = group_end;
+        }
+    }
+
+    /// A loop tested at its bottom that is not a counted `for`: the body
+    /// runs once before the test, so it is a `do` loop over its variables.
+    fn do_while(&mut self, i: usize, from: usize, cond: Cond, _end: usize) -> usize {
+        let outer_vars = std::mem::take(&mut self.loop_vars);
+        // Liveness past the loop follows the code wherever it continues.
+        let whole = self.ins.len();
+        let pre = self.loop_enter(i, from, from + 1, whole);
+        self.emit("do {");
+        let saved = self.indent.clone();
+        self.indent.push_str("    ");
+        let inner = self.indent.clone();
+        self.loops.push((from, from));
+        let body_out = self.out.len();
+        self.run(i, from - 1);
+        self.loops.pop();
+        self.loop_exit(&pre, body_out, &inner, from + 1, whole);
+        let (ca, cb) = match self.ins[from - 1].kind {
+            Kind::CmpImm { rn, imm } => {
+                let v = self.val_of(rn, None);
+                (self.fmt_raw(&v), imm.to_string())
+            }
+            Kind::CmpReg { rn, rm } => {
+                let v = self.val_of(rn, None);
+                let w = self.val_of(rm, None);
+                let b = self.fmt(&w);
+                (self.fmt_raw(&v), b)
+            }
+            _ => ("?".to_string(), "?".to_string()),
+        };
+        self.indent = saved;
+        let text = cond_text(cond, &ca, &cb);
+        self.emit(format!("}} while ({text});"));
+        self.loop_vars = outer_vars;
+        self.cursor_max = self.cursor_max.max(from + 1);
+        from + 1
+    }
+
+    /// Whether register `r` is read at or after instruction `at` before it
+    /// is written, scanning the straight line until the region ends. A call
+    /// may read an argument register; a jump leaves the answer unknown, so
+    /// both count as live.
+    fn live_after(&self, at: usize, _end: usize, r: u8) -> bool {
+        // The code after a region is whatever the machine executes next:
+        // the walk follows every branch, both ways for a conditional one,
+        // and stops at a return or at a write to the register.
+        let mut pending = vec![at];
+        let mut visited = BTreeSet::new();
+        while let Some(start) = pending.pop() {
+            let mut j = start;
+            while j < self.ins.len() && visited.insert(j) {
+                let kind = &self.ins[j].kind;
+                if crate::sched::reads(kind).contains(&r) {
+                    return true;
+                }
+                match kind {
+                    Kind::Pop { pc: true } | Kind::Bx(_) => break,
+                    Kind::B { target } => match self.index_of(*target) {
+                        Some(next) => {
+                            j = next;
+                            continue;
+                        }
+                        None => return true,
+                    },
+                    Kind::Bcond { target, .. } => match self.index_of(*target) {
+                        Some(taken) => pending.push(taken),
+                        None => return true,
+                    },
+                    _ => {}
+                }
+                if writes(kind).contains(&r) {
+                    break;
+                }
+                j += 1;
+            }
+        }
+        false
     }
 }
 
@@ -2315,6 +2900,49 @@ fn contains_word(text: &str, name: &str) -> bool {
     false
 }
 
+/// An absolute access. An address inside the overlay image is a relocated
+/// data symbol: two such addresses stay two pool words, where two literals
+/// become one base and an offset.
+/// The computed address of a halfword store, `*(u16 *)(<expr>)`, when the
+/// expression is more than a name.
+fn half_store_address(lhs: &str) -> Option<String> {
+    let inner = lhs.strip_prefix("*(u16 *)(")?.strip_suffix(')')?;
+    // A named base plus an offset stays inline (the scene modules match
+    // that way); an address that itself loads a pointer is hoisted.
+    let loads = inner.contains("*(");
+    loads.then(|| inner.to_string())
+}
+
+/// `deref_named` through a base kept in a register, volatile when the base
+/// is a hardware register block.
+fn deref_named_at(c_type: &str, name: &str, off: u32, address: u32) -> String {
+    let text = deref_named(c_type, name, off);
+    if (0x0400_0000..0x0500_0000).contains(&address) {
+        text.replacen(
+            &format!("*({c_type} *)"),
+            &format!("*(volatile {c_type} *)"),
+            1,
+        )
+    } else {
+        text
+    }
+}
+
+fn absolute_deref(c_type: &str, address: u32) -> String {
+    if main_mode() && main_symbol(address as i32).is_some() {
+        return format!("*({c_type} *)Data_{address:08x}");
+    }
+    // A hardware register is volatile in the original: every access stays.
+    if (0x0400_0000..0x0500_0000).contains(&address) {
+        return format!("*(volatile {c_type} *)0x{address:08x}");
+    }
+    if (0x0200_0000..0x0201_0000).contains(&address) {
+        format!("*({c_type} *)Data_{address:08x}")
+    } else {
+        format!("*({c_type} *)0x{address:08x}")
+    }
+}
+
 /// `name[index]` split into its parts.
 fn indexed(lhs: &str) -> Option<(String, u32)> {
     let (name, rest) = lhs.split_once('[')?;
@@ -2415,7 +3043,49 @@ pub fn lift(ins: &[Ins]) -> Draft {
     for target in lifter.goto_targets.difference(&lifter.emitted_labels) {
         lines.push(format!("    {}:;", label_name(*target)));
     }
-    rewrite_scene_work(&mut lines);
+    // Instructions the run never stepped through and no idiom consumed are
+    // code the draft dropped; the ranges are reported at the top so a batch
+    // can measure what the structure misses.
+    let structural = |kind: &Kind| {
+        matches!(
+            kind,
+            Kind::B { .. }
+                | Kind::Bcond { .. }
+                | Kind::CmpImm { .. }
+                | Kind::CmpReg { .. }
+                | Kind::Push { .. }
+                | Kind::Pop { .. }
+                | Kind::Bx(_)
+                | Kind::SpAdjust(_)
+                | Kind::MovHi { .. }
+        )
+    };
+    let mut dropped: Vec<(u32, u32, usize)> = Vec::new();
+    for (k, x) in ins.iter().enumerate() {
+        if lifter.visited.contains(&k) || lifter.consumed.contains(&k) || structural(&x.kind) {
+            continue;
+        }
+        match dropped.last_mut() {
+            Some((_, end, count)) if *end == x.addr => {
+                *end = x.addr + x.size;
+                *count += 1;
+            }
+            _ => dropped.push((x.addr, x.addr + x.size, 1)),
+        }
+    }
+    let dropped: Vec<String> = dropped
+        .iter()
+        .filter(|(_, _, count)| *count >= 2)
+        .map(|(start, end, count)| format!("0x{start:08x}..0x{end:08x} ({count})"))
+        .collect();
+    if !dropped.is_empty() {
+        // At the end: the unit's by-value struct detection reads the first
+        // lines of the body.
+        lines.push(format!("    /* unlifted: {} */", dropped.join(", ")));
+    }
+    if !main_mode() {
+        rewrite_scene_work(&mut lines);
+    }
     let mut consts = lifter.consts.clone();
     for slot in &lifter.slots {
         push_unique(&mut consts, slot);
@@ -2426,7 +3096,9 @@ pub fn lift(ins: &[Ins]) -> Draft {
     Draft {
         lines,
         params: lifter.params.iter().cloned().collect(),
+        param_types: lifter.param_types.clone(),
         consts,
+        frames: lifter.frames.clone(),
     }
 }
 
@@ -2461,7 +3133,9 @@ fn rewrite_scene_work(lines: &mut Vec<String>) {
         }
         *line = line.replace("(*(s32 *)0x03001ebc + 0x", "(*(u8 **)0x03001ebc + 0x");
     }
-    share_scene_work(lines);
+    if !main_mode() {
+        share_scene_work(lines);
+    }
 }
 
 /// Consecutive statements through the scene work pointer read it once: the

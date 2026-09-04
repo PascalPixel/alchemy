@@ -97,6 +97,7 @@ for testing and provenance, not as public commands.
 | [allocator-lens](tools/allocator-lens/) | Read GCC 2.96 pseudos, costs, conflicts, assignments, spills, and reloads. |
 | [lifter](tools/lifter/) | Lift retained Thumb overlay modules to candidate C and tune them against the ROM. |
 | [shape-search](tools/shape-search/) | Run bounded source-shape searches through the real scorer. |
+| [unit-flatten](tools/unit-flatten/) | Flatten a wholly exact overlay's owners into one translation unit, reconciling declarations. |
 | [unit-scaffold](tools/unit-scaffold/) | Scaffold declared translation units and owner composition. |
 | [weyard-font](tools/weyard-font/) | Extract and verify the shared text font across historical ROMs. |
 
@@ -271,7 +272,7 @@ written down in those dumps or readable in that source.
 
 So when a candidate diverges, the order of work is:
 
-1. **Read the decision.** Run `bun tools/allocator-lens/lens.ts <owner>` for
+1. **Read the decision.** Run `out/cargo-target/release/allocator-lens <owner>` for
    the per-pseudo record (creation order, class costs, preferences, global
    ordering, conflicts, assignments, spills, reloads), or read the pass
    dumps directly.
@@ -323,7 +324,7 @@ exact members exact, refuting one member's earlier `u16` guess.
 Scaffold a new unit with:
 
 ```sh
-bun tools/unit-scaffold/scaffold.ts gs1 <unit-id> <start-hex> <end-hex>
+out/cargo-target/release/unit-scaffold gs1 <unit-id> <start-hex> <end-hex>
 ```
 
 then add the printed manifest entry, resolve declaration collisions in the

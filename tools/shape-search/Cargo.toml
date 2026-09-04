@@ -1,0 +1,17 @@
+[workspace]
+
+[package]
+name = "shape-search"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "shape-search"
+path = "src/main.rs"
+
+[dependencies]
+regex = "1"
+
+[profile.release]
+opt-level = 3
+lto = true

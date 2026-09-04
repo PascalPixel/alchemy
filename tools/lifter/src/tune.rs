@@ -284,6 +284,32 @@ pub fn tune_targeted(
             lines = stripped;
         }
     }
+    // A halfword store through an int local: the store address hoisted into
+    // a pointer before the local shortens the local's live range, which
+    // changes which pseudo the allocator places first. Each block is tried
+    // both ways and the better one stays.
+    let mut k = 0;
+    while k + 3 < lines.len() {
+        if let Some(hoisted) = hoisted_shown_block(&lines, k) {
+            let saved: Vec<String> = lines[k..k + 4].to_vec();
+            lines.splice(k..k + 4, hoisted.iter().cloned());
+            let trial = write_and_score(&format!("{}\n", lines.join("\n")));
+            if trial.as_ref().is_ok_and(|t| t.differing < best.differing) {
+                let trial = trial.unwrap();
+                report(&format!(
+                    "{} -> {}  hoisted {}",
+                    best.differing,
+                    trial.differing,
+                    hoisted[0].trim()
+                ));
+                best = trial;
+                k += hoisted.len();
+                continue;
+            }
+            lines.splice(k..k + hoisted.len(), saved.iter().cloned());
+        }
+        k += 1;
+    }
     let mut tried: std::collections::BTreeSet<(u32, usize)> = std::collections::BTreeSet::new();
     let mut rounds = 0;
     while best.differing > 0 && rounds < 12 {
@@ -373,9 +399,144 @@ pub fn tune_targeted(
             break;
         }
     }
+    // Statement order: two adjacent independent statements swapped change
+    // the scheduler's tie-breaks (it keeps source order among equals), so a
+    // swap that scores better is kept. Three passes bound the search.
+    let mut passes = 0;
+    while best.differing > 0 && passes < 3 {
+        passes += 1;
+        let mut improved = false;
+        let mut k = 0;
+        while k + 1 < lines.len() {
+            if swappable(&lines[k], &lines[k + 1]) {
+                lines.swap(k, k + 1);
+                let trial = write_and_score(&format!("{}\n", lines.join("\n")));
+                match trial {
+                    Ok(t) if t.differing < best.differing => {
+                        report(&format!(
+                            "{} -> {}  swap {}",
+                            best.differing,
+                            t.differing,
+                            lines[k].trim()
+                        ));
+                        best = t;
+                        improved = true;
+                    }
+                    _ => lines.swap(k, k + 1),
+                }
+            }
+            k += 1;
+        }
+        if !improved {
+            break;
+        }
+    }
     let text = format!("{}\n", lines.join("\n"));
     std::fs::write(scratch, &text).map_err(|error| format!("{}: {error}", scratch.display()))?;
     Ok((text, best))
+}
+
+/// The hoisted form of the `shown` block starting at `k`:
+/// `{ s32 shown = K; <blank> *(u16 *)(ADDR) = shown; }` becomes
+/// `{ u16 *target = (u16 *)(ADDR); s32 shown = K; <blank> *target = shown; }`.
+/// None when the lines are not such a block or the address is a bare name.
+fn hoisted_shown_block(lines: &[String], k: usize) -> Option<Vec<String>> {
+    let open = &lines[k];
+    let declaration = &lines[k + 1];
+    let store = &lines[k + 3];
+    if open.trim() != "{" || !lines[k + 2].trim().is_empty() {
+        return None;
+    }
+    let lead = &declaration[..declaration.len() - declaration.trim_start().len()];
+    let constant = declaration
+        .trim()
+        .strip_prefix("s32 shown = ")?
+        .strip_suffix(';')?;
+    let lhs = store.trim().strip_suffix(" = shown;")?;
+    let address = lhs.strip_prefix("*(u16 *)(")?.strip_suffix(')')?;
+    if !address.contains(" + ") && !address.contains("*(") {
+        return None;
+    }
+    Some(vec![
+        open.clone(),
+        format!("{lead}u16 *target = (u16 *)({address});"),
+        format!("{lead}s32 shown = {constant};"),
+        String::new(),
+        format!("{lead}*target = shown;"),
+    ])
+}
+
+/// The local a simple statement assigns, `v3` in `v3 = expr;`.
+fn assigned(line: &str) -> Option<&str> {
+    let trimmed = line.trim();
+    let (lhs, _) = trimmed.strip_suffix(';')?.split_once(" = ")?;
+    let plain = lhs.chars().all(|c| c.is_ascii_alphanumeric() || c == '_');
+    plain.then_some(lhs)
+}
+
+/// Whether `line` mentions the identifier `name` as a whole word.
+fn mentions(line: &str, name: &str) -> bool {
+    let boundary = |c: char| c.is_ascii_alphanumeric() || c == '_';
+    let mut rest = line;
+    while let Some(at) = rest.find(name) {
+        let before = rest[..at].chars().last().is_some_and(boundary);
+        let after = rest[at + name.len()..].chars().next().is_some_and(boundary);
+        if !before && !after {
+            return true;
+        }
+        rest = &rest[at + name.len()..];
+    }
+    false
+}
+
+/// Two adjacent statements the original could have written in either
+/// order: simple statements at one indent, no control flow, no shared
+/// local, and at most one of them touching memory or calling.
+fn swappable(a: &str, b: &str) -> bool {
+    let indent = |s: &str| s.len() - s.trim_start().len();
+    if indent(a) != indent(b) || a.trim().is_empty() || b.trim().is_empty() {
+        return false;
+    }
+    let simple = |s: &str| {
+        let t = s.trim();
+        t.ends_with(';')
+            && !t.contains('{')
+            && !t.contains('}')
+            && !t.ends_with(":;")
+            && ![
+                "if ", "while ", "do", "for ", "switch ", "case ", "return", "goto ", "break",
+                "continue", "s32 ", "u8 ", "u16 ", "u32 ",
+            ]
+            .iter()
+            .any(|k| t.starts_with(k))
+    };
+    if !simple(a) || !simple(b) {
+        return false;
+    }
+    // Two loads may swap; a call or a store keeps its order against any
+    // other memory access or call.
+    let calls = |s: &str| s.contains("Func_") || s.contains("Call") || s.contains("Value");
+    let stores = |s: &str| {
+        s.trim()
+            .split_once(" = ")
+            .is_some_and(|(lhs, _)| lhs.contains("*(") || lhs.contains('['))
+    };
+    let touches = |s: &str| s.contains("*(") || s.contains('[') || calls(s);
+    let heavy = |s: &str| calls(s) || stores(s);
+    if (heavy(a) && touches(b)) || (heavy(b) && touches(a)) {
+        return false;
+    }
+    if let Some(x) = assigned(a) {
+        if mentions(b, x) {
+            return false;
+        }
+    }
+    if let Some(y) = assigned(b) {
+        if mentions(a, y) {
+            return false;
+        }
+    }
+    assigned(a).is_some() || assigned(b).is_some()
 }
 
 /// The base names of volatile accesses, `record` and `rec7` and `p5`, in

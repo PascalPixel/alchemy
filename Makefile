@@ -365,6 +365,21 @@ tooling-index-check:
 	diff -u "$$actual" "$$indexed"; \
 	printf 'tooling index ok: %s tools\n' "$$(wc -l < "$$actual" | tr -d ' ')"
 
+# Tools are Rust. A TypeScript, JavaScript, Python, or shell implementation
+# file anywhere in the tracked tree fails the gate; the asset and source
+# directories carry no scripts either.
+language-check:
+	@set -eu; \
+	scripts=$$(git ls-files --cached --others --exclude-standard | grep -E '\.(ts|mjs|cjs|py|sh)$$' || true); \
+	if [ -n "$$scripts" ]; then printf 'TypeScript, Python, or shell implementation files are not allowed:\n%s\n' "$$scripts"; exit 1; fi; \
+	for js in $$(git ls-files --cached --others --exclude-standard | grep -E '\.js$$' || true); do \
+		base=$$(basename "$$js"); dir=$$(dirname "$$js"); \
+		if ! grep -Rq "include_str!(\"$$base\")" "$$dir/.." 2>/dev/null; then \
+			printf '%s is JS with no Rust include_str! embedder beside it; tool implementations must be Rust\n' "$$js"; exit 1; \
+		fi; \
+	done; \
+	printf 'language gate ok: Rust only (embedded browser-client JS excepted)\n'
+
 lint: lint-all-targets
 
 lint-production: standard-check
@@ -385,7 +400,7 @@ test: lint tooling-size tooling-index-check tool-tests
 	$(CHECK) progress --self-test
 	$(CHECK) no-asm --self-test
 
-verify: index-sync-check source-tracking-check corpus-check lint-production tooling-size tooling-index-check \
+verify: index-sync-check source-tracking-check corpus-check language-check lint-production tooling-size tooling-index-check \
 	strict-tu-check check-owners core-retained-check coverage-check | $(REPORT_DIR)
 	@tree=$$(git write-tree) || exit; \
 	printf '%s\n' "$$tree" > $(VERIFIED_TREE).tmp; \

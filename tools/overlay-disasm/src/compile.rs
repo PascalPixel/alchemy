@@ -539,7 +539,7 @@ fn compile_overlay_unit(
     work: &Path,
     overlay: &str,
     edition: Option<&str>,
-) -> Result<Compiled, String> {
+) -> Result<Vec<Compiled>, String> {
     let names = SourcePaths::load(&root())?;
     let source = root().join(&unit.source);
     let first = unit
@@ -591,46 +591,202 @@ fn compile_overlay_unit(
         checked(&step.command, work)?;
     }
     let produced = fs::read_to_string(&assembly).map_err(|error| error.to_string())?;
-    fs::write(&assembly, bias_in_image_label_words(&produced).text)
-        .map_err(|error| error.to_string())?;
+    let biased = bias_in_image_label_words(&produced).text;
+    // The unit's functions need not be contiguous in the image: retained
+    // assembly, tables, and pools sit between them. Each function goes into
+    // its own section and one link places every section at its owner's
+    // address, so intra-unit calls and pool words see the real layout.
+    let mut members = unit.symbols().collect::<Vec<_>>();
+    members.sort_by_key(|member| member.0);
+    let mut placed: Vec<(u32, String, usize)> = Vec::new();
+    for (address, _, extent) in &members {
+        placed.push((
+            *address,
+            unit.source_owner(*address)?.legacy_name(),
+            *extent,
+        ));
+    }
+    let symbols: Vec<&str> = placed
+        .iter()
+        .map(|(_, symbol, _)| symbol.as_str())
+        .collect();
+    let sectioned =
+        section_functions(&biased, &symbols).map_err(|error| format!("{}: {error}", unit.id))?;
+    fs::write(&assembly, sectioned).map_err(|error| error.to_string())?;
     assemble_file(&assembly, &object, work)?;
     let listing = checked(
         &strings(&["arm-none-eabi-nm", "-S", "--defined-only", &object]),
         work,
     )?;
-    let mut members = unit.symbols().collect::<Vec<_>>();
-    members.sort_by_key(|member| member.0);
-    let mut cursor = first.address;
-    for (address, _, extent) in &members {
-        if *address != cursor {
-            return Err(format!("{}: grouped text has an undeclared gap", unit.id));
+    for (_, symbol, extent) in &placed {
+        let (_, size) = symbol_span(&listing, symbol)?;
+        if size != *extent {
+            return Err(format!(
+                "{}: {symbol} extent differs ({size} compiled, {extent} declared)",
+                unit.id
+            ));
         }
-        let symbol = unit.source_owner(*address)?.legacy_name();
-        let offset = address
-            .checked_sub(first.address)
-            .ok_or_else(|| format!("{}: symbol precedes first owner", unit.id))?;
-        let expected = (offset as usize, *extent);
-        if symbol_span(&listing, &symbol)? != expected {
-            return Err(format!("{}: {symbol} offset or extent differs", unit.id));
-        }
-        cursor = *address + *extent as u32;
     }
-    let whole = link_object(
-        [&object, &symbols_source, &symbols_object, &elf, &binary],
+    let script = at("ld");
+    let mut text = String::from("SECTIONS\n{\n");
+    for (address, symbol, _) in &placed {
+        text.push_str(&format!(
+            "  .text.{symbol} 0x{address:08x} : {{ *(.text.{symbol}) }}\n"
+        ));
+    }
+    text.push_str("  /DISCARD/ : { *(.text) *(.comment) *(.note*) }\n}\n");
+    fs::write(&script, text).map_err(|error| format!("{script}: {error}"))?;
+    link_placed_object(
+        [&object, &symbols_source, &symbols_object, &elf],
         work,
-        base,
-        None,
+        &script,
         Some(unit),
         &names,
         call_via,
     )?;
-    if whole.len() != (cursor - first.address) as usize {
-        return Err(format!("{}: grouped text extent differs", unit.id));
+    let _ = (base, binary);
+    let mut compiled = Vec::new();
+    for (address, symbol, extent) in &placed {
+        let piece = at(&format!("{symbol}.bin"));
+        checked(
+            &strings(&[
+                "arm-none-eabi-objcopy",
+                "-O",
+                "binary",
+                "-j",
+                &format!(".text.{symbol}"),
+                &elf,
+                &piece,
+            ]),
+            work,
+        )?;
+        let data = fs::read(&piece).map_err(|error| format!("{piece}: {error}"))?;
+        if data.len() != *extent {
+            return Err(format!(
+                "{}: {symbol} linked extent differs ({} != {extent})",
+                unit.id,
+                data.len()
+            ));
+        }
+        compiled.push(Compiled {
+            address: i64::from(*address),
+            data,
+        });
     }
-    Ok(Compiled {
-        address: base,
-        data: whole,
-    })
+    Ok(compiled)
+}
+
+/// Gives every listed function its own `.text.<symbol>` section: the
+/// section directive goes before the `.align` that opens the function's
+/// block, so the function's literal pool, which follows its code, stays with
+/// it. A function outside the list or a data section is an error, since the
+/// placement script would drop it.
+fn section_functions(assembly: &str, symbols: &[&str]) -> Result<String, String> {
+    let lines: Vec<&str> = assembly.lines().collect();
+    for line in &lines {
+        let trimmed = line.trim();
+        if trimmed.starts_with(".section") || trimmed == ".data" || trimmed == ".rodata" {
+            return Err(format!("unit assembly switches sections: {trimmed}"));
+        }
+    }
+    let mut inserts: Vec<(usize, String)> = Vec::new();
+    for (index, line) in lines.iter().enumerate() {
+        let Some(label) = line.strip_suffix(':') else {
+            continue;
+        };
+        if label.starts_with('.') || label.contains(' ') {
+            continue;
+        }
+        let is_function = index > 0
+            && lines[..index]
+                .iter()
+                .rev()
+                .take(4)
+                .any(|previous| previous.trim() == ".thumb_func");
+        if !is_function {
+            continue;
+        }
+        if !symbols.contains(&label) {
+            return Err(format!("function {label} is not a declared unit member"));
+        }
+        let mut start = index;
+        while start > 0 {
+            let previous = lines[start - 1].trim();
+            if previous.starts_with(".align") {
+                start -= 1;
+                break;
+            }
+            if previous.starts_with(".thumb_func")
+                || previous.starts_with(".global")
+                || previous.starts_with(".globl")
+                || previous.starts_with(".type")
+            {
+                start -= 1;
+                continue;
+            }
+            break;
+        }
+        inserts.push((start, format!("\t.section\t.text.{label},\"ax\",%progbits")));
+    }
+    if inserts.len() != symbols.len() {
+        return Err(format!(
+            "unit assembly defines {} functions, {} declared",
+            inserts.len(),
+            symbols.len()
+        ));
+    }
+    let mut out = Vec::with_capacity(lines.len() + inserts.len());
+    let mut next = 0;
+    for (index, line) in lines.iter().enumerate() {
+        while next < inserts.len() && inserts[next].0 == index {
+            out.push(inserts[next].1.clone());
+            next += 1;
+        }
+        out.push((*line).to_string());
+    }
+    Ok(format!("{}\n", out.join("\n")))
+}
+
+/// `link_object` with a linker script instead of one text address: the
+/// stubs for undefined symbols are the same.
+fn link_placed_object(
+    files: [&str; 4],
+    work: &Path,
+    script: &str,
+    unit: Option<&TranslationUnit>,
+    names: &SourcePaths,
+    call_via: u64,
+) -> Result<(), String> {
+    let [object, symbols_source, symbols_object, elf] = files;
+    let undefined = checked(&strings(&["arm-none-eabi-nm", "-u", object]), work)?;
+    let mut stubs = names.main_symbol_exports();
+    for name in undefined
+        .lines()
+        .filter_map(|line| line.split_whitespace().last())
+    {
+        if names.main_symbol(name)?.is_some() {
+            continue;
+        }
+        stubs.push_str(
+            &overlay_external_assembly(name, unit, call_via)
+                .map_err(|_| format!("unsupported overlay C external symbol: {name}"))?,
+        );
+    }
+    fs::write(symbols_source, stubs).map_err(|error| format!("{symbols_source}: {error}"))?;
+    assemble_file(symbols_source, symbols_object, work)?;
+    checked(
+        &strings(&[
+            "arm-none-eabi-ld",
+            "-T",
+            script,
+            "-o",
+            elf,
+            object,
+            symbols_object,
+        ]),
+        work,
+    )
+    .map(drop)
 }
 pub fn compile_declared_overlay_unit(
     unit: &TranslationUnit,
@@ -640,12 +796,33 @@ pub fn compile_declared_overlay_unit(
         return Err(format!("{}: not a wholly exact overlay unit", unit.id));
     }
     let work = tempdir().map_err(|error| error.to_string())?;
-    compile_overlay_unit(
+    let members = compile_overlay_unit(
         unit,
         work.path(),
         unit.overlay.as_deref().unwrap(),
         Some(edition),
-    )
+    )?;
+    // One span from the first member to the end of the last, zero between
+    // members, so a caller indexes owners by their offset from the base.
+    let first = members
+        .iter()
+        .map(|member| member.address)
+        .min()
+        .ok_or_else(|| format!("{}: no compiled members", unit.id))?;
+    let end = members
+        .iter()
+        .map(|member| member.address + member.data.len() as i64)
+        .max()
+        .unwrap_or(first);
+    let mut data = vec![0u8; (end - first) as usize];
+    for member in &members {
+        let offset = (member.address - first) as usize;
+        data[offset..offset + member.data.len()].copy_from_slice(&member.data);
+    }
+    Ok(Compiled {
+        address: first,
+        data,
+    })
 }
 fn validate_shared_overlay_source(
     repository: &Path,
@@ -719,7 +896,7 @@ fn compile_production_overlay(
                 ));
             }
         }
-        compiled.push(compile_overlay_unit(unit, work, overlay, None)?);
+        compiled.extend(compile_overlay_unit(unit, work, overlay, None)?);
     }
     for address in placeholders.difference(&handled) {
         let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;

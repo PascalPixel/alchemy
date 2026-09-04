@@ -1151,53 +1151,8 @@ AlchemyC_02000ff0:
 	.space 0x19c
 AlchemyC_0200118c:
 	.space 0x44
-	push	{r5, lr}
-	ldr	r3, [pc, #88]
-	ldr	r0, [pc, #88]
-	ldr	r5, [r3, #0]
-	bl	sub_02002baa
-	movs	r0, #144
-	lsls	r0, r0, #2
-	bl	sub_02002bb2
-	movs	r0, #0
-	bl	sub_02002be8
-	ldr	r2, [pc, #72]
-	ldr	r3, [r0, #8]
-	adds	r3, r3, r2
-	ldr	r2, [pc, #68]
-	cmp	r3, r2
-	bhi.n	.L_02001218
-	movs	r3, #160
-	ldr	r0, [r0, #16]
-	lsls	r3, r3, #16
-	cmp	r0, r3
-	ble.n	.L_02001218
-	movs	r2, #248
-	lsls	r2, r2, #16
-	cmp	r0, r2
-	bge.n	.L_02001218
-	ldr	r0, [pc, #48]
-	bl	sub_02002b3c
-	movs	r3, #193
-	lsls	r3, r3, #1
-	adds	r2, r5, r3
-	movs	r3, #91
-	strh	r3, [r2, #0]
-.L_02001218:
-	bl	sub_020023a6
-	movs	r0, #145
-	lsls	r0, r0, #2
-	bl	sub_02002bf2
-	pop	{r5}
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.4byte 0x03001ebc
-	.4byte 0x00000241
-	.4byte 0xff97ffff
-	.4byte 0x0087fffe
-	.2byte 0x9241
-	.2byte 0x0200
+AlchemyC_020011d0:
+	.space 0x70
 	push	{r5, lr}
 	ldr	r3, [pc, #80]
 	movs	r0, #0
@@ -1568,68 +1523,8 @@ AlchemyC_0200118c:
 	.4byte 0x020092a5
 	.2byte 0x2410
 	.2byte 0x0000
-	push	{lr}
-	bl	sub_02002fa0
-	bl	sub_0200308c
-	movs	r2, #168
-	movs	r1, #152
-	movs	r0, #0
-	bl	sub_02002fee
-	movs	r0, #0
-	bl	sub_0200300c
-	movs	r0, #20
-	bl	sub_02002fb2
-	movs	r0, #146
-	movs	r1, #1
-	bl	sub_020030da
-	movs	r1, #0
-	movs	r0, #0
-	bl	sub_020030ea
-	bl	sub_020030fe
-	movs	r0, #1
-	bl	sub_020030e4
-	bl	sub_02003100
-	movs	r1, #144
-	movs	r2, #184
-	movs	r0, #0
-	bl	sub_02003022
-	movs	r0, #0
-	bl	sub_02003040
-	movs	r1, #88
-	movs	r2, #184
-	movs	r0, #0
-	bl	sub_02003032
-	movs	r0, #0
-	bl	sub_02003050
-	movs	r1, #88
-	movs	r2, #200
-	movs	r0, #0
-	bl	sub_02003042
-	movs	r0, #0
-	bl	sub_02003060
-	movs	r1, #72
-	movs	r2, #200
-	movs	r0, #0
-	bl	sub_02003052
-	movs	r0, #0
-	bl	sub_02003070
-	movs	r2, #144
-	movs	r1, #72
-	lsls	r2, r2, #1
-	movs	r0, #0
-	bl	sub_02003064
-	movs	r0, #0
-	bl	sub_02003082
-	movs	r2, #144
-	movs	r1, #88
-	lsls	r2, r2, #1
-	movs	r0, #0
-	bl	sub_02003076
-	movs	r0, #0
-	bl	sub_02003094
-	bl	sub_02003048
-	pop	{r0}
-	bx	r0
+AlchemyC_020015bc:
+	.space 0xaa
 	.2byte 0x0000
 	push	{r5, lr}
 	ldr	r5, [pc, #276]

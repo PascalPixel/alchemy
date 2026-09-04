@@ -8208,6 +8208,38 @@
     "resource_395:020002ec": {
       "name": "RunEventScript01",
       "source": "overlays/event_script/run_event_script_01_395_020002ec.c"
+    },
+    "resource_3bf:02004bfc": {
+      "name": "RunActor20SceneSequence",
+      "source": "map/locations/heidia/village/run_actor_20_scene_sequence.c"
+    },
+    "resource_373:02000ba8": {
+      "name": "Func_02000ba8",
+      "source": "unidentified/overlays/state_update/state_update_0040.c"
+    },
+    "resource_3bf:02002308": {
+      "name": "InspectVillageWell",
+      "source": "map/locations/heidia/village/inspect_village_well.c"
+    },
+    "resource_3bf:0200238c": {
+      "name": "RunSecondaryMapInteraction",
+      "source": "map/locations/heidia/village/run_secondary_map_interaction.c"
+    },
+    "resource_374:02000634": {
+      "name": "Func_02000634",
+      "source": "unidentified/overlays/leaf/leaf_0620.c"
+    },
+    "resource_3b8:02003f84": {
+      "name": "Func_02003f84",
+      "source": "unidentified/overlays/leaf/leaf_0040.c"
+    },
+    "resource_3a8:020015b4": {
+      "name": "Func_020015b4",
+      "source": "unidentified/overlays/state_update/state_update_0507.c"
+    },
+    "resource_3a8:0200158c": {
+      "name": "Func_0200158c",
+      "source": "unidentified/overlays/state_update/state_update_0714.c"
     }
   }
 }

@@ -399,6 +399,28 @@ pub fn tune_targeted(
             break;
         }
     }
+    // A statement after an if/else that consumes the value each branch
+    // assigned may have been written in both branches by the original: the
+    // compiler cross-jumps identical tails into one, where the joined
+    // variable compiles to a hoisted load. Each such join is tried sunk.
+    let mut k = 0;
+    while k + 4 < lines.len() {
+        if let Some(sunk) = sink_into_branches(&lines, k) {
+            let trial = write_and_score(&format!("{}\n", sunk.join("\n")));
+            if trial.as_ref().is_ok_and(|t| t.differing < best.differing) {
+                let trial = trial.unwrap();
+                report(&format!(
+                    "{} -> {}  sunk {}",
+                    best.differing,
+                    trial.differing,
+                    lines[k].trim()
+                ));
+                best = trial;
+                lines = sunk;
+            }
+        }
+        k += 1;
+    }
     // Statement order: two adjacent independent statements swapped change
     // the scheduler's tie-breaks (it keeps source order among equals), so a
     // swap that scores better is kept. Three passes bound the search.
@@ -435,6 +457,83 @@ pub fn tune_targeted(
     std::fs::write(scratch, &text).map_err(|error| format!("{}: {error}", scratch.display()))?;
     Ok((text, best))
 }
+
+/// The lines with the statement after the if/else at `k` sunk into both
+/// branches, when each branch ends by assigning the same local and the
+/// statement reads it once: `if (c) { v = A; } else { v = B; } H(v);`
+/// becomes `if (c) { v = A; H(A); } else { v = B; H(B); }`. The
+/// assignments stay when the local is read anywhere else, and go otherwise.
+fn sink_into_branches(lines: &[String], k: usize) -> Option<Vec<String>> {
+    let head = &lines[k];
+    let indent = &head[..head.len() - head.trim_start().len()];
+    if !head.trim_start().starts_with("if (") || !head.trim_end().ends_with('{') {
+        return None;
+    }
+    let at_level =
+        |line: &String| line.starts_with(indent) && !line[indent.len()..].starts_with(' ');
+    // The `} else {` and the closing `}` at this indent.
+    let else_at = (k + 1..lines.len()).find(|&j| at_level(&lines[j]))?;
+    if lines[else_at].trim() != "} else {" {
+        return None;
+    }
+    let close_at = (else_at + 1..lines.len()).find(|&j| at_level(&lines[j]))?;
+    if lines[close_at].trim() != "}" || close_at + 1 >= lines.len() {
+        return None;
+    }
+    let (then_last, else_last) = (&lines[else_at - 1], &lines[close_at - 1]);
+    let local = assigned(then_last)?;
+    if assigned(else_last)? != local {
+        return None;
+    }
+    let then_value = then_last
+        .trim()
+        .strip_suffix(';')?
+        .split_once(" = ")?
+        .1
+        .to_string();
+    let else_value = else_last
+        .trim()
+        .strip_suffix(';')?
+        .split_once(" = ")?
+        .1
+        .to_string();
+    let statement = &lines[close_at + 1];
+    let trimmed = statement.trim();
+    if !statement.starts_with(indent)
+        || statement[indent.len()..].starts_with(' ')
+        || !trimmed.ends_with(';')
+        || CONTROL.iter().any(|w| trimmed.starts_with(w))
+        || trimmed.matches(local).count() != 1
+        || !mentions(statement, local)
+    {
+        return None;
+    }
+    let read_elsewhere = lines.iter().enumerate().any(|(j, line)| {
+        j != else_at - 1 && j != close_at - 1 && j != close_at + 1 && mentions(line, local)
+    });
+    let substitute = |value: &str| statement.replace(local, value);
+    let mut out: Vec<String> = Vec::with_capacity(lines.len() + 1);
+    for (j, line) in lines.iter().enumerate() {
+        if j == close_at + 1 {
+            continue;
+        }
+        if (j == else_at - 1 || j == close_at - 1) && !read_elsewhere {
+            // The assignment goes; its consumer takes the value directly.
+        } else {
+            out.push(line.clone());
+        }
+        if j == else_at - 1 {
+            out.push(substitute(&then_value));
+        } else if j == close_at - 1 {
+            out.push(substitute(&else_value));
+        }
+    }
+    Some(out)
+}
+
+const CONTROL: [&str; 9] = [
+    "if ", "while ", "do", "for ", "switch ", "case ", "return", "goto ", "break",
+];
 
 /// The hoisted form of the `shown` block starting at `k`:
 /// `{ s32 shown = K; <blank> *(u16 *)(ADDR) = shown; }` becomes

@@ -111,7 +111,7 @@ pub(crate) fn reads(kind: &Kind) -> Vec<u8> {
 fn is_block_end(kind: &Kind) -> bool {
     matches!(
         kind,
-        Kind::B { .. } | Kind::Bcond { .. } | Kind::Bx(_) | Kind::Pop { pc: true }
+        Kind::B { .. } | Kind::Bcond { .. } | Kind::Bx(_) | Kind::Pop { pc: true, .. }
     )
 }
 

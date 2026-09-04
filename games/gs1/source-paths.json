@@ -6750,9 +6750,6 @@
       "name": "FieldScene_RunFourEntitySequence",
       "source": "overlays/scene_primary_script/run_scene_37f_late_sequence.c"
     },
-    "resource_396:02000918": {
-      "name": "FieldScene_RunFourActorEncounter"
-    },
     "resource_3b8:02002014": {
       "name": "FieldScene_RunMainCutsceneSequence",
       "source": "overlays/scene_effect_sequence/run_main_cutscene_sequence.c"
@@ -6920,7 +6917,8 @@
       "name": "FieldScene_RunEarlySequence"
     },
     "resource_373:020034c8": {
-      "name": "FieldScene_RunLargeStagingSequence"
+      "name": "FieldScene_RunLargeStagingSequence",
+      "source": "overlays/scene_primary_script/run_scene_373_large_staging_sequence.c"
     },
     "resource_373:02003fb0": {
       "name": "FieldScene_RunStagedActorCutsceneSequence",
@@ -8548,6 +8546,19 @@
     "resource_3bf:020017bc": {
       "name": "FieldScene_RunScene3bfSequenceC",
       "source": "overlays/scene_primary_script/run_scene_3bf_sequence_c.c"
+    },
+    "resource_39f:02000ab0": "unidentified/overlays/state_update/state_update_1032.c",
+    "resource_3b2:02000ab0": "unidentified/overlays/state_update/state_update_1033.c",
+    "resource_3c4:02000ab0": "unidentified/overlays/state_update/state_update_1034.c",
+    "resource_3c5:02000ab0": "unidentified/overlays/state_update/state_update_1035.c",
+    "resource_39b:02001c20": "unidentified/overlays/state_update/state_update_1036.c",
+    "resource_39c:02000cd0": {
+      "name": "FieldScene_RunScene39cSequenceC",
+      "source": "overlays/scene_primary_script/run_scene_39c_sequence_c.c"
+    },
+    "resource_396:02000918": {
+      "name": "FieldScene_RunFourActorEncounter",
+      "source": "overlays/scene_primary_script/run_scene_396_four_actor_encounter.c"
     }
   }
 }

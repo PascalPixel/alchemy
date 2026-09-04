@@ -6866,7 +6866,8 @@
       "name": "FieldScene_RunEarlySequence"
     },
     "resource_3a3:02000904": {
-      "name": "FieldScene_RunMiddleSequence"
+      "name": "FieldScene_RunMiddleSequence",
+      "source": "overlays/scene_primary_script/run_scene_3a3_middle_sequence.c"
     },
     "resource_373:02000f5c": {
       "name": "FieldScene_RunPrimarySequence",

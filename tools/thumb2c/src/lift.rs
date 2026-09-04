@@ -17,6 +17,12 @@ pub struct Val {
     pub name: Option<String>,
     pub reg: Option<u8>,
     pub pool: bool,
+    /// A constant formed by shifting a constant left: `(k, shift)`.
+    pub shifted: Option<(i32, u8)>,
+    /// A constant formed by adding a shifted constant to a pool address:
+    /// `(base, k, shift)`, the element `k` of a table of `1 << shift`-byte
+    /// rows at `base`.
+    pub table: Option<(u32, i32, u8)>,
 }
 
 impl Val {
@@ -240,6 +246,26 @@ pub fn set_main_mode(on: bool) {
 
 pub fn main_mode() -> bool {
     MAIN_MODE.with(|m| m.get())
+}
+
+thread_local! {
+    /// Typed table views the lifted bodies index, by symbol name: the
+    /// declaration each needs at file scope.
+    static TABLES: std::cell::RefCell<BTreeMap<String, String>> =
+        const { std::cell::RefCell::new(BTreeMap::new()) };
+}
+
+/// The typed table declarations the bodies lifted so far need, drained.
+pub fn take_tables() -> Vec<String> {
+    TABLES.with(|t| t.borrow_mut().split_off("").into_values().collect())
+}
+
+fn width_bytes(c_type: &str) -> i64 {
+    match c_type {
+        "u8" | "s8" => 1,
+        "u16" | "s16" => 2,
+        _ => 4,
+    }
 }
 
 /// In the main image, a word inside the ROM or the work RAM is a relocated
@@ -698,6 +724,35 @@ impl<'a> Lifter<'a> {
         }
         v.e = Some(name.clone());
         name
+    }
+
+    /// A typed table element, `Data_<base>_t[k][column]`, when the address
+    /// was formed as a pool address plus a scaled constant index and the
+    /// access fits the row: the compiler scales a constant index into a
+    /// typed array at run time, where a folded address would sit in the
+    /// pool. The table is declared once per unit; a second shape for the
+    /// same symbol keeps the folded spelling.
+    fn table_expr(&mut self, base: &Val, off: i64, width: Width) -> Option<String> {
+        let (address, k, shift) = base.table?;
+        let c_type = width.c_type();
+        let w = width_bytes(c_type);
+        let stride = 1i64 << shift;
+        if off < 0 || off >= stride || off % w != 0 || stride % w != 0 {
+            return None;
+        }
+        let name = format!("Data_{address:08x}_t");
+        let declaration = format!("extern {c_type} {name}[][{}];", stride / w);
+        let accepted = TABLES.with(|t| {
+            let mut t = t.borrow_mut();
+            match t.get(&name) {
+                Some(existing) => *existing == declaration,
+                None => {
+                    t.insert(name.clone(), declaration);
+                    true
+                }
+            }
+        });
+        accepted.then(|| format!("{name}[{k}][{}]", off / w))
     }
 
     fn addr_expr(&mut self, base: &Val, off: i64, width: Width) -> String {
@@ -1394,7 +1449,25 @@ impl<'a> Lifter<'a> {
         let v = self.val_of(rn, Some(rd));
         let w = self.val_of(rm, Some(rd));
         let value = match (v.c, w.c) {
-            (Some(a), Some(b)) => Val::constant(fold(a, b)),
+            (Some(a), Some(b)) => {
+                let mut value = Val::constant(fold(a, b));
+                // A pool address plus a shifted constant is a typed table
+                // element: the compiler scales a constant index into a typed
+                // array at run time rather than folding it into the pool.
+                if op == "+" {
+                    let pair = if v.pool && w.shifted.is_some() {
+                        Some((a as u32, w.shifted))
+                    } else if w.pool && v.shifted.is_some() {
+                        Some((b as u32, v.shifted))
+                    } else {
+                        None
+                    };
+                    if let Some((base, Some((k, shift)))) = pair {
+                        value.table = Some((base, k, shift));
+                    }
+                }
+                value
+            }
             _ => {
                 let a = self.arith(&v);
                 let b = self.arith(&w);
@@ -1413,6 +1486,22 @@ impl<'a> Lifter<'a> {
         let addr = x.addr;
         let flags = flag_register(&x.kind);
         match x.kind.clone() {
+            // The return address popped into r1 rather than r0 leaves r0
+            // for the value the function returns.
+            Kind::Pop {
+                pc: false,
+                list: 0b10,
+            } if matches!(self.ins.get(i + 1).map(|n| &n.kind), Some(Kind::Bx(1))) => {
+                if self.regs[0].is_some() {
+                    let mut v = self.val_of(0, None);
+                    let text = if v.call_index().is_some() {
+                        self.ensure_result_var(&mut v)
+                    } else {
+                        self.fmt(&v)
+                    };
+                    self.emit(format!("return {text};"));
+                }
+            }
             Kind::Push { .. }
             | Kind::Pop { .. }
             | Kind::Bx(_)
@@ -1499,7 +1588,13 @@ impl<'a> Lifter<'a> {
                 let v = self.val_of(rm, Some(rd));
                 let n = imm;
                 let value = match (shift, v.c) {
-                    (Shift::Lsl, Some(c)) => Val::constant(c.wrapping_shl(n)),
+                    (Shift::Lsl, Some(c)) => {
+                        let mut value = Val::constant(c.wrapping_shl(n));
+                        if (1..=4).contains(&n) && c > 0 {
+                            value.shifted = Some((c, n as u8));
+                        }
+                        value
+                    }
                     (Shift::Lsr, Some(c)) => Val::constant(((c as u32) >> n) as i32),
                     (Shift::Asr, Some(c)) => Val::constant(c >> n),
                     (Shift::Lsl, None) => Val::expr(format!("({} << {n})", self.arith(&v))),
@@ -1795,7 +1890,10 @@ impl<'a> Lifter<'a> {
             let base = self.val_of(rn, None);
             let c_type = width.c_type();
             let e = match index.c {
-                Some(c) => self.addr_expr(&base, i64::from(c), width),
+                Some(c) => match self.table_expr(&base, i64::from(c), width) {
+                    Some(e) => e,
+                    None => self.addr_expr(&base, i64::from(c), width),
+                },
                 // A register index that is not a constant stays in the address.
                 None => {
                     let b = match base.c {
@@ -1825,9 +1923,12 @@ impl<'a> Lifter<'a> {
         let base = self.val_of(rn, None);
         let c_type = width.c_type();
         if let Some(c) = base.c {
-            let e = match self.shared_base(&base) {
-                Some(name) => deref_named_at(c_type, &name, off, c as u32),
-                None => absolute_deref(c_type, (c as u32).wrapping_add(off)),
+            let e = match self.table_expr(&base, i64::from(off), width) {
+                Some(e) => e,
+                None => match self.shared_base(&base) {
+                    Some(name) => deref_named_at(c_type, &name, off, c as u32),
+                    None => absolute_deref(c_type, (c as u32).wrapping_add(off)),
+                },
             };
             // A load into a callee-saved register is a value kept across calls,
             // a local in the original: the scene work pointer read once at entry
@@ -1880,6 +1981,14 @@ impl<'a> Lifter<'a> {
             let Offset::Reg(rm) = offset else { return };
             let mut base = self.val_of(rn, None);
             let index = self.val_of(rm, None);
+            if let Some(e) = index
+                .c
+                .and_then(|c| self.table_expr(&base, i64::from(c), width))
+            {
+                let value = self.fmt(&v);
+                self.emit(format!("{e} = {value};"));
+                return;
+            }
             let b = self.ensure_result_var(&mut base);
             let ix = self.fmt(&index);
             let value = self.fmt(&v);
@@ -1888,9 +1997,12 @@ impl<'a> Lifter<'a> {
         };
         let base = self.val_of(rn, None);
         let lhs = match base.c {
-            Some(c) => match self.shared_base(&base) {
-                Some(name) => deref_named_at(c_type, &name, off, c as u32),
-                None => absolute_deref(c_type, (c as u32).wrapping_add(off)),
+            Some(c) => match self.table_expr(&base, i64::from(off), width) {
+                Some(e) => e,
+                None => match self.shared_base(&base) {
+                    Some(name) => deref_named_at(c_type, &name, off, c as u32),
+                    None => absolute_deref(c_type, (c as u32).wrapping_add(off)),
+                },
             },
             None => self.addr_expr(&base, i64::from(off), width),
         };
@@ -2759,7 +2871,7 @@ impl<'a> Lifter<'a> {
                     return true;
                 }
                 match kind {
-                    Kind::Pop { pc: true } | Kind::Bx(_) => break,
+                    Kind::Pop { pc: true, .. } | Kind::Bx(_) => break,
                     Kind::B { target } => match self.index_of(*target) {
                         Some(next) => {
                             j = next;

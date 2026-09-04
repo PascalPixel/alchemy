@@ -144,6 +144,8 @@ pub enum Kind {
     },
     Pop {
         pc: bool,
+        /// The low registers popped, as a bit per register.
+        list: u8,
     },
     Bx(u8),
     Nop,
@@ -341,7 +343,7 @@ fn alu_mnemonic(op: Alu) -> &'static str {
 pub fn text_of(kind: &Kind) -> String {
     match kind {
         Kind::Push { lr } => format!("push {{{}}}", if *lr { "lr" } else { "" }),
-        Kind::Pop { pc } => format!("pop {{{}}}", if *pc { "pc" } else { "" }),
+        Kind::Pop { pc, .. } => format!("pop {{{}}}", if *pc { "pc" } else { "" }),
         Kind::Bx(rm) => format!("bx {}", reg(*rm)),
         Kind::Nop => "nop".to_string(),
         Kind::MovImm { rd, imm } => format!("movs r{rd}, #{imm}"),
@@ -627,6 +629,7 @@ pub fn decode_one(image: &[u8], pc: u32) -> Option<Ins> {
             } else if half & 0xfe00 == 0xbc00 {
                 Kind::Pop {
                     pc: half & 0x100 != 0,
+                    list: (half & 0xff) as u8,
                 }
             } else if half == 0xbf00 || half == 0x46c0 {
                 Kind::Nop
@@ -724,7 +727,7 @@ pub fn decode_window(image: &[u8], entry: u32, span: u32) -> Vec<Ins> {
                         queue.push(target);
                     }
                 }
-                Kind::Bx(_) | Kind::Pop { pc: true } => stop = true,
+                Kind::Bx(_) | Kind::Pop { pc: true, .. } => stop = true,
                 Kind::Unknown(_) => stop = true,
                 _ => {}
             }
@@ -763,7 +766,7 @@ pub fn decode_window(image: &[u8], entry: u32, span: u32) -> Vec<Ins> {
         let after_return = seen
             .range(..cursor)
             .next_back()
-            .is_some_and(|(_, x)| matches!(x.kind, Kind::Bx(_) | Kind::Pop { pc: true }));
+            .is_some_and(|(_, x)| matches!(x.kind, Kind::Bx(_) | Kind::Pop { pc: true, .. }));
         if half & 0xff00 == 0xb500 && after_return {
             let extra = decode_window(image, cursor, end - cursor);
             // Table words can look like a prologue: only a run that decodes
@@ -771,7 +774,7 @@ pub fn decode_window(image: &[u8], entry: u32, span: u32) -> Vec<Ins> {
             let clean = extra.iter().all(|x| !matches!(x.kind, Kind::Unknown(_)))
                 && extra
                     .iter()
-                    .any(|x| matches!(x.kind, Kind::Bx(_) | Kind::Pop { pc: true }));
+                    .any(|x| matches!(x.kind, Kind::Bx(_) | Kind::Pop { pc: true, .. }));
             if clean {
                 for ins in extra {
                     seen.entry(ins.addr).or_insert(ins);

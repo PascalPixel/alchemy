@@ -8152,6 +8152,42 @@
     "resource_38b:02000d10": {
       "name": "FieldScene_RunScene38b_02000d10",
       "source": "overlays/scene_primary_script/run_scene_38b_02000d10.c"
+    },
+    "resource_3a4:02002310": {
+      "name": "FieldScene_RunScene3a4_02002310",
+      "source": "overlays/scene_primary_script/run_scene_3a4_02002310.c"
+    },
+    "resource_3a4:02002490": {
+      "name": "FieldScene_RunScene3a4_02002490",
+      "source": "overlays/scene_primary_script/run_scene_3a4_02002490.c"
+    },
+    "resource_3a4:020025c0": {
+      "name": "FieldScene_RunScene3a4_020025c0",
+      "source": "overlays/scene_primary_script/run_scene_3a4_020025c0.c"
+    },
+    "resource_3ab:02000eb0": {
+      "name": "FieldScene_RunScene3ab_02000eb0",
+      "source": "overlays/scene_primary_script/run_scene_3ab_02000eb0.c"
+    },
+    "resource_3ae:020008cc": {
+      "name": "FieldScene_RunScene3ae_020008cc",
+      "source": "overlays/scene_primary_script/run_scene_3ae_020008cc.c"
+    },
+    "resource_3b2:02001494": {
+      "name": "FieldScene_RunScene3b2_02001494",
+      "source": "overlays/scene_primary_script/run_scene_3b2_02001494.c"
+    },
+    "resource_3ba:020015e0": {
+      "name": "FieldScene_RunScene3ba_020015e0",
+      "source": "overlays/scene_primary_script/run_scene_3ba_020015e0.c"
+    },
+    "resource_3ae:0200086c": {
+      "name": "FieldScene_RunScene3ae_0200086c",
+      "source": "overlays/scene_primary_script/run_scene_3ae_0200086c.c"
+    },
+    "resource_3be:02001394": {
+      "name": "FieldScene_RunScene3be_02001394",
+      "source": "overlays/scene_primary_script/run_scene_3be_02001394.c"
     }
   }
 }

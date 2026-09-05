@@ -14830,6 +14830,10 @@
     "main:080b29a8": {
       "name": "Shop_ConfirmPartyAction",
       "source": "shop/confirm_party_action.c"
+    },
+    "main:080c1afc": {
+      "name": "BattleFormation_SelectLevelMatchedCandidate",
+      "source": "battle/formation/select_level_matched_candidate.c"
     }
   }
 }

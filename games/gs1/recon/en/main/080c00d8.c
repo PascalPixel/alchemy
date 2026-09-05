@@ -7,10 +7,14 @@ void BattlePresentation_BuildTilemap(s32 destination)
     s32 *cursor;
     s32 entry;
     u32 index;
+    /* The ROM calls the IWRAM fill through call-via veneers, not callees
+     * taking a fourth argument. Register lifetimes remain unmatched. */
+    void (*fill)(s32 destination, s32 size, s32 value) =
+        (void (*)(s32, s32, s32))0x03000168;
 
-    Func_080072f8(destination, 0x100, -1);
+    fill(destination, 0x100, -1);
     destination += 0x100;
-    Func_080072f8(destination, 0x80, 0x03ff03ff);
+    fill(destination, 0x80, 0x03ff03ff);
     entry = 0x02010200;
     cursor = (s32 *)(destination + 0x80);
 
@@ -21,5 +25,5 @@ void BattlePresentation_BuildTilemap(s32 destination)
         entry += 0x00020002;
     } while (index <= 239);
 
-    Func_080072f0(cursor, 0x280, 0x03ff03ff, 0x03000168);
+    fill((s32)cursor, 0x280, 0x03ff03ff);
 }

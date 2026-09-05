@@ -14843,6 +14843,10 @@
     "main:080a602c": {
       "name": "PsynergyMenu_SelectPartySlot",
       "source": "psynergy_menu/select_party_slot.c"
+    },
+    "main:08096960": {
+      "name": "BattleEffect_DispatchRequestKind",
+      "source": "battle/effects/dispatch_request_kind.c"
     }
   }
 }

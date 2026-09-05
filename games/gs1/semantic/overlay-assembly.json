@@ -3123,18 +3123,6 @@
       ]
     },
     {
-      "overlay": "resource_3a4",
-      "start": "0x02000ec0",
-      "end": "0x02001398",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete shared set-piece accounts for all 93 calls, both published-callback contexts, waits, flags, and callback lifecycle",
-        "games/gs1/recon/en/dossiers.json#resource_3a4:02000ec0"
-      ]
-    },
-    {
       "overlay": "resource_3af",
       "start": "0x02002c84",
       "end": "0x02002ed8",

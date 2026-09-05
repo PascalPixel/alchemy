@@ -4,6 +4,32 @@ use regex::Regex;
 use std::path::Path;
 
 type Var = (String, Option<u8>, Option<i32>);
+pub fn split_pointer_uses(code: &str, name: &str) -> bool {
+    let name = regex::escape(name);
+    let uses = format!(r"\b{name}\b");
+    Regex::new(&uses).unwrap().find_iter(code).count() == 4
+        && !Regex::new(&format!(
+            r"(?:\+\+|--)\s*\b{0}\b|\b{0}\b\s*(?:\+\+|--|[-+*/%&|^]=|<<=|>>=)",
+            name
+        ))
+        .unwrap()
+        .is_match(code)
+}
+#[test]
+fn split_pointer_rejects_induction() {
+    let code = "u8 *id; id = base; use(*id); use(*id);";
+    assert!(split_pointer_uses(code, "id"));
+    for update in ["id++", "++id", "id--", "--id", "id += 1", "id <<= 1"] {
+        assert!(!split_pointer_uses(
+            &code.replace("use(*id);", update),
+            "id"
+        ));
+    }
+    assert!(!split_pointer_uses(
+        include_str!("../../../games/gs1/recon/en/main/0808c30c.c"),
+        "id"
+    ));
+}
 
 #[derive(Clone, Debug)]
 pub struct Report {
@@ -380,7 +406,7 @@ fn analyze(
     if source.contains("do {") && source.contains("while") {
         if let Some(var) = unique(&vars, |v| {
             v.1.is_some_and(|reg| {
-                source.matches(&v.0).count() >= 3
+                split_pointer_uses(source, &v.0)
                     && candidate.matches(&format!("[r{reg}")).count() >= 2
             })
         }) {

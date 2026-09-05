@@ -34,10 +34,12 @@ extern u8 Data_02000240[];
  * its reference address is what makes the names emit the right bl bytes --
  * the ordering and the naming are one fix, not two.
  *
- * Uncertainty: none of the callees are identified beyond call shape.
- * Func_020047ec is called with two arguments by selector 69 and with
- * one by selector 31, so it is declared old-style per the
- * resource_3b9_c_02002668.c precedent.  The 0x109 status id gates both
+ * The loader at 08002d5c relocates BL pairs. The raw encoded name
+ * 020047ec collides: the call at offset 1b8e reaches the veneer at 2c5c
+ * (ROM 0808a100), while 1c26 reaches 2bc4 (ROM 080770c8). Keep distinct
+ * declarations; the _a suffix distinguishes the second container alias,
+ * not a second entry point in one runtime function.
+ * The 0x109 status id gates both
  * selector 12 and selector 69 (call first, act only when the check
  * returns zero); 0x90e/0x90f are passed ids from the pool.
  */
@@ -45,7 +47,8 @@ extern u8 Data_02000240[];
 extern void Func_020045de(s32 arg0);
 extern void Func_020047da(s32 arg0, s32 arg1);
 extern void Func_020047e2(s32 arg0, s32 arg1);
-extern void Func_020047ec();
+extern void Func_020047ec(s32 arg0, s32 arg1);
+extern void Func_020047ec_a(s32 arg0);
 extern void Func_020047f4(s32 arg0, s32 arg1);
 extern s32 Func_0200475a(s32 arg0);
 extern void Func_020031b2(void);
@@ -133,7 +136,7 @@ void FieldScene_DispatchBySelector(void)
         Func_020047ea(1);
         Func_020047f0(2);
         Func_020047f6(3);
-        Func_020047ec(0x90f);
+        Func_020047ec_a(0x90f);
         Func_02004590();
         break;
     default:

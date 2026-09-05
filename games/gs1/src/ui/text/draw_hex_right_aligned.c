@@ -1,8 +1,6 @@
 #include "low_runtime.h"
 #include "global_cells.h"
 
-#define Text_DrawHexRightAligned Func_08004718
-
 void Func_080045f0(u32);
 
 void Text_DrawHexRightAligned(u32 value, s32 width)

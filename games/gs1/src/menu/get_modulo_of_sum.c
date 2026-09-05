@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Menu_GetModuloOfSum Func_080aa538
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 Modulo(s32);

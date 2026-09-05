@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Ui_CountIconTableEntries Func_08019ebc
-
 extern u8 Data_0802a2e0[];
 extern u8 Data_08029ee4[];
 

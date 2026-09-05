@@ -2,8 +2,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Ui_FillGridColumnFromMetadata Func_08012d70
-
 struct Entry_08012d70 {
     s16 no;
     s16 x;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Menu_DrawAtWindowOffset Func_080ab1f4
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void Func_080153c8(s32, s32, s32, s32, s32);

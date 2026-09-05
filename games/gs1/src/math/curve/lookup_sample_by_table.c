@@ -1,7 +1,5 @@
 #include "curve.h"
 
-#define Curve_LookupSampleByTable Func_08011f14
-
 s32 Curve_LookupSampleByTable(const s8 *samples, u32 position, u32 row)
 {
     return samples[Data_080133fc[position + (row << 4)]]

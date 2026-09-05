@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define ObjectTable_RunIfActive Func_080931d4
-
 s32 Func_08015100();
 s32 ObjectTable_ReadActiveValue();
 

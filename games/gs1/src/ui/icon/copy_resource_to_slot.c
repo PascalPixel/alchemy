@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define UiIcon_CopyResourceToSlot Func_0801a2a4
-
 s32 Func_08002dd8(s32);
 s32 Resource_CopyData(s32, s32, s32);
 s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);

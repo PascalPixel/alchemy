@@ -2,8 +2,6 @@
 
 s32 WaitFrames(s32);
 
-#define SerialRuntime_WaitForTransfers Func_080064b8
-
 void SerialRuntime_WaitForTransfers(void)
 {
     u32 count;

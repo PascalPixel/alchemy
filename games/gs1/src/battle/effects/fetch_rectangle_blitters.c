@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_FetchRectangleBlitters Func_080cef64
-
 s32 Func_080ed408(s32, s32, s32, s32, s32);
 extern u8 Data_03001e50[];
 

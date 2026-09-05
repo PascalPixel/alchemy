@@ -1,6 +1,4 @@
 #include "inventory.h"
-#undef BattleParty_CollectUnitList
-#define BattleParty_CollectUnitList Func_080b5a0c
 
 extern u8 *Data_03001e74;
 extern s8 Data_080c2a10[];

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Ui_SetGridColumnByte5 Func_08012d20
-
 extern u8 *Data_03001e60;
 
 void Ui_SetGridColumnByte5(s32 slot, s32 value)

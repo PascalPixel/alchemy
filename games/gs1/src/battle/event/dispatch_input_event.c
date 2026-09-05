@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Battle_DispatchInputEvent Func_0808d8f0
-
 struct RuntimeState_0808d8f0 {
     u8 padding0[0x19C];
     s16 delay;

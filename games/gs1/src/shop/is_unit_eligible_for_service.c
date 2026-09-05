@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Shop_IsUnitEligibleForService Func_080b27b0
-
 u8 *Runtime_GetObject(s32);
 
 s32 Shop_IsUnitEligibleForService(s32 entry_no, s32 kind)

@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Menu_SetupSelectionBothSides Func_0801b228
-
 s32 Func_0801b248(s32, s32);
 
 void Menu_SetupSelectionBothSides(void) {

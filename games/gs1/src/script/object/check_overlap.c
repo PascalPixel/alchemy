@@ -1,8 +1,6 @@
 #include "script_object_entry.h"
 #include "global_cells.h"
 
-#define ScriptObject_CheckOverlap Func_0800d924
-
 s32 Func_0800eba0(s32 *a, s32 arg1, s32 *b, s32 arg3);
 
 s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *values)

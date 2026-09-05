@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SerialRuntime_GetActiveTransfers Func_080064f4
-
 s32 SerialRuntime_GetActiveTransfers(void)
 {
     s32 flags;

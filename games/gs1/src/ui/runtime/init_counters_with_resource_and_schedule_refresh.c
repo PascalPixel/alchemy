@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define UiWork_InitCountersWithResourceAndScheduleRefresh Func_080173f4
-
 struct State_080173f4 {
     u8 filler0[0xEA8];
     u16 ten;

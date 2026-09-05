@@ -1,8 +1,6 @@
 #include "fixed_math.h"
 #include "types.h"
 
-#define BattleEffect_SetRandomTableValueOnObject Func_0809ad70
-
 extern s8 Data_0809f160[];
 
 u32 Random16(void);

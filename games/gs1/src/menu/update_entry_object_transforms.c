@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Menu_UpdateEntryObjectTransforms Func_080a19a0
-
 extern u8 *Data_03001f2c;
 
 s32 Func_08077148(void);

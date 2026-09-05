@@ -1,8 +1,6 @@
 #include "types.h"
 #include "runtime_interfaces.h"
 
-#define SaveState_WriteCurrentSlotPair Func_0801f9b4
-
 s32 Func_080056cc(void);
 s32 Func_08005920(s32, void *);
 void Func_0801776c(s32, s32);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Menu_LoadSelectionNodeResource Func_0801b9ec
-
 struct Node_0801b9ec {
     u8 filler0[4];
     struct Node_0801b9ec *next;

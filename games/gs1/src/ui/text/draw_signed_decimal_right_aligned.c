@@ -1,8 +1,6 @@
 #include "low_runtime.h"
 #include "global_cells.h"
 
-#define Text_DrawSignedDecimalRightAligned Func_0800473c
-
 void Func_08004620(s32);
 
 void Text_DrawSignedDecimalRightAligned(s32 value, s32 width)

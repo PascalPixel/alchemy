@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Summon_GetEntryByte3Kind Func_080c2368
-
 extern const u8 Data_080c7420[];
 
 u32 Summon_GetEntryByte3Kind(s32 arg0)

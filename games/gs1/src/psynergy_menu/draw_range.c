@@ -1,9 +1,6 @@
 #include "types.h"
-#define UiWindow_SetTilemapEntryFar Func_08015280
 
 void UiWindow_SetTilemapEntryFar(s32, s32, s32, s32, s32);
-
-#define PsynergyMenu_DrawRange Func_080a8cc0
 
 void PsynergyMenu_DrawRange(
     s32 window, s32 x, s32 y, s32 range, s32 unused)

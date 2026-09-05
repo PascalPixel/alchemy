@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define GraphicsPalette_DecrementSelectedCounter Func_0801ce90
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 extern u8 Data_02000240[];

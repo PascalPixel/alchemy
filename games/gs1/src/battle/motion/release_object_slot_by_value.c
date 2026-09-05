@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define BattleMotion_ReleaseObjectSlotByValue Func_080b6e30
-
 extern s32 Func_08009270(s32, s32, s32, s32);
 
 s32 BattleMotion_ReleaseObjectSlotByValue(s32 value)

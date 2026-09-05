@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Palette_CopyBanksWithBrightnessOffset Func_080b98b4
-
 void Palette_CopyBanksWithBrightnessOffset(s32 arg0)
 {
     s32 iter;

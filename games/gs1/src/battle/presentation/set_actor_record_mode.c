@@ -23,8 +23,6 @@ struct EffectActorSlot {
 
 struct EffectActorSlot *Func_080b7dd0(s32);
 
-#define BattlePresentation_SetActorRecordMode Func_080c0f98
-
 void BattlePresentation_SetActorRecordMode(s32 actor_id, s32 mode)
 {
     struct EffectActorSlot *slot = Func_080b7dd0(actor_id);

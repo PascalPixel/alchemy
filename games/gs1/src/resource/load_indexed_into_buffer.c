@@ -1,8 +1,6 @@
 #include "types.h"
 #include "resource.h"
 
-#define Resource_LoadIndexedIntoBuffer Func_08021c64
-
 extern u8 Data_000000f1[];
 
 s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Shop_CopyGlyphRowsToLayout Func_080b06ec
-
 extern u16 Data_080b413c[];
 extern u8 Data_080b3d40[];
 

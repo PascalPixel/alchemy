@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleUnit_ClearField12bForGroup Func_080b90ac
-
 struct ActorState_080b90ac {
     u8 padding_000[0x12b];
     u8 field_12b;

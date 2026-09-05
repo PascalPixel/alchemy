@@ -1,8 +1,6 @@
 #include "types.h"
 #include "gs1_edition.h"
 
-#define UiWork_InitCountersAndScheduleRefresh Func_08017464
-
 struct State_08017464 {
 #if defined(GS1_EDITION_JA)
     u8 filler0[0xF38];

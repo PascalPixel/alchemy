@@ -1,8 +1,6 @@
 #include "types.h"
 #include "gs1_edition.h"
 
-#define Ui_SetRenderResultFromObject Func_08093304
-
 struct State08093304 {
     u8 padding[0x12F4];
     s16 ret;

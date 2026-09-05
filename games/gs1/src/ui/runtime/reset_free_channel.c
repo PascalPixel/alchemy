@@ -1,8 +1,6 @@
 #include "types.h"
 #include "gs1_edition.h"
 
-#define UiWork_ResetFreeChannel Func_08016758
-
 struct EntryState {
     u8 padding00[0x14];
     u16 state;

@@ -1,11 +1,9 @@
 #include "types.h"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-#define Scheduler_RemoveCallback Func_08004278
 
 #define DisplayScroll_ArmHBlankDma_Entry Data_080944ed
 #define DisplayScroll_BuildAndSwapHBlankPage_Entry Data_08094545
-#define DisplayScroll_DisarmHBlankDma Func_080947e4
 
 void Scheduler_RemoveCallback(void *callback);
 extern u8 DisplayScroll_ArmHBlankDma_Entry;

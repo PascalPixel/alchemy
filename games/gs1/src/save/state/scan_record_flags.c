@@ -2,8 +2,6 @@
 #include "runtime_interfaces.h"
 #include "global_cells.h"
 
-#define SaveState_ScanRecordFlags Func_0801f77c
-
 extern volatile s16 Data_0200200c;
 
 s32 Func_080056cc(void);

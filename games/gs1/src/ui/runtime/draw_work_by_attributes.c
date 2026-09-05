@@ -31,8 +31,6 @@
 #include "global_cells.h"
 #include "gs1_edition.h"
 
-#define UiWork_DrawByAttributes Func_08016230
-
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 s32 Func_08017248(s32, s32, s32, s32, s32);

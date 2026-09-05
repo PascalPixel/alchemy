@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Scheduler_DisableOverlayCallbacksWithFlags Func_080a1050
-
 s32 Func_080043e0(void);
 s32 Func_08009298(void);
 s32 GameFlag_Clear(s32 flag_no);

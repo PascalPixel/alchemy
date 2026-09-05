@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Animation_ApplyChildValues Func_0800c598
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 Func_0800b684(s32);

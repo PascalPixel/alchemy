@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Shop_PrepareEffectRuntimeEntry Func_080b0894
-
 s32 Func_0808a330(s32, s32);
 s32 Func_0808a348(s32);
 

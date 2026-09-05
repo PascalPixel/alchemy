@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define ObjectDispatch_ApplyValueToKind200Children Func_08098294
-
 void ObjectDispatch_ApplyValueToKind200Children(int arg0)
 {
   s32 cnt;

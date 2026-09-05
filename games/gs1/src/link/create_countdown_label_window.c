@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Link_CreateCountdownLabelWindow Func_08021c34
-
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
 void UiText_DrawStringInWindow(u8 *s, s32 arg1, u32 arg2, u32 arg3);
 extern u8 Data_08037300[];

@@ -7,8 +7,6 @@ extern u8 Data_03001aec;
 extern volatile u8 Data_03001c98;
 extern u8 Data_03001ac0;
 
-#define Blend_SetDarkenTarget0 Func_08003bb4
-
 void Blend_SetDarkenTarget0(s32 duration)
 {
     Data_03001cd4 = 0;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Camera_ApplyPhasedDelta Func_080d6504
-
 struct Actor {
     u8 unknown[54];
     u16 value;

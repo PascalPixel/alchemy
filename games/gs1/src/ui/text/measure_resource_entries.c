@@ -1,8 +1,6 @@
 #include "types.h"
 #include "runtime_interfaces.h"
 
-#define UiText_MeasureResourceEntries Func_08018790
-
 s32 UiText_BuildRenderEntries(s32, s32);
 
 void UiText_MeasureResourceEntries(s32 no, s32 *x, s32 *y) {

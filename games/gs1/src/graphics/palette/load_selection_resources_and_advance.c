@@ -1,8 +1,6 @@
 #include "types.h"
 #include "resource.h"
 
-#define GraphicsPalette_LoadSelectionResourcesAndAdvance Func_0801cf48
-
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 extern u8 *Data_03001ea0;

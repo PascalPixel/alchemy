@@ -1,8 +1,6 @@
 #include "types.h"
 #include "motion_object.h"
 
-#define BattleMotion_ApplyPairMidpoint Func_080b83b4
-
 struct BattleObjectSlot *GetBattleObjectSlot(s32);
 void BattleMotion_ReservedNoOp83B0(void *, s32);
 

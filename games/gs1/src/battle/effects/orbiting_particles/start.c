@@ -15,10 +15,8 @@ struct OrbitingParticleState {
 };
 
 extern struct OrbitingParticleState *Data_03001f30;
-#define RunOrbitingParticleEffect Func_08099160
 void RunOrbitingParticleEffect(void);
 
-#define StartOrbitingParticleEffect Func_08099128
 void StartOrbitingParticleEffect(void)
 {
     struct OrbitingParticleState *state = Data_03001f30;

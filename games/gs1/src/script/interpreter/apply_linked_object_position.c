@@ -1,8 +1,6 @@
 #include "object_commands.h"
 #include "script_object_runtime.h"
 
-#define Script_ApplyLinkedObjectPosition Func_0800daa0
-
 s32 Script_ApplyLinkedObjectPosition(struct ScriptObjectRuntime *object)
 {
     struct ScriptObjectRuntime *target;

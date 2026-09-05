@@ -27,8 +27,6 @@
  */
 #include "types.h"
 
-#define Runtime_CallWorkEntryWithArgs Func_080fb690
-
 s32 Func_080072ec(s32, s32, s32);
 void Runtime_CallWorkEntryWithArgs(s32 arg0, s32 arg1)
 {

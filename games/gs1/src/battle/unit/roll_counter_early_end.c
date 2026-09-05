@@ -1,7 +1,5 @@
 #include "counter_runtime.h"
 
-#define BattleUnit_RollCounterEarlyEnd Func_080bf208
-
 s32 Func_080771a0(void);
 
 s32 BattleUnit_RollCounterEarlyEnd(s32 object_id, s32 count, s32 bias)

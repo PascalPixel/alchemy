@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Party_LookupCharacterValueByFlag32 Func_08021360
-
 extern s16 Data_08037206[];
 extern s16 Data_08037216[];
 s32 GameFlag_IsSet(s32);

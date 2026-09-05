@@ -1,8 +1,6 @@
 #include "metadata_lookup.h"
 #include "types.h"
 
-#define ResourceMetadata_SumCommandLengths Func_0800be20
-
 struct EventInfo {
     u8 pad0[5];
     u8 count;

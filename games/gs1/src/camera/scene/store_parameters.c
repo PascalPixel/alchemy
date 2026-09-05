@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Camera_StoreSceneParameters Func_08005258
-
 void Camera_StoreSceneParameters(u32 value0, u32 value1, u32 value2)
 {
     u32 *work = (u32 *)ADDR_03001CE0;

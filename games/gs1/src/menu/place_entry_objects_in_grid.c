@@ -2,8 +2,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Menu_PlaceEntryObjectsInGrid Func_080a9b94
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void Menu_PlaceEntryObjectsInGrid(s32 origin_x, s32 origin_y, s32 phase) {

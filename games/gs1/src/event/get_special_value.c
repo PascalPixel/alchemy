@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Event_GetSpecialValue Func_0808b248
-
 struct Fields_0808b248 {
     u8 filler[0x1d6];
     s16 value;

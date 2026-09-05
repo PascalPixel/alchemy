@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_AdvanceHueCycle Func_080978c4
-
 extern u8 *Data_03001ea8;
 
 extern void Func_08097948(s32 angle, s32 *out1, s32 *out2, s32 *out3);

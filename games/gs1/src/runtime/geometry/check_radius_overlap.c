@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Runtime_CheckRadiusOverlap Func_0800eba0
-
 s32 Runtime_CheckRadiusOverlap(s32 *a, s32 arg1, s32 *b, s32 arg3) {
     s32 dx = (*a++ - *b++) >> 16;
     s32 dy = (*a++ - *b++) >> 16;

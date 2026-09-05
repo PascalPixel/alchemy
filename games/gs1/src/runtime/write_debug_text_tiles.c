@@ -1,8 +1,6 @@
 #include "low_runtime.h"
 #include "global_cells.h"
 
-#define Runtime_WriteDebugTextTiles Func_080046c4
-
 void Runtime_WriteDebugTextTiles(const u8 *src)
 {
     if (*(u8 *)ADDR_03001AC4 != 0) {

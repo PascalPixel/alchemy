@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Owner_ScaleValueByCurve Func_08079c30
-
 s32 Func_08079b24(s32, s32);
 s32 Owner_ScaleValueByCurve(s32 value, s32 no, s32 multiplier)
 {

@@ -23,20 +23,6 @@ struct BattleEffectGlobals {
 extern struct BattleEffectRequest *Data_03001f30;
 extern struct BattleEffectGlobals Data_02000240;
 #define RunBattleEffect01 Func_0809802c
-#define RunSceneTransitionEffect Func_08097540
-#define RunBattleEffect03 Func_080994d0
-#define RunBattleEffect04 Func_08098cd8
-#define RunBattleEffect05 Func_080999f0
-#define RunOrbitingParticleEffect Func_08099160
-#define RunBattleEffect07 Func_08098954
-#define RunBattleEffect08 Func_080983a0
-#define RunBattleEffect10 Func_08099838
-#define RunBattleEffect11 Func_0809a294
-#define RunBurstParticleEffect Func_080985fc
-#define RunBattleEffect13 Func_0809ae64
-#define RunBattleEffect14 Func_0809a8c4
-#define RunBattleEffect15 Func_0809b208
-#define RunBattleEffect16 Func_0809b698
 
 void RunBattleEffect01(void);
 void RunSceneTransitionEffect(s32 source_id, s32 target_id);
@@ -61,10 +47,8 @@ void BattleEffect_SetupObjectPair(s32 selected_object, s32 objectId);
 void Func_0809ab98(s32 objectId);
 void BattleEffect_PauseObject(s32 objectId);
 void Func_0809abb4(void);
-#define ResetSceneTransitionEffect Func_080984c0
 void ResetSceneTransitionEffect(void);
 
-#define RunBattleEffect Func_08096810
 void RunBattleEffect(void)
 {
     struct BattleEffectRequest *request;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleUnit_ResetStateByMode Func_080b2da8
-
 u8 *Runtime_GetObject(s32);
 void Func_08077128(s32);
 u8 *Item_GetData(u16);

@@ -20,7 +20,7 @@ extern u8 Data_00000050[];
 
 extern s32 ScheduleCallback(void (*)(void));
 extern void Func_0800307c(s32, s32, s32);
-extern s32 Func_080072f0(s32, s32, s32, s32);
+typedef s32 (*SignedDivide)(s32, s32);
 
 #define UpdateMapTransition Func_08090488
 
@@ -46,8 +46,7 @@ void UpdateMapTransition(void)
             s32 value;
 
             (*step)++;
-            value = Func_080072f0(
-                delta * *step, *duration, delta, 0x03000380);
+            value = ((SignedDivide)0x03000380)(delta * *step, *duration);
             state->transition_value = state->transition_start + value;
         }
     }

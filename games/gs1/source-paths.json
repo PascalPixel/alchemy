@@ -12818,9 +12818,6 @@
       "name": "FieldScene_RunMainScriptSequence",
       "source": "overlays/scene_primary_script/run_scene_3bf_main_sequence.c"
     },
-    "resource_380:02001d04": {
-      "name": "FieldScene_RunActorFourteenGuestScene"
-    },
     "resource_3af:02002c84": {
       "name": "FieldScene_RunPartyRosterScene"
     },
@@ -12852,9 +12849,6 @@
     },
     "resource_37a:02001510": {
       "name": "FieldScene_RunClosingSequence"
-    },
-    "resource_3a8:020031b8": {
-      "name": "FieldScene_RunLateSequence"
     },
     "resource_383:020019a2": {
       "name": "FieldScene_RunMiddleSequence"
@@ -12915,9 +12909,6 @@
     },
     "resource_3c4:02001fda": {
       "name": "FieldScene_RunLateSequence"
-    },
-    "resource_3a4:020006dc": {
-      "name": "FieldScene_RunEarlySequence"
     },
     "resource_3a3:02000904": {
       "name": "FieldScene_RunMiddleSequence",
@@ -14792,6 +14783,30 @@
     "resource_37b:020014b8": {
       "name": "FieldScene_RunScene37bSequenceC",
       "source": "overlays/scene_primary_script/run_scene_37b_sequence_c.c"
+    },
+    "resource_380:02001d04": {
+      "name": "FieldScene_RunActorFourteenGuestScene",
+      "source": "overlays/scene_primary_script/run_scene_380_actor_fourteen_guest_scene.c"
+    },
+    "resource_3a8:020031b8": {
+      "name": "FieldScene_RunLateSequence",
+      "source": "overlays/scene_primary_script/run_scene_3a8_late_sequence.c"
+    },
+    "resource_3a8:020032a4": {
+      "name": "FieldScene_RunScene3a8SequenceB",
+      "source": "overlays/scene_primary_script/run_scene_3a8_sequence_b.c"
+    },
+    "resource_3a4:020006dc": {
+      "name": "FieldScene_RunEarlySequence",
+      "source": "overlays/scene_primary_script/run_scene_3a4_early_sequence.c"
+    },
+    "resource_3a4:020007e8": {
+      "name": "FieldScene_RunScene3a4SequenceH",
+      "source": "overlays/scene_primary_script/run_scene_3a4_sequence_h.c"
+    },
+    "resource_3a4:020008d4": {
+      "name": "FieldScene_RunScene3a4SequenceI",
+      "source": "overlays/scene_primary_script/run_scene_3a4_sequence_i.c"
     }
   }
 }

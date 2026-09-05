@@ -13029,9 +13029,6 @@
     "resource_374:02000248": {
       "name": "FieldScene_RunOpeningAuxiliarySequence"
     },
-    "resource_3af:02000a48": {
-      "name": "FieldScene_RunOpeningAuxiliarySequence"
-    },
     "resource_3b1:0200366c": {
       "name": "RunSceneSelectionChain",
       "source": "overlays/conditional_scene_setup/run_scene_selection_chain.c"
@@ -13045,12 +13042,6 @@
     },
     "resource_3bb:02000a1c": {
       "name": "FieldScene_RunOpeningAuxiliarySequence"
-    },
-    "resource_3bc:020002f8": {
-      "name": "FieldScene_RunClosingAuxiliarySequence"
-    },
-    "resource_3c0:02000464": {
-      "name": "FieldScene_RunMiddleAuxiliarySequence"
     },
     "resource_3a4:02002f10": {
       "name": "FieldScene_RunLateAuxiliarySequence",
@@ -13084,9 +13075,6 @@
     "resource_3bf:02001e94": {
       "name": "FieldScene_RunSupplementalSequenceOne",
       "source": "overlays/scene_primary_script/run_scene_3bf_supplemental_sequence_one.c"
-    },
-    "resource_3ab:0200049a": {
-      "name": "FieldScene_RunSupplementalSequenceOne"
     },
     "resource_378:02000360": {
       "name": "FieldScene_RunSupplementalSequenceOne",
@@ -13165,9 +13153,6 @@
     "resource_3b8:02003e40": {
       "name": "RunSupplementalSequenceOne",
       "source": "overlays/scene_effect_sequence/run_supplemental_sequence_one.c"
-    },
-    "resource_3c8:020009c6": {
-      "name": "FieldScene_RunSupplementalSequenceOne"
     },
     "main:080a46b4": {
       "name": "Item_ClassifyUseMode",
@@ -14732,6 +14717,30 @@
     "resource_3a8:02003864": {
       "name": "FieldScene_RunScene3a8SequenceA",
       "source": "overlays/scene_primary_script/run_scene_3a8_sequence_a.c"
+    },
+    "resource_3ab:0200049c": {
+      "name": "FieldScene_RunSupplementalSequenceOne",
+      "source": "overlays/scene_primary_script/run_scene_3ab_supplemental_sequence_one.c"
+    },
+    "resource_3af:02000a48": {
+      "name": "FieldScene_RunOpeningAuxiliarySequence",
+      "source": "overlays/scene_primary_script/run_scene_3af_opening_auxiliary_sequence.c"
+    },
+    "resource_3af:02000af0": {
+      "name": "FieldScene_RunScene3afSequenceA",
+      "source": "overlays/scene_primary_script/run_scene_3af_sequence_a.c"
+    },
+    "resource_3c0:02000464": {
+      "name": "FieldScene_RunMiddleAuxiliarySequence",
+      "source": "overlays/scene_primary_script/run_scene_3c0_middle_auxiliary_sequence.c"
+    },
+    "resource_3bc:020002f8": {
+      "name": "FieldScene_RunClosingAuxiliarySequence",
+      "source": "overlays/scene_primary_script/run_scene_3bc_closing_auxiliary_sequence.c"
+    },
+    "resource_3c8:020009c8": {
+      "name": "FieldScene_RunSupplementalSequenceOne",
+      "source": "overlays/scene_primary_script/run_scene_3c8_supplemental_sequence_one.c"
     }
   }
 }

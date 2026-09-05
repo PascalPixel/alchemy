@@ -3614,18 +3614,6 @@
       ]
     },
     {
-      "overlay": "resource_3af",
-      "start": "0x02000a48",
-      "end": "0x02000b98",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete executable body accounts for 32 calls, 0 loop(s), 2 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3af:02000a48"
-      ]
-    },
-    {
       "overlay": "resource_3c0",
       "start": "0x02000d24",
       "end": "0x02000dc8",
@@ -3648,30 +3636,6 @@
       "evidence": [
         "complete executable body accounts for 26 calls, 1 loop(s), 0 memory operation(s), and its audited boundary",
         "games/gs1/recon/en/dossiers.json#resource_3bb:02000a1c"
-      ]
-    },
-    {
-      "overlay": "resource_3bc",
-      "start": "0x020002f8",
-      "end": "0x02000404",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete executable body accounts for 16 calls, 0 loop(s), 16 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3bc:020002f8"
-      ]
-    },
-    {
-      "overlay": "resource_3c0",
-      "start": "0x02000464",
-      "end": "0x02000558",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "complete executable body accounts for 17 calls, 0 loop(s), 6 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3c0:02000464"
       ]
     },
     {
@@ -3737,14 +3701,12 @@
     {
       "overlay": "resource_3ab",
       "start": "0x0200049a",
-      "end": "0x020005f0",
-      "kind": "structured_scene_module",
+      "end": "0x0200049c",
+      "kind": "alignment_padding",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
-        "complete production body accounts for 35 calls, 0 loop(s), 3 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3ab:0200049a",
-        "resource_3ab:020005f0 (204 bytes) is now exact C"
+        "2 zero bytes of alignment padding before the exact owner at 0x0200049c; no instructions"
       ]
     },
     {
@@ -3969,13 +3931,12 @@
     {
       "overlay": "resource_3c8",
       "start": "0x020009c6",
-      "end": "0x02000b08",
-      "kind": "structured_scene_module",
+      "end": "0x020009c8",
+      "kind": "alignment_padding",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
-        "complete production body accounts for 22 calls, 1 loop(s), 14 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_3c8:020009c6"
+        "2 zero bytes of alignment padding before the exact owner at 0x020009c8; no instructions"
       ]
     },
     {

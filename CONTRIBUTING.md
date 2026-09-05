@@ -73,6 +73,17 @@ The restored bundle is currently admitted on Apple Silicon macOS only; other
 hosts need a source build and full verification, not the previous modified
 compiler's hashes. Never suppress linker ABI mismatches to admit a bundle.
 
+Compiler pins, binary hashes, family flags, assembler routes, and transformations
+of compiler output are maintainer-owned evidence boundaries, not matching knobs.
+An agent must not change them to improve a candidate's score. A change needs
+explicit maintainer authorization, independently justified provenance, and fresh
+full verification; a matching ROM alone is not justification. `compiler-source-check`
+gates both production verification and tests against approved gitlinks, checked-out
+revisions, and clean tracked/untracked compiler source. Ignored build output is
+not source approval; executable hashes are checked separately. These local checks
+cannot prevent someone authorized to edit the checks themselves from bypassing
+them; protected review of this boundary is still required.
+
 Configure the repository hooks once, then build the contributor host:
 
 ```sh

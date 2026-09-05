@@ -63,7 +63,7 @@ CANDIDATE_SINGLE_OWNERS := \
 
 .PHONY: help verify audit reports test lint lint-production lint-all-targets build-tools tool-tests tooling-size tooling-index-check \
 	build-claimed build-asm build-assets build-full build-rom \
-	standard-check pristine-options-check corpus-check core-retained-check \
+	standard-check compiler-source-check corpus-check core-retained-check \
 	full-rom-check overlay-check declared-tu-check owner-inventory-check strict-tu-check classification-check \
 	candidate-corpus-check source-tracking-check index-sync-check check-owners progress progress-report progress-check progress-subject \
 	correspondence correspondence-check edition-builds edition-builds-check \
@@ -409,13 +409,13 @@ language-check:
 
 lint: lint-all-targets
 
-lint-production: standard-check
+lint-production: standard-check compiler-source-check
 	@set -e; git ls-files --cached --others --exclude-standard '*.rs' | while IFS= read -r source; do \
 		test ! -f "$$source" || rustfmt --edition 2021 --check "$$source"; \
 	done
 	$(CHECK) no-asm --target $(TARGET)
 
-lint-all-targets: standard-check pristine-options-check
+lint-all-targets: standard-check compiler-source-check
 	@set -e; git ls-files --cached --others --exclude-standard '*.rs' | while IFS= read -r source; do \
 		test ! -f "$$source" || rustfmt --edition 2021 --check "$$source"; \
 	done
@@ -445,32 +445,23 @@ standard-check:
 	@diff -u /tmp/alchemy-standard-makefile.txt /tmp/alchemy-standard-routing.txt
 	@printf 'compiler standard ok\n'
 
-AGSCC_UPSTREAM := 16c01e50c067d9bce4c1cc30e96d79ed9e72c2cc
-AGBCC_UPSTREAM := da598c1d918402c42c0c0d7128ba14567f3175e9
-OPTION_FILES := agscc/gcc/toplev.c agscc/gcc/flags.h \
-    agscc/gcc/config/arm/arm.h agbcc/gcc_arm/toplev.c \
-    agbcc/gcc_arm/flags.h agbcc/gcc_arm/config/arm/arm.h
-
 .PHONY: compilers
 compilers:
 	sh agscc/build.sh
 	$(MAKE) -C agbcc/gcc old -j1
 
-pristine-options-check:
-	@set -e; for file in $(OPTION_FILES); do \
-		test -f "$$file" || { printf 'missing compiler option source: %s\n' "$$file"; exit 1; }; \
-		repo=$${file%%/*}; upstream_file=$${file#*/}; \
-		case "$$repo" in agscc) base=$(AGSCC_UPSTREAM);; agbcc) base=$(AGBCC_UPSTREAM);; esac; \
-		git -C "$$repo" show "$$base:$$upstream_file" > /tmp/compiler-options-upstream.c; \
-		grep -oE '"(f|m)[a-z0-9-]+"|ARM_FLAG_[A-Z0-9_]+|flag_[a-z0-9_]+' \
-		  /tmp/compiler-options-upstream.c | sort -u > /tmp/compiler-options-stock.txt; \
-		grep -oE '"(f|m)[a-z0-9-]+"|ARM_FLAG_[A-Z0-9_]+|flag_[a-z0-9_]+' $$file \
-		  | sort -u > /tmp/compiler-options-current.txt; \
-		if comm -13 /tmp/compiler-options-stock.txt /tmp/compiler-options-current.txt | grep -q .; then \
-			printf 'invented compiler option in %s\n' "$$file"; exit 1; \
-		fi; \
+compiler-source-check:
+	@set -e; for repo in agbcc agscc; do \
+		case "$$repo" in \
+		  agbcc) approved=da598c1d918402c42c0c0d7128ba14567f3175e9;; \
+		  agscc) approved=5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148;; \
+		esac; \
+		test "$$(git rev-parse :$$repo)" = "$$approved" || { printf '%s gitlink is not approved\n' "$$repo"; exit 1; }; \
+		test "$$(git -C "$$repo" rev-parse HEAD)" = "$$approved" || { printf '%s checkout is not approved\n' "$$repo"; exit 1; }; \
+		state=$$(git -C "$$repo" status --porcelain --untracked-files=all); \
+		test -z "$$state" || { printf '%s compiler source is dirty\n' "$$repo"; exit 1; }; \
 	done
-	@printf 'compiler options pristine\n'
+	@printf 'compiler sources match approved submodules\n'
 
 CLEAN_TREES := out work build builds dist cmatch comparisons compiler-output \
 	diffs disassembly dumps m2c objdump reports analysis .cache target

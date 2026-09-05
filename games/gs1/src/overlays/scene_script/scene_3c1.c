@@ -1,27 +1,5 @@
 #include "types.h"
 
-#define SceneState_InitEntryWorkspaceAndFlag96f Func_0200022c
-
-#define SceneData_SelectTable8614ByFlag96f Func_02000208
-
-#define SceneEffect_ConfigureIndexedEffect85fe Func_02000194
-
-#define FieldScene_RunLayoutStepThenSet201 Func_020000f8
-
-#define FieldScene_RunActorCue25dcBranch Func_020000b0
-
-#define FieldScene_RunActorCue25b8Branch Func_02000068
-
-#define SceneData_SelectActorTableByFlag96f Func_02000044
-
-#define SceneData_GetMessageTable Func_0200003c
-
-#define SceneData_ReturnZero Func_02000038
-
-#define SceneData_GetScriptTable Func_02000030
-
-#define SceneEffect_ConfigureIndexedEffect85e8 Func_02000120
-
 extern u8 Value_000025b8;
 extern u8 Value_000025dc;
 extern s16 Data_020085d0[];

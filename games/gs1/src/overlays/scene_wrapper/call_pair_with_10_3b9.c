@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_CallPairWith10 Func_02001c48
-
 /*
  * resource_3b9 owner at 0x02001c48, 12 bytes: two-call trampoline,
  * forwarding the argument to the first callee with a fixed second argument,

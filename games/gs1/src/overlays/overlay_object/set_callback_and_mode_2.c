@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_SetCallbackAndMode2 Func_02002694
-
 u8 *Func_020051b4(void);
 
 void OverlayObject_SetCallbackAndMode2(void)

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_SetCallbackWhenTargetUnset Func_08097a54
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 s32 Object_SetCallback(void *, s32);

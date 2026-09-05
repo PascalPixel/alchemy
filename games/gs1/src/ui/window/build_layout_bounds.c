@@ -2,8 +2,6 @@
 #include "global_cells.h"
 #include "gs1_edition.h"
 
-#define UiWindow_BuildLayoutBounds Func_0801eea0
-
 struct State_0801eea0 {
     u8 padding[4];
     u16 left;

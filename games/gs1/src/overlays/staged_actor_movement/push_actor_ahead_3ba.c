@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define StagedActor_PushActorAhead Func_020038f8
-
 typedef struct SceneRecord {
     u8 pad_00[6];
     u16 facing;

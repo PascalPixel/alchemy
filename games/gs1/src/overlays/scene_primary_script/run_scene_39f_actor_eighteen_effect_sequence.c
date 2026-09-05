@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActorEighteenEffectSequence Func_02002078
-
 /* 0x02004f28 serves two imports: the two-argument setter at site 7 and the
  * three-argument step at site 14. */
 extern u8 *Func_02004e40(s32);

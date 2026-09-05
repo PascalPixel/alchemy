@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_InitActorsAndDispatchBySubstate Func_0200071c
-
 typedef struct {
     u8 filler0[0xc];
     s32 unk0c;

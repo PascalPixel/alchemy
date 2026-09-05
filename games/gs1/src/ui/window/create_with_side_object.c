@@ -2,8 +2,6 @@
 #include "global_cells.h"
 #include "gs1_edition.h"
 
-#define UiWindow_CreateWithSideObject Func_08019da8
-
 #define FIELD_AT_OFFSET(base, type, ofs)     (*(type *)((u8 *)(base) + (ofs)))
 
 extern s32 Localization_LookupEntryId();

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_UpdatePartnerProximity Func_02000170
-
 /*
  * Resource 3b5, owner at 0x02000170 (152 bytes advertised; 144 bytes of code
  * plus an 8-byte literal pool at 0x02000200-0x02000207).

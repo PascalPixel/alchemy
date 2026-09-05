@@ -9,8 +9,6 @@
  */
 #include "types.h"
 
-#define OverlayObject_CreateAndInitialize Func_020009f4
-
 u8 *Func_02003a6a(s32 kind, s32 x, s32 y, s32 z);
 void Func_02003ad8(u8 *obj, s32 mode);
 void Func_02003b98(u8 *obj, s32 mode);

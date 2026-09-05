@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Menu_SetFirstObjectRowCoordinates Func_080aa544
-
 extern u8 *Data_03001f2c;
 
 s32 Menu_SetFirstObjectRowCoordinates(s32 arg0) {

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunMessage23acStep Func_020008cc
-
 /* Pool-forced message base: a SYMBOL_REF gcc cannot fold, so the two
  * sibling ids stay `adds r0, r5, #1` / `#2` off one pooled word. */
 extern u8 Value_000023ac;

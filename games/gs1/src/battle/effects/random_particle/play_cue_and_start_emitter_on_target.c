@@ -1,7 +1,5 @@
 #include "effect_runtime.h"
 
-#define BattleEffect_PlayCueAndStartEmitterOnTarget Func_0808e078
-
 s32 WaitFrames(s32);
 s32 Object_SetMode(s32, s32);
 s32 Func_0808ef70(s32, s32);

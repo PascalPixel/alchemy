@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Trade_ListFlaggedEntries Func_0807977c
-
 struct State_0807977c {
     u32 flags;
 };

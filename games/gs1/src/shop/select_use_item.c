@@ -3,6 +3,8 @@
 #include "global_cells.h"
 #include "battle_calc.h"
 
+#define Shop_SelectUseItem Func_080b362c
+
 s32 Ability_GetAvailability(s32);
 s32 Func_080772a8(s32, s32);
 s32 UiWork_Create(s32, s32, s32, s32);
@@ -11,7 +13,7 @@ void UiWork_FinalizePending(void);
 
 extern u8 Value_00000075;
 
-s32 Func_080b362c(s32 actor)
+s32 Shop_SelectUseItem(s32 actor)
 {
     struct ShopRuntime *shop = SHOP_RUNTIME;
     /* win2 declared ahead of win1 (and both ahead of object) to match the

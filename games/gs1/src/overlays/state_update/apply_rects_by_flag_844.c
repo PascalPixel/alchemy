@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyRectsByFlag844 Func_02000f58
-
 extern s32 Func_02002a2c(s32 flag);
 extern void Func_02001884(void);
 extern void Func_02002992(s32 frames);

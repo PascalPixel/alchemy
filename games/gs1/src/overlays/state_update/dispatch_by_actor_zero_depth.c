@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_DispatchByActorZeroDepth Func_020006e4
-
 struct Actor {
     s32 f00;
     s32 f04;

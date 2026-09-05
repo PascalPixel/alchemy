@@ -2,8 +2,6 @@
 #include "types.h"
 #include "object_efx.h"
 
-#define BattleEffect_UpdateDriftingFallObject Func_080999a8
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 u32 Random16(void);

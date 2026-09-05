@@ -1,8 +1,6 @@
 #include "types.h"
 #include "object_efx.h"
 
-#define BattleEffect_UpdateScaledArcObjectB Func_08096d84
-
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 void BattleEffect_UpdateScaledArcObjectB(void *obj) {

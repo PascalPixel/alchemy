@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleUnit_BuildStatusFlags Func_080b78e4
-
 u8 *Runtime_GetObject(s32);
 
 s32 BattleUnit_BuildStatusFlags(s32 id, u8 *output)

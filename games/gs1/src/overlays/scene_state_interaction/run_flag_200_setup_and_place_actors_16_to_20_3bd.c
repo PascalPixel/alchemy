@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_RunFlag200SetupAndPlaceActors16To20 Func_02000c2c
-
 extern s16 Data_02000240;
 extern u8 Value_00000097;
 

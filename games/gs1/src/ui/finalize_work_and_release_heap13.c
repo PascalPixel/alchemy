@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Ui_FinalizeWorkAndReleaseHeap13 Func_0801c954
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void UiWork_Finalize(struct Work *work, s32 release);

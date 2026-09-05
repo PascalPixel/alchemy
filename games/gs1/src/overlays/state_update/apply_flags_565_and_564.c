@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyFlags565And564 Func_020011ac
-
 /*
  * resource_3b9 owner at 0x020011ac, 24 bytes: a two-call story-flag
  * hand-off. It clears one flag and sets its immediate neighbour.

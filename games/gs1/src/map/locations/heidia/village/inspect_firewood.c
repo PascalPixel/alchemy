@@ -4,7 +4,6 @@ void Func_02007b02(s32);
 void Func_020047c2(void);
 void Func_02007b98(s32, s32, s32);
 
-#define InspectFirewood Func_020024e4
 void InspectFirewood(void)
 {
     Func_02007b02(2373);

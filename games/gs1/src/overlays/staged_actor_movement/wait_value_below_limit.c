@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_WaitValueBelowLimit Func_02001038
-
 struct Track02001038 {
     u8 head[12];
     s32 value;

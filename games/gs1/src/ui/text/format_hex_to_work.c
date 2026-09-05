@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Text_FormatHexToWork Func_080045f0
-
 extern const u8 Data_0800795c[];
 
 void Text_FormatHexToWork(u32 value)

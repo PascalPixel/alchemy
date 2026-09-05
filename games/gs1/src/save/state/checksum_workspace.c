@@ -5,8 +5,6 @@ struct Runtime08005ae0 {
     u8 bytes[0x103F];
 };
 
-#define SaveState_ChecksumWorkspace Func_08005ae0
-
 s32 SaveState_ChecksumWorkspace(void)
 {
     struct Runtime08005ae0 *runtime;

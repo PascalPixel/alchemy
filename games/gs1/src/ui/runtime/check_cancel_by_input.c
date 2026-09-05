@@ -2,8 +2,6 @@
 #include "global_cells.h"
 #include "gs1_edition.h"
 
-#define UiWork_CheckCancelByInput Func_0801999c
-
 s32 Func_080f9048();
 s32 UiWork_CheckCancelByInput(void *obj)
 {

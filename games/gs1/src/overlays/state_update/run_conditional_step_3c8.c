@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_RunConditionalStep Func_0200226c
-
 extern void Func_02007106(void);
 extern s32 Func_02002f3e(void);
 extern void Func_020070c2(s32, s32, s32, s32, s32, s32);

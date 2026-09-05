@@ -1,4 +1,3 @@
-#define SceneDialogue_RunActor23BranchedDialogue Func_020014b0
 void Func_0200797c(); void Func_020079ba(); int Func_0200795a(); int Func_0200796c();
 void Func_02007a6c(); void Func_02007a7e(); void Func_02007a86(); void Func_02007a9e();
 /* Story selector owner at 0x020014b0, 84 bytes; eight calls. */

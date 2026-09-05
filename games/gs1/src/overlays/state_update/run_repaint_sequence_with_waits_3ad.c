@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_RunRepaintSequenceWithWaits Func_020000d4
-
 /*
  * Resource 3ad, map-repaint sequence at 0x020000d4 (220 bytes, 15 call sites).
  *

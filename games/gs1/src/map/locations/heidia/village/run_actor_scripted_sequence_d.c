@@ -12,7 +12,6 @@ void Func_0200747e(s32);
 void Func_02007496();
 void Func_020074ae(s32, s32);
 
-#define RunActorScriptedSequenceD Func_02001d60
 void RunActorScriptedSequenceD(s32 actor_id)
 {
     u8 *t = &Value_00002428;

@@ -2,8 +2,6 @@
 #include "global_cells.h"
 #include "gs1_edition.h"
 
-#define Ui_SetBank15PaletteAndClearRenderMode Func_08097adc
-
 extern void ScheduleCallback(s32);
 extern void Func_08097868(void);
 extern s32 Func_08015360(s32, s32);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_HalveDistanceToTarget Func_08096574
-
 struct Object_08096574 {
     u8 padding000[8];
     s32 x;

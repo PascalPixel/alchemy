@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define RunEventScript02 Func_020019bc
-
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 extern u8 Data_03001ebc[];

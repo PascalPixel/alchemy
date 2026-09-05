@@ -9,8 +9,6 @@
 
 #include "select_overlay_data_by_runtime_selector.h"
 
-#define SceneData_SelectOverlayDataBySelector Func_020000e0
-
 s32 SceneData_SelectOverlayDataBySelector(void)
 {
 #include "select_overlay_data_by_runtime_selector_body.inc"

@@ -2,7 +2,6 @@
 
 #define ConfigurableEffectDescriptors Data_0200cbc4
 
-#define Overlay380_SpawnConfiguredEffect Func_0200013c
 #define GetPrimaryEffectRecord Func_02004b1a
 #define SpawnConfiguredEffectObject Func_02004a48
 #define SetConfiguredEffectVariant Func_02004a52

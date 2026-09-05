@@ -21,8 +21,6 @@
  */
 #include "types.h"
 
-#define SceneActor_SetupSlotNineAndInstallHandler Func_02001a10
-
 typedef struct Slot_02001a10 {
     s32 pad0;
     s32 pad4;

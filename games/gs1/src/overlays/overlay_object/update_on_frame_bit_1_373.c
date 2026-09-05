@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_UpdateOnFrameBit1 Func_02005c20
-
 extern s32 Data_03001e40;
 extern void Func_0200bba8(s32, s32);
 extern void Func_0200bbb2(s32, s32);

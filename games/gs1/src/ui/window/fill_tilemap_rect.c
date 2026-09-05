@@ -26,9 +26,9 @@ void UiWindow_FillTilemapRect(u8 *window, s32 x, s32 y, s32 width, s32 height) {
         height = 20 - y;
 
     if (width > 0 && height > 0) {
-        s32 yOffset = y << 6;
-        s32 xOffset = x << 1;
-        s32 offset = yOffset + xOffset;
+        s32 y_ofs = y << 6;
+        s32 x_ofs = x << 1;
+        s32 offset = y_ofs + x_ofs;
         do {
             s32 remaining = width;
             u16 *cell = (u16 *)(offset + (s32)map);

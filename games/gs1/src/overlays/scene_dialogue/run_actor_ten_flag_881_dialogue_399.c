@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActorTenFlag881Dialogue Func_020002b8
-
 /*
  * resource_399 scripted step at 0x020002b8, 204 bytes.
  *

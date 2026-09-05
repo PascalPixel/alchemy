@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Battle_SelectWeightedIndex Func_080bd3e4
-
 s32 Func_080771a0(void);
 
 /*

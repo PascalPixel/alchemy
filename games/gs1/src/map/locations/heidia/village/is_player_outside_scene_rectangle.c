@@ -9,7 +9,6 @@ typedef struct SceneActor {
 
 SceneActor *Func_02006cb6(s32);
 
-#define IsPlayerOutsideSceneRectangle Func_02001660
 s32 IsPlayerOutsideSceneRectangle(void)
 {
     SceneActor *player = Func_02006cb6(0);

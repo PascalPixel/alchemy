@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_SpawnKind24AtActor Func_02000f3c
-
 /* Per-site raw names preserve the stock relocated branch operands; they
  * resolve to Func_080090c8, Object_SetCallback and Object_InitializeMode respectively. */
 extern u8 *Func_02001f90();

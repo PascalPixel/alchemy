@@ -22,8 +22,6 @@
  * identical semantics; this row's pool word was resolved on its own.
  */
 
-#define SceneData_GetTable9db4 Func_02000094
-
 u8 *SceneData_GetTable9db4(void)
 {
     return (u8 *)0x02009db4;
@@ -51,16 +49,12 @@ u8 *SceneData_GetTable9db4(void)
  * identical semantics; this row's pool word was resolved on its own.
  */
 
-#define SceneData_GetTable9ddc Func_0200009c
-
 u8 *SceneData_GetTable9ddc(void)
 {
     return (u8 *)0x02009ddc;
 }
 
 #include "types.h"
-
-#define SceneData_SelectTable9efcByFlags Func_020000a4
 
 extern u8 Data_0200a028[];
 extern u8 Data_02009fb0[];

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattlePresentation_SetupTransitionAtPairMidpoint Func_080c0df4
-
 struct Point {
     u8 unknown0[8];
     s32 x;

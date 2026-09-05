@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_PassOffsetPointOfActorZero Func_0200103c
-
 extern s32 *Func_02003e00(s32 a);
 extern void Func_02001d38(s32 *p);
 

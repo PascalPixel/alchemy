@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define ObjectDispatch_StopCallbacksAndHideLayers Func_0800c5fc
-
 s32 Func_0800439c(u32 value);
 void Func_0800c62c(void);
 void Func_0800c880(void);

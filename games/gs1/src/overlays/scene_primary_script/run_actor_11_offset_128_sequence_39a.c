@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActor11Offset128Sequence Func_02000bf4
-
 /*
  * Run this scene transition's six setup services.  The literal word following
  * the return belongs to this owner and supplies 0x121 to Func_0200301e.

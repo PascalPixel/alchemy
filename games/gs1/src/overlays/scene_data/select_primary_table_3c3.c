@@ -9,8 +9,6 @@ extern u8 Data_02008a40[];
 extern u8 Data_02008ad0[];
 extern u8 Data_02008998[];
 
-#define SceneData_GetPrimaryTable Func_02000040
-
 s32 SceneData_GetPrimaryTable(void) {
     s16 v = Data_02000240[224];
 
@@ -24,8 +22,6 @@ s32 SceneData_GetPrimaryTable(void) {
 }
 
 #include "types.h"
-
-#define SceneData_ReturnZero Func_02000080
 
 /*
  * resource_3c3 owner at 0x02000080, 4 bytes: `movs r0, #0 / bx lr`.

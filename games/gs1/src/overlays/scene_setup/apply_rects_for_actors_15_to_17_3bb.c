@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyRectsForActors15To17 Func_0200062c
-
 /* STILL-OPEN: adopt --where differing_bytes=10/112. alchemist.ts refused
  * (tiers: class, depend-count, model-divergence, priority) -- matches the
  * documented DEAD-END FINGERPRINT (adjacent r5/r6-class register swap in an

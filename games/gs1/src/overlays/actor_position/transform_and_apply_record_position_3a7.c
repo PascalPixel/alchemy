@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_TransformAndApplyRecordPosition Func_02000b54
-
 extern void Func_02001bfc(s32, s32, s32 *);
 extern void Func_02001c38(s32 *, s32, s32, s32);
 

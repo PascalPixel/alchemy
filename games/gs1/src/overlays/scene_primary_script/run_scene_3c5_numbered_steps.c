@@ -5,8 +5,6 @@ extern void Func_020022e4();
 extern void Func_020040c2();
 extern void Func_02003fd6();
 
-#define FieldScene_RunStep11 Func_02001184
-
 void FieldScene_RunStep11(void) {
     Func_02003fc0();
     Func_020022e4();
@@ -20,8 +18,6 @@ extern void Func_0200230c();
 extern void Func_020040ea();
 extern void Func_02003ffe();
 
-#define FieldScene_RunStep12WithPosition Func_0200119c
-
 void FieldScene_RunStep12WithPosition(void) {
     Func_02003fd8();
     Func_02001ba4(0x1d00000, 0, 0x1220000, 223);
@@ -31,12 +27,6 @@ void FieldScene_RunStep12WithPosition(void) {
 }
 
 #include "types.h"
-
-#define FieldScene_RunStepWithValue2693 Func_02001214
-
-#define FieldScene_RunStep15 Func_020011fc
-
-#define FieldScene_RunStep13WithTwoPositions Func_020011c4
 
 extern void Func_02004000();
 extern s32 Func_02001bcc();

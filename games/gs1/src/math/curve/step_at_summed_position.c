@@ -1,7 +1,5 @@
 #include "curve.h"
 
-#define Curve_StepAtSummedPosition Func_08011d34
-
 s32 Curve_StepAtSummedPosition(const s8 *samples, s32 start, s32 end)
 {
     s32 first;

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetValue123Mode1 Func_0200031c
-
 extern void Func_02001dce(s32);
 extern void Func_02000608(s32);
 

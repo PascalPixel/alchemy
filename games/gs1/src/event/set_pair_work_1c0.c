@@ -1,7 +1,5 @@
 #include "event_runtime.h"
 
-#define Event_SetPairWork1c0 Func_08091e3c
-
 extern struct EventPairWork1c0 Data_02000240;
 
 void Event_SetPairWork1c0(u16 first, u16 second)

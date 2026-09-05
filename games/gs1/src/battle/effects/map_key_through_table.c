@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_MapKeyThroughTable Func_0808ddb8
-
 extern s16 Data_0809e686[];
 
 s32 BattleEffect_MapKeyThroughTable(s32 key)

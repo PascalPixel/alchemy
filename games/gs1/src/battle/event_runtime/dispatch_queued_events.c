@@ -10,7 +10,6 @@ struct BattleEventRuntime {
     u32 actor_auxiliary;
 };
 
-#define BattleEvent_DispatchQueued Func_080bb938
 extern u8 *Data_03001e74;
 extern u8 *Data_03001ee4;
 

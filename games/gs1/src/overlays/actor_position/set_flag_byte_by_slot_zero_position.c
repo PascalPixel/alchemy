@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_SetFlagByteBySlotZeroPosition Func_02005a94
-
 extern s32 *Func_0200ba7e(s32);
 extern s32 Func_0200ba3e(s32);
 extern u8 *Func_0200ba90(s32);

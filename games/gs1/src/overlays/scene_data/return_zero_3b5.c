@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_ReturnZero Func_02000210
-
 /*
  * resource_3b5 owner at 0x02000210, 4 bytes: `movs r0, #0 / bx lr`.
  *

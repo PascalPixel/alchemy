@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_FindDescriptor Func_0808d48c
-
 struct EffectDescriptor {
     s32 flags;
     u8 value;

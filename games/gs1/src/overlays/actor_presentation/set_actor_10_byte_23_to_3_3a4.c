@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_SetActor10Byte23To3 Func_02000c74
-
 extern u8 *Func_02004812(s32);
 
 void SceneActor_SetActor10Byte23To3(void)

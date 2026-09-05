@@ -28,8 +28,8 @@ s32 InventoryMenu_PrepareOwnerItems(s32 party_slot)
     }
 
     {
-        s32 owner_id_offset = offset + 0x208;
-        result = Runtime_GetObject(*(u16 *)(menu + owner_id_offset));
+        s32 off = offset + 0x208;
+        result = Runtime_GetObject(*(u16 *)(menu + off));
     }
     offset = (s32)(menu + 0x1C8);
     *(s8 *)(menu + 0x218) =

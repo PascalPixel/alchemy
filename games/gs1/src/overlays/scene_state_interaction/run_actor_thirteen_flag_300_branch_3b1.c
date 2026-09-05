@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActorThirteenFlag300Branch Func_02000e14
-
 s32 Func_020072bc(s32 n);
 u8 *Func_02002100(void);
 void Func_020072f2(void);

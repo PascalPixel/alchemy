@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define Overlay387_ConfigureActorEightAtDepth Func_02000d04
 struct OverlayActorPosition {
     u8 pad00[8];
     s32 depth_fixed;

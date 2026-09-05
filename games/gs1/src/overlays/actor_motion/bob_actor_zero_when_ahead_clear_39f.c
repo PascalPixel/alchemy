@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_BobActorZeroWhenAheadClear Func_02001078
-
 extern s32 *Func_02003e40(s32 a);
 extern s32 Func_02001d82(s32 *actor);
 extern void Func_02003e5e(void);

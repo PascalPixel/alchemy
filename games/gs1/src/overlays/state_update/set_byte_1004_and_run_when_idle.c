@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetByte1004AndRunWhenIdle Func_02000abc
-
 extern u8 Data_02001004;
 extern void Func_02001528(void);
 

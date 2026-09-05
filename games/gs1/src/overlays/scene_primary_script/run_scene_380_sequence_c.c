@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_StagePairedActors Func_02000d5c
-
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 void Func_0200572a();

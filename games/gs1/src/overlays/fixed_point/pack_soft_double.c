@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Runtime_PackSoftDouble Func_020015a4
-
 /*
  * Double-precision packer from the GCC soft-float runtime shape.  The overlay
  * copy uses the shared class predicates and 64-bit logical-right-shift helper.

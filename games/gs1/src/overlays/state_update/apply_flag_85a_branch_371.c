@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyFlag85aBranch Func_020006b4
-
 extern s32 Func_02004946(s32);
 extern void Func_02004ad0(s32);
 extern void Func_02004b70(s32);

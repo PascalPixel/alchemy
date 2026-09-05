@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_UpdateThreeStateMotion Func_02003a30
-
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 extern s32 Func_02007670(void);

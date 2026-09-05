@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunLoopedLayoutSequence Func_02000098
 #define NULL ((void *)0)
 
 void Func_020024b2(s32, s32, s32, s32, s32, s32);

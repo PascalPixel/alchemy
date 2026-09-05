@@ -1,4 +1,3 @@
-#define SceneDialogue_RunActor25FlaggedLine Func_02001558
 void Func_02007a24(); void Func_02007a50(); int Func_02007a02();
 void Func_02007b14(); void Func_02007b1c(); void Func_02007b34();
 /* Story selector owner at 0x02001558, 60 bytes; six calls. */

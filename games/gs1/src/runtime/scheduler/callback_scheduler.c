@@ -14,20 +14,6 @@ extern u8 Data_03001d34;
 extern struct SchedulerTask Data_03001a20[20];
 extern volatile u16 Data_04000208;
 
-#define Scheduler_ResetTaskTable Func_080040e8
-#define Scheduler_CopyWords Func_0800412c
-#define Scheduler_SortTasks Func_08004144
-#define Scheduler_FindCallback Func_08004198
-#define Scheduler_AddOrUpdateCallback Func_080041d8
-#define Scheduler_RemoveCallback Func_08004278
-#define Scheduler_EnableCallbacks Func_080042c8
-#define Scheduler_EnableUnmaskedOverlayCallbacks Func_0800430c
-#define Scheduler_SetCallbackMask Func_08004358
-#define Scheduler_DisableCallbacks Func_0800439c
-#define Scheduler_DisableOverlayCallbacks Func_080043e0
-#define Scheduler_Idle Func_08004270
-#define Scheduler_EmptyCallback Func_08004274
-
 void Scheduler_ResetTaskTable(void)
 {
     struct SchedulerTask *task = Data_03001a20;

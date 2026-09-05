@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActor11Line Func_0200050c
-
 /*
  * Complete actor-11 dialogue wrapper through its one-word pool.
  *

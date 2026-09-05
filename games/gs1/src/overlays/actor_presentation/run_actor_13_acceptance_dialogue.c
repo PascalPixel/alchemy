@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define ActorPresentation_RunActor13AcceptanceDialogue Func_020007d4
-
 /* Complete actor-13 temporary-acceptance dialogue wrapper through its pool. */
 struct Actor_020007d4 {
     u8 reserved00[91];

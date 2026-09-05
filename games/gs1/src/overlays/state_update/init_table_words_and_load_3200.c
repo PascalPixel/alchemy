@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_InitTableWordsAndLoad3200 Func_02002d8c
-
 extern u8 Data_0200abed[];
 extern u16 Data_0200c760;
 extern u16 Data_0200c800;

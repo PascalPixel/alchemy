@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Graphics_MergeShiftedTileRows Func_08021950
-
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output, s32 shift)
 {
     s32 neg;

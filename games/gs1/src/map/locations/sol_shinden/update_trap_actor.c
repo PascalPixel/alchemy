@@ -49,7 +49,6 @@ extern void Func_02003778(s32, s32, s32);
 extern void Func_02003786(s32, s32, s32);
 extern void Func_0200375a(void);
 
-#define UpdateStatueTrapActor Func_02000c00
 void UpdateStatueTrapActor(void)
 {
     EntA *scene_actor;

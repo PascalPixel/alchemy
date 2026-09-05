@@ -18,7 +18,6 @@ extern u8 Value_0200ae71;
 
 #define UpdateOrbitingSceneObject Value_0200ae71
 
-#define InitializeSwayingSceneObject Func_02002ed8
 void InitializeSwayingSceneObject(void)
 {
 #include "initialize_orbiting_scene_object_body.inc"

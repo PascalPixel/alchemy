@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyRectsByFlags2384And962 Func_02001c6c
 /* resource_3b9 owner at 0x02001c6c, 100 bytes. Two alternative layouts. */
 s32 Func_02004832();
 void Func_02004820();

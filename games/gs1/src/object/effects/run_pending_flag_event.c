@@ -1,8 +1,6 @@
 #include "object_lookup.h"
 #include "types.h"
 
-#define ObjectEffect_RunPendingFlagEvent Func_08094428
-
 s32 GameFlag_IsSet(s32);
 void GameFlag_Clear(s32);
 void Func_08094380(s32 arg0);

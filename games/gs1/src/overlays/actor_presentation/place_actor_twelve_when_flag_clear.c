@@ -10,8 +10,6 @@ static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
     Func_02001dc6(actor, x, y);
 }
 
-#define PlaceActorTwelveWhenFlagClear Func_02000adc
-
 void PlaceActorTwelveWhenFlagClear(void)
 {
     if (Func_02001d2e(2487) == 0) {

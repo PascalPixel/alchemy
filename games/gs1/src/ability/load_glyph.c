@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Ability_LoadGlyph Func_0801a3d0
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 Func_0801a404(u8, s32, s32, s32, s32);

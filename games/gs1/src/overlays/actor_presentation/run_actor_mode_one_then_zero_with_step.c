@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define ActorPresentation_RunActorModeOneThenZeroWithStep Func_02000354
-
 extern void Func_02005130(s32, s32);
 extern void Func_0200498a(s32, s32, s32);
 extern void Func_02005192(s32, s32);

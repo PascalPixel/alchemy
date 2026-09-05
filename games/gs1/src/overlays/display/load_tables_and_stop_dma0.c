@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_LoadTablesAndStopDma0 Func_02001188
-
 extern void Func_020024ba(void *);
 extern void Func_020024c0(void *);
 extern u16 Data_02008f31[];

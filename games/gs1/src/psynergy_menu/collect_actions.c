@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define PsynergyMenu_CollectActions Func_080a68ec
 #include "owner_state.h"
 
 u8 *Ability_GetData(s32 action);

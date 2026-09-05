@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_FindDescriptorWithOverride Func_0808d5a4
-
 struct State_0808d5a4 {
     u8 padding[0x24a];
     s16 value;

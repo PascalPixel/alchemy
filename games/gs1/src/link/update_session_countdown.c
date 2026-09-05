@@ -4,7 +4,6 @@
 #define COUNTDOWN_START_FRAMES 900
 #define FRAMES_PER_SECOND 60
 
-#define UpdateLinkSessionCountdown Func_08026e80
 struct CountdownDisplayEntry {
     u8 data[12];
 };

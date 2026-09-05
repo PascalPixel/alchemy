@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetWorkspaceHalfword382To1018 Func_02003410
-
 /*
  * resource_3a4 owner at 0x02003410, 24 bytes: write 0x1018 into the
  * halfword at scene workspace + 382, and return.

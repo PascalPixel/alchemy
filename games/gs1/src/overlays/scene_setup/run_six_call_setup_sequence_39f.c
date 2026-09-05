@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunSixCallSetupSequence Func_02000ea8
-
 extern void Func_02003d14(s32 no, s32 val);
 extern s32 Func_02003d34(s32 no, s32 val);
 extern void Func_02003d30(void);

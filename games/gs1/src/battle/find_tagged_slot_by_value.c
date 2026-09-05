@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Battle_FindTaggedSlotByValue Func_080b9a70
-
 extern void *Data_03001e74;
 
 s32 Battle_FindTaggedSlotByValue(u32 value)

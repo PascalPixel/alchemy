@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ForwardMaskedHalfwordWith10 Func_02001c5c
-
 /*
  * resource_3b9 owner at 0x02001c5c, 12 bytes: single-call trampoline,
  * forwarding `arg0` unchanged and `arg1` masked to its low 16 bits,

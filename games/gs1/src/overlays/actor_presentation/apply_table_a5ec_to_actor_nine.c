@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define ActorPresentation_ApplyTableA5ecToActorNine Func_020016ac
-
 extern void Func_0200390c(s32, s32);
 extern void Func_020039c4(s32, s32);
 extern s32 Data_0200a5ec[];

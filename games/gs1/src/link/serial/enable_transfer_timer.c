@@ -2,8 +2,6 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-#define SerialRuntime_EnableTransferTimer Func_08005e70
-
 void SerialRuntime_EnableTransferTimer(void)
 {
     s32 state = 0x02002240;

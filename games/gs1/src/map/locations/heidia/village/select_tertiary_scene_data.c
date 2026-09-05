@@ -13,7 +13,6 @@ extern u8 Data_0200eac0[];
 extern u8 Data_0200ee98[];
 extern u8 Data_0200e9b8[];
 
-#define SelectTertiarySceneData Func_02000a80
 s32 SelectTertiarySceneData(void) {
     s16 scene_variant = Data_02000240[224];
 

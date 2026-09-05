@@ -1,26 +1,7 @@
 #include "types.h"
 
-#define SceneData_SelectSecondaryTableByFlag9a7 Func_020011e8
-
-#define SceneState_SetWord1c8To16AndForward16c Func_020001f0
-
-#define SceneActor_UpdateObjectWithCue28be Func_020000c4
-
-#define SceneData_SelectTableByFlag9a7 Func_02000054
-
-#define SceneData_GetTable98c4 Func_0200004c
-
-#define SceneData_ReturnZero Func_02000048
-
-#define SceneData_GetTable975c Func_02000040
-
-#define SceneActor_SetActor23Params2And6 Func_02000030
-
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-#define SceneActor_SetupActorForTable9638 Func_02000078
-#define SceneActor_SetupActor18Event Func_0200010c
-#define FieldScene_RunPrimarySequence Func_02000218
 #define BattleRuntime_Reset_1(args...) Func_0200174c(args)
 #define SceneWork_SetStepValue_1(a0) Call1(Func_020017ea, a0)
 #define ObjectMotion_SetHorizontalPositionWithTerrain_1(a0, a1, a2) Call3(Func_020017c0, a0, a1, a2)
@@ -198,7 +179,6 @@
 #define ObjectMotion_SetHorizontalPositionWithTerrain_2(args...) Func_02001d38(args)
 #define BattleRuntime_WaitIfModeZero_71(args...) Func_02001cd6(args)
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_1(args...) Func_02001cea(args)
-#define FieldScene_RunSecondarySequence Func_020007c4
 #define GameFlag_Set_1(a0) Call1(Func_02001cec, a0)
 #define BattleRuntime_Reset_1_020007c4(args...) Func_02001d00(args)
 #define SceneWork_SetStepValue_1_020007c4(a0) Call1(Func_02001d9e, a0)
@@ -446,7 +426,6 @@
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_1_020007c4(args...) Func_020025bc(args)
 #define SCENE_STEP (*(u16 *)(*(u8 **)0x03001ebc + 0x1d8))
 #define REC_S16(rec, off) (*(s16 *)((rec) + (off)))
-#define FieldScene_RunScene3c6SequenceA Func_02001090
 #define SceneWork_SetStepValue_1_02001090(a0) Call1(Func_0200265e, a0)
 #define BattleRuntime_WaitIfModeZero_1_02001090(args...) Func_020025c4(args)
 #define ObjectMotion_SetVariantCallbackAndInvokeObject_1_02001090(args...) Func_02002654(args)
@@ -484,7 +463,6 @@
 #define ObjectMotion_CallThenWaitForAnimationChange_4_02001090(args...) Func_02002744(args)
 #define BattleRuntime_WaitIfModeZero_16_02001090(args...) Func_020026d2(args)
 #define BattleEvent_RunActionAndWait_7_02001090(args...) Func_0200278a(args)
-#define FieldScene_RunSequenceB Func_020011bc
 
 extern u8 Value_000028be;
 

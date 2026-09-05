@@ -1,8 +1,6 @@
 #include "fixed_math.h"
 #include "types.h"
 
-#define BattlePresentation_RunMosaicFadeOut Func_080bffb8
-
 void Func_08003b70(s32 arg0);
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */

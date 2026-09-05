@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_StoreSlotTileXToWork832To848 Func_020000c0
-
 extern void Func_02003f5e(s32, s32, s32, s32, s32, s32);
 extern s32 *Func_0200402c(s32);
 extern void Func_02003ff2(s32, s32);

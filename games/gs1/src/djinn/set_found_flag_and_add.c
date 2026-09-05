@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Djinn_SetFoundFlagAndAdd Func_080294d4
-
 s32 GameFlag_Set(s32);
 s32 Func_080771a8(s32, s32, s32);
 

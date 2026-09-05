@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunFacingGatedDialogue18 Func_020004bc
-
 u8 *Func_0200138a();        /* scene/actor record accessor */
 void Func_02001490();
 void Func_02001386();       /* opens a scripted sequence */

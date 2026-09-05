@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_GetPositionDistance Func_02000040
-
 typedef s32 (*IwramSqrt02000040)(s32);
 
 s32 SceneActor_GetPositionDistance(s32 *a, s32 *b)

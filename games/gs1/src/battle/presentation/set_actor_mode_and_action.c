@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattlePresentation_SetActorModeAndAction Func_080b7aac
-
 u8 *Runtime_GetObject(s32);
 s32 *GetBattleObjectSlot(s32);
 void Object_SetMode(s32, s32);

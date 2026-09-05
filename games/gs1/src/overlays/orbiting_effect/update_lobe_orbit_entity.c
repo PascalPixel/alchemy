@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_UpdateLobeOrbitEntity Func_0200090c
-
 /*
  * resource_38e owner at 0x0200090c, 102 bytes: the per-entity BEHAVIOUR
  * callback that walks one entity around a lobe of a sine/cosine figure and

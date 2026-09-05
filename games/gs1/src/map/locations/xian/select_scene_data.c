@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_SelectData Func_02002574
-
 extern s16 Data_02000240[];
 extern u8 Value_0000003c;
 extern u8 Data_0200cb90[];

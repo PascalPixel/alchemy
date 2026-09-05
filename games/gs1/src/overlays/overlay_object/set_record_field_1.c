@@ -7,8 +7,6 @@ struct OverlayObjectRecordFieldView {
     u8 unknown_04_0 : 4;
 };
 
-#define SetOverlayObjectRecordField1 Func_02000030
-
 void SetOverlayObjectRecordField1(struct OverlayObject *object, s32 value) {
     struct OverlayObjectRecordFieldView *record;
     record = (struct OverlayObjectRecordFieldView *)object->record;

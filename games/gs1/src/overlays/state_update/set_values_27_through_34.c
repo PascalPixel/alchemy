@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetValues27Through34 Func_02001e6c
-
 extern void Func_02003d16(s32);
 extern void Func_02003d1c(s32);
 extern void Func_02003d22(s32);

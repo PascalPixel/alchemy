@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Menu_SelectEntry20To21 Func_08028ea8
-
 void *Func_080284dc(void);
 void Func_0802851c(void);
 s32 Func_08028574(s32);

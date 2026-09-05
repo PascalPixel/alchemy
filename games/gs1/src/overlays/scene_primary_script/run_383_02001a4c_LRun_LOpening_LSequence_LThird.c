@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunOpeningSequenceThird Func_02001a4c
-
 struct SceneRecord {
     u8 pad[100];
     u16 value100;

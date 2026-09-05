@@ -16,8 +16,6 @@
 extern u8 *Func_02007472(s32 actor);
 extern void Func_02007496(s32 actor, const u8 *desc);
 
-#define SceneActor_UpdateAnimationOnStateMatch Func_020026e4
-
 void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected, s32 next, const u8 *desc)
 {
     u8 *rec = Func_02007472(actor);
@@ -29,8 +27,6 @@ void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected, s32 next, c
 }
 
 #include "types.h"
-
-#define SceneState_SetFlagByActorPosition Func_0200271c
 
 extern u8 *Func_0200749e(s32 actor);
 extern u8 *Func_020074a6(s32 actor);

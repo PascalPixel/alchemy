@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Field_CheckConfiguredKeysAndCount Func_0800f7dc
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 Func_0800eaf8();

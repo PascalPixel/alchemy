@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Input_UpdateKeyRepeatAndDirection Func_08003538
-
 #define REG32(address) (*(volatile u32 *)(address))
 
 void Input_UpdateKeyRepeatAndDirection(void)

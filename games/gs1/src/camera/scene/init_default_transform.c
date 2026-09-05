@@ -25,8 +25,6 @@
  */
 #include "types.h"
 
-#define Camera_InitDefaultTransform Func_080b7f9c
-
 struct State_080b7f9c {
     u8 filler0[12];
     s32 field0c;

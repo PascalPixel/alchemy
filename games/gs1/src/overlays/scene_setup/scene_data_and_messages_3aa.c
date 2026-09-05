@@ -7,8 +7,6 @@ extern u8 Value_00000067;
 extern u8 Data_02009c04[];
 extern u8 Data_02009bd4[];
 
-#define SceneData_SelectTable9bd4ByState Func_02000030
-
 s32 SceneData_SelectTable9bd4ByState(void) {
     if (Data_02000240[224] == (s32)&Value_00000067) {
         return (s32)Data_02009c04;
@@ -17,8 +15,6 @@ s32 SceneData_SelectTable9bd4ByState(void) {
 }
 
 #include "types.h"
-
-#define SceneData_ReturnZero Func_02000060
 
 s32 SceneData_ReturnZero(void)
 {
@@ -47,22 +43,12 @@ s32 SceneData_ReturnZero(void)
  * identical semantics; this row's pool word was resolved on its own.
  */
 
-#define SceneData_GetTable9d9c Func_02000064
-
 u8 *SceneData_GetTable9d9c(void)
 {
     return (u8 *)0x02009d9c;
 }
 
 #include "types.h"
-
-#define SceneDialogue_RunActor16Message1b88 Func_020000f4
-
-#define SceneDialogue_RunActor13Message1b83 Func_020000d4
-
-#define SceneData_SelectTable9f2cByState Func_020000a4
-
-#define SceneData_SelectTable9ddcByStateWithInit Func_0200006c
 
 extern s16 Data_02000240[];
 extern u8 Value_00000067;

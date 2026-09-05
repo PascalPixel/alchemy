@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_ScheduleCallbacksAndReleaseBlocks Func_080ccbdc
-
 extern void ScheduleCallback(void (*)(void));
 extern void Func_08002dd8(s32);
 

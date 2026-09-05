@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleUnit_LookupWeaponValueByClass Func_080b6eb4
-
 u8 *Runtime_GetObject(s32);
 s32 Func_08077228(s32, s32);
 u32 Func_080b6e7c(s32 arg0);

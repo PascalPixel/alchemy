@@ -2,8 +2,6 @@
 #include "global_cells.h"
 #include "gs1_edition.h"
 
-#define Ui_LoadCharacterEntryForSlot Func_0801ed40
-
 #if defined(GS1_EDITION_JA)
 #define SLOT1_ID_OFS 0x117E
 #define SLOT0_ID_OFS 0x117C

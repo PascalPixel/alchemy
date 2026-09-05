@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunLargeStagingSequence Func_020034c8
-
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 extern u8 Data_00000ee8[];

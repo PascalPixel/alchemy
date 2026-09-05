@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_BranchOnSlotZeroFacingAndFlag855 Func_02000454
-
 extern u8 *Func_020051d6(s32);
 extern void Func_020051a4(void);
 extern void Func_0200537e(s32, s32);

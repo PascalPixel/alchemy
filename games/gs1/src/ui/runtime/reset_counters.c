@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define UiWork_ResetCounters Func_080173ac
-
 struct State_080173ac {
     u8 filler0[0xea8];
     u16 ten;

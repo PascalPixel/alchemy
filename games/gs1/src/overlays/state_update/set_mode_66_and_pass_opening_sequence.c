@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetMode66AndPassOpeningSequence Func_02000158
-
 extern s32 Func_02003c78(s32, s32);
 
 void SceneState_SetMode66AndPassOpeningSequence(void)

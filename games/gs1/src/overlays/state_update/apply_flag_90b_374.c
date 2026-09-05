@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyFlag90b Func_02000910
 #define NULL ((void *)0)
 
 void Func_02002f92(s32);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetWork1c0AndRunObject Func_0200015c
-
 extern s32 Func_02004840(s32);
 extern void Func_020049c8(void);
 extern void Func_020049c4(u8 *);

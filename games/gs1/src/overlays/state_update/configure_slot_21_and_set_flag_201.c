@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_ConfigureSlot21AndSetFlag201 Func_02001938
-
 extern void Func_02004a84(s32, s32);
 extern void Func_02004aa4(s32, s32);
 extern void Func_02004a94(s32, s32);

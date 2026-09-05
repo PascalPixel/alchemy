@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_FlushPendingGraphicsTransfer Func_080cd358
-
 typedef s32 (*WordCopyFn)(void *destination, const void *source, s32 size);
 
 static __inline__ void CopyWords(

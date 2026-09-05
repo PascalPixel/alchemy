@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActor10WaypointSequence Func_02001150
-
 extern u8 *Func_02003f14(s32);
 extern void Func_02003f02(void);
 extern void Func_02001c7a(s32, s32, s32, s32, s32, s32, s32, s32);

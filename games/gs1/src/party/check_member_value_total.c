@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Party_CheckMemberValueTotal Func_080919d8
-
 extern u8 Data_02000240[];
 extern u8 Value_0000097d;
 

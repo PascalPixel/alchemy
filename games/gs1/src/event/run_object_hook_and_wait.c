@@ -1,8 +1,6 @@
 #include "event_runtime.h"
 #include "object_lookup.h"
 
-#define Event_RunObjectHookAndWait Func_08091780
-
 extern struct EventValueWork Data_02000240;
 
 void WaitFrames(s32);

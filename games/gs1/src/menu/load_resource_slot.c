@@ -8,7 +8,7 @@ u32 Func_080053e8(const void *, void *);
 void Resource_CopyData(s32, s32, void *);
 void Func_08002df0(void *);
 
-void Menu_LoadResourceSlot(s32 arg0, s32 index)
+void Menu_LoadResourceSlot(s32 slot, s32 index)
 {
     s32 size = 1024;
     void *buffer = (void *)Runtime_BumpAllocate(size);
@@ -16,6 +16,6 @@ void Menu_LoadResourceSlot(s32 arg0, s32 index)
 
     /* 表内の相対位置から転送元を求める。 */
     Func_080053e8((void *)((u32)base + base[index]), buffer);
-    Resource_CopyData(arg0, size, buffer);
+    Resource_CopyData(slot, size, buffer);
     Func_08002df0(buffer);
 }

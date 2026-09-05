@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Menu_SpawnFourObjectsAtOrigin Func_0801ffd8
-
 struct PlacementOrigin {
     u8 pad_00[0x0c];
     u16 x;

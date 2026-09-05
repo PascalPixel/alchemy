@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_AdvancePositionByAxisMode Func_02000a00
-
 void SceneEffect_AdvancePositionByAxisMode(u8 *o) {
     s16 v = *(s16 *)(o + 102);
 

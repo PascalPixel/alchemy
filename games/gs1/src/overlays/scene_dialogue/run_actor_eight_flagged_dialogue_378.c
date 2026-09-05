@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActorEightFlaggedDialogue Func_0200345c
-
 /* Close scene 8 when facing inward; otherwise choose its story line. */
 extern s32 Func_02006708(void);
 extern void Func_02006b92(s32 scene);

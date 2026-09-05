@@ -1,30 +1,9 @@
 #include "types.h"
 
-#define SceneData_InitRecordTable Func_02000030
 #define MAP390_WORKSPACE (*(u8 **)0x03001ebc)
 
 #include "resource_390.h"
 #include "resource_390_table.h"
-
-#define FieldScene_SetupEntryLayoutsBySelector Func_020001c4
-
-#define SceneData_GetTable8658 Func_020001bc
-
-#define FieldScene_RunActor19MessageBranch Func_02000174
-
-#define FieldScene_RunActor18MessageBranch Func_0200012c
-
-#define FieldScene_RunActor17MessageBranch Func_020000e4
-
-#define FieldScene_RunActor16MessageBranch Func_0200009c
-
-#define SceneData_PrepareTable84d8 Func_02000070
-
-#define SceneData_GetSecondaryTable Func_02000068
-
-#define SceneData_ReturnZero Func_02000064
-
-#define SceneData_GetPrimaryTable Func_0200005c
 
 struct Approach390Subject {
     u16 unknown_00[3];

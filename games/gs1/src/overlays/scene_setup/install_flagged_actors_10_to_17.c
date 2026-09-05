@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_InstallFlaggedActors10To17 Func_02004670
-
 /*
  * Resource 3b1 unindexed helper at 0x02004670 (348 bytes incl. pool,
  * 7 calls).

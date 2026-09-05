@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Camera_SetAngleParameters Func_08005208
-
 s32 Func_0800231c(s32);
 s32 Func_08002322(s32);
 typedef s32 (*WorkFunc_08005208)(s32, s32);

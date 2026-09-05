@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_UpdateCounterDrivenOrbit Func_02003660
-
 /*
  * resource_3c9 owner at 0x02003660, 112 bytes: a per-frame orbit step
  * for one scene actor -- it reads a binary angle out of the actor's own

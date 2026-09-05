@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunFlag815GatedStep Func_02000eb4
-
 extern s32 Func_02006e56(s32);
 extern s32 Func_02006e60(s32);
 extern void Func_02006e88(void);

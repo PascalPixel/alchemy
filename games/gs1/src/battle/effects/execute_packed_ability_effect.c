@@ -2,8 +2,6 @@
 #include "object_lookup.h"
 #include "battle_effect_runtime.h"
 
-#define BattleEffect_ExecutePackedAbilityEffect Func_0808e5d8
-
 /* Data_02000240 is struct BattleWork (battle_effect_runtime.h); its
  * object_id field sits at the same 0x1f4 offset this owner reads as
  * selected_object, matching main:0808e23c's use of the same shared symbol. */

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_SelectTable99C4Or97B4ByStateA6 Func_02000e5c
-
 extern s16 Data_02000240[];
 extern u8 Value_000000a6;
 extern u8 Data_020099c4[];

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_SetField6OnCountdown Func_02000030
-
 struct Object {
     u8 filler00[6];
     u16 x;

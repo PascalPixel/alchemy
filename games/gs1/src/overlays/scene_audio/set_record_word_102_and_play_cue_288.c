@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetRecordWord102AndPlayCue288 Func_02003724
-
 /*
  * resource_3a4 owner at 0x02003724, 20 bytes: stamp a fixed value into the
  * caller's record at +102, then play sound cue 288.

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattlePresentation_BuildTargetList Func_080b9d34
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void *Runtime_GetObject(u8);

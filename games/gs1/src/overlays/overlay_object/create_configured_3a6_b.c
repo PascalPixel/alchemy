@@ -1,4 +1,3 @@
-#define OverlayObject_CreateConfiguredB Func_020000a0
 #define CreateOverlayObject Func_02001cf6
 #define SetOverlayObjectMode Func_02001d58
 #define SetOverlayObjectSlot Func_02001df0

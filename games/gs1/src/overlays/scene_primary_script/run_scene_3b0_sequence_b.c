@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunActorNinePresentationCycles Func_020007b0
-
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 void Func_0200126a();

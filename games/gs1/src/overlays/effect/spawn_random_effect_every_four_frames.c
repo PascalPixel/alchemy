@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_SpawnRandomEveryFourFrames Func_02003b24
-
 extern u32 Func_020094e8(void);
 extern u32 Func_02009502(void);
 extern u32 Func_02009516(void);

@@ -20,7 +20,7 @@ void *BattleEffect_StartItemBreak(void *source)
     s32 fragment_height;
     s32 fragment_scale;
     s32 fragment_count;
-    u32 horizontal_velocity;
+    u32 vel;
     u32 rotation_jitter;
     s32 zero;
     void *parent;
@@ -54,8 +54,8 @@ void *BattleEffect_StartItemBreak(void *source)
             *(s32 *)((s8 *)child + 0x30) = fragment_scale;
             *(s8 *)((s8 *)child + 0x55) = 2;
             *(s32 *)((s8 *)child + 0x48) = 0x51e;
-            horizontal_velocity = Rand();
-            *(s32 *)((s8 *)child + 0x28) = horizontal_velocity - Rand();
+            vel = Rand();
+            *(s32 *)((s8 *)child + 0x28) = vel - Rand();
             fragment_height = Rand() * 0x18 + 0x80000;
             rotation_jitter = Rand();
             ObjectMotion_SetTargetPositionFromMagnitudeAngle(

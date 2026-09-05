@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunGuardedRectStep Func_02001f28
-
 extern void Func_02006dc2(void);
 extern s32 Func_02002bfa(void);
 extern void Func_02006d7e(s32, s32, s32, s32, s32, s32);

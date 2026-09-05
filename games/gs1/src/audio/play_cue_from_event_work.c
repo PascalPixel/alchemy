@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Audio_PlayCueFromEventWork Func_0808acc4
-
 struct Party {
     u8 unk00[0x1f0];
     s16 cue;

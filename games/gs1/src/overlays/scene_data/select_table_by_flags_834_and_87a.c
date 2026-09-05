@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneData_SelectTableByFlags834And87a Func_020000b8
 #define NULL ((void *)0)
 
 extern s16 Data_02000240[];

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActorTenFlaggedDialogue Func_020009b4
-
 s32 Func_02006e5c(s32 n);
 u8 *Func_02001ca0(void);
 void Func_02006e92(void);

@@ -1,7 +1,5 @@
 #include "map_render_work.h"
 
-#define Map_EnableUpdateCallback Func_08011984
-
 s32 Func_080042c8(u32 value);
 void Func_0801179c(void);
 

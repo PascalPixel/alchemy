@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SubtractSoftDouble Func_020013e4
-
 /*
  * resource_3a7 soft-float double subtraction at 0x020013e4.
  *

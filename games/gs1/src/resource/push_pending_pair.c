@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Resource_PushPendingPair Func_0801a7c0
-
 struct State_0801a7c0 {
     u8 filler0[0x354];
     u16 first[16];

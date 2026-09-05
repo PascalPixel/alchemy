@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Graphics_FillWordStreamWithF000 Func_08004698
-
 extern u16 *Data_03001cbc;
 
 void Graphics_FillWordStreamWithF000(u32 count)

@@ -24,7 +24,6 @@ extern void Func_02002284();
 extern void Func_02003584();
 extern void Func_020022a4();
 extern void Func_020035a4();
-#define DialogueLayout_ConfigureGroupTwo Func_02001154
 void DialogueLayout_ConfigureGroupTwo(void)
 {
     { s32 f1 = 12; s32 g1 = 8; Func_0200345a(0, 28, 10, 18,  f1, g1); }

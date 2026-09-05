@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneActor_MoveActor10ByRow Func_02001aac
 #define NULL ((void *)0)
 
 s32 *Func_02003f20(s32);

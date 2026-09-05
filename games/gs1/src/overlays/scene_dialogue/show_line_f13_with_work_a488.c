@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_ShowLineF13WithWorkA488 Func_02001b9c
-
 extern s32 Data_0200a488;
 
 extern void Func_02003ed8(void);

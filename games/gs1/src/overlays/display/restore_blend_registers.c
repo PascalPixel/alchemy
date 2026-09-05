@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_RestoreBlendRegisters Func_020038fc
-
 extern u32 Data_03001e40;
 extern u16 Data_0200e7a0;
 void Func_02007af0(u32 address, u32 value);

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetRuntimeWord448To521AndSend303 Func_02000ad4
-
 extern u8 *Data_03001ebc;
 
 extern void Func_02002048(s32);

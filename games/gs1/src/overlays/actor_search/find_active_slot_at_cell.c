@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_FindActiveSlotAtCell Func_02000134
-
 extern u8 *Data_03001ebc;
 
 s32 *SceneData_FindActiveSlotAtCell(s32 cx, s32 cz) {

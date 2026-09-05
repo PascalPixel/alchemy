@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_WaitActorDescent Func_02000cd0
-
 /* Give the actor at most sixty frames to descend to its target height, then
  * clamp the live height to the target so the following scene starts exact. */
 extern void Func_020028fa(s32 cnt);

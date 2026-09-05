@@ -1,4 +1,3 @@
-#define SceneDialogue_RunActor22TwoFlagLine Func_0200145c
 void Func_02007928(); void Func_02007968(); int Func_02007908(); int Func_0200791a();
 void Func_02007a1a(); void Func_02007a2c(); void Func_02007a34(); void Func_02007a4c();
 /* Story selector owner at 0x0200145c, 84 bytes; eight calls. */

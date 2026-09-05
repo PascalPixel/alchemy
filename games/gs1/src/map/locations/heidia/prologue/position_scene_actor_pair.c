@@ -26,7 +26,6 @@ extern void Func_0200484c(Obj *);
 extern void Func_02004954(s32);
 extern void Func_020048b8(void);
 
-#define PositionSceneActorPair Func_02001774
 void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset)
 {
     Obj *p;

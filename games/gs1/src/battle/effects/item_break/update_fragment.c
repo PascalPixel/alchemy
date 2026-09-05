@@ -48,11 +48,11 @@ void BattleEffect_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source
 
     target = source->target;
     if (target != 0) {
-        s32 xDelta = target->x - source->x;
-        s32 zDelta = target->z - source->z;
+        s32 dx = target->x - source->x;
+        s32 dz = target->z - source->z;
 
-        if (xDelta != 0 || zDelta != 0) {
-            steering_delta = (s16)(ArcTan2(zDelta, xDelta) - source->angle);
+        if (dx != 0 || dz != 0) {
+            steering_delta = (s16)(ArcTan2(dz, dx) - source->angle);
             if (steering_delta > 0x1000)
                 steering_delta = 0x1000;
             if (steering_delta < -0x1000)

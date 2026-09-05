@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Map_ApplyWorkOriginAndSpan Func_0800fe9c
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 Func_08010000();

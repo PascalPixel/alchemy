@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_InitStateWordsAndSlots Func_02001084
-
 extern s32 Data_0200bb68;
 extern s32 Data_0200bb00;
 extern s32 Data_0200bb6c;

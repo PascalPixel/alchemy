@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyWork16cMinus50 Func_02001080
-
 extern u8 *Data_03001ebc;
 extern void Func_02002018(s32);
 

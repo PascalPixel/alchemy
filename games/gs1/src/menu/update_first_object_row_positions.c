@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Menu_UpdateFirstObjectRowPositions Func_0801ff58
-
 extern u8 *Data_03001f2c;
 s32 Func_08009008(s32, void *, void *, s32);
 

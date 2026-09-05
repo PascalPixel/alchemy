@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunChoiceSequence2352 Func_020005a4
-
 extern u8 Value_00002352;
 extern u8 Value_00000f31;
 

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_ResetObjectWhenFlags12Set Func_02001a50
-
 typedef struct {
     u8 filler0[9];
     u8 unk9;

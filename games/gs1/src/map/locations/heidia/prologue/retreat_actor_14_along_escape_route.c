@@ -15,7 +15,6 @@ void Func_02005c6a();
 /* This overlay's transition starter at 0x02001774. */
 void Func_0200437e();
 
-#define RetreatActor14AlongEscapeRoute Func_02002b80
 void RetreatActor14AlongEscapeRoute(void)
 {
     s32 column;

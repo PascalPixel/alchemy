@@ -5,8 +5,6 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-#define RunSceneSelectionChain Func_0200366c
-
 /* Scene selection chain of the resource_3b1 overlay: tests scene ids in turn and runs the matching call sequence. */
 
 void Func_02006e2a();

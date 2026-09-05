@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Menu_InitSelectorCursorAndEntries Func_080a8034
-
 struct State080a8034 {
     u8 padding_00[0x20];
     s32 field_20;

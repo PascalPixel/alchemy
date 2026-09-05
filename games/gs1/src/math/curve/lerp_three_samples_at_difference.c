@@ -1,7 +1,5 @@
 #include "curve.h"
 
-#define Curve_LerpThreeSamplesAtDifference Func_08011ddc
-
 s32 Curve_LerpThreeSamplesAtDifference(const s8 *samples, s32 start, s32 end)
 {
     s32 first;

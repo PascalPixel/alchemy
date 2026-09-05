@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunStepThen10 Func_0200486c
-
 /*
  * Resource 3b1 unindexed helper at 0x0200486c (18 bytes, 179 calls).
  *

@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Event_SetPair1c4AndResetValue170 Func_08091e6c
-
 struct State_08091e6c {
     u8 filler0[0x170];
     u16 value;

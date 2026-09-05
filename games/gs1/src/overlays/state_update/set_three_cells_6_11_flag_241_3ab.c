@@ -1,4 +1,3 @@
-#define SceneState_SetThreeCellsAt6x11AndFlag241 Func_02000fa0
 typedef signed int s32;  
 extern void Func_02002946(s32,s32,s32,s32,s32,s32);
 extern void Func_02002958(s32,s32,s32,s32,s32,s32);

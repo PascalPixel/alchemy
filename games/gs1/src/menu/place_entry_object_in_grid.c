@@ -1,8 +1,6 @@
 #include "a9_motion.h"
 #include "types.h"
 
-#define Menu_PlaceEntryObjectInGrid Func_080a9bd8
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 FixedPoint_Ratio(s32, s32);

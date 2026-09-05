@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneEffect_SpawnParticleEveryFourthFrame Func_02003a64
-
 extern s32 *Func_02009548(s32);
 extern u32 Func_02009426(void);
 extern u32 Func_02009440(void);

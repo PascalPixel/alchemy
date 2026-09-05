@@ -36,7 +36,6 @@
  * is deliberately not named.
  */
 
-#define GetSolShindenMessageData Func_0200003c
 u8 *GetSolShindenMessageData(void)
 {
     return (u8 *)0x0200abec;

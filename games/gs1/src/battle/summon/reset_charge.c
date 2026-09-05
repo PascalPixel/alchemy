@@ -1,9 +1,11 @@
 #include "types.h"
 #include "gs1_edition.h"
 
+#define Summon_ResetCharge Func_080c1f50
+
 u8 *Runtime_GetObject(s32);
 
-s32 Func_080c1f50(s32 class_id)
+s32 Summon_ResetCharge(s32 class_id)
 {
     u8 *summon;
     s32 object_index;

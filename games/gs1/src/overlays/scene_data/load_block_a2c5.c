@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneData_LoadBlockA2c5 Func_020022ec
-
 extern void Func_02007c7a(s32, s32);
 extern u8 Data_0200a2c5[];
 

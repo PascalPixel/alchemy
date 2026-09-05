@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define BattleEffect_ShrinkObjectAndDestroyFast Func_08095f9c
-
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void Object_Destroy();

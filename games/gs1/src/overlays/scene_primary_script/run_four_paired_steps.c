@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunFourPairedSteps Func_0200456c
-
 extern void Func_02008c9e(s32);
 extern void Func_0200887a(void);
 extern void Func_02008ca8(s32);

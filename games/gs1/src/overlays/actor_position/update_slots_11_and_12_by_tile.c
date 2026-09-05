@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_UpdateSlots11And12ByTile Func_02001a9c
-
 typedef struct {
     u8 filler0[8];
     s32 unk8;

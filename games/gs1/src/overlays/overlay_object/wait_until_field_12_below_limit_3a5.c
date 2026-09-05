@@ -6,8 +6,6 @@
  */
 #include "types.h"
 
-#define OverlayObject_WaitUntilField12BelowLimit Func_02000324
-
 extern void Func_02001fc0();
 void OverlayObject_WaitUntilField12BelowLimit(u8 *o, s32 limit)
 {

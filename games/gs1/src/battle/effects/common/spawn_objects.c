@@ -15,11 +15,10 @@ extern u8 Value_000077d8;
 
 #define InitBattleEffectObject Object_InitializeMode
 
-#define SpawnBattleEffectObjects Func_080dbb24
 BattleEffectObject *GetBattleEffectObject(s32);
 void InitBattleEffectObject(BattleEffectObject *, s32);
 
-void SpawnBattleEffectObjects(s32 entry_count, s32 kind, u32 variant) {
+void BattleEffect_SpawnObjects(s32 entry_count, s32 kind, u32 variant) {
     u32 base = Data_03001eec;
     s32 entry_index = 0;
     u32 offset;

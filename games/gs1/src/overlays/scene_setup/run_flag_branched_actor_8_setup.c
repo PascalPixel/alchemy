@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_RunFlagBranchedActor8Setup Func_020008ec
-
 s32 Func_02006d94(s32 n);
 u8 *Func_02001bd8(void);
 void Func_02006dca(void);

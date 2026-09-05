@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define ObjectDispatch_FindFreeObject Func_0800c0cc
-
 extern u8 *Data_03001e64;
 
 void *ObjectDispatch_FindFreeObject(void)

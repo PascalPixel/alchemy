@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_FindNearestSlotOfKindF2 Func_020004bc
-
 typedef struct {
     u8 filler0[0x28];
     s16 *unk28;

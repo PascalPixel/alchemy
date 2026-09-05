@@ -14,8 +14,6 @@ static __inline__ void SetOffset(s32 actor, s32 axis, s32 offset)
     Func_02008266(actor, axis, offset);
 }
 
-#define RunSceneEffectSetup Func_02003df8
-
 void RunSceneEffectSetup(void)
 {
     Func_020081dc();

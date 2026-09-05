@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define OverlayObject_IntegrateVelocities Func_02000ab0
-
 void OverlayObject_IntegrateVelocities(void *arg0)
 {
     u8 *a = arg0;

@@ -27,8 +27,6 @@
  */
 #include "types.h"
 
-#define Object_ApproachLinkedObject Func_0800dcdc
-
 s32 FixedPoint_Ratio(s32, s32);
 s32 Func_080072f0(s32, s32, s32, s32);
 void Func_0800c300(void *object, s32 argument);

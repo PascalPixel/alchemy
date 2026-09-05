@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define Menu_ClearSecondObjectRowAndScheduleUpdate Func_08020088
-
 extern u8 *Data_03001f2c;
 void ScheduleCallback(s32);
 void Func_080200cc(void);

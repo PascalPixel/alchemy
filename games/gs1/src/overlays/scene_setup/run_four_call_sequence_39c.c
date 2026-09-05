@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_RunFourCallSequence Func_02001408
-
 extern void Func_02006ec0(void);
 extern void Func_020017b8(void);
 extern void Func_02006ed0(void);

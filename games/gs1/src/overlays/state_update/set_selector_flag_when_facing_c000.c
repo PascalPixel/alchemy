@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_SetSelectorFlagWhenFacingC000 Func_020010b8
-
 extern u8 *Func_02003600(s32);
 extern s32 Func_020035de(s32);
 extern s32 Func_020035d8(s32);

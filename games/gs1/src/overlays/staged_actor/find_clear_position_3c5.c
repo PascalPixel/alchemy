@@ -3,8 +3,6 @@
 #define ActorSearchStep Data_0200afd4
 #include "find_clear_actor_position.h"
 
-#define StagedActor_FindClearPosition Func_02000474
-
 s32 StagedActor_FindClearPosition(s32 *a)
 {
 #include "find_clear_actor_position_body.inc"

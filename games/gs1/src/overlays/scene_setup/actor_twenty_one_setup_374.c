@@ -31,8 +31,6 @@ void Func_02002ce0(s32);
 void Func_02002dd0(s32, void *);
 void Func_02002da4(void);
 
-#define FieldScene_RunActorTwentyOneSetup Func_02000674
-
 void FieldScene_RunActorTwentyOneSetup(void) {
     struct Obj *p = Func_02002d3e(21);
     Func_02002d1c();
@@ -59,7 +57,6 @@ void FieldScene_RunActorTwentyOneSetup(void) {
 
 #include "types.h"
 
-#define SceneState_SetWork1c0AndRun Func_02000714
 #define NULL ((void *)0)
 
 s32 Func_02002d90(s32);

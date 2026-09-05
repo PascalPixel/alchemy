@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define ActorPresentation_SetupActorEightForFlags308And309Guarded Func_02000668
-
 extern s32 Func_02002988(s32);
 extern s32 Func_02002992(s32);
 extern void Func_02002a94(s32);

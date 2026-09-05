@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyRectWhenActor20AtColumn28 Func_02002600
-
 extern void Func_020080ba(void);
 extern s32 *Func_020080e0(s32);
 extern void Func_020080b0(s32);

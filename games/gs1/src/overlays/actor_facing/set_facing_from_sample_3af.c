@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_SetFacingFromSample Func_02000570
-
 extern s32 Func_020047e2(void);
 
 s32 SceneActor_SetFacingFromSample(u8 *a)

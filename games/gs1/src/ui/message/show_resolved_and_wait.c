@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define UiMessage_ShowResolvedAndWait Func_080b28d4
-
 struct Work_080b28d4 {
     u8 unknown_000[0x3a4];
     u16 value_3a4;

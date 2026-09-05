@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Input_InitKeyIrq Func_08003810
-
 void Input_InitKeyIrq(void)
 {
     u32 keyInterruptMask;

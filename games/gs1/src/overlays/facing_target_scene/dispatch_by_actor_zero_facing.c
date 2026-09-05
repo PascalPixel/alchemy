@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_DispatchByActorZeroFacing Func_02001d78
-
 struct Slot {
     u16 f00;
     u16 f02;

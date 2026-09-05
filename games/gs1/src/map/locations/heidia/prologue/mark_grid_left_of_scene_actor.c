@@ -14,7 +14,6 @@ extern struct S *Func_020048f4(void);
 extern void Func_0200494a(s32 arg0, s32 arg1);
 extern void Func_020048c8(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
 
-#define MarkGridLeftOfSceneActor Func_0200185c
 void MarkGridLeftOfSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute) {
     struct S *p = Func_020048f4();
 

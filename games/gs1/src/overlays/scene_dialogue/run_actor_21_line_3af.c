@@ -1,6 +1,5 @@
 #include "types.h"
 
-#define SceneDialogue_RunActor21Line Func_02000b98
 extern unsigned char Value_00001f00;
 
 /*

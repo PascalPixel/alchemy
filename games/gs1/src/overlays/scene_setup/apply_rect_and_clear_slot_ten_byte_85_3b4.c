@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneState_ApplyRectAndClearSlotTenByte85 Func_02001ca0
-
 extern s32 Func_0200418e(s32, s32, s32, s32, s32, s32);
 extern u8 *Func_020041fc(s32);
 

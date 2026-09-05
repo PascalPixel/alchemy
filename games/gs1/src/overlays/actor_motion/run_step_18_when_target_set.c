@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define SceneActor_RunStep18WhenTargetSet Func_0200572c
-
 extern s32 Func_0200b718(s32);
 extern void Func_0200ad9e(s32, s32, s32, s32);
 

@@ -1,8 +1,6 @@
 #include "types.h"
 #include "global_cells.h"
 
-#define Map_GetCellAttributeLowNibble Func_08011fd8
-
 s32 Map_GetCellAttributeLowNibble(s32 index, s32 x, s32 y)
 {
     u8 *state = *(u8 **)ADDR_03001E70;

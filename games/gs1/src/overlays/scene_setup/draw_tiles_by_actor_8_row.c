@@ -1,7 +1,5 @@
 #include "types.h"
 
-#define FieldScene_DrawTilesByActor8Row Func_02000fa0
-
 /* Per-site raw names: the first resolves to Scene_GetRecord and the four
  * renderer sites resolve to Func_080091c0. */
 extern u8 *Func_02002078();

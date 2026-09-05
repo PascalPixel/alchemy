@@ -347,6 +347,11 @@ fn unit_slice(root: &str, unit: &TranslationUnit, owner: u32, object: &str) -> R
     let symbols = unit.canonical_symbols()?;
     let mut out = ".code 16\n.text\n".to_string();
     for (name, value) in symbols.iter().filter(|(name, _)| *name != &symbol) {
+        // Keep external calls relocatable until the slice has its load address.
+        if value.kind == AbsoluteSymbolKind::Thumb && external_symbol(name, CALL_VIA_BASE).is_some()
+        {
+            continue;
+        }
         out.push_str(&binding(
             name,
             value.address,
@@ -409,7 +414,7 @@ fn materialize_unit_owner(
     let assembly = object_dir.join(format!("{stem}.s"));
     let output = text(object_dir.join(format!("{stem}.o")));
     write_file(&assembly, unit_slice(root, unit, owner, object)?.as_bytes())?;
-    let assembler = compiler_core::routing::assembly_command(&text(assembly), &output);
+    let assembler = compiler_core::routing::compiler_assembly_command(&text(assembly), &output);
     run(root, &assembler)?;
     if verify(&output)?.actual != verification.actual {
         return Err(format!("{}: emitted {stem} slice changed output", unit.id));
@@ -555,7 +560,7 @@ pub fn compile_source_for_owner(
     }
     run(
         root,
-        &compiler_core::routing::assembly_command(&assembly, &object),
+        &compiler_core::routing::compiler_assembly_command(&assembly, &object),
     )?;
     let defined = last_fields(&run(
         root,

@@ -62,6 +62,17 @@ replacing the approved bundle. `agbcc` comes directly from pret; `agscc` is
 the separately audited GCC 2.96 host port in PascalPixel/agscc. Compiler source
 history belongs to those repositories; Alchemy owns routing and verification.
 
+The restored bundle contains `xgcc`, `cc1`, `cpp0`, and `tradcpp0` from
+`agscc/build/gcc`, stock `agbcc/gcc/old_agbcc` under `agbcc/`, and unmodified
+GNU binutils 2.10 GAS as `as`. Compiler output and its translation-unit slices
+use historical GAS: its zero alignment fill is part of the build contract.
+Modern binutils still handles retained syntax, symbol objects, and linking;
+mixed C links use the explicit GNU/soft-float ABI from `assembly_command`.
+All bundle executables enter the cache identity and require approved hashes.
+The restored bundle is currently admitted on Apple Silicon macOS only; other
+hosts need a source build and full verification, not the previous modified
+compiler's hashes. Never suppress linker ABI mismatches to admit a bundle.
+
 Configure the repository hooks once, then build the contributor host:
 
 ```sh

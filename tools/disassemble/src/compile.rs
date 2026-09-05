@@ -492,7 +492,10 @@ fn compile_overlay_with_mutations(
     let produced = fs::read_to_string(&assembly).map_err(|error| format!("{assembly}: {error}"))?;
     fs::write(&assembly, bias_in_image_label_words(&produced).text)
         .map_err(|error| format!("{assembly}: {error}"))?;
-    assemble_file(&assembly, &object, work)?;
+    checked(
+        &compiler_core::routing::compiler_assembly_command(&assembly, &object),
+        work,
+    )?;
     let object_listing = checked(&strings(&["arm-none-eabi-nm", "-S", &object]), work)?;
     let (object_offset, object_size) = symbol_span(&object_listing, &symbol)?;
     let link_address = address
@@ -640,7 +643,10 @@ fn compile_overlay_unit(
     let sectioned =
         section_functions(&biased, &symbols).map_err(|error| format!("{}: {error}", unit.id))?;
     fs::write(&assembly, sectioned).map_err(|error| error.to_string())?;
-    assemble_file(&assembly, &object, work)?;
+    checked(
+        &compiler_core::routing::compiler_assembly_command(&assembly, &object),
+        work,
+    )?;
     let listing = checked(
         &strings(&["arm-none-eabi-nm", "-S", "--defined-only", &object]),
         work,

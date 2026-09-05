@@ -39,7 +39,8 @@ s32 Func_02000408(
 
         if ((angle & 0xf000) != heading &&
             ((angle + 0x1000) & 0xf000) != heading &&
-            ((angle + 0xfa7ef001) & 0xf000) != heading &&
+            /* The loader decodes the stored pool word to -0x1000. */
+            ((angle - 0x1000) & 0xf000) != heading &&
             force_tracking == 0) {
             actor->tracking_state = 0;
             Func_02001814(actor, 2);

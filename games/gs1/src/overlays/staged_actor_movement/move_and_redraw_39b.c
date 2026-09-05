@@ -34,9 +34,8 @@
 
 #include "staged_actor_movement.h"
 
-#define ApplyEffectSequenceActorMovementAndRedraw Func_020008ec
 
-void ApplyEffectSequenceActorMovementAndRedraw(
+void Func_020008ec(
     StagedActorMovementRequest request)
 {
 #include "run_staged_actor_movement_and_redraw_body.inc"

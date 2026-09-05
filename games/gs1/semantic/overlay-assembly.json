@@ -3773,14 +3773,15 @@
     },
     {
       "overlay": "resource_39c",
-      "start": "0x020017a8",
+      "start": "0x020018f8",
       "end": "0x02001bd8",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
         "complete production body accounts for 57 calls, 4 loop(s), 0 memory operation(s), and its audited boundary",
-        "games/gs1/recon/en/dossiers.json#resource_39c:020017a8"
+        "games/gs1/recon/en/dossiers.json#resource_39c:020017a8",
+        "region split around the exact C owner at 0x020017a8..0x020018f8; the retained bytes after it keep their classification"
       ]
     },
     {

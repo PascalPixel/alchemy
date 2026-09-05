@@ -9,7 +9,6 @@ void Func_0200a4c6(void);
 void Func_02009936(void);
 
 #define FinishActor20SceneSequence Func_02004d0c
-
 void FinishActor20SceneSequence(void)
 {
     if (Func_0200a322(0x226)) {

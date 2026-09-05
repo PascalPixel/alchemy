@@ -71,7 +71,7 @@ void FieldScene_RunScene3a4_020026c0(void)
         {
             u8 *record = Func_0200629c(9);
             u8 value = *(volatile u8 *)&record[35];
-        
+
             record[35] = (u8)(value | 2);
         }
     }
@@ -82,7 +82,7 @@ void FieldScene_RunScene3a4_020026c0(void)
         {
             u8 *record = Func_020062d8(11);
             u8 value = *(volatile u8 *)&record[35];
-        
+
             record[35] = (u8)(value | 2);
         }
     }
@@ -93,7 +93,7 @@ void FieldScene_RunScene3a4_020026c0(void)
         {
             u8 *record = Func_02006316(12);
             u8 value = *(volatile u8 *)&record[35];
-        
+
             record[35] = (u8)(value | 2);
         }
     }

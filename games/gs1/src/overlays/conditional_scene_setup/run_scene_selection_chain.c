@@ -40,7 +40,7 @@ s32 Func_02009c2a();
 void Func_02009cb2();
 void Func_02009cca();
 
-void Func_0200366c(void)
+void RunSceneSelectionChain(void)
 {
     Func_02009a92(1);
     Func_02006e2a();

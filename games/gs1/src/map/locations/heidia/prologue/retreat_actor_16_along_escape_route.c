@@ -16,7 +16,6 @@ void Func_02005dee();
 void Func_02004502();
 
 #define RetreatActor16AlongEscapeRoute Func_02002d0c
-
 void RetreatActor16AlongEscapeRoute(void)
 {
     s32 column;

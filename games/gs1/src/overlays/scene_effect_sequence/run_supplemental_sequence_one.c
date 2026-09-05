@@ -72,7 +72,7 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
     return f(a0, a1);
 }
 
-void Func_02003e40(void)
+void RunSupplementalSequenceOne(void)
 {
     s32 p;
     Call1(Func_020081ee, 2412);

@@ -1,0 +1,23 @@
+#include "types.h"
+#include "global_cells.h"
+
+#define Link_DrawShiftedTilePair Func_080219c8
+
+extern u8 Data_08037280[];
+
+void Func_08021950(void *, u8 *, s32, s32);
+
+void Link_DrawShiftedTilePair(s32 offset)
+{
+    s32 phase = (*(u32 *)ADDR_03001E40 >> 2) & 3;
+
+    if (phase > 2) {
+        phase = 2;
+    }
+    if (phase <= 0) {
+        phase = 1;
+    }
+    phase = phase + 1;
+    Func_08021950((void *)0x06000220, Data_08037280, offset, -phase);
+    Func_08021950((void *)0x06000240, Data_08037280 + 32, offset + 32, phase);
+}

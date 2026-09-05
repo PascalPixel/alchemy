@@ -1,0 +1,15 @@
+#include "types.h"
+
+#define SceneState_Send210AndApplyRectAt40x84 Func_02000d70
+
+extern void Func_02006d1e(s32);
+extern void Func_02006cca(s32, s32, s32, s32, s32, s32);
+
+void SceneState_Send210AndApplyRectAt40x84(void)
+{
+    s32 m, n;
+    Func_02006d1e(0x210);
+    m = 10;
+    n = 84;
+    Func_02006cca(40, 84, 7, 4, m, n);
+}

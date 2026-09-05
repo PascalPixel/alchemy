@@ -1,0 +1,17 @@
+#include "types.h"
+
+#define Summon_GetEntryValue Func_080c2384
+
+struct Entry {
+    u16 value;
+    u8 rest[6];
+};
+
+extern struct Entry Data_080c7420[];
+
+s32 Summon_GetEntryValue(s32 index)
+{
+    if ((u32)index > 171)
+        return Data_080c7420[0].value;
+    return Data_080c7420[index].value;
+}

@@ -30,7 +30,6 @@
  */
 
 #define GetSolShindenInitialState Func_02000038
-
 s32 GetSolShindenInitialState(void)
 {
     return 0;

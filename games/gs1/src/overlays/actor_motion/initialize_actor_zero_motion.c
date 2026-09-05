@@ -30,7 +30,6 @@ struct SceneActor {
 };
 
 #define InitializeActorZeroMotion Func_02000518
-
 void InitializeActorZeroMotion(void)
 {
     struct SceneActor *actor;

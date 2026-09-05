@@ -15,7 +15,6 @@ s32 Func_02007064(s32);
 void Func_02002920(void);
 
 #define TriggerScene40AtVillagePath Func_02001a44
-
 void TriggerScene40AtVillagePath(void)
 {
     SceneActor *player = Func_0200709a(0);

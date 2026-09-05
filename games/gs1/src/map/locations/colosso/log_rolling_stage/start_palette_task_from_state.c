@@ -1,6 +1,5 @@
 #include "colosso_log_rolling_stage.h"
 
-
 extern u16 Data_0200dba0;
 extern u16 Data_0200dc40;
 extern u16 Data_0200dc34;

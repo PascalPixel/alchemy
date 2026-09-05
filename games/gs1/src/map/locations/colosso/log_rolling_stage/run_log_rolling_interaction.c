@@ -1,6 +1,5 @@
 #include "colosso_log_rolling_stage.h"
 
-
 extern s16 Data_02000240[];
 
 extern void Func_02004d72(void);       /* site 0x20024e4 -> Func_0200288c veneer */

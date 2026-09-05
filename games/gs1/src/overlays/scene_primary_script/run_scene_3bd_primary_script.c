@@ -564,7 +564,6 @@ void Func_02007164();
 
 /* Loader-relocated ROM calls: each site names the pre-relocation call word the image holds. */
 
-
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
@@ -619,7 +618,7 @@ static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 #define RECORD_COORD_X_OFFSET 10
 #define RECORD_COORD_Y_OFFSET 18
 
-void Func_02002c44(void)
+void FieldScene_RunBranchingCutsceneSequence(void)
 {
     u8 *record;
     s32 line;

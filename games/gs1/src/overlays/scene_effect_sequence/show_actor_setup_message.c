@@ -1,8 +1,5 @@
 #include "scene_effect_sequence.h"
 
-
-
-
 extern void Func_02001998(void);
 extern void Func_02001a3e(s32 messageId);
 /* Returns a value: the reference sets r1 before r0 at this site, which

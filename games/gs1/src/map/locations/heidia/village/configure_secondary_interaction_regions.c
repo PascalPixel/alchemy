@@ -6,7 +6,6 @@ void Func_02007a7c(s32, s32, s32, s32, s32, s32);
 void Func_02007a8e(s32, s32, s32, s32, s32, s32);
 
 #define ConfigureSecondaryInteractionRegions Func_02002468
-
 void ConfigureSecondaryInteractionRegions(void)
 {
     Func_02007a4e(8, 77, 1, 2, 17, 82);

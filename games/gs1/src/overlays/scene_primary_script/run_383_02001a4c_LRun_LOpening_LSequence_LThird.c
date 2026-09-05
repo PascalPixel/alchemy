@@ -126,7 +126,7 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 /* Third scene step: sets up actors 24 and 25 (fetching each one's record),
  * runs a shared series of configuration calls touching actors 0-2, 10, 14,
  * 20, 24 and 25, then marks the two fetched records with a byte flag. */
-void Func_02001a4c(void)
+void FieldScene_RunOpeningSequenceThird(void)
 {
     void *actor24;
     void *actor25;

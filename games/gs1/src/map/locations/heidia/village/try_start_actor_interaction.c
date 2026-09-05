@@ -10,7 +10,6 @@ void Func_02006636(s32);
 void Func_020066c2(void);
 
 #define TryStartActorInteraction Func_02001038
-
 s32 TryStartActorInteraction(s32 actor_id, s32 interaction_id)
 {
     s32 started = 0;

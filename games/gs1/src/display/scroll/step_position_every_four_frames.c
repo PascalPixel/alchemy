@@ -1,0 +1,23 @@
+#include "types.h"
+
+#define DisplayScroll_StepPositionEveryFourFrames Func_080f03c0
+
+typedef struct {
+    u16 unused[4];
+    u16 first;
+    u16 padding;
+    u16 second;
+} State;
+
+extern u32 Data_03001800;
+extern State Data_03001ad0;
+extern u8 Value_0000ffff;
+
+void DisplayScroll_StepPositionEveryFourFrames(void) {
+    if ((Data_03001800 & 3) == 0) {
+        State *state = &Data_03001ad0;
+        u32 decrement = (u32)&Value_0000ffff;
+        state->first += decrement;
+        state->second += decrement;
+    }
+}

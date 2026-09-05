@@ -1,6 +1,5 @@
 #include "colosso_log_rolling_stage.h"
 
-
 extern s16 Data_0200dace;
 
 s32 Func_0200829e(void);       /* established (veneer to Func_080153b8) */

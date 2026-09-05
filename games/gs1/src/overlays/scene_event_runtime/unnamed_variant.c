@@ -22,7 +22,6 @@
  * identical semantics; this row's pool word was resolved on its own.
  */
 
-
 u8 *Func_02000030(void)
 {
     return (u8 *)0x020085f8;
@@ -57,7 +56,6 @@ s32 Func_02000038(void)
  * identical semantics; this row's pool word was resolved on its own.
  */
 
-
 u8 *Func_0200003c(void)
 {
     return (u8 *)0x02008628;
@@ -85,7 +83,6 @@ u8 *Func_0200003c(void)
  * identical semantics; this row's pool word was resolved on its own.
  */
 
-
 u8 *Func_02000044(void)
 {
     return (u8 *)0x0200862c;
@@ -112,7 +109,6 @@ u8 *Func_02000044(void)
  * one of them returns a DIFFERENT address. Identical bytes are not
  * identical semantics; this row's pool word was resolved on its own.
  */
-
 
 u8 *Func_0200004c(void)
 {
@@ -250,4 +246,3 @@ stop:
     Func_02000784(19);
     return 0;
 }
-

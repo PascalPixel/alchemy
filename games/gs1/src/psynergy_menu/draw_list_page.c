@@ -18,7 +18,6 @@ extern u8 Data_080af22c;
 #define ACT_ID_MASK 0x3fff
 #define OWNER_LEVEL_OFS 15
 #define OWNER_CLASS_MSG_OFS 0x129
-
 #define Menu_SetPageIcons Func_080a2324
 #define UiText_DrawStringAtOffsetFar Func_08015090
 #define UiText_DrawStringInWindowFar Func_08015098

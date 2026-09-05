@@ -21,7 +21,6 @@ extern void Func_020052d6(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 extern void Func_020052e6(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 
 #define UpdateActor15WestRoute Func_02002200
-
 void UpdateActor15WestRoute(void) {
     s32 x = Func_02005290(15)->f08 >> 20;
     s32 y = Func_0200529a(15)->f10 >> 20;

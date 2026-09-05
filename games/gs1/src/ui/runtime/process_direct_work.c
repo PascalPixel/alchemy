@@ -22,8 +22,8 @@ struct Work {
 
 extern u8 *Data_03001e8c;
 
-#define UiWindow_EraseBorderRect Func_08016178
 #define UiWork_ProcessDirectWork Func_08016f2c
+#define UiWindow_EraseBorderRect Func_08016178
 
 void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);

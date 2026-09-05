@@ -22,7 +22,6 @@ struct BattleEffectGlobals {
 
 extern struct BattleEffectRequest *Data_03001f30;
 extern struct BattleEffectGlobals Data_02000240;
-
 #define RunBattleEffect01 Func_0809802c
 #define RunSceneTransitionEffect Func_08097540
 #define RunBattleEffect03 Func_080994d0
@@ -38,6 +37,7 @@ extern struct BattleEffectGlobals Data_02000240;
 #define RunBattleEffect14 Func_0809a8c4
 #define RunBattleEffect15 Func_0809b208
 #define RunBattleEffect16 Func_0809b698
+
 void RunBattleEffect01(void);
 void RunSceneTransitionEffect(s32 source_id, s32 target_id);
 void RunBattleEffect03(void);

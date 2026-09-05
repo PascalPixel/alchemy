@@ -1,6 +1,5 @@
 #include "colosso_log_rolling_stage.h"
 
-
 u8 *Func_020077bc();           /* veneer, item/party record by id, established */
 s32 Func_020077ce();           /* veneer, established (handle, item) */
 void Func_020077ea();          /* veneer, established (handle, slot) */

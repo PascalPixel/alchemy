@@ -19,7 +19,6 @@ extern u16 Data_0200ade4;
 extern volatile s32 Data_0200ade8;
 
 #define UpdateStatueLight1 Func_02000d9c
-
 void UpdateStatueLight1(void)
 {
     volatile s32 *st;

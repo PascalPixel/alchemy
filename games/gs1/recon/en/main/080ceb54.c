@@ -17,7 +17,7 @@
  * variant) and indexes a two-byte-per-variant table at 0x080ee090
  * (Data_080ee090) for the outer frame-loop length and the per-frame burst
  * count. Per Func_080cef64's already-recovered body
- * (games/gs1/src/unidentified/main/runtime/runtime_owner_21.c) the function
+ * (games/gs1/src/battle/effects/fetch_rectangle_blitters.c) the function
  * unconditionally copies the kind-46/47 allocator-cache slot pair; this
  * owner never calls Func_080ed408 itself, so it is reading back whatever
  * kind-46/47 slots a prior effect already populated.

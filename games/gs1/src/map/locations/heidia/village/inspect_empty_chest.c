@@ -13,7 +13,6 @@ void Func_020074b2(void);
 void Func_02007498(s32);
 
 #define InspectEmptyChest Func_02001e2c
-
 void InspectEmptyChest(void)
 {
     Func_020074dc(0, 1);
